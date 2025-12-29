@@ -4920,6 +4920,10 @@ font-weight: 600;
   	margin: 0 !important;
   }
   
+  .aonInputIconLabel {
+  	top: 6px;
+  }
+  
   #aonTimeControlReasonDialogDialogMain {
   	margin-top: 60px;
   }
@@ -4928,14 +4932,14 @@ font-weight: 600;
   	border-bottom: none;
   }
   
-  #DesplazadoReasonInput,
-  #OtroReasonInput{
+  #ReasonInput2,
+  #ReasonInput10{
 	padding-left: 1rem;
 
   }
   
-  span#DesplazadoReasonInputTitle,
-  span#OtroReasonInputTitle {
+  span#ReasonInput2Title,
+  span#ReasonInput10Title {
   	display: none;
   }
   
@@ -4947,6 +4951,11 @@ font-weight: 600;
   	cursor: pointer;
  	border-bottom: 1px solid #d3d3d3;
   }
+  
+  .aonTimeControlResonOption.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
   
   .aonTimeControlResonOption:hover {
   	background-color: #f0f0f0;
