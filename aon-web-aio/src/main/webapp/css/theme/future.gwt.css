@@ -874,7 +874,7 @@ div:has( > .aon_icon_menu_collapse) {
 }
 
 .gwt-Selector .gwt-MenuBarPopup {
-	height: auto;aon-web-aio/src/main/webapp/css/theme/future.gwt.css
+	height: auto;
 	border: none;
 	min-width: 12.5rem;
 	border-radius: .375rem;
@@ -1070,4 +1070,54 @@ div:has( > .aon_icon_menu_collapse) {
 	height: 15px !important;
 	background-size: 15px !important;
 	margin-top: 0.1rem !important;
+}
+
+.aon_toolbar_button.aon_icon_save,
+.aon-finding-toolbar-item.aon_icon_save{
+	border: 0;
+  	border-radius: .375rem;
+	
+	min-width: 200px;
+	background-image: none;
+	background-color: #0f172a !important;
+	
+	height: 32px;
+  	padding: 0px;
+  	margin-bottom: 2px;	  
+	
+	color:white;  	
+  	text-align: center;		
+}
+
+.aon_toolbar_button.aon_icon_save {
+  	text-transform: lowercase;
+}
+
+.aon_toolbar_button.aon_icon_save:before,
+.aon-finding-toolbar-item.aon_icon_save:before{
+		content: '';
+  		width: 32px;
+  		height: 32px;
+  		
+  		display: inline-block;
+  		vertical-align: middle;
+  		
+  		background-color: white;
+  		mask-size: 24px;
+		mask-repeat: no-repeat;
+  		mask-position-y: center;
+  		mask-image: url('/icons/save.svg');
+}
+
+.aon_toolbar_button.aon_icon_save:after{
+		content: 'guardar';
+  		height: 24px;
+  		width: fit-content;
+  		margin-left: 8px;
+  		
+  		color: white;
+  		font-size: 0.9rem;
+	
+  		display: inline-block;
+  		
 }
