@@ -67,7 +67,7 @@ class VerifactuCanariasVentaExentaE1Test extends AbstractVerifactuTest {
 	}
 
 	private void assertInvoice( VerifactuContext vc ) throws InvoiceCommunicationException {
-		RegFactuSistemaFacturacion rfsf = Invoice2Verifactu.build(vc);
+		RegFactuSistemaFacturacion rfsf = Invoice2Verifactu.build(getEnvironment().getCtx(),vc, EMPTY_VERIFACTU_PHASE_LISTENER);
 		assertNotNull( rfsf );
 		
 		// ------------------------ CabeceraType asserts
