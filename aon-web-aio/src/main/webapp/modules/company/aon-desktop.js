@@ -210,7 +210,7 @@ export class AonDesktop extends AonElement {
 			if(showError) this.showMessageError("Es obligatorio rellenar todos los datos de la persona física.");
 			return false;
 		} 
-		if(showError && (icc.isCommonTerritory() || icc.isCanarias()) && !icc.isSii() && !icc.willBeSii() && !icc.isVerifactu() && !icc.willBeVerifactu() && !icc.isNoVerifactu() && !icc.willBeNoVerifactu()) {
+		if(showError && !icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) && !icc.isSii() && !icc.willBeSii() && !icc.isVerifactu() && !icc.willBeVerifactu() && !icc.isNoVerifactu() && !icc.willBeNoVerifactu()) {
 			this.showMessageError("Es obligatorio selecionar Verifactu, No Verifactu o SII para empresas del territorio común.");
 			return false;
 		} 

@@ -41,19 +41,14 @@ export class AonInvoiceCommunication extends AonElement {
     }
 
     build() {
-        if (!isValid(this.configuration.company.document)) {
-            this.showError('No es posible configurar las comunicaciones. El documento de la empresa no es válido.');
-        } else {
-            let div = this.createElement(TAG.DIV);
-            div.id  = this.DIV;
-            this.COMPONENT = div;
-            // div.style.display = 'flex';
-            // div.style.width = '100%';
-            this.appendChild(div);
-            this.buildCompanyCard(div);
-            if(this.showCommunicationCard()) 
-                this.buildCommunicationCard(div);
-        }
+        let div = this.createElement(TAG.DIV);
+        div.id = this.DIV;
+        div.style.display = 'flex';
+        div.style.width = '100%';
+        this.appendChild(div);
+        this.buildCompanyCard(div);
+        if(this.showCommunicationCard()) 
+            this.buildCommunicationCard(div);        
     }
 
     reload() {
@@ -126,20 +121,22 @@ export class AonInvoiceCommunication extends AonElement {
     buildCompanyInfo(table) {
         const valid = isValid(this.configuration.company.document);
         let document = createInput(this.id + 'companyDocument', MSG.DOCUMENT);
-        document.setValue(this.configuration.company.document);
-        document.disabled = valid;
-        document.readonly = valid;
+        document.setValue(this.configuration.company.document || '');
+        
+        if(valid) {
+            document.disabled = valid;
+            document.readonly = valid;
+        }
+        table.addCell(document, 1).style.height = '50px';
         if(!valid) {
-            document.buildErrorMessage('Documento no válido');
+            document.addError('Documento no válido');
             document.addEventListener(EVENT.CHANGE, () => {
                 this.configuration.company.document = document.value;
                 this.dispatchEvent(new Event(EVENT.CHANGE));
                 this.reload();
             });
         }
-        table.addCell(document, 1).style.height = '50px';
-
-        if(isPersonaFisica(this.configuration.company.document)) {
+        if(valid && isPersonaFisica(this.configuration.company.document)) {
             let nameValue = this.configuration.person && this.configuration.person.firstSurname 
                 ? this.configuration.person.firstName : this.configuration.company.name;
             let surname1Value = this.configuration.person && this.configuration.person.firstSurname

@@ -121,7 +121,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.CostParams;
 import com.esferalia.aon.gwt.payroll.shared.Country;
-import com.esferalia.aon.gwt.payroll.shared.DateVariable;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -183,6 +182,7 @@ import com.esferalia.aon.occam.api.model.ContractParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
+import com.esferalia.aon.occam.api.model.EnterpriseData;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -266,7 +266,6 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
-import java.io.ByteArrayOutputStream;
 
 import aon.sepe.objects.Contract;
 import jakarta.servlet.annotation.WebServlet;
@@ -3237,6 +3236,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
 			Optional<ApplicationParameter> authParam = AON.getApplicationParameterStream(domainName, domainId, userLogin, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY"))).findFirst();
+			String authKey = null;
+			if(authParam.isEmpty() || AonStringUtils.isBlank(authParam.get().getValue())) {
+				EnterpriseData enterpriseData = AON.getEnterpriseData(new Domain().setName(domainName).setId(domainId), new User().setLogin(userLogin), f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY")));
+				if(null != enterpriseData && null != enterpriseData.getId()) authKey = enterpriseData.getExpression();
+			} else 
+				authKey = authParam.get().getValue();
 			
 			if(rattachId == null) {
 				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
@@ -3246,7 +3251,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			} else
 				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
 			
-			byte[] data = SistemaRED.getSecondaryUsersPDF(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), authParam.isEmpty() ? null : authParam.get().getValue());
+			byte[] data = SistemaRED.getSecondaryUsersPDF(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), authKey);
 			String base64Pdf = Base64.getEncoder().encodeToString(data);
 					
 			Writer stringWriter = new StringWriter();
@@ -3271,6 +3276,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
 			Optional<ApplicationParameter> authParam = AON.getApplicationParameterStream(domainName, domainId, userLogin, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY"))).findFirst();
+			String authKey = null;
+			if(authParam.isEmpty() || AonStringUtils.isBlank(authParam.get().getValue())) {
+				EnterpriseData enterpriseData = AON.getEnterpriseData(new Domain().setName(domainName).setId(domainId), new User().setLogin(userLogin), f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY")));
+				if(null != enterpriseData && null != enterpriseData.getId()) authKey = enterpriseData.getExpression();
+			} else 
+				authKey = authParam.get().getValue();
 			
 			if(rattachId == null) {
 				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
@@ -3280,7 +3291,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			} else
 				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
 			
-			byte[] data = SistemaRED.getAssignedCCCsPDF(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), authParam.isEmpty() ? null : authParam.get().getValue());
+			byte[] data = SistemaRED.getAssignedCCCsPDF(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), authKey);
 			String base64Pdf = Base64.getEncoder().encodeToString(data);
 					
 			Writer stringWriter = new StringWriter();
