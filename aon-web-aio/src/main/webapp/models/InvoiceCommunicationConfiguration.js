@@ -176,7 +176,7 @@ export class InvoiceCommunicationConfiguration {
     deleteHistory = (history) => {
         let auxHistory = structuredClone(history);   
         auxHistory.forEach((element, index)=> {
-            if(!element.endDate || element.endDate > (date || new Date())) {
+            if(!element.endDate || element.endDate > new Date()) {
                 auxHistory[index].removed = true;
             }
         });
