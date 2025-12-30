@@ -174,38 +174,45 @@ aon-new-date, aon-new-select, aon-new-textarea, aon-iban, aon-quantity{
 // Select
 //
 aon-new-select{
-  .aonInputListOptions{
-    position  : absolute;
-    display   : grid;
-    gap       : v.$gap-min;
-    visibility: hidden;
-    display   : none;
-    &.is-visible{
-      visibility    : visible;
-      display       : block;
-      border-radius : v.$border-radius;
-      z-index       : v.$num-1;
-      padding       : $padding;
-      max-height    : v.$px-222;
-      overflow-y    : auto;
-      overflow-x    : hidden;
-      ul{
-        list-style: none;
-        margin    : v.$px-0;
-        padding   : v.$px-0;
-        display   : grid;
-        gap       : v.$gap-min;
-        li{
-          padding : $padding;
-          cursor  : pointer;
-          display : flex;
-          gap     : v.$gap-min;
-          border-radius : v.$border-radius;
-          div{
-            display: flex;
-            &:first-child{
-              width : v.$px-24;
-              height: v.$px-24;
+  .aonSpanListOptions{
+    position: relative;
+    display : flex;
+    width   : v.$pct-100;
+    .aonInputListOptions{
+      position  : absolute;
+      display   : grid;
+      gap       : v.$gap-min;
+      visibility: hidden;
+      display   : none;
+      &.is-visible{
+        visibility    : visible;
+        display       : block;
+        border-radius : v.$border-radius;
+        z-index       : v.$num-1;
+        padding       : $padding;
+        max-height    : v.$px-222;
+        overflow-y    : auto;
+        overflow-x    : hidden;
+        width         : -webkit-fill-available;
+        width         : fill-available; 
+        ul{
+          list-style: none;
+          margin    : v.$px-0;
+          padding   : v.$px-0;
+          display   : grid;
+          gap       : v.$gap-min;
+          li{
+            padding : $padding;
+            cursor  : pointer;
+            display : flex;
+            gap     : v.$gap-min;
+            border-radius : v.$border-radius;
+            div{
+              display: flex;
+              &:first-child{
+                width : v.$px-24;
+                height: v.$px-24;
+              }
             }
           }
         }

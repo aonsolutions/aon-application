@@ -135,6 +135,7 @@ export class AonNewSelect extends AonNewInput {
       let rootDiv = this.getElement(this.ROOT);
       let span = this.createSpan();
       span.id = this.id + "OptionsSpan";
+      span.className = 'aonSpanListOptions';
       rootDiv.appendChild(span);
   
       let optionsDiv = this.createDiv();
