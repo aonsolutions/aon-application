@@ -256,8 +256,8 @@ export class AonDialog extends AonElement {
   }
   
   deleteHeadClose(){
-	const close = this.getElement(this.BUTTON_CLOSE);
-	close.remove();
+		const close = this.getElement(this.BUTTON_CLOSE);
+		close.remove();
   }
 
   setTitle(title) {
@@ -357,7 +357,14 @@ export class AonDialog extends AonElement {
   }
   
   removeCliclOutsideDialogClose(){
-	this.removeEventListener('click', this.OUTSIDE_CLICK_CANCEL);
+		this.removeEventListener('click', this.OUTSIDE_CLICK_CANCEL);
+  }
+
+	setDialogWidth(width) {
+    let content = this.getDialog();
+		if(width) {
+			content.style.maxWidth = width;
+		}
   }
 
   setContent(widget, top = null, left = null, width = null) {

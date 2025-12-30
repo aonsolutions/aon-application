@@ -125,6 +125,7 @@ export class AonDesktop extends AonElement {
 			dialog.id = this.INVOICE_CONFIGURATION_DIALOG;
 			this.appendChild(dialog);
 			dialog.autoclose = false;
+			dialog.setDialogWidth('90%');
 			dialog.removeCliclOutsideDialogClose();
 			this.getElement(dialog.BUTTON_CLOSE).style.display = 'none';
 			
@@ -144,9 +145,10 @@ export class AonDesktop extends AonElement {
 		
 			let aviso = this.createDiv();
 			aviso.style.backgroundColor = '#fde400ff';
-			aviso.style.padding = '10px';
-			aviso.style.margin = '10px';
-			aviso.innerHTML = "<span style='color:red'>Aviso Importante</span>: Como usuario de AON SIF (Sistema de Facturación) adaptado a la normativa de la \"ley antifraude\" y regulado por el Reglamento RRSIF (RD 1007/2023), debe cumplimentar los datos que se solicitan a continuación. El Cliente es el único responsable de la correcta activación de la modalidad de comunicación, configuración del software y validación de su certificado digital en el software para la comunicación de facturas a la Administración Tributaria (AEAT o Haciendas Forales) a través de los sistemas VeriFactu, No VeriFactu, LROE o Ticket BAI. <br><b>AON SOLUTIONS, S.L.U. no será responsable</b> de información no veraz o incorrecta incluida por el usuario en el SIF.</br>";
+			aviso.style.padding = '1rem';
+			aviso.style.borderRadius = '.625rem';
+			// aviso.style.margin = '10px';
+			aviso.innerHTML = "<span style='color:red'><b>Aviso Importante:</b></span> <span>Como usuario de AON SIF (Sistema de Facturación) adaptado a la normativa de la \"ley antifraude\" y regulado por el Reglamento RRSIF (RD 1007/2023), debe cumplimentar los datos que se solicitan a continuación. El Cliente es el único responsable de la correcta activación de la modalidad de comunicación, configuración del software y validación de su certificado digital en el software para la comunicación de facturas a la Administración Tributaria (AEAT o Haciendas Forales) a través de los sistemas VeriFactu, No VeriFactu, LROE o Ticket BAI. <br><b>AON SOLUTIONS, S.L.U. no será responsable</b> de información no veraz o incorrecta incluida por el usuario en el SIF.</br></span>";
 
 			div.appendChild(aviso);
 			div.appendChild(communication);
@@ -159,7 +161,7 @@ export class AonDesktop extends AonElement {
 
 			dialog.addAcceptAction(() => {		
 				if(this.checkConfigurationComplete(this.ic, true)) { 
-					// saveInvoiceConfiguration(this.ic);
+					saveInvoiceConfiguration(this.ic);
 				} else {
 					this.buildInvoiceConfigurationDialog();
 				}
@@ -175,15 +177,15 @@ export class AonDesktop extends AonElement {
 		let conditions = this.createDiv();
 		parent.appendChild(conditions);
 		let table = new AonBasicTable();
-		table.style.top = '20px';
-		table.style.position = 'relative'; 
+		// table.style.top = '20px';
+		// table.style.position = 'relative'; 
 		conditions.appendChild(table);
 		table.addRow();
 		
 		let checkBox = new AonCheckbox();
 		checkBox.setCh
 		let td = table.addCell(checkBox)
-		td.style.width = '15px';
+		// td.style.width = '15px';
 		let span3 = this.createElement(TAG.SPAN);
 		span3.innerHTML = 'He leido y acepto las <a target="_blank" class="aonLink" href="http://aonsolutions.es/docs/aon_condiciones_generales_del_contrato.pdf">CONDICIONES GENERALES</a> del contrato de licencia de software y los términos <a target="_blank" class="aonLink" href="https://aonsolutions.es/docs/Aon-Declaracion%20Responsable%20VeriFactu.pdf">DECLARACIÓN RESPONSABLE del SIF</a> (Sistema Informático de facturación)';
 		table.addCell(span3);
