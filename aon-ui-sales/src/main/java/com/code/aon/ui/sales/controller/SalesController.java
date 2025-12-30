@@ -1182,12 +1182,11 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	}
 	
 	public void onPrepareSale(ActionEvent event) {
-		Date date = getDeliveryDate() != null ? getDeliveryDate() : new Date();
 		String domainName = AonUtil.getDomainName();
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
-		String series = Integer.toString(AonDateUtils.getYear(date));
 		Sales to = (Sales)this.getTo();
-		
+		Date date = to.getDeliveryDate() != null ? to.getDeliveryDate() : new Date();		
+		String series = Integer.toString(AonDateUtils.getYear(date));
 		Occam occam = new Occam().setDomain(to.getDomain()).setDomainName(domainName).setUser(login);
 		to.setCarrier(getPrepareSaleProcess().getCarrier());
 		to.setStatus(SalesStatus.IN_PREPARATION);
