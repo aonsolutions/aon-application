@@ -533,6 +533,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 4909.50);
 		assertValue("cgpBaseLabel", 4909.50);
 		assertNotElement("editor-bases_provisonales");
+		calculate(Calendar.JANUARY,2026);
+		assertValue("cgcBaseLabel", 5101.20);
+		assertValue("cgpBaseLabel", 5101.20);
+		assertNotElement("editor-bases_provisonales");
 
 		draft("BASE, MÁXIMA ( GRUPO 10 )");
 //		calculate(Calendar.JANUARY,2022);
@@ -555,6 +559,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.FEBRUARY,2025);
 		assertValue("cgcBaseLabel", 4909.50 / 30.00 * 28);
 		assertValue("cgpBaseLabel", 4909.50 );
+		assertNotElement("editor-bases_provisonales");
+		calculate(Calendar.FEBRUARY,2026);
+		assertValue("cgcBaseLabel", 5101.20 / 30.00 * 28);
+		assertValue("cgpBaseLabel", 5101.20 );
 		assertNotElement("editor-bases_provisonales");
 
 		draft("BASE, MÍNIMA ( GRUPO 01 )");
@@ -3096,6 +3104,35 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertText("mei_cost", cgcBase*0.67/100.00);
 		click("costsCheck-input");
 		
+		calculate(Calendar.JANUARY,2026);
+		cgcBase = getValue("cgcBaseLabel");
+		cgpBase = getValue("cgpBaseLabel");
+		assertText("mei", cgcBase*0.15/100.00);
+		click("costsCheck-input");
+		assertText("mei_cost", cgcBase*0.75/100.00);
+		click("costsCheck-input");
+	}
+
+	@Test
+	public void TestSolidaridad() throws Exception {
+		
+		if (!isDisplayed("solidaridad,_tercer_tramo"))
+			open("solidaridad");
+
+
+		wait4Id("solidaridad,_tercer_tramo");
+
+		draft("SOLIDARIDAD, TERCER TRAMO");
+		
+		calculate(Calendar.JANUARY,2026);
+		assertText("solidaridad_iPercentLabel", "0,19 %");
+		assertText("solidaridad_iiPercentLabel", "0,21 %");
+		assertText("solidaridad_iiiPercentLabel", "0,24 %");
+		click("costsCheck-input");
+		assertText("solidaridad_i_ePercentLabel", "0,96 %");
+		assertText("solidaridad_ii_ePercentLabel", "1,04 %");
+		assertText("solidaridad_iii_ePercentLabel", "1,22 %");
+		click("costsCheck-input");
 	}
 
 	@Test

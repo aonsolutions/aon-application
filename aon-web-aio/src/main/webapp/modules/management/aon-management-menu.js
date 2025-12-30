@@ -20,13 +20,12 @@ export class AonManagementMenu extends AonSuiteMenu {
     async connectedCallback () {
         this.clear();
         this.initialize();
-        await this.getInvoiceConfiguration();
    		this.gestionInitialize();
         this.build();
         this.setTitle("Opciones de gestión");
     }
 
-    async getInvoiceConfiguration() {
+    async initInvoiceConfiguration() {
         let c = await getInvoiceConfiguration();
         this.icc = new InvoiceCommunicationConfiguration(c.communication);
     }
@@ -62,6 +61,7 @@ export class AonManagementMenu extends AonSuiteMenu {
     }
 
     initOptions() {
+		this.initInvoiceConfiguration();
         this.options = [{
             title: 'Ventas',
             options: [{
@@ -71,12 +71,12 @@ export class AonManagementMenu extends AonSuiteMenu {
             }, {
                 description: "Facturas de Venta",
                 title: "Facturas de Venta",
-                disabled: this.icc.isNoSif(),
+                disabled: this.icc?.isNoSif(),
                 action: () => this.rootPanel(new JSF.AonJsfSaleInvoice())
             }, {
                 description: "Impresión / eMail de Facturas",
                 title: "Impresión / eMail de Facturas",
-                disabled: this.icc.isNoSif(),
+                disabled: this.icc?.isNoSif(),
                 action: () => this.rootPanel(new JSF.AonJsfInvoicePrint())
             }, {
                 description: "Pedidos de Venta",
@@ -85,7 +85,7 @@ export class AonManagementMenu extends AonSuiteMenu {
             }, {
                 description: "Facturación masiva de Albaranes",
                 title: "Facturación masiva de Albaranes",
-                disabled: this.icc.isNoSif(),
+                disabled: this.icc?.isNoSif(),
                 action: () => this.rootPanel(new JSF.AonJsfInvoiceDelivery())
             }]
         }, {
@@ -151,7 +151,7 @@ export class AonManagementMenu extends AonSuiteMenu {
             }, {
                 description: "SII - Suministro Inmediato de Información",
                 title: "SII - Suministro Inmediato de Información",
-                disabled: !this.icc.isSii(),
+                disabled: !this.icc?.isSii(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }, {
                 description: "Modelo 347 - Declaración anual operaciones con terceras personas.",

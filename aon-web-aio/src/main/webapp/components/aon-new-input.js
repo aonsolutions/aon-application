@@ -141,7 +141,10 @@ export class AonNewInput extends AonElement {
 
 		input.addEventListener(EVENT.CHANGE, () => this.setValue(input.value));
 		input.addEventListener(EVENT.BLUR, this.onBlur);
-		input.addEventListener(EVENT.INPUT, this.onInput);
+		input.addEventListener(EVENT.INPUT, () => {
+		    this.setValue(input.value);
+		    this.onInput();
+		});
 
 		input.placeholder = this.getTitle();
 		label.appendChild(input);
