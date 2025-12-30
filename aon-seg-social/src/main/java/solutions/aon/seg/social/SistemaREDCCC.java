@@ -13,6 +13,7 @@ import java.util.stream.Stream.Builder;
 import javax.xml.transform.TransformerException;
 
 import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.SgmlPage;
 import org.htmlunit.UnexpectedPage;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.DomElement;
@@ -20,6 +21,7 @@ import org.htmlunit.html.DomNodeList;
 import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlHeading4;
 import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlParagraph;
@@ -30,7 +32,6 @@ import org.htmlunit.xml.XmlPage;
 
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
-import solutions.aon.seg.social.toolkit.Toolkit;
 
 public class SistemaREDCCC {
     
@@ -140,8 +141,18 @@ public class SistemaREDCCC {
 			
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			
-			XmlPage xmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P002");
-			HtmlPage document = HtmlUnitToolkit.transformXmlPage(xmlPage);
+			SgmlPage page  = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P002");
+			
+			XmlPage xmlPage = null;
+			HtmlPage document = null;
+			
+			if(page instanceof XmlPage) {
+				xmlPage = (XmlPage) page;
+				document = HtmlUnitToolkit.transformXmlPage(xmlPage);
+			} else if(page instanceof HtmlPage)
+				document = (HtmlPage) page;
+			
+			checkAuth(document);
 			
 			// Check if need to find by authCode
 			try {
@@ -155,6 +166,8 @@ public class SistemaREDCCC {
 				
 				document = HtmlUnitToolkit.transformXmlPage(targetLink.click());
 			} catch (Exception e) {}
+			
+			checkAuth(document);
 			
 			HtmlInput sitUsuSec = document.querySelector("#autorizado_1");
 			sitUsuSec.click();
@@ -194,6 +207,12 @@ public class SistemaREDCCC {
 			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
+	}
+	
+	private static void checkAuth(HtmlPage document) throws Exception {
+		HtmlHeading4 errorMessage = (HtmlHeading4) document.querySelector("div.mensajeError > h4.cabMensaje");
+		if(errorMessage != null && null != errorMessage.getVisibleText())
+			throw new SegSocialException(errorMessage.getVisibleText());
 	}
 	
 	private static byte[] getPDFDocument(HtmlElement linkElement) throws IllegalArgumentException {

@@ -19,6 +19,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContexts;
 import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.SgmlPage;
 import org.htmlunit.StringWebResponse;
 import org.htmlunit.UnexpectedPage;
 import org.htmlunit.WebClient;
@@ -30,6 +31,7 @@ import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlDivision;
 import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlHeading4;
 import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlParagraph;
@@ -133,8 +135,18 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 			
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			
-			XmlPage xmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P003");
-			HtmlPage document = HtmlUnitToolkit.transformXmlPage(xmlPage);
+			SgmlPage page  = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P003");
+			
+			XmlPage xmlPage = null;
+			HtmlPage document = null;
+			
+			if(page instanceof XmlPage) {
+				xmlPage = (XmlPage) page;
+				document = HtmlUnitToolkit.transformXmlPage(xmlPage);
+			} else if(page instanceof HtmlPage)
+				document = (HtmlPage) page;
+			
+			checkAuth(document);
 			
 			// Check if need to find by authCode
 			try {
@@ -146,8 +158,14 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 				String enlaceSelector = "#enlace_" + autorizationCode;
 				HtmlAnchor targetLink = autorizadTable.querySelector(enlaceSelector);
 				
+				if(null != autorizadTable && null == targetLink)
+					throw new SegSocialException("No se puede seleccionar ninguno de los autorizados");
+				
 				document = HtmlUnitToolkit.transformXmlPage(targetLink.click());
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				if(e instanceof SegSocialException)
+					throw new SegSocialException(e.getMessage());
+			}
 
 			HtmlDivision dialogoMensajes = (HtmlDivision) document.getElementById("dialogoMensajes");
 
@@ -161,6 +179,8 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 			        }
 			    }
 			}
+			
+			checkAuth(document);
 			
 			HtmlInput sitUsuSec = document.querySelector("#sitUsuSec_1");
 			sitUsuSec.click();
@@ -208,6 +228,13 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 		}
 	}
 	
+	private static void checkAuth(HtmlPage document) throws Exception {
+		HtmlHeading4 errorMessage = (HtmlHeading4) document.querySelector("div.mensajeError > h4.cabMensaje");
+		if(errorMessage != null && null != errorMessage.getVisibleText())
+			throw new SegSocialException(errorMessage.getVisibleText());
+		
+	}
+
 	private static byte[] getPDFDocument(HtmlElement linkElement) throws IllegalArgumentException {
 		try {
 			UnexpectedPage docPage = linkElement.click();
