@@ -1,4 +1,5 @@
 import { CONSTANT } from "../environments/environments";
+import { CONTACT } from "../environments/msg-en";
 import { isPersonaFisica } from "../services/documentUtils";
 import { Administration } from "./Administration";
 import { EnterpriseData, EnterpriseDataNames } from "./EnterpriseData";
@@ -458,14 +459,16 @@ export class InvoiceCommunicationConfiguration {
             if(date >= this.getToday().addDay(1)) {
                 this.undefinedHistories([CONSTANT.VERIFACTU]);
                 this.verifactuData = undefined;
-                if(this.isNoSif()) {
-                    this.setSif(true, enterprise);
+                if(!this.hasCommunication()) {
+                    this.setSif(true, enterprise, CONSTANT.VERIFACTU);
+                    this._sifDataHistory = this.endHistory(this.getSifDataHistory(), date);
                 }
             } else {
                 this.verifactuData.startDate = date;
                 this.verifactuData.updated = true;
             }
-            this.endOtherHistories([CONSTANT.VERIFACTU], date);
+            let h = this.willBeVerifactu() && this.isSif() ? [CONSTANT.VERIFACTU, CONSTANT.SIF, CONSTANT.NO_SIF] : [CONSTANT.VERIFACTU];
+            this.endOtherHistories(h, date);
             if(!this.hasCommunication()) {
                 this.setSif(true, enterprise, CONSTANT.VERIFACTU);
             }
@@ -549,14 +552,16 @@ export class InvoiceCommunicationConfiguration {
             if(date >= this.getToday().addDay(1)) {
                 this.undefinedHistories([CONSTANT.NO_VERIFACTU]);
                 this.noVerifactuData = undefined;
-                if(this.isNoSif()) {
-                    this.setSif(true, enterprise);
+                if(!this.hasCommunication()) {
+                    this.setSif(true, enterprise, CONSTANT.NO_VERIFACTU);
+                    this._sifDataHistory = this.endHistory(this.getSifDataHistory(), date);
                 }
             } else {
                 this.noVerifactuData.startDate = date;
                 this.noVerifactuData.updated = true;
             }
-            this.endOtherHistories([CONSTANT.NO_VERIFACTU], date);
+            let h = this.willBeNoVerifactu() && this.isSif() ? [CONSTANT.NO_VERIFACTU, CONSTANT.SIF, CONSTANT.NO_SIF] : [CONSTANT.NO_VERIFACTU];
+            this.endOtherHistories(h, date);
             if(!this.hasCommunication()) {
                 this.setSif(true, enterprise, CONSTANT.NO_VERIFACTU);
             }
@@ -804,13 +809,14 @@ export class InvoiceCommunicationConfiguration {
         const selectedDate = date;
         const now = new Date();
         const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-        if (selectedDate > nowDate) {
+        
+        if (selectedDate > nowDate.addDay(1)) {
             return {valid: false, message: 'La fecha seleccionada no puede ser posterior a la fecha actual.'};
         }
-        if (selectedDate < nowDate) {
+        if (selectedDate < nowDate.addDay(-1)) {
             return {valid: false, message: 'La fecha seleccionada no puede ser anterior a la fecha actual.'};
         }
+        
         return { valid: true, message: '' };
     }
 
