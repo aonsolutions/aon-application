@@ -2905,10 +2905,6 @@ background-image: url("../favicon.png");
   background-image: url("../assets/aon-black-logo.svg");
 }
 
-.aonLink:after {
-  content: 'aonSolutions';
-}
-
 .aonTrademark:after {
   content: 'es una marca registrada de AON SOLUTIONS, S.L.';
 }

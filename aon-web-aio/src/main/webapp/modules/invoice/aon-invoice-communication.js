@@ -41,18 +41,14 @@ export class AonInvoiceCommunication extends AonElement {
     }
 
     build() {
-        if (!isValid(this.configuration.company.document)) {
-            this.showError('No es posible configurar las comunicaciones. El documento de la empresa no es válido.');
-        } else {
-            let div = this.createElement(TAG.DIV);
-            div.id = this.DIV;
-            div.style.display = 'flex';
-            div.style.width = '100%';
-            this.appendChild(div);
-            this.buildCompanyCard(div);
-            if(this.showCommunicationCard()) 
-                this.buildCommunicationCard(div);
-        }
+        let div = this.createElement(TAG.DIV);
+        div.id = this.DIV;
+        div.style.display = 'flex';
+        div.style.width = '100%';
+        this.appendChild(div);
+        this.buildCompanyCard(div);
+        if(this.showCommunicationCard()) 
+            this.buildCommunicationCard(div);        
     }
 
     reload() {
@@ -126,20 +122,22 @@ export class AonInvoiceCommunication extends AonElement {
     buildCompanyInfo(table) {
         const valid = isValid(this.configuration.company.document);
         let document = createInput(this.id + 'companyDocument', MSG.DOCUMENT);
-        document.setValue(this.configuration.company.document);
-        document.disabled = valid;
-        document.readonly = valid;
+        document.setValue(this.configuration.company.document || '');
+        
+        if(valid) {
+            document.disabled = valid;
+            document.readonly = valid;
+        }
+        table.addCell(document, 1).style.height = '50px';
         if(!valid) {
-            document.buildErrorMessage('Documento no válido');
+            document.addError('Documento no válido');
             document.addEventListener(EVENT.CHANGE, () => {
                 this.configuration.company.document = document.value;
                 this.dispatchEvent(new Event(EVENT.CHANGE));
                 this.reload();
             });
         }
-        table.addCell(document, 1).style.height = '50px';
-
-        if(isPersonaFisica(this.configuration.company.document)) {
+        if(valid && isPersonaFisica(this.configuration.company.document)) {
             let nameValue = this.configuration.person && this.configuration.person.firstSurname 
                 ? this.configuration.person.firstName : this.configuration.company.name;
             let surname1Value = this.configuration.person && this.configuration.person.firstSurname
@@ -211,7 +209,9 @@ export class AonInvoiceCommunication extends AonElement {
         table.addCell(administration, 2).style.height = '50px';
         administration.setOptions(Object.values(ADMINISTRATIONS));
         administration.setValue(this.communicationConfiguration.getAdministration().value);
-        administration.disabled = !this.communicationConfiguration.getAdministration().isUnknown();
+        administration.disabled = !this.communicationConfiguration.getAdministration().isUnknown() 
+            && this.communicationConfiguration.getAdministrationData() 
+            && this.communicationConfiguration.getAdministrationData().id;
         administration.addEventListener(EVENT.CHANGE, () => {
             this.communicationConfiguration.setAdministration(new Administration(administration.value), enterprise);
             this.dispatchEvent(new Event(EVENT.CHANGE));
@@ -225,7 +225,7 @@ export class AonInvoiceCommunication extends AonElement {
 
     buildNoSif(table) {
         const enterprise = this.configuration.company.id;
-        let issueInvoice = createSwitch("emitefacturas", 'La empresa emite registros de Facturación');
+        let issueInvoice = createSwitch("emitefacturas", 'La empresa emite facturas oficiales con la aplicación');
         issueInvoice.checked = !this.communicationConfiguration.isNoSif();
         if(!this.communicationConfiguration.isNoSif() && !this.communicationConfiguration.hasCommunication()) {
             this.communicationConfiguration.setNoSif(!issueInvoice.isChecked(), enterprise);
@@ -248,20 +248,20 @@ export class AonInvoiceCommunication extends AonElement {
             this.dispatchEvent(new Event(EVENT.CHANGE));
         });
         table.addCell(facturae, 1).style.height = '50px';
-        facturae.setWidth('150px');
+        facturae.setWidth('215px');
         table.addRow();
     }
 
 
     buildCommunication(table, id, title, active, future, data, futureData, activeFn, dateFn) {
-        let span = this.createSpan();
-        span.innerHTML = title;
-        span.style.fontWeight = 'bold';
-        table.addCell(span, 2).style.height = '30px';
-        table.addRow();
+        // let span = this.createSpan();
+        // span.innerHTML = title;
+        // span.style.fontWeight = 'bold';
+        // table.addCell(span, 2).style.height = '30px';
+        // table.addRow();
 
         const communicationActiveId = id + CONSTANT.ACTIVE.initCap();
-        let communicationActive = createSwitch(communicationActiveId, future ? MSG.PROGRAMMED : MSG.ACTIVATE);
+        let communicationActive = createSwitch(communicationActiveId, future ? title + " " + MSG.PROGRAMMED : MSG.ACTIVATE + " " + title);
         communicationActive.checked = active || future;
         communicationActive.disabled = (active && data && data.id) ? true : false;
         communicationActive.addEventListener(EVENT.CHANGE, () => {
@@ -270,7 +270,7 @@ export class AonInvoiceCommunication extends AonElement {
             this.reload();
         });
         table.addCell(communicationActive, 1).style.height = '50px';
-        communicationActive.setWidth('150px');
+        communicationActive.setWidth('215px');
 
         if (active || future) {
             const communicationIncludeDateId = id + CONSTANT.INCLUDE_DATE.initCap();
@@ -287,11 +287,12 @@ export class AonInvoiceCommunication extends AonElement {
                 this.reload();
             });
 
-        } else { 
-            const communicationExemptionId = id + CONSTANT.EXEMPTION.initCap();
-            let exemption = createSelect(communicationExemptionId, MSG.EXEMPTION_CAUSE);
-            table.addCell(exemption, 1).style.height = '50px';
         }
+        // else { 
+        //     const communicationExemptionId = id + CONSTANT.EXEMPTION.initCap();
+        //     let exemption = createSelect(communicationExemptionId, MSG.EXEMPTION_CAUSE);
+        //     table.addCell(exemption, 1).style.height = '50px';
+        // }
         table.addRow();
     }
 

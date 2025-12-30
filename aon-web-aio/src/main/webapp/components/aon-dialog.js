@@ -321,7 +321,6 @@ export class AonDialog extends AonElement {
 	}
 
 	close() {
-		this.autoclose = true;
 		let dialog = this.getDialog();
 		if(dialog) dialog.style.display = 'none';
 		this.dispatchEvent(new CustomEvent(EVENT.CLOSE));

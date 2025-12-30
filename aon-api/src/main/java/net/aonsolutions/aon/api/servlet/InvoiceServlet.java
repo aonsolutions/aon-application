@@ -737,23 +737,26 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	private JSONObject saveConfiguration(AonApiData api) {
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		company.seteInvoice(JsonUtils.getboolean(api.getData(), IJsonNames.E_INVOICE));
-		JSONObject cJson = api.getData().getJSONObject(IJsonNames.COMPANY);
-		if(cJson.opt(IJsonNames.PERSON) != null) {
-			JSONObject pJson = cJson.getJSONObject(IJsonNames.PERSON);
-			String name = JsonUtils.getString(pJson, IJsonNames.NAME);
-			String surname1 = JsonUtils.getString(pJson, IJsonNames.SURNAME + "1");
-			String surname2 = JsonUtils.getString(pJson, IJsonNames.SURNAME + "2");
-			Person person = AON.getPerson(api.getDomain(), api.getUser().getLogin(), f -> f.getIdProperty().eq(company.getId()));
-			person.setFirstName(name);
-			person.setFirstSurname(surname1);
-			person.setSecondSurname(surname2);
-			person.setDomain(company.getDomain());
-			person.setGender(Gender.UNKNOWN);
-			person.setMaritalStatus(MaritalStatus.UNKNOWN);
-			person.setId(company.getId());
-			AON.savePerson(api.getDomain(), api.getUser().getLogin(), person);
+		if(AonStringUtils.isBlank(company.getDocument())) {
+			Company c = CompanyJSON.fromJSON(JsonUtils.getJSONObject(api.getData(), IJsonNames.COMPANY));
+			company.setDocument(c.getDocument());
 		}
+		
+		if(AonStringUtils.isBlank(company.getName())) {
+			Company c = CompanyJSON.fromJSON(JsonUtils.getJSONObject(api.getData(), IJsonNames.COMPANY));
+			company.setName(c.getName());
+		}
+		
 		AON.saveCompany(api.getDomain(), api.getUser(), company);
+		if(JsonUtils.has(api.getData(), IJsonNames.PERSON)) {
+			Person p = PersonJSON.fromJSON(JsonUtils.getJSONObject(api.getData(), IJsonNames.PERSON));
+			p.copy(company);
+			if(p.getDomain() == null) p.setDomain(company.getDomain());
+			if(p.getGender() == null) p.setGender(Gender.UNKNOWN);
+			if(p.getMaritalStatus() == null) p.setMaritalStatus(MaritalStatus.UNKNOWN);
+			if(p.getId() == null) p.setId(company.getId());
+			AON.savePerson(api.getDomain(), api.getUser().getLogin(), p);
+		}
 
 		Administration administration = saveAdministration(api, JsonUtils.getString(api.getData(), IJsonNames.ADMINISTRATION));
 

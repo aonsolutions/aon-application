@@ -16,13 +16,17 @@ export class AonToast extends AonElement {
 
 	constructor() {
 		super();
-		this.id = this.id || 'aonToast';
-		this.DIV = this.id + 'Div';
 	}
 
 	connectedCallback() {
+		this.initialize();
 		this.setStyleComponent();
 		this.paintView();
+	}
+
+	initialize(){
+		this.id = this.id || 'aonToast';
+		this.DIV = this.id + 'Div';
 	}
 
 	setStyleComponent(){
@@ -70,6 +74,7 @@ export class AonToast extends AonElement {
 		else if (type === CONSTANT.PRIMARY) color = '#2196f3';
 		toast.innerHTML = message;
 		toast.style.background = color;
+
 		this.displayToast(true);
 		setTimeout(() => this.displayToast(false), delay);
 	}
