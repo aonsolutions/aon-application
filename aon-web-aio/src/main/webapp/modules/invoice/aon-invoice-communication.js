@@ -213,7 +213,9 @@ export class AonInvoiceCommunication extends AonElement {
         if(!this.communicationConfiguration.getAdministration().isUnknown()) {
             administration.setValue(this.communicationConfiguration.getAdministration().value);
         }
-        administration.disabled = !this.communicationConfiguration.getAdministration().isUnknown();
+        administration.disabled = !this.communicationConfiguration.getAdministration().isUnknown() 
+            && this.communicationConfiguration.getAdministrationData() 
+            && this.communicationConfiguration.getAdministrationData().id;
         administration.addEventListener(EVENT.CHANGE, () => {
             this.communicationConfiguration.setAdministration(new Administration(administration.getValue()), enterprise);
             this.dispatchEvent(new Event(EVENT.CHANGE));
@@ -227,7 +229,7 @@ export class AonInvoiceCommunication extends AonElement {
 
     buildNoSif(table) {
         const enterprise = this.configuration.company.id;
-        let issueInvoice = createSwitch("emitefacturas", 'La empresa emite registros de Facturación');
+        let issueInvoice = createSwitch("emitefacturas", 'La empresa emite facturas oficiales con la aplicación');
         issueInvoice.checked = !this.communicationConfiguration.isNoSif();
         if(!this.communicationConfiguration.isNoSif() && !this.communicationConfiguration.hasCommunication()) {
             this.communicationConfiguration.setNoSif(!issueInvoice.isChecked(), enterprise);
@@ -250,20 +252,20 @@ export class AonInvoiceCommunication extends AonElement {
             this.dispatchEvent(new Event(EVENT.CHANGE));
         });
         table.addCell(facturae, 1).style.height = '50px';
-        facturae.setWidth('150px');
+        facturae.setWidth('215px');
         table.addRow();
     }
 
 
     buildCommunication(table, id, title, active, future, data, futureData, activeFn, dateFn) {
-        let span = this.createSpan();
-        span.innerHTML = title;
-        span.style.fontWeight = 'bold';
-        table.addCell(span, 2).style.height = '30px';
-        table.addRow();
+        // let span = this.createSpan();
+        // span.innerHTML = title;
+        // span.style.fontWeight = 'bold';
+        // table.addCell(span, 2).style.height = '30px';
+        // table.addRow();
 
         const communicationActiveId = id + CONSTANT.ACTIVE.initCap();
-        let communicationActive = createSwitch(communicationActiveId, future ? MSG.PROGRAMMED : MSG.ACTIVATE);
+        let communicationActive = createSwitch(communicationActiveId, future ? title + " " + MSG.PROGRAMMED : MSG.ACTIVATE + " " + title);
         communicationActive.checked = active || future;
         communicationActive.disabled = (active && data && data.id) ? true : false;
         communicationActive.addEventListener(EVENT.CHANGE, () => {
@@ -272,7 +274,7 @@ export class AonInvoiceCommunication extends AonElement {
             this.reload();
         });
         table.addCell(communicationActive, 1).style.height = '50px';
-        communicationActive.setWidth('150px');
+        communicationActive.setWidth('215px');
 
         if (active || future) {
             const communicationIncludeDateId = id + CONSTANT.INCLUDE_DATE.initCap();
@@ -289,12 +291,12 @@ export class AonInvoiceCommunication extends AonElement {
                 this.reload();
             });
 
-        } else { 
-            const communicationExemptionId = id + CONSTANT.EXEMPTION.initCap();
-            // let exemption = createSelect(communicationExemptionId, MSG.EXEMPTION_CAUSE);
-            let exemption = createInput(communicationExemptionId, MSG.EXEMPTION_CAUSE);
-            table.addCell(exemption, 1).style.height = '50px';
         }
+        // else { 
+        //     const communicationExemptionId = id + CONSTANT.EXEMPTION.initCap();
+        //     let exemption = createSelect(communicationExemptionId, MSG.EXEMPTION_CAUSE);
+        //     table.addCell(exemption, 1).style.height = '50px';
+        // }
         table.addRow();
     }
 

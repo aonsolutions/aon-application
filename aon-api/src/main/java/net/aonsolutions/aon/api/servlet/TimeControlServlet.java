@@ -79,6 +79,14 @@ public class TimeControlServlet extends AonApiHttpServlet{
 			case "/excel":
 				responseFile(resp, getTimeControlExcel(api), MimeType.MS_EXCEL);
 				break;
+			case "/location":
+				if(AonStringUtils.isEmpty(api.getToken())) {
+					response ( req, resp, getLocationByCoordinates(api, api.getDomain(), api.getUser()));
+				} else {
+					AonToken aonToken = SECURITY.getAonToken(api.getToken());
+					response ( req, resp, getLocationByCoordinates(api, aonToken) );
+				}
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -174,6 +182,62 @@ public class TimeControlServlet extends AonApiHttpServlet{
 				.and(f.getTypeProperty().eq(TaskHolderType.INTERNAL.value()))));
 		}
 		return getTimeControl(taskHolder.getDomain(), api.getUser(), taskHolder);
+	}
+	
+
+	
+	private JSONObject getLocationByCoordinates(AonApiData api, Domain domain, User user) {
+		TaskHolder taskHolder = api.getData().opt(TASK_HOLDER) != null 
+		    ? AON.getTaskHolder(domain.getName(), domain.getId(), user.getLogin(), f -> 
+		    	f.getDomainProperty().eq(domain.getId())
+		    	.and(f.getIdProperty().eq(api.getData().optInt(TASK_HOLDER)))
+		    	.and(f.getActiveProperty().eq( (byte) 1))
+		    	.and(f.getTypeProperty().eq(TaskHolderType.INTERNAL.value())))
+		    : AON.getTaskHolder(domain.getName(), domain.getId(), user.getLogin(), f -> 
+				f.getDomainProperty().eq(domain.getId())
+				.and(f.getUserIdProperty().eq(user.getId()))
+				.and(f.getActiveProperty().eq( (byte) 1))
+				.and(f.getTypeProperty().eq(TaskHolderType.INTERNAL.value())));
+		  return getLocationByCoordinates(api, taskHolder);
+	}
+	
+	private JSONObject getLocationByCoordinates(AonApiData api, AonToken aonToken) {
+		TaskHolder taskHolder = null;
+		if(api.getData().opt(TASK_HOLDER) != null && api.getDomain().getId() != 0) {
+			taskHolder = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f ->
+				f.getIdProperty().eq(api.getData().optInt(TASK_HOLDER))
+				.and(f.getActiveProperty().eq( (byte) 1))
+				.and(f.getTypeProperty().eq(TaskHolderType.INTERNAL.value())));
+		} else if(api.getData().opt(TASK_HOLDER) != null) {
+			taskHolder = AON_SOLUTIONS.getTaskHolders(aonToken).stream()
+				.filter(th -> th.getId().equals(api.getData().optInt(TASK_HOLDER))
+					&& th.isActive() && TaskHolderType.INTERNAL.equals(th.getType()))
+				.findFirst().orElse(null);
+		} else {
+			taskHolder = AON_SOLUTIONS.getTaskHolders(aonToken).stream()
+				.filter(th -> th.isActive() && TaskHolderType.INTERNAL.equals(th.getType()))
+				.findFirst().orElse(null);
+		}
+		
+		if(taskHolder != null ) {
+			return getLocationByCoordinates(api, taskHolder);
+		}
+		return new JSONObject();
+	}
+	
+	private JSONObject getLocationByCoordinates(AonApiData api, TaskHolder taskHolder) {
+		JSONObject json = new JSONObject();
+		
+		JSONObject params = api.getData();
+		
+		Coordinates coordinates = new Coordinates(params.optString("coordinates"));
+	
+		Location lc = new Location();		
+		if(!coordinates.isEmpty()) {
+			lc = AON_SOLUTIONS.getLocationByCoordinates(taskHolder.getDomain(), "",  coordinates);
+		}
+		
+		return null == lc || null == lc.getId() ? json : lc.toJSON();
 	}
 	
 	private JSONObject saveTimeControl(AonApiData api) {

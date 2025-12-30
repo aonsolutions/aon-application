@@ -33,7 +33,6 @@ export class AonFiscalMenu extends AonSuiteMenu {
     async connectedCallback() {
 		await this.getAppParams(); 
         await this.getCompany();
-        await this.getInvoiceConfiguration();
 		this.buildDur().then(() => {		
 	        this.clear();
 	        this.initialize();
@@ -51,7 +50,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
         });
     }
  
-    async getInvoiceConfiguration() {
+    async initInvoiceConfiguration() {
         let c = await getInvoiceConfiguration();
         this.icc = new InvoiceCommunicationConfiguration(c.communication);
     }
@@ -113,6 +112,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
     }
 
     initOptions() {
+		this.initInvoiceConfiguration();
         this.options = [{
             title: 'IVA AEAT',
             visible: this.isAEAT,
@@ -140,7 +140,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
 			}, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
-                disabled: !this.icc.isSii(),
+                disabled: !this.icc?.isSii(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()
@@ -228,7 +228,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
-                disabled: !this.icc.isSii(),
+                disabled: !this.icc?.isSii(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()
@@ -273,12 +273,12 @@ export class AonFiscalMenu extends AonSuiteMenu {
             options: [{
                 description: "Modelo 140 ",
                 title: "Libro-registro de operaciones económicas de personas físicas",
-                disabled: !this.icc.isLroe() || !isPersonaFisica(this.company.document),
+                disabled: !this.icc?.isLroe() || !isPersonaFisica(this.company.document),
                 action: () => GWT.iLoad(GWT.MODEL_140)
             }, {
                 description: "Modelo 240 ",
                 tite: "Libro-registro de operaciones económicas de sociedades",
-                disabled: !this.icc.isLroe() || isPersonaFisica(this.company.document),
+                disabled: !this.icc?.isLroe() || isPersonaFisica(this.company.document),
                 action: () => GWT.iLoad(GWT.MODEL_240)
             }],
             filter: () => this.isNotDomainManagementAvailable()
@@ -305,7 +305,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
-                disabled: !this.icc.isSii(),
+                disabled: !this.icc?.isSii(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()

@@ -35,13 +35,13 @@ export const PAUSE_REASON = [
 		clickable: true
 	},
 	{
-		name: 'Hospitalización Familia',
+		name: 'Hospitalización Familiar',
 		value: '5',
 		icon: MATERIAL_ICONS.HOME_HEALTH,
 		clickable: true
 	},
 	{
-		name: 'Func. Legales Inexcusables',
+		name: 'Funciones Legales Inexcusables',
 		value: '6',
 		icon: MATERIAL_ICONS.BALANCE,
 		clickable: true

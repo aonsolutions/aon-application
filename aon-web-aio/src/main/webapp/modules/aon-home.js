@@ -56,7 +56,6 @@ export class AonHome extends AonElement {
 		// TimeControl Reason Dialog
 	    let aonDialog = new AonDialog();
 	    aonDialog.id = 'aonTimeControlReasonDialog';
-	    aonDialog.autoclose = true;
 	    this.appendChild(aonDialog)
 
 		let rootPanel = this.createElement(TAG.DIV);

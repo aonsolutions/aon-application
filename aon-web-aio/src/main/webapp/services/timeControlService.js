@@ -7,6 +7,8 @@ export const saveTimeControlDetail = (data) => post(`${API_URL}/timecontrol/save
 
 export const deleteTimeControl = (data) => remove(`${API_URL}/timecontrol`, data);
 
+export const getLocationByCoordinates = (data) => get(`${API_URL}/timecontrol/location`, data);
+
 export const getTimeControl = (data) => get(`${API_URL}/timecontrol`, data);
 export const getTimeControlHistoric = (data) => get(`${API_URL}/timecontrol/historic`, data);
 export const getTimeControlDetail = (data) => get(`${API_URL}/timecontrol/list-holder-detail`, data);

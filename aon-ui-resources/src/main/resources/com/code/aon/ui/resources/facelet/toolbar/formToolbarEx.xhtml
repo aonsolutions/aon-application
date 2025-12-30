@@ -14,7 +14,7 @@
 				title="#{bundle.aon_inherited_row}"
 				styleClass="aon-icon16 aon-icon-shield" />																
 			<aon:if test="#{ app.standAlone and !skipBackButton}">								
-				<aon:commandButton id="#{toolbarID}-aback"
+				<aon:commandButton id="#{toolbarID}-back"
 					title="#{bundle.aon_key_cancel_accelerator}"
 					value="#{controller.backAction == null ? bundle.aon_list : bundle.aon_back}" reRender="#{backButtonReRender}"
 					rendered="#{!formNew}" immediate="true"
@@ -23,6 +23,18 @@
 					action="#{backAction}"
 					accesskey="#{bundle.aon_key_cancel}" />
 			</aon:if>
+			<aon:if test="#{app.standAlone and !skipCancelButton}">			
+				<aon:confirmButton id="#{toolbarID}-cancel"
+					title="#{bundle.aon_key_cancel_accelerator}"
+					value="#{bundle.aon_cancel}" reRender="#{cancelButtonReRender}"
+					rendered="#{formNew}" immediate="true" 
+					styleClass="aon-finding-toolbar-item aon-icon-cancel"
+					confirmTitle="#{bundle.aon_confirm_title}"
+					confirmMessage="#{bundle.aon_cancel_confirm}"
+					confirmActionListener="#{cancelActionListener}"
+					confirmAction="#{cancelAction}"
+					accesskey="#{bundle.aon_key_cancel}" />
+			</aon:if>								
 			<aon:if test="#{!skipSaveButton and !skipEditTo}">	
 				<aon:div id="#{toolbarID}-save-container"  style="display:inline-block;">
 					<aon:commandButton id="#{toolbarID}-save"
@@ -35,7 +47,7 @@
 						accesskey="#{bundle.aon_key_save}" />
 				</aon:div>	
 			</aon:if>
-			<aon:if test="#{!skipCancelButton}">			
+			<aon:if test="#{!app.standAlone and !skipCancelButton}">			
 				<aon:confirmButton id="#{toolbarID}-cancel"
 					title="#{bundle.aon_key_cancel_accelerator}"
 					value="#{bundle.aon_cancel}" reRender="#{cancelButtonReRender}"
