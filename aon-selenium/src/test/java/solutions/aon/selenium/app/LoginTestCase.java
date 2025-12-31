@@ -13,6 +13,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -101,6 +102,10 @@ public class LoginTestCase extends AppBaseTestCase {
 			login(webDriver, url, email, password);
 
 			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+			JavascriptExecutor js = (JavascriptExecutor) webDriver;
+			js.executeScript(
+			    "let d = document.getElementById('aonDesktopInvoiceConfigurationDialog'); if(d) d.close();"
+			);
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHeaderHelpButton"))).click();
 			
 			WebElement aonHelpSwitchSupport = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHelpSwitchSupport")));
@@ -217,6 +222,10 @@ public class LoginTestCase extends AppBaseTestCase {
 			login(webDriver, url, email, password);
 
 			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+			JavascriptExecutor js = (JavascriptExecutor) webDriver;
+			js.executeScript(
+			    "let d = document.getElementById('aonDesktopInvoiceConfigurationDialog'); if(d) d.close();"
+			);
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("invoice"))).click();
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonInvoiceSidenavOffers"))).click();
 			
@@ -251,6 +260,10 @@ public class LoginTestCase extends AppBaseTestCase {
 			login(webDriver, url, email, password);
 
 			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+			JavascriptExecutor js = (JavascriptExecutor) webDriver;
+			js.executeScript(
+			    "let d = document.getElementById('aonDesktopInvoiceConfigurationDialog'); if(d) d.close();"
+			);
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonCompanyTabFilter-inactive"))).click();
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#UlCompanies .aonLiSpan"))).click();
 

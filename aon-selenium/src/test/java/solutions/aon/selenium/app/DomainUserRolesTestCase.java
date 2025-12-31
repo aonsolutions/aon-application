@@ -162,7 +162,10 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 			login(webDriver, url, email, password);
 
 			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
-
+			JavascriptExecutor js = (JavascriptExecutor) webDriver;
+			js.executeScript(
+			    "let d = document.getElementById('aonDesktopInvoiceConfigurationDialog'); if(d) d.close();"
+			);
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonDesktopMainContent")));
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("contentIndex"))).click();
 
@@ -196,7 +199,10 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 	}
 
 	private void selectEnterprise(WebDriver webDriver, WebDriverWait wait, String tab, String enterprise) {
-
+		JavascriptExecutor js = (JavascriptExecutor) webDriver;
+		js.executeScript(
+		    "let d = document.getElementById('aonDesktopInvoiceConfigurationDialog'); if(d) d.close();"
+		);
 		WebElement aonCompanyTabFilter = webDriver.findElement(By.id("aonCompanyTabFilter-" + tab));
 		aonCompanyTabFilter.click();
 		webDriver.findElement(By.xpath("//ul[@id='UlCompanies']/li/span/span[text()='" + enterprise + "']")).click();
@@ -267,6 +273,10 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 	}
 
 	private void assertHelpNotifications(WebDriver webDriver, WebDriverWait wait) {
+		JavascriptExecutor js = (JavascriptExecutor) webDriver;
+		js.executeScript(
+		    "let d = document.getElementById('aonDesktopInvoiceConfigurationDialog'); if(d) d.close();"
+		);
 		webDriver.findElement(By.id("aonParentSidenavHelpNotifications" )).click();
 		WebElement aonJsfAppFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAppFrame")));
 		webDriver.switchTo().frame(aonJsfAppFrame);
@@ -277,6 +287,10 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 	}
 	
 	private void assertHelpContentIndex(WebDriver webDriver, WebDriverWait wait) {
+		JavascriptExecutor js = (JavascriptExecutor) webDriver;
+		js.executeScript(
+		    "let d = document.getElementById('aonDesktopInvoiceConfigurationDialog'); if(d) d.close();"
+		);
 		webDriver.findElement(By.id("aonParentSidenavHelpContentIndex" )).click();
 		WebElement aonJsfAppFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAppFrame")));
 		webDriver.switchTo().frame(aonJsfAppFrame);
