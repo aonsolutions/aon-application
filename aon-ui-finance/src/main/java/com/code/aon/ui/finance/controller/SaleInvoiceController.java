@@ -153,7 +153,7 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	public boolean isTbaiLroe() {
 		Invoice invoice = (Invoice) this.getTo();
-		return isTbai() && isBizkaia() && invoice.getNumber() > 0;
+		return  (isTbai() || isLroe()) && isBizkaia() && invoice.getNumber() > 0;
 	}
 
 	public void setDeliveryTransferManager(DeliveryTransferManager deliveryTransferManager) {
@@ -509,7 +509,7 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	@Override
 	protected synchronized void accept() {
-		if(isNevv() && (isTbai() || isVerifactu() || isNoVerifactu() || isSif())) {
+		if(isNevv() && (hasCommunication())) {
 			Invoice invoice = (Invoice) getTo();
 			String domainName = AonUtil.getDomainName();
 			Integer domainId = DomainManager.getCurrentDomain();
@@ -593,7 +593,7 @@ public class SaleInvoiceController extends InvoiceController {
 				.setDomain(invoice.getDomain())
 				.setUser(login);
 			InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
-			if(icc.isTbai()) {
+			if(icc.isTbai() || icc.isLroe()) {
 				Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
 				icc.setCertificate(getCertData());
 				TbaiMain tbai = new TbaiMain();
@@ -695,7 +695,7 @@ public class SaleInvoiceController extends InvoiceController {
 				}
 
 				config.setCertificate(getCertData());
-				if(config.isTbai()) {
+				if(config.isTbai() || config.isLroe()) {
 					TbaiMain tbai = new TbaiMain();
 					tbai.createEmisionTBAI(company, invoice, config);
 					setTbaiUrl(TbaiData.getInstance(config).getTbaiUrl(company.getDomain().getName(), company.getDomain().getId(), login, invoice.getId()));

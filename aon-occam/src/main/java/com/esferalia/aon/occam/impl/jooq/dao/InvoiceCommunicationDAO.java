@@ -232,7 +232,8 @@ public class InvoiceCommunicationDAO {
 		fillNoVerifactu(ctx, domainId, configuration);
 		fillSif(ctx, domainId, configuration);
 		fillNoSif(ctx, domainId, configuration);
-		return configuration;
+		
+		return checkConfigurationConsistency(ctx, domainId, configuration);
 	}
 	
 	private static void fillAdministration(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
@@ -377,6 +378,47 @@ public class InvoiceCommunicationDAO {
 	private static void fillNoSif(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
 		config.setNoSifDataHistory(getIccHistory(ctx, domainId, EnterpriseDataNames.ICC_NO_SIF));
 		config.setNoSifData(getIccData(config.getNoSifDataHistory()));
+	}
+	
+	private static InvoiceCommunicationConfiguration checkConfigurationConsistency(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
+		if(config.isNoSif()) {
+			if(config.isSif()) {
+				updateEndDate(ctx, domainId, config.getSifData(), config.getNoSifData().getStartDate());
+				fillSif(ctx, domainId, config);
+			}
+			
+			if(config.isLroe()) {
+				updateEndDate(ctx, domainId, config.getLroeData(), config.getNoSifData().getStartDate());
+				fillLroe(ctx, domainId, config);
+			}
+			
+			if(config.isTbai()) {
+				updateEndDate(ctx, domainId, config.getTbaiData(), config.getNoSifData().getStartDate());
+				fillTbai(ctx, domainId, config);
+			}
+			
+			if(config.isNoVerifactu()) {
+				updateEndDate(ctx, domainId, config.getNoVerifactuData(), config.getNoSifData().getStartDate());
+				fillNoVerifactu(ctx, domainId, config);
+			}
+			
+			if(config.isVerifactu()) {
+				updateEndDate(ctx, domainId, config.getVerifactuData(), config.getNoSifData().getStartDate());
+				fillVerifactu(ctx, domainId, config);
+			}
+			
+			if(config.isSii()) {
+				updateEndDate(ctx, domainId, config.getSiiData(), config.getNoSifData().getStartDate());
+				fillSii(ctx, domainId, config);
+			}
+		}
+		
+		return config;
+	}
+	
+	private static void updateEndDate(AONContext ctx, Integer domainId, EnterpriseData data, Date endDate) {
+		data.setEndDate(endDate);
+		EnterpriseDataDAO.update(ctx, data);
 	}
 	
 	private static List<EnterpriseData> getIccHistory(AONContext ctx, Integer domainId, EnterpriseDataNames name) {

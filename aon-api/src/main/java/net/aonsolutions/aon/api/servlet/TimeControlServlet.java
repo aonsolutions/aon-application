@@ -425,7 +425,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 				.setDate(date)
 				.setLocation(lc)
 				.setComments(params.optString(IJsonNames.COMMENTS))
-				.setReason(AonStringUtils.isBlank(params.optString("cause")) ? null : TimeControlReason.safeValueOf(Byte.parseByte(params.optString("cause"))))
+				.setReason(AonStringUtils.isBlank(params.optString("cause")) || AonStringUtils.equalsIgnoreCase(params.optString("cause"), "DEFAULT") ? null : TimeControlReason.safeValueOf(Byte.parseByte(params.optString("cause"))))
 				.setStatus(TimeControlStatus.safeValueOf(params.optString(IJsonNames.STATUS)));
 		
 		if(AonStringUtils.isBlank(tcd.getComments()) && null != lc && !AonStringUtils.isBlank(lc.getDescription()))
