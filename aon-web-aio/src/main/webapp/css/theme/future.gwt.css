@@ -398,6 +398,7 @@ input, select, textarea,
 .gwt-Selector .aon-AgreementSalaryTabs > div > div:not(.gwt-Label) {
 	color: black !important;
 	background-color: #fff !important;
+	box-shadow: 0 .25rem .375rem 0 #0f172a0D;
 }
 
 
