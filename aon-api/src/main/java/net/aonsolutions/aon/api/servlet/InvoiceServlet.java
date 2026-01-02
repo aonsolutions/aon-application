@@ -737,6 +737,16 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	private JSONObject saveConfiguration(AonApiData api) {
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		company.seteInvoice(JsonUtils.getboolean(api.getData(), IJsonNames.E_INVOICE));
+		if(AonStringUtils.isBlank(company.getDocument())) {
+			Company c = CompanyJSON.fromJSON(JsonUtils.getJSONObject(api.getData(), IJsonNames.COMPANY));
+			company.setDocument(c.getDocument());
+		}
+		
+		if(AonStringUtils.isBlank(company.getName())) {
+			Company c = CompanyJSON.fromJSON(JsonUtils.getJSONObject(api.getData(), IJsonNames.COMPANY));
+			company.setName(c.getName());
+		}
+		
 		AON.saveCompany(api.getDomain(), api.getUser(), company);
 		if(JsonUtils.has(api.getData(), IJsonNames.PERSON)) {
 			Person p = PersonJSON.fromJSON(JsonUtils.getJSONObject(api.getData(), IJsonNames.PERSON));
@@ -756,12 +766,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				InvofoxServlet.saveConfiguration(api.setData(JsonUtils.getJSONObject(api.getData(), IJsonNames.INVOFOX))) 
 				: new JSONObject();
 		
-		return new JSONObject()
-			.put(IJsonNames.ADMINISTRATION, administration.name())	
-			.put(IJsonNames.PRINT, print)
-			.put(IJsonNames.COMMUNICATION, icc)
-			.put(IJsonNames.INVOFOX, invofox)
-			.put(IJsonNames.E_INVOICE, company.iseInvoice());
+		return getConfiguration(api);
 	}
 	
 	private JSONArray getVats(AonApiData api) {

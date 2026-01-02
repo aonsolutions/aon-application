@@ -85,23 +85,34 @@ public class LocationDAO {
 	}
 	
 	public static Location getByCoordinates(AONContext ctx, Coordinates coordinates) {
-
 	    ctx.checkRead();
-
+	
+	    // Parámetros de entrada
 	    Param<Double> lat = DSL.val(coordinates.getLatitude());
 	    Param<Double> lng = DSL.val(coordinates.getLongitude());
-
-	    // Field SIN alias (para WHERE)
+	
+	    /*
+	     * Distancia en metros usando Haversine
+	     * Radio medio de la Tierra = 6.371.000 m
+	     */
 	    Field<BigDecimal> distanceExpr = DSL.field(
-	        "ST_Distance_Sphere(POINT({0},{1}), POINT({2},{3}))",
+	        """
+	        6371000 * acos(
+	            cos(radians({0})) * cos(radians({1})) *
+	            cos(radians({2}) - radians({3})) +
+	            sin(radians({0})) * sin(radians({1}))
+	        )
+	        """,
 	        BigDecimal.class,
-	        lng, lat,
-	        LOCATION.LONGITUDE, LOCATION.LATITUDE
+	        lat,                    // {0} lat punto buscado
+	        LOCATION.LATITUDE,      // {1} lat tabla
+	        LOCATION.LONGITUDE,     // {2} lng tabla
+	        lng                     // {3} lng punto buscado
 	    );
-
-	    // Field CON alias (para SELECT / ORDER BY)
+	
+	    // Alias solo para SELECT / ORDER BY
 	    Field<BigDecimal> distance = distanceExpr.as("distance");
-
+	
 	    return ctx.getDslContext()
 	        .select(
 	            LOCATION.ID,
@@ -114,6 +125,7 @@ public class LocationDAO {
 	        )
 	        .from(LOCATION)
 	        .where(LOCATION.DOMAIN.eq(ctx.getDomainId()))
+	        // Dentro del radio (metros)
 	        .and(distanceExpr.le(LOCATION.RADIO.cast(BigDecimal.class)))
 	        .orderBy(distance.asc())
 	        .limit(1)
