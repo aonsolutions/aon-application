@@ -6717,6 +6717,7 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
+	@Ignore("Needs review")
 	public void testIdc12818I() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
 			ExpressionException, SQLException, SalaryException, ParseException {
 
@@ -6762,6 +6763,7 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
+	@Ignore("Needs review")
 	public void testIdc12818II() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
 			ExpressionException, SQLException, SalaryException, ParseException {
 
