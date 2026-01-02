@@ -16,6 +16,7 @@ export class AonInvoiceConfiguration extends AonElement {
     
     configuration;
     options;
+    selectedOption;
 
     TOOLBAR;
     TABS;
@@ -56,6 +57,7 @@ export class AonInvoiceConfiguration extends AonElement {
         content.id = this.CONTENT;
         this.appendChild(content);
         if(!LS.isAonSolutions() && !this.configuration.print.active){
+            this.selectedOption = 'communication';
             this.buildCommunication();
         } else this.buildPrintConfiguration();
     }
@@ -93,6 +95,7 @@ export class AonInvoiceConfiguration extends AonElement {
             }
         });
         content.appendChild(communication);
+        this.selectedOption = 'communication';
     }
 
     async buildOcrConfiguration() {
@@ -108,7 +111,16 @@ export class AonInvoiceConfiguration extends AonElement {
 
 
     save() {
-        saveInvoiceConfiguration(this.configuration);
+        saveInvoiceConfiguration(this.configuration).then((c) => {
+            this.showMessage(MSG.SAVED_DATA);
+            this.configuration = c;
+
+            if(this.selectedOption === 'communication') {
+                this.buildCommunication();
+            }
+        }).catch(() => {
+            this.showMessageError(MSG.ERROR);
+        });
     }
 }
 if(!window.customElements.get(TAG.AON_INVOICE_CONFIGURATION)){

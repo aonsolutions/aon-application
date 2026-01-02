@@ -83,7 +83,12 @@ export class InvoiceCommunicationConfiguration {
         return this.is(data) && data.expression && data.expression.toLowerCase().includes("test");
     }
 
-    was = (history) => { // history: array of EnterpriseData
+    was = (history, year) => { // history: array of EnterpriseData
+        if(year) {
+            return history && history.length > 0 && history.some(d =>
+                d.startDate && d.startDate.getFullYear() >= year &&
+                ((d.endDate && d.endDate.getFullYear() <= year) || !d.endDate));
+        }
         return history && history.length > 0 && history.some(d => 
             d.startDate && d.startDate < new Date());
     }
@@ -176,7 +181,7 @@ export class InvoiceCommunicationConfiguration {
     deleteHistory = (history) => {
         let auxHistory = structuredClone(history);   
         auxHistory.forEach((element, index)=> {
-            if(!element.endDate || element.endDate > (date || new Date())) {
+            if(!element.endDate || element.endDate > new Date()) {
                 auxHistory[index].removed = true;
             }
         });
@@ -210,7 +215,7 @@ export class InvoiceCommunicationConfiguration {
         }
         if(!h.includes(CONSTANT.NO_SIF)) {
             this._noSifDataHistory = this.willBeNoSif() ? this.deleteHistory(this.noSifDataHistory) : this.endHistory(this.noSifDataHistory, date);
-            this.noSifData = this.getData(this.getNoSifDataHistory());
+            // this.noSifData = this.getData(this.getNoSifDataHistory());
         }
     }
 
@@ -239,10 +244,10 @@ export class InvoiceCommunicationConfiguration {
             this._sifDataHistory = undefined;
             this.sifData = this.getData(this.getSifDataHistory());
         }
-        if(!h.includes(CONSTANT.NO_SIF)) {
-            this._noSifDataHistory = undefined;
-            this.noSifData = this.getData(this.getNoSifDataHistory());
-        }
+        // if(!h.includes(CONSTANT.NO_SIF)) {
+        //     this._noSifDataHistory = undefined;
+        //     this.noSifData = this.getData(this.getNoSifDataHistory());
+        // }
     }
 
     setHistoryStartDate = (history, date) => {
@@ -480,17 +485,33 @@ export class InvoiceCommunicationConfiguration {
         const selectedDate = date;
         const now = new Date();
         const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const maxDate = new Date(2026, 0, 1, 23 , 59, 59);
+        const maxDate = new Date(2025, 0, 1, 23 , 59, 59);
         if (now < maxDate && selectedDate > maxDate) {
             return {valid: false, message: 'La fecha es posterior al 1 de Enero de 2026.'};
         }
         if (selectedDate < nowDate.addDay(-1)) {
             return {valid: false, message: 'La fecha seleccionada no puede ser anterior a la fecha actual.'};
         }
-
+        if((selectedDate.getMonth() !== 0 || selectedDate.getDate() !== 1) && selectedDate > nowDate.addDay(1)) {
+            return {valid: false, message: 'La fecha seleccionada no puede ser posterior a la fecha actual si no es 1 de Enero del próximo año.'};
+        }
         return { valid: true, message: '' };
     }
 
+    getDefaultVerifactuDate() {
+        const now = new Date();
+        const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12);
+        if(this.isNoVerifactu() || this.wasNoVerifactu(now.getFullYear())) {
+            let date = new Date(now.getFullYear() + 1, 0, 1, 12);
+            return date;
+        }
+        let date = new Date(2026, 0, 1, 12);
+        if(now >= date) {
+            return nowDate;
+        }
+        return date;
+    }
+    
     getVerifactuDataHistory = () => {
         return this._verifactuDataHistory || this.verifactuDataHistory;
     }
@@ -511,8 +532,8 @@ export class InvoiceCommunicationConfiguration {
         return this.isTest(this.verifactuData);
     }
 
-    wasVerifactu = () => {
-        return this.was(this.getVerifactuDataHistory());
+    wasVerifactu = (year) => {
+        return this.was(this.getVerifactuDataHistory(), year);
     }
     
     willBeVerifactu = () => {
@@ -526,7 +547,7 @@ export class InvoiceCommunicationConfiguration {
             this.noVerifactuData = this.newEnterpriseData(EnterpriseDataNames.ICC_NO_VERIFACTU, enterprise);
             this._noVerifactuDataHistory = this.noVerifactuDataHistory ? structuredClone(this.noVerifactuDataHistory) : [];
             this._noVerifactuDataHistory.push(this.noVerifactuData);
-            this.setNoVerifactuDate(this.getDefaultVerifactuDate(), enterprise);
+            this.setNoVerifactuDate(this.getDefaultNoVerifactuDate(), enterprise);
         } else if(!noVerifactu && (this.isNoVerifactu())) {
             this.noVerifactuData = undefined;
             this._noVerifactuDataHistory = this.endHistory(this.noVerifactuDataHistory);
@@ -580,13 +601,20 @@ export class InvoiceCommunicationConfiguration {
         if (selectedDate < nowDate.addDay(-1)) {
             return {valid: false, message: 'La fecha seleccionada no puede ser anterior a la fecha actual.'};
         }
-
+        if((selectedDate.getMonth() !== 0 || selectedDate.getDate() !== 1) && selectedDate > nowDate.addDay(1)) {
+            return {valid: false, message: 'La fecha seleccionada no puede ser posterior a la fecha actual si no es 1 de Enero del próximo año.'};
+        }
         return { valid: true, message: '' };
     }
 
-    getDefaultVerifactuDate() {
+    getDefaultNoVerifactuDate() {
         const now = new Date();
         const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12);
+        if(this.isVerifactu() || this.wasVerifactu(now.getFullYear())) {
+            let date = new Date(now.getFullYear() + 1, 0, 1, 12);
+            return date;
+        }
+
         let date = new Date(2026, 0, 1, 12);
         if(now >= date) {
             return nowDate;
@@ -610,8 +638,8 @@ export class InvoiceCommunicationConfiguration {
         return this.is(this.noVerifactuData);
     }
 
-    wasNoVerifactu = () => {
-        return this.was(this.getNoVerifactuDataHistory());
+    wasNoVerifactu = (year) => {
+        return this.was(this.getNoVerifactuDataHistory(), year);
     }
 
     willBeNoVerifactu = () => {
@@ -783,7 +811,7 @@ export class InvoiceCommunicationConfiguration {
             this._noSifDataHistory = this.endHistory(this.noSifDataHistory);
             this.undefinedHistories([CONSTANT.NO_SIF]);
             if(!this.hasCommunication()) {
-                this.setSif(true, enterprise);
+                this.setSif(true, enterprise, CONSTANT.NO_SIF);
             }
         }
     }

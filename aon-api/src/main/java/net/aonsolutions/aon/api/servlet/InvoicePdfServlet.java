@@ -104,7 +104,7 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 						+ "&t=" + invoice.getTotal();  
 			InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
 			String tbaiId = "";
-			if(icc.isTbai()) {
+			if(icc.isTbai() || icc.isLroe()) {
 				TbaiData tbaiData = TbaiData.getInstance(icc);
 				String tbaiUrl = tbaiData.getTbaiUrl(domainName, domainId, login, invoice.getId());
 				qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;

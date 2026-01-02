@@ -38,7 +38,7 @@
 										value="#{true}" />
 							</aon:commandButton>
 						</aon:if>
-						<aon:if test="#{!saleInvoice.nevv and saleInvoice.tbai and !saleInvoice.tbaiInvoice and (saleInvoice.to.number le 0 or saleInvoice.uniqueNumberOfSeries)}"> 
+						<aon:if test="#{!saleInvoice.nevv and (saleInvoice.tbai || saleInvoice.lroe) and !saleInvoice.tbaiInvoice and (saleInvoice.to.number le 0 or saleInvoice.uniqueNumberOfSeries)}"> 
 							<aon:commandButton id="acceptTbai"	
 								value="&#160;"
 								title="Emitir"
@@ -137,11 +137,11 @@
 						
 						<aon:outputLink id="saleInvoice-downloadPdf"
 							target="_blank" value="#{saleInvoice.downloadURL}"
-							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and (saleInvoice.tbai or saleInvoice.verifactu or saleInvoice.noVerifactu or printParams.saleInvoiceDefault) }"
+							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and saleInvoice.hasCommunication() }"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 					    </aon:outputLink>
 
-						<aon:htmlCommandLink id="saleInvoice-report"
+						<!-- <aon:htmlCommandLink id="saleInvoice-report"
 							value="#{bundle.finance_invoice}" target="_new" 
 							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and !saleInvoice.tbai and !saleInvoice.verifactu and !saleInvoice.noVerifactu and !printParams.saleInvoiceDefault}"
 							action="#{saleInvoiceSigner.onReport}"
@@ -149,7 +149,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-pdf"
 							actionListener="#{printParams.onInit}">
 							<f:param name="reportKey" value="#{printParams.saleInvoiceParams.saleInvoiceTemplateValue}" />
-						</aon:htmlCommandLink>
+						</aon:htmlCommandLink> -->
 						
 						<aon:htmlCommandLink id="saleInvoice-facturae"
 							value="#{bundle.finance_facturae}" target="_blank" 

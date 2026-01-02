@@ -104,19 +104,28 @@ body,
 	margin: 0px;
 }  
 
+.gwt-Selector .aon-MainAgreement-Agreements .gwt-Tree > div:has( > .gwt-TreeItem){
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
+.gwt-Selector .aon-MainAgreement-Agreements .gwt-Tree > div > table:has(.gwt-TreeItem),
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree > div > table:has(.gwt-TreeItem), 
 .gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree > div > table:has(.gwt-TreeItem){
   	border-top-right-radius: 0px;
   	border-bottom-right-radius: 0px;
 }
 
+.gwt-Selector .aon-MainAgreement-Agreements .gwt-Tree .gwt-TreeItem, 
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem, 
 .gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem {
+	padding: 4px;
   	border-top-right-radius: 0px;
   	border-bottom-right-radius: 0px;
 	background-color: initial !important;
 }
 
+.gwt-Selector .aon-MainAgreement-Agreements .gwt-Tree .gwt-TreeItem-selected, 
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem-selected, 
 .gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem-selected, 
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree > div > table:has(.gwt-TreeItem-selected), 
@@ -126,23 +135,39 @@ body,
   border-left: none !important;
 }
 
+.gwt-Selector .aon-MainAgreement-Agreements .gwt-Tree .gwt-TreeItem-selected{
+	font-weight: normal ;
+	border: none !important;
+}
+
+.gwt-Selector .aon-MainAgreement-Agreements div :has( > div > .gwt-Tree ){
+	margin: 0px !important;
+}
+
+.gwt-Selector .aon-MainAgreement-Agreements .gwt-Tree div:has( > .gwt-TreeItem ):hover,
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree div:has( > .gwt-TreeItem ):hover,
 .gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree div:has( > .gwt-TreeItem ):hover,
+.gwt-Selector .aon-MainAgreement-Agreements .gwt-Tree div:has( > .gwt-TreeItem-selected),
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree div:has( > .gwt-TreeItem-selected),
 .gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree div:has( > .gwt-TreeItem-selected),
+.gwt-Selector .aon-MainAgreement-Agreements .gwt-Tree table:has( > tbody > tr > td >  .gwt-TreeItem-selected),
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree table:has( > tbody > tr > td >  .gwt-TreeItem-selected),
 .gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree table:has( > tbody > tr > td >  .gwt-TreeItem-selected)
  {
 	background-color: #f1f5f9 !important;
 }
 
+
+.gwt-Selector .aon-MainAgreement-Agreements .gwt-Tree table:has( > tbody > tr > td >  .gwt-TreeItem),
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree table:has( > tbody > tr > td >  .gwt-TreeItem),
 .gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree table:has( > tbody > tr > td >  .gwt-TreeItem){
 	width: 100% ;
 }
 
+.gwt-Selector .aon-MainAgreement-Agreements .gwt-Tree div[style*="margin-left: 16px"]:has( > .gwt-TreeItem ):hover,
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree div[style*="margin-left: 16px"]:has( > .gwt-TreeItem ):hover,
 .gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree div[style*="margin-left: 16px"]:has( > .gwt-TreeItem ):hover,
+.gwt-Selector .aon-MainAgreement-Agreements .gwt-Tree div[style*="margin-left: 16px"]:has( > .gwt-TreeItem-selected),
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree div[style*="margin-left: 16px"]:has( > .gwt-TreeItem-selected),
 .gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree div[style*="margin-left: 16px"]:has( > .gwt-TreeItem-selected){
 	margin-left: 0px !important;
@@ -150,8 +175,10 @@ body,
 }
 
 
+.gwt-Selector .aon-MainAgreement-Agreements .gwt-Tree .gwt-TreeItem:hover,
 .gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem:hover,
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem:hover,
+.gwt-Selector .aon-MainAgreement-Agreements .gwt-Tree>div>table:has(.gwt-TreeItem):hover,
 .gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree>div>table:has(.gwt-TreeItem):hover,
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree>div>table:has(.gwt-TreeItem):hover
 	{
@@ -217,6 +244,21 @@ input, select, textarea,
   background-color: #e2e8f0;
 }
 
+.aon-AgreementSalaryGrid > tbody > tr:first-child,
+.aon-AgreementExtrasGrid > tbody > tr:first-child,
+.aon-AgreementPaymentsGrid > tbody > tr:first-child {
+  font-size: 14.875px;
+  background-clip: padding-box;
+  background-color: #e2e8f0;
+}
+
+.aon-AgreementSalaryGrid > tbody > tr:first-child td,
+.aon-AgreementExtrasGrid > tbody > tr:first-child td,
+.aon-AgreementPaymentsGrid > tbody > tr:first-child td {
+  	height: 2.625rem;
+	background-color: #e2e8f0;
+}
+
 .aon_custom_table_footer {
 	border: none;	
 }
@@ -236,13 +278,43 @@ input, select, textarea,
   border-bottom: none;
 }
 
+.aon-AgreementSalaryGrid ,
+.aon-AgreementExtrasGrid ,
+.aon-AgreementPaymentsGrid {
+	border-collapse: separate;
+  	border-spacing: 0 0.5rem;
+}
+
+
 .aon_grid td,
-.dataGridCell, .aon_display_grid_cell  {
+.dataGridCell, 
+.aon_display_grid_cell,
+.aon-AgreementSalaryGrid > tbody > tr:not(:first-child) td,
+.aon-AgreementExtrasGrid > tbody > tr:not(:first-child) td,
+.aon-AgreementPaymentsGrid > tbody > tr:not(:first-child) td{
 	color: #64748b;
 	min-height: 68px;
 	border-top: .0625rem solid #e2e8f0;
 	border-bottom: .0625rem solid #e2e8f0;
 }
+
+.aon-AgreementSalaryGrid > tbody > tr:not(:first-child),
+.aon-AgreementExtrasGrid > tbody > tr:not(:first-child),
+.aon-AgreementPaymentsGrid > tbody > tr:not(:first-child){
+	height: 42px !important;
+	min-height: 42px !important;
+}
+
+
+.aon-AgreementSalaryGrid > tbody > tr:not(:first-child) td,
+.aon-AgreementExtrasGrid > tbody > tr:not(:first-child) td,
+.aon-AgreementPaymentsGrid > tbody > tr:not(:first-child) td,
+.aon-AgreementSalaryGrid > tbody > tr:not(:first-child) td *,
+.aon-AgreementExtrasGrid > tbody > tr:not(:first-child) td *,
+.aon-AgreementPaymentsGrid > tbody > tr:not(:first-child) td *{
+	background-color: #fff;
+}
+
 
 .aon_grid td {
 	border-left: none;
@@ -257,11 +329,26 @@ input, select, textarea,
 	background-color: #fff;
 }
 
-.aon_grid tr td:first-child {
+.aon-AgreementSalaryGrid > tbody > tr td:first-child,
+.aon-AgreementExtrasGrid > tbody > tr td:first-child,
+.aon-AgreementPaymentsGrid > tbody > tr td:first-child,
+.aon-AgreementSalaryGrid > tbody > tr td:last-child,
+.aon-AgreementExtrasGrid > tbody > tr td:last-child,
+.aon-AgreementPaymentsGrid > tbody > tr td:last-child {
+	border-radius: 6px 0px 0px 6px;
+}
+
+.aon_grid tr td:first-child,
+.aon-AgreementSalaryGrid > tbody > tr td:first-child,
+.aon-AgreementExtrasGrid > tbody > tr td:first-child,
+.aon-AgreementPaymentsGrid > tbody > tr td:first-child {
 	border-left: .0625rem solid #e2e8f0;
 }
 
-.aon_grid tr td:last-child {
+.aon_grid tr td:last-child,
+.aon-AgreementSalaryGrid > tbody > tr td:last-child,
+.aon-AgreementExtrasGrid > tbody > tr td:last-child,
+.aon-AgreementPaymentsGrid > tbody > tr td:last-child {
 	border-right: .0625rem solid #e2e8f0;
 }
 
@@ -273,6 +360,7 @@ input, select, textarea,
 	width: auto;
 }
 
+.gwt-Selector .aon-AgreementSalaryTabs > div,
 .aon_selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs ,
 .gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
 	display: flex;
@@ -292,10 +380,24 @@ input, select, textarea,
 	
 }
 
+.gwt-Selector .aon-AgreementSalaryTabs > div {
+	padding-left: .3rem;
+}
+
+.gwt-Selector .aon-AgreementSalaryTabs > div ,
 .aon_selector .gwt-TabLayoutPanel div:has( > .gwt-TabLayoutPanelTabs), 
 .gwt-Selector .gwt-TabLayoutPanel div:has( > .gwt-TabLayoutPanelTabs) {
     margin-top: 6px;
 	height: 40px !important;
+}
+
+.gwt-Selector .aon-AgreementSalaryTabs > div > div {
+	border: none !important;
+}
+
+.gwt-Selector .aon-AgreementSalaryTabs > div > div:not(.gwt-Label) {
+	color: black !important;
+	background-color: #fff !important;
 }
 
 
@@ -1120,4 +1222,8 @@ div:has( > .aon_icon_menu_collapse) {
 	
   		display: inline-block;
   		
+}
+
+.aon-MainAgreement .aon_toolbar_small_inner{
+	border-bottom: none;
 }

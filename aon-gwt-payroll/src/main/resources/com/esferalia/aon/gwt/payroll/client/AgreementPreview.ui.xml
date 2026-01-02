@@ -351,15 +351,15 @@
 						
 						<!-- LEVEL / CATEGORY && SALARY TABLE -->
 						<g:HTMLPanel styleName="{style.flexColumn}">
-							<aon:AonToolbarSmall ui:field="levelSalaryToolbar" />
+							<aon:AonToolbarSmall ui:field="levelSalaryToolbar" styleName="aon-AgreementSalaryToolbar" />
 							<g:HTMLPanel styleName="{style.flexColumn} {style.gap0}">
-								<g:HTMLPanel ui:field="levelSalaryTabs" styleName="{style.flex} {style.gap05}" />
+								<g:HTMLPanel ui:field="levelSalaryTabs" styleName="{style.flex} {style.gap05} aon-AgreementSalaryTabs" />
 								<g:DeckPanel ui:field="levelSalaryDeck">
 									<g:ScrollPanel ui:field="levelScrollPanel" styleName="{style.hideScroll} {style.flexCenter}">
-										<g:Grid ui:field="levelGrid" styleName="{style.borderCollapse}" />
+										<g:Grid ui:field="levelGrid" styleName="{style.borderCollapse} aon-AgreementLevelGrid" />
 									</g:ScrollPanel>
 									<g:ScrollPanel ui:field="salaryScrollPanel" styleName="salary-scroll">
-										<g:Grid ui:field="salaryGrid" styleName="{style.borderCollapse}" />
+										<g:Grid ui:field="salaryGrid" styleName="{style.borderCollapse} aon-AgreementSalaryGrid" />
 									</g:ScrollPanel>
 									<g:HTMLPanel styleName="{style.flexCenter}">
 										<g:Label text="DEBE CREAR UN NIVEL PARA VISUALIZAR LA TABLA (+)" styleName="{style.message}" />
@@ -376,7 +376,7 @@
 						  <g:HTMLPanel styleName="{style.flexColumn}">
 						  	<aon:AonToolbarSmall ui:field="paymentToolbar" />
 						  	<g:DeckPanel ui:field="paymentDeck">
-						  		<g:Grid ui:field="paymentGrid" debugId="agreementPaymentDG" styleName="{style.borderCollapse} " />
+						  		<g:Grid ui:field="paymentGrid" debugId="agreementPaymentDG" styleName="{style.borderCollapse} aon-AgreementPaymentsGrid" />
 								<g:HTMLPanel styleName="{style.flexCenter}">
 									<g:Label text="DEBE CREAR UN DEVENGO PARA VISUALIZAR LA TABLA DE DEVENGOS (+)" styleName="{style.message}" />
 								</g:HTMLPanel>
@@ -388,7 +388,7 @@
 						   <g:HTMLPanel styleName="{style.flexColumn}">
 						  	<aon:AonToolbarSmall ui:field="extraToolbar" />
 						  	<g:DeckPanel ui:field="extraDeck">
-						  		<g:Grid ui:field="extraGrid" debugId="agreementExtraPaymentDG" styleName="{style.borderCollapse}" />
+						  		<g:Grid ui:field="extraGrid" debugId="agreementExtraPaymentDG" styleName="{style.borderCollapse} aon-AgreementExtrasGrid" />
 								<g:HTMLPanel ui:field="agreementExtraTableMessage" styleName="{style.flexCenter}">
 									<g:Label text="DEBE CREAR UN DEVENGO PARA VISUALIZAR LA TABLA DE EXTRAS (+)" styleName="{style.message}" />
 								</g:HTMLPanel>
