@@ -1,6 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { Apps, ClassicApps, getAppsByDur } from '../../services/app.js';
-import { getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral, getTrailData, getCompanyOne, getCompanyActivities, saveInvoiceConfiguration, getInvoiceConfiguration } from '../../services/service.js';
+import { getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral, getTrailData, getCompanyOne, getCompanyActivities, saveInvoiceConfiguration, getInvoiceConfiguration, closeSession } from '../../services/service.js';
 import { getAccessBidoq } from '../../services/bidoqService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
@@ -176,6 +176,19 @@ export class AonDesktop extends AonElement {
 
 		this.buildConditions(div);
 
+		dialog.addAction2({
+				id: "Salir",
+				title: "Salir",
+				icon: MATERIAL_ICONS.ARROW_BACK,
+				position: "left",
+			}, () => {
+				if(this.getDur().isParentUser()) {
+					this.getAonHeader().goToParent();
+				} else {
+					closeSession();
+				}
+			});
+
 		dialog.addAcceptAction(() => {		
 			if(this.checkConfigurationComplete(this.ic, true)) { 
 				saveInvoiceConfiguration(this.ic);
@@ -183,9 +196,13 @@ export class AonDesktop extends AonElement {
 				this.buildInvoiceConfigurationDialog();
 			}
 		});
+
 		dialog.open();
 	}
 
+	getAonHeader() {
+		return document.querySelector(TAG.AON_HEADER);
+	}
 
 	buildConditions(parent) {
 		let conditions = this.createDiv();
