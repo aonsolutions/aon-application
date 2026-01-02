@@ -337,8 +337,9 @@ export class AonSignMobile extends AonElement {
 			} else 
 				this.openReasonDialog(signin, timeOutPosition);
 			
-		} else
+		} else {
 			this.openReasonDialog(signin, timeOutPosition);
+		}
 		
 	} else {
 		const resp = await saveTimeControl(signin);
@@ -459,17 +460,19 @@ export class AonSignMobile extends AonElement {
 		
 		    nameInput.addEventListener('click', e => e.stopPropagation());
 		
+			/*
 		    nameInput.addEventListener('input', (e) => {
 		        e.stopPropagation();
 		        this.toggleReasonOptions(nameInput.value.length > 0, opt.value);
 		    });
+		    */
 		}
 	});
 	
 	d.setContent(content);
 	   
     nameInput && nameInput.addIcon(MATERIAL_ICONS.DONE, undefined, async () => {
-		if(nameInput.value.trim().length == 0) return;
+		if(nameInput.value.trim().length <= 3) return;
 		
         signin.cause = nameInput.dataset.reasonValue;
         signin.comments = nameInput.value.trim();
@@ -483,32 +486,37 @@ export class AonSignMobile extends AonElement {
 	
   }
   
-  showReasonInput(value) {
+  showReasonInput(value, name) {
 	let input = this.getElement('ReasonInput' + value);
    
-   	if (input) {
+   	if (input && input.style.display == 'none') {
         input.style.display = 'block';
         input.focus();
-    }
+    } else if(input)
+    	input.style.display = 'none';
+    	
+    let inputIcon = document.querySelector(`#TimeControlReasonOption${value} > i`);
+	if(inputIcon && (inputIcon.innerHTML == 'unknown_document' || inputIcon.innerHTML == 'distance')) inputIcon.innerHTML = 'close';
+	else if(inputIcon && inputIcon.innerHTML == 'close') inputIcon.innerHTML = value == '2' ? 'distance' : 'unknown_document';
+	
+	let inputSpan = document.querySelector(`#TimeControlReasonOption${value} > span`);
+	if(inputSpan && inputSpan.innerHTML == name) inputSpan.innerHTML = name + ' (Cerrar)';
+	else if(inputSpan && inputSpan.innerHTML == name + ' (Cerrar)') inputSpan.innerHTML = name;
   }
   
-  toggleReasonOptions(hasText, currentValue) {
+  toggleReasonOptions(currentValue) {
     const options = document.querySelectorAll('.aonTimeControlResonOption');
     
     options.forEach(opt => {
         if (opt.dataset.value !== currentValue) {
-            if (hasText) {
-                opt.classList.add('disabled');
-            } else {
-                opt.classList.remove('disabled');
-            }
+            opt.classList.toggle('disabled');
         }
     });
   }
   
   buildReasonOption(opt, callback) {
     let div = this.createElement(TAG.DIV);
-    div.id = opt.value + 'TimeControlReasonOption';
+    div.id = 'TimeControlReasonOption' + opt.value;
     div.classList.add('aonTimeControlResonOption');
     div.dataset.value = opt.value;
     div.dataset.clickable = opt.clickable;
@@ -532,7 +540,8 @@ export class AonSignMobile extends AonElement {
         } 
         // Opción con input
         else {
-            this.showReasonInput(opt.value);
+			this.toggleReasonOptions(opt.value);
+            this.showReasonInput(opt.value, opt.name);
         }
     });
 
@@ -586,8 +595,9 @@ export class AonSignMobile extends AonElement {
 
     this.changeTime(time);
     
-    //if(!this.isApp())
-    //  this.divLastTime(signin);
+    if(this.isBeta() && this.isMobile())
+      this.totalHourWeek();
+      //this.divLastTime(signin);
   }
 
   async timeAction(time, id) {
