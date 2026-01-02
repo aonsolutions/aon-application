@@ -163,6 +163,7 @@ public class VATDAO  {
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 			.and(INVOICE.TAX_DATE.between( AonDateUtils.toSql(params.getFromDate()), AonDateUtils.toSql(params.getToDate())))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( FALSE_BYTE ))	// No Criterio de Caja.
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch()
 			.stream()
@@ -177,6 +178,7 @@ public class VATDAO  {
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 			.and(INVOICE.TAX_DATE.between( AonDateUtils.toSql(params.getFromDate()), AonDateUtils.toSql(params.getToDate())))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( FALSE_BYTE ))	// No Criterio de Caja.
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 			.and(INVOICE.ID.isNotNull())
 			.and(condition)
 			.groupBy(INVOICE.ID)
@@ -220,6 +222,7 @@ public class VATDAO  {
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 			.and(INVOICE.TAX_DATE.between( AonDateUtils.toSql(params.getFromDate()), AonDateUtils.toSql(params.getToDate())))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( FALSE_BYTE ))	// No Criterio de Caja.
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 			.and(INVOICE.ID.isNotNull())
 			.and(condition)
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER)
@@ -286,6 +289,7 @@ public class VATDAO  {
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 			.and(INVOICE.TAX_DATE.ge(prevYearFirstDay))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch()
 			.stream()
@@ -303,6 +307,7 @@ public class VATDAO  {
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 			.and(INVOICE.TAX_DATE.ge(prevYearFirstDay))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 			.and(INVOICE.ID.isNotNull())
 			.and(condition)
 			.groupBy(INVOICE.ID)
@@ -326,6 +331,7 @@ public class VATDAO  {
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 			.and(INVOICE.TAX_DATE.ge(prevYearFirstDay))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 			.and(INVOICE.ID.isNotNull())
 			.and(condition)
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
@@ -372,6 +378,7 @@ public class VATDAO  {
 			.and(FINANCE.STATUS.eq(FinanceStatus.PENDING.value()))
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value()))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))	// Criterio de Caja.
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch()
 			.stream()
@@ -401,6 +408,7 @@ public class VATDAO  {
 				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
 				.and(INVOICE.TAX_DATE.between( getStartDate(mod), getEndDate(mod)))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( FALSE_BYTE) )	// No Criterio de Caja.
+				.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.stream()
 				.map(new VatContextFiller())
@@ -433,6 +441,7 @@ public class VATDAO  {
 			.and(FINANCE_TRACKING.TYPE.in(FinanceTrackingType.PAID.value(),FinanceTrackingType.RETURNED.value()))
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.stream()
 			.map(new VatContextCritCajaFiller())
@@ -464,6 +473,7 @@ public class VATDAO  {
 			.and(FINANCE.STATUS.eq(FinanceStatus.PENDING.value()))
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value()))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))	// Criterio de Caja.
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch()
 			.stream()
@@ -483,6 +493,7 @@ public class VATDAO  {
 					.and(ALCATRAZ.FINANCE_TRACKING.isNull())
 					.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
 					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( FALSE_BYTE) )	// No Criterio de Caja.
+					.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.stream()
 				.map(new VatContextFiller())
@@ -501,6 +512,7 @@ public class VATDAO  {
 				.and(ALCATRAZ.FS_MODEL.eq(mod.getId()))
 				.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))
+				.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.stream()
 			.map(new VatContextCritCajaFiller())
@@ -519,6 +531,7 @@ public class VATDAO  {
 				.and(ALCATRAZ.FS_MODEL.eq(mod.getId()))
 				.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value()))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))	// Criterio de Caja.
+				.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch()
 			.stream()
@@ -711,6 +724,9 @@ public class VATDAO  {
 	
 	private static Condition getWhere(AccountingReportParams params) {
 		Condition condition = INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() );
+		
+		// No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+		condition = condition.and(INVOICE.NUMBER.ge(0));   
 		
 		if (params.getActivity() != null) {
 			if (AonMathUtils.isNegative(params.getActivity())) {
@@ -963,6 +979,7 @@ public class VATDAO  {
 					.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
 					.and(INVOICE.TAX_DATE.between( getStartDate(mod), getEndDate(mod)))
 					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE) )	// Criterio de Caja.
+					.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.stream()
 				.map(new VatContextFiller())
@@ -980,6 +997,7 @@ public class VATDAO  {
 				.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
 					.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
 					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE) )	// Criterio de Caja.
+					.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.stream()
 				.map(new VatContextFiller())
@@ -1007,6 +1025,7 @@ public class VATDAO  {
 					.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
 					.and(INVOICE.TAX_DATE.between( getStartDate(mod), getEndDate(mod)))
 					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE) )	// Criterio de Caja.
+					.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.stream()
 				.map(new VatContextFiller())
@@ -1035,7 +1054,8 @@ public class VATDAO  {
 			.where(INVOICE.DOMAIN.equal(mod.getDomain()))
 			.and(INVOICE.TAX_DATE.ge(getYearFirstDay(mod)))
 			.and(INVOICE.TAX_DATE.lt(AonDateUtils.toSql( FiscalUtils.getPeriodStart(mod))))
-			.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
+			.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))	
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 			.orderBy(INVOICE.TAX_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
 			.fetch()
 			.stream()
@@ -1065,6 +1085,7 @@ public class VATDAO  {
 			.and(FINANCE_TRACKING.TRACKING_DATE.between( modYearFirstDay, periodFirstDay ))
 			.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 			.orderBy(INVOICE.TAX_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
 			.fetch()
 			.stream()
