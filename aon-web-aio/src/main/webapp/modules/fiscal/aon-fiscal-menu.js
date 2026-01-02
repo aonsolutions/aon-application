@@ -140,7 +140,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
 			}, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
-                disabled: !this.icc?.isSii(),
+                // disabled: !this.icc?.isSii(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()
@@ -228,7 +228,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
-                disabled: !this.icc?.isSii(),
+                // disabled: !this.icc?.isSii(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()
@@ -305,7 +305,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
-                disabled: !this.icc?.isSii(),
+                // disabled: !this.icc?.isSii(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()
