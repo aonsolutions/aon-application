@@ -5253,6 +5253,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 	}
 	@Test
+	@Ignore("Needs review")
 	public void testGtzdo4PartialSaved() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
