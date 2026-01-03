@@ -345,6 +345,7 @@ const getIcon = (task, size = undefined, isChild = undefined) => {
   } else {
     icon.className = CONSTANT.MATERIAL_ICONS_OUTLINED;
     icon.textContent = iconJson.icon;
+	icon.setAttribute("icon", iconJson.icon);
     if (size) {
       icon.style.fontSize = size;
     }
