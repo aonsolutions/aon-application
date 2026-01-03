@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,6 +48,13 @@ public class AonTask {
 			throws URISyntaxException, IOException, InterruptedException {
 		JSONObject jsonObject = TaskHolderJSON.toJSON(taskHolder);
 		return postJSON(domainName, userLogin, token, "/ms/api/taskholder", jsonObject);
+	}
+
+	public static List<Task> getTasks(String domainName, String userLogin, Map<String, Object> params)
+			throws URISyntaxException, IOException, InterruptedException {
+		String response = get(domainName, userLogin, "/ms/api/task", params);
+		JSONArray responseJSON = new JSONArray(response);
+		return TaskJSON.fromJSON(responseJSON);
 	}
 
 	public static List<TaskHolder> getTaskHolders(String domainName, String userLogin, String token)
