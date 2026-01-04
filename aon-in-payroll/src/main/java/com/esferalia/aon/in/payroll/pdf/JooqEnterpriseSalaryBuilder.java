@@ -758,10 +758,19 @@ public class JooqEnterpriseSalaryBuilder {
 		.innerJoin(SALARY_DEDUCTION).on(SALARY.ID.eq(SALARY_DEDUCTION.SALARY))
 		.where(condition)
 		.fetchStream().forEach(s -> {
-					
+			
 					if (deductions.get(s.get(SALARY.ID)) != null) {
-						deductions.get(s.get(SALARY.ID)).put(s.get(SALARY_DEDUCTION.TYPE) != null ? s.get(SALARY_DEDUCTION.TYPE).intValue() : null,
-								s.get(SALARY_DEDUCTION.AMOUNT));
+						
+						// Accumulate value if exists previus
+						Integer type = s.get(SALARY_DEDUCTION.TYPE) != null
+						        ? s.get(SALARY_DEDUCTION.TYPE).intValue()
+						        : null;
+						Double amount = s.get(SALARY_DEDUCTION.AMOUNT);
+			
+						deductions
+						    .computeIfAbsent(s.get(SALARY.ID), k -> new HashMap<>())
+						    .merge(type, amount, Double::sum);
+						
 					} else {
 						Map<Integer, Double> map = new HashMap<>();
 						map.put(s.get(SALARY_DEDUCTION.TYPE) != null ? s.get(SALARY_DEDUCTION.TYPE).intValue() : null
