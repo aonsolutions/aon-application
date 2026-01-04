@@ -36,18 +36,16 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 	}
 
 	static void handleS3EventObject(S3EventObject s3EventObject) {
-//		try {
-//			URL url = S3.getURL(s3EventObject.getBucket(), s3EventObject.getKey());
-//
-//		} catch (URISyntaxException e) {
-//			e.printStackTrace();
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
+		try {
+			S3 s3 = S3.getInstance();
+			byte data [] = s3.download(s3EventObject.getBucket(), s3EventObject.getKey());
+				MimeMessage mimeMessage = MimeMessageUtils.getMimeMessage(data);
+				MimeMessage2Task.addTask(mimeMessage, cid -> String.format("%s/%s/%s/%s", FUNCTION_URL, s3EventObject.getBucket(), s3EventObject.getKey(), cid));
+
+		} catch (Exception e) {
+			System.err.println("Error processing task for " + s3EventObject.getKey() + ": " + e.getMessage());
+		}
+			
 	}
 
 	static Optional<String> getBody(MimeMessage mimeMessage, UnaryOperator<String> cidInlineHandler) {

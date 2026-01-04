@@ -268,9 +268,6 @@ export class AonDialog extends AonElement {
 		//----------TITLE
 		title.style.lineHeight = "41px";
 
-		//----------ACTION
-		action.style.display = "flex";
-
 		//---------CONTENT
 		content.style.padding = "20px";
 
@@ -460,6 +457,24 @@ export class AonDialog extends AonElement {
 			btn.addEventListener(EVENT.CLICK, fn);
 		}
 	}
+	// {id, title, icon, aonIcon, position}
+	addAction2(data, fn){
+		let btn = undefined;
+		if(this.isTypeFullScreen()){
+			btn = this.addAction(data, fn);
+		} else {
+			btn = this.getElement(data.id);
+			if(btn) btn.remove();
+			btn = this.createElement(TAG.BUTTON);
+			btn.id = this.id + data.id;
+			btn.className = 'aonButton';
+			btn.style.marginRight = "10px";
+			btn.innerHTML = data.title;
+			this.getElement(this.ACTION).appendChild(btn);
+			btn.addEventListener(EVENT.CLICK, fn);
+		}
+		return btn;
+	}
 
 	addCancelAction(fn, close=true) {
 		let btn = undefined;
@@ -522,8 +537,6 @@ export class AonDialog extends AonElement {
 			btn.title = title || MSG.ACCEPT;
 			btn.style.marginLeft= "auto";
 			let divAction = this.getElement(this.ACTION);
-			divAction.style.display = "flex";
-			divAction.style.justifyContent = "space-between";
 			divAction.appendChild(btn);
 		}
 		

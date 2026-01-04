@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FiscalModelValidation {
@@ -42,7 +43,7 @@ public class FiscalModelValidation {
 	 * El ejercicio debe ser válido.
 	 */
 	private static final BiConsumer<FiscalModel,AONContext> INVALID_YEAR = (fm,ctx) -> {
-		if (fm.getYear() < 2005 || fm.getYear() > 2025) 
+		if (fm.getYear() < 2005 || fm.getYear() > AonDateUtils.getCurrentYear()) 
 			throw new AonCoreException(AonError.INVALID_YEAR.getMessage());
 	};
 
