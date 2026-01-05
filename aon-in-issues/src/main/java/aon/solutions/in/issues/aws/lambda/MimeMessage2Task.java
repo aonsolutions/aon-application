@@ -578,8 +578,11 @@ public class MimeMessage2Task {
 		return document;
 	}
 
-	private static void addTask(MimeMessage mimeMessage, UnaryOperator<String> cidInlineHandler)
+	static void addTask(MimeMessage mimeMessage, UnaryOperator<String> cidInlineHandler)
 			throws MessagingException, IOException, URISyntaxException, InterruptedException {
+
+		if ( Arrays.stream(mimeMessage.getFrom()).anyMatch(from -> getEmail(from).endsWith("callcenter@contactsolutions.es")) )
+			throw new IOException("Skip email from 'callcenter@contactsolutions.es" );
 		
 
 		String[] replyTo = mimeMessage.getHeader(IN_REPLY_TO);
@@ -623,6 +626,7 @@ public class MimeMessage2Task {
 
 			for (TaskWorkflow taskWorkflow : newTaskWorkflows ) {
 				taskWorkflow.setTask(taskId);
+				System.out.println("Adding workflow to task " + taskId + ": " + taskWorkflow.getType() + ", " + taskWorkflow.getCreationDate() + ", " + AonStringUtils.abbreviate(taskWorkflow.getComment(), 60));
 				// taskWorkflow.setType(TaskWorkflowType.COMMENT);
 				//taskWorkflow.setComment(collapse(taskWorkflow.getComment(), workflowIndex++ + ""));
 				AonTask.addTaskWorkflow(DOMAIN_NAME, LOGIN, taskWorkflow);
@@ -641,13 +645,13 @@ public class MimeMessage2Task {
 
 		
 	}
-	public static void main(String[] args) throws IOException, MessagingException, URISyntaxException, InterruptedException, ParseException {
+	public static void _main(String[] args) throws IOException, MessagingException, URISyntaxException, InterruptedException, ParseException {
 		task(args);
-		// comment(args);
+		//comment(args);
 	}
 	
 
-	public static void m4in(String[] args)
+	public static void main(String[] args)
 			throws IOException, MessagingException, URISyntaxException, InterruptedException {
 		String prefix = args[1];
 		String bucket = args[0];
@@ -665,7 +669,8 @@ public class MimeMessage2Task {
 				continue;
 			}
 			try {
-				addTask(getMimeMessage(data), cid -> String.format("%s/%s/%s/%s", FUNCTION_URL, bucket, obj.key(), cid));
+				MimeMessage mimeMessage = getMimeMessage(data);
+				addTask(mimeMessage, cid -> String.format("%s/%s/%s/%s", FUNCTION_URL, bucket, obj.key(), cid));
 			} catch (Exception e) {
 				System.err.println("Error processing task for " + obj.key() + ": " + e.getMessage());
 			}

@@ -122,3 +122,12 @@ export const createSpan = (properties)=> newComponent({
     return element;
   }
   
+  export const getOffsetTop = (element) => {
+  	let totalOffsetTop = 0;
+  	for ( let el = element; el; el = el.offsetParent ) {
+  		totalOffsetTop += el.offsetTop;
+  	}
+  	return totalOffsetTop;
+  }
+
+  
