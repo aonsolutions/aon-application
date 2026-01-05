@@ -48,6 +48,7 @@ export class AonHeader extends AonElement {
 	BASE_ID;
 	activeTimecontrol;
 	newTheme;
+	companySelectorOpenedManually = false;
 
 	get id() {
 		return this.getAttribute('id');
@@ -438,99 +439,10 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderCompanyListButton = this.getElement(this.BASE_ID + 'CompanyListButton');
 
-		let companySelectorOpenedManually = false;
+
 		//boton seleccion de empresa
 		aonHeaderCompanyListButton.addEventListener('click', () => {
-			// Marcar que el selector fue abierto manualmente
-			companySelectorOpenedManually = true;
-
-			this.buildDur().then(dur => {
-				if(dur && dur.parentDomain) {
-					aonHeaderCompanyName.innerHTML = dur.parentDomain.description || '';
-				}
-			});
-
-			// let aonHeaderSearch = this.getElement(this.BASE_ID + 'Search');
-			// let aonHeaderHome = this.getElement(this.BASE_ID + 'Home');
-			// let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
-
-			// if (!LS.isNewTheme() && !this.newTheme) {
-			// 	let aonShowMenu = this.getElement('aonShowMenu');
-			// }
-
-			let aonMenu = this.getElement('aonMenu');
-			aonMenu.removeAttribute('company');
-			aonMenu.removeAttribute('user');
-			aonMenu.close();
-
-			let company = LS.getCompany();
-			let domainId = LS.getDomainId();
-
-			//  Si ya hay un domainId válido y no se abrió manualmente → no mostrar selector
-			if (domainId && domainId !== 0 && domainId !== 1 && company && !companySelectorOpenedManually) {
-				LS.setCompanySelected(true);
-				LS.setOnlyOne(true);
-				this.rootPanel(new AonDesktop());
-				return;
-			}
-
-			//  Si no hay empresa cargada , detener
-			if (!company) {
-				console.warn('No hay empresa cargada. Deteniendo ejecución.');
-				return;
-			}
-
-			//  Si estamos en la empresa general (sin parentId), no hacer nada
-			if (!company.parentId) {
-				console.log('Ya estás en la empresa general. No se realiza cambio.');
-				return;
-			}
-
-			//  Si ya hay una empresa hija seleccionada y no se abrió manualmente carga directamente
-			if (LS.getCompanySelected() && !companySelectorOpenedManually) {
-				console.log('Empresa hija ya seleccionada, cargando directamente');
-				LS.setOnlyOne(true);
-				LS.setDomainId(parseInt(company.parentId));
-				this.rootPanel(new AonParent());
-				return;
-			}
-
-			//  Usuario abrio manualmente el selector de empresas, permitir cambio
-			LS.removeDomain();
-			LS.removeCompany();
-			clearDurum();
-
-			if (company.parentId) {
-				LS.setDomainId(parseInt(company.parentId));
-			} else {
-				LS.setOnlyOne(true);
-			}
-
-			// let aonHeaderCompanyList = this.getElement(this.BASE_ID + 'CompanyList');
-			this.removeAttribute('company');
-			this.removeAttribute('user');
-
-			clearDurum();
-			this.rootPanel(new AonParent());
-
-			// let header = this.getElement("aonHeaderWeb");
-			// let apps = this.getElement("aonMenuLeftop-applications");
-			// let headerapp = this.getElement("aonHeaderApp");
-
-			// let logo = this.getElement("aonLogo");
-			// let rootPanel = this.getElement("rootPanel");
-			// let enterprise = this.getElement("aonHeaderCompanyName");
-			// let appss = this.getElement("applications");
-			// let welcome = this.getElement("aonCompanyTabFilter");
-
-			let header2 = this.getElement('aonHeaderWeb');
-			header2.className = 'aonHeader aonHeaderStart';
-
-			let applications = this.getElement('applications');
-			if(applications) applications.className = 'aonMenuLeftopStart';
-
-			companySelectorOpenedManually = false;
-			aonHeaderCompanyList.style.display = LS.isCompanySelected() && !LS.isOnlyOne() ? 'block' : 'none';
+			this.goToParent();
 		});
 
 		if(this.activeTimecontrol) {
@@ -624,50 +536,96 @@ export class AonHeader extends AonElement {
 	}
 
 	goToParent() {
-		let aonHeaderSearch = this.getElement(this.BASE_ID + 'Search');
-		aonHeaderSearch.style.display = 'flex';
+		// Marcar que el selector fue abierto manualmente
+		this.companySelectorOpenedManually = true;
 
-		let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
-		aonHeaderCompany.style.display = 'none';
+		this.buildDur().then(dur => {
+			if(dur && dur.parentDomain) {
+				aonHeaderCompanyName.innerHTML = dur.parentDomain.description || '';
+			}
+		});
 
-		if (!LS.isNewTheme() && !this.newTheme) {
-			let aonShowMenu = this.getElement('aonShowMenu');
-			aonShowMenu.style.display = 'none';
-		}
+		// let aonHeaderSearch = this.getElement(this.BASE_ID + 'Search');
+		// let aonHeaderHome = this.getElement(this.BASE_ID + 'Home');
+		// let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
+
+		// if (!LS.isNewTheme() && !this.newTheme) {
+		// 	let aonShowMenu = this.getElement('aonShowMenu');
+		// }
 
 		let aonMenu = this.getElement('aonMenu');
 		aonMenu.removeAttribute('company');
 		aonMenu.removeAttribute('user');
-		LS.setCompanySelected(false);
+		aonMenu.close();
 
-		let aonHeaderCompanyList = this.getElement(this.BASE_ID + 'CompanyList');
-		aonHeaderCompanyList.style.display = 'none';
+		let company = LS.getCompany();
+		let domainId = LS.getDomainId();
 
+		//  Si ya hay un domainId válido y no se abrió manualmente → no mostrar selector
+		if (domainId && domainId !== 0 && domainId !== 1 && company && !this.companySelectorOpenedManually) {
+			LS.setCompanySelected(true);
+			LS.setOnlyOne(true);
+			this.rootPanel(new AonDesktop());
+			return;
+		}
+
+		//  Si no hay empresa cargada , detener
+		if (!company) {
+			console.warn('No hay empresa cargada. Deteniendo ejecución.');
+			return;
+		}
+
+		//  Si estamos en la empresa general (sin parentId), no hacer nada
+		if (!company.parentId) {
+			console.log('Ya estás en la empresa general. No se realiza cambio.');
+			return;
+		}
+
+		//  Si ya hay una empresa hija seleccionada y no se abrió manualmente carga directamente
+		if (LS.getCompanySelected() && !this.companySelectorOpenedManually) {
+			console.log('Empresa hija ya seleccionada, cargando directamente');
+			LS.setOnlyOne(true);
+			LS.setDomainId(parseInt(company.parentId));
+			this.rootPanel(new AonParent());
+			return;
+		}
+
+		//  Usuario abrio manualmente el selector de empresas, permitir cambio
+		LS.removeDomain();
+		LS.removeCompany();
+		clearDurum();
+
+		if (company.parentId) {
+			LS.setDomainId(parseInt(company.parentId));
+		} else {
+			LS.setOnlyOne(true);
+		}
+
+		// let aonHeaderCompanyList = this.getElement(this.BASE_ID + 'CompanyList');
 		this.removeAttribute('company');
 		this.removeAttribute('user');
 
-		LS.removeDomain();
-		LS.removeCompany();
-
 		clearDurum();
-
 		this.rootPanel(new AonParent());
 
-		let headerapp = this.getElement("aonHeaderApp");
-		headerapp.style.display = "none";
+		// let header = this.getElement("aonHeaderWeb");
+		// let apps = this.getElement("aonMenuLeftop-applications");
+		// let headerapp = this.getElement("aonHeaderApp");
 
-		let logo = this.getElement("aonLogo");
-		logo.style.display = "block";
-		logo.style.filter = "none";
-
-		let rootPanel = this.getElement("rootPanel");
-		rootPanel.style.backgroundColor = "transparent"
+		// let logo = this.getElement("aonLogo");
+		// let rootPanel = this.getElement("rootPanel");
+		// let enterprise = this.getElement("aonHeaderCompanyName");
+		// let appss = this.getElement("applications");
+		// let welcome = this.getElement("aonCompanyTabFilter");
 
 		let header2 = this.getElement('aonHeaderWeb');
 		header2.className = 'aonHeader aonHeaderStart';
 
 		let applications = this.getElement('applications');
-		applications.className = 'aonMenuLeftopStart';
+		if(applications) applications.className = 'aonMenuLeftopStart';
+
+		this.companySelectorOpenedManually = false;
+		aonHeaderCompanyList.style.display = LS.isCompanySelected() && !LS.isOnlyOne() ? 'block' : 'none';
 	}
 
 	timeControlStatus(signin) {
