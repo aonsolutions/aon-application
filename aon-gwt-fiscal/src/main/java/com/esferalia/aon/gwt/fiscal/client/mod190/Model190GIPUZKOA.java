@@ -98,8 +98,10 @@ public class Model190GIPUZKOA extends Model190Base {
 			setDetailManager( new Model190GIPUZKOADetail2022( getCallback() , getModel(), selectedIndex ));
 		} else if (getModel().getYear() == 2023) {
 			setDetailManager( new Model190GIPUZKOADetail2023( getCallback() , getModel(), selectedIndex ));
-		} else {
+		} else if (getModel().getYear() == 2024) {
 			setDetailManager( new Model190GIPUZKOADetail2024( getCallback() , getModel(), selectedIndex ));
+		} else {
+			setDetailManager( new Model190GIPUZKOADetail2025( getCallback() , getModel(), selectedIndex ));
 		}
 		tabPanel.add( (Widget) getDetailManager(),  AON.MSG.receiverList());
 	}
