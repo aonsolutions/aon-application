@@ -1,5 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getNotification, getCompanies, getUser, getAllContracts, getAuth} from  '../services/service.js';
+import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getNotification, getCompanies, getUser, getAllContracts, getAuth, getHelpDatas} from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
 
 //import '../components/aon-dialog-menu.js';
@@ -621,6 +621,53 @@ export class AonHeader extends AonElement {
 
 		// let header6 = this.getElement("aonHeaderUserButtonIconButton")
 		// header6.style.color = "var--(aonGrayHeaderButtonsColor)";
+	}
+
+	goToParent() {
+		let aonHeaderSearch = this.getElement(this.BASE_ID + 'Search');
+		aonHeaderSearch.style.display = 'flex';
+
+		let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
+		aonHeaderCompany.style.display = 'none';
+
+		if (!LS.isNewTheme() && !this.newTheme) {
+			let aonShowMenu = this.getElement('aonShowMenu');
+			aonShowMenu.style.display = 'none';
+		}
+
+		let aonMenu = this.getElement('aonMenu');
+		aonMenu.removeAttribute('company');
+		aonMenu.removeAttribute('user');
+		LS.setCompanySelected(false);
+
+		let aonHeaderCompanyList = this.getElement(this.BASE_ID + 'CompanyList');
+		aonHeaderCompanyList.style.display = 'none';
+
+		this.removeAttribute('company');
+		this.removeAttribute('user');
+
+		LS.removeDomain();
+		LS.removeCompany();
+
+		clearDurum();
+
+		this.rootPanel(new AonParent());
+
+		let headerapp = this.getElement("aonHeaderApp");
+		headerapp.style.display = "none";
+
+		let logo = this.getElement("aonLogo");
+		logo.style.display = "block";
+		logo.style.filter = "none";
+
+		let rootPanel = this.getElement("rootPanel");
+		rootPanel.style.backgroundColor = "transparent"
+
+		let header2 = this.getElement('aonHeaderWeb');
+		header2.className = 'aonHeader aonHeaderStart';
+
+		let applications = this.getElement('applications');
+		applications.className = 'aonMenuLeftopStart';
 	}
 
 	timeControlStatus(signin) {

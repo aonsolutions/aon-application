@@ -476,6 +476,25 @@ export class AonDialog extends AonElement {
     }
   }
 
+  // {id, title, icon, aonIcon, position}
+	addAction2(data, fn){
+		let btn = undefined;
+		if(this.isTypeFullScreen()){
+			btn = this.addAction(data, fn);
+		} else {
+			btn = this.getElement(data.id);
+			if(btn) btn.remove();
+			btn = this.createElement(TAG.BUTTON);
+			btn.id = this.id + data.id;
+			btn.className = 'aonButton';
+			// btn.style.marginRight = "10px";
+			btn.innerHTML = data.title;
+			this.getElement(this.ACTION).appendChild(btn);
+			btn.addEventListener(EVENT.CLICK, fn);
+		}
+		return btn;
+	}
+
   addCancelAction(fn = undefined, close = true, title = MSG.CANCEL) {
     let btn = undefined;
 //    if (this.isTypeFullScreen()) {

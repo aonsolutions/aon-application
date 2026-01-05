@@ -1675,8 +1675,11 @@ public class InvoiceTemplate {
 
 	// DRAW BOTTOM INFO
 	private void drawBottomInfo(InvoiceTemplateContext ctx) throws IOException, WriterException {
-		x = 50;
+ 		x = 50;
 		float legalSize = legalLines.size() * LEGAL_TEXT_SIZE;
+		if(y < limit) {
+			jumpToNewPage(ctx);
+		}
 		y = bottom + 10 + bottomExtra + legalSize;
 		if(!ctx.isVerifactu() && ctx.getQrUrl() != null && !ctx.getInvoice().isProforma()) {
 			byte[] qrCode = createQR(ctx.getQrUrl(), 300, 300);

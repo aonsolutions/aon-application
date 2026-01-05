@@ -1,6 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { Apps, ClassicApps, getAppsByDur } from '../../services/app.js';
-import { getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral, getTrailData, getCompanyOne, getCompanyActivities, saveInvoiceConfiguration, getInvoiceConfiguration } from '../../services/service.js';
+import { getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral, getTrailData, getCompanyOne, getCompanyActivities, saveInvoiceConfiguration, getInvoiceConfiguration, closeSession } from '../../services/service.js';
 import { getAccessBidoq } from '../../services/bidoqService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
@@ -145,10 +145,9 @@ export class AonDesktop extends AonElement {
 		
 			let aviso = this.createDiv();
 			aviso.style.backgroundColor = '#fde400ff';
-			aviso.style.padding = '1rem';
-			aviso.style.borderRadius = '.625rem';
-			// aviso.style.margin = '10px';
-			aviso.innerHTML = "<span style='color:red'><b>Aviso Importante:</b></span> <span>Como usuario de AON SIF (Sistema de Facturación) adaptado a la normativa de la \"ley antifraude\" y regulado por el Reglamento RRSIF (RD 1007/2023), debe cumplimentar los datos que se solicitan a continuación. El Cliente es el único responsable de la correcta activación de la modalidad de comunicación, configuración del software y validación de su certificado digital en el software para la comunicación de facturas a la Administración Tributaria (AEAT o Haciendas Forales) a través de los sistemas VeriFactu, No VeriFactu, LROE o Ticket BAI. <br><b>AON SOLUTIONS, S.L.U. no será responsable</b> de información no veraz o incorrecta incluida por el usuario en el SIF.</br></span>";
+			aviso.style.padding = '10px';
+			aviso.style.margin = '10px';
+			aviso.innerHTML = "<span style='color:red'>Aviso Importante</span>: Como usuario de AON SIF (Sistema de Facturación) adaptado a la normativa de la \"ley antifraude\" y regulado por el Reglamento RRSIF (RD 1007/2023), debe cumplimentar los datos que se solicitan a continuación. El Cliente es el único responsable de la correcta activación de la modalidad de comunicación, configuración del software y validación de su certificado digital en el software para la comunicación de facturas a la Administración Tributaria (AEAT o Haciendas Forales) a través de los sistemas VeriFactu, No VeriFactu, LROE o Ticket BAI. <br><b>AON SOLUTIONS, S.L.U. no será responsable</b> de información no veraz o incorrecta incluida por el usuario en el SIF.</br>";
 
 			div.appendChild(aviso);
 			div.appendChild(communication);
@@ -159,6 +158,19 @@ export class AonDesktop extends AonElement {
 
 			this.buildConditions(div);
 
+			dialog.addAction2({
+					id: "Salir",
+					title: "Salir",
+					icon: MATERIAL_ICONS.ARROW_BACK,
+					position: "left",
+				}, () => {
+					if(this.getDur().isParentUser()) {
+						this.getAonHeader().goToParent();
+					} else {
+						closeSession();
+					}
+				});
+
 			dialog.addAcceptAction(() => {		
 				if(this.checkConfigurationComplete(this.ic, true)) { 
 					saveInvoiceConfiguration(this.ic);
@@ -166,11 +178,16 @@ export class AonDesktop extends AonElement {
 					this.buildInvoiceConfigurationDialog();
 				}
 			});
+
 			dialog.open();
 		} else {
 			// Existe simplemente lo abrimos
 			dialog.open();
 		}
+	}
+
+	getAonHeader() {
+		return document.querySelector(TAG.AON_HEADER);
 	}
 
 	buildConditions(parent) {

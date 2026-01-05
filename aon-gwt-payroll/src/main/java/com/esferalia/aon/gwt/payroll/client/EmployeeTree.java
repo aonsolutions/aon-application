@@ -1126,7 +1126,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		@Override
 		public void setWorkplace(Workplace workplace) {
 			this.workplace = workplace;
-			dialog.setData(getCCs(workplace));
+			dialog.setData(MainCreta.distint(getCCs(workplace)));
 		}
 		// --------------------------------------------------------------------
 
@@ -1184,7 +1184,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		@Override
 		public void setWorkplace(Workplace workplace) {
 			this.workplace = workplace;
-			setData(getCCs(workplace));
+			setData(MainCreta.distint(getCCs(workplace)));
 			setBankAccounts(enterprise.getBankAccounts());
 
 			if (AonStringUtils.isBlank(getHolder()))
@@ -1245,7 +1245,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		// --------------------------------------------------------------------
 		public void setEnterprise(Enterprise enterprise) {
 			this.enterprise = enterprise;
-			dialog.setData(getCCs(enterprise));
+			dialog.setData(MainCreta.distint(getCCs(enterprise)));
 		}
 
 		// --------------------------------------------------
@@ -1318,7 +1318,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		@Override
 		public void setEnterprise(Enterprise enterprise) {
 			this.enterpr1se = enterprise;
-			setData(getCCs(enterprise));
+			setData(MainCreta.distint(getCCs(enterprise)));
 			setBankAccounts(enterprise.getBankAccounts());
 
 			if (AonStringUtils.isBlank(getHolder()))
@@ -3460,7 +3460,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				Task syncTask = new Task();
 				syncTask.setDescription("Sincronizando mensajes");
 				progressPanel.showTask(syncTask);
-				MainCreta.sync(new EmployeeTreeSyncCallback(syncTask), getCCs());
+				MainCreta.sync(new EmployeeTreeSyncCallback(syncTask), MainCreta.distint(getCCs()));
 				handlerRegistration[0].removeHandler();
 			});
 			
@@ -4442,13 +4442,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		List<CCC> ccs = activity.getCccs();
 		if (ccs == null)
 			return Collections.emptyList();
-		return ccs;
+		
+		return ccs.stream().collect( Collectors.toMap( CCC::toString, ccc -> ccc, (ccc1,ccc2) -> ccc1 ) ).values().stream().collect( Collectors.toList() );
 	}
 
 	private static List<CCC> getCCs(Enterprise enterprise) {
-		return enterprise.getActivities().stream().map(Activity::getCccs).flatMap(List::stream).distinct().collect(Collectors.toList());
+		return enterprise.getActivities().stream().map(Activity::getCccs).flatMap(List::stream).collect(Collectors.toList());
 	}
-
+	
 	private static boolean isSaltraEnabled(EmployeeStatus employeeStatus) {
 		try {
 			employeeStatus.visit(new Visitor() {

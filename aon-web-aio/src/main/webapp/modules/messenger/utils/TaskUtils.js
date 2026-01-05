@@ -184,7 +184,7 @@ const downChat = () => {
   const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
   if (chat) {
     setTimeout(() => {
-      chat.lastChild.scrollIntoView();
+      chat.lastChild.scrollIntoView({ container: 'nearest', block: 'nearest' });
       addLine(chat);
     }, 100);
   }
