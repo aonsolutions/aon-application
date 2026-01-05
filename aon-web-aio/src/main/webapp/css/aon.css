@@ -4901,6 +4901,10 @@ font-weight: 600;
     border-radius: 10px;
   }
   
+  #aonTimeControlReasonDialogDialogAction{
+  	display: flex;
+  }
+  
   #aonTimeControlReasonDialog {
   	margin-top: 5rem;
   }
