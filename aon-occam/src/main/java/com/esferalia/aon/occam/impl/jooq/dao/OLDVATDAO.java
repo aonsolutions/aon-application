@@ -166,6 +166,7 @@ public class OLDVATDAO  {
 				.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
 				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 0))	// No Criterio de Caja.
+				.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.fetch()
 				.stream()
@@ -199,6 +200,7 @@ public class OLDVATDAO  {
 			.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
 			.and(INVOICE.TAX_DATE.ge(prevYearFirstDay))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch()
 			.stream()
@@ -230,6 +232,7 @@ public class OLDVATDAO  {
 			.and(FINANCE.STATUS.eq(FinanceStatus.PENDING.value()))
 			.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch()
 			.stream()
@@ -261,6 +264,7 @@ public class OLDVATDAO  {
 			.and(FINANCE.STATUS.eq(FinanceStatus.PENDING.value()))
 			.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch()
 			.stream()
@@ -305,6 +309,7 @@ public class OLDVATDAO  {
 			.where(VAT_PROPERTIES.getConditions(filter))
 //			.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
 //			.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 			.orderBy(InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch().stream().map(new SiiVatContextFiller())
 		;

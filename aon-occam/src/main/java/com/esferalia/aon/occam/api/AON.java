@@ -2071,7 +2071,8 @@ public class AON {
 		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getFinance().getSiiInvoiceStream(ctx, filter, pending, aceptada, aceptadaErrores, incorrecta, anulada, sii);
+			return getFinance().getSiiInvoiceStream(ctx, filter, pending, aceptada, aceptadaErrores, incorrecta, anulada, sii)
+					.filter(s -> s.getNumber() >= 0); // No facturas proforma (factura proforma es la que su numero de factura es menor que cero) 
 		} finally {
 			if (ctx != null)
 				ctx.close();
