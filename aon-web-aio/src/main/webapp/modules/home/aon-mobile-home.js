@@ -16,6 +16,7 @@ import { AonApps } from '../aon-apps.js';
 import { getWorkgroups } from '../../services/workgroupService.js';
 import { AonTimecontrol } from '../timecontrol/aon-timecontrol.js';
 import { AonDialog } from '../../components/aon-dialog.js';
+import { SigninSidenav } from '../timecontrol/signinEnums.js';
 
 export class AonMobileHome extends AonElement {
 
@@ -246,7 +247,10 @@ export class AonMobileHome extends AonElement {
 		
 		li.addEventListener('click', (ev) => {
 			ev.stopPropagation();
-			this.rootPanel(new AonTimecontrol());
+			const {TODAY}  = SigninSidenav.PERIOD;
+			let timeControl = new AonTimecontrol();
+            this.rootPanel(timeControl);
+			timeControl.setDataFilter({period:TODAY.id});
 		});
 		
 		let span = this.createElement(TAG.SPAN);
