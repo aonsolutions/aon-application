@@ -261,93 +261,69 @@ export class AonSign extends AonElement {
 				timeOutPosition = error && error.timeout;
 			});
 
-		if (this.isBeta()) {
+		if (signin.status == 'out' || signin.status == 'return') {
 
-			if (signin.status == 'out' || signin.status == 'return') {
+			if (signin.status == 'return') signin.status = 'in';
 
-				if (signin.status == 'return') signin.status = 'in';
+			if (signin.status == 'in' && signin.coordinates && signin.coordinates.length > 0) {
 
-				if (signin.status == 'in' && signin.coordinates && signin.coordinates.length > 0) {
-
-					const locationResp = await getLocationByCoordinates(signin);
-
-					if (locationResp && locationResp.id) {
-						const resp = await saveTimeControl(signin);
-						this.setTimeControl(resp);
-						this.buildSignin(resp);
-
-						this.disabledButton(false);
-						this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
-						this.getApplication().stopLoading();
-					} else
-						this.openReasonDialog(signin, timeOutPosition);
-
-				} else if (signin.status == 'in') {
-
-					this.openReasonDialog(signin, timeOutPosition);
-
-				} else {
-
-					const resp = await saveTimeControl(signin);
-
-					if (timeOutPosition && this.isMobile() && resp && resp.id) {
-						getPosition()
-							.then(position => {
-								if (position) {
-									resp.coordinates = position.latitude + ',' + position.longitude;
-									saveTimeControl({ ...resp, ...signin })
-										.then(console.log)
-										.catch(console.error);
-								}
-							})
-							.catch(console.error);
-					}
-
-					this.setTimeControl(resp);
-					this.buildSignin(resp);
-
-					this.disabledButton(false);
-					this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
-					this.getApplication().stopLoading();
-				}
-
-			} else if (signin.status == 'in' && signin.coordinates && signin.coordinates.length > 0) {
 				const locationResp = await getLocationByCoordinates(signin);
 
 				if (locationResp && locationResp.id) {
 					const resp = await saveTimeControl(signin);
 					this.setTimeControl(resp);
 					this.buildSignin(resp);
+
+					this.disabledButton(false);
+					this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
+					this.getApplication().stopLoading();
 				} else
 					this.openReasonDialog(signin, timeOutPosition);
 
-			} else {
+			} else if (signin.status == 'in') {
+
 				this.openReasonDialog(signin, timeOutPosition);
+
+			} else {
+
+				const resp = await saveTimeControl(signin);
+
+				if (timeOutPosition && this.isMobile() && resp && resp.id) {
+					getPosition()
+						.then(position => {
+							if (position) {
+								resp.coordinates = position.latitude + ',' + position.longitude;
+								saveTimeControl({ ...resp, ...signin })
+									.then(console.log)
+									.catch(console.error);
+							}
+						})
+						.catch(console.error);
+				}
+
+				this.setTimeControl(resp);
+				this.buildSignin(resp);
+
+				this.disabledButton(false);
+				this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
+				this.getApplication().stopLoading();
 			}
+
+		} else if (signin.status == 'in' && signin.coordinates && signin.coordinates.length > 0) {
+			const locationResp = await getLocationByCoordinates(signin);
+
+			if (locationResp && locationResp.id) {
+				const resp = await saveTimeControl(signin);
+				this.setTimeControl(resp);
+				this.buildSignin(resp);
+			} else
+				this.openReasonDialog(signin, timeOutPosition);
 
 		} else {
-			const resp = await saveTimeControl(signin);
-
-			if (timeOutPosition && this.isMobile() && resp && resp.id) {
-				getPosition()
-					.then(position => {
-						if (position) {
-							resp.coordinates = position.latitude + ',' + position.longitude;
-							saveTimeControl({ ...resp, ...signin })
-								.then(console.log)
-								.catch(console.error);
-						}
-					})
-					.catch(console.error);
-			}
-
-			this.setTimeControl(resp);
-			this.buildSignin(resp);
-
-			this.disabledButton(false);
-			this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
-			this.getApplication().stopLoading();
+			this.openReasonDialog(signin, timeOutPosition);
 		}
+
+	
 	}
 
 	openReasonDialog(signin, timeOutPosition) {

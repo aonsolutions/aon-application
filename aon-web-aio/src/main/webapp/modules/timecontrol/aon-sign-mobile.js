@@ -245,7 +245,7 @@ export class AonSignMobile extends AonElement {
 			});
 			buttons.appendChild(button);
 
-			if (this.isBeta() && this.isMobile()) {
+			if (this.isMobile()) {
 				let button2 = this.createElement(TAG.BUTTON);
 				button2.id = this.id + "Pausa";
 				button2.className = 'aonButton';
@@ -285,7 +285,7 @@ export class AonSignMobile extends AonElement {
 
 		//console.log('saveTimeCtrl : ', signin);
 
-		if (this.isBeta() && this.isMobile()) {
+		if (this.isMobile()) {
 
 			if (signin.status == 'out' || signin.status == 'return') {
 
@@ -595,7 +595,7 @@ export class AonSignMobile extends AonElement {
 
 		this.changeTime(time);
 
-		if (this.isBeta() && this.isMobile())
+		if (this.isMobile())
 			this.totalHourWeek();
 		//this.divLastTime(signin);
 	}
@@ -650,7 +650,7 @@ export class AonSignMobile extends AonElement {
 				this.totalHourWeek();
 			}
 
-			if (this.isBeta() && this.isMobile()) {
+			if (this.isMobile()) {
 				const id = 'lastTimeUser';
 				const div = this.getElement(id) || this.createElement(TAG.DIV);
 				div.id = id;

@@ -138,7 +138,7 @@ export class AonMobileHome extends AonElement {
         divGeneral.appendChild(notificationDrag);
         
         // Control horario
-		if(this.isBeta() && this.isMobile() && this.getDur().isTimecontrol()){
+		if(this.isMobile() && this.getDur().isTimecontrol()){
 			let timeControlTitleWidgets = this.buildTitle("Control Horario");
 			divGeneral.appendChild(timeControlTitleWidgets); 
 			
@@ -163,7 +163,7 @@ export class AonMobileHome extends AonElement {
         divWidgets.className = "aonDivWidgetsMobile";
     
         const widgetOrder = [
-            { id: this.WIDGET_TC, builder: this.widgetTimeControl, show: this.getDur().isTimecontrol() && !(this.isBeta() && this.isMobile())},
+            { id: this.WIDGET_TC, builder: this.widgetTimeControl, show: this.getDur().isTimecontrol() && !this.isMobile()},
             { id: this.WIDGET_NOMINA, builder: this.widgetNomina, show: this.getDur().isPayroll()},
             { id: this.WIDGET_SOLICITUDES_RECIBIDAS, builder: () => this.widgetSolicitudes("recibidas"), show: this.getDur().isMessenger() },
             { id: this.WIDGET_SOLICITUDES_ENVIADAS, builder: () => this.widgetSolicitudes("enviadas"), show: this.getDur().isMessenger() },
@@ -206,12 +206,12 @@ export class AonMobileHome extends AonElement {
         const r = await getTimeControl();
         aonSign.setTimeControl(r);
         
-        if(this.isBeta() && this.isMobile())
+        if(this.isMobile())
 			timeControlPanel.classList.add('aonWidgetTCMobileBig');
         
         widgetTC.appendChild(aonSign);
         
-        if(this.isBeta() && this.isMobile())
+        if(this.isMobile())
         	this.createTimeControlApps(widgetTC);
         
         timeControlPanel.appendChild(widgetTC);
