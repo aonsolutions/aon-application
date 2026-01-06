@@ -463,10 +463,11 @@ export class AonDialog extends AonElement {
 		if(this.isTypeFullScreen()){
 			btn = this.addAction(data, fn);
 		} else {
-			btn = this.getElement(data.id);
+			let btnId = this.id + data.id;
+			btn = this.getElement(btnId);
 			if(btn) btn.remove();
 			btn = this.createElement(TAG.BUTTON);
-			btn.id = this.id + data.id;
+			btn.id = btnId;
 			btn.className = 'aonButton';
 			btn.style.marginRight = "10px";
 			btn.innerHTML = data.title;
