@@ -390,11 +390,8 @@ public class SiiMain extends DockLayoutPanel {
 	}
 	
 	private String getStatusName(InvoiceCommunicationStatus st) {
-		if(InvoiceCommunicationStatus.ACCEPTED.equals(st)) return "Aceptada";
-		else if(InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS.equals(st)) return "Aceptada con Errores";
-		else if(InvoiceCommunicationStatus.CANCELLED.equals(st)) return "Anulada";
-		else if(InvoiceCommunicationStatus.WRONG.equals(st)) return "Incorrecta";
-		else return "Pendiente";
+		if (st == null) return InvoiceCommunicationStatus.PENDING.getDescription();
+		return st.getDescription();
 	}
 	
 	public void initializeFilter() {

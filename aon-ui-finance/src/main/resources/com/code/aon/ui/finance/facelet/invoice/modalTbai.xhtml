@@ -35,7 +35,10 @@
 						<aon:div style="width:100%">
 							<aon:div styleClass="aon-popupWindow-content-internal">
 								<aon:div style="width:99%">
-									<aon:div styleClass="aon-toolbar">
+									<aon:div
+										rendered="#{invoiceController.communicationAvailable}" 
+										styleClass="aon-toolbar">
+										
 										<aon:commandButton id="tbaiaccept"	
 											value="Enviar"
 											action="#{saleInvoice.tbai}"
