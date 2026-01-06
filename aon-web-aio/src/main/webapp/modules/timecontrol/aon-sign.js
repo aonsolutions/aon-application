@@ -1,5 +1,5 @@
 import { AonElement } from '../../components/AonElement.js';
-import { getPeriod, getTaskHolder, getTaskHoldersUser, getTaskHolderTimeControl, getTimeControl, saveTimeControl, saveTimeControlDetail } from '../../services/service.js';
+import { getLocationByCoordinates, getPeriod, getTaskHolder, getTaskHoldersUser, getTaskHolderTimeControl, getTimeControl, saveTimeControl, saveTimeControlDetail } from '../../services/service.js';
 import { getPosition } from '../../services/maps.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { SIGNIN_VIEWS } from "./signinEnums.js";
@@ -316,6 +316,10 @@ export class AonSign extends AonElement {
 				const resp = await saveTimeControl(signin);
 				this.setTimeControl(resp);
 				this.buildSignin(resp);
+
+				this.disabledButton(false);
+				this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
+				this.getApplication().stopLoading();
 			} else
 				this.openReasonDialog(signin, timeOutPosition);
 
@@ -323,16 +327,16 @@ export class AonSign extends AonElement {
 			this.openReasonDialog(signin, timeOutPosition);
 		}
 
-	
+
 	}
 
 	openReasonDialog(signin, timeOutPosition) {
 		let d = document.getElementById(this.DIALOG);
 		d.clear();
 
-		if (this.isMobile()){
-			 d.type = "fullscreen";
-			 d.addAction(
+		if (this.isMobile()) {
+			d.type = "fullscreen";
+			d.addAction(
 				{
 					id: '',
 					title: 'Control Horario',
@@ -348,8 +352,8 @@ export class AonSign extends AonElement {
 			this.disabledButton(false);
 			this.getApplication().stopLoading();
 		}
-		
-		
+
+
 
 		let reasonTitle = !signin || !signin.status ? 'N/D' : signin.status === 'in' ? 'Entrada' : 'Pausa';
 		d.setTitle(`Motivo ${reasonTitle}`);
@@ -441,11 +445,11 @@ export class AonSign extends AonElement {
 
 				const resp = await saveTimeControl(signin);
 				this.buildSignin(resp);
-				
+
 				this.disabledButton(false);
 				this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
 				this.getApplication().stopLoading();
-				
+
 				d.close();
 			}
 		});
