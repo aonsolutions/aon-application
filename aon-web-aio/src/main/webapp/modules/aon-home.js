@@ -63,7 +63,7 @@ export class AonHome extends AonElement {
 		// TimeControl Reason Dialog
 	    let aonDialog = new AonDialog();
 	    aonDialog.id = 'aonTimeControlReasonDialog';
-	    this.appendChild(aonDialog)
+	    this.appendChild(aonDialog);
 
 		let rootPanel = this.createElement(TAG.DIV);
 		rootPanel.id = this.ROOT_PANEL;
@@ -101,6 +101,11 @@ export class AonHome extends AonElement {
 
 		aonHeader.setVisibleHomeButton(false);
 		aonHeader.setVisibleCompanyListButton(false);
+		
+		// TimeControl Reason Dialog
+	    let aonDialog = new AonDialog();
+	    aonDialog.id = 'aonTimeControlReasonDialog';
+	    this.appendChild(aonDialog);
 		
 		let aonMenu = new AonNewMenu();
 		aonMenu.id = this.AON_MENU;

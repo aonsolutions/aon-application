@@ -148,8 +148,9 @@ export class AonTimecontrol extends AonElement {
 
   async setDataFilter(data){
     try {
-      if(this.isMobile())
+      if(this.isMobile() && !data.period)
         this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
+      
       this.DATE_TMP =  null;
       if(data && data.period){
         data = {...data, ...getPeriod(data.period)};
@@ -329,8 +330,6 @@ export class AonTimecontrol extends AonElement {
         icon.style.backgroundColor = "var(--aonTimecontrol)";
         icon.style.color = "white";
         icon.style.fontVariationSettings = "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24";
-        icon.style.paddingTop = "5px";
-        icon.style.paddingLeft = "4px";
         icon.style.borderRadius = "5px";
         icon.style.width = "32px";
         icon.style.height = "32px";
@@ -360,7 +359,7 @@ export class AonTimecontrol extends AonElement {
   }
 
   isEmployee() {
-    return !this.getDur().isTimecontrolManager() && !this.getDur().isTimecontrolPortal();
+    return this.getDur() && !this.getDur().isTimecontrolManager() && !this.getDur().isTimecontrolPortal();
   }
 
 }

@@ -1375,7 +1375,8 @@ i[id$="ToolbarHeaderToolSectionbar_chartMessengerButtonIcon"],
 i[id$="ToolbarHeaderToolSectionSYNCHRONIZEButtonIcon"],
 i[id$="ToolbarHeaderToolSectionArchivadasButtonIcon"],
 i[id$="ToolbarHeaderToolSectionCerradasButtonIcon"],
-i[id$="ToolbarHeaderToolSectiontoolbarLabelsButtonIcon"]
+i[id$="ToolbarHeaderToolSectiontoolbarLabelsButtonIcon"],
+i[id$="ToolbarHeaderToolSectionRestoreButtonIcon"]
 {
 	width: 24px;
 	height: 24px;
@@ -1383,6 +1384,10 @@ i[id$="ToolbarHeaderToolSectiontoolbarLabelsButtonIcon"]
 	mask-size: contain;
 	mask-position: center;
 	mask-repeat: no-repeat;
+}
+
+i[id$="ToolbarHeaderToolSectionRestoreButtonIcon"]{
+    mask-image: url('/icons/rotate-ccw.svg') ;	
 }
 
 i[id$="ToolbarHeaderToolSectionSaveButtonIcon"]{
@@ -2046,5 +2051,41 @@ aon-right-panel {
 
 #aonHeaderSearchDialogMenu i.material-icons[icon="business"] {
 	mask-image: url('/icons/building.svg');
+}
+
+
+aon-icon[icon='excel'],
+aon-icon[icon='aon_excel']{
+	width: 24px;
+	height: 24px;
+	display: inline-block;
+	background-size: 24px;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+aon-icon[icon='aon_excel']{
+	background-color:white;
+	mask-image: url('/icons/x-square.svg');
+}
+
+aon-icon[icon='excel']{
+	background-color:black;
+	mask-image: url('/icons/file-spreadsheet.svg');
+}
+
+aon-icon[icon='excel'] > svg,
+aon-icon[icon='aon_excel'] > svg {
+	display: none;
+}
+
+button:has(aon-icon[icon='aon_excel']) {
+	width: 30px;
+	height: 30px;
+	margin: 10px;
+	min-width: 24px;
+	min-height: 24px;
+	border-radius: 0px;
+	background-color:black !important;
 }
 

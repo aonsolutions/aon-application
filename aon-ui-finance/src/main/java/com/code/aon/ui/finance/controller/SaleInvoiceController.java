@@ -82,6 +82,7 @@ import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus.InvoiceCommunicationStatusVisitor;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorException;
@@ -89,6 +90,7 @@ import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.mutable.MutableObject;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
@@ -717,7 +719,7 @@ public class SaleInvoiceController extends InvoiceController {
 				.setDomain(inv.getDomain())
 				.setUser(login);
 			InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(occam);
-			if (config.isVerifactu() || config.isNoVerifactu() || config.isSif()) {
+			if (config.isVerifactu() || config.isNoVerifactu() || config.isSif() || config.isSii()) {
 				com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
 				Company company = AON.getCompanyForDomain(domainName, inv.getDomain(), login);			
 				communicateInvoice( occam, config, company , invoice , getCertificate() );
@@ -1083,38 +1085,38 @@ public class SaleInvoiceController extends InvoiceController {
 		return StringUtils.upperCase(getCommunicationStatus().getDescription());
 	}
 	public String getCommunicationStatusIcon() {
-		if ( isNoVerifactuInvoice() && getCommunicationStatus() == InvoiceCommunicationStatus.PENDING ) {
-			return "aon-icon-point-light-green";
-		} else if ( getCommunicationStatus() == InvoiceCommunicationStatus.ACCEPTED ) {
-			return "aon-icon-point-green";
-		} else if ( getCommunicationStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS ) {
-			return "aon-icon-point-yellow";
-		} else if ( getCommunicationStatus() == InvoiceCommunicationStatus.WRONG ) {
-			return "aon-icon-point-red";
-		} else {
-			return "aon-icon-point-orange";
-		}
-		
+		if (getCommunicationStatus() == null) return "aon-icon-point-orange";
+		MutableObject<String> ret = new MutableObject<>();
+		getCommunicationStatus().accept(new InvoiceCommunicationStatusVisitor() {
+			@Override
+			public void visitPending() {
+				if ( isNoVerifactuInvoice() ) {
+					ret.setValue("aon-icon-point-light-green");
+				} else {
+					ret.setValue("aon-icon-point-orange");
+				}
+			}
+
+			@Override public void visitAccepted() { ret.setValue("aon-icon-point-green"); }
+			@Override public void visitAcceptedWithErrors() { ret.setValue("aon-icon-point-yellow"); }
+			@Override public void visitWrong() { ret.setValue("aon-icon-point-red"); }
+			@Override public void visitCancelled() { ret.setValue("aon-icon-point-gray"); }
+			@Override public void visitExternallyCommunicated() {ret.setValue("aon-icon-point-blue"); }
+		});
+		return ret.getValue();
+	}
+	
+	public boolean isCommunicationAvailable() {
+		return !isInvoiceCommunicationAccepted()
+			&& (isCommunicationPending() || isCommunicationWrong());
 	}
 	
 	public boolean isCommunicationPending() {return getCommunicationStatus() == null || getCommunicationStatus() == InvoiceCommunicationStatus.PENDING;}
 	public boolean isCommunicationAccepted() { return getCommunicationStatus() == InvoiceCommunicationStatus.ACCEPTED; }
 	public boolean isCommunicationAcceptedWithErrors() {return getCommunicationStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS;}
 	public boolean isCommunicationWrong() { return getCommunicationStatus() == InvoiceCommunicationStatus.WRONG; }
+	public boolean isCommunicationExternal() { return getCommunicationStatus() == InvoiceCommunicationStatus.EXTERNALLY_COMMUNICATED; }
 	public boolean isInvoiceCommunicationAccepted() { return isCommunicationAccepted() || isCommunicationAcceptedWithErrors(); }
-	
-//	public boolean isVerifactuNoStatus() {return getVerifactuStatus() == null || getVerifactuStatus() == InvoiceCommunicationStatus.PENDING;}
-//	public boolean isNoVerifactuNoStatus() {return getNoVerifactuStatus() == null || getNoVerifactuStatus() == InvoiceCommunicationStatus.PENDING;}
-//	public boolean isSifNoStatus() {return getSifStatus() == null || getSifStatus() == InvoiceCommunicationStatus.PENDING;}
-//	public boolean isVerifactuAccepted() { return getVerifactuStatus() == InvoiceCommunicationStatus.ACCEPTED; }
-//	public boolean isNoVerifactuAccepted() { return getNoVerifactuStatus() == InvoiceCommunicationStatus.ACCEPTED; }
-//	public boolean isSifAccepted() { return getSifStatus() == InvoiceCommunicationStatus.ACCEPTED; }
-//	public boolean isVerifactuAcceptedWithErrors() {return getVerifactuStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS;}
-//	public boolean isNoVerifactuAcceptedWithErrors() {return getNoVerifactuStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS;}
-//	public boolean isSifAcceptedWithErrors() {return getSifStatus() == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS;}
-//	public boolean isVerifactuWrong() { return getVerifactuStatus() == InvoiceCommunicationStatus.WRONG; }
-//	public boolean isNoVerifactuWrong() { return getNoVerifactuStatus() == InvoiceCommunicationStatus.WRONG; }
-//	public boolean isSifWrong() { return getSifStatus() == InvoiceCommunicationStatus.WRONG; }
 	
 	public boolean isPass() {	
 		return getCert().hasPassword();
