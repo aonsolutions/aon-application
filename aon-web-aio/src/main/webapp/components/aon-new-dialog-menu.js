@@ -46,8 +46,18 @@ export class AonNewDialogMenu extends AonElement {
 		});
 	}
 
-	open() {
+	open(el = undefined) {
 		let dialog = this.getElement(this.id);
+
+		if (el) {
+			let top = el.getBoundingClientRect().top;
+			let left = el.getBoundingClientRect().right;
+
+			let content = this.getElement(this.CONTENT);
+			content.style.top = top + 'px' || '90px';
+			content.style.left = (left > (window.innerWidth / 2) ? left - 180 : left) + 'px';
+		}
+
 		dialog.classList.remove("hidden");
 	}
 
@@ -67,6 +77,7 @@ export class AonNewDialogMenu extends AonElement {
 
 	createOption(option) {
 		const wrapper = this.createElement(TAG.DIV);
+		wrapper.classList.add("menu-option-wrapper");
 
 		const item = this.createElement(TAG.DIV);
 		item.classList.add("menu-option");
@@ -98,9 +109,17 @@ export class AonNewDialogMenu extends AonElement {
 
 			item.addEventListener(EVENT.CLICK, (e) => {
 				e.stopPropagation();
-				children.classList.toggle("open");
-				item.classList.toggle("open");
+				
+				let items = document.querySelectorAll('.menu-option');
+				items.forEach(i => i.classList.remove("open"));
+				
+				let childrens = document.querySelectorAll('.menu-children');
+				childrens.forEach(c => c.classList.remove("open"));
+				
+				children.classList.add("open");
+				item.classList.add("open");
 			});
+
 
 			wrapper.appendChild(children);
 
