@@ -1,7 +1,7 @@
 import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT, CONSTANT, TAG, AON_ICONS} from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
-import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
+import { newComponent, setAttributes, setStyles, getOffsetTop } from "../../../services/utilsComponents.js";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_EVALUATION, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
 import { TaskCreationUtils } from "./TaskCreationUtils.js";
 import { TaskUtils } from "./TaskUtils.js";
@@ -233,7 +233,21 @@ const buildWrapper = (secondDiv) => {
         height: '100%',
       }
     }).element;
-    secondDiv.appendChild(wrapper);
+
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach(mutation => {
+            mutation.addedNodes.forEach(addedNode => {
+				if ( addedNode == wrapper) {
+					addedNode.style.height = `calc(100vh - ${getOffsetTop(addedNode) + 32}px)`;
+				}
+            });
+        });
+    });
+
+    observer.observe(secondDiv, { childList: true });
+
+    
+	secondDiv.appendChild(wrapper);
 
     /**
      * The chat itself

@@ -512,6 +512,17 @@ public class AonDateUtils {
 	}
 
 	/**
+	 * Devuelve el año actual.
+	 * 
+	 * @return El año actual.
+	 */
+	public static int getCurrentYear() {
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		return c.get(Calendar.YEAR);
+	}
+	
+	/**
 	 * Devuelve el aÃ±o de la fecha indicada.
 	 * 
 	 * @param date

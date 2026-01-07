@@ -855,7 +855,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			if (getRectificationNumber() == 0) {
 				updateRectificationNumber(getRectificationSeries());
 			}
-			if(isTbai() || isVerifactu() || isNoVerifactu() || isSif()) {
+			if(hasCommunication()) {
 				String domainName = AonUtil.getDomainName();
 				Integer domainId = DomainManager.getCurrentDomain();
 				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, getRectificationSeries());
@@ -867,14 +867,14 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 				, getRectificationDate()
 				, getRectificationCause()
 				, getRectificationSettleFinance()
-				, (isTbai() || isVerifactu() || isNoVerifactu() || isSif()));
+				, hasCommunication());
 		} else {
 			rectifier = manager.rectifyReceivedInvoice(getInvoice()
 				, getRectificationReferenceCode()
 				, getRectificationDate()
 				, getRectificationCause()
 				, getRectificationSettleFinance()
-				, (isTbai() || isVerifactu() || isNoVerifactu() || isSif()));
+				, hasCommunication());
 		}
 		onEditSearch(event);
 		getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), rectifier.getId());
@@ -1019,7 +1019,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	        if (getDuplicationNumber() == 0) {
 	        	updateDuplicationNumber(getDuplicationSeries());
 			}		
-	        if(isTbai() || isVerifactu() || isNoVerifactu() || isSif()) {
+	        if(hasCommunication()) {
 				String domainName = AonUtil.getDomainName();
 				Integer domainId = DomainManager.getCurrentDomain();
 				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, getDuplicationSeries());
@@ -1693,7 +1693,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			}
 			String qrUrl = domain.getName() + "/dip?source=invoice&id=" + inv.getId() ;  
 			String tbaiId = "";
-			if(isTbai()) {
+			if(isTbai() || isLroe()) {
 				TbaiData tbaiData = TbaiData.getInstance(getInvoiceCommunicationConfiguration());
 				String tbaiUrl = tbaiData.getTbaiUrl(domain.getName(), domain.getId(), login, invoice.getId());
 				qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
@@ -2136,7 +2136,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 	    
 	public boolean isTbaiInvoice() {
-		return isTbai() && !AonStringUtils.isBlank(getTbaiUrl());
+		return (isTbai() || isLroe() ) && !AonStringUtils.isBlank(getTbaiUrl());
 	}
 	
 	public boolean isCommunicableInvoice() {
@@ -2155,6 +2155,9 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 	public boolean isSifInvoice() {
 		return isSif() && getInvoice().getNumber() > 0; // && !AonStringUtils.isBlank(getVerifactuUrl());
+	}
+	public boolean isSiiInvoice() {
+		return isSii() && getInvoice().getNumber() > 0; // && !AonStringUtils.isBlank(getVerifactuUrl());
 	}
 	
 	String tbaiUrl;
@@ -2183,8 +2186,8 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	
 	public boolean isIssueable() {
 		return !isNevv()
-			&& (isVerifactu() || isNoVerifactu() ||  isSif())
-			&& (!isVerifactuInvoice() || !isNoVerifactuInvoice() || !isSifInvoice())
+			&& (isVerifactu() || isNoVerifactu() ||  isSif() ||  isSii())
+			&& (!isVerifactuInvoice() || !isNoVerifactuInvoice() || !isSifInvoice() || !isSiiInvoice())
 			&& (getInvoice().getNumber() <= 0 || isUniqueNumberOfSeries());
 	}
 	public String getVerifactuUrl() {
@@ -2218,11 +2221,15 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	public void setVerifactuUrl(String verifactuUrl) {
 		this.verifactuUrl = verifactuUrl;
 	}
+
+	public boolean hasCommunication() { return getInvoiceCommunicationConfiguration().hasCommunication(); }
 	
+	public boolean isLroe() 		{return getInvoiceCommunicationConfiguration().isLroe();}
 	public boolean isTbai() 		{return getInvoiceCommunicationConfiguration().isTbai();}
 	public boolean isVerifactu() 	{return getInvoiceCommunicationConfiguration().isVerifactu();}
 	public boolean isNoVerifactu() 	{return getInvoiceCommunicationConfiguration().isNoVerifactu();}
 	public boolean isSif() 			{return getInvoiceCommunicationConfiguration().isSif();}
+	public boolean isSii() 			{return getInvoiceCommunicationConfiguration().isSii();}
 
 	public boolean isAraba() 	{return getInvoiceCommunicationConfiguration().isAraba();}
 	public boolean isBizkaia() 	{return getInvoiceCommunicationConfiguration().isBizkaia();}
@@ -2246,13 +2253,14 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		this.icc = icc;
 	}
 	
-	public LROEInformation getLroe() {
+	public LROEInformation getLroeInfo() {
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
 		Domain domain = new Domain().setName(domainName).setId(domainId);
 		User user = new User().setLogin(login);
-		return LroeData.get(domain, user, getInvoice().getId(), com.esferalia.aon.occam.api.model.type.InvoiceType.safeValueOf(getInvoice().getType().ordinal()));		
+		LROEInformation a = LroeData.get(domain, user, getInvoice().getId(), com.esferalia.aon.occam.api.model.type.InvoiceType.safeValueOf(getInvoice().getType().ordinal()));
+		return a; 		
 	}
 	
 	public TBAIInformation getTbaiInfo() {

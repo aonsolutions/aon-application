@@ -49,12 +49,14 @@ import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisito
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -74,6 +76,7 @@ import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDetailDAO.InvoiceDetailFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountingInvoiceValidation;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -434,16 +437,16 @@ public class AccountingInvoiceDAO {
 	}
 	
 	private static void checkCommunicationForSales( final AONContext ctx, int domainId, final InvoiceType type ) {
-		InvoiceCommunicationConfiguration c = InvoiceCommunicationDAO.get(ctx, domainId);
-		if (type == InvoiceType.SALES) {
-			if (c.isTbai()) {
-				throw new AonCoreException("No se pueden crear facturas emitidas en entornos con TicketBai activado");
-			} else if (c.isVerifactu()) {
-				throw new AonCoreException("No se pueden crear facturas emitidas en entornos con Verifactu activado");
-			} else if(c.hasCommunication()) {
-				throw new AonCoreException("No se pueden crear facturas emitidas en entornos con Emisión de facturas activada");
-			}
-		}
+//		InvoiceCommunicationConfiguration c = InvoiceCommunicationDAO.get(ctx, domainId);
+//		if (type == InvoiceType.SALES) {
+//			if (c.isTbai()) {
+//				throw new AonCoreException("No se pueden crear facturas emitidas en entornos con TicketBai activado");
+//			} else if (c.isVerifactu()) {
+//				throw new AonCoreException("No se pueden crear facturas emitidas en entornos con Verifactu activado");
+//			} else if(c.hasCommunication()) {
+//				throw new AonCoreException("No se pueden crear facturas emitidas en entornos con Emisión de facturas activada");
+//			}
+//		}
 	}
 	
 	public static AccountingInvoice initializeInvoice(final AONContext ctx, final InvoiceType type, final Integer registry, final Integer activity, final Date issueDate) {
@@ -755,7 +758,9 @@ public class AccountingInvoiceDAO {
 		try {
 			ctx.log().debug("------ [START] INSERT INVOICE");
 			LinkedList<AccountEntry> entries = new LinkedList<>();
-
+			
+			fillSeriesNumberIfNeeded(ctx, config, accInvoice);
+				
 			if (accInvoice.getInvoice().getId() == null) {
 				LinkedList<InvoiceDetail> details = generateDetails(accInvoice);
 				accInvoice.getInvoice().setDetails(details);
@@ -777,6 +782,8 @@ public class AccountingInvoiceDAO {
 				}
 				
 			}
+
+			saveCommunicationData( ctx, config, accInvoice.getInvoice() );
 			
 			AccountEntry ae = InvoiceRecorder.getInvoiceEntry(accInvoice);
 			Integer entryId = AccountEntryDAO.save(ctx, ae);
@@ -820,6 +827,40 @@ public class AccountingInvoiceDAO {
 			t.printStackTrace();
 			ctx.log().debug("------ [END FAIL] INSERT INVOICE [{0}]",t.getMessage());
 			throw t;
+		}
+	}
+
+	private static void fillSeriesNumberIfNeeded(AONContext ctx, AonConfiguration config, AccountingInvoice accInvoice) {
+		Invoice invoice = accInvoice.getInvoice();
+		InvoiceCommunicationConfiguration icc = config.getCommunicationConfig();
+		if (invoice.isSales() && icc.hasCommunication( invoice.getType() )) {
+			int y = AonDateUtils.getYear( invoice.getIssueDate() ) - 2000;
+			String prefix = invoice.isRectifier()?"REX":"EX";
+			String year = AonNumberUtils.toString(y);
+			invoice.setSeries( prefix + year );
+			invoice.setNumber( InvoiceDAO.getNextNumber(ctx, new Byte[]{invoice.getType().value()}, invoice.getSeries()));
+			if (AonStringUtils.isBlank(invoice.getReferenceCode())) {
+				throw new AonCoreException("Es obligatorio indicar el n\u00FAmero de factura.");
+			}
+		}
+	}
+
+	private static void saveCommunicationData(AONContext ctx, AonConfiguration config, Invoice invoice) {
+		try {
+			InvoiceCommunicationConfiguration icc = config.getCommunicationConfig();
+			if (icc.hasCommunication( invoice.getType() )) {
+				AonCollectionUtils.stream( icc.getTypes(invoice.getType()) )
+					.map( t -> new InvoiceInfo()
+						.setDomain( invoice.getDomain() )
+						.setInvoice( invoice.getId() )
+						.setType( t )
+						.setStatus( InvoiceCommunicationStatus.EXTERNALLY_COMMUNICATED ) 
+					)
+					.forEach( info -> InvoiceInfoDAO.save(ctx, info) )
+				;
+			}
+		} catch (Exception t) {
+			throw new AonCoreException("No se ha podido guardar la informaci\u00F3n de comunicaci\u00F3n de la factura: " + t.getMessage(), t);
 		}
 	}
 

@@ -280,10 +280,15 @@ public class InvoiceCommunicator {
 							@Override public void visitSERES() throws InvoiceCommunicationException 	{throwSERES();}
 							@Override public void visitEMAIL() throws InvoiceCommunicationException		{throwEMAIL();}
 							@Override public void visitCLOSING() throws InvoiceCommunicationException	{throwCLOSING();}
-							@Override public void visitSII() throws InvoiceCommunicationException		{throwSII();}
 							@Override public void visitTBAI() throws InvoiceCommunicationException		{throwTBAI();}
 							@Override public void visitLROE() throws InvoiceCommunicationException		{throwLROE();}
 							@Override public void visitFACTURAE() throws InvoiceCommunicationException	{throwFACTURAE();}
+							
+							@Override 
+							public void visitSII() throws InvoiceCommunicationException	{
+								// Se emite la factura. La comunicación se delega en la pantalla del SII.
+								InvoiceDAO.postIssue(ctx, invoice );
+							}
 							
 							@Override
 							public void visitVERIFACTU() throws InvoiceCommunicationException  {

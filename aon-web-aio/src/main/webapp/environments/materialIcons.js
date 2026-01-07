@@ -298,6 +298,7 @@ export const SEARCH = 'search';
 export const SECURITY = 'security';
 export const SEND = 'send';
 export const SETTINGS = 'settings';
+export const SIF = 'stacks';
 export const SHOPPING_BAG = 'shopping_bag';
 export const SPEAKER_NOTES = 'speaker_notes';
 export const STETHOSCOPE = 'stethoscope';

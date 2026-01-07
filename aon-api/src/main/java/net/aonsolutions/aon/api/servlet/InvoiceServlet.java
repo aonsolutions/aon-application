@@ -541,7 +541,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	public static void acceptTbai(InvoiceCommunicationConfiguration icc, Company company,  Invoice invoice) throws Exception {
-		if(invoice.isSales() && icc.isTbai() && !invoice.isThirdPart()) {
+		if(invoice.isSales() && (icc.isTbai() || icc.isLroe()) && !invoice.isThirdPart()) {
 			TbaiMain tbai = new TbaiMain();
 			tbai.createEmisionTBAI(company, invoice, icc);
 		}
@@ -766,12 +766,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				InvofoxServlet.saveConfiguration(api.setData(JsonUtils.getJSONObject(api.getData(), IJsonNames.INVOFOX))) 
 				: new JSONObject();
 		
-		return new JSONObject()
-			.put(IJsonNames.ADMINISTRATION, administration.name())	
-			.put(IJsonNames.PRINT, print)
-			.put(IJsonNames.COMMUNICATION, icc)
-			.put(IJsonNames.INVOFOX, invofox)
-			.put(IJsonNames.E_INVOICE, company.iseInvoice());
+		return getConfiguration(api);
 	}
 	
 	private JSONArray getVats(AonApiData api) {

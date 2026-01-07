@@ -757,9 +757,6 @@ aon-configuration-menu .suiteMenuContent  {
 	transform: rotate(-90deg);
 }
 
-#aonOfficePanelToolbarHeaderToolSectionSearchAdvancedButtonIcon {
-	
-}
 
 .aonSidenav .aonAppMenuSidenavList:hover,
 .aonSidenav .aonAppMenuSidenavListSelected {
@@ -798,7 +795,10 @@ aon-configuration-menu .suiteMenuContent  {
 
 #aonOfficePanelSidenavTypesNewButtonIconButton {
 	width: 20.5px;
-	height: 20.5px;
+	height: 20.5px;#i[id$='ToolbarHeaderToolSectionSearchAdvancedButtonIcon'] {
+	
+}
+	
 	background-color: var(--aonTopAppTextColor) !important;
 	mask-size: contain;
 	mask-position: center;
@@ -1353,22 +1353,155 @@ ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover span {
     mask-image: url('/icons/sticker.svg') ;
 }
 
+
+i[id$="DateIconButtonIcon"],
+i[id$="RegistryRemoveRegistryIcon"],
 i[id$="ToolbarHeaderToolSectionUploadFileButtonIcon"],
 i[id$="ToolbarHeaderToolSectionRefreshButtonIcon"],
 i[id$="ToolbarHeaderToolSectionaddButtonIcon"],
 i[id$="ToolbarHeaderToolSectionAddInvoiceButtonIcon"],
 i[id$="ToolbarHeaderToolSectionSearchSearchButtonIcon"], 
 i[id$="ToolbarHeaderToolSectionmore_vertButtonIcon"],
-i[id$="aonOfficePanelToolbarHeaderToolSectionAddButtonIcon"],
-i[id$="aonOfficePanelToolbarHeaderToolSectionSearchAdvancedButtonIcon"]
+i[id$="ToolbarHeaderToolSectionAddButtonIcon"],
+i[id$="ToolbarHeaderToolSectionSearchAdvancedButtonIcon"],
+i[id$="ToolbarHeaderToolSectionBackButtonIcon"],
+i[id$="ToolbarHeaderToolSectionDeleteButtonIcon"],
+i[id$="ToolbarHeaderToolSectionPreviousButtonIcon"],
+i[id$="ToolbarHeaderToolSectionNextButtonIcon"],
+i[id$="ToolbarHeaderToolSectionOptionsButtonIcon"],
+i[id$="ToolbarHeaderToolSectionAcceptButtonIcon"],
+i[id$="ToolbarHeaderToolSectionReject1ButtonIcon"],
+i[id$="ToolbarHeaderToolSectionbar_chartMessengerButtonIcon"],
+i[id$="ToolbarHeaderToolSectionSYNCHRONIZEButtonIcon"],
+i[id$="ToolbarHeaderToolSectionArchivadasButtonIcon"],
+i[id$="ToolbarHeaderToolSectionCerradasButtonIcon"],
+i[id$="ToolbarHeaderToolSectiontoolbarLabelsButtonIcon"],
+i[id$="ToolbarHeaderToolSectionRestoreButtonIcon"]
 {
-	width: 25.5px;
-	height: 25.5px;
+	width: 24px;
+	height: 24px;
 	background-color: var(--aonTopAppTextColor);
 	mask-size: contain;
 	mask-position: center;
 	mask-repeat: no-repeat;
 }
+
+i[id$="ToolbarHeaderToolSectionRestoreButtonIcon"]{
+    mask-image: url('/icons/rotate-ccw.svg') ;	
+}
+
+i[id$="ToolbarHeaderToolSectionSaveButtonIcon"]{
+	display: none;
+	color:transparent;
+}
+
+
+button:has( > i[id$="ToolbarHeaderToolSectionSaveButtonIcon"]) {
+
+	border: 0;
+  	border-radius: .375rem;
+	
+	min-width: 200px;
+	background-image: none;
+	background-color: #0f172a !important;
+	
+	height: 32px;
+  	padding: 0px;
+  	margin-bottom: 2px;	  
+	
+	
+}	
+
+button:has( > i[id$="ToolbarHeaderToolSectionSaveButtonIcon"]):before{
+	content: '';
+	width: 32px;
+	height: 32px;
+	mask-size: 24px;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	mask-image: url('/icons/save.svg') ;
+	background-color: white;
+
+  	margin-right: 8px;
+	display: inline-block;
+}
+
+button:has( > i[id$="ToolbarHeaderToolSectionSaveButtonIcon"]):after {
+  	top: -4px;      		
+  	height: 32px;
+  	position: relative;
+
+	color:white;  	
+	content: 'guardar';
+  	font-size: 0.9rem;
+  	vertical-align: middle;
+  	text-transform: lowercase;
+	display: inline-block;
+  	font-family: "Inter-medium", sans-serif;
+}
+
+i[id$="ToolbarHeaderToolSectiontoolbarLabelsButtonIcon"]{
+	mask-image: url('/icons/tag.svg') ;
+}
+
+
+i[id$="ToolbarHeaderToolSectionCerradasButtonIcon"]{
+	mask-image: url('/icons/check-circle.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionArchivadasButtonIcon"]{
+	mask-image: url('/icons/archive.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionSYNCHRONIZEButtonIcon"] {
+    mask-image: url('/icons/refresh-cw.svg') ;	
+}
+
+i[id$="ToolbarHeaderToolSectionbar_chartMessengerButtonIcon"]{
+    mask-image: url('/icons/bar-chart-2.svg') ;
+}
+
+i[id$='ToolbarHeaderToolSectionSearchAdvancedButtonIcon'] {
+    mask-image: url('/icons/filter.svg') ;	
+}
+
+i[id$="DateIconButtonIcon"]{
+	mask-image: url('/icons/calendar.svg') ;
+}
+
+i[id$="RegistryRemoveRegistryIcon"] {
+    mask-image: url('/icons/x-circle.svg') ;
+	
+}
+
+i[id$="ToolbarHeaderToolSectionRejectButtonIcon"]{
+	mask-image: url('/icons/info.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionAcceptButtonIcon"]{
+	mask-image: url('/icons/check.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionOptionsButtonIcon"] {
+    mask-image: url('/icons/more-vertical.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionPreviousButtonIcon"]{
+	mask-image: url('/icons/chevron-left.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionNextButtonIcon"] {
+    mask-image: url('/icons/chevron-right.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionDeleteButtonIcon"] {
+	mask-image: url('/icons/trash-2.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionBackButtonIcon"] {
+	mask-image: url('/icons/arrow-left.svg') ;
+}
+
 
 i[id$="ToolbarHeaderToolSectionUploadFileButtonIcon"] {
     mask-image: url('/icons/upload-cloud.svg') ;
@@ -1918,5 +2051,41 @@ aon-right-panel {
 
 #aonHeaderSearchDialogMenu i.material-icons[icon="business"] {
 	mask-image: url('/icons/building.svg');
+}
+
+
+aon-icon[icon='excel'],
+aon-icon[icon='aon_excel']{
+	width: 24px;
+	height: 24px;
+	display: inline-block;
+	background-size: 24px;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+aon-icon[icon='aon_excel']{
+	background-color:white;
+	mask-image: url('/icons/x-square.svg');
+}
+
+aon-icon[icon='excel']{
+	background-color:black;
+	mask-image: url('/icons/file-spreadsheet.svg');
+}
+
+aon-icon[icon='excel'] > svg,
+aon-icon[icon='aon_excel'] > svg {
+	display: none;
+}
+
+button:has(aon-icon[icon='aon_excel']) {
+	width: 30px;
+	height: 30px;
+	margin: 10px;
+	min-width: 24px;
+	min-height: 24px;
+	border-radius: 0px;
+	background-color:black !important;
 }
 

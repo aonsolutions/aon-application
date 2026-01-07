@@ -868,6 +868,7 @@ export class AonInvoice extends AonElement {
 		} else if ("EMAIL" === type) { typeIconButton.icon = MATERIAL_ICONS.MAIL;
 		} else if ("CLOSING" === type) { typeIconButton.icon = MATERIAL_ICONS.LOCK;
 		} else if ("VERIFACTU" === type) { typeIconButton.aonIcon = AON_ICONS.AON_AEAT;
+		} else if ("SIF" === type) { typeIconButton.icon = MATERIAL_ICONS.SIF;
 		}
 		if (!typeIconButton.icon) {
 			typeIconButton.icon = MATERIAL_ICONS.QUESTION_MARK;
@@ -879,6 +880,7 @@ export class AonInvoice extends AonElement {
 		if("PENDING" === status) return "Pendiente";
 		else if("ACCEPTED" === status) return "Aceptada";
 		else if("ACCEPTED_WITH_ERRORS" === status) return "Aceptada con errores";
+		else if("EXTERNALLY_COMMUNICATED" === status) return "Com. Externamente";
 		else if("WRONG" === status) return "Incorrecta";
 		else return "Sin Estado";
 	}
@@ -887,6 +889,7 @@ export class AonInvoice extends AonElement {
 		if("PENDING" === status) return "orange";
 		else if("ACCEPTED" === status) return "green";
 		else if("ACCEPTED_WITH_ERRORS" === status) return "yellow";
+		else if("EXTERNALLY_COMMUNICATED" === status) return "blue";
 		else if("WRONG" === status) return "red"
 		else return "gray";
 	}
@@ -2978,7 +2981,7 @@ export class AonInvoice extends AonElement {
 		let ok = this.checkConfiguration();
 		if(!ok) return;
 		if(!this.isInvofoxInvoice() && this.getInvoice().isEmitida()) this.getInvoice().setReference(undefined);
-		if(this.invoice.isEmitida() && this.icc.hasCommunication() && !this.icc.isSif() ) {
+		if(this.invoice.isEmitida() && this.icc.hasCommunication() && !this.icc.isSif() && !this.icc.isNoVerifactu()) {
 			let d = this.getApplication().getDialog();
 			d.clear();
 			if(!this.isMobile()) d.width = '400px';
@@ -3047,11 +3050,9 @@ export class AonInvoice extends AonElement {
 						} else {
 							this.showError(e);
 						}
-						
 					});
 				});
 			}
-			
 			d.open();
 		} else if(this.accept) {
 			this.getApplication().startLoader();

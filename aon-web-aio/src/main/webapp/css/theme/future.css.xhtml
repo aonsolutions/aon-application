@@ -103,6 +103,9 @@
 	
 	.aon-finding-filter-toolbar{
 		height: 2.5rem;
+		display: flex;
+		align-items: center;
+		justify-content: right;
 	}
 	
 	.aon-dataScroller {
@@ -336,6 +339,7 @@
 	}
 	
 	.aon-inputText,
+	.aon-inputSecret,
 	.aon-inputTextarea,
 	.aon-form select, 
 	.aon-selectOneMenu,
@@ -365,6 +369,11 @@
 		height: 2.15rem;
 	}
 	
+	
+	 .aon-inputText.aon-icon-search{
+		height: 2.00rem;
+		background-size: 20px;
+	 }
 
 	.aon-inputTextarea {
 		height: 5rem;
@@ -497,6 +506,7 @@
 		background-color: var(--aonBackgroundColor2);
 	}
 	
+	table:has( .rich-tabhdr-cell-active ),
 	.aon-panelTabSet-headerClass > table {
 		padding: 8.625px; /*.625rem;*/
 		cursor: pointer;
@@ -606,6 +616,13 @@
         background-image: url(#{aonResource.resolve['/icons/pencil.svg']});
   	}
   	
+  	.aon-icon-version {
+  		padding: 24px ;
+  		background-size: 24px;
+  		margin-right: 0px !important;
+        background-image: url(#{aonResource.resolve['/icons/list-checks.svg']});
+  	} 
+  	
   	.aon-icon-edit-end,
   	.aon-icon-edit-end-simple{
   	    padding: 24px ;
@@ -675,7 +692,7 @@
 	.aon-finding-toolbar-item.aon-icon-remove-selection:hover, 
 	.aon-finding-toolbar-item.aon-icon-done-all:hover, 
 	.aon-finding-toolbar-item.aon-icon-remove-done:hover,
-	.aon-finding-toolbar-item.aon-dropDownMenu:hover {
+	.aon-finding-toolbar-item.aon-dropDownMenu:hover{
   		background-color: inherit;
 	}
 	
@@ -970,7 +987,13 @@
     	mask-image: url(#{aonResource.resolve['/icons/file-text.svg']}) ;
     }
     
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-new):before {
+    	mask-image: url(#{aonResource.resolve['/icons/plus.svg']}) ;
+    }
     
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-accept):before {
+    	mask-image: url(#{aonResource.resolve['/icons/save.svg']}) ;
+    }
     
 	.rich-menu-item:hover,
 	.aon-dropDownMenu-selectItem, 
@@ -1427,17 +1450,89 @@
 		
 		content: '';
   		width: 24px;
-  		height: 24px;
+  		height: 2.25rem;
   		
   		display: inline-block;
   		vertical-align: middle;
   		
   		background-color: white;
+  		mask-repeat: no-repeat;
+  		mask-position-y: center;
   		mask-image: url(#{aonResource.resolve['/icons/save.svg']});
     }
-    
+
     td.aon-width-220 > div:only-child {
         min-width: max-content;
+    }
+    
+    .rich-panelbar-content{
+    	padding-left: 0px !important;
+    	padding-right: 0px !important;
+    }
+ 	
+	.aon-ConfigPanel .rich-panelbar{
+	}
+
+ 	.aon-ConfigPanel .aon-direct-access-list-element:hover,   
+    .aon-ConfigPanel .aon-panelBar-selected {
+    	border-radius: 0px;
+  		border: none !important;
+  		font-weight: normal !important;
+  		background-color: #f1f5f9 !important;
+    }
+    .aon-ConfigPanel .aon-direct-access-list-element{
+  		position: relative;
+    	padding: .925rem 1.25rem .925rem 2.5rem;
+    }
+    
+    #aonContent\:globalConfigPanelForm\:configPanelBar{
+    	margin-top: 3px !important;
+    	height: calc(100vh - 17px );
+    	min-width: 250px !important;
+    }
+    
+    .aon-ConfigPanel .aon-direct-access-list-element a {
+    	white-space: nowrap;
+    	font-size: 14px;
+    	font-family: "Inter-regular", sans-serif;
+    }
+    
+    .aon-ConfigPanel .rich-panelbar-header.aon-panelBar-title {
+		margin-left: 24px;
+		padding-left: 24px;
+		background-size: 24px !important;
+		background-position-x: left !important;
+  		background-repeat: no-repeat !important;
+  		background-position-y: center !important;
+		background-image: url(#{aonResource.resolve['/icons/chevron-right.svg']}) !important;
+    }
+
+    .aon-ConfigPanel .rich-panelbar-header-act.aon-panelBar-title {
+		margin-left: 24px;
+		padding-left: 24px;
+		background-size: 24px !important;
+		background-position-x: left !important;
+  		background-repeat: no-repeat !important;
+  		background-position-y: center !important;
+        background-image: url(#{aonResource.resolve['/icons/chevron-down.svg']}) !important;
+    }
+    
+    .aon-ConfigPanel .rich-panelbar-content-exterior {
+    	height: auto !important;
+    }
+    
+    .aon-form-group-title {
+    	border-bottom: none ;
+    }
+    .aon-form-group-title-internal {
+    	background: none ;
+    	border-left: none ;
+    }
+    
+    
+    .aon-list-icon.aon-icon-contact {
+    	padding-left: 32px;
+    	background-image: url(#{aonResource.resolve['/icons/user.svg']});
     }
 	
 </style>

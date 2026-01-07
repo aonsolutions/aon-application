@@ -1496,7 +1496,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		// --------------------------------------------------------------------
 		public void setEnterprise(Enterprise enterprise) {
 			this.enterprise = enterprise;
-			dialog.setData(getCCs(enterprise));
+			dialog.setData(distint(getCCs(enterprise)));
 		}
 		
 
@@ -1517,7 +1517,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		@Override
 		public void setEnterprise(Enterprise enterprise) {
 			this.enterpr1se = enterprise;
-			setData(getCCs(enterprise));
+			setData(distint(getCCs(enterprise)));
 			setBankAccounts(enterprise.getBankAccounts());
 
 			if (AonStringUtils.isBlank(getHolder()))
@@ -1756,7 +1756,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		@Override
 		public void setActivity(Activity activity) {
 			this.activity = activity;
-			dialog.setData(getCCCs(activity));
+			dialog.setData(distint(getCCCs(activity)));
 		}
 
 		protected List<CCC> getCCCs(Activity activity) {
@@ -1783,7 +1783,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		@Override
 		public void setActivity(Activity activity) {
 			this.activity = activity;
-			setData(getCCCs(activity));
+			setData(distint(getCCCs(activity)));
 			setBankAccounts(getBankAccounts(activity));
 
 			if (AonStringUtils.isBlank(getHolder()))
@@ -2304,12 +2304,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		@Override
 		public void setEnterprises(List<Enterprise> enterprises) {
 			this.enterprises = enterprises;
-			dialog.setData(getCCCs(enterprises));
-		}
-		
-		public void setEnterprises(List<Enterprise> enterprises, List<CCC> cccs) {
-			this.enterprises = enterprises;
-			dialog.setData(cccs);
+			dialog.setData(distint(getCCCs(enterprises)));
 		}
 		
 		
@@ -2335,7 +2330,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		@Override
 		public void setEnterprises(List<Enterprise> enterprises) {
 			this.enterprises = enterprises;
-			setData(getCCCs(enterprises));
+			setData(distint(getCCCs(enterprises)));
 			setBankAccounts(getBankAccounts(enterprises));
 		}
 
@@ -2486,6 +2481,10 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 
 	// ------------------------------------------------------------------------
+
+	protected static List<CCC> distint(Collection<CCC> cccs) {
+		return cccs.stream().collect(Collectors.toMap( CCC::toString, ccc -> ccc, (ccc1,ccc2) -> ccc1 ) ).values().stream().collect( Collectors.toList() );
+	}
 
 	protected static void submit(String url, String xml) {
 		XMLHttpRequest xmlHttpRequest = XMLHttpRequest.create();
