@@ -89,6 +89,8 @@ export class AonNewMenu extends AonElement {
 	AON_MENU_SEARCH_BOX;
 	AON_MENU_SEARCH_DIALOG;
 	CLOSE;
+	
+	OPTION_DIALOG;
 
 	supersetDashboard;
 
@@ -150,6 +152,8 @@ export class AonNewMenu extends AonElement {
 		this.AON_MENU_SEARCH_BOX = 'aonMenuSearchBox';
 		this.AON_MENU_SEARCH_DIALOG = 'aonMenuSearchDialog';
 		this.CLOSE = true;
+		
+		this.OPTION_DIALOG = 'newOptionDialog';
 	}
 
 	init() {
@@ -1133,8 +1137,9 @@ export class AonNewMenu extends AonElement {
 	}
 	
 	showNewDialogMenu(el){
-		let newDialogMenu =  this.getApplication().getOptionDialog();
-
+		
+		let newDialogMenu = this.getElement(this.OPTION_DIALOG);
+		
 		let newMenuOptions = [];
 		if(this.getDur().isInvoice()){
 			let optionsMenu = [
