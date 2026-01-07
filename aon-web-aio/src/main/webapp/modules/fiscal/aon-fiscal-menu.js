@@ -101,8 +101,8 @@ export class AonFiscalMenu extends AonSuiteMenu {
             filter: () => this.isNotDomainManagementAvailable()
         }, {
             title: 'IRPF AEAT',
-            visible: this.icc?.isCommonTerritory(),
-            disabled: !this.icc?.isCommonTerritory(),
+            visible: this.icc?.isCommonTerritory() || this.icc?.isCanarias(),
+            disabled: !(this.icc?.isCommonTerritory() || this.icc?.isCanarias()),
             options: [{
                 description: "Modelo 111 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, permios y determinadas ganancias patrimoniales e imputaciones de renta",
@@ -135,8 +135,8 @@ export class AonFiscalMenu extends AonSuiteMenu {
             filter: () => this.isNotDomainManagementAvailable()
         }, {
             title: 'AEAT',
-            visible: this.icc?.isCommonTerritory(),
-            disabled: !this.icc?.isCommonTerritory(),
+            visible: this.icc?.isCommonTerritory() || this.icc?.isCanarias(),
+            disabled: !(this.icc?.isCommonTerritory() || this.icc?.isCanarias()),
             options: [{
                 description: "Modelo 130 ",
                 description2: " |Profes./Empresar.",
