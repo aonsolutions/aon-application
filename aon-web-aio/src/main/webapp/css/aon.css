@@ -4906,8 +4906,14 @@ aon-superset iframe {
 	background: #1e293b80;
 	z-index: 3;
 	display: grid;
+	
+	place-items: start start;
+	padding: 24px;
+	
+	/* Boton flotante menu end end
 	place-items: end end;
 	padding: 24px;
+	*/
 }
 
 .hidden {
@@ -4919,6 +4925,8 @@ aon-superset iframe {
 	flex-direction: column;
 	gap: 1rem;
 	min-width: 260px;
+	
+	position: absolute;
 }
 
 .menu-option {

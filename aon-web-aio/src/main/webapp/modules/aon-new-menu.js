@@ -1306,20 +1306,19 @@ export class AonNewMenu extends AonElement {
 				}
 			});
 		}
+		
+		const top = el.getBoundingClientRect().top;
+		const left = el.getBoundingClientRect().right;
 
 		if (LS.isFutureTheme()) {
 
 			let newDialogMenu = this.getElement('newDialogMenu');
 			newDialogMenu.setOptions(newMenuOptions);
-			newDialogMenu.open();
+			newDialogMenu.open(el);
 
 		} else {
 
 			let newDialogMenu = this.getElement(this.OPTION_DIALOG);
-
-			const top = el.getBoundingClientRect().top;
-			const left = el.getBoundingClientRect().right;
-
 			newDialogMenu.setMenuOptions(newMenuOptions, top, left);
 			newDialogMenu.open();
 

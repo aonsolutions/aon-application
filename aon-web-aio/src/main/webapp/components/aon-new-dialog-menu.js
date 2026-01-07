@@ -46,8 +46,18 @@ export class AonNewDialogMenu extends AonElement {
 		});
 	}
 
-	open() {
+	open(el = undefined) {
 		let dialog = this.getElement(this.id);
+		
+		if(el){
+			let top = el.getBoundingClientRect().top;
+			let left = el.getBoundingClientRect().right;
+			
+			let content = this.getElement(this.CONTENT);
+			content.style.top = top + 'px' || '90px';
+			content.style.left = (left > (window.innerWidth/2) ? left - 180 : left)+'px' ;
+		}
+		
 		dialog.classList.remove("hidden");
 	}
 
