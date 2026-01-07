@@ -15,6 +15,7 @@ import { AonMobileMenu } from '../modules/aon-mobile-menu.js';
 import { AonTooltip } from '../components/aon-tooltip.js';
 import { AonDialog } from '../components/aon-dialog.js';
 import { AonDialogMenu } from '../components/aon-dialog-menu.js';
+import { AonNewDialogMenu } from '../components/aon-new-dialog-menu.js';
 
 export class AonHome extends AonElement {
 
@@ -299,9 +300,16 @@ export class AonHome extends AonElement {
 		);
 
 		// New Option Dialog
-		let dialogMenu = new AonDialogMenu();
-	    dialogMenu.id = this.OPTION_DIALOG;
-	    this.appendChild(dialogMenu);
+		if(LS.isFutureTheme()){
+			let newDialogMenu = new AonNewDialogMenu();
+		    newDialogMenu.id = 'newDialogMenu';
+		    this.appendChild(newDialogMenu);
+			
+		} else {
+			let dialogMenu = new AonDialogMenu();
+		    dialogMenu.id = this.OPTION_DIALOG;
+		    this.appendChild(dialogMenu);	
+		}
 		
 	}
 	
