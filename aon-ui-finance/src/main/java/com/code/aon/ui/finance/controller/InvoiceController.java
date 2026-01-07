@@ -2156,6 +2156,9 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	public boolean isSifInvoice() {
 		return isSif() && getInvoice().getNumber() > 0; // && !AonStringUtils.isBlank(getVerifactuUrl());
 	}
+	public boolean isSiiInvoice() {
+		return isSii() && getInvoice().getNumber() > 0; // && !AonStringUtils.isBlank(getVerifactuUrl());
+	}
 	
 	String tbaiUrl;
 	String verifactuUrl;
@@ -2183,8 +2186,8 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	
 	public boolean isIssueable() {
 		return !isNevv()
-			&& (isVerifactu() || isNoVerifactu() ||  isSif())
-			&& (!isVerifactuInvoice() || !isNoVerifactuInvoice() || !isSifInvoice())
+			&& (isVerifactu() || isNoVerifactu() ||  isSif() ||  isSii())
+			&& (!isVerifactuInvoice() || !isNoVerifactuInvoice() || !isSifInvoice() || !isSiiInvoice())
 			&& (getInvoice().getNumber() <= 0 || isUniqueNumberOfSeries());
 	}
 	public String getVerifactuUrl() {
@@ -2226,6 +2229,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	public boolean isVerifactu() 	{return getInvoiceCommunicationConfiguration().isVerifactu();}
 	public boolean isNoVerifactu() 	{return getInvoiceCommunicationConfiguration().isNoVerifactu();}
 	public boolean isSif() 			{return getInvoiceCommunicationConfiguration().isSif();}
+	public boolean isSii() 			{return getInvoiceCommunicationConfiguration().isSii();}
 
 	public boolean isAraba() 	{return getInvoiceCommunicationConfiguration().isAraba();}
 	public boolean isBizkaia() 	{return getInvoiceCommunicationConfiguration().isBizkaia();}
