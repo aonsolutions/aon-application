@@ -18,14 +18,14 @@ import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod390HFAraba2024Declaration extends Mod390HFArabaDeclaration {
+public class Mod390HFAraba2025Declaration extends Mod390HFArabaDeclaration {
 	
-	Mod390HFAraba2024Declaration() {
+	Mod390HFAraba2025Declaration() {
 		
 	}
 	
 	public static boolean accept(Mod390HF mod) {
-		return  mod.isAraba() && mod.getYear() == 2024;
+		return  mod.isAraba() && mod.getYear() >= 2025;
 	}
 	
 	private static final Mod390Key[] PRORATE_KEYS = new Mod390Key[]{
@@ -75,15 +75,15 @@ public class Mod390HFAraba2024Declaration extends Mod390HFArabaDeclaration {
 			,null,null,null)
 		
 		// Base imponible, porcentaje y cuota al 2%
-		,AR_C380	(Mod390Key.AR_C380
-			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent2(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C380,mod,vat.getBase())
-			,null,null,null)
-		,AR_C381	(Mod390Key.AR_C381,null,null,(ctx,mod) -> add(Mod390Key.AR_C381,mod,PERCENT_2),null,null)
-		,AR_C382	(Mod390Key.AR_C382
-			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent2(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C382,mod,vat.getQuota())
-			,null,null,null)
+//		,AR_C380	(Mod390Key.AR_C380
+//			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent2(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C380,mod,vat.getBase())
+//			,null,null,null)
+//		,AR_C381	(Mod390Key.AR_C381,null,null,(ctx,mod) -> add(Mod390Key.AR_C381,mod,PERCENT_2),null,null)
+//		,AR_C382	(Mod390Key.AR_C382
+//			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent2(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C382,mod,vat.getQuota())
+//			,null,null,null)
 		
 		// Base imponible, porcentaje y cuota al 4%
 		,AR_C001	(Mod390Key.AR_C001
@@ -97,26 +97,26 @@ public class Mod390HFAraba2024Declaration extends Mod390HFArabaDeclaration {
 			,null,null,null)
 		
 		// Base imponible, porcentaje y cuota al 5%
-		,AR_C205	(Mod390Key.AR_C205
-			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent5(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C205,mod,vat.getBase())
-			,null,null,null)
-		,AR_C206	(Mod390Key.AR_C206,null,null,(ctx,mod) -> add(Mod390Key.AR_C206,mod,PERCENT_5),null,null)
-		,AR_C207	(Mod390Key.AR_C207
-			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent5(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C207,mod,vat.getQuota())
-			,null,null,null)
+//		,AR_C205	(Mod390Key.AR_C205
+//			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent5(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C205,mod,vat.getBase())
+//			,null,null,null)
+//		,AR_C206	(Mod390Key.AR_C206,null,null,(ctx,mod) -> add(Mod390Key.AR_C206,mod,PERCENT_5),null,null)
+//		,AR_C207	(Mod390Key.AR_C207
+//			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent5(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C207,mod,vat.getQuota())
+//			,null,null,null)
 		
 		// Base imponible, porcentaje y cuota al 7,5%
-		,AR_C383	(Mod390Key.AR_C383
-			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent75(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C383,mod,vat.getBase())
-			,null,null,null)
-		,AR_C384	(Mod390Key.AR_C384,null,null,(ctx,mod) -> add(Mod390Key.AR_C384,mod,PERCENT_75),null,null)
-		,AR_C385	(Mod390Key.AR_C385
-			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent75(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C385,mod,vat.getQuota())
-			,null,null,null)
+//		,AR_C383	(Mod390Key.AR_C383
+//			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent75(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C383,mod,vat.getBase())
+//			,null,null,null)
+//		,AR_C384	(Mod390Key.AR_C384,null,null,(ctx,mod) -> add(Mod390Key.AR_C384,mod,PERCENT_75),null,null)
+//		,AR_C385	(Mod390Key.AR_C385
+//			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent75(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C385,mod,vat.getQuota())
+//			,null,null,null)
 
 		// Base imponible, porcentaje y cuota al 10%
 		,AR_C804	(Mod390Key.AR_C804
@@ -165,26 +165,26 @@ public class Mod390HFAraba2024Declaration extends Mod390HFArabaDeclaration {
 		,AR_C224	(Mod390Key.AR_C224)
 		
 		// Recargo equivalencia al 0%
-		,AR_C810	(Mod390Key.AR_C810
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent0(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C810,mod,vat.getBase())
-			,null,null,null)
-		,AR_C811	(Mod390Key.AR_C811,null,null,(ctx,mod) -> add(Mod390Key.AR_C811,mod,SURCHARGE_PERCENT_0),null,null)
-		,AR_C812	(Mod390Key.AR_C812
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent0(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C812,mod,vat.getSurchargeQuota())
-			,null,null,null)
+//		,AR_C810	(Mod390Key.AR_C810
+//			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent0(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C810,mod,vat.getBase())
+//			,null,null,null)
+//		,AR_C811	(Mod390Key.AR_C811,null,null,(ctx,mod) -> add(Mod390Key.AR_C811,mod,SURCHARGE_PERCENT_0),null,null)
+//		,AR_C812	(Mod390Key.AR_C812
+//			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent0(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C812,mod,vat.getSurchargeQuota())
+//			,null,null,null)
 		
 		// Recargo equivalencia al 0,26%
-		,AR_C386	(Mod390Key.AR_C386
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent026(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C386,mod,vat.getBase())
-			,null,null,null)
-		,AR_C387	(Mod390Key.AR_C387,null,null,(ctx,mod) -> add(Mod390Key.AR_C387,mod,SURCHARGE_PERCENT_026),null,null)
-		,AR_C388	(Mod390Key.AR_C388
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent026(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C388,mod,vat.getSurchargeQuota())
-			,null,null,null)
+//		,AR_C386	(Mod390Key.AR_C386
+//			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent026(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C386,mod,vat.getBase())
+//			,null,null,null)
+//		,AR_C387	(Mod390Key.AR_C387,null,null,(ctx,mod) -> add(Mod390Key.AR_C387,mod,SURCHARGE_PERCENT_026),null,null)
+//		,AR_C388	(Mod390Key.AR_C388
+//			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent026(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C388,mod,vat.getSurchargeQuota())
+//			,null,null,null)
 		
 		// Recargo equivalencia al 0,5%
 		,AR_C025	(Mod390Key.AR_C025
@@ -198,26 +198,26 @@ public class Mod390HFAraba2024Declaration extends Mod390HFArabaDeclaration {
 			,null,null,null)
 		
 		// Recargo equivalencia al 0,62%
-		,AR_C819	(Mod390Key.AR_C819
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent062(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C819,mod,vat.getBase())
-			,null,null,null)
-		,AR_C820	(Mod390Key.AR_C820,null,null,(ctx,mod) -> add(Mod390Key.AR_C820,mod,SURCHARGE_PERCENT_062),null,null)
-		,AR_C821	(Mod390Key.AR_C821
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent062(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C821,mod,vat.getSurchargeQuota())
-			,null,null,null)
+//		,AR_C819	(Mod390Key.AR_C819
+//			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent062(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C819,mod,vat.getBase())
+//			,null,null,null)
+//		,AR_C820	(Mod390Key.AR_C820,null,null,(ctx,mod) -> add(Mod390Key.AR_C820,mod,SURCHARGE_PERCENT_062),null,null)
+//		,AR_C821	(Mod390Key.AR_C821
+//			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent062(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C821,mod,vat.getSurchargeQuota())
+//			,null,null,null)
 		
 		// Recargo equivalencia al 1%
-		,AR_C389	(Mod390Key.AR_C389
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent1(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C389,mod,vat.getBase())
-			,null,null,null)
-		,AR_C390	(Mod390Key.AR_C390,null,null,(ctx,mod) -> add(Mod390Key.AR_C390,mod,SURCHARGE_PERCENT_1),null,null)
-		,AR_C391	(Mod390Key.AR_C391
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent1(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C391,mod,vat.getSurchargeQuota())
-			,null,null,null)
+//		,AR_C389	(Mod390Key.AR_C389
+//			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent1(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C389,mod,vat.getBase())
+//			,null,null,null)
+//		,AR_C390	(Mod390Key.AR_C390,null,null,(ctx,mod) -> add(Mod390Key.AR_C390,mod,SURCHARGE_PERCENT_1),null,null)
+//		,AR_C391	(Mod390Key.AR_C391
+//			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent1(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C391,mod,vat.getSurchargeQuota())
+//			,null,null,null)
 		
 		// Recargo equivalencia al 1,4%.
 		,AR_C828	(Mod390Key.AR_C828
@@ -267,26 +267,26 @@ public class Mod390HFAraba2024Declaration extends Mod390HFArabaDeclaration {
 		,AR_C240	(Mod390Key.AR_C240)
 		
 		// Adquisiciones intracomunitarias al 0%		
-		,AR_C234	(Mod390Key.AR_C234
-			,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification() && hasPercent0(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C234,mod,vat.getBase())
-			,null,null,null)
-		,AR_C235	(Mod390Key.AR_C235,null,null,(ctx,mod) -> add(Mod390Key.AR_C235,mod,PERCENT_0),null,null)
-		,AR_C236	(Mod390Key.AR_C236
-			,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification() && hasPercent0(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C236,mod,vat.getQuota())
-			,null,null,null)
+//		,AR_C234	(Mod390Key.AR_C234
+//			,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification() && hasPercent0(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C234,mod,vat.getBase())
+//			,null,null,null)
+//		,AR_C235	(Mod390Key.AR_C235,null,null,(ctx,mod) -> add(Mod390Key.AR_C235,mod,PERCENT_0),null,null)
+//		,AR_C236	(Mod390Key.AR_C236
+//			,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification() && hasPercent0(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C236,mod,vat.getQuota())
+//			,null,null,null)
 
 		// Adquisiciones intracomunitarias al 2%		
-		,AR_C392	(Mod390Key.AR_C392
-			,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification() && hasPercent2(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C392,mod,vat.getBase())
-			,null,null,null)
-		,AR_C393	(Mod390Key.AR_C393,null,null,(ctx,mod) -> add(Mod390Key.AR_C393,mod,PERCENT_2),null,null)
-		,AR_C394	(Mod390Key.AR_C394
-			,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification() && hasPercent2(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C394,mod,vat.getQuota())
-			,null,null,null)
+//		,AR_C392	(Mod390Key.AR_C392
+//			,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification() && hasPercent2(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C392,mod,vat.getBase())
+//			,null,null,null)
+//		,AR_C393	(Mod390Key.AR_C393,null,null,(ctx,mod) -> add(Mod390Key.AR_C393,mod,PERCENT_2),null,null)
+//		,AR_C394	(Mod390Key.AR_C394
+//			,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification() && hasPercent2(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C394,mod,vat.getQuota())
+//			,null,null,null)
 		
 		// Adquisiciones intracomunitarias al 4%		
 		,AR_C010	(Mod390Key.AR_C010
@@ -311,15 +311,15 @@ public class Mod390HFAraba2024Declaration extends Mod390HFArabaDeclaration {
 			,null,null,null)
 		
 		// Adquisiciones intracomunitarias al 7,5%		
-		,AR_C395	(Mod390Key.AR_C395
-			,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification() && hasPercent75(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C395,mod,vat.getBase())
-			,null,null,null)
-		,AR_C396	(Mod390Key.AR_C396,null,null,(ctx,mod) -> add(Mod390Key.AR_C396,mod,PERCENT_75),null,null)
-		,AR_C397	(Mod390Key.AR_C397
-			,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification() && hasPercent75(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C397,mod,vat.getQuota())
-			,null,null,null)
+//		,AR_C395	(Mod390Key.AR_C395
+//			,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification() && hasPercent75(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C395,mod,vat.getBase())
+//			,null,null,null)
+//		,AR_C396	(Mod390Key.AR_C396,null,null,(ctx,mod) -> add(Mod390Key.AR_C396,mod,PERCENT_75),null,null)
+//		,AR_C397	(Mod390Key.AR_C397
+//			,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification() && hasPercent75(vat)
+//			,(ctx,mod,vat) -> add(Mod390Key.AR_C397,mod,vat.getQuota())
+//			,null,null,null)
 
 		// Adquisiciones intracomunitarias al 10%		
 		,AR_C813	(Mod390Key.AR_C813
@@ -355,9 +355,12 @@ public class Mod390HFAraba2024Declaration extends Mod390HFArabaDeclaration {
 		
 		// TOTAL CUOTA DEVENGADA
 		,AR_C041	(Mod390Key.AR_C041,null,null,null,
-			"AR_C204+AR_C382+AR_C003+AR_C207+AR_C385+AR_C806+AR_C809+AR_C352+AR_C020+AR_C224+"
-		  + "AR_C812+AR_C388+AR_C027+AR_C821+AR_C391+AR_C830+AR_C036+AR_C833+AR_C038+AR_C240+"
-		  + "AR_C236+AR_C394+AR_C012+AR_C233+AR_C397+AR_C815+AR_C818+AR_C354",null)
+//			"AR_C204+AR_C382+AR_C003+AR_C207+AR_C385+AR_C806+AR_C809+AR_C352+AR_C020+AR_C224+"
+//		  + "AR_C812+AR_C388+AR_C027+AR_C821+AR_C391+AR_C830+AR_C036+AR_C833+AR_C038+AR_C240+"
+//		  + "AR_C236+AR_C394+AR_C012+AR_C233+AR_C397+AR_C815+AR_C818+AR_C354",null)
+			"AR_C204+AR_C003+AR_C806+AR_C809+AR_C352+AR_C020+AR_C224+"
+		  + "AR_C027+AR_C830+AR_C036+AR_C833+AR_C038+AR_C240+"
+		  + "AR_C012+AR_C233+AR_C815+AR_C818+AR_C354",null)
 
 		// Minoración por devolución en régimen de viajeros
 		,AR_C042	(Mod390Key.AR_C042)

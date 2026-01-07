@@ -23,13 +23,13 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod390HFBizkaia2024Declaration extends Mod390HFBizkaiaDeclaration {
+class Mod390HFBizkaia2025Declaration extends Mod390HFBizkaiaDeclaration {
 	
-	Mod390HFBizkaia2024Declaration() {
+	Mod390HFBizkaia2025Declaration() {
 	}
 	
 	static boolean accept(Mod390HF mod) {
-		return  mod.isBizkaia() && mod.getYear() == 2024;
+		return  mod.isBizkaia() && mod.getYear() >= 2025;
 	}
 	
 	private static final Mod390Key[] PRORATE_KEYS = new Mod390Key[]{
@@ -88,14 +88,14 @@ class Mod390HFBizkaia2024Declaration extends Mod390HFBizkaiaDeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C050,mod,vat.getQuota())
 			,null,null,null)
 		
-		// Base imponible, porcentaje y cuota al 4% y 2%
+		// Base imponible, porcentaje y cuota al 4%
 		,BZ_C020(Mod390Key.BZ_C020
-			,(mod,vat) -> isCommonNationalSales(vat) && (hasPercent4(vat) || hasPercent2(vat)) 
+			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent4(vat) 
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C020,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X020(Mod390Key.BZ_X020,null,null,(ctx,mod) -> add(Mod390Key.BZ_X020,mod,PERCENT_4),null,null)
 		,BZ_C021(Mod390Key.BZ_C021
-			,(mod,vat) -> isCommonNationalSales(vat) && (hasPercent4(vat) || hasPercent2(vat))
+			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C021,mod,vat.getQuota())
 			,null,null,null)
 		
@@ -110,14 +110,14 @@ class Mod390HFBizkaia2024Declaration extends Mod390HFBizkaiaDeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C052,mod,vat.getQuota())
 			,null,null,null)
 		
-		// Base imponible, porcentaje y cuota al 10% y 7,5%
+		// Base imponible, porcentaje y cuota al 10%
 		,BZ_C022	(Mod390Key.BZ_C022
-			,(mod,vat) -> isCommonNationalSales(vat) && (hasPercent10(vat) || hasPercent75(vat))
+			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent10(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C022,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X022	(Mod390Key.BZ_X022,null,null,(ctx,mod) -> add(Mod390Key.BZ_X022,mod,PERCENT_10),null,null)
 		,BZ_C023	(Mod390Key.BZ_C023
-			,(mod,vat) -> isCommonNationalSales(vat) && (hasPercent10(vat) || hasPercent75(vat))
+			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent10(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C023,mod,vat.getQuota())
 			,null,null,null)
 		
@@ -137,7 +137,7 @@ class Mod390HFBizkaia2024Declaration extends Mod390HFBizkaiaDeclaration {
 		,BZ_X053	(Mod390Key.BZ_X053,null,null,(ctx,mod) -> add(Mod390Key.BZ_X053,mod,PERCENT_0),null,null)
 		,BZ_C054	(Mod390Key.BZ_C054)
 
-		// Operaciones intragrupo. Base imponible, porcentaje y cuota al 4% y 2%
+		// Operaciones intragrupo. Base imponible, porcentaje y cuota al 4%
 		,BZ_C026	(Mod390Key.BZ_C026)
 		,BZ_X026	(Mod390Key.BZ_X026,null,null,(ctx,mod) -> add(Mod390Key.BZ_X026,mod,PERCENT_4),null,null)
 		,BZ_C027	(Mod390Key.BZ_C027)
@@ -147,7 +147,7 @@ class Mod390HFBizkaia2024Declaration extends Mod390HFBizkaiaDeclaration {
 		,BZ_X055	(Mod390Key.BZ_X055,null,null,(ctx,mod) -> add(Mod390Key.BZ_X055,mod,PERCENT_5),null,null)
 		,BZ_C056	(Mod390Key.BZ_C056)
 		
-		// Operaciones intragrupo. Base imponible, porcentaje y cuota al 10% y 7,5%
+		// Operaciones intragrupo. Base imponible, porcentaje y cuota al 10%
 		,BZ_C028	(Mod390Key.BZ_C028)
 		,BZ_X028	(Mod390Key.BZ_X028,null,null,(ctx,mod) -> add(Mod390Key.BZ_X028,mod,PERCENT_10),null,null)
 		,BZ_C029	(Mod390Key.BZ_C029)
@@ -157,14 +157,14 @@ class Mod390HFBizkaia2024Declaration extends Mod390HFBizkaiaDeclaration {
 		,BZ_X030	(Mod390Key.BZ_X030,null,null,(ctx,mod) -> add(Mod390Key.BZ_X030,mod,PERCENT_21),null,null)
 		,BZ_C031	(Mod390Key.BZ_C031)
 		
-		// Recargo equivalencia al primer 0,5% y 0,26%
+		// Recargo equivalencia al primer 0,5%
 		,BZ_C032	(Mod390Key.BZ_C032
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && (hasSurchargePercent05(vat) || hasSurchargePercent026(vat))
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent05(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C032,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X032	(Mod390Key.BZ_X032,null,null,(ctx,mod) -> add(Mod390Key.BZ_X032,mod,SURCHARGE_PERCENT_05),null,null)
 		,BZ_C033	(Mod390Key.BZ_C033
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && (hasSurchargePercent05(vat) || hasSurchargePercent026(vat))
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent05(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C033,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		
@@ -179,14 +179,14 @@ class Mod390HFBizkaia2024Declaration extends Mod390HFBizkaiaDeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C058,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		
-		// Recargo equivalencia al 1,4% y 1%
+		// Recargo equivalencia al 1,4%
 		,BZ_C034	(Mod390Key.BZ_C034
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && (hasSurchargePercent14(vat) || hasSurchargePercent1(vat)) 
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent14(vat) 
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C034,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X034	(Mod390Key.BZ_X034,null,null,(ctx,mod) -> add(Mod390Key.BZ_X034,mod,SURCHARGE_PERCENT_14),null,null)
 		,BZ_C035	(Mod390Key.BZ_C035
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && (hasSurchargePercent14(vat) || hasSurchargePercent1(vat))
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent14(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C035,mod,vat.getSurchargeQuota())
 			,null,null,null)
 
