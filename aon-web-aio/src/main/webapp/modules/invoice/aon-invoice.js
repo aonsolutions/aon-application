@@ -291,8 +291,9 @@ export class AonInvoice extends AonElement {
 	}
 
 	build() {
-		if(this.icc.isNoSif()) this.fileOpened = false;
-		this.checkConfiguration();
+		let check = this.checkConfiguration();
+		if(this.icc.isNoSif() || !check) this.fileOpened = false;
+
 		this.clear();
 		this.buildInputFile();
 		this.buildToolbar();
@@ -304,10 +305,23 @@ export class AonInvoice extends AonElement {
 		});
 	}
 
-
 	checkConfiguration() {		
 		if(!this.getDur().hasScopes()) {
-			this.showError("El usuario no tiene ámbitos asignados. Por favor, contacte con el administrador del dominio.");
+			this.showMessageError("El usuario no tiene ámbitos asignados. Por favor, contacte con el administrador del dominio.");
+			return false;
+		}
+		if(this.getInvoice().isEmitida()){
+			if(!this.icc.hasCommunication() && !this.icc.isNoSif()) {
+				this.showMessageError("La configuración de facturación no está completa. Por favor, revise la configuración.");
+				return false;
+			}
+
+			if(!this.icc.getAdministration().isUnknown() && (this.icc.hasCommunication() || this.icc.willBeCommunication() || this.icc.isNoSif())) {
+				return true;
+			} else {
+				this.showMessageError("La configuración de facturación no está completa. Es obligatorio selecionar una administración para la comunicación electrónica de facturas.");
+				return false;
+			}
 		}
 		return true;
 	}	
@@ -529,7 +543,7 @@ export class AonInvoice extends AonElement {
 
 		invoiceToolbar.addButton2(ACTION.BACK, () => this.back());
 		if( (this.getInvoice().file 
-			&& !(this.icc.isNoSif() && this.getInvoice().file.path && this.getInvoice().file.path.includes('download_invoice_pdf') ) )
+			&& !((this.icc.isNoSif() || !this.checkConfiguration()) && this.getInvoice().file.path && this.getInvoice().file.path.includes('download_invoice_pdf') ) )
 			|| (!this.icc.isNoSif() && this.invoice.isEmitida())) {
 			invoiceToolbar.addButtonTitle(ACTION.SHOW_FILE, () => this.showFile(true));
 		} else if(!this.invoice.isEmitida()){

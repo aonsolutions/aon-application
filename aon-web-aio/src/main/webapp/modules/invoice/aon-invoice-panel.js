@@ -3,7 +3,8 @@ import {
 	insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel,
 	getBidoqToOCR, getBidoqToOCRCount, getInvoice, getInvoiceCount, getRawdocCount, invoiceDuplicateFix, saveInvoiceClosing, downloadRegistryExcel,
 	checkBidoq,
-	getCompanyActivities
+	getCompanyActivities,
+	getInvoiceConfiguration
 } from "../../services/service.js";
 import { Invoice } from "./Invoice.js";
 import { AonInvoice } from "./aon-invoice.js";
@@ -53,6 +54,8 @@ import { AonIncomeList } from "./aon-income-list.js";
 import { AonExpenseList } from "./aon-expense-list.js";
 import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
 import { AonDialog } from "../../components/aon-dialog.js";
+import { InvoiceCommunicationConfiguration } from "../../models/InvoiceCommunicationConfiguration.js";
+import { isValid } from "../../services/documentUtils.js";
 
 export class AonInvoicePanel extends AonElement {
 	selectedOption;
@@ -90,7 +93,7 @@ export class AonInvoicePanel extends AonElement {
 		super();
 	}
 
-	connectedCallback() {
+	async connectedCallback() {
 		this.initialize();
 		this.innerHTML = `
 			<aon-application id='${this.INVOICE}' title='${MSG.BILLING}' drag_and_drop='true'></aon-application>
@@ -98,6 +101,7 @@ export class AonInvoicePanel extends AonElement {
 			<input id='${this.INPUT_FILE}' style='display:none;' type='file' name='file' multiple>
 			<input id='${this.INPUT_CAMERA}' type='file' accept='image/*' capture='camera' hidden />
 		`;
+		await this.getInvoiceConfiguration();
 		this.buildDur().then((r) => {
 			this.build();
 		});
@@ -167,9 +171,25 @@ export class AonInvoicePanel extends AonElement {
 			this.getApplication().showMessageError("El usuario no tiene ámbitos asignados. Por favor, contacte con el administrador del dominio.");
 			return false;
 		}
+		if(!this.config || !this.config.company || !this.config.company.document || !this.config.communication){
+			this.getApplication().showMessageError("La configuración de facturación no está completa. Por favor, revise la configuración.");
+			return false;
+		} 
+		if(!isValid(this.config.company.document)) {
+			this.getApplication().showMessageError("La configuración de facturación no está completa. El NIF/CIF de la empresa no es válido.");
+			return false;
+		}
+		// if(isPersonaFisica(this.config.company.document) && !(this.config.company.person || this.config.person)) {
+		// 	this.getApplication().showMessageError("La configuración de facturación no está completa. Es obligatorio rellenar todos los datos de la persona física.");
+		// 	return false;
+		// }
 		return true;
-	}	
+	}
 
+	async getInvoiceConfiguration() {
+		this.config = await getInvoiceConfiguration();
+		this.icc = new InvoiceCommunicationConfiguration(this.config.communication);
+	}
 	buildEmptyToolbarOptions() {
 		this.clearToolbar();
 	}
