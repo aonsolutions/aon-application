@@ -3555,6 +3555,7 @@ export class AonInvoice extends AonElement {
 	restoreInvoice() {
 		this.updateCounter(getRestoreFromOption(this.invoice), getRestoreToOption(this.invoice), 1);
 		this.getInvoice().status = CONSTANT.INBOX;
+		this.getInvoice().number = '';
 		this.save(MSG.RESTORED_DATA);
 		this.reload();
 	}
