@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToastModel;
@@ -22,6 +23,7 @@ import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -40,6 +42,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.Widget;
 
 abstract class Model190Base extends DockLayoutPanel {
 
@@ -95,6 +98,12 @@ abstract class Model190Base extends DockLayoutPanel {
 
 	private IModel190Detail detailManager;
 	private AonToastModel toast = null;
+	
+	private AonDoubleBox preferredContributionsTotal;
+	private AonDoubleBox otherContributionsTotal;
+	private AonDoubleBox preferredContributionsPercentage1;
+	private AonDoubleBox preferredContributionsPercentage2;
+	private AonDoubleBox otherContributionsPercentage;
 
 	protected Model190Base(Model190Callback cbk, Mod190 mod190) {
 		super(Unit.PX);
@@ -535,13 +544,14 @@ abstract class Model190Base extends DockLayoutPanel {
 		ScrollPanel declarationScrollPanel = new ScrollPanel();
 		declarationScrollPanel.setStyleName(AON.CSS.aonWidthAll());
 		declarationScrollPanel.addStyleName(AON.CSS.aonScrollArea());
+		
+		FlowPanel declarationPanel = new FlowPanel();
 
 		FlexTable table = new FlexTable();
 		table.setStyleName(AON.CSS.aonTable());
 		table.addStyleName(AON.CSS.aonWidthAlmostAll());
 		table.addStyleName(AON.CSS.aonBlockCenter());
 		table.getColumnFormatter().setWidth(0, "300px");
-
 		table.getColumnFormatter().setWidth(1, "auto");
 
 		table.setWidget(0, 0, new InlineLabel(AON.MSG.document()));
@@ -630,9 +640,19 @@ abstract class Model190Base extends DockLayoutPanel {
 		});
 		table.setWidget(6, 1, replaced);
 
-		declarationScrollPanel.setWidget(table);
+//		declarationScrollPanel.setWidget(table);
+		declarationPanel.add(table);
+		
+		// A partir del ejercicio 2025 y para las administraciones forales ARABA, BIZKAIA y GIPUZKOA, se piden los campos nuevos
+		if (getModel().getYear() >= 2025 && (getModel().getAdministration() == Administration.ALAVA || getModel().getAdministration() == Administration.BIZKAIA || getModel().getAdministration() == Administration.GIPUZKOA)) {
+			declarationPanel.add(getForalesTable2025());	
+		}
+		
+		declarationScrollPanel.setWidget(declarationPanel);
 		tabPanel.add(declarationScrollPanel, AON.MSG.declaration());
 	}
+
+
 
 	protected void decorateDeclarationTab() {
 		if (receiptBox != null) {
@@ -952,4 +972,164 @@ abstract class Model190Base extends DockLayoutPanel {
 		markAsDirty();
 		validate();
 	}
+	
+	private Widget getForalesTable2025() {
+		// Otra tabla para los campos nuevos de 2025 de Mod190
+		FlexTable table = new FlexTable();
+		table.setStyleName(AON.CSS.aonTable());
+//		table2025.addStyleName(AON.CSS.aonWidthAlmostAll());
+//		table2025.addStyleName(AON.CSS.aonBlockCenter());
+		table.addStyleName(AON.CSS.aonMarginTop());
+		table.getColumnFormatter().setWidth(0, "auto");
+		table.getColumnFormatter().setWidth(1, "130px");
+		table.getColumnFormatter().setWidth(2, "130px");
+		int row = 0;
+		
+		preferredContributionsTotal = new AonDoubleBox();
+		otherContributionsTotal = new AonDoubleBox();
+		preferredContributionsPercentage1 = new AonDoubleBox();
+		preferredContributionsPercentage2 = new AonDoubleBox();
+		otherContributionsPercentage = new AonDoubleBox();
+		setForales2025TotalValues();
+		
+//		private double preferredContributions;        	 	// Preferentes: Aportaciones
+//		private double preferredContributionsUnder36; 	 	// Preferentes: Contribuciones empresariales a favor de personas menores de 36 años
+//		private double preferredContributionsOver36;  	 	// Preferentes: Contribuciones empresariales a favor de personas de 36 años o más
+//		private double preferredContributionsTotal; 	 	// Preferentes: Contribuciones empresariales totales
+//		private double preferredGrossAnnualSalary; 		 	// Preferentes: Salario bruto anual de la entidad	
+//		private double preferredContributionsPercentage1; 	// Preferentes: Porcentaje de las aportaciones y contribuciones sobre el salario bruto anual	
+//		private double preferredContributionsPercentage2; 	// Preferentes: Porcentaje de las contribuciones sobre el salario bruto anual
+//		private double otherContributionsUnder36; 		  	// Resto sistemas de empleo: Contribuciones empresariales a favor de personas menores de 36 años
+//		private double otherContributionsOver36; 		  	// Resto sistemas de empleo: Contribuciones empresariales a favor de personas de 36 años o más
+//		private double otherContributionsTotal; 			// Resto sistemas de empleo: Contribuciones empresariales totales
+//		private double otherGrossAnnualSalary; 				// Resto sistemas de empleo: Salario bruto anual de la entidad
+//		private double otherContributionsPercentage; 		// Resto sistemas de empleo: Porcentaje de las contribuciones sobre el salario bruto anual
+		
+		table.getCellFormatter().setStyleName(0, 0, AON.CSS.aonBorderBottom());
+		table.getCellFormatter().addStyleName(0, 0, AON.CSS.aonBold());
+		table.getCellFormatter().addStyleName(0, 0, AON.CSS.aonMarginTop());
+		table.getFlexCellFormatter().setColSpan(0, 0, 3);
+		table.setWidget(0, 0, new InlineLabel("APORTACIONES Y CONTRIBUCIONES A PLANES DE PREVISI\u00D3N SOCIAL"));
+		
+		row++;		
+		table.setWidget(row, 0, new InlineLabel(""));
+		table.setWidget(row, 1, new InlineLabel("Preferentes"));
+		table.setWidget(row, 2, new InlineLabel("Resto sistemas de empleo"));
+		table.getCellFormatter().setStyleName(row, 1, AON.CSS.aonTableLabel());
+		table.getCellFormatter().addStyleName(row, 1, AON.CSS.aonTextCenter());
+		table.getCellFormatter().setStyleName(row, 2, AON.CSS.aonTableLabel());
+		table.getCellFormatter().addStyleName(row, 2, AON.CSS.aonTextCenter());
+		
+		row++;
+		table.setWidget(row, 0, new InlineLabel("Aportaciones"));
+		AonDoubleBox preferredContributions = new AonDoubleBox();
+		preferredContributions.setValue(getModel().getPreferredContributions());
+		preferredContributions.addValueChangeHandler(event -> {
+			if (preferredContributions.getValue() == null) 
+				preferredContributions.setValue(0.0, false);
+			getModel().setPreferredContributions(preferredContributions.getValue());
+			setForales2025TotalValues();
+			markAsDirty();
+		});
+		table.setWidget(row, 1, preferredContributions);
+		
+		row++;
+		table.setWidget(row, 0, new InlineLabel("Contribuciones empresariales a favor de personas menores de 36 a\u00F1os"));
+		AonDoubleBox preferredContributionsUnder36 = new AonDoubleBox();
+		preferredContributionsUnder36.setValue(getModel().getPreferredContributionsUnder36());
+		preferredContributionsUnder36.addValueChangeHandler(event -> {
+			if (preferredContributionsUnder36.getValue() == null) 
+				preferredContributionsUnder36.setValue(0.0, false);
+			getModel().setPreferredContributionsUnder36(preferredContributionsUnder36.getValue());
+			setForales2025TotalValues();
+			markAsDirty();
+		});
+		table.setWidget(row, 1, preferredContributionsUnder36);
+		AonDoubleBox otherContributionsUnder36 = new AonDoubleBox();
+		otherContributionsUnder36.setValue(getModel().getOtherContributionsUnder36());
+		otherContributionsUnder36.addValueChangeHandler(event -> {
+			if (otherContributionsUnder36.getValue() == null) 
+				otherContributionsUnder36.setValue(0.0, false);
+			getModel().setOtherContributionsUnder36(otherContributionsUnder36.getValue());
+			setForales2025TotalValues();
+			markAsDirty();
+		});
+		table.setWidget(row, 2, otherContributionsUnder36);
+		
+		row++;
+		table.setWidget(row, 0, new InlineLabel("Contribuciones empresariales a favor de personas de 36 a\u00F1os o m\u00E1s"));
+		AonDoubleBox preferredContributionsOver36 = new AonDoubleBox();
+		preferredContributionsOver36.setValue(getModel().getPreferredContributionsOver36());
+		preferredContributionsOver36.addValueChangeHandler(event -> {
+			if (preferredContributionsOver36.getValue() == null) 
+				preferredContributionsOver36.setValue(0.0, false);
+			getModel().setPreferredContributionsOver36(preferredContributionsOver36.getValue());
+			setForales2025TotalValues();
+			markAsDirty();
+		});
+		table.setWidget(row, 1, preferredContributionsOver36);
+		AonDoubleBox otherContributionsOver36 = new AonDoubleBox();
+		otherContributionsOver36.setValue(getModel().getOtherContributionsOver36());
+		otherContributionsOver36.addValueChangeHandler(event -> {
+			if (otherContributionsOver36.getValue() == null) 
+				otherContributionsOver36.setValue(0.0, false);
+			getModel().setOtherContributionsOver36(otherContributionsOver36.getValue());
+			setForales2025TotalValues();
+			markAsDirty();
+		});
+		table.setWidget(row, 2, otherContributionsOver36);
+		
+		row++;
+		table.setWidget(row, 0, new InlineLabel("Contribuciones empresariales totales"));
+		preferredContributionsTotal.setEnabled(false);
+		table.setWidget(row, 1, preferredContributionsTotal);
+		otherContributionsTotal.setEnabled(false);		
+		table.setWidget(row, 2, otherContributionsTotal);
+		
+		row++;
+		table.setWidget(row, 0, new InlineLabel("Salario bruto anual de la entidad"));
+		AonDoubleBox preferredGrossAnnualSalary = new AonDoubleBox();
+		preferredGrossAnnualSalary.setValue(getModel().getPreferredGrossAnnualSalary());
+		preferredGrossAnnualSalary.addValueChangeHandler(event -> {
+			if (preferredGrossAnnualSalary.getValue() == null) 
+				preferredGrossAnnualSalary.setValue(0.0, false);
+			getModel().setPreferredGrossAnnualSalary(preferredGrossAnnualSalary.getValue());
+			setForales2025TotalValues();
+			markAsDirty();
+		});
+		table.setWidget(row, 1, preferredGrossAnnualSalary);
+		AonDoubleBox otherGrossAnnualSalary = new AonDoubleBox();
+		otherGrossAnnualSalary.setValue(getModel().getOtherGrossAnnualSalary());
+		otherGrossAnnualSalary.addValueChangeHandler(event -> {
+			if (otherGrossAnnualSalary.getValue() == null) 
+				otherGrossAnnualSalary.setValue(0.0, false);
+			getModel().setOtherGrossAnnualSalary(otherGrossAnnualSalary.getValue());
+			setForales2025TotalValues();
+			markAsDirty();
+		});
+		table.setWidget(row, 2, otherGrossAnnualSalary);
+		
+		row++;
+		table.setWidget(row, 0, new InlineLabel("Porcentaje de las aportaciones y contribuciones sobre el salario bruto anual"));
+		preferredContributionsPercentage1.setEnabled(false);
+		table.setWidget(row, 1, preferredContributionsPercentage1);
+		
+		row++;
+		table.setWidget(row, 0, new InlineLabel("Porcentaje de las contribuciones sobre el salario bruto anual"));
+		preferredContributionsPercentage2.setEnabled(false);
+		table.setWidget(row, 1, preferredContributionsPercentage2);
+		otherContributionsPercentage.setEnabled(false);
+		table.setWidget(row, 2, otherContributionsPercentage);
+		
+		return table;
+	}
+
+	private void setForales2025TotalValues() {
+		preferredContributionsTotal.setValue(getModel().getPreferredContributionsTotal());
+		otherContributionsTotal.setValue(getModel().getOtherContributionsTotal());
+		preferredContributionsPercentage1.setValue(getModel().getPreferredContributionsPercentage1());
+		preferredContributionsPercentage2.setValue(getModel().getPreferredContributionsPercentage2());
+		otherContributionsPercentage.setValue(getModel().getOtherContributionsPercentage());
+	}	
+	
 }

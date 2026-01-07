@@ -96,7 +96,9 @@ public class Model190NAVARRA extends Model190Base {
 	}
 
 	protected void paintPerceptorsTab(TabLayoutPanel tabPanel, Integer selectedIndex) {
-		if (getModel().getYear() >= 2024) {
+		if (getModel().getYear() >= 2025) {
+			setDetailManager( new Model190NAVARRADetail2025( getCallback() , getModel(), selectedIndex ));
+		} else if (getModel().getYear() >= 2024) {
 			setDetailManager( new Model190NAVARRADetail2024( getCallback() , getModel(), selectedIndex ));
 		} else {
 			setDetailManager( new Model190NAVARRADetail2021( getCallback() , getModel(), selectedIndex ));
