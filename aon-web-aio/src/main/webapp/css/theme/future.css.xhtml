@@ -103,6 +103,9 @@
 	
 	.aon-finding-filter-toolbar{
 		height: 2.5rem;
+		display: flex;
+		align-items: center;
+		justify-content: right;
 	}
 	
 	.aon-dataScroller {
@@ -366,6 +369,11 @@
 		height: 2.15rem;
 	}
 	
+	
+	 .aon-inputText.aon-icon-search{
+		height: 2.00rem;
+		background-size: 20px;
+	 }
 
 	.aon-inputTextarea {
 		height: 5rem;
@@ -684,7 +692,7 @@
 	.aon-finding-toolbar-item.aon-icon-remove-selection:hover, 
 	.aon-finding-toolbar-item.aon-icon-done-all:hover, 
 	.aon-finding-toolbar-item.aon-icon-remove-done:hover,
-	.aon-finding-toolbar-item.aon-dropDownMenu:hover {
+	.aon-finding-toolbar-item.aon-dropDownMenu:hover{
   		background-color: inherit;
 	}
 	
@@ -979,7 +987,13 @@
     	mask-image: url(#{aonResource.resolve['/icons/file-text.svg']}) ;
     }
     
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-new):before {
+    	mask-image: url(#{aonResource.resolve['/icons/plus.svg']}) ;
+    }
     
+    .rich-menu-list-bg .rich-menu-item:has(.aon-icon-accept):before {
+    	mask-image: url(#{aonResource.resolve['/icons/save.svg']}) ;
+    }
     
 	.rich-menu-item:hover,
 	.aon-dropDownMenu-selectItem, 
@@ -1446,7 +1460,7 @@
   		mask-position-y: center;
   		mask-image: url(#{aonResource.resolve['/icons/save.svg']});
     }
-    
+
     td.aon-width-220 > div:only-child {
         min-width: max-content;
     }
@@ -1474,7 +1488,7 @@
     #aonContent\:globalConfigPanelForm\:configPanelBar{
     	margin-top: 3px !important;
     	height: calc(100vh - 17px );
-    	min-width: fit-content !important;
+    	min-width: 250px !important;
     }
     
     .aon-ConfigPanel .aon-direct-access-list-element a {
@@ -1505,6 +1519,20 @@
     
     .aon-ConfigPanel .rich-panelbar-content-exterior {
     	height: auto !important;
+    }
+    
+    .aon-form-group-title {
+    	border-bottom: none ;
+    }
+    .aon-form-group-title-internal {
+    	background: none ;
+    	border-left: none ;
+    }
+    
+    
+    .aon-list-icon.aon-icon-contact {
+    	padding-left: 32px;
+    	background-image: url(#{aonResource.resolve['/icons/user.svg']});
     }
 	
 </style>

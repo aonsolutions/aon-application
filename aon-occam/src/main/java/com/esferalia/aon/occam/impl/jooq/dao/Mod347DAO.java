@@ -983,7 +983,7 @@ public class Mod347DAO {
 		return Stream.concat(
 				 OLDVATDAO.getVatBreakdown(ctx, fromDate, toDate, mod347)
 				,OLDVATDAO.getPeriodPendingAccrualVatBreakdown(ctx, fromDate, toDate, null)
-			)
+			)			
 			.filter(vat ->  !(mod347.isExcludeOutputNationalZero() && vat.isSales() && vat.getTransaction() == InvoiceTransactionType.NATIONAL && AonMathUtils.isZero(vat.getPercentage())) )				
 			.filter(vat ->  !(mod347.isExcludeInputNationalZero() && !vat.isSales() && vat.getTransaction() == InvoiceTransactionType.NATIONAL && AonMathUtils.isZero(vat.getPercentage())) )
 			.filter(vat ->  !(mod347.isExcludeRetention() && vat.hasRetention()))

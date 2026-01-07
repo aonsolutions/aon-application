@@ -884,6 +884,7 @@ public class Mod349DAO {
 				.where(INVOICE.DOMAIN.equal(ctx.getDomainId()))
 				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
 				.and(INVOICE.TRANSACTION.eq(InvoiceTransactionType.INTRACOMMUNITY.value()))
+				.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
 				.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
 				.groupBy(INVOICE.ID)
 				.orderBy(InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )				

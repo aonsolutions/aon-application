@@ -20,7 +20,7 @@ export class AonManagementMenu extends AonSuiteMenu {
     async connectedCallback () {
         this.clear();
         this.initialize();
-   		this.gestionInitialize();
+   		await this.managementInitialize();
         this.build();
         this.setTitle("Opciones de gestión");
     }
@@ -30,7 +30,7 @@ export class AonManagementMenu extends AonSuiteMenu {
         this.icc = new InvoiceCommunicationConfiguration(c.communication);
     }
 
-    gestionInitialize() {
+    async managementInitialize() {
         this.AON_MENU = 'aonMenu';
         this.AON_HEADER = 'aonHeader';
         this.ROOT_PANEL = 'rootPanel';
@@ -57,11 +57,11 @@ export class AonManagementMenu extends AonSuiteMenu {
             title: "Cliente", 
             action: () => this.rootPanel(new JSF.AonJsfCustomer())
         }];
-        this.initOptions();
+        await this.initOptions();
     }
 
-    initOptions() {
-		this.initInvoiceConfiguration();
+    async initOptions() {
+		await this.initInvoiceConfiguration();
         this.options = [{
             title: 'Ventas',
             options: [{

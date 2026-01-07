@@ -416,6 +416,10 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 									@Override public void visitCancelled() {
 										colorAndStatus.setLeft("red").setRight("Anulada");
 									}
+									@Override public void visitExternallyCommunicated() {
+										colorAndStatus.setLeft("blue").setRight("Com. Externamente");
+									}
+									
 								} );
 							}
 							sb.appendHtmlConstant( 

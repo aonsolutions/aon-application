@@ -402,8 +402,8 @@
 					</ui:include>
 				</aon:if>			
 				<aon:if test="#{!saleInvoice.nevv}">
-					<!-- *************** VERIFACTU / NO VERIFACTU / SIF INFO *************** -->				
-					<aon:if test="#{saleInvoice.verifactu or saleInvoice.noVerifactu or saleInvoice.sif}">
+					<!-- *************** VERIFACTU / NO VERIFACTU / SIF INFO / SII *************** -->				
+					<aon:if test="#{saleInvoice.verifactu or saleInvoice.noVerifactu or saleInvoice.sif or saleInvoice.sii}">
 						<aon:panelGrid id="verifactuBlock" columns="3" 
 							styleClass="aon-width-all aon-margin-top aon-margin-bottom"
 							columnClasses="
@@ -417,6 +417,9 @@
 									styleClass="aon-icon-aeat aon-bold" style="padding-left: 25px;"/>
 								<aon:outputText value="NO Veri*Factu"
 									rendered="#{saleInvoice.noVerifactu}" 
+									styleClass="aon-icon-aeat aon-nowrap aon-bold" style="padding-left: 25px;"/>
+								<aon:outputText value="S.I.I."
+									rendered="#{saleInvoice.sii}" 
 									styleClass="aon-icon-aeat aon-nowrap aon-bold" style="padding-left: 25px;"/>
 								<!--  
 								<aon:outputText value="S.I.F."
@@ -434,14 +437,14 @@
 							
 							<aon:div  style="padding: 0 5px; border-bottom: solid #3a85c3 0.5px; height: 30px; display: flex; align-items: center; gap: 5px;">
 								<aon:if test="#{saleInvoice.issueable}">
-									<aon:if test="#{saleInvoice.noVerifactu or saleInvoice.sif}">
+									<aon:if test="#{saleInvoice.noVerifactu or saleInvoice.sif or saleInvoice.sii}">
 										<aon:confirmButton id="acceptNoVerifactuSif"
-											title="Emitir Factura"
+											title="Una vez emitida la factura, se comunicará/registrará automaticamente y no se podrá modificar."
 											value="Emitir Factura"
 											immediate="true" 
 											styleClass="aon-icon-commandButton aon-icon-check-black"
 											confirmTitle="Emitir"
-											confirmMessage="&iquest;Confirmar emisi&oacute;n de la factura?"
+											confirmMessage="¿Confirmar emisión de la factura?"
 											confirmActionListener="#{saleInvoice.onCommunicateInvoice}"
 											reRender="saleInvoiceForm"
 										/>
@@ -457,7 +460,7 @@
 												immediate="true" 
 												styleClass="aon-icon-commandButton aon-icon-delete"
 												confirmTitle="Anular Factura"
-												confirmMessage="&iquest;Confirmar emisi&oacute;n de la factura?"
+												confirmMessage="¿Confirmar anulación de la factura?"
 												confirmAction="#{saleInvoice.onCommunicateCancelInvoice}"
 											/>
 										</aon:if>

@@ -70,18 +70,11 @@ public class InvoiceCommunicationHistory implements Serializable {
 		this.status = status;
 		return this;
 	}
-	public boolean isWrong() {
-		return this.status == InvoiceCommunicationStatus.WRONG;
-	}
-	public boolean isAcceptedWithErrors() {
-		return this.status == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS;
-	}
-	public boolean isAccepted() {
-		return this.status == InvoiceCommunicationStatus.ACCEPTED;
-	}
-	public boolean isPending() {
-		return this.status == InvoiceCommunicationStatus.PENDING;
-	}
+	public boolean isWrong() 					{return this.status == InvoiceCommunicationStatus.WRONG; }
+	public boolean isAcceptedWithErrors() 		{return this.status == InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS;	}
+	public boolean isAccepted() 				{return this.status == InvoiceCommunicationStatus.ACCEPTED;	}
+	public boolean isPending() 					{return this.status == InvoiceCommunicationStatus.PENDING;}
+	public boolean isExternallyCommunicated() 	{return this.status == InvoiceCommunicationStatus.EXTERNALLY_COMMUNICATED;}
 	
 	public boolean isMessagesVisible() {
 		return isWrong() || isAcceptedWithErrors();

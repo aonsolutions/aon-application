@@ -295,6 +295,7 @@ export class AonInvoiceList extends AonElement {
 		if("PENDING" === status) return "Pendiente";
 		else if("ACCEPTED" === status) return "Aceptada";
 		else if("ACCEPTED_WITH_ERRORS" === status) return "Aceptada con errores";
+		else if("EXTERNALLY_COMMUNICATED" === status) return "Com. Externamente";
 		else if("WRONG" === status) return "Incorrecta";
 		else return "Sin Estado";
 	}
@@ -303,6 +304,7 @@ export class AonInvoiceList extends AonElement {
 		if("PENDING" === status) return "orange";
 		else if("ACCEPTED" === status) return "green";
 		else if("ACCEPTED_WITH_ERRORS" === status) return "yellow";
+		else if("EXTERNALLY_COMMUNICATED" === status) return "blue";
 		else if("WRONG" === status) return "red"
 		else return "gray";
 	}

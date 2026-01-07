@@ -36,7 +36,7 @@
 							<aon:div styleClass="aon-popupWindow-content-internal">
 								<aon:div style="width:99%">
 									<aon:div
-										rendered="#{!invoiceController.invoiceCommunicationAccepted}" 
+										rendered="#{invoiceController.communicationAvailable}" 
 										styleClass="aon-toolbar">
 										<aon:commandButton id="verifactuaccept"	
 											value="Enviar"
@@ -77,6 +77,9 @@
 														value="#{history.status.description}" />
 													<aon:outputText style="color:yellow;"
 														rendered="#{history.acceptedWithErrors}" 
+														value="#{history.status.description}" />
+													<aon:outputText style="color:blue;"
+														rendered="#{history.externallyCommunicated}" 
 														value="#{history.status.description}" />
 													<aon:outputText style="color:orange; "
 														rendered="#{history.pending}"
