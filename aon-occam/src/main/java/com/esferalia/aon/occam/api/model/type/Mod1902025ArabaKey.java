@@ -1,13 +1,6 @@
 package com.esferalia.aon.occam.api.model.type;
 
 public enum Mod1902025ArabaKey {
-	// FALTA - AUN NO SE HA PUBLICADO LA ORDEN PERO CASI SEGURO QUE CAMBIAN IGUAL QUE EN BIZKAIA Y GIPUZKOA
-	// POR AHORA LE PONGO LO MISMO QUE EN BIZKAIA Y GIPUZKOA:
-	// CLAVE B: AÑADIR SUBCLAVE 99
-	// CLAVE C: AÑADIR SUBCLAVES 01..09
-	// CLAVE K: AÑADIR SUBCLAVES 04 Y 05
-	// CLAVE L: AÑADIR SUBCLAVES 45, 46
-	// QUITAR CLAVE Z
 	 A ("A - Rendimientos del trabajo: Empleados por cuenta ajena en general"
 		 ,null
 	 )
@@ -34,7 +27,7 @@ public enum Mod1902025ArabaKey {
 	)
 	,J ("J - Imputaci\u00F3n de rentas por la cesi\u00F3n de derechos de imagen"
 		,null
-)
+	)
 	,K ("K - Premios"
 		,new String[] { "01", "03", "04", "05" }
 	)
@@ -43,9 +36,6 @@ public enum Mod1902025ArabaKey {
 			"01", "02", "03", "04", "05", "06", "07", "08", "09", "10",	"11", "12", "13", "14", "15", "16", "17", "18" , "19", "20", 
 			"22", "23", "24", "27", "28" , "29", "35", "36", "41", "42", "44", "45", "46", "99"}
 	)
-//	,Z ("Z - Rendimientos de trabajo derivados de participaciones de acciones, participaciones u otros derechos econ\u00F3micos especiales de cualquier tipo de Fondo de Inversi\u00F3n Alternativa"
-//		,null
-//	)
 	;
 
 	private String description;

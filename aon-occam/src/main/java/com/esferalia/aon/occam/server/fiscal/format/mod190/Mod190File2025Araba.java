@@ -33,7 +33,6 @@ enum Mod190File2025Araba {
 			   ).sum(),15,2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(mod190.getContactMail(),50))
 
-	   // FALTA - NUEVOS CAMPOS PARA EL 2025	   
 	   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 75))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod190.getPreferredContributions(), 13, 2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod190.getPreferredContributionsUnder36(), 13, 2))
