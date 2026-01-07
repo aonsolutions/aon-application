@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022BIZKAIAScri
 import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022BIZKAIASpecificOperationsScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902024BIZKAIAAdditionalDataScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902024BIZKAIAScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902025BIZKAIAScript1;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -193,7 +194,9 @@ public class Model390HF2022BIZKAIA extends Model390HFBase {
 		table.getColumnFormatter().setWidth(6, WIDTH_140PX);
 		
 		table.getColumnFormatter().setWidth(7, "50px");
-		if (getModel().getYear() >= 2024)
+		if (getModel().getYear() >= 2025)
+			paintDeclaration(table,Model3902025BIZKAIAScript1.values(),8);
+		else if (getModel().getYear() == 2024)
 			paintDeclaration(table,Model3902024BIZKAIAScript1.values(),8);
 		else
 			paintDeclaration(table,Model3902022BIZKAIAScript1.values(),8);
