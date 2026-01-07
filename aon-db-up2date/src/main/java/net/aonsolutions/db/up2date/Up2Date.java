@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod1902025;
 import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionProduct;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.product.ProductBookingCreation;
@@ -571,6 +572,7 @@ public class Up2Date {
 			MEI2026Insert.MEI2026INSERT,
 			Solidarity2026Insert.SOLIDARITY2026INSERT,
 			
+			AlterFsMod1902025.ALTER_FS_MODEL_190_2025, 
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 

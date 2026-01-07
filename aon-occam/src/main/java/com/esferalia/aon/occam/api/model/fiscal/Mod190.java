@@ -50,15 +50,10 @@ public class Mod190 implements IFiscalModel, HasAudit {
 	private double preferredContributions;        	 	// Preferentes: Aportaciones
 	private double preferredContributionsUnder36; 	 	// Preferentes: Contribuciones empresariales a favor de personas menores de 36 años
 	private double preferredContributionsOver36;  	 	// Preferentes: Contribuciones empresariales a favor de personas de 36 años o más
-//	private double preferredContributionsTotal; 	 	// Preferentes: Contribuciones empresariales totales
 	private double preferredGrossAnnualSalary; 		 	// Preferentes: Salario bruto anual de la entidad	
-//	private double preferredContributionsPercentage1; 	// Preferentes: Porcentaje de las aportaciones y contribuciones sobre el salario bruto anual	
-//	private double preferredContributionsPercentage2; 	// Preferentes: Porcentaje de las contribuciones sobre el salario bruto anual
 	private double otherContributionsUnder36; 		  	// Resto sistemas de empleo: Contribuciones empresariales a favor de personas menores de 36 años
 	private double otherContributionsOver36; 		  	// Resto sistemas de empleo: Contribuciones empresariales a favor de personas de 36 años o más
-//	private double otherContributionsTotal; 			// Resto sistemas de empleo: Contribuciones empresariales totales
 	private double otherGrossAnnualSalary; 				// Resto sistemas de empleo: Salario bruto anual de la entidad
-//	private double otherContributionsPercentage; 		// Resto sistemas de empleo: Porcentaje de las contribuciones sobre el salario bruto anual
 	
 	@Override
 	public Integer getId() { 
@@ -336,34 +331,35 @@ public class Mod190 implements IFiscalModel, HasAudit {
 	public double getPreferredContributions() {
 		return preferredContributions;
 	}
-	public void setPreferredContributions(double preferredContributions) {
+	public Mod190 setPreferredContributions(double preferredContributions) {
 		this.preferredContributions = preferredContributions;
+		return this;
 	}
 	public double getPreferredContributionsUnder36() {
 		return preferredContributionsUnder36;
 	}
-	public void setPreferredContributionsUnder36(double preferredContributionsUnder36) {
+	public Mod190 setPreferredContributionsUnder36(double preferredContributionsUnder36) {
 		this.preferredContributionsUnder36 = preferredContributionsUnder36;
+		return this;
 	}
 	public double getPreferredContributionsOver36() {
 		return preferredContributionsOver36;
 	}
-	public void setPreferredContributionsOver36(double preferredContributionsOver36) {
+	public Mod190 setPreferredContributionsOver36(double preferredContributionsOver36) {
 		this.preferredContributionsOver36 = preferredContributionsOver36;
+		return this;
 	}
 	// Preferentes: Contribuciones empresariales totales
 	public double getPreferredContributionsTotal() {
 		// Campo calculado: contribuciones menores de 36 + contribuciones mayores de 36
 		return preferredContributionsUnder36 + preferredContributionsOver36;
 	}
-//	public void setPreferredContributionsTotal(double preferredContributionsTotal) {
-//		this.preferredContributionsTotal = preferredContributionsTotal;
-//	}
 	public double getPreferredGrossAnnualSalary() {
 		return preferredGrossAnnualSalary;
 	}
-	public void setPreferredGrossAnnualSalary(double preferredGrossAnnualSalary) {
+	public Mod190 setPreferredGrossAnnualSalary(double preferredGrossAnnualSalary) {
 		this.preferredGrossAnnualSalary = preferredGrossAnnualSalary;
+		return this;
 	}
 	// Preferentes: Porcentaje de las aportaciones y contribuciones sobre el salario bruto anual	
 	public double getPreferredContributionsPercentage1() {
@@ -375,9 +371,6 @@ public class Mod190 implements IFiscalModel, HasAudit {
 		} 
 		return result;
 	}
-//	public void setPreferredContributionsPercentage1(double preferredContributionsPercentage1) {
-//		this.preferredContributionsPercentage1 = preferredContributionsPercentage1;
-//	}
 	// Preferentes: Porcentaje de las contribuciones sobre el salario bruto anual
 	public double getPreferredContributionsPercentage2() {
 		// Campo calculado: contribuciones / salario bruto anual * 100
@@ -388,34 +381,31 @@ public class Mod190 implements IFiscalModel, HasAudit {
 		}
 		return result;
 	}
-//	public void setPreferredContributionsPercentage2(double preferredContributionsPercentage2) {
-//		this.preferredContributionsPercentage2 = preferredContributionsPercentage2;
-//	}
 	public double getOtherContributionsUnder36() {
 		return otherContributionsUnder36;
 	}
-	public void setOtherContributionsUnder36(double otherContributionsUnder36) {
+	public Mod190 setOtherContributionsUnder36(double otherContributionsUnder36) {
 		this.otherContributionsUnder36 = otherContributionsUnder36;
+		return this;
 	}
 	public double getOtherContributionsOver36() {
 		return otherContributionsOver36;
 	}
-	public void setOtherContributionsOver36(double otherContributionsOver36) {
+	public Mod190 setOtherContributionsOver36(double otherContributionsOver36) {
 		this.otherContributionsOver36 = otherContributionsOver36;
+		return this;
 	}
-//	private double otherContributionsTotal; 			// Resto sistemas de empleo: Contribuciones empresariales totales
+	// Resto sistemas de empleo: Contribuciones empresariales totales
 	public double getOtherContributionsTotal() {
 		// Campo calculado: contribuciones menores de 36 + contribuciones mayores de 36
 		return otherContributionsUnder36 + otherContributionsOver36;		
 	}
-//	public void setOtherContributionsTotal(double otherContributionsTotal) {
-//		this.otherContributionsTotal = otherContributionsTotal;
-//	}
 	public double getOtherGrossAnnualSalary() {
 		return otherGrossAnnualSalary;
 	}
-	public void setOtherGrossAnnualSalary(double otherGrossAnnualSalary) {
+	public Mod190 setOtherGrossAnnualSalary(double otherGrossAnnualSalary) {
 		this.otherGrossAnnualSalary = otherGrossAnnualSalary;
+		return this;
 	}
 	// Resto sistemas de empleo: Porcentaje de las contribuciones sobre el salario bruto anual
 	public double getOtherContributionsPercentage() {
@@ -427,8 +417,5 @@ public class Mod190 implements IFiscalModel, HasAudit {
 		}
 		return result;
 	}
-//	public void setOtherContributionsPercentage(double otherContributionsPercentage) {
-//		this.otherContributionsPercentage = otherContributionsPercentage;
-//	}
 		
 }
