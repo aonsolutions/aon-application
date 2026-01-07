@@ -127,6 +127,10 @@ public abstract class Mod390HFDeclaration {
 			@Override Mod390HFDeclaration get() {return new Mod390HFBizkaia2017Declaration();}
 		},
 		
+		GIPUZKOA_2025 {
+			@Override boolean accept(Mod390HF mod) { return Mod390HFGipuzkoa2025Declaration.accept(mod);}
+			@Override Mod390HFDeclaration get() {return new Mod390HFGipuzkoa2025Declaration();}
+		},
 		GIPUZKOA_2024 {
 			@Override boolean accept(Mod390HF mod) { return Mod390HFGipuzkoa2024Declaration.accept(mod);}
 			@Override Mod390HFDeclaration get() {return new Mod390HFGipuzkoa2024Declaration();}

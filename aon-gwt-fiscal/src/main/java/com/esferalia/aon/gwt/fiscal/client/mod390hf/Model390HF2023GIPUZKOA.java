@@ -15,6 +15,8 @@ import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022GIPUZKOASpe
 import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902023GIPUZKOARScript1;
 import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902024GIPUZKOAAdditionalDataScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902024GIPUZKOARScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902025GIPUZKOAAdditionalDataScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902025GIPUZKOARScript1;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -101,7 +103,9 @@ public class Model390HF2023GIPUZKOA extends Model390HFBase {
 		table.getColumnFormatter().setStyleName(5, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(6, WIDTH_140PX);
 		table.getColumnFormatter().setWidth(7, "50px");
-		if (getModel().getYear() >= 2024)
+		if (getModel().getYear() >= 2025)
+			paintDeclaration(table, Model3902025GIPUZKOARScript1.values(),8);
+		else if (getModel().getYear() == 2024)
 			paintDeclaration(table, Model3902024GIPUZKOARScript1.values(),8);
 		else
 			paintDeclaration(table,Model3902023GIPUZKOARScript1.values(),8);
@@ -157,7 +161,9 @@ public class Model390HF2023GIPUZKOA extends Model390HFBase {
 		table.getColumnFormatter().setWidth(9, "50px");
 		additionalDataScrollPanel.setWidget(table);
 		tabPanel.add(additionalDataScrollPanel, "Inf. Adicional");
-		if (getModel().getYear() >= 2024)
+		if (getModel().getYear() >= 2025)
+			paintDeclaration(table,Model3902025GIPUZKOAAdditionalDataScript.values(),10);
+		else if (getModel().getYear() == 2024)
 			paintDeclaration(table,Model3902024GIPUZKOAAdditionalDataScript.values(),10);
 		else 
 			paintDeclaration(table,Model3902022GIPUZKOAAdditionalDataScript.values(),10);
