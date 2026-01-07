@@ -17,7 +17,9 @@ public enum InvoiceCommunicationStatus implements Serializable{
 	WRONG("Incorrecta", "Incorrecto"){
 		@Override public void accept(InvoiceCommunicationStatusVisitor visitor) { visitor.visitWrong();}},
 	CANCELLED("Anulada") {
-		@Override public void accept(InvoiceCommunicationStatusVisitor visitor) { visitor.visitCancelled();}}
+		@Override public void accept(InvoiceCommunicationStatusVisitor visitor) { visitor.visitCancelled();}},
+	EXTERNALLY_COMMUNICATED("Com. Externamente") {
+		@Override public void accept(InvoiceCommunicationStatusVisitor visitor) { visitor.visitExternallyCommunicated();}}
 	;
 	
 	String[] description;
@@ -74,6 +76,7 @@ public enum InvoiceCommunicationStatus implements Serializable{
 		void visitAcceptedWithErrors();
 		void visitWrong();
 		void visitCancelled();
+		void visitExternallyCommunicated();
 	}
 	
 }

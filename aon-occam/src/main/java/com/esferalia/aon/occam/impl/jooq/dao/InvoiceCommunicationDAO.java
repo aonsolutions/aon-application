@@ -413,6 +413,33 @@ public class InvoiceCommunicationDAO {
 			}
 		}
 		
+		if(config.isSif()) {
+			if(config.isLroe()) {
+				updateEndDate(ctx, domainId, config.getSifData(), config.getLroeData().getStartDate());
+				fillSif(ctx, domainId, config);
+			}
+			
+			if(config.isTbai()) {
+				updateEndDate(ctx, domainId, config.getSifData(), config.getTbaiData().getStartDate());
+				fillSif(ctx, domainId, config);
+			}
+			
+			if(config.isNoVerifactu()) {
+				updateEndDate(ctx, domainId, config.getSifData(), config.getNoVerifactuData().getStartDate());
+				fillSif(ctx, domainId, config);
+			}
+			
+			if(config.isVerifactu()) {
+				updateEndDate(ctx, domainId, config.getSifData(), config.getVerifactuData().getStartDate());
+				fillSif(ctx, domainId, config);
+			}
+			
+			if(config.isSii()) {
+				updateEndDate(ctx, domainId, config.getSifData(), config.getSiiData().getStartDate());
+				fillSif(ctx, domainId, config);
+			}
+		}
+		
 		return config;
 	}
 	

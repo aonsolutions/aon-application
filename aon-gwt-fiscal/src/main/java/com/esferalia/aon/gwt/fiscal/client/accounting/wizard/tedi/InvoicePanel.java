@@ -390,7 +390,11 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		public void setAccountEntry(AccountEntry ae) {
 			getWrapper().setAccountEntry(ae);
 		}
-		
+		public boolean hasCommunication() {
+			return getCallback().getConfiguration() != null
+				&& getCallback().getConfiguration().getCommunicationConfig() != null
+				&& getCallback().getConfiguration().getCommunicationConfig().hasCommunication();
+		}
 		@Override
 		public boolean isInvestAssetsAvailable() {
 			return !getWrapper().isSales() 

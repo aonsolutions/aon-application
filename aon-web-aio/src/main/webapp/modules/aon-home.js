@@ -56,7 +56,7 @@ export class AonHome extends AonElement {
 		// TimeControl Reason Dialog
 	    let aonDialog = new AonDialog();
 	    aonDialog.id = 'aonTimeControlReasonDialog';
-	    this.appendChild(aonDialog)
+	    this.appendChild(aonDialog);
 
 		let rootPanel = this.createElement(TAG.DIV);
 		rootPanel.id = this.ROOT_PANEL;
@@ -79,34 +79,39 @@ export class AonHome extends AonElement {
 		let content = this.createElement(TAG.DIV);
 		content.id  = "homeContent";
 
+    // TimeControl Reason Dialog
+    let aonDialog = new AonDialog();
+    aonDialog.id = 'aonTimeControlReasonDialog';
+    this.appendChild(aonDialog);
+
 		let aonMenu = new AonNewMenu();
 		aonMenu.id = this.AON_MENU;
 		aonMenu.className = CSS.AON_MENU;
-        aonMenu.addEventListener(EVENT.AON_APPLICATION_SELECT, (e) => {
-          let app = e.detail.app;
-          let sidenav = e.detail.sidenav; 
-          // console.log(JSON.stringify(e.detail));
-          const appColor = app.newColor || app.color;
-          if ( !app.home ){
-              let appEl = aonMenu.buildApp(app, {
-                  height: '32px',
-                  color: '#ffffff',
-                  flexDirection: 'row'
-              }, sidenav);
-              aonHeader.buildApp(app, sidenav);
-              aonHeader.setVisibleLogo(!appEl);
-              aonHeader.setVisibleApp(appEl);
-          } else {
-              aonHeader.setVisibleApp(false);
-              aonHeader.setVisibleLogo(true);
-          }
+    aonMenu.addEventListener(EVENT.AON_APPLICATION_SELECT, (e) => {
+      let app = e.detail.app;
+      let sidenav = e.detail.sidenav; 
+      // console.log(JSON.stringify(e.detail));
+      const appColor = app.newColor || app.color;
+      if ( !app.home ){
+          let appEl = aonMenu.buildApp(app, {
+              height: '32px',
+              color: '#ffffff',
+              flexDirection: 'row'
+          }, sidenav);
+          aonHeader.buildApp(app, sidenav);
+          aonHeader.setVisibleLogo(!appEl);
+          aonHeader.setVisibleApp(appEl);
+      } else {
+          aonHeader.setVisibleApp(false);
+          aonHeader.setVisibleLogo(true);
+      }
 
-          aonHeader.setColor();
-          aonHeader.setBackgroundColor();
-          let appName = app.app[0].toUpperCase() + app.app.slice(1);
-          aonHeader.setClassName(`${CSS.AON_HEADER} ${CSS.AON_HEADER}${appName}`); 
-        });
-        content.appendChild(aonMenu);
+      aonHeader.setColor();
+      aonHeader.setBackgroundColor();
+      let appName = app.app[0].toUpperCase() + app.app.slice(1);
+      aonHeader.setClassName(`${CSS.AON_HEADER} ${CSS.AON_HEADER}${appName}`); 
+    });
+    content.appendChild(aonMenu);
 
 		let rootPanel = this.createElement(TAG.DIV);
 		rootPanel.id = this.ROOT_PANEL;

@@ -68,6 +68,7 @@ export class AonNewDate extends AonNewInput {
     }
     // 
     this.setType('text');
+    return this.date;
   }
 
   buildDate() {

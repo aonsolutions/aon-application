@@ -123,6 +123,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	private AonDoubleBox invoiceTotal;
 	private AonDateBox taxDate;
 	private AonDateBox issueDate;
+	private InlineLabel communicationWarningLabel = new InlineLabel(
+		 "Las facturas de venta introducidas desde el mantenimiento de "
+		+"facturas se marcan como comunicadas externamente.");
 	
 	private FlowPanel checksLabel;
 	private FlowPanel checksTable;
@@ -937,7 +940,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 								result.setAccountEntry(invoiceCallback.getInvoice().getAccountEntry());
 								result.getInvoice().setIssueDate(invoiceCallback.getModule().getEntryDate());
 								result.getInvoice().setTaxDate(invoiceCallback.getModule().getEntryDate());
-								if (!result.getInvoice().isSales()) {
+								if (invoiceCallback.hasCommunication() || !result.getInvoice().isSales()) {
 									result.getInvoice().setReferenceCode(referenceCode.getValue());
 								}
 								// TODO Manage due dates for all finances.
@@ -1023,9 +1026,15 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		series = new ListBox();
 		referenceCode = new TextBox();
 		
-		if (inv.isSales()) {
+		if (!invoiceCallback.hasCommunication() && inv.isSales()) {
 			fillSeriesWidget(invoiceCallback, inv );
 			number.setValue(inv.getInvoice().getNumber());
+		}
+		
+		if (invoiceCallback.hasCommunication() && inv.isSales()) {
+			communicationWarningLabel.setVisible( true );
+		} else {
+			communicationWarningLabel.setVisible( false );
 		}
 		
 		referenceCode.setValue(inv.getInvoice().getReferenceCode());
@@ -1126,6 +1135,14 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			}
 		});
 		headerPanel1.add(rName);
+		
+		communicationWarningLabel.setStyleName(AON.CSS.aonLabelWithIcon());
+		communicationWarningLabel.addStyleName(AON.CSS.aonIconWarning());
+		communicationWarningLabel.addStyleName(AON.CSS.aonMarginLeft());
+		communicationWarningLabel.addStyleName(AON.CSS.aonPadding());
+		communicationWarningLabel.addStyleName(AON.CSS.aonBold());
+		headerPanel1.add(communicationWarningLabel);
+		
 		
 		
 		// *************************************************************************
@@ -1525,7 +1542,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// --------- NUMERO FACTURA ---------
 		// ----------------------------------
 		String l = AON.MSG.invoiceNumber();
-		if ( inv.isSales() ) {
+		if ( !invoiceCallback.hasCommunication() && inv.isSales() ) {
 			l = AON.MSG.seriesNumber();	
 		}
 		InlineLabel seriesNumberLabel = new InlineLabel(l);
@@ -1608,7 +1625,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// --------- REFERENCE CODE ---------
 		// ----------------------------------
 
-		if (inv.isSales()) {
+		if (!invoiceCallback.hasCommunication() && inv.isSales()) {
 			AonTableButton showReference = new AonTableButton("Mostrar N\u00BA de factura", AON.CSS.aonIconEdit() );
 			showReference.addStyleName( AON.CSS.aonMarginLeft() );
 			showReference.addClickHandler( e -> {
@@ -1640,7 +1657,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 
 		referenceCode.setVisibleLength(15); 
 		referenceCode.setMaxLength(32);
-		if (inv.isSales()) {
+		if (!invoiceCallback.hasCommunication() && inv.isSales()) {
 			referenceCodePanel.add(referenceCode);
 			numberPanel.add(referenceCodePanel);
 			headerPanel4.add(numberPanel);
@@ -1879,7 +1896,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		invoicePanel.setVisible(true);
 		
 		Scheduler.get().scheduleDeferred(() -> {
-			if (invoiceCallback.getInvoice().isSales()) {
+			if (!invoiceCallback.hasCommunication() && invoiceCallback.getInvoice().isSales()) {
 				series.setFocus(true);
 			} else {
 				referenceCode.setFocus(true);

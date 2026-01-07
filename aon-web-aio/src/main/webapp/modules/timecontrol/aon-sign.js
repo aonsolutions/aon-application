@@ -1,12 +1,15 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getPeriod, getTaskHolder, getTaskHoldersUser, getTaskHolderTimeControl, getTimeControl, saveTimeControl, saveTimeControlDetail} from '../../services/service.js';
+import {getLocationByCoordinates, getPeriod, getTaskHolder, getTaskHoldersUser, getTaskHolderTimeControl, getTimeControl, saveTimeControl, saveTimeControlDetail} from '../../services/service.js';
 import {getPosition} from '../../services/maps.js';
 import { AonNewSelect } from '../../components/aon-new-select.js';
 import { SIGNIN_VIEWS } from "./signinEnums.js";
-import { CONSTANT, EVENT, MSG, TAG, } from '../../environments/environments.js';
+import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG, } from '../../environments/environments.js';
 import { timeHour } from './time-control/utils.js';
 import { AonDateUtils } from '../utils/AonDateUtils.js';
-// import * as LS from "../../services/localStorageService.js";
+import * as LS from "../../services/localStorageService.js";
+import { IN_REASON, PAUSE_REASON } from '../../models/timecontrol/TimeControlReason.js';
+import { createInput } from '../../components/CreateComponent.js';
+import { AonButton } from '../../components/aon-button.js';
 
 export class AonSign extends AonElement {
   _taskHolders;
@@ -43,6 +46,8 @@ export class AonSign extends AonElement {
     this.TIME_ID = "TIME_ID";
     this.applicationEl = this.getApplication();
     this.parent = this.parent || false;
+		this.DIALOG = 'aonTimeControlReasonDialog';
+
     getTaskHolder({reload:true});
 //    if(this.isMobile()){
 //      getPosition().catch(console.error);  // GET POSITION
@@ -84,6 +89,17 @@ export class AonSign extends AonElement {
 //    } else {
 //      this.parentNode.style.paddingLeft = 0;
 //    }
+
+		// TimeControl Reason Dialog
+		let aonDialog = this.getElement(this.DIALOG);
+		// if (this.isMobile()) aonDialog.type = "fullscreen";
+		// else aonDialog.width = '600px';
+		aonDialog.addEventListener(EVENT.CLOSE, (e) => e.stopPropagation());
+		aonDialog.onclick = (e) => {
+			e.stopPropagation();
+			aonDialog.close();
+			this.disabledButton(false);
+		}
 
     if(this.parent && this._taskHolders.length > 1){
       let company = this.createElement(TAG.DIV);
@@ -129,10 +145,10 @@ export class AonSign extends AonElement {
 
   entrada() {
     let content = this.getElement(this.CONTENT);
-    if(content){
+    if (content) {
       this.clearElement(content);
       let button = this.createElement(TAG.BUTTON);
-      button.id = this.id+"Entrada";
+      button.id = this.id + "Entrada";
       button.className = 'aonButton';
       button.classList.add('aonTimeControlButton');
 //      button.style.backgroundColor = '#86D364';
@@ -141,7 +157,10 @@ export class AonSign extends AonElement {
 //        button.style.width = "60%";
 //        button.style.borderRadius = "12px";
 //      }
-      button.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('in'));
+      button.addEventListener(EVENT.CLICK, (event) => {
+				event.stopPropagation();
+				this.saveTimeCtrl('in');
+			});
       content.appendChild(button);
     }
   }
@@ -150,143 +169,413 @@ export class AonSign extends AonElement {
     let content = this.getElement(this.CONTENT);
     if(content){
       this.clearElement(content);
+
+			let buttons = this.createElement(TAG.DIV);
+			buttons.style.display = "flex";
+			buttons.style.justifyContent = "center";
+			buttons.style.gap = "1rem";
+
+			let button2 = this.createElement(TAG.BUTTON);
+			button2.id = this.id + "Salida";
+			button2.className = 'aonButton';
+			button2.classList.add('aonTimeControlButton');
+			// button2.style.backgroundColor = '#DC4D30';
+			button2.innerHTML = MSG.EXIT.toUpperCase();
+			button2.addEventListener(EVENT.CLICK, (event) => {
+				event.stopPropagation();
+				this.saveTimeCtrl('out');
+			});
+			buttons.appendChild(button2);
+
       let button = this.createElement(TAG.BUTTON);
       button.id = this.id+"Vuelta";
       button.className = 'aonButton';
       button.classList.add('aonTimeControlButton');
-//      button.style.backgroundColor = '#86D364';
+    //  button.style.backgroundColor = '#86D364';
       button.innerHTML = 'VUELTA';
-//      if(this.isMobile()){
-//        button.style.width = "60%";
-//        button.style.borderRadius = "12px";
-//      }
-      button.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('in'));
-      content.appendChild(button);
+			button.addEventListener(EVENT.CLICK, (event) => {
+				event.stopPropagation();
+				this.saveTimeCtrl('return');
+			});
+			buttons.appendChild(button);
+
+			content.appendChild(buttons);
     }
   }
 
-  salida() {
-    let content = this.getElement(this.CONTENT);
-    if(content){
-      this.clearElement(content);
+	salida() {
+		let content = this.getElement(this.CONTENT);
+		if (content) {
+			this.clearElement(content);
 
-      let button = this.createElement(TAG.BUTTON);
-      button.id = this.id+"Salida";
-      button.className = 'aonButton';
-      button.classList.add('aonTimeControlButton');
-      button.innerHTML = MSG.EXIT.toUpperCase();
-      button.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('out'));
-      content.appendChild(button);
+			let buttons = this.createElement(TAG.DIV);
+			buttons.style.display = "flex";
+			buttons.style.justifyContent = "center";
+			buttons.style.gap = "1rem";
 
-      let button2 = this.createElement(TAG.BUTTON);
-      button2.className = 'aonButton';
-      button2.classList.add('aonTimeControlButton');
-      button2.innerHTML = 'PAUSA';
-      button2.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('pause'));
-      content.appendChild(button2);
-    }
-  }
+			let button = this.createElement(TAG.BUTTON);
+			button.id = this.id + "Salida";
+			button.className = 'aonButton';
+			button.classList.add('aonTimeControlButton');
+			// button.style.backgroundColor = '#DC4D30';
+			button.innerHTML = MSG.EXIT.toUpperCase();
+			button.addEventListener(EVENT.CLICK, (event) => {
+				event.stopPropagation();
+				this.saveTimeCtrl('out');
+			});
+			buttons.appendChild(button);
+
+			let button2 = this.createElement(TAG.BUTTON);
+			button2.className = 'aonButton';
+			button2.classList.add('aonTimeControlButton');
+			// button2.style.backgroundColor = '#F39F1D';
+			button2.innerHTML = 'PAUSA';
+			button2.addEventListener(EVENT.CLICK, (event) => {
+				event.stopPropagation();
+				this.saveTimeCtrl('pause');
+			});
+			buttons.appendChild(button2);
+
+			content.appendChild(buttons);
+		}
+	}
 
   async saveTimeCtrl(status){
-	let divGeneral = this.getElement(this.id);
 	// Spinner
     this.getApplication().startLoading();
-
-    let signin = {status, task_holder: this._taskHolder, parent: this.parent};
     this.disabledButton(true);
-    let timeOutPosition = false;
 
-    await getPosition().then(position=>{
-      if(position){
-        signin.coordinates = position.latitude + ',' + position.longitude;
-      }
-    }).catch(error=>{
-      timeOutPosition = error && error.timeout;
-//      this.showToast(error);
-    });
+		let signin = { status, task_holder: this._taskHolder, parent: this.parent };
+		let timeOutPosition = false;
 
-    const resp = await saveTimeControl(signin).catch(() => {
-      this.getApplication().stopLoading();
-	});
+		await getPosition()
+			.then(position => {
+				if (position) {
+					signin.coordinates = position.latitude + ',' + position.longitude;
+				}
+			})
+			.catch(error => {
+				timeOutPosition = error && error.timeout;
+			});
 
-//    if(timeOutPosition && this.isMobile() && resp && resp.id){
-//      getPosition().then(position=>{
-//        if(position){
-//          r.coordinates = position.latitude + ',' + position.longitude;
-//          saveTimeControl({...resp, ...signin})
-//          .then(console.log)
-//          .catch(console.error);
-//        }
-//      }).catch(console.error);
-//    }
+		if (signin.status == 'out' || signin.status == 'return') {
+			if (signin.status == 'return') 
+				signin.status = 'in';
+			if (signin.status == 'in' && signin.coordinates && signin.coordinates.length > 0) {
+				const locationResp = await getLocationByCoordinates(signin);
 
-    this.buildSignin(resp);
+				if (locationResp && locationResp.id) {
+					const resp = await saveTimeControl(signin);
+					this.setTimeControl(resp);
+					this.buildSignin(resp);
 
-    this.disabledButton(false);
-	this.showToast({code: 3, message: 'Marcaje realizado con exito', timeout: false});
-    this.getApplication().stopLoading();
+					this.disabledButton(false);
+					this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
+					this.getApplication().stopLoading();
+				} else
+					this.openReasonDialog(signin, timeOutPosition);
+			} else if (signin.status == 'in') {
+				this.openReasonDialog(signin, timeOutPosition);
+			} else {
+				const resp = await saveTimeControl(signin);
+
+				if (timeOutPosition && this.isMobile() && resp && resp.id) {
+					getPosition()
+						.then(position => {
+							if (position) {
+								resp.coordinates = position.latitude + ',' + position.longitude;
+								saveTimeControl({ ...resp, ...signin })
+									.then(console.log)
+									.catch(console.error);
+							}
+						})
+						.catch(console.error);
+				}
+
+				this.setTimeControl(resp);
+				this.buildSignin(resp);
+
+				this.disabledButton(false);
+				this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
+				this.getApplication().stopLoading();
+			}
+
+		} else if (signin.status == 'in' && signin.coordinates && signin.coordinates.length > 0) {
+			const locationResp = await getLocationByCoordinates(signin);
+
+			if (locationResp && locationResp.id) {
+				const resp = await saveTimeControl(signin);
+				this.setTimeControl(resp);
+				this.buildSignin(resp);
+
+				this.disabledButton(false);
+				this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
+				this.getApplication().stopLoading();
+			} else
+				this.openReasonDialog(signin, timeOutPosition);
+
+		} else {
+			this.openReasonDialog(signin, timeOutPosition);
+		}
   }
 
-  disabledButton(disabled){
-    const content = this.getElement(this.CONTENT);
-    if(content){
-      content.querySelectorAll('.aonButton')
-      .forEach(element => {
-        if(disabled){
-          element.setAttribute(CONSTANT.DISABLED, true);
-        } else {
-          element.removeAttribute(CONSTANT.DISABLED);
-        }
-      });
-    }
-  }
+	openReasonDialog(signin, timeOutPosition) {
+		let d = document.getElementById(this.DIALOG);
+		d.clear();
 
-  buildSignin(signin) {
-    this._taskHolder = signin.task_holder.id;
-    const aonUserConnected = this.getElement('aonHeaderUserConnected');
-    const timeEl = this.getElement(this.TIME);
-//    timeEl.style.cursor = "default";
+		// if (this.isMobile()) {
+		// 	d.type = "fullscreen";
+		// 	d.addAction(
+		// 		{
+		// 			id: '',
+		// 			title: 'Control Horario',
+		// 			icon: MATERIAL_ICONS.ALARM,
+		// 			position: "right",
+		// 		},
+		// 		(e) => e.stopPropagation()
+		// 	);
+		// } else d.width = '600px';
+		d.addEventListener(EVENT.CLOSE, (e) => e.stopPropagation());
+		d.onclick = (e) => {
+			e.stopPropagation();
+			this.disabledButton(false);
+			this.getApplication().stopLoading();
+		}
 
-    let time = signin.time;
-    localStorage.removeItem(this.TIME_ID);
+		let reasonTitle = !signin || !signin.status ? 'N/D' : signin.status === 'in' ? 'Entrada' : 'Pausa';
+		d.setTitle(`Motivo ${reasonTitle}`);
 
-    let color = '#DC4D30';
+		let content = document.createElement(TAG.DIV);
+		content.style.display = "flex";
+		content.style.flexDirection = "column";
+		content.style.overflowY = 'scroll';
+		content.style.gap= '1rem';
 
-    if(signin.status === 'in') {
-      color =  '#86D364';
-      time = signin.time + (new Date().getTime() - signin.in_date);
-      this.salida();
-      let timeId =  Math.random();
-      localStorage.setItem(this.TIME_ID, timeId);
-      this.timeAction(time, timeId);
-    } else if(signin.status === 'pause') {
-      color = '#F39F1D';
-      this.vuelta();
-    } else {
-      this.entrada();
-    }
+		let options = !signin || !signin.status
+			? []
+			: signin.status === 'in' ? IN_REASON
+				: signin.status === 'pause' ? PAUSE_REASON
+					: [];
 
-    if(aonUserConnected) {
-      aonUserConnected.style.backgroundColor = color;
-    }
+		let nameInput;
 
-    this.changeTime(time);
-    this.divLastTime(signin);
-  }
+		options.forEach(opt => {
+			content.appendChild(this.buildReasonOption(opt, async (value) => {
+				//console.log('value', value);
 
-  async timeAction(time, id) {
-    this.changeTime(time);
-    this.updateHour();
+				signin.cause = value;
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+				const resp = await saveTimeControl(signin);
 
-    const aonSign = document.querySelector(`#`+this.id);
-    const timeIdStorage = parseFloat(localStorage.getItem(this.TIME_ID));
+				if (timeOutPosition && this.isMobile() && resp && resp.id) {
+					getPosition()
+						.then(position => {
+							if (position) {
+								resp.coordinates = position.latitude + ',' + position.longitude;
+								saveTimeControl({ ...resp, ...signin })
+									.then(console.log)
+									.catch(console.error);
+							}
+						})
+						.catch(console.error);
+				}
 
-    if(aonSign && (id ===  timeIdStorage)) {
-      this.timeAction(time+ 1000, id);
-    }
-  }
+				this.buildSignin(resp);
+
+				this.disabledButton(false);
+				this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
+				this.getApplication().stopLoading();
+
+				d.close();
+			}));
+
+			if (!opt.clickable) {
+				nameInput = createInput(
+					"ReasonInput" + opt.value,
+					opt.value === '2' ? 'Indicar lugar' : 'Indicar motivo'
+				);
+
+				nameInput.type = 'text';
+				nameInput.maxLength = 50;
+				nameInput.style.display = 'none';
+				nameInput.dataset.reasonValue = opt.value;
+
+				content.appendChild(nameInput);
+
+				nameInput.addEventListener('click', e => e.stopPropagation());
+			}
+		});
+
+		d.setContent(content);
+		this.getApplication().stopLoading();
+
+		nameInput && nameInput.addIcon(MATERIAL_ICONS.DONE, undefined, async () => {
+			if (nameInput.value.trim().length <= 3) return;
+
+			signin.cause = nameInput.dataset.reasonValue;
+			signin.comments = nameInput.value.trim();
+
+			const resp = await saveTimeControl(signin);
+			this.buildSignin(resp);
+
+			this.disabledButton(false);
+			this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
+			this.getApplication().stopLoading();
+
+			d.close();
+		});
+
+		nameInput && nameInput.addEventListener("keydown", async (event) => {
+			if (event.key === "Enter") {
+				if (nameInput.value.trim().length <= 3) return;
+
+				signin.cause = nameInput.dataset.reasonValue;
+				signin.comments = nameInput.value.trim();
+
+				const resp = await saveTimeControl(signin);
+				this.buildSignin(resp);
+
+				this.disabledButton(false);
+				this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
+				this.getApplication().stopLoading();
+
+				d.close();
+			}
+		});
+
+		d.open();
+	}
+
+	showReasonInput(value, name) {
+		let input = this.getElement('ReasonInput' + value);
+
+		if (input && input.style.display == 'none') {
+			input.style.display = 'block';
+			input.focus();
+		} else if (input)
+			input.style.display = 'none';
+
+		let inputIcon = document.querySelector(`#TimeControlReasonOption${value} > i`);
+		if (inputIcon && (inputIcon.innerHTML == 'unknown_document' || inputIcon.innerHTML == 'distance')) inputIcon.innerHTML = 'close';
+		else if (inputIcon && inputIcon.innerHTML == 'close') inputIcon.innerHTML = value == '2' ? 'distance' : 'unknown_document';
+
+		let inputSpan = document.querySelector(`#TimeControlReasonOption${value} > span`);
+		if (inputSpan && inputSpan.innerHTML == name) inputSpan.innerHTML = name + ' (Cerrar)';
+		else if (inputSpan && inputSpan.innerHTML == name + ' (Cerrar)') inputSpan.innerHTML = name;
+	}
+
+	toggleReasonOptions(currentValue) {
+		const options = document.querySelectorAll('.aonTimeControlResonOption');
+
+		options.forEach(opt => {
+			if (opt.dataset.value !== currentValue) {
+				opt.classList.toggle('disabled');
+			}
+		});
+	}
+
+	buildReasonOption(opt, callback) {
+		// let div = this.createElement(TAG.DIV);
+		// div.id = 'TimeControlReasonOption' + opt.value;
+		// div.classList.add('aonTimeControlResonOption');
+		// div.dataset.value = opt.value;
+		// div.dataset.clickable = opt.clickable;
+		// this.appendChild(div);
+		
+		// let i = this.createElement(TAG.I);
+		// i.className = 'material-icons';
+		// i.innerHTML = opt.icon;
+		// div.appendChild(i);
+		
+		// let val = this.createElement(TAG.SPAN);
+		// val.innerHTML = opt.name;
+		// div.appendChild(val);
+
+		let div = new AonButton();
+		div.id = 'TimeControlReasonOption' + opt.value;
+		div.classList.add('aonTimeControlResonOption');
+		div.dataset.value = opt.value;
+		div.title = opt.name;
+		// div.setIcon(opt.icon);
+
+		div.addEventListener(EVENT.CLICK, (e) => {
+			e.stopPropagation();
+			
+			// Opción normal
+			if (opt.clickable) {
+				this.getApplication().startLoading();
+				callback && callback(opt.value);
+			}
+			// Opción con input
+			else {
+				this.toggleReasonOptions(opt.value);
+				this.showReasonInput(opt.value, opt.name);
+			}
+		});
+
+		return div;
+	}
+
+	disabledButton(disabled) {
+		const content = this.getElement(this.CONTENT);
+		if (content) {
+			content.querySelectorAll('.aonButton')
+				.forEach(element => {
+					if (disabled) {
+						element.setAttribute(CONSTANT.DISABLED, true);
+					} else {
+						element.removeAttribute(CONSTANT.DISABLED);
+					}
+				});
+		}
+	}
+
+	buildSignin(signin) {
+		this._taskHolder = signin.task_holder.id;
+		const aonUserConnected = this.getElement('aonHeaderUserConnected');
+		const timeEl = this.getElement(this.TIME);
+		timeEl.style.cursor = "default";
+
+		let time = signin.time;
+		localStorage.removeItem(this.TIME_ID);
+
+		let color = '#DC4D30';
+
+		if (signin.status === 'in') {
+			color = '#86D364';
+			time = signin.time + (new Date().getTime() - signin.in_date);
+			this.salida();
+			let timeId = Math.random();
+			localStorage.setItem(this.TIME_ID, timeId);
+			this.timeAction(time, timeId);
+		} else if (signin.status === 'pause') {
+			color = '#F39F1D';
+			this.vuelta();
+		} else {
+			this.entrada();
+		}
+
+		if (aonUserConnected) {
+			aonUserConnected.style.backgroundColor = color;
+		}
+
+		this.changeTime(time);
+		this.divLastTime(signin);
+	}
+
+	async timeAction(time, id) {
+		this.changeTime(time);
+		this.updateHour();
+
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+
+		const aonSign = document.querySelector(`#` + this.id);
+		const timeIdStorage = parseFloat(localStorage.getItem(this.TIME_ID));
+
+		if (aonSign && (id === timeIdStorage)) {
+			this.timeAction(time + 1000, id);
+		}
+	}
 
   changeTime(time){
     let timeDiv = this.getElement(this.TIME);
@@ -332,8 +621,8 @@ export class AonSign extends AonElement {
         };
         let datos = await getTaskHolderTimeControl(filter);
         if(datos){
-          let sumHour = datos.reduce((total, {time, status, in_date})=> status && status.indexOf("in")>=0 && in_date ? ((total + (new Date().getTime() - in_date))  + time) : total + time, 0);
-          if(sumHour>0){
+          let sumHour = datos.reduce((total, {time, status, in_date})=> status && status.indexOf("in") >= 0 && in_date ? ((total + (new Date().getTime() - in_date))  + time) : total + time, 0);
+          if(sumHour > 0){
             let content = this.getElement(this.CONTENT);
             const div = this.getElement(this.TOTAL_HOUR) || this.createElement(TAG.DIV);
             div.id = this.TOTAL_HOUR;

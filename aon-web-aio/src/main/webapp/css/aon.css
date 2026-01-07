@@ -4896,6 +4896,10 @@ font-size: 11px;
     border-radius: 10px;
   }
   
+  #aonTimeControlReasonDialogDialogAction{
+  	display: flex;
+  }
+  
   #aonTimeControlReasonDialog {
   	margin-top: 5rem;
   }

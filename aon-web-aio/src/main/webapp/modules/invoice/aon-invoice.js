@@ -869,6 +869,7 @@ export class AonInvoice extends AonElement {
 		} else if ("EMAIL" === type) { typeIconButton.icon = MATERIAL_ICONS.MAIL;
 		} else if ("CLOSING" === type) { typeIconButton.icon = MATERIAL_ICONS.LOCK;
 		} else if ("VERIFACTU" === type) { typeIconButton.aonIcon = AON_ICONS.AON_AEAT;
+		} else if ("SIF" === type) { typeIconButton.icon = MATERIAL_ICONS.SIF;
 		}
 		if (!typeIconButton.icon) {
 			typeIconButton.icon = MATERIAL_ICONS.QUESTION_MARK;
@@ -880,6 +881,7 @@ export class AonInvoice extends AonElement {
 		if("PENDING" === status) return "Pendiente";
 		else if("ACCEPTED" === status) return "Aceptada";
 		else if("ACCEPTED_WITH_ERRORS" === status) return "Aceptada con errores";
+		else if("EXTERNALLY_COMMUNICATED" === status) return "Com. Externamente";
 		else if("WRONG" === status) return "Incorrecta";
 		else return "Sin Estado";
 	}
@@ -888,6 +890,7 @@ export class AonInvoice extends AonElement {
 		if("PENDING" === status) return "orange";
 		else if("ACCEPTED" === status) return "green";
 		else if("ACCEPTED_WITH_ERRORS" === status) return "yellow";
+		else if("EXTERNALLY_COMMUNICATED" === status) return "blue";
 		else if("WRONG" === status) return "red"
 		else return "gray";
 	}
