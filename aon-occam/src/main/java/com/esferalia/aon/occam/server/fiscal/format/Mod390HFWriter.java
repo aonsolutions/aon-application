@@ -28,7 +28,8 @@ public class Mod390HFWriter {
 	protected static SimpleDateFormat df = new SimpleDateFormat("MMMMM");
 	
 	private enum Writers {
-		 ARABA_2024		(mod -> (mod.isAraba() && mod.getYear() >= 2024), Mod390HFWriterARABA2024::new)
+		 ARABA_2025		(mod -> (mod.isAraba() && mod.getYear() >= 2025), Mod390HFWriterARABA2025::new)
+		,ARABA_2024		(mod -> (mod.isAraba() && mod.getYear() == 2024), Mod390HFWriterARABA2024::new)
 		,ARABA_2023		(mod -> (mod.isAraba() && mod.getYear() == 2023), Mod390HFWriterARABA2023::new)
 		,ARABA_2021		(mod -> (mod.isAraba() && mod.getYear() >= 2021 && mod.getYear() < 2023), Mod390HFWriterARABA2021::new)
 		,ARABA_2019		(mod -> (mod.isAraba() && mod.getYear() >= 2019 && mod.getYear() < 2021), Mod390HFWriterARABA2019::new)

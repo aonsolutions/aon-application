@@ -137,7 +137,8 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 
 					@Override
 					public void visitSalaryInKind(PaymentType paymentType) {
-						if (!isBoss()) visitAInKindKey();
+//						if (!isBoss()) visitAInKindKey();
+						visitAEInKindKey();
 					}
 					
 					@Override
@@ -302,7 +303,46 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 						}
 					}
 					
-					private void visitAInKindKey() {
+//					private void visitAInKindKey() {
+//						double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
+//						double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
+//						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
+//						double irpfQuota = ( AonMathUtils.isZero( irpfBase) || AonMathUtils.isZero( totalIrpfBase ) )
+//								? 0.0
+//								: (irpfBase * totalIrpf / totalIrpfBase);
+//						
+//						Mod190Detail detail = getDetail(document,person,Mod1902025Key.A,null,accrualYear);
+//						String prest = rec.getValue( SALARY_PAYMENT.PAYMENT_CONCEPT);
+//						Double enterpriseIrpfQuota = getEnterpriseIrpfQuota();
+//						
+//						// Si esta exento deberia ir al L.24
+//						if(irpfQuota == 0.00) {
+//							visitInsurance();
+//						} else {
+//							if (PREST_IT.equals(prest)) {
+//								detail.setInKindPerceptionIL(AonMathUtils.round(detail.getInKindPerceptionIL() + irpfBase ));
+//								detail.setInKindDepositIL(AonMathUtils.round(detail.getInKindDepositIL() + irpfQuota ));
+////								if(detail.getInKindDepositIL() - enterpriseIrpfQuota > 1)
+////									detail.setInKindOutputDepositIL(enterpriseIrpfQuota);
+//								double dif = AonMathUtils.round(irpfQuota) - AonMathUtils.round(enterpriseIrpfQuota);
+//								if (dif > 0) {
+//									detail.setInKindOutputDepositIL(AonMathUtils.sum(detail.getInKindOutputDepositIL(), dif));
+//								}
+//							} else {
+//								detail.setInKindPerception(AonMathUtils.round(detail.getInKindPerception() + irpfBase ));
+//								detail.setInKindDeposit(AonMathUtils.round(detail.getInKindDeposit() + irpfQuota ));
+////								if(detail.getInKindDeposit() - enterpriseIrpfQuota > 1)
+////									detail.setInKindOutputDeposit(enterpriseIrpfQuota);
+//								// Cuota repercutida = Cuota total - Cuota empresa
+//								double dif = AonMathUtils.round(irpfQuota) - AonMathUtils.round(enterpriseIrpfQuota);
+//								if (dif > 0) {
+//									detail.setInKindOutputDeposit(AonMathUtils.sum(detail.getInKindOutputDeposit(), dif));
+//								}
+//							}
+//						}
+//					}
+					
+					private void visitAEInKindKey() {
 						double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
 						double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
 						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
@@ -310,19 +350,34 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 								? 0.0
 								: (irpfBase * totalIrpf / totalIrpfBase);
 						
-						Mod190Detail detail = getDetail(document,person,Mod1902025Key.A,null,accrualYear);
+//						Mod190Detail detail = getDetail(document,person,Mod1902025Key.A,null,accrualYear);
+						Mod1902025Key key = Mod1902025Key.A;
+						String subKey = null;
+						
+						if (isE01()) {
+							key = Mod1902025Key.E;
+							subKey = "01";
+						} else if (isE02()) {
+							key = Mod1902025Key.E;
+							subKey = "02";
+						} else if (isE03()) {
+							key = Mod1902025Key.E;
+							subKey = "03";
+						} else if (isE04()) {
+							key = Mod1902025Key.E;
+							subKey = "04";
+						}
+						Mod190Detail detail = getDetail(document, person, key, subKey, accrualYear);
 						String prest = rec.getValue( SALARY_PAYMENT.PAYMENT_CONCEPT);
 						Double enterpriseIrpfQuota = getEnterpriseIrpfQuota();
 						
 						// Si esta exento deberia ir al L.24
-						if(irpfQuota == 0.00) {
+						if (key == Mod1902025Key.A && irpfQuota == 0.00) {
 							visitInsurance();
 						} else {
-							if (PREST_IT.equals(prest)) {
+							if (key == Mod1902025Key.A && PREST_IT.equals(prest)) {
 								detail.setInKindPerceptionIL(AonMathUtils.round(detail.getInKindPerceptionIL() + irpfBase ));
 								detail.setInKindDepositIL(AonMathUtils.round(detail.getInKindDepositIL() + irpfQuota ));
-//								if(detail.getInKindDepositIL() - enterpriseIrpfQuota > 1)
-//									detail.setInKindOutputDepositIL(enterpriseIrpfQuota);
 								double dif = AonMathUtils.round(irpfQuota) - AonMathUtils.round(enterpriseIrpfQuota);
 								if (dif > 0) {
 									detail.setInKindOutputDepositIL(AonMathUtils.sum(detail.getInKindOutputDepositIL(), dif));
@@ -330,15 +385,25 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 							} else {
 								detail.setInKindPerception(AonMathUtils.round(detail.getInKindPerception() + irpfBase ));
 								detail.setInKindDeposit(AonMathUtils.round(detail.getInKindDeposit() + irpfQuota ));
-//								if(detail.getInKindDeposit() - enterpriseIrpfQuota > 1)
-//									detail.setInKindOutputDeposit(enterpriseIrpfQuota);
 								// Cuota repercutida = Cuota total - Cuota empresa
 								double dif = AonMathUtils.round(irpfQuota) - AonMathUtils.round(enterpriseIrpfQuota);
 								if (dif > 0) {
 									detail.setInKindOutputDeposit(AonMathUtils.sum(detail.getInKindOutputDeposit(), dif));
 								}
 							}
+							
+							if (key == Mod1902025Key.E) {
+								// Asignar tambien el importe a la administracion del modelo
+								switch (mod190.getAdministration()) {
+									case ALAVA -> detail.setArabaRetention(AonMathUtils.round(detail.getArabaRetention() + irpfQuota));
+									case BIZKAIA -> detail.setBizkaiaRetention(AonMathUtils.round(detail.getBizkaiaRetention() + irpfQuota));
+									case GIPUZKOA -> detail.setGipuzkoaRetention(AonMathUtils.round(detail.getGipuzkoaRetention() + irpfQuota));
+									case NAVARRA -> detail.setNavarraRetention(AonMathUtils.round(detail.getNavarraRetention() + irpfQuota));
+									default -> detail.setCommonRetention(AonMathUtils.round(detail.getCommonRetention() + irpfQuota));
+								}
+							}
 						}
+						
 					}
 					
 					private Double getEnterpriseIrpfQuota() {

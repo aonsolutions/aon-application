@@ -954,13 +954,12 @@ public class InvoiceImport extends ImportUtils{
 		try {
 			Occam occam = new Occam().setDomain(domain.getId()).setDomainName(domain.getName()).setUser(user.getLogin());
 
-			InvoiceCommunicationConfiguration icConfig = AON.getInvoiceCommunicationConfiguration(occam);
-		
-			InvoiceType invoiceType = iic.getInvoiceType() != null ? iic.getInvoiceType() : getInvoiceType(iic.getAccount());
-			if((icConfig.isTbai() || icConfig.isVerifactu()) && InvoiceType.SALES.equals(invoiceType)) {
-				throw new Exception( (icConfig.isTbai() ? "Ticket Bai" : "Veri*factu") 
-					+ " está activado, no se pueden importar facturas emitidas");
-			}
+//			InvoiceCommunicationConfiguration icConfig = AON.getInvoiceCommunicationConfiguration(occam);
+//			InvoiceType invoiceType = iic.getInvoiceType() != null ? iic.getInvoiceType() : getInvoiceType(iic.getAccount());
+//			if((icConfig.isTbai() || icConfig.isVerifactu()) && InvoiceType.SALES.equals(invoiceType)) {
+//				throw new Exception( (icConfig.isTbai() ? "Ticket Bai" : "Veri*factu") 
+//					+ " está activado, no se pueden importar facturas emitidas");
+//			}
 		
 			AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
 
