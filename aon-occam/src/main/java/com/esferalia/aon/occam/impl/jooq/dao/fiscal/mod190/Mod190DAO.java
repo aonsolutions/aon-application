@@ -121,6 +121,13 @@ public class Mod190DAO {
 				.set(FS_MODEL190.RETENTION_TOTAL, mod190.getRetentionTotal())
 				.set(FS_MODEL190.CREATION_USER,ctx.getUser())
 				.set(FS_MODEL190.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.set(FS_MODEL190.PREFERRED_CONTRIBUTIONS, mod190.getPreferredContributions())
+				.set(FS_MODEL190.PREFERRED_CONTRIBUTIONS_UNDER36, mod190.getPreferredContributionsUnder36())
+				.set(FS_MODEL190.PREFERRED_CONTRIBUTIONS_OVER36, mod190.getPreferredContributionsOver36())
+				.set(FS_MODEL190.PREFERRED_GROSS_ANNUAL_SALARY, mod190.getPreferredGrossAnnualSalary())
+				.set(FS_MODEL190.OTHER_CONTRIBUTIONS_UNDER36, mod190.getOtherContributionsUnder36())
+				.set(FS_MODEL190.OTHER_CONTRIBUTIONS_OVER36, mod190.getOtherContributionsOver36())
+				.set(FS_MODEL190.OTHER_GROSS_ANNUAL_SALARY, mod190.getOtherGrossAnnualSalary())				
 				.returning(FS_MODEL190.ID).fetchOne();
 		mod190.setId(rec.getId());
 		
@@ -154,6 +161,13 @@ public class Mod190DAO {
 				.set(FS_MODEL190.RETENTION_TOTAL, mod190.getRetentionTotal())
 				.set(FS_MODEL190.MODIFICATION_USER,ctx.getUser())
 				.set(FS_MODEL190.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.set(FS_MODEL190.PREFERRED_CONTRIBUTIONS, mod190.getPreferredContributions())
+				.set(FS_MODEL190.PREFERRED_CONTRIBUTIONS_UNDER36, mod190.getPreferredContributionsUnder36())
+				.set(FS_MODEL190.PREFERRED_CONTRIBUTIONS_OVER36, mod190.getPreferredContributionsOver36())
+				.set(FS_MODEL190.PREFERRED_GROSS_ANNUAL_SALARY, mod190.getPreferredGrossAnnualSalary())
+				.set(FS_MODEL190.OTHER_CONTRIBUTIONS_UNDER36, mod190.getOtherContributionsUnder36())
+				.set(FS_MODEL190.OTHER_CONTRIBUTIONS_OVER36, mod190.getOtherContributionsOver36())
+				.set(FS_MODEL190.OTHER_GROSS_ANNUAL_SALARY, mod190.getOtherGrossAnnualSalary())				
 				.where(FS_MODEL190.ID.equal(mod190.getId())).execute();
 		return mod190;
 	}
@@ -668,7 +682,15 @@ public class Mod190DAO {
 				.setCreationDate(rec.getValue(FS_MODEL190.CREATION_DATE))
 				.setCreationUser(rec.getValue(FS_MODEL190.CREATION_USER))
 				.setModificationDate(rec.getValue(FS_MODEL190.MODIFICATION_DATE))
-				.setModificationUser(rec.getValue(FS_MODEL190.MODIFICATION_USER));
+				.setModificationUser(rec.getValue(FS_MODEL190.MODIFICATION_USER))
+				.setPreferredContributions(rec.getValue(FS_MODEL190.PREFERRED_CONTRIBUTIONS))
+				.setPreferredContributionsUnder36(rec.getValue(FS_MODEL190.PREFERRED_CONTRIBUTIONS_UNDER36))
+				.setPreferredContributionsOver36(rec.getValue(FS_MODEL190.PREFERRED_CONTRIBUTIONS_OVER36))
+				.setPreferredGrossAnnualSalary(rec.getValue(FS_MODEL190.PREFERRED_GROSS_ANNUAL_SALARY))
+				.setOtherContributionsUnder36(rec.getValue(FS_MODEL190.OTHER_CONTRIBUTIONS_UNDER36))
+				.setOtherContributionsOver36(rec.getValue(FS_MODEL190.OTHER_CONTRIBUTIONS_OVER36))
+				.setOtherGrossAnnualSalary(rec.getValue(FS_MODEL190.OTHER_GROSS_ANNUAL_SALARY))
+				;
 		}
 	}
 	
@@ -795,3 +817,4 @@ public class Mod190DAO {
 	}	
 	
 }
+

@@ -10,7 +10,6 @@ import { AonNotificationPanel } from './aon-notification-panel.js';
 
 import { AonMobileHeader } from '../modules/aon-mobile-header.js';
 import { AonMobileMenu } from '../modules/aon-mobile-menu.js';
-import { AonTooltip } from '../components/aon-tooltip.js';
 import { AonDialog } from '../components/aon-dialog.js';
 
 export class AonHome extends AonElement {
@@ -19,7 +18,7 @@ export class AonHome extends AonElement {
 	AON_HEADER;
 	ROOT_PANEL;
 	RIGHT_PANEL;
-
+	
 	// Right Panel, needed for hide on click outside
 	rightPanel;
 	editButton;

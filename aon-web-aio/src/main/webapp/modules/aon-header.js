@@ -1,5 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getNotification, getCompanies, getUser, getAllContracts, getAuth, getHelpDatas} from  '../services/service.js';
+import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getNotification, getCompanies, getUser, getAllContracts, getAuth} from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
 
 //import '../components/aon-dialog-menu.js';

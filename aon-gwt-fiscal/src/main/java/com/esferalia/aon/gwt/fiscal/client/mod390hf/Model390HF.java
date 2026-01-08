@@ -373,11 +373,23 @@ public class Model390HF  implements EntryPoint {
 				return new Model390HF2017BIZKAIA(cbk,mod390HF);
 			}
 		},
+		
+		ARABA_2025 {
+			@Override
+			public boolean accept(Mod390HF mod390HF) {
+				return (mod390HF.isAraba() && mod390HF.getYear() >= 2025);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod390HF mod390HF, Model390HFCallback cbk) {
+				return new Model390HF2025ARABA(cbk,mod390HF);
+			}
+		},
 
 		ARABA_2024 {
 			@Override
 			public boolean accept(Mod390HF mod390HF) {
-				return (mod390HF.isAraba() && mod390HF.getYear() >= 2024);
+				return (mod390HF.isAraba() && mod390HF.getYear() == 2024);
 			}
 
 			@Override

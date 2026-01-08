@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class Mod190 implements IFiscalModel, HasAudit {
 
@@ -43,6 +44,16 @@ public class Mod190 implements IFiscalModel, HasAudit {
 	private Date modificationDate;
 	
 	private boolean useChargeDate;
+	
+	// Nuevos campos para el ejercicio 2025 (ARABA, BIZKAIA y GIPUZKOA):
+	// Aportaciones a planes de previsión social preferentes y Contribuciones empresariales al resto de sistemas de empleo 
+	private double preferredContributions;        	 	// Preferentes: Aportaciones
+	private double preferredContributionsUnder36; 	 	// Preferentes: Contribuciones empresariales a favor de personas menores de 36 años
+	private double preferredContributionsOver36;  	 	// Preferentes: Contribuciones empresariales a favor de personas de 36 años o más
+	private double preferredGrossAnnualSalary; 		 	// Preferentes: Salario bruto anual de la entidad	
+	private double otherContributionsUnder36; 		  	// Resto sistemas de empleo: Contribuciones empresariales a favor de personas menores de 36 años
+	private double otherContributionsOver36; 		  	// Resto sistemas de empleo: Contribuciones empresariales a favor de personas de 36 años o más
+	private double otherGrossAnnualSalary; 				// Resto sistemas de empleo: Salario bruto anual de la entidad
 	
 	@Override
 	public Integer getId() { 
@@ -316,4 +327,95 @@ public class Mod190 implements IFiscalModel, HasAudit {
 	public FiscalModelDeclarationType getDeclarationResultType() {
 		return null;
 	}
+	
+	public double getPreferredContributions() {
+		return preferredContributions;
+	}
+	public Mod190 setPreferredContributions(double preferredContributions) {
+		this.preferredContributions = preferredContributions;
+		return this;
+	}
+	public double getPreferredContributionsUnder36() {
+		return preferredContributionsUnder36;
+	}
+	public Mod190 setPreferredContributionsUnder36(double preferredContributionsUnder36) {
+		this.preferredContributionsUnder36 = preferredContributionsUnder36;
+		return this;
+	}
+	public double getPreferredContributionsOver36() {
+		return preferredContributionsOver36;
+	}
+	public Mod190 setPreferredContributionsOver36(double preferredContributionsOver36) {
+		this.preferredContributionsOver36 = preferredContributionsOver36;
+		return this;
+	}
+	// Preferentes: Contribuciones empresariales totales
+	public double getPreferredContributionsTotal() {
+		// Campo calculado: contribuciones menores de 36 + contribuciones mayores de 36
+		return preferredContributionsUnder36 + preferredContributionsOver36;
+	}
+	public double getPreferredGrossAnnualSalary() {
+		return preferredGrossAnnualSalary;
+	}
+	public Mod190 setPreferredGrossAnnualSalary(double preferredGrossAnnualSalary) {
+		this.preferredGrossAnnualSalary = preferredGrossAnnualSalary;
+		return this;
+	}
+	// Preferentes: Porcentaje de las aportaciones y contribuciones sobre el salario bruto anual	
+	public double getPreferredContributionsPercentage1() {
+		// Campo calculado: (aportaciones + contribuciones) / salario bruto anual * 100
+		double result = 0.0;
+		if (preferredGrossAnnualSalary != 0) {
+			result = ( (preferredContributions + getPreferredContributionsTotal()) / preferredGrossAnnualSalary ) * 100;
+			result = AonMathUtils.round(result); // redondeo a 2 decimales
+		} 
+		return result;
+	}
+	// Preferentes: Porcentaje de las contribuciones sobre el salario bruto anual
+	public double getPreferredContributionsPercentage2() {
+		// Campo calculado: contribuciones / salario bruto anual * 100
+		double result = 0.0;
+		if (preferredGrossAnnualSalary != 0) {
+			result = ( getPreferredContributionsTotal() / preferredGrossAnnualSalary ) * 100;
+			result = AonMathUtils.round(result); // redondeo a 2 decimales
+		}
+		return result;
+	}
+	public double getOtherContributionsUnder36() {
+		return otherContributionsUnder36;
+	}
+	public Mod190 setOtherContributionsUnder36(double otherContributionsUnder36) {
+		this.otherContributionsUnder36 = otherContributionsUnder36;
+		return this;
+	}
+	public double getOtherContributionsOver36() {
+		return otherContributionsOver36;
+	}
+	public Mod190 setOtherContributionsOver36(double otherContributionsOver36) {
+		this.otherContributionsOver36 = otherContributionsOver36;
+		return this;
+	}
+	// Resto sistemas de empleo: Contribuciones empresariales totales
+	public double getOtherContributionsTotal() {
+		// Campo calculado: contribuciones menores de 36 + contribuciones mayores de 36
+		return otherContributionsUnder36 + otherContributionsOver36;		
+	}
+	public double getOtherGrossAnnualSalary() {
+		return otherGrossAnnualSalary;
+	}
+	public Mod190 setOtherGrossAnnualSalary(double otherGrossAnnualSalary) {
+		this.otherGrossAnnualSalary = otherGrossAnnualSalary;
+		return this;
+	}
+	// Resto sistemas de empleo: Porcentaje de las contribuciones sobre el salario bruto anual
+	public double getOtherContributionsPercentage() {
+		// Campo calculado: contribuciones / salario bruto anual * 100
+		double result = 0.0;
+		if (otherGrossAnnualSalary != 0) {
+			result = ( getOtherContributionsTotal() / otherGrossAnnualSalary ) * 100;
+			result = AonMathUtils.round(result); // redondeo a 2 decimales
+		}
+		return result;
+	}
+		
 }
