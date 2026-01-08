@@ -11,7 +11,7 @@ import { getAuth } from '../../services/service.js';
 import { getAccounting, getPeriods } from '../../services/accountingService.js';
 import { AonLaboral } from '../laboral/aon-laboral.js';
 import { AonIcon } from '../../components/aon-icon.js';
-import { isEmptyObject, sortBy } from '../../services/utils.js';
+import { isEmptyObject, sortBy, waitEl } from '../../services/utils.js';
 import { AonApps } from '../aon-apps.js';
 import { getWorkgroups } from '../../services/workgroupService.js';
 import { AonTimecontrol } from '../timecontrol/aon-timecontrol.js';
@@ -247,10 +247,9 @@ export class AonMobileHome extends AonElement {
 		
 		li.addEventListener('click', (ev) => {
 			ev.stopPropagation();
-			const {TODAY}  = SigninSidenav.PERIOD;
 			let timeControl = new AonTimecontrol();
             this.rootPanel(timeControl);
-			timeControl.setDataFilter({period:TODAY.id});
+			waitEl('#aonMobileTcAppHoy').then(el => el.click());
 		});
 		
 		let span = this.createElement(TAG.SPAN);
