@@ -121,6 +121,7 @@ public class TaskWorkflowDAO {
 			.set(TASK_WORKFLOW.TASK_HOLDER, taskWorkflow.getTaskHolder().getId())
 			.set(TASK_WORKFLOW.TYPE, taskWorkflow.getType().value())	
 			.set(TASK_WORKFLOW.COMMENT, taskWorkflow.getComment())
+			.set(TASK_WORKFLOW.EMAIL, taskWorkflow.getEmail())
 			.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(firstNonNull(taskWorkflow.getModificationDate(), new Date())))
 			.set(TASK_WORKFLOW.MODIFICATION_USER, firstNonNull(taskWorkflow.getModificationUser(), ctx.getUser()))
 			.set(TASK_WORKFLOW.NOTIFICATION_DATE, AonDateUtils.toTimestamp(firstNonNull(taskWorkflow.getNotificationDate(), new Date())))

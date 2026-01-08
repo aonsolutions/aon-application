@@ -15,12 +15,14 @@
 					accesskey="#{bundle.aon_key_new}" />
 			</aon:if>				
 			<aon:if test="#{!skipSaveButton}">		
-				<aon:commandButton id="#{toolbarID}-save"
-					title="#{bundle.aon_key_save_accelerator}"
-					value="#{bundle.aon_save}" rendered="#{formEdit or formNew}"
-					action="#{saveAction}" actionListener="#{saveActionListener}"
-					styleClass="aon-finding-toolbar-item aon-icon-accept"
-					accesskey="#{bundle.aon_key_save}" />
+				<aon:div id="#{toolbarID}-save-container"  style="display:inline-block;" rendered="#{formEdit or formNew}" >
+					<aon:commandButton id="#{toolbarID}-save"
+						title="#{bundle.aon_key_save_accelerator}"
+						value="#{bundle.aon_save}" rendered="#{formEdit or formNew}"
+						action="#{saveAction}" actionListener="#{saveActionListener}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_save}" />
+				</aon:div>
 			</aon:if>
 			<aon:confirmButton id="#{toolbarID}-cancel" 
 				title="#{bundle.aon_key_cancel_accelerator}"
