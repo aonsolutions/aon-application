@@ -519,7 +519,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Aceptar")
 	String accept();
 
- 	@DefaultMessage("Ocultar")
+	@DefaultMessage("Editar")
+	String edit();
+	
+	@DefaultMessage("Ocultar")
  	String hide();
  	
  	@DefaultMessage("Vista previa")
