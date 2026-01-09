@@ -10,8 +10,12 @@ public class Pair<L, R> implements Serializable {
 	private R r;
 	
     public static <L, R> Pair<L, R> of(L left, R right) {
-        return new Pair<L, R>(left, right);
+        return new Pair<>(left, right);
     }
+    
+    public Pair() {
+	}
+    
 
     public Pair(L l, R r) {
     	this.l = l;	
