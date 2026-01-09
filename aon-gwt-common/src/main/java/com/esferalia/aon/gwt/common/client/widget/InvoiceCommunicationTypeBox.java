@@ -15,7 +15,7 @@ public class InvoiceCommunicationTypeBox extends ListBox {
 		setWidth("120px");
 		addItem(AonStringUtils.defaultIfBlank(firstItemLabel),"");
 		for (InvoiceCommunicationType d : InvoiceCommunicationType.values()) {
-			String desc = d.name(); 
+			String desc = d.getAbbr(); 
 			addItem(desc);
 		}
 	}
