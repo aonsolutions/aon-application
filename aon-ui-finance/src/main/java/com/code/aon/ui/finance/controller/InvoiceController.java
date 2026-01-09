@@ -131,7 +131,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapV
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -2293,7 +2292,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 				.findFirst()
 				.orElse(new LinkedList<>())
 			;
-		} catch (InvoiceCommunicationException e) {
+		} catch (Exception e) {
 			throw new AbortProcessingException(e);
 		}
 	}
