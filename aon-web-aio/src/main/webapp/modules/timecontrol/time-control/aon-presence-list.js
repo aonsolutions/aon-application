@@ -88,7 +88,8 @@ export class AonPresenceList extends AonElement {
     }
 
     if(!this.isMobile()) {
-      this.applicationEl.addToolbarOption2(SigninSidenav.MORE, ({target}) => this.dialogReport(target));
+	  this.applicationEl.addToolbarOption2(SigninSidenav.REPORT, () => modalReport(this.applicationEl, this, "excel"));
+      //this.applicationEl.addToolbarOption2(SigninSidenav.MORE, ({target}) => this.dialogReport(target));
     }
 
     this.buildToolbarSearch();
@@ -162,11 +163,12 @@ export class AonPresenceList extends AonElement {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
-      aonTable.addColumn("", "string", "lettersHtml", "6%");
-      aonTable.addColumn(MSG.NAME, "string", "name", "34%");
-      aonTable.addColumn(MSG.LAST_STATUS, "", "lastStatus", "35%");
+      aonTable.addColumn("", "string", "lettersHtml", "5%");
+      aonTable.addColumn(MSG.NAME, "string", "name", "33%");
+      aonTable.addColumn(MSG.LAST_STATUS, "", "lastStatus", "32%");
+      aonTable.addColumn("Motivo", "string", "reason", "10%");
       aonTable.addColumn(MSG.DURATION, "", "duration", "5%");
-      aonTable.addColumn(MSG.LAST_LOCATION, "string", "nameLocation", "20%");
+      aonTable.addColumn(MSG.LAST_LOCATION, "string", "nameLocation", "15%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
@@ -255,6 +257,7 @@ export class AonPresenceList extends AonElement {
               coordinates,
               last_location,
               task_holder: { id: taskHolderId, name },
+              detail
             }) => {
               const newStatus = status.toLowerCase();
               const lettersName = StringTwoLetters(name);
@@ -274,6 +277,9 @@ export class AonPresenceList extends AonElement {
                 let aib = setAttributes(new AonIconButton(),{id: "iconLocation", noHover: "true", icon: iconAddLocation});
                 nameLocation = aib.outerHTML;
               }
+              
+              let reason = detail && detail.length > 0 ? detail[detail.length - 1].reasonValue : '';
+              
               data.push({
                 name,
                 lettersHtml,
@@ -285,6 +291,7 @@ export class AonPresenceList extends AonElement {
                 textStatus,
                 status: newStatus,
                 duration: timeHour(Number(time)),
+                reason
               });
             }
           );

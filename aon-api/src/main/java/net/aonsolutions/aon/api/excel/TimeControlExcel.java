@@ -260,7 +260,7 @@ public class TimeControlExcel {
 	}
 	
 	private static void sheetDay(Collection<TimeControl> tcList, Workbook workbook, Date startDate, Date endDate, Domain domain){
-		String[] columns = {"Fecha", "Hora","Estado","Ubicaci\u00F3n"};
+		String[] columns = {"Fecha", "Hora","Estado", "Motivo", "Ubicaci\u00F3n"};
 		Timestamp startTimestamp = new Timestamp(startDate.getTime());
 		Timestamp endTimestamp = new Timestamp(endDate.getTime());
 		
@@ -367,6 +367,11 @@ public class TimeControlExcel {
 					Cell cellStatus = row.createCell(cells++);
 					cellStatus.setCellValue(getStatusText(dt.getStatus().name().toLowerCase()));
 					cellStatus.setCellStyle(cellStyleDate);
+					
+					Cell cellReason = row.createCell(cells++);
+					cellReason.setCellValue(null == dt.getReason() ? "" : dt.getReason().getDescription());
+					cellReason.setCellStyle(cellStyleDate);
+					
 					Cell cellLocation = row.createCell(cells++);
 					
 					if(hrefCoordinate.getAddress()!=null) {

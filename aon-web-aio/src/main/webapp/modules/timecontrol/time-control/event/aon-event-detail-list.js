@@ -152,6 +152,7 @@ export class AonEventDetailList extends AonElement {
       aonTable.removeColumns();
       aonTable.addColumnIcon({title:MSG.BACK, name:MATERIAL_ICONS.ARROW_BACK, type:"string", id:"lettersHtml", width:"6%"}, ()=>this.back());
       aonTable.addColumn(MSG.STATUS, "string", "textStatus", "10%");
+      aonTable.addColumn("Motivo", "string", "reason", "15%");
       aonTable.addColumn(MSG.DATE, "date", "dateParse", "20%");
       aonTable.addColumn(MSG.LOCATION, "string", "nameLocation", "30%");
       try {
@@ -202,6 +203,7 @@ export class AonEventDetailList extends AonElement {
       try {filter = { ...this.applicationParentEl._filter, ...this.applicationParentEl.DATE_TMP };} catch (error) {}
 
       const datos = await getTimeControlDetail(filter);
+      
       if (datos) {
         sortBy(datos, "date", "asc").map((resp) => {
           removeEmpty(resp);
@@ -217,6 +219,8 @@ export class AonEventDetailList extends AonElement {
             let aib = setAttributes(new AonIconButton(),{id: "iconLocation", noHover: "true", icon: iconAddLocation});
             nameLocation = aib.outerHTML;
           }
+          
+          let reason = resp.reasonValue ? resp.reasonValue : '';
 
           data.push({
             ...resp,
@@ -225,6 +229,7 @@ export class AonEventDetailList extends AonElement {
             status: newStatus,
             nameLocation,
             dateParse: AonDateUtils.setDateTimestamp(resp.date),
+            reason
           });
           
         });

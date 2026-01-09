@@ -158,6 +158,7 @@ export class AonEventList extends AonElement {
       const iconBack = !this.applicationParentEl.isEmployee() ? "arrow_back" : "";
       aonTable.addColumnIcon({title:MSG.BACK, name:iconBack, type:"string", id:"lettersHtml", width:"6%"}, ()=>this.back());
       aonTable.addColumn(MSG.DATE, "date", "dateParse", "30%");
+      aonTable.addColumn("Motivo", "string", "reason", "15%");
       aonTable.addColumn(MSG.DURATION, "string", "durationParse", "10%");
       aonTable.addColumn(MSG.LAST_LOCATION, "string", "nameLocation", "20%");
       try {
@@ -253,6 +254,8 @@ export class AonEventList extends AonElement {
                 const groupV  = r.group;
                 dateParse =  groupV && groupV.indexOf("DAY")>=0 ? AonDateUtils.formatDate(r.start_date)+" - "+ AonDateUtils.formatDate(r.end_date) : firstLetters(AonDateUtils.setDateTpDay(r.start_date))
               }
+              
+              let reason = r.detail && r.detail.length > 0 ? r.detail[r.detail.length - 1].reasonValue : '';
 
               data.push({
                 ...r,
@@ -261,7 +264,8 @@ export class AonEventList extends AonElement {
                 nameLocation,
                 textStatus: textStatus.name,
                 status: newStatus,
-                durationParse: timeHour(Number(r.time))
+                durationParse: timeHour(Number(r.time)),
+                reason
               });
             }
           );
