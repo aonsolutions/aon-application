@@ -118,7 +118,8 @@ export class AonDesktop extends AonElement {
 		this.build();
 
 	    await this.getInvoiceConfiguration();
-		if(!this.checkConfigurationComplete(this.ic, false) && !this.getDur().isParentUser())
+		if(!this.checkConfigurationComplete(this.ic, false) && !this.getDur().isParentUser() 
+				&& (this.getDur().isInvoice() || this.getDur().isManagement()))
 			this.buildInvoiceConfigurationDialog();	
 	}
 
