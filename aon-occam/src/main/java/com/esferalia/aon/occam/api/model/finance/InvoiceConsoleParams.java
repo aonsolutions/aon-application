@@ -3,37 +3,98 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
 public class InvoiceConsoleParams implements Serializable {
 	
+	public static enum OrderBy {
+		 ISSUE_DATE("Fecha de emisi\u00F3n") { @Override public <T> T visit(InvoiceConsoleParamsOrderVisitor<T> visitor) {return visitor.issueDate();}}
+		,REGISTRY("Raz\u00F3n Social") { @Override public <T> T visit(InvoiceConsoleParamsOrderVisitor<T> visitor) {return visitor.registry();}}
+		,SERIES_NUMBER("Serie/N\u00FAmero") { @Override public <T> T visit(InvoiceConsoleParamsOrderVisitor<T> visitor) {return visitor.seriesNumber();}}
+		,REFERENCE_CODE("C\u00F3digo de referencia") { @Override public <T> T visit(InvoiceConsoleParamsOrderVisitor<T> visitor) {return visitor.referenceCode();}}
+		,ID("ID") { @Override public <T> T visit(InvoiceConsoleParamsOrderVisitor<T> visitor) {return visitor.id();}}
+		;
+		
+		private String label;
+
+		private OrderBy(String label) {
+			this.label = label;
+		}
+		public String getLabel() {
+			return label;
+		}
+
+		public abstract <T> T visit( InvoiceConsoleParamsOrderVisitor<T> visitor);
+		
+		public interface InvoiceConsoleParamsOrderVisitor<T> {
+			T issueDate();
+			T registry();
+			T seriesNumber();
+			T referenceCode();
+			T id();
+		}
+	}
+	
 	private static final long serialVersionUID = 2683060057390169937L;
 	
+	private Integer fromId;
+	private Integer toId;
 	private Integer domain;
 	private Date fromDate;
 	private Date toDate;
 	private Integer activity;
 	
+	private String series;
+	private Integer fromNumber;
+	private Integer toNumber;
+	private String referenceCode;
+	
 	private Integer registry;
 	private Boolean output;
-	private VatSummaryType vatSummaryType;
+	private InvoiceTransactionType transactionType;
 	private RectificationType rectified;
 	private Boolean surcharge;
 	private Boolean farmerRegime;
 	private Boolean accrualRegime;
 	private Boolean investment;
+	private Boolean withholding;
 	private Boolean service;
 	private Boolean recorded;
+	private Boolean proforma;
 	private InvoiceSource source;
 
 	private SecurityLevel securityLevel;
 	
+	private InvoiceCommunicationType communicationType;
+	private InvoiceCommunicationStatus communicationStatus;
+	
+	private OrderBy orderBy;
+	private boolean descending = true;
+
 	private int offset;
 	private int limit;
 
+	public Integer getFromId() {
+		return fromId;
+	}
+	public InvoiceConsoleParams setFromId(Integer fromId) {
+		this.fromId = fromId;
+		return this;
+	}
+	
+	public Integer getToId() {
+		return toId;
+	}
+	public InvoiceConsoleParams setToId(Integer toId) {
+		this.toId = toId;
+		return this;
+	}
+	
 	public Integer getDomain() {
 		return domain;
 	}
@@ -63,6 +124,38 @@ public class InvoiceConsoleParams implements Serializable {
 	}
 	public InvoiceConsoleParams setActivity(Integer activity) {
 		this.activity = activity;
+		return this;
+	}
+	
+	public String getSeries() {
+		return series;
+	}
+	public InvoiceConsoleParams setSeries(String series) {
+		this.series = series;
+		return this;
+	}
+	
+	public Integer getFromNumber() {
+		return fromNumber;
+	}
+	public InvoiceConsoleParams setFromNumber(Integer fromNumber) {
+		this.fromNumber = fromNumber;
+		return this;
+	}
+	
+	public Integer getToNumber() {
+		return toNumber;
+	}
+	public InvoiceConsoleParams setToNumber(Integer toNumber) {
+		this.toNumber = toNumber;
+		return this;
+	}
+	
+	public String getReferenceCode() {
+		return referenceCode;
+	}
+	public InvoiceConsoleParams setReferenceCode(String referenceCode) {
+		this.referenceCode = referenceCode;
 		return this;
 	}
 	
@@ -96,11 +189,11 @@ public class InvoiceConsoleParams implements Serializable {
 		return output != null && !output.booleanValue();
 	}
 	
-	public VatSummaryType getVatSummaryType() {
-		return vatSummaryType;
+	public InvoiceTransactionType getTransactionType() {
+		return transactionType;
 	}
-	public InvoiceConsoleParams setVatSummaryType(VatSummaryType vatSummaryType) {
-		this.vatSummaryType = vatSummaryType;
+	public InvoiceConsoleParams setTransactionType(InvoiceTransactionType transactionType) {
+		this.transactionType = transactionType;
 		return this;
 	}
 	
@@ -136,6 +229,14 @@ public class InvoiceConsoleParams implements Serializable {
 		return this;
 	}
 	
+	public Boolean getWithholding() {
+		return withholding;
+	}
+	public InvoiceConsoleParams setWithholding(Boolean withholding) {
+		this.withholding = withholding;
+		return this;
+	}
+	
 	public Boolean getInvestment() {
 		return investment;
 	}
@@ -160,11 +261,51 @@ public class InvoiceConsoleParams implements Serializable {
 		return this;
 	}
 	
+	public Boolean getProforma() {
+		return proforma;
+	}
+	public InvoiceConsoleParams setProforma(Boolean proforma) {
+		this.proforma = proforma;
+		return this;
+	}
+
 	public InvoiceSource getSource() {
 		return source;
 	}
 	public InvoiceConsoleParams setSource(InvoiceSource source) {
 		this.source = source;
+		return this;
+	}
+
+	public InvoiceCommunicationType getCommunicationType() {
+		return communicationType;
+	}
+	public InvoiceConsoleParams setCommunicationType(InvoiceCommunicationType communicationType) {
+		this.communicationType = communicationType;
+		return this;
+	}
+	
+	public InvoiceCommunicationStatus getCommunicationStatus() {
+		return communicationStatus;
+	}
+	public InvoiceConsoleParams setCommunicationStatus(InvoiceCommunicationStatus communicationStatus) {
+		this.communicationStatus = communicationStatus;
+		return this;
+	}
+	
+	public OrderBy getOrderBy() {
+		return orderBy;
+	}
+	public InvoiceConsoleParams setOrderBy(OrderBy orderBy) {
+		this.orderBy = orderBy;
+		return this;
+	}
+	
+	public boolean isDescending() {
+		return descending;
+	}
+	public InvoiceConsoleParams setDescending(boolean descending) {
+		this.descending = descending;
 		return this;
 	}
 	
@@ -183,4 +324,5 @@ public class InvoiceConsoleParams implements Serializable {
 		this.limit = limit;
 		return this;
 	}
+	
 }
