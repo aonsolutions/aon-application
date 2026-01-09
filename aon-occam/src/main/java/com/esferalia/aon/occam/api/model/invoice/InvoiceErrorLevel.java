@@ -47,4 +47,9 @@ public enum InvoiceErrorLevel implements Serializable{
 		T visitWRN();
 		T visitERR();
 	}
+	public static InvoiceErrorLevel mostSeriousLevel(InvoiceErrorLevel level1, InvoiceErrorLevel level2) {
+		if (level1 == null) return level2;
+		if (level2 == null) return level1;
+		return level1.ordinal() >= level2.ordinal() ? level1 : level2;
+	}
 }
