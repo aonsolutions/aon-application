@@ -2,19 +2,25 @@ package com.esferalia.aon.gwt.fiscal.client.invoice.console;
 
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.InvoiceCommunicationStatusBox;
+import com.esferalia.aon.gwt.common.client.widget.InvoiceCommunicationTypeBox;
+import com.esferalia.aon.gwt.common.client.widget.InvoiceConsoleOrderByBox;
+import com.esferalia.aon.gwt.common.client.widget.InvoiceRegistryNameBox;
+import com.esferalia.aon.gwt.common.client.widget.InvoiceSourceBox;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistryBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
-import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.SelectElement;
@@ -22,10 +28,13 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 
 class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHandlers<InvoiceConsoleParams>{
@@ -39,31 +48,51 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 	private AonDateBox toDateBox;
 	private ListBox confidentialBox;
 	private ListBox activityBox;
-	private AonAccountingRegistryBox registryBox;
+	private AonTextBox seriesBox;
+	private AonIntegerBox fromNumberBox;
+	private AonIntegerBox toNumberBox;
+	private AonTextBox referenceCodeBox;
+	private InvoiceRegistryNameBox registryBox;
 	private ListBox outputBox;
 	private InvoiceTransactionListBox transactionBox;
 	
-	private ListBox investmentBox = new ListBox();
-	private ListBox serviceBox = new ListBox();
-	private ListBox accrualRegimeBox = new ListBox();
-	private ListBox farmerRegimeBox = new ListBox();
-	private ListBox surchargeBox = new ListBox();
-	private ListBox rectificationTypeBox = new ListBox();
+	private ListBox withholdingBox;
+	private ListBox investmentBox;
+	private ListBox serviceBox;
+	private ListBox accrualRegimeBox;
+	private ListBox farmerRegimeBox;
+	private ListBox surchargeBox;
+	private ListBox rectificationTypeBox;
 	
-	private ListBox recordedBox = new ListBox();
+	private ListBox recordedBox;
+	private ListBox proformaBox;
+	
+	private InvoiceCommunicationTypeBox communicationTypeBox;
+	private InvoiceCommunicationStatusBox communicationStatusBox;
+	private InvoiceSourceBox sourceBox;
 
+	private InvoiceConsoleOrderByBox orderByBox;
+	private ListBox orderBox;
 	
-	InvoiceConsoleFilter( InvoiceConsoleModuleOptions opts ) {
+	InvoiceConsoleFilter( InvoiceModuleOptions opts ) {
 		initYearBox(opts);
 		initPeriodBox(opts);
 		initFromDateBox(opts);
 		initToDateBox(opts);
 		initConfidentialBox(opts);
 		initActivityBox(opts);
+		
+		initSeriesBox(opts);
+		initFromNumberBox(opts);
+		initToNumberBox(opts);
+		initReferenceCodeBox(opts);
+		
 		initRecordedBox(opts);
+		initProformaBox(opts);
 		initRegistryBox(opts);
 		initOutputBox(opts);
 		initTransactionOutputBox(opts);
+		initWithholdingBox(opts);
 		initInvestmentBox(opts);
 		initServiceBox(opts);
 		initAccrualRegimeBox(opts);
@@ -71,57 +100,71 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		initSurchargeBox(opts);
 		initRectificationTypeBox(opts);
 		
+		initCommunicationTypeBox(opts);
+		initCommunicationStatusBox(opts);
+		initSourceBox(opts);
+		
+		initOrderByBox(opts);
+		initOrderBox(opts);
+		
 		paint( opts);
 	}
-
-	private void paint(InvoiceConsoleModuleOptions opts) {
+	
+	private void paint(InvoiceModuleOptions opts) {
 		AonDisplayTable mainTab = new AonDisplayTable(
 				 AON.CSS.aonSearchPanel()
 				,AON.CSS.aonBlockCenter()
 				,AON.CSS.aonWidthAlmostAll()
 			);
-		boolean hasActivities = (opts.getConfiguration() != null && opts.getConfiguration().hasActivities());
-		mainTab.addRow().addCell( 
-			new AonDisplayTable().addRow()
-				.addCell(new Label(AON.MSG.fiscalYear()),AON.CSS.aonSearchPanelLabel())
-				.addCell(yearBox)
-				.addCell(new Label(AON.MSG.period()),AON.CSS.aonSearchPanelLabel())
-				.addCell(periodBox)
-				.addCell(new Label(AON.MSG.date()),AON.CSS.aonSearchPanelLabel() )
-				.addCell(fromDateBox)
-				.addCell(new Label(AON.MSG.to()),AON.CSS.aonItalic())
-				.addCell(toDateBox)
-				.addCellIf(hasActivities,new Label(AON.MSG.activity()),AON.CSS.aonItalic())
-				.addCellIf(hasActivities,activityBox)
-				.addCell(new Label(AON.MSG.recorded()),AON.CSS.aonItalic())
-				.addCell(recordedBox)
-				.addCell(new Label(AON.MSG.titular()),AON.CSS.aonSearchPanelLabel() )
-				.addCell(registryBox)
-				.addCell(new Label(), AON.CSS.aonFlexGrow1())
-		);
-			
-		mainTab.addRow().addCell( 
-			new AonDisplayTable().addRow()
-				.addCell(new Label(AON.MSG.invoices()),AON.CSS.aonSearchPanelLabel() )
-				.addCell(outputBox)
-				.addCell(new Label(AON.MSG.transaction()),AON.CSS.aonSearchPanelLabel() )
-				.addCell(transactionBox)
-				.addCell(new Label(AON.MSG.investment()),AON.CSS.aonSearchPanelLabel() )
-				.addCell(investmentBox)
-				.addCell(new Label(AON.MSG.service()),AON.CSS.aonSearchPanelLabel() )
-				.addCell(serviceBox)
-				.addCell(new Label(AON.MSG.vatAccrualPaymentAbbr()),AON.CSS.aonSearchPanelLabel() )
-				.addCell(accrualRegimeBox)
-				.addCell(new Label(AON.MSG.withholdingFarmer()),AON.CSS.aonSearchPanelLabel() )
-				.addCell(farmerRegimeBox)
-				.addCell(new Label(AON.MSG.surcharge()),AON.CSS.aonSearchPanelLabel() )
-				.addCell(surchargeBox)
-				.addCell(new Label(AON.MSG.rectified()),AON.CSS.aonSearchPanelLabel() )
-				.addCell(rectificationTypeBox)
-				.addCell(new Label(), AON.CSS.aonFlexGrow1())
-		);
 		
+		boolean hasActivities = (opts.getConfiguration() != null && opts.getConfiguration().hasActivities());
 
+		FlowPanel datePanel = new FlowPanel();
+		datePanel.addStyleName(AON.CSS.aonNowrap());
+		datePanel.add(fromDateBox);
+		InlineLabel toDateLabel = new InlineLabel( AON.MSG.to());
+		toDateLabel.setStyleName(AON.CSS.aonItalic());
+		datePanel.add(toDateLabel);
+		datePanel.add(toDateBox);
+
+		FlowPanel numberPanel = new FlowPanel();
+		numberPanel.addStyleName(AON.CSS.aonNowrap());
+		numberPanel.add(fromNumberBox);
+		Label toNumberLabel = new InlineLabel( AON.MSG.to());
+		toNumberLabel.setStyleName(AON.CSS.aonItalic());
+		numberPanel.add(toNumberLabel);
+		numberPanel.add(toNumberBox);
+
+		addPair(mainTab, AON.MSG.invoices(), outputBox);
+		addPair(mainTab, AON.MSG.fiscalYear(), yearBox);
+		addPair(mainTab,AON.MSG.period(),periodBox);
+		addPair(mainTab,AON.MSG.date() ,datePanel);
+		addPair(mainTab,AON.MSG.confidential(),confidentialBox);
+		addPair(mainTab,AON.MSG.series(),seriesBox);
+		addPair(mainTab,AON.MSG.number() ,numberPanel);
+		addPair(mainTab,AON.MSG.reference() ,referenceCodeBox);
+		addPair(mainTab,AON.MSG.titular() ,registryBox);
+		if ( hasActivities ) {
+			addPair(mainTab,AON.MSG.activity(),activityBox);
+		}
+		addPair(mainTab,AON.MSG.transaction() ,transactionBox);
+		addPair(mainTab,AON.MSG.withholding() ,withholdingBox);
+		addPair(mainTab,AON.MSG.rectified() ,rectificationTypeBox);
+		addPair(mainTab,AON.MSG.communicated() ,communicationTypeBox);
+		addPair(mainTab,AON.MSG.withStatus() ,communicationStatusBox);
+
+		addPair(mainTab,AON.MSG.investment() ,investmentBox);
+		addPair(mainTab,AON.MSG.service() ,serviceBox);
+		addPair(mainTab,AON.MSG.vatAccrualPaymentAbbr() ,accrualRegimeBox);
+		addPair(mainTab,AON.MSG.withholdingFarmer() ,farmerRegimeBox);
+		addPair(mainTab,AON.MSG.surcharge() ,surchargeBox);
+
+		addPair(mainTab,AON.MSG.recorded(),recordedBox);
+		addPair(mainTab,AON.MSG.proforma(),proformaBox);
+		addPair(mainTab,AON.MSG.source() ,sourceBox);
+		addPair(mainTab,AON.MSG.orderBy(),orderByBox);
+		addPair(mainTab,AON.MSG.order(),orderBox);
+		
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.addStyleName(AON.CSS.aonWidthAll());
 		scrollPanel.setWidget(mainTab);
@@ -129,7 +172,22 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		
 	}
 
-	private void initYearBox(InvoiceConsoleModuleOptions opts) {
+	private void addPair(AonDisplayTable tab, String label, Widget widget) {
+		FlowPanel container = new FlowPanel();
+		container.setStyleName(AON.CSS.aonFlexColumn());
+		container.addStyleName(AON.CSS.aonCustomTextBox());
+		Label l = new Label(label);
+		l.setStyleName(AON.CSS.aonSearchPanelLabel());
+		l.addStyleName(AON.CSS.aonCustomTextBoxTitle());
+		widget.setStyleName(AON.CSS.aonCustomTextBoxInput());
+		widget.setWidth("100%");
+		widget.getElement().getStyle().setProperty("padding", "0");
+		container.add(l);
+		container.add(widget);
+		tab.addRow().addCell(container);
+	}
+
+	private void initYearBox(InvoiceModuleOptions opts) {
 		yearBox = new AonIntegerBox();
 		yearBox.addStyleName(AON.CSS.aonMarginLeft());
 		yearBox.setMaxLength(4);
@@ -140,7 +198,7 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		});
 	}
 
-	private void initPeriodBox(InvoiceConsoleModuleOptions opts) {
+	private void initPeriodBox(InvoiceModuleOptions opts) {
 		periodBox = new PeriodListBox();
 		periodBox.addStyleName(AON.CSS.aonMarginLeft());
 		periodBox.addChangeHandler(event -> {
@@ -166,27 +224,27 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		}
 	}
 	
-	private void initFromDateBox(InvoiceConsoleModuleOptions opts) {
+	private void initFromDateBox(InvoiceModuleOptions opts) {
 		fromDateBox = new AonDateBox();
 		fromDateBox.addValueChangeHandler(event -> fire(opts));
 	}
 	
-	private void initToDateBox(InvoiceConsoleModuleOptions opts) {
+	private void initToDateBox(InvoiceModuleOptions opts) {
 		toDateBox = new AonDateBox();
 		toDateBox.addValueChangeHandler(event -> fire(opts));
 	}
 
-	private void initConfidentialBox(InvoiceConsoleModuleOptions opts) {
+	private void initConfidentialBox(InvoiceModuleOptions opts) {
 		confidentialBox = new ListBox();
 		confidentialBox.setWidth(PX100);
+		confidentialBox.addItem(" Todas ");
 		confidentialBox.addItem( "Facturas NO confidenciales" );
 		confidentialBox.addItem( "Facturas confidenciales" );
-		confidentialBox.addItem(" Todas ");
-		confidentialBox.setSelectedIndex(2);
+		confidentialBox.setSelectedIndex(0);
 		confidentialBox.addChangeHandler(event -> fire(opts));
 	}
 
-	private void initActivityBox(InvoiceConsoleModuleOptions opts) {
+	private void initActivityBox(InvoiceModuleOptions opts) {
 		if (opts.getConfiguration() != null && opts.getConfiguration().hasActivities()) {
 			activityBox = new ListBox();
 			activityBox.setWidth("150px");
@@ -205,7 +263,39 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		}
 	}
 
-	private void initOutputBox(InvoiceConsoleModuleOptions opts) {
+	private void initSeriesBox(InvoiceModuleOptions opts) {
+		seriesBox = new AonTextBox();
+		seriesBox.addStyleName(AON.CSS.aonMarginLeft());
+		seriesBox.setMaxLength(5);
+		seriesBox.setVisibleLength(6);
+		seriesBox.addValueChangeHandler(event -> fire(opts));
+	}
+	
+	private void initFromNumberBox(InvoiceModuleOptions opts) {
+		fromNumberBox = new AonIntegerBox();
+		fromNumberBox.addStyleName(AON.CSS.aonMarginLeft());
+		fromNumberBox.setMaxLength(8);
+		fromNumberBox.setVisibleLength(8);
+		fromNumberBox.addValueChangeHandler(event -> fire(opts));
+	}
+	
+	private void initToNumberBox(InvoiceModuleOptions opts) {
+		toNumberBox = new AonIntegerBox();
+		toNumberBox.addStyleName(AON.CSS.aonMarginLeft());
+		toNumberBox.setMaxLength(8);
+		toNumberBox.setVisibleLength(8);
+		toNumberBox.addValueChangeHandler(event -> fire(opts));
+	}
+	
+	private void initReferenceCodeBox(InvoiceModuleOptions opts) {
+		referenceCodeBox = new AonTextBox();
+		referenceCodeBox.addStyleName(AON.CSS.aonMarginLeft());
+		referenceCodeBox.setMaxLength(15);
+		referenceCodeBox.setVisibleLength(18);
+		referenceCodeBox.addValueChangeHandler(event -> fire(opts));	
+	}
+
+	private void initOutputBox(InvoiceModuleOptions opts) {
 		outputBox = new ListBox();
 		outputBox.addItem(TODAS);
 		outputBox.addItem(AON.MSG.inputInvoices());
@@ -213,13 +303,13 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		outputBox.addChangeHandler(event -> fire(opts));
 	}
 
-	private void initTransactionOutputBox(InvoiceConsoleModuleOptions opts) {
+	private void initTransactionOutputBox(InvoiceModuleOptions opts) {
 		transactionBox = new InvoiceTransactionListBox(TODAS);
 		transactionBox.setWidth(PX100);
 		transactionBox.addChangeHandler(event -> fire(opts));
 	}
 	
-	private void initRecordedBox(InvoiceConsoleModuleOptions opts) {
+	private void initRecordedBox(InvoiceModuleOptions opts) {
 		recordedBox = new ListBox();
 		recordedBox.addItem(TODAS);
 		recordedBox.addItem(AON.MSG.no());
@@ -227,13 +317,30 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		recordedBox.addChangeHandler(event -> fire(opts));
 	}
 
-	private void initRegistryBox(InvoiceConsoleModuleOptions opts) {
-		registryBox = new AonAccountingRegistryBox(opts,true);
+	private void initProformaBox(InvoiceModuleOptions opts) {
+		proformaBox = new ListBox();
+		proformaBox.addItem(TODAS);
+		proformaBox.addItem(AON.MSG.no());
+		proformaBox.addItem(AON.MSG.yes());
+		proformaBox.addChangeHandler(event -> fire(opts));
+	}
+
+	private void initRegistryBox(InvoiceModuleOptions opts) {
+		registryBox = new InvoiceRegistryNameBox(opts);
 		registryBox.setRequired(false);
 		registryBox.addSelectionHandler(event -> fire(opts));
 	}
 	
-	private void initInvestmentBox(InvoiceConsoleModuleOptions opts) {
+	private void initWithholdingBox(InvoiceModuleOptions opts) {
+		withholdingBox = new ListBox();
+		withholdingBox.setWidth(PX100);
+		withholdingBox.addItem(TODAS);
+		withholdingBox.addItem(AON.MSG.no());
+		withholdingBox.addItem(AON.MSG.yes());
+		withholdingBox.addChangeHandler(event -> fire(opts));
+	}
+
+	private void initInvestmentBox(InvoiceModuleOptions opts) {
 		investmentBox = new ListBox();
 		investmentBox.setWidth(PX100);
 		investmentBox.addItem(TODAS);
@@ -242,7 +349,7 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		investmentBox.addChangeHandler(event -> fire(opts));
 	}
 	
-	private void initAccrualRegimeBox(InvoiceConsoleModuleOptions opts) {
+	private void initAccrualRegimeBox(InvoiceModuleOptions opts) {
 		accrualRegimeBox = new ListBox();
 		accrualRegimeBox.addItem(TODAS);
 		accrualRegimeBox.addItem(AON.MSG.no());
@@ -250,7 +357,7 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		accrualRegimeBox.addChangeHandler(event -> fire(opts));
 	}
 	
-	private void initFarmerRegimeBox(InvoiceConsoleModuleOptions opts) {
+	private void initFarmerRegimeBox(InvoiceModuleOptions opts) {
 		farmerRegimeBox = new ListBox();
 		farmerRegimeBox.addItem(TODAS);
 		farmerRegimeBox.addItem(AON.MSG.no());
@@ -262,7 +369,7 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		});
 	}
 
-	private void initServiceBox(InvoiceConsoleModuleOptions opts) {
+	private void initServiceBox(InvoiceModuleOptions opts) {
 		serviceBox = new ListBox();
 		serviceBox.addItem(TODAS);
 		serviceBox.addItem(AON.MSG.no());
@@ -270,7 +377,7 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		serviceBox.addChangeHandler(event -> fire(opts));
 	}
 	
-	private void initSurchargeBox(InvoiceConsoleModuleOptions opts) {
+	private void initSurchargeBox(InvoiceModuleOptions opts) {
 		surchargeBox = new ListBox();
 		surchargeBox.addItem(TODAS);
 		surchargeBox.addItem(AON.MSG.no());
@@ -282,7 +389,7 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		});
 	}
 	
-	private void initRectificationTypeBox(InvoiceConsoleModuleOptions opts) {
+	private void initRectificationTypeBox(InvoiceModuleOptions opts) {
 		rectificationTypeBox = new ListBox();
 		rectificationTypeBox.setWidth(PX100);
 		rectificationTypeBox.addItem(TODAS);
@@ -294,33 +401,74 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		rectificationTypeBox.addChangeHandler(event -> fire(opts));
 	}
 
+
+	private void initCommunicationTypeBox(InvoiceModuleOptions opts) {
+		communicationTypeBox = new InvoiceCommunicationTypeBox(TODAS);
+		communicationTypeBox.setWidth(PX100);
+		communicationTypeBox.addChangeHandler(event -> fire(opts));
+	}
 	
-	private InvoiceConsoleParams getWidgetParams(InvoiceConsoleModuleOptions opts) {
+	private void initCommunicationStatusBox(InvoiceModuleOptions opts) {
+		communicationStatusBox = new InvoiceCommunicationStatusBox(TODAS);
+		communicationStatusBox.setWidth(PX100);
+		communicationStatusBox.addChangeHandler(event -> fire(opts));
+	}
+
+	private void initSourceBox(InvoiceModuleOptions opts) {
+		sourceBox = new InvoiceSourceBox();
+		sourceBox.setWidth(PX100);
+		sourceBox.addChangeHandler(event -> fire(opts));
+	}
+
+	private void initOrderByBox(InvoiceModuleOptions opts) {
+		orderByBox = new InvoiceConsoleOrderByBox();
+		orderByBox.setWidth(PX100);
+		orderByBox.addChangeHandler(event -> fire(opts));
+	}
+	
+	private void initOrderBox(InvoiceModuleOptions opts) {
+		orderBox = new ListBox();
+		orderBox.addItem(AON.MSG.ascendingOrder());
+		orderBox.addItem(AON.MSG.descendingOrder());
+		orderBox.addChangeHandler(event -> fire(opts));
+	}
+
+	private InvoiceConsoleParams getWidgetParams(InvoiceModuleOptions opts) {
 		InvoiceConsoleParams params = new InvoiceConsoleParams()
 			.setDomain(opts.getDomain())
-			.setRegistry(registryBox.getId())
 			.setFromDate(fromDateBox.getValue())
 			.setToDate(toDateBox.getValue())
 		;
+		if (registryBox.getValue() != null) {
+			params.setRegistry( registryBox.getValue().getId() );
+		}
 		if (opts.getConfiguration() != null && opts.getConfiguration().hasActivities() && activityBox.getSelectedIndex() > 0) {
 			params.setActivity( AonNumberUtils.toInteger( activityBox.getSelectedValue()));
 		}
+		
+		if (AonStringUtils.isNotBlank(seriesBox.getValue())) {
+			params.setSeries( seriesBox.getValue() );
+		}
+		
+		if (fromNumberBox.getValue() != null) {
+			params.setFromNumber( fromNumberBox.getValue() );
+		}
+		
+		if (toNumberBox.getValue() != null) {
+			params.setToNumber( toNumberBox.getValue() );
+		}
+		
+		if (AonStringUtils.isNotBlank(referenceCodeBox.getValue())) {
+			params.setReferenceCode( referenceCodeBox.getValue() );
+		}
+		
 		if (transactionBox.getValue() != null) {
-			if (transactionBox.getValue() == InvoiceTransactionType.NATIONAL) {
-				params.setVatSummaryType(VatSummaryType.NATIONAL);
-				if (surchargeBox.getSelectedIndex() == 2) params.setVatSummaryType(VatSummaryType.SURCHARGE);
-				if (farmerRegimeBox.getSelectedIndex() == 2) params.setVatSummaryType(VatSummaryType.FARMER);
-			} else if (transactionBox.getValue() == InvoiceTransactionType.INTRACOMMUNITY) {
-				params.setVatSummaryType(VatSummaryType.INTRACOMMUNITY);
-			} else if (transactionBox.getValue() == InvoiceTransactionType.EXTRACOMMUNITY) {
-				params.setVatSummaryType(VatSummaryType.EXTRACOMMUNITY);
-			} else if (transactionBox.getValue() == InvoiceTransactionType.CAN_CEU_MEL) {
-				params.setVatSummaryType(VatSummaryType.CAN_CEU_MEL);
-			} else if (transactionBox.getValue() == InvoiceTransactionType.OTHER_ISP) {
-				params.setVatSummaryType(VatSummaryType.OTHER_ISP);
-			}
+			params.setTransactionType(transactionBox.getValue());
 		}
 			
+		if (confidentialBox.getSelectedIndex() == 1) params.setSecurityLevel(SecurityLevel.OFFICIAL);
+		if (confidentialBox.getSelectedIndex() == 2) params.setSecurityLevel(SecurityLevel.CONFIDENTIAL);
+
 		if (outputBox.getSelectedIndex() == 1) params.setOutput(false);
 		if (outputBox.getSelectedIndex() == 2) params.setOutput(true);
 			
@@ -331,6 +479,9 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 			params.setRectificationType(RectificationType.values()[rectificationTypeBox.getSelectedIndex() - 1]);	
 		}
 			
+		if (withholdingBox.getSelectedIndex() == 1) params.setWithholding(false);
+		if (withholdingBox.getSelectedIndex() == 2) params.setWithholding(true);
+
 		if (investmentBox.getSelectedIndex() == 1) params.setInvestment(false);
 		if (investmentBox.getSelectedIndex() == 2) params.setInvestment(true);
 			
@@ -341,17 +492,33 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		if (serviceBox.getSelectedIndex() == 2) params.setService(true);
 			
 		if (recordedBox.getSelectedIndex() == 1) params.setRecorded(false);
-		if (recordedBox.getSelectedIndex() == 2) params.setRecorded(true);	
+		if (recordedBox.getSelectedIndex() == 2) params.setRecorded(true);
+		
+		if (proformaBox.getSelectedIndex() == 1) params.setProforma(false);
+		if (proformaBox.getSelectedIndex() == 2) params.setProforma(true);
+
+		if (communicationTypeBox.getValue() != null) {
+			params.setCommunicationType( communicationTypeBox.getValue() );
+		}
+		if (communicationStatusBox.getValue() != null) {
+			params.setCommunicationStatus( communicationStatusBox.getValue() );
+		}
+		if (sourceBox.getValue() != null) {
+			params.setSource( sourceBox.getValue() );
+		}
+		
+		params.setOrderBy( orderByBox.getValue() );
+		params.setDescending( orderBox.getSelectedIndex() == 1 );
 
 		return params;
 	}
 
 
-	private void fire(final InvoiceConsoleModuleOptions opts) {
+	private void fire(final InvoiceModuleOptions opts) {
 		ValueChangeEvent.<InvoiceConsoleParams>fire( InvoiceConsoleFilter.this, getWidgetParams( opts ) ); 
 	}
 
-	void initialize(InvoiceConsoleModuleOptions opts) {
+	void initialize(InvoiceModuleOptions opts) {
 		yearBox.setValue(DateUtils.getYear(),false);
 		periodBox.setSelectedIndex(0);
 		fillDates();

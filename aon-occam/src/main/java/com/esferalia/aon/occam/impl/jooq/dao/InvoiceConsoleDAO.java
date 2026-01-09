@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,22 +11,19 @@ import java.util.stream.Collectors;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.OrderField;
-import org.jooq.impl.DSL;
+import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
-import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams.OrderBy.InvoiceConsoleParamsOrderVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
-import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
-import com.esferalia.aon.occam.api.model.type.InvoiceSource;
-import com.esferalia.aon.occam.api.model.type.InvoiceSource.IInvoiceSourceVisitor;
-import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
-import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceConsoleDAO {
 	
@@ -33,15 +31,10 @@ public class InvoiceConsoleDAO {
 
 	}
 
-//	private static final Field<Byte> MIN_SOURCE = DSL.minDistinct( INVOICE_DETAIL.SOURCE);
-	private static final Field<Byte> TEDI_FIELD = DSL.inline( InvoiceSource.TEDI.value());
-	
 	// ---------------------------------------------------------------------	
 	// --------------------------------------------------------- [PUBLIC] --	
 	// ---------------------------------------------------------------------
-	
-	public static List<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params) {
-		ctx.checkRead();
+	private static SelectJoinStep<?> select(AONContext ctx) {
 		Field<Integer> orderedType = InvoiceDAO.getOrderedType();
 		return ctx.getDslContext()
 			.select(
@@ -51,16 +44,14 @@ public class InvoiceConsoleDAO {
 				,INVOICE.TYPE
 				,INVOICE.ISSUE_DATE
 				,INVOICE.REFERENCE_CODE
-				,TEDI_FIELD
 			)
-			.from(INVOICE)
-			.where(getWhere(params))
-//			.and( TEDI_FIELD.in(
-//				ctx.getDslContext().select( MIN_SOURCE )
-//					.from(INVOICE_DETAIL)
-//					.where( INVOICE_DETAIL.INVOICE.eq( INVOICE.ID) )
-//					.groupBy( INVOICE_DETAIL.INVOICE )
-//					.having(MIN_SOURCE.eq(InvoiceSource.TEDI.value()))))
+			.from(INVOICE);
+	}
+	
+	public static List<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params) {
+		ctx.checkRead();
+		return select(ctx)
+			.where(getWhere(ctx, params))
 			.orderBy(getOrderBy(params))
 			.limit(params.getOffset() , params.getLimit())
 			.fetch()
@@ -73,9 +64,11 @@ public class InvoiceConsoleDAO {
 			.map( ic -> fillSource(ic))
 			.map( ic -> fillMessages(ctx, ic))
 			.map( ic -> fillCommunicationInfo(ctx, ic))
+			.map( ic -> fillBreakdown(ctx, ic))
 			.collect(Collectors.toCollection(LinkedList::new))
 		;
 	}
+
 
 	// ---------------------------------------------------------------------	
 	// -------------------------------------------------------- [PRIVATE] --	
@@ -108,9 +101,21 @@ public class InvoiceConsoleDAO {
 		return ic;
 	}
 
-	public static Condition getWhere(InvoiceConsoleParams params) {
+	private static InvoiceConsole fillBreakdown(AONContext ctx, InvoiceConsole ic) {
+		ic.getInvoice().refreshTaxBreakdown( );
+		return ic;
+	}
+	
+	public static Condition getWhere(AONContext ctx, InvoiceConsoleParams params) {
 		
 		Condition condition = INVOICE.DOMAIN.equal( params.getDomain() );
+		
+		if (params.getFromId() != null) {
+			condition = condition.and( INVOICE.ID.ge( params.getFromId() ));
+		}
+		if (params.getToId() != null) {
+			condition = condition.and( INVOICE.ID.le( params.getToId() ));
+		}
 		
 		if (params.getActivity() != null) {
 			if (AonMathUtils.isNegative(params.getActivity())) {
@@ -131,6 +136,21 @@ public class InvoiceConsoleDAO {
 		if(params.getActivity() != null){
 			condition = condition.and( INVOICE.ACTIVITY.eq( params.getActivity()));
 		}
+		
+		if (AonStringUtils.isNotEmpty(params.getSeries())) {
+			condition = condition.and( INVOICE.SERIES.eq( params.getSeries() ));
+		}
+		
+		if (params.getFromNumber() != null) {
+			condition = condition.and( INVOICE.NUMBER.ge( params.getFromNumber() ));
+		}
+		if (params.getToNumber() != null) {
+			condition = condition.and( INVOICE.NUMBER.le( params.getToNumber() ));
+		}
+
+		if (AonStringUtils.isNotEmpty(params.getReferenceCode())) {
+			condition = condition.and( INVOICE.REFERENCE_CODE.eq( params.getReferenceCode() ));
+		}
 
 		if (params.getRegistry()  != null && params.getRegistry().intValue() != 0 ) {
 			condition = condition.and( INVOICE.REGISTRY.eq( params.getRegistry() ));
@@ -138,6 +158,10 @@ public class InvoiceConsoleDAO {
 		
 		if (params.getAccrualRegime() != null) {
 			condition = condition.and( INVOICE.VAT_ACCRUAL_PAYMENT.eq( AonEnumUtils.getByte(params.getAccrualRegime())));
+		}
+		
+		if (params.getWithholding() != null) {
+			condition = condition.and( INVOICE.WITHHOLDING.eq( AonEnumUtils.getByte(params.getWithholding())));
 		}
 		
 		if (params.getInvestment() != null) {
@@ -164,6 +188,14 @@ public class InvoiceConsoleDAO {
 			}
 		}
 
+		if (params.getProforma() != null) {
+			if ( params.getProforma().booleanValue() ) {
+				condition = condition.and( INVOICE.NUMBER.lt( 0 ));
+			} else {
+				condition = condition.and( INVOICE.NUMBER.ge( 0 ));
+			}
+		}
+
 		if (params.getOutput() != null) {
 			if (params.getOutput().booleanValue()) {
 				condition = condition.and( INVOICE.TYPE.eq( InvoiceType.SALES.value() ));
@@ -172,77 +204,90 @@ public class InvoiceConsoleDAO {
 			}
 		}
 			
-		if (params.getVatSummaryType() != null) {
-			if (params.getVatSummaryType() == VatSummaryType.NATIONAL) {
-				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.NATIONAL.value() ));
-				condition = condition.and( INVOICE.WITHHOLDING_FARMER.eq( AonEnumUtils.getByte(false)));
-			} else if (params.getVatSummaryType() == VatSummaryType.SURCHARGE){	
-				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.NATIONAL.value() ));
-				condition = condition.and( INVOICE.SURCHARGE.eq( AonEnumUtils.getByte(true)));
-			} else if (params.getVatSummaryType() == VatSummaryType.FARMER) {
-				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.NATIONAL.value() ));
-				condition = condition.and( INVOICE.WITHHOLDING_FARMER.eq( AonEnumUtils.getByte(true)));
-			} else if (params.getVatSummaryType() == VatSummaryType.INTRACOMMUNITY) {
-				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.INTRACOMMUNITY.value() ));
-			} else if (params.getVatSummaryType() == VatSummaryType.EXTRACOMMUNITY) {
-				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.EXTRACOMMUNITY.value() ));
-			} else if (params.getVatSummaryType() == VatSummaryType.CAN_CEU_MEL) {
-				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.CAN_CEU_MEL.value() ));
-			} else if (params.getVatSummaryType() == VatSummaryType.OTHER_ISP) {
-				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.OTHER_ISP.value() ));
+		if (params.getTransactionType() != null) {
+			condition = condition.and( INVOICE.TRANSACTION.eq( params.getTransactionType().value() ));
+		}
+		
+		
+		if (params.getCommunicationType() != null || params.getCommunicationStatus() != null) {
+			Condition invoiceInfoCondition = INVOICE_INFO.INVOICE.equal(INVOICE.ID);
+			if (params.getCommunicationType() != null) {
+				invoiceInfoCondition = invoiceInfoCondition.and( INVOICE_INFO.TYPE.eq( params.getCommunicationType().value() ));
 			}
+			if (params.getCommunicationStatus() != null) {
+				invoiceInfoCondition = invoiceInfoCondition.and( INVOICE_INFO.STATUS.eq( params.getCommunicationStatus().value() ));
+			}
+			condition = condition.andExists( 
+				ctx.getDslContext().select(INVOICE_INFO.INVOICE)
+					.from(INVOICE_INFO)
+					.where(invoiceInfoCondition)
+					.limit(1)
+				);
 		}
-		return condition;
-	}
-	public static boolean mustReadDetails(InvoiceConsoleParams params) {
-		return ( params.getSource() != null);
-	}
-	public static Condition getDetailWhere(InvoiceConsoleParams params) {
-		Condition condition = INVOICE_DETAIL.DOMAIN.equal( params.getDomain() );
+		
 		if ( params.getSource() != null) {
-			params.getSource().visit(null, new IInvoiceSourceVisitor() {
-
-				private static final long serialVersionUID = 5981585563515519217L;
-
-				private void visitManagement(InvoiceDetail detail) {
-					condition
-						.and( INVOICE_DETAIL.SOURCE.notEqual( InvoiceSource.ACCOUNT.value()))
-						.and( INVOICE_DETAIL.SOURCE.notEqual( InvoiceSource.TEDI.value()));
-				}
-
-				@Override public void visitDirectExpense(InvoiceDetail detail) { visitManagement(detail); }
-				@Override public void visitPurchase(InvoiceDetail detail) { visitManagement(detail); }
-				@Override public void visitSales(InvoiceDetail detail) { visitManagement(detail); }
-				@Override public void visitDelivery(InvoiceDetail detail) { visitManagement(detail); }
-				@Override public void visitIncome(InvoiceDetail detail) { visitManagement(detail); }
-				@Override public void visitFee(InvoiceDetail detail) {visitManagement(detail); }
-				@Override public void visitDirectInvoice(InvoiceDetail detail) { visitManagement(detail); }
-				@Override public void visitOffer(InvoiceDetail detail) {  visitManagement(detail); }
-				@Override public void visitReservation(InvoiceDetail detail) { visitManagement(detail); }
-				
-				@Override 
-				public void visitAccount(InvoiceDetail detail) {
-					condition.and( INVOICE_DETAIL.SOURCE.equal( InvoiceSource.ACCOUNT.value() ) );
-				}
-				@Override 
-				public void visitTedi(InvoiceDetail detail) {
-					condition.and( INVOICE_DETAIL.SOURCE.equal( InvoiceSource.TEDI.value() ) );
-				}
-				
-			});
+			condition = condition.andExists( 
+				ctx.getDslContext().selectFrom( INVOICE_DETAIL )
+					.where( INVOICE_DETAIL.INVOICE.equal( INVOICE.ID )
+						.and( INVOICE_DETAIL.SOURCE.equal( params.getSource().value() ))
+					)
+					.limit(1)
+				);
 		}
 		return condition;
 	}
-
 	
 	private static OrderField<?>[] getOrderBy(InvoiceConsoleParams params) {
-		// implementar order field in params and ask user.
-		return new OrderField<?>[] {
-			 InvoiceDAO.getOrderedType()
-			,INVOICE.TYPE
-			,INVOICE.ISSUE_DATE.desc()
-			,INVOICE.REFERENCE_CODE
-		};
+		if (params.getOrderBy() == null) {
+			return new OrderField<?>[] {
+				 InvoiceDAO.getOrderedType()
+				,INVOICE.ISSUE_DATE.desc()
+				,INVOICE.REFERENCE_CODE
+			};
+		}
+		return params.getOrderBy().visit( new InvoiceConsoleParamsOrderVisitor<OrderField<?>[]>() {
+			private OrderField<?> field(Field<?> field) {
+				return params.isDescending() ? field.desc() : field ;
+			}
+
+			@Override
+			public OrderField<?>[] issueDate() {
+				return new OrderField<?>[] {
+					field( INVOICE.ISSUE_DATE )
+				};
+			}
+
+			@Override
+			public OrderField<?>[] registry() {
+				return new OrderField<?>[] {
+					field( INVOICE.RNAME )
+				};
+			}
+
+			@Override
+			public OrderField<?>[] seriesNumber() {
+				return new OrderField<?>[] {
+					 InvoiceDAO.getOrderedType()
+					,field( INVOICE.SERIES )
+					,field( INVOICE.NUMBER )
+				};
+			}
+
+			@Override
+			public OrderField<?>[] referenceCode() {
+				return new OrderField<?>[] {
+					 InvoiceDAO.getOrderedType()
+					,field( INVOICE.REFERENCE_CODE )
+				};
+			}
+			@Override
+			public OrderField<?>[] id() {
+				return new OrderField<?>[] {
+					field( INVOICE.ID )
+				};
+			}
+		});
+		
 	}
 	
 }

@@ -160,7 +160,6 @@ public interface CommonServiceAsync {
 	// **************************************************
 	// **************************************** [INVOICE]
 	// **************************************************
-	void getInvoiceRegistries(String domainName, int domain, String user, String query, AsyncCallback<LinkedList<InvoiceRegistry>> asyncCallback);
 	void getInvoiceProducts(String domainName, int domain, String user, String query, AsyncCallback<LinkedList<OldProduct>> asyncCallback);
 	
 	// **************************************************
