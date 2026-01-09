@@ -227,13 +227,15 @@ export class AonDesktop extends AonElement {
 	}
 
 	checkConfigurationComplete(config, showError) {
+		let isSpain = config && config.company && config.company.documentCountry && config.company.documentCountry === 'ES';
+		if(showError && !isSpain) return true;
 		if(showError && !this.conditionsAccepted) {
 			this.showMessageError("Debe aceptar las condiciones para continuar.");
 			return false;
 		}
 		if(!config || !config.company || !config.company.document || !config.communication) return false;
 		let icc = new InvoiceCommunicationConfiguration(config.communication);
-		if(!isValid(config.company.document)) {
+		if(!isValid(config.company.document) && isSpain) {
 			if(showError) this.showMessageError("El NIF/CIF de la empresa no es válido.");
 			return false;
 		}

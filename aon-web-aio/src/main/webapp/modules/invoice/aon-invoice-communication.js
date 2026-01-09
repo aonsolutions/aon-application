@@ -7,6 +7,7 @@ import { isPersonaFisica, isValid } from "../../services/documentUtils.js";
 import { AonToast } from "../../components/aon-toast.js";
 import { InvoiceCommunicationConfiguration } from "../../models/InvoiceCommunicationConfiguration.js";
 import { Administration, ADMINISTRATIONS } from "../../models/Administration.js";
+import { Countries } from "../../services/country.js";
 
 export class AonInvoiceCommunication extends AonElement {
 
@@ -21,7 +22,7 @@ export class AonInvoiceCommunication extends AonElement {
     initialize() {
         this.id = this.id || 'aonInvoiceConfigurationCommunication';
         this.DIV = this.id + 'Div';
-        
+
         this.COMPANY_CARD = this.id + 'CompanyCard';
         this.COMPANY_CARD_DIV = this.COMPANY_CARD + 'Div';
         this.COMPANY_CARD_TABLE = this.COMPANY_CARD + 'Table';
@@ -47,15 +48,15 @@ export class AonInvoiceCommunication extends AonElement {
         div.style.width = '100%';
         this.appendChild(div);
         this.buildCompanyCard(div);
-        if(this.showCommunicationCard()) 
-            this.buildCommunicationCard(div);        
+        if (this.showCommunicationCard())
+            this.buildCommunicationCard(div);
     }
 
     reload() {
         let parent = this.getElement(this.DIV);
         this.clearElement(parent);
         this.buildCompanyCard(parent);
-        if(this.showCommunicationCard()) 
+        if (this.showCommunicationCard())
             this.buildCommunicationCard(parent);
     }
 
@@ -76,18 +77,16 @@ export class AonInvoiceCommunication extends AonElement {
         let table = new AonBasicTable();
         table.id = this.COMPANY_CARD_TABLE;
         content.appendChild(table);
- 
+
         table.addRow();
 
         this.buildCompanyInfo(table);
-
-        this.buildAdministration(table);
-
+        if(this.isSpainCompany()) this.buildAdministration(table);
         this.buildNoSif(table);
     }
 
     buildCommunicationCard(parent) {
-        if (!this.communicationConfiguration.getAdministration().isUnknown() &&  isValid(this.configuration.company.document)) {
+        if (!this.communicationConfiguration.getAdministration().isUnknown() && isValid(this.configuration.company.document)) {
             let card = createCard(this.CARD, MSG.COMMUNICATIONS);
             card.style.width = '50%';
             parent.appendChild(card);
@@ -120,16 +119,31 @@ export class AonInvoiceCommunication extends AonElement {
     }
 
     buildCompanyInfo(table) {
+        let country = createSelect(this.id + 'CompanyCountry', MSG.COUNTRY);
+        country.autocomplete = true;
+        country.options = JSON.stringify(
+            Countries.map((c) => {
+                return { value: c.iso2, name: c.nombre };
+            })
+        );
+        country.value = this.configuration.company.documentCountry || 'ES';
+        country.addEventListener(EVENT.SELECT, () => {
+            this.configuration.company.documentCountry = country.value;
+            this.dispatchEvent(new Event(EVENT.CHANGE));
+            this.reload();
+        });
+        table.addCell(country, 1).style.height = '50px';
+
         const valid = isValid(this.configuration.company.document);
         let document = createInput(this.id + 'companyDocument', MSG.DOCUMENT);
         document.setValue(this.configuration.company.document || '');
-        
-        if(valid) {
+
+        if (valid) {
             document.disabled = valid;
             document.readonly = valid;
         }
         table.addCell(document, 1).style.height = '50px';
-        if(!valid) {
+        if (!valid && this.isSpainCompany()) {
             document.addError('Documento no válido');
             document.addEventListener(EVENT.CHANGE, () => {
                 this.configuration.company.document = document.value;
@@ -137,26 +151,27 @@ export class AonInvoiceCommunication extends AonElement {
                 this.reload();
             });
         }
-        if(valid && isPersonaFisica(this.configuration.company.document)) {
-            let nameValue = this.configuration.person && this.configuration.person.firstSurname 
+        table.addRow();
+        if (valid && isPersonaFisica(this.configuration.company.document) && this.isSpainCompany()) {
+            let nameValue = this.configuration.person && this.configuration.person.firstSurname
                 ? this.configuration.person.firstName : this.configuration.company.name;
             let surname1Value = this.configuration.person && this.configuration.person.firstSurname
                 ? this.configuration.person.firstSurname : '';
-            let surname2Value = this.configuration.person && this.configuration.person.secondSurname 
+            let surname2Value = this.configuration.person && this.configuration.person.secondSurname
                 ? this.configuration.person.secondSurname : '';
             let name = createInput(this.id + 'personName', MSG.NAME);
             name.setValue(nameValue);
             name.addEventListener(EVENT.CHANGE, () => {
-                if(!this.configuration.person) this.configuration.person = {};
-                if(!this.configuration.company.person) this.configuration.company.person = {};
+                if (!this.configuration.person) this.configuration.person = {};
+                if (!this.configuration.company.person) this.configuration.company.person = {};
                 this.configuration.person.firstName = name.value;
                 this.configuration.company.person.name = name.value;
                 name.removeError();
                 this.dispatchEvent(new Event(EVENT.CHANGE));
             });
-          
-            table.addCell(name, 1).style.height = '50px';
-            if(nameValue === '') {
+
+            table.addCell(name, 2).style.height = '50px';
+            if (nameValue === '') {
                 name.addError('Este campo es obligatorio');
             }
             table.addRow();
@@ -164,30 +179,30 @@ export class AonInvoiceCommunication extends AonElement {
             let surname1 = createInput(this.id + 'personSurname1', MSG.SURNAME + ' 1');
             surname1.setValue(surname1Value);
             surname1.addEventListener(EVENT.CHANGE, () => {
-                if(!this.configuration.person) this.configuration.person = {};
-                if(!this.configuration.company.person) this.configuration.company.person = {};
+                if (!this.configuration.person) this.configuration.person = {};
+                if (!this.configuration.company.person) this.configuration.company.person = {};
                 this.configuration.person.firstSurname = surname1.value;
                 this.configuration.company.person.surname1 = surname1.value;
                 surname1.removeError();
                 this.dispatchEvent(new Event(EVENT.CHANGE));
             });
             table.addCell(surname1, 1).style.height = '50px';
-            if(surname1Value === '') {
+            if (surname1Value === '') {
                 surname1.addError('Este campo es obligatorio');
             }
 
             let surname2 = createInput(this.id + 'personSurname2', MSG.SURNAME + ' 2');
             surname2.setValue(surname2Value);
             surname2.addEventListener(EVENT.CHANGE, () => {
-                if(!this.configuration.person) this.configuration.person = {};
-                if(!this.configuration.company.person) this.configuration.company.person = {};
+                if (!this.configuration.person) this.configuration.person = {};
+                if (!this.configuration.company.person) this.configuration.company.person = {};
                 this.configuration.person.secondSurname = surname2.value;
                 this.configuration.company.person.surname2 = surname2.value;
                 surname2.removeError();
                 this.dispatchEvent(new Event(EVENT.CHANGE));
             });
             table.addCell(surname2, 1).style.height = '50px';
-            if(surname2Value === '') {
+            if (surname2Value === '') {
                 surname2.addError('Este campo es obligatorio');
             }
 
@@ -197,7 +212,7 @@ export class AonInvoiceCommunication extends AonElement {
             name.setValue(this.configuration.company.name);
             name.disabled = true;
             name.readonly = true;
-            table.addCell(name, 1).style.height = '50px';
+            table.addCell(name, 2).style.height = '50px';
 
             table.addRow();
         }
@@ -209,15 +224,15 @@ export class AonInvoiceCommunication extends AonElement {
         table.addCell(administration, 2).style.height = '50px';
         administration.setOptions(Object.values(ADMINISTRATIONS));
         administration.setValue(this.communicationConfiguration.getAdministration().value);
-        administration.disabled = !this.communicationConfiguration.getAdministration().isUnknown() 
-            && this.communicationConfiguration.getAdministrationData() 
+        administration.disabled = !this.communicationConfiguration.getAdministration().isUnknown()
+            && this.communicationConfiguration.getAdministrationData()
             && this.communicationConfiguration.getAdministrationData().id;
         administration.addEventListener(EVENT.CHANGE, () => {
             this.communicationConfiguration.setAdministration(new Administration(administration.value), enterprise);
             this.dispatchEvent(new Event(EVENT.CHANGE));
             this.reload();
         });
-        if(this.communicationConfiguration.getAdministration().isUnknown()) {
+        if (this.communicationConfiguration.getAdministration().isUnknown()) {
             administration.addError('Debe seleccionar una administración');
         }
         table.addRow();
@@ -225,11 +240,16 @@ export class AonInvoiceCommunication extends AonElement {
 
     buildNoSif(table) {
         const enterprise = this.configuration.company.id;
+        if(!this.isSpainCompany() && !this.communicationConfiguration.isNoSif()) {
+            this.communicationConfiguration.setNoSif(true, enterprise);
+            this.dispatchEvent(new Event(EVENT.CHANGE));
+        }
         let issueInvoice = createSwitch("emitefacturas", 'La empresa emite facturas oficiales con la aplicación');
         issueInvoice.checked = !this.communicationConfiguration.isNoSif();
-        if(!this.communicationConfiguration.isNoSif() && !this.communicationConfiguration.hasCommunication()) {
+        if (!this.communicationConfiguration.isNoSif() && !this.communicationConfiguration.hasCommunication()) {
             this.communicationConfiguration.setNoSif(!issueInvoice.isChecked(), enterprise);
         }
+        issueInvoice.disabled = !this.isSpainCompany();
         // issueInvoice.disabled = !this.communicationConfiguration.isNoSif() && this.communicationConfiguration.hasCommunication();
         issueInvoice.addEventListener(EVENT.CHANGE, () => {
             this.communicationConfiguration.setNoSif(!issueInvoice.isChecked(), enterprise);
@@ -275,7 +295,7 @@ export class AonInvoiceCommunication extends AonElement {
         if (active || future) {
             const communicationIncludeDateId = id + CONSTANT.INCLUDE_DATE.initCap();
             let communicationIncludeDate = createDate(communicationIncludeDateId, 'Fecha Inclusión ' + title);
-            if(data && data.id) {
+            if (data && data.id) {
                 communicationIncludeDate.disabled = true;
                 communicationIncludeDate.readonly = true;
             }
@@ -304,7 +324,7 @@ export class AonInvoiceCommunication extends AonElement {
             this.communicationConfiguration.getFutureTbaiData(), (value) => this.communicationConfiguration.setTbai(value, enterprise),
             (date) => {
                 let check = this.communicationConfiguration.setTbaiDate(date, enterprise)
-                if(!check.valid) this.showError(check.message);
+                if (!check.valid) this.showError(check.message);
             }
         );
     }
@@ -313,11 +333,11 @@ export class AonInvoiceCommunication extends AonElement {
         const enterprise = this.configuration.company.id;
         let active = this.communicationConfiguration.isLroe();
         let future = this.communicationConfiguration.willBeLroe();
-        this.buildCommunication(table, this.LROE, MSG.LROE + " / " + MSG.TICKETBAI, active, future, this.communicationConfiguration.getLroeData(), 
+        this.buildCommunication(table, this.LROE, MSG.LROE + " / " + MSG.TICKETBAI, active, future, this.communicationConfiguration.getLroeData(),
             this.communicationConfiguration.getFutureLroeData(), (value) => this.communicationConfiguration.setLroe(value, enterprise),
             (date) => {
                 let check = this.communicationConfiguration.setLroeDate(date, enterprise)
-                if(!check.valid) this.showError(check.message);
+                if (!check.valid) this.showError(check.message);
             });
     }
 
@@ -325,11 +345,11 @@ export class AonInvoiceCommunication extends AonElement {
         const enterprise = this.configuration.company.id;
         let active = this.communicationConfiguration.isSii();
         let future = this.communicationConfiguration.willBeSii();
-        this.buildCommunication(table, this.SII, MSG.SII, active, future, this.communicationConfiguration.getSiiData(), 
+        this.buildCommunication(table, this.SII, MSG.SII, active, future, this.communicationConfiguration.getSiiData(),
             this.communicationConfiguration.getFutureSiiData(), (value) => this.communicationConfiguration.setSii(value, enterprise),
             (date) => {
                 let check = this.communicationConfiguration.setSiiDate(date, enterprise)
-                if(!check.valid) this.showError(check.message);
+                if (!check.valid) this.showError(check.message);
             });
     }
 
@@ -338,11 +358,11 @@ export class AonInvoiceCommunication extends AonElement {
         const document = this.configuration.company.document;
         let active = this.communicationConfiguration.isVerifactu();
         let future = this.communicationConfiguration.willBeVerifactu();
-        this.buildCommunication(table, this.VERIFACTU, MSG.VERIFACTU, active, future, this.communicationConfiguration.getVerifactuData(), 
+        this.buildCommunication(table, this.VERIFACTU, MSG.VERIFACTU, active, future, this.communicationConfiguration.getVerifactuData(),
             this.communicationConfiguration.getFutureVerifactuData(), (value) => this.communicationConfiguration.setVerifactu(value, enterprise),
             (date) => {
                 let check = this.communicationConfiguration.setVerifactuDate(date, enterprise)
-                if(!check.valid) this.showError(check.message);
+                if (!check.valid) this.showError(check.message);
             });
     }
 
@@ -354,7 +374,7 @@ export class AonInvoiceCommunication extends AonElement {
             this.communicationConfiguration.getFutureNoVerifactuData(), (value) => this.communicationConfiguration.setNoVerifactu(value, enterprise),
             (date) => {
                 let check = this.communicationConfiguration.setNoVerifactuDate(date, enterprise)
-                if(!check.valid) this.showError(check.message);
+                if (!check.valid) this.showError(check.message);
             });
     }
 
@@ -373,6 +393,10 @@ export class AonInvoiceCommunication extends AonElement {
             this.appendChild(toast);
         }
         toast.start(object);
+    }
+
+    isSpainCompany() {
+        return this.configuration.company.documentCountry === 'ES';
     }
 
     getConfiguration() {
