@@ -501,7 +501,7 @@ export class AonNewSelect extends AonNewInput {
   loading(load){
     const input = this.getElement(this.INPUT);
     if(input){
-      input.loading(load);
+      input.loading?.(load);
     }
   }
 

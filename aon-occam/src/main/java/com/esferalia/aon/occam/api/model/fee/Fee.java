@@ -265,6 +265,10 @@ public class Fee implements Serializable{
 		return this;
 	}
 	
+	/**
+	 * @deprecated use {@link #setLine(Short line)} instead
+	 */
+	@Deprecated
 	public Fee setLine(Double line) {
 		this.line = line.shortValue();
 		return this;

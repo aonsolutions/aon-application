@@ -30,6 +30,13 @@ public class AonTask {
 		return postJSON(domainName, userLogin, "/ms/api/task", jsonObject);
 	}
 
+	public static JSONObject updateTask(String domainName, String userLogin, Task task)
+			throws URISyntaxException, IOException, InterruptedException {
+		JSONObject jsonObject = TaskJSON.toJSON(task);
+		
+		return postJSON(domainName, userLogin, "/ms/api/task", jsonObject);
+	}
+
 	public static JSONObject addTaskWorkflow(String domainName, String userLogin, TaskWorkflow taskWorkflow)
 			throws URISyntaxException, IOException, InterruptedException {
 		JSONObject jsonObject = TaskWorkflowJSON.toJSON(taskWorkflow);

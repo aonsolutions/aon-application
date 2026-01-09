@@ -828,6 +828,36 @@ public class AonDateUtils {
 		}
 		return calendar.getTime();
 	}
+	
+    //-----------------------------------------------------------------------
+    /**
+     * Sets the years field to a date returning a new object.
+     * The original {@code Date} is unchanged.
+     *
+     * @param date  the date, not null
+     * @param amount the amount to set
+     * @return a new {@code Date} set with the specified value
+     * @throws IllegalArgumentException if the date is null
+     * @since 2.4
+     */
+    public static Date setYears(final Date date, final int amount) {
+        return set(date, Calendar.YEAR, amount);
+    }
+
+    //-----------------------------------------------------------------------
+    /**
+     * Sets the months field to a date returning a new object.
+     * The original {@code Date} is unchanged.
+     *
+     * @param date  the date, not null
+     * @param amount the amount to set
+     * @return a new {@code Date} set with the specified value
+     * @throws IllegalArgumentException if the date is null
+     * @since 2.4
+     */
+    public static Date setMonths(final Date date, final int amount) {
+        return set(date, Calendar.MONTH, amount);
+    }
 
 	// -----------------------------------------------------------------------
 	/**

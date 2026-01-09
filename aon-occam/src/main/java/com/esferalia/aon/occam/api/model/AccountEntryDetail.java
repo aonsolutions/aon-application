@@ -63,10 +63,22 @@ public class AccountEntryDetail implements Serializable, HasAudit {
 		return this;
 	}
 
+	public AccountEntryDetail setAccount(Account account) {
+		if (account != null) {
+			setAccountId( account.getId() );
+			setAccountCode( account.getCode() );
+			setAccountDescription( account.getDescription() );
+		} else {
+			setAccountId( null );
+			setAccountCode( null );
+			setAccountDescription( null );
+		}
+		return this;
+	}
+	
 	public Integer getAccountId() {
 		return accountId;
 	}
-
 	public AccountEntryDetail setAccountId(Integer accountId) {
 		this.setDirty( isDirty()?true:AonUtils.notEquals(this.accountId , accountId) );
 		this.accountId = accountId;
@@ -201,6 +213,19 @@ public class AccountEntryDetail implements Serializable, HasAudit {
 		return balancingAccountDescription;
 	}
 
+	public AccountEntryDetail setBalancingAccount(Account balancingAccount) {
+		if (balancingAccount != null) {
+			setBalancingAccountId( balancingAccount.getId() );
+			setBalancingAccountCode( balancingAccount.getCode() );
+			setBalancingAccountDescription( balancingAccount.getDescription() );
+		} else {
+			setBalancingAccountId( null );
+			setBalancingAccountCode( null );
+			setBalancingAccountDescription( null );
+		}
+		return this;
+	}
+	
 	public AccountEntryDetail setBalancingAccountDescription(String balancingAccountDescription) {
 		this.balancingAccountDescription = balancingAccountDescription;
 		return this;

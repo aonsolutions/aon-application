@@ -39,4 +39,8 @@ public enum FinanceStatus implements Serializable {
 		if (i < 0 || i >= FinanceStatus.values().length) return null;
 		return FinanceStatus.values()[i];
 	}
+	public static String safeDescriptionOf( FinanceStatus s ) {
+		if (s == null) return null;
+		return s.getDescription();
+	}
 }

@@ -2492,8 +2492,11 @@ public abstract class AgreementPreview extends Composite {
 	}
 	
 	private void setTableHeight() {
-		salaryScrollPanel.setHeight(salaryGrid.getRowCount() < 10 ? ((salaryGrid.getRowCount() * 26 + 10) + "px") : "260px");
-		levelScrollPanel.setHeight(levelGrid.getRowCount() < 10 ? ((levelGrid.getRowCount() * 26 + 10) + "px") : "260px");
+		salaryScrollPanel.getElement().getStyle().setProperty("minHeight", "64px");
+		levelScrollPanel.getElement().getStyle().setProperty("minHeight", "64px");
+		salaryScrollPanel.getElement().getStyle().setProperty("maxHeight", "260px");
+		levelScrollPanel.getElement().getStyle().setProperty("maxHeight", "260px");
+		
 	}
 
 	public void setTablesWidthCollapseMenu() {

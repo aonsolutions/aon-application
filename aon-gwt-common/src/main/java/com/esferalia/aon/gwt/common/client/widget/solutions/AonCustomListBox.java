@@ -2,10 +2,11 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
 
-public class AonCustomListBox extends HTMLPanel {
+public class AonCustomListBox extends HTMLPanel implements Focusable {
 
 	private static final String EMPTY_STRING = "";
 	private ListBox listBox;
@@ -71,7 +72,13 @@ public class AonCustomListBox extends HTMLPanel {
 		listBox.addChangeHandler(changeHandler);
 	}
 
+	/**
+	 * @deprecated use {@link #setEnabled(boolean)} instead
+	 */
 	public void setEnable(boolean enabled) {
+		listBox.setEnabled(enabled);
+	}
+	public void setEnabled(boolean enabled) {
 		listBox.setEnabled(enabled);
 	}
 	
@@ -107,5 +114,25 @@ public class AonCustomListBox extends HTMLPanel {
 	protected void onEnsureDebugId(String baseID) {
 		super.onEnsureDebugId(baseID);
 		this.listBox.ensureDebugId(baseID + "Select");
+	}
+
+	@Override
+	public int getTabIndex() {
+		return listBox.getTabIndex();
+	}
+
+	@Override
+	public void setAccessKey(char key) {
+		listBox.setAccessKey(key);
+	}
+
+	@Override
+	public void setFocus(boolean focused) {
+		listBox.setFocus(focused);
+	}
+
+	@Override
+	public void setTabIndex(int index) {
+		listBox.setTabIndex(index);
 	}
 }
