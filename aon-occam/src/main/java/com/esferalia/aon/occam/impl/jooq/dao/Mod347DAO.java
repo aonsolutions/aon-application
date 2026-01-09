@@ -356,15 +356,19 @@ public class Mod347DAO {
 	
 	private static void validate(AONContext ctx, Mod347 mod347) {
 		
-		// Comprobar que est√° cumplimentado el ejercicio
+		// Comprobar que est· cumplimentado el ejercicio
 		if (mod347.getYear() == 0)
 			throw new AonCoreException("Debe cumplimentar el Ejercicio.");
 		
+		// Canarias solo a partir del ejercicio 2025
+		if (mod347.getAdministration() == Administration.CANARIAS && mod347.getYear() < 2025)
+			throw new AonCoreException("El modelo 415 en Canarias solo est\u00E1 disponible a partir del ejercicio 2025.");
+		
 		// NIF Declarante debe estar cumplimentado y de longitud menor de 9
 		if (AonStringUtils.isBlank(mod347.getDocument()) || mod347.getDocument().length() > 9)
-			throw new AonCoreException("El NIF del Declarante debe estar cumplimentado y su longitud no puede ser mayor de 9 caracteres.");
+			throw new AonCoreException("El NIF del Declarante debe estar cumplimentado y su longitud no puede ser mayor de 9 caracteres.");		
 		
-		// Se comprueba que no exista otra declaraci√≥n sustitutiva que sustituya a la misma anterior
+		// Se comprueba que no exista otra declaraciÛn sustitutiva que sustituya a la misma anterior
 		if (mod347.isReplacement()) {
 						
 			if (ctx.getDslContext().selectOne()
@@ -382,7 +386,7 @@ public class Mod347DAO {
 				throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_REPLACED.getMessage());			
 		}
 		else if (!mod347.isComplementary()) {
-			// Se comprueba que no exista ya una declaraci√≥n, para el perido indicado
+			// Se comprueba que no exista ya una declaraciÛn, para el perido indicado
 			if (ctx.getDslContext().selectOne()
 				.from(FS_MOD347)
 				.where(FS_MOD347.DOMAIN.equal(mod347.getDomain())
