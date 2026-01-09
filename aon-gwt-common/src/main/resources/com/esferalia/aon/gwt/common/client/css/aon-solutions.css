@@ -404,6 +404,8 @@
 .aon_icon_aeat_orange { background-image: iconAeatOrange;}
 @url iconAeatRed aonIconAeatRed;
 .aon_icon_aeat_red { background-image: iconAeatRed;}
+@url iconAeatBlue aonIconAeatBlue;
+.aon_icon_aeat_blue { background-image: iconAeatBlue;}
 @url iconSif aonIconSif;
 .aon_icon_sif { background-image: iconSif;}
 @url iconSifGreen aonIconSifGreen;
@@ -412,6 +414,8 @@
 .aon_icon_sif_orange { background-image: iconSifOrange;}
 @url iconSifRed aonIconSifRed;
 .aon_icon_sif_red { background-image: iconSifRed;}
+@url iconSifBlue aonIconSifBlue;
+.aon_icon_sif_blue { background-image: iconSifBlue;}
 @url iconAraba aonIconAraba;
 .aon_icon_araba { background-image: iconAraba;}
 @url iconArabaBw aonIconArabaBw;
@@ -422,6 +426,8 @@
 .aon_icon_araba_green { background-image: iconArabaGreen;}
 @url iconArabaRed aonIconArabaRed;
 .aon_icon_araba_red { background-image: iconArabaRed;}
+@url iconArabaBlue aonIconArabaBlue;
+.aon_icon_araba_blue { background-image: iconArabaBlue;}
 @url iconBizkaia aonIconBizkaia;
 .aon_icon_bizkaia { background-image: iconBizkaia;}
 @url iconBizkaiaBw aonIconBizkaiaBw;
@@ -432,6 +438,8 @@
 .aon_icon_bizkaia_green { background-image: iconBizkaiaGreen;}
 @url iconBizkaiaRed aonIconBizkaiaRed;
 .aon_icon_bizkaia_red { background-image: iconBizkaiaRed;}
+@url iconBizkaiaBlue aonIconBizkaiaBlue;
+.aon_icon_bizkaia_blue { background-image: iconBizkaiaBlue;}
 @url iconGipuzkoa aonIconGipuzkoa;
 .aon_icon_gipuzkoa { background-image: iconGipuzkoa;}
 @url iconGipuzkoaBw aonIconGipuzkoaBw;
@@ -442,6 +450,8 @@
 .aon_icon_gipuzkoa_green { background-image: iconGipuzkoaGreen;}
 @url iconGipuzkoaRed aonIconGipuzkoaRed;
 .aon_icon_gipuzkoa_red { background-image: iconGipuzkoaRed;}
+@url iconGipuzkoaBlue aonIconGipuzkoaBlue;
+.aon_icon_gipuzkoa_blue { background-image: iconGipuzkoaBlue;}
 @url iconNavarra aonIconNavarra;
 .aon_icon_navarra { background-image: iconNavarra;}
 @url iconNavarraBw aonIconNavarraBw;
@@ -516,6 +526,10 @@
 .aon_icon_qr_code_orange { background-image: iconQrCodeOrange;}
 @url iconQrCodeRed aonIconQrCodeRed;
 .aon_icon_qr_code_red { background-image: iconQrCodeRed;}
+@url iconQrCodeBlue aonIconQrCodeBlue;
+.aon_icon_qr_code_blue { background-image: iconQrCodeBlue;}
+@url iconDebug aonIconDebug;
+.aon_icon_debug { background-image: iconDebug;}
 @url iconKeyboardDoubleArrowRight aonIconKeyboardDoubleArrowRight;
 .aon_icon_keyboard_double_arrow_right { background-image: iconKeyboardDoubleArrowRight;}
 @url iconKeyboardDoubleArrowLeft aonIconKeyboardDoubleArrowLeft;

@@ -92,11 +92,13 @@ public class Model190BIZKAIA extends Model190Base {
 	}
 
 	protected void paintPerceptorsTab(TabLayoutPanel tabPanel, Integer selectedIndex) {
-		if ( getModel().getYear() >= 2024) {
+		if (getModel().getYear() >= 2025) {
+			setDetailManager( new Model190BIZKAIADetail2025( getCallback() , getModel(), selectedIndex ));
+		} else if (getModel().getYear() >= 2024) {
 			setDetailManager( new Model190BIZKAIADetail2024( getCallback() , getModel(), selectedIndex ));
-		} else if ( getModel().getYear() >= 2022) {
+		} else if (getModel().getYear() >= 2022) {
 			setDetailManager( new Model190BIZKAIADetail2022( getCallback() , getModel(), selectedIndex ));
-		} else if ( getModel().getYear() >= 2017) {
+		} else if (getModel().getYear() >= 2017) {
 			setDetailManager( new Model190BIZKAIADetail2017( getCallback() , getModel(), selectedIndex ));
 		} else {
 			setDetailManager( new Model190BIZKAIADetail2016( getCallback() , getModel(), selectedIndex ));

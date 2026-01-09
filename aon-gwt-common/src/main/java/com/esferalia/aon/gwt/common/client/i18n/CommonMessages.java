@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.i18n.client.Messages;
+import com.google.gwt.user.client.ui.CheckBox;
 
 public interface CommonMessages extends Messages {
 	// Á --> \u00C1 á --> \u00E1
@@ -518,7 +519,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Aceptar")
 	String accept();
 
- 	@DefaultMessage("Ocultar")
+	@DefaultMessage("Editar")
+	String edit();
+	
+	@DefaultMessage("Ocultar")
  	String hide();
  	
  	@DefaultMessage("Vista previa")
@@ -4390,6 +4394,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Generaci\u00F3n de facturas")
 	String generateInvoices();
+	
+	@DefaultMessage("Rendimientos del trabajo obtenidos por la gesti\u00F3n de fondos vinculados al emprendimiento, a la innovaci\u00F3n y al desarrollo de la actividad econ\u00F3mica")
+	String entrepreneurship();  
 
 }
 

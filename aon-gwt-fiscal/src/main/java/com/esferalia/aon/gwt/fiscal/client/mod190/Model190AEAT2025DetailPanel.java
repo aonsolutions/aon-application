@@ -286,14 +286,17 @@ public class Model190AEAT2025DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.setWidget(2, 2, retention);
 
 		tab2.setWidget(2, 3, new Label());
+		tab2.setWidget(2, 4, new Label());
 		
-		CheckBox entrepreneurship = new CheckBox("Rendimientos del trabajo obtenidos por la gesti\u00F3n de fondos vinculados al emprendimiento");
-		entrepreneurship.setValue(detail.isEntrepreneurship());
-		entrepreneurship.addClickHandler(event -> {
-			detail.setEntrepreneurship(entrepreneurship.getValue());
-			callback.onValueChanged(detail);
-		});
-		tab2.setWidget(2, 4, entrepreneurship);
+//		CheckBox entrepreneurship = new CheckBox(AON.MSG.entrepreneurship());
+//		entrepreneurship.addStyleName(AON.CSS.aonFontSmaller());		
+//		entrepreneurship.setValue(detail.isEntrepreneurship());
+//		entrepreneurship.addClickHandler(event -> {
+//			detail.setEntrepreneurship(entrepreneurship.getValue());
+//			callback.onValueChanged(detail);
+//		});
+//		tab2.setWidget(2, 4, entrepreneurship);
+		tab2.setWidget(3, 4, new Label());
 
 		tab2.setWidget(3, 0, new Label());
 		tab2.setWidget(3, 1, new Model190SmallerLabel(AON.MSG.inKindPerception()));
@@ -327,13 +330,34 @@ public class Model190AEAT2025DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab2.setWidget(4, 3, inKindOutputDeposit);
 		
+//		CheckBox excesses = new CheckBox("Excesos entrega acciones empresas emergentes");
+//		excesses.setValue(detail.isExcesses());
+//		excesses.addClickHandler(event -> {
+//			detail.setExcesses(excesses.getValue());
+//			callback.onValueChanged(detail);
+//		});
+//		tab2.setWidget(4, 4, excesses);
+		tab2.setWidget(4, 4, new Label());
+		
+		CheckBox entrepreneurship = new CheckBox(AON.MSG.entrepreneurship());
+		entrepreneurship.addStyleName(AON.CSS.aonFontSmaller());		
+		entrepreneurship.setValue(detail.isEntrepreneurship());
+		entrepreneurship.addClickHandler(event -> {
+			detail.setEntrepreneurship(entrepreneurship.getValue());
+			callback.onValueChanged(detail);
+		});
+		tab2.setWidget(5, 0, entrepreneurship);
+		tab2.getFlexCellFormatter().setColSpan(5, 0, 5);
+		
 		CheckBox excesses = new CheckBox("Excesos entrega acciones empresas emergentes");
+		excesses.addStyleName(AON.CSS.aonFontSmaller());
 		excesses.setValue(detail.isExcesses());
 		excesses.addClickHandler(event -> {
 			detail.setExcesses(excesses.getValue());
 			callback.onValueChanged(detail);
 		});
-		tab2.setWidget(4, 4, excesses);
+		tab2.setWidget(6, 0, excesses);
+		tab2.getFlexCellFormatter().setColSpan(6, 0, 5);
 		
 		// Percepciones derivadas de incapacidad laboral (sólo para clave A y B.01)
 

@@ -2148,16 +2148,19 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 
 	public boolean isVerifactuInvoice() {
-		return isVerifactu() && getInvoice().getNumber() > 0; // && !AonStringUtils.isBlank(getVerifactuUrl());
+		return isVerifactu() && getInvoice().getNumber() > 0 && getInvoice().isSales(); // && !AonStringUtils.isBlank(getVerifactuUrl());
 	}
+	
 	public boolean isNoVerifactuInvoice() {
-		return isNoVerifactu() && getInvoice().getNumber() > 0; // && !AonStringUtils.isBlank(getVerifactuUrl());
+		return isNoVerifactu() && getInvoice().getNumber() > 0 && getInvoice().isSales(); // && !AonStringUtils.isBlank(getVerifactuUrl());
 	}
+	
 	public boolean isSifInvoice() {
-		return isSif() && getInvoice().getNumber() > 0; // && !AonStringUtils.isBlank(getVerifactuUrl());
+		return isSif() && getInvoice().getNumber() > 0 && getInvoice().isSales(); // && !AonStringUtils.isBlank(getVerifactuUrl());
 	}
+	
 	public boolean isSiiInvoice() {
-		return isSii() && getInvoice().getNumber() > 0; // && !AonStringUtils.isBlank(getVerifactuUrl());
+		return isSii() && getInvoice().getNumber() > 0 && getInvoice().isSales(); // && !AonStringUtils.isBlank(getVerifactuUrl());
 	}
 	
 	String tbaiUrl;

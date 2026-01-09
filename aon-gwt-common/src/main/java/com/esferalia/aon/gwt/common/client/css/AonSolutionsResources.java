@@ -768,6 +768,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconAeatRed();
 
+	@Source("icons/aon-icon-aeat-blue.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconAeatBlue();
+
 	@Source("icons/aon-icon-sif.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconSif();
@@ -783,6 +787,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-sif-red.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconSifRed();
+
+	@Source("icons/aon-icon-sif-blue.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconSifBlue();
 
 	@Source("icons/aon-icon-canarias.svg")
 	@MimeType("image/svg+xml")
@@ -812,6 +820,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconArabaRed();
 	
+	@Source("icons/aon-icon-araba-blue.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconArabaBlue();
+
 	@Source("icons/aon-icon-bizkaia.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconBizkaia();
@@ -832,6 +844,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconBizkaiaRed();
 	
+	@Source("icons/aon-icon-bizkaia-blue.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconBizkaiaBlue();
+
 	@Source("icons/aon-icon-gipuzkoa.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconGipuzkoa();
@@ -851,6 +867,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-gipuzkoa-red.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconGipuzkoaRed();
+
+	@Source("icons/aon-icon-gipuzkoa-blue.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconGipuzkoaBlue();
 
 	@Source("icons/aon-icon-navarra.svg")
 	@MimeType("image/svg+xml")
@@ -996,6 +1016,14 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconQrCodeRed();
 	
+	@Source("icons/aon-icon-qr-code-blue.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconQrCodeBlue();
+
+	@Source("icons/aon-icon-debug.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconDebug();
+
 	@Source("icons/aon-icon-keyboard-double-arrow-right.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconKeyboardDoubleArrowRight();

@@ -91,7 +91,9 @@ public class Model190ARABA extends Model190Base {
 	}
 	
 	protected void paintPerceptorsTab(TabLayoutPanel tabPanel, Integer selectedIndex) {
-		if ( getModel().getYear() >= 2023) {
+		if ( getModel().getYear() >= 2025) {
+			setDetailManager( new Model190ARABADetail2025( getCallback() , getModel(), selectedIndex ));	
+		} else if ( getModel().getYear() >= 2023) {
 			setDetailManager( new Model190ARABADetail2023( getCallback() , getModel(), selectedIndex ));	
 		} else if ( getModel().getYear() >= 2022) {
 			setDetailManager( new Model190ARABADetail2022( getCallback() , getModel(), selectedIndex ));	

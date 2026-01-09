@@ -106,6 +106,10 @@ public abstract class Mod390HFDeclaration {
 	}
 	
 	private enum Declarations {
+		BIZKAIA_2025 {
+			@Override boolean accept(Mod390HF mod) { return Mod390HFBizkaia2025Declaration.accept(mod);}
+			@Override Mod390HFDeclaration get() {return new Mod390HFBizkaia2025Declaration();}
+		},
 		BIZKAIA_2024 {
 			@Override boolean accept(Mod390HF mod) { return Mod390HFBizkaia2024Declaration.accept(mod);}
 			@Override Mod390HFDeclaration get() {return new Mod390HFBizkaia2024Declaration();}
@@ -127,6 +131,10 @@ public abstract class Mod390HFDeclaration {
 			@Override Mod390HFDeclaration get() {return new Mod390HFBizkaia2017Declaration();}
 		},
 		
+		GIPUZKOA_2025 {
+			@Override boolean accept(Mod390HF mod) { return Mod390HFGipuzkoa2025Declaration.accept(mod);}
+			@Override Mod390HFDeclaration get() {return new Mod390HFGipuzkoa2025Declaration();}
+		},
 		GIPUZKOA_2024 {
 			@Override boolean accept(Mod390HF mod) { return Mod390HFGipuzkoa2024Declaration.accept(mod);}
 			@Override Mod390HFDeclaration get() {return new Mod390HFGipuzkoa2024Declaration();}
@@ -147,7 +155,11 @@ public abstract class Mod390HFDeclaration {
 			@Override boolean accept(Mod390HF mod) { return Mod390HFGipuzkoa2017Declaration.accept(mod);}
 			@Override Mod390HFDeclaration get() {return new Mod390HFGipuzkoa2017Declaration();}
 		},
-		
+
+		ARABA_2025 {
+			@Override boolean accept(Mod390HF mod) { return Mod390HFAraba2025Declaration.accept(mod);}
+			@Override Mod390HFDeclaration get() {return new Mod390HFAraba2025Declaration();}
+		},
 		ARABA_2024 {
 			@Override boolean accept(Mod390HF mod) { return Mod390HFAraba2024Declaration.accept(mod);}
 			@Override Mod390HFDeclaration get() {return new Mod390HFAraba2024Declaration();}

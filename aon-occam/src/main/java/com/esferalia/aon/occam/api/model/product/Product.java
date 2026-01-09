@@ -321,7 +321,7 @@ public class Product implements Serializable{
 		return item;
 	}
 	/**
-	 * @deprecated Se debe utilizar el objeto Item y su product, no al revés!!.
+	 * @deprecated Se debe utilizar el objeto Item y su product, no al revÃ©s!!.
 	 */
 	@Deprecated
 	public Product setItem(Item item) {

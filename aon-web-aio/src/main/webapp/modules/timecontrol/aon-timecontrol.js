@@ -147,8 +147,9 @@ export class AonTimecontrol extends AonElement {
   }
 
   async setDataFilter(data){
+	console.log('setDataFilter', data);
     try {
-      if(this.isMobile() && !data.period)
+      if(this.isMobile())
         this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
       
       this.DATE_TMP =  null;
@@ -359,7 +360,7 @@ export class AonTimecontrol extends AonElement {
   }
 
   isEmployee() {
-    return this.getDur() && !this.getDur().isTimecontrolManager() && !this.getDur().isTimecontrolPortal();
+    return !this.getDur().isTimecontrolManager() && !this.getDur().isTimecontrolPortal();
   }
 
 }

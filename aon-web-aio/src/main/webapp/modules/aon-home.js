@@ -14,6 +14,8 @@ import { AonMobileHeader } from '../modules/aon-mobile-header.js';
 import { AonMobileMenu } from '../modules/aon-mobile-menu.js';
 import { AonTooltip } from '../components/aon-tooltip.js';
 import { AonDialog } from '../components/aon-dialog.js';
+import { AonDialogMenu } from '../components/aon-dialog-menu.js';
+import { AonNewDialogMenu } from '../components/aon-new-dialog-menu.js';
 
 export class AonHome extends AonElement {
 
@@ -22,6 +24,7 @@ export class AonHome extends AonElement {
 	AON_HEADER;
 	ROOT_PANEL;
 	RIGHT_PANEL;
+	OPTION_DIALOG;
 	
 	// Right Panel, needed for hide on click outside
 	rightPanel;
@@ -53,6 +56,7 @@ export class AonHome extends AonElement {
 		this.AON_HEADER = 'aonHeader';
 		this.ROOT_PANEL = 'rootPanel';
 		this.RIGHT_PANEL = 'rightPanel';
+		this.OPTION_DIALOG = 'newOptionDialog';
 	}
 
 	buildMobile() {
@@ -295,6 +299,17 @@ export class AonHome extends AonElement {
 			{ position: 'right' }
 		);
 
+		// New Option Dialog
+		if(LS.isFutureTheme()){
+			let newDialogMenu = new AonNewDialogMenu();
+		    newDialogMenu.id = 'newDialogMenu';
+		    this.appendChild(newDialogMenu);
+			
+		} else {
+			let dialogMenu = new AonDialogMenu();
+		    dialogMenu.id = this.OPTION_DIALOG;
+		    this.appendChild(dialogMenu);	
+		}
 		
 	}
 	
