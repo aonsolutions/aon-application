@@ -182,11 +182,14 @@ export class AonEventDetailList extends AonElement {
         resp.map((res, idx) => {
           let newDate = dateCustomDayHour(res.date);
           if(newDate){res.dateParse = newDate;}
+          
+          let subtitle = `${res.reason && res.reason.length > 0 ? res.reason : ''} <span style="float: right;">${res.nameLocation}</span> `;
+          
           let options = {
             paddingTopTitle: "5px",
             iconHtmlCustom: `${res.lettersHtml} <span style="padding-top: 5px;float: right;color: rgba(0,0,0,.54);">${res.dateParse}</span>`,
             title: `${res.textStatus}`,
-            subtitle: `<span style="float: right;">${res.nameLocation}</span>`,
+            subtitle
           };
           aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
         });

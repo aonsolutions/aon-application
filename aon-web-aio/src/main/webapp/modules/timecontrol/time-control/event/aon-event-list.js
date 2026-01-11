@@ -193,10 +193,14 @@ export class AonEventList extends AonElement {
             res.time = (new Date().getTime() - res.in_date)  + res.time;
             res.durationParse = timeHour(Number(res.time));
           }
+          
+          let subtitle = `${res.reason && res.reason.length > 0 ? res.reason : ''} <span style="float: right;">${res.nameLocation}</span> `;
+          
           const options = {
             paddingTopTitle: "5px",
             iconHtmlCustom: `${res.lettersHtml} <span style="padding-top: 5px;float: right;color: rgba(0,0,0,.54);">${res.durationParse}</span>`,
             title: `${res.dateParse}`,
+            subtitle
           };
           aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
           idxTotal = idx;
