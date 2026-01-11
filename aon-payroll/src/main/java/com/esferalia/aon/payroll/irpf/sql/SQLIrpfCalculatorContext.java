@@ -22,26 +22,32 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Stack;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import com.code.aon.common.AonException;
+import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractIrpfCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.IHasPayment;
 import com.esferalia.aon.payroll.calculator.SimpleContractDeduction;
 import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
@@ -49,8 +55,10 @@ import com.esferalia.aon.payroll.calculator.TaxCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqCommon;
 import com.esferalia.aon.payroll.calculator.sql.FilterCollection;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLExtraSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
@@ -135,9 +143,27 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			+ IrpfDataAscendantsColumns.IRPF_DATA + " = ? ";
 	
 	
+	private static class SimpleIrpfContractPayment extends SimpleContractPayment {
+
+		private int extraId = 0;
+		
+		public SimpleIrpfContractPayment(IContractPayment contractPayment) {
+			super(contractPayment);
+			getExtraPayment(contractPayment).ifPresent( extraPayment -> {
+				extraId = extraPayment.getExtraId();
+			});
+		}
+		
+		public int getExtraId() {
+			return extraId;
+		}
+		
+	}
+	
 	private static class IrpfSalaryBuilder extends SalaryBuilder {
 		
-		Double prorrated = 0.00;
+		Double extraProrrated = 0.00;
+		Double bonusProrrated = 0.00;
 		Double monthlyAmount = 0.00 ;
 		
 		@Override
@@ -147,15 +173,21 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			
 			if (!isExtra(payment) 
 				&& isBonus(payment) ) {
-				prorrated += quote - tax ;
+				bonusProrrated += quote - tax;
 			} else if (isMonthly(payment)) {
 				monthlyAmount += tax;
+			} else if (isNonExtra(payment) ) {
+				extraProrrated += quote /*- tax */;
 			}
 			
 		}
 		
-		public Double getProrrated() {
-			return prorrated;
+		public Double getBonusProrrated() {
+			return bonusProrrated;
+		}
+		
+		public Double getExtraProrrated() {
+			return extraProrrated;
 		}
 		
 		public Double getMonthlyAmount() {
@@ -166,7 +198,9 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		public void addZeroPayment(Double quote, Double tax, Date startDate, Date endDate, IPayment payment,
 				Map<String, ITimedVariable<?>> context) {
 			if ( !isExtra(payment) )
-				prorrated += quote;
+				bonusProrrated += quote;
+			else if ( isNonExtra(payment) ) 
+				extraProrrated += quote;
 			
 			super.addZeroPayment(quote, tax, startDate, endDate, payment, context);
 		}
@@ -263,7 +297,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				Collection<IContractPayment> collection) {
 			List<IContractPayment> copy = new ArrayList<IContractPayment>();
 			for (IContractPayment payment : collection)
-				copy.add(new SimpleContractPayment(payment));
+				copy.add(new SimpleIrpfContractPayment(payment));
 			return copy;
 		}
 
@@ -334,6 +368,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 		protected abstract T get();
 	}
+	
 
 	static class IrpfContractSalaryCalculatorContext
 			extends
@@ -503,6 +538,96 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			return new IrpfContractSalaryCalculatorContext(ctx, p);
 		}
 
+		private static Collection<SQLExtraSalaryCalculatorContext> getExtraContexts(
+				ISQLContractSalaryCalculatorContext ctx) {
+			try {
+				List<Period> periods = getPeriods(ctx);
+				return ctx.getContractPayments().stream()
+				.map (p -> (SimpleIrpfContractPayment) p)
+				.filter(intersects(periods) )
+				.filter( p -> p.getExtraId() != 0 )
+				.map( p -> newSQLExtraSalaryCalculatorContext(ctx, p))
+				.filter( Objects::nonNull )
+				.toList();
+				
+			} catch (AonException e) {
+				return Collections.emptyList();
+			}
+		}
+
+		protected static Predicate<? super SimpleIrpfContractPayment> intersects(List<Period> periods) {
+			return p -> periods.stream().anyMatch( period -> period.intersects(new Period(p.getStartDate(), p.getEndDate())) );
+		}
+		
+		
+		
+		private static SQLExtraSalaryCalculatorContext newSQLExtraSalaryCalculatorContext( ISQLContractSalaryCalculatorContext ctx, SimpleIrpfContractPayment payment) {
+			try {
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), ctx.getId());
+
+				SQLExtraSalaryCalculatorContext extraCtx = 
+				new SQLExtraSalaryCalculatorContext(
+						ctx.getConnection(),
+						payment.getExtraId(), 
+						AonDateUtils.getYear(ctx.getStartDate()), 
+						ctx.getChargeDate(),
+						criteria) {
+					
+					
+					@Override
+					public double getIrpf() {
+						return 0.00;
+					}
+					
+					@Override
+					public Collection<IContractCost> getContractCosts() throws AonException {
+						return super.getContractCosts();
+					}
+					@Override
+					public Collection<IContractBonus> getContractBonus() throws AonException {
+						return Collections.emptyList();
+					}
+					@Override
+					public Collection<IContractEmbargo> getContractEmbargos() throws AonException {
+						return Collections.emptyList();
+					}
+					@Override
+					public Collection<IContractDeduction> getContractDeductions() throws AonException {
+						return Collections.emptyList();
+					}
+					
+					@Override
+					protected SQLContractExtraCalculatorContext newSQLContractExtraCalculatorContext(
+							int paymentId, String paymentName, Month paymentMonth, Criteria agreementCriteria)
+							throws SQLException, ExpressionException {
+						return new PaymentSQLContractExtraCalculatorContext(
+								paymentId,
+								paymentName,
+								paymentMonth,
+								agreementCriteria) {
+							
+							@Override
+								public Object liquid(double liquid, Date start, Date end)
+										throws ExpressionException, SQLException, SalaryException {
+									return super.liquid(liquid, start, end);
+								}
+							
+							@Override
+							protected IContractSalaryCalculatorContext getLiquidCalculatorContext(
+									Connection conn, Date startDate, Date endDate, Date issueDate,
+									Criteria criteria, double solve, double liquid) {
+								return super.getLiquidCalculatorContext(conn, startDate, endDate, issueDate, criteria, solve, liquid);
+							}
+						};
+						//return super.newSQLContractExtraCalculatorContext(paymentId, paymentName, paymentMonth, agreementCriteria);
+					}
+				};
+				return extraCtx.next() ? extraCtx : null;
+			} catch (SQLException | ExpressionException e) {
+				return null;
+			}
+		}
 	}
 
 	class SQLAscendientes extends ResultSetIterable<Ascendiente> implements
@@ -637,10 +762,13 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	private double extras;
 	private double totalIrpf;
 	private double irpfBase;
+	private double extraBase;
 	private double proExtBase;
+	private double guessExtraBase;
 	private double socialSecurityContributons;
 	private PreparedStatement salaryStmt;
 
+	private double nextExtraBase;
 	private double nextIrpfBase;
 	private double nextTotalIrpf;
 	private double nextSocialSecurityContributons;
@@ -655,6 +783,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	private Connection connection;
 	
+	private Collection<Date> issuedExtras;
 	private Collection<Date> issuedSalaries;
 
 	private ISQLContractSalaryCalculatorContext ctx;
@@ -702,6 +831,11 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	
 	// --------------------------------------- SQLIIrpfCalculatorContext methods
 	
+	public double getProExtBase() {
+		return proExtBase;
+	}
+	
+	
 	protected Calendar getIrpfStart() {
 	    Calendar calendar = Calendar.getInstance();
 	    try {
@@ -728,11 +862,12 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			boolean next = ctx.next();
 
 			int contractId = ctx.getId();
-			issuedSalaries = nextSalaryRs(contractId);
+			nextSalaryRs(contractId);
 			nextThreadSalary();
 			nextIrpfDataRs(contractId);
 			nextIrpfRegRs(contractId);
 			nextSalary();
+			nextExtra();
 
 			return next;
 		} catch (SQLException e) {
@@ -1012,8 +1147,10 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		Double retribAnuales = irpfBase;
 		retribAnuales += bonus;
 		retribAnuales -= extras;
-		retribAnuales += proExtBase;
+		//retribAnuales += proExtBase;
 		retribAnuales += nextIrpfBase;
+		retribAnuales += nextExtraBase;
+		retribAnuales += guessExtraBase;
 		return round(BigDecimal.valueOf(retribAnuales));
 	}
 
@@ -1186,14 +1323,16 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	    return calendar;
 	}
 
-	private Collection<Date> nextSalaryRs(int contractId) throws SQLException {
-		TreeSet<Date> dates = new TreeSet<Date>();
+	private void nextSalaryRs(int contractId) throws SQLException {
 		bonus = 0.00;
 		extras = 0.00;
 		irpfBase = 0.00;
 		totalIrpf = 0.00;
 		proExtBase = 0.00;
+		guessExtraBase = 0.00;
 		socialSecurityContributons = 0.00;
+		issuedExtras = new TreeSet<Date>();
+		issuedSalaries = new TreeSet<Date>();
 		ResultSet salaryRs = null;
 		try {
 			irpfStart = getIrpfStart();
@@ -1209,21 +1348,29 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				double salaryCgcBase = salaryRs.getDouble(SalaryColumns.CGC_BASE);
 				double salaryIrpfBase = salaryRs.getDouble(SalaryColumns.IRPF_BASE);
 				double salaryProExtBase = salaryRs.getDouble(SalaryColumns.PRO_EXT_BASE);
+				double salaryTotalIrpf = salaryRs.getDouble(SalaryColumns.TOTAL_IRPF);
 				bonus += salaryBonus;
 				extras += salaryExtras;  // for remove 
 				irpfBase += salaryIrpfBase ;
 				//irpfBase += Math.max(salaryCgcBase - irpfBase - salaryProExtBase, 0.00);
 				
 				proExtBase += salaryProExtBase;
-				totalIrpf += salaryRs.getDouble(SalaryColumns.TOTAL_IRPF);
+				totalIrpf += salaryTotalIrpf;
 				socialSecurityContributons += salaryRs
 						.getDouble(SalaryColumns.SOCIAL_SECURITY_CONTRIBUTIONS);
 				int type = salaryRs.getInt(SalaryColumns.TYPE);
 				if (type == SalaryType.SALARY.ordinal() 
 					|| type == SalaryType.M190.ordinal()) {
-					dates.add(AonDateUtils.getMonthFirstDay(salaryRs.getDate(SalaryColumns.END_DATE)));
+					issuedSalaries.add(AonDateUtils.getMonthFirstDay(salaryRs.getDate(SalaryColumns.END_DATE)));
 				}else if ( type == SalaryType.EXTRA.ordinal() ) {
 					proExtBase -= salaryRs.getDouble(SalaryColumns.IRPF_BASE);
+					issuedExtras.add(salaryRs.getDate(SalaryColumns.ISSUE_DATE));
+					
+					Date salaryEndDate = salaryRs.getDate(SalaryColumns.END_DATE);
+					Date salaryStartDate = salaryRs.getDate(SalaryColumns.START_DATE);
+					int salaryMonths = getMonthsBetweenDates(salaryStartDate, salaryEndDate) + 1;
+					
+					guessExtraBase += salaryIrpfBase / salaryMonths * ( 12 - salaryMonths); ;
 				}
 			}
 			//irpfBase += proExtBase;
@@ -1231,7 +1378,6 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			if (salaryRs != null)
 				salaryRs.close();
 		}
-		return dates;
 	}
 
 	private void nextThreadSalary() {
@@ -1290,9 +1436,41 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	private static final ThreadLocal<Stack<ISalary>> SALARIES = new ThreadLocal<Stack<ISalary>>();
 	
 
+	protected void nextExtra() throws SalaryException, ExpressionException,
+	SQLException {
+		
+		nextExtraBase = 0.00;
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>() {
+			@Override
+			protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
+				return TaxCalculator.getTaxCalculator(ctx);
+			}
+		};
+
+		calculator.setSalaryBuilder(new IrpfSalaryBuilder());
+		
+		Collection<SQLExtraSalaryCalculatorContext> extraContexts = IrpfContractSalaryCalculatorContext
+				.getExtraContexts(ctx);
+		
+		for (SQLExtraSalaryCalculatorContext extraCtx : extraContexts) {
+			if ( issuedExtras.contains(extraCtx.getIssueDate()) ) 
+				continue;
+			
+			Salary extra = calculator.calculate(extraCtx);
+			
+			int expectedMonths = getMonthsBetweenDates(extraCtx.getExtraStartDate(), extraCtx.getExtraEndDate()) + 1;
+			int calculatedMonths = getMonthsBetweenDates(extra.getStartDate(), extra.getEndDate()) + 1 ;
+			nextExtraBase += round(extra.getIrpfBase() / calculatedMonths * expectedMonths);
+		}
+		
+		
+		
+	}
+
 	protected void nextSalary() throws SalaryException, ExpressionException,
 			SQLException {
-
+		
 		nextIrpfBase = 0.00;
 		nextTotalIrpf = 0.00;
 		nextSocialSecurityContributons = 0.00;
@@ -1303,7 +1481,6 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				return TaxCalculator.getTaxCalculator(ctx);
 			}
 		};
-
 		IrpfSalaryBuilder builder = new IrpfSalaryBuilder();
 		calculator.setSalaryBuilder(builder);
 
@@ -1367,9 +1544,10 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				
 				nextIrpfBase = (
 						( irpfBase )
-						+ ( proration ) 
+						//+ ( proration ) 
 						) * size ;
-				nextIrpfBase += builder.getProrrated() * size;
+				nextIrpfBase += builder.getExtraProrrated() * 12 ;
+				nextIrpfBase += builder.getBonusProrrated() * size;
 				nextIrpfBase -= (size - 1) * builder.getMonthlyAmount();
 				
 				nextTotalIrpf = ( salary.getTotalIrpf() != null ? salary.getTotalIrpf() : 0.00 )  * size;
@@ -1389,10 +1567,11 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				
 				nextIrpfBase = (
 						( irpfBase )
-						+ ( proration ) 
+						//+ ( proration ) 
 						) * size;
 				
-				nextIrpfBase += builder.getProrrated() * size;
+				nextIrpfBase += builder.getExtraProrrated() * 12 ;
+				nextIrpfBase += builder.getBonusProrrated() * size;
 				nextIrpfBase -= (size - 1) * builder.getMonthlyAmount();
 				
 				double tirpf = ( salary.getTotalIrpf() != null ? salary.getTotalIrpf() : 0.00 );
@@ -1518,6 +1697,10 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	}
 
 	// ------------------------------------------------------------------------
+	protected static double round(double value) {
+		BigDecimal round = round(BigDecimal.valueOf(value));
+		return round != null ? round.doubleValue() : 0.00;
+	}
 	protected static BigDecimal round(BigDecimal value) {
 		return value != null && value.doubleValue() != 0.00 ? value.setScale(
 				SCALE, RoundingMode.HALF_UP) : null;
@@ -1574,6 +1757,43 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		default:
 			return Discapacidad.GRADO0;
 		}
+	}
+	
+	private  static int getMonthsBetweenDates(Date startDate, Date endDate) {
+	    Calendar startCalendar = Calendar.getInstance();
+	    startCalendar.setTime(startDate);
+	    Calendar endCalendar = Calendar.getInstance();
+	    endCalendar.setTime(endDate);
+	    return (endCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR)) * 12 
+	    		+ (endCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH));
+	}
+
+	private static Optional<IExtraPayment> getExtraPayment(IPayment payment) {
+		if ( payment instanceof IExtraPayment extraPayment ) 
+			return Optional.of(extraPayment);
+		if( payment instanceof IHasPayment hasPayment ) {
+			return getExtraPayment(hasPayment.getPayment());
+		}
+		return Optional.empty();
+	}
+
+	private static boolean isExtraPayment(IPayment payment) {
+		if ( payment instanceof IExtraPayment extraPayment ) 
+			return true;
+		else if( payment instanceof SimpleIrpfContractPayment simplePayment )
+			return simplePayment.getExtraId() != 0; 
+		else if( payment instanceof IHasPayment hasPayment ) 
+			return isExtraPayment(hasPayment.getPayment());
+		return false;
+	}
+
+	private static boolean isNonExtra(IPayment payment) {
+		Month month = null;
+		if ( payment instanceof IContractPayment contractPayment )
+			month = contractPayment.getMonth() ;
+		return ( month != null ) 
+				&& ( PaymentType.CRA_0004 == payment.getType() ) 
+				&& !isExtraPayment(payment) ;  
 	}
 
 }

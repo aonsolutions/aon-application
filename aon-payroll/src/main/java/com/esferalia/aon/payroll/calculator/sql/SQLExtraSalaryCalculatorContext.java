@@ -58,6 +58,80 @@ public class SQLExtraSalaryCalculatorContext implements
 		+ " WHERE " + AGREEMENT_EXTRA + "." + AgreementExtraColumns.ID + " = %d"
 		;
 	
+	protected class PaymentSQLContractExtraCalculatorContext extends SQLContractExtraCalculatorContext {
+
+		private int paymentId;
+		private String paymentName;
+		private Month paymentMonth;
+		
+		public PaymentSQLContractExtraCalculatorContext(
+				int paymentId, 
+				String paymentName,
+				Month paymentMonth, 
+				Criteria agreementCriteria) 
+		throws SQLException, ExpressionException {
+			super(
+					SQLExtraSalaryCalculatorContext.this.connection, 
+					SQLExtraSalaryCalculatorContext.this.extraStartDate, 
+					SQLExtraSalaryCalculatorContext.this.extraEndDate, 
+					SQLExtraSalaryCalculatorContext.this.extraIssueDate, 
+					SQLExtraSalaryCalculatorContext.this.chargeDate,
+					agreementCriteria);
+			this.paymentId = paymentId;
+			this.paymentName = paymentName;
+			this.paymentMonth = paymentMonth;
+		}
+		
+		@Override
+		protected Date getContractEndDate() {
+			return Period.min(endDate, super.getContractEndDate());
+		}
+		
+		@Override
+		protected Filter<IContractPayment> getExtraPaymentFilter() {
+			return  e -> e.getScope() == ExpressionScope.APPLICATION || e.getId() == paymentId; 
+		}
+		
+		@Override
+		protected Collection<IContractPayment> getMonthlyQuotedPayments() throws AonException {
+			return SQLExtraSalaryCalculatorContext.this.getMonthlyQuotedPayments(super.getMonthlyQuotedPayments());
+		}
+		
+		@Override
+		protected Collection<IContractPayment> getExtraContractPayments() throws AonException {
+			return new DelegateCollection<IContractPayment>(super.getExtraContractPayments()) {
+				@Override
+				public Iterator<IContractPayment> iterator() {
+					return new DelegateIterator<IContractPayment>( super.iterator()) {
+						@Override
+						public IContractPayment next() {
+							return 
+							new DelegateContractPayment(super.next()) {
+								@Override
+								public Integer getId() {
+									return isOverride() ? paymentId: super.getId();
+								}
+								
+								@Override
+								public SalaryType getSalaryType() {
+									return isOverride() ? SalaryType.EXTRA : super.getSalaryType();
+								}
+								
+								private boolean isOverride () {
+									return 
+									super.getScope() == ExpressionScope.CONTRACT
+									&& super.getMonth() == paymentMonth
+									&& AonStringUtils.equals(super.getName(), paymentName)
+									;
+								}
+							};
+						}
+					};
+				}
+			};
+		}
+	}
+
 	private ResultSet rs;
 	private Statement stmt;
 
@@ -67,7 +141,11 @@ public class SQLExtraSalaryCalculatorContext implements
 	private Date chargeDate;
 	private Criteria criteria;
 	private Connection connection ;
-	private ISQLContractSalaryCalculatorContext ctx;
+	private SQLContractSalaryCalculatorContext ctx;
+
+	private Date extraEndDate;
+	private Date extraStartDate;
+	private Date extraIssueDate;
 	
 	public SQLExtraSalaryCalculatorContext(Connection connection,
 			int extra,
@@ -96,6 +174,17 @@ public class SQLExtraSalaryCalculatorContext implements
 		initExtrasResultSet();
 	}
 	
+	public Date getExtraEndDate() {
+		return extraEndDate;
+	}
+	
+	public Date getExtraStartDate() {
+		return extraStartDate;
+	}
+	
+	public Date getExtraIssueDate() {
+		return extraIssueDate;
+	}
 	
 	@Override
 	public void close() throws SQLException {
@@ -134,10 +223,9 @@ public class SQLExtraSalaryCalculatorContext implements
 		}
 		
 
-		Date extraStartDate = 
-			AgreementExtra.parseAgreementStartDate(this.rs.getString(AgreementExtraColumns.START_DATE), this.year);
-		Date extraEndDate  = AgreementExtra.parseAgreementEndDate(this.rs.getString(AgreementExtraColumns.END_DATE), this.year);
-		Date extraIssueDate  = AgreementExtra.parseAgreementIssueDate(this.rs.getString(AgreementExtraColumns.ISSUE_DATE), this.year);
+		extraStartDate = AgreementExtra.parseAgreementStartDate(this.rs.getString(AgreementExtraColumns.START_DATE), this.year);
+		extraEndDate = AgreementExtra.parseAgreementEndDate(this.rs.getString(AgreementExtraColumns.END_DATE), this.year);
+		extraIssueDate = AgreementExtra.parseAgreementIssueDate(this.rs.getString(AgreementExtraColumns.ISSUE_DATE), this.year);
 		
 		if ( extraStartDate.after(extraEndDate)) {
 			return nextContractSalaryCalculatorContext();
@@ -153,65 +241,14 @@ public class SQLExtraSalaryCalculatorContext implements
 		String paymentName = rs.getString(PaymentConceptColumns.CODE);
 		Month paymentMonth = Month.getMonthByValue(rs.getInt(AgreementPaymentColumns.MONTH));
 		
-		this.ctx = new SQLContractExtraCalculatorContext(
-				this.connection, 
-				extraStartDate, 
-				extraEndDate, 
-				extraIssueDate, 
-				chargeDate, 
-				agreementCriteria) {
-			
-			@Override
-			protected Date getContractEndDate() {
-				return Period.min(endDate, super.getContractEndDate());
-			}
-			
-			@Override
-			protected Filter<IContractPayment> getExtraPaymentFilter() {
-				return  e -> e.getScope() == ExpressionScope.APPLICATION || e.getId() == paymentId; 
-			}
-			
-			@Override
-			protected Collection<IContractPayment> getMonthlyQuotedPayments() throws AonException {
-				return SQLExtraSalaryCalculatorContext.this.getMonthlyQuotedPayments(super.getMonthlyQuotedPayments());
-			}
-			
-			@Override
-			protected Collection<IContractPayment> getExtraContractPayments() throws AonException {
-				return new DelegateCollection<IContractPayment>(super.getExtraContractPayments()) {
-					@Override
-					public Iterator<IContractPayment> iterator() {
-						return new DelegateIterator<IContractPayment>( super.iterator()) {
-							@Override
-							public IContractPayment next() {
-								return 
-								new DelegateContractPayment(super.next()) {
-									@Override
-									public Integer getId() {
-										return isOverride() ? paymentId: super.getId();
-									}
-									
-									@Override
-									public SalaryType getSalaryType() {
-										return isOverride() ? SalaryType.EXTRA : super.getSalaryType();
-									}
-									
-									private boolean isOverride () {
-										return 
-										super.getScope() == ExpressionScope.CONTRACT
-										&& super.getMonth() == paymentMonth
-										&& AonStringUtils.equals(super.getName(), paymentName)
-										;
-									}
-								};
-							}
-						};
-					}
-				};
-			}
-		}; 
+		this.ctx = newSQLContractExtraCalculatorContext(paymentId, paymentName, paymentMonth, agreementCriteria); 
 		
 		return true;
+	}
+	
+	protected SQLContractExtraCalculatorContext newSQLContractExtraCalculatorContext(int paymentId, String paymentName,
+			Month paymentMonth, Criteria agreementCriteria) throws SQLException, ExpressionException {
+		return new PaymentSQLContractExtraCalculatorContext(paymentId, paymentName, paymentMonth, agreementCriteria);
 	}
 	
 	
