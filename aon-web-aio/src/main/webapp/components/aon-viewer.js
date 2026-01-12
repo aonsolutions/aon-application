@@ -86,7 +86,7 @@ export class AonViewer extends AonElement {
 				this.notSupport(this.type);
 			}
 		} catch ( err ) {
-			console.log(err);			
+			// console.log(err);			
 		}
 
 		let div = this.createElement(TAG.DIV);
@@ -237,7 +237,7 @@ export class AonViewer extends AonElement {
 	
 	printImageTextLayer(textContent) {
 		this.loadCSS(PDFJS_VIEWER_STYLESHEET_URL).then(() => {
-			console.log(JSON.stringify(textContent));
+			// console.log(JSON.stringify(textContent));
 			
 			let img = this.getElement(this.AON_IMG_DIV);
 			
@@ -253,7 +253,7 @@ export class AonViewer extends AonElement {
 			this.append(textLayerDiv);
 
 			page.items.forEach(item => {
-				console.log(JSON.stringify(item));
+				// console.log(JSON.stringify(item));
 				let itemSpan = this.createElement(TAG.SPAN);
 				itemSpan.innerText = item.str;
 	
@@ -358,7 +358,7 @@ export class AonViewer extends AonElement {
 			
 			loadingTask.promise.then( (pdf) =>  {
 				this.PDF = pdf;
-				console.log('PDF loaded');
+				// console.log('PDF loaded');
 				// Fetch the first page
 				for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
 					
@@ -380,7 +380,7 @@ export class AonViewer extends AonElement {
 					div.appendChild(canvas);
 	
 					pdf.getPage(pageNumber).then((page) =>  {
-						console.log('Page loaded');
+						// console.log('Page loaded');
 	
 						let scale = zoom || 1;
 						let viewport = page.getViewport({ scale });
@@ -395,7 +395,7 @@ export class AonViewer extends AonElement {
 						canvas.height = viewport.height;
 						canvas.width = viewport.width;
 						
-						console.log(JSON.stringify(context));
+						// console.log(JSON.stringify(context));
 						
 						const canvasOffset = this.getIFrameOffset(canvas);
 						
@@ -417,14 +417,14 @@ export class AonViewer extends AonElement {
 						const renderTask = page.render(renderContext);
 						renderTask.promise
 						.then( ()=> {
-							console.log('Page rendered');
+							// console.log('Page rendered');
 						})
 						.catch( err => console.log('Error rendering page: ' + err ))
 						;
 						
 						this.loadCSS(PDFJS_VIEWER_STYLESHEET_URL).then(() => {
 							// clean viewer implicit styles.
-							console.log('Clean viewer implicit styles');
+							// console.log('Clean viewer implicit styles');
 							document.body.style.setProperty('background-color', 'transparent');
 							
 							page.getTextContent()
@@ -450,16 +450,16 @@ export class AonViewer extends AonElement {
 					});
 				}
 			},  (reason)=> {			// PDF loading error
-				console.log(reason);
+				// console.log(reason);
 			});
 		}).catch(err=>{
-			console.log(err);
+			// console.log(err);
 		});
 	}
 
 	printPdfTextLayer(pageIndex, textContent) {
 		
-		console.log(JSON.stringify(textContent));
+		// console.log(JSON.stringify(textContent));
 		
 		let screenPPI = this.getScreenPPI() * 0.80;
 		let page = textContent.pages[pageIndex-1];
@@ -483,7 +483,7 @@ export class AonViewer extends AonElement {
 			
 			itemSpan.style.setProperty('role', 'presentation');
 			itemSpan.style.setProperty('font-family', 'sans-serif');
-			console.log(`calc(var(--scale-factor)*${item.height * screenPPI}px)`);
+			// console.log(`calc(var(--scale-factor)*${item.height * screenPPI}px)`);
 			itemSpan.style.setProperty('font-size', `calc(var(--scale-factor)*${item.height * screenPPI}px)`);
 
 			textLayerDiv.appendChild(itemSpan);
@@ -610,7 +610,7 @@ export class AonViewer extends AonElement {
 		        this.getIFrameHead().appendChild(link);
 		        link.onload = function() { 
 		            resolve(); 
-		            console.log( 'CSS has loaded!' ); 
+		            // console.log( 'CSS has loaded!' ); 
 		        };
 	        }
 	    });

@@ -91,7 +91,7 @@ export class AonIcon extends AonElement {
     icon.id = this.id + CONSTANT.MATERIAL.initCap();
     icon.className = CSS.MATERIAL_ICONS;
     icon.innerHTML = this.icon;
-	icon.setAttribute('icon', this.icon);
+    icon.setAttribute('icon', this.icon);
     this.appendChild(icon);
   }
 

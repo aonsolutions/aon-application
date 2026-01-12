@@ -274,6 +274,9 @@ export class AonTable extends AonElement {
           icon2.id = this.getId() + "Icon" + i;
           icon2.icon = icon.icon;
           icon2.title = icon.title;
+          if(icon.icon === "qr_code_2"){
+            icon2.color = icon.color;
+          }
           // let icon2 = this.createElement(TAG.I);
           // icon2.id = this.getId() + "Icon" + i;
           // icon2.className = icon.class || "material-icons";

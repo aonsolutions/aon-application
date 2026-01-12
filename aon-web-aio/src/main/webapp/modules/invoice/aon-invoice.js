@@ -17,6 +17,7 @@ import { getInvestAssets, getItems} from '../../services/productService.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
+import { AonIcon } from '../../components/aon-icon.js';
 import { AonCustomerSuggestion } from '../registry/customer/aon-customer-suggestion.js';
 import { AonSwitch } from '../../components/aon-switch.js';
 import { AonTab } from '../../components/aon-tab.js';
@@ -583,7 +584,7 @@ export class AonInvoice extends AonElement {
 				};
 				let aib = invoiceToolbar.addButtonTitle(action, fn);
 				if (aib && communicationStatus) {
-					aib.getButton().style.color = this.getCommunicationStatusColor(communicationStatus);
+					aib.getIcon().color = this.getCommunicationStatusColor(communicationStatus);
 				}
 			}
 		}
@@ -709,31 +710,31 @@ export class AonInvoice extends AonElement {
 					let info = hist[key].communicationInfo;
 					
 					table.addRow();
-
+					
 					let typeButton = this.getCommunicationTypeIcon(info.communicationType);
 					typeButton.id = key+i+"button";
-					if ( info.checkUrl ) {
+					if (info.checkUrl && typeof info.checkUrl === 'string' && info.checkUrl.startsWith('http')) {
 						typeButton.title = "Comprobar";
-						typeButton.addEventListener(EVENT.CLICK, () => open(info.checkUrl));
+						typeButton.addEventListener(EVENT.CLICK, () => open(info.checkUrl, '_blank'));
 					} else {
-						typeButton.style.cursor = "none";
+						// typeButton.getButton().style.cursor = "unset";
 					}
 					table.addCell(typeButton);
-
+					
 					let span1 = this.createElement(TAG.SPAN);
 					span1.innerHTML = key;
 					table.addCell(span1);
 
-					let icon = this.createElement(TAG.I);
-					icon.className = "material-icons";
+					let icon = new AonIcon();
+					icon.className = "icons-color";
 					icon.title = this.getCommunicationStatusLabel(info.communicationStatus);
-					icon.style.color = this.getCommunicationStatusColor(info.communicationStatus);
-					icon.innerHTML = history.ok ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
+					icon.color = this.getCommunicationStatusColor(info.communicationStatus);
+					icon.icon = history.ok ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
 					table.addCell(icon);
 
 					let span2 = this.createElement(TAG.SPAN);
 					span2.innerHTML = this.getCommunicationStatusLabel(info.communicationStatus);
-					span2.style.color = this.getCommunicationStatusColor(info.communicationStatus);
+					span2.dataset.color = this.getCommunicationStatusColor(info.communicationStatus);
 					table.addCell(span2);
 
 					let infoDate = info.modification_date ?
@@ -748,23 +749,31 @@ export class AonInvoice extends AonElement {
 					span4.innerHTML = infoUser ? infoUser : "";
 					table.addCell(span4);
 
+					let dummySpan7 = this.createElement(TAG.SPAN);
+					table.addCell(dummySpan7);
+					let dummySpan8 = this.createElement(TAG.SPAN);
+					table.addCell(dummySpan8);
+					let dummySpan9 = this.createElement(TAG.SPAN);
+					table.addCell(dummySpan9);
+
 					let commHist  = hist[key].communicationHistory;
-					
 					if (commHist && commHist.length > 0) {
-						table.addRow();
-
-						let dummySpan = this.createElement(TAG.SPAN);
-						table.addCell(dummySpan);
-
-						let histTable = this.getElement(this.COMMUNICATION_TABLE + "_" + key);
-						if(!histTable) {
-							histTable = new AonBasicTable();
-							histTable.id = this.COMMUNICATION_TABLE + "_" + key;
-							table.addCell(histTable, "5" );
-						}
-						histTable.removeRows();
-
 						for(let x = 0; x < commHist.length; x++) {
+							table.addRow();
+	
+							let dummySpan = this.createElement(TAG.SPAN);
+							table.addCell(dummySpan);
+	
+							let histTable = this.getElement(this.COMMUNICATION_TABLE + "_" + key);
+							if(!histTable) {
+								histTable = new AonBasicTable();
+								histTable.id = this.COMMUNICATION_TABLE + "_" + key;
+								histTable.style.display = "flex";
+								histTable.style.paddingLeft = "1rem";
+								table.addCell(histTable, "8" );
+							} else {
+								histTable.removeRows();
+							}
 							let hist = commHist[x];
 							this.printCommunicationHistory(histTable, hist, i);
 						}
@@ -782,11 +791,11 @@ export class AonInvoice extends AonElement {
 		span1.innerHTML = commHist.operation;
 		table.addCell(span1);
 
-		let icon = this.createElement(TAG.I);
-		icon.className = "material-icons";
+		let icon = new AonIcon();
+		icon.className = "icons-color";
 		icon.title = this.getCommunicationStatusLabel(commHist.status);;
-		icon.style.color = this.getCommunicationStatusColor(commHist.status);
-        icon.innerHTML = commHist.ok ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
+		icon.color = this.getCommunicationStatusColor(commHist.status);
+		icon.icon = commHist.ok ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
 		table.addCell(icon);
 
 		let span2 = this.createElement(TAG.SPAN);
@@ -817,14 +826,14 @@ export class AonInvoice extends AonElement {
 			let showErrors  = new AonIconButton();
 			showErrors.icon = MATERIAL_ICONS.CHAT_ERROR;
 			showErrors.title= "Mostrar errores";
-			showErrors.style.color = "red";
+			showErrors.dataset.color = "red";
 			table.addCell(showErrors);
 
 			let historyRowNumber = table.addRow();
 			let historyTr = table.getRow(historyRowNumber);
 			historyTr.style.display = "none";
 			showErrors.addEventListener(EVENT.CLICK, () => {
-				historyTr.style.display = historyTr.style.display == "none" ? "contents" : "none";
+				historyTr.style.display = historyTr.style.display == "none" ? "block" : "none";
 			});
 			let ul = this.createElement(TAG.UL);
 			ul.classList.add(CSS.AON_UL);
@@ -839,7 +848,7 @@ export class AonInvoice extends AonElement {
 				li.appendChild(errSpan);
 				ul.appendChild(li);
 			}
-			table.addCell(ul, "7" );
+			table.addCell(ul);
 		} else {
 			let dummySpan = this.createElement(TAG.SPAN);
 			table.addCell(dummySpan);
@@ -859,7 +868,6 @@ export class AonInvoice extends AonElement {
 		return `${day}/${month}/${year} ${hours}:${mins}:${secs}`;
 	}
 
-
 	buildFileContent() {
 		let div = this.getElement(this.DIV);
 		let file = this.createElement(TAG.DIV);
@@ -872,18 +880,30 @@ export class AonInvoice extends AonElement {
 		let typeIconButton = new AonIconButton();
 		if ("SII" === type || "TBAI" === type) {
 			let administration = this.configuration ? this.configuration.administration : '';
-			if ("ALAVA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_ARABA;
-			else if ("BIZKAIA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_BIZKAIA;
-			else if ("GIPUZKOA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_GIPUZKOA;
-			else if ("NAVARRA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_NAVARRA;
-			else if ("COMMON_TERRITORY" === administration) typeIconButton.aonIcon = AON_ICONS.AON_AEAT;
-			else if ("CANARIAS" === administration) typeIconButton.aonIcon = AON_ICONS.AON_CANARY;
-		} else if ("LROE" === type) { typeIconButton.aonIcon = AON_ICONS.AON_BIZKAIA;
-		} else if ("SERES" === type) { typeIconButton.aonIcon = AON_ICONS.SERES;
-		} else if ("EMAIL" === type) { typeIconButton.icon = MATERIAL_ICONS.MAIL;
-		} else if ("CLOSING" === type) { typeIconButton.icon = MATERIAL_ICONS.LOCK;
-		} else if ("VERIFACTU" === type) { typeIconButton.aonIcon = AON_ICONS.AON_AEAT;
-		} else if ("SIF" === type) { typeIconButton.icon = MATERIAL_ICONS.SIF;
+			if ("ALAVA" === administration)
+				typeIconButton.aonIcon = AON_ICONS.AON_ARABA;
+			else if ("BIZKAIA" === administration)
+				typeIconButton.aonIcon = AON_ICONS.AON_BIZKAIA;
+			else if ("GIPUZKOA" === administration)
+				typeIconButton.aonIcon = AON_ICONS.AON_GIPUZKOA;
+			else if ("NAVARRA" === administration)
+				typeIconButton.aonIcon = AON_ICONS.AON_NAVARRA;
+			else if ("COMMON_TERRITORY" === administration)
+				typeIconButton.aonIcon = AON_ICONS.AON_AEAT;
+			else if ("CANARIAS" === administration)
+				typeIconButton.aonIcon = AON_ICONS.AON_CANARY;
+		} else if ("LROE" === type) {
+			typeIconButton.aonIcon = AON_ICONS.AON_BIZKAIA;
+		} else if ("SERES" === type) {
+			typeIconButton.aonIcon = AON_ICONS.SERES;
+		} else if ("EMAIL" === type) {
+			typeIconButton.icon = MATERIAL_ICONS.MAIL;
+		} else if ("CLOSING" === type) {
+			typeIconButton.icon = MATERIAL_ICONS.LOCK;
+		} else if ("VERIFACTU" === type) {
+			typeIconButton.aonIcon = AON_ICONS.AON_AEAT;
+		} else if ("SIF" === type) {
+			typeIconButton.icon = MATERIAL_ICONS.SIF;
 		}
 		if (!typeIconButton.icon) {
 			typeIconButton.icon = MATERIAL_ICONS.QUESTION_MARK;

@@ -12,7 +12,7 @@
     $color-switch-off, $color-switch-on, $color-switch,
     $color-red-100,  $color-red-500, $color-red-900,
     $color-green-100, $color-green-400, $color-green-500, $color-green-900, $color-menu-green,
-    $color-blue-100, $color-blue-500, $color-blue-900,
+    $color-blue-100, $color-blue-500, $color-blue-900, $color-yellow-500,
     $color-corp-orange, $color-corp-turquoise, $color-corp-blue,
     $logoHead, $logoHead-width, $logoHead-height,
     $logo, $logo-width, $logo-height
@@ -255,6 +255,38 @@
   // 
   // Componentes
   //
+    // Colores para comunicacion con entidades (verifactu...)
+    $colors: (
+      orange: $color-corp-orange,
+      green: $color-green-500,
+      yellow: $color-yellow-500,
+      blue: $color-blue-500,
+      red: $color-red-500
+    );
+    aon-icon[icon="qr_code_2"], aon-icon.icons-color, span{
+      @each $name, $value in $colors {
+        &[color = "#{'' + $name}"], &[data-color = "#{'' + $name}"] {
+          color: $value;
+          &::after {
+            content: "";
+            background-color: $value;
+          }
+        }
+      }
+    }
+    aon-icon-button{
+      @each $name, $value in $colors {
+        &[data-color = "#{'' + $name}"] {
+          aon-icon{
+            color: $value;
+            &::after {
+              content: "";
+              background-color: $value;
+            }
+          }
+        }
+      }
+    }
     // Badge
     aon-badge{
       .badge {

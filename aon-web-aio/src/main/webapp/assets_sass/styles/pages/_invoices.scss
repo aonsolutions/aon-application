@@ -84,6 +84,13 @@ $panding-icon-table: calc(v.$input-height / 4);
         }
       }
     // FIN - aon-invoice-home
+    // aon-invoice-list 
+      aon-invoice-list{
+        table tbody tr td:last-child span:has(aon-icon){
+          gap: v.$gap-min;
+        }
+      }
+    // FIN aon-invoice-list 
     // aon-invoice 
       aon-invoice{
         #aonInvoiceSheetDataGeneral{
@@ -118,6 +125,20 @@ $panding-icon-table: calc(v.$input-height / 4);
           td:has(> aon-icon-button) {
             padding-bottom: $panding-icon-table;
           }
+        }
+      }
+      #aonInvoiceSheetCommunicationCardContent{
+        padding: v.$num-0;
+        aon-basic-table{
+          tr{
+            padding: v.$padding-min v.$num-0 v.$num-0 v.$num-0;
+            td{
+              padding: v.$num-0 v.$num-0 v.$num-0 v.$padding-min;
+              &:first-child{
+                padding: v.$num-0;
+              }
+            }
+          } 
         }
       }
     // FIN - aon-invoice 
