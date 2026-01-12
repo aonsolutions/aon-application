@@ -201,7 +201,7 @@ export class AonPresenceList extends AonElement {
           let subtitle = null;
           if(res.last_date){
             const dateParse = dateCustomDayHour(res.last_date) || AonDateUtils.setDateTimestamp(res.last_date);
-            subtitle = `${dateParse} <span style="float: right;">${res.nameLocation}</span> `;
+            subtitle = `${res.reason && res.reason.length > 0 ? (res.reason + ' - ') : ''} ${dateParse} <span style="float: right;">${res.nameLocation}</span> `;
           }
           let options = {
             iconHtmlCustom: `${res.lettersHtml} <span style="float: right;color: rgba(0,0,0,.54);">${res.duration}</span>`,
