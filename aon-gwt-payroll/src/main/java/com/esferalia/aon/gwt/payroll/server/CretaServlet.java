@@ -2442,12 +2442,18 @@ public class CretaServlet extends HttpServlet
 	
 	private static String[] getUniqueParameterValues (HttpServletRequest req, CretaService.Parameter param , char separatorChar, String [] defaultValues) {
 		String[] values = req.getParameterValues(param.name());
-		if ( values == null ) {
+		if ( values == null )  {
 			return defaultValues;
 		}
-		return Arrays.stream(values)
-				.filter(AonStringUtils::isNotBlank).flatMap( value -> Arrays.stream(AonStringUtils.split(value, separatorChar)) ).distinct()
+		values = Arrays.stream(values)
+				.filter(AonStringUtils::isNotBlank)
+				.flatMap( value -> Arrays.stream(AonStringUtils.split(value, separatorChar)) ).distinct()
 				.toArray(String[]::new);
+		if ( values.length == 0 )  {
+			return defaultValues;
+		}
+		
+		return values;
 	}
 
 	private static String[] getUniqueParameterValues (HttpServletRequest req, CretaService.Parameter param, String [] defaultValues ) {
