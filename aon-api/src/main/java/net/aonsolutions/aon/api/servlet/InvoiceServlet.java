@@ -499,7 +499,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				
 			if (icc.isTbai() && invoice.isThirdPart()) {
 				checkTbaiId(company, invoice, tbaiId);
-			} else if( icc.isTbai() || icc.isSii()) {
+			} else if( icc.isTbai() || icc.isLroe() || icc.isSii()) {
 				Certificate certificate = checkCertificate(api);
 				icc.setCertificate(certificate);
 				invoiceValidation(invoice);
