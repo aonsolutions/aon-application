@@ -112,7 +112,7 @@ export class AonConfiguration extends AonElement {
 				if (relationshipCompany.rrelationship) {
 					officeOptions.push({
 						name: MSG.CLIENT_FILE,
-						icon: MATERIAL_ICONS.CONTACTS,
+						// icon: MATERIAL_ICONS.CONTACTS,
 						fn: () => this.buildCustomerList(),
 					});
 					
