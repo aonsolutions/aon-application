@@ -53,7 +53,7 @@ import { AonDashboardSalesPurchases } from '../accounting/aon-dashboard-sales-pu
 import { AonJsfAccountingGraph, AonJsfPayrollGraph, AonJsfContractGraph } from '../aon-jsf-app.js';
 import { createSelect } from '../../components/CreateComponent.js';
 import { InvoiceCommunicationConfiguration } from '../../models/InvoiceCommunicationConfiguration.js';
-import { AonInvoiceCommunication } from '../invoice/aon-invoice-communication.js';
+import { AonInvoiceCommunicationConfiguration } from '../invoice/aon-invoice-communication-configuration.js';
 import { isPersonaFisica, isValid } from '../../services/documentUtils.js';
 import { Invoice } from '../invoice/Invoice.js';
 import { AonCheckbox } from '../../components/aon-checkbox.js';
@@ -147,7 +147,7 @@ export class AonDesktop extends AonElement {
 			this.getElement(dialog.BUTTON_CLOSE).style.display = 'none';
 		}
 
-		let communication =  new AonInvoiceCommunication();
+		let communication =  new AonInvoiceCommunicationConfiguration();
 		communication.setConfiguration(this.ic);
 		communication.onChange(() => {
 			this.ic = communication.getConfiguration();
@@ -243,8 +243,8 @@ export class AonDesktop extends AonElement {
 			if(showError) this.showMessageError("Es obligatorio rellenar todos los datos de la persona física.");
 			return false;
 		} 
-		if(showError && !icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) && !icc.isSii() && !icc.willBeSii() && !icc.isVerifactu() && !icc.willBeVerifactu() && !icc.isNoVerifactu() && !icc.willBeNoVerifactu()) {
-			this.showMessageError("Es obligatorio selecionar Verifactu, No Verifactu o SII para empresas del territorio común.");
+		if(!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) && !icc.isSii() && !icc.willBeSii() && !icc.isVerifactu() && !icc.willBeVerifactu() && !icc.isNoVerifactu() && !icc.willBeNoVerifactu()) {
+			if(showError) this.showMessageError("Es obligatorio selecionar Verifactu, No Verifactu o SII para empresas del territorio común.");
 			return false;
 		} 
 		if(!icc.getAdministration().isUnknown() && (icc.hasCommunication() || icc.willBeCommunication() || icc.isNoSif())) {

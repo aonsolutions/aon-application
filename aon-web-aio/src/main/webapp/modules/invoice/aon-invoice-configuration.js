@@ -5,7 +5,7 @@ import { ToolbarType } from "../../models/enums.js";
 import { getInvoiceConfiguration, saveInvoiceConfiguration } from "../../services/invoiceService.js";
 import { AonInvoicePrint } from "./aon-invoice-print.js";
 import { AonTab } from "../../components/aon-tab.js";
-import { AonInvoiceCommunication } from "./aon-invoice-communication.js";
+import { AonInvoiceCommunicationConfiguration } from "./aon-invoice-communication-configuration.js";
 import { AonOcrConfiguration } from "./aon-ocr-configuration.js";
 
 import * as ACTION from '../actions.js';
@@ -83,7 +83,7 @@ export class AonInvoiceConfiguration extends AonElement {
     buildCommunication() {
         let content = this.getElement(this.CONTENT);
         this.clearElement(content);
-        let communication =  new AonInvoiceCommunication();
+        let communication =  new AonInvoiceCommunicationConfiguration();
         communication.setConfiguration(this.configuration);
         communication.onChange(() => {
             this.configuration = communication.getConfiguration();
