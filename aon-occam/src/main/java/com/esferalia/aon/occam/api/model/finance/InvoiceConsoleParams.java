@@ -56,6 +56,7 @@ public class InvoiceConsoleParams implements Serializable {
 	
 	private Integer registry;
 	private Boolean output;
+	private Boolean annulled;
 	private InvoiceTransactionType transactionType;
 	private RectificationType rectified;
 	private Boolean surcharge;
@@ -290,6 +291,14 @@ public class InvoiceConsoleParams implements Serializable {
 	}
 	public InvoiceConsoleParams setCommunicationStatus(InvoiceCommunicationStatus communicationStatus) {
 		this.communicationStatus = communicationStatus;
+		return this;
+	}
+	
+	public Boolean getAnnulled() {
+		return annulled;
+	}
+	public InvoiceConsoleParams setAnnulled(Boolean annulled) {
+		this.annulled = annulled;
 		return this;
 	}
 	

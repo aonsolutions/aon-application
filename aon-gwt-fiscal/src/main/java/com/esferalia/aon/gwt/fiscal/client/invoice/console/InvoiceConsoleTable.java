@@ -19,8 +19,6 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceUncheckedHandler;
 import com.esferalia.aon.gwt.fiscal.client.invoice.HasInvoiceCheckedHandlers;
 import com.esferalia.aon.gwt.fiscal.client.invoice.HasInvoiceUncheckedHandlers;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceCommunicationIconsPanel;
-import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceDockPanel;
-import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceDockPanel.InvoiceDockPanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
@@ -174,33 +172,34 @@ public class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceChecke
 				checkBox.addClickHandler( event -> {
 					checkBox.fireEvent( InvoiceConsoleTable.this, inv);
 					});
+				
 				AonTableButton debugInvoice = new AonTableButton("DEBUG",AON.CSS.aonIconDebug());
 				debugInvoice.addClickHandler( event -> debugInvoice(inv));
 				
-				AonTableButton editInvoice = new AonTableButton(AON.MSG.edit(),AON.CSS.aonIconKeyboardArrowRight());
-				InvoiceDockPanelCallback invoiceCallback = new InvoiceDockPanelCallback() {
-
-					@Override
-					public Invoice getInvoice() {
-						return inv;
-					}
-
-					@Override
-					public void onSave(Invoice invoice) {
-						row.clear();
-						paintRow( invConsole, row );
-					}
-
-					@Override
-					public void onDelete(Invoice invoice) {
-						row.clear();
-					}
-					
-					@Override public void onError(String message) {
-						AonMessageDialog.error( "Error inexperado: " + message);
-					}
-				};
-				editInvoice.addClickHandler( event -> editInvoice(opts,inv, invoiceCallback));
+//				AonTableButton editInvoice = new AonTableButton(AON.MSG.edit(),AON.CSS.aonIconKeyboardArrowRight());
+//				InvoiceDockPanelCallback invoiceCallback = new InvoiceDockPanelCallback() {
+//
+//					@Override
+//					public Invoice getInvoice() {
+//						return inv;
+//					}
+//
+//					@Override
+//					public void onSave(Invoice invoice) {
+//						row.clear();
+//						paintRow( invConsole, row );
+//					}
+//
+//					@Override
+//					public void onDelete(Invoice invoice) {
+//						row.clear();
+//					}
+//					
+//					@Override public void onError(String message) {
+//						AonMessageDialog.error( "Error inexperado: " + message);
+//					}
+//				};
+//				editInvoice.addClickHandler( event -> editInvoice(opts,inv, invoiceCallback));
 				
 				AonTableButton recordInvoice = new AonTableButton(AON.MSG.record(),AON.CSS.aonIconAddTask());
 				recordInvoice.addClickHandler( event -> showEntry(opts, inv.getId()) );
@@ -209,10 +208,14 @@ public class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceChecke
 				showEntry.addClickHandler( event -> showEntry(opts, inv.getId()));
 				
 				row
-					.addCell( checkBox )
+					.addCellIfElse( inv.isAnnulled() 
+						, new Label() 
+						, checkBox )
 					.addCell( debugInvoice )
-					.addCell( editInvoice )
-					.addCell( new InvoiceMessagesLabel( inv )  )
+					// .addCell( editInvoice )
+					.addCellIfElse( inv.isAnnulled() 
+						, new Label() 
+						, new InvoiceMessagesLabel( inv )  )
 					.addCell(new Label( getSourceDescription(invConsole.getSource())))
 					.addCell(new Label(ensure(inv.getType(),inv.getType()::getAbbrDescription)))
 					.addCell(new Label(ensure(inv.getTransaction(),inv.getTransaction()::getTediName)))
@@ -220,17 +223,27 @@ public class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceChecke
 					.addCell(new Label(ensure(inv.getRegistryDocument(), inv::getRegistryDocument, AonStringUtils.EMPTY)))
 					.addCell(new Label(ensure(inv.getRegistryName(), () -> AonStringUtils.abbreviate(inv.getRegistryName(),25), AonStringUtils.EMPTY)))
 					.addCellIfElse( inv.isProforma() 
-						,new Label(AonStringUtils.EMPTY)
-						,new Label(ensure(inv.getReferenceCode(), inv::getReferenceCode, AonStringUtils.EMPTY)))
+							,new Label(AonStringUtils.EMPTY)
+							,new Label(ensure(inv.getReferenceCode(), inv::getReferenceCode, AonStringUtils.EMPTY)))
 					.addCell(issueDateLabel)
 					.addCell(taxDateLabel)
 					.addCell(creationDateLabel)
-					.addCell(new Label( AON.FMT.format(inv.getTotal())), AON.CSS.aonTextRight() )
-					.addCellIfElse(inv.isRecorded()
+					.addCell(new Label( AON.FMT.format(inv.getTotal())), AON.CSS.aonTextRight() );
+				
+				if (inv.isAnnulled()) {
+					row.addCell( new Label() );
+				} else {
+					row.addCellIfElse(inv.isRecorded()
 						, showEntry
-						, recordInvoice)
-					.addCell(new InvoiceCommunicationIconsPanel( opts, inv ), AON.CSS.aonTextRight() )
-				;
+						, recordInvoice);
+				}
+				
+				row.addCell(new InvoiceCommunicationIconsPanel( opts, inv ), AON.CSS.aonTextRight() );
+				
+				if (inv.isAnnulled()) {
+					row.getElement().getStyle().setBackgroundColor("mistyrose");
+				}
+					
 			}
 			
 			private String getSourceDescription(InvoiceSource source) {
@@ -347,23 +360,23 @@ public class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceChecke
 		dialog.show();
 	}
 	
-	private void editInvoice(InvoiceModuleOptions opts, Invoice invoice, InvoiceDockPanelCallback invoiceCallback) {
-		AonCustomPopup dialog = new AonCustomPopup();
-		dialog.setWidth((Window.getClientWidth() - 100) + "px");
-		dialog.setHeight((Window.getClientHeight() - 100) + "px");
-		dialog.setAnimationEnabled(true);
-		dialog.setGlassEnabled(true);
-		dialog.setModal(true);
-		InvoiceModuleOptions options = new InvoiceModuleOptions()
-			.setDomainName(opts.getDomainName())
-			.setDomain(opts.getDomain())
-			.setUser(opts.getUser())
-			.setConfiguration(opts.getConfiguration());
-		dialog.setCaption(AON.MSG.invoice());
-		dialog.add(new InvoiceDockPanel(options, invoice, invoiceCallback));
-		dialog.center();
-		dialog.show();
-	}
+//	private void editInvoice(InvoiceModuleOptions opts, Invoice invoice, InvoiceDockPanelCallback invoiceCallback) {
+//		AonCustomPopup dialog = new AonCustomPopup();
+//		dialog.setWidth((Window.getClientWidth() - 100) + "px");
+//		dialog.setHeight((Window.getClientHeight() - 100) + "px");
+//		dialog.setAnimationEnabled(true);
+//		dialog.setGlassEnabled(true);
+//		dialog.setModal(true);
+//		InvoiceModuleOptions options = new InvoiceModuleOptions()
+//			.setDomainName(opts.getDomainName())
+//			.setDomain(opts.getDomain())
+//			.setUser(opts.getUser())
+//			.setConfiguration(opts.getConfiguration());
+//		dialog.setCaption(AON.MSG.invoice());
+//		dialog.add(new InvoiceDockPanel(options, invoice, invoiceCallback));
+//		dialog.center();
+//		dialog.show();
+//	}
 
 	@Override
 	public HandlerRegistration addInvoiceCheckedHandler(AonInvoiceCheckedHandler handler) {

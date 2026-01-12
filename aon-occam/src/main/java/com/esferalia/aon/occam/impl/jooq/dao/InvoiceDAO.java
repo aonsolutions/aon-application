@@ -46,7 +46,6 @@ import org.jooq.Record14;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
-import org.json.JSONObject;
 
 import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.jooq.tables.records.InvoiceRecord;
@@ -87,8 +86,6 @@ import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
-import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -1045,7 +1042,7 @@ public class InvoiceDAO {
 		if (invoice.isSales() && invoice.getNumber() > 0) {
 			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId());
 			if((icc.hasCommunication())) {
-				saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
+				InvoiceTrackingDAO.insert(ctx, invoice, InvoiceTrackingStatus.DELETED);
 			}
 		}
 		
@@ -1069,31 +1066,6 @@ public class InvoiceDAO {
 		return invoice;
 	}
 
-	private static void saveInvoiceTracking(AONContext ctx, Invoice invoice, InvoiceTrackingStatus status) {
-		invoice.setComments(null);
-		invoice.setRemarks(null);
-		JSONObject json = InvoiceJSON.toJSON(invoice);
-		
-		ctx.getDslContext().insertInto(INVOICE_TRACKING)
-		.set(INVOICE_TRACKING.ID, invoice.getId())
-		.set(INVOICE_TRACKING.DOMAIN, invoice.getDomain())
-		.set(INVOICE_TRACKING.SERIES, invoice.getSeries())
-		.set(INVOICE_TRACKING.NUMBER, invoice.getNumber())
-		.set(INVOICE_TRACKING.REFERENCE_CODE, invoice.getReferenceCode())
-		.set(INVOICE_TRACKING.ISSUE_DATE, AonDateUtils.toSql(invoice.getIssueDate()))
-		.set(INVOICE_TRACKING.RDOCUMENT, invoice.getRegistryDocument())
-		.set(INVOICE_TRACKING.RNAME, invoice.getRegistryName())
-		.set(INVOICE_TRACKING.STATUS, status.value())
-		.set(INVOICE_TRACKING.TYPE, invoice.getType().value())
-		.set(INVOICE_TRACKING.TOTAL, invoice.getTotal())
-		.set(INVOICE_TRACKING.JSON, json.toString())
-		.set(INVOICE_TRACKING.CREATION_USER, invoice.getCreationUser())
-		.set(INVOICE_TRACKING.CREATION_DATE, AonDateUtils.toTimestamp(invoice.getCreationDate()))
-		.set(INVOICE_TRACKING.MODIFICATION_USER, ctx.getUser())
-		.set(INVOICE_TRACKING.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
-		.execute();
-	}
-	
 	public static void rectify(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice)  {
 		ctx.getDslContext().update(INVOICE)
 		.set(INVOICE.RECTIFICATION_TYPE, RectificationType.NORMAL_RECTIFIER.value())

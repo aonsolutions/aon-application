@@ -70,6 +70,8 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 	private InvoiceCommunicationTypeBox communicationTypeBox;
 	private InvoiceCommunicationStatusBox communicationStatusBox;
 	private InvoiceSourceBox sourceBox;
+	
+	private ListBox annulledBox;
 
 	private InvoiceConsoleOrderByBox orderByBox;
 	private ListBox orderBox;
@@ -104,6 +106,8 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		initCommunicationStatusBox(opts);
 		initSourceBox(opts);
 		
+		initAnnulledBox(opts);
+		
 		initOrderByBox(opts);
 		initOrderBox(opts);
 		
@@ -136,6 +140,7 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		numberPanel.add(toNumberBox);
 
 		addPair(mainTab, AON.MSG.invoices(), outputBox);
+		addPair(mainTab,"Facturas anuladas" ,annulledBox);
 		addPair(mainTab, AON.MSG.fiscalYear(), yearBox);
 		addPair(mainTab,AON.MSG.period(),periodBox);
 		addPair(mainTab,AON.MSG.date() ,datePanel);
@@ -301,6 +306,15 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		outputBox.addItem(AON.MSG.inputInvoices());
 		outputBox.addItem(AON.MSG.outputInvoices());
 		outputBox.addChangeHandler(event -> fire(opts));
+	}
+
+	private void initAnnulledBox(InvoiceModuleOptions opts) {
+		annulledBox = new ListBox();
+		annulledBox.addItem("Mostrar no anuladas");
+		annulledBox.addItem("Mostrar anuladas");
+		annulledBox.addItem(TODAS);
+		
+		annulledBox.addChangeHandler(event -> fire(opts));
 	}
 
 	private void initTransactionOutputBox(InvoiceModuleOptions opts) {
@@ -506,6 +520,11 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		if (sourceBox.getValue() != null) {
 			params.setSource( sourceBox.getValue() );
 		}
+
+		if (annulledBox.getSelectedIndex() == 0) params.setAnnulled( false );
+		if (annulledBox.getSelectedIndex() == 1) params.setAnnulled( true );
+		if (annulledBox.getSelectedIndex() == 2) params.setAnnulled( null );
+		
 		
 		params.setOrderBy( orderByBox.getValue() );
 		params.setDescending( orderBox.getSelectedIndex() == 1 );
