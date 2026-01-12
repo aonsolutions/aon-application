@@ -27,8 +27,9 @@ export class AonManagementMenu extends AonSuiteMenu {
     }
 
     async initInvoiceConfiguration() {
-        let c = await getInvoiceConfiguration();
-        this.icc = new InvoiceCommunicationConfiguration(c.communication);
+        this.c = await getInvoiceConfiguration();
+        this.icc = new InvoiceCommunicationConfiguration(this.c.communication);
+
     }
 
     checkConfiguration() {		

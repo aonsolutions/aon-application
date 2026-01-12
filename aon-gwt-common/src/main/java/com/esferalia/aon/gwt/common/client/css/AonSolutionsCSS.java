@@ -576,6 +576,24 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_aeat_red")
 	String aonIconAeatRed();
 
+	@ClassName("aon_icon_aeat_blue")
+	String aonIconAeatBlue();
+
+	@ClassName("aon_icon_sif")
+	String aonIconSif();
+
+	@ClassName("aon_icon_sif_green")
+	String aonIconSifGreen();
+
+	@ClassName("aon_icon_sif_orange")
+	String aonIconSifOrange();
+
+	@ClassName("aon_icon_sif_red")
+	String aonIconSifRed();
+
+	@ClassName("aon_icon_sif_blue")
+	String aonIconSifBlue();
+
 	@ClassName("aon_icon_canarias")
 	String aonIconCanarias();
 
@@ -590,6 +608,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_icon_araba_red")
 	String aonIconArabaRed();
+
+	@ClassName("aon_icon_araba_blue")
+	String aonIconArabaBlue();
 
 	@ClassName("aon_icon_araba_green")
 	String aonIconArabaGreen();
@@ -606,6 +627,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_bizkaia_red")
 	String aonIconBizkaiaRed();
 
+	@ClassName("aon_icon_bizkaia_blue")
+	String aonIconBizkaiaBlue();
+
 	@ClassName("aon_icon_bizkaia_green")
 	String aonIconBizkaiaGreen();
 
@@ -620,6 +644,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_icon_gipuzkoa_red")
 	String aonIconGipuzkoaRed();
+
+	@ClassName("aon_icon_gipuzkoa_blue")
+	String aonIconGipuzkoaBlue();
 
 	@ClassName("aon_icon_gipuzkoa_green")
 	String aonIconGipuzkoaGreen();
@@ -723,7 +750,13 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_qr_code_red")
 	String aonIconQrCodeRed();
 	
-/* BASICS */
+	@ClassName("aon_icon_qr_code_blue")
+	String aonIconQrCodeBlue();
+
+	@ClassName("aon_icon_debug")
+	String aonIconDebug();
+
+	/* BASICS */
 	@ClassName("aon_selector")
 	String aonSelector();
 

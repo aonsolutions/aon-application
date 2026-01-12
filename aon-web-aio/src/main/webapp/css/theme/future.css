@@ -194,7 +194,8 @@
 #aonMenuListAppImgTop-apps,
 #aonMenuListAppImgTop-expandHirin,
 #aonMenuListAppImgTop-contentIndex,
-#aonMenuAnchorDivIcon
+#aonMenuAnchorDivIcon,
+#aonSigninToolbarHeaderToolSectionfile_downloadButtonIcon
  {
 	width: 25.5px;
 	height: 25.5px;
@@ -352,6 +353,10 @@
 
 #aonHeaderUserButtonIcon{
     mask-image: url('/icons/user.svg') ;
+}
+
+#aonSigninToolbarHeaderToolSectionfile_downloadButtonIcon {
+	mask-image: url('/icons/download.svg') ;
 }
 
 
@@ -795,7 +800,9 @@ aon-configuration-menu .suiteMenuContent  {
 
 #aonOfficePanelSidenavTypesNewButtonIconButton {
 	width: 20.5px;
-	height: 20.5px;#i[id$='ToolbarHeaderToolSectionSearchAdvancedButtonIcon'] {
+	height: 20.5px;
+	
+	#i[id$='ToolbarHeaderToolSectionSearchAdvancedButtonIcon'] {
 	
 }
 	
