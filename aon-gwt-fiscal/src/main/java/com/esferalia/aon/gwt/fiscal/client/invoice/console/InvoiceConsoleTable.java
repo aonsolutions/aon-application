@@ -4,14 +4,12 @@ import java.util.LinkedList;
 import java.util.function.Supplier;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIcon;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceCheckedEvent;
 import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceCheckedHandler;
 import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceUncheckedEvent;
@@ -20,12 +18,9 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.HasInvoiceCheckedHandlers;
 import com.esferalia.aon.gwt.fiscal.client.invoice.HasInvoiceUncheckedHandlers;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceCommunicationIconsPanel;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
-import com.esferalia.aon.occam.api.model.AccountingInvoice;
-import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
-import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.watson.mutable.MutableBoolean;
 import com.esferalia.aon.watson.mutable.MutableInt;
@@ -201,11 +196,16 @@ public class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceChecke
 //				};
 //				editInvoice.addClickHandler( event -> editInvoice(opts,inv, invoiceCallback));
 				
-				AonTableButton recordInvoice = new AonTableButton(AON.MSG.record(),AON.CSS.aonIconAddTask());
-				recordInvoice.addClickHandler( event -> showEntry(opts, inv.getId()) );
+//				AonTableButton recordInvoice = new AonTableButton(AON.MSG.record(),AON.CSS.aonIconAddTask());
+//				recordInvoice.addClickHandler( event -> showEntry(opts, inv.getId()) );
+				Label invoiceRecorded = new Label();
+				invoiceRecorded.setTitle( AON.MSG.recorded() );
+				invoiceRecorded.setStyleName(AON.CSS.aonLabelWithIcon());
+				invoiceRecorded.addStyleName(AON.CSS.aonIconValid());
 				
-				AonTableButton showEntry = new AonTableButton(AON.MSG.viewAccountEntry(),AON.CSS.aonIconCheckCircle());
-				showEntry.addClickHandler( event -> showEntry(opts, inv.getId()));
+				
+//				AonTableButton showEntry = new AonTableButton(AON.MSG.viewAccountEntry(),AON.CSS.aonIconCheckCircle());
+//				showEntry.addClickHandler( event -> showEntry(opts, inv.getId()));
 				
 				row
 					.addCellIfElse( inv.isAnnulled() 
@@ -234,8 +234,8 @@ public class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceChecke
 					row.addCell( new Label() );
 				} else {
 					row.addCellIfElse(inv.isRecorded()
-						, showEntry
-						, recordInvoice);
+						, invoiceRecorded
+						, new Label() );
 				}
 				
 				row.addCell(new InvoiceCommunicationIconsPanel( opts, inv ), AON.CSS.aonTextRight() );
@@ -266,85 +266,85 @@ public class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceChecke
 		});
 	}
 
-	private void showEntry(InvoiceModuleOptions opts,Integer invoiceId) {
-		InvoiceConsoleModule.INVOICE_SERVICE.getAccountingInvoice(opts.getOccam(), opts.getDomain(), invoiceId
-				, new AsyncCallback<AccountingInvoice>() {
-
-					@Override
-					public void onSuccess(AccountingInvoice result) {
-						if (result != null) {
-							AonCustomPopup entryDialog = new AonCustomPopup();
-							entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
-							entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
-							entryDialog.setAnimationEnabled(true);
-							entryDialog.setGlassEnabled(true);
-							entryDialog.setModal(true);
-							entryDialog.setCaption(AON.MSG.accountingDocument());
-							AccountEntryModule module = new AccountEntryModule();
-							module.onModuleLoad(new AccountEntryModuleOptions()
-									.setParentWidget(entryDialog)
-									.setDomainName(opts.getDomainName())
-									.setDomain(opts.getDomain())
-									.setUser(opts.getUser())
-									.setConfiguration(opts.getConfiguration())
-									.setAccountingInvoice( result )
-									.setTediResult(new TediResult()
-										.setAon(result)
-										.setInv(result.getInvoice()))
-									.setBackButtonVisible(false)
-									.setSessionLogTabVisible(false)
-									.setJournalTabVisible(false)
-									.setExtraInfoTabVisible(false)
-									.setExternalCallback(new ModuleCallback() {
-		
-										private static final long serialVersionUID = -2947804456883665519L;
-		
-										@Override
-										public void onRemove(IAccountEntryWrapper removed) {
-											entryDialog.hide();
-										}
-		
-										@Override
-										public void onFailure(Throwable caught) {
-											entryDialog.hide();
-										}
-		
-										@Override
-										public void onExit() {
-											entryDialog.hide();
-										}
-		
-										@Override
-										public void onChange(IAccountEntryWrapper changed) {
-	//										entryDialog.hide();
-	//										result.setAon((AccountingInvoice) changed);
-	//										StringBuilder buf = new StringBuilder();
-	//										if (result.getAccountingInvoice() != null 
-	//										 && result.getAccountingInvoice().getAccountEntry() != null) {
-	//												buf.append(AON.MSG.journal());
-	//												buf.append(": ");
-	//												buf.append(result.getAccountingInvoice().getAccountEntry().getJournal());
-	//										} else {
-	//											buf.append("CONTABILIZADO");
-	//										}
-	//										Label label = new Label( buf.toString() );
-	//										label.setStyleName( AON.CSS.aonColorGreen() );
-	//										refreshRow(opt, cbk, rawdoc, label, true);
-										}
-									}));
-							entryDialog.center();
-							entryDialog.show();
-						} else {
-							AonMessageDialog.error("Factura no encontrada.", () -> {});
-						}
-					}
-	
-					@Override
-					public void onFailure(Throwable caught) {
-						AonMessageDialog.error("Se ha producido un error al intentar mostrar el documento de la factura.", () -> {});
-					}
-				});
-	}
+//	private void showEntry(InvoiceModuleOptions opts,Integer invoiceId) {
+//		InvoiceConsoleModule.INVOICE_SERVICE.getAccountingInvoice(opts.getOccam(), opts.getDomain(), invoiceId
+//				, new AsyncCallback<AccountingInvoice>() {
+//
+//					@Override
+//					public void onSuccess(AccountingInvoice result) {
+//						if (result != null) {
+//							AonCustomPopup entryDialog = new AonCustomPopup();
+//							entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
+//							entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
+//							entryDialog.setAnimationEnabled(true);
+//							entryDialog.setGlassEnabled(true);
+//							entryDialog.setModal(true);
+//							entryDialog.setCaption(AON.MSG.accountingDocument());
+//							AccountEntryModule module = new AccountEntryModule();
+//							module.onModuleLoad(new AccountEntryModuleOptions()
+//									.setParentWidget(entryDialog)
+//									.setDomainName(opts.getDomainName())
+//									.setDomain(opts.getDomain())
+//									.setUser(opts.getUser())
+//									.setConfiguration(opts.getConfiguration())
+//									.setAccountingInvoice( result )
+//									.setTediResult(new TediResult()
+//										.setAon(result)
+//										.setInv(result.getInvoice()))
+//									.setBackButtonVisible(false)
+//									.setSessionLogTabVisible(false)
+//									.setJournalTabVisible(false)
+//									.setExtraInfoTabVisible(false)
+//									.setExternalCallback(new ModuleCallback() {
+//		
+//										private static final long serialVersionUID = -2947804456883665519L;
+//		
+//										@Override
+//										public void onRemove(IAccountEntryWrapper removed) {
+//											entryDialog.hide();
+//										}
+//		
+//										@Override
+//										public void onFailure(Throwable caught) {
+//											entryDialog.hide();
+//										}
+//		
+//										@Override
+//										public void onExit() {
+//											entryDialog.hide();
+//										}
+//		
+//										@Override
+//										public void onChange(IAccountEntryWrapper changed) {
+//	//										entryDialog.hide();
+//	//										result.setAon((AccountingInvoice) changed);
+//	//										StringBuilder buf = new StringBuilder();
+//	//										if (result.getAccountingInvoice() != null 
+//	//										 && result.getAccountingInvoice().getAccountEntry() != null) {
+//	//												buf.append(AON.MSG.journal());
+//	//												buf.append(": ");
+//	//												buf.append(result.getAccountingInvoice().getAccountEntry().getJournal());
+//	//										} else {
+//	//											buf.append("CONTABILIZADO");
+//	//										}
+//	//										Label label = new Label( buf.toString() );
+//	//										label.setStyleName( AON.CSS.aonColorGreen() );
+//	//										refreshRow(opt, cbk, rawdoc, label, true);
+//										}
+//									}));
+//							entryDialog.center();
+//							entryDialog.show();
+//						} else {
+//							AonMessageDialog.error("Factura no encontrada.", () -> {});
+//						}
+//					}
+//	
+//					@Override
+//					public void onFailure(Throwable caught) {
+//						AonMessageDialog.error("Se ha producido un error al intentar mostrar el documento de la factura.", () -> {});
+//					}
+//				});
+//	}
 				
 	
 	private void debugInvoice(Invoice invoice) {

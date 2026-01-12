@@ -145,10 +145,6 @@ export class AonTreasuryMenu extends AonSuiteMenu {
                 description: "Panel Carga Trabajo",
                 title: "Panel Carga Trabajo",
                 action: () => GWT.iLoad(GWT.SELLER_WORKLOAD_MODULE)
-            }, {
-                description: "Consola de facturación",
-                title: "Consola de facturación",
-                action: () => GWT.iLoad(GWT.INVOICE_CONSOLE)
             }
             ]
         }, {
