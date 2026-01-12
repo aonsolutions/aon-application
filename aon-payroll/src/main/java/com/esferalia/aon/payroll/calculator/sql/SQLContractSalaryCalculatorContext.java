@@ -27,6 +27,7 @@ import static java.util.Calendar.WEDNESDAY;
 import static java.util.stream.Collectors.summingDouble;
 
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -3119,6 +3120,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 							public double getIrpf() {
 								return 0.00;
 							};
+							
 
 							@Override
 							public Object liquid(double _liquid, Date start, Date end)
@@ -3165,6 +3167,18 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 										SQLConstants.PersonColumns.BIRTH_DATE);
 								return birthDate != null ? AonDateUtils.get(birthDate, Calendar.YEAR) : 0;
 							};
+							
+							@Override
+							protected void nextExtra() throws SalaryException ,ExpressionException ,SQLException {
+							};
+							
+							@Override
+							public BigDecimal getRetribAnuales() {
+								BigDecimal retribAnuales = super.getRetribAnuales();
+								retribAnuales = retribAnuales.add(BigDecimal.valueOf( getProExtBase()));
+								return retribAnuales;
+							}
+							;
 
 						};
 					} catch (SQLException e) {
