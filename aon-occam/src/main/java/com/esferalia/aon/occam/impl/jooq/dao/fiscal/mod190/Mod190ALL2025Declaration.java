@@ -103,11 +103,12 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 		.and(IRPFDAO.getEconomicAgreementCondition(mod190))
 		.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
 		.and(CONTRACT_DATA.EXPRESSION.isNull().or(CONTRACT_DATA.EXPRESSION.ne("\"3\"")))  // No tener en cuenta los no residentes
-		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
+//		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
+		.orderBy(SALARY.END_DATE) // ORDENAR POR FECHA PARA QUE DETERMINADOS DATOS SE COJAN SIEMPRE DE LA ULTIMA NOMINA DE CADA PERSONA		
 		.fetch()
 		.stream()
 		.forEach(rec -> {
-				String document = rec.getValue(SALARY.EMPLOYEE_DOCUMENT);
+				String document = AonStringUtils.upperCase(rec.getValue(SALARY.EMPLOYEE_DOCUMENT));
 				Integer person = rec.getValue(PERSON.REGISTRY);
 				Date issueDate = rec.getValue(SALARY.ISSUE_DATE);
 				Integer issueYear = AonDateUtils.getYear(issueDate);
@@ -184,6 +185,7 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 							detail = getDetail(document,person,Mod1902025Key.E,"04",accrualYear);
 						
 						if(null != detail) {
+							irpfBase = fixRoundBaseProblem();
 							detail.setPerception(AonMathUtils.round(detail.getPerception() + irpfBase ));
 							detail.setRetention(AonMathUtils.round(detail.getRetention() + irpfQuota ));
 							Integer salary = rec.getValue(SALARY.ID);
@@ -293,6 +295,9 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 							double ss = rec.getValue(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
 							detail.setDeducibleExpense(AonMathUtils.round(detail.getDeducibleExpense() + ss ));
 						}
+	
+						irpfBase = fixRoundBaseProblem();
+						
 						String prest = rec.getValue( SALARY_PAYMENT.PAYMENT_CONCEPT);
 						if (PREST_IT.equals(prest)) {
 							detail.setPerceptionIL(AonMathUtils.round(detail.getPerceptionIL() + irpfBase ));
@@ -303,45 +308,19 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 						}
 					}
 					
-//					private void visitAInKindKey() {
-//						double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
-//						double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
-//						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
-//						double irpfQuota = ( AonMathUtils.isZero( irpfBase) || AonMathUtils.isZero( totalIrpfBase ) )
-//								? 0.0
-//								: (irpfBase * totalIrpf / totalIrpfBase);
-//						
-//						Mod190Detail detail = getDetail(document,person,Mod1902025Key.A,null,accrualYear);
-//						String prest = rec.getValue( SALARY_PAYMENT.PAYMENT_CONCEPT);
-//						Double enterpriseIrpfQuota = getEnterpriseIrpfQuota();
-//						
-//						// Si esta exento deberia ir al L.24
-//						if(irpfQuota == 0.00) {
-//							visitInsurance();
-//						} else {
-//							if (PREST_IT.equals(prest)) {
-//								detail.setInKindPerceptionIL(AonMathUtils.round(detail.getInKindPerceptionIL() + irpfBase ));
-//								detail.setInKindDepositIL(AonMathUtils.round(detail.getInKindDepositIL() + irpfQuota ));
-////								if(detail.getInKindDepositIL() - enterpriseIrpfQuota > 1)
-////									detail.setInKindOutputDepositIL(enterpriseIrpfQuota);
-//								double dif = AonMathUtils.round(irpfQuota) - AonMathUtils.round(enterpriseIrpfQuota);
-//								if (dif > 0) {
-//									detail.setInKindOutputDepositIL(AonMathUtils.sum(detail.getInKindOutputDepositIL(), dif));
-//								}
-//							} else {
-//								detail.setInKindPerception(AonMathUtils.round(detail.getInKindPerception() + irpfBase ));
-//								detail.setInKindDeposit(AonMathUtils.round(detail.getInKindDeposit() + irpfQuota ));
-////								if(detail.getInKindDeposit() - enterpriseIrpfQuota > 1)
-////									detail.setInKindOutputDeposit(enterpriseIrpfQuota);
-//								// Cuota repercutida = Cuota total - Cuota empresa
-//								double dif = AonMathUtils.round(irpfQuota) - AonMathUtils.round(enterpriseIrpfQuota);
-//								if (dif > 0) {
-//									detail.setInKindOutputDeposit(AonMathUtils.sum(detail.getInKindOutputDeposit(), dif));
-//								}
-//							}
-//						}
-//					}
-					
+					// Se devuelve la base redondeada corregida en caso de que haya una pequeña diferencia con el importe
+					// Se ha detectado que en algunos casos la base de IRPF de la línea del concepto se graba con tres decimales
+					// y no coincide con el importe redondeado a dos decimales
+					private double fixRoundBaseProblem() {
+						double amount = AonMathUtils.round(rec.getValue(SALARY_PAYMENT.AMOUNT));
+						double irpfRoundBase = AonMathUtils.round(rec.getValue(SALARY_PAYMENT.IRPF));
+						double difference = AonMathUtils.absRounded(amount - irpfRoundBase);
+						if (difference > 0.00 && difference <= 0.03) {							
+							irpfRoundBase = amount;
+						}
+						return irpfRoundBase;
+					}
+
 					private void visitAEInKindKey() {
 						double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
 						double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
@@ -433,51 +412,85 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 						return irpfQuota == 0.00 || irpfQuotaEnterprise <= 0.00 ? 0.00 : irpfQuotaEnterprise;
 					}
 					
+					// AHORA SE ACUMULA POR NIF + CLAVE + SUBCLAVE + AÑO DEVENGO
 					private Mod190Detail getDetail(String document,int person, Mod1902025Key key, String subKey, Integer accrualYear) {
 						String mapKey =  document 
 									+ "_" 
-									+ person 
-									+ "_" 
+//									+ person 
+//									+ "_" 
 									+ key.getValue()
 									+ "_"
 									+ AonStringUtils.defaultIfBlank(subKey)
 									+ "_"
-									+ AonStringUtils.defaultIfBlank( AonNumberUtils.toString(accrualYear))
+									+ AonStringUtils.defaultIfBlank(AonNumberUtils.toString(accrualYear))
 									;
+						// SI NO EXISTE SE CREA Y SI EXISTE SE ACTUALIZAN SUS DATOS, PARA COGER DETERMINADOS DATOS DE LA PERSONA DE LA ULTIMA NOMINA
 						if ( !map.containsKey(mapKey) ) {
-							final Mod190Detail detail = new Mod190Detail();
-							map.put(mapKey, detail);
-							detail.setDomain(mod190.getDomain());
-							detail.setMod190(mod190.getId());
-							detail.setKey(key.getValue());
-							detail.setSubKey(subKey);
-							detail.setDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT));
-							detail.setName(rec.getValue(SALARY.EMPLOYEE_NAME));
-							if (accrualYear != null) detail.setAccrualYear( accrualYear );
+							final Mod190Detail det = new Mod190Detail();
+							map.put(mapKey, det);
+							det.setDomain(mod190.getDomain());
+							det.setMod190(mod190.getId());
+							det.setKey(key.getValue());
+							det.setSubKey(subKey);
+//							detail.setDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT));
+//							detail.setName(rec.getValue(SALARY.EMPLOYEE_NAME));
+							det.setDocument(document);
+							if (accrualYear != null) 
+								det.setAccrualYear( accrualYear );
 							
-							ctx.getDslContext().select(GEOZONE.CODE)
-								.from(RADDRESS)
-								.join(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
-								.where(RADDRESS.REGISTRY.equal(rec.getValue(PERSON.REGISTRY)))
-								.and(RADDRESS.TYPE.equal((byte) 0))
-								.limit(1)
-								.fetch()
-								.stream()
-								.forEach(
-									province -> {
-										try {detail.setProvince(Integer.parseInt(province.getValue(GEOZONE.CODE)));
-										} catch (NumberFormatException e) {
-											// nothing. If not a number,  not a valid province.
-										}
-									}
-								);
-							if (key == Mod1902025Key.A) {
-								Integer birthData = rec.getValue(birthYear);
-								detail.setBirthYear(birthData==null?0:birthData);
-								fillLastIrpfDataByPerson(ctx,rec.getValue(PERSON.REGISTRY),firstDay, lastDay, detail);
-							}
+//							ctx.getDslContext().select(GEOZONE.CODE)
+//								.from(RADDRESS)
+//								.join(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
+//								.where(RADDRESS.REGISTRY.equal(rec.getValue(PERSON.REGISTRY)))
+//								.and(RADDRESS.TYPE.equal((byte) 0))
+//								.limit(1)
+//								.fetch()
+//								.stream()
+//								.forEach(
+//									province -> {
+//										try {detail.setProvince(Integer.parseInt(province.getValue(GEOZONE.CODE)));
+//										} catch (NumberFormatException e) {
+//											// nothing. If not a number,  not a valid province.
+//										}
+//									}
+//								);
+//							if (key == Mod1902025Key.A) {
+//								Integer birthData = rec.getValue(birthYear);
+//								detail.setBirthYear(birthData==null?0:birthData);
+//								fillLastIrpfDataByPerson(ctx,rec.getValue(PERSON.REGISTRY),firstDay, lastDay, detail);
+//							}
 						}
-						return map.get(mapKey);
+						
+						// ACTUALIZAR LOS DATOS DE LA PERSONA
+						Mod190Detail detail = map.get(mapKey);						
+						detail.setName(rec.getValue(SALARY.EMPLOYEE_NAME)); // Nombre
+						ctx.getDslContext().select(GEOZONE.CODE)
+						.from(RADDRESS)
+						.join(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
+						.where(RADDRESS.REGISTRY.equal(rec.getValue(PERSON.REGISTRY)))
+						.and(RADDRESS.TYPE.equal((byte) 0))
+						.limit(1)
+						.fetch()
+						.stream()
+						.forEach(
+							province -> {
+								try {
+									detail.setProvince(Integer.parseInt(province.getValue(GEOZONE.CODE))); // Código de provincia (si está indicado)
+								} catch (NumberFormatException e) {
+									// nothing. If not a number,  not a valid province.
+								}
+							}
+						);
+						if (key == Mod1902025Key.A) {
+							Integer birthData = rec.getValue(birthYear);
+							if (birthData != null && birthData != 0)
+								detail.setBirthYear(birthData == null ? 0 : birthData); // Año de nacimiento (si está indicado)
+							fillLastIrpfDataByPerson(ctx,rec.getValue(PERSON.REGISTRY),firstDay, lastDay, detail); // Datos adicionales 
+						}
+						
+//						return map.get(mapKey);
+						return detail;
+						
 					}
 					
 					// Regimen general asimilado && Adm./Consejero Negocio > 100.000
@@ -721,7 +734,7 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 				LinkedList<Mod190Detail> selected = new LinkedList<>();
 				for (Mod190Detail det : mod190.getDetails() ) {
 					double tmpRet = AonMathUtils.round(det.getRetention() + det.getInKindDeposit() + det.getRetentionIL() + det.getInKindDepositIL());
-					if ( AonStringUtils.equals (detail.getDocument(),det.getDocument()) && AonMathUtils.isNotZero(tmpRet))  {
+					if ( AonStringUtils.equals (detail.getDocument(),det.getDocument())	&& AonMathUtils.isNotZero(tmpRet) ) {
 						selected.add(det);		
 					}
 				}
@@ -746,7 +759,6 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 			if (!AonStringUtils.equals("G", detail.getKey()) &&
 				!AonStringUtils.equals("H", detail.getKey()) &&
 				AonMathUtils.isNotZero(ret)) {
-				
 				Mod190Detail det = null;
 				if (!map.containsKey(mapKey)) {
 					det = new Mod190Detail();
@@ -1045,3 +1057,5 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 	}
 	
 }
+
+
