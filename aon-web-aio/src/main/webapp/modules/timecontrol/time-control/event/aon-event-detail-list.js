@@ -152,7 +152,7 @@ export class AonEventDetailList extends AonElement {
       aonTable.removeColumns();
       aonTable.addColumnIcon({title:MSG.BACK, name:MATERIAL_ICONS.ARROW_BACK, type:"string", id:"lettersHtml", width:"6%"}, ()=>this.back());
       aonTable.addColumn(MSG.STATUS, "string", "textStatus", "10%");
-      aonTable.addColumn("Motivo", "string", "reason", "15%");
+      aonTable.addColumn("Tipo", "string", "reason", "15%");
       aonTable.addColumn(MSG.DATE, "date", "dateParse", "20%");
       aonTable.addColumn(MSG.LOCATION, "string", "nameLocation", "30%");
       try {
@@ -208,6 +208,7 @@ export class AonEventDetailList extends AonElement {
       const datos = await getTimeControlDetail(filter);
       
       if (datos) {
+		console.log('aonEventDetailList', datos);
         sortBy(datos, "date", "asc").map((resp) => {
           removeEmpty(resp);
           const newStatus = resp.status.toLowerCase();

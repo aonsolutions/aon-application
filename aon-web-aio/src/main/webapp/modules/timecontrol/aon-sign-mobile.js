@@ -403,7 +403,7 @@ export class AonSignMobile extends AonElement {
 		}
 
 		let reasonTitle = !signin || !signin.status ? 'N/D' : signin.status === 'in' ? 'Entrada' : 'Pausa';
-		d.setTitle(`Motivo ${reasonTitle}`);
+		d.setTitle(`Tipo ${reasonTitle}`);
 
 		let content = document.createElement(TAG.DIV);
 		content.style.display = "flex";

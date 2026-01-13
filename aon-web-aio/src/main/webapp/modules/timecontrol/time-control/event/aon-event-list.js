@@ -158,7 +158,7 @@ export class AonEventList extends AonElement {
       const iconBack = !this.applicationParentEl.isEmployee() ? "arrow_back" : "";
       aonTable.addColumnIcon({title:MSG.BACK, name:iconBack, type:"string", id:"lettersHtml", width:"6%"}, ()=>this.back());
       aonTable.addColumn(MSG.DATE, "date", "dateParse", "30%");
-      aonTable.addColumn("Motivo", "string", "reason", "15%");
+      aonTable.addColumn("Tipo", "string", "reason", "15%");
       aonTable.addColumn(MSG.DURATION, "string", "durationParse", "10%");
       aonTable.addColumn(MSG.LAST_LOCATION, "string", "nameLocation", "20%");
       try {
@@ -233,7 +233,7 @@ export class AonEventList extends AonElement {
         try {filter = {...this.applicationParentEl._filter};} catch (error) {}
         let datos = await getTaskHolderTimeControl(filter);
         if(datos){
-          datos = datos.filter(dt => new Date(dt.start_date) <= new Date());
+		  datos = datos.filter(dt => new Date(dt.start_date) <= new Date());
           sortBy(datos, 'start_date', 'asc').map((r) => {
               const newStatus = r.status.toLowerCase();
               const textStatus = getStatus(newStatus);
@@ -273,11 +273,14 @@ export class AonEventList extends AonElement {
               });
             }
           );
+          //console.log('aonEventList', data);
+          
       }
     } catch (e) {
       console.log(e);
     }
     this.paintName();
+    //data = data.filter(d => d.durationParse !== "00:00");
     return data;
   }
 
