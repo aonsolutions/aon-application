@@ -203,7 +203,8 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	
 	@Override
 	public Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(String domainName, int domain, String user, Integer searchDomain, String query) {
-		return AON.getInvoicingGroupsSuggestion(domainName, domain, user, searchDomain, query);
+		return AON.getInvoicingGroupsSuggestion(domainName, domain, user, searchDomain, query)
+			.collect(HashMap::new, (m, v) -> m.put(v.getDescription(), v), HashMap::putAll);
 	}
 	
 	@Override
