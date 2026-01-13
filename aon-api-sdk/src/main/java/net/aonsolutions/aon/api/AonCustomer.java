@@ -23,7 +23,15 @@ public class AonCustomer {
 		return CustomerJSON.fromJSON(responseJson);
 	}
     
-	public static List<Customer> getCustomers(String domainName, String token, String email) throws URISyntaxException, IOException, InterruptedException {
+	public static List<Customer> getCustomersByDocument(String domainName, String token, String document) throws URISyntaxException, IOException, InterruptedException {
+		
+		String response = get(domainName, ":-)", token, "/ms/api/customers", Collections.singletonMap(IJsonNames.DOCUMENT, document));
+		JSONArray responseJson = new JSONArray(response);
+ 		
+		return CustomerJSON.fromJSON(responseJson);
+	}
+
+	public static List<Customer> getCustomersByEmail(String domainName, String token, String email) throws URISyntaxException, IOException, InterruptedException {
 		
 		String response = get(domainName, ":-)", token, "/ms/api/customers", Collections.singletonMap(IJsonNames.EMAIL, email));
 		JSONArray responseJson = new JSONArray(response);

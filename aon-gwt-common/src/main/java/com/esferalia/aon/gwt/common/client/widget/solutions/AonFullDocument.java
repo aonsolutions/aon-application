@@ -6,9 +6,7 @@ import com.esferalia.aon.gwt.common.client.widget.DocumentTypeListBox;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
-import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
@@ -79,33 +77,19 @@ public class AonFullDocument extends FlowPanel implements Focusable {
 		unknownIcon.setVisible(false);
 		add(unknownIcon);
 
-		type.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				check();
-			}
-		});
-		country.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				check();
-			}
-		});
-		document.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				check();
-			}
-		});
+		type.addChangeHandler(event -> check());
+		country.addChangeHandler(event -> check());
+		document.addValueChangeHandler(event -> check());
 	}
 	
 	public void setValue(DocumentType documentType, Country documentCountry,String doc) {
+		setValue( documentType, documentCountry, doc, true);
+	}
+	
+	public void setValue(DocumentType documentType, Country documentCountry,String doc, boolean fireEvents) {
 		type.setValue(documentType);
 		country.setValue(documentCountry);
-		document.setValue(doc);	
+		document.setValue(doc,fireEvents);	
 		check();
 	}
 	public DocumentType getType() {

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -350,29 +352,14 @@ public class Item implements Serializable {
 	}
 	
 	public String getFullName() {
-		StringBuffer sb = new StringBuffer();
-		sb.append(getProduct().getName());
-		if (AonStringUtils.isNotEmpty(getDetail()) || AonStringUtils.isNotEmpty(getDetail2()) || AonStringUtils.isNotEmpty(getDetail3())) {
-			sb.append(' ');
-			sb.append('[');
-			if (AonStringUtils.isNotEmpty(getDetail())) {
-				sb.append(getDetail());
-			}
-			if (AonStringUtils.isNotEmpty(getDetail2())) {
-				if ( sb.length() > 0 ) {
-					sb.append("/");
-				}
-				sb.append(getDetail2());
-			}
-			if (AonStringUtils.isNotEmpty(getDetail3())) {
-				if ( sb.length() > 0 ) {
-					sb.append("/");
-				}
-				sb.append(getDetail3());
-			}
-			sb.append(']');
-		}
-		return sb.toString();
+	    StringBuilder sb = new StringBuilder(getProduct().getName());
+	    String details = Stream.of(getDetail(), getDetail2(), getDetail3())
+	        .filter(AonStringUtils::isNotEmpty)
+	        .collect(Collectors.joining("/"));
+	    if (AonStringUtils.isNotEmpty(details)) {
+	        sb.append(" [").append(details).append(']');
+	    }
+	    return sb.toString();
 	}
 	
 	public boolean isRemoved() {
@@ -384,6 +371,10 @@ public class Item implements Serializable {
 		return this;
 	}
 	
+	/**
+	 * @deprecated Don't use this method. Is empty when is null! 
+	 */
+	@Deprecated
 	public boolean isEmpty() {
 		return getId() == null && getDetail() == null && getDetail2() == null 
 				&& getDetail3() == null && getDescription() == null && getSerialNumber() == null

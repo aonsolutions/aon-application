@@ -16,7 +16,6 @@ import { DailyTracking } from "../../../models/task/DailyTracking.js";
 import { sortBy } from "../../../services/utils.js";
 import { AonMessengerSimpleList } from "../aon-messenger-simple-list.js";
 
-
 /**
  * 
  * @param {HTMLElement} parent appenchild
@@ -408,6 +407,7 @@ const createSelectCau = (name, id, title) => setAttributes( new AonNewSelect(),{
   title,
 });
 
+
 //----------------TYPE REQUEST   
 const createRequestType = () =>setAttributes( new AonNewSelect(),{
   id: MESSENGER_IDS.SOURCE_TASK,
@@ -473,7 +473,7 @@ const createAdvisory = () => setAttributes( new AonNewSelect(),{
 //-------------TEXT AREA COMMENT
 const createAonTextArea = (placeholder) =>  setAttributes(new AonTextArea(),{
     name:MESSENGER_IDS.COMMENT_TASK,
-    placeholder: placeholder || MSG.COMMENT+"..."
+    title: placeholder || MSG.COMMENT+"..."
 });
 
 //-------------TEXT AREA EDITOR

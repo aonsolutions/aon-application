@@ -137,7 +137,9 @@ import solutions.aon.seg.social.exception.SegSocialException;
 )
 public class CretaServlet extends HttpServlet
 		implements CretaService.File.Visitor<HttpServletRequest, HttpServletResponse, Exception> {
-
+	
+	private static String[] EMPTY_VALUES = new String[0];
+	
 	private static final class EmployeesCallback implements TrabajadoresTramosCallback {
 		private final Map<String, List<Employee>> employees;
 
@@ -273,7 +275,8 @@ public class CretaServlet extends HttpServlet
 	
 			String outOfDateLiquidation = req.getParameter(CretaService.Parameter.RECTIFICACION_FUERA_PLAZO_LIQUIDACION.name());
 			
-			String[] nafs = getUniqueParameterValues(req, CretaService.Parameter.NAFS);
+			String[] nafs = getUniqueParameterValues(req, CretaService.Parameter.NAFS, null);
+			
 	
 			List<String> defaultsList = new ArrayList<>();
 			//defaultsList.addAll(Arrays.asList("51=M", "737=0", "54=1"));
@@ -410,7 +413,7 @@ public class CretaServlet extends HttpServlet
 	public void visitSolicitudBorrador(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		resp.setContentType("text/xml;");
 		String tipo = req.getParameter(CretaService.Parameter.TIPO.name());
-		String[] cccs = getUniqueParameterValues(req, CretaService.Parameter.CCC);
+		String[] cccs = getUniqueParameterValues(req, CretaService.Parameter.CCC, EMPTY_VALUES);
 		String desdeMes = req.getParameter(CretaService.Parameter.DESDE_MES.name());
 		String desdeAnho = req.getParameter(CretaService.Parameter.DESDE_ANHO.name());
 		String hastaMes = req.getParameter(CretaService.Parameter.HASTA_MES.name());
@@ -429,7 +432,7 @@ public class CretaServlet extends HttpServlet
 	public void visitSolicitudConfirmacion(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		resp.setContentType("text/xml;");
 		String tipo = req.getParameter(CretaService.Parameter.TIPO.name());
-		String[] cccs = getUniqueParameterValues(req, CretaService.Parameter.CCC);
+		String[] cccs = getUniqueParameterValues(req, CretaService.Parameter.CCC, EMPTY_VALUES);
 		String desdeMes = req.getParameter(CretaService.Parameter.DESDE_MES.name());
 		String desdeAnho = req.getParameter(CretaService.Parameter.DESDE_ANHO.name());
 		String hastaMes = req.getParameter(CretaService.Parameter.HASTA_MES.name());
@@ -444,7 +447,7 @@ public class CretaServlet extends HttpServlet
 	public void visitSolicitudCalculos(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		resp.setContentType("text/xml;");
 		String tipo = req.getParameter(CretaService.Parameter.TIPO.name());
-		String[] cccs = getUniqueParameterValues(req, CretaService.Parameter.CCC);
+		String[] cccs = getUniqueParameterValues(req, CretaService.Parameter.CCC, EMPTY_VALUES);
 		String desdeMes = req.getParameter(CretaService.Parameter.DESDE_MES.name());
 		String desdeAnho = req.getParameter(CretaService.Parameter.DESDE_ANHO.name());
 		String hastaMes = req.getParameter(CretaService.Parameter.HASTA_MES.name());
@@ -459,7 +462,7 @@ public class CretaServlet extends HttpServlet
 	public void visitSolicitudTrabajadoresTramos(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		resp.setContentType("text/xml;");
 		String tipo = req.getParameter(CretaService.Parameter.TIPO.name());
-		String[] cccs = getUniqueParameterValues(req, CretaService.Parameter.CCC);
+		String[] cccs = getUniqueParameterValues(req, CretaService.Parameter.CCC, EMPTY_VALUES);
 		String desdeMes = req.getParameter(CretaService.Parameter.DESDE_MES.name());
 		String desdeAnho = req.getParameter(CretaService.Parameter.DESDE_ANHO.name());
 		String hastaMes = req.getParameter(CretaService.Parameter.HASTA_MES.name());
@@ -537,7 +540,7 @@ public class CretaServlet extends HttpServlet
 		resp.setContentType("text/xml;");
 
 		String autorizado = req.getParameter(CretaService.Parameter.AUTORIZADO.name());
-		String[] cccs = getUniqueParameterValues(req, CretaService.Parameter.CCC);
+		String[] cccs = getUniqueParameterValues(req, CretaService.Parameter.CCC, EMPTY_VALUES);
 		String tipoMoviento = req.getParameter(CretaService.Parameter.TIPO_MOVIMIENTO.name());
 		String tipoAccion = req.getParameter(CretaService.Parameter.TIPO_ACCION.name());
 		String iban = req.getParameter(CretaService.Parameter.IBAN.name());
@@ -678,7 +681,7 @@ public class CretaServlet extends HttpServlet
 	private static InputStream generateSalaryTrabajadoresYTramos(Connection connection, HttpServletRequest req ) throws JAXBException, IOException {
 		
 		String tipo = req.getParameter(CretaService.Parameter.TIPO.name());
-		String[] cccs = getUniqueParameterValues(req, CretaService.Parameter.CCC);
+		String[] cccs = getUniqueParameterValues(req, CretaService.Parameter.CCC, EMPTY_VALUES);
 		String desdeMes = req.getParameter(CretaService.Parameter.DESDE_MES.name());
 		String desdeAnho = req.getParameter(CretaService.Parameter.DESDE_ANHO.name());
 		String hastaMes = req.getParameter(CretaService.Parameter.HASTA_MES.name());
@@ -753,7 +756,7 @@ public class CretaServlet extends HttpServlet
 			
 			List<InputStream> trabajaresYTramosIsList = new LinkedList<>();
 
-			String[] nafs = getUniqueParameterValues(req, CretaService.Parameter.NAFS);
+			String[] nafs = getUniqueParameterValues(req, CretaService.Parameter.NAFS, null);
 			
 			String autorizado = respuesta.getAutorizado();
 			
@@ -790,8 +793,8 @@ public class CretaServlet extends HttpServlet
 				throw new IOException("Unsupported type '" + tipo + "' from IDC. Comming soon :-(");
 			}
 			
-			String[] cccs = getUniqueParameterValues(req, CretaService.Parameter.CCC);
-			String[] nafs = getUniqueParameterValues(req, CretaService.Parameter.NAFS);
+			String[] cccs = getUniqueParameterValues(req, CretaService.Parameter.CCC,EMPTY_VALUES);
+			String[] nafs = getUniqueParameterValues(req, CretaService.Parameter.NAFS, null);
 			String desdeMes = req.getParameter(CretaService.Parameter.DESDE_MES.name());
 			String desdeAnho = req.getParameter(CretaService.Parameter.DESDE_ANHO.name());
 			
@@ -1922,7 +1925,7 @@ public class CretaServlet extends HttpServlet
 		Date from = getFromDate();
 		String domainName = getDomainName(req);
 		Integer domainId = AonServletUtils.getDomainID(domainName);
-		String[] cccs = getUniqueParameterValues(req, Parameter.CCC);
+		String[] cccs = getUniqueParameterValues(req, Parameter.CCC, EMPTY_VALUES);
 		String login = req.getParameter(CretaService.Parameter.USER.name());
 		
 		return
@@ -1937,7 +1940,7 @@ public class CretaServlet extends HttpServlet
 		Date from = getFromDate();
 		String domainName = getDomainName(req);
 		Integer domainId = AonServletUtils.getDomainID(domainName);
-		String[] cccs = getUniqueParameterValues(req, Parameter.CCC);
+		String[] cccs = getUniqueParameterValues(req, Parameter.CCC, EMPTY_VALUES);
 		String login = req.getParameter(CretaService.Parameter.USER.name());
 		
 		return
@@ -1963,7 +1966,7 @@ public class CretaServlet extends HttpServlet
 		
 		String domainName = getDomainName(req);
 		Integer domainId = AonServletUtils.getDomainID(domainName);
-		Collection<String> cccs = findCCCs(domainName, domainId, new java.sql.Date(from.getTime()), getUniqueParameterValues(req, Parameter.CCC));
+		Collection<String> cccs = findCCCs(domainName, domainId, new java.sql.Date(from.getTime()), getUniqueParameterValues(req, Parameter.CCC, EMPTY_VALUES));
 		cccs = filter(cccs);
 		
 		String authorized = getAuthorized(domainName, domainId, login);
@@ -2001,7 +2004,7 @@ public class CretaServlet extends HttpServlet
 		String domainName = getDomainName(req);
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Date from = getFromDate();
-		String[] cccs = getUniqueParameterValues(req, Parameter.CCC, MULTI_VALUE_SEPARATOR_CHAR);
+		String[] cccs = getUniqueParameterValues(req, Parameter.CCC, MULTI_VALUE_SEPARATOR_CHAR, EMPTY_VALUES);
 		String login = req.getParameter(CretaService.Parameter.USER.name());; //":-)" ; 
 
 		
@@ -2437,23 +2440,24 @@ public class CretaServlet extends HttpServlet
 	}
 	
 	
-	private static String[] getParameterValues (HttpServletRequest req, CretaService.Parameter param , char separatorChar) {
-		return Optional.ofNullable(req.getParameterValues(param.name())).map(Arrays::stream).orElse(Stream.empty())
-				.filter(AonStringUtils::isNotBlank).flatMap( value -> Arrays.stream(AonStringUtils.split(value, separatorChar)) ).toArray(String[]::new);
-	}
-
-	private static String[] getParameterValues (HttpServletRequest req, CretaService.Parameter param) {
-		return getParameterValues(req, param , MULTI_VALUE_SEPARATOR_CHAR);
-	}
-
-	private static String[] getUniqueParameterValues (HttpServletRequest req, CretaService.Parameter param , char separatorChar) {
-		return Optional.ofNullable(req.getParameterValues(param.name())).map(Arrays::stream).orElse(Stream.empty())
-				.filter(AonStringUtils::isNotBlank).flatMap( value -> Arrays.stream(AonStringUtils.split(value, separatorChar)) ).distinct()
+	private static String[] getUniqueParameterValues (HttpServletRequest req, CretaService.Parameter param , char separatorChar, String [] defaultValues) {
+		String[] values = req.getParameterValues(param.name());
+		if ( values == null )  {
+			return defaultValues;
+		}
+		values = Arrays.stream(values)
+				.filter(AonStringUtils::isNotBlank)
+				.flatMap( value -> Arrays.stream(AonStringUtils.split(value, separatorChar)) ).distinct()
 				.toArray(String[]::new);
+		if ( values.length == 0 )  {
+			return defaultValues;
+		}
+		
+		return values;
 	}
 
-	private static String[] getUniqueParameterValues (HttpServletRequest req, CretaService.Parameter param) {
-		return getUniqueParameterValues(req, param , MULTI_VALUE_SEPARATOR_CHAR);
+	private static String[] getUniqueParameterValues (HttpServletRequest req, CretaService.Parameter param, String [] defaultValues ) {
+		return getUniqueParameterValues(req, param , MULTI_VALUE_SEPARATOR_CHAR, defaultValues);
 	}
 
 	private static int getAnhoControl() {

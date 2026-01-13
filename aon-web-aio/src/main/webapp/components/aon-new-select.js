@@ -617,7 +617,7 @@ export class AonNewSelect extends AonNewInput {
    */
   loading(load){
     // Funcion del input
-    super.loading(load);
+    super.loading?.(load);
   }
 
   getDetail(){

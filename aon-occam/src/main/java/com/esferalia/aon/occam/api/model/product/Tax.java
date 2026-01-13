@@ -73,6 +73,9 @@ public class Tax implements Serializable, HasAudit {
 		this.type = type;
 		return this;
 	}
+	public double getPercentage(boolean surchargePercent) {
+		return (surchargePercent ? getSurcharge() : getPercentage());
+	}
 	public double getPercentage() {
 		return percentage;
 	}

@@ -44,6 +44,7 @@ RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends wget; \
 	apt-get install -y --no-install-recommends unzip; \
+	apt-get install -y --no-install-recommends xmlstarlet; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
 	rm -rf /var/lib/apt/lists/*;
 
@@ -118,6 +119,12 @@ RUN mkdir -p "$AON_AIO_CONF"
 COPY aon-web-aio/src/main/scripts/login.config $TOMCAT_CONFDIR
 COPY aon-web-aio/src/main/scripts/default.pool-properties $AON_AIO_CONF
 COPY aon-web-aio/src/main/scripts/pro-aonsolutions-net.pool-properties $AON_AIO_CONF
+
+RUN xmlstarlet ed --inplace \
+	--insert /Server/Service/Connector --type attr -n maxPartCount -v 100 \
+	--insert /Server/Service/Connector --type attr -n maxParameterCount -v 1000 \
+	--insert /Server/Service/Connector --type attr -n maxPartHeaderSize -v 1024 \
+	$TOMCAT_CONFDIR/server.xml
 
 
 COPY docker-entrypoint.sh /usr/local/bin/

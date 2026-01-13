@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlReason;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TimeControlPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
@@ -421,6 +422,7 @@ public class TimeControlDAO {
 					.setLocation(location)
 					.setComments(record.getValue(TIMECONTROL.COMMENTS))
 					.setCoordinates(new Coordinates(record.getValue(TIMECONTROL.LATITUDE),record.getValue(TIMECONTROL.LONGITUDE)))
+					.setReason(null == record.get(TIMECONTROL.CAUSE) ? null : TimeControlReason.values()[record.get(TIMECONTROL.CAUSE)])
 					
 					.setCreationDate(record.getValue(TIMECONTROL.CREATION_DATE))
 					.setCreationUser(record.getValue(TIMECONTROL.CREATION_USER))
