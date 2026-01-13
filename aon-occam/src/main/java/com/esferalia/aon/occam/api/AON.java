@@ -132,7 +132,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
-import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
@@ -283,6 +282,7 @@ import com.esferalia.aon.occam.server.registry.RegistryUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.http.AonURIBuilder;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 import net.aonsolutions.core.pool.AonConnectionException;
 import net.aonsolutions.core.pool.AonDataSource;
@@ -2269,31 +2269,6 @@ public class AON {
 		}
 	}
 	
-	public static LinkedList<InvoicingGroup> getInvoicingGroupList(
-			String domainName, Integer domainId, String login,
-			InvoicingGroupFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getFinance().getInvoicingGroupList(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static InvoicingGroup getInvoicingGroup(String domainName, Integer domainId, String login, InvoicingGroupFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			LinkedList<InvoicingGroup> list = getFinance().getInvoicingGroupList(ctx, filter);
-			return !list.isEmpty() ? list.getFirst() : new InvoicingGroup();
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
 	public static InvoicingGroup save(String domainName, Integer domainId, String login, InvoicingGroup invoicingGroup) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().save(ctx, invoicingGroup);
@@ -2939,11 +2914,6 @@ public class AON {
 		}
 	}
 	
-	public static Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(String domainName, int domainId, String login, Integer searchDomain, String query) {
-		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getInvoicingGroupsSuggestion(ctx, searchDomain, query);
-		}
-	}
 	
 	public static Map<String, Project> getProjectsSuggestion(String domainName, int domainId, String login, Integer customerId, Integer searchDomain, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
@@ -2963,6 +2933,16 @@ public class AON {
 		}
 	}
 	
+	public static Stream<Item> getItemsSuggestion(Occam occam, Integer domainId, String query) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getFinance().getItemsSuggestion(ctx, domainId, query);
+		}
+	}
+
+	/**
+	 * @deprecated OldItem is deprecated!!
+	 */
+	@Deprecated
 	public static Map<String, OldItem> getProductsSuggestion(String domainName, int domainId, String login, Integer searchDomain, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getProductsSuggestion(ctx, searchDomain, query);
@@ -2981,9 +2961,19 @@ public class AON {
 		}
 	}
 
+	/**
+	 * @deprecated Replaced by getCustomersSuggestion(Occam occam, Integer domainId, String query)
+	 */
+	@Deprecated
 	public static Map<String, Customer> getCustomersSuggestion(String domainName, int domainId, String login, Integer searchDomain, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getCustomersSuggestion(ctx, searchDomain, query);
+			return getFinance().getFeeCustomersSuggestion(ctx, searchDomain, query);
+		}
+	}
+	
+	public static Stream<Customer> getCustomersSuggestion(Occam occam, Integer domainId, String query) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getFinance().getCustomersSuggestion(ctx, domainId, query);
 		}
 	}
 	
@@ -7151,6 +7141,13 @@ public class AON {
 	
 	// ---------- CERTIFICATES
 	
+		public static LinkedList<Certificate> getAEATCertificates(Occam occam) throws IllegalArgumentException {
+			try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+				return getCommon().getAEATCertificates(ctx, occam.getDomain(), occam.getUser())
+					.collect(Collectors.toCollection(LinkedList::new));
+			}
+		}
+		
 		public static Stream<Certificate> getCertificates(Domain domain, User user, CertificateFilter filter) {
 			try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 				return getSecurity().getCertificates(ctx, filter);
@@ -7398,18 +7395,6 @@ public class AON {
 			if (ctx != null) ctx.close();
 		}
 	}
-
-//	public static Stream<InvoiceRegistry> getInvoiceRegistries(String domainName, int domain, String loggedUser,
-//			RegistryFilter filter) {
-//		CloseableAONContext ctx = null;
-//		try {
-//			ctx = AONContext.getAONContext(domainName, domain, loggedUser);
-//			return getFinance().getInvoiceRegistries(ctx, filter);
-//		} finally {
-//			if (ctx != null)
-//				ctx.close();
-//		}
-//	}
 
 	public static Stream<OldProduct> getInvoiceProducts(String domainName, int domain, String loggedUser, ProductFilter filter) {
 		CloseableAONContext ctx = null;
@@ -9034,7 +9019,7 @@ public class AON {
 			return getSecurity().getRegistryRelationships(ctx, domainId);
 		}
 	}
-	
+
 	public static void createBookingProduct(String domainName, int domain, String user, Integer customerRelatedRegistry, ProductBooking product, Fee newFee) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			getNewProduct().createBookingProduct(ctx, domainName, domain, user, customerRelatedRegistry, product, newFee);
@@ -9065,4 +9050,57 @@ public class AON {
 		}
 	}
 	
+	// ********************************************
+	// ************************* INVOICING GROUP **
+	// ********************************************
+	
+	public static Stream<InvoicingGroup> getInvoicingGroups(Occam occam, Integer domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getFinance().getInvoicingGroups(ctx, domainId);
+		}
+	}
+	public static Stream<InvoicingGroup> getInvoicingGroups(Occam occam, Integer domainId, String name) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getFinance().getInvoicingGroupsByName(ctx, domainId, name);
+		}
+	}
+	public static Stream<InvoicingGroup> getInvoicingGroupsSuggestion(Occam occam, Integer domainId, String query) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getFinance().getInvoicingGroupsSuggestion(ctx, domainId, query);
+		}
+	}
+	
+	/**
+	 * @deprecated use {@link #getInvoicingGroupsSuggestion(Occam, Integer, String)}
+	 */
+	@Deprecated
+	public static Stream<InvoicingGroup> getInvoicingGroupsSuggestion(String domainName, int domainId, String login, Integer searchDomain, String query) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getInvoicingGroupsSuggestion(ctx, searchDomain, query);
+		}
+	}
+	
+	public static InvoicingGroup save(Occam occam, InvoicingGroup invoicingGroup) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getFinance().save(ctx, invoicingGroup);
+		}
+	}
+	
+	// ******************************************
+	// ********************** INVOICE REGISTRY **
+	// ******************************************
+	public static Stream<InvoiceRegistry> getInvoiceRegistriesSuggestion(Occam occam, Integer domainId, String query) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getFinance().getInvoiceRegistries(ctx, domainId, query);
+		}
+	}
+	
+	// ***************************************
+	// ***************************** SERIES **
+	// ***************************************
+	public static Stream<Series> getSeriesSuggestion(Occam occam, Integer domainId, String query) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getFinance().getSeriesSuggestion(ctx, domainId, query);
+		}
+	}
 }

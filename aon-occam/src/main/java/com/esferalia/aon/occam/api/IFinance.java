@@ -17,10 +17,10 @@ import com.esferalia.aon.occam.api.model.Filter.InvoiceDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
-import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.InvoiceUserData;
 import com.esferalia.aon.occam.api.model.PayMethodParams;
+import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -42,7 +42,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
-import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
@@ -126,13 +125,31 @@ public interface IFinance {
 	InvoiceCounter getInvoiceCounter(AONContext ctx);
 	
 	public InvoiceUserData getInvoiceUserData(AONContext ctx, byte[] auth);
+	
 	// 	***********************************************
 	// 	*************************** INVOICING GROUP ***
 	// 	***********************************************
-
-	LinkedList<InvoicingGroup> getInvoicingGroupList(AONContext ctx, InvoicingGroupFilter filter);
-	InvoicingGroup save(AONContext ctx, InvoicingGroup invoicingGroup);
+	public Stream<InvoicingGroup> getInvoicingGroups(AONContext ctx, Integer domainId);
+	public Stream<InvoicingGroup> getInvoicingGroupsByName(AONContext ctx, Integer domainId, String name);
+	public Stream<InvoicingGroup> getInvoicingGroupsSuggestion(AONContext ctx, Integer domainId, String query);
+	public InvoicingGroup save(AONContext ctx, InvoicingGroup invoicingGroup);
 	
+	// 	***********************************************
+	// 	********************************* CUSTOMER ****
+	// 	***********************************************
+	/**
+	 * @deprecated Use {@link #getCustomersSuggestion(AONContext, Integer, String)} instead
+	 * 
+	 */
+	@Deprecated
+	public Map<String, Customer> getFeeCustomersSuggestion(AONContext ctx, int domainId, String query);
+	public Stream<Customer> getCustomersSuggestion(AONContext ctx, Integer domainId, String query);
+
+	// 	***********************************************
+	// 	************************************* ITEM ****
+	// 	***********************************************
+	Stream<Item> getItemsSuggestion(AONContext ctx, Integer domainId, String query);
+
 	// 	***********************************************
 	// 	**************************** INVOICE SERIES ***
 	// 	***********************************************
@@ -146,7 +163,6 @@ public interface IFinance {
 	
 	public void reorderCustomerFeeLine(CloseableAONContext ctx, int domainId, Integer customer);
 	
-	public Map<String, Customer> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, OldItem> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, Integer> getProductCategoriesSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, Integer> getProductTagsSuggestion(CloseableAONContext ctx, int domainId, String query);
@@ -312,5 +328,9 @@ public interface IFinance {
 	Optional<InvoiceDoc> getInvoiceDoc(AONContext ctx, int domain, Integer invoiceId);	
 	void saveInvoiceDoc(AONContext ctx, InvoiceDoc invoiceDoc);
 	
+	// ********************************************
+	// ********************************** SERIES **
+	// ********************************************
+	Stream<Series> getSeriesSuggestion(AONContext ctx, Integer domainId, String query);
 }
 	

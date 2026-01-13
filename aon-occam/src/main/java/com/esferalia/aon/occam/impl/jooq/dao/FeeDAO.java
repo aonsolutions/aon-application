@@ -928,7 +928,7 @@ public class FeeDAO {
 		return productTagsSuggestion;
 	}
 
-	public static Map<String, Customer> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query) {
+	public static Map<String, Customer> getCustomersSuggestion(AONContext ctx, int domainId, String query) {
 		// Condition
 		Condition condition = CUSTOMER.DOMAIN.eq(domainId);
 		if(AonStringUtils.isNotBlank(query)) 

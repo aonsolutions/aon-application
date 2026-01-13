@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 import static com.esferalia.aon.jooq.tables.InvoiceTracking.INVOICE_TRACKING;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,8 +14,9 @@ import java.util.stream.Collectors;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.OrderField;
-import org.jooq.Record10;
+import org.jooq.Record14;
 import org.jooq.Select;
+import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
@@ -42,8 +44,12 @@ public class InvoiceConsoleDAO {
 	private static final Field<String>  F_REFERENCE_CODE = DSL.field("referenceCode", String.class);
 	private static final Field<String>  F_SERIES = DSL.field("series", String.class);
 	private static final Field<Integer>  F_NUMBER = DSL.field("number", Integer.class);
+	private static final Field<String>  F_RDOCUMENT = DSL.field("rDocument", String.class);
 	private static final Field<String>  F_RNAME = DSL.field("rName", String.class);
+	private static final Field<Double> F_TOTAL = DSL.field("total", Double.class);
 	private static final Field<Boolean> F_ANNULLED = DSL.field("annulled", Boolean.class);
+	private static final Field<Timestamp> F_CREATION_DATE = DSL.field("creationTime", Timestamp.class);
+	private static final Field<Byte> F_STATUS = DSL.field("statuc", Byte.class);
 	private static final String INVOICE_UNION = "invoice_union";
 
 	public static Field<Integer> getOrderedType() {
@@ -77,100 +83,118 @@ public class InvoiceConsoleDAO {
 	// ---------------------------------------------------------------------	
 	// --------------------------------------------------------- [PUBLIC] --	
 	// ---------------------------------------------------------------------
-	private static Table<Record10<Integer, Integer, Integer, Byte, Date, String, String, Integer, String, Boolean>> unionTable(AONContext ctx, InvoiceConsoleParams params) {
-		boolean showInvoices = params.getAnnulled() == null || params.getAnnulled().booleanValue() == false;
-		boolean showInvoiceTracking = params.getAnnulled() == null || params.getAnnulled().booleanValue() == true;
-		Select<Record10<Integer, Integer, Integer, Byte, Date, String, String, Integer, String, Boolean>> invoiceSelect = null;
-		Select<Record10<Integer, Integer, Integer, Byte, Date, String, String, Integer, String, Boolean>> invoiceTrackingSelect = null;
-		
-		if (showInvoices) {
-			Field<Integer> invoiceOrderedType = getOrderedType().as(F_ORDERED_TYPE);
-			invoiceSelect = ctx.getDslContext()
-				.select(
-						INVOICE.ID.as( F_ID )
-						,INVOICE.DOMAIN.as( F_DOMAIN )
-						,invoiceOrderedType.as( F_ORDERED_TYPE )
-						,INVOICE.TYPE.as( F_TYPE )
-						,INVOICE.ISSUE_DATE.as( F_ISSUE_DATE )
-						,INVOICE.REFERENCE_CODE.as( F_REFERENCE_CODE )
-						,INVOICE.SERIES.as( F_SERIES)
-						,INVOICE.NUMBER.as( F_NUMBER)
-						,INVOICE.RNAME.as( F_RNAME)
-						,DSL.val( false ).as( F_ANNULLED )
-						)
-				.from(INVOICE)
-				.where(new InvoiceConditionBuilder().build(ctx, params))
-				;
+	private static SelectConditionStep<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Boolean>> getInvoiceSelect( AONContext ctx, InvoiceConsoleParams params ) {
+		Field<Integer> invoiceOrderedType = getOrderedType().as(F_ORDERED_TYPE);
+		return ctx.getDslContext()
+			.select(
+					INVOICE.ID.as( F_ID )
+					,INVOICE.DOMAIN.as( F_DOMAIN )
+					,invoiceOrderedType.as( F_ORDERED_TYPE )
+					,INVOICE.TYPE.as( F_TYPE )
+					,INVOICE.ISSUE_DATE.as( F_ISSUE_DATE )
+					,INVOICE.REFERENCE_CODE.as( F_REFERENCE_CODE )
+					,INVOICE.SERIES.as( F_SERIES)
+					,INVOICE.NUMBER.as( F_NUMBER)
+					,INVOICE.STATUS.as( F_STATUS )
+					,INVOICE.RDOCUMENT.as( F_RDOCUMENT)
+					,INVOICE.RNAME.as( F_RNAME)
+					,INVOICE.TOTAL.as( F_TOTAL)
+					,INVOICE.CREATION_DATE.as( F_CREATION_DATE )
+					,DSL.val( false ).as( F_ANNULLED )
+					)
+			.from(INVOICE)
+			.where(new InvoiceConditionBuilder().build(ctx, params))
+			;
+	}
+	
+	private static SelectConditionStep<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Boolean>> getInvoiceTrackingSelect( AONContext ctx, InvoiceConsoleParams params ) {
+    	Field<Integer> invoiceTrackingOrderedType = getTrackingOrderedType().as(F_ORDERED_TYPE);
+    	return ctx.getDslContext()
+			.select(
+					INVOICE_TRACKING.ID.as( F_ID )
+					,INVOICE_TRACKING.DOMAIN.as( F_DOMAIN )
+					,invoiceTrackingOrderedType.as( F_ORDERED_TYPE)
+					,INVOICE_TRACKING.TYPE.as( F_TYPE )
+					,INVOICE_TRACKING.ISSUE_DATE.as( F_ISSUE_DATE )
+					,INVOICE_TRACKING.REFERENCE_CODE.as( F_REFERENCE_CODE )
+					,INVOICE_TRACKING.SERIES.as( F_SERIES)
+					,INVOICE_TRACKING.NUMBER.as( F_NUMBER)
+					,DSL.val( (byte) 0 ).as( F_STATUS)
+					,INVOICE_TRACKING.RDOCUMENT.as( F_RDOCUMENT)
+					,INVOICE_TRACKING.RNAME.as( F_RNAME)
+					,INVOICE_TRACKING.TOTAL.as( F_TOTAL)
+					,INVOICE_TRACKING.CREATION_DATE.as( F_CREATION_DATE )
+					,DSL.val( true ).as( F_ANNULLED )
+					)
+			.from(INVOICE_TRACKING)
+			.where(new InvoiceTrackingConditionBuilder().build(ctx, params))
+			;
+	}
+	private static Table<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Boolean>> unionTable(AONContext ctx, InvoiceConsoleParams params) {
+		Select<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Boolean>> invoiceSelect = null;
+		if (params.showInvoices()) {
+			if (params.showInvoiceTrackings()) {
+				invoiceSelect = getInvoiceSelect(ctx, params).unionAll( getInvoiceTrackingSelect(ctx, params) );
+			}
+		} else {
+			invoiceSelect = getInvoiceTrackingSelect(ctx, params);	
 		}
-	    
-		if (showInvoiceTracking) {
-	    	Field<Integer> invoiceTrackingOrderedType = getTrackingOrderedType().as(F_ORDERED_TYPE);
-	    	invoiceTrackingSelect = ctx.getDslContext()
-    			.select(
-    					INVOICE_TRACKING.ID.as( F_ID )
-    					,INVOICE_TRACKING.DOMAIN.as( F_DOMAIN )
-    					,invoiceTrackingOrderedType.as( F_ORDERED_TYPE)
-    					,INVOICE_TRACKING.TYPE.as( F_TYPE )
-    					,INVOICE_TRACKING.ISSUE_DATE.as( F_ISSUE_DATE )
-    					,INVOICE_TRACKING.REFERENCE_CODE.as( F_REFERENCE_CODE )
-    					,INVOICE_TRACKING.SERIES.as( F_SERIES)
-    					,INVOICE_TRACKING.NUMBER.as( F_NUMBER)
-    					,INVOICE_TRACKING.RNAME.as( F_RNAME)
-    					,DSL.val( true ).as( F_ANNULLED )
-    					)
-    			.from(INVOICE_TRACKING)
-    			.where(new InvoiceTrackingConditionBuilder().build(ctx, params))
-    			;
-	    }
-
-		if (showInvoices && showInvoiceTracking) {
-			invoiceSelect = invoiceSelect.unionAll( invoiceTrackingSelect );
-		} else if (showInvoiceTracking) {
-			invoiceSelect = invoiceTrackingSelect;
-		}
-		
-	    return invoiceSelect.asTable( INVOICE_UNION );
-		 
+		return invoiceSelect.asTable( INVOICE_UNION );
 	}
 	
 	public static List<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params) {
 		ctx.checkRead();
+		Select<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Boolean>> select =
+			(params.showInvoiceTrackings())
+				?ctx.getDslContext().selectFrom( unionTable(ctx,params) )
+					.orderBy(getOrderBy(params))
+					.limit(params.getOffset() , params.getLimit())
+				:getInvoiceSelect(ctx, params)
+					.orderBy(getOrderBy(params))
+					.limit(params.getOffset() , params.getLimit())
+		;
 		
-		Select<Record10<Integer, Integer, Integer, Byte, Date, String, String, Integer, String, Boolean>> select = 
-			ctx.getDslContext() 
-				.selectFrom( unionTable(ctx,params) )
-				.orderBy(getOrderBy(params))
-				.limit(params.getOffset() , params.getLimit());
-		
-		System.out.println("--- SQL InvoiceConsoleDAO.getInvoiceHeaders ----");
-		System.out.println( select .getSQL(ParamType.INLINED) );
-		System.out.println("-----------------------------------------------");
+//		System.out.println("--- SQL InvoiceConsoleDAO.getInvoiceHeaders ----");
+//		System.out.println( select .getSQL(ParamType.INLINED) );
+//		System.out.println("-----------------------------------------------");
 		
 		return select
 			.fetch()
 			.stream()
-			.map(r -> new InvoiceConsole()
+			.map(r -> {
+				InvoiceConsole ic = new InvoiceConsole()
 					.setId(r.getValue(F_ID))
-					.setAnnulled(Boolean.TRUE.equals( r.getValue(F_ANNULLED) ))
-			)
+					.setAnnulled(Boolean.TRUE.equals( r.getValue(F_ANNULLED) ));
+				if (!ic.isAnnulled()) {
+					ic.setInvoice(  new Invoice()
+						.setId( r.getValue(F_ID) )
+						.setDomain( r.getValue(F_DOMAIN) )
+						.setType(AonEnumUtils.enumValue(InvoiceType.class, r.getValue(F_TYPE)))
+						.setIssueDate( r.getValue(F_ISSUE_DATE) )
+						.setReferenceCode( r.getValue(F_REFERENCE_CODE) )
+						.setSeries( r.getValue(F_SERIES) )
+						.setNumber( r.getValue(F_NUMBER) )
+						.setRecorded(r.getValue(F_STATUS) != null && r.getValue(F_STATUS) == 1 )
+						.setRegistryDocument( r.getValue(F_RDOCUMENT) )
+						.setRegistryName( r.getValue(F_RNAME) )
+						.setTotal( r.getValue(F_TOTAL) )
+						.setCreationDate( r.getValue(F_CREATION_DATE) )
+						);
+				}
+				return ic;
+			})
 			.map( ic -> {
 				if (ic.isAnnulled()) {
 					InvoiceTrackingDAO.get( ctx, params.getDomain(), ic.getId() )
-					.ifPresent( ic::setInvoice );
-				} else {
-					Invoice i = InvoiceDAO.getFullInvoice( ctx, ic.getId() );
-					if (i != null) {
-						ic.setInvoice( i );		
-						fillAttach(ctx, ic);
-						fillSource(ic);
-						fillMessages(ctx, ic);
-						fillCommunicationInfo(ctx, ic);
-						fillBreakdown(ctx, ic);
-					}
+						.ifPresent( ic::setInvoice );
 				}
 				return ic;
-			}
-			)
+			})
+			.map( ic -> fillAttach(ctx, ic))
+			.map( ic -> fillCommunicationInfo(ctx, ic))
+//			.map( ic -> fillSource(ic))
+//			.map( ic -> fillMessages(ctx, ic))
+//			.map( ic -> fillBreakdown(ctx, ic))
 			.collect(Collectors.toCollection(LinkedList::new))
 		;
 	}
@@ -186,30 +210,32 @@ public class InvoiceConsoleDAO {
 		return ic;
 	}
 
-	private static InvoiceConsole fillSource(InvoiceConsole ic) {
-		return ic.setSource( 
-			ic.getInvoice().detailStream()
-			 	.map( id -> id.getSource() )
-			 	.distinct()
-	            .limit(2)
-	            .reduce((a, b) -> null) // Si hay más de uno, devuelve null. Factura con más de un source.
-	            .orElse( null )
-        );
-	}
-	private static InvoiceConsole fillMessages(AONContext ctx, InvoiceConsole ic) {
-		InvoiceRecorderDAO.fillMessages(ctx, ic.getInvoice().getDomain(), ic.getInvoice());
-		return ic;
-	}
-	
 	private static InvoiceConsole fillCommunicationInfo(AONContext ctx, InvoiceConsole ic) {
 		ic.getInvoice().addCommunicationInfo(InvoiceInfoDAO.getMap(ctx, ic.getInvoice().getDomain(), ic.getInvoice().getId()).orElse(null));
 		return ic;
 	}
 
-	private static InvoiceConsole fillBreakdown(AONContext ctx, InvoiceConsole ic) {
-		ic.getInvoice().refreshTaxBreakdown( );
-		return ic;
-	}
+//	private static InvoiceConsole fillSource(InvoiceConsole ic) {
+//		return ic.setSource( 
+//			ic.getInvoice().detailStream()
+//			 	.map( id -> id.getSource() )
+//			 	.distinct()
+//	            .limit(2)
+//	            .reduce((a, b) -> null) // Si hay más de uno, devuelve null. Factura con más de un source.
+//	            .orElse( null )
+//        );
+//	}
+//	
+//	private static InvoiceConsole fillMessages(AONContext ctx, InvoiceConsole ic) {
+//		InvoiceRecorderDAO.fillMessages(ctx, ic.getInvoice().getDomain(), ic.getInvoice());
+//		return ic;
+//	}
+//	
+//
+//	private static InvoiceConsole fillBreakdown(AONContext ctx, InvoiceConsole ic) {
+//		ic.getInvoice().refreshTaxBreakdown( );
+//		return ic;
+//	}
 	
 	private static class InvoiceConditionBuilder extends ConditionBuilder {
 		
