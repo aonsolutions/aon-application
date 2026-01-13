@@ -381,6 +381,13 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Borrar")
 	String deleteAction();
 	
+	@DefaultMessage("{0} seleccionadas")
+	@AlternateMessage({
+		 "0",  "Sin selecci\u00F3n"
+		,"1",  "Una seleccionada"
+		})
+	String selectedItem(@Select int count);
+
 	@DefaultMessage("Borrar seleccionados")
 	String deleteSelected();
 

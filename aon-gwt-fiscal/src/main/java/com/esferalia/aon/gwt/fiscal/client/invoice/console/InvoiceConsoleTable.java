@@ -2,11 +2,11 @@ package com.esferalia.aon.gwt.fiscal.client.invoice.console;
 
 import java.util.LinkedList;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonIcon;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
@@ -35,6 +35,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceCheckedHandlers, HasInvoiceUncheckedHandlers{
+	
+	private static final Logger LOGGER = Logger.getLogger(InvoiceConsoleTable.class.getName());   
 
 	FlowPanel containerPanel = new FlowPanel();
 	AonDisplayGrid grid = new AonDisplayGrid();
@@ -163,11 +165,6 @@ public class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceChecke
 				String creationDate = ensure(inv.getCreationDate(), () -> AON.DATE_FORMAT.format(inv.getCreationDate()), AonStringUtils.EMPTY);
 				Label creationDateLabel = new Label(creationDate);
 				
-				AonInvoiceCheckButton checkBox = new AonInvoiceCheckButton();
-				checkBox.addClickHandler( event -> {
-					checkBox.fireEvent( InvoiceConsoleTable.this, inv);
-					});
-				
 				AonTableButton debugInvoice = new AonTableButton("DEBUG",AON.CSS.aonIconDebug());
 				debugInvoice.addClickHandler( event -> debugInvoice(inv));
 				
@@ -210,7 +207,7 @@ public class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceChecke
 				row
 					.addCellIfElse( inv.isAnnulled() 
 						, new Label() 
-						, checkBox )
+						, new AonInvoiceCheckButton( inv ) )
 					.addCell( debugInvoice )
 					// .addCell( editInvoice )
 					.addCellIfElse( inv.isAnnulled() 
@@ -391,31 +388,24 @@ public class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceChecke
 	private class AonInvoiceCheckButton extends AonTableButton {
 		private boolean checked = false;
 		
-		public AonInvoiceCheckButton() {
+		public AonInvoiceCheckButton( Invoice inv) {
 			super("",AON.CSS.aonIconCheck());
 			addClickHandler( event -> {
 				checked = !checked;
 				if (checked) {
 					this.addStyleName(AON.CSS.aonIconChecked());
 					this.removeStyleName(AON.CSS.aonIconCheck());
+					LOGGER.info("Invoice checked: " + inv.getId());
+					AonInvoiceCheckedEvent.fire(InvoiceConsoleTable.this, inv);
 				} else {
 					this.addStyleName(AON.CSS.aonIconCheck());
 					this.removeStyleName(AON.CSS.aonIconChecked());
+					LOGGER.info("Invoice unchecked: " + inv.getId());
+					AonInvoiceUncheckedEvent.fire(InvoiceConsoleTable.this, inv);
 				}
 			});
 		}
-		
-		public boolean isChecked() {
-			return checked;
-		}
-		
-		public void fireEvent(InvoiceConsoleTable invoiceConsoleTable, Invoice inv) {
-			if (isChecked()) {
-				AonInvoiceCheckedEvent.fire(invoiceConsoleTable, inv);
-			} else {
-				AonInvoiceUncheckedEvent.fire(invoiceConsoleTable, inv);
-			}
-		}
+
 	}
 	
 }

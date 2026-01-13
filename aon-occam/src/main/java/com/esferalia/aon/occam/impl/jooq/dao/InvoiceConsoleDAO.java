@@ -16,7 +16,6 @@ import org.jooq.OrderField;
 import org.jooq.Record10;
 import org.jooq.Select;
 import org.jooq.Table;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -142,9 +141,9 @@ public class InvoiceConsoleDAO {
 				.orderBy(getOrderBy(params))
 				.limit(params.getOffset() , params.getLimit());
 		
-		System.out.println("--- SQL InvoiceConsoleDAO.getInvoiceHeaders ----");
-		System.out.println( select .getSQL(ParamType.INLINED) );
-		System.out.println("-----------------------------------------------");
+//		System.out.println("--- SQL InvoiceConsoleDAO.getInvoiceHeaders ----");
+//		System.out.println( select .getSQL(ParamType.INLINED) );
+//		System.out.println("-----------------------------------------------");
 		
 		return select
 			.fetch()
