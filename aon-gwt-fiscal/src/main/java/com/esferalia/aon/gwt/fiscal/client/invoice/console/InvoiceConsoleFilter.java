@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.invoice.console;
 
 
+import java.util.Date;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceCommunicationStatusBox;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceCommunicationTypeBox;
@@ -229,14 +231,33 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		}
 	}
 	
+	private void checkDatesAndFire(InvoiceModuleOptions opts) {
+		Date from = fromDateBox.getValue();
+		Date to = toDateBox.getValue();
+		if (from != null && to != null) {
+			int fromYear = DateUtils.getYear( from );
+			int toYear = DateUtils.getYear( to );
+			if ( fromYear == toYear ) {
+				yearBox.setValue(fromYear,false);
+			} else {
+				yearBox.setValue(null,false);
+				periodBox.setSelectedIndex(0);
+			}
+		} else {
+			yearBox.setValue(null,false);
+			periodBox.setSelectedIndex(0);
+		}
+		fire(opts);
+	}
+	
 	private void initFromDateBox(InvoiceModuleOptions opts) {
 		fromDateBox = new AonDateBox();
-		fromDateBox.addValueChangeHandler(event -> fire(opts));
+		fromDateBox.addValueChangeHandler(event -> checkDatesAndFire(opts));
 	}
 	
 	private void initToDateBox(InvoiceModuleOptions opts) {
 		toDateBox = new AonDateBox();
-		toDateBox.addValueChangeHandler(event -> fire(opts));
+		toDateBox.addValueChangeHandler(event -> checkDatesAndFire(opts));
 	}
 
 	private void initConfidentialBox(InvoiceModuleOptions opts) {
@@ -538,12 +559,19 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 	}
 
 	void initialize(InvoiceModuleOptions opts) {
-		yearBox.setValue(DateUtils.getYear(),false);
-		periodBox.setSelectedIndex(0);
-		fillDates();
+		Date toDate = new Date();
+		Date fromDate = DateUtils.addMonths2Date(new Date(), -4);
+		fromDateBox.setValue(fromDate,false);
+		toDateBox.setValue(toDate,false);
+		int fromYear = DateUtils.getYear( fromDate );
+		int toYear = DateUtils.getYear( toDate );
+		if ( fromYear == toYear ) {
+			yearBox.setValue(fromYear,false);
+		}
 		if (opts.getConfiguration() != null && opts.getConfiguration().hasActivities()) {
 			activityBox.setSelectedIndex(0);
 		}
+		proformaBox.setSelectedIndex(1);
 		fire(opts);
 	}
 	

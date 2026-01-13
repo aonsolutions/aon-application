@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceConsoleToolbar.ToolbarAsyncCallback;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
 import com.google.gwt.core.client.EntryPoint;
@@ -109,9 +110,11 @@ public class InvoiceConsoleModule  implements EntryPoint {
 		content.clear();
 		selectionHandler.clean();
 		toolbar.refresh();
-		InvoiceConsoleTable table = new InvoiceConsoleTable(opts, params );
+		InvoiceConsoleTable table = new InvoiceConsoleTable(opts, params, new ToolbarAsyncCallback() {
+			@Override public void onStartRunning() 	{ toolbar.startRun(AON.MSG.searching()); }
+			@Override public void onEndRunning() 	{ toolbar.endRun();  }
+		});
 		content.setWidget(table);
-		
 		table.addInvoiceCheckedHandler(e -> selectionHandler.select( e.getInvoice() ) );
 		table.addInvoiceUncheckedHandler(e -> selectionHandler.unselect( e.getInvoice() ) );
 	}

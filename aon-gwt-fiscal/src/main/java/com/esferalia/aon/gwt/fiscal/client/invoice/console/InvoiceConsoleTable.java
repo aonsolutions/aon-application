@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceUncheckedHandler;
 import com.esferalia.aon.gwt.fiscal.client.invoice.HasInvoiceCheckedHandlers;
 import com.esferalia.aon.gwt.fiscal.client.invoice.HasInvoiceUncheckedHandlers;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceConsoleToolbar.ToolbarAsyncCallback;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
 import com.esferalia.aon.watson.mutable.MutableBoolean;
@@ -38,7 +39,7 @@ class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceCheckedHandle
 	private final MutableBoolean searchEnabled = new MutableBoolean( true );
 	private int lastScrollPos = 0;	
 	
-	InvoiceConsoleTable(InvoiceModuleOptions opts, InvoiceConsoleParams params) {
+	InvoiceConsoleTable(InvoiceModuleOptions opts, InvoiceConsoleParams params, ToolbarAsyncCallback toolbarCallback) {
 		setStyleName(AON.CSS.aonScrollArea());
 		
 		setWidget(containerPanel);
@@ -60,11 +61,11 @@ class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceCheckedHandle
 				int maxScrollTop = getWidget().getOffsetHeight() - getOffsetHeight();
 				if (lastScrollPos >= maxScrollTop) {
 					disableSearch();
-					onSearch(opts, params);
+					onSearch(opts, params, toolbarCallback);
 				}
 			}
 		});
-		onSearch(opts, params);
+		onSearch(opts, params, toolbarCallback);
 	}
 	
 	private boolean isSearchEnabled() {
@@ -86,10 +87,11 @@ class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceCheckedHandle
 		moreData.setValue(true);
 	}
 	
-	private void onSearch(InvoiceModuleOptions opts, InvoiceConsoleParams params) {
+	private void onSearch(InvoiceModuleOptions opts, InvoiceConsoleParams params, ToolbarAsyncCallback toolbarCallback) {
 		if (!isMoreData()) return;
 		params.setOffset( offset.getValue() );
 		params.setLimit( LIMIT );
+		if (toolbarCallback != null) toolbarCallback.onStartRunning();
 		InvoiceConsoleModule.INVOICE_SERVICE.getInvoices(opts.getOccam(), params, new AsyncCallback<LinkedList<InvoiceConsole>>() {
 			
 			@Override
@@ -110,11 +112,13 @@ class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceCheckedHandle
 					disableMoreData();
 				}
 				enableSearch();
+				if (toolbarCallback != null) toolbarCallback.onEndRunning();
 			}
 			
 			@Override
 			public void onFailure(Throwable e) {
 				AonMessageDialog.error( "Error inexperado: " + e.getMessage());
+				if (toolbarCallback != null) toolbarCallback.onEndRunning();
 			}
 			
 			public AonDisplayGridRow addRow(InvoiceConsole invConsole) {

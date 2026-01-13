@@ -333,5 +333,11 @@ public class InvoiceConsoleParams implements Serializable {
 		this.limit = limit;
 		return this;
 	}
+	public boolean showInvoices() {
+		return getAnnulled() == null || getAnnulled().booleanValue() == false;
+	}
+	public boolean showInvoiceTrackings() {
+		return getAnnulled() == null || getAnnulled().booleanValue();
+	}
 	
 }
