@@ -609,6 +609,11 @@ export const CUSTOMER_FEE = {
   entryPoint: 'customerFee'
 };
 
+export const INVOICE_CONSOLE = {
+  module: GWT_FISCAL,
+  entryPoint: 'InvoiceConsoleModule'
+};
+
 export const CUSTOMER_INVOICE = {
   module: GWT_FISCAL,
   entryPoint: 'CustomerInvoiceModule'

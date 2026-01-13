@@ -95,6 +95,10 @@ export class AonConfigurationMenu extends AonSuiteMenu {
                 title: "Agentes Comerciales",
                 action: () => this.rootPanel(new JSF.AonJsfSeller()),
                 filter: () => this.isNotDomainManagementAvailable()
+            }, {
+                description: "Consola de facturación",
+                title: "Consola de facturación",
+                action: () => GWT.iLoad(GWT.INVOICE_CONSOLE)
             }
             ]
         }, {

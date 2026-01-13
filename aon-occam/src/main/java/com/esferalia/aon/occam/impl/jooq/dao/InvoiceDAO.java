@@ -46,7 +46,6 @@ import org.jooq.Record14;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
-import org.json.JSONObject;
 
 import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.jooq.tables.records.InvoiceRecord;
@@ -70,6 +69,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.doc.ExternalStorage;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
@@ -86,8 +86,6 @@ import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
-import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -670,10 +668,46 @@ public class InvoiceDAO {
 		.execute();
 	}
 	
+	public static Invoice saveInvoiceAndFinances(AONContext ctx, Invoice invoice) {
+		AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate());
+		return saveInvoiceAndFinances(ctx, config, invoice);
+	}
+	public static Invoice saveInvoiceAndFinances(AONContext ctx, AonConfiguration config, Invoice invoice) {
+		InvoiceDAO.save(ctx, config, invoice);
+		invoice.financeStream()
+			// ** If finance is full pending, must be saved/deleted
+			.filter(Finance::isFullPending)
+			// ** If finance is dirty, must be saved/deleted
+			.filter(Finance::isDirty)
+			// ** If finance is new and marked to delete, skip it
+			.filter(f -> !(f.getId() == null && f.isRemoved()))	
+			.forEach(f -> {
+				if (f.getId() != null && f.isRemoved()) {
+					ctx.log().debug("** FINANCE MARKED TO DELETE");
+					FinanceDAO.delete(ctx, f.getId());
+					return;
+				}
+				if ( AonMathUtils.isNotZero(f.getAmount()) ) {
+					ctx.log().debug("** FINANCE READY TO SAVE");
+					f.setInvoice(invoice);
+					Integer financeId = FinanceDAO.save(ctx, f);
+					f.setId(financeId);
+				} else {
+					ctx.log().debug("** FINANCE NOT SAVED [AMOUNT 0]");
+				}
+			}
+		);	
+		return getFullInvoice(ctx, invoice.getId());
+	}
+
 	public static Invoice save(AONContext ctx, Invoice invoice) {
+		AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate());
+		return save(ctx, config, invoice);
+	}
+	public static Invoice save(AONContext ctx, AonConfiguration config, Invoice invoice) {
 		invoice = invoice.getId() != null
-			? update(ctx, invoice)
-			: insert(ctx, invoice);
+			? update(ctx, config, invoice)
+			: insert(ctx, config, invoice);
 		invoice.setDetails(InvoiceDetailDAO.save(ctx, invoice.getDetails()));
 		return invoice;
 	}
@@ -848,14 +882,14 @@ public class InvoiceDAO {
 		return invoice; 
 	}
 
-	public static void delete(AONContext ctx, Integer id, boolean preserveRawdoc) {
-		delete(ctx, ConfigurationDAO.getConfiguration(ctx),id, preserveRawdoc);
+	public static Invoice delete(AONContext ctx, Integer id, boolean preserveRawdoc) {
+		return delete(ctx, ConfigurationDAO.getConfiguration(ctx),id, preserveRawdoc);
 	}
-	public static void delete(AONContext ctx, Integer id) {
-		delete(ctx, ConfigurationDAO.getConfiguration(ctx),id, false);
+	public static Invoice delete(AONContext ctx, Integer id) {
+		return delete(ctx, ConfigurationDAO.getConfiguration(ctx),id, false);
 	}
 	
-	private static void delete(AONContext ctx, AonConfiguration config, Integer id, boolean preserveRawdoc) {
+	private static Invoice delete(AONContext ctx, AonConfiguration config, Integer id, boolean preserveRawdoc) {
 		ctx.checkWrite();
 		Invoice invoice = getFullInvoice(ctx, id);
 		if (invoice == null) throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
@@ -1008,7 +1042,7 @@ public class InvoiceDAO {
 		if (invoice.isSales() && invoice.getNumber() > 0) {
 			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId());
 			if((icc.hasCommunication())) {
-				saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
+				InvoiceTrackingDAO.insert(ctx, invoice, InvoiceTrackingStatus.DELETED);
 			}
 		}
 		
@@ -1029,33 +1063,9 @@ public class InvoiceDAO {
 			;
 			RawdocDAO.save(ctx, rawdoc);
 		}
+		return invoice;
 	}
 
-	private static void saveInvoiceTracking(AONContext ctx, Invoice invoice, InvoiceTrackingStatus status) {
-		invoice.setComments(null);
-		invoice.setRemarks(null);
-		JSONObject json = InvoiceJSON.toJSON(invoice);
-		
-		ctx.getDslContext().insertInto(INVOICE_TRACKING)
-		.set(INVOICE_TRACKING.ID, invoice.getId())
-		.set(INVOICE_TRACKING.DOMAIN, invoice.getDomain())
-		.set(INVOICE_TRACKING.SERIES, invoice.getSeries())
-		.set(INVOICE_TRACKING.NUMBER, invoice.getNumber())
-		.set(INVOICE_TRACKING.REFERENCE_CODE, invoice.getReferenceCode())
-		.set(INVOICE_TRACKING.ISSUE_DATE, AonDateUtils.toSql(invoice.getIssueDate()))
-		.set(INVOICE_TRACKING.RDOCUMENT, invoice.getRegistryDocument())
-		.set(INVOICE_TRACKING.RNAME, invoice.getRegistryName())
-		.set(INVOICE_TRACKING.STATUS, status.value())
-		.set(INVOICE_TRACKING.TYPE, invoice.getType().value())
-		.set(INVOICE_TRACKING.TOTAL, invoice.getTotal())
-		.set(INVOICE_TRACKING.JSON, json.toString())
-		.set(INVOICE_TRACKING.CREATION_USER, invoice.getCreationUser())
-		.set(INVOICE_TRACKING.CREATION_DATE, AonDateUtils.toTimestamp(invoice.getCreationDate()))
-		.set(INVOICE_TRACKING.MODIFICATION_USER, ctx.getUser())
-		.set(INVOICE_TRACKING.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
-		.execute();
-	}
-	
 	public static void rectify(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice)  {
 		ctx.getDslContext().update(INVOICE)
 		.set(INVOICE.RECTIFICATION_TYPE, RectificationType.NORMAL_RECTIFIER.value())
@@ -1072,40 +1082,40 @@ public class InvoiceDAO {
 		.execute();
 	}
 	
-	public static Stream<InvoiceRegistry> getInvoiceRegistries(AONContext ctx, RegistryFilter filter) {
-		return 	ctx.getDslContext().select(
-				 INVOICE.TYPE
-				,INVOICE.REGISTRY
-				,INVOICE.SCOPE
-				,REGISTRY.ALIAS
-				,REGISTRY.DOCUMENT
-				,REGISTRY.DOCUMENT_TYPE
-				,REGISTRY.DOCUMENT_COUNTRY
-				,REGISTRY.NAME
-				
-			)
-			.from(INVOICE)
-			.join(REGISTRY).on(REGISTRY.ID.eq(INVOICE.REGISTRY))
-			.where(REGISTRY_PROPERTIES.getConditions(filter))
-			.and(INVOICE.DOMAIN.eq(ctx.getDomainId())
-			.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),INVOICE.SCOPE)))
-			.and(SecurityDAO.getSecurityLevelCondition(ctx, ctx.getUser(), INVOICE.SECURITY_LEVEL))
-			.groupBy(INVOICE.TYPE,INVOICE.REGISTRY)
-			.orderBy(REGISTRY.NAME)
-			.limit(30)
-			.fetch()
-			.stream()
-			.map(rec -> new InvoiceRegistry()
-					.setId( rec.getValue(INVOICE.REGISTRY) )
-					.setScope(rec.getValue(INVOICE.SCOPE))
-					.setAlias(rec.getValue(REGISTRY.ALIAS))
-					.setDocument(rec.getValue(REGISTRY.DOCUMENT))
-					.setDocumentType(DocumentType.safeValueOf(rec.getValue(REGISTRY.DOCUMENT_TYPE)))
-					.setDocumentCountry(Country.safeValueOf(rec.getValue(REGISTRY.DOCUMENT_COUNTRY)))
-					.setName(rec.getValue(REGISTRY.NAME))
-					.setType( AccountingRegistryType.getFor(InvoiceType.safeValueOf( rec.getValue(INVOICE.TYPE) )))
-					);			
-	}
+//	public static Stream<InvoiceRegistry> getInvoiceRegistries(AONContext ctx, RegistryFilter filter) {
+//		return 	ctx.getDslContext().select(
+//				 INVOICE.TYPE
+//				,INVOICE.REGISTRY
+//				,INVOICE.SCOPE
+//				,REGISTRY.ALIAS
+//				,REGISTRY.DOCUMENT
+//				,REGISTRY.DOCUMENT_TYPE
+//				,REGISTRY.DOCUMENT_COUNTRY
+//				,REGISTRY.NAME
+//				
+//			)
+//			.from(INVOICE)
+//			.join(REGISTRY).on(REGISTRY.ID.eq(INVOICE.REGISTRY))
+//			.where(REGISTRY_PROPERTIES.getConditions(filter))
+//			.and(INVOICE.DOMAIN.eq(ctx.getDomainId())
+//			.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),INVOICE.SCOPE)))
+//			.and(SecurityDAO.getSecurityLevelCondition(ctx, ctx.getUser(), INVOICE.SECURITY_LEVEL))
+//			.groupBy(INVOICE.TYPE,INVOICE.REGISTRY)
+//			.orderBy(REGISTRY.NAME)
+//			.limit(30)
+//			.fetch()
+//			.stream()
+//			.map(rec -> new InvoiceRegistry()
+//					.setId( rec.getValue(INVOICE.REGISTRY) )
+//					.setScope(rec.getValue(INVOICE.SCOPE))
+//					.setAlias(rec.getValue(REGISTRY.ALIAS))
+//					.setDocument(rec.getValue(REGISTRY.DOCUMENT))
+//					.setDocumentType(DocumentType.safeValueOf(rec.getValue(REGISTRY.DOCUMENT_TYPE)))
+//					.setDocumentCountry(Country.safeValueOf(rec.getValue(REGISTRY.DOCUMENT_COUNTRY)))
+//					.setName(rec.getValue(REGISTRY.NAME))
+//					.setType( AccountingRegistryType.getFor(InvoiceType.safeValueOf( rec.getValue(INVOICE.TYPE) )))
+//					);			
+//	}
 	
 	public static void saveFacturaeCodeAsignacion(AONContext ctx, Integer invoice, Integer registry, String code) {
 		Project project = new Project()

@@ -547,7 +547,9 @@ public class InvoiceConsoleTextPanel extends ScrollPanel {
 				buf.append(VERTICAL_BAR);
 				buf.append(AonStringUtils.spaces(5));
 				buf.append(AonStringUtils.rightPad("Actividad .................: " 
-						+ Optional.ofNullable(invoice.getActivity()).map(a -> (a.getEpigraph() + " " +a.getDescription())).orElse("TODAS"),87));
+						+ invoice.optActivity()
+							.map(a -> (a.getEpigraph() + " " +a.getDescription()))
+							.orElse("TODAS"),87));
 				buf.append(VERTICAL_BAR);
 				buf.append(AonStringUtils.spaces(getLineSize() - buf.length()));			
 				println(out,buf.toString());

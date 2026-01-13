@@ -2,7 +2,10 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
+import static com.esferalia.aon.jooq.tables.InvoiceTracking.INVOICE_TRACKING;
 
+import java.sql.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,69 +13,164 @@ import java.util.stream.Collectors;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.OrderField;
+import org.jooq.Record10;
+import org.jooq.Select;
+import org.jooq.Table;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
-import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams.OrderBy.InvoiceConsoleParamsOrderVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
-import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
-import com.esferalia.aon.occam.api.model.type.InvoiceSource;
-import com.esferalia.aon.occam.api.model.type.InvoiceSource.IInvoiceSourceVisitor;
-import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
-import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceConsoleDAO {
+	
+	private static final Field<Integer> F_ID = DSL.field("id", Integer.class);
+	private static final Field<Integer> F_DOMAIN = DSL.field("domain", Integer.class);
+	private static final Field<Integer> F_ORDERED_TYPE = DSL.field("orderedType", Integer.class);
+	private static final Field<Byte>    F_TYPE = DSL.field("type", Byte.class);
+	private static final Field<Date>    F_ISSUE_DATE = DSL.field("issueDate", Date.class);
+	private static final Field<String>  F_REFERENCE_CODE = DSL.field("referenceCode", String.class);
+	private static final Field<String>  F_SERIES = DSL.field("series", String.class);
+	private static final Field<Integer>  F_NUMBER = DSL.field("number", Integer.class);
+	private static final Field<String>  F_RNAME = DSL.field("rName", String.class);
+	private static final Field<Boolean> F_ANNULLED = DSL.field("annulled", Boolean.class);
+	private static final String INVOICE_UNION = "invoice_union";
+
+	public static Field<Integer> getOrderedType() {
+		// Field para que salgan ordenado primero 
+		// compras,gastos y gastos no .ded y luego ventas.
+		// En la select se complementa con invoice.type
+		return DSL.decode()
+		   .when(INVOICE.TYPE.equal((byte) 0), 0)
+		   .when(INVOICE.TYPE.equal((byte) 1), 1)
+		   .when(INVOICE.TYPE.equal((byte) 2), 0)
+		   .when(INVOICE.TYPE.equal((byte) 3), 0);
+
+	}
+	
+	public static Field<Integer> getTrackingOrderedType() {
+		// Field para que salgan ordenado primero 
+		// compras,gastos y gastos no .ded y luego ventas.
+		// En la select se complementa con invoice.type
+		return DSL.decode()
+		   .when(INVOICE_TRACKING.TYPE.equal((byte) 0), 0)
+		   .when(INVOICE_TRACKING.TYPE.equal((byte) 1), 1)
+		   .when(INVOICE_TRACKING.TYPE.equal((byte) 2), 0)
+		   .when(INVOICE_TRACKING.TYPE.equal((byte) 3), 0);
+
+	}
 	
 	private InvoiceConsoleDAO() {
 
 	}
 
-//	private static final Field<Byte> MIN_SOURCE = DSL.minDistinct( INVOICE_DETAIL.SOURCE);
-	private static final Field<Byte> TEDI_FIELD = DSL.inline( InvoiceSource.TEDI.value());
-	
 	// ---------------------------------------------------------------------	
 	// --------------------------------------------------------- [PUBLIC] --	
 	// ---------------------------------------------------------------------
+	private static Table<Record10<Integer, Integer, Integer, Byte, Date, String, String, Integer, String, Boolean>> unionTable(AONContext ctx, InvoiceConsoleParams params) {
+		boolean showInvoices = params.getAnnulled() == null || params.getAnnulled().booleanValue() == false;
+		boolean showInvoiceTracking = params.getAnnulled() == null || params.getAnnulled().booleanValue() == true;
+		Select<Record10<Integer, Integer, Integer, Byte, Date, String, String, Integer, String, Boolean>> invoiceSelect = null;
+		Select<Record10<Integer, Integer, Integer, Byte, Date, String, String, Integer, String, Boolean>> invoiceTrackingSelect = null;
+		
+		if (showInvoices) {
+			Field<Integer> invoiceOrderedType = getOrderedType().as(F_ORDERED_TYPE);
+			invoiceSelect = ctx.getDslContext()
+				.select(
+						INVOICE.ID.as( F_ID )
+						,INVOICE.DOMAIN.as( F_DOMAIN )
+						,invoiceOrderedType.as( F_ORDERED_TYPE )
+						,INVOICE.TYPE.as( F_TYPE )
+						,INVOICE.ISSUE_DATE.as( F_ISSUE_DATE )
+						,INVOICE.REFERENCE_CODE.as( F_REFERENCE_CODE )
+						,INVOICE.SERIES.as( F_SERIES)
+						,INVOICE.NUMBER.as( F_NUMBER)
+						,INVOICE.RNAME.as( F_RNAME)
+						,DSL.val( false ).as( F_ANNULLED )
+						)
+				.from(INVOICE)
+				.where(new InvoiceConditionBuilder().build(ctx, params))
+				;
+		}
+	    
+		if (showInvoiceTracking) {
+	    	Field<Integer> invoiceTrackingOrderedType = getTrackingOrderedType().as(F_ORDERED_TYPE);
+	    	invoiceTrackingSelect = ctx.getDslContext()
+    			.select(
+    					INVOICE_TRACKING.ID.as( F_ID )
+    					,INVOICE_TRACKING.DOMAIN.as( F_DOMAIN )
+    					,invoiceTrackingOrderedType.as( F_ORDERED_TYPE)
+    					,INVOICE_TRACKING.TYPE.as( F_TYPE )
+    					,INVOICE_TRACKING.ISSUE_DATE.as( F_ISSUE_DATE )
+    					,INVOICE_TRACKING.REFERENCE_CODE.as( F_REFERENCE_CODE )
+    					,INVOICE_TRACKING.SERIES.as( F_SERIES)
+    					,INVOICE_TRACKING.NUMBER.as( F_NUMBER)
+    					,INVOICE_TRACKING.RNAME.as( F_RNAME)
+    					,DSL.val( true ).as( F_ANNULLED )
+    					)
+    			.from(INVOICE_TRACKING)
+    			.where(new InvoiceTrackingConditionBuilder().build(ctx, params))
+    			;
+	    }
+
+		if (showInvoices && showInvoiceTracking) {
+			invoiceSelect = invoiceSelect.unionAll( invoiceTrackingSelect );
+		} else if (showInvoiceTracking) {
+			invoiceSelect = invoiceTrackingSelect;
+		}
+		
+	    return invoiceSelect.asTable( INVOICE_UNION );
+		 
+	}
 	
 	public static List<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params) {
 		ctx.checkRead();
-		Field<Integer> orderedType = InvoiceDAO.getOrderedType();
-		return ctx.getDslContext()
-			.select(
-				 INVOICE.ID
-				,INVOICE.DOMAIN
-				,orderedType
-				,INVOICE.TYPE
-				,INVOICE.ISSUE_DATE
-				,INVOICE.REFERENCE_CODE
-				,TEDI_FIELD
-			)
-			.from(INVOICE)
-			.where(getWhere(params))
-//			.and( TEDI_FIELD.in(
-//				ctx.getDslContext().select( MIN_SOURCE )
-//					.from(INVOICE_DETAIL)
-//					.where( INVOICE_DETAIL.INVOICE.eq( INVOICE.ID) )
-//					.groupBy( INVOICE_DETAIL.INVOICE )
-//					.having(MIN_SOURCE.eq(InvoiceSource.TEDI.value()))))
-			.orderBy(getOrderBy(params))
-			.limit(params.getOffset() , params.getLimit())
+		
+		Select<Record10<Integer, Integer, Integer, Byte, Date, String, String, Integer, String, Boolean>> select = 
+			ctx.getDslContext() 
+				.selectFrom( unionTable(ctx,params) )
+				.orderBy(getOrderBy(params))
+				.limit(params.getOffset() , params.getLimit());
+		
+		System.out.println("--- SQL InvoiceConsoleDAO.getInvoiceHeaders ----");
+		System.out.println( select .getSQL(ParamType.INLINED) );
+		System.out.println("-----------------------------------------------");
+		
+		return select
 			.fetch()
 			.stream()
-			.map( r -> r.getValue(INVOICE.ID) )
-			.map( id -> InvoiceDAO.getFullInvoice( ctx, id) )
-			.filter( i -> i != null)
-			.map(i -> new InvoiceConsole().setInvoice(i))
-			.map( ic -> fillAttach(ctx, ic))
-			.map( ic -> fillSource(ic))
-			.map( ic -> fillMessages(ctx, ic))
-			.map( ic -> fillCommunicationInfo(ctx, ic))
+			.map(r -> new InvoiceConsole()
+					.setId(r.getValue(F_ID))
+					.setAnnulled(Boolean.TRUE.equals( r.getValue(F_ANNULLED) ))
+			)
+			.map( ic -> {
+				if (ic.isAnnulled()) {
+					InvoiceTrackingDAO.get( ctx, params.getDomain(), ic.getId() )
+					.ifPresent( ic::setInvoice );
+				} else {
+					Invoice i = InvoiceDAO.getFullInvoice( ctx, ic.getId() );
+					if (i != null) {
+						ic.setInvoice( i );		
+						fillAttach(ctx, ic);
+						fillSource(ic);
+						fillMessages(ctx, ic);
+						fillCommunicationInfo(ctx, ic);
+						fillBreakdown(ctx, ic);
+					}
+				}
+				return ic;
+			}
+			)
 			.collect(Collectors.toCollection(LinkedList::new))
 		;
 	}
@@ -108,141 +206,389 @@ public class InvoiceConsoleDAO {
 		return ic;
 	}
 
-	public static Condition getWhere(InvoiceConsoleParams params) {
+	private static InvoiceConsole fillBreakdown(AONContext ctx, InvoiceConsole ic) {
+		ic.getInvoice().refreshTaxBreakdown( );
+		return ic;
+	}
+	
+	private static class InvoiceConditionBuilder extends ConditionBuilder {
 		
-		Condition condition = INVOICE.DOMAIN.equal( params.getDomain() );
-		
-		if (params.getActivity() != null) {
-			if (AonMathUtils.isNegative(params.getActivity())) {
-				// Solo las comunes. Los "sin activdad".
-				condition = condition.and( INVOICE.ACTIVITY.isNull());
-			} else {
-				condition = condition.and( INVOICE.ACTIVITY.eq( params.getActivity() ));
-			}
+		@Override
+		protected Condition buildDomainCondition(AONContext ctx, InvoiceConsoleParams params) {
+			return buildDomainCondition(ctx, INVOICE.DOMAIN, params);
 		}
+
+		@Override
+		protected Condition buildIdCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			return buildIdCondition(ctx, INVOICE.ID, cond, params);
+		}
+		
+		@Override
+		protected Condition buildIssueDateCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			return buildIssueDateCondition(ctx, INVOICE.ISSUE_DATE, cond, params);
 			
-		if (params.getFromDate() != null){
-			condition = condition.and( INVOICE.ISSUE_DATE.ge( AonDateUtils.toSql(params.getFromDate())));
-		}
-		if(params.getToDate() != null){
-			condition = condition.and( INVOICE.ISSUE_DATE.le( AonDateUtils.toSql(params.getToDate())));
 		}
 
-		if(params.getActivity() != null){
-			condition = condition.and( INVOICE.ACTIVITY.eq( params.getActivity()));
+		@Override
+		protected Condition buildSeriesCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			return buildSeriesCondition(ctx, INVOICE.SERIES , cond, params);
 		}
 
-		if (params.getRegistry()  != null && params.getRegistry().intValue() != 0 ) {
-			condition = condition.and( INVOICE.REGISTRY.eq( params.getRegistry() ));
-		}
-		
-		if (params.getAccrualRegime() != null) {
-			condition = condition.and( INVOICE.VAT_ACCRUAL_PAYMENT.eq( AonEnumUtils.getByte(params.getAccrualRegime())));
-		}
-		
-		if (params.getInvestment() != null) {
-			condition = condition.and( INVOICE.INVESTMENT.eq( AonEnumUtils.getByte(params.getInvestment())));
-		}
-		
-		if (params.getRectificationType() != null) {
-			condition = condition.and( INVOICE.RECTIFICATION_TYPE.eq( params.getRectificationType().value()));
-		}
-		
-		if (params.getService() != null) {
-			if ( params.getService().booleanValue() ) {
-				condition = condition.and( INVOICE.SERVICE.eq((byte)1).or( INVOICE.TYPE.eq( InvoiceType.EXPENSES.value())));
-			} else {
-				condition = condition.and( INVOICE.SERVICE.ne((byte)1).and( INVOICE.TYPE.ne( InvoiceType.EXPENSES.value())));
-			}
-		}
-		
-		if (params.getRecorded() != null) {
-			if ( params.getRecorded().booleanValue() ) {
-				condition = condition.and( INVOICE.STATUS.eq( InvoiceStatus.SCORED.value()));
-			} else {
-				condition = condition.and( INVOICE.STATUS.eq( InvoiceStatus.PENDING.value()));
-			}
+		@Override
+		protected Condition buildNumberCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			return buildNumberCondition(ctx, INVOICE.NUMBER, cond, params);
 		}
 
-		if (params.getOutput() != null) {
-			if (params.getOutput().booleanValue()) {
-				condition = condition.and( INVOICE.TYPE.eq( InvoiceType.SALES.value() ));
-			} else {
-				condition = condition.and( INVOICE.TYPE.in( InvoiceType.EXPENSES.value(), InvoiceType.PURCHASE.value() ));
-			}
+		@Override
+		protected Condition buildReferenceCodeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			return buildReferenceCodeCondition(ctx, INVOICE.REFERENCE_CODE, cond, params);
 		}
-			
-		if (params.getVatSummaryType() != null) {
-			if (params.getVatSummaryType() == VatSummaryType.NATIONAL) {
-				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.NATIONAL.value() ));
-				condition = condition.and( INVOICE.WITHHOLDING_FARMER.eq( AonEnumUtils.getByte(false)));
-			} else if (params.getVatSummaryType() == VatSummaryType.SURCHARGE){	
-				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.NATIONAL.value() ));
-				condition = condition.and( INVOICE.SURCHARGE.eq( AonEnumUtils.getByte(true)));
-			} else if (params.getVatSummaryType() == VatSummaryType.FARMER) {
-				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.NATIONAL.value() ));
-				condition = condition.and( INVOICE.WITHHOLDING_FARMER.eq( AonEnumUtils.getByte(true)));
-			} else if (params.getVatSummaryType() == VatSummaryType.INTRACOMMUNITY) {
-				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.INTRACOMMUNITY.value() ));
-			} else if (params.getVatSummaryType() == VatSummaryType.EXTRACOMMUNITY) {
-				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.EXTRACOMMUNITY.value() ));
-			} else if (params.getVatSummaryType() == VatSummaryType.CAN_CEU_MEL) {
-				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.CAN_CEU_MEL.value() ));
-			} else if (params.getVatSummaryType() == VatSummaryType.OTHER_ISP) {
-				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.OTHER_ISP.value() ));
-			}
+
+		@Override
+		protected Condition buildOutputCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			return  buildOutputCondition(ctx, INVOICE.TYPE, cond, params);
 		}
-		return condition;
-	}
-	public static boolean mustReadDetails(InvoiceConsoleParams params) {
-		return ( params.getSource() != null);
-	}
-	public static Condition getDetailWhere(InvoiceConsoleParams params) {
-		Condition condition = INVOICE_DETAIL.DOMAIN.equal( params.getDomain() );
-		if ( params.getSource() != null) {
-			params.getSource().visit(null, new IInvoiceSourceVisitor() {
 
-				private static final long serialVersionUID = 5981585563515519217L;
-
-				private void visitManagement(InvoiceDetail detail) {
-					condition
-						.and( INVOICE_DETAIL.SOURCE.notEqual( InvoiceSource.ACCOUNT.value()))
-						.and( INVOICE_DETAIL.SOURCE.notEqual( InvoiceSource.TEDI.value()));
+		@Override
+		protected Condition buildActivityCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			if (params.getActivity() != null) {	
+				if (AonMathUtils.isNegative(params.getActivity())) {
+					// Solo las comunes. Los "sin activdad".
+					cond = cond.and( INVOICE.ACTIVITY.isNull());
+				} else {
+					cond = cond.and( INVOICE.ACTIVITY.eq( params.getActivity() ));
 				}
-
-				@Override public void visitDirectExpense(InvoiceDetail detail) { visitManagement(detail); }
-				@Override public void visitPurchase(InvoiceDetail detail) { visitManagement(detail); }
-				@Override public void visitSales(InvoiceDetail detail) { visitManagement(detail); }
-				@Override public void visitDelivery(InvoiceDetail detail) { visitManagement(detail); }
-				@Override public void visitIncome(InvoiceDetail detail) { visitManagement(detail); }
-				@Override public void visitFee(InvoiceDetail detail) {visitManagement(detail); }
-				@Override public void visitDirectInvoice(InvoiceDetail detail) { visitManagement(detail); }
-				@Override public void visitOffer(InvoiceDetail detail) {  visitManagement(detail); }
-				@Override public void visitReservation(InvoiceDetail detail) { visitManagement(detail); }
-				
-				@Override 
-				public void visitAccount(InvoiceDetail detail) {
-					condition.and( INVOICE_DETAIL.SOURCE.equal( InvoiceSource.ACCOUNT.value() ) );
-				}
-				@Override 
-				public void visitTedi(InvoiceDetail detail) {
-					condition.and( INVOICE_DETAIL.SOURCE.equal( InvoiceSource.TEDI.value() ) );
-				}
-				
-			});
+			}
+			return cond;
 		}
-		return condition;
+		
+		@Override
+		protected Condition buildRegistryCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			if (params.getRegistry()  != null && params.getRegistry().intValue() != 0 ) {
+				cond = cond.and( INVOICE.REGISTRY.eq( params.getRegistry() ));
+			}
+			return cond;
+		}
+
+		@Override
+		protected Condition buildAccrualRegimeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			if (params.getAccrualRegime() != null) {
+				cond = cond.and( INVOICE.VAT_ACCRUAL_PAYMENT.eq( AonEnumUtils.getByte(params.getAccrualRegime())));
+			}
+			return cond;
+		}
+
+		@Override
+		protected Condition buildWithholdingCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			if (params.getWithholding() != null) {
+				cond = cond.and( INVOICE.WITHHOLDING.eq( AonEnumUtils.getByte(params.getWithholding())));
+			}
+			return cond;
+		}
+
+		@Override
+		protected Condition buildInvestmentCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			if (params.getInvestment() != null) {
+				cond = cond.and( INVOICE.INVESTMENT.eq( AonEnumUtils.getByte(params.getInvestment())));
+			}
+			return cond;
+		}
+
+		@Override
+		protected Condition buildRectificationTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			if (params.getRectificationType() != null) {
+				cond = cond.and( INVOICE.RECTIFICATION_TYPE.eq( params.getRectificationType().value()));
+			}
+			return cond;
+		}
+
+		@Override
+		protected Condition buildServiceCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			if (params.getService() != null) {
+				if ( params.getService().booleanValue() ) {
+					cond = cond.and( INVOICE.SERVICE.eq((byte)1).or( INVOICE.TYPE.eq( InvoiceType.EXPENSES.value())));
+				} else {
+					cond = cond.and( INVOICE.SERVICE.ne((byte)1).and( INVOICE.TYPE.ne( InvoiceType.EXPENSES.value())));
+				}
+			}
+			return cond;
+		}
+
+		@Override
+		protected Condition buildRecordedCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			if (params.getRecorded() != null) {
+				if ( params.getRecorded().booleanValue() ) {
+					cond = cond.and( INVOICE.STATUS.eq( InvoiceStatus.SCORED.value()));
+				} else {
+					cond = cond.and( INVOICE.STATUS.eq( InvoiceStatus.PENDING.value()));
+				}
+			}
+			return cond;
+		}
+
+		@Override
+		protected Condition buildProformaCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			if (params.getProforma() != null) {
+				if ( params.getProforma().booleanValue() ) {
+					cond = cond.and( INVOICE.NUMBER.lt( 0 ));
+				} else {
+					cond = cond.and( INVOICE.NUMBER.ge( 0 ));
+				}
+			}
+			return cond;
+		}
+
+		@Override
+		protected Condition buildTransactionTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			if (params.getTransactionType() != null) {
+				cond = cond.and( INVOICE.TRANSACTION.eq( params.getTransactionType().value() ));
+			}
+			return cond;
+		}
+
+		@Override
+		protected Condition buildCommunicationTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			if (params.getCommunicationType() != null || params.getCommunicationStatus() != null) {
+				Condition invoiceInfoCondition = INVOICE_INFO.INVOICE.equal(INVOICE.ID);
+				if (params.getCommunicationType() != null) {
+					invoiceInfoCondition = invoiceInfoCondition.and( INVOICE_INFO.TYPE.eq( params.getCommunicationType().value() ));
+				}
+				if (params.getCommunicationStatus() != null) {
+					invoiceInfoCondition = invoiceInfoCondition.and( INVOICE_INFO.STATUS.eq( params.getCommunicationStatus().value() ));
+				}
+				cond = cond.andExists( 
+					ctx.getDslContext().select(INVOICE_INFO.INVOICE)
+						.from(INVOICE_INFO)
+						.where(invoiceInfoCondition)
+						.limit(1)
+					);
+			}
+			return cond;
+		}
+
+		@Override
+		protected Condition buildSourceCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			if ( params.getSource() != null) {
+				cond = cond.andExists( 
+					ctx.getDslContext().selectFrom( INVOICE_DETAIL )
+						.where( INVOICE_DETAIL.INVOICE.equal( INVOICE.ID )
+							.and( INVOICE_DETAIL.SOURCE.equal( params.getSource().value() ))
+						)
+						.limit(1)
+					);
+			}
+			return cond;
+		}
+		
+	}
+	
+	private static class InvoiceTrackingConditionBuilder extends ConditionBuilder {
+		
+		@Override protected Condition buildActivityCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+		@Override protected Condition buildRegistryCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+		@Override protected Condition buildAccrualRegimeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+		@Override protected Condition buildWithholdingCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+		@Override protected Condition buildInvestmentCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+		@Override protected Condition buildRectificationTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+		@Override protected Condition buildServiceCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+		@Override protected Condition buildRecordedCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+		@Override protected Condition buildProformaCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+		@Override protected Condition buildTransactionTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+		@Override protected Condition buildCommunicationTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+		@Override protected Condition buildSourceCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }		
+		
+		@Override
+		protected Condition buildDomainCondition(AONContext ctx, InvoiceConsoleParams params) {
+			return buildDomainCondition(ctx, INVOICE_TRACKING.DOMAIN, params);
+		}
+
+		@Override
+		protected Condition buildIdCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			return buildIdCondition(ctx, INVOICE_TRACKING.ID, cond, params);
+		}
+		
+
+		@Override
+		protected Condition buildIssueDateCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			return buildIssueDateCondition(ctx, INVOICE_TRACKING.ISSUE_DATE, cond, params);
+		}
+
+
+		@Override
+		protected Condition buildSeriesCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			return buildSeriesCondition(ctx, INVOICE_TRACKING.SERIES, cond, params);
+		}
+
+		@Override
+		protected Condition buildNumberCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			return buildNumberCondition(ctx, INVOICE_TRACKING.NUMBER, cond, params);
+		}
+
+		@Override
+		protected Condition buildReferenceCodeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			return buildReferenceCodeCondition(ctx, INVOICE_TRACKING.REFERENCE_CODE, cond, params);
+		}
+
+		@Override
+		protected Condition buildOutputCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			return buildOutputCondition(ctx, INVOICE_TRACKING.TYPE, cond, params);
+		}
+
 	}
 
+	private abstract static class ConditionBuilder {
+		Condition build(AONContext ctx, InvoiceConsoleParams params) {
+			Condition condition = buildDomainCondition(ctx, params);
+			condition = buildIdCondition(ctx, condition, params);
+			condition = buildActivityCondition(ctx, condition, params);
+			condition = buildIssueDateCondition(ctx, condition, params);
+			condition = buildSeriesCondition(ctx, condition, params);
+			condition = buildNumberCondition(ctx, condition, params);
+			condition = buildReferenceCodeCondition(ctx, condition, params);
+			condition = buildRegistryCondition(ctx, condition, params);
+			condition = buildAccrualRegimeCondition(ctx, condition, params);
+			condition = buildWithholdingCondition(ctx, condition, params);
+			condition = buildInvestmentCondition(ctx, condition, params);
+			condition = buildRectificationTypeCondition(ctx, condition, params);
+			condition = buildServiceCondition(ctx, condition, params);
+			condition = buildRecordedCondition(ctx, condition, params);
+			condition = buildProformaCondition(ctx, condition, params);
+			condition = buildOutputCondition(ctx, condition, params);
+			condition = buildTransactionTypeCondition(ctx, condition, params);
+			condition = buildCommunicationTypeCondition(ctx, condition, params);
+			condition = buildSourceCondition(ctx, condition, params);
+			return condition;
+		}
+		
+		protected Condition buildDomainCondition(AONContext ctx, Field<Integer> field, InvoiceConsoleParams params) {
+			return field.equal( params.getDomain() );	
+		}
+		protected Condition buildIdCondition(AONContext ctx, Field<Integer> field, Condition cond, InvoiceConsoleParams params) {
+			if (params.getFromId() != null) {
+				cond = cond.and( field.ge( params.getFromId() ));
+			}
+			if (params.getToId() != null) {
+				cond = cond.and( field.le( params.getToId() ));
+			}
+			return cond;
+		}
+
+		protected Condition buildIssueDateCondition(AONContext ctx, Field<Date> field, Condition cond, InvoiceConsoleParams params) {
+			if (params.getFromDate() != null){
+				cond = cond.and( field.ge( AonDateUtils.toSql(params.getFromDate())));
+			}
+			if(params.getToDate() != null){
+				cond = cond.and( field.le( AonDateUtils.toSql(params.getToDate())));
+			}
+			return cond;
+		}
+		
+		protected Condition buildSeriesCondition(AONContext ctx, Field<String> field, Condition cond, InvoiceConsoleParams params) {
+			if (AonStringUtils.isNotEmpty(params.getSeries())) {
+				cond = cond.and( field.eq( params.getSeries() ));
+			}
+			return cond;
+		}
+
+		protected Condition buildNumberCondition(AONContext ctx, Field<Integer> field, Condition cond, InvoiceConsoleParams params) {
+			if (params.getFromNumber() != null) {
+				cond = cond.and( field.ge( params.getFromNumber() ));
+			}
+			if (params.getToNumber() != null) {
+				cond = cond.and( field.le( params.getToNumber() ));
+			}
+			return cond;
+		}
+		
+		protected Condition buildReferenceCodeCondition(AONContext ctx, Field<String> field, Condition cond, InvoiceConsoleParams params) {
+			if (AonStringUtils.isNotEmpty(params.getReferenceCode())) {
+				cond = cond.and( field.like( AonStringUtils.SQLlike( params.getReferenceCode())));
+			}
+			return cond;
+		}
+
+		protected Condition buildOutputCondition(AONContext ctx, Field<Byte> field, Condition cond, InvoiceConsoleParams params) {
+			if (params.getOutput() != null) {
+				if (params.getOutput().booleanValue()) {
+					cond = cond.and( field.eq( InvoiceType.SALES.value() ));
+				} else {
+					cond = cond.and( field.in( InvoiceType.EXPENSES.value(), InvoiceType.PURCHASE.value() ));
+				}
+			}
+			return cond;
+		}
+
+		protected abstract Condition buildDomainCondition(AONContext ctx, InvoiceConsoleParams params);
+		protected abstract Condition buildIdCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		protected abstract Condition buildActivityCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		protected abstract Condition buildIssueDateCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		protected abstract Condition buildSeriesCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		protected abstract Condition buildNumberCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		protected abstract Condition buildReferenceCodeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		protected abstract Condition buildRegistryCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		protected abstract Condition buildAccrualRegimeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		protected abstract Condition buildWithholdingCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		protected abstract Condition buildInvestmentCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		protected abstract Condition buildRectificationTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		protected abstract Condition buildServiceCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		protected abstract Condition buildRecordedCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		protected abstract Condition buildProformaCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		protected abstract Condition buildOutputCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		protected abstract Condition buildTransactionTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		protected abstract Condition buildCommunicationTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		protected abstract Condition buildSourceCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		
+	}
 	
 	private static OrderField<?>[] getOrderBy(InvoiceConsoleParams params) {
-		// implementar order field in params and ask user.
-		return new OrderField<?>[] {
-			 InvoiceDAO.getOrderedType()
-			,INVOICE.TYPE
-			,INVOICE.ISSUE_DATE.desc()
-			,INVOICE.REFERENCE_CODE
-		};
+		if (params.getOrderBy() == null) {
+			return new OrderField<?>[] {
+				 F_ORDERED_TYPE
+				,F_ISSUE_DATE.desc()
+				,F_REFERENCE_CODE
+			};
+		}
+		return params.getOrderBy().visit( new InvoiceConsoleParamsOrderVisitor<OrderField<?>[]>() {
+			private OrderField<?> field(Field<?> field) {
+				return params.isDescending() ? field.desc() : field ;
+			}
+
+			@Override
+			public OrderField<?>[] issueDate() {
+				return new OrderField<?>[] {
+					field( F_ISSUE_DATE )
+				};
+			}
+
+			@Override
+			public OrderField<?>[] registry() {
+				return new OrderField<?>[] {
+					field( F_RNAME )
+				};
+			}
+
+			@Override
+			public OrderField<?>[] seriesNumber() {
+				return new OrderField<?>[] {
+					 field( F_ORDERED_TYPE )
+					,field( F_SERIES )
+					,field( F_NUMBER )
+				};
+			}
+
+			@Override
+			public OrderField<?>[] referenceCode() {
+				return new OrderField<?>[] {
+					 InvoiceDAO.getOrderedType()
+					,field( F_REFERENCE_CODE )
+				};
+			}
+			@Override
+			public OrderField<?>[] id() {
+				return new OrderField<?>[] {
+					field( F_ID )
+				};
+			}
+		});
 	}
-	
 }

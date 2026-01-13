@@ -75,7 +75,6 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
-import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -257,12 +256,6 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	// **************************************************
 	// **************************************** [INVOICE]
 	// **************************************************
-	@Override
-	public void getInvoiceRegistries(String domainName, int domain, String user, String query, AsyncCallback<LinkedList<InvoiceRegistry>> callback) {
-		AON.start();
-		serviceAsync.getInvoiceRegistries(domainName, domain, user, query, new AsyncCallbackWrapper<>(callback));
-	}
-
 	@Override
 	public void getInvoiceProducts(String domainName, int domain, String user, String query, AsyncCallback<LinkedList<OldProduct>> callback) {
 		AON.start();
