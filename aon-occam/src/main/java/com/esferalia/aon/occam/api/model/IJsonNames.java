@@ -413,6 +413,7 @@ public final class IJsonNames {
 	public static final String LROE = "lroe";
 	public static final String LROE_DATA = "lroeData";
 	public static final String LROE_DATA_HISTORY = "lroeDataHistory";
+	public static final String LROE_INVOICE = "lroeInvoice";
 	public static final String LROE_REGISTRY_DATE = "lroeRegistryDate";
 	
 	// ---------------------------------------------------------------------------------------------	[M] 
@@ -447,6 +448,7 @@ public final class IJsonNames {
 	public static final String NO_SIF_DATA_HISTORY = "noSifDataHistory";
 	public static final String NO_VERIFACTU_DATA = "noVerifactuData";
 	public static final String NO_VERIFACTU_DATA_HISTORY = "noVerifactuDataHistory";
+	public static final String NO_VERIFACTU_INVOICE = "noVerifactuInvoice";
 	public static final String NOTARY = "notary";
 	public static final String NOT_LINKED = "notLinked";
 	public static final String NOTIFICATION_DATE = "notification_date";
@@ -693,6 +695,7 @@ public final class IJsonNames {
 	public static final String SIF = "sif";
 	public static final String SIF_DATA = "sifData";
 	public static final String SIF_DATA_HISTORY = "sifDataHistory";
+	public static final String SIF_INVOICE = "sifInvoice";
 	public static final String SIGNATURE = "signature";
 	public static final String SIGNED = "signed";
 	public static final String SII = "sii";
@@ -700,6 +703,7 @@ public final class IJsonNames {
 	public static final String SII_DATA = "siiData";
 	public static final String SII_DATA_HISTORY = "siiDataHistory";
 	public static final String SII_INCLUDE_DATE = "siiIncludeDate";
+	public static final String SII_INVOICE = "siiInvoice";
 	public static final String SII_REGISTRY_DATE = "siiRegistryDate";
 	public static final String SII_STATUS = "siiStatus";
 	public static final String SII_TEST = "siiTest";
@@ -753,6 +757,7 @@ public final class IJsonNames {
 	public static final String TBAI_DATA = "tbaiData";
 	public static final String TBAI_DATA_HISTORY = "tbaiDataHistory";
 	public static final String TBAI_INCLUDE_DATE = "tbaiIncludeDate";
+	public static final String TBAI_INVOICE = "tbaiInvoice";
 	public static final String TBAI_REGISTRY_DATE = "tbaiRegistryDate";
 	public static final String TBAI_TEST = "tbaiTest";
 	public static final String TBAI_ID = "tbaiId";
@@ -814,6 +819,7 @@ public final class IJsonNames {
 	public static final String VERIFACTU_DATA = "verifactuData";
 	public static final String VERIFACTU_DATA_HISTORY = "verifactuDataHistory";
 	public static final String VERIFACTU_INCLUDE_DATE = "verifactuIncludeDate";
+	public static final String VERIFACTU_INVOICE = "verifactuInvoice";
 	public static final String VERIFACTU_REGISTRY_DATE = "verifactuRegistryDate";
 	public static final String VERIFACTU_TEST = "verifactuTest";
 	public static final String VERIFACTU_URL = "verifactuUrl";
