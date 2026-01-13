@@ -160,7 +160,6 @@ public interface CommonService extends RemoteService {
 	// **************************************************
 	// **************************************** [INVOICE]
 	// **************************************************
-	LinkedList<InvoiceRegistry> getInvoiceRegistries(String domainName,int domain, String user,String query) throws AonCoreException;
 	LinkedList<OldProduct> getInvoiceProducts(String domainName,int domain, String user,String query) throws AonCoreException;
 	
 	// **************************************************

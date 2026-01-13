@@ -7,22 +7,43 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceCommunicationType implements Serializable {
  
-	SII { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSII();}},
-	TBAI { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitTBAI();}},
-	LROE { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitLROE();}},
-	SERES { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSERES();}},
-	EMAIL { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitEMAIL();}},
-	CLOSING { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitCLOSING();}},
-	VERIFACTU { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitVERIFACTU();}},
-	NO_VERIFACTU{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitNO_VERIFACTU();}},
-	SIF{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSIF();}},
-	FACTURAE { @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitFACTURAE();}}
+	SII ("S.I.I.","Suministro Inmediato de Información")
+	{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSII();}},
+	TBAI ("Ticket BAI","Ticket BAI")
+		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitTBAI();}},
+	LROE ("L.R.O.E.","Libro Registro de Operaciones Económicas") 
+		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitLROE();}},
+	SERES ("SERES","Plataforma de Intercambio Electrónico de Documentos") 
+		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSERES();}},
+	EMAIL ("Envío Mail","Envío por correo electrónico") 
+		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitEMAIL();}},
+	CLOSING ("Cierre","Cierre de facturación") 
+		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitCLOSING();}},
+	VERIFACTU ("Verifactu","Plataforma Verifactu") 
+		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitVERIFACTU();}},
+	NO_VERIFACTU ("No Verifactu","Plataforma No Verifactu")
+		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitNO_VERIFACTU();}},
+	SIF ("S.I.F.","Sistema de Informatico de facturación")
+		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSIF();}},
+	FACTURAE ("FacturaE","Factura Electrónica") 
+		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitFACTURAE();}}
 	;
 	
-	private InvoiceCommunicationType() {
-
+	private final String abbr;
+	private final String description;
+	
+	private InvoiceCommunicationType(String  abbr, String description) {
+		this.abbr = abbr;
+		this.description = description;
 	}
 	
+	public String getAbbr() {
+		return this.abbr;
+	}
+	public String getDescription() {
+		return this.description;
+	}
+
 	public Byte value(){
 		return (byte) ordinal();
 	}

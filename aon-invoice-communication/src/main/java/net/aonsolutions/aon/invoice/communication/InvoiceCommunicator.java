@@ -8,7 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +26,6 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.JsonUtils.JSONArrayCollector;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
-import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -34,7 +33,6 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
-import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
@@ -50,14 +48,11 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.OLDVATDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
-import com.esferalia.aon.occam.server.finance.FinanceUtils;
 import com.esferalia.aon.watson.mutable.MutableBoolean;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import net.aonsolutions.aon.sii.SIIManager;
 import net.aonsolutions.aon.tbai.TBAIInformation;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.verifactu.NOVERIFACTU;
@@ -73,13 +68,13 @@ public class InvoiceCommunicator {
 	// *************************************************************
 	// ******************************************* [HISTORY] *******
 	// *************************************************************
-	public static Map<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> history(Occam occam, Integer invoiceId) throws InvoiceCommunicationException {
+	public static HashMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> history(Occam occam, Integer invoiceId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return history(ctx, occam.getDomain(), invoiceId);
 		}
 	}
 	
-	public static Map<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> history(AONContext ctx, final Integer domainId, final Integer invoiceId ) {
+	public static HashMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> history(AONContext ctx, final Integer domainId, final Integer invoiceId ) {
 		List<InvoiceCommunicationHistory> history = InvoiceCommunicationDAO.getHistory(ctx, invoiceId, t -> {
 			try {
 				t.getType().visit( new InvoiceCommunicationTypeVisitor() {
@@ -107,7 +102,7 @@ public class InvoiceCommunicator {
 			return t.getResponseMessages();
 		});
 		
-		EnumMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> map = new EnumMap<>(InvoiceCommunicationType.class);
+		HashMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> map = new HashMap<>();
 		AonCollectionUtils.stream( InvoiceInfoDAO.getMap(ctx, domainId, invoiceId).orElse(null) )
 			.forEach( e -> map.put(e.getKey(), new InvoiceCommunicationHistoryMapValue().setInfo(e.getValue())));
 		AonCollectionUtils.stream(history)
