@@ -26,6 +26,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -43,8 +44,10 @@ import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Salary.Bonus;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
@@ -61,6 +64,7 @@ import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.bonus.IBonus;
 import com.esferalia.aon.salary.enumeration.BonusType;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -7181,6 +7185,246 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(0.00, delay.getCommonBase());
 		Assert.assertEquals(0.00, delay.getProfessionalBase());
 		Assert.assertEquals(100.00, delay.getIrpfBase());
+	}
+
+	@Test
+	public void testDelaysSEPEBonusI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		addSSRegimeCost(aonContext, 
+				SSRegimeType.GENERAL, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				"CGC_E", 
+				DeductionType.ADVANCE_PAYMENT, 
+				"BASE_CGC_E * 23.60/100");
+		addSSRegimeCost(aonContext, 
+				SSRegimeType.GENERAL, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				"IT_E", 
+				DeductionType.ADVANCE_PAYMENT, 
+				"BASE_CGP_E * 1.00/100");
+		addSSRegimeCost(aonContext, 
+				SSRegimeType.GENERAL, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				"IMS_E", 
+				DeductionType.ADVANCE_PAYMENT, 
+				"BASE_CGP_E * 2.00/100");
+		addSSRegimeCost(aonContext, 
+				SSRegimeType.GENERAL, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				"FOGASA_E", 
+				DeductionType.ADVANCE_PAYMENT, 
+				"BASE_CGP_E * 3.00/100");
+		addSSRegimeCost(aonContext, 
+				SSRegimeType.GENERAL, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				"FP_E", 
+				DeductionType.ADVANCE_PAYMENT, 
+				"BASE_CGP_E * 4.00/100");
+		addSSRegimeCost(aonContext, 
+				SSRegimeType.GENERAL, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				"DESMPL_E", 
+				DeductionType.ADVANCE_PAYMENT, 
+				"BASE_CGP_E * 5.00/100");
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+						
+				}, null);
+		//@formatter:on
+		
+		addBonus(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(),
+				"/*epoch:1761299408001,pec:16,quota:01*//*read-only*/_D=(TOTAL_BONF_SEPE_E=(isdef TOTAL_BONF_SEPE_E ? TOTAL_BONF_SEPE_E : 0.00); TOTAL_DIAS_BONF_SEPE_E=(isdef TOTAL_DIAS_BONF_SEPE_E ? TOTAL_DIAS_BONF_SEPE_E: 0.00) + DIAS_COTIZADOS;LEFT_BONF_SEPE_E = 128.00 - TOTAL_BONF_SEPE_E;BONF_SEPE_E=MIN(CGC_E + IT_E + IMS_E + FP_E + DESMPL_E + FOGASA_E, MIN(128.00, (DIAS_NOMINA == DIAS_MES) ? 128.00 : TOTAL_DIAS_BONF_SEPE_E >= DIAS_MES ? LEFT_BONF_SEPE_E : MIN( LEFT_BONF_SEPE_E, ROUND(128.00/30.00, 2)*DIAS_COTIZADOS) ));SELF.addVariable('TOTAL_DIAS_BONF_SEPE_E', TOTAL_DIAS_BONF_SEPE_E); SELF.addVariable('TOTAL_BONF_SEPE_E',TOTAL_BONF_SEPE_E + BONF_SEPE_E); BONF_SEPE_E);_D == 0.00 ? REMOVE() : _D /**/",
+				"BON.P.F.EMPL.CUANTIA  (128,00)");
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		for ( int i = 0 ; i < 10 ; i++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			calculator.setSalaryBuilder(jooqSalaryBuilder);
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+			AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().eq(ctx.getStartDate())) ).findAny()
+			.ifPresentOrElse(salary -> {
+				List<Bonus> bonuses = salary.getBonuses();
+				org.junit.Assert.assertEquals(1, bonuses.size());
+				Bonus bonus = bonuses.get(0);
+				org.junit.Assert.assertEquals(128.00,bonus.getAmount(), DELTA);
+				salary.getContextData().get("BONF_SEPE_E").forEach(value -> {
+					System.out.println("  BONF_SEPE_E : " + value.getExpression() );
+				});
+			}, 
+			() -> org.junit.Assert.fail("No salary found for contract " + contract.getId() + " and date " + ctx.getStartDate() ) );
+		}
+		
+		addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				getFirstDayOfMonth(getToday()), 
+				add(startDate, DAY_OF_MONTH, -1), 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		delayCalculator.setSalaryBuilder(new SalaryBuilder());
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+		for (com.esferalia.aon.payroll.SalaryPayment payment : delay
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		Collection<SalaryBonus> bonuses = delay.getBonus();
+		org.junit.Assert.assertEquals(0, bonuses.size());
+		bonuses.forEach(bonus -> {
+			System.out.println("   Bonus -> " + bonus.getDescription() + " : " + bonus.getAmount() );
+			org.junit.Assert.assertEquals(0, bonus.getAmount(), DELTA);
+		});
+		
+		Assert.assertEquals(100.00, delay.getTotalPayment());
+		Assert.assertEquals(100.00, delay.getCommonBase());
+		Assert.assertEquals(100.00, delay.getRawCommonBase());
+		Assert.assertEquals(100.00, delay.getProfessionalBase());
+		Assert.assertEquals(100.00, delay.getIrpfBase());
+	}
+
+	@Test
+	public void testDelaysSEPEBonusII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		addSSRegimeCost(aonContext, 
+				SSRegimeType.GENERAL, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				"CGC_E", 
+				DeductionType.ADVANCE_PAYMENT, 
+				"BASE_CGC_E * 1.00/100");
+		addSSRegimeCost(aonContext, 
+				SSRegimeType.GENERAL, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				"IT_E", 
+				DeductionType.ADVANCE_PAYMENT, 
+				"BASE_CGP_E * 1.00/100");
+		addSSRegimeCost(aonContext, 
+				SSRegimeType.GENERAL, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				"IMS_E", 
+				DeductionType.ADVANCE_PAYMENT, 
+				"BASE_CGP_E * 1.00/100");
+		addSSRegimeCost(aonContext, 
+				SSRegimeType.GENERAL, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				"FOGASA_E", 
+				DeductionType.ADVANCE_PAYMENT, 
+				"BASE_CGP_E * 1.00/100");
+		addSSRegimeCost(aonContext, 
+				SSRegimeType.GENERAL, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				"FP_E", 
+				DeductionType.ADVANCE_PAYMENT, 
+				"BASE_CGP_E * 1.00/100");
+		addSSRegimeCost(aonContext, 
+				SSRegimeType.GENERAL, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				"DESMPL_E", 
+				DeductionType.ADVANCE_PAYMENT, 
+				"BASE_CGP_E * 1.00/100");
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"750.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+						
+				}, null);
+		//@formatter:on
+		
+		addBonus(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(),
+				"/*epoch:1761299408001,pec:16,quota:01*//*read-only*/_D=(TOTAL_BONF_SEPE_E=(isdef TOTAL_BONF_SEPE_E ? TOTAL_BONF_SEPE_E : 0.00); TOTAL_DIAS_BONF_SEPE_E=(isdef TOTAL_DIAS_BONF_SEPE_E ? TOTAL_DIAS_BONF_SEPE_E: 0.00) + DIAS_COTIZADOS;LEFT_BONF_SEPE_E = 128.00 - TOTAL_BONF_SEPE_E;BONF_SEPE_E=MIN(CGC_E + IT_E + IMS_E + FP_E + DESMPL_E + FOGASA_E, MIN(128.00, (DIAS_NOMINA == DIAS_MES) ? 128.00 : TOTAL_DIAS_BONF_SEPE_E >= DIAS_MES ? LEFT_BONF_SEPE_E : MIN( LEFT_BONF_SEPE_E, ROUND(128.00/30.00, 2)*DIAS_COTIZADOS) ));SELF.addVariable('TOTAL_DIAS_BONF_SEPE_E', TOTAL_DIAS_BONF_SEPE_E); SELF.addVariable('TOTAL_BONF_SEPE_E',TOTAL_BONF_SEPE_E + BONF_SEPE_E); BONF_SEPE_E);_D == 0.00 ? REMOVE() : _D /**/",
+				"BON.P.F.EMPL.CUANTIA  (128,00)");
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		for ( int i = 0 ; i < 10 ; i++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			calculator.setSalaryBuilder(jooqSalaryBuilder);
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+			AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().eq(ctx.getStartDate())) ).findAny()
+			.ifPresentOrElse(salary -> {
+				List<Bonus> bonuses = salary.getBonuses();
+				org.junit.Assert.assertEquals(1, bonuses.size());
+				Bonus bonus = bonuses.get(0);
+				org.junit.Assert.assertEquals(60.00,bonus.getAmount(), DELTA);
+				salary.getContextData().get("BONF_SEPE_E").forEach(value -> {
+					System.out.println("  BONF_SEPE_E : " + value.getExpression() );
+				});
+			}, 
+			() -> org.junit.Assert.fail("No salary found for contract " + contract.getId() + " and date " + ctx.getStartDate() ) );
+		}
+		
+		addPayment(aonContext, contract, "100.00 * DIAS_TRABAJADOS / DIAS_MES");
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				getFirstDayOfMonth(getToday()), 
+				add(startDate, DAY_OF_MONTH, -1), 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		delayCalculator.setSalaryBuilder(new SalaryBuilder());
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+		for (com.esferalia.aon.payroll.SalaryPayment payment : delay
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		Collection<SalaryBonus> bonuses = delay.getBonus();
+		org.junit.Assert.assertEquals(10, bonuses.size());
+		bonuses.forEach(bonus -> {
+			System.out.println("   Bonus -> " + bonus.getDescription() + " : " + bonus.getAmount() );
+			org.junit.Assert.assertEquals(6.00, bonus.getAmount(), DELTA);
+		});
+		
+		Assert.assertEquals(1000.00, delay.getTotalPayment());
+		Assert.assertEquals(1000.00, delay.getCommonBase());
+		Assert.assertEquals(1000.00, delay.getRawCommonBase());
+		Assert.assertEquals(1000.00, delay.getProfessionalBase());
+		Assert.assertEquals(1000.00, delay.getIrpfBase());
 	}
 
 	// ------------------------------------------
