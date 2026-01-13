@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
+import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.Certifica2Batch.CERTIFICA2_BATCH;
 import static com.esferalia.aon.jooq.tables.Certifica2BatchDetail.CERTIFICA2_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
@@ -94,7 +94,7 @@ public class ContractDAO {
 			.from(CONTRACT)
 			.innerJoin(PERSON).onKey()
 			.innerJoin(REGISTRY).onKey()
-			.innerJoin(ENTERPRISE_CCC).onKey()
+			.leftOuterJoin(ENTERPRISE_CCC).onKey()
 			, filter).fetch().stream().map(new ContractFiller());		
 	}
 
