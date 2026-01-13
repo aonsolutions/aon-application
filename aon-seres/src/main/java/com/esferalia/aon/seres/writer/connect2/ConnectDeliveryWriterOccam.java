@@ -489,8 +489,14 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setNumeroDeLineaReferencia3(null);
 		seh1l.setDiferenciaEnCantidadPedida_21_(null);
 		seh1l.setCodigoDiscrepancia(null);
-		seh1l.setPesoTotalNetoDeLaLinea_AAI_AAF_(quantity * packageUnit);// detail.getItem().getPackMeasurement());
-		seh1l.setPesoTotalBrutoDeLaLinea_AAI_AAB_(quantity * packageUnit); // detail.getItem().getPackMeasurement());
+		if(customerPackage.equalsIgnoreCase(detail.getItem().getPackMeasurementTag().getName())) {
+			seh1l.setPesoTotalNetoDeLaLinea_AAI_AAF_(quantity);
+			seh1l.setPesoTotalBrutoDeLaLinea_AAI_AAB_(quantity);
+		} else {
+			seh1l.setPesoTotalNetoDeLaLinea_AAI_AAF_(quantity * detail.getItem().getPackMeasurement());
+			seh1l.setPesoTotalBrutoDeLaLinea_AAI_AAB_(quantity * detail.getItem().getPackMeasurement());
+		}
+
 		if(detail.getItem().getPackMeasurementTag()!=null && detail.getItem().getPackMeasurementTag().getName()!=null) {
 			String packMeasurement = detail.getItem().getPackMeasurementTag().getName();
 			if("KG".equalsIgnoreCase(packMeasurement)) packMeasurement = "KGM";
@@ -839,10 +845,15 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		Tag packUnitsTag = detail.getItem().getPackUnitsTag();
 
 		if(customerPackingTag != null){
-			if(packFormatTag != null && packUnitsTag != null && packFormatTag.getName().equalsIgnoreCase(packUnitsTag.getName())) {
+			if(packFormatTag != null && packUnitsTag != null && packMeasurementTag != null
+					&& packFormatTag.getName().equalsIgnoreCase(packUnitsTag.getName())) {
 				return packMeasurementTag.getName();
-			} else return customerPackingTag;
-		} else return packFormatTag.getName();
+			} else if(customerPackingTag.equalsIgnoreCase(packFormatTag.getName())
+					|| customerPackingTag.equalsIgnoreCase(packMeasurementTag.getName())
+					|| customerPackingTag.equalsIgnoreCase(packUnitsTag.getName()))
+				return customerPackingTag;
+		} 
+		return packFormatTag.getName();
 	}
 	
 	private double obtainPackageUnit(DeliveryDetail detail, String customerPackingTag) {
@@ -850,11 +861,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			Tag packFormatTag = detail.getItem().getPackFormatTag();
 			Tag packMeasurementTag = detail.getItem().getPackMeasurementTag();
 			Tag packUnitsTag = detail.getItem().getPackUnitsTag();
-			Tag stockUnitsTag = detail.getItem().getStockUnitTag();
-
-			if(stockUnitsTag != null && customerPackingTag.equalsIgnoreCase(stockUnitsTag.getName())) {
-				return 1.0;
-			} else if(packFormatTag != null && packUnitsTag != null && packFormatTag.getName().equalsIgnoreCase(packUnitsTag.getName())) {
+			
+			if(packFormatTag != null && packUnitsTag != null && packFormatTag.getName().equalsIgnoreCase(packUnitsTag.getName())) {
 				return detail.getItem().getPackUnits() * detail.getItem().getPackMeasurement();
 			} else if(packUnitsTag != null &&  customerPackingTag.equalsIgnoreCase(packUnitsTag.getName())) 
 				return detail.getItem().getPackUnits();
