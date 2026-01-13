@@ -6,9 +6,6 @@ import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDoma
 import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentUser;
 import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getRootPanel;
 
-import java.util.HashMap;
-import java.util.logging.Logger;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
@@ -16,24 +13,18 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
-import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
 public class InvoiceConsoleModule  implements EntryPoint {
-	private static final Logger LOGGER = Logger.getLogger(InvoiceConsoleModule.class.getName());
 	
 	private static final CommonServiceAsync COMMON_SERVICE;
 	static {
@@ -50,7 +41,8 @@ public class InvoiceConsoleModule  implements EntryPoint {
 
 	private InvoiceConsoleToolbar toolbar;
 	private SimpleLayoutPanel content;
-	private final HashMap<Integer,Invoice> selectedInvoices = new HashMap<>();
+	
+	private final InvoiceConsoleSelectionHandler selectionHandler = new InvoiceConsoleSelectionHandler();
 
 	@Override
 	public void onModuleLoad() {
@@ -80,55 +72,10 @@ public class InvoiceConsoleModule  implements EntryPoint {
 
 	}
 	
-	private class InvoiceConsoleToolbar extends AonToolbar {
-		private final AonToolbarButton showFilter;
-		private final AonToolbarButton hideFilter;
-		
-		private final InlineLabel selectedLabel;
-		
-		InvoiceConsoleToolbar() {
-			super("Monitor de facturas");
-			
-			showFilter = new AonToolbarButton(AON.MSG.showFilter(), AON.CSS.aonIconFilterOn());
-			showFilter.setVisible(false);
-			this.add(showFilter);
-
-			hideFilter = new AonToolbarButton(AON.MSG.hideFilter(), AON.CSS.aonIconFilterOff());
-			hideFilter.setVisible(true);
-			this.add(hideFilter);
-			
-			showFilter.addClickHandler(e -> {
-				hideFilter.setVisible(true);
-				showFilter.setVisible(false);
-			});
-			hideFilter.addClickHandler(e -> {
-				hideFilter.setVisible(false);
-				showFilter.setVisible(true);
-			});
-
-			selectedLabel = new InlineLabel();
-			this.add(selectedLabel);
-			
-			refresh();
-		}
-		
-		void addClickHandlerToShowFilter( ClickHandler handler ) {
-			showFilter.addClickHandler(handler);
-		}
-		void addClickHandlerToHideFilter( ClickHandler handler ) {
-			hideFilter.addClickHandler(handler);
-		}
-
-		public void refresh() {
-			LOGGER.info("Refreshing toolbar. Selected invoices: " + AonCollectionUtils.size( selectedInvoices ) );
-			selectedLabel.setText( AON.MSG.selectedItem( AonCollectionUtils.size( selectedInvoices ) ) );
-		}
-		
-	}
-	
 	private void loadModule( InvoiceModuleOptions opts ) {
 		AonLayoutPanel aonLayoutPanel = new AonLayoutPanel(Unit.PX);
 		toolbar = new InvoiceConsoleToolbar();
+		
 		
 		aonLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		InvoiceConsoleFilter filterPanel = new InvoiceConsoleFilter(opts);
@@ -146,6 +93,9 @@ public class InvoiceConsoleModule  implements EntryPoint {
 			aonLayoutPanel.animate(200);
 		});
 		
+		selectionHandler.addValueChangeHandler(e -> toolbar.refresh() );
+		toolbar.add(selectionHandler);
+		
 		content = new SimpleLayoutPanel();
 		content.setStyleName(AON.CSS.aonSelector());
 		aonLayoutPanel.add(content);
@@ -157,29 +107,13 @@ public class InvoiceConsoleModule  implements EntryPoint {
 	
 	private void search(InvoiceModuleOptions opts, InvoiceConsoleParams params) {
 		content.clear();
-		selectedInvoices.clear();
+		selectionHandler.clean();
 		toolbar.refresh();
 		InvoiceConsoleTable table = new InvoiceConsoleTable(opts, params );
 		content.setWidget(table);
 		
-		table.addInvoiceCheckedHandler(e -> markAsSelected( e.getInvoice() ) );
-		table.addInvoiceUncheckedHandler(e -> markAsUnselected( e.getInvoice() ) );
-	}
-
-	private void markAsUnselected(Invoice invoice) {
-		LOGGER.info("Marking as unselected invoice: " + invoice );
-		if (invoice != null) {
-			selectedInvoices.remove(invoice.getId());
-			toolbar.refresh();			
-		}
-	}
-
-	private void markAsSelected(Invoice invoice) {
-		LOGGER.info("Marking as selected invoice: " + invoice);
-		if (invoice != null) {
-			selectedInvoices.put(invoice.getId(), invoice);
-			toolbar.refresh();
-		}
+		table.addInvoiceCheckedHandler(e -> selectionHandler.select( e.getInvoice() ) );
+		table.addInvoiceUncheckedHandler(e -> selectionHandler.unselect( e.getInvoice() ) );
 	}
 
 	public static void run() {
