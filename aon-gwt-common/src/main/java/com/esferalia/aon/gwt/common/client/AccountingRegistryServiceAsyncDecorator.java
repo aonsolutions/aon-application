@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryParams;
-import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class AccountingRegistryServiceAsyncDecorator implements AccountingRegistryServiceAsync {
@@ -44,12 +43,6 @@ public class AccountingRegistryServiceAsyncDecorator implements AccountingRegist
 	public void getAccountingRegistries(String domainName, int domain, String user, AccountingRegistryParams params, AsyncCallback<LinkedList<AccountingRegistry>> callback) {
 		AON.start();
 		serviceAsync.getAccountingRegistries(domainName, domain, user, params, new AsyncCallbackWrapper<LinkedList<AccountingRegistry>>(callback));
-	}
-
-	@Override
-	public void getInvoiceRegistries(String domainName, int domain, String user, String query, AsyncCallback<LinkedList<InvoiceRegistry>> callback) {
-		AON.start();
-		serviceAsync.getInvoiceRegistries(domainName, domain, user, query, new AsyncCallbackWrapper<LinkedList<InvoiceRegistry>>(callback));
 	}
 
 	@Override

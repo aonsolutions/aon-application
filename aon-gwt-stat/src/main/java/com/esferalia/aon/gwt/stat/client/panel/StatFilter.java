@@ -6,7 +6,9 @@ import java.util.HashMap;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceProductBox;
-import com.esferalia.aon.gwt.common.client.widget.InvoiceRegistryBox;
+import com.esferalia.aon.gwt.common.client.widget.InvoiceRegistryDocumentBox;
+import com.esferalia.aon.gwt.common.client.widget.InvoiceRegistryNameBox;
+import com.esferalia.aon.gwt.stat.client.StatModuleOptions;
 import com.esferalia.aon.gwt.stat.client.StatService;
 import com.esferalia.aon.gwt.stat.client.StatServiceAsync;
 import com.esferalia.aon.gwt.stat.client.StatServiceAsyncDecorator;
@@ -165,7 +167,11 @@ public class StatFilter extends ScrollPanel implements HasValueChangeHandlers<St
 		row++;
 		
 		tab.setWidget(row, 0, new MediumLabel(AON.MSG.titular()));
-		InvoiceRegistryBox titular = new InvoiceRegistryBox(getDomainName(),getDomain(),getCurrentUser() );
+		StatModuleOptions options = new StatModuleOptions();
+		options.setDomainName( getDomainName() );
+		options.setDomain( getDomain() );
+		options.setUser( getCurrentUser() );
+		InvoiceRegistryNameBox titular = new InvoiceRegistryNameBox(options);
 		titular.setRequired(false);
 		titular.addSelectionHandler(new  SelectionHandler<InvoiceRegistry>() {
 			
