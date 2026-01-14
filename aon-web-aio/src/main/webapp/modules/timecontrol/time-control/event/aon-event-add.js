@@ -15,6 +15,7 @@ import * as ACTION from '../../../actions.js';
 import { setStyles } from "../../../../services/utilsComponents.js";
 import { AonBasicTable } from "../../../../components/aon-basic-table.js";
 import { AonSelect } from "../../../../components/aon-select.js";
+import { AonNewSelect } from "../../../../components/aon-new-select.js";
 
 
 export class AonEventAdd extends AonElement {
@@ -148,11 +149,34 @@ export class AonEventAdd extends AonElement {
   }
 
   getFormValues() {
-    const serialize = serializeForm(this.getElement(`${this.id}Form`));
+    //const serialize = serializeForm(this.getElement(`${this.id}Form`));
+    let serialize = {};
+    
+    let nameInput = this.getElement("name");
+    if(nameInput) serialize.name = nameInput.getValue();
+    
+    let statusSelect = this.getElement("status");
+    serialize.status = statusSelect.getValueObject() && statusSelect.getValueObject().value;
+    
+    let locationSelect = this.getElement("location");
+    serialize.location = locationSelect.getValueObject() && locationSelect.getValueObject().value;
+    
+    let dateInput = this.getElement("date");
+    let timeInput = this.getElement("time");
+    serialize.date = new Date( AonDateUtils.formatDateOrigin(dateInput.getDate()) + " " + timeInput.getValue() ).getTime();
+  	
+  	let idInput = this.getElement("id");
+  	if(idInput.getValue() !== 'undefined') serialize.id = idInput.getValue();
+  	
+  	let coordinatesInput = this.getElement("coordinates");
+  	if(coordinatesInput.getValue() !== 'undefined') serialize.coordinates = coordinatesInput.getValue();
+  	
+  	console.log('getFormValues', serialize, this.TASK_HOLDER ? this.TASK_HOLDER.id : null);
+    
     return {
       ...serialize,
       task_holder: this.TASK_HOLDER ? this.TASK_HOLDER.id : null,
-      date: new Date( AonDateUtils.formatDateOrigin(serialize.date) + " " + serialize.time ).getTime(),
+      //date: new Date( AonDateUtils.formatDateOrigin(serialize.date) + " " + serialize.time ).getTime(),
     };
   }
 
@@ -184,7 +208,11 @@ export class AonEventAdd extends AonElement {
 
   setValues() {
     if (this.data) {
+	
+	  //console.log('setValues', this.data);
+		
       let data = this.data;
+      
       let date = new Date(data.date);
       if (data.coordinates) {data.coordinates = data.coordinates.latitude + "," + data.coordinates.longitude;}
       if (data.location && data.location.id) {data.location = data.location.id;}
@@ -195,11 +223,38 @@ export class AonEventAdd extends AonElement {
         data.name = this.TASK_HOLDER.name;
         this.getElement("name").disabled = "disabled";
       }
- 
+      
       for (const property in data) {
         const value = data[property];
         if (value) setValueName(property, value);
       }
+      
+      let nameInput = this.getElement("name");
+      nameInput && nameInput.setDisabled(true);
+      nameInput && nameInput.setValue(data.name);
+      
+      let statusSelect = this.getElement("status");
+      statusSelect.setValue(data.status);
+      
+      let locationSelect = this.getElement("location");
+      locationSelect.setValue(data.location);
+      
+      let dateInput = this.getElement("date");
+      dateInput.setDate(data.date);
+      
+      let timeInput = this.getElement("time");
+      timeInput.setValue(data.time);
+      
+      let coordinatesInput = this.getElement("coordinates");
+      coordinatesInput.setDisabled(true);
+      coordinatesInput.style.display = 'none';
+      coordinatesInput.setValue(data.coordinates);
+      
+      let idInput = this.getElement("id");
+      idInput.setDisabled(true);
+      idInput.style.display = 'none';
+      idInput.setValue(data.id);
+      
     }
     
     if(this.applicationParentEl.isEmployee()) 
@@ -372,7 +427,7 @@ export class AonEventAdd extends AonElement {
         const parent = name.parentNode;
         name.remove();
 
-        let aonSelect = new AonSelect();
+        let aonSelect = new AonNewSelect();
         aonSelect.id = aonSelect.name = "task_holder";
         aonSelect.title = MSG.EMPLOYEE;
         aonSelect.autocomplete = true;

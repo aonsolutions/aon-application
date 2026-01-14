@@ -195,7 +195,8 @@
 #aonMenuListAppImgTop-expandHirin,
 #aonMenuListAppImgTop-contentIndex,
 #aonMenuAnchorDivIcon,
-#aonSigninToolbarHeaderToolSectionfile_downloadButtonIcon
+#aonSigninToolbarHeaderToolSectionfile_downloadButtonIcon,
+#aonEventAddToolbarHeaderToolSectionhistoricButtonIcon
  {
 	width: 25.5px;
 	height: 25.5px;
@@ -357,6 +358,10 @@
 
 #aonSigninToolbarHeaderToolSectionfile_downloadButtonIcon {
 	mask-image: url('/icons/download.svg') ;
+}
+
+#aonEventAddToolbarHeaderToolSectionhistoricButtonIcon{
+	mask-image: url('/icons/clipboard-list.svg') ;
 }
 
 
