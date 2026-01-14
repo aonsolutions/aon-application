@@ -520,7 +520,8 @@ export class AonInvoice extends AonElement {
 	}
 
 	showAccept() {
-		return this.icc.hasCommunication() && (this.getInvoice().isInbox() || (this.getInvoice().isProcessed() && !this.getInvoice().isEmitida()));
+		return (this.icc.hasCommunication() || !this.getInvoice().isEmitida()) &&
+			(this.getInvoice().isInbox() || (this.getInvoice().isProcessed() && !this.getInvoice().isEmitida()));
 	}
 
 	showDelete() {

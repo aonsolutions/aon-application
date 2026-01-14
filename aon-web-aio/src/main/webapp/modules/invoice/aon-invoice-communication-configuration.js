@@ -251,6 +251,9 @@ export class AonInvoiceCommunicationConfiguration extends AonElement {
         if (!this.communicationConfiguration.isNoSif() && !this.communicationConfiguration.hasCommunication()) {
             this.communicationConfiguration.setNoSif(!issueInvoice.isChecked(), enterprise);
         }
+        if(!issueInvoice.checked && !this.communicationConfiguration.isNoSif()) {
+            this.communicationConfiguration.setNoSif(false, enterprise);
+        }
         issueInvoice.disabled = !this.isSpainCompany();
         // issueInvoice.disabled = !this.communicationConfiguration.isNoSif() && this.communicationConfiguration.hasCommunication();
         issueInvoice.addEventListener(EVENT.CHANGE, () => {
