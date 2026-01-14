@@ -138,8 +138,8 @@ public class InvoiceInfoDAO {
 	private static void fixUrl(InvoiceCommunicationConfiguration icc, InvoiceInfo v) {
 		if (v != null
 			 && AonStringUtils.startsWith(v.getCheckUrl(), "?")) {
-				String urlQr = "https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR";
-				String urlQrTest = "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR";
+				String urlQr = "https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR" + (v.getType().isNoVerifactu()? "NoVerifactu":"");
+				String urlQrTest = "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR" + (v.getType().isNoVerifactu()? "NoVerifactu":"");
 				v.setCheckUrl( (icc.isVerifactuTest()?urlQrTest:urlQr) + v.getCheckUrl());
 			}
 	}

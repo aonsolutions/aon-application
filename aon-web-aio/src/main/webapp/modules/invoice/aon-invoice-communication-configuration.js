@@ -61,8 +61,9 @@ export class AonInvoiceCommunicationConfiguration extends AonElement {
     }
 
     showCommunicationCard() {
-        return !this.communicationConfiguration.getAdministration().isUnknown() && isValid(this.configuration.company.document)
-            && !this.communicationConfiguration.isNoSif();
+        return !this.communicationConfiguration.getAdministration().isUnknown() 
+            && isValid(this.configuration.company.document);
+            //&& !this.communicationConfiguration.isNoSif();
     }
 
     buildCompanyCard(parent) {
@@ -87,7 +88,8 @@ export class AonInvoiceCommunicationConfiguration extends AonElement {
 
     buildCommunicationCard(parent) {
         if (!this.communicationConfiguration.getAdministration().isUnknown() && isValid(this.configuration.company.document)) {
-            let card = createCard(this.CARD, MSG.COMMUNICATIONS);
+            let cardTitle = MSG.COMMUNICATIONS + (this.communicationConfiguration.isNoSif() ? ' ' + MSG.RECEIVED_INVOICES : '');
+            let card = createCard(this.CARD, cardTitle);
             card.style.width = '50%';
             parent.appendChild(card);
 
@@ -101,18 +103,18 @@ export class AonInvoiceCommunicationConfiguration extends AonElement {
 
             table.addRow();
 
-            this.buildFacturae(table);
+            if(!this.communicationConfiguration.isNoSif()) this.buildFacturae(table);
 
             if (this.communicationConfiguration.isAlava() || this.communicationConfiguration.isGipuzkoa()) {
-                this.buildTicketBai(table);
+                if(!this.communicationConfiguration.isNoSif()) this.buildTicketBai(table);
                 this.buildSii(table);
             } else if (this.communicationConfiguration.isBizkaia()) {
                 this.buildLroe(table);
             } else if (this.communicationConfiguration.isNavarra()) {
                 this.buildSii(table);
             } else {
-                this.buildVerifactu(table);
-                this.buildNoVerifactu(table);
+                if(!this.communicationConfiguration.isNoSif()) this.buildVerifactu(table);
+                if(!this.communicationConfiguration.isNoSif()) this.buildNoVerifactu(table);
                 this.buildSii(table);
             }
         }
@@ -245,7 +247,7 @@ export class AonInvoiceCommunicationConfiguration extends AonElement {
             this.dispatchEvent(new Event(EVENT.CHANGE));
         }
         let issueInvoice = createSwitch("emitefacturas", 'La empresa emite facturas oficiales con la aplicación');
-        issueInvoice.checked = !this.communicationConfiguration.isNoSif();
+        issueInvoice.checked = !this.communicationConfiguration.isNoSif() && this.communicationConfiguration.hasCommunication("emitida");
         if (!this.communicationConfiguration.isNoSif() && !this.communicationConfiguration.hasCommunication()) {
             this.communicationConfiguration.setNoSif(!issueInvoice.isChecked(), enterprise);
         }
@@ -283,7 +285,7 @@ export class AonInvoiceCommunicationConfiguration extends AonElement {
         const communicationActiveId = id + CONSTANT.ACTIVE.initCap();
         let communicationActive = createSwitch(communicationActiveId, future ? title + " " + MSG.PROGRAMMED : MSG.ACTIVATE + " " + title);
         communicationActive.checked = active || future;
-        communicationActive.disabled = (active && data && data.id) ? true : false;
+        communicationActive.disabled = (active && data && data.id && !this.communicationConfiguration.isNoSif()) ? true : false;
         communicationActive.addEventListener(EVENT.CHANGE, () => {
             activeFn(communicationActive.isChecked());
             this.dispatchEvent(new Event(EVENT.CHANGE));
@@ -295,7 +297,7 @@ export class AonInvoiceCommunicationConfiguration extends AonElement {
         if (active || future) {
             const communicationIncludeDateId = id + CONSTANT.INCLUDE_DATE.initCap();
             let communicationIncludeDate = createDate(communicationIncludeDateId, 'Fecha Inclusión ' + title);
-            if (data && data.id) {
+            if (data && data.id && !this.communicationConfiguration.isNoSif()) {
                 communicationIncludeDate.disabled = true;
                 communicationIncludeDate.readonly = true;
             }
@@ -333,7 +335,8 @@ export class AonInvoiceCommunicationConfiguration extends AonElement {
         const enterprise = this.configuration.company.id;
         let active = this.communicationConfiguration.isLroe();
         let future = this.communicationConfiguration.willBeLroe();
-        this.buildCommunication(table, this.LROE, MSG.LROE + " / " + MSG.TICKETBAI, active, future, this.communicationConfiguration.getLroeData(),
+        let title = MSG.LROE + (!this.communicationConfiguration.isNoSif() ? " / " + MSG.TICKETBAI : "");
+        this.buildCommunication(table, this.LROE, title, active, future, this.communicationConfiguration.getLroeData(),
             this.communicationConfiguration.getFutureLroeData(), (value) => this.communicationConfiguration.setLroe(value, enterprise),
             (date) => {
                 let check = this.communicationConfiguration.setLroeDate(date, enterprise)

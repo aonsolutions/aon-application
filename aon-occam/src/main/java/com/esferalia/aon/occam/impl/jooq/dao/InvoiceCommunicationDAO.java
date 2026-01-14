@@ -262,6 +262,8 @@ public class InvoiceCommunicationDAO {
 		config.setTbaiDataHistory( getIccHistory(ctx, domainId, EnterpriseDataNames.ICC_TBAI) );
 		config.setTbaiData( getIccData( config.getTbaiDataHistory() ) );
 		
+		config.setTbaiInvoice(DataResponseDAO.has(ctx, domainId, DataResponseSource.TBAI, AonDateUtils.getCurrentYear()));
+		
 		if(config.getTbaiDataHistory().isEmpty() && (config.isAraba() || config.isGipuzkoa())) {
 			Enterprise enterprise = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(domainId));
 			EnterpriseData oldTbaiData = new EnterpriseData()
@@ -286,6 +288,7 @@ public class InvoiceCommunicationDAO {
 	private static void fillLroe(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
 		config.setLroeDataHistory(getIccHistory(ctx, domainId, EnterpriseDataNames.ICC_LROE));
 		config.setLroeData(getIccData( config.getLroeDataHistory() ));
+		config.setLroeInvoice(DataResponseDAO.has(ctx, domainId, DataResponseSource.LROE, AonDateUtils.getCurrentYear()));
 		
 		if(config.getLroeDataHistory().isEmpty() && config.isBizkaia()) {
 			Enterprise enterprise = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(domainId));
@@ -313,7 +316,7 @@ public class InvoiceCommunicationDAO {
 	private static void fillVerifactu(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
 		config.setVerifactuDataHistory(getIccHistory(ctx, domainId, EnterpriseDataNames.ICC_VERIFACTU));
 		config.setVerifactuData(getIccData(config.getVerifactuDataHistory()));
-		
+		config.setVerifactuInvoice(DataResponseDAO.has(ctx, domainId, DataResponseSource.VERIFACTU, AonDateUtils.getCurrentYear()));
 		if(config.getVerifactuDataHistory().isEmpty()) {
 			Enterprise enterprise = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(domainId));
 			EnterpriseData oldVerifactuData = new EnterpriseData()
@@ -336,7 +339,8 @@ public class InvoiceCommunicationDAO {
 	private static void fillSii(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
 		config.setSiiDataHistory(getIccHistory(ctx, domainId, EnterpriseDataNames.ICC_SII));
 		config.setSiiData(getIccData(config.getSiiDataHistory()));
-		
+		System.out.println("SII " + DataResponseDAO.has(ctx, domainId, DataResponseSource.SII, AonDateUtils.getCurrentYear()));
+		config.setSiiInvoice(DataResponseDAO.has(ctx, domainId, DataResponseSource.SII, AonDateUtils.getCurrentYear()));
 		if(config.getSiiDataHistory().isEmpty()) {
 			Enterprise enterprise = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(domainId));
 			EnterpriseData oldSiiData = new EnterpriseData()
@@ -368,11 +372,13 @@ public class InvoiceCommunicationDAO {
 	private static void fillNoVerifactu(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
 		config.setNoVerifactuDataHistory(getIccHistory(ctx, domainId, EnterpriseDataNames.ICC_NO_VERIFACTU));
 		config.setNoVerifactuData(getIccData(config.getNoVerifactuDataHistory()));
+		config.setNoVerifactuInvoice(DataResponseDAO.has(ctx, domainId, DataResponseSource.NO_VERIFACTU, AonDateUtils.getCurrentYear()));
 	}
 	
 	private static void fillSif(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
 		config.setSifDataHistory(getIccHistory(ctx, domainId, EnterpriseDataNames.ICC_SIF));
 		config.setSifData(getIccData(config.getSifDataHistory()));
+		config.setSifInvoice(DataResponseDAO.has(ctx, domainId, DataResponseSource.SIF, AonDateUtils.getCurrentYear()));
 	}
 	
 	private static void fillNoSif(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
@@ -387,10 +393,10 @@ public class InvoiceCommunicationDAO {
 				fillSif(ctx, domainId, config);
 			}
 			
-			if(config.isLroe()) {
-				updateEndDate(ctx, domainId, config.getLroeData(), config.getNoSifData().getStartDate());
-				fillLroe(ctx, domainId, config);
-			}
+//			if(config.isLroe()) {
+//				updateEndDate(ctx, domainId, config.getLroeData(), config.getNoSifData().getStartDate());
+//				fillLroe(ctx, domainId, config);
+//			}
 			
 			if(config.isTbai()) {
 				updateEndDate(ctx, domainId, config.getTbaiData(), config.getNoSifData().getStartDate());
@@ -407,10 +413,10 @@ public class InvoiceCommunicationDAO {
 				fillVerifactu(ctx, domainId, config);
 			}
 			
-			if(config.isSii()) {
-				updateEndDate(ctx, domainId, config.getSiiData(), config.getNoSifData().getStartDate());
-				fillSii(ctx, domainId, config);
-			}
+//			if(config.isSii()) {
+//				updateEndDate(ctx, domainId, config.getSiiData(), config.getNoSifData().getStartDate());
+//				fillSii(ctx, domainId, config);
+//			}
 		}
 		
 		if(config.isSif()) {
@@ -567,7 +573,7 @@ public class InvoiceCommunicationDAO {
     		Condition c1 = INVOICE_INFO.STATUS.eq(params.getCommunicationStatus().value());
     		if (params.getCommunicationStatus() == InvoiceCommunicationStatus.PENDING) {
 				c1 = INVOICE_INFO.STATUS.isNull().or(c1);
-			} 
+			}
 			c = c.and(c1);
     	}
     	return c;

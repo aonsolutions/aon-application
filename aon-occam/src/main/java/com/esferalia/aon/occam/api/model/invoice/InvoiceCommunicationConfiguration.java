@@ -40,6 +40,11 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	 */
 	private EnterpriseData tbaiData;
 	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante TBAI en el ejercicio actual.
+	 */
+	private boolean tbaiInvoice;
+	
 	// LROE
 	
 	/**
@@ -51,6 +56,11 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	 * Estado actual de la configuraci�n de LROE.
 	 */
 	private EnterpriseData lroeData;
+	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante LROE en el ejercicio actual.
+	 */
+	private boolean lroeInvoice;
 
 	@Deprecated	private String lroeRegistryDate;
 	
@@ -66,6 +76,11 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	 */
 	private EnterpriseData siiData;
 
+	/**
+	 * Indica si la empresa ha enviado facturas mediante SII en el ejercicio actual.
+	 */
+	private boolean siiInvoice;
+	
 	@Deprecated	private String siiRegistryDate;
 	@Deprecated	private boolean prepareNewSii;
 	
@@ -81,6 +96,11 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	 */
 	private EnterpriseData verifactuData;
 	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante VERIFACTU en el ejercicio actual.
+	 */
+	private boolean verifactuInvoice;
+	
 	// NO VERIFACTU
 
 	/**
@@ -93,6 +113,11 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	 */
 	private EnterpriseData noVerifactuData;
 	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante VERIFACTU en el ejercicio actual.
+	 */
+	private boolean noVerifactuInvoice;
+	
 	// SIF || LEY ANTIFRAUDE
 	
 	/**
@@ -104,6 +129,11 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	 * Estado actual de la configuraci�n de SIF (Sistema Inform�tico de Facturaci�n).
 	 */
 	private EnterpriseData sifData;
+	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante SIF en el ejercicio actual.
+	 */
+	private boolean sifInvoice;
 	
 	// NO SIF
 	
@@ -257,6 +287,19 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		return willBe(getTbaiDataHistory());
 	}
 	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante TBAI en el ejercicio actual.
+	 * @return true si la empresa ha enviado facturas mediante TBAI en el ejercicio actual, false en caso contrario.
+	 */
+	public boolean hasTbaiInvoice() {
+		return tbaiInvoice;
+	}
+	
+	public InvoiceCommunicationConfiguration setTbaiInvoice(boolean tbaiInvoice) {
+		this.tbaiInvoice = tbaiInvoice;
+		return this;
+	}
+	
 	// LROE
 	
 	/**
@@ -335,6 +378,19 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	@Deprecated
 	public InvoiceCommunicationConfiguration setLroeRegistryDate(String lroeRegistryDate) {
 		this.lroeRegistryDate = lroeRegistryDate;
+		return this;
+	}
+	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante LROE en el ejercicio actual.
+	 * @return true si la empresa ha enviado facturas mediante LROE en el ejercicio actual, false en caso contrario.
+	 */
+	public boolean hasLroeInvoice() {
+		return lroeInvoice;
+	}
+	
+	public InvoiceCommunicationConfiguration setLroeInvoice(boolean lroeInvoice) {
+		this.lroeInvoice = lroeInvoice;
 		return this;
 	}
 	
@@ -435,6 +491,19 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		return this;
 	}
 	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante SII en el ejercicio actual.
+	 * @return true si la empresa ha enviado facturas mediante SII en el ejercicio actual, false en caso contrario.
+	 */
+	public boolean hasSiiInvoice() {
+		return siiInvoice;
+	}
+	
+	public InvoiceCommunicationConfiguration setSiiInvoice(boolean siiInvoice) {
+		this.siiInvoice = siiInvoice;
+		return this;
+	}
+	
 	// VERIFACTU
 	
 	/**
@@ -504,6 +573,19 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	public boolean willBeVerifactu() {
 		return willBe(getVerifactuDataHistory());
 	}
+	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante VERIFACTU en el ejercicio actual.
+	 * @return true si la empresa ha enviado facturas mediante VERIFACTU en el ejercicio actual, false en caso contrario.
+	 */
+	public boolean hasVerifactuInvoice() {
+		return verifactuInvoice;
+	}
+
+	public InvoiceCommunicationConfiguration setVerifactuInvoice(boolean verifactuInvoice) {
+		this.verifactuInvoice = verifactuInvoice;
+		return this;
+	}
 
 	// NO VERIFACTU
 	
@@ -567,6 +649,19 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		return willBe(getNoVerifactuDataHistory());
 	}
 	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante NO VERIFACTU en el ejercicio actual.
+	 * @return true si la empresa ha enviado facturas mediante  NO VERIFACTU en el ejercicio actual, false en caso contrario.
+	 */
+	public boolean hasNoVerifactuInvoice() {
+		return noVerifactuInvoice;
+	}
+
+	public InvoiceCommunicationConfiguration setNoVerifactuInvoice(boolean noVerifactuInvoice) {
+		this.noVerifactuInvoice = noVerifactuInvoice;
+		return this;
+	}
+	
 	// SIF || LEY ANTIFRAUDE
 	
 	/**
@@ -627,6 +722,19 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	 */
 	public boolean willBeSif() {
 		return willBe(getSifDataHistory());
+	}
+	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante SIF en el ejercicio actual.
+	 * @return true si la empresa ha enviado facturas mediante SIF en el ejercicio actual, false en caso contrario.
+	 */
+	public boolean hasSifInvoice() {
+		return sifInvoice;
+	}
+
+	public InvoiceCommunicationConfiguration setSifInvoice(boolean sifInvoice) {
+		this.sifInvoice = sifInvoice;
+		return this;
 	}
 
 	// NO SIF 
@@ -745,6 +853,8 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	public List<InvoiceCommunicationType> getTypes(InvoiceType invoiceType) {
 		LinkedList<InvoiceCommunicationType> types = new LinkedList<>();
 
+		if(invoiceType.isSales() && isNoSif()) return types;
+		
 		if(invoiceType.isSales() && isTbai() && (isAraba() || isGipuzkoa())) {
 			types.add(InvoiceCommunicationType.TBAI);
 		} 
