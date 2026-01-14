@@ -128,6 +128,11 @@ public class InvoiceInfoDAO {
 			fixUrl( icc, v );
 		}
 		
+		if (enumMap.containsKey(InvoiceCommunicationType.NO_VERIFACTU)) {
+			InvoiceInfo v = enumMap.get(InvoiceCommunicationType.NO_VERIFACTU);
+			fixUrl( icc, v );
+		}
+		
 		// ---------------------------------------------------------------------------------------
 		
 		if (AonCollectionUtils.isEmpty(enumMap)) return Optional.empty();
