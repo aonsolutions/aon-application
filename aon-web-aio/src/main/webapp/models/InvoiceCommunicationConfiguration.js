@@ -381,7 +381,7 @@ export class InvoiceCommunicationConfiguration {
             this.lroeData = undefined;
             this._lroeDataHistory = this.endHistory(this.lroeDataHistory);
             this.undefinedHistories([CONSTANT.LROE]);
-            if (!this.hasCommunication()) {
+            if (!this.hasCommunication() && !this.isNoSif()) {
                 this.setSif(true, enterprise);
             }
         }
@@ -707,7 +707,7 @@ export class InvoiceCommunicationConfiguration {
             this.siiData = undefined;
             this._siiDataHistory = this.endHistory(this.siiDataHistory);
             this.undefinedHistories([CONSTANT.SII, CONSTANT.TBAI]);
-            if (!this.hasCommunication()) {
+            if (!this.hasCommunication() && !this.isNoSif()) {
                 this.setSif(true, enterprise);
             }
         }

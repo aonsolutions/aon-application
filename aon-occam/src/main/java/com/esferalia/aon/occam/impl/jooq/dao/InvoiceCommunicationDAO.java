@@ -689,6 +689,7 @@ public class InvoiceCommunicationDAO {
 		
 		DataResponse dataResponse = new DataResponse()
 			.setDomain(dataRequest.getDomain())
+			.setResponseDate(new Date())
 			.setDataRequest(dataRequest.getId())
 			.setCode("")
 			.setSource(DataResponseSource.safeValueOf(communicationType));
