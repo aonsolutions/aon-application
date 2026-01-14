@@ -598,6 +598,27 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 			detail.setWorkActivityExtension(AonEnumUtils.getBoolean(record.getLabourProlongation()));
 			detail.setGeographicMobility(record.getMovingDate() != null);
 			
+			detail.setLessThan3Descendent((byte) 0);
+			detail.setLessThan3DescendentRatio((byte) 0);
+			detail.setOtherDescendent((byte) 0);
+			detail.setOtherDescendentRatio((byte) 0);
+			detail.setDisabilityDescendent33((byte) 0);
+			detail.setDisabilityDescendent33Ratio((byte) 0);
+			detail.setDisabilityDescendentDependence((byte) 0);
+			detail.setDisabilityDescendentDependenceRatio((byte) 0);
+			detail.setDisabilityDescendent65((byte) 0);
+			detail.setDisabilityDescendent65Ratio((byte) 0);
+			detail.setLessThan75Ascendant((byte) 0);
+			detail.setLessThan75AscendantRatio((byte) 0);
+			detail.setAscendant((byte) 0);
+			detail.setAscendantRatio((byte) 0);
+			detail.setDisabilityAscendant33((byte) 0);
+			detail.setDisabilityAscendant33Ratio((byte) 0);
+			detail.setDisabilityAscendantDependence((byte) 0);
+			detail.setDisabilityAscendantDependenceRatio((byte) 0);
+			detail.setDisabilityAscendant65((byte) 0);
+			detail.setDisabilityAscendant65Ratio((byte) 0);
+			
 			List<IrpfDataDescendientsRecord> descs = ctx.getDslContext()
 				.select(IRPF_DATA_DESCENDIENTS.fields())
 				.from(IRPF_DATA_DESCENDIENTS)
