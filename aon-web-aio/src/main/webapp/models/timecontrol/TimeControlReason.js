@@ -60,19 +60,19 @@ export const PAUSE_REASON = [
 	},
 	{
 		name: 'Exámenes / Pruebas Académicas',
-		value: '8',
+		value: '9',
 		icon: MATERIAL_ICONS.SCHOOL,
 		clickable: true
 	},
 	{
 		name: 'Enfermedad / Accidente Propio',
-		value: '9',
+		value: '10',
 		icon: MATERIAL_ICONS.CLINICAL_NOTES,
 		clickable: true
 	},
 	{
 		name: 'Otro',
-		value: '10',
+		value: '11',
 		icon: MATERIAL_ICONS.UNKNOWN_DOCUMENT,
 		clickable: false
 	}
