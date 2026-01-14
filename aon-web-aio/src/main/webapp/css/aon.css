@@ -4971,3 +4971,170 @@ aon-superset iframe {
 	background-position: 100% 0;
 	color: #fff;
 }
+
+/* ---------- __Aon__ Agenda ---------- */
+
+aon-agenda-all-days {
+  display: block;
+  height: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+  color: #202124;
+}
+
+/* ---------- Header ---------- */
+
+aon-agenda-all-days header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: white;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+aon-agenda-all-days .header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+aon-agenda-all-days .month {
+  font-size: 22px;
+  font-weight: 500;
+}
+
+aon-agenda-all-days .range {
+  font-size: 13px;
+  color: #70757a;
+}
+
+aon-agenda-all-days .task-holder-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #5f6368;
+}
+
+/* ---------- Scroll container ---------- */
+
+aon-agenda-all-days .scroll {
+  height: calc(100% - 56px);
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  overscroll-behavior: contain;
+}
+
+/* ---------- Week ---------- */
+
+aon-agenda-all-days .week {
+  scroll-snap-align: start;
+  padding: 8px 0;
+}
+
+/* ---------- Day ---------- */
+
+aon-agenda-all-days .day {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+aon-agenda-all-days .day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+aon-agenda-all-days .day-header-left {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+aon-agenda-all-days .day-header-right {
+  display: flex;
+  align-items: baseline;
+}
+
+aon-agenda-all-days .day-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: #70757a;
+  text-transform: uppercase;
+}
+
+aon-agenda-all-days .day-number {
+  font-size: 22px;
+  font-weight: 500;
+}
+
+aon-agenda-all-days .total-hours {
+  font-size: 13px;
+  font-weight: 500;
+  color: #5f6368;
+}
+
+aon-agenda-all-days .day.today .day-number {
+  color: #1a73e8;
+}
+
+/* Días de fin de semana en rojo */
+aon-agenda-all-days .day.weekend .day-number {
+  color: #d93025;
+}
+
+aon-agenda-all-days .day.weekend .day-name {
+  color: #d93025;
+}
+
+/* ---------- Events ---------- */
+
+aon-agenda-all-days .events {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-left: 32px;
+}
+
+aon-agenda-all-days .event {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+aon-agenda-all-days .event .time {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-right: 6px;
+}
+
+/* ---------- States ---------- */
+
+aon-agenda-all-days .event.in {
+  background: #e6f4ea;
+  color: #137333;
+}
+
+aon-agenda-all-days .event.out {
+  background: #fce8e6;
+  color: #a50e0e;
+}
+
+aon-agenda-all-days .event.pause {
+  background: #fef7e0;
+  color: #b06000;
+}
+
+/* ---------- Loading ---------- */
+
+aon-agenda-all-days .loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 14px;
+  color: #70757a;
+}
