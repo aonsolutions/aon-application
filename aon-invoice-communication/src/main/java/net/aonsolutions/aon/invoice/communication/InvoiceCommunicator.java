@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
@@ -70,11 +71,46 @@ public class InvoiceCommunicator {
 	// *************************************************************
 	public static HashMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> history(Occam occam, Integer invoiceId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return history(ctx, occam.getDomain(), invoiceId);
+			Invoice invoice = InvoiceDAO.getInvoice(ctx, invoiceId);
+			if (invoice == null) return new HashMap<>();
+			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, occam.getDomain() );
+			return history(ctx, icc, invoice);
+		}
+		
+	}
+
+	public static HashMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> history(AONContext ctx, Integer domain, Integer invoiceId) {
+		Invoice invoice = InvoiceDAO.getInvoice(ctx, invoiceId);
+		if (invoice == null) return new HashMap<>();
+		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, domain );
+		return history(ctx, icc, invoice);
+	}
+
+	public static HashMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> history(
+		Occam occam
+		, Integer invoiceId
+		, InvoiceType invoiceType
+		, Date expDate) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, occam.getDomain() );
+			return history(ctx, icc, occam.getDomain(), invoiceId, invoiceType, expDate);
 		}
 	}
 	
-	public static HashMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> history(AONContext ctx, final Integer domainId, final Integer invoiceId ) {
+	public static HashMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> history(
+			AONContext ctx
+			, final InvoiceCommunicationConfiguration icc
+			, final Invoice invoice) {
+		return history(ctx, icc, invoice.getDomain(), invoice.getId(), invoice.getType(), invoice.getExpDate());
+	}
+			
+	private static HashMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> history(
+			AONContext ctx
+			, final InvoiceCommunicationConfiguration icc
+			, final Integer domainId
+			, final Integer invoiceId
+			, InvoiceType invoiceType
+			, Date expDate) {
 		List<InvoiceCommunicationHistory> history = InvoiceCommunicationDAO.getHistory(ctx, invoiceId, t -> {
 			try {
 				t.getType().visit( new InvoiceCommunicationTypeVisitor() {
@@ -103,7 +139,7 @@ public class InvoiceCommunicator {
 		});
 		
 		HashMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> map = new HashMap<>();
-		AonCollectionUtils.stream( InvoiceInfoDAO.getMap(ctx, domainId, invoiceId).orElse(null) )
+		AonCollectionUtils.stream( InvoiceInfoDAO.getMap(ctx, icc, domainId, invoiceId, invoiceType, expDate).orElse(null) )
 			.forEach( e -> map.put(e.getKey(), new InvoiceCommunicationHistoryMapValue().setInfo(e.getValue())));
 		AonCollectionUtils.stream(history)
 			.forEach(t -> {
@@ -123,9 +159,9 @@ public class InvoiceCommunicator {
 				v.add(t);
 			})
 		;
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, domainId);
-		if (config.isTbai() && !config.isBizkaia()) {	
-			TbaiData.getInstance(config).get(ctx, domainId, invoiceId)
+		
+		if (icc.isTbai(expDate, invoiceType) && !icc.isBizkaia(expDate)) {	
+			TbaiData.getInstance(icc).get(ctx, domainId, invoiceId)
 				.ifPresent(tbaiInfo -> addTBAI(ctx, map, tbaiInfo, domainId, invoiceId));
 		}  
 		return map;

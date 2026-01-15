@@ -331,7 +331,7 @@ public class InvoiceDAO {
 			}
 			
 			invoice.setDoc(InvoiceDocDAO.get(ctx, invoice.getDomain(), invoice.getId()).orElse(null));
-			invoice.addCommunicationInfo(InvoiceInfoDAO.getMap(ctx, invoice.getDomain(), invoice.getId()).orElse(null));
+			invoice.addCommunicationInfo(InvoiceInfoDAO.getMap(ctx, invoice).orElse(null));
 		}
 		return invoice;
 	}

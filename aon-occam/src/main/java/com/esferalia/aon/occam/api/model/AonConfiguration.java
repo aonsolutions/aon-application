@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Optional;
 
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.config.AccountingConfig;
@@ -356,6 +357,9 @@ public class AonConfiguration implements Serializable {
 		return accounting;
 	}
 	
+	public Optional<InvoiceCommunicationConfiguration> optCommunicationConfig() {
+		return Optional.ofNullable(communicationConfig);
+	}
 	public InvoiceCommunicationConfiguration getCommunicationConfig() {
 		return communicationConfig;
 	}

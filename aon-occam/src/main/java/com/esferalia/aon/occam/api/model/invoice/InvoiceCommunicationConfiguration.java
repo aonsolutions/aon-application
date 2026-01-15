@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
@@ -197,15 +198,33 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	
 	// COMUNICATION FUNCTIONS
 
-	private boolean is(List<EnterpriseData> history, Date date) {
+	/**
+	 * Determina si una configuración de empresa está en rango para una fecha dada.
+	 * La fecha de inicio debe ser anterior o igual a la fecha dada y la fecha de fin debe ser posterior a la fecha dada o nula.
+	 */
+	private boolean inRange(EnterpriseData d, Date atDate) {
+		if (d == null || atDate == null) return false;
+		return d.getStartDate() != null 
+			&& !atDate.before(d.getStartDate())
+			&& (d.getEndDate() == null || d.getEndDate().after(atDate))
+		;
+	}
+	private boolean is(List<EnterpriseData> history, Date atDate) {
 		return history != null && !history.isEmpty()
-				&& history.stream().anyMatch(d -> 
-					d.getStartDate() != null && d.getStartDate().before(date)
-					&& (d.getEndDate() == null || d.getEndDate().after(date)));
+			&& history.stream().anyMatch(d -> inRange(d,atDate)); 
 	}
 	
 	private boolean is(EnterpriseData data) {
 		return data != null && data.getId() != null && (data.getEndDate() == null || data.getEndDate().after(new Date()));
+	}
+
+	public Administration getAdministration(Date atDate) {
+		return AonCollectionUtils.stream(getAdministrationHistory())
+			.filter(d -> inRange(d,atDate))
+			.map(d -> Administration.safeValueOf(d.getExpression()))
+			.filter(a -> a != null)
+			.findFirst()
+			.orElse(Administration.UNKNOWN);
 	}
 	
 	private boolean isTest(EnterpriseData data) {
@@ -1069,6 +1088,41 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		return types;
 	}
 	
+	public List<InvoiceCommunicationType> getTypes(Date atDate) {
+		return getTypes(InvoiceType.SALES, atDate);
+	}
+	public List<InvoiceCommunicationType> getTypes(InvoiceType invoiceType ,Date atDate) {
+		LinkedList<InvoiceCommunicationType> types = new LinkedList<>();
+
+		if(invoiceType.isSales() && isNoSif(atDate)) return types;
+		
+		if(invoiceType.isSales() && isTbai(atDate) && (isAraba(atDate) || isGipuzkoa(atDate))) {
+			types.add(InvoiceCommunicationType.TBAI);
+		} 
+		
+		if(isLroe(atDate) && isBizkaia(atDate)) {
+			types.add(InvoiceCommunicationType.LROE);
+		} 
+		
+		if(invoiceType.isSales() && isVerifactu(atDate) && (isAEAT(atDate) || isCanarias(atDate) || isUnknown(atDate))) {
+			types.add(InvoiceCommunicationType.VERIFACTU);
+		} 
+		
+		if(isSii(atDate) && (isAEAT(atDate) || isCanarias(atDate) || isUnknown(atDate) || isNavarra(atDate) 
+			|| (!invoiceType.isSales() && (isAraba(atDate) || isGipuzkoa(atDate))))) {
+			types.add(InvoiceCommunicationType.SII);
+		} 
+		
+		if(invoiceType.isSales() && isNoVerifactu(atDate) && (isAEAT(atDate) || isCanarias(atDate) || isUnknown(atDate))) {
+			types.add(InvoiceCommunicationType.NO_VERIFACTU);
+		} 
+		
+		if(isSif(atDate)) {
+			types.add(InvoiceCommunicationType.SIF);
+		}
+		
+		return types;
+	}
 	/**
 	 * Determina si existen tipos de comunicación de facturas emitadas activos.
 	 * @return true si existen tipos de comunicación de facturas emitidas activos, false en caso contrario.
@@ -1094,4 +1148,19 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	public boolean isCanarias() {return administration == Administration.CANARIAS;}
 	public boolean isUnknown() {return administration == null || administration == Administration.UNKNOWN;}
 
+	private List<EnterpriseData> getAdministrationHistory(Administration admon) {
+		return AonCollectionUtils.stream(getAdministrationHistory())
+			.filter(d -> admon == Administration.safeValueOf(d.getExpression()))
+			.collect(Collectors.toList());
+		
+	}
+	
+	public boolean isBizkaia(Date atDate) 	{return is( getAdministrationHistory(Administration.BIZKAIA), atDate);}
+	public boolean isAraba(Date atDate) 	{return is( getAdministrationHistory(Administration.ALAVA), atDate);}
+	public boolean isGipuzkoa(Date atDate) 	{return is( getAdministrationHistory(Administration.GIPUZKOA), atDate);}
+	public boolean isNavarra(Date atDate) 	{return is( getAdministrationHistory(Administration.NAVARRA), atDate);}
+	public boolean isAEAT(Date atDate) 		{return is( getAdministrationHistory(Administration.COMMON_TERRITORY), atDate);}
+	public boolean isCanarias(Date atDate) 	{return is( getAdministrationHistory(Administration.CANARIAS), atDate);}
+	public boolean isUnknown(Date atDate) 	{return is( getAdministrationHistory(Administration.UNKNOWN), atDate);}
+	
 }

@@ -312,11 +312,18 @@ public class InvoiceValidation {
 	 * Las facturas enviadas a Ticket Bai y que no se han dado de baja en Ticket Bai no se pueden borrar.
 	 */
 	private static final Consumer<InvoiceValidationContext> TBAI = ivc -> {
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ivc.ctx, ivc.inv.getDomain() );
-		if (config.isTbai()) {
+		InvoiceCommunicationConfiguration icc = ivc.config.getCommunicationConfig();
+		if (icc.isTbai()) {
 			boolean accepted = true;
-			if(config.isBizkaia()) {
-				accepted = InvoiceInfoDAO.getMap(ivc.ctx, ivc.inv.getDomain(), ivc.inv.getId())
+			if(icc.isBizkaia()) {
+				accepted = InvoiceInfoDAO.getMap(
+						ivc.ctx
+						, icc 
+						, ivc.inv.getDomain()
+						, ivc.inv.getId()
+						, ivc.inv.getType()
+						, ivc.inv.getExpDate()
+						)
 					.map( ic -> ic.get(InvoiceCommunicationType.LROE) )
 					.filter( Objects::nonNull )
 					.map(info -> info.isAccepted() || info.isAcceptedWithErrors())
@@ -336,9 +343,16 @@ public class InvoiceValidation {
 	 * Las facturas enviadas a Verifactu y que no se han dado de baja en Verifactu no se pueden borrar.
 	 */
 	private static final Consumer<InvoiceValidationContext> VERIFACTU = ivc -> {
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ivc.ctx, ivc.inv.getDomain() );
-		if(config.isVerifactu()) {
-			boolean accepted = InvoiceInfoDAO.getMap(ivc.ctx, ivc.inv.getDomain(), ivc.inv.getId())
+		InvoiceCommunicationConfiguration icc = ivc.config.getCommunicationConfig();
+		if(icc.isVerifactu()) {
+			boolean accepted = InvoiceInfoDAO.getMap(
+					ivc.ctx
+					, icc 
+					, ivc.inv.getDomain()
+					, ivc.inv.getId()
+					, ivc.inv.getType()
+					, ivc.inv.getExpDate()
+				)
 				.map( ic -> ic.get(InvoiceCommunicationType.VERIFACTU) )
 				.filter( Objects::nonNull )
 				.map(info -> info.isAccepted() || info.isAcceptedWithErrors())
