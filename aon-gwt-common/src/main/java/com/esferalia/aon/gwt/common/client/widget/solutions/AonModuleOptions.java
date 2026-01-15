@@ -1,9 +1,11 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.google.gwt.user.client.ui.HasWidgets;
 
 public class AonModuleOptions<T extends AonModuleOptions<T>> implements Serializable {
@@ -57,6 +59,13 @@ public class AonModuleOptions<T extends AonModuleOptions<T>> implements Serializ
 
 	public AonConfiguration getConfiguration() {
 		return configuration;
+	}
+	public Optional<AonConfiguration> optConfiguration() {
+		return Optional.ofNullable( configuration );
+	}
+
+	public Optional<InvoiceCommunicationConfiguration> getCommunicationConfiguration() {
+		return optConfiguration().flatMap( c -> c.optCommunicationConfig());
 	}
 
 	@SuppressWarnings("unchecked")

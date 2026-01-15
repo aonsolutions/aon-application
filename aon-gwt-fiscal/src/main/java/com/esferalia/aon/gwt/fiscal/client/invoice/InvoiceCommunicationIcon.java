@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.invoice;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAdministrationVisitor;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus.InvoiceCommunicationStatusVisitor;
@@ -13,35 +14,47 @@ import com.google.gwt.user.client.ui.InlineLabel;
 
 class InvoiceCommunicationIcon extends InlineLabel {
 	
-	public InvoiceCommunicationIcon(InvoiceModuleOptions options, InvoiceCommunicationType type, InvoiceCommunicationStatus status) {
+	public InvoiceCommunicationIcon(InvoiceModuleOptions options, Invoice invoice, InvoiceCommunicationType type, InvoiceCommunicationStatus status) {
 		super();
-		boolean hasAdminitration = (options.getConfiguration() == null 
-			|| options.getConfiguration().getCommunicationConfig()==null
-			|| options.getConfiguration().getCommunicationConfig().getAdministration()==null
-		);
-		Administration admon = hasAdminitration ? options.getConfiguration().getCommunicationConfig().getAdministration() : Administration.COMMON_TERRITORY;
-		initIcon(admon, type, status);
-	}
-	
-	InvoiceCommunicationIcon(Administration admon, InvoiceCommunicationType type, InvoiceCommunicationStatus status) {
-		super();
-		initIcon(admon, type, status);
+		if (type == null && status == null) {
+			setTitle(AON.MSG.noCommunication());
+			setStyleName(AON.CSS.aonLabelWithIcon());
+			addStyleName(AON.CSS.aonIconLock());
+		} else {
+			boolean emptyAdministration = (options.getConfiguration() == null 
+					|| options.getConfiguration().getCommunicationConfig()==null
+					|| options.getConfiguration().getCommunicationConfig().getAdministration()==null
+					);
+			Administration admon = emptyAdministration 
+				? Administration.UNKNOWN
+				: options.getConfiguration().getCommunicationConfig().getAdministration(invoice.getExpDate()) 
+			;
+			initIcon(admon, type, status);
+		}
 	}
 	
 	private void initIcon(Administration admon, InvoiceCommunicationType type, InvoiceCommunicationStatus status) {
 		StringBuilder title = new StringBuilder();
-		if (type != null) title.append(type.name());
+		if (type != null) title.append( type.getAbbr() );
 		if (status != null) {
 			if (title.length() > 0) title.append(" - ");
-			title.append(status.name());
+			title.append( getStatusDescription( type, status));
 		}
 		setTitle(title.toString());
+		
 		setStyleName(AON.CSS.aonLabelWithIcon());
 		if (type == null) {
 			addStyleName(AON.CSS.aonIconUnknown());
 		} else {
 			decorateIcon(type, admon, status);
 		}
+	}
+
+	private String  getStatusDescription(InvoiceCommunicationType type, InvoiceCommunicationStatus status) {
+		if (type == InvoiceCommunicationType.NO_VERIFACTU && status == InvoiceCommunicationStatus.PENDING) {
+			return "Emitida/No comunicada";
+		}
+		return status == null ? InvoiceCommunicationStatus.PENDING.getDescription() : status.getDescription();
 	}
 
 	private void decorateIcon(InvoiceCommunicationType type, Administration admon, InvoiceCommunicationStatus status) {
@@ -66,7 +79,18 @@ class InvoiceCommunicationIcon extends InlineLabel {
 				
 				@Override
 				public void visitNO_VERIFACTU() throws InvoiceCommunicationException {
-					visitVERIFACTU();
+					if ( status == null ) {
+						addStyleName(AON.CSS.aonIconAeatYellow());
+					} else {
+						status.accept(new InvoiceCommunicationStatusVisitor() {
+							@Override public void visitPending() {addStyleName( AON.CSS.aonIconAeatOrange());}
+							@Override public void visitAccepted() {addStyleName( AON.CSS.aonIconAeatGreen());}
+							@Override public void visitAcceptedWithErrors() {addStyleName( AON.CSS.aonIconAeatGreen());}
+							@Override public void visitWrong() {addStyleName( AON.CSS.aonIconAeatRed());}
+							@Override public void visitCancelled() {addStyleName( AON.CSS.aonIconAeatBw());}
+							@Override public void visitExternallyCommunicated() {addStyleName( AON.CSS.aonIconAeatBlue());}
+						});
+					}
 				}
 
 				@Override

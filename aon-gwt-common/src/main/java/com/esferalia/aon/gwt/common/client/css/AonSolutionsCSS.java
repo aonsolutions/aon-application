@@ -447,6 +447,18 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_send_cancel")
 	String aonIconSendCancel();
 	
+	@ClassName("aon_icon_send_cancel_red")
+	String aonIconSendCancelRed();
+
+	@ClassName("aon_icon_send_archive")
+	String aonIconSendArchive();
+
+	@ClassName("aon_icon_send_sif")
+	String aonIconSendSif();
+
+	@ClassName("aon_icon_send_pending")
+	String aonIconSendPending();
+	
 	@ClassName("aon_icon_attach")
 	String aonIconAttach();
 	
@@ -573,6 +585,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_aeat_orange")
 	String aonIconAeatOrange();
 
+	@ClassName("aon_icon_aeat_yellow")
+	String aonIconAeatYellow();
+	
 	@ClassName("aon_icon_aeat_red")
 	String aonIconAeatRed();
 

@@ -36,9 +36,9 @@ public class InvoiceInfoHistoryPanel extends SimpleLayoutPanel implements HasVal
 		SERVICE = new InvoiceServiceAsyncDecorator(serviceRaw);
 	}
 	
-	public InvoiceInfoHistoryPanel(InvoiceModuleOptions options, InvoiceInfo info) {
+	public InvoiceInfoHistoryPanel(InvoiceModuleOptions options, Invoice invoice, InvoiceInfo info) {
 		super();
-		setWidget( getDetails(options, info) );
+		setWidget( getDetails(options, invoice, info) );
 	}
 	
 	@Override
@@ -49,14 +49,14 @@ public class InvoiceInfoHistoryPanel extends SimpleLayoutPanel implements HasVal
 		ValueChangeEvent.<Invoice>fire(InvoiceInfoHistoryPanel.this, invoice );
 	}
 	
-	private Widget getDetails(InvoiceModuleOptions options, InvoiceInfo invoiceInfo) {
+	private Widget getDetails(InvoiceModuleOptions options, Invoice invoice, InvoiceInfo invoiceInfo) {
 		SimpleLayoutPanel basePanel = new SimpleLayoutPanel();
 		ScrollPanel scroll = new ScrollPanel();
 		basePanel.setWidget(scroll);
 		FlowPanel container = new FlowPanel();
 		scroll.setWidget(container);
 
-		SERVICE.communicationHistory(options.getOccam(), invoiceInfo.getInvoice(), new AsyncCallback<HashMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue>>() {
+		SERVICE.communicationHistory(options.getOccam(), invoice.getId(), new AsyncCallback<HashMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue>>() {
 			@Override
 			public void onSuccess(HashMap<InvoiceCommunicationType,InvoiceCommunicationHistoryMapValue> map) {
 				if ( AonCollectionUtils.isEmpty(map) ) {
@@ -66,7 +66,7 @@ public class InvoiceInfoHistoryPanel extends SimpleLayoutPanel implements HasVal
 				AonCollectionUtils.stream(map)
 					.filter( entry -> entry.getKey() == invoiceInfo.getType() )
 					.findFirst()
-					.ifPresent( entry -> container.add( getTypePanel(options, entry.getKey(), entry.getValue())));
+					.ifPresent( entry -> container.add( getTypePanel(options, invoice, entry.getKey(), entry.getValue())));
 			}
 
 
@@ -81,7 +81,7 @@ public class InvoiceInfoHistoryPanel extends SimpleLayoutPanel implements HasVal
 	}
 	
 	
-	private Widget getTypePanel(InvoiceModuleOptions options, InvoiceCommunicationType type, InvoiceCommunicationHistoryMapValue map) {
+	private Widget getTypePanel(InvoiceModuleOptions options, Invoice invoice, InvoiceCommunicationType type, InvoiceCommunicationHistoryMapValue map) {
 		InvoiceInfo info = map.getInfo();
 		
 		FlowPanel mainPanel = new FlowPanel();
@@ -96,7 +96,7 @@ public class InvoiceInfoHistoryPanel extends SimpleLayoutPanel implements HasVal
 			FlowPanel typePanel = new FlowPanel();
 			typePanel.setStyleName(AON.CSS.aonNowrap());
 			typePanel.addStyleName(AON.CSS.aonFlexBetween());
-				InlineLabel typeIconLabel = new InvoiceCommunicationIcon( options, type, info.getStatus() );
+				InlineLabel typeIconLabel = new InvoiceCommunicationIcon( options, invoice, type, info.getStatus() );
 				typePanel.add(typeIconLabel);
 			
 				InlineLabel typeLabel = new InlineLabel( type.name() );

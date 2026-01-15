@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.invoice.console;
 
 import java.util.HashMap;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -60,6 +61,10 @@ class InvoiceConsoleSelectionHandler extends FlowPanel implements HasValueChange
 			refresh();
 			fireEvent( new ValueChangeEvent<Integer>( selectedCount() ) {} );
 		}
+	}
+
+	public Stream<Invoice> stream() {
+		return AonCollectionUtils.valuesStream( selectedInvoices );
 	}
 
 

@@ -7,25 +7,25 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceCommunicationType implements Serializable {
  
-	SII ("S.I.I.","Suministro Inmediato de Información")
+	SII ("S.I.I.","Suministro Inmediato de Informaci\u00F3n")
 	{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSII();}},
 	TBAI ("Ticket BAI","Ticket BAI")
 		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitTBAI();}},
-	LROE ("L.R.O.E.","Libro Registro de Operaciones Económicas") 
+	LROE ("L.R.O.E.","Libro Registro de Operaciones Econ\u00F3micas") 
 		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitLROE();}},
-	SERES ("SERES","Plataforma de Intercambio Electrónico de Documentos") 
+	SERES ("SERES","Plataforma de Intercambio Electr\u00F3nico de Documentos") 
 		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSERES();}},
-	EMAIL ("Envío Mail","Envío por correo electrónico") 
+	EMAIL ("Env\u00EDo Mail","Env\u00EDo por correo electr\u00F3nico") 
 		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitEMAIL();}},
-	CLOSING ("Cierre","Cierre de facturación") 
+	CLOSING ("Cierre","Cierre de facturaci\u00F3n") 
 		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitCLOSING();}},
 	VERIFACTU ("Verifactu","Plataforma Verifactu") 
 		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitVERIFACTU();}},
 	NO_VERIFACTU ("No Verifactu","Plataforma No Verifactu")
 		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitNO_VERIFACTU();}},
-	SIF ("S.I.F.","Sistema de Informatico de facturación")
+	SIF ("S.I.F.","Sistema de Informatico de facturaci\u00F3n")
 		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSIF();}},
-	FACTURAE ("FacturaE","Factura Electrónica") 
+	FACTURAE ("FacturaE","Factura Electr\u00F3nica") 
 		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitFACTURAE();}}
 	;
 	

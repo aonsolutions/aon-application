@@ -14,9 +14,9 @@ import com.esferalia.aon.watson.util.Pair;
 public class ApiImpl implements IApi {
 
 	@Override
-	public Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter) {
+	public Stream<Invoice> getInvoices(AONContext ctx, Integer domain, InvoiceFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceApiDAO.getInvoices(ctx, filter));
+				configuration -> InvoiceApiDAO.getInvoices(ctx, domain, filter));
 	}
 	
 	@Override
