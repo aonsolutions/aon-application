@@ -1446,7 +1446,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- REGISTRY (Date USER)
 		if(this.invoice.isEmitida()) {
-			let customer = new AonCustomerSuggestion();	
+			let customer = new AonCustomerSuggestion();
 			customer.id = this.REGISTRY;
 			customer.showAddress = true;
 			customer.readonly = this.invoice.isReadonly();

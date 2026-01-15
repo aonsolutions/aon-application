@@ -171,93 +171,101 @@ export class AonRegistrySuggestion extends AonElement {
   }
 
   buildGeneral() {
-    let table = new AonBasicTable();
-    table.id = this.GENERAL_TABLE;
-    this.appendChild(table);
-    this.getElement(table.TABLE).style.borderSpacing = '0px';
-    table.addRow();
+  let table = new AonBasicTable();
+  table.id = this.GENERAL_TABLE;
+  this.appendChild(table);
+  this.getElement(table.TABLE).style.borderSpacing = '0px';
+  table.addRow();
 
-    let div = this.createElement(TAG.DIV);
-    div.className = this.isMobile() ? CSS.AON_BLOCK : CSS.AON_FLEX;
-    let td = table.addCell(div);
-    td.style.width = '100%';
+  let div = this.createElement(TAG.DIV);
+  div.className = this.isMobile() ? CSS.AON_BLOCK : CSS.AON_FLEX;
+  let td = table.addCell(div);
+  td.style.width = '100%';
 
-    let span0 = this.createElement(TAG.SPAN);
-    span0.style.width="20%";
-    span0.style.marginRight = "2px";
-    div.appendChild(span0);
+  // -----------------------------
+  // NIF
+  // -----------------------------
+  let span0 = this.createElement(TAG.SPAN);
+  span0.style.width = "25%";
+  span0.style.marginRight = "2px";
+  div.appendChild(span0);
 
-    let country = createSelect(this.DOCUMENT_COUNTRY, MSG.COUNTRY);
-    country.autocomplete = true;
-    country.options = JSON.stringify(
-      Countries.map((c) => {
-        return { value: c.iso2, name: c.nombre };
-      })
-    );
-    country.readonly = this.isReadonly();
-    country.value = this.registry.documentCountry || 'ES';
-    country.addEventListener(EVENT.SELECT, () => {
-      this.registry.documentCountry = country.value;
-      this.dispatchEvent(new Event(EVENT.CHANGE));
-    });
-    span0.appendChild(country);
-    if(this.registry.id) country.disabled = true;
+  let document = createSuggestion(this.DOCUMENT, MSG.NIF);
+  document.readonly = this.isReadonly();
+  document.value = this.registry.document;
+  document.addEventListener(EVENT.KEYUP, (e) => this.onKeyupDocument(e, document.value));
+  document.addEventListener(EVENT.CHANGE, () => this.onChangeDocument(document.value));
+  span0.appendChild(document);
+  if (this.registry.id) document.disabled = true;
 
-    let span1 = this.createElement(TAG.SPAN);
-    span1.style.width="25%";
-    span1.style.marginRight = "2px";
-    div.appendChild(span1);
+  // -----------------------------
+  // Razón social
+  // -----------------------------
+  let span1 = this.createElement(TAG.SPAN);
+  span1.style.width = "55%";
+  div.appendChild(span1);
 
-    let document = createSuggestion(this.DOCUMENT, MSG.NIF);
-    document.readonly = this.isReadonly();
-    document.value = this.registry.document;
-    document.addEventListener(EVENT.KEYUP, (e) => this.onKeyupDocument(e, document.value));
-    document.addEventListener(EVENT.CHANGE, () => this.onChangeDocument(document.value));
-    span1.appendChild(document);
-    if(this.registry.id) document.disabled = true;
+  let name = createSuggestion(this.NAME, MSG.BUSINESS_NAME);
+  name.name = CONSTANT.NAME;
+  name.value = this.registry.name;
+  name.readonly = this.isReadonly();
+  name.addEventListener(EVENT.KEYUP, (e) => this.onKeyupName(e, name.value));
+  name.addEventListener(EVENT.CHANGE, () => this.onChangeName(name.value));
+  span1.appendChild(name);
+  if (this.registry.id) name.disabled = true;
 
-    let span2 = this.createElement(TAG.SPAN);
-    span2.style.width="55%";
-    div.appendChild(span2);
+  // -----------------------------
+  // Pais
+  // -----------------------------
+  let span2 = this.createElement(TAG.SPAN);
+  span2.style.width = "20%";
+  span2.style.marginRight = "2px";
+  div.appendChild(span2);
 
-    let name =  createSuggestion(this.NAME, MSG.BUSINESS_NAME);
-    name.name = CONSTANT.NAME;
-    name.value = this.registry.name;
-    name.readonly = this.isReadonly();
-    name.addEventListener(EVENT.KEYUP, (e) => this.onKeyupName(e, name.value));
-    name.addEventListener(EVENT.CHANGE, () => this.onChangeName(name.value));
-    span2.appendChild(name);
-    if(this.registry.id) name.disabled = true;
+  let country = createSelect(this.DOCUMENT_COUNTRY, MSG.COUNTRY);
+  country.autocomplete = true;
+  country.options = JSON.stringify(
+    Countries.map((c) => ({ value: c.iso2, name: c.nombre }))
+  );
+  country.readonly = this.isReadonly();
+  country.value = this.registry.documentCountry || 'ES';
+  country.addEventListener(EVENT.SELECT, () => {
+    this.registry.documentCountry = country.value;
+    this.dispatchEvent(new Event(EVENT.CHANGE));
+  });
+  span2.appendChild(country);
+  if (this.registry.id) country.disabled = true;
 
-    let removeRegistry = new AonIconButton();
-    removeRegistry.id = this.REMOVE_REGISTRY;
-    removeRegistry.title = MSG.DELETE;
-    removeRegistry.icon = MATERIAL_ICONS.HIGHLIGHT_OFF;
-    removeRegistry.style.paddingTop = '13px';
-    removeRegistry.style.marginRight = '3px';
-    removeRegistry.style.marginLeft = '4px';
-    removeRegistry.style.display = !this.isReadonly() && this.registry.id ? 'block' : 'none';
-    removeRegistry.addEventListener(EVENT.CLICK, () => {
-      this.registry = {};
-      country.value = 'ES';
-      country.disabled = false;
-      name.value = '';
-      name.disabled = false;
-      document.value = '';
-      document.disabled = false;
-      removeRegistry.style.display = 'none';
-      this.clearAddress();
-      this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
-    });
-    table.addCell(removeRegistry);
+  // -----------------------------
+  // Remove
+  // -----------------------------
+  let removeRegistry = new AonIconButton();
+  removeRegistry.id = this.REMOVE_REGISTRY;
+  removeRegistry.title = MSG.DELETE;
+  removeRegistry.icon = MATERIAL_ICONS.HIGHLIGHT_OFF;
+  removeRegistry.style.paddingTop = '13px';
+  removeRegistry.style.marginRight = '3px';
+  removeRegistry.style.marginLeft = '4px';
+  removeRegistry.style.display = !this.isReadonly() && this.registry.id ? 'block' : 'none';
+  removeRegistry.addEventListener(EVENT.CLICK, () => {
+    this.registry = {};
+    country.value = 'ES';
+    country.disabled = false;
+    name.value = '';
+    name.disabled = false;
+    document.value = '';
+    document.disabled = false;
+    removeRegistry.style.display = 'none';
+    this.clearAddress();
+    this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
+  });
+  table.addCell(removeRegistry);
 
-    let options = this.createElement(TAG.DIV);
-		options.id = this.OPTIONS;
-    options.classList.add(CSS.AON_INPUT_LIST_OPTIONS, 'suggestion-list');
-    options.style.width = div.clientWidth;
-    options.style.marginTop = "-16px";
-		this.appendChild(options);
-  }
+  let options = this.createElement(TAG.DIV);
+  options.id = this.OPTIONS;
+  options.classList.add(CSS.AON_INPUT_LIST_OPTIONS, 'suggestion-list');
+  this.appendChild(options);
+}
 
   clearAddress() {
     let div = this.getElement(this.ADDRESS_DIV);
