@@ -236,6 +236,7 @@ public class InvoiceFiscalDAO {
 			.set(INVOICE_FISCAL.DOMAIN, invFiscal.getDomain() )
 			.set(INVOICE_FISCAL.ISSUE_DATE, AonDateUtils.toSql(invFiscal.getIssueDate()))
 			.set(INVOICE_FISCAL.TAX_DATE, AonDateUtils.toSql(invFiscal.getTaxDate()))
+			.set(INVOICE_FISCAL.EXP_DATE, AonDateUtils.toSql(invFiscal.getExpDate()))
 			.set(INVOICE_FISCAL.VAT_GENERAL, AonEnumUtils.getByte( invFiscal.isVatRegimeEnabled(VATTaxRegime.VAT_GENERAL)))
 			.set(INVOICE_FISCAL.VAT_SURCHARGE, AonEnumUtils.getByte( invFiscal.isVatRegimeEnabled(VATTaxRegime.VAT_SURCHARGE)))
 			.set(INVOICE_FISCAL.VAT_SIMPLIFIED, AonEnumUtils.getByte( invFiscal.isVatRegimeEnabled(VATTaxRegime.VAT_SIMPLIFIED)))
