@@ -351,7 +351,7 @@ public class JooqContractPDF {
 				extensionInfo.put("Cifra8", municipalityCode.substring(4, 5));
 			}
 			
-			if(null != zip) {
+			if(null != zip && AonStringUtils.length(zip) > 4) {
 				extensionInfo.put("Cifra9", zip.substring(0, 1));
 				extensionInfo.put("Cifra10", zip.substring(1, 2));
 				extensionInfo.put("Cifra11", zip.substring(2, 3));

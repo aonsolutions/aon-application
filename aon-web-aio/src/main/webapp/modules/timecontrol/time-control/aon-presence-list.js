@@ -165,7 +165,7 @@ export class AonPresenceList extends AonElement {
       aonTable.addColumn("", "string", "lettersHtml", "5%");
       aonTable.addColumn(MSG.NAME, "string", "name", "33%");
       aonTable.addColumn(MSG.LAST_STATUS, "", "lastStatus", "32%");
-      aonTable.addColumn("Motivo", "string", "reason", "10%");
+      aonTable.addColumn("Tipo", "string", "reason", "10%");
       aonTable.addColumn(MSG.DURATION, "", "duration", "5%");
       aonTable.addColumn(MSG.LAST_LOCATION, "string", "nameLocation", "15%");
       try {
@@ -294,7 +294,11 @@ export class AonPresenceList extends AonElement {
               });
             }
           );
+          
+          //data = data.filter(d => d.duration != "00:00");
+          
           this._list = data;
+          //console.log('aonPresenceList', data);
           if(this.searchFilter) data = this.filterSearch(["name", "nameLocation"], data);
         }
       }

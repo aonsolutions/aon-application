@@ -23,6 +23,7 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import  org.jooq.Record;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -135,8 +136,7 @@ public class CustomerDAO {
 		       .and(RADDINFO.ATTRIBUTE.like("AON_DOMAIN%"))
 		).as("has_domain");
 	
-	private static SelectConditionStep<Record> select(AONContext ctx, CustomerFilter filter) {
-		
+	private static SelectOnConditionStep<Record> select(AONContext ctx) {
 		return ctx.getDslContext()
 	            .selectDistinct(CUSTOMER.fields())
 	            .select(REGISTRY.fields())
@@ -147,16 +147,34 @@ public class CustomerDAO {
 	        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
 	        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
 	        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
-	        .leftOuterJoin(RRELATIONSHIP).on(RRELATIONSHIP.REGISTRY.eq(REGISTRY.ID).and(RRELATIONSHIP.RELATIONSHIP.eq(-1)))
-	        .where(CUSTOMER_PROPERTIES.getConditions(filter));
+	        .leftOuterJoin(RRELATIONSHIP).on(RRELATIONSHIP.REGISTRY.eq(REGISTRY.ID).and(RRELATIONSHIP.RELATIONSHIP.eq(-1)));
 		
 	}
 	
+	private static SelectConditionStep<Record> select(AONContext ctx, CustomerFilter filter) {
+		return select(ctx)
+			.where(CUSTOMER_PROPERTIES.getConditions(filter));
+		
+	}
+
 	public static Stream<Customer> getStream(AONContext ctx, CustomerFilter filter){
 		return select(ctx,filter)
 			.fetch()
 			.stream()
 			.map(new CustomerFiller());
+	}
+	
+	public static Stream<Customer> getStreamSuggestion(AONContext ctx, Integer domainId, String query) {
+		return select(ctx)
+			.where(CUSTOMER.DOMAIN.eq(domainId))
+			.and( (REGISTRY.NAME.containsIgnoreCase(query))
+				.or(REGISTRY.ALIAS.containsIgnoreCase(query))
+				.or(REGISTRY.DOCUMENT.containsIgnoreCase(query))
+			)
+		.limit(50)	
+		.fetch()
+		.stream()
+		.map(new CustomerFiller());
 	}
 	
 	public static Stream<Customer> getStream(AONContext ctx, CustomerFilter filter, int offset, int limit){

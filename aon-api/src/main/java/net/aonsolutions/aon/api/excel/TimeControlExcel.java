@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlReason;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -369,7 +370,7 @@ public class TimeControlExcel {
 					cellStatus.setCellStyle(cellStyleDate);
 					
 					Cell cellReason = row.createCell(cells++);
-					cellReason.setCellValue(null == dt.getReason() ? "" : dt.getReason().getDescription());
+					cellReason.setCellValue(null == dt.getReason() ? "" : (dt.getReason().equals(TimeControlReason.DISPLACED) || dt.getReason().equals(TimeControlReason.OTHER_REASON) ? dt.getComments() : dt.getReason().getDescription()) );
 					cellReason.setCellStyle(cellStyleDate);
 					
 					Cell cellLocation = row.createCell(cells++);

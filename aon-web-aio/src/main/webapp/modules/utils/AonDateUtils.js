@@ -254,5 +254,76 @@ export const AonDateUtils = {
     const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
     const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
     return d1 >= d2;
+  },
+  
+  /**
+   *
+   * @param {Date} date
+   * @return {Date} Lunes de la semana
+   */
+  startOfWeek: function (d) {
+    const date = new Date(d);
+    const day = date.getDay() || 7; // Domingo = 7
+    if (day !== 1) {
+      date.setDate(date.getDate() - (day - 1));
+    }
+    date.setHours(0, 0, 0, 0);
+    return date;
+  },
+
+  /**
+   *
+   * @param {Date} date
+   * @return {String} DAY (LUN, MAR...)
+   */
+  dayName: function (d) {
+    const date = new Date(d);
+    return DAYS[date.getDay()];
+  },
+
+  /**
+   *
+   * @param {Date} date
+   * @return {String} MONTH
+   */
+  monthName: function (d) {
+    const date = new Date(d);
+    return MONTHS[date.getMonth()];
+  },
+
+  /**
+   *
+   * @param {Date} date
+   * @param {String} format
+   * @return {String}
+   */
+  format: function (d, format) {
+    if (!d) return "";
+
+    const date = new Date(d);
+    const day = addZero(date.getDate(), 2);
+    const month = addZero(date.getMonth() + 1, 2);
+    const year = date.getFullYear();
+
+    switch (format) {
+      case "YYYY-MM-DD":
+        return `${year}-${month}-${day}`;
+      case "DD/MM/YYYY":
+        return `${day}/${month}/${year}`;
+      default:
+        return this.formatDate(date);
+    }
+  },
+
+  /**
+   *
+   * @param {Date|Number} date
+   * @return {String} hh:mm
+   */
+  hour: function (d) {
+    const date = new Date(d);
+    const h = addZero(date.getHours(), 2);
+    const m = addZero(date.getMinutes(), 2);
+    return `${h}:${m}`;
   }
 }

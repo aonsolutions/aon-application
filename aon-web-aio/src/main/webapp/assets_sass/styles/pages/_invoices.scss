@@ -127,7 +127,7 @@ $panding-icon-table: calc(v.$input-height / 4);
           }
         }
       }
-      #aonInvoiceSheetCommunicationCardContent{
+      aon-invoice-communication{
         padding: v.$num-0;
         aon-basic-table{
           tr{

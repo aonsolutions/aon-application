@@ -8,6 +8,8 @@ import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Tax.TAX;
 import static com.esferalia.aon.occam.impl.jooq.dao.ItemCompositionDAO.COMPOSITION_ALIAS;
+import static com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.RETENTION_ALIAS;
+import static com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.VAT_ALIAS;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -27,6 +29,7 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
+import org.jooq.SelectOnConditionStep;
 
 import com.esferalia.aon.jooq.tables.records.RitemRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -45,6 +48,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.type.Priority;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemCompositionDAO.ItemCompositionFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RItemPropertiesDAO;
@@ -123,12 +127,16 @@ public class ItemDAO {
 	
 	// ----- SELECT
 
-	private static SelectConditionStep<Record> select(AONContext ctx, ItemFilter filter) {
+	private static SelectOnConditionStep<Record> select(AONContext ctx) {
 		 return ctx.getDslContext().select()
 			.from(ITEM)
 			.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-			.leftOuterJoin(TAX).on(PRODUCT.VAT.eq(TAX.ID))
-			.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
+			.leftOuterJoin(VAT_ALIAS).on(PRODUCT.VAT.eq(VAT_ALIAS.ID))
+			.leftOuterJoin(RETENTION_ALIAS).on(PRODUCT.RETENTION.eq(RETENTION_ALIAS.ID))
+			.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY));
+	}
+	private static SelectConditionStep<Record> select(AONContext ctx, ItemFilter filter) {
+		 return select(ctx)
 			.where(ITEM_PROPERTIES.getConditions(filter));
 	}
 	
@@ -200,6 +208,24 @@ public class ItemDAO {
 				.fetchStreamInto(RITEM);
 	}
 	
+	
+	public static Stream<Item> getStreamSuggestion(AONContext ctx, Integer domainId, String query) {
+		return getStreamSuggestion(ctx, domainId, query, ProductType.COMMERCIAL_PRODUCT);
+	}
+	public static Stream<Item> getStreamSuggestion(AONContext ctx, Integer domainId, String query, ProductType type) {
+		ctx.checkRead();
+		return select(ctx)
+			.where(ITEM.DOMAIN.eq(domainId))
+			.and( PRODUCT.TYPE.eq( type.value() ) )
+			.and( (PRODUCT.CODE.containsIgnoreCase(query))
+				.or(PRODUCT.NAME.containsIgnoreCase(query))
+				.or(ITEM.DETAIL.containsIgnoreCase(query))
+			)
+		.limit(50)	
+		.fetch()
+		.stream()
+		.map(new ItemFiller());
+	}
 	
 	private static Stream<Item> getStream(AONContext ctx, ItemFilter filter, Optional<Integer> page, Optional<Integer> perPage){
 		ctx.checkRead();

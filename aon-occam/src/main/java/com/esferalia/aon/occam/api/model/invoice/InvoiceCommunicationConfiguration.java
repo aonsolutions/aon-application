@@ -19,101 +19,131 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	// ADMINISTRATION
 	
 	/**
-	 * Listado histï¿½rico de administraciones.
+	 * Listado histórico de administraciones.
 	 */
 	private List<EnterpriseData>  administrationHistory;
 	
 	/**
-	 * Administraciï¿½n actual.
+	 * Administración actual.
 	 */
 	private Administration administration;
 
 	// TBAI
 	
 	/**
-	 * Listado histï¿½rico de configuraciones de TICKET BAI.
+	 * Listado histórico de configuraciones de TICKET BAI.
 	 */
 	private List<EnterpriseData> tbaiDataHistory;
 	
 	/**
-	 * Estado actual de la configuraciï¿½n de TICKET BAI.
+	 * Estado actual de la configuración de TICKET BAI.
 	 */
 	private EnterpriseData tbaiData;
+	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante TBAI en el ejercicio actual.
+	 */
+	private boolean tbaiInvoice;
 	
 	// LROE
 	
 	/**
-	 * Listado histï¿½rico de configuraciones de LROE.
+	 * Listado histórico de configuraciones de LROE.
 	 */
 	private List<EnterpriseData> lroeDataHistory;
 	
 	/**
-	 * Estado actual de la configuraciï¿½n de LROE.
+	 * Estado actual de la configuración de LROE.
 	 */
 	private EnterpriseData lroeData;
+	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante LROE en el ejercicio actual.
+	 */
+	private boolean lroeInvoice;
 
 	@Deprecated	private String lroeRegistryDate;
 	
 	// SII
 	
 	/**
-	 * Listado histï¿½rico de configuraciones de SII.
+	 * Listado histórico de configuraciones de SII.
 	 */
 	private List<EnterpriseData> siiDataHistory;
 	
 	/**
-	 * Estado actual de la configuraciï¿½n de SII.
+	 * Estado actual de la configuración de SII.
 	 */
 	private EnterpriseData siiData;
 
+	/**
+	 * Indica si la empresa ha enviado facturas mediante SII en el ejercicio actual.
+	 */
+	private boolean siiInvoice;
+	
 	@Deprecated	private String siiRegistryDate;
 	@Deprecated	private boolean prepareNewSii;
 	
 	// VERIFACTU
 
 	/**
-	 * Listado histï¿½rico de configuraciones de Verifactu.
+	 * Listado histórico de configuraciones de Verifactu.
 	 */
 	private List<EnterpriseData> verifactuDataHistory;
 
 	/**
-	 * Estado actual de la configuraciï¿½n de Verifactu.
+	 * Estado actual de la configuración de Verifactu.
 	 */
 	private EnterpriseData verifactuData;
+	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante VERIFACTU en el ejercicio actual.
+	 */
+	private boolean verifactuInvoice;
 	
 	// NO VERIFACTU
 
 	/**
-	 * Listado histï¿½rico de configuraciones de No Verifactu.
+	 * Listado histórico de configuraciones de No Verifactu.
 	 */
 	private List<EnterpriseData> noVerifactuDataHistory;
 	
 	/**
-	 * Estado actual de la configuraciï¿½n de No Verifactu.
+	 * Estado actual de la configuración de No Verifactu.
 	 */
 	private EnterpriseData noVerifactuData;
+	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante VERIFACTU en el ejercicio actual.
+	 */
+	private boolean noVerifactuInvoice;
 	
 	// SIF || LEY ANTIFRAUDE
 	
 	/**
-	 * Listado histï¿½rico de configuraciones de SIF (Sistema Informï¿½tico de Facturaciï¿½n).
+	 * Listado histórico de configuraciones de SIF (Sistema Informï¿½tico de Facturaciï¿½n).
 	 */
 	private List<EnterpriseData> sifDataHistory; 
 
 	/**
-	 * Estado actual de la configuraciï¿½n de SIF (Sistema Informï¿½tico de Facturaciï¿½n).
+	 * Estado actual de la configuración de SIF (Sistema Informï¿½tico de Facturaciï¿½n).
 	 */
 	private EnterpriseData sifData;
+	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante SIF en el ejercicio actual.
+	 */
+	private boolean sifInvoice;
 	
 	// NO SIF
 	
 	/**
-	 * Listado histï¿½rico de configuraciones de SIF (Sistema Informï¿½tico de Facturaciï¿½n).
+	 * Listado histórico de configuraciones de SIF (Sistema Informï¿½tico de Facturaciï¿½n).
 	 */
 	private List<EnterpriseData> noSifDataHistory; 
 
 	/**
-	 * Estado actual de la configuraciï¿½n de SIF (Sistema Informï¿½tico de Facturaciï¿½n).
+	 * Estado actual de la configuración de SIF (Sistema Informï¿½tico de Facturaciï¿½n).
 	 */
 	private EnterpriseData noSifData;
 	
@@ -125,7 +155,7 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	private Integer defaultCertificate;
 	
 	/**
-	 * Certificado para la comunicaciï¿½n de facturas.
+	 * Certificado para la comunicación de facturas.
 	 */
 	private Certificate certificate;
 	
@@ -148,16 +178,16 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	/**
-	 * Obtiene la administraciï¿½n actual.
-	 * @return Administraciï¿½n actual.
+	 * Obtiene la Administración actual.
+	 * @return Administración actual.
 	 */
 	public Administration getAdministration() {
 		return administration;
 	}
 	
 	/**
-	 * Establece la administraciï¿½n actual.
-	 * @param administration Administraciï¿½n actual.
+	 * Establece la Administración actual.
+	 * @param administration Administración actual.
 	 * @return Instancia actualizada de InvoiceCommunicationConfiguration.
 	 */
 	public InvoiceCommunicationConfiguration setAdministration(Administration administration) {
@@ -166,6 +196,13 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	// COMUNICATION FUNCTIONS
+
+	private boolean is(List<EnterpriseData> history, Date date) {
+		return history != null && !history.isEmpty()
+				&& history.stream().anyMatch(d -> 
+					d.getStartDate() != null && d.getStartDate().before(date)
+					&& (d.getEndDate() == null || d.getEndDate().after(date)));
+	}
 	
 	private boolean is(EnterpriseData data) {
 		return data != null && data.getId() != null && (data.getEndDate() == null || data.getEndDate().after(new Date()));
@@ -208,16 +245,16 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	/**
-	 * Obtiene la configuraciï¿½n actual de Ticket BAI.
-	 * @return Configuraciï¿½n actual de Ticket BAI.
+	 * Obtiene la configuración actual de Ticket BAI.
+	 * @return configuración actual de Ticket BAI.
 	 */
 	public EnterpriseData getTbaiData() {
 		return tbaiData;
 	}
 	
 	/**
-	 * Establece la configuraciï¿½n actual de Ticket BAI.
-	 * @param tbaiData Configuraciï¿½n actual de Ticket BAI.
+	 * Establece la configuración actual de Ticket BAI.
+	 * @param tbaiData configuración actual de Ticket BAI.
 	 * @return Instancia actualizada de InvoiceCommunicationConfiguration.
 	 */
 	public InvoiceCommunicationConfiguration setTbaiData(EnterpriseData tbaiData) {
@@ -226,35 +263,76 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	/**
-	 * Determina si la empresa estï¿½ dada de alta en Ticket Bai.
-	 * @return true si la empresa estï¿½ dada de alta en Ticket Bai actualmente, false en caso contrario.
+	 * Determina si la empresa está dada de alta en TBAI en la fecha y tipo de factura indicadas.
+	 * @param date Fecha a comprobar.
+	 * @param type Tipo de factura.
+	 * @return true si la empresa está dada de alta en TBAI en la fecha y tipo de factura indicadas, false en caso contrario.
+	 */
+	public boolean isTbai(Date date, InvoiceType type) {
+		return type.isSales() && isTbai(date);
+	}
+	
+	/**
+	 * Determina si la empresa está dada de alta en TBAI actualmente con el tipo de factura indicado.
+	 * @param type Tipo de factura.
+	 * @return true si la empresa está dada de alta en TBAI actualmente con el tipo de factura indicado, false en caso contrario.
+	 */
+	public boolean isTbai(InvoiceType type) {
+		return type.isSales() && isTbai();
+	}
+	
+	/**
+	 * Determina si la empresa está dada de alta en TBAI en la fecha indicada.
+	 * @param date Fecha a comprobar.
+	 * @return true si la empresa está dada de alta en TBAI en la fecha indicada, false en caso contrario.
+	 */
+	public boolean isTbai(Date date) {
+		return is(getTbaiDataHistory(), date);
+	}
+	
+	/**
+	 * Determina si la empresa está dada de alta en Ticket Bai.
+	 * @return true si la empresa está dada de alta en Ticket Bai actualmente, false en caso contrario.
 	 */
 	public boolean isTbai() {
 		return is(getTbaiData());
 	}
 
 	/**
-	 * Determina si la empresa estï¿½ dada de alta en Ticket Bai en modo test.
-	 * @return true si la empresa estï¿½ dada de alta en Ticket Bai en modo test, false en caso contrario.
+	 * Determina si la empresa está dada de alta en Ticket Bai en modo test.
+	 * @return true si la empresa está dada de alta en Ticket Bai en modo test, false en caso contrario.
 	 */
 	public boolean isTbaiTest() {
 		return isTest(getTbaiData());
 	}
 	
 	/**
-	 * Determina si la empresa ha estado dada de alta en Ticket Bai en algï¿½n momento.
-	 * @return true si la empresa ha estado dada de alta en Ticket Bai en algï¿½n momento, false en caso contrario.
+	 * Determina si la empresa ha estado dada de alta en Ticket Bai en algún momento.
+	 * @return true si la empresa ha estado dada de alta en Ticket Bai en algún momento, false en caso contrario.
 	 */
 	public boolean wasTbai() {
 		return was(getTbaiDataHistory());
 	}
 
 	/**
-	 * Determina si la empresa estarï¿½ dada de alta en Ticket Bai en algï¿½n momento.
-	 * @return true si la empresa estarï¿½ dada de alta en Ticket Bai en algï¿½n momento, false en caso contrario.
+	 * Determina si la empresa estará dada de alta en Ticket Bai en algún momento.
+	 * @return true si la empresa estará dada de alta en Ticket Bai en algún momento, false en caso contrario.
 	 */
 	public boolean willBeTbai() {
 		return willBe(getTbaiDataHistory());
+	}
+	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante TBAI en el ejercicio actual.
+	 * @return true si la empresa ha enviado facturas mediante TBAI en el ejercicio actual, false en caso contrario.
+	 */
+	public boolean hasTbaiInvoice() {
+		return tbaiInvoice;
+	}
+	
+	public InvoiceCommunicationConfiguration setTbaiInvoice(boolean tbaiInvoice) {
+		this.tbaiInvoice = tbaiInvoice;
+		return this;
 	}
 	
 	// LROE
@@ -278,16 +356,16 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	/**
-	 * Obtiene la configuraciï¿½n actual de LROE.
-	 * @return Configuraciï¿½n actual de LROE.
+	 * Obtiene la configuración actual de LROE.
+	 * @return configuración actual de LROE.
 	 */
 	public EnterpriseData getLroeData() {
 		return lroeData;
 	}
 	
 	/**
-	 * Establece la configuraciï¿½n actual de LROE.
-	 * @param lroeData Configuraciï¿½n actual de LROE.
+	 * Establece la configuración actual de LROE.
+	 * @param lroeData configuración actual de LROE.
 	 * @return Instancia actualizada de InvoiceCommunicationConfiguration.
 	 */
 	public InvoiceCommunicationConfiguration setLroeData(EnterpriseData lroeData) {
@@ -296,32 +374,61 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	/**
-	 * Determina si la empresa estï¿½ dada de alta en LROE.
-	 * @return true si la empresa estï¿½ dada de alta en LROE actualmente, false en caso contrario.
+	 * Determina si la empresa está dada de alta en LROE en la fecha y tipo de factura indicadas.
+	 * @param date Fecha a comprobar.
+	 * @param type Tipo de factura.
+	 * @return true si la empresa está dada de alta en LROE en la fecha y tipo de factura indicadas, false en caso contrario.
+	 */
+	public boolean isLroe(Date date, InvoiceType type) {
+		return ((type.isSales() && !isNoSif(date)) || !type.isSales()) && isLroe(date);
+	}
+	
+	/**
+	 * Determina si la empresa está dada de alta en LROE actualmente con el tipo de factura indicado.
+	 * @param type Tipo de factura.
+	 * @return true si la empresa está dada de alta en LROE actualmente con el tipo de factura indicado, false en caso contrario.
+	 */
+	public boolean isLroe(InvoiceType type) {
+		return ((type.isSales() && !isNoSif()) || !type.isSales()) && isLroe();
+	}
+	
+	/**
+	 * Determina si la empresa está dada de alta en LROE en la fecha indicada.
+	 * @param date Fecha a comprobar.
+	 * @return true si la empresa está dada de alta en LROE en la fecha indicada, false en caso contrario.
+	 */
+	public boolean isLroe(Date date) {
+		return is(getLroeDataHistory(), date);
+	}
+	
+	
+	/**
+	 * Determina si la empresa está dada de alta en LROE.
+	 * @return true si la empresa está dada de alta en LROE actualmente, false en caso contrario.
 	 */
 	public boolean isLroe() {
 		return is(getLroeData());
 	}
 	
 	/**
-	 * Determina si la empresa estï¿½ dada de alta en LROE en modo test.
-	 * @return true si la empresa estï¿½ dada de alta en LROE en modo test, false en caso contrario.
+	 * Determina si la empresa está dada de alta en LROE en modo test.
+	 * @return true si la empresa está dada de alta en LROE en modo test, false en caso contrario.
 	 */
 	public boolean isLroeTest() {
 		return isTest(getLroeData());
 	}
 	
 	/**
-	 * Determina si la empresa ha estado dada de alta en LROE en algï¿½n momento.
-	 * @return true si la empresa ha estado dada de alta en LROE en algï¿½n momento, false en caso contrario.
+	 * Determina si la empresa ha estado dada de alta en LROE en algún momento.
+	 * @return true si la empresa ha estado dada de alta en LROE en algún momento, false en caso contrario.
 	 */
 	public boolean wasLroe() {
 		return was(getLroeDataHistory());
 	}
 	
 	/**
-	 * Determina si la empresa estarï¿½ dada de alta en LROE en algï¿½n momento.
-	 * @return true si la empresa estarï¿½ dada de alta en LROE en algï¿½n momento, false en caso contrario.
+	 * Determina si la empresa estará dada de alta en LROE en algún momento.
+	 * @return true si la empresa estará dada de alta en LROE en algún momento, false en caso contrario.
 	 */
 	public boolean willBeLroe() {
 		return willBe(getLroeDataHistory());
@@ -335,6 +442,19 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	@Deprecated
 	public InvoiceCommunicationConfiguration setLroeRegistryDate(String lroeRegistryDate) {
 		this.lroeRegistryDate = lroeRegistryDate;
+		return this;
+	}
+	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante LROE en el ejercicio actual.
+	 * @return true si la empresa ha enviado facturas mediante LROE en el ejercicio actual, false en caso contrario.
+	 */
+	public boolean hasLroeInvoice() {
+		return lroeInvoice;
+	}
+	
+	public InvoiceCommunicationConfiguration setLroeInvoice(boolean lroeInvoice) {
+		this.lroeInvoice = lroeInvoice;
 		return this;
 	}
 	
@@ -359,16 +479,16 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	/**
-	 * Obtiene la configuraciï¿½n actual de SII.
-	 * @return Configuraciï¿½n actual de SII.
+	 * Obtiene la configuración actual de SII.
+	 * @return configuración actual de SII.
 	 */
 	public EnterpriseData getSiiData() {
 		return siiData;
 	}
 	
 	/**
-	 * Establece la configuraciï¿½n actual de SII.
-	 * @param siiData Configuraciï¿½n actual de SII.
+	 * Establece la configuración actual de SII.
+	 * @param siiData configuración actual de SII.
 	 * @return Instancia actualizada de InvoiceCommunicationConfiguration.
 	 */
 	public InvoiceCommunicationConfiguration setSiiData(EnterpriseData siiData) {
@@ -377,32 +497,60 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	/**
-	 * Determina si la empresa estï¿½ dada de alta en SII.
-	 * @return true si la empresa estï¿½ dada de alta en SII actualmente, false en caso contrario.
+	 * Determina si la empresa está dada de alta en Sii en la fecha y tipo de factura indicadas.
+	 * @param date Fecha a comprobar.
+	 * @param type Tipo de factura.
+	 * @return true si la empresa está dada de alta en SII en la fecha y tipo de factura indicadas, false en caso contrario.
+	 */
+	public boolean isSii(Date date, InvoiceType type) {
+		return ((type.isSales() && !isNoSif(date)) || !type.isSales()) && isSii(date);
+	}
+	
+	/**
+	 * Determina si la empresa está dada de alta en LROE actualmente con el tipo de factura indicado.
+	 * @param type Tipo de factura.
+	 * @return true si la empresa está dada de alta en LROE actualmente con el tipo de factura indicado, false en caso contrario.
+	 */
+	public boolean isSii(InvoiceType type) {
+		return ((type.isSales() && !isNoSif()) || !type.isSales()) && isSii();
+	}
+
+	/**
+	 * Determina si la empresa está dada de alta en SII en la fecha indicada.
+	 * @param date Fecha a comprobar.
+	 * @return true si la empresa está dada de alta en SII actualmente, false en caso contrario.
+	 */
+	public boolean isSii(Date date) {
+		return is(getSiiDataHistory(), date);
+	}
+	
+	/**
+	 * Determina si la empresa está dada de alta en SII.
+	 * @return true si la empresa está dada de alta en SII actualmente, false en caso contrario.
 	 */
 	public boolean isSii() {
 		return is(getSiiData());
 	}
 	
 	/**
-	 * Determina si la empresa estï¿½ dada de alta en SII en modo test.
-	 * @return true si la empresa estï¿½ dada de alta en SII en modo test, false en caso contrario.
+	 * Determina si la empresa está dada de alta en SII en modo test.
+	 * @return true si la empresa está dada de alta en SII en modo test, false en caso contrario.
 	 */
 	public boolean isSiiTest() {
 		return isTest(getSiiData());
 	}
 	
 	/**
-	 * Determina si la empresa ha estado dada de alta en SII en algï¿½n momento.
-	 * @return true si la empresa ha estado dada de alta en SII en algï¿½n momento, false en caso contrario.
+	 * Determina si la empresa ha estado dada de alta en SII en algún momento.
+	 * @return true si la empresa ha estado dada de alta en SII en algún momento, false en caso contrario.
 	 */
 	public boolean wasSii() {
 		return was(getSiiDataHistory());
 	}
 	
 	/**
-	 * Determina si la empresa estarï¿½ dada de alta en SII en algï¿½n momento.
-	 * @return true si la empresa estarï¿½ dada de alta en SII en algï¿½n momento, false en caso contrario.
+	 * Determina si la empresa estará dada de alta en SII en algún momento.
+	 * @return true si la empresa estará dada de alta en SII en algún momento, false en caso contrario.
 	 */
 	public boolean willBeSii() {
 		return willBe(getSiiDataHistory());
@@ -435,6 +583,19 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		return this;
 	}
 	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante SII en el ejercicio actual.
+	 * @return true si la empresa ha enviado facturas mediante SII en el ejercicio actual, false en caso contrario.
+	 */
+	public boolean hasSiiInvoice() {
+		return siiInvoice;
+	}
+	
+	public InvoiceCommunicationConfiguration setSiiInvoice(boolean siiInvoice) {
+		this.siiInvoice = siiInvoice;
+		return this;
+	}
+	
 	// VERIFACTU
 	
 	/**
@@ -456,16 +617,16 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	/**
-	 * Obtiene la configuraciï¿½n actual de Verifactu.
-	 * @return Configuraciï¿½n actual de Verifactu.
+	 * Obtiene la configuración actual de Verifactu.
+	 * @return configuración actual de Verifactu.
 	 */
 	public EnterpriseData getVerifactuData() {
 		return verifactuData;
 	}
 	
 	/**
-	 * Establece la configuraciï¿½n actual de Verifactu.
-	 * @param verifactuData Configuraciï¿½n actual de Verifactu.
+	 * Establece la configuración actual de Verifactu.
+	 * @param verifactuData configuración actual de Verifactu.
 	 * @return Instancia actualizada de InvoiceCommunicationConfiguration.
 	 */
 	public InvoiceCommunicationConfiguration setVerifactuData(EnterpriseData verifactuData) {
@@ -474,35 +635,77 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	/**
-	 * Determina si la empresa estï¿½ dada de alta en Verifactu.
-	 * @return true si la empresa estï¿½ dada de alta en Verifactu actualmente, false en caso contrario.
+	 * Determina si la empresa está dada de alta en VERIFACTU en la fecha y tipo de factura indicadas.
+	 * @param date Fecha a comprobar.
+	 * @param type Tipo de factura.
+	 * @return true si la empresa está dada de alta en VERIFACTU en la fecha y tipo de factura indicadas, false en caso contrario.
+	 */
+	public boolean isVerifactu(Date date, InvoiceType type) {
+		return type.isSales() && isVerifactu(date);
+	}
+	
+	/**
+	 * Determina si la empresa está dada de alta en VERIFACTU actualmente con el tipo de factura indicado.
+	 * @param type Tipo de factura.
+	 * @return true si la empresa está dada de alta en VERIFACTU actualmente con el tipo de factura indicado, false en caso contrario.
+	 */
+	public boolean isVerifactu(InvoiceType type) {
+		return type.isSales() && isVerifactu();
+	}
+	
+	/**
+	 * Determina si la empresa está dada de alta en VERIFACTU en la fecha indicada.
+	 * @param date Fecha a comprobar.
+	 * @return true si la empresa está dada de alta en VERIFACTU actualmente, false en caso contrario.
+	 */
+	public boolean isVerifactu(Date date) {
+		return is(getVerifactuDataHistory(), date);
+	}
+	
+	
+	/**
+	 * Determina si la empresa está dada de alta en Verifactu.
+	 * @return true si la empresa está dada de alta en Verifactu actualmente, false en caso contrario.
 	 */
 	public boolean isVerifactu() {
 		return is(getVerifactuData());
 	}
 	
 	/**
-	 * Determina si la empresa estï¿½ dada de alta en Verifactu en modo test.
-	 * @return true si la empresa estï¿½ dada de alta en Verifactu en modo test, false en caso contrario.
+	 * Determina si la empresa está dada de alta en Verifactu en modo test.
+	 * @return true si la empresa está dada de alta en Verifactu en modo test, false en caso contrario.
 	 */
 	public boolean isVerifactuTest() {
 		return isTest(getVerifactuData());
 	}
 
 	/**
-	 * Determina si la empresa ha estado dada de alta en Verifactu en algï¿½n momento.
-	 * @return true si la empresa ha estado dada de alta en Verifactu en algï¿½n momento, false en caso contrario.
+	 * Determina si la empresa ha estado dada de alta en Verifactu en algún momento.
+	 * @return true si la empresa ha estado dada de alta en Verifactu en algún momento, false en caso contrario.
 	 */
 	public boolean wasVerifactu() {
 		return was(getVerifactuDataHistory());
 	}
 	
 	/**
-	 * Determina si la empresa estarï¿½ dada de alta en Verifactu en algï¿½n momento.
-	 * @return true si la empresa estarï¿½ dada de alta en Verifactu en algï¿½n momento, false en caso contrario.
+	 * Determina si la empresa estará dada de alta en Verifactu en algún momento.
+	 * @return true si la empresa estará dada de alta en Verifactu en algún momento, false en caso contrario.
 	 */
 	public boolean willBeVerifactu() {
 		return willBe(getVerifactuDataHistory());
+	}
+	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante VERIFACTU en el ejercicio actual.
+	 * @return true si la empresa ha enviado facturas mediante VERIFACTU en el ejercicio actual, false en caso contrario.
+	 */
+	public boolean hasVerifactuInvoice() {
+		return verifactuInvoice;
+	}
+
+	public InvoiceCommunicationConfiguration setVerifactuInvoice(boolean verifactuInvoice) {
+		this.verifactuInvoice = verifactuInvoice;
+		return this;
 	}
 
 	// NO VERIFACTU
@@ -526,16 +729,16 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	/**
-	 * Obtiene la configuraciï¿½n actual de No Verifactu.
-	 * @return Configuraciï¿½n actual de No Verifactu.
+	 * Obtiene la configuración actual de No Verifactu.
+	 * @return configuración actual de No Verifactu.
 	 */
 	public EnterpriseData getNoVerifactuData() {
 		return noVerifactuData;
 	}
 	
 	/**
-	 * Establece la configuraciï¿½n actual de No Verifactu.
-	 * @param noVerifactuData Configuraciï¿½n actual de No Verifactu.
+	 * Establece la configuración actual de No Verifactu.
+	 * @param noVerifactuData configuración actual de No Verifactu.
 	 * @return Instancia actualizada de InvoiceCommunicationConfiguration.
 	 */
 	public InvoiceCommunicationConfiguration setNoVerifactuData(EnterpriseData noVerifactuData) {
@@ -544,27 +747,68 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	/**
-	 * Determina si la empresa estï¿½ dada de alta en No Verifactu.
-	 * @return true si la empresa estï¿½ dada de alta en No Verifactu actualmente, false en caso contrario.
+	 * Determina si la empresa está dada de alta en NO VERIFACTU en la fecha y tipo de factura indicadas.
+	 * @param date Fecha a comprobar.
+	 * @param type Tipo de factura.
+	 * @return true si la empresa está dada de alta en NO VERIFACTU en la fecha y tipo de factura indicadas, false en caso contrario.
+	 */
+	public boolean isNoVerifactu(Date date, InvoiceType type) {
+		return type.isSales() && isNoVerifactu(date);
+	}
+	
+	/**
+	 * Determina si la empresa está dada de alta en NO VERIFACTU actualmente con el tipo de factura indicado.
+	 * @param type Tipo de factura.
+	 * @return true si la empresa está dada de alta en NO VERIFACTU actualmente con el tipo de factura indicado, false en caso contrario.
+	 */
+	public boolean isNoVerifactu(InvoiceType type) {
+		return type.isSales() && isNoVerifactu();
+	}
+	
+	/**
+	 * Determina si la empresa está dada de alta en NO VERIFACTU en la fecha indicada.
+	 * @param date Fecha a comprobar.
+	 * @return true si la empresa esta dada de alta en NO VERIFACTU en la fecha indicada, false en caso contrario.
+	 */
+	public boolean isNoVerifactu(Date date) {
+		return is(getNoVerifactuDataHistory(), date);
+	}
+	
+	/**
+	 * Determina si la empresa está dada de alta en No Verifactu.
+	 * @return true si la empresa está dada de alta en No Verifactu actualmente, false en caso contrario.
 	 */
 	public boolean isNoVerifactu() {
 		return is(getNoVerifactuData());
 	}
 	
 	/**
-	 * Determina si la empresa ha estado dada de alta en No Verifactu en algï¿½n momento.
-	 * @return true si la empresa ha estado dada de alta en No Verifactu en algï¿½n momento, false en caso contrario.
+	 * Determina si la empresa ha estado dada de alta en No Verifactu en algún momento.
+	 * @return true si la empresa ha estado dada de alta en No Verifactu en algún momento, false en caso contrario.
 	 */
 	public boolean wasNoVerifactu() {
 		return was(getNoVerifactuDataHistory());
 	}
 	
 	/**
-	 * Determina si la empresa estarï¿½ dada de alta en No Verifactu en algï¿½n momento.
-	 * @return true si la empresa estarï¿½ dada de alta en No Verifactu en algï¿½n momento, false en caso contrario.
+	 * Determina si la empresa estará dada de alta en No Verifactu en algún momento.
+	 * @return true si la empresa estará dada de alta en No Verifactu en algún momento, false en caso contrario.
 	 */
 	public boolean willBeNoVerifactu() {
 		return willBe(getNoVerifactuDataHistory());
+	}
+	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante NO VERIFACTU en el ejercicio actual.
+	 * @return true si la empresa ha enviado facturas mediante  NO VERIFACTU en el ejercicio actual, false en caso contrario.
+	 */
+	public boolean hasNoVerifactuInvoice() {
+		return noVerifactuInvoice;
+	}
+
+	public InvoiceCommunicationConfiguration setNoVerifactuInvoice(boolean noVerifactuInvoice) {
+		this.noVerifactuInvoice = noVerifactuInvoice;
+		return this;
 	}
 	
 	// SIF || LEY ANTIFRAUDE
@@ -588,16 +832,16 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	/**
-	 * Obtiene la configuraciï¿½n actual de SIF.
-	 * @return Configuraciï¿½n actual de SIF.
+	 * Obtiene la configuración actual de SIF.
+	 * @return configuración actual de SIF.
 	 */
 	public EnterpriseData getSifData() {
 		return sifData;
 	}
 	
 	/**
-	 * Establece la configuraciï¿½n actual de SIF.
-	 * @param sifData Configuraciï¿½n actual de SIF.
+	 * Establece la configuración actual de SIF.
+	 * @param sifData configuración actual de SIF.
 	 * @return Instancia actualizada de InvoiceCommunicationConfiguration.
 	 */
 	public InvoiceCommunicationConfiguration setSifData(EnterpriseData sifData) {
@@ -606,27 +850,68 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	/**
-	 * Determina si la empresa estï¿½ dada de alta en SIF.
-	 * @return true si la empresa estï¿½ dada de alta en SIF actualmente, false en caso contrario.
+	 * Determina si la empresa está dada de alta en SIF en la fecha y tipo de factura indicadas.
+	 * @param date Fecha a comprobar.
+	 * @param type Tipo de factura.
+	 * @return true si la empresa está dada de alta en SIF en la fecha y tipo de factura indicadas, false en caso contrario.
+	 */
+	public boolean isSif(Date date, InvoiceType type) {
+		return type.isSales() && isSif(date);
+	}
+	
+	/**
+	 * Determina si la empresa está dada de alta en SIF actualmente con el tipo de factura indicado.
+	 * @param type Tipo de factura.
+	 * @return true si la empresa está dada de alta en SIF actualmente con el tipo de factura indicado, false en caso contrario.
+	 */
+	public boolean isSif(InvoiceType type) {
+		return type.isSales() && isSif();
+	}
+	
+	/**
+	 * Determina si la empresa está dada de alta en SIF en la fecha indicada.
+	 * @param date Fecha a comprobar.
+	 * @return true si la empresa está dada de alta en SIF en la fecha indicada, false en caso contrario.
+	 */
+	public boolean isSif(Date date) {
+		return is(getSifDataHistory(), date);
+	}
+	
+	/**
+	 * Determina si la empresa está dada de alta en SIF.
+	 * @return true si la empresa está dada de alta en SIF actualmente, false en caso contrario.
 	 */
 	public boolean isSif() {
 		return is(getSifData());
 	}
 	
 	/**
-	 * Determina si la empresa ha estado dada de alta en SIF en algï¿½n momento.
-	 * @return true si la empresa ha estado dada de alta en SIF en algï¿½n momento, false en caso contrario.
+	 * Determina si la empresa ha estado dada de alta en SIF en algún momento.
+	 * @return true si la empresa ha estado dada de alta en SIF en algún momento, false en caso contrario.
 	 */
 	public boolean wasSif() {
 		return was(getSifDataHistory());
 	}
 	
 	/**
-	 * Determina si la empresa estarï¿½ dada de alta en SIF en algï¿½n momento.
-	 * @return true si la empresa estarï¿½ dada de alta en SIF en algï¿½n momento, false en caso contrario.
+	 * Determina si la empresa estará dada de alta en SIF en algún momento.
+	 * @return true si la empresa estará dada de alta en SIF en algún momento, false en caso contrario.
 	 */
 	public boolean willBeSif() {
 		return willBe(getSifDataHistory());
+	}
+	
+	/**
+	 * Indica si la empresa ha enviado facturas mediante SIF en el ejercicio actual.
+	 * @return true si la empresa ha enviado facturas mediante SIF en el ejercicio actual, false en caso contrario.
+	 */
+	public boolean hasSifInvoice() {
+		return sifInvoice;
+	}
+
+	public InvoiceCommunicationConfiguration setSifInvoice(boolean sifInvoice) {
+		this.sifInvoice = sifInvoice;
+		return this;
 	}
 
 	// NO SIF 
@@ -650,16 +935,16 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	/**
-	 * Obtiene la configuraciï¿½n actual de NO SIF.
-	 * @return Configuraciï¿½n actual de NO SIF.
+	 * Obtiene la configuración actual de NO SIF.
+	 * @return configuración actual de NO SIF.
 	 */
 	public EnterpriseData getNoSifData() {
 		return noSifData;
 	}
 	
 	/**
-	 * Establece la configuraciï¿½n actual de NO SIF.
-	 * @param sifData Configuraciï¿½n actual de NO SIF.
+	 * Establece la configuración actual de NO SIF.
+	 * @param sifData configuración actual de NO SIF.
 	 * @return Instancia actualizada de InvoiceCommunicationConfiguration.
 	 */
 	public InvoiceCommunicationConfiguration setNoSifData(EnterpriseData noSifData) {
@@ -668,24 +953,33 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	/**
-	 * Determina si la empresa estï¿½ dada de alta en NO SIF.
-	 * @return true si la empresa estï¿½ dada de alta en NO SIF actualmente, false en caso contrario.
+	 * Determina si la empresa está dada de alta en NO SIF en la fecha indicada.
+	 * @param date Fecha a comprobar.
+	 * @return true si la empresa está dada de alta en NO SIF en la fecha indicada, false en caso contrario.
+	 */
+	public boolean isNoSif(Date date) {
+		return is(getNoSifDataHistory(), date);
+	}
+	
+	/**
+	 * Determina si la empresa está dada de alta en NO SIF.
+	 * @return true si la empresa está dada de alta en NO SIF actualmente, false en caso contrario.
 	 */
 	public boolean isNoSif() {
 		return is(getNoSifData());
 	}
 	
 	/**
-	 * Determina si la empresa ha estado dada de alta en NO SIF en algï¿½n momento.
-	 * @return true si la empresa ha estado dada de alta en NO SIF en algï¿½n momento, false en caso contrario.
+	 * Determina si la empresa ha estado dada de alta en NO SIF en algún momento.
+	 * @return true si la empresa ha estado dada de alta en NO SIF en algún momento, false en caso contrario.
 	 */
 	public boolean wasNoSif() {
 		return was(getNoSifDataHistory());
 	}
 	
 	/**
-	 * Determina si la empresa estarï¿½ dada de alta en NO SIF en algï¿½n momento.
-	 * @return true si la empresa estarï¿½ dada de alta en NO SIF en algï¿½n momento, false en caso contrario.
+	 * Determina si la empresa estará dada de alta en NO SIF en algún momento.
+	 * @return true si la empresa estará dada de alta en NO SIF en algún momento, false en caso contrario.
 	 */
 	public boolean willBeNoSif() {
 		return willBe(getNoSifDataHistory());
@@ -712,16 +1006,16 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	/**
-	 * Obtiene el certificado para la comunicaciï¿½n de facturas.
-	 * @return Certificado para la comunicaciï¿½n de facturas.
+	 * Obtiene el certificado para la comunicación de facturas.
+	 * @return Certificado para la comunicación de facturas.
 	 */
 	public Certificate getCertificate() {
 		return certificate;
 	}
 	
 	/**
-	 * Establece el certificado para la comunicaciï¿½n de facturas.
-	 * @param certificate Certificado para la comunicaciï¿½n de facturas.
+	 * Establece el certificado para la comunicación de facturas.
+	 * @param certificate Certificado para la comunicación de facturas.
 	 * @return Instancia actualizada de InvoiceCommunicationConfiguration.
 	 */
 	public InvoiceCommunicationConfiguration setCertificate(Certificate certificate) {
@@ -730,21 +1024,23 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 
 	/**
-	 * Obtiene los tipos de comunicaciï¿½n de facturas activos para Facturas Emitidas.
-	 * @return Listado de tipos de comunicaciï¿½n de facturas activos para Facturas Emitidas.
+	 * Obtiene los tipos de comunicación de facturas activos para Facturas Emitidas.
+	 * @return Listado de tipos de comunicación de facturas activos para Facturas Emitidas.
 	 */
 	public List<InvoiceCommunicationType> getTypes() {
 		return getTypes(InvoiceType.SALES);
 	}
 	
 	/**
-	 * Obtiene los tipos de comunicaciï¿½n de facturas activos para el tipo de factura indicado.
+	 * Obtiene los tipos de comunicación de facturas activos para el tipo de factura indicado.
 	 * @param invoiceType Tipo de factura.
-	 * @return Listado de tipos de comunicaciï¿½n de facturas activos para el tipo de factura indicado.
+	 * @return Listado de tipos de comunicación de facturas activos para el tipo de factura indicado.
 	 */
 	public List<InvoiceCommunicationType> getTypes(InvoiceType invoiceType) {
 		LinkedList<InvoiceCommunicationType> types = new LinkedList<>();
 
+		if(invoiceType.isSales() && isNoSif()) return types;
+		
 		if(invoiceType.isSales() && isTbai() && (isAraba() || isGipuzkoa())) {
 			types.add(InvoiceCommunicationType.TBAI);
 		} 
@@ -774,17 +1070,17 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	/**
-	 * Determina si existen tipos de comunicaciï¿½n de facturas emitadas activos.
-	 * @return true si existen tipos de comunicaciï¿½n de facturas emitidas activos, false en caso contrario.
+	 * Determina si existen tipos de comunicación de facturas emitadas activos.
+	 * @return true si existen tipos de comunicación de facturas emitidas activos, false en caso contrario.
 	 */
 	public boolean hasCommunication() {
 		return AonCollectionUtils.isNotEmpty(getTypes());
 	}
 	
 	/**
-	 * Determina si existen tipos de comunicaciï¿½n de facturas activos para el tipo de factura indicado.
+	 * Determina si existen tipos de comunicación de facturas activos para el tipo de factura indicado.
 	 * @param invoiceType Tipo de factura.
-	 * @return true si existen tipos de comunicaciï¿½n de facturas activos para el tipo de factura indicado, false en caso contrario.
+	 * @return true si existen tipos de comunicación de facturas activos para el tipo de factura indicado, false en caso contrario.
 	 */
 	public boolean hasCommunication(InvoiceType invoiceType) {
 		return AonCollectionUtils.isNotEmpty(getTypes(invoiceType));

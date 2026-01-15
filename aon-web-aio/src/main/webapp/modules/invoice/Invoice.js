@@ -394,8 +394,7 @@ export class Invoice {
   }
 
   isInbox() {
-    return this.status.toLowerCase() === 'inbox'
-      || this.isProcessed(); // provisional
+    return this.status.toLowerCase() === 'inbox';
   }
 
   isProcessed() {

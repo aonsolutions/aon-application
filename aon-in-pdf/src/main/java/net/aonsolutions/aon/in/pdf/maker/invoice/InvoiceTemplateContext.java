@@ -151,6 +151,13 @@ public class InvoiceTemplateContext {
 			|| getQrUrl().contains("prewww2.aeat.es"));
 	}
 	
+	public boolean isNoVerifactu() {
+		return getQrUrl() != null && 
+			(getQrUrl().contains("agenciatributaria")
+			|| getQrUrl().contains("prewww2.aeat.es")) 
+			&& getQrUrl().contains("ValidarQRNoVerifactu");
+	}
+	
 	public boolean isVerifactuTest() {
 		return getQrUrl() != null && getQrUrl().contains("prewww2.aeat.es");
 	}

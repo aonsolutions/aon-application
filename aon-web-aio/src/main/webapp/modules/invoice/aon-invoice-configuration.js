@@ -11,6 +11,7 @@ import { AonOcrConfiguration } from "./aon-ocr-configuration.js";
 import * as ACTION from '../actions.js';
 import * as LS from '../../services/localStorageService.js';
 import { InvoiceCommunicationConfiguration } from "../../models/InvoiceCommunicationConfiguration.js";
+import { isPersonaFisica, isValid } from "../../services/documentUtils.js";
 
 export class AonInvoiceConfiguration extends AonElement {
     
@@ -110,17 +111,64 @@ export class AonInvoiceConfiguration extends AonElement {
     }
 
 
-    save() {
-        saveInvoiceConfiguration(this.configuration).then((c) => {
-            this.showMessage(MSG.SAVED_DATA);
-            this.configuration = c;
+    save() {    
+        if(this.checkCommunicationConfiguration(this.configuration)) {
+            saveInvoiceConfiguration(this.configuration).then((c) => {
+                this.showMessage(MSG.SAVED_DATA);
+                this.configuration = c;
 
-            if(this.selectedOption === 'communication') {
-                this.buildCommunication();
+                if(this.selectedOption === 'communication') {
+                    this.buildCommunication();
+                }
+            }).catch(() => {
+                this.showMessageError(MSG.ERROR);
+            });
+        }
+    }
+
+    checkCommunicationConfiguration(config) {
+            let isSpain = config && config.company && config.company.documentCountry && config.company.documentCountry === 'ES';
+            if(!isSpain) return true;
+
+            if(!config || !config.company || !config.company.document || !config.communication) return false;
+            let icc = new InvoiceCommunicationConfiguration(config.communication);
+            if(!isValid(config.company.document) && isSpain) {
+                this.showMessageError("El NIF/CIF de la empresa no es válido.");
+                return false;
             }
-        }).catch(() => {
-            this.showMessageError(MSG.ERROR);
-        });
+            if(isPersonaFisica(config.company.document) && !(config.company.person || config.person)) {
+                this.showMessageError("Es obligatorio rellenar todos los datos de la persona física.");
+                return false;
+            } 
+            if(!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) && !icc.isSii() && !icc.willBeSii() && !icc.isVerifactu() && !icc.willBeVerifactu() && !icc.isNoVerifactu() && !icc.willBeNoVerifactu()) {
+                this.showMessageError("Es obligatorio selecionar Verifactu, No Verifactu o SII para empresas del territorio común.");
+                return false;
+            } 
+
+            if(!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) &&
+                !icc.isVerifactu() && icc.verifactuInvoice) {
+                this.showMessageError("Es obligatorio seleccionar Verifactu, ya que existe una factura Verifactu en el año actual.");
+                return false;                                
+            }
+
+            if(!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) &&
+                !icc.isSii() && icc.siiInvoice) {
+                this.showMessageError("Es obligatorio seleccionar SII, ya que existe una factura SII en el año actual.");
+                return false;                                
+            }
+
+            if(!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) &&
+                !icc.isNoVerifactu() && icc.noVerifactuInvoice) {
+                this.showMessageError("Es obligatorio seleccionar No Verifactu, ya que existe una factura No Verifactu en el año actual.");
+                return false;                                
+            }
+
+            if(!icc.getAdministration().isUnknown() && (icc.hasCommunication() || icc.willBeCommunication() || icc.isNoSif())) {
+                return true;
+            } else {
+                this.showMessageError("Es obligatorio selecionar una administración para la comunicación electrónica de facturas.");
+                return false;
+        }
     }
 }
 if(!window.customElements.get(TAG.AON_INVOICE_CONFIGURATION)){

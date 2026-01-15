@@ -28,7 +28,7 @@ public class AonInvoiceUncheckedEvent extends GwtEvent<AonInvoiceUncheckedHandle
     
 	@Override
 	protected void dispatch(AonInvoiceUncheckedHandler handler) {
-		handler.onUncheck(null);
+		handler.onUncheck(this);
 	}
 
 	public static void fire(HasInvoiceUncheckedHandlers source, Invoice invoice) {

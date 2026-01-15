@@ -1,9 +1,9 @@
 import { CSS } from "../../environments/environments.js";
 import { createDiv } from "../../services/utilsComponents.js";
-import { CreateComponent } from "../../components/CreateComponent.js";
+import { CreateComponent, createDate, createInput, createSelect } from "../../components/CreateComponent.js";
 
-//import '../../css/aon-css-utils.css';
-//import '../../css/aon-grid.css';
+import '../../css/aon-css-utils.css';
+import '../../css/aon-grid.css';
 
 export const createFormEvent = (id, parent) => {
     const form = CreateComponent.createForm(id+"Form");
@@ -14,11 +14,11 @@ export const createFormEvent = (id, parent) => {
     form.appendChild(div.element)
 
     let divC;
-    divC = createDiv();
+    divC = createDiv({classes:[CSS.AON_COL_SM_12]})
     divC.appendTo(div.element);
     CreateComponent.createAonCard({id: id+"CardEvent", title:"Datos del evento"}, divC.element);
 
-    divC = createDiv();
+    divC = createDiv({classes:[CSS.AON_COL_SM_12]});
     divC.appendTo(div.element);
     CreateComponent.createAonCard({id: id+"CardCoordinate", title:"Mapa", visible: false}, divC.element);
   
@@ -26,63 +26,29 @@ export const createFormEvent = (id, parent) => {
 }
 
 export const createCardEvent = (parent) => {
+    
+    let divC;
+    divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_3]})
+    divC.appendTo(parent);
+    createInput("name", "Nombre", divC.element);
+  
+    divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_2]})
+    divC.appendTo(parent);
+    createSelect("status", "Estado", divC.element);
 
-    CreateComponent.createAonInput({
-        attributes:{
-            name:"name",
-            id:"name",
-            title:"Nombre"
-        }
-    }, parent);
+    divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_3]})
+    divC.appendTo(parent);
+    createSelect("location", "Ubicación", divC.element);
 
-    CreateComponent.createAonSelect({
-        attributes:{
-            name:"status",
-            id:"status",
-            title:"Estado"
-        }
-    }, parent);
+    divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_2]})
+    divC.appendTo(parent);
+    createDate("date", "Fecha", divC.element);
 
-    CreateComponent.createAonSelect({
-        attributes:{
-            name:"location",
-            id:"location",
-            title:"Ubicación"
-        }
-    }, parent);
+    divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_2]})
+    divC.appendTo(parent);
+    createInput("time", "Hora", divC.element);
 
-    CreateComponent.createAonDate({
-        attributes:{
-            name:"date", 
-            id:"date", 
-            title:"Fecha"
-        }
-    }, parent);
+  createInput("id", "Id", parent);
 
-    CreateComponent.createAonInput({
-        attributes:{
-            name:"time",
-            id:"time",
-            title:"Hora",
-            type:"time"
-        }
-    }, parent);
-
-    CreateComponent.createAonInput({
-        attributes:{
-            name:"id",
-            id:"id",
-            type:"text",
-            visible:"false"
-        }
-    }, parent);
-
-    CreateComponent.createAonInput({
-        attributes:{
-            name:"coordinates",
-            id:"coordinates",
-            type:"text",
-            visible:"false"
-        }
-    }, parent);
+  createInput("coordinates", "Coordenadas", parent);
 }

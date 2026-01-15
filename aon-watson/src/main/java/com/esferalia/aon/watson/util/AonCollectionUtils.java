@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -146,6 +145,11 @@ public class AonCollectionUtils {
 		LinkedList<T> l = new LinkedList<>();
 		if (t != null) l.add(t);
 		return l;
+	}
+
+	public static int size(Map<?, ?> map) {
+		if (map == null) return 0;
+		return map.size();
 	}
 
 }

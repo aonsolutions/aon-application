@@ -410,11 +410,18 @@ public class TimeControlServlet extends AonApiHttpServlet{
 
 		Location lc = new Location();
 		
-		if(!coordinates.isEmpty()) {
+		if(!coordinates.isEmpty() || (coordinates.isEmpty() && null != params.opt("location"))) {
 			Integer locationId = params.optInt("location");
 			  lc = locationId!=0
 				? AON_SOLUTIONS.getLocation(taskHolder.getDomain(), "",  f -> f.getIdProperty().eq(locationId) )
 				: AON_SOLUTIONS.getLocationByCoordinates(taskHolder.getDomain(), "",  coordinates);
+		}
+		
+		// Set location coordinates if not exists
+		if(null != lc.getId() && null == coordinates.getLatitude()) {
+			coordinates.setLatitude(lc.getCoordinates().getLatitude());
+			coordinates.setLongitude(lc.getCoordinates().getLongitude());
+			coordinates.setCoordinates(lc.getCoordinates().getCoordinates());
 		}
 		
 		TimeControlDetail tcd = new TimeControlDetail()

@@ -92,6 +92,22 @@ public enum InvoiceCommunicationType implements Serializable {
 		return VERIFACTU.equals(this);
 	}
 	
+	public boolean isNoVerifactu() {
+		return NO_VERIFACTU.equals(this);
+	}
+	
+	public boolean isSif() {
+		return SIF.equals(this);
+	}
+	
+	public boolean isFacturae() {
+		return FACTURAE.equals(this);
+	}
+	
+	public boolean isEmail() {
+		return EMAIL.equals(this);
+	}
+	
 	public abstract void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception;
 	
 	public static interface InvoiceCommunicationTypeVisitor {

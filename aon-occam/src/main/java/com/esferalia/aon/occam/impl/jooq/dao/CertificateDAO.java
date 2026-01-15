@@ -30,6 +30,9 @@ import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateOwner;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateSecurity;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.CertificateFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -37,7 +40,9 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Properties.CertificateProperties;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachPropertiesDAO.RattachPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RegistryAddInfoPropertiesDAO;
@@ -516,4 +521,47 @@ public class CertificateDAO {
 		}
 	}
 	
+	public static Stream<Certificate> getAEATCertificates(AONContext ctx, int domainId, String userLogin) {
+		Company company = CompanyDAO.getByDomain(ctx, domainId);
+		if (company == null || company.getId() == null) return Stream.empty();
+		Domain domain = company.getDomain();
+		if (domain == null || domain.getId() == null) return Stream.empty();
+		User user = SecurityDAO.getUser( ctx, userLogin );
+		if (user== null || user.getId() == null) return Stream.empty();
+		return CertificateDAO.getStream(ctx, f -> getAEATCertificateFilter( ctx, domain, company, user, f));
+	}
+	
+	private static Filter getAEATCertificateFilter(AONContext ctx, Domain domain, Company company, User user, CertificateProperties f) {
+		Filter filter;
+		if(domain.getParentId() != null) {
+			if(!user.getDomain().getId().equals(domain.getParentId())) {
+				filter = (f.getDomainProperty().eq(domain.getId()).or(
+						f.getDomainProperty().eq(domain.getParentId())
+						.and(f.getSecurityLevelProperty().eq(SecurityLevel.OFFICIAL.value())))
+					);
+			} else {
+				Integer[] domains = {domain.getId(), domain.getParentId()};
+				filter = f.getDomainProperty().in(domains);
+			}
+		} else filter = f.getDomainProperty().eq(domain.getId());
+    	
+		if(!user.getRegistry().isEmpty() && domain.getParentId() != null) {
+			// Company parentCompany = AON.getCompanyForDomain(domain.getName(), domain.getParentId(), user.getLogin());
+			Company parentCompany = CompanyDAO.getByDomain(ctx, domain.getParentId());
+			Integer[] registries = {user.getRegistry().getId(), company.getId(), parentCompany.getId()};
+			filter = filter.and(f.getRegistryProperty().in(registries));
+		} else if(!user.getRegistry().isEmpty()) {
+			Integer[] registries = {user.getRegistry().getId(), company.getId()};
+			filter = filter.and(f.getRegistryProperty().in(registries));
+		} else if(domain.getParentId() != null) {
+			//Company parentCompany = AON.getCompanyForDomain(domain.getName(), domain.getParentId(), user.getLogin());
+			Company parentCompany = CompanyDAO.getByDomain(ctx, domain.getParentId());
+			Integer[] registries = {company.getId(), parentCompany.getId()};
+			filter = filter.and(f.getRegistryProperty().in(registries));
+		} else filter = filter.and(f.getRegistryProperty().eq(company.getId()));
+		
+		filter = filter.and(f.getTypeProperty().eq(CertificateType.AEAT.name()).or(f.getTypeProperty().isNull()));
+		
+    	return filter;
+    }
 }

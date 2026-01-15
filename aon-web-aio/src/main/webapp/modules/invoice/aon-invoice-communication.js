@@ -1,18 +1,17 @@
-import { AonElement } from "../../components/AonElement.js";
-import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
 import { AonBasicTable } from "../../components/aon-basic-table.js";
-import { AonDialog } from "../../components/aon-dialog.js";
-import { createCard, createDate, createInput, createSelect, createSwitch } from "../../components/CreateComponent.js";
-import { isPersonaFisica, isValid } from "../../services/documentUtils.js";
-import { AonToast } from "../../components/aon-toast.js";
-import { InvoiceCommunicationConfiguration } from "../../models/InvoiceCommunicationConfiguration.js";
-import { Administration, ADMINISTRATIONS } from "../../models/Administration.js";
-import { Countries } from "../../services/country.js";
+import { AonIconButton } from "../../components/aon-icon-button.js";
+import { AonIcon } from "../../components/aon-icon";
+import { AonElement } from "../../components/AonElement.js";
+import { createCard } from "../../components/CreateComponent.js";
+import { AON_ICONS, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
+import { getCommunicationHistory } from "../../services/invoiceService.js";
 
 export class AonInvoiceCommunication extends AonElement {
 
-    configuration;
-    communicationConfiguration;
+    invoice; // Invoice id.
+    CARD;
+    TABLE;
+    COMMUNICATION_TABLE;
 
     connectedCallback() {
         this.initialize();
@@ -20,402 +19,252 @@ export class AonInvoiceCommunication extends AonElement {
     }
 
     initialize() {
-        this.id = this.id || 'aonInvoiceConfigurationCommunication';
-        this.DIV = this.id + 'Div';
-
-        this.COMPANY_CARD = this.id + 'CompanyCard';
-        this.COMPANY_CARD_DIV = this.COMPANY_CARD + 'Div';
-        this.COMPANY_CARD_TABLE = this.COMPANY_CARD + 'Table';
-
-        this.CARD = this.id + 'Card';
-        this.CARD_TABLE = this.CARD + 'Table';
-        this.CARD_DIV = this.CARD + 'Div';
-
-
-        // FACTURAE
-        this.FACTURAE = this.CARD_TABLE + 'Facturae';
-        this.TBAI = this.CARD_TABLE + 'Tbai';
-        this.LROE = this.CARD_TABLE + 'Lroe';
-        this.VERIFACTU = this.CARD_TABLE + 'Verifactu';
-        this.NO_VERIFACTU = this.CARD_TABLE + 'NoVerifactu';
-        this.SII = this.CARD_TABLE + 'Sii';
+        this.id = this.id || "aonInvoiceCommunication";
+        this.CARD = this.id + "Card";
+        this.TABLE = this.CARD + "Table";
+        this.COMMUNICATION_TABLE = this.CARD + "CommunicationTable";
     }
 
     build() {
-        let div = this.createElement(TAG.DIV);
-        div.id = this.DIV;
-        div.style.display = 'flex';
-        div.style.width = '100%';
-        this.appendChild(div);
-        this.buildCompanyCard(div);
-        if (this.showCommunicationCard())
-            this.buildCommunicationCard(div);
-    }
+        let communicationDiv = this.createElement(TAG.DIV);
+        communicationDiv.id = this.COMMUNICATION;
+        communicationDiv.className = CSS.AON_BLOCK;
+        this.appendChild(communicationDiv);
+        this.buildCommunicationCard(communicationDiv);
 
-    reload() {
-        let parent = this.getElement(this.DIV);
-        this.clearElement(parent);
-        this.buildCompanyCard(parent);
-        if (this.showCommunicationCard())
-            this.buildCommunicationCard(parent);
-    }
-
-    showCommunicationCard() {
-        return !this.communicationConfiguration.getAdministration().isUnknown() && isValid(this.configuration.company.document)
-            && !this.communicationConfiguration.isNoSif();
-    }
-
-    buildCompanyCard(parent) {
-        let card = createCard(this.COMPANY_CARD, MSG.COMPANY);
-        card.style.width = '50%';
-        parent.appendChild(card);
-
-        let content = this.createElement(TAG.DIV);
-        content.id = this.COMPANY_CARD_DIV;
-        card.setContent(content);
-
-        let table = new AonBasicTable();
-        table.id = this.COMPANY_CARD_TABLE;
-        content.appendChild(table);
-
-        table.addRow();
-
-        this.buildCompanyInfo(table);
-        if(this.isSpainCompany()) this.buildAdministration(table);
-        this.buildNoSif(table);
     }
 
     buildCommunicationCard(parent) {
-        if (!this.communicationConfiguration.getAdministration().isUnknown() && isValid(this.configuration.company.document)) {
-            let card = createCard(this.CARD, MSG.COMMUNICATIONS);
-            card.style.width = '50%';
-            parent.appendChild(card);
+        let title = "Detalle de comunicaciones de la factura";
+        let card = createCard(this.CARD, title, parent);
 
-            let content = this.createElement(TAG.DIV);
-            content.id = this.CARD_DIV;
-            card.setContent(content);
+        let table = this.getElement(this.TABLE);
+        if (!table) {
+            table = new AonBasicTable();
+            table.id = this.TABLE;
+            card.setContent(table);
+        }
+        table.removeRows();
 
-            let table = new AonBasicTable();
-            table.id = this.CARD_TABLE;
-            content.appendChild(table);
+        getCommunicationHistory(this.invoice).then(hist => {
+            let keys = Object.keys(hist ?? {});
+            if (keys.length === 0) {
+                table.addRow();
 
-            table.addRow();
-
-            this.buildFacturae(table);
-
-            if (this.communicationConfiguration.isAlava() || this.communicationConfiguration.isGipuzkoa()) {
-                this.buildTicketBai(table);
-                this.buildSii(table);
-            } else if (this.communicationConfiguration.isBizkaia()) {
-                this.buildLroe(table);
-            } else if (this.communicationConfiguration.isNavarra()) {
-                this.buildSii(table);
+                let span1 = this.createElement(TAG.SPAN);
+                span1.innerHTML = MSG.NO_DATA;
+                table.addCell(span1);
             } else {
-                this.buildVerifactu(table);
-                this.buildNoVerifactu(table);
-                this.buildSii(table);
+                for (let i = 0; i < keys.length; i++) {
+                    let key = keys[i];
+
+                    let info = hist[key].communicationInfo;
+
+                    table.addRow();
+
+                    let typeButton = this.getCommunicationTypeIcon(info.communicationType);
+                    typeButton.id = key + i + "button";
+                    if (info.checkUrl && typeof info.checkUrl === 'string' && info.checkUrl.startsWith('http')) {
+                        typeButton.title = "Comprobar";
+                        typeButton.addEventListener(EVENT.CLICK, () => open(info.checkUrl, '_blank'));
+                    } else {
+                        // typeButton.style.cursor = "none";
+                    }
+                    table.addCell(typeButton);
+
+                    let span1 = this.createElement(TAG.SPAN);
+                    span1.innerHTML = key;
+                    table.addCell(span1);
+
+                    let icon = new AonIcon();
+                    icon.className = "icons-color";
+                    icon.title = this.getCommunicationStatusLabel(info.communicationStatus);
+                    icon.color = this.getCommunicationStatusColor(info.communicationStatus);
+                    icon.icon = history.ok ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
+                    table.addCell(icon);
+
+                    let span2 = this.createElement(TAG.SPAN);
+                    span2.innerHTML = this.getCommunicationStatusLabel(info.communicationStatus);
+                    span2.dataset.color = this.getCommunicationStatusColor(info.communicationStatus);
+                    table.addCell(span2);
+
+                    let infoDate = info.modification_date ?
+                        info.modification_date : info.creation_date;
+                    let span3 = this.createElement(TAG.SPAN);
+                    span3.innerHTML = infoDate ? this.formatDate(infoDate) : "";
+                    table.addCell(span3);
+
+                    let infoUser = info.modification_user ?
+                        info.modification_user : info.creation_user;
+                    let span4 = this.createElement(TAG.SPAN);
+                    span4.innerHTML = infoUser ? infoUser : "";
+                    table.addCell(span4);
+
+                    let dummySpan7 = this.createElement(TAG.SPAN);
+                    table.addCell(dummySpan7);
+                    let dummySpan8 = this.createElement(TAG.SPAN);
+                    table.addCell(dummySpan8);
+                    let dummySpan9 = this.createElement(TAG.SPAN);
+                    table.addCell(dummySpan9);
+
+                    let commHist = hist[key].communicationHistory;
+
+                    if (commHist && commHist.length > 0) {
+                        for(let x = 0; x < commHist.length; x++) {
+                            table.addRow();
+                
+                            let dummySpan = this.createElement(TAG.SPAN);
+                            table.addCell(dummySpan);
+                
+                            let histTable = this.getElement(this.COMMUNICATION_TABLE + "_" + key);
+                            if(!histTable) {
+                                histTable = new AonBasicTable();
+                                histTable.id = this.COMMUNICATION_TABLE + "_" + key;
+                                histTable.style.display = "flex";
+                                histTable.style.paddingLeft = "1rem";
+                                table.addCell(histTable, "8" );
+                            } else {
+                                histTable.removeRows();
+                            }
+                            let hist = commHist[x];
+                            this.printCommunicationHistory(histTable, hist, i);
+                            }
+                    }
+                }
             }
-        }
+        });
     }
 
-    buildCompanyInfo(table) {
-        let country = createSelect(this.id + 'CompanyCountry', MSG.COUNTRY);
-        country.autocomplete = true;
-        country.options = JSON.stringify(
-            Countries.map((c) => {
-                return { value: c.iso2, name: c.nombre };
-            })
-        );
-        country.value = this.configuration.company.documentCountry || 'ES';
-        country.addEventListener(EVENT.SELECT, () => {
-            this.configuration.company.documentCountry = country.value;
-            this.dispatchEvent(new Event(EVENT.CHANGE));
-            this.reload();
-        });
-        table.addCell(country, 1).style.height = '50px';
-
-        const valid = isValid(this.configuration.company.document);
-        let document = createInput(this.id + 'companyDocument', MSG.DOCUMENT);
-        document.setValue(this.configuration.company.document || '');
-
-        if (valid) {
-            document.disabled = valid;
-            document.readonly = valid;
-        }
-        table.addCell(document, 1).style.height = '50px';
-        if (!valid && this.isSpainCompany()) {
-            document.addError('Documento no válido');
-            document.addEventListener(EVENT.CHANGE, () => {
-                this.configuration.company.document = document.value;
-                this.dispatchEvent(new Event(EVENT.CHANGE));
-                this.reload();
-            });
-        }
+    printCommunicationHistory(table, commHist, i) {
         table.addRow();
-        if (valid && isPersonaFisica(this.configuration.company.document) && this.isSpainCompany()) {
-            let nameValue = this.configuration.person && this.configuration.person.firstSurname
-                ? this.configuration.person.firstName : this.configuration.company.name;
-            let surname1Value = this.configuration.person && this.configuration.person.firstSurname
-                ? this.configuration.person.firstSurname : '';
-            let surname2Value = this.configuration.person && this.configuration.person.secondSurname
-                ? this.configuration.person.secondSurname : '';
-            let name = createInput(this.id + 'personName', MSG.NAME);
-            name.setValue(nameValue);
-            name.addEventListener(EVENT.CHANGE, () => {
-                if (!this.configuration.person) this.configuration.person = {};
-                if (!this.configuration.company.person) this.configuration.company.person = {};
-                this.configuration.person.firstName = name.value;
-                this.configuration.company.person.name = name.value;
-                name.removeError();
-                this.dispatchEvent(new Event(EVENT.CHANGE));
+        
+        let span1 = this.createElement(TAG.SPAN);
+        span1.innerHTML = commHist.operation;
+        table.addCell(span1);
+
+        let icon = new AonIcon();
+        icon.className = "icons-color";
+        icon.title = this.getCommunicationStatusLabel(commHist.status);;
+        icon.color = this.getCommunicationStatusColor(commHist.status);
+        icon.icon = commHist.ok ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
+        table.addCell(icon);
+
+        let span2 = this.createElement(TAG.SPAN);
+        span2.innerHTML = commHist.date ? this.formatDate(commHist.date) : "";
+        table.addCell(span2);
+
+        let span3 = this.createElement(TAG.SPAN);
+        span3.innerHTML = commHist.creation_user ?  commHist.creation_user : "";
+        table.addCell(span3);
+
+        let requestDownload = new AonIconButton();
+        requestDownload.title = "Descargar petición";
+        requestDownload.icon = MATERIAL_ICONS.FILE_DOWNLOAD;
+        requestDownload.addEventListener(EVENT.CLICK, () => {
+            open(commHist.requestUrl, '_blank');
+        });
+        table.addCell(requestDownload);
+
+        let responseDownload = new AonIconButton();
+        responseDownload.icon = MATERIAL_ICONS.FILE_DOWNLOAD;
+        responseDownload.title= "Descargar respuesta";
+        responseDownload.addEventListener(EVENT.CLICK, () => {
+            open(commHist.responseUrl, '_blank');
+        });
+        table.addCell(responseDownload);
+
+        if (commHist.responseMessages && commHist.responseMessages.length > 0) {
+            let showErrors  = new AonIconButton();
+            showErrors.icon = MATERIAL_ICONS.CHAT_ERROR;
+            showErrors.title= "Mostrar errores";
+            showErrors.dataset.color = "red";
+            table.addCell(showErrors);
+
+            let historyRowNumber = table.addRow();
+            let historyTr = table.getRow(historyRowNumber);
+            historyTr.style.display = "none";
+            showErrors.addEventListener(EVENT.CLICK, () => {
+                historyTr.style.display = historyTr.style.display == "none" ? "block" : "none";
             });
-
-            table.addCell(name, 2).style.height = '50px';
-            if (nameValue === '') {
-                name.addError('Este campo es obligatorio');
+            let ul = this.createElement(TAG.UL);
+            ul.classList.add(CSS.AON_UL);
+            ul.style.width = '100%';
+            for(let i = 0; i < commHist.responseMessages.length; i++) {
+                let item = commHist.responseMessages[i];
+                let li = this.createElement(TAG.LI);
+                li.style.paddingLeft = "20px";
+                li.style.backgrounColor = 'transparent !important';
+                let errSpan = this.createElement(TAG.SPAN);
+                errSpan.innerHTML = item;
+                li.appendChild(errSpan);
+                ul.appendChild(li);
             }
-            table.addRow();
-
-            let surname1 = createInput(this.id + 'personSurname1', MSG.SURNAME + ' 1');
-            surname1.setValue(surname1Value);
-            surname1.addEventListener(EVENT.CHANGE, () => {
-                if (!this.configuration.person) this.configuration.person = {};
-                if (!this.configuration.company.person) this.configuration.company.person = {};
-                this.configuration.person.firstSurname = surname1.value;
-                this.configuration.company.person.surname1 = surname1.value;
-                surname1.removeError();
-                this.dispatchEvent(new Event(EVENT.CHANGE));
-            });
-            table.addCell(surname1, 1).style.height = '50px';
-            if (surname1Value === '') {
-                surname1.addError('Este campo es obligatorio');
-            }
-
-            let surname2 = createInput(this.id + 'personSurname2', MSG.SURNAME + ' 2');
-            surname2.setValue(surname2Value);
-            surname2.addEventListener(EVENT.CHANGE, () => {
-                if (!this.configuration.person) this.configuration.person = {};
-                if (!this.configuration.company.person) this.configuration.company.person = {};
-                this.configuration.person.secondSurname = surname2.value;
-                this.configuration.company.person.surname2 = surname2.value;
-                surname2.removeError();
-                this.dispatchEvent(new Event(EVENT.CHANGE));
-            });
-            table.addCell(surname2, 1).style.height = '50px';
-            if (surname2Value === '') {
-                surname2.addError('Este campo es obligatorio');
-            }
-
-            table.addRow();
+            table.addCell(ul);
         } else {
-            let name = createInput(this.id + 'companyName', MSG.NAME);
-            name.setValue(this.configuration.company.name);
-            name.disabled = true;
-            name.readonly = true;
-            table.addCell(name, 2).style.height = '50px';
-
-            table.addRow();
+            let dummySpan = this.createElement(TAG.SPAN);
+            table.addCell(dummySpan);
         }
+
     }
 
-    buildAdministration(table) {
-        const enterprise = this.configuration.company.id;
-        let administration = createSelect(this.ADMINISTRATION, 'Administración');
-        table.addCell(administration, 2).style.height = '50px';
-        administration.setOptions(Object.values(ADMINISTRATIONS));
-        administration.setValue(this.communicationConfiguration.getAdministration().value);
-        administration.disabled = !this.communicationConfiguration.getAdministration().isUnknown()
-            && this.communicationConfiguration.getAdministrationData()
-            && this.communicationConfiguration.getAdministrationData().id;
-        administration.addEventListener(EVENT.CHANGE, () => {
-            this.communicationConfiguration.setAdministration(new Administration(administration.value), enterprise);
-            this.dispatchEvent(new Event(EVENT.CHANGE));
-            this.reload();
-        });
-        if (this.communicationConfiguration.getAdministration().isUnknown()) {
-            administration.addError('Debe seleccionar una administración');
+
+    formatDate(isoString) {
+        const d = new Date(isoString);
+        const pad = n => n.toString().padStart(2, "0");
+        const day = pad(d.getDate());
+        const month = pad(d.getMonth() + 1);
+        const year = d.getFullYear();
+        const hours = pad(d.getHours());
+        const mins = pad(d.getMinutes());
+        const secs = pad(d.getSeconds());
+        return `${day}/${month}/${year} ${hours}:${mins}:${secs}`;
+    }
+
+    getCommunicationTypeIcon(type) {
+        let typeIconButton = new AonIconButton();
+        if ("SII" === type || "TBAI" === type) {
+            let administration = this.configuration ? this.configuration.administration : '';
+            if ("ALAVA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_ARABA;
+            else if ("BIZKAIA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_BIZKAIA;
+            else if ("GIPUZKOA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_GIPUZKOA;
+            else if ("NAVARRA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_NAVARRA;
+            else if ("COMMON_TERRITORY" === administration) typeIconButton.aonIcon = AON_ICONS.AON_AEAT;
+            else if ("CANARIAS" === administration) typeIconButton.aonIcon = AON_ICONS.AON_CANARY;
+        } else if ("LROE" === type) {
+            typeIconButton.aonIcon = AON_ICONS.AON_BIZKAIA;
+        } else if ("SERES" === type) {
+            typeIconButton.aonIcon = AON_ICONS.SERES;
+        } else if ("EMAIL" === type) {
+            typeIconButton.icon = MATERIAL_ICONS.MAIL;
+        } else if ("CLOSING" === type) {
+            typeIconButton.icon = MATERIAL_ICONS.LOCK;
+        } else if ("VERIFACTU" === type) {
+            typeIconButton.aonIcon = AON_ICONS.AON_AEAT;
+        } else if ("SIF" === type) {
+            typeIconButton.icon = MATERIAL_ICONS.SIF;
         }
-        table.addRow();
-    }
-
-    buildNoSif(table) {
-        const enterprise = this.configuration.company.id;
-        if(!this.isSpainCompany() && !this.communicationConfiguration.isNoSif()) {
-            this.communicationConfiguration.setNoSif(true, enterprise);
-            this.dispatchEvent(new Event(EVENT.CHANGE));
+        if (!typeIconButton.icon) {
+            typeIconButton.icon = MATERIAL_ICONS.QUESTION_MARK;
         }
-        let issueInvoice = createSwitch("emitefacturas", 'La empresa emite facturas oficiales con la aplicación');
-        issueInvoice.checked = !this.communicationConfiguration.isNoSif();
-        if (!this.communicationConfiguration.isNoSif() && !this.communicationConfiguration.hasCommunication()) {
-            this.communicationConfiguration.setNoSif(!issueInvoice.isChecked(), enterprise);
-        }
-        issueInvoice.disabled = !this.isSpainCompany();
-        // issueInvoice.disabled = !this.communicationConfiguration.isNoSif() && this.communicationConfiguration.hasCommunication();
-        issueInvoice.addEventListener(EVENT.CHANGE, () => {
-            this.communicationConfiguration.setNoSif(!issueInvoice.isChecked(), enterprise);
-            this.dispatchEvent(new Event(EVENT.CHANGE));
-            this.reload();
-        });
-        table.addCell(issueInvoice, 2).style.height = '50px';
-        table.addRow();
+        return typeIconButton;
     }
 
-    buildFacturae(table) {
-        let facturae = createSwitch(this.FACTURAE, 'Facturae');
-        facturae.checked = this.configuration.eInvoice;
-        facturae.addEventListener(EVENT.CHANGE, () => {
-            this.configuration.eInvoice = facturae.isChecked();
-            this.dispatchEvent(new Event(EVENT.CHANGE));
-        });
-        table.addCell(facturae, 1).style.height = '50px';
-        facturae.setWidth('215px');
-        table.addRow();
+    getCommunicationStatusLabel(status) {
+        if ("PENDING" === status) return "Pendiente";
+        else if ("ACCEPTED" === status) return "Aceptada";
+        else if ("ACCEPTED_WITH_ERRORS" === status) return "Aceptada con errores";
+        else if ("EXTERNALLY_COMMUNICATED" === status) return "Com. Externamente";
+        else if ("WRONG" === status) return "Incorrecta";
+        else return "Sin Estado";
     }
 
-
-    buildCommunication(table, id, title, active, future, data, futureData, activeFn, dateFn) {
-        // let span = this.createSpan();
-        // span.innerHTML = title;
-        // span.style.fontWeight = 'bold';
-        // table.addCell(span, 2).style.height = '30px';
-        // table.addRow();
-
-        const communicationActiveId = id + CONSTANT.ACTIVE.initCap();
-        let communicationActive = createSwitch(communicationActiveId, future ? title + " " + MSG.PROGRAMMED : MSG.ACTIVATE + " " + title);
-        communicationActive.checked = active || future;
-        communicationActive.disabled = (active && data && data.id) ? true : false;
-        communicationActive.addEventListener(EVENT.CHANGE, () => {
-            activeFn(communicationActive.isChecked());
-            this.dispatchEvent(new Event(EVENT.CHANGE));
-            this.reload();
-        });
-        table.addCell(communicationActive, 1).style.height = '50px';
-        communicationActive.setWidth('215px');
-
-        if (active || future) {
-            const communicationIncludeDateId = id + CONSTANT.INCLUDE_DATE.initCap();
-            let communicationIncludeDate = createDate(communicationIncludeDateId, 'Fecha Inclusión ' + title);
-            if (data && data.id) {
-                communicationIncludeDate.disabled = true;
-                communicationIncludeDate.readonly = true;
-            }
-            table.addCell(communicationIncludeDate, 1).style.height = '50px';
-            communicationIncludeDate.setDate(future ? futureData.startDate : data.startDate);
-            communicationIncludeDate.addEventListener(EVENT.CHANGE, () => {
-                dateFn(communicationIncludeDate.getDate());
-                this.dispatchEvent(new Event(EVENT.CHANGE));
-                this.reload();
-            });
-
-        }
-        // else { 
-        //     const communicationExemptionId = id + CONSTANT.EXEMPTION.initCap();
-        //     let exemption = createSelect(communicationExemptionId, MSG.EXEMPTION_CAUSE);
-        //     table.addCell(exemption, 1).style.height = '50px';
-        // }
-        table.addRow();
-    }
-
-    buildTicketBai(table) {
-        const enterprise = this.configuration.company.id;
-        let active = this.communicationConfiguration.isTbai();
-        let future = this.communicationConfiguration.willBeTbai();
-        this.buildCommunication(table, this.TBAI, MSG.TICKETBAI, active, future, this.communicationConfiguration.getTbaiData(),
-            this.communicationConfiguration.getFutureTbaiData(), (value) => this.communicationConfiguration.setTbai(value, enterprise),
-            (date) => {
-                let check = this.communicationConfiguration.setTbaiDate(date, enterprise)
-                if (!check.valid) this.showError(check.message);
-            }
-        );
-    }
-
-    buildLroe(table) {
-        const enterprise = this.configuration.company.id;
-        let active = this.communicationConfiguration.isLroe();
-        let future = this.communicationConfiguration.willBeLroe();
-        this.buildCommunication(table, this.LROE, MSG.LROE + " / " + MSG.TICKETBAI, active, future, this.communicationConfiguration.getLroeData(),
-            this.communicationConfiguration.getFutureLroeData(), (value) => this.communicationConfiguration.setLroe(value, enterprise),
-            (date) => {
-                let check = this.communicationConfiguration.setLroeDate(date, enterprise)
-                if (!check.valid) this.showError(check.message);
-            });
-    }
-
-    buildSii(table) {
-        const enterprise = this.configuration.company.id;
-        let active = this.communicationConfiguration.isSii();
-        let future = this.communicationConfiguration.willBeSii();
-        this.buildCommunication(table, this.SII, MSG.SII, active, future, this.communicationConfiguration.getSiiData(),
-            this.communicationConfiguration.getFutureSiiData(), (value) => this.communicationConfiguration.setSii(value, enterprise),
-            (date) => {
-                let check = this.communicationConfiguration.setSiiDate(date, enterprise)
-                if (!check.valid) this.showError(check.message);
-            });
-    }
-
-    buildVerifactu(table) {
-        const enterprise = this.configuration.company.id;
-        const document = this.configuration.company.document;
-        let active = this.communicationConfiguration.isVerifactu();
-        let future = this.communicationConfiguration.willBeVerifactu();
-        this.buildCommunication(table, this.VERIFACTU, MSG.VERIFACTU, active, future, this.communicationConfiguration.getVerifactuData(),
-            this.communicationConfiguration.getFutureVerifactuData(), (value) => this.communicationConfiguration.setVerifactu(value, enterprise),
-            (date) => {
-                let check = this.communicationConfiguration.setVerifactuDate(date, enterprise)
-                if (!check.valid) this.showError(check.message);
-            });
-    }
-
-    buildNoVerifactu(table) {
-        const enterprise = this.configuration.company.id;
-        let active = this.communicationConfiguration.isNoVerifactu();
-        let future = this.communicationConfiguration.willBeNoVerifactu();
-        this.buildCommunication(table, this.NO_VERIFACTU, MSG.NO_VERIFACTU, active, future, this.communicationConfiguration.getNoVerifactuData(),
-            this.communicationConfiguration.getFutureNoVerifactuData(), (value) => this.communicationConfiguration.setNoVerifactu(value, enterprise),
-            (date) => {
-                let check = this.communicationConfiguration.setNoVerifactuDate(date, enterprise)
-                if (!check.valid) this.showError(check.message);
-            });
-    }
-
-    showError(error) {
-        this.showToast({
-            type: CONSTANT.ERROR,
-            message: error
-        });
-    }
-
-    showToast(object) {
-        let toast = this.getElement(this.id + 'Toast');
-        if (!toast) {
-            toast = new AonToast();
-            toast.id = this.id + 'Toast';
-            this.appendChild(toast);
-        }
-        toast.start(object);
-    }
-
-    isSpainCompany() {
-        return this.configuration.company.documentCountry === 'ES';
-    }
-
-    getConfiguration() {
-        return this.configuration;
-    }
-
-    getCommunicationConfiguration() {
-        return this.communicationConfiguration && this.communicationConfiguration instanceof InvoiceCommunicationConfiguration
-            ? this.communicationConfiguration
-            : new InvoiceCommunicationConfiguration(this.communicationConfiguration);
-    }
-
-    setConfiguration(configuration) {
-        this.configuration = configuration;
-        if (this.configuration.communication) {
-            this.communicationConfiguration = this.configuration.communication instanceof InvoiceCommunicationConfiguration
-                ? this.configuration.communication
-                : new InvoiceCommunicationConfiguration(this.configuration.communication);
-        }
+    getCommunicationStatusColor(status) {
+        if ("PENDING" === status) return "orange";
+        else if ("ACCEPTED" === status) return "green";
+        else if ("ACCEPTED_WITH_ERRORS" === status) return "yellow";
+        else if ("EXTERNALLY_COMMUNICATED" === status) return "blue";
+        else if ("WRONG" === status) return "red"
+        else return "gray";
     }
 }
 if (!window.customElements.get(TAG.AON_INVOICE_COMMUNICATION)) {

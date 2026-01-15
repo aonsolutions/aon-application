@@ -93,15 +93,15 @@ export class AonDesktop extends AonElement {
 		}
 
 		this.initialize();
-		
+
 		let r = await getDomainUserRoles({});
 		this.dur = new DomainUserRoles(r);
 		this.build();
 
-	    await this.getInvoiceConfiguration();
-		if(!this.checkConfigurationComplete(this.ic, false) && !this.getDur().isParentUser() 
-				&& (this.getDur().isInvoice() || this.getDur().isManagement()))
-			this.buildInvoiceConfigurationDialog();	
+		await this.getInvoiceConfiguration();
+		if (!this.checkConfigurationComplete(this.ic, false) && !this.getDur().isParentUser()
+			&& (this.getDur().isInvoice() || this.getDur().isManagement()))
+			this.buildInvoiceConfigurationDialog();
 	}
 
 	disconnectedCallback() {
@@ -120,7 +120,7 @@ export class AonDesktop extends AonElement {
 
 	buildInvoiceConfigurationDialog() {
 		let dialog = this.getElement(this.INVOICE_CONFIGURATION_DIALOG);
-		if(!dialog) {
+		if (!dialog) {
 			dialog = new AonDialog();
 			dialog.id = this.INVOICE_CONFIGURATION_DIALOG;
 			this.appendChild(dialog);
@@ -198,7 +198,7 @@ export class AonDesktop extends AonElement {
 		// table.style.position = 'relative'; 
 		conditions.appendChild(table);
 		table.addRow();
-		
+
 		let checkBox = new AonCheckbox();
 		checkBox.setCh
 		let td = table.addCell(checkBox)
@@ -206,7 +206,7 @@ export class AonDesktop extends AonElement {
 		let span3 = this.createElement(TAG.SPAN);
 		span3.innerHTML = 'He leido y acepto las <a target="_blank" class="aonLink" href="http://aonsolutions.es/docs/aon_condiciones_generales_del_contrato.pdf">CONDICIONES GENERALES</a> del contrato de licencia de software y los términos <a target="_blank" class="aonLink" href="https://aonsolutions.es/docs/Aon-Declaracion%20Responsable%20VeriFactu.pdf">DECLARACIÓN RESPONSABLE del SIF</a> (Sistema Informático de facturación)';
 		table.addCell(span3);
-		
+
 		checkBox.addEventListener(EVENT.CHANGE, () => {
 			this.conditionsAccepted = checkBox.isChecked();
 		});
@@ -214,29 +214,48 @@ export class AonDesktop extends AonElement {
 
 	checkConfigurationComplete(config, showError) {
 		let isSpain = config && config.company && config.company.documentCountry && config.company.documentCountry === 'ES';
-		if(showError && !isSpain) return true;
-		if(showError && !this.conditionsAccepted) {
+		if (showError && !isSpain) return true;
+		if (showError && !this.conditionsAccepted) {
 			this.showMessageError("Debe aceptar las condiciones para continuar.");
 			return false;
 		}
-		if(!config || !config.company || !config.company.document || !config.communication) return false;
+		if (!config || !config.company || !config.company.document || !config.communication) return false;
 		let icc = new InvoiceCommunicationConfiguration(config.communication);
-		if(!isValid(config.company.document) && isSpain) {
-			if(showError) this.showMessageError("El NIF/CIF de la empresa no es válido.");
+		if (!isValid(config.company.document) && isSpain) {
+			if (showError) this.showMessageError("El NIF/CIF de la empresa no es válido.");
 			return false;
 		}
-		if(isPersonaFisica(config.company.document) && !(config.company.person || config.person)) {
-			if(showError) this.showMessageError("Es obligatorio rellenar todos los datos de la persona física.");
+		if (isPersonaFisica(config.company.document) && !(config.company.person || config.person)) {
+			if (showError) this.showMessageError("Es obligatorio rellenar todos los datos de la persona física.");
 			return false;
-		} 
-		if(!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) && !icc.isSii() && !icc.willBeSii() && !icc.isVerifactu() && !icc.willBeVerifactu() && !icc.isNoVerifactu() && !icc.willBeNoVerifactu()) {
-			if(showError) this.showMessageError("Es obligatorio selecionar Verifactu, No Verifactu o SII para empresas del territorio común.");
+		}
+		if (!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) && !icc.isSii() && !icc.willBeSii() && !icc.isVerifactu() && !icc.willBeVerifactu() && !icc.isNoVerifactu() && !icc.willBeNoVerifactu()) {
+			if (showError) this.showMessageError("Es obligatorio selecionar Verifactu, No Verifactu o SII para empresas del territorio común.");
 			return false;
-		} 
-		if(!icc.getAdministration().isUnknown() && (icc.hasCommunication() || icc.willBeCommunication() || icc.isNoSif())) {
+		}
+
+		if (!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) &&
+			!icc.isVerifactu() && icc.verifactuInvoice) {
+			if (showError) this.showMessageError("Es obligatorio seleccionar Verifactu, ya que existe una factura Verifactu en el año actual.");
+			return false;
+		}
+
+		if (!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) &&
+			!icc.isSii() && icc.siiInvoice) {
+			if (showError) this.showMessageError("Es obligatorio seleccionar SII, ya que existe una factura SII en el año actual.");
+			return false;
+		}
+
+		if (!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) &&
+			!icc.isNoVerifactu() && icc.noVerifactuInvoice) {
+			if (showError) this.showMessageError("Es obligatorio seleccionar No Verifactu, ya que existe una factura No Verifactu en el año actual.");
+			return false;
+		}
+
+		if (!icc.getAdministration().isUnknown() && (icc.hasCommunication() || icc.willBeCommunication() || icc.isNoSif())) {
 			return true;
 		} else {
-			if(showError) this.showMessageError("Es obligatorio selecionar una administración para la comunicación electrónica de facturas.");
+			if (showError) this.showMessageError("Es obligatorio selecionar una administración para la comunicación electrónica de facturas.");
 			return false;
 		}
 	}
@@ -358,8 +377,8 @@ export class AonDesktop extends AonElement {
 		// ------------------------------------------------
 		// Accounting
 		// ------------------------------------------------
-		let aonJsfAccountingGraphCard ;
-		if (this.getDur().isAccountingManager() ) {
+		let aonJsfAccountingGraphCard;
+		if (this.getDur().isAccountingManager()) {
 			let accountingGraphCard = new AonCard();
 			accountingGraphCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			accountingGraphCard.id = "accountingGraphCard";
@@ -400,7 +419,7 @@ export class AonDesktop extends AonElement {
 		// ------------------------------------------------
 		// Payroll
 		// ------------------------------------------------
-		if (this.getDur().isPayrollManager()  ) {
+		if (this.getDur().isPayrollManager()) {
 			let contractGraphCard = new AonCard();
 			let payrollGraphCard = new AonCard();
 			payrollGraphCard.classList.add(CSS.AON_DASHBOARD_CARD);
@@ -412,17 +431,17 @@ export class AonDesktop extends AonElement {
 
 			let aonJsfPayrollGraphCard = new AonJsfPayrollGraph();
 			let aonJsfContractGraphCard = new AonJsfContractGraph();
-			
-			if ( aonJsfAccountingGraphCard ) {
-				aonJsfAccountingGraphCard.isLoaded().then( () => {
+
+			if (aonJsfAccountingGraphCard) {
+				aonJsfAccountingGraphCard.isLoaded().then(() => {
 					payrollGraphCard.setContent(aonJsfPayrollGraphCard);
-					aonJsfPayrollGraphCard.isLoaded().then( () => {
+					aonJsfPayrollGraphCard.isLoaded().then(() => {
 						contractGraphCard.setContent(aonJsfContractGraphCard);
 					});
 				});
 			} else {
 				payrollGraphCard.setContent(aonJsfPayrollGraphCard);
-				aonJsfPayrollGraphCard.isLoaded().then( () => {
+				aonJsfPayrollGraphCard.isLoaded().then(() => {
 					contractGraphCard.setContent(aonJsfContractGraphCard);
 				});
 			}
@@ -469,7 +488,7 @@ export class AonDesktop extends AonElement {
 		// ------------------------------------------------
 		// Usage Summary
 		// ------------------------------------------------
-		if ((this.getDur().isInvoice() || this.getDur().isAccounting()) && this.getDur().isTrial() ) {
+		if ((this.getDur().isInvoice() || this.getDur().isAccounting()) && this.getDur().isTrial()) {
 			// Trial Card
 			let trialCard = new AonCard();
 			trialCard.classList.add(CSS.AON_DASHBOARD_CARD);
@@ -859,7 +878,7 @@ export class AonDesktop extends AonElement {
 				.map((model) => FiscalUtils.getModelNew(model));
 		}
 
-		const result = orderDatos.filter(function(a) {
+		const result = orderDatos.filter(function (a) {
 			var key = a.year + '|' + a.period;
 			if (!this[key]) {
 				this[key] = true;
@@ -867,7 +886,7 @@ export class AonDesktop extends AonElement {
 			}
 		}, Object.create(null));
 
-		result.sort(function(a, b) {
+		result.sort(function (a, b) {
 			var aSize = a.year;
 			var bSize = b.year;
 			var aLow = a.period;
