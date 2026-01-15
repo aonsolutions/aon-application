@@ -4972,7 +4972,7 @@ aon-superset iframe {
 	color: #fff;
 }
 
-/* ---------- __Aon__ Agenda ---------- */
+/* ---------- Aon Agenda ---------- */
 
 aon-agenda-all-days {
   display: block;
@@ -4992,13 +4992,19 @@ aon-agenda-all-days header {
   border-bottom: 1px solid #e0e0e0;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
 }
 
 aon-agenda-all-days .header-left {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
+}
+
+aon-agenda-all-days .header-top {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
 }
 
 aon-agenda-all-days .month {
@@ -5006,30 +5012,52 @@ aon-agenda-all-days .month {
   font-weight: 500;
 }
 
-aon-agenda-all-days .range {
+aon-agenda-all-days .month-hours {
   font-size: 13px;
+  font-weight: 400;
+  color: #5f6368;
+}
+
+aon-agenda-all-days .header-bottom {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: 14px;
   color: #70757a;
+}
+
+aon-agenda-all-days .week-label {
+  font-weight: 500;
+}
+
+aon-agenda-all-days .range {
+  font-weight: 400;
+}
+
+aon-agenda-all-days .week-hours {
+  font-weight: 400;
+  color: #5f6368;
+  font-size: 13px;
 }
 
 aon-agenda-all-days .task-holder-name {
   font-size: 14px;
   font-weight: 500;
   color: #5f6368;
+  padding-top: 2px;
 }
 
 /* ---------- Scroll container ---------- */
 
 aon-agenda-all-days .scroll {
-  height: calc(100% - 56px);
+  height: calc(100% - 76px);
   overflow-y: auto;
-  scroll-snap-type: y mandatory;
   overscroll-behavior: contain;
 }
 
 /* ---------- Week ---------- */
 
 aon-agenda-all-days .week {
-  scroll-snap-align: start;
   padding: 8px 0;
 }
 
@@ -5077,7 +5105,10 @@ aon-agenda-all-days .total-hours {
 }
 
 aon-agenda-all-days .day.today .day-number {
-  color: #1a73e8;
+  color: white;
+  background-color: #1a73e8;
+  padding: .2rem;
+  border-radius: .5rem;
 }
 
 /* Días de fin de semana en rojo */
@@ -5126,15 +5157,4 @@ aon-agenda-all-days .event.out {
 aon-agenda-all-days .event.pause {
   background: #fef7e0;
   color: #b06000;
-}
-
-/* ---------- Loading ---------- */
-
-aon-agenda-all-days .loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  font-size: 14px;
-  color: #70757a;
 }

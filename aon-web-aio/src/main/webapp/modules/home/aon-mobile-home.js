@@ -17,7 +17,8 @@ import { getWorkgroups } from '../../services/workgroupService.js';
 import { AonTimecontrol } from '../timecontrol/aon-timecontrol.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { SigninSidenav } from '../timecontrol/signinEnums.js';
-import { AonAgendaAllDays } from '../timecontrol/time-control/aon-agenda-all-days.js';
+import { AonAgendaAllDays } from '../timecontrol/time-control/agenda/aon-agenda-all-days.js';
+import { AgendaApplication } from '../timecontrol/time-control/agenda/agenda-application.js';
 
 export class AonMobileHome extends AonElement {
 
@@ -249,7 +250,7 @@ export class AonMobileHome extends AonElement {
 		li.addEventListener('click', (ev) => {
 			ev.stopPropagation();
 			
-			let aonAgenda = new AonAgendaAllDays();
+			let aonAgenda = new AgendaApplication();
 			this.rootPanel(aonAgenda);
 			
 			/*
