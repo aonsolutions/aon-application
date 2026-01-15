@@ -18,7 +18,6 @@ import org.jooq.Record14;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.Table;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -27,6 +26,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams.OrderBy.InvoiceConsoleParamsOrderVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -158,6 +158,7 @@ public class InvoiceConsoleDAO {
 //		System.out.println( select .getSQL(ParamType.INLINED) );
 //		System.out.println("-----------------------------------------------");
 		
+		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, params.getDomain() );
 		return select
 			.fetch()
 			.stream()
@@ -191,7 +192,7 @@ public class InvoiceConsoleDAO {
 				return ic;
 			})
 			.map( ic -> fillAttach(ctx, ic))
-			.map( ic -> fillCommunicationInfo(ctx, ic))
+			.map( ic -> fillCommunicationInfo(ctx, icc, ic))
 //			.map( ic -> fillSource(ic))
 //			.map( ic -> fillMessages(ctx, ic))
 //			.map( ic -> fillBreakdown(ctx, ic))
@@ -210,8 +211,18 @@ public class InvoiceConsoleDAO {
 		return ic;
 	}
 
-	private static InvoiceConsole fillCommunicationInfo(AONContext ctx, InvoiceConsole ic) {
-		ic.getInvoice().addCommunicationInfo(InvoiceInfoDAO.getMap(ctx, ic.getInvoice().getDomain(), ic.getInvoice().getId()).orElse(null));
+	private static InvoiceConsole fillCommunicationInfo(AONContext ctx, InvoiceCommunicationConfiguration icc, InvoiceConsole ic) {
+		if (icc != null) {
+			ic.getInvoice().addCommunicationInfo(
+				InvoiceInfoDAO.getMap(
+					ctx
+					, icc
+					, ic.getInvoice().getDomain()
+					, ic.getInvoice().getId()
+					, ic.getInvoice().getType()
+					, ic.getInvoice().getExpDate()
+					).orElse(null));
+		}
 		return ic;
 	}
 

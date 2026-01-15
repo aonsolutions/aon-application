@@ -536,7 +536,7 @@ public class AON_SOLUTIONS {
 	
 	public static List<Invoice> getInvoices(String domainName, Integer domainId, String login, InvoiceFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getApi().getInvoices(ctx, filter )
+			return getApi().getInvoices(ctx, domainId, filter )
 				.collect(Collectors.toCollection(LinkedList::new));
 		}
 	}

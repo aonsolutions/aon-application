@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
+import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams.OrderBy;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
@@ -130,6 +131,8 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		datePanel.add(fromDateBox);
 		InlineLabel toDateLabel = new InlineLabel( AON.MSG.to());
 		toDateLabel.setStyleName(AON.CSS.aonItalic());
+		toDateLabel.addStyleName(AON.CSS.aonMarginLeft());
+		toDateLabel.addStyleName(AON.CSS.aonMarginRight());
 		datePanel.add(toDateLabel);
 		datePanel.add(toDateBox);
 
@@ -138,11 +141,14 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		numberPanel.add(fromNumberBox);
 		Label toNumberLabel = new InlineLabel( AON.MSG.to());
 		toNumberLabel.setStyleName(AON.CSS.aonItalic());
+		toNumberLabel.addStyleName(AON.CSS.aonMarginLeft());
+		toNumberLabel.addStyleName(AON.CSS.aonMarginRight());
 		numberPanel.add(toNumberLabel);
 		numberPanel.add(toNumberBox);
 
 		addPair(mainTab, AON.MSG.invoices(), outputBox);
 		addPair(mainTab,"Facturas anuladas" ,annulledBox);
+		addPair(mainTab,AON.MSG.proforma(),proformaBox);
 		addPair(mainTab, AON.MSG.fiscalYear(), yearBox);
 		addPair(mainTab,AON.MSG.period(),periodBox);
 		addPair(mainTab,AON.MSG.date() ,datePanel);
@@ -154,6 +160,7 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		if ( hasActivities ) {
 			addPair(mainTab,AON.MSG.activity(),activityBox);
 		}
+		addPair(mainTab,AON.MSG.recorded(),recordedBox);
 		addPair(mainTab,AON.MSG.transaction() ,transactionBox);
 		addPair(mainTab,AON.MSG.withholding() ,withholdingBox);
 		addPair(mainTab,AON.MSG.rectified() ,rectificationTypeBox);
@@ -166,8 +173,6 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		addPair(mainTab,AON.MSG.withholdingFarmer() ,farmerRegimeBox);
 		addPair(mainTab,AON.MSG.surcharge() ,surchargeBox);
 
-		addPair(mainTab,AON.MSG.recorded(),recordedBox);
-		addPair(mainTab,AON.MSG.proforma(),proformaBox);
 		addPair(mainTab,AON.MSG.source() ,sourceBox);
 		addPair(mainTab,AON.MSG.orderBy(),orderByBox);
 		addPair(mainTab,AON.MSG.order(),orderBox);
@@ -299,7 +304,6 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 	
 	private void initFromNumberBox(InvoiceModuleOptions opts) {
 		fromNumberBox = new AonIntegerBox();
-		fromNumberBox.addStyleName(AON.CSS.aonMarginLeft());
 		fromNumberBox.setMaxLength(8);
 		fromNumberBox.setVisibleLength(8);
 		fromNumberBox.addValueChangeHandler(event -> fire(opts));
@@ -307,7 +311,6 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 	
 	private void initToNumberBox(InvoiceModuleOptions opts) {
 		toNumberBox = new AonIntegerBox();
-		toNumberBox.addStyleName(AON.CSS.aonMarginLeft());
 		toNumberBox.setMaxLength(8);
 		toNumberBox.setVisibleLength(8);
 		toNumberBox.addValueChangeHandler(event -> fire(opts));
@@ -468,7 +471,7 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		orderBox.addChangeHandler(event -> fire(opts));
 	}
 
-	private InvoiceConsoleParams getWidgetParams(InvoiceModuleOptions opts) {
+	InvoiceConsoleParams getWidgetParams(InvoiceModuleOptions opts) {
 		InvoiceConsoleParams params = new InvoiceConsoleParams()
 			.setDomain(opts.getDomain())
 			.setFromDate(fromDateBox.getValue())
@@ -549,7 +552,7 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		
 		params.setOrderBy( orderByBox.getValue() );
 		params.setDescending( orderBox.getSelectedIndex() == 1 );
-
+		
 		return params;
 	}
 
@@ -559,6 +562,7 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 	}
 
 	void initialize(InvoiceModuleOptions opts) {
+		outputBox.setSelectedIndex(2); // Output invoices - Emitidas
 		Date toDate = new Date();
 		Date fromDate = DateUtils.addMonths2Date(new Date(), -4);
 		fromDateBox.setValue(fromDate,false);
@@ -572,6 +576,8 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 			activityBox.setSelectedIndex(0);
 		}
 		proformaBox.setSelectedIndex(1);
+		orderByBox.setValue(OrderBy.ID);
+		orderBox.setSelectedIndex(1); // Descending
 		fire(opts);
 	}
 	

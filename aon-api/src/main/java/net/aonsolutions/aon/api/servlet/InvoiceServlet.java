@@ -293,7 +293,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				boolean accepted = true;
 				if(config.isBizkaia()) {
 					try(CloseableAONContext ctx = AONContext.getAONContext(api.getDomain(), api.getUser())) {
-						accepted = InvoiceInfoDAO.getMap(ctx, config, api.getDomain().getId(), invoiceId)
+						accepted = InvoiceInfoDAO.getMap(ctx, config, invoice)
 								.map( ic -> ic.get(InvoiceCommunicationType.LROE) )
 								.filter( Objects::nonNull )
 								.map(info -> info.isAccepted() || info.isAcceptedWithErrors())
@@ -364,7 +364,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			// Cuando se grabe en invoice_info la información de los envios de ARABA y GIPUZKOA, el siguiente código debe borrarse.
 			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx,domainId);
 			if (!icc.isBizkaia() && icc.isTbai()) {
-				Map<InvoiceCommunicationType, InvoiceCommunicationHistoryMapValue> history = InvoiceCommunicator.history(ctx, domainId, invoiceId);
+				Map<InvoiceCommunicationType, InvoiceCommunicationHistoryMapValue> history = InvoiceCommunicator.history(ctx, icc, invoice );
 				AonCollectionUtils.stream(history)
 				.filter(e -> !invoice.hasInvoiceInfo(e.getKey()))
 				.forEach(e -> invoice.putInvoiceInfo(e.getKey(), e.getValue().getInfo()) )
@@ -410,7 +410,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		if(!isRawdoc(filter.getStatus())) {
 			Integer domainId = api.getDomain().getId();
 			try(CloseableAONContext ctx = AONContext.getAONContext(api.getOccam())) {
-				return InvoiceApiDAO.getInvoices(ctx, f -> AonApiServletUtils.invoiceFilter(f, domainId, filter))
+				return InvoiceApiDAO.getInvoices(ctx, domainId, f -> AonApiServletUtils.invoiceFilter(f, domainId, filter))
 					.map( i ->  invoiceList2JSON(ctx, i))
 					.collect(Collector.of(JSONArray::new,JSONArray::put,(left, right) -> left, Collector.Characteristics.UNORDERED));
 			}

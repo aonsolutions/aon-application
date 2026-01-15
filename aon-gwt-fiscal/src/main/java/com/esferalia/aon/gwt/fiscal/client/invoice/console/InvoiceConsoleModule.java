@@ -75,13 +75,16 @@ public class InvoiceConsoleModule  implements EntryPoint {
 	
 	private void loadModule( InvoiceModuleOptions opts ) {
 		AonLayoutPanel aonLayoutPanel = new AonLayoutPanel(Unit.PX);
-		toolbar = new InvoiceConsoleToolbar();
+		
+		toolbar = new InvoiceConsoleToolbar(opts, selectionHandler);
 		
 		
 		aonLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		InvoiceConsoleFilter filterPanel = new InvoiceConsoleFilter(opts);
 		filterPanel.addValueChangeHandler(e -> search(opts, e.getValue()) );
 		aonLayoutPanel.addWest(filterPanel, FILTER_WIDTH);
+		
+		toolbar.addClickHandlerToRefresh(e -> search(opts, filterPanel.getWidgetParams(opts) ) );
 		
 		toolbar.addClickHandlerToShowFilter(e -> {
 			aonLayoutPanel.setWidgetHidden(filterPanel, false);
@@ -93,9 +96,6 @@ public class InvoiceConsoleModule  implements EntryPoint {
 			aonLayoutPanel.setWidgetSize(filterPanel, 0);
 			aonLayoutPanel.animate(200);
 		});
-		
-		selectionHandler.addValueChangeHandler(e -> toolbar.refresh() );
-		toolbar.add(selectionHandler);
 		
 		content = new SimpleLayoutPanel();
 		content.setStyleName(AON.CSS.aonSelector());
@@ -109,9 +109,9 @@ public class InvoiceConsoleModule  implements EntryPoint {
 	private void search(InvoiceModuleOptions opts, InvoiceConsoleParams params) {
 		content.clear();
 		selectionHandler.clean();
-		toolbar.refresh();
+		toolbar.refresh( opts );
 		InvoiceConsoleTable table = new InvoiceConsoleTable(opts, params, new ToolbarAsyncCallback() {
-			@Override public void onStartRunning() 	{ toolbar.startRun(AON.MSG.searching()); }
+			@Override public void onStartRunning() 	{ toolbar.startRun(AON.MSG.loading()); }
 			@Override public void onEndRunning() 	{ toolbar.endRun();  }
 		});
 		content.setWidget(table);

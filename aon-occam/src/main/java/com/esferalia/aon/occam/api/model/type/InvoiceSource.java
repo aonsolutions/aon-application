@@ -7,17 +7,17 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceSource implements Serializable {
 	
-	 DIRECT_EXPENSE	("Directa de gastos", (d,v) -> v.visitDirectExpense(d) )
-	,PURCHASE		("Pedido de compra"	, (d,v) -> v.visitPurchase(d) )
-	,SALES			("Pedido de venta"	, (d,v) -> v.visitSales(d) )
-    ,DELIVERY		("Albarán de venta"	, (d,v) -> v.visitDelivery(d) )
-    ,INCOME			("Albarán de compra", (d,v) -> v.visitIncome(d) )
-    ,FEE			("Cuota"			, (d,v) -> v.visitFee(d) )
-    ,ACCOUNT		("Apunte contable"	, (d,v) -> v.visitAccount(d) )			
-    ,DIRECT_INVOICE	("Directa"			, (d,v) -> v.visitDirectInvoice(d) )
-    ,OFFER			("Presupuesto"		, (d,v) -> v.visitOffer(d) )
-    ,RESERVATION	("Reserva"			, (d,v) -> v.visitReservation(d) )
-    ,TEDI 			("Tedi"				, (d,v) -> v.visitTedi(d) );
+	 DIRECT_EXPENSE	("Directa de gastos"		, (d,v) -> v.visitDirectExpense(d) )
+	,PURCHASE		("Pedido de compra"			, (d,v) -> v.visitPurchase(d) )
+	,SALES			("Pedido de venta"			, (d,v) -> v.visitSales(d) )
+    ,DELIVERY		("Albar\u00E1n de venta"	, (d,v) -> v.visitDelivery(d) )
+    ,INCOME			("Albar\u00E1n de compra"	, (d,v) -> v.visitIncome(d) )
+    ,FEE			("Cuota"					, (d,v) -> v.visitFee(d) )
+    ,ACCOUNT		("Apunte contable"			, (d,v) -> v.visitAccount(d) )			
+    ,DIRECT_INVOICE	("Directa"					, (d,v) -> v.visitDirectInvoice(d) )
+    ,OFFER			("Presupuesto"				, (d,v) -> v.visitOffer(d) )
+    ,RESERVATION	("Reserva"					, (d,v) -> v.visitReservation(d) )
+    ,TEDI 			("Tedi"						, (d,v) -> v.visitTedi(d) );
 
 	public byte value() {
 		return (byte) ordinal();

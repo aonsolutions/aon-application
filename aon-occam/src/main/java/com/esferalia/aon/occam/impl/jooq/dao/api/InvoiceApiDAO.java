@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.util.AonEnumUtils;
@@ -35,7 +37,8 @@ public class InvoiceApiDAO {
 	
 	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
 	
-	public static Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter) {
+	public static Stream<Invoice> getInvoices(AONContext ctx, Integer domainId, InvoiceFilter filter) {
+		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, domainId);
 		Integer page = INVOICE_PROPERTIES.getPage(filter);
 		if (page == null) page = 1;
 		Integer perPage = INVOICE_PROPERTIES.getPerPage(filter);
@@ -43,6 +46,7 @@ public class InvoiceApiDAO {
 		return ctx.getDslContext().select()
 			.from(INVOICE)
 			.where(INVOICE_PROPERTIES.getConditions(filter))
+			.and(INVOICE.DOMAIN.eq(domainId))
 			.groupBy(INVOICE.ID)
 			.orderBy(INVOICE.ISSUE_DATE.desc(), INVOICE.ID.desc())
 			.limit(perPage)
@@ -50,7 +54,7 @@ public class InvoiceApiDAO {
 			.fetch()
 			.stream()
 			.map(new InvoiceApiFiller() )
-			.map(i -> i.addCommunicationInfo( InvoiceInfoDAO.getMap(ctx, i.getDomain(), i.getId()).orElse(null) ))
+			.map(i -> i.addCommunicationInfo( InvoiceInfoDAO.getMap(ctx, icc, i).orElse(null) ))
 		;
 	}
 	
@@ -77,9 +81,6 @@ public class InvoiceApiDAO {
 	}
 	
 	public static Pair<Date, Date> getInvoicesChartPeriod(AONContext ctx, InvoiceFilter filter) {
-		
-		System.out.println( "getInvoicesChartPeriod!" );
-
 		Record2<java.sql.Date, java.sql.Date> result = 
 			ctx.getDslContext().select(
 				DSL.min(INVOICE.ISSUE_DATE),
@@ -99,9 +100,6 @@ public class InvoiceApiDAO {
 	}
 	
 	public static Integer getInvoicesCount(AONContext ctx, InvoiceFilter filter) {
-		
-		System.out.println( "getInvoicesChartPeriod!" );
-
 		return ctx.getDslContext().selectCount()
 				.from(INVOICE)
 			.where(INVOICE_PROPERTIES.getConditions(filter))
@@ -109,9 +107,6 @@ public class InvoiceApiDAO {
 	}
 	
 	public static Date getInvoiceExpDate(AONContext ctx, Integer id) {
-		
-		System.out.println( "getInvoiceExpDate!" );
-
 		return ctx.getDslContext().select(INVOICE_FISCAL.EXP_DATE)
 		.from(INVOICE_FISCAL)
 		.where(INVOICE_FISCAL.DOMAIN.eq(ctx.getDomainId()))
