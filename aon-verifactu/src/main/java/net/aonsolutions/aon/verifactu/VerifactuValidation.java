@@ -1269,7 +1269,9 @@ public class VerifactuValidation {
 	private static boolean notSameSign(String v1, String v2) {
 		double d1 = VerifactuUtils.todouble(v1);
 		double d2 = VerifactuUtils.todouble(v2);
-		return AonMathUtils.isNegative(d1) != AonMathUtils.isNegative(d2);
+		return AonMathUtils.isNotZero(d1)
+			&& AonMathUtils.isNotZero(d2)
+			&& AonMathUtils.isNegative(d1) != AonMathUtils.isNegative(d2);
 	}
 
 	private static boolean isIVA(String impuesto) {
