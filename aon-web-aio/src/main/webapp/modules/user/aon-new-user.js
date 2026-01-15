@@ -403,14 +403,16 @@ export class AonNewUser extends AonElement {
 	addUserScope(parent) {
 		getCompanyScopes().then( scopes => {
 			let scopeSelect = new AonNewSelect();
-	    	scopeSelect.title = MSG.SCOPES;
-	    	scopeSelect.id = "userScopesSelect";
-	   	 	scopeSelect.autocomplete = true;
-	    	scopeSelect.default = true;
-	    	scopeSelect.multiple = true;
+			scopeSelect.title = MSG.SCOPES;
+			scopeSelect.id = "userScopesSelect";
+			scopeSelect.autocomplete = true;
+			scopeSelect.default = true;
+			scopeSelect.multiple = true;
 		
 			let d = this.getApplication().getDialog();
 			d.clear();
+			d.setDialogWidth('90%');
+			d.setDialogHeightFull();
 			d.setTitle(MSG.ADD_SCOPE);
 			d.setContent(scopeSelect);
 			d.addAcceptAction(() => {

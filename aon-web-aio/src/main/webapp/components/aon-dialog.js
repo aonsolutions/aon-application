@@ -366,6 +366,12 @@ export class AonDialog extends AonElement {
 			content.style.maxWidth = width;
 		}
   }
+	setDialogHeightFull() {
+    let content = this.getDialog();
+		content.style.height = "100%";
+    content.style.height = "-webkit-fill-available";
+    content.style.height = "fill-available";
+  }
 
   setContent(widget, top = null, left = null, width = null) {
     let content       = this.getContent();

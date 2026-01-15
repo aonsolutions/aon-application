@@ -36,7 +36,8 @@ export class AonJsfApp extends AonElement {
 		iframe.style.border = 'none';
 		iframe.style.width = '100%';
 		let top = this.getBoundingClientRect().top;
-		iframe.style.height = `calc(100vh - ${top + 10}px)`;
+		// iframe.style.height = `calc(100vh - ${top + 10}px)`;
+		iframe.style.height = '100vh';
 
 
 		this.appendChild(iframe);
