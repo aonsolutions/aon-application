@@ -437,8 +437,8 @@ public class InvoiceTypes {
 							.setDeductibleQuota(26.2)
 						)
 					)
-					.setVatQuota(21.0)
-					.setTotal(121.0)
+					.setVatQuota(26.2)
+					.setTotal(126.2)
 					.refreshTaxBreakdown()
 				;
 			}

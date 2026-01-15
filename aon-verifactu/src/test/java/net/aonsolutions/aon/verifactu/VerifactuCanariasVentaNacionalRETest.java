@@ -208,8 +208,8 @@ class VerifactuCanariasVentaNacionalRETest extends AbstractVerifactuTest {
 	    assertEquals( "5.2" , dt.getTipoRecargoEquivalencia());
 	    assertEquals( "5.2" , dt.getCuotaRecargoEquivalencia());		
 	    
-	    assertEquals( "21" , rfat.getCuotaTotal());
-	    assertEquals( "121" , rfat.getImporteTotal());
+	    assertEquals( "26.2" , rfat.getCuotaTotal());
+	    assertEquals( "126.2" , rfat.getImporteTotal());
 	    
 	    RegistroFacturacionAltaType.Encadenamiento encadenamiento = rfat.getEncadenamiento();
 	    assertNotNull( encadenamiento );
