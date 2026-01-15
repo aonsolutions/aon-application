@@ -452,6 +452,14 @@ public class InvoiceCommunicationDAO {
 				updateEndDate(ctx, domainId, config.getSifData(), config.getSiiData().getStartDate());
 				fillSif(ctx, domainId, config);
 			}
+		
+			if(config.isAEAT() || config.isCanarias()) {
+				if(!config.hasVerifactuInvoice() && !config.hasNoVerifactuInvoice() && !config.hasSifInvoice()) {
+					EnterpriseDataDAO.update(ctx, config.getSifData().setName(EnterpriseDataNames.ICC_NO_VERIFACTU.name()));
+					fillSif(ctx, domainId, config);
+					fillNoVerifactu(ctx, domainId, config);	
+				}
+			}
 		}
 		
 		return config;
