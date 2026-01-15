@@ -379,9 +379,10 @@ export class AonDialog extends AonElement {
     content.appendChild(widget);
     if (this.isTypeMenu() && top && left) {
       this.style.top  = top + 'px';
-      this.style.left = (left > (this.offsetWidth / 2) ? left - 180 : left) + 'px';
+//	  this.style.left = (left > (this.offsetWidth / 2) ? left - 180 : left) + 'px';
+	  this.classList.remove("aon-dialog-hidden");
+	  this.style.left = left - this.offsetWidth/1.25 + 'px';
     }
-
 //		if(width) {
 //			content.style.width = width;
 //		}
