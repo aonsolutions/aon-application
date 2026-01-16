@@ -206,7 +206,7 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	public Date getExpDate() {
-		return ensureFiscal().getExpDate() != null ? ensureFiscal().getExpDate() : issueDate;
+		return ensureFiscal().getExpDate();
 	}
 	public Date getTaxDate() {
 		return taxDate;
