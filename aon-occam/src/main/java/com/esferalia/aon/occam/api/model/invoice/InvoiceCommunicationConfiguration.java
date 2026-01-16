@@ -898,7 +898,7 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	 * @return true si la empresa está dada de alta en SIF en modo test, false en caso contrario.
 	 */
 	public boolean isSifTest() {
-		return isTest(getTbaiData());
+		return isTest(getSifData());
 	}
 	
 	/**
