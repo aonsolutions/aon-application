@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.soap.SOAPMessage;
@@ -253,7 +254,8 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 	    assertNotNull( idFactura );
 	    assertEquals(vc.getCompany().getDocument() , idFactura.getIDEmisorFactura() );
 	    assertEquals(invoice.getReferenceCode() , idFactura.getNumSerieFactura() );
-	    assertEquals(VerifactuUtils.toString(invoice.getExpDate() ), idFactura.getFechaExpedicionFactura() );
+	    Date expDate = invoice.getExpDate() != null ? invoice.getExpDate() : new Date();
+	    assertEquals(VerifactuUtils.toString(expDate), idFactura.getFechaExpedicionFactura() );
 		
 		OperacionType operacion = ret.getOperacion();
 		assertNotNull(operacion);

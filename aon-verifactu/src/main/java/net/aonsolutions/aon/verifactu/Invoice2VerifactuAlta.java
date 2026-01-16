@@ -45,7 +45,8 @@ class Invoice2VerifactuAlta {
 		IDFacturaExpedidaType idFactura = new IDFacturaExpedidaType();
 		idFactura.setIDEmisorFactura(vc.getCompany().getDocument());
 		idFactura.setNumSerieFactura(invoice.getReferenceCode());
-		idFactura.setFechaExpedicionFactura( VerifactuUtils.toString(new Date()) );
+		Date expDate = invoice.getExpDate() != null ? invoice.getExpDate() : new Date();
+		idFactura.setFechaExpedicionFactura( VerifactuUtils.toString(expDate) );
 		alta.setIDFactura(idFactura);
 		
 		// Referencia Externa InvoiceId
