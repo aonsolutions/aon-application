@@ -659,6 +659,13 @@ public class InvoiceDAO {
 		
 		return invoice;
 	}
+	
+	public static void saveInvoiceExpDate(AONContext ctx, Integer invoiceId, Date expDate) {
+		ctx.getDslContext().update(INVOICE_FISCAL)
+		.set(INVOICE_FISCAL.EXP_DATE,AonDateUtils.toSql(expDate))
+		.where(INVOICE_FISCAL.INVOICE.eq(invoiceId))
+		.execute();
+	}
 
 	private static void updateRectifiedInvoice(AONContext ctx, Invoice rectifierInvoice) {
 		ctx.getDslContext().update(INVOICE)

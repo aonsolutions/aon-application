@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -235,7 +236,8 @@ class VerifactuInvoiceCommunicationCancelTest extends AbsInvoiceCommunicationCan
 	    	    assertNotNull( idFactura );
 	    	    assertEquals(cc.getCompany().getDocument() , idFactura.getIDEmisorFactura() );
 	    	    assertEquals(invoice.getReferenceCode() , idFactura.getNumSerieFactura() );
-	    	    assertEquals(VerifactuUtils.toString(invoice.getExpDate() ), idFactura.getFechaExpedicionFactura() );
+	    	    Date expDate = invoice.getExpDate() != null ? invoice.getExpDate() : new Date();
+	    	    assertEquals(VerifactuUtils.toString(expDate ), idFactura.getFechaExpedicionFactura() );
 	    		
 	    		OperacionType operacion = ret.getOperacion();
 	    		assertNotNull(operacion);
@@ -339,7 +341,8 @@ class VerifactuInvoiceCommunicationCancelTest extends AbsInvoiceCommunicationCan
 	    	    assertNotNull( idFactura );
 	    	    assertEquals(cc.getCompany().getDocument() , idFactura.getIDEmisorFactura() );
 	    	    assertEquals(invoice.getReferenceCode() , idFactura.getNumSerieFactura() );
-	    	    assertEquals(VerifactuUtils.toString(invoice.getExpDate() ), idFactura.getFechaExpedicionFactura() );
+	    	    Date expDate = invoice.getExpDate() != null ? invoice.getExpDate() : new Date();
+	    	    assertEquals(VerifactuUtils.toString( expDate ), idFactura.getFechaExpedicionFactura() );
 	    		
 	    		OperacionType operacion = ret.getOperacion();
 	    		assertNotNull(operacion);

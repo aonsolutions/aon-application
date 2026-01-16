@@ -3,7 +3,7 @@ import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, rectifyIn
 	getCompanyActivities, getPaymethods,  getRegistryBanks, sendInvoice2Mail, getSalesSeries, 
 	signInvoice, getApiConfiguration, getAeatCertificates, downloadFacturae, getCustomerEmails,
 	getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, getRegistrySuggestedAccount, 
-	getPaymethod} from '../../services/service.js';
+	getPaymethod, getRegistry} from '../../services/service.js';
 import { Invoice, getDocumentNumber } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
@@ -34,6 +34,7 @@ import * as ACTION from '../actions.js';
 import * as OPTION from './InvoiceOptions.js';
 import * as LS from '../../services/localStorageService.js';
 import * as JSF from '../aon-jsf-app.js';
+import { isValid } from '../../services/documentUtils.js';
 
 
 export class AonInvoice extends AonElement {
@@ -321,7 +322,18 @@ export class AonInvoice extends AonElement {
 			}
 		}
 		return true;
-	}	
+	}
+	
+	checkRegistry() {
+		if(this.invoice.getRegistry().document && this.invoice.getRegistry().document != ""
+				&& this.invoice.getRegistry().documentCountry == 'ES' && !isValid(this.invoice.getRegistry().document)) {
+			this.showMessageError(this.invoice.isEmitida()
+				? "El Documento del Cliente no es válido."
+				: "El Documento del Proveedor/Acreedor no es válido.");
+			return false;
+		}
+		return true;
+	}
 
 	resize() {
 		if(!this.isMobile()){
@@ -1410,6 +1422,19 @@ export class AonInvoice extends AonElement {
 				this.invoice.receiver.address = registry.getRegistry().address;
 			});
 			table.addCell(registry, '6');	
+		}
+		
+		if(this.invoice.isRawdoc() && this.invoice.getRegistry().documentCountry == 'ES' 
+				&& !isValid(this.invoice.getRegistry().document) && this.invoice.getRegistry().id) {
+			let data = {
+   				id: this.invoice.getRegistry().id,
+	   	    	additional_info: []
+    		};
+   			getRegistry(data).then(r => {
+				if(isValid(r.document)) {
+					this.invoice.getRegistry().document = r.document;
+				}
+       		});					
 		}
 
 		table.addRow(); // ----- ROW 3
@@ -2747,7 +2772,9 @@ export class AonInvoice extends AonElement {
 
 	acceptInvoice() {
 		let ok = this.checkConfiguration();
+		ok = ok && this.checkRegistry();	
 		if(!ok) return;
+
 		if(!this.isInvofoxInvoice() && this.getInvoice().isEmitida()) this.getInvoice().setReference(undefined);
 		if(this.invoice.isEmitida() && this.icc.hasCommunication() && !this.icc.isSif() && !this.icc.isNoVerifactu()) {
 			let d = this.getApplication().getDialog();
