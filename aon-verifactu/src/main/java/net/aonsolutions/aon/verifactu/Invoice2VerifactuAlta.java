@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.verifactu;
 
+import java.util.Date;
 import java.util.Optional;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -44,7 +45,7 @@ class Invoice2VerifactuAlta {
 		IDFacturaExpedidaType idFactura = new IDFacturaExpedidaType();
 		idFactura.setIDEmisorFactura(vc.getCompany().getDocument());
 		idFactura.setNumSerieFactura(invoice.getReferenceCode());
-		idFactura.setFechaExpedicionFactura( VerifactuUtils.toString(invoice.getExpDate()) );
+		idFactura.setFechaExpedicionFactura( VerifactuUtils.toString(new Date()) );
 		alta.setIDFactura(idFactura);
 		
 		// Referencia Externa InvoiceId
