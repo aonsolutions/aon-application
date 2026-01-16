@@ -969,10 +969,12 @@ public class Mod347DAO {
 		
 		String INFO_MSG = "<pre class='aon-fixed-font aon-font-medium aon-margin-bottom'>{0}<pre>";
 		
-		// InformaciÃ³n Desglose de facturas
-		if (infoKey == FiscalModelKeyInfo.INVOICE) {
+		// Información Desglose de facturas
+		if (infoKey == FiscalModelKeyInfo.MODEL_INVOICE_VAT_BREAKDOWN) {
 			return MessageFormat.format(INFO_MSG, getInvoicesInfo(ctx, mod347, declared));			
-		}
+		} else if (infoKey == FiscalModelKeyInfo.MODEL_INVOICE_IRPF_BREAKDOWN) {
+			return MessageFormat.format(INFO_MSG, getInvoicesInfoRental(ctx, mod347, declared));			
+		} 
 		
 		return null;
 	}
@@ -981,15 +983,35 @@ public class Mod347DAO {
 
 		String title = "FACTURAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
 				+ FiscalModelUtils.getModelName(mod347)
-				+ " DE " + mod347.getYear();
+				+ " DE " + mod347.getYear()
+				+ " (OPERACIONES) ";
 		
 		String subtitle =  "Clave "+ (Mod347Key.safeValue(declared.getType()) == null ? "" : declared.getType().getValue()) +
 				" - " + (AonStringUtils.isNotBlank(declared.getOperatorNif()) ? declared.getOperatorNif() : (declared.getDocument() == null ? "" : declared.getDocument())) +
 				" - " + (declared.getName() == null ? "" : declared.getName());				
 		
-		return Mod347Formatter.formatInvoices347(title
-				,subtitle
-				,getVatBreakdown(ctx, mod347, declared).collect(Collectors.toCollection(LinkedList::new)),mod347.getYear(), declared.isVatAccrual());
+		return Mod347Formatter.formatInvoices347(title, subtitle
+				, getVatBreakdown(ctx, mod347, declared)
+				    .filter(vat -> !(mod347.isCanarias() && vat.hasRetention() && vat.getWithholdingType() == WithholdingType.RENTING) )  // Si el modelo es de Canarias no sacar las facturas de arrendamientos de locales
+					.collect(Collectors.toCollection(LinkedList::new)),mod347.getYear(), declared.isVatAccrual());
+		
+	}
+	
+	private static String getInvoicesInfoRental(AONContext ctx, Mod347 mod347, Mod347Declared declared) {
+
+		String title = "FACTURAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
+				+ FiscalModelUtils.getModelName(mod347)
+				+ " DE " + mod347.getYear()
+				+ " (ARRENDAMIENTO DE LOCALES) ";
+		
+		String subtitle =  "Clave "+ (Mod347Key.safeValue(declared.getType()) == null ? "" : declared.getType().getValue()) +
+				" - " + (AonStringUtils.isNotBlank(declared.getOperatorNif()) ? declared.getOperatorNif() : (declared.getDocument() == null ? "" : declared.getDocument())) +
+				" - " + (declared.getName() == null ? "" : declared.getName());				
+		
+		return Mod347Formatter.formatInvoices347(title, subtitle
+				, getVatBreakdown(ctx, mod347, declared)
+				    .filter(vat -> mod347.isCanarias() && vat.hasRetention() && vat.getWithholdingType() == WithholdingType.RENTING)  // Si el modelo es de Canarias sacar las facturas de arrendamientos de locales
+					.collect(Collectors.toCollection(LinkedList::new)),mod347.getYear(), declared.isVatAccrual());
 		
 	}
 	

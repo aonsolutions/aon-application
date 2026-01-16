@@ -374,10 +374,10 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 		});
 		tab5.setWidget(2, 4, amount);
 		
-		AonTableButton button = new AonTableButton(FiscalModelKeyInfo.INVOICE.getLabel(), AON.CSS.aonIconData());
+		AonTableButton button = new AonTableButton("Ver desglose en facturas", AON.CSS.aonIconData());
 		button.setTabIndex(-2); // NO FOCUS
 		button.addClickHandler(event -> Model347.SERVICE.getInfo(cbk.getOptions().getOccam(),
-			mod347, declared, FiscalModelKeyInfo.INVOICE, new AsyncCallback<String>() {
+			mod347, declared, FiscalModelKeyInfo.MODEL_INVOICE_VAT_BREAKDOWN, new AsyncCallback<String>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
@@ -396,9 +396,7 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 		
 		panel.add(tab5);
 		
-// ---------------------------------
-		// FALTA - EN EL MODELO 415 TAMBIEN SE DESGLOSAN LOS IMPORTES POR ARRENDAMIENTOS DE LOCALES, VER SI TAMBIEN SE PUEDE OBTENER EL BOTON INFO
-		// Importe por arredamiento de locales (1T, 2T, 3T, 4T, Total Anual, Botón info)
+		// Importe por arrendamiento de locales (1T, 2T, 3T, 4T, Total Anual, Botón info)
 		
 		FlexTable tab51 = new FlexTable();
 		tab51.getColumnFormatter().setWidth(0, WIDTH_120PX);
@@ -481,10 +479,10 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 		});
 		tab51.setWidget(2, 4, rentalAmount);
 		
-		AonTableButton button1 = new AonTableButton(FiscalModelKeyInfo.INVOICE.getLabel(), AON.CSS.aonIconData());
+		AonTableButton button1 = new AonTableButton("Ver desglose en facturas", AON.CSS.aonIconData());
 		button1.setTabIndex(-2); // NO FOCUS
 		button1.addClickHandler(event -> Model347.SERVICE.getInfo(cbk.getOptions().getOccam(),
-			mod347, declared, FiscalModelKeyInfo.INVOICE, new AsyncCallback<String>() {
+			mod347, declared, FiscalModelKeyInfo.MODEL_INVOICE_IRPF_BREAKDOWN, new AsyncCallback<String>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
@@ -502,8 +500,6 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 		tab51.setWidget(2, 5, button1);
 		
 		panel.add(tab51);
-		
-// ---------------------------------    		
 		
 		// Vaciar y cerrar el panel de informacion de desglose 
 		cbk.cleanInfoPanel();
@@ -705,7 +701,6 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 			}
 		}
 		
-		// FALTA - VER SI AL FINAL CANARIAS PONE EL CAMPO BDNS
 		// BDNS solo si es clave E, si está deshabilitado se limpia el campo
 		bdns.setEnabled( key.getValue() == Mod347Key.E );
 		if (!bdns.isEnabled()) {

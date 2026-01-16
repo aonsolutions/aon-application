@@ -310,7 +310,11 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 description: "Modelo 425 ",
                 title: "IGIC Declaración resumen anual",
                 action: () => GWT.iLoad(GWT.MODEL_390)
-            }],
+            }, {
+                description: "Modelo 415 ",
+                title: "Declaración anual operaciones con terceras personas",
+                action: () => GWT.iLoad(GWT.MODEL_347)
+			}],
             filter: () => this.isNotDomainManagementAvailable()
         }, {
             title: 'Matriz de empresas y modelos fiscales',
