@@ -86,7 +86,6 @@ public class ModificationFormServlet extends AonApiHttpServlet {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		try {
 			JooqModificationFormBuilder.createModificationForm(os, domainName, domainId, login, contractId, title, information, date);
-			os.close();
 			
 			Attach attach = new Attach()
 				.setAttachType(AttachType.CONTRACT)
@@ -100,6 +99,8 @@ public class ModificationFormServlet extends AonApiHttpServlet {
 				.setType(ContractAttachType.MODIFCONTRACT.value());
 			
 			AON.insertAttach(domainName, domainId, login, attach);
+			
+			os.close();
 			
 			return new JSONObject().put("success", "Documento generado correctamente. Este documento se encuentra en el apartado de Documentos.");
 		} catch (CanNotCreatePdfException | IOException e) {

@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.invoice;
 import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
@@ -23,6 +25,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
@@ -62,12 +65,32 @@ public class InvoiceInfoDAO {
 			.findFirst();	
 	}
 	
-	public static Optional<EnumMap<InvoiceCommunicationType,InvoiceInfo>> getMap(AONContext ctx, Integer domainId, Integer invoiceId) {
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, domainId);
-		return getMap(ctx, icc, domainId, invoiceId); 
+	public static Optional<EnumMap<InvoiceCommunicationType,InvoiceInfo>> getMap(AONContext ctx, Invoice invoice) {
+		return getMap(ctx, invoice.getDomain(), invoice.getId(), invoice.getType(), invoice.getIssueDate());
+	}
+	public static Optional<EnumMap<InvoiceCommunicationType,InvoiceInfo>> getMap(AONContext ctx, InvoiceCommunicationConfiguration icc, Invoice invoice) {
+		return getMap(ctx, icc, invoice.getDomain(), invoice.getId(), invoice.getType(), invoice.getIssueDate());
 	}
 	
-	public static Optional<EnumMap<InvoiceCommunicationType,InvoiceInfo>> getMap(AONContext ctx, InvoiceCommunicationConfiguration icc, Integer domainId, Integer invoiceId) {
+	public static Optional<EnumMap<InvoiceCommunicationType,InvoiceInfo>> getMap(
+		AONContext ctx
+		, Integer domainId
+		, Integer invoiceId
+		, InvoiceType invoiceType
+		, Date atDate
+	) {
+		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, domainId );
+		return getMap(ctx, icc, domainId, invoiceId, invoiceType, atDate); 
+	}
+	
+	public static Optional<EnumMap<InvoiceCommunicationType,InvoiceInfo>> getMap(
+		AONContext ctx
+		, InvoiceCommunicationConfiguration icc
+		, Integer domainId
+		, Integer invoiceId
+		, InvoiceType invoiceType
+		, Date atDate
+	) {
 		ctx.checkRead();
 		EnumMap<InvoiceCommunicationType,InvoiceInfo> enumMap = select(ctx)
 			.where(INVOICE_INFO.DOMAIN.eq(domainId))
@@ -82,7 +105,7 @@ public class InvoiceInfoDAO {
 				,Map::putAll
 			);
 		
-		if(icc.isTbai() && !icc.isBizkaia()) {
+		if(icc.isTbai(atDate, invoiceType) && !icc.isBizkaia(atDate)) {
 			DataResponseSource drs = icc.isTbaiTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
 			if(!enumMap.containsKey(InvoiceCommunicationType.TBAI)) {
 				List<Boolean> list =  DataResponseDAO.getStream(ctx, f -> f.getDomainProperty().eq(domainId).and(f.getSourceProperty().eq(drs.value())).and(f.getSourceIdProperty().eq(invoiceId)))
@@ -109,15 +132,15 @@ public class InvoiceInfoDAO {
 				enumMap.get(InvoiceCommunicationType.TBAI).setCheckUrl(url);	 
 			}
 		}
-		
-		if (icc != null) {
-			AonCollectionUtils.stream(icc.getTypes())
+		if (AonCollectionUtils.isEmpty(enumMap)) {
+			AonCollectionUtils.stream(icc.getTypes(invoiceType, atDate))
 				.forEach( t -> enumMap.computeIfAbsent(t, 
 					k -> new InvoiceInfo()
-						.setType(t)
-						.setInvoice(invoiceId)
-						.setDomain(domainId)
-						.setStatus(InvoiceCommunicationStatus.PENDING)));
+					.setType(t)
+					.setInvoice(invoiceId)
+					.setDomain(domainId)
+					.setStatus( t.isNoVerifactu()?null:InvoiceCommunicationStatus.PENDING))
+			);
 		}
 
 		// Esto es debido a que la dirección del QR no cabe en los 128 caracteres de invoice_data
@@ -125,6 +148,11 @@ public class InvoiceInfoDAO {
 		// Es una buena ñapa puesto que debería guardarse la URL completa :(
 		if (enumMap.containsKey(InvoiceCommunicationType.VERIFACTU)) {
 			InvoiceInfo v = enumMap.get(InvoiceCommunicationType.VERIFACTU);
+			fixUrl( icc, v );
+		}
+		
+		if (enumMap.containsKey(InvoiceCommunicationType.NO_VERIFACTU)) {
+			InvoiceInfo v = enumMap.get(InvoiceCommunicationType.NO_VERIFACTU);
 			fixUrl( icc, v );
 		}
 		
@@ -138,8 +166,8 @@ public class InvoiceInfoDAO {
 	private static void fixUrl(InvoiceCommunicationConfiguration icc, InvoiceInfo v) {
 		if (v != null
 			 && AonStringUtils.startsWith(v.getCheckUrl(), "?")) {
-				String urlQr = "https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR";
-				String urlQrTest = "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR";
+				String urlQr = "https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR" + (v.getType().isNoVerifactu()? "NoVerifactu":"");
+				String urlQrTest = "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR" + (v.getType().isNoVerifactu()? "NoVerifactu":"");
 				v.setCheckUrl( (icc.isVerifactuTest()?urlQrTest:urlQr) + v.getCheckUrl());
 			}
 	}

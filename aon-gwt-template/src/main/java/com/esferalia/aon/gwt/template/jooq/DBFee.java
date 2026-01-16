@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 import org.jooq.Record4;
 import org.jooq.Record5;
@@ -14,6 +15,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -166,8 +168,12 @@ public class DBFee {
 	}
 	
 	public LinkedList<InvoicingGroup> getInvoicingGroupList(Domain domain, User user){
-		return AON.getInvoicingGroupList(domain.getName(), domain.getId(), user.getLogin(),
-				filter -> filter.getDomainProperty().eq(domain.getId()));
+		Occam occam = new Occam()
+			.setDomainName(domain.getName())
+			.setDomain(domain.getId())
+			.setUser(user.getLogin());
+		return AON.getInvoicingGroups(occam, domain.getId())
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	

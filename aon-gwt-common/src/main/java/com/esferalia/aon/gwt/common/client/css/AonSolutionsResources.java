@@ -344,6 +344,22 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconSendCancel();
 	
+	@Source("icons/aon-icon-send-cancel-red.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconSendCancelRed();
+
+	@Source("icons/aon-icon-send-archive.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconSendArchive();
+
+	@Source("icons/aon-icon-send-sif.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconSendSif();
+
+	@Source("icons/aon-icon-send-pending.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconSendPending();
+
 	@Source("icons/aon-icon-attach.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconAttach();
@@ -763,6 +779,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-aeat-orange.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconAeatOrange();
+
+	@Source("icons/aon-icon-aeat-yellow.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconAeatYellow();
 
 	@Source("icons/aon-icon-aeat-red.svg")
 	@MimeType("image/svg+xml")

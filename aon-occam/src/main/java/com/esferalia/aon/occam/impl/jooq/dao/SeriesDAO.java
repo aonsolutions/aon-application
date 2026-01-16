@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Properties.SeriesProperties;
 import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SeriesDAO {
 	
@@ -38,6 +39,13 @@ public class SeriesDAO {
 			.map(new SeriesFiller());	
 	}
 	
+	public static Stream<Series> getStreamSuggestion(AONContext ctx, Integer domainId, String query) {
+		return stream(ctx, domainId)
+			.filter(s -> AonStringUtils.contains(s.getCode(), query)
+					|| AonStringUtils.contains(s.getDescription(), query)
+			);
+	}
+
 	private static class SeriesFiller extends Filler implements Function<Record, Series> {
 		@Override
 		public Series apply(Record r) {

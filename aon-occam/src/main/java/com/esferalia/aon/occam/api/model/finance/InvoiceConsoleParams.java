@@ -17,7 +17,7 @@ public class InvoiceConsoleParams implements Serializable {
 		,REGISTRY("Raz\u00F3n Social") { @Override public <T> T visit(InvoiceConsoleParamsOrderVisitor<T> visitor) {return visitor.registry();}}
 		,SERIES_NUMBER("Serie/N\u00FAmero") { @Override public <T> T visit(InvoiceConsoleParamsOrderVisitor<T> visitor) {return visitor.seriesNumber();}}
 		,REFERENCE_CODE("C\u00F3digo de referencia") { @Override public <T> T visit(InvoiceConsoleParamsOrderVisitor<T> visitor) {return visitor.referenceCode();}}
-		,ID("ID") { @Override public <T> T visit(InvoiceConsoleParamsOrderVisitor<T> visitor) {return visitor.id();}}
+		,ID("Orden creaci\u00F3n") { @Override public <T> T visit(InvoiceConsoleParamsOrderVisitor<T> visitor) {return visitor.id();}}
 		;
 		
 		private String label;
@@ -332,6 +332,12 @@ public class InvoiceConsoleParams implements Serializable {
 	public InvoiceConsoleParams setLimit(int limit) {
 		this.limit = limit;
 		return this;
+	}
+	public boolean showInvoices() {
+		return getAnnulled() == null || getAnnulled().booleanValue() == false;
+	}
+	public boolean showInvoiceTrackings() {
+		return getAnnulled() == null || getAnnulled().booleanValue();
 	}
 	
 }

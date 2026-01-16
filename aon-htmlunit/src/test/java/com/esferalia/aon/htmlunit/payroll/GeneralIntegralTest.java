@@ -2995,7 +2995,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("irpfPercentTexTBox", "30,00 %" );
 		
 		
-		
+		draft("I.R.P.F, HIJOS");
+		calculate(Calendar.JANUARY, 2026);
+		assertDisplay("irpfPercentTexTBox", true);
 	}
 
 	@Test

@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
-import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
@@ -12,7 +11,6 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -34,18 +32,19 @@ public class InvoiceRegistryDAO {
 	private static final Field<Integer> CREDITOR_SCOPE = CREDITOR.SCOPE.as(SCOPE_FIELD);
 	private static final Field<Integer> SUPPLIER_SCOPE = SUPPLIER.SCOPE.as(SCOPE_FIELD);
 	
-	private static Field<Integer> REGISTRY_ID = DSL.field("REGISTRY_ID", Integer.class);
-	private static Field<Integer> REGISTRY_DOMAIN = DSL.field("REGISTRY_DOMAIN", Integer.class);
-	private static Field<Byte> REGISTRY_DOCUMENT_TYPE = DSL.field("REGISTRY_DOCUMENT_TYPE", Byte.class);
-	private static Field<String> REGISTRY_DOCUMENT_COUNTRY = DSL.field("REGISTRY_DOCUMENT_COUNTRY", String.class);
-	private static Field<String> REGISTRY_DOCUMENT = DSL.field("REGISTRY_DOCUMENT", String.class);
-	private static Field<String> REGISTRY_NATIONALITY = DSL.field("REGISTRY_NATIONALITY", String.class);
-	private static Field<String> REGISTRY_NAME = DSL.field("REGISTRY_NAME", String.class);
-	private static Field<String> REGISTRY_ALIAS = DSL.field("REGISTRY_ALIAS", String.class);
+	private static final Field<Integer> REGISTRY_ID = DSL.field("REGISTRY_ID", Integer.class);
+	private static final Field<Integer> REGISTRY_DOMAIN = DSL.field("REGISTRY_DOMAIN", Integer.class);
+	private static final Field<Byte> REGISTRY_DOCUMENT_TYPE = DSL.field("REGISTRY_DOCUMENT_TYPE", Byte.class);
+	private static final Field<String> REGISTRY_DOCUMENT_COUNTRY = DSL.field("REGISTRY_DOCUMENT_COUNTRY", String.class);
+	private static final Field<String> REGISTRY_DOCUMENT = DSL.field("REGISTRY_DOCUMENT", String.class);
+	private static final Field<String> REGISTRY_NATIONALITY = DSL.field("REGISTRY_NATIONALITY", String.class);
+	private static final Field<String> REGISTRY_NAME = DSL.field("REGISTRY_NAME", String.class);
+	private static final Field<String> REGISTRY_ALIAS = DSL.field("REGISTRY_ALIAS", String.class);
+	private static final Field<Byte> REGISTRY_SECURITY_LEVEL = DSL.field("REGISTRY_SECURITY_LEVEL", Byte.class);
 
 	private static final Field<?>[] REGISTRY_FIELDS = new Field[] {
 		REGISTRY_ID, REGISTRY_DOMAIN, REGISTRY_DOCUMENT, REGISTRY_DOCUMENT_COUNTRY, REGISTRY_DOCUMENT_TYPE, 
-		REGISTRY_NATIONALITY, REGISTRY_NAME, REGISTRY_ALIAS
+		REGISTRY_NATIONALITY, REGISTRY_NAME, REGISTRY_ALIAS, REGISTRY_SECURITY_LEVEL
 	};
 
 	private static final Field<Integer> REGISTRY_ID_F = REGISTRY.ID.as( REGISTRY_ID );
@@ -56,6 +55,7 @@ public class InvoiceRegistryDAO {
 	private static final Field<String> REGISTRY_NATIONALITY_F = REGISTRY.NATIONALITY.as(REGISTRY_NATIONALITY);
 	private static final Field<String> REGISTRY_NAME_F = REGISTRY.NAME.as(REGISTRY_NAME);
 	private static final Field<String> REGISTRY_ALIAS_F = REGISTRY.ALIAS.as(REGISTRY_ALIAS);
+	private static final Field<Byte> REGISTRY_SECURITY_LEVEL_F = REGISTRY.SECURITY_LEVEL.as(REGISTRY_SECURITY_LEVEL);
 
 	private static final Field<?>[] REGISTRY_SUB_FIELDS = new Field[] {
 		REGISTRY_ID_F
@@ -66,6 +66,7 @@ public class InvoiceRegistryDAO {
 		,REGISTRY_NATIONALITY_F
 		,REGISTRY_NAME_F
 		,REGISTRY_ALIAS_F
+		,REGISTRY_SECURITY_LEVEL_F
 	};
 	
 	private InvoiceRegistryDAO() {
@@ -79,8 +80,7 @@ public class InvoiceRegistryDAO {
 			.and( REGISTRY.DOCUMENT.like(pattern)
 			 .or( REGISTRY.NAME.like(pattern) )
 			 .or( REGISTRY.ALIAS.like(pattern) ) )
-			.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),INVOICE.SCOPE))
-			.and(SecurityDAO.getSecurityLevelCondition(ctx, ctx.getUser(), INVOICE.SECURITY_LEVEL))
+			.and(SecurityDAO.getSecurityLevelCondition(ctx, ctx.getUser(), REGISTRY_SECURITY_LEVEL))
 		;
 		
 		SelectConditionStep<Record> customerSelect = ctx.getDslContext()
@@ -88,21 +88,24 @@ public class InvoiceRegistryDAO {
 			.select(CUSTOMER_SCOPE, CUSTOMER_TYPE)
 				.from(REGISTRY)
 				.innerJoin(CUSTOMER).on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
-				.where(c);
+				.where(c)
+				.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),CUSTOMER.SCOPE));
 		
 		SelectConditionStep<Record> supplierSelect = ctx.getDslContext()
 			.select(REGISTRY_SUB_FIELDS)
 			.select(SUPPLIER_SCOPE, SUPPLIER_TYPE)
 				.from(REGISTRY)
 				.innerJoin(SUPPLIER).on(SUPPLIER.REGISTRY.eq(REGISTRY.ID))
-				.where(c);
+				.where(c)
+				.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),SUPPLIER.SCOPE));
 		
 		SelectConditionStep<Record> creditorSelect = ctx.getDslContext()
 			.select(REGISTRY_SUB_FIELDS)
 			.select(CREDITOR_SCOPE, CREDITOR_TYPE)
 				.from(REGISTRY)
 				.innerJoin(CREDITOR).on(CREDITOR.REGISTRY.eq(REGISTRY.ID))
-				.where(c);
+				.where(c)
+				.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),CREDITOR.SCOPE));
 
 		return ctx.getDslContext().select( REGISTRY_FIELDS ).select(SCOPE_FIELD, TYPE_FIELD)
 			.from(customerSelect.unionAll(supplierSelect).unionAll(creditorSelect))

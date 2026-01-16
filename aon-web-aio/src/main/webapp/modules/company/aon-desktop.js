@@ -112,15 +112,15 @@ export class AonDesktop extends AonElement {
 		}
 
 		this.initialize();
-		
+
 		let r = await getDomainUserRoles({});
 		this.dur = new DomainUserRoles(r);
 		this.build();
 
-	    await this.getInvoiceConfiguration();
-		if(!this.checkConfigurationComplete(this.ic, false) && !this.getDur().isParentUser() 
-				&& (this.getDur().isInvoice() || this.getDur().isManagement()))
-			this.buildInvoiceConfigurationDialog();	
+		await this.getInvoiceConfiguration();
+		if (!this.checkConfigurationComplete(this.ic, false) && !this.getDur().isParentUser()
+			&& (this.getDur().isInvoice() || this.getDur().isManagement()))
+			this.buildInvoiceConfigurationDialog();
 	}
 
 	disconnectedCallback() {
@@ -139,7 +139,7 @@ export class AonDesktop extends AonElement {
 
 	buildInvoiceConfigurationDialog() {
 		let dialog = this.getElement(this.INVOICE_CONFIGURATION_DIALOG);
-		if(!dialog) {
+		if (!dialog) {
 			dialog = new AonDialog();
 			dialog.id = this.INVOICE_CONFIGURATION_DIALOG;
 			this.appendChild(dialog);
@@ -147,12 +147,12 @@ export class AonDesktop extends AonElement {
 			this.getElement(dialog.BUTTON_CLOSE).style.display = 'none';
 		}
 
-		let communication =  new AonInvoiceCommunicationConfiguration();
+		let communication = new AonInvoiceCommunicationConfiguration();
 		communication.setConfiguration(this.ic);
 		communication.onChange(() => {
 			this.ic = communication.getConfiguration();
 			let com = communication.getCommunicationConfiguration();
-			if(com instanceof InvoiceCommunicationConfiguration) {
+			if (com instanceof InvoiceCommunicationConfiguration) {
 				this.ic.communication = com.toJSON();
 			} else {
 				this.ic.communication = new InvoiceCommunicationConfiguration(com).toJSON();
@@ -160,7 +160,7 @@ export class AonDesktop extends AonElement {
 		});
 
 		let div = this.createDiv();
-	
+
 		let aviso = this.createDiv();
 		aviso.style.backgroundColor = '#fde400ff';
 		aviso.style.padding = '10px';
@@ -177,20 +177,20 @@ export class AonDesktop extends AonElement {
 		this.buildConditions(div);
 
 		dialog.addAction2({
-				id: "Salir",
-				title: "Salir",
-				icon: MATERIAL_ICONS.ARROW_BACK,
-				position: "left",
-			}, () => {
-				if(this.getDur().isParentUser()) {
-					this.getAonHeader().goToParent();
-				} else {
-					closeSession();
-				}
-			});
+			id: "Salir",
+			title: "Salir",
+			icon: MATERIAL_ICONS.ARROW_BACK,
+			position: "left",
+		}, () => {
+			if (this.getDur().isParentUser()) {
+				this.getAonHeader().goToParent();
+			} else {
+				closeSession();
+			}
+		});
 
-		dialog.addAcceptAction(() => {		
-			if(this.checkConfigurationComplete(this.ic, true)) { 
+		dialog.addAcceptAction(() => {
+			if (this.checkConfigurationComplete(this.ic, true)) {
 				saveInvoiceConfiguration(this.ic);
 			} else {
 				this.buildInvoiceConfigurationDialog();
@@ -209,10 +209,10 @@ export class AonDesktop extends AonElement {
 		parent.appendChild(conditions);
 		let table = new AonBasicTable();
 		table.style.top = '20px';
-		table.style.position = 'relative'; 
+		table.style.position = 'relative';
 		conditions.appendChild(table);
 		table.addRow();
-		
+
 		let checkBox = new AonCheckbox();
 		checkBox.setCh
 		let td = table.addCell(checkBox)
@@ -220,7 +220,7 @@ export class AonDesktop extends AonElement {
 		let span3 = this.createElement(TAG.SPAN);
 		span3.innerHTML = 'He leido y acepto las <a target="_blank" class="aonLink" href="http://aonsolutions.es/docs/aon_condiciones_generales_del_contrato.pdf">CONDICIONES GENERALES</a> del contrato de licencia de software y los términos <a target="_blank" class="aonLink" href="https://aonsolutions.es/docs/Aon-Declaracion%20Responsable%20VeriFactu.pdf">DECLARACIÓN RESPONSABLE del SIF</a> (Sistema Informático de facturación)';
 		table.addCell(span3);
-		
+
 		checkBox.addEventListener(EVENT.CHANGE, () => {
 			this.conditionsAccepted = checkBox.isChecked();
 		});
@@ -228,29 +228,48 @@ export class AonDesktop extends AonElement {
 
 	checkConfigurationComplete(config, showError) {
 		let isSpain = config && config.company && config.company.documentCountry && config.company.documentCountry === 'ES';
-		if(showError && !isSpain) return true;
-		if(showError && !this.conditionsAccepted) {
+		if (showError && !isSpain) return true;
+		if (showError && !this.conditionsAccepted) {
 			this.showMessageError("Debe aceptar las condiciones para continuar.");
 			return false;
 		}
-		if(!config || !config.company || !config.company.document || !config.communication) return false;
+		if (!config || !config.company || !config.company.document || !config.communication) return false;
 		let icc = new InvoiceCommunicationConfiguration(config.communication);
-		if(!isValid(config.company.document) && isSpain) {
-			if(showError) this.showMessageError("El NIF/CIF de la empresa no es válido.");
+		if (!isValid(config.company.document) && isSpain) {
+			if (showError) this.showMessageError("El NIF/CIF de la empresa no es válido.");
 			return false;
 		}
-		if(isPersonaFisica(config.company.document) && !(config.company.person || config.person)) {
-			if(showError) this.showMessageError("Es obligatorio rellenar todos los datos de la persona física.");
+		if (isPersonaFisica(config.company.document) && !(config.company.person || config.person)) {
+			if (showError) this.showMessageError("Es obligatorio rellenar todos los datos de la persona física.");
 			return false;
-		} 
-		if(!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) && !icc.isSii() && !icc.willBeSii() && !icc.isVerifactu() && !icc.willBeVerifactu() && !icc.isNoVerifactu() && !icc.willBeNoVerifactu()) {
-			if(showError) this.showMessageError("Es obligatorio selecionar Verifactu, No Verifactu o SII para empresas del territorio común.");
+		}
+		if (!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) && !icc.isSii() && !icc.willBeSii() && !icc.isVerifactu() && !icc.willBeVerifactu() && !icc.isNoVerifactu() && !icc.willBeNoVerifactu()) {
+			if (showError) this.showMessageError("Es obligatorio selecionar Verifactu, No Verifactu o SII para empresas del territorio común.");
 			return false;
-		} 
-		if(!icc.getAdministration().isUnknown() && (icc.hasCommunication() || icc.willBeCommunication() || icc.isNoSif())) {
+		}
+
+		if (!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) &&
+			!icc.isVerifactu() && icc.verifactuInvoice) {
+			if (showError) this.showMessageError("Es obligatorio seleccionar Verifactu, ya que existe una factura Verifactu en el año actual.");
+			return false;
+		}
+
+		if (!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) &&
+			!icc.isSii() && icc.siiInvoice) {
+			if (showError) this.showMessageError("Es obligatorio seleccionar SII, ya que existe una factura SII en el año actual.");
+			return false;
+		}
+
+		if (!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) &&
+			!icc.isNoVerifactu() && icc.noVerifactuInvoice) {
+			if (showError) this.showMessageError("Es obligatorio seleccionar No Verifactu, ya que existe una factura No Verifactu en el año actual.");
+			return false;
+		}
+
+		if (!icc.getAdministration().isUnknown() && (icc.hasCommunication() || icc.willBeCommunication() || icc.isNoSif())) {
 			return true;
 		} else {
-			if(showError) this.showMessageError("Es obligatorio selecionar una administración para la comunicación electrónica de facturas.");
+			if (showError) this.showMessageError("Es obligatorio selecionar una administración para la comunicación electrónica de facturas.");
 			return false;
 		}
 	}
@@ -503,14 +522,14 @@ export class AonDesktop extends AonElement {
 	uploadInvoiceDesktop(input, files) {
 		getCompanyActivities({}).then(activities => {
 			let data = { uploaded: 0 };
-			if(activities.length > 1) {
+			if (activities.length > 1) {
 				activities.push({
 					id: "all",
 					description: "TODAS"
-    			});
-				let activity =  createSelect(this.ACTIVITY, MSG.ACTIVITY);
+				});
+				let activity = createSelect(this.ACTIVITY, MSG.ACTIVITY);
 				activity.setAlias("id", "description");
-				if(activities.length > 0) {
+				if (activities.length > 0) {
 					activity.setOptions(activities);
 					activity.value = activities[0].id;
 				}
@@ -529,7 +548,7 @@ export class AonDesktop extends AonElement {
 						uploadToast = new AonUploadToast();
 						this.appendChild(uploadToast);
 					}
-		
+
 					uploadToast.setJobId(generateJobId());
 					for (let file of files) {
 						uploadToast.addFile("invoice", file, data);
@@ -537,7 +556,7 @@ export class AonDesktop extends AonElement {
 				});
 				d.open();
 			} else {
-				if(activities.length > 0) {
+				if (activities.length > 0) {
 					data.activity = activities[0].id;
 				}
 
@@ -546,7 +565,7 @@ export class AonDesktop extends AonElement {
 					uploadToast = new AonUploadToast();
 					this.appendChild(uploadToast);
 				}
-		
+
 				uploadToast.setJobId(generateJobId());
 				for (let file of files) {
 					uploadToast.addFile("invoice", file, data);
@@ -692,12 +711,12 @@ export class AonDesktop extends AonElement {
 
 			await this.filterFutureFiscal();
 		}
-		
+
 		// ------------------------------------------------
 		// Accounting
 		// ------------------------------------------------
-		let aonJsfAccountingGraphCard ;
-		if (this.getDur().isAccountingManager() ) {
+		let aonJsfAccountingGraphCard;
+		if (this.getDur().isAccountingManager()) {
 			let accountingGraphCard = new AonCard();
 			accountingGraphCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			accountingGraphCard.id = "accountingGraphCard";
@@ -708,11 +727,11 @@ export class AonDesktop extends AonElement {
 
 			aonJsfAccountingGraphCard = new AonJsfAccountingGraph();
 			accountingGraphCard.setContent(aonJsfAccountingGraphCard);
-			
+
 			accountingGraphCard.firstChild.style.minHeight = "28rem";
 			accountingGraphCard.firstChild.children.item(1).style.height = "22.5rem";
 			accountingGraphCard.firstChild.style.margin = '0';
-			
+
 		} else if (this.getDur().isAccounting()) {
 			// PyG Card
 			let defaultYear = new Date().getFullYear();
@@ -745,11 +764,11 @@ export class AonDesktop extends AonElement {
 				this.appSelectionFilter(Apps.ACCOUNTING.app, dashboardGraphicsTrial.getFilter());
 			});
 		}
-		
+
 		// ------------------------------------------------
 		// Payroll
 		// ------------------------------------------------
-		if (this.getDur().isPayrollManager()  ) {
+		if (this.getDur().isPayrollManager()) {
 			let contractGraphCard = new AonCard();
 			let payrollGraphCard = new AonCard();
 			payrollGraphCard.classList.add(CSS.AON_DASHBOARD_CARD);
@@ -761,37 +780,37 @@ export class AonDesktop extends AonElement {
 
 			let aonJsfPayrollGraphCard = new AonJsfPayrollGraph();
 			let aonJsfContractGraphCard = new AonJsfContractGraph();
-			
-			if ( aonJsfAccountingGraphCard ) {
-				aonJsfAccountingGraphCard.isLoaded().then( () => {
+
+			if (aonJsfAccountingGraphCard) {
+				aonJsfAccountingGraphCard.isLoaded().then(() => {
 					payrollGraphCard.setContent(aonJsfPayrollGraphCard);
-					aonJsfPayrollGraphCard.isLoaded().then( () => {
+					aonJsfPayrollGraphCard.isLoaded().then(() => {
 						contractGraphCard.setContent(aonJsfContractGraphCard);
 					});
 				});
 			} else {
 				payrollGraphCard.setContent(aonJsfPayrollGraphCard);
-				aonJsfPayrollGraphCard.isLoaded().then( () => {
+				aonJsfPayrollGraphCard.isLoaded().then(() => {
 					contractGraphCard.setContent(aonJsfContractGraphCard);
 				});
 			}
-			
+
 			payrollGraphCard.firstChild.style.minHeight = "28rem";
 			payrollGraphCard.firstChild.children.item(1).style.height = "22.5rem";
 			payrollGraphCard.firstChild.style.margin = '0';
-		
+
 			contractGraphCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			contractGraphCard.id = "contractGraphCard";
 			contractGraphCard.message = `Contratos`; //MSG.CONTRACTS;
 			contractGraphCard.setApp(Apps.PAYROLL);
 			cardsPanel.appendChild(contractGraphCard);
 			contractGraphCard.getCardTitle1().style.cursor = 'pointer';
-			
+
 			contractGraphCard.firstChild.style.minHeight = "28rem";
 			contractGraphCard.firstChild.children.item(1).style.height = "22.5rem";
 			contractGraphCard.firstChild.style.margin = '0';
 
-		} if ( this.getDur().isPayrollManager() ){
+		} if (this.getDur().isPayrollManager()) {
 			let payrollCard = new AonCard();
 			payrollCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			payrollCard.id = CONSTANT.PAYROLL;
@@ -833,12 +852,12 @@ export class AonDesktop extends AonElement {
 			payrollCard.firstChild.children.item(1).style.height = "22.5rem";
 			payrollCard.firstChild.style.margin = '0';
 		}
-		
-		
+
+
 		// ------------------------------------------------
 		// Usage Summary
 		// ------------------------------------------------
-		if ((this.getDur().isInvoice() || this.getDur().isAccounting()) && this.getDur().isTrial() ) {
+		if ((this.getDur().isInvoice() || this.getDur().isAccounting()) && this.getDur().isTrial()) {
 			// Trial Card
 			let trialCard = new AonCard();
 			trialCard.classList.add(CSS.AON_DASHBOARD_CARD);
@@ -902,14 +921,14 @@ export class AonDesktop extends AonElement {
 			cardsPanel.appendChild(cypCard);
 			cypCard.getCardTitle1().style.cursor = 'pointer';
 			cypCard.insertAdjacentHTML('beforeend', "<aon-dialog-menu id='aonCardCyPOption'> </aon-dialog-menu>");
-	
+
 			cypCard.setContent(new AonDashboardChargePayments("current_month"));
 			cypCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterCyP(cypCard));
 			cypCard.firstChild.style.marginLeft = '0';
 			cypCard.firstChild.style.minHeight = "28rem";
 			cypCard.firstChild.children.item(1).style.height = "22.5rem";
 			cypCard.firstChild.style.margin = '0';
-	
+
 			cypCard.addEventListener(EVENT.CLICK_TITLE, () => {
 				this.appSelection(this.getDur().isInvoice() ? Apps.INVOICE.app : Apps.ACCOUNTING.app);
 			});
@@ -968,7 +987,7 @@ export class AonDesktop extends AonElement {
 			documentalCard.firstChild.style.margin = '0';
 		}
 
-		
+
 		// ------------------------------------------------
 		// Requests ( Issues )
 		// ------------------------------------------------
@@ -1256,7 +1275,7 @@ export class AonDesktop extends AonElement {
 				.map((model) => FiscalUtils.getModelNew(model));
 		}
 
-		const result = orderDatos.filter(function(a) {
+		const result = orderDatos.filter(function (a) {
 			var key = a.year + '|' + a.period;
 			if (!this[key]) {
 				this[key] = true;
@@ -1264,7 +1283,7 @@ export class AonDesktop extends AonElement {
 			}
 		}, Object.create(null));
 
-		result.sort(function(a, b) {
+		result.sort(function (a, b) {
 			var aSize = a.year;
 			var bSize = b.year;
 			var aLow = a.period;

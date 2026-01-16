@@ -472,7 +472,7 @@ public class InvoiceTemplate {
 
 			byte[] qrCode = createQR(ctx.getQrUrl(), 300, 300);
 			drawImage(ctx.getDocument(), ctx.getContents(), qrCode, x + 390, tempY - 40, 120, 120);
-			drawText(ctx.getContents(), "Veri*Factu", x + 440, tempY + 72, Color.BLACK, FONT, 5);
+			drawText(ctx.getContents(), ctx.isNoVerifactu() ? "No Veri*Factu" : "Veri*Factu", x + 440, tempY + 72, Color.BLACK, FONT, 5);
 		}
 		drawTopInfo(ctx);
 		
@@ -1390,7 +1390,7 @@ public class InvoiceTemplate {
 		}
 		
 		drawText(ctx.getContents(), ctx.getInvoiceTitle(), x + 255, tempY + 20, config.getTheme().getTitleTextColor(), BOLD_FONT, 14);
-		if(ctx.isVerifactu() || ctx.isTbai()) {
+		if((ctx.isVerifactu() && !ctx.isNoVerifactu()) || ctx.isTbai()) {
 			drawText(ctx.getContents(), "Comunicada a " + (ctx.isTbai() ? "TicketBAI" : "Veri*factu"), x + 255, tempY + 10, config.getTheme().getTitleTextColor(), FONT, 6);
 			drawText(ctx.getContents(), "Verificable en la sede electrónica de Hacienda", x + 255, tempY, config.getTheme().getTitleTextColor(), FONT, 6);
 		}

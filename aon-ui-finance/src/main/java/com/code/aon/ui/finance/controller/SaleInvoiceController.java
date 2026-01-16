@@ -1070,7 +1070,7 @@ public class SaleInvoiceController extends InvoiceController {
 			AON.getInvoiceInfo(occam, inv.getId(), type)
 				.ifPresentOrElse( 
 					info -> setCommunicationStatus( info.getStatus() ),
-					()  -> setCommunicationStatus( InvoiceCommunicationStatus.PENDING )
+					()  -> setCommunicationStatus( null )
 				);
 		}
 		return communicationStatus;
@@ -1082,7 +1082,9 @@ public class SaleInvoiceController extends InvoiceController {
 		if ( isNoVerifactuInvoice() && getCommunicationStatus() == InvoiceCommunicationStatus.PENDING ) {
 			return StringUtils.upperCase("EMITIDA/NO ENVIADA");
 		}
-		return StringUtils.upperCase(getCommunicationStatus().getDescription());
+		return getCommunicationStatus() == null 
+			? StringUtils.upperCase(InvoiceCommunicationStatus.PENDING.getDescription()) 
+			: StringUtils.upperCase(getCommunicationStatus().getDescription());
 	}
 	public String getCommunicationStatusIcon() {
 		if (getCommunicationStatus() == null) return "aon-icon-point-orange";

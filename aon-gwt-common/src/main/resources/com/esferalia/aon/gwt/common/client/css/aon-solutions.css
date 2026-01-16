@@ -322,6 +322,14 @@
 .aon_icon_send { background-image: iconSend;}
 @url iconSendCancel aonIconSendCancel;
 .aon_icon_send_cancel { background-image: iconSendCancel;}
+@url iconSendCancelRed aonIconSendCancelRed;
+.aon_icon_send_cancel_red { background-image: iconSendCancelRed;}
+@url iconSendArchive aonIconSendArchive;
+.aon_icon_send_archive { background-image: iconSendArchive;}
+@url iconSendSif aonIconSendSif;
+.aon_icon_send_sif { background-image: iconSendSif;}
+@url iconSendSif aonIconSendPending;
+.aon_icon_send_pending { background-image: iconSendPending;}
 @url iconAttach aonIconAttach;
 .aon_icon_attach { background-image: iconAttach;}
 @url iconNoAttach aonIconNoAttach;
@@ -402,6 +410,8 @@
 .aon_icon_aeat_green { background-image: iconAeatGreen;}
 @url iconAeatOrange aonIconAeatOrange;
 .aon_icon_aeat_orange { background-image: iconAeatOrange;}
+@url iconAeatYellow aonIconAeatYellow;
+.aon_icon_aeat_yellow { background-image: iconAeatYellow;}
 @url iconAeatRed aonIconAeatRed;
 .aon_icon_aeat_red { background-image: iconAeatRed;}
 @url iconAeatBlue aonIconAeatBlue;

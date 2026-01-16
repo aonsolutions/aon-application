@@ -304,7 +304,6 @@ export class AonHome extends AonElement {
 			let newDialogMenu = new AonNewDialogMenu();
 		    newDialogMenu.id = 'newDialogMenu';
 		    this.appendChild(newDialogMenu);
-			
 		} else {
 			let dialogMenu = new AonDialogMenu();
 		    dialogMenu.id = this.OPTION_DIALOG;

@@ -8,7 +8,6 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.i18n.client.Messages;
-import com.google.gwt.user.client.ui.CheckBox;
 
 public interface CommonMessages extends Messages {
 	// Á --> \u00C1 á --> \u00E1
@@ -162,8 +161,8 @@ public interface CommonMessages extends Messages {
 		,"M200"		,"Declaraci\u00F3n-liquidaci\u00F3n del Impuesto sobre Sociedades."
 		,"M202"		,"Impuesto sobre sociedades. Pago fraccionado."
 		,"M303"		,"IVA. Autoliquidaci\u00F3n."
-		,"M140"		,"Libro-registro de operaciones econ\u00F3micas de personas f\u00EDsicas [VERSI\u00d3N BETA]"
-		,"M240"		,"Libro-registro de operaciones econ\u00F3micas de personas jur\u00EDdicas [VERSI\u00d3N BETA]"
+		,"M140"		,"Libro-registro de operaciones econ\u00F3micas de personas f\u00EDsicas"
+		,"M240"		,"Libro-registro de operaciones econ\u00F3micas de personas jur\u00EDdicas"
 		,"SII"		,"Suministro inmediato de informaci\u00F3n"
 		,"M369"		,"Declaraciones de IVA del r\u00E9gimen One Stop Shop (OSS)"
 		})	
@@ -381,6 +380,13 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Borrar")
 	String deleteAction();
 	
+	@DefaultMessage("{0} seleccionadas")
+	@AlternateMessage({
+		 "0",  "Sin selecci\u00F3n"
+		,"1",  "Una seleccionada"
+		})
+	String selectedItem(@Select int count);
+
 	@DefaultMessage("Borrar seleccionados")
 	String deleteSelected();
 
@@ -486,6 +492,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Buscar")
 	String searchAction();
 
+	@DefaultMessage("Buscando...")
+	String searching();
+
+	@DefaultMessage("Cargando...")
+	String loading();
+	
 	@DefaultMessage("Busqueda Avanzada")
 	String advancedSearch();
 	
@@ -711,7 +723,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("No se han encontrado datos")
 	String noData();
 
-	@DefaultMessage("No se han m\u00E1s encontrado datos")
+	@DefaultMessage("No se han encontrado m\u00E1s datos")
 	String noMoreData();
 
 	@DefaultMessage("Mostrar m\u00E1s datos")
@@ -2628,6 +2640,15 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Mostrar")
 	String show();
 
+	@DefaultMessage("Emitir")
+	String issue();
+
+	@DefaultMessage("Emitir y enviar")
+	String issueAndSend();
+
+	@DefaultMessage("Emitir y archivar")
+	String issueAndArchive();
+
 	@DefaultMessage("Fecha de emisi\u00F3n")
 	String issueDate();
 	
@@ -4396,7 +4417,10 @@ public interface CommonMessages extends Messages {
 	String generateInvoices();
 	
 	@DefaultMessage("Rendimientos del trabajo obtenidos por la gesti\u00F3n de fondos vinculados al emprendimiento, a la innovaci\u00F3n y al desarrollo de la actividad econ\u00F3mica")
-	String entrepreneurship();  
+	String entrepreneurship();
+
+	@DefaultMessage("Sin comunicaci\u00F3n de facturas")
+	String noCommunication();  
 
 }
 
