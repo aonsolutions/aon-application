@@ -427,7 +427,7 @@ public class InvoiceCommunicationDAO {
 			}
 		}
 		
-		if(config.isSif()) {
+		if(config.isSif() && !config.isSifTest()) {
 			if(config.isLroe()) {
 				updateEndDate(ctx, domainId, config.getSifData(), config.getLroeData().getStartDate());
 				fillSif(ctx, domainId, config);
@@ -458,6 +458,48 @@ public class InvoiceCommunicationDAO {
 					EnterpriseDataDAO.update(ctx, config.getSifData().setName(EnterpriseDataNames.ICC_NO_VERIFACTU.name()));
 					fillSif(ctx, domainId, config);
 					fillNoVerifactu(ctx, domainId, config);	
+				}
+				
+				if(!config.hasVerifactuInvoice() && config.hasNoVerifactuInvoice()) {
+					EnterpriseDataDAO.update(ctx, config.getSifData().setName(EnterpriseDataNames.ICC_NO_VERIFACTU.name()));
+					fillSif(ctx, domainId, config);
+					fillNoVerifactu(ctx, domainId, config);
+					
+					ctx.getDslContext().update(INVOICE_INFO)
+					.set(INVOICE_INFO.TYPE, InvoiceCommunicationType.NO_VERIFACTU.value())
+					.where(INVOICE_INFO.DOMAIN.eq(domainId)
+						.and(INVOICE_INFO.TYPE.eq(InvoiceCommunicationType.SIF.value()))
+						.and(INVOICE_INFO.CREATION_DATE.ge(AonDateUtils.toTimestamp(AonDateUtils.getYearFirstDay(new Date()))))
+					)
+					.execute();
+					
+					ctx.getDslContext().update(INVOICE_BATCH)
+					.set(INVOICE_BATCH.TYPE, InvoiceCommunicationType.NO_VERIFACTU.value())
+					.where(INVOICE_BATCH.DOMAIN.eq(domainId)
+						.and(INVOICE_BATCH.TYPE.eq(InvoiceCommunicationType.SIF.value()))
+						.and(INVOICE_BATCH.CREATION_DATE.ge(AonDateUtils.toTimestamp(AonDateUtils.getYearFirstDay(new Date()))))
+					)
+					.execute();
+					
+					ctx.getDslContext().update(DATA_RESPONSE)
+					.set(DATA_RESPONSE.SOURCE, DataResponseSource.NO_VERIFACTU.value())
+					.where(DATA_RESPONSE.DOMAIN.eq(domainId)
+						.and(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SIF.value()))
+						.and(DATA_RESPONSE.CREATION_DATE.ge(AonDateUtils.toTimestamp(AonDateUtils.getYearFirstDay(new Date()))))
+					)
+					.execute();
+				}
+				
+				if(config.hasVerifactuInvoice()) {
+					updateEndDate(ctx, domainId, config.getSifData(), new Date());
+					fillSif(ctx, domainId, config);
+					
+					EnterpriseData vd = new EnterpriseData()
+							.setDomain(domainId)
+							.setEnterprise( config.getSifData().getEnterprise() )
+							.setName(EnterpriseDataNames.ICC_VERIFACTU.name())
+							.setStartDate( new Date() );
+					EnterpriseDataDAO.insert(ctx, vd);
 				}
 			}
 		}
