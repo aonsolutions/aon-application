@@ -339,7 +339,6 @@ public class InvoiceCommunicationDAO {
 	private static void fillSii(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
 		config.setSiiDataHistory(getIccHistory(ctx, domainId, EnterpriseDataNames.ICC_SII));
 		config.setSiiData(getIccData(config.getSiiDataHistory()));
-		System.out.println("SII " + DataResponseDAO.has(ctx, domainId, DataResponseSource.SII, AonDateUtils.getCurrentYear()));
 		config.setSiiInvoice(DataResponseDAO.has(ctx, domainId, DataResponseSource.SII, AonDateUtils.getCurrentYear()));
 		if(config.getSiiDataHistory().isEmpty()) {
 			Enterprise enterprise = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(domainId));

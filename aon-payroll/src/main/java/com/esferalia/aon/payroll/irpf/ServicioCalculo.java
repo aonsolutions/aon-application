@@ -36,6 +36,9 @@ import net.aonsolutions.core.aeat.v2024.jaxb.AEATRetencionesSalida2024;
 import net.aonsolutions.core.aeat.v2025.jaxb.AEATRetencionesEntrada2025;
 import net.aonsolutions.core.aeat.v2025.jaxb.AEATRetencionesError2025;
 import net.aonsolutions.core.aeat.v2025.jaxb.AEATRetencionesSalida2025;
+import net.aonsolutions.core.aeat.v2026.jaxb.AEATRetencionesEntrada2026;
+import net.aonsolutions.core.aeat.v2026.jaxb.AEATRetencionesError2026;
+import net.aonsolutions.core.aeat.v2026.jaxb.AEATRetencionesSalida2026;
 
 class ServicioCalculo {
 	
@@ -224,6 +227,34 @@ class ServicioCalculo {
 	    }
     }
 
+    public static  AEATRetencionesSalida2026 procesarFicheroXML(AEATRetencionesEntrada2026 entrada2026) throws JAXBException, IrpfCalculateException, IOException {
+	    Marshaller marshaller = JAXBContext.newInstance(
+		    AEATRetencionesEntrada2026.class).createMarshaller();
+	    StringWriter writer = new StringWriter();
+	    marshaller.marshal(entrada2026, writer);
+	    
+	    String str = ServicioCalculo.procesarFicheroXml(writer.toString(), 2026, 0 );
+	    
+	    try {
+		    StringReader reader = new StringReader(str);
+		    Unmarshaller unmarshaller = JAXBContext.newInstance(
+			    AEATRetencionesSalida2026.class).createUnmarshaller();
+		    AEATRetencionesSalida2026 salida2026 = 
+			    (AEATRetencionesSalida2026)unmarshaller.unmarshal(reader);
+		    System.out.println("Retenciones IRPF."
+		    	+ "Servicio de Módulo de Cálculo de Retenciones "
+		    	+ "EJERCICIO 2026");
+		    return salida2026;
+	    } catch (JAXBException | IllegalArgumentException e ) {
+		    StringReader reader = new StringReader(str);
+		    Unmarshaller unmarshaller = JAXBContext.newInstance(
+			    AEATRetencionesError2026.class).createUnmarshaller();
+		    AEATRetencionesError2026 error2026 = 
+			    (AEATRetencionesError2026)unmarshaller.unmarshal(reader);
+		    throw new IrpfCalculateException(error2026);
+	    }
+    }
+
     public static void main(String[] args) throws IOException, JAXBException, IrpfCalculateException {
 //	String ejemploSalida2022 = procesarFicheroXml(EJEMPLOENTRADA2022, 2022);
 //	StringReader reader = new StringReader(ejemploSalida2022);
@@ -261,6 +292,12 @@ class ServicioCalculo {
 //	    JAXBContext.newInstance(AEATRetencionesSalida2025.class).createMarshaller().marshal(salida2025, System.out);
 //	}
 
+    	try ( StringReader ejemploEntrada2026Reader = new StringReader(EJEMPLOENTRADA2026) ) {
+	    AEATRetencionesEntrada2026 entrada2026 = (AEATRetencionesEntrada2026) 
+	    	    JAXBContext.newInstance(AEATRetencionesEntrada2026.class).createUnmarshaller().unmarshal( ejemploEntrada2026Reader );
+	    AEATRetencionesSalida2026 salida2026 = procesarFicheroXML(entrada2026);
+	    JAXBContext.newInstance(AEATRetencionesSalida2026.class).createMarshaller().marshal(salida2026, System.out);
+	}
     }
     
     private static final String EJEMPLOENTRADA2022 = 
@@ -346,5 +383,23 @@ class ServicioCalculo {
 	    	+ "</Retenido>"
 	    	+ "</Retenedor></AEATRetencionesEntrada2025>";
 
+    private static final String EJEMPLOENTRADA2026 = 
+	    	"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+	    	+ "<AEATRetencionesEntrada2026>"
+	    	+ "<IdDoc>"
+	    	+ "<CodModelo>RET</CodModelo>"
+	    	+ "<Ejercicio>2026</Ejercicio>"
+	    	+ "</IdDoc>"
+	    	+ "<Retenedor>"
+	    	+ "<Nif>Z7896423E</Nif>"
+	    	+ "<ApellidosNombre>LINUX FOUNDATION</ApellidosNombre>"
+	    	+ "<Retenido><Nif>87449445H</Nif><ApellidosNombre>TORVALDS BENEDICT LINUS</ApellidosNombre>"
+	    	+ "<Nacimiento>1974</Nacimiento>"
+	    	+ "<SituacionFamiliar><Situacion3/></SituacionFamiliar>"
+	    	+ "<SituacionLaboral><TrabajadorActivo><Contrato>1</Contrato></TrabajadorActivo></SituacionLaboral>"
+	    	+ "<RetribAnuales>15120.00</RetribAnuales>"
+	    	+ "<Cotizaciones>978.26</Cotizaciones>"
+	    	+ "</Retenido>"
+	    	+ "</Retenedor></AEATRetencionesEntrada2026>";
 
 }

@@ -9,7 +9,7 @@ import com.esferalia.aon.watson.util.Pair;
 
 public interface IApi {
 
-	Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter );
+	Stream<Invoice> getInvoices(AONContext ctx, Integer domain, InvoiceFilter filter );
 	Stream<Invoice> getChartInvoices(AONContext ctx, InvoiceFilter filter);
 	Pair<Date, Date> getInvoicesChartPeriod(AONContext ctx, InvoiceFilter filter);
 	Integer getInvoicesCount(AONContext ctx, InvoiceFilter filter);

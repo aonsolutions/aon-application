@@ -1,13 +1,10 @@
 package com.esferalia.aon.payroll.irpf;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
@@ -119,6 +116,15 @@ import net.aonsolutions.core.aeat.v2025.jaxb.TipoRetenedorSalida2025;
 import net.aonsolutions.core.aeat.v2025.jaxb.TipoRetenidoEntrada2025;
 import net.aonsolutions.core.aeat.v2025.jaxb.TipoRetenidoError2025;
 import net.aonsolutions.core.aeat.v2025.jaxb.TipoRetenidoSalida2025;
+import net.aonsolutions.core.aeat.v2026.jaxb.AEATRetencionesEntrada2026;
+import net.aonsolutions.core.aeat.v2026.jaxb.AEATRetencionesError2026;
+import net.aonsolutions.core.aeat.v2026.jaxb.AEATRetencionesSalida2026;
+import net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenedorEntrada2026;
+import net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenedorError2026;
+import net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenedorSalida2026;
+import net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoEntrada2026;
+import net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoError2026;
+import net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026;
 
 public class IrpfCalculator {
 
@@ -144,9 +150,10 @@ public class IrpfCalculator {
 		    irpfOutcome = calculateIrpf2023(ctx, date);
 		} else if ( year == 2024 ){
 		    irpfOutcome = calculateIrpf2024(ctx, date);
+		} else if ( year == 2025 ){
+		    irpfOutcome = calculateIrpf2025(ctx, date);
 		} else {
-//			irpfOutcome = calculateIrpf2024(ctx, date);
-			irpfOutcome = calculateIrpf2025(ctx, date);
+			irpfOutcome = calculateIrpf2026(ctx, date);
 		}
 		
 		irpfOutcome.getIrpfResult()
@@ -231,6 +238,19 @@ public class IrpfCalculator {
 				.getRetenido();
 		TipoRetenidoSalida2025 retenidoSalida2025 = retenidos.get(0);		
 		return transfom(ctx, retenidoSalida2025);
+	}
+
+	// ------------------------------------------------------------------- 2025
+
+	public static IrpfOutcome calculateIrpf2026(IIrpfCalculatorContext ctx, Date date) {
+		AEATRetencionesSalida2026 aeatRetencionesSalida2026 = calculate2026(ctx, date);
+		List<TipoRetenedorSalida2026> retenedores = aeatRetencionesSalida2026
+				.getRetenedor();
+		TipoRetenedorSalida2026 retenedorSalida2026 = retenedores.get(0);
+		List<TipoRetenidoSalida2026> retenidos = retenedorSalida2026
+				.getRetenido();
+		TipoRetenidoSalida2026 retenidoSalida2026 = retenidos.get(0);		
+		return transfom(ctx, retenidoSalida2026);
 	}
 
 	// -------------------------------------------------------------------------
@@ -1587,6 +1607,202 @@ public class IrpfCalculator {
 	        	return irpfOutcome;
 		}
 
+	protected static IrpfOutcome transfom(IIrpfCalculatorContext ctx,
+			TipoRetenidoSalida2026 retenidoSalida2026) {
+
+	        	IrpfOutcome irpfOutcome = new IrpfOutcome();
+	        
+	        	irpfOutcome.setNif(ctx.getNif() == DEFAULT_NIF ? null : ctx.getNif());
+	        	irpfOutcome.setBirthYear(ctx.getAñoNacimiento());
+	        	irpfOutcome.setComunidadAutonoma(ctx.getComunidadAutonoma());
+	        	
+	        
+	        	IrpfResult irpfResult = new IrpfResult();
+	        	irpfResult.setEffectiveDate(new Date()); // TODO: Now ???
+	        
+	        	irpfResult.setIrpf(toDouble(retenidoSalida2026.getTipoRetencion()));
+	        
+	        	irpfResult.setBaseIrpf(toDouble(retenidoSalida2026.getBaseRetencion()));
+	        	net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.MinimoPersonalFamiliar minimoPersonalFamiliar = retenidoSalida2026
+	        			.getMinimoPersonalFamiliar();
+	        	irpfResult
+	        			.setMinimunPersonalFamily(minimoPersonalFamiliar != null ? toDouble(minimoPersonalFamiliar
+	        					.getTotal()) : 0.00);
+	        	irpfResult.setDeduct80Bis(toDouble(null /*
+	        											 * retenidoSalida2026.
+	        											 * getDeduccion80Bis()
+	        											 */));
+	        	irpfResult.setDeductHomeLoanAmount(toDouble(retenidoSalida2026
+	        			.getMinoracionPrestamo()));
+	        	irpfResult.setAnnualIrpf(toDouble(retenidoSalida2026
+	        			.getImpAnualRetencionesIngresosCuenta()));
+	        
+	        	// DATOS PERSONALES DEL PERCEPTOR
+	        	IrpfData irpfData = new IrpfData();
+	        	irpfData.setFamilySituation(toFamilySituation(ctx
+	        			.getSituacionFamiliar()));
+	        	irpfData.setLabourProlongation(ctx.getProlongacionLaboral());
+	        	irpfData.setMovingDate(ctx.getMovilidadGeografica() ? new Date() : null);
+	        	irpfData.setDisabilityLevel(toDisabilityLevel(ctx.getDiscapacidad(), ctx.getMovilidadReducida()));
+	        	irpfData.setDeductHomeLoan(toDeductHomeLoan(retenidoSalida2026.getPagoPrestamosVivienda()));
+	        	irpfOutcome.setIrpfData(irpfData);
+	        
+	        	// DATOS ECONOMICOS
+	        	irpfResult.setAnnualRemuneration(toDouble(retenidoSalida2026
+	        			.getRetribAnuales()));
+	        	irpfResult.setIrregular18_2Reduction(toDouble(null /*
+	        														 * retenidoSalida2016.
+	        														 * getDeduccion80Bis
+	        														 * ()
+	        														 */));
+	        	net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Reduccion reduccion = retenidoSalida2026
+	        			.getReduccion();
+	        	irpfResult
+	        			.setIrregular18_3Reduction(reduccion != null ? toDouble(null/*
+	        																		 * reduccion
+	        																		 * .
+	        																		 * getTotal
+	        																		 * (
+	        																		 * )
+	        																		 */)
+	        					: 0.00);
+	        	irpfResult.setDeducciblesExpenses(toDouble(retenidoSalida2026
+	        			.getCotizaciones()/* retenidoSalida2016.getGastosAnuales() */));
+	        	irpfResult.setSpousalSupport(toDouble(retenidoSalida2026
+	        			.getPensionCompensatoria()));
+	        	irpfResult.setFoodAnnuity(toDouble(retenidoSalida2026
+	        			.getAnualidadesHijos()));
+	        
+	        	// DESCENCIENTES COMPUTADOS
+	        	net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Descendientes descendientes = retenidoSalida2026
+	        			.getDescendientes();
+	        	if (descendientes != null) {
+	        		net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Descendientes.Menores3 menores32026 = descendientes
+	        				.getMenores3();
+	        		if (menores32026 != null) {
+	        			irpfResult.setDescendentsMinor3Total(toInteger(menores32026
+	        					.getTotal()));
+	        			irpfResult.setDescendentsMinor3Entirely(toInteger(menores32026
+	        					.getPorEntero()));
+	        		}
+	        		net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Descendientes.Resto resto2026 = descendientes
+	        				.getResto();
+	        		if (resto2026 != null) {
+	        			irpfResult.setDescendentsRemainderTotal(toInteger(resto2026
+	        					.getTotal()));
+	        			irpfResult.setDescendentsRemainderEntirely(toInteger(resto2026
+	        					.getPorEntero()));
+	        		}
+	        		net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Descendientes.ComputoDescendientes computoDescendientes2026 = descendientes
+	        				.getComputoDescendientes();
+	        		if (computoDescendientes2026 != null) {
+	        			irpfResult.setDescendentsFirst(toInteger(computoDescendientes2026
+	        					.getHijo1()));
+	        			irpfResult.setDescendentsSecond(toInteger(computoDescendientes2026
+	        					.getHijo2()));
+	        			irpfResult.setDescendentsThird(toInteger(computoDescendientes2026
+	        					.getHijo3()));
+	        			net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Descendientes.ComputoDescendientes.CuartoySucesivos cuartoySucesivos2026 = computoDescendientes2026
+	        					.getCuartoySucesivos();
+	        			if (cuartoySucesivos2026 != null) {
+	        				irpfResult
+	        						.setDescendentsFourthSubsequentTotal(toInteger(cuartoySucesivos2026
+	        								.getTotal()));
+	        				irpfResult
+	        						.setDescendentsFourthSubsequentEntirely(toInteger(cuartoySucesivos2026
+	        								.getPorEntero()));
+	        			}
+	        		}
+	        		net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Descendientes.ConDiscapacidad conDiscapacidad2026 = descendientes
+	        				.getConDiscapacidad();
+	        		if (conDiscapacidad2026 != null) {
+	        			net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Descendientes.ConDiscapacidad.EnGrado1 grado1 = conDiscapacidad2026
+	        					.getEnGrado1();
+	        			if (grado1 != null) {
+	        				irpfResult.setDescendents33_65Total(toInteger(grado1
+	        						.getTotal()));
+	        				irpfResult.setDescendents33_65Entirely(toInteger(grado1
+	        						.getPorEntero()));
+	        				net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Descendientes.ConDiscapacidad.EnGrado1.ConMovilidadReducida conMovilidadReducida2026 = grado1
+	        						.getConMovilidadReducida();
+	        				if (conMovilidadReducida2026 != null) {
+	        					irpfResult
+	        							.setDescendentsMovingTotal(toInteger(conMovilidadReducida2026
+	        									.getTotal()));
+	        					irpfResult
+	        							.setDescendentsMovingEntirely(toInteger(conMovilidadReducida2026
+	        									.getPorEntero()));
+	        				}
+	        			}
+	        			net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Descendientes.ConDiscapacidad.EnGrado2 grado22026 = conDiscapacidad2026
+	        					.getEnGrado2();
+	        			if (grado22026 != null) {
+	        				irpfResult.setDescendents65Total(toInteger(grado22026
+	        						.getTotal()));
+	        				irpfResult.setDescendents65Entirely(toInteger(grado22026
+	        						.getPorEntero()));
+	        			}
+	        
+	        		}
+	        
+	        	}
+	        
+	        	
+	        	
+	        	// ASCENCIENTES COMPUTADOS
+	        	net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Ascendientes ascendientes = retenidoSalida2026
+	        			.getAscendientes();
+	        	if (ascendientes != null) {
+	        		net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Ascendientes.Menores75 menores75 = ascendientes
+	        				.getMenores75();
+	        		if (menores75 != null) {
+	        		}
+	        		net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Ascendientes.Mayores75 mayores75 = ascendientes
+	        				.getMayores75();
+	        		if (mayores75 != null) {
+	        		}
+	        		net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Ascendientes.ConDiscapacidad conDiscapacidad = ascendientes
+	        				.getConDiscapacidad();
+	        		if (conDiscapacidad != null) {
+	        
+	        		}
+	        	}
+	        
+	        	irpfOutcome.setIrpfResult(irpfResult);
+	        
+	        	// REEGULARIZACION
+	        	net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoEntrada2026.Regularizacion regularizacion = retenidoSalida2026
+	        			.getRegularizacion();
+	        	if (regularizacion != null) {
+	        		IrpfRegularization irpfRegularization = new IrpfRegularization();
+	        		List<Integer> causas = regularizacion.getCausa();
+	        		irpfRegularization
+	        				.setReason(causas.isEmpty() ? IrpfRegularizationReason.OTHER
+	        						: toIrpfRegularizationReason(causas.get(0)));
+	        		irpfRegularization.setPaidRemuneration(toDouble(regularizacion
+	        				.getRetribSatisfechas()));
+	        		irpfRegularization.setPaidIrpf(toDouble(regularizacion
+	        				.getRetencionPracticada()));
+	        		irpfRegularization
+	        				.setPriorAnnualRemuneration(toDouble(regularizacion
+	        						.getRetribAnualesIniciales()));
+	        		irpfRegularization.setPriorAnnualIrpf(toDouble(regularizacion
+	        				.getRetencionAnualInicial()));
+	        		irpfRegularization.setPriorBaseIrpf(toDouble(regularizacion
+	        				.getBaseRetencion()));
+	        		irpfRegularization
+	        				.setPriorMinimunPersonalFamily(toDouble(regularizacion
+	        						.getMinimoPersonalFamiliarInicial()));
+	        		irpfRegularization.setPriorIrpf(toDouble(regularizacion
+	        				.getTipoRetencion()));
+	        		irpfRegularization
+	        				.setPriorDeductHomeLoanAmount(toDouble(regularizacion
+	        						.getMinoracionPrestamosVivienda()));
+	        		irpfOutcome.setIrpfRegularization(irpfRegularization);
+	        	}
+	        
+	        	return irpfOutcome;
+		}
 	protected static AEATRetencionesSalida2020 calculate2020(
 			IIrpfCalculatorContext ctx) {
 		ctx.next();
@@ -1653,6 +1869,17 @@ public class IrpfCalculator {
 	        	return AEATCalculate.INSTANCE.calculate2025(ctx, date);
 		}
 
+	protected static AEATRetencionesSalida2026 calculate2026(
+			IIrpfCalculatorContext ctx, Date date) {
+	        	ctx.next();
+	        
+	        	for (Calculate calculate : ForalCalculate.INSTANCES)
+	        		if (calculate.accept(ctx))
+	        			return calculate.calculate2026(ctx, date);
+	        
+	        	return AEATCalculate.INSTANCE.calculate2026(ctx, date);
+		}
+
 	private static Integer toInteger(Byte b) {
 		return b == null ? 0 : b.intValue();
 	}
@@ -1688,6 +1915,11 @@ public class IrpfCalculator {
 
 	private static Integer toInteger(
 			net.aonsolutions.core.aeat.v2025.jaxb.TipoComputo tipoComputo) {
+		    	return tipoComputo != null ? tipoComputo.ordinal() : null;
+		}
+
+	private static Integer toInteger(
+			net.aonsolutions.core.aeat.v2026.jaxb.TipoComputo tipoComputo) {
 		    	return tipoComputo != null ? tipoComputo.ordinal() : null;
 		}
 
@@ -1745,6 +1977,8 @@ public class IrpfCalculator {
 		AEATRetencionesSalida2024 calculate2024(IIrpfCalculatorContext ctx, Date date);
 
 		AEATRetencionesSalida2025 calculate2025(IIrpfCalculatorContext ctx, Date date);
+
+		AEATRetencionesSalida2026 calculate2026(IIrpfCalculatorContext ctx, Date date);
 	}
 
 	private static class AEATCalculate implements Calculate {
@@ -2174,6 +2408,82 @@ public class IrpfCalculator {
 			}
 		}
 
+		@Override
+		public AEATRetencionesSalida2026 calculate2026(
+				IIrpfCalculatorContext ctx, Date date) {
+			try {
+			    	AEATRetencionesEntrada2026 aeatRetencionesEntrada2026 = AEATRetencionesEntradaFactory.create2026(ctx);
+				
+				return calculate(aeatRetencionesEntrada2026, date);
+			} catch (IOException e) {
+				throw new ExpressionExceptionWrapper(new ExpressionException(e));
+			} catch (SQLException e) {
+				throw new ExpressionExceptionWrapper(new ExpressionException(e));
+			} catch (JAXBException e) {
+				throw new ExpressionExceptionWrapper(new ExpressionException(e));
+			} catch (ExpressionException e) {
+				throw new ExpressionExceptionWrapper(e);
+			} catch (IrpfCalculateException e) {
+				AEATRetencionesError2026 error = e
+						.getAEATRetencionesError2026();
+
+				String message = null;
+				
+				List<String> messages = new LinkedList<>();
+				
+				error.getErrorGeneral().stream()
+				.map(net.aonsolutions.core.aeat.v2026.jaxb.TipoErrorGeneral::getDescripcion)
+				.forEach( messages::add );
+
+				List<TipoRetenedorError2026> retenedores = 
+				error.getRetenedor();
+
+				retenedores.stream()
+				.map(TipoRetenedorError2026::getError)
+				.filter(Objects::nonNull)
+				.map( net.aonsolutions.core.aeat.v2026.jaxb.TipoError::getDescripcion)
+				.forEach(messages::add);
+
+				List<TipoRetenidoError2026> retenidos =
+				retenedores.stream()
+				.map(TipoRetenedorError2026::getRetenido)
+				.flatMap(List::stream)
+				.collect(Collectors.toList());
+				
+				// Errores 
+				retenidos.stream()
+				.map(TipoRetenidoError2026::getError)
+				.flatMap(List::stream)
+				.map(net.aonsolutions.core.aeat.v2026.jaxb.TipoError::getDescripcion )
+				.forEach( messages::add );
+
+				// Descendientes
+				retenidos.stream()
+				.map(TipoRetenidoError2026::getDescendiente)
+				.flatMap(List::stream)
+				.map(TipoRetenidoError2026.Descendiente::getError)
+				.flatMap(List::stream)
+				.map(net.aonsolutions.core.aeat.v2026.jaxb.TipoError::getDescripcion )
+				.forEach( messages::add );
+				
+				// Ascendientes
+				retenidos.stream()
+				.map(TipoRetenidoError2026::getAscendiente)
+				.flatMap(List::stream)
+				.map(TipoRetenidoError2026.Ascendiente::getError)
+				.flatMap(List::stream)
+				.map(net.aonsolutions.core.aeat.v2026.jaxb.TipoError::getDescripcion )
+				.forEach( messages::add )
+				;
+
+				message = messages.stream().findFirst().orElse("Error al calcular el IRPF");
+				
+
+				ExpressionException expressionException = new CheckException(
+						message);
+				throw new ExpressionExceptionWrapper(expressionException);
+			}
+		}
 		// --------------------------------------------------------------------
 
 
@@ -2499,8 +2809,78 @@ public class IrpfCalculator {
 				return salida2025;
 		}
 	
+		private AEATRetencionesSalida2026 calculate(
+				AEATRetencionesEntrada2026 entrada2026, Date fecha)
+				throws IrpfCalculateException, JAXBException, IOException {
+				try {
+					checkNullZeroRetribAnuales(entrada2026);
+				} catch (NullPointerException e) {
+					return newZeroAEATRetencionesSalida2026(entrada2026);
+				} 
+
+				try {
+				    return ServicioCalculo.procesarFicheroXML(entrada2026);
+				} catch ( IrpfCalculateException e) {
+				    throw e;
+				} catch ( Exception e ) {
+					e.printStackTrace();
+				} 
+				
+				Marshaller marshaller = JAXBContext.newInstance(
+						AEATRetencionesEntrada2025.class).createMarshaller();
+				
+				StringWriter entrada2026Writer = new StringWriter(); 
+				marshaller.marshal(entrada2026, entrada2026Writer);
+				String entrada2024String = entrada2026Writer.toString().replace("2026", "2024");
+				File entrada2024File = File.createTempFile(
+						AEATRetencionesEntrada2024.class.getSimpleName(), null);
+				try (OutputStream entrada2024Stream  = new FileOutputStream(entrada2024File);
+					 OutputStreamWriter entrada2024Writer = new OutputStreamWriter(entrada2024Stream)) {
+					entrada2024Writer.write(entrada2024String);
+				}
+				System.out.println(entrada2026Writer.toString());
+
+				File salida2024File = File.createTempFile(
+						AEATRetencionesSalida2024.class.getSimpleName(), null);
+				File error2024File = File.createTempFile(
+						AEATRetencionesError2024.class.getSimpleName(), null);
+
+				es.aeat.pret.c200.mc.c241.ModuloCalculo.procesarFicheroXml(entrada2024File.getAbsolutePath(),
+						error2024File.getAbsolutePath(), null,
+						salida2024File.getAbsolutePath());
+				
+				entrada2024File.delete();
+				Unmarshaller unMarshaller = JAXBContext.newInstance(
+						AEATRetencionesError2024.class).createUnmarshaller();
+				try(Reader error2026Reader = to2026(error2024File)) {
+					
+					AEATRetencionesError2026 error2026 = (AEATRetencionesError2026) unMarshaller
+							.unmarshal(error2026Reader);
+					error2024File.delete();
+					throw new IrpfCalculateException(error2026);
+				} catch (JAXBException e) {
+				} catch (FileNotFoundException e) {
+				} catch (IllegalArgumentException e) {
+				}
+
+				error2024File.delete();
+				unMarshaller = JAXBContext.newInstance(
+						AEATRetencionesSalida2026.class).createUnmarshaller();
+				AEATRetencionesSalida2026 salida2026 = (AEATRetencionesSalida2026) unMarshaller
+						.unmarshal(to2026(salida2024File));
+				salida2024File.delete();
+				return salida2026;
+		}
 	}
 	
+	private static Reader to2026(File file2024) throws IOException{
+		try(FileReader reader2024 = new FileReader(file2024)) {
+			StringWriter writer2024 = new StringWriter();
+			reader2024.transferTo(writer2024);
+			String string2026 = writer2024.toString().replace("2024", "2026");
+			return new StringReader(string2026); 
+		}
+	}
 	
 	private static Reader to2025(File file2024) throws IOException{
 		try(FileReader reader2024 = new FileReader(file2024)) {
@@ -2582,6 +2962,19 @@ public class IrpfCalculator {
 		double retribAnulaes = 0.00;
 		for ( TipoRetenedorEntrada2025 retenedor : entrada2025.getRetenedor() )
 			for ( TipoRetenidoEntrada2025 retenido: retenedor.getRetenido() )
+				if ( retenido.getRetribAnuales() != null )
+					retribAnulaes += retenido.getRetribAnuales().doubleValue(); 
+
+		if ( retribAnulaes == 0.00 ) 
+			throw new NullPointerException();
+		
+	}
+
+	private static void checkNullZeroRetribAnuales(AEATRetencionesEntrada2026 entrada2026) {
+		
+		double retribAnulaes = 0.00;
+		for ( TipoRetenedorEntrada2026 retenedor : entrada2026.getRetenedor() )
+			for ( TipoRetenidoEntrada2026 retenido: retenedor.getRetenido() )
 				if ( retenido.getRetribAnuales() != null )
 					retribAnulaes += retenido.getRetribAnuales().doubleValue(); 
 
@@ -2941,6 +3334,65 @@ public class IrpfCalculator {
 		
 		
 		return aeatRetencionesSalida2025;
+		
+	}
+
+	private static AEATRetencionesSalida2026 newZeroAEATRetencionesSalida2026(AEATRetencionesEntrada2026 entrada2026) {
+		AEATRetencionesSalida2026 aeatRetencionesSalida2026 = new AEATRetencionesSalida2026();
+		
+		aeatRetencionesSalida2026.setIdDoc(entrada2026.getIdDoc());
+		for ( TipoRetenedorEntrada2026 retenedorEntrada : entrada2026.getRetenedor() ) {
+			TipoRetenedorSalida2026 retenedorSalida = new TipoRetenedorSalida2026();
+			retenedorSalida.setNif(retenedorEntrada.getNif());
+			retenedorSalida.setApellidosNombre(retenedorEntrada.getApellidosNombre());
+			
+			for ( TipoRetenidoEntrada2026 retenidoEntrada: retenedorEntrada.getRetenido() ) {
+				TipoRetenidoSalida2026 retenidoSalida = new  TipoRetenidoSalida2026();
+				retenidoSalida.setNif(retenidoEntrada.getNif());
+				retenidoSalida.setApellidosNombre(retenidoEntrada.getApellidosNombre());
+				retenidoSalida.setNacimiento(retenidoEntrada.getNacimiento());
+				retenidoSalida.setDiscapacidad(retenidoEntrada.getDiscapacidad());
+				retenidoSalida.setResidenciaCeutaMelilla(retenidoEntrada.getResidenciaCeutaMelilla());
+				retenidoSalida.setSituacionLaboral(retenidoEntrada.getSituacionLaboral());
+				retenidoSalida.setSituacionFamiliar(retenidoEntrada.getSituacionFamiliar());
+				
+
+				retenidoSalida.setReducciones(retenidoEntrada.getReducciones());
+				retenidoSalida.setCotizaciones(retenidoEntrada.getCotizaciones());
+				retenidoSalida.setRegularizacion(retenidoEntrada.getRegularizacion());
+				retenidoSalida.setPensionCompensatoria(retenidoEntrada.getPensionCompensatoria());
+				retenidoSalida.setPagoPrestamosVivienda(retenidoEntrada.getPagoPrestamosVivienda());
+				retenidoSalida.setRdtosObtenidosCeutaMelilla(retenidoEntrada.getRdtosObtenidosCeutaMelilla());
+				retenidoSalida.setAnualidadesHijos(retenidoEntrada.getAnualidadesHijos());
+
+				net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Ascendientes ascendientes = 
+						new net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Ascendientes();
+				retenidoSalida.setAscendientes(ascendientes);
+				
+				net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Descendientes descendientes = 
+						new net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Descendientes();
+				retenidoSalida.setDescendientes(descendientes);
+				
+				net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Gastos gastos = 
+				new net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Gastos();
+				retenidoSalida.setGastos(gastos);
+
+				retenidoSalida.setTipoRetencion(BigDecimal.ZERO);
+				
+				retenidoSalida.setBaseRetencion(BigDecimal.ZERO);
+				retenidoSalida.setRetribAnuales(BigDecimal.ZERO);
+				//retenidoSalida.setMinimoPersonalFamiliar(BigDecimal.ZERO);
+				retenidoSalida.setMinoracionPrestamo(BigDecimal.ZERO);
+				retenidoSalida.setImpAnualRetencionesIngresosCuenta(BigDecimal.ZERO);
+				
+				retenedorSalida.getRetenido().add(retenidoSalida);
+				
+			}
+			aeatRetencionesSalida2026.getRetenedor().add(retenedorSalida);
+		}
+		
+		
+		return aeatRetencionesSalida2026;
 		
 	}
 
@@ -3466,6 +3918,89 @@ public class IrpfCalculator {
 			return aeatRetencionesSalida;
 		}
 		
+		@Override
+		public AEATRetencionesSalida2026 calculate2026(IIrpfCalculatorContext ctx, Date date) {
+			byte descendants = 0;
+			Iterable<Descendiente> descendientes = ctx.getDescendientes();
+			if (descendientes != null)
+				for (Descendiente descendiente : descendientes)
+					descendants++;
+
+			byte handicap = 0;
+			Discapacidad discapacidad = ctx.getDiscapacidad();
+			if (discapacidad != null)
+				handicap = (byte) discapacidad.ordinal();
+
+			double amount = 0.00;
+			BigDecimal retribAnuales = ctx.getRetribAnuales();
+			if (retribAnuales != null)
+				amount = retribAnuales.doubleValue();
+
+			SQLIrpfCalculatorContext sqlCtx = (SQLIrpfCalculatorContext) ctx;
+			
+			Date chargeDate = sqlCtx.getChargeDate();
+			
+			Double percent = JooqGeozoneIrpf.getPercent(sqlCtx.getConnection(),
+					geozone, amount, descendants, handicap, new java.sql.Date(
+							chargeDate.getTime()));
+			if (percent == null)
+				throw new ExpressionExceptionWrapper(new CheckException(
+						String.format("Imposible encontrar un porcentaje de retenci\u00f3n en las tablas de  %s ( %s descendientes, %s )",
+								administration.getName(new Locale("es")), 
+								descendants > 0 ? String.valueOf(descendants) : "sin",
+								new String [] {
+										"sin discapacidad", 
+										"discapacidad >= 33% y < 65%",
+										"discapacidad >= 33% y < 65%, movilidad reducida",
+										"discapacidad > 65%"}[handicap])) );
+
+			if ( ctx.getContrato() == Contrato.DOS ) {
+				percent = Math.max(2.00, percent);
+			}
+			
+			TipoRetenidoSalida2026 retenidoSalida2026 = new TipoRetenidoSalida2026();
+			retenidoSalida2026.setTipoRetencion(BigDecimal.valueOf(percent));
+			//retenidoSalida2026.setResidenciaCeutaMelilla(new ResidenciaCeutaMelilla());
+
+			// Mainly DEBUG INFO
+			retenidoSalida2026.setRetribAnuales(retribAnuales);
+			retenidoSalida2026.setCotizaciones(ctx.getGastosAnuales());
+			retenidoSalida2026.setBaseRetencion(retribAnuales);
+			net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Descendientes.ComputoDescendientes computoDescendientes2026 = 
+			new net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Descendientes.ComputoDescendientes();
+			if (descendants >= 1)
+				computoDescendientes2026
+						.setHijo1(net.aonsolutions.core.aeat.v2026.jaxb.TipoComputo.POR_ENTERO);
+			if (descendants >= 2)
+				computoDescendientes2026
+						.setHijo2(net.aonsolutions.core.aeat.v2026.jaxb.TipoComputo.POR_ENTERO);
+			if (descendants >= 3)
+				computoDescendientes2026
+						.setHijo3(net.aonsolutions.core.aeat.v2026.jaxb.TipoComputo.POR_ENTERO);
+			if (descendants >= 4) {
+				net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Descendientes.ComputoDescendientes.CuartoySucesivos cuartoySucesivos2026 = 
+				new net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Descendientes.ComputoDescendientes.CuartoySucesivos();
+				cuartoySucesivos2026.setTotal((byte) (descendants - 3));
+				cuartoySucesivos2026.setPorEntero((byte) (descendants - 3));
+				computoDescendientes2026.setCuartoySucesivos(cuartoySucesivos2026);
+			}
+			net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Descendientes descendientes2026 = 
+			new net.aonsolutions.core.aeat.v2026.jaxb.TipoRetenidoSalida2026.Descendientes();
+			descendientes2026.setComputoDescendientes(computoDescendientes2026);
+			retenidoSalida2026.setDescendientes(descendientes2026);
+
+			TipoRetenedorSalida2026 retenedorSalida2026 = new TipoRetenedorSalida2026();
+			List<TipoRetenidoSalida2026> retenidosSalida = retenedorSalida2026
+					.getRetenido();
+			retenidosSalida.add(retenidoSalida2026);
+
+			AEATRetencionesSalida2026 aeatRetencionesSalida = new AEATRetencionesSalida2026();
+			List<TipoRetenedorSalida2026> retenedoresSalida = aeatRetencionesSalida
+					.getRetenedor();
+			retenedoresSalida.add(retenedorSalida2026);
+
+			return aeatRetencionesSalida;
+		}
 		
 	}
 

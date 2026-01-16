@@ -495,6 +495,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Buscando...")
 	String searching();
 
+	@DefaultMessage("Cargando...")
+	String loading();
+	
 	@DefaultMessage("Busqueda Avanzada")
 	String advancedSearch();
 	
@@ -2637,6 +2640,15 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Mostrar")
 	String show();
 
+	@DefaultMessage("Emitir")
+	String issue();
+
+	@DefaultMessage("Emitir y enviar")
+	String issueAndSend();
+
+	@DefaultMessage("Emitir y archivar")
+	String issueAndArchive();
+
 	@DefaultMessage("Fecha de emisi\u00F3n")
 	String issueDate();
 	
@@ -4405,7 +4417,10 @@ public interface CommonMessages extends Messages {
 	String generateInvoices();
 	
 	@DefaultMessage("Rendimientos del trabajo obtenidos por la gesti\u00F3n de fondos vinculados al emprendimiento, a la innovaci\u00F3n y al desarrollo de la actividad econ\u00F3mica")
-	String entrepreneurship();  
+	String entrepreneurship();
+
+	@DefaultMessage("Sin comunicaci\u00F3n de facturas")
+	String noCommunication();  
 
 }
 
