@@ -3,6 +3,8 @@ import { getTaskHoldersUser } from "../../../../services/taskHolderService.js";
 import { getTaskHolderTimeControl } from "../../../../services/timeControlService.js";
 import { AonDateUtils } from "../../../utils/AonDateUtils.js";
 import { timeHour } from ".././utils.js";
+import { AonCalendarMenu } from "./aon-calendar-menu.js";
+
 
 export class AonAgendaAllDays extends AonElement {
 	
@@ -11,12 +13,16 @@ export class AonAgendaAllDays extends AonElement {
 	_events = new Map(); // key: "YYYY-MM-DD" => value: array de eventos
 	_loadedMonths = new Set(); // Para trackear qué meses ya se han cargado
 	_isLoading = false; // Flag para evitar múltiples cargas simultáneas
+	_initialLoadComplete = false; // Flag para evitar cargas durante scroll inicial
 	
 	async connectedCallback() {
 		this.initState();
 		await this.build();
 		this.renderInitial();
 		this.attachEventListeners();
+		
+		// Configurar el menú calendario
+    	this.setupCalendarMenu();
 		
 		// Cargar eventos del mes actual inicialmente
 		await this.loadInitialEvents();
@@ -25,6 +31,22 @@ export class AonAgendaAllDays extends AonElement {
 		setTimeout(() => {
 			this.scrollToToday();
 		}, 200);
+		
+		// Activar checkLoadMonthsOnScroll después de 2 segundos para estar seguros
+		setTimeout(() => {
+			this._initialLoadComplete = true;
+			console.log('Carga inicial completa - checkLoadMonthsOnScroll ahora activo');
+		}, 2000);
+	}
+	
+	setupCalendarMenu() {
+	    setTimeout(() => {
+	        if (this.aonCalendarMenu && typeof this.aonCalendarMenu.setOnTodayClick === 'function') {
+	            this.aonCalendarMenu.setOnTodayClick(() => {
+	                this.goToToday(true);
+	            });
+	        }
+	    }, 200);
 	}
 
 	/* ---------------- STATE ---------------- */
@@ -37,8 +59,8 @@ export class AonAgendaAllDays extends AonElement {
 		this.weekHeight = 0;
 		this.visibleWeeks = new Map(); // offset => {element, week}
 
-		// Rango de renderizado
-		this.renderRange = 52; // Total de semanas a renderizar hacia atrás
+		// Rango de renderizado inicial reducido - solo 8 semanas hacia atrás (aprox 2 meses)
+		this.renderRange = 8;
 	}
 
 	/* ---------------- BUILD ---------------- */
@@ -50,14 +72,13 @@ export class AonAgendaAllDays extends AonElement {
 	            <span class="month"></span>
 	          </div>
 	          <div class="header-bottom">
-	            <span class="week-label">S.</span>
+	            <span class="week-label">Sem.</span>
 	            <span class="range"></span>
-	            <span class="week-hours"></span>
 	          </div>
 	        </div>
-	        <div class="header-left">
+	        <div class="header-right">
 	            <span class="month-hours"></span>
-	       		<div class="task-holder-name"></div>
+	            <span class="week-hours"></span>
 	        </div>
 	        
 	      </header>
@@ -68,16 +89,19 @@ export class AonAgendaAllDays extends AonElement {
 		this.headerMonthHours = this.querySelector(".month-hours");
 		this.headerRange = this.querySelector(".range");
 		this.headerWeekHours = this.querySelector(".week-hours");
-		this.taskHolderNameEl = this.querySelector(".task-holder-name");
 		this.scrollEl = this.querySelector(".scroll");
-
+	
 		let userTaskHolders = await getTaskHoldersUser();
 		if (userTaskHolders.length > 0) {
 			this._taskHolder = userTaskHolders[0].id;
 			this._taskHolderName = userTaskHolders[0].name;
-			this.taskHolderNameEl.textContent = this._taskHolderName;
 		}
-	}
+		
+		this.aonCalendarMenu = new AonCalendarMenu();
+		this.aonCalendarMenu.id = 'aonCalendarMenu';
+	    this.appendChild(this.aonCalendarMenu);
+	    
+}
 
 	/* ---------------- LOAD EVENTS ---------------- */
 	async loadInitialEvents() {
@@ -216,7 +240,7 @@ export class AonAgendaAllDays extends AonElement {
 	}
 	
 	/* ---------------- SCROLL TO TODAY ---------------- */
-	scrollToToday() {
+	scrollToToday(smooth) {
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
 		const todayKey = AonDateUtils.format(today, "YYYY-MM-DD");
@@ -240,21 +264,21 @@ export class AonAgendaAllDays extends AonElement {
 		
 		// Hacer scroll al día de hoy CENTRADO en el viewport
 		if (todayElement) {
-			todayElement.scrollIntoView({ behavior: 'auto', block: 'center' });
-			console.log('Scrolled to today (centered)');
+			todayElement.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'center' });
+			console.log('Scrolled to today (centered) - auto');
 		} else {
 			console.warn('Today element not found');
 			// Si no encontramos el día de hoy, hacer scroll a la semana actual
 			const currentWeekData = this.visibleWeeks.get(0);
 			if (currentWeekData) {
-				currentWeekData.element.scrollIntoView({ behavior: 'auto', block: 'center' });
+				currentWeekData.element.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'center' });
 			}
 		}
 		
 		// Actualizar header después del scroll
 		setTimeout(() => {
 			this.updateHeader();
-		}, 100);
+		}, 600);
 	}
 
 	/* ---------------- WEEK MANAGEMENT ---------------- */
@@ -359,7 +383,7 @@ export class AonAgendaAllDays extends AonElement {
 			            <span class="day-number">${day.date.getDate()}</span>
 			          </div>
 			          <div class="day-header-right">
-			            <span class="total-hours">H. Día: ${totalHours}</span>
+			            <span class="total-hours">${totalHours} h</span>
 			          </div>
 			        </div>
 			        <div class="day-content">
@@ -564,6 +588,8 @@ export class AonAgendaAllDays extends AonElement {
 	
 	/* ---------------- LOAD MONTHS ON SCROLL ---------------- */
 	async checkLoadMonthsOnScroll() {
+		// No cargar meses adicionales hasta que la carga inicial esté completa
+		if (!this._initialLoadComplete) return;
 		if (this._isLoading) return;
 		
 		const scrollTop = this.scrollEl.scrollTop;
@@ -681,20 +707,23 @@ export class AonAgendaAllDays extends AonElement {
 
 		// Calcular horas totales del mes
 		const monthHours = this.calculateMonthHours(centerWeek.start);
-		this.headerMonthHours.textContent = `H. Mes: ${monthHours}`;
+		this.headerMonthHours.textContent = `Mes: ${monthHours} h`;
 
 		// Actualizar rango: del día X al día Y
 		const firstDay = centerWeek.days[0].date;
 		const lastDay = centerWeek.days[6].date;
 
-		const firstDayNum = firstDay.getDate();
-		const lastDayNum = lastDay.getDate();
+		const firstDayNum = String(firstDay.getDate() + 1).padStart(2, '0');
+		const lastDayNum = String(lastDay.getDate() + 1).padStart(2, '0');
+		
+		const firstDayMonthNum = String(firstDay.getMonth() + 1).padStart(2, '0');
+		const lastDayMontNum = String(lastDay.getMonth() + 1).padStart(2, '0');
 
-		this.headerRange.textContent = `${firstDayNum}–${lastDayNum}`;
+		this.headerRange.textContent = `${firstDayNum}/${firstDayMonthNum} – ${lastDayNum}/${lastDayMontNum}`;
 		
 		// Calcular horas totales de la semana
 		const weekHours = this.calculateWeekHours(centerWeek);
-		this.headerWeekHours.textContent = `/ H. Semana: ${weekHours}`;
+		this.headerWeekHours.textContent = `Sem.: ${weekHours} h`;
 	}
 	
 	/* ---------------- CALCULATE HOURS ---------------- */
@@ -727,8 +756,8 @@ export class AonAgendaAllDays extends AonElement {
 	}
 
 	/* ---------------- PUBLIC API ---------------- */
-	goToToday() {
-		this.scrollToToday();
+	goToToday(smooth) {
+		this.scrollToToday(smooth);
 	}
 
 	goToDate(date) {
@@ -743,18 +772,27 @@ export class AonAgendaAllDays extends AonElement {
 		// Buscar el elemento
 		const weekData = this.visibleWeeks.get(offset);
 		if (weekData) {
-			weekData.element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			weekData.element.scrollIntoView({ behavior: 'auto', block: 'start' });
 		}
 	}
 	
 	/* ---------------- RELOAD DATA ---------------- */
 	async reload() {
+		// Resetear flag de carga inicial
+		this._initialLoadComplete = false;
+		
 		// Limpiar datos cargados
 		this._events.clear();
 		this._loadedMonths.clear();
 		
 		// Recargar eventos iniciales
 		await this.loadInitialEvents();
+		
+		// Marcar como completo nuevamente
+		setTimeout(() => {
+			this._initialLoadComplete = true;
+			console.log('Recarga completa - checkLoadMonthsOnScroll activo');
+		}, 1500); // Aumentado para consistencia
 	}
 	
 	startLoading() {
