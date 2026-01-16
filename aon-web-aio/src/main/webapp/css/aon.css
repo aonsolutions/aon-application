@@ -5001,6 +5001,13 @@ aon-agenda-all-days .header-left {
   gap: 4px;
 }
 
+aon-agenda-all-days .header-right {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: end;
+}
+
 aon-agenda-all-days .header-top {
   display: flex;
   align-items: baseline;
@@ -5012,9 +5019,11 @@ aon-agenda-all-days .month {
   font-weight: 500;
 }
 
-aon-agenda-all-days .month-hours {
+aon-agenda-all-days .month-hours,
+aon-agenda-all-days .week-hours,
+aon-agenda-all-days .total-hours {
   font-size: 13px;
-  font-weight: 400;
+  font-weight: 500;
   color: #5f6368;
 }
 
@@ -5032,19 +5041,6 @@ aon-agenda-all-days .week-label {
 
 aon-agenda-all-days .range {
   font-weight: 400;
-}
-
-aon-agenda-all-days .week-hours {
-  font-weight: 400;
-  color: #5f6368;
-  font-size: 13px;
-}
-
-aon-agenda-all-days .task-holder-name {
-  font-size: 14px;
-  font-weight: 500;
-  color: #5f6368;
-  padding-top: 2px;
 }
 
 /* ---------- Scroll container ---------- */
@@ -5096,12 +5092,6 @@ aon-agenda-all-days .day-name {
 aon-agenda-all-days .day-number {
   font-size: 22px;
   font-weight: 500;
-}
-
-aon-agenda-all-days .total-hours {
-  font-size: 13px;
-  font-weight: 500;
-  color: #5f6368;
 }
 
 aon-agenda-all-days .day.today .day-number {
@@ -5157,4 +5147,222 @@ aon-agenda-all-days .event.out {
 aon-agenda-all-days .event.pause {
   background: #fef7e0;
   color: #b06000;
+}
+
+/* Contenedor principal del menú calendario */
+aon-calendar-menu {
+	display: block;
+	position: fixed;
+	bottom: 85px;
+	right: 20px;
+	z-index: 1000;
+}
+
+/* Contenedor de los elementos */
+aon-calendar-menu .calendar-menu-container {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 12px;
+}
+
+/* Botón flotante principal (FAB) */
+aon-calendar-menu .calendar-fab {
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #5B7DB1 0%, #4A6A96 100%);
+	border: none;
+	box-shadow: 0 4px 12px rgba(91, 125, 177, 0.4);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	position: relative;
+	z-index: 1001;
+}
+
+aon-calendar-menu .calendar-fab:hover {
+	background: linear-gradient(135deg, #6B8DC1 0%, #5A7AA6 100%);
+	box-shadow: 0 6px 16px rgba(91, 125, 177, 0.5);
+	transform: scale(1.05);
+}
+
+aon-calendar-menu .calendar-fab:active {
+	transform: scale(0.95);
+}
+
+aon-calendar-menu .calendar-icon {
+	color: white;
+}
+
+/* Botón de cerrar (X) */
+aon-calendar-menu .calendar-close-btn {
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #2D3E50 0%, #1C2833 100%);
+	border: none;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	opacity: 0;
+	transform: scale(0) rotate(-180deg);
+	pointer-events: none;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	z-index: 1000;
+}
+
+aon-calendar-menu .calendar-close-btn svg {
+	color: white;
+}
+
+/* Mostrar botón de cerrar cuando el menú está abierto */
+aon-calendar-menu.menu-open .calendar-close-btn {
+	opacity: 1;
+	transform: scale(1) rotate(0deg);
+	pointer-events: auto;
+}
+
+aon-calendar-menu.menu-open .calendar-fab {
+	opacity: 0;
+	transform: scale(0) rotate(180deg);
+	pointer-events: none;
+}
+
+aon-calendar-menu .calendar-close-btn:hover {
+	background: linear-gradient(135deg, #3D4E60 0%, #2C3843 100%);
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+	transform: scale(1.05) rotate(0deg);
+}
+
+aon-calendar-menu .calendar-close-btn:active {
+	transform: scale(0.95) rotate(0deg);
+}
+
+/* Menú popup */
+aon-calendar-menu .calendar-menu-popup {
+	position: absolute;
+	bottom: 72px;
+	right: 0;
+	background: white;
+	border-radius: 12px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+	min-width: 200px;
+	overflow: hidden;
+	opacity: 0;
+	transform: translateY(10px) scale(0.95);
+	pointer-events: none;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Mostrar menú cuando está abierto */
+aon-calendar-menu.menu-open .calendar-menu-popup {
+	opacity: 1;
+	transform: translateY(0) scale(1);
+	pointer-events: auto;
+}
+
+/* Opciones del menú */
+aon-calendar-menu .calendar-menu-option {
+	width: 100%;
+	padding: 14px 20px;
+	border: none;
+	background: white;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	transition: background-color 0.2s ease;
+	font-size: 15px;
+	color: #2D3E50;
+	text-align: left;
+}
+
+aon-calendar-menu .calendar-menu-option:not(:last-child) {
+	border-bottom: 1px solid #E8EDF2;
+}
+
+aon-calendar-menu .calendar-menu-option:hover:not(.disabled) {
+	background-color: #F5F8FA;
+}
+
+aon-calendar-menu .calendar-menu-option:active:not(.disabled) {
+	background-color: #E8EDF2;
+}
+
+/* Icono de las opciones */
+aon-calendar-menu .menu-icon {
+	flex-shrink: 0;
+	color: #5B7DB1;
+}
+
+/* Opciones deshabilitadas */
+aon-calendar-menu .calendar-menu-option.disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+aon-calendar-menu .calendar-menu-option.disabled .menu-icon {
+	color: #A0AEC0;
+}
+
+/* Texto de las opciones */
+aon-calendar-menu .calendar-menu-option span {
+	font-weight: 500;
+}
+
+/* Animación de entrada secuencial para las opciones */
+aon-calendar-menu.menu-open .calendar-menu-option {
+	animation: aon-calendar-menu-slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+	opacity: 0;
+}
+
+aon-calendar-menu.menu-open .calendar-menu-option:nth-child(1) {
+	animation-delay: 0.05s;
+}
+
+aon-calendar-menu.menu-open .calendar-menu-option:nth-child(2) {
+	animation-delay: 0.1s;
+}
+
+aon-calendar-menu.menu-open .calendar-menu-option:nth-child(3) {
+	animation-delay: 0.15s;
+}
+
+aon-calendar-menu.menu-open .calendar-menu-option:nth-child(4) {
+	animation-delay: 0.2s;
+}
+
+@keyframes aon-calendar-menu-slideIn {
+	from {
+		opacity: 0;
+		transform: translateX(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+	aon-calendar-menu .calendar-menu-popup {
+		min-width: 180px;
+	}
+	
+	aon-calendar-menu .calendar-menu-option {
+		padding: 12px 16px;
+		font-size: 14px;
+	}
 }
