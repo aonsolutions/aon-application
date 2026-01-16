@@ -42,7 +42,7 @@ public class Mod347Declared implements Serializable {
 	private double vatAccrualAmount;
 	private String bdns; // Nuevo campo 2025: Número de convocatoria BDNS
 
-	// FALTA - NUEVOS CAMPOS 2025 PARA CANARIAS, LOS ARRENDAMIENTOS TAMBIEN VAN POR TRIMESTRES
+	// FALTA - NUEVOS CAMPOS 2025 PARA CANARIAS (Modelo 415), LOS ARRENDAMIENTOS TAMBIEN VAN POR TRIMESTRES
 	private double rentalAmount;
 	private double firstQuarterRentalAmount;
 	private double secondQuarterRentalAmount;

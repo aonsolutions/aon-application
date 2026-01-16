@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod347Key;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -31,7 +32,7 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 	private int tabIndex;
 	
 	private DocumentTextBox document = new DocumentTextBox();
-//	private TextBox vatDocument = new TextBox();
+	private TextBox vatDocument = new TextBox();
 	private Mod347KeyListBox key = new Mod347KeyListBox();
 	private DoubleBox cashAmount = new DoubleBox();
 	private IntegerBox cashYear = new IntegerBox();	
@@ -60,21 +61,21 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 		FlowPanel panel = new FlowPanel();
 		panel.setStyleName(AON.CSS.aonScrollArea());
 		
-		// NIF Declarado / NIF Representante / Nombre
+		// NIF Declarado / NIF Extranjeros / NIF Representante / Nombre
 		
 		FlexTable tab1 = new FlexTable();
 		tab1.getColumnFormatter().setWidth(0, "100px");
-//		tab1.getColumnFormatter().setWidth(1, WIDTH_120PX);		
-		tab1.getColumnFormatter().setWidth(1, "100px");
-		tab1.getColumnFormatter().setWidth(2, "auto");
+		tab1.getColumnFormatter().setWidth(1, WIDTH_120PX);		
+		tab1.getColumnFormatter().setWidth(2, "100px");
+		tab1.getColumnFormatter().setWidth(3, "auto");
 		
 		tab1.setStyleName(AON.CSS.aonWidthAll());
 		tab1.addStyleName(AON.CSS.aonNowrap());
 
 		tab1.setWidget(0, 0, new Model347SmallerLabel(AON.MSG.document()));
-//		tab1.setWidget(0, 1, new Model347SmallerLabel("NIF-IVA declarado"));
-		tab1.setWidget(0, 1, new Model347SmallerLabel(AON.MSG.representativeDocument()));		
-		tab1.setWidget(0, 2, new Model347SmallerLabel(AON.MSG.fullName()));
+		tab1.setWidget(0, 1, new Model347SmallerLabel("NIF Extranjeros"));
+		tab1.setWidget(0, 2, new Model347SmallerLabel(AON.MSG.representativeDocument()));		
+		tab1.setWidget(0, 3, new Model347SmallerLabel(AON.MSG.fullName()));
 		
 		document.setValue(declared.getDocument());
 		document.setMaxLength(9);
@@ -84,22 +85,22 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 		});
 		
 		// Controlar si se introduce algo en document se deshabilita vatDocument (ambos son incompatibles)
-//		document.addKeyUpHandler(event -> vatDocument.setEnabled(AonStringUtils.isBlank(document.getText())));
+		document.addKeyUpHandler(event -> vatDocument.setEnabled(AonStringUtils.isBlank(document.getText())));
 		
 		tab1.setWidget(1, 0, document);		
 				
-//		vatDocument.setVisibleLength(17);		
-//		vatDocument.setMaxLength(17);
-//		vatDocument.setStyleName(AON.CSS.aonInputText());
-//		vatDocument.setValue(declared.getOperatorNif());
-//		vatDocument.addValueChangeHandler(event -> {
-//			declared.setOperatorNif(vatDocument.getValue());
-//			callback.onValueChanged(declared);
-//		});
+		vatDocument.setVisibleLength(17);		
+		vatDocument.setMaxLength(17);
+		vatDocument.setStyleName(AON.CSS.aonInputText());
+		vatDocument.setValue(declared.getOperatorNif());
+		vatDocument.addValueChangeHandler(event -> {
+			declared.setOperatorNif(vatDocument.getValue());
+			callback.onValueChanged(declared);
+		});
 		
 		// Controlar si se introduce algo en vatDocument se deshabilita document (ambos son incompatibles)
-//		vatDocument.addKeyUpHandler(event -> document.setEnabled(AonStringUtils.isBlank(vatDocument.getText())));		
-//		tab1.setWidget(1, 1, vatDocument);
+		vatDocument.addKeyUpHandler(event -> document.setEnabled(AonStringUtils.isBlank(vatDocument.getText())));		
+		tab1.setWidget(1, 1, vatDocument);
 		
 		DocumentTextBox representativeDocument = new DocumentTextBox();
 		representativeDocument.setValue(declared.getRepresentativeDocument());
@@ -108,7 +109,7 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 			declared.setRepresentativeDocument(representativeDocument.getValue());
 			callback.onValueChanged(declared);
 		});
-		tab1.setWidget(1, 1, representativeDocument);
+		tab1.setWidget(1, 2, representativeDocument);
 				
 		TextBox name = new TextBox();
 		name.setVisibleLength(40);
@@ -119,7 +120,7 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 			declared.setName(name.getValue());
 			callback.onTableChanged(declared);
 		});
-		tab1.setWidget(1, 2, name);
+		tab1.setWidget(1, 3, name);
 		
 		panel.add(tab1);
 		
@@ -205,9 +206,7 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 		tab3.setWidget(0, 0, accrual);
 		
 		CheckBox isp = new CheckBox("Op. ISP");
-		// FALTA - NO SE SI TAMBIEN ES SOLO PARA EL DESTINATARIO
-//		isp.setTitle("Operaci\u00F3n con inversi\u00F3n del sujeto pasivo (solo destinatario de la operaci\u00F3n)");
-		isp.setTitle("Operaci\u00F3n con inversi\u00F3n del sujeto pasivo");
+		isp.setTitle("Operaci\u00F3n con inversi\u00F3n del sujeto pasivo (solo destinatario de la operaci\u00F3n)");
 		isp.setValue(declared.isIsp());
 		isp.addClickHandler(event -> {
 			declared.setIsp(isp.getValue());
@@ -215,9 +214,8 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 		});   
 		tab3.setWidget(0, 1, isp);
 		
-		// FALTA - PARA ESTE CHECK SE VA A USAR EL CAMPO depositRegime DE Mod347Declared
+		// PARA ESTE CHECK SE VA A USAR EL CAMPO depositRegime DE Mod347Declared
 		CheckBox deposit = new CheckBox("Op. exenta (art. 13 Ley 20/1991)");
-//		deposit.setTitle("Operaci\u00F3n con bienes vinculados o destinados a vincularse al r\u00E9gimen de dep\u00F3sito distinto del aduanero");
 		deposit.setValue(declared.isDepositRegime());
 		deposit.addClickHandler(event -> {
 			declared.setDepositRegime(deposit.getValue());
@@ -605,8 +603,8 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 	private void setEnabledFields(Mod347 mod347) {
 		
 		// Document y vatDocument son mutuamente excluyentes
-//		document.setEnabled(AonStringUtils.isBlank(vatDocument.getValue()));
-//		vatDocument.setEnabled(AonStringUtils.isBlank(document.getValue()));		
+		document.setEnabled(AonStringUtils.isBlank(vatDocument.getValue()));
+		vatDocument.setEnabled(AonStringUtils.isBlank(document.getValue()));		
 		
 		// Importe percibido en metalico y ejercicio (solo claves B, C y F)
 		cashAmount.setEnabled( key.getValue() == Mod347Key.B || key.getValue() == Mod347Key.C || key.getValue() == Mod347Key.F);

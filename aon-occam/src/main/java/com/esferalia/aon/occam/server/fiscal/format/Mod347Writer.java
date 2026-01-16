@@ -243,75 +243,76 @@ public class Mod347Writer {
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace((mod347.getDeclared()==null ? 0.0 : mod347.getDeclared().stream().filter(det -> det.getType() == Mod347Key.G).mapToDouble(det -> det.getAmount()).sum()), 16, 2)) // Clave G - Importe total de las operaciones
 		   ,(line, mod347, declared, asset) -> line.append(mod347.isComplementary() ? "C" : mod347.isReplacement() ? "S" : " ")														// Declaración Complementaria o Sustitutiva
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(mod347.isComplementary() || mod347.isReplacement() ? mod347.getReplacedNumber() : "", 13,0))	// Nº de justificante de la declaración anterior
-		   ,(line, mod347, declared, asset) -> line.append("\r\n") // FALTA - NO SE SI HABRA QUE AÑADIR ESTO
+		   ,(line, mod347, declared, asset) -> line.append("\r\n") 
 		})
 		
 		// Registro de Declarado (Canarias)
 		,TYPE_2_CANARIAS (new IPropertyFiller[] { 
-			(line, mod347, declared, asset) -> line.append("2") 													         	// TIPO DE REGISTRO
-		   ,(line, mod347, declared, asset) -> line.append("415") 													         	// MODELO DECLARACIÓN
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(mod347.getYear(), 4, 0)) 	         	// EJERCICIO
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(mod347.getDocument(), 9))	 	         	// N.I.F. DEL OBLIGADO TRIBUTARIO
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(Mod347Key.safeValue(declared.getType()), 1)) // CLAVE		   
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(declared.getDocument(), 9))               	// N.I.F. O N.I.E DEL DECLARADO
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(declared.getName(), 40))	 			     	// APELLIDOS Y NOMBRE O DENOMINACIÓN O RAZÓN SOCIAL DEL DECLARADO
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(declared.getRepresentativeDocument(), 9))	// N.I.F. DEL REPRESENTANTE LEGAL
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(Country.safeIso2(declared.getCountry()), 2)) // CÓDIGO DE PAÍS		   
-		   ,(line, mod347, declared, asset) -> line.append(declared.isVatAccrual() ? "X" : " ")                                             // OPERACIÓN IGIC DE CAJA
-		   ,(line, mod347, declared, asset) -> line.append(declared.isIsp() ? "X" : " ")                                                    // OPERACIÓN INVERSIÓN SUJETO PASIVO
-		   ,(line, mod347, declared, asset) -> line.append(declared.isDepositRegime() ? "X" : " ")                                          // OPERACIÓN EXENTA ART. 13 LEY 20/1991
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getVatAccrualAmount(), 16, 2))         // IMPORTE ANUAL DE OPERACIONES DEVENGADAS CON CRITERIO IGIC DE CAJA
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAmount(), 16, 2))                   // IMPORTE ANUAL DE LAS OPERACIONES
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(declared.getCashAmount(), 15, 2))                  // IMPORTE PERCIBIDO EN METÁLICO
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getRentalAmount(), 16, 2))                   // IMPORTE ARRENDAMIENTO DE LOCALES DE NEGOCIO
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAssetAmount(), 16, 2))              // IMPORTE PERCIBIDO POR TRANSMISIONES DE INMUEBLES SUJETAS A I.G.I.C.
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(declared.getCashYear(), 4, 0))                     // EJERCICIO
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getFirstQuarterAmount(), 16, 2))       // IMPORTE DE LAS OPERACIONES PRIMER TRIMESTRE
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getFirstQuarterRentalAmount(), 16, 2)) // IMPORTE ARRENDAMIENTO DE LOCALES DE NEGOCIO PRIMER TRIMESTRE
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAssetFirstQuarterAmount(), 16, 2))  // IMPORTE PERCIBIDO POR TRANSMISIONES DE INMUEBLES SUJETAS A I.G.I.C. PRIMER TRIMESTRE
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getSecondQuarterAmount(), 16, 2))      // IMPORTE DE LAS OPERACIONES SEGUNDO TRIMESTRE
+			(line, mod347, declared, asset) -> line.append("2") 													         	           // TIPO DE REGISTRO
+		   ,(line, mod347, declared, asset) -> line.append("415") 													         	           // MODELO DECLARACIÓN
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(mod347.getYear(), 4, 0)) 	         	           // EJERCICIO
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(mod347.getDocument(), 9))	 	         	           // N.I.F. DEL OBLIGADO TRIBUTARIO
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(Mod347Key.safeValue(declared.getType()), 1))            // CLAVE		   
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(declared.getDocument(), 9))               	           // N.I.F. O N.I.E DEL DECLARADO
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(declared.getName(), 40))	 			     	           // APELLIDOS Y NOMBRE O DENOMINACIÓN O RAZÓN SOCIAL DEL DECLARADO
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(declared.getRepresentativeDocument(), 9))			   // N.I.F. DEL REPRESENTANTE LEGAL
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(Country.safeIso2(declared.getCountry()), 2))            // CÓDIGO DE PAÍS		   
+		   ,(line, mod347, declared, asset) -> line.append(declared.isVatAccrual() ? "X" : " ")                                            // OPERACIÓN IGIC DE CAJA
+		   ,(line, mod347, declared, asset) -> line.append(declared.isIsp() ? "X" : " ")                                                   // OPERACIÓN INVERSIÓN SUJETO PASIVO
+		   ,(line, mod347, declared, asset) -> line.append(declared.isDepositRegime() ? "X" : " ")                                         // OPERACIÓN EXENTA ART. 13 LEY 20/1991
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getVatAccrualAmount(), 16, 2))          // IMPORTE ANUAL DE OPERACIONES DEVENGADAS CON CRITERIO IGIC DE CAJA
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAmount(), 16, 2))                    // IMPORTE ANUAL DE LAS OPERACIONES
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(declared.getCashAmount(), 15, 2))                   // IMPORTE PERCIBIDO EN METÁLICO
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getRentalAmount(), 16, 2))              // IMPORTE ARRENDAMIENTO DE LOCALES DE NEGOCIO
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAssetAmount(), 16, 2))               // IMPORTE PERCIBIDO POR TRANSMISIONES DE INMUEBLES SUJETAS A I.G.I.C.
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(declared.getCashYear(), 4, 0))                      // EJERCICIO
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getFirstQuarterAmount(), 16, 2))        // IMPORTE DE LAS OPERACIONES PRIMER TRIMESTRE
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getFirstQuarterRentalAmount(), 16, 2))  // IMPORTE ARRENDAMIENTO DE LOCALES DE NEGOCIO PRIMER TRIMESTRE
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAssetFirstQuarterAmount(), 16, 2))   // IMPORTE PERCIBIDO POR TRANSMISIONES DE INMUEBLES SUJETAS A I.G.I.C. PRIMER TRIMESTRE
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getSecondQuarterAmount(), 16, 2))       // IMPORTE DE LAS OPERACIONES SEGUNDO TRIMESTRE
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getSecondQuarterRentalAmount(), 16, 2)) // IMPORTE ARRENDAMIENTO DE LOCALES DE NEGOCIO SEGUNDO TRIMESTRE
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAssetSecondQuarterAmount(), 16, 2)) // IMPORTE PERCIBIDO POR TRANSMISIONES DE INMUEBLES SUJETAS A I.G.I.C. SEGUNDO TRIMESTRE
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getThirdQuarterAmount(), 16, 2))       // IMPORTE DE LAS OPERACIONES TERCER TRIMESTRE
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getThirdQuarterRentalAmount(), 16, 2)) // IMPORTE ARRENDAMIENTO DE LOCALES DE NEGOCIO TERCER TRIMESTRE
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAssetThirdQuarterAmount(), 16, 2))  // IMPORTE PERCIBIDO POR TRANSMISIONES DE INMUEBLES SUJETAS A I.G.I.C. TERCER TRIMESTRE
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getFourthQuarterAmount(), 16, 2))      // IMPORTE DE LAS OPERACIONES CUARTO TRIMESTRE
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAssetSecondQuarterAmount(), 16, 2))  // IMPORTE PERCIBIDO POR TRANSMISIONES DE INMUEBLES SUJETAS A I.G.I.C. SEGUNDO TRIMESTRE
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getThirdQuarterAmount(), 16, 2))        // IMPORTE DE LAS OPERACIONES TERCER TRIMESTRE
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getThirdQuarterRentalAmount(), 16, 2))  // IMPORTE ARRENDAMIENTO DE LOCALES DE NEGOCIO TERCER TRIMESTRE
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAssetThirdQuarterAmount(), 16, 2))   // IMPORTE PERCIBIDO POR TRANSMISIONES DE INMUEBLES SUJETAS A I.G.I.C. TERCER TRIMESTRE
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getFourthQuarterAmount(), 16, 2))       // IMPORTE DE LAS OPERACIONES CUARTO TRIMESTRE
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getFourthQuarterRentalAmount(), 16, 2)) // IMPORTE ARRENDAMIENTO DE LOCALES DE NEGOCIO CUARTO TRIMESTRE
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAssetFourthQuarterAmount(), 16, 2))  // IMPORTE PERCIBIDO POR TRANSMISIONES DE INMUEBLES SUJETAS A I.G.I.C. CUARTO TRIMESTRE
-//		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(declared.getBdns(),6,0) )  // FALTA Número de convocatoria BDNS (a partir del ejercicio 2025)
-		   ,(line, mod347, declared, asset) -> line.append("\r\n") // FALTA
+//		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(declared.getBdns(),6,0) )  // FALTA Número de convocatoria BDNS
+		   ,(line, mod347, declared, asset) -> line.append("\r\n") 
 		})
 		
 		// Registro de Inmueble (Canarias)
 		,TYPE_3_CANARIAS (new IPropertyFiller[] {
-			(line, mod347, declared, asset) -> line.append("3") 														    // TIPO DE REGISTRO
-		   ,(line, mod347, declared, asset) -> line.append("415") 													        // MODELO DECLARACIÓN
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(mod347.getYear(), 4, 0)) 		        // EJERCICIO
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(mod347.getDocument(), 9))	 		        // N.I.F. DEL OBLIGADO TRIBUTARIO
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getDocument(), 9))	 		        // N.I.F. O N.I.E. DEL ARRENDATARIO
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getName(), 40))	 			        // APELLIDOS Y NOMBRE O DENOMINACIÓN O RAZÓN SOCIAL DEL ARRENDATARIO
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getRepresentativeDocument(), 9))    // N.I.F. DEL REPRESENTANTE LEGAL
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(asset.getAmount(), 15, 2))          // IMPORTE DE LA OPERACIÓN
-		   ,(line, mod347, declared, asset) -> line.append("3".equals(asset.getAssetLocation()) ? "N" : "S")       // INDICADOR DE REFERENCIA CATASTRAL (S - Con referencia catastral; N - Sin referencia catastral)
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getCadasdralReference(),25))       // REFERENCIA CATASTRAL
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetType(), 5))   // TIPO DE VÍA
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreet(), 50))              // NOMBRE VÍA PÚBLICA
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetNumberType(), 3))     // TIPO DE NUMERACIÓN
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(asset.getAssetStreetNumber(), 5, 0))   // NÚMERO DE CASA
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetNumberSuffix(), 3))   // CALIFICADOR DEL NÚMERO
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetBlock(), 3))	        // BLOQUE
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetHall(), 3))	        // PORTAL
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetStair(), 3))	        // ESCALERA
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetFloor(), 3))	        // PLANTA O PISO
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetDoor(), 3))	        // PUERTA
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetComplement(), 40))    // COMPLEMENTO
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetCity(), 30))	        // LOCALIDAD O POBLACIÓN
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetTown(), 30))	        // MUNICIPIO
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(asset.getAssetStreetTownCode(), 5, 0)) // CÓDIGO DE MUNICIPIO
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(asset.getAssetStreetProvince(), 2, 0)) // CÓDIGO PROVINCIA
-		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(asset.getAssetStreetZip(), 5, 0))      // CÓDIGO POSTAL
-		   ,(line, mod347, declared, asset) -> line.append("\r\n") // FALTA 													        
+			(line, mod347, declared, asset) -> line.append("3") 														    		// TIPO DE REGISTRO
+		   ,(line, mod347, declared, asset) -> line.append("415") 													        		// MODELO DECLARACIÓN
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(mod347.getYear(), 4, 0)) 		        	// EJERCICIO
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(mod347.getDocument(), 9))	 		        	// N.I.F. DEL OBLIGADO TRIBUTARIO
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getDocument(), 9))	 		        		// N.I.F. O N.I.E. DEL ARRENDATARIO
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getName(), 40))	 			        	// APELLIDOS Y NOMBRE O DENOMINACIÓN O RAZÓN SOCIAL DEL ARRENDATARIO
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getRepresentativeDocument(), 9))    		// N.I.F. DEL REPRESENTANTE LEGAL
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(asset.getAmount(), 15, 2))          		// IMPORTE DE LA OPERACIÓN
+		   ,(line, mod347, declared, asset) -> line.append("3".equals(asset.getAssetLocation()) ? "N" : "S")       					// INDICADOR DE REFERENCIA CATASTRAL (S - Con referencia catastral; N - Sin referencia catastral)
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getCadasdralReference(),25))              	// REFERENCIA CATASTRAL
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(getStreetType2(asset.getAssetStreetType()), 5)) 	// TIPO DE VÍA // FALTA: CREO QUE LAS SIGLAS VAN SOLO CON 2 CARACTERES
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreet(), 50))              		// NOMBRE VÍA PÚBLICA
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetNumberType(), 3))     		// TIPO DE NUMERACIÓN
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(asset.getAssetStreetNumber(), 5, 0))   		// NÚMERO DE CASA
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetNumberSuffix(), 3))   		// CALIFICADOR DEL NÚMERO
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetBlock(), 3))	        		// BLOQUE
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetHall(), 3))	        		// PORTAL
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetStair(), 3))	        		// ESCALERA
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetFloor(), 3))	        		// PLANTA O PISO
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetDoor(), 3))	        		// PUERTA
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetComplement(), 40))    		// COMPLEMENTO
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetCity(), 30))	        		// LOCALIDAD O POBLACIÓN
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getAssetStreetTown(), 30))	        		// MUNICIPIO
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(asset.getAssetStreetTownCode(), 5, 0)) 		// CÓDIGO DE MUNICIPIO
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(asset.getAssetStreetProvince(), 2, 0)) 		// CÓDIGO PROVINCIA
+		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(asset.getAssetStreetZip(), 5, 0))      		// CÓDIGO POSTAL
+		   ,(line, mod347, declared, asset) -> line.append("\r\n")  													        
 		})
+		
 		;
 
 		private IPropertyFiller[] propertyFillers;
@@ -352,8 +353,7 @@ public class Mod347Writer {
 			for (Mod347Asset asset : mod347.getAssets()) {
 				Mod347File2014.TYPE_2_ASS_GIPUZKOA.fillPage(mod347, null, asset, writer);
 			}
-		}
-		else {
+		} else {
 			// Territorio Comun - Alava - Bizkaia - Navarra
 			Mod347File2014.TYPE_1.fillPage(mod347, null, null, writer);		
 			for (Mod347Declared declared : mod347.getDeclared()) {

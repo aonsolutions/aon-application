@@ -85,6 +85,12 @@
 			<version>6.3.0</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.grecasa</groupId>
+			<artifactId>pa-mod415</artifactId>
+			<version>6.10.1</version>
+			<scope>compile</scope>
+		</dependency>
 		
 		<dependency>
 			<groupId>com.amazonaws</groupId>

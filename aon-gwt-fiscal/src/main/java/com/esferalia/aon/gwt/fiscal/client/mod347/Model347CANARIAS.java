@@ -58,9 +58,7 @@ public class Model347CANARIAS extends Model347Base {
 
 					@Override
 					public String getDownloadFileAction() {
-						// FALTA 
-//						return GWT.getHostPageBaseURL() + "aon_gwt_fiscal/ms/Model415File";
-						return Model347Base.MODEL347_FILE;
+						return GWT.getHostPageBaseURL() + "aon_gwt_fiscal/ms/Model415File";
 					}
 
 					@Override
@@ -103,7 +101,15 @@ public class Model347CANARIAS extends Model347Base {
 						return "https://www3.gobiernodecanarias.org/tributos/atc/w/modelo-415";
 						
 					}
+					
+					// Otro link para la descarga del fichero TXT y poder importar los declarados desde el programa de ayuda
+					@Override
+					public boolean isBoeFormatEnabled() {
+						return true;
+					}
+					
 			};
+			
 			admonPanel = new FiscalModelAdmonPanel<>(cbk);
 			tabPanel.add( admonPanel, AON.MSG.administrationName(getModel().getAdministration()));		
 	}
