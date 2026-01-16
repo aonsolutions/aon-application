@@ -87,6 +87,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.InvoicingGroupDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PrintInvoiceConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceRegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SettleSalariesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
@@ -454,9 +455,8 @@ public class FinanceImpl implements IFinance {
 	}
 
 	@Override
-	public Stream<InvoiceRegistry> getInvoiceRegistries(AONContext ctx, RegistryFilter filter) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> InvoiceDAO.getInvoiceRegistries(ctx, filter));
+	public Stream<InvoiceRegistry> getInvoiceRegistries(AONContext ctx, Integer domainId, String query) {
+		return InvoiceRegistryDAO.getInvoiceRegistriesSuggestion(ctx, domainId, query);
 	}
 
 	@Override

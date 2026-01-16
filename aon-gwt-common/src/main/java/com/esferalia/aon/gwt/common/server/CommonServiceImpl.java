@@ -28,7 +28,6 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
-import com.esferalia.aon.occam.api.CONSOLE;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.ActivityType;
@@ -107,7 +106,6 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
-import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -280,19 +278,6 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	// **************************************************
 	// **************************************** [INVOICE]
 	// **************************************************
-	@Override
-	public LinkedList<InvoiceRegistry> getInvoiceRegistries(String domainName, int domain, String user, String query)
-			throws AonCoreException {
-		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
-			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
-				:(query);
-		return AON.getInvoiceRegistries(domainName, domain,user,
-				p -> p.getDocumentProperty().like(q)
-					 .or(p.getNameProperty().like(q))
-					 .or(p.getAliasProperty().like(q))
-				).collect(Collectors.toCollection(LinkedList::new));
-	}
-
 	@Override
 	public LinkedList<OldProduct> getInvoiceProducts(String domainName, int domain, String user, String query)
 			throws AonCoreException {

@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.MONTH;
+import static junit.framework.Assert.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -282,6 +283,12 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 	@Override
 	protected void assertIrpf(double expected, double base, double percent, double delta) {
 		super.assertIrpf(expected, base + ( 66666.00 / 12 ), percent, delta);
+	}
+
+	@Override
+	protected void assertAnualIrpf(double expected,
+			double annualRemuneration, double percent, double delta) {
+		assertEquals(expected, ( annualRemuneration +  66666.00  ) * percent / 100.00, delta);
 	}
 
 	@Override

@@ -172,7 +172,7 @@ public interface IFinance {
 	// 	***********************************************
 	// 	************************** INVOICE REGISTRY ***
 	// 	***********************************************
-	public Stream<InvoiceRegistry> getInvoiceRegistries(AONContext ctx, RegistryFilter filter);
+	public Stream<InvoiceRegistry> getInvoiceRegistries(AONContext ctx, Integer domainId, String query);
 	public Stream<OldProduct> getInvoiceProducts(AONContext ctx, ProductFilter filter);
 	public Stream<InvoiceTax> getInvoiceTaxStream(AONContext ctx, Integer invoiceId);
 	

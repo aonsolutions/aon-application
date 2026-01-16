@@ -17,7 +17,7 @@ public enum AonError implements Serializable{
 	
 	
 	// -----------------------------------------------------------
-	// --------------------- SECUROTY ----------------------------
+	// --------------------- SECURITY ----------------------------
 	// -----------------------------------------------------------
 	 READ_FORBIDDEN("El acceso de lectura al recurso solicitado, ha sido denegado.")
 	,WRITE_FORBIDDEN("El acceso de escritura al recurso solicitado, ha sido denegado.")
@@ -213,6 +213,7 @@ public enum AonError implements Serializable{
 	,INVOICE_EMPTY_REFERENCE_CODE("No se ha indicado un n\u00FAmero de factura.")
 	,INVOICE_EMPTY_TRANSACTION("No se ha indicado un tipo de transacci\u00F3n de factura (Nacional, Intracom., Extracom, ...")
 	,INVOICE_NOT_FOUND("Factura no encontrada.")
+	,FEE_NOT_FOUND_FOR_INVOICE_DETAIL("No se ha encontrado la cuota vinculada a la línea de factura. (ID cuota: {0})")
 	,INVOICE_RECTIFIED_NOT_FOUND("Factura rectificada no encontrada.")
 	,INVOICE_RECTIFIED_ALREADY_RECTIFIED("La factura a rectificar ya ha sido rectificada por la factura {0} del día {1,date,dd/MM/yyyy}")
 	,INVOICE_INVALID_RECTIFICATION_DATA("Los datos necesarios para rectificar la factura, no son correctos.")
@@ -363,7 +364,6 @@ public enum AonError implements Serializable{
 	// --------------------------------------------- SELLER
 	,SELLER_NULL("El valor del agente comercial es nulo.")
 	,NULL_SELLER_NAME("El Nombre / Raz\u00f3n Social del agente comercial es nulo.")
-	
 	;
 	
 	

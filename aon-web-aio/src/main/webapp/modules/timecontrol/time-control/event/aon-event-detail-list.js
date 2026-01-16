@@ -152,6 +152,7 @@ export class AonEventDetailList extends AonElement {
       aonTable.removeColumns();
       aonTable.addColumnIcon({title:MSG.BACK, name:MATERIAL_ICONS.ARROW_BACK, type:"string", id:"lettersHtml", width:"6%"}, ()=>this.back());
       aonTable.addColumn(MSG.STATUS, "string", "textStatus", "10%");
+      aonTable.addColumn("Motivo", "string", "reason", "15%");
       aonTable.addColumn(MSG.DATE, "date", "dateParse", "20%");
       aonTable.addColumn(MSG.LOCATION, "string", "nameLocation", "30%");
       try {
@@ -181,11 +182,14 @@ export class AonEventDetailList extends AonElement {
         resp.map((res, idx) => {
           let newDate = dateCustomDayHour(res.date);
           if(newDate){res.dateParse = newDate;}
+          
+          let subtitle = `${res.reason && res.reason.length > 0 ? res.reason : ''} <span style="float: right;">${res.nameLocation}</span> `;
+          
           let options = {
             paddingTopTitle: "5px",
             iconHtmlCustom: `${res.lettersHtml} <span style="padding-top: 5px;float: right;color: rgba(0,0,0,.54);">${res.dateParse}</span>`,
             title: `${res.textStatus}`,
-            subtitle: `<span style="float: right;">${res.nameLocation}</span>`,
+            subtitle
           };
           aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
         });
@@ -202,6 +206,7 @@ export class AonEventDetailList extends AonElement {
       try {filter = { ...this.applicationParentEl._filter, ...this.applicationParentEl.DATE_TMP };} catch (error) {}
 
       const datos = await getTimeControlDetail(filter);
+      
       if (datos) {
         sortBy(datos, "date", "asc").map((resp) => {
           removeEmpty(resp);
@@ -217,6 +222,8 @@ export class AonEventDetailList extends AonElement {
             let aib = setAttributes(new AonIconButton(),{id: "iconLocation", noHover: "true", icon: iconAddLocation});
             nameLocation = aib.outerHTML;
           }
+          
+          let reason = resp.reasonValue ? resp.reasonValue : '';
 
           data.push({
             ...resp,
@@ -225,6 +232,7 @@ export class AonEventDetailList extends AonElement {
             status: newStatus,
             nameLocation,
             dateParse: AonDateUtils.setDateTimestamp(resp.date),
+            reason
           });
           
         });

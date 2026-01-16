@@ -53,7 +53,7 @@ import { AonDashboardSalesPurchases } from '../accounting/aon-dashboard-sales-pu
 import { AonJsfAccountingGraph, AonJsfPayrollGraph, AonJsfContractGraph } from '../aon-jsf-app.js';
 import { createSelect } from '../../components/CreateComponent.js';
 import { InvoiceCommunicationConfiguration } from '../../models/InvoiceCommunicationConfiguration.js';
-import { AonInvoiceCommunication } from '../invoice/aon-invoice-communication.js';
+import { AonInvoiceCommunicationConfiguration } from '../invoice/aon-invoice-communication-configuration.js';
 import { isPersonaFisica, isValid } from '../../services/documentUtils.js';
 import { Invoice } from '../invoice/Invoice.js';
 import { AonCheckbox } from '../../components/aon-checkbox.js';
@@ -118,7 +118,8 @@ export class AonDesktop extends AonElement {
 		this.build();
 
 	    await this.getInvoiceConfiguration();
-		if(!this.checkConfigurationComplete(this.ic, false) && !this.getDur().isParentUser())
+		if(!this.checkConfigurationComplete(this.ic, false) && !this.getDur().isParentUser() 
+				&& (this.getDur().isInvoice() || this.getDur().isManagement()))
 			this.buildInvoiceConfigurationDialog();	
 	}
 
@@ -146,7 +147,7 @@ export class AonDesktop extends AonElement {
 			this.getElement(dialog.BUTTON_CLOSE).style.display = 'none';
 		}
 
-		let communication =  new AonInvoiceCommunication();
+		let communication =  new AonInvoiceCommunicationConfiguration();
 		communication.setConfiguration(this.ic);
 		communication.onChange(() => {
 			this.ic = communication.getConfiguration();
@@ -226,13 +227,15 @@ export class AonDesktop extends AonElement {
 	}
 
 	checkConfigurationComplete(config, showError) {
+		let isSpain = config && config.company && config.company.documentCountry && config.company.documentCountry === 'ES';
+		if(showError && !isSpain) return true;
 		if(showError && !this.conditionsAccepted) {
 			this.showMessageError("Debe aceptar las condiciones para continuar.");
 			return false;
 		}
 		if(!config || !config.company || !config.company.document || !config.communication) return false;
 		let icc = new InvoiceCommunicationConfiguration(config.communication);
-		if(!isValid(config.company.document)) {
+		if(!isValid(config.company.document) && isSpain) {
 			if(showError) this.showMessageError("El NIF/CIF de la empresa no es válido.");
 			return false;
 		}
@@ -240,8 +243,8 @@ export class AonDesktop extends AonElement {
 			if(showError) this.showMessageError("Es obligatorio rellenar todos los datos de la persona física.");
 			return false;
 		} 
-		if(showError && !icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) && !icc.isSii() && !icc.willBeSii() && !icc.isVerifactu() && !icc.willBeVerifactu() && !icc.isNoVerifactu() && !icc.willBeNoVerifactu()) {
-			this.showMessageError("Es obligatorio selecionar Verifactu, No Verifactu o SII para empresas del territorio común.");
+		if(!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) && !icc.isSii() && !icc.willBeSii() && !icc.isVerifactu() && !icc.willBeVerifactu() && !icc.isNoVerifactu() && !icc.willBeNoVerifactu()) {
+			if(showError) this.showMessageError("Es obligatorio selecionar Verifactu, No Verifactu o SII para empresas del territorio común.");
 			return false;
 		} 
 		if(!icc.getAdministration().isUnknown() && (icc.hasCommunication() || icc.willBeCommunication() || icc.isNoSif())) {

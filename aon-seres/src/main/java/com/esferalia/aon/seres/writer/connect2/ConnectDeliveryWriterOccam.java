@@ -462,9 +462,10 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			? obtainPackageQuantity(detail.getItem(), detail.getQuantity(), customerPackage)
 			: obtainPackageQuantityOld(detail, packageQuantity, customerPackage);		
 
+		double packageUnit = obtainPackageUnit(detail, customerPackage);
 		seh1l.setCantidadEnviada_12_(quantity);
 		seh1l.setUnidadDeMedidaCantidadEnviada(StringUtils.substring(customerPackage, 0, 3).toUpperCase());
-		seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(obtainPackageUnit(detail, customerPackage));
+		seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packageUnit);
 		
 		seh1l.setCalificadorReferencia1(null);
 		seh1l.setNumeroReferencia1(null);
@@ -488,8 +489,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setNumeroDeLineaReferencia3(null);
 		seh1l.setDiferenciaEnCantidadPedida_21_(null);
 		seh1l.setCodigoDiscrepancia(null);
-		seh1l.setPesoTotalNetoDeLaLinea_AAI_AAF_(quantity * detail.getItem().getPackMeasurement());
-		seh1l.setPesoTotalBrutoDeLaLinea_AAI_AAB_(quantity * detail.getItem().getPackMeasurement());
+		seh1l.setPesoTotalNetoDeLaLinea_AAI_AAF_(quantity * packageUnit);// detail.getItem().getPackMeasurement());
+		seh1l.setPesoTotalBrutoDeLaLinea_AAI_AAB_(quantity * packageUnit); // detail.getItem().getPackMeasurement());
 		if(detail.getItem().getPackMeasurementTag()!=null && detail.getItem().getPackMeasurementTag().getName()!=null) {
 			String packMeasurement = detail.getItem().getPackMeasurementTag().getName();
 			if("KG".equalsIgnoreCase(packMeasurement)) packMeasurement = "KGM";
@@ -849,8 +850,11 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			Tag packFormatTag = detail.getItem().getPackFormatTag();
 			Tag packMeasurementTag = detail.getItem().getPackMeasurementTag();
 			Tag packUnitsTag = detail.getItem().getPackUnitsTag();
+			Tag stockUnitsTag = detail.getItem().getStockUnitTag();
 
-			if(packFormatTag != null && packUnitsTag != null && packFormatTag.getName().equalsIgnoreCase(packUnitsTag.getName())) {
+			if(stockUnitsTag != null && customerPackingTag.equalsIgnoreCase(stockUnitsTag.getName())) {
+				return 1.0;
+			} else if(packFormatTag != null && packUnitsTag != null && packFormatTag.getName().equalsIgnoreCase(packUnitsTag.getName())) {
 				return detail.getItem().getPackUnits() * detail.getItem().getPackMeasurement();
 			} else if(packUnitsTag != null &&  customerPackingTag.equalsIgnoreCase(packUnitsTag.getName())) 
 				return detail.getItem().getPackUnits();

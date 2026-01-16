@@ -21,6 +21,11 @@ export const SigninSidenav = {
     icon: "tune",
     id: "filter",
   },
+  REPORT:{
+    name: "Registro de jornada",
+    icon: MATERIAL_ICONS.FILE_DOWNLOAD,
+    id: MATERIAL_ICONS.FILE_DOWNLOAD,
+  },
   MORE:{
     name: "Ver",
     icon: MATERIAL_ICONS.MORE_VERT,

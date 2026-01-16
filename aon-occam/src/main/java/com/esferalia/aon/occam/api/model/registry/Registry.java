@@ -221,6 +221,25 @@ public class Registry implements Serializable{
 		return child;
 	}
 	
+	public String getDisplayName() {
+		return AonStringUtils.defaultIfEmpty(Country.safeIso2(getDocumentCountry()), AonStringUtils.repeat(AonStringUtils.QUESTION, 2)) 
+			+ AonStringUtils.SLASH
+			+ AonStringUtils.defaultIfEmpty(getDocument(), AonStringUtils.repeat(AonStringUtils.QUESTION, 9))
+			+ AonStringUtils.SPACE
+			+ AonStringUtils.HYPHEN
+			+ AonStringUtils.SPACE
+			+ getName()
+			+ AonStringUtils.SPACE
+			+ (AonStringUtils.isNotBlank(getAlias())
+				?(AonStringUtils.SPACE + AonStringUtils.OPEN_PARENTHESIS + getAlias() + AonStringUtils.CLOSE_PARENTHESIS)
+				:AonStringUtils.EMPTY)
+		;
+	}
+	
+	/**
+	 * @deprecated Don't use this method. Registry is empty when is null!
+	 */
+	@Deprecated
 	public boolean isEmpty() {
 		return getId() == null && getDomain() == null
 			&& getDocument() == null && getDocumentType() == null

@@ -7399,17 +7399,17 @@ public class AON {
 		}
 	}
 
-	public static Stream<InvoiceRegistry> getInvoiceRegistries(String domainName, int domain, String loggedUser,
-			RegistryFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, loggedUser);
-			return getFinance().getInvoiceRegistries(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
+//	public static Stream<InvoiceRegistry> getInvoiceRegistries(String domainName, int domain, String loggedUser,
+//			RegistryFilter filter) {
+//		CloseableAONContext ctx = null;
+//		try {
+//			ctx = AONContext.getAONContext(domainName, domain, loggedUser);
+//			return getFinance().getInvoiceRegistries(ctx, filter);
+//		} finally {
+//			if (ctx != null)
+//				ctx.close();
+//		}
+//	}
 
 	public static Stream<OldProduct> getInvoiceProducts(String domainName, int domain, String loggedUser, ProductFilter filter) {
 		CloseableAONContext ctx = null;

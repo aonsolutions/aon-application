@@ -900,6 +900,11 @@ export class InvoiceCommunicationConfiguration {
 
     // 
 
+    hasCommunicationByType = (type) => {
+        if(type === "emitida") return !this.isNoSif() && (this.isTbai() || this.isLroe() || this.isVerifactu() || this.isNoVerifactu() || this.isSii() || this.isSif());
+        else return this.isLroe() || this.isSii(); 
+    }
+
     hasCommunication = () => {
         return !this.isNoSif() && (this.isTbai() || this.isLroe() || this.isVerifactu() || this.isNoVerifactu() || this.isSii() || this.isSif()); 
     }
