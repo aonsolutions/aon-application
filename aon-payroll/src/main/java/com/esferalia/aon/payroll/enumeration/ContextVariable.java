@@ -419,8 +419,9 @@ public enum ContextVariable implements IResourceable {
 	
 	MONTHLY("COTIZACION_MENSUAL", VariableType.BOOLEAN, false),
 	
+	PLUS_BASE("BASE_ADICIONAL", VariableType.DOUBLE),
 	
-	PLUS_BASE("BASE_ADICIONAL", VariableType.DOUBLE)
+	FLEXIBLE("FLEXIBLE", VariableType.DOUBLE, false)
 	;
 
 	public static final String ALL = "_P";
