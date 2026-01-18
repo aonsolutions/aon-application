@@ -5095,7 +5095,7 @@ aon-agenda-all-days .day-number {
 }
 
 aon-agenda-all-days .day.today .day-number {
-  color: white;
+  color: white !important;
   background-color: #1a73e8;
   padding: .2rem;
   border-radius: .5rem;
