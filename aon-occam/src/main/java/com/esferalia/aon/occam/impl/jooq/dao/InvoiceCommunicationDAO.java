@@ -459,7 +459,11 @@ public class InvoiceCommunicationDAO {
 					fillNoVerifactu(ctx, domainId, config);	
 				}
 				
-				if(!config.hasVerifactuInvoice() && config.hasNoVerifactuInvoice()) {
+				if(!config.hasVerifactuInvoice()) {
+					if(config.willBeNoVerifactu()) {
+						config.getNoVerifactuDataHistory().stream().filter(f -> f.getStartDate().after(new Date())).findFirst()
+						.ifPresent(ed -> EnterpriseDataDAO.delete(ctx, ed.getId()));
+					}
 					EnterpriseDataDAO.update(ctx, config.getSifData().setName(EnterpriseDataNames.ICC_NO_VERIFACTU.name()));
 					fillSif(ctx, domainId, config);
 					fillNoVerifactu(ctx, domainId, config);
