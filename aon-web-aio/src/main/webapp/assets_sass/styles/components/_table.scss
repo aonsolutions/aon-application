@@ -1,6 +1,9 @@
 @use '../variables' as v;
 
 aon-table{
+  display: block;
+  overflow-y: auto;
+  
   table{
     width           : v.$pct-100;
     border-collapse : separate;

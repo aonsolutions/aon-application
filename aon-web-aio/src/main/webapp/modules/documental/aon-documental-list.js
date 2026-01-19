@@ -76,9 +76,11 @@ export class AonDocumentalList extends AonElement {
 
 		// Iniciar tabla
 		this.init();
-		aonDocumentalTable.addEventListener('more', () => {
-			if(this.more)
+		aonDocumentalTable.addEventListener('more', (event) => {
+			event.stopPropagation();
+			if (this.more) {
 				this.loadMore();
+			}
 		});
 
 		aonDocumentalTable.addEventListener('select', () => {
@@ -432,45 +434,45 @@ export class AonDocumentalList extends AonElement {
     }
 
     loadDocumentsIntoTable(table, filter, isInit = false) {
-        // Barra loader de AonApplication - Iniciar
-        this.getApplication().startLoader();
-        // Traer los ficheros
-        const fetchDocuments = this.isBetaDoc() ? getS3Document : getDocuments;
-        fetchDocuments(filter).then(documents => {
-            if (isInit) {
-                table.removeRows();               // Limpiar la tabla si es la inicializaci�n
-                table.selected = [];              // Limpiar la seleccion
-                this.removeDocumentalActions();   // Eliminar acciones de ficheros
-            } 
-              // Si no es el inicio (es loadMore), actualizar el filtro para la siguiente p�gina
-                filter.page = filter.page + 1;
-				this.setFilter(filter);
-            if (isInit && documents.length === 0 ) {
-                this.more = false;  // Si no hay ficheros, no se puede cargar mas
-                // Mostrar mensaje si no hay ficheros
-                table.empty("No existen ficheros disponibles");
-            }
-			
-			const ids = documents.map(document => document.id)
-			const types = documents.map(document => document.type)
-			
-            // Insertar los ficheros en la tabla
-            documents.forEach((doc, i) => { 
-				if(this.isBetaDoc() && documents[i].size){
-					documents[i].size = formatBytes(documents[i].size);
+			// Barra loader de AonApplication - Iniciar
+			this.getApplication().startLoader();
+			// Traer los ficheros
+			const fetchDocuments = this.isBetaDoc() ? getS3Document : getDocuments;
+			fetchDocuments(filter).then(documents => {
+				if (isInit) {
+						table.removeRows();               // Limpiar la tabla si es la inicializaci�n
+						table.selected = [];              // Limpiar la seleccion
+						this.removeDocumentalActions();   // Eliminar acciones de ficheros
+				} 
+				// Si no es el inicio (es loadMore), actualizar el filtro para la siguiente p�gina
+					filter.page = filter.page + 1;
+					this.setFilter(filter);
+				if (isInit && documents.length === 0 ) {
+						this.more = false;  // Si no hay ficheros, no se puede cargar mas
+						// Mostrar mensaje si no hay ficheros
+						table.empty("No existen ficheros disponibles");
 				}
-				const filter = this.getFilter();
-                let tr = table.addRow(doc, () => this.aonDocument(doc, i, ids, filter, types), (e) => this.aonDocumentContextMenu(e, doc, i));
-                tr.id = "aonDocumentalRow";
-            });
-            // Barra loader de AonApplication - Finalizar
-            this.getApplication().stopLoader();
-        }).catch((error) => {
-          // En caso de error, detener el loader y mostrar mensaje
-//          console.error("Error al cargar ficheros:", error);
-          // Barra loader de AonApplication - Finalizar
-          this.getApplication().stopLoader();
-        });
+	
+				const ids = documents.map(document => document.id)
+				const types = documents.map(document => document.type)
+		
+				// Insertar los ficheros en la tabla
+				documents.forEach((doc, i) => { 
+					if(this.isBetaDoc() && documents[i].size){
+						documents[i].size = formatBytes(documents[i].size);
+					}
+					const filter = this.getFilter();
+					let tr = table.addRow(doc, () => this.aonDocument(doc, i, ids, filter, types), (e) => this.aonDocumentContextMenu(e, doc, i));
+					tr.id = "aonDocumentalRow";
+				});
+				// Barra loader de AonApplication - Finalizar
+				this.getApplication().stopLoader();
+			}).catch((error) => {
+				// En caso de error, detener el loader y mostrar mensaje
+			 	// console.error("Error al cargar ficheros:", error);
+				// Barra loader de AonApplication - Finalizar
+				this.getApplication().stopLoader();
+			});
     }
 
 	aonDocument(doc, i, ids, filter, types) {

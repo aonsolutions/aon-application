@@ -12,10 +12,10 @@ export class AonTable extends AonElement {
   selected;
   selectedTr;
   selectedAll;
-
   checkFetch;
   isFetchingData;
-  
+  tableBaseHeight = 0;
+
   TABLE;
   THEADER;
   TBODY;
@@ -80,30 +80,29 @@ export class AonTable extends AonElement {
       }
     }
 */
-    if(this.checkFetch){
-      tbody.addEventListener("scroll", ({target}) => {
-        const scrollTop = target.scrollTop;
-        const offsetHeight = target.offsetHeight;
-        const physicalSize = target.scrollHeight;
-        const maxScrollPosition = physicalSize - offsetHeight;
-  
-        if (scrollTop >= maxScrollPosition && !this.isFetchingData) {
-          this.isFetchingData = true;
-          this.dispatchEvent(new CustomEvent(EVENT.MORE));
+    let reachedBottom = false;
+    this.addEventListener("scroll", ({target}) => {
+      const scrollTop = target.scrollTop;
+      const offsetHeight = target.offsetHeight;
+      const physicalSize = target.scrollHeight;
+      const maxScrollPosition = physicalSize - offsetHeight;
+
+      if (scrollTop >= maxScrollPosition) {
+        if (!reachedBottom) {
+          reachedBottom = true;
+          if (this.checkFetch) {
+            if (!this.isFetchingData) {
+              this.isFetchingData = true;
+              this.dispatchEvent(new CustomEvent(EVENT.MORE));
+            }
+          } else {
+            this.dispatchEvent(new CustomEvent(EVENT.MORE));
+          }
         }
-      });
-    } else {
-      tbody.addEventListener("scroll", ({target}) => {
-        const scrollTop = target.scrollTop;
-        const offsetHeight = target.offsetHeight;
-        const physicalSize = target.scrollHeight;
-        const maxScrollPosition = physicalSize - offsetHeight;
-  
-        if (scrollTop >= maxScrollPosition ) {
-          this.dispatchEvent(new CustomEvent(EVENT.MORE));
-        }
-      });
-    }
+      } else {
+        reachedBottom = false;
+      }
+    });
   }
 
   setFetchingData(fetching){
@@ -191,7 +190,8 @@ export class AonTable extends AonElement {
   }
 
   addRow(value, fn, contextMenu) {
-    let body = this.getElement(this.TBODY);
+    let body   = this.getElement(this.TBODY);
+    let header = this.getElement(this.THEADER);
     if (!body) return true;
     let tr = this.createElement(TAG.TR);
     // tr.id = Math.random().toString(36).substring(7);
@@ -371,6 +371,14 @@ export class AonTable extends AonElement {
       }
       tr.appendChild(td);
     });
+
+    if (this.tableBaseHeight === 0) {
+      const headerHeight = Math.max(header.offsetHeight - 1, 0);
+      // lo que ocupa la fila + 15
+      const bodyHeight = Math.max(body.offsetHeight - 1, 0) * 15;
+      this.tableBaseHeight = headerHeight + bodyHeight;
+      this.style.maxHeight = `${this.tableBaseHeight}px`;
+    }
 
     return tr;
   }
