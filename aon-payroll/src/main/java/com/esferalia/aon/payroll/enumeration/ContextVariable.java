@@ -421,7 +421,6 @@ public enum ContextVariable implements IResourceable {
 	
 	PLUS_BASE("BASE_ADICIONAL", VariableType.DOUBLE),
 	
-	FLEXIBLE("FLEXIBLE", VariableType.DOUBLE, false)
 	;
 
 	public static final String ALL = "_P";
@@ -463,6 +462,7 @@ public enum ContextVariable implements IResourceable {
 	public static final String CAUTION = "ADVERTENCIA";
 	
 	public static final String PPE = "PPE";
+	public static final String FLEXIBLE = "FLEXIBLE";
 	public static final String GEROA = "GEROA";
 	public static final String OLDD = "ANTIGUEDAD";
 	public static final String PREST_IT = "PREST_IT";

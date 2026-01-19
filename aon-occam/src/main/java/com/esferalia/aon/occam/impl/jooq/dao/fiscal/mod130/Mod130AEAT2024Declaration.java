@@ -8,13 +8,13 @@ import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.m
 import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.noWrap;
 import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.paddingLeft;
 import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.styledTag;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.textCenter;
 import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.textLeft;
 import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.textRight;
 import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.textUnderline;
 
 import java.text.MessageFormat;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -230,6 +230,12 @@ public class Mod130AEAT2024Declaration extends Mod130Declaration {
 					.and(p.getEntryDateProperty().le(FiscalUtils.getPeriodEnd(mod)))
 					.and(p.getAccountCodeProperty().like("7%"))
 					)
+			.peek( br -> {
+					// Si la actividad está vacía, asignar la actividad indicada en el modelo
+					if (br.getActivity() == null && mod.getDefaultActivityCode() != 0) {
+						br.setActivity(mod.getDefaultActivityCode());
+					}
+				})
 			.filter( br -> (!br.hasActivity() || (!br.isFarmer() && (br.isNormalRegime() || br.isSimplifiedRegime())) ));
 	}
 	private static double getRawC01(AONContext ctx, final Mod130 mod) {
@@ -252,6 +258,12 @@ public class Mod130AEAT2024Declaration extends Mod130Declaration {
 					.and(p.getEntryDateProperty().le(FiscalUtils.getPeriodEnd(mod)))
 					.and(p.getAccountCodeProperty().like("6%"))
 					)
+			.peek( br -> {
+					// Si la actividad está vacía, asignar la actividad indicada en el modelo
+					if (br.getActivity() == null && mod.getDefaultActivityCode() != 0) {
+						br.setActivity(mod.getDefaultActivityCode());
+					}
+				})
 			.filter( br -> (!br.hasActivity() || (!br.isFarmer() && (br.isNormalRegime() || br.isSimplifiedRegime()))));
 	}
 	private static double getRawC02(AONContext ctx, final Mod130 mod) {
@@ -262,22 +274,73 @@ public class Mod130AEAT2024Declaration extends Mod130Declaration {
 	
 	private static double getInitialC02(AONContext ctx, final Mod130 mod) {
 		double c02 = getRawC02(ctx, mod);
-		if (mod.getRegime() != null && mod.getRegime() == IRPFRegime.SIMPLIFIED) { 
-			double c01 = getRawC01(ctx, mod);
-			double c02_ = AonMathUtils.round( c01 - c02);
-			if (c02_ > 0 ) {
-				double dif = (c02_* PORC_GASTOS_DIF_JUST /100);
-				if (dif > LIMITE_GASTOS_DIF_JUST ) {
-					dif = LIMITE_GASTOS_DIF_JUST;
-				}
-				c02 = AonMathUtils.round( c02 + dif ); 
-			}
+		if (mod.getRegime() != null && mod.getRegime() == IRPFRegime.SIMPLIFIED) {			
+//			double c01 = getRawC01(ctx, mod);
+//			double c02_ = AonMathUtils.round( c01 - c02);
+//			if (c02_ > 0 ) {
+//				double dif = (c02_* PORC_GASTOS_DIF_JUST /100);
+//				if (dif > LIMITE_GASTOS_DIF_JUST ) {
+//					dif = LIMITE_GASTOS_DIF_JUST;
+//				}
+//				c02 = AonMathUtils.round( c02 + dif ); 
+//			}
+			// Calcular los gastos de dificil justificacion
+			double dje = computeDifficultJustificationExpenses(ctx, mod);
+			c02 = AonMathUtils.round( c02 + dje ); 
 		}
 		double percent = mod.getAmount(Mod130Key.P1);
 		c02 = AonMathUtils.round(c02 * percent / 100 );
 		return c02;
 	}
 
+	private static double computeDifficultJustificationExpenses(AONContext ctx, final Mod130 mod) {
+		
+		// Se deben calcular los gastos de dificil justificacion según cada actividad
+		
+		double totalGastosDificilJustificacion = 0.0;
+		if (mod.getDefaultActivityCode() != 0) {
+			// Obtener los ingresos y gastos, agrupados por actividad
+			Map<Integer, Double> ingresosPorActividad = // Ingresos
+					getInitialBaseC01(ctx, mod).collect(Collectors.groupingBy(
+						br -> br.getActivity() == null ? 0 : br.getActivity(),
+						Collectors.summingDouble(br -> br.getCreditBalance())
+					));
+			
+			Map<Integer, Double> gastosPorActividad = // Gastos
+					getInitialBaseC02(ctx, mod).collect(Collectors.groupingBy(
+						br -> br.getActivity() == null ? 0 : br.getActivity(),
+						Collectors.summingDouble(br -> br.getDebitBalance())
+					));
+			
+			// Recorrer el mapa de ingresos, buscando en el mapa de gastos y calculando los gastos de dificil justificacion por actividad
+			for (Integer actividad : ingresosPorActividad.keySet()) {
+				double ingresos = ingresosPorActividad.get(actividad);
+				double gastos = gastosPorActividad.getOrDefault(actividad, 0.0);
+				double rendimientoNeto = AonMathUtils.round(ingresos - gastos);
+				if (rendimientoNeto > 0) {
+					double gastosDificilJustificacion = AonMathUtils.round(rendimientoNeto * PORC_GASTOS_DIF_JUST / 100);
+					totalGastosDificilJustificacion = AonMathUtils.round(totalGastosDificilJustificacion + gastosDificilJustificacion);
+				}
+			}
+		} else {
+			// Antes de que se pudiera indicar la actividad por defecto, se hacia el calculo global
+			double c01 = getRawC01(ctx, mod);
+			double c02 = getRawC02(ctx, mod);
+			double dif = AonMathUtils.round( c01 - c02);
+			if (dif > 0 ) {
+				totalGastosDificilJustificacion = AonMathUtils.round(dif * PORC_GASTOS_DIF_JUST / 100);
+			}
+		}
+		
+		// Comprobar el límite maximo de todas las actividades
+		if (totalGastosDificilJustificacion > LIMITE_GASTOS_DIF_JUST ) {
+			totalGastosDificilJustificacion = LIMITE_GASTOS_DIF_JUST;
+		}
+		
+		return totalGastosDificilJustificacion;
+		
+	}
+	
 	private static double getInitialC05(AONContext ctx, final Mod130 mod) {
 		LinkedList<FiscalModel> list = Mod130DAO.getPreviousEffectiveModels(ctx, mod)
 				.collect(Collectors.toCollection(LinkedList::new));
@@ -436,52 +499,23 @@ public class Mod130AEAT2024Declaration extends Mod130Declaration {
 						.append(MessageFormat.format(fullStyledTag, "td", paddingLeft+textRight+fontMedium+bold, DEC2.format(rawC02)))
 					.append("</tr>");
 				
-				if (AonNumberUtils.equals(1,mod.getAmount( Mod130Key.P0))) {
-					double rawC01 = getRawC01(ctx,mod);
-					double c02p = AonMathUtils.round(rawC01 - rawC02);
+				if (AonNumberUtils.equals(1,mod.getAmount(Mod130Key.P0))) {
 					buf.append("<tr>")
 						.append(MessageFormat.format(fullStyledTag, "td colspan=\"2\"", textUnderline,
-							"R\u00E9gimen de determinaci\u00F3n de rendimientos: Estimaci\u00F3n directa simplificada."))
-					.append("</tr>")
-					
-					.append("<tr>")
+								"R\u00E9gimen de determinaci\u00F3n de rendimientos: Estimaci\u00F3n directa simplificada."))
+						.append("</tr>");
+					double c02a = computeDifficultJustificationExpenses(ctx, mod);
+					buf.append("<tr>")
 						.append(MessageFormat.format(fullStyledTag, "td", paddingLeft+noWrap,
-							"<li>Rendimiento neto previo  ("+ DEC2.format( rawC01 )+ " - "  + DEC2.format( rawC02)+ ")</li>"))
-						.append(MessageFormat.format(fullStyledTag, "td", paddingLeft+textRight+fontMedium+bold, DEC2.format(c02p)))
-					.append("</tr>")
-					;
-					if ( AonMathUtils.isLessThanZero(c02p) ) {
-						buf.append("<tr>")
-							.append(MessageFormat.format(fullStyledTag, "td colspan=\"2\"", textUnderline,
-								"Al ser el rendimiento neto previo menor que cero, no se aplican los gastos de dif\u00EDcil justificaci\u00F3n"))
-						.append("</tr>");
-					} else {
-						buf.append("<tr>")
-							.append(MessageFormat.format(fullStyledTag, "td", textCenter,
-								"- Al no ser negativo el rendimiento neto previo, se procede a la aplicaci\u00F3n del "+PORC_GASTOS_DIF_JUST+"% de gastos de dif\u00EDcil justificaci\u00F3n"))
-						.append("</tr>");
-						
-						double c02a = AonMathUtils.round(c02p * PORC_GASTOS_DIF_JUST / 100);
-						buf.append("<tr>")
-							.append(MessageFormat.format(fullStyledTag, "td", paddingLeft+noWrap,
-									"<li>"+PORC_GASTOS_DIF_JUST+"% de "+ DEC2.format( c02p ) + "</li>"))
-							.append(MessageFormat.format(fullStyledTag, "td", paddingLeft+textRight+fontMedium+bold, DEC2.format(c02a)))
-						.append("</tr>");
-						if (AonMathUtils.isGreatherThan(c02a, LIMITE_GASTOS_DIF_JUST) ) {
-							c02a = LIMITE_GASTOS_DIF_JUST;
-							buf.append("<tr>")
-								.append(MessageFormat.format(fullStyledTag, "td", paddingLeft+noWrap,
-										"<li>Se supera el l\u00EDmite de "+ DEC2.format( LIMITE_GASTOS_DIF_JUST ) + " euros. Se aplica el l\u00EDmite.</li>"))
-								.append(MessageFormat.format(fullStyledTag, "td", paddingLeft+textRight+fontMedium+bold, DEC2.format(c02a)))
-							.append("</tr>");
-						}
-						double c02b = AonMathUtils.round(c02a + rawC02);
-						buf.append("<tr>")
-							.append(MessageFormat.format(fullStyledTag, "td", paddingLeft+noWrap,
-									"<li>Saldo más gastos de dif\u00EDcil justificaci\u00F3n (" + DEC2.format( rawC02 ) + " + " + DEC2.format( c02a ) +")</li>"))
-							.append(MessageFormat.format(fullStyledTag, "td", paddingLeft+textRight+fontMedium+bold, DEC2.format(c02b)))
-						.append("</tr>");
-					}
+								"<li>Gastos de dif\u00EDcil justificaci\u00F3n</li>"))
+						.append(MessageFormat.format(fullStyledTag, "td", paddingLeft+textRight+fontMedium+bold, DEC2.format(c02a)))
+					.append("</tr>");
+					double c02b = AonMathUtils.round(c02a + rawC02);
+					buf.append("<tr>")
+						.append(MessageFormat.format(fullStyledTag, "td", paddingLeft+noWrap,
+								"<li>Saldo más gastos de dif\u00EDcil justificaci\u00F3n (" + DEC2.format( rawC02 ) + " + " + DEC2.format( c02a ) +")</li>"))
+						.append(MessageFormat.format(fullStyledTag, "td", paddingLeft+textRight+fontMedium+bold, DEC2.format(c02b)))
+					.append("</tr>");
 				}
 				
 				buf.append("<tr>")

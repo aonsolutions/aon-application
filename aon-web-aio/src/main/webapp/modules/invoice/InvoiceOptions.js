@@ -176,7 +176,7 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
 
   export const INVOICE_TICKET = {
     id: CONSTANT.INVOICE_TICKET.initCap(),
-    name: MSG.SIMPLIFIED_INVOICES + "/" + MSG.TICKETS,
+    name: MSG.SIMPLIFIED_INVOICES,
     icon: MATERIAL_ICONS.RECEIPT,
     fn: () => invoiceList({
       status: "accounting",

@@ -137,9 +137,8 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
        				.put(RAWDOC, rawdocId);
     	    
         		loadDocuments(invofoxConfiguration, DocumentType.INVOICE, companyId, loadBatchId, clientData,  downloadURL);
-    	    
     		} else {
-        		createRawdoc(s3UploadEventObject, RawdocStatus.INBOX);
+        		createRawdoc(s3UploadEventObject, RawdocStatus.PROCESSED);
     		}
     	} catch (URISyntaxException e) {
     		e.printStackTrace();

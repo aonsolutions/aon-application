@@ -21,7 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionProduct;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.FlexibleInsert;
+import net.aonsolutions.db.up2date.payroll.FlexibleUpdate;
 import net.aonsolutions.db.up2date.product.ProductBookingCreation;
 import net.aonsolutions.db.up2date.timecontrol.LocationRegistryAlter;
 
@@ -569,8 +569,8 @@ public class Up2Date {
 			// MEI2026Insert.MEI2026INSERT,
 			// Solidarity2026Insert.SOLIDARITY2026INSERT,
 			// Holidays2026Insert.HOLIDAYS2026INSERT,
-			FlexibleInsert.FLEXIBLEINSERT,
-			
+			// FlexibleInsert.FLEXIBLEINSERT,
+			FlexibleUpdate.FLEXIBLEUPDATE,
 			//AlterFsMod1902025.ALTER_FS_MODEL_190_2025, 
 			
 			// ----------------------------------------------------------------

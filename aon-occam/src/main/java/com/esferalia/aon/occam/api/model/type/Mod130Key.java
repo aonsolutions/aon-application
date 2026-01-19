@@ -9,6 +9,7 @@ public enum Mod130Key implements IFiscalModelKey {
 	,P1  	("130-P1"  , 0)
 	,P2  	("130-P2"  , 0)
 	,P3  	("130-P3"  , 0)
+	,P4  	("130-P4"  , 0) // Código de actividad por defecto para los apuntes que no lo tengan
 	,C01 	("130-01"  , 1)
 	,C02 	("130-02"  , 2)
 	,C03 	("130-03"  , 3)
