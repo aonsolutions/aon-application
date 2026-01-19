@@ -681,7 +681,7 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 					.fetchInto(IrpfDataAscendantsRecord.class);
 			if (ascs != null && !ascs.isEmpty()) {
 				for (IrpfDataAscendantsRecord asc : ascs) {
-					boolean lessThan75 = ( curYear - 75 ) <  asc.getBirthYear();
+					boolean lessThan75 = asc.getBirthYear() != null && ( curYear - 75 ) <  asc.getBirthYear() ;
 					boolean byInteger = asc.getAnotherDescendient() != null && asc.getAnotherDescendient() == 0;
 					boolean disability = asc.getDisabilityLevel() != null;
 					boolean disability33 = asc.getDisabilityLevel() != null && asc.getDisabilityLevel() == 0;

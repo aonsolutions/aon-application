@@ -802,6 +802,14 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	/**
+	 * Determina si la empresa está dada de alta en No Verifactu en modo test.
+	 * @return true si la empresa está dada de alta en No Verifactu en modo test, false en caso contrario.
+	 */
+	public boolean isNoVerifactuTest() {
+		return isTest(getNoVerifactuData());
+	}
+	
+	/**
 	 * Determina si la empresa ha estado dada de alta en No Verifactu en algún momento.
 	 * @return true si la empresa ha estado dada de alta en No Verifactu en algún momento, false en caso contrario.
 	 */
@@ -902,6 +910,14 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	 */
 	public boolean isSif() {
 		return is(getSifData());
+	}
+	
+	/**
+	 * Determina si la empresa está dada de alta en SIF en modo test.
+	 * @return true si la empresa está dada de alta en SIF en modo test, false en caso contrario.
+	 */
+	public boolean isSifTest() {
+		return isTest(getSifData());
 	}
 	
 	/**

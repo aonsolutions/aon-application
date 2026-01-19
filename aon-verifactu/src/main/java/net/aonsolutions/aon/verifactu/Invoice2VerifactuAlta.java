@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.verifactu;
 
+import java.util.Date;
 import java.util.Optional;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -44,7 +45,8 @@ class Invoice2VerifactuAlta {
 		IDFacturaExpedidaType idFactura = new IDFacturaExpedidaType();
 		idFactura.setIDEmisorFactura(vc.getCompany().getDocument());
 		idFactura.setNumSerieFactura(invoice.getReferenceCode());
-		idFactura.setFechaExpedicionFactura( VerifactuUtils.toString(invoice.getExpDate()) );
+		Date expDate = invoice.getExpDate() != null ? invoice.getExpDate() : new Date();
+		idFactura.setFechaExpedicionFactura( VerifactuUtils.toString(expDate) );
 		alta.setIDFactura(idFactura);
 		
 		// Referencia Externa InvoiceId
@@ -66,7 +68,8 @@ class Invoice2VerifactuAlta {
 
 		alta.setCupon(CuponType.N);
 
-		alta.setCuotaTotal( VerifactuUtils.toString( invoice.getTaxBreakdown().map(b -> b.getVatQuota()).orElse(0.0)));
+		alta.setCuotaTotal( VerifactuUtils.toString( invoice.getTaxBreakdown().map(b -> (b.getVatQuota() + b.getSurchargeQuota()) ).orElse(0.0)));
+		
 		alta.setImporteTotal(VerifactuUtils.toString(invoice.getGrossTotal()));
 		
 		alta.setDesglose(getDesglose(vc, invoice));

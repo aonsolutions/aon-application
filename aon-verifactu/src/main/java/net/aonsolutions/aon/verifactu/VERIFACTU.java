@@ -173,6 +173,7 @@ public class VERIFACTU {
 						.forEach(i -> i.addMessage( InvoiceErrorMessages.C051.err(InvoiceErrorKey.COMMUNICATION,r.getCodigoErrorRegistro(),r.getDescripcionErrorRegistro())))							
 					;
 				}
+				InvoiceDAO.saveInvoiceExpDate(ctx, invoiceId, new Date());
 				break;
 			}
 			

@@ -34,6 +34,7 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.enumeration.InvoiceStatus;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
@@ -129,12 +130,45 @@ public class AccountEntryInvoiceWriter implements Serializable {
 		} else if (invoice.isPurchase()) {
 			accountEntryType = AccountEntryType.PURCHASE_INVOICE;
 			account = getAccountBridgeUtil().obtainSupplierAccount(invoice.getRegistry());
+			
+			
+			// ******************************************************
+			// ********************* ÑAPA PADRE ********************* 
+			// ******************************************************
+			if (account == null) {
+				account = getAccountBridgeUtil().obtainCreditorAccount(invoice.getRegistry());
+				if (account == null) {
+					throw new ManagerBeanException("El proveedor " + invoice.getRegistry().getName() + " no existe.");
+				} else {
+					changeType( invoice,  InvoiceType.EXPENSES);
+				}
+			}
+			// ******************************************************
+			
 		} else if (invoice.isExpense()) {
 			accountEntryType = AccountEntryType.EXPENSE_INVOICE;
 			account = getAccountBridgeUtil().obtainCreditorAccount(invoice.getRegistry());
+
+			// ******************************************************
+			// ********************* ÑAPA PADRE ********************* 
+			// ******************************************************
+			if (account == null) {
+				account = getAccountBridgeUtil().obtainSupplierAccount(invoice.getRegistry());
+				if (account == null) {
+					throw new ManagerBeanException("El acreedor " + invoice.getRegistry().getName() + " no existe.");
+				} else {
+					changeType( invoice,  InvoiceType.PURCHASE);
+				}
+			}
+			// ******************************************************
+
 		} else if (invoice.isUndeductible()) {
 			accountEntryType = AccountEntryType.EXPENSES;
 			account = getAccountBridgeUtil().obtainCreditorAccount(invoice.getRegistry());
+			if (account == null) {
+				throw new ManagerBeanException("El acreedor " + invoice.getRegistry().getName() + " no existe.");
+			}
+			// ******************************************************
 		}
 		entry.setType(accountEntryType);
 		entry.setSecurityLevel(invoice.getSecurityLevel());
@@ -155,6 +189,15 @@ public class AccountEntryInvoiceWriter implements Serializable {
 			insertAccountEntryInvoice(entry, invoice);	
 		}
 		return details;
+	}
+	
+	private void changeType(Invoice invoice, InvoiceType type) throws ManagerBeanException {
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		invoice.setSkipCalculateMainActivity(true);
+		invoice.setUpdateEnabled(false);
+		invoice.setUpdateDetails(false);
+		invoice.setType(type);
+		invoiceBean.update(invoice); 
 	}
 	
 	public List<AccountEntryDetail> preRecordInvoice(Invoice invoice) throws ManagerBeanException {

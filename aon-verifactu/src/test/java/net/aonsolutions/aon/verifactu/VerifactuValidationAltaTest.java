@@ -1266,6 +1266,9 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 				c.det.setTipoImpositivo(VerifactuUtils.toString(10));
 				c.det.setCuotaRepercutida(VerifactuUtils.toString(10));
 				c.det.setTipoRecargoEquivalencia(VerifactuUtils.toString(0.5));
+				c.det.setCuotaRecargoEquivalencia(VerifactuUtils.toString(0.5));
+				c.fra.setCuotaTotal(VerifactuUtils.toString(10.5));
+				c.fra.setImporteTotal(VerifactuUtils.toString(110.5));
 			}
 			, InvoiceCommunicationError.VERIFACTU_1164
 		);
@@ -1348,6 +1351,9 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 				c.det.setTipoImpositivo(VerifactuUtils.toString(7.5));
 				c.det.setCuotaRepercutida(VerifactuUtils.toString(7.5));
 				c.det.setTipoRecargoEquivalencia(VerifactuUtils.toString(1));
+				c.det.setCuotaRecargoEquivalencia(VerifactuUtils.toString(1));
+				c.fra.setCuotaTotal(VerifactuUtils.toString(8.5));
+				c.fra.setImporteTotal(VerifactuUtils.toString(108.5));
 			}
 			, InvoiceCommunicationError.VERIFACTU_1169, InvoiceCommunicationError.VERIFACTU_1235
 		);
@@ -1361,8 +1367,11 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 				Date date = AonDateUtils.getYearFirstDay(2025);
 				c.fra.setFechaOperacion(VerifactuUtils.toString(date));
 				c.det.setTipoImpositivo(VerifactuUtils.toString(7.5));
-				c.det.setCuotaRepercutida(VerifactuUtils.toString(7.5));
+				c.det.setCuotaRepercutida(VerifactuUtils.toString(8.5));
 				c.det.setTipoRecargoEquivalencia(VerifactuUtils.toString(1));
+				c.det.setCuotaRecargoEquivalencia(VerifactuUtils.toString(1));
+				c.fra.setCuotaTotal(VerifactuUtils.toString(9.5));
+				c.fra.setImporteTotal(VerifactuUtils.toString(109.5));
 			}
 			, InvoiceCommunicationError.VERIFACTU_1169, InvoiceCommunicationError.VERIFACTU_1235
 		);
@@ -1395,6 +1404,9 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 				c.det.setTipoImpositivo(VerifactuUtils.toString(7.5));
 				c.det.setCuotaRepercutida(VerifactuUtils.toString(7.5));
 				c.det.setTipoRecargoEquivalencia(VerifactuUtils.toString(1));
+				c.det.setCuotaRecargoEquivalencia(VerifactuUtils.toString(1));
+				c.fra.setCuotaTotal(VerifactuUtils.toString(8.5));
+				c.fra.setImporteTotal(VerifactuUtils.toString(108.5	));	
 			}
 		);
 	}
@@ -1419,6 +1431,9 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 				c.det.setTipoImpositivo(VerifactuUtils.toString(10));
 				c.det.setCuotaRepercutida(VerifactuUtils.toString(10));
 				c.det.setTipoRecargoEquivalencia(VerifactuUtils.toString(1.4));
+				c.det.setCuotaRecargoEquivalencia(VerifactuUtils.toString(1.4));
+				c.fra.setCuotaTotal(VerifactuUtils.toString(11.4));
+				c.fra.setImporteTotal(VerifactuUtils.toString(111.4 ));
 			}
 		);
 	}
@@ -1432,6 +1447,9 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 				c.det.setTipoImpositivo(VerifactuUtils.toString(10));
 				c.det.setCuotaRepercutida(VerifactuUtils.toString(10));
 				c.det.setTipoRecargoEquivalencia(VerifactuUtils.toString(1.75));
+				c.det.setCuotaRecargoEquivalencia(VerifactuUtils.toString(1.75));
+				c.fra.setCuotaTotal(VerifactuUtils.toString(11.75));
+				c.fra.setImporteTotal(VerifactuUtils.toString(111.75 ));
 			}
 			, InvoiceCommunicationError.VERIFACTU_1162
 		);
@@ -1456,6 +1474,9 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 				c.det.setTipoImpositivo(VerifactuUtils.toString(10));
 				c.det.setCuotaRepercutida(VerifactuUtils.toString(10));
 				c.det.setTipoRecargoEquivalencia(VerifactuUtils.toString(5.2));
+				c.det.setCuotaRecargoEquivalencia(VerifactuUtils.toString(5.2));
+				c.fra.setCuotaTotal(VerifactuUtils.toString(15.2 ));
+				c.fra.setImporteTotal(VerifactuUtils.toString(115.2 ));
 			}
 			, InvoiceCommunicationError.VERIFACTU_1162
 		);
