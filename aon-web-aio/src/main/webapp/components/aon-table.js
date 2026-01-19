@@ -429,7 +429,7 @@ export class AonTable extends AonElement {
       body = document.createElement("tbody");
       table.appendChild(body);
     } else {
-      body.innerHTML = ""; 
+      message = 'No hay más datos disponibles.'
     }
 
     let columnsCount = table.querySelectorAll("th").length || 1;

@@ -120,7 +120,9 @@ export class AonParent extends AonElement {
 					}
 					let aonMenu = this.getElement('aonMenu');
 					aonMenu.init().then(() => {
-						LS.setDomainLogin(aonMenu.getDur().getUser().login);
+						if(!aonMenu.getDur().getUser().login === undefined){
+							LS.setDomainLogin(aonMenu.getDur().getUser().login);
+						}
 						LS.setDomainId(aonMenu.getDur().getDomain().getId());
 						LS.setDomainName(aonMenu.getDur().getDomain().getName());
 						aonMenu.open();

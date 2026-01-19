@@ -126,7 +126,7 @@ export class AonList extends AonElement {
             tbody = document.createElement("tbody");
             table.appendChild(tbody);
         } else {
-            tbody.innerHTML = ""; 
+            message = 'No hay más datos disponibles.'
         }
         
         let columnsCount = table.querySelectorAll("th").length || 1;

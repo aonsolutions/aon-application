@@ -465,7 +465,7 @@ export class AonNewLogin extends AonElement {
   }
 
   login() {
-	  const username = this.getElement("aonLoginUser").value;
+	  let username = this.getElement("aonLoginUser").value;
 	  const password = this.getElement("aonLoginPassword").value;
 	  const data = {
 		  username: username,
@@ -494,8 +494,9 @@ export class AonNewLogin extends AonElement {
 						  this.isMobile() ? new AonMobileParent() : new AonParent()
 					  );
 				  }
+          username = username.includes("=") ? username.split("=")[1] : username;
 
-				  LS.setDomainLogin(username);
+          LS.setDomainLogin(username);
 				  this.buildDur().then(dur => {
 					  if ( this.isUser(dur) && !this.hasAuth(dur)) {
 						  LS.setDomainLogin(dur.getUser().login);
