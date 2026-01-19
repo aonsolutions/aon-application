@@ -488,7 +488,7 @@ export class AonInvoice extends AonElement {
 				duplicate.backgroundColor = INVOICE.color;
 				duplicate.fn = () => this.duplicateInvoice();
 				moreActions.push(duplicate);
-				if(this.getInvoice().isInbox()){
+				if(this.getInvoice().isProcessed()){
 					let changeType = ACTION.CHANGE_TYPE;
 					changeType.permission = true;
 					changeType.backgroundColor = INVOICE.color;
@@ -533,7 +533,10 @@ export class AonInvoice extends AonElement {
 
 	showAccept() {
 		return (this.icc.hasCommunication() || !this.getInvoice().isEmitida()) &&
-			(this.getInvoice().isInbox() || (this.getInvoice().isProcessed() && !this.getInvoice().isEmitida()));
+			(this.getInvoice().isInbox() || (this.getInvoice().isProcessed() && !this.getInvoice().isEmitida()))
+			&& ( (this.getInvoice().isInbox() && this.getInvoice().isEmitida() && !this.getInvoice().file) 
+				|| !this.getInvoice().isEmitida())
+			;
 	}
 
 	showDelete() {

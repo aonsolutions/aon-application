@@ -64,10 +64,22 @@ export class AonInvoiceProcessing extends AonElement {
         table.id = "aonInvoiceList";
         if(!this.isMobile()) {
             table.setFn((invoice, i) => {
-                if((invoice.status == 'pending' || invoice.status == 'processed') && this.getDur().hasInvofox() && this.getDur().isInvofox()) {
+                if(this.getDur().hasInvofox()) {
+                    if((invoice.status == 'pending' || invoice.status == 'processed') 
+                            && this.getDur().isInvofox()) {
+                        invoice.status = 'processed';
+                        this.aonInvoice(invoice, i);
+                    } else this.showFile(invoice, i);
+                } else if(this.getDur().hasOcr()) {
+                    if((invoice.status == 'pending' || invoice.status == 'processed') 
+                            && this.getDur().isOcr()) {
+                        invoice.status = 'processed';
+                        this.aonInvoice(invoice, i);
+                    } else this.showFile(invoice, i);
+                } else {
                     invoice.status = 'processed';
                     this.aonInvoice(invoice, i);
-                } else this.showFile(invoice, i);
+                }
             });
         }
         table.setFilter(filter);
