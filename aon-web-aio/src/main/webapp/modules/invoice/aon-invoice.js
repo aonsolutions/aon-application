@@ -482,12 +482,15 @@ export class AonInvoice extends AonElement {
 					rectify.fn = () => this.rectifyInvoice();
 					moreActions.push(rectify);
 				}
-	
-				let duplicate = ACTION.DUPLICATE_INVOICE;
-				duplicate.permission = true;
-				duplicate.backgroundColor = INVOICE.color;
-				duplicate.fn = () => this.duplicateInvoice();
-				moreActions.push(duplicate);
+
+				if(!this.getInvoice().isRectifier()){
+					let duplicate = ACTION.DUPLICATE_INVOICE;
+					duplicate.permission = true;
+					duplicate.backgroundColor = INVOICE.color;
+					duplicate.fn = () => this.duplicateInvoice();
+					moreActions.push(duplicate);
+				}
+
 				if(this.getInvoice().isProcessed()){
 					let changeType = ACTION.CHANGE_TYPE;
 					changeType.permission = true;
@@ -1726,13 +1729,14 @@ export class AonInvoice extends AonElement {
 		irpf.id = this.WITHHOLDING;
 		irpf.title = MSG.IRPF; // MSG.WITHHOLDING;
 
-		irpf.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
+		irpf.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0 
+			|| this.invoice.isRectifier();
 		irpf.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setWithholding(irpf.checked, this.getDefaultWithholdingType());
 			this.reload();
 		});
 		irpfTable.addCell(irpf, '1');
-		if(!this.invoice.isNacional() && !this.invoice.isCcm()) {
+		if((!this.invoice.isNacional() && !this.invoice.isCcm()) || this.invoice.isRectifier()) {
 			irpf.setDisabled(true);
 		}
 		if(this.invoice.isReadonly()) irpf.setDisabled(true);
@@ -3234,6 +3238,7 @@ export class AonInvoice extends AonElement {
 		dupInv.status = 'inbox';
 		dupInv.tbai = undefined;
 		dupInv.tbaiUrl = undefined;
+		dupInv.rectified = false;
 		dupInv.file = undefined;
 		if(dupInv.finances) {
 			dupInv.finances.forEach((item, i) => {
