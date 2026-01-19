@@ -173,7 +173,7 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		wait4Id("tramo,_1");
 
 		draft("TRAMO, 1");
-		click("costsCheck-input");
+		check("costsCheck-input");
 //		calculate(Calendar.AUGUST, 2021);
 //		assertValue("cgpBaseLabel", 206.00);
 //		assertValue("cgcBaseLabel", 206.00);
@@ -800,6 +800,8 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		cgcBase = getValue("cgcBaseLabel");
 		assertText("common_contingency", cgcBase*4.70/100.00);
 		assertText("unemployment", cgcBase*1.55/100.00);
+		
+		uncheck("costsCheck-input");
 	}
 
 
