@@ -161,7 +161,7 @@ public abstract class TaxCalculator {
 			if ( AonStringUtils.equals(IRPF_CTA_ESP.getName(), contractPayment.getName() ))
 				return 0.00; //tax
 			
-			if ( AonStringUtils.equals(FLEXIBLE.getName(), contractPayment.getName() )) {
+			if ( AonStringUtils.equals(FLEXIBLE, contractPayment.getName() )) {
 				DefaultTaxCalculator.this.irpfBase += tax;
 				return tax;
 			}

@@ -50,7 +50,6 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	}
 
 	// ------------------------------------------------------------------------
-
 	// TODO: @Test
 	public void TestDraftWeekHours() throws Exception {
 		
@@ -72,6 +71,28 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertElement("editor-horas_jueves");
 		assertElement("editor-horas_viernes");
 	}
+
+
+	@Test
+	public void TestFlexiblePayments() throws Exception {
+
+		if (!isDisplayed("retribucion,_flexible"))
+			open("retribucion_flexible");
+
+		wait4Id("retribucion,_flexible");
+
+		draft("RETRIBUCIÓN, FLEXIBLE");
+
+		calculate(Calendar.JANUARY, 2026);
+		assertDisplay("eventsCheck", true);
+		
+		calculate(Calendar.FEBRUARY, 2026);
+		assertDisplay("eventsCheck", true);
+		getElementById("eventsCheck-input").click();
+		HtmlTable eventsTable = getElementById("eventsTable");
+		assertEquals(2, eventsTable.getRowCount());
+	}
+
 
 	@Test
 	public void TestDratPaymentVariables() throws Exception {

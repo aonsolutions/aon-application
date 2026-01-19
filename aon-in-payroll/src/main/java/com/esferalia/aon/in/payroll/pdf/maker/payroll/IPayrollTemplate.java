@@ -8,6 +8,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException
 public interface IPayrollTemplate {
     	
 		public static final int PPE = Integer.MAX_VALUE -3; 
+		public static final int FLEXIBLE = Integer.MAX_VALUE -4; 
 
 		public static final int NOTE = Integer.MAX_VALUE -2; 
     	public static final int INFO = Integer.MAX_VALUE -1 ; 

@@ -1,5 +1,6 @@
  package com.esferalia.aon.in.payroll.pdf.maker.payroll.bean;
 
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate.FLEXIBLE;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate.INFO;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate.NOTE;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate.PPE;
@@ -7,6 +8,8 @@ import static com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate.WA
 
 import java.util.Locale;
 import java.util.ResourceBundle;
+
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate;
 
 public class CraTypes {	
 
@@ -85,6 +88,8 @@ public class CraTypes {
 			case NOTE: return words.getString(Integer.toString(NOTE));
 			case WARNING: return words.getString(Integer.toString(WARNING));
 			
+			case FLEXIBLE: return words.getString(Integer.toString(IPayrollTemplate.FLEXIBLE));	
+
 			default: throw new UnknownCraException(type + " is not a valid CRA type.");
 		}
 	}

@@ -24,6 +24,7 @@ import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getDeductionsByType;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getExtraGratificationPayment;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getExtraHoursPayment;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getFlexiblePayments;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getIndemns;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getInfos;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getNotes;
@@ -390,6 +391,7 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		String totals			 = text("TOTALES").toUpperCase();
 		String paymentTotalTitle = "A." + text("TOTAL DEVENGADO").toUpperCase();
 		String paymentTotal		 = toLatinNumber(p.getPaymentsTotal().orElse(0.00));
+		String flexibleTitle	 = "3. Retribución flexible";
 
 		drawText(contents, title, x - 5, y, BLACK, HELVETICA, FONT_SIZE);
 		drawTextRight(contents, new PDRectangle(x + 450, y, 100, 20), totals, BLACK, HELVETICA, FONT_SIZE, 0, 0);
@@ -403,6 +405,7 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		List<PDFPayment> prestSS = getPrestSS(allPayments);
 		List<PDFPayment> indemns = getIndemns(allPayments);
 		List<PDFPayment> ppes = getPPEs(allPayments);
+		List<PDFPayment> flexibles = getFlexiblePayments(allPayments);
 		
 		List<PDFPayment> infos = getInfos(allPayments);
 		List<PDFPayment> notes = getNotes(allPayments);
@@ -411,6 +414,7 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		List<PDFPayment> others = getOtherPayments(allPayments);
 
 		List<PDFPayment> inKindPaymets = DefaultPayrollFuseBox.getInKindPayments(allPayments);
+		
 
 		String paymentTxt;
 		try {
@@ -467,6 +471,12 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 			drawText(contents, "Otras percepciones no salariales", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
 			y -= LITTLE_LINE_JUMP;
 			drawOrLine(others);
+			
+			if ( !flexibles.isEmpty()) {
+				drawText(contents, flexibleTitle, x, y, BLACK, HELVETICA, FONT_SIZE);
+				y -= LITTLE_LINE_JUMP;
+				drawOrLine(flexibles);
+			}
 			
 			if ( !infos.isEmpty() ) {
 			    infos.forEach(p -> p.setAmount(null));
