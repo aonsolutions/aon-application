@@ -23,6 +23,7 @@ import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionProduct;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.FlexibleUpdate;
 import net.aonsolutions.db.up2date.product.ProductBookingCreation;
+import net.aonsolutions.db.up2date.timecontrol.LocationRegistryAlter;
 
 public class Up2Date {
 
@@ -591,6 +592,7 @@ public class Up2Date {
 			// ----------------------- ProductBooking alters
 			ProductBookingCreation.PRODUCT_BOOKING_CREATION,
 			AddColumnMarketingActionProduct.ADD_COLUMN_MARKETING_ACTION_PRODUCT,
+			LocationRegistryAlter.LOCATION_REGISTRY_ALTER
 	
 	};
 

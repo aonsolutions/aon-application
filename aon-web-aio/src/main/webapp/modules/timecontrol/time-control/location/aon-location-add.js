@@ -1,267 +1,328 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { setValueName, serializeForm, waitEl } from "../../../../services/utils.js";
-import { deleteLocation, saveLocation } from "../../../../services/service.js";
+import { deleteLocation, getTastHolders, saveLocation } from "../../../../services/service.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
 import * as ACTION from '../../../actions.js';
 import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../../environments/environments.js";
 import { AonMap } from "../../../../components/aon-map.js";
-import { CreateComponent } from "../../../../components/CreateComponent.js";
+import { CreateComponent, createInput, createSelect } from "../../../../components/CreateComponent.js";
+import { IN_REASON } from "../../../../models/timecontrol/TimeControlReason.js";
 
 
 export class AonLocationAdd extends AonElement {
-  NAME;
-  static get observedAttributes() {
-    return [CONSTANT.DATA, CONSTANT.ADD];
-  }
+	NAME;
+	static get observedAttributes() {
+		return [CONSTANT.DATA, CONSTANT.ADD];
+	}
 
-  get id() {
-    return this.getAttribute(CONSTANT.ID);
-  }
+	get id() {
+		return this.getAttribute(CONSTANT.ID);
+	}
 
-  set id(id) {
-    this.setAttribute(CONSTANT.ID, id);
-  }
+	set id(id) {
+		this.setAttribute(CONSTANT.ID, id);
+	}
 
-  get add() {
-    return this.getAttribute(CONSTANT.ADD) == CONSTANT.TRUE;
-  }
+	get add() {
+		return this.getAttribute(CONSTANT.ADD) == CONSTANT.TRUE;
+	}
 
-  set add(add) {
-    this.setAttribute(CONSTANT.ADD, add);
-  }
+	set add(add) {
+		this.setAttribute(CONSTANT.ADD, add);
+	}
 
-  get data() {
-    return JSON.parse(this.getAttribute(CONSTANT.DATA));
-  }
+	get data() {
+		return JSON.parse(this.getAttribute(CONSTANT.DATA));
+	}
 
-  set data(value) {
-    this.setAttribute(CONSTANT.DATA, JSON.stringify(value));
-  }
-
-
-  constructor() {
-    super();
-    this.id = this.id || SIGNIN_VIEWS.AON_LOCATION_ADD;
-    this.NAME =  MSG.LOCATION;
-    this.TOOLBAR = this.id + "Toolbar";
-    this.applicationEl = this.getApplication();
-  }
-
-  connectedCallback() {
-    this.build();
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (CONSTANT.DATA == name && newValue) 
-      this.setFormValues();
-    else if (CONSTANT.ADD == name && newValue) 
-      this.paintViewMap(undefined);
-  }
+	set data(value) {
+		this.setAttribute(CONSTANT.DATA, JSON.stringify(value));
+	}
 
 
-  build() {
-    this.applicationEl.removeToolbarOptions();
-    this.paintView();
-    this.buildToolbar();
-  }
+	constructor() {
+		super();
+		this.id = this.id || SIGNIN_VIEWS.AON_LOCATION_ADD;
+		this.NAME = MSG.LOCATION;
+		this.TOOLBAR = this.id + "Toolbar";
+		this.applicationEl = this.getApplication();
+	}
 
-  paintView() {
-    CreateComponent.createAonToolbar({ id:this.TOOLBAR, type:ToolbarType.SECONDARY}, this);
+	connectedCallback() {
+		this.build();
+	}
 
-    const form = CreateComponent.createForm(this.id+"Form");
-    this.appendChild(form);
+	attributeChangedCallback(name, oldValue, newValue) {
+		if (CONSTANT.DATA == name && newValue)
+			this.setFormValues();
+		else if (CONSTANT.ADD == name && newValue)
+			this.paintViewMap(undefined);
+	}
 
-    let div = this.createElement(TAG.DIV);
-    div.id = this.id+"Div";
 
-    const className = this.isMobile() ? CSS.AON_MOBILE_SUB_CONTENT : CSS.AON_SUB_CONTENT;
-    div.className = className;
-    form.appendChild(div);
+	build() {
+		this.applicationEl.removeToolbarOptions();
+		this.paintView();
+		this.listTypes();
+		this.listTaskHolder();
+		this.buildToolbar();
+		this.eventListener();
+		
+		if(this.data === null)
+			this.setFormValues();
+	}
 
-    let div2 = this.createElement(TAG.DIV);
-    div2.classList.add(CSS.AON_COL_XS_12);
-    div.appendChild(div2);
-    
-    const aonCard = CreateComponent.createAonCard({id: this.id+"Card", title:"Datos de la " +this.NAME, flex:"true"}, div2).getContent();
+	listTypes() {
+		let typeSelect = this.getElement("type");
+		typeSelect.options = JSON.stringify(
+			IN_REASON.map((r) => ({ ...r, name: `${r.name}`, value: r.value }))
+		);
+	}
 
-    let divG = this.createElement(TAG.DIV);
-    divG.classList.add(CSS.AON_COL_SM_5, CSS.AON_COL_XS_10);
-    aonCard.appendChild(divG);
+	async listTaskHolder() {
+		let registrySelect = this.getElement("registry");
+		try {
+			const resp = await getTastHolders();
+			registrySelect.options = JSON.stringify(
+				resp.map((r) => {
+					return {
+						...r,
+						value: `${r.id}`,
+					};
+				})
+			);
+		} catch (error) { }
+	}
 
-    CreateComponent.createAonInput({
-      attributes:{
-        name:"description",
-        id:"description" ,
-        description:MSG.NAME,
-        type:"text"
-      }
-    }, divG);
+	eventListener() {
+		let typeSelect = this.getElement("type");
+		let registrySelect = this.getElement("registry");
+		typeSelect.addEventListener(EVENT.CHANGE, ({ detail }) => {
+			registrySelect.setDisabled(detail && detail.value !== "1");
+			registrySelect.style.display = detail && detail.value !== "1" ? 'none' : '';
+		});
+	}
 
-    divG = this.createElement(TAG.DIV);
-    divG.classList.add(CSS.AON_COL_SM_1, CSS.AON_COL_XS_2);
-    aonCard.appendChild(divG);
+	paintView() {
+		CreateComponent.createAonToolbar({ id: this.TOOLBAR, type: ToolbarType.SECONDARY }, this);
 
-    CreateComponent.createAonInput({
-      attributes:{
-        name:"radio",
-        id:"radio" ,
-        description:MSG.RADIO,
-        type:"number"
-      }
-    }, divG);
+		const form = CreateComponent.createForm(this.id + "Form");
+		this.appendChild(form);
 
-    divG = this.createElement(TAG.DIV);
-    divG.classList.add(CSS.AON_COL_SM_6, CSS.AON_COL_XS_12);
-    aonCard.appendChild(divG);
+		let div = this.createElement(TAG.DIV);
+		div.id = this.id + "Div";
 
-     CreateComponent.createAonInput({
-      attributes:{
-        name:"direction",
-        id:"direction" ,
-        type:"text",
-        description:"Dirección",
-        disabled:true
-      }
-    }, divG);
-    
-  
-    CreateComponent.createAonInput({
-      attributes:{
-        name:"latitude",
-        id:"latitude" ,
-        type:"text",
-        visible:"false",
-      }
-    }, aonCard);
+		const className = this.isMobile() ? CSS.AON_MOBILE_SUB_CONTENT : CSS.AON_SUB_CONTENT;
+		div.className = className;
+		form.appendChild(div);
 
-    CreateComponent.createAonInput({
-      attributes:{
-        name:"longitude",
-        id:"longitude" ,
-        type:"text",
-        visible:"false",
-      }
-    }, aonCard);
+		let div2 = this.createElement(TAG.DIV);
+		div2.classList.add(CSS.AON_COL_XS_12);
+		div.appendChild(div2);
 
-    CreateComponent.createAonInput({
-      attributes:{
-        name:"id",
-        id:"id" ,
-        type:"text",
-        visible:"false",
-      }
-    }, aonCard);
+		const aonCard = CreateComponent.createAonCard({ id: this.id + "Card", title: "Datos de la " + this.NAME, flex: "true" }, div2).getContent();
 
-    const divMap = this.createElement(TAG.DIV);
-    divMap.classList.add(CSS.AON_COL_XS_12);
-    divMap.id = "divMap";
-    div.appendChild(divMap);
-  }
+		let divG = this.createElement(TAG.DIV);
+		divG.classList.add(CSS.AON_COL_SM_4, CSS.AON_COL_XS_10);
+		aonCard.appendChild(divG);
 
-  buildToolbar(){
-    const toolbarEl = this.getElement(this.TOOLBAR);
-    toolbarEl.removeButtons();
-    if(this.data && this.data.id){
-      toolbarEl.addButton2(ACTION.DELETE, () =>this.delete());
-      toolbarEl.title = MSG.EDIT;
-    } else {
-      toolbarEl.title = MSG.REGISTER;
-    }
-    toolbarEl.addButton2(ACTION.SAVE, () => this.save());
-    toolbarEl.addButton2(ACTION.BACK, () => this.back());
-  }
+		createInput("description", MSG.NAME, divG);
 
-  async paintViewMap(data) {
-    let divMap = await waitEl(`#divMap`);
-    divMap.innerHTML = "";
+		divG = this.createElement(TAG.DIV);
+		divG.classList.add(CSS.AON_COL_SM_2, CSS.AON_COL_XS_2);
+		aonCard.appendChild(divG);
 
-    let position = null;
-    if (data && data.latitude && data.longitude) 
-      position = { lat: data.latitude, lng: data.longitude}
+		createInput("radio", MSG.RADIO, divG);
 
-    let aonMap = new AonMap();
-    aonMap.POSITION = position;
-    aonMap.geocoder = true;
-    aonMap.addEventListener(EVENT.COORDINATES, ({detail})=>{
-      this.setCoordinates(detail);
-    });
+		divG = this.createElement(TAG.DIV);
+		divG.classList.add(CSS.AON_COL_SM_3, CSS.AON_COL_XS_2);
+		aonCard.appendChild(divG);
 
-    aonMap.addEventListener(EVENT.GEOCODE, ({detail})=>{
-      if(detail && detail.name)
-        this.getElement("direction").value = detail.name
-    });
+		createSelect("type", "Tipo", divG);
 
-    const cardContentMap = CreateComponent.createAonCard({id: this.id+"Map", title:"Mapa", flex:"true"}, divMap).getContent();
-    cardContentMap.appendChild(aonMap);
-  }
+		divG = this.createElement(TAG.DIV);
+		divG.classList.add(CSS.AON_COL_SM_3, CSS.AON_COL_XS_2);
+		aonCard.appendChild(divG);
 
-  getFormValues() {
-    const form = this.getElement(`${this.id}Form`);
-    return serializeForm(form);
-  }
+		createSelect("registry", "Operario", divG);
 
-  async setFormValues() {
-    await waitEl('#latitude');
-    const data = this.data;
-    if (data) {
-      const obj = { ...data };
-      for (const property in obj)
-        setValueName(property, obj[property]);
-      this.paintViewMap(data);
-    }
-  }
+		divG = this.createElement(TAG.DIV);
+		divG.classList.add(CSS.AON_COL_XS_12);
+		aonCard.appendChild(divG);
 
-  async save() {
-    const data = this.getFormValues();
-    const count = Object.keys(data).length;
-    if (count > 3) {
-      this.applicationEl.startLoading();
-      try {
-        const { id } = await saveLocation({
-          ...data,
-          coordinates: `${data.latitude},${data.longitude}`,
-        });
-        this.showToast({ message: MSG.SAVED_DATA, type: CONSTANT.SUCCESS });
-        if (id) { setValueName("id", id); }
-      } catch (error) {
-        this.showToast(error);
-      }
-      this.applicationEl.stopLoading();
-    }
-  }
+		createInput("latitude", "Latitud", divG);
 
-  async delete() {
-    this.applicationEl.confirmDialog(MSG.DELETE, `${MSG.DELETE_CONFIRM} ${this.NAME}?`, async()=>{
-      this.applicationEl.startLoading();
-      try {
-        const data = this.getFormValues();
-        await deleteLocation(data);
-        this.showToast({ message: MSG.DELETED_DATA });
-        this.back();
-      } catch (error) {
-        this.showToast(error);
-      }
-      this.applicationEl.stopLoading();
-    });
-  }
+		createInput("longitude", "Longuitud", divG);
 
-  deleteManual(id){
-    deleteLocation({id});
-  }
+		createInput("id", "Id", divG);
 
-  setCoordinates(data) {
-    let lat = data.latitude || data.lat;
-    let lng = data.longitude || data.lng;
-    if (lat && lng) {
-      setValueName("latitude", lat);
-      setValueName("longitude", lng);
-    }
-  }
+		const divMap = this.createElement(TAG.DIV);
+		divMap.classList.add(CSS.AON_COL_XS_12);
+		divMap.id = "divMap";
+		div.appendChild(divMap);
+	}
 
-  back() {
-    this.applicationEl.getParent().showView(SIGNIN_VIEWS.AON_LOCATION_LIST);
-  }
+	buildToolbar() {
+		const toolbarEl = this.getElement(this.TOOLBAR);
+		toolbarEl.removeButtons();
+		if (this.data && this.data.id) {
+			toolbarEl.addButton2(ACTION.DELETE, () => this.delete());
+			toolbarEl.title = MSG.EDIT;
+		} else {
+			toolbarEl.title = MSG.REGISTER;
+		}
+		toolbarEl.addButton2(ACTION.SAVE, () => this.save());
+		toolbarEl.addButton2(ACTION.BACK, () => this.back());
+	}
+
+	async paintViewMap(data) {
+		let divMap = await waitEl(`#divMap`);
+		divMap.innerHTML = "";
+
+		let position = null;
+		if (data && data.latitude && data.longitude)
+			position = { lat: data.latitude, lng: data.longitude }
+
+		if (!position)
+			position = { lat: "40.41849734317215", lng: "-3.7008337076347084" }
+
+		let aonMap = new AonMap();
+		aonMap.POSITION = position;
+		aonMap.geocoder = true;
+		aonMap.addEventListener(EVENT.COORDINATES, ({ detail }) => {
+			this.setCoordinates(detail);
+		});
+
+		aonMap.addEventListener(EVENT.GEOCODE, ({ detail }) => {
+			if (detail && detail.name)
+				this.getElement("direction").value = detail.name
+		});
+
+		const cardContentMap = CreateComponent.createAonCard({ id: this.id + "Map", title: "Mapa", flex: "true" }, divMap).getContent();
+		cardContentMap.appendChild(aonMap);
+	}
+
+	getFormValues() {
+		let serialize = {};
+
+		let descriptionInput = this.getElement("description");
+		if (descriptionInput) serialize.description = descriptionInput.getValue();
+
+		let radioInput = this.getElement("radio");
+		if (radioInput) serialize.radio = radioInput.getValue();
+
+		let latitudeInput = this.getElement("latitude");
+		if (latitudeInput) serialize.latitude = latitudeInput.getValue();
+
+		let longitudeInput = this.getElement("longitude");
+		if (longitudeInput) serialize.longitude = longitudeInput.getValue();
+
+		let typeSelect = this.getElement("type");
+		serialize.type = typeSelect.getValueObject() && typeSelect.getValueObject().value;
+
+		let registrySelect = this.getElement("registry");
+		serialize.registry = registrySelect.getValueObject() && registrySelect.getValueObject().value;
+
+		let idInput = this.getElement("id");
+		if (idInput.getValue() !== 'undefined') serialize.id = idInput.getValue();
+
+		return serialize;
+	}
+
+	async setFormValues() {
+		await waitEl('#latitude');
+		const data = this.data;
+
+		let descriptionInput = this.getElement("description");
+		let radioInput = this.getElement("radio");
+		let latitudeInput = this.getElement("latitude");
+		let longitudeInput = this.getElement("longitude");
+		let typeSelect = this.getElement("type");
+		let registrySelect = this.getElement("registry");
+		let idInput = this.getElement("id");
+		
+		if (data) {
+
+			descriptionInput && descriptionInput.setValue(data.description);
+			radioInput && radioInput.setValue(data.radio);
+			latitudeInput && latitudeInput.setValue(data.latitude);
+			longitudeInput && longitudeInput.setValue(data.longitude);
+			typeSelect.setValueZero(data.type);
+			registrySelect.setValue(data.registry);
+			idInput && idInput.setValue(data.id);
+
+		}
+
+		if (!data || !data.type || data.type != "1") {
+			registrySelect.setDisabled(true);
+			registrySelect.style.display = 'none';
+		}
+
+		latitudeInput.setDisabled(true);
+		latitudeInput.style.display = 'none';
+
+		longitudeInput.setDisabled(true);
+		longitudeInput.style.display = 'none';
+
+		idInput.setDisabled(true);
+		idInput.style.display = 'none';
+		
+		this.paintViewMap(data);
+	}
+
+	async save() {
+		const data = this.getFormValues();
+		const count = Object.keys(data).length;
+		if (count > 3) {
+			this.applicationEl.startLoading();
+			try {
+				const { id } = await saveLocation({
+					...data,
+					coordinates: `${data.latitude},${data.longitude}`,
+				});
+				this.showToast({ message: MSG.SAVED_DATA, type: CONSTANT.SUCCESS });
+				if (id) { setValueName("id", id); }
+			} catch (error) {
+				this.showToast(error);
+			}
+			this.applicationEl.stopLoading();
+		}
+	}
+
+	async delete() {
+		this.applicationEl.confirmDialog(MSG.DELETE, `${MSG.DELETE_CONFIRM} ${this.NAME}?`, async () => {
+			this.applicationEl.startLoading();
+			try {
+				const data = this.getFormValues();
+				await deleteLocation(data);
+				this.showToast({ message: MSG.DELETED_DATA });
+				this.back();
+			} catch (error) {
+				this.showToast(error);
+			}
+			this.applicationEl.stopLoading();
+		});
+	}
+
+	deleteManual(id) {
+		deleteLocation({ id });
+	}
+
+	setCoordinates(data) {
+		let lat = data.latitude || data.lat;
+		let lng = data.longitude || data.lng;
+		if (lat && lng) {
+			let latitude = this.getElement("latitude");
+			latitude.setValue(lat);
+			let longitude = this.getElement("longitude");
+			longitude.setValue(lng);
+		}
+	}
+
+	back() {
+		this.applicationEl.getParent().showView(SIGNIN_VIEWS.AON_LOCATION_LIST);
+	}
 }
 
 window.customElements.define("aon-location-add", AonLocationAdd);
