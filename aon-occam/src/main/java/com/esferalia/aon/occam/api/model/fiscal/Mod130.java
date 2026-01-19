@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod130 extends FiscalModel implements Serializable {
@@ -79,6 +80,14 @@ public class Mod130 extends FiscalModel implements Serializable {
 			&& (getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT);
 	}
 	
+	public int getDefaultActivityCode() {
+		return AonNumberUtils.toint(getAmount(Mod130Key.P4));
+	}
+
+	public void setDefaultActivityCode(int defaultActivityCode) {
+		putAmount(Mod130Key.P4, defaultActivityCode);
+	}
+	
 	// ************************************************************
 	// ************************************************************
 	@Override
@@ -111,6 +120,7 @@ public class Mod130 extends FiscalModel implements Serializable {
 //			}
 //		}
 	}
+
 
 	
 //	@Override

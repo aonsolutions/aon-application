@@ -1,5 +1,7 @@
 package net.aonsolutions.aon.verifactu;
 
+import java.util.Date;
+
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -25,7 +27,8 @@ class Invoice2VerifactuAnulacion {
 		IDFacturaExpedidaBajaType idFactura = new IDFacturaExpedidaBajaType();
 		idFactura.setIDEmisorFacturaAnulada(vc.getCompany().getDocument());
 		idFactura.setNumSerieFacturaAnulada(invoice.getReferenceCode());
-		idFactura.setFechaExpedicionFacturaAnulada( VerifactuUtils.toString(invoice.getExpDate()) );
+		Date expDate = invoice.getExpDate() != null ? invoice.getExpDate() : invoice.getIssueDate(); 
+		idFactura.setFechaExpedicionFacturaAnulada( VerifactuUtils.toString(expDate) );
 		anul.setIDFactura(idFactura);
 		anul.setRefExterna(AonNumberUtils.toString(invoice.getId()));
 		anul.setSinRegistroPrevio( SinRegistroPrevioType.N ); // hasRegistroPrevio( vc, invoice ) );

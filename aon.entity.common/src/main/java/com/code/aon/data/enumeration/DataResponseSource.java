@@ -42,7 +42,12 @@ public enum DataResponseSource implements IResourceable {
 	MOD349,
 	MOD200,
 	LROE_TEST,
-	PACKAGING_DELIVERY
+	PACKAGING_DELIVERY,
+	MOD369,
+	VERIFACTU,
+	NO_VERIFACTU,
+	SIF,
+	FACTURAE
 	;
 	
     /** Message key prefix. */

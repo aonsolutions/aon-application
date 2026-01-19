@@ -12,12 +12,14 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.mod130.Model130.Model130Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -46,6 +48,7 @@ public class Model130NewDeclarationPanel extends DockLayoutPanel {
 	private AonDoubleBox percentBox;
 	private CheckBox regularHome;
 	private ListBox regimeList;
+	private ListBox activityList;
 
 	private FlowPanel rootPanel;
 	private SimpleLayoutPanel headerPanel = new SimpleLayoutPanel();
@@ -87,12 +90,14 @@ public class Model130NewDeclarationPanel extends DockLayoutPanel {
 		percentBox = new AonDoubleBox();
 		regularHome = new CheckBox(AON.MSG.regularHomePayments());
 		regimeList = new ListBox();
+		activityList = new ListBox();
 		
 		admonList.addChangeHandler( event -> {
 			model.setAdministration( admonList.getValue() );
 			regimeList.setVisible(model.isAEAT());
 			percentBox.setVisible(model.isAEAT());
 			regularHome.setVisible(model.isAEAT());
+			activityList.setVisible(model.isAEAT());
 			initialize(model, callback );
 		});
 		
@@ -130,6 +135,7 @@ public class Model130NewDeclarationPanel extends DockLayoutPanel {
 		regimeList.addChangeHandler(event -> {
 			model.setRegime(regimeList.getSelectedIndex() == 1?IRPFRegime.SIMPLIFIED:IRPFRegime.NORMAL);
 		});
+		
 		if (AonCollectionUtils.isNotEmpty(model.getDeponents())) {
 			int d = 0;
 			for ( FiscalModel fm : model.getDeponents().values() ) {
@@ -196,6 +202,30 @@ public class Model130NewDeclarationPanel extends DockLayoutPanel {
 		regularHome.addClickHandler( event -> {
 			model.putAmount(Mod130Key.P2,regularHome.getValue().booleanValue()?1.0:0.0);
 		});		
+		
+		if (callback.getOptions().getConfiguration() != null && callback.getOptions().getConfiguration().hasAllActivities()) {
+			int indexMainActivity = 0;
+			activityList.setWidth("350px");
+			int i = 0;
+			for (EnterpriseActivity ea : callback.getOptions().getConfiguration().getAllActivities()) {			
+				String description = ea.getDescription() + (ea.getIae().isEmpty() ? "" : (" ("+ea.getEpigraph()+")"));
+				activityList.addItem(description, AonNumberUtils.toString(ea.getId()));
+				if (ea.isPrincipal()) {
+					activityList.setItemText(i, description + " " + AonStringUtils.ASTERISK);
+					indexMainActivity = i; // Se quedará marcada la actividad principal, por defecto
+				}
+				i++;
+			}
+			activityList.setSelectedIndex(indexMainActivity);
+			model.setDefaultActivityCode(Integer.parseInt(activityList.getSelectedValue()));
+			activityList.addChangeHandler(event -> {
+				model.setDefaultActivityCode(Integer.parseInt(activityList.getSelectedValue()));
+			});
+
+		} else {
+			model.setDefaultActivityCode(0);  // No hay actividades definidas
+		}
+		
 	}
 	
 	private void paint(Mod130 model, Model130Callback callback) {
@@ -260,6 +290,10 @@ public class Model130NewDeclarationPanel extends DockLayoutPanel {
 			.addCell(new Label(),AON.CSS.aonTableLabel())
 			.addCell(regularHome);
 		
+		tab.addRow()
+			.addCell(new Label("Imputar apuntes sin actividad a la actividad"), AON.CSS.aonTableLabel())
+			.addCell(activityList);
+		
 		rootPanel.add(getButtonsPanel(model,callback));
 	}
 
@@ -319,7 +353,7 @@ public class Model130NewDeclarationPanel extends DockLayoutPanel {
 		percentBox.setValue( model.getAmount(Mod130Key.P1));
 		regularHome.setValue( model.getAmount(Mod130Key.P2)==1);
 	}
-		
+	
 	private void initialize(Mod130 model, Model130Callback callback) {
 		Model130.SERVICE.initialize(callback.getOptions().getOccam(),model,
 			new AsyncCallback<Mod130>() {

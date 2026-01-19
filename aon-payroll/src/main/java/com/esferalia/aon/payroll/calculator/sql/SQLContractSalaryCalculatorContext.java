@@ -2074,6 +2074,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return periods;
 	}
 
+	public void addBonus(String expression) {
+		addBonus(getStartDate(), null, null, expression);
+	}
+
 	public void addBonus(String description, String expression) {
 		addBonus(getStartDate(), null, description, expression);
 	}

@@ -88,6 +88,7 @@ public class SIF {
 		if ( invoiceId == null) return;
 		if ( AonMathUtils.isZero(invoiceId)) return;
 		saveInvoiceCommunication(ctx, vc, invoiceBatch, invoiceId, InvoiceCommunicationStatus.ACCEPTED);
+		InvoiceDAO.saveInvoiceExpDate(ctx, invoiceId, new Date());
 	}
 
 	// **************************************************************
