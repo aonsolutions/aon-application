@@ -1914,6 +1914,9 @@ public class InvoiceDAO {
 					.setDirty(true);
 			});
 		
+		source.refreshTaxBreakdown();
+		if(source.getTaxBreakdown().isPresent())
+			source.setBreakdown(source.getTaxBreakdown().get().getBreakdown());
 		Invoice target = source; 
 		if (save) {
 			target = save(ctx, source);
