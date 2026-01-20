@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -136,6 +137,16 @@ public class ContextFunctions {
 			throw new InvalidVariables(msg, name);
 		}
 	}
+
+	public static void checkDef(String[] names, ExpressionContext context  ) throws UndefinedVariablesException {
+		String[] undefs =  Arrays.stream(names).filter( name -> !context.isDef(name)).toArray( String[]::new );
+		Arrays.stream(names).filter(context::isDef).forEach(name -> context.getVariables(name).forEach(
+				variable -> context.readVariable(name, variable.getPeriod().getStart(), variable.getPeriod().getEnd(), Object.class)));
+		if ( undefs.length > 0 ) 
+			throw new UndefinedVariablesException(context.getRead(), undefs);
+		
+	}
+
 
 	public static boolean isRead(String name, ExpressionContext context) throws CheckException {
 		return context.isRead(name);
@@ -1194,6 +1205,23 @@ public class ContextFunctions {
 		}
 	}
 	
+	private static void loadCheckDefFunction(ExpressionContext context, Date startDate, Date endDate)
+			throws ExpressionException {
+		try {
+			Method checkDef = ContextFunctions.class.getMethod("checkDef", String[].class,
+					ExpressionContext.class);
+
+			MethodStub checkDefStub = new MethodStub(checkDef);
+			context.setVariable("CHECKDEF", checkDefStub, startDate, endDate);
+			String functionScript = String.format("%s = def(variables) { CHECKDEF(variables, %s) };",
+					ContextVariable.CHECK_DEF, ContextVariable.CONTEXT);
+
+			context.eval(functionScript, startDate, endDate);
+		} catch (SecurityException e) {
+		} catch (NoSuchMethodException e) {
+		}
+	}
+
 	private static void loadIsReadFunction(ExpressionContext context, Date startDate, Date endDate)
 			throws ExpressionException {
 
@@ -1368,6 +1396,7 @@ public class ContextFunctions {
 		loadProrationFunction(context, startDate, endDate);
 		loadScopeFunction(context, startDate, endDate);
 		loadPPEDelaysFunction(context, startDate, endDate);
+		loadCheckDefFunction(context, startDate, endDate);
 	}
 	
 	public static void loadDaysFunctions(ExpressionContext context, Date startDate, Date endDate)
