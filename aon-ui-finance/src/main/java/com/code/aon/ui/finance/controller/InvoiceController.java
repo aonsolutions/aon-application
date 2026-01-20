@@ -824,6 +824,11 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 
 		if (invoice.isSales()) {
 			setRectificationSeries(SeriesUtil.ensureRectificationSeries(invoice.getSeries()));
+			if (SeriesUtil.getFirstRectificationSeries() == null) {
+				String message = "Es obligatorio indicar una serie para rectificaciones de ventas. Defina una en Configuraci\u00f3n >> Series.";
+				AonUtil.addErrorMessage(message);
+				throw new AbortProcessingException(message);
+			}
 		}
 		setRectificationNumber(0);
 		setRectificationNumberEditable(false);
