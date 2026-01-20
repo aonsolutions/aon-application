@@ -2,7 +2,7 @@ import { AonElement } from "../../../components/AonElement.js";
 import { getPeriod, getStatus, getTimeControlList, getTimeControlExcel, getTimeControlPdf } from "../../../services/service.js";
 import { cleanDetailObject, isEmptyObject, setValueName, sortBy, waitEl } from "../../../services/utils.js";
 import { setAttributes } from "../../../services/utilsComponents.js";
-import { iconAddLocation, PRESENCE_FILTER, ToolbarOptions, SIGNIN_VIEWS } from "../signinEnums.js";
+import { iconAddLocation, PRESENCE_FILTER, ToolbarOptions, SIGNIN_VIEWS, SigninSidenav } from "../signinEnums.js";
 import { dateCustomDayHour, modalReport, StringTwoLetters, timeHour } from "./utils.js";
 import { CONSTANT, EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
@@ -78,7 +78,6 @@ export class AonPresenceList extends AonElement {
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
-    
     if(!this.applicationParentEl.isEmployee()){
 //      if(this.isMobile()){
 //        this.applicationEl.addFloatOption(ToolbarOptions.ADD, () => this.aonEventAdd() );
@@ -149,11 +148,9 @@ export class AonPresenceList extends AonElement {
   }
 
   async getTable() {
-    this.applicationEl = await waitEl("#aonSignin");
+    this.applicationEl = this.getApplication();
     this.applicationEl.startLoader();
-//    if (this.isMobile()) await this.getTableMobile();
-//    else 
-	await this.getTableDesk();
+    await this.getTableDesk();
     this.applicationEl.stopLoader();
     this.applicationParentEl.changeFilter();
   }

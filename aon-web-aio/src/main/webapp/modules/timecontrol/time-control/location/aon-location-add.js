@@ -68,7 +68,7 @@ export class AonLocationAdd extends AonElement {
 		this.listTaskHolder();
 		this.buildToolbar();
 		this.eventListener();
-		
+
 		if(this.data === null)
 			this.setFormValues();
 	}

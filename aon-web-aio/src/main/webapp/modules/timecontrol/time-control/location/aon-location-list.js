@@ -1,6 +1,6 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { getLocation, getTastHolders } from "../../../../services/service.js";
-import { SigninSidenav, SIGNIN_VIEWS } from "../../signinEnums.js";
+import { SigninSidenav, SIGNIN_VIEWS, ToolbarOptions } from "../../signinEnums.js";
 import { CONSTANT, MSG } from "../../../../environments/environments.js";
 import { AonMobileList } from "../../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../../components/aon-table.js";

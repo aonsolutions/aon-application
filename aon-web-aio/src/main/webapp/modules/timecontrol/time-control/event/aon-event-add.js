@@ -150,7 +150,7 @@ consoleLog("agui - 2", "green")
     //const serialize = serializeForm(this.getElement(`${this.id}Form`));
     let serialize = {};
     
-    let nameInput = this.getElement("name");
+    let nameInput = this.getElement("task_holder");
     if(nameInput) serialize.name = nameInput.getValue();
     
     let statusSelect = this.getElement("status");
