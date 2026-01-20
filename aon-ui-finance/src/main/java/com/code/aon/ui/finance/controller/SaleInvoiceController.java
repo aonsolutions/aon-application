@@ -79,6 +79,7 @@ import com.esferalia.aon.occam.api.model.Properties.CertificateProperties;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAdministrationVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
@@ -88,6 +89,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorException;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.mutable.MutableObject;
@@ -1078,9 +1080,40 @@ public class SaleInvoiceController extends InvoiceController {
 	public void setCommunicationStatus(InvoiceCommunicationStatus invoiceCommunicationStatus) {
 		this.communicationStatus = invoiceCommunicationStatus;
 	}
+	
+	public String getAdmonIcon() {
+		if (getInvoiceCommunicationConfiguration() != null) {
+			Administration admon = getInvoiceCommunicationConfiguration().getAdministration();		
+			return admon.visit(new IAdministrationVisitor<String>() {
+				@Override public String visitAlava() 			{ return "aon-icon-araba-bw"; }
+				@Override public String visitBizkaia() 			{ return "aon-icon-bizkaia-bw"; }
+				@Override public String visitGipuzkoa() 		{ return "aon-icon-gipuzkoa-bw"; }
+				@Override public String visitNavarra() 			{ return "aon-icon-navarra-bw"; }
+				@Override public String visitCommonTerritory() 	{ return "aon-icon-aeat-bw"; }
+				@Override public String visitUnknown() 			{ return "aon-icon-sif"; }
+				@Override public String visitCanarias() 		{ return "aon-icon-canarias-bw"; }
+			});
+		}
+		return "aon-icon-sif";
+	}
+	
+	public String getSendLabel() {
+		if (isVerifactu()) return "Emitir / Enviar";
+		if (isNoVerifactu()) return "Emitir / Archivar"; 
+		if (isSif()) return "Emitir / Archivar";
+		return "Aceptar/Enviar";
+	}
+	
+	public String getSendIcon() {
+		if (isNoVerifactu()) return "aon-icon-send-archive"; 
+		if (isSif()) return "aon-icon-send-sif";
+		return "aon-icon-send";
+	}
+	
 	public String getCommunicationStatusDescription() {
-		if ( isNoVerifactuInvoice() && getCommunicationStatus() == InvoiceCommunicationStatus.PENDING ) {
-			return StringUtils.upperCase("EMITIDA/NO ENVIADA");
+		if ((isSif() 				&& getCommunicationStatus() == InvoiceCommunicationStatus.ACCEPTED ) 
+		 || (isNoVerifactuInvoice() && getCommunicationStatus() == InvoiceCommunicationStatus.PENDING  )   ) {
+			return StringUtils.upperCase("ARCHIVADA");
 		}
 		return getCommunicationStatus() == null 
 			? StringUtils.upperCase(InvoiceCommunicationStatus.PENDING.getDescription()) 
