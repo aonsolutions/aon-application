@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.InvoiceFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO.InvoiceInfoFiller;
+import com.esferalia.aon.occam.impl.jooq.validation.InvoiceCommunicationConfigurationValidation;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -279,10 +280,15 @@ public class InvoiceCommunicationDAO {
 				
 				config.setTbaiData(EnterpriseDataDAO.insert(ctx, oldTbaiData));
 				config.getTbaiDataHistory().add(oldTbaiData);
-				
-				// TODO Eliminar los parámetros antiguos de TBAI. (Excepto TBAI_REGISTRY_DATE)
 			}
 		}
+		
+		AppParamDAO.get(ctx, domainId, AppParam.TBAI_ACTIVE).ifPresent(r -> {
+			AppParamDAO.delete(ctx, domainId, AppParam.TBAI_ACTIVE);
+			AppParamDAO.delete(ctx, domainId, AppParam.TBAI_TEST);
+			AppParamDAO.delete(ctx, domainId, AppParam.TBAI_INCLUDE_DATE);			
+		});
+
 	}
 	
 	private static void fillLroe(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
@@ -303,10 +309,14 @@ public class InvoiceCommunicationDAO {
 				}
 				config.setLroeData(EnterpriseDataDAO.insert(ctx, oldLroeData));
 				config.getLroeDataHistory().add(oldLroeData);
-				
-				// TODO Eliminar los parámetros antiguos de TBAI/LROE. (Excepto TBAI_REGISTRY_DATE)
 			}
 		}
+		
+		AppParamDAO.get(ctx, domainId, AppParam.TBAI_ACTIVE).ifPresent(r -> {
+			AppParamDAO.delete(ctx, domainId, AppParam.TBAI_ACTIVE);
+			AppParamDAO.delete(ctx, domainId, AppParam.TBAI_TEST);
+			AppParamDAO.delete(ctx, domainId, AppParam.TBAI_INCLUDE_DATE);			
+		});
 		
 		// Fecha de registro contable que se envía al LROE. Fecha de Auditoria (creation_date) o Fecha de IVA (tax_date)
 		AppParamDAO.get(ctx, domainId, AppParam.TBAI_REGISTRY_DATE)
@@ -330,10 +340,14 @@ public class InvoiceCommunicationDAO {
 				}
 				config.setVerifactuData(EnterpriseDataDAO.insert(ctx, oldVerifactuData));
 				config.getVerifactuDataHistory().add(oldVerifactuData);
-				
-				// TODO Eliminar los parámetros antiguos de Verifactu.
 			}
 		}
+		
+		AppParamDAO.get(ctx, domainId, AppParam.VERIFACTU_ACTIVE).ifPresent(r -> {
+			AppParamDAO.delete(ctx, domainId, AppParam.VERIFACTU_ACTIVE);
+			AppParamDAO.delete(ctx, domainId, AppParam.VERIFACTU_TEST);
+			AppParamDAO.delete(ctx, domainId, AppParam.VERIFACTU_INCLUDE_DATE);			
+		});
 	}
 	
 	private static void fillSii(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
@@ -353,10 +367,14 @@ public class InvoiceCommunicationDAO {
 				}
 				config.setSiiData(EnterpriseDataDAO.insert(ctx, oldSiiData));
 				config.getSiiDataHistory().add(oldSiiData);
-				
-				// TODO Eliminar los parámetros antiguos de SII.
 			}
 		}
+		
+		AppParamDAO.get(ctx, domainId, AppParam.SII_ACTIVE).ifPresent(r -> {
+			AppParamDAO.delete(ctx, domainId, AppParam.SII_ACTIVE);
+			AppParamDAO.delete(ctx, domainId, AppParam.SII_TEST);
+			AppParamDAO.delete(ctx, domainId, AppParam.SII_INCLUDE_DATE);			
+		});
 		
 		// Fecha de registro contable que se envía al SII. Fecha de Auditoria (creation_date) o Fecha de IVA (tax_date)
 		AppParamDAO.get(ctx, domainId, AppParam.FS_MODEL_CFG_SII)
@@ -392,11 +410,6 @@ public class InvoiceCommunicationDAO {
 				fillSif(ctx, domainId, config);
 			}
 			
-//			if(config.isLroe()) {
-//				updateEndDate(ctx, domainId, config.getLroeData(), config.getNoSifData().getStartDate());
-//				fillLroe(ctx, domainId, config);
-//			}
-			
 			if(config.isTbai()) {
 				updateEndDate(ctx, domainId, config.getTbaiData(), config.getNoSifData().getStartDate());
 				fillTbai(ctx, domainId, config);
@@ -411,14 +424,9 @@ public class InvoiceCommunicationDAO {
 				updateEndDate(ctx, domainId, config.getVerifactuData(), config.getNoSifData().getStartDate());
 				fillVerifactu(ctx, domainId, config);
 			}
-			
-//			if(config.isSii()) {
-//				updateEndDate(ctx, domainId, config.getSiiData(), config.getNoSifData().getStartDate());
-//				fillSii(ctx, domainId, config);
-//			}
 		}
 		
-		if(config.isSif()) {
+		if(config.isSif() && !config.isSifTest()) {
 			if(config.isLroe()) {
 				updateEndDate(ctx, domainId, config.getSifData(), config.getLroeData().getStartDate());
 				fillSif(ctx, domainId, config);
@@ -442,6 +450,60 @@ public class InvoiceCommunicationDAO {
 			if(config.isSii()) {
 				updateEndDate(ctx, domainId, config.getSifData(), config.getSiiData().getStartDate());
 				fillSif(ctx, domainId, config);
+			}
+		
+			if(config.isAEAT() || config.isCanarias()) {
+				if(!config.hasVerifactuInvoice() && !config.hasNoVerifactuInvoice() && !config.hasSifInvoice()) {
+					EnterpriseDataDAO.update(ctx, config.getSifData().setName(EnterpriseDataNames.ICC_NO_VERIFACTU.name()));
+					fillSif(ctx, domainId, config);
+					fillNoVerifactu(ctx, domainId, config);	
+				}
+				
+				if(!config.hasVerifactuInvoice()) {
+					if(config.willBeNoVerifactu()) {
+						config.getNoVerifactuDataHistory().stream().filter(f -> f.getStartDate().after(new Date())).findFirst()
+						.ifPresent(ed -> EnterpriseDataDAO.delete(ctx, ed.getId()));
+					}
+					EnterpriseDataDAO.update(ctx, config.getSifData().setName(EnterpriseDataNames.ICC_NO_VERIFACTU.name()));
+					fillSif(ctx, domainId, config);
+					fillNoVerifactu(ctx, domainId, config);
+					
+					ctx.getDslContext().update(INVOICE_INFO)
+					.set(INVOICE_INFO.TYPE, InvoiceCommunicationType.NO_VERIFACTU.value())
+					.where(INVOICE_INFO.DOMAIN.eq(domainId)
+						.and(INVOICE_INFO.TYPE.eq(InvoiceCommunicationType.SIF.value()))
+						.and(INVOICE_INFO.CREATION_DATE.ge(AonDateUtils.toTimestamp(AonDateUtils.getYearFirstDay(new Date()))))
+					)
+					.execute();
+					
+					ctx.getDslContext().update(INVOICE_BATCH)
+					.set(INVOICE_BATCH.TYPE, InvoiceCommunicationType.NO_VERIFACTU.value())
+					.where(INVOICE_BATCH.DOMAIN.eq(domainId)
+						.and(INVOICE_BATCH.TYPE.eq(InvoiceCommunicationType.SIF.value()))
+						.and(INVOICE_BATCH.CREATION_DATE.ge(AonDateUtils.toTimestamp(AonDateUtils.getYearFirstDay(new Date()))))
+					)
+					.execute();
+					
+					ctx.getDslContext().update(DATA_RESPONSE)
+					.set(DATA_RESPONSE.SOURCE, DataResponseSource.NO_VERIFACTU.value())
+					.where(DATA_RESPONSE.DOMAIN.eq(domainId)
+						.and(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SIF.value()))
+						.and(DATA_RESPONSE.CREATION_DATE.ge(AonDateUtils.toTimestamp(AonDateUtils.getYearFirstDay(new Date()))))
+					)
+					.execute();
+				}
+				
+				if(config.hasVerifactuInvoice()) {
+					updateEndDate(ctx, domainId, config.getSifData(), new Date());
+					fillSif(ctx, domainId, config);
+					
+					EnterpriseData vd = new EnterpriseData()
+							.setDomain(domainId)
+							.setEnterprise( config.getSifData().getEnterprise() )
+							.setName(EnterpriseDataNames.ICC_VERIFACTU.name())
+							.setStartDate( new Date() );
+					EnterpriseDataDAO.insert(ctx, vd);
+				}
 			}
 		}
 		
@@ -467,6 +529,7 @@ public class InvoiceCommunicationDAO {
 	
 	public static InvoiceCommunicationConfiguration save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
 		ctx.checkWrite();
+		InvoiceCommunicationConfigurationValidation.validate(ctx, config);
 		saveAdministration(ctx, domainId, config);
 		saveTbai(ctx, domainId, config);
 		saveLroe(ctx, domainId, config);

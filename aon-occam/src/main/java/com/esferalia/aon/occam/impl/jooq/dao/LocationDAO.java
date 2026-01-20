@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlReason;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.LocationPropertiesDAO;
 
 public class LocationDAO {
@@ -52,6 +53,8 @@ public class LocationDAO {
 				.set(LOCATION.RADIO, lc.getRadio())
 				.set(LOCATION.LATITUDE, lc.getCoordinates().getLatitude())	
 				.set(LOCATION.LONGITUDE,lc.getCoordinates().getLongitude())
+				.set(LOCATION.TYPE,lc.getType() == null ? null : lc.getType().value())
+				.set(LOCATION.REGISTRY,lc.getRegistry())
 			.returning(LOCATION.ID).fetchOne().getId();
 		ctx.log().debug("INSERT LOCATION id: " + id);		
 		return lc.setId(id);
@@ -65,6 +68,8 @@ public class LocationDAO {
 			.set(LOCATION.RADIO, lc.getRadio())
 			.set(LOCATION.LATITUDE, lc.getCoordinates().getLatitude())
 			.set(LOCATION.LONGITUDE, lc.getCoordinates().getLongitude())
+			.set(LOCATION.TYPE,lc.getType() == null ? null : lc.getType().value())
+			.set(LOCATION.REGISTRY,lc.getRegistry())
 			.where(LOCATION.ID.eq(lc.getId()))
 			.execute();		
 		ctx.log().debug("UPDATE LOCATION id: " + lc.getId());		
@@ -148,7 +153,10 @@ public class LocationDAO {
 					.setDomain(new Domain().setId(record.getValue(LOCATION.DOMAIN)))
 					.setCoordinates(new Coordinates(record.getValue(LOCATION.LATITUDE), record.getValue(LOCATION.LONGITUDE)))
 					.setDescription(record.getValue(LOCATION.DESCRIPTION))
-					.setRadio(record.getValue(LOCATION.RADIO));
+					.setRadio(record.getValue(LOCATION.RADIO))
+					.setRegistry(record.getValue(LOCATION.REGISTRY))
+					.setType(null == record.getValue(LOCATION.TYPE) ? null : TimeControlReason.safeValueOf(record.getValue(LOCATION.TYPE)))
+					;
 		}
 	}
 	

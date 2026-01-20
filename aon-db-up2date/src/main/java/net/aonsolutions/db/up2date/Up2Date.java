@@ -19,14 +19,11 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod1902025;
 import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionProduct;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.Holidays2026Insert;
+import net.aonsolutions.db.up2date.payroll.FlexibleUpdate;
 import net.aonsolutions.db.up2date.product.ProductBookingCreation;
-import net.aonsolutions.db.up2date.tgss.BasesMax2026Update;
-import net.aonsolutions.db.up2date.tgss.MEI2026Insert;
-import net.aonsolutions.db.up2date.tgss.Solidarity2026Insert;
+import net.aonsolutions.db.up2date.timecontrol.LocationRegistryAlter;
 
 public class Up2Date {
 
@@ -565,16 +562,16 @@ public class Up2Date {
 			// PermissionUnPaidDescriptionFix.PERMISSIONUNPAIDDESCRIPTIONFIX,
 			// PrestITDescriptionFix.PRESTITDESCRIPTIONFIX,
 			// PermissionUnPaidDescriptionFixII.PERMISSIONUNPAIDDESCRIPTIONFIXII,
-			
 			// AlterFsMod193Detail2025.ALTER_FS_MODEL_193_DETAIL_2025,
 			// AlterFsMod347Detail2025.ALTER_FS_MODEL_347_DETAIL_2025,
 			// AlterFsMod190Detail2025.ALTER_FS_MODEL_190_DETAIL_2025,
 			// BasesMax2026Update.BASESMAX2026UPDATE,
 			// MEI2026Insert.MEI2026INSERT,
 			// Solidarity2026Insert.SOLIDARITY2026INSERT,
-			Holidays2026Insert.HOLIDAYS2026INSERT,
-			
-			AlterFsMod1902025.ALTER_FS_MODEL_190_2025, 
+			// Holidays2026Insert.HOLIDAYS2026INSERT,
+			// FlexibleInsert.FLEXIBLEINSERT,
+			FlexibleUpdate.FLEXIBLEUPDATE,
+			//AlterFsMod1902025.ALTER_FS_MODEL_190_2025, 
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
@@ -595,6 +592,7 @@ public class Up2Date {
 			// ----------------------- ProductBooking alters
 			ProductBookingCreation.PRODUCT_BOOKING_CREATION,
 			AddColumnMarketingActionProduct.ADD_COLUMN_MARKETING_ACTION_PRODUCT,
+			LocationRegistryAlter.LOCATION_REGISTRY_ALTER
 	
 	};
 

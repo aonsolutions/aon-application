@@ -3,7 +3,7 @@ import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, rectifyIn
 	getCompanyActivities, getPaymethods,  getRegistryBanks, sendInvoice2Mail, getSalesSeries, 
 	signInvoice, getApiConfiguration, getAeatCertificates, downloadFacturae, getCustomerEmails,
 	getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, getRegistrySuggestedAccount, 
-	getPaymethod} from '../../services/service.js';
+	getPaymethod, getRegistry} from '../../services/service.js';
 import { Invoice, getDocumentNumber } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
@@ -34,6 +34,7 @@ import * as ACTION from '../actions.js';
 import * as OPTION from './InvoiceOptions.js';
 import * as LS from '../../services/localStorageService.js';
 import * as JSF from '../aon-jsf-app.js';
+import { isValid } from '../../services/documentUtils.js';
 
 
 export class AonInvoice extends AonElement {
@@ -318,7 +319,18 @@ export class AonInvoice extends AonElement {
 			}
 		}
 		return true;
-	}	
+	}
+	
+	checkRegistry() {
+		if(this.invoice.getRegistry().document && this.invoice.getRegistry().document != ""
+				&& this.invoice.getRegistry().documentCountry == 'ES' && !isValid(this.invoice.getRegistry().document)) {
+			this.showMessageError(this.invoice.isEmitida()
+				? "El Documento del Cliente no es válido."
+				: "El Documento del Proveedor/Acreedor no es válido.");
+			return false;
+		}
+		return true;
+	}
 
 	resize() {
 		// if(!this.isMobile()){
@@ -468,13 +480,16 @@ export class AonInvoice extends AonElement {
 					rectify.fn = () => this.rectifyInvoice();
 					moreActions.push(rectify);
 				}
-	
-				let duplicate = ACTION.DUPLICATE_INVOICE;
-				duplicate.permission = true;
-				duplicate.backgroundColor = INVOICE.color;
-				duplicate.fn = () => this.duplicateInvoice();
-				moreActions.push(duplicate);
-				if(this.getInvoice().isInbox()){
+
+				if(!this.getInvoice().isRectifier()){
+					let duplicate = ACTION.DUPLICATE_INVOICE;
+					duplicate.permission = true;
+					duplicate.backgroundColor = INVOICE.color;
+					duplicate.fn = () => this.duplicateInvoice();
+					moreActions.push(duplicate);
+				}
+
+				if(this.getInvoice().isProcessed()){
 					let changeType = ACTION.CHANGE_TYPE;
 					changeType.permission = true;
 					changeType.backgroundColor = INVOICE.color;
@@ -519,7 +534,10 @@ export class AonInvoice extends AonElement {
 
 	showAccept() {
 		return (this.icc.hasCommunication() || !this.getInvoice().isEmitida()) &&
-			(this.getInvoice().isInbox() || (this.getInvoice().isProcessed() && !this.getInvoice().isEmitida()));
+			(this.getInvoice().isInbox() || (this.getInvoice().isProcessed() && !this.getInvoice().isEmitida()))
+			&& ( (this.getInvoice().isInbox() && this.getInvoice().isEmitida() && !this.getInvoice().file) 
+				|| !this.getInvoice().isEmitida())
+			;
 	}
 
 	showDelete() {
@@ -1383,6 +1401,47 @@ export class AonInvoice extends AonElement {
 		|| this.invoice.details.length > 0;
 		// *****
 
+		table.addRow(); // ----- ROW 2
+
+		// ----- REGISTRY
+		if(this.invoice.isEmitida()) {
+			let customer = new AonCustomerSuggestion();	
+			customer.id = this.REGISTRY;
+			customer.showAddress = true;
+			customer.readonly = this.invoice.isReadonly();
+			customer.setCustomer(this.invoice.getRegistry());
+			customer.addEventListener(EVENT.SELECT_REGISTRY, () => this.onChangeRegistry(customer.getCustomer()));
+			customer.addEventListener(EVENT.CUSTOMER_CHANGE, () => {
+				this.invoice.receiver.address = customer.getCustomer().address;
+			});
+			table.addCell(customer, '4');	
+		} else {
+			let registry = new AonRegistrySuggestion();
+			registry.id = this.REGISTRY;
+			registry.showAddress = true;
+			registry.types = this.invoice.getRegistryType();
+			// registry.value = this.invoice.getRegistry();
+			registry.setRegistry(this.invoice.getRegistry());
+			registry.addEventListener(EVENT.SELECT_REGISTRY, () => this.onChangeRegistry(registry.getRegistry()));
+			registry.addEventListener(EVENT.CUSTOMER_CHANGE, () => {
+				this.invoice.receiver.address = registry.getRegistry().address;
+			});
+			table.addCell(registry, '6');	
+		}
+		
+		if(this.invoice.isRawdoc() && this.invoice.getRegistry().documentCountry == 'ES' 
+				&& !isValid(this.invoice.getRegistry().document) && this.invoice.getRegistry().id) {
+			let data = {
+   				id: this.invoice.getRegistry().id,
+	   	    	additional_info: []
+    		};
+   			getRegistry(data).then(r => {
+				if(isValid(r.document)) {
+					this.invoice.getRegistry().document = r.document;
+				}
+       		});					
+		}
+
 		table.addRow(); // ----- ROW 3
 
 		// ----- CATEGORY
@@ -1655,13 +1714,14 @@ export class AonInvoice extends AonElement {
 		irpf.id = this.WITHHOLDING;
 		irpf.title = MSG.IRPF; // MSG.WITHHOLDING;
 
-		irpf.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
+		irpf.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0 
+			|| this.invoice.isRectifier();
 		irpf.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setWithholding(irpf.checked, this.getDefaultWithholdingType());
 			this.reload();
 		});
-		irpfTable.addCell(irpf, '1', undefined, 'add-irpf-padding');
-		if(!this.invoice.isNacional() && !this.invoice.isCcm()) {
+		irpfTable.addCell(irpf, '1');
+		if((!this.invoice.isNacional() && !this.invoice.isCcm()) || this.invoice.isRectifier()) {
 			irpf.setDisabled(true);
 		}
 		if(this.invoice.isReadonly()) irpf.setDisabled(true);
@@ -2705,7 +2765,9 @@ export class AonInvoice extends AonElement {
 
 	acceptInvoice() {
 		let ok = this.checkConfiguration();
+		ok = ok && this.checkRegistry();	
 		if(!ok) return;
+
 		if(!this.isInvofoxInvoice() && this.getInvoice().isEmitida()) this.getInvoice().setReference(undefined);
 		if(this.invoice.isEmitida() && this.icc.hasCommunication() && !this.icc.isSif() && !this.icc.isNoVerifactu()) {
 			let d = this.getApplication().getDialog();
@@ -3153,6 +3215,7 @@ export class AonInvoice extends AonElement {
 		dupInv.status = 'inbox';
 		dupInv.tbai = undefined;
 		dupInv.tbaiUrl = undefined;
+		dupInv.rectified = false;
 		dupInv.file = undefined;
 		if(dupInv.finances) {
 			dupInv.finances.forEach((item, i) => {

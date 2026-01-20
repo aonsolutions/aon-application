@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -115,7 +116,8 @@ class VerifactuVentaNacionalRectificativaSimplificadaTest extends AbstractVerifa
 	    assertNotNull( idFactura );
 	    assertEquals(vc.getCompany().getDocument() , idFactura.getIDEmisorFactura() );
 	    assertEquals(i.getReferenceCode() , idFactura.getNumSerieFactura() );
-	    assertEquals(VerifactuUtils.toString(i.getExpDate() ), idFactura.getFechaExpedicionFactura() );
+	    Date expDate = i.getExpDate() != null ? i.getExpDate() : new Date();
+	    assertEquals(VerifactuUtils.toString(expDate), idFactura.getFechaExpedicionFactura() );
 	    
 	    String refExterna = rfat.getRefExterna();
 	    assertNotNull( refExterna );

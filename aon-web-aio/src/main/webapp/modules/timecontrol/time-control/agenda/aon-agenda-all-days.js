@@ -3,6 +3,8 @@ import { getTaskHoldersUser } from "../../../../services/taskHolderService.js";
 import { getTaskHolderTimeControl } from "../../../../services/timeControlService.js";
 import { AonDateUtils } from "../../../utils/AonDateUtils.js";
 import { timeHour } from ".././utils.js";
+import { AonCalendarMenu } from "./aon-calendar-menu.js";
+
 
 export class AonAgendaAllDays extends AonElement {
 	
@@ -10,13 +12,22 @@ export class AonAgendaAllDays extends AonElement {
 	_taskHolderName;
 	_events = new Map(); // key: "YYYY-MM-DD" => value: array de eventos
 	_loadedMonths = new Set(); // Para trackear qué meses ya se han cargado
+	_loadingMonths = new Set(); // Para trackear qué meses están cargándose AHORA
 	_isLoading = false; // Flag para evitar múltiples cargas simultáneas
+	_initialLoadComplete = false; // Flag para evitar cargas durante scroll inicial
+	_scrollLocked = false; // Flag para bloquear scroll durante carga
+	_lastScrollPosition = 0; // Última posición válida del scroll
+	_firstLoadedMonth = null; // Primer mes cargado (Date)
+	_lastLoadedMonth = null; // Último mes cargado (Date)
 	
 	async connectedCallback() {
 		this.initState();
 		await this.build();
 		this.renderInitial();
 		this.attachEventListeners();
+		
+		// Configurar el menú calendario
+    	this.setupCalendarMenu();
 		
 		// Cargar eventos del mes actual inicialmente
 		await this.loadInitialEvents();
@@ -25,6 +36,22 @@ export class AonAgendaAllDays extends AonElement {
 		setTimeout(() => {
 			this.scrollToToday();
 		}, 200);
+		
+		// Activar checkLoadMonthsOnScroll después de 1 segundo
+		setTimeout(() => {
+			this._initialLoadComplete = true;
+			console.log('✅ Scroll infinito activado');
+		}, 1000);
+	}
+	
+	setupCalendarMenu() {
+	    setTimeout(() => {
+	        if (this.aonCalendarMenu && typeof this.aonCalendarMenu.setOnTodayClick === 'function') {
+	            this.aonCalendarMenu.setOnTodayClick(() => {
+	                this.goToToday(true);
+	            });
+	        }
+	    }, 200);
 	}
 
 	/* ---------------- STATE ---------------- */
@@ -37,8 +64,8 @@ export class AonAgendaAllDays extends AonElement {
 		this.weekHeight = 0;
 		this.visibleWeeks = new Map(); // offset => {element, week}
 
-		// Rango de renderizado
-		this.renderRange = 52; // Total de semanas a renderizar hacia atrás
+		// Rango de renderizado inicial reducido - solo 6 semanas hacia atrás (aprox 1.5 meses)
+		this.renderRange = 6;
 	}
 
 	/* ---------------- BUILD ---------------- */
@@ -50,14 +77,13 @@ export class AonAgendaAllDays extends AonElement {
 	            <span class="month"></span>
 	          </div>
 	          <div class="header-bottom">
-	            <span class="week-label">S.</span>
+	            <span class="week-label">Sem.</span>
 	            <span class="range"></span>
-	            <span class="week-hours"></span>
 	          </div>
 	        </div>
-	        <div class="header-left">
+	        <div class="header-right">
 	            <span class="month-hours"></span>
-	       		<div class="task-holder-name"></div>
+	            <span class="week-hours"></span>
 	        </div>
 	        
 	      </header>
@@ -68,31 +94,41 @@ export class AonAgendaAllDays extends AonElement {
 		this.headerMonthHours = this.querySelector(".month-hours");
 		this.headerRange = this.querySelector(".range");
 		this.headerWeekHours = this.querySelector(".week-hours");
-		this.taskHolderNameEl = this.querySelector(".task-holder-name");
 		this.scrollEl = this.querySelector(".scroll");
-
+	
 		let userTaskHolders = await getTaskHoldersUser();
 		if (userTaskHolders.length > 0) {
 			this._taskHolder = userTaskHolders[0].id;
 			this._taskHolderName = userTaskHolders[0].name;
-			this.taskHolderNameEl.textContent = this._taskHolderName;
 		}
-	}
+		
+		this.aonCalendarMenu = new AonCalendarMenu();
+		this.aonCalendarMenu.id = 'aonCalendarMenu';
+	    this.appendChild(this.aonCalendarMenu);
+	    
+}
 
 	/* ---------------- LOAD EVENTS ---------------- */
 	async loadInitialEvents() {
 		if (!this._taskHolder) return;
 		
-		// Cargar mes actual + 1 mes anterior + 1 mes siguiente
+		// Cargar 3 meses: anterior, actual y siguiente
 		const today = new Date();
-		await this.loadMonthEvents(today); // Mes actual
 		
 		const prevMonth = new Date(today);
 		prevMonth.setMonth(prevMonth.getMonth() - 1);
-		await this.loadMonthEvents(prevMonth); // Mes anterior
 		
 		const nextMonth = new Date(today);
 		nextMonth.setMonth(nextMonth.getMonth() + 1);
+		
+		// Establecer los límites ANTES de cargar
+		this._firstLoadedMonth = new Date(prevMonth.getFullYear(), prevMonth.getMonth(), 1);
+		this._lastLoadedMonth = new Date(nextMonth.getFullYear(), nextMonth.getMonth(), 1);
+		
+		console.log(`🚀 Cargando 3 meses: ${AonDateUtils.format(this._firstLoadedMonth, 'YYYY-MM')} a ${AonDateUtils.format(this._lastLoadedMonth, 'YYYY-MM')}`);
+		
+		await this.loadMonthEvents(prevMonth); // Mes anterior
+		await this.loadMonthEvents(today); // Mes actual
 		await this.loadMonthEvents(nextMonth); // Mes siguiente
 	}
 	
@@ -102,10 +138,13 @@ export class AonAgendaAllDays extends AonElement {
 		// Generar clave del mes (YYYY-MM)
 		const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 		
-		// Si ya se cargó este mes, salir
-		if (this._loadedMonths.has(monthKey)) {
+		// Si ya se cargó o se está cargando este mes, salir
+		if (this._loadedMonths.has(monthKey) || this._loadingMonths.has(monthKey)) {
 			return;
 		}
+		
+		// Marcar como "cargándose"
+		this._loadingMonths.add(monthKey);
 		
 		this._isLoading = true;
 		this.startLoading();
@@ -118,7 +157,7 @@ export class AonAgendaAllDays extends AonElement {
 		const startDateStr = AonDateUtils.format(startDate, "YYYY-MM-DD");
 		const endDateStr = AonDateUtils.format(endDate, "YYYY-MM-DD");
 		
-		console.log(`Cargando mes: ${monthKey} (${startDateStr} hasta ${endDateStr})`);
+		console.log(`📥 Cargando ${monthKey} (${startDateStr} a ${endDateStr})`);
 		
 		// Construir filtro
 		const filter = {
@@ -136,7 +175,7 @@ export class AonAgendaAllDays extends AonElement {
 		
 		try {
 			const datos = await getTaskHolderTimeControl(filter);
-			console.log(`Eventos cargados para ${monthKey}:`, datos.length);
+			console.log(`✅ ${monthKey}: ${datos.length} eventos`);
 			
 			// Procesar y guardar eventos por fecha
 			this.processEvents(datos);
@@ -144,13 +183,42 @@ export class AonAgendaAllDays extends AonElement {
 			// Marcar mes como cargado
 			this._loadedMonths.add(monthKey);
 			
+			// AGREGAR LAS SEMANAS DEL MES AL DOM
+			this.addWeeksForMonth(startDate);
+			
 			// Re-renderizar las semanas visibles con los eventos
 			this.refreshWeeks();
 		} catch (error) {
-			console.error(`Error cargando eventos del mes ${monthKey}:`, error);
+			console.error(`❌ Error en ${monthKey}:`, error);
 		} finally {
+			// Quitar de "cargándose"
+			this._loadingMonths.delete(monthKey);
 			this._isLoading = false;
 			this.stopLoading();
+		}
+	}
+	
+	/* ---------------- AGREGAR SEMANAS DEL MES ---------------- */
+	addWeeksForMonth(monthStartDate) {
+		// Calcular primer y último día del mes
+		const firstDay = new Date(monthStartDate.getFullYear(), monthStartDate.getMonth(), 1);
+		const lastDay = new Date(monthStartDate.getFullYear(), monthStartDate.getMonth() + 1, 0);
+		
+		// Calcular primera y última semana que contienen días de este mes
+		const firstWeekStart = AonDateUtils.startOfWeek(firstDay);
+		const lastWeekStart = AonDateUtils.startOfWeek(lastDay);
+		
+		// Calcular offsets de esas semanas
+		const firstOffset = Math.floor((firstWeekStart - this.baseDate) / (1000 * 60 * 60 * 24 * 7));
+		const lastOffset = Math.floor((lastWeekStart - this.baseDate) / (1000 * 60 * 60 * 24 * 7));
+		
+		console.log(`  📅 Agregando semanas ${firstOffset} a ${lastOffset}`);
+		
+		// Montar todas las semanas del mes
+		for (let offset = firstOffset; offset <= lastOffset; offset++) {
+			if (!this.visibleWeeks.has(offset)) {
+				this.mountWeek(offset);
+			}
 		}
 	}
 	
@@ -180,12 +248,24 @@ export class AonAgendaAllDays extends AonElement {
 	
 	/* ---------------- REFRESH WEEKS ---------------- */
 	refreshWeeks() {
-		// Re-renderizar todas las semanas visibles con los nuevos eventos
+		// Guardar posición de scroll
+		const currentScrollTop = this.scrollEl.scrollTop;
+		
+		console.log(`🔄 Actualizando ${this.visibleWeeks.size} semanas con eventos`);
+		
+		// Re-renderizar cada semana visible in-place
 		this.visibleWeeks.forEach((data, offset) => {
 			const newWeekEl = this.renderWeek(data.week);
+			
+			// Reemplazar el elemento antiguo con el nuevo (mantiene posición en DOM)
 			data.element.replaceWith(newWeekEl);
+			
+			// Actualizar la referencia
 			this.visibleWeeks.set(offset, { element: newWeekEl, week: data.week });
 		});
+		
+		// Restaurar posición de scroll
+		this.scrollEl.scrollTop = currentScrollTop;
 	}
 
 	/* ---------------- INITIAL RENDER ---------------- */
@@ -216,7 +296,7 @@ export class AonAgendaAllDays extends AonElement {
 	}
 	
 	/* ---------------- SCROLL TO TODAY ---------------- */
-	scrollToToday() {
+	scrollToToday(smooth) {
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
 		const todayKey = AonDateUtils.format(today, "YYYY-MM-DD");
@@ -240,21 +320,21 @@ export class AonAgendaAllDays extends AonElement {
 		
 		// Hacer scroll al día de hoy CENTRADO en el viewport
 		if (todayElement) {
-			todayElement.scrollIntoView({ behavior: 'auto', block: 'center' });
-			console.log('Scrolled to today (centered)');
+			todayElement.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'center' });
+			console.log('Scrolled to today (centered) - auto');
 		} else {
 			console.warn('Today element not found');
 			// Si no encontramos el día de hoy, hacer scroll a la semana actual
 			const currentWeekData = this.visibleWeeks.get(0);
 			if (currentWeekData) {
-				currentWeekData.element.scrollIntoView({ behavior: 'auto', block: 'center' });
+				currentWeekData.element.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'center' });
 			}
 		}
 		
 		// Actualizar header después del scroll
 		setTimeout(() => {
 			this.updateHeader();
-		}, 100);
+		}, 600);
 	}
 
 	/* ---------------- WEEK MANAGEMENT ---------------- */
@@ -266,8 +346,44 @@ export class AonAgendaAllDays extends AonElement {
 
 		this.visibleWeeks.set(offset, { element: weekEl, week });
 
-		// Añadir al DOM siempre al final (orden descendente)
-		this.scrollEl.appendChild(weekEl);
+		// Insertar en la posición correcta según offset
+		// Offsets negativos (pasado) van al principio
+		// Offsets positivos (futuro) van al final
+		
+		if (this.visibleWeeks.size === 1) {
+			// Primera semana, añadir directamente
+			this.scrollEl.appendChild(weekEl);
+		} else {
+			// Encontrar dónde insertar según el offset
+			let inserted = false;
+			
+			// Obtener todos los offsets ordenados
+			const sortedOffsets = Array.from(this.visibleWeeks.keys()).sort((a, b) => a - b);
+			const thisIndex = sortedOffsets.indexOf(offset);
+			
+			if (thisIndex === 0) {
+				// Es el offset más pequeño, insertar al principio
+				this.scrollEl.insertBefore(weekEl, this.scrollEl.firstChild);
+				inserted = true;
+			} else if (thisIndex === sortedOffsets.length - 1) {
+				// Es el offset más grande, insertar al final
+				this.scrollEl.appendChild(weekEl);
+				inserted = true;
+			} else {
+				// Insertar entre dos elementos
+				const nextOffset = sortedOffsets[thisIndex + 1];
+				const nextData = this.visibleWeeks.get(nextOffset);
+				if (nextData && nextData.element) {
+					this.scrollEl.insertBefore(weekEl, nextData.element);
+					inserted = true;
+				}
+			}
+			
+			if (!inserted) {
+				// Fallback: añadir al final
+				this.scrollEl.appendChild(weekEl);
+			}
+		}
 	}
 
 	unmountWeek(offset) {
@@ -359,7 +475,7 @@ export class AonAgendaAllDays extends AonElement {
 			            <span class="day-number">${day.date.getDate()}</span>
 			          </div>
 			          <div class="day-header-right">
-			            <span class="total-hours">H. Día: ${totalHours}</span>
+			            <span class="total-hours">${totalHours} h</span>
 			          </div>
 			        </div>
 			        <div class="day-content">
@@ -510,9 +626,27 @@ export class AonAgendaAllDays extends AonElement {
 
 	/* ---------------- EVENT LISTENERS ---------------- */
 	attachEventListeners() {
-		this.scrollEl.addEventListener("scroll", () => {
+		let checkTimeout;
+		
+		this.scrollEl.addEventListener("scroll", (e) => {
+			// Si el scroll está bloqueado, prevenir y restaurar posición
+			if (this._scrollLocked) {
+				e.preventDefault();
+				this.scrollEl.scrollTop = this._lastScrollPosition;
+				return;
+			}
+			
+			// Guardar la posición actual como válida
+			this._lastScrollPosition = this.scrollEl.scrollTop;
+			
 			this.handleScroll();
-		}, { passive: true });
+			
+			// Debounce para checkLoadMonthsOnScroll
+			clearTimeout(checkTimeout);
+			checkTimeout = setTimeout(() => {
+				this.checkLoadMonthsOnScroll();
+			}, 150); // Aumentado a 150ms para evitar triggers múltiples
+		}, { passive: false }); // Cambiado a false para permitir preventDefault
 
 		// Medir altura después de un pequeño delay
 		setTimeout(() => {
@@ -523,7 +657,7 @@ export class AonAgendaAllDays extends AonElement {
 	handleScroll() {
 		this.updateHeader();
 		this.checkLoadMore();
-		this.checkLoadMonthsOnScroll();
+		//this.checkLoadMonthsOnScroll();
 	}
 
 	async checkLoadMore() {
@@ -532,24 +666,11 @@ export class AonAgendaAllDays extends AonElement {
 		const clientHeight = this.scrollEl.clientHeight;
 
 		const scrollBottom = scrollTop + clientHeight;
-		const distanceFromTop = scrollTop;
 		const distanceFromBottom = scrollHeight - scrollBottom;
 
-		// Si estamos cerca del top (pasado), cargar más semanas pasadas
-		if (distanceFromTop < clientHeight * 2) {
-			const minOffset = Math.min(...this.visibleWeeks.keys());
-			// Cargar 10 semanas más hacia el pasado al principio
-			for (let i = minOffset - 10; i < minOffset; i++) {
-				if (!this.visibleWeeks.has(i)) {
-					const week = this.createWeek(i);
-					const weekEl = this.renderWeek(week);
-					this.visibleWeeks.set(i, { element: weekEl, week });
-					// Insertar al principio
-					this.scrollEl.insertBefore(weekEl, this.scrollEl.firstChild);
-				}
-			}
-		}
-
+		// DESACTIVADO: checkLoadMore hacia el pasado
+		// Ahora loadPreviousMonth() maneja la carga hacia atrás
+		
 		// Si estamos cerca del bottom (futuro), cargar más semanas futuras
 		if (distanceFromBottom < clientHeight * 2) {
 			const maxOffset = Math.max(...this.visibleWeeks.keys());
@@ -564,81 +685,97 @@ export class AonAgendaAllDays extends AonElement {
 	
 	/* ---------------- LOAD MONTHS ON SCROLL ---------------- */
 	async checkLoadMonthsOnScroll() {
+		// No cargar meses adicionales hasta que la carga inicial esté completa
+		if (!this._initialLoadComplete) return;
 		if (this._isLoading) return;
+		if (this._scrollLocked) return;
 		
 		const scrollTop = this.scrollEl.scrollTop;
 		const scrollHeight = this.scrollEl.scrollHeight;
 		const clientHeight = this.scrollEl.clientHeight;
+		
 		const scrollBottom = scrollTop + clientHeight;
-		
-		// Obtener las semanas visibles en el viewport
-		const visibleWeeks = [];
-		this.visibleWeeks.forEach((data, offset) => {
-			const weekTop = data.element.offsetTop;
-			const weekBottom = weekTop + data.element.offsetHeight;
-			
-			// Si la semana está visible en el viewport
-			if (weekBottom >= scrollTop && weekTop <= scrollBottom) {
-				visibleWeeks.push({ week: data.week, top: weekTop, offset });
-			}
-		});
-		
-		if (visibleWeeks.length === 0) return;
-		
-		// Ordenar semanas visibles por posición (top más pequeño = más arriba)
-		visibleWeeks.sort((a, b) => a.top - b.top);
-		
-		// Cargar meses de las semanas visibles
-		const monthsToLoad = new Set();
-		visibleWeeks.forEach(({ week }) => {
-			week.days.forEach(day => {
-				const monthKey = `${day.date.getFullYear()}-${String(day.date.getMonth() + 1).padStart(2, '0')}`;
-				if (!this._loadedMonths.has(monthKey)) {
-					monthsToLoad.add(monthKey);
-				}
-			});
-		});
-		
-		// Cargar los meses que faltan de las semanas visibles
-		for (const monthKey of monthsToLoad) {
-			const [year, month] = monthKey.split('-');
-			const date = new Date(parseInt(year), parseInt(month) - 1, 1);
-			await this.loadMonthEvents(date);
-		}
-		
-		// Precargar UN mes adyacente SOLO si estamos muy cerca del borde
 		const distanceFromTop = scrollTop;
 		const distanceFromBottom = scrollHeight - scrollBottom;
 		
-		// Precarga hacia el pasado (arriba): usar la PRIMERA semana visible
-		if (distanceFromTop < clientHeight) {
-			const topVisibleWeek = visibleWeeks[0].week;
-			const topDate = topVisibleWeek.start;
-			
-			// Cargar el mes anterior solo si no está cargado
-			const prevMonth = new Date(topDate);
-			prevMonth.setMonth(prevMonth.getMonth() - 1);
-			const prevMonthKey = `${prevMonth.getFullYear()}-${String(prevMonth.getMonth() + 1).padStart(2, '0')}`;
-			
-			if (!this._loadedMonths.has(prevMonthKey)) {
-				await this.loadMonthEvents(prevMonth);
-			}
+		// Threshold dinámico: 20% del viewport (ej: 126px en 630px)
+		const threshold = clientHeight * 0.2;
+		
+		// Cargar mes anterior si estamos cerca del inicio
+		if (distanceFromTop < threshold) {
+			console.log(`🔍 Cerca del inicio: ${Math.round(distanceFromTop)}px < ${Math.round(threshold)}px`);
+			await this.loadPreviousMonth();
 		}
 		
-		// Precarga hacia el futuro (abajo): usar la ÚLTIMA semana visible
-		if (distanceFromBottom < clientHeight) {
-			const bottomVisibleWeek = visibleWeeks[visibleWeeks.length - 1].week;
-			const bottomDate = bottomVisibleWeek.start;
-			
-			// Cargar el mes siguiente solo si no está cargado
-			const nextMonth = new Date(bottomDate);
-			nextMonth.setMonth(nextMonth.getMonth() + 1);
-			const nextMonthKey = `${nextMonth.getFullYear()}-${String(nextMonth.getMonth() + 1).padStart(2, '0')}`;
-			
-			if (!this._loadedMonths.has(nextMonthKey)) {
-				await this.loadMonthEvents(nextMonth);
-			}
+		// Cargar mes siguiente si estamos cerca del final
+		if (distanceFromBottom < threshold) {
+			console.log(`🔍 Cerca del final: ${Math.round(distanceFromBottom)}px < ${Math.round(threshold)}px`);
+			await this.loadNextMonth();
 		}
+	}
+	
+	async loadPreviousMonth() {
+		if (!this._firstLoadedMonth) {
+			console.log('⚠️ loadPreviousMonth: _firstLoadedMonth no definido');
+			return;
+		}
+		
+		// Calcular el mes anterior al primer mes cargado
+		const prevMonth = new Date(this._firstLoadedMonth);
+		prevMonth.setMonth(prevMonth.getMonth() - 1);
+		
+		const monthKey = `${prevMonth.getFullYear()}-${String(prevMonth.getMonth() + 1).padStart(2, '0')}`;
+		
+		// Si ya está cargado, no hacer nada
+		if (this._loadedMonths.has(monthKey)) {
+			console.log(`⏭️ loadPreviousMonth: ${monthKey} ya cargado`);
+			return;
+		}
+		
+		console.log(`⬆️ loadPreviousMonth: Iniciando carga de ${monthKey}`);
+		console.log(`   _firstLoadedMonth actual: ${AonDateUtils.format(this._firstLoadedMonth, 'YYYY-MM-DD')}`);
+		
+		// Guardar posición de scroll
+		const beforeHeight = this.scrollEl.scrollHeight;
+		const beforeScroll = this.scrollEl.scrollTop;
+		
+		// Cargar el mes (esto bloqueará automáticamente con startLoading)
+		await this.loadMonthEvents(prevMonth);
+		
+		// Actualizar el límite
+		this._firstLoadedMonth = new Date(prevMonth.getFullYear(), prevMonth.getMonth(), 1);
+		console.log(`   _firstLoadedMonth nuevo: ${AonDateUtils.format(this._firstLoadedMonth, 'YYYY-MM-DD')}`);
+		
+		// Ajustar scroll para mantener posición visual
+		requestAnimationFrame(() => {
+			const afterHeight = this.scrollEl.scrollHeight;
+			const heightDiff = afterHeight - beforeHeight;
+			this.scrollEl.scrollTop = beforeScroll + heightDiff;
+			console.log(`   Scroll ajustado: ${beforeScroll} + ${heightDiff} = ${this.scrollEl.scrollTop}`);
+		});
+	}
+	
+	async loadNextMonth() {
+		if (!this._lastLoadedMonth) return;
+		
+		// Calcular el mes siguiente al último mes cargado
+		const nextMonth = new Date(this._lastLoadedMonth);
+		nextMonth.setMonth(nextMonth.getMonth() + 1);
+		
+		const monthKey = `${nextMonth.getFullYear()}-${String(nextMonth.getMonth() + 1).padStart(2, '0')}`;
+		
+		// Si ya está cargado, no hacer nada
+		if (this._loadedMonths.has(monthKey)) {
+			return;
+		}
+		
+		console.log(`⬇️ Cargando siguiente: ${monthKey}`);
+		
+		// Cargar el mes (esto bloqueará automáticamente con startLoading)
+		await this.loadMonthEvents(nextMonth);
+		
+		// Actualizar el límite
+		this._lastLoadedMonth = new Date(nextMonth.getFullYear(), nextMonth.getMonth(), 1);
 	}
 
 	measureWeekHeight() {
@@ -681,20 +818,23 @@ export class AonAgendaAllDays extends AonElement {
 
 		// Calcular horas totales del mes
 		const monthHours = this.calculateMonthHours(centerWeek.start);
-		this.headerMonthHours.textContent = `H. Mes: ${monthHours}`;
+		this.headerMonthHours.textContent = `Mes: ${monthHours} h`;
 
 		// Actualizar rango: del día X al día Y
 		const firstDay = centerWeek.days[0].date;
 		const lastDay = centerWeek.days[6].date;
 
-		const firstDayNum = firstDay.getDate();
-		const lastDayNum = lastDay.getDate();
+		const firstDayNum = String(firstDay.getDate() + 1).padStart(2, '0');
+		const lastDayNum = String(lastDay.getDate() + 1).padStart(2, '0');
+		
+		const firstDayMonthNum = String(firstDay.getMonth() + 1).padStart(2, '0');
+		const lastDayMontNum = String(lastDay.getMonth() + 1).padStart(2, '0');
 
-		this.headerRange.textContent = `${firstDayNum}–${lastDayNum}`;
+		this.headerRange.textContent = `${firstDayNum}/${firstDayMonthNum} – ${lastDayNum}/${lastDayMontNum}`;
 		
 		// Calcular horas totales de la semana
 		const weekHours = this.calculateWeekHours(centerWeek);
-		this.headerWeekHours.textContent = `/ H. Semana: ${weekHours}`;
+		this.headerWeekHours.textContent = `Sem.: ${weekHours} h`;
 	}
 	
 	/* ---------------- CALCULATE HOURS ---------------- */
@@ -727,8 +867,8 @@ export class AonAgendaAllDays extends AonElement {
 	}
 
 	/* ---------------- PUBLIC API ---------------- */
-	goToToday() {
-		this.scrollToToday();
+	goToToday(smooth) {
+		this.scrollToToday(smooth);
 	}
 
 	goToDate(date) {
@@ -743,18 +883,27 @@ export class AonAgendaAllDays extends AonElement {
 		// Buscar el elemento
 		const weekData = this.visibleWeeks.get(offset);
 		if (weekData) {
-			weekData.element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			weekData.element.scrollIntoView({ behavior: 'auto', block: 'start' });
 		}
 	}
 	
 	/* ---------------- RELOAD DATA ---------------- */
 	async reload() {
+		// Resetear flag de carga inicial
+		this._initialLoadComplete = false;
+		
 		// Limpiar datos cargados
 		this._events.clear();
 		this._loadedMonths.clear();
 		
 		// Recargar eventos iniciales
 		await this.loadInitialEvents();
+		
+		// Marcar como completo nuevamente
+		setTimeout(() => {
+			this._initialLoadComplete = true;
+			console.log('Recarga completa - checkLoadMonthsOnScroll activo');
+		}, 1500); // Aumentado para consistencia
 	}
 	
 	startLoading() {

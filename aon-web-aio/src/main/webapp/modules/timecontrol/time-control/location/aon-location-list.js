@@ -1,13 +1,17 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { getLocation } from "../../../../services/service.js";
-import { ToolbarOptions, SIGNIN_VIEWS } from "../../signinEnums.js";
+import { getLocation, getTastHolders } from "../../../../services/service.js";
+import { SigninSidenav, SIGNIN_VIEWS } from "../../signinEnums.js";
 import { CONSTANT, MSG } from "../../../../environments/environments.js";
 import { AonMobileList } from "../../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../../components/aon-table.js";
 import { TIMECONTROL } from "../../../../services/app.js";
+import { IN_REASON } from "../../../../models/timecontrol/TimeControlReason.js";
+import { registry } from "chart.js";
 
 export class AonLocationList extends AonElement {
   TABLE_ID;
+  _taskHolders;
+  
   static get observedAttributes() {
     return [CONSTANT.FILTER];
   }
@@ -57,10 +61,16 @@ export class AonLocationList extends AonElement {
     this.appendChild(aonTable);
   }
 
-  build() {
+  async build() {
+	await this.getTaskHolders();
     this.paintView();
     this.getTable();
     this.buildToolbar();
+  }
+  
+  async getTaskHolders(){
+	const resp = await getTastHolders();
+	this._taskHolders = resp;
   }
 
   buildToolbar() {
@@ -87,8 +97,10 @@ export class AonLocationList extends AonElement {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
-      aonTable.addColumn(MSG.NAME, "string", "description", "70%");
-      aonTable.addColumn(MSG.RADIO, "number", "radio", "30%");
+      aonTable.addColumn(MSG.NAME, "string", "description", "30%");
+      aonTable.addColumn(MSG.RADIO, "number", "radio", "20%");
+      aonTable.addColumn(MSG.TYPE, "string", "typeValue", "20%");
+      aonTable.addColumn("Asociado a", "string", "registryName", "30%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
@@ -128,7 +140,16 @@ export class AonLocationList extends AonElement {
     let data = [];
     try {
       let resp = await getLocation(this.data);
-      resp.map(({ id, description, coordinates, radio }) => {
+      resp.map(({ id, description, coordinates, radio, type, registry }) => {
+		
+		let name = type === 0
+			? "Oficina" 
+			: (
+				registry && this._taskHolders 
+					? this._taskHolders.filter(th => th.id === registry)[0].name 
+					: ''
+			);
+		
         data.push({
           id,
           description,
@@ -136,6 +157,12 @@ export class AonLocationList extends AonElement {
           radio,
           latitude: coordinates.latitude,
           longitude: coordinates.longitude,
+          typeValue: type !== null && type !== undefined
+			  ? IN_REASON[type]?.name ?? ''
+			  : '',
+          registryName: name,
+          type,
+          registry
         });
       });
     } catch (e) {

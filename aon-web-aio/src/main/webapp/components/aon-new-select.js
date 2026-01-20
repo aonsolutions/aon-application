@@ -656,6 +656,21 @@ export class AonNewSelect extends AonNewInput {
       this.clear();
     }
   }
+  
+  setValueZero(value) {
+	  if (value !== null && value !== undefined) {
+	    const options = this.getOptions();
+	
+	    if (options?.length) {
+	      const option = options.find(opt => opt.value == value);
+	      if (option) {
+	        this.value = option.value;
+	      }
+	    }
+	  } else {
+	    this.clear();
+	  }
+	}
 
   setValueAlias(valueAlias) {
     this.valueAlias = valueAlias;

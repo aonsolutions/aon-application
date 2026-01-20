@@ -88,6 +88,7 @@ public class NOVERIFACTU {
 		if ( invoiceId == null) return;
 		if ( AonMathUtils.isZero(invoiceId)) return;
 		saveInvoiceCommunication(ctx, vc, invoiceBatch, invoiceId, InvoiceCommunicationStatus.PENDING);
+		InvoiceDAO.saveInvoiceExpDate(ctx, invoiceId, new Date());
 	}
 
 	// **************************************************************
@@ -143,7 +144,7 @@ public class NOVERIFACTU {
 		, Integer invoiceId
 		, InvoiceCommunicationStatus status) {
 		saveInvoiceInfo(ctx, vc.getDomainId(), invoiceId, status);
-		saveInvoiceBatchdetail(ctx, invoiceBatch, invoiceId, status);					
+		saveInvoiceBatchdetail(ctx, invoiceBatch, invoiceId, status);			
 	}
 	
 	static DataRequest saveRequest(AONContext ctx, Domain domain, byte[] request) {
