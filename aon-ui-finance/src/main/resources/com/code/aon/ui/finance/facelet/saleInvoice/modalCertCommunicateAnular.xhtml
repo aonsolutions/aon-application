@@ -40,25 +40,28 @@
 										<aon:outputText value="(Este número no se recicla ni desaparece)" style="display:block;" />
 									</aon:div>
 									
-									<aon:panelGrid id="menuGrid" columns="2" dir="true"
-										styleClass="aon-width-all aon-margin-top"
-										columnClasses="aon-panelGrid-odd aon-width-half aon-text-right aon-padding-right, aon-panelGrid-even aon-width-half">
-		
-										<aon:outputLabel for="keystore" value="Seleccione certificado" />
-										<aon:selectOneMenu id="keystore" value="#{saleInvoice.certificate}" >
-											<f:selectItems value="#{saleInvoice.digitalCertificates}" />
-											<a4j:support event="onchange" reRender="showCertVerifactuAnularWindow" ajaxSingle="true" />
-										</aon:selectOneMenu>
-										
-										<aon:outputLabel rendered="#{!saleInvoice.pass}" for="password" value="#{bundle.aon_login_passwd}" />
-										<aon:inputSecret rendered="#{!saleInvoice.pass}" id="password" value="#{saleInvoice.password}" />
-									</aon:panelGrid>
+									<aon:if test="#{saleInvoice.verifactu}">
+										<aon:panelGrid id="menuGrid" columns="2" dir="true"
+											styleClass="aon-width-all aon-margin-top"
+											columnClasses="aon-panelGrid-odd aon-width-half aon-text-right aon-padding-right, aon-panelGrid-even aon-width-half">
+			
+											<aon:outputLabel for="keystore" value="Seleccione certificado" />
+											<aon:selectOneMenu id="keystore" value="#{saleInvoice.certificate}" >
+												<f:selectItems value="#{saleInvoice.digitalCertificates}" />
+												<a4j:support event="onchange" reRender="showCertVerifactuAnularWindow" ajaxSingle="true" />
+											</aon:selectOneMenu>
+											
+											<aon:outputLabel rendered="#{!saleInvoice.pass}" for="password" value="#{bundle.aon_login_passwd}" />
+											<aon:inputSecret rendered="#{!saleInvoice.pass}" id="password" value="#{saleInvoice.password}" />
+										</aon:panelGrid>
+									</aon:if>
 									
 									<aon:div style="text-align: center; margin-top: 10px;">
 										<aon:commandButton id="certVerifactuAnularAccept"	
-											value="Anular Factura Verifactu"
-											action="#{saleInvoice.onAnularVerifactu}"
+											value="Anular Factura"
+											action="#{saleInvoice.onAnular}"
 											styleClass="aon-icon-commandButton aon-icon-send-cancel"
+											style="margin-top: 20px;"
 											onclick="Richfaces.showModalPanel('waitProccess')" 
 											oncomplete="Richfaces.hideModalPanel('waitProccess')">
 												<rich:componentControl for="fiscalCertVerifactuAnularModalPanel"

@@ -39,29 +39,31 @@
 										<aon:outputText value="Una vez emitida, la factura se registrará y enviará automaticamente." />
 										<aon:outputText value="No se podrá modificar ni eliminar." style="display:block;" />
 									</aon:div>
-												
-									<aon:panelGrid id="menuGridVerifactu" columns="2" dir="true"
-										styleClass="aon-width-all aon-margin-top"
-										columnClasses="aon-panelGrid-odd aon-width-half aon-text-right aon-padding-right, aon-panelGrid-even aon-width-half">
-
 									
-										<aon:outputLabel for="keystoreVerifactu" value="Seleccione certificado" />
-										<aon:selectOneMenu id="keystoreVerifactu" value="#{saleInvoice.certificate}" >
-											<f:selectItems value="#{saleInvoice.digitalCertificates}" />
-											<a4j:support event="onchange" reRender="showCertVerifactuWindow" ajaxSingle="true" />
-										</aon:selectOneMenu>
-									
-										<aon:outputLabel rendered="#{!saleInvoice.pass}" for="password" value="#{bundle.aon_login_passwd}"/>
-										<aon:inputSecret rendered="#{!saleInvoice.pass}" id="password" value="#{saleInvoice.password}" />
-									</aon:panelGrid>
+									<aon:if test="#{saleInvoice.verifactu}">
+										<aon:panelGrid id="menuGridVerifactu" columns="2" dir="true"
+											styleClass="aon-width-all aon-margin-top"
+											columnClasses="aon-panelGrid-odd aon-width-half aon-text-right aon-padding-right, aon-panelGrid-even aon-width-half">
+	
+										
+											<aon:outputLabel for="keystoreVerifactu" value="Seleccione certificado" />
+											<aon:selectOneMenu id="keystoreVerifactu" value="#{saleInvoice.certificate}" >
+												<f:selectItems value="#{saleInvoice.digitalCertificates}" />
+												<a4j:support event="onchange" reRender="showCertVerifactuWindow" ajaxSingle="true" />
+											</aon:selectOneMenu>
+										
+											<aon:outputLabel rendered="#{!saleInvoice.pass}" for="password" value="#{bundle.aon_login_passwd}"/>
+											<aon:inputSecret rendered="#{!saleInvoice.pass}" id="password" value="#{saleInvoice.password}" />
+										</aon:panelGrid>
+									</aon:if>			
 										
 									<aon:div style="text-align: center; margin-top: 10px;">
 
 										<aon:commandButton id="certVerifactuAccept"	
 											rendered="#{!saleInvoice.invoiceCommunicationAccepted}"
-											value="Emitir / Enviar VeriFactu"
+											value="#{saleInvoice.sendLabel}"
 											action="#{saleInvoice.issueInvoice}"
-											styleClass="aon-icon-commandButton aon-icon-send"
+											styleClass="aon-icon-commandButton #{saleInvoice.sendIcon}"
 											style="margin-top: 20px;"
 											onclick="Richfaces.showModalPanel('waitProccess')" 
 											oncomplete="Richfaces.hideModalPanel('waitProccess')">

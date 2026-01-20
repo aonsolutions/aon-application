@@ -876,22 +876,16 @@ public class SaleInvoiceController extends InvoiceController {
 		initializeModel();
 		resetTo();
 	}
-	public String onCommunicateCancelInvoice() {
-		if (isNoVerifactuInvoice() || isSifInvoice()) {
-			return onAnular();		
-		} else {
-			throw new AbortProcessingException("La factura no se puede anular");
-		}
-	}
-	public String onAnularVerifactu() {
-		if (isVerifactuInvoice() ) {
-			return onAnular();
+	
+	public String onAnular() {
+		if (isVerifactuInvoice() || isNoVerifactuInvoice() || isSifInvoice()) {
+			return onDoAnular();
 		} else {
 			throw new AbortProcessingException("La factura no se puede anular");
 		}
 	}
 	
-	private String onAnular() {
+	private String onDoAnular() {
 		Invoice inv = (Invoice) getTo();
 		String domainName = AonUtil.getDomainName();
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
