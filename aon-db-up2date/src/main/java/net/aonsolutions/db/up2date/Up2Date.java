@@ -19,11 +19,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.marketing.AddColumnMarketingActionProduct;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.FlexibleUpdate;
-import net.aonsolutions.db.up2date.product.ProductBookingCreation;
-import net.aonsolutions.db.up2date.timecontrol.LocationRegistryAlter;
+import net.aonsolutions.db.up2date.payroll.FlexibleConceptsFix;
+import net.aonsolutions.db.up2date.payroll.FlexibleInsurance;
 import net.aonsolutions.db.up2date.timecontrol.TimecontrolLocationAlter;
 
 public class Up2Date {
@@ -571,8 +569,10 @@ public class Up2Date {
 			// Solidarity2026Insert.SOLIDARITY2026INSERT,
 			// Holidays2026Insert.HOLIDAYS2026INSERT,
 			// FlexibleInsert.FLEXIBLEINSERT,
-			FlexibleUpdate.FLEXIBLEUPDATE,
-			//AlterFsMod1902025.ALTER_FS_MODEL_190_2025, 
+			// FlexibleUpdate.FLEXIBLEUPDATE,
+			//AlterFsMod1902025.ALTER_FS_MODEL_190_2025,
+			FlexibleConceptsFix.FLEXIBLECONCEPTSFIX,
+			FlexibleInsurance.FLEXIBLEINSURANCE,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
@@ -591,9 +591,10 @@ public class Up2Date {
 			// DataResponseSourceResponseDateIndex.DATA_RESPONSE_SOURCE_RESPONSE_DATE_INDEX,	
 	
 			// ----------------------- ProductBooking alters
-			ProductBookingCreation.PRODUCT_BOOKING_CREATION,
-			AddColumnMarketingActionProduct.ADD_COLUMN_MARKETING_ACTION_PRODUCT,
-			LocationRegistryAlter.LOCATION_REGISTRY_ALTER,
+
+			//ProductBookingCreation.PRODUCT_BOOKING_CREATION,
+			//AddColumnMarketingActionProduct.ADD_COLUMN_MARKETING_ACTION_PRODUCT,
+			//LocationRegistryAlter.LOCATION_REGISTRY_ALTER,
 			TimecontrolLocationAlter.TIMECONTROL_LOCATION_ALTER
 	
 	};

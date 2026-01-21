@@ -88,9 +88,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		calculate(Calendar.FEBRUARY, 2026);
 		assertDisplay("eventsCheck", true);
-		getElementById("eventsCheck-input").click();
+		check("eventsCheck-input");
 		HtmlTable eventsTable = getElementById("eventsTable");
 		assertEquals(2, eventsTable.getRowCount());
+		uncheck("eventsCheck-input");
 	}
 
 
@@ -1182,9 +1183,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertDisplay("eventsCheck", false);
 		assertNotElement("editor-dias_menstruacion_21");
 		assertNotElement("editor-dias_menstruacion_1_20");
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertText("totalEnterpriseLabel", cgcBase * 31.90 / 100.00 - ( cgcBase / 30.00 * 7 * 0.75 ) );
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 
 
 		draft("SEMANA 39, EMBARAZO");
@@ -1327,12 +1328,12 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		draft("ENTRENADORES BONIFICACION, LEY 7/2024");
 		calculate(Calendar.JUNE, 2024);
-		click("costsCheck-input");
+		check("costsCheck-input");
 		double totalEnterpriseJune = getText("totalEnterpriseLabel");
 		double commonContingencyCost = getText("common_contingency_cost");
 		calculate(Calendar.JULY, 2024);
 		assertText("totalEnterpriseLabel", totalEnterpriseJune - commonContingencyCost);
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 	}
 
 	@Test
@@ -2822,16 +2823,16 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		draft("INTERINIDAD, TIEMPO COMPLETO");
 		
 		assertValue("textBox_PORCENTAJE_DESMPL", "1,55 %");
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertValue("textBox_PORCENTAJE_DESMPL_E", "5,50 %");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		
 		draft("INTERINIDAD, TIEMPO PARCIAL");
 		
 		assertValue("textBox_PORCENTAJE_DESMPL", "1,55 %");
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertValue("textBox_PORCENTAJE_DESMPL_E", "5,50 %");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 	}
 
 	@Test
@@ -2846,16 +2847,16 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		draft("PRACTICAS, TIEMPO COMPLETO");
 		
 		assertValue("textBox_PORCENTAJE_DESMPL", "1,55 %");
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertValue("textBox_PORCENTAJE_DESMPL_E", "5,50 %");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		
 		draft("PRACTICAS, TIEMPO PARCIAL");
 		
 		assertValue("textBox_PORCENTAJE_DESMPL", "1,55 %");
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertValue("textBox_PORCENTAJE_DESMPL_E", "5,50 %");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 	}
 	
 	@Test
@@ -2931,31 +2932,31 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.APRIL, 2025);
 		assertValue("cgcBaseLabel", 1381.20 * 0.5 + 200.00 * 0.5);
 		assertDisplay("eventsCheck", false);
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertElement("red_ppe_ePercentLabel");
 		assertElement("editor-reduccion_aportacion_empresa_ppe");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		
 		draft("ENFERMEDAD PROFESIONAL, PPE");
 		
 		calculate(Calendar.MAY, 2025);
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertText("other_cost", 100.00);
 		calculate(Calendar.JUNE, 2025);
 		assertText("other_cost", 100.00);
 		calculate(Calendar.JULY, 2025);
 		assertText("other_cost", 100.00);
 		//assertValue("description-box-3", "APORTACIÓN EMPRESARIAL AL PLAN DE PENSIONES DE EMPLEO");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		
 		draft("ENFERMEDAD COMÚN, PPE");
 		
 		calculate(Calendar.JUNE, 2025);
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertValue("quote-label-11", 66.67);
 		//REDUCCIÓN APORTACIÓN EMPRESARIAL AL PLAN DE PENSIONES DE EMPLEO
 		Assert.assertNotNull(getElementByXpath("//*[text()=\"-15,73\"]"));
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 	}
 
 	@Test
@@ -3107,33 +3108,33 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JANUARY,2023);
 		double cgpBase = getValue("cgpBaseLabel");
 		assertText("unemployment", cgpBase*1.60/100.00);
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertText("unemployment_cost", cgpBase*6.70/100.00);
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		
 		calculate(Calendar.JANUARY,2024);
 		double cgcBase = getValue("cgcBaseLabel");
 		cgpBase = getValue("cgpBaseLabel");
 		assertText("mei", cgcBase*0.12/100.00);
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertText("mei_cost", cgpBase*0.58/100.00);
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		
 		calculate(Calendar.JANUARY,2025);
 		cgcBase = getValue("cgcBaseLabel");
 		cgpBase = getValue("cgpBaseLabel");
 		assertText("mei", cgcBase*0.13/100.00);
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertText("mei_cost", cgcBase*0.67/100.00);
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		
 		calculate(Calendar.JANUARY,2026);
 		cgcBase = getValue("cgcBaseLabel");
 		cgpBase = getValue("cgpBaseLabel");
 		assertText("mei", cgcBase*0.15/100.00);
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertText("mei_cost", cgcBase*0.75/100.00);
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 	}
 
 	@Test
@@ -3151,11 +3152,11 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertText("solidaridad_iPercentLabel", "0,19 %");
 		assertText("solidaridad_iiPercentLabel", "0,21 %");
 		assertText("solidaridad_iiiPercentLabel", "0,24 %");
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertText("solidaridad_i_ePercentLabel", "0,96 %");
 		assertText("solidaridad_ii_ePercentLabel", "1,04 %");
 		assertText("solidaridad_iii_ePercentLabel", "1,22 %");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 	}
 
 	@Test
@@ -3232,11 +3233,12 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		double cgcBase = getValue("cgcBaseLabel");
 		double cgpBase = getValue("cgpBaseLabel");
 		assertText("common_contingency", cgcBase*0.25/100.00);
-		click("costsCheck-input");
+		( ( HtmlCheckBoxInput ) getElementById("costsCheck-input") ).isChecked();
+		check("costsCheck-input");
 		assertText("common_contingency_cost", cgcBase*1.30/100.00);
 		assertText("it_cost", cgpBase*0.80/100.00);
 		assertText("ims_cost", cgpBase*0.70/100.00);
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		
 		draft("JUBILACION, PARCIAL");
 		calculate(Calendar.JANUARY,2025);
@@ -3255,21 +3257,21 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		draft("INDEFINIDO FIJO, DISCONTINO");
 		calculate(Calendar.JANUARY,2025);
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertNotElement("cgc_e_tempPercentLabel");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		
 		draft("CORTA DURACIÓN, ART. 28");
 		calculate(Calendar.JANUARY,2025);
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertText("cgc_e_tempPercentLabel", "3,26 %");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		
 		draft("INTERINIDAD, PARCIAL");
 		calculate(Calendar.SEPTEMBER,2025);
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertNotElement("cgc_e_tempPercentLabel");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		
 		
 	}

@@ -9,6 +9,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -451,6 +454,7 @@ public enum ContextVariable implements IResourceable {
 	public static final String SCOPE = "AMBITO";
 	public static final String ISDEF = "DEFINIDA";
 	public static final String ISREAD = "UTILIZADA";
+	public static final String CHECK_DEF = "CHECK_DEF";
 	public static final String CHECK_VAR = "CHECK_VAR";
 	public static final String REDEFINE = "REDEFINE";
 	public static final String PRORATION = "PRORRATEAR";
@@ -460,9 +464,15 @@ public enum ContextVariable implements IResourceable {
 	public static final String INFO = "INFO";
 	public static final String NOTE = "NOTA";
 	public static final String CAUTION = "ADVERTENCIA";
+
+	public static final String FLEXIBLE = "FLEXIBLE";
+	public static final String FLEXIBLE_FOOD = "FLEXIBLE_COMIDA";
+	public static final String FLEXIBLE_DAYCARE = "FLEXIBLE_GUARDERIA";
+	public static final String FLEXIBLE_INSURANCE = "FLEXIBLE_SEGURO";
+	public static final String FLEXIBLE_TRAINING = "FLEXIBLE_FORMACION";
+	public static final String FLEXIBLE_TRANSPORT = "FLEXIBLE_TRANSPORTE";
 	
 	public static final String PPE = "PPE";
-	public static final String FLEXIBLE = "FLEXIBLE";
 	public static final String GEROA = "GEROA";
 	public static final String OLDD = "ANTIGUEDAD";
 	public static final String PREST_IT = "PREST_IT";
@@ -558,6 +568,10 @@ public enum ContextVariable implements IResourceable {
 
 	public static ContextVariable [] FREE_BASES  =
 	new ContextVariable [] { UNPAID_BASE, DIRECT_BASE, MATERNITY_BASE, LACK_BASE} ;
+
+	public static final Set<String> FLEXIBLES = Stream
+			.of(FLEXIBLE, FLEXIBLE_FOOD, FLEXIBLE_DAYCARE, FLEXIBLE_TRAINING, FLEXIBLE_INSURANCE, FLEXIBLE_TRANSPORT)
+			.collect(Collectors.toSet());
 
 	private final String name;
 	private VariableType type;

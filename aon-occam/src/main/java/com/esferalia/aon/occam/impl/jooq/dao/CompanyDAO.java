@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.api.model.type.StreetType;
@@ -141,7 +142,8 @@ public class CompanyDAO {
 				.setCnaeCode(getValue(r, CNAE2009.CODE))
 				.setCnaeDescription(getValue(r, CNAE2009.TITLE) )
 				.setVatRegime(AonEnumUtils.enumValue(VATRegime.class, r.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME)))
-				.setVatExemptionCause(VATExemptionCause.safeValueOf(getValue(r, ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE)));
+				.setVatExemptionCause(VATExemptionCause.safeValueOf(getValue(r, ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE)))
+				.setIrpfRegime(AonEnumUtils.enumValue(IRPFRegime.class, r.getValue(ENTERPRISE_ACTIVITY.RETENTION_REGIME)));
 		}
 	}
 	
