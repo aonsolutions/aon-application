@@ -1,12 +1,11 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { getLocation, getTastHolders } from "../../../../services/service.js";
+import { getLocation, getTastHolders, syncTimeControl } from "../../../../services/service.js";
 import { SigninSidenav, SIGNIN_VIEWS } from "../../signinEnums.js";
 import { CONSTANT, MSG } from "../../../../environments/environments.js";
 import { AonMobileList } from "../../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../../components/aon-table.js";
-import { TIMECONTROL } from "../../../../services/app.js";
 import { IN_REASON } from "../../../../models/timecontrol/TimeControlReason.js";
-import { registry } from "chart.js";
+import * as LS from "../../../../services/localStorageService.js";
 
 
 export class AonLocationList extends AonElement {
@@ -79,8 +78,10 @@ export class AonLocationList extends AonElement {
 
     if (this.isMobile()) 
       this.applicationEl.addFloatOption(SigninSidenav.ADD,() => this.add());
-    else 
+    else {
       this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () => this.add());
+      this.applicationEl.addToolbarOption2(SigninSidenav.LOCATION_SYNC, () => this.syncLocationTimeControl());
+    }
   }
 
   async getTable() {
@@ -144,7 +145,7 @@ export class AonLocationList extends AonElement {
       resp.map(({ id, description, coordinates, radio, type, registry }) => {
 		
 		let name = type === 0
-			? "Oficina" 
+			? LS.getCompany()?.name || "Oficina" 
 			: (
 				registry && this._taskHolders 
 					? this._taskHolders.filter(th => th.id === registry)[0].name 
@@ -178,5 +179,17 @@ export class AonLocationList extends AonElement {
     if (!data) newData = {add:true};
     this.applicationParentEl.showView(SIGNIN_VIEWS.AON_LOCATION_ADD, newData);
   }
+  
+  async syncLocationTimeControl() {
+	this.applicationEl.startLoader();
+    try{
+		await syncTimeControl();
+		this.showToast({ message: "Control horario sincronizado", type: CONSTANT.SUCCESS });
+	} catch (e) {
+		this.showToast(error);
+	}
+    this.applicationEl.stopLoader();
+  }
+  
 }
 window.customElements.define("aon-location-list", AonLocationList);

@@ -52,6 +52,9 @@ public class LocationServlet extends AonApiHttpServlet{
 			case "/":
 				response(req, resp, saveLocation(api));
 				break;
+			case "/syncTimeControl":
+				response(req, resp, syncTimeControl(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -109,6 +112,11 @@ public class LocationServlet extends AonApiHttpServlet{
 
 		location = AON_SOLUTIONS.saveLocation(api.getDomain(), "", location);
 		return location.toJSON();
+	}
+	
+	private JSONObject syncTimeControl(AonApiData api) {
+		AON_SOLUTIONS.syncLocationTimeControl(api.getDomain(), api.getUser());
+		return new JSONObject();
 	}
 
 	private JSONObject deleteLocation(AonApiData api) {
