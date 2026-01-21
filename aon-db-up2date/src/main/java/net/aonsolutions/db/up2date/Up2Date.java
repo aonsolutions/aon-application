@@ -20,8 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.FlexibleConceptsFix;
-import net.aonsolutions.db.up2date.payroll.FlexibleInsurance;
+import net.aonsolutions.db.up2date.payroll.FlexibleInsuranceFix;
 
 public class Up2Date {
 
@@ -570,8 +569,9 @@ public class Up2Date {
 			// FlexibleInsert.FLEXIBLEINSERT,
 			// FlexibleUpdate.FLEXIBLEUPDATE,
 			//AlterFsMod1902025.ALTER_FS_MODEL_190_2025,
-			FlexibleConceptsFix.FLEXIBLECONCEPTSFIX,
-			FlexibleInsurance.FLEXIBLEINSURANCE,
+			//FlexibleConceptsFix.FLEXIBLECONCEPTSFIX,
+			//FlexibleInsurance.FLEXIBLEINSURANCE,
+			FlexibleInsuranceFix.FLEXIBLEINSURANCEFIX,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
