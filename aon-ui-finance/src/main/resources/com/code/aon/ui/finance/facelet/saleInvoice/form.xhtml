@@ -399,7 +399,7 @@
 							
 							<aon:div  style="padding: 0 5px; border-bottom: solid #3a85c3 0.5px; height: 30px; display: flex; align-items: center; gap: 5px;">
 							
-								<!-- *** [EMITIR FACTURA VERIFACTU / NO VERIFACTU / SIF] *** -->
+								<!-- *** [EMITIR FACTURA VERIFACTU / NO VERIFACTU / SIF / SII] *** -->
 								<aon:if test="#{saleInvoice.issueable}">
 								    <!-- ** Verifactu / No Verifactu / SIF **  -->
 									<aon:if test="#{saleInvoice.verifactu or saleInvoice.noVerifactu or saleInvoice.sif or saleInvoice.sii}">
@@ -410,8 +410,7 @@
 											styleClass="aon-icon-commandButton #{saleInvoice.sendIcon}"
 											onclick="#{saveOnClick}" 
 											reRender="showCertVerifactuWindow, verifactuBlock">
-												<f:setPropertyActionListener target="#{saleInvoice.showCertVerifactuWindow}"
-													value="#{true}" />
+												<f:setPropertyActionListener target="#{saleInvoice.showCertVerifactuWindow}" value="#{true}" />
 										</aon:commandButton>
 									</aon:if>
 								</aon:if>
