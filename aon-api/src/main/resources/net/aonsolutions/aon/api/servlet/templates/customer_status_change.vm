@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+	    <meta charset="UTF-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <title>Cambio de estado del cliente</title>
+	</head>
+	<body style="margin: 0; padding: 0; font-family: Arial, sans-serif;">
+	    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+		    <!-- Header con logo -->
+		    <tr>
+		        <td style="padding: 30px 20px; text-align: center;">
+		            <img src="$logo" alt="$parentName" style="max-width: 200px; height: auto; border-radius: 10px; display: block; margin: 0 auto;">
+		        </td>
+		    </tr>
+		    
+		    <!-- Contenido principal -->
+		    <tr>
+		        <td style="padding: 30px; color: #333333; line-height: 1.6; font-size: 16px;">
+		            
+		            <p style="margin: 0 0 25px 0; font-size: 18px; font-weight: bold;">
+		                Se ha producido un cambio de estado en uno de tus clientes asignados.
+		            </p>
+		            
+		            <p style="margin: 0 0 20px 0; font-size: 16px;">
+		                El cliente <strong style="color: #007bff;">$customerName</strong> ha actualizado su estado en el sistema.
+		            </p>
+		            
+		            <table style="width: 100%; margin: 20px 0; border-collapse: collapse;">
+		                <tr>
+		                    <td style="padding: 10px; background-color: #f8f9fa; font-weight: bold; width: 40%;">
+		                        Estado anterior
+		                    </td>
+		                    <td style="padding: 10px; background-color: #f8f9fa;">
+		                        $oldCustomerStatus
+		                    </td>
+		                </tr>
+		                <tr>
+		                    <td style="padding: 10px; background-color: #ffffff; font-weight: bold;">
+		                        Nuevo estado
+		                    </td>
+		                    <td style="padding: 10px; background-color: #ffffff;">
+		                        $newCustomerStatus
+		                        <br>
+		                        Motivo: $reasonNewStatus
+		                        <br>
+		                        $expirationDateStatus
+		                    </td>
+		                </tr>
+		            </table>
+		            
+		            <p style="margin: 25px 0 0 0; font-size: 16px;">
+		                Te recomendamos revisar la situación del cliente y realizar el seguimiento oportuno según el nuevo estado.
+		            </p>
+		            
+		            <p style="margin: 30px 0 0 0;">
+		                Un saludo,<br>
+		                <strong>$parentName</strong>
+		            </p>
+		        </td>
+		    </tr>
+		    
+		    <!-- Footer -->
+		    <tr>
+		        <td style="padding: 20px; text-align: center; color: #666666; font-size: 12px;">
+		            <p style="margin: 0;">Este es un correo automático, por favor no respondas a este mensaje.</p>
+		        </td>
+		    </tr>
+		</table>
+	</body>
+</html>
+
+
