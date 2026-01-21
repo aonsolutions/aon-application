@@ -433,7 +433,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 				.setCoordinates(coordinates)
 				.setDate(date)
 				.setLocation(lc)
-				.setLocationDesLocation(null != lc.getId() ? lc.getDescription() : null)
+				.setLocationDescription(null != lc.getId() ? lc.getDescription() : null)
 				.setComments(params.optString(IJsonNames.COMMENTS))
 				.setReason(AonStringUtils.isBlank(params.optString("cause")) || AonStringUtils.equalsIgnoreCase(params.optString("cause"), "DEFAULT") ? null : TimeControlReason.safeValueOf(Byte.parseByte(params.optString("cause"))))
 				.setStatus(TimeControlStatus.safeValueOf(params.optString(IJsonNames.STATUS)));
