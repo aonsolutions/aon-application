@@ -43,11 +43,19 @@ public abstract class AbstractVerifactuTest {
 	protected static final Environment NO_VERIFACTU_ENV = new NoVerifactuEnvironment();
 	protected static final Environment SIF_ENV = new SifEnvironment();
 	
+	protected static final Environment TBAI_ALAVA_ENV = new TBAIAlavaEnvironment();
+	protected static final Environment TBAI_GIPUZKOA_ENV = new TBAIGipuzkoaEnvironment();
+	protected static final Environment LROE_ENV = new LROEEnvironment();
+	
+	
 	private static final Environment[] ENVIRONMENTS = new Environment[] {
 		VERIFACTU_ENV,
 		VERIFACTU_CANARIAS_ENV,
 		NO_VERIFACTU_ENV,
-		SIF_ENV
+		SIF_ENV,
+		TBAI_ALAVA_ENV,
+		TBAI_GIPUZKOA_ENV,
+		LROE_ENV
 	}; 
 	
 	private Date testDate; 

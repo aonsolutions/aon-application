@@ -3,16 +3,23 @@ package net.aonsolutions.aon.verifactu;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import java.util.List;
 
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.Certificate.CertificateOwner;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
@@ -121,4 +128,19 @@ abstract class VerifactuEnvironmentAbs implements Environment {
 			.setDomain(domainId)
 			.setUser(getUser());
 	}
+	
+	protected Certificate insertAONCertificate(AONContext ctx) {
+		Integer userId = null;
+		Certificate certificate = AonSecret.getSigCert();
+		String pass = certificate.getPassword();
+		certificate.setTags(Arrays.asList(CertificateType.values()));
+		certificate.setDomain(ctx.getDomainId());
+		certificate.setDescription("certificado");
+		certificate.setOwner(CertificateOwner.ENTERPRISE);
+		certificate.setConfidential(false);
+		certificate.setPassword(pass);
+		CertificateDAO.save(ctx, ctx.getDomainId(), userId, certificate);
+		return certificate;
+	}
+	
 }
