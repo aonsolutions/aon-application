@@ -673,7 +673,7 @@ public class SaleInvoiceController extends InvoiceController {
 				String domainName = AonUtil.getDomainName();
 				String login = UserUtils.getInstance().getLoggedUser().getLogin();
 				com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
-				tbaiValidation(invoice);
+				communicationValidation(invoice);
 				
 				Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
 				Occam occam = new Occam()
@@ -686,6 +686,7 @@ public class SaleInvoiceController extends InvoiceController {
 					return;
 				}
 
+				checkCertificate();
 				if(invoice.getNumber() < 1) {
 					Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
 					Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
