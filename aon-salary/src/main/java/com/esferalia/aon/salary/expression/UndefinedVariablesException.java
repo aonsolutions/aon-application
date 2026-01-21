@@ -1,7 +1,8 @@
 package com.esferalia.aon.salary.expression;
 
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.Map;
 
 import com.code.aon.AonVersion;
 
@@ -12,16 +13,27 @@ public class UndefinedVariablesException extends ExpressionException {
 	private String expression;
 	private String variableNames [];
 	
+	private Map<String, ITimedVariable<?>> context ;
+	
 
 	public UndefinedVariablesException(String ...variableNames) {
-		this.variableNames = variableNames;
+		this(Collections.emptyMap(), variableNames);
 	}
 
 	public UndefinedVariablesException(String expression, String [] variableNames) {
-		this(variableNames);
-		this.expression = expression;
+		this(Collections.emptyMap(), expression,variableNames);
 	}
 
+	public UndefinedVariablesException(Map<String, ITimedVariable<?>> context, String ...variableNames) {
+		this.context = context;
+		this.variableNames = variableNames;
+	}
+
+	public UndefinedVariablesException(Map<String, ITimedVariable<?>> context,String expression, String [] variableNames) {
+		this(context,variableNames);
+		this.expression = expression;
+	}
+	
 	public String getExpression() {
 		return expression;
 	}
@@ -35,6 +47,10 @@ public class UndefinedVariablesException extends ExpressionException {
 		this.expression = expression;
 	}
 	 
+	public Map<String, ITimedVariable<?>> getContext() {
+		return context;
+	}
+
 	
 	public boolean hasVariableName(String var) {
 		if (var == null)
