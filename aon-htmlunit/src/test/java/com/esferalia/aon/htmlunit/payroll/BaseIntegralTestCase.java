@@ -32,6 +32,7 @@ import org.htmlunit.WebClient;
 import org.htmlunit.html.DomElement;
 import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlButton;
+import org.htmlunit.html.HtmlCheckBoxInput;
 import org.htmlunit.html.HtmlDivision;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlImage;
@@ -645,6 +646,26 @@ public abstract class BaseIntegralTestCase {
 		LOGGER.warning("Cick on: " + id);
 	}
 	
+	protected static void check(String id) throws IndexOutOfBoundsException, IOException, InterruptedException {
+		HtmlCheckBoxInput checkBoxInput = getElementById(id);
+		if ( checkBoxInput.isChecked() ) {
+			LOGGER.warning("Checkbox '" + id + "' is already checked");
+		} else {
+			checkBoxInput.click();
+			LOGGER.warning("Check on: " + id);
+		}
+	}
+	
+	static void uncheck(String id) throws IndexOutOfBoundsException, IOException, InterruptedException {
+		HtmlCheckBoxInput checkBoxInput = getElementById(id);
+		if ( checkBoxInput.isChecked() ) {
+			checkBoxInput.click();
+			LOGGER.warning("Uncheck on: " + id);
+		} else {
+			LOGGER.warning("Checkbox '" + id + "' is already unchecked");
+		}
+	}
+
 	protected static void select(String id) throws IndexOutOfBoundsException, IOException, InterruptedException {
 		htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id ).click();
 		LOGGER.warning("Select ["  + id + "]: "+ htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id + "-content").getTextContent());

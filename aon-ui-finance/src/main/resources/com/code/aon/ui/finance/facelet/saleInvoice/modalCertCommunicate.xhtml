@@ -15,7 +15,7 @@
 				showWhenRendered="#{saleInvoice.showCertVerifactuWindow}" >
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="Emitir Factura Verifactu" />
+						<aon:outputText value="Emitir factura" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -34,13 +34,37 @@
 					<aon:div styleClass="aon-popupWindow-content">
 						<aon:div style="width:100%">
 							<aon:div styleClass="aon-popupWindow-content-internal">
-								<aon:div style="width:99%">
-									<aon:div styleClass="aon-toolbar">
+								<aon:div style="width:90%; margin-left: auto; margin-right: auto;">
+									<aon:div style="margin-top: 10px; width:90%; margin-left: auto; margin-right: auto; border: solid gray 1px; padding: 10px; font-weight: bold; background-color: LightBlue; text-align: center;">
+										<aon:outputText value="Una vez emitida, la factura se registrará y enviará automaticamente." />
+										<aon:outputText value="No se podrá modificar ni eliminar." style="display:block;" />
+									</aon:div>
+									
+									<aon:if test="#{saleInvoice.verifactu}">
+										<aon:panelGrid id="menuGridVerifactu" columns="2" dir="true"
+											styleClass="aon-width-all aon-margin-top"
+											columnClasses="aon-panelGrid-odd aon-width-half aon-text-right aon-padding-right, aon-panelGrid-even aon-width-half">
+	
+										
+											<aon:outputLabel for="keystoreVerifactu" value="Seleccione certificado" />
+											<aon:selectOneMenu id="keystoreVerifactu" value="#{saleInvoice.certificate}" >
+												<f:selectItems value="#{saleInvoice.digitalCertificates}" />
+												<a4j:support event="onchange" reRender="showCertVerifactuWindow" ajaxSingle="true" />
+											</aon:selectOneMenu>
+										
+											<aon:outputLabel rendered="#{!saleInvoice.pass}" for="password" value="#{bundle.aon_login_passwd}"/>
+											<aon:inputSecret rendered="#{!saleInvoice.pass}" id="password" value="#{saleInvoice.password}" />
+										</aon:panelGrid>
+									</aon:if>			
+										
+									<aon:div style="text-align: center; margin-top: 10px;">
+
 										<aon:commandButton id="certVerifactuAccept"	
 											rendered="#{!saleInvoice.invoiceCommunicationAccepted}"
-											value="Enviar"
+											value="#{saleInvoice.sendLabel}"
 											action="#{saleInvoice.issueInvoice}"
-											styleClass="aon-finding-toolbar-item aon-icon-check-black"
+											styleClass="aon-icon-commandButton #{saleInvoice.sendIcon}"
+											style="margin-top: 20px;"
 											onclick="Richfaces.showModalPanel('waitProccess')" 
 											oncomplete="Richfaces.hideModalPanel('waitProccess')">
 												<rich:componentControl for="fiscalCertVerifactuModalPanel"
@@ -49,19 +73,10 @@
 													target="#{saleInvoice.showCertVerifactuWindow}"
 													value="#{false}" />
 										</aon:commandButton>
+
 									</aon:div>
-									
-									<aon:panelGrid id="menuGridVerifactu" columns="2" dir="true">
-		
-										<aon:outputLabel for="keystoreVerifactu" value="Certificado" />
-										<aon:selectOneMenu id="keystoreVerifactu" value="#{saleInvoice.certificate}" >
-											<f:selectItems value="#{saleInvoice.digitalCertificates}" />
-											<a4j:support event="onchange" reRender="showCertVerifactuWindow" ajaxSingle="true" />
-										</aon:selectOneMenu>
 										
-										<aon:outputLabel rendered="#{!saleInvoice.pass}" for="password" value="#{bundle.aon_login_passwd}" />
-										<aon:inputSecret rendered="#{!saleInvoice.pass}" id="password" value="#{saleInvoice.password}" />
-									</aon:panelGrid>
+									
 								</aon:div>
 							</aon:div>
 						</aon:div>

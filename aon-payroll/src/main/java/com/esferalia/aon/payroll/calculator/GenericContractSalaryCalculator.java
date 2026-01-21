@@ -479,6 +479,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 		void onUndefinedData(GenericContractSalaryCalculator<?,?> calculator) {
 			calculator.onUndefinedData(this, exception.getMessage(), exception.getVariableNames());
+			calculator.fillData(exception.getContext());			
 		}
 		
 		@Override
@@ -865,6 +866,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 						addResult(expressionContext, undefMonthlyPayment.getName(), start, end, 0.00);
 						addResult(expressionContext, undefMonthlyPayment.getSurName(), start, end, 0.00);
 					}
+					fillData(e.getContext());
 				} 
 			}
 
@@ -1801,6 +1803,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					&& contractPaymentType != PaymentType.CRA_0055 
 					&& !AonStringUtils.equals(ContextVariable.GUARENTEED, name)
 					&& !AonStringUtils.equals(ContextVariable.PREST_IT, name)
+					&& !ContextVariable.FLEXIBLES.contains(name)
 					&& Period.intersects(results.stream().filter(r -> r.getValue() != null /*&& r.getValue() != 0.00*/)
 							.map(r -> r.getPeriod()).iterator(), leavePeriods.iterator())) {
 				try {
@@ -2454,6 +2457,15 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		}
 		salaryBuilder
 		.setTimeUnits((int) (AonDateUtils.getDaysBetweenDates(ctx.getStartDate(), ctx.getEndDate()) + 1));
+	}
+
+	protected void fillData(Map<String, ITimedVariable<?>> map) {
+		for (Entry<String, ITimedVariable<?>> entry : map.entrySet()) {
+			try {
+				salaryBuilder.addData(entry.getKey(), entry.getValue());
+			} catch (Throwable t) {
+			}
+		}
 	}
 
 	protected void onInvalidData(String... variableNames) {

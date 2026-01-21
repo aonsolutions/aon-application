@@ -3797,11 +3797,11 @@ CREATE TABLE `fs_model190` (
   `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
   `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   `preferred_contributions` decimal(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Preferentes. Aportaciones',
-  `preferred_contributions_under36` decimal(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Preferentes. Contribuciones empresariales a favor de personas menores de 36 años',
-  `preferred_contributions_over36` decimal(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Preferentes. Contribuciones empresariales a favor de personas de 36 años o mas',
+  `preferred_contributions_under36` decimal(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Preferentes. Contribuciones empresariales a favor de personas menores de 36 a?s',
+  `preferred_contributions_over36` decimal(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Preferentes. Contribuciones empresariales a favor de personas de 36 a?s o mas',
   `preferred_gross_annual_salary` decimal(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Preferentes. Salario bruto anual de la entidad',
-  `other_contributions_under36` decimal(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Resto sistemas de empleo. Contribuciones empresariales a favor de personas menores de 36 años',
-  `other_contributions_over36` decimal(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Resto sistemas de empleo. Contribuciones empresariales a favor de personas de 36 años o mas',
+  `other_contributions_under36` decimal(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Resto sistemas de empleo. Contribuciones empresariales a favor de personas menores de 36 a?s',
+  `other_contributions_over36` decimal(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Resto sistemas de empleo. Contribuciones empresariales a favor de personas de 36 a?s o mas',
   `other_gross_annual_salary` decimal(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Resto sistemas de empleo. Salario bruto anual de la entidad', 
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL190_DOMAIN` (`domain`),
@@ -5454,9 +5454,13 @@ CREATE TABLE `location` (
   `radio` int DEFAULT '50' COMMENT 'Radio de la UbicaciÃ³n',
   `latitude` double DEFAULT NULL COMMENT 'Latitud de las coordenadas.',
   `longitude` double DEFAULT NULL COMMENT 'Longitud de las coordenadas.',
+  `registry` int(4) DEFAULT NULL COMMENT 'Empresa / Operario',
+  `type` tinyint(4) DEFAULT NULL COMMENT 'Tipo',
   PRIMARY KEY (`id`),
   KEY `IDX_LOCATION_DOMAIN` (`domain`),
-  CONSTRAINT `FK_LOCATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  KEY `IDX_LOCATION_REGISTRY` (`registry`),
+  CONSTRAINT `FK_LOCATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_LOCATION_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='UbicaciÃ³n';
 
 #

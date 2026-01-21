@@ -1,11 +1,14 @@
 package com.esferalia.aon.in.payroll.pdf.maker.payroll.bundle;
 
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate.FLEXIBLE;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate.INFO;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate.NOTE;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate.PPE;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate.WARNING;
 
 import java.util.ListResourceBundle;
+
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate;
 
 public class CraTypesBundle   extends ListResourceBundle{
 	  private Object[][] contents = {
@@ -79,7 +82,9 @@ public class CraTypesBundle   extends ListResourceBundle{
 		{Integer.toString(NOTE),"Notas"},
 		{Integer.toString(WARNING),"Avisos"},
 
-		{Integer.toString(PPE),"Aportación empresarial al plan de pensiones de empleo"}
+		{Integer.toString(PPE),"Aportación empresarial al plan de pensiones de empleo"},
+
+		{Integer.toString(FLEXIBLE),"Retribución flexible"},
 	  };
 
 	@Override

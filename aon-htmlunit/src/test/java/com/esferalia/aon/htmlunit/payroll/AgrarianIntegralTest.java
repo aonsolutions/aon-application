@@ -64,10 +64,10 @@ public class AgrarianIntegralTest extends BaseIntegralTestCase {
 
 		draft("CORTA DURACION, ART 28");
 		calculate(Calendar.APRIL,2025);
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertNotElement("cgc_e_tempPercentLabel");
 		assertEquals(1,getElementsById("common_contingency_cost").size());
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 	}
 
 	@Test

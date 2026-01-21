@@ -21,7 +21,9 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
+import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.impl.jooq.dao.AuthDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
@@ -225,13 +227,17 @@ public class ModelEmailUtils {
 					configuration -> {
 						User user = ctx.getConfig().getUser();
 						MailAccount mailAccount = SecurityDAO.getMailAccount(ctx, f -> f.getUserIdProperty().eq(user.getId()).and(f.getDomainProperty().eq(user.getDomain().getId())));
-						return mailAccount.getEmail();
+						String email = mailAccount.getEmail();
+						if (AonStringUtils.isBlank(email)) {
+							email = getAuthEmail(ctx, user);
+						}						
+						return email;
 					}
 			);
 		}
 
 	}
-	
+
 	// Obtener la dirección email del usuario del dominio padre
 	private static String getParentUserEmail(Occam occam, String parentUser) {
 		
@@ -240,11 +246,28 @@ public class ModelEmailUtils {
 					configuration -> {
 						User user = ctx.getConfig().getUser();
 						MailAccount mailAccount = SecurityDAO.getMailAccount(ctx, f -> f.getUserIdProperty().eq(user.getId()).and(f.getDomainProperty().eq(user.getDomain().getId())));
-						return mailAccount.getEmail();
+						String email = mailAccount.getEmail();
+						if (AonStringUtils.isBlank(email)) {
+							email = getAuthEmail(ctx, user);
+						}
+						return email;
 					}
 			);
 		}
 
+	}
+	
+	private static String getAuthEmail(CloseableAONContext ctx, User user) {
+		String email = null;
+		if (user.getAuth() != null) {
+			email = user.getAuth().getEmail();
+			if (AonStringUtils.isBlank(email)) {
+				Auth auth = AuthDAO.getAuth(ctx, user.getAuth().getAuth());
+				email = auth.getEmail();
+				return email;
+			}
+		}
+		return email;
 	}
 	
 	// Obtener el nombre del usuario del dominio padre

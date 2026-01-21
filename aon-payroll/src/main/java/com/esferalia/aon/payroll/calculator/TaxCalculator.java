@@ -1,10 +1,8 @@
 package com.esferalia.aon.payroll.calculator;
 
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.FLEXIBLE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_CTA_ESP;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -161,7 +159,7 @@ public abstract class TaxCalculator {
 			if ( AonStringUtils.equals(IRPF_CTA_ESP.getName(), contractPayment.getName() ))
 				return 0.00; //tax
 			
-			if ( AonStringUtils.equals(FLEXIBLE.getName(), contractPayment.getName() )) {
+			if ( ContextVariable.FLEXIBLES.contains(contractPayment.getName() )) {
 				DefaultTaxCalculator.this.irpfBase += tax;
 				return tax;
 			}

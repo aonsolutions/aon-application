@@ -20,6 +20,9 @@ public class Location implements Serializable {
 	private Coordinates coordinates;
 	private Integer radio;
 	
+	private TimeControlReason type;
+	private Integer registry;
+	
 	public Location() {
 	
 	}
@@ -69,6 +72,24 @@ public class Location implements Serializable {
 		return this;
 	}	
 	
+	public TimeControlReason getType() {
+		return type;
+	}
+
+	public Location setType(TimeControlReason type) {
+		this.type = type;
+		return this;
+	}
+
+	public Integer getRegistry() {
+		return registry;
+	}
+
+	public Location setRegistry(Integer registry) {
+		this.registry = registry;
+		return this;
+	}
+
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		json.put("id", getId());
@@ -81,6 +102,13 @@ public class Location implements Serializable {
 			coordinates.put("longitude", getCoordinates().getLongitude());
 			json.put("coordinates", coordinates);
 		}
+		
+		if(null != getType())
+			json.put("type", getType().value());
+		
+		if(null != getRegistry())
+			json.put("registry", getRegistry());
+		
 		return json;
 	}
 	
