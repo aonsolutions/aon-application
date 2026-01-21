@@ -31,6 +31,9 @@ import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 import org.mvel2.PropertyAccessException;
 import org.mvel2.UnresolveablePropertyException;
+import org.mvel2.ast.ASTNode;
+import org.mvel2.integration.Interceptor;
+import org.mvel2.integration.VariableResolverFactory;
 import org.mvel2.templates.TemplateRuntime;
 
 import com.code.aon.AonVersion;
@@ -694,6 +697,10 @@ public class ExpressionContext {
 		
 		return false;
 	}
+	
+	public Map<String, ITimedVariable<?>>  getRead() {
+		return getCurrentBindings().getRead();
+	}
 
 	public <T> T readVariable(Object name, Date start, Date end, Class<T> toType) {
 		read.add(name.toString());
@@ -1119,6 +1126,7 @@ public class ExpressionContext {
 		ParserContext ctx = new ParserContext();
 		
 		MVEL.analysisCompile(script, ctx);
+		
 
 		Set<String> variables = new HashSet<String>();
 
