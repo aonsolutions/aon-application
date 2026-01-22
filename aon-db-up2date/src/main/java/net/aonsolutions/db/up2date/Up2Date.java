@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.FlexibleConceptsFix;
 import net.aonsolutions.db.up2date.payroll.FlexibleInsurance;
+import net.aonsolutions.db.up2date.timecontrol.TimecontrolLocationAlter;
 
 public class Up2Date {
 
@@ -590,9 +591,11 @@ public class Up2Date {
 			// DataResponseSourceResponseDateIndex.DATA_RESPONSE_SOURCE_RESPONSE_DATE_INDEX,	
 	
 			// ----------------------- ProductBooking alters
+
 			//ProductBookingCreation.PRODUCT_BOOKING_CREATION,
 			//AddColumnMarketingActionProduct.ADD_COLUMN_MARKETING_ACTION_PRODUCT,
-			//LocationRegistryAlter.LOCATION_REGISTRY_ALTER
+			//LocationRegistryAlter.LOCATION_REGISTRY_ALTER,
+			TimecontrolLocationAlter.TIMECONTROL_LOCATION_ALTER
 	
 	};
 

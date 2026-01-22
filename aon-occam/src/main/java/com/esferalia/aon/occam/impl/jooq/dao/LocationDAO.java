@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Location.LOCATION;
+import static com.esferalia.aon.jooq.tables.Timecontrol.TIMECONTROL;
 
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -15,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlReason;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.LocationPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.LocationValidation;
 
@@ -149,10 +151,31 @@ public class LocationDAO {
 	static Field<Double> radians(double value) {
 	    return DSL.function("radians", Double.class, DSL.val(value));
 	}
-
 	
 	private static void updateLocationUser(AONContext ctx, Location lc) {
 		TimeControlDAO.updateTimeControDetailLocation(ctx, lc);
+	}
+	
+	public static void syncLocationTimeControl(AONContext ctx) {
+		int updated = ctx.getDslContext()
+				.update(TIMECONTROL)
+				.set(TIMECONTROL.LOCATION_DESCRIPTION, LOCATION.DESCRIPTION)
+				.set(TIMECONTROL.CAUSE, LOCATION.TYPE)
+				.from(LOCATION)
+				.where(TIMECONTROL.LOCATION.isNotNull())
+				.and(TIMECONTROL.LOCATION.eq(LOCATION.ID))
+				.and(LOCATION.DESCRIPTION.isNotNull())
+				.and(LOCATION.TYPE.isNotNull())
+				.and(
+						TIMECONTROL.STATUS.eq(TimeControlStatus.IN.value())
+						.or(
+							TIMECONTROL.STATUS.eq(TimeControlStatus.PAUSE.value())
+							.and(TIMECONTROL.CAUSE.isNull())
+						)
+				)
+				.execute();
+		
+		System.out.println("[UPDATED rows: " + updated + "]");
 	}
 	
 	public static class LocationFiller extends Filler implements Function<Record, Location> {

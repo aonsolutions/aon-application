@@ -99,5 +99,12 @@ public class TimeControlImpl implements ITimeControl {
 		return ctx.getDslContext().transactionResult(
 				configuration -> LocationDAO.getByCoordinates(ctx, c));
 	}
+
+	@Override
+	public void syncLocationTimeControl(AONContext ctx) {
+		ctx.getDslContext().transaction(
+				configuration -> LocationDAO.syncLocationTimeControl(ctx)
+		);
+	}
 	
 }

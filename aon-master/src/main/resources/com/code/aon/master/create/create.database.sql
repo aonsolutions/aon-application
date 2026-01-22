@@ -8941,6 +8941,7 @@ CREATE TABLE `timecontrol` (
   `date` datetime NOT NULL COMMENT 'Fecha del control de horario',
   `comments` text CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Comentarios del control de horario',
   `location` int DEFAULT NULL COMMENT 'Ubicación del Operario',
+  `location_description` varchar(64) DEFAULT NULL COMMENT 'Descripción de la ubicación',
   `latitude` double DEFAULT NULL COMMENT 'Latitud de las coordenadas.',
   `longitude` double DEFAULT NULL COMMENT 'Longitud de las coordenadas.',
   `cause` tinyint DEFAULT '0' COMMENT 'causa de fichaje',
@@ -8954,7 +8955,6 @@ CREATE TABLE `timecontrol` (
   KEY `IDX_TIMECONTROL_TASK_HOLDER` (`task_holder`),
   KEY `IDX_TIMECONTROL_LOCATION` (`location`),
   CONSTRAINT `FK_TIMECONTROL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_TIMECONTROL_LOCATION` FOREIGN KEY (`location`) REFERENCES `location` (`id`),
   CONSTRAINT `FK_TIMECONTROL_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Control de Horario';
 

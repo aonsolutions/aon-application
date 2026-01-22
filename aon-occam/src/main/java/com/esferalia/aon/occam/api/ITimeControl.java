@@ -34,4 +34,6 @@ public interface ITimeControl {
 	
 	public Location getLocationByCoordinates(AONContext ctx, Coordinates c);
 	
+	public void syncLocationTimeControl(AONContext ctx);
+	
 }

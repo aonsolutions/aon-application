@@ -1,4 +1,4 @@
-import { get, post, put, remove, removePro, getPro } from "./request.js";
+import { get, post, put, remove, removePro, getPro, putPro } from "./request.js";
 import { API_URL, PRO_TEST_URL, PRO_URL } from "../environments/environments.js";
 import { openFileUrl } from "./fileService.js";
 
@@ -24,7 +24,10 @@ export const getCustomers = (data) => post(CUSTOMERS, data);
 export const getCustomer = (data) => post(`${CUSTOMERS}/${data.id}`, data);
 export const getCustomerEmails = (data) => post(`${CUSTOMERS}/${data.id}/${EMAILS}`, data);
 export const saveCustomer = (data) => put(`${CUSTOMERS}/${data.id}`, data);
+//export const saveCustomerNote = (data) => putPro(`${PRO_URL}/${CUSTOMERS}/note`, data);
+// LOCAL
 export const saveCustomerNote = (data) => put(`${CUSTOMERS}/note`, data);
+export const saveCustomerNotePro = (data) => putPro(`${CUSTOMERS}/note`, data);
 
 export const getTarget = (data) => get(`${TARGETS}/${data.id}`, data);
 export const saveTarget = (data) => post(`${TARGETS}`, data);

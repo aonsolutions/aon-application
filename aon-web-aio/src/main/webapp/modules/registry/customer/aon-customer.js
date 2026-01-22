@@ -6,7 +6,7 @@ import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonBasicTable } from "../../../components/aon-basic-table.js";
 import { Transactions } from "../../../services/transaction.js";
 import { Customer } from "../../../models/registry/Customer.js";
-import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getRelationShipCompany, getRegistryNotes, saveCustomerNote, getCustomerDomainAddInfo, removeCustomerDomainAddInfo, removeAonCustomerDomain } from "../../../services/registryService.js";
+import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getRelationShipCompany, getRegistryNotes, saveCustomerNote, getCustomerDomainAddInfo, removeCustomerDomainAddInfo, removeAonCustomerDomain, saveCustomerNotePro } from "../../../services/registryService.js";
 import { AonCustomerList } from "./aon-customer-list.js";
 import { getScopes } from "../../../services/documentalService.js";
 import { getCustomerStatusTags, getDomainCompanies, saveCompany } from "../../../services/companyService.js";
@@ -963,10 +963,12 @@ export class AonCustomer extends AonReg {
 
 		dialog.addSendAction(async () => {
 			if (selectTag.value) {
+				dialog.close();
+				this.getApplication().startLoading();
 				await this.saveNote(selectTag.getDetail().name, datePicker ? datePicker.getDateValue() : undefined );
 				this.buildStatusRegistry();
 				this.save();
-				dialog.close();
+				this.getApplication().stopLoading();
 			}
 		}, MSG.SAVE);
 
@@ -982,7 +984,10 @@ export class AonCustomer extends AonReg {
 			isSig: this.isSig()
 		}
 		
-		await saveCustomerNote(params);
+		if(params.isSig)
+			await saveCustomerNotePro(params);
+		else
+			await saveCustomerNote(params);
 	}
 
 	openDialogCompany(companies = []) {
