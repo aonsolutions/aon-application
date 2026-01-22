@@ -70,6 +70,9 @@ public class TimeControlServlet extends AonApiHttpServlet{
 			case "/list-holder":
 				response(req, resp, getTaskHolderTimeControlStream(api));
 				break;
+			case "/contract-events":
+				response(req, resp, getTaskHolderContractEvents(api));
+				break;
 			case "/list-holder-detail":
 				response(req, resp, getTimeControlDetailStream(api));
 				break;
@@ -356,6 +359,24 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		return array;
 	}
 	
+	private JSONArray getTaskHolderContractEvents(AonApiData api) {
+		Integer taskHolder = api.getData().optInt("taskHolderId");
+		Date startDate = AonDateUtils.getDateWithoutTime(new Date());
+		Date endDate = AonDateUtils.addDays(startDate, 1);
+		endDate = AonDateUtils.addSeconds(endDate, -1);
+		
+		if(!api.getData().optString(START_DATE).isEmpty()) 
+			startDate = AonDateUtils.parse(api.getData().optString(START_DATE), FORMAT_DATE);
+		
+		if(!api.getData().optString(END_DATE).isEmpty()) 
+			endDate = AonDateUtils.parse(api.getData().optString(END_DATE), FORMAT_DATE);
+
+		JSONArray array = new JSONArray();
+		AON_SOLUTIONS.getTaskHolderTimeContractEvents(api.getDomain(), api.getUser(), taskHolder, startDate, endDate)
+			.forEach(tc -> array.put(tc.toJSON()));
+		
+		return array;
+	}
 	
 	private JSONObject delete(AonApiData api) {
 		Integer tmId = api.getData().optInt("id");

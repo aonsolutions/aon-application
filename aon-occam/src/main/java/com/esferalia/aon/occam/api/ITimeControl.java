@@ -9,12 +9,14 @@ import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlContractEvent;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 
 public interface ITimeControl {
 
 	public Stream<TimeControl> getTimeControlStream(AONContext ctx, Date startDate, Date endDate);
+	public Stream<TimeControlContractEvent> getTaskHolderTimeContractEvents(AONContext ctx, Integer taskHolderId, Date startDate, Date endDate);
 	public Stream<TimeControl> getTaskHolderTimeControlStream(AONContext ctx, Integer taskHolderId, Date startDate, Date endDate, TimeControlGroup group);
 	public TimeControl getTaskHolderTimeControl(AONContext ctx, Integer taskHolderId, Date startDate, Date endDate);
 	

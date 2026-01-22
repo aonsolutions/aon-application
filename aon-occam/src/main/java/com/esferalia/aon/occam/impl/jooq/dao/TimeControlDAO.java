@@ -1,15 +1,22 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Holiday.HOLIDAY;
+import static com.esferalia.aon.jooq.tables.HolidayDetail.HOLIDAY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Location.LOCATION;
+import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Timecontrol.TIMECONTROL;
 import static com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TASK_HOLDER_ALIAS;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -19,10 +26,12 @@ import org.jooq.Field;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.Param;
 import org.jooq.Record;
+import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.TimecontrolRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -30,6 +39,8 @@ import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlContractEvent;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlContractEventSource;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlReason;
@@ -407,6 +418,92 @@ public class TimeControlDAO {
 		tc.setGroup(group);
 		
 		return tc;
+	}
+	
+	public static Stream<TimeControlContractEvent> getTaskHolderTimeContractEvents(AONContext ctx, Integer taskHolderId, Date startDate, Date endDate) {
+		List<TimeControlContractEvent> contractEvents = new ArrayList<TimeControlContractEvent>();
+		
+		Result<ContractRecord> taskHolderContracts = ctx.getDslContext().selectFrom(CONTRACT)
+				.where(CONTRACT.PERSON.eq(taskHolderId))
+				.and(
+					(
+						CONTRACT.START_DATE.le(AonDateUtils.toSql(startDate))
+						.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(AonDateUtils.toSql(startDate))))
+					
+					).or(
+					
+						CONTRACT.START_DATE.le(AonDateUtils.toSql(endDate))
+						.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(AonDateUtils.toSql(endDate))))
+					
+					)
+					
+				)
+				.fetch();
+		
+		if(!taskHolderContracts.isEmpty()) {
+			
+			taskHolderContracts.forEach(taskHolderContract -> {
+				
+				Record contractCalendarRecord = ctx.getDslContext().select(DSL.ifnull(CONTRACT.CALENDAR, PAYROLL_WORKPLACE.CALENDAR).as(CONTRACT.CALENDAR))
+						  .from(CONTRACT)
+						  .innerJoin(PAYROLL_WORKPLACE)
+						  .on(CONTRACT.WORKPLACE.eq(PAYROLL_WORKPLACE.WORKPLACE))
+						  .where(CONTRACT.ID.eq(taskHolderContract.getId()))
+						  .fetchOne();
+				
+				Integer calendarId = null == contractCalendarRecord ? null : contractCalendarRecord.get(CONTRACT.CALENDAR);
+				
+				if(null != calendarId) {
+					
+					Integer holidayId = ctx.getDslContext().select(CALENDAR.HOLIDAY).from(CALENDAR)
+							.where(CALENDAR.ID.eq(calendarId))
+							.fetchOne(CALENDAR.HOLIDAY);
+					
+					ArrayList<Integer> holidays = new ArrayList<>();
+					
+					// Get all holidays ids
+					while ( holidayId != null ) {
+						holidays.add(holidayId);
+						
+						holidayId = ctx.getDslContext().select(HOLIDAY.HOLIDAY_)
+								.from(HOLIDAY)
+								.where(HOLIDAY.ID.eq(holidayId))
+								.fetchOne()
+								.get(HOLIDAY.HOLIDAY_);
+					}
+					
+					Result<Record> holidayRecords = ctx.getDslContext().select()
+							.from(HOLIDAY_DETAIL)
+							.where(HOLIDAY_DETAIL.HOLIDAY.in(holidays))
+							.and(HOLIDAY_DETAIL.DATE.between(AonDateUtils.toSql(startDate), AonDateUtils.toSql(endDate)))
+							.fetch();
+					
+					for(Record holidayRecord : holidayRecords) {
+						TimeControlContractEvent timeControlContractEvent = new TimeControlContractEvent()
+								.setSource(TimeControlContractEventSource.HOLIDAY)
+								.setStartDate(parseDateSqlToUtil(holidayRecord.get(HOLIDAY_DETAIL.DATE)))
+								.setEndDate(parseDateSqlToUtil(holidayRecord.get(HOLIDAY_DETAIL.DATE)))
+								.setDescription(holidayRecord.get(HOLIDAY_DETAIL.DESCRIPTION))
+								;
+						
+						contractEvents.add(timeControlContractEvent);
+					}
+				}
+				
+			});
+			
+		}
+		
+		return contractEvents.stream();
+	}
+	
+	private static java.util.Date parseDateSqlToUtil(Date date) {
+		if(null == date)
+			return null;
+		
+		java.util.Date javaDate = new java.util.Date(date.getTime());
+		
+		return javaDate;
 	}
 
 	public static class TimeControlDetailFiller implements Function<Record, TimeControlDetail> {
