@@ -1,15 +1,28 @@
 package net.aonsolutions.aon.api.servlet.registry;
 
+import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.LOGO;
+import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SIGNATURE;
+
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -26,13 +39,20 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.Properties.TargetProperties;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
+import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.RegistrySellerStatus;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.AonValidationUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -41,6 +61,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import net.aonsolutions.aon.api.servlet.AonRouting;
+import solutions.aon.aws.ses.SES;
+import solutions.aon.aws.ses.SESMessage;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonApiCustomersServlet", urlPatterns = { "/ms/api/customers/*" })
@@ -354,10 +376,155 @@ public class CustomersServlet extends AonApiHttpServlet {
 				}
 
 			}
+			
+			List<RegistrySeller> rsellerList = AON.getRegistrySellerStream(
+					api.getDomain(), 
+					api.getUser().getLogin(), 
+					f -> f.getDomainProperty().eq(api.getDomain().getId())
+						.and(f.getRegistryProperty().eq(customerId))
+						.and(f.getStatusProperty().eq(RegistrySellerStatus.ACTIVE.value()))
+						.and(f.getStartDateProperty().le(AonDateUtils.toSql(new Date())))
+					).collect(Collectors.toList());
+			if(!rsellerList.isEmpty()) {
+				
+				Set<Integer> sellerIds =
+					    rsellerList.stream()
+					        .map(RegistrySeller::getSeller)   
+					        .filter(Objects::nonNull)         
+					        .map(Seller::getId)               
+					        .filter(Objects::nonNull)         
+					        .collect(Collectors.toSet());   
+				
+				sellerIds.forEach(sellerId -> {
+					RegistryMedia emailMedia = AON.getRegistryMedia(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getRegistryProperty().eq(sellerId)).and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
+					if(AonStringUtils.isNotBlank(emailMedia.getValue()) && AonValidationUtil.isValidEmail(emailMedia.getValue())) {
+						
+						String from = getFromMessage(api);
+						String logoUrl = getLogoUrl(api);
+						
+						Domain useDomain = null == api.getDomain().getParentId()
+								? api.getDomain()
+								: AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(api.getDomain().getParentId()));
 
+							
+						
+						SESMessage msg = new SESMessage()
+								.setFrom(from)
+								.setAlias(useDomain.getDescription())
+								.setTo(emailMedia.getValue())
+								.setSubject("Cambio de estado del cliente " + customer.getName())
+								.setBody(createCustomerStatusChangeTemplate(
+										logoUrl, 
+										useDomain.getDescription(), 
+										customer.getName(),
+										customer.getStatus().getDescription(),
+										newStatus.getDescription(),
+										tagName,
+										dateStr
+								));
+
+						SES.sendEmail(msg);
+						
+					}
+				});
+				
+			}
+			
+			
+			
 		}
 
 		return new JSONObject();
+	}
+	
+	private static String getLogoUrl(AonApiData api) {
+
+		Domain useDomain = null == api.getDomain().getParentId()
+				? api.getDomain()
+				: AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(api.getDomain().getParentId()));
+
+		Company company = AON.getCompany(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(useDomain.getId()));	
+			
+		Attach attach = getLogoAttach(api, company.getId());
+
+		String str = "domain=" + attach.getDomain().getId() + "&id=" + attach.getId() + "&attach_type=registry";
+		String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+		String logoUrl = null;
+
+		Domain attachDomain = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(attach.getDomain().getId()));
+		
+		logoUrl = "https://" + useDomain.getName() + "/ms/download_attachment/" + attachDomain.getName() + "/" + attach.getCreationUser() + "/" + result;
+
+		return logoUrl;
+	}
+
+	private static Attach getLogoAttach(AonApiData api, Integer enterpriseId) {
+		
+		Domain useDomain = null == api.getDomain().getParentId()
+				? api.getDomain()
+				: AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(api.getDomain().getParentId()));
+		
+		Optional<Attach> attach1 = AON.getAttachStream(
+				useDomain.getName(), 
+				useDomain.getId(), 
+				api.getUser().getLogin(), 
+				f -> f.getTypeProperty().eq(LOGO.value()).and(f.getDomainProperty().eq(useDomain.getId())).and(f.getAttachModuleProperty().eq(enterpriseId)), 
+				AttachType.REGISTRY, 
+				true
+			).findFirst();
+		
+		return attach1
+				.isPresent()
+						? attach1.get()
+						: AON.getAttachStream(
+								useDomain.getName(), 
+								useDomain.getId(), 
+								api.getUser().getLogin(), 
+								f -> f.getTypeProperty().eq(SIGNATURE.value()).and(f.getDomainProperty().eq(useDomain.getId())).and(f.getAttachModuleProperty().eq(enterpriseId)), 
+								AttachType.REGISTRY, 
+								true
+							).findFirst().get();
+	}
+	
+	private static String getFromMessage(AonApiData api) {
+		String from = null;
+		
+		Domain useDomain = null == api.getDomain().getParentId()
+			? api.getDomain()
+			: AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(api.getDomain().getParentId()));
+
+		Company company = AON.getCompany(useDomain, api.getUser(), f -> f.getDomainProperty().eq(useDomain.getId()));
+		
+		RegistryMedia emailMedia = AON.getRegistryMedia(useDomain, api.getUser(), f -> f.getDomainProperty().eq(useDomain.getId()).and(f.getRegistryProperty().eq(company.getId())).and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
+		
+		if(AonStringUtils.isNotBlank(emailMedia.getValue()) && AonValidationUtil.isValidEmail(emailMedia.getValue()))
+			from = emailMedia.getValue();
+
+		return from;
+	}
+	
+	private static String createCustomerStatusChangeTemplate(String logoUrl, String domainName, String customerName, String oldCustomerStatus, String newCustomerStatus, String reasonNewStatus, String expirationDate) {
+		VelocityEngine engine = new VelocityEngine();
+		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+		engine.init();
+
+		VelocityContext context = new VelocityContext();
+		context.put("logo", logoUrl);
+		context.put("parentName", domainName);
+		context.put("customerName", customerName);
+		context.put("oldCustomerStatus", oldCustomerStatus);
+		context.put("newCustomerStatus", newCustomerStatus);
+		context.put("reasonNewStatus", reasonNewStatus );
+		context.put("expirationDateStatus", AonStringUtils.isBlank(expirationDate) ? "" : ("F. Expiraci\u00f3n: " + expirationDate) );
+		
+		Template template = engine
+				.getTemplate("/net/aonsolutions/aon/api/servlet/templates/customer_status_change.vm");
+
+		StringWriter writer = new StringWriter();
+		template.merge(context, writer);
+
+		return writer.toString();
 	}
 
 }

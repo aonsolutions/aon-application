@@ -93,7 +93,7 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("job_training", "0,25");
 		assertValue("cgcBaseLabel", "1.260,00");
 		assertValue("cgpBaseLabel", "1.260,00");
-		click("costsCheck-input");
+		check("costsCheck-input");
 		wait4Id("common_contingency_cost");
 		assertText("common_contingency_cost", "51,06");
 		assertText("unemployment_cost", "69,30");
@@ -101,14 +101,14 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("fogasa_cost", "3,88");
 		assertText("it_cost", "3,93");
 		assertText("ims_cost", "3,10");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		calculate(Calendar.JANUARY, 2024);
 		assertText("common_contingency", "10,69");
 		assertText("unemployment", "20,51"); // 1323.00 * 1.55 / 100.00
 		assertText("job_training", "0,26");
 		//assertValue("cgcBaseLabel", "1.323,00");
 		//assertValue("cgpBaseLabel", "1.323,00");
-		click("costsCheck-input");
+		check("costsCheck-input");
 		wait4Id("common_contingency_cost");
 		assertText("common_contingency_cost", "53,61");
 		assertText("unemployment_cost", "72,76"); // 1323.00 * 5.50 / 100.00
@@ -116,14 +116,14 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("fogasa_cost", "4,07");
 		assertText("it_cost", "3,82");
 		assertText("ims_cost", "3,56");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		calculate(Calendar.JANUARY, 2025);
 		assertText("common_contingency", "11,16");
 		assertText("unemployment", "21,41"); // 1381.20 * 1.55 / 100.00
 		assertText("job_training", "0,27");
 		//assertValue("cgcBaseLabel", "1.381,20");
 		//assertValue("cgpBaseLabel", "1.381,20");
-		click("costsCheck-input");
+		check("costsCheck-input");
 		wait4Id("common_contingency_cost");
 		assertText("common_contingency_cost", "55,97");
 		assertText("unemployment_cost", "75,96"); // 1381.20 * 5.50 / 100.00
@@ -131,7 +131,7 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("fogasa_cost", "4,25");
 		assertText("it_cost", "3,99");
 		assertText("ims_cost", "3,72");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		
 
 		//costsCheck-input
@@ -155,21 +155,21 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("common_contingency", "10,18");
 		assertText("job_training", "0,25");
 		//assertText("totalDeductionLabel", "10,69"); // + MEI
-		click("costsCheck-input");
+		check("costsCheck-input");
 		wait4Id("it_cost");
 		assertText("common_contingency_cost", "51,06");
 		assertText("job_training_cost", "1,90");
 		assertText("fogasa_cost", "3,88");
 		assertText("it_cost", "3,93");
 		assertText("ims_cost", "3,10");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		calculate(Calendar.JANUARY, 2024);
 		assertValue("cgcBaseLabel", "1.323,00");
 		assertValue("cgpBaseLabel", "1.323,00");
 		assertText("common_contingency", "10,69");
 		assertText("job_training", "0,26");
 		assertNotElement("mei");
-		click("costsCheck-input");
+		check("costsCheck-input");
 		wait4Id("it_cost");
 		assertText("common_contingency_cost", "53,61");
 		assertText("job_training_cost", "2,00");
@@ -177,14 +177,14 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("it_cost", "3,82");
 		assertText("ims_cost", "3,56");
 		assertNotElement("mei_cost");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		calculate(Calendar.JANUARY, 2025);
 		assertValue("cgcBaseLabel", "1.381,20");
 		assertValue("cgpBaseLabel", "1.381,20");
 		assertText("common_contingency", "11,16");
 		assertText("job_training", "0,27");
 		assertNotElement("mei");
-		click("costsCheck-input");
+		check("costsCheck-input");
 		wait4Id("it_cost");
 		assertText("common_contingency_cost", "55,97");
 		assertText("job_training_cost", "2,09");
@@ -192,7 +192,7 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("it_cost", "3,99");
 		assertText("ims_cost", "3,72");
 		assertNotElement("mei_cost");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 
 		draft("FORMACION Y APRENDIZAJE, IT");
 		calculate(Calendar.OCTOBER, 2018);
@@ -242,7 +242,7 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("job_training", 0.25);
 		assertText("mei", 1.26);
 		if ( !isDisplayed("it_cost") )
-			click("costsCheck-input");
+			check("costsCheck-input");
 		wait4Id("it_cost");
 		assertText("common_contingency_cost", "51,06");
 		assertText("job_training_cost", "1,90");
@@ -250,7 +250,7 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("it_cost", "3,93");
 		assertText("ims_cost", "3,10");
 		assertText("unemployment_cost", 69.30);
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		
 		draft("FORMACION APRENDIZAJE, ALTERNANCIA (EXCESO 1)");
 		calculate(Calendar.MAY, 2024);
@@ -352,10 +352,10 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		
 		draft("FORMACIÓN ALTERNANCIA, PLAN DE PENSIONES");
 		calculate(Calendar.SEPTEMBER, 2025);
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertNotElement("red_ppe_ePercentLabel");
 		assertElement("editor-reduccion_aportacion_empresa_ppe");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 
 	}
 
@@ -402,23 +402,23 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		draft("MECANISMO, EQUIDAD");
 		calculate(Calendar.MARCH, 2023);
 		assertText("mei", "1,26");
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertText("mei_cost", "6,30");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		
 		calculate(Calendar.JANUARY, 2024);
 		assertText("mei", "1,59");
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertText("mei_cost", "7,67");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		
 		calculate(Calendar.JANUARY, 2025);
 		assertText("mei", "1,80");
 		assertText("meiPercentLabel", "0,13 %");
-		click("costsCheck-input");
+		check("costsCheck-input");
 		assertText("mei_cost", "9,25");
 		assertText("mei_ePercentLabel", "0,67 %");
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 		
 		
 	}

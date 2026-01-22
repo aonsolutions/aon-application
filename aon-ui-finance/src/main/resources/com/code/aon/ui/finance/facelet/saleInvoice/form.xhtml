@@ -77,43 +77,7 @@
 								styleClass="aon-finding-toolbar-item aon-icon-bizkaia">
 							</aon:outputLink>
 						</aon:if>
-						
-						<!-- ******************************************* [CANCEL/ REMOVE] *** -->
-						<aon:if test="#{!saleInvoice.recorded}">
-							<aon:if test="#{saleInvoice.verifactu}">
-								<!-- ** Verifactu / No Verifactu / SIF **  -->
-								<aon:if test="#{saleInvoice.communicableInvoice}">
-									<aon:commandButton id="verifactuInvoiceRemove"	
-										value="&#160;"
-										title="Anular"
-										action="#{saleInvoice.verifactu}"
-										onclick="#{saveOnClick}" 
-										styleClass="aon-finding-toolbar-item aon-icon-delete"
-										reRender="showCertVerifactuAnularWindow">
-											<f:setPropertyActionListener target="#{saleInvoice.showCertVerifactuAnularWindow}"
-												value="#{true}" />
-									</aon:commandButton>
-								</aon:if>
-							</aon:if>
-						</aon:if>
 						 
-						<!-- ******************************************* [ISSUE] *** -->
-						<aon:if test="#{saleInvoice.issueable}">
-							<!-- ** Verifactu **  -->
-							<aon:if test="#{saleInvoice.verifactu}">
-								<aon:commandButton id="acceptVerifactu"	
-									value="&#160;"
-									title="Emitir"
-									action="#{saleInvoice.verifactu}"
-									styleClass="aon-finding-toolbar-item aon-icon-check-black"
-									onclick="#{saveOnClick}" 
-									reRender="showCertVerifactuWindow, verifactuBlock">
-										<f:setPropertyActionListener target="#{saleInvoice.showCertVerifactuWindow}"
-											value="#{true}" />
-								</aon:commandButton>
-							</aon:if>
-						</aon:if>
-						
 						<!-- ****************** Common ************************  --> 
 						<aon:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
 							<aon:commandButton value="&#160;" id="email"
@@ -414,18 +378,16 @@
 							<aon:div style="border-bottom: solid #3a85c3 0.5px; padding: 0px 5px; height: 30px; line-height: 30px;">
 								<aon:outputText value="Veri*Factu"
 									rendered="#{saleInvoice.verifactu}" 
-									styleClass="aon-icon-aeat aon-bold" style="padding-left: 25px;"/>
+									styleClass="#{saleInvoice.admonIcon} aon-bold" style="padding-left: 25px;"/>
 								<aon:outputText value="NO Veri*Factu"
 									rendered="#{saleInvoice.noVerifactu}" 
-									styleClass="aon-icon-aeat aon-nowrap aon-bold" style="padding-left: 25px;"/>
+									styleClass="#{saleInvoice.admonIcon} aon-nowrap aon-bold" style="padding-left: 25px;"/>
 								<aon:outputText value="S.I.I."
 									rendered="#{saleInvoice.sii}" 
-									styleClass="aon-icon-aeat aon-nowrap aon-bold" style="padding-left: 25px;"/>
-								<!--  
+									styleClass="#{saleInvoice.admonIcon} aon-nowrap aon-bold" style="padding-left: 25px;"/>
 								<aon:outputText value="S.I.F."
 									rendered="#{saleInvoice.sif}" 
-									styleClass="aon-icon-check-blue aon-nowrap aon-bold" style="padding-left: 25px;"/>
-								-->
+									styleClass="#{saleInvoice.admonIcon} aon-nowrap aon-bold" style="padding-left: 25px;"/>
 							</aon:div>
 							 
 							<aon:div style="border-bottom: solid #3a85c3 0.5px; padding: 0px 5px; height: 30px; line-height: 30px; text-align: center middle;">
@@ -436,33 +398,40 @@
 							</aon:div>
 							
 							<aon:div  style="padding: 0 5px; border-bottom: solid #3a85c3 0.5px; height: 30px; display: flex; align-items: center; gap: 5px;">
+							
+								<!-- *** [EMITIR FACTURA VERIFACTU / NO VERIFACTU / SIF / SII] *** -->
 								<aon:if test="#{saleInvoice.issueable}">
-									<aon:if test="#{saleInvoice.noVerifactu or saleInvoice.sif or saleInvoice.sii}">
-										<aon:confirmButton id="acceptNoVerifactuSif"
-											title="Una vez emitida la factura, se comunicará/registrará automaticamente y no se podrá modificar."
-											value="Emitir Factura"
-											immediate="true" 
-											styleClass="aon-icon-commandButton aon-icon-check-black"
-											confirmTitle="Emitir"
-											confirmMessage="¿Confirmar emisión de la factura?"
-											confirmActionListener="#{saleInvoice.onCommunicateInvoice}"
-											reRender="saleInvoiceForm"
-										/>
+								    <!-- ** Verifactu / No Verifactu / SIF **  -->
+									<aon:if test="#{saleInvoice.verifactu or saleInvoice.noVerifactu or saleInvoice.sif or saleInvoice.sii}">
+										<aon:commandButton id="acceptVerifactu"	
+											value="#{saleInvoice.sendLabel}"
+											title="#{saleInvoice.sendLabel}"
+											action="#{saleInvoice.verifactu}"
+											styleClass="aon-icon-commandButton #{saleInvoice.sendIcon}"
+											onclick="#{saveOnClick}" 
+											reRender="showCertVerifactuWindow, verifactuBlock">
+												<f:setPropertyActionListener target="#{saleInvoice.showCertVerifactuWindow}" value="#{true}" />
+										</aon:commandButton>
 									</aon:if>
 								</aon:if>
 								
+								<!-- *** [ANULAR FACTURA VERIFACTU / NO VERIFACTU / SIF] *** -->
 								<aon:if test="#{!saleInvoice.issueable}">
 									<aon:if test="#{!saleInvoice.recorded}">
-										<aon:if test="#{saleInvoice.noVerifactuInvoice or saleInvoice.sifInvoice}">
-											<!-- ** No Verifactu / SIF **  -->
-											<aon:confirmButton id="verifactuInvoiceRemove2"	
-												value="Anular Factura"
-												immediate="true" 
-												styleClass="aon-icon-commandButton aon-icon-delete"
-												confirmTitle="Anular Factura"
-												confirmMessage="¿Confirmar anulación de la factura?"
-												confirmAction="#{saleInvoice.onCommunicateCancelInvoice}"
-											/>
+										<aon:if test="#{saleInvoice.verifactu or saleInvoice.noVerifactuInvoice or saleInvoice.sifInvoice}">
+											<!-- ** Verifactu / No Verifactu / SIF **  -->
+											<aon:if test="#{saleInvoice.communicableInvoice}">
+												<aon:commandButton id="verifactuInvoiceRemove"	
+													value="Anular Factura"
+													title="Anular"
+													action="#{saleInvoice.verifactu}"
+													onclick="#{saveOnClick}" 
+													styleClass="aon-icon-commandButton aon-icon-send-cancel"
+													reRender="showCertVerifactuAnularWindow">
+														<f:setPropertyActionListener target="#{saleInvoice.showCertVerifactuAnularWindow}"
+															value="#{true}" />
+												</aon:commandButton>
+											</aon:if>
 										</aon:if>
 									</aon:if>
 
@@ -629,10 +598,10 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalCertTbaiAnular.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
-		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalCertVerifactu.xhtml">
+		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalCertCommunicate.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
-		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalCertVerifactuAnular.xhtml">
+		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalCertCommunicateAnular.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalFacturae.xhtml">

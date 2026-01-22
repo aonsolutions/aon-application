@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
+import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 
 public class EnterpriseActivity implements Serializable {
@@ -18,6 +19,7 @@ public class EnterpriseActivity implements Serializable {
 	private String cnaeDescription;
 	private VATRegime vatRegime; 
 	private VATExemptionCause vatExemptionCause;
+	private IRPFRegime irpfRegime;
 
 	public Integer getId() {
 		return id;
@@ -119,6 +121,18 @@ public class EnterpriseActivity implements Serializable {
 			&& getDescription() == null
 			&& getIae().isEmpty()
 			&& getCnae() == null;
+	}
+
+	public IRPFRegime getIrpfRegime() {
+		if (irpfRegime == null) {
+			irpfRegime = IRPFRegime.NORMAL;
+		}
+		return irpfRegime;
+	}
+
+	public EnterpriseActivity setIrpfRegime(IRPFRegime irpfRegime) {
+		this.irpfRegime = irpfRegime;
+		return this;
 	}
 
 }

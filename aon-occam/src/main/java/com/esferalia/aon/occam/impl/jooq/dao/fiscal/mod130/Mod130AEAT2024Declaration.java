@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.fiscal.AccountingBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -30,6 +31,7 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.IRPFFormatter;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.ExplainRowManager;
@@ -224,6 +226,14 @@ public class Mod130AEAT2024Declaration extends Mod130Declaration {
 	}
 
 	private static Stream<AccountingBreakdown> getInitialBaseC01(AONContext ctx, final Mod130 mod) {
+		
+		// Actividad seleccionada para imputar apuntes sin actividad
+		EnterpriseActivity ea = null;
+		if (mod.getDefaultActivityCode() != 0) {
+			ea = CompanyDAO.getEnterpriseActivity(ctx, mod.getDefaultActivityCode());
+		}
+		
+		final EnterpriseActivity eaf = ea;
 		return AccountEntryDAO.getAccountingBreakdown(ctx,
 				p -> p.getDomainProperty().eq(ctx.getDomainId())
 					.and(p.getEntryDateProperty().ge(AonDateUtils.getYearFirstDay(mod.getYear())))
@@ -232,8 +242,12 @@ public class Mod130AEAT2024Declaration extends Mod130Declaration {
 					)
 			.peek( br -> {
 					// Si la actividad está vacía, asignar la actividad indicada en el modelo
-					if (br.getActivity() == null && mod.getDefaultActivityCode() != 0) {
+					if (br.getActivity() == null && eaf != null) {
 						br.setActivity(mod.getDefaultActivityCode());
+						br.setActivityDescription(eaf.getDescription());
+						br.setEpigraph(eaf.getEpigraph());
+						br.setEpigraphSection(eaf.getIae().getSection());
+						br.setRegime(eaf.getIrpfRegime());
 					}
 				})
 			.filter( br -> (!br.hasActivity() || (!br.isFarmer() && (br.isNormalRegime() || br.isSimplifiedRegime())) ));
@@ -252,6 +266,14 @@ public class Mod130AEAT2024Declaration extends Mod130Declaration {
 	}
 	
 	private static Stream<AccountingBreakdown> getInitialBaseC02(AONContext ctx, final Mod130 mod) {
+		
+		// Actividad seleccionada para imputar apuntes sin actividad
+		EnterpriseActivity ea = null;
+		if (mod.getDefaultActivityCode() != 0) {
+			ea = CompanyDAO.getEnterpriseActivity(ctx, mod.getDefaultActivityCode());
+		}
+		
+		final EnterpriseActivity eaf = ea;
 		return AccountEntryDAO.getAccountingBreakdown(ctx,
 				p -> p.getDomainProperty().eq(ctx.getDomainId())
 					.and(p.getEntryDateProperty().ge(AonDateUtils.getYearFirstDay(mod.getYear())))
@@ -260,8 +282,12 @@ public class Mod130AEAT2024Declaration extends Mod130Declaration {
 					)
 			.peek( br -> {
 					// Si la actividad está vacía, asignar la actividad indicada en el modelo
-					if (br.getActivity() == null && mod.getDefaultActivityCode() != 0) {
+					if (br.getActivity() == null && eaf != null) {
 						br.setActivity(mod.getDefaultActivityCode());
+						br.setActivityDescription(eaf.getDescription());
+						br.setEpigraph(eaf.getEpigraph());
+						br.setEpigraphSection(eaf.getIae().getSection());
+						br.setRegime(eaf.getIrpfRegime());
 					}
 				})
 			.filter( br -> (!br.hasActivity() || (!br.isFarmer() && (br.isNormalRegime() || br.isSimplifiedRegime()))));

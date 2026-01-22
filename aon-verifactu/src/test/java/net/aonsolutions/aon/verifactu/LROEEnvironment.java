@@ -4,23 +4,34 @@ import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
+import com.esferalia.aon.occam.api.model.Certificate.CertificateOwner;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.payroll.Enterprise;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.EnterpriseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 
-final class SifEnvironment extends VerifactuEnvironmentAbs {
-	protected String domainName = "siftest.aonsolutions.test";	
+final class LROEEnvironment extends VerifactuEnvironmentAbs {
+	protected String domainName = "lroetest.aonsolutions.test";	
 	protected String user 		= "admin";
 	
 	@Override
@@ -54,7 +65,31 @@ final class SifEnvironment extends VerifactuEnvironmentAbs {
 		}
 	}
 
+	private Certificate insertBizkaiaCertificate(AONContext ctx) throws IOException {
+		InputStream input = this.getClass().getResourceAsStream("bizkaia.p12");
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		AonIOUtils.copy(input, baos);
+		Integer userId = null;
+		Certificate certificate = new Certificate();
+		certificate.setTags(Arrays.asList(CertificateType.values()));
+		certificate.setDomain(ctx.getDomainId());
+		certificate.setDescription("CERT. BIZKAIA TEST");
+		certificate.setOwner(CertificateOwner.ENTERPRISE);
+		certificate.setConfidential(false);
+		String CERT_PASSWORD = "IZDesa2021";
+		certificate.setPassword(CERT_PASSWORD);
+		certificate.setData( baos.toByteArray() );
+		CertificateDAO.save(ctx, ctx.getDomainId(), userId, certificate);
+		return certificate;
+	}
+
 	public void initializeDomain(AONContext ctx) {
+		try {
+			insertBizkaiaCertificate(ctx);
+		} catch (IOException e) {
+			throw new AonCoreException("Error inserting Bizkaia certificate", e);
+		}
+		
 		Date today = new Date();
 		Date yesterday = AonDateUtils.addDays(today, -1);
 		
@@ -62,19 +97,28 @@ final class SifEnvironment extends VerifactuEnvironmentAbs {
 		ctx.getDslContext().insertInto(ENTERPRISE_DATA)
 			.set(ENTERPRISE_DATA.DOMAIN, ctx.getDomainId())
 			.set(ENTERPRISE_DATA.ENTERPRISE, enterprise.getId() )
-			.set(ENTERPRISE_DATA.NAME, EnterpriseDataNames.ICC_SIF.name() )
+			.set(ENTERPRISE_DATA.NAME, EnterpriseDataNames.ICC_LROE.name() )
 			.set(ENTERPRISE_DATA.EXPRESSION, "test" )
 			.set(ENTERPRISE_DATA.START_DATE,  AonDateUtils.toSql(yesterday))
 			.execute();
-		ctx.log().info("Enterprise Data: ICC_SIF set to TRUE / TEST");
+		ctx.log().info("Enterprise Data: ICC_LROE set to TRUE / TEST");
 		
 		ctx.getDslContext().insertInto(ENTERPRISE_DATA)
 			.set(ENTERPRISE_DATA.DOMAIN, ctx.getDomainId())
 			.set(ENTERPRISE_DATA.ENTERPRISE, enterprise.getId() )
 			.set(ENTERPRISE_DATA.NAME, EnterpriseDataNames.ICC_ADMINISTRATION.name() )
-			.set(ENTERPRISE_DATA.EXPRESSION, Administration.NAVARRA.name() )
+			.set(ENTERPRISE_DATA.EXPRESSION, Administration.BIZKAIA.name() )
 			.set(ENTERPRISE_DATA.START_DATE,  AonDateUtils.toSql(yesterday))
 			.execute();
-		ctx.log().info("Enterprise Data: ICC_ADMINISTRATION set to COMMON_TERRITORY");
+		ctx.log().info("Enterprise Data: ICC_ADMINISTRATION set to BIZKAIA");
+	}
+	
+	public static void main(String[] args) throws IOException {
+		LROEEnvironment env = new LROEEnvironment();
+		env.setDomainId( 8 );
+		try (CloseableAONContext ctx = AONContext.getAONContext( env.getOccam() )) {
+			env.insertBizkaiaCertificate(ctx);
+		}
+		
 	}
 }

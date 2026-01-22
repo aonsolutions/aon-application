@@ -681,6 +681,12 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static void syncLocationTimeControl(Domain domain, User user) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
+			getTimeControl().syncLocationTimeControl(ctx);
+		}
+	}
+	
 	
 	//----------------NOTE
 	

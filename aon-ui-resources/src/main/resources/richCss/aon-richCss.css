@@ -764,6 +764,27 @@ color:#000;
 .aon-icon-unsigned{
 	background:transparent url(images/aon-icon/aon-icon-unsigned.png) scroll left center no-repeat;
  }
+.aon-icon-sif{
+	background:transparent url(images/aon-icon/aon-icon-sif.png) scroll left center no-repeat;
+ }
+.aon-icon-send{
+	background:transparent url(images/aon-icon/aon-icon-send.png) scroll left center no-repeat;
+ }
+.aon-icon-send-sif{
+	background:transparent url(images/aon-icon/aon-icon-send-sif.png) scroll left center no-repeat;
+ }
+.aon-icon-send-cancel{
+	background:transparent url(images/aon-icon/aon-icon-send-cancel.png) scroll left center no-repeat;
+ }
+.aon-icon-send-archive{
+	background:transparent url(images/aon-icon/aon-icon-send-archive.png) scroll left center no-repeat;
+ }
+.aon-icon-send-pending{
+	background:transparent url(images/aon-icon/aon-icon-send-pending.png) scroll left center no-repeat;
+ }
+.aon-icon-send-cancel-red{
+	background:transparent url(images/aon-icon/aon-icon-send-cancel-red.png) scroll left center no-repeat;
+ }
 .aon-icon-expand{
 	padding-left: 14px;
 	padding-top: 2px;
@@ -1142,7 +1163,8 @@ color:#000;
 	background:transparent url(images/aon-icon/aon-evicertia.png) scroll left center no-repeat;	
 }
 .aon-icon-qr{
-	background:transparent url(images/aon-icon/aon-icon-qr.png) scroll left center no-repeat;	
+	background:transparent url(images/aon-icon/aon-icon-qr.png) scroll left center no-repeat;
+	padding-left: 30;	
 }
 .aon-icon-aeat{
 	background:transparent url(images/aon-icon/aon-aeat.png) scroll left center no-repeat;	
@@ -1176,6 +1198,12 @@ color:#000;
 }
 .aon-icon-gipuzkoa-bw{
 	background:transparent url(images/aon-icon/aon-icon-gipuzkoa-bw.png) scroll left center no-repeat;	
+}
+.aon-icon-canarias{
+	background:transparent url(images/aon-icon/aon-icon-canarias.png) scroll left center no-repeat;	
+}
+.aon-icon-canarias-bw{
+	background:transparent url(images/aon-icon/aon-icon-canarias-bw.png) scroll left center no-repeat;	
 }
 
 .aon-icon-winsuite{

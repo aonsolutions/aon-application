@@ -61,10 +61,10 @@ public class ArtistIntegralTest extends BaseIntegralTestCase {
 		draft("CORTA, DURACIÓN");
 		calculate(Calendar.JUNE, 2025);
 		
-		click("costsCheck-input");
+		check("costsCheck-input");
 		List<DomElement> commonContingencyCost = getElementsById("common_contingency_cost");
 		Assert.assertEquals(1, commonContingencyCost.size());
-		click("costsCheck-input");
+		uncheck("costsCheck-input");
 
 	}
 
