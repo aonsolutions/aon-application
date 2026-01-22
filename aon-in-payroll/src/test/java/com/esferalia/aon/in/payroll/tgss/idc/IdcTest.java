@@ -5039,36 +5039,6 @@ public class IdcTest extends AbstractSQLTestCase {
 		return contract;
 	}
 
-	protected final void cleanDeductionConcepts(AONContext aonContext) {
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
-
-		aonContext.getDslContext().delete(DEDUCTION_CONCEPT).execute();
-
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
-	}
-
-	public static final DeductionConceptRecord addDeductionConcept(AONContext aonContext, String code,
-			DeductionType type) {
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
-		DeductionConceptRecord deductionConceptRecord = aonContext.getDslContext().insertInto(DEDUCTION_CONCEPT)
-				.set(DEDUCTION_CONCEPT.DOMAIN, 0).set(DEDUCTION_CONCEPT.CODE, code)
-				.set(DEDUCTION_CONCEPT.TYPE, (byte) type.ordinal()).set(DEDUCTION_CONCEPT.DESCRIPTION, code).returning()
-				.fetchOne();
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
-		return deductionConceptRecord;
-	}
-
-	protected final void addSSRegimeDeduction(AONContext aonContext, DeductionConceptRecord concept,
-			SSRegimeType ssRegimetype, java.sql.Date startDate, String expression) {
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
-
-		aonContext.getDslContext().insertInto(SYSTEM_DEDUCTION).set(SYSTEM_DEDUCTION.START_DATE, startDate)
-				.set(SYSTEM_DEDUCTION.DOMAIN, (-1) * ssRegimetype.ordinal())
-				.set(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT, concept.getId()).set(SYSTEM_DEDUCTION.EXPRESSION, expression)
-				.execute();
-
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
-	}
 
 	protected final void addSystemPayment(AONContext aonContext, PaymentConceptRecord concept, java.sql.Date startDate,
 			String description, String expression, String quoteExpression, String irpfExpression) {

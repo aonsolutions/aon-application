@@ -41,15 +41,18 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.BonusConceptRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.DeductionConceptRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.Bonus;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
+import com.esferalia.aon.occam.api.model.Salary.Deduction;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryData;
+import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
@@ -7425,6 +7428,198 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(1000.00, delay.getRawCommonBase());
 		Assert.assertEquals(1000.00, delay.getProfessionalBase());
 		Assert.assertEquals(1000.00, delay.getIrpfBase());
+	}
+
+	@Test
+	public void testDelaysSEPEDeductionBonusI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanDeductionConcepts(aonContext);
+		
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+		
+		DeductionConceptRecord fpConcept = addDeductionConcept(aonContext, "FP", DeductionType.JOB_TRAINING);
+		DeductionConceptRecord desmplConcept = addDeductionConcept(aonContext, "DESMPL",DeductionType.UNEMPLOYMENT);
+		DeductionConceptRecord cgcConcept = addDeductionConcept(aonContext, "CGC", DeductionType.COMMON_CONTINGENCY);
+
+		addSSRegimeDeduction(aonContext, fpConcept, SSRegimeType.GENERAL, contract.getStartDate(), "BASE_CGP * 1.55/100");
+		addSSRegimeDeduction(aonContext, cgcConcept, SSRegimeType.GENERAL, contract.getStartDate(), "BASE_CGC * 6.4/100");
+		addSSRegimeDeduction(aonContext, desmplConcept, SSRegimeType.GENERAL, contract.getStartDate(), "BASE_CGP * 1.6/100");
+
+		addDeduction(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(),
+				"/*epoch:1768981961643,pec:16,quota:08*//*read-only*/_D=(TOTAL_BONF_SEPE=(isdef TOTAL_RED_CUOTA_SS ? TOTAL_BONF_SEPE : 0.00); BONF_SEPE=MIN(-(-CGC -FP -DESMPL), MIN(28.00, (DIAS_NOMINA == DIAS_MES) ? 28.00 : MIN( 28.00 - TOTAL_BONF_SEPE, ROUND(28.00/30.00, 2)*DIAS_COTIZADOS) ));SELF.addVariable('TOTAL_BONF_SEPE', TOTAL_BONF_SEPE + BONF_SEPE ) ; -BONF_SEPE);_D == 0.00 ? REMOVE() : _D /**/",
+				"BON.P.F.EMPL.CUANTIA (28,00)",
+				DeductionType.BONUS);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		for ( int i = 0 ; i < 10 ; i++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			calculator.setSalaryBuilder(jooqSalaryBuilder);
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+			AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().eq(ctx.getStartDate())) ).findAny()
+			.ifPresentOrElse(salary -> {
+				List<Deduction> bonuses = salary.getDeductions().stream()
+						.filter(d -> d.getDeductionType() == com.esferalia.aon.occam.api.model.type.DeductionType.BONUS)
+						.toList();
+				org.junit.Assert.assertEquals(1, bonuses.size());
+				Deduction bonus = bonuses.get(0);
+				org.junit.Assert.assertEquals(-28.00,bonus.getAmount(), DELTA);
+			}, 
+			() -> org.junit.Assert.fail("No salary found for contract " + contract.getId() + " and date " + ctx.getStartDate() ) );
+		}
+		
+		addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				getFirstDayOfMonth(getToday()), 
+				add(startDate, DAY_OF_MONTH, -1), 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		delayCalculator.setSalaryBuilder(new SalaryBuilder());
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+		for (com.esferalia.aon.payroll.SalaryPayment payment : delay
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		
+		List<SalaryDeduction> bonuses = delay.getSalaryDeductions().stream()
+				.filter(d -> d.getDeductionType() == DeductionType.BONUS)
+				.toList();
+		org.junit.Assert.assertEquals(0, bonuses.size());
+		bonuses.forEach(bonus -> {
+			System.out.println("   Bonus -> " + bonus.getDescription() + " : " + bonus.getAmount() );
+			org.junit.Assert.assertEquals(0, bonus.getAmount(), DELTA);
+		});
+		
+		Assert.assertEquals(100.00, delay.getTotalPayment());
+		Assert.assertEquals(100.00, delay.getCommonBase());
+		Assert.assertEquals(100.00, delay.getRawCommonBase());
+		Assert.assertEquals(100.00, delay.getProfessionalBase());
+		Assert.assertEquals(100.00, delay.getIrpfBase());
+	}
+
+	@Test
+	public void testDelaysSEPEDeductionBonusII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanDeductionConcepts(aonContext);
+		
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+		
+		DeductionConceptRecord fpConcept = addDeductionConcept(aonContext, "FP", DeductionType.JOB_TRAINING);
+		DeductionConceptRecord desmplConcept = addDeductionConcept(aonContext, "DESMPL",DeductionType.UNEMPLOYMENT);
+		DeductionConceptRecord cgcConcept = addDeductionConcept(aonContext, "CGC", DeductionType.COMMON_CONTINGENCY);
+
+		addSSRegimeDeduction(aonContext, fpConcept, SSRegimeType.GENERAL, contract.getStartDate(), "BASE_CGP * 1.0/100;");
+		addSSRegimeDeduction(aonContext, cgcConcept, SSRegimeType.GENERAL, contract.getStartDate(), "BASE_CGC * 0.0/100;");
+		addSSRegimeDeduction(aonContext, desmplConcept, SSRegimeType.GENERAL, contract.getStartDate(), "BASE_CGP * 0.0/100;");
+
+		addDeduction(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(),
+				"/*epoch:1768981961643,pec:16,quota:08*//*read-only*/_D=(TOTAL_BONF_SEPE=(isdef TOTAL_RED_CUOTA_SS ? TOTAL_BONF_SEPE : 0.00); BONF_SEPE=MIN(-(-CGC -FP -DESMPL), MIN(28.00, (DIAS_NOMINA == DIAS_MES) ? 28.00 : MIN( 28.00 - TOTAL_BONF_SEPE, ROUND(28.00/30.00, 2)*DIAS_COTIZADOS) ));SELF.addVariable('TOTAL_BONF_SEPE', TOTAL_BONF_SEPE + BONF_SEPE ) ; -BONF_SEPE);_D == 0.00 ? REMOVE() : _D /**/",
+				"BON.P.F.EMPL.CUANTIA (28,00)",
+				DeductionType.BONUS);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		for ( int i = 0 ; i < 10 ; i++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			calculator.setSalaryBuilder(jooqSalaryBuilder);
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+			AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().eq(ctx.getStartDate())) ).findAny()
+			.ifPresentOrElse(salary -> {
+				List<Deduction> bonuses = salary.getDeductions().stream()
+						.filter(d -> d.getDeductionType() == com.esferalia.aon.occam.api.model.type.DeductionType.BONUS)
+						.toList();
+				org.junit.Assert.assertEquals(1, bonuses.size());
+				Deduction bonus = bonuses.get(0);
+				org.junit.Assert.assertEquals(-17.50,bonus.getAmount(), DELTA);
+			}, 
+			() -> org.junit.Assert.fail("No salary found for contract " + contract.getId() + " and date " + ctx.getStartDate() ) );
+		}
+		
+		addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				getFirstDayOfMonth(getToday()), 
+				add(startDate, DAY_OF_MONTH, -1), 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		delayCalculator.setSalaryBuilder(new SalaryBuilder());
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+		for (com.esferalia.aon.payroll.SalaryPayment payment : delay
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		
+		List<SalaryDeduction> bonuses = delay.getSalaryDeductions().stream()
+				.filter(d -> d.getDeductionType() == DeductionType.BONUS)
+				.toList();
+		org.junit.Assert.assertEquals(10, bonuses.size());
+		bonuses.forEach(bonus -> {
+			System.out.println("   Bonus -> " + bonus.getDescription() + " : " + bonus.getAmount() );
+			org.junit.Assert.assertEquals(-0.1, bonus.getAmount(), DELTA);
+		});
+		
+		Assert.assertEquals(100.00, delay.getTotalPayment());
+		Assert.assertEquals(100.00, delay.getCommonBase());
+		Assert.assertEquals(100.00, delay.getRawCommonBase());
+		Assert.assertEquals(100.00, delay.getProfessionalBase());
+		Assert.assertEquals(100.00, delay.getIrpfBase());
 	}
 
 	// ------------------------------------------
