@@ -2758,6 +2758,7 @@ export class AonInvoice extends AonElement {
 					this.accept = false;
 					let data = this.getInvoice();
 					data.tbaiId = tbaiIdInput.value;
+					data.messages = undefined;
 					acceptInvoice(data).then(r => {
 						this.updateCounter(this.getAcceptFromOption(), this.getAcceptToOption(), 1);
 						this.invoice = new Invoice(r);
@@ -2785,6 +2786,7 @@ export class AonInvoice extends AonElement {
 					this.accept = false;
 					let data = this.getInvoice();
 					data.cert = certSelect.value;
+					data.messages = undefined;
 					acceptInvoice(data).then(r => {
 						this.updateCounter(this.getAcceptFromOption(), this.getAcceptToOption(), 1);
 						this.invoice = new Invoice(r);
@@ -2819,7 +2821,9 @@ export class AonInvoice extends AonElement {
 		} else if(this.accept) {
 			this.getApplication().startLoader();
 			this.accept = false;
-			acceptInvoice(this.getInvoice())
+			let data = this.getInvoice();
+			data.messages = undefined;
+			acceptInvoice(data)
 			.then(r => {
 				this.updateCounter(this.getAcceptFromOption(), this.getAcceptToOption(), 1);
 				this.invoice = new Invoice(r);

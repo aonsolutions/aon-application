@@ -16,6 +16,11 @@ PRESENCE: {
     icon: MATERIAL_ICONS.ADD,
     id: MATERIAL_ICONS.ADD,
   },
+  LOCATION_SYNC: {
+    name: "Sincronizar",
+    icon: MATERIAL_ICONS.SYNC,
+    id: MATERIAL_ICONS.SYNC,
+  },
   FILTER:{
     name: "Filter",
     icon: "tune",

@@ -252,6 +252,7 @@ public class TimeControlDAO {
 		.set(TIMECONTROL.DATE, new Timestamp(tcd.getDate().getTime()))
 		.set(TIMECONTROL.COMMENTS, tcd.getComments())
 		.set(TIMECONTROL.LOCATION, tcd.getLocation().getId())
+		.set(TIMECONTROL.LOCATION_DESCRIPTION ,tcd.getLocationDescription())
 		.set(TIMECONTROL.LATITUDE, tcd.getCoordinates().getLatitude())
 		.set(TIMECONTROL.LONGITUDE, tcd.getCoordinates().getLongitude())
 		.set(TIMECONTROL.CREATION_USER, ctx.getUser())
@@ -300,6 +301,7 @@ public class TimeControlDAO {
 		.set(TIMECONTROL.COMMENTS, tcd.getComments())
 		.set(TIMECONTROL.STATUS, tcd.getStatus().value())
 		.set(TIMECONTROL.LOCATION ,tcd.getLocation()!=null ? tcd.getLocation().getId() : null)
+		.set(TIMECONTROL.LOCATION_DESCRIPTION ,tcd.getLocationDescription())
 		.set(TIMECONTROL.MODIFICATION_USER, ctx.getUser())
 		.set(TIMECONTROL.MODIFICATION_DATE, new Timestamp(new Date().getTime()))
 		;
@@ -420,6 +422,7 @@ public class TimeControlDAO {
 					.setStatus(TimeControlStatus.safeValueOf(record.getValue(TIMECONTROL.STATUS)))
 					.setTaskHolder(TaskHolderFiller.build(record))
 					.setLocation(location)
+					.setLocationDescription(record.get(TIMECONTROL.LOCATION_DESCRIPTION))
 					.setComments(record.getValue(TIMECONTROL.COMMENTS))
 					.setCoordinates(new Coordinates(record.getValue(TIMECONTROL.LATITUDE),record.getValue(TIMECONTROL.LONGITUDE)))
 					.setReason(null == record.get(TIMECONTROL.CAUSE) ? null : TimeControlReason.values()[record.get(TIMECONTROL.CAUSE)])
