@@ -474,7 +474,8 @@ export class AonInvoice extends AonElement {
 	
 				if(!this.getInvoice().isRawdoc() 
 					&& !this.getInvoice().isRectified() 
-					&& !this.getInvoice().isRectifier()){
+					&& !this.getInvoice().isRectifier()
+				 	&& !this.getInvoice().isAccountSource()) {
 						
 					let rectify = ACTION.RECTIFY_INVOICE;
 					rectify.permission = true;
