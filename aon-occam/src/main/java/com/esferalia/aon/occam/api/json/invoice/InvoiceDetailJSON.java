@@ -99,7 +99,8 @@ public class InvoiceDetailJSON {
 				.put(IJsonNames.AMOUNT, detail.getTaxableBase())
 				.put(IJsonNames.DISCOUNT, detail.getDiscount())
 				.put(IJsonNames.CATEGORY, detail.getAccountCode())
-				.put(IJsonNames.PREPAYMENT, detail.isPrepayment());
+				.put(IJsonNames.PREPAYMENT, detail.isPrepayment())
+				.put(IJsonNames.SOURCE, detail.getSource().name());
 		
 		
 		detail.getInvoiceTaxes().stream().forEach(tax -> {

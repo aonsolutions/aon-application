@@ -263,15 +263,15 @@ enum ClaveTipoFactura {
 			destinatario.setNIF(invoice.getRegistryDocument().replace(" ", ""));	
 		} else {
 			IDOtroType other = new IDOtroType();
-			other.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getIso2()));		
+			other.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getAeatCode()));		
 			other.setIDType(invoice.isIntracommunity() 
 					? VerifactuIDType.NIF_IVA.getName()
 					: VerifactuIDType.OTRO.getName());
 			
 			String doc = invoice.getRegistryDocument().replace(" ", "");
-			if(AonStringUtils.notEquals(doc.substring(0,2), invoice.getRegistryDocumentCountry().getIso2())) {
+			if(AonStringUtils.notEquals(doc.substring(0,2), invoice.getRegistryDocumentCountry().getAeatCode())) {
 				boolean isGrecia = Country.GR == invoice.getRegistryDocumentCountry();
-				String countryDocument = isGrecia ? "EL" : invoice.getRegistryDocumentCountry().getIso2();
+				String countryDocument = isGrecia ? "EL" : invoice.getRegistryDocumentCountry().getAeatCode();
 				doc = countryDocument + doc;
 			}
 			other.setID(doc);

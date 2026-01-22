@@ -382,7 +382,8 @@ export class Invoice {
   }
 
   isRawdoc() {
-    return this.isInbox() || this.isRejected() || this.isDraft();
+    return this.isInbox() || this.isRejected() || this.isDraft()
+      || this.isProcessed() || this.isProcessing();
   }
 
   isOcrStatus(...publicStates) {
@@ -399,6 +400,10 @@ export class Invoice {
 
   isProcessed() {
     return this.status.toLowerCase() === 'processed';    
+  }
+
+  isProcessing() {
+    return this.status.toLowerCase() === 'processing';    
   }
 
   isPending() {
@@ -435,6 +440,10 @@ export class Invoice {
 
   isSigned() {
     return this.signed;
+  }
+
+  isAccountSource() {
+    return this.details.filter(f => f.source == 'ACCOUNT').length > 0;
   }
 
   isTbai()          { throw new Error("Invoice.js isTBAI() Not Supported!");}
