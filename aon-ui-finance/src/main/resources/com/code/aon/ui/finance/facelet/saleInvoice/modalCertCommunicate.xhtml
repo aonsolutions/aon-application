@@ -40,7 +40,7 @@
 										<aon:outputText value="No se podrá modificar ni eliminar." style="display:block;" />
 									</aon:div>
 									
-									<aon:if test="#{saleInvoice.verifactu}">
+									<aon:if test="#{saleInvoice.verifactu or saleInvoice.sii}">
 										<aon:panelGrid id="menuGridVerifactu" columns="2" dir="true"
 											styleClass="aon-width-all aon-margin-top"
 											columnClasses="aon-panelGrid-odd aon-width-half aon-text-right aon-padding-right, aon-panelGrid-even aon-width-half">

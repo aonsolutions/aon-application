@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -69,6 +70,8 @@ import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -80,8 +83,10 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAdministrationVisitor;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus.InvoiceCommunicationStatusVisitor;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
@@ -101,6 +106,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import jakarta.persistence.Transient;
 import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
+import net.aonsolutions.aon.sii.SIIManager;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
 
@@ -705,6 +711,25 @@ public class SaleInvoiceController extends InvoiceController {
 					tbai.createEmisionTBAI(company, invoice, config);
 					setTbaiUrl(TbaiData.getInstance(config).getTbaiUrl(company.getDomain().getName(), company.getDomain().getId(), login, invoice.getId()));
 				}
+				
+				if(config.isSii()) {
+					try {
+						SIIManager manager = SIIManager.getInstance(config);
+							
+						AccountingReportParams params = new AccountingReportParams();
+						params.setDomain(inv.getDomain());
+						params.setInvoices(new Integer[] {invoice.getId()});
+						LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(getOccam(), params, "")
+								.collect(Collectors.toCollection(LinkedList::new));		
+						manager.suministroFacturas(getDomain(), login, company, invoice, contextList, null);
+					} catch (Exception e) {
+						if (e instanceof InvoiceCommunicationException ice) {
+							throw ice;
+						} else {
+							throw new InvoiceCommunicationException( e );
+						}
+					}
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1096,6 +1121,7 @@ public class SaleInvoiceController extends InvoiceController {
 		if (isVerifactu()) return "Emitir / Enviar";
 		if (isNoVerifactu()) return "Emitir / Archivar"; 
 		if (isSif()) return "Emitir / Archivar";
+		if (isSii()) return "Emitir / Enviar";
 		return "Aceptar/Enviar";
 	}
 	
