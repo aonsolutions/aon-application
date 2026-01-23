@@ -5073,7 +5073,6 @@ aon-agenda-all-days .day-header {
 
 aon-agenda-all-days .day-header-left {
   display: flex;
-  gap: 8px;
   align-items: baseline;
 }
 
@@ -5087,16 +5086,28 @@ aon-agenda-all-days .day-name {
   font-weight: 600;
   color: #70757a;
   text-transform: uppercase;
+   min-width: 32px;
 }
 
 aon-agenda-all-days .day-number {
   font-size: 22px;
   font-weight: 500;
+  min-width: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 aon-agenda-all-days .day.today .day-number {
   color: white !important;
   background-color: #1a73e8;
+  padding: .2rem;
+  border-radius: .5rem;
+}
+
+aon-agenda-all-days .day-number.festive {
+  color: white !important;
+  background-color: #e65d54;
   padding: .2rem;
   border-radius: .5rem;
 }
@@ -5116,7 +5127,7 @@ aon-agenda-all-days .events {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-left: 32px;
+  margin-left: 75px;
 }
 
 aon-agenda-all-days .event {
@@ -5147,14 +5158,6 @@ aon-agenda-all-days .event.out {
 aon-agenda-all-days .event.pause {
   background: #fef7e0;
   color: #b06000;
-}
-
-aon-agenda-all-days .event.holiday {
-  background: #fee3da;
-  color: #fb7249;
-  display: flex;
-  gap: .5rem;
-  align-items: center;
 }
 
 /* Contenedor principal del menú calendario */
