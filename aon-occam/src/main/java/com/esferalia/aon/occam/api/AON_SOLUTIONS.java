@@ -19,7 +19,6 @@ import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.S3Category;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
@@ -44,6 +43,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.S3Category;
 import com.esferalia.aon.occam.api.model.S3Document;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
@@ -52,7 +52,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.api.model.aonsolutions.Note;
 import com.esferalia.aon.occam.api.model.aonsolutions.Notification;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
-import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlContractEvent;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlContractEvents;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
@@ -618,7 +618,7 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static Stream<TimeControlContractEvent> getTaskHolderTimeContractEvents(Domain domain, User user, Integer taskHolderId, Date startDate, Date endDate) {
+	public static TimeControlContractEvents getTaskHolderTimeContractEvents(Domain domain, User user, Integer taskHolderId, Date startDate, Date endDate) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
 			return getTimeControl().getTaskHolderTimeContractEvents(ctx, taskHolderId, startDate, endDate);
 		}

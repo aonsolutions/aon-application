@@ -87,7 +87,7 @@ export class AonLocationAdd extends AonElement {
 			registrySelect.options = JSON.stringify(
 				resp.map((r) => {
 					return {
-						...r,
+						name: `${r.name}`,
 						value: `${r.id}`,
 					};
 				})
@@ -99,7 +99,6 @@ export class AonLocationAdd extends AonElement {
 		let typeSelect = this.getElement("type");
 		let registrySelect = this.getElement("registry");
 		typeSelect.addEventListener(EVENT.CHANGE, ({ detail }) => {
-			registrySelect.setDisabled(detail && detail.value !== "1");
 			registrySelect.style.display = detail && detail.value !== "1" ? 'none' : '';
 		});
 	}
@@ -145,7 +144,8 @@ export class AonLocationAdd extends AonElement {
 		divG.classList.add(CSS.AON_COL_SM_3, CSS.AON_COL_XS_2);
 		aonCard.appendChild(divG);
 
-		createSelect("registry", "Operario", divG);
+		let registry = createSelect("registry", "Operario", divG);
+		registry.autocomplete = true;
 
 		divG = this.createElement(TAG.DIV);
 		divG.classList.add(CSS.AON_COL_XS_12);
@@ -255,7 +255,6 @@ export class AonLocationAdd extends AonElement {
 		}
 
 		if (!data || !data.type || data.type != "1") {
-			registrySelect.setDisabled(true);
 			registrySelect.style.display = 'none';
 		}
 

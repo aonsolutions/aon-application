@@ -11,6 +11,8 @@ export class AonAgendaAllDays extends AonElement {
 	_taskHolder;
 	_taskHolderName;
 	_events = new Map(); // key: "YYYY-MM-DD" => value: array de eventos
+	_festivesContract = new Map(); // key: "YYYY-MM-DD" => value: array de eventos
+	_workingDays = []; // array dias laborables
 	_eventsContract = new Map(); // key: "YYYY-MM-DD" => value: array de eventos
 	_loadedMonths = new Set(); // Para trackear qué meses ya se han cargado
 	_loadingMonths = new Set(); // Para trackear qué meses están cargándose AHORA
@@ -180,12 +182,19 @@ export class AonAgendaAllDays extends AonElement {
 			
 			console.log(`✅ ${monthKey}: ${datos.length} eventos`);
 			console.log(`✅ ${monthKey}: ${contractDatos.length} eventos contrato`);
+			console.log(contractDatos);
 			
 			// Procesar y guardar eventos por fecha
 			this.processEvents(datos);
 			
+			// Procesar y guardar festivos por fecha
+			this.processContractFestives(contractDatos.festives);
+			
+			// Guardar dias laborables / no laborables semana
+			this._workingDays = contractDatos.workingDays;
+			
 			// Procesar y guardar eventos por fecha
-			this.processContractEvents(contractDatos);
+			//this.processContractEvents(contractDatos.events);
 			
 			// Marcar mes como cargado
 			this._loadedMonths.add(monthKey);
@@ -248,6 +257,28 @@ export class AonAgendaAllDays extends AonElement {
 						status: dayData.status
 					},
 					details: dayData.detail || []
+				});
+			}
+		});
+	}
+	
+	/* ---------------- PROCESS CONTRACT FESTIVES ---------------- */
+	processContractFestives(datos) {
+		if (!datos || !Array.isArray(datos)) return;
+		
+		datos.forEach(dayData => {
+			// Convertir start_date (timestamp en milisegundos) a fecha
+			const date = new Date(dayData.start_date);
+			const dateKey = AonDateUtils.format(date, "YYYY-MM-DD");
+			
+			// Solo guardar si no existe ya (para no sobrescribir)
+			
+			if (!this._festivesContract.has(dateKey)) {
+				this._festivesContract.set(dateKey, {
+					start_date: dayData.start_date,
+					end_date: dayData.end_date,
+					description: dayData.description,
+					source: dayData.source
 				});
 			}
 		});
@@ -462,9 +493,12 @@ export class AonAgendaAllDays extends AonElement {
 				dayEl.classList.add("today");
 			}
 			
-			// Marcar fin de semana (sábado = 6, domingo = 0)
+			// Marcar fin de semana (sábado = 6, domingo = 0) si no existe _workingDays
 			const dayOfWeek = dayDate.getDay();
-			if (dayOfWeek === 0 || dayOfWeek === 6) {
+			if(this._workingDays.length > 0){
+				if(this._workingDays[dayOfWeek] === 1)
+					dayEl.classList.add("weekend");
+			} else if (dayOfWeek === 0 || dayOfWeek === 6) {
 				dayEl.classList.add("weekend");
 			}
 
@@ -481,12 +515,20 @@ export class AonAgendaAllDays extends AonElement {
 			}
 			
 			// Obtener eventos contrato del día
-			const dayEventContractData = this._eventsContract.get(day.key);
-			let eventsContractHtml = '';
+			const dayContractFestive = this._festivesContract.get(day.key);
+			let dayFestiveHtml = '';
 			
-			if (dayEventContractData) {
-				eventsContractHtml = this.renderDayContractEvents(dayEventContractData);
+			if (dayContractFestive) {
+				dayFestiveHtml = this.renderContractFestive(dayContractFestive);
 			}
+			
+			// Obtener eventos contrato del día
+			//const dayEventContractData = this._eventsContract.get(day.key);
+			//let eventsContractHtml = '';
+			
+			//if (dayEventContractData) {
+			//	eventsContractHtml = this.renderDayContractEvents(dayEventContractData);
+			//}
 			
 			// Formatear nombre del día (3 primeras letras + punto)
 			const dayNameFull = AonDateUtils.dayName(day.date);
@@ -497,30 +539,32 @@ export class AonAgendaAllDays extends AonElement {
 			        <div class="day-header">
 			          <div class="day-header-left">
 			            <span class="day-name">${dayNameShort}</span>
-			            <span class="day-number">${day.date.getDate()}</span>
+			            <span class="day-number ${dayFestiveHtml.length > 0 ? 'festive' : ''}">${day.date.getDate()}</span>
+			            ${dayFestiveHtml}
 			          </div>
 			        </div>
 			        <div class="day-content">
-			          ${eventsContractHtml}
 			          ${eventsHtml}
 			        </div>
 			      `;
+			      //${eventsContractHtml}
 			} else {
 				dayEl.innerHTML = `
 			        <div class="day-header">
 			          <div class="day-header-left">
 			            <span class="day-name">${dayNameShort}</span>
-			            <span class="day-number">${day.date.getDate()}</span>
+			            <span class="day-number ${dayFestiveHtml.length > 0 ? 'festive' : ''}">${day.date.getDate()}</span>
+			            ${dayFestiveHtml}
 			          </div>
 			          <div class="day-header-right">
 			            <span class="total-hours">${totalHours} h</span>
 			          </div>
 			        </div>
 			        <div class="day-content">
-			          ${eventsContractHtml}
 			          ${eventsHtml}
 			        </div>
-			      `;	
+			      `;
+			      //${eventsContractHtml}	
 			}
 		      
 			el.appendChild(dayEl);
@@ -576,6 +620,17 @@ export class AonAgendaAllDays extends AonElement {
 				`;
 			}).join('')}
 		</div>`;
+	}
+	
+	/* ---------------- RENDER CONTRACT EVENTS ---------------- */
+	renderContractFestive(event) {
+		if (!event) return '';
+		
+		return `
+			<div class="event">
+				<span class="reason">${event.description}</span>
+			</div>
+		`;
 	}
 	
 	/* ---------------- RENDER CONTRACT EVENTS ---------------- */

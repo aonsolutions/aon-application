@@ -27,7 +27,7 @@ export const saveCustomer = (data) => put(`${CUSTOMERS}/${data.id}`, data);
 //export const saveCustomerNote = (data) => putPro(`${PRO_URL}/${CUSTOMERS}/note`, data);
 // LOCAL
 export const saveCustomerNote = (data) => put(`${CUSTOMERS}/note`, data);
-export const saveCustomerNotePro = (data) => putPro(`${CUSTOMERS}/note`, data);
+export const saveCustomerNotePro = (data, headers) => putPro(`${CUSTOMERS}/note`, data, headers);
 
 export const getTarget = (data) => get(`${TARGETS}/${data.id}`, data);
 export const saveTarget = (data) => post(`${TARGETS}`, data);

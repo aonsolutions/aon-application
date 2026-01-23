@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Holiday.HOLIDAY;
 import static com.esferalia.aon.jooq.tables.HolidayDetail.HOLIDAY_DETAIL;
@@ -41,6 +42,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlContractEvent;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlContractEventSource;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlContractEvents;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlReason;
@@ -48,6 +50,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TimeControlPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class TimeControlDAO {	
@@ -420,8 +423,10 @@ public class TimeControlDAO {
 		return tc;
 	}
 	
-	public static Stream<TimeControlContractEvent> getTaskHolderTimeContractEvents(AONContext ctx, Integer taskHolderId, Date startDate, Date endDate) {
-		List<TimeControlContractEvent> contractEvents = new ArrayList<TimeControlContractEvent>();
+	public static TimeControlContractEvents getTaskHolderTimeContractEvents(AONContext ctx, Integer taskHolderId, Date startDate, Date endDate) {
+		TimeControlContractEvents contractEvents = new TimeControlContractEvents();
+		
+		List<TimeControlContractEvent> contractFestives = new ArrayList<TimeControlContractEvent>();
 		
 		Result<ContractRecord> taskHolderContracts = ctx.getDslContext().selectFrom(CONTRACT)
 				.where(CONTRACT.PERSON.eq(taskHolderId))
@@ -429,12 +434,9 @@ public class TimeControlDAO {
 					(
 						CONTRACT.START_DATE.le(AonDateUtils.toSql(startDate))
 						.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(AonDateUtils.toSql(startDate))))
-					
 					).or(
-					
 						CONTRACT.START_DATE.le(AonDateUtils.toSql(endDate))
 						.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(AonDateUtils.toSql(endDate))))
-					
 					)
 					
 				)
@@ -442,59 +444,253 @@ public class TimeControlDAO {
 		
 		if(!taskHolderContracts.isEmpty()) {
 			
-			taskHolderContracts.forEach(taskHolderContract -> {
-				
-				Record contractCalendarRecord = ctx.getDslContext().select(DSL.ifnull(CONTRACT.CALENDAR, PAYROLL_WORKPLACE.CALENDAR).as(CONTRACT.CALENDAR))
-						  .from(CONTRACT)
-						  .innerJoin(PAYROLL_WORKPLACE)
-						  .on(CONTRACT.WORKPLACE.eq(PAYROLL_WORKPLACE.WORKPLACE))
-						  .where(CONTRACT.ID.eq(taskHolderContract.getId()))
-						  .fetchOne();
-				
-				Integer calendarId = null == contractCalendarRecord ? null : contractCalendarRecord.get(CONTRACT.CALENDAR);
-				
-				if(null != calendarId) {
-					
-					Integer holidayId = ctx.getDslContext().select(CALENDAR.HOLIDAY).from(CALENDAR)
-							.where(CALENDAR.ID.eq(calendarId))
-							.fetchOne(CALENDAR.HOLIDAY);
-					
-					ArrayList<Integer> holidays = new ArrayList<>();
-					
-					// Get all holidays ids
-					while ( holidayId != null ) {
-						holidays.add(holidayId);
-						
-						holidayId = ctx.getDslContext().select(HOLIDAY.HOLIDAY_)
-								.from(HOLIDAY)
-								.where(HOLIDAY.ID.eq(holidayId))
-								.fetchOne()
-								.get(HOLIDAY.HOLIDAY_);
-					}
-					
-					Result<Record> holidayRecords = ctx.getDslContext().select()
-							.from(HOLIDAY_DETAIL)
-							.where(HOLIDAY_DETAIL.HOLIDAY.in(holidays))
-							.and(HOLIDAY_DETAIL.DATE.between(AonDateUtils.toSql(startDate), AonDateUtils.toSql(endDate)))
-							.fetch();
-					
-					for(Record holidayRecord : holidayRecords) {
-						TimeControlContractEvent timeControlContractEvent = new TimeControlContractEvent()
-								.setSource(TimeControlContractEventSource.HOLIDAY)
-								.setStartDate(parseDateSqlToUtil(holidayRecord.get(HOLIDAY_DETAIL.DATE)))
-								.setEndDate(parseDateSqlToUtil(holidayRecord.get(HOLIDAY_DETAIL.DATE)))
-								.setDescription(holidayRecord.get(HOLIDAY_DETAIL.DESCRIPTION))
-								;
-						
-						contractEvents.add(timeControlContractEvent);
-					}
-				}
-				
-			});
+			Integer lastContractId = taskHolderContracts.get(taskHolderContracts.size() - 1).getId();
+			
+			contractEvents.setFullTime(getFullTimeJourney(ctx, lastContractId));
+			contractEvents.setWorkingDays(getWorkingDays(ctx, lastContractId));
+			
+			getContractFestives(ctx, startDate, endDate, contractFestives, taskHolderContracts);
+			
+			
 			
 		}
 		
-		return contractEvents.stream();
+		contractEvents.setFestives(contractFestives);
+		
+		return contractEvents;
+	}
+	
+	private static Boolean getFullTimeJourney(AONContext ctx, Integer contractId) {
+		String journeyTypeEmployee = ctx.getDslContext().select()
+				  .from(CONTRACT_DATA)
+				  .where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				  .and(CONTRACT_DATA.NAME.like("TC2"))
+				  .orderBy(CONTRACT_DATA.START_DATE.desc())
+				  .fetchStreamInto(CONTRACT_DATA)
+				  .map( data -> data.getExpression())
+				  .filter(tc2 -> AonStringUtils.isNotBlank(tc2))
+				  .findFirst()
+				  .orElse("true");
+		
+		return isFullTimeJourney(journeyTypeEmployee);
+	}
+	
+	private static Boolean isFullTimeJourney(String tc2) {
+		if(AonStringUtils.isBlank(tc2))
+			return false;
+		
+		parseContractData(tc2);
+		
+		try {
+			Integer contractType = Integer.parseInt(tc2);
+			return !AonNumberUtils.between(contractType, 200, 300) && !AonNumberUtils.between(contractType, 500, 599) && !AonNumberUtils.equals(contractType, 0);
+		} catch (NumberFormatException e) {
+			return '1' == tc2.charAt(1) || '4' == tc2.charAt(1)|| "true".equals(tc2);
+		}
+	}
+	
+	private static String parseContractData(String contractType) {
+		if(AonStringUtils.isNotBlank(contractType) && contractType.contains("\""))
+			try {
+				contractType = contractType.split("\"")[1];
+				return contractType;
+			} catch (IndexOutOfBoundsException e) {
+				return contractType;
+			}	
+		else
+			return contractType;
+	}
+	
+	private static void getContractFestives(AONContext ctx, Date startDate, Date endDate, List<TimeControlContractEvent> contractFestives, Result<ContractRecord> taskHolderContracts) {
+		taskHolderContracts.forEach(taskHolderContract -> {
+			
+			Record contractCalendarRecord = ctx.getDslContext().select(DSL.ifnull(CONTRACT.CALENDAR, PAYROLL_WORKPLACE.CALENDAR).as(CONTRACT.CALENDAR))
+					  .from(CONTRACT)
+					  .innerJoin(PAYROLL_WORKPLACE)
+					  .on(CONTRACT.WORKPLACE.eq(PAYROLL_WORKPLACE.WORKPLACE))
+					  .where(CONTRACT.ID.eq(taskHolderContract.getId()))
+					  .fetchOne();
+			
+			Integer calendarId = null == contractCalendarRecord ? null : contractCalendarRecord.get(CONTRACT.CALENDAR);
+			
+			if(null != calendarId) {
+				
+				Integer holidayId = ctx.getDslContext().select(CALENDAR.HOLIDAY).from(CALENDAR)
+						.where(CALENDAR.ID.eq(calendarId))
+						.fetchOne(CALENDAR.HOLIDAY);
+				
+				ArrayList<Integer> holidays = new ArrayList<>();
+				
+				// Get all holidays ids
+				while ( holidayId != null ) {
+					holidays.add(holidayId);
+					
+					holidayId = ctx.getDslContext().select(HOLIDAY.HOLIDAY_)
+							.from(HOLIDAY)
+							.where(HOLIDAY.ID.eq(holidayId))
+							.fetchOne()
+							.get(HOLIDAY.HOLIDAY_);
+				}
+				
+				Result<Record> holidayRecords = ctx.getDslContext().select()
+						.from(HOLIDAY_DETAIL)
+						.join(HOLIDAY).on(HOLIDAY.ID.eq(HOLIDAY_DETAIL.HOLIDAY))
+						.where(HOLIDAY_DETAIL.HOLIDAY.in(holidays))
+						.and(HOLIDAY_DETAIL.DATE.between(AonDateUtils.toSql(startDate), AonDateUtils.toSql(endDate)))
+						.fetch();
+				
+				for(Record holidayRecord : holidayRecords) {
+					TimeControlContractEvent timeControlContractEvent = new TimeControlContractEvent()
+							.setSource(TimeControlContractEventSource.FESTIVE)
+							.setStartDate(parseDateSqlToUtil(holidayRecord.get(HOLIDAY_DETAIL.DATE)))
+							.setEndDate(parseDateSqlToUtil(holidayRecord.get(HOLIDAY_DETAIL.DATE)))
+							.setDescription(holidayRecord.get(HOLIDAY_DETAIL.DESCRIPTION) + " (" + holidayRecord.get(HOLIDAY.DESCRIPTION) + ")")
+							;
+					
+					contractFestives.add(timeControlContractEvent);
+				}
+			}
+			
+		});
+	}
+	
+	private static Byte[] getWorkingDays(AONContext ctx, Integer contractId) {
+		Byte[] workingDays = new Byte[7];
+		
+		Record contractCalendarRecord = ctx.getDslContext().select(DSL.ifnull(CONTRACT.CALENDAR, PAYROLL_WORKPLACE.CALENDAR).as(CONTRACT.CALENDAR))
+				  .from(CONTRACT)
+				  .innerJoin(PAYROLL_WORKPLACE)
+				  .on(CONTRACT.WORKPLACE.eq(PAYROLL_WORKPLACE.WORKPLACE))
+				  .where(CONTRACT.ID.eq(contractId))
+				  .fetchOne();
+		
+		if (null != contractCalendarRecord){
+				
+			// Si vale 0 es laborable y si vale 1 es no laborables
+			
+			Result<Record> workingDaysRecords = ctx.getDslContext().select().from(CONTRACT_DATA)
+					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+					.and(CONTRACT_DATA.NAME.in(
+							"LABORABLE_LUNES",
+							"LABORABLE_MARTES",
+							"LABORABLE_MIERCOLES",
+							"LABORABLE_JUEVES",
+							"LABORABLE_VIERNES",
+							"LABORABLE_SABADO",
+							"LABORABLE_DOMINGO"
+					)).fetch();
+			
+			if(workingDaysRecords.isEmpty()) {
+				
+				// Default calendar working days
+				
+				Integer calendarId = contractCalendarRecord.get(CONTRACT.CALENDAR);
+				
+				Result<Record> calendarRecords = ctx.getDslContext().select().from(CALENDAR)
+						.where(CALENDAR.ID.eq(calendarId))
+						.fetch();
+				
+				for(Record calendarRecord : calendarRecords){
+					workingDays[0] = calendarRecord.get(CALENDAR.SUNDAY);
+					workingDays[1] = calendarRecord.get(CALENDAR.MONDAY);
+					workingDays[2] = calendarRecord.get(CALENDAR.TUESDAY);
+					workingDays[3] = calendarRecord.get(CALENDAR.WEDNESDAY);
+					workingDays[4] = calendarRecord.get(CALENDAR.THURSDAY);
+					workingDays[5] = calendarRecord.get(CALENDAR.FRIDAY);
+					workingDays[6] = calendarRecord.get(CALENDAR.SATURDAY);
+				}
+				
+			} else {
+				
+				for(Record workingDaysRecord : workingDaysRecords) {
+					String name = workingDaysRecord.get(CONTRACT_DATA.NAME);
+					switch (name) {
+						case "LABORABLE_DOMINGO":
+							workingDays[0] = Byte.parseByte(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "LABORABLE_LUNES":
+							workingDays[1] = Byte.parseByte(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "LABORABLE_MARTES":
+							workingDays[2] = Byte.parseByte(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "LABORABLE_MIERCOLES":
+							workingDays[3] = Byte.parseByte(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "LABORABLE_JUEVES":
+							workingDays[4] = Byte.parseByte(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "LABORABLE_VIERNES":
+							workingDays[5] = Byte.parseByte(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "LABORABLE_SABADO":
+							workingDays[6] = Byte.parseByte(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						default:
+							break;
+					}
+				}
+			}	
+		
+		} else {
+			
+			// Si vale 0 es laborable y si vale 1 es no laborables
+			Result<Record> workingDaysRecords = ctx.getDslContext().select().from(CONTRACT_DATA)
+					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+					.and(CONTRACT_DATA.NAME.in(
+							"LABORABLE_LUNES",
+							"LABORABLE_MARTES",
+							"LABORABLE_MIERCOLES",
+							"LABORABLE_JUEVES",
+							"LABORABLE_VIERNES",
+							"LABORABLE_SABADO",
+							"LABORABLE_DOMINGO"
+					)).fetch();
+			
+			if(workingDaysRecords.isEmpty()) {
+				
+				workingDays[0] = 1;
+				workingDays[1] = 0;
+				workingDays[2] = 0;
+				workingDays[3] = 0;
+				workingDays[4] = 0;
+				workingDays[5] = 0;
+				workingDays[6] = 1;
+			
+			} else {
+				
+				for(Record workingDaysRecord : workingDaysRecords) {
+					String name = workingDaysRecord.get(CONTRACT_DATA.NAME);
+					switch (name) {
+						case "LABORABLE_DOMINGO":
+							workingDays[0] = Byte.parseByte(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "LABORABLE_LUNES":
+							workingDays[1] = Byte.parseByte(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "LABORABLE_MARTES":
+							workingDays[2] = Byte.parseByte(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "LABORABLE_MIERCOLES":
+							workingDays[3] = Byte.parseByte(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "LABORABLE_JUEVES":
+							workingDays[4] = Byte.parseByte(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "LABORABLE_VIERNES":
+							workingDays[5] = Byte.parseByte(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "LABORABLE_SABADO":
+							workingDays[6] = Byte.parseByte(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						default:
+							break;
+					}
+				}
+			}
+		}
+		
+		return workingDays;
 	}
 	
 	private static java.util.Date parseDateSqlToUtil(Date date) {
