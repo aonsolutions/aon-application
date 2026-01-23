@@ -985,9 +985,10 @@ export class AonCustomer extends AonReg {
 		}
 		
 		if(params.isSig){
-	        params.domain_name = LS.getDomainName();
-	        params.domain_id = LS.getDomainId();
-	        await saveCustomerNotePro(params);
+			let headers = {domain_name: LS.getDomainName(), domain_id: LS.getDomainId()};
+	        //params.domain_name = LS.getDomainName();
+	        //params.domain_id = LS.getDomainId();
+	        await saveCustomerNotePro(params, headers);
 		} else
 			await saveCustomerNote(params);
 	}
