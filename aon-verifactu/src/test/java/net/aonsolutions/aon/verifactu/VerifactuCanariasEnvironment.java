@@ -48,6 +48,8 @@ final class VerifactuCanariasEnvironment extends VerifactuEnvironmentAbs {
 	}
 
 	public void initializeDomain(AONContext ctx) {
+		insertAONCertificate(ctx);
+		
 		Date today = new Date();
 		Date yesterday = AonDateUtils.addDays(today, -1);
 		

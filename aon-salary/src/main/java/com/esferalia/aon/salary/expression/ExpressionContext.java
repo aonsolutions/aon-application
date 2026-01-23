@@ -985,7 +985,7 @@ public class ExpressionContext {
 
 		} catch (DeferredExpressionException e) {
 			if ( e.getExpression() == expression )
-				throw new UndefinedVariablesException(script, expression.getName());
+				throw new UndefinedVariablesException(this.getRead(), script, expression.getName());
 			e.eval(this, toType);
 			return eval(script, start, end, toType);
 		} catch (DeferredException e) {
@@ -1026,7 +1026,7 @@ public class ExpressionContext {
 				// throwExpressionException(e);
 				// throw new UndefinedVariablesException(getUndefinedProperty(e, bindings));
 			} catch (UnresolveablePropertyException e) {
-				throw new UndefinedVariablesException(e.getName());
+				throw new UndefinedVariablesException(this.getRead(), e.getName());
 			} catch (ExpressionExceptionWrapper e) {
 				throw e.getExpressionException();
 			} catch (CompileException e) {
@@ -1045,14 +1045,14 @@ public class ExpressionContext {
 			throwExpressionException(child);
 		}catch ( DeferredExpressionException e ) {
 			if ( e.getExpression().getExpression().equals(script) )
-				throw new UndefinedVariablesException(script, e.getExpression().getName());
+				throw new UndefinedVariablesException(this.getRead(), script, e.getExpression().getName());
 			e.eval(this, Object.class);
 			throw new RetryExpressionException();
 		}catch ( DeferredException e ) {
 			e.eval(this, Object.class);
 			throw new RetryExpressionException();
 		}
-		throw new UndefinedVariablesException(getUndefinedProperty(child, bindings));
+		throw new UndefinedVariablesException(this.getRead(), getUndefinedProperty(child, bindings));
 	}
 
 

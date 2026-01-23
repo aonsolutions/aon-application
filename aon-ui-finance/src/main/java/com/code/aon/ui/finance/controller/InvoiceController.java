@@ -1311,6 +1311,14 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.ACCOUNT);
 		return (invoiceDetailBean.getCount(criteria) > 0);
 	}
+	
+	public boolean isTediSource() throws ManagerBeanException {
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.TEDI);
+		return (invoiceDetailBean.getCount(criteria) > 0);
+	}
 
 	public void onApplyDiscountsShow(ActionEvent event) throws ManagerBeanException {
 		Invoice invoice = getInvoice();
@@ -2117,6 +2125,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 	
 	public boolean isFirstNumberOfSeries() {
+		if(AonStringUtils.isBlank(getInvoice().getSeries())) return false; 
 	    Integer domainId = DomainManager.getCurrentDomain();
         String domainName = AonUtil.getDomainName();
         String login = UserUtils.getInstance().getLoggedUser().getLogin();

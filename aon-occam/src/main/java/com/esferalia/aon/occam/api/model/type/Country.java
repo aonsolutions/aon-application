@@ -89,10 +89,10 @@ public enum Country implements Serializable {
 	GD("GRANADA","GD","GRD",308,4,34),
 	GR("GRECIA","GR","GRC",300,3,27),
 	GL("GROENLANDIA","GL","GRL",304,4,18),
-	GP("GUADALUPE","GP","GLP",312,5,27),
+	GP("GUADALUPE","GP", "FR", "GLP",312,5,27),
 	GU("GUAM","GU","GUM",316,4,34),
 	GT("GUATEMALA","GT","GTM",320,4,28),
-	GF("GUAYANA FRANCESA","GF","GUF",254,5,27),
+	GF("GUAYANA FRANCESA","GF", "FR", "GUF",254,5,27),
 	GG("GUERNSEY","GG","GGY",831,4,34),
 	GN("GUINEA","GN","GIN",324,4,34),
 	GW("GUINEA-BIS\u00C1U","GW","GNB",624,4,34),
@@ -156,7 +156,7 @@ public enum Country implements Serializable {
 	ML("MAL\u00CD","ML","MLI",466,4,34),
 	MT("MALTA","MT","MLT",470,4,31),
 	MA("MARRUECOS","MA","MAR",504,4,34),
-	MQ("MARTINICA","MQ","MTQ",474,5,27),
+	MQ("MARTINICA","MQ", "FR", "MTQ",474,5,27),
 	MU("MAURICIO","MU","MUS",480,6,30),
 	MR("MAURITANIA","MR","MRT",478,5,27),
 	YT("MAYOTTE","YT","MYT",175,5,27),
@@ -199,7 +199,7 @@ public enum Country implements Serializable {
 	CG("CONGO","CG","COG",178,4,34),
 	CD("CONGO, REP\u00DABLICA DEMOCR\u00C1TICA DEL","CD","COD",180,4,34),
 	DO("REP\u00DABLICA DOMINICANA","DO","DOM",214,4,28),
-	RE("REUNI\u00D3N","RE","REU",638,5,27),
+	RE("REUNI\u00D3N","RE", "FR", "REU",638,5,27),
 	RW("RUANDA","RW","RWA",646,4,34),
 	RO("RUMANIA","RO","ROU",642,4,24),
 	RU("RUSIA, FEDERACI\u00D3N DE","RU","RUS",643,4,34),
@@ -265,6 +265,7 @@ public enum Country implements Serializable {
 	private String name;
 	private String iso2;
 	private String iso3;
+	private String aeatCode;
 	private int isoCode;
 	
 	private int bankIdLength;
@@ -273,6 +274,16 @@ public enum Country implements Serializable {
 	private Country(String name, String iso2, String iso3, int isoCode,int bankIdLength, int ibanLength) {
 		this.name = name;
 		this.iso2 = iso2;
+		this.iso3 = iso3;
+		this.isoCode = isoCode;
+		this.bankIdLength = bankIdLength;
+		this.ibanLength = ibanLength;
+	}
+	
+	private Country(String name, String iso2, String aeatCode, String iso3, int isoCode,int bankIdLength, int ibanLength) {
+		this.name = name;
+		this.iso2 = iso2;
+		this.aeatCode = aeatCode;
 		this.iso3 = iso3;
 		this.isoCode = isoCode;
 		this.bankIdLength = bankIdLength;
@@ -287,6 +298,12 @@ public enum Country implements Serializable {
 		return iso2;
 	}
 
+	public String getAeatCode() {
+		if(aeatCode == null)
+			return iso2;
+		return aeatCode;
+	}
+	
 	public String getIso3() {
 		return iso3;
 	}
