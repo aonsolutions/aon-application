@@ -97,14 +97,20 @@ public class FeeInvoicingProcess implements ILongProcess {
 			engine.setHibernateSession(HibernateUtil.getSession(sessionName));
 			
 			
+			// Grabacion de las facturas proforma
 			HibernateUtil.beginTransaction(sessionName);
 			controller.updateSeries();
 			engine.invoice(controller.getParams());
 			HibernateUtil.commitTransaction(sessionName);
-
+			
+			// Comunicación de las facturas proforma
 			Collection<Invoice> invoicedList = engine.getInvoicingDAO().getCollection();
 			if (invoicedList != null && !invoicedList.isEmpty()) {
-				communication(invoicedList);			
+				communication(sessionName, invoicedList);
+			}
+			
+			// Contabilización de las facturas si procede
+			if (invoicedList != null && !invoicedList.isEmpty()) {
 				if (controller.getParams().isInvoiceRecordable()) {
 					HibernateUtil.beginTransaction(sessionName);
 					int invoicesToRecord = invoicedList.size();
@@ -147,7 +153,7 @@ public class FeeInvoicingProcess implements ILongProcess {
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);			
 		}
 	}
-	private void communication(Collection<Invoice> invoiceList) throws InvoiceCommunicationException, Exception {
+	private void communication(String sessionName, Collection<Invoice> invoiceList) throws InvoiceCommunicationException, Exception {
 		InvoiceCommunicationConfiguration config = controller.getInvoiceCommunicationConfiguration();
 		config.setCertificate(controller.getCert());
 
@@ -163,19 +169,26 @@ public class FeeInvoicingProcess implements ILongProcess {
 			// Y USAR EL ELSE PARA TICKET BAI. 
 			AonCollectionUtils.stream(invoiceList).forEach(inv -> ticketbai(config, company, inv));
 		} else if(config.hasCommunication()) {
-			AonCollectionUtils.stream(invoiceList)
-			.map(inv -> AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), user.getLogin(), inv.getId()))
-			.forEach(invoice -> {
+			for (Invoice inv : invoiceList) {
+				com.esferalia.aon.occam.api.model.finance.Invoice invoice 
+					= AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), user.getLogin(), inv.getId());
 				InvoiceCommunicatorContext communicator = new InvoiceCommunicatorContext(domain, usr, controller.getCertificate(), AonCollectionUtils.toList(invoice))
 					.setConfig(config)
 					.setCompany(company);
 				try {
 					InvoiceCommunicator.issueInvoice(communicator);
+					
+					// Devolver el número a Hibernate para poder contabilizar si todo fue bien
+					com.esferalia.aon.occam.api.model.finance.Invoice afterInvoice 
+						= AON.getInvoice(domainName, inv.getDomain(), user.getLogin(), inv.getId());
+					inv.setNumber(afterInvoice.getNumber());
+					inv.setReferenceCode(afterInvoice.getReferenceCode());
+					inv = (Invoice) HibernateUtil.getSession(sessionName).merge(inv);
 				} catch (Exception e) {
 					e.printStackTrace();
 					AonUtil.addErrorMessage("Error during invoice communication invoice " + invoice.getReferenceCode() + ": " + e.getMessage());
 				}
-			});
+			}
 		}
 	}
 	
