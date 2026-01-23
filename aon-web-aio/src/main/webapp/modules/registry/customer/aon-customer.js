@@ -984,9 +984,11 @@ export class AonCustomer extends AonReg {
 			isSig: this.isSig()
 		}
 		
-		if(params.isSig)
-			await saveCustomerNotePro(params);
-		else
+		if(params.isSig){
+	        params.domain_name = LS.getDomainName();
+	        params.domain_id = LS.getDomainId();
+	        await saveCustomerNotePro(params);
+		} else
 			await saveCustomerNote(params);
 	}
 
