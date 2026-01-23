@@ -163,20 +163,19 @@ public class FeeInvoicingProcess implements ILongProcess {
 			// Y USAR EL ELSE PARA TICKET BAI. 
 			AonCollectionUtils.stream(invoiceList).forEach(inv -> ticketbai(config, company, inv));
 		} else if(config.hasCommunication()) {
-			List<com.esferalia.aon.occam.api.model.finance.Invoice> invoices = AonCollectionUtils.stream(invoiceList)
-					.map(inv -> AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), user.getLogin(), inv.getId()))
-					.toList();
-			
-			InvoiceCommunicatorContext communicator = new InvoiceCommunicatorContext(domain, usr, controller.getCertificate(), invoices)
+			AonCollectionUtils.stream(invoiceList)
+			.map(inv -> AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), user.getLogin(), inv.getId()))
+			.forEach(invoice -> {
+				InvoiceCommunicatorContext communicator = new InvoiceCommunicatorContext(domain, usr, controller.getCertificate(), AonCollectionUtils.toList(invoice))
 					.setConfig(config)
 					.setCompany(company);
-			try {
-				InvoiceCommunicator.acceptInvoice(communicator);
-			} catch (Exception e) {
-				e.printStackTrace();
-				AonUtil.addErrorMessage("Error during invoice communication: " + e.getMessage());
-				throw new Exception("Error during invoice communication");
-			}
+				try {
+					InvoiceCommunicator.issueInvoice(communicator);
+				} catch (Exception e) {
+					e.printStackTrace();
+					AonUtil.addErrorMessage("Error during invoice communication invoice " + invoice.getReferenceCode() + ": " + e.getMessage());
+				}
+			});
 		}
 	}
 	
