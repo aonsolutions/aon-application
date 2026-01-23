@@ -4,11 +4,13 @@ import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.security.KeyStore;
 import java.util.Date;
+import java.util.LinkedList;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -38,9 +40,14 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.Properties.CertificateProperties;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
+import com.esferalia.aon.occam.api.model.security.User;
 
 public class FeeInvoicingController implements IFinanceConstants, Serializable {
 	
@@ -53,8 +60,30 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 	private ProgressionState progressionState;
 	
 	private InvoiceCommunicationConfiguration icc;
+	
+	private boolean showCertFeeWindow;
 
-
+	LinkedList<SelectItem> digitalCertificates;
+	LinkedList<Certificate> certificates;
+	Integer certificate;
+	String password;
+	
+	public Integer getCertificate() {
+		return certificate;
+	}
+	
+	public void setCertificate(Integer certificate) {
+		this.certificate = certificate;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
 	public InvoicingParameters getParams() {
 		return invoicingParams;
 	}
@@ -66,7 +95,15 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 	private SaleInvoiceController getSaleInvoiceController() {
 		return (SaleInvoiceController) AonUtil.getRegisteredBean(IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME);
 	}			
+	
+	public boolean isShowCertFeeWindow() {
+		return showCertFeeWindow;
+	}
 
+	public void setShowCertFeeWindow(boolean showCertFeeWindow) {
+		this.showCertFeeWindow = showCertFeeWindow;
+	}
+	
 	public void onInitialize(ActionEvent event) throws ManagerBeanException {
 		InvoicingParameters params = new InvoicingParameters();
 		params.initializeParams();
@@ -134,6 +171,85 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 		return false;
 	}
 	
+	public Certificate getCert() {
+		if(certificates == null) {
+			getDigitalCertificates();
+		}
+		return certificates.stream().filter(f -> f.getId().equals(certificate)).findFirst().orElse(new Certificate());	
+	}
+	
+	public boolean isPass() {	
+		return getCert().hasPassword();
+	}
+	
+	
+	public LinkedList<SelectItem> getDigitalCertificates() {
+		if(digitalCertificates == null) {
+			digitalCertificates = new LinkedList<>();
+			certificates = new LinkedList<>();
+			Domain domain = getDomain();
+			User user = getUser();
+			AON.getCertificates(domain, user, f -> certificateFilter(domain, user, f)).forEach(certificate -> {
+				SelectItem item = new SelectItem(certificate.getId(), certificate.getDescription());
+				digitalCertificates.add(item);
+				certificates.add(certificate);
+			});
+			
+			if(!certificates.isEmpty())
+				certificate = certificates.getFirst().getId();
+		}
+		return digitalCertificates;
+	}	
+	
+	public Filter certificateFilter(Domain domain, User user, CertificateProperties f) {
+		Company company = AON.getCompanyForDomain(domain.getName(), domain.getId(), user.getLogin());
+		
+		Filter filter;
+		if(domain.getParentId() != null) {
+			if(!user.getDomain().getId().equals(domain.getParentId())) {
+				filter = (f.getDomainProperty().eq(domain.getId()).or(
+						f.getDomainProperty().eq(domain.getParentId())
+						.and(f.getSecurityLevelProperty().eq(com.esferalia.aon.occam.api.model.type.SecurityLevel.OFFICIAL.value())))
+					);
+			} else {
+				Integer[] domains = {domain.getId(), domain.getParentId()};
+				filter = f.getDomainProperty().in(domains);
+			}
+		} else filter = f.getDomainProperty().eq(domain.getId());
+    	
+		if(!user.getRegistry().isEmpty() && domain.getParentId() != null) {
+			Company parentCompany = AON.getCompanyForDomain(domain.getName(), domain.getParentId(), user.getLogin());
+			Integer[] registries = {user.getRegistry().getId(), company.getId(), parentCompany.getId()};
+			filter = filter.and(f.getRegistryProperty().in(registries));
+		} else if(!user.getRegistry().isEmpty()) {
+			Integer[] registries = {user.getRegistry().getId(), company.getId()};
+			filter = filter.and(f.getRegistryProperty().in(registries));
+		} else if(domain.getParentId() != null) {
+			Company parentCompany = AON.getCompanyForDomain(domain.getName(), domain.getParentId(), user.getLogin());
+			Integer[] registries = {company.getId(), parentCompany.getId()};
+			filter = filter.and(f.getRegistryProperty().in(registries));
+		} else filter = filter.and(f.getRegistryProperty().eq(company.getId()));
+		
+		filter = filter.and(f.getTypeProperty().eq(CertificateType.AEAT.name()).or(f.getTypeProperty().isNull()));
+		
+    	return filter;
+    }
+	
+	public Domain getDomain() {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		return AON.getDomain(domainName, domainId, login);
+	}
+	
+	public User getUser( ) {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Integer userId = UserUtils.getInstance().getLoggedUser().getId();	
+		return AON.getUser(domainName, domainId, login, f -> f.getIdProperty().eq(userId));
+	}
+	
 	public void onInvoice(ActionEvent event) throws Exception {
 		Series series = getParams().getInvoiceSeries();
 		checkSerie(getParams().getInvoiceDate(), series != null ? series.getCode() : null);
@@ -167,6 +283,24 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 		}
 	}
 	
+	private static Certificate checkCertificate(Certificate certificate) throws Exception {
+		try {
+			if(!checkCert(certificate.getData(), certificate.getPassword())) {
+				AonUtil.addErrorMessage("El certificado o la contraseña no son correctos.");
+				throw new Exception("El certificado o la contraseña no son correctos.");
+			}
+		} catch (Exception e) {
+			AonUtil.addErrorMessage("El certificado o la contraseña no son correctos.");
+			throw new Exception("El certificado o la contraseña no son correctos.");			
+		}		
+		if(certificate.isEmpty()) {
+			AonUtil.addErrorMessage("El certificado no existe.");
+			throw new Exception("El certificado no existe.");
+		}
+		return certificate;
+		
+	}
+	
 	private static Certificate checkCertificate() throws Exception {
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
@@ -178,17 +312,7 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 		} catch (Exception e) {
 			throw new Exception("Error al obtener el certificado.");
 		}
-		try {
-			if(!checkCert(cert.getData(), cert.getPassword())) {
-				throw new Exception("El certificado o la contraseña no son correctos.");
-			}
-		} catch (Exception e) {
-			throw new Exception("El certificado o la contraseña no son correctos.");			
-		}		
-		if(cert.isEmpty()) {
-			throw new Exception("El certificado no existe.");
-		}
-		return cert;
+		return checkCertificate(cert);
 	}
 	
 	public static boolean checkCert(byte[] cert, String password) {
@@ -206,7 +330,13 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 		return (getInvoiceIds() != null) ? IFinanceConstants.SALE_INVOICE_LIST_NAME : null;
 	}
 
-	public void onShowPanel(ActionEvent event) {
+	public void onShowPanel(ActionEvent event) throws Exception {
+		try {
+			checkCertificate(getCert());
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AbortProcessingException(e.getMessage(),e);
+		}
 		getProgressionState().start(false);
 	}
 
@@ -250,9 +380,16 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 		this.invoiceIds = invoiceIds;
 	}	
 	
-	public boolean isTbai() {
-		return getInvoiceCommunicationConfiguration().isTbai();
+	public boolean needCertificate() {
+		return isTbai() || isSii() || isLroe() || isVerifactu();
 	}
+	
+	public boolean isLroe() 		{ return getInvoiceCommunicationConfiguration().isLroe(); }
+	public boolean isTbai() 		{ return getInvoiceCommunicationConfiguration().isTbai(); }
+	public boolean isVerifactu() 	{ return getInvoiceCommunicationConfiguration().isVerifactu(); }
+	public boolean isNoVerifactu() 	{ return getInvoiceCommunicationConfiguration().isNoVerifactu(); }
+	public boolean isSif() 			{ return getInvoiceCommunicationConfiguration().isSif(); }
+	public boolean isSii() 			{ return getInvoiceCommunicationConfiguration().isSii(); }
 	
 	public boolean isAraba() {
 		return getInvoiceCommunicationConfiguration().isAraba();

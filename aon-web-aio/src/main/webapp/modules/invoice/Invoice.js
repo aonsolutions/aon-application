@@ -446,6 +446,10 @@ export class Invoice {
     return this.details.filter(f => f.source == 'ACCOUNT').length > 0;
   }
 
+  isFeeSource() {
+    return this.details.filter(f => f.source == 'FEE').length > 0;
+  }
+
   isTbai()          { throw new Error("Invoice.js isTBAI() Not Supported!");}
   isVerifactu()     { throw new Error("Invoice.js isVerifactu() Not Supported!");}
   getTbaiUrl()      { throw new Error("Invoice.js getTbaiUrl() Not Supported!");}
