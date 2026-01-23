@@ -12,6 +12,7 @@ import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.IProgression;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.User;
 import com.code.aon.finance.Invoice;
@@ -66,6 +67,12 @@ public class FeeInvoicingProcess implements ILongProcess {
 	
 	@Override
 	public void execute() {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		Occam occam = new Occam().setDomainName(domainName).setDomain(domainId).setUser(user.getLogin());
+		InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(occam);
+		controller.getParams().setInvoiceCommunicationConfiguration(config);
+		
 		controller.setInvoiceIds(null);
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
@@ -94,8 +101,10 @@ public class FeeInvoicingProcess implements ILongProcess {
 					int recordingInvoice = 0;
 					AccountEntryInvoiceWriter accountWriter = new AccountEntryInvoiceWriter();
 					for (Invoice invoice : invoicedList) {
-						invoice = (Invoice)HibernateUtil.getSession(sessionName).merge(invoice);
-						accountWriter.recordAndUpdateInvoice(invoice);
+						if (!invoice.isProforma()) {
+							invoice = (Invoice)HibernateUtil.getSession(sessionName).merge(invoice);
+							accountWriter.recordAndUpdateInvoice(invoice);
+						}
 						recordingInvoice++;
 						if (recordingInvoice % 20 == 0) {
 							HibernateUtil.getSession(sessionName).flush();
@@ -112,6 +121,7 @@ public class FeeInvoicingProcess implements ILongProcess {
 			}
 			controller.getProgressionState().setProgressionCurrentValue(FINISH_VALUE);
 		} catch (Throwable e) {
+			e.printStackTrace();
 			try {
 				HibernateUtil.rollbackTransaction(sessionName);
 			} catch (DAOException daoe) {
@@ -138,9 +148,8 @@ public class FeeInvoicingProcess implements ILongProcess {
 			AonCollectionUtils.stream(invoiceList).forEach(inv -> ticketbai(config,inv));
 		} else if(config.isVerifactu()) {
 			List<com.esferalia.aon.occam.api.model.finance.Invoice> invoices = AonCollectionUtils.stream(invoiceList)
-					.map(inv -> AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), user.getLogin(), inv.getId()))
-					.toList();
-			
+				.map(inv -> AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), user.getLogin(), inv.getId()))
+				.toList();
 			AcceptInvoiceCommunicationTypeVisitor visitor = (AcceptInvoiceCommunicationTypeVisitor) 
 				new AcceptInvoiceCommunicationTypeVisitor(occam, invoices)
 				.setCompany(AON.getCompanyForDomain(occam));

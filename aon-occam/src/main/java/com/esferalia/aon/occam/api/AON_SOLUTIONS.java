@@ -916,6 +916,12 @@ public class AON_SOLUTIONS {
 		return InvoiceJSON.toJSON(invoice);
 	}
 	
+	public static Invoice getInvoice(Occam occam, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			Invoice invoice = getFinance().getFullInvoice(ctx, id);
+			return invoice;
+		}
+	}
 	public static Invoice getInvoice(String domainName, Integer domainId, String login, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			Invoice invoice = getFinance().getFullInvoice(ctx, id);
