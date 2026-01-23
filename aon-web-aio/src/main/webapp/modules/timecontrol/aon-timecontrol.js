@@ -149,8 +149,7 @@ export class AonTimecontrol extends AonElement {
   async setDataFilter(data){
 	console.log('setDataFilter', data);
     try {
-      if(this.isMobile())
-        this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
+      this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
       
       this.DATE_TMP =  null;
       if(data && data.period){
@@ -185,6 +184,8 @@ export class AonTimecontrol extends AonElement {
       if(data && data.reload){
         this.TASK_HOLDER = null;
       }
+      
+      this.applicationEl.removeToolbarOptions();
 
       // if(!this.getElement(view)){
         switch(view){

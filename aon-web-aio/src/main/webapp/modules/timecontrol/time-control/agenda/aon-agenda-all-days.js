@@ -1,6 +1,6 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { getTaskHoldersUser } from "../../../../services/taskHolderService.js";
-import { getTaskHolderTimeControl } from "../../../../services/timeControlService.js";
+import { getTaskHolderContactEvents, getTaskHolderTimeControl } from "../../../../services/timeControlService.js";
 import { AonDateUtils } from "../../../utils/AonDateUtils.js";
 import { timeHour } from ".././utils.js";
 import { AonCalendarMenu } from "./aon-calendar-menu.js";
@@ -11,6 +11,7 @@ export class AonAgendaAllDays extends AonElement {
 	_taskHolder;
 	_taskHolderName;
 	_events = new Map(); // key: "YYYY-MM-DD" => value: array de eventos
+	_eventsContract = new Map(); // key: "YYYY-MM-DD" => value: array de eventos
 	_loadedMonths = new Set(); // Para trackear qué meses ya se han cargado
 	_loadingMonths = new Set(); // Para trackear qué meses están cargándose AHORA
 	_isLoading = false; // Flag para evitar múltiples cargas simultáneas
@@ -175,10 +176,16 @@ export class AonAgendaAllDays extends AonElement {
 		
 		try {
 			const datos = await getTaskHolderTimeControl(filter);
+			const contractDatos = await getTaskHolderContactEvents(filter);
+			
 			console.log(`✅ ${monthKey}: ${datos.length} eventos`);
+			console.log(`✅ ${monthKey}: ${contractDatos.length} eventos contrato`);
 			
 			// Procesar y guardar eventos por fecha
 			this.processEvents(datos);
+			
+			// Procesar y guardar eventos por fecha
+			this.processContractEvents(contractDatos);
 			
 			// Marcar mes como cargado
 			this._loadedMonths.add(monthKey);
@@ -241,6 +248,28 @@ export class AonAgendaAllDays extends AonElement {
 						status: dayData.status
 					},
 					details: dayData.detail || []
+				});
+			}
+		});
+	}
+	
+	/* ---------------- PROCESS CONTRACT EVENTS ---------------- */
+	processContractEvents(datos) {
+		if (!datos || !Array.isArray(datos)) return;
+		
+		datos.forEach(dayData => {
+			// Convertir start_date (timestamp en milisegundos) a fecha
+			const date = new Date(dayData.start_date);
+			const dateKey = AonDateUtils.format(date, "YYYY-MM-DD");
+			
+			// Solo guardar si no existe ya (para no sobrescribir)
+			
+			if (!this._eventsContract.has(dateKey)) {
+				this._eventsContract.set(dateKey, {
+					start_date: dayData.start_date,
+					end_date: dayData.end_date,
+					description: dayData.description,
+					source: dayData.source
 				});
 			}
 		});
@@ -451,6 +480,14 @@ export class AonAgendaAllDays extends AonElement {
 				eventsHtml = this.renderDayEvents(dayEventData.details);
 			}
 			
+			// Obtener eventos contrato del día
+			const dayEventContractData = this._eventsContract.get(day.key);
+			let eventsContractHtml = '';
+			
+			if (dayEventContractData) {
+				eventsContractHtml = this.renderDayContractEvents(dayEventContractData);
+			}
+			
 			// Formatear nombre del día (3 primeras letras + punto)
 			const dayNameFull = AonDateUtils.dayName(day.date);
 			const dayNameShort = dayNameFull.substring(0, 3) + '.';
@@ -464,6 +501,7 @@ export class AonAgendaAllDays extends AonElement {
 			          </div>
 			        </div>
 			        <div class="day-content">
+			          ${eventsContractHtml}
 			          ${eventsHtml}
 			        </div>
 			      `;
@@ -479,6 +517,7 @@ export class AonAgendaAllDays extends AonElement {
 			          </div>
 			        </div>
 			        <div class="day-content">
+			          ${eventsContractHtml}
 			          ${eventsHtml}
 			        </div>
 			      `;	
@@ -537,6 +576,27 @@ export class AonAgendaAllDays extends AonElement {
 				`;
 			}).join('')}
 		</div>`;
+	}
+	
+	/* ---------------- RENDER CONTRACT EVENTS ---------------- */
+	renderDayContractEvents(event) {
+		if (!event) {
+			return '';
+		}
+		
+		return `
+			<div class="events">
+				<div class="event ${event.source.toLowerCase()}">
+					<svg class="calendar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+						<line x1="16" y1="2" x2="16" y2="6"></line>
+						<line x1="8" y1="2" x2="8" y2="6"></line>
+						<line x1="3" y1="10" x2="21" y2="10"></line>
+					</svg>
+					<span class="reason">${event.description}</span>
+				</div>
+			</div>
+		`;
 	}
 	
 	/* ---------------- GROUP EVENTS INTO TRAMOS ---------------- */
@@ -645,7 +705,7 @@ export class AonAgendaAllDays extends AonElement {
 			clearTimeout(checkTimeout);
 			checkTimeout = setTimeout(() => {
 				this.checkLoadMonthsOnScroll();
-			}, 150); // Aumentado a 150ms para evitar triggers múltiples
+			}, 50); // Aumentado a 50ms para evitar triggers múltiples
 		}, { passive: false }); // Cambiado a false para permitir preventDefault
 
 		// Medir altura después de un pequeño delay
@@ -894,6 +954,7 @@ export class AonAgendaAllDays extends AonElement {
 		
 		// Limpiar datos cargados
 		this._events.clear();
+		this._eventsContract.clear();
 		this._loadedMonths.clear();
 		
 		// Recargar eventos iniciales

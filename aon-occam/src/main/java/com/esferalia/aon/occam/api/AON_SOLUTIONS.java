@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.api.model.aonsolutions.Note;
 import com.esferalia.aon.occam.api.model.aonsolutions.Notification;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlContractEvent;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
@@ -614,6 +615,12 @@ public class AON_SOLUTIONS {
 	public static Stream<TimeControlDetail> getTimeControlHistoric(Domain domain, String login, TimeControlFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getTimeControl().getTimeControlHistoric(ctx, filter);
+		}
+	}
+	
+	public static Stream<TimeControlContractEvent> getTaskHolderTimeContractEvents(Domain domain, User user, Integer taskHolderId, Date startDate, Date endDate) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
+			return getTimeControl().getTaskHolderTimeContractEvents(ctx, taskHolderId, startDate, endDate);
 		}
 	}
 	

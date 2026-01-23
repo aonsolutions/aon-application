@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlContractEvent;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.impl.jooq.dao.LocationDAO;
@@ -24,6 +25,12 @@ public class TimeControlImpl implements ITimeControl {
 				configuration -> TimeControlDAO.getTimeControlStream(ctx, startDate, endDate));
 	}
 
+	@Override
+	public Stream<TimeControlContractEvent> getTaskHolderTimeContractEvents(AONContext ctx, Integer taskHolderId, Date startDate, Date endDate) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TimeControlDAO.getTaskHolderTimeContractEvents(ctx, taskHolderId, startDate, endDate));
+	}
+	
 	@Override
 	public Stream<TimeControl> getTaskHolderTimeControlStream(AONContext ctx, Integer taskHolderId, Date startDate, Date endDate, TimeControlGroup group) {
 		return ctx.getDslContext().transactionResult(

@@ -10,7 +10,8 @@ import * as JSF from "../aon-jsf-app.js";
   }
 
   export const taskHolder = () => {
-    let application = document.querySelector(TAG.AON_APPLICATION);
+	let application = document.querySelector(TAG.AON_APPLICATION);
+    application.removeToolbarOptions();
     application.setContent(new JSF.AonJsfTaskHolder())
   }
 

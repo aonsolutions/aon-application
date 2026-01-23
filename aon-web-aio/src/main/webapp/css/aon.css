@@ -5149,6 +5149,14 @@ aon-agenda-all-days .event.pause {
   color: #b06000;
 }
 
+aon-agenda-all-days .event.holiday {
+  background: #fee3da;
+  color: #fb7249;
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+}
+
 /* Contenedor principal del menú calendario */
 aon-calendar-menu {
 	display: block;

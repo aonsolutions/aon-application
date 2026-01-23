@@ -305,6 +305,10 @@
 #aonMenuListAppImgTop-messenger{
     mask-image: url('/icons/subtitles.svg') ;
  }
+ 
+#aonSigninToolbarHeaderToolSectionsyncButtonIcon{
+	mask-image: url('/icons/refresh-cw.svg') ;	
+}
 
 #aonMenuListAppImgTop-aonApplication{
 	visibility: hidden;
@@ -1388,7 +1392,8 @@ i[id$="ToolbarHeaderToolSectionSYNCHRONIZEButtonIcon"],
 i[id$="ToolbarHeaderToolSectionArchivadasButtonIcon"],
 i[id$="ToolbarHeaderToolSectionCerradasButtonIcon"],
 i[id$="ToolbarHeaderToolSectiontoolbarLabelsButtonIcon"],
-i[id$="ToolbarHeaderToolSectionRestoreButtonIcon"]
+i[id$="ToolbarHeaderToolSectionRestoreButtonIcon"],
+i[id$="aonSigninToolbarHeaderToolSectionsyncButtonIcon"]
 {
 	width: 24px;
 	height: 24px;
