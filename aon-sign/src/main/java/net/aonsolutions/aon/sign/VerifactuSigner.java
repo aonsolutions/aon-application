@@ -1,8 +1,15 @@
 package net.aonsolutions.aon.sign;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 
 import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 
 import es.gob.afirma.core.signers.AOSignConstants;
 import es.gob.afirma.core.signers.AdESPolicy;
@@ -29,6 +36,10 @@ public class VerifactuSigner extends XadesSigner {
 		return sign(certificate, data, getTbaiExtraParams());
 	}
 	
+	public byte[] signWithoutTransform(Certificate certificate, byte[] data) throws AonSignerException {
+		return sign(certificate, data, getNoTransformExtraParams());
+	}
+
 	public Properties getTbaiExtraParams() {
     	final Properties xParams = new Properties();
     	xParams.setProperty(XAdESExtraParams.FORMAT, AOSignConstants.SIGN_FORMAT_XADES_ENVELOPED);
@@ -36,4 +47,19 @@ public class VerifactuSigner extends XadesSigner {
     	xParams.putAll(POLICY_VERIFACTU.asExtraParams());
     	return xParams;
     }
+
+	public Properties getNoTransformExtraParams() {
+		Properties xParams = getTbaiExtraParams();
+    	xParams.setProperty(XAdESExtraParams.AVOID_XPATH_EXTRA_TRANSFORMS_ON_ENVELOPED, Boolean.TRUE.toString());
+    	return xParams;
+    }
+	
+	public static void main(String[] args) throws FileNotFoundException, IOException, AonSignerException {
+		try ( InputStream is = new FileInputStream(args[0]);
+				OutputStream os = new FileOutputStream(args[0]+".sign") ) {
+			byte [] data = VerifactuSigner.getInstance().signWithoutTransform(AonSecret.getAonCert(), is.readAllBytes());
+			os.write(data);
+		} 
+	}
+
 }
