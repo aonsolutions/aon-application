@@ -27,9 +27,11 @@
 						styleClass="aon-finding-toolbar-item aon-icon-rubber" />
 					<aon:commandButton id="feeInvoicing"
 						value="#{bundle.aon_key_invoice_description}"
-						reRender="progressBarForm"
-						actionListener="#{feeInvoicing.onShowPanel}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept" />
+						styleClass="aon-finding-toolbar-item aon-icon-accept" 
+						reRender="showCertFeeWindow">
+							<f:setPropertyActionListener target="#{feeInvoicing.showCertFeeWindow}"
+								value="#{true}" />
+					</aon:commandButton>
 				</ui:define>
 			</ui:decorate>
 
@@ -206,5 +208,6 @@
 				default="#{feeInvoicing.onClosePanel}" type="actionListener" />
 			<aon:methodParam name="progressBarCloseAction" default="#{feeInvoicing.invoiceAction}"/>
 		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/feeInvoicing/modalCertFeeCommunicate.xhtml" />
 	</ui:define>
 </ui:composition>

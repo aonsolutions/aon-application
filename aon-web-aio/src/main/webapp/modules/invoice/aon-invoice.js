@@ -544,7 +544,8 @@ export class AonInvoice extends AonElement {
 	}
 
 	showDelete() {
-		return this.getInvoice().isRejected() || this.getInvoice().isInbox() || this.getInvoice().isPending();
+		return !this.getInvoice().isFeeSource() 
+			 && (this.getInvoice().isRejected() || this.getInvoice().isInbox() || this.getInvoice().isPending());
 	}
 
 	showDeleteForever() {

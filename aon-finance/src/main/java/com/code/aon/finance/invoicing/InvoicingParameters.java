@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -23,6 +24,7 @@ import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.product.Item;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.registry.Segment;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 
 public class InvoicingParameters implements Serializable {
 	
@@ -58,6 +60,8 @@ public class InvoicingParameters implements Serializable {
 	private Integer domainId;
 	private String login;
 	private boolean tbai;
+
+	private InvoiceCommunicationConfiguration icc;
 	
 	public InvoicingGroup getInvoicingGroup() {
 		return invoicingGroup;
@@ -314,5 +318,18 @@ public class InvoicingParameters implements Serializable {
 				.collect(Collectors.toCollection(LinkedList::new));
 		}
 		return new LinkedList<>();
+	}
+
+	public Optional<InvoiceCommunicationConfiguration> getInvoiceCommunicationConfiguration() {
+		return Optional.ofNullable(icc);
+	}
+	public void setInvoiceCommunicationConfiguration(InvoiceCommunicationConfiguration icc) {
+		this.icc = icc;
+	}
+
+	public boolean hasCommunication() {
+		return getInvoiceCommunicationConfiguration()
+			.map( c -> c.hasCommunication()  && !c.isTbai() && !c.isLroe() && !c.isSii()) 
+			.orElse(false);
 	}
 }
