@@ -372,7 +372,6 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		if(!api.getData().optString(END_DATE).isEmpty()) 
 			endDate = AonDateUtils.parse(api.getData().optString(END_DATE), FORMAT_DATE);
 
-		JSONArray array = new JSONArray();
 		TimeControlContractEvents contractEvents = AON_SOLUTIONS.getTaskHolderTimeContractEvents(api.getDomain(), api.getUser(), taskHolder, startDate, endDate);
 		
 		return contractEvents.toJSON();
