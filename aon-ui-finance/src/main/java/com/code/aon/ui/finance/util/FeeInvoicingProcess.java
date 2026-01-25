@@ -155,7 +155,9 @@ public class FeeInvoicingProcess implements ILongProcess {
 	}
 	private void communication(String sessionName, Collection<Invoice> invoiceList) throws InvoiceCommunicationException, Exception {
 		InvoiceCommunicationConfiguration config = controller.getInvoiceCommunicationConfiguration();
-		config.setCertificate(controller.getCert());
+		if (!config.isNoVerifactu() && !config.isSif()) {
+			config.setCertificate(controller.getCert());
+		}
 
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = AonCollectionUtils.stream(invoiceList).findFirst().orElse(new Invoice()).getDomain();

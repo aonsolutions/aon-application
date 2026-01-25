@@ -391,7 +391,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine, Serializabl
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		number = (number == 0 ? 1 : number);
 		if (params.hasCommunication()) {
-			number = (number == 0 ? -1 : number);
+			number = (number >= 0 ? -1 : number);
 		} else {
 			number = (number == 0 ? 1 : number);	
 		}

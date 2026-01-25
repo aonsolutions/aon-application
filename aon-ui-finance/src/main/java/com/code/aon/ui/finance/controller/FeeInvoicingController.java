@@ -332,7 +332,9 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 
 	public void onShowPanel(ActionEvent event) throws Exception {
 		try {
-			checkCertificate(getCert());
+			if(!getInvoiceCommunicationConfiguration().isSif() && !getInvoiceCommunicationConfiguration().isNoVerifactu()) {
+				checkCertificate(getCert());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new AbortProcessingException(e.getMessage(),e);
