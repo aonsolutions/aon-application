@@ -445,15 +445,19 @@ public class AgreementUpdate {
 		    	     	            	NodeList listdescriptions = elementCPI.getElementsByTagName("GRUPO");
 		    		    	            String description = "";
 		    		    	            
-		    		    	            if(listdescriptions.getLength() == 0)
-		    		    	            	description = "NIVEL " + (l+1);
-		    		    	            else {
+		    		    	            String code = elementCPI.getElementsByTagName("CODIGO").item(0).getTextContent();
+		    		    	            
+		    		    	            if(listdescriptions.getLength() > 0) {
 			    		    	            for(int b=0; b<listdescriptions.getLength(); b++)
 			    		    	            	description += listdescriptions.item(b).getTextContent() + " ";
 			    		    	            description = description.trim();
+		    		    	            } else if(code.length() > 0) {
+		    		    	            	description = "NIVEL " + code;
 		    		    	            }
 		    		    	            
 			   	    	            	String category = elementCPI.getElementsByTagName("NOMBRE").item(0).getTextContent();
+			   	    	            	
+			   	    	            	System.out.println("Description: " + description + ", Category; " + category);
 			   	    	            	
 				   	    	            AgreementLevel agreementLevel = agreement.getAgreementLevel(description, category);
 			   	    	            	
