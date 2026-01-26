@@ -15,6 +15,8 @@ public class TimeControlContractEvents implements Serializable {
 	private Byte[] workingDays;
 	private List<TimeControlContractEvent> events;
 	private List<TimeControlContractEvent> festives;
+	private List<TimeControlContractEvent> contractDaysType;
+	private List<TimeControlContractEvent> contractITs;
 
 	public TimeControlContractEvents() {
 		super();
@@ -56,6 +58,24 @@ public class TimeControlContractEvents implements Serializable {
 		return this;
 	}
 
+	public List<TimeControlContractEvent> getContractDaysType() {
+		return null == contractDaysType ? Collections.emptyList() : contractDaysType;
+	}
+
+	public TimeControlContractEvents setContractDaysType(List<TimeControlContractEvent> contractDaysType) {
+		this.contractDaysType = contractDaysType;
+		return this;
+	}
+	
+	public List<TimeControlContractEvent> getContractITs() {
+		return null == contractITs ? Collections.emptyList() : contractITs;
+	}
+
+	public TimeControlContractEvents setContractITs(List<TimeControlContractEvent> contractITs) {
+		this.contractITs = contractITs;
+		return this;
+	}
+
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		
@@ -63,6 +83,12 @@ public class TimeControlContractEvents implements Serializable {
 		
 		JSONArray festivesArr = new JSONArray();
 		getFestives().forEach(f -> festivesArr.put(f.toJSON()));
+		
+		JSONArray daysTypeArr = new JSONArray();
+		getContractDaysType().forEach(f -> daysTypeArr.put(f.toJSON()));
+		
+		JSONArray contractITsArr = new JSONArray();
+		getContractITs().forEach(f -> contractITsArr.put(f.toJSON()));
 		
 		JSONArray eventsArr = new JSONArray();
 		getEvents().forEach(e -> eventsArr.put(e.toJSON()));
@@ -73,6 +99,8 @@ public class TimeControlContractEvents implements Serializable {
 				workingDaysArr.put(workingDays[i]);
 		
 		json.put("festives", festivesArr);
+		json.put("daysType", daysTypeArr);
+		json.put("contractITs", contractITsArr);
 		json.put("events", eventsArr);
 		json.put("workingDays", workingDaysArr);
 		

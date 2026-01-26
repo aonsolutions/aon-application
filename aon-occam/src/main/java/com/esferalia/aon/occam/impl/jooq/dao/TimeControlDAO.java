@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Holiday.HOLIDAY;
 import static com.esferalia.aon.jooq.tables.HolidayDetail.HOLIDAY_DETAIL;
@@ -407,7 +408,13 @@ public class TimeControlDAO {
 					.setDate(date)
 					.setStatus(TimeControlStatus.OUT)
 					.setDomain(tcd.getDomain()));
+		} else if (TimeControlStatus.IN.equals(tc.getStatus()) && AonDateUtils.isSameDay(tc.getInDate(), new Date())) {				
+			// CASO NUEVO: IN abierto hoy - expandir hasta NOW
+			
+			Date now = new Date();
+			tc.setTime(tc.getTime() + now.getTime() - tc.getInDate().getTime());
 		}
+
 		
 		tc.setStatus(tcd.getStatus());
 		
@@ -427,6 +434,9 @@ public class TimeControlDAO {
 		TimeControlContractEvents contractEvents = new TimeControlContractEvents();
 		
 		List<TimeControlContractEvent> contractFestives = new ArrayList<TimeControlContractEvent>();
+		List<TimeControlContractEvent> contractDaysType = new ArrayList<TimeControlContractEvent>();
+		
+		//List<TimeControlContractEvent> contractITs = new ArrayList<TimeControlContractEvent>();
 		
 		Result<ContractRecord> taskHolderContracts = ctx.getDslContext().selectFrom(CONTRACT)
 				.where(CONTRACT.PERSON.eq(taskHolderId))
@@ -450,12 +460,14 @@ public class TimeControlDAO {
 			contractEvents.setWorkingDays(getWorkingDays(ctx, lastContractId));
 			
 			getContractFestives(ctx, startDate, endDate, contractFestives, taskHolderContracts);
-			
-			
+			getContractDaysTypes(ctx, startDate, endDate, contractDaysType, taskHolderContracts);
+			getContractITs(ctx, startDate, endDate, contractDaysType, taskHolderContracts);
 			
 		}
 		
 		contractEvents.setFestives(contractFestives);
+		contractEvents.setContractDaysType(contractDaysType);
+		//contractEvents.setContractITs(contractITs);
 		
 		return contractEvents;
 	}
@@ -551,6 +563,67 @@ public class TimeControlDAO {
 				}
 			}
 			
+		});
+	}
+	
+	private static void getContractDaysTypes(AONContext ctx, Date startDate, Date endDate, List<TimeControlContractEvent> contractDaysType, Result<ContractRecord> taskHolderContracts) {
+		taskHolderContracts.forEach(taskHolderContract -> {
+			
+			Result<Record> daysTypeRecords = ctx.getDslContext()
+					.select()
+					.from(CONTRACT_DATA)
+					.where(CONTRACT_DATA.CONTRACT.eq(taskHolderContract.getId()))
+					.and(CONTRACT_DATA.NAME.in(
+							"DIAS_VACACIONES"
+							,"NO_LABORABLE"
+							,"DIAS_EFECTIVOS"
+							,"JORNADAS_REALES"
+							,"JORNADAS_TEORICAS"
+							,"LABORABLE"
+							//Coeficientes
+							,"COEFICIENTE_ERE"
+							,"COEFICIENTE_HUELGA"
+							,"COEFICIENTE_ERE_FZA"
+							,"COEFICIENTE_ERE_FZA_EXONERADO"
+							//,"FIN_ERE_FZA_EXONERADO"
+							,"COEFICIENTE_AUSENCIA"
+							,"CAUSA_INACTIVIDAD"
+							,"PERMISO_RETRIBUIDO"
+							,"COEFICIENTE_PARCIALIDAD"))
+					.and(CONTRACT_DATA.START_DATE.ge(AonDateUtils.toSql(startDate)).and(CONTRACT_DATA.START_DATE.le(AonDateUtils.toSql(endDate))))
+					.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.ge(AonDateUtils.toSql(startDate))))
+					.fetch();
+			
+			for(Record daysTypeRecord : daysTypeRecords){
+				TimeControlContractEvent timeControlContractEvent = new TimeControlContractEvent()
+						.setSource(TimeControlContractEventSource.parseContractDataName(daysTypeRecord.get(CONTRACT_DATA.NAME)))
+						.setStartDate(parseDateSqlToUtil(daysTypeRecord.get(CONTRACT_DATA.START_DATE)))
+						.setEndDate(parseDateSqlToUtil(daysTypeRecord.get(CONTRACT_DATA.END_DATE)))
+						.setDescription(daysTypeRecord.get(CONTRACT_DATA.EXPRESSION))
+						;
+				
+				contractDaysType.add(timeControlContractEvent);
+			}
+		});
+	}
+	
+	private static void getContractITs(AONContext ctx, Date startDate, Date endDate, List<TimeControlContractEvent> contractITs, Result<ContractRecord> taskHolderContracts) {
+		taskHolderContracts.forEach(taskHolderContract -> {
+			
+			Result<Record> itDaysRecords = ctx.getDslContext().select().from(CONTRACT_LEAVE)
+					.where(CONTRACT_LEAVE.CONTRACT.eq(taskHolderContract.getId()))
+					.fetch();
+			
+			for(Record itDaysRecord : itDaysRecords){
+				TimeControlContractEvent timeControlContractEvent = new TimeControlContractEvent()
+						.setSource(TimeControlContractEventSource.IT)
+						.setStartDate(parseDateSqlToUtil(itDaysRecord.get(CONTRACT_LEAVE.START_DATE)))
+						.setEndDate(parseDateSqlToUtil(itDaysRecord.get(CONTRACT_LEAVE.END_DATE)))
+						.setDescription("Baja IT")
+						;
+				
+				contractITs.add(timeControlContractEvent);
+			}
 		});
 	}
 	
