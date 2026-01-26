@@ -3,7 +3,9 @@ package com.code.aon.ui.finance.util;
 import static com.code.aon.common.IProgression.FINISH_VALUE;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +14,7 @@ import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.IProgression;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.User;
 import com.code.aon.finance.Invoice;
@@ -26,14 +29,22 @@ import com.code.aon.ui.finance.controller.FeeInvoicingController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
+import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
 import net.aonsolutions.aon.invoice.communication.visitor.AcceptInvoiceCommunicationTypeVisitor;
+import net.aonsolutions.aon.sii.SIIManager;
 import net.aonsolutions.aon.tbai.TbaiMain;
 
 public class FeeInvoicingProcess implements ILongProcess {
@@ -66,6 +77,12 @@ public class FeeInvoicingProcess implements ILongProcess {
 	
 	@Override
 	public void execute() {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		Occam occam = new Occam().setDomainName(domainName).setDomain(domainId).setUser(user.getLogin());
+		InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(occam);
+		controller.getParams().setInvoiceCommunicationConfiguration(config);
+		
 		controller.setInvoiceIds(null);
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
@@ -80,22 +97,30 @@ public class FeeInvoicingProcess implements ILongProcess {
 			engine.setHibernateSession(HibernateUtil.getSession(sessionName));
 			
 			
+			// Grabacion de las facturas proforma
 			HibernateUtil.beginTransaction(sessionName);
 			controller.updateSeries();
 			engine.invoice(controller.getParams());
 			HibernateUtil.commitTransaction(sessionName);
-
+			
+			// Comunicación de las facturas proforma
 			Collection<Invoice> invoicedList = engine.getInvoicingDAO().getCollection();
 			if (invoicedList != null && !invoicedList.isEmpty()) {
-				communication(invoicedList);			
+				communication(sessionName, invoicedList);
+			}
+			
+			// Contabilización de las facturas si procede
+			if (invoicedList != null && !invoicedList.isEmpty()) {
 				if (controller.getParams().isInvoiceRecordable()) {
 					HibernateUtil.beginTransaction(sessionName);
 					int invoicesToRecord = invoicedList.size();
 					int recordingInvoice = 0;
 					AccountEntryInvoiceWriter accountWriter = new AccountEntryInvoiceWriter();
 					for (Invoice invoice : invoicedList) {
-						invoice = (Invoice)HibernateUtil.getSession(sessionName).merge(invoice);
-						accountWriter.recordAndUpdateInvoice(invoice);
+						if (!invoice.isProforma()) {
+							invoice = (Invoice)HibernateUtil.getSession(sessionName).merge(invoice);
+							accountWriter.recordAndUpdateInvoice(invoice);
+						}
 						recordingInvoice++;
 						if (recordingInvoice % 20 == 0) {
 							HibernateUtil.getSession(sessionName).flush();
@@ -112,6 +137,7 @@ public class FeeInvoicingProcess implements ILongProcess {
 			}
 			controller.getProgressionState().setProgressionCurrentValue(FINISH_VALUE);
 		} catch (Throwable e) {
+			e.printStackTrace();
 			try {
 				HibernateUtil.rollbackTransaction(sessionName);
 			} catch (DAOException daoe) {
@@ -127,50 +153,82 @@ public class FeeInvoicingProcess implements ILongProcess {
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);			
 		}
 	}
-	private void communication(Collection<Invoice> invoiceList) {
+	private void communication(String sessionName, Collection<Invoice> invoiceList) throws InvoiceCommunicationException, Exception {
+		InvoiceCommunicationConfiguration config = controller.getInvoiceCommunicationConfiguration();
+		if (!config.isNoVerifactu() && !config.isSif()) {
+			config.setCertificate(controller.getCert());
+		}
+
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = AonCollectionUtils.stream(invoiceList).findFirst().orElse(new Invoice()).getDomain();
-		Occam occam = new Occam().setDomainName(domainName).setDomain(domainId).setUser(user.getLogin());
-		InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(occam);
-		if(config.isTbai()) {
+		Domain domain = new Domain().setName(domainName).setId(domainId);
+		Company company = AON.getCompanyForDomain(domainName, domainId, user.getLogin());
+		com.esferalia.aon.occam.api.model.security.User usr = new com.esferalia.aon.occam.api.model.security.User()
+				.setLogin(user.getLogin())
+				.setId(user.getId());
+		if(config.isTbai() || config.isLroe() || config.isSii()) {
 			// TODO HAY QUE ADAPTAR TICKET BAI PARA QUE PUEDA ENVIARSE TODAS LAS FACTURAS DE UNA.
 			// Y USAR EL ELSE PARA TICKET BAI. 
-			AonCollectionUtils.stream(invoiceList).forEach(inv -> ticketbai(config,inv));
-		} else if(config.isVerifactu()) {
-			List<com.esferalia.aon.occam.api.model.finance.Invoice> invoices = AonCollectionUtils.stream(invoiceList)
-					.map(inv -> AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), user.getLogin(), inv.getId()))
-					.toList();
-			
-			AcceptInvoiceCommunicationTypeVisitor visitor = (AcceptInvoiceCommunicationTypeVisitor) 
-				new AcceptInvoiceCommunicationTypeVisitor(occam, invoices)
-				.setCompany(AON.getCompanyForDomain(occam));
-			try {
-				if (config.hasCommunication()) {
-					for (InvoiceCommunicationType type : config.getTypes()) {
-						type.visit(visitor);
-					}
+			AonCollectionUtils.stream(invoiceList).forEach(inv -> ticketbai(config, company, inv));
+		} else if(config.hasCommunication()) {
+			for (Invoice inv : invoiceList) {
+				com.esferalia.aon.occam.api.model.finance.Invoice invoice 
+					= AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), user.getLogin(), inv.getId());
+				InvoiceCommunicatorContext communicator = new InvoiceCommunicatorContext(domain, usr, controller.getCertificate(), AonCollectionUtils.toList(invoice))
+					.setConfig(config)
+					.setCompany(company);
+				try {
+					InvoiceCommunicator.issueInvoice(communicator);
+					
+					// Devolver el número a Hibernate para poder contabilizar si todo fue bien
+					com.esferalia.aon.occam.api.model.finance.Invoice afterInvoice 
+						= AON.getInvoice(domainName, inv.getDomain(), user.getLogin(), inv.getId());
+					inv.setNumber(afterInvoice.getNumber());
+					inv.setReferenceCode(afterInvoice.getReferenceCode());
+					inv = (Invoice) HibernateUtil.getSession(sessionName).merge(inv);
+				} catch (Exception e) {
+					e.printStackTrace();
+					AonUtil.addErrorMessage("Error during invoice communication invoice " + invoice.getReferenceCode() + ": " + e.getMessage());
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}			
+			}
 		}
 	}
 	
-	private Invoice ticketbai(InvoiceCommunicationConfiguration config, Invoice inv) {
-		if(config.isTbai()) {
-			String domainName = AonUtil.getDomainName();
-			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), user.getLogin(), inv.getId());
-			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), user.getLogin());
-			config.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), user.getLogin(), user.getId(), CertificateType.AEAT.name()));
+	private Invoice ticketbai(InvoiceCommunicationConfiguration config, Company company, Invoice inv) {
+		String domainName = AonUtil.getDomainName();
+		Occam occam = new Occam().setDomainName(domainName).setDomain(inv.getDomain()).setUser(user.getLogin());
+		Domain domain = new Domain().setName(domainName).setId(inv.getDomain());
+		com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), user.getLogin(), inv.getId());
+
+		if(config.isTbai() || config.isLroe()) {
+			if(config.getCertificate() == null)
+				config.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), user.getLogin(), user.getId(), CertificateType.AEAT.name()));
 			try {
 				TbaiMain tbai = new TbaiMain();
 				tbai.createEmisionTBAI(company, invoice, config);
 			} catch (Exception e ) {
 				e.printStackTrace();
+				AonUtil.addErrorMessage("Error during SII invoice communication: " + e.getMessage());
 			}
 		}
 		
-		// SII
+		if(config.isSii()) {
+			try {
+				SIIManager manager = SIIManager.getInstance(config);
+					
+				AccountingReportParams params = new AccountingReportParams();
+				params.setDomain(inv.getDomain());
+				params.setInvoices(new Integer[] {inv.getId()});
+				LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(occam, params, "")
+						.collect(Collectors.toCollection(LinkedList::new));		
+				manager.suministroFacturas(domain, user.getLogin(), company, invoice, contextList, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+				AonUtil.addErrorMessage("Error during SII invoice communication: " + e.getMessage());
+				throw new RuntimeException(e);
+			}
+		}
+		
 		return inv;
 	}
 

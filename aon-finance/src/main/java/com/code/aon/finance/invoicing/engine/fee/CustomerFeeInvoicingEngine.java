@@ -30,6 +30,7 @@ import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Series;
+import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.Invoice;
@@ -274,7 +275,11 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine, Serializabl
 		int size = feeList.size();
 		getInvoicingFeedBack().setRowCount(size);
 		getInvoicingFeedBack().setCurrentRow(0);
+		
 		int number = params.getInvoiceNumber();
+		if (params.hasCommunication()) {
+			number = SeriesNumberUtil.obtainSalesMinNumber(params.getInvoiceSeries().getCode());
+		}
 		Invoice invoice = null;
 		InvoiceDetail invoiceDetail = null;
 		CustomerFee previousFee = null;
@@ -301,7 +306,11 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine, Serializabl
 				invoice = getInvoicingDAO().insertInvoice(invoice);
 				getInvoicingFeedBack().addMessage("\t" + "Invoice: " + invoice.getReferenceCode());
 
-				number = invoice.getNumber() + 1;
+				if (params.hasCommunication()) {
+					number = invoice.getNumber() - 1;
+				} else {
+					number = invoice.getNumber() + 1;
+				}
 				detailLine = 0;
 				previousFee = fee;
 			}
@@ -362,7 +371,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine, Serializabl
 		Invoice invoice = new Invoice();
 		invoice.setProject(customerFee.getProject());
 		invoice.setSeries((params.getInvoiceSeries()==null) ? null : params.getInvoiceSeries().getCode());
-		invoice.setNumber(calculateNextNumber(params.getInvoiceSeries(), number));
+		invoice.setNumber(calculateNextNumber(params, params.getInvoiceSeries(), number));
 		invoice.setRegistry(customerFee.getInvoicingCustomer().getRegistry());
 		invoice.setRegistryDocument(customerFee.getInvoicingCustomer().getRegistry().getDocument());
 		invoice.setRegistryDocumentType(customerFee.getInvoicingCustomer().getRegistry().getDocumentType());
@@ -378,9 +387,14 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine, Serializabl
 		return invoice;
 	}
 	
-	private int calculateNextNumber(Series series, int number) throws ManagerBeanException {
+	private int calculateNextNumber(InvoicingParameters params, Series series, int number) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		number = (number == 0 ? 1 : number);
+		if (params.hasCommunication()) {
+			number = (number >= 0 ? -1 : number);
+		} else {
+			number = (number == 0 ? 1 : number);	
+		}
 		while (true) {
 			Criteria criteria = new Criteria();
 			String seriesAlias = invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES);
@@ -396,7 +410,11 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine, Serializabl
 			if (invoiceBean.getCount(criteria) == 0) {
 				break;
 			}
-			number++;
+			if (params.hasCommunication()) {
+				number--;
+			} else {
+				number++;
+			}
 		}
 		return number;
 	}

@@ -46,7 +46,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -1196,11 +1195,12 @@ public class SecurityDAO {
 	}
 	
 	public static Certificate getCertificate(AONContext ctx, Integer userId, String certificateType) {
+		Integer uid = userId != null ? userId : getUser(ctx).getId();
 		Certificate certificate;
 		DSLContext dslContext = ctx.getDslContext();
 		
 		Integer parentDomainId = dslContext.select(DOMAIN.PARENT).from(DOMAIN).where(DOMAIN.ID.eq(ctx.getDomainId())).fetchOne(DOMAIN.PARENT);
-		Record userRegistryRecord = dslContext.select().from(USER).where(USER.ID.eq(userId)).fetchOne();
+		Record userRegistryRecord = dslContext.select().from(USER).where(USER.ID.eq(uid)).fetchOne();
 		Integer userRegistryId = userRegistryRecord.get(USER.REGISTRY);
 		Integer userRegistryDomain = userRegistryRecord.get(USER.DOMAIN);
 		Integer enterpriseId = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(ctx.getDomainId())).fetchOne(ENTERPRISE.REGISTRY);
@@ -1219,7 +1219,7 @@ public class SecurityDAO {
 		if(null != certificate) return certificate;
 
 		if(AonStringUtils.equalsIgnoreCase(certificateType, "TGSS")) {
-			certificate = getCertificate(ctx, f -> f.getIdProperty().eq(userId))
+			certificate = getCertificate(ctx, f -> f.getIdProperty().eq(uid))
 					.orElseThrow(CertificateNotFoundException::new);
 			if(null != certificate) return certificate;
 		} else if(AonStringUtils.equalsIgnoreCase(certificateType, "SEPE")) {
