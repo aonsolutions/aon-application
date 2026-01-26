@@ -7721,15 +7721,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			String employeesColective = employeeContractInfo.getContractInfo().getEmployeesColective();
 			if(AonStringUtils.isBlank(employeesColective))
 				throw new IllegalArgumentException("El colectivo de trabajadores es obligatorio para los contratos de tipo 402 y 502. Debe rellenarlo en la pesta\u00F1a Datos Afiliaci\u00f3n");
-			if(AonStringUtils.equalsIgnoreCase(employeesColective, "967")) {
-				builder.setPrevisible(false);
-			} else {
-				Date startDate = employeeContractInfo.getContractInfo().getStartDate();
-				Date endDate = employeeContractInfo.getContractInfo().getEndDate();
-				if(null == endDate) throw new IllegalArgumentException("La fecha fin es obligatoria para los contratos de tipo 402 y 502 con situaci\u00f3n previsible. Debe rellenarlo en la pesta\u00F1a Datos Afiliaci\u00f3n");
-				int daysBetween = DateUtils.getDaysBetween(startDate, endDate);
-				builder.setPrevisible(daysBetween <= 90);
-			}
+			
+			builder.setPrevisible(AonStringUtils.equalsIgnoreCase(employeesColective, "968"));
 		} else
 			builder.setPrevisible(false);
 		

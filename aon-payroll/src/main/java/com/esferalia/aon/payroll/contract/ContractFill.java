@@ -5,8 +5,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -17,6 +19,7 @@ import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDResources;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts.FontName;
@@ -256,7 +259,7 @@ public class ContractFill {
 							valueStr = valueStr.replace("$aon:", "");
 							
 							if(StringUtils.equals(valueStr, "ADITIONAL_CLAUSES")) {
-								setAditionalClauses(field, contractClauses);
+								setAditionalClauses(pdfDocument, field, contractClauses);
 							} else {
 								if(!StringUtils.contains(valueStr, " ")){
 									String newValue = contractOtherInfo.getOrDefault(valueStr, "");
@@ -342,7 +345,7 @@ public class ContractFill {
 							valueStr = valueStr.replace("$aon:", "");
 							
 							if(StringUtils.equals(valueStr, "ADITIONAL_CLAUSES")) {
-								setAditionalClauses(field, contractClauses);
+								setAditionalClauses(pdfDocument, field, contractClauses);
 							} else {
 								if(!StringUtils.contains(valueStr, " ")){
 									String newValue = contractOtherInfo.getOrDefault(valueStr, "");
@@ -495,7 +498,7 @@ public class ContractFill {
 							valueStr = valueStr.replace("$aon:", "");
 							
 							if(StringUtils.equals(valueStr, "ADITIONAL_CLAUSES")) {
-								setAditionalClauses(field, contractClauses);
+								setAditionalClauses(pdfDocument, field, contractClauses);
 							} else {
 								if(!StringUtils.contains(valueStr, " ")){
 									String newValue = contractOtherInfo.getOrDefault(valueStr, "");
@@ -581,7 +584,7 @@ public class ContractFill {
 							valueStr = valueStr.replace("$aon:", "");
 							
 							if(StringUtils.equals(valueStr, "ADITIONAL_CLAUSES")) {
-								setAditionalClauses(field, contractClauses);
+								setAditionalClauses(pdfDocument, field, contractClauses);
 							} else {
 								if(!StringUtils.contains(valueStr, " ")){
 									String newValue = contractOtherInfo.getOrDefault(valueStr, "");
@@ -670,7 +673,7 @@ public class ContractFill {
 							valueStr = valueStr.replace("$aon:", "");
 							
 							if(StringUtils.equals(valueStr, "ADITIONAL_CLAUSES")) {
-								setAditionalClauses(field, contractClauses);
+								setAditionalClauses(pdfDocument, field, contractClauses);
 							} else {
 								if(!StringUtils.contains(valueStr, " ")){
 									String newValue = contractOtherInfo.getOrDefault(valueStr, "");
@@ -757,7 +760,7 @@ public class ContractFill {
 							valueStr = valueStr.replace("$aon:", "");
 							
 							if(StringUtils.equals(valueStr, "ADITIONAL_CLAUSES")) {
-								setAditionalClauses(field, contractClauses);
+								setAditionalClauses(pdfDocument, field, contractClauses);
 							} else {
 								if(!StringUtils.contains(valueStr, " ")){
 									String newValue = contractOtherInfo.getOrDefault(valueStr, "");
@@ -849,7 +852,7 @@ public class ContractFill {
 							valueStr = valueStr.replace("$aon:", "");
 							
 							if(StringUtils.equals(valueStr, "ADITIONAL_CLAUSES")) {
-								setAditionalClauses(field, contractClauses);
+								setAditionalClauses(pdfDocument, field, contractClauses);
 							} else {
 								if(!StringUtils.contains(valueStr, " ")){
 									String newValue = contractOtherInfo.getOrDefault(valueStr, "");
@@ -933,7 +936,7 @@ public class ContractFill {
 							valueStr = valueStr.replace("$aon:", "");
 							
 							if(StringUtils.equals(valueStr, "ADITIONAL_CLAUSES")) {
-								setAditionalClauses(field, contractClauses);
+								setAditionalClauses(pdfDocument, field, contractClauses);
 							} else {
 								if(!StringUtils.contains(valueStr, " ")){
 									String newValue = contractOtherInfo.getOrDefault(valueStr, "");
@@ -1078,17 +1081,212 @@ public class ContractFill {
 	    }
 	}
 	
-	public static void setAditionalClauses(PDField field, HashMap<String, String> contractClauses) throws IOException {
-	    String clauses = "\n";
-		for(Entry<String, String> entry : contractClauses.entrySet()) {
-			System.out.println("setAditionalClauses  --> " + entry.getKey());
-			clauses += "\t" + entry.getKey() + " :  \t\t" + entry.getValue() + "\n\n";
+	public static void setAditionalClauses(
+	        PDDocument pdfDocument,
+	        PDField field,
+	        HashMap<String, String> contractClauses
+	) throws IOException {
+
+	    // Construimos el texto completo
+		StringBuilder fullText = new StringBuilder();
+		for (Entry<String, String> entry : contractClauses.entrySet()) {
+		    fullText.append(entry.getKey())
+		            .append(":\n")
+		            .append(entry.getValue())
+		            .append("\n\n");
 		}
-		try {
-			field.setValue(clauses);
-		} catch (Exception e) {}
-		
-		((PDTextField) field).setDefaultValue(clauses);
+
+	    String allClauses = fullText.toString();
+
+	    // Calculamos cuánto texto cabe en el campo
+	    PDTextField textField = (PDTextField) field;
+
+	    int maxLinesInField = 35; // AJUSTABLE según el tamaño real del campo
+	    List<String> lines = wrapTextPreservingNewlines(allClauses, 175);
+
+	    List<String> fieldLines = new ArrayList<>();
+	    List<String> overflowLines = new ArrayList<>();
+
+	    for (int i = 0; i < lines.size(); i++) {
+	        if (i < maxLinesInField) {
+	            fieldLines.add(lines.get(i));
+	        } else {
+	            overflowLines.add(lines.get(i));
+	        }
+	    }
+
+	    // Rellenamos el campo SOLO con lo que cabe
+	    String fieldText = String.join("\n", fieldLines);
+	    textField.setValue(fieldText);
+	    textField.setDefaultValue(fieldText);
+
+	    // Si sobra texto, lo escribimos en nuevas páginas
+	    if (!overflowLines.isEmpty()) {
+	        writeOverflowPages(pdfDocument, overflowLines);
+	    }
+	}
+	
+	private static List<String> wrapTextPreservingNewlines(String text, int maxChars) {
+	    List<String> result = new ArrayList<>();
+
+	    for (String paragraph : text.split("\n")) {
+
+	        if (paragraph.trim().isEmpty()) {
+	            result.add(""); // línea en blanco
+	            continue;
+	        }
+
+	        String[] words = paragraph.split("\\s+");
+	        StringBuilder line = new StringBuilder();
+
+	        for (String word : words) {
+	            if (line.length() + word.length() > maxChars) {
+	                result.add(line.toString());
+	                line = new StringBuilder(word);
+	            } else {
+	                if (line.length() > 0) line.append(" ");
+	                line.append(word);
+	            }
+	        }
+	        if (line.length() > 0) {
+	            result.add(line.toString());
+	        }
+	    }
+	    return result;
+	}
+
+	private static void writeOverflowPages(
+	        PDDocument document,
+	        List<String> originalLines
+	) throws IOException {
+
+	    // ===== CONFIGURACIÓN =====
+	    float margin = 50;
+	    float yStart = 750;
+	    float titleFontSize = 10;
+	    float textFontSize = 8;
+	    float leading = textFontSize * 1.5f;
+	    int maxLinesPerPage = 45;
+
+	    PDRectangle pageSize = PDRectangle.A4;
+	    float pageWidth = pageSize.getWidth();
+	    float usableWidth = pageWidth - (margin * 2);
+
+	    PDFont titleFont = new PDType1Font(FontName.HELVETICA_BOLD);
+	    PDFont textFont = new PDType1Font(FontName.HELVETICA);
+
+	    String title = "CLÁUSULAS ADICIONALES";
+
+	    // ===== WRAP REAL POR ANCHO =====
+	    String joinedText = String.join("\n", originalLines);
+	    List<String> lines = wrapTextByWidth(
+	            joinedText,
+	            textFont,
+	            textFontSize,
+	            usableWidth
+	    );
+
+	    PDPage page = new PDPage(pageSize);
+	    document.addPage(page);
+
+	    PDPageContentStream cs = new PDPageContentStream(document, page);
+
+	    // ===== TÍTULO =====
+	    float titleWidth = titleFont.getStringWidth(title) / 1000 * titleFontSize;
+	    float titleX = (pageWidth - titleWidth) / 2;
+
+	    cs.beginText();
+	    cs.setFont(titleFont, titleFontSize);
+	    cs.newLineAtOffset(titleX, yStart);
+	    cs.showText(title);
+	    cs.endText();
+
+	    // ===== TEXTO =====
+	    cs.beginText();
+	    cs.setFont(textFont, textFontSize);
+	    cs.newLineAtOffset(margin, yStart - leading * 2);
+
+	    int lineCount = 0;
+
+	    for (String line : lines) {
+
+	        if (lineCount == maxLinesPerPage) {
+	            cs.endText();
+	            cs.close();
+
+	            page = new PDPage(pageSize);
+	            document.addPage(page);
+	            cs = new PDPageContentStream(document, page);
+
+	            // --- Título nueva página ---
+	            float w = titleFont.getStringWidth(title) / 1000 * titleFontSize;
+	            float x = (pageWidth - w) / 2;
+
+	            cs.beginText();
+	            cs.setFont(titleFont, titleFontSize);
+	            cs.newLineAtOffset(x, yStart);
+	            cs.showText(title);
+	            cs.endText();
+
+	            cs.beginText();
+	            cs.setFont(textFont, textFontSize);
+	            cs.newLineAtOffset(margin, yStart - leading * 2);
+
+	            lineCount = 0;
+	        }
+
+	        if (line.isEmpty()) {
+	            cs.newLineAtOffset(0, -leading);
+	            lineCount++;
+	            continue;
+	        }
+
+	        cs.showText(line);
+	        cs.newLineAtOffset(0, -leading);
+	        lineCount++;
+	    }
+
+	    cs.endText();
+	    cs.close();
+	}
+
+	private static List<String> wrapTextByWidth(
+	        String text,
+	        PDFont font,
+	        float fontSize,
+	        float maxWidth
+	) throws IOException {
+
+	    List<String> result = new ArrayList<>();
+
+	    for (String paragraph : text.split("\n")) {
+
+	        if (paragraph.trim().isEmpty()) {
+	            result.add("");
+	            continue;
+	        }
+
+	        String[] words = paragraph.split("\\s+");
+	        StringBuilder line = new StringBuilder();
+
+	        for (String word : words) {
+	            String testLine = line.length() == 0 ? word : line + " " + word;
+	            float size = font.getStringWidth(testLine) / 1000 * fontSize;
+
+	            if (size > maxWidth) {
+	                result.add(line.toString());
+	                line = new StringBuilder(word);
+	            } else {
+	                if (line.length() > 0) line.append(" ");
+	                line.append(word);
+	            }
+	        }
+
+	        if (line.length() > 0) {
+	            result.add(line.toString());
+	        }
+	    }
+	    return result;
 	}
 	
 	private static void addSepeInfo(PDDocument document, String sepeIde, Date comunicationDate) {

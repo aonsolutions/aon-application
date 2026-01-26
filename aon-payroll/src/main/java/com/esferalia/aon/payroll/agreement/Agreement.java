@@ -236,7 +236,7 @@ public class Agreement {
 	
 	public AgreementLevel getAgreementLevel(String description, String category) {
 		for(AgreementLevel lvl : this.levels) {
-			if((lvl.description == description || lvl.description.equals(description)) && lvl.categories.contains(category))
+			if((lvl.description == description || lvl.description.equals(description)) && lvl.categories.contains(category) )
 				return lvl;
 		}
 		

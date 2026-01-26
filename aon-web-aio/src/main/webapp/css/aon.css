@@ -5112,6 +5112,83 @@ aon-agenda-all-days .day-number.festive {
   border-radius: .5rem;
 }
 
+aon-agenda-all-days .day-number.paid_leave {
+  color: white !important;
+  background-color: #80bc70;
+  padding: .2rem;
+  border-radius: .5rem;
+}
+
+aon-agenda-all-days .day-number.effecitve_days {
+  color: white !important;
+  background-color: #77e1d2;
+  padding: .2rem;
+  border-radius: .5rem;
+}
+
+aon-agenda-all-days .day-number.inactivity {
+  color: white !important;
+  background-color: #71b1e8;
+  padding: .2rem;
+  border-radius: .5rem;
+}
+
+aon-agenda-all-days .day-number.ere {
+  color: white !important;
+  background-color: #b91257;
+  padding: .2rem;
+  border-radius: .5rem;
+}
+
+aon-agenda-all-days .day-number.ere_fza {
+  color: white !important;
+  background-color: #B91257B3;
+  padding: .2rem;
+  border-radius: .5rem;
+}
+
+aon-agenda-all-days .day-number.ere_fza_exo {
+  color: white !important;
+  background-color: #B9125766;
+  padding: .2rem;
+  border-radius: .5rem;
+}
+
+aon-agenda-all-days .day-number.strike {
+  color: white !important;
+  background-color: #a09c13;
+  padding: .2rem;
+  border-radius: .5rem;
+}
+
+aon-agenda-all-days .day-number.absence {
+  color: white !important;
+  background-color: #733969;
+  padding: .2rem;
+  border-radius: .5rem;
+}
+
+aon-agenda-all-days .day-number.holidays {
+  color: white !important;
+  background-color: #52ab3c;
+  padding: .2rem;
+  border-radius: .5rem;
+}
+
+aon-agenda-all-days .day-number.partiality {
+  color: white !important;
+  background-color: #9c85ee;
+  padding: .2rem;
+  border-radius: .5rem;
+}
+
+aon-agenda-all-days .day-number.it {
+  color: white !important;
+  background-color: #FF0000B8;
+  padding: .2rem;
+  border-radius: .5rem;
+}
+
 /* Días de fin de semana en rojo */
 aon-agenda-all-days .day.weekend .day-number {
   color: #d93025;
@@ -5158,6 +5235,65 @@ aon-agenda-all-days .event.out {
 aon-agenda-all-days .event.pause {
   background: #fef7e0;
   color: #b06000;
+}
+
+aon-agenda-all-days .event.current {
+  background: #D1D1D1;
+}
+
+aon-agenda-all-days .event.paid_leave {
+  background: #e0f5da;
+  color: #80bc70;
+}
+
+aon-agenda-all-days .event.effecitve_days {
+  background: #e6f9f6;
+  color: #77e1d2;
+}
+
+aon-agenda-all-days .event.inactivity {
+  background: #daedfe;
+  color: #71b1e8;
+}
+
+aon-agenda-all-days .event.ere {
+  background: #f99bc2;
+  color: #b91257;
+}
+
+aon-agenda-all-days .event.ere_fza {
+  background: #e979a8b3;
+  color: #B91257B3;
+}
+
+aon-agenda-all-days .event.ere_fza_exo {
+  background: #e87da966;
+  color: #B9125766;
+}
+
+aon-agenda-all-days .event.strike {
+  background: #e3df67;
+  color: #a09c13;
+}
+
+aon-agenda-all-days .event.absence {
+  background: #de8dd0;
+  color: #733969;
+}
+
+aon-agenda-all-days .event.holidays {
+  background: #b0f69f;
+  color: #52ab3c;
+}
+
+aon-agenda-all-days .event.partiality {
+  background: #eae4ff;
+  color: #9c85ee;
+}
+
+aon-agenda-all-days .event.it {
+  background: #ed8e8eb8;
+  color: #FF0000B8;
 }
 
 /* Contenedor principal del menú calendario */
