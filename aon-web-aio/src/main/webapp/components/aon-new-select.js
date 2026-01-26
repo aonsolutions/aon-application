@@ -107,7 +107,6 @@ export class AonNewSelect extends AonNewInput {
       if(!this.hasAttribute(CONSTANT.AUTOCOMPLETE)) {
         input.setAttribute(CONSTANT.READONLY, true);
       }
-
       this.addIcon(MATERIAL_ICONS.ARROW_DROP_DOWN, undefined, () => this.showOptions());
 
       input.addEventListener(EVENT.CLICK, () => this.showOptions());
@@ -178,7 +177,6 @@ export class AonNewSelect extends AonNewInput {
   }
 
   buildOptions(options) {
-
     this.clearElementById(this.OPTIONS);
 
     if(options.length === 0) return null;
@@ -205,10 +203,10 @@ export class AonNewSelect extends AonNewInput {
       isMultiple ? this.buildLiMultiple(option, ul) : this.buildLi(option, ul, div);
     }
 
-    
+    let icon = this.getElement(this.ICON_BUTTON);
     document.addEventListener(EVENT.CLICK, function(event) {
       this.value = this._selected ? this._selected[this.nameAlias] : '';
-      let isClickInside = input.contains(event.target);
+      let isClickInside = input.contains(event.target) || icon.contains(event.target);
       if(!isClickInside){
         if(div.classList.contains('is-visible')){
           div.classList.remove('is-visible');
