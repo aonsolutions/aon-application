@@ -2456,6 +2456,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_RECURSO_PREVENTIVO_ANUAL", "P_REC_PREV_A");
 		variablesMap.put("PLUS_REFRIGERADO_ANUAL", "P_REFRIG_A");
 		variablesMap.put("TRIENIO_PAGA_UNICA_ANUAL", "TRI_PU_A");
+		variablesMap.put("PLUS_DOMINGOS_Y_FESTIVOS_ZONA_TURISTICA_HORAS", "P_DOM_FEST_ZT_H");
 
 
 	}
