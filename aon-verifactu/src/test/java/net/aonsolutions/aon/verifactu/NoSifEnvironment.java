@@ -19,8 +19,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.EnterpriseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
-final class SifEnvironment extends VerifactuEnvironmentAbs {
-	protected String domainName = "siftest.aonsolutions.test";	
+final class NoSifEnvironment extends VerifactuEnvironmentAbs {
+	protected String domainName = "nosiftest.aonsolutions.test";	
 	protected String user 		= "admin";
 	
 	@Override
@@ -59,15 +59,6 @@ final class SifEnvironment extends VerifactuEnvironmentAbs {
 		Date yesterday = AonDateUtils.addDays(today, -1);
 		
 		Enterprise enterprise = EnterpriseDAO.get( ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
-		ctx.getDslContext().insertInto(ENTERPRISE_DATA)
-			.set(ENTERPRISE_DATA.DOMAIN, ctx.getDomainId())
-			.set(ENTERPRISE_DATA.ENTERPRISE, enterprise.getId() )
-			.set(ENTERPRISE_DATA.NAME, EnterpriseDataNames.ICC_SIF.name() )
-			.set(ENTERPRISE_DATA.EXPRESSION, "test" )
-			.set(ENTERPRISE_DATA.START_DATE,  AonDateUtils.toSql(yesterday))
-			.execute();
-		ctx.log().info("Enterprise Data: ICC_SIF set to TRUE / TEST");
-		
 		ctx.getDslContext().insertInto(ENTERPRISE_DATA)
 			.set(ENTERPRISE_DATA.DOMAIN, ctx.getDomainId())
 			.set(ENTERPRISE_DATA.ENTERPRISE, enterprise.getId() )

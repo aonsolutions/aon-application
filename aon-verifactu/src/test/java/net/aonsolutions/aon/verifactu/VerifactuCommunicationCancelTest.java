@@ -208,7 +208,7 @@ class VerifactuCommunicationCancelTest extends AbstractVerifactuTest {
 			InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate(invoices);
 			Invoice inv = InvoiceDAO.save(getEnvironment().getCtx(), invoice);
 			invoices = AonCollectionUtils.toList(inv);
-			VerifactuContext vc = VERIFACTU.accept(getEnvironment().getCtx(), icc);
+			VerifactuContext vc = VERIFACTU.accept(getEnvironment().getCtx(), icc, PHASE_LISTENER);
 			vc.invoiceStream()			
 				.forEach( i -> {
 					InvoiceCommunicationTracking tracking = assertInvoiceBatch(i);

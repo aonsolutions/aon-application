@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -111,6 +112,26 @@ class TestDomainDefaults {
 			.set(TAX.VAT_DEDUCTION_TYPE,  VatDeductionType.WITH_RIGHT.value() )
 		.execute();
 		ctx.log().info("TAX Tipo Superreducido inserted");
+		
+		ctx.getDslContext().insertInto(TAX)
+			.set(TAX.DOMAIN, domain.getId())
+			.set(TAX.NAME , "IRPF Profesionales")
+			.set(TAX.TAX_TYPE , TaxType.RETENTION.value())
+			.set(TAX.PERCENTAGE , 19.0 )
+			.set(TAX.START_DATE , AonDateUtils.toSql(AonDateUtils.getDate( 2010, 0, 1) ))
+			.set(TAX.WITHHOLDING_TYPE,  WithholdingType.PROFESSIONAL.value() )
+		.execute();
+		ctx.log().info("TAX IRPF Profesionales inserted");
+		
+		ctx.getDslContext().insertInto(TAX)
+			.set(TAX.DOMAIN, domain.getId())
+			.set(TAX.NAME , "IRPF Alquileres")
+			.set(TAX.TAX_TYPE , TaxType.RETENTION.value())
+			.set(TAX.PERCENTAGE , 19.0 )
+			.set(TAX.START_DATE , AonDateUtils.toSql(AonDateUtils.getDate( 2010, 0, 1) ))
+			.set(TAX.WITHHOLDING_TYPE,  WithholdingType.RENTING.value() )
+		.execute();
+		ctx.log().info("TAX IRPF Profesionales inserted");
 		
 	}
 

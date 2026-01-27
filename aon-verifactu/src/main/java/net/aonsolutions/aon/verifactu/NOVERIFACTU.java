@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationPhaseListener;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
@@ -41,18 +42,18 @@ public class NOVERIFACTU {
 	// ************************************************ [ACCEPT] ****
 	// **************************************************************
 	
-	public static VerifactuContext accept(AONContext ctx, InvoiceCommunicatorContext invoiceCommunicatorContext) throws InvoiceCommunicationException {
+	public static VerifactuContext accept(AONContext ctx, InvoiceCommunicatorContext invoiceCommunicatorContext, InvoiceCommunicationPhaseListener phase) throws InvoiceCommunicationException {
 		VerifactuContext vc = new VerifactuContext( invoiceCommunicatorContext )
 			.setBlockchain( VERIFACTU.getBlockchain(ctx) )
 			.setOperation(InvoiceCommunicationOperation.REGISTER)
 		;
-		return accept(ctx, vc);
+		return accept(ctx, vc, phase);
 	}
 	
-	private static VerifactuContext accept(AONContext ctx, VerifactuContext vc) throws InvoiceCommunicationException {
+	private static VerifactuContext accept(AONContext ctx, VerifactuContext vc, InvoiceCommunicationPhaseListener phase) throws InvoiceCommunicationException {
 		try {
 			check(vc);
-			RegFactuSistemaFacturacion request = Invoice2Verifactu.build(vc);
+			RegFactuSistemaFacturacion request = Invoice2Verifactu.build(ctx, InvoiceCommunicationType.NO_VERIFACTU,vc, phase);
 			vc.setRequest( request );
 			Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
 			byte[] requestBytes = VerifactuXMLUtils.toBytes(document);
@@ -104,7 +105,7 @@ public class NOVERIFACTU {
 	
 	private static VerifactuContext cancel(AONContext ctx, VerifactuContext vc) throws InvoiceCommunicationException {
 		check(vc);
-		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(vc);
+		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(ctx, InvoiceCommunicationType.NO_VERIFACTU, vc, null);
 		vc.setRequest( request );
 		Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
 		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));

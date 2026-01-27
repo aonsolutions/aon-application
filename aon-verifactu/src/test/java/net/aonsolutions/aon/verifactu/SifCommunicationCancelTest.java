@@ -179,7 +179,7 @@ class SifCommunicationCancelTest extends AbstractVerifactuTest {
 			InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate(invoices);
 			Invoice inv = InvoiceDAO.save(getEnvironment().getCtx(), invoice);
 			invoices = AonCollectionUtils.toList(inv);
-			VerifactuContext vc = SIF.accept(getEnvironment().getCtx(), icc);
+			VerifactuContext vc = SIF.accept(getEnvironment().getCtx(), icc, PHASE_LISTENER);
 			assertNotNull(vc);
 			assertNull(vc.getResponse());
 			return inv;

@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Properties;
 import java.util.TimeZone;
@@ -21,6 +22,11 @@ import org.junit.platform.commons.logging.LoggerFactory;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationPhaseListener;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.mysql.cj.jdbc.Driver;
@@ -42,7 +48,7 @@ public abstract class AbstractVerifactuTest {
 	protected static final Environment VERIFACTU_CANARIAS_ENV = new VerifactuCanariasEnvironment();
 	protected static final Environment NO_VERIFACTU_ENV = new NoVerifactuEnvironment();
 	protected static final Environment SIF_ENV = new SifEnvironment();
-	
+	protected static final Environment NO_SIF_ENV = new NoSifEnvironment();
 	protected static final Environment TBAI_ALAVA_ENV = new TBAIAlavaEnvironment();
 	protected static final Environment TBAI_GIPUZKOA_ENV = new TBAIGipuzkoaEnvironment();
 	protected static final Environment LROE_ENV = new LROEEnvironment();
@@ -55,8 +61,69 @@ public abstract class AbstractVerifactuTest {
 		SIF_ENV,
 		TBAI_ALAVA_ENV,
 		TBAI_GIPUZKOA_ENV,
-		LROE_ENV
+		LROE_ENV,
+		NO_SIF_ENV
 	}; 
+	
+	protected static InvoiceCommunicationPhaseListener PHASE_LISTENER = new InvoiceCommunicationPhaseListener() {
+		@Override
+		public void beforeAll(AONContext ctx, InvoiceCommunicatorContext icc) throws InvoiceCommunicationException {
+			// Nothing
+		}
+		@Override
+		public void beforeInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) {
+			// Nothing
+		}
+		@Override
+		public void afterRightInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) {
+			// Nothing
+		}
+		
+		@Override
+		public void afterWrongInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) throws InvoiceCommunicationException{
+			// Nothing
+		}
+		
+		@Override
+		public void afterAll(AONContext ctx, InvoiceCommunicatorContext icc) throws InvoiceCommunicationException {
+			if (icc.isFailOnWrongValidation() 
+			 && icc.invoiceStream().filter( Invoice::hasMessages ).anyMatch( Invoice::hasERRMessages )) {
+				// TRACE _-- borrar
+				icc.invoiceStream()
+					.filter( Invoice::hasMessages )
+					.flatMap( Invoice::messageStream )
+					.forEach( m -> System.out.println( m.getLevel() + " " + m.getCode() + " - " + m.getMessage() ));
+				// ----------------
+				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0024);
+			}
+		}
+	};
+	
+	protected static final InvoiceCommunicationPhaseListener EMPTY_VERIFACTU_PHASE_LISTENER = new InvoiceCommunicationPhaseListener() {
+		
+		@Override public void beforeInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) {/* nothing */}
+		@Override public void beforeAll(AONContext ctx, InvoiceCommunicatorContext icc) throws InvoiceCommunicationException {/* nothing */}
+		@Override public void afterRightInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) {/* nothing */}
+		@Override public void afterAll(AONContext ctx, InvoiceCommunicatorContext icc) throws InvoiceCommunicationException {/* nothing */}
+		
+		@Override
+		public void afterWrongInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) throws InvoiceCommunicationException {
+			// TRACE _-- borrar
+			String s = "MSG Inv: [{0}]: {1} - {2} {3} - {4}";
+			invoice.messageStream()
+				.forEach( m -> 
+					System.out.println( MessageFormat.format( s,
+						invoice.getId(),
+						invoice.getDocumentNumber(),
+						m.getLevel(),
+						m.getCode(),
+						m.getMessage()
+					 ))
+				);
+			// ----------------
+		}
+		
+	};
 	
 	private Date testDate; 
 	

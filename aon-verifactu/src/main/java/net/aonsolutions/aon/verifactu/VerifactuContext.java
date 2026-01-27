@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.console.ConsoleLogger;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
@@ -88,6 +89,9 @@ public class VerifactuContext  {
 	public boolean isVerifactuTest() {
 		return getInvoiceCommunicatorContext().getConfig().isVerifactuTest();
 
+	}
+	public ConsoleLogger getLogger() {
+		return getInvoiceCommunicatorContext().getLogger();
 	}
 	public List<EnterpriseActivity> getActivities() {
 		return activities;
