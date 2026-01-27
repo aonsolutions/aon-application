@@ -1,21 +1,27 @@
 package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 public enum BillingPeriod implements Serializable{
-	NO_PERIOD(0),
-	MONTHLY(1),
-	BI_MONTHLY(2),
-	THREE_MONTHLY(3),
-	FOUR_MONTHLY(4),
-	SIX_MONTHLY(5),
-	YEARLY(6);
+	NO_PERIOD		(""),
+	MONTHLY			("Mensual"),
+	BI_MONTHLY		("Bimensual"),
+	THREE_MONTHLY	("Trimestal"),
+	FOUR_MONTHLY	("Cuatrimestral"),
+	SIX_MONTHLY		("Semestral"),
+	YEARLY			("Anual")
+	;	
 
    
-   private int value;
+   private String description;
    
-   BillingPeriod(int value){
-   	this.value = value;
+   private BillingPeriod(String description){
+	   this.description = description;
+   }
+   
+   public String getDescription() {
+	   return this.description;
    }
 
    public String getName() {
@@ -23,13 +29,33 @@ public enum BillingPeriod implements Serializable{
    }
    
    public Integer getValue(){
-	   return this.value;
+	   return this.ordinal();
    }
    
-   public byte value(){
-	   return (byte) this.ordinal();
+   public short value(){
+	   return (short) this.ordinal();
    }
    
+	public static String toString(BillingPeriod period) {
+		if (period == null) return "";
+		return period.getName();
+	}
+
+	public static Optional<BillingPeriod> safeValueOf(Short s) {
+		if (s == null) return Optional.empty();
+		return safeValueOf(s.intValue());
+	}
+
+	public static Optional<BillingPeriod> safeValueOf(Integer i) {
+		if (i == null) return Optional.empty();
+		if (i < 0 || i >= BillingPeriod.values().length) return Optional.empty();
+		return Optional.of(BillingPeriod.values()[i]);
+	}
+	
+	/**
+	 * @deprecated NULL is null NO_PERIOD is NO_PERIOD!!
+	 */
+	@Deprecated
 	public static BillingPeriod safeValueOf( String value ) {
 		if(value == null) return BillingPeriod.NO_PERIOD;
 		for(BillingPeriod p : BillingPeriod.values()) {
@@ -40,6 +66,10 @@ public enum BillingPeriod implements Serializable{
 		return safeValueOf2(value);
 	}
 	
+	/**
+	 * @deprecated NULL is null NO_PERIOD is NO_PERIOD!!
+	 */
+	@Deprecated
 	public static BillingPeriod safeValueOf2(String value) {
 		if("mensual".equalsIgnoreCase(value)) {
 			return BillingPeriod.MONTHLY;
@@ -56,26 +86,6 @@ public enum BillingPeriod implements Serializable{
 		}
 		return BillingPeriod.NO_PERIOD;
 	}
-	
-	public static String toString(BillingPeriod period) {
-		switch (period) {
-			case MONTHLY:
-				return "Mensual";
-			case BI_MONTHLY:
-				return "Bimensual";
-			case THREE_MONTHLY:
-				return "Trimestal";
-			case FOUR_MONTHLY:
-				return "Cuatrimestral";
-			case SIX_MONTHLY:
-				return "Semestral";
-			case YEARLY:
-				return "Anual";
-			default:
-				return "";
-		}
-	}
-	
 	
 	
 }

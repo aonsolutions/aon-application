@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 import static com.esferalia.aon.jooq.tables.InvoiceTracking.INVOICE_TRACKING;
 
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.OrderField;
-import org.jooq.Record14;
+import org.jooq.Record15;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.Table;
@@ -49,6 +50,7 @@ public class InvoiceConsoleDAO {
 	private static final Field<Double> F_TOTAL = DSL.field("total", Double.class);
 	private static final Field<Boolean> F_ANNULLED = DSL.field("annulled", Boolean.class);
 	private static final Field<Timestamp> F_CREATION_DATE = DSL.field("creationTime", Timestamp.class);
+	private static final Field<Date> F_EXP_DATE = DSL.field("expDate", Date.class);
 	private static final Field<Byte> F_STATUS = DSL.field("statuc", Byte.class);
 	private static final String INVOICE_UNION = "invoice_union";
 
@@ -83,7 +85,7 @@ public class InvoiceConsoleDAO {
 	// ---------------------------------------------------------------------	
 	// --------------------------------------------------------- [PUBLIC] --	
 	// ---------------------------------------------------------------------
-	private static SelectConditionStep<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Boolean>> getInvoiceSelect( AONContext ctx, InvoiceConsoleParams params ) {
+	private static SelectConditionStep<Record15<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Date, Boolean>> getInvoiceSelect( AONContext ctx, InvoiceConsoleParams params ) {
 		Field<Integer> invoiceOrderedType = getOrderedType().as(F_ORDERED_TYPE);
 		return ctx.getDslContext()
 			.select(
@@ -100,14 +102,16 @@ public class InvoiceConsoleDAO {
 					,INVOICE.RNAME.as( F_RNAME)
 					,INVOICE.TOTAL.as( F_TOTAL)
 					,INVOICE.CREATION_DATE.as( F_CREATION_DATE )
+					,INVOICE_FISCAL.EXP_DATE.as( F_EXP_DATE )
 					,DSL.val( false ).as( F_ANNULLED )
 					)
 			.from(INVOICE)
+			.leftOuterJoin(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.equal(INVOICE.ID))
 			.where(new InvoiceConditionBuilder().build(ctx, params))
 			;
 	}
 	
-	private static SelectConditionStep<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Boolean>> getInvoiceTrackingSelect( AONContext ctx, InvoiceConsoleParams params ) {
+	private static SelectConditionStep<Record15<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Date, Boolean>> getInvoiceTrackingSelect( AONContext ctx, InvoiceConsoleParams params ) {
     	Field<Integer> invoiceTrackingOrderedType = getTrackingOrderedType().as(F_ORDERED_TYPE);
     	return ctx.getDslContext()
 			.select(
@@ -124,14 +128,15 @@ public class InvoiceConsoleDAO {
 					,INVOICE_TRACKING.RNAME.as( F_RNAME)
 					,INVOICE_TRACKING.TOTAL.as( F_TOTAL)
 					,INVOICE_TRACKING.CREATION_DATE.as( F_CREATION_DATE )
+					,INVOICE_TRACKING.ISSUE_DATE.as( F_EXP_DATE )
 					,DSL.val( true ).as( F_ANNULLED )
 					)
 			.from(INVOICE_TRACKING)
 			.where(new InvoiceTrackingConditionBuilder().build(ctx, params))
 			;
 	}
-	private static Table<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Boolean>> unionTable(AONContext ctx, InvoiceConsoleParams params) {
-		Select<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Boolean>> invoiceSelect = null;
+	private static Table<Record15<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Date, Boolean>> unionTable(AONContext ctx, InvoiceConsoleParams params) {
+		Select<Record15<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Date, Boolean>> invoiceSelect = null;
 		if (params.showInvoices()) {
 			if (params.showInvoiceTrackings()) {
 				invoiceSelect = getInvoiceSelect(ctx, params).unionAll( getInvoiceTrackingSelect(ctx, params) );
@@ -144,7 +149,7 @@ public class InvoiceConsoleDAO {
 	
 	public static List<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params) {
 		ctx.checkRead();
-		Select<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Boolean>> select =
+		Select<Record15<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Date, Boolean>> select =
 			(params.showInvoiceTrackings())
 				?ctx.getDslContext().selectFrom( unionTable(ctx,params) )
 					.orderBy(getOrderBy(params))
@@ -167,7 +172,7 @@ public class InvoiceConsoleDAO {
 					.setId(r.getValue(F_ID))
 					.setAnnulled(Boolean.TRUE.equals( r.getValue(F_ANNULLED) ));
 				if (!ic.isAnnulled()) {
-					ic.setInvoice(  new Invoice()
+					Invoice inv = new Invoice()
 						.setId( r.getValue(F_ID) )
 						.setDomain( r.getValue(F_DOMAIN) )
 						.setType(AonEnumUtils.enumValue(InvoiceType.class, r.getValue(F_TYPE)))
@@ -180,7 +185,13 @@ public class InvoiceConsoleDAO {
 						.setRegistryName( r.getValue(F_RNAME) )
 						.setTotal( r.getValue(F_TOTAL) )
 						.setCreationDate( r.getValue(F_CREATION_DATE) )
-						);
+					;
+					java.util.Date expDate = r.getValue(F_EXP_DATE);
+					if (expDate == null && !inv.isProforma()) {
+						expDate = inv.getIssueDate();
+					}
+					inv.ensureFiscal().setExpDate( expDate );
+					ic.setInvoice( inv );
 				}
 				return ic;
 			})

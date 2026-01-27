@@ -555,6 +555,9 @@ public class Invoice implements Serializable, HasAudit {
 	public Stream<InvoiceDetail> detailStream() {
 		return AonCollectionUtils.stream(this.details);
 	}
+	public int detailsSize() {
+		return (int) detailStream().count();
+	}
 	public boolean hasDetails() {
 		return AonCollectionUtils.isNotEmpty(this.details); 
 	}
@@ -565,6 +568,9 @@ public class Invoice implements Serializable, HasAudit {
 	private List<InvoiceDetail> ensureDetails() {
 		if (this.details == null) this.details = new LinkedList<>();
 		return this.details;
+	}
+	public boolean hasPrepayments() {
+		return detailStream().filter(d -> d.isPrepayment()).count() > 0; 
 	}
 	
 	// ---------------------------------------------------- [FINANCES]
@@ -626,6 +632,12 @@ public class Invoice implements Serializable, HasAudit {
     	AonCollectionUtils.stream(messages )
 			.forEach( m -> ensureMessages().add(m) );
 	    return this;
+	}
+	
+	public boolean hasERRMessages() {
+		return getMoreSeriousLevel()
+			.filter( e -> e == InvoiceErrorLevel.ERR)
+			.isPresent(); 
 	}
 	
 	public Optional<InvoiceErrorLevel> getMoreSeriousLevel() {
@@ -726,6 +738,9 @@ public class Invoice implements Serializable, HasAudit {
 			|| isVatUnionExternal() 				//  Regimen Exterior Unión UOSS
 			)
 		;
+	}
+	public boolean isVatEnabled() {
+		return isOutputVatEnabled() != isInputVatEnabled();
 	}
 	public boolean isVatImportationAvailable() {
 		return (isExtracommunity() || isCanCeuMel()) 

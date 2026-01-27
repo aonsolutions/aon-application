@@ -5,6 +5,7 @@ import java.io.PrintStream;
 
 import com.esferalia.aon.occam.api.json.ConsoleMessageJSON;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
+import com.esferalia.aon.occam.api.model.console.ConsoleLogger;
 import com.esferalia.aon.occam.api.model.console.ConsoleMessage;
 import com.esferalia.aon.occam.api.model.console.ConsoleMessageType;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -86,4 +87,58 @@ public class ConsoleMessageUtils {
 		stream.println( "]" );
 	}
 
+	public static class PrintStreamConsoleLogger implements ConsoleLogger {
+
+		private final PrintStream printStream;
+
+		public PrintStreamConsoleLogger(PrintStream printStream) {
+			this.printStream = printStream;
+		}
+
+		@Override
+		public void title(String id, String msg) {
+			ConsoleMessageUtils.print(this.printStream, ConsoleMessageUtils.title(id, msg));
+		}
+
+		@Override
+		public void subtitle(String id, String msg) {
+			ConsoleMessageUtils.print(this.printStream, ConsoleMessageUtils.subtitle(id, msg));
+		}
+
+		@Override
+		public void ok(String id, String msg) {
+			ConsoleMessageUtils.print(this.printStream, ConsoleMessageUtils.ok(id, msg));
+		}
+
+		@Override
+		public void error(String id, String msg) {
+			ConsoleMessageUtils.print(this.printStream, ConsoleMessageUtils.error(id, msg));
+		}
+
+		@Override
+		public void warning(String id, String msg) {
+			ConsoleMessageUtils.print(this.printStream, ConsoleMessageUtils.warning(id, msg));
+		}
+
+		@Override
+		public void message(String id, String msg) {
+			ConsoleMessageUtils.print(this.printStream, ConsoleMessageUtils.message(id, msg));
+		}
+
+		@Override
+		public void progress(String id, int count, int progress, String msg) {
+			ConsoleMessageUtils.print(this.printStream, ConsoleMessageUtils.progress(id, count, progress, msg));
+		}
+
+		@Override
+		public void progress(String id, int count, int progress) {
+			ConsoleMessageUtils.print(this.printStream, ConsoleMessageUtils.progress(id, count, progress));
+		}
+
+		@Override
+		public void mainProgress(String id, int count, int progress) {
+			ConsoleMessageUtils.print(this.printStream, ConsoleMessageUtils.mainProgress(id, count, progress));
+		}
+	}
+	
 }

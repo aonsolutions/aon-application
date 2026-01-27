@@ -55,6 +55,7 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -405,6 +406,9 @@ public class FinanceDAO {
 	// -------------------------------------------------------------
 	// ------ FINANCE --- CALCULO EN FUNCION DE RPAYMETHOD ---------
 	// -------------------------------------------------------------
+	public static Stream<Finance> getFinancesForInvoiceStream(AONContext ctx, Invoice invoice) {
+		return AonCollectionUtils.stream( getFinancesForInvoice(ctx, invoice) );
+	}
 	public static LinkedList<Finance> getFinancesForInvoice(AONContext ctx, Invoice invoice) {
 		LinkedList<Finance> finances = new LinkedList<>();
 		RegistryPayMethod rPayMethod = RegistryPayMethodDAO.getStream(ctx, prop -> prop.getDomainProperty()

@@ -61,6 +61,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.watson.util.Pair;
 
 public interface IFinance {
 	
@@ -327,6 +328,11 @@ public interface IFinance {
 	// 	****************************************
 	Optional<InvoiceDoc> getInvoiceDoc(AONContext ctx, int domain, Integer invoiceId);	
 	void saveInvoiceDoc(AONContext ctx, InvoiceDoc invoiceDoc);
+	
+	// ********************************************
+	// ***************************** INVOICE FEE **
+	// ********************************************
+	Optional<Pair<Integer, Integer>> getFeeYearRange(AONContext ctx, Integer domainId);
 	
 	// ********************************************
 	// ********************************** SERIES **

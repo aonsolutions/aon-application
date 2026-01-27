@@ -40,6 +40,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Record1;
@@ -82,6 +83,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.FeeValidation;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 public class FeeDAO {
 	
@@ -1202,6 +1204,25 @@ public class FeeDAO {
 		return updateQuery.execute();
 	}
 
+	public static Optional<Pair<Integer, Integer>> getFeeYearRange(AONContext ctx, Integer domainId) {
+		AggregateFunction<Integer> maxYear = DSL.max(DSL.year(CUSTOMER_FEE.BILLING_DATE));
+		AggregateFunction<Integer> minYear = DSL.min(DSL.year(CUSTOMER_FEE.BILLING_DATE));
+		return ctx.getDslContext()
+			.select(minYear, maxYear)
+			.from(CUSTOMER_FEE)
+			.where(CUSTOMER_FEE.DOMAIN.eq(domainId))
+			.fetch()
+			.stream()
+			.map(r -> Pair.of(r.get(minYear), r.get(maxYear)))
+			.findFirst();
+	}
+
+	/**
+	 * No need two selects to get min and max year.
+	 * 
+	 * @deprecated Use {@link #getFeeYearRange(AONContext, Integer)} instead.
+	 */
+	@Deprecated
 	public static Map<Integer, Integer> getMinMaxCustomerFeeYear(CloseableAONContext ctx, int domainId) {
 		Date maxDate = (Date) ctx.getDslContext().select(DSL.max(CUSTOMER_FEE.BILLING_DATE)).from(CUSTOMER_FEE).where(CUSTOMER_FEE.DOMAIN.eq(domainId)).fetchOne().get(0);
 		Date minDate = (Date) ctx.getDslContext().select(DSL.min(CUSTOMER_FEE.BILLING_DATE)).from(CUSTOMER_FEE).where(CUSTOMER_FEE.DOMAIN.eq(domainId)).fetchOne().get(0);

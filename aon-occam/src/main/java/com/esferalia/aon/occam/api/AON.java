@@ -9095,6 +9095,15 @@ public class AON {
 		}
 	}
 	
+	// ********************************************
+	// ***************************** INVOICE FEE **
+	// ********************************************
+	public static Optional<Pair<Integer, Integer>> getFeeYearRange(Occam occam, Integer domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getFinance().getFeeYearRange(ctx, domainId);
+		}
+	}
+	
 	// ***************************************
 	// ***************************** SERIES **
 	// ***************************************

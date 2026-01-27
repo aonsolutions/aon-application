@@ -4,12 +4,15 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.watson.mutable.MutableBoolean;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -161,6 +164,11 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	private Certificate certificate;
 	
 	/**
+	 * Certificado para la firma de facturas.
+	 */
+	private Certificate aonCertificate;
+	
+	/**
 	 * Obtiene el historial de administraciones.
 	 * @return Historial de administraciones.
 	 */
@@ -206,7 +214,7 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		if (d == null || atDate == null) return false;
 		return d.getStartDate() != null 
 			&& !atDate.before(d.getStartDate())
-			&& (d.getEndDate() == null || d.getEndDate().after(atDate))
+			&& (d.getEndDate() == null || !atDate.after(d.getEndDate()))
 		;
 	}
 	private boolean is(List<EnterpriseData> history, Date atDate) {
@@ -1039,6 +1047,23 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		this.defaultCertificate = defaultCertificate;
 		return this;
 	}
+	/**
+	 * Obtiene el certificado de AON para la firma de facturas 
+	 * @return Certificado para la comunicación con AON.
+	 */
+	public Optional<Certificate> getAonCertificate() {
+		return Optional.ofNullable(aonCertificate);
+	}
+	
+	/**
+	 * Establece el certificado de AON para la firma de facturas 
+	 * @param aonCertificate Certificado para la comunicación con AON.
+	 * @return Instancia actualizada de InvoiceCommunicationConfiguration.
+	 */
+	public InvoiceCommunicationConfiguration setAonCertificate(Certificate aonCertificate) {
+		this.aonCertificate = aonCertificate;
+		return this;
+	}
 	
 	/**
 	 * Obtiene el certificado para la comunicación de facturas.
@@ -1139,12 +1164,16 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		
 		return types;
 	}
+	
 	/**
 	 * Determina si existen tipos de comunicación de facturas emitadas activos.
 	 * @return true si existen tipos de comunicación de facturas emitidas activos, false en caso contrario.
 	 */
 	public boolean hasCommunication() {
 		return AonCollectionUtils.isNotEmpty(getTypes());
+	}
+	public boolean hasCommunication(Date atDate) {
+		return AonCollectionUtils.isNotEmpty(getTypes(atDate));
 	}
 	
 	/**
@@ -1154,6 +1183,46 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	 */
 	public boolean hasCommunication(InvoiceType invoiceType) {
 		return AonCollectionUtils.isNotEmpty(getTypes(invoiceType));
+	}
+	public boolean hasCommunication(InvoiceType invoiceType, Date atDate) {
+		return AonCollectionUtils.isNotEmpty(getTypes(invoiceType, atDate));
+	}
+	
+	public boolean isCertificateNeeded( ) {
+		return isCertificateNeeded( InvoiceType.SALES );
+	}
+	public boolean isCertificateNeeded( InvoiceType invoiceType ) {
+		return AonCollectionUtils.stream(getTypes(invoiceType))
+			.anyMatch(t -> 
+				   t == InvoiceCommunicationType.VERIFACTU
+				|| t == InvoiceCommunicationType.LROE
+				|| t == InvoiceCommunicationType.TBAI
+				|| t == InvoiceCommunicationType.SII
+			)
+		;
+	}
+	
+	public Optional<Boolean> isTest(InvoiceCommunicationType type) {
+		if (type == null) return Optional.empty();
+		MutableBoolean data = new MutableBoolean();
+		try {
+			type.visit( new InvoiceCommunicationTypeVisitor() {
+				@Override public void visitSII() throws InvoiceCommunicationException { data.setValue( isTest( getSiiData() ) ); }
+				@Override public void visitTBAI() throws InvoiceCommunicationException { data.setValue( isTest( getTbaiData() ) );}
+				@Override public void visitLROE() throws InvoiceCommunicationException { data.setValue( isTest( getLroeData() ) ); }
+				@Override public void visitVERIFACTU() throws InvoiceCommunicationException { data.setValue( isTest( getVerifactuData() ) );}
+				@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException { data.setValue( isTest( getNoVerifactuData() ) );}
+				@Override public void visitSIF() throws InvoiceCommunicationException { data.setValue( isTest( getSifData() ) );}
+				@Override public void visitSERES() throws InvoiceCommunicationException { /* Nothing*/ }
+				@Override public void visitEMAIL() throws InvoiceCommunicationException { /* Nothing*/ }
+				@Override public void visitCLOSING() throws InvoiceCommunicationException { /* Nothing*/ }
+				@Override public void visitFACTURAE() throws InvoiceCommunicationException { /* Nothing*/ }
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Optional.empty();
+		}
+		return Optional.ofNullable( data.getValue() );
 	}
 
 	public boolean isBizkaia() 	{return administration == Administration.BIZKAIA;}

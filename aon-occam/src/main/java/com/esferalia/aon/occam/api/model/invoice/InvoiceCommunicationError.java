@@ -44,6 +44,7 @@ public enum InvoiceCommunicationError {
 	AON_0032("0032", "El tipo de comunicaci\u00F3n SIG no est\u00E1 implementado."),
 	AON_0033("0033", "El tipo de comunicaci\u00F3n FACTURAE no est\u00E1 implementado."),
 	AON_0034("0034", "Se ha producido un error al firmar el XML del registro ed facturaci\u00F3n."),
+	AON_0035("0035", "No se ha encontrado el certificado para firmar las facturas."),
 
 	// InvoiceCommunicationType 	
 	AON_NO_SERES		("0100", "El tipo de comunicaci\u00F3n SERES no est\u00E1 implementado."),

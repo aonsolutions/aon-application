@@ -97,6 +97,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceClosingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
+import com.esferalia.aon.watson.util.Pair;
 
 public class FinanceImpl implements IFinance {
 
@@ -962,8 +963,13 @@ public class FinanceImpl implements IFinance {
 		return ItemDAO.getStreamSuggestion(ctx, domainId, query);
 	}
 	
-	// ------------------------------------- SERIES 
+	// ------------------------------------- INVOICE FEE
+	@Override
+	public Optional<Pair<Integer, Integer>> getFeeYearRange(AONContext ctx, Integer domainId) {
+		return FeeDAO.getFeeYearRange(ctx, domainId);
+	}
 
+	// ------------------------------------- SERIES 
 	@Override
 	public Stream<Series> getSeriesSuggestion(AONContext ctx, Integer domainId, String query) {
 		return SeriesDAO.getStreamSuggestion(ctx, domainId, query);
