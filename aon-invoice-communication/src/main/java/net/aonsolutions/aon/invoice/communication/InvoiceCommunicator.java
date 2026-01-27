@@ -7,6 +7,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.jooq.exception.DataAccessException;
@@ -27,16 +29,23 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.JsonUtils.JSONArrayCollector;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.console.ConsoleLogger;
+import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
+import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
+import com.esferalia.aon.occam.api.model.finance.InvoiceProcessOutput;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationPhaseListener;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
@@ -44,13 +53,21 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.fee.FeeBillingDAO;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableBoolean;
+import com.esferalia.aon.watson.util.AonChronometer;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -59,13 +76,43 @@ import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.verifactu.NOVERIFACTU;
 import net.aonsolutions.aon.verifactu.SIF;
 import net.aonsolutions.aon.verifactu.VERIFACTU;
-import net.aonsolutions.aon.verifactu.VerifactuContext;
 
 public class InvoiceCommunicator {
+	
+	private static final int MSG_INVOICES = 500;
+	private static final String PC = "PC";
+	private static final String IC = "IC";
+	private static final Logger LOGGER = Logger.getLogger(InvoiceCommunicator.class.getName());
 	
 	private InvoiceCommunicator() {
 	}
 
+	private static void log( String message ) {
+		LOGGER.info(message);
+	}
+	
+	private abstract static class AonAbstractPhaseListener extends InvoiceCommunicationPhaseListener {
+		
+		@Override
+		public void beforeAll(AONContext ctx, InvoiceCommunicatorContext icc) throws InvoiceCommunicationException {
+			// Nothing
+		}
+		
+		@Override
+		public void afterAll(AONContext ctx, InvoiceCommunicatorContext icc) throws InvoiceCommunicationException {
+			if (icc.isFailOnWrongValidation() 
+			 && icc.invoiceStream().filter( Invoice::hasMessages ).anyMatch( Invoice::hasERRMessages )) {
+				// TRACE _-- borrar
+				icc.invoiceStream()
+					.filter( Invoice::hasMessages )
+					.flatMap( Invoice::messageStream )
+					.forEach( m -> System.out.println( m.getLevel() + " " + m.getCode() + " - " + m.getMessage() ));
+				// ----------------
+				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0024);
+			}
+		}
+	}
+	
 	// *************************************************************
 	// ******************************************* [HISTORY] *******
 	// *************************************************************
@@ -212,15 +259,44 @@ public class InvoiceCommunicator {
 	// *************************************************************
 	// ******************************************* [ISSUE] ********
 	// *************************************************************
+	private static class AonIssuePhaseListener extends AonAbstractPhaseListener {
+
+		@Override
+		public void beforeInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) {
+			setOldNumber( invoice.getNumber() );
+			setProforma( invoice.isProforma() );
+			if (invoice.isProforma()) {
+				InvoiceDAO.preIssue(ctx, icc.getConfig(), invoice);
+			}
+		}
+		
+		@Override
+		public void afterRightInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) {
+			if (isProforma()) {
+				InvoiceDAO.postIssue(ctx, invoice);
+			}
+		}
+		
+		@Override
+		public void afterWrongInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) throws InvoiceCommunicationException{
+			if (isProforma()) {
+				// Revertir el n\u00FAmero si es proforma y la validaci\u00F3n fall\u00F3, puesto que no se va a comunicar.
+				invoice.setNumber( getOldNumber() );
+				invoice.setReferenceCode( FinanceUtil.getSalesReferenceCode(invoice) );
+			}
+		}
+		
+	}
+	
 	public static InvoiceCommunicatorContext issueInvoice(final InvoiceCommunicatorContext communicator) throws InvoiceCommunicationException {
 		checkAONContextValues(communicator);
 		try (CloseableAONContext ctx = AONContext.getAONContext(communicator.getDomain(), communicator.getUser())) {
 			return ctx.getDslContext().transactionResult(trx -> 
-				issue(ctx, communicator));
+				issue(ctx, communicator, new AonIssuePhaseListener()));
 		}
 	}
 	
-	private static InvoiceCommunicatorContext issue(AONContext ctx, final InvoiceCommunicatorContext cc) throws InvoiceCommunicationException {
+	private static InvoiceCommunicatorContext issue(AONContext ctx, final InvoiceCommunicatorContext cc, InvoiceCommunicationPhaseListener phase) throws InvoiceCommunicationException {
 		try {
 			check(ctx, cc);
 			checkUniqueInvoice(cc);
@@ -228,11 +304,9 @@ public class InvoiceCommunicator {
 				.findFirst()
 				.orElseThrow(() -> new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005));
 			if(invoice.isSales()) {
-				InvoiceDAO.preIssue(ctx, invoice );
 				if (cc.getConfig().hasCommunication() ) {
 					for ( InvoiceCommunicationType type : cc.getConfig().getTypes()) {
 						type.visit( new InvoiceCommunicationTypeVisitor() {
-							
 							@Override public void visitSERES() throws InvoiceCommunicationException 	{throwSERES();}
 							@Override public void visitEMAIL() throws InvoiceCommunicationException		{throwEMAIL();}
 							@Override public void visitCLOSING() throws InvoiceCommunicationException	{throwCLOSING();}
@@ -240,32 +314,10 @@ public class InvoiceCommunicator {
 							@Override public void visitLROE() throws InvoiceCommunicationException		{throwLROE();}
 							@Override public void visitFACTURAE() throws InvoiceCommunicationException	{throwFACTURAE();}
 							
-							@Override 
-							public void visitSII() throws InvoiceCommunicationException	{
-								// Se emite la factura. La comunicación se delega en la pantalla del SII.
-								InvoiceDAO.postIssue(ctx, invoice );
-							}
-							
-							@Override
-							public void visitVERIFACTU() throws InvoiceCommunicationException  {
-								VerifactuContext vc = VERIFACTU.accept(ctx,cc);
-								if (vc.isResponseCorrecta(invoice.getId())) {
-									InvoiceDAO.postIssue(ctx, invoice );								
-								}
-							}
-							
-							@Override 
-							public void visitNO_VERIFACTU() throws InvoiceCommunicationException { 
-								NOVERIFACTU.accept(ctx,cc);
-								InvoiceDAO.postIssue(ctx, invoice );								
-							}
-							
-							@Override 
-							public void visitSIF() throws InvoiceCommunicationException	{
-								SIF.accept(ctx,cc);
-								InvoiceDAO.postIssue(ctx, invoice );								
-							}
-							
+							@Override public void visitVERIFACTU() throws InvoiceCommunicationException  	{ VERIFACTU.accept(ctx,cc, phase); }
+							@Override public void visitNO_VERIFACTU() throws InvoiceCommunicationException 	{ NOVERIFACTU.accept(ctx,cc, phase);}
+							@Override public void visitSIF() throws InvoiceCommunicationException			{ SIF.accept(ctx,cc, phase);}
+							@Override public void visitSII() throws InvoiceCommunicationException			{ /* Se emite la factura. La comunicación se delega en la pantalla del SII.*/ }
 						});
 					}
 				}
@@ -282,26 +334,44 @@ public class InvoiceCommunicator {
 	// *************************************************************
 	// ******************************************* [ACCEPT] ********
 	// *************************************************************
+	private static class AonAcceptPhaseListener extends AonAbstractPhaseListener {
+
+		@Override
+		public void beforeInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) {
+			setOldNumber( invoice.getNumber() );
+			InvoiceDAO.accept(ctx, invoice, invoice.getRawdocId().orElse(null));
+			// TODO Cambiarlo cuando accept2 sea viable para la pantalla del portal.
+			// invoice = InvoiceDAO.accept2(ctx, invoice, cc.getRawdocId());
+		}
+		
+		@Override
+		public void afterRightInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) {
+			// Nothing
+		}
+		
+		@Override
+		public void afterWrongInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) throws InvoiceCommunicationException{
+			invoice.setId( null );
+			invoice.setNumber( getOldNumber() );
+			invoice.setReferenceCode( FinanceUtil.getSalesReferenceCode(invoice) );
+		}
+	}
+	
 	public static InvoiceCommunicatorContext acceptInvoice(final InvoiceCommunicatorContext communicator) throws InvoiceCommunicationException {
 		checkAONContextValues(communicator);
 		try (CloseableAONContext ctx = AONContext.getAONContext(communicator.getDomain(), communicator.getUser())) {
 			return ctx.getDslContext().transactionResult(configuration -> 
-				accept(ctx, communicator));
+				accept(ctx, communicator, new AonAcceptPhaseListener()));
 		}
 	}
 	
-	private static InvoiceCommunicatorContext accept(AONContext ctx, final InvoiceCommunicatorContext cc) throws InvoiceCommunicationException {
+	private static InvoiceCommunicatorContext accept(AONContext ctx, final InvoiceCommunicatorContext cc, InvoiceCommunicationPhaseListener phase) throws InvoiceCommunicationException {
 		try {
 			check(ctx, cc);
 			checkUniqueInvoice(cc);
 			Invoice invoice = cc.invoiceStream()
 				.findFirst()
 				.orElseThrow(() -> new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005));
-
-			invoice = InvoiceDAO.accept(ctx, invoice, invoice.getRawdocId().orElse(null));
-			// TODO Cambiarlo cuando accept2 sea viable para la pantalla del portal.
-			// invoice = InvoiceDAO.accept2(ctx, invoice, cc.getRawdocId());
-
 			if(invoice.isSales() && cc.getConfig().hasCommunication() ) {
 				for ( InvoiceCommunicationType type : cc.getConfig().getTypes()) {
 					type.visit( new InvoiceCommunicationTypeVisitor() {
@@ -316,17 +386,17 @@ public class InvoiceCommunicator {
 						
 						@Override
 						public void visitVERIFACTU() throws InvoiceCommunicationException  {
-							VERIFACTU.accept(ctx,cc);
+							VERIFACTU.accept(ctx,cc, phase);
 						}
 						
 						@Override 
 						public void visitNO_VERIFACTU() throws InvoiceCommunicationException { 
-							NOVERIFACTU.accept(ctx,cc);
+							NOVERIFACTU.accept(ctx,cc, phase);
 						}
 						
 						@Override 
 						public void visitSIF() throws InvoiceCommunicationException {
-							SIF.accept(ctx,cc);
+							SIF.accept(ctx,cc, phase);
 						}
 						
 					});
@@ -339,6 +409,162 @@ public class InvoiceCommunicator {
 			}
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_9000, e);
 		}
+	}
+
+	// *************************************************************
+	// ************************************* [FEE INVOICING] *******
+	// *************************************************************
+	public static InvoiceProcessOutput feeInvoicing(Occam occam, FeeBillingParams params, ConsoleLogger logger) {
+		AonChronometer chronometer = new AonChronometer();
+		chronometer.start();
+
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, params.getDomainId() );
+			logger.message( IC, "\u00BFLa operaci\u00F3n es una simulaci\u00F3n? " + (params.isDryRun()?"SI":"NO"));
+			logger.message( IC, "\u00BFLas facturas se deben guardar como proforma? " + (params.mustSaveAsProforma()?"SI":"NO"));
+			logger.message( IC, "\u00BFLas facturas se deben comunicar? " + ((icc.hasCommunication() && params.isCommunicable())?"SI":"NO"));
+			if (icc.hasCommunication(params.getInvoiceDate()) && params.isNotDryRun() && params.isCommunicable()) {
+				InvoiceProcessOutput output = new InvoiceProcessOutput();
+				try {
+					feeInvoicing(ctx, icc, params, logger)
+						.invoiceStream()
+						.forEach(output::addInvoice);
+					chronometer.stop(); 
+					logger.message(IC, "Tiempo total del proceso:" + chronometer.format());
+					logger.ok(IC, "Fin del proceso" );
+				} catch (Throwable e) {
+					e.printStackTrace();
+					output.setProcessErrorLevel(InvoiceErrorLevel.ERR);
+					output.setProcessMessage(e.getMessage());
+					chronometer.stop();
+					logger.message(IC, "Tiempo total del proceso:" + chronometer.format());
+					logger.error(IC, "Error en la comunicaci\u00F3n de las facturas: " + e.getMessage());
+					if (e instanceof InvoiceCommunicatorContextError icce) {
+						icce.getInvoiceCommunicatorContext()
+							.invoiceStream()
+							.forEach(output::addInvoice);
+					}
+				}
+				return output;
+			} else {
+				log( "---> INVOICES MUST NOT BE COMMUNICATED!");
+				return ctx.getDslContext().transactionResult(configuration ->
+					FeeBillingDAO.invoice(ctx, params, logger)
+				);
+			}
+		} catch (Exception e) {
+			InvoiceProcessOutput output = new InvoiceProcessOutput();
+			String prev = AonStringUtils.defaultIfBlank(output.getProcessMessage());
+			output.setProcessMessage( prev +" <"+ e.getMessage()+">");
+			return output;
+		}
+	}
+	
+	private static class InvoiceCommunicatorContextError extends RuntimeException {
+
+		private static final long serialVersionUID = -3730190195705367708L;
+
+		private transient final InvoiceCommunicatorContext icc;
+		
+		InvoiceCommunicatorContextError(Throwable t, InvoiceCommunicatorContext icc) {
+			super(t);
+			this.icc = icc;
+		}
+		
+		InvoiceCommunicatorContext getInvoiceCommunicatorContext() {
+			return icc;
+		}
+	}
+	
+	private static InvoiceCommunicatorContext feeInvoicing(AONContext ctx, InvoiceCommunicationConfiguration icc, FeeBillingParams params, ConsoleLogger logger) throws InvoiceCommunicationException {
+		if (!icc.hasCommunication(params.getInvoiceDate())) throw new AonCoreException("Si no hay comunicaci\u00F3n, no se debe llamar a este m\u00C9todo.");
+		if (params.isDryRun()) throw new AonCoreException("Si es una simulaci\u00F3n, no se debe llamar a este m\u00C9todo.");
+		if (!params.isCommunicable()) throw new AonCoreException("Si no se debe comunicar, no se debe llamar a este m\u00C9todo.");
+		
+		// ************************************** [BORRAR AL SUBIR A PRODUCCION] ****
+		if (icc.isVerifactu()) {
+			if (!icc.isVerifactuTest())
+				throw new AonCoreException("La facturaci\u00F3n de cuotas no est\u00E1 permitida a\u00FAn en modo producci\u00F3n de VERIFACTU.");
+		}
+		// **************************************************************************
+		
+		Company company = CompanyDAO.getByDomain(ctx, params.getDomainId());
+		Domain domain = DomainDAO.getDomain(ctx, params.getDomainId());
+		User user = SecurityDAO.getUser(ctx, ctx.getUser());
+		Integer certId = params.getCertId();
+		
+		checkCompany(company);
+		checkConfig(icc);
+		if ( icc.isCertificateNeeded() ) {
+			checkCertificate(ctx, icc, certId);
+		}
+			
+		return ctx.getDslContext().transactionResult(conf -> {
+			InvoiceProcessOutput output = FeeBillingDAO.invoice(ctx, params, logger);
+			logger.message(IC, "Inicio del proceso comunicaci\u00F3n.");
+
+			List<Invoice> invoices = output.invoiceStream().collect(Collectors.toCollection(LinkedList::new));
+			InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, certId, invoices)
+				.setConfig( icc )
+				.setCompany( company )
+				.setLogger( logger )
+				.setFailOnWrongValidation( AonCollectionUtils.size(invoices) == 1 );
+			if (AonCollectionUtils.size(invoices) > MSG_INVOICES) {
+				List<List<Invoice>> splittedInvoices = AonCollectionUtils.split( invoices, MSG_INVOICES );
+				int prg = 0;
+				int count = splittedInvoices.size();
+				cc.getLogger().message( PC, MessageFormat.format("Procesando {0} lotes", count));
+				cc.getLogger().mainProgress(PC, count, 0);
+				for (List<Invoice> invoiceBatch : splittedInvoices) {
+					InvoiceCommunicatorContext batchContext = new InvoiceCommunicatorContext(domain, user, certId, invoiceBatch)
+						.setConfig( icc )
+						.setCompany( company )
+						.setLogger( logger )
+						.setFailOnWrongValidation( false );
+					communicateGeneratedInvoices( ctx, batchContext, params );
+					prg = prg + 1;
+					cc.getLogger().mainProgress( PC, count, prg );
+				}
+			} else {
+				communicateGeneratedInvoices( ctx, cc, params);
+			}
+			return cc;
+		});
+	}
+
+	private static void communicateGeneratedInvoices(AONContext ctx, InvoiceCommunicatorContext cc, FeeBillingParams params) {
+			try {
+				for ( InvoiceCommunicationType type : cc.getConfig().getTypes( params.getInvoiceDate() )) {
+					type.visit( new InvoiceCommunicationTypeVisitor() {
+						
+						@Override public void visitSERES() throws InvoiceCommunicationException 		{ throwSERES();}
+						@Override public void visitEMAIL() throws InvoiceCommunicationException 		{ throwEMAIL(); }
+						@Override public void visitCLOSING() throws InvoiceCommunicationException 		{ throwCLOSING(); }
+						@Override public void visitSII() throws InvoiceCommunicationException 			{ throwSII(); }
+						@Override public void visitTBAI() throws InvoiceCommunicationException 			{ throwTBAI(); }
+						@Override public void visitLROE() throws InvoiceCommunicationException 			{ throwLROE(); }
+						@Override public void visitFACTURAE() throws InvoiceCommunicationException 		{ throwFACTURAE(); }
+						
+						@Override 
+						public void visitSIF() throws InvoiceCommunicationException {
+							SIF.accept(ctx, cc, new AonIssuePhaseListener() );
+						}
+						
+						@Override 
+						public void visitNO_VERIFACTU() throws InvoiceCommunicationException { 
+							NOVERIFACTU.accept(ctx, cc, new AonIssuePhaseListener() );
+						}
+						 
+						@Override
+						public void visitVERIFACTU() throws InvoiceCommunicationException  {
+							VERIFACTU.accept(ctx, cc, new AonIssuePhaseListener() );
+						}
+					});
+				}
+			} catch (Throwable e) {
+				e.printStackTrace();
+				throw new InvoiceCommunicatorContextError( e, cc );
+			}
 	}
 
 	// *************************************************************
@@ -476,12 +702,8 @@ public class InvoiceCommunicator {
 	}
 	
 	private static void check(AONContext ctx, InvoiceCommunicatorContext cc) throws InvoiceCommunicationException {
-		if (cc.getCompany() == null
-			|| cc.getCompany().getId() == null
-			|| AonStringUtils.isBlank(cc.getCompany().getDocument())
-			|| AonStringUtils.isBlank(cc.getCompany().getName())) {
-			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0002);
-		}
+		checkCompany(cc.getCompany());
+		checkConfig(cc.getConfig());
 		if (cc.invoiceCount() == 0) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005);
 		}
@@ -504,7 +726,7 @@ public class InvoiceCommunicator {
 					
 					@Override
 					public void visitVERIFACTU() throws InvoiceCommunicationException  {
-						checkCertificate(ctx, cc);
+						checkCertificate(ctx, cc.getConfig(), cc.getCertificateId());
 					}
 					
 				});
@@ -518,55 +740,64 @@ public class InvoiceCommunicator {
 		}
 	}
 	
-	private static void checkCertificate(AONContext ctx, final InvoiceCommunicatorContext cc) throws InvoiceCommunicationException {
-		if (cc.getConfig().getCertificate() == null) {
+	private static void checkConfig(InvoiceCommunicationConfiguration config) throws InvoiceCommunicationException {
+		if (config == null) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0006);
+		}
+	}
+
+	private static void checkCompany(Company company) throws InvoiceCommunicationException {
+		if (company == null
+			|| company.getId() == null
+			|| AonStringUtils.isBlank(company.getDocument())
+			|| AonStringUtils.isBlank(company.getName())) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0002);
+		}
+	}
+	
+	private static void checkCertificate(AONContext ctx, final InvoiceCommunicationConfiguration icc, Integer certId) throws InvoiceCommunicationException {
+		Certificate certificate = icc.getCertificate();
+		if (certificate == null) {
 			try {
-				if (cc.getCertificateId() != null) {
-					cc.getConfig().setCertificate(
-						CertificateDAO.getStream(ctx, f -> f.getIdProperty().eq(cc.getCertificateId()))
-							.findFirst()
-							.orElse(null)
-					);
-//				} else {
-//					cc.getConfig().setCertificate(SecurityDAO.getCertificate(ctx, cc.getUser().getId(), CertificateType.AEAT.name()));  
+				if (certId != null) {
+					certificate = CertificateDAO.getStream(ctx, f -> f.getIdProperty().eq(certId))
+						.findFirst()
+						.orElseThrow( () -> new InvoiceCommunicationException(InvoiceCommunicationError.AON_0021));
+					icc.setCertificate( certificate );			 
 				}
 			} catch (Exception e) {
 				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0021,e);
 			}
-			try {
-				if (cc.getConfig().getCertificate() != null 
-				 && !checkCert(cc.getConfig().getCertificate())) {
-					throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0022);
-				}
-			} catch (Exception e) {
-				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0022,e);
+			if (certificate != null && !checkCert(certificate)) {
+				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0022);
 			}
-			if(cc.getConfig().getCertificate() == null || cc.getConfig().getCertificate().isEmpty()) {
+			if(certificate == null || certificate.isEmpty()) {
 				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0023);
 			}
 		}
-		if (cc.getConfig().getCertificate().getData() == null) {
+		if (certificate.getData() == null) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0023);
 		}
-		
+		checkCertificateData(certificate);
+	}
+
+	private static void checkCertificateData(Certificate certificate) throws InvoiceCommunicationException {
 		try {
-			ByteArrayInputStream key = new ByteArrayInputStream(cc.getConfig().getCertificate().getData());
+			ByteArrayInputStream key = new ByteArrayInputStream(certificate.getData());
 			KeyStore keyStore = KeyStore.getInstance("PKCS12");
-			keyStore.load(key, cc.getConfig().getCertificate().getPassword().toCharArray());
+			keyStore.load(key, certificate.getPassword().toCharArray());
 			String alias = keyStore.aliases().nextElement();
-			X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
+			X509Certificate x509Certificate = (X509Certificate) keyStore.getCertificate(alias);
 			Date now = new Date();
-			if (certificate.getNotBefore() != null && now.before(certificate.getNotBefore())) {
+			if (x509Certificate.getNotBefore() != null && now.before(x509Certificate.getNotBefore())) {
 				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0026);
 			} 
-			if (certificate.getNotAfter() != null && now.after(certificate.getNotAfter())) {
+			if (x509Certificate.getNotAfter() != null && now.after(x509Certificate.getNotAfter())) {
 				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0027);
 			} 			
 		} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0025);
 		}
-
-		
 	}
 
 	private static boolean checkCert(Certificate certificate) {
@@ -587,7 +818,6 @@ public class InvoiceCommunicator {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_9007);
 		}
 	}
-
 
 	public static void throwRightException(Exception e, Invoice invoice) throws InvoiceErrorException {
 		if (invoice != null) {
