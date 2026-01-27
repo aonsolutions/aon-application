@@ -21,16 +21,18 @@ class InvoiceCommunicationIcon extends InlineLabel {
 			setStyleName(AON.CSS.aonLabelWithIcon());
 			addStyleName(AON.CSS.aonIconLock());
 		} else {
-			boolean emptyAdministration = (options.getConfiguration() == null 
-					|| options.getConfiguration().getCommunicationConfig()==null
-					|| options.getConfiguration().getCommunicationConfig().getAdministration()==null
-					);
-			Administration admon = emptyAdministration 
-				? Administration.UNKNOWN
-				: options.getConfiguration().getCommunicationConfig().getAdministration(invoice.getExpDate()) 
-			;
+			Administration admon = options.getCommunicationConfiguration()
+				 .map( icc -> icc.getAdministration(invoice.getExpDate()) )
+				 .orElse( Administration.UNKNOWN );
 			initIcon(admon, type, status);
 		}
+	}
+	
+	public InvoiceCommunicationIcon(InvoiceModuleOptions options, Invoice invoice ) {
+		super();
+		setTitle(AON.MSG.noSif());
+		setStyleName(AON.CSS.aonLabelWithIcon());
+		addStyleName(AON.CSS.aonIconBlock());
 	}
 	
 	private void initIcon(Administration admon, InvoiceCommunicationType type, InvoiceCommunicationStatus status) {

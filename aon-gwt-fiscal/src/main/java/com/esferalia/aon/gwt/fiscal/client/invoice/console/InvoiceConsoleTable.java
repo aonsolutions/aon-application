@@ -26,7 +26,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceCheckedHandlers, HasInvoiceUncheckedHandlers{
+public class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceCheckedHandlers, HasInvoiceUncheckedHandlers{
 	
 	private static final Logger LOGGER = Logger.getLogger(InvoiceConsoleTable.class.getName());   
 
@@ -38,6 +38,10 @@ class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceCheckedHandle
 	private final MutableBoolean moreData = new MutableBoolean(true);
 	private final MutableBoolean searchEnabled = new MutableBoolean( true );
 	private int lastScrollPos = 0;	
+	
+	public InvoiceConsoleTable(InvoiceModuleOptions opts, InvoiceConsoleParams params) {
+		this(opts, params, null);
+	}
 	
 	InvoiceConsoleTable(InvoiceModuleOptions opts, InvoiceConsoleParams params, ToolbarAsyncCallback toolbarCallback) {
 		setStyleName(AON.CSS.aonScrollArea());

@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.HasInvoiceCheckedHandlers;
 import com.esferalia.aon.gwt.fiscal.client.invoice.HasInvoiceUncheckedHandlers;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceCommunicationIconsPanel;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
+import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -46,7 +47,7 @@ class InvoiceConsoleTableRow extends AonDisplayGridRow implements HasInvoiceChec
 		invoiceRecorded.setTitle( AON.MSG.recorded() );
 		invoiceRecorded.setStyleName(AON.CSS.aonLabelWithIcon());
 		invoiceRecorded.addStyleName(AON.CSS.aonIconValid());
-		
+		String documentNumber = FinanceUtil.getDocumentNumber(inv);
 		this
 			.addCellIfElse( inv.isAnnulled() 
 				, new Label() 
@@ -58,7 +59,7 @@ class InvoiceConsoleTableRow extends AonDisplayGridRow implements HasInvoiceChec
 //			.addCell(new Label( getSourceDescription(invConsole.getSource())))
 			.addCell(new Label(ensure(inv.getType(),inv.getType()::getAbbrDescription)))
 //			.addCell(new Label(ensure(inv.getTransaction(),inv.getTransaction()::getTediName)))
-			.addCell(new Label(ensure(inv.getDocumentNumber(), inv::getDocumentNumber, AonStringUtils.EMPTY)))
+			.addCell(new Label( AonStringUtils.defaultIfBlank( documentNumber)))
 			.addCell(new Label(ensure(inv.getRegistryDocument(), inv::getRegistryDocument, AonStringUtils.EMPTY)))
 			.addCell(new Label(ensure(inv.getRegistryName(), () -> AonStringUtils.abbreviate(inv.getRegistryName(),25), AonStringUtils.EMPTY)))
 			.addCellIfElse( inv.isProforma() 

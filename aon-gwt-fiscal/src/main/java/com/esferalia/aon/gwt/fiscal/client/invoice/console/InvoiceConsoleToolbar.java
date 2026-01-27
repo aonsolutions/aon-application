@@ -85,7 +85,7 @@ class InvoiceConsoleToolbar extends AonToolbar {
 	void refresh(InvoiceModuleOptions opts) {
 		runningLabel.setVisible(false);
 		MutableBoolean sendVisible = new MutableBoolean(false);
-		opts.getCommunicationConfiguration()
+		opts.optCommunicationConfig()
 			.ifPresent( icc -> selectionHandler.stream()
 				.filter(i -> i.getCommunicationInfo() != null )
 				.forEach( i -> 

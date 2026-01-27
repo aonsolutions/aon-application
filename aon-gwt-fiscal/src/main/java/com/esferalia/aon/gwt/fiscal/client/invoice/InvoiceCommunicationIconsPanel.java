@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 public class InvoiceCommunicationIconsPanel extends FlowPanel {
@@ -15,7 +16,21 @@ public class InvoiceCommunicationIconsPanel extends FlowPanel {
 		setStyleName(AON.CSS.aonNowrap());
 		addStyleName(AON.CSS.aonFlexBetween());
 		if (AonCollectionUtils.isEmpty(invoice.getCommunicationInfo())) {
-			add( new InvoiceCommunicationIcon( options, invoice, null, null ));
+			options.getCommunicationConfiguration()
+				.ifPresentOrElse( 
+					icc -> {
+						icc
+							.getTypes( invoice.getType(), invoice.getExpDate())
+							.forEach( type -> add( new InvoiceCommunicationIcon( options, invoice, type, null )));
+						if (icc.isNoSif( invoice.getExpDate())) {
+							Window.alert( "NO SIF TRUE" );
+							add( new InvoiceCommunicationIcon( options, invoice ));		
+						} else {
+							Window.alert( "NO SIF FALSE" );
+						}
+					}
+					, () -> add( new InvoiceCommunicationIcon( options, invoice, null, null )) 
+			);
 		} else {
 			AonCollectionUtils.valuesStream(invoice.getCommunicationInfo())
 				.filter( Objects::nonNull )
