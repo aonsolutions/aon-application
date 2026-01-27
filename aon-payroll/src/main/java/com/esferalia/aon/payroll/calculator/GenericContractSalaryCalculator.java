@@ -1700,6 +1700,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			//;
 			System.out.println("Fix Constant...!!!!!");
 		}
+		
+		List<ITimedResult<Double>> nonZeroResults = 
+				results.stream().filter( r -> AonNumberUtils.compare(r.getValue(),0.00) > 0).toList();
+		List<Period> nonZeroPeriods =  nonZeroResults.stream().map( ITimedResult::getPeriod).toList();
+		if ( !Period.intersects(nonZeroPeriods.iterator(), its.iterator()) ) 
+			return nonZeroResults;
 
 		throw new UnsupportedOperationException(String.format(IT_PAY_MSG, contractPayment.getDescription(),
 				contractPayment.getExpression())); 
@@ -1806,7 +1812,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					&& !AonStringUtils.equals(ContextVariable.GUARENTEED, name)
 					&& !AonStringUtils.equals(ContextVariable.PREST_IT, name)
 					&& !ContextVariable.FLEXIBLES.contains(name)
-					&& Period.intersects(results.stream().filter(r -> r.getValue() != null /*&& r.getValue() != 0.00*/)
+					&& Period.intersects(results.stream().filter(r -> r.getValue() != null /*&& r.getValue() > 0.00*/)
 							.map(r -> r.getPeriod()).iterator(), leavePeriods.iterator())) {
 				try {
 					results = fixItResults(contractPayment, results, leavePeriods, start, end, expressionContext);
