@@ -1837,6 +1837,10 @@ public class InvoiceDAO {
 			}
 			invoice.setReferenceCode(referenceCode);
 		}		
+		if(invoice.getFiscal() == null || invoice.getFiscal().getInvoice() == null) {
+			AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate());
+			InvoiceFiscalDAO.save(ctx, config, invoice);
+		}
 		return invoice;
 	}
 	public static Invoice postIssue(AONContext ctx, Invoice invoice) {

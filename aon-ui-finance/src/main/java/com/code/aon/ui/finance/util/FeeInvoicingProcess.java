@@ -188,7 +188,7 @@ public class FeeInvoicingProcess implements ILongProcess {
 					inv = (Invoice) HibernateUtil.getSession(sessionName).merge(inv);
 				} catch (Exception e) {
 					e.printStackTrace();
-					AonUtil.addErrorMessage("Error during invoice communication invoice " + invoice.getReferenceCode() + ": " + e.getMessage());
+					// AonUtil.addErrorMessage("Error during invoice communication invoice " + invoice.getReferenceCode() + ": " + e.getMessage());
 				}
 			}
 		}
