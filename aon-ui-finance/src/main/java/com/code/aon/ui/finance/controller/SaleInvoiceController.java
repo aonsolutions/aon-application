@@ -1162,6 +1162,12 @@ public class SaleInvoiceController extends InvoiceController {
 		return ret.getValue();
 	}
 	
+	public boolean isIssueable() {
+		return !isNevv()
+			&& (isVerifactu( ) || isNoVerifactu() ||  isSif() ||  isSii())
+			&& (getInvoice().getNumber() <= 0 || isUniqueNumberOfSeries());
+	}
+	
 	public boolean isCommunicationAvailable() {
 		return !isInvoiceCommunicationAccepted()
 			&& (isCommunicationPending() || isCommunicationWrong());

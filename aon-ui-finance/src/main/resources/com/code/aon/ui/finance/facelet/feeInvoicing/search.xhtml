@@ -25,13 +25,25 @@
 						value="#{bundle.aon_clear}"
 						type="reset" ajaxSingle="true"
 						styleClass="aon-finding-toolbar-item aon-icon-rubber" />
-					<aon:commandButton id="feeInvoicing"
-						value="#{bundle.aon_key_invoice_description}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept" 
-						reRender="showCertFeeWindow">
-							<f:setPropertyActionListener target="#{feeInvoicing.showCertFeeWindow}"
-								value="#{true}" />
-					</aon:commandButton>
+					
+					<aon:if test="#{!feeInvoicing.noSif}">
+						<aon:commandButton id="feeInvoicing"
+							value="#{bundle.aon_key_invoice_description}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept" 
+							reRender="showCertFeeWindow">
+								<f:setPropertyActionListener target="#{feeInvoicing.showCertFeeWindow}"
+									value="#{true}" />
+						</aon:commandButton>
+					</aon:if>
+					
+					<aon:if test="#{feeInvoicing.noSif}">
+						<aon:commandButton id="feeInvoicing2"
+							value="#{bundle.aon_key_invoice_description}"
+							reRender="progressBarForm"
+							actionListener="#{feeInvoicing.onShowPanel}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept" />
+					</aon:if>
+					
 				</ui:define>
 			</ui:decorate>
 

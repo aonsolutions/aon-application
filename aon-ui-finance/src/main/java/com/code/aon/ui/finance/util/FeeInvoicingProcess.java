@@ -155,7 +155,7 @@ public class FeeInvoicingProcess implements ILongProcess {
 	}
 	private void communication(String sessionName, Collection<Invoice> invoiceList) throws InvoiceCommunicationException, Exception {
 		InvoiceCommunicationConfiguration config = controller.getInvoiceCommunicationConfiguration();
-		if (!config.isNoVerifactu() && !config.isSif()) {
+		if (config.isCertificateNeeded()) {
 			config.setCertificate(controller.getCert());
 		}
 

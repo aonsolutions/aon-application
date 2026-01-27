@@ -332,7 +332,7 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 
 	public void onShowPanel(ActionEvent event) throws Exception {
 		try {
-			if(!getInvoiceCommunicationConfiguration().isSif() && !getInvoiceCommunicationConfiguration().isNoVerifactu()) {
+			if	(getInvoiceCommunicationConfiguration().isCertificateNeeded()) {
 				checkCertificate(getCert());
 			}
 		} catch (Exception e) {
@@ -383,7 +383,7 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 	}	
 	
 	public boolean needCertificate() {
-		return isTbai() || isSii() || isLroe() || isVerifactu();
+		return getInvoiceCommunicationConfiguration().isCertificateNeeded();
 	}
 	
 	public boolean isLroe() 		{ return getInvoiceCommunicationConfiguration().isLroe(); }
@@ -391,6 +391,7 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 	public boolean isVerifactu() 	{ return getInvoiceCommunicationConfiguration().isVerifactu(); }
 	public boolean isNoVerifactu() 	{ return getInvoiceCommunicationConfiguration().isNoVerifactu(); }
 	public boolean isSif() 			{ return getInvoiceCommunicationConfiguration().isSif(); }
+	public boolean isNoSif() 		{ return getInvoiceCommunicationConfiguration().isNoSif(); }
 	public boolean isSii() 			{ return getInvoiceCommunicationConfiguration().isSii(); }
 	
 	public boolean isAraba() {

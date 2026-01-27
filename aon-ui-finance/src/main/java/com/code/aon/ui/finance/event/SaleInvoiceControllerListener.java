@@ -46,6 +46,7 @@ public class SaleInvoiceControllerListener extends InvoiceControllerListener {
 	private void initializeCommunicationData(ControllerEvent event) {
 		SaleInvoiceController controller = (SaleInvoiceController) event.getController();
 		controller.setCommunicationStatus(null);
+		controller.setExpeditionDate(null);
 		controller.setVerifactuUrl(null);
 	}
 	
