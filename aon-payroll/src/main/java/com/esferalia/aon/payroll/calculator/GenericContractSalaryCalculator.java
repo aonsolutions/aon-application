@@ -1705,7 +1705,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				results.stream().filter( r -> AonNumberUtils.compare(r.getValue(),0.00) > 0).toList();
 		List<Period> nonZeroPeriods =  nonZeroResults.stream().map( ITimedResult::getPeriod).toList();
 		if ( !Period.intersects(nonZeroPeriods.iterator(), its.iterator()) ) 
-			return nonZeroResults;
+			return results;
 
 		throw new UnsupportedOperationException(String.format(IT_PAY_MSG, contractPayment.getDescription(),
 				contractPayment.getExpression())); 
