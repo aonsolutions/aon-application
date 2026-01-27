@@ -5596,7 +5596,10 @@ public class SalaryDraft extends ResizeComposite
 	    };
 	    
 	    List<Variable> contractContext = context.stream().filter( v -> v.getScope() == Scope.CONTRACT).sorted(variableComparator).collect(Collectors.toList());	
-	    List<Variable> agreementContext = context.stream().filter( v -> v.getScope() == Scope.AGREEMENT).sorted(variableComparator).collect(Collectors.toList());
+	    contractContext.addAll( context.stream().filter( v -> v.getScope() == Scope.AGREEMENT && (v instanceof UndefinedPaymentVariable) ).sorted(variableComparator).collect(Collectors.toList()) );
+	    
+	    List<Variable> agreementContext = context.stream().filter( v -> v.getScope() == Scope.AGREEMENT && !(v instanceof UndefinedPaymentVariable) ).sorted(variableComparator).collect(Collectors.toList());
+	    
 	    List<Variable> systemContext = context.stream().filter( v -> v.getScope() == Scope.SYSTEM).sorted(variableComparator).collect(Collectors.toList());
 	    List<Variable> applicationContext = context.stream().filter( v -> v.getScope() == Scope.APPLICATION).sorted(variableComparator).collect(Collectors.toList());
 	    
