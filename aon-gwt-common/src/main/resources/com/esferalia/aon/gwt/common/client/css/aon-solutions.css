@@ -416,6 +416,8 @@
 .aon_icon_aeat_red { background-image: iconAeatRed;}
 @url iconAeatBlue aonIconAeatBlue;
 .aon_icon_aeat_blue { background-image: iconAeatBlue;}
+@url iconNoSif aonIconNoSif;
+.aon_icon_no_sif { background-image: iconNoSif;}
 @url iconSif aonIconSif;
 .aon_icon_sif { background-image: iconSif;}
 @url iconSifGreen aonIconSifGreen;

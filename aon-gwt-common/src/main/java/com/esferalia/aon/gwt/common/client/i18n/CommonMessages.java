@@ -4422,5 +4422,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Sin comunicaci\u00F3n de facturas")
 	String noCommunication();  
 
+	@DefaultMessage("Sin sistema facturaci\u00F3n")
+	String noSif();  
 }
 
