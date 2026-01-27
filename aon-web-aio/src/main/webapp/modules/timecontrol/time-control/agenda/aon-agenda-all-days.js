@@ -247,11 +247,29 @@ export class AonAgendaAllDays extends AonElement {
 	/* ---------------- PROCESS EVENTS ---------------- */
 	processEvents(datos) {
 		if (!datos || !Array.isArray(datos)) return;
+		
+		const now = Date.now();
+		const todayKey = AonDateUtils.format(new Date(), "YYYY-MM-DD");
 
 		datos.forEach(dayData => {
 			// Convertir start_date (timestamp en milisegundos) a fecha
 			const date = new Date(dayData.start_date);
 			const dateKey = AonDateUtils.format(date, "YYYY-MM-DD");
+			
+			let time = dayData.time || 0;
+			const details = dayData.detail || [];
+			
+			// Sumar tiempo vivo SOLO si el día es hoy y el último evento es IN
+			if (
+				details.length > 0 &&
+				dateKey === todayKey
+			) {
+				const lastDetail = details[details.length - 1];
+	
+				if (lastDetail.status === 'in') {
+					time += now - lastDetail.date;
+				}
+			}
 
 			// Solo guardar si no existe ya (para no sobrescribir)
 			if (!this._events.has(dateKey)) {
@@ -259,10 +277,10 @@ export class AonAgendaAllDays extends AonElement {
 					dayData: {
 						start_date: dayData.start_date,
 						end_date: dayData.end_date,
-						time: dayData.time,
+						time,
 						status: dayData.status
 					},
-					details: dayData.detail || []
+					details
 				});
 			}
 		});
