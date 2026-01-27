@@ -1647,8 +1647,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	protected List<ITimedResult<Double>> fixConstantResult(IContractPayment contractPayment, ITimedResult<Double> result, Date start, Date end, ExpressionContext expressionContext) 
 	throws UnsupportedOperationException, UndefinedVariablesException
 	{
-		if ( Period.compare(contractPayment.getStartDate(), start) < 0 ||
-				Period.compare(contractPayment.getEndDate(), end) > 0 ) 
+		if ( ( Period.compare(contractPayment.getStartDate(), start) < 0 ||
+				Period.compare(contractPayment.getEndDate(), end) > 0 )
+			&& AonStringUtils.notIn(contractPayment.getName(), ContextVariable.FLEXIBLES.toArray(String[]::new)))
+			
 			throw new UnsupportedOperationException(String.format(CONSTANT_PAY_MSG, contractPayment.getDescription())); 
 		
 		return Collections.singletonList(result);

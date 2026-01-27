@@ -173,7 +173,7 @@ public class DraftPayrollBuilder {
 				if ( Objects.equals(ContextVariable.PPE, p.getName())) {
 				    craKey  = IPayrollTemplate.PPE;
 				    accrual.setAmount(p.getQuote() >= 0.00 ? p.getQuote() : p.getAmount());
-				} else if (ContextVariable.FLEXIBLES.contains(p.getName())) {
+				} else if (Objects.equals(ContextVariable.FLEXIBLE_DISCOUNT, p.getName())) {
 					craKey = IPayrollTemplate.FLEXIBLE;
 					accrual.setAmount(p.getQuote() > 0 ? p.getQuote() : p.getAmount());
 				} else if ( Objects.equals(ContextVariable.NOTE, p.getName())) {

@@ -20,10 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.FlexibleInsuranceFix;
-import net.aonsolutions.db.up2date.payroll.FlexibleConceptsFix;
-import net.aonsolutions.db.up2date.payroll.FlexibleInsurance;
-import net.aonsolutions.db.up2date.timecontrol.TimecontrolLocationAlter;
+import net.aonsolutions.db.up2date.payroll.FlexibleCRAFix;
 
 public class Up2Date {
 
@@ -571,10 +568,11 @@ public class Up2Date {
 			// Holidays2026Insert.HOLIDAYS2026INSERT,
 			// FlexibleInsert.FLEXIBLEINSERT,
 			// FlexibleUpdate.FLEXIBLEUPDATE,
-			//AlterFsMod1902025.ALTER_FS_MODEL_190_2025,
-			//FlexibleConceptsFix.FLEXIBLECONCEPTSFIX,
-			//FlexibleInsurance.FLEXIBLEINSURANCE,
-			FlexibleInsuranceFix.FLEXIBLEINSURANCEFIX,
+			// AlterFsMod1902025.ALTER_FS_MODEL_190_2025,
+			// FlexibleConceptsFix.FLEXIBLECONCEPTSFIX,
+			// FlexibleInsurance.FLEXIBLEINSURANCE,
+			// FlexibleInsuranceFix.FLEXIBLEINSURANCEFIX,
+			FlexibleCRAFix.FLEXIBLECRAFIX,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
@@ -597,7 +595,7 @@ public class Up2Date {
 			//ProductBookingCreation.PRODUCT_BOOKING_CREATION,
 			//AddColumnMarketingActionProduct.ADD_COLUMN_MARKETING_ACTION_PRODUCT,
 			//LocationRegistryAlter.LOCATION_REGISTRY_ALTER,
-			TimecontrolLocationAlter.TIMECONTROL_LOCATION_ALTER
+			//TimecontrolLocationAlter.TIMECONTROL_LOCATION_ALTER
 	
 	};
 

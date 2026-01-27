@@ -29,7 +29,7 @@ public class DefaultPayrollFuseBox {
 	
 	private static final Integer[] EXTRA_HOUR_CRAS = {2,3};
 	private static final Integer[] EXTRA_GRATIFICATIONS_CRAS = {4,5};
-	private static final Integer[] IN_KIND_CRAS = {13,14,15,16,17,18,19,20,21,22};
+	private static final Integer[] IN_KIND_CRAS = {13,14,15,16,17,18,19,20,21,22,23,24,25,26};
 	private static final Integer[] INDEMN_CRAS = {51,52,53,54};
 	
 	private static final Pattern[] SALARY_PATTERN = {
@@ -113,6 +113,10 @@ public class DefaultPayrollFuseBox {
 	
 	public static List<PDFPayment> getPPEs(Optional<Map<Integer, ArrayList<PDFPayment>>> allPayments) {
 		return getPaymentsByCras(allPayments, new Integer [] {IPayrollTemplate.PPE} );
+	}
+
+	public static double getFlexiblePayment(Optional<Map<Integer, ArrayList<PDFPayment>>> allPayments) {
+		return getSumByCras(allPayments, new Integer[] {IPayrollTemplate.FLEXIBLE});
 	}
 
 	public static List<PDFPayment> getFlexiblePayments(Optional<Map<Integer, ArrayList<PDFPayment>>> allPayments) {

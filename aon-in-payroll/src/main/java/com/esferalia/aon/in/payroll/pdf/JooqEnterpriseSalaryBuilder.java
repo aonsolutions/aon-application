@@ -724,7 +724,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.innerJoin(WORKPLACE).onKey()
 		.innerJoin(ENTERPRISE).onKey()
 		.where(condition)
-		.and(SALARY_PAYMENT.TYPE.eq(AonNumberUtils.toByte(13)))
+		.and(SALARY_PAYMENT.TYPE.between(AonNumberUtils.toByte(13)).and(AonNumberUtils.toByte(26)))
 		.fetchStreamInto(SALARY_PAYMENT)
 		.filter(Objects::nonNull)
 		.forEach(sp -> {
@@ -935,7 +935,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.innerJoin(WORKPLACE).onKey()
 		.innerJoin(ENTERPRISE).onKey()
 		.where(condition)
-		.and(SALARY_PAYMENT.TYPE.eq(AonNumberUtils.toByte(13)))
+		.and(SALARY_PAYMENT.TYPE.between(AonNumberUtils.toByte(13)).and(AonNumberUtils.toByte(26)))
 		.fetchStreamInto(SALARY_PAYMENT)
 		.filter(Objects::nonNull)
 		.forEach(sp -> {
@@ -1115,7 +1115,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.innerJoin(WORKPLACE).onKey()
 		.innerJoin(ENTERPRISE).onKey()
 		.where(condition)
-		.and(SALARY_PAYMENT.TYPE.eq(AonNumberUtils.toByte(13)))
+		.and(SALARY_PAYMENT.TYPE.between(AonNumberUtils.toByte(13)).and(AonNumberUtils.toByte(26)))
 		.fetchStreamInto(SALARY_PAYMENT)
 		.filter(Objects::nonNull)
 		.forEach(sp -> {
