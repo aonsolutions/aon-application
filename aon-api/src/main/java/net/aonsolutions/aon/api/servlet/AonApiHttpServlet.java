@@ -153,7 +153,11 @@ public class AonApiHttpServlet extends HttpServlet{
 			domainLogin = api.getData().getString("userLogin");
 		}
 		User user = new User().setLogin("");
-		if(!api.isPredefinedToken() && AonStringUtils.isBlank(domainLogin) && !AonStringUtils.isBlank(api.getToken()) && api.getDomain().getId() != null && api.getDomain().getId() != 0) {
+		if(!api.isPredefinedToken() 
+//				&& AonStringUtils.isBlank(domainLogin) 
+				&& !AonStringUtils.isBlank(api.getToken()) 
+				&& api.getDomain().getId() != null 
+				&& api.getDomain().getId() != 0) {
 			AonToken aonToken = SECURITY.getAonToken(api.getToken());
 			user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(aonToken.getAuth())
 					.and(f.getDomainProperty().eq(api.getDomain().getId())));
