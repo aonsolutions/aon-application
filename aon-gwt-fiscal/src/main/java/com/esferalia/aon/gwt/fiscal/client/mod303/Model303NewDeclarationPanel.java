@@ -41,8 +41,9 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 	private CheckBox generateFromYearStart;
 	private CheckBox diffCalculationMandatory;
 	private CheckBox forceDiffCalculation;
-	private AonDoubleBox previousProrate;
-	private AonDoubleBox prorate;
+	private CheckBox prorate; // Aplicar prorrata
+	private AonDoubleBox previousProratePercent;
+	private AonDoubleBox proratePercent;
 	private CheckBox specialProrate;
 	private PeriodListBox periodList;
 	private CheckBox manualDeclaration;
@@ -90,13 +91,12 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		generateFromYearStart = new CheckBox();
 		diffCalculationMandatory = new CheckBox();
 		forceDiffCalculation = new CheckBox();
-		previousProrate = new AonDoubleBox(7);
-		prorate = new AonDoubleBox(7);
+		prorate = new CheckBox("Aplicar prorrata."); // Aplicar prorrata
+		previousProratePercent = new AonDoubleBox(7);
+		proratePercent = new AonDoubleBox(7);
 		specialProrate = new CheckBox("Especial");
 		periodList = new PeriodListBox(true);
 		manualDeclaration = new CheckBox();
-		
-		
 		
 		admonList.addChangeHandler( event -> {
 			model.setAdministration( admonList.getValue() );
@@ -146,11 +146,12 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		manualDeclaration.setText(AON.MSG.manualDeclaration());
 		manualDeclaration.addClickHandler(event -> {
 			model.setManualDeclaration(manualDeclaration.getValue());
-			if ( model.isManualDeclaration()) {
+			if (model.isManualDeclaration()) {
 				model.setProratePercent(0);
 				model.setSpecialProrateValue(false);
+				model.setProrate(false);
 			}
-			initialize(model, callback );
+			initialize(model, callback);
 		});
 
 		defaultVatRegimeLabel.setText("Destinar Fras. sin actividad a");
@@ -166,18 +167,24 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		generateFromYearStart.setText(AON.MSG.generateFromYearStartInv( model.getYear() ));
 		generateFromYearStart.addClickHandler(event -> model.setGenerateFromYearStart(generateFromYearStart.getValue()));
 
-		prorate.addValueChangeHandler(event -> {
-			if (prorate.getValue() == null) prorate.setValue(100.0,false); 
-			model.ensureDetail(model.getProrateKey()).setAmount(prorate.getValue());
+		prorate.addClickHandler(event -> {
+			model.setProrate(prorate.getValue());
+			initialize(model, callback);
+		});
+		
+		proratePercent.addValueChangeHandler(event -> {
+			if (proratePercent.getValue() == null) 
+				proratePercent.setValue(100.0,false); 
+			model.ensureDetail(model.getProratePercentKey()).setAmount(proratePercent.getValue());
 			specialProrate.setVisible(model.hasProrate());
 			calculateProratePanel.setVisible(((model.hasProrate() || model.hasPreviousProrate()) && model.getPeriod().isLastPeriod()));
 			if (!model.hasProrate()) {
 				specialProrate.setValue(false);
-				model.setSpecialProrateValue( specialProrate.getValue() );
+				model.setSpecialProrateValue(specialProrate.getValue());
 			}
 		});
 
-		specialProrate.addClickHandler(event -> model.setSpecialProrateValue( specialProrate.getValue() ));
+		specialProrate.addClickHandler(event -> model.setSpecialProrateValue(specialProrate.getValue()));
 		
 		forceDiffCalculation.addClickHandler(event -> {
 			model.setDiffCalculationMandatory(forceDiffCalculation.getValue());
@@ -307,20 +314,33 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 
 
 	private void paintProrrate(Mod303 model, Model303Callback callback, AonDisplayTable tab) {
-// 		PORCENTAJE DE PRORRATA ANTERIOR
-		if (model.hasPreviousProrate() && model.getPeriod().isLastPeriod() ) {
-			previousProrate.setEnabled(false);
-			tab.addLabelWidgetRow(AON.MSG.prorrataYearPercent(), previousProrate);
+		
+		// Aplicar prorrata (solo a partir de 2026)
+		if (model.getYear() >= 2026) {
+			tab.addLabelWidgetRow("", prorate);	
+		}
+		
+		// PORCENTAJE DE PRORRATA ANTERIOR
+		if (model.hasPreviousProrate() && model.getPeriod().isLastPeriod()) {
+			previousProratePercent.setEnabled(false);
+			if (model.getYear() < 2026 || (model.getYear() >= 2026 && model.hasProrate())) {
+				tab.addLabelWidgetRow(AON.MSG.prorrataYearPercent(), previousProratePercent);
+			}
 		}
 
 		// PORCENTAJE DE PRORRATA
 		FlowPanel proratePanel = new FlowPanel();
 		proratePanel.setStyleName(AON.CSS.aonFlexBlock());
 		
-		specialProrate.setStyleName(AON.CSS.aonMarginLeft());  
+		specialProrate.setStyleName(AON.CSS.aonMarginLeft());
+//		specialProrate.setVisible(model.hasProrate());
 		
-		proratePanel.add(prorate);
+		proratePanel.add(proratePercent);
 		proratePanel.add(specialProrate);
+		
+		if (model.getYear() >= 2026 && !model.hasProrate()) {
+			calculateProratePanel.clear();
+		}
 		
 		if ((model.hasProrate() || model.hasPreviousProrate()) && model.getPeriod().isLastPeriod() ) {
 			AonTableButton showProrrateInfo = new AonTableButton("Mostrar informaci\u00F3n sobre el c\u00E1lculo",AON.CSS.aonIconInfo());
@@ -350,9 +370,9 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 //			calculateProratePanel.clear();	
 //		}
 		
-		tab.addLabelWidgetRow( model.getPeriod().isLastPeriod()
-				?AON.MSG.prorrataFinalPercent()
-				:AON.MSG.prorrataPercent(), proratePanel);
+		if (model.getYear() < 2026 || (model.getYear() >= 2026 && model.hasProrate())) {
+			tab.addLabelWidgetRow(model.getPeriod().isLastPeriod() ? AON.MSG.prorrataFinalPercent() : AON.MSG.prorrataPercent(), proratePanel);
+		}
 	}
 
 	private void paintCalculateProratePanel(Mod303 model, Model303Callback callback) {
@@ -399,7 +419,6 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		return new Label(key.getDescription());
 	}
 	
-	
 	private AonDoubleBox getDoubleBox(Mod303 model, Model303Callback callback,Mod303Key key) {
 		AonDoubleBox box = new AonDoubleBox();
 		box.setValue(model.ensureDetail(key).getAmount());
@@ -417,8 +436,8 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 			
 			@Override
 			public void onSuccess(Mod303 result) {
-				prorate.setValue(result.ensureDetail(model.getProrateKey()).getAmount(),false,true);
-				model.ensureDetail(model.getProrateKey()).setAmount(prorate.getValue());
+				proratePercent.setValue(result.ensureDetail(model.getProratePercentKey()).getAmount(),false,true);
+				model.ensureDetail(model.getProratePercentKey()).setAmount(proratePercent.getValue());
 				paintCalculateProratePanel(result,callback); 
 			}
 			
@@ -491,9 +510,11 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		withoutActivity.setValue(model.isWithoutActivity());
 		manualDeclaration.setValue(model.isManualDeclaration());
 		generateFromYearStart.setValue(model.isGenerateFromYearStart());
-		previousProrate.setValue(model.ensureDetail(model.getPreviousProrateKey()).getAmount(),false,false);
+		
+		prorate.setValue(model.hasProrate());
+		previousProratePercent.setValue(model.ensureDetail(model.getPreviousProratePercentKey()).getAmount(),false,false);
+		proratePercent.setValue(model.ensureDetail(model.getProratePercentKey()).getAmount(),false,true);
 		specialProrate.setValue(model.isSpecialProrate());
-		specialProrate.setVisible(model.hasProrate());
-		prorate.setValue(model.ensureDetail(model.getProrateKey()).getAmount(),false,true);
+//		specialProrate.setVisible(model.hasProrate());		
 	}
 }

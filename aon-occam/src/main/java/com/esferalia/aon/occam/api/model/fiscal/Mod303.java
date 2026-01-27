@@ -69,13 +69,13 @@ public class Mod303 extends FiscalModel implements Serializable {
 		return getAmount(Mod303Key.CM_002) == 1;
 	}
 	
-	public Mod303Key getProrateKey() {
+	public Mod303Key getProratePercentKey() {
 		return Mod303Key.CM_003;
 	}
 	public Mod303Key getProrateTypeKey() {
 		return Mod303Key.CM_006;
 	}
-	public Mod303Key getPreviousProrateKey() {
+	public Mod303Key getPreviousProratePercentKey() {
 		return Mod303Key.CM_007;
 	}
 
@@ -98,9 +98,18 @@ public class Mod303 extends FiscalModel implements Serializable {
 	}
 	
 	public boolean hasProrate() {
-		return (getProratePercent() != 0 && getProratePercent() != 100)
-			|| (isLastPeriod() && hasPreviousProrate())
-			|| (!isLastPeriod() && hasPreviousProrate() && isDraft());
+		// A partir de 2026, se añade un check para indicar expresamente si se debe aplicar prorrata, sea el porcentaje que sea.
+		if (getYear() >= 2026) {
+			return getAmount(Mod303Key.CM_008) == 1; 
+		} else {
+			return (getProratePercent() != 0 && getProratePercent() != 100)
+				|| (isLastPeriod() && hasPreviousProrate())
+				|| (!isLastPeriod() && hasPreviousProrate() && isDraft());
+		}
+	}
+	
+	public void setProrate(boolean prorate) {
+		ensureDetail(Mod303Key.CM_008).setAmount(prorate ? 1 : 0);
 	}
 	
 	public boolean isSpecialProrate() {
@@ -115,28 +124,31 @@ public class Mod303 extends FiscalModel implements Serializable {
 	}
 	
 	public double getProratePercent() {
-		Mod303Key key = getProrateKey();
+		Mod303Key key = getProratePercentKey();
 		double proratePercent = getAmount(key); 
-//		if (AonMathUtils.isZero(proratePercent)) proratePercent = 100.0;  
 		return proratePercent;
 	}
 	public Mod303 setProratePercent(double prorratePercent) {
-		ensureDetail(getProrateKey()).setAmount( prorratePercent );
+		ensureDetail(getProratePercentKey()).setAmount( prorratePercent );
 		return this;
 	}
 	
 	public double getPreviousProratePercent() {
-		Mod303Key key = getPreviousProrateKey();
+		Mod303Key key = getPreviousProratePercentKey();
 		double previousProratePercent = getAmount(key); 
-//		if (AonMathUtils.isZero(previousProratePercent)) previousProratePercent = 100.0;  
 		return previousProratePercent;
 	}
 	public Mod303 setPreviousProratePercent(double previousProrratePercent) {
-		ensureDetail(getPreviousProrateKey()).setAmount( previousProrratePercent );
+		ensureDetail(getPreviousProratePercentKey()).setAmount( previousProrratePercent );
 		return this;
 	}
 	public boolean hasPreviousProrate() {
-		return getPreviousProratePercent() != 0 && getPreviousProratePercent() != 100;
+		// A partir de 2026, se añade un check para indicar expresamente si se aplicó prorrata en periodos previos, sea el porcentaje que sea.
+		if (getYear() >= 2026) {
+			return getAmount(Mod303Key.CM_009) == 1; 
+		} else {
+			return getPreviousProratePercent() != 0 && getPreviousProratePercent() != 100;
+		}
 	}
 
 	@Override

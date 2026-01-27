@@ -147,7 +147,7 @@ public class Mod303DAO extends FiscalModelDAO {
 	}
 	
 	private static void initializeProrrate(AONContext ctx, Mod303 mod303) {
-		if (mod303.getProrateKey() != null) {
+		if (mod303.getProratePercentKey() != null) {
 			Pair<Double,String> prorrateInfo = getLastPeriodEffectiveModels(ctx, mod303)
 //			Pair<Double,String> prorrateInfo = getMod303s( ctx , mod303.getDomain())
 				.filter(mod -> mod.getAdministration() == mod303.getAdministration() )
@@ -157,10 +157,10 @@ public class Mod303DAO extends FiscalModelDAO {
 			if (AonMathUtils.equals(prorrateInfo.getLeft() ,100.0)) {
 				prorrateInfo.setLeft( 0.0);
 			}
-			mod303.ensureDetail(mod303.getProrateKey()).setAmount(prorrateInfo.getLeft());
+			mod303.ensureDetail(mod303.getProratePercentKey()).setAmount(prorrateInfo.getLeft());
 			mod303.ensureDetail(mod303.getProrateTypeKey()).setDescription(prorrateInfo.getRight());
 			if (mod303.getPeriod().isLastPeriod() && (mod303.hasProrate() || mod303.hasPreviousProrate())) {
-				mod303.ensureDetail(mod303.getPreviousProrateKey()).setAmount(prorrateInfo.getLeft());
+				mod303.ensureDetail(mod303.getPreviousProratePercentKey()).setAmount(prorrateInfo.getLeft());
 				AccountingReportParams params = new AccountingReportParams()
 						.setFromDate(AonDateUtils.getYearFirstDay(mod303.getYear()))
 						.setToDate(AonDateUtils.getYearLastDay(mod303.getYear()));
@@ -214,7 +214,7 @@ public class Mod303DAO extends FiscalModelDAO {
 				double prorrate = (c70 * 100 / c71);
 				prorrate = AonMathUtils.ceil(prorrate,0);
 				if (AonMathUtils.isGreatherThan(prorrate,100.0)) prorrate = 100.0;
-				mod303.ensureDetail(mod303.getProrateKey()).setAmount( prorrate );
+				mod303.ensureDetail(mod303.getProratePercentKey()).setAmount( prorrate );
 			}
 			mod303.ensureDetail(Mod303Key.CM_070).setAmount( c70 );
 			mod303.ensureDetail(Mod303Key.CM_071).setAmount( c71 );
