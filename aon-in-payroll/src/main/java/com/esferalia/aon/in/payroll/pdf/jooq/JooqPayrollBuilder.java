@@ -25,8 +25,6 @@ import static com.esferalia.aon.watson.util.AonStringUtils.equalsIgnoreCase;
 import static com.esferalia.aon.watson.util.AonStringUtils.isEmpty;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -38,7 +36,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -954,9 +951,9 @@ public class JooqPayrollBuilder {
 				return salaryPeriod.intersects(chper);
 			}).collect(Collectors.toList());
 
-			Double chCdSum = complementaryHoursCD.stream().map(ch -> getExpressionValue(ch.getExpression())).reduce(0d,
+			Double chCdSum = complementaryHoursCD.stream().map(ch -> getExpressionValue(ch.getExpression())).filter(Objects::nonNull).reduce(0d,
 					(a, b) -> a + b);
-			Double chSdSum = complementaryHoursSD.stream().map(ch -> getExpressionValue(ch.getExpression())).reduce(0d,
+			Double chSdSum = complementaryHoursSD.stream().map(ch -> getExpressionValue(ch.getExpression())).filter(Objects::nonNull).reduce(0d,
 					(a, b) -> a + b);
 			List<SalaryData> complementaryHours = null;
 			if (AonNumberUtils.equals(chCdSum, chSdSum)) {
