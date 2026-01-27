@@ -18,8 +18,8 @@ PRESENCE: {
   },
   LOCATION_SYNC: {
     name: "Sincronizar",
-    icon: MATERIAL_ICONS.SYNC,
-    id: MATERIAL_ICONS.SYNC,
+    icon: "refresh",
+    id: "refresh",
   },
   FILTER:{
     name: "Filter",

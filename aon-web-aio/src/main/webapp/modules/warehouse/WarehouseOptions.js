@@ -4,7 +4,7 @@ import { WAREHOUSE } from "../../services/app.js"
 export const INVENTORY = {
   id: CONSTANT.INVENTORY.initCap(),
   name: MSG.INVENTORY,
-  icon: MATERIAL_ICONS.INVENTORY
+  // icon: MATERIAL_ICONS.INVENTORY
 }
 
 export const ELABORATION = {
