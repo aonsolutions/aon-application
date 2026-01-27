@@ -7,11 +7,12 @@ import { AonCalendarMenu } from "./aon-calendar-menu.js";
 
 
 export class AonAgendaAllDays extends AonElement {
-	
+
 	_taskHolder;
 	_taskHolderName;
 	_events = new Map(); // key: "YYYY-MM-DD" => value: array de eventos
 	_festivesContract = new Map(); // key: "YYYY-MM-DD" => value: array de eventos
+	_daysTypeContract = new Map(); // key: "YYYY-MM-DD" => value: array de eventos
 	_workingDays = []; // array dias laborables
 	_eventsContract = new Map(); // key: "YYYY-MM-DD" => value: array de eventos
 	_loadedMonths = new Set(); // Para trackear qué meses ya se han cargado
@@ -22,39 +23,39 @@ export class AonAgendaAllDays extends AonElement {
 	_lastScrollPosition = 0; // Última posición válida del scroll
 	_firstLoadedMonth = null; // Primer mes cargado (Date)
 	_lastLoadedMonth = null; // Último mes cargado (Date)
-	
+
 	async connectedCallback() {
 		this.initState();
 		await this.build();
 		this.renderInitial();
 		this.attachEventListeners();
-		
+
 		// Configurar el menú calendario
-    	this.setupCalendarMenu();
-		
+		this.setupCalendarMenu();
+
 		// Cargar eventos del mes actual inicialmente
 		await this.loadInitialEvents();
-		
+
 		// DESPUÉS de cargar los eventos, hacer scroll al día de hoy
 		setTimeout(() => {
 			this.scrollToToday();
 		}, 200);
-		
+
 		// Activar checkLoadMonthsOnScroll después de 1 segundo
 		setTimeout(() => {
 			this._initialLoadComplete = true;
 			console.log('✅ Scroll infinito activado');
 		}, 1000);
 	}
-	
+
 	setupCalendarMenu() {
-	    setTimeout(() => {
-	        if (this.aonCalendarMenu && typeof this.aonCalendarMenu.setOnTodayClick === 'function') {
-	            this.aonCalendarMenu.setOnTodayClick(() => {
-	                this.goToToday(true);
-	            });
-	        }
-	    }, 200);
+		setTimeout(() => {
+			if (this.aonCalendarMenu && typeof this.aonCalendarMenu.setOnTodayClick === 'function') {
+				this.aonCalendarMenu.setOnTodayClick(() => {
+					this.goToToday(true);
+				});
+			}
+		}, 200);
 	}
 
 	/* ---------------- STATE ---------------- */
@@ -92,76 +93,76 @@ export class AonAgendaAllDays extends AonElement {
 	      </header>
 	      <div class="scroll"></div>
 	    `;
-	    
+
 		this.headerMonth = this.querySelector(".month");
 		this.headerMonthHours = this.querySelector(".month-hours");
 		this.headerRange = this.querySelector(".range");
 		this.headerWeekHours = this.querySelector(".week-hours");
 		this.scrollEl = this.querySelector(".scroll");
-	
+
 		let userTaskHolders = await getTaskHoldersUser();
 		if (userTaskHolders.length > 0) {
 			this._taskHolder = userTaskHolders[0].id;
 			this._taskHolderName = userTaskHolders[0].name;
 		}
-		
+
 		this.aonCalendarMenu = new AonCalendarMenu();
 		this.aonCalendarMenu.id = 'aonCalendarMenu';
-	    this.appendChild(this.aonCalendarMenu);
-	    
-}
+		this.appendChild(this.aonCalendarMenu);
+
+	}
 
 	/* ---------------- LOAD EVENTS ---------------- */
 	async loadInitialEvents() {
 		if (!this._taskHolder) return;
-		
+
 		// Cargar 3 meses: anterior, actual y siguiente
 		const today = new Date();
-		
+
 		const prevMonth = new Date(today);
 		prevMonth.setMonth(prevMonth.getMonth() - 1);
-		
+
 		const nextMonth = new Date(today);
 		nextMonth.setMonth(nextMonth.getMonth() + 1);
-		
+
 		// Establecer los límites ANTES de cargar
 		this._firstLoadedMonth = new Date(prevMonth.getFullYear(), prevMonth.getMonth(), 1);
 		this._lastLoadedMonth = new Date(nextMonth.getFullYear(), nextMonth.getMonth(), 1);
-		
+
 		console.log(`🚀 Cargando 3 meses: ${AonDateUtils.format(this._firstLoadedMonth, 'YYYY-MM')} a ${AonDateUtils.format(this._lastLoadedMonth, 'YYYY-MM')}`);
-		
+
 		await this.loadMonthEvents(prevMonth); // Mes anterior
 		await this.loadMonthEvents(today); // Mes actual
 		await this.loadMonthEvents(nextMonth); // Mes siguiente
 	}
-	
+
 	async loadMonthEvents(date) {
 		if (!this._taskHolder || this._isLoading) return;
-		
+
 		// Generar clave del mes (YYYY-MM)
 		const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-		
+
 		// Si ya se cargó o se está cargando este mes, salir
 		if (this._loadedMonths.has(monthKey) || this._loadingMonths.has(monthKey)) {
 			return;
 		}
-		
+
 		// Marcar como "cargándose"
 		this._loadingMonths.add(monthKey);
-		
+
 		this._isLoading = true;
 		this.startLoading();
-		
+
 		// Calcular primer y último día del mes
 		const startDate = new Date(date.getFullYear(), date.getMonth(), 1);
 		const endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-		
+
 		// Formatear fechas para el filtro
 		const startDateStr = AonDateUtils.format(startDate, "YYYY-MM-DD");
 		const endDateStr = AonDateUtils.format(endDate, "YYYY-MM-DD");
-		
+
 		console.log(`📥 Cargando ${monthKey} (${startDateStr} a ${endDateStr})`);
-		
+
 		// Construir filtro
 		const filter = {
 			"group": "DAY",
@@ -175,33 +176,38 @@ export class AonAgendaAllDays extends AonElement {
 			"event": "click",
 			"search": ""
 		};
-		
+
 		try {
 			const datos = await getTaskHolderTimeControl(filter);
 			const contractDatos = await getTaskHolderContactEvents(filter);
-			
+
 			console.log(`✅ ${monthKey}: ${datos.length} eventos`);
+			console.log(datos);
+			
 			console.log(`✅ ${monthKey}: ${contractDatos.length} eventos contrato`);
 			console.log(contractDatos);
-			
+
 			// Procesar y guardar eventos por fecha
 			this.processEvents(datos);
-			
+
+			// Procesar y guardar festivos por fecha
+			this.processContractDaysType(contractDatos.daysType);
+
 			// Procesar y guardar festivos por fecha
 			this.processContractFestives(contractDatos.festives);
-			
+
 			// Guardar dias laborables / no laborables semana
 			this._workingDays = contractDatos.workingDays;
-			
+
 			// Procesar y guardar eventos por fecha
 			//this.processContractEvents(contractDatos.events);
-			
+
 			// Marcar mes como cargado
 			this._loadedMonths.add(monthKey);
-			
+
 			// AGREGAR LAS SEMANAS DEL MES AL DOM
 			this.addWeeksForMonth(startDate);
-			
+
 			// Re-renderizar las semanas visibles con los eventos
 			this.refreshWeeks();
 		} catch (error) {
@@ -213,23 +219,23 @@ export class AonAgendaAllDays extends AonElement {
 			this.stopLoading();
 		}
 	}
-	
+
 	/* ---------------- AGREGAR SEMANAS DEL MES ---------------- */
 	addWeeksForMonth(monthStartDate) {
 		// Calcular primer y último día del mes
 		const firstDay = new Date(monthStartDate.getFullYear(), monthStartDate.getMonth(), 1);
 		const lastDay = new Date(monthStartDate.getFullYear(), monthStartDate.getMonth() + 1, 0);
-		
+
 		// Calcular primera y última semana que contienen días de este mes
 		const firstWeekStart = AonDateUtils.startOfWeek(firstDay);
 		const lastWeekStart = AonDateUtils.startOfWeek(lastDay);
-		
+
 		// Calcular offsets de esas semanas
 		const firstOffset = Math.floor((firstWeekStart - this.baseDate) / (1000 * 60 * 60 * 24 * 7));
 		const lastOffset = Math.floor((lastWeekStart - this.baseDate) / (1000 * 60 * 60 * 24 * 7));
-		
+
 		console.log(`  📅 Agregando semanas ${firstOffset} a ${lastOffset}`);
-		
+
 		// Montar todas las semanas del mes
 		for (let offset = firstOffset; offset <= lastOffset; offset++) {
 			if (!this.visibleWeeks.has(offset)) {
@@ -237,16 +243,16 @@ export class AonAgendaAllDays extends AonElement {
 			}
 		}
 	}
-	
+
 	/* ---------------- PROCESS EVENTS ---------------- */
 	processEvents(datos) {
 		if (!datos || !Array.isArray(datos)) return;
-		
+
 		datos.forEach(dayData => {
 			// Convertir start_date (timestamp en milisegundos) a fecha
 			const date = new Date(dayData.start_date);
 			const dateKey = AonDateUtils.format(date, "YYYY-MM-DD");
-			
+
 			// Solo guardar si no existe ya (para no sobrescribir)
 			if (!this._events.has(dateKey)) {
 				this._events.set(dateKey, {
@@ -261,18 +267,18 @@ export class AonAgendaAllDays extends AonElement {
 			}
 		});
 	}
-	
+
 	/* ---------------- PROCESS CONTRACT FESTIVES ---------------- */
 	processContractFestives(datos) {
 		if (!datos || !Array.isArray(datos)) return;
-		
+
 		datos.forEach(dayData => {
 			// Convertir start_date (timestamp en milisegundos) a fecha
 			const date = new Date(dayData.start_date);
 			const dateKey = AonDateUtils.format(date, "YYYY-MM-DD");
-			
+
 			// Solo guardar si no existe ya (para no sobrescribir)
-			
+
 			if (!this._festivesContract.has(dateKey)) {
 				this._festivesContract.set(dateKey, {
 					start_date: dayData.start_date,
@@ -283,18 +289,51 @@ export class AonAgendaAllDays extends AonElement {
 			}
 		});
 	}
-	
+
+	/* ---------------- PROCESS CONTRACT DAYS TYPE ---------------- */
+	processContractDaysType(datos) {
+		if (!datos || !Array.isArray(datos)) return;
+
+		datos.forEach(dayData => {
+			const start = new Date(dayData.start_date);
+			const end = new Date(dayData.end_date);
+
+			// Normalizar horas para evitar saltos raros
+			start.setHours(0, 0, 0, 0);
+			end.setHours(0, 0, 0, 0);
+
+			// Iterar día a día
+			for (
+				let current = new Date(start);
+				current <= end;
+				current.setDate(current.getDate() + 1)
+			) {
+				const dateKey = AonDateUtils.format(current, "YYYY-MM-DD");
+
+				// No sobrescribir si ya existe
+				if (!this._daysTypeContract.has(dateKey)) {
+					this._daysTypeContract.set(dateKey, {
+						start_date: current,
+						end_date: current,
+						description: dayData.description,
+						source: dayData.source
+					});
+				}
+			}
+		});
+	}
+
 	/* ---------------- PROCESS CONTRACT EVENTS ---------------- */
 	processContractEvents(datos) {
 		if (!datos || !Array.isArray(datos)) return;
-		
+
 		datos.forEach(dayData => {
 			// Convertir start_date (timestamp en milisegundos) a fecha
 			const date = new Date(dayData.start_date);
 			const dateKey = AonDateUtils.format(date, "YYYY-MM-DD");
-			
+
 			// Solo guardar si no existe ya (para no sobrescribir)
-			
+
 			if (!this._eventsContract.has(dateKey)) {
 				this._eventsContract.set(dateKey, {
 					start_date: dayData.start_date,
@@ -305,25 +344,25 @@ export class AonAgendaAllDays extends AonElement {
 			}
 		});
 	}
-	
+
 	/* ---------------- REFRESH WEEKS ---------------- */
 	refreshWeeks() {
 		// Guardar posición de scroll
 		const currentScrollTop = this.scrollEl.scrollTop;
-		
+
 		console.log(`🔄 Actualizando ${this.visibleWeeks.size} semanas con eventos`);
-		
+
 		// Re-renderizar cada semana visible in-place
 		this.visibleWeeks.forEach((data, offset) => {
 			const newWeekEl = this.renderWeek(data.week);
-			
+
 			// Reemplazar el elemento antiguo con el nuevo (mantiene posición en DOM)
 			data.element.replaceWith(newWeekEl);
-			
+
 			// Actualizar la referencia
 			this.visibleWeeks.set(offset, { element: newWeekEl, week: data.week });
 		});
-		
+
 		// Restaurar posición de scroll
 		this.scrollEl.scrollTop = currentScrollTop;
 	}
@@ -335,15 +374,15 @@ export class AonAgendaAllDays extends AonElement {
 		// Esto hace que el scroll funcione correctamente:
 		// - Arriba: pasado (offset negativo)
 		// - Abajo: futuro (offset positivo)
-		
+
 		// Primero las semanas pasadas (de -52 a -1)
 		for (let i = -this.renderRange; i <= -1; i++) {
 			this.mountWeek(i);
 		}
-		
+
 		// Luego la semana actual (0)
 		this.mountWeek(0);
-		
+
 		// Finalmente las semanas futuras (de 1 a 4)
 		for (let i = 1; i <= 4; i++) {
 			this.mountWeek(i);
@@ -354,30 +393,30 @@ export class AonAgendaAllDays extends AonElement {
 			this.measureWeekHeight();
 		}, 100);
 	}
-	
+
 	/* ---------------- SCROLL TO TODAY ---------------- */
 	scrollToToday(smooth) {
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
 		const todayKey = AonDateUtils.format(today, "YYYY-MM-DD");
-		
+
 		// Buscar el día de hoy en todas las semanas renderizadas
 		let todayElement = null;
-		
+
 		this.visibleWeeks.forEach((data, offset) => {
 			if (todayElement) return; // Ya lo encontramos
-			
+
 			const dayElements = data.element.querySelectorAll('.day');
 			dayElements.forEach(dayEl => {
 				if (todayElement) return; // Ya lo encontramos
-				
+
 				// Verificar si este día es hoy comparando con la clase 'today'
 				if (dayEl.classList.contains('today')) {
 					todayElement = dayEl;
 				}
 			});
 		});
-		
+
 		// Hacer scroll al día de hoy CENTRADO en el viewport
 		if (todayElement) {
 			todayElement.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'center' });
@@ -390,7 +429,7 @@ export class AonAgendaAllDays extends AonElement {
 				currentWeekData.element.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'center' });
 			}
 		}
-		
+
 		// Actualizar header después del scroll
 		setTimeout(() => {
 			this.updateHeader();
@@ -409,18 +448,18 @@ export class AonAgendaAllDays extends AonElement {
 		// Insertar en la posición correcta según offset
 		// Offsets negativos (pasado) van al principio
 		// Offsets positivos (futuro) van al final
-		
+
 		if (this.visibleWeeks.size === 1) {
 			// Primera semana, añadir directamente
 			this.scrollEl.appendChild(weekEl);
 		} else {
 			// Encontrar dónde insertar según el offset
 			let inserted = false;
-			
+
 			// Obtener todos los offsets ordenados
 			const sortedOffsets = Array.from(this.visibleWeeks.keys()).sort((a, b) => a - b);
 			const thisIndex = sortedOffsets.indexOf(offset);
-			
+
 			if (thisIndex === 0) {
 				// Es el offset más pequeño, insertar al principio
 				this.scrollEl.insertBefore(weekEl, this.scrollEl.firstChild);
@@ -438,7 +477,7 @@ export class AonAgendaAllDays extends AonElement {
 					inserted = true;
 				}
 			}
-			
+
 			if (!inserted) {
 				// Fallback: añadir al final
 				this.scrollEl.appendChild(weekEl);
@@ -492,68 +531,80 @@ export class AonAgendaAllDays extends AonElement {
 			if (dayDate.getTime() === today.getTime()) {
 				dayEl.classList.add("today");
 			}
-			
+
 			// Marcar fin de semana (sábado = 6, domingo = 0) si no existe _workingDays
 			const dayOfWeek = dayDate.getDay();
-			if(this._workingDays.length > 0){
-				if(this._workingDays[dayOfWeek] === 1)
+			if (this._workingDays.length > 0) {
+				if (this._workingDays[dayOfWeek] === 1)
 					dayEl.classList.add("weekend");
 			} else if (dayOfWeek === 0 || dayOfWeek === 6) {
 				dayEl.classList.add("weekend");
 			}
 
 			// Obtener eventos del día
-			const dayEventData = this._events.get(day.key);
-			
+			const dayTypeContract = this._daysTypeContract.get(day.key);
+
+			// Mostrar todos los tipos de días
+			let daysTypeHtml = '<div class="events">';
+
+			if (dayTypeContract) {
+				daysTypeHtml += this.renderDaysTypeEvents(dayTypeContract);
+			}
+
 			// Mostrar todos los días, tengan eventos o no
+			const dayEventData = this._events.get(day.key);
+
 			let totalHours = "0h 0m";
 			let eventsHtml = '';
-			
+
 			if (dayEventData) {
 				totalHours = timeHour(Number(dayEventData.dayData.time));
 				eventsHtml = this.renderDayEvents(dayEventData.details);
 			}
 			
+			daysTypeHtml += eventsHtml;
+			daysTypeHtml += '</div>';
+
 			// Obtener eventos contrato del día
 			const dayContractFestive = this._festivesContract.get(day.key);
 			let dayFestiveHtml = '';
-			
+
 			if (dayContractFestive) {
 				dayFestiveHtml = this.renderContractFestive(dayContractFestive);
 			}
-			
+
 			// Obtener eventos contrato del día
 			//const dayEventContractData = this._eventsContract.get(day.key);
 			//let eventsContractHtml = '';
-			
+
 			//if (dayEventContractData) {
 			//	eventsContractHtml = this.renderDayContractEvents(dayEventContractData);
 			//}
-			
+
 			// Formatear nombre del día (3 primeras letras + punto)
 			const dayNameFull = AonDateUtils.dayName(day.date);
 			const dayNameShort = dayNameFull.substring(0, 3) + '.';
-			
+
 			if (eventsHtml === '') {
 				dayEl.innerHTML = `
 			        <div class="day-header">
 			          <div class="day-header-left">
 			            <span class="day-name">${dayNameShort}</span>
-			            <span class="day-number ${dayFestiveHtml.length > 0 ? 'festive' : ''}">${day.date.getDate()}</span>
+			            <span class="day-number ${dayFestiveHtml.length > 0 ? 'festive' : (dayTypeContract ? dayTypeContract.source.toLowerCase() : '')}">${day.date.getDate()}</span>
 			            ${dayFestiveHtml}
 			          </div>
 			        </div>
 			        <div class="day-content">
-			          ${eventsHtml}
+			          ${daysTypeHtml}
 			        </div>
 			      `;
-			      //${eventsContractHtml}
+				//${eventsContractHtml}
 			} else {
 				dayEl.innerHTML = `
 			        <div class="day-header">
 			          <div class="day-header-left">
 			            <span class="day-name">${dayNameShort}</span>
-			            <span class="day-number ${dayFestiveHtml.length > 0 ? 'festive' : ''}">${day.date.getDate()}</span>
+			             <span class="day-number ${dayFestiveHtml.length > 0 ? 'festive' : (dayTypeContract ? dayTypeContract.source.toLowerCase() : '')}">${day.date.getDate()}</span>
 			            ${dayFestiveHtml}
 			          </div>
 			          <div class="day-header-right">
@@ -561,84 +612,138 @@ export class AonAgendaAllDays extends AonElement {
 			          </div>
 			        </div>
 			        <div class="day-content">
-			          ${eventsHtml}
+			          ${daysTypeHtml}
 			        </div>
 			      `;
-			      //${eventsContractHtml}	
+				//${eventsContractHtml}	
 			}
-		      
+
 			el.appendChild(dayEl);
 		});
 
 		return el;
 	}
-	
+
 	/* ---------------- RENDER EVENTS ---------------- */
 	renderDayEvents(events) {
 		if (!events || events.length === 0) {
 			return '';
 		}
-		
+
 		// Ordenar eventos por fecha (hora)
 		const sortedEvents = [...events].sort((a, b) => a.date - b.date);
-		
+
 		// Agrupar eventos en tramos
 		const tramos = this.groupEventsIntoTramos(sortedEvents);
-		
-		return `<div class="events">
+
+		return `
 			${tramos.map(tramo => {
-				// Formatear horas de inicio y fin
-				const startDate = new Date(tramo.start.date);
-				const endDate = new Date(tramo.end.date);
-				
-				const startHours = String(startDate.getHours()).padStart(2, '0');
-				const startMinutes = String(startDate.getMinutes()).padStart(2, '0');
-				const startTimeStr = `${startHours}:${startMinutes}`;
-				
-				const endHours = String(endDate.getHours()).padStart(2, '0');
-				const endMinutes = String(endDate.getMinutes()).padStart(2, '0');
-				const endTimeStr = `${endHours}:${endMinutes}`;
-				
-				// Determinar clase CSS según el status del evento de inicio
-				let statusClass = '';
-				if (tramo.start.status === 'in') {
-					statusClass = 'in';
-				} else if (tramo.start.status === 'out') {
-					statusClass = 'out';
-				} else if (tramo.start.status === 'pause') {
-					statusClass = 'pause';
-				}
-				
-				// Usar el reasonValue del evento de inicio
-				const reason = tramo.start.reasonValue || tramo.start.reason || '';
-				
-				return `
+			// Formatear horas de inicio y fin
+			const startDate = new Date(tramo.start.date);
+			const endDate = new Date(tramo.end.date);
+
+			const startHours = String(startDate.getHours()).padStart(2, '0');
+			const startMinutes = String(startDate.getMinutes()).padStart(2, '0');
+			const startTimeStr = `${startHours}:${startMinutes}`;
+
+			const endHours = String(endDate.getHours()).padStart(2, '0');
+			const endMinutes = String(endDate.getMinutes()).padStart(2, '0');
+			const endTimeStr = `${endHours}:${endMinutes}`;
+
+			// Determinar clase CSS según el status del evento de inicio
+			let statusClass = '';
+			if (tramo.start.status === 'in') {
+				statusClass = 'in';
+			} else if (tramo.start.status === 'out') {
+				statusClass = 'out';
+			} else if (tramo.start.status === 'pause') {
+				statusClass = 'pause';
+			} else if (tramo.start.status === 'current') {
+				statusClass = 'current';
+			}
+
+			// Usar el reasonValue del evento de inicio
+			const reason = tramo.start.reasonValue || tramo.start.reason || '';
+
+			return `
 					<div class="event ${statusClass}">
 						<span class="time">${startTimeStr} - ${endTimeStr}</span>
 						<span class="reason">${reason}</span>
 					</div>
 				`;
-			}).join('')}
-		</div>`;
+		}).join('')}
+		`;
 	}
-	
+
 	/* ---------------- RENDER CONTRACT EVENTS ---------------- */
 	renderContractFestive(event) {
 		if (!event) return '';
-		
+
 		return `
 			<div class="event">
 				<span class="reason">${event.description}</span>
 			</div>
 		`;
 	}
-	
+
+	/* ---------------- RENDER CONTRACT EVENTS ---------------- */
+	renderDaysTypeEvents(event) {
+		if (!event) return '';
+
+		return `
+				<div class="event ${event.source.toLowerCase()}">
+					<span class="reason">${this.parseDayTypeDescription(event)}</span>
+				</div>
+		`;
+	}
+
+	parseDayTypeDescription(event) {
+		switch (event.source) {
+			case 'HOLIDAYS':
+				return 'Vacaciones';
+			case 'EFFECITVE_DAYS':
+				return 'Día Efectivo';
+			case 'INACTIVITY':
+				return 'Inactividad: ' + event.description;
+			case 'ABSENCE':
+				return 'Ausencia. ' + this.parsePartialityDescription(event.description);
+			case 'STRIKE':
+				return 'Huelga. ' + this.parsePartialityDescription(event.description);
+			case 'ERE':
+				return 'ERE. ' + this.parsePartialityDescription(event.description);
+			case 'ERE_FZA':
+				return 'ERE Fuerza Mayor. ' + this.parsePartialityDescription(event.description);
+			case 'ERE_FZA_EXO':
+				return 'ERE Fuerza Mayor Exonerado. ' + this.parsePartialityDescription(event.description);
+			case 'PAID_LEAVE':
+				return 'Perm. Retribuido: ' + this.parsePaidLeaveDescription(event.description);
+			case 'PARTIALITY':
+				return this.parsePartialityDescription(event.description);
+			case 'IT':
+				return event.description;
+			default:
+				return 'Desconocido'
+		}
+	}
+
+	parsePartialityDescription(description) {
+		return `Parcialidad: ${description * 100}%`;
+	}
+
+	parsePaidLeaveDescription(description) {
+		let regex = /\/\*inherit\*\/(.*?)\/\*\*\/([\d.]+)/;
+		let [, frase, numero] = description.match(regex);
+		return `${frase}. Parcialidad: ${numero * 100}%`;
+	}
+
+
+
 	/* ---------------- RENDER CONTRACT EVENTS ---------------- */
 	renderDayContractEvents(event) {
 		if (!event) {
 			return '';
 		}
-		
+
 		return `
 			<div class="events">
 				<div class="event ${event.source.toLowerCase()}">
@@ -653,55 +758,55 @@ export class AonAgendaAllDays extends AonElement {
 			</div>
 		`;
 	}
-	
+
 	/* ---------------- GROUP EVENTS INTO TRAMOS ---------------- */
 	groupEventsIntoTramos(events) {
 		const tramos = [];
 		let i = 0;
-		
+
 		while (i < events.length) {
 			const currentEvent = events[i];
-			
+
 			// Solo procesar eventos que son 'in' o 'pause'
 			if (currentEvent.status === 'in') {
 				// Verificar si hay múltiples 'in' seguidos, quedarnos con el más tardío
 				let startIndex = i;
 				let nextIndex = i + 1;
-				
+
 				while (nextIndex < events.length && events[nextIndex].status === 'in') {
 					startIndex = nextIndex;
 					nextIndex++;
 				}
-				
+
 				const startEvent = events[startIndex];
-				
+
 				// Buscar el siguiente evento que sea 'out' o 'pause'
 				let endIndex = startIndex + 1;
 				while (endIndex < events.length && events[endIndex].status === 'in') {
 					endIndex++;
 				}
-				
+
 				if (endIndex < events.length) {
 					const endEvent = events[endIndex];
-					
+
 					// Crear tramo in → pause/out
 					tramos.push({
 						start: startEvent,
 						end: endEvent
 					});
-					
+
 					// Si el endEvent es 'pause', crear otro tramo desde 'pause' hasta el siguiente evento
 					if (endEvent.status === 'pause') {
 						let afterPauseIndex = endIndex + 1;
 						if (afterPauseIndex < events.length) {
 							// Buscar el siguiente out o in
 							const afterPauseEvent = events[afterPauseIndex];
-							
+
 							tramos.push({
 								start: endEvent,
 								end: afterPauseEvent
 							});
-							
+
 							i = afterPauseIndex + 1;
 						} else {
 							// Pause sin evento siguiente
@@ -712,7 +817,15 @@ export class AonAgendaAllDays extends AonElement {
 						i = endIndex + 1;
 					}
 				} else {
-					// No hay más eventos, el tramo queda abierto
+					// No hay más eventos → cerrar con momento actual
+					tramos.push({
+						start: {
+							...startEvent, 
+							status: 'current'
+						},
+						end: this.createNowEndEvent()
+					});
+				
 					i = startIndex + 1;
 				}
 			}
@@ -735,14 +848,25 @@ export class AonAgendaAllDays extends AonElement {
 				i++;
 			}
 		}
-		
+
 		return tramos;
+	}
+	
+	createNowEndEvent() {
+		const now = Date.now();
+	
+		return {
+			status: 'current',
+			date: now,
+			creation_date: now,
+			cause: 'DEFAULT'
+		};
 	}
 
 	/* ---------------- EVENT LISTENERS ---------------- */
 	attachEventListeners() {
 		let checkTimeout;
-		
+
 		this.scrollEl.addEventListener("scroll", (e) => {
 			// Si el scroll está bloqueado, prevenir y restaurar posición
 			if (this._scrollLocked) {
@@ -750,12 +874,12 @@ export class AonAgendaAllDays extends AonElement {
 				this.scrollEl.scrollTop = this._lastScrollPosition;
 				return;
 			}
-			
+
 			// Guardar la posición actual como válida
 			this._lastScrollPosition = this.scrollEl.scrollTop;
-			
+
 			this.handleScroll();
-			
+
 			// Debounce para checkLoadMonthsOnScroll
 			clearTimeout(checkTimeout);
 			checkTimeout = setTimeout(() => {
@@ -785,7 +909,7 @@ export class AonAgendaAllDays extends AonElement {
 
 		// DESACTIVADO: checkLoadMore hacia el pasado
 		// Ahora loadPreviousMonth() maneja la carga hacia atrás
-		
+
 		// Si estamos cerca del bottom (futuro), cargar más semanas futuras
 		if (distanceFromBottom < clientHeight * 2) {
 			const maxOffset = Math.max(...this.visibleWeeks.keys());
@@ -797,70 +921,70 @@ export class AonAgendaAllDays extends AonElement {
 			}
 		}
 	}
-	
+
 	/* ---------------- LOAD MONTHS ON SCROLL ---------------- */
 	async checkLoadMonthsOnScroll() {
 		// No cargar meses adicionales hasta que la carga inicial esté completa
 		if (!this._initialLoadComplete) return;
 		if (this._isLoading) return;
 		if (this._scrollLocked) return;
-		
+
 		const scrollTop = this.scrollEl.scrollTop;
 		const scrollHeight = this.scrollEl.scrollHeight;
 		const clientHeight = this.scrollEl.clientHeight;
-		
+
 		const scrollBottom = scrollTop + clientHeight;
 		const distanceFromTop = scrollTop;
 		const distanceFromBottom = scrollHeight - scrollBottom;
-		
+
 		// Threshold dinámico: 20% del viewport (ej: 126px en 630px)
 		const threshold = clientHeight * 0.2;
-		
+
 		// Cargar mes anterior si estamos cerca del inicio
 		if (distanceFromTop < threshold) {
 			console.log(`🔍 Cerca del inicio: ${Math.round(distanceFromTop)}px < ${Math.round(threshold)}px`);
 			await this.loadPreviousMonth();
 		}
-		
+
 		// Cargar mes siguiente si estamos cerca del final
 		if (distanceFromBottom < threshold) {
 			console.log(`🔍 Cerca del final: ${Math.round(distanceFromBottom)}px < ${Math.round(threshold)}px`);
 			await this.loadNextMonth();
 		}
 	}
-	
+
 	async loadPreviousMonth() {
 		if (!this._firstLoadedMonth) {
 			console.log('⚠️ loadPreviousMonth: _firstLoadedMonth no definido');
 			return;
 		}
-		
+
 		// Calcular el mes anterior al primer mes cargado
 		const prevMonth = new Date(this._firstLoadedMonth);
 		prevMonth.setMonth(prevMonth.getMonth() - 1);
-		
+
 		const monthKey = `${prevMonth.getFullYear()}-${String(prevMonth.getMonth() + 1).padStart(2, '0')}`;
-		
+
 		// Si ya está cargado, no hacer nada
 		if (this._loadedMonths.has(monthKey)) {
 			console.log(`⏭️ loadPreviousMonth: ${monthKey} ya cargado`);
 			return;
 		}
-		
+
 		console.log(`⬆️ loadPreviousMonth: Iniciando carga de ${monthKey}`);
 		console.log(`   _firstLoadedMonth actual: ${AonDateUtils.format(this._firstLoadedMonth, 'YYYY-MM-DD')}`);
-		
+
 		// Guardar posición de scroll
 		const beforeHeight = this.scrollEl.scrollHeight;
 		const beforeScroll = this.scrollEl.scrollTop;
-		
+
 		// Cargar el mes (esto bloqueará automáticamente con startLoading)
 		await this.loadMonthEvents(prevMonth);
-		
+
 		// Actualizar el límite
 		this._firstLoadedMonth = new Date(prevMonth.getFullYear(), prevMonth.getMonth(), 1);
 		console.log(`   _firstLoadedMonth nuevo: ${AonDateUtils.format(this._firstLoadedMonth, 'YYYY-MM-DD')}`);
-		
+
 		// Ajustar scroll para mantener posición visual
 		requestAnimationFrame(() => {
 			const afterHeight = this.scrollEl.scrollHeight;
@@ -869,26 +993,26 @@ export class AonAgendaAllDays extends AonElement {
 			console.log(`   Scroll ajustado: ${beforeScroll} + ${heightDiff} = ${this.scrollEl.scrollTop}`);
 		});
 	}
-	
+
 	async loadNextMonth() {
 		if (!this._lastLoadedMonth) return;
-		
+
 		// Calcular el mes siguiente al último mes cargado
 		const nextMonth = new Date(this._lastLoadedMonth);
 		nextMonth.setMonth(nextMonth.getMonth() + 1);
-		
+
 		const monthKey = `${nextMonth.getFullYear()}-${String(nextMonth.getMonth() + 1).padStart(2, '0')}`;
-		
+
 		// Si ya está cargado, no hacer nada
 		if (this._loadedMonths.has(monthKey)) {
 			return;
 		}
-		
+
 		console.log(`⬇️ Cargando siguiente: ${monthKey}`);
-		
+
 		// Cargar el mes (esto bloqueará automáticamente con startLoading)
 		await this.loadMonthEvents(nextMonth);
-		
+
 		// Actualizar el límite
 		this._lastLoadedMonth = new Date(nextMonth.getFullYear(), nextMonth.getMonth(), 1);
 	}
@@ -941,35 +1065,35 @@ export class AonAgendaAllDays extends AonElement {
 
 		const firstDayNum = String(firstDay.getDate() + 1).padStart(2, '0');
 		const lastDayNum = String(lastDay.getDate() + 1).padStart(2, '0');
-		
+
 		const firstDayMonthNum = String(firstDay.getMonth() + 1).padStart(2, '0');
 		const lastDayMontNum = String(lastDay.getMonth() + 1).padStart(2, '0');
 
 		this.headerRange.textContent = `${firstDayNum}/${firstDayMonthNum} – ${lastDayNum}/${lastDayMontNum}`;
-		
+
 		// Calcular horas totales de la semana
 		const weekHours = this.calculateWeekHours(centerWeek);
 		this.headerWeekHours.textContent = `Sem.: ${weekHours} h`;
 	}
-	
+
 	/* ---------------- CALCULATE HOURS ---------------- */
 	calculateMonthHours(date) {
 		const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 		let totalMilliseconds = 0;
-		
+
 		// Sumar horas de todos los días del mes
 		this._events.forEach((eventData, dateKey) => {
 			if (dateKey.startsWith(monthKey)) {
 				totalMilliseconds += Number(eventData.dayData.time) || 0;
 			}
 		});
-		
+
 		return timeHour(totalMilliseconds);
 	}
-	
+
 	calculateWeekHours(week) {
 		let totalMilliseconds = 0;
-		
+
 		// Sumar horas de todos los días de la semana
 		week.days.forEach(day => {
 			const eventData = this._events.get(day.key);
@@ -977,7 +1101,7 @@ export class AonAgendaAllDays extends AonElement {
 				totalMilliseconds += Number(eventData.dayData.time) || 0;
 			}
 		});
-		
+
 		return timeHour(totalMilliseconds);
 	}
 
@@ -1001,27 +1125,27 @@ export class AonAgendaAllDays extends AonElement {
 			weekData.element.scrollIntoView({ behavior: 'auto', block: 'start' });
 		}
 	}
-	
+
 	/* ---------------- RELOAD DATA ---------------- */
 	async reload() {
 		// Resetear flag de carga inicial
 		this._initialLoadComplete = false;
-		
+
 		// Limpiar datos cargados
 		this._events.clear();
 		this._eventsContract.clear();
 		this._loadedMonths.clear();
-		
+
 		// Recargar eventos iniciales
 		await this.loadInitialEvents();
-		
+
 		// Marcar como completo nuevamente
 		setTimeout(() => {
 			this._initialLoadComplete = true;
 			console.log('Recarga completa - checkLoadMonthsOnScroll activo');
 		}, 1500); // Aumentado para consistencia
 	}
-	
+
 	startLoading() {
 		let el = this.getElement('aonModuleLoader');
 		if (el) el.startLoading();
