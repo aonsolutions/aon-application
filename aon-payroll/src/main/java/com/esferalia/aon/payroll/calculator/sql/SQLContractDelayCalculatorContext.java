@@ -12,6 +12,7 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT_LEAVE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY_BONUS;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY_DATA;
+import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY_DEDUCTION;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY_PAYMENT;
 import static java.util.Calendar.DAY_OF_MONTH;
 
@@ -41,13 +42,12 @@ import org.mvel2.util.MethodStub;
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
-import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
+import com.esferalia.aon.payroll.calculator.CompositeCollection;
 import com.esferalia.aon.payroll.calculator.CompositeIterator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
+import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
@@ -59,6 +59,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.ContractLeaveColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryBonusColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryDataColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryPaymentColumns;
 import com.esferalia.aon.salary.AbstractSalaryBuilder;
 import com.esferalia.aon.salary.CompositeSalaryBuilder;
@@ -66,7 +67,9 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.bonus.IBonus;
+import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.BonusType;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -81,7 +84,6 @@ import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
@@ -425,6 +427,7 @@ public class SQLContractDelayCalculatorContext extends
 	
 	private Collection<IContractBonus> salaryBonuses;
 	private Collection<IContractPayment> differencePayments; 
+	private Collection<IContractDeduction> salaryBonusDeductions;
 	
 
 	public SQLContractDelayCalculatorContext(Connection connection,
@@ -492,6 +495,13 @@ public class SQLContractDelayCalculatorContext extends
 
 	}
 	
+	
+	@Override
+    public Collection<IContractDeduction> getContractDeductions() throws AonException {
+		Collection<IContractDeduction> contractDeductions = super.getContractDeductions();
+		Collection<IContractDeduction> filteredDeductions = new FilterCollection<>( deduction -> deduction.getType() != DeductionType.BONUS || AonStringUtils.equalsIgnoreCase(deduction.getName(), ContextVariable.MEI_EMPLOYEE.getName()), contractDeductions );
+		return new CompositeCollection<IContractDeduction>( filteredDeductions, salaryBonusDeductions );
+    }
 	
 	@Override
     public Collection<IContractBonus> getContractBonus() throws AonException {
@@ -724,15 +734,17 @@ public class SQLContractDelayCalculatorContext extends
 		differencePayments = new LinkedList<IContractPayment>();
 		
 		salaryBonuses = new LinkedList<IContractBonus>();
+		salaryBonusDeductions = new LinkedList<IContractDeduction>();
 
 		DelayBonusBuilder delayBonusBuilder = new DelayBonusBuilder(getConnection());
+		DelayBonusDeductionBuilder delayBonusDeductionBuilder = new DelayBonusDeductionBuilder(getConnection());
 		
 		DelayPaymentBuilder delayPaymentBuilder = getDelayPaymentBuilder();
 
 		ExtrasDelayPaymentBuilder extrasDelayPaymentBuilder = getExtraPaymentBuilder();
 		
 		ISalaryBuilder<ISalary> compositeBuilder = getSalaryBuilder(
-				new CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>>(delayPaymentBuilder, extrasDelayPaymentBuilder, delayBonusBuilder));
+				new CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>>(delayPaymentBuilder, extrasDelayPaymentBuilder, delayBonusBuilder, delayBonusDeductionBuilder));
 		
 
 		Collection<Period> periods = getCgcPeriods(connection, getId(), startDate, endDate);//split(startDate, endDate);
@@ -775,6 +787,7 @@ public class SQLContractDelayCalculatorContext extends
 
 		}
 		salaryBonuses.addAll(delayBonusBuilder.getContractBonuses());
+		salaryBonusDeductions.addAll(delayBonusDeductionBuilder.getContractBonusDeductions());
 		return true;
 	}
 	
@@ -1158,6 +1171,170 @@ public class SQLContractDelayCalculatorContext extends
 			};
 			
 			contractBonuses.add(contractBonus);
+		}
+	}
+
+	private static class DelayBonusDeductionBuilder<T extends ISalary> extends AbstractSalaryBuilder<T> {
+		
+		private int contractId;
+		private Connection connection;
+		Map<String, Double> paidBonusDeductions ;
+		
+		
+		private Collection<IContractDeduction> contractBonusDeductions = new LinkedList<>();
+		
+		private static final String BONUS_DEDUCTIONS_SQL = 
+				"SELECT * "
+					+ " FROM "
+					+ SALARY 
+					+" LEFT JOIN " + SALARY_DEDUCTION + " ON (" + SALARY_DEDUCTION + "." + SalaryDeductionColumns.SALARY +  " = " + SALARY+ "." + SalaryColumns.ID +")" 
+					+ " WHERE " 
+					+ SALARY + "." + SalaryColumns.CONTRACT + " = ? " 
+					+ " AND " + SALARY + "." + SalaryColumns.TYPE + "  = ? " 
+					+ " AND " +SALARY + "." + SalaryColumns.START_DATE + "  <= ? "
+					+ " AND " +SALARY + "." + SalaryColumns.END_DATE + " >= ? "
+					+ " AND " +SALARY_DEDUCTION + "." + SalaryDeductionColumns.TYPE + " >= ? "
+					+ " AND ( " +SALARY_DEDUCTION + "." + SalaryDeductionColumns.DEDUCTION_CONCEPT + " <> ? "
+					+ " OR " +SALARY_DEDUCTION + "." + SalaryDeductionColumns.DEDUCTION_CONCEPT + " IS NULL ) "
+				;
+		
+		public DelayBonusDeductionBuilder(Connection connection ) {
+			super();
+			this.connection = connection;
+		}
+
+		public Collection<IContractDeduction> getContractBonusDeductions() {
+			return contractBonusDeductions;
+		}
+		
+		@Override
+		public void createNewSalary() {
+			paidBonusDeductions = null;
+			super.createNewSalary();
+		}
+		
+		@Override
+		public void setContract(Object contract) {
+			this.contractId = ((SQLSalaryProxy) contract).getContractId();
+		}
+		
+		private double getPaidBonusDeductionAmount(String description, Date startDate, Date endDate) throws SQLException {
+			if ( paidBonusDeductions == null ) {
+				paidBonusDeductions = new HashMap<>();
+				
+				ResultSet rs = null;
+				PreparedStatement stmt = null;
+				try {
+					stmt = connection.prepareStatement(BONUS_DEDUCTIONS_SQL);
+					stmt.setInt(1, this.contractId);
+					stmt.setInt(2, SalaryType.SALARY.ordinal());
+					stmt.setDate(3, toSqlDate(endDate));
+					stmt.setDate(4, toSqlDate(startDate));
+					stmt.setInt(5, DeductionType.BONUS.ordinal());
+					stmt.setString(6, ContextVariable.MEI_EMPLOYEE.getName());
+					
+					rs = stmt.executeQuery();
+					while ( rs.next() ) {
+						double bonusDeductionAmount = rs.getDouble(SalaryDeductionColumns.AMOUNT);
+						String bonusDeductionDescription = rs.getString(SalaryDeductionColumns.DESCRIPTION);
+						paidBonusDeductions.put(bonusDeductionDescription, paidBonusDeductions.getOrDefault(bonusDeductionDescription, 0.00) + bonusDeductionAmount);
+					}
+					
+				} finally {
+					if ( rs != null )
+						rs.close();
+					if ( stmt != null )
+						stmt.close();
+				}
+			}
+			return paidBonusDeductions.getOrDefault(description, paidBonusDeductions.getOrDefault(null,0.00));
+		}
+		
+		
+		
+		@Override
+		public void addDeduction(Double amount, String description, Date startDate, Date endDate, IDeduction deduction,
+				Map<String, ITimedVariable<?>> context) {
+			super.addDeduction(amount, description, startDate, endDate, deduction, context);
+			if ( amount == 0.00 )
+				return;
+			if ( deduction.getType() != DeductionType.BONUS )
+				return;
+			if ( AonStringUtils.equalsIgnoreCase(deduction.getName(), ContextVariable.MEI_EMPLOYEE.getName()) )
+				return;
+			
+			final int id = contractBonusDeductions.size()+1;
+			final DeductionType type = deduction.getType();
+			final String name = String.format("%s-%d",AonStringUtils.defaultIfBlank(deduction.getName(), "BONF"), id);
+			final ExpressionScope scope = ( deduction instanceof IContractDeduction contractDeduction) ? contractDeduction.getScope() : ExpressionScope.CONTRACT;
+			
+			StringBuilder expression = new StringBuilder();
+			try {
+				double paidBonusAmount = getPaidBonusDeductionAmount(description, startDate, endDate);
+				// deductions are negative amounts
+				if ( paidBonusAmount <= amount )  
+					return;
+				expression.append(String.format(Locale.ROOT, "/*ep0ch:*/%f", amount - paidBonusAmount ));
+			} catch (SQLException e) {
+				expression.append(String.format(Locale.ROOT,"/*ep0ch:*/%f", amount ));			
+			}
+			
+			
+			IContractDeduction contractBonus = new IContractDeduction() {
+				
+				@Override
+				public Date getStartDate() {
+					return startDate;
+				}
+				
+				@Override
+				public Date getEndDate() {
+					return endDate;
+				}
+				
+				@Override
+				public DeductionType getType() {
+					return type;
+				}
+				
+				@Override
+				public double getAmount() {
+					return amount;
+				}
+				
+				@Override
+				public boolean isReadOnly() {
+					return false;
+				}
+				
+				@Override
+				public ExpressionScope getScope() {
+					return ExpressionScope.SYSTEM;
+				}
+				
+				@Override
+				public String getName() {
+					return name;
+				}
+				
+				@Override
+				public Integer getId() {
+					return id;
+				}
+				
+				@Override
+				public String getExpression() {
+					return expression.toString();
+				}
+				
+				@Override
+				public String getDescription() {
+					return description;
+				}
+				
+			};
+			
+			contractBonusDeductions.add(contractBonus);
 		}
 	}
 

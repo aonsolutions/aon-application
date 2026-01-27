@@ -16,6 +16,7 @@ export const getTimeControlExcel = (data) => openFile(`${API_URL}/timecontrol/ex
 export const getTimeControlPdf = (data) => openFile(`${API_URL}/timecontrol/pdf`, data);
 export const getTimeControlList = (data) => get(`${API_URL}/timecontrol/list`, data);
 export const getTaskHolderTimeControl = (data) => get(`${API_URL}/timecontrol/list-holder`, data);
+export const getTaskHolderContactEvents = (data) => get(`${API_URL}/timecontrol/contract-events`, data);
 
 const getWeekDayObj = () =>  ({
   now: new Date(),

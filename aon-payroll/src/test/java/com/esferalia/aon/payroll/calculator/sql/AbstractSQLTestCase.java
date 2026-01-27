@@ -1660,6 +1660,21 @@ public abstract class AbstractSQLTestCase {
 	}
 
 	public static final ContractDeductionRecord addDeduction(AONContext aonContext, ContractRecord contract,
+			Date startDate, Date endDate, String expression, String description , DeductionType type ) {
+		return aonContext.getDslContext()
+				.insertInto(CONTRACT_DEDUCTION)
+				.set(CONTRACT_DEDUCTION.DOMAIN, contract.getDomain())
+				.set(CONTRACT_DEDUCTION.CONTRACT, contract.getId())
+				.set(CONTRACT_DEDUCTION.START_DATE, startDate)
+				.set(CONTRACT_DEDUCTION.END_DATE, endDate)
+				.set(CONTRACT_DEDUCTION.EXPRESSION, expression)
+				.set(CONTRACT_DEDUCTION.DESCRIPTION, description)
+				.set(CONTRACT_DEDUCTION.TYPE, type != null ? AonEnumUtils.getByte(type) : null)
+				.returning().fetchOne();
+
+	}
+
+	public static final ContractDeductionRecord addDeduction(AONContext aonContext, ContractRecord contract,
 			Date startDate, Date endDate, String expression, String description , String concept) {
 		return aonContext.getDslContext()
 				.insertInto(CONTRACT_DEDUCTION)
@@ -1697,6 +1712,37 @@ public abstract class AbstractSQLTestCase {
 
 	}
 	
+
+	public static final void cleanDeductionConcepts(AONContext aonContext) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		aonContext.getDslContext().delete(DEDUCTION_CONCEPT).execute();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+
+	public static final DeductionConceptRecord addDeductionConcept(AONContext aonContext, String code,
+			DeductionType type) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+		DeductionConceptRecord deductionConceptRecord = aonContext.getDslContext().insertInto(DEDUCTION_CONCEPT)
+				.set(DEDUCTION_CONCEPT.DOMAIN, 0).set(DEDUCTION_CONCEPT.CODE, code)
+				.set(DEDUCTION_CONCEPT.TYPE, (byte) type.ordinal()).set(DEDUCTION_CONCEPT.DESCRIPTION, code).returning()
+				.fetchOne();
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+		return deductionConceptRecord;
+	}
+
+	public static final void addSSRegimeDeduction(AONContext aonContext, DeductionConceptRecord concept,
+			SSRegimeType ssRegimetype, java.sql.Date startDate, String expression) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		aonContext.getDslContext().insertInto(SYSTEM_DEDUCTION).set(SYSTEM_DEDUCTION.START_DATE, startDate)
+				.set(SYSTEM_DEDUCTION.DOMAIN, (-1) * ssRegimetype.ordinal())
+				.set(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT, concept.getId()).set(SYSTEM_DEDUCTION.EXPRESSION, expression)
+				.execute();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
 
 	public static final ContractBonusRecord addBonus(AONContext aonContext, ContractRecord contract,
 			Date startDate, BonusConceptRecord concept) {

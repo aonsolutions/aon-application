@@ -125,8 +125,7 @@ export class AonTimecontrol extends AonElement {
   async setDataFilter(data){
 	console.log('setDataFilter', data);
     try {
-      // if(this.isMobile() && !data.period)
-        this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
+      this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
       
       this.DATE_TMP =  null;
       if(data && data.period){

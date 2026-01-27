@@ -11,8 +11,9 @@ import * as JSF from "../aon-jsf-app.js";
 
   export const taskHolder = () => {
     let application = document.querySelector(TAG.AON_APPLICATION);
-    application.setContent(new JSF.AonJsfTaskHolder());
-  };
+    application.removeToolbarOptions();
+    application.setContent(new JSF.AonJsfTaskHolder())
+  }
 
   export const PRESENCE = {
     id: CONSTANT.PRESENCE,

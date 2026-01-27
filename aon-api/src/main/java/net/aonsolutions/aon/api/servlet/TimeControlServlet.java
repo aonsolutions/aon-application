@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlContractEvents;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlReason;
@@ -69,6 +70,9 @@ public class TimeControlServlet extends AonApiHttpServlet{
 				break;
 			case "/list-holder":
 				response(req, resp, getTaskHolderTimeControlStream(api));
+				break;
+			case "/contract-events":
+				response(req, resp, getTaskHolderContractEvents(api));
 				break;
 			case "/list-holder-detail":
 				response(req, resp, getTimeControlDetailStream(api));
@@ -354,6 +358,22 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		return array;
 	}
 	
+	private JSONObject getTaskHolderContractEvents(AonApiData api) {
+		Integer taskHolder = api.getData().optInt("taskHolderId");
+		Date startDate = AonDateUtils.getDateWithoutTime(new Date());
+		Date endDate = AonDateUtils.addDays(startDate, 1);
+		endDate = AonDateUtils.addSeconds(endDate, -1);
+		
+		if(!api.getData().optString(START_DATE).isEmpty()) 
+			startDate = AonDateUtils.parse(api.getData().optString(START_DATE), FORMAT_DATE);
+		
+		if(!api.getData().optString(END_DATE).isEmpty()) 
+			endDate = AonDateUtils.parse(api.getData().optString(END_DATE), FORMAT_DATE);
+
+		TimeControlContractEvents contractEvents = AON_SOLUTIONS.getTaskHolderTimeContractEvents(api.getDomain(), api.getUser(), taskHolder, startDate, endDate);
+		
+		return contractEvents.toJSON();
+	}
 	
 	private JSONObject delete(AonApiData api) {
 		Integer tmId = api.getData().optInt("id");

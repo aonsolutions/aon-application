@@ -322,6 +322,7 @@ public class CustomersServlet extends AonApiHttpServlet {
 					Date expirationDate = AonDateUtils.simpleParse(dateStr);
 
 					domainCustomer.setExpirationDate(newStatus.equals(RegistryStatus.ACTIVE) ? null : expirationDate);
+					domainCustomer.setActive( !( (newStatus.equals(RegistryStatus.INACTIVE) || newStatus.equals(RegistryStatus.BLOCKED)) && null == domainCustomer.getExpirationDate()) );
 
 					AON.updateDomainStatus(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 							domainCustomer);
@@ -360,6 +361,7 @@ public class CustomersServlet extends AonApiHttpServlet {
 						Date expirationDate = AonDateUtils.simpleParse(dateStr);
 
 						domainCustomer.setExpirationDate(newStatus.equals(RegistryStatus.ACTIVE) ? null : expirationDate);
+						domainCustomer.setActive( !( (newStatus.equals(RegistryStatus.INACTIVE) || newStatus.equals(RegistryStatus.BLOCKED)) && null == domainCustomer.getExpirationDate()) );
 
 						AON.updateDomainStatus(domainCustomer.getName(), domainCustomer.getId(), api.getUser().getLogin(),
 								domainCustomer);
@@ -370,6 +372,7 @@ public class CustomersServlet extends AonApiHttpServlet {
 					Date expirationDate = AonDateUtils.simpleParse(dateStr);
 
 					domainCustomer.setExpirationDate(newStatus.equals(RegistryStatus.ACTIVE) ? null : expirationDate);
+					domainCustomer.setActive( !( (newStatus.equals(RegistryStatus.INACTIVE) || newStatus.equals(RegistryStatus.BLOCKED)) && null == domainCustomer.getExpirationDate()) );
 
 					AON.updateDomainStatus(domainCustomer.getName(), domainCustomer.getId(), api.getUser().getLogin(),
 							domainCustomer);
