@@ -188,42 +188,40 @@ public class Mod303DAO extends FiscalModelDAO {
 	
 	private static void initializeProrrateFrom2026(AONContext ctx, Mod303 mod303) {
 		
-		// FALTA - NO FUNCIONA - Primera inicialización o si se marca aplicar prorrata, se va a buscar la prorrata del periodo anterior, en caso contrario no se hace nada
-//		if (!mod303.getMap().containsKey(Mod303Key.CM_008.getValue()) || mod303.hasProrate()) {
-			// Obtener prorrata del periodo anterior
-			Pair<Double,String> prorrateInfo = getLastPeriodEffectiveModels(ctx, mod303)
-				.filter(mod -> mod.getAdministration() == mod303.getAdministration() && mod.hasProrate())
-				.map(mod -> new Pair<Double,String>(mod.getProratePercent(), mod.getSpecialProrateValue()))
-				.findFirst()
-				.orElse(null);
-			
-			if (prorrateInfo == null && mod303.hasProrate()) {
-				prorrateInfo = new Pair<>(0.0, "G");
+		// Obtener prorrata del periodo anterior
+		Pair<Double,String> prorrateInfo = getLastPeriodEffectiveModels(ctx, mod303)
+			.filter(mod -> mod.getAdministration() == mod303.getAdministration() && mod.hasProrate())
+			.map(mod -> new Pair<Double,String>(mod.getProratePercent(), mod.getSpecialProrateValue()))
+			.findFirst()
+			.orElse(null);
+		
+		if (prorrateInfo == null && mod303.hasProrate()) {
+			prorrateInfo = new Pair<>(0.0, "G");
+		}
+		
+		if (prorrateInfo != null) {
+			mod303.setProrate(true);
+			mod303.ensureDetail(mod303.getProratePercentKey()).setAmount(prorrateInfo.getLeft());
+			mod303.ensureDetail(mod303.getProrateTypeKey()).setDescription(prorrateInfo.getRight());
+			if (mod303.getPeriod().isLastPeriod()) {
+				mod303.ensureDetail(mod303.getPreviousProratePercentKey()).setAmount(prorrateInfo.getLeft());
+				mod303.putAmount(Mod303Key.CM_070, 0.0);
+				mod303.putAmount(Mod303Key.CM_071, 0.0);
+				AccountingReportParams params = new AccountingReportParams()
+						.setFromDate(AonDateUtils.getYearFirstDay(mod303.getYear()))
+						.setToDate(AonDateUtils.getYearLastDay(mod303.getYear()));
+				VATDAO.getVatBreakdown(ctx,params )
+					.filter( VatContext::isSales )
+					.forEach( vat -> {
+						if (!vat.isVatSurchargeRegime() && vat.getVatRegime() != VATRegime.EXEMPT) {
+							mod303.ensureDetail(Mod303Key.CM_070).addAmount( vat.getBase());
+						}
+						mod303.ensureDetail(Mod303Key.CM_071).addAmount( vat.getBase());		
+					});
+				calculateProrrate(mod303);
 			}
+		}
 			
-			if (prorrateInfo != null) {
-				mod303.setProrate(true);
-				mod303.ensureDetail(mod303.getProratePercentKey()).setAmount(prorrateInfo.getLeft());
-				mod303.ensureDetail(mod303.getProrateTypeKey()).setDescription(prorrateInfo.getRight());
-				if (mod303.getPeriod().isLastPeriod()) {
-					mod303.ensureDetail(mod303.getPreviousProratePercentKey()).setAmount(prorrateInfo.getLeft());
-					mod303.putAmount(Mod303Key.CM_070, 0.0);
-					mod303.putAmount(Mod303Key.CM_071, 0.0);
-					AccountingReportParams params = new AccountingReportParams()
-							.setFromDate(AonDateUtils.getYearFirstDay(mod303.getYear()))
-							.setToDate(AonDateUtils.getYearLastDay(mod303.getYear()));
-					VATDAO.getVatBreakdown(ctx,params )
-						.filter( VatContext::isSales )
-						.forEach( vat -> {
-							if (!vat.isVatSurchargeRegime() && vat.getVatRegime() != VATRegime.EXEMPT) {
-								mod303.ensureDetail(Mod303Key.CM_070).addAmount( vat.getBase());
-							}
-							mod303.ensureDetail(Mod303Key.CM_071).addAmount( vat.getBase());		
-						});
-					calculateProrrate(mod303);
-				}
-			}
-//		}
 	}
 	
 	public static Mod303 reset(AONContext ctx,Mod303 mod303) {

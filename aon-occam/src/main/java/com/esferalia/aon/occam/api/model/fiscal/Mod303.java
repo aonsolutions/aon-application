@@ -68,7 +68,7 @@ public class Mod303 extends FiscalModel implements Serializable {
 	public boolean isEnrolledInDevolutionRegistry() {
 		return getAmount(Mod303Key.CM_002) == 1;
 	}
-	
+
 	public Mod303Key getProratePercentKey() {
 		return Mod303Key.CM_003;
 	}
@@ -106,8 +106,7 @@ public class Mod303 extends FiscalModel implements Serializable {
 				|| (isLastPeriod() && hasPreviousProrate())
 				|| (!isLastPeriod() && hasPreviousProrate() && isDraft());
 		}
-	}
-	
+	}	
 	public void setProrate(boolean prorate) {
 		ensureDetail(Mod303Key.CM_008).setAmount(prorate ? 1 : 0);
 	}
@@ -142,10 +141,11 @@ public class Mod303 extends FiscalModel implements Serializable {
 		ensureDetail(getPreviousProratePercentKey()).setAmount( previousProrratePercent );
 		return this;
 	}
+ 
 	public boolean hasPreviousProrate() {
-		// A partir de 2026, se añade un check para indicar expresamente si se aplicó prorrata en periodos previos, sea el porcentaje que sea.
+		// Solo se utiliza hasta 2025, a partir de 2026 se añade un check para indicar expresamente si se debe aplicar prorrata, sea el porcentaje que sea.
 		if (getYear() >= 2026) {
-			return getAmount(Mod303Key.CM_009) == 1; 
+			return false;  
 		} else {
 			return getPreviousProratePercent() != 0 && getPreviousProratePercent() != 100;
 		}

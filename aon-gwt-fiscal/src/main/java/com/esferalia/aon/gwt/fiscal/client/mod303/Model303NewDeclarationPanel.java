@@ -533,6 +533,6 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		previousProratePercent.setValue(model.ensureDetail(model.getPreviousProratePercentKey()).getAmount(),false,false);
 		proratePercent.setValue(model.ensureDetail(model.getProratePercentKey()).getAmount(),false,true);
 		specialProrate.setValue(model.isSpecialProrate());
-//		specialProrate.setVisible(model.hasProrate());		
+		specialProrate.setVisible(model.hasProrate());		
 	}
 }
