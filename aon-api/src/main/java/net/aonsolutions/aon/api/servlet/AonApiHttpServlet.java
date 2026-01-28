@@ -153,8 +153,12 @@ public class AonApiHttpServlet extends HttpServlet{
 			domainLogin = api.getData().getString("userLogin");
 		}
 		User user = new User().setLogin("");
+		if(api.getDomain().getId() != null && api.getDomain().getId() != 0 && !AonStringUtils.isBlank(domainLogin)) {
+			user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), domainLogin);
+		}
+		
 		if(!api.isPredefinedToken() 
-//				&& AonStringUtils.isBlank(domainLogin) 
+				&& (user.isEmpty() || user.getId() == null || !user.getDomain().getId().equals(api.getDomain().getId()))
 				&& !AonStringUtils.isBlank(api.getToken()) 
 				&& api.getDomain().getId() != null 
 				&& api.getDomain().getId() != 0) {
@@ -165,8 +169,6 @@ public class AonApiHttpServlet extends HttpServlet{
 				user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(aonToken.getAuth())
 						.and(f.getDomainProperty().eq(api.getDomain().getParentId())));
 			}
-		} else if(api.getDomain().getId() != null && api.getDomain().getId() != 0){
-			user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), domainLogin);
 		}
 		
 		if(user.isEmpty()) {
