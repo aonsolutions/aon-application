@@ -119,16 +119,41 @@ public enum PaymentType implements IResourceable{
 	CRA_0029(true,true),
 	CRA_0030(true,false),
 	CRA_0031(true,false),
-	CRA_0032(true,false),
+	CRA_0032(true,false){
+		@Override
+		public void accept(PaymentTypeVisitor visitor) { 
+			visitor.visitSalaryInKind(this); 
+		}
+	},
 	CRA_0033(true,false),
 	CRA_0034(true,false),
 	CRA_0035(false,true), // 
-	CRA_0036(true,false),
+	CRA_0036(true,false){
+		@Override
+		public void accept(PaymentTypeVisitor visitor) { 
+			visitor.visitSalaryInKind(this); 
+		}
+	},
 	CRA_0037(true,false),
 	CRA_0038(true,false),
-	CRA_0039(true,false),
-	CRA_0040(true,false),
-	CRA_0041(true,false),
+	CRA_0039(true,false){
+		@Override
+		public void accept(PaymentTypeVisitor visitor) { 
+			visitor.visitSalaryInKind(this); 
+		}
+	},
+	CRA_0040(true,false){
+		@Override
+		public void accept(PaymentTypeVisitor visitor) { 
+			visitor.visitSalaryInKind(this); 
+		}
+	},
+	CRA_0041(true,false){
+		@Override
+		public void accept(PaymentTypeVisitor visitor) { 
+			visitor.visitSalaryInKind(this); 
+		}
+	},
 	CRA_0042(true,true),
 	CRA_0043(true,true),
 	CRA_0044(true,true),
@@ -149,7 +174,12 @@ public enum PaymentType implements IResourceable{
 	CRA_0058(true,false), // CRA_0002
 	CRA_0059(true,false), // CRA_0006
 	CRA_0060(true,false), // CRA_0006
-	CRA_0061(true,false), // CRA_0032
+	CRA_0061(true,false){
+		@Override
+		public void accept(PaymentTypeVisitor visitor) {
+			visitor.visitSalaryInKind(this);
+		}
+	}, // CRA_0032
 
 	CRA_0062(false,true)
 	;

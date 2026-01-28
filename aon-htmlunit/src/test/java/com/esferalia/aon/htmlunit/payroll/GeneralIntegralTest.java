@@ -74,6 +74,23 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 
 	@Test
+	public void TestEnEspecie() throws Exception {
+
+		if (!isDisplayed("primas_seguro,_enfermedad_comun"))
+			open("en_especie");
+
+		wait4Id("primas_seguro,_enfermedad_comun");
+
+		draft("PRIMAS SEGURO, ENFERMEDAD COMÚN");
+
+		calculate(Calendar.JANUARY, 2026);
+		double totalPayment = getValue("totalPaymentLabel");
+		assertText("remunerationLabel", totalPayment - 300.00 );
+		assertText("irpfBaseLabel", totalPayment - 250.00 );
+		
+	}
+
+	@Test
 	public void TestFlexiblePayments() throws Exception {
 
 		if (!isDisplayed("retribucion,_flexible"))

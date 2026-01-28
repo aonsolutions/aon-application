@@ -53,6 +53,7 @@ import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ContextFunctions {
@@ -136,6 +137,11 @@ public class ContextFunctions {
 		if (!context.isDef(name)) {
 			throw new InvalidVariables(msg, name);
 		}
+	}
+
+
+	public static Number ifNDef(String name, Number def) {
+		return ExpressionContext.getCurrentBindings().get(name, AonNumberUtils::todouble , def);
 	}
 
 	public static void checkDef(String[] names, ExpressionContext context  ) throws UndefinedVariablesException {
@@ -1222,6 +1228,20 @@ public class ContextFunctions {
 		}
 	}
 
+	private static void loadIfNDefFunction(ExpressionContext context, Date startDate, Date endDate)
+			throws ExpressionException {
+		try {
+			Method ifNDef = ContextFunctions.class.getMethod("ifNDef", String.class,
+					Number.class);
+
+			MethodStub checkDefStub = new MethodStub(ifNDef);
+			context.setVariable("IFNDEF", checkDefStub, startDate, endDate);
+
+		} catch (SecurityException e) {
+		} catch (NoSuchMethodException e) {
+		}
+	}
+
 	private static void loadIsReadFunction(ExpressionContext context, Date startDate, Date endDate)
 			throws ExpressionException {
 
@@ -1397,6 +1417,7 @@ public class ContextFunctions {
 		loadScopeFunction(context, startDate, endDate);
 		loadPPEDelaysFunction(context, startDate, endDate);
 		loadCheckDefFunction(context, startDate, endDate);
+		loadIfNDefFunction(context, startDate, endDate);
 	}
 	
 	public static void loadDaysFunctions(ExpressionContext context, Date startDate, Date endDate)
