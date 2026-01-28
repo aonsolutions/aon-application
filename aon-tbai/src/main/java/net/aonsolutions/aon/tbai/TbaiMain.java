@@ -211,12 +211,14 @@ public class TbaiMain {
 					info = lroe240.buildInfo(OperacionEnum.A_00, lroe240.getEjercicio(icc, invoice));
 					lroeResponse = lroe240.alta(company, icc, invoice, xml);
 				} else {
-					Person person = AonDocumentUtil.isAssetCommunity(company.getDocument()) || AonDocumentUtil.isCivilSociety(company.getDocument())
-				    		? new Person().copy(company) 
-				    		: AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
+					Person person = AonDocumentUtil.isAssetCommunity(company.getDocument()) 
+							|| AonDocumentUtil.isCivilSociety(company.getDocument())
+							|| AonDocumentUtil.isOwnerCommunity(company.getDocument())
+				    	? new Person().copy(company) 
+				    	: AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
 				    if(person.getId() == null) person = new Person().copy(company);
-					    EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
-                        company.getDomain().getId(), "", invoice.getActivity().getId());
+				    EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
+                    company.getDomain().getId(), "", invoice.getActivity().getId());
                     if(ea == null || ea.getId() == null) {
                         ea = AON.getEnterpriseActivities(company.getDomain().getName(),
                             company.getDomain().getId(), "").filter(f -> f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());
@@ -271,16 +273,21 @@ public class TbaiMain {
 			HandleTbaiResponse(response);
 		} else if (icc.isBizkaia()) { 
 			LROEResponse lroeResponse = null;
-			LROEInfo info = null;
-			if (AonDocumentUtil.isValidCIF(company.getDocument())) {
-				LROE240_1_1 lroe240 = new LROE240_1_1();
-				info = lroe240.buildInfo(OperacionEnum.AN_0, lroe240.getEjercicio(icc, invoice));
-				lroeResponse = lroe240.anulacion(company, icc, invoice, xml);
-			} else {
-				Person person = AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
+			LROEInfo info = null;	
+			if(isPersonaFisica(company.getDocument())) {
+				Person person = AonDocumentUtil.isAssetCommunity(company.getDocument()) 
+						|| AonDocumentUtil.isCivilSociety(company.getDocument())
+						|| AonDocumentUtil.isOwnerCommunity(company.getDocument())
+			    	? new Person().copy(company) 
+			    	: AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
+			    if(person.getId() == null) person = new Person().copy(company);
 				LROE140_1_1 lroe140 = new LROE140_1_1();
 				info = lroe140.buildInfo(OperacionEnum.AN_0, lroe140.getEjercicio(icc, invoice));
 				lroeResponse = lroe140.anulacion(icc, person, invoice, xml);
+			} else if (AonDocumentUtil.isValidCIF(company.getDocument())) {
+				LROE240_1_1 lroe240 = new LROE240_1_1();
+				info = lroe240.buildInfo(OperacionEnum.AN_0, lroe240.getEjercicio(icc, invoice));
+				lroeResponse = lroe240.anulacion(company, icc, invoice, xml);
 			}
 			LroeData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, lroeResponse, info);
 			HandleLroeResponse(lroeResponse);
