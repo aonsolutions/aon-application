@@ -140,6 +140,7 @@ public class Model1842025PartnerPanel extends SimpleLayoutPanel implements Focus
 	
 	private AonDoubleBox rendNetoPrevio = new AonDoubleBox();
 	private AonDoubleBox rendNetoMinorado = new AonDoubleBox();
+	private AonDoubleBox expenses = new AonDoubleBox();
 
 	public Model1842025PartnerPanel(Mod184Partner partner, IModel184PartnerCallback callback) {
 		ScrollPanel scroll = new ScrollPanel();
@@ -283,7 +284,8 @@ public class Model1842025PartnerPanel extends SimpleLayoutPanel implements Focus
 		tab2.setWidget(2, 2, nameContainer);
 
 		memberEndOfYear.setText(AON.MSG.memberEndOfYear());
-		memberEndOfYear.setStyleName(AON.CSS.aonFontMedium());
+//		memberEndOfYear.setStyleName(AON.CSS.aonFontMedium());
+		memberEndOfYear.setStyleName(AON.CSS.aonFontSmaller());
 		memberEndOfYear.setValue(partner.isMemberEndOfYear());
 		memberEndOfYear.addClickHandler(event -> {
 			partner.setMemberEndOfYear(memberEndOfYear.getValue());
@@ -329,10 +331,14 @@ public class Model1842025PartnerPanel extends SimpleLayoutPanel implements Focus
 		tab2.setWidget(5, 2, reduction);
 
 
-		InlineLabel addressLabel = new InlineLabel("Domicilio fiscal del miembro de la entidad");
-		addressLabel.setStyleName(AON.CSS.aonFontMedium());
- 		tab2.setWidget(6, 0, addressLabel);
+//		InlineLabel addressLabel = new InlineLabel("Domicilio fiscal del miembro de la entidad");
+//		addressLabel.setStyleName(AON.CSS.aonFontMedium());
+// 		tab2.setWidget(6, 0, addressLabel);
+// 		tab2.getFlexCellFormatter().setColSpan(6, 0, 2);
+ 		tab2.setWidget(6, 0, new Model184SmallerLabel("Domicilio fiscal del miembro de la entidad"));
  		tab2.getFlexCellFormatter().setColSpan(6, 0, 2);
+ 		tab2.setWidget(6, 1, new Model184SmallerLabel("Provisiones deducibles y gastos de dif\u00EDcil justificaci\u00F3n"));
+ 		
  		address.setMaxLength(40);
  		address.setVisibleLength(40);
  		address.setValue(partner.getAddress());
@@ -343,9 +349,16 @@ public class Model1842025PartnerPanel extends SimpleLayoutPanel implements Focus
  		tab2.setWidget(7, 0, address);
  		tab2.getFlexCellFormatter().setColSpan(7, 0, 2);
  		
+		expenses.setValue(partner.getExpenses());
+		expenses.addValueChangeHandler(event -> {
+			partner.setExpenses(expenses.getValue());
+			callback.onValueChanged(partner);
+		});
+		tab2.setWidget(7, 1, expenses);
+ 		
  		tab2.setWidget(8, 0, new Model184SmallerLabel(AON.MSG.nature()));
  		tab2.setWidget(8, 1, new Model184SmallerLabel(AON.MSG.buildingLocation()));
- 		tab2.setWidget(8, 1, new Model184SmallerLabel(AON.MSG.cadasdralReference()));
+ 		tab2.setWidget(8, 2, new Model184SmallerLabel(AON.MSG.cadasdralReference()));
 
 		nature.addItem("-","");
 		nature.addItem("1 - Inmueble urbano","1");

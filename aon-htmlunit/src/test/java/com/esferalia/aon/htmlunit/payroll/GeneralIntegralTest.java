@@ -85,6 +85,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		calculate(Calendar.JANUARY, 2026);
 		assertDisplay("eventsCheck", true);
+		assertElement("editor-porcentaje_flexible");
 		
 		calculate(Calendar.FEBRUARY, 2026);
 		assertDisplay("eventsCheck", true);
@@ -1157,7 +1158,6 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("description-box-2", "[1001]1 DÍAS DE IT POR EC DEL 1º AL 3º DÍA 15/10 ");
 		assertValue("description-box-3", "[1001]3 DÍAS DE IT POR EC DEL 1º AL 3º DÍA 20/10 - 22/10 ");
 		assertValue("description-box-4", "[1004]2 DÍAS DE IT POR EC DEL 4º AL 15º DÍA 23/10 - 24/10");
-		
 	
 	}
 
@@ -1215,6 +1215,11 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", cgcBase );
 		assertNotElement("editor-dias_menstruacion_21");
 		assertNotElement("editor-dias_menstruacion_1_20");
+
+		
+		draft("EXTRAS, MENSUALIDAD");
+		calculate(Calendar.JANUARY,2026);
+		assertDisplay("eventsCheck", false);
 	}
 
 	@Test
