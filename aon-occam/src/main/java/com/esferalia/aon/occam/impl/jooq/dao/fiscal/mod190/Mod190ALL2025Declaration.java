@@ -718,12 +718,20 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 	}
 	
 	private void fixRoundProblems(AONContext ctx, Mod190 mod190) {
-		Field<java.sql.Date> dateField =  mod190.mustUseChargeDate() ? SALARY.CHARGE_DATE : SALARY.ISSUE_DATE;
+		Field<java.sql.Date> dateField = mod190.mustUseChargeDate() ? SALARY.CHARGE_DATE : SALARY.ISSUE_DATE;
 		if (mod190.getDetails() == null || mod190.getDetails().isEmpty()) return;		
 		java.sql.Date firstDay = AonDateUtils.toSql(AonDateUtils.getYearFirstDay(mod190.getYear()));
 		java.sql.Date lastDay = AonDateUtils.toSql(AonDateUtils.getYearLastDay(mod190.getYear()));
 		LinkedHashMap<String,Mod190Detail> map = getUniqueMap( mod190 );	
 		for (Mod190Detail detail : map.values()) {
+			// Si ejercicio de deveng distinto de cero entonces buscar solo salary cuyo año de la fecha de emisión sea ese año (son nominas de atrasos de años anteriores)
+			Condition c = DSL.noCondition();
+			if (detail.getAccrualYear() != 0)
+				c = DSL.year(SALARY.ISSUE_DATE).eq(detail.getAccrualYear());
+			// En caso contrario no buscar los registros cuya fecha de emisión no esté en el año del modelo (solo si se creo el modelo 190 según la fecha de pago de las nóminas)
+			else if (mod190.mustUseChargeDate())
+				c = DSL.year(SALARY.ISSUE_DATE).eq(mod190.getYear());
+			
 			ctx.getDslContext().select(SALARY.IRPF_BASE,SALARY.TOTAL_IRPF)
 				.from(SALARY)
 				.join(CONTRACT).on(SALARY.CONTRACT.equal(CONTRACT.ID))
@@ -734,6 +742,7 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 //				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().value()))
 				.and(IRPFDAO.getEconomicAgreementCondition(mod190))
 				.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
+				.and(c)
 				.orderBy(SALARY.EMPLOYEE_DOCUMENT)
 				.fetch()
 				.stream()
@@ -755,7 +764,7 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 				LinkedList<Mod190Detail> selected = new LinkedList<>();
 				for (Mod190Detail det : mod190.getDetails() ) {
 					double tmpRet = AonMathUtils.round(det.getRetention() + det.getInKindDeposit() + det.getRetentionIL() + det.getInKindDepositIL());
-					if ( AonStringUtils.equals (detail.getDocument(),det.getDocument())	&& AonMathUtils.isNotZero(tmpRet) ) {
+					if ( AonStringUtils.equals(detail.getDocument(),det.getDocument()) && detail.getAccrualYear() == det.getAccrualYear() && AonMathUtils.isNotZero(tmpRet) ) {
 						selected.add(det);		
 					}
 				}
