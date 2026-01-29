@@ -499,6 +499,18 @@ public class PosInvoiceController extends SaleInvoiceController {
 		invoice.setComments(comments);
 		accept(event);
 		FormUtil.getController(getInvoiceFinanceControllerName()).onSearch(null);
+		
+		if(getInvoiceCommunicationConfiguration().hasCommunication()) {
+			if (getInvoiceCommunicationConfiguration().isVerifactu() 
+					|| getInvoiceCommunicationConfiguration().isNoVerifactu() 
+					|| getInvoiceCommunicationConfiguration().isSif()) {
+				onCommunicateInvoice(event);
+			} else if(getInvoiceCommunicationConfiguration().isTbai() 
+					|| getInvoiceCommunicationConfiguration().isLroe() 
+					|| getInvoiceCommunicationConfiguration().isSii()) {
+				issueInvoice();
+			}
+		}
 	}
 
 	public boolean isTicketFinished() {
