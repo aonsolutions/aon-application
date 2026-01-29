@@ -211,7 +211,7 @@ public class LROE140_1_1 extends LROE140 {
 			e.printStackTrace();
 		}
 		try(CloseableAONContext ctx = AONContext.getAONContext(person.getDomain(), "")){
-			TbaiData.getInstance(icc)
+			TbaiData.getInstance(ctx, icc)
 				.saveResponsePending(ctx, person.getDomain(), invoice, tresp, bc, new DataRequest(), qrUrl);			
 		}
 

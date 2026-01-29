@@ -75,11 +75,16 @@ import ticketbai.emision.TicketBai;
 import ticketbai.zuzendu_alta.SubsanacionModificacionTicketBAI;
 
 public class TbaiMain {
-	
-	public void createEmisionLROE(Company company, Invoice invoice, InvoiceCommunicationConfiguration icc) throws Exception, TbaiException, JAXBException, ParserConfigurationException, SAXException, IOException {
+	public void createEmisionLROE(Company company, Invoice invoice, InvoiceCommunicationConfiguration icc) throws Exception {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(company.getDomain(), "")) {
+			createEmisionLROE(ctx, company, invoice, icc);
+		}
+	}
+
+	public void createEmisionLROE(AONContext ctx, Company company, Invoice invoice, InvoiceCommunicationConfiguration icc) throws Exception, TbaiException, JAXBException, ParserConfigurationException, SAXException, IOException {
 		LROEInformation lroe = LroeData.get(company.getDomain(), new User().setLogin(""), invoice.getId(), invoice.getType());
 		if (!lroe.getChapter1().isAccepted()) {
-			TbaiData tbaiData = TbaiData.getInstance(icc); 
+			TbaiData tbaiData = TbaiData.getInstance(ctx, icc); 
 			byte[] xml = tbaiData.getTbaiRequestFile(company.getDomain(), "", invoice.getId());
 			
 			if(xml == null || lroe.getChapter1().isTbaiError()) {
@@ -127,7 +132,7 @@ public class TbaiMain {
 	}
 
 	public void zuzenduTBAI(AONContext ctx, Company company, Invoice invoice, InvoiceCommunicationConfiguration icc, boolean subsanar) throws Exception {
-		TbaiData tbaiData = TbaiData.getInstance(icc); 
+		TbaiData tbaiData = TbaiData.getInstance(ctx, icc); 
 		TicketBai ticketBai = tbaiData.getTicketBai(ctx, company.getDomain(), invoice.getId(), icc, subsanar);
 		TbaiBlockchain blockchain = tbaiData.getInvoiceBlockchain(company.getDomain(), new User().setLogin(""), invoice.getId(), subsanar);
 		final SubsanacionModificacionTicketBAI tbai = Invoice2tbai.buildZuzendu(company, invoice, icc, ticketBai, blockchain, subsanar);
@@ -160,7 +165,7 @@ public class TbaiMain {
 	}
 	
 	public void createEmisionTBAI(AONContext ctx, Company company, Invoice invoice, InvoiceCommunicationConfiguration icc) throws Exception {
-		TbaiData tbaiData = TbaiData.getInstance(icc); 
+		TbaiData tbaiData = TbaiData.getInstance(ctx, icc); 
 		boolean send = true;
 		if(!icc.isBizkaia()) {
 			TBAIInformation info = tbaiData.get(company.getDomain(),  new User().setLogin(""), invoice.getId());
@@ -252,7 +257,7 @@ public class TbaiMain {
 	}
 
 	public void createAnulacionTBAI(AONContext ctx, Company company, Invoice invoice, InvoiceCommunicationConfiguration icc) throws Exception {
-		TbaiData tbaiData = TbaiData.getInstance(icc); 
+		TbaiData tbaiData = TbaiData.getInstance(ctx, icc); 
 		final AnulaTicketBai tbai = Invoice2tbai.buildBaja(company, invoice, icc);
 
 		final JAXBContext jaxbContext = JAXBContext.newInstance(AnulaTicketBai.class);
