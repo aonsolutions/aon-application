@@ -78,6 +78,7 @@ public class SIF {
 			, dataResponse	
 			, InvoiceCommunicationOperation.REGISTER);								
 		vc.invoiceStream()
+			.filter(i -> !i.isProforma() )
 			.forEach(i -> acceptInAON( ctx, vc, invoiceBatch, i) )
 		;
 		return vc.setDataResponse(dataResponse);
