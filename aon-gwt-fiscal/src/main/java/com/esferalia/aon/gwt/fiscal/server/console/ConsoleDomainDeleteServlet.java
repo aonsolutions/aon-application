@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.fiscal.server.JsonParser;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.AONContext.UnpooledCloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -40,7 +41,7 @@ public class ConsoleDomainDeleteServlet extends ConsoleAbstractServlet {
 		DomainParams domainParams = null;
 		try {
 			domainParams = JsonParser.parseDomainParams(domainParamsParam);
-			try (CloseableAONContext ctx = AONContext.getAONContext(domainParams.getDbSchema())) {
+			try (UnpooledCloseableAONContext ctx = AONContext.getUnpooledAONContext(domainParams.getDbSchema())) {
 				ConsoleConnectionParams conParams = new ConsoleConnectionParams()
 					.setAONContext(ctx)
 					.setSchemaName(domainParams.getDbSchema())
