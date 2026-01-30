@@ -27,6 +27,7 @@ import net.aonsolutions.db.up2date.payroll.FlexibleDTOInsert;
 import net.aonsolutions.db.up2date.payroll.FlexibleIrpfFix;
 import net.aonsolutions.db.up2date.payroll.FlexibleSumFix;
 import net.aonsolutions.db.up2date.payroll.InKindConceptsIrpfFix;
+import net.aonsolutions.db.up2date.tgss.MEISolidarity2026RDL162025Fix;
 
 public class Up2Date {
 
@@ -583,8 +584,9 @@ public class Up2Date {
 			// FlexibleDTOInsert.FLEXIBLEDTOINSERT,
 			// FlexibleChecksInsert.FLEXIBLECHECKSINSERT,
 			// InKindConceptsIrpfFix.INKINDCONCEPTSIRPFFIX,
-			FlexibleIrpfFix.FLEXIBLEIRPFFIX,
-			FlexibleChecksDelete.FLEXIBLECHECKSDELETE,
+			// FlexibleIrpfFix.FLEXIBLEIRPFFIX,
+			// FlexibleChecksDelete.FLEXIBLECHECKSDELETE,
+			MEISolidarity2026RDL162025Fix.MEISOLIDARITYRDL162025FIX,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
