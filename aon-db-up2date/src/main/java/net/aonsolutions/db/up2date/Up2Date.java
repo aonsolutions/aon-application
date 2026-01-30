@@ -21,6 +21,12 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.FlexibleCRAFix;
+import net.aonsolutions.db.up2date.payroll.FlexibleChecksDelete;
+import net.aonsolutions.db.up2date.payroll.FlexibleChecksInsert;
+import net.aonsolutions.db.up2date.payroll.FlexibleDTOInsert;
+import net.aonsolutions.db.up2date.payroll.FlexibleIrpfFix;
+import net.aonsolutions.db.up2date.payroll.FlexibleSumFix;
+import net.aonsolutions.db.up2date.payroll.InKindConceptsIrpfFix;
 
 public class Up2Date {
 
@@ -572,7 +578,13 @@ public class Up2Date {
 			// FlexibleConceptsFix.FLEXIBLECONCEPTSFIX,
 			// FlexibleInsurance.FLEXIBLEINSURANCE,
 			// FlexibleInsuranceFix.FLEXIBLEINSURANCEFIX,
-			FlexibleCRAFix.FLEXIBLECRAFIX,
+			// FlexibleCRAFix.FLEXIBLECRAFIX,
+			// FlexibleSumFix.FLEXIBLESUMFIX,
+			// FlexibleDTOInsert.FLEXIBLEDTOINSERT,
+			// FlexibleChecksInsert.FLEXIBLECHECKSINSERT,
+			// InKindConceptsIrpfFix.INKINDCONCEPTSIRPFFIX,
+			FlexibleIrpfFix.FLEXIBLEIRPFFIX,
+			FlexibleChecksDelete.FLEXIBLECHECKSDELETE,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
