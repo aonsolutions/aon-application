@@ -25,6 +25,7 @@ public interface IRequestParamsNames {
 	String AEAT_PARAMS = "aeatParams";  
 	String ALIAS = "document";
 	String AMOUNT = "amount";
+	String ANNULLED = "annulled";
 	String BALANCE_TYPE = "balanceType";
 	String BALANCING_ACCOUNT = "balancingAccount";
 	String BATCHED = "batched";
@@ -40,6 +41,8 @@ public interface IRequestParamsNames {
 	String CLOSING_ENTRIES_EXCLUDED = "closingEntriesExcluded";
 	String COMMENTS = "comments";
 	String COMMUNICABLE = "communicable";
+	String COMMUNICATION_STATUS = "communicationStatus";
+	String COMMUNICATION_TYPE = "communicationType";
 	String CONCEPT = "concept";
 	String CONFIDENTIAL = "confidential";
 	String CONSOLE_UTILITY = "consoleUtility";
@@ -51,6 +54,7 @@ public interface IRequestParamsNames {
 	String DEBIT = "debit";
 	String DELIVERY_STATUS_INVOICED = "deliveryStatusInvoiced";
 	String DELIVERY_STATUS_PENDING = "deliveryStatusPending";
+	String DESCENDING = "descending";
 	String DESCRIPTION = "description";
 	String DOCUMENT_COUNTRY = "documentCountry";
 	String DOCUMENT = "document";
@@ -74,7 +78,9 @@ public interface IRequestParamsNames {
 	String FROM_DOMAIN_NAME = "fromDomainName";
 	String FROM_DUE_DATE = "fromDueDate";
 	String FROM_EXPIRATION_DATE = "fromExpirationDate";
+	String FROM_ID = "fromId";
 	String FROM_LAST_ACCESS_DATE = "fromLastAccessDate";
+	String FROM_NUMBER = "fromNumber";
 	String FROM_USER = "fromUser";
 	String GROUPED_BY = "groupedBy";
 	String HAS_CONFIDENTIALITY_ROLE = "hasConfidentialityRole";
@@ -82,12 +88,15 @@ public interface IRequestParamsNames {
 	String HIDE_DATETIME_ON_FOOTER = "hideDateTimeOnFooter";
 	String HIDE_FILTER = "hideFilter";
 	String ID = "id";
+	String IDS = "ids";
 	String INACTIVE = "inactive";
 	String INVESTMENT = "investment";
 	String INVOICE_ACTIVITY = "invoiceActivity";
 	String INVOICE_COMMENTS = "invoiceComments"; 
 	String INVOICE_DATE = "invoiceDate";
+	String INVOICE_PARAMS = "invoiceParams";
 	String INVOICE_SERIES = "invoiceSeries";
+	String INVOICE_SOURCE = "invoiceSource";
 	String INVOICE_TYPE_EXPENSES = "invoiceTypeExpenses";
 	String INVOICE_TYPE_PURCHASES = "invoiceTypePurchases";
 	String INVOICE_TYPE_SALES = "invoiceTypeSales";
@@ -144,8 +153,11 @@ public interface IRequestParamsNames {
 	String PREVIOUS_PERIODS = "previousPeriods";
 	String PRODUCT_ID = "productId";
 	String PRODUCT_CATEGORY = "productCategory";
+	String PROFORMA = "proforma";
 	String QUERY = "query";
+	String RECORDED = "recorded";
 	String RECTIFICATION = "rectification";
+	String RECTIFICATION_TYPE = "rectificationType";
 	String REFERENCE_CODE = "referenceCode";
 	String REMOTE_ACCESS_ENABLED = "remoteAccessEnabled";
 	String REGISTRY_ID = "registryId";
@@ -158,6 +170,7 @@ public interface IRequestParamsNames {
 	String SECURITY_LEVEL = "securityLevel";
 	String SELECT = "select";
 	String SELECTED = "selected";
+	String SERIES = "series";
 	String SELLER_IDS = "sellerIds";
 	String SERVICE = "service";
 	String SETTLED = "settled";
@@ -173,17 +186,20 @@ public interface IRequestParamsNames {
 	String TO_DOMAIN_NAME = "toDomainName";
 	String TO_DUE_DATE = "toDueDate";
 	String TO_EXPIRATION_DATE = "toExpirationDate";
+	String TO_ID = "fromId";
 	String TO_LAST_ACCESS_DATE = "toLastAccessDate";
+	String TO_NUMBER = "toNumber";
 	String TO_USER = "toUser";
 	String TYPE = "type";
+	String TRANSACTION_TYPE = "transactionType";
 	String UNIFIED_BOOK = "unifiedBook";  // Libro Registro AEAT Unificado (IVA e IRPF) (OLD)
 	String USER = "user";
 	String VALIDATE = "validate";
 	String VAT_PARAMS = "vatParams";
 	String VAT_SUMMARY_TYPE = "vatSummaryType";
+	String WITHHOLDING = "withholding";
 	String WITHHOLDING_TYPE = "withholdingType";
 	String WITHHOLDING_TYPE_GROUP = "withholdingTypeGroup";
 	String WORKPLACE_IDS = "workplaceIds";
 	String YEAR = "year";
-
 }

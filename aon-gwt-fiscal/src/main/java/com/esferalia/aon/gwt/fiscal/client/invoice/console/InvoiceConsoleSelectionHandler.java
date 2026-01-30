@@ -55,7 +55,7 @@ class InvoiceConsoleSelectionHandler extends FlowPanel implements HasValueChange
 	}
 
 	void unselect(Invoice invoice) {
-		LOGGER.info("Marking as unselected invoice: " + invoice );
+		LOGGER.info("Unmrking as unselected invoice: " + invoice );
 		if (invoice != null) {
 			selectedInvoices.remove(invoice.getId());
 			refresh();

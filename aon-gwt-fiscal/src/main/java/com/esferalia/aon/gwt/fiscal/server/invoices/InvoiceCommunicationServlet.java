@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.server.invoices;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,11 +15,15 @@ import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageType;
 import com.esferalia.aon.occam.api.model.console.ConsoleMessage;
 import com.esferalia.aon.occam.api.model.console.ConsoleMessageType;
-import com.esferalia.aon.occam.api.model.finance.FeeBillingParams;
+import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
+import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams.OrderBy;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProcessOutput;
-import com.esferalia.aon.occam.api.model.type.BillingPeriod;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.api.model.type.Month;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleMessageUtils;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleMessageUtils.PrintStreamConsoleLogger;
@@ -33,23 +36,25 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
 
-@WebServlet(name = "Fee Invoicing Servlet", urlPatterns = { "/aon_gwt_fiscal/roms/feeInvoicing" })
-public class FeeInvoicingServlet extends HttpServlet {
+@WebServlet(name = "Invoice Communication Servlet", urlPatterns = { "/aon_gwt_fiscal/roms/invoiceCommunication" })
+public class InvoiceCommunicationServlet extends HttpServlet {
 
-	private static final String MAIN_PROCESS = "FEE_SERVLET";
 	private static final long serialVersionUID = -5703828624659508582L;
-	private static final Logger LOGGER = Logger.getLogger(FeeInvoicingServlet.class.getName());
-	 
+	private static final Logger LOGGER = Logger.getLogger(InvoiceCommunicationServlet.class.getName());
+	
+	private static final String MAIN_PROCESS = "COMMUNICATION_SERVLET";
+	private static final String DATE_PATTERN = "dd/MM/yyyy";
+	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		LOGGER.log(Level.INFO, "FeeInvoicingServlet start!");
+		LOGGER.log(Level.INFO, "InvoiceCommunicationServlet start!");
 		try {
 			resp.setContentType(MimeType.JSON.getName());
 			PrintStream printStream = new PrintStream(resp.getOutputStream());
 			PrintStreamConsoleLogger logger = new PrintStreamConsoleLogger( printStream );
-			logger.title(MAIN_PROCESS, "Facturación de cuotas");
+			logger.title(MAIN_PROCESS, "Comunicación de facturas");
 			try {
-				String feeBillingParams = req.getParameter(IRequestParamsNames.FEE_BILLING_PARAMS);
+				String invoiceConsoleParams = req.getParameter(IRequestParamsNames.INVOICE_PARAMS);
 				String domainName = req.getParameter(IRequestParamsNames.DOMAIN_NAME);;
 				int domainId = Integer.parseInt(req.getParameter(IRequestParamsNames.DOMAIN_ID));
 				String user = req.getParameter(IRequestParamsNames.USER);
@@ -57,8 +62,9 @@ public class FeeInvoicingServlet extends HttpServlet {
 						.setDomainName(domainName)
 						.setDomain(domainId)
 						.setUser(user);
-				FeeBillingParams params = parseParams(feeBillingParams);
-				InvoiceProcessOutput output = InvoiceCommunicator.feeInvoicing(occam, params, logger);
+				InvoiceConsoleParams params = parseParams(invoiceConsoleParams);
+				InvoiceProcessOutput output = InvoiceCommunicator.issue(occam, params, logger);
+				
 				ConsoleMessage msg = new ConsoleMessage()
 					.setProcessId("END")
 					.setType(ConsoleMessageType.CONSOLE_MESSAGE)
@@ -66,7 +72,7 @@ public class FeeInvoicingServlet extends HttpServlet {
 					.setConsoleDomainMessage(
 						new ConsoleDomainMessage()
 						.setType(ConsoleDomainMessageType.INVOICE_PROCESS_OUTPUT)	
-						.setDomainId( params.getDomainId()  )
+						.setDomainId( params.getDomain()  )
 						.setMessage( getOutputJSON(output) )
 					);
 				ConsoleMessageUtils.print( printStream, msg );
@@ -117,56 +123,47 @@ public class FeeInvoicingServlet extends HttpServlet {
 	    }
 	}
 
-	private static FeeBillingParams parseParams(String feeBillingParams) throws InvalidArgumentException {
-		FeeBillingParams params = new FeeBillingParams();
-		JSONObject jsonParams =  new JSONObject(feeBillingParams);
-		
-		// ******************* DOMAIN ******************* 
+	private static InvoiceConsoleParams parseParams(String invoiceConsoleParams) throws InvalidArgumentException {
+		JSONObject jsonParams =  new JSONObject(invoiceConsoleParams);
 		Integer dom = JsonUtils.getInteger(jsonParams, IRequestParamsNames.DOMAIN_ID);
 		if (dom == null) throw new InvalidArgumentException("El identificador de dominio es un dato requerido");
-		params.setDomainId(dom);
 		
-		// ******************* notDryRun ******************* 
-		Boolean dryRun = JsonUtils.getBooleanNumber(jsonParams, IRequestParamsNames.DRY_RUN);
-		if (dryRun != null) {
-			params.setDryRun(dryRun.booleanValue());
-		}
+		return new InvoiceConsoleParams()
+			.setDomain(dom)
+			.setId( JsonUtils.getInteger(jsonParams, IRequestParamsNames.ID) )
+			.setIds( JsonUtils.getIntegerArray(jsonParams, IRequestParamsNames.IDS) )
+			.setFromId( JsonUtils.getInteger(jsonParams, IRequestParamsNames.FROM_ID) )
+			.setToId( JsonUtils.getInteger(jsonParams, IRequestParamsNames.TO_ID) )
+			.setFromDate( JsonUtils.getDateFormat(jsonParams, IRequestParamsNames.FROM_DATE, DATE_PATTERN ))
+			.setToDate( JsonUtils.getDateFormat(jsonParams, IRequestParamsNames.TO_DATE, DATE_PATTERN ))
+			.setActivity( JsonUtils.getInteger(jsonParams, IRequestParamsNames.ACTIVITY) )
+			.setSeries( JsonUtils.getString(jsonParams, IRequestParamsNames.SERIES) )
+			.setFromNumber( JsonUtils.getInteger(jsonParams, IRequestParamsNames.FROM_NUMBER) )
+			.setToNumber( JsonUtils.getInteger(jsonParams, IRequestParamsNames.TO_NUMBER) )
+			.setReferenceCode(JsonUtils.getString(jsonParams, IRequestParamsNames.REFERENCE_CODE) )
+			.setRegistry( JsonUtils.getInteger(jsonParams, IRequestParamsNames.REGISTRY) )
+			.setOutput( JsonUtils.getBooleanNumber(jsonParams, IRequestParamsNames.OUTPUT) )
+			.setAnnulled(JsonUtils.getBooleanNumber(jsonParams, IRequestParamsNames.ANNULLED) )
+			.setTransactionType(JsonUtils.getEnumFromOrdinal(jsonParams, IRequestParamsNames.TRANSACTION_TYPE, InvoiceTransactionType.class ) )
+			.setRectificationType(JsonUtils.getEnumFromOrdinal(jsonParams, IRequestParamsNames.RECTIFICATION_TYPE, RectificationType.class ) )
+			.setSurcharge(JsonUtils.getBooleanNumber(jsonParams, IRequestParamsNames.SURCHARGE) )
+			.setFarmerRegime( JsonUtils.getBooleanNumber(jsonParams, IRequestParamsNames.FARMER_REGIME) )
+			.setAccrualRegime( JsonUtils.getBooleanNumber(jsonParams, IRequestParamsNames.ACCRUAL_REGIME) )
+			.setInvestment( JsonUtils.getBooleanNumber(jsonParams, IRequestParamsNames.INVESTMENT) )
+			.setWithholding( JsonUtils.getBooleanNumber(jsonParams, IRequestParamsNames.WITHHOLDING) )
+			.setService( JsonUtils.getBooleanNumber(jsonParams, IRequestParamsNames.SERVICE) )
+			.setRecorded( JsonUtils.getBooleanNumber(jsonParams, IRequestParamsNames.RECORDED) )
+			.setProforma( JsonUtils.getBooleanNumber(jsonParams, IRequestParamsNames.PROFORMA) )
+			.setSource( JsonUtils.getEnumFromOrdinal(jsonParams, IRequestParamsNames.INVOICE_SOURCE, InvoiceSource.class ) )
+			.setSecurityLevel( JsonUtils.getEnumFromOrdinal(jsonParams, IRequestParamsNames.SECURITY_LEVEL, SecurityLevel.class ) )
+			.setCommunicationType( JsonUtils.getEnumFromOrdinal(jsonParams, IRequestParamsNames.COMMUNICATION_TYPE, InvoiceCommunicationType.class ) )
+			.setCommunicationStatus( JsonUtils.getEnumFromOrdinal(jsonParams, IRequestParamsNames.COMMUNICATION_STATUS, InvoiceCommunicationStatus.class ) )
+			.setOrderBy( JsonUtils.getEnumFromOrdinal(jsonParams, IRequestParamsNames.ORDER_BY, OrderBy.class ) )
+			.setDescending( JsonUtils.getBooleanNumber(jsonParams, IRequestParamsNames.DESCENDING) )
+			.setOffset( JsonUtils.getInteger(jsonParams, IRequestParamsNames.OFFSET) )
+			.setLimit( JsonUtils.getInteger(jsonParams, IRequestParamsNames.LIMIT) )
+			.setCertId( JsonUtils.getInteger(jsonParams, IRequestParamsNames.CERTIFICATE_ID) )
+		;
 		
-		// ******************* saveAsProforma *******************
-		Boolean proforma = JsonUtils.getBooleanNumber(jsonParams, IRequestParamsNames.SAVE_AS_PROFORMA);
-		if (proforma != null) {
-			params.setSaveAsProforma(proforma.booleanValue());
-		}
-		
-		// ******************* communicable *******************
-		Boolean communicable = JsonUtils.getBooleanNumber(jsonParams, IRequestParamsNames.COMMUNICABLE);
-		if (communicable != null) {
-			params.setCommunicable(communicable.booleanValue());
-		}
-		
-		params.setCertId( JsonUtils.getInteger(jsonParams, IRequestParamsNames.CERTIFICATE_ID) );
-		params.setInvoicingGroup( JsonUtils.getInteger(jsonParams, IRequestParamsNames.INVOICING_GROUP) );
-		params.setCustomer( JsonUtils.getInteger(jsonParams, IRequestParamsNames.CUSTOMER) );
-		params.setItem( JsonUtils.getInteger(jsonParams, IRequestParamsNames.ITEM) );
-		params.setProductCategory( JsonUtils.getInteger(jsonParams, IRequestParamsNames.PRODUCT_CATEGORY) );
-		Month.safeValueOf(JsonUtils.getInteger(jsonParams, IRequestParamsNames.MONTH))
-			.ifPresent( month -> params.setMonth(month) );
-		params.setYear( JsonUtils.getInteger(jsonParams, IRequestParamsNames.YEAR) ) ;
-		Optional.ofNullable( SecurityLevel.safeValueOf( JsonUtils.getInteger(jsonParams, IRequestParamsNames.SECURITY_LEVEL) ))
-			.ifPresent( level -> params.setSecurityLevel(level) );
-		BillingPeriod.safeValueOf( JsonUtils.getInteger(jsonParams, IRequestParamsNames.BILLING_PERIOD) )
-			.ifPresent( period -> params.setPeriod(period) );
-		
-//		private Integer workplace;
-//		private Integer[] scopes;
-//		private Integer[] segments;
-
-		params.setInvoiceActivity( JsonUtils.getInteger(jsonParams, IRequestParamsNames.INVOICE_ACTIVITY) );
-		params.setInvoiceSeries( JsonUtils.getString(jsonParams, IRequestParamsNames.INVOICE_SERIES ) );
-		params.setInvoiceDate( JsonUtils.getDate(jsonParams, IRequestParamsNames.INVOICE_DATE) );
-		params.setInvoiceComments( JsonUtils.getString(jsonParams, IRequestParamsNames.INVOICE_COMMENTS ) );
-
-		
-		return params;
 	}
 }

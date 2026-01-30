@@ -85,7 +85,7 @@ class InvoiceCommunicationIcon extends InlineLabel {
 						addStyleName(AON.CSS.aonIconAeatYellow());
 					} else {
 						status.accept(new InvoiceCommunicationStatusVisitor() {
-							@Override public void visitPending() {addStyleName( AON.CSS.aonIconAeatOrange());}
+							@Override public void visitPending() {addStyleName( AON.CSS.aonIconAeatLightGreen());}
 							@Override public void visitAccepted() {addStyleName( AON.CSS.aonIconAeatGreen());}
 							@Override public void visitAcceptedWithErrors() {addStyleName( AON.CSS.aonIconAeatGreen());}
 							@Override public void visitWrong() {addStyleName( AON.CSS.aonIconAeatRed());}

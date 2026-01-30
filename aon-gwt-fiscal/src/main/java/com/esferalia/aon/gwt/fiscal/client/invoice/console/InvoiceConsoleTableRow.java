@@ -14,7 +14,7 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceUncheckedEvent;
 import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceUncheckedHandler;
 import com.esferalia.aon.gwt.fiscal.client.invoice.HasInvoiceCheckedHandlers;
 import com.esferalia.aon.gwt.fiscal.client.invoice.HasInvoiceUncheckedHandlers;
-import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceCommunicationIconsPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceCommunicationPanel;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -30,6 +30,11 @@ class InvoiceConsoleTableRow extends AonDisplayGridRow implements HasInvoiceChec
 
 	InvoiceConsoleTableRow(InvoiceModuleOptions opts, InvoiceConsole invConsole) {
 		Invoice inv = invConsole.getInvoice();
+		paint(opts, inv);
+	}
+	
+	private void paint(InvoiceModuleOptions opts, Invoice inv) {
+		this.clear();
 		String issueDate = ensure(inv.getIssueDate(), () -> AON.DATE_FORMAT.format(inv.getIssueDate()), AonStringUtils.EMPTY);
 		Label issueDateLabel = new Label(issueDate);
 //		String taxDate = ensure(inv.getTaxDate(), () -> AON.DATE_FORMAT.format(inv.getTaxDate()), AonStringUtils.EMPTY);
@@ -41,7 +46,7 @@ class InvoiceConsoleTableRow extends AonDisplayGridRow implements HasInvoiceChec
 		Label creationDateLabel = new Label(creationDate);
 		
 		AonTableButton debugInvoice = new AonTableButton("DEBUG",AON.CSS.aonIconDebug());
-		debugInvoice.addClickHandler( event -> debugInvoice(opts, invConsole));
+		debugInvoice.addClickHandler( event -> debugInvoice(opts, inv));
 		
 		Label invoiceRecorded = new Label();
 		invoiceRecorded.setTitle( AON.MSG.recorded() );
@@ -53,12 +58,7 @@ class InvoiceConsoleTableRow extends AonDisplayGridRow implements HasInvoiceChec
 				, new Label() 
 				, new AonInvoiceCheckButton( inv ) )
 			.addCell( debugInvoice )
-//			.addCellIfElse( inv.isAnnulled() 
-//				, new Label() 
-//				, new InvoiceMessagesLabel( inv )  )
-//			.addCell(new Label( getSourceDescription(invConsole.getSource())))
 			.addCell(new Label(ensure(inv.getType(),inv.getType()::getAbbrDescription)))
-//			.addCell(new Label(ensure(inv.getTransaction(),inv.getTransaction()::getTediName)))
 			.addCell(new Label( AonStringUtils.defaultIfBlank( documentNumber)))
 			.addCell(new Label(ensure(inv.getRegistryDocument(), inv::getRegistryDocument, AonStringUtils.EMPTY)))
 			.addCell(new Label(ensure(inv.getRegistryName(), () -> AonStringUtils.abbreviate(inv.getRegistryName(),25), AonStringUtils.EMPTY)))
@@ -66,7 +66,6 @@ class InvoiceConsoleTableRow extends AonDisplayGridRow implements HasInvoiceChec
 					,new Label(AonStringUtils.EMPTY)
 					,new Label(ensure(inv.getReferenceCode(), inv::getReferenceCode, AonStringUtils.EMPTY)))
 			.addCell(issueDateLabel)
-//			.addCell(taxDateLabel)
 			.addCell(creationDateLabel)
 			.addCell(new Label( AON.FMT.format(inv.getTotal())), AON.CSS.aonTextRight() );
 		
@@ -77,8 +76,9 @@ class InvoiceConsoleTableRow extends AonDisplayGridRow implements HasInvoiceChec
 				, invoiceRecorded
 				, new Label() );
 		}
-		
-		this.addCell(new InvoiceCommunicationIconsPanel( opts, inv ), AON.CSS.aonTextRight() );
+		InvoiceCommunicationPanel commPanel = new InvoiceCommunicationPanel( opts, inv );
+		commPanel.addValueChangeHandler( event -> paint(opts, event.getValue()));
+		this.addCell(commPanel, AON.CSS.aonTextRight() );
 		
 		if (inv.isAnnulled()) {
 			this.getElement().getStyle().setBackgroundColor("mistyrose");
@@ -86,14 +86,6 @@ class InvoiceConsoleTableRow extends AonDisplayGridRow implements HasInvoiceChec
 			
 	}
 	
-//	private String getSourceDescription(InvoiceSource source) {
-//		if (source == null) return null;
-//		else if (source == InvoiceSource.TEDI) return "Portal";
-//		else if (source == InvoiceSource.ACCOUNT) return "Conta.";
-//		else if (source == InvoiceSource.FEE) return "Cuotas";
-//		return "Gesti\u00F3n";
-//	}
-
 	private String ensure(Object nullable, Supplier<String>  supplier) {
 		return ensure(nullable, supplier, "---");
 	}
@@ -107,16 +99,12 @@ class InvoiceConsoleTableRow extends AonDisplayGridRow implements HasInvoiceChec
 		headerRow
 			.addCell(new Label(""),AON.CSS.aonWidth20())
 			.addCell(new Label("Ver"),AON.CSS.aonWidth20())
-//			.addCell(new Label("Msg"),AON.CSS.aonWidth20())
-//			.addCell(new Label("Orig."),AON.CSS.aonWidth40())
 			.addCell(new Label("Tipo"),AON.CSS.aonWidth40())
-//			.addCell(new Label("Tran."),AON.CSS.aonWidth40())
 			.addCell(new Label("N\u00BA.Doc"),AON.CSS.aonWidth100(),AON.CSS.aonNowrap())
 			.addCell(new Label("Doc.Tit."),AON.CSS.aonWidthAuto())
 			.addCell(new Label("Nombre/raz\u00F3n social"),AON.CSS.aonWidth300(),AON.CSS.aonNowrap())
 			.addCell(new Label("N\u00BA Referencia"),AON.CSS.aonWidth100(),AON.CSS.aonNowrap())
 			.addCell(new Label("Fec. Fac."),AON.CSS.aonWidth80(),AON.CSS.aonNowrap())
-//			.addCell(new Label("Fec. Imp."),AON.CSS.aonWidth80(),AON.CSS.aonNowrap())
 			.addCell(new Label("Fec. Crea."),AON.CSS.aonWidth80(),AON.CSS.aonNowrap())
 			.addCell(new Label("Total"),AON.CSS.aonWidth80(),AON.CSS.aonNowrap())
 			.addCell(new Label("Cont"),AON.CSS.aonWidth40())
@@ -125,7 +113,7 @@ class InvoiceConsoleTableRow extends AonDisplayGridRow implements HasInvoiceChec
 	}
 	
 
-	private void debugInvoice(InvoiceModuleOptions opts, InvoiceConsole invConsole) {
+	private void debugInvoice(InvoiceModuleOptions opts, Invoice inv) {
 		AonCustomPopup dialog = new AonCustomPopup();
 		dialog.setWidth((Window.getClientWidth() - 100) + "px");
 		dialog.setHeight((Window.getClientHeight() - 100) + "px");
@@ -133,10 +121,10 @@ class InvoiceConsoleTableRow extends AonDisplayGridRow implements HasInvoiceChec
 		dialog.setGlassEnabled(true);
 		dialog.setModal(true);
 		dialog.setCaption(AON.MSG.invoice());
-		if (invConsole.isAnnulled()) {
-			dialog.add(new InvoiceConsoleTextPanel(invConsole.getInvoice()));
+		if (inv.isAnnulled()) {
+			dialog.add(new InvoiceConsoleTextPanel(inv));
 		} else {
-			dialog.add(new InvoiceConsoleTextPanel(opts.getOccam(), opts.getDomain(), invConsole.getInvoice().getId()));
+			dialog.add(new InvoiceConsoleTextPanel(opts.getOccam(), opts.getDomain(), inv.getId()));
 		}
 		dialog.center();
 		dialog.show();
