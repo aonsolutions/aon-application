@@ -14,11 +14,14 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.Random;
+import java.util.HashSet;
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.esferalia.aon.jooq.tables.CustomerFee;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -33,7 +36,6 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.fee.Fee;
-import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -44,10 +46,8 @@ import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
-import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
@@ -368,6 +368,7 @@ class TestDomainProvider {
 		TestDomainDefaults.insertTaxes( context, domain );		
 		insertProducts( context, domain );
 		insertCustomers( context, domain );
+		loadCustomers( context, domain );
 		insertCustomerFees( context, domain );
 		env.initializeDomain(context);
 	}
@@ -580,9 +581,18 @@ class TestDomainProvider {
 			.where(WORKPLACE.DOMAIN.eq(domain.getId()))
 			.limit(1)
 			.fetchOneInto(Integer.class);
-		String[] nifs = new String[] {"B98351984","B95717484","15247056B","07485941Q","52717592M","B66068065","E07170327","B98465644","75407353J","43162588Y","B57551251","43102210A" };
-		AonCollectionUtils.stream(nifs)
-			.map( doc -> CustomerDAO.getRandom(context, f -> f.getDomainProperty().eq(domain.getId()).and( f.getDocumentProperty().eq(doc))))
+		HashSet<String> nifs = new HashSet<>();
+		AonCollectionUtils.stream(ThreadLocalRandom.current().nextInt(50, 250))
+			.mapToObj( i -> CustomerDAO.getRandom(context, f -> f.getDomainProperty().eq(domain.getId())) )
+			.filter( customer -> {
+				String doc = customer.getDocument();
+				if ( nifs.contains( doc ) ) {
+					return false;
+				} else {
+					nifs.add( doc );
+					return true;
+				}
+			})
 			.forEach( customer -> {
 				AonCollectionUtils.stream(ThreadLocalRandom.current().nextInt(1, 6))
 					.forEach( i -> {
@@ -607,6 +617,67 @@ class TestDomainProvider {
 					});
 			});
 	}
+	
+	private static void loadCustomers(AONContext ctx, Domain domain) {
+		try {
+			ctx.log().info("Cargando resto de clientes");
+			InputStream input = TestDomainProvider.class.getResourceAsStream("customers.csv");
+			InputStreamReader isr = new InputStreamReader(input, StandardCharsets.ISO_8859_1);
+			LineNumberReader reader = new LineNumberReader(isr);
+			while (reader.ready()) {
+				String line = reader.readLine();
+				String[] parts = AonStringUtils.splitPreserveAllTokens(line,'|');
+				String doc = parts[0];
+				String[] docParts = AonStringUtils.splitPreserveAllTokens(doc,'/');
+				String documentType = docParts[0];
+				DocumentType dt = DocumentType.safeValueOf(documentType);
+				String documentCountry = docParts[1];
+				Country dc = Country.safeValueOf(documentCountry);
+				String document = docParts[2];
+				if ("B95767604".equals(document)) {
+					System.out.println( document );
+				}
+				String name = parts[1];
+				String nationality = parts[2];
+				Country nat = Country.safeValueOf(nationality);
+				
+				
+				
+				String address = parts[3];
+				String streetType = AonStringUtils.substring(address, 0,2);
+				String adr = AonStringUtils.substring(address, 2);
+				StreetType st = StreetType.safeValueOf(streetType);
+				String city = parts[4];
+				String zip = parts[5];
+				String geozone = parts[6];
+				Integer geozoneId = getGeozoneId(ctx,geozone);
+				
+				CustomerFull cf = new CustomerFull();
+				cf.setRegistry(
+					new Customer().copy(
+						new Registry()
+							.setDomain(domain)
+							.setDocument(document)
+							.setDocumentType(dt)
+							.setDocumentCountry(dc)
+							.setNationality(nat)
+							.setName(name)))
+					.addAddress(
+						new RegistryAddress()
+							.setMain(true)
+							.setStreetType(st)
+							.setAddress(adr)
+							.setZip(zip)
+							.setCity(city)
+							.setGeozone(getGeozoneId(ctx, geozone)));
+				CustomerDAO.save(ctx, cf);
+			}
+			ctx.log().info("Fin carga de clientes");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+		
 }
 
 
