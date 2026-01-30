@@ -39,24 +39,25 @@
 											value="#{bundle.customer_finance_checking}" />
 									</aon:div>
 					
-									<!-- Facturas de Venta -->
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="saleInvoiceManagement"
-											rendered="#{actionDenied.renderedOption('saleInvoice_search')}"
-											action="saleInvoice_search"
-											actionListener="#{saleInvoice.onEditSearch}"
-											value="#{bundle.finance_sale_invoice_management_module}" />
-									</aon:div>
+									<aon:if test="#{icc.hasCommunication()}">
+										<!-- Facturas de Venta -->
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="saleInvoiceManagement"
+												rendered="#{actionDenied.renderedOption('saleInvoice_search')}"
+												action="saleInvoice_search"
+												actionListener="#{saleInvoice.onEditSearch}"
+												value="#{bundle.finance_sale_invoice_management_module}" />
+										</aon:div>
 									
-									<!-- Impresión / eMail de Facturas -->
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="invoicePrint"
-											rendered="#{actionDenied.renderedOption('invoicePrint_search')}"
-											action="invoicePrint_search"
-											actionListener="#{invoicePrint.onEditSearch}"
-											value="#{bundle.finance_invoice_print_module}"/>
-									</aon:div>
-							
+										<!-- Impresión / eMail de Facturas -->
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="invoicePrint"
+												rendered="#{actionDenied.renderedOption('invoicePrint_search')}"
+												action="invoicePrint_search"
+												actionListener="#{invoicePrint.onEditSearch}"
+												value="#{bundle.finance_invoice_print_module}"/>
+										</aon:div>
+								    </aon:if>
 									<aon:if test="#{dur.commercial}">
 										<!-- Pedidos de Venta -->
 										<aon:div styleClass="aon-direct-access-list-element">
@@ -67,7 +68,7 @@
 												value="#{bundle.sales_module}" />
 										</aon:div>
 									</aon:if>
-									<aon:if test="#{dur.warehouse}">
+									<aon:if test="#{dur.warehouse and icc.hasCommunication()}">
 										<!-- Facturación masiva de Albaranes -->			
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="delivery_invoicing"

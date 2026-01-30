@@ -52,10 +52,13 @@ import ticketbai.emision.TicketBai;
 public class TbaiData {
 
 	private static final String TBAIURL = "tbaiUrl";
+	private static final String TBAIID = "tbaiId";
 	
+	private final AONContext ctx;
 	private final InvoiceCommunicationConfiguration icc;
 	
-	private TbaiData(InvoiceCommunicationConfiguration icc) {
+	private TbaiData(AONContext ctx, InvoiceCommunicationConfiguration icc) {
+		this.ctx = ctx;
 		this.icc = icc;
 	}
 	
@@ -63,8 +66,12 @@ public class TbaiData {
 		return icc;
 	}
 	
-	public static TbaiData getInstance(InvoiceCommunicationConfiguration icc) {
-		return new TbaiData(icc);
+	public AONContext getAONContext() {
+		return ctx;
+	}
+	
+	public static TbaiData getInstance(AONContext ctx, InvoiceCommunicationConfiguration icc) {
+		return new TbaiData(ctx, icc);
 	}
 	
 	public boolean isTest() {
@@ -104,18 +111,19 @@ public class TbaiData {
 	public TBAIInformation get(String domainName, Integer domainId, String user, Integer invoice) {
 		TBAIInformation info = new TBAIInformation();
 		DataResponseSource source = isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
-		AON.getDataResponseStream(domainName, domainId, user,
-			source, f -> 
+		DataResponseDAO.getDataResponseStream(getAONContext(), source, f -> 
 				f.getDomainProperty().eq(domainId)
 				.and(f.getSourceProperty().eq(source.value()))
 				.and(f.getSourceIdProperty().eq(invoice))).forEach(r -> {
 					TBAIRequest request = new TBAIRequest();
 					request.setDataResponse(r);
 					if(r.getDataRequest() != null) {
-						request.setDataRequest(AON.getDataRequest(domainName, domainId, user, f -> f.getIdProperty().eq(r.getDataRequest())));
+						request.setDataRequest(DataRequestDAO.get(getAONContext(), f -> f.getIdProperty().eq(r.getDataRequest())));
 					}
-					DataResponseDetail response = AON.getDataResponseDetail(domainName, domainId, user, f -> 
-						f.getDataResponseProperty().eq(r.getId()).and(f.getDataVariableProperty().eq("response"))).orElse(new DataResponseDetail());
+					
+					DataResponseDetail response = DataResponseDAO.getDataResponseDetailStream(getAONContext(), f -> 
+						f.getDataResponseProperty().eq(r.getId()).and(f.getDataVariableProperty().eq("response")))
+						.findFirst().orElse(new DataResponseDetail());
 					if(!AonStringUtils.isBlank(response.getDataValue())) {
 						JSONObject responseJson = new JSONObject(response.getDataValue());
 						TbaiResponse tbaiResponse = new TbaiResponse(responseJson);
@@ -189,29 +197,6 @@ public class TbaiData {
 		
 		return TbaiBlockchain.fromJSON(drd.getDataValue());
 	}
-
-	public String getTbaiId(String domainName, Integer domainId, String login, Integer invoiceId) {
-		InvoiceData id = AON.getInvoiceData(new Domain().setName(domainName).setId(domainId), new User().setLogin(login), f -> 
-			f.getDomainProperty().eq(domainId)
-			.and(f.getInvoiceProperty().eq(invoiceId))
-			.and(f.getNameProperty().eq("TBAI_ID")));
-		if(id != null && !AonStringUtils.isBlank(id.getValue())) {
-			return id.getValue();
-		} else {
-			DataResponseSource source = isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
-			DataResponse dr = AON.getDataResponse(domainName, domainId, login, f -> 
-				f.getDomainProperty().eq(domainId)
-				.and(f.getSourceProperty().eq(source.value()))
-				.and(f.getSourceIdProperty().eq(invoiceId)));
-
-			DataResponseDetail drd = !dr.isEmpty() ? AON.getDataResponseDetail(domainName, domainId, login, f -> 
-				f.getDomainProperty().eq(domainId)
-				.and(f.getDataResponseProperty().eq(dr.getId()))
-				.and(f.getDataVariableProperty().eq("tbaiId"))).orElse(new DataResponseDetail()) : new DataResponseDetail();
-	
-			return drd.getDataValue();
-		}
-	}
 	
 	public byte[] getTbaiRequestFile(Domain domain, String login, Integer invoiceId) {
 		DataResponseSource source = isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
@@ -255,31 +240,20 @@ public class TbaiData {
 			.or(() -> DataResponseDAO.getDetailValue(ctx, domainId, invoiceId, getDataResponseSource(), TBAIURL))
 		;	
 	}
-	public String getTbaiUrl(String domainName, Integer domainId, String login, Integer invoiceId) {
-		InvoiceData id = AON.getInvoiceData(new Domain().setName(domainName).setId(domainId), new User().setLogin(login), f -> 
-			f.getDomainProperty().eq(domainId)
-			.and(f.getInvoiceProperty().eq(invoiceId))
-			.and(f.getNameProperty().eq("TBAI_URL")));
-		if(id != null && !AonStringUtils.isBlank(id.getValue())) {
-			return id.getValue();
-		} else {
-			DataResponseSource source = isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
-			DataResponse dr = AON.getDataResponse(domainName, domainId, login, f -> 
-				f.getDomainProperty().eq(domainId)
-				.and(f.getSourceProperty().eq(source.value()))
-				.and(f.getSourceIdProperty().eq(invoiceId)));
-
-			DataResponseDetail drd = !dr.isEmpty() ? AON.getDataResponseDetail(domainName, domainId, login, f -> 
-				f.getDomainProperty().eq(domainId)
-				.and(f.getDataResponseProperty().eq(dr.getId()))
-				.and(f.getDataVariableProperty().eq(TBAIURL))).orElse(new DataResponseDetail()) : new DataResponseDetail();
 	
-			return drd.getDataValue();
-		}
+	public String getTbaiUrl(Integer domain, Integer invoiceId) {
+		return getTbaiUrl(getAONContext(), domain, invoiceId).orElse(null);
 	}
 	
-	public String getTbaiId(Domain domain, User user, Integer invoiceId) {
-		return getTbaiId(domain.getName(),  domain.getId(), user.getLogin(), invoiceId);
+	public Optional<String> getTbaiId(AONContext ctx, Integer domainId, Integer invoiceId) {
+		return InvoiceDataDAO.get(ctx, domainId, invoiceId, InvoiceDataName.TBAI_ID)
+			.map(InvoiceData::getValue)
+			.or(() -> DataResponseDAO.getDetailValue(ctx, domainId, invoiceId, getDataResponseSource(), TBAIID))
+		;	
+	}
+	
+	public String getTbaiId(Integer domainId, Integer invoiceId) {
+		return getTbaiId(getAONContext(), domainId, invoiceId).orElse(null);
 	}
 	
 	public DataResponse saveResponse(AONContext ctx, Domain domain, Integer invoiceId, TbaiResponse response, DataResponse dr) {
