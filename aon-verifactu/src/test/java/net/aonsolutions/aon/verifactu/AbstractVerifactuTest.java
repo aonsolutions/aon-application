@@ -38,8 +38,7 @@ public abstract class AbstractVerifactuTest {
 
 	private static String getDbPort() {		return System.getProperty("dbPort", "3306");	}
 	private static String getDbHost() {		return System.getProperty("dbHost", "127.0.0.1");	}
-	private static String getDbName() {		return System.getProperty("dbName", "qa-aonsolutions-org");	}
-	//private static String getDbName() {		return System.getProperty("dbName", "aon_jooq_");	}
+	private static String getDbName() {		return System.getProperty("dbName", "aon_jooq_");	}
 	private static String getDbUser() {		return System.getProperty("dbUser", "dbuser");	}
 	private static String getDbPasswd() {	return System.getProperty("dbPasswd", "serubd2000");	}
 	private static String getDbUseSSL() {	return System.getProperty("dbUseSSL", "false");	}
@@ -57,14 +56,14 @@ public abstract class AbstractVerifactuTest {
 	protected static final Environment LROE_ENV = new LROEEnvironment();
 	
 	private static final Environment[] ENVIRONMENTS = new Environment[] {
-//		VERIFACTU_ENV,
-//		VERIFACTU_CANARIAS_ENV,
-//		NO_VERIFACTU_ENV,
-//		SIF_ENV,
-//		TBAI_ALAVA_ENV,
-//		TBAI_GIPUZKOA_ENV,
-//		LROE_ENV,
-//		NO_SIF_ENV,
+		VERIFACTU_ENV,
+		VERIFACTU_CANARIAS_ENV,
+		NO_VERIFACTU_ENV,
+		SIF_ENV,
+		TBAI_ALAVA_ENV,
+		TBAI_GIPUZKOA_ENV,
+		LROE_ENV,
+		NO_SIF_ENV,
 		TBAI_SII_ALAVA_ENV,
 		TBAI_SII_GIPUZKOA_ENV
 		}; 
