@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -346,7 +347,7 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		    (model.getYear() < 2026 && model.hasPreviousProrate() && model.getPeriod().isLastPeriod())) {
 			previousProratePercent.setEnabled(false);
 //			tab.addLabelWidgetRow(AON.MSG.prorrataYearPercent(), previousProratePercent);
-			labelPreviousProratePercent = new Label(AON.MSG.prorrataYearPercent());
+			labelPreviousProratePercent = new Label(model.getYear() >= 2026 ? "Porcentaje de prorrata \u00FAltimo periodo" : AON.MSG.prorrataYearPercent());			
 			tab.addLabelWidgetRow(labelPreviousProratePercent, previousProratePercent);
 		}
 
@@ -442,27 +443,44 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		box.addValueChangeHandler( event -> {
 			if (box.getValue() == null) box.setValue(0.0,false);
 			model.ensureDetail(key).setAmount(box.getValue());	
-			calculateProrrate(model,callback);
+//			calculateProrrate(model,callback);
+			calculateProrrate(model);
 		});
 		return box;
 	}
 	
-	private void calculateProrrate(Mod303 model, Model303Callback callback) {
-		Model303.service.calculateProrrate(callback.getOptions().getOccam(), model, 
-			new AsyncCallback<Mod303>() {
-			
-			@Override
-			public void onSuccess(Mod303 result) {
-				proratePercent.setValue(result.ensureDetail(model.getProratePercentKey()).getAmount(),false,true);
-				model.ensureDetail(model.getProratePercentKey()).setAmount(proratePercent.getValue());
-				paintCalculateProratePanel(result,callback); 
+//	private void calculateProrrate(Mod303 model, Model303Callback callback) {
+//		Model303.service.calculateProrrate(callback.getOptions().getOccam(), model, 
+//			new AsyncCallback<Mod303>() {
+//			
+//			@Override
+//			public void onSuccess(Mod303 result) {
+//				proratePercent.setValue(result.ensureDetail(model.getProratePercentKey()).getAmount(),false,true);
+//				model.ensureDetail(model.getProratePercentKey()).setAmount(proratePercent.getValue());
+//				paintCalculateProratePanel(result,callback); 
+//			}
+//			
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				callback.showError(caught.getMessage());
+//			}
+//		});
+//	}
+	
+	private void calculateProrrate(Mod303 mod303) {
+		if (mod303.hasProrate() || mod303.hasPreviousProrate()) {
+			double c70 = AonMathUtils.round(mod303.ensureDetail(Mod303Key.CM_070).getAmount());
+			double c71 = AonMathUtils.round(mod303.ensureDetail(Mod303Key.CM_071).getAmount());
+			if (AonMathUtils.isNotZero(c71)) {
+				double prorrate = (c70 * 100 / c71);
+				prorrate = AonMathUtils.ceil(prorrate,0);
+				if (AonMathUtils.isGreatherThan(prorrate,100.0)) prorrate = 100.0;
+				mod303.ensureDetail(mod303.getProratePercentKey()).setAmount( prorrate );
+				proratePercent.setValue(prorrate);
 			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				callback.showError(caught.getMessage());
-			}
-		});
+			mod303.ensureDetail(Mod303Key.CM_070).setAmount( c70 );
+			mod303.ensureDetail(Mod303Key.CM_071).setAmount( c71 );
+		}
 	}
 
 	private void paintGenerateFromYearStart(Mod303 model, AonDisplayTable tab) {
