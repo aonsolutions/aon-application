@@ -188,7 +188,7 @@ public class FeeBillingDAO {
 					Invoice lastInvoice = AonCollectionUtils.stream(invoices).reduce((f, s) -> s).orElse(null);
 					if (breakInvoice(fee, lastFee.getValue())) {
 						// Nuevo bloque --> nueva factura
-						int invNumber = (params.mustSaveAsProforma() || params.isCommunicable() )
+						int invNumber = (params.isDryRun() || params.mustSaveAsProforma() || params.isCommunicable() )
 							?invoiceNumber.getAndDecrement()
 							:invoiceNumber.getAndIncrement();
 						lastInvoice = createInvoice(ctx, fee, invNumber, params);

@@ -354,10 +354,15 @@ public final class IJsonNames {
 	public static final String INVOICE = "invoice";
 	public static final String INVOICE_BREAKDOWN = "invoiceBreakdown";;
 	public static final String INVOICE_COUNT = "invoiceCount";
+	public static final String INVOICE_PROFORMA_COUNT = "invoiceProformaCount";
 	public static final String INVOICE_DETAIL = "invoiceDetail";
 	public static final String INVOICE_DOC = "invoiceDoc";
 	public static final String INVOICE_FISCAL = "invoiceFiscal";
 	public static final String INVOICE_INFO = "invoiceInfo";
+	public static final String INVOICE_PROFORMA_TOTAL_AMOUNT = "invoiceProformaTotalAmount";
+	public static final String INVOICE_PROFORMA_TOTAL_PREPAYMENT_COUNT = "invoiceProformaTotalPrepaymentCount";
+	public static final String INVOICE_PROFORMA_TOTAL_RETENTION = "invoiceTotalProformaRetention";
+	public static final String INVOICE_PROFORMA_TOTAL_VAT = "invoiceProformaTotalVAT";
 	public static final String INVOICE_TAXES = "invoiceTaxes";
 	public static final String INVOICE_TYPE = "invoiceType";
 	public static final String INVOICE_TOTAL_AMOUNT = "invoiceTotalAmount";

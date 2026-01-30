@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
+import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProcessOutput;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
@@ -57,10 +58,12 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.impl.jooq.console.ConsoleMessageUtils.PrintStreamConsoleLogger;
 import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceConsoleDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
@@ -101,7 +104,7 @@ public class InvoiceCommunicator {
 		@Override
 		public void afterAll(AONContext ctx, InvoiceCommunicatorContext icc) throws InvoiceCommunicationException {
 			if (icc.isFailOnWrongValidation() 
-			 && icc.invoiceStream().filter( Invoice::hasMessages ).anyMatch( Invoice::hasERRMessages )) {
+			  && icc.invoiceStream().filter( Invoice::hasMessages ).anyMatch( Invoice::hasERRMessages )) {
 				// TRACE _-- borrar
 				icc.invoiceStream()
 					.filter( Invoice::hasMessages )
@@ -288,6 +291,80 @@ public class InvoiceCommunicator {
 		
 	}
 	
+	public static InvoiceProcessOutput issue(Occam occam, InvoiceConsoleParams params, PrintStreamConsoleLogger logger) {
+		if (params == null) throw new AonCoreException("Par\u00E1metros nulos.");
+		params.setAnnulled( false )	// No se comunican facturas anuladas
+			.setOutput( true )		// Facturas emitidas
+		;
+		;	// Se rellena en getFullInvoice()
+		AonChronometer chronometer = new AonChronometer();
+		chronometer.start();
+		Date expDate = new Date();;
+		final InvoiceProcessOutput output = new InvoiceProcessOutput();
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, params.getDomain() );
+			if (!icc.hasCommunication(expDate)) throw new AonCoreException("Si no hay comunicaci\u00F3n, no se debe llamar a este m\u00C9todo.");
+			Company company = CompanyDAO.getByDomain(ctx, params.getDomain());
+			Domain domain = DomainDAO.getDomain(ctx, params.getDomain());
+			User user = SecurityDAO.getUser(ctx, ctx.getUser());
+			Integer certId = params.getCertId();
+			checkCompany(company);
+			checkConfig(icc);
+			if ( icc.isCertificateNeeded() ) {
+				checkCertificate(ctx, icc, certId);
+			}
+			
+			params.setAttachExcluded( true );				// Se rellena en getFullInvoice()
+			params.setCommunicationExcluded( true ); 		// Se rellena en getFullInvoice()
+			InvoiceConsoleDAO.getInvoiceHeadersStream(ctx, params)
+				.map(ic -> InvoiceDAO.getFullInvoice(ctx, icc, ic.getId()))
+				.forEach( output::addInvoice );
+			
+			ctx.getDslContext().transaction(conf -> {
+				
+				logger.message(IC, "Inicio del proceso comunicaci\u00F3n.");
+
+				List<Invoice> invoices = output.invoiceStream().collect(Collectors.toCollection(LinkedList::new));
+				InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, certId, invoices)
+					.setConfig( icc )
+					.setCompany( company )
+					.setLogger( logger )
+					.setFailOnWrongValidation( AonCollectionUtils.size(invoices) == 1 );
+				
+				if (AonCollectionUtils.size(invoices) > MSG_INVOICES) {
+					List<List<Invoice>> splittedInvoices = AonCollectionUtils.split( invoices, MSG_INVOICES );
+					int prg = 0;
+					int count = splittedInvoices.size();
+					cc.getLogger().message( PC, MessageFormat.format("Procesando {0} lotes", count));
+					cc.getLogger().mainProgress(PC, count, 0);
+					for (List<Invoice> invoiceBatch : splittedInvoices) {
+						InvoiceCommunicatorContext batchContext = new InvoiceCommunicatorContext(domain, user, certId, invoiceBatch)
+							.setConfig( icc )
+							.setCompany( company )
+							.setLogger( logger )
+							.setFailOnWrongValidation( false );
+						communicateGeneratedInvoices( ctx, batchContext, expDate );
+						prg = prg + 1;
+						cc.getLogger().mainProgress( PC, count, prg );
+					}
+				} else {
+					communicateGeneratedInvoices( ctx, cc, expDate);
+				}
+			});
+			chronometer.stop(); 
+			logger.message(IC, "Tiempo total del proceso:" + chronometer.format());
+			logger.ok(IC, "Fin del proceso" );
+		} catch (Throwable e) {
+			e.printStackTrace();
+			output.setProcessErrorLevel(InvoiceErrorLevel.ERR);
+			output.setProcessMessage(e.getMessage());
+			chronometer.stop();
+			logger.message(IC, "Tiempo total del proceso:" + chronometer.format());
+			logger.error(IC, "Error en la comunicaci\u00F3n de las facturas: " + e.getMessage());
+		}
+		return output;
+	}
+	
 	public static InvoiceCommunicatorContext issueInvoice(final InvoiceCommunicatorContext communicator) throws InvoiceCommunicationException {
 		checkAONContextValues(communicator);
 		try (CloseableAONContext ctx = AONContext.getAONContext(communicator.getDomain(), communicator.getUser())) {
@@ -299,7 +376,7 @@ public class InvoiceCommunicator {
 	private static InvoiceCommunicatorContext issue(AONContext ctx, final InvoiceCommunicatorContext cc, InvoiceCommunicationPhaseListener phase) throws InvoiceCommunicationException {
 		try {
 			check(ctx, cc);
-			checkUniqueInvoice(cc);
+			// checkUniqueInvoice(cc);
 			Invoice invoice = cc.invoiceStream()
 				.findFirst()
 				.orElseThrow(() -> new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005));
@@ -509,6 +586,7 @@ public class InvoiceCommunicator {
 				.setCompany( company )
 				.setLogger( logger )
 				.setFailOnWrongValidation( AonCollectionUtils.size(invoices) == 1 );
+			
 			if (AonCollectionUtils.size(invoices) > MSG_INVOICES) {
 				List<List<Invoice>> splittedInvoices = AonCollectionUtils.split( invoices, MSG_INVOICES );
 				int prg = 0;
@@ -521,20 +599,20 @@ public class InvoiceCommunicator {
 						.setCompany( company )
 						.setLogger( logger )
 						.setFailOnWrongValidation( false );
-					communicateGeneratedInvoices( ctx, batchContext, params );
+					communicateGeneratedInvoices( ctx, batchContext, params.getInvoiceDate() );
 					prg = prg + 1;
 					cc.getLogger().mainProgress( PC, count, prg );
 				}
 			} else {
-				communicateGeneratedInvoices( ctx, cc, params);
+				communicateGeneratedInvoices( ctx, cc, params.getInvoiceDate());
 			}
 			return cc;
 		});
 	}
 
-	private static void communicateGeneratedInvoices(AONContext ctx, InvoiceCommunicatorContext cc, FeeBillingParams params) {
+	private static void communicateGeneratedInvoices(AONContext ctx, InvoiceCommunicatorContext cc, Date expDate) throws InvoiceCommunicationException {
 			try {
-				for ( InvoiceCommunicationType type : cc.getConfig().getTypes( params.getInvoiceDate() )) {
+				for ( InvoiceCommunicationType type : cc.getConfig().getTypes( expDate )) {
 					type.visit( new InvoiceCommunicationTypeVisitor() {
 						
 						@Override public void visitSERES() throws InvoiceCommunicationException 		{ throwSERES();}
@@ -562,8 +640,10 @@ public class InvoiceCommunicator {
 					});
 				}
 			} catch (Throwable e) {
-				e.printStackTrace();
-				throw new InvoiceCommunicatorContextError( e, cc );
+				if (e instanceof InvoiceCommunicationException ice) {
+					throw ice;
+				}
+				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_9000, e);
 			}
 	}
 
@@ -902,5 +982,6 @@ public class InvoiceCommunicator {
 				);
 		});		
 	}
+
 }
 

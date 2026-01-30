@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -203,6 +202,17 @@ public class JsonUtils {
 		return json.put(key, enumValue==null?null:enumValue.ordinal());
 	}
 	
+	public static <T extends Enum<?>> T getEnumFromOrdinal(JSONObject json, String key, Class<T> enumClass ) {
+		Integer ordinal = getInteger( json, key);
+		if (ordinal == null) return null;
+		T[] constants = enumClass.getEnumConstants();
+		if (constants != null && ordinal >=0 && ordinal < constants.length) {
+			return constants[ordinal];
+		}
+		return null;
+		
+	}
+	
 	public static boolean has(JSONObject json, String key) {
 		return json.opt(key) != null;
 	}
@@ -244,6 +254,17 @@ public class JsonUtils {
 	            Collector.Characteristics.IDENTITY_FINISH
 	        );
 	    }
+	}
+
+	public static Integer[] getIntegerArray(JSONObject json, String key) {
+		if(json == null) return null;
+		JSONArray jsonArray = json.optJSONArray(key);
+		if (jsonArray == null || jsonArray.length() == 0) return null;
+		Integer[] arr = new Integer[jsonArray.length()];
+		for (int i = 0; i < jsonArray.length(); i++) {
+		    arr[i] = jsonArray.isNull(i) ? null : jsonArray.getInt(i);
+		}
+		return arr;
 	}
 	
 }

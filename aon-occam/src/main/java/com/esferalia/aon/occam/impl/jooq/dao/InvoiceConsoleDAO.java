@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -147,7 +148,7 @@ public class InvoiceConsoleDAO {
 		return invoiceSelect.asTable( INVOICE_UNION );
 	}
 	
-	public static List<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params) {
+	public static Stream<InvoiceConsole> getInvoiceHeadersStream(AONContext ctx, InvoiceConsoleParams params) {
 		ctx.checkRead();
 		Select<Record15<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Date, Boolean>> select =
 			(params.showInvoiceTrackings())
@@ -159,9 +160,9 @@ public class InvoiceConsoleDAO {
 					.limit(params.getOffset() , params.getLimit())
 		;
 		
-//		System.out.println("--- SQL InvoiceConsoleDAO.getInvoiceHeaders ----");
-//		System.out.println( select .getSQL(ParamType.INLINED) );
-//		System.out.println("-----------------------------------------------");
+		System.out.println("--- SQL InvoiceConsoleDAO.getInvoiceHeaders ----");
+		System.out.println( select .getSQL() );
+		System.out.println("-----------------------------------------------");
 		
 		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, params.getDomain() );
 		return select
@@ -187,8 +188,8 @@ public class InvoiceConsoleDAO {
 						.setCreationDate( r.getValue(F_CREATION_DATE) )
 					;
 					java.util.Date expDate = r.getValue(F_EXP_DATE);
-					if (expDate == null && !inv.isProforma()) {
-						expDate = inv.getIssueDate();
+					if (expDate == null) {
+						expDate = inv.isProforma()? new java.util.Date() : inv.getIssueDate();
 					}
 					inv.ensureFiscal().setExpDate( expDate );
 					ic.setInvoice( inv );
@@ -202,11 +203,16 @@ public class InvoiceConsoleDAO {
 				}
 				return ic;
 			})
-			.map( ic -> fillAttach(ctx, ic))
-			.map( ic -> fillCommunicationInfo(ctx, icc, ic))
+			.map( ic -> params.isAttachExcluded() ? ic : fillAttach(ctx, ic))
+			.map( ic -> params.isCommunicationExcluded() ? ic : fillCommunicationInfo(ctx, icc, ic))
 //			.map( ic -> fillSource(ic))
 //			.map( ic -> fillMessages(ctx, ic))
 //			.map( ic -> fillBreakdown(ctx, ic))
+		;
+	}
+	
+	public static List<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params) {
+		return getInvoiceHeadersStream(ctx, params)
 			.collect(Collectors.toCollection(LinkedList::new))
 		;
 	}
@@ -512,11 +518,17 @@ public class InvoiceConsoleDAO {
 			return field.equal( params.getDomain() );	
 		}
 		protected Condition buildIdCondition(AONContext ctx, Field<Integer> field, Condition cond, InvoiceConsoleParams params) {
+			if (params.getId() != null) {
+				cond = cond.and( field.eq( params.getId() ));
+			}
 			if (params.getFromId() != null) {
 				cond = cond.and( field.ge( params.getFromId() ));
 			}
 			if (params.getToId() != null) {
 				cond = cond.and( field.le( params.getToId() ));
+			}
+			if (params.getIds() != null) {
+				cond = cond.and( field.in( params.getIds()) );
 			}
 			return cond;
 		}

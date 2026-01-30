@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.model.finance;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -10,7 +11,86 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
-public class InvoiceProcessOutput implements java.io.Serializable {
+public class InvoiceProcessOutput implements Serializable {
+	
+	public static class InvoicesInfo implements Serializable {
+		private static final long serialVersionUID = -6061576110389791837L;
+		private int totalCount;
+		private double totalAmount;
+		private double totalVAT;
+		private double totalRetention;
+		private int totalPrepaymentCount;
+		
+		public int getTotalCount() {
+			return totalCount;
+		}
+		public InvoicesInfo setTotalCount(int totalCount) {
+			this.totalCount = totalCount;
+			return this;
+		}
+		
+		public double getTotalAmount() {
+			return totalAmount;
+		}
+		public InvoicesInfo setTotalAmount(double totalAmount) {
+			this.totalAmount = totalAmount;
+			return this;
+		}
+		
+		public double getTotalVAT() {
+			return totalVAT;
+		}
+		public InvoicesInfo setTotalVAT(double totalVAT) {
+			this.totalVAT = totalVAT;
+			return this;
+		}
+		
+		public double getTotalRetention() {
+			return totalRetention;
+		}
+		public InvoicesInfo setTotalRetention(double totalRetention) {
+			this.totalRetention = totalRetention;
+			return this;
+		}
+		
+		public int getTotalPrepaymentCount() {
+			return totalPrepaymentCount;
+		}
+		public InvoicesInfo setTotalPrepaymentCount(int totalPrepaymentCount) {
+			this.totalPrepaymentCount = totalPrepaymentCount;
+			return this;
+		}
+		
+		public void addInvoice(Invoice invoice) {
+			addTotalCount();
+			addTotalAmount( invoice.getTotal() );
+			addTotalVAT( invoice.getVatQuota() );
+			addTotalRetention( invoice.getRetentionQuota() );
+			addPrepaymentCount( invoice.hasPrepayments() );
+		}
+		
+		private InvoicesInfo addTotalCount() {
+			this.totalCount++;
+			return this;
+		}
+		private InvoicesInfo addTotalAmount(double amount) {
+			this.totalAmount = AonMathUtils.round( this.totalAmount + amount);
+			return this;
+		}
+		private InvoicesInfo addTotalVAT(double vat) {
+			this.totalVAT = AonMathUtils.round( this.totalVAT + vat);
+			return this;
+		}
+		private InvoicesInfo addTotalRetention(double retention) {
+			this.totalRetention = AonMathUtils.round( this.totalRetention + retention);
+			return this;
+		}
+		private InvoicesInfo addPrepaymentCount(boolean hasPrepayments) {
+			totalPrepaymentCount += hasPrepayments ? 1 : 0;
+			return this;
+		}
+		
+	}
 	
 	private static final long serialVersionUID = -4479134079637305099L;
 	
@@ -19,11 +99,8 @@ public class InvoiceProcessOutput implements java.io.Serializable {
 	private LinkedList<Invoice> invoices = new LinkedList<>();
 	private Integer fromId = null;
 	private Integer toId = null;
-	private int totalCount;
-	private double totalAmount;
-	private double totalVAT;
-	private double totalRetention;
-	private int totalPrepaymentCount;
+	private InvoicesInfo invoicesInfo = new InvoicesInfo();
+	private InvoicesInfo proformasInfo = new InvoicesInfo();
 	
 	public Stream<Invoice> invoiceStream() {
 		return AonCollectionUtils.stream(invoices);
@@ -32,11 +109,11 @@ public class InvoiceProcessOutput implements java.io.Serializable {
 		invoices.add(invoice);
 		if ( fromId == null ) fromId = invoice.getId();
 		toId = invoice.getId();
-		addTotalCount();
-		addTotalAmount( invoice.getTotal() );
-		addTotalVAT( invoice.getVatQuota() );
-		addTotalRetention( invoice.getRetentionQuota() );
-		addPrepaymentCount( invoice.hasPrepayments() );
+		if ( invoice.isProforma() ) {
+			proformasInfo.addInvoice( invoice );
+		} else {
+			invoicesInfo.addInvoice( invoice );
+		}
 		invoice.getMoreSeriousLevel()
 			.ifPresent(level -> setProcessErrorLevel( InvoiceErrorLevel.mostSeriousLevel(processErrorLevel, level)));
 	}
@@ -73,63 +150,18 @@ public class InvoiceProcessOutput implements java.io.Serializable {
 		return this;
 	}
 	
-	public int getTotalCount() {
-		return totalCount;
+	public InvoicesInfo getInvoicesInfo() {
+		return invoicesInfo;
 	}
-	public InvoiceProcessOutput setTotalCount(int totalCount) {
-		this.totalCount = totalCount;
+	public InvoiceProcessOutput setInvoicesInfo(InvoicesInfo invoicesInfo) {
+		this.invoicesInfo = invoicesInfo;
 		return this;
 	}
-	private InvoiceProcessOutput addTotalCount() {
-		this.totalCount++;
-		return this;
+	public InvoicesInfo getProformasInfo() {
+		return proformasInfo;
 	}
-	
-	public double getTotalAmount() {
-		return totalAmount;
-	}
-	public InvoiceProcessOutput setTotalAmount(double totalAmount) {
-		this.totalAmount = totalAmount;
-		return this;
-	}
-	private InvoiceProcessOutput addTotalAmount(double amount) {
-		this.totalAmount = AonMathUtils.round( this.totalAmount + amount);
-		return this;
-	}
-	
-	public double getTotalVAT() {
-		return totalVAT;
-	}
-	public InvoiceProcessOutput setTotalVAT(double totalVAT) {
-		this.totalVAT = totalVAT;
-		return this;
-	}
-	private InvoiceProcessOutput addTotalVAT(double vat) {
-		this.totalVAT = AonMathUtils.round( this.totalVAT + vat);
-		return this;
-	}
-	
-	public double getTotalRetention() {
-		return totalRetention;
-	}
-	public InvoiceProcessOutput setTotalRetention(double totalRetention) {
-		this.totalRetention = totalRetention;
-		return this;
-	}
-	private InvoiceProcessOutput addTotalRetention(double retention) {
-		this.totalRetention = AonMathUtils.round( this.totalRetention + retention);
-		return this;
-	}
-	
-	public int getTotalPrepaymentCount() {
-		return totalPrepaymentCount;
-	}
-	public InvoiceProcessOutput setTotalPrepaymentCount(int totalPrepaymentCount) {
-		this.totalPrepaymentCount = totalPrepaymentCount;
-		return this;
-	}
-	private InvoiceProcessOutput addPrepaymentCount(boolean hasPrepayments) {
-		totalPrepaymentCount += hasPrepayments ? 1 : 0;
+	public InvoiceProcessOutput setProformasInfo(InvoicesInfo proformasInfo) {
+		this.proformasInfo = proformasInfo;
 		return this;
 	}
 	

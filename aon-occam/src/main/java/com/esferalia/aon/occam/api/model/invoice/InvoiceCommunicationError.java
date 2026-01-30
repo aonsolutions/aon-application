@@ -33,7 +33,7 @@ public enum InvoiceCommunicationError {
 	AON_0021("0021", "Error al obtener el certificado."),
 	AON_0022("0022", "El certificado o la contrase\u00F1a no son correctos."),
 	AON_0023("0023", "El certificado no existe."),
-	AON_0024("0024", "Se han producido errores en la validaci\u00F3n VERIFACTU."),
+	AON_0024("0024", "Se han producido errores en la validaci\u00F3n."),
 	AON_0025("0025", "Se han producido errores durante la validaci\u00F3n del certificado."),
 	AON_0026("0026", "La fecha de inicio de validez del certificado es posterior a la fecha de hoy"),
 	AON_0027("0027", "La fecha de validez del certificado ha caducado."),
