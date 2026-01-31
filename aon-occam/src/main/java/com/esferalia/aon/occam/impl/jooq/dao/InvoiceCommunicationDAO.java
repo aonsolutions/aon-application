@@ -242,20 +242,22 @@ public class InvoiceCommunicationDAO {
 		EnterpriseData data = getIccData(config.getAdministrationHistory());
 		if(data != null) config.setAdministration(Administration.safeValueOf(data.getExpression()));
 		if(config.getAdministration() == null) {
-			Enterprise enterprise = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(domainId));
-			Administration admon = AppParamDAO.get(ctx, domainId, AppParam.FS_DEFAULT_ADMINISTRATION)
-					.map( ApplicationParameter::getValue )
-					.map( Integer::parseInt )
-					.map( Administration::safeValueOf )
-					.orElse( Administration.UNKNOWN );
-			EnterpriseData ed = EnterpriseDataDAO.insert(ctx, new EnterpriseData()
-					.setDomain(domainId)
-					.setEnterprise(enterprise.getId())
-					.setName(EnterpriseDataNames.ICC_ADMINISTRATION.name())
-					.setExpression(admon.name())
-					.setStartDate(AonDateUtils.today()));
-			config.getAdministrationHistory().add(ed);
-			config.setAdministration(admon);	
+			EnterpriseDAO.opt(ctx, f -> f.getDomainProperty().eq(domainId))
+			.ifPresent( enterprise -> {
+				Administration admon = AppParamDAO.get(ctx, domainId, AppParam.FS_DEFAULT_ADMINISTRATION)
+						.map( ApplicationParameter::getValue )
+						.map( Integer::parseInt )
+						.map( Administration::safeValueOf )
+						.orElse( Administration.UNKNOWN );
+					EnterpriseData ed = EnterpriseDataDAO.insert(ctx, new EnterpriseData()
+						.setDomain(domainId)
+						.setEnterprise(enterprise.getId())
+						.setName(EnterpriseDataNames.ICC_ADMINISTRATION.name())
+						.setExpression(admon.name())
+						.setStartDate(AonDateUtils.today()));
+					config.getAdministrationHistory().add(ed);
+					config.setAdministration(admon);	
+			});
 		}
 	}
 
@@ -266,23 +268,24 @@ public class InvoiceCommunicationDAO {
 		config.setTbaiInvoice(DataResponseDAO.has(ctx, domainId, DataResponseSource.TBAI, AonDateUtils.getCurrentYear()));
 		
 		if(config.getTbaiDataHistory().isEmpty() && (config.isAraba() || config.isGipuzkoa())) {
-			Enterprise enterprise = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(domainId));
-			EnterpriseData oldTbaiData = new EnterpriseData()
+			EnterpriseDAO.opt(ctx, f -> f.getDomainProperty().eq(domainId))
+			.ifPresent( enterprise -> {
+				EnterpriseData oldTbaiData = new EnterpriseData()
 					.setDomain(domainId)
 					.setEnterprise(enterprise.getId());
-			AppParamDAO.getByPattern(ctx, domainId, "TBAI_%")
-			.forEach(r -> InvoiceCommunicationConfigurationParams.safeValueOf(r.getName() ) .ifPresent(t -> t.fillValue(ctx, config.getAdministration(), oldTbaiData, r)));
+				AppParamDAO.getByPattern(ctx, domainId, "TBAI_%")
+				.forEach(r -> InvoiceCommunicationConfigurationParams.safeValueOf(r.getName() ) .ifPresent(t -> t.fillValue(ctx, config.getAdministration(), oldTbaiData, r)));
 						
-			if(AonStringUtils.isNotBlank(oldTbaiData.getName())) {
-				if(oldTbaiData.getStartDate() == null) {
-					oldTbaiData.setStartDate(AonDateUtils.today());
-				}
+				if(AonStringUtils.isNotBlank(oldTbaiData.getName())) {
+					if(oldTbaiData.getStartDate() == null) {
+						oldTbaiData.setStartDate(AonDateUtils.today());
+					}	
 				
-				config.setTbaiData(EnterpriseDataDAO.insert(ctx, oldTbaiData));
-				config.getTbaiDataHistory().add(oldTbaiData);
-			}
+					config.setTbaiData(EnterpriseDataDAO.insert(ctx, oldTbaiData));
+					config.getTbaiDataHistory().add(oldTbaiData);
+				}
+			});
 		}
-		
 		AppParamDAO.get(ctx, domainId, AppParam.TBAI_ACTIVE).ifPresent(r -> {
 			AppParamDAO.delete(ctx, domainId, AppParam.TBAI_ACTIVE);
 			AppParamDAO.delete(ctx, domainId, AppParam.TBAI_TEST);
@@ -297,19 +300,21 @@ public class InvoiceCommunicationDAO {
 		config.setLroeInvoice(DataResponseDAO.has(ctx, domainId, DataResponseSource.LROE, AonDateUtils.getCurrentYear()));
 		
 		if(config.getLroeDataHistory().isEmpty() && config.isBizkaia()) {
-			Enterprise enterprise = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(domainId));
-			EnterpriseData oldLroeData = new EnterpriseData()
+			EnterpriseDAO.opt(ctx, f -> f.getDomainProperty().eq(domainId))
+			.ifPresent( enterprise -> {
+				EnterpriseData oldLroeData = new EnterpriseData()
 					.setDomain(domainId)
 					.setEnterprise(enterprise.getId());
-			AppParamDAO.getByPattern(ctx, domainId, "TBAI_%")
-			.forEach(r -> InvoiceCommunicationConfigurationParams.safeValueOf(r.getName() ) .ifPresent(t -> t.fillValue(ctx, config.getAdministration(), oldLroeData, r)));
-			if(AonStringUtils.isNotBlank(oldLroeData.getName())) {
-				if(oldLroeData.getStartDate() == null) {
-					oldLroeData.setStartDate(AonDateUtils.today());
+				AppParamDAO.getByPattern(ctx, domainId, "TBAI_%")
+				.forEach(r -> InvoiceCommunicationConfigurationParams.safeValueOf(r.getName() ) .ifPresent(t -> t.fillValue(ctx, config.getAdministration(), oldLroeData, r)));
+				if(AonStringUtils.isNotBlank(oldLroeData.getName())) {
+					if(oldLroeData.getStartDate() == null) {
+						oldLroeData.setStartDate(AonDateUtils.today());
+					}
+					config.setLroeData(EnterpriseDataDAO.insert(ctx, oldLroeData));
+					config.getLroeDataHistory().add(oldLroeData);
 				}
-				config.setLroeData(EnterpriseDataDAO.insert(ctx, oldLroeData));
-				config.getLroeDataHistory().add(oldLroeData);
-			}
+			});
 		}
 		
 		AppParamDAO.get(ctx, domainId, AppParam.TBAI_ACTIVE).ifPresent(r -> {
@@ -328,19 +333,21 @@ public class InvoiceCommunicationDAO {
 		config.setVerifactuData(getIccData(config.getVerifactuDataHistory()));
 		config.setVerifactuInvoice(DataResponseDAO.has(ctx, domainId, DataResponseSource.VERIFACTU, AonDateUtils.getCurrentYear()));
 		if(config.getVerifactuDataHistory().isEmpty()) {
-			Enterprise enterprise = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(domainId));
-			EnterpriseData oldVerifactuData = new EnterpriseData()
+			EnterpriseDAO.opt(ctx, f -> f.getDomainProperty().eq(domainId))
+			.ifPresent( enterprise -> {
+				EnterpriseData oldVerifactuData = new EnterpriseData()
 					.setDomain(domainId)
 					.setEnterprise(enterprise.getId());
-			AppParamDAO.getByPattern(ctx, domainId, "VERIFACTU_%")
-			.forEach(r -> InvoiceCommunicationConfigurationParams.safeValueOf(r.getName() ) .ifPresent(t -> t.fillValue(ctx, config.getAdministration(), oldVerifactuData, r)));
-			if(AonStringUtils.isNotBlank(oldVerifactuData.getName())) {
-				if(oldVerifactuData.getStartDate() == null) {
-					oldVerifactuData.setStartDate(AonDateUtils.today());
+				AppParamDAO.getByPattern(ctx, domainId, "VERIFACTU_%")
+				.forEach(r -> InvoiceCommunicationConfigurationParams.safeValueOf(r.getName() ) .ifPresent(t -> t.fillValue(ctx, config.getAdministration(), oldVerifactuData, r)));
+				if(AonStringUtils.isNotBlank(oldVerifactuData.getName())) {
+					if(oldVerifactuData.getStartDate() == null) {
+						oldVerifactuData.setStartDate(AonDateUtils.today());
+					}
+					config.setVerifactuData(EnterpriseDataDAO.insert(ctx, oldVerifactuData));
+					config.getVerifactuDataHistory().add(oldVerifactuData);
 				}
-				config.setVerifactuData(EnterpriseDataDAO.insert(ctx, oldVerifactuData));
-				config.getVerifactuDataHistory().add(oldVerifactuData);
-			}
+			});
 		}
 		
 		AppParamDAO.get(ctx, domainId, AppParam.VERIFACTU_ACTIVE).ifPresent(r -> {
@@ -355,19 +362,21 @@ public class InvoiceCommunicationDAO {
 		config.setSiiData(getIccData(config.getSiiDataHistory()));
 		config.setSiiInvoice(DataResponseDAO.has(ctx, domainId, DataResponseSource.SII, AonDateUtils.getCurrentYear()));
 		if(config.getSiiDataHistory().isEmpty()) {
-			Enterprise enterprise = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(domainId));
-			EnterpriseData oldSiiData = new EnterpriseData()
+			EnterpriseDAO.opt(ctx, f -> f.getDomainProperty().eq(domainId))
+			.ifPresent( enterprise -> {
+				EnterpriseData oldSiiData = new EnterpriseData()
 					.setDomain(domainId)
 					.setEnterprise(enterprise.getId());
-			AppParamDAO.getByPattern(ctx, domainId, "SII_%")
-			.forEach(r -> InvoiceCommunicationConfigurationParams.safeValueOf(r.getName() ) .ifPresent(t -> t.fillValue(ctx, config.getAdministration(), oldSiiData, r)));
-			if(AonStringUtils.isNotBlank(oldSiiData.getName())) {
-				if(oldSiiData.getStartDate() == null) {
-					oldSiiData.setStartDate(AonDateUtils.today());
+				AppParamDAO.getByPattern(ctx, domainId, "SII_%")
+				.forEach(r -> InvoiceCommunicationConfigurationParams.safeValueOf(r.getName() ) .ifPresent(t -> t.fillValue(ctx, config.getAdministration(), oldSiiData, r)));
+				if(AonStringUtils.isNotBlank(oldSiiData.getName())) {
+					if(oldSiiData.getStartDate() == null) {
+						oldSiiData.setStartDate(AonDateUtils.today());
+					}
+					config.setSiiData(EnterpriseDataDAO.insert(ctx, oldSiiData));
+					config.getSiiDataHistory().add(oldSiiData);
 				}
-				config.setSiiData(EnterpriseDataDAO.insert(ctx, oldSiiData));
-				config.getSiiDataHistory().add(oldSiiData);
-			}
+			});
 		}
 		
 		AppParamDAO.get(ctx, domainId, AppParam.SII_ACTIVE).ifPresent(r -> {
