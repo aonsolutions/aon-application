@@ -211,7 +211,7 @@ public class InvoiceCommunicator {
 		;
 		
 		if (icc.isTbai(expDate, invoiceType) && !icc.isBizkaia(expDate)) {	
-			TbaiData.getInstance(icc).get(ctx, domainId, invoiceId)
+			TbaiData.getInstance(ctx, icc).get(ctx, domainId, invoiceId)
 				.ifPresent(tbaiInfo -> addTBAI(ctx, map, tbaiInfo, domainId, invoiceId));
 		}  
 		return map;

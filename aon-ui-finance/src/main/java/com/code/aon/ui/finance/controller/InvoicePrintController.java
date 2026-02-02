@@ -57,16 +57,21 @@ import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.IMailAccount;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PrintInvoiceConfigurationDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.in.pdf.maker.PdfMaker;
@@ -234,61 +239,64 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 	}
 	
 	public  void onDownloadMultipleInvoiceZip(ActionEvent event) throws ManagerBeanException, IOException {
-		List<File> list = new LinkedList<>();
-		com.esferalia.aon.occam.api.model.Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
-		String login = UserUtils.getInstance().getLoggedUser().getLogin();
-		getInvoiceIds().stream().forEach(id ->{
-			try {
-				com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), login, id);
-				if(InvoiceType.SALES.equals(invoice.getType())) {
-					CompanyFull company = AON.getCompanyFull(domain.getName(), domain.getId(), login);
-					Attach logo = new Attach();
-					PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domain.getName(), domain.getId(), login, true);
-					if(config.isLogo()) {
-						Integer regId = company.getRegistry().getId();
-						logo = AON.getAttach(domain.getName(), domain.getId(), login, f-> f.getAttachModuleProperty().eq(regId)
-							.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
-					}
-					File file = File.createTempFile("Factura " + invoice.getReferenceCode(), ".pdf");
-					FileOutputStream out = new FileOutputStream(file);
+		Occam occam = new Occam()
+				.setDomainName(AonUtil.getDomainName())
+				.setDomain(DomainManager.getCurrentDomain())
+				.setUser(UserUtils.getInstance().getLoggedUser().getLogin());
+		try(CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			List<File> list = new LinkedList<>();
+			getInvoiceIds().stream().forEach(id ->{
+				try {
+					com.esferalia.aon.occam.api.model.finance.Invoice invoice = InvoiceDAO.getFullInvoice(ctx, id);
+					if(InvoiceType.SALES.equals(invoice.getType())) {
+						CompanyFull company = CompanyDAO.getFull(ctx, occam.getDomain());
+						Attach logo = new Attach();
+						PrintInvoiceConfiguration config = PrintInvoiceConfigurationDAO.get(ctx, true);
+						if(config.isLogo()) {
+							Integer regId = company.getRegistry().getId();
+							logo = AttachmentDAO.getRegistryAttachStream(ctx, f-> 
+									f.getAttachModuleProperty().eq(regId)
+									.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), true)
+								.findFirst().orElse(new Attach()); 
+			
+						}
+						File file = File.createTempFile("Factura " + invoice.getReferenceCode(), ".pdf");
+						FileOutputStream out = new FileOutputStream(file);
 					
-					Occam occam = new Occam()
-						.setDomainName(domain.getName())
-						.setDomain( domain.getId() )
-						.setUser(login)
-					;
-					String qrUrl = domain.getName() + "/dip?source=invoice&id=" + id;  
-					InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
-					String tbaiId = "";
-					if(icc.isTbai()) {
-						TbaiData tbaiData = TbaiData.getInstance(icc);
-						String tbaiUrl = tbaiData.getTbaiUrl(domain.getName(), domain.getId(), login, invoice.getId());
-						qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
-						tbaiId = tbaiData.getTbaiId(domain.getName(), domain.getId(), login, invoice.getId());
+
+						String qrUrl = occam.getDomainName() + "/dip?source=invoice&id=" + id;  
+						InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, occam.getDomain());
+						String tbaiId = "";
+						if(icc.isTbai()) {
+							TbaiData tbaiData = TbaiData.getInstance(ctx, icc);
+							String tbaiUrl = tbaiData.getTbaiUrl(occam.getDomain(), invoice.getId());
+							qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
+							tbaiId = tbaiData.getTbaiId(occam.getDomain(), invoice.getId());
+						}
+						PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData(), tbaiId);
+						list.add(file);	
 					}
-					PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData(), tbaiId);
-					list.add(file);	
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		});
+			});
 		
-    	File file = File.createTempFile( "invoices", "." + MimeType.MIME_ZIP.getExtension());
-		OutputStream fileOut = new BufferedOutputStream( new FileOutputStream(file) );
-		ZipOutputStream zos = new ZipOutputStream(fileOut);
-		Closeable res = zos;
-		try {
-			for (File f : list) {
-				String fileName = f.getName();
-				zos.putNextEntry(new ZipEntry(fileName));
-				copy(f, zos);
-				zos.closeEntry();
+    		File file = File.createTempFile( "invoices", "." + MimeType.MIME_ZIP.getExtension());
+			OutputStream fileOut = new BufferedOutputStream( new FileOutputStream(file) );
+			ZipOutputStream zos = new ZipOutputStream(fileOut);
+			Closeable res = zos;
+			try {
+				for (File f : list) {
+					String fileName = f.getName();
+					zos.putNextEntry(new ZipEntry(fileName));
+					copy(f, zos);
+					zos.closeEntry();
+				}
+			} finally {
+				res.close();
 			}
-		} finally {
-			res.close();
+			downloadZip(file);
 		}
-		downloadZip(file);
 	}
 
 	private static void copy(File file, OutputStream out) throws IOException {

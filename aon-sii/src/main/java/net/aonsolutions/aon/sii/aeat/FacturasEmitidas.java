@@ -189,11 +189,19 @@ public class FacturasEmitidas extends SIIBuilt {
 		// Régimen especial de la Unión, se debe pasar como no sujeta por reglas de localizacion y solo la base imponible sin el IVA del pais miembro 
 		boolean oss = invoice.isVatUnion();
 		
-		Double exenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && exempt && f.getPercentage() == 0 && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()) && !f.isPrepayment() && !oss) 
+		Double exenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) 
+				&&  f.getPercentage() == 0 && 
+				( 
+					(exempt && VatDeductionType.WITH_RIGHT.equals(f.getVatDeductionType()))
+					|| VatDeductionType.WITHOUT_RIGHT.equals(f.getVatDeductionType())
+				)
+				&& !f.isPrepayment() && !oss) 
 				.mapToDouble(f -> f.getBase()).sum();
 		Double noSujeta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && (VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()) || f.isPrepayment() || oss))
 				.mapToDouble(f -> f.getBase()).sum();
-		LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && (!exempt || f.getPercentage() > 0)  && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()) && !f.isPrepayment() && !oss )
+
+		LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && (!exempt || f.getPercentage() > 0)  
+				&& VatDeductionType.WITH_RIGHT.equals(f.getVatDeductionType()) && !f.isPrepayment() && !oss )
 				.map(f -> new VatData().setBase(f.getBase())
 						.setPercentage(f.getPercentage())
 						.setQuota(f.getQuota())

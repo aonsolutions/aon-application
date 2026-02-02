@@ -454,6 +454,7 @@ public enum ContextVariable implements IResourceable {
 	public static final String SCOPE = "AMBITO";
 	public static final String ISDEF = "DEFINIDA";
 	public static final String ISREAD = "UTILIZADA";
+	public static final String IFNDEF = "IFNDEF";
 	public static final String CHECK_DEF = "CHECK_DEF";
 	public static final String CHECK_VAR = "CHECK_VAR";
 	public static final String REDEFINE = "REDEFINE";
@@ -482,6 +483,7 @@ public enum ContextVariable implements IResourceable {
 	public static final String GUARENTEE_IT = "GARANTIZADO_IT";
 	public static final String MONTHLY_PAYMENTS = "MENSUALIDAD";
 	public static final String TEMP_PAYMENT = "DEVENGO_TEMPORAL";
+	public static final String FLEXIBLE_DISCOUNT = "DTO_FLEXIBLE";
 	
 	public static final String  SUBTRACT_IT_DAY = "RESTAR_DIA_IT";
 	

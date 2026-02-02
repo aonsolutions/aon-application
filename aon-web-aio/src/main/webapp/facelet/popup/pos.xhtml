@@ -8,9 +8,9 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<aon:div id="posMenuPopup" style="display:none" 
-	onclick="javascript:selectItemHeader(this.id)"
-	onmouseout="javascript:hideMenuPopup(this.id)" 
-	onmouseover="javascript:showMenuPopup(this.id)" >
+		onclick="javascript:selectItemHeader(this.id)"
+		onmouseout="javascript:hideMenuPopup(this.id)" 
+		onmouseover="javascript:showMenuPopup(this.id)" >
 
 		<aon:form id="posMenuForm">
 
@@ -28,6 +28,8 @@
 								<aon:outputText value="#{bundle.aon_module_pos}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
+							
+								<!-- Apertura de Caja -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="pos_opening-tpv" 
 										rendered="#{actionDenied.renderedOption('posOpening_form-tpv')}"
@@ -35,6 +37,8 @@
 										actionListener="#{posOpening.onReset}"
 										value="#{bundle.finance_posOpening_module}" />
 								</aon:div>
+								
+								<!-- Arqueo de Caja -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="pos_closing-tpv" 
 										rendered="#{actionDenied.renderedOption('')}"
@@ -42,14 +46,19 @@
 										actionListener="#{posClosing.onLoad}" 
 										value="#{bundle.finance_posClosing_module}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="pos_invoice" 
-										rendered="#{actionDenied.renderedOption('posInvoice_form')}"
-										action="posInvoice_form"
-										actionListener="#{posInvoice.onLoad}" 
-										value="#{bundle.finance_pos_invoice_management_module}" />
-								</aon:div>
+								
+								<!-- Venta TPV -->
+								<aon:if test="#{icc.hasCommunication()}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="pos_invoice" 
+											rendered="#{actionDenied.renderedOption('posInvoice_form')}"
+											action="posInvoice_form"
+											actionListener="#{posInvoice.onLoad}" 
+											value="#{bundle.finance_pos_invoice_management_module}" />
+									</aon:div>
+								</aon:if>	
 								<aon:if test="#{aonRole.financeOperator}">
+									<!-- Remesar Cobros de Cajas -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="pos_finance_batch-tpv" 
 											rendered="#{actionDenied.renderedOption('posFinance_search-tpv')}"
@@ -59,6 +68,7 @@
 									</aon:div>
 								</aon:if>
 								<aon:if test="#{aonRole.productOperator}">
+									<!-- Productos -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="product" 
 											rendered="#{actionDenied.renderedOption('product_search')}"
@@ -80,6 +90,8 @@
 								<aon:outputText value="#{bundle.aon_auxiliaries}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
+								
+								<!-- Etiquetas de Producto -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="productTag-pos" 
 										rendered="#{actionDenied.renderedOption('productTag_form-pos')}"
@@ -87,6 +99,8 @@
 										actionListener="#{productTag.onCancel}"
 										value="#{bundle.product_tag_module}"/>	
 								</aon:div>
+								
+								<!-- Categorías -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="productCategory-pos" 
 										rendered="#{actionDenied.renderedOption('productCategory-pos')}"
@@ -94,6 +108,7 @@
 										value="#{bundle.aon_categories}" />
 								</aon:div>								
 								<aon:if test="#{aonRole.config}">
+	                                <!-- Definición de Caja -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="posDefinition-tpv" 
 											rendered="#{actionDenied.renderedOption('pos_search-tpv')}"
@@ -103,6 +118,7 @@
 									</aon:div>
 								</aon:if>
 								<aon:if test="#{aonRole.admin or aonRole.config or aonRole.saleOperator}">
+								    <!-- Turnos de Caja -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="posShift-tpv" 
 											rendered="#{actionDenied.renderedOption('posShift_search-tpv')}"
@@ -111,6 +127,8 @@
 											value="#{bundle.report_posShift_list}" />
 									</aon:div>
 								</aon:if>
+								
+								<!-- Impresión de Etiquetas -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="itemTagPrint-tpv" 
 										rendered="#{actionDenied.renderedOption('itemTagPrint_search-tpv')}"
