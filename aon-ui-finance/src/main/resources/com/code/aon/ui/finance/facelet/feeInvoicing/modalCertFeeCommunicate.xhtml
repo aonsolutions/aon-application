@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showCertFeeWindow">
+		<aon:if test="#{feeInvoicing.showCertFeeWindow}">
+			<rich:modalPanel id="fiscalCertFeeModalPanel"
+				minWidth="400" minHeight="200" zindex="90"
+				showWhenRendered="#{feeInvoicing.showCertFeeWindow}" >
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="Emitir Cuotas" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showCertFeeWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{feeInvoicing.showCertFeeWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="certFeeForm">
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+								<aon:div style="width:90%; margin-left: auto; margin-right: auto;">
+									<aon:div style="margin-top: 10px; width:90%; margin-left: auto; margin-right: auto; border: solid gray 1px; padding: 10px; font-weight: bold; background-color: LightBlue; text-align: center;">
+										<aon:outputText value="Una vez emitida, las cuotas se registrará y enviarán automaticamente." />
+										<aon:outputText value="No se podrán modificar ni eliminar." style="display:block;" />
+									</aon:div>
+									
+									<aon:if test="#{feeInvoicing.needCertificate()}">
+										<aon:panelGrid id="menuGridFee" columns="2" dir="true"
+											styleClass="aon-width-all aon-margin-top"
+											columnClasses="aon-panelGrid-odd aon-width-half aon-text-right aon-padding-right, aon-panelGrid-even aon-width-half">
+	
+										
+											<aon:outputLabel for="keystoreFee" value="Seleccione certificado" />
+											<aon:selectOneMenu id="keystoreFee" value="#{feeInvoicing.certificate}" >
+												<f:selectItems value="#{feeInvoicing.digitalCertificates}" />
+												<a4j:support event="onchange" reRender="showCertVerifactuWindow" ajaxSingle="true" />
+											</aon:selectOneMenu>
+										
+											<aon:outputLabel rendered="#{!feeInvoicing.pass}" for="password" value="#{bundle.aon_login_passwd}"/>
+											<aon:inputSecret rendered="#{!feeInvoicing.pass}" id="password" value="#{feeInvoicing.password}" />
+										</aon:panelGrid>
+									</aon:if>			
+										
+									<aon:div style="text-align: center; margin-top: 10px;">
+
+										<aon:commandButton id="certFeeAccept"
+											value="Emitir Cuotas"
+											reRender="progressBarForm"
+											actionListener="#{feeInvoicing.onShowPanel}"
+											styleClass="aon-finding-toolbar-item aon-icon-accept">
+												<rich:componentControl for="fiscalCertFeeModalPanel"
+													event="onclick" operation="hide"/>		
+												<f:setPropertyActionListener
+													target="#{feeInvoicing.showCertFeeWindow}"
+													value="#{false}" />
+										</aon:commandButton>
+									</aon:div>
+	
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>							
+				</aon:form>
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>

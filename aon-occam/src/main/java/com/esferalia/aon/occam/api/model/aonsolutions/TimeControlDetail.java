@@ -24,6 +24,7 @@ public class TimeControlDetail implements Serializable {
 	private Date date;
 	private String comments;
 	private Location location;
+	private String locationDescription;
 	private Coordinates coordinates;
 	
 	private TimeControlReason reason;
@@ -142,6 +143,15 @@ public class TimeControlDetail implements Serializable {
 		return this;
 	}
 
+	public String getLocationDescription() {
+		return locationDescription;
+	}
+
+	public TimeControlDetail setLocationDescription(String locationDescription) {
+		this.locationDescription = locationDescription;
+		return this;
+	}
+
 	public Coordinates getCoordinates() {
 		return coordinates;
 	}
@@ -190,6 +200,8 @@ public class TimeControlDetail implements Serializable {
 			locationJson.put("name", getLocation().getDescription());
 			json.put("location", locationJson);
 		}
+		
+		json.put("location_description", getLocationDescription());
 		
 		if(getTaskHolder() != null) {
 			JSONObject taskHolderJson = new JSONObject();

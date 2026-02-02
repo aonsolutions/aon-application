@@ -66,13 +66,13 @@ final class SifEnvironment extends VerifactuEnvironmentAbs {
 			.set(ENTERPRISE_DATA.EXPRESSION, "test" )
 			.set(ENTERPRISE_DATA.START_DATE,  AonDateUtils.toSql(yesterday))
 			.execute();
-		ctx.log().info("Enterprise Data: ICC_NO_SIF set to TRUE / TEST");
+		ctx.log().info("Enterprise Data: ICC_SIF set to TRUE / TEST");
 		
 		ctx.getDslContext().insertInto(ENTERPRISE_DATA)
 			.set(ENTERPRISE_DATA.DOMAIN, ctx.getDomainId())
 			.set(ENTERPRISE_DATA.ENTERPRISE, enterprise.getId() )
 			.set(ENTERPRISE_DATA.NAME, EnterpriseDataNames.ICC_ADMINISTRATION.name() )
-			.set(ENTERPRISE_DATA.EXPRESSION, Administration.COMMON_TERRITORY.name() )
+			.set(ENTERPRISE_DATA.EXPRESSION, Administration.NAVARRA.name() )
 			.set(ENTERPRISE_DATA.START_DATE,  AonDateUtils.toSql(yesterday))
 			.execute();
 		ctx.log().info("Enterprise Data: ICC_ADMINISTRATION set to COMMON_TERRITORY");

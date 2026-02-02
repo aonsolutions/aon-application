@@ -16,6 +16,7 @@ import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.Series;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -84,6 +85,36 @@ public class SeriesNumberUtil {
 			}
 		}
 		return 1;
+	}
+	
+
+	/**
+	 * Devuelve el siguiente número de la tabla pasada por parámetro.
+	 * 
+	 * @param series Serie de la que hay que devolver el siguiente número.
+	 * @param table Tabla de la que hay que devolver el siguiente número.
+	 * @param criteria Restricciones sobre la consulta.
+	 * @return El siguiente número.
+	 */
+	public static int obtainSalesMinNumber(String series) {
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+		Session session = HibernateUtil.getSession(sessionFactoryName);
+		String hqlQuery = 
+			"SELECT MIN(invoice.number)"
+				+ " FROM Invoice invoice "
+				+ " WHERE invoice.series " + (StringUtils.isBlank(series) ? "IS NULL" : " = '" + series + "'")
+				+ " AND invoice.domain = " + DomainManager.getCurrentDomain()
+				+ " AND invoice.type = " + InvoiceType.SALES.ordinal()
+				;
+		Query query = session.createQuery(hqlQuery);
+		Iterator<?> iterator = query.list().iterator();
+		if (iterator.hasNext()) {
+			Integer results = (Integer)iterator.next();
+			if (results != null) {
+				return (results.intValue() + 1);
+			}
+		}
+		return -1;
 	}
 	
 	public static int getNumberMinimumLength() {

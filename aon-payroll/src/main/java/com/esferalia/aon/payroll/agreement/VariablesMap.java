@@ -2440,6 +2440,24 @@ public class VariablesMap implements Serializable {
 		// Act. 17/12/25
 		variablesMap.put("PLUS_TRABAJO_EN_OBRA_MENSUAL", "P_TRAB_OBRA_M");
 
+		// Act. 23/01/26
+		variablesMap.put("COMPLEMENTO_INTERVENCION_HORAS", "C_INTERV_H");
+		variablesMap.put("COMPLEMENTO_PAGA_UNICA_ANUAL", "C_PAGA_UNICA_A");
+		variablesMap.put("COMPLEMENTO_PERSONAL_LIBRE_DIARIO", "C_PERS_LIBRE_D");
+		variablesMap.put("COMPLEMENTO_PERSONAL_LIBRE_MENSUAL", "C_PERS_LIBRE_M");
+		variablesMap.put("COMPLEMENTO_TRIENIO_PAGA_UNICA_ANUAL", "C_TRI_PU_A");
+		variablesMap.put("GRATIFICACION_PERMANENCIA_65_AÑOS_ANUAL", "G_PERM_65_A");
+		variablesMap.put("PAGA_UNICA_ANUAL", "PAGA_UNICA_A");
+		variablesMap.put("PLUS_ASIDUIDAD_MENSUAL", "P_ASIDUIDAD_M");
+		variablesMap.put("PLUS_FABRICAS_HIELO_MENSUAL", "P_FAB_HIELO_M");
+		variablesMap.put("PLUS_NOCTURNIDAD_PRIMERA_HORA_DIARIO", "P_NOCT_1H_D");
+		variablesMap.put("PLUS_PERMANENCIA_3_MESES_MENSUAL", "P_PERM_3M_M");
+		variablesMap.put("PLUS_PERMANENCIA_6_MESES_MENSUAL", "P_PERM_6M_M");
+		variablesMap.put("PLUS_RECURSO_PREVENTIVO_ANUAL", "P_REC_PREV_A");
+		variablesMap.put("PLUS_REFRIGERADO_ANUAL", "P_REFRIG_A");
+		variablesMap.put("TRIENIO_PAGA_UNICA_ANUAL", "TRI_PU_A");
+		variablesMap.put("PLUS_DOMINGOS_Y_FESTIVOS_ZONA_TURISTICA_HORAS", "P_DOM_FEST_ZT_H");
+
 
 	}
 	

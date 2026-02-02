@@ -1567,7 +1567,10 @@ public class SalaryDraftBuilder
 
 			    || (d.getType() == Deduction.Type.SOLIDARITY 
 			    	&& deduction.getType() == Deduction.Type.SOLIDARITY)
-			    ) 
+
+			    || (d.getType() == Deduction.Type.BONUS 
+		    	&& deduction.getType() == Deduction.Type.BONUS
+		    	&& AonStringUtils.equals(d.getDescriptionTemplate(), deduction.getDescriptionTemplate() )))
 			{
 				if (deduction instanceof CompositeDeduction)
 					return (CompositeDeduction) deduction;

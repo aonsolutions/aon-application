@@ -1311,6 +1311,14 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.ACCOUNT);
 		return (invoiceDetailBean.getCount(criteria) > 0);
 	}
+	
+	public boolean isTediSource() throws ManagerBeanException {
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.TEDI);
+		return (invoiceDetailBean.getCount(criteria) > 0);
+	}
 
 	public void onApplyDiscountsShow(ActionEvent event) throws ManagerBeanException {
 		Invoice invoice = getInvoice();
@@ -1698,10 +1706,12 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			String qrUrl = domain.getName() + "/dip?source=invoice&id=" + inv.getId() ;  
 			String tbaiId = "";
 			if(isTbai() || isLroe()) {
-				TbaiData tbaiData = TbaiData.getInstance(getInvoiceCommunicationConfiguration());
-				String tbaiUrl = tbaiData.getTbaiUrl(domain.getName(), domain.getId(), login, invoice.getId());
-				qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
-				tbaiId = tbaiData.getTbaiId(domain.getName(), domain.getId(), login, invoice.getId());
+				try(CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)) {
+					TbaiData tbaiData = TbaiData.getInstance(ctx, getInvoiceCommunicationConfiguration());
+					String tbaiUrl = tbaiData.getTbaiUrl( domain.getId(), invoice.getId());
+					qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
+					tbaiId = tbaiData.getTbaiId(domain.getId(), invoice.getId());
+				}
 			}
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData(), tbaiId);
@@ -2117,6 +2127,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 	
 	public boolean isFirstNumberOfSeries() {
+		if(AonStringUtils.isBlank(getInvoice().getSeries())) return false; 
 	    Integer domainId = DomainManager.getCurrentDomain();
         String domainName = AonUtil.getDomainName();
         String login = UserUtils.getInstance().getLoggedUser().getLogin();
@@ -2181,7 +2192,10 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			Integer domainId = DomainManager.getCurrentDomain();
 			String domainName = AonUtil.getDomainName();
 			String login = UserUtils.getInstance().getLoggedUser().getLogin();
-			tbaiUrl = TbaiData.getInstance(getInvoiceCommunicationConfiguration()).getTbaiUrl(domainName, domainId, login, invoice.getId());
+
+			try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+				tbaiUrl = TbaiData.getInstance(ctx, getInvoiceCommunicationConfiguration()).getTbaiUrl(domainId, invoice.getId());
+			}
 			if(tbaiUrl == null) tbaiUrl = ""; 
 		} 
 		return tbaiUrl;
@@ -2276,7 +2290,9 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
 		Domain domain = new Domain().setName(domainName).setId(domainId);
 		User user = new User().setLogin(login);
-		return TbaiData.getInstance(getInvoiceCommunicationConfiguration()).get(domain, user, getInvoice().getId());		
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return TbaiData.getInstance(ctx, getInvoiceCommunicationConfiguration()).get(domain, user, getInvoice().getId());		
+		}
 	}
 	
 	public List<InvoiceCommunicationHistory> getInvoiceCommunicationHistory() {

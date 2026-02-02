@@ -615,11 +615,14 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				+ "&t=" + invoice.getTotal();  
 		InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(api.getOccam());
 		String tbaiId = "";
-		if(icc.isTbai()) {
-			TbaiData tbaiData = TbaiData.getInstance(icc);
-			String tbaiUrl = tbaiData.getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
-			qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
-			tbaiId = tbaiData.getTbaiId(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
+		if(icc.isTbai() || icc.isLroe()) {
+			try(CloseableAONContext ctx = AONContext.getAONContext(api.getDomain(), api.getUser())) {
+				TbaiData tbaiData = TbaiData.getInstance(ctx, icc);
+				String tbaiUrl = tbaiData.getTbaiUrl(api.getDomain().getId(), invoice.getId());
+				qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
+				tbaiId = tbaiData.getTbaiId(api.getDomain().getId(), invoice.getId());				
+			}
+
 		}
 		Attach logo = new Attach();
 		

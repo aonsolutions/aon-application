@@ -18,6 +18,7 @@ import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.Select;
+import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.jooq.tables.records.GeozoneRecord;
@@ -89,12 +90,25 @@ public class EnterpriseDAO {
 	
 	// -------------------------------------- CRUD Methods
 	
+	private static SelectConditionStep<Record> select(AONContext ctx, EnterpriseFilter filter) {
+		return ctx.getDslContext().select().from(ENTERPRISE)
+			.join(REGISTRY).on(ENTERPRISE.REGISTRY.equal(REGISTRY.ID))
+			.where(ENTERPRISE_PROPERTIES.getConditions(filter));
+	}
+	
+	public static Optional<Enterprise> opt(AONContext ctx, EnterpriseFilter filter) {
+		return select(ctx, filter)
+			.limit(1)
+			.fetch()
+			.stream()
+			.map(new EnterpriseFiller())
+			.findFirst();
+	}
+	
 	public static Enterprise get(AONContext ctx, EnterpriseFilter filter) {
 		ctx.checkRead();
 		
-		Enterprise enterprise = ctx.getDslContext().select().from(ENTERPRISE)
-			.join(REGISTRY).on(ENTERPRISE.REGISTRY.equal(REGISTRY.ID))
-			.where(ENTERPRISE_PROPERTIES.getConditions(filter))
+		Enterprise enterprise = select(ctx, filter)
 			.limit(1)
 			.stream()
 			.map(new EnterpriseFiller())

@@ -21,6 +21,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
@@ -300,11 +302,13 @@ public class MultipleDownloadServlet extends HttpServlet{
 							+ "&t=" + invoice.getTotal();  
 					InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
 					String tbaiId = "";
-					if(icc.isTbai()) {	
-						TbaiData tbaiData = TbaiData.getInstance(icc);
-						String tbaiUrl = tbaiData.getTbaiUrl(domain.getName(), domain.getId(), user.getLogin(), invoice.getId());
-						qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
-						tbaiId = tbaiData.getTbaiId(domain.getName(), domain.getId(), user.getLogin(), invoice.getId());
+					if(icc.isTbai() || icc.isLroe()) {	
+						try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())) {
+							TbaiData tbaiData = TbaiData.getInstance(ctx, icc);
+							String tbaiUrl = tbaiData.getTbaiUrl(domain.getId(), invoice.getId());
+							qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
+							tbaiId = tbaiData.getTbaiId(domain.getId(), invoice.getId());							
+						}
 					}
 					PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData(), tbaiId);
 					return file;

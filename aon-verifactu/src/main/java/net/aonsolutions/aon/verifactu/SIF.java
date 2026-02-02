@@ -57,7 +57,7 @@ public class SIF {
 			Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
 			byte[] requestBytes = VerifactuXMLUtils.toBytes(document);
 			Certificate cert = AonSecret.getAonCert();
-			requestBytes = VerifactuSigner.getInstance().sign( cert, requestBytes );
+			requestBytes = VerifactuSigner.getInstance().signWithoutTransform(cert, requestBytes );
 			vc.setRequestBytes(requestBytes);
 			return saveAccept( ctx, vc );
 		} catch (AonSignerException e) {

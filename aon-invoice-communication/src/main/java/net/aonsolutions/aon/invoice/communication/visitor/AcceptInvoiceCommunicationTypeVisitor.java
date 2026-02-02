@@ -71,10 +71,8 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	@Override
 	public void visitTBAI() throws InvoiceCommunicationException {
 		if(InvoiceType.SALES.equals(getInvoice().getType())) {
-			try {
-				TBAI.accept(getConfiguration(), getCompany(), getInvoice(), 
-						getBlockchain(getCertificateId()));
-				
+			try (CloseableAONContext ctx = AONContext.getAONContext(getOccam())) {
+				TBAI.accept(ctx, getConfiguration(), getCompany(), getInvoice());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

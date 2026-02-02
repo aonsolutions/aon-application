@@ -679,8 +679,8 @@ public class JooqEmployeeCalendarNew {
 		for(Record itDaysRecord : itDaysRecords){
 			CalendarDayType calendarDayType = new CalendarDayType();
 			
-			calendarDayType.setStartDate(parseDateSqlToUtil(itDaysRecord.get(CONTRACT_DATA.START_DATE)));
-			calendarDayType.setEndDate(parseDateSqlToUtil(itDaysRecord.get(CONTRACT_DATA.END_DATE)));
+			calendarDayType.setStartDate(parseDateSqlToUtil(itDaysRecord.get(CONTRACT_LEAVE.START_DATE)));
+			calendarDayType.setEndDate(parseDateSqlToUtil(itDaysRecord.get(CONTRACT_LEAVE.END_DATE)));
 			calendarDayType.setDayType(parseStringToDayType("DIAS_IT"));
 			calendarDayType.setExpession("");
 			

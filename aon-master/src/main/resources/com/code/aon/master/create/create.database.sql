@@ -499,6 +499,7 @@ CREATE TABLE `alcatraz` (
   `finance` int DEFAULT NULL COMMENT 'Id Vto',
   `finance_tracking` int DEFAULT NULL COMMENT 'Id seguimiento Vto',
   `invoice_batch` int DEFAULT NULL COMMENT 'Id Lote Factura',
+  `liquidation` int DEFAULT NULL COMMENT 'Id de la liquidacion y/o calculo de la TGSS',
   PRIMARY KEY (`id`),
   KEY `IDX_ALCATRAZ_DOMAIN` (`domain`),
   KEY `IDX_ALCATRAZ_FS_MODEL` (`fs_model`),
@@ -507,13 +508,15 @@ CREATE TABLE `alcatraz` (
   KEY `IDX_ALCATRAZ_FINANCE` (`finance`),
   KEY `IDX_ALCATRAZ_FINANCE_TRACKING` (`finance_tracking`),
   KEY `IDX_ALCATRAZ_INVOICE_BATCH` (`invoice_batch`),
+  KEY `IDX_ALCATRAZ_LIQUIDATION` (`liquidation`),
   CONSTRAINT `FK_ALCATRAZ_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ALCATRAZ_FS_MODEL` FOREIGN KEY (`fs_model`) REFERENCES `fs_model` (`id`),
   CONSTRAINT `FK_ALCATRAZ_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
   CONSTRAINT `FK_ALCATRAZ_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`),
   CONSTRAINT `FK_ALCATRAZ_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`),
   CONSTRAINT `FK_ALCATRAZ_FINANCE_TRACKING` FOREIGN KEY (`finance_tracking`) REFERENCES `finance_tracking` (`id`),
-  CONSTRAINT `FK_ALCATRAZ_INVOICE_BATCH` FOREIGN KEY (`invoice_batch`) REFERENCES `invoice_batch` (`id`)
+  CONSTRAINT `FK_ALCATRAZ_INVOICE_BATCH` FOREIGN KEY (`invoice_batch`) REFERENCES `invoice_batch` (`id`),
+  CONSTRAINT `FK_ALCATRAZ_LIQUIDATION` FOREIGN KEY (`liquidation`) REFERENCES `salary` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bloqueo de entidades';
 
 #
@@ -6054,8 +6057,11 @@ CREATE TABLE `payment_concept` (
   `expression` varchar(1024) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe',
   `irpf_expression` varchar(128) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe tributable',
   `quote_expression` varchar(128) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe cotizable',
+  `payment_concept_agreement` int DEFAULT NULL,
+  `wrong_payment_concept` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_PAYMENT_CONCEPT_DOMAIN` (`domain`),
+  KEY `IDX_WRONG_PAYMENT_CONCEPT` (`payment_concept_agreement`,`wrong_payment_concept`),
   CONSTRAINT `FK_PAYMENT_CONCEPT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos de devengos';
 
@@ -8941,6 +8947,7 @@ CREATE TABLE `timecontrol` (
   `date` datetime NOT NULL COMMENT 'Fecha del control de horario',
   `comments` text CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Comentarios del control de horario',
   `location` int DEFAULT NULL COMMENT 'Ubicación del Operario',
+  `location_description` varchar(64) DEFAULT NULL COMMENT 'Descripción de la ubicación',
   `latitude` double DEFAULT NULL COMMENT 'Latitud de las coordenadas.',
   `longitude` double DEFAULT NULL COMMENT 'Longitud de las coordenadas.',
   `cause` tinyint DEFAULT '0' COMMENT 'causa de fichaje',
@@ -8954,7 +8961,6 @@ CREATE TABLE `timecontrol` (
   KEY `IDX_TIMECONTROL_TASK_HOLDER` (`task_holder`),
   KEY `IDX_TIMECONTROL_LOCATION` (`location`),
   CONSTRAINT `FK_TIMECONTROL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_TIMECONTROL_LOCATION` FOREIGN KEY (`location`) REFERENCES `location` (`id`),
   CONSTRAINT `FK_TIMECONTROL_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Control de Horario';
 

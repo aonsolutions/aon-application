@@ -173,7 +173,7 @@
 						</aon:menuItem>
 						<aon:menuItem id="rectify"
 							value="#{bundle.finance_rectify}"
-							rendered="#{saleInvoice.to.number > 0 and !saleInvoice.rectifier and !saleInvoice.accountSource and saleInvoiceDetail.model.rowCount > 0}"
+							rendered="#{saleInvoice.to.number > 0 and !saleInvoice.rectifier and !saleInvoice.accountSource and !saleInvoice.tediSource and saleInvoiceDetail.model.rowCount > 0}"
 							iconClass="aon-icon-version"
 							actionListener="#{saleInvoice.onRectificationShow}"
 							reRender="showRectificationWindow">

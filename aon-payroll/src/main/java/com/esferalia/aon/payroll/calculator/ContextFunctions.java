@@ -11,6 +11,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WARNING;
 
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ import org.mvel2.util.MethodStub;
 import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.PaymentVariable;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext.DateFormatException;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -53,6 +56,7 @@ import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ContextFunctions {
@@ -123,19 +127,42 @@ public class ContextFunctions {
 		throw new DisableException();
 	}
 
-	public static Double excess(Double amount, ExpressionContext context) {
-		List<ITimedVariable<?>> vars = context.getTimedVariables(ContextVariable.ALL);
+	public static Double excess(Double amount, SQLContractSalaryCalculatorContext context) {
+		List<ITimedVariable<?>> vars = context.getExpressionContext().getTimedVariables(ContextVariable.ALL);
 		if (vars == null || vars.isEmpty())
 			return 0.00;
 		ITimedVariable<?> var = vars.get(0);
 		Double all = (Double) var.getValue(var.getPeriod());
-		return Math.max(all - amount, 0.00);
+		
+		double excess = Math.max(all - amount, 0.00);
+		excess = ExcelFunctions.round(excess, 2);
+		if ( excess > 0.00 ) {
+			PaymentVariable paymentVariable = context.getVariable(ContextVariable.PAYMENT_VARIABLE, PaymentVariable.class);
+			if ( paymentVariable != null  ) {
+				context.addBonus(String.format(
+						Locale.of("es", "ES"),
+						"AVISO(\"<div>"
+						+ "%s est\u00E1 exento el importe que no exceda de %.2f \u20AC. El exceso %.2f \u20AC est\u00E1 incluido."
+						+ "</div>"
+						+ "<div>&nbsp;</div>"
+						+ "<div class='aon-text-right'><span class='aon-icon aon-icon-logo' />aon Solutions</div>\");"
+						,paymentVariable.getPayment().getDescription() , amount, excess
+						));
+			}
+		}
+
+		return excess;
 	}
 
 	public static void isDef(String name, String msg, ExpressionContext context) throws CheckException {
 		if (!context.isDef(name)) {
 			throw new InvalidVariables(msg, name);
 		}
+	}
+
+
+	public static Number ifNDef(String name, Number def) {
+		return ExpressionContext.getCurrentBindings().get(name, AonNumberUtils::todouble , def);
 	}
 
 	public static void checkDef(String[] names, ExpressionContext context  ) throws UndefinedVariablesException {
@@ -1222,6 +1249,20 @@ public class ContextFunctions {
 		}
 	}
 
+	private static void loadIfNDefFunction(ExpressionContext context, Date startDate, Date endDate)
+			throws ExpressionException {
+		try {
+			Method ifNDef = ContextFunctions.class.getMethod("ifNDef", String.class,
+					Number.class);
+
+			MethodStub checkDefStub = new MethodStub(ifNDef);
+			context.setVariable("IFNDEF", checkDefStub, startDate, endDate);
+
+		} catch (SecurityException e) {
+		} catch (NoSuchMethodException e) {
+		}
+	}
+
 	private static void loadIsReadFunction(ExpressionContext context, Date startDate, Date endDate)
 			throws ExpressionException {
 
@@ -1265,11 +1306,11 @@ public class ContextFunctions {
 	private static void loadExcessFunction(ExpressionContext context, Date startDate, Date endDate)
 			throws ExpressionException {
 		try {
-			Method isDef = ContextFunctions.class.getMethod("excess", Double.class, ExpressionContext.class);
+			Method isDef = ContextFunctions.class.getMethod("excess", Double.class, SQLContractSalaryCalculatorContext.class);
 			MethodStub excessStub = new MethodStub(isDef);
 			context.setVariable("_EXCESS", excessStub, startDate, endDate);
 			String functionScript = String.format("%s = def(amount){ _EXCESS(amount, %s) };", ContextVariable.EXCESS,
-					ContextVariable.CONTEXT);
+					ContextVariable.SELF);
 			context.eval(functionScript, startDate, endDate);
 		} catch (SecurityException e) {
 		} catch (NoSuchMethodException e) {
@@ -1397,6 +1438,7 @@ public class ContextFunctions {
 		loadScopeFunction(context, startDate, endDate);
 		loadPPEDelaysFunction(context, startDate, endDate);
 		loadCheckDefFunction(context, startDate, endDate);
+		loadIfNDefFunction(context, startDate, endDate);
 	}
 	
 	public static void loadDaysFunctions(ExpressionContext context, Date startDate, Date endDate)
