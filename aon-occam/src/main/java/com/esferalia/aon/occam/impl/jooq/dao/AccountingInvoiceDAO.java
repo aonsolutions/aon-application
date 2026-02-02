@@ -57,6 +57,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -293,6 +294,8 @@ public class AccountingInvoiceDAO {
 //			.findFirst()
 //			.orElse(null)
 //		);
+		
+		ai.getInvoice().addCommunicationInfo(InvoiceInfoDAO.getMap(ctx, invoice).orElse(null));
 		return ai;
 	}
 
@@ -850,6 +853,15 @@ public class AccountingInvoiceDAO {
 			InvoiceCommunicationConfiguration icc = config.getCommunicationConfig();
 			if (icc.hasCommunication( invoice.getType() )) {
 				AonCollectionUtils.stream( icc.getTypes(invoice.getType()) )
+					.filter( t -> invoice.isSales() 
+						|| (!invoice.isSales()
+							&& t != InvoiceCommunicationType.VERIFACTU
+							&& t != InvoiceCommunicationType.NO_VERIFACTU
+							&& t != InvoiceCommunicationType.TBAI
+							&& t != InvoiceCommunicationType.LROE
+							&& t != InvoiceCommunicationType.SII
+						   )
+					)
 					.map( t -> new InvoiceInfo()
 						.setDomain( invoice.getDomain() )
 						.setInvoice( invoice.getId() )
