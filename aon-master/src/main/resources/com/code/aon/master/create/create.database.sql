@@ -6057,11 +6057,8 @@ CREATE TABLE `payment_concept` (
   `expression` varchar(1024) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe',
   `irpf_expression` varchar(128) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe tributable',
   `quote_expression` varchar(128) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe cotizable',
-  `payment_concept_agreement` int DEFAULT NULL,
-  `wrong_payment_concept` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_PAYMENT_CONCEPT_DOMAIN` (`domain`),
-  KEY `IDX_WRONG_PAYMENT_CONCEPT` (`payment_concept_agreement`,`wrong_payment_concept`),
   CONSTRAINT `FK_PAYMENT_CONCEPT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos de devengos';
 
