@@ -230,7 +230,7 @@ public class LROE140_2_1 extends LROE140 {
 			r.setCriterioCobrosYPagos(invoice.isVatAccrualPayment() ? SiNoEnum.S : SiNoEnum.N);
 
 			// BIEN AFECTO !!
-			if(invoice.getInvestAsset() != null) { 
+			if(invoice.getInvestAsset() != null || detail.getInvestAsset() != null) { 
 				Integer ia = detail.getInvestAssetData() != null && detail.getInvestAssetData().getId() != null 
 					? detail.getInvestAssetData().getId() : invoice.getInvestAsset();
 				r.setBienAfectoIRPFYOIVA(BienAfectoIRPFYOIVAEnum.I);
