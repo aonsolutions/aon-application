@@ -31,6 +31,8 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDe
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoicePanel.InvoicePanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoiceRectificationDataPanel.InvoiceRectificationDataPanelCallback;
+import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceCommunicationIconsPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceConsoleTextPanel;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -511,7 +513,21 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			});
 			regTable.add(tediButton);
 		}
-
+		
+		if (invoiceCallback.getInvoice() != null 
+			&& invoiceCallback.getInvoice().getInvoice() != null) {
+			
+			InvoiceModuleOptions invoiceOptions = new InvoiceModuleOptions()
+				.setDomainName( invoiceCallback.getOccam().getDomainName() )
+				.setDomain( invoiceCallback.getOccam().getDomain() )
+				.setUser( invoiceCallback.getOccam().getUser() )
+			;
+			InvoiceCommunicationIconsPanel communicationIcons = new InvoiceCommunicationIconsPanel( invoiceOptions, invoiceCallback.getInvoice().getInvoice(), false );
+			communicationIcons.addStyleName(AON.CSS.aonMarginLeft());
+			regTable.add(communicationIcons);
+		}
+		
+		
 		AonTableButton helpButton  = new AonTableButton(AON.MSG.help(),AON.CSS.aonIconHelp());
 		helpButton.addStyleName(AON.CSS.aonMarginRight());
 		helpButton.addStyleName(AON.CSS.aonMarginLeft());
@@ -1031,12 +1047,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			number.setValue(inv.getInvoice().getNumber());
 		}
 		
-		if (invoiceCallback.hasCommunication() && inv.isSales()) {
-			communicationWarningLabel.setVisible( true );
-		} else {
-			communicationWarningLabel.setVisible( false );
-		}
-		
 		referenceCode.setValue(inv.getInvoice().getReferenceCode());
 		
 		series.setVisible( inv.isSales() );
@@ -1136,13 +1146,14 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		});
 		headerPanel1.add(rName);
 		
-		communicationWarningLabel.setStyleName(AON.CSS.aonLabelWithIcon());
-		communicationWarningLabel.addStyleName(AON.CSS.aonIconWarning());
-		communicationWarningLabel.addStyleName(AON.CSS.aonMarginLeft());
-		communicationWarningLabel.addStyleName(AON.CSS.aonPadding());
-		communicationWarningLabel.addStyleName(AON.CSS.aonBold());
-		headerPanel1.add(communicationWarningLabel);
-		
+		if (invoiceCallback.hasCommunication() && inv.getInvoice().getId() == null && inv.isSales()) {
+			communicationWarningLabel.setStyleName(AON.CSS.aonLabelWithIcon());
+			communicationWarningLabel.addStyleName(AON.CSS.aonIconWarning());
+			communicationWarningLabel.addStyleName(AON.CSS.aonMarginLeft());
+			communicationWarningLabel.addStyleName(AON.CSS.aonPadding());
+			communicationWarningLabel.addStyleName(AON.CSS.aonBold());
+			headerPanel1.add(communicationWarningLabel);
+		}
 		
 		
 		// *************************************************************************

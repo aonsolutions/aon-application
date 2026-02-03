@@ -10,8 +10,10 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 public class InvoiceCommunicationIconsPanel extends FlowPanel {
-	
 	public InvoiceCommunicationIconsPanel(InvoiceModuleOptions options,  Invoice invoice ) {
+		this(options, invoice, true);
+	}
+	public InvoiceCommunicationIconsPanel(InvoiceModuleOptions options,  Invoice invoice , boolean clickable ) {
 		setStyleName(AON.CSS.aonNowrap());
 		addStyleName(AON.CSS.aonFlexBetween());
 		if (AonCollectionUtils.isEmpty(invoice.getCommunicationInfo())) {
@@ -21,8 +23,11 @@ public class InvoiceCommunicationIconsPanel extends FlowPanel {
 				.filter( Objects::nonNull )
 				.filter(info -> info.getType() != null)
 				.map( info ->  {
-					InvoiceCommunicationIcon i = new InvoiceCommunicationIcon( options, invoice, info.getType(), info.getStatus() ) ;	
-					i.addClickHandler(e-> showHistory(options, invoice, info));
+					InvoiceCommunicationIcon i = new InvoiceCommunicationIcon( options, invoice, info.getType(), info.getStatus() ) ;
+					if (clickable) {
+						i.addStyleName(AON.CSS.aonClickable());
+						i.addClickHandler(e-> showHistory(options, invoice, info));
+					}
 					return i;
 				})
 				.forEach( label -> add(label))
