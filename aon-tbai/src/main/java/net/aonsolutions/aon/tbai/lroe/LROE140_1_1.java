@@ -211,7 +211,7 @@ public class LROE140_1_1 extends LROE140 {
 			e.printStackTrace();
 		}
 		try(CloseableAONContext ctx = AONContext.getAONContext(person.getDomain(), "")){
-			TbaiData.getInstance(icc)
+			TbaiData.getInstance(ctx, icc)
 				.saveResponsePending(ctx, person.getDomain(), invoice, tresp, bc, new DataRequest(), qrUrl);			
 		}
 
@@ -229,6 +229,8 @@ public class LROE140_1_1 extends LROE140 {
 		if(invoice.getEpigraph().equals("184950")) invoice.setEpigraph("1849501"); // o 1849502 ??
 		if(invoice.getEpigraph().equals("192210") || invoice.getEpigraph().equals("192220") )
 			invoice.setEpigraph("192200");
+		if(invoice.getEpigraph().equals("150410")) invoice.setEpigraph("150411"); // o 150412 ??
+		if(invoice.getEpigraph().equals("166410")) invoice.setEpigraph("166411"); // o 166412 ??
 		
 		filtro.setEpigrafe(invoice.getEpigraph());
 		filtro.setEstado(EstadoRegistroConsultaEnum.CORRECTO);

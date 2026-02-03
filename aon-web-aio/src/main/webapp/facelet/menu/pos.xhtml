@@ -25,25 +25,32 @@
 								<aon:outputText value="#{bundle.aon_module_pos}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
+								<!-- Apertura de Caja -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="pos_opening-tpv" 
 										action="posOpening_form-tpv"
 										actionListener="#{posOpening.onReset}"
 										value="#{bundle.finance_posOpening_module}" />
 								</aon:div>
+								
+								<!-- Arqueo de Caja -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="pos_closing-tpv" 
 										action="posClosing_form-tpv"
 										actionListener="#{posClosing.onLoad}" 
 										value="#{bundle.finance_posClosing_module}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="pos_invoice" 
-										action="posInvoice_form"
-										actionListener="#{posInvoice.onLoad}" 
-										value="#{bundle.finance_pos_invoice_management_module}" />
-								</aon:div>
+								<aon:if test="#{icc.hasCommunication()}">
+									<!-- Venta TPV -->
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="pos_invoice" 
+											action="posInvoice_form"
+											actionListener="#{posInvoice.onLoad}" 
+											value="#{bundle.finance_pos_invoice_management_module}" />
+									</aon:div>
+								</aon:if>
 								<aon:if test="#{aonRole.financeOperator}">
+									<!-- Remesar Cobros de Cajas -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="pos_finance_batch-tpv" 
 											action="posFinance_search-tpv"
@@ -52,6 +59,7 @@
 									</aon:div>
 								</aon:if>
 								<aon:if test="#{aonRole.productOperator}">
+								    <!-- Productos -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="product" 
 											action="product_search"
@@ -71,18 +79,23 @@
 								<aon:outputText value="#{bundle.aon_auxiliaries}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
+							
+								<!-- Etiquetas de Producto -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="productTag-pos" 
 										action="productTag_form-pos" 
 										actionListener="#{productTag.onCancel}"
 										value="#{bundle.product_tag_module}"/>	
 								</aon:div>
+								
+								<!-- Categorías -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="productCategory-pos" 
 										action="productCategory-pos"
 										value="#{bundle.aon_categories}" />
 								</aon:div>								
 								<aon:if test="#{aonRole.config}">
+									<!-- Definición de Caja -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="posDefinition-tpv" 
 											action="pos_search-tpv"
@@ -91,6 +104,7 @@
 									</aon:div>
 								</aon:if>
 								<aon:if test="#{aonRole.admin or aonRole.config or aonRole.saleOperator}">
+									<!-- Turnos de Caja -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="posShift-tpv" 
 											action="posShift_search-tpv"
@@ -98,6 +112,8 @@
 											value="#{bundle.report_posShift_list}" />
 									</aon:div>
 								</aon:if>
+
+								<!-- Impresión de Etiquetas -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="itemTagPrint-tpv" 
 										action="itemTagPrint_search-tpv"

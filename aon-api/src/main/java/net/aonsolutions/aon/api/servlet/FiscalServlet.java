@@ -317,8 +317,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 				JSONObject invoiceJson = InvoiceJSON.toJSON(invoice);
 				
 				InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(api.getOccam());
-				if(icc.isTbai()) {	
-					String tbaiUrl = TbaiData.getInstance(icc).getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
+				if(icc.isTbai() || icc.isLroe()) {	
+					String tbaiUrl = TbaiData.getInstance(ctx, icc).getTbaiUrl(api.getDomain().getId(), invoice.getId());
 					if(!AonStringUtils.isBlank(tbaiUrl)) {
 						invoiceJson.put("tbai", true);
 						invoiceJson.put("tbaiUrl", tbaiUrl);
@@ -998,8 +998,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 			JSONObject invoiceJson = InvoiceJSON.toJSON(invoice);
 			
 			InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(api.getOccam());
-			if(icc.isTbai()) {	
-				String tbaiUrl = TbaiData.getInstance(icc).getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
+			if(icc.isTbai() || icc.isLroe()) {	
+				String tbaiUrl = TbaiData.getInstance(ctx, icc)
+						.getTbaiUrl(api.getDomain().getId(), invoice.getId());
 				if(!AonStringUtils.isBlank(tbaiUrl)) {
 					invoiceJson.put("tbai", true);
 					invoiceJson.put("tbaiUrl", tbaiUrl);
@@ -1201,8 +1202,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 				JSONObject invoiceJson = InvoiceJSON.toJSON(invoice);
 				
 				InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(api.getOccam());
-				if(icc.isTbai()) {	
-					String tbaiUrl = TbaiData.getInstance(icc).getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
+				if(icc.isTbai() || icc.isLroe()) {	
+					String tbaiUrl = TbaiData.getInstance(ctx, icc).getTbaiUrl(api.getDomain().getId(), invoice.getId());
 					if(!AonStringUtils.isBlank(tbaiUrl)) {
 						invoiceJson.put("tbai", true);
 						invoiceJson.put("tbaiUrl", tbaiUrl);
