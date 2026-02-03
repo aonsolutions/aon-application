@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams.OrderBy.InvoiceConsoleParamsOrderVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceConsoleAnalysis;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -149,6 +150,10 @@ public class InvoiceConsoleDAO {
 	}
 	
 	public static Stream<InvoiceConsole> getInvoiceHeadersStream(AONContext ctx, InvoiceConsoleParams params) {
+		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, params.getDomain() );
+		return getInvoiceHeadersStream(ctx, icc, params);		
+	}
+	public static Stream<InvoiceConsole> getInvoiceHeadersStream(AONContext ctx, InvoiceCommunicationConfiguration icc, InvoiceConsoleParams params) {
 		ctx.checkRead();
 		Select<Record15<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Date, Boolean>> select =
 			(params.showInvoiceTrackings())
@@ -160,11 +165,10 @@ public class InvoiceConsoleDAO {
 					.limit(params.getOffset() , params.getLimit())
 		;
 		
-		System.out.println("--- SQL InvoiceConsoleDAO.getInvoiceHeaders ----");
-		System.out.println( select .getSQL() );
-		System.out.println("-----------------------------------------------");
+//		System.out.println("--- SQL InvoiceConsoleDAO.getInvoiceHeaders ----");
+//		System.out.println( select .getSQL() );
+//		System.out.println("-----------------------------------------------");
 		
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, params.getDomain() );
 		return select
 			.fetch()
 			.stream()
@@ -217,6 +221,19 @@ public class InvoiceConsoleDAO {
 		;
 	}
 
+	public static InvoiceConsoleAnalysis analyze(AONContext ctx, InvoiceConsoleParams params) {
+		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, params.getDomain() );
+		InvoiceConsoleAnalysis analysis = new InvoiceConsoleAnalysis()
+			.setCommunicationConfiguration( icc );
+		params
+			.setOffset(0)
+			.setLimit( Integer.MAX_VALUE );
+		getInvoiceHeadersStream(ctx, icc, params)
+			.map(ic -> ic.getInvoice())
+			.forEach( analysis::addInvoice );
+		return analysis;
+	}
+	
 	// ---------------------------------------------------------------------	
 	// -------------------------------------------------------- [PRIVATE] --	
 	// ---------------------------------------------------------------------
@@ -651,4 +668,5 @@ public class InvoiceConsoleDAO {
 			}
 		});
 	}
+
 }

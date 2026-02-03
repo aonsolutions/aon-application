@@ -4,11 +4,11 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
-import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceConsoleAnalysis;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class InvoiceConsoleAsyncDecorator implements InvoiceConsoleServiceAsync {
@@ -32,9 +32,8 @@ public class InvoiceConsoleAsyncDecorator implements InvoiceConsoleServiceAsync 
 	}
 	
 	@Override
-	public void getAccountingInvoice(Occam occam, Integer domain, Integer invoiceId, AsyncCallback<AccountingInvoice> callback) {
+	public void analyze(Occam occam, InvoiceConsoleParams params, AsyncCallback<InvoiceConsoleAnalysis> callback) {
 		AON.start();
-		serviceAsync.getAccountingInvoice(occam, domain, invoiceId, new AsyncCallbackWrapper<>(callback));
+		serviceAsync.analyze(occam, params, new AsyncCallbackWrapper<>(callback));
 	}
-
 }

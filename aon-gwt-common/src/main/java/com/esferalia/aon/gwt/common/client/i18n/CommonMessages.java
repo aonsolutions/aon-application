@@ -498,6 +498,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Cargando...")
 	String loading();
 	
+	@DefaultMessage("Analizando...")
+	String analyzing();
+	
 	@DefaultMessage("Busqueda Avanzada")
 	String advancedSearch();
 	

@@ -31,7 +31,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDe
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoicePanel.InvoicePanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoiceRectificationDataPanel.InvoiceRectificationDataPanelCallback;
-import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceCommunicationIconsPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceCommunicationPanel;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceConsoleTextPanel;
 import com.esferalia.aon.occam.api.model.Account;
@@ -522,7 +522,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				.setDomain( invoiceCallback.getOccam().getDomain() )
 				.setUser( invoiceCallback.getOccam().getUser() )
 			;
-			InvoiceCommunicationIconsPanel communicationIcons = new InvoiceCommunicationIconsPanel( invoiceOptions, invoiceCallback.getInvoice().getInvoice(), false );
+			InvoiceCommunicationPanel communicationIcons = new InvoiceCommunicationPanel( invoiceOptions, invoiceCallback.getInvoice().getInvoice(), false );
 			communicationIcons.addStyleName(AON.CSS.aonMarginLeft());
 			regTable.add(communicationIcons);
 		}

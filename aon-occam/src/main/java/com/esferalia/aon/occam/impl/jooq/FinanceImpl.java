@@ -55,6 +55,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfigurati
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceConsoleAnalysis;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -924,9 +925,11 @@ public class FinanceImpl implements IFinance {
 	// ------------------------------------- INVOICE CONSOLE
 	@Override
 	public List<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params) {
-		return ctx.getDslContext().transactionResult(
-			configuration -> InvoiceConsoleDAO.getInvoiceHeaders(ctx, params)
-		);
+		return InvoiceConsoleDAO.getInvoiceHeaders(ctx, params);
+	}
+	@Override
+	public InvoiceConsoleAnalysis analyze(CloseableAONContext ctx, InvoiceConsoleParams params) {
+		return InvoiceConsoleDAO.analyze(ctx, params);
 	}
 	
 	// ------------------------------------- INVOICE DOC

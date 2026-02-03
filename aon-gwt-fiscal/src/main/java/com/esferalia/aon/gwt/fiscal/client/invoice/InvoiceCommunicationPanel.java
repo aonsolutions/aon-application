@@ -36,6 +36,9 @@ public class InvoiceCommunicationPanel extends FlowPanel implements HasValueChan
 	}
 
 	public InvoiceCommunicationPanel(InvoiceModuleOptions options,  Invoice invoice ) {
+		this(options, invoice, true);
+	}
+	public InvoiceCommunicationPanel(InvoiceModuleOptions options,  Invoice invoice , boolean clickable) {
 		setStyleName(AON.CSS.aonNowrap());
 		addStyleName(AON.CSS.aonFlexBetween());
 		paint(options, invoice);

@@ -1,7 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.invoice.console;
 
-import java.util.logging.Logger;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
@@ -16,8 +14,6 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfigurati
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.watson.mutable.MutableBoolean;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -25,14 +21,6 @@ import com.google.gwt.user.client.ui.InlineLabel;
 
 class InvoiceConsoleToolbar extends AonToolbar {
 
-	private static final Logger LOGGER = Logger.getLogger(InvoiceConsoleToolbar.class.getName());
-
-	private static final InvoiceConsoleServiceAsync INVOICE_SERVICE;
-	static {
-		InvoiceConsoleServiceAsync fiscalServiceRaw = GWT.create(InvoiceConsoleService.class);
-		INVOICE_SERVICE = new InvoiceConsoleAsyncDecorator(fiscalServiceRaw);
-	}
-			
 	static interface ToolbarAsyncCallback {
 		public void onStartRunning();
 		public void onEndRunning();
@@ -57,7 +45,6 @@ class InvoiceConsoleToolbar extends AonToolbar {
 		refresh = new AonToolbarButton(AON.MSG.refresh(), AON.CSS.aonIconRefresh());
 		this.add(refresh);
 		
-		communicationWizardButton = new AonToolbarButton( "Asitente comunicaci\u00F3n", AON.CSS.aonIconWizard());
 		
 		showFilter = new AonToolbarButton(AON.MSG.showFilter(), AON.CSS.aonIconFilterOn());
 		showFilter.setVisible(false);
@@ -68,12 +55,8 @@ class InvoiceConsoleToolbar extends AonToolbar {
 		this.add(hideFilter);
 		
 		showFilter.addClickHandler(e -> {
-			if (e.isControlKeyDown()) {
-				communicationWizardButton.setVisible(true);
-			} else {
-				hideFilter.setVisible(true);
-				showFilter.setVisible(false);
-			}
+			hideFilter.setVisible(true);
+			showFilter.setVisible(false);
 		});
 		hideFilter.addClickHandler(e -> {
 			hideFilter.setVisible(false);
@@ -89,7 +72,7 @@ class InvoiceConsoleToolbar extends AonToolbar {
 		send.addClickHandler(e -> send(opts));
 		this.add(send);
 		
-		communicationWizardButton.setVisible(false);
+		communicationWizardButton = new AonToolbarButton( "Asitente comunicaci\u00F3n", AON.CSS.aonIconWizard());
 		this.add(communicationWizardButton);
 
 		refresh(opts);
@@ -113,6 +96,10 @@ class InvoiceConsoleToolbar extends AonToolbar {
 
 	public void addClickHandlerToRefresh(ClickHandler handler) {
 		refresh.addClickHandler(handler);
+	}
+	
+	public void addClickHandlerToWizard(ClickHandler handler) {
+		communicationWizardButton.addClickHandler(handler);
 	}
 	
 	void refresh(InvoiceModuleOptions opts) {

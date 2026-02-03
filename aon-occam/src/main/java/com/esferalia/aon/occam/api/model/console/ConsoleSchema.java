@@ -26,10 +26,7 @@ public enum ConsoleSchema {
 	// -------------------------------------------
 	// BASES DE DATOS DE DESARROLLO EN MI MAQUINA
 	// -------------------------------------------
-//	,EUK_AYUDAT		("EK_AYUDAT","ayudat-aonsolutions-net","console-ayudat.ecastellano.euk","jgarcia")
-//	,EUK_GRUPO		("EK_GRUPO"	,"grupo-ayudat-aonsolutions-net","console-grupoayudat.ecastellano.euk","jgarcia")
-//	,EUK_PRO_NET	("EK_PRO"	,"pro-aonsolutions-net","console-pro.ecastellano.euk","jgarcia")
-//	,EUK_SIG		("EK_SUITE"	,"suite-aonsolutions-org","console.ecastellano.org","jgarcia")
+	// ,EUK_JOOQ_ORG	("EK_AYUDAT","aon_jooq_efd9c","console-aonsolutions.test","admin")
 	// -------------------------------------------
 	;
 	

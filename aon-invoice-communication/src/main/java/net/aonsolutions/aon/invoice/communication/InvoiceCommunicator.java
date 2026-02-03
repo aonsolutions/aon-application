@@ -49,6 +49,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationPhaseListener;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceConsoleAnalysis;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
@@ -296,7 +297,6 @@ public class InvoiceCommunicator {
 		params.setAnnulled( false )	// No se comunican facturas anuladas
 			.setOutput( true )		// Facturas emitidas
 		;
-		;	// Se rellena en getFullInvoice()
 		AonChronometer chronometer = new AonChronometer();
 		chronometer.start();
 		Date expDate = new Date();;
@@ -765,7 +765,59 @@ public class InvoiceCommunicator {
 		}
 	}
 	
-
+	// *************************************************************
+	// ******************************************* [PRIVATE] *******
+	// *************************************************************
+	public static InvoiceConsoleAnalysis analyze(Occam occam, InvoiceConsoleParams params, PrintStreamConsoleLogger logger) {
+		if (params == null) throw new AonCoreException("Par\u00E1metros nulos.");
+		params.setAnnulled( false )	// No se comunican facturas anuladas
+			.setOutput( true )		// Facturas emitidas
+		;
+		AonChronometer chronometer = new AonChronometer();
+		chronometer.start();
+		
+		Date expDate = new Date();;
+		final InvoiceProcessOutput output = new InvoiceProcessOutput();
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, params.getDomain() );
+			if (!icc.hasCommunication(expDate)) {
+				return InvoiceConsoleAnalysis.fromError("No hay comunicaci\u00F3n activa a fecha de hoy);");
+			}
+				
+			Company company = CompanyDAO.getByDomain(ctx, params.getDomain());
+			Domain domain = DomainDAO.getDomain(ctx, params.getDomain());
+			User user = SecurityDAO.getUser(ctx, ctx.getUser());
+			Integer certId = params.getCertId();
+			
+			checkCompany(company);
+			checkConfig(icc);
+			if ( icc.isCertificateNeeded() ) {
+				checkCertificate(ctx, icc, certId);
+			}
+			
+			params.setAttachExcluded( true );
+			InvoiceConsoleAnalysis analysis = InvoiceConsoleDAO.analyze(ctx, params);
+//			InvoiceConsoleDAO.getInvoiceHeadersStream(ctx, params)
+//				.forEach( output::addInvoice );
+//				
+//				List<Invoice> invoices = output.invoiceStream().collect(Collectors.toCollection(LinkedList::new));
+//				InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext(domain, user, certId, invoices)
+//					.setConfig( icc )
+//					.setCompany( company )
+//					.setLogger( logger )
+//					.setFailOnWrongValidation( AonCollectionUtils.size(invoices) == 1 );
+//				communicateGeneratedInvoices( ctx, cc, expDate);
+				
+			chronometer.stop(); 
+			logger.message(IC, "Tiempo total del proceso:" + chronometer.format());
+			logger.ok(IC, "Fin del proceso" );
+			return analysis;
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return InvoiceConsoleAnalysis.fromError( e.getMessage() );
+		}
+	}
+	
 	// *************************************************************
 	// ******************************************* [PRIVATE] *******
 	// *************************************************************

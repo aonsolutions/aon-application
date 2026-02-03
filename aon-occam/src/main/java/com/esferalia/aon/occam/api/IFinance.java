@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfigurati
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceConsoleAnalysis;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -322,6 +323,7 @@ public interface IFinance {
 	// 	************** INVOICE CONSOLE ****************
 	// 	***********************************************
 	List<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params);
+	InvoiceConsoleAnalysis analyze(CloseableAONContext ctx, InvoiceConsoleParams params);
 	
 	// 	****************************************
 	// 	************************ INVOICE DOC ***
