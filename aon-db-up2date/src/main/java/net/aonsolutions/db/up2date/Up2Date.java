@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod347Detail2025Bis;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.FlexibleCRAFix;
 import net.aonsolutions.db.up2date.payroll.FlexibleChecksDelete;
@@ -587,6 +588,8 @@ public class Up2Date {
 			// FlexibleIrpfFix.FLEXIBLEIRPFFIX,
 			// FlexibleChecksDelete.FLEXIBLECHECKSDELETE,
 			MEISolidarity2026RDL162025Fix.MEISOLIDARITYRDL162025FIX,
+						
+			AlterFsMod347Detail2025Bis.ALTER_FS_MOD_347_DETAIL_2025_BIS,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 

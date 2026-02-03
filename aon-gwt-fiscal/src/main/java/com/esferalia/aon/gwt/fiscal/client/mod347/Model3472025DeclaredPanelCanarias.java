@@ -226,6 +226,7 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 		panel.add(tab3);
 		
 		// FALTA - POR AHORA VOY A DEJAR EL BDNS PORQUE NO SE SI AL FINAL CANARIAS TAMBIEN LO PONDRA
+		// EL PROGRAMA DE AYUDA DEL 2025 NO LO LLEVA
 		// Importe percibido en metalico / Ejercicio / Importe operaciones criterio de caja / BDNS
 		
 		FlexTable tab4 = new FlexTable();
@@ -467,7 +468,7 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 				rentalAmount.setValue(total,false);
 				declared.setRentalAmount(total);				
 			}
-			declared.setFourthQuarterRentalAmount(fourthAmount.getValue());
+			declared.setFourthQuarterRentalAmount(fourthRentalAmount.getValue());
 			callback.onValueChanged(declared);
 		});
 		tab51.setWidget(2, 3, fourthRentalAmount);		

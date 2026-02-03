@@ -103,18 +103,18 @@ public class MIModelo420RequestHandler implements RequestHandler<MIModelo420Requ
 		MIModelo420RequestHandler mi = new MIModelo420RequestHandler();
 		MIModelo420Result result = mi.handleRequest(input, null);
 		
-//		String resultado = result.getResultado();
-//		
-//		// grabar la variable resultado en un fichero externo
-//		PrintWriter writer;
-//		try {
-//			writer = new PrintWriter("c:\\tmp\\resultado_415.atc", "UTF-8");
-//			writer.print(resultado);
-////			writer.print(obtener415());
-//			writer.close();
-//		} catch (FileNotFoundException | UnsupportedEncodingException e) {
-//			e.printStackTrace();
-//		}
+		String resultado = result.getResultado();
+		
+		// grabar la variable resultado en un fichero externo
+		PrintWriter writer;
+		try {
+			writer = new PrintWriter("c:\\tmp\\resultado_415.atc", "UTF-8");
+			writer.print(resultado);
+//			writer.print(obtener415());
+			writer.close();
+		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	

@@ -451,12 +451,11 @@ public class Mod347DAO {
 				.setDepositRegime(AonEnumUtils.getBoolean(record.getValue(FS_MOD347_DETAIL.DEPOSIT_REGIME)))
 				.setVatAccrualAmount(record.getValue(FS_MOD347_DETAIL.VAT_ACCRUAL_AMOUNT))
 				.setBdns(record.getValue(FS_MOD347_DETAIL.BDNS))
-				// FALTA - NUEVOS CAMPOS PARA CANARIAS
-//				.setRentalAmount(record.getValue(FS_MOD347_DETAIL.RENTAL_AMOUNT))
-//				.setFirstQuarterRentalAmount(record.getValue(FS_MOD347_DETAIL.FIRST_QUARTER_RENTAL_AMOUNT))
-//				.setSecondQuarterRentalAmount(record.getValue(FS_MOD347_DETAIL.SECOND_QUARTER_RENTAL_AMOUNT))
-//				.setThirdQuarterRentalAmount(record.getValue(FS_MOD347_DETAIL.THIRD_QUARTER_RENTAL_AMOUNT))
-//				.setFourthQuarterRentalAmount(record.getValue(FS_MOD347_DETAIL.FOURTH_QUARTER_RENTAL_AMOUNT))
+				.setRentalAmount(record.getValue(FS_MOD347_DETAIL.RENTAL_AMOUNT))
+				.setFirstQuarterRentalAmount(record.getValue(FS_MOD347_DETAIL.FIRST_QUARTER_RENTAL_AMOUNT))
+				.setSecondQuarterRentalAmount(record.getValue(FS_MOD347_DETAIL.SECOND_QUARTER_RENTAL_AMOUNT))
+				.setThirdQuarterRentalAmount(record.getValue(FS_MOD347_DETAIL.THIRD_QUARTER_RENTAL_AMOUNT))
+				.setFourthQuarterRentalAmount(record.getValue(FS_MOD347_DETAIL.FOURTH_QUARTER_RENTAL_AMOUNT))
 				;
 		}
 	}
@@ -514,12 +513,11 @@ public class Mod347DAO {
 			.set(FS_MOD347_DETAIL.DEPOSIT_REGIME,AonEnumUtils.getByte(declared.isDepositRegime()))
 			.set(FS_MOD347_DETAIL.VAT_ACCRUAL_AMOUNT, declared.getVatAccrualAmount())
 			.set(FS_MOD347_DETAIL.BDNS, declared.getBdns())
-			// FALTA - NUEVOS CAMPOS PARA CANARIAS
-//			.set(FS_MOD347_DETAIL.RENTAL_AMOUNT, declared.getRentalAmount())
-//			.set(FS_MOD347_DETAIL.FIRST_QUARTER_RENTAL_AMOUNT, declared.getFirstQuarterRentalAmount())
-//			.set(FS_MOD347_DETAIL.SECOND_QUARTER_RENTAL_AMOUNT, declared.getSecondQuarterRentalAmount())
-//			.set(FS_MOD347_DETAIL.THIRD_QUARTER_RENTAL_AMOUNT, declared.getThirdQuarterRentalAmount())
-//			.set(FS_MOD347_DETAIL.FOURTH_QUARTER_RENTAL_AMOUNT, declared.getFourthQuarterRentalAmount())
+			.set(FS_MOD347_DETAIL.RENTAL_AMOUNT, declared.getRentalAmount())
+			.set(FS_MOD347_DETAIL.FIRST_QUARTER_RENTAL_AMOUNT, declared.getFirstQuarterRentalAmount())
+			.set(FS_MOD347_DETAIL.SECOND_QUARTER_RENTAL_AMOUNT, declared.getSecondQuarterRentalAmount())
+			.set(FS_MOD347_DETAIL.THIRD_QUARTER_RENTAL_AMOUNT, declared.getThirdQuarterRentalAmount())
+			.set(FS_MOD347_DETAIL.FOURTH_QUARTER_RENTAL_AMOUNT, declared.getFourthQuarterRentalAmount())
 			.execute();
 		
 	}
@@ -557,12 +555,11 @@ public class Mod347DAO {
 			.set(FS_MOD347_DETAIL.DEPOSIT_REGIME,AonEnumUtils.getByte(declared.isDepositRegime()))
 			.set(FS_MOD347_DETAIL.VAT_ACCRUAL_AMOUNT, declared.getVatAccrualAmount())
 			.set(FS_MOD347_DETAIL.BDNS, declared.getBdns())
-			// FALTA - NUEVOS CAMPOS PARA CANARIAS
-//			.set(FS_MOD347_DETAIL.RENTAL_AMOUNT, declared.getRentalAmount())
-//			.set(FS_MOD347_DETAIL.FIRST_QUARTER_RENTAL_AMOUNT, declared.getFirstQuarterRentalAmount())
-//			.set(FS_MOD347_DETAIL.SECOND_QUARTER_RENTAL_AMOUNT, declared.getSecondQuarterRentalAmount())
-//			.set(FS_MOD347_DETAIL.THIRD_QUARTER_RENTAL_AMOUNT, declared.getThirdQuarterRentalAmount())
-//			.set(FS_MOD347_DETAIL.FOURTH_QUARTER_RENTAL_AMOUNT, declared.getFourthQuarterRentalAmount())
+			.set(FS_MOD347_DETAIL.RENTAL_AMOUNT, declared.getRentalAmount())
+			.set(FS_MOD347_DETAIL.FIRST_QUARTER_RENTAL_AMOUNT, declared.getFirstQuarterRentalAmount())
+			.set(FS_MOD347_DETAIL.SECOND_QUARTER_RENTAL_AMOUNT, declared.getSecondQuarterRentalAmount())
+			.set(FS_MOD347_DETAIL.THIRD_QUARTER_RENTAL_AMOUNT, declared.getThirdQuarterRentalAmount())
+			.set(FS_MOD347_DETAIL.FOURTH_QUARTER_RENTAL_AMOUNT, declared.getFourthQuarterRentalAmount())
 			.where(FS_MOD347_DETAIL.ID.equal(declared.getId()))
 			.execute();
 	}
