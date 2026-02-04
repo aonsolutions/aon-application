@@ -181,6 +181,20 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 			return t;
 		}
 		
+		public <T> Collection<T> getAll(String key, Function<Object,T> mapper, T def) {
+			List<ITimedVariable<Object>> variables = Variables.this.getVariables(key,
+					period);
+			List<T> result = new ArrayList<>();
+			
+			for (ITimedVariable<Object> variable : variables) {
+				Object value = variable.getValue(period);
+				T t = value == null ? def : mapper.apply(value);
+				read(key, variable,t);
+				result.add(t);
+			}
+			return result;
+		}
+
 		public <T> T get(Object key, Function<Object,T> mapper) {
 			return get(key.toString(), mapper);
 		}

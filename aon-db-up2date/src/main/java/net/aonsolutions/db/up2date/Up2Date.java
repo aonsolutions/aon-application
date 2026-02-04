@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2026Insert;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
+import net.aonsolutions.db.up2date.payroll.FlexibleInsurancePremiumsInsert;
 import net.aonsolutions.db.up2date.tgss.MEISolidarity2026RDL162025Fix;
 import net.aonsolutions.db.up2date.tgss.MEISolidarity2026RDL162025Undo;
 
@@ -584,6 +585,7 @@ public class Up2Date {
 			// MEISolidarity2026RDL162025Fix.MEISOLIDARITYRDL162025FIX,
 			// IrpfEuskadi2026Insert.IRPFEUSKADI2026INSERT,
 			MEISolidarity2026RDL162025Undo.MEISOLIDARITYRDL162025UNDO,
+			FlexibleInsurancePremiumsInsert.FLEXIBLEINSURANCEPREMIUMSINSERT,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
