@@ -262,13 +262,18 @@ public abstract class Mod303Declaration {
 		}
 	}
 
+	// Cálculo de la regularización de la prorrata en el último periodo
 	public void prorrateRegularization(AONContext ctx, Mod303 mod303){
 		if (mod303.isLastPeriod() && getRegularizationKey() != null) {
 			double lastPercent = mod303.getProratePercent();
 			double prevPercent = mod303.getPreviousProratePercent();
-			if ((mod303.hasProrate() || mod303.hasPreviousProrate()) 
-				&& AonNumberUtils.notEquals(lastPercent, prevPercent)) {
-				
+			
+			// A partir de 2026, se añade un check para indicar expresamente si se debe aplicar prorrata, sea el porcentaje que sea.
+			// Por lo tanto, a partir de 2026 se comprueba unicamente si el modelo actual tiene prorrata y antes del 2026 se comprueba como se hacia antes
+			boolean calculate = mod303.getYear() >= 2026 ? 
+					mod303.hasProrate() : ((mod303.hasProrate() || mod303.hasPreviousProrate()) && AonNumberUtils.notEquals(lastPercent, prevPercent));
+			
+			if (calculate) {
 				Mod303DAO.getPreviousEffectiveModels(ctx, mod303).forEach( fm -> {
 					Mod303Declaration dec =  Mod303Declaration.getInstance(fm);
 					MutableDouble sumProrratedMustDeclared = new MutableDouble();
