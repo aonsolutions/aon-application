@@ -244,6 +244,11 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 		});	
 		StringBuilder requestData = new StringBuilder();
 		requestData.append("&"+IRequestParamsNames.AEAT_PARAMS +"=" + JsonParams.convert( params ));
+
+		if (getCallback().getModel().isCanarias()) {
+			requestData.append("&isBorrador=true");	
+		}
+		
 		xhr.send(requestData.toString());
 	}
 	

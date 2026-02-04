@@ -33,6 +33,7 @@ public class Mod415File extends HttpServlet {
 		try {
 			System.out.println("Mod415File: PASO 0");
 			boolean bocFormat = Boolean.parseBoolean(req.getParameter("bocFormat"));
+			boolean isBorrador = Boolean.parseBoolean(req.getParameter("isBorrador"));
 			AEATParams aeatParams = ModelAdmonUtils.getAEATParams(req);
 			Occam occam = new Occam()
 					.setDomainName(aeatParams.getDomainName())
@@ -80,7 +81,7 @@ public class Mod415File extends HttpServlet {
 				System.out.println("Mod415File: PASO 3. FILE TXT OK");
 			} else {
 				// Pasarlo al modulo de impresión para obtener el fichero para la presentación 
-				ModelAdmonUtils.callAtcAwsFunction(txt, mod415, false, resp);
+				ModelAdmonUtils.callAtcAwsFunction(txt, mod415, isBorrador, resp);
 				System.out.println("Mod415File: PASO 3. CALL ATC OK");
 			}
 			

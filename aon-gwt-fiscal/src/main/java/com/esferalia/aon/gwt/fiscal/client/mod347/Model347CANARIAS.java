@@ -53,7 +53,7 @@ public class Model347CANARIAS extends Model347Base {
 					@Override
 					public String getValidatePrintAction() {
 						// FALTA
-//						return GWT.getHostPageBaseURL() + "aon_gwt_fiscal/ms/Mod415ValidatePrintATC";
+//						return GWT.getHostPageBaseURL() + "aon_gwt_fiscal/ms/Model415File";
 						return null;
 					}
 
@@ -61,7 +61,7 @@ public class Model347CANARIAS extends Model347Base {
 					public String getDownloadFileAction() {
 						// FALTA
 //						return GWT.getHostPageBaseURL() + "aon_gwt_fiscal/ms/Model415File";
-						return null; 
+						return null;
 					}
 
 					@Override
@@ -104,7 +104,7 @@ public class Model347CANARIAS extends Model347Base {
 						return "https://www3.gobiernodecanarias.org/tributos/atc/w/modelo-415";
 						
 					}
-					
+
 					// FALTA
 					// Otro link para la descarga del fichero TXT y poder importar los declarados desde el programa de ayuda
 //					@Override
