@@ -3,7 +3,6 @@ package net.aonsolutions.aws.atc.lambda;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import org.grecasa.ext.pa.mod415.MIModelo415;
 import org.grecasa.ext.pa.mod417.MIModelo417;
 import org.grecasa.ext.pa.mod420.MIModelo420;
 import org.grecasa.ext.pa.mod425.MIModelo425;
@@ -101,33 +100,33 @@ public class MIModelo420Handler {
 		return result;
 	}
 	
-	public MIModelo420Result obtenerPresentacion415(String declaracion) {
-		MIModelo420Result result = new MIModelo420Result();
-		if (isEmpty(declaracion)) {
-			System.err.println("ERROR: DECLARACION ES NULO");
-			result.getErrores().add("ERROR: DECLARACION ES NULO");
-		}
-		try {
-			System.out.println("INFO: Llamada al modulo de impresion de la ATC (MIModelo415.getFicheroPresentacion)");
-			MIModelo415 miModelo415 = new MIModelo415(getDownloadDir());
-			String resultado = miModelo415.getFicheroPresentacion(declaracion);
-			System.out.println("INFO: resultado = " + resultado);
-			
-			if (resultado != null) {
-				result.setResultado(resultado);
-			}
-			List<String> mensajes = miModelo415.getMensajes() ;
-			if (miModelo415.getMensajes() != null) {
-				mostrarMensajes(mensajes);
-				result.getErrores().addAll(mensajes);
-			}
-		} catch (Exception e) {
-			System.err.println("EXCEPTION ERROR: " + e.getMessage());
-			e.printStackTrace();
-			result.getErrores().add("EXCEPTION ERROR: " + e.getMessage());			
-		}
-		return result;
-	}
+//	public MIModelo420Result obtenerPresentacion415(String declaracion) {
+//		MIModelo420Result result = new MIModelo420Result();
+//		if (isEmpty(declaracion)) {
+//			System.err.println("ERROR: DECLARACION ES NULO");
+//			result.getErrores().add("ERROR: DECLARACION ES NULO");
+//		}
+//		try {
+//			System.out.println("INFO: Llamada al modulo de impresion de la ATC (MIModelo415.getFicheroPresentacion)");
+//			MIModelo415 miModelo415 = new MIModelo415(getDownloadDir());
+//			String resultado = miModelo415.getFicheroPresentacion(declaracion);
+//			System.out.println("INFO: resultado = " + resultado);
+//			
+//			if (resultado != null) {
+//				result.setResultado(resultado);
+//			}
+//			List<String> mensajes = miModelo415.getMensajes() ;
+//			if (miModelo415.getMensajes() != null) {
+//				mostrarMensajes(mensajes);
+//				result.getErrores().addAll(mensajes);
+//			}
+//		} catch (Exception e) {
+//			System.err.println("EXCEPTION ERROR: " + e.getMessage());
+//			e.printStackTrace();
+//			result.getErrores().add("EXCEPTION ERROR: " + e.getMessage());			
+//		}
+//		return result;
+//	}
 	
 	public MIModelo420Result obtenerBorrador420(String declaracion) {
 		MIModelo420Result result = new MIModelo420Result();
@@ -213,41 +212,41 @@ public class MIModelo420Handler {
 		return result;
 	}
 	
-	public MIModelo420Result obtenerBorrador415(String declaracion) {
-		MIModelo420Result result = new MIModelo420Result();
-		if (isEmpty(declaracion)) {
-			System.err.println("ERROR: DECLARACION ES NULO");
-			result.getErrores().add("ERROR: DECLARACION ES NULO");
-		}
-		try {
-			System.out.println("INFO: Llamada al modulo de impresion de la ATC (MIModelo415.getBorrador)");
-			MIModelo415 miModelo415 = new MIModelo415(getDownloadDir());
-			
-			// FALTA - EL METODO getBorrador DEVUELVE SIEMPRE NULL, AUNQUE LE PASES COMO SEGUNDO PARAMETRO UN STRING VALIDO CON LOS DATOS ADICIONALES
-			// EN LAS INSTRUCCIONES NO APARECE ESTE METODO ASI QUE SE PUEDE HACER LLAMANDO AL METODO getFicheroPresentacion Y POSTERIORMENTE A getCopiaAutoliquidacion
-			// AUNQUE HABRIA QUE INTENTAR PONER EN ESE PDF ALGUNA MARCA DE AGUA O ALGO QUE INDIQUE QUE ES UN BORRADOR
-//			byte[] resultado = miModelo415.getBorrador(declaracion, null); 
-			String resultado = miModelo415.getFicheroPresentacion(declaracion);
-			System.out.println("INFO: resultado1 = " + resultado);
-			
-			if (resultado != null) {
-				byte[] resultado2 = miModelo415.getCopiaAutoliquidacion();
-				System.out.println("INFO: resultado2 = " + resultado2);
-				if (resultado2 != null)
-					result.setResultado(new String(resultado2, StandardCharsets.ISO_8859_1));
-			}
-			List<String> mensajes = miModelo415.getMensajes() ;
-			if (miModelo415.getMensajes() != null) {
-				mostrarMensajes(mensajes);
-				result.getErrores().addAll(mensajes);				
-			}
-		} catch (Exception e) {
-			System.err.println("EXCEPTION ERROR: " + e.getMessage());
-			e.printStackTrace();
-			result.getErrores().add("EXCEPTION ERROR: " + e.getMessage());
-		}
-		return result;
-	}
+//	public MIModelo420Result obtenerBorrador415(String declaracion) {
+//		MIModelo420Result result = new MIModelo420Result();
+//		if (isEmpty(declaracion)) {
+//			System.err.println("ERROR: DECLARACION ES NULO");
+//			result.getErrores().add("ERROR: DECLARACION ES NULO");
+//		}
+//		try {
+//			System.out.println("INFO: Llamada al modulo de impresion de la ATC (MIModelo415.getBorrador)");
+//			MIModelo415 miModelo415 = new MIModelo415(getDownloadDir());
+//			
+//			// FALTA - EL METODO getBorrador DEVUELVE SIEMPRE NULL, AUNQUE LE PASES COMO SEGUNDO PARAMETRO UN STRING VALIDO CON LOS DATOS ADICIONALES
+//			// EN LAS INSTRUCCIONES NO APARECE ESTE METODO ASI QUE SE PUEDE HACER LLAMANDO AL METODO getFicheroPresentacion Y POSTERIORMENTE A getCopiaAutoliquidacion
+//			// AUNQUE HABRIA QUE INTENTAR PONER EN ESE PDF ALGUNA MARCA DE AGUA O ALGO QUE INDIQUE QUE ES UN BORRADOR
+////			byte[] resultado = miModelo415.getBorrador(declaracion, null); 
+//			String resultado = miModelo415.getFicheroPresentacion(declaracion);
+//			System.out.println("INFO: resultado1 = " + resultado);
+//			
+//			if (resultado != null) {
+//				byte[] resultado2 = miModelo415.getCopiaAutoliquidacion();
+//				System.out.println("INFO: resultado2 = " + resultado2);
+//				if (resultado2 != null)
+//					result.setResultado(new String(resultado2, StandardCharsets.ISO_8859_1));
+//			}
+//			List<String> mensajes = miModelo415.getMensajes() ;
+//			if (miModelo415.getMensajes() != null) {
+//				mostrarMensajes(mensajes);
+//				result.getErrores().addAll(mensajes);				
+//			}
+//		} catch (Exception e) {
+//			System.err.println("EXCEPTION ERROR: " + e.getMessage());
+//			e.printStackTrace();
+//			result.getErrores().add("EXCEPTION ERROR: " + e.getMessage());
+//		}
+//		return result;
+//	}
 	
 	private void mostrarMensajes(List<String> mensajes) {
 		if (mensajes == null) {

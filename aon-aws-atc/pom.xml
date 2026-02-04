@@ -85,13 +85,14 @@
 			<version>6.3.0</version>
 			<scope>compile</scope>
 		</dependency>
+<!--
 		<dependency>
 			<groupId>org.grecasa</groupId>
 			<artifactId>pa-mod415</artifactId>
 			<version>6.11.0</version>
 			<scope>compile</scope>
 		</dependency>
-		
+-->		
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk-lambda</artifactId>

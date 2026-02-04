@@ -52,13 +52,16 @@ public class Model347CANARIAS extends Model347Base {
 
 					@Override
 					public String getValidatePrintAction() {
-						return GWT.getHostPageBaseURL() + "aon_gwt_fiscal/ms/Mod415ValidatePrintATC";
-						
+						// FALTA
+//						return GWT.getHostPageBaseURL() + "aon_gwt_fiscal/ms/Mod415ValidatePrintATC";
+						return null;
 					}
 
 					@Override
 					public String getDownloadFileAction() {
-						return GWT.getHostPageBaseURL() + "aon_gwt_fiscal/ms/Model415File";
+						// FALTA
+//						return GWT.getHostPageBaseURL() + "aon_gwt_fiscal/ms/Model415File";
+						return null; 
 					}
 
 					@Override
@@ -102,11 +105,12 @@ public class Model347CANARIAS extends Model347Base {
 						
 					}
 					
+					// FALTA
 					// Otro link para la descarga del fichero TXT y poder importar los declarados desde el programa de ayuda
-					@Override
-					public boolean isBoeFormatEnabled() {
-						return true;
-					}
+//					@Override
+//					public boolean isBoeFormatEnabled() {
+//						return true;						
+//					}
 					
 			};
 			
