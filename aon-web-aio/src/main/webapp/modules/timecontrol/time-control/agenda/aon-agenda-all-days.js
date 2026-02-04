@@ -1,10 +1,9 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { getTaskHoldersUser } from "../../../../services/taskHolderService.js";
+import { getTaskHolder } from "../../../../services/taskHolderService.js";
 import { getTaskHolderContactEvents, getTaskHolderTimeControl } from "../../../../services/timeControlService.js";
 import { AonDateUtils } from "../../../utils/AonDateUtils.js";
 import { timeHour } from ".././utils.js";
 import { AonCalendarMenu } from "./aon-calendar-menu.js";
-
 
 export class AonAgendaAllDays extends AonElement {
 
@@ -100,10 +99,10 @@ export class AonAgendaAllDays extends AonElement {
 		this.headerWeekHours = this.querySelector(".week-hours");
 		this.scrollEl = this.querySelector(".scroll");
 
-		let userTaskHolders = await getTaskHoldersUser();
-		if (userTaskHolders.length > 0) {
-			this._taskHolder = userTaskHolders[0].id;
-			this._taskHolderName = userTaskHolders[0].name;
+		let userTaskHolder = await getTaskHolder();
+		if (userTaskHolder) {
+			this._taskHolder = userTaskHolder.id;
+			this._taskHolderName = userTaskHolder.name;
 		}
 
 		this.aonCalendarMenu = new AonCalendarMenu();

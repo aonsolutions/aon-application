@@ -22,6 +22,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CM_005("303-CM005",false,null,"R\u00E9gimen por defecto")
 	,CM_006("303-CM006",false,null,"Tipo de prorrata (E/G).")
 	,CM_007("303-CM007",false,null,"Porcentaje de prorrata antes de la regularizaci\u00F3n.")
+	,CM_008("303-CM008",false,null,"Aplicar prorrata")
 
 	// Casillas necesarias para el calculo de la prorrata definitiva.
 	,CM_070("303-CM070",false,null,"Importe anual de entregas de bienes y prestaciones de servicios que dan derecho a deducci\u00F3n, sin incluir el IVA (incluye operaciones con inversi\u00F3n del sujeto pasivo, exportaciones, y entregas intracomunitarias)")
