@@ -27,16 +27,16 @@ import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod303CANARIAS2025Declaration extends Mod303CANARIAS {
+class Mod303CANARIAS2026Declaration extends Mod303CANARIAS {
 	
-	protected Mod303CANARIAS2025Declaration() {
+	protected Mod303CANARIAS2026Declaration() {
 
 	}
 	
-	// DEVENGADO: LOS POSIBLES PORCENTAJES DE IGIC QUE APARECEN EN EL PROGRAMA DE AYUDA SON 7 PERO EL MODELO SOLO PERMITE 6
-	// PORCENTAJES POSIBLES DE IGIC: 0%, 3%, 5%, 7%, 9.5%, 15% Y 20%
+	// PORCENTAJES POSIBLES DE IGIC: 0%, 3%, 5%, 7%, 9.5%, 15%, 20% y 1%
 	
 	private static final double PERCENT0 = 0.0;
+	private static final double PERCENT1 = 1.0;
 	private static final double PERCENT3 = 3.0;
 	private static final double PERCENT5 = 5.0;
 	private static final double PERCENT7 = 7.0;
@@ -45,7 +45,7 @@ class Mod303CANARIAS2025Declaration extends Mod303CANARIAS {
 	private static final double PERCENT20 = 20.0;
 	
 	public static boolean accept(Mod303 mod) {
-		return (mod.isCanarias() && mod.getYear() == 2025);
+		return (mod.isCanarias() && mod.getYear() >= 2026);
 	}
 	
 	private static final Mod303Key[] COMPENSATION_EXPLAIN_KEYS = new Mod303Key[] { Mod303Key.CA_C043 };
@@ -128,6 +128,14 @@ class Mod303CANARIAS2025Declaration extends Mod303CANARIAS {
 		CA_DT07(Mod303Key.CA_DT07, null, null, (ctx, mod) -> add(Mod303Key.CA_DT07, mod, PERCENT20), null, null),
 		CA_DC07(Mod303Key.CA_DC07, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent20(vat)),
 				(ctx, mod, vat) -> add(Mod303Key.CA_DC07, mod, vat.getQuota()), null, null, null)
+		
+		// Base imponible, porcentaje y cuota (7)
+		,
+		CA_DB08(Mod303Key.CA_DB08, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent1(vat)),
+				(ctx, mod, vat) -> add(Mod303Key.CA_DB08, mod, vat.getBase()), null, null, null),
+		CA_DT08(Mod303Key.CA_DT08, null, null, (ctx, mod) -> add(Mod303Key.CA_DT08, mod, PERCENT1), null, null),
+		CA_DC08(Mod303Key.CA_DC08, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent1(vat)),
+				(ctx, mod, vat) -> add(Mod303Key.CA_DC08, mod, vat.getQuota()), null, null, null)
 
 		// Operaciones con inversión del sujeto pasivo. Base y cuota
 		,
@@ -142,13 +150,14 @@ class Mod303CANARIAS2025Declaration extends Mod303CANARIAS {
 				(ctx, mod, vat) -> add(Mod303Key.CA_C021, mod, vat.getBase()), null, null, null),
 		CA_C022(Mod303Key.CA_C022, (mod, vat) -> modificacionBasesYCuotasFilter(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CA_C022, mod, vat.getQuota()), null, null, null)
-		
+
+		// FALTA - EL PROGRAMA DE AYUDA NO LLEVA ESTAS CASILLAS
 		// Cuotas devueltas en régimen de viajeros. Base y cuota
-		, CA_C023(Mod303Key.CA_C023)
-		, CA_C024(Mod303Key.CA_C024)
+//		, CA_C023(Mod303Key.CA_C023)
+//		, CA_C024(Mod303Key.CA_C024)
 
 		// Total cuota devengada
-		, CA_C025(Mod303Key.CA_C025, null, null, null,"CA_DC01+CA_DC02+CA_DC03+CA_DC04+CA_DC05+CA_DC06+CA_DC07+CA_C020+CA_C022-CA_C024", null)
+		, CA_C025(Mod303Key.CA_C025, null, null, null,"CA_DC01+CA_DC02+CA_DC03+CA_DC04+CA_DC05+CA_DC06+CA_DC07+CA_DC08+CA_C020+CA_C022", null)
 
 		// ---------------------------------------------------------------
 		// ----------------------- LIQUIDACION: IGIC DEDUCIBLE Y RESULTADO
@@ -472,6 +481,10 @@ class Mod303CANARIAS2025Declaration extends Mod303CANARIAS {
 	
 	private static boolean hasPercent0(VatContext vat) {
 		return vat.getPercentage() == PERCENT0;
+	}
+	
+	private static boolean hasPercent1(VatContext vat) {
+		return vat.getPercentage() == PERCENT1;
 	}
 	
 	private static boolean hasPercent3(VatContext vat) {
