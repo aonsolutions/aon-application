@@ -35,13 +35,15 @@ public class TaxBreakdown implements Serializable {
 	}
 	public Stream<InvoiceBreakdown> vatStream() {
 		return ibs.stream()
-			.filter(ib -> ib.isVat() )
+			.filter(ib -> ib.isVat())
+			.filter(ib -> !ib.isPrepayment() )
 			.sorted((ib,ib1) -> AonNumberUtils.compare(ib.getPercentage(),ib1.getPercentage()))
 		;
 	}
 	public Stream<InvoiceBreakdown> withholdingStream() {
 		return ibs.stream()
 			.filter(ib -> ib.isWithholding() )
+			.filter(ib -> !ib.isPrepayment() )
 			.sorted((ib,ib1) -> AonNumberUtils.compare(ib.getPercentage(),ib1.getPercentage()))
 		;
 	}
