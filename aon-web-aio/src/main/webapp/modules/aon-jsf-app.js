@@ -1106,6 +1106,14 @@ export class AonJsfEndPeriodEntries extends AonJsfApp {
 	}
 }
 
+export class AonJsfInvoiceIntegrity extends AonJsfApp {
+
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/invoiceIntegrity.xhtml');
+	}
+}
+
 export class AonJsfInvoiceReport extends AonJsfApp {
 
 	constructor() {
@@ -1951,6 +1959,10 @@ if (!window.customElements.get(TAG.AON_JSF_PERIOD_AMORTIZATION)) {
 
 if (!window.customElements.get(TAG.AON_JSF_END_PERIOD_ENTRIES)) {
 	window.customElements.define(TAG.AON_JSF_END_PERIOD_ENTRIES, AonJsfEndPeriodEntries);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_INVOICE_INTEGRITY)) {
+	window.customElements.define(TAG.AON_JSF_INVOICE_INTEGRITY, AonJsfInvoiceIntegrity);
 }
 
 if (!window.customElements.get(TAG.AON_JSF_INVOICE_REPORT)) {
