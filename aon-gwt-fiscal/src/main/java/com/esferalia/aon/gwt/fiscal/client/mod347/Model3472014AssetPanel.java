@@ -323,6 +323,7 @@ public class Model3472014AssetPanel extends SimpleLayoutPanel implements Focusab
 		tab5.setWidget(1, 0, town);
 
 		FlowPanel townCodePanel = new FlowPanel(); 
+		townCodePanel.setStyleName(AON.CSS.aonFlexBlock()); 
 		AonTextBox townCode = new AonTextBox();
 		townCode.setMaxLength(5);
 		townCode.setVisibleLength(5);
@@ -337,7 +338,7 @@ public class Model3472014AssetPanel extends SimpleLayoutPanel implements Focusab
 		townCodeAnchor.setStyleName(AON.CSS.aonIconLabel());
 		townCodeAnchor.addStyleName(AON.CSS.aonIconLink());
 		townCodeAnchor.setTarget("_blank");
-		townCodeAnchor.setHref("http://www.ine.es/daco/daco42/codmun/codmunmapa.htm");
+		townCodeAnchor.setHref("https://www.ine.es/dyngs/INEbase/es/operacion.htm?c=Estadistica_C&cid=1254736177031&menu=ultiDatos&idp=1254734710990");
 		townCodePanel.add(townCodeAnchor);
 		
 		tab5.setWidget(1, 1, townCodePanel);
