@@ -99,7 +99,7 @@ enum ClaveRegimen {
 				&& !inv.isVatAccrualPayment()
 				&& !inv.isSalesOSS()
 				&& !ib.isPrepayment()
-				&& VatDeductionType.safeSujetoNoExento(ib.getVatDeductionType())
+				// && VatDeductionType.safeSujetoNoExento(ib.getVatDeductionType())
 			;
 		}
 		
@@ -179,6 +179,7 @@ enum ClaveRegimen {
 			return detalle;
 		}
 	},
+
     /**
      * Art. 25 - Entregas intracomunitarias
      * 	Vender a empresas en otros países de la UE también está exento de IVA, 
