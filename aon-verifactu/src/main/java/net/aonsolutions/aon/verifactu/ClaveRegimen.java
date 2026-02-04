@@ -123,7 +123,7 @@ enum ClaveRegimen {
 		@Override
 		protected boolean accept( VerifactuContext vc, Invoice inv, InvoiceBreakdown ib) {
 			return getVATRegime(vc, inv) == VATRegime.GENERAL 
-				&& inv.isNational()
+//				&& inv.isNational()
 				&& !inv.isSurcharge() 
 				&& !inv.isWithholdingFarmer()
 				&& !inv.isVatAccrualPayment()
