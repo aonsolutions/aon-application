@@ -214,7 +214,8 @@ public class FacturasEmitidas extends SIIBuilt {
 		factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), false));
 		IDFacturaExpedidaType idFactura = new IDFacturaExpedidaType();
 		
-		idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
+		Date expDate = invoice != null && invoice.getExpDate() != null ? invoice.getExpDate() : vat.getIssueDate();
+		idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(expDate, "dd-MM-yyyy"));
 		//idFactura.setNumSerieFacturaEmisorResumenFin(vat.getReferenceCode()); // SI ES ASIENTO RESUMEN
 		idFactura.setNumSerieFacturaEmisor(vat.getReferenceCode());
 		IDEmisorFactura emisor = new IDEmisorFactura();
@@ -236,7 +237,8 @@ public class FacturasEmitidas extends SIIBuilt {
 			Invoice rectificada = AON.getInvoice(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(vat.getRectificationInvoice()));
 			// SOLO 1 RECTIFICADA PARA CADA RECTIFICATIVA! 
 			IDFacturaARType a2 = new IDFacturaARType();
-			a2.setFechaExpedicionFacturaEmisor(AonDateUtils.format(rectificada.getIssueDate(), "dd-MM-yyyy")); //TODO
+			
+			a2.setFechaExpedicionFacturaEmisor(AonDateUtils.format(rectificada.getExpDate(), "dd-MM-yyyy")); //TODO
 			a2.setNumSerieFacturaEmisor(rectificada.getReferenceCode());
 			fr.getIDFacturaRectificada().add(a2);
 			fet.setFacturasRectificadas(fr);

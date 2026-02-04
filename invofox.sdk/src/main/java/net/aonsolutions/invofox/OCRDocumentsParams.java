@@ -84,6 +84,10 @@ public class OCRDocumentsParams extends OCRParams {
 	public OCRDocumentsParams withCompanyActsLike(String param) {
 		return append(OCRNames.COMPANY_ACTS_LIKE2, param);
 	}
+	
+	public OCRDocumentsParams withFilter(String filter) {
+		return append(OCRNames.FILTER, filter);
+	}
 
 	public static String normalize(String ocrDocument) {
 		return AonStringUtils.removeStartIgnoreCase(ocrDocument, "ES");
