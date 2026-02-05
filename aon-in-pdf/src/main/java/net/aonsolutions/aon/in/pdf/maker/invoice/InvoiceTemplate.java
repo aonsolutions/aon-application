@@ -533,14 +533,21 @@ public class InvoiceTemplate {
 		});
 	}
 	
-	private static void sortOtherSources(List<InvoiceDetail> details, Map<DetailCategory, List<InvoiceDetail>> map) {
+	private static void sortOtherSources(InvoiceTemplateContext ctx, List<InvoiceDetail> details, Map<DetailCategory, List<InvoiceDetail>> map) {
 		List<InvoiceSource> sortedTypes = Arrays.asList(SORTED_SOURCES);
 		details.stream()
 		.filter(detail -> detail != null && !sortedTypes.contains(detail.getSource()))
 		.forEach(detail -> {
-			List<InvoiceDetail> detailList = map.getOrDefault(null, new LinkedList<>());
-			detailList.add(detail);
-			map.put(null, detailList);
+			if(isGarage(ctx.getCompany()) && detail.getProject() != null && AonStringUtils.isNotBlank(detail.getProjectName())) {
+				DetailCategory key = new DetailCategory(detail.getSource(), detail.getProject(), detail.getProjectName(), null, null);
+				List<InvoiceDetail> detailList = map.getOrDefault(key, new LinkedList<>());
+				detailList.add(detail);
+				map.put(key, detailList);
+			} else {
+				List<InvoiceDetail> detailList = map.getOrDefault(null, new LinkedList<>());
+				detailList.add(detail);
+				map.put(null, detailList);
+			}
 		});
 	}
 	
@@ -585,13 +592,13 @@ public class InvoiceTemplate {
 	}
 	
 	
-	private static Map<DetailCategory, List<InvoiceDetail>> groupBySource(List<InvoiceDetail> details) {
+	private static Map<DetailCategory, List<InvoiceDetail>> groupBySource(InvoiceTemplateContext ctx, List<InvoiceDetail> details) {
 		Map<DetailCategory, List<InvoiceDetail>> map = new LinkedHashMap<>();
 		if (details == null)
 			return map;
 		
 		//OTROS
-		sortOtherSources(details, map);
+		sortOtherSources(ctx, details, map);
 		//DELIVERIES
 		sortDeliveries(details, map);
 		//SALES
@@ -704,7 +711,7 @@ public class InvoiceTemplate {
 					});			
 		}
 		
-		Map<DetailCategory, List<InvoiceDetail>> detailMap = groupBySource(filteredList);
+		Map<DetailCategory, List<InvoiceDetail>> detailMap = groupBySource(ctx, filteredList);
 		
 		if (!udapaAuxiliaryList.isEmpty()) {
 			DetailCategory auxCat = new DetailCategory(ProductType.AUXILIARY);
