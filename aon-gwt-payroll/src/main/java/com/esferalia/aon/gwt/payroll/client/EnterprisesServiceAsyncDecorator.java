@@ -73,6 +73,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.calendar.Calendar;
+import com.esferalia.aon.occam.api.model.calendar.Holiday;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
@@ -1334,11 +1336,32 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.fixAgreementIntegrity(domainName, agreementId, callback);
 	}
-
 	
 	@Override
 	public void getDomainByName(String domainName, AsyncCallback<Domain> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getDomainByName(domainName, callback);
 	}
+	
+	// ------------------------------------------------ Calendar
+
+	@Override
+	public void getCalendar(String domainName, String currentUser, Integer workplace, AsyncCallback<List<Calendar>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getCalendar(domainName, currentUser, workplace, callback);
+	}
+
+	@Override
+	public void getHolidays(String domainName, String currentUser, AsyncCallback<List<Holiday>> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getHolidays(domainName, currentUser, callback);
+	}
+
+	@Override
+	public void deleteHolidayDetail(String domainName, String currentUser, Integer id, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.deleteHolidayDetail(domainName, currentUser, id, callback);
+	}
+	
 }

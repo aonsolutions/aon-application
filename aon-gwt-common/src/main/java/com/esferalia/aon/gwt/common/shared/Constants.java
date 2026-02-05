@@ -42,4 +42,6 @@ public interface Constants {
 	
 	public static final String AFI_PENSION_PLAN_ENTRY_POINT = "AFIPensionPlan";
 	
+	public static final String WORKPLACES_CALENDAR_ENTRY_POINT = "WorkplacesCalendar";
+	
 }

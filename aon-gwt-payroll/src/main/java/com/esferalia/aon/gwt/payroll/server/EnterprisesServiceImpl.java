@@ -186,6 +186,7 @@ import com.esferalia.aon.occam.api.model.EnterpriseData;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.calendar.Holiday;
 import com.esferalia.aon.occam.api.model.doc.Doc;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
@@ -5230,6 +5231,26 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public Domain getDomainByName(String domainName) throws IllegalArgumentException {
 		Domain domain = AON_SOLUTIONS.getDomain(domainName);
 		return domain;
+	}
+	
+	// ------------------------------------------------ Calendar
+
+	@Override
+	public List<com.esferalia.aon.occam.api.model.calendar.Calendar> getCalendar(String domainName, String userLogin, Integer workplace) throws IllegalArgumentException {
+		Domain domain = AON_SOLUTIONS.getDomain(domainName);
+		return AON.getCalendar(domain.getName(), domain.getId(), userLogin, workplace);
+	}
+
+	@Override
+	public List<Holiday> getHolidays(String domainName, String userLogin) throws IllegalArgumentException {
+		Domain domain = AON_SOLUTIONS.getDomain(domainName);
+		return AON.getHolidays(domain.getName(), domain.getId(), userLogin);
+	}
+
+	@Override
+	public void deleteHolidayDetail(String domainName, String userLogin, Integer id) throws IllegalArgumentException {
+		Domain domain = AON_SOLUTIONS.getDomain(domainName);
+		AON.deleteHolidayDetail(domain.getName(), domain.getId(), userLogin, id);
 	}
 	
 }
