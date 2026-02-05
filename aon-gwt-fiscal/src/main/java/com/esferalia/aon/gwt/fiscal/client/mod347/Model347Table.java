@@ -51,7 +51,7 @@ public class Model347Table extends SimpleLayoutPanel implements HasSelectionHand
 	}
 	
 	private Widget getToolbarPanel(Model347Callback cbk) {
-		AonToolbar toolbar = new AonToolbar( "Modelo 347");
+		AonToolbar toolbar = new AonToolbar("Declaraci\u00F3n anual operaciones con terceras personas");
 		
 		final AonToolbarButton newButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
 		newButton.addClickHandler( event -> cbk.onNew( ));

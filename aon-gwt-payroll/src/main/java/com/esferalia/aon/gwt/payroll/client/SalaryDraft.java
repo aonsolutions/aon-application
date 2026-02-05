@@ -2432,6 +2432,10 @@ public class SalaryDraft extends ResizeComposite
 				htmlBuilder.appendHtmlConstant(suggestion.getDisplayString());
 				htmlBuilder.appendHtmlConstant("</span>");
 
+				if (payment != null && payment.getType() != null && payment.getType().isInKind()) {
+					htmlBuilder.appendHtmlConstant("<span class=\"inkind\" >en especie</span>");
+				}
+
 				mySuggestions.add(new MultiWordSuggestOracle.MultiWordSuggestion(replacementString,
 						htmlBuilder.toSafeHtml().asString()));
 			}
@@ -2719,6 +2723,9 @@ public class SalaryDraft extends ResizeComposite
 		@ClassName("margin-top30")
 		String marginTop30();
 		
+		@ClassName("no-wrap")
+		String noWrap();
+
 		String issueLabel();
 
 		String issueTextBox();
@@ -6697,6 +6704,8 @@ public class SalaryDraft extends ResizeComposite
 			dbIrpfLabel.setText(formatPercent(AonStringUtils.isBlank(dbPercent) ? "0.00" : dbPercent));
 			dbIrpfLabel.setVisible(salaryDraftObject.hasDbSalary());
 			dbIrpfLabel.addStyleName(AON.AON_TEXT_RIGHT);
+			dbIrpfLabel.addStyleName(style.noWrap());
+
 
 			setDbStyleName(dbIrpfLabel, irpfPercentTexTBox.getText(), dbIrpfLabel.getText());
 		

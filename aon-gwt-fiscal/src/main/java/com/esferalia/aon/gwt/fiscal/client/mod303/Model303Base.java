@@ -1364,11 +1364,11 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		}
 		marksPanels.add(replacedLabel);
 
-		if (AonMathUtils.isNotZero(getModel().getProratePercent()) &&  !AonMathUtils.equals(getModel().getProratePercent(), 100.0)) {
+		//if (AonMathUtils.isNotZero(getModel().getProratePercent()) &&  !AonMathUtils.equals(getModel().getProratePercent(), 100.0)) {
+		if (getModel().hasProrate()) {
 			prorataLabel.setStyleName(AON.CSS.aonMarginLeft());
 			prorataLabel.setText(AON.MSG.prorrata() + ": " + getModel().getProratePercent() + "%" + (getModel().isSpecialProrate()?" Especial":""));
 			prorataLabel.addStyleName(AON.CSS.aonBold());
-			
 		}
 		marksPanels.add(replacedLabel);
 		marksPanels.add(prorataLabel);

@@ -1129,6 +1129,12 @@ public class SaleInvoiceController extends InvoiceController {
 		return "Aceptar/Enviar";
 	}
 	
+	@Override
+	public boolean isSii() {
+		if(isTbai()) return false;
+		return super.isSii();
+	}
+	
 	public String getSendIcon() {
 		if (isNoVerifactu()) return "aon-icon-send-archive"; 
 		if (isSif()) return "aon-icon-send-sif";

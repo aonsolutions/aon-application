@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.junit.Ignore;
@@ -2049,6 +2050,167 @@ public class SQLFunctionsTestCase extends
 		.forEach( r -> org.junit.Assert.assertFalse(r.getValue()) );
 	}
 
+	@Test
+	public void testSumIfDefI() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, getToday(), new HashMap<String, String>(){{
+				    put("VAR1", "1.00");
+				    put("VAR2", "1.00");
+				    put("VAR3", "1.00");
+				    put("VAR4", "1.00");
+				    put("VAR5", "1.00");
+				    put("VAR6", "1.00");
+				    put("VAR7", "1.00");
+				    put("VAR8", "1.00");
+				    put("VAR9", "1.00");
+				}} ));
+		//@formatter:on
+		
+		
+		Date today = getToday();
+		
+		List<ITimedResult<Number>>  sum = 
+				ctx.getExpressionContext().eval(
+						String.format("SUMIFDEF('VAR1', 'VAR2', 'VAR3', 'VAR4', 'VAR5', 'VAR6', 'VAR7', 'VAR8', 'VAR9')")
+						, startDate
+						, endDate, Number.class);
+		Assert.assertEquals(9.0, sum.get(0).getValue());
+	}
+
+	@Test
+	public void testSumIfDefII() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, startDate, Collections.emptyMap() );
+		for(int i =1 ; i<= 9 ; i++ ) {
+		    addData(aonContext, contract, startDate, startDate, "VAR"+i, "1.00");
+		}
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		//@formatter:on
+		
+		
+		
+		List<ITimedResult<Number>>  sum = 
+				ctx.getExpressionContext().eval(
+						String.format("SUMIFDEF('VAR1', 'VAR2', 'VAR3', 'VAR4', 'VAR5', 'VAR6', 'VAR7', 'VAR8', 'VAR9')")
+						, startDate
+						, endDate, Number.class);
+		Assert.assertEquals(9.0, sum.stream().collect(Collectors.summingDouble( r -> r.getValue().doubleValue()) ), 0.00);
+	}
+
+	@Test
+	public void testSumIfDefIII() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, startDate, Collections.emptyMap() );
+		for(int i =1 ; i<= 9 ; i++ ) {
+		    addData(aonContext, contract, startDate, startDate, "VAR"+i, "1.00");
+		}
+		for(int i =1 ; i<= 9 ; i++ ) {
+		    addData(aonContext, contract, endDate, endDate, "VAR"+i, "1.00");
+		}
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		//@formatter:on
+		
+		
+		
+		List<ITimedResult<Number>>  sum = 
+				ctx.getExpressionContext().eval(
+						String.format("SUMIFDEF('VAR1', 'VAR2', 'VAR3', 'VAR4', 'VAR5', 'VAR6', 'VAR7', 'VAR8', 'VAR9')")
+						, startDate
+						, endDate, Number.class);
+		Assert.assertEquals(18.0, sum.stream().collect(Collectors.summingDouble( r -> r.getValue().doubleValue()) ), 0.00);
+	}
+
+	@Test
+	public void testSumIfDefIV() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, startDate, Collections.emptyMap() );
+		for(int i =1 ; i<= 4 ; i++ ) {
+		    addData(aonContext, contract, endDate, endDate, "VAR"+i, "1.00");
+		}
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		//@formatter:on
+		
+		
+		
+		List<ITimedResult<Number>>  sum = 
+				ctx.getExpressionContext().eval(
+						String.format("SUMIFDEF('VAR1', 'VAR2', 'VAR3', 'VAR4', 'VAR5', 'VAR6', 'VAR7', 'VAR8', 'VAR9')")
+						, startDate
+						, endDate, Number.class);
+		Assert.assertEquals(4.0, sum.stream().collect(Collectors.summingDouble( r -> r.getValue().doubleValue()) ), 0.00);
+	}
+
+	@Test
+	public void testSumIfDefV() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, startDate, Collections.emptyMap() );
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		//@formatter:on
+		
+		
+		
+		List<ITimedResult<Number>>  sum = 
+				ctx.getExpressionContext().eval(
+						String.format("SUMIFDEF('VAR1', 'VAR2', 'VAR3', 'VAR4', 'VAR5', 'VAR6', 'VAR7', 'VAR8', 'VAR9')")
+						, startDate
+						, endDate, Number.class);
+		Assert.assertEquals(0.0, sum.stream().collect(Collectors.summingDouble( r -> r.getValue().doubleValue()) ), 0.00);
+	}
 	//------------------------------------------------------------------------
 	
 	protected ContractRecord newContract(AONContext aonContext, String quoteGroup, Date startDate, Date endDate ) {

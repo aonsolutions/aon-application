@@ -44,10 +44,12 @@ import org.jooq.impl.DSL;
 import org.json.JSONObject;
 
 import com.esferalia.aon.jooq.tables.EnterpriseActivity;
+import com.esferalia.aon.jooq.tables.FsModelDetail;
 import com.esferalia.aon.jooq.tables.Iae;
 import com.esferalia.aon.jooq.tables.InvoiceTax;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdownNew;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -67,6 +69,7 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 public class AccountingOperationNewDAO {
 	
@@ -93,13 +96,20 @@ public class AccountingOperationNewDAO {
 	private static Field<Double> proratePercentageField = DSL.field(DSL.select(FS_MODEL_DETAIL.AMOUNT)
 				.from(FS_MODEL_DETAIL)
 				.join(ALCATRAZ).on(ALCATRAZ.FS_MODEL.equal(FS_MODEL_DETAIL.FS_MODEL))
-				.where(ALCATRAZ.INVOICE.eq(INVOICE.ID)).and(FS_MODEL_DETAIL.TYPE.eq(Mod303Key.CM_003.getValue()))
+				.where(ALCATRAZ.INVOICE.eq(INVOICE.ID)).and(FS_MODEL_DETAIL.TYPE.eq(Mod303Key.CM_003.getValue())) // Porcentaje de prorrata
 				.orderBy(FS_MODEL_DETAIL.ID.desc())
 				.limit(1));
 	private static Field<String> prorateTypeField = DSL.field(DSL.select(FS_MODEL_DETAIL.DESCRIPTION)
 				.from(FS_MODEL_DETAIL)
 				.join(ALCATRAZ).on(ALCATRAZ.FS_MODEL.equal(FS_MODEL_DETAIL.FS_MODEL))
-				.where(ALCATRAZ.INVOICE.eq(INVOICE.ID)).and(FS_MODEL_DETAIL.TYPE.eq(Mod303Key.CM_006.getValue()))
+				.where(ALCATRAZ.INVOICE.eq(INVOICE.ID)).and(FS_MODEL_DETAIL.TYPE.eq(Mod303Key.CM_006.getValue())) // Tipo de prorrata
+				.orderBy(FS_MODEL_DETAIL.ID.desc())
+				.limit(1));
+	private static Field<Double> prorateField = DSL.field(DSL.select(FS_MODEL_DETAIL.AMOUNT)
+				.from(FS_MODEL_DETAIL)
+				.join(FS_MODEL).on(FS_MODEL.ID.equal(FS_MODEL_DETAIL.FS_MODEL))
+				.join(ALCATRAZ).on(ALCATRAZ.FS_MODEL.equal(FS_MODEL_DETAIL.FS_MODEL))
+				.where(ALCATRAZ.INVOICE.eq(INVOICE.ID)).and(FS_MODEL.YEAR.ge(2026)).and(FS_MODEL_DETAIL.TYPE.eq(Mod303Key.CM_008.getValue())) // Aplicar prorrata (desde 2026)
 				.orderBy(FS_MODEL_DETAIL.ID.desc())
 				.limit(1));
 		
@@ -148,10 +158,10 @@ public class AccountingOperationNewDAO {
 		,INVEST_ASSET.RETENTION_PERCENT
 		,proratePercentageField
 		,prorateTypeField
+		,prorateField
 		,allEnterpriseActivity.VAT_REGIME
 		,otherIae.SECTION
-		,otherIae.EPIGRAPH
-		
+		,otherIae.EPIGRAPH	
 	};
 	
 	// Cobros/Pagos RECC
@@ -369,29 +379,51 @@ public class AccountingOperationNewDAO {
 		params.setLastProratePercentage(0.0);
 		params.setLastProrateType("");
 		
-		Double percentage = ctx.getDslContext()
-							   .select(FS_MODEL_DETAIL.AMOUNT)
-							   .from(FS_MODEL_DETAIL)
-							   .join(FS_MODEL).on(FS_MODEL.ID.equal(FS_MODEL_DETAIL.FS_MODEL))
-							   .where(FS_MODEL.DOMAIN.eq(ctx.getDomainId())).and(FS_MODEL_DETAIL.TYPE.eq(Mod303Key.CM_003.getValue()))
-							   .orderBy(FS_MODEL.YEAR.desc(), FS_MODEL.PERIOD.desc(), FS_MODEL.ID.desc())
-							   .fetchAny(FS_MODEL_DETAIL.AMOUNT);
+		FsModelDetail detail1 = FS_MODEL_DETAIL.as("detail1"); // Porcentaje de prorrata
+		FsModelDetail detail2 = FS_MODEL_DETAIL.as("detail2"); // Tipo de prorrata
+		FsModelDetail detail3 = FS_MODEL_DETAIL.as("detail3"); // Aplicar prorrata (desde 2026)
 		
-		if (percentage != null) {
-			params.setLastProratePercentage(percentage);
-		}
-		
-		String type = ctx.getDslContext()
-						 .select(FS_MODEL_DETAIL.DESCRIPTION)
-						 .from(FS_MODEL_DETAIL)
-						 .join(FS_MODEL).on(FS_MODEL.ID.equal(FS_MODEL_DETAIL.FS_MODEL))
-						 .where(FS_MODEL.DOMAIN.eq(ctx.getDomainId())).and(FS_MODEL_DETAIL.TYPE.eq(Mod303Key.CM_006.getValue()))
-						 .orderBy(FS_MODEL.YEAR.desc(), FS_MODEL.PERIOD.desc(), FS_MODEL.ID.desc())
-						 .fetchAny(FS_MODEL_DETAIL.DESCRIPTION);
-		
-		if (type != null) {
-			params.setLastProrateType(AonStringUtils.trimToEmpty(type));
-		}
+		ctx.getDslContext()
+		   .select(FS_MODEL.YEAR, detail1.AMOUNT, detail2.DESCRIPTION, detail3.AMOUNT)
+		   .from(FS_MODEL)
+		   .leftJoin(detail1).on(FS_MODEL.ID.eq(detail1.FS_MODEL).and(detail1.TYPE.eq(Mod303Key.CM_003.getValue()))) // Porcentaje de prorrata
+		   .leftJoin(detail2).on(FS_MODEL.ID.eq(detail2.FS_MODEL).and(detail2.TYPE.eq(Mod303Key.CM_006.getValue()))) // Tipo de prorrata
+		   .leftJoin(detail3).on(FS_MODEL.ID.eq(detail3.FS_MODEL).and(detail3.TYPE.eq(Mod303Key.CM_008.getValue()))) // Aplicar prorrata
+		   .where(FS_MODEL.DOMAIN.eq(ctx.getDomainId())).and(FS_MODEL.MODEL.eq(FiscalModelType.M303.getValue()))
+		   .orderBy(FS_MODEL.YEAR.desc(), FS_MODEL.PERIOD.desc(), FS_MODEL.ID.desc())
+		   .limit(1)
+		   .fetch()			   
+		   .stream()			   
+		   .forEach(rec -> {
+			   
+			   // Solo se leen los modelos 303 de este ejercicio o del anterior, según params.getFromDate()
+			   int modelYear = rec.getValue(FS_MODEL.YEAR);
+			   int fromYear = AonDateUtils.getYear(params.getFromDate());
+			   if (modelYear >= fromYear - 1 && modelYear <= fromYear) {
+				   Double percentage = rec.getValue(detail1.AMOUNT);
+				   String type = rec.getValue(detail2.DESCRIPTION);
+				   Double applyProrate = rec.getValue(detail3.AMOUNT);
+				   
+				   // A partir del 2026 hay un check para indicar si se aplica prorrata o no
+				   if (modelYear >= 2026) {
+					   if (percentage != null && type != null && applyProrate != null) {
+						   if (applyProrate.byteValue() == TRUE_BYTE) {
+							   params.setLastProratePercentage(percentage);
+							   params.setLastProrateType(AonStringUtils.trimToEmpty(type));
+						   }
+					   }
+				   } else {
+					   // Hasta 2025, si el porcentaje es cero o cien se asume que no se aplica prorrata
+					   if (percentage != null && type != null) {
+						   if (percentage > 0.0 && percentage < 100.0) {
+							   params.setLastProratePercentage(percentage);
+							   params.setLastProrateType(AonStringUtils.trimToEmpty(type));
+						   }
+					   }
+				   }
+			   }
+			   
+		   });
 		
 	}
 
@@ -479,10 +511,6 @@ public class AccountingOperationNewDAO {
 			.leftOuterJoin(ACCOUNT_ENTRY_FINANCE_TRACKING).on(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY.equal(ACCOUNT_ENTRY.ID))
 			.leftOuterJoin(FINANCE_TRACKING).on(FINANCE_TRACKING.ID.equal(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING))
 			.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FINANCE_TRACKING.FINANCE))
-			
-//			INNER JOIN account_entry_finance_tracking ON account_entry_finance_tracking.account_entry = account_entry.id
-//			INNER JOIN finance_tracking ON finance_tracking.id=account_entry_finance_tracking.finance_tracking
-//			INNER JOIN finance ON finance.id=finance_tracking.finance
 			;
 	}
 
@@ -810,19 +838,12 @@ public class AccountingOperationNewDAO {
 			// Comprobar si la factura lleva porcentaje de prorrata y debe aplicarse:
 			// Prorrata General: Se aplica a todas las facturas
 			// Prorrata Especial: Se aplica solo a las facturas que no tienen actividad (es decir que se imputan a todas las actividades)
-			double proratePer;
-			String prorateTyp; 
-			if (rec.getValue(proratePercentageField) == null) {
-				// Si la factura aún no está declarada en el modelo 303, entonces se coge el porcentaje de prorrata del último modelo 303 creado
-				proratePer = params.getLastProratePercentage();
-				prorateTyp = params.getLastProrateType(); 
-			} else {
-				// Si la factura ya está declarada en el modelo 303, se cogen los datos de dicho modelo
-				proratePer = AonNumberUtils.todouble(rec.getValue(proratePercentageField));
-				prorateTyp = rec.getValue(prorateTypeField);
-			}
+			Pair<Double, String> prorateData = getProrateData(rec, params);
+			double proratePer = prorateData.getLeft();
+			String prorateTyp = prorateData.getRight();
 			boolean mustApplyProrate = AonStringUtils.equals(prorateTyp, "G") || (AonStringUtils.equals(prorateTyp, "E") && rec.getValue(INVOICE.ACTIVITY) == null);   
-			if (mustApplyProrate && AonMathUtils.isNotZero(proratePer) && proratePer < 100) {
+			//if (mustApplyProrate && AonMathUtils.isNotZero(proratePer) && proratePer < 100) {
+			if (mustApplyProrate) {
 				if (params.isDistributeInvoice() && rec.getValue(allEnterpriseActivity.VAT_REGIME) != null && rec.getValue(allEnterpriseActivity.VAT_REGIME) == VATRegime.EXEMPT.value())
 					dedQuota = 0.0;
 				else
@@ -831,6 +852,34 @@ public class AccountingOperationNewDAO {
 			return dedQuota;
 		}
 		
+		private Pair<Double, String> getProrateData(Record rec, OperationParamsNew params) {			
+			double proratePer = 0.0;
+			String prorateTyp = ""; 
+			if (rec.getValue(proratePercentageField) == null) {
+				// Si la factura aún no está declarada en el modelo 303, entonces se coge el porcentaje de prorrata del último modelo 303 creado
+				proratePer = params.getLastProratePercentage();
+				prorateTyp = params.getLastProrateType(); 
+			} else {
+				// Si la factura ya está declarada en el modelo 303, se cogen los datos de dicho modelo
+				proratePer = AonNumberUtils.todouble(rec.getValue(proratePercentageField));
+				prorateTyp = rec.getValue(prorateTypeField);
+				if (rec.getValue(prorateField) != null) {
+					// A partir de 2026, existe un campo específico en el modelo 303 que indica si se aplica prorrata, sea el porcentaje que sea
+					if (AonNumberUtils.todouble(rec.getValue(prorateField)) == 0.0) {
+						proratePer = 0.0;
+						prorateTyp = "";
+					}	
+				} else {
+					// Hasta 2025, si el porcentaje de prorrata es 0 o 100, no se aplica prorrata
+					if (proratePer == 0.0 || proratePer == 100.0) {
+						proratePer = 0.0;
+						prorateTyp = "";
+					}
+				}
+			}
+			return Pair.of(proratePer, prorateTyp);			
+		}
+
 		private double getAmountDistributed(Record rec, OperationParamsNew params, double amount) {
 			double dedQuota = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA));
 			if (AonMathUtils.isZero(dedQuota)) {
@@ -841,23 +890,16 @@ public class AccountingOperationNewDAO {
 				} else {
 					dedQuota = AonMathUtils.round(quota * percent / 100);
 				}
-			}			
+			}		
 			// Comprobar si la factura lleva porcentaje de prorrata y debe aplicarse:
 			// Prorrata General: Se aplica a todas las facturas
 			// Prorrata Especial: Se aplica solo a las facturas que no tienen actividad (es decir que se imputan a todas las actividades)
-			double proratePer;
-			String prorateTyp; 
-			if (rec.getValue(proratePercentageField) == null) {
-				// Si la factura aún no está declarada en el modelo 303, entonces se coge el porcentaje de prorrata del último modelo 303 creado
-				proratePer = params.getLastProratePercentage();
-				prorateTyp = params.getLastProrateType(); 
-			} else {
-				// Si la factura ya está declarada en el modelo 303, se cogen los datos de dicho modelo
-				proratePer = AonNumberUtils.todouble(rec.getValue(proratePercentageField));
-				prorateTyp = rec.getValue(prorateTypeField);
-			}
+			Pair<Double, String> prorateData = getProrateData(rec, params);
+			double proratePer = prorateData.getLeft();
+			String prorateTyp = prorateData.getRight();
 			boolean mustApplyProrate = AonStringUtils.equals(prorateTyp, "G") || (AonStringUtils.equals(prorateTyp, "E") && rec.getValue(INVOICE.ACTIVITY) == null);   
-			if (mustApplyProrate && AonMathUtils.isNotZero(proratePer) && proratePer < 100) {
+			//if (mustApplyProrate && AonMathUtils.isNotZero(proratePer) && proratePer < 100) {
+			if (mustApplyProrate) {
 				if (params.isDistributeInvoice() && rec.getValue(allEnterpriseActivity.VAT_REGIME) != null && rec.getValue(allEnterpriseActivity.VAT_REGIME) == VATRegime.EXEMPT.value())
 					amount = (amount - AonMathUtils.round(amount * proratePer / 100)) + (dedQuota - AonMathUtils.round(dedQuota * proratePer / 100)) ;
 				else

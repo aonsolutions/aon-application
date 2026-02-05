@@ -197,22 +197,24 @@ class VerifactuVentaNacionalSuplidosTest extends AbstractVerifactuTest {
 	    assertNotNull( desglose );
 	    List<DetalleType> listaDesglose = desglose.getDetalleDesglose();
 	    assertNotNull( listaDesglose );
-	    assertEquals( 2, listaDesglose.size() );
-
-	    DetalleType dt0 = listaDesglose.get(0);
-	    assertNotNull( dt0 );
-	    assertEquals( TipoImpuesto.IVA.getValue() , dt0.getImpuesto() );
-	    assertEquals( ClaveRegimen.C01_NATIONAL.getValue() , dt0.getClaveRegimen() );
-	    assertEquals( CalificacionOperacionType.N_1 , dt0.getCalificacionOperacion() );
-	    assertNull( dt0.getOperacionExenta() );		
-	    assertNull( dt0.getTipoImpositivo());
-	    assertEquals( "500" , dt0.getBaseImponibleOimporteNoSujeto());
-	    assertNull( dt0.getBaseImponibleACoste() );
-	    assertNull( dt0.getCuotaRepercutida());
-	    assertNull( dt0.getTipoRecargoEquivalencia() );		
-	    assertNull( dt0.getCuotaRecargoEquivalencia() );
+	    assertEquals( 1, listaDesglose.size() );
 	    
-	    DetalleType dt1 = listaDesglose.get(1);
+//      Los suplido no se envían a Verifactu
+	    
+//	    DetalleType dt0 = listaDesglose.get(0);
+//	    assertNotNull( dt0 );
+//	    assertEquals( TipoImpuesto.IVA.getValue() , dt0.getImpuesto() );
+//	    assertEquals( ClaveRegimen.C01_NATIONAL.getValue() , dt0.getClaveRegimen() );
+//	    assertEquals( CalificacionOperacionType.N_1 , dt0.getCalificacionOperacion() );
+//	    assertNull( dt0.getOperacionExenta() );		
+//	    assertNull( dt0.getTipoImpositivo());
+//	    assertEquals( "500" , dt0.getBaseImponibleOimporteNoSujeto());
+//	    assertNull( dt0.getBaseImponibleACoste() );
+//	    assertNull( dt0.getCuotaRepercutida());
+//	    assertNull( dt0.getTipoRecargoEquivalencia() );		
+//	    assertNull( dt0.getCuotaRecargoEquivalencia() );
+	    
+	    DetalleType dt1 = listaDesglose.get(0);
 	    assertNotNull( dt1 );
 	    assertEquals( TipoImpuesto.IVA.getValue() , dt1.getImpuesto() );
 	    assertEquals( ClaveRegimen.C01_NATIONAL.getValue() , dt1.getClaveRegimen() );
@@ -226,7 +228,7 @@ class VerifactuVentaNacionalSuplidosTest extends AbstractVerifactuTest {
 	    assertNull( dt1.getCuotaRecargoEquivalencia() );
 	    
 	    assertEquals( "21" , rfat.getCuotaTotal());
-	    assertEquals( "621" , rfat.getImporteTotal());
+	    assertEquals( "121" , rfat.getImporteTotal());
 	    
 	    RegistroFacturacionAltaType.Encadenamiento encadenamiento = rfat.getEncadenamiento();
 	    assertNotNull( encadenamiento );
