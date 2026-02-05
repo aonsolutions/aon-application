@@ -383,8 +383,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 //		click("fxCancelButton");
 		 
 		
-		getElementById("db-amount-label-3").focus();
-		wait4Value("db-amount-label-3", "PLUS_DISPONIBILIDAD");
+		getElementById("db-amount-label-2").focus();
+		wait4Value("db-amount-label-2", "PLUS_DISPONIBILIDAD");
 		click("fxButton");
 		wait4Id("fxExpressionCodeArea");
 		Assert.assertEquals(((HtmlTextArea) getElementById("fxExpressionCodeArea")).getText(),"DIAS_TRABAJADOS * /*user*/ PLUS_DISPONIBILIDAD/**/ / DIAS_MES" );
