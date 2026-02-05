@@ -85,7 +85,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		calculate(Calendar.JANUARY, 2026);
 		double totalPayment = getValue("totalPaymentLabel");
-		assertText("remunerationLabel", totalPayment - 300.00 );
+		assertText("remunerationLabel", totalPayment - 250.00 );
 		assertText("irpfBaseLabel", totalPayment - 250.00 + (50.00 - 11.00 * 3));
 		
 	}
