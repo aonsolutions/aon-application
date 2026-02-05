@@ -204,11 +204,12 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				description: "Regenerar número en Facturas de IVA Soportado",
 				title: "Regenerar número en Facturas de IVA Soportado",
 				action: () => alert("Regenerar número en Facturas de IVA Soportado")
-			},{
+			},*/
+			{
 				description: "Chequeo de Integridad de Facturas",
 				title: "Chequeo de Integridad de Facturas",
-				action: () => alert("Chequeo de Integridad de Facturas")
-			},*/{
+				action: () => this.rootPanel(new JSF.AonJsfInvoiceIntegrity())
+			},{
 				description: "Utilidades facturas/vencimientos",
 				title: "Utilidades facturas/vencimientos",
 				action: () => GWT.iLoad(GWT.FINANCE_UTILITIES)

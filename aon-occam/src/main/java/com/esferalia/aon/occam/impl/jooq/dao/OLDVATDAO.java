@@ -19,10 +19,12 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectSelectStep;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.InvoiceTax;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.finance.Filters.VATFilter;
@@ -42,6 +44,7 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
@@ -104,6 +107,12 @@ public class OLDVATDAO  {
 		}
 	}
 	
+	private static InvoiceTax retInvoiceTax = INVOICE_TAX.as("retInvoiceTax"); // Para la cuota de retención IRPF
+	private static Field<Byte> withholdingTypeField = DSL.field(DSL.select(retInvoiceTax.WITHHOLDING_TYPE)
+				.from(retInvoiceTax)
+				.where(retInvoiceTax.INVOICE_DETAIL.eq(INVOICE_DETAIL.ID).and(retInvoiceTax.TAX_TYPE.equal((byte) 2)))
+				.limit(1));
+	
 	private static SelectSelectStep<Record> getCommonSelect( AONContext ctx ) {
 		return ctx.getDslContext().select(
 				 INVOICE.ID
@@ -146,6 +155,7 @@ public class OLDVATDAO  {
 				,INVOICE.WITHHOLDING
 				,INVOICE.RETENTION_QUOTA
 				,INVOICE.REGISTRY
+				,withholdingTypeField
 			);		
 	}
 
@@ -454,6 +464,8 @@ public class OLDVATDAO  {
 						rec.getValue(INVOICE_DETAIL.SOURCE),
 						rec.getValue(INVOICE.RETENTION_QUOTA)))
 				.setRegistry(rec.getValue(INVOICE.REGISTRY))
+				
+				.setWithholdingType(WithholdingType.safeValueOf(rec.getValue(withholdingTypeField)))
 			;
 		}
 		

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -163,6 +164,14 @@ public class ContextFunctions {
 
 	public static Number ifNDef(String name, Number def) {
 		return ExpressionContext.getCurrentBindings().get(name, AonNumberUtils::todouble , def);
+	}
+
+	public static Number sumIfDef(String ...names) {
+		double sum = 0.00;
+		for (String name : names) {
+			sum += ExpressionContext.getCurrentBindings().getAll(name, AonNumberUtils::todouble , 0.00).stream().collect(Collectors.summingDouble(Double::doubleValue));
+		}
+		return sum;
 	}
 
 	public static void checkDef(String[] names, ExpressionContext context  ) throws UndefinedVariablesException {
@@ -1263,6 +1272,19 @@ public class ContextFunctions {
 		}
 	}
 
+	private static void loadSumIfDefFunction(ExpressionContext context, Date startDate, Date endDate)
+			throws ExpressionException {
+		try {
+			Method sumIfDef = ContextFunctions.class.getMethod("sumIfDef", String[].class);
+
+			MethodStub sumIfDefStub = new MethodStub(sumIfDef);
+			context.setVariable("SUMIFDEF", sumIfDefStub, startDate, endDate);
+
+		} catch (SecurityException e) {
+		} catch (NoSuchMethodException e) {
+		}
+	}
+
 	private static void loadIsReadFunction(ExpressionContext context, Date startDate, Date endDate)
 			throws ExpressionException {
 
@@ -1439,6 +1461,7 @@ public class ContextFunctions {
 		loadPPEDelaysFunction(context, startDate, endDate);
 		loadCheckDefFunction(context, startDate, endDate);
 		loadIfNDefFunction(context, startDate, endDate);
+		loadSumIfDefFunction(context, startDate, endDate);
 	}
 	
 	public static void loadDaysFunctions(ExpressionContext context, Date startDate, Date endDate)

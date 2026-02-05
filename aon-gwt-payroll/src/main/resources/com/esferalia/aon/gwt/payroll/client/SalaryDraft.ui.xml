@@ -289,6 +289,10 @@
 			padding-right: 30px;
 			--height-adjust: -25;
 		}
+		
+		.no-wrap {
+            white-space: nowrap;
+        }
 
 		@external gwt-ListBox;
 		@external gwt-TextBox;

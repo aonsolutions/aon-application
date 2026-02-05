@@ -53,8 +53,6 @@ public class Model347  implements EntryPoint {
 	
 	protected class Model347Callback implements IFiscalModelCallback<Mod347,Model347ModuleOptions> {
 		
-
-		
 		@Override
 		public Model347ModuleOptions getOptions() {
 			return Model347.this.options;
@@ -240,7 +238,6 @@ public class Model347  implements EntryPoint {
 		if (options.getFiscalModelId() != null ) {
 			onSelect(options,options.getFiscalModelId());
 		} else if (options.getNewModel() != null ) {
-//			newModel(options);
 			newModel(options, options.getNewModel().getYear());
 		} else {
 			model347Table.refresh(new Model347Callback());
@@ -325,7 +322,6 @@ public class Model347  implements EntryPoint {
 		Mod347 sel = event.getSelectedItem();
 		onSelect(options, sel.getId());
 	}
-	
 
 	private void select(Mod347 selected, Integer selectedIndexDeclared, Integer selectedIndexAsset, int tabPanelIndex) {
 		cleanErrorMessage();
@@ -339,7 +335,9 @@ public class Model347  implements EntryPoint {
 			declarationContainer.setWidget( new Model347GIPUZKOA(new Model347Callback(),selected,selectedIndexDeclared,selectedIndexAsset,tabPanelIndex));			
 		} else if ( selected.isNavarra() ) {
 			declarationContainer.setWidget( new Model347NAVARRA(new Model347Callback(),selected,selectedIndexDeclared,selectedIndexAsset,tabPanelIndex));			
-		} else {
+		} else if ( selected.isCanarias() ) {
+			declarationContainer.setWidget( new Model347CANARIAS(new Model347Callback(),selected,selectedIndexDeclared,selectedIndexAsset,tabPanelIndex));			
+		} else{
 			showErrorMessage("Administraci\u00F3n y/o ejercicio no soportado.");
 		}
 	}
@@ -406,4 +404,5 @@ public class Model347  implements EntryPoint {
 			}
 		});
 	}
+	
 }

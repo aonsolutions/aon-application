@@ -5,7 +5,6 @@ import com.esferalia.aon.gwt.common.client.widget.CountryListBox;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
-import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347.Model347Callback;
@@ -15,7 +14,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod347Key;
-import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -27,7 +25,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focusable {
+public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel implements Focusable {
 
 	private static final String WIDTH_120PX = "120px";
 
@@ -44,6 +42,11 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 	private DoubleBox secondAmount = new DoubleBox();
 	private DoubleBox thirdAmount = new DoubleBox();
 	private DoubleBox fourthAmount = new DoubleBox();
+	private DoubleBox rentalAmount = new DoubleBox(); 		
+	private DoubleBox firstRentalAmount = new DoubleBox();
+	private DoubleBox secondRentalAmount = new DoubleBox();
+	private DoubleBox thirdRentalAmount = new DoubleBox();
+	private DoubleBox fourthRentalAmount = new DoubleBox();
 	private DoubleBox assetAmount = new DoubleBox(); 		
 	private DoubleBox firstAssetAmount = new DoubleBox();
 	private DoubleBox secondAssetAmount = new DoubleBox();
@@ -51,14 +54,14 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 	private DoubleBox fourthAssetAmount = new DoubleBox();
 	private AonTextBox bdns = new AonTextBox();
 	
-	Model3472014DeclaredPanel(Model347Callback cbk, Mod347 mod347,Mod347Declared declared, IModel347DeclaredCallback callback) {
+	Model3472025DeclaredPanelCanarias(Model347Callback cbk, Mod347 mod347,Mod347Declared declared, IModel347DeclaredCallback callback) {
 		
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setStyleName(AON.CSS.aonWidthAll());
 		FlowPanel panel = new FlowPanel();
 		panel.setStyleName(AON.CSS.aonScrollArea());
 		
-		// NIF Declarado / NIF-IVA Declarado / NIF Representante / Nombre
+		// NIF Declarado / NIF Extranjeros / NIF Representante / Nombre
 		
 		FlexTable tab1 = new FlexTable();
 		tab1.getColumnFormatter().setWidth(0, "100px");
@@ -70,7 +73,7 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 		tab1.addStyleName(AON.CSS.aonNowrap());
 
 		tab1.setWidget(0, 0, new Model347SmallerLabel(AON.MSG.document()));
-		tab1.setWidget(0, 1, new Model347SmallerLabel("NIF-IVA declarado"));
+		tab1.setWidget(0, 1, new Model347SmallerLabel("NIF Extranjeros"));
 		tab1.setWidget(0, 2, new Model347SmallerLabel(AON.MSG.representativeDocument()));		
 		tab1.setWidget(0, 3, new Model347SmallerLabel(AON.MSG.fullName()));
 		
@@ -121,27 +124,27 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 		
 		panel.add(tab1);
 		
-		// Provincia / Pais / Clave
+		// Pais / Clave
 		
 		FlexTable tab2 = new FlexTable();
+//		tab2.getColumnFormatter().setWidth(0, "110px");
 		tab2.getColumnFormatter().setWidth(0, "110px");
-		tab2.getColumnFormatter().setWidth(1, "110px");
-		tab2.getColumnFormatter().setWidth(2, "auto");
+		tab2.getColumnFormatter().setWidth(1, "auto");
 		
 		tab2.setStyleName(AON.CSS.aonWidthAll());
 		tab2.addStyleName(AON.CSS.aonNowrap());
 		
-		tab2.setWidget(0, 0, new Model347SmallerLabel(AON.MSG.province()));
-		tab2.setWidget(0, 1, new Model347SmallerLabel(AON.MSG.country()));
-		tab2.setWidget(0, 2, new Model347SmallerLabel(AON.MSG.key()));
+//		tab2.setWidget(0, 0, new Model347SmallerLabel(AON.MSG.province()));
+		tab2.setWidget(0, 0, new Model347SmallerLabel(AON.MSG.country()));
+		tab2.setWidget(0, 1, new Model347SmallerLabel(AON.MSG.key()));
 
-		ProvinceListBox province = new ProvinceListBox();
-		province.setValue(declared.getProvince());
-		province.addChangeHandler(event -> {
-			declared.setProvince( Province.safeValueOf(province.getSelectedIndex()) );				                                    
-			callback.onValueChanged(declared);
-		});
-		tab2.setWidget(1, 0, province);
+//		ProvinceListBox province = new ProvinceListBox();
+//		province.setValue(declared.getProvince());
+//		province.addChangeHandler(event -> {
+//			declared.setProvince( Province.safeValueOf(province.getSelectedIndex()) );				                                    
+//			callback.onValueChanged(declared);
+//		});
+//		tab2.setWidget(1, 0, province);
 				
 		CountryListBox country = new CountryListBox();
 		country.setWidth(WIDTH_120PX);
@@ -150,7 +153,7 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 			declared.setCountry(Country.safeValueOf(country.getSelectedValue()));
 			callback.onValueChanged(declared);
 		});
-		tab2.setWidget(1, 1, country);
+		tab2.setWidget(1, 0, country);
 		
  		key.setValue(declared.getType());
  		key.addChangeHandler( event -> {
@@ -158,49 +161,49 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 			setEnabledFields(mod347);
 			callback.onTableChanged(declared);
 		});
-		tab2.setWidget(1, 2, key);
+		tab2.setWidget(1, 1, key);
 		
 		panel.add(tab2);
 
-		// Operación de seguro / arrendamiento / iva de caja / isp / deposito aduanero
+		// igic de caja / isp / exenta
 		
 		FlexTable tab3 = new FlexTable();
-		tab3.getColumnFormatter().setWidth(0, "90px");
-		tab3.getColumnFormatter().setWidth(1, WIDTH_120PX);
-		tab3.getColumnFormatter().setWidth(2, WIDTH_120PX);
-		tab3.getColumnFormatter().setWidth(3, "80px");		
-		tab3.getColumnFormatter().setWidth(4, "auto");
+//		tab3.getColumnFormatter().setWidth(0, "90px");       // Seguro
+//		tab3.getColumnFormatter().setWidth(1, WIDTH_120PX);  // Arrendamiento
+		tab3.getColumnFormatter().setWidth(0, WIDTH_120PX);  // IGIC caja
+		tab3.getColumnFormatter().setWidth(1, "80px");		 // ISP
+		tab3.getColumnFormatter().setWidth(2, "auto");		 // Exenta
 		
 		tab3.setStyleName(AON.CSS.aonWidthAll());
 		tab3.addStyleName(AON.CSS.aonNowrap());
 		
-		CheckBox insurance = new CheckBox("Op. seguro");
-		insurance.setTitle("Operaci\u00F3n de seguro");
-		insurance.setValue(declared.isInsuranceOperation());
-		insurance.addClickHandler(event -> {
-			declared.setInsuranceOperation(insurance.getValue());
-			callback.onValueChanged(declared);				
-		});   
-		tab3.setWidget(0, 0, insurance);
+//		CheckBox insurance = new CheckBox("Op. seguro");
+//		insurance.setTitle("Operaci\u00F3n de seguro");
+//		insurance.setValue(declared.isInsuranceOperation());
+//		insurance.addClickHandler(event -> {
+//			declared.setInsuranceOperation(insurance.getValue());
+//			callback.onValueChanged(declared);				
+//		});   
+//		tab3.setWidget(0, 0, insurance);
 		
-		CheckBox rental = new CheckBox("Arr. local negocio");
-		rental.setTitle("Arrendamiento de local de negocio");
-		rental.setValue(declared.isBusinessPremiseRental());
-		rental.addClickHandler(event -> {
-			declared.setBusinessPremiseRental(rental.getValue());
-			callback.onValueChanged(declared);				
-		});   
-		tab3.setWidget(0, 1, rental);
+//		CheckBox rental = new CheckBox("Arr. local negocio");
+//		rental.setTitle("Arrendamiento de local de negocio");
+//		rental.setValue(declared.isBusinessPremiseRental());
+//		rental.addClickHandler(event -> {
+//			declared.setBusinessPremiseRental(rental.getValue());
+//			callback.onValueChanged(declared);				
+//		});   
+//		tab3.setWidget(0, 1, rental);
 		
-		accrual.setText("Op. IVA de caja");
-		accrual.setTitle("Operaci\u00F3n IVA criterio de caja");		
+		accrual.setText("Op. IGIC de caja");
+		accrual.setTitle("Operaci\u00F3n IGIC criterio de caja");		
 		accrual.setValue(declared.isVatAccrual());
 		accrual.addClickHandler(event -> {
 			declared.setVatAccrual(accrual.getValue());
 			setEnabledFields(mod347);
 			callback.onValueChanged(declared);				
 		});   
-		tab3.setWidget(0, 2, accrual);
+		tab3.setWidget(0, 0, accrual);
 		
 		CheckBox isp = new CheckBox("Op. ISP");
 		isp.setTitle("Operaci\u00F3n con inversi\u00F3n del sujeto pasivo (solo destinatario de la operaci\u00F3n)");
@@ -209,19 +212,21 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 			declared.setIsp(isp.getValue());
 			callback.onValueChanged(declared);				
 		});   
-		tab3.setWidget(0, 3, isp);
+		tab3.setWidget(0, 1, isp);
 		
-		CheckBox deposit = new CheckBox("Op. reg. dep. distinto aduanero");
-		deposit.setTitle("Operaci\u00F3n con bienes vinculados o destinados a vincularse al r\u00E9gimen de dep\u00F3sito distinto del aduanero");
+		// PARA ESTE CHECK SE VA A USAR EL CAMPO depositRegime DE Mod347Declared
+		CheckBox deposit = new CheckBox("Op. exenta (art. 13 Ley 20/1991)");
 		deposit.setValue(declared.isDepositRegime());
 		deposit.addClickHandler(event -> {
 			declared.setDepositRegime(deposit.getValue());
 			callback.onValueChanged(declared);				
 		});   
-		tab3.setWidget(0, 4, deposit);
+		tab3.setWidget(0, 2, deposit);
 		
 		panel.add(tab3);
 		
+		// FALTA - POR AHORA VOY A DEJAR EL BDNS PORQUE NO SE SI AL FINAL CANARIAS TAMBIEN LO PONDRA
+		// EL PROGRAMA DE AYUDA DEL 2025 NO LO LLEVA
 		// Importe percibido en metalico / Ejercicio / Importe operaciones criterio de caja / BDNS
 		
 		FlexTable tab4 = new FlexTable();
@@ -233,11 +238,11 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 		tab4.setStyleName(AON.CSS.aonWidthAll());
 		tab4.addStyleName(AON.CSS.aonNowrap());
 		
-		tab4.setWidget(0, 0, new Model347SmallerLabel("Importe perc. en met\u00E1lico"));
+		tab4.setWidget(0, 0, new Model347SmallerLabel("Importe en met\u00E1lico"));
 		tab4.setWidget(0, 1, new Model347SmallerLabel(AON.MSG.fiscalYear()));
 		
 		Model347SmallerLabel label6 = new Model347SmallerLabel("Imp. anual op. crit. caja");
-		label6.setTitle("Importe anual de las operaciones devengadas conforme al criterio de caja del IVA");		
+		label6.setTitle("Importe anual de las operaciones devengadas conforme al criterio de caja del IGIC");		
 		tab4.setWidget(0, 2, label6);
 		
 		Model347SmallerLabel label7 = new Model347SmallerLabel("N\u00FAm. convocatoria BDNS");
@@ -276,7 +281,6 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 		});
 		tab4.setWidget(1, 2, accrualAmount);
 		
-		bdns.setVisible(mod347.getYear() >= 2025);
 		bdns.setMaxLength(6);
 		bdns.setVisibleLength(6);
 		bdns.setValue(declared.getBdns());
@@ -393,10 +397,115 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 		
 		panel.add(tab5);
 		
+		// Importe por arrendamiento de locales (1T, 2T, 3T, 4T, Total Anual, Botón info)
+		
+		FlexTable tab51 = new FlexTable();
+		tab51.getColumnFormatter().setWidth(0, WIDTH_120PX);
+		tab51.getColumnFormatter().setWidth(1, WIDTH_120PX);
+		tab51.getColumnFormatter().setWidth(2, WIDTH_120PX);
+		tab51.getColumnFormatter().setWidth(3, WIDTH_120PX);		
+		tab51.getColumnFormatter().setWidth(4, WIDTH_120PX);
+		tab51.getColumnFormatter().setWidth(5, "auto");
+		
+		tab51.setStyleName(AON.CSS.aonWidthAll());
+		tab51.addStyleName(AON.CSS.aonNowrap());
+		
+		tab51.getCellFormatter().setStyleName(0, 0, AON.CSS.aonBorderBottom());
+		tab51.getCellFormatter().addStyleName(0, 0, AON.CSS.aonBold());
+		tab51.getFlexCellFormatter().setColSpan(0, 0, 6);
+		tab51.setWidget(0, 0, new InlineLabel("Importe por arrendamiento de locales"));
+		
+		tab51.setWidget(1, 0, new Model347SmallerLabel("Trimestre 1"));
+		tab51.setWidget(1, 1, new Model347SmallerLabel("Trimestre 2"));
+		tab51.setWidget(1, 2, new Model347SmallerLabel("Trimestre 3"));
+		tab51.setWidget(1, 3, new Model347SmallerLabel("Trimestre 4"));
+		tab51.setWidget(1, 4, new Model347SmallerLabel("Importe anual"));
+		
+		firstRentalAmount.setValue(declared.getFirstQuarterRentalAmount());
+		firstRentalAmount.addValueChangeHandler(event -> {
+			// Recalcular amount con la suma de los trimestres
+			if (!rentalAmount.isEnabled()) {					
+				double total = firstRentalAmount.getValue()+secondRentalAmount.getValue()+thirdRentalAmount.getValue()+fourthRentalAmount.getValue();
+				rentalAmount.setValue(total,false);					
+				declared.setRentalAmount(total);				
+			}
+			declared.setFirstQuarterRentalAmount(firstRentalAmount.getValue());
+			callback.onValueChanged(declared);
+		});
+		tab51.setWidget(2, 0, firstRentalAmount);
+	
+		secondRentalAmount.setValue(declared.getSecondQuarterRentalAmount());
+		secondRentalAmount.addValueChangeHandler(event -> {
+			// Recalcular amount con la suma de los trimestres
+			if (!rentalAmount.isEnabled()) {					
+				double total = firstRentalAmount.getValue()+secondRentalAmount.getValue()+thirdRentalAmount.getValue()+fourthRentalAmount.getValue();
+				rentalAmount.setValue(total,false);
+				declared.setRentalAmount(total);				
+			}
+			declared.setSecondQuarterRentalAmount(secondRentalAmount.getValue());
+			callback.onValueChanged(declared);
+		});
+		tab51.setWidget(2, 1, secondRentalAmount);	
+		
+		thirdRentalAmount.setValue(declared.getThirdQuarterRentalAmount());
+		thirdRentalAmount.addValueChangeHandler(event -> {
+			// Recalcular amount con la suma de los trimestres
+			if (!rentalAmount.isEnabled()) {					
+				double total = firstRentalAmount.getValue()+secondRentalAmount.getValue()+thirdRentalAmount.getValue()+fourthRentalAmount.getValue();
+				rentalAmount.setValue(total,false);
+				declared.setRentalAmount(total);				
+			}
+			declared.setThirdQuarterRentalAmount(thirdRentalAmount.getValue());
+			callback.onValueChanged(declared);
+		});
+		tab51.setWidget(2, 2, thirdRentalAmount);		
+		
+		fourthRentalAmount.setValue(declared.getFourthQuarterRentalAmount());
+		fourthRentalAmount.addValueChangeHandler(event -> {
+			// Recalcular amount con la suma de los trimestres
+			if (!rentalAmount.isEnabled()) {					
+				double total = firstRentalAmount.getValue()+secondRentalAmount.getValue()+thirdRentalAmount.getValue()+fourthRentalAmount.getValue();
+				rentalAmount.setValue(total,false);
+				declared.setRentalAmount(total);				
+			}
+			declared.setFourthQuarterRentalAmount(fourthRentalAmount.getValue());
+			callback.onValueChanged(declared);
+		});
+		tab51.setWidget(2, 3, fourthRentalAmount);		
+				
+		rentalAmount.setValue(declared.getRentalAmount());
+		rentalAmount.addValueChangeHandler(event -> {
+			declared.setRentalAmount(rentalAmount.getValue());
+			callback.onValueChanged(declared);
+		});
+		tab51.setWidget(2, 4, rentalAmount);
+		
+		AonTableButton button1 = new AonTableButton("Ver desglose en facturas", AON.CSS.aonIconData());
+		button1.setTabIndex(-2); // NO FOCUS
+		button1.addClickHandler(event -> Model347.SERVICE.getInfo(cbk.getOptions().getOccam(),
+			mod347, declared, FiscalModelKeyInfo.MODEL_INVOICE_IRPF_BREAKDOWN, new AsyncCallback<String>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					cbk.showError(AON.MSG.errorMessage());
+				}
+
+				@Override
+				public void onSuccess(String result) {
+					cbk.showInfoPanel(result);
+				}
+		
+			}
+		));
+		
+		tab51.setWidget(2, 5, button1);
+		
+		panel.add(tab51);
+		
 		// Vaciar y cerrar el panel de informacion de desglose 
 		cbk.cleanInfoPanel();
 		
-		// Importe percibido por transmisiones de inmuebles sujetas a IVA (1T, 2T, 3T, 4T, Total Anual)
+		// Importe percibido por transmisiones de inmuebles sujetas a IGIC (1T, 2T, 3T, 4T, Total Anual)
 		
 		FlexTable tab6 = new FlexTable();
 		tab6.getColumnFormatter().setWidth(0, WIDTH_120PX);
@@ -411,7 +520,7 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 		tab6.getCellFormatter().setStyleName(0, 0, AON.CSS.aonBorderBottom());
 		tab6.getCellFormatter().addStyleName(0, 0, AON.CSS.aonBold());
 		tab6.getFlexCellFormatter().setColSpan(0, 0, 5);
-		tab6.setWidget(0, 0, new InlineLabel("Importe percibido por transmisiones de inmuebles sujetas a IVA"));
+		tab6.setWidget(0, 0, new InlineLabel("Importe percibido por transmisiones de inmuebles sujetas a IGIC"));
 		
 		tab6.setWidget(1, 0, new Model347SmallerLabel("Trimestre 1"));
 		tab6.setWidget(1, 1, new Model347SmallerLabel("Trimestre 2"));
@@ -530,6 +639,29 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 				firstAmount.setValue(amount.getValue(),true);
 		}
 		
+		rentalAmount.setEnabled(enabled); 		
+		firstRentalAmount.setEnabled(!rentalAmount.isEnabled());
+		secondRentalAmount.setEnabled(!rentalAmount.isEnabled());
+		thirdRentalAmount.setEnabled(!rentalAmount.isEnabled());
+		fourthRentalAmount.setEnabled(!rentalAmount.isEnabled());
+		
+		if (rentalAmount.isEnabled()) {
+			// Si está habilitado el total, se dejan a cero los importes de los trimestres
+			firstRentalAmount.setValue(0.0,true);
+			secondRentalAmount.setValue(0.0,true);
+			thirdRentalAmount.setValue(0.0,true);
+			fourthRentalAmount.setValue(0.0,true);
+		}
+		else {
+			// Si está deshabilitado y los trimestres están a cero
+			// se iguala el primer trimestre a lo que tenga el total
+			if (firstRentalAmount.getValue() == 0.0 &&
+				secondRentalAmount.getValue() == 0.0 &&
+				thirdRentalAmount.getValue() == 0.0 &&
+				fourthRentalAmount.getValue() == 0.0)
+				firstRentalAmount.setValue(rentalAmount.getValue(),true);
+		}
+		
 		// Importe percibido por trasmisiones (solo claves B, C y F)
 		if (key.getValue() != Mod347Key.B && key.getValue() != Mod347Key.C && key.getValue() != Mod347Key.F) {
 			firstAssetAmount.setEnabled(false);
@@ -570,8 +702,8 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 			}
 		}
 		
-		// BDNS solo si esta visible (a partir del ejercicio 2025) y si es clave E, si está deshabilitado se limpia el campo
-		bdns.setEnabled( bdns.isVisible() && key.getValue() == Mod347Key.E );
+		// BDNS solo si es clave E, si está deshabilitado se limpia el campo
+		bdns.setEnabled( key.getValue() == Mod347Key.E );
 		if (!bdns.isEnabled()) {
 			bdns.setValue(null, true);
 		}
