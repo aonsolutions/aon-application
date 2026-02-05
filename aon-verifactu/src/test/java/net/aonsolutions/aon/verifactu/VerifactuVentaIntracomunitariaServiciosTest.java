@@ -51,12 +51,24 @@ class VerifactuVentaIntracomunitariaServiciosTest extends AbstractVerifactuTest 
 		return invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
 	}
 	
+	private Invoice getTestInvoiceWithoutRigth() {
+		Invoice invoice = InvoiceTypes.Invoices.VENTA_INTRACOMUNITARIA_SERVICIOS_WITHOUT_RIGHT
+			.get( getEnvironment() )
+			.setId(1);
+		return invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
+	}
+	
 	@Test
 	void ventaNoActTest() throws InvoiceCommunicationException {
 		List<Invoice> invoices = AonCollectionUtils.toList( getTestInvoice() );
 		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
+		
+		List<Invoice> invoicesWR = AonCollectionUtils.toList( getTestInvoiceWithoutRigth() );
+		InvoiceCommunicatorContext  iccWR = getEnvironment().getInvoiceCommunicatorContext(invoicesWR);
+		VerifactuContext vcWR = new VerifactuContext(iccWR);
+		assertInvoice( vcWR );
 	}
 		
 	@Test
@@ -68,6 +80,14 @@ class VerifactuVentaIntracomunitariaServiciosTest extends AbstractVerifactuTest 
 		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
+		
+		List<Invoice> invoicesWR = new LinkedList<>();
+		Invoice invoiceWR = getTestInvoiceWithoutRigth();
+		invoiceWR.setActivity(InvoiceTypes.getActivityGeneral(getEnvironment().getCtx(), getEnvironment().getDomainId()));
+		invoicesWR.add( invoiceWR );
+		InvoiceCommunicatorContext iccWR = getEnvironment().getInvoiceCommunicatorContext(invoicesWR);
+		VerifactuContext vcWr = new VerifactuContext(iccWR);
+		assertInvoice( vcWr );
 	}
 
 	@Test
@@ -77,6 +97,12 @@ class VerifactuVentaIntracomunitariaServiciosTest extends AbstractVerifactuTest 
 		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
 		VerifactuContext vc = new VerifactuContext(icc);
 		assertInvoice( vc );
+		
+		Invoice facesInvoiceWR = VerifactuTestsUtils.toFacesInvoice( getTestInvoiceWithoutRigth() );
+		List<Invoice> invoicesWR = AonCollectionUtils.toList( facesInvoiceWR );
+		InvoiceCommunicatorContext  iccWR = getEnvironment().getInvoiceCommunicatorContext(invoicesWR);
+		VerifactuContext vcWR = new VerifactuContext(iccWR);
+		assertInvoice( vcWR );
 	}
 
 	private void assertInvoice( VerifactuContext vc ) throws InvoiceCommunicationException {

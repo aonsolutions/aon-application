@@ -130,7 +130,7 @@ public class DataResponseDAO {
 	
 	public static boolean has(AONContext ctx, Integer domainId, DataResponseSource source, Integer year){	
 		return ctx.getDslContext()
-			.selectCount()
+			.select(DATA_RESPONSE.ID)
 			.from(DATA_RESPONSE)
 			.where(DATA_RESPONSE.DOMAIN.eq(domainId))
 			.and(DATA_RESPONSE.SOURCE.eq(source.value()))
@@ -138,8 +138,9 @@ public class DataResponseDAO {
 				DATA_RESPONSE.RESPONSE_DATE.between(AonDateUtils.toSql(AonDateUtils.getYearFirstDay(year)), AonDateUtils.toSql(AonDateUtils.getYearLastDay(year)))
 				.or(DATA_RESPONSE.CREATION_DATE.between(AonDateUtils.toTimestamp(AonDateUtils.getYearFirstDay(year)), AonDateUtils.toTimestamp(AonDateUtils.getYearLastDay(year))))
 				// Se filtra también por creation_date porque en algunos casos no se guarda response_date.
-			)
-			.fetchOne().value1() > 0;
+			).limit(1)
+			.fetch()
+			.stream().findFirst().isPresent();
 	}
 	
 	public static DataResponse insertDataResponse(AONContext ctx, DataResponse dataResponse){	

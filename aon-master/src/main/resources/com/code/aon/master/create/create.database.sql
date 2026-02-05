@@ -499,6 +499,7 @@ CREATE TABLE `alcatraz` (
   `finance` int DEFAULT NULL COMMENT 'Id Vto',
   `finance_tracking` int DEFAULT NULL COMMENT 'Id seguimiento Vto',
   `invoice_batch` int DEFAULT NULL COMMENT 'Id Lote Factura',
+  `liquidation` int DEFAULT NULL COMMENT 'Id de la liquidacion y/o calculo de la TGSS',
   PRIMARY KEY (`id`),
   KEY `IDX_ALCATRAZ_DOMAIN` (`domain`),
   KEY `IDX_ALCATRAZ_FS_MODEL` (`fs_model`),
@@ -507,13 +508,15 @@ CREATE TABLE `alcatraz` (
   KEY `IDX_ALCATRAZ_FINANCE` (`finance`),
   KEY `IDX_ALCATRAZ_FINANCE_TRACKING` (`finance_tracking`),
   KEY `IDX_ALCATRAZ_INVOICE_BATCH` (`invoice_batch`),
+  KEY `IDX_ALCATRAZ_LIQUIDATION` (`liquidation`),
   CONSTRAINT `FK_ALCATRAZ_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ALCATRAZ_FS_MODEL` FOREIGN KEY (`fs_model`) REFERENCES `fs_model` (`id`),
   CONSTRAINT `FK_ALCATRAZ_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
   CONSTRAINT `FK_ALCATRAZ_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`),
   CONSTRAINT `FK_ALCATRAZ_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`),
   CONSTRAINT `FK_ALCATRAZ_FINANCE_TRACKING` FOREIGN KEY (`finance_tracking`) REFERENCES `finance_tracking` (`id`),
-  CONSTRAINT `FK_ALCATRAZ_INVOICE_BATCH` FOREIGN KEY (`invoice_batch`) REFERENCES `invoice_batch` (`id`)
+  CONSTRAINT `FK_ALCATRAZ_INVOICE_BATCH` FOREIGN KEY (`invoice_batch`) REFERENCES `invoice_batch` (`id`),
+  CONSTRAINT `FK_ALCATRAZ_LIQUIDATION` FOREIGN KEY (`liquidation`) REFERENCES `salary` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bloqueo de entidades';
 
 #
@@ -3443,6 +3446,11 @@ CREATE TABLE `fs_mod347_detail` (
   `deposit_regime` tinyint(1) DEFAULT '0' COMMENT 'Regimen de deposito',
   `vat_accrual_amount` decimal(15,3) DEFAULT '0.000' COMMENT 'Importe de las operaciones en reg, caja',
   `bdns` varchar(6) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de convocatoria BDNS',
+  `rental_amount` decimal(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Importe arrendamiento de locales de negocios',
+  `first_quarter_rental_amount` decimal(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Importe arrendamiento de locales de negocios primer trimestre',
+  `second_quarter_rental_amount` decimal(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Importe arrendamiento de locales de negocios segundo trimestre',
+  `third_quarter_rental_amount` decimal(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Importe arrendamiento de locales de negocios tercer trimestre',
+  `fourth_quarter_rental_amount` decimal(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Importe arrendamiento de locales de negocios cuarto trimestre',  
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MOD347_DETAIL_FS_MOD347` (`fs_mod347`),
   KEY `IDX_FS_MOD347_DETAIL_DOMAIN` (`domain`),

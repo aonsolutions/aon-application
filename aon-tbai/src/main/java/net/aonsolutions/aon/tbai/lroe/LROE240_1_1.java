@@ -196,7 +196,7 @@ public class LROE240_1_1 extends LROE240 {
 			e.printStackTrace();
 		}
 		try(CloseableAONContext ctx = AONContext.getAONContext(company.getDomain(), "")){
-			TbaiData.getInstance(icc)
+			TbaiData.getInstance(ctx, icc)
 				.saveResponsePending(ctx, company.getDomain(), invoice, tresp, bc, new DataRequest(), qrUrl);
 		}
 	}

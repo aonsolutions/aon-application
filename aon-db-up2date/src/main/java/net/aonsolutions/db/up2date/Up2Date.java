@@ -19,11 +19,13 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod347Detail2025Bis;
+import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2026Insert;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.FlexibleInsuranceFix;
-import net.aonsolutions.db.up2date.payroll.FlexibleConceptsFix;
-import net.aonsolutions.db.up2date.payroll.FlexibleInsurance;
-import net.aonsolutions.db.up2date.timecontrol.TimecontrolLocationAlter;
+import net.aonsolutions.db.up2date.payroll.FlexibleInsurancePremiumsInsert;
+import net.aonsolutions.db.up2date.payroll.PlusTransporte0001Insert;
+import net.aonsolutions.db.up2date.tgss.MEISolidarity2026RDL162025Fix;
+import net.aonsolutions.db.up2date.tgss.MEISolidarity2026RDL162025Undo;
 
 public class Up2Date {
 
@@ -571,10 +573,24 @@ public class Up2Date {
 			// Holidays2026Insert.HOLIDAYS2026INSERT,
 			// FlexibleInsert.FLEXIBLEINSERT,
 			// FlexibleUpdate.FLEXIBLEUPDATE,
-			//AlterFsMod1902025.ALTER_FS_MODEL_190_2025,
-			//FlexibleConceptsFix.FLEXIBLECONCEPTSFIX,
-			//FlexibleInsurance.FLEXIBLEINSURANCE,
-			FlexibleInsuranceFix.FLEXIBLEINSURANCEFIX,
+			// AlterFsMod1902025.ALTER_FS_MODEL_190_2025,
+			// FlexibleConceptsFix.FLEXIBLECONCEPTSFIX,
+			// FlexibleInsurance.FLEXIBLEINSURANCE,
+			// FlexibleInsuranceFix.FLEXIBLEINSURANCEFIX,
+			// FlexibleCRAFix.FLEXIBLECRAFIX,
+			// FlexibleSumFix.FLEXIBLESUMFIX,
+			// FlexibleDTOInsert.FLEXIBLEDTOINSERT,
+			// FlexibleChecksInsert.FLEXIBLECHECKSINSERT,
+			// InKindConceptsIrpfFix.INKINDCONCEPTSIRPFFIX,
+			// FlexibleIrpfFix.FLEXIBLEIRPFFIX,
+			// FlexibleChecksDelete.FLEXIBLECHECKSDELETE,
+			// MEISolidarity2026RDL162025Fix.MEISOLIDARITYRDL162025FIX,
+			// IrpfEuskadi2026Insert.IRPFEUSKADI2026INSERT,
+			MEISolidarity2026RDL162025Undo.MEISOLIDARITYRDL162025UNDO,
+			FlexibleInsurancePremiumsInsert.FLEXIBLEINSURANCEPREMIUMSINSERT,
+			PlusTransporte0001Insert.PLUSTRANSPORTE0001INSERT,
+			
+			AlterFsMod347Detail2025Bis.ALTER_FS_MOD_347_DETAIL_2025_BIS,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
@@ -597,7 +613,7 @@ public class Up2Date {
 			//ProductBookingCreation.PRODUCT_BOOKING_CREATION,
 			//AddColumnMarketingActionProduct.ADD_COLUMN_MARKETING_ACTION_PRODUCT,
 			//LocationRegistryAlter.LOCATION_REGISTRY_ALTER,
-			TimecontrolLocationAlter.TIMECONTROL_LOCATION_ALTER
+			//TimecontrolLocationAlter.TIMECONTROL_LOCATION_ALTER
 	
 	};
 

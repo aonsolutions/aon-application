@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -24,10 +25,14 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
@@ -218,12 +223,15 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	
 	private boolean isAccountSource() {
 		boolean sourceAccount = true;
+		// Si la edición está forzada por parámetro
 		if (getCallback().getModuleOptions().isForceInvoiceEdition()) {
 			if (getWrapper().getInvoice() != null) {
 				getWrapper().getInvoice().setSkipAlcatrazValidationAllowed( true );
 			}
 			return true;
 		}
+
+		// Si todos los detalles son de origen ACCOUNT o TEDI
 		if (getWrapper().getInvoice() != null && getWrapper().getInvoice().getDetails() != null) {
 			for (InvoiceDetail detail : getWrapper().getInvoice().getDetails()) {
 				LOGGER.info(detail.getSource().getDescription());
@@ -231,6 +239,27 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				 && detail.getSource() != InvoiceSource.TEDI) {
 					sourceAccount = false;
 					break;
+				}
+			}
+		}
+		
+		if (sourceAccount && getWrapper().getInvoice() != null && getWrapper().getInvoice().getId() != null) {
+			InvoiceType invType = getWrapper().getInvoice().getType();
+			Date expDate = getWrapper().getInvoice().getExpDate();
+			if (getCallback().getConfiguration() != null
+				&& getCallback().getConfiguration().getCommunicationConfig() != null
+				&& getCallback().getConfiguration().getCommunicationConfig().hasCommunication( invType, expDate )) {
+				// Si tiene por tipo y fecha tiene comunicación, de permite la edición si es externa o está pendiente.
+				List<InvoiceCommunicationType> types = getCallback().getConfiguration().getCommunicationConfig().getTypes( invType, expDate );
+				for (InvoiceCommunicationType type : types ) {
+					InvoiceInfo info = getWrapper().getInvoice().getInvoiceInfo( type ).orElse( null );
+					if (info != null 
+						&& info.getStatus() != null
+						&& info.getStatus() != InvoiceCommunicationStatus.EXTERNALLY_COMMUNICATED
+						&& info.getStatus() != InvoiceCommunicationStatus.PENDING) {
+						sourceAccount = false;
+						break;
+					}
 				}
 			}
 		}

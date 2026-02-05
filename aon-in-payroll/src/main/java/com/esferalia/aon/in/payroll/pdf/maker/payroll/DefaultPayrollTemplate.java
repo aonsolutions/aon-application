@@ -391,7 +391,6 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		String totals			 = text("TOTALES").toUpperCase();
 		String paymentTotalTitle = "A." + text("TOTAL DEVENGADO").toUpperCase();
 		String paymentTotal		 = toLatinNumber(p.getPaymentsTotal().orElse(0.00));
-		String flexibleTitle	 = "3. Retribución flexible";
 
 		drawText(contents, title, x - 5, y, BLACK, HELVETICA, FONT_SIZE);
 		drawTextRight(contents, new PDRectangle(x + 450, y, 100, 20), totals, BLACK, HELVETICA, FONT_SIZE, 0, 0);
@@ -441,8 +440,8 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 			y -= LITTLE_LINE_JUMP;
 			
 			if ( ppes.isEmpty() ) {
-				double kExtras = DefaultPayrollFuseBox.getInKindPayment(allPayments);
-				PDFPayment kindExtrasPayment = new PDFPayment(kExtras != 0 ? kExtras : null, "Salario en Especie");
+				double inKindAmount = DefaultPayrollFuseBox.getInKindPayment(allPayments);
+				PDFPayment kindExtrasPayment = new PDFPayment(inKindAmount != 0 ? inKindAmount : null, "Salario en Especie");
 				drawPayment(kindExtrasPayment);
 			} else {
 				drawText(contents, "Salario en Especie", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
@@ -451,7 +450,15 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 					drawOrLine(inKindPaymets);
 				drawOrLine(ppes);
 			}
+			
 			y -= LITTLE_LINE_JUMP;
+
+			if ( !flexibles.isEmpty()) {
+				double flexibleAmount = DefaultPayrollFuseBox.getFlexiblePayment(allPayments);
+				PDFPayment flexiblePayment = new PDFPayment(flexibleAmount != 0 ? flexibleAmount : null, "Retribución Flexible");
+				drawPayment(flexiblePayment);
+				y -= LITTLE_LINE_JUMP;
+			}
 
 			drawText(contents, noSalaryTitle, x, y, BLACK, HELVETICA, FONT_SIZE);
 			y -= LITTLE_LINE_JUMP;
@@ -471,12 +478,6 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 			drawText(contents, "Otras percepciones no salariales", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
 			y -= LITTLE_LINE_JUMP;
 			drawOrLine(others);
-			
-			if ( !flexibles.isEmpty()) {
-				drawText(contents, flexibleTitle, x, y, BLACK, HELVETICA, FONT_SIZE);
-				y -= LITTLE_LINE_JUMP;
-				drawOrLine(flexibles);
-			}
 			
 			if ( !infos.isEmpty() ) {
 			    infos.forEach(p -> p.setAmount(null));

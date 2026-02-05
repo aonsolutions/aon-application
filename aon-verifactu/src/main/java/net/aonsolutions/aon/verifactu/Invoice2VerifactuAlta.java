@@ -70,7 +70,7 @@ class Invoice2VerifactuAlta {
 
 		alta.setCuotaTotal( VerifactuUtils.toString( invoice.getTaxBreakdown().map(b -> (b.getVatQuota() + b.getSurchargeQuota()) ).orElse(0.0)));
 		
-		alta.setImporteTotal(VerifactuUtils.toString(invoice.getGrossTotal()));
+		alta.setImporteTotal(VerifactuUtils.toString(invoice.getGrossTotal(false)));
 		
 		alta.setDesglose(getDesglose(vc, invoice));
 

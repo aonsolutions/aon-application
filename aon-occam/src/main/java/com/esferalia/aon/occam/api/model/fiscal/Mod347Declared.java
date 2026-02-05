@@ -42,6 +42,13 @@ public class Mod347Declared implements Serializable {
 	private double vatAccrualAmount;
 	private String bdns; // Nuevo campo 2025: Número de convocatoria BDNS
 
+	// Nuevos campos 2025 para Canarias (Modelo 415), los arrendamientos también se desglosan por trimestres
+	private double rentalAmount; 
+	private double firstQuarterRentalAmount;
+	private double secondQuarterRentalAmount;
+	private double thirdQuarterRentalAmount;
+	private double fourthQuarterRentalAmount;
+
 	private boolean dirty;
 	private boolean deleted;
 	private int tempId;	
@@ -340,6 +347,42 @@ public class Mod347Declared implements Serializable {
 
 	public Mod347Declared setTempId(int tempId) {
 		this.tempId = tempId;
+		return this;
+	}
+	
+	public double getRentalAmount() {
+		return rentalAmount;
+	}
+	public Mod347Declared setRentalAmount(double rentalAmount) {
+		this.rentalAmount = rentalAmount;
+		return this;
+	}
+	public double getFirstQuarterRentalAmount() {
+		return firstQuarterRentalAmount;
+	}
+	public Mod347Declared setFirstQuarterRentalAmount(double firstQuarterRentalAmount) {
+		this.firstQuarterRentalAmount = firstQuarterRentalAmount;
+		return this;
+	}
+	public double getSecondQuarterRentalAmount() {
+		return secondQuarterRentalAmount;
+	}
+	public Mod347Declared setSecondQuarterRentalAmount(double secondQuarterRentalAmount) {
+		this.secondQuarterRentalAmount = secondQuarterRentalAmount;
+		return this;
+	}
+	public double getThirdQuarterRentalAmount() {
+		return thirdQuarterRentalAmount;
+	}
+	public Mod347Declared setThirdQuarterRentalAmount(double thirdQuarterRentalAmount) {
+		this.thirdQuarterRentalAmount = thirdQuarterRentalAmount;
+		return this;
+	}
+	public double getFourthQuarterRentalAmount() {
+		return fourthQuarterRentalAmount;
+	}
+	public Mod347Declared setFourthQuarterRentalAmount(double fourthQuarterRentalAmount) {
+		this.fourthQuarterRentalAmount = fourthQuarterRentalAmount;
 		return this;
 	}
 	

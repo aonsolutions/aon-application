@@ -9,6 +9,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -36,9 +37,9 @@ public class TBAI {
 		
 	}
 	
-	public static void accept(InvoiceCommunicationConfiguration icc, Company company, Invoice invoice, TbaiBlockchain blockchain) throws Exception {
+	public static void accept(AONContext ctx, InvoiceCommunicationConfiguration icc, Company company, Invoice invoice) throws Exception {
 		TbaiMain tbai = new TbaiMain();
-		tbai.createEmisionTBAI(company, invoice, icc);
+		tbai.createEmisionTBAI(ctx, company, invoice, icc);
 	}
 	
 	public static void modify(InvoiceCommunicationConfiguration icc, Company company, Invoice invoice) throws Exception {

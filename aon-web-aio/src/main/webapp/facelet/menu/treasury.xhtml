@@ -185,23 +185,24 @@
 										<aon:outputText value="#{bundle.finance_fees_module}" />
 									</f:facet>
 									<aon:div styleClass="aon-direct-access-list">
+										<aon:if test="#{icc.hasCommunication()}">
+						
+											<!-- Listado de Pre-facturación -->
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="aon_pre_invoicing-treasury"
+													action="feePreInvoicing-treasury"
+													actionListener="#{preInvoicing.onInitialize}"
+													value="#{bundle.finance_pre_invoicing_module}"/>
+											</aon:div>
 										
-										<!-- Listado de Pre-facturación -->
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="aon_pre_invoicing-treasury"
-												action="feePreInvoicing-treasury"
-												actionListener="#{preInvoicing.onInitialize}"
-												value="#{bundle.finance_pre_invoicing_module}"/>
-										</aon:div>
-										
-										<!-- Facturación de Cuotas -->
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="aon_invoicing-treasury"
-												action="feeInvoicing-treasury"
-												actionListener="#{feeInvoicing.onInitialize}"
-												value="#{bundle.finance_fee_invoicing_module}"/>
-										</aon:div>
-										
+											<!-- Facturación de Cuotas -->
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="aon_invoicing-treasury"
+													action="feeInvoicing-treasury"
+													actionListener="#{feeInvoicing.onInitialize}"
+													value="#{bundle.finance_fee_invoicing_module}"/>
+											</aon:div>
+								        </aon:if>				
 										<!-- Asignar Cuotas a Clientes -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="aon_fee_assignment-treasury" 

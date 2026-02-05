@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class VatContext implements Serializable {
 	
@@ -74,6 +75,7 @@ public class VatContext implements Serializable {
 	private Period rectificatePeriod;       // Periodo de la factura rectificada (se utiliza al generar el Modelo 349)
 	private boolean vatUnion;               // Ventanilla Unica (OSS) - Régimen de la Unión (Ventas)
 	private boolean vatUnionExternal;       // Ventanilla Unica (OSS) - Régimen Exterior a la Unión (Ventas)
+	private WithholdingType withholdingType; // Tipo de retención (se usa en la generación del modelo 415 Canarias)
 	
 	// GETTERS Y SETTERS ------------------------------------------------------------------------------------------
 	
@@ -641,6 +643,14 @@ public class VatContext implements Serializable {
 	}
 	public boolean isSalesOSS() {
 		return (invoiceType == InvoiceType.SALES && (isVatUnion() || isVatUnionExternal() || isVatImportation()));
+	}
+	
+	public WithholdingType getWithholdingType() {
+		return withholdingType;
+	}
+	public VatContext setWithholdingType(WithholdingType withholdingType) {
+		this.withholdingType = withholdingType;
+		return this;
 	}
 	
 }

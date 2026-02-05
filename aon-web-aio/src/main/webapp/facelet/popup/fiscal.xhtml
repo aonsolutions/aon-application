@@ -208,15 +208,15 @@
 										</aon:div>
 
 										<!-- *********************** [MODELO 347] -->
-										<aon:div rendered="#{fiscalParams.aeat || fiscalParams.bizkaia || fiscalParams.araba || fiscalParams.gipuzkoa || fiscalParams.navarra}">
+										<aon:div>
 											<aon:commandLink id="gwt_mod347-new" 
 												rendered="#{actionDenied.renderedOption('gwt_mod347-new')}"
 												action="gwt_mod347-new"
 												title="#{bundle.fiscal_model_347_module}"
 												styleClass="aon-menu-fiscal">
-												<aon:outputText rendered="#{fiscalParams.aeat}"
+												<aon:outputText rendered="#{fiscalParams.aeat || fiscalParams.canarias}"
 													styleClass="aon-menu-fiscal-model aon-menu-icon-aeat"
-													value="347" />
+													value="#{fiscalParams.aeat?'347':'&#160;'}" />
 												<aon:outputText rendered="#{fiscalParams.araba}"
 													styleClass="aon-menu-fiscal-model aon-menu-icon-araba"
 													value="347" />
@@ -229,7 +229,9 @@
 												<aon:outputText rendered="#{fiscalParams.navarra}"
 													styleClass="aon-menu-fiscal-model aon-menu-icon-navarra"
 													value="347" />
-												<aon:outputText rendered="#{fiscalParams.canarias}" styleClass="aon-menu-fiscal-model aon-menu-icon-canarias" value="&#160;"/>
+												<aon:outputText rendered="#{fiscalParams.canarias}" 
+													styleClass="aon-menu-fiscal-model aon-menu-icon-canarias" 
+													value="415"/>
 												<aon:outputText styleClass="aon-menu-fiscal-label"
 													value="#{bundle.fiscal_model_347_module}" />
 											</aon:commandLink>
