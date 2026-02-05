@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Mod347Key;
 import com.esferalia.aon.occam.api.model.type.Province;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -356,15 +357,19 @@ public class Mod347DAO {
 	
 	private static void validate(AONContext ctx, Mod347 mod347) {
 		
-		// Comprobar que est√° cumplimentado el ejercicio
+		// Comprobar que est· cumplimentado el ejercicio
 		if (mod347.getYear() == 0)
 			throw new AonCoreException("Debe cumplimentar el Ejercicio.");
 		
+		// Canarias solo a partir del ejercicio 2025
+		if (mod347.getAdministration() == Administration.CANARIAS && mod347.getYear() < 2025)
+			throw new AonCoreException("El modelo 415 en Canarias solo est\u00E1 disponible a partir del ejercicio 2025.");
+		
 		// NIF Declarante debe estar cumplimentado y de longitud menor de 9
 		if (AonStringUtils.isBlank(mod347.getDocument()) || mod347.getDocument().length() > 9)
-			throw new AonCoreException("El NIF del Declarante debe estar cumplimentado y su longitud no puede ser mayor de 9 caracteres.");
+			throw new AonCoreException("El NIF del Declarante debe estar cumplimentado y su longitud no puede ser mayor de 9 caracteres.");		
 		
-		// Se comprueba que no exista otra declaraci√≥n sustitutiva que sustituya a la misma anterior
+		// Se comprueba que no exista otra declaraciÛn sustitutiva que sustituya a la misma anterior
 		if (mod347.isReplacement()) {
 						
 			if (ctx.getDslContext().selectOne()
@@ -382,7 +387,7 @@ public class Mod347DAO {
 				throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_REPLACED.getMessage());			
 		}
 		else if (!mod347.isComplementary()) {
-			// Se comprueba que no exista ya una declaraci√≥n, para el perido indicado
+			// Se comprueba que no exista ya una declaraciÛn, para el perido indicado
 			if (ctx.getDslContext().selectOne()
 				.from(FS_MOD347)
 				.where(FS_MOD347.DOMAIN.equal(mod347.getDomain())
@@ -445,7 +450,12 @@ public class Mod347DAO {
 				.setIsp(AonEnumUtils.getBoolean(record.getValue(FS_MOD347_DETAIL.ISP)))
 				.setDepositRegime(AonEnumUtils.getBoolean(record.getValue(FS_MOD347_DETAIL.DEPOSIT_REGIME)))
 				.setVatAccrualAmount(record.getValue(FS_MOD347_DETAIL.VAT_ACCRUAL_AMOUNT))
-				.setBdns(record.getValue(FS_MOD347_DETAIL.BDNS)) 
+				.setBdns(record.getValue(FS_MOD347_DETAIL.BDNS))
+				.setRentalAmount(record.getValue(FS_MOD347_DETAIL.RENTAL_AMOUNT))
+				.setFirstQuarterRentalAmount(record.getValue(FS_MOD347_DETAIL.FIRST_QUARTER_RENTAL_AMOUNT))
+				.setSecondQuarterRentalAmount(record.getValue(FS_MOD347_DETAIL.SECOND_QUARTER_RENTAL_AMOUNT))
+				.setThirdQuarterRentalAmount(record.getValue(FS_MOD347_DETAIL.THIRD_QUARTER_RENTAL_AMOUNT))
+				.setFourthQuarterRentalAmount(record.getValue(FS_MOD347_DETAIL.FOURTH_QUARTER_RENTAL_AMOUNT))
 				;
 		}
 	}
@@ -502,7 +512,12 @@ public class Mod347DAO {
 			.set(FS_MOD347_DETAIL.ISP,AonEnumUtils.getByte(declared.isIsp()))
 			.set(FS_MOD347_DETAIL.DEPOSIT_REGIME,AonEnumUtils.getByte(declared.isDepositRegime()))
 			.set(FS_MOD347_DETAIL.VAT_ACCRUAL_AMOUNT, declared.getVatAccrualAmount())
-			.set(FS_MOD347_DETAIL.BDNS, declared.getBdns()) 
+			.set(FS_MOD347_DETAIL.BDNS, declared.getBdns())
+			.set(FS_MOD347_DETAIL.RENTAL_AMOUNT, declared.getRentalAmount())
+			.set(FS_MOD347_DETAIL.FIRST_QUARTER_RENTAL_AMOUNT, declared.getFirstQuarterRentalAmount())
+			.set(FS_MOD347_DETAIL.SECOND_QUARTER_RENTAL_AMOUNT, declared.getSecondQuarterRentalAmount())
+			.set(FS_MOD347_DETAIL.THIRD_QUARTER_RENTAL_AMOUNT, declared.getThirdQuarterRentalAmount())
+			.set(FS_MOD347_DETAIL.FOURTH_QUARTER_RENTAL_AMOUNT, declared.getFourthQuarterRentalAmount())
 			.execute();
 		
 	}
@@ -510,7 +525,7 @@ public class Mod347DAO {
 	private static void updateDeclared(AONContext ctx, Mod347Declared declared) {
 		validateDeclared(ctx, declared);
 		ctx.getDslContext().update(FS_MOD347_DETAIL)		
-			// Antes no se guardaba el dominio en las lineas, cuando se generaba el modelo, as√≠
+			// Antes no se guardaba el dominio en las lineas, cuando se generaba el modelo, asÌ
 			// que hago que siempre que se guarde, se ponga el dominio en las lineas
 			.set(FS_MOD347_DETAIL.DOMAIN,declared.getDomain())
 			.set(FS_MOD347_DETAIL.TYPE, Mod347Key.safeValue(declared.getType()))
@@ -539,7 +554,12 @@ public class Mod347DAO {
 			.set(FS_MOD347_DETAIL.ISP,AonEnumUtils.getByte(declared.isIsp()))
 			.set(FS_MOD347_DETAIL.DEPOSIT_REGIME,AonEnumUtils.getByte(declared.isDepositRegime()))
 			.set(FS_MOD347_DETAIL.VAT_ACCRUAL_AMOUNT, declared.getVatAccrualAmount())
-			.set(FS_MOD347_DETAIL.BDNS, declared.getBdns()) 
+			.set(FS_MOD347_DETAIL.BDNS, declared.getBdns())
+			.set(FS_MOD347_DETAIL.RENTAL_AMOUNT, declared.getRentalAmount())
+			.set(FS_MOD347_DETAIL.FIRST_QUARTER_RENTAL_AMOUNT, declared.getFirstQuarterRentalAmount())
+			.set(FS_MOD347_DETAIL.SECOND_QUARTER_RENTAL_AMOUNT, declared.getSecondQuarterRentalAmount())
+			.set(FS_MOD347_DETAIL.THIRD_QUARTER_RENTAL_AMOUNT, declared.getThirdQuarterRentalAmount())
+			.set(FS_MOD347_DETAIL.FOURTH_QUARTER_RENTAL_AMOUNT, declared.getFourthQuarterRentalAmount())
 			.where(FS_MOD347_DETAIL.ID.equal(declared.getId()))
 			.execute();
 	}
@@ -731,13 +751,13 @@ public class Mod347DAO {
 	private static void insertDetailsFromInvoice(AONContext ctx , final Mod347 mod347) {
 		
 		// PROCEDIMIENTO A SEGUIR:
-		// - Se leen las facturas, seg√∫n los filtros, del ejercicio actual y del anterior (para las facturas RECC)
+		// - Se leen las facturas, seg˙n los filtros, del ejercicio actual y del anterior (para las facturas RECC)
 		// - Se asigna a todas las compras y gastos, el tipo "0" y a las ventas el "1"
 		// - Se guardan en un mapa agrupandolas por "Documento + Tipo + ISP + RECC"
 		// - Si la factura es RECC se acumula el importe total de la factura, si es del ejercicio actual y 
-		//   adem√°s se acumula tambien el importe declarado seg√∫n la regla RECC del IVA
+		//   adem·s se acumula tambien el importe declarado seg˙n la regla RECC del IVA
 		// - Se van leyendo y por cada "Documento + Tipo + ISP + RECC", se va creando una linea de 
-		//   declarado (si el total de operaciones de "Documento + Tipo" supera el valor m√≠nimo)
+		//   declarado (si el total de operaciones de "Documento + Tipo" supera el valor mÌnimo)
 		
 		// Se pone solo el ejercicio actual, porque getVatBreakdown ya lee automaticamente las facturas RECC del ejercicio anterior
 		Date fromDate = AonDateUtils.getYearFirstDay(mod347.getYear());
@@ -745,7 +765,7 @@ public class Mod347DAO {
 		
 		Calendar cal = Calendar.getInstance();
 
-		// Mapa que guardar√° los datos agrupando por "Documento + Tipo + ISP + RECC"
+		// Mapa que guardar· los datos agrupando por "Documento + Tipo + ISP + RECC"
 		Map<String,Mod347Declared> mapResult = new TreeMap<String, Mod347Declared>();
 		
 		// Obtenemos el desglose de facturas del ejercicio actual y el anterior (facturas RECC), usando VATDAO
@@ -765,9 +785,9 @@ public class Mod347DAO {
 					}
 				})
 				.forEach( vat -> {
-						// A√±adir la factura al registro que corresponda del declarado
+						// AÒadir la factura al registro que corresponda del declarado
 						// Dado que es necesario separar las operaciones normales de las ISP y de las RECC, se usa como clave esos dos datos
-						// adem√°s del NIF y el tipo, para posteriormente crear tantos registros como sea necesario en las lineas del 347						
+						// adem·s del NIF y el tipo, para posteriormente crear tantos registros como sea necesario en las lineas del 347						
 						String document = AonStringUtils.trimToEmpty(vat.getRegistryDocument());
 						String name = AonStringUtils.trimToEmpty(vat.getRegistryName());
 						String c = document + ";" + vat.getInvoiceType() + ";" + vat.getTransaction() + ";" + vat.isVatAccrualRegime();						
@@ -777,7 +797,7 @@ public class Mod347DAO {
 							declared = new Mod347Declared();
 							declared.setDomain(mod347.getDomain());
 							declared.setMod347(mod347.getId());
-	
+							
 							Country country = vat.getRegistryDocumentCountry();
 							if (country == null || country == Country.ES) {
 	
@@ -787,7 +807,7 @@ public class Mod347DAO {
 									
 								declared.setDocument(document);
 									
-								// La provincia no la tengo en VATContext, se obtiene de RADRESS de la direcci√≥n principal 
+								// La provincia no la tengo en VATContext, se obtiene de RADRESS de la direcciÛn principal 
 								declared.setProvince(Province.safeValueOf(
 									RegistryAddressDAO.getMainAddressProvince(ctx, vat.getRegistry()))
 								);
@@ -821,12 +841,24 @@ public class Mod347DAO {
 							declared.setAmount(0.0);
 							declared.setVatAccrualAmount(0.0);
 							
-							// A√±adir el declarado al map
+							// Canarias: Inicializar importes trimestrales arrendamientos
+							if (mod347.isCanarias()) {
+								declared.setFirstQuarterRentalAmount(0.0);
+								declared.setSecondQuarterRentalAmount(0.0);
+								declared.setThirdQuarterRentalAmount(0.0);
+								declared.setFourthQuarterRentalAmount(0.0);
+								declared.setRentalAmount(0.0);								
+							}
+							
+							// AÒadir el declarado al map
 							mapResult.put(c, declared);
 						}
 	
 						// Acumular el importe que se declara en el 347
 						double amount = vat.getAmount347();
+						
+						// Arrendamientos en Canarias (van en campos separados)
+						boolean isCanariasRental = mod347.isCanarias() && vat.hasRetention() && vat.getWithholdingType() == WithholdingType.RENTING;
 	
 						if (vat.isVatAccrualRegime()) {
 							
@@ -846,22 +878,43 @@ public class Mod347DAO {
 						} else if (mod347.getDocument() != null && !mod347.getDocument().startsWith("H")) {
 	
 							// No es factura RECC, ni NIF declarante empieza por "H", se acumula por trimestres
+							
 							cal.setTime(vat.getTaxDate());
 							int quarter = (cal.get(Calendar.MONTH) / 3);
 							if (quarter == 0) {
-								declared.setFirstQuarterAmount(declared.getFirstQuarterAmount() + amount);
+								if (isCanariasRental) {
+									declared.setFirstQuarterRentalAmount(declared.getFirstQuarterRentalAmount() + amount);
+								} else {
+									declared.setFirstQuarterAmount(declared.getFirstQuarterAmount() + amount);
+								}
 							} else if (quarter == 1) {
-								declared.setSecondQuarterAmount(declared.getSecondQuarterAmount() + amount);
+								if (isCanariasRental) {
+									declared.setSecondQuarterRentalAmount(declared.getSecondQuarterRentalAmount() + amount);
+								} else {
+									declared.setSecondQuarterAmount(declared.getSecondQuarterAmount() + amount);
+								}
 							} else if (quarter == 2) {
-								declared.setThirdQuarterAmount(declared.getThirdQuarterAmount() + amount);
+								if (isCanariasRental) {
+									declared.setThirdQuarterRentalAmount(declared.getThirdQuarterRentalAmount() + amount);
+								} else {
+									declared.setThirdQuarterAmount(declared.getThirdQuarterAmount() + amount);
+								}
 							} else if (quarter == 3) {
-								declared.setFourthQuarterAmount(declared.getFourthQuarterAmount() + amount);
+								if (isCanariasRental) {
+									declared.setFourthQuarterRentalAmount(declared.getFourthQuarterRentalAmount() + amount);
+								} else {
+									declared.setFourthQuarterAmount(declared.getFourthQuarterAmount() + amount);
+								}
 							}
 							
 						}
 						
 						// Acumular el total
-						declared.setAmount(declared.getAmount() + amount);
+						if (isCanariasRental) {
+							declared.setRentalAmount(declared.getRentalAmount() + amount);
+						} else {
+							declared.setAmount(declared.getAmount() + amount);
+						}
 				});
 		
 		String control = "";
@@ -870,12 +923,12 @@ public class Mod347DAO {
 		Map<String,Mod347Declared> map = new TreeMap<String, Mod347Declared>();
 		
 		for (Mod347Declared dec : mapResult.values()) {
-			// El importe m√≠nimo a declarar se controla por NIF y Tipo (Ventas o Compras)
+			// El importe mÌnimo a declarar se controla por NIF y Tipo (Ventas o Compras)
 			String document = AonStringUtils.isNotBlank(dec.getOperatorNif())?dec.getOperatorNif():dec.getDocument(); 
 			String c = document + ";" + dec.getType();
 			if (!control.equals(c)) {
 
-				// A√±adir el bloque a la base de datos, si supera el importe minimo
+				// AÒadir el bloque a la base de datos, si supera el importe minimo
 				if (Math.abs(acumulated) > minAmount) {
 					for (Mod347Declared declared : map.values()) {
 						insertDeclared(ctx, declared);
@@ -887,9 +940,9 @@ public class Mod347DAO {
 				map.clear();
 			}
 						
-			// A√±adir la factura al registro que corresponda del bloque actual
+			// AÒadir la factura al registro que corresponda del bloque actual
 			// Dado que es necesario separar las operaciones normales de las ISP y de las RECC, se usa como clave esos dos datos
-			// adem√°s del NIF y el tipo, para posteriormente crear tantos registros como sea necesario en las lineas del 347
+			// adem·s del NIF y el tipo, para posteriormente crear tantos registros como sea necesario en las lineas del 347
 			c = document + ";" + dec.getType() + ";" + dec.isIsp() + ";" + dec.isVatAccrual();			
 			map.put(c, dec);
 									
@@ -898,7 +951,7 @@ public class Mod347DAO {
 
 		}
 
-		// A√±adir ultimo bloque de map, si existe
+		// AÒadir ultimo bloque de map, si existe
 		if (Math.abs(acumulated) > minAmount) {
 			for (Mod347Declared declared : map.values()) {
 				insertDeclared(ctx, declared);
@@ -913,10 +966,12 @@ public class Mod347DAO {
 		
 		String INFO_MSG = "<pre class='aon-fixed-font aon-font-medium aon-margin-bottom'>{0}<pre>";
 		
-		// Informaci√≥n Desglose de facturas
-		if (infoKey == FiscalModelKeyInfo.INVOICE) {
+		// InformaciÛn Desglose de facturas
+		if (infoKey == FiscalModelKeyInfo.MODEL_INVOICE_VAT_BREAKDOWN) {
 			return MessageFormat.format(INFO_MSG, getInvoicesInfo(ctx, mod347, declared));			
-		}
+		} else if (infoKey == FiscalModelKeyInfo.MODEL_INVOICE_IRPF_BREAKDOWN) {
+			return MessageFormat.format(INFO_MSG, getInvoicesInfoRental(ctx, mod347, declared));			
+		} 
 		
 		return null;
 	}
@@ -925,15 +980,35 @@ public class Mod347DAO {
 
 		String title = "FACTURAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
 				+ FiscalModelUtils.getModelName(mod347)
-				+ " DE " + mod347.getYear();
+				+ " DE " + mod347.getYear()
+				+ " (OPERACIONES) ";
 		
 		String subtitle =  "Clave "+ (Mod347Key.safeValue(declared.getType()) == null ? "" : declared.getType().getValue()) +
 				" - " + (AonStringUtils.isNotBlank(declared.getOperatorNif()) ? declared.getOperatorNif() : (declared.getDocument() == null ? "" : declared.getDocument())) +
 				" - " + (declared.getName() == null ? "" : declared.getName());				
 		
-		return Mod347Formatter.formatInvoices347(title
-				,subtitle
-				,getVatBreakdown(ctx, mod347, declared).collect(Collectors.toCollection(LinkedList::new)),mod347.getYear(), declared.isVatAccrual());
+		return Mod347Formatter.formatInvoices347(title, subtitle
+				, getVatBreakdown(ctx, mod347, declared)
+				    .filter(vat -> !(mod347.isCanarias() && vat.hasRetention() && vat.getWithholdingType() == WithholdingType.RENTING) )  // Si el modelo es de Canarias no sacar las facturas de arrendamientos de locales
+					.collect(Collectors.toCollection(LinkedList::new)),mod347.getYear(), declared.isVatAccrual());
+		
+	}
+	
+	private static String getInvoicesInfoRental(AONContext ctx, Mod347 mod347, Mod347Declared declared) {
+
+		String title = "FACTURAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
+				+ FiscalModelUtils.getModelName(mod347)
+				+ " DE " + mod347.getYear()
+				+ " (ARRENDAMIENTO DE LOCALES) ";
+		
+		String subtitle =  "Clave "+ (Mod347Key.safeValue(declared.getType()) == null ? "" : declared.getType().getValue()) +
+				" - " + (AonStringUtils.isNotBlank(declared.getOperatorNif()) ? declared.getOperatorNif() : (declared.getDocument() == null ? "" : declared.getDocument())) +
+				" - " + (declared.getName() == null ? "" : declared.getName());				
+		
+		return Mod347Formatter.formatInvoices347(title, subtitle
+				, getVatBreakdown(ctx, mod347, declared)
+				    .filter(vat -> mod347.isCanarias() && vat.hasRetention() && vat.getWithholdingType() == WithholdingType.RENTING)  // Si el modelo es de Canarias sacar las facturas de arrendamientos de locales
+					.collect(Collectors.toCollection(LinkedList::new)),mod347.getYear(), declared.isVatAccrual());
 		
 	}
 	
