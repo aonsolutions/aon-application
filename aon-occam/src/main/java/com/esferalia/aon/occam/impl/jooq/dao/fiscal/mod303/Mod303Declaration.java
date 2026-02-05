@@ -187,6 +187,10 @@ public abstract class Mod303Declaration {
 		
 // CANARIAS ---------------------------------------------------------------------------------------		
 		
+		,CANARIAS_2026 {
+			@Override boolean accept(Mod303 mod) { return Mod303CANARIAS2026Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303CANARIAS2026Declaration();}
+		}		
 		,CANARIAS_2025 {
 			@Override boolean accept(Mod303 mod) { return Mod303CANARIAS2025Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303CANARIAS2025Declaration();}
