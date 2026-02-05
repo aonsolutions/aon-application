@@ -151,7 +151,7 @@ class Mod303CANARIAS2026Declaration extends Mod303CANARIAS {
 		CA_C022(Mod303Key.CA_C022, (mod, vat) -> modificacionBasesYCuotasFilter(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CA_C022, mod, vat.getQuota()), null, null, null)
 
-		// FALTA - EL PROGRAMA DE AYUDA NO LLEVA ESTAS CASILLAS
+		// EL PROGRAMA DE AYUDA NO LLEVA ESTAS CASILLAS
 		// Cuotas devueltas en régimen de viajeros. Base y cuota
 //		, CA_C023(Mod303Key.CA_C023)
 //		, CA_C024(Mod303Key.CA_C024)
