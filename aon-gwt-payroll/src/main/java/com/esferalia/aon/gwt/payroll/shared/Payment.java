@@ -106,6 +106,10 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment {
 			return this.ordinal();
 		}
 		
+		public boolean isInKind() {
+			return INKIND.getOrDefault(this, false);
+		}
+		
 		public boolean isBBCCIncluded() {
 			return BBCC_INCLUDED.getOrDefault(this, true);
 		}
@@ -325,6 +329,33 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment {
 				put(CRA_0060, false); // CRA_0006
 				put(CRA_0061, false); // CRA_0032
 				put(CRA_0062, true);
+			}
+		};
+		//@formatter:on
+
+		//@formatter:off
+		static Map<Type, Boolean> INKIND = new HashMap<Type, Boolean>() {
+			{
+				put(CRA_0013, true);
+				put(CRA_0014, true);
+				put(CRA_0015, true);
+				put(CRA_0016, true);
+				put(CRA_0017, true);
+				put(CRA_0018, true);
+				put(CRA_0019, true);
+				put(CRA_0020, true);
+				put(CRA_0021, true);
+				put(CRA_0022, true);
+				put(CRA_0023, true);
+				put(CRA_0024, true);
+				put(CRA_0025, true);
+				put(CRA_0026, true);
+				put(CRA_0032, true);
+				put(CRA_0036, true);
+				put(CRA_0039, true);
+				put(CRA_0040, true);
+				put(CRA_0041, true);
+				put(CRA_0061, true); // CRA_0032
 			}
 		};
 		//@formatter:on
