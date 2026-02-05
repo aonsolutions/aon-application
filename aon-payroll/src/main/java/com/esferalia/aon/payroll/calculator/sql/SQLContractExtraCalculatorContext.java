@@ -64,6 +64,7 @@ import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
@@ -525,12 +526,12 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 					addSalaryPayment(expressionContext, p, paymentStart, paymentEnd);
 				}catch (com.esferalia.aon.salary.expression.InterruptedException e) {
 					throw e;
+				}catch (RemoveException | CompileException | ConversionException e) {
+			    	if (AonStringUtils.isNotBlank(p.getName()))
+			    	    expressionContext.setVariable(p.getName(), 0.00, paymentStart, paymentEnd);
 				}catch (UndefinedVariablesException e) {
 					undefPayments.add(new SimpleContractPayment(p));
-				}catch (ExpressionException e) {
-				}catch (CompileException | ConversionException e) {
-				    	if (AonStringUtils.isNotBlank(p.getName()))
-				    	    expressionContext.setVariable(p.getName(), 0.00, paymentStart, paymentEnd);
+				} catch (ExpressionException e) {
 				}
 			}
 		}
