@@ -1729,7 +1729,10 @@ public class ModelAdmonUtils {
 		
 		System.out.println("payload = " + payload);
 		
-		String functionName = "aon-aws-atc";
+		String functionName = model.getYear() >= 2026 ? "aon-aws-atc-2026" : "aon-aws-atc"; // Resto de Modelos (ejercicios 2026 y 2025)
+		if (model.getModel() == FiscalModelType.M347)
+			functionName = "aon-aws-atc-mod415"; // Modelo 415 (ejercicio 2025)
+		
 		InvokeRequest invokeRequest = 
 				new InvokeRequest()
 				.withFunctionName(functionName )
