@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.impl.jooq.dao.mod417_2025.Mod417ToDEC;
+import com.esferalia.aon.occam.impl.jooq.dao.mod417_2026.Mod417ToDEC2026;
 import com.esferalia.aon.occam.impl.jooq.dao.mod420_2025.Mod420ToDEC;
 
 import jakarta.servlet.ServletException;
@@ -35,13 +36,14 @@ public class Mod420ValidatePrintATC extends HttpServlet {
 			System.out.println("PASO 1");
 			
 			// Obtener el XML
-			String xml = mod303.isMonthPeriod() ? Mod417ToDEC.getDeclaration(mod303) : Mod420ToDEC.getDeclaration(mod303);
+			String xml = mod303.isMonthPeriod() ? 
+							mod303.getYear() >= 2026 ? Mod417ToDEC2026.getDeclaration(mod303) : Mod417ToDEC.getDeclaration(mod303) // Modelo 417 
+							: Mod420ToDEC.getDeclaration(mod303); // Modelo 420
 			
 			System.out.println("PASO 2. xml="+xml);
 			
 			// Pasarlo al modulo de impresión para obtener el borrador pdf
 			ModelAdmonUtils.callAtcAwsFunction(xml, mod303, true, resp);
-//			pruebaBorrador(xml, resp);
 			
 			System.out.println("PASO 3. OK");
 			
@@ -50,33 +52,6 @@ public class Mod420ValidatePrintATC extends HttpServlet {
 		}
 
 	}
-	
-//	private void pruebaBorrador(String xml, HttpServletResponse resp) throws IOException {
-//
-//		try {
-//			MIModelo420Request input = new MIModelo420Request();
-//			input.setDeclaracion(Base64.getEncoder().encodeToString(xml.getBytes()));
-//			input.setBorrador(true);
-//			MIModelo420Result result = new MIModelo420RequestHandler().handleRequest(input, null);
-//			
-//			JSONObject json = new JSONObject(result);
-//			System.out.println("result = " + result);
-//			
-//			if (json.has("resultado")) {
-//				ModelAdmonUtils.giveBase64Back(resp, json.getString("resultado").getBytes(StandardCharsets.ISO_8859_1), MimeType.PDF);
-//			}
-//			else if (json.has("errores")) {
-//				ModelAdmonUtils.manageWrongResponseCanarias(resp, json.optJSONArray("errores"));
-//			} else {
-//				ModelAdmonUtils.giveExceptionBackCanarias(resp, "ERROR INDEFINIDO (Mod420ValidatePrintATC)");
-//			}		
-//		
-//		} catch (Exception e) {
-//			System.out.println(e);
-//			ModelAdmonUtils.giveExceptionBackCanarias(resp, "EXCEPTION ERROR (Mod420ValidatePrintATC): " + e.getMessage());
-//		}
-//		
-//	}
 	
 }
 
