@@ -19,12 +19,11 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.config.EnterpriseDataAddAudit;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod347Detail2025Bis;
-import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2026Insert;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.FlexibleInsurancePremiumsInsert;
 import net.aonsolutions.db.up2date.payroll.PlusTransporte0001Insert;
-import net.aonsolutions.db.up2date.tgss.MEISolidarity2026RDL162025Fix;
 import net.aonsolutions.db.up2date.tgss.MEISolidarity2026RDL162025Undo;
 
 public class Up2Date {
@@ -591,7 +590,7 @@ public class Up2Date {
 			PlusTransporte0001Insert.PLUSTRANSPORTE0001INSERT,
 			
 			AlterFsMod347Detail2025Bis.ALTER_FS_MOD_347_DETAIL_2025_BIS,
-			
+			EnterpriseDataAddAudit.ENTERPRISE_DATA_ADD_AUDIT,
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
 			// MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
