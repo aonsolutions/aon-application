@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.IFinance;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.BookingCheck;
@@ -83,6 +84,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDetailExtendedDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDocDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceRecorderDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceRegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoicingGroupDAO;
@@ -928,8 +930,13 @@ public class FinanceImpl implements IFinance {
 		return InvoiceConsoleDAO.getInvoiceHeaders(ctx, params);
 	}
 	@Override
-	public InvoiceConsoleAnalysis analyze(CloseableAONContext ctx, InvoiceConsoleParams params) {
+	public InvoiceConsoleAnalysis analyze(AONContext ctx, InvoiceConsoleParams params) {
 		return InvoiceConsoleDAO.analyze(ctx, params);
+	}
+	@Override
+	public AccountEntry record(AONContext ctx, Invoice inv) {
+		if (inv.getId() == null) throw new IllegalArgumentException("Invoice is required for simulation");
+		return InvoiceRecorderDAO.simulate(ctx, inv.getId());
 	}
 	
 	// ------------------------------------- INVOICE DOC

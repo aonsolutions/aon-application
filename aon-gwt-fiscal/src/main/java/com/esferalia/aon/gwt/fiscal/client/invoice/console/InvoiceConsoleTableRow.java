@@ -8,12 +8,15 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridHeaderRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceCheckedEvent;
-import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceCheckedHandler;
-import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceUncheckedEvent;
-import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceUncheckedHandler;
-import com.esferalia.aon.gwt.fiscal.client.invoice.HasInvoiceCheckedHandlers;
-import com.esferalia.aon.gwt.fiscal.client.invoice.HasInvoiceUncheckedHandlers;
+import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceEvents.AonInvoiceCheckedEvent;
+import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceEvents.AonInvoiceCheckedHandler;
+import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceEvents.AonInvoiceRecordEvent;
+import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceEvents.AonInvoiceRecordHandler;
+import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceEvents.AonInvoiceUncheckedEvent;
+import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceEvents.AonInvoiceUncheckedHandler;
+import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceEvents.HasInvoiceCheckedHandlers;
+import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceEvents.HasInvoiceRecordHandlers;
+import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceEvents.HasInvoiceUncheckedHandlers;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceCommunicationPanel;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
@@ -24,7 +27,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 
-class InvoiceConsoleTableRow extends AonDisplayGridRow implements HasInvoiceCheckedHandlers, HasInvoiceUncheckedHandlers{
+class InvoiceConsoleTableRow extends AonDisplayGridRow implements HasInvoiceCheckedHandlers, HasInvoiceUncheckedHandlers, HasInvoiceRecordHandlers {
 	
 	private static final Logger LOGGER = Logger.getLogger(InvoiceConsoleTableRow.class.getName());   
 
@@ -48,6 +51,9 @@ class InvoiceConsoleTableRow extends AonDisplayGridRow implements HasInvoiceChec
 		AonTableButton debugInvoice = new AonTableButton("DEBUG",AON.CSS.aonIconDebug());
 		debugInvoice.addClickHandler( event -> debugInvoice(opts, inv));
 		
+		AonTableButton invoiceToRecord = new AonTableButton(AON.MSG.record(),AON.CSS.aonIconAddTask());
+		invoiceToRecord.addClickHandler( event -> recordInvoice(opts, inv));
+
 		Label invoiceRecorded = new Label();
 		invoiceRecorded.setTitle( AON.MSG.recorded() );
 		invoiceRecorded.setStyleName(AON.CSS.aonLabelWithIcon());
@@ -74,7 +80,7 @@ class InvoiceConsoleTableRow extends AonDisplayGridRow implements HasInvoiceChec
 		} else {
 			this.addCellIfElse(inv.isRecorded()
 				, invoiceRecorded
-				, new Label() );
+				, invoiceToRecord );
 		}
 		InvoiceCommunicationPanel commPanel = new InvoiceCommunicationPanel( opts, inv );
 		commPanel.addValueChangeHandler( event -> paint(opts, event.getValue()));
@@ -112,6 +118,9 @@ class InvoiceConsoleTableRow extends AonDisplayGridRow implements HasInvoiceChec
 		;
 	}
 	
+	private void recordInvoice(InvoiceModuleOptions opts, Invoice inv) {
+		AonInvoiceRecordEvent.fire(InvoiceConsoleTableRow.this, inv);
+	}
 
 	private void debugInvoice(InvoiceModuleOptions opts, Invoice inv) {
 		AonCustomPopup dialog = new AonCustomPopup();
@@ -138,6 +147,11 @@ class InvoiceConsoleTableRow extends AonDisplayGridRow implements HasInvoiceChec
 	@Override
 	public HandlerRegistration addInvoiceUncheckedHandler(AonInvoiceUncheckedHandler handler) {
 		return super.addHandler(handler, AonInvoiceUncheckedEvent.getType());
+	}
+	
+	@Override
+	public HandlerRegistration addInvoiceRecordHandler(AonInvoiceRecordHandler handler) {
+		return super.addHandler(handler, AonInvoiceRecordEvent.getType());
 	}
 
 	private class AonInvoiceCheckButton extends AonTableButton {

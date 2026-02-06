@@ -18,7 +18,9 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceConsoleToolbar.ToolbarAsyncCallback;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceConsoleAnalysis;
 import com.google.gwt.core.client.EntryPoint;
@@ -149,8 +151,28 @@ public class InvoiceConsoleModule  implements EntryPoint {
 		content.setWidget(table);
 		table.addInvoiceCheckedHandler(e -> selectionHandler.select( e.getInvoice() ) );
 		table.addInvoiceUncheckedHandler(e -> selectionHandler.unselect( e.getInvoice() ) );
+		table.addInvoiceRecordHandler(e -> record(opts, e.getInvoice() ));
 	}
-
+	private void record(InvoiceModuleOptions opts, Invoice inv) {
+		toolbar.startRun(AON.MSG.recording());
+		INVOICE_SERVICE.record(opts.getOccam(), inv, new AsyncCallback<AccountEntry>() {
+			@Override
+			public void onSuccess(AccountEntry result) {
+				InvoiceConsoleAccountEntryPanel icaep = (InvoiceConsoleAccountEntryPanel) 
+					footPanel.addWidget( "Asiento", InvoiceConsoleAccountEntryPanel::new );
+				icaep.paint( opts, inv, result );
+				toolbar.endRun();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				String msg = "Error analizando facturas";
+				LOGGER.log( Level.SEVERE, msg, caught );
+				toolbar.endRun();
+				toolbar.showErrorMessage( msg + " [" + caught.getMessage() + "]" );
+			}
+		});
+	}
 	private void analyze(InvoiceModuleOptions opts, InvoiceConsoleParams params) {
 		toolbar.startRun(AON.MSG.analyzing());
 		INVOICE_SERVICE.analyze(opts.getOccam(), params, new AsyncCallback<InvoiceConsoleAnalysis>() {

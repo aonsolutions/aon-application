@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
@@ -117,16 +118,25 @@ public abstract class AbstractOccamTest {
 		properties.setProperty("serverTimezone", dbTimeZone);
 		String url = String.format("jdbc:mysql://%s:%s", dbHost, dbPort, dbName);
 		Connection connection = DriverManager.getConnection(url, properties);
-
 		ResultSet rs = connection.createStatement().executeQuery("SHOW DATABASES");
 		while (rs.next()) {
 			if (rs.getString(1).startsWith(dbName)) {
-				String schemaName = rs.getString(1); 
+				String schemaName = rs.getString(1);
+				System.out.println("\t .... checking [" + schemaName+ "] schema.");
 				connection.createStatement().execute("use " + schemaName);
-				System.out.println("*******************************");
-				System.out.println("USING  [" + schemaName+ "] schema.");
-				System.out.println("*******************************");
-				return connection;
+				boolean exists = false;
+				String sql = "SELECT 1 FROM domain WHERE name = ? LIMIT 1";
+				try (PreparedStatement ps = connection.prepareStatement(sql)) {
+				    ps.setString(1, DOMAIN_NAME);
+				    try (ResultSet rs0 = ps.executeQuery()) {
+				        exists = rs0.next();
+				    }
+				}
+				if (exists) {
+					System.out.println("\t .... domain [" + DOMAIN_NAME+ "] found!!");
+					System.out.println("USING [" + schemaName+ "] SCHEMA FOR TESTS.");
+					return connection;
+				}
 			}
 		}
 		return connection;

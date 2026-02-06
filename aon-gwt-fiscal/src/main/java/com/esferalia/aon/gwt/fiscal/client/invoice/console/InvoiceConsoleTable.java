@@ -7,12 +7,15 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
-import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceCheckedEvent;
-import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceCheckedHandler;
-import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceUncheckedEvent;
-import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceUncheckedHandler;
-import com.esferalia.aon.gwt.fiscal.client.invoice.HasInvoiceCheckedHandlers;
-import com.esferalia.aon.gwt.fiscal.client.invoice.HasInvoiceUncheckedHandlers;
+import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceEvents.AonInvoiceCheckedEvent;
+import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceEvents.AonInvoiceCheckedHandler;
+import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceEvents.AonInvoiceRecordEvent;
+import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceEvents.AonInvoiceRecordHandler;
+import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceEvents.AonInvoiceUncheckedEvent;
+import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceEvents.AonInvoiceUncheckedHandler;
+import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceEvents.HasInvoiceCheckedHandlers;
+import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceEvents.HasInvoiceRecordHandlers;
+import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceEvents.HasInvoiceUncheckedHandlers;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceConsoleToolbar.ToolbarAsyncCallback;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
@@ -26,7 +29,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceCheckedHandlers, HasInvoiceUncheckedHandlers{
+public class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceCheckedHandlers, HasInvoiceUncheckedHandlers, HasInvoiceRecordHandlers {
 	
 	private static final Logger LOGGER = Logger.getLogger(InvoiceConsoleTable.class.getName());   
 
@@ -136,7 +139,10 @@ public class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceChecke
 					LOGGER.info("InvoiceConsoleTable: Invoice unchecked: " + e.getInvoice().getId());
 					AonInvoiceUncheckedEvent.fire(InvoiceConsoleTable.this, e.getInvoice());
 				});
-
+				row.addInvoiceRecordHandler(e -> {
+					LOGGER.info("InvoiceConsoleTable: Invoice record requested: " + e.getInvoice().getId());
+					AonInvoiceRecordEvent.fire(InvoiceConsoleTable.this, e.getInvoice());
+				});
 				return row;
 			}
 		});
@@ -152,4 +158,8 @@ public class InvoiceConsoleTable extends ScrollPanel implements HasInvoiceChecke
 		return super.addHandler(handler, AonInvoiceUncheckedEvent.getType());
 	}
 	
+	@Override
+	public HandlerRegistration addInvoiceRecordHandler(AonInvoiceRecordHandler handler) {
+		return super.addHandler(handler, AonInvoiceRecordEvent.getType());
+	}
 }

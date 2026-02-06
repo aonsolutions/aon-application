@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -45,6 +46,12 @@ public class INVOICECONSOLE {
 	public static InvoiceConsoleAnalysis analyze(Occam occam, InvoiceConsoleParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getFinance().analyze(ctx, params);
+		}
+	}
+
+	public static AccountEntry record(Occam occam, Invoice inv) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().record(ctx, inv);
 		}
 	}
 

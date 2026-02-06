@@ -173,7 +173,19 @@ public class InvoiceBreakdown implements Serializable {
 		}
 		return this;
 	}
-	
+	public InvoiceBreakdown calculate( Invoice i ) {
+		if (AonMathUtils.isNotZero( this.getPercentage()) && AonMathUtils.isZero( this.getQuota())) {
+			this.setQuota(AonMathUtils.round(this.getBase() * this.getPercentage() / 100 ));
+			if (i.isSurcharge() && AonMathUtils.isNotZero( this.getSurcharge() ) && AonMathUtils.isZero( this.getSurchargeQuota())) {
+				this.setSurchargeQuota( AonMathUtils.round(this.getBase() * this.getSurcharge() / 100 ));	
+			} else {
+				this.setSurcharge( 0.0);
+				this.setSurchargeQuota( 0.0);
+			}
+		}
+		return this;
+	}
+
 	public static InvoiceBreakdown from(InvoiceTax it) {
 		return new InvoiceBreakdown()
 			.setTaxType(it.getTaxType())

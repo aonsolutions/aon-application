@@ -361,6 +361,9 @@ public class Invoice implements Serializable, HasAudit {
 	public boolean isSurcharge() {
 		return surcharge;
 	}
+	public boolean isNotSurcharge() {
+		return !isSurcharge();
+	}
 	public Invoice setSurcharge(boolean surcharge) {
 		this.surcharge = surcharge;
 		return this;
@@ -449,6 +452,9 @@ public class Invoice implements Serializable, HasAudit {
 		double prepayment = includePrepayments ?  0.0
 			: detailStream().filter(f -> f.isPrepayment()).map(InvoiceDetail::getAmount).mapToDouble(d -> Double.valueOf(d)).sum();
 		return AonMathUtils.round(total + getTaxBreakdown().map(b -> b.getRetentionQuota()).orElse(0.0) - prepayment, 2);	
+	}
+	public double getTaxableBaseSum() {
+		return AonMathUtils.round( detailStream().mapToDouble( t -> t.getTaxableBase()  ).sum() , 4); 
 	}
 	public double getTotal() {
 		return total;
@@ -573,6 +579,12 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	public boolean hasPrepayments() {
 		return detailStream().filter(d -> d.isPrepayment()).count() > 0; 
+	}
+	// ---------------------------------------------------- [TAXES]
+	public Stream<InvoiceTax> invoiceTaxVatStream() {
+		return detailStream()
+			.flatMap( d -> d.taxStream())
+			.filter( it -> it.isVatType() );
 	}
 	
 	// ---------------------------------------------------- [FINANCES]
@@ -704,18 +716,12 @@ public class Invoice implements Serializable, HasAudit {
 	public boolean isIsp() {
 		return getTransaction() == InvoiceTransactionType.OTHER_ISP;
 	}
-	public boolean isSales() {
-		return getType() == InvoiceType.SALES;
-	}
-	public boolean isPurchase() {
-		return getType() == InvoiceType.PURCHASE;
-	}
-	public boolean isExpenses() {
-		return getType() == InvoiceType.EXPENSES;
-	}
-	public boolean isUndeductible() {
-		return getType() == InvoiceType.UNDEDUCTIBLE;
-	}
+	
+	public boolean isSales() 		{return getType() == InvoiceType.SALES;}
+	public boolean isNotSales()		{return !isSales();}
+	public boolean isPurchase() 	{return getType() == InvoiceType.PURCHASE;}
+	public boolean isExpenses() 	{return getType() == InvoiceType.EXPENSES;}
+	public boolean isUndeductible() {return getType() == InvoiceType.UNDEDUCTIBLE;}
 	
 	public boolean mustApplyISP() {
 		return (isPurchase() && isIntracommunity())					// Compra intracomunitaria
@@ -901,11 +907,9 @@ public class Invoice implements Serializable, HasAudit {
 		ensureTaxBreakdown().add(ib);
 		return this;
 	}
-	public List<InvoiceBreakdown> getVats() {
-		return this.getTaxBreakdown().map(itb -> itb.getVats() ).orElse(Collections.emptyList());
-	}
-	public Optional<InvoiceWithholding> getWithholding() {
-		return this.getTaxBreakdown().flatMap( itb -> itb.getInvoiceWithholding() );
+	public Optional<InvoiceWithholding> getInvoiceWithholding() {
+		return this.getTaxBreakdown()
+			.flatMap( itb -> itb.getInvoiceWithholding() );
 	}
 	 
 	public boolean isThirdPart() {
@@ -1005,7 +1009,7 @@ public class Invoice implements Serializable, HasAudit {
 
 	/**
 	 * @deprecated This method will be removed 
-	 * use getTaxBreakdown(), getVats() or getWithHolding()
+	 * use getTaxBreakdown() streams
 	 */
 	@Deprecated
 	public List<InvoiceBreakdown> getBreakdown() {

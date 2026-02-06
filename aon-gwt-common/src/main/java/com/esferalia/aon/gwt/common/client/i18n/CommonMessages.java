@@ -3855,6 +3855,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Contabilizar pago")
 	String recordPayment();
 	
+	@DefaultMessage("Contabilizando")
+	String recording();
+
 	@DefaultMessage("Contabilizar")
 	String record();
 

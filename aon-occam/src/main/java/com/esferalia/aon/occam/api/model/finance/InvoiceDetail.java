@@ -248,6 +248,9 @@ public class InvoiceDetail implements Serializable {
 	public boolean isPrepayment() {
 		return prepayment;
 	}
+	public boolean isNotPrepayment() {
+		return !isPrepayment();
+	}
 	public InvoiceDetail setPrepayment(boolean prepayment) {
 		this.prepayment = prepayment;
 		return this;

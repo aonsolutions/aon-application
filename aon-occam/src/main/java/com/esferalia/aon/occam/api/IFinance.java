@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.BookingCheck;
@@ -323,7 +324,8 @@ public interface IFinance {
 	// 	************** INVOICE CONSOLE ****************
 	// 	***********************************************
 	List<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params);
-	InvoiceConsoleAnalysis analyze(CloseableAONContext ctx, InvoiceConsoleParams params);
+	InvoiceConsoleAnalysis analyze(AONContext ctx, InvoiceConsoleParams params);
+	AccountEntry record(AONContext ctx, Invoice inv);
 	
 	// 	****************************************
 	// 	************************ INVOICE DOC ***

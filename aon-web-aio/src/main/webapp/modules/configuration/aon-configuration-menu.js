@@ -96,7 +96,7 @@ export class AonConfigurationMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfSeller()),
                 filter: () => this.isNotDomainManagementAvailable()
             }, {
-                description: "Consola de facturación",
+                description: "Consola de facturas",
                 title: "Consola de facturación",
                 action: () => GWT.iLoad(GWT.INVOICE_CONSOLE)
             }

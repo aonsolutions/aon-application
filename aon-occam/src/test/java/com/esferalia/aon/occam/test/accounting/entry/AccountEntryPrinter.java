@@ -13,19 +13,22 @@ public class AccountEntryPrinter {
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 	private static final DecimalFormat FMT = new  DecimalFormat("#,##0.00");
 
-	static void print( PrintStream out, AccountEntry entry) {
-		boolean abbrv = true; 
+	public static void print( PrintStream out, AccountEntry entry) {
+		print(out, entry, true);
+	}
+	public static void print( PrintStream out, AccountEntry entry, boolean abbrv) {
 		out.println(sep(abbrv));
 		out.println(toString(entry,abbrv));
 		out.println(sepInner(abbrv));
 		entry.getDetails().stream().forEach(det -> out.println(toString(det,abbrv)));
 		out.println(sep(abbrv));
+		out.println(toString(entry.getDebitSum(), entry.getCreditSum(),abbrv));
 		out.println();
 		out.flush();
 	}
 	public static String sep(boolean abbrv) {
 		int lineSize = abbrv?110:172;
-		return AonStringUtils.repeat(AonStringUtils.ASTERISK, lineSize);
+		return AonStringUtils.repeat(AonStringUtils.BULLET, lineSize);
 	}
 	public static String sepInner(boolean abbrv) {
 		int lineSize = abbrv?110:172;
@@ -102,5 +105,4 @@ public class AccountEntryPrinter {
 		return buf.toString();
 	}
 	
-
 }

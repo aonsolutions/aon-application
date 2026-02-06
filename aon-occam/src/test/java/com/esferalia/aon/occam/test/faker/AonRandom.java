@@ -162,6 +162,9 @@ public class AonRandom {
         		:null;
     }
     
+    public static Date getRandomYearDay( ) {
+    	return getRandomYearDay( AonDateUtils.getCurrentYear() );
+    }
     public static Date getRandomYearDay( int year ) {
     	return truncate( FAKER.date().between(AonDateUtils.getYearFirstDay(year),AonDateUtils.getYearLastDay(year)));
     }

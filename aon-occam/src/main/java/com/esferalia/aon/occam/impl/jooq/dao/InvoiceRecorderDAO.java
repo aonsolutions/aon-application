@@ -1,36 +1,602 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Tax.TAX;
 
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.jooq.Field;
-import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
-import com.esferalia.aon.watson.AonError;
-import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
-import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 public class InvoiceRecorderDAO {
 	
+	private static final String DEF_SALES_ACCOUNT = "700000000";				// Ventas de mercaderias.
+	private static final String DEF_PURCHASE_ACCOUNT = "600000000";				// Compras de mercaderias. 
+	private static final String DEF_OUTPUT_VAT_ACCOUNT = "477000000";			// H.P. IVA REPERCUTIDO
+	private static final String DEF_INPUT_VAT_ACCOUNT = "472000000";			// H.P. IVA SOPORTADO
+	private static final String DEF_SALES_RET_ACCOUNT = "473000000";			// H.P. RETENCIONES Y PAGOS A CUENTA
+	private static final String DEF_NOT_SALES_RET_ACCOUNT = "475100000";		// H.P. ACREEDORA POR RETENCIONES PRACTICADAS
+	private static final String DEF_VAT_NEGATIVE_ADJUST_ACCOUNT = "634100000"; 	// AJUSTES NEGATIVOS DE I.V.A. DE ACTIVO CORRIENTE
+	private static final String DEF_PREPAYMENT_ACCOUNT = "555900000";			// SUPLIDOS Y PAGOS A CUENTA
+	
+	private static final String N_FRA = "N/Fra";
+	private static final String S_FRA = "S/Fra";
+	private static final String ABONO = "ABONO";
+	
 	private InvoiceRecorderDAO() {
-		
+	}
+
+	// ********************************************************
+	// ******************************************* [PUBLIC] ***
+	// ********************************************************
+
+	public static AccountEntry recordInvoice(AONContext ctx, Integer invoiceId) {
+		return getInvoiceEntry(ctx, InvoiceDAO.getFullInvoice(ctx, invoiceId), false);
+	}
+	public static AccountEntry simulate(AONContext ctx, Integer invoiceId) {
+		return getInvoiceEntry(ctx, InvoiceDAO.getFullInvoice(ctx, invoiceId), true);
 	}
 	
+	public static AccountEntry getInvoiceEntry(AONContext ctx, Invoice invoice, boolean dryRun) {
+		Context c = new Context(ctx, invoice, dryRun);
+		AccountEntry ae = fillAccountEntry( c );
+		REGISTRY
+			.andThen(INPUT_VAT)
+			.andThen(OUTPUT_VAT)
+			.andThen(VAT_NEGATIVE_ADJUST)
+			.andThen(SALES_WITHHOLDING)
+			.andThen(NOT_SALES_WITHHOLDING)
+//			.andThen(DIRECT_TAX_ADJUST)
+			.andThen(SALES_EXP_ACCOUNT)
+			.andThen(PREPAYMENT_ACCOUNT)
+			.andThen(PURCHASE_EXP_ACCOUNT)
+			.andThen(EXPENSES_EXP_ACCOUNT)
+			.andThen(REGISTRY_BALANCING_ACCOUNT)
+		.accept(c);
+		ae.setDetails(new LinkedList<>());
+		ae.getDetails().addAll(c.map.values());
+		String concept = obtainConcept(invoice);
+		ae.getDetails().stream()
+			.forEach( d ->
+				d.setConcept(concept)
+				 .setDocumentNumber(invoice.getDocumentNumber()));
+		return ae;
+	}
+	
+	// *********************************************************
+	// ******************************************* [PRIVATE] ***
+	// *********************************************************
+
+	private static AccountEntry fillAccountEntry(Context c) {
+		if (c.invoice == null) throw new AonCoreException("La factura no puede ser NULL");
+		if (c.invoice.getDomain() == null || AonNumberUtils.equals(c.invoice.getDomain(), 0)) {
+			throw new AonCoreException("La factura debe tener dominio");
+		}
+		if (c.invoice.getType() == null) throw new AonCoreException("La factura debe tener tipo");
+		if (c.invoice.getIssueDate() == null) throw new AonCoreException("La factura debe tener fecha");
+		if (c.invoice.getRegistry() == null) throw new AonCoreException("La factura debe tener titular");
+		AccountPeriod period = AccountPeriodDAO.ensurePeriod(c.ctx, c.invoice.getDomain(), c.invoice.getIssueDate());
+		AccountEntry accountEntry = new AccountEntry()
+			.setPeriod(period.getId())
+			.setDomain(c.invoice.getDomain())
+			.setConfidential(false)
+			.setEntryDate(c.invoice.getIssueDate())
+			.setActivity(Optional.ofNullable(c.config.getMainActivity()).map(a -> a.getId()).orElse(null))
+			.setComments(c.invoice.getComments())
+			.setDirty(false);
+		return c.invoice.getType().visit(c.invoice,  new IInvoiceTypeVisitor<AccountEntry>() {
+			@Override public AccountEntry visitUndeductible(Invoice i) {return accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);}
+			@Override public AccountEntry visitSales(Invoice i) {return accountEntry.setEntryType(AccountEntryType.SALES_INVOICE);}
+			@Override public AccountEntry visitPurchase(Invoice i) {return accountEntry.setEntryType(AccountEntryType.PURCHASE_INVOICE);}
+			@Override public AccountEntry visitExpenses(Invoice i) {return accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);}
+		});
+	}
+	
+	private static String obtainConcept(Invoice invoice) {
+		StringBuilder buf = new StringBuilder();
+		buf.append( invoice.isSales()? N_FRA : S_FRA );
+		if (invoice.getTotal() < 0) {
+			buf.append( " " + ABONO );
+		}
+		buf.append(": ");
+		String refCode = AonStringUtils.defaultIfBlank(invoice.getReferenceCode(),"????????");
+		buf.append( AonStringUtils.abbreviate(refCode, 64) );
+		return buf.toString();
+	}
+	
+	// *********************************************************
+	// ***************************************** [CONSUMERS] ***
+	// *********************************************************
+
+	// -------------------------------- [ENTRY DETAIL FOR INVOICE REGISTRY ]
+	private static final Consumer<Context> REGISTRY = c -> {
+		Account account = c.getRegistryAccount().orElse(null);
+		double amount = c.invoice.getTotal(); 
+		if (c.invoice.isSales()) {
+			c.addDebit( account, amount, null );
+		} else {
+			c.addCredit( account, amount, null );
+		}
+	};
+	
+	// -------------------------------------- [ENTRY DETAIL FOR INPUT VAT]
+	private static final Consumer<Context> INPUT_VAT = c -> {
+		if (c.invoice.isInputVatEnabled()) {
+			AonCollectionUtils.stream( AccountInvoiceTaxBreakdown.getMap(c, det -> getInputVatAccount(c, det) ))
+				.filter( entry -> AonMathUtils.isNotZero( entry.getValue().getVatQuota(c.invoice) ))  
+				.forEach( entry -> c.addDebit( 
+						entry.getValue().getAccount()
+						, entry.getValue().getVatQuota(c.invoice)
+						, c.getRegistryAccount().orElse(null)
+					));
+		}
+	};
+	
+	// ------------------------------------- [ENTRY DETAIL FOR OUTPUT VAT]
+	private static final Consumer<Context> OUTPUT_VAT = c -> {
+		if (c.invoice.isOutputVatEnabled()) {
+			AonCollectionUtils.stream( AccountInvoiceTaxBreakdown.getMap(c, det -> getOutputVatAccount(c, det) ))
+				.filter( entry -> AonMathUtils.isNotZero( entry.getValue().getVatQuota(c.invoice) ))  
+				.forEach( entry -> c.addCredit( 
+						entry.getValue().getAccount()
+						, entry.getValue().getVatQuota(c.invoice)
+						, c.getRegistryAccount().orElse(null)
+					));
+		}
+	};
+	
+	// --------------------------- [ENTRY DETAIL VAT NEGATIVE ADJUSTMENT]
+	private static final Consumer<Context> VAT_NEGATIVE_ADJUST = c -> {
+		if (c.invoice.isNotSales() && c.invoice.isNotSurcharge() && c.invoice.isVatEnabled() ) {
+			AonCollectionUtils.stream( AccountInvoiceTaxBreakdown.getMap(c, det -> getVATNegativeAdjustAccount(c, det) ))
+				.filter( entry -> AonMathUtils.isNotZero( entry.getValue().getVatAdjustAmount(c.invoice) ))  
+				.forEach( entry -> c.addDebit( 
+						entry.getValue().getAccount()
+						, entry.getValue().getVatAdjustAmount(c.invoice)
+						, c.getRegistryAccount().orElse(null)
+					));
+		}
+	};
+	
+//		
+//	private static final BiConsumer<Invoice, LinkedHashMap<Integer,AccountEntryDetail>> DIRECT_TAX_ADJUST = (invoice, map) -> {
+//		if (!invoice.isSales() && !invoice.isSurcharge() && invoice.isOutputVatEnabled() != invoice.isInputVatEnabled()) {
+//			for (InvoiceDetail det : invoice.getDetails()) {
+//				if (det.getInvestAsset().isPresent() && det.getInvestAsset().get().getId() != null) {
+//					for (InvoiceTax it : det.getInvoiceTaxes()) {
+//						if (AonMathUtils.notEquals(100.0, it.getDirectTaxNoDedExpenses())
+//							&& it.getAdjDirectTaxAccount() != null
+//							&& it.getAdjDirectTaxAccount().getId() != null) {
+//							double amount = it.getDirectTaxNoDedExpenses();
+//							Account adjDirectTaxAccount = it.getAdjDirectTaxAccount();
+//							if (!isEmpty(adjDirectTaxAccount)) {
+//								AccountEntryDetail detail = map.computeIfAbsent(adjDirectTaxAccount.getId()
+//									, k -> new AccountEntryDetail()
+//										.setAccount(adjDirectTaxAccount.getId())
+//										.setAccountCode(adjDirectTaxAccount.getCode())
+//										.setAccountDescription(adjDirectTaxAccount.getDescription())
+//										.setBalancingAccount(obtainRegistryAccount(invoice))
+//										.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+//										.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice))
+//								);
+//								if (invoice.isOutputVatEnabled()) {
+//									detail.addCredit( amount );
+//								} else {
+//									detail.addDebit( amount );
+//								}
+//								
+//								Account expAccount = det.getExpAccount();
+//								if (!isEmpty(expAccount)) {
+//									detail = map.computeIfAbsent(expAccount.getId()
+//										, k -> new AccountEntryDetail()
+//											.setAccount(expAccount.getId())
+//											.setAccountCode(expAccount.getCode())
+//											.setAccountDescription(expAccount.getDescription())
+//											.setBalancingAccount(obtainRegistryAccount(invoice))
+//											.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+//											.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice))
+//									);
+//									if (invoice.isOutputVatEnabled()) {
+//										detail.addDebit( amount );
+//									} else {
+//										detail.addCredit( amount );
+//									}
+//									
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//	};
+//
+	
+	// -------------------------------- [ENTRY DETAIL FOR SALES WITDHOLDING]
+	private static final Consumer<Context> SALES_WITHHOLDING = c -> {
+		if (c.invoice.isSales() && c.invoice.isWithholding()) {
+			c.invoice.getInvoiceWithholding() 
+				.filter( w -> AonMathUtils.isNotZero(w.getQuota() - w.getDeductibleQuota())) 
+				.ifPresent( w  -> {
+					Account account = w.getAccount().orElse( c.getDefaultSalesRetentionAccount() );
+					c.map
+						.computeIfAbsent( account.getCode()
+							, k -> new AccountEntryDetail()
+							.setAccount(account)
+							.setBalancingAccount(c.getRegistryAccount().orElse(null))					
+						.addDebit( w.getQuota() - w.getDeductibleQuota()));
+			});
+		}
+	};
+	
+	// -------------------------------- [ENTRY DETAIL FOR SALES WITDHOLDING]
+	private static final Consumer<Context> NOT_SALES_WITHHOLDING = c -> {
+		if (c.invoice.isNotSales() && c.invoice.isWithholding()) {
+			c.invoice.getInvoiceWithholding() 
+				.filter( w -> AonMathUtils.isNotZero(w.getQuota() - w.getDeductibleQuota())) 
+				.ifPresent( w  -> {
+					Account account = w.getAccount().orElse( c.getDefaultNotSalesRetentionAccount() );
+					c.map
+						.computeIfAbsent( account.getCode()
+							, k -> new AccountEntryDetail()
+							.setAccount(account)
+							.setBalancingAccount(c.getRegistryAccount().orElse(null))					
+						.addCredit( w.getQuota() - w.getDeductibleQuota()));
+			});
+		}
+	};
+
+	// -------------------------------- [ENTRY DETAIL FOR PURCHASE INVOICE EXP ACCOUNT ]
+	private static final Consumer<Context> PREPAYMENT_ACCOUNT = c -> {
+		if (c.invoice.isPurchase()) {
+			c.invoice.detailStream()
+				.filter( det -> det.isPrepayment() )
+				.filter( det -> AonMathUtils.isNotZero( det.getTaxableBase()) )
+				.map(det -> 
+					new Pair<Account,Double>( 
+						c.getExpAccount(det).orElse( c.getDefaultPrepaymentAccount() ) 
+						, det.getTaxableBase() )
+					)
+				.forEach( p -> { 
+					c.setRegistryBalancingAccount(p.getLeft());
+					c.addDebit( p.getLeft(), p.getRight(), c.getRegistryAccount().orElse(null) );
+				})
+			;
+		}
+	};
+
+	// -------------------------------- [ENTRY DETAIL FOR SALE INVOICE EXP ACCOUNT ]
+	private static final Consumer<Context> SALES_EXP_ACCOUNT = c -> {
+		if (c.invoice.isSales()) {
+			c.invoice.detailStream()
+				.filter( det -> det.isNotPrepayment() )
+				.filter( det -> AonMathUtils.isNotZero( det.getTaxableBase()) )
+				.map(det -> 
+					new Pair<Account,Double>( 
+						c.getExpAccount(det).orElse( c.getDefaultSalesAccount() ) 
+						, det.getTaxableBase() )
+					)
+				.forEach( p -> { 
+					c.setRegistryBalancingAccount(p.getLeft());
+					c.addCredit( p.getLeft(), p.getRight(), c.getRegistryAccount().orElse(null));
+				 })
+			;
+		}
+	};
+
+	// -------------------------------- [ENTRY DETAIL FOR PURCHASE INVOICE EXP ACCOUNT ]
+	private static final Consumer<Context> PURCHASE_EXP_ACCOUNT = c -> {
+		if (c.invoice.isPurchase()) {
+			c.invoice.detailStream()
+				.filter( det -> det.isNotPrepayment() )
+				.filter( det -> AonMathUtils.isNotZero( det.getTaxableBase()) )
+				.map(det -> 
+					new Pair<Account,Double>( 
+						c.getExpAccount(det).orElse( c.getDefaultPurchaseAccount() ) 
+						, det.getTaxableBase() )
+					)
+				.forEach( p -> { 
+					c.setRegistryBalancingAccount(p.getLeft());
+					c.addDebit( p.getLeft(), p.getRight(), c.getRegistryAccount().orElse(null) );
+				})
+			;
+		}
+	};
+	
+		
+	// -------------------------------- [ENTRY DETAIL FOR EXPENSE INVOICE EXP ACCOUNT ]
+	private static final Consumer<Context> EXPENSES_EXP_ACCOUNT = c -> {
+		if (c.invoice.isExpenses() || c.invoice.isUndeductible()) {
+			c.invoice.detailStream()
+				.filter( det -> det.isNotPrepayment() )
+				.filter( det -> AonMathUtils.isNotZero( det.getTaxableBase()) )
+				.map(det -> 
+					new Pair<Account,Double>( 
+						c.getExpAccount(det)
+							.orElseThrow( () -> new AonCoreException(
+							"No se ha podido determinar la cuenta de explotaci\u00F3 para el detalle de la factura: " + AonStringUtils.abbreviate(det.getDescription(), 64) ) )
+						, det.getTaxableBase() )
+					)
+				.forEach( p -> { 
+					c.setRegistryBalancingAccount(p.getLeft());
+					c.addDebit( p.getLeft(), p.getRight(), c.getRegistryAccount().orElse(null) ); 
+				}) 
+			;
+		}
+	};
+
+	// -------------------------------- [FILL REGISTRY BALANCING ACCOUNT]
+	private static final Consumer<Context> REGISTRY_BALANCING_ACCOUNT = c -> {
+		if (c.registryBalancingAccount != null && c.registryBalancingAccount.get() != null) {
+			Account balancingAccount = c.registryBalancingAccount.get();
+			c.getRegistryAccount()
+				.map( Account::getCode )
+				.filter( code -> AonStringUtils.isNotBlank(code) )
+				.map( code -> c.map.get(code))
+				.filter( d -> d != null)
+				.ifPresent( aed -> aed.setBalancingAccount(balancingAccount))
+			;
+		}
+	};
+
+	// *****************************************************
+	// ************************* [INNER UTILITY CLASSES] ***
+	// *****************************************************
+	
+	private static class AccountInvoiceTaxBreakdown {
+		private final Account account;
+		private final InvoiceBreakdown ib;
+		
+		AccountInvoiceTaxBreakdown(Account account, InvoiceTax it) {
+			super();
+			ib = InvoiceBreakdown.from( it );
+			this.account = account;
+		}
+		String getKey() {
+			return account.getCode() + "|" + ib.getPercentage() + "|" + ib.getSurcharge();
+		}
+		
+		Account getAccount() {
+			return account;
+		}
+		
+		InvoiceBreakdown getInvoiceBreakdown() {
+			return ib;
+		}
+		
+		double getVatQuota( Invoice invoice) {
+			return invoice.isVatEnabled()
+				? ib.getDeductibleQuota()
+				: ib.getQuota();
+		}
+		double getVatAdjustAmount(Invoice invoice) {
+			return invoice.isVatEnabled()
+				? AonMathUtils.round(ib.getQuota() + ib.getSurchargeQuota() - ib.getDeductibleQuota())
+				: 0.0;
+		}
+		
+		static Map<String, AccountInvoiceTaxBreakdown> getMap(Context c, Function<InvoiceDetail, Account> accountGetter) {
+			Map<String, AccountInvoiceTaxBreakdown> vatMap = new LinkedHashMap<>();
+			c.invoice.detailStream()
+				.forEach(det -> {
+					Account account = accountGetter.apply( det );
+					if (account == null || account.getId() == null) {
+						throw new AonCoreException("No se ha podido determinar la cuenta de IVA repercutido para el detalle de la factura: " + AonStringUtils.abbreviate(det.getDescription(), 64) );
+					}
+					det.taxStream()
+						.filter( it -> it.isVatType() )
+						.map( it -> new AccountInvoiceTaxBreakdown( account, it ) )
+						.forEach( aitb -> {
+							AccountInvoiceTaxBreakdown prev = vatMap.get( aitb.getKey() );
+							if (prev == null) {
+								vatMap.put( aitb.getKey(), aitb );
+							} else {
+								prev.getInvoiceBreakdown().add( aitb.getInvoiceBreakdown() );
+							}
+						});
+				});
+			AonCollectionUtils.valuesStream( vatMap )
+				.map( aitb -> aitb.getInvoiceBreakdown() )
+				.forEach( ib -> ib.calculate( c.invoice ) )
+			;
+			return vatMap;
+		}
+	}
+	
+	private static class Context {
+		
+		private final AONContext ctx;
+		private final Integer domainId;
+		private final AonConfiguration config;
+		private final Invoice invoice;
+		private final boolean dryRun;
+		LinkedHashMap<String,AccountEntryDetail> map = new LinkedHashMap<>();
+		private Account registryAccount = null;
+		private AtomicReference<Account> registryBalancingAccount = null;
+		
+		Context(AONContext ctx, Invoice invoice, boolean dryRun) {
+			this.ctx = ctx;
+			this.config = ctx.getConfig();
+			this.invoice = invoice;
+			this.domainId = invoice.getDomain();
+			this.dryRun = dryRun;
+			checkDefaultAccounts();
+		}
+		
+		public void setRegistryBalancingAccount(Account account) {
+			// Solo se puede establecer la cuenta de contrapartida del asiento de registro una vez (una cuenta de explotacion). 
+			// Si  hay mas de una cuenta de explotacion, se anula el valor para que no se utilice ninguna.
+			if (account == null || AonStringUtils.isBlank(account.getCode())) return;
+			if (registryBalancingAccount == null) {
+				registryBalancingAccount = new AtomicReference<>( account );
+			} else if (AonStringUtils.notEquals( registryBalancingAccount.get().getCode(), account.getCode() )) {
+				registryBalancingAccount.set( null );
+			}
+		}
+
+		private void checkDefaultAccounts() {
+			checkDefaultAccount(getDefaultSalesAccount()
+				, DEF_SALES_ACCOUNT, AppParam.ACC_DEFAULT_SALES_ACC, config.accounting()::setDefaultSalesAccount);
+			checkDefaultAccount(getDefaultPurchaseAccount()
+				, DEF_PURCHASE_ACCOUNT, AppParam.ACC_DEFAULT_PURCHASE_ACC, config.accounting()::setDefaultPurchaseAccount);
+			checkDefaultAccount(getDefaultOutputVatAccount()
+				, DEF_OUTPUT_VAT_ACCOUNT, AppParam.ACC_DEFAULT_CHARGED_VAT_ACC, config.accounting()::setDefaultChargedVatAccount);
+			checkDefaultAccount(getDefaultInputVatAccount()
+				, DEF_INPUT_VAT_ACCOUNT, AppParam.ACC_DEFAULT_PAID_VAT_ACC, config.accounting()::setDefaultPaidVatAccount);
+			checkDefaultAccount(getDefaultSalesRetentionAccount()
+				, DEF_SALES_RET_ACCOUNT, AppParam.ACC_DEFAULT_PAID_RET_ACC, config.accounting()::setDefaultPaidRetAccount);
+			checkDefaultAccount(getDefaultNotSalesRetentionAccount()
+				, DEF_NOT_SALES_RET_ACCOUNT, AppParam.ACC_DEFAULT_PAID_RET_ACC, config.accounting()::setDefaultChargedRetAccount);
+			checkDefaultAccount(getDefaultVATNegativeAdjustAccount()
+				, DEF_VAT_NEGATIVE_ADJUST_ACCOUNT, AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC, config.accounting()::setVatNegativeAdjustAccount);
+			checkDefaultAccount(getDefaultPrepaymentAccount()
+				, DEF_PREPAYMENT_ACCOUNT, AppParam.ACC_DEFAULT_PREPAYMENT_ACC, config.accounting()::setDefaultPrepayment);
+		}
+
+
+		private Account checkDefaultAccount(Account a, String code, AppParam params, Consumer<Account> setter) {
+			if (a == null || a.getId() == null) {
+				a = AccountDAO.get(ctx, code);
+				if (a != null && a.getId() != null) {
+					AppParamDAO.save(ctx, domainId, params, AonNumberUtils.toString(a.getId()));
+					setter.accept(a);
+				}
+			}
+			return a;
+		}
+
+		private Account getDefaultSalesAccount() 			{return ensureAccount(config.accounting().getDefaultSalesAccount());}
+		private Account getDefaultPurchaseAccount() 		{return ensureAccount(config.accounting().getDefaultPurchaseAccount());}
+		private Account getDefaultOutputVatAccount() 		{return ensureAccount(config.accounting().getDefaultChargedVatAccount());}
+		private Account getDefaultInputVatAccount() 		{return ensureAccount(config.accounting().getDefaultPaidVatAccount());}
+		private Account getDefaultSalesRetentionAccount() 	{return ensureAccount(config.accounting().getDefaultPaidRetAccount());}
+		private Account getDefaultNotSalesRetentionAccount(){return ensureAccount(config.accounting().getDefaultChargedRetAccount());}
+		private Account getDefaultVATNegativeAdjustAccount(){return ensureAccount(config.accounting().getVatNegativeAdjustAccount());}
+		private Account getDefaultPrepaymentAccount() 		{return ensureAccount(config.accounting().getDefaultPrepayment());}
+		
+		private Account ensureAccount(Account a) {
+			return (a != null && a.getId() == null) ? null : a;
+		}
+		
+		Optional<Account> getRegistryAccount() {
+			if (registryAccount == null) {
+				registryAccount = obtainRegistryAccount().orElse(null);
+			}
+			return Optional.ofNullable(registryAccount);
+		}
+		
+		private Optional<Account> obtainRegistryAccount() {
+			Account account = null;
+			if (invoice.getRegistry() != null && invoice.getRegistryAccount() != null) {
+				account = ensureAccount(invoice.getRegistryAccount());
+			}
+			if (dryRun && account == null) {
+				String code = obtainRegistryAccountCode(invoice);
+				account = new Account()
+					.setCode(code)
+					.setDescription(invoice.getRegistryName());
+			}
+			return Optional.ofNullable(account);
+		}
+
+		private String obtainRegistryAccountCode(Invoice invoice) {
+			String code = "?????????";
+			if (invoice.getRegistryAccount() != null) {
+				code = invoice.getRegistryAccount().getCode();
+				if (AonStringUtils.isBlank(code)) {
+					code = getUnknowAccountCode( getRegistryAccountPrefix(invoice) );
+				}
+			}
+			return code;
+		}
+
+		private String getRegistryAccountPrefix(Invoice invoice ) {
+			return invoice.getType().visit(invoice,  new IInvoiceTypeVisitor<String>() {
+				@Override public String visitPurchase(Invoice i) 		{return "4000";}
+				@Override public String visitSales(Invoice i) 			{return "4300";}
+				@Override public String visitExpenses(Invoice i) 		{return "4100";}
+				@Override public String visitUndeductible(Invoice i) 	{return "4100";}
+			});
+		}
+
+		private String getUnknowAccountCode(String accountPrefix) {
+			return AonStringUtils.rightPad(accountPrefix, 9, '?');
+		}
+		
+		Optional<Account> getExpAccount(InvoiceDetail detail) {
+			Account account = null;
+			if (detail.getAccountId() != null) {
+				account = new Account()
+					.setId(detail.getAccountId())
+					.setCode(detail.getAccountCode())
+					.setDescription(detail.getAccountDescription());
+			}
+			return Optional.ofNullable(account);
+		}
+		
+		private Optional<AccountEntryDetail> get(Account account, Account balAccount) {
+			if (account == null) return Optional.empty();
+			if (AonStringUtils.isBlank(account.getCode())) return Optional.empty();
+			return Optional.of(map.computeIfAbsent(account.getCode(), k -> new AccountEntryDetail().setAccount(account).setBalancingAccount(balAccount)));
+		}
+		
+		void addCredit(Account account, double amount, Account balAccount) {
+			if (!check(account, amount)) return;
+			get(account,balAccount).ifPresent( detail -> detail.addCredit( amount ));
+		}
+		
+		void addDebit(Account account, double amount, Account balAccount) {
+			if (!check(account, amount)) return;
+			get(account,balAccount).ifPresent( detail -> detail.addDebit( amount ));
+		}
+		
+		private boolean check(Account account, double amount) {
+			if (AonMathUtils.isZero(amount)
+			 || account == null
+			 || AonStringUtils.isBlank(account.getCode())) {
+				return false;
+			}
+			return true;
+		}
+	}
+	
+	// *****************************************************
+	// ******************************************* [OLD] ***
+	// *****************************************************
+	
+	/**
+	 * Usado en AccountingInvoiceDAO! 
+	 */
 	public static AccountEntry getEntryBase(AONContext ctx, AonConfiguration aonCtx, Invoice invoice) {
 		EnterpriseActivity ea = !invoice.getActivity().isEmpty() ? invoice.getActivity() : aonCtx.getMainActivity();
 		Integer activity = (ea==null?null:ea.getId());
@@ -74,444 +640,29 @@ public class InvoiceRecorderDAO {
 		return accountEntry;
 	}
 
-	private record InvoicePreRecordContext( AONContext ctx, int domain, Invoice inv) {}
-	public static Invoice fillMessages(AONContext ctx, int domain, Invoice inv) {
-		InvoicePreRecordContext iprc = new InvoicePreRecordContext(ctx, domain, inv);
-		if (inv.getId() == null) {
-			EMPTY_INVOICE_DOMAIN
-				.andThen(EMPTY_INVOICE_SCOPE)
-				.andThen(OVERFLOW_INVOICE_SERIES)
-				.andThen(EMPTY_INVOICE_REFERENCE_CODE)
-				.andThen(OVERFLOW_INVOICE_REFERENCE_CODE)
-				.andThen(EMPTY_INVOICE_TRANSACTION)
-				.andThen(EMPTY_INVOICE_DATE)
-				.andThen(DUPLICATED_SERIES_NUMBER)
-				.andThen(DUPLICATED_REFERENCE_CODE) 
-				.andThen(EMPTY_INVOICE_TAX_DATE)
-				.andThen(EMPTY_INVOICE_TYPE)
-				.andThen(EMPTY_INVOICE_REGISTRY)
-				.andThen(EMPTY_REGISTRY_DOCUMENT)
-				.andThen(OVERFLOW_REGISTRY_DOCUMENT)
-				.andThen(INVALID_REGISTRY_DOCUMENT)
-				.andThen(OVERFLOW_REGISTRY_NAME)
-				.accept(iprc);
-		}
-		
-		if ( !inv.isRecorded() ) {
-			CHECK_IF_INVESTMENT
-				.andThen(CHECK_IF_SURCHARGE)
-				.andThen(CHECK_IF_WITHHOLDING)
-				.andThen(CHECK_TRANSACTION)
-				.andThen(CHECK_PREPAYMENT)
-				.andThen(CHECK_EXPENSES)
-				.accept(iprc);
-		}
-		
-		return inv;
+	private static Account getInputVatAccount(Context c, InvoiceDetail det) {
+		return getProductVatAccount(c, det, TAX.PURCHASE_ACCOUNT)
+			.orElse( c.getDefaultInputVatAccount() );
+	}
+	private static Account getOutputVatAccount(Context c, InvoiceDetail det) {
+		return getProductVatAccount(c, det, TAX.SALES_ACCOUNT)
+			.orElse( c.getDefaultOutputVatAccount() );
+	}
+	private static Account getVATNegativeAdjustAccount(Context c, InvoiceDetail det) {
+		return c.getDefaultVATNegativeAdjustAccount();
+	}
+	private static Optional<Account> getProductVatAccount(Context c, InvoiceDetail det, Field<Integer> accountField) {
+		if (det.getItem() == null || det.getItem().getId() != null) return Optional.empty();
+		return c.ctx.getDslContext().select(ACCOUNT.fields())
+			.from(ITEM)
+			.innerJoin(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+			.innerJoin(TAX).on(TAX.ID.eq(PRODUCT.VAT))
+			.innerJoin(ACCOUNT).on(ACCOUNT.ID.eq( accountField))
+			.where(ITEM.ID.eq(det.getItem().getId()))
+			.fetch()
+			.stream()
+			.map( r -> FullAccountFiller.build( r )  )
+			.findFirst();
 	}
 
-	// ************************************************************************************** 	
-	// *************************************************************************** [CHECK] ** 	
-	// ************************************************************************************** 	
-	private static final Consumer<InvoicePreRecordContext> CHECK_IF_INVESTMENT = c -> {
-		if (c.inv.isInvestment()) {
-			c.inv.addMessage( new InvoiceError(
-				 InvoiceErrorKey.INVESTMENT
-				,InvoiceErrorLevel.INF
-				,AonError.INVOICE_RECORDER_INVESTMENT.getMessage()));
-		}
-	};
-
-	private static final Consumer<InvoicePreRecordContext> CHECK_IF_SURCHARGE = c -> {
-		if (c.inv.isSurcharge()) {
-			c.inv.addMessage( new InvoiceError(
-				 InvoiceErrorKey.SURCHARGE
-				,InvoiceErrorLevel.INF
-				,AonError.INVOICE_RECORDER_SURCHARGE.getMessage()));
-		}
-	};
-	
-	private static final Consumer<InvoicePreRecordContext> CHECK_IF_WITHHOLDING = c -> {
-		if (c.inv.isWithholding()) {
-			c.inv.addMessage( new InvoiceError(
-				 InvoiceErrorKey.WITHHOLDING
-				,InvoiceErrorLevel.INF
-				,AonError.INVOICE_RECORDER_WITHHOLDING.getMessage()));
-		}
-	};
-
-	private static final Consumer<InvoicePreRecordContext> CHECK_TRANSACTION = c -> {
-		if (c.inv.getTransaction() != null && !c.inv.isNational()) {
-			c.inv.addMessage(new InvoiceError(
-				 InvoiceErrorKey.TRANSACTION
-				,InvoiceErrorLevel.INF
-				,AonError.INVOICE_RECORDER_TRANSACTION.format(c.inv.getTransaction().getDescription())));
-		}
-	};
-
-	private static final Consumer<InvoicePreRecordContext> CHECK_PREPAYMENT = c -> 
-		AonCollectionUtils.stream( c.inv.getDetails() )
-			.filter( d -> d.isPrepayment() )
-			.findFirst()
-			.ifPresent(d -> c.inv.addMessage( new InvoiceError(
-				 InvoiceErrorKey.GENERIC
-				,InvoiceErrorLevel.INF
-				,AonError.INVOICE_RECORDER_PREPAYMENT.getMessage())));
-	
-
-	private static final Consumer<InvoicePreRecordContext> CHECK_EXPENSES = c -> {
-		if ( c.inv.isExpenses() || c.inv.isUndeductible() ) {
-			AonCollectionUtils.stream( c.inv.getDetails() )
-				.filter( d -> d.getAccountId() == null )
-				.findAny()
-				.ifPresent( d -> c.inv.addMessage( new InvoiceError(
-					 InvoiceErrorKey.EXPENSE_ACCOUNT
-					,InvoiceErrorLevel.ERR
-					,AonError.INVOICE_RECORDER_EXPENSE_ACCOUNT.getMessage())));
-		}
-	};
-	
-	/**
-	 * El dominio de la factura no puede estar vacio.
-	 */
-	private static final Consumer<InvoicePreRecordContext> EMPTY_INVOICE_DOMAIN = c -> {
-		if (c.inv.getDomain() == null || c.inv.getDomain() == 0) {
-			c.inv.addMessage(new InvoiceError(
-				InvoiceErrorKey.DOMAIN
-				,InvoiceErrorLevel.ERR
-				,AonError.INVOICE_RECORDER_EMPTY_DOMAIN.getMessage()));
-		}
-	};
-	/**
-	 * El ámbito de la factura es un dato obligatorio.
-	 */
-	private static final Consumer<InvoicePreRecordContext> EMPTY_INVOICE_SCOPE = c -> {
-		if (c.inv.getRegistry() != null &&
-			(c.inv.getScope() == null || c.inv.getScope().getId() == null)) {
-			c.inv.addMessage(new InvoiceError(
-				InvoiceErrorKey.SCOPE
-				,InvoiceErrorLevel.ERR
-				,AonError.INVOICE_RECORDER_EMPTY_SCOPE.getMessage()));
-		}
-	};
-	/**
-	 * La serie no debe superar caracters definido en BD.
-	 */
-	private static final Consumer<InvoicePreRecordContext> OVERFLOW_INVOICE_SERIES = c -> {
-		if (AonStringUtils.isNotBlank(c.inv.getSeries()) && willOverflow(INVOICE.SERIES, c.inv.getSeries())) {
-			c.inv.addMessage(new InvoiceError(
-				InvoiceErrorKey.SERIES
-				,InvoiceErrorLevel.ERR
-				,AonError.INVALID_LENGTH.format(InvoiceErrorKey.SERIES.getDescription(),INVOICE.SERIES.getDataType().length()) ));
-		}
-	};
-	
-	/**
-	 * Si la factura no es de ventas, el codigo de referencia debe tener valor.
-	 */
-	private static final Consumer<InvoicePreRecordContext> EMPTY_INVOICE_REFERENCE_CODE = c -> {
-		// SI Venta y no número ni reference code 
-		//				o 
-		// NO Venta y no ref. code 
-		if ( ( (c.inv.isSales() && c.inv.getNumber() == 0 ) || !c.inv.isSales())
-			&& AonStringUtils.isBlank(c.inv.getReferenceCode())) {
-			
-			c.inv.addMessage(new InvoiceError(
-				InvoiceErrorKey.REFERENCE_CODE
-				,InvoiceErrorLevel.ERR
-				,AonError.INVOICE_EMPTY_REFERENCE_CODE.getMessage()));
-		}
-	};
-	
-	/**
-	 * El codigo de referencia debe superar caracters definido en BD.
-	 */
-	private static final Consumer<InvoicePreRecordContext> OVERFLOW_INVOICE_REFERENCE_CODE = c -> {
-		if (AonStringUtils.isNotBlank(c.inv.getReferenceCode()) 
-		 && willOverflow(INVOICE.REFERENCE_CODE, c.inv.getReferenceCode())) {
-			c.inv.addMessage(new InvoiceError(
-				InvoiceErrorKey.REFERENCE_CODE
-				,InvoiceErrorLevel.ERR
-				,AonError.INVALID_LENGTH.format(InvoiceErrorKey.REFERENCE_CODE.getDescription(),INVOICE.REFERENCE_CODE.getDataType().length()) ));
-		}
-	};
-	
-	/**
-	 * Si la factura no es de ventas, el codigo de referencia debe tener valor.
-	 */
-	private static final Consumer<InvoicePreRecordContext> EMPTY_INVOICE_TRANSACTION = c -> {
-		if (c.inv.getRegistry() != null && (c.inv.getTransaction() == null)) {
-			c.inv.addMessage(new InvoiceError(
-				InvoiceErrorKey.TRANSACTION
-				,InvoiceErrorLevel.ERR
-				,AonError.INVOICE_EMPTY_TRANSACTION.getMessage()) );
-		}
-	};
-	
-	/**
-	 * La fecha de la factura es un dato obligatorio.
-	 */
-	private static final Consumer<InvoicePreRecordContext> EMPTY_INVOICE_DATE = c -> { 
-		if (c.inv.getIssueDate() == null) {
-			c.inv.addMessage(new InvoiceError(
-				InvoiceErrorKey.ISSUE_DATE
-				,InvoiceErrorLevel.ERR
-				,AonError.INVOICE_EMPTY_DATE.getMessage()) );
-		}
-	};
-
-	/**
-	 * En facturas emitidas, el Domain/Serie/Número/Tipo no puede estar duplicado
-	 */
-	private static final Consumer<InvoicePreRecordContext> DUPLICATED_SERIES_NUMBER = c -> {
-		if ( c.inv.isSales() && c.inv.getNumber() != 0) {
-			if (c.ctx != null && c.ctx.getDslContext().fetchExists( 
-				c.ctx.getDslContext().selectOne()
-					.from(INVOICE)
-					.where(INVOICE.DOMAIN.eq(c.inv.getDomain()))
-					.and(AonStringUtils.isBlank(c.inv.getSeries())
-						?INVOICE.SERIES.isNull().or(DSL.trim(INVOICE.SERIES).eq(""))
-						:INVOICE.SERIES.eq(c.inv.getSeries()))
-					.and(INVOICE.NUMBER.eq(c.inv.getNumber()))
-					.and(c.inv.getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(c.inv.getId()))
-					.and(INVOICE.TYPE.eq(c.inv.getType().value())))) {
-				c.inv.addMessage(new InvoiceError(
-					InvoiceErrorKey.DUPLICATED_SERIES_NUMBER
-					,InvoiceErrorLevel.ERR
-					,AonError.INVOICE_DUPLICATED_SERIES_NUMBER.getMessage()) );
-			}
-		}
-	};
-	
-	/**
-	 * En facturas recibidas, el Domain/Registry/Numero Referencia no puede estar duplicado en el mismo año.
-	 */
-	private static final Consumer<InvoicePreRecordContext> DUPLICATED_REFERENCE_CODE = c -> {
-		if (AonStringUtils.isNotBlank(c.inv.getReferenceCode())
-			&& c.inv.getType() != null
-			&& !c.inv.isSales() 
-			&& !c.inv.isUndeductible() 
-			&& c.inv.getIssueDate() != null) {
-			if (c.ctx != null && c.ctx.getDslContext().fetchExists( 
-					c.ctx.getDslContext().selectOne()
-					.from(INVOICE)
-					.where(INVOICE.DOMAIN.eq(c.inv.getDomain()))
-					.and(INVOICE.REGISTRY.eq(c.inv.getRegistry()))
-					.and(INVOICE.REFERENCE_CODE.eq(c.inv.getReferenceCode()))
-					.and(INVOICE.TYPE.eq(c.inv.getType().value()))
-					.and(c.inv.getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(c.inv.getId()))					
-					.and(DSL.year(INVOICE.ISSUE_DATE).eq(AonDateUtils.getYear( c.inv.getIssueDate())))
-				)) {
-				c.inv.addMessage(new InvoiceError(
-					InvoiceErrorKey.DUPLICATED_REFERENCE_CODE
-					,InvoiceErrorLevel.ERR
-					,AonError.INVOICE_DUPLICATED_REFERENCE_CODE.getMessage()) );
-			}
-		}
-	};
-	
-	/**
-	 * La fecha IVA de la factura es un dato obligatorio.
-	 */
-	private static final Consumer<InvoicePreRecordContext> EMPTY_INVOICE_TAX_DATE = c -> {
-		if (c.inv.getIssueDate() != null && c.inv.getTaxDate() == null) {
-			c.inv.addMessage(new InvoiceError(
-				InvoiceErrorKey.TAX_DATE
-				,InvoiceErrorLevel.WRN
-				,AonError.INVOICE_EMPTY_TAX_DATE.getMessage()) );
-		}
-	};
-	
-	/**
-	 * El Tipo de la factura no puede ser null.
-	 */
-	private static final Consumer<InvoicePreRecordContext> EMPTY_INVOICE_TYPE = c -> {
-		if (c.inv.getType() == null) {
-			c.inv.addMessage(new InvoiceError(
-				InvoiceErrorKey.TYPE
-				,InvoiceErrorLevel.ERR
-				,AonError.INVOICE_EMPTY_TYPE.getMessage()) );
-		}
-	};
-
-	/**
-	 * El titular de la factura es un dato obligatorio.
-	 */
-	private static final Consumer<InvoicePreRecordContext> EMPTY_INVOICE_REGISTRY = c -> {
-		if (c.inv.getRegistry() == null) {
-			if (AonStringUtils.isEmpty(c.inv.getRegistryDocument())) {
-				c.inv.addMessage(new InvoiceError(
-					InvoiceErrorKey.REGISTRY
-					,InvoiceErrorLevel.ERR
-					,AonError.INVOICE_EMPTY_REGISTRY.getMessage()) );
-			} else {
-				c.inv.addMessage(new InvoiceError(
-					InvoiceErrorKey.REGISTRY
-					,InvoiceErrorLevel.ERR
-					,AonError.INVOICE_RECORDER_REGISTRY_NOT_FOUND.format(
-						(c.inv.isSales()?"cliente":"acreedor/proveedor")
-						,(c.inv.getRegistryDocument() + " " + c.inv.getRegistryName()))));
-			}
-		}
-	};
-
-	/**
-	 * El document del titular de la factura es un dato obligatorio.
-	 */
-	private static final Consumer<InvoicePreRecordContext> EMPTY_REGISTRY_DOCUMENT = c -> {
-		if (c.inv.getRegistry() != null && AonStringUtils.isBlank(c.inv.getRegistryDocument())) {
-			c.inv.addMessage(new InvoiceError(
-				InvoiceErrorKey.RDOCUMENT
-				,InvoiceErrorLevel.WRN
-				,AonError.REGISTRY_EMPTY_DOCUMENT.getMessage()));
-		}
-	};
-	
-	/**
-	 * El documento del titular no debe superar caracters definido en BD.
-	 */
-	private static final Consumer<InvoicePreRecordContext> OVERFLOW_REGISTRY_DOCUMENT = c -> {
-		if (AonStringUtils.isNotBlank(c.inv.getRegistryDocument())) {
-			if (willOverflow(INVOICE.RDOCUMENT, c.inv.getRegistryDocument())) {
-				c.inv.addMessage(new InvoiceError(
-					InvoiceErrorKey.RDOCUMENT
-					,InvoiceErrorLevel.WRN
-					,AonError.INVALID_LENGTH.format(InvoiceErrorKey.REGISTRY.getDescription(),INVOICE.INVOICE.RDOCUMENT.getDataType().length()) ));
-			}
-		}
-	};
-
-	/**
-	 * El documento del titular debería validarse correctamente.
-	 */
-	private static final Consumer<InvoicePreRecordContext> INVALID_REGISTRY_DOCUMENT = c -> {
-		if (AonStringUtils.isNotBlank(c.inv.getRegistryDocument())) {
-			String country = c.inv.getRegistryDocumentCountry() == null ? null : 
-				c.inv.getRegistryDocumentCountry().getIso2();
-			if ("ES".equals( country )) {
-				if (!AonDocumentUtil.isValid(c.inv.getRegistryDocument())) {
-					c.inv.addMessage(new InvoiceError(
-						InvoiceErrorKey.RDOCUMENT
-						,InvoiceErrorLevel.WRN
-						,AonError.REGISTRY_INVALID_DOCUMENT.getMessage()) );
-				}
-			} else if (!AonDocumentUtil.isValidComunitaryCode(country,c.inv.getRegistryDocument())) {
-				c.inv.addMessage(new InvoiceError(
-					InvoiceErrorKey.RDOCUMENT
-					,InvoiceErrorLevel.WRN
-					,AonError.REGISTRY_INVALID_DOCUMENT.getMessage()) );
-			}
-		}
-	};
-	
-	/**
-	 * La razon social del titular de la factura es un dato obligatorio.
-	 */
-	private static final Consumer<InvoicePreRecordContext> EMPTY_REGISTRY_NAME = c -> {
-		if (c.inv.getRegistry() != null &&  AonStringUtils.isBlank(c.inv.getRegistryName())) {
-			c.inv.addMessage(new InvoiceError(
-				InvoiceErrorKey.RNAME
-				,InvoiceErrorLevel.WRN
-				,AonError.REGISTRY_EMPTY_NAME.getMessage()));
-		}
-	};
-	
-	/**
-	 * La razon social del titular no debe superar caracters definido en BD.
-	 */
-	private static final Consumer<InvoicePreRecordContext> OVERFLOW_REGISTRY_NAME = c -> {
-		if (AonStringUtils.isNotBlank(c.inv.getRegistryName())) {
-			if (willOverflow(INVOICE.RNAME, c.inv.getRegistryName())) {
-				c.inv.addMessage(new InvoiceError(
-					InvoiceErrorKey.REGISTRY
-					,InvoiceErrorLevel.WRN
-					,AonError.INVALID_LENGTH.format(InvoiceErrorKey.RNAME.getDescription(),INVOICE.INVOICE.RNAME.getDataType().length()) ));
-			}
-		}
-	};
-//
-//	/**
-//	 * La dirección de la factura no debe superar caracters definido en BD.
-//	 */
-//	private static final Consumer<InvoicePreRecordContext> OVERFLOW_ADDRESS = c -> {
-//		if (AonStringUtils.isNotBlank(c.inv.getAddress().getAddress())) {
-//			if (willOverflow(RADDRESS.ADDRESS, c.inv.getAddress().getAddress())) {
-//				ctx.add( InvoiceErrorMessages.C002.err(InvoiceErrorKey.ADDRESS, InvoiceErrorKey.ADDRESS.getDescription(), RADDRESS.ADDRESS.getDataType().length()));
-//			}
-//		}
-//	};
-//
-//	/**
-//	 * La descripcion del detalle no debe superar caracters definido en BD.
-//	 */
-//	public static BiConsumer<ValidationContext,InvoiceDetail> OVERFLOW_DETAIL_DESCRIPTION = (ctx,detail) -> {
-//		if (AonStringUtils.isNotBlank(detail.getDescription())) {
-//			if (willOverflow(INVOICE_DETAIL.DESCRIPTION, detail.getDescription())) {
-//				InvoiceErrorContext context = new InvoiceErrorContext(InvoiceErrorKey.DETAIL_DESCRIPTION, (int) detail.getLine());  
-//				ctx.add( InvoiceErrorMessages.C002.err(context, InvoiceErrorKey.DETAIL_DESCRIPTION.getDescription(), INVOICE_DETAIL.DESCRIPTION.getDataType().length()));
-//			}
-//		}
-//	};
-//
-//	private static final Consumer<InvoicePreRecordContext> DETAILS_VALIDATION = c -> {
-//		if (c.inv.getDetails() != null) {
-//			for (InvoiceDetail detail : c.inv.getDetails()) {
-//				OVERFLOW_DETAIL_DESCRIPTION
-//				 .accept(ctx,detail);
-//			}
-//		}
-//	};
-//
-//	public static BiConsumer<Finance,ValidationContext> CHECK_FINANCE_AMOUNT_ZERO = (finance,ctx) -> {
-//		if (AonMathUtils.isZero(finance.getAmount())) {
-//			InvoiceErrorContext context = new InvoiceErrorContext(InvoiceErrorKey.FINANCE_AMOUNT_ZERO);
-//			ctx.add( InvoiceErrorMessages.C014.wrn(context, InvoiceErrorKey.FINANCE_AMOUNT_ZERO.getDescription()));
-//		}
-//	};
-//
-//	public static BiConsumer<Finance,ValidationContext> CHECK_BANK_ACCOUNT = (finance,ctx) -> {
-//		if (finance.getBankAccount() == null || AonStringUtils.isEmpty(finance.getBankAccount().getBban())) {
-//			finance.setBankAccount(null);
-//			finance.setBankAlias(null);
-//			finance.setBic(null);
-//		}
-//		if (finance.getBankAccount() != null && !finance.getBankAccount().isValidBankAccount()) {
-//			InvoiceErrorContext context = new InvoiceErrorContext(InvoiceErrorKey.FINANCE_WRONG_ACCOUNT_BANK);
-//			ctx.add( InvoiceErrorMessages.C014.err(context, InvoiceErrorKey.FINANCE_WRONG_ACCOUNT_BANK.getDescription()));
-//		}
-//	};
-//	
-//	private static final Consumer<InvoicePreRecordContext> FINANCES_VALIDATION = c -> {
-//		if (ctx.getResult().getAccountingInvoice() != null && ctx.getResult().getAccountingInvoice().getInvoice().getFinances() != null) {
-//			for (Finance finance : ctx.getResult().getAccountingInvoice().getInvoice().getFinances()) {
-//				CHECK_FINANCE_AMOUNT_ZERO
-//				.andThen(CHECK_BANK_ACCOUNT)			
-//			 	.accept(finance, ctx);
-//			}
-//		}
-//	};
-//
-//	
-//	/**
-//	 * Si el año de la factura no es anterior en cinco años al actual.
-//	 */
-//	private static final Consumer<InvoicePreRecordContext> CHECK_FIVE_YEARS = c -> {
-//		if (c.inv.getIssueDate() != null) {
-//			int thisYear = AonDateUtils.getYear(new Date());
-//			int invoiceYear = AonDateUtils.getYear(c.inv.getIssueDate());
-//			if (invoiceYear < (thisYear - 5) || invoiceYear > (thisYear + 1)) {
-//				ctx.add( InvoiceErrorMessages.C008.err(InvoiceErrorKey.ISSUE_DATE) );
-//			}
-//		}
-//	};
-//
-//	private static final Consumer<InvoicePreRecordContext> CHECK_LINES = c -> {
-//		if (c.inv.getDetails() == null || c.inv.getDetails().size() == 0) {
-//			ctx.add( InvoiceErrorMessages.C010.err(InvoiceErrorKey.DETAILS) );
-//		}
-//	};
-	
-	private static boolean willOverflow(Field<String> field, String series) {
-		return (AonStringUtils.length(series) > field.getDataType().length());
-	}
 }
