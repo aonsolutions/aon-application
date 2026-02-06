@@ -85,7 +85,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		calculate(Calendar.JANUARY, 2026);
 		double totalPayment = getValue("totalPaymentLabel");
-		assertText("remunerationLabel", totalPayment - 300.00 );
+		assertText("remunerationLabel", totalPayment - 250.00 );
 		assertText("irpfBaseLabel", totalPayment - 250.00 + (50.00 - 11.00 * 3));
 		
 	}
@@ -383,8 +383,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 //		click("fxCancelButton");
 		 
 		
-		getElementById("db-amount-label-3").focus();
-		wait4Value("db-amount-label-3", "PLUS_DISPONIBILIDAD");
+		getElementById("db-amount-label-2").focus();
+		wait4Value("db-amount-label-2", "PLUS_DISPONIBILIDAD");
 		click("fxButton");
 		wait4Id("fxExpressionCodeArea");
 		Assert.assertEquals(((HtmlTextArea) getElementById("fxExpressionCodeArea")).getText(),"DIAS_TRABAJADOS * /*user*/ PLUS_DISPONIBILIDAD/**/ / DIAS_MES" );

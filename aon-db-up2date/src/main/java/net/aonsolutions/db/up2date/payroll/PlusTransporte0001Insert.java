@@ -76,7 +76,7 @@ public class PlusTransporte0001Insert implements Update {
 			config.dsl()
 			.update(CONTRACT_PAYMENT)
 			.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT, plusTransporte0001Concet)
-			.set(CONTRACT_PAYMENT.DESCRIPTION, DSL.regexpReplaceAll(CONTRACT_PAYMENT.DESCRIPTION, "[ \\[]*0032[ \\]]*", ""))
+			.set(CONTRACT_PAYMENT.DESCRIPTION, DSL.regexpReplaceAll(CONTRACT_PAYMENT.DESCRIPTION, "([ \\[]*0*)32([ \\]]*)", "$101$2"))
 			.set(CONTRACT_PAYMENT.TYPE, DSL.if_(CONTRACT_PAYMENT.TYPE.in((byte)32, (byte)1), DSL.castNull(CONTRACT_PAYMENT.TYPE), CONTRACT_PAYMENT.TYPE))
 			.where(CONTRACT_PAYMENT.PAYMENT_CONCEPT.in(plusTransporte0032Concepts))
 			.execute();
@@ -85,7 +85,7 @@ public class PlusTransporte0001Insert implements Update {
 			config.dsl()
 			.update(AGREEMENT_PAYMENT)
 			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, plusTransporte0001Concet)
-			.set(AGREEMENT_PAYMENT.DESCRIPTION, DSL.regexpReplaceAll(AGREEMENT_PAYMENT.DESCRIPTION, "[ \\[]*0032[ \\]]*", ""))
+			.set(AGREEMENT_PAYMENT.DESCRIPTION, DSL.regexpReplaceAll(AGREEMENT_PAYMENT.DESCRIPTION, "([ \\[]*0*)32([ \\]]*)", "$101$2"))
 			.set(AGREEMENT_PAYMENT.TYPE, DSL.if_(AGREEMENT_PAYMENT.TYPE.in((byte)32, (byte)1), DSL.castNull(AGREEMENT_PAYMENT.TYPE), AGREEMENT_PAYMENT.TYPE))
 			.where(AGREEMENT_PAYMENT.PAYMENT_CONCEPT.in(plusTransporte0032Concepts))
 			.execute();
@@ -94,7 +94,7 @@ public class PlusTransporte0001Insert implements Update {
 			config.dsl()
 			.update(PAYMENT_CONCEPT)
 			.set(PAYMENT_CONCEPT.TYPE, (byte)1)
-			.set(PAYMENT_CONCEPT.DESCRIPTION, DSL.regexpReplaceAll(PAYMENT_CONCEPT.DESCRIPTION, "[ \\[]*0032[ \\]]*", ""))
+			.set(PAYMENT_CONCEPT.DESCRIPTION, DSL.regexpReplaceAll(PAYMENT_CONCEPT.DESCRIPTION, "([ \\[]*0*)32([ \\]]*)", "$101$2"))
 			.where(PAYMENT_CONCEPT.DOMAIN.gt(0))
 			.and(PAYMENT_CONCEPT.TYPE.eq((byte)32))
 			.execute();

@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032025CANARIASIgicS
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032025CANARIASIgicScript2;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032025CANARIASLastPeriodScript1;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032025CANARIASLastPeriodScript2;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032026CANARIASIgicScript1;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -95,7 +96,11 @@ class Model303CANARIAS2025 extends Model303Base {
 		table.getColumnFormatter().setStyleName(5, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(6, WIDTH_140PX);
 		table.getColumnFormatter().setWidth(7, "50px");
-		paintDeclaration(table, Model3032025CANARIASIgicScript1.values(), 8);
+		if (getModel().getYear() >= 2026) {
+			paintDeclaration(table, Model3032026CANARIASIgicScript1.values(), 8);
+		} else {
+			paintDeclaration(table, Model3032025CANARIASIgicScript1.values(), 8);
+		}
 		container.add(table);
 		
 		table = new FlexTable();
