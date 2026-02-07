@@ -71,13 +71,13 @@ public class SociosCoopBases2025Update implements Update {
 			.set(SYSTEM_PAYMENT.DESCRIPTION, "Bases mínimas de cotización respecto de los socios de cooperativas de trabajo asociado, en los supuestos de contrato a tiempo parcial.")
 			.set(SYSTEM_PAYMENT.EXPRESSION, "if(COEFICIENTE_PARCIALIDAD < 1.00){"
 					+ "BASE_CGC_MIN "
-					+ "=(["
+					+ "=((["
 					+"\"01\":868.2,"
-					+"\"02\":639.2,"
-					+"\"03\":556.8][GRUPO_COTIZACION] or 552.6);" 
-					+ "BASE_CGC_MAX=BASE_CGC_MIN;" 
+					+"\"02\":639.9,"
+					+"\"03\":556.8][GRUPO_COTIZACION] or 552.6) "
+					+ "* (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/DIAS_MES)"
+					+ ");" 
 					+ "BASE_CGP_MIN=BASE_CGC_MIN;" 
-					+ "BASE_CGP_MAX=BASE_CGC_MIN;" 
 					+ "}; "
 					+ "HIDE();")
 			.execute();
