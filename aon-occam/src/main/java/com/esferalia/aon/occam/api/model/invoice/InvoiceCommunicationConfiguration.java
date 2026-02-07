@@ -1104,6 +1104,9 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		return types;
 	}
 	
+	public boolean hasCommunication(InvoiceType invoiceType, Date expDate) {
+		return AonCollectionUtils.isNotEmpty(getTypes(invoiceType, expDate));
+	}
 	public List<InvoiceCommunicationType> getTypes(Date atDate) {
 		return getTypes(InvoiceType.SALES, atDate);
 	}

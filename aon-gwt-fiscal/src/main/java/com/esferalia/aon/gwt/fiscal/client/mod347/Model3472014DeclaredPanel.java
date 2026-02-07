@@ -371,10 +371,10 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 		});
 		tab5.setWidget(2, 4, amount);
 		
-		AonTableButton button = new AonTableButton(FiscalModelKeyInfo.INVOICE.getLabel(), AON.CSS.aonIconData());
+		AonTableButton button = new AonTableButton("Ver desglose en facturas", AON.CSS.aonIconData());
 		button.setTabIndex(-2); // NO FOCUS
 		button.addClickHandler(event -> Model347.SERVICE.getInfo(cbk.getOptions().getOccam(),
-			mod347, declared, FiscalModelKeyInfo.INVOICE, new AsyncCallback<String>() {
+			mod347, declared, FiscalModelKeyInfo.MODEL_INVOICE_VAT_BREAKDOWN, new AsyncCallback<String>() {
 
 				@Override
 				public void onFailure(Throwable caught) {

@@ -25,7 +25,7 @@ public class Model347NewDeclarationPopup extends DockLayoutPanel {
 	private FlowPanel rootPanel;
 	private SimpleLayoutPanel headerPanel = new SimpleLayoutPanel();
 
-	private AdministrationListBox admonList = new AdministrationListBox(false, false, true);
+	private AdministrationListBox admonList = new AdministrationListBox();
 	private AonIntegerBox yearBox = new AonIntegerBox();
 	private CheckBox complementary = new CheckBox(AON.MSG.complementary());
 	private CheckBox replacement = new CheckBox(AON.MSG.replacement());

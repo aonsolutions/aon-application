@@ -1,10 +1,9 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { getTaskHoldersUser } from "../../../../services/taskHolderService.js";
+import { getTaskHolder } from "../../../../services/taskHolderService.js";
 import { getTaskHolderContactEvents, getTaskHolderTimeControl } from "../../../../services/timeControlService.js";
 import { AonDateUtils } from "../../../utils/AonDateUtils.js";
 import { timeHour } from ".././utils.js";
 import { AonCalendarMenu } from "./aon-calendar-menu.js";
-
 
 export class AonAgendaAllDays extends AonElement {
 
@@ -100,10 +99,10 @@ export class AonAgendaAllDays extends AonElement {
 		this.headerWeekHours = this.querySelector(".week-hours");
 		this.scrollEl = this.querySelector(".scroll");
 
-		let userTaskHolders = await getTaskHoldersUser();
-		if (userTaskHolders.length > 0) {
-			this._taskHolder = userTaskHolders[0].id;
-			this._taskHolderName = userTaskHolders[0].name;
+		let userTaskHolder = await getTaskHolder();
+		if (userTaskHolder) {
+			this._taskHolder = userTaskHolder.id;
+			this._taskHolderName = userTaskHolder.name;
 		}
 
 		this.aonCalendarMenu = new AonCalendarMenu();
@@ -247,11 +246,29 @@ export class AonAgendaAllDays extends AonElement {
 	/* ---------------- PROCESS EVENTS ---------------- */
 	processEvents(datos) {
 		if (!datos || !Array.isArray(datos)) return;
+		
+		const now = Date.now();
+		const todayKey = AonDateUtils.format(new Date(), "YYYY-MM-DD");
 
 		datos.forEach(dayData => {
 			// Convertir start_date (timestamp en milisegundos) a fecha
 			const date = new Date(dayData.start_date);
 			const dateKey = AonDateUtils.format(date, "YYYY-MM-DD");
+			
+			let time = dayData.time || 0;
+			const details = dayData.detail || [];
+			
+			// Sumar tiempo vivo SOLO si el día es hoy y el último evento es IN
+			if (
+				details.length > 0 &&
+				dateKey === todayKey
+			) {
+				const lastDetail = details[details.length - 1];
+	
+				if (lastDetail.status === 'in') {
+					time += now - lastDetail.date;
+				}
+			}
 
 			// Solo guardar si no existe ya (para no sobrescribir)
 			if (!this._events.has(dateKey)) {
@@ -259,10 +276,10 @@ export class AonAgendaAllDays extends AonElement {
 					dayData: {
 						start_date: dayData.start_date,
 						end_date: dayData.end_date,
-						time: dayData.time,
+						time,
 						status: dayData.status
 					},
-					details: dayData.detail || []
+					details
 				});
 			}
 		});

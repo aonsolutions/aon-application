@@ -7,6 +7,8 @@ import java.util.logging.Logger;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -17,14 +19,12 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -35,7 +35,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.in.pdf.maker.PdfMaker;
 import net.aonsolutions.aon.tbai.TbaiData;
-import net.aonsolutions.aon.verifactu.VERIFACTU;
 
 
 @SuppressWarnings("serial")
@@ -105,10 +104,12 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 			InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
 			String tbaiId = "";
 			if(icc.isTbai() || icc.isLroe()) {
-				TbaiData tbaiData = TbaiData.getInstance(icc);
-				String tbaiUrl = tbaiData.getTbaiUrl(domainName, domainId, login, invoice.getId());
-				qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
-				tbaiId = tbaiData.getTbaiId(domainName, domainId, login, invoice.getId());
+				try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+					TbaiData tbaiData = TbaiData.getInstance(ctx, icc);
+					String tbaiUrl = tbaiData.getTbaiUrl(domainId, invoice.getId());
+					qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
+					tbaiId = tbaiData.getTbaiId(domainId, invoice.getId());
+				}
 			} else if(icc.isVerifactu() || icc.isNoVerifactu()) {
 				if (invoice.getCommunicationInfo() != null) {
 					InvoiceInfo info = invoice.getCommunicationInfo().get(

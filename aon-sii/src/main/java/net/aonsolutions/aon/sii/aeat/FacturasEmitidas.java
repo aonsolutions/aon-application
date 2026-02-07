@@ -189,11 +189,19 @@ public class FacturasEmitidas extends SIIBuilt {
 		// Régimen especial de la Unión, se debe pasar como no sujeta por reglas de localizacion y solo la base imponible sin el IVA del pais miembro 
 		boolean oss = invoice.isVatUnion();
 		
-		Double exenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && exempt && f.getPercentage() == 0 && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()) && !f.isPrepayment() && !oss) 
+		Double exenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) 
+				&&  f.getPercentage() == 0 && 
+				( 
+					(exempt && VatDeductionType.WITH_RIGHT.equals(f.getVatDeductionType()))
+					|| VatDeductionType.WITHOUT_RIGHT.equals(f.getVatDeductionType())
+				)
+				&& !f.isPrepayment() && !oss) 
 				.mapToDouble(f -> f.getBase()).sum();
 		Double noSujeta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && (VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()) || f.isPrepayment() || oss))
 				.mapToDouble(f -> f.getBase()).sum();
-		LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && (!exempt || f.getPercentage() > 0)  && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()) && !f.isPrepayment() && !oss )
+
+		LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && (!exempt || f.getPercentage() > 0)  
+				&& VatDeductionType.WITH_RIGHT.equals(f.getVatDeductionType()) && !f.isPrepayment() && !oss )
 				.map(f -> new VatData().setBase(f.getBase())
 						.setPercentage(f.getPercentage())
 						.setQuota(f.getQuota())
@@ -206,7 +214,8 @@ public class FacturasEmitidas extends SIIBuilt {
 		factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), false));
 		IDFacturaExpedidaType idFactura = new IDFacturaExpedidaType();
 		
-		idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
+		Date expDate = invoice != null && invoice.getExpDate() != null ? invoice.getExpDate() : vat.getIssueDate();
+		idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(expDate, "dd-MM-yyyy"));
 		//idFactura.setNumSerieFacturaEmisorResumenFin(vat.getReferenceCode()); // SI ES ASIENTO RESUMEN
 		idFactura.setNumSerieFacturaEmisor(vat.getReferenceCode());
 		IDEmisorFactura emisor = new IDEmisorFactura();
@@ -228,7 +237,8 @@ public class FacturasEmitidas extends SIIBuilt {
 			Invoice rectificada = AON.getInvoice(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(vat.getRectificationInvoice()));
 			// SOLO 1 RECTIFICADA PARA CADA RECTIFICATIVA! 
 			IDFacturaARType a2 = new IDFacturaARType();
-			a2.setFechaExpedicionFacturaEmisor(AonDateUtils.format(rectificada.getIssueDate(), "dd-MM-yyyy")); //TODO
+			
+			a2.setFechaExpedicionFacturaEmisor(AonDateUtils.format(rectificada.getExpDate(), "dd-MM-yyyy")); //TODO
 			a2.setNumSerieFacturaEmisor(rectificada.getReferenceCode());
 			fr.getIDFacturaRectificada().add(a2);
 			fet.setFacturasRectificadas(fr);

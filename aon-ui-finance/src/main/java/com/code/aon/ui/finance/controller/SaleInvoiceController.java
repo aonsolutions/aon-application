@@ -69,6 +69,8 @@ import com.code.aon.warehouse.bridge.DeliveryTransferManager;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
@@ -83,8 +85,8 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAdministrationVisitor;
-import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
@@ -709,7 +711,9 @@ public class SaleInvoiceController extends InvoiceController {
 				if(config.isTbai() || config.isLroe()) {
 					TbaiMain tbai = new TbaiMain();
 					tbai.createEmisionTBAI(company, invoice, config);
-					setTbaiUrl(TbaiData.getInstance(config).getTbaiUrl(company.getDomain().getName(), company.getDomain().getId(), login, invoice.getId()));
+					try (CloseableAONContext ctx =  AONContext.getAONContext(company.getDomain(), "")) {
+						setTbaiUrl(TbaiData.getInstance(ctx, config).getTbaiUrl(company.getDomain().getId(), invoice.getId()));
+					}
 				}
 				
 				if(config.isSii()) {
@@ -1123,6 +1127,12 @@ public class SaleInvoiceController extends InvoiceController {
 		if (isSif()) return "Emitir / Archivar";
 		if (isSii()) return "Emitir / Enviar";
 		return "Aceptar/Enviar";
+	}
+	
+	@Override
+	public boolean isSii() {
+		if(isTbai()) return false;
+		return super.isSii();
 	}
 	
 	public String getSendIcon() {

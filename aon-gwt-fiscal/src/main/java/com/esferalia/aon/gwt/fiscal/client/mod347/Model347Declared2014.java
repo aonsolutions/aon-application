@@ -17,6 +17,8 @@ public class Model347Declared2014 extends DockLayoutPanel implements IModel347De
 		void onValueChanged( Mod347Declared declared);
 	}
 	private Model347DeclaredTable table;
+	private Model3472014DeclaredPanel declaredPanel;
+	private Model3472025DeclaredPanelCanarias declaredPanelCanarias;
 	
 	public Model347Declared2014( Model347Callback callback, Mod347 mod347, Integer selectedIndex ) {
 		super(Unit.PX);
@@ -25,7 +27,8 @@ public class Model347Declared2014 extends DockLayoutPanel implements IModel347De
 		
 		SimpleLayoutPanel container = new SimpleLayoutPanel();
 		table.addSelectionHandler( event -> {
-			Model3472014DeclaredPanel panel = new Model3472014DeclaredPanel(callback,mod347,event.getSelectedItem(), new IModel347DeclaredCallback() {
+			
+			IModel347DeclaredCallback model347DeclaredCallback = new IModel347DeclaredCallback() {
 				
 				@Override
 				public void onValueChanged(Mod347Declared declared) {
@@ -41,19 +44,106 @@ public class Model347Declared2014 extends DockLayoutPanel implements IModel347De
 					table.refresh();
 				}
 				
-			});
-			container.setWidget(panel);
+			};
+			
+			if (mod347.isCanarias()) {
+				declaredPanelCanarias = new Model3472025DeclaredPanelCanarias(callback, mod347, event.getSelectedItem(), model347DeclaredCallback);	
+			} else {
+				declaredPanel = new Model3472014DeclaredPanel(callback, mod347, event.getSelectedItem(), model347DeclaredCallback);	
+			}
+			
+//			SimpleLayoutPanel panel = mod347.isCanarias() ? getDeclaredPanelCanarias(callback, mod347, event) : getDeclaredPanel(callback, mod347, event);	
+			
+//			if (mod347.isCanarias()) {
+//				panel = getDeclaredPanelCanarias(callback, mod347, event);
+//			} else {
+//				panel = getDeclaredPanel(callback, mod347, event);	
+//			}
+			
+//			Model3472014DeclaredPanel panel = new Model3472014DeclaredPanel(callback,mod347,event.getSelectedItem(), new IModel347DeclaredCallback() {
+//				
+//				@Override
+//				public void onValueChanged(Mod347Declared declared) {
+//					if (!declared.isDirty()) {
+//						declared.setDirty(true);
+//						table.refresh();		
+//					}
+//				}
+//				
+//				@Override
+//				public void onTableChanged(Mod347Declared declared) {
+//					declared.setDirty(true);
+//					table.refresh();
+//				}
+//				
+//			});
+//			container.setWidget(panel);
+//			
+//			Scheduler.get().scheduleDeferred(new Command() {
+//		        public void execute() {
+//		        	panel.setFocus(true);
+//		        }
+//		    });
+			
+			container.setWidget(mod347.isCanarias() ? declaredPanelCanarias : declaredPanel);
 			
 			Scheduler.get().scheduleDeferred(new Command() {
 		        public void execute() {
-		        	panel.setFocus(true);
+		        	if (mod347.isCanarias()) 
+		        		declaredPanelCanarias.setFocus(true);
+		        	else 
+		        		declaredPanel.setFocus(true);	  
 		        }
-		    });		
+			});
 
 		});
 		add(container);
 	}
 
+//	private Model3472014DeclaredPanel getDeclaredPanel(Model347Callback callback, Mod347 mod347, SelectionEvent<Mod347Declared> event) {
+//		
+//		return new Model3472014DeclaredPanel(callback,mod347,event.getSelectedItem(), new IModel347DeclaredCallback() {
+//		
+//			@Override
+//			public void onValueChanged(Mod347Declared declared) {
+//				if (!declared.isDirty()) {
+//					declared.setDirty(true);
+//					table.refresh();		
+//				}
+//			}
+//			
+//			@Override
+//			public void onTableChanged(Mod347Declared declared) {
+//				declared.setDirty(true);
+//				table.refresh();
+//			}
+//			
+//		});
+//		
+//	}
+//	
+//	private Model3472025DeclaredPanelCanarias getDeclaredPanelCanarias(Model347Callback callback, Mod347 mod347, SelectionEvent<Mod347Declared> event) {
+//		
+//		return new Model3472025DeclaredPanelCanarias(callback,mod347,event.getSelectedItem(), new IModel347DeclaredCallback() {
+//			
+//			@Override
+//			public void onValueChanged(Mod347Declared declared) {
+//				if (!declared.isDirty()) {
+//					declared.setDirty(true);
+//					table.refresh();		
+//				}
+//			}
+//			
+//			@Override
+//			public void onTableChanged(Mod347Declared declared) {
+//				declared.setDirty(true);
+//				table.refresh();
+//			}
+//			
+//		});		
+//		
+//	}
+	
 	@Override
 	public Integer getSelectedDeclaredIndex() {
 		return table.getSelectionIndex();

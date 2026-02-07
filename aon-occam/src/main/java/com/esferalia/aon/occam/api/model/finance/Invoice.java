@@ -445,8 +445,10 @@ public class Invoice implements Serializable, HasAudit {
 		this.retentionQuota = retentionQuota;
 		return this;
 	}
-	public double getGrossTotal() {
-		return AonMathUtils.round(total + getTaxBreakdown().map(b -> b.getRetentionQuota()).orElse(0.0));	
+	public double getGrossTotal(boolean includePrepayments) {
+		double prepayment = includePrepayments ?  0.0
+			: detailStream().filter(f -> f.isPrepayment()).map(InvoiceDetail::getAmount).mapToDouble(d -> Double.valueOf(d)).sum();
+		return AonMathUtils.round(total + getTaxBreakdown().map(b -> b.getRetentionQuota()).orElse(0.0) - prepayment, 2);	
 	}
 	public double getTotal() {
 		return total;

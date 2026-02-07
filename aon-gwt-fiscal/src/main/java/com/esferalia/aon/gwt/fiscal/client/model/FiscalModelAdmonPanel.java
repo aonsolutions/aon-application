@@ -82,7 +82,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 
 	private AonLink modelInfoLinklink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconLink(), "Informaci\u00F3n de procedimiento del modelo.");
 	private AonLink downloadLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconDownload(), "Archivo para la presentaci\u00F3n");
-	private AonLink boeDownloadLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconDownload(), "Archivo para la presentaci\u00F3n. [Formato BOE]");
+	private AonLink boeDownloadLink;
 
 	private AonLink validateLink;
 	private AonLink sendLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconSend(), "Envio de la presentaci\u00F3n a la AEAT.");
@@ -130,8 +130,10 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 		
 		if (callback.getModel().isCanarias()) {
 			validateLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconValid(), "Validar / Borrador PDF via ATC");
+			boeDownloadLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconDownload(), "Archivo TXT para la importaci\u00F3n desde el programa de ayuda");
 		} else {
 			validateLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconValid(), "Validar / Borrador PDF via AEAT");
+			boeDownloadLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconDownload(), "Archivo para la presentaci\u00F3n. [Formato BOE]");
 		}
 		validateLink.addClickHandler(event -> validateAEAT()); 
 		cards.add( validateLink );
@@ -242,6 +244,11 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 		});	
 		StringBuilder requestData = new StringBuilder();
 		requestData.append("&"+IRequestParamsNames.AEAT_PARAMS +"=" + JsonParams.convert( params ));
+
+		if (getCallback().getModel().isCanarias()) {
+			requestData.append("&isBorrador=true");	
+		}
+		
 		xhr.send(requestData.toString());
 	}
 	
@@ -253,7 +260,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 		if (getCallback().getModel().canBeSent() || getCallback().getModel().isSent()) {
 			boeFormatHidden.setValue(Boolean.toString(boeFormat));
 			if (getCallback().getModel().isCanarias()) {
-				downloadFileATC();
+				downloadFileATC(boeFormat);
 			}
 			else {
 				submitForm(getCallback().getDownloadFileAction());
@@ -264,7 +271,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 	}
 	
 	// Agencia Tributaria Canaria: Obtener fichero (se hace a través del modulo de impresión de la ATC)
-	private void downloadFileATC() {
+	private void downloadFileATC(boolean bocFormat) {
 		if (!validating) {
 			validating = true;
 			AEATParams params =new AEATParams()
@@ -301,6 +308,9 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 			});	
 			StringBuilder requestData = new StringBuilder();
 			requestData.append("&"+IRequestParamsNames.AEAT_PARAMS +"=" + JsonParams.convert( params ));
+			if (bocFormat) {
+				requestData.append("&bocFormat=true");
+			}
 			xhr.send(requestData.toString());
 		}
 	}

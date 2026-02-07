@@ -52,7 +52,8 @@ public class FiscalModelUtils {
 		// ********** MODELO 340 ********** 
 		,M340	("340",mod -> mod.getModel() == FiscalModelType.M340)
 		// ********** MODELO 347 ********** 
-		,M347	("347",mod -> mod.getModel() == FiscalModelType.M347)
+		,M347	("347",mod -> (mod.getModel() == FiscalModelType.M347 && !mod.isCanarias()))
+		,M415	("415",mod -> (mod.getModel() == FiscalModelType.M347 && mod.isCanarias()), "Declaraci\u00F3n anual de operaciones con terceras personas.")
 		// ********** MODELO 349 ********** 
 		,M349	("349",mod -> mod.getModel() == FiscalModelType.M349)
 		// ********** MODELO 180 ********** 

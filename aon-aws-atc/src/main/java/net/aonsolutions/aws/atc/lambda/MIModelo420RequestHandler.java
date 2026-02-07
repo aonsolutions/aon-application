@@ -11,27 +11,47 @@ public class MIModelo420RequestHandler implements RequestHandler<MIModelo420Requ
 	public MIModelo420Result handleRequest(MIModelo420Request input, Context context) {
 		String declaracion = new String(Base64.getDecoder().decode(input.getDeclaracion()));
 		System.out.println(declaracion);
-		if (declaracion.contains("MOD=\"425\"")) {
-			// Modelo 425
-			if (input.isBorrador())
-				return new MIModelo420Handler().obtenerBorrador425(declaracion); // Borrador
-			else
-				return new MIModelo420Handler().obtenerPresentacion425(declaracion); // Fichero para presentación
-		} else if (declaracion.contains("MOD=\"417\"")) {
-			// Modelo 417
-			if (input.isBorrador())
-				return new MIModelo420Handler().obtenerBorrador417(declaracion); // Borrador
-			else
-				return new MIModelo420Handler().obtenerPresentacion417(declaracion); // Fichero para presentación
-		} else if (declaracion.contains("MOD=\"420\"")) {
-			// Modelo 420
-			if (input.isBorrador())
-				return new MIModelo420Handler().obtenerBorrador420(declaracion); // Borrador
-			else
-				return new MIModelo420Handler().obtenerPresentacion420(declaracion); // Fichero para presentación
-		} else {
-			return new MIModelo420Handler().errorModeloNoSoportado();
-		}
+		
+		// MODELOS 417, 420 y 425
+		if (input.isBorrador())
+			return new MIModelo420Handler().obtenerBorrador(declaracion); // Borrador
+		else
+			return new MIModelo420Handler().obtenerPresentacion(declaracion); // Fichero para presentación
+		
+		// MODELO 415
+//		if (input.isBorrador())
+//			return new MIModelo420Handler().obtenerBorrador415(declaracion); // Borrador
+//		else
+//			return new MIModelo420Handler().obtenerPresentacion415(declaracion); // Fichero para presentación
+		
+//		if (declaracion.startsWith("1415")) {
+//			// Modelo 415
+//			if (input.isBorrador())
+//				return new MIModelo420Handler().obtenerBorrador415(declaracion); // Borrador
+//			else
+//				return new MIModelo420Handler().obtenerPresentacion415(declaracion); // Fichero para presentación
+//		} else 
+//			if (declaracion.contains("MOD=\"425\"")) {
+//			// Modelo 425
+//			if (input.isBorrador())
+//				return new MIModelo420Handler().obtenerBorrador425(declaracion); // Borrador
+//			else
+//				return new MIModelo420Handler().obtenerPresentacion425(declaracion); // Fichero para presentación
+//		} else if (declaracion.contains("MOD=\"417\"")) {
+//			// Modelo 417
+//			if (input.isBorrador())
+//				return new MIModelo420Handler().obtenerBorrador417(declaracion); // Borrador
+//			else
+//				return new MIModelo420Handler().obtenerPresentacion417(declaracion); // Fichero para presentación
+//		} else if (declaracion.contains("MOD=\"420\"")) {
+//			// Modelo 420
+//			if (input.isBorrador())
+//				return new MIModelo420Handler().obtenerBorrador420(declaracion); // Borrador
+//			else
+//				return new MIModelo420Handler().obtenerPresentacion420(declaracion); // Fichero para presentación
+//		} else {
+//			return new MIModelo420Handler().errorModeloNoSoportado();
+//		}
 	}
 	
 //	private static String obtenerXML() {
@@ -67,14 +87,46 @@ public class MIModelo420RequestHandler implements RequestHandler<MIModelo420Requ
 //		
 //	}
 //	
+//	private static String obtener415() {
+//		
+//		String fileTxt = 
+//			 "14152025B50111111EMPRESA DE PRUEBA, S.L.                 000000002 000000002602006000000004 000000003527366000000000 000000000000000000000000 000000000000000000000000 000000000000000000000000 000000000000000000000000 000000000000000 0000000000000" + "\r\n" 
+//			+"24152025B50111111B17456640PADRIAN SANCHO MARQUES                                  000000000000000 000000000602500000000000000000 000000000000000 0000000000010000000 000000000121000 000000000000000 000000000000100 000000000181500 000000000000000 000000000000200 000000000300000 000000000000000 000000000000300 000000000000000 000000000000000 000000000000400" +"\r\n" 
+//			+"24152025B50111111B26485990HADA PUNZANO MILLAN                                     000000000000000 000000001380246000000000000000 000000000000000 0000000000000000000 000000000760246 000000000000000 000000000000000 000000000363000 000000000000000 000000000000000 000000000257000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000" +"\r\n" 
+//			+"24152025B50111111B26485990HADA PUNZANO MILLAN                                 X   000000000000000 000000000157300000000000000000 000000000000000 0000000000000000000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000" +"\r\n" 
+//			+"24152025B50111111AA01021690ALAVESA DE PINTURAS                                    000000000000000 000000002432606000000000000000 000000000000000 0000000000000000000 000000000099000 000000000000000 000000000000000 000000001586380 000000000000000 000000000000000 000000000211726 000000000000000 000000000000000 000000000535500 000000000000000 000000000000000" +"\r\n" 
+//			+"24152025B50111111AA01021690ALAVESA DE PINTURAS                                X   000000000169400 000000000169400000000000000000 000000000000000 0000000000000000000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000" +"\r\n" 
+//			+"24152025B50111111B         OSS CLIENTE INTRA ALEMANIA OSS                   DE    000000000000000 000000001386320000000000000000 000000000000000 0000000000000000000 000000000509070 000000000000000 000000000000000 000000000877250 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000 000000000000000" +"\r\n" 
+////			+"34152025B5011111117456640PADRIAN SANCHO MARQUES                             00000000602500N                         CL   SEVILLA                                           NUM00002                                                          ZARAGOZA                      ZARAGOZA                      502975050001" +"\r\n"
+//		;
+//		
+//		return fileTxt;
+//	
+//	}
+//	
 //	public static void main(String[] args) {
 //		
 //		MIModelo420Request input = new MIModelo420Request();
 //		input.setDeclaracion(Base64.getEncoder().encodeToString(obtenerXML().getBytes()));
+////		input.setDeclaracion(Base64.getEncoder().encodeToString(obtener415().getBytes()));
 //		input.setBorrador(false);
 //		
 //		MIModelo420RequestHandler mi = new MIModelo420RequestHandler();
 //		mi.handleRequest(input, null);
+//		
+////		MIModelo420Result result = mi.handleRequest(input, null);
+////		String resultado = result.getResultado();
+//		
+//		// grabar la variable resultado en un fichero externo
+////		PrintWriter writer;
+////		try {
+////			writer = new PrintWriter("c:\\tmp\\resultado_415.atc", "UTF-8");
+////			writer.print(resultado);
+//////			writer.print(obtener415());
+////			writer.close();
+////		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+////			e.printStackTrace();
+////		}
 //		
 //	}
 	

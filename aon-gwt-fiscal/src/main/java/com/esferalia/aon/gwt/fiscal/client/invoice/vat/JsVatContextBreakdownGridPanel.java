@@ -262,8 +262,10 @@ public class JsVatContextBreakdownGridPanel extends FlowPanel implements HasSele
 			.addCell(surchargeQuotaLabel   ,AON.CSS.aonTextRight(),COLUMN_LENGTHS[i++])
 			.addCell(deductiblePercentLabel,AON.CSS.aonTextRight(),COLUMN_LENGTHS[i++])
 			.addCell(deductibleQuotaLabel,AON.CSS.aonTextRight(),COLUMN_LENGTHS[i++])
-			.addCellIf(showProrrate, prorratePercentLabel,AON.CSS.aonTextRight(),AonMathUtils.isZero(vc.getProrratePercent())?AON.CSS.aonColorBlack():AON.CSS.aonColorBlue(),COLUMN_LENGTHS[i++])
-			.addCellIf(showProrrate, prorrateQuotaLabel,AON.CSS.aonTextRight(),AonMathUtils.isZero(vc.getProrratePercent())?AON.CSS.aonColorBlack():AON.CSS.aonColorBlue(),COLUMN_LENGTHS[i++])
+//			.addCellIf(showProrrate, prorratePercentLabel,AON.CSS.aonTextRight(),AonMathUtils.isZero(vc.getProrratePercent())?AON.CSS.aonColorBlack():AON.CSS.aonColorBlue(),COLUMN_LENGTHS[i++])
+//			.addCellIf(showProrrate, prorrateQuotaLabel,AON.CSS.aonTextRight(),AonMathUtils.isZero(vc.getProrratePercent())?AON.CSS.aonColorBlack():AON.CSS.aonColorBlue(),COLUMN_LENGTHS[i++])
+			.addCellIf(showProrrate, prorratePercentLabel,AON.CSS.aonTextRight(),AON.CSS.aonColorBlue(),COLUMN_LENGTHS[i++])
+			.addCellIf(showProrrate, prorrateQuotaLabel,AON.CSS.aonTextRight(),AON.CSS.aonColorBlue(),COLUMN_LENGTHS[i++])
 			.addCell(new Label(ensure(vc.getReferenceCode(), vc::getReferenceCode, AonStringUtils.EMPTY)),COLUMN_LENGTHS[i++])
 		;
 		return row;

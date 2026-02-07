@@ -214,6 +214,7 @@ public class LROE140_2_1 extends LROE140 {
 			if(invoice.getEpigraph().equals("192210") || invoice.getEpigraph().equals("192220") )
 				invoice.setEpigraph("192200");
 			if(invoice.getEpigraph().equals("150410")) invoice.setEpigraph("150411"); // o 150412 ??
+			if(invoice.getEpigraph().equals("166410")) invoice.setEpigraph("166411"); // o 166412 ??
 			
 			r.setEpigrafe(invoice.getEpigraph());
 
@@ -229,7 +230,7 @@ public class LROE140_2_1 extends LROE140 {
 			r.setCriterioCobrosYPagos(invoice.isVatAccrualPayment() ? SiNoEnum.S : SiNoEnum.N);
 
 			// BIEN AFECTO !!
-			if(invoice.getInvestAsset() != null) { 
+			if(invoice.getInvestAsset() != null || detail.getInvestAsset() != null) { 
 				Integer ia = detail.getInvestAssetData() != null && detail.getInvestAssetData().getId() != null 
 					? detail.getInvestAssetData().getId() : invoice.getInvestAsset();
 				r.setBienAfectoIRPFYOIVA(BienAfectoIRPFYOIVAEnum.I);

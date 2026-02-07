@@ -22,6 +22,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CM_005("303-CM005",false,null,"R\u00E9gimen por defecto")
 	,CM_006("303-CM006",false,null,"Tipo de prorrata (E/G).")
 	,CM_007("303-CM007",false,null,"Porcentaje de prorrata antes de la regularizaci\u00F3n.")
+	,CM_008("303-CM008",false,null,"Aplicar prorrata")
 
 	// Casillas necesarias para el calculo de la prorrata definitiva.
 	,CM_070("303-CM070",false,null,"Importe anual de entregas de bienes y prestaciones de servicios que dan derecho a deducci\u00F3n, sin incluir el IVA (incluye operaciones con inversi\u00F3n del sujeto pasivo, exportaciones, y entregas intracomunitarias)")
@@ -1194,6 +1195,9 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CA_DB07("303-CADB07",true ,null,"IGIC Devengado (7) - Base imponible")       // IGIC Devengado - Base imponible     (7)
 	,CA_DT07("303-CADT07",false,null,"IGIC Devengado (7) - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (7)
 	,CA_DC07("303-CADC07",true ,null,"IGIC Devengado (7) - Cuota devengada")      // IGIC Devengado - Cuota devengada    (7)
+	,CA_DB08("303-CADB08",true ,null,"IGIC Devengado (8) - Base imponible")       // IGIC Devengado - Base imponible     (8) // Fila de casillas que añaden en 2026, total 8 filas para poder cubrir todos los tipos posibles de IGIC
+	,CA_DT08("303-CADT08",false,null,"IGIC Devengado (8) - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (8)
+	,CA_DC08("303-CADC08",true ,null,"IGIC Devengado (8) - Cuota devengada")      // IGIC Devengado - Cuota devengada    (8)
 	,CA_C019("303-CAC019",true ,"19","Operaciones con inversi\u00F3n del sujeto pasivo - Base imponible")	// Operaciones con inversión del sujeto pasivo - Base imponible 
 	,CA_C020("303-CAC020",true ,"20","Operaciones con inversi\u00F3n del sujeto pasivo - Cuota devengada")	// Operaciones con inversión del sujeto pasivo - Cuota devengada
 	,CA_C021("303-CAC021",true ,"21","Modificaci\u00F3n bases y cuotas - Base imponible")               	// Modificación bases y cuotas - Base imponible       

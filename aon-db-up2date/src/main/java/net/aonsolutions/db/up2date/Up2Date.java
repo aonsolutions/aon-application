@@ -19,6 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod347Detail2025Bis;
+import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2026Insert;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.tgss.SociosCoopBases2025Update;
 
@@ -587,6 +589,8 @@ public class Up2Date {
 			// PlusTransporte0001Insert.PLUSTRANSPORTE0001INSERT,
 			SociosCoopBases2025Update.SOCIOSCOOPBASES2025UPDATE,
 			
+			
+			AlterFsMod347Detail2025Bis.ALTER_FS_MOD_347_DETAIL_2025_BIS,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
