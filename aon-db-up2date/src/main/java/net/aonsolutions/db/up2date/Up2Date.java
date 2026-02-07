@@ -22,6 +22,11 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod347Detail2025Bis;
 import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2026Insert;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
+import net.aonsolutions.db.up2date.payroll.FlexibleInsurancePremiumsInsert;
+import net.aonsolutions.db.up2date.payroll.PlusTransporte0001Insert;
+import net.aonsolutions.db.up2date.tgss.MEISolidarity2026RDL162025Fix;
+import net.aonsolutions.db.up2date.tgss.MEISolidarity2026RDL162025Undo;
+import net.aonsolutions.db.up2date.timecontrol.CalendarHolidaysAlter;
 import net.aonsolutions.db.up2date.tgss.SociosCoopBases2025Update;
 
 public class Up2Date {
@@ -614,6 +619,8 @@ public class Up2Date {
 			//AddColumnMarketingActionProduct.ADD_COLUMN_MARKETING_ACTION_PRODUCT,
 			//LocationRegistryAlter.LOCATION_REGISTRY_ALTER,
 			//TimecontrolLocationAlter.TIMECONTROL_LOCATION_ALTER
+			
+			CalendarHolidaysAlter.CALENDAR_HOLIDAYS_ALTER
 	
 	};
 
