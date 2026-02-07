@@ -871,10 +871,15 @@ public class Contrata {
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 					setOccupation(cto, form);
 					
-					HtmlSelect select = (HtmlSelect) htmlPage.getElementById("preg28dias");
-					select.setSelectedIndex(cto.isWrittenContract() ? 1 : 2);
-					select.setSelectedAttribute(cto.isWrittenContract() ? "S" : "N", true);
-//					form.getInputByName("contratoEscrito").setValue(cto.isWrittenContract() ? "S" : "N");
+					HtmlSelect selectPreg28Dias = (HtmlSelect) htmlPage.getElementById("preg28dias");
+					if (selectPreg28Dias != null) {
+						selectPreg28Dias.setSelectedIndex(cto.isWrittenContract() ? 1 : 2);
+						selectPreg28Dias.setSelectedAttribute(cto.isWrittenContract() ? "S" : "N", true);
+					}
+					
+//					HtmlInput contratoEscritoHtmlInput = form.getInputByName("contratoEscrito");
+//					if ( contratoEscritoHtmlInput != null)
+//						contratoEscritoHtmlInput.setValue(cto.isWrittenContract() ? "S" : "N");
 					
 					webClient.waitForBackgroundJavaScript(5000);
 					

@@ -92,6 +92,7 @@ public class InvoiceDetailExtendedDAO {
 				,INVOICE_DETAIL.ITEM
 				,PCATEGORY.ID
 				,PCATEGORY.NAME
+				,BRAND.ID
 				,BRAND.NAME
 				,PRODUCT.ID
 				,PRODUCT.NAME

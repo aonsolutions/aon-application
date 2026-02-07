@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.impl.jooq.dao.mod417_2025.Mod417ToDEC;
+import com.esferalia.aon.occam.impl.jooq.dao.mod417_2026.Mod417ToDEC2026;
 import com.esferalia.aon.occam.impl.jooq.dao.mod420_2025.Mod420ToDEC;
 
 import jakarta.servlet.ServletException;
@@ -35,7 +36,9 @@ public class Mod420File extends HttpServlet {
 			System.out.println("PASO 1");
 			
 			// Obtener el XML
-			String xml = mod303.isMonthPeriod() ? Mod417ToDEC.getDeclaration(mod303) : Mod420ToDEC.getDeclaration(mod303);
+			String xml = mod303.isMonthPeriod() ? 
+							mod303.getYear() >= 2026 ?  Mod417ToDEC2026.getDeclaration(mod303) : Mod417ToDEC.getDeclaration(mod303) // Modelo 417
+							: Mod420ToDEC.getDeclaration(mod303); // Modelo 420
 			
 			System.out.println("PASO 2. xml="+xml);
 			
