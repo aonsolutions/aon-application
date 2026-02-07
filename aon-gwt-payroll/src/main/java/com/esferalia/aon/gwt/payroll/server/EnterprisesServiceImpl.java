@@ -5252,5 +5252,17 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		Domain domain = AON_SOLUTIONS.getDomain(domainName);
 		AON.deleteHolidayDetail(domain.getName(), domain.getId(), userLogin, id);
 	}
+
+	@Override
+	public com.esferalia.aon.occam.api.model.calendar.Calendar saveCalendar(String domainName, String userLogin, com.esferalia.aon.occam.api.model.calendar.Calendar calendar) throws IllegalArgumentException {
+		Domain domain = AON_SOLUTIONS.getDomain(domainName);
+		return AON.saveCalendar(domain.getName(), domain.getId(), userLogin, calendar);
+	}
+
+	@Override
+	public void setPayrollWorkplaceCalendar(String domainName, String userLogin, Integer workplaceId, Integer calendarId) throws IllegalArgumentException {
+		Domain domain = AON_SOLUTIONS.getDomain(domainName);
+		AON.setPayrollWorkplaceCalendar(domain.getName(), domain.getId(), userLogin, workplaceId, calendarId);
+	}
 	
 }

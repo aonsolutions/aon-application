@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.calendar;
 import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -15,6 +16,7 @@ import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Filter.CalendarFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.CalendarProperties;
@@ -36,6 +38,8 @@ public class CalendarDAO {
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(CALENDAR.DOMAIN);}
 		@Override public Property<Integer> getHolidayroperty() { return new FilterDAO.PropertyDAO<>(CALENDAR.HOLIDAY);}
 		@Override public Property<Double> getAnualHoursProperty() { return new FilterDAO.PropertyDAO<>(CALENDAR.ANUAL_HOURS);}
+		@Override public Property<Double> getAnualHolidaysProperty() { return new FilterDAO.PropertyDAO<>(CALENDAR.ANNUAL_HOLIDAYS);}
+		@Override public Property<Byte> getHolidaysTypeProperty() { return new FilterDAO.PropertyDAO<>(CALENDAR.HOLIDAYS_TYPE);}
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(CALENDAR.DESCRIPTION);}
 		@Override public Property<String> getCommentsProperty() { return new FilterDAO.PropertyDAO<>(CALENDAR.COMMENTS);}
 		@Override public Property<Byte> getMondayProperty() { return new FilterDAO.PropertyDAO<>(CALENDAR.MONDAY);}
@@ -91,7 +95,7 @@ public class CalendarDAO {
 		else if(payrollWorkplaces.size() > 1) throw new IllegalArgumentException("Existe mas de un payroll_workplace asociado al CT");
 		else {
 			Integer calendarId = payrollWorkplaces.get(0).get(PAYROLL_WORKPLACE.CALENDAR);
-			if(null == calendarId) throw new IllegalArgumentException("No existe calendario asociado al CT");
+			if(null == calendarId) return new ArrayList<Calendar>().stream();
 			else 
 				return getStream(ctx, f -> f.getIdProperty().eq(calendarId));
 		}
@@ -138,9 +142,15 @@ public class CalendarDAO {
 	}
 	
 	private static Calendar update(AONContext ctx, Calendar calendar){
+		Holiday holiday = calendar.getHoliday();
+		if(holiday != null)
+			holiday = HolidayDAO.save(ctx, holiday);
+		
 		ctx.getDslContext().update(CALENDAR)
-			.set(CALENDAR.HOLIDAY, calendar.getHoliday().getId())
+			.set(CALENDAR.HOLIDAY, null == holiday ? null : holiday.getId())
 			.set(CALENDAR.ANUAL_HOURS, calendar.getAnualHours())
+			.set(CALENDAR.ANNUAL_HOLIDAYS, calendar.getAnnualHolidays())
+			.set(CALENDAR.HOLIDAYS_TYPE, null == calendar.getHolidaysType() ? (byte)0 : calendar.getHolidaysType())
 			.set(CALENDAR.DESCRIPTION, calendar.getDescription())
 			.set(CALENDAR.COMMENTS, calendar.getComment())
 			.set(CALENDAR.MONDAY, calendar.isMonday() ? (byte) 1 : (byte) 0)
@@ -161,16 +171,25 @@ public class CalendarDAO {
 			.set(CALENDAR.CALENDAR_, calendar.getCalendarParent())
 			.where(CALENDAR.ID.eq(calendar.getId()))
 			.execute();
+		
+		
+		
 		ctx.log().debug("UPDATE CALENDAR id: " + calendar.getId());		
 		return calendar;
 	}
 	
 	private static Calendar insert(AONContext ctx, Calendar calendar) {
+		Holiday holiday = calendar.getHoliday();
+		if(holiday != null)
+			holiday = HolidayDAO.save(ctx, holiday);
+		
 		Integer id = ctx.getDslContext()
 				.insertInto(CALENDAR)
 				.set(CALENDAR.DOMAIN, calendar.getDomain())
-				.set(CALENDAR.HOLIDAY, calendar.getHoliday().getId())
+				.set(CALENDAR.HOLIDAY, null == holiday ? null : holiday.getId())
 				.set(CALENDAR.ANUAL_HOURS, calendar.getAnualHours())
+				.set(CALENDAR.ANNUAL_HOLIDAYS, calendar.getAnnualHolidays())
+				.set(CALENDAR.HOLIDAYS_TYPE, null == calendar.getHolidaysType() ? (byte)0 : calendar.getHolidaysType())
 				.set(CALENDAR.DESCRIPTION, calendar.getDescription())
 				.set(CALENDAR.COMMENTS, calendar.getComment())
 				.set(CALENDAR.MONDAY, calendar.isMonday() ? (byte) 1 : (byte) 0)
@@ -207,6 +226,15 @@ public class CalendarDAO {
 		
 		ctx.log().debug("DELETE CALENDAR id: " + id);		
 	}
+
+	public static void setPayrollWorkplaceCalendar(CloseableAONContext ctx, Integer domainId, Integer workplaceId, Integer calendarId) {
+		ctx.getDslContext()
+			.update(PAYROLL_WORKPLACE)
+			.set(PAYROLL_WORKPLACE.CALENDAR, calendarId)
+			.where(PAYROLL_WORKPLACE.WORKPLACE.eq(workplaceId))
+			.and(PAYROLL_WORKPLACE.DOMAIN.eq(domainId))
+			.execute();
+	}
 	
 	private static class CalendarFiller extends Filler implements Function<Record, Calendar> {
 		@Override
@@ -216,6 +244,8 @@ public class CalendarDAO {
 					.setDomain(r.getValue(CALENDAR.DOMAIN))
 					.setHoliday(new Holiday().setId( r.getValue(CALENDAR.HOLIDAY) ))
 					.setAnualHours(r.getValue(CALENDAR.ANUAL_HOURS))
+					.setAnnualHolidays(r.getValue(CALENDAR.ANNUAL_HOLIDAYS))
+					.setHolidaysType(r.getValue(CALENDAR.HOLIDAYS_TYPE))
 					.setDescription(r.getValue(CALENDAR.DESCRIPTION))
 					.setComment(r.getValue(CALENDAR.COMMENTS))
 					.setMonday(r.getValue(CALENDAR.MONDAY) == (byte) 0 ? false : true)

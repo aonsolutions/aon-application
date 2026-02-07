@@ -11,6 +11,8 @@ public class HolidayDetail implements Serializable {
 	private Date date;
 	private String description;
 	
+	private boolean isDirty = false;
+	
 	public HolidayDetail() {
 		super();
 	}
@@ -58,6 +60,15 @@ public class HolidayDetail implements Serializable {
 	public HolidayDetail setDate(Date date) {
 		this.date = date;
 		return this;
-	}	
+	}
+	
+	public boolean isDirty() {
+		return isDirty;
+	}
+
+	public HolidayDetail setDirty(boolean isDirty) {
+		this.isDirty = isDirty;
+		return this;
+	}
 	
 }

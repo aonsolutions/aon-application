@@ -13,6 +13,10 @@ public interface ICalendar {
 	List<Holiday> getHolidays(CloseableAONContext ctx, Integer domainId);
 
 	void deleteHolidayDetail(CloseableAONContext ctx, Integer id);
+
+	Calendar saveCalendar(CloseableAONContext ctx, Integer domainId, Calendar calendar);
+
+	void setPayrollWorkplaceCalendar(CloseableAONContext ctx, Integer domainId, Integer workplaceId, Integer calendarId);
 	
 	
 }

@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.Filter.HolidayFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.HolidayProperties;
 import com.esferalia.aon.occam.api.model.calendar.Holiday;
+import com.esferalia.aon.occam.api.model.calendar.HolidayDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
 
@@ -47,12 +48,23 @@ public class HolidayDAO {
 	
 	public static Optional<Holiday> get(AONContext ctx, HolidayFilter filter) {
 		ctx.checkRead();
-		return select(ctx, filter)
+		Optional<Holiday> holiday = select(ctx, filter)
 				.limit(1)
 				.fetch()
 				.stream()
 				.map(new HolidayFiller())
 				.findFirst();
+		
+		if(holiday.isPresent())
+			holiday.get().setDetails( 
+					HolidayDetailDAO.getStream(ctx, 
+							f -> f.getDomainProperty().eq(holiday.get().getDomain())
+								.and(f.getHolidayProperty().eq(holiday.get().getId()))
+							)
+							.collect(Collectors.toList()));
+		
+		return holiday;
+		
 	}
 	
 	public static Stream<Holiday> getStream(AONContext ctx, HolidayFilter filter){	
@@ -94,6 +106,13 @@ public class HolidayDAO {
 			.set(HOLIDAY.EDITABLE, holiday.isEditable() ? (byte) 1 : (byte) 0)
 			.where(HOLIDAY.ID.eq(holiday.getId()))
 			.execute();
+		
+
+		List<HolidayDetail> details = holiday.getDetails();
+		if(!details.isEmpty()) {
+			details.stream().filter(dh -> dh.isDirty() || null == dh.getId()).forEach(hd -> HolidayDetailDAO.save(ctx, hd));
+		}
+		
 		ctx.log().debug("UPDATE NOTE id: " + holiday.getId());		
 		return holiday;
 	}
@@ -108,6 +127,13 @@ public class HolidayDAO {
 				.returning(HOLIDAY.ID)
 				.fetchOne()
 				.getId();
+		
+		holiday.getDetails().forEach(hd -> hd.setHoliday(id));
+		
+		List<HolidayDetail> details = holiday.getDetails();
+		if(!details.isEmpty()) {
+			details.stream().filter(dh -> dh.isDirty() || null == dh.getId()).forEach(hd -> HolidayDetailDAO.save(ctx, hd));
+		}
 		
 		holiday.setId(id);
 		ctx.log().debug("INSERT NOTE id: " + id);		

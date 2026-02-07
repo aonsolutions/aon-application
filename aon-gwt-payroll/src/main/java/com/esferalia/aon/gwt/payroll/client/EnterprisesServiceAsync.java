@@ -378,5 +378,7 @@ public interface EnterprisesServiceAsync {
 	void getCalendar(String currentDomainName, String currentUser, Integer workplace, AsyncCallback<List<Calendar>> asyncCallback) throws IllegalArgumentException ;
 	void getHolidays(String currentDomainName, String currentUser, AsyncCallback<List<Holiday>> asyncCallback) throws IllegalArgumentException ;
 	void deleteHolidayDetail(String currentDomainName, String currentUser, Integer id, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;
+	void saveCalendar(String currentDomainName, String currentUser, Calendar calendar, AsyncCallback<Calendar> asyncCallback) throws IllegalArgumentException ;
+	void setPayrollWorkplaceCalendar(String currentDomainName, String currentUser, Integer workplaceId, Integer calendarId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;
 	
 }

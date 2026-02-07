@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.calendar;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Holiday implements Serializable {
@@ -64,6 +65,7 @@ public class Holiday implements Serializable {
 	}
 
 	public List<HolidayDetail> getDetails() {
+		if(null == details) details = new ArrayList<HolidayDetail>();
 		return details;
 	}
 

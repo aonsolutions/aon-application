@@ -10,7 +10,6 @@ import com.esferalia.aon.occam.api.model.calendar.Calendar;
 import com.esferalia.aon.occam.api.model.calendar.Holiday;
 import com.esferalia.aon.occam.api.model.calendar.HolidayDetail;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
@@ -19,18 +18,22 @@ public class AnnualCalendarWidget extends FlowPanel {
 
     private FlowPanel annualCalendar;
 
+    private Integer domain;
     private Calendar calendar;
     private List<Holiday> holidays;
     private List<Holiday> chain;
 
     private int year;
     private Consumer<Integer> onYearChange;
+    private Consumer<Date> onDateSelected;
 
-    public AnnualCalendarWidget(Calendar calendar, List<Holiday> holidays, int year, Consumer<Integer> onYearChange) {
-        this.calendar = calendar;
+    public AnnualCalendarWidget(Integer domain, Calendar calendar, List<Holiday> holidays, int year, Consumer<Integer> onYearChange, Consumer<Date> onDateSelected) {
+        this.domain = domain;
+    	this.calendar = calendar;
         this.holidays = holidays;
         this.year = year;
         this.onYearChange = onYearChange;
+        this.onDateSelected = onDateSelected;
 
         Holiday selected = calendar.getHoliday();
         chain = buildHolidayChain(selected, holidays);
@@ -120,15 +123,18 @@ public class AnnualCalendarWidget extends FlowPanel {
             int dayCopy = day;
 
             lbl.addClickHandler(e -> {
-                Window.alert("Día seleccionado: " + dayCopy + "/" + (month + 1) + "/" + year);
+            	if(isHoliday(month, dayCopy)) return;
+            	Date selectedDate = new Date(year - 1900, month, dayCopy);
+            	onDateSelected.accept(selectedDate);
             });
 
-            if (col == 5 || col == 6) {
+            if (isWeekend(col)) {
                 lbl.addStyleName("weekend");
+                lbl.getElement().setTitle("No Laborable");
             }
 
-            if (isHoliday(month, day)) {
-                lbl.addStyleName("holiday");
+            if (isHoliday(month, day) || isOwnHoliday(month, day)) {
+                lbl.addStyleName(isHoliday(month, day) ? "holiday" : "own-holiday");
 
                 String desc = getHolidayDescription(month, day);
                 if (desc != null) {
@@ -149,7 +155,28 @@ public class AnnualCalendarWidget extends FlowPanel {
         return panel;
     }
 
-    private String getHolidayDescription(int month, int day) {
+    private boolean isWeekend(int col) {
+		switch (col) {
+			case 0: 
+				return calendar.isMonday();
+			case 1: 
+				return calendar.isTuesday();
+			case 2: 
+				return calendar.isWednesday();
+			case 3: 
+				return calendar.isThursday();
+			case 4: 
+				return calendar.isFriday();
+			case 5: 
+				return calendar.isSaturday();
+			case 6: 
+				return calendar.isSunday();
+			default:
+				return false;
+		}
+	}
+
+	private String getHolidayDescription(int month, int day) {
         for (Holiday h : chain) {
             if (h.getDetails() != null) {
                 for (HolidayDetail d : h.getDetails()) {
@@ -190,7 +217,21 @@ public class AnnualCalendarWidget extends FlowPanel {
         for (Holiday h : chain) {
             if (h.getDetails() != null) {
                 for (HolidayDetail d : h.getDetails()) {
-                    if (d.getDate().equals(compareDate)) {
+                    if (d.getDate().equals(compareDate) && !d.getDomain().equals(domain)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    
+    private boolean isOwnHoliday(int month, int day) {
+    	Date compareDate = new Date(year - 1900, month, day);
+        for (Holiday h : chain) {
+            if (h.getDetails() != null) {
+                for (HolidayDetail d : h.getDetails()) {
+                    if (d.getDate().equals(compareDate) && d.getDomain().equals(domain)) {
                         return true;
                     }
                 }

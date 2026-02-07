@@ -887,6 +887,14 @@ public class DomainEnterprisesServiceAsync {
 	public void deleteHolidayDetail(Integer id, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException  {
 		enterprisesServiceAsync.deleteHolidayDetail(getCurrentDomainName(), getCurrentUser(), id, asyncCallback);
 	}
+
+	public void saveCalendar(Calendar calendar, AsyncCallback<Calendar> asyncCallback) throws IllegalArgumentException  {
+		enterprisesServiceAsync.saveCalendar(getCurrentDomainName(), getCurrentUser(), calendar, asyncCallback);
+	}
+
+	public void setPayrollWorkplaceCalendar(Integer workplaceId, Integer calendarId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.setPayrollWorkplaceCalendar(getCurrentDomainName(), getCurrentUser(), workplaceId, calendarId, asyncCallback);
+	}
 	
 	// ----------------------------------------------------------------- static
 	

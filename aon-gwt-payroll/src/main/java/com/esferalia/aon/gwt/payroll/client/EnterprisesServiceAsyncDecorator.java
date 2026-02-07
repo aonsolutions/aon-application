@@ -1363,5 +1363,17 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.deleteHolidayDetail(domainName, currentUser, id, callback);
 	}
+
+	@Override
+	public void saveCalendar(String currentDomainName, String currentUser, Calendar calendar, AsyncCallback<Calendar> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.saveCalendar(currentDomainName, currentUser, calendar, callback);
+	}
+
+	@Override
+	public void setPayrollWorkplaceCalendar(String currentDomainName, String currentUser, Integer workplaceId, Integer calendarId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.setPayrollWorkplaceCalendar(currentDomainName, currentUser, workplaceId, calendarId, callback);
+	}
 	
 }

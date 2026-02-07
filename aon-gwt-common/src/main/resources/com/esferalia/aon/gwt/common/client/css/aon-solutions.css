@@ -35,6 +35,8 @@
 .aon_icon_drive { background-image: iconDrive;}
 @url iconEditCalendar aonIconEditCalendar;
 .aon_icon_edit_calendar { background-image: iconEditCalendar;}
+@url iconCalendarClock aonIconCalendarClock;
+.aon_icon_calendar_clock { background-image: iconCalendarClock;}
 @url iconSettings aonIconSettings;
 .aon_icon_settings { background-image: iconSettings;}
 @url iconDataSettings aonIconDataSettings;
@@ -2894,7 +2896,7 @@
 /* Festivo propio */
 .holiday-own {
     background: #ffe7c2;
-    border-left: 4px solid #ff9800;
+    cursor: pointer;
 }
 
 /* Festivo heredado */
@@ -2944,6 +2946,10 @@
     padding: 4px;
 }
 
+.month-grid td {
+	cursor: pointer;
+}
+
 /* Encabezado de días */
 .day-header {
     font-weight: bold;
@@ -2969,6 +2975,14 @@
     background: #e8f0ff;
   	border: 1px solid #d0dffa;
   	color: #6099ff;
+    font-weight: bold;
+    border-radius: 6px;
+}
+
+.own-holiday{
+	background: #ffe7c2;
+  	border: 1px solid #ffd593;
+  	color: #f79a07;
     font-weight: bold;
     border-radius: 6px;
 }

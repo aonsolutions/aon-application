@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.api.model.calendar;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class Calendar implements Serializable {
 
@@ -9,6 +8,8 @@ public class Calendar implements Serializable {
 	private Integer domain;
 	private Holiday holiday;
 	private Double anualHours;
+	private Double anualHolidays;
+	private Byte holidaysType;
 	private String description;
 	private String comment;
 	private boolean isMonday;
@@ -65,6 +66,24 @@ public class Calendar implements Serializable {
 
 	public Calendar setAnualHours(Double anualHours) {
 		this.anualHours = anualHours;
+		return this;
+	}
+
+	public Double getAnnualHolidays() {
+		return anualHolidays;
+	}
+
+	public Calendar setAnnualHolidays(Double anualHolidays) {
+		this.anualHolidays = anualHolidays;
+		return this;
+	}
+
+	public Byte getHolidaysType() {
+		return holidaysType;
+	}
+
+	public Calendar setHolidaysType(Byte holidaysType) {
+		this.holidaysType = holidaysType;
 		return this;
 	}
 

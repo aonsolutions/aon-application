@@ -9130,4 +9130,16 @@ public class AON {
 			getCalendar().deleteHolidayDetail(ctx, id);
 		}
 	}
+
+	public static com.esferalia.aon.occam.api.model.calendar.Calendar saveCalendar(String domainName, Integer domainId, String userLogin, com.esferalia.aon.occam.api.model.calendar.Calendar calendar) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
+			return getCalendar().saveCalendar(ctx, domainId, calendar);
+		}
+	}
+
+	public static void setPayrollWorkplaceCalendar(String domainName, Integer domainId, String userLogin, Integer workplaceId, Integer calendarId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
+			getCalendar().setPayrollWorkplaceCalendar(ctx, domainId, workplaceId, calendarId);
+		}
+	}
 }

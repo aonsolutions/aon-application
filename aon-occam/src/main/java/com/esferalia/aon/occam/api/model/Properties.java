@@ -1726,6 +1726,8 @@ public interface Properties {
 		Property<Integer> getDomainProperty();
 		Property<Integer> getHolidayroperty();
 		Property<Double> getAnualHoursProperty();
+		Property<Double> getAnualHolidaysProperty();
+		Property<Byte> getHolidaysTypeProperty();
 		Property<String> getDescriptionProperty();
 		Property<String> getCommentsProperty();
 		Property<Byte> getMondayProperty();

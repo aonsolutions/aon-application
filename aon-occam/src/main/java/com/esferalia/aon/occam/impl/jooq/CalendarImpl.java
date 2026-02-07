@@ -31,4 +31,17 @@ public class CalendarImpl implements ICalendar {
 				configuration -> HolidayDetailDAO.delete(ctx, id));
 	}
 
+	@Override
+	public Calendar saveCalendar(CloseableAONContext ctx, Integer domainId, Calendar calendar) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CalendarDAO.save(ctx, calendar));
+	}
+
+	@Override
+	public void setPayrollWorkplaceCalendar(CloseableAONContext ctx, Integer domainId, Integer workplaceId,
+			Integer calendarId) {
+		ctx.getDslContext().transaction(
+				configuration -> CalendarDAO.setPayrollWorkplaceCalendar(ctx, domainId, workplaceId, calendarId));
+	}
+
 }

@@ -513,6 +513,8 @@ public interface EnterprisesService extends RemoteService {
 	List<Calendar> getCalendar(String currentDomainName, String currentUser, Integer workplace) throws IllegalArgumentException ;
 	List<Holiday> getHolidays(String currentDomainName, String currentUser) throws IllegalArgumentException ;
 	void deleteHolidayDetail(String currentDomainName, String currentUser, Integer id) throws IllegalArgumentException ;
-
+	Calendar saveCalendar(String currentDomainName, String currentUser, Calendar calendar) throws IllegalArgumentException ;
+	void setPayrollWorkplaceCalendar(String currentDomainName, String currentUser, Integer workplaceId, Integer calendarId) throws IllegalArgumentException ;
+	
 }
 

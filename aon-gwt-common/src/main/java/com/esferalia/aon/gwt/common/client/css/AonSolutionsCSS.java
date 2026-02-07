@@ -39,6 +39,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_edit_calendar")
 	String aonIconEditCalendar();
 	
+	@ClassName("aon_icon_calendar_clock")
+	String aonIconCalendarClock();
+	
 	@ClassName("aon_icon_settings")
 	String aonIconSettings();
 	
