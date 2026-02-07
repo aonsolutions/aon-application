@@ -22,10 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod347Detail2025Bis;
 import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2026Insert;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.FlexibleInsurancePremiumsInsert;
-import net.aonsolutions.db.up2date.payroll.PlusTransporte0001Insert;
-import net.aonsolutions.db.up2date.tgss.MEISolidarity2026RDL162025Fix;
-import net.aonsolutions.db.up2date.tgss.MEISolidarity2026RDL162025Undo;
+import net.aonsolutions.db.up2date.tgss.SociosCoopBases2025Update;
 
 public class Up2Date {
 
@@ -142,7 +139,8 @@ public class Up2Date {
 			// DropTableAccountHelper.DROP_TABLE_ACCOUNT_HELPER
 			// RawdocCreation.RAWDOC_CREATION,
 			// Irpf2021Update.IRPF2021UPDATEII,
-			// LocationCreation.LOCATION_CREATION,
+			// LocationCreation.LOCATION_CREATION,			.set(SYSTEM_DATA.DOMAIN, DOMAIN)
+
 			// TimeControlCreation.TIMECONTROL_CREATION,
 			// CoordinatesUpdate.COORDINATES_UPDATE,
 			// AlterAgreement4SSNumber.ALTER_AGREEMENT_SSNUM,
@@ -586,9 +584,11 @@ public class Up2Date {
 			// FlexibleChecksDelete.FLEXIBLECHECKSDELETE,
 			// MEISolidarity2026RDL162025Fix.MEISOLIDARITYRDL162025FIX,
 			// IrpfEuskadi2026Insert.IRPFEUSKADI2026INSERT,
-			MEISolidarity2026RDL162025Undo.MEISOLIDARITYRDL162025UNDO,
-			FlexibleInsurancePremiumsInsert.FLEXIBLEINSURANCEPREMIUMSINSERT,
-			PlusTransporte0001Insert.PLUSTRANSPORTE0001INSERT,
+			// MEISolidarity2026RDL162025Undo.MEISOLIDARITYRDL162025UNDO,
+			// FlexibleInsurancePremiumsInsert.FLEXIBLEINSURANCEPREMIUMSINSERT,
+			// PlusTransporte0001Insert.PLUSTRANSPORTE0001INSERT,
+			SociosCoopBases2025Update.SOCIOSCOOPBASES2025UPDATE,
+			
 			
 			AlterFsMod347Detail2025Bis.ALTER_FS_MOD_347_DETAIL_2025_BIS,
 			
