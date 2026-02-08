@@ -587,10 +587,10 @@ public class Up2Date {
 			// MEISolidarity2026RDL162025Undo.MEISOLIDARITYRDL162025UNDO,
 			// FlexibleInsurancePremiumsInsert.FLEXIBLEINSURANCEPREMIUMSINSERT,
 			// PlusTransporte0001Insert.PLUSTRANSPORTE0001INSERT,
-			SociosCoopBases2025Update.SOCIOSCOOPBASES2025UPDATE,
+			// SociosCoopBases2025Update.SOCIOSCOOPBASES2025UPDATE,
 			
 			
-			AlterFsMod347Detail2025Bis.ALTER_FS_MOD_347_DETAIL_2025_BIS,
+			// AlterFsMod347Detail2025Bis.ALTER_FS_MOD_347_DETAIL_2025_BIS,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
