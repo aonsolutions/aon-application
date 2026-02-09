@@ -151,7 +151,7 @@ export class AonUserList extends AonElement {
 	}
 
 	getOptions(user) {
-		return this.isBeta() || this.isAyudaT() ?
+		return this.isBeta() || this.isAyudaTorInfoautonomos() ?
 			[{
 				id:"supplant",
 				color: "#5f6368",
