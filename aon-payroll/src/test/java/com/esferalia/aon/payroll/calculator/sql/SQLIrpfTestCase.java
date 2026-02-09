@@ -466,7 +466,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				null, 
 				Collections.singletonMap("DIAS_MES", "30.0"), 
 				new String[] { 
-				"BRUTO( 1925.00   * DIAS_TRABAJADOS / DIAS_MES )",
+				"1925.00   * DIAS_TRABAJADOS / DIAS_MES",
 				}, 
 				new String[] {
 				"BASE_CGC * 0.10", 
@@ -484,6 +484,11 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				getLastDayOfMonth(contractStart), 
 				getLastDayOfMonth(contractStart), 
 				contract));
+		
+//		AON.getSalaries(aonContext, f -> f.getContractProperty().eq(contract.getId())).forEach( salary -> {
+//			System.out.println(salary.getStartDate() + ": " + salary.getTotalPayment() + " - " + salary.getIrpfBase());
+//			salary.getPayments().forEach( payment -> System.out.println("\t" + payment.getDescription()+ ": " + payment.getAmount()));
+//		});
 		
 		Date start = add(contract.getStartDate(), Calendar.MONTH, 1);
 		Date end = getLastDayOfMonth(start);
