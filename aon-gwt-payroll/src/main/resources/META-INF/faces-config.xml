@@ -172,6 +172,14 @@
 			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/pension_plan_afi.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- =================== Main Workplaces Calendar  ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_workplaces_calendar</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/workplaces_calendar.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 </faces-config>
 		

@@ -677,6 +677,20 @@ public interface Filter extends Serializable{
 		Filter filter(NoteProperties properties);
 	}
 	
+	@FunctionalInterface
+	public interface CalendarFilter{
+		Filter filter(CalendarProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface HolidayFilter{
+		Filter filter(HolidayProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface HolidayDetailFilter{
+		Filter filter(HolidayDetailProperties properties);
+	}
 	
 	@FunctionalInterface
 	public interface NotificationFilter{

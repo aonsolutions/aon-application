@@ -11,6 +11,19 @@ public class MIModelo420RequestHandler implements RequestHandler<MIModelo420Requ
 	public MIModelo420Result handleRequest(MIModelo420Request input, Context context) {
 		String declaracion = new String(Base64.getDecoder().decode(input.getDeclaracion()));
 		System.out.println(declaracion);
+		
+		// MODELOS 417, 420 y 425
+		if (input.isBorrador())
+			return new MIModelo420Handler().obtenerBorrador(declaracion); // Borrador
+		else
+			return new MIModelo420Handler().obtenerPresentacion(declaracion); // Fichero para presentación
+		
+		// MODELO 415
+//		if (input.isBorrador())
+//			return new MIModelo420Handler().obtenerBorrador415(declaracion); // Borrador
+//		else
+//			return new MIModelo420Handler().obtenerPresentacion415(declaracion); // Fichero para presentación
+		
 //		if (declaracion.startsWith("1415")) {
 //			// Modelo 415
 //			if (input.isBorrador())
@@ -18,27 +31,27 @@ public class MIModelo420RequestHandler implements RequestHandler<MIModelo420Requ
 //			else
 //				return new MIModelo420Handler().obtenerPresentacion415(declaracion); // Fichero para presentación
 //		} else 
-			if (declaracion.contains("MOD=\"425\"")) {
-			// Modelo 425
-			if (input.isBorrador())
-				return new MIModelo420Handler().obtenerBorrador425(declaracion); // Borrador
-			else
-				return new MIModelo420Handler().obtenerPresentacion425(declaracion); // Fichero para presentación
-		} else if (declaracion.contains("MOD=\"417\"")) {
-			// Modelo 417
-			if (input.isBorrador())
-				return new MIModelo420Handler().obtenerBorrador417(declaracion); // Borrador
-			else
-				return new MIModelo420Handler().obtenerPresentacion417(declaracion); // Fichero para presentación
-		} else if (declaracion.contains("MOD=\"420\"")) {
-			// Modelo 420
-			if (input.isBorrador())
-				return new MIModelo420Handler().obtenerBorrador420(declaracion); // Borrador
-			else
-				return new MIModelo420Handler().obtenerPresentacion420(declaracion); // Fichero para presentación
-		} else {
-			return new MIModelo420Handler().errorModeloNoSoportado();
-		}
+//			if (declaracion.contains("MOD=\"425\"")) {
+//			// Modelo 425
+//			if (input.isBorrador())
+//				return new MIModelo420Handler().obtenerBorrador425(declaracion); // Borrador
+//			else
+//				return new MIModelo420Handler().obtenerPresentacion425(declaracion); // Fichero para presentación
+//		} else if (declaracion.contains("MOD=\"417\"")) {
+//			// Modelo 417
+//			if (input.isBorrador())
+//				return new MIModelo420Handler().obtenerBorrador417(declaracion); // Borrador
+//			else
+//				return new MIModelo420Handler().obtenerPresentacion417(declaracion); // Fichero para presentación
+//		} else if (declaracion.contains("MOD=\"420\"")) {
+//			// Modelo 420
+//			if (input.isBorrador())
+//				return new MIModelo420Handler().obtenerBorrador420(declaracion); // Borrador
+//			else
+//				return new MIModelo420Handler().obtenerPresentacion420(declaracion); // Fichero para presentación
+//		} else {
+//			return new MIModelo420Handler().errorModeloNoSoportado();
+//		}
 	}
 	
 //	private static String obtenerXML() {
@@ -73,7 +86,7 @@ public class MIModelo420RequestHandler implements RequestHandler<MIModelo420Requ
 //		return fileXML;
 //		
 //	}
-	
+//	
 //	private static String obtener415() {
 //		
 //		String fileTxt = 
@@ -94,25 +107,26 @@ public class MIModelo420RequestHandler implements RequestHandler<MIModelo420Requ
 //	public static void main(String[] args) {
 //		
 //		MIModelo420Request input = new MIModelo420Request();
-////		input.setDeclaracion(Base64.getEncoder().encodeToString(obtenerXML().getBytes()));
-//		input.setDeclaracion(Base64.getEncoder().encodeToString(obtener415().getBytes()));
+//		input.setDeclaracion(Base64.getEncoder().encodeToString(obtenerXML().getBytes()));
+////		input.setDeclaracion(Base64.getEncoder().encodeToString(obtener415().getBytes()));
 //		input.setBorrador(false);
 //		
 //		MIModelo420RequestHandler mi = new MIModelo420RequestHandler();
-//		MIModelo420Result result = mi.handleRequest(input, null);
+//		mi.handleRequest(input, null);
 //		
-//		String resultado = result.getResultado();
+////		MIModelo420Result result = mi.handleRequest(input, null);
+////		String resultado = result.getResultado();
 //		
 //		// grabar la variable resultado en un fichero externo
-//		PrintWriter writer;
-//		try {
-//			writer = new PrintWriter("c:\\tmp\\resultado_415.atc", "UTF-8");
-//			writer.print(resultado);
-////			writer.print(obtener415());
-//			writer.close();
-//		} catch (FileNotFoundException | UnsupportedEncodingException e) {
-//			e.printStackTrace();
-//		}
+////		PrintWriter writer;
+////		try {
+////			writer = new PrintWriter("c:\\tmp\\resultado_415.atc", "UTF-8");
+////			writer.print(resultado);
+//////			writer.print(obtener415());
+////			writer.close();
+////		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+////			e.printStackTrace();
+////		}
 //		
 //	}
 	

@@ -69,6 +69,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.calendar.Calendar;
+import com.esferalia.aon.occam.api.model.calendar.Holiday;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
@@ -505,6 +507,14 @@ public interface EnterprisesService extends RemoteService {
 
 	
 	Domain getDomainByName(String domainName) throws IllegalArgumentException;
-
+	
+	// ------------------------------------------------ Calendar
+	
+	List<Calendar> getCalendar(String currentDomainName, String currentUser, Integer workplace) throws IllegalArgumentException ;
+	List<Holiday> getHolidays(String currentDomainName, String currentUser) throws IllegalArgumentException ;
+	void deleteHolidayDetail(String currentDomainName, String currentUser, Integer id) throws IllegalArgumentException ;
+	Calendar saveCalendar(String currentDomainName, String currentUser, Calendar calendar) throws IllegalArgumentException ;
+	void setPayrollWorkplaceCalendar(String currentDomainName, String currentUser, Integer workplaceId, Integer calendarId) throws IllegalArgumentException ;
+	
 }
 
