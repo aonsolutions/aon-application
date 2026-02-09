@@ -1321,7 +1321,7 @@
   	flex: 1;               
     display: flex;
     flex-direction: column;
-    min-height: 6.5rem;    
+   /* min-height: 6.5rem; use setVisibleLines of TextArea */
 }
 
 .aon_custom_rich_text{
@@ -1398,7 +1398,7 @@
 	border: none;
 	width: -moz-available;
 	width: -webkit-fill-available;
-	height: 5rem;
+	/*height: 5rem; use setVisibleLines of TextArea */
 	padding: .2rem;
 	/*border-bottom: 1px solid #b9b8b8;*/	
 }

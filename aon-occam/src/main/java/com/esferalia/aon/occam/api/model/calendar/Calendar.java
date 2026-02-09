@@ -8,6 +8,7 @@ public class Calendar implements Serializable {
 	private Integer domain;
 	private Holiday holiday;
 	private Double anualHours;
+	private Double anualPersonalDays;
 	private Double anualHolidays;
 	private Byte holidaysType;
 	private String description;
@@ -66,6 +67,15 @@ public class Calendar implements Serializable {
 
 	public Calendar setAnualHours(Double anualHours) {
 		this.anualHours = anualHours;
+		return this;
+	}
+
+	public Double getAnualPersonalDays() {
+		return anualPersonalDays;
+	}
+
+	public Calendar setAnualPersonalDays(Double anualPersonalDays) {
+		this.anualPersonalDays = anualPersonalDays;
 		return this;
 	}
 
