@@ -9113,6 +9113,12 @@ public class AON {
 		}
 	}
 	
+	public static void fixInvoice(Occam occam, int domain) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			getFinance().fixInvoice(ctx, domain);
+		}
+	}
+	
 	// ***************************************
 	// ***************************** SERIES **
 	// ***************************************

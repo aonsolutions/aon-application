@@ -338,6 +338,7 @@ export class AonInvoice extends AonElement {
 			this.showMessageError("No hay series definidas en la configuración de la empresa. Por favor, contacte con el administrador del dominio.");
 			return false;
 		}
+		
 		return true;
 	}
 
@@ -1249,8 +1250,9 @@ export class AonInvoice extends AonElement {
 		div.appendChild(serieSpan);
 
 		let serie = createSelect(this.SERIE, MSG.SERIE);
-		serie.setOptions(this.configuration.series);
-		serie.value = this.invoice.series;
+		serie.setOptions(this.configuration.series.filter(f =>  this.invoice.isRectifier() ? f.rectification : f.invoice));
+		serie.setAlias("code", "code");
+		serie.setValue(this.invoice.series);
 		serieSpan.appendChild(serie);
 		serie.readonly = this.invoice.isReadonly();
 		serie.addEventListener(EVENT.SELECT, () => this.onChangeSerie(serie.value));
@@ -2732,6 +2734,7 @@ export class AonInvoice extends AonElement {
 	acceptInvoice() {
 		let ok = this.checkConfiguration();
 		ok = ok && this.checkRegistry();	
+		ok = ok && this.checkSeries();
 		if(!ok) return;
 
 		if(!this.isInvofoxInvoice() && this.getInvoice().isEmitida()) this.getInvoice().setReference(undefined);

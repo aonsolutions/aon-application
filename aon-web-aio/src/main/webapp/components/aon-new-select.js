@@ -193,7 +193,7 @@ export class AonNewSelect extends AonNewInput {
     }
 
     let ul = this.createElement(TAG.UL);
-    ul.classList.add(CSS.AON_UL);
+    ul.classList.add(CSS.AON_UL_OPTIONS);
     ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
     ul.setAttribute('for', this.getAttribute(CONSTANT.ID) + 'Icon');
     div.appendChild(ul);
@@ -530,9 +530,9 @@ export class AonNewSelect extends AonNewInput {
     if(value && value!=0){
       let options = this.getOptions();
       if(options.length){
-        const option = options.find(opt => opt.value == value);
+        const option = options.find(opt => opt[this.valueAlias] == value);
         if(option){
-          this.value = option.value;
+          this.value = option[this.valueAlias];
         }
       }
     } else {
@@ -545,9 +545,9 @@ export class AonNewSelect extends AonNewInput {
 	    const options = this.getOptions();
 	
 	    if (options?.length) {
-	      const option = options.find(opt => opt.value == value);
+	      const option = options.find(opt => opt[this.valueAlias] == value);
 	      if (option) {
-	        this.value = option.value;
+	        this.value = option[this.valueAlias];
 	      }
 	    }
 	  } else {

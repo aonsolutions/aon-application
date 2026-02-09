@@ -181,6 +181,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			case "/selfconta_record":
 				response(req, resp, selfcontaRecord(api));
 				break;
+			case "/fix":
+				response(req, resp, fix(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -684,6 +687,11 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			e.printStackTrace();
 		}
 		return file;
+	}
+	
+	private JSONObject fix(AonApiData api) {
+		AON.fixInvoice(api.getOccam(), api.getDomain().getId());
+		return new JSONObject();
 	}
 	
 	private JSONObject getApiConfiguration(AonApiData api) {
