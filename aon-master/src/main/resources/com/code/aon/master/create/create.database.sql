@@ -1062,6 +1062,7 @@ CREATE TABLE `calendar` (
   `domain` int NOT NULL COMMENT 'Identificador del Dominio',
   `holiday` int DEFAULT NULL COMMENT 'Identificador de Festivos',
   `anual_hours` decimal(15,4) DEFAULT '0' COMMENT 'Horas anuales del Calendario',
+  `annual_personal_days` decimal(15,2) DEFAULT 0.00 COMMENT 'Dias libre disposicion',
   `annual_holidays` decimal(15,2) DEFAULT 0.00 COMMENT 'Vacaciones anuales',
   `holidays_type` tinyint(1) DEFAULT 0 COMMENT 'Tipo de vacaciones (naturales o laborables)',
   `description` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion del Calendario',
