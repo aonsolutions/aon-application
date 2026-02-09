@@ -435,7 +435,6 @@ export const IRPF = MSG.IRPF;
 export const IS_REQUIRED = MSG.IS_REQUIRED;
 export const IS_NOT_VALID_EMAIL = MSG.IS_NOT_VALID_EMAIL;
 export const ISSUED = MSG.ISSUED;
-export const ISSUED_BY_THIRD_PART = "Emitida por terceros";
 export const ISSUED_INVOICES = "Facturas Emitidas";
 export const ISSUEDS = MSG.ISSUEDS;
 export const ISSUE = "Asunto"; //TODO
