@@ -21,6 +21,12 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod347Detail2025Bis;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
+import net.aonsolutions.db.up2date.payroll.FlexibleInsurancePremiumsInsert;
+import net.aonsolutions.db.up2date.payroll.PlusTransporte0001Insert;
+import net.aonsolutions.db.up2date.tgss.MEISolidarity2026RDL162025Fix;
+import net.aonsolutions.db.up2date.tgss.MEISolidarity2026RDL162025Undo;
+import net.aonsolutions.db.up2date.tgss.MEITrainingUpdate2026;
+import net.aonsolutions.db.up2date.timecontrol.CalendarHolidaysAlter;
 import net.aonsolutions.db.up2date.tgss.SociosCoopBases2025Update;
 import net.aonsolutions.db.up2date.timecontrol.CalendarPersonalDaysAlter;
 
@@ -104,7 +110,7 @@ public class Up2Date {
 			// AyudaTWarnDelete.AYUDATWARNDELETE,
 			// EreFzaExoneradoInsert.EREFZAEXONERADOINSERT,
 			// AlterCertifica2BatchDetail4ERE.ALTER_CERTIFICA2_BATCH_DETAIL_ERE,
-			// EreFzaExoneradoUpdate.EREFZAEXONERADOUPDATE
+			// EreFzaExoneradoUpdate.EREFZAEXONERADOUPDATE[] 
 			// EresUpdate.ERESUPDATE
 			// PrestITDescriptionsUpdateII.PRESTITDESCRIPTIONSUPDATEII,
 			// FellowsPercentages2019Fix.FELLOWSPERCENTAGES2019FIX,
@@ -587,10 +593,11 @@ public class Up2Date {
 			// MEISolidarity2026RDL162025Undo.MEISOLIDARITYRDL162025UNDO,
 			// FlexibleInsurancePremiumsInsert.FLEXIBLEINSURANCEPREMIUMSINSERT,
 			// PlusTransporte0001Insert.PLUSTRANSPORTE0001INSERT,
-			SociosCoopBases2025Update.SOCIOSCOOPBASES2025UPDATE,
+			// SociosCoopBases2025Update.SOCIOSCOOPBASES2025UPDATE,
+			MEITrainingUpdate2026.MEITRAININGUPDATE2026,
 			
 			
-			AlterFsMod347Detail2025Bis.ALTER_FS_MOD_347_DETAIL_2025_BIS,
+			// AlterFsMod347Detail2025Bis.ALTER_FS_MOD_347_DETAIL_2025_BIS,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
