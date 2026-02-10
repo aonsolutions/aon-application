@@ -36,6 +36,20 @@ public enum WithholdingType implements IResourceable {
 	,M190_F_02_1(TRABAJO,"Cursos (F/02)")
 	,M190_F_02_2(TRABAJO,"Elab. obras (F/02)")
 	,M193_C4(CAPITAL_MOBILIARIO,"Cap. Mobiliario (C/4)")
+	,M193_B_01 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (B/01)")
+	,M193_B_02 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (B/02)")
+	,M193_B_03 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (B/03)")
+	,M193_B_04 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (B/04)")
+	,M193_B_05 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (B/05)")
+	,M193_B_06 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (B/06)")
+	,M193_B_07 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (B/07)")
+	,M193_D_01 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (D/01)")
+	,M193_D_02 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (D/02)")
+	,M193_D_03 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (D/03)")
+	,M193_D_04 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (D/04)")
+	,M193_D_05 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (D/05)")
+	,M193_D_06 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (D/06)")
+	,M193_D_07 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (D/07)")
 	;
 	private WithholdingTypeGroup group;
 	private String abbrev;
@@ -78,7 +92,7 @@ public enum WithholdingType implements IResourceable {
 		// TRABAJO
 		,M190_F_01,M190_F_02_1,M190_F_02_2
 		// CAPITAL_MOBILIARIO
-		,MOVABLE_CAPITAL,M193_C1,M193_C2,M193_C3,M193_C4
+		,MOVABLE_CAPITAL,M193_C1,M193_C2,M193_C3,M193_C4,M193_B_01,M193_B_02,M193_B_03,M193_B_04,M193_B_05,M193_B_06,M193_B_07,M193_D_01,M193_D_02,M193_D_03,M193_D_04,M193_D_05,M193_D_06,M193_D_07
 		// DERECHOS_IMAGEN
 		,M190_J
 		// GANANCIAS_PATRIMONIALES

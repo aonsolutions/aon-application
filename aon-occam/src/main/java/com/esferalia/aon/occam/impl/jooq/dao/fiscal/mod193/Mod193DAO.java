@@ -23,6 +23,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.jooq.tables.records.FsModel193Record;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IWithholdingTypeVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
@@ -38,6 +39,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 public class Mod193DAO {
 	
@@ -509,26 +511,241 @@ public class Mod193DAO {
 				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_C1.value()))
 				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_C2.value()))
 				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_C3.value()))
-				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_C4.value())) )  // IRPF de Capital Mobiliario
+				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_C4.value()))
+				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_B_01.value()))
+				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_B_02.value()))
+				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_B_03.value()))
+				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_B_04.value()))
+				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_B_05.value()))
+				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_B_06.value()))
+				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_B_07.value()))
+				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_D_01.value()))
+				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_D_02.value()))
+				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_D_03.value()))
+				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_D_04.value()))
+				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_D_05.value()))
+				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_D_06.value()))
+				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_D_07.value())) )  // IRPF de Capital Mobiliario
 			.and(INVOICE.ISSUE_DATE.between(firstDay,lastDay))
 			.groupBy(INVOICE.RDOCUMENT, INVOICE.RNAME, INVOICE_TAX.WITHHOLDING_TYPE, INVOICE_TAX.PERCENTAGE)
 			.fetch()
 			.stream()
-			.map(rec -> new Mod193Detail()
+			.map(rec -> {
+				String key = "";
+				String nature = "";
+				WithholdingType type = WithholdingType.safeValueOf(rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE));
+				if (type != null) {
+					Pair<String,String> keyNature = type.visit(new IWithholdingTypeVisitor<Pair<String,String>>() {
+
+						@Override
+						public Pair<String, String> visitProfessional(Pair<String, String> t) {
+							return null;
+						}
+
+						@Override
+						public Pair<String, String> visitRenting(Pair<String, String> t) {
+							return null;
+						}
+
+						@Override
+						public Pair<String, String> visitMovableCapital(Pair<String, String> t) {
+							return new Pair<>("A","01");
+						}
+
+						@Override
+						public Pair<String, String> visitFarmer(Pair<String, String> t) {
+							return null;
+						}
+
+						@Override
+						public Pair<String, String> visitTransportOperator(Pair<String, String> t) {
+							return null;
+						}
+
+						@Override
+						public Pair<String, String> visitM190G02(Pair<String, String> t) {
+							return null;
+						}
+
+						@Override
+						public Pair<String, String> visitM190G03(Pair<String, String> t) {
+							return null;
+						}
+
+						@Override
+						public Pair<String, String> visitM190H02(Pair<String, String> t) {
+							return null;
+						}
+
+						@Override
+						public Pair<String, String> visitM190H03(Pair<String, String> t) {
+							return null;
+						}
+
+						@Override
+						public Pair<String, String> visitM190I01(Pair<String, String> t) {
+							return null;
+						}
+
+						@Override
+						public Pair<String, String> visitM190I02(Pair<String, String> t) {
+							return null;
+						}
+
+						@Override
+						public Pair<String, String> visitM190J(Pair<String, String> t) {
+							return null;
+						}
+
+						@Override
+						public Pair<String, String> visitM190K01(Pair<String, String> t) {
+							return null;
+						}
+
+						@Override
+						public Pair<String, String> visitM190K03(Pair<String, String> t) {
+							return null;
+						}
+
+						@Override
+						public Pair<String, String> visitM190K02(Pair<String, String> t) {
+							return null;
+						}
+						
+						@Override
+						public Pair<String, String> visitM193C1(Pair<String, String> t) {
+							return new Pair<>("C","02");
+						}
+
+						@Override
+						public Pair<String, String> visitM193C2(Pair<String, String> t) {
+							return new Pair<>("C","01");
+						}
+
+						@Override
+						public Pair<String, String> visitM193C3(Pair<String, String> t) {
+							return new Pair<>("C","06");
+						}
+
+						@Override
+						public Pair<String, String> visitM190F01(Pair<String, String> t) {
+							return null;
+						}
+
+						@Override
+						public Pair<String, String> visitM190F021(Pair<String, String> t) {
+							return null;
+						}
+
+						@Override
+						public Pair<String, String> visitM190F022(Pair<String, String> t) {
+							return null;
+						}
+
+						@Override
+						public Pair<String, String> visitM193C4(Pair<String, String> t) {
+							return new Pair<>("C","04");
+						}
+
+						@Override
+						public Pair<String, String> visitM193B01(Pair<String, String> t) {
+							return new Pair<>("B","01");
+						}
+
+						@Override
+						public Pair<String, String> visitM193B02(Pair<String, String> t) {
+							return new Pair<>("B","02");
+						}
+
+						@Override
+						public Pair<String, String> visitM193B03(Pair<String, String> t) {
+							return new Pair<>("B","03");
+						}
+
+						@Override
+						public Pair<String, String> visitM193B04(Pair<String, String> t) {
+							return new Pair<>("B","04");
+						}
+
+						@Override
+						public Pair<String, String> visitM193B05(Pair<String, String> t) {
+							return new Pair<>("B","05");
+						}
+
+						@Override
+						public Pair<String, String> visitM193B06(Pair<String, String> t) {
+							return new Pair<>("B","06");
+						}
+
+						@Override
+						public Pair<String, String> visitM193B07(Pair<String, String> t) {
+							return new Pair<>("B","07");
+						}
+
+						@Override
+						public Pair<String, String> visitM193D01(Pair<String, String> t) {
+							return new Pair<>("D","01");
+						}
+
+						@Override
+						public Pair<String, String> visitM193D02(Pair<String, String> t) {
+							return new Pair<>("D","02");
+						}
+
+						@Override
+						public Pair<String, String> visitM193D03(Pair<String, String> t) {
+							return new Pair<>("D","03");
+						}
+
+						@Override
+						public Pair<String, String> visitM193D04(Pair<String, String> t) {
+							return new Pair<>("D","04");
+						}
+
+						@Override
+						public Pair<String, String> visitM193D05(Pair<String, String> t) {
+							return new Pair<>("D","05");
+						}
+
+						@Override
+						public Pair<String, String> visitM193D06(Pair<String, String> t) {
+							return new Pair<>("D","06");
+						}
+
+						@Override
+						public Pair<String, String> visitM193D07(Pair<String, String> t) {
+							return new Pair<>("D","07");
+						}
+
+						
+					}, null);
+					if (keyNature != null) {
+						key = keyNature.getLeft();
+						nature = keyNature.getRight();
+					}
+				}
+				
+				return new Mod193Detail()
 					.setDomain(mod193.getDomain())
 					.setType(Mod193Detail.DETAIL_TYPE)
 					.setMod193(mod193.getId())
 					.setDocument(rec.getValue(INVOICE.RDOCUMENT))
 					.setName(rec.getValue(INVOICE.RNAME))
-					.setKey(rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.MOVABLE_CAPITAL.value() ? "A" : "C")
-					.setNature( rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.M193_C4.value() ? "04" :
-				        		rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.M193_C3.value() ? "06" :
-				        		rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.M193_C1.value() ? "02" : "01" )
+					// FALTA
+//					.setKey(rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.MOVABLE_CAPITAL.value() ? "A" : "C")
+//					.setNature( rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.M193_C4.value() ? "04" :
+//				        		rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.M193_C3.value() ? "06" :
+//				        		rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.M193_C1.value() ? "02" : "01" )
+					.setKey(key)
+					.setNature(nature)
 					.setRetentionBase(rec.getValue(sumBase).doubleValue())
 					.setPercent(rec.getValue(INVOICE_TAX.PERCENTAGE))
 					.setRetention(rec.getValue(quotaOp).doubleValue())
-					.setProvince( RegistryAddressDAO.getMainAddressProvince(ctx, rec.getValue(minRegistry)) ))
+					.setProvince( RegistryAddressDAO.getMainAddressProvince(ctx, rec.getValue(minRegistry)) );
+					
+			})
 			.forEach(detail -> insertDetail(ctx,detail));
+		
 	}
 
 	public static Mod193 initialize(AONContext ctx, int year) {

@@ -166,11 +166,96 @@ export const WithholdingType = [
     percentage: 15.0
   },
   {
-    id: 'M193_C4',
-    name: "Cap. Mobiliario (C/4) - 19%",
-    description: "Arrendamiento y subarrendamiento de bienes muebles, negocios o minas.",
-    percentage: 19.0
-  }
+    	id: 'M193_C4',
+    	name: "Cap. Mobiliario (C/4) - 19%",
+    	description: "Arrendamiento y subarrendamiento de bienes muebles, negocios o minas.",
+    	percentage: 19.0
+  },
+	{
+	  	id: 'M193_B_01',
+	  	name: "Cap. Mobiliario (B/01) - 19%",
+	  	description: "Intereses de obligaciones, bonos, certificados de dep\u00F3sito u otros t\u00EDtulos privados.",
+	  	percentage: 19.0
+	},
+	{
+	  	id: 'M193_B_02',
+	  	name: "Cap. Mobiliario (B/02) - 19%",
+	  	description: "Intereses de obligaciones, bonos, c\u00E9dulas, deuda p\u00FAblica u otros t\u00EDtulos p\u00FAblicos.",
+	  	percentage: 19.0
+	},																																
+	{
+		id: 'M193_B_03',
+		name: "Cap. Mobiliario (B/03) - 19%",
+		description: "Intereses de pr\u00E9stamos no bancarios.",
+		percentage: 19.0
+	},
+	{
+		id: 'M193_B_04',
+		name: "Cap. Mobiliario (B/04) - 19%",
+		description: "Rendimientos o rentas que disfruten de un r\u00E9gimen transitorio de beneficios en operaciones financieras a que se refiere la disposición transitoria sexta de la Ley 27/2014, de 27 de noviembre, del Impuesto sobre Sociedades.",
+		percentage: 19.0
+	},
+	{
+		id: 'M193_B_05',
+		name: "Cap. Mobiliario (B/05) - 19%",
+		description: "Rendimientos o rentas satisfechos por una entidad financiera como consecuencia de la transmisión, cesión o transferencia, total o parcial, de un crédito titularidad de aquélla.",
+		percentage: 19.0
+		},
+	{
+		id: 'M193_B_06',
+		name: "Cap. Mobiliario (B/06) - 19%",
+		description: "Otros rendimientos de capital mobiliario o rentas no incluidos en los dígitos anteriores.",
+		percentage: 19.0
+	},
+	{
+		id: 'M193_B_07',
+		name: "Cap. Mobiliario (B/07) - 19%",
+		description: "Rendimientos exentos.",
+		percentage: 19.0
+	},
+	{
+		id: 'M193_D_01',
+		name: "Cap. Mobiliario (D/01) - 19%",
+		description: "Intereses de obligaciones, bonos, certificados de dep\u00F3sito u otros t\u00EDtulos privados.",
+		percentage: 19.0
+	},
+	{
+		id: 'M193_D_02',
+		name: "Cap. Mobiliario (D/02) - 19%",
+		description: "Intereses de obligaciones, bonos, c\u00E9dulas, deuda p\u00FAblica u otros t\u00EDtulos p\u00FAblicos.",
+		percentage: 19.0
+	},
+	{
+		id: 'M193_D_03',
+		name: "Cap. Mobiliario (D/03) - 19%",
+		description: "Intereses de pr\u00E9stamos no bancarios.",
+		percentage: 19.0
+	},
+	{
+		id: 'M193_D_04',
+		name: "Cap. Mobiliario (D/04) - 19%",
+		description: "Rendimientos o rentas que disfruten de un r\u00E9gimen transitorio de beneficios en operaciones financieras a que se refiere la disposición transitoria sexta de la Ley 27/2014, de 27 de noviembre, del Impuesto sobre Sociedades.",
+		percentage: 19.0
+	},
+	{
+		id: 'M193_D_05',
+		name: "Cap. Mobiliario (D/05) - 19%",
+		description: "Rendimientos o rentas satisfechos por una entidad financiera como consecuencia de la transmisión, cesión o transferencia, total o parcial, de un crédito titularidad de aquélla.",
+		percentage: 19.0
+	},
+	{
+		id: 'M193_D_06',
+		name: "Cap. Mobiliario (D/06) - 19%",
+		description: "Otros rendimientos de capital mobiliario o rentas no incluidos en los dígitos anteriores.",
+		percentage: 19.0
+	},
+	{
+		id: 'M193_D_07',
+		name: "Cap. Mobiliario (D/07) - 19%",
+		description: "Rendimientos exentos.",
+		percentage: 19.0
+	}
+	
 ];
 
 
