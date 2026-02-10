@@ -333,12 +333,26 @@ export class AonInvoice extends AonElement {
 		return true;
 	}
 
-	checkSeries() {
+	checkSeries(accept) {
 		if(!this.configuration.series || this.configuration.series.length == 0) {
 			this.showMessageError("No hay series definidas en la configuración de la empresa. Por favor, contacte con el administrador del dominio.");
 			return false;
 		}
 		
+		let seriesOptions = this.configuration.series.filter(f =>  this.invoice.isRectifier() ? f.rectification : f.invoice);
+		if(this.invoice.isRectifier() && seriesOptions.length == 0) {
+			this.showMessageError("No hay series de rectificación definidas en la configuración de la empresa. Por favor, contacte con el administrador del dominio.");
+			return false;
+		} else if(seriesOptions.length == 0) {
+			this.showMessageError("No hay series definidas para el tipo de factura en la configuración de la empresa. Por favor, contacte con el administrador del dominio.");
+			return false;
+		}
+
+		if(accept && (!this.invoice.series || this.invoice.series == "")) {
+			this.showMessageError("No se ha seleccionado la serie de la factura. Por favor, seleccione una serie para continuar.");
+			return false;
+		}
+
 		return true;
 	}
 
@@ -1248,9 +1262,12 @@ export class AonInvoice extends AonElement {
 		
 		let serieSpan = this.createTableSpan("20%", "2px");
 		div.appendChild(serieSpan);
-
+		let seriesOptions = this.configuration.series.filter(f =>  this.invoice.isRectifier() ? f.rectification : f.invoice);
+		if(!seriesOptions.map(o => o.code).includes(this.invoice.series)) {
+			this.invoice.setSeries(seriesOptions.length > 0 ? seriesOptions[0].code : undefined);
+		}
 		let serie = createSelect(this.SERIE, MSG.SERIE);
-		serie.setOptions(this.configuration.series.filter(f =>  this.invoice.isRectifier() ? f.rectification : f.invoice));
+		serie.setOptions(seriesOptions);
 		serie.setAlias("code", "code");
 		serie.setValue(this.invoice.series);
 		serieSpan.appendChild(serie);
@@ -2734,7 +2751,7 @@ export class AonInvoice extends AonElement {
 	acceptInvoice() {
 		let ok = this.checkConfiguration();
 		ok = ok && this.checkRegistry();	
-		ok = ok && this.checkSeries();
+		ok = ok && this.checkSeries(true);
 		if(!ok) return;
 
 		if(!this.isInvofoxInvoice() && this.getInvoice().isEmitida()) this.getInvoice().setReference(undefined);

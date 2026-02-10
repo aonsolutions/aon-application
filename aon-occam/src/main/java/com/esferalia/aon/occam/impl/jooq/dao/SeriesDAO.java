@@ -97,6 +97,7 @@ public class SeriesDAO {
 		return ctx.getDslContext().select()
 			.from(SERIES)
 			.where(SERIES.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+			.and(SERIES.ACTIVE.eq((byte) 1))
 			.fetch()
 			.stream()
 			.map(new SeriesFiller());	
