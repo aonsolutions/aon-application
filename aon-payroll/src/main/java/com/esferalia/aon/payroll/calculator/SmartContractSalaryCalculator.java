@@ -1323,7 +1323,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			}
 			fixBaseMin(salaryType, expressionContext, start, end, quoteCalculator, taxCalculator, issueDate,
 					leavePeriods, offPeriods, baseVariable);
-		} catch (UndefinedContextVariablesException e) {
+		} catch (UndefinedVariablesException e) {
 
 		}
 	}
