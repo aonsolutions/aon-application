@@ -151,15 +151,14 @@ export class AonUserList extends AonElement {
 	}
 
 	getOptions(user) {
-		return this.isBeta() || this.isAyudaTorInfoautonomos() ?
-			[{
+		return [{
 				id:"supplant",
 				color: "#5f6368",
 				title: 'Suplantar',
 				icon: "social_distance",
 				fn: () => this.supplant(user)
 			}]
-		 : [];
+		 ;
 	}
 
 	supplant(user) {
