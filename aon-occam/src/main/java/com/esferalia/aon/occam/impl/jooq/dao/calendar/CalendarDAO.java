@@ -38,6 +38,7 @@ public class CalendarDAO {
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(CALENDAR.DOMAIN);}
 		@Override public Property<Integer> getHolidayroperty() { return new FilterDAO.PropertyDAO<>(CALENDAR.HOLIDAY);}
 		@Override public Property<Double> getAnualHoursProperty() { return new FilterDAO.PropertyDAO<>(CALENDAR.ANUAL_HOURS);}
+		@Override public Property<Double> getAnualPersonalDaysProperty() { return new FilterDAO.PropertyDAO<>(CALENDAR.ANNUAL_PERSONAL_DAYS);}
 		@Override public Property<Double> getAnualHolidaysProperty() { return new FilterDAO.PropertyDAO<>(CALENDAR.ANNUAL_HOLIDAYS);}
 		@Override public Property<Byte> getHolidaysTypeProperty() { return new FilterDAO.PropertyDAO<>(CALENDAR.HOLIDAYS_TYPE);}
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(CALENDAR.DESCRIPTION);}
@@ -143,12 +144,13 @@ public class CalendarDAO {
 	
 	private static Calendar update(AONContext ctx, Calendar calendar){
 		Holiday holiday = calendar.getHoliday();
-		if(holiday != null)
+		if(holiday != null && null != holiday.getDomain())
 			holiday = HolidayDAO.save(ctx, holiday);
 		
 		ctx.getDslContext().update(CALENDAR)
 			.set(CALENDAR.HOLIDAY, null == holiday ? null : holiday.getId())
 			.set(CALENDAR.ANUAL_HOURS, calendar.getAnualHours())
+			.set(CALENDAR.ANNUAL_PERSONAL_DAYS, calendar.getAnualPersonalDays())
 			.set(CALENDAR.ANNUAL_HOLIDAYS, calendar.getAnnualHolidays())
 			.set(CALENDAR.HOLIDAYS_TYPE, null == calendar.getHolidaysType() ? (byte)0 : calendar.getHolidaysType())
 			.set(CALENDAR.DESCRIPTION, calendar.getDescription())
@@ -180,7 +182,7 @@ public class CalendarDAO {
 	
 	private static Calendar insert(AONContext ctx, Calendar calendar) {
 		Holiday holiday = calendar.getHoliday();
-		if(holiday != null)
+		if(holiday != null && null != holiday.getDomain())
 			holiday = HolidayDAO.save(ctx, holiday);
 		
 		Integer id = ctx.getDslContext()
@@ -188,6 +190,7 @@ public class CalendarDAO {
 				.set(CALENDAR.DOMAIN, calendar.getDomain())
 				.set(CALENDAR.HOLIDAY, null == holiday ? null : holiday.getId())
 				.set(CALENDAR.ANUAL_HOURS, calendar.getAnualHours())
+				.set(CALENDAR.ANNUAL_PERSONAL_DAYS, calendar.getAnualPersonalDays())
 				.set(CALENDAR.ANNUAL_HOLIDAYS, calendar.getAnnualHolidays())
 				.set(CALENDAR.HOLIDAYS_TYPE, null == calendar.getHolidaysType() ? (byte)0 : calendar.getHolidaysType())
 				.set(CALENDAR.DESCRIPTION, calendar.getDescription())
@@ -244,6 +247,7 @@ public class CalendarDAO {
 					.setDomain(r.getValue(CALENDAR.DOMAIN))
 					.setHoliday(new Holiday().setId( r.getValue(CALENDAR.HOLIDAY) ))
 					.setAnualHours(r.getValue(CALENDAR.ANUAL_HOURS))
+					.setAnualPersonalDays(r.getValue(CALENDAR.ANNUAL_PERSONAL_DAYS))
 					.setAnnualHolidays(r.getValue(CALENDAR.ANNUAL_HOLIDAYS))
 					.setHolidaysType(r.getValue(CALENDAR.HOLIDAYS_TYPE))
 					.setDescription(r.getValue(CALENDAR.DESCRIPTION))

@@ -477,6 +477,14 @@
 		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M172-292v-28h438v28H172Zm596-35L613-480l155-152 20 20-135 132 135 133-20 20ZM172-466v-28h326v28H172Zm0-174v-28h438v28H172Z"/></svg>');
 }
 
+#gwt-debug-collapseMenuWorkplaceCalendar.aon_icon_menu_collapse{
+	background-size: 24px !important;
+	background-image:
+		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M172-292v-28h438v28H172Zm596-35L613-480l155-152 20 20-135 132 135 133-20 20ZM172-466v-28h326v28H172Zm0-174v-28h438v28H172Z"/></svg>') !important;
+	mask-image: none !important;
+	background-color: transparent !important;
+}
+
 .aon_icon_send {
 	background-size: 24px;
 	background-image:
@@ -510,13 +518,19 @@
 .aon_icon_edit_calendar {
 	background-size: 24px;
 	background-image:
-		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M232-132q-26 0-43-17t-17-43v-496q0-26 17-43t43-17h80v-92h32v92h276v-92h28v92h80q26 0 43 17t17 43v200h-28v-40H200v336q0 12 10 22t22 10h240v28H232Zm-32-424h560v-132q0-12-10-22t-22-10H232q-12 0-22 10t-10 22v132Zm0 0v-164 164Zm372 424v-78l211-210q5-5 10-6.5t10-1.5q5 0 10.5 2t9.5 6l37 38q4 5 6 10t2 10q0 5-2 10t-6 10L650-132h-78Zm268-230-37-38 37 38ZM600-160h38l144-144-19-19-18-20-145 145v38Zm163-163-18-20 37 39-19-19Z"/></svg>');
+		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M232-132q-26 0-43-17t-17-43v-496q0-26 17-43t43-17h80v-92h32v92h276v-92h28v92h80q26 0 43 17t17 43v200h-28v-40H200v336q0 12 10 22t22 10h240v28H232Zm-32-424h560v-132q0-12-10-22t-22-10H232q-12 0-22 10t-10 22v132Zm0 0v-164 164Zm372 424v-78l211-210q5-5 10-6.5t10-1.5q5 0 10.5 2t9.5 6l37 38q4 5 6 10t2 10q0 5-2 10t-6 10L650-132h-78Zm268-230-37-38 37 38ZM600-160h38l144-144-19-19-18-20-145 145v38Zm163-163-18-20 37 39-19-19Z"/></svg>') !important;
 }
 
 .aon_icon_calendar_clock {
 	background-size: 24px;
 	background-image:
 		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M200-556h560v-132q0-12-10-22t-22-10H232q-12 0-22 10t-10 22v132Zm0 0v-164 164Zm32 424q-26 0-43-17t-17-43v-496q0-26 17-43t43-17h80v-92h32v92h276v-92h28v92h80q26 0 43 17t17 43v205q-7-2-14-2.5t-14-1.5v-41H200v336q0 12 10 22t22 10h273q2 8 5.5 14.5T517-132H232Zm403-3q-43-43-43-105t43-105q43-43 105-43t105 43q43 43 43 105t-43 105q-43 43-105 43t-105-43Zm171-19 20-20-72-72v-108h-28v120l80 80Z"/></svg>');
+}
+
+.aon_icon_edit_calendarma {
+	background-size: 24px;
+	background-image:
+		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M232-132q-26 0-43-17t-17-43v-496q0-26 17-43t43-17h80v-92h32v92h276v-92h28v92h80q26 0 43 17t17 43v200h-28v-40H200v336q0 12 10 22t22 10h240v28H232Zm-32-424h560v-132q0-12-10-22t-22-10H232q-12 0-22 10t-10 22v132Zm0 0v-164 164Zm372 424v-78l211-210q5-5 10-6.5t10-1.5q5 0 10.5 2t9.5 6l37 38q4 5 6 10t2 10q0 5-2 10t-6 10L650-132h-78Zm268-230-37-38 37 38ZM600-160h38l144-144-19-19-18-20-145 145v38Zm163-163-18-20 37 39-19-19Z"/></svg>');
 }
 
 .aon_icon_format_indent_increase {

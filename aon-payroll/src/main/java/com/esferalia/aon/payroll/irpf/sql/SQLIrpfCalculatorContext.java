@@ -70,6 +70,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.IrpfDataDescendientsColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfRegularizationColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
 import com.esferalia.aon.salary.ISalary;
@@ -109,11 +110,20 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			+ " AND (" + SalaryPaymentColumns.AMOUNT + " = 0.00 OR " + SalaryPaymentColumns.AMOUNT + " > " + SalaryPaymentColumns.QUOTE + ")" 
 			+ " AND " + SalaryPaymentColumns.TYPE + " IN (" + PaymentType.CRA_0005.ordinal() + ")"
 			;
+	private static final String MONTH_DAYS_SQL = "SELECT "
+			+ " " + SalaryDataColumns.EXPRESSION  
+			+ " FROM " + SQLConstants.SALARY_DATA
+			+ " WHERE " + SQLConstants.SALARY + "." + SalaryColumns.TYPE + " = 0 "
+			+ " AND " + SalaryDataColumns.SALARY + " = " + SQLConstants.SALARY + "." + SalaryColumns.ID
+			+ " AND " + SalaryDataColumns.NAME + " = '" + ContextVariable.MONTH_DAYS.getName() + "' "
+			+ " LIMIT 1"
+			;
 	
 	private static final String SALARY_SQL = "SELECT"
 			+ "  "+ SQLConstants.SALARY + ".*" 
 			+ ", (" + EXTRAS_SQL + ") AS EXTRAS " 
 			+ ", (" + BONUS_SQL + ") AS BONUS " 
+			+ ", (" + MONTH_DAYS_SQL + ") AS MONTH_DAYS " 
 			+ " FROM  " + SQLConstants.SALARY 
 			+ " WHERE " + SalaryColumns.CONTRACT
 			+ " = ? " + " AND " + SalaryColumns.CHARGE_DATE
@@ -1345,7 +1355,6 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			while (salaryRs.next()) {
 				double salaryBonus = salaryRs.getDouble("BONUS");
 				double salaryExtras = salaryRs.getDouble("EXTRAS");
-				double salaryCgcBase = salaryRs.getDouble(SalaryColumns.CGC_BASE);
 				double salaryIrpfBase = salaryRs.getDouble(SalaryColumns.IRPF_BASE);
 				double salaryProExtBase = salaryRs.getDouble(SalaryColumns.PRO_EXT_BASE);
 				double salaryTotalIrpf = salaryRs.getDouble(SalaryColumns.TOTAL_IRPF);
@@ -1358,9 +1367,32 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				totalIrpf += salaryTotalIrpf;
 				socialSecurityContributons += salaryRs
 						.getDouble(SalaryColumns.SOCIAL_SECURITY_CONTRIBUTIONS);
+				
+				
+				
 				int type = salaryRs.getInt(SalaryColumns.TYPE);
 				if (type == SalaryType.SALARY.ordinal() 
 					|| type == SalaryType.M190.ordinal()) {
+					
+					Date salaryEndDate = salaryRs.getDate(SalaryColumns.END_DATE);
+					int salaryEndDay = AonDateUtils.getDay(salaryEndDate);
+					Date salaryStartDate = salaryRs.getDate(SalaryColumns.START_DATE);
+					int salaryStartDay = AonDateUtils.getDay(salaryStartDate);
+					int salaryDays = ( salaryEndDay - salaryStartDay ) + 1;
+					double monthDays = salaryRs.getDouble("MONTH_DAYS");
+					
+					double nonSalaryDays  = Math.max( monthDays - salaryDays, 0 ) ;
+					nonSalaryDays = Math.min( salaryStartDay - 1.00 , nonSalaryDays);
+					
+					bonus +=  bonus / salaryDays * nonSalaryDays ;
+					extras += extras / salaryDays * nonSalaryDays ;
+					irpfBase +=  irpfBase / salaryDays * nonSalaryDays ;
+					proExtBase +=  proExtBase / salaryDays * nonSalaryDays ;
+					totalIrpf +=  totalIrpf / salaryDays * nonSalaryDays ;
+					socialSecurityContributons +=  socialSecurityContributons / salaryDays * nonSalaryDays ;
+					
+					
+
 					issuedSalaries.add(AonDateUtils.getMonthFirstDay(salaryRs.getDate(SalaryColumns.END_DATE)));
 				}else if ( type == SalaryType.EXTRA.ordinal() ) {
 					proExtBase -= salaryRs.getDouble(SalaryColumns.IRPF_BASE);

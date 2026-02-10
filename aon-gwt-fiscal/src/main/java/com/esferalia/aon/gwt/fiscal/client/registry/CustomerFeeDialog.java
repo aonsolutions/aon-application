@@ -36,7 +36,6 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -551,10 +550,28 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		discountTextBox.setWidth("8.8em");
 		discountTextBox.getElement().getStyle().setProperty("padding", "0 5px");
 		discountTextBox.addValueChangeHandler(e -> { 
-			if(null != fee) fee.setDiscountExpr(e.getValue());
-			recalculateTotalAmount();
+			String expression = e.getValue();
+			expression = expression.replaceAll(",", ".");
+			try {
+				evalExpression(expression);
+				fee.setDiscountExpr(expression);
+				discountTextBox.setValue(expression);
+				recalculateTotalAmount();
+			} catch (Exception exception) {
+				AonMessagePanel.showError(messagePanel, "Descuento con formato incorrecto");
+			}
 		});
-		if(null != fee) discountTextBox.setValue(fee.getDiscountExpr());
+		if(null != fee) {
+			String expression = fee.getDiscountExpr();
+			if(AonStringUtils.contains(expression, ",")) AonMessagePanel.showError(messagePanel, "Se debe usar '.' para decimales");
+			try {
+				evalExpression(expression);
+			} catch (Exception exception) {
+				AonMessagePanel.showError(messagePanel, "Descuento con formato incorrecto");
+			}
+			
+			discountTextBox.setValue(fee.getDiscountExpr());
+		}
 		
 		if(null != this.fee || this.isNewFee) {
 			quantityPricePanel.add(quantityLabel);
@@ -569,6 +586,14 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		container.add(quantityPricePanel);
 	}
+	
+	public double evalExpression(String expression) {
+		return calculate(expression);
+	}
+
+	public final native double calculate(String expression) /*-{
+		return eval(expression);
+	}-*/;
 
 	private void createDatesPanel() {
 		datesPanel = new HTMLPanel("");
