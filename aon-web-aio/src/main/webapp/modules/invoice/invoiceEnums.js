@@ -192,7 +192,7 @@ export const WithholdingType = [
 	{
 		id: 'M193_B_04',
 		name: "Cap. Mobiliario (B/04) - 19%",
-		description: "Rendimientos o rentas que disfruten de un r\u00E9gimen transitorio de beneficios en operaciones financieras a que se refiere la disposición transitoria sexta de la Ley 27/2014, de 27 de noviembre, del Impuesto sobre Sociedades.",
+		description: "Rendimientos o rentas que disfruten de un r\u00E9gimen transitorio de beneficios en operaciones financieras a que se refiere la D.T. sexta de la Ley 27/2014, de 27 de noviembre, del I.S.",
 		percentage: 19.0
 	},
 	{
@@ -234,7 +234,7 @@ export const WithholdingType = [
 	{
 		id: 'M193_D_04',
 		name: "Cap. Mobiliario (D/04) - 19%",
-		description: "Rendimientos o rentas que disfruten de un r\u00E9gimen transitorio de beneficios en operaciones financieras a que se refiere la disposición transitoria sexta de la Ley 27/2014, de 27 de noviembre, del Impuesto sobre Sociedades.",
+		description: "Rendimientos o rentas que disfruten de un r\u00E9gimen transitorio de beneficios en operaciones financieras a que se refiere la D.T. sexta de la Ley 27/2014, de 27 de noviembre, del I.S.",
 		percentage: 19.0
 	},
 	{

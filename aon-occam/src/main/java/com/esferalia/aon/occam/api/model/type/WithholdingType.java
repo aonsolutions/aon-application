@@ -203,19 +203,19 @@ public enum WithholdingType implements Serializable {
 	}
 	,M193_B_04 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (B/04)","Rendimientos o rentas que disfruten de un r\u00E9gimen transitorio"
 			+ " de beneficios en operaciones financieras a que se refiere la"
-			+ " disposición transitoria sexta de la Ley 27/2014, de 27 de noviembre, del Impuesto sobre Sociedades.") {
+			+ " D.T. sexta de la Ley 27/2014, de 27 de noviembre, del I.S.") {
 		@Override
 		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
 			return visitor.visitM193B04(t);
 		}		
 	}
-	,M193_B_05 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (B/05)","Rendimientos o rentas satisfechos por una entidad financiera como consecuencia de la transmisión, cesión o transferencia, total o parcial, de un crédito titularidad de aquélla.") {
+	,M193_B_05 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (B/05)","Rendimientos o rentas satisfechos por una entidad financiera como consecuencia de la transmisi\u00F3n, cesi\u00F3n o transferencia, total o parcial, de un cr\u00E9dito titularidad de aquella.") {
 		@Override
 		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
 			return visitor.visitM193B05(t);
 		}		
 	}
-	,M193_B_06 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (B/06)","Otros rendimientos de capital mobiliario o rentas no incluidos en los dígitos anteriores.") {
+	,M193_B_06 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (B/06)","Otros rendimientos de capital mobiliario o rentas no incluidos en los d\u00EDgitos anteriores.") {
 		@Override
 		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
 			return visitor.visitM193B06(t);
@@ -247,19 +247,19 @@ public enum WithholdingType implements Serializable {
 	}
 	,M193_D_04 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (D/04)","Rendimientos o rentas que disfruten de un r\u00E9gimen transitorio"
 			+ " de beneficios en operaciones financieras a que se refiere la"
-			+ " disposición transitoria sexta de la Ley 27/2014, de 27 de noviembre, del Impuesto sobre Sociedades.") {
+			+ " D.T. sexta de la Ley 27/2014, de 27 de noviembre, del I.S.") {
 		@Override
 		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
 			return visitor.visitM193D04(t);
 		}		
 	}
-	,M193_D_05 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (D/05)","Rendimientos o rentas satisfechos por una entidad financiera como consecuencia de la transmisión, cesión o transferencia, total o parcial, de un crédito titularidad de aquélla.") {
+	,M193_D_05 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (D/05)","Rendimientos o rentas satisfechos por una entidad financiera como consecuencia de la transmisi\u00F3n, cesi\u00F3n o transferencia, total o parcial, de un cr\u00E9dito titularidad de aquella.") {
 		@Override
 		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
 			return visitor.visitM193D05(t);
 		}		
 	}
-	,M193_D_06 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (D/06)","Otros rendimientos de capital mobiliario o rentas no incluidos en los dígitos anteriores.") {
+	,M193_D_06 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (D/06)","Otros rendimientos de capital mobiliario o rentas no incluidos en los d\u00EDgitos anteriores.") {
 		@Override
 		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
 			return visitor.visitM193D06(t);

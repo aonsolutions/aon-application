@@ -275,7 +275,7 @@ public abstract class Mod123Declaration {
 	public abstract Mod123Key[] getSamePeriodExplainKeys();
 	
 	protected static boolean isMovableCapitalDividens(IrpfBreakdown br) {
-		// FALTA
+		// FALTA - NUEVAS CLAVES B Y D A VER A QUE CASILLAS VAN
 //		return (br.isFromInvoice() && br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL);		
 		return br.isFromInvoice() && (br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL
 									|| br.getWithholdingType() == WithholdingType.M193_B_01

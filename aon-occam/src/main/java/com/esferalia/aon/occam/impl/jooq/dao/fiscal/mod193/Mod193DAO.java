@@ -731,11 +731,6 @@ public class Mod193DAO {
 					.setMod193(mod193.getId())
 					.setDocument(rec.getValue(INVOICE.RDOCUMENT))
 					.setName(rec.getValue(INVOICE.RNAME))
-					// FALTA
-//					.setKey(rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.MOVABLE_CAPITAL.value() ? "A" : "C")
-//					.setNature( rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.M193_C4.value() ? "04" :
-//				        		rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.M193_C3.value() ? "06" :
-//				        		rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.M193_C1.value() ? "02" : "01" )
 					.setKey(key)
 					.setNature(nature)
 					.setRetentionBase(rec.getValue(sumBase).doubleValue())
