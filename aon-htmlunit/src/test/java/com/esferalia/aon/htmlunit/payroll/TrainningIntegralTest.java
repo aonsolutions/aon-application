@@ -2,20 +2,16 @@ package com.esferalia.aon.htmlunit.payroll;
 
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_PASSWORD;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
-import static com.esferalia.aon.htmlunit.HtmlUnitIT.LOGGER;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Locale;
 
+import org.htmlunit.html.HtmlSelect;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.esferalia.aon.htmlunit.HtmlUnitIT;
-
-import org.htmlunit.html.HtmlOption;
-import org.htmlunit.html.HtmlPage;
-import org.htmlunit.html.HtmlSelect;
 
 public class TrainningIntegralTest extends BaseIntegralTestCase {
 
@@ -349,6 +345,19 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("job_training", 0.27);
 		assertText("mei", 1.80);
 		assertText("meiPercentLabel", "0,13 %");
+
+		calculate(Calendar.JANUARY, 2026);
+		check("costsCheck-input");
+		assertValue("cgcBaseLabel", 1381.20);
+		assertValue("cgpBaseLabel", 1381.20);
+		assertText("common_contingency", 11.16);
+		assertText("unemployment", 21.41);
+		assertText("job_training", 0.27);
+		assertText("mei", BigDecimal.valueOf(1381.20 * 0.15 / 100.00).setScale(2, RoundingMode.HALF_UP).doubleValue());
+		assertText("meiPercentLabel", "0,15 %");
+		//assertText("mei_cost", BigDecimal.valueOf(1381.20 * 0.75 / 100.00).setScale(2, RoundingMode.HALF_UP).doubleValue());
+		assertText("mei_ePercentLabel", "0,75 %");
+		uncheck("costsCheck-input");
 		
 		draft("FORMACIÓN ALTERNANCIA, PLAN DE PENSIONES");
 		calculate(Calendar.SEPTEMBER, 2025);

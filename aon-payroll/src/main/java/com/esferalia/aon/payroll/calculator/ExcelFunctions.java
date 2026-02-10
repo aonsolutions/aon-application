@@ -1,6 +1,8 @@
 package com.esferalia.aon.payroll.calculator;
 
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -197,9 +199,14 @@ public class ExcelFunctions {
 
 	@Variable(ContextVariable.ROUND)
 	public static final Double round(double number, int precision) {
-		double factor = Math.pow(10, precision);
-		return Math.round(number*factor) / factor;
+		return BigDecimal.valueOf(number).setScale(precision, RoundingMode.HALF_UP).doubleValue();
 	}
+
+	// Default precision is 2, as in Excel
+	public static final Double round(double number) {
+		return round(number, 2);
+	}
+
 
 	// ------------------------------------------
 	//
