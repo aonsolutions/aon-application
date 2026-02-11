@@ -133,7 +133,6 @@ export class AonInvoice extends AonElement {
 		this.SERVICE = CONSTANT.AON_INVOICE + CONSTANT.SERVICE.initCap();
 		this.INVESTMENT = CONSTANT.AON_INVOICE + CONSTANT.INVESTMENT.initCap();
 		this.RECTIFIED = CONSTANT.AON_INVOICE + CONSTANT.RECTIFIED.initCap();
-		this.THIRD_PART = CONSTANT.AON_INVOICE + CONSTANT.THIRD_PART.initCap();
 		this.NUMBER = CONSTANT.AON_INVOICE + CONSTANT.NUMBER.initCap();
 		this.REFERENCE = CONSTANT.AON_INVOICE + CONSTANT.REFERENCE.initCap();
 		this.DATE = CONSTANT.AON_INVOICE + CONSTANT.DATE.initCap();
@@ -257,8 +256,7 @@ export class AonInvoice extends AonElement {
 				let tax = this.getTax(this.configuration.defaultRetentionTax);
 				if (tax) {
 					return tax.withholding_type;
-				} 
-				
+				} 	
 			}
 		}
 		return undefined;
@@ -279,7 +277,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	build() {
-		let check = this.checkConfiguration();
+		let check = this.checkConfiguration() && this.checkSeries();
 		if(this.icc.isNoSif() || !check) this.fileOpened = false;
 		this.buildOptions();
 		this.clear();
@@ -332,6 +330,29 @@ export class AonInvoice extends AonElement {
 				: "El Documento del Proveedor/Acreedor no es válido.");
 			return false;
 		}
+		return true;
+	}
+
+	checkSeries(accept) {
+		if(!this.configuration.series || this.configuration.series.length == 0) {
+			this.showMessageError("No hay series definidas en la configuración de la empresa. Por favor, contacte con el administrador del dominio.");
+			return false;
+		}
+		
+		let seriesOptions = this.configuration.series.filter(f =>  this.invoice.isRectifier() ? f.rectification : f.invoice);
+		if(this.invoice.isRectifier() && seriesOptions.length == 0) {
+			this.showMessageError("No hay series de rectificación definidas en la configuración de la empresa. Por favor, contacte con el administrador del dominio.");
+			return false;
+		} else if(seriesOptions.length == 0) {
+			this.showMessageError("No hay series definidas para el tipo de factura en la configuración de la empresa. Por favor, contacte con el administrador del dominio.");
+			return false;
+		}
+
+		if(accept && (!this.invoice.series || this.invoice.series == "")) {
+			this.showMessageError("No se ha seleccionado la serie de la factura. Por favor, seleccione una serie para continuar.");
+			return false;
+		}
+
 		return true;
 	}
 
@@ -1212,22 +1233,6 @@ export class AonInvoice extends AonElement {
 			});
 			rectified.checked = this.invoice.isRectified();
 
-			// ----- EMITIDA POR TERCEROS
-
-
-			let thirdPart = new AonSwitch();
-			if(this.invoice.isEmitida()){
-				thirdPart.id = this.THIRD_PART;
-				thirdPart.title = MSG.ISSUED_BY_THIRD_PART;
-				thirdPart.readonly = this.invoice.isReadonly();
-				div.appendChild(thirdPart);
-				thirdPart.addEventListener(EVENT.CHANGE, () => {
-					this.invoice.setThirdPart(thirdPart.checked);
-				});
-				thirdPart.checked = this.invoice.isThirdPart();
-			}
-
-
 			const top  = button.getBoundingClientRect().top;
 			const left = button.getBoundingClientRect().left;
 			dialog.setContent(div, top, left);
@@ -1241,11 +1246,6 @@ export class AonInvoice extends AonElement {
 
 			rectified.setWidth('150px');
 			rectified.setMarginBottom('10px');
-		
-			if(this.invoice.isEmitida()){
-				thirdPart.setWidth('150px');
-				thirdPart.setMarginBottom('10px');
-			}
 		});
 
 		let table = new AonBasicTable();
@@ -1262,26 +1262,16 @@ export class AonInvoice extends AonElement {
 		
 		let serieSpan = this.createTableSpan("20%", "2px");
 		div.appendChild(serieSpan);
-
-		// let serie = createSelect(this.SERIE, MSG.SERIE);
-		// serie.options = JSON.stringify(this.configuration.series);
-		// serie.value = this.invoice.series;
-		// serieSpan.appendChild(serie);
-		// serie.readonly = this.invoice.isReadonly();
-		// serie.addEventListener(EVENT.SELECT, () => this.onChangeSerie(serie.value));
-
-		let serie = createSuggestion(this.SERIE, MSG.SERIE);
-		serie.setMaxlength(5);
+		let seriesOptions = this.configuration.series.filter(f =>  this.invoice.isRectifier() ? f.rectification : f.invoice);
+		if(!seriesOptions.map(o => o.code).includes(this.invoice.series)) {
+			this.invoice.setSeries(seriesOptions.length > 0 ? seriesOptions[0].code : undefined);
+		}
+		let serie = createSelect(this.SERIE, MSG.SERIE);
+		serie.setOptions(seriesOptions);
+		serie.setAlias("code", "code");
+		serie.setValue(this.invoice.series);
 		serieSpan.appendChild(serie);
-		serie.addEventListener(EVENT.AON_KEYUP, (e) => {
-			serie.buildOptions(this.series.filter(f => f.description && f.description.includes(serie.value)).map(r => {return {
-				name: r.description,
-				value: r.description,
-				item: r};}));
-		});
 		serie.readonly = this.invoice.isReadonly();
-		serie.value = this.invoice.series;
-		serie.addEventListener(EVENT.CHANGE, () => this.onChangeSerie(serie.value));
 		serie.addEventListener(EVENT.SELECT, () => this.onChangeSerie(serie.value));
 
 		// ----- NUMBER
@@ -1295,28 +1285,7 @@ export class AonInvoice extends AonElement {
 		number.readonly = CONSTANT.READONLY;
 		number.disabled = CONSTANT.TRUE;
 		numberSpan.appendChild(number);
-		if(this.invoice.isInbox()) {
-			if(this.invoice.isThirdPart()) {
-				number.setReadonly(false);
-				number.setDisabled(false);
-			} else {
-				getSalesSeries({}).then(r => {
-					this.series = r;
-					let enabled = this.invoice.isInbox() && r.filter(f => f.description == this.invoice.series).length === 0;
-					number.setReadonly(!enabled );
-					number.setDisabled(!enabled );
-					if(!enabled){
-						this.invoice.number =  '';
-						this.getElement(this.NUMBER).value = '';
-					}
-				});
-			}
-
-			number.addEventListener(EVENT.CHANGE, () => {
-				this.invoice.number = number.value;
-			});
-		}
-
+		
 		// ----- REFERENCE
 		let referenceSpan = this.createTableSpan("45%", "2px");
 		div.appendChild(referenceSpan);
@@ -2782,6 +2751,7 @@ export class AonInvoice extends AonElement {
 	acceptInvoice() {
 		let ok = this.checkConfiguration();
 		ok = ok && this.checkRegistry();	
+		ok = ok && this.checkSeries(true);
 		if(!ok) return;
 
 		if(!this.isInvofoxInvoice() && this.getInvoice().isEmitida()) this.getInvoice().setReference(undefined);
@@ -2791,28 +2761,7 @@ export class AonInvoice extends AonElement {
 			if(!this.isMobile()) d.width = '400px';
 			d.setTitle(MSG.ACCEPT);
 
-			if(this.invoice.isThirdPart()) {
-				let tbaiIdInput = createInput(this.TBAI_ID, "Identificador TicketBai");
-				d.setContent(tbaiIdInput);
-
-				d.addAcceptAction(() => {
-					this.getApplication().startLoader();
-					this.accept = false;
-					let data = this.getInvoice();
-					data.tbaiId = tbaiIdInput.value;
-					data.messages = undefined;
-					acceptInvoice(data).then(r => {
-						this.updateCounter(this.getAcceptFromOption(), this.getAcceptToOption(), 1);
-						this.invoice = new Invoice(r);
-						this.getApplication().stopLoader(); 
-						this.reload();
-					}).catch(e => {
-						this.accept = true;
-						this.getApplication().stopLoader(); 
-						this.showError(e)
-					});
-				});
-			} else if(this.icc.isTbai() || this.icc.isLroe() || this.icc.isVerifactu() || this.icc.isSii()) {	
+			if(this.icc.isTbai() || this.icc.isLroe() || this.icc.isVerifactu() || this.icc.isSii()) {	
 				let certSelect = createSelect("cert", "Certificado");
 				getAeatCertificates().then(certs => {
 					certSelect.setOptions(certs.map(s => {

@@ -4102,8 +4102,21 @@ public class AON {
 		}
 	}
 	
-	public static List<ProjectTas> getProjectTasStream(String domainName, Integer domainId, String login, ProjectTasFilter filter){
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+
+	public static Optional<ProjectTas> getProjectTas(Occam occam, ProjectTasFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getProject().getProjectTasStream(ctx, filter).findFirst();
+		}
+	}
+	
+	public static Stream<ProjectTas> getProjectTasStream(Occam occam, ProjectTasFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getProject().getProjectTasStream(ctx, filter);
+		}
+	}
+	
+	public static List<ProjectTas> getProjectTasList(Occam occam, ProjectTasFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			return getProject().getProjectTasStream(ctx, filter).collect(Collectors.toList());
 		}
 	}
@@ -9097,6 +9110,12 @@ public class AON {
 	public static Stream<InvoiceRegistry> getInvoiceRegistriesSuggestion(Occam occam, Integer domainId, String query) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			return getFinance().getInvoiceRegistries(ctx, domainId, query);
+		}
+	}
+	
+	public static void fixInvoice(Occam occam, int domain) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			getFinance().fixInvoice(ctx, domain);
 		}
 	}
 	

@@ -99,6 +99,7 @@ import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
+import com.esferalia.aon.occam.api.model.project.ProjectTas;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -1233,6 +1234,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public String getInvoicePDF(String domainName, int domainId, String login, Integer officeDomain, Integer invoiceId) throws AonCoreException {
+		Occam occam = new Occam().setDomainName(domainName).setDomain(domainId).setUser(login);
 		try (ByteArrayOutputStream os = new ByteArrayOutputStream(30 * 1024)){	
 			PrintInvoiceConfiguration config;
 			if(null == officeDomain)
@@ -1261,6 +1263,14 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 						+ "&s=" + invoice.getSeries()
 						+ "&n=" + invoice.getNumber()
 						+ "&t=" + invoice.getTotal();  
+			
+			if(company.getRegistry().getDomain().isGarage()) {	
+				invoice.detailStream().forEach(d -> {
+					ProjectTas pt = AON.getProjectTas(occam, f -> f.getDomainProperty().eq(invoice.getDomain())
+							.and(f.getIdProperty().eq(d.getProject()))).orElse(null);
+					if(pt != null)	d.setProjectName(d.getProjectName() + " - KMS. " + d.getProject());	
+				});
+			}
 			
 			PdfMaker.printInvoice(os, company, invoice, config, qrUrl, logo.getData(), null);
 			

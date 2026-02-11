@@ -102,6 +102,10 @@ public class Domain implements Serializable {
 	public boolean isConsultancy() {
 		return DomainType.CONSULTANCY.equals(getDomainType());
 	}
+	
+	public boolean isGarage() {
+		return DomainType.GARAGE.equals(getDomainType());
+	}
 
 	public boolean isActive() {
 		return active;
