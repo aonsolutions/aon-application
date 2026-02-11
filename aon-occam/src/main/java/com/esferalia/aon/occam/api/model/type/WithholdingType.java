@@ -182,7 +182,95 @@ public enum WithholdingType implements Serializable {
 		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
 			return visitor.visitM193C4(t);
 		}
-	}	
+	}
+	,M193_B_01 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (B/01)","Intereses de obligaciones, bonos, certificados de dep\u00F3sito u otros t\u00EDtulos privados.") {
+		@Override 
+		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
+			return visitor.visitM193B01(t);
+		}
+	}
+	,M193_B_02 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (B/02)","Intereses de obligaciones, bonos, c\u00E9dulas, deuda p\u00FAblica u otros t\u00EDtulos p\u00FAblicos.") {
+		@Override 
+		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
+			return visitor.visitM193B02(t);
+		}
+	}
+	,M193_B_03 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (B/03)","Intereses de pr\u00E9stamos no bancarios.") {
+		@Override 
+		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
+			return visitor.visitM193B03(t);
+		}
+	}
+	,M193_B_04 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (B/04)","Rendimientos o rentas que disfruten de un r\u00E9gimen transitorio"
+			+ " de beneficios en operaciones financieras a que se refiere la"
+			+ " D.T. sexta de la Ley 27/2014, de 27 de noviembre, del I.S.") {
+		@Override
+		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
+			return visitor.visitM193B04(t);
+		}		
+	}
+	,M193_B_05 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (B/05)","Rendimientos o rentas satisfechos por una entidad financiera como consecuencia de la transmisi\u00F3n, cesi\u00F3n o transferencia, total o parcial, de un cr\u00E9dito titularidad de aquella.") {
+		@Override
+		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
+			return visitor.visitM193B05(t);
+		}		
+	}
+	,M193_B_06 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (B/06)","Otros rendimientos de capital mobiliario o rentas no incluidos en los d\u00EDgitos anteriores.") {
+		@Override
+		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
+			return visitor.visitM193B06(t);
+		}		
+	}
+	,M193_B_07 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (B/07)","Rendimientos exentos.") {
+		@Override
+		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
+			return visitor.visitM193B07(t);
+		}		
+	}
+	,M193_D_01 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (D/01)","Intereses de obligaciones, bonos, certificados de dep\u00F3sito u otros t\u00EDtulos privados.") {
+		@Override 
+		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
+			return visitor.visitM193D01(t);
+		}
+	}
+	,M193_D_02 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (D/02)","Intereses de obligaciones, bonos, c\u00E9dulas, deuda p\u00FAblica u otros t\u00EDtulos p\u00FAblicos.") {
+		@Override 
+		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
+			return visitor.visitM193D02(t);
+		}
+	}
+	,M193_D_03 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (D/03)","Intereses de pr\u00E9stamos no bancarios.") {
+		@Override 
+		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
+			return visitor.visitM193D03(t);
+		}
+	}
+	,M193_D_04 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (D/04)","Rendimientos o rentas que disfruten de un r\u00E9gimen transitorio"
+			+ " de beneficios en operaciones financieras a que se refiere la"
+			+ " D.T. sexta de la Ley 27/2014, de 27 de noviembre, del I.S.") {
+		@Override
+		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
+			return visitor.visitM193D04(t);
+		}		
+	}
+	,M193_D_05 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (D/05)","Rendimientos o rentas satisfechos por una entidad financiera como consecuencia de la transmisi\u00F3n, cesi\u00F3n o transferencia, total o parcial, de un cr\u00E9dito titularidad de aquella.") {
+		@Override
+		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
+			return visitor.visitM193D05(t);
+		}		
+	}
+	,M193_D_06 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (D/06)","Otros rendimientos de capital mobiliario o rentas no incluidos en los d\u00EDgitos anteriores.") {
+		@Override
+		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
+			return visitor.visitM193D06(t);
+		}		
+	}
+	,M193_D_07 (CAPITAL_MOBILIARIO, "Cap. Mobiliario (D/07)","Rendimientos exentos.") {
+		@Override
+		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
+			return visitor.visitM193D07(t);
+		}		
+	}
 	;
 	
 	private WithholdingTypeGroup group;
@@ -281,14 +369,12 @@ public enum WithholdingType implements Serializable {
 		// TRABAJO
 		,M190_F_01,M190_F_02_1,M190_F_02_2
 		// CAPITAL_MOBILIARIO
-		,MOVABLE_CAPITAL,M193_C1,M193_C2,M193_C3,M193_C4
+		,MOVABLE_CAPITAL,M193_B_01,M193_B_02,M193_B_03,M193_B_04,M193_B_05,M193_B_06,M193_B_07,M193_C1,M193_C2,M193_C3,M193_C4,M193_D_01,M193_D_02,M193_D_03,M193_D_04,M193_D_05,M193_D_06,M193_D_07
 		// DERECHOS_IMAGEN
 		,M190_J
 		// GANANCIAS_PATRIMONIALES
 		,M190_K_01,M190_K_03,M190_K_02
 	};
-
-
 	
 	public static WithholdingType[] getTypes(WithholdingTypeGroup group) {
 		return Arrays.stream(WithholdingType.values())
