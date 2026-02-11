@@ -2603,7 +2603,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		List<IContractPayment> payments = new ArrayList<IContractPayment>(systemPayments.size());
 		CCCType cccType = getCCCType();
 		for (ISystemPayment systemPayment : systemPayments) {
-			if (filter(systemPayment, cccType)) {
+			if (filter(systemPayment, cccType) || filterCoop(systemPayment)) {
 				payments.add(new DelegateSystemPayment(systemPayment) {
 					@Override
 					public ExpressionScope getScope() {
@@ -2648,6 +2648,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			}
 		}
 		return deductions;
+	}
+
+	private boolean filterCoop(ISystemPayment systemPayment) {
+		int ssRegime = getInt(SQLConstants.CONTRACT, ContractColumns.SS_REGIME);
+		System.out.println("SSRegime: " + ssRegime + " - Payment domain: " + (systemPayment.getDomain() == (-1 * ssRegime ) ));
+		return ssRegime == 1 && systemPayment.getDomain() == (-1 * ssRegime);
 	}
 
 	private boolean filter(ISystemCost systemCost, CCCType cccType) {

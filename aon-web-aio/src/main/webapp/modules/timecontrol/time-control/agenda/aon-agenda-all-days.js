@@ -1080,8 +1080,8 @@ export class AonAgendaAllDays extends AonElement {
 		const firstDay = centerWeek.days[0].date;
 		const lastDay = centerWeek.days[6].date;
 
-		const firstDayNum = String(firstDay.getDate() + 1).padStart(2, '0');
-		const lastDayNum = String(lastDay.getDate() + 1).padStart(2, '0');
+		const firstDayNum = String(firstDay.getDate()).padStart(2, '0');
+		const lastDayNum = String(lastDay.getDate()).padStart(2, '0');
 
 		const firstDayMonthNum = String(firstDay.getMonth() + 1).padStart(2, '0');
 		const lastDayMontNum = String(lastDay.getMonth() + 1).padStart(2, '0');

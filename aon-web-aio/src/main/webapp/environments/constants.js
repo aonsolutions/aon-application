@@ -453,6 +453,7 @@ export const WITHHOLDING = 'withholding';
 export const WITHHOLDING_FARMER = 'withholdingFarmer';
 export const WORKGROUP = 'workgroup';
 export const WORKPLACE = 'workplace';
+export const WORKPLACES_CALENDAR = 'workplacesCalendar';
 
 // ----- X
 

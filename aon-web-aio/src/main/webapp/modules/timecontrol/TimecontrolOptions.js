@@ -2,6 +2,7 @@ import { CONSTANT, MSG, TAG } from "../../environments/environments";
 import Apps from "../../services/app";
 import { SIGNIN_VIEWS, SigninSidenav } from "./signinEnums";
 import * as JSF from "../aon-jsf-app.js";
+import * as GWT from '../../gwt/gwt.js';
 
   export const showView = (view) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
@@ -13,6 +14,13 @@ import * as JSF from "../aon-jsf-app.js";
     let application = document.querySelector(TAG.AON_APPLICATION);
     application.removeToolbarOptions();
     application.setContent(new JSF.AonJsfTaskHolder())
+  }
+  
+  export const workplacesCalendar = () => {
+	let application = document.querySelector(TAG.AON_APPLICATION);
+    application.removeToolbarOptions();
+    application.closeSidenav();
+    GWT.iLoad(GWT.WORKPLACES_CALENDAR, application.CONTENT);
   }
 
   export const PRESENCE = {
@@ -38,11 +46,21 @@ import * as JSF from "../aon-jsf-app.js";
     title: "Operarios",
     fn: () => taskHolder()
   };
+  
+  export const WORKPLACES_CALENDAR = {
+    id: CONSTANT.WORKPLACES_CALENDAR,
+    name: "Calendario",
+    title: "Calendario",
+    icon: MATERIAL_ICONS.CALENDAR_TODAY,
+    fn: () => workplacesCalendar()
+  };
 
   export const TIMECONTROL_SIDENAV = {
     id: CONSTANT.TIMECONTROL.initCap(),
     title: MSG.TIMECONTROL,
     name: MSG.TIMECONTROL,
     app: Apps.TIMECONTROL,
-    options:[ PRESENCE, LOCATION, TASK_HOLDER]
-  };
+    options:[ PRESENCE, LOCATION, TASK_HOLDER, WORKPLACES_CALENDAR]
+  }
+
+

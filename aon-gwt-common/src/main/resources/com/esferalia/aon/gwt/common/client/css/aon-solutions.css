@@ -35,6 +35,8 @@
 .aon_icon_drive { background-image: iconDrive;}
 @url iconEditCalendar aonIconEditCalendar;
 .aon_icon_edit_calendar { background-image: iconEditCalendar;}
+@url iconCalendarClock aonIconCalendarClock;
+.aon_icon_calendar_clock { background-image: iconCalendarClock;}
 @url iconSettings aonIconSettings;
 .aon_icon_settings { background-image: iconSettings;}
 @url iconDataSettings aonIconDataSettings;
@@ -1319,7 +1321,7 @@
   	flex: 1;               
     display: flex;
     flex-direction: column;
-    min-height: 6.5rem;    
+   /* min-height: 6.5rem; use setVisibleLines of TextArea */
 }
 
 .aon_custom_rich_text{
@@ -1396,7 +1398,7 @@
 	border: none;
 	width: -moz-available;
 	width: -webkit-fill-available;
-	height: 5rem;
+	/*height: 5rem; use setVisibleLines of TextArea */
 	padding: .2rem;
 	/*border-bottom: 1px solid #b9b8b8;*/	
 }
@@ -2784,4 +2786,233 @@
 	height: 15px !important;
 	background-size: 15px !important;
 }
+
+/* ------------------------- Calendar ------------------------- */
+
+/* ============================================================
+   LOADER OVERLAY
+   ============================================================ */
+
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fafafa; /* overlay blanco sólido */
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Spinner tipo opción 1 */
+.loader {
+    border: 6px solid #e0e0e0;
+    border-top: 6px solid #333;
+    border-radius: 50%;
+    width: 55px;
+    height: 55px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loader-text {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #444;
+}
+
+/* ============================================================
+   DISCLOSURE PANEL CUSTOMIZATION
+   ============================================================ */
+
+/* Eliminar borde gris por defecto */
+.gwt-DisclosurePanel .content {
+    border-left: none !important;
+    padding-left: 0 !important;
+}
+
+/* Header personalizado */
+.holiday-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.3rem 0.2rem;
+}
+
+/* Chevron animado */
+.holiday-chevron {
+    transition: transform 0.25s ease;
+}
+
+.holiday-chevron.open {
+    transform: rotate(90deg);
+}
+
+/* Título del collapsible */
+.holiday-title {
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+/* Mensaje cuando no hay festivos */
+.holiday-empty {
+    font-style: italic;
+    color: #777;
+    padding: 0.5rem;
+}
+
+/* ============================================================
+   HOLIDAY DETAIL ROWS
+   ============================================================ */
+
+.holiday-detail-row {
+    display: flex;
+    align-items: center;
+    padding: 0.4rem;
+    border-radius: 6px;
+    margin-bottom: 0.3rem;
+}
+
+/* Fecha */
+.holiday-detail-date {
+    width: 6rem;
+    font-weight: bold;
+}
+
+/* Descripción */
+.holiday-detail-desc {
+    flex: 1;
+}
+
+/* Festivo propio */
+.holiday-own {
+    background: #ffe7c2;
+    cursor: pointer;
+}
+
+/* Festivo heredado */
+.holiday-inherited {
+    background: #e8f0ff;
+}
+
+/* ============================================================
+   CALENDARIO ANUAL
+   ============================================================ */
+
+.annual-calendar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem;
+    justify-content: center;
+}
+
+/* Panel de cada mes */
+.month-panel {
+    width: calc(33% - 1rem);
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.5rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Título del mes */
+.month-panel > label:first-child {
+    font-weight: bold;
+    font-size: 1.1rem;
+    display: block;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+/* Grid */
+.month-grid {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.month-grid td, .month-grid th {
+    text-align: center;
+    padding: 4px;
+}
+
+.month-grid td {
+	cursor: pointer;
+}
+
+/* Encabezado de días */
+.day-header {
+    font-weight: bold;
+    text-align: center;
+    padding: 2px;
+}
+
+/* Día normal */
+.day-cell {
+    padding: 4px;
+    border-radius: 6px; /* border radius */
+}
+
+/* Fines de semana */
+.weekend {
+    border: 1px solid #ff9999;
+    color: #a00;
+    border-radius: 6px;
+}
+
+/* Festivo */
+.holiday {
+    background: #e8f0ff;
+  	border: 1px solid #d0dffa;
+  	color: #6099ff;
+    font-weight: bold;
+    border-radius: 6px;
+}
+
+.own-holiday{
+	background: #ffe7c2;
+  	border: 1px solid #ffd593;
+  	color: #f79a07;
+    font-weight: bold;
+    border-radius: 6px;
+}
+
+/* Hover */
+.month-grid label:hover {
+    background: #e0e0e0;
+    cursor: pointer;
+}
+
+/* ============================================================
+   CALENDAR HEADER
+   ============================================================ */
+
+.calendar-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+    position: sticky;
+    background-color: #fafafa;
+    top: 0;
+    padding: 0.5rem 0;
+}
+
+.calendar-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+
 

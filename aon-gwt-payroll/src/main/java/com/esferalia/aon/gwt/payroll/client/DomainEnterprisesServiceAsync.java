@@ -69,6 +69,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.calendar.Calendar;
+import com.esferalia.aon.occam.api.model.calendar.Holiday;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
@@ -868,10 +870,30 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.fixAgreementIntegrity(getCurrentDomainName(), agreementId, asyncCallback);
 	}
 	
-	
-	
 	public void getDomainByName(String domainName, AsyncCallback<Domain> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getDomainByName(domainName, asyncCallback);	
+	}
+	
+	// ------------------------------------------------ Calendar
+
+	public void getCalendar(Integer workplace, AsyncCallback<List<Calendar>> asyncCallback) throws IllegalArgumentException  {
+		enterprisesServiceAsync.getCalendar(getCurrentDomainName(), getCurrentUser(), workplace, asyncCallback);
+	}
+
+	public void getHolidays(AsyncCallback<List<Holiday>> asyncCallback) throws IllegalArgumentException  {
+		enterprisesServiceAsync.getHolidays(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	}
+
+	public void deleteHolidayDetail(Integer id, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException  {
+		enterprisesServiceAsync.deleteHolidayDetail(getCurrentDomainName(), getCurrentUser(), id, asyncCallback);
+	}
+
+	public void saveCalendar(Calendar calendar, AsyncCallback<Calendar> asyncCallback) throws IllegalArgumentException  {
+		enterprisesServiceAsync.saveCalendar(getCurrentDomainName(), getCurrentUser(), calendar, asyncCallback);
+	}
+
+	public void setPayrollWorkplaceCalendar(Integer workplaceId, Integer calendarId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.setPayrollWorkplaceCalendar(getCurrentDomainName(), getCurrentUser(), workplaceId, calendarId, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

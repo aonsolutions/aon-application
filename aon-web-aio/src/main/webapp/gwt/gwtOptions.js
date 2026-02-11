@@ -243,6 +243,12 @@ export const ACTIVITY_SUMMARY = {
   entryPoint: 'ActivitySummary'
 };
 
+export const WORKPLACES_CALENDAR = {
+  title: 'Workplaces Calendar',
+  module: GWT_PAYROLL,
+  entryPoint: 'WorkplacesCalendar'
+};
+
 export const MASSIVE_FIE = {
   title: 'Massive Fie',
   module: GWT_PAYROLL,

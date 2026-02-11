@@ -45,7 +45,7 @@ class Mod303CANARIAS2025Declaration extends Mod303CANARIAS {
 	private static final double PERCENT20 = 20.0;
 	
 	public static boolean accept(Mod303 mod) {
-		return (mod.isCanarias() && mod.getYear() >= 2025);
+		return (mod.isCanarias() && mod.getYear() == 2025);
 	}
 	
 	private static final Mod303Key[] COMPENSATION_EXPLAIN_KEYS = new Mod303Key[] { Mod303Key.CA_C043 };
