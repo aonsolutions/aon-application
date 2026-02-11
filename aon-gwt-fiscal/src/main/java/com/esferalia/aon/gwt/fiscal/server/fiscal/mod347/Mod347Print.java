@@ -60,7 +60,7 @@ public class Mod347Print extends HttpServlet {
 				}
 			}
 
-			String fileName = "Mod347" + "_" + mod347.getYear() + "_" + sb.toString();			
+			String fileName = "Mod" + FiscalModelUtils.getModelName(mod347) + "_" + mod347.getYear() + "_" + sb.toString();			
 			
 			resp.setContentType(MimeType.MS_EXCEL_2007.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");

@@ -1,23 +1,14 @@
 package com.esferalia.aon.gwt.fiscal.server.fiscal.mod347;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
-import org.apache.poi.xssf.streaming.SXSSFDrawing;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -28,7 +19,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.occam.api.model.type.Mod347Key;
 import com.esferalia.aon.occam.api.model.type.Province;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -51,17 +41,17 @@ public class Mod347ExcelAction extends AbsExcelAction { // ModelVAExcelAction<Mo
 	protected static final XSSFColor GIPUZKOA_BG = new XSSFColor(new java.awt.Color(161, 192, 49), new DefaultIndexedColorMap());
 	protected static final XSSFColor NAVARRA_BG = new XSSFColor(new java.awt.Color(218, 0, 42), new DefaultIndexedColorMap());
 	protected static final XSSFColor AEAT_BG = new XSSFColor(new java.awt.Color(58, 133, 195), new DefaultIndexedColorMap());
+	protected static final XSSFColor CANARIAS_BG = new XSSFColor(new java.awt.Color(251, 186, 0), new DefaultIndexedColorMap());
 
-	protected  static final XSSFColor[] COLORS = new XSSFColor[] { ARABA_BG, BIZKAIA_BG, GIPUZKOA_BG, NAVARRA_BG,
-			AEAT_BG };
+	protected  static final XSSFColor[] COLORS = new XSSFColor[] { ARABA_BG, BIZKAIA_BG, GIPUZKOA_BG, NAVARRA_BG, AEAT_BG, CANARIAS_BG };
 
-	protected  static final String[] IMAGES = new String[] { 
-			"/com/esferalia/aon/gwt/common/client/css/images/aon-araba-header-image.png"
-			,"/com/esferalia/aon/gwt/common/client/css/images/aon-bizkaia-header-image.png"
-			,"/com/esferalia/aon/gwt/common/client/css/images/aon-gipuzkoa-header-image.png"
-			,"/com/esferalia/aon/gwt/common/client/css/images/aon-navarra-header-image.png"
-			,"/com/esferalia/aon/gwt/common/client/css/images/aon-aeat-header-image.png"
-	};
+//	protected  static final String[] IMAGES = new String[] { 
+//			 "/com/esferalia/aon/gwt/common/client/css/images/aon-araba-header-image.png"
+//			,"/com/esferalia/aon/gwt/common/client/css/images/aon-bizkaia-header-image.png"
+//			,"/com/esferalia/aon/gwt/common/client/css/images/aon-gipuzkoa-header-image.png"
+//			,"/com/esferalia/aon/gwt/common/client/css/images/aon-navarra-header-image.png"
+//			,"/com/esferalia/aon/gwt/common/client/css/images/aon-aeat-header-image.png"
+//	};
 	
 	protected Font idFont;
 	protected XSSFCellStyle idCellStyle;
@@ -77,39 +67,49 @@ public class Mod347ExcelAction extends AbsExcelAction { // ModelVAExcelAction<Mo
 		Font headerFont = workbook.createFont();
 		headerFont.setBold(true);
 		headerFont.setColor(IndexedColors.WHITE.index);
-		headerFont.setFontHeightInPoints((short) 10);
+//		headerFont.setFontHeightInPoints((short) 10);
+		headerFont.setFontHeightInPoints((short) 12);
 		
 		headerCellStyle.setFont(headerFont);
 		headerCellStyle.setFillForegroundColor(COLORS[mod347.getAdministration().ordinal()]);
 				
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
-		try {
-			InputStream inputStream = Mod347ExcelAction.class.getResourceAsStream(
-					IMAGES[ mod347.getAdministration().ordinal()]);
-			byte[] imageBytes = AonIOUtils.toByteArray(inputStream);
-			int pictureureIdx = workbook.addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);
-			inputStream.close();
-			CreationHelper helper = workbook.getCreationHelper();
-			SXSSFDrawing drawing = sheet.createDrawingPatriarch();
-			ClientAnchor anchor = helper.createClientAnchor();
-			anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
-			anchor.setCol1(0);
-			anchor.setRow1(rowCount - 1 );
-			anchor.setDx1(10);
-			anchor.setDy1(10);
-			Picture pict = drawing.createPicture(anchor, pictureureIdx);
-			pict.resize();
-		} catch (IOException e) {
-			e.printStackTrace();
-			// Sin Imagen,.
-		}
-		CellUtil.createCell(row, 0,"");
+//		try {
+//			InputStream inputStream = Mod347ExcelAction.class.getResourceAsStream(
+//					IMAGES[ mod347.getAdministration().ordinal()]);
+//			byte[] imageBytes = AonIOUtils.toByteArray(inputStream);
+//			int pictureureIdx = workbook.addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);
+//			inputStream.close();
+//			CreationHelper helper = workbook.getCreationHelper();
+//			SXSSFDrawing drawing = sheet.createDrawingPatriarch();
+//			ClientAnchor anchor = helper.createClientAnchor();
+//			anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
+//			anchor.setCol1(0);
+//			anchor.setRow1(rowCount - 1 );
+//			anchor.setDx1(10);
+//			anchor.setDy1(10);
+//			Picture pict = drawing.createPicture(anchor, pictureureIdx);
+//			pict.resize();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			// Sin Imagen,.
+//		}
+//		CellUtil.createCell(row, 0,"");
+		
+		// Modelo
+		CellUtil.createCell(row, 0, FiscalModelUtils.getModelName(mod347), headerCellStyle);
 		sheet.addMergedRegion(new CellRangeAddress((rowCount-1), (rowCount), 0, 0));
 		
-		// Titulo completo del modelo
-		CellUtil.createCell(row, 1, "Modelo 347. Declaración anual operaciones con terceras personas. Ejercicio " + AonNumberUtils.toString(mod347.getYear()),headerCellStyle);
-		sheet.addMergedRegion(new CellRangeAddress((rowCount-1),(rowCount), 1,11));
+		// Titulo
+//		CellUtil.createCell(row, 1, "Modelo 347. Declaración anual operaciones con terceras personas. Ejercicio " + AonNumberUtils.toString(mod347.getYear()),headerCellStyle);
+//		sheet.addMergedRegion(new CellRangeAddress((rowCount-1),(rowCount), 1,11));		
+		CellUtil.createCell(row, 1, "Declaración anual operaciones con terceras personas", headerCellStyle);
+		sheet.addMergedRegion(new CellRangeAddress((rowCount-1), (rowCount), 1, 10));
+		
+		// Ejercicio
+		CellUtil.createCell(row, 11, AonNumberUtils.toString(mod347.getYear()), headerCellStyle);
+		sheet.addMergedRegion(new CellRangeAddress((rowCount-1), (rowCount), 11, 11));
 		
 		// NIF y Nombre de la Empresa
 		row = sheet.createRow(rowCount++);
@@ -187,11 +187,11 @@ public class Mod347ExcelAction extends AbsExcelAction { // ModelVAExcelAction<Mo
 		CellUtil.createCell(row, cellCount++, declared.getProvince() == null || declared.getProvince() == Province.DESCONOCIDO ? "" : declared.getProvince().getName(), style);
 		CellUtil.createCell(row, cellCount++, declared.getCountry() == null ? "" : declared.getCountry().getName(), style);
 		
-		createAmountCell(declared.getAmount());
-		createAmountCell(declared.getFirstQuarterAmount());
-		createAmountCell(declared.getSecondQuarterAmount());
-		createAmountCell(declared.getThirdQuarterAmount());
-		createAmountCell(declared.getFourthQuarterAmount());
+		createAmountCell(declared.getAmount() + declared.getAssetAmount() + declared.getRentalAmount());
+		createAmountCell(declared.getFirstQuarterAmount() + declared.getAssetFirstQuarterAmount() + declared.getFirstQuarterRentalAmount());
+		createAmountCell(declared.getSecondQuarterAmount() + declared.getAssetSecondQuarterAmount() + declared.getSecondQuarterRentalAmount());
+		createAmountCell(declared.getThirdQuarterAmount() + declared.getAssetThirdQuarterAmount() + declared.getThirdQuarterRentalAmount());
+		createAmountCell(declared.getFourthQuarterAmount() + declared.getAssetFourthQuarterAmount() + declared.getFourthQuarterRentalAmount());
 		createAmountCell(declared.getVatAccrualAmount());
 		
 		String observaciones = "";
