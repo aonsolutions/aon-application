@@ -207,7 +207,7 @@ export class AonNewMenu extends AonElement {
 					break;
 				case NEW.app:
 					this.removeOldNewDialogContents();
-					this.showNewDialogMenu(this.getElement(app.app));
+					this.showNewDialogMenu(LS.isFutureTheme() ? this.getElement('aonMenuListAppImgTop-new') : this.getElement(app.app));
 					break;
 				case HOME.app:
 					this.rootPanel(this.getDur().isDomainManagementAvailable() ? new AonParent() : new AonDesktop());
@@ -397,6 +397,18 @@ export class AonNewMenu extends AonElement {
 		let aonSearchDialog = new AonDialogMenu();
 		aonSearchDialog.id = this.AON_MENU_SEARCH_DIALOG;
 		this.appendChild(aonSearchDialog);
+		
+		let aonNewFixedButton = this.getElement('newFixedButton');
+		if(aonNewFixedButton){
+			aonNewFixedButton.addEventListener(EVENT.CLICK, () => {
+				this.removeOldNewDialogContents();
+				
+				let newFixedButton = document.querySelector('aon-new-fixed-button .newFixedButton');
+				console.log(newFixedButton);
+				
+				this.showNewDialogMenu(newFixedButton, true);
+			});
+		}
 
 	}
 
@@ -1136,8 +1148,8 @@ export class AonNewMenu extends AonElement {
 		return element && element.id == this.AON_MENU_TOPNAV;
 	}
 
-	showNewDialogMenu(el) {
-
+	showNewDialogMenu(el, isFixedButton = false) {
+		
 		let newMenuOptions = [];
 		if (this.getDur().isInvoice()) {
 			let optionsMenu = [
@@ -1307,6 +1319,7 @@ export class AonNewMenu extends AonElement {
 			});
 		}
 		
+		
 		const top = el.getBoundingClientRect().top;
 		const left = el.getBoundingClientRect().right;
 
@@ -1314,7 +1327,7 @@ export class AonNewMenu extends AonElement {
 
 			let newDialogMenu = this.getElement('newDialogMenu');
 			newDialogMenu.setOptions(newMenuOptions);
-			newDialogMenu.open(el);
+			newDialogMenu.open(el, isFixedButton);
 
 		} else {
 

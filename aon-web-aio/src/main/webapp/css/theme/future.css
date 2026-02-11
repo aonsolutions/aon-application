@@ -224,6 +224,12 @@
 
 #aonMenuListAppImgTop-new{
 	mask-image: url('/icons/plus-circle.svg');
+	
+    transition: transform 0.5s;
+}
+
+#aonMenuListAppImgTop-new.open{
+	transform: rotate(-45deg);
 }
 
 #aonMenuListAppImgTop-office {
@@ -2104,5 +2110,51 @@ button:has(aon-icon[icon='aon_excel']) {
 	min-height: 24px;
 	border-radius: 0px;
 	background-color:black !important;
+}
+
+aon-new-fixed-button .newFixedButton {
+	position: absolute;
+	z-index: 5;
+	right: 30;
+	bottom: 20;
+	
+    box-shadow: rgba(0, 0, 0, 0.07) 0px 0.0625rem 0.0625rem, rgba(0, 0, 0, 0.07) 0px 0.125rem 0.125rem, rgba(0, 0, 0, 0.07) 0px 0.25rem 0.25rem, rgba(0, 0, 0, 0.07) 0px 0.5rem 0.5rem, rgba(0, 0, 0, 0.07) 0px 1rem 1rem;
+  	background: linear-gradient(to right, rgb(0, 75, 251), rgb(0, 75, 251), rgb(14, 16, 48), rgb(88, 96, 120)) 0px 0px / 300% 100%;
+    background-position-x: 0px;
+    background-position-y: 0px;
+  	background-position: 0px 0px;
+  	transition: background 0.1s;
+  	width: 4rem;
+  	height: 4rem;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	border-radius: 100%;
+  	padding: unset;
+  	color: white;
+  	border: none;
+  	cursor: pointer;
+  	
+  	transition: transform 0.5s;
+}
+
+aon-new-fixed-button .newFixedButton.open{
+	transform: rotate(-45deg);
+	background-position: 100% 0px;
+}
+
+aon-new-fixed-button .newFixedButton:hover {
+    background-position: 100% 0px;
+}
+
+aon-new-fixed-button .newFixedButton .plus {
+    pointer-events: none;
+    mask-image: url('/icons/plus-circle.svg');
+  	width: 2.5rem;
+  	height: 2.5rem;
+  	mask-size: contain;
+  	mask-position: center;
+  	mask-repeat: no-repeat;
+  	background-color: white;
 }
 
