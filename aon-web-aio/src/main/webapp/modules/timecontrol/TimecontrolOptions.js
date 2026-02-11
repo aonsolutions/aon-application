@@ -50,8 +50,7 @@ import * as GWT from '../../gwt/gwt.js';
   export const WORKPLACES_CALENDAR = {
     id: CONSTANT.WORKPLACES_CALENDAR,
     name: "Calendario",
-    title: "Calendario",
-    icon: MATERIAL_ICONS.CALENDAR_TODAY,
+    title: "Calendario", 
     fn: () => workplacesCalendar()
   };
 
