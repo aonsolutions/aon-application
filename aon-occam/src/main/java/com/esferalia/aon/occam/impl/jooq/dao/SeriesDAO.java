@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Properties.SeriesProperties;
 import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SeriesDAO {
@@ -27,6 +28,68 @@ public class SeriesDAO {
 	}
 	
 	// ****************************************************************
+	// **************************************************** [WRITE] ***
+	// ****************************************************************
+	
+	public static Series save(AONContext ctx, Series series) {
+		return series.getId() == null 
+				? insertSeries(ctx, series) 
+				: updateSeries(ctx, series);
+	}
+	
+	private static Series updateSeries(AONContext ctx, Series series) {
+		ctx.getDslContext().update(SERIES)
+			.set(SERIES.DOMAIN, series.getDomain())
+			.set(SERIES.SCOPE, series.getScope())
+			.set(SERIES.CODE, series.getCode())
+			.set(SERIES.DESCRIPTION, series.getDescription())
+			.set(SERIES.ACTIVE, AonEnumUtils.getByte(series.isActive()))
+			.set(SERIES.TAS, AonEnumUtils.getByte(series.isTas()))
+			.set(SERIES.OFFER, AonEnumUtils.getByte(series.isOffer()))
+			.set(SERIES.SALES, AonEnumUtils.getByte(series.isSales()))
+			.set(SERIES.DELIVERY, AonEnumUtils.getByte(series.isDelivery()))
+			.set(SERIES.INVOICE, AonEnumUtils.getByte(series.isInvoice()))
+			.set(SERIES.RECTIFICATION, AonEnumUtils.getByte(series.isRectification()))
+			.set(SERIES.POS, AonEnumUtils.getByte(series.isPos()))
+			.set(SERIES.SECURITY_LEVEL, series.getSecurityLevel() != null ? (byte)series.getSecurityLevel().ordinal() : null)
+			.where(SERIES.ID.eq(series.getId()))
+			.execute();
+		return series;
+	}
+	
+	private static Series insertSeries(AONContext ctx, Series series) {
+		Integer id = ctx.getDslContext().insertInto(SERIES)
+			.set(SERIES.DOMAIN, series.getDomain())
+			.set(SERIES.SCOPE, series.getScope())
+			.set(SERIES.CODE, series.getCode())
+			.set(SERIES.DESCRIPTION, series.getDescription())
+			.set(SERIES.ACTIVE, AonEnumUtils.getByte(series.isActive()))
+			.set(SERIES.TAS, AonEnumUtils.getByte(series.isTas()))
+			.set(SERIES.OFFER, AonEnumUtils.getByte(series.isOffer()))
+			.set(SERIES.SALES, AonEnumUtils.getByte(series.isSales()))
+			.set(SERIES.DELIVERY, AonEnumUtils.getByte(series.isDelivery()))
+			.set(SERIES.INVOICE, AonEnumUtils.getByte(series.isInvoice()))
+			.set(SERIES.RECTIFICATION, AonEnumUtils.getByte(series.isRectification()))
+			.set(SERIES.POS, AonEnumUtils.getByte(series.isPos()))
+			.set(SERIES.SECURITY_LEVEL, series.getSecurityLevel() != null ? (byte)series.getSecurityLevel().ordinal() : null)
+			.returning(SERIES.ID)
+			.fetchOne()
+			.getId();
+		return series.setId(id);
+	}
+	
+	// ****************************************************************
+	// *************************************************** [DELETE] ***
+	// ****************************************************************
+	
+	public static void deleteSeries(AONContext ctx, Integer seriesId) {
+		ctx.getDslContext().deleteFrom(SERIES)
+			.where(SERIES.ID.eq(seriesId))
+			.execute();
+	}
+	
+	
+	// ****************************************************************
 	// ***************************************************** [READ] ***
 	// ****************************************************************
 	
@@ -34,6 +97,7 @@ public class SeriesDAO {
 		return ctx.getDslContext().select()
 			.from(SERIES)
 			.where(SERIES.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+			.and(SERIES.ACTIVE.eq((byte) 1))
 			.fetch()
 			.stream()
 			.map(new SeriesFiller());	

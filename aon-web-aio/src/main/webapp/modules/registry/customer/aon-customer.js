@@ -475,9 +475,7 @@ export class AonCustomer extends AonReg {
 			main.addEventListener(EVENT.CLICK, () => {
 				const countCompany = companies.length;
 
-				if (countCompany === 1) {
-					this.saveRegistryRelationship(companies[0]);
-				} else if (countCompany > 1) {
+				if (countCompany > 0) {
 					this.openDialogCompany(companies);
 				} else {
 					this.getOptionsLinked(iconArrowDown);

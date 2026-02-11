@@ -808,6 +808,20 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 		@Override public Mod190DetailKey visitM193C2(Mod190DetailKey detailKey) {return detailKey;}
 		@Override public Mod190DetailKey visitM193C3(Mod190DetailKey detailKey) {return detailKey;}
 		@Override public Mod190DetailKey visitM193C4(Mod190DetailKey detailKey) {return detailKey;}
+		@Override public Mod190DetailKey visitM193B01(Mod190DetailKey detailKey) {return detailKey;}
+		@Override public Mod190DetailKey visitM193B02(Mod190DetailKey detailKey) {return detailKey;}
+		@Override public Mod190DetailKey visitM193B03(Mod190DetailKey detailKey) {return detailKey;}
+		@Override public Mod190DetailKey visitM193B04(Mod190DetailKey detailKey) {return detailKey;}
+		@Override public Mod190DetailKey visitM193B05(Mod190DetailKey detailKey) {return detailKey;}
+		@Override public Mod190DetailKey visitM193B06(Mod190DetailKey detailKey) {return detailKey;}
+		@Override public Mod190DetailKey visitM193B07(Mod190DetailKey detailKey) {return detailKey;}
+		@Override public Mod190DetailKey visitM193D01(Mod190DetailKey detailKey) {return detailKey;}
+		@Override public Mod190DetailKey visitM193D02(Mod190DetailKey detailKey) {return detailKey;}
+		@Override public Mod190DetailKey visitM193D03(Mod190DetailKey detailKey) {return detailKey;}
+		@Override public Mod190DetailKey visitM193D04(Mod190DetailKey detailKey) {return detailKey;}
+		@Override public Mod190DetailKey visitM193D05(Mod190DetailKey detailKey) {return detailKey;}
+		@Override public Mod190DetailKey visitM193D06(Mod190DetailKey detailKey) {return detailKey;}
+		@Override public Mod190DetailKey visitM193D07(Mod190DetailKey detailKey) {return detailKey;}
 		
 		@Override
 		public Mod190DetailKey visitProfessional(Mod190DetailKey detailKey) {

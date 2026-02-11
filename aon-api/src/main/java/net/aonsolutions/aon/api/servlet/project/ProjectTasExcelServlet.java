@@ -21,6 +21,7 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.project.ProjectTas;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -52,13 +53,15 @@ public class ProjectTasExcelServlet extends AonApiHttpServlet{
 			Integer domainId = Integer.parseInt(request.getParameter("domainId"));
 			String login = request.getParameter("login");
 			
+			Occam occam = new Occam().setDomain(domainId).setDomainName(domainName).setUser(login);
+			
 			String startDate = request.getParameter("startDate");
 			String endDate = request.getParameter("endDate");
 			
 			Date start = AonDateUtils.simpleParse(startDate);
 			Date end = AonDateUtils.simpleParse(endDate);
 			
-			List<ProjectTas> projectTas = AON.getProjectTasStream(domainName, domainId, login, 
+			List<ProjectTas> projectTas = AON.getProjectTasList(occam, 
 					f -> f.getDomainProperty().eq(domainId)
 						.and(f.getDateProperty().ge(AonDateUtils.toSql(start)))
 						.and(f.getDateProperty().le(AonDateUtils.toSql(null == end ? new Date() : end)))
