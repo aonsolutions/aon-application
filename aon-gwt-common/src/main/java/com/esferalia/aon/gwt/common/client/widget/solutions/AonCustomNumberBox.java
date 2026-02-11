@@ -91,7 +91,7 @@ public class AonCustomNumberBox extends HTMLPanel {
 		
 		Label gt = new Label("\u2265");
 		
-		gtnumberBox = new DoubleBox(12, precision);
+		gtnumberBox = new DoubleBox(12, null == precision ? 3 : 2);
 		gtnumberBox.setStyleName(AON.CSS.aonBetweenInput());
 		gtnumberBox.getElement().setPropertyString("placeholder", "Mayor o igual que...");
 		gtnumberBoxPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -107,7 +107,7 @@ public class AonCustomNumberBox extends HTMLPanel {
 		
 		Label lt = new Label("\u2264");
 		
-		ltnumberBox = new DoubleBox(12, precision);
+		ltnumberBox = new DoubleBox(12, null == precision ? 3 : 2);
 		ltnumberBox.setStyleName(AON.CSS.aonBetweenInput());
 		ltnumberBox.getElement().setPropertyString("placeholder", "Menor o igual que...");
 		ltnumberBoxPanel.getElement().getStyle().setDisplay(Display.NONE);

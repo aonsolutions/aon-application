@@ -1029,26 +1029,38 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			salaryBuilder.setProExtBase(quoteCalculator.getProExtBase());
 			expressionContext.setVariable(PAY_PRORRATED, AonNumberUtils.equals(quoteCalculator.getProExtBase(), Double.valueOf(0.00)), start, end);
 			
+			Double cgcBaseEmployee = getValue(expressionContext, CGC_BASE);
 			if ( cgcBase != null && cgcBase > 0.00 ) {
 			    Period cgcBasePeriod = getPeriod(expressionContext, ContextVariable.CGC_BASE,
 				    new Period(start, end));
-			    expressionContext.setVariable(ContextVariable.TOTAL_CGC_BASE, cgcBase,
+			    expressionContext.setVariable(ContextVariable.TOTAL_CGC_BASE, cgcBaseEmployee,
 				    cgcBasePeriod.getStart(), cgcBasePeriod.getEnd());
-			    Period cgcBaseEnterprisePeriod = getPeriod(expressionContext, ContextVariable.CGC_BASE,
+			}
+			
+			Double cgcBaseEnterprise = getValue(expressionContext, CGC_BASE_ENTERPRISE);
+			if ( cgcBaseEnterprise != null && cgcBaseEnterprise > 0.00 ) {
+			    Period cgcBaseEnterprisePeriod = getPeriod(expressionContext, ContextVariable.CGC_BASE_ENTERPRISE,
 				    new Period(start, end));
-			    expressionContext.setVariable(ContextVariable.TOTAL_CGC_BASE_ENTERPRISE, cgcBase,
+			    expressionContext.setVariable(ContextVariable.TOTAL_CGC_BASE_ENTERPRISE, cgcBaseEnterprise,
 				    cgcBaseEnterprisePeriod.getStart(), cgcBaseEnterprisePeriod.getEnd());
 			}
+
+			Double cgpBaseEmployee = getValue(expressionContext, CGP_BASE);
 			if ( cgpBase != null && cgpBase > 0.00 ) {
 			    Period cgpBasePeriod = getPeriod(expressionContext, ContextVariable.CGP_BASE,
 				    new Period(start, end));
-			    expressionContext.setVariable(ContextVariable.TOTAL_CGP_BASE, cgpBase,
+			    expressionContext.setVariable(ContextVariable.TOTAL_CGP_BASE, cgpBaseEmployee,
 				    cgpBasePeriod.getStart(), cgpBasePeriod.getEnd());
-			    Period cgpBaseEnterprisePeriod = getPeriod(expressionContext, ContextVariable.CGC_BASE,
+			}
+
+			Double cgpBaseEnterprise = getValue(expressionContext, CGP_BASE_ENTERPRISE);
+			if ( cgpBaseEnterprise != null && cgpBaseEnterprise > 0.00 ) {
+			    Period cgpBaseEnterprisePeriod = getPeriod(expressionContext, ContextVariable.CGP_BASE_ENTERPRISE,
 				    new Period(start, end));
-			    expressionContext.setVariable(ContextVariable.TOTAL_CGP_BASE_ENTERPRISE, cgpBase,
+			    expressionContext.setVariable(ContextVariable.TOTAL_CGP_BASE_ENTERPRISE, cgpBaseEnterprise,
 				    cgpBaseEnterprisePeriod.getStart(), cgpBaseEnterprisePeriod.getEnd());
 			}
+			
 			
 			return taxCalculator.getTotalPayment();
 		} catch (SalaryExpressionException e) {
