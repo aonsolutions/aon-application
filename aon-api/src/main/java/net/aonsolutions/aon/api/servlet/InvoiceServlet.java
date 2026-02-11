@@ -68,6 +68,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.project.ProjectTas;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
@@ -179,6 +180,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				break;
 			case "/selfconta_record":
 				response(req, resp, selfcontaRecord(api));
+				break;
+			case "/fix":
+				response(req, resp, fix(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -487,7 +491,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		if (invoice.isSales()) {
 			// ***********************************
 			// If the invoice is not a sales invoice or TBAI is not active, we accept and communicate the invoice
-			if (icc.hasCommunication() && !icc.isSii() && !icc.isTbai() && !icc.isLroe() && !invoice.isThirdPart()) {
+			if (icc.hasCommunication() && !icc.isSii() && !icc.isTbai() && !icc.isLroe()) {
 				return acceptAndCommunicateInvoice(api, icc, company);	
 			} 
 			
@@ -497,9 +501,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				invoice.setReferenceCode(null);	
 			}
 				
-			if (icc.isTbai() && invoice.isThirdPart()) {
-				checkTbaiId(company, invoice, tbaiId);
-			} else if( icc.isTbai() || icc.isLroe() || icc.isSii()) {
+			if( icc.isTbai() || icc.isLroe() || icc.isSii()) {
 				Certificate certificate = checkCertificate(api);
 				icc.setCertificate(certificate);
 				invoiceValidation(invoice);
@@ -541,7 +543,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	public static void acceptTbai(InvoiceCommunicationConfiguration icc, Company company,  Invoice invoice) throws Exception {
-		if(invoice.isSales() && (icc.isTbai() || icc.isLroe()) && !invoice.isThirdPart()) {
+		if(invoice.isSales() && (icc.isTbai() || icc.isLroe())) {
 			TbaiMain tbai = new TbaiMain();
 			tbai.createEmisionTBAI(company, invoice, icc);
 		}
@@ -569,7 +571,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 
 	public static void saveInvoiceData(AonApiData api, InvoiceCommunicationConfiguration icc, Invoice invoice, String tbaiId) throws UnsupportedEncodingException {
-		if(invoice.isSales() && icc.isTbai() && invoice.isThirdPart()){
+		if(invoice.isSales() && icc.isTbai()){
 			String qrUrl = TbaiUri.getUrlQr(icc) + "?id=" + tbaiId + "&s="
 					+ (invoice.getSeries() != null ? invoice.getSeries() : "") + "&nf=" + invoice.getNumber() + "&i="
 					+ invoice.getTotal();
@@ -590,15 +592,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			
 			AON.saveInvoiceData(api.getDomain(), api.getUser(), dataTbaiId);
 			AON.saveInvoiceData(api.getDomain(), api.getUser(), dataTbaiUrl);
-		}
-		if(invoice.isThirdPart()) {
-			InvoiceData dataThirdPart = new InvoiceData()
-					.setDomain(invoice.getDomain())
-					.setInvoice(invoice.getId())
-					.setName(InvoiceDataName.THIRD_PART)
-					.setValue("true");
-			
-			AON.saveInvoiceData(api.getDomain(), api.getUser(), dataThirdPart);
 		}
 	}
 	
@@ -624,6 +617,14 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			}
 
 		}
+		if(company.getRegistry().getDomain().isGarage()) {	
+			invoice.detailStream().forEach(d -> {
+				ProjectTas pt = AON.getProjectTas(api.getOccam(), f -> f.getDomainProperty().eq(invoice.getDomain())
+						.and(f.getIdProperty().eq(d.getProject()))).orElse(null);
+				if(pt != null)	d.setProjectName(d.getProjectName() + " - KMS. " + d.getProject());	
+			});
+		}
+		
 		Attach logo = new Attach();
 		
 		if(config.isLogo()) {
@@ -686,6 +687,11 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			e.printStackTrace();
 		}
 		return file;
+	}
+	
+	private JSONObject fix(AonApiData api) {
+		AON.fixInvoice(api.getOccam(), api.getDomain().getId());
+		return new JSONObject();
 	}
 	
 	private JSONObject getApiConfiguration(AonApiData api) {

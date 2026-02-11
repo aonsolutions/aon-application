@@ -769,9 +769,13 @@ public class Mod347DAO {
 		Map<String,Mod347Declared> mapResult = new TreeMap<String, Mod347Declared>();
 		
 		// Obtenemos el desglose de facturas del ejercicio actual y el anterior (facturas RECC), usando VATDAO
-		// Solo facturas Nacionales o ISP o Intracomunitarias (con y sin retencion) o Servicios Extracomunitarios, que cumplan los filtros 
+		// Solo facturas Nacionales o ISP o Intracomunitarias (con y sin retencion) o Servicios Extracomunitarios o Servicios Canarias Ceuta o Melilla, que cumplan los filtros 
 		getInvoiceBreakdown(ctx, fromDate, toDate, mod347)
-				.filter(vat -> (vat.getTransaction() == InvoiceTransactionType.NATIONAL || vat.getTransaction() == InvoiceTransactionType.OTHER_ISP || vat.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY || (vat.getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY && vat.isService()) )) 
+				.filter(vat -> (vat.getTransaction() == InvoiceTransactionType.NATIONAL || 
+				                vat.getTransaction() == InvoiceTransactionType.OTHER_ISP || 
+				                vat.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY || 
+				                (vat.getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY && vat.isService()) ||
+				                (vat.getTransaction() == InvoiceTransactionType.CAN_CEU_MEL && vat.isService()) )) 
 				.peek( vat -> {					
 					// Las compras y gastos, se ponen todas como compras
 					vat.setInvoiceType( vat.getInvoiceType() == InvoiceType.SALES ? InvoiceType.SALES : InvoiceType.PURCHASE);
@@ -1048,7 +1052,7 @@ public class Mod347DAO {
 			: AonStringUtils.substring(declared.getOperatorNif(),2); 
 		return getInvoiceBreakdown(ctx, fromDate, toDate, mod347)
 			.filter( vat -> AonStringUtils.equals(vat.getRegistryDocument(),registryDocument))
-			.filter( vat -> (vat.getTransaction() == invoiceTransaction1 || vat.getTransaction() == invoiceTransaction2 || vat.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY || (vat.getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY && vat.isService()) ) &&  // Nacional o ISP o intracomunitarias o servicios extracomunitarios
+			.filter( vat -> (vat.getTransaction() == invoiceTransaction1 || vat.getTransaction() == invoiceTransaction2 || vat.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY || (vat.getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY && vat.isService()) || (vat.getTransaction() == InvoiceTransactionType.CAN_CEU_MEL && vat.isService()) ) &&  // Nacional o ISP o intracomunitarias o servicios extracomunitarios
 		                    (vat.getInvoiceType() == invoiceType1 || vat.getInvoiceType() == invoiceType2) &&  				 // Tipo (Ventas o Compras/Gastos)		                    
 		                    (vat.isVatAccrualRegime() == declared.isVatAccrual())                                            // Criterio de caja		                    
 	                    );  

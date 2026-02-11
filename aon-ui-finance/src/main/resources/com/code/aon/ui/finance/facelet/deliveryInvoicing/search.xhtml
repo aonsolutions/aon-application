@@ -159,7 +159,7 @@
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" />
 	
-						<aon:if test="#{aonRole.accountingOperator}">
+						<aon:if test="#{aonRole.accountingOperator and !icc.hasCommunication()}">
 							<aon:outputLabel for="Invoice_record"
 								value="#{bundle.finance_record}" />
 							<aon:selectOneRadio id="Invoice_record" 
