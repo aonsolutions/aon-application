@@ -21,8 +21,8 @@ import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.watson.util.AonDateUtils.compare;
 import static com.esferalia.aon.watson.util.AonDateUtils.max;
-import static com.esferalia.aon.watson.util.AonDateUtils.min;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -71,7 +72,6 @@ import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SalaryDAO {
@@ -709,6 +709,8 @@ public class SalaryDAO {
 				.or(CONTRACT_DATA.END_DATE.ge(SALARY.START_DATE))
 				)
 		)
+		.leftJoin(CONTRACT)
+		.on( CONTRACT_DATA.CONTRACT.eq(CONTRACT.ID) )
 		.where(conditions)
 		.and(CONTRACT_DATA.END_DATE.isNull()
 			.or(CONTRACT_DATA.END_DATE.ge(CONTRACT_DATA.START_DATE))
@@ -768,6 +770,13 @@ public class SalaryDAO {
 					);
 					salaryDataIter.back();
 					
+					// fix salary end date with salary data.
+					salary.getContextData().values().stream()
+					.filter( datas -> datas != null && !datas.isEmpty() )
+					.map(List::getLast).map(ContextData::getEndDate)
+					.filter( endDate -> endDate != null && endDate.after(salary.getEndDate()) )
+					.sorted( ( d1, d2 ) -> d2.compareTo(d1) ).findFirst().ifPresent( salary::setEndDate);
+
 					Seq.limitWhile(
 					Seq.skipUntil(Seq.seq(contractDataIter), 
 					r -> AonStringUtils.equalsIgnoreCase(getEmployeeDocument(r), employeeDocument) ),
@@ -778,7 +787,7 @@ public class SalaryDAO {
 						contractDataRecord.get(CONTRACT_DATA.NAME), 
 						contractDataRecord.get(CONTRACT_DATA.EXPRESSION),
 						contractDataRecord.get(CONTRACT_DATA.START_DATE),
-						AonObjectUtils.firstNonNull(contractDataRecord.get(CONTRACT_DATA.END_DATE), salary.getEndDate()) )
+						min(contractDataRecord.get(CONTRACT_DATA.END_DATE),contractDataRecord.get(CONTRACT.END_DATE), salary.getEndDate()))
 					);
 					contractDataIter.back();
 
@@ -1249,6 +1258,8 @@ public class SalaryDAO {
 		return AonStringUtils.leftPad(AonStringUtils.trim(record.get(SALARY.EMPLOYEE_DOCUMENT)), 16, '0');
 	}
 	
-	
+	private static Date min(Date... dates) {
+		return Arrays.stream(dates).filter(Objects::nonNull).min(Date::compareTo).orElse(null);
+	}
 
 }
