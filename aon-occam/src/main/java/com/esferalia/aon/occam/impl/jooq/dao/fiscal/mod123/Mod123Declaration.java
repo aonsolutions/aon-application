@@ -275,32 +275,29 @@ public abstract class Mod123Declaration {
 	public abstract Mod123Key[] getSamePeriodExplainKeys();
 	
 	protected static boolean isMovableCapitalDividens(IrpfBreakdown br) {
-		// FALTA - NUEVAS CLAVES B Y D A VER A QUE CASILLAS VAN
-//		return (br.isFromInvoice() && br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL);		
-		return br.isFromInvoice() && (br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL
-									|| br.getWithholdingType() == WithholdingType.M193_B_01
-									|| br.getWithholdingType() == WithholdingType.M193_B_02
-									|| br.getWithholdingType() == WithholdingType.M193_B_03
-									|| br.getWithholdingType() == WithholdingType.M193_B_04
-									|| br.getWithholdingType() == WithholdingType.M193_B_05
-									|| br.getWithholdingType() == WithholdingType.M193_B_06
-									|| br.getWithholdingType() == WithholdingType.M193_B_07
-									|| br.getWithholdingType() == WithholdingType.M193_D_01
-									|| br.getWithholdingType() == WithholdingType.M193_D_02
-									|| br.getWithholdingType() == WithholdingType.M193_D_03
-									|| br.getWithholdingType() == WithholdingType.M193_D_04
-									|| br.getWithholdingType() == WithholdingType.M193_D_05
-									|| br.getWithholdingType() == WithholdingType.M193_D_06
-									|| br.getWithholdingType() == WithholdingType.M193_D_07);
-		  
+		return (br.isFromInvoice() && br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL);		
 	}
 	
 	protected static boolean isMovableCapitalOther(IrpfBreakdown br) {
 		return br.isFromInvoice() && 
-			(br.getWithholdingType() == WithholdingType.M193_C1
+			  (br.getWithholdingType() == WithholdingType.M193_C1
 			|| br.getWithholdingType() == WithholdingType.M193_C2
 			|| br.getWithholdingType() == WithholdingType.M193_C3
-			|| br.getWithholdingType() == WithholdingType.M193_C4);
+			|| br.getWithholdingType() == WithholdingType.M193_C4
+			|| br.getWithholdingType() == WithholdingType.M193_B_01
+			|| br.getWithholdingType() == WithholdingType.M193_B_02
+			|| br.getWithholdingType() == WithholdingType.M193_B_03
+			|| br.getWithholdingType() == WithholdingType.M193_B_04
+			|| br.getWithholdingType() == WithholdingType.M193_B_05
+			|| br.getWithholdingType() == WithholdingType.M193_B_06
+			|| br.getWithholdingType() == WithholdingType.M193_B_07
+			|| br.getWithholdingType() == WithholdingType.M193_D_01
+			|| br.getWithholdingType() == WithholdingType.M193_D_02
+			|| br.getWithholdingType() == WithholdingType.M193_D_03
+			|| br.getWithholdingType() == WithholdingType.M193_D_04
+			|| br.getWithholdingType() == WithholdingType.M193_D_05
+			|| br.getWithholdingType() == WithholdingType.M193_D_06
+			|| br.getWithholdingType() == WithholdingType.M193_D_07);
 	}	
 
 }
