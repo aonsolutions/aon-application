@@ -342,5 +342,7 @@ public interface IFinance {
 	// ********************************** SERIES **
 	// ********************************************
 	Stream<Series> getSeriesSuggestion(AONContext ctx, Integer domainId, String query);
+	
+	void fixInvoice(AONContext ctx, int domain);
 }
 	

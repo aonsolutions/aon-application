@@ -132,6 +132,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.project.ProjectTas;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.payroll.EnterpriseActivity;
@@ -1692,7 +1693,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		IAttachment attachment = null;
 		try {
 			String login = "";
-
+			Occam occam = new Occam().setDomain(domain.getId()).setDomainName(domain.getName()).setUser(login);
 			PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domain.getName(), domain.getId(), login, true);
 			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), login, inv.getId());
 		
@@ -1715,6 +1716,15 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 				}
 			}
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			
+			if(company.getRegistry().getDomain().isGarage()) {	
+				invoice.detailStream().forEach(d -> {
+					ProjectTas pt = AON.getProjectTas(occam, f -> f.getDomainProperty().eq(invoice.getDomain())
+							.and(f.getIdProperty().eq(d.getProject()))).orElse(null);
+					if(pt != null)	d.setProjectName(d.getProjectName() + " - KMS. " + d.getProject());	
+				});
+			}
+			
 			PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData(), tbaiId);
 			byte[] data = out.toByteArray();
 			attachment = newAttachment(to, MimeType.MIME_PDF);

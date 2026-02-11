@@ -1721,6 +1721,50 @@ public interface Properties {
 		Property<Timestamp> getModificationDateProperty();
 	}
 	
+	public interface CalendarProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getHolidayroperty();
+		Property<Double> getAnualHoursProperty();
+		Property<Double> getAnualPersonalDaysProperty();
+		Property<Double> getAnualHolidaysProperty();
+		Property<Byte> getHolidaysTypeProperty();
+		Property<String> getDescriptionProperty();
+		Property<String> getCommentsProperty();
+		Property<Byte> getMondayProperty();
+		Property<Double> getMondayHoursProperty();
+		Property<Byte> getTuesdayProperty();
+		Property<Double> getTuesdayHoursProperty();
+		Property<Byte> getWednesdayProperty();
+		Property<Double> getWednesHoursProperty();
+		Property<Byte> getThursdayProperty();
+		Property<Double> getThursdayHoursProperty();
+		Property<Byte> getFridayProperty();
+		Property<Double> getFridayHoursProperty();
+		Property<Byte> getSaturdayProperty();
+		Property<Double> getSaturdayHoursProperty();
+		Property<Byte> getSundayProperty();
+		Property<Double> getSundayHoursProperty();
+		Property<Byte> getGenericProperty();
+		Property<Integer> getCalendarParentProperty();
+	}
+	
+	public interface HolidayProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getDescriptionProperty();
+		Property<Integer> getHolidayParentProperty();
+		Property<Byte> getEditableProperty();
+	}
+	
+	public interface HolidayDetailProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getHolidayProperty();
+		Property<Date> getDateProperty();
+		Property<String> getDescriptionProperty();
+	}
+	
 	
 	public interface AuthDeviceProperties {
 		Property<Integer> getIdProperty();

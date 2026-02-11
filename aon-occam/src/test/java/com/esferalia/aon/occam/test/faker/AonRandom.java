@@ -596,6 +596,20 @@ public class AonRandom {
 			@Override public Invoice visitM190F01(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_F_01);   }
 			@Override public Invoice visitM190F021(Invoice t) { return getRetentionInvoice( WithholdingType.M190_F_02_1); }
 			@Override public Invoice visitM190F022(Invoice t) { return getRetentionInvoice( WithholdingType.M190_F_02_2); }
+			@Override public Invoice visitM193B01(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_B_01);  }
+			@Override public Invoice visitM193B02(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_B_02);  }
+			@Override public Invoice visitM193B03(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_B_03);  }
+			@Override public Invoice visitM193B04(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_B_04);  }
+			@Override public Invoice visitM193B05(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_B_05);  }
+			@Override public Invoice visitM193B06(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_B_06);  }
+			@Override public Invoice visitM193B07(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_B_07);  }
+			@Override public Invoice visitM193D01(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_D_01);  }
+			@Override public Invoice visitM193D02(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_D_02);  }
+			@Override public Invoice visitM193D03(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_D_03);  }
+			@Override public Invoice visitM193D04(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_D_04);  }
+			@Override public Invoice visitM193D05(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_D_05);  }
+			@Override public Invoice visitM193D06(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_D_06);  }
+			@Override public Invoice visitM193D07(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_D_07);  }
 			
 			@Override
 			public Invoice visitFarmer(Invoice t) {
@@ -636,6 +650,20 @@ public class AonRandom {
 			@Override public Invoice visitM190F01(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_F_01);   }
 			@Override public Invoice visitM190F021(Invoice t) { return getRetentionInvoice( WithholdingType.M190_F_02_1); }
 			@Override public Invoice visitM190F022(Invoice t) { return getRetentionInvoice( WithholdingType.M190_F_02_2); }
+			@Override public Invoice visitM193B01(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_B_01);  }
+			@Override public Invoice visitM193B02(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_B_02);  }
+			@Override public Invoice visitM193B03(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_B_03);  }
+			@Override public Invoice visitM193B04(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_B_04);  }
+			@Override public Invoice visitM193B05(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_B_05);  }
+			@Override public Invoice visitM193B06(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_B_06);  }
+			@Override public Invoice visitM193B07(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_B_07);  }
+			@Override public Invoice visitM193D01(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_D_01);  }
+			@Override public Invoice visitM193D02(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_D_02);  }
+			@Override public Invoice visitM193D03(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_D_03);  }
+			@Override public Invoice visitM193D04(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_D_04);  }
+			@Override public Invoice visitM193D05(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_D_05);  }
+			@Override public Invoice visitM193D06(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_D_06);  }
+			@Override public Invoice visitM193D07(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_D_07);  }
 			
 			@Override
 			public Invoice visitFarmer(Invoice t) {

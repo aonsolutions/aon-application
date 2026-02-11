@@ -109,6 +109,11 @@ export class AonDesktop extends AonElement {
 
 			let expandButtonDiv = this.getElement('aonExpandButtonDiv');
 			if (expandButtonDiv) expandButtonDiv.style.display = 'block';
+			
+			let newFixedButton = this.getElement('newFixedButton');
+			if(newFixedButton)
+				newFixedButton.classList.remove('hidden');
+	
 		}
 
 		this.initialize();

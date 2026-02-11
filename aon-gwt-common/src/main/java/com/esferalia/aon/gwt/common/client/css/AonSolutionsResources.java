@@ -129,6 +129,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconEditCalendar();
 	
+	@Source("icons/aon-icon-calendar-clock.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconCalendarClock();
+	
 	@Source("icons/aon-icon-settings.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconSettings();

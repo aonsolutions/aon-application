@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.project.ProjectTas;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -213,6 +214,15 @@ public class MultipleDownloadServlet extends HttpServlet{
 						Invoice invoice = InvoiceJSON.fromJSON(new JSONObject(r.getJson()));
 						File file = File.createTempFile(name, ".pdf");
 						FileOutputStream out = new FileOutputStream(file);
+						
+						if(company.getRegistry().getDomain().isGarage()) {	
+							invoice.detailStream().forEach(d -> {
+								ProjectTas pt = AON.getProjectTas(occam, f -> f.getDomainProperty().eq(invoice.getDomain())
+										.and(f.getIdProperty().eq(d.getProject()))).orElse(null);
+								if(pt != null)	d.setProjectName(d.getProjectName() + " - KMS. " + d.getProject());	
+							});
+						}
+						
 						PdfMaker.printInvoice(out, company, invoice, config, null, logo.getData(), "");
 						list.add(file);
 					}
@@ -310,6 +320,15 @@ public class MultipleDownloadServlet extends HttpServlet{
 							tbaiId = tbaiData.getTbaiId(domain.getId(), invoice.getId());							
 						}
 					}
+					
+					if(company.getRegistry().getDomain().isGarage()) {	
+						invoice.detailStream().forEach(d -> {
+							ProjectTas pt = AON.getProjectTas(occam, f -> f.getDomainProperty().eq(invoice.getDomain())
+									.and(f.getIdProperty().eq(d.getProject()))).orElse(null);
+							if(pt != null)	d.setProjectName(d.getProjectName() + " - KMS. " + d.getProject());	
+						});
+					}
+					
 					PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData(), tbaiId);
 					return file;
 	    		} catch (IOException e) {

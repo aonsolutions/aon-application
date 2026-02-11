@@ -3480,6 +3480,56 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 	}
 
+	@Test
+	public void TestBasesSociosCoop() throws Exception {
+		
+		if ( !isDisplayed("socio_coop,_grupo_1") )
+			open("socios_coop");
+
+		wait4Id("socio_coop,_grupo_1");
+
+		draft("SOCIO COOP, GRUPO 1");
+		calculate(Calendar.JANUARY,2026);
+		assertValue("cgcBaseLabel", 868.20 * 6.00 / 30.00);
+		assertValue("cgpBaseLabel", 868.20 * 6.00 / 30.00);
+		calculate(Calendar.FEBRUARY,2026);
+		assertValue("cgcBaseLabel", 868.20);
+		assertValue("cgpBaseLabel", 868.20);
+
+		draft("SOCIO COOP, GRUPO 2");
+		calculate(Calendar.JANUARY,2026);
+		assertValue("cgcBaseLabel", 639.90 * 6.00 / 30.00);
+		assertValue("cgpBaseLabel", 639.90 * 6.00 / 30.00);
+		calculate(Calendar.FEBRUARY,2026);
+		assertValue("cgcBaseLabel", 639.90);
+		assertValue("cgpBaseLabel", 639.90);
+
+		draft("SOCIO COOP, GRUPO 3");
+		calculate(Calendar.JANUARY,2026);
+		assertValue("cgcBaseLabel", 556.80 * 6.00 / 30.00);
+		assertValue("cgpBaseLabel", 556.80 * 6.00 / 30.00);
+		calculate(Calendar.FEBRUARY,2026);
+		assertValue("cgcBaseLabel", 556.80);
+		assertValue("cgpBaseLabel", 556.80);
+
+		draft("SOCIO COOP, GRUPO 8");
+		calculate(Calendar.JANUARY,2026);
+		assertValue("cgcBaseLabel", 552.60 * 6.00 / 31.00);
+		assertValue("cgpBaseLabel", 552.60 * 6.00 / 31.00);
+		calculate(Calendar.FEBRUARY,2026);
+		assertValue("cgcBaseLabel", 552.60);
+		assertValue("cgpBaseLabel", 552.60);
+
+	
+		draft("SOCIO COOP, GRUPO 5");
+		calculate(Calendar.JANUARY,2026);
+		assertValue("cgcBaseLabel", 1381.20 * 6.00 / 30.00);
+		assertValue("cgpBaseLabel", 1381.20 * 6.00 / 30.00);
+		calculate(Calendar.FEBRUARY,2026);
+		assertValue("cgcBaseLabel", 1381.20);
+		assertValue("cgpBaseLabel", 1381.20);
+	}
+
 	// -------------------------------------------------------------------------
 	
 	private void changeDisplayedHolidays(boolean flag) throws IndexOutOfBoundsException, IOException, InterruptedException{

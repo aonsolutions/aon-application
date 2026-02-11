@@ -114,9 +114,6 @@ public class Invoice implements Serializable, HasAudit {
 	private boolean recordable;
 	private boolean selected;
 	private boolean skipAlcatrazValidationAllowed;
-	
-	// Facturas Emitidas por Terceros.
-	private boolean thirdPart;
 
 	// ***************************
 	// ATRIBUTOS CON DUDOSO FUTURO
@@ -910,15 +907,6 @@ public class Invoice implements Serializable, HasAudit {
 	public Optional<InvoiceWithholding> getInvoiceWithholding() {
 		return this.getTaxBreakdown()
 			.flatMap( itb -> itb.getInvoiceWithholding() );
-	}
-	 
-	public boolean isThirdPart() {
-		return thirdPart;
-	}
-	
-	public Invoice setThirdPart(boolean thirdPart) {
-		this.thirdPart = thirdPart;
-		return this;
 	}
 	
 	public String flat() {	

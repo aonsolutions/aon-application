@@ -32,7 +32,7 @@ public class AlterFsMod347Detail2025Bis implements Update {
 
 		dslContext = DSL.using(connection, SQLDialect.MYSQL, settings);
 		
-		// Nuevos campos para el modelo 347 (Se usar·n para el modelo 415 de Canarias)
+		// Nuevos campos para el modelo 347 (Se usar√°n para el modelo 415 de Canarias)
 		boolean rentalAmount = false;
 		boolean firstQuarterRentalAmount = false;
 		boolean secondQuarterRentalAmount = false;
@@ -43,7 +43,7 @@ public class AlterFsMod347Detail2025Bis implements Update {
 		ResultSet rs = null;
 		try {
 			stmt = connection.createStatement();
-			rs = stmt.executeQuery("select * from fs_mod347_detail");
+			rs = stmt.executeQuery("select * from fs_mod347_detail limit 1");
 			ResultSetMetaData rsmd = rs.getMetaData();
 			for (int i = 1; i <= rsmd.getColumnCount(); i++) {
 				String name = rsmd.getColumnName(i);

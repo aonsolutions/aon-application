@@ -393,6 +393,125 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testSimpleStartAtII() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+
+		
+		Date contractStart = getFirstDayOfMonth(getToday());
+		contractStart = add(contractStart, DAY_OF_MONTH, 14);
+		
+		ContractRecord contract = newContract(aonContext, 
+				contractStart, 
+				null, 
+				Collections.emptyMap(), 
+				new String[] { 
+				"( P_1 + P_2 ) * 0.10 ",
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				}, 
+				new String[] {
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05", 
+				"BASE_ESTR * 0.10",
+				"BASE_NESTR * 0.20", 
+				"BASE_IRPF * PORCENTAJE_IRPF" 
+				},
+				null);
+		
+		calculateAndSave(
+				getConnection(), 
+				getContractSalaryCalculatorContext(getConnection(), 
+				getFirstDayOfMonth(contractStart), 
+				getLastDayOfMonth(contractStart), 
+				getLastDayOfMonth(contractStart), 
+				contract));
+		
+		Date start = add(contract.getStartDate(), Calendar.MONTH, 1);
+		Date end = getLastDayOfMonth(start);
+		
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		ctx.setListener(new Listener() {
+
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				IrpfResult result = irpfOutcome.getIrpfResult();
+				assertAnnualRemuneration( CommonUtil.round((1500.00 + 250.00) * 1.10 * 12 , 3),result.getAnnualRemuneration());
+				assertEquals(CommonUtil.round(result.getAnnualRemuneration() * 0.15, 3),result.getDeducciblesExpenses());
+			}
+		});
+
+		ctx.getIrpf();
+
+	}
+
+	@Test
+	public void testSimpleStartAtIII() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+
+		
+		Date contractStart = getFirstDayOfYear(getToday());
+		contractStart = add(contractStart, DAY_OF_MONTH, 14);
+		
+		ContractRecord contract = newContract(aonContext, 
+				contractStart, 
+				null, 
+				Collections.singletonMap("DIAS_MES", "30.0"), 
+				new String[] { 
+				"1925.00   * DIAS_TRABAJADOS / DIAS_MES",
+				}, 
+				new String[] {
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05", 
+				"BASE_ESTR * 0.10",
+				"BASE_NESTR * 0.20", 
+				"BASE_IRPF * PORCENTAJE_IRPF" 
+				},
+				null);
+		
+		calculateAndSave(
+				getConnection(), 
+				getContractSalaryCalculatorContext(getConnection(), 
+				getFirstDayOfMonth(contractStart), 
+				getLastDayOfMonth(contractStart), 
+				getLastDayOfMonth(contractStart), 
+				contract));
+		
+//		AON.getSalaries(aonContext, f -> f.getContractProperty().eq(contract.getId())).forEach( salary -> {
+//			System.out.println(salary.getStartDate() + ": " + salary.getTotalPayment() + " - " + salary.getIrpfBase());
+//			salary.getPayments().forEach( payment -> System.out.println("\t" + payment.getDescription()+ ": " + payment.getAmount()));
+//		});
+		
+		Date start = add(contract.getStartDate(), Calendar.MONTH, 1);
+		Date end = getLastDayOfMonth(start);
+		
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		ctx.setListener(new Listener() {
+
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				IrpfResult result = irpfOutcome.getIrpfResult();
+				assertAnnualRemuneration( CommonUtil.round((1500.00 + 250.00) * 1.10 * 12 , 3),result.getAnnualRemuneration());
+				assertEquals(CommonUtil.round(result.getAnnualRemuneration() * 0.15, 3),result.getDeducciblesExpenses());
+			}
+		});
+
+		ctx.getIrpf();
+
+	}
+
+	@Test
 	public void testShortWithExtras() throws ExpressionException, SQLException, SalaryException {
 
 		Connection connection = getConnection();

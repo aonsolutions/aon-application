@@ -109,7 +109,6 @@ class InvoiceJSONV1 {
 			.setMessages(messages)
 			.setTediCategory(JsonUtils.getString(json, IJsonNames.CATEGORY))
 			.setActivity(EnterpriseActivityJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ACTIVITY)))
-			.setThirdPart(JsonUtils.getboolean(json, IJsonNames.THIRD_PART))
 			.setDoc(InvoiceDocJSON.from(JsonUtils.getJSONObject(json, IJsonNames.INVOICE_DOC)).orElse(null))
 			.addCommunicationInfo(getCommunicationInfo( JsonUtils.getJSONObject(json, IJsonNames.COMMUNICATION_INFO) ).orElse(null))
 		;
@@ -175,7 +174,6 @@ class InvoiceJSONV1 {
 			.put(IJsonNames.FINANCES, FinanceJSON.toJSON(invoice.getFinances()))
 			.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(invoice.getActivity()))
 			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(invoice.getScope()))
-			.put(IJsonNames.THIRD_PART, invoice.isThirdPart())
 			.put(IJsonNames.INVOICE_DOC, invoice.getDoc().map(InvoiceDocJSON::to).orElse(null))
 			.put(IJsonNames.COMMUNICATION_INFO, getCommunicationInfoJSON(invoice.getCommunicationInfo()).orElse(null))
 		;

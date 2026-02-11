@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.project.ProjectTas;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -129,7 +130,13 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 //					qrUrl = data.getValue();
 //				}
 			}
-			
+			if(company.getRegistry().getDomain().isGarage()) {	
+				invoice.detailStream().forEach(d -> {
+					ProjectTas pt = AON.getProjectTas(occam, f -> f.getDomainProperty().eq(domainId)
+							.and(f.getIdProperty().eq(d.getProject()))).orElse(null);
+					if(pt != null)	d.setProjectName(d.getProjectName() + " - KMS. " + pt.getCounter());	
+				});
+			}
 			PdfMaker.printInvoice(resp.getOutputStream(), company, invoice, config, qrUrl, logo.getData(), tbaiId);
 		
 			responseFile(resp, "factura", MimeType.PDF);

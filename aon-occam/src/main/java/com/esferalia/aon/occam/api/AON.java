@@ -105,6 +105,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RattachTag;
+import com.esferalia.aon.occam.api.model.calendar.Holiday;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.Commission;
 import com.esferalia.aon.occam.api.model.commission.CommissionCategory;
@@ -250,6 +251,7 @@ import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
 import com.esferalia.aon.occam.impl.jooq.AgreementImpl;
 import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
+import com.esferalia.aon.occam.impl.jooq.CalendarImpl;
 import com.esferalia.aon.occam.impl.jooq.CommercialImpl;
 import com.esferalia.aon.occam.impl.jooq.CommissionImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
@@ -315,6 +317,10 @@ public class AON {
 
 	private static IFinance getFinance() {
 		return new FinanceImpl();
+	}
+	
+	private static ICalendar getCalendar() {
+		return new CalendarImpl();
 	}
 
 	private static IRawdoc getRawdoc() {
@@ -4097,8 +4103,21 @@ public class AON {
 		}
 	}
 	
-	public static List<ProjectTas> getProjectTasStream(String domainName, Integer domainId, String login, ProjectTasFilter filter){
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+
+	public static Optional<ProjectTas> getProjectTas(Occam occam, ProjectTasFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getProject().getProjectTasStream(ctx, filter).findFirst();
+		}
+	}
+	
+	public static Stream<ProjectTas> getProjectTasStream(Occam occam, ProjectTasFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getProject().getProjectTasStream(ctx, filter);
+		}
+	}
+	
+	public static List<ProjectTas> getProjectTasList(Occam occam, ProjectTasFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			return getProject().getProjectTasStream(ctx, filter).collect(Collectors.toList());
 		}
 	}
@@ -9104,12 +9123,52 @@ public class AON {
 		}
 	}
 	
+	public static void fixInvoice(Occam occam, int domain) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			getFinance().fixInvoice(ctx, domain);
+		}
+	}
+
 	// ***************************************
 	// ***************************** SERIES **
 	// ***************************************
 	public static Stream<Series> getSeriesSuggestion(Occam occam, Integer domainId, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
 			return getFinance().getSeriesSuggestion(ctx, domainId, query);
+		}
+	}
+	
+	// ***************************************
+	// *************************** CALENDAR **
+	// ***************************************
+
+	public static List<com.esferalia.aon.occam.api.model.calendar.Calendar> getCalendar(String domainName, Integer domainId, String userLogin, Integer workplace) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
+			return getCalendar().getCalendar(ctx, domainId, workplace);
+		}
+	}
+
+	public static List<Holiday> getHolidays(String domainName, Integer domainId, String userLogin) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
+			return getCalendar().getHolidays(ctx, domainId);
+		}
+	}
+
+	public static void deleteHolidayDetail(String domainName, Integer domainId, String userLogin, Integer id) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
+			getCalendar().deleteHolidayDetail(ctx, id);
+		}
+	}
+
+	public static com.esferalia.aon.occam.api.model.calendar.Calendar saveCalendar(String domainName, Integer domainId, String userLogin, com.esferalia.aon.occam.api.model.calendar.Calendar calendar) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
+			return getCalendar().saveCalendar(ctx, domainId, calendar);
+		}
+	}
+
+	public static void setPayrollWorkplaceCalendar(String domainName, Integer domainId, String userLogin, Integer workplaceId, Integer calendarId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
+			getCalendar().setPayrollWorkplaceCalendar(ctx, domainId, workplaceId, calendarId);
 		}
 	}
 }

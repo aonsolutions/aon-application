@@ -6,33 +6,237 @@ import java.util.List;
 import org.grecasa.ext.pa.mod417.MIModelo417;
 import org.grecasa.ext.pa.mod420.MIModelo420;
 import org.grecasa.ext.pa.mod425.MIModelo425;
+import org.grecasa.ext.pa.tributos.MIModeloComun;
 
 public class MIModelo420Handler {
 	
-	public MIModelo420Result errorModeloNoSoportado() {
-		MIModelo420Result result = new MIModelo420Result();
-		System.err.println("ERROR: MODELO NO SOPORTADO");
-		result.getErrores().add("ERROR: MODELO NO SOPORTADO");
-		return result;
+//	public MIModelo420Result errorModeloNoSoportado() {
+//		MIModelo420Result result = new MIModelo420Result();
+//		System.err.println("ERROR: MODELO NO SOPORTADO");
+//		result.getErrores().add("ERROR: MODELO NO SOPORTADO");
+//		return result;
+//	}
+	
+//	public MIModelo420Result obtenerPresentacion420(String declaracion) {
+//		MIModelo420Result result = new MIModelo420Result();
+//		if (isEmpty(declaracion)) {
+//			System.err.println("ERROR: DECLARACION ES NULO");
+//			result.getErrores().add("ERROR: DECLARACION ES NULO");
+//		}
+//		try {
+//			System.out.println("INFO: Llamada al modulo de impresion de la ATC (MIModelo420.getFicheroPresentacion)");
+//			MIModelo420 miModelo420 = new MIModelo420(getDownloadDir());
+//			String resultado = miModelo420.getFicheroPresentacion(declaracion);
+//			System.out.println("INFO: resultado = " + resultado);
+//			
+//			if (resultado != null) {
+//				result.setResultado(resultado);
+//			}
+//			List<String> mensajes = miModelo420.getMensajes() ;
+//			if (miModelo420.getMensajes() != null) {
+//				mostrarMensajes(mensajes);
+//				result.getErrores().addAll(mensajes);
+//			}
+//		} catch (Exception e) {
+//			System.err.println("EXCEPTION ERROR: " + e.getMessage());
+//			e.printStackTrace();
+//			result.getErrores().add("EXCEPTION ERROR: " + e.getMessage());			
+//		}
+//		return result;
+//	}
+//	
+//	public MIModelo420Result obtenerPresentacion417(String declaracion) {
+//		MIModelo420Result result = new MIModelo420Result();
+//		if (isEmpty(declaracion)) {
+//			System.err.println("ERROR: DECLARACION ES NULO");
+//			result.getErrores().add("ERROR: DECLARACION ES NULO");
+//		}
+//		try {
+//			System.out.println("INFO: Llamada al modulo de impresion de la ATC (MIModelo417.getFicheroPresentacion)");
+//			MIModelo417 miModelo417 = new MIModelo417(getDownloadDir());
+//			String resultado = miModelo417.getFicheroPresentacion(declaracion);
+//			System.out.println("INFO: resultado = " + resultado);
+//			
+//			if (resultado != null) {
+//				result.setResultado(resultado);
+//			}
+//			List<String> mensajes = miModelo417.getMensajes() ;
+//			if (miModelo417.getMensajes() != null) {
+//				mostrarMensajes(mensajes);
+//				result.getErrores().addAll(mensajes);
+//			}
+//		} catch (Exception e) {
+//			System.err.println("EXCEPTION ERROR: " + e.getMessage());
+//			e.printStackTrace();
+//			result.getErrores().add("EXCEPTION ERROR: " + e.getMessage());			
+//		}
+//		return result;
+//	}
+//	
+//	public MIModelo420Result obtenerPresentacion425(String declaracion) {
+//		MIModelo420Result result = new MIModelo420Result();
+//		if (isEmpty(declaracion)) {
+//			System.err.println("ERROR: DECLARACION ES NULO");
+//			result.getErrores().add("ERROR: DECLARACION ES NULO");
+//		}
+//		try {
+//			System.out.println("INFO: Llamada al modulo de impresion de la ATC (MIModelo425.getFicheroPresentacion)");
+//			MIModelo425 miModelo425 = new MIModelo425(getDownloadDir());
+//			String resultado = miModelo425.getFicheroPresentacion(declaracion);
+//			System.out.println("INFO: resultado = " + resultado);
+//			
+//			if (resultado != null) {
+//				result.setResultado(resultado);
+//			}
+//			List<String> mensajes = miModelo425.getMensajes() ;
+//			if (miModelo425.getMensajes() != null) {
+//				mostrarMensajes(mensajes);
+//				result.getErrores().addAll(mensajes);
+//			}
+//		} catch (Exception e) {
+//			System.err.println("EXCEPTION ERROR: " + e.getMessage());
+//			e.printStackTrace();
+//			result.getErrores().add("EXCEPTION ERROR: " + e.getMessage());			
+//		}
+//		return result;
+//	}
+	
+	
+//	public MIModelo420Result obtenerBorrador420(String declaracion) {
+//		MIModelo420Result result = new MIModelo420Result();
+//		if (isEmpty(declaracion)) {
+//			System.err.println("ERROR: DECLARACION ES NULO");
+//			result.getErrores().add("ERROR: DECLARACION ES NULO");
+//		}
+//		try {
+//			System.out.println("INFO: Llamada al modulo de impresion de la ATC (MIModelo420.getBorrador)");
+//			MIModelo420 miModelo420 = new MIModelo420(getDownloadDir());
+//			byte[] resultado = miModelo420.getBorrador(declaracion);
+//			System.out.println("INFO: resultado = " + resultado);
+//			
+//			if (resultado != null) {
+//				result.setResultado(new String(resultado, StandardCharsets.ISO_8859_1));
+//			}
+//			List<String> mensajes = miModelo420.getMensajes() ;
+//			if (miModelo420.getMensajes() != null) {
+//				mostrarMensajes(mensajes);
+//				result.getErrores().addAll(mensajes);				
+//			}
+//		} catch (Exception e) {
+//			System.err.println("EXCEPTION ERROR: " + e.getMessage());
+//			e.printStackTrace();
+//			result.getErrores().add("EXCEPTION ERROR: " + e.getMessage());
+//		}
+//		return result;
+//	}
+//	
+//	public MIModelo420Result obtenerBorrador417(String declaracion) {
+//		MIModelo420Result result = new MIModelo420Result();
+//		if (isEmpty(declaracion)) {
+//			System.err.println("ERROR: DECLARACION ES NULO");
+//			result.getErrores().add("ERROR: DECLARACION ES NULO");
+//		}
+//		try {
+//			System.out.println("INFO: Llamada al modulo de impresion de la ATC (MIModelo417.getBorrador)");
+//			MIModelo417 miModelo417 = new MIModelo417(getDownloadDir());
+//			byte[] resultado = miModelo417.getBorrador(declaracion);
+//			System.out.println("INFO: resultado = " + resultado);
+//			
+//			if (resultado != null) {
+//				result.setResultado(new String(resultado, StandardCharsets.ISO_8859_1));
+//			}
+//			List<String> mensajes = miModelo417.getMensajes() ;
+//			if (miModelo417.getMensajes() != null) {
+//				mostrarMensajes(mensajes);
+//				result.getErrores().addAll(mensajes);				
+//			}
+//		} catch (Exception e) {
+//			System.err.println("EXCEPTION ERROR: " + e.getMessage());
+//			e.printStackTrace();
+//			result.getErrores().add("EXCEPTION ERROR: " + e.getMessage());
+//		}
+//		return result;
+//	}
+//	
+//	public MIModelo420Result obtenerBorrador425(String declaracion) {
+//		MIModelo420Result result = new MIModelo420Result();
+//		if (isEmpty(declaracion)) {
+//			System.err.println("ERROR: DECLARACION ES NULO");
+//			result.getErrores().add("ERROR: DECLARACION ES NULO");
+//		}
+//		try {
+//			System.out.println("INFO: Llamada al modulo de impresion de la ATC (MIModelo425.getBorrador)");
+//			MIModelo425 miModelo425 = new MIModelo425(getDownloadDir());
+//			byte[] resultado = miModelo425.getBorrador(declaracion);
+//			System.out.println("INFO: resultado = " + resultado);
+//			
+//			if (resultado != null) {
+//				result.setResultado(new String(resultado, StandardCharsets.ISO_8859_1));
+//			}
+//			List<String> mensajes = miModelo425.getMensajes() ;
+//			if (miModelo425.getMensajes() != null) {
+//				mostrarMensajes(mensajes);
+//				result.getErrores().addAll(mensajes);				
+//			}
+//		} catch (Exception e) {
+//			System.err.println("EXCEPTION ERROR: " + e.getMessage());
+//			e.printStackTrace();
+//			result.getErrores().add("EXCEPTION ERROR: " + e.getMessage());
+//		}
+//		return result;
+//	}
+	
+	
+	private void mostrarMensajes(List<String> mensajes) {
+		if (mensajes == null) {
+			System.out.println("mensajes is null");
+		} else if (mensajes.isEmpty()) {
+			System.out.println("mensajes is empty");
+		} else {
+			System.err.println("Nº mensajes error: " + mensajes.size());
+			for (String m : mensajes)
+				System.err.println("" + m);
+		}
+	}
+
+	private static String getDownloadDir() {
+		return System.getProperty("java.io.tmpdir");
 	}
 	
-	public MIModelo420Result obtenerPresentacion420(String declaracion) {
+	private static boolean isEmpty(String str) {
+		return str == null || str.trim().isEmpty();
+	}
+	
+	// MODELOS 417, 420 y 425 ----------------------------------------------------------------------------
+	
+	public MIModelo420Result obtenerPresentacion(String declaracion) {
+		
 		MIModelo420Result result = new MIModelo420Result();
 		if (isEmpty(declaracion)) {
 			System.err.println("ERROR: DECLARACION ES NULO");
 			result.getErrores().add("ERROR: DECLARACION ES NULO");
+			return result;
 		}
 		try {
-			System.out.println("INFO: Llamada al modulo de impresion de la ATC (MIModelo420.getFicheroPresentacion)");
-			MIModelo420 miModelo420 = new MIModelo420(getDownloadDir());
-			String resultado = miModelo420.getFicheroPresentacion(declaracion);
+			MIModeloComun miModelo = getMiModelo(declaracion);
+		
+			if (miModelo == null) {
+				System.err.println("ERROR: MODELO NO SOPORTADO");
+				result.getErrores().add("ERROR: MODELO NO SOPORTADO");
+				return result;
+			}
+			
+			System.out.println("INFO: Llamada al modulo de impresion de la ATC");
+			System.out.println("INFO: " + miModelo.getClass().getName() + ".getFicheroPresentacion()");
+			
+			String resultado = miModelo.getFicheroPresentacion(declaracion);
 			System.out.println("INFO: resultado = " + resultado);
 			
 			if (resultado != null) {
 				result.setResultado(resultado);
 			}
-			List<String> mensajes = miModelo420.getMensajes() ;
-			if (miModelo420.getMensajes() != null) {
+			List<String> mensajes = miModelo.getMensajes() ;
+			if (miModelo.getMensajes() != null) {
 				mostrarMensajes(mensajes);
 				result.getErrores().addAll(mensajes);
 			}
@@ -42,63 +246,63 @@ public class MIModelo420Handler {
 			result.getErrores().add("EXCEPTION ERROR: " + e.getMessage());			
 		}
 		return result;
+		
 	}
-	
-	public MIModelo420Result obtenerPresentacion417(String declaracion) {
+
+	public MIModelo420Result obtenerBorrador(String declaracion) {
+		
 		MIModelo420Result result = new MIModelo420Result();
 		if (isEmpty(declaracion)) {
 			System.err.println("ERROR: DECLARACION ES NULO");
 			result.getErrores().add("ERROR: DECLARACION ES NULO");
+			return result;
 		}
 		try {
-			System.out.println("INFO: Llamada al modulo de impresion de la ATC (MIModelo417.getFicheroPresentacion)");
-			MIModelo417 miModelo417 = new MIModelo417(getDownloadDir());
-			String resultado = miModelo417.getFicheroPresentacion(declaracion);
+			MIModeloComun miModelo = getMiModelo(declaracion);
+			
+			if (miModelo == null) {
+				System.err.println("ERROR: MODELO NO SOPORTADO");
+				result.getErrores().add("ERROR: MODELO NO SOPORTADO");
+				return result;
+			}
+			
+			System.out.println("INFO: Llamada al modulo de impresion de la ATC");
+			System.out.println("INFO: " + miModelo.getClass().getName() + ".getBorrador()");
+			
+			byte[] resultado = miModelo.getBorrador(declaracion);
 			System.out.println("INFO: resultado = " + resultado);
 			
 			if (resultado != null) {
-				result.setResultado(resultado);
+				result.setResultado(new String(resultado, StandardCharsets.ISO_8859_1));
 			}
-			List<String> mensajes = miModelo417.getMensajes() ;
-			if (miModelo417.getMensajes() != null) {
+			List<String> mensajes = miModelo.getMensajes() ;
+			if (miModelo.getMensajes() != null) {
 				mostrarMensajes(mensajes);
-				result.getErrores().addAll(mensajes);
+				result.getErrores().addAll(mensajes);				
 			}
 		} catch (Exception e) {
 			System.err.println("EXCEPTION ERROR: " + e.getMessage());
 			e.printStackTrace();
-			result.getErrores().add("EXCEPTION ERROR: " + e.getMessage());			
+			result.getErrores().add("EXCEPTION ERROR: " + e.getMessage());
 		}
 		return result;
 	}
 	
-	public MIModelo420Result obtenerPresentacion425(String declaracion) {
-		MIModelo420Result result = new MIModelo420Result();
-		if (isEmpty(declaracion)) {
-			System.err.println("ERROR: DECLARACION ES NULO");
-			result.getErrores().add("ERROR: DECLARACION ES NULO");
+	private MIModeloComun getMiModelo(String declaracion) {
+		
+		if (declaracion.contains("MOD=\"420\"")) {
+			return new MIModelo420(getDownloadDir());
+		} else if (declaracion.contains("MOD=\"417\"")) {
+			return new MIModelo417(getDownloadDir());
+		} else if (declaracion.contains("MOD=\"425\"")) {
+			return new MIModelo425(getDownloadDir());
+		} else {	
+			return null;
 		}
-		try {
-			System.out.println("INFO: Llamada al modulo de impresion de la ATC (MIModelo425.getFicheroPresentacion)");
-			MIModelo425 miModelo425 = new MIModelo425(getDownloadDir());
-			String resultado = miModelo425.getFicheroPresentacion(declaracion);
-			System.out.println("INFO: resultado = " + resultado);
-			
-			if (resultado != null) {
-				result.setResultado(resultado);
-			}
-			List<String> mensajes = miModelo425.getMensajes() ;
-			if (miModelo425.getMensajes() != null) {
-				mostrarMensajes(mensajes);
-				result.getErrores().addAll(mensajes);
-			}
-		} catch (Exception e) {
-			System.err.println("EXCEPTION ERROR: " + e.getMessage());
-			e.printStackTrace();
-			result.getErrores().add("EXCEPTION ERROR: " + e.getMessage());			
-		}
-		return result;
+		
 	}
+	
+	// MODELO 415 ----------------------------------------------------------------------------------
 	
 //	public MIModelo420Result obtenerPresentacion415(String declaracion) {
 //		MIModelo420Result result = new MIModelo420Result();
@@ -127,91 +331,7 @@ public class MIModelo420Handler {
 //		}
 //		return result;
 //	}
-	
-	public MIModelo420Result obtenerBorrador420(String declaracion) {
-		MIModelo420Result result = new MIModelo420Result();
-		if (isEmpty(declaracion)) {
-			System.err.println("ERROR: DECLARACION ES NULO");
-			result.getErrores().add("ERROR: DECLARACION ES NULO");
-		}
-		try {
-			System.out.println("INFO: Llamada al modulo de impresion de la ATC (MIModelo420.getBorrador)");
-			MIModelo420 miModelo420 = new MIModelo420(getDownloadDir());
-			byte[] resultado = miModelo420.getBorrador(declaracion);
-			System.out.println("INFO: resultado = " + resultado);
-			
-			if (resultado != null) {
-				result.setResultado(new String(resultado, StandardCharsets.ISO_8859_1));
-			}
-			List<String> mensajes = miModelo420.getMensajes() ;
-			if (miModelo420.getMensajes() != null) {
-				mostrarMensajes(mensajes);
-				result.getErrores().addAll(mensajes);				
-			}
-		} catch (Exception e) {
-			System.err.println("EXCEPTION ERROR: " + e.getMessage());
-			e.printStackTrace();
-			result.getErrores().add("EXCEPTION ERROR: " + e.getMessage());
-		}
-		return result;
-	}
-	
-	public MIModelo420Result obtenerBorrador417(String declaracion) {
-		MIModelo420Result result = new MIModelo420Result();
-		if (isEmpty(declaracion)) {
-			System.err.println("ERROR: DECLARACION ES NULO");
-			result.getErrores().add("ERROR: DECLARACION ES NULO");
-		}
-		try {
-			System.out.println("INFO: Llamada al modulo de impresion de la ATC (MIModelo417.getBorrador)");
-			MIModelo417 miModelo417 = new MIModelo417(getDownloadDir());
-			byte[] resultado = miModelo417.getBorrador(declaracion);
-			System.out.println("INFO: resultado = " + resultado);
-			
-			if (resultado != null) {
-				result.setResultado(new String(resultado, StandardCharsets.ISO_8859_1));
-			}
-			List<String> mensajes = miModelo417.getMensajes() ;
-			if (miModelo417.getMensajes() != null) {
-				mostrarMensajes(mensajes);
-				result.getErrores().addAll(mensajes);				
-			}
-		} catch (Exception e) {
-			System.err.println("EXCEPTION ERROR: " + e.getMessage());
-			e.printStackTrace();
-			result.getErrores().add("EXCEPTION ERROR: " + e.getMessage());
-		}
-		return result;
-	}
-	
-	public MIModelo420Result obtenerBorrador425(String declaracion) {
-		MIModelo420Result result = new MIModelo420Result();
-		if (isEmpty(declaracion)) {
-			System.err.println("ERROR: DECLARACION ES NULO");
-			result.getErrores().add("ERROR: DECLARACION ES NULO");
-		}
-		try {
-			System.out.println("INFO: Llamada al modulo de impresion de la ATC (MIModelo425.getBorrador)");
-			MIModelo425 miModelo425 = new MIModelo425(getDownloadDir());
-			byte[] resultado = miModelo425.getBorrador(declaracion);
-			System.out.println("INFO: resultado = " + resultado);
-			
-			if (resultado != null) {
-				result.setResultado(new String(resultado, StandardCharsets.ISO_8859_1));
-			}
-			List<String> mensajes = miModelo425.getMensajes() ;
-			if (miModelo425.getMensajes() != null) {
-				mostrarMensajes(mensajes);
-				result.getErrores().addAll(mensajes);				
-			}
-		} catch (Exception e) {
-			System.err.println("EXCEPTION ERROR: " + e.getMessage());
-			e.printStackTrace();
-			result.getErrores().add("EXCEPTION ERROR: " + e.getMessage());
-		}
-		return result;
-	}
-	
+//
 //	public MIModelo420Result obtenerBorrador415(String declaracion) {
 //		MIModelo420Result result = new MIModelo420Result();
 //		if (isEmpty(declaracion)) {
@@ -225,7 +345,7 @@ public class MIModelo420Handler {
 //			// FALTA - EL METODO getBorrador DEVUELVE SIEMPRE NULL, AUNQUE LE PASES COMO SEGUNDO PARAMETRO UN STRING VALIDO CON LOS DATOS ADICIONALES
 //			// EN LAS INSTRUCCIONES NO APARECE ESTE METODO ASI QUE SE PUEDE HACER LLAMANDO AL METODO getFicheroPresentacion Y POSTERIORMENTE A getCopiaAutoliquidacion
 //			// AUNQUE HABRIA QUE INTENTAR PONER EN ESE PDF ALGUNA MARCA DE AGUA O ALGO QUE INDIQUE QUE ES UN BORRADOR
-////			byte[] resultado = miModelo415.getBorrador(declaracion, null); 
+//	//		byte[] resultado = miModelo415.getBorrador(declaracion, null); 
 //			String resultado = miModelo415.getFicheroPresentacion(declaracion);
 //			System.out.println("INFO: resultado1 = " + resultado);
 //			
@@ -247,25 +367,5 @@ public class MIModelo420Handler {
 //		}
 //		return result;
 //	}
-	
-	private void mostrarMensajes(List<String> mensajes) {
-		if (mensajes == null) {
-			System.out.println("mensajes is null");
-		} else if (mensajes.isEmpty()) {
-			System.out.println("mensajes is empty");
-		} else {
-			System.err.println("Nº mensajes error: " + mensajes.size());
-			for (String m : mensajes)
-				System.err.println("" + m);
-		}
-	}
-
-	private static String getDownloadDir() {
-		return System.getProperty("java.io.tmpdir");
-	}
-	
-	private static boolean isEmpty(String str) {
-		return str == null || str.trim().isEmpty();
-	}
 
 }

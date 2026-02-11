@@ -847,7 +847,8 @@ export class DomainUserRoles {
 	// COMMERCE
 
 	hasCommerce() {
-		return this.getDomain().getDomainType() == 'COMMERCE';
+		return this.getDomain().getDomainType() == 'COMMERCE'
+			|| this.getParentDomain().getDomainType() == 'COMMERCE';
 	}
 
 	isCommerce() {

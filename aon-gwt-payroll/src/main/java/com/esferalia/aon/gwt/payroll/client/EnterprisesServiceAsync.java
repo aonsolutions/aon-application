@@ -69,6 +69,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.calendar.Calendar;
+import com.esferalia.aon.occam.api.model.calendar.Holiday;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
@@ -370,5 +372,13 @@ public interface EnterprisesServiceAsync {
 	
 
 	void getDomainByName(String domainName, AsyncCallback<Domain> asyncCallback) throws IllegalArgumentException;
+	
+	// ------------------------------------------------ Calendar
+	
+	void getCalendar(String currentDomainName, String currentUser, Integer workplace, AsyncCallback<List<Calendar>> asyncCallback) throws IllegalArgumentException ;
+	void getHolidays(String currentDomainName, String currentUser, AsyncCallback<List<Holiday>> asyncCallback) throws IllegalArgumentException ;
+	void deleteHolidayDetail(String currentDomainName, String currentUser, Integer id, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;
+	void saveCalendar(String currentDomainName, String currentUser, Calendar calendar, AsyncCallback<Calendar> asyncCallback) throws IllegalArgumentException ;
+	void setPayrollWorkplaceCalendar(String currentDomainName, String currentUser, Integer workplaceId, Integer calendarId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;
 	
 }

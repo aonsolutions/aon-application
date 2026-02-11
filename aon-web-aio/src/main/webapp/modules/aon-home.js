@@ -16,6 +16,7 @@ import { AonTooltip } from '../components/aon-tooltip.js';
 import { AonDialog } from '../components/aon-dialog.js';
 import { AonDialogMenu } from '../components/aon-dialog-menu.js';
 import { AonNewDialogMenu } from '../components/aon-new-dialog-menu.js';
+import { AonNewFixedButton } from '../components/aon-new-fixed-button.js';
 
 export class AonHome extends AonElement {
 
@@ -304,6 +305,11 @@ export class AonHome extends AonElement {
 			let newDialogMenu = new AonNewDialogMenu();
 		    newDialogMenu.id = 'newDialogMenu';
 		    this.appendChild(newDialogMenu);
+		    
+		    let newFixedButton = new AonNewFixedButton();
+			newFixedButton.id = 'newFixedButton';
+			newFixedButton.classList.add('hidden');
+		    this.appendChild(newFixedButton);
 		} else {
 			let dialogMenu = new AonDialogMenu();
 		    dialogMenu.id = this.OPTION_DIALOG;

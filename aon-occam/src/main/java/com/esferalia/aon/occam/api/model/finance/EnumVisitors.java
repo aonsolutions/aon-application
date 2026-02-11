@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.api.model.finance;
 
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 
 public class EnumVisitors {
 
@@ -48,6 +47,21 @@ public class EnumVisitors {
 		T visitM190F021(T t);
 		T visitM190F022(T t);
 		T visitM193C4(T t);
+		T visitM193B01(T t);
+		T visitM193B02(T t);
+		T visitM193B03(T t);
+		T visitM193B04(T t);
+		T visitM193B05(T t);
+		T visitM193B06(T t);
+		T visitM193B07(T t);
+		T visitM193D01(T t);
+		T visitM193D02(T t);
+		T visitM193D03(T t);
+		T visitM193D04(T t);
+		T visitM193D05(T t);
+		T visitM193D06(T t);
+		T visitM193D07(T t);
+		
 	}
 	
 	public static interface IRPFParamsOrderByVisitor<T,P> {

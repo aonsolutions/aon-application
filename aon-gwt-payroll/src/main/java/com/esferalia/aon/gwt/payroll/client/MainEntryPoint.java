@@ -68,6 +68,8 @@ public class MainEntryPoint implements EntryPoint {
 			runAsync(PensionPlanAFIModule.class, new PensionPlanAFIModule());
 		} else if (entryPoint.equalsIgnoreCase("MainCostModule")) {
 			runAsync(PensionPlanAFIModule.class, new CostModule());
+		}  else if (entryPoint.equalsIgnoreCase(Constants.WORKPLACES_CALENDAR_ENTRY_POINT)) {
+			runAsync(WorkplacesCalendarModule.class, new WorkplacesCalendarModule());
 		} 
 	}
 	
@@ -336,6 +338,19 @@ public class MainEntryPoint implements EntryPoint {
 			});
 		} else if (name == DomainVariablesModule.class ) {
 			GWT.runAsync(DomainVariablesModule.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+		}  else if (name == WorkplacesCalendarModule.class ) {
+			GWT.runAsync(WorkplacesCalendarModule.class, new RunAsyncCallback() {
 				
 				@Override
 				public void onSuccess() {

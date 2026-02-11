@@ -435,12 +435,19 @@ input, select, textarea,
 
 .aon_custom_row:hover, 
 .aon_utility_option:hover, 
-.aon_custom_text_box:hover, 
+.aon_custom_text_box:hover,
+.aon_custom_text_box_no_border:hover, 
 .aon_custom_text_area:hover {
   background-color:inherit ;
 }	
 
-.aon_custom_text_box {
+.aon_custom_text_area{
+	height: auto !important;
+}
+
+.aon_custom_text_box,
+.aon_custom_text_area,
+.aon_custom_text_box_no_border {
 	gap: 2px;
 	height: 3.0rem;
 	margin-bottom: 0.5rem;
@@ -457,7 +464,7 @@ input, select, textarea,
 	padding: .5rem .75rem .5rem .75rem !important;
 }
 
-.aon_custom_text_box:hover.aon_custom_warning, .aon_custom_text_area:hover.aon_custom_warning, .aon_custom_warning {
+.aon_custom_text_box_no_border:hover.aon_custom_warning, .aon_custom_text_box:hover.aon_custom_warning, .aon_custom_text_area:hover.aon_custom_warning, .aon_custom_warning {
   	border-color: initial;
     border-bottom-color:initial; 
   	background-color:initial ;
@@ -851,7 +858,9 @@ div[style*='height:55px'] > .aon_toolbar {
 	border-bottom: none !important;
 }
 
-.aon_flex_column.aon_custom_text_box {
+.aon_flex_column.aon_custom_text_box,
+.aon_flex_column.aon_custom_text_area,
+.aon_flex_column.aon_custom_text_box_no_border {
     width: auto ;
 }
 
@@ -1227,4 +1236,27 @@ div:has( > .aon_icon_menu_collapse) {
 
 .aon-MainAgreement .aon_toolbar_small_inner{
 	border-bottom: none;
+}
+
+/* ---------- Calendar Workplace */
+
+.loader-overlay,
+.calendar-header,
+.month-panel {
+	background-color: white;
+}
+
+.aon-annual-data,
+.aon-holidays {
+	/*
+	flex-direction: column;
+  	justify-content: start;
+  	align-items: start;
+  	*/
+  	gap: 0rem;
+}
+
+.aon-annual-data div, 
+.aon-holidays div {
+	margin-right: 0px;
 }
