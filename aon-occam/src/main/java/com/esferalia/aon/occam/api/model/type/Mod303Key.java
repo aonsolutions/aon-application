@@ -47,6 +47,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_A12("303-CTA12",false,null,"Sujeto pasivo que tributa exclusivamente a una Administraci\u00F3n tributaria Foral con IVA a la importaci\u00F3n liquidado por la Aduana pendiente de ingreso")
 	,CT_A13("303-CTA13",false,null,"Sujeto pasivo acogido voluntariamente al SII")
 	,CT_A14("303-CTA14",false,null,"Sujeto pasivo exonerado de la Declaraci\u00F3n-resumen anual del IVA, modelo 390")
+	,CT_A15("303-CTA15",false,null,"Sujeto pasivo con derecho a deducir pago a cuenta de entregas de gasolinas, gas\u00F3leos y biocarburantes posteriores a la ultimaci\u00F3n del r\u00E9gimen de dep\u00F3sito distinto del aduanero")
 	
 	,CT_R00("303-CTR00",false,null,"Como consecuencia de la presentaci\u00F3n de la autoliquidaci\u00F3n rectificativa solicito dar de baja/modificar la domiciliaci\u00F3n efectuada")
 	,CT_R01("303-CTR01",false,null,"Motivo de la rectificaci\u00F3n: Rectificaciones (excepto incluidas en el motivo siguiente)")
@@ -637,6 +638,9 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_C69("303-CTA69",false,"69",CT_S11R.getDescription()) 
 	,CT_C70("303-CTA70",false,"70","Resultados a ingresar de anteriores autoliquidaciones o liquidaciones administrativas correspondientes al ejercicio y per\u00EDodo objeto de la autoliquidaci\u00F3n")
 	,CT_C109("303-CTA109",false,"109","Devoluciones acordadas por la Agencia Tributaria como consecuencia de la tramitaci\u00F3n de anteriores autoliquidaciones correspondientes al ejercicio y per\u00EDodo objeto de la autoliquidaci\u00F3n")
+	
+	,CT_C112("303-CTA112",false,"112","Pago a cuenta de entregas de gasolinas, gas\u00F3leos y biocarburantes posteriores a la ultimaci\u00F3n del r\u00E9gimen de dep\u00F3sito distinto del aduanero atribuible a la Administraci\u00F3n del Estado")
+	
 	,CT_C71("303-CTA71",false,"71","Resultado de la liquidaci\u00F3n")
 	
 	,CT_C111("303-CTA111",false,"111","Importe a devolver como consecuencia de la rectificaci\u00F3n")

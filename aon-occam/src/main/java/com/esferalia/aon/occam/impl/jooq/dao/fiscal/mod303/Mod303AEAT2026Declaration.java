@@ -43,7 +43,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod303AEAT2025Declaration extends Mod303AEAT {
+class Mod303AEAT2026Declaration extends Mod303AEAT {
 	
 	@FunctionalInterface
 	private interface ISimplifiedRegimeActivityFiller {
@@ -60,7 +60,7 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 		void copy(Mod303 prev, Mod303 current);
 	}
 
-	protected Mod303AEAT2025Declaration() {
+	protected Mod303AEAT2026Declaration() {
 
 	}
 	
@@ -85,7 +85,7 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 	private static final double SURCHARGE_PERCENT_52 = 5.2;
 	
 	public static boolean accept(Mod303 mod) {
-		return (mod.isAEAT() && mod.getYear() == 2025);
+		return (mod.isAEAT() && mod.getYear() >= 2026);
 	}
 	
 	private static final Mod303Key[] COMPENSATION_EXPLAIN_KEYS = new Mod303Key[] { Mod303Key.CT_C110 };
@@ -118,6 +118,8 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 		,CT_A14(Mod303Key.CT_A14, null, null, (ctx, mod) -> set(Mod303Key.CT_A14, mod, 0), null, null, null, null
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_A14))
 		,CT_A11(Mod303Key.CT_A11)
+		,CT_A15(Mod303Key.CT_A15, null, null, (ctx, mod) -> set(Mod303Key.CT_A15, mod, 0), null, null, null, null
+				,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_A15))
 
 		// ---------------------------------------------------------
 		// ----------------------------------------- REGIMEN GENERAL
@@ -2291,6 +2293,8 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 		// y a las Diputaciones Forales. Resultado de la Regularización anual.
 		, CT_C68(Mod303Key.CT_C68)
 		
+		// Rectificativa - Exclusivamente para determinados supuestos de autoliquidación rectificativa por 
+		// discrepancia de criterio administrativo que no deban incluirse en otras casillas. Otros ajustes
 		, CT_C108(Mod303Key.CT_C108)
 
 		// Resultado de la autoliquidación
@@ -2309,10 +2313,15 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 		)
 		,CT_C109(Mod303Key.CT_C109)
 		
+		// Pago a cuenta de entregas de gasolinas, gasóleos y biocarburantes posteriores a la ultimación del 
+		// régimen de depósito distinto del aduanero atribuible a la Administración del Estado 
+		,CT_C112(Mod303Key.CT_C112)
+		
 		// Resultado
-		,CT_C71(Mod303Key.CT_C71, null, null, null, "CT_C69-CT_C70+CT_C109", null)
+		,CT_C71(Mod303Key.CT_C71, null, null, null, "CT_C69-CT_C70+CT_C109-CT_C112", null)
 		
 		// Importe a devolver consecuencia de la rectificación
+		// FALTA - EN ESTA FORMULA DEL CALCULO DE LA 111 TAMBIEN DEBERIA TENERSE EN CUENTA LA NUEVA CASILLA 112 ??
 		,CT_C111(Mod303Key.CT_C111, null, null, null, "calculateC111(CT_C69,CT_C70,CT_C71)", null)
 
 		, CT_U1D(Mod303Key.CT_U1D), CT_U1C(Mod303Key.CT_U1C), CT_U1E(Mod303Key.CT_U1E)
