@@ -622,9 +622,8 @@ public class Up2Date {
 			//TimecontrolLocationAlter.TIMECONTROL_LOCATION_ALTER
 			
 //			CalendarHolidaysAlter.CALENDAR_HOLIDAYS_ALTER,
-			CalendarPersonalDaysAlter.CALENDAR_PERSONAL_DAYS_ALTER,
-
-			EnterpriseDataAddAudit.ENTERPRISE_DATA_ADD_AUDIT
+//			CalendarPersonalDaysAlter.CALENDAR_PERSONAL_DAYS_ALTER,
+//			EnterpriseDataAddAudit.ENTERPRISE_DATA_ADD_AUDIT,
 	};
 
 	// ------------------------------------------------------------------------

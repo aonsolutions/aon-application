@@ -371,11 +371,14 @@ public class AonApiHttpServlet extends HttpServlet{
 	}
 	
 	protected static Certificate checkCertificate(AonApiData api) {
+		return checkCertificate(api, JsonUtils.getInteger(api.getData(), "cert"));
+	}
+	
+	protected static Certificate checkCertificate(AonApiData api, Integer certificateId) {
 		Certificate cert = new Certificate();
 		try {
-			if(api.getData().opt("cert") != null) {
-				Integer id = JsonUtils.getInteger(api.getData(), "cert");
-				cert = AON.getCertificates(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(id))
+			if(certificateId != null) {
+				cert = AON.getCertificates(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(certificateId))
 						.findFirst().orElse(new Certificate());
 			} else {
 				cert =  AON.getCertificate(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), CertificateType.AEAT.name());				

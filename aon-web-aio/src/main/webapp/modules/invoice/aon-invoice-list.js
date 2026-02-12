@@ -1,12 +1,12 @@
 import { AonElement } from '../../components/AonElement.js';
 import { Paymethods } from '../../services/paymethod.js';
-import { getInvoices, getInvoice, insertInvoice, deleteRawdocInvoices, sendInvoiceMail, downloadInvoices, getAeatCertificates, recordInvoices, refreshProcessing} from '../../services/service.js';
+import { getInvoices, getInvoice, insertInvoice, deleteRawdocInvoices, sendInvoiceMail, downloadInvoices, getAeatCertificates, recordInvoices, refreshProcessing, communicateInvoice} from '../../services/service.js';
 import { Invoice, getDocumentNumber } from './Invoice.js';
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
 import { COLORS, CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { formatNumber, isBase64 } from '../../services/utils.js';
 import { AonDateUtils } from '../utils/AonDateUtils.js';
-import { createList } from '../../components/CreateComponent.js';
+import { createList, createSelect } from '../../components/CreateComponent.js';
 
 import * as ACTION from '../actions.js';
 import * as OPTION from './InvoiceOptions.js';
@@ -19,6 +19,7 @@ export class AonInvoiceList extends AonElement {
 	more;
 	filter;	
 	TABLE;
+	icc;
 
 	fn;
 
@@ -273,10 +274,11 @@ export class AonInvoiceList extends AonElement {
 				for (let i = 0; i < keys.length; i++) {
 					let key = keys[i];
 					let communicationStatus = ci[key].communicationStatus;
+					let communicationType = ci[key].communicationType;
 					let icon = {
 						icon: MATERIAL_ICONS.QR_CODE_2,
-						title: key + " " + this.getCommunicationStatusLabel(communicationStatus),
-						color: this.getCommunicationStatusColor(communicationStatus)
+						title: key + " " + this.getCommunicationStatusLabel(communicationType, communicationStatus),
+						color: this.getCommunicationStatusColor(communicationType, communicationStatus)
 					};
 					icons.push(icon);
 				}
@@ -286,24 +288,25 @@ export class AonInvoiceList extends AonElement {
 		return icons;
 	}
 
+
 	hasCommunicationInfo(invoice) {
 		return (invoice
 			&& invoice.communicationInfo 
 			&& Object.keys(invoice.communicationInfo).length > 0);
 	}
 
-	getCommunicationStatusLabel(status) {
-		if("PENDING" === status) return "Pendiente";
-		else if("ACCEPTED" === status) return "Aceptada";
+	getCommunicationStatusLabel(type, status) {
+		if("PENDING" === status && "NO_VERIFACTU" !== type) return "Pendiente";
+		else if("ACCEPTED" === status || ("PENDING" === status && "NO_VERIFACTU" === type)) return "Aceptada";
 		else if("ACCEPTED_WITH_ERRORS" === status) return "Aceptada con errores";
 		else if("EXTERNALLY_COMMUNICATED" === status) return "Com. Externamente";
 		else if("WRONG" === status) return "Incorrecta";
 		else return "Sin Estado";
 	}
 
-	getCommunicationStatusColor(status) {
-		if("PENDING" === status) return "orange";
-		else if("ACCEPTED" === status) return "green";
+	getCommunicationStatusColor(type, status) {
+		if("PENDING" === status && "NO_VERIFACTU" !== type) return "orange";
+		else if("ACCEPTED" === status || ("PENDING" === status && "NO_VERIFACTU" === type)) return "green";
 		else if("ACCEPTED_WITH_ERRORS" === status) return "yellow";
 		else if("EXTERNALLY_COMMUNICATED" === status) return "blue";
 		else if("WRONG" === status) return "red"
@@ -410,10 +413,63 @@ export class AonInvoiceList extends AonElement {
 			toolbar.addSeparator();
 			aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
 			aonInvoice.addToolbarOption2(ACTION.SEND_INVOICE, () => this.sendInvoices());
+			if(this.isSig()) aonInvoice.addToolbarOption2(ACTION.COMMUNICATE_INVOICE, () => this.communicateInvoices());
 		} else if(this.isProcessing()) {
 			toolbar.addSeparator();
 			aonInvoice.addToolbarOption2(ACTION.DELETE_FOREVER, () => this.deleteForeverInvoices());
 		}
+	}
+
+	communicateInvoices() {
+		if(this.icc.isTbai() || this.icc.isLroe() || this.icc.isVerifactu() || this.icc.isSii()) {	
+			this.certificateDialog((certificate) => this.communicatingInvoices(certificate));
+		} else  this.communicatingInvoices();
+	}
+
+	certificateDialog(action) {
+		let dialog = this.getApplication().getDialog();
+		dialog.clear();
+		if(!this.isMobile()) dialog.width = '400px';
+		dialog.setTitle("Comunicar facturas seleccionadas");
+
+		let certSelect = createSelect("cert", MSG.CERTIFICATE);
+		certSelect.setAlias("id", "name");	
+
+		getAeatCertificates().then(certs => certSelect.setOptions(certs));
+		dialog.setContent(certSelect);
+		dialog.addAcceptAction(() => action(certSelect.value));
+		dialog.open();
+	}
+
+	communicatingInvoices(certificate) {
+		console.log("CERTIFICADO: " + certificate);
+		let div = this.createDiv();
+		let dialog = this.getApplication().getDialog();
+		dialog.clear();
+		if(!this.isMobile()) dialog.width = '400px';
+		dialog.setTitle("Comunicando facturas seleccionadas");
+		dialog.setContent(div);
+		dialog.open();
+
+		let aonInvoiceTable = this.getTable();
+		aonInvoiceTable.selected.forEach((invoice, i) => {
+			let icDiv = this.createDiv("invoiceCommunicationDiv" + i);
+			icDiv.innerHTML = invoice.reference + " - comunicando...";
+			div.appendChild(icDiv);
+			let data = {
+				invoice: invoice.id,
+				certificate
+			}
+			communicateInvoice(data).then(() => {
+				icDiv.innerHTML = invoice.reference + " - comunicada con éxito";
+				icDiv.style.color = "green";
+				icDiv.style.fontWeight = "bold";
+			}).catch(e => {
+				icDiv.innerHTML = invoice.reference + " - ERROR: " + e.message;
+				icDiv.style.color = "red";
+				icDiv.style.fontWeight = "bold";
+			});
+		});
 	}
 
 	deleteInvoices() {
@@ -430,6 +486,8 @@ export class AonInvoiceList extends AonElement {
 			});
 		});
 	}
+
+	  setIcc(icc) {this.icc = icc; }
 
 	deleteForeverInvoices() {
 		let aonInvoice = this.getElement('aonInvoice');
@@ -565,6 +623,7 @@ export class AonInvoiceList extends AonElement {
 		aonInvoice.removeToolbarOption(ACTION.DELETE_FOREVER);
 		aonInvoice.removeToolbarOption(ACTION.DOWNLOAD_INVOICE);
 		aonInvoice.removeToolbarOption(ACTION.SEND_INVOICE);
+		aonInvoice.removeToolbarOption(ACTION.COMMUNICATE_INVOICE);
 		// aonInvoice.removeToolbarOption(ACTION.REPROCESS);
 	}
 
