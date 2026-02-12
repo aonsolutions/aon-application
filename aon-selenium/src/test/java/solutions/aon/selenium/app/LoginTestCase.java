@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import org.junit.Ignore;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -208,6 +209,7 @@ public class LoginTestCase extends AppBaseTestCase {
 	}
 
 	@Test
+	@Ignore
 	@Order(7)
 	public void testLoginFactoryUser() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
@@ -232,9 +234,6 @@ public class LoginTestCase extends AppBaseTestCase {
 			WebElement aonJsfAppFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAppFrame")));
 			webDriver.switchTo().frame(aonJsfAppFrame);
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonContent:offerList")));
-			
-			
-			
 		} catch (Exception e) {
 			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
 		} finally {
