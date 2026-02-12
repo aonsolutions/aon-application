@@ -105,8 +105,12 @@ public class InvoiceInfoDAO {
 				,Map::putAll
 			);
 		
-		if(icc.isTbai(atDate, invoiceType) && !icc.isBizkaia(atDate)) {
-			DataResponseSource drs = icc.isTbaiTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
+		if(icc.isTbai(invoiceType, atDate) && !icc.isBizkaia(atDate)) {
+			DataResponseSource drs = icc.getTbaiData(atDate)
+				.filter(cc -> cc.isTest())
+				.map( cc -> DataResponseSource.TBAI_TEST )
+				.orElse( DataResponseSource.TBAI );
+			// DataResponseSource drs = icc.isTbaiTest( atDate ) ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
 			if(!enumMap.containsKey(InvoiceCommunicationType.TBAI)) {
 				List<Boolean> list =  DataResponseDAO.getStream(ctx, f -> f.getDomainProperty().eq(domainId).and(f.getSourceProperty().eq(drs.value())).and(f.getSourceIdProperty().eq(invoiceId)))
 						.map(r -> "ok".equalsIgnoreCase(r.getCode()))

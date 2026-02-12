@@ -111,7 +111,7 @@ public class SiiMain extends DockLayoutPanel {
 			public void onSuccess(InvoiceCommunicationConfiguration result) {
 				setConfiguration(result);
 				FiscalModel sii = new FiscalModel();
-				sii.setAdministration(result.getAdministration());
+				sii.setAdministration(result.getAdministration().orElse(null));
 				sii.setModel(FiscalModelType.SII);
 				sii.setName(options.getConfiguration().getCompany().getName());
 				sii.setDocument(options.getConfiguration().getCompany().getDocument());

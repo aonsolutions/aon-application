@@ -822,9 +822,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	
 	private JSONObject saveInvoiceCommunicationConfiguration(AonApiData api, JSONObject json) {
 		return InvoiceCommunicationConfigurationJSON.from(json)
-			.map(icc -> AON.saveInvoiceCommunicationConfiguration(api.getOccam(), api.getDomain().getId(), icc))
+//			.map(icc -> AON.saveInvoiceCommunicationConfiguration(api.getOccam(), api.getDomain().getId(), icc))
 			.flatMap(InvoiceCommunicationConfigurationJSON::to)
-			.orElse(null);
+			.orElse(null)
+			;
 	}
 
 	private static RawdocStatus getRawdocStatus(String status) {

@@ -223,7 +223,7 @@ public class SIIUri {
 	
 	public String getURI(InvoiceCommunicationConfiguration icc, SIIType type) {
 		return icc.isSiiTest() 
-			? getURIPruebas(type, icc.getAdministration())
-			: getURI(type, icc.getAdministration());
+			? getURIPruebas(type, icc.getAdministration().orElse( null ))
+			: getURI(type, icc.getAdministration().orElse( null ));
 	}
 }

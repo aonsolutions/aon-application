@@ -36,16 +36,15 @@ public class EnterpriseDataJSON {
 				.setExpression(JsonUtils.getString(json, IJsonNames.EXPRESSION))
 				.setStartDate(JsonUtils.getDate(json, IJsonNames.START_DATE))
 				.setEndDate(JsonUtils.getDate(json, IJsonNames.END_DATE))
-				.setUpdated(JsonUtils.getboolean(json, IJsonNames.UPDATED))
-				.setIsRemoved(JsonUtils.getboolean(json, IJsonNames.REMOVED));
+				.setDeleted(JsonUtils.getboolean(json, IJsonNames.REMOVED));
 	}
 	
-	public static JSONArray toJSON(List<EnterpriseData> list) {
+	public static <T extends EnterpriseData> JSONArray toJSON(List<T> list) {
 		if(list == null) return new JSONArray();
 		return toJSON(list.stream());
 	}
 	
-	public static JSONArray toJSON(Stream<EnterpriseData> stream) {
+	public static <T extends EnterpriseData> JSONArray toJSON(Stream<T> stream) {
 		if(stream == null) return new JSONArray();
 		JSONArray array = new JSONArray();
 		stream.forEach(data -> array.put(toJSON(data)));

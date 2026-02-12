@@ -85,7 +85,7 @@ public class SiiMain extends AonTemplate2{
 			
 			@Override
 			public void onSuccess(InvoiceCommunicationConfiguration result) {
-				administration = result.getAdministration();
+				administration = result.getAdministration().orElse(null);
 				icc = result;
 				initializeFilterMap();
 				toolbar();
@@ -103,14 +103,22 @@ public class SiiMain extends AonTemplate2{
 		list.add("fe_emitidas");
 		filterMap.put("sii",list);
 		
-		Date date = icc.getSiiData().getStartDate() != null
-				? icc.getSiiData().getStartDate()
-				: new Date(2017-1900, 6, 1);
+		Date date = icc.getSiiData()
+			.map( sd -> sd.getStartDate())
+			.filter( d -> d != null)
+			.orElse(new Date(2017-1900, 6, 1));
+//		Date date = icc.getSiiData().getStartDate() != null
+//				? icc.getSiiData().getStartDate()
+//				: new Date(2017-1900, 6, 1);
 		if(administration.equals(Administration.ALAVA) || administration.equals(Administration.BIZKAIA)
 				|| administration.equals(Administration.GIPUZKOA) || administration.equals(Administration.NAVARRA)) {
-			date = icc.getSiiData().getStartDate() != null
-					? icc.getSiiData().getStartDate()
-					: new Date(2018-1900, 0, 1);
+			date = icc.getSiiData()
+				.map( sd -> sd.getStartDate())
+				.filter( d -> d != null)
+				.orElse(new Date(2018-1900, 0, 1));
+//			date = icc.getSiiData().getStartDate() != null
+//					? icc.getSiiData().getStartDate()
+//					: new Date(2018-1900, 0, 1);
 		}
 		
 		list = new LinkedList<>();

@@ -1457,7 +1457,14 @@ public class AonDateUtils {
 		);
 	}
 	
-    /**
+	public static Date yesterday() {
+		return Date.from(LocalDate.now().minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+	}
+	public static Date tomorrow() {
+		return Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+	}
+
+	/**
      * Verifica si value está entre start y end (inclusive).
      * Si value, start o end son null -> false.
      */

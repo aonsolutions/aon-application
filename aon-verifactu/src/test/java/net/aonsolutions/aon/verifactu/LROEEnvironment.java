@@ -12,10 +12,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Certificate;
-import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateOwner;
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
@@ -113,12 +112,4 @@ final class LROEEnvironment extends VerifactuEnvironmentAbs {
 		ctx.log().info("Enterprise Data: ICC_ADMINISTRATION set to BIZKAIA");
 	}
 	
-	public static void main(String[] args) throws IOException {
-		LROEEnvironment env = new LROEEnvironment();
-		env.setDomainId( 8 );
-		try (CloseableAONContext ctx = AONContext.getAONContext( env.getOccam() )) {
-			env.insertBizkaiaCertificate(ctx);
-		}
-		
-	}
 }

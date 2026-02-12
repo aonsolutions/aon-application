@@ -51,9 +51,7 @@ abstract class VerifactuEnvironmentAbs implements Environment {
 	public void setDomainId(Integer id) {
 		this.domainId = id;
 	}
-	
 
-	
 	@Override
 	public InvoiceCommunicatorContext getInvoiceCommunicatorContext(List<Invoice> invoices) {
 		return new InvoiceCommunicatorContext(domain(),user(), null, invoices)

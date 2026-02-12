@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.invoice;
 
 import java.util.Optional;
 
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -58,6 +59,54 @@ public enum InvoiceCommunicationError {
 	AON_NO_SIF			("0108", "El tipo de comunicaci\u00F3n SIF no est\u00E1 implementado."),
 	AON_NO_FACTURAE		("0109", "El tipo de comunicaci\u00F3n FACTURAE no est\u00E1 implementado."),
 
+	// Invoice Communication Configuration errors
+	ICC_5000("5000", "Informaci\u00F3n incompleta al habilitar comunicaci\u00F3n"),
+	ICC_5001("5001", "VERIFACTU solo se puede habilitar en TERRITORIO COM\u00DAN o CANARIAS"),
+	ICC_5002("5002", "NO VERIFACTU solo se puede habilitar en TERRITORIO COM\u00DAN o CANARIAS"),
+	ICC_5003("5003", "TicketBai solo se puede habilitar en ARABA/\u00C1LAVA o GIPUZKOA"),
+	ICC_5004("5004", "S.I.I, solo se puede habilitar en TERRITORIO COM\u00DAN, CANARIAS, NAVARRA, ARABA/\u00C1LAVA o GIPUZKOA"),
+	ICC_5005("5005", "S.I.F, solo se puede habilitar en NAVARRA"),
+	ICC_5006("5006", "LROE/TicketBai solo se puede habilitar en BIZKAIA"),
+	
+	ICC_5007("5007", "No se puede activar TicketBai y Verifactu a la vez"),
+	ICC_5008("5008", "No se puede activar TicketBai y No Verifactu a la vez"),
+	ICC_5009("5009", "No se puede activar TicketBai y SIF a la vez"),
+	ICC_5010("5010", "No se puede activar TicketBai y LROE/Ticket Bai a la vez"),
+	
+	ICC_5011("5011", "No se puede activar LROE/Ticket Bai y Verifactu a la vez"),
+	ICC_5012("5012", "No se puede activar LROE/Ticket Bai y No Verifactu a la vez"),
+	ICC_5013("5013", "No se puede activar LROE/Ticket Bai y SIF a la vez"),
+	ICC_5014("5014", "No se puede activar LROE/Ticket Bai y SII a la vez"),
+	ICC_5015("5015", "No se puede activar LROE/Ticket Bai y TBAI a la vez"),
+	
+	ICC_5016("5016", "No se puede activar Verifactu y No Verifactu a la vez"),
+	ICC_5017("5017", "No se puede activar Verifactu y SIF a la vez"),
+	ICC_5018("5018", "No se puede activar Verifactu y SII a la vez"),
+	ICC_5019("5019", "No se puede activar Verifactu y TBAI a la vez"),
+	ICC_5020("5020", "No se puede activar Verifactu y LROE/TicketBai a la vez"),
+	
+	ICC_5021("5021", "No se puede activar SII y Verifactu a la vez"),
+	ICC_5022("5022", "No se puede activar SII y No Verifactu a la vez"),
+	ICC_5023("5023", "No se puede activar SII y SIF a la vez"),
+	ICC_5024("5024", "No se puede activar SII y LROE/TicketBai a la vez"),
+	
+	ICC_5025("5025", "No se puede activar No Verifactu y Verifactu a la vez"),
+	ICC_5026("5026", "No se puede activar No Verifactu y SIF a la vez"),
+	ICC_5027("5027", "No se puede activar No Verifactu y SII a la vez"),
+	ICC_5028("5028", "No se puede activar No Verifactu y TBAI a la vez"),
+	ICC_5029("5029", "No se puede activar No Verifactu y LROE/Ticket Bai a la vez"),
+	
+	ICC_5030("5030", "No se puede activar TBAI cuando No SIF está activado"),
+	ICC_5031("5031", "No se puede activar Verifactu cuando No SIF está activado"),
+	ICC_5032("5032", "No se puede activar No Verifactu cuando No SIF está activado"),
+	ICC_5033("5033", "No se puede activar SIF cuando No SIF está activado"),
+	
+	ICC_5034("5034", "No se puede activar SIF y Verifactu a la vez"),
+	ICC_5035("5035", "No se puede activar SIF y No Verifactu a la vez"),
+	ICC_5036("5036", "No se puede activar SIF y SII a la vez"),
+	ICC_5037("5037", "No se puede activar SIF y LROE a la vez"),
+	ICC_5038("5038", "No se puede activar SIF y TBAI a la vez"),
+	
 	// TODO REFACTOR
 	AON_9000("9000", "Error interno."),
 	AON_9001("9001", "No se ha encontrado un valor para ClaveRegimen v\u00E1lido."),

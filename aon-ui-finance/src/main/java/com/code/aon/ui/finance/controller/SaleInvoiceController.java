@@ -1107,7 +1107,9 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	public String getAdmonIcon() {
 		if (getInvoiceCommunicationConfiguration() != null) {
-			Administration admon = getInvoiceCommunicationConfiguration().getAdministration();		
+			Administration admon = getInvoiceCommunicationConfiguration()
+				.getAdministration()
+				.orElse(Administration.UNKNOWN);
 			return admon.visit(new IAdministrationVisitor<String>() {
 				@Override public String visitAlava() 			{ return "aon-icon-araba-bw"; }
 				@Override public String visitBizkaia() 			{ return "aon-icon-bizkaia-bw"; }

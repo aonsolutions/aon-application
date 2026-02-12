@@ -723,11 +723,11 @@ public class FinanceImpl implements IFinance {
 				configuration -> InvoiceCommunicationDAO.get(ctx, domainId));
 	}
 
-	@Override
-	public InvoiceCommunicationConfiguration saveInvoiceCommunicationConfiguration(AONContext ctx, int domainId, InvoiceCommunicationConfiguration config) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceCommunicationDAO.save(ctx, domainId, config));
-	}
+//	@Override
+//	public InvoiceCommunicationConfiguration saveInvoiceCommunicationConfiguration(AONContext ctx, int domainId, InvoiceCommunicationConfiguration config) {
+//		return ctx.getDslContext().transactionResult(
+//				configuration -> InvoiceCommunicationDAO.save(ctx, domainId, config));
+//	}
 
 	@Override
 	public void prepareNewSii(AONContext ctx) {

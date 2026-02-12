@@ -54,6 +54,7 @@ public abstract class AbstractVerifactuTest {
 	protected static final Environment TBAI_GIPUZKOA_ENV = new TBAIGipuzkoaEnvironment();
 	protected static final Environment TBAI_SII_GIPUZKOA_ENV = new TBAISIIGipuzkoaEnvironment();
 	protected static final Environment LROE_ENV = new LROEEnvironment();
+	protected static final Environment ICC_CONFIG_ENV = new ICCConfigurationEnvironment();
 	
 	private static final Environment[] ENVIRONMENTS = new Environment[] {
 		VERIFACTU_ENV,
@@ -65,8 +66,9 @@ public abstract class AbstractVerifactuTest {
 		LROE_ENV,
 		NO_SIF_ENV,
 		TBAI_SII_ALAVA_ENV,
-		TBAI_SII_GIPUZKOA_ENV
-		}; 
+		TBAI_SII_GIPUZKOA_ENV,
+		ICC_CONFIG_ENV
+	}; 
 	
 	protected static InvoiceCommunicationPhaseListener PHASE_LISTENER = new InvoiceCommunicationPhaseListener() {
 		@Override
@@ -227,4 +229,13 @@ public abstract class AbstractVerifactuTest {
 	
 	protected abstract Environment getEnvironment();
 	
+	protected AONContext getCtx() {
+		return getEnvironment().getCtx();
+	}
+	protected Integer getDomainId() {
+		return getEnvironment().getDomainId();
+	}
+	protected String getUser() {
+		return getEnvironment().getUser();
+	}
 }

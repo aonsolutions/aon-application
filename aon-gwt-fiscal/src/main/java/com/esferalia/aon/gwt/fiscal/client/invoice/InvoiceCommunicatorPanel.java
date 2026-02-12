@@ -168,11 +168,6 @@ public class InvoiceCommunicatorPanel extends DockLayoutPanel implements Focusab
 						desc.append("[");
 						desc.append( t.getAbbr() );
 						desc.append(" ");
-						icc.isTest( t ).ifPresent( isTest -> {
-							if (isTest) {
-								desc.append("(TEST) ");
-							}
-						});
 						desc.append("] ");
 					})	
 				;

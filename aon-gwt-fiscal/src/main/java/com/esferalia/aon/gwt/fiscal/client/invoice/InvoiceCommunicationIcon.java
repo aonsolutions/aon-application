@@ -22,8 +22,9 @@ class InvoiceCommunicationIcon extends InlineLabel {
 			addStyleName(AON.CSS.aonIconLock());
 		} else {
 			Administration admon = options.getCommunicationConfiguration()
-				 .map( icc -> icc.getAdministration(invoice.getExpDate()) )
-				 .orElse( Administration.UNKNOWN );
+				 .flatMap( icc -> icc.getAdministration(invoice.getExpDate()) )
+				 .orElse( Administration.UNKNOWN )
+				 ;
 			initIcon(admon, type, status);
 		}
 	}

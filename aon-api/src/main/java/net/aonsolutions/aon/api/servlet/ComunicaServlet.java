@@ -46,6 +46,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
@@ -653,7 +654,12 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	}
 	
 	private String getEnterpriseAgreement(Domain domain, User user) {
-		LinkedList<EnterpriseData> enterpriseDataList = AON.getEnterpriseDataList(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
+		Occam occam = new Occam()
+			.setDomainName( domain.getName() )
+			.setDomain( domain.getId() )
+			.setUser( user.getLogin() )
+		;
+		LinkedList<EnterpriseData> enterpriseDataList = AON.getEnterpriseDataList(occam, domain.getId() );
 		Optional<EnterpriseData> enterpriseAgreementOpt = enterpriseDataList.stream().filter(data -> AonStringUtils.equalsIgnoreCase(data.getName(), "agreement")).findFirst();
 		
 		if(enterpriseAgreementOpt.isEmpty()) return "60888888888888";

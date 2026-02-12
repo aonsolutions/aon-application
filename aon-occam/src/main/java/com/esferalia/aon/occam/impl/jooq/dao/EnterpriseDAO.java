@@ -122,8 +122,10 @@ public class EnterpriseDAO {
 		List<RegistryMedia> medias = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(enterprise.getId())).collect(Collectors.toList());
 		enterprise.setMedias(medias);
 		
-		LinkedList<EnterpriseData> datas = EnterpriseDataDAO.getList(ctx, f -> f.getEnterpriseProperty().eq(enterprise.getId()));
-		enterprise.setDatas(datas);
+		enterprise.setDatas(
+			EnterpriseDataDAO.streamByEnterprise(ctx, enterprise.getId() )
+				.collect(Collectors.toCollection( LinkedList::new ))
+		);
 		
 		return enterprise;
 	}
