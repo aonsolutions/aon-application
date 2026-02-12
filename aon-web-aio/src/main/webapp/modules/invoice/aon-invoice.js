@@ -1298,43 +1298,15 @@ export class AonInvoice extends AonElement {
 		});
 		referenceSpan.appendChild(reference);
 
-		let switchReference  = new AonIconButton();
-		switchReference.icon = MATERIAL_ICONS.EDIT;
-		switchReference.style.alignContent = "center";
-		switchReference.addEventListener(EVENT.CLICK, () => {
-			if (referenceSpan.style.display == 'block') {
-				serieSpan.style.display = 'block';
-				numberSpan.style.display = 'block';
-				referenceSpan.style.display = 'none';
-			} else {
-				serieSpan.style.display = 'none';
-				numberSpan.style.display = 'none';
-				referenceSpan.style.display = 'block';
-			}
-		});
-		div.appendChild(switchReference);
-
-		if(this.invoice.isEmitida()) {
+		if(this.invoice.isRawdoc() && this.invoice.isEmitida() && !this.isInvofoxInvoice()) {
 			serieSpan.style.display = 'block';
 			numberSpan.style.display = 'block';
 			referenceSpan.style.display = 'none';
-			switchReference.style.display = 'none';
-			if (this.isInvofoxInvoice()) {
-				this.getInvoice().number = undefined;
-				serieSpan.style.display = 'none';
-				numberSpan.style.display = 'none';
-				referenceSpan.style.display = 'block';
-				switchReference.style.display = 'block';
-			} else if(!this.invoice.isRawdoc()) {
-				serieSpan.style.display = 'none';
-				numberSpan.style.display = 'none';
-				referenceSpan.style.display = 'block';
-			}
 		} else {
+			if(this.isInvofoxInvoice()) this.getInvoice().number = undefined;
 			serieSpan.style.display = 'none';
 			numberSpan.style.display = 'none';
 			referenceSpan.style.display = 'block';
-			switchReference.style.display = 'none';
 		}
 
 		// ----- DATE

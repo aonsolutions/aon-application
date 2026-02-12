@@ -660,6 +660,7 @@ export class AonInvoicePanel extends AonElement {
 			? new AonMobileInvoiceList()
 			: new AonInvoiceList();
 		table.id = "aonInvoiceList";
+		table.setIcc(this.icc);
 		table.setFilter(this.filter);
 		table.invofoxFilter = this.invofoxFilter;
 		this.getApplication().setContent(table);
