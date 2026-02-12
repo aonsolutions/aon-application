@@ -44,7 +44,11 @@ public abstract class Mod303Declaration {
 		
 // AEAT ----------------------------------------------------------------------------------------		
 
-		 AEAT_2025 {
+		AEAT_2026 {
+			@Override boolean accept(Mod303 mod) { return Mod303AEAT2026Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303AEAT2026Declaration();}
+		}
+		,AEAT_2025 {
 			@Override boolean accept(Mod303 mod) { return Mod303AEAT2025Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303AEAT2025Declaration();}
 		}

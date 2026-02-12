@@ -46,7 +46,7 @@ public enum Model3032026AEATResultScript implements IModelScript<Mod303Key> {
 	
 	,RES112(Mod303Key.CT_C112.getDescription(), new Mod303Key[]{Mod303Key.CT_C112}, NONE)	
 	
-	,RES012("RESULTADO" 
+	,RES012("RESULTADO"  
 		,new Mod303Key[]{Mod303Key.CT_C71},COMPUTE)
 	;
 	

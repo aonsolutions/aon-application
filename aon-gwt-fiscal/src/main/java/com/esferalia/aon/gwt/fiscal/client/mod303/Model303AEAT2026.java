@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.mod303;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2009Panel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2025Panel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
@@ -18,8 +17,6 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022AEATAdditiona
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022AEATGeneralRegimeScript2;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022AEATSimplifiedRegime4TScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022AEATSimplifiedRegimeScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032024T3AEATGeneralRegimeScript1;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032024T3AEATResultScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032024T3AEATResultScript2;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032025AEATGeneralRegimeScript1;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032026AEATResultScript;
@@ -149,10 +146,7 @@ class Model303AEAT2026 extends Model303AEAT {
 		table.getColumnFormatter().setStyleName(5, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(6, WIDTH_140PX);
 		table.getColumnFormatter().setWidth(7, "50px");
-		if (getModel().getYear() >= 2025)
-			paintDeclaration(table,Model3032025AEATGeneralRegimeScript1.values(),8);
-		else
-			paintDeclaration(table,Model3032024T3AEATGeneralRegimeScript1.values(),8);
+		paintDeclaration(table,Model3032025AEATGeneralRegimeScript1.values(),8);
 		container.add(table);
 		
 		table = new FlexTable();
@@ -345,7 +339,7 @@ class Model303AEAT2026 extends Model303AEAT {
 		
 		// Sujeto pasivo con derecho a deducir pago a cuenta de entregas de gasolinas, gasóleos y biocarburantes 
 		// posteriores a la ultimación del régimen de depósito distinto del aduanero
-		a15 = paintCheck(Mod303Key.CT_A15,table);	 
+		a15 = paintCheck(Mod303Key.CT_A15, table);	 
 		
 		// Exonerado de la declaracion resumen anual del IVA (modelo 390)
 		a14 = new ListBox();
@@ -584,7 +578,7 @@ class Model303AEAT2026 extends Model303AEAT {
 		tab2.getColumnFormatter().setWidth(5, WIDTH_150PX);
 		tab2.getColumnFormatter().setWidth(6, "auto");
 		
-		tab2.setWidget(1, 0, new Label(getModel().getYear() >= 2025 ? "CNAE2025" : "C.N.A.E.")); 
+		tab2.setWidget(1, 0, new Label("CNAE2025")); 
 		tab2.getFlexCellFormatter().addStyleName(1,0,AON.CSS.aonBold());
 		tab2.getFlexCellFormatter().addStyleName(1,0,AON.CSS.aonBorderBottom());
 		tab2.setWidget(1, 1, new Label() ); 
@@ -635,27 +629,15 @@ class Model303AEAT2026 extends Model303AEAT {
 		tab.setWidget(row, 0, cnae);
 		
 		// A partir de 2025, se usa CNAE2025
-		if (getModel().getYear() >= 2025) {
-			AonCnae2025Panel panel = new AonCnae2025Panel();
-			panel.addSelectionHandler(event -> {
-				cnae.setValue(event.getSelectedItem().getCodeWithoutPoint(),false);
-				getModel().putDescription(cnaeKey, event.getSelectedItem().getCodeWithoutPoint());
-				markAsDirty();
-			});
-			AonTableButton button = new AonTableButton("CNAE",AON.CSS.aonIconSearch());
-			button.addClickHandler(event -> panel.onShow());
-			tab.setWidget(row, 1, button);
-		} else {
-			AonCnae2009Panel panel = new AonCnae2009Panel();
-			panel.addSelectionHandler(event -> {
-				cnae.setValue(event.getSelectedItem().getCodeWithoutPoint(),false);
-				getModel().putDescription(cnaeKey, event.getSelectedItem().getCodeWithoutPoint());
-				markAsDirty();
-			});
-			AonTableButton button = new AonTableButton("CNAE",AON.CSS.aonIconSearch());
-			button.addClickHandler(event -> panel.onShow());
-			tab.setWidget(row, 1, button);
-		}
+		AonCnae2025Panel panel = new AonCnae2025Panel();
+		panel.addSelectionHandler(event -> {
+			cnae.setValue(event.getSelectedItem().getCodeWithoutPoint(),false);
+			getModel().putDescription(cnaeKey, event.getSelectedItem().getCodeWithoutPoint());
+			markAsDirty();
+		});
+		AonTableButton button = new AonTableButton("CNAE",AON.CSS.aonIconSearch());
+		button.addClickHandler(event -> panel.onShow());
+		tab.setWidget(row, 1, button);
 		
 		AonDoubleBox amount = new AonDoubleBox();
 		amount.setValue(getModel().getAmount(amountKey));
@@ -687,7 +669,6 @@ class Model303AEAT2026 extends Model303AEAT {
 			markAsDirty();
 		});
 		tab.setWidget(row, 4, typeBox);
-		
 		
 		AonDoubleBox percent = new AonDoubleBox();
 		percent.setValue(getModel().getAmount(percentKey));

@@ -2321,7 +2321,6 @@ class Mod303AEAT2026Declaration extends Mod303AEAT {
 		,CT_C71(Mod303Key.CT_C71, null, null, null, "CT_C69-CT_C70+CT_C109-CT_C112", null)
 		
 		// Importe a devolver consecuencia de la rectificación
-		// FALTA - EN ESTA FORMULA DEL CALCULO DE LA 111 TAMBIEN DEBERIA TENERSE EN CUENTA LA NUEVA CASILLA 112 ??
 		,CT_C111(Mod303Key.CT_C111, null, null, null, "calculateC111(CT_C69,CT_C70,CT_C71)", null)
 
 		, CT_U1D(Mod303Key.CT_U1D), CT_U1C(Mod303Key.CT_U1C), CT_U1E(Mod303Key.CT_U1E)
