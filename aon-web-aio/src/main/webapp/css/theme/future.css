@@ -1535,7 +1535,8 @@ i[id$="ToolbarHeaderToolSectionRefreshButtonIcon"] {
 }
 
 i[id$="ToolbarHeaderToolSectionAddInvoiceButtonIcon"],
-i[id$="ToolbarHeaderToolSectionaddButtonIcon"] {
+i[id$="ToolbarHeaderToolSectionaddButtonIcon"],
+i[id$="aonDocumentalToolbarHeaderToolSectionAddButtonIcon"]{
     mask-image: url('/icons/plus.svg') ;
 }
 
@@ -1716,6 +1717,12 @@ aon-right-panel {
 	flex-direction: column;
 }
 
+#loginContent > div:first-child{
+	background-color: white;
+    border-radius: .375rem;
+    padding: 1.25rem;
+}
+
 .helpCardText:hover,
 .configCardText:hover {
   background-color: #64748b !important;
@@ -1817,7 +1824,7 @@ aon-right-panel {
 }
 
 #aonRightPanelCloseButton > button > i {
-	mask-image: url('/icons/x.svg') ;
+	mask-image: url('/icons/x-square.svg') ;
 }
 
 #openNotificationButton > button > i {
@@ -1825,14 +1832,15 @@ aon-right-panel {
 }
 
 #aonConfig > span > i {
-	mask-image: url('/icons/folder-cog.svg') ;
+	mask-image: url('/icons/settings-2.svg');
 }
 
 .rightPanel div[id$="CardContent"] > div > div{
 	padding: .5rem !important;
 }
 
-.rightPanel div[id$="CardContent"] > div > div:hover{
+.rightPanel div[id$="CardContent"] > div > div:hover,
+.rightPanel div[id$="CardContent"] > div > div.selected {
 	background-color: #f1f5f9;
 }
 
@@ -1845,7 +1853,7 @@ aon-right-panel {
 .rightPanel .toolbarSidenavPanel{
 	color: #fff;
 	background: #475569;
-	padding: 1rem 1.25rem;
+	padding: .5rem 1.25rem;
 	
 	position: sticky;
 	top: 0;
@@ -1917,7 +1925,13 @@ aon-right-panel {
 }
 
 #loginContent > div > div.userPanelDivUserInfo {
-	margin-bottom: 2rem;
+	margin-bottom: 0;
+}
+
+#loginContent > div:first-of-type {
+	padding: 1.25rem !important;
+  	border-radius: .375rem;
+  	background-color: #fff;
 }
 
 .userPanelDivUserInfo .userPanelNameInfoDiv:nth-of-type(1){
@@ -2158,3 +2172,153 @@ aon-new-fixed-button .newFixedButton .plus {
   	background-color: white;
 }
 
+#aonHelpSwitchSupport > .aonSwitch > span::before {
+    content: "";
+    float: right;
+    border-radius: 7px;
+    width: 3rem;
+    height: 1.8rem;
+    
+    background-color: #cbd5e1;
+    box-shadow: inset 0 .1875rem .3125rem rgba(126, 126, 126, .3), inset 0 -0.1875rem .3125rem hsla(0, 0%, 100%, .7);
+    cursor: pointer;
+    border-radius: 1.375rem;
+    transition: background-color .3s;
+}
+
+#aonHelpSwitchSupport > .aonSwitch > span::after {
+    content: "";
+    position: absolute;
+    top: 6px;
+    height: 1.3rem;
+    width: 1.3rem;
+    left: 1rem;
+    bottom: .125rem;
+    border-radius: 50%;
+    transition: transform .3s;
+}
+
+#aonHelpSwitchSupport > .aonSwitch > input,
+#aonHelpSwitchSupport > .aonSwitch > input:checked {
+    background-color: transparent;
+}
+
+#aonHelpSwitchSupport > .aonSwitch > input:checked + span::before {
+	background-color: #cbd5e1;
+}
+
+#aonHelpSwitchSupport > .aonSwitch > input:checked + span::after {
+	background-color: var(--aonHeaderBackgroundColor);
+}
+
+
+aon-input[readonly="true"] input, 
+aon-input[disabled="true"] input, 
+aon-input[disabled="disabled"] input, 
+aon-new-input[readonly="true"] input, 
+aon-new-input[disabled="true"] input, 
+aon-new-input[disabled="disabled"] input, 
+aon-new-number[readonly="true"] input, 
+aon-new-number[disabled="true"] input, 
+aon-new-number[disabled="disabled"] input,
+aon-new-suggestion[readonly="true"] input, 
+aon-new-suggestion[disabled="true"] input, 
+aon-new-suggestion[disabled="disabled"] input, 
+aon-email[readonly="true"] input, 
+aon-email[disabled="true"] input, 
+aon-email[disabled="disabled"] input, 
+aon-new-date[readonly="true"] input, 
+aon-new-date[disabled="true"] input, 
+aon-new-date[disabled="disabled"] input, 
+aon-new-select[readonly="true"] input, 
+aon-new-select[disabled="true"] input, 
+aon-new-select[disabled="disabled"] input, 
+aon-new-textarea[readonly="true"] input, 
+aon-new-textarea[disabled="true"] input, 
+aon-new-textarea[disabled="disabled"] input, 
+aon-iban[readonly="true"] input, 
+aon-iban[disabled="true"] input, 
+aon-iban[disabled="disabled"] input, 
+aon-quantity[readonly="true"] input, 
+aon-quantity[disabled="true"] input, 
+aon-quantity[disabled="disabled"] input, 
+aon-autosize-textarea[readonly="true"] input, 
+aon-autosize-textarea[disabled="true"] input, 
+aon-autosize-textarea[disabled="disabled"] input, 
+textarea[readonly="true"] input, 
+textarea[disabled="true"] input, 
+textarea[disabled="disabled"] input {
+	background-color: #e2e8f0;
+  	cursor: not-allowed;
+}
+
+aon-search > span {
+	border-bottom: none !important;
+    border-radius: .375rem;
+    border: .0625rem solid #cbd5e1 !important;
+}
+
+#aonDocumentalSidenavUserCategoriesList li > span:last-of-type,
+#aon-notesSidenavTagsList li > span:last-of-type,
+#aonWarehouseSidenavWarehousesList li > span:last-of-type {
+	display: block !important;
+}
+
+#aonDocumentalSidenavUserCategoriesList aon-icon-button.aonOfficePanelSidenavTypesListOption,
+#aon-notesSidenavTagsList aon-icon-button.aonOfficePanelSidenavTypesListOption,
+#aonWarehouseSidenavWarehousesList aon-icon-button.aonOfficePanelSidenavTypesListOption {
+	mask-image: url(/icons/edit.svg);
+}
+
+#aonMessengerToolbarHeaderToolSectionexcelButtonIconButton{
+	background-color: transparent !important; 
+}
+
+#aonMessengerToolbarHeaderToolSectionexcelButtonAonIcon {
+	background-color: black !important;
+}
+
+#aon-notesToolbarHeaderToolSectionOrderButtonIcon,
+#orderOptDialogDialogMenuContent i{
+	mask-size: 22px;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    background-color: rgb(95, 99, 104);
+    mask-image: url(/icons/filter.svg);
+}
+
+#orderOptDialogDialogMenuContent i{
+	mask-size: 16px;
+}
+
+.aonDialogContent{
+	padding: 1rem 0;
+}
+
+.aonDialogContent > label{
+	mask-size: 26px;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    background-color: rgb(66, 66, 66);
+    color: rgb(66, 66, 66) !important;
+    mask-image: url(/icons/x-square.svg);
+    margin-right: .5rem !important;
+    margin-top: -15px !important;
+}
+
+.aonDialogContent > div:first-of-type{
+	border-bottom: 1px solid;
+    padding: 0 0 1rem 1rem;
+    font-family: "Inter-semibold";
+    font-size: 1.25rem !important;
+    line-height: 1.75rem;
+    letter-spacing: -0.005rem;
+}
+
+.aonDialogContent > div:nth-child(4){
+	padding: .2rem 1rem;
+}
+
+.aonDialogContent > div:last-of-type{
+	padding: 0 1rem;
+}
