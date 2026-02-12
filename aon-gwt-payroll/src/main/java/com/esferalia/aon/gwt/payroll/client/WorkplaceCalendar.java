@@ -103,7 +103,7 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
         container.add(centerPanel);
 
         westPanel.addStyleName(AON.CSS.aonFlexColumn());
-        addWest(westPanel, 325);
+        addWest(westPanel, 350);
 
         add(container);
         
@@ -124,7 +124,7 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
     	
         showHide.addClickHandler(e -> {
             if (!westShow) {
-                setWidgetSize(westPanel, 325);
+                setWidgetSize(westPanel, 350);
                 animate(300);
                 showHide.removeStyleName(AON.CSS.aonIconMenu());
                 showHide.addStyleName(AON.CSS.aonIconMenuCollapse());

@@ -12,6 +12,7 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.ProjectHolder.PROJECT_HOLDER;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
@@ -46,9 +47,11 @@ import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
 import org.jooq.SelectJoinStep;
+import org.jooq.Table;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Registry;
+import com.esferalia.aon.jooq.tables.Rnote;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -70,6 +73,19 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SellerWorkloadDAO {
+	
+	public static class StatusFilter {
+	    public final Condition condition;
+	    public final Table<?> lastNote;
+	    public final Field<Integer> lnRegistry;
+
+	    public StatusFilter(Condition condition, Table<?> lastNote, Field<Integer> lnRegistry) {
+	        this.condition = condition;
+	        this.lastNote = lastNote;
+	        this.lnRegistry = lnRegistry;
+	    }
+	}
+
 
 	private SellerWorkloadDAO() {
 	}
@@ -310,11 +326,13 @@ public class SellerWorkloadDAO {
 		Date start = getStartDatePeriod(params.getPeriod());
 		Date endIt = AonDateUtils.toSql( AonDateUtils.getMonthLastDay(start) );
 		Date end = getEndDatePeriod(params.getPeriod());
-
+		
+		StatusFilter sf = getCustomerStatusCondition(params, end); 
+		
 		HashSet<Integer> customerFeeIds = new HashSet<Integer>();
 		HashSet<Integer> invoiceIds = new HashSet<Integer>();
 
-		// Utilizamos JOOQ para recalcular la fecha de facturaci髇 ajustada de manera
+		// Utilizamos JOOQ para recalcular la fecha de facturaci贸n ajustada de manera
 		// compatible con ambos motores de base de datos
 		Field<Date> recalculatedBillingDateAdjusted = DSL
 				.when(CUSTOMER_FEE.PERIOD.eq((short) 0), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 1, DatePart.MONTH))
@@ -324,7 +342,7 @@ public class SellerWorkloadDAO {
 				.when(CUSTOMER_FEE.PERIOD.eq((short) 4), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 4, DatePart.MONTH))
 				.when(CUSTOMER_FEE.PERIOD.eq((short) 5), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 6, DatePart.MONTH))
 				.when(CUSTOMER_FEE.PERIOD.eq((short) 6), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 12, DatePart.MONTH))
-				.otherwise(CUSTOMER_FEE.BILLING_DATE); // Si no hay per韔do definido, no ajustamos la fecha
+				.otherwise(CUSTOMER_FEE.BILLING_DATE); // Si no hay per铆odo definido, no ajustamos la fecha
 		
 		List<Integer> projectIds = ctx.getDslContext().selectDistinct(PROJECT.ID)
 				.from(PROJECT)
@@ -335,19 +353,36 @@ public class SellerWorkloadDAO {
 				.fetch(PROJECT.ID);
 
 		while (start.before(end)) {
-			// Realizamos la consulta con la l骻ica del ajuste de fechas incorporada
+			// Realizamos la consulta con la l贸gica del ajuste de fechas incorporada
 			if(null != params.getSeller()) {
-				SelectConditionStep<Record1<Integer>> select = ctx.getDslContext().selectDistinct(CUSTOMER_FEE.ID)
-						.from(CUSTOMER_FEE).join(CUSTOMER)
-						.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
-						.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
-						.where(CUSTOMER_FEE.SELLER.eq(params.getSeller()))
-						.and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-						.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
-						.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))
-						.and(recalculatedBillingDateAdjusted.lessThan(start)) // Filtro por la fecha ajustada
-						.and(condition);
-	
+				SelectConditionStep<Record1<Integer>> select = null;
+				if ( (params.getCustomers() == null || params.getCustomers() == (byte)1) && (params.getCustomerActive() && !params.getCustomerInactive() && !params.getCustomerBlocked()) && null != sf.lnRegistry ) {
+					select = ctx.getDslContext().selectDistinct(CUSTOMER_FEE.ID)
+					    .from(CUSTOMER_FEE)
+					    .join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
+					    .join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+					    .leftOuterJoin(sf.lastNote).on(sf.lnRegistry.eq(CUSTOMER.REGISTRY))
+					    .where(CUSTOMER_FEE.SELLER.eq(params.getSeller()))
+					    .and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+					    .and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
+					    .and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))
+					    .and(recalculatedBillingDateAdjusted.lessThan(start))
+					    .and(sf.condition)
+					    ;
+				} else {
+					
+					select = ctx.getDslContext().selectDistinct(CUSTOMER_FEE.ID)
+							.from(CUSTOMER_FEE).join(CUSTOMER)
+							.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
+							.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+							.where(CUSTOMER_FEE.SELLER.eq(params.getSeller()))
+							.and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+							.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
+							.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))
+							.and(recalculatedBillingDateAdjusted.lessThan(start)) // Filtro por la fecha ajustada
+							.and(sf.condition);
+				}
+
 				applyFeeOrdering(select, params);
 	
 				Result<Record1<Integer>> result = select.groupBy(CUSTOMER_FEE.ID).offset(params.getOffset())
@@ -357,17 +392,32 @@ public class SellerWorkloadDAO {
 			}
 			
 			if(null != params.getTaskHolder()) {
-				SelectConditionStep<Record1<Integer>> select = ctx.getDslContext().selectDistinct(CUSTOMER_FEE.ID)
-						.from(CUSTOMER_FEE).join(CUSTOMER)
-						.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
-						.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
-						.where(CUSTOMER_FEE.PROJECT.in(projectIds))
-						.and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-						.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
-						.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))
-						.and(recalculatedBillingDateAdjusted.lessThan(start)) // Filtro por la fecha ajustada
-						.and(condition);
-	
+				SelectConditionStep<Record1<Integer>> select = null;
+				if ( (params.getCustomers() == null || params.getCustomers() == (byte)1) && (params.getCustomerActive() && !params.getCustomerInactive() && !params.getCustomerBlocked()) && null != sf.lnRegistry ) {
+					select = ctx.getDslContext().selectDistinct(CUSTOMER_FEE.ID)
+				    .from(CUSTOMER_FEE)
+				    .join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
+				    .join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+				    .leftOuterJoin(sf.lastNote).on(sf.lnRegistry.eq(CUSTOMER.REGISTRY))
+				    .where(CUSTOMER_FEE.PROJECT.in(projectIds))
+				    .and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+				    .and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
+				    .and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))
+				    .and(recalculatedBillingDateAdjusted.lessThan(start))
+				    .and(sf.condition);
+				} else {
+					select = ctx.getDslContext().selectDistinct(CUSTOMER_FEE.ID)
+							.from(CUSTOMER_FEE).join(CUSTOMER)
+							.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
+							.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+							.where(CUSTOMER_FEE.PROJECT.in(projectIds))
+							.and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+							.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
+							.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))
+							.and(recalculatedBillingDateAdjusted.lessThan(start)) // Filtro por la fecha ajustada
+							.and(sf.condition);
+				}
+				
 				applyFeeOrdering(select, params);
 	
 				Result<Record1<Integer>> result = select.groupBy(CUSTOMER_FEE.ID).offset(params.getOffset())
@@ -377,26 +427,32 @@ public class SellerWorkloadDAO {
 			}
 
 			if(null != params.getSeller()) {
-				// Realizamos la consulta con la l骻ica del ajuste de fechas incorporada
-				SelectConditionStep<Record1<Integer>> invoiceSelect = ctx.getDslContext().selectDistinct(INVOICE_DETAIL.ID)
-						.from(INVOICE_DETAIL)
-						.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-						.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
-						.where(INVOICE_DETAIL.SELLER.eq(params.getSeller()))
-						.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-						.and(INVOICE.ISSUE_DATE.between(start, endIt));
+				// Realizamos la consulta con la l贸gica del ajuste de fechas incorporada
 				
-				if (params.getCustomers() == null || params.getCustomers() == (byte)1) {
-					
-					List<Byte> customerStatus = new ArrayList<Byte>();
-					
-					if(params.getCustomerActive()) customerStatus.add((byte)0);
-					if(params.getCustomerInactive()) customerStatus.add((byte)1);
-					if(params.getCustomerBlocked()) customerStatus.add((byte)2);
-					
-					invoiceSelect.and(CUSTOMER.STATUS.in(customerStatus));
+				SelectConditionStep<Record1<Integer>> invoiceSelect = null;
+				
+				if ( (params.getCustomers() == null || params.getCustomers() == (byte)1) && (params.getCustomerActive() && !params.getCustomerInactive() && !params.getCustomerBlocked()) && null != sf.lnRegistry ) {
+					invoiceSelect = ctx.getDslContext().selectDistinct(INVOICE_DETAIL.ID)
+							.from(INVOICE_DETAIL)
+							.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+							.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
+							.leftOuterJoin(sf.lastNote).on(sf.lnRegistry.eq(CUSTOMER.REGISTRY))
+							.where(INVOICE_DETAIL.SELLER.eq(params.getSeller()))
+							.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+							.and(INVOICE.ISSUE_DATE.between(start, endIt))
+							.and(sf.condition);
+				} else {
+					invoiceSelect = ctx.getDslContext().selectDistinct(INVOICE_DETAIL.ID)
+							.from(INVOICE_DETAIL)
+							.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+							.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
+							.where(INVOICE_DETAIL.SELLER.eq(params.getSeller()))
+							.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+							.and(INVOICE.ISSUE_DATE.between(start, endIt))
+							;
 				}
-	
+				
+				
 				Result<Record1<Integer>> resultInvoice = invoiceSelect.groupBy(INVOICE_DETAIL.ID).offset(params.getOffset())
 						.limit(params.getLimit()).fetch();
 	
@@ -404,26 +460,30 @@ public class SellerWorkloadDAO {
 			}
 			
 			if(null != params.getTaskHolder()) {
-				// Realizamos la consulta con la l骻ica del ajuste de fechas incorporada
-				SelectConditionStep<Record1<Integer>> invoiceSelect = ctx.getDslContext().selectDistinct(INVOICE_DETAIL.ID)
-						.from(INVOICE_DETAIL)
-						.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-						.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
-						.where(INVOICE_DETAIL.PROJECT.in(projectIds))
-						.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-						.and(INVOICE.ISSUE_DATE.between(start, endIt));
+				// Realizamos la consulta con la l贸gica del ajuste de fechas incorporada
+				SelectConditionStep<Record1<Integer>> invoiceSelect = null;
 				
-				if (params.getCustomers() == null || params.getCustomers() == (byte)1) {
-					
-					List<Byte> customerStatus = new ArrayList<Byte>();
-					
-					if(params.getCustomerActive()) customerStatus.add((byte)0);
-					if(params.getCustomerInactive()) customerStatus.add((byte)1);
-					if(params.getCustomerBlocked()) customerStatus.add((byte)2);
-					
-					invoiceSelect.and(CUSTOMER.STATUS.in(customerStatus));
+				if ( (params.getCustomers() == null || params.getCustomers() == (byte)1) && (params.getCustomerActive() && !params.getCustomerInactive() && !params.getCustomerBlocked()) && null != sf.lnRegistry ) {
+					invoiceSelect = ctx.getDslContext().selectDistinct(INVOICE_DETAIL.ID)
+							.from(INVOICE_DETAIL)
+							.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+							.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
+							.leftOuterJoin(sf.lastNote).on(sf.lnRegistry.eq(CUSTOMER.REGISTRY))
+							.where(INVOICE_DETAIL.PROJECT.in(projectIds))
+							.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+							.and(INVOICE.ISSUE_DATE.between(start, endIt))
+							.and(sf.condition);
+				} else {
+					invoiceSelect = ctx.getDslContext().selectDistinct(INVOICE_DETAIL.ID)
+							.from(INVOICE_DETAIL)
+							.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+							.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
+							.where(INVOICE_DETAIL.PROJECT.in(projectIds))
+							.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+							.and(INVOICE.ISSUE_DATE.between(start, endIt))
+							.and(sf.condition);
 				}
-	
+				
 				Result<Record1<Integer>> resultInvoice = invoiceSelect.groupBy(INVOICE_DETAIL.ID).offset(params.getOffset())
 						.limit(params.getLimit()).fetch();
 	
@@ -463,6 +523,82 @@ public class SellerWorkloadDAO {
 		return sellerWorkloadContent;
 	}
 
+	private static StatusFilter getCustomerStatusCondition(
+	        SellerWorkloadParams params,
+	        Date end
+	) {
+
+	    // Caso general: usar flags normales
+	    if (!(params.getCustomers() == null || params.getCustomers() == (byte) 1)) {
+	        return new StatusFilter(DSL.trueCondition(), null, null);
+	    }
+
+	    // Caso especial: solo activos + inactivos/bloqueados v谩lidos
+	    if (params.getCustomerActive() && !params.getCustomerInactive() && !params.getCustomerBlocked()) {
+
+	        Rnote r1 = RNOTE.as("r1");
+	        Rnote r2 = RNOTE.as("r2");
+
+	        // Subconsulta: 煤ltima nota tipo 6 por registry
+	        Table<?> lastNote = DSL
+	            .select(
+	                r1.REGISTRY,
+	                r1.DESCRIPTION,
+	                r1.COMMENTS
+	            )
+	            .from(r1)
+	            .join(
+	                DSL.select(
+	                        r2.REGISTRY,
+	                        DSL.max(r2.ID).as("max_id")
+	                )
+	                .from(r2)
+	                .where(r2.NOTE_TYPE.eq((byte) 6))
+	                .groupBy(r2.REGISTRY)
+	            ).on(r1.ID.eq(DSL.field("max_id", Integer.class)))
+	            .where(r1.NOTE_TYPE.eq((byte) 6))
+	            .asTable("lastNote");
+
+	        Field<Integer> lnRegistry = lastNote.field(RNOTE.REGISTRY.getName(), Integer.class);
+	        Field<String> lnDescription = lastNote.field(RNOTE.DESCRIPTION.getName(), String.class);
+	        Field<String> lnComments = lastNote.field(RNOTE.COMMENTS.getName(), String.class);
+
+	        // Extraer fecha YYYY-MM-DD
+	        Field<String> expirationDateStr = DSL.field(
+	            "REGEXP_SUBSTR({0}, '([0-9]{4}-[0-9]{2}-[0-9]{2})')",
+	            String.class,
+	            lnComments
+	        );
+
+	        Field<java.sql.Date> expirationDate =
+	            DSL.field("STR_TO_DATE({0}, '%Y-%m-%d')", java.sql.Date.class, expirationDateStr);
+
+	        // Condici贸n para inactivos o bloqueados v谩lidos
+	        Condition inactiveOrBlockedCondition =
+	            CUSTOMER.STATUS.in((byte)1, (byte)2)
+	            .and(lnDescription.in("Inactivo", "Bloqueado"))
+	            .and(expirationDate.isNotNull())
+	            .and(expirationDate.greaterOrEqual(end));
+
+	        // Condici贸n final
+	        Condition condition =
+	            CUSTOMER.STATUS.eq((byte) 0)   // activos siempre
+	            .or(inactiveOrBlockedCondition);
+
+	        return new StatusFilter(condition, lastNote, lnRegistry);
+	    }
+
+	    // Caso normal: usar flags
+	    List<Byte> customerStatus = new ArrayList<>();
+	    if (params.getCustomerActive())   customerStatus.add((byte) 0);
+	    if (params.getCustomerInactive()) customerStatus.add((byte) 1);
+	    if (params.getCustomerBlocked())  customerStatus.add((byte) 2);
+
+	    return new StatusFilter(CUSTOMER.STATUS.in(customerStatus), null, null);
+	}
+
+
+	
 	public static List<Integer> getFeeIdsList(CloseableAONContext ctx, SellerWorkloadParams params) {
 
 		if (params.getSeller() == null && params.getTaskHolder() == null) {
@@ -584,17 +720,6 @@ public class SellerWorkloadDAO {
 			Integer[] userScopes = SecurityDAO.getUserScopes(ctx);
 			condition = condition.and(CUSTOMER.SCOPE.in(userScopes));
 		}
-		
-		if (params.getCustomers() == null || params.getCustomers() == (byte)1) {
-			
-			List<Byte> customerStatus = new ArrayList<Byte>();
-			
-			if(params.getCustomerActive()) customerStatus.add((byte)0);
-			if(params.getCustomerInactive()) customerStatus.add((byte)1);
-			if(params.getCustomerBlocked()) customerStatus.add((byte)2);
-			
-			condition = condition.and(CUSTOMER.STATUS.in(customerStatus));
-		}
 
 		return condition;
 	}
@@ -606,17 +731,6 @@ public class SellerWorkloadDAO {
 		if (user.getDomain().getId() == ctx.getDomainId()) {
 			Integer[] userScopes = SecurityDAO.getUserScopes(ctx);
 			condition = condition.and(CUSTOMER.SCOPE.in(userScopes));
-		}
-		
-		if (params.getCustomers() == null || params.getCustomers() == (byte)1) {
-			
-			List<Byte> customerStatus = new ArrayList<Byte>();
-			
-			if(params.getCustomerActive()) customerStatus.add((byte)0);
-			if(params.getCustomerInactive()) customerStatus.add((byte)1);
-			if(params.getCustomerBlocked()) customerStatus.add((byte)2);
-			
-			condition = condition.and(CUSTOMER.STATUS.in(customerStatus));
 		}
 
 		return condition;
@@ -785,8 +899,10 @@ public class SellerWorkloadDAO {
 		Date end = getEndDatePeriod(params.getPeriod());
 		
 		Condition condition = createFeeWorkloadCondition(ctx, params);
+		
+		StatusFilter sf = getCustomerStatusCondition(params, end); 
 
-		// Utilizamos JOOQ para recalcular la fecha de facturaci髇 ajustada de manera
+		// Utilizamos JOOQ para recalcular la fecha de facturaci贸n ajustada de manera
 		// compatible con ambos motores de base de datos
 		Field<Date> recalculatedBillingDateAdjusted = DSL
 				.when(CUSTOMER_FEE.PERIOD.eq((short) 0), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 1, DatePart.MONTH))
@@ -796,47 +912,67 @@ public class SellerWorkloadDAO {
 				.when(CUSTOMER_FEE.PERIOD.eq((short) 4), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 4, DatePart.MONTH))
 				.when(CUSTOMER_FEE.PERIOD.eq((short) 5), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 6, DatePart.MONTH))
 				.when(CUSTOMER_FEE.PERIOD.eq((short) 6), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 12, DatePart.MONTH))
-				.otherwise(CUSTOMER_FEE.BILLING_DATE); // Si no hay per韔do definido, no ajustamos la fecha
+				.otherwise(CUSTOMER_FEE.BILLING_DATE); // Si no hay per铆odo definido, no ajustamos la fecha
 
 		while (start.before(end)) {
-			// Realizamos la consulta con la l骻ica del ajuste de fechas incorporada
-			Result<Record5<Double, Double, String, Short, Integer>> result = ctx.getDslContext()
-					.select(CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.PERIOD,
-							CUSTOMER_FEE.CUSTOMER)
-					.from(CUSTOMER_FEE).join(CUSTOMER)
-					.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
-					.where(CUSTOMER_FEE.SELLER.eq(seller))
-					.and(condition)
-					.and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-					.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
-					.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))
-					.and(recalculatedBillingDateAdjusted.lessThan(start)) // Filtro por la fecha ajustada
-					.fetch();
+			// Realizamos la consulta con la l贸gica del ajuste de fechas incorporada
+			Result<Record5<Double, Double, String, Short, Integer>> result = null;
+			if ( (params.getCustomers() == null || params.getCustomers() == (byte)1) && (params.getCustomerActive() && !params.getCustomerInactive() && !params.getCustomerBlocked()) && null != sf.lnRegistry ) {
+				result = ctx.getDslContext()
+						.select(CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.PERIOD,
+								CUSTOMER_FEE.CUSTOMER)
+						.from(CUSTOMER_FEE).join(CUSTOMER)
+						.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
+						.leftOuterJoin(sf.lastNote).on(sf.lnRegistry.eq(CUSTOMER.REGISTRY))
+						.where(CUSTOMER_FEE.SELLER.eq(seller))
+						.and(condition)
+						.and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+						.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
+						.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))
+						.and(recalculatedBillingDateAdjusted.lessThan(start)) // Filtro por la fecha ajustada
+						.fetch();
+			} else {
+				result = ctx.getDslContext()
+						.select(CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.PERIOD,
+								CUSTOMER_FEE.CUSTOMER)
+						.from(CUSTOMER_FEE).join(CUSTOMER)
+						.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
+						.where(CUSTOMER_FEE.SELLER.eq(seller))
+						.and(condition)
+						.and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+						.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
+						.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))
+						.and(recalculatedBillingDateAdjusted.lessThan(start)) // Filtro por la fecha ajustada
+						.fetch();
+			}
 			
-			// Realizamos la consulta con la l骻ica del ajuste de fechas incorporada
-			SelectConditionStep<Record4<Double, Double, String, Integer>> invoiceSelect = ctx.getDslContext()
-					.select(INVOICE_DETAIL.QUANTITY, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE.REGISTRY)
-					.from(INVOICE_DETAIL)
-					.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-					.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
-					.where(INVOICE_DETAIL.SELLER.eq(seller))
-					.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-					.and(INVOICE.ISSUE_DATE.between(start, endIt));
-			
-			if (params.getCustomers() == null || params.getCustomers() == (byte)1) {
-				
-				List<Byte> customerStatus = new ArrayList<Byte>();
-				
-				if(params.getCustomerActive()) customerStatus.add((byte)0);
-				if(params.getCustomerInactive()) customerStatus.add((byte)1);
-				if(params.getCustomerBlocked()) customerStatus.add((byte)2);
-				
-				invoiceSelect.and(CUSTOMER.STATUS.in(customerStatus));
+			SelectConditionStep<Record4<Double, Double, String, Integer>> invoiceSelect = null;
+			if ( (params.getCustomers() == null || params.getCustomers() == (byte)1) && (params.getCustomerActive() && !params.getCustomerInactive() && !params.getCustomerBlocked()) && null != sf.lnRegistry ) {
+				invoiceSelect = ctx.getDslContext()
+						.select(INVOICE_DETAIL.QUANTITY, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE.REGISTRY)
+						.from(INVOICE_DETAIL)
+						.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+						.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
+						.leftOuterJoin(sf.lastNote).on(sf.lnRegistry.eq(CUSTOMER.REGISTRY))
+						.where(INVOICE_DETAIL.SELLER.eq(seller))
+						.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+						.and(INVOICE.ISSUE_DATE.between(start, endIt))
+						.and(sf.condition);
+			} else {
+				invoiceSelect = ctx.getDslContext()
+						.select(INVOICE_DETAIL.QUANTITY, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE.REGISTRY)
+						.from(INVOICE_DETAIL)
+						.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+						.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
+						.where(INVOICE_DETAIL.SELLER.eq(seller))
+						.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+						.and(INVOICE.ISSUE_DATE.between(start, endIt))
+						;
 			}
 			
 			Result<Record4<Double, Double, String, Integer>> invoiceResult = invoiceSelect.fetch();
 			
-			// Inicializamos los valores para los c醠culos
+			// Inicializamos los valores para los c谩lculos
 			double netSum = 0.0;
 			double totalSum = 0.0;
 			ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
@@ -858,7 +994,7 @@ public class SellerWorkloadDAO {
 					}
 				}
 
-				// F髍mula: (PRICE - DISCOUNT) * QUANTITY / PERIOD
+				// F贸rmula: (PRICE - DISCOUNT) * QUANTITY / PERIOD
 				double periodValue = getPeriodValue(recordPeriod);
 				double feeNetSum = (price - discount) * quantity / periodValue;
 				double feeSum = price * quantity / periodValue;
@@ -882,7 +1018,7 @@ public class SellerWorkloadDAO {
 					}
 				}
 
-				// F髍mula: (PRICE - DISCOUNT) * QUANTITY
+				// F贸rmula: (PRICE - DISCOUNT) * QUANTITY
 				double invoiceNetSum = (price - discount) * quantity;
 				double invoiceSum = price * quantity;
 				netSum += invoiceNetSum;
@@ -893,7 +1029,7 @@ public class SellerWorkloadDAO {
 			customers.addAll(result.stream().map(it -> it.get(CUSTOMER_FEE.CUSTOMER)).distinct().collect(Collectors.toList()));
 			customers.addAll(invoiceResult.stream().map(it -> it.get(INVOICE.REGISTRY)).distinct().collect(Collectors.toList()));
 
-			// Actualizamos la carga de trabajo con el n鷐ero de clientes distintos, total
+			// Actualizamos la carga de trabajo con el n煤mero de clientes distintos, total
 			// de registros y sumatorio
 			sellerWorkload.addSellerWorkloadPeriod(
 					start,
@@ -916,6 +1052,8 @@ public class SellerWorkloadDAO {
 		
 		Condition condition = createFeeWorkloadCondition(ctx, params);
 		
+		StatusFilter sf = getCustomerStatusCondition(params, end); 
+		
 		List<Integer> projectIds = ctx.getDslContext().selectDistinct(PROJECT.ID)
 			.from(PROJECT)
 			.join(PROJECT_HOLDER).on(PROJECT_HOLDER.PROJECT.eq(PROJECT.ID))
@@ -924,7 +1062,7 @@ public class SellerWorkloadDAO {
 			.and(PROJECT_HOLDER.END_DATE.isNull().or(PROJECT_HOLDER.END_DATE.le(new Timestamp(end.getTime()))))
 			.fetch(PROJECT.ID);
 
-		// Utilizamos JOOQ para recalcular la fecha de facturaci髇 ajustada de manera
+		// Utilizamos JOOQ para recalcular la fecha de facturaci贸n ajustada de manera
 		// compatible con ambos motores de base de datos
 		Field<Date> recalculatedBillingDateAdjusted = DSL
 				.when(CUSTOMER_FEE.PERIOD.eq((short) 0), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 1, DatePart.MONTH))
@@ -934,48 +1072,68 @@ public class SellerWorkloadDAO {
 				.when(CUSTOMER_FEE.PERIOD.eq((short) 4), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 4, DatePart.MONTH))
 				.when(CUSTOMER_FEE.PERIOD.eq((short) 5), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 6, DatePart.MONTH))
 				.when(CUSTOMER_FEE.PERIOD.eq((short) 6), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 12, DatePart.MONTH))
-				.otherwise(CUSTOMER_FEE.BILLING_DATE); // Si no hay per韔do definido, no ajustamos la fecha
+				.otherwise(CUSTOMER_FEE.BILLING_DATE); // Si no hay per铆odo definido, no ajustamos la fecha
 
 		while (start.before(end)) {
-			// Realizamos la consulta con la l骻ica del ajuste de fechas incorporada
-			Result<Record5<Double, Double, String, Short, Integer>> result = ctx.getDslContext()
-					.select(CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.PERIOD,
-							CUSTOMER_FEE.CUSTOMER)
-					.from(CUSTOMER_FEE).join(CUSTOMER)
-					.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
-					.where(CUSTOMER_FEE.PROJECT.in(projectIds))
-					.and(condition)
-					.and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-					.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
-					.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))
-					.and(recalculatedBillingDateAdjusted.lessThan(start)) // Filtro por la fecha ajustada
-					.fetch();
+			// Realizamos la consulta con la l贸gica del ajuste de fechas incorporada
+			Result<Record5<Double, Double, String, Short, Integer>> result = null;
+			if ( (params.getCustomers() == null || params.getCustomers() == (byte)1) && (params.getCustomerActive() && !params.getCustomerInactive() && !params.getCustomerBlocked()) && null != sf.lnRegistry ) {
+				result = ctx.getDslContext()
+						.select(CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.PERIOD,
+								CUSTOMER_FEE.CUSTOMER)
+						.from(CUSTOMER_FEE).join(CUSTOMER)
+						.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
+						.leftOuterJoin(sf.lastNote).on(sf.lnRegistry.eq(CUSTOMER.REGISTRY))
+						.where(CUSTOMER_FEE.PROJECT.in(projectIds))
+						.and(condition)
+						.and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+						.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
+						.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))
+						.and(recalculatedBillingDateAdjusted.lessThan(start)) // Filtro por la fecha ajustada
+						.fetch();
+			} else {
+				result = ctx.getDslContext()
+						.select(CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.PERIOD,
+								CUSTOMER_FEE.CUSTOMER)
+						.from(CUSTOMER_FEE).join(CUSTOMER)
+						.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
+						.where(CUSTOMER_FEE.PROJECT.in(projectIds))
+						.and(condition)
+						.and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+						.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
+						.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))
+						.and(recalculatedBillingDateAdjusted.lessThan(start)) // Filtro por la fecha ajustada
+						.fetch();
+			}
 			
-			// Realizamos la consulta con la l骻ica del ajuste de fechas incorporada
-			SelectConditionStep<Record4<Double, Double, String, Integer>> invoiceSelect = ctx.getDslContext()
-					.select(INVOICE_DETAIL.QUANTITY, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE.REGISTRY)
-					.from(INVOICE_DETAIL)
-					.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-					.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
-					.where(INVOICE_DETAIL.PROJECT.in(projectIds))
-					.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-					.and(INVOICE.ISSUE_DATE.between(start, endIt));
-			
-			if (params.getCustomers() == null || params.getCustomers() == (byte)1) {
-				
-				List<Byte> customerStatus = new ArrayList<Byte>();
-				
-				if(params.getCustomerActive()) customerStatus.add((byte)0);
-				if(params.getCustomerInactive()) customerStatus.add((byte)1);
-				if(params.getCustomerBlocked()) customerStatus.add((byte)2);
-				
-				invoiceSelect.and(CUSTOMER.STATUS.in(customerStatus));
+			SelectConditionStep<Record4<Double, Double, String, Integer>> invoiceSelect = null;
+			if ( (params.getCustomers() == null || params.getCustomers() == (byte)1) && (params.getCustomerActive() && !params.getCustomerInactive() && !params.getCustomerBlocked()) && null != sf.lnRegistry ) {
+				invoiceSelect = ctx.getDslContext()
+						.select(INVOICE_DETAIL.QUANTITY, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE.REGISTRY)
+						.from(INVOICE_DETAIL)
+						.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+						.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
+						.leftOuterJoin(sf.lastNote).on(sf.lnRegistry.eq(CUSTOMER.REGISTRY))
+						.where(INVOICE_DETAIL.PROJECT.in(projectIds))
+						.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+						.and(INVOICE.ISSUE_DATE.between(start, endIt))
+						.and(condition);
+			} else {
+				invoiceSelect = ctx.getDslContext()
+						.select(INVOICE_DETAIL.QUANTITY, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE.REGISTRY)
+						.from(INVOICE_DETAIL)
+						.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+						.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
+						.where(INVOICE_DETAIL.PROJECT.in(projectIds))
+						.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+						.and(INVOICE.ISSUE_DATE.between(start, endIt))
+						;
 			}
 			
 			Result<Record4<Double, Double, String, Integer>> invoiceResult = invoiceSelect.fetch();
 			
 
-			// Inicializamos los valores para los c醠culos
+			// Inicializamos los valores para los c谩lculos
 			double netSum = 0.0;
 			double totalSum = 0.0;
 			ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
@@ -997,7 +1155,7 @@ public class SellerWorkloadDAO {
 					}
 				}
 
-				// F髍mula: (PRICE - DISCOUNT) * QUANTITY / PERIOD
+				// F贸rmula: (PRICE - DISCOUNT) * QUANTITY / PERIOD
 				double periodValue = getPeriodValue(recordPeriod);
 				double feeNetSum = (price - discount) * quantity / periodValue;
 				double feeSum = price * quantity / periodValue;
@@ -1021,7 +1179,7 @@ public class SellerWorkloadDAO {
 					}
 				}
 
-				// F髍mula: (PRICE - DISCOUNT) * QUANTITY
+				// F贸rmula: (PRICE - DISCOUNT) * QUANTITY
 				double invoiceNetSum = (price - discount) * quantity;
 				double invoiceSum = price * quantity;
 				netSum += invoiceNetSum;
@@ -1032,7 +1190,7 @@ public class SellerWorkloadDAO {
 			customers.addAll(result.stream().map(it -> it.get(CUSTOMER_FEE.CUSTOMER)).distinct().collect(Collectors.toList()));
 			customers.addAll(invoiceResult.stream().map(it -> it.get(INVOICE.REGISTRY)).distinct().collect(Collectors.toList()));
 
-			// Actualizamos la carga de trabajo con el n鷐ero de clientes distintos, total
+			// Actualizamos la carga de trabajo con el n煤mero de clientes distintos, total
 			// de registros y sumatorio
 			sellerWorkload.addSellerWorkloadPeriod(
 					start,
@@ -1048,22 +1206,22 @@ public class SellerWorkloadDAO {
 		}
 	}
 	
-	// M閠odo para evaluar el descuento basado en DISCOUNT_EXPR
+	// M茅todo para evaluar el descuento basado en DISCOUNT_EXPR
 	private static double evaluateDiscount(String discountExpr, Double price, ScriptEngine engine)
 			throws ScriptException {
 		double discount = 0.0;
 		double discountedPrice = price;
 
-		// Expresi髇 regular que soporta n鷐eros con o sin decimales (e.g., 10, 10.5)
+		// Expresi贸n regular que soporta n煤meros con o sin decimales (e.g., 10, 10.5)
 		String numberPattern = "\\d+(\\.\\d+)?";
 
 		if (discountExpr.matches(numberPattern)) {
-			// Si es un n鷐ero simple como "10" o "10.5", aplicamos ese porcentaje de
+			// Si es un n煤mero simple como "10" o "10.5", aplicamos ese porcentaje de
 			// descuento
 			discount = (price * Double.parseDouble(discountExpr)) / 100;
 			discountedPrice = price - discount;
 		} else {
-			// Si es una expresi髇 matem醫ica (e.g., "10 + 10.5"), aplicamos cada descuento
+			// Si es una expresi贸n matem谩tica (e.g., "10 + 10.5"), aplicamos cada descuento
 			// secuencialmente
 			String[] discountParts = discountExpr.split("\\+");
 
@@ -1075,8 +1233,8 @@ public class SellerWorkloadDAO {
 					discount = (discountedPrice * percentage) / 100;
 					discountedPrice -= discount;
 				} else {
-					// Si por alguna raz髇 el descuento no es num閞ico, se lanza una excepci髇
-					throw new ScriptException("Formato de descuento inv醠ido: " + part);
+					// Si por alguna raz贸n el descuento no es num茅rico, se lanza una excepci贸n
+					throw new ScriptException("Formato de descuento inv谩lido: " + part);
 				}
 			}
 		}
@@ -1084,7 +1242,7 @@ public class SellerWorkloadDAO {
 		return price - discountedPrice; // Devolvemos la cantidad total descontada
 	}
 
-	// M閠odo para calcular el valor de divisi髇 por periodo (Short Period)
+	// M茅todo para calcular el valor de divisi贸n por periodo (Short Period)
 	private static double getPeriodValue(short period) {
 		switch (period) {
 		case 1:
@@ -1100,7 +1258,7 @@ public class SellerWorkloadDAO {
 		case 6:
 			return 12.0;
 		default:
-			return 1.0; // Por defecto, si el periodo es inv醠ido o no se especifica
+			return 1.0; // Por defecto, si el periodo es inv谩lido o no se especifica
 		}
 	}
 
