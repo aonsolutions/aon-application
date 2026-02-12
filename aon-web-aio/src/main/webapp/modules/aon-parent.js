@@ -55,6 +55,12 @@ export class AonParent extends AonElement {
 
 	connectedCallback () {
 		this.init({id:'active', active: true, domainActive:true});
+		
+		if(LS.isNewTheme()) {
+			let newFixedButton = this.getElement('newFixedButton');
+			if(newFixedButton)
+				newFixedButton.classList.add('hidden');
+		}
 	}
 
 	init(filter) {

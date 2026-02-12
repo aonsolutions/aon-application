@@ -1255,3 +1255,8 @@ div:has( > .aon_icon_menu_collapse) {
   	*/
   	gap: 0rem;
 }
+
+.aon-annual-data div, 
+.aon-holidays div {
+	margin-right: 0px;
+}

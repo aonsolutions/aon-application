@@ -7,7 +7,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
-import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class Mod123Navarra2021Declaration extends Mod123Declaration {
 	
@@ -111,12 +110,13 @@ public class Mod123Navarra2021Declaration extends Mod123Declaration {
 	}
 
 	private static boolean isMovableCapital(IrpfBreakdown br) {
-		return br.isFromInvoice() && 
-			(br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL
-			|| br.getWithholdingType() == WithholdingType.M193_C1
-			|| br.getWithholdingType() == WithholdingType.M193_C2
-			|| br.getWithholdingType() == WithholdingType.M193_C3
-			|| br.getWithholdingType() == WithholdingType.M193_C4);
+//		return br.isFromInvoice() && 
+//			(br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL
+//			|| br.getWithholdingType() == WithholdingType.M193_C1
+//			|| br.getWithholdingType() == WithholdingType.M193_C2
+//			|| br.getWithholdingType() == WithholdingType.M193_C3
+//			|| br.getWithholdingType() == WithholdingType.M193_C4);
+		return isMovableCapitalDividens(br) || isMovableCapitalOther(br);
 	}
 	
 }
