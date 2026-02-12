@@ -355,7 +355,7 @@ public class EnterpriseDraftObject {
 		Optional<EnterpriseData> paySheetModelRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_REPORT_salary_PAY")).findFirst();
 		if(paySheetModelRM.isPresent()) {
 			paySheetModelRM.get().setExpression(paySheetModel);
-			paySheetModelRM.get().setIsRemoved(AonStringUtils.isBlank(paySheetModel));
+			paySheetModelRM.get().setDeleted(AonStringUtils.isBlank(paySheetModel));
 		} else
 			this.enterprise.getDatas().add(new EnterpriseData()
 				.setDomain(enterprise.getDomain())
@@ -368,7 +368,7 @@ public class EnterpriseDraftObject {
 		Optional<EnterpriseData> costModelRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_REPORT_enterpriseSalary_PAY")).findFirst();
 		if(costModelRM.isPresent()) {
 			costModelRM.get().setExpression(costModel);
-			costModelRM.get().setIsRemoved(AonStringUtils.isBlank(costModel));
+			costModelRM.get().setDeleted(AonStringUtils.isBlank(costModel));
 		} else
 			this.enterprise.getDatas().add(new EnterpriseData()
 				.setDomain(enterprise.getDomain())
@@ -381,7 +381,7 @@ public class EnterpriseDraftObject {
 		Optional<EnterpriseData> paySheetModelTypeSendRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_salarySendingMethod_PAY")).findFirst();
 		if(paySheetModelTypeSendRM.isPresent()) {
 			paySheetModelTypeSendRM.get().setExpression(paySheetModelTypeSend);
-			paySheetModelTypeSendRM.get().setIsRemoved(AonStringUtils.isBlank(paySheetModelTypeSend));
+			paySheetModelTypeSendRM.get().setDeleted(AonStringUtils.isBlank(paySheetModelTypeSend));
 		} else
 			this.enterprise.getDatas().add(new EnterpriseData()
 				.setDomain(enterprise.getDomain())
@@ -391,7 +391,7 @@ public class EnterpriseDraftObject {
 		
 		if(!AonStringUtils.equals(paySheetModelTypeSend, "EMAIL")) {
 			Optional<EnterpriseData> email = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_salarySending_email_PAY")).findFirst();
-			email.ifPresent(emailIt -> emailIt.setIsRemoved(true));
+			email.ifPresent(emailIt -> emailIt.setDeleted(true));
 		}
 	}
 	
@@ -399,7 +399,7 @@ public class EnterpriseDraftObject {
 		Optional<EnterpriseData> emailRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_salarySending_email_PAY")).findFirst();
 		if(emailRM.isPresent()) {
 			emailRM.get().setExpression(email);
-			emailRM.get().setIsRemoved(AonStringUtils.isBlank(email));
+			emailRM.get().setDeleted(AonStringUtils.isBlank(email));
 		} else
 			this.enterprise.getDatas().add(new EnterpriseData()
 				.setDomain(enterprise.getDomain())
@@ -412,7 +412,7 @@ public class EnterpriseDraftObject {
 		Optional<EnterpriseData> agreementRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("agreement")).findFirst();
 		if(agreementRM.isPresent()) {
 			agreementRM.get().setExpression(agreementId);
-			agreementRM.get().setIsRemoved(AonStringUtils.isBlank(agreementId));
+			agreementRM.get().setDeleted(AonStringUtils.isBlank(agreementId));
 		} else
 			this.enterprise.getDatas().add(new EnterpriseData()
 				.setDomain(enterprise.getDomain())
@@ -425,7 +425,7 @@ public class EnterpriseDraftObject {
 		Optional<EnterpriseData> paySsMutualRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_ss_pension_plan_mutual_PAY")).findFirst();
 		if(paySsMutualRM.isPresent()) {
 			paySsMutualRM.get().setExpression(paySsMutual);
-			paySsMutualRM.get().setIsRemoved(AonStringUtils.isBlank(paySsMutual));
+			paySsMutualRM.get().setDeleted(AonStringUtils.isBlank(paySsMutual));
 		} else
 			this.enterprise.getDatas().add(new EnterpriseData()
 				.setDomain(enterprise.getDomain())
@@ -438,7 +438,7 @@ public class EnterpriseDraftObject {
 		Optional<EnterpriseData> payAuthorizationKeyRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_authorization_key_PAY")).findFirst();
 		if(payAuthorizationKeyRM.isPresent()) {
 			payAuthorizationKeyRM.get().setExpression(payAuthorizationKey);
-			payAuthorizationKeyRM.get().setIsRemoved(AonStringUtils.isBlank(payAuthorizationKey));
+			payAuthorizationKeyRM.get().setDeleted(AonStringUtils.isBlank(payAuthorizationKey));
 		} else
 			this.enterprise.getDatas().add(new EnterpriseData()
 				.setDomain(enterprise.getDomain())
