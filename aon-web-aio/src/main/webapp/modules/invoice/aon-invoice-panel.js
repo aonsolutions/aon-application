@@ -202,12 +202,12 @@ export class AonInvoicePanel extends AonElement {
 	async buildInvoiceHomeToolbarOptions() {
 		this.clearToolbar();
 		if (!this.isMobile()) {
-			let hasBidoq = await this.hasBidoq();
 			this.getApplication().addToolbarOption2(ACTION.ADD_INVOICE, () => this.addInvoice());
 			this.getApplication().addToolbarOption2(ACTION.REFRESH, () => this.refreshInvoicePanel());
 			if (this.getDur().isOcr() || this.getDur().isInvofox())
 				this.getApplication().addToolbarOption2(ACTION.UPLOAD_FILE, () => this.addInvoiceFile());
-			if (hasBidoq && this.getDur().isInvoiceManager()) {
+			// BIDOQ INTEGRATION
+			if (this.getDur().isBidoq() && this.getDur().isInvoiceManager()) {
 				this.getApplication().addToolbarOption2(ACTION.BIDOQ_IMPORT, () => this.importBidoqDocumentsToAon());
 			}
 		} else {
@@ -216,103 +216,7 @@ export class AonInvoicePanel extends AonElement {
 		}
 	}
 
-	async hasBidoq() {
-		let data = {
-			document: localStorage.getItem('aon_domain_document')
-		};
-		let response = await checkBidoq(data);
-		return response;
-	}
 
-	async importBidoqDocumentsToAon() {
-		// Crear overlay
-		let loadingOverlay = document.createElement('div');
-		loadingOverlay.id = 'aonDocumentalLoadingOverlay';
-		loadingOverlay.style.position = 'absolute';
-		loadingOverlay.style.top = '0';
-		loadingOverlay.style.left = '0';
-		loadingOverlay.style.width = '100%';
-		loadingOverlay.style.height = '100%';
-		loadingOverlay.style.backgroundColor = 'rgba(241, 236, 236, 0.8)';
-		loadingOverlay.style.display = 'flex';
-		loadingOverlay.style.alignItems = 'center';
-		loadingOverlay.style.justifyContent = 'center';
-		loadingOverlay.style.zIndex = '10';
-
-		// Contenedor del spinner + texto
-		let spinnerContainer = document.createElement('div');
-		spinnerContainer.style.display = 'flex';
-		spinnerContainer.style.flexDirection = 'column';
-		spinnerContainer.style.alignItems = 'center';
-
-		// Spinner
-		let spinner = document.createElement('div');
-		spinner.classList.add('preloader-wrapper', 'active');
-		spinner.innerHTML = `
-		<span class="material-symbols-outlined">
-			refresh
-		</span>
-	`;
-
-		let icon = spinner.querySelector('.material-symbols-outlined');
-		icon.style.fontSize = '48px';
-		icon.style.animation = 'rotate 2s linear infinite';
-
-		// Texto
-		let text = document.createElement('div');
-		text.textContent = 'Importando documentos desde Bidoq...';
-		text.style.marginTop = '12px';
-		text.style.fontSize = '16px';
-		text.style.color = '#333';
-		text.style.fontFamily = 'Arial, sans-serif';
-
-		// Estilo para la animación del spinner
-		if (!document.getElementById('spinner-style')) {
-			let style = document.createElement('style');
-			style.id = 'spinner-style';
-			style.innerHTML = `
-			@keyframes rotate {
-				0% {
-					transform: rotate(0deg);
-				}
-				100% {
-					transform: rotate(360deg);
-				}
-			}
-		`;
-			document.head.appendChild(style);
-		}
-
-		// Armar estructura
-		spinnerContainer.appendChild(spinner);
-		spinnerContainer.appendChild(text);
-		loadingOverlay.appendChild(spinnerContainer);
-
-		// Agregar overlay al contenedor
-		let container = document.body;
-		container.appendChild(loadingOverlay);
-		try {
-			let data = {
-				document: localStorage.getItem('aon_domain_document'),
-			};
-			let count = await getBidoqToOCRCount(data);
-			let size = 10;
-			for (let i = 0; i < count; i = i + size) {
-				let data_bidoq = {
-					document: localStorage.getItem('aon_domain_document'),
-					order: i,
-					size: size
-				}
-				text.textContent = 'Importando documentos desde Bidoq... ' + i + ' de ' + count;
-				await getBidoqToOCR(data_bidoq);
-			}
-		} catch (error) {
-			console.error("Error al importar documentos:", error);
-		} finally {
-			// Quitar el spinner
-			loadingOverlay.remove();
-		}
-	}
 
 	buildInvoiceToolbarOptions(acceptedInvoices, processing) {
 		this.clearToolbar();
@@ -480,12 +384,9 @@ export class AonInvoicePanel extends AonElement {
 
 		OPTION.getOptions(this.isBeta()).forEach((option) => {
 			option.app = INVOICE;
-			if (this.getDur().isTrial()) {
-				const itemsToRemove = [OPTION.RAWDOC_PROCESSING, OPTION.RAWDOC_REJECT, OPTION.CHARGES_PAYMENTS, OPTION.FISCAL_DRAFT, OPTION.OFFERS];
-				option.options = option.options.filter(option => !itemsToRemove.includes(option));
-			}
 			this.getApplication().addSidenavOptions3(option);
 		});
+
 		this.buildCounter();
 	}
 
@@ -1185,6 +1086,110 @@ export class AonInvoicePanel extends AonElement {
 
 		let aonFutureTax = new AonFutureTax(INVOICE, futureFiscalFilter);
 		aonInvoice.setContent(aonFutureTax);
+	}
+
+
+	// BIDOQ INTEGRATION
+
+	async hasBidoq() {
+		let data = {
+			document: localStorage.getItem('aon_domain_document')
+		};
+		let response = await checkBidoq(data);
+		return response;
+	}
+
+	async importBidoqDocumentsToAon() {
+		let hasBidoq = await this.hasBidoq();
+		if(!hasBidoq) return;
+
+		// Crear overlay
+		let loadingOverlay = document.createElement('div');
+		loadingOverlay.id = 'aonDocumentalLoadingOverlay';
+		loadingOverlay.style.position = 'absolute';
+		loadingOverlay.style.top = '0';
+		loadingOverlay.style.left = '0';
+		loadingOverlay.style.width = '100%';
+		loadingOverlay.style.height = '100%';
+		loadingOverlay.style.backgroundColor = 'rgba(241, 236, 236, 0.8)';
+		loadingOverlay.style.display = 'flex';
+		loadingOverlay.style.alignItems = 'center';
+		loadingOverlay.style.justifyContent = 'center';
+		loadingOverlay.style.zIndex = '10';
+
+		// Contenedor del spinner + texto
+		let spinnerContainer = document.createElement('div');
+		spinnerContainer.style.display = 'flex';
+		spinnerContainer.style.flexDirection = 'column';
+		spinnerContainer.style.alignItems = 'center';
+
+		// Spinner
+		let spinner = document.createElement('div');
+		spinner.classList.add('preloader-wrapper', 'active');
+		spinner.innerHTML = `
+		<span class="material-symbols-outlined">
+			refresh
+		</span>
+	`;
+
+		let icon = spinner.querySelector('.material-symbols-outlined');
+		icon.style.fontSize = '48px';
+		icon.style.animation = 'rotate 2s linear infinite';
+
+		// Texto
+		let text = document.createElement('div');
+		text.textContent = 'Importando documentos desde Bidoq...';
+		text.style.marginTop = '12px';
+		text.style.fontSize = '16px';
+		text.style.color = '#333';
+		text.style.fontFamily = 'Arial, sans-serif';
+
+		// Estilo para la animación del spinner
+		if (!document.getElementById('spinner-style')) {
+			let style = document.createElement('style');
+			style.id = 'spinner-style';
+			style.innerHTML = `
+			@keyframes rotate {
+				0% {
+					transform: rotate(0deg);
+				}
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+		`;
+			document.head.appendChild(style);
+		}
+
+		// Armar estructura
+		spinnerContainer.appendChild(spinner);
+		spinnerContainer.appendChild(text);
+		loadingOverlay.appendChild(spinnerContainer);
+
+		// Agregar overlay al contenedor
+		let container = document.body;
+		container.appendChild(loadingOverlay);
+		try {
+			let data = {
+				document: localStorage.getItem('aon_domain_document'),
+			};
+			let count = await getBidoqToOCRCount(data);
+			let size = 10;
+			for (let i = 0; i < count; i = i + size) {
+				let data_bidoq = {
+					document: localStorage.getItem('aon_domain_document'),
+					order: i,
+					size: size
+				}
+				text.textContent = 'Importando documentos desde Bidoq... ' + i + ' de ' + count;
+				await getBidoqToOCR(data_bidoq);
+			}
+		} catch (error) {
+			console.error("Error al importar documentos:", error);
+		} finally {
+			// Quitar el spinner
+			loadingOverlay.remove();
+		}
 	}
 }
 if (!window.customElements.get(TAG.AON_INVOICE_PANEL)) {

@@ -324,11 +324,11 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     }
   }
 
-  export const MAIN_INCOMES_BETA = {
+  export const MAIN_INCOMES_TRIAL = {
     id: CONSTANT.INCOMES.initCap(),
     title: MSG.INCOMES,
     name: MSG.INCOMES,
-    options: [INVOICE_ISSUED, OTHER_INCOMES, OFFERS ],
+    options: [INVOICE_ISSUED_BETA, PROFORMA_INVOICES, OTHER_INCOMES ],
     button: {
       id: CONSTANT.INCOMES.initCap() + 'Info',
       title: MSG.INFO_INCOMES,
@@ -342,6 +342,7 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
       )
     }
   }
+
 
   export const MAIN_EXPENSES = {
     id: CONSTANT.EXPENSES.initCap(),
@@ -383,6 +384,25 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
       )
     }
   }
+
+  export const MAIN_DOCUMENTS_TRIAL = {
+    id: CONSTANT.DOCUMENT.initCap(),
+    title: MSG.PENDING,
+    name: MSG.PENDING,
+    options: [RAWDOC_TRASH],
+    button: {
+      id: CONSTANT.DOCUMENT.initCap() + 'Info',
+      title: MSG.INFO_PENDING,
+      icon: 'info',
+      fn: () => info(
+        MSG.PENDING,
+        `<b>En Trámite:</b> Documentos subidos al portal y que se están gestionando por el contable o asesor. Una vez tramitados los veras en Facturas.<br><br>
+         <b>A revisar:</b> Documentos subidos al portal, de los cuales existen alguna duda pendiente de aclaración para poder procesalos correctamente.<br><br>
+         <b>Papelera:</b> Documentos rechazados que no se van a contabilizar por diferentes causas (titular erroneo, factura duplicada, no afectos a la actividad, documento ilegible, etc.).Estos documentos se eliminarán automáticamente transcurridos 30 DIAS.<br><br>`
+      )
+    }
+  }
+
 
   // ********************
   
@@ -489,6 +509,13 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     options:[ REGISTRY, CONCEPTS, CHARGES_PAYMENTS, FISCAL_DRAFT] //, CLOSING_INVOICE ]
   }
 
+  export const MANAGEMENT_TRIAL = {
+    id: CONSTANT.MANAGEMENT.initCap(),
+    title: MSG.MANAGEMENT,
+    name: MSG.MANAGEMENT,
+    options:[ REGISTRY, CONCEPTS]
+  }
+
 
   export const INVOICE_SEARCH_OPTIONS = [
     {
@@ -541,11 +568,10 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
 
   // ********************    
 
-  export const getOptions = (beta) => {
-    // return beta 
-    //   ? [MAIN_INCOMES_BETA, MAIN_EXPENSES, MAIN_DOCUMENTS, MANAGEMENT]
-    //   : [MAIN_INCOMES, MAIN_EXPENSES, MAIN_DOCUMENTS, MANAGEMENT];
-    return [MAIN_INCOMES, MAIN_EXPENSES, MAIN_DOCUMENTS, MANAGEMENT];
+  export const getOptions = (trial) => {
+    return trial 
+      ? [MAIN_INCOMES_TRIAL, MAIN_EXPENSES, MAIN_DOCUMENTS_TRIAL, MANAGEMENT_TRIAL]
+      : [MAIN_INCOMES, MAIN_EXPENSES, MAIN_DOCUMENTS, MANAGEMENT];
   }
 
   export const getNewOptions = () => {

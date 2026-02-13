@@ -301,6 +301,7 @@ export const MARKETING = 'Màrqueting';
 export const MARK_ENTRY = 'Marcar Entrada';
 export const MARK_EXIT = 'Marcar Sortida';
 export const MANAGEMENT = 'Gestió';
+export const MANUALS = 'Manuals';
 export const MODEL_111 = 'Model 111';
 export const MODEL_111_DESCRIPTION = `Model 111. Retencions i ingressos a compte. Rendiments del treball i d'activitats econòmiques, premis i determinats guanys patrimonials i imputacions de renda. Autoliquidació.`;
 export const MODEL_190 = 'Model 190';

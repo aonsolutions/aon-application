@@ -309,6 +309,7 @@ export const MARKETING = 'Marketing';
 export const MARK_ENTRY = 'Marcar Entrada';
 export const MARK_EXIT = 'Marcar Salida';
 export const MANAGEMENT = 'Gestión';
+export const MANUALS = 'Manuales';
 export const MENU = 'Menu';
 export const MODEL_111 = 'Modelo 111';
 export const MODEL_111_DESCRIPTION = 'Modelo 111. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de Renta. Autoliquidación.';
