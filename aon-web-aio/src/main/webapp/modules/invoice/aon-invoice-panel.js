@@ -382,7 +382,7 @@ export class AonInvoicePanel extends AonElement {
 			this.selectOption(e.detail);
 		});
 
-		OPTION.getOptions(this.isBeta()).forEach((option) => {
+		OPTION.getOptions(this.getDur().isTrial()).forEach((option) => {
 			option.app = INVOICE;
 			this.getApplication().addSidenavOptions3(option);
 		});
