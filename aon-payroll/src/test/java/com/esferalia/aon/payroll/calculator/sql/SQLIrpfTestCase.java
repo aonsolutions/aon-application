@@ -4864,6 +4864,122 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	}
 
 
+	@Test
+	public void testDuplicatePaymentExtras() throws ExpressionException, SQLException, SalaryException {
+
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+
+
+		AgreementLevelCategoryRecord agreementLevelCategory = 
+		newAgreement(aonContext,
+		new Extra[] {
+			new Extra() {
+				{
+					this.expression = "P_0";
+					this.month = Month.DECEMBER;
+					this.start = "01/07";
+					this.end = "31/12";
+					this.issue = "15/12";
+					this.concept = pagaExtra.getId();
+					this.description = "PAGA_NAVIDAD";
+				}
+			}, new Extra() {
+				{
+					this.expression = "P_0";
+					this.month = Month.JUNE;
+					this.start = "01/01";
+					this.end = "30/06";
+					this.issue = "30/06";
+					this.concept = pagaExtra.getId();
+					this.description = "PAGA_VERANO";
+				}
+			},
+			new Extra() {
+				{
+					this.expression = "P_1";
+					this.month = Month.DECEMBER;
+					this.start = "01/07";
+					this.end = "31/12";
+					this.issue = "15/12";
+					this.concept = pagaExtra.getId();
+					this.description = "PAGA_NAVIDAD";
+				}
+			}, new Extra() {
+				{
+					this.expression = "P_1";
+					this.month = Month.JUNE;
+					this.start = "01/01";
+					this.end = "30/06";
+					this.issue = "30/06";
+					this.concept = pagaExtra.getId();
+					this.description = "PAGA_VERANO";
+				}
+			},
+		}
+		);
+
+
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()), 
+				null, 
+				Collections.emptyMap(), 
+				new String[] { 
+				"1000.00 * DIAS_TRABAJADOS/DIAS_MES ",
+				"NODEFINIDA * DIAS_TRABAJADOS/DIAS_MES ",
+				},
+				new String[] { 
+				"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+				"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, 
+				agreementLevelCategory);
+		
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				null, 
+				"Description of the payment that is only for test purposes.",
+				"0.00"
+				+ "/* "
+				+ "This comment it's only for test an expression  longer than 128 characters."
+				+ "This way we can test how safe is JooqSalaryBuilder with complex payments."
+				+ "Some system payments can have very long expressions and we want to be sure that they are correctly stored and retrieved from database."
+				+ "*/",
+				null,
+				null,
+				PaymentType.CRA_0001
+				);
+
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		calculateAndSave(connection, ctx);
+
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		ctx.setListener(new Listener() {
+
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				assertAnnualRemuneration(
+						CommonUtil.round(1000.00 * 14 , 3)
+								, irpfOutcome.getIrpfResult().getAnnualRemuneration());
+			}
+		});
+
+		ctx.getIrpf();
+		
+		
+		
+	}
+
 	// ------------------------------------------------------------------------
 
 	protected void assertAnnualRemuneration(double expected,
