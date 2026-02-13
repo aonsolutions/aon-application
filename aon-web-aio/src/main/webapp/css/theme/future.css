@@ -1346,6 +1346,10 @@ ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover span {
 	background-color: var(--aonBackgroundColor2);
 }
 
+#aonInvoiceRegistryAddressAddIconButton {
+	top: 15px;
+}
+
 #aonInvoiceSheetDataGeneral {
 	display: block !important;
 }
@@ -2249,7 +2253,6 @@ aon-new-fixed-button .newFixedButton .plus {
 .aonSwitch > input:checked + span::after {
 	background-color: var(--aonHeaderBackgroundColor);
 }
-
 
 aon-input[readonly="true"] input, 
 aon-input[disabled="true"] input, 
