@@ -20,14 +20,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.config.EnterpriseDataAddAudit;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod347Detail2025Bis;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.FlexibleInsurancePremiumsInsert;
-import net.aonsolutions.db.up2date.payroll.PlusTransporte0001Insert;
-import net.aonsolutions.db.up2date.tgss.MEISolidarity2026RDL162025Undo;
 import net.aonsolutions.db.up2date.tgss.MEITrainingUpdate2026;
-import net.aonsolutions.db.up2date.timecontrol.CalendarHolidaysAlter;
-import net.aonsolutions.db.up2date.tgss.SociosCoopBases2025Update;
 import net.aonsolutions.db.up2date.timecontrol.CalendarPersonalDaysAlter;
 
 public class Up2Date {
@@ -601,7 +595,7 @@ public class Up2Date {
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
 			// MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
-			DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS
+			DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS,
 			// RdocTag.RDOC_TAG,
 			// UpdateCategoryTree.UPDATE_CATEGORY_TREE,
 			// NordigenCallsLog.NORDIGEN_CALL_LOG_TABLE,
@@ -622,9 +616,9 @@ public class Up2Date {
 			//TimecontrolLocationAlter.TIMECONTROL_LOCATION_ALTER
 			
 //			CalendarHolidaysAlter.CALENDAR_HOLIDAYS_ALTER,
-//			CalendarPersonalDaysAlter.CALENDAR_PERSONAL_DAYS_ALTER
+			CalendarPersonalDaysAlter.CALENDAR_PERSONAL_DAYS_ALTER,
 
-//			EnterpriseDataAddAudit.ENTERPRISE_DATA_ADD_AUDIT
+			EnterpriseDataAddAudit.ENTERPRISE_DATA_ADD_AUDIT
 	};
 
 	// ------------------------------------------------------------------------
