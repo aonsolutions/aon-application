@@ -61,6 +61,14 @@ export class AonTimecontrol extends AonElement {
       this.showView(SIGNIN_VIEWS.AON_STATISTICS);
     else
       this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
+      
+	// Set selected sidebar  
+    let aonSigninSidenavpresence = this.getElement('aonSigninSidenavpresence');
+    aonSigninSidenavpresence.classList.add('aonAppMenuSidenavListSelected');
+    
+    let aonSigninSidenavtoday = this.getElement('aonSigninSidenavtoday');
+    aonSigninSidenavtoday.classList.add('aonAppMenuSidenavListSelected');
+    
   }
 
   filterInit(){

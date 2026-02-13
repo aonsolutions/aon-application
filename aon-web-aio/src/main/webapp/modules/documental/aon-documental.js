@@ -102,6 +102,10 @@ export class AonDocumental extends AonElement {
 	}
 
 	async build() {
+		if(LS.isFutureTheme()){
+			LS.setBetaDoc(true);
+		}
+		
 		let aonDocumental = this.getApplication();
 		if(this.isBeta() ||  this.isAyudaTorInfoautonomos()) {
 			let titleSection = aonDocumental.getToolbar().getTitleSection();
@@ -115,7 +119,8 @@ export class AonDocumental extends AonElement {
 				LS.setBetaDoc(newView.checked);
 				this.rootPanel(new AonDocumental());
 			});
-			titleSection.appendChild(newView);
+			if(!LS.isFutureTheme())
+				titleSection.appendChild(newView);
 		}
 
 		this.getElement("aonDocumentalToolbarHeaderTitleSection");
