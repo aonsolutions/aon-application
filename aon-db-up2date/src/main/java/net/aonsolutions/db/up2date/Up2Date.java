@@ -19,15 +19,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod347Detail2025Bis;
+import net.aonsolutions.db.up2date.config.EnterpriseDataAddAudit;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.FlexibleInsurancePremiumsInsert;
-import net.aonsolutions.db.up2date.payroll.PlusTransporte0001Insert;
-import net.aonsolutions.db.up2date.tgss.MEISolidarity2026RDL162025Fix;
-import net.aonsolutions.db.up2date.tgss.MEISolidarity2026RDL162025Undo;
 import net.aonsolutions.db.up2date.tgss.MEITrainingUpdate2026;
-import net.aonsolutions.db.up2date.timecontrol.CalendarHolidaysAlter;
-import net.aonsolutions.db.up2date.tgss.SociosCoopBases2025Update;
 import net.aonsolutions.db.up2date.timecontrol.CalendarPersonalDaysAlter;
 
 public class Up2Date {
@@ -596,7 +590,6 @@ public class Up2Date {
 			// SociosCoopBases2025Update.SOCIOSCOOPBASES2025UPDATE,
 			MEITrainingUpdate2026.MEITRAININGUPDATE2026,
 			
-			
 			// AlterFsMod347Detail2025Bis.ALTER_FS_MOD_347_DETAIL_2025_BIS,
 			
 			// ----------------------------------------------------------------
@@ -623,8 +616,9 @@ public class Up2Date {
 			//TimecontrolLocationAlter.TIMECONTROL_LOCATION_ALTER
 			
 //			CalendarHolidaysAlter.CALENDAR_HOLIDAYS_ALTER,
-			CalendarPersonalDaysAlter.CALENDAR_PERSONAL_DAYS_ALTER
-	
+			CalendarPersonalDaysAlter.CALENDAR_PERSONAL_DAYS_ALTER,
+
+			EnterpriseDataAddAudit.ENTERPRISE_DATA_ADD_AUDIT
 	};
 
 	// ------------------------------------------------------------------------

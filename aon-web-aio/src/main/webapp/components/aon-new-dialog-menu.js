@@ -46,24 +46,89 @@ export class AonNewDialogMenu extends AonElement {
 		});
 	}
 
-	open(el = undefined) {
-		let dialog = this.getElement(this.id);
-		
-		if(el){
-			let top = el.getBoundingClientRect().top;
-			let left = el.getBoundingClientRect().right;
-			
-			let content = this.getElement(this.CONTENT);
-			content.style.top = top + 'px' || '90px';
-			content.style.left = (left > (window.innerWidth/2) ? left - 180 : left)+'px' ;
-		}
-		
-		dialog.classList.remove("hidden");
+	open(el = undefined, isFixedButton = false) {
+	    const dialog = this.getElement(this.id);
+	    
+	    this.isFixedButton = isFixedButton; 
+	    this.lastEl = el;
+	    
+	    if (el) {
+	        const rect = el.getBoundingClientRect();
+	        const content = this.getElement(this.CONTENT);
+	
+	        if (isFixedButton) {
+	            // Aseguramos que el content ya tenga tamaño (por si está hidden)
+	            content.style.visibility = "hidden";
+	            content.style.display = "block";
+	
+	            const contentHeight = content.offsetHeight;
+	
+	            // Volvemos a ocultarlo correctamente
+	            content.style.visibility = "";
+	            content.style.display = "";
+	
+	            // Posición: ENCIMA del botón
+	            const top = rect.top - contentHeight - 70; // 60px de separación
+	
+	            content.style.top = `${top}px`;
+	            content.style.right = `30px`;
+	            content.style.left = `auto`;
+	
+	        } else {
+	            // Tu comportamiento original
+	            const top = rect.top;
+	            const left = rect.right;
+	
+	            content.style.top = top + 'px' || '90px';
+	            content.style.left =
+	                (left > (window.innerWidth / 2) ? left - 180 : (left + 10)) + 'px';
+	            content.style.right = `auto`;
+	        }
+	    }
+	
+	    dialog.classList.remove("hidden");
+	
+		if (!isFixedButton) {
+		    const iconEl = this.getElement('aonMenuListAppImgTop-new');
+		    iconEl.classList.add('open');
+	    } else {
+			let newFixedButton = document.querySelector('aon-new-fixed-button .newFixedButton');
+		    newFixedButton.classList.add('open');
+	    }
+	    
 	}
+	
+	repositionFixedMenu(el) {
+	    const content = this.getElement(this.CONTENT);
+	    const rect = el.getBoundingClientRect();
+	
+	    // Aseguramos que el content tenga tamaño real
+	    content.style.visibility = "hidden";
+	    content.style.display = "block";
+	
+	    const contentHeight = content.offsetHeight;
+	
+	    content.style.visibility = "";
+	    content.style.display = "";
+	
+	    // Posición encima del botón flotante
+	    const top = rect.top - contentHeight - 70;
+	
+	    content.style.top = `${top}px`;
+	    content.style.right = `30px`;
+	    content.style.left = `auto`;
+	}
+
 
 	close() {
 		let dialog = this.getElement(this.id);
 		dialog.classList.add("hidden");
+		
+		let iconEl = this.getElement('aonMenuListAppImgTop-new');
+		if(iconEl) iconEl.classList.remove('open');
+		
+		let newFixedButton = document.querySelector('aon-new-fixed-button .newFixedButton');
+		if(newFixedButton) newFixedButton.classList.remove('open');
 	}
 
 	setOptions(options = []) {
@@ -110,6 +175,8 @@ export class AonNewDialogMenu extends AonElement {
 				e.stopPropagation();
 				children.classList.toggle("open");
 				item.classList.toggle("open");
+				
+				if (this.isFixedButton && this.lastEl) { this.repositionFixedMenu(this.lastEl); }
 			});
 
 			wrapper.appendChild(children);

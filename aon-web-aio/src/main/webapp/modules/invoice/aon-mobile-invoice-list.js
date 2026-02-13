@@ -14,6 +14,7 @@ import * as LS from '../../services/localStorageService.js';
 export class AonMobileInvoiceList extends AonMobileList {
 
   more;
+  icc;
 
   constructor () {
     super();
@@ -48,6 +49,8 @@ export class AonMobileInvoiceList extends AonMobileList {
         });
     }
   }
+
+  setIcc(icc) {this.icc = icc; }
 
   init() {
     this.more = true;

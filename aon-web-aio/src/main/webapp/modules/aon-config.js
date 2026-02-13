@@ -182,7 +182,7 @@ export class AonConfig extends AonElement {
         let div = this.createDiv();
         div.style.title = "Temas";
         div.className = "configPanelLanguageDiv";
-
+        
         let i = this.createElement(TAG.I);
         i.className = CSS.MATERIAL_ICONS + " configPanelLanguageI";
         div.appendChild(i);
@@ -195,11 +195,13 @@ export class AonConfig extends AonElement {
         if(theme == LS.getTheme()) {
             i.innerHTML = "done";
             span.style.fontWeight = "bold";
+            div.classList.add('selected');
         }else{
             i.innerHTML = "palette";
         }
 
         div.addEventListener(EVENT.CLICK, () => {
+			div.classList.toggle('selected');
             LS.setTheme(theme);
         })
 
@@ -223,11 +225,13 @@ export class AonConfig extends AonElement {
         if(language == LS.getLanguage()) {
             i.innerHTML = "done";
             span.style.fontWeight = "bold";
+            div.classList.add('selected');
         }else{
             i.innerHTML= "language";
         }
 
         div.addEventListener(EVENT.CLICK, () => {
+			div.classList.toggle('selected');
             LS.setLanguage(language);
         })
     

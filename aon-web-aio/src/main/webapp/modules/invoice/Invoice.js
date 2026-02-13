@@ -56,8 +56,6 @@ export class Invoice {
   messages;
   ocrStatus;
 
-  thirdPart;
-
   communicationInfo;
 
   constructor(invoice) {
@@ -136,7 +134,6 @@ export class Invoice {
       this.workplace = invoice.workplace; 
       this.messages = invoice.messages || [];
       this.insight = invoice.insight || {};
-      this.thirdPart = invoice.thirdPart || false;
       this.communicationInfo = invoice.communicationInfo;
       if(this.finances.length === 0) this.resetFinances();
     } else {
@@ -189,20 +186,11 @@ export class Invoice {
       // this.tbai = false;
       // this.tbaiUrl = '';
       this.signed = false;
-      this.thirdPart = false;
     }
     // getCompany().then(company => {
     //   this.surcharge = this.surcharge || company.surcharge;
     //   this.vatAccrualPayment = this.vatAccrualPayment || company.vatAccrualPayment;
     // });
-  }
-
-  isThirdPart() {
-    return this.thirdPart;
-  }
-
-  setThirdPart(thirdPart) {
-    this.thirdPart = thirdPart;
   }
 
   getType() {

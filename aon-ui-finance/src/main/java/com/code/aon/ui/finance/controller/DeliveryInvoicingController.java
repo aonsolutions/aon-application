@@ -69,7 +69,7 @@ public class DeliveryInvoicingController implements IFinanceConstants, Serializa
 		params.setConfidential(isSeriesConfidential(series));
 		params.setInvoiceNumber(0);
 		params.setInvoiceDate(new Date());
-		params.setInvoiceRecordable(AonUtil.getRoleManager().isAccountingOperator());
+		params.setInvoiceRecordable(false);//AonUtil.getRoleManager().isAccountingOperator());
 		setParams(params);
 		setProgressionState(new ProgressionState());
 	}

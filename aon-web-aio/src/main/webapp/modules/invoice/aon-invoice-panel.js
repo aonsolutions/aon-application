@@ -4,7 +4,8 @@ import {
 	getBidoqToOCR, getBidoqToOCRCount, getInvoice, getInvoiceCount, getRawdocCount, invoiceDuplicateFix, saveInvoiceClosing, downloadRegistryExcel,
 	checkBidoq,
 	getCompanyActivities,
-	getInvoiceConfiguration
+	getInvoiceConfiguration,
+	fixInvoice
 } from "../../services/service.js";
 import { Invoice } from "./Invoice.js";
 import { AonInvoice } from "./aon-invoice.js";
@@ -101,10 +102,14 @@ export class AonInvoicePanel extends AonElement {
 			<input id='${this.INPUT_FILE}' style='display:none;' type='file' name='file' multiple>
 			<input id='${this.INPUT_CAMERA}' type='file' accept='image/*' capture='camera' hidden />
 		`;
+		
+		fixInvoice().then(() => { console.log("fixInvoice completed"); }).catch(() => { console.log("fixInvoice failed"); });
+
 		await this.getInvoiceConfiguration();
 		this.buildDur().then((r) => {
 			this.build();
 		});
+		
 	}
 
 	initialize() {
@@ -655,6 +660,7 @@ export class AonInvoicePanel extends AonElement {
 			? new AonMobileInvoiceList()
 			: new AonInvoiceList();
 		table.id = "aonInvoiceList";
+		table.setIcc(this.icc);
 		table.setFilter(this.filter);
 		table.invofoxFilter = this.invofoxFilter;
 		this.getApplication().setContent(table);

@@ -220,6 +220,12 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 	padding: 0px 15px 15px 0px;
 }
 
+.aonUlOptions {
+	margin: 0;
+	list-style: none;
+	padding: 0;
+}
+
 .aonUlUploadToast {
 	max-height: 275px;
 	overflow-y: scroll;

@@ -39,7 +39,6 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DataResponseDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DataResponseFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DataResponseDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DataResponsePropertiesDAO;

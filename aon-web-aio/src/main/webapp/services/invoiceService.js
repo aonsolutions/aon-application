@@ -73,3 +73,8 @@ export const getChartInvoices = (data) => get(`${API_URL}/invoices/chart`, data)
 export const getChartInvoicesPeriod = (data) => get(`${API_URL}/invoices/chart/period`, data);
 export const getBidoqToOCR = (data) => get(`${API_URL}/s3/bidoq_ocr`, data);
 export const getBidoqToOCRCount = (data) => get(`${API_URL}/s3/bidoq_ocr_count`, data);
+
+export const fixInvoice = (data) => post(`${API_URL}/invoice/fix`, data);
+
+// COMMUNICATE INVOICE  
+export const communicateInvoice = (data) => post(`${API_URL}/invoices/communicate`, data);

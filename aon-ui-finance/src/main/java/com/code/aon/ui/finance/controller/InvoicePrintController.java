@@ -65,6 +65,7 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.project.ProjectTas;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
@@ -273,6 +274,14 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 							qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
 							tbaiId = tbaiData.getTbaiId(occam.getDomain(), invoice.getId());
 						}
+						if(company.getRegistry().getDomain().isGarage()) {	
+							invoice.detailStream().forEach(d -> {
+								ProjectTas pt = AON.getProjectTas(occam, f -> f.getDomainProperty().eq(invoice.getDomain())
+										.and(f.getIdProperty().eq(d.getProject()))).orElse(null);
+								if(pt != null)	d.setProjectName(d.getProjectName() + " - KMS. " + d.getProject());	
+							});
+						}
+						
 						PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData(), tbaiId);
 						list.add(file);	
 					}

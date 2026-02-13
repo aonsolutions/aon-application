@@ -9,11 +9,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.json.InvoiceCounterJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RawdocInvoiceCounterJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
@@ -27,12 +30,18 @@ import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 
@@ -42,6 +51,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.ewok.IConstants;
+import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonInvoicesServlet", urlPatterns = { "/ms/api/invoices/*" })
@@ -54,6 +64,7 @@ public class InvoicesServlet extends AonApiHttpServlet {
     public static final String INVOICE_RECORD = "/:id/record";
     public static final String RAWDOC = "/rawdoc/:id";
     public static final String ACCEPT = "/accept";
+    public static final String COMMUNICATE = "/communicate";
     public static final String COUNT = "/count";
     public static final String CHART = "/chart";
     public static final String CHART_PERIOD = "/chart/period";
@@ -106,6 +117,7 @@ public class InvoicesServlet extends AonApiHttpServlet {
             AonApiData api = initialize(req);
             Object object = new AonRouting(api)
                     .addRoute(ACCEPT, InvoicesServlet::acceptInvoice)
+                    .addRoute(COMMUNICATE, InvoicesServlet::communicateInvoice)
                     .addRoute(INVOICE_DUPLICATE_FIX, InvoicesServlet::invoiceDuplicateFix)
             		.addRoute(INVOICES, InvoicesServlet::saveInvoice)
                     .addRoute(INVOICE, InvoicesServlet::saveInvoice)
@@ -295,6 +307,37 @@ public class InvoicesServlet extends AonApiHttpServlet {
     private static JSONObject acceptInvoice(AonApiData api) {
     	try {
 			return InvoiceServlet.acceptInvoice(api);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AonApiException(e);
+		}
+    }
+    
+    private static JSONObject communicateInvoice(AonApiData api) {
+    	try (CloseableAONContext ctx = AONContext.getAONContext(api.getOccam())) {
+    		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+    		Integer invoiceId = JsonUtils.getInteger(api.getData(), IJsonNames.INVOICE);
+    		Integer certificateId = JsonUtils.getInteger(api.getData(), IJsonNames.CERTIFICATE);
+    		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, api.getDomain().getId());
+    		icc.setCertificate(checkCertificate(api, certificateId));
+    		
+    		Invoice invoice = InvoiceDAO.getFullInvoice(ctx, invoiceId);
+
+    		if(icc.isVerifactu() || icc.isNoVerifactu() || icc.isSif()) {
+    			InvoiceCommunicatorContext communicator = new InvoiceCommunicatorContext(api.getDomain(), api.getUser(), certificateId, AonCollectionUtils.toList(invoice))
+    					.setConfig(icc)
+    					.setCompany(company);
+    			try {
+    				InvoiceCommunicator.issueInvoice(communicator);
+    			} catch (Exception e) {
+    				InvoiceCommunicator.throwRightException( e, invoice  );
+    			}    			
+    		} else if(icc.isTbai() || icc.isLroe()) {
+    			InvoiceServlet.acceptTbai(icc, company, invoice);
+    		} else if(icc.isSii()) {
+    			InvoiceServlet.acceptSii(api, icc, company, invoice);
+    		}
+    		return new JSONObject();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new AonApiException(e);

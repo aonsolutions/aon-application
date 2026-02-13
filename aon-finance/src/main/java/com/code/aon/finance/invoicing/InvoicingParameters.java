@@ -329,7 +329,7 @@ public class InvoicingParameters implements Serializable {
 
 	public boolean hasCommunication() {
 		return getInvoiceCommunicationConfiguration()
-			.map( c -> c.hasCommunication()  && !c.isTbai() && !c.isLroe() && !c.isSii()) 
+			.map(c -> c.hasCommunication()) 
 			.orElse(false);
 	}
 }
