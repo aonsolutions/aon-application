@@ -162,7 +162,6 @@ export const COMMERCIAL_NAME = 'Nombre Comercial'; // TODO
 export const COMMERCIAL_PRODUCT = 'Producto Comercial'; // TODO
 export const COMMUNICATE = "Comunicar";// TODO
 export const COMMUNICATE_CONFIRM = "¿Desea comunicar a la seguridad social?";// TODO
-export const COMMUNICATE_INVOICE = "Comunicar Factura";// TODO
 export const COMMUNICATION = MSG.COMMUNICATION;
 export const COMMUNICATIONS = MSG.COMMUNICATIONS;
 export const COMPANIES = MSG.COMPANIES;

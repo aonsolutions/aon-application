@@ -116,7 +116,6 @@ public final class IJsonNames {
 	public static final String CATEGORY = "category";
 	public static final String CATEGORY_IDS = "categoryIds";
 	public static final String CERT = "cert";
-	public static final String CERTIFICATE = "certificate";
 	public static final String CITY = "city";
 	public static final String CHARGE_DATE = "chargeDate";
 	public static final String CHECK_URL = "checkUrl";
