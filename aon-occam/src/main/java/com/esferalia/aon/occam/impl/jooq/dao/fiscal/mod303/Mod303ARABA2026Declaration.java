@@ -17,9 +17,9 @@ import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod303ARABA2025Declaration extends Mod303ARABA {
+class Mod303ARABA2026Declaration extends Mod303ARABA {
 	
-	protected Mod303ARABA2025Declaration() {
+	protected Mod303ARABA2026Declaration() {
 		
 	}
 	
@@ -37,7 +37,7 @@ class Mod303ARABA2025Declaration extends Mod303ARABA {
 		return mod.isAraba() 
 			&& mod.getPeriod() != Period.T4
 			&& mod.getPeriod() != Period.M12
-			&& mod.getYear() == 2025		   
+			&& mod.getYear() >= 2026		   
 		;
 	}
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
@@ -55,6 +55,7 @@ class Mod303ARABA2025Declaration extends Mod303ARABA {
 		,AR_C911	(Mod303Key.AR_C911)
 		,AR_C908	(Mod303Key.AR_C908)
 		,AR_C909	(Mod303Key.AR_C909)
+		,AR_C913	(Mod303Key.AR_C913)
 		
 		// ---------------------------------------------------------------
 		// ------------------------------------------------- IVA DEVENGADO
@@ -251,7 +252,8 @@ class Mod303ARABA2025Declaration extends Mod303ARABA {
 		,AR_C061	(Mod303Key.AR_C061)
 		// Intereses demora	IVA deducible por importaciones de bienes de inversión
 		,AR_C062	(Mod303Key.AR_C062)
-		// A deducir (exclusivamente en el caso de autoliquidación sustitutiva: resultado de las autoliquidaciones anteriores presentadas por el mismo concepto, ejercicio y período)
+		// A deducir (exclusivamente en el caso de autoliquidación sustitutiva: resultado de las autoliquidaciones 
+		// anteriores presentadas por el mismo concepto, ejercicio y período)
 		,AR_C063	(Mod303Key.AR_C063,null,null,
 				(ctx,mod) -> {
 					if (mod.isReplacement()) {
@@ -263,8 +265,12 @@ class Mod303ARABA2025Declaration extends Mod303ARABA {
 					}
 				})
 		
+		// Pago a cuenta de entregas de gasolinas, gasóleos y biocarburantes posteriores a la ultimación del 
+		// régimen de depósito distinto del aduanero atribuible al Territorio Histórico de Álava"
+		,AR_C064	(Mod303Key.AR_C064)
+		
 		// TOTAL DEUDA TRIBUTARIA	
-		,AR_C080	(Mod303Key.AR_C080,null,null,null,"AR_C060+AR_C061+AR_C062-AR_C063",null)
+		,AR_C080	(Mod303Key.AR_C080,null,null,null,"AR_C060+AR_C061+AR_C062-AR_C063-AR_C064",null)
 		
 		// TOTAL A DEVOLVER
 		,AR_C081	(Mod303Key.AR_C081,null,null,null,"isToPayback()?round(AR_C080*-1):0.0",null)

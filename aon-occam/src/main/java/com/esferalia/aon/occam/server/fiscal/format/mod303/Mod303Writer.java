@@ -58,12 +58,13 @@ public class Mod303Writer {
 		,AEAT_2019		(mod303 -> (mod303.isAEAT() && mod303.getYear() > 2018 && mod303.getYear() <= 2020), Mod303WriterAEAT2019::new)
 		,AEAT_2018T4	(mod303 -> (mod303.getYear() == 2018 && mod303.isLastPeriod()) 	, Mod303WriterAEAT20184T::new)
 		,AEAT_2018		(mod303 -> (mod303.isAEAT() && mod303.getYear() == 2018 && !mod303.isLastPeriod()) 	, Mod303WriterAEAT20184T::new)
-		,AEAT_2017		(mod303 -> (mod303.isAEAT() && mod303.getYear() == 2017) 	, Mod303WriterAEAT2017::new)
-		,AEAT_2016		(mod303 -> (mod303.isAEAT() && mod303.getYear() <= 2016) 	, Mod303WriterAEAT2016::new)
+		,AEAT_2017		(mod303 -> (mod303.isAEAT() && mod303.getYear() == 2017), Mod303WriterAEAT2017::new)
+		,AEAT_2016		(mod303 -> (mod303.isAEAT() && mod303.getYear() <= 2016), Mod303WriterAEAT2016::new)
 		
-		,ARABA_2025		(mod303 -> (mod303.isAraba() && mod303.getYear() >= 2025), Mod303WriterARABA2025::new)
+		,ARABA_2026		(mod303 -> (mod303.isAraba() && mod303.getYear() >= 2026), Mod303WriterARABA2026::new)
+		,ARABA_2025		(mod303 -> (mod303.isAraba() && mod303.getYear() == 2025), Mod303WriterARABA2025::new)
 		,ARABA_2023		(mod303 -> (mod303.isAraba() && mod303.getYear() >= 2023 && mod303.getYear() <= 2024), Mod303WriterARABA2023::new)
-		,ARABA_2022		(mod303 -> (mod303.isAraba() && mod303.getYear() == 2022)	, Mod303WriterARABA2022::new)
+		,ARABA_2022		(mod303 -> (mod303.isAraba() && mod303.getYear() == 2022), Mod303WriterARABA2022::new)
 		,ARABA_2019		(mod303 -> (mod303.isAraba() && mod303.getYear() >= 2019 && mod303.getYear() < 2022)	, Mod303WriterARABA2019::new)		
 		,ARABA_2017		(mod303 -> (mod303.isAraba() && mod303.getYear() >= 2016 && mod303.getYear() < 2019)	, Mod303WriterARABA2017::new)
 

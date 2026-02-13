@@ -738,6 +738,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,AR_C911("303-AR911",false,"911","\u00BFEs destinatario de operaciones a las que se aplique el r\u00E9gimen especial del criterio de caja?")
 	,AR_C908("303-AR908",false,"908","Fecha en que se dict\u00F3 el auto de declaraci\u00F3n de concurso")
 	,AR_C909("303-AR909",false,"909","Si se ha dictado auto de declaraci\u00F3n de concurso en este periodo, indique el tipo de autoliquidaci\u00F3n")
+	,AR_C913("303-AR913",false,"913","Sujeto pasivo con derecho a deducir pago a cuenta de entregas de gasolinas, gas\u00F3leos y biocarburantes posteriores a la ultimaci\u00F3n del r\u00E9gimen de dep\u00F3sito distinto del aduanero") 
 	 
 	,AR_C210("303-AR210",true ,"210",CT_C01.getDescription())
 	,AR_C211("303-AR211",false,"211",CT_C02.getDescription())
@@ -830,14 +831,14 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,AR_C061("303-AR061",false,"61","Recargo presentaci\u00F3n extempor\u00E1nea")
 	,AR_C062("303-AR062",false,"62","Intereses demora")
 	,AR_C063("303-AR063",false,"63","A deducir (exclusivamente en el caso de autoliquidaci\u00F3n sustitutiva: resultado de las autoliquidaciones anteriores presentadas por el mismo concepto, ejercicio y per\u00EDodo)")
+	,AR_C064("303-AR064",false,"64","Pago a cuenta de entregas de gasolinas, gas\u00F3leos y biocarburantes posteriores a la ultimaci\u00F3n del r\u00E9gimen de dep\u00F3sito distinto del aduanero atribuible al Territorio Hist\u00F3rico de \u00C1lava") 
 	
 	,AR_C080("303-AR080",false,"80","Total deuda tributaria")
 	,AR_C081("303-AR081",false,"81","Total a devolver")
 	,AR_C082("303-AR082",false,"82","Total a compensar")
 	
 	,AR_C052("303-AR052",true ,"52","Operaciones no sujetas o con inversi\u00F3n del sujeto pasivo que originan el derecho a deducci\u00F3n")
-	
-	
+
 	
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  BIZKAIA ----

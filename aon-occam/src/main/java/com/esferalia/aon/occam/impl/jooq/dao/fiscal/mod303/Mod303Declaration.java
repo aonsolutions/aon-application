@@ -91,6 +91,10 @@ public abstract class Mod303Declaration {
 		
 // ARABA ------------------------------------------------------------------------------------------		
 
+		,ARABA_2026{
+			@Override boolean accept(Mod303 mod) { return Mod303ARABA2026Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303ARABA2026Declaration();}
+		}
 		,ARABA_2025{
 			@Override boolean accept(Mod303 mod) { return Mod303ARABA2025Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303ARABA2025Declaration();}
