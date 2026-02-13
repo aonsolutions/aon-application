@@ -228,12 +228,12 @@ public class LoginTestCase extends AppBaseTestCase {
 			    "let d = document.getElementById('aonDesktopInvoiceConfigurationDialog'); if(d) d.close();"
 			);
 
-//			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("invoice"))).click();
-//			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonInvoiceSidenavOffers"))).click();
-//			
-//			WebElement aonJsfAppFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAppFrame")));
-//			webDriver.switchTo().frame(aonJsfAppFrame);
-//			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonContent:offerList")));
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("invoice"))).click();
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonInvoiceSidenavOffers"))).click();
+			
+			WebElement aonJsfAppFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAppFrame")));
+			webDriver.switchTo().frame(aonJsfAppFrame);
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonContent:offerList")));
 		} catch (Exception e) {
 			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
 		} finally {
