@@ -24,8 +24,14 @@ public enum EnterpriseDataNames {
 	// INVOFOX COUNTERS
 	INVOFOX, 
 	
-	// PAYROLL 
-	PAY_authorization_key_PAY
+	// PAYROLL
+	agreement, 
+	PAY_authorization_key_PAY, 
+	PAY_REPORT_salary_PAY, 
+	PAY_REPORT_enterpriseSalary_PAY, 
+	PAY_salarySendingMethod_PAY, 
+	PAY_salarySending_email_PAY, 
+	PAY_ss_pension_plan_mutual_PAY
 	;
 
 	public static Optional<EnterpriseDataNames> safeValueOf(String name) {
