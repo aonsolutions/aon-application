@@ -1350,9 +1350,13 @@ ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover span {
 	top: 15px;
 }
 
-#aonInvoiceSheetDataGeneral {
-	display: block !important;
+#aonInvoiceWithholdingLabel {
+	top: 15px;
 }
+
+/* #aonInvoiceSheetDataGeneral {
+	display: block !important;
+} */
 
 #aonInvoiceHomeNewIncomeButton,
 #aonInvoiceHomeNewExpenseButton,
@@ -2232,7 +2236,7 @@ aon-new-fixed-button .newFixedButton .plus {
 .aonSwitch > span::after {
     content: "";
     position: absolute;
-    top: 5.5px;
+    top: 6px;
     height: 1rem;
     width: 1rem;
     right: 1.1rem;
