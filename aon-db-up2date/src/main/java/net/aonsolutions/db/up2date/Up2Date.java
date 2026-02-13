@@ -601,7 +601,7 @@ public class Up2Date {
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
 			// MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
-			DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS,
+			DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS
 			// RdocTag.RDOC_TAG,
 			// UpdateCategoryTree.UPDATE_CATEGORY_TREE,
 			// NordigenCallsLog.NORDIGEN_CALL_LOG_TABLE,
@@ -622,8 +622,9 @@ public class Up2Date {
 			//TimecontrolLocationAlter.TIMECONTROL_LOCATION_ALTER
 			
 //			CalendarHolidaysAlter.CALENDAR_HOLIDAYS_ALTER,
-//			CalendarPersonalDaysAlter.CALENDAR_PERSONAL_DAYS_ALTER,
-//			EnterpriseDataAddAudit.ENTERPRISE_DATA_ADD_AUDIT,
+//			CalendarPersonalDaysAlter.CALENDAR_PERSONAL_DAYS_ALTER
+
+//			EnterpriseDataAddAudit.ENTERPRISE_DATA_ADD_AUDIT
 	};
 
 	// ------------------------------------------------------------------------
