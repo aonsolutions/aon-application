@@ -193,7 +193,7 @@ export class AonElement extends HTMLElement{
   
   isAyudaTorInfoautonomos(){
 	const href = localStorage.getItem("aon_domain_name")
-    return href?.includes('ayudat') || href?.includes('infoautonomos') || href?.includes('openges')
+    return href?.includes('ayudat') || href?.includes('infoautonomos')
   }
   
   isAyudaT(){
