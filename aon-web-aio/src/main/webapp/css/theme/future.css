@@ -29,7 +29,6 @@
   font-style:normal;
 }
 
-
 :root {
 	--aonTopMenuSpecial: transparent;
 	
@@ -372,6 +371,10 @@
 
 #aonEventAddToolbarHeaderToolSectionhistoricButtonIcon{
 	mask-image: url('/icons/clipboard-list.svg') ;
+}
+
+#aonMenuList-new {
+	display: none;
 }
 
 
@@ -736,7 +739,7 @@ aon-configuration-menu .suiteMenuContent  {
 	mask-image: url('/icons/chevron-right.svg');
 }
 
-.aonSidenav i.material-icons {
+.aonAppMenuSidenavList i.material-icons {
 	display: none;
 }
 
@@ -756,7 +759,7 @@ aon-configuration-menu .suiteMenuContent  {
 
 .aonSidenav .aonSidenavTitle {
 	padding: 0 1rem;
-	padding-top: 0px;
+	padding-top: 6px;
 	display: flex;
 	gap: .3rem;
 	align-items: center;
@@ -1120,17 +1123,32 @@ aon-configuration-menu .suiteMenuContent  {
 
 .aonInputBoxLabel {
 	display: flex;
-  flex-direction: column-reverse;
-  width: 100%;
-  max-width: 100%;
-  gap: .375rem;
-  box-sizing: border-box;
-  overflow: hidden;	
+  	flex-direction: column-reverse;
+  	width: 100%;
+  	max-width: 100%;
+  	gap: .375rem;
+  	box-sizing: border-box;
+  	overflow: hidden;	
 }
 
 .aonInputBoxLabel > span{
 	position: inherit;
 }
+
+.aonTextareaBoxLabel {
+	display: flex;
+  	flex-direction: column-reverse;
+  	width: 100%;
+  	max-width: 100%;
+  	gap: .375rem;
+  	box-sizing: border-box;
+  	overflow: hidden;	
+}
+
+.aonTextareaBoxLabel > span{
+	position: inherit;
+}
+
 #aonLoginUserTitle,
 #aonLoginPasswordTitle {
 	font-family: "Inter-regular", sans-serif;
@@ -1287,7 +1305,7 @@ ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover span {
 }
 
 .aonInputIconLabel{
-	top: 25px;
+	top: 21px;
 }
 
 .aonDashboardButton span {
@@ -1327,6 +1345,18 @@ ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover span {
 	border-radius: .375rem;
 	background-color: var(--aonBackgroundColor2);
 }
+
+#aonInvoiceRegistryAddressAddIconButton {
+	top: 15px;
+}
+
+#aonInvoiceWithholdingLabel {
+	top: 15px;
+}
+
+/* #aonInvoiceSheetDataGeneral {
+	display: block !important;
+} */
 
 #aonInvoiceHomeNewIncomeButton,
 #aonInvoiceHomeNewExpenseButton,
@@ -1388,6 +1418,7 @@ i[id$="ToolbarHeaderToolSectionAddButtonIcon"],
 i[id$="ToolbarHeaderToolSectionSearchAdvancedButtonIcon"],
 i[id$="ToolbarHeaderToolSectionBackButtonIcon"],
 i[id$="ToolbarHeaderToolSectionDeleteButtonIcon"],
+i[id$="ToolbarHeaderToolSectionRejectButtonIcon"],
 i[id$="ToolbarHeaderToolSectionPreviousButtonIcon"],
 i[id$="ToolbarHeaderToolSectionNextButtonIcon"],
 i[id$="ToolbarHeaderToolSectionOptionsButtonIcon"],
@@ -1498,7 +1529,7 @@ i[id$="RegistryRemoveRegistryIcon"] {
 }
 
 i[id$="ToolbarHeaderToolSectionRejectButtonIcon"]{
-	mask-image: url('/icons/info.svg') ;
+	mask-image: url('/icons/report.svg') ;
 }
 
 i[id$="ToolbarHeaderToolSectionAcceptButtonIcon"]{
@@ -1610,13 +1641,21 @@ i[id$="aonOfficePanelToolbarHeaderToolSectionSearchAdvancedButtonIcon"] {
   border-radius: 0px;
 }
 
-
-
+td .aonCheckbox  {
+	margin-left: 9px;
+}
 
 .aonCheckbox >span::before {
 	width: 14px;
 	height: 14px;
 	border: 1px solid;
+	margin-left: 1.5px;
+ 	margin-top: 3px;
+}
+
+.aonCheckbox > input {
+	left: -11px;
+	top: -9px;
 }
 
 /*=========================== Right Panel Styles  ========================== */
@@ -1976,6 +2015,14 @@ aon-right-panel {
 .aonInputBoxLabel > input {
 	border-radius: .375rem !important;
 	border: .0625rem solid #cbd5e1 ;
+	height: 2.5rem;
+}
+
+.aonTextareaBoxLabel > textarea {
+	border-radius: .375rem !important;
+	border: .0625rem solid #cbd5e1 ;
+	height: 2.5rem;
+	min-height: 2.5rem;
 }
 
 /* ========================== Office Styles  ========================== */
@@ -2172,12 +2219,12 @@ aon-new-fixed-button .newFixedButton .plus {
   	background-color: white;
 }
 
-#aonHelpSwitchSupport > .aonSwitch > span::before {
+.aonSwitch > span::before {
     content: "";
     float: right;
     border-radius: 7px;
-    width: 3rem;
-    height: 1.8rem;
+    width: 2.3rem;
+    height: 1.3rem;
     
     background-color: #cbd5e1;
     box-shadow: inset 0 .1875rem .3125rem rgba(126, 126, 126, .3), inset 0 -0.1875rem .3125rem hsla(0, 0%, 100%, .7);
@@ -2186,31 +2233,30 @@ aon-new-fixed-button .newFixedButton .plus {
     transition: background-color .3s;
 }
 
-#aonHelpSwitchSupport > .aonSwitch > span::after {
+.aonSwitch > span::after {
     content: "";
     position: absolute;
     top: 6px;
-    height: 1.3rem;
-    width: 1.3rem;
-    left: 1rem;
+    height: 1rem;
+    width: 1rem;
+    right: 1.1rem;
     bottom: .125rem;
     border-radius: 50%;
     transition: transform .3s;
 }
 
-#aonHelpSwitchSupport > .aonSwitch > input,
-#aonHelpSwitchSupport > .aonSwitch > input:checked {
+.aonSwitch > input,
+.aonSwitch > input:checked {
     background-color: transparent;
 }
 
-#aonHelpSwitchSupport > .aonSwitch > input:checked + span::before {
+.aonSwitch > input:checked + span::before {
 	background-color: #cbd5e1;
 }
 
-#aonHelpSwitchSupport > .aonSwitch > input:checked + span::after {
+.aonSwitch > input:checked + span::after {
 	background-color: var(--aonHeaderBackgroundColor);
 }
-
 
 aon-input[readonly="true"] input, 
 aon-input[disabled="true"] input, 
