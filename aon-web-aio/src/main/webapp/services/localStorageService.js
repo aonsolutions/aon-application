@@ -73,7 +73,7 @@ export const closeSession = () => {
     setPortalChecked(portalChecked);
 }
 
-export const getLanguage = () => get(AON_LANGUAGE);
+export const getLanguage = () => get(AON_LANGUAGE) || 'es';
 
 export const setLanguage = (value) => {
     set(AON_LANGUAGE, value);
