@@ -476,7 +476,7 @@ export class AonDesktop extends AonElement {
 
 		// Content
 		let content = this.createElement(TAG.DIV);
-		content.id = "content";
+		content.id = "aonDesktopMainContent";
 		content.style.margin = '0 1rem';
 		// aonDesktop.setContent(content);
 		this.appendChild(content);

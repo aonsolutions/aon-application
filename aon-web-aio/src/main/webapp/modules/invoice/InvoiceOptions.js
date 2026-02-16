@@ -682,6 +682,7 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     id: 'FutureIncomesList',
     title: MSG.LIST,
     name: MSG.LIST,
+    opened: true,
     options: [FUTURE_INVOICE_ISSUED_BETA, FUTURE_PROFORMA_INVOICES, OTHER_INCOMES, OFFERS ]
   }
 
@@ -728,6 +729,7 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     id: 'FutureIncomesListTrial',
     title: MSG.LIST,
     name: MSG.LIST,
+    opened: true,
     options: [FUTURE_INVOICE_ISSUED_BETA, FUTURE_PROFORMA_INVOICES, OTHER_INCOMES ]
   }
 
@@ -742,6 +744,7 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     id: 'FutureExpensesList',
     title: MSG.LIST,
     name: MSG.LIST,
+    opened: true,
     options: [FUTURE_INVOICE_RECEIVED_BETA, FUTURE_RAWDOC_INBOX_RECEIVED_NEW, FUTURE_INVOICE_TICKET, FUTURE_RAWDOC_INBOX_TICKET_NEW, OTHER_EXPENSES] 
   }
 
