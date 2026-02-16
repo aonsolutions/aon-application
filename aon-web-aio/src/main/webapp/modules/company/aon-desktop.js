@@ -283,9 +283,9 @@ export class AonDesktop extends AonElement {
 		let company = JSON.parse(localStorage.getItem("company"));
 		this.innerHTML = /*html*/`
           <input id='${this.INPUT_INVOICE_FILE}' style='display:none;' type='file' name='file' multiple>
-          <input id='${this.INPUT_DOCUMENT_FILE}' style='display:none;' type='file' name='file' multiple>
-          <aon-application id="${this.AON_DESKTOP}" main="true"></aon-application>`;
-		let aonDesktop = this.getElement(this.AON_DESKTOP);
+          <input id='${this.INPUT_DOCUMENT_FILE}' style='display:none;' type='file' name='file' multiple>`;
+        //   <aon-application id="${this.AON_DESKTOP}" main="true"></aon-application>`;
+		// let aonDesktop = this.getElement(this.AON_DESKTOP);
 
 		let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
 		inputInvoiceFile.addEventListener(EVENT.CHANGE, ({ target }) => {
@@ -297,50 +297,50 @@ export class AonDesktop extends AonElement {
 			this.uploadDocumentsDesktop(undefined, target.files);
 		});
 
-		let divLogo = this.createElement(TAG.DIV);
-		divLogo.id = this.id + 'Logo';
-		aonDesktop.getSidenav().appendChild(divLogo);
-		if (LS.isNewTheme()) {
-			aonDesktop.getSidenav().style.display = 'none';
-		}
-		let filter = {
-			attachType: 'registry',
-			attachModule: company.registry,
-			type: 0
-		};
+		// let divLogo = this.createElement(TAG.DIV);
+		// divLogo.id = this.id + 'Logo';
+		// aonDesktop.getSidenav().appendChild(divLogo);
+		// if (LS.isNewTheme()) {
+		// 	aonDesktop.getSidenav().style.display = 'none';
+		// }
+		// let filter = {
+		// 	attachType: 'registry',
+		// 	attachModule: company.registry,
+		// 	type: 0
+		// };
 
-		let parentFilter = {
-			attachType: 'registry',
-			domainId: company.parentId,
-			type: 0
-		};
-		let f = this.getDur().hasCustomView() || this.getDur().isEmployee()
-			? filter : parentFilter;
+		// let parentFilter = {
+		// 	attachType: 'registry',
+		// 	domainId: company.parentId,
+		// 	type: 0
+		// };
+		// let f = this.getDur().hasCustomView() || this.getDur().isEmployee()
+		// 	? filter : parentFilter;
 
-		getAttach(f).then(r => {
-			let attach = new Attach(r);
-			if (attach && attach.id && attach.getContentType().includes("image")) {
-				divLogo.style.maxHeight = '60px';
-				divLogo.style.margin = '10px';
-				divLogo.style.justifyContent = 'center';
+		// getAttach(f).then(r => {
+		// 	let attach = new Attach(r);
+		// 	if (attach && attach.id && attach.getContentType().includes("image")) {
+		// 		divLogo.style.maxHeight = '60px';
+		// 		divLogo.style.margin = '10px';
+		// 		divLogo.style.justifyContent = 'center';
 
-				let data = {
-					domain_id: attach.getDomain().getId(),
-					attach_type: attach.getAttachType(),
-					domain_name: attach.getDomain().getName(),
-					id: attach.getId()
-				};
-				let url = location.origin + '/ms/api/file/' + btoa(JSON.stringify(data));
+		// 		let data = {
+		// 			domain_id: attach.getDomain().getId(),
+		// 			attach_type: attach.getAttachType(),
+		// 			domain_name: attach.getDomain().getName(),
+		// 			id: attach.getId()
+		// 		};
+		// 		let url = location.origin + '/ms/api/file/' + btoa(JSON.stringify(data));
 
-				let img = this.createElement(TAG.IMG);
-				img.id = this.id + 'LogoImg';
-				img.style.maxHeight = '60px';
-				img.style.maxWidth = '100%';
-				img.style.borderRadius = '10px';
-				img.src = url;
-				divLogo.appendChild(img);
-			}
-		});
+		// 		let img = this.createElement(TAG.IMG);
+		// 		img.id = this.id + 'LogoImg';
+		// 		img.style.maxHeight = '60px';
+		// 		img.style.maxWidth = '100%';
+		// 		img.style.borderRadius = '10px';
+		// 		img.src = url;
+		// 		divLogo.appendChild(img);
+		// 	}
+		// });
 
 		/*if(this.getDur().hasCustomView()){
 			getAttach(parentFilter).then(r => {
@@ -360,46 +360,46 @@ export class AonDesktop extends AonElement {
 			});
 		}*/
 
-		if (this.isBeta() && !this.getDur().hasOffice()) {
-			let myGestor = {
-				id: 'Gestor',
-				name: MSG.MY_MANAGER,
-				options: []
-			};
-			aonDesktop.addSidenavOptions3(myGestor);
-			getOfficeProjects({}).then(offices => {
-				this.clearElementById(aonDesktop.SIDENAV + myGestor.id + 'List');
-				offices.forEach(office => {
-					if (office.projects.length > 0) {
-						office.projects.forEach((item, idx) => {
-							let p = new Project(item);
-							let h = p.getProjectHolder().getTaskHolder().name || p.getProjectHolder().getWorkgroup().getDescription();
-							let option = {
-								name: p.getType().getDescription() + (h ? ' - ' + h : ''),
-								icon: MATERIAL_ICONS.SUPPORT_AGENT,
-								fn: () => { },
-								actions: [{
-									id: 'Contact' + idx,
-									icon: 'chat',
-									action: () => {
-										let aonMessengerChat = new AonMessenger();
-										aonMessengerChat.data = { source: TASK_SOURCE.QUERY, project: item, domain: item.domain };
-										this.rootPanel(aonMessengerChat);
-									}
-								}]
-							};
-							aonDesktop.addSidenavOptionsListValue(myGestor, option);
-						});
-					}
-				});
-			});
-		}
+		// if (this.isBeta() && !this.getDur().hasOffice()) {
+		// 	let myGestor = {
+		// 		id: 'Gestor',
+		// 		name: MSG.MY_MANAGER,
+		// 		options: []
+		// 	};
+		// 	aonDesktop.addSidenavOptions3(myGestor);
+		// 	getOfficeProjects({}).then(offices => {
+		// 		this.clearElementById(aonDesktop.SIDENAV + myGestor.id + 'List');
+		// 		offices.forEach(office => {
+		// 			if (office.projects.length > 0) {
+		// 				office.projects.forEach((item, idx) => {
+		// 					let p = new Project(item);
+		// 					let h = p.getProjectHolder().getTaskHolder().name || p.getProjectHolder().getWorkgroup().getDescription();
+		// 					let option = {
+		// 						name: p.getType().getDescription() + (h ? ' - ' + h : ''),
+		// 						icon: MATERIAL_ICONS.SUPPORT_AGENT,
+		// 						fn: () => { },
+		// 						actions: [{
+		// 							id: 'Contact' + idx,
+		// 							icon: 'chat',
+		// 							action: () => {
+		// 								let aonMessengerChat = new AonMessenger();
+		// 								aonMessengerChat.data = { source: TASK_SOURCE.QUERY, project: item, domain: item.domain };
+		// 								this.rootPanel(aonMessengerChat);
+		// 							}
+		// 						}]
+		// 					};
+		// 					aonDesktop.addSidenavOptionsListValue(myGestor, option);
+		// 				});
+		// 			}
+		// 		});
+		// 	});
+		// }
 
-		if (company.parentId || company.type !== 'CONSULTANCY') {
-			this.getSidenavActivity();
-		}
+		// if (company.parentId || company.type !== 'CONSULTANCY') {
+		// 	this.getSidenavActivity();
+		// }
 
-		let classicOptions = [];
+		// let classicOptions = [];
 
 		// if(!localStorage.getItem('aon_jsf') && this.getDur().isAon()){
 		// 	classicOptions.push({
@@ -416,69 +416,70 @@ export class AonDesktop extends AonElement {
 		// 	});
 		// }
 
-		if (this.getDur().isAon()) {
-			classicOptions.push({
-				name: 'aonSolutions',
-				img: 'assets/aon.png',
-				style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION_AON,
-				fn: () => open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'))
-			});
-		}
+		// if (this.getDur().isAon()) {
+		// 	classicOptions.push({
+		// 		name: 'aonSolutions',
+		// 		img: 'assets/aon.png',
+		// 		style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION_AON,
+		// 		fn: () => open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'))
+		// 	});
+		// }
 
-		if (this.getDur().isBidoq()) {
-			classicOptions.push({
-				name: 'Bidoq',
-				img: 'assets/apps/bidoq.png',
-				style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION,
-				fn: () => {
-					getAccessBidoq().then(r => {
-						const { datos } = r;
-						if (datos && datos.ruta) {
-							open(datos.respuesta);
-						} else {
-							open('https://mispapeles.es/');
-						}
-					});
-				}
-			});
-		}
+		// if (this.getDur().isBidoq()) {
+		// 	classicOptions.push({
+		// 		name: 'Bidoq',
+		// 		img: 'assets/apps/bidoq.png',
+		// 		style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION,
+		// 		fn: () => {
+		// 			getAccessBidoq().then(r => {
+		// 				const { datos } = r;
+		// 				if (datos && datos.ruta) {
+		// 					open(datos.respuesta);
+		// 				} else {
+		// 					open('https://mispapeles.es/');
+		// 				}
+		// 			});
+		// 		}
+		// 	});
+		// }
 
-		if (this.getDur().isSelfconta()) {
-			classicOptions.push({
-				name: 'Selfconta',
-				img: 'assets/apps/selfconta.png',
-				style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION,
-				fn: () => open('https://mispapeles.es/selfconta/')
-			});
-		}
+		// if (this.getDur().isSelfconta()) {
+		// 	classicOptions.push({
+		// 		name: 'Selfconta',
+		// 		img: 'assets/apps/selfconta.png',
+		// 		style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION,
+		// 		fn: () => open('https://mispapeles.es/selfconta/')
+		// 	});
+		// }
 
-		if (this.getDur().isSaltra()) {
-			classicOptions.push({
-				name: 'Saltra',
-				img: 'assets/apps/saltra.png',
-				style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION,
-				fn: () => open('https://app.saltra.es/')
-			});
-		}
+		// if (this.getDur().isSaltra()) {
+		// 	classicOptions.push({
+		// 		name: 'Saltra',
+		// 		img: 'assets/apps/saltra.png',
+		// 		style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION,
+		// 		fn: () => open('https://app.saltra.es/')
+		// 	});
+		// }
 
-		if (classicOptions.length > 0)
-			aonDesktop.addSidenavOptions(MSG.CLASSIC_VIEW.toUpperCase(), classicOptions);
+		// if (classicOptions.length > 0)
+		// 	aonDesktop.addSidenavOptions(MSG.CLASSIC_VIEW.toUpperCase(), classicOptions);
 
-		if (this.getDur().isTimecontrol() && !LS.isNewTheme()) {
-			getTimeControl().then(r => {
-				let aonSign = new AonSign();
-				aonDesktop.addSidenavWidget(MSG.TIMECONTROL.toUpperCase(), aonSign);
-				aonSign.buildSignin(r);
-				let aonHeader = this.getElement('aonHeader');
-				aonHeader.timeControlStatus(r);
-			});
-		}
+		// if (this.getDur().isTimecontrol() && !LS.isNewTheme()) {
+		// 	getTimeControl().then(r => {
+		// 		let aonSign = new AonSign();
+		// 		aonDesktop.addSidenavWidget(MSG.TIMECONTROL.toUpperCase(), aonSign);
+		// 		aonSign.buildSignin(r);
+		// 		let aonHeader = this.getElement('aonHeader');
+		// 		aonHeader.timeControlStatus(r);
+		// 	});
+		// }
 
 		// Content
 		let content = this.createElement(TAG.DIV);
-		content.id = "content";
+		content.id = "aonDesktopMainContent";
 		content.style.margin = '0 1rem';
-		aonDesktop.setContent(content);
+		// aonDesktop.setContent(content);
+		this.appendChild(content);
 
 		// Content data
 		let contentData = this.createElement(TAG.DIV);

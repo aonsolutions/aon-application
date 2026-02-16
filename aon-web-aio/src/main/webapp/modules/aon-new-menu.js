@@ -385,8 +385,7 @@ export class AonNewMenu extends AonElement {
 		aonMenuTopnav.id = this.AON_MENU_TOPNAV;
 		aonMenuTopnav.className = CSS.AON_MENU_TOPNAV;
 		this.appendChild(aonMenuTopnav);
-		aonMenuTopnav.classList.add("aonNewMenuTopNav");
-		this.getRootPanel().style.marginTop = '1px'; //'69px';
+		aonMenuTopnav.classList.add(CSS.AON_MENU_TOP_NAV_HIDE);
 		this.buildMenuTopnav();
 
 		let header = this.getElement('aonHeaderWeb');
@@ -630,34 +629,14 @@ export class AonNewMenu extends AonElement {
 
 	showTopNav() {
 		let topnav = this.getElement(this.AON_MENU_TOPNAV);
-		let rootPanel = this.getElement("rootPanel");
-		let rightPanel = this.getElement("aonRightPanel");
-
-		topnav.style.height = '68px';
-		rootPanel.style.marginTop = `${rootPanel.style.marginTop + 69}px`;
-		if (rightPanel) {
-			rightPanel.style.marginTop = topnav.offsetHeight;
-			rightPanel.style.height = `calc(100vh - 61px)`;
-
-		}
-
-		rootPanel.style.marginTop = "68px";
-		rootPanel.classList.add('rootPanelTopbar');
-		//rootPanel.style.height = `calc(100vh - 115px )`;
+		topnav.classList.remove(CSS.AON_MENU_TOP_NAV_HIDE);
+		topnav.classList.add(CSS.AON_MENU_TOP_NAV_VISIBLE);
 	}
 
 	hideTopNav() {
 		let topnav = this.getElement(this.AON_MENU_TOPNAV);
-		let rootPanel = this.getElement("rootPanel");
-		let rightPanel = this.getElement("aonRightPanel");
-		topnav.style.height = '0px';
-		if (rightPanel) {
-			rightPanel.style.marginTop = "1px";
-			rightPanel.style.height = `calc(100vh - 49px)`;
-		}
-		rootPanel.style.marginTop = "1px";
-
-		rootPanel.style.height = `calc(100vh - 50px)`;
+		topnav.classList.remove(CSS.AON_MENU_TOP_NAV_VISIBLE);
+		topnav.classList.add(CSS.AON_MENU_TOP_NAV_HIDE);
 	}
 
 	isTopNavVisible() {
@@ -694,7 +673,6 @@ export class AonNewMenu extends AonElement {
 		div.title = app.title;
 		let header = this.getElement("aonHeaderWeb");
 		let welcome = this.getElement("aonCompanyTabFilter");
-
 
 		if (app.symbol) {
 			let icon = this.createElement(TAG.SPAN);
