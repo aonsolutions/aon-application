@@ -217,8 +217,26 @@ class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isAEAT( today ) );
 		assertFalse( icc.isUnknown( today ) );
 		
-		AonCoreException e = assertThrows(AonCoreException.class,  () -> InvoiceCommunicationDAO.enableLroe( getCtx(),getDomainId(), today ) );
-		assertEquals( InvoiceCommunicationError.ICC_5013.getMessage(), e.getMessage() );
+		InvoiceCommunicationConfiguration icc2 = InvoiceCommunicationDAO.enableLroe( getCtx(),getDomainId(), today );
+		printIcc(icc2);
+		assertTrue( icc2.isBizkaia( today ) );
+		assertTrue( icc2.isLroe( today ) );
+		
+		assertTrue( icc2.isNavarra( lastMonthFirstDay ) );
+		assertTrue( icc2.isSif( lastMonthFirstDay ) );
+		
+		assertFalse( icc2.isNoVerifactu( today ) );
+		assertFalse( icc2.isNoSif( today ) );
+		assertFalse( icc2.isSif( today ) );
+		assertFalse( icc2.isTbai( today ) );
+		assertFalse( icc2.isSii( today ) );
+		
+		assertFalse( icc2.isCanarias( today ) );
+		assertFalse( icc2.isAEAT( today ) );
+		assertFalse( icc2.isGipuzkoa( today ) );
+		assertFalse( icc2.isAraba( today ) );
+		assertFalse( icc2.isNavarra( today ) );
+		assertFalse( icc2.isUnknown( today ) );
 	}
 
 	@Test
