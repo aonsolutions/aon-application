@@ -1,8 +1,6 @@
 package net.aonsolutions.aon.invoice.communication.visitor;
  
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
@@ -10,10 +8,8 @@ import java.util.Date;
 import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 

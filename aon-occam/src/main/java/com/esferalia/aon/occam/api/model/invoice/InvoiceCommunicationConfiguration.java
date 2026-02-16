@@ -101,14 +101,20 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	public boolean isCanarias() {return isCanarias(new Date());}
 	public boolean isUnknown()  {return isUnknown(new Date());}
 
-	public boolean isBizkaia(Date atDate) 	{return getAdministration(atDate).filter( a -> a.isBizkaia()).isPresent();}
-	public boolean isAraba(Date atDate) 	{return getAdministration(atDate).filter( a -> a.isAraba()).isPresent();}
-	public boolean isGipuzkoa(Date atDate) 	{return getAdministration(atDate).filter( a -> a.isGipuzkoa()).isPresent();}
-	public boolean isNavarra(Date atDate) 	{return getAdministration(atDate).filter( a -> a.isNavarra()).isPresent();}
-	public boolean isAEAT(Date atDate) 		{return getAdministration(atDate).filter( a -> a.isAEAT()).isPresent();}
-	public boolean isCanarias(Date atDate) 	{return getAdministration(atDate).filter( a -> a.isCanarias()).isPresent();}
-	public boolean isUnknown(Date atDate) 	{return getAdministration(atDate).filter( a -> a.isUnknown()).isPresent() 
-												 || getAdministration(atDate).isEmpty();}
+	public boolean isBizkaia(Date atDate) 		{return getAdministration(atDate).filter( a -> a.isBizkaia()).isPresent();}
+	public boolean isNotBizkaia(Date atDate)	{return !isBizkaia( atDate);}
+	public boolean isAraba(Date atDate) 		{return getAdministration(atDate).filter( a -> a.isAraba()).isPresent();}
+	public boolean isNotAraba(Date atDate) 		{return !isAraba( atDate);}
+	public boolean isGipuzkoa(Date atDate) 		{return getAdministration(atDate).filter( a -> a.isGipuzkoa()).isPresent();}
+	public boolean isNotGipuzkoa(Date atDate)	{return !isGipuzkoa( atDate);}
+	public boolean isNavarra(Date atDate) 		{return getAdministration(atDate).filter( a -> a.isNavarra()).isPresent();}
+	public boolean isNotNavarra(Date atDate)	{return !isNavarra( atDate);}
+	public boolean isAEAT(Date atDate) 			{return getAdministration(atDate).filter( a -> a.isAEAT()).isPresent();}
+	public boolean isNotAEAT(Date atDate) 		{return !isAEAT( atDate);}
+	public boolean isCanarias(Date atDate) 		{return getAdministration(atDate).filter( a -> a.isCanarias()).isPresent();}
+	public boolean isNotCanarias(Date atDate)	{return !isCanarias( atDate);}
+	public boolean isUnknown(Date atDate) 		{return getAdministration(atDate).filter( a -> a.isUnknown()).isPresent() || getAdministration(atDate).isEmpty();}
+	public boolean isNoUnknown() 				{return !isUnknown(new Date());}
 
 	// [ --------------- STREAMS -----------------]
 	public Stream<CommunicationData> getTbaiStream() 		{return dataStream().filter( cc -> cc.isTBai() );}

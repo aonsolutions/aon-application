@@ -781,7 +781,7 @@ public class InvoiceCommunicationDAO {
 		@Override 
 		public Void visitVERIFACTU() {
 			if (isNotEnabled( InvoiceCommunicationType.VERIFACTU ) ) {
-				if (!ec.config.isAEAT(ec.date) && !ec.config.isCanarias(ec.date)) {
+				if (ec.config.isNotAEAT(ec.date) && ec.config.isNotCanarias(ec.date)) {
 					throw new AonCoreException( InvoiceCommunicationError.ICC_5001.getMessage() );
 				}
 				if (ec.config.isLroe( ec.date )) throw new AonCoreException( InvoiceCommunicationError.ICC_5011.getMessage() );
@@ -807,7 +807,7 @@ public class InvoiceCommunicationDAO {
 		@Override 
 		public Void visitNO_VERIFACTU() {
 			if (isNotEnabled( InvoiceCommunicationType.NO_VERIFACTU ) ) {
-				if (!ec.config.isAEAT(ec.date) && !ec.config.isCanarias(ec.date)) {
+				if (ec.config.isNotAEAT(ec.date) && ec.config.isNotCanarias(ec.date)) {
 					throw new AonCoreException( InvoiceCommunicationError.ICC_5001.getMessage() );
 				}
 				if (ec.config.isLroe( ec.date )) throw new AonCoreException( InvoiceCommunicationError.ICC_5012.getMessage() );
@@ -835,7 +835,7 @@ public class InvoiceCommunicationDAO {
 		@Override 
 		public Void visitSIF() { 
 			if (isNotEnabled( InvoiceCommunicationType.SIF ) ) {
-				if (!ec.config.isNavarra(ec.date) ) {
+				if (ec.config.isNotNavarra(ec.date) ) {
 					throw new AonCoreException( InvoiceCommunicationError.ICC_5005.getMessage() );
 				}
 				ec.config.getNoSifData(ec.date).ifPresent( d -> closeData(d, ec.date));
@@ -844,12 +844,44 @@ public class InvoiceCommunicationDAO {
 			return null; 
 		}
 		
-		// ------ TODO ---------------
-		@Override public Void visitSII() { enable(); return null; }
-		@Override public Void visitTBAI() { enable(); return null; }
-		@Override public Void visitLROE() { enable(); return null; }
-		// ---------------------------
-		// ---------------------------
+		@Override 
+		public Void visitLROE() {
+			if (isNotEnabled( InvoiceCommunicationType.LROE ) ) {
+				if (ec.config.isNotBizkaia(ec.date) ) {
+					throw new AonCoreException( InvoiceCommunicationError.ICC_5006.getMessage() );
+				}
+				ec.config.getNoSifData(ec.date).ifPresent( d -> closeData(d, ec.date));
+				ec.config.getSifData(ec.date).ifPresent( d -> closeData(d, ec.date));
+				enable(); 
+			}
+			return null; 
+		}
+
+		@Override 
+		public Void visitTBAI() {
+			if (isNotEnabled( InvoiceCommunicationType.TBAI ) ) {
+				if (ec.config.isNotAraba(ec.date) && ec.config.isNotGipuzkoa(ec.date)) {
+					throw new AonCoreException( InvoiceCommunicationError.ICC_5003.getMessage() );
+				}
+				ec.config.getNoSifData(ec.date).ifPresent( d -> closeData(d, ec.date));
+				ec.config.getSifData(ec.date).ifPresent( d -> closeData(d, ec.date));
+				enable();
+			}
+			return null; 
+		}
+		
+		
+		@Override 
+		public Void visitSII() {
+			if (isNotEnabled( InvoiceCommunicationType.SII ) ) {
+				if (ec.config.isBizkaia(ec.date) || ec.config.isUnknown( ec.date )) {
+					throw new AonCoreException( InvoiceCommunicationError.ICC_5004.getMessage() );
+				}
+				ec.config.getNoSifData(ec.date).ifPresent( d -> closeData(d, ec.date));
+				enable(); 
+			}
+			return null; 
+		}
 		
 		@Override public Void visitSERES() { return null; }
 		@Override public Void visitEMAIL() { return null; }

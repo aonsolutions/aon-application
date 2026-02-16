@@ -19,8 +19,6 @@ abstract class ICCAbstractEnablingTest extends AbstractVerifactuTest {
 
 	@Override protected Environment getEnvironment() { return ICC_CONFIG_ENV; }
 	
-	private Integer enterpriseId = null;
-
 	protected void printIcc(InvoiceCommunicationConfiguration icc) {
 		System.out.println( " ------- InvoiceCommunicationConfiguration" );
 		icc.dataStream()

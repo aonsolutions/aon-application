@@ -1,15 +1,12 @@
 package net.aonsolutions.aon.invoice.communication.visitor;
  
 import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
-import static com.esferalia.aon.occam.api.model.EnterpriseDataNames.ICC_ADMINISTRATION;
-import static com.esferalia.aon.occam.api.model.EnterpriseDataNames.ICC_SIF;
 import static com.esferalia.aon.occam.api.model.type.Administration.ALAVA;
 import static com.esferalia.aon.occam.api.model.type.Administration.BIZKAIA;
 import static com.esferalia.aon.occam.api.model.type.Administration.CANARIAS;
 import static com.esferalia.aon.occam.api.model.type.Administration.COMMON_TERRITORY;
 import static com.esferalia.aon.occam.api.model.type.Administration.GIPUZKOA;
 import static com.esferalia.aon.occam.api.model.type.Administration.NAVARRA;
-import static org.assertj.core.api.Assertions.in;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -17,24 +14,16 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
-import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.EnterpriseData;
 import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
-import com.esferalia.aon.occam.api.model.payroll.Enterprise;
 import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.EnterpriseDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.EnterpriseDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -47,8 +36,6 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 
 	@Override protected Environment getEnvironment() { return ICC_CONFIG_ENV; }
 	
-	private Integer enterpriseId = null;
-
 	private void printIcc(InvoiceCommunicationConfiguration icc) {
 		System.out.println( " ------- InvoiceCommunicationConfiguration" );
 		icc.dataStream()
@@ -76,42 +63,6 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		return icc;
 	}
 	
-	private void insertFake(Administration admon, Date date) {
-		insertFake( ICC_ADMINISTRATION, admon.name(), date );
-	}
-	private void insertFake(EnterpriseDataNames name, Date date) {
-		insertFake( name, null, date );
-	}
-	private void insertFake(EnterpriseDataNames name, String expr, Date date) {
-		getCtx().getDslContext().insertInto(ENTERPRISE_DATA)
-			.set(ENTERPRISE_DATA.DOMAIN, getDomainId())
-			.set(ENTERPRISE_DATA.ENTERPRISE, getEnterpriseId() )
-			.set(ENTERPRISE_DATA.NAME, name.name())
-			.set(ENTERPRISE_DATA.START_DATE, AonDateUtils.toSql( date) )
-			.set(ENTERPRISE_DATA.CREATION_USER, getUser()) 
-			.set(ENTERPRISE_DATA.CREATION_DATE, new Timestamp( System.currentTimeMillis()))
-			.set(ENTERPRISE_DATA.MODIFICATION_USER, getUser()) 
-			.set(ENTERPRISE_DATA.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
-		.execute();
-	}
-	
-	private Integer getEnterpriseId() {
-		if (enterpriseId == null) {
-			Company company = CompanyDAO.getByDomain(getCtx(), getDomainId());
-			if (company != null) {
-				Enterprise enterprise = EnterpriseDAO.get(getCtx(), f -> 
-					f.getDomainProperty().eq(getDomainId())
-					.and(f.getIdProperty().eq(company.getId())));
-				if (enterprise != null) {
-					enterpriseId = enterprise.getId();
-				} else {
-					throw new AonCoreException("No enterprise found for domain " + getDomainId());
-				}
-			}
-		}
-		return enterpriseId;
-	}
-
 	@Test
 	void test_empty_config() {
 		InvoiceCommunicationConfiguration icc = resetAndGetIcc();
