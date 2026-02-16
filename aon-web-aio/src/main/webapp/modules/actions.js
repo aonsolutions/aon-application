@@ -393,6 +393,13 @@ export const SEND_INVOICE = {
     icon: MATERIAL_ICONS.MAIL
 };
 
+export const COMMUNICATE_INVOICE = {
+    id: CONSTANT.COMMUNICATE_INVOICE.initCap(),
+    name: MSG.COMMUNICATE_INVOICE,
+    title: MSG.COMMUNICATE_INVOICE,
+    icon: MATERIAL_ICONS.SEND
+};
+
 // export const TICKETBAI = {
 //     id: 'Ticketbai',
 //     name: MSG.TICKETBAI,

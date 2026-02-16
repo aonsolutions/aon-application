@@ -51,9 +51,9 @@ export class AonNewNumber extends AonNewInput {
                 input.value = this.onBlur2(newValue);
             if (input && newValue === '') input.value = '';
             let desc = this.getElement(this.TITLE);
-            if(desc && input.value.length > 0) {
-              desc.classList.add(CSS.AON_INPUT_NOT_EMPTY);
-            } else if(desc) desc.classList.remove(CSS.AON_INPUT_NOT_EMPTY);
+            // if(desc && input.value.length > 0) {
+            //   desc.classList.add(CSS.AON_INPUT_NOT_EMPTY);
+            // } else if(desc) desc.classList.remove(CSS.AON_INPUT_NOT_EMPTY);
         }
         else if (CONSTANT.DISABLED === name) {
             let input = this.getElement(this.INPUT);

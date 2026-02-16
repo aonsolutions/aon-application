@@ -70,8 +70,8 @@ export class AonFiscalMenu extends AonSuiteMenu {
 		await this.initInvoiceConfiguration();
         this.options = [{
             title: 'IVA AEAT',
-            visible: this.icc?.isCommonTerritory(),
-            disabled: !this.icc?.isCommonTerritory(),
+            visible: this.icc?.isCommonTerritory() || this.icc?.isCanarias(),
+            disabled: !(this.icc?.isCommonTerritory() || this.icc?.isCanarias()),
             options: [{
                 description: "Modelo 303 ",
                 title: "IVA Autoliquidación",

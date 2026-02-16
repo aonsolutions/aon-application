@@ -93,7 +93,7 @@ export const s3UploadInvoice = (company, file, jobId, data, success, error) => {
     } catch(e) {
         base64 = btoa(encodeURIComponent(name)) + (ext || '');
     } 
-
+    base64 = base64.replace(/=/g, '').replace(/\//g, '_').replace(/\+/g, '-');  
     if(data.activity) {
         formData.append('key', 
             'invoices'

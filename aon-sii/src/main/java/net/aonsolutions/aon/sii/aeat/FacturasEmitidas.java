@@ -237,8 +237,8 @@ public class FacturasEmitidas extends SIIBuilt {
 			Invoice rectificada = AON.getInvoice(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(vat.getRectificationInvoice()));
 			// SOLO 1 RECTIFICADA PARA CADA RECTIFICATIVA! 
 			IDFacturaARType a2 = new IDFacturaARType();
-			
-			a2.setFechaExpedicionFacturaEmisor(AonDateUtils.format(rectificada.getExpDate(), "dd-MM-yyyy")); //TODO
+			Date recExpDate = rectificada.getExpDate() != null ? rectificada.getExpDate() : rectificada.getIssueDate();
+			a2.setFechaExpedicionFacturaEmisor(AonDateUtils.format(recExpDate, "dd-MM-yyyy"));
 			a2.setNumSerieFacturaEmisor(rectificada.getReferenceCode());
 			fr.getIDFacturaRectificada().add(a2);
 			fet.setFacturasRectificadas(fr);
