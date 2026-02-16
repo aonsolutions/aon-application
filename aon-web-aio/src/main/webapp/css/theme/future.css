@@ -73,6 +73,41 @@
 	margin-left: 68px;
 }
 
+#aonHome:has(.aonMenuTopNavVisible) .rootPanel {
+	height: calc(100vh - 136px);
+	margin-top: 68px;
+}
+
+#aonHome:has(.aonMenuTopNavHide) .rootPanel {
+	height: calc(100vh - 68px);
+}
+
+#aonHome:has(.aonMenuTopNavVisible) .rightPanel {
+	height: calc(100vh - 136px);
+	margin-top: 69px;
+}
+
+#aonHome:has(.aonMenuTopNavHide) .rightPanel {
+	height: calc(100vh - 68px);
+	margin-top: 1px;
+}
+
+#aonHome:has(.aonMenuTopNavVisible) .aonApplicationContent {
+	height: calc(100vh - 201px);
+}
+
+#aonHome:has(.aonMenuTopNavHide) .aonApplicationContent {
+	height: calc(100vh - 133px);
+}
+
+#aonHome:has(.aonMenuTopNavVisible) .aonContentBeta .aonTable tbody {
+	height: calc(100vh - 301px);
+}
+
+#aonHome:has(.aonMenuTopNavHide) .aonContentBeta .aonTable tbody {
+	height: calc(100vh - 233px);
+}
+
 .aonMenuTopnav {
 	top: 68px; /*4rem;*/
     border-color: var(--aonBackgroundColor);
@@ -674,6 +709,10 @@ aon-configuration-menu .suiteMenuContent  {
 
 /* ========================== App Styles  ========================== */
 
+.aonContentBeta:has(#aonInvoiceHome) {
+  background-color: var(--aonBackgroundColor2) !important;
+}
+
 .aonSidenav,
 .aonToolbar,
 #aonParent .aonContentBeta,
@@ -696,7 +735,7 @@ aon-configuration-menu .suiteMenuContent  {
 #aonWarehouse .aonContentBeta,
 #aonMessenger .aonContentBeta,
 #aonOfficePanel .aonContentBeta {
-	padding: 1.25rem;
+	padding: 1.25rem 1.25rem 0 1.25rem;
 }
 
 .closeSidenav {
@@ -821,11 +860,6 @@ aon-configuration-menu .suiteMenuContent  {
 #aonOfficePanelSidenavTypesNewButtonIconButton {
 	width: 20.5px;
 	height: 20.5px;
-	
-	#i[id$='ToolbarHeaderToolSectionSearchAdvancedButtonIcon'] {
-	
-}
-	
 	background-color: var(--aonTopAppTextColor) !important;
 	mask-size: contain;
 	mask-position: center;
@@ -1640,7 +1674,7 @@ i[id$="aonOfficePanelToolbarHeaderToolSectionSearchAdvancedButtonIcon"] {
 
 .aonTable tbody {
 	padding-left: 0px !important;
-	padding-rigth: 0px !important;
+	padding-right: 0px !important;
 
 }
 
@@ -2270,7 +2304,7 @@ aon-new-fixed-button .newFixedButton .plus {
 .aonSwitch > span::after {
     content: "";
     position: absolute;
-    top: 5px;
+    top: 0.35rem;
     height: 1rem;
     width: 1rem;
     right: 1.1rem;

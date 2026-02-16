@@ -340,7 +340,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	buildToolbarSearchOption(acceptedInvoices) {
-		const btnSearch = this.getApplication().addSearchOption();
+		const btnSearch = this.getApplication().addSearchOption(true);
 		let searchFn = (event) => this.search(event.detail);
 		btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
 		if (acceptedInvoices) {
