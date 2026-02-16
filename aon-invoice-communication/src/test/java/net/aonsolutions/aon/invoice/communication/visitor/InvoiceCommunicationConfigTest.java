@@ -1055,15 +1055,14 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 
 	// Consistency
 	@Test
-	void test_consistency() {
+	void test_verifactu_common_territory_to_canarias() {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableTbaiAraba(getCtx(),getDomainId(), today );
-		insertFake( ALAVA, today );
-		insertFake( ICC_SIF, today );
+		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
+		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableVerifactu( getCtx(),getDomainId(), lastMonthFirstDay );
 		printIcc(icc);
-		icc = InvoiceCommunicationDAO.get(getCtx(),getDomainId() );
-		printIcc(icc);
+		InvoiceCommunicationConfiguration icc2 = InvoiceCommunicationDAO.enableVerifactuCanarias( getCtx(),getDomainId(), today );
+		printIcc(icc2);
 	}
 
 	

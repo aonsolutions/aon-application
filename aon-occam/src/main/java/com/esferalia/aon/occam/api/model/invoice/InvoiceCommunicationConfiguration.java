@@ -8,6 +8,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeAccepter;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -367,11 +369,37 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		return engine.getTypes(this, invoiceType, atDate);
 	}
 	
-	public boolean isCertificateNeeded() {
-		return (isSii() || isVerifactu() || isTbai() || isLroe());
+	public boolean isCertificateNeeded( ) {
+		return isCertificateNeeded( InvoiceType.SALES );
 	}
-	public boolean isCertificateNeeded(InvoiceType type) {
-		return (type.isSales() && isCertificateNeeded())
-			|| (!type.isSales() && (isSii() || isLroe()));
+	public boolean isCertificateNeeded( InvoiceType invoiceType ) {
+		return AonCollectionUtils.stream(getTypes(invoiceType))
+			.anyMatch(t -> 
+				   t == InvoiceCommunicationType.VERIFACTU
+				|| t == InvoiceCommunicationType.LROE
+				|| t == InvoiceCommunicationType.TBAI
+				|| t == InvoiceCommunicationType.SII
+			)
+		;
 	}
+	public Optional<CommunicationData> getData(InvoiceCommunicationType t, Date atDate) {
+		if ( t == null ) return Optional.empty();
+		return t.accept( new InvoiceCommunicationTypeAccepter<Optional<CommunicationData>>() {
+			@Override public Optional<CommunicationData> visitVERIFACTU() { return getVerifactuData(atDate); }
+			@Override public Optional<CommunicationData> visitSII() { return getSiiData(atDate); }
+			@Override public Optional<CommunicationData> visitTBAI() { return getTbaiData(atDate); }
+			@Override public Optional<CommunicationData> visitLROE() { return getLroeData(atDate); }
+			@Override public Optional<CommunicationData> visitNO_VERIFACTU() { return getNoVerifactuData(atDate); }
+			@Override public Optional<CommunicationData> visitSIF() { return getSifData(atDate); }
+			@Override public Optional<CommunicationData> visitSERES() { return Optional.empty(); }
+			@Override public Optional<CommunicationData> visitEMAIL() { return Optional.empty(); }
+			@Override public Optional<CommunicationData> visitCLOSING() { return Optional.empty(); }
+			@Override public Optional<CommunicationData> visitFACTURAE() { return Optional.empty(); }
+		});
+	}	
+	public Optional<CommunicationData> getData(EnterpriseDataNames name, Date atDate) {
+		if (name == EnterpriseDataNames.ICC_NO_SIF) return getNoSifData(atDate);
+		return InvoiceCommunicationType.get( name).flatMap( t -> getData(t, atDate) );
+	}
+	
 }

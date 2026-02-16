@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.api.model.invoice;
 
 import java.util.Optional;
 
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -106,6 +105,9 @@ public enum InvoiceCommunicationError {
 	ICC_5036("5036", "No se puede activar SIF y SII a la vez"),
 	ICC_5037("5037", "No se puede activar SIF y LROE a la vez"),
 	ICC_5038("5038", "No se puede activar SIF y TBAI a la vez"),
+
+	ICC_6000("6000", "Verifactu se debe activar el uno de enero del año siguiente"),
+	ICC_6001("6001", "No Verifactu se debe activar el uno de enero del año siguiente"),
 	
 	// TODO REFACTOR
 	AON_9000("9000", "Error interno."),

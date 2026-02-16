@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.MessageFormat;
@@ -138,7 +139,7 @@ public abstract class AbstractVerifactuTest {
 		for (Environment env : ENVIRONMENTS) {
 			synchronized (env) {
 				if ( env.getDomainId() == null) {
-					AONContext context = new AONContext(connect());
+					AONContext context = new AONContext(connect( env));
 					Domain domain = TestDomainProvider.getOrCreateDomain(context, env );
 					env.setDomainId( domain.getId() );
 				}
@@ -186,7 +187,7 @@ public abstract class AbstractVerifactuTest {
 	}
 
 	
-	private static Connection connect() throws ClassNotFoundException, SQLException  {
+	private static Connection connect(Environment env) throws ClassNotFoundException, SQLException  {
 		Class.forName(Driver.class.getName());
 
 		String dbHost = getDbHost();
@@ -210,14 +211,21 @@ public abstract class AbstractVerifactuTest {
 		while (rs.next()) {
 			if (rs.getString(1).startsWith(dbName)) {
 				String schemaName = rs.getString(1); 
-				connection.createStatement().execute("use `" + schemaName +"`");
-				String infoText = "USING  [" + schemaName+ "] schema";
-				System.out.println("\033[1;34m");
-				System.out.println(AonStringUtils.spaces(10) + "\u250C" + AonStringUtils.repeat('\u2500', 50) + "\u2510");
-				System.out.println(AonStringUtils.spaces(10) + "\u2502" + AonStringUtils.center(infoText, 50) + "\u2502");
-				System.out.println(AonStringUtils.spaces(10) + "\u2514" + AonStringUtils.repeat('\u2500', 50) + "\u2518");
-				System.out.println("\033[0m");
-				return connection;
+				System.out.println("\t .... checking [" + schemaName+ "] schema.");
+				connection.createStatement().execute("use " + schemaName);
+				boolean exists = false;
+				String sql = "SELECT 1 FROM domain WHERE name = ? LIMIT 1";
+				try (PreparedStatement ps = connection.prepareStatement(sql)) {
+				    ps.setString(1, env.getDomainName());
+				    try (ResultSet rs0 = ps.executeQuery()) {
+				        exists = rs0.next();
+				    }
+				}
+				if (exists) {
+					System.out.println("\t .... domain [" + env.getDomainName() + "] found!!");
+					System.out.println("USING [" + schemaName+ "] SCHEMA FOR TESTS.");
+					return connection;
+				}
 			}
 		}
 		return connection;

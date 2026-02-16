@@ -28,7 +28,7 @@ import net.aonsolutions.aon.verifactu.AbstractVerifactuTest;
 import net.aonsolutions.aon.verifactu.Environment;
 
 
-class EnterpriseDataDAOTest extends AbstractVerifactuTest {
+class ICCEnterpriseDataDAOTest extends AbstractVerifactuTest {
 
 	@Override protected Environment getEnvironment() { return ICC_CONFIG_ENV; }
 	

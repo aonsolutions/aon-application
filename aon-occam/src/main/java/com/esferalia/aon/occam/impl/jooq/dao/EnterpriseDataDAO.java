@@ -13,7 +13,6 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
-import org.jooq.Record1;
 import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
@@ -21,7 +20,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
 import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
-import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.payroll.Enterprise;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -102,14 +100,18 @@ public class EnterpriseDataDAO {
 		}
 	}
 	
-	public static EnterpriseData updateEndDate(AONContext ctx, EnterpriseData cc, Date closeDate) {
+	public static EnterpriseData updateEndDate(AONContext ctx, EnterpriseData cc, Date endDate) {
+		return save(ctx, setEndDate(cc, endDate));
+	}
+	
+	public static EnterpriseData setEndDate(EnterpriseData cc, Date endDate) {
 		Date startDate = cc.getStartDate();
-		if ( AonDateUtils.isBefore( closeDate, startDate) ) {
+		if ( AonDateUtils.isBefore( endDate, startDate) ) {
 			cc.setDeleted(true);		
 		} else { 
-			cc.setEndDate( closeDate );
+			cc.setEndDate( endDate );
 		}
-		return save(ctx, cc);
+		return cc;
 	}
 	
 	
@@ -131,7 +133,7 @@ public class EnterpriseDataDAO {
 			.fetchOne()
 			.getId();
 		enterpriseData.setId(id);
-		ctx.log().info("INSERT ENTERPRISE_DATA id: " + id);		
+		ctx.log().debug("INSERT ENTERPRISE_DATA id: " + id);		
 		return enterpriseData;
 	}
 	
@@ -256,19 +258,6 @@ public class EnterpriseDataDAO {
             );
 		    
 		    Condition notSelf  = (d.getId() == null) ? DSL.noCondition() : ENTERPRISE_DATA.ID.ne(d.getId());
-		    
-		    
-		    System.out.println(
-		    		ctx.getDslContext()
-		    		.selectOne()
-		    		.from(ENTERPRISE_DATA)
-		    		.where(ENTERPRISE_DATA.DOMAIN.eq(d.getDomain()))
-		    		.and(ENTERPRISE_DATA.NAME.eq(d.getName()))
-			        .and(notSelf)
-			        .and(overlap)
-			        .limit(1)
-			        .getSQL()
-		    		);
 		    Integer existingId = ctx.getDslContext()
 	    		.select(ENTERPRISE_DATA.ID)
 	    		.from(ENTERPRISE_DATA)

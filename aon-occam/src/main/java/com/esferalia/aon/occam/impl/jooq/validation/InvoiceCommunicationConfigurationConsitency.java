@@ -1,7 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.validation;
 
-import java.util.Date;
-
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.impl.jooq.dao.EnterpriseDataDAO;

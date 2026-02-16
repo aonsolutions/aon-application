@@ -134,19 +134,9 @@ public class CommunicationData extends EnterpriseData {
 	}
 	
 	public Optional<InvoiceCommunicationType> getCommunicationType() {
-		return CommunicationData.getCommunicationType(getDataName());
+		return InvoiceCommunicationType.get(getDataName());
 	}
-	public static Optional<InvoiceCommunicationType> getCommunicationType(EnterpriseDataNames name) {
-		switch (name) {
-			case ICC_TBAI: return Optional.of(InvoiceCommunicationType.TBAI);
-			case ICC_LROE: return Optional.of(InvoiceCommunicationType.LROE);
-			case ICC_SII: return Optional.of(InvoiceCommunicationType.SII);
-			case ICC_VERIFACTU: return Optional.of(InvoiceCommunicationType.VERIFACTU);
-			case ICC_NO_VERIFACTU: return Optional.of(InvoiceCommunicationType.NO_VERIFACTU);
-			case ICC_SIF: return Optional.of(InvoiceCommunicationType.SIF);
-			default: return Optional.empty();
-		}
-	}
+
 	public boolean isAdministration() { return getDataName() == ICC_ADMINISTRATION; }
 	public boolean isTBai() { return getDataName() == ICC_TBAI; }
 	public boolean isLroe() { return getDataName() == ICC_LROE; }

@@ -40,4 +40,16 @@ public enum EnterpriseDataNames {
 			.filter(e -> AonStringUtils.equalsIgnoreCase( e.name() , name))
 			.findFirst();
 	}
+	
+	public static EnterpriseDataNames[] getInvoiceCommunicationTypesNames() {
+		return new EnterpriseDataNames[] {
+			ICC_LROE,
+			ICC_SIF,
+			ICC_NO_SIF,
+			ICC_SII,
+			ICC_TBAI,
+			ICC_VERIFACTU,
+			ICC_NO_VERIFACTU,
+		};
+	}
 }

@@ -1,7 +1,9 @@
 package com.esferalia.aon.occam.api.model.invoice;
 
 import java.io.Serializable;
+import java.util.Optional;
 
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -127,6 +129,19 @@ public enum InvoiceCommunicationType implements Serializable {
 	public boolean isEmail() {
 		return EMAIL.equals(this);
 	}
+	
+	public static Optional<InvoiceCommunicationType> get(EnterpriseDataNames name) {
+		switch (name) {
+			case ICC_TBAI: return Optional.of(InvoiceCommunicationType.TBAI);
+			case ICC_LROE: return Optional.of(InvoiceCommunicationType.LROE);
+			case ICC_SII: return Optional.of(InvoiceCommunicationType.SII);
+			case ICC_VERIFACTU: return Optional.of(InvoiceCommunicationType.VERIFACTU);
+			case ICC_NO_VERIFACTU: return Optional.of(InvoiceCommunicationType.NO_VERIFACTU);
+			case ICC_SIF: return Optional.of(InvoiceCommunicationType.SIF);
+			default: return Optional.empty();
+		}
+	}
+
 	
 	public abstract void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception;
 	public abstract <T> T accept(InvoiceCommunicationTypeAccepter<T> visitor) ;

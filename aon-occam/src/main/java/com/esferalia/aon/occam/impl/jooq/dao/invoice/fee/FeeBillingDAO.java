@@ -348,11 +348,19 @@ public class FeeBillingDAO {
 	}
 
 	private static String composeDescription(FeeBilling fee, Map<String, Object> mvelContext) {
-        String desc = (String) TemplateRuntime.eval(fee.getDescription(), mvelContext);
-        if ( AonNumberUtils.notEquals(fee.getInvoicingCustomer().getId(), fee.getCustomer().getId())) {
-			desc += " - " + fee.getInvoicingCustomer().getName();
+		String description = fee.getDescription();
+		if (isMVELTemplate(description)) {
+		    description = (String) TemplateRuntime.eval(description, mvelContext);
 		}
-		return AonStringUtils.abbreviate(desc, INVOICE_DETAIL.DESCRIPTION.getDataType().length()); 
+        if ( AonNumberUtils.notEquals(fee.getInvoicingCustomer().getId(), fee.getCustomer().getId())) {
+        	description += " - " + fee.getInvoicingCustomer().getName();
+		}
+		return AonStringUtils.abbreviate(description, INVOICE_DETAIL.DESCRIPTION.getDataType().length());	// prevent DB overflow 
+	}
+
+	private static boolean isMVELTemplate(String description) {
+		return description != null && 
+			(description.contains("${") || description.contains("@{"));
 	}
 
 	private static double calculateCorrectionFactor(FeeBilling fee, FeeBillingParams params) {
