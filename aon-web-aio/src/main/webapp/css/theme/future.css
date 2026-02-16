@@ -67,6 +67,7 @@
 	height: 68px; /*4rem;*/
 	min-height: 68px; /*4rem;*/
 	background-color: var(--aonHeaderBackgroundColor);
+	position: relative;
 }
 
 #aonMenu:has(.aonMenuSidenav.close) .aonMenuTopnav {
@@ -113,8 +114,6 @@
     border-color: var(--aonBackgroundColor);
     background-color: var(--aonBackgroundColor);
     margin-left: 237px;
-    
-    transition: margin .5s;
 }
 
 .aonMenuTopnav.closeSidenav{
@@ -506,7 +505,7 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"].closeIcon {
 }
 
 .aonSidenavTitle{
-	margin-bottom: 20px;
+	margin-top: 10px;
 }
 
 aon-fiscal-menu .suiteMenuContent,
@@ -589,17 +588,15 @@ aon-configuration-menu .suiteMenuContent  {
 	width: 237px;
 	margin-left: 4px;
 	z-index: 2;
+	transition: none;
 }
 
 #aonMenuAnchor.close {
 	width: 68px;
-	background-color: white;
-	left: 0;
-	top: 68;
-	transition: width .2s;
 	border-radius: 0px;
-	transition: width 0.3s;
-	padding-left: 0;
+	top: 68px;
+	width: 75px;
+	background-color: #ffff;
 }
 
 #aonMenuAnchorDiv {
@@ -651,6 +648,10 @@ aon-configuration-menu .suiteMenuContent  {
 
 #aonMenuSidenav.close #expandHirin {
 	padding: 0 .7rem !important;
+}
+
+#aonMenu #aonMenuSidenav{
+	transition: none;
 }
 
 /*
@@ -750,6 +751,7 @@ aon-configuration-menu .suiteMenuContent  {
 
 .aonSidenav {
   white-space:nowrap;
+  padding-top: .5rem;
 }
 
 .aonSidenav *,
@@ -1477,7 +1479,9 @@ i[id$="aonNewDialognote_addIcon"],
 i[id$="aonNewDialogaccount_balance_walletIcon"],
 i[id$="aonNewDialogcloud_uploadIcon"],
 i[id$="aonNewDialogadd_commentIcon"],
-i[id$="aonNewDialogperson_addIcon"]
+i[id$="aonNewDialogperson_addIcon"],
+#aon-search-buttonIconButton i,
+i[id$="aonHeaderSearchDivButtonIcon"]
 {
 	width: 24px;
 	height: 24px;
@@ -1637,7 +1641,9 @@ i[id$="aonDocumentalToolbarHeaderToolSectionAddButtonIcon"]{
     mask-image: url('/icons/plus.svg') ;
 }
 
-i[id$="ToolbarHeaderToolSectionSearchSearchButtonIcon"] {
+i[id$="ToolbarHeaderToolSectionSearchSearchButtonIcon"],
+#aon-search-buttonIconButton i,
+i[id$="aonHeaderSearchDivButtonIcon"] {
     mask-image: url('/icons/search.svg') ;
 }
 
@@ -2443,7 +2449,7 @@ aon-search > span {
 }
 
 .aonSidenav > div {
-	padding-bottom: 5px !important;
+	padding-bottom: 0px !important;
 }
 
 .aonCheckbox:hover>input,
@@ -2479,6 +2485,7 @@ aon-search > span {
 	background-color: #ffff;
 }
 
+<<<<<<< Updated upstream
 
 /* Invoice Future Sidenav options */
 
@@ -2512,4 +2519,31 @@ aon-search > span {
 
 #aonInvoiceSidenavFutureManagement {
 	display: block;
+}
+
+#aonHeaderSearch {
+  position: absolute;
+  top: 20;
+  right: 15;
+  z-index: 2;
+
+  transform: translateX(100%);
+  opacity: 0;
+
+  transition: transform .3s ease, opacity .2s ease;
+  pointer-events: none; /* evita clics cuando está oculto */
+}
+
+#aonHeaderSearch.open {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+
+#aonHeaderSearchDiv{
+	display: block;
+}
+
+i[id$="aonHeaderSearchDivButtonIcon"]{
+	background-color: #ffff;
 }
