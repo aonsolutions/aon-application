@@ -2478,3 +2478,38 @@ aon-search > span {
 .menu-option.open i {
 	background-color: #ffff;
 }
+
+
+/* Invoice Future Sidenav options */
+
+#aonInvoiceSidenavIncomes {
+	display: none;
+}
+
+#aonInvoiceSidenavExpenses {
+	display: none;
+}
+
+#aonInvoiceSidenavDocument {
+	display: none;
+}
+
+#aonInvoiceSidenavManagement {
+	display: none;
+}
+
+#aonInvoiceSidenavFutureIncomes {
+	display: block;
+}
+
+#aonInvoiceSidenavFutureExpenses {
+	display: block;
+}
+
+#aonInvoiceSidenavFutureDocument {
+	display: block;
+}
+
+#aonInvoiceSidenavFutureManagement {
+	display: block;
+}

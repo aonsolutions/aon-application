@@ -5560,3 +5560,20 @@ aon-calendar-menu.menu-open .calendar-menu-option:nth-child(4) {
 	}
 }
 
+/* Invoice Future Sidenav options */
+
+#aonInvoiceSidenavFutureIncomes {
+	display: none;
+}
+
+#aonInvoiceSidenavFutureExpenses {
+	display: none;
+}
+
+#aonInvoiceSidenavFutureDocument {
+	display: none;
+}
+
+#aonInvoiceSidenavFutureManagement {
+	display: none;
+}
