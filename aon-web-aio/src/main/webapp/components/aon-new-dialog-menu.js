@@ -156,13 +156,14 @@ export class AonNewDialogMenu extends AonElement {
 		text.textContent = option.name;
 		item.appendChild(text);
 
-		if (option.icon && !isFixedButton) {
+		if (option.icon && isFixedButton) {
 			let ic = document.createElement('i');
+			ic.id = `aonNewDialog${option.icon}Icon`;
 			ic.className = 'material-icons';
 			ic.style.verticalAlign = 'middle';
 			ic.style.fontSize = `24px`;
 			ic.innerHTML = option.icon;
-			ic.setAttribute('icon', option.icon);
+			ic.setAttribute('icn', option.icon);
 			item.appendChild(ic);
 		}
 
@@ -174,7 +175,7 @@ export class AonNewDialogMenu extends AonElement {
 			children.classList.add("menu-children");
 
 			option.options.forEach(child => {
-				children.appendChild(this.createOption(child, isFixedButton));
+				children.appendChild(this.createOption(child, false));
 			});
 
 			item.addEventListener(EVENT.CLICK, (e) => {

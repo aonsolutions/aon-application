@@ -1279,7 +1279,7 @@ export class AonNewMenu extends AonElement {
 			});
 		}
 
-		if (this.getDur().isDocumental() && !this.isBetaDoc()) {
+		if (this.getDur().isDocumental()) {
 			newMenuOptions.push({
 				fn: () => {
 					let input = this.createElement(TAG.INPUT);

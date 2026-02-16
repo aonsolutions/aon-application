@@ -146,7 +146,7 @@ export const setAppMenu = (value) => {
 }
 
 export const getTheme = () => {
-    return get(THEME);
+    return get(THEME) || '/css/theme/aon.css';
 }
 
 export const setTheme = (theme) => {

@@ -366,7 +366,8 @@
 }
 
 #aonSigninToolbarHeaderToolSectionfile_downloadButtonIcon,
-i[id$="aonDocumentalToolbarHeaderToolSectionDownloadFileButtonIcon"] {
+i[id$="aonDocumentalToolbarHeaderToolSectionDownloadFileButtonIcon"],
+i[id$="aonDocumentalSheetToolbarHeaderToolSectionDownloadFileButtonIcon"] {
 	mask-image: url('/icons/download.svg') ;
 }
 
@@ -1434,7 +1435,15 @@ i[id$="ToolbarHeaderToolSectionRestoreButtonIcon"],
 i[id$="aonSigninToolbarHeaderToolSectionsyncButtonIcon"],
 i[id$="aonDocumentalToolbarHeaderToolSectionSendFileButtonIcon"],
 i[id$="aonDocumentalToolbarHeaderToolSectionDownloadFileButtonIcon"],
-i[id$="aonDocumentalToolbarHeaderToolSectionDeleteFileButtonIcon"]
+i[id$="aonDocumentalToolbarHeaderToolSectionDeleteFileButtonIcon"],
+i[id$="aonDocumentalSheetToolbarHeaderToolSectionSendFileButtonIcon"],
+i[id$="aonDocumentalSheetToolbarHeaderToolSectionDownloadFileButtonIcon"],
+i[id$="aonDocumentalSheetToolbarHeaderToolSectionDeleteFileButtonIcon"],
+i[id$="aonNewDialognote_addIcon"],
+i[id$="aonNewDialogaccount_balance_walletIcon"],
+i[id$="aonNewDialogcloud_uploadIcon"],
+i[id$="aonNewDialogadd_commentIcon"],
+i[id$="aonNewDialogperson_addIcon"]
 {
 	width: 24px;
 	height: 24px;
@@ -1444,7 +1453,19 @@ i[id$="aonDocumentalToolbarHeaderToolSectionDeleteFileButtonIcon"]
 	mask-repeat: no-repeat;
 }
 
-i[id$="ToolbarHeaderToolSectionRestoreButtonIcon"]{
+i[id$="aonNewDialogaccount_balance_walletIcon"] {
+	mask-image: url('/icons/coins.svg') ;
+}
+
+i[id$="aonNewDialogadd_commentIcon"] {
+	mask-image: url('/icons/message-square.svg') ;
+}
+
+i[id$="aonNewDialogperson_addIcon"] {
+	mask-image: url('/icons/user-plus.svg') ;
+}
+
+i[id$="aonNewDialogcloud_uploadIcon"]{
     mask-image: url('/icons/rotate-ccw.svg') ;	
 }
 
@@ -1553,7 +1574,8 @@ i[id$="ToolbarHeaderToolSectionNextButtonIcon"] {
 }
 
 i[id$="ToolbarHeaderToolSectionDeleteButtonIcon"],
-i[id$="aonDocumentalToolbarHeaderToolSectionDeleteFileButtonIcon"] {
+i[id$="aonDocumentalToolbarHeaderToolSectionDeleteFileButtonIcon"],
+i[id$="aonDocumentalSheetToolbarHeaderToolSectionDeleteFileButtonIcon"] {
 	mask-image: url('/icons/trash-2.svg') ;
 }
 
@@ -1561,8 +1583,13 @@ i[id$="ToolbarHeaderToolSectionBackButtonIcon"] {
 	mask-image: url('/icons/arrow-left.svg') ;
 }
 
+i[id$="aonNewDialognote_addIcon"] {
+	mask-image: url('/icons/file-plus-2.svg') ;
+}
 
-i[id$="ToolbarHeaderToolSectionUploadFileButtonIcon"] {
+
+i[id$="ToolbarHeaderToolSectionUploadFileButtonIcon"],
+i[id$="aonNewDialogcloud_uploadIcon"] {
     mask-image: url('/icons/upload-cloud.svg') ;
 }
 
@@ -1844,7 +1871,8 @@ aon-right-panel {
 }
 
 #aonContactIcon3,
-i[id$="aonDocumentalToolbarHeaderToolSectionSendFileButtonIcon"]{
+i[id$="aonDocumentalToolbarHeaderToolSectionSendFileButtonIcon"],
+i[id$="aonDocumentalSheetToolbarHeaderToolSectionSendFileButtonIcon"]{
 	 mask-image: url('/icons/mail.svg') ;
 }
 
@@ -2242,7 +2270,7 @@ aon-new-fixed-button .newFixedButton .plus {
 .aonSwitch > span::after {
     content: "";
     position: absolute;
-    top: 6px;
+    top: 5px;
     height: 1rem;
     width: 1rem;
     right: 1.1rem;
@@ -2262,6 +2290,7 @@ aon-new-fixed-button .newFixedButton .plus {
 
 .aonSwitch > input:checked + span::after {
 	background-color: var(--aonHeaderBackgroundColor);
+	transform: translateX(14px);
 }
 
 aon-input[readonly="true"] input, 
@@ -2376,7 +2405,7 @@ aon-search > span {
 }
 
 .newMenuContent{
-	min-width: 205px;
+	align-items: end;
 }
 
 .aonSidenav > div {
@@ -2393,4 +2422,25 @@ aon-search > span {
 .aonCheckbox>span::after{
 	top: 2;
 	left: 0;
+}
+
+.menu-option {
+	width: max-content;
+}
+
+.menu-children.open{
+	flex-direction: row;
+	margin-top: 10px;
+	padding-left: 0;
+}
+
+.menu-option.open{
+	width: 100%;
+	justify-content: center;	
+}
+
+.menu-option:hover i,
+.menu-children > div:hover i,
+.menu-option.open i {
+	background-color: #ffff;
 }
