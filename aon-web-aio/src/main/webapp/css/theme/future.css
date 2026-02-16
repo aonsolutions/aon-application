@@ -2545,3 +2545,9 @@ aon-search > span {
 i[id$="aonHeaderSearchDivButtonIcon"]{
 	background-color: #ffff;
 }
+
+#aonHeaderSearchDialogMenuDialogMenuContent{
+  left: 15 !important;
+  right: 15;
+  top: 65 !important;
+}
