@@ -11,6 +11,7 @@ import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import Apps, { TIMECONTROL } from "../../../services/app.js";
+import * as LS from '../../../services/localStorageService.js';
 
 export class AonPresenceList extends AonElement {
   TABLE_ID;
@@ -97,7 +98,7 @@ export class AonPresenceList extends AonElement {
   }
 
   buildToolbarSearch(){
-    let btnSearch = this.applicationEl.addSearchOption();
+    let btnSearch = this.applicationEl.addSearchOption(LS.isFutureTheme());
     
     let timeOut = null;
 

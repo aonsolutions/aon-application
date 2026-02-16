@@ -301,6 +301,7 @@ export const MARKETING = 'Marketing';
 export const MARK_ENTRY = 'Eintrag markieren';
 export const MARK_EXIT = 'Ausgang markieren';
 export const MANAGEMENT = 'Verwaltung';
+export const MANUALS = 'Handbücher';
 export const MODEL_111 = 'Form 111';
 export const MODEL_111_DESCRIPTION = 'Form 111. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Self-assessment.';
 export const MODEL_190 = 'Form 190';

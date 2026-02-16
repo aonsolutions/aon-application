@@ -20,14 +20,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.config.EnterpriseDataAddAudit;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod347Detail2025Bis;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.FlexibleInsurancePremiumsInsert;
-import net.aonsolutions.db.up2date.payroll.PlusTransporte0001Insert;
-import net.aonsolutions.db.up2date.tgss.MEISolidarity2026RDL162025Undo;
 import net.aonsolutions.db.up2date.tgss.MEITrainingUpdate2026;
-import net.aonsolutions.db.up2date.timecontrol.CalendarHolidaysAlter;
-import net.aonsolutions.db.up2date.tgss.SociosCoopBases2025Update;
 import net.aonsolutions.db.up2date.timecontrol.CalendarPersonalDaysAlter;
 
 public class Up2Date {

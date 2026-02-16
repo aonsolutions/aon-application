@@ -51,9 +51,18 @@ export class AonWarehouse extends AonElement {
 	}
 
  	build() {
-		this.createApplication(this.WAREHOUSE, MSG.WAREHOUSE, new AonApplication());
+		let applicationEl = this.createApplication(this.WAREHOUSE, MSG.WAREHOUSE, new AonApplication());
 		this.buildSidenav();
 		this.selectOption(this.option);
+		
+		let selectedItem = this.getElement(this.option.id);
+		if(selectedItem) selectedItem.classList.add('aonAppMenuSidenavListSelected');
+		
+		// TODO: Show when its needed
+		let search = applicationEl.getSearchButton();
+		search.classList.add("hidden");
+		
+		getSearchButton
 	}
 
 	buildSidenav() {

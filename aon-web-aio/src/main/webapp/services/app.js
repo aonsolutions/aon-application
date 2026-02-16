@@ -1753,8 +1753,8 @@ export const EXPAND_HIRIND = {
 
 export const CONTENT_INDEX = {
 	app: CONSTANT.CONTENT_INDEX,
-	title: MSG.CONTENT_INDEX,
-	description: MSG.CONTENT_INDEX,
+	title: MSG.MANUALS,
+	description: MSG.MANUALS,
 	symbol: MATERIAL_ICONS.MENU_BOOK,
 };
 

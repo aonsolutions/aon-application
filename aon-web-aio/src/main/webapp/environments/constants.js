@@ -85,6 +85,7 @@ export const COMMENT = 'comment';
 export const COMMENTS = 'comments';
 export const COMMERCE = 'commerce';
 export const COMMERCIAL = 'commercial';
+export const COMMUNICATE_INVOICE = 'communicateInvoice';
 export const COMPANY = 'company';
 export const COMPOSITION = 'composition';
 export const COMUNICA = 'comunica';

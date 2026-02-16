@@ -301,6 +301,7 @@ export const MARKETING = 'Marketin';
 export const MARK_ENTRY = 'Sarrera Markatu';
 export const MARK_EXIT = 'Irteera Markatu';
 export const MANAGEMENT = 'Kudeaketa';
+export const MANUALS = 'Eskuliburuak';
 export const MODEL_111 = '111 Eredua';
 export const MODEL_111_DESCRIPTION = 'Modelo 111. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de Renta. Autoliquidación.';
 export const MODEL_190 = '190 Eredua';

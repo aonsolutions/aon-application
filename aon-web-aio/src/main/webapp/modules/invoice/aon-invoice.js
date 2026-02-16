@@ -1253,6 +1253,47 @@ export class AonInvoice extends AonElement {
 		card.setContent(table);
 
 		table.addRow(); // ----- ROW 1
+
+		// ----- REGISTRY
+		if(this.invoice.isEmitida()) {
+			let customer = new AonCustomerSuggestion();	
+			customer.id = this.REGISTRY;
+			customer.showAddress = true;
+			customer.readonly = this.invoice.isReadonly();
+			customer.setCustomer(this.invoice.getRegistry());
+			customer.addEventListener(EVENT.SELECT_REGISTRY, () => this.onChangeRegistry(customer.getCustomer()));
+			customer.addEventListener(EVENT.CUSTOMER_CHANGE, () => {
+				this.invoice.receiver.address = customer.getCustomer().address;
+			});
+			table.addCell(customer, '4');	
+		} else {
+			let registry = new AonRegistrySuggestion();
+			registry.id = this.REGISTRY;
+			registry.showAddress = true;
+			registry.types = this.invoice.getRegistryType();
+			// registry.value = this.invoice.getRegistry();
+			registry.setRegistry(this.invoice.getRegistry());
+			registry.addEventListener(EVENT.SELECT_REGISTRY, () => this.onChangeRegistry(registry.getRegistry()));
+			registry.addEventListener(EVENT.CUSTOMER_CHANGE, () => {
+				this.invoice.receiver.address = registry.getRegistry().address;
+			});
+			table.addCell(registry, '6');	
+		}
+		
+		if(this.invoice.isRawdoc() && this.invoice.getRegistry().documentCountry == 'ES' 
+				&& !isValid(this.invoice.getRegistry().document) && this.invoice.getRegistry().id) {
+			let data = {
+   				id: this.invoice.getRegistry().id,
+	   	    	additional_info: []
+    		};
+   			getRegistry(data).then(r => {
+				if(isValid(r.document)) {
+					this.invoice.getRegistry().document = r.document;
+				}
+       		});					
+		}
+
+		table.addRow(); // ----- ROW 2
 		
 		let div = this.createDiv();
 		div.className = CSS.AON_FLEX;
@@ -1298,43 +1339,15 @@ export class AonInvoice extends AonElement {
 		});
 		referenceSpan.appendChild(reference);
 
-		let switchReference  = new AonIconButton();
-		switchReference.icon = MATERIAL_ICONS.EDIT;
-		switchReference.style.alignContent = "center";
-		switchReference.addEventListener(EVENT.CLICK, () => {
-			if (referenceSpan.style.display == 'block') {
-				serieSpan.style.display = 'block';
-				numberSpan.style.display = 'block';
-				referenceSpan.style.display = 'none';
-			} else {
-				serieSpan.style.display = 'none';
-				numberSpan.style.display = 'none';
-				referenceSpan.style.display = 'block';
-			}
-		});
-		div.appendChild(switchReference);
-
-		if(this.invoice.isEmitida()) {
+		if(this.invoice.isRawdoc() && this.invoice.isEmitida() && !this.isInvofoxInvoice()) {
 			serieSpan.style.display = 'block';
 			numberSpan.style.display = 'block';
 			referenceSpan.style.display = 'none';
-			switchReference.style.display = 'none';
-			if (this.isInvofoxInvoice()) {
-				this.getInvoice().number = undefined;
-				serieSpan.style.display = 'none';
-				numberSpan.style.display = 'none';
-				referenceSpan.style.display = 'block';
-				switchReference.style.display = 'block';
-			} else if(!this.invoice.isRawdoc()) {
-				serieSpan.style.display = 'none';
-				numberSpan.style.display = 'none';
-				referenceSpan.style.display = 'block';
-			}
 		} else {
+			if(this.isInvofoxInvoice()) this.getInvoice().number = undefined;
 			serieSpan.style.display = 'none';
 			numberSpan.style.display = 'none';
 			referenceSpan.style.display = 'block';
-			switchReference.style.display = 'none';
 		}
 
 		// ----- DATE
@@ -1373,46 +1386,7 @@ export class AonInvoice extends AonElement {
 		|| this.invoice.details.length > 0;
 		// *****
 
-		table.addRow(); // ----- ROW 2
-
-		// ----- REGISTRY
-		if(this.invoice.isEmitida()) {
-			let customer = new AonCustomerSuggestion();	
-			customer.id = this.REGISTRY;
-			customer.showAddress = true;
-			customer.readonly = this.invoice.isReadonly();
-			customer.setCustomer(this.invoice.getRegistry());
-			customer.addEventListener(EVENT.SELECT_REGISTRY, () => this.onChangeRegistry(customer.getCustomer()));
-			customer.addEventListener(EVENT.CUSTOMER_CHANGE, () => {
-				this.invoice.receiver.address = customer.getCustomer().address;
-			});
-			table.addCell(customer, '4');	
-		} else {
-			let registry = new AonRegistrySuggestion();
-			registry.id = this.REGISTRY;
-			registry.showAddress = true;
-			registry.types = this.invoice.getRegistryType();
-			// registry.value = this.invoice.getRegistry();
-			registry.setRegistry(this.invoice.getRegistry());
-			registry.addEventListener(EVENT.SELECT_REGISTRY, () => this.onChangeRegistry(registry.getRegistry()));
-			registry.addEventListener(EVENT.CUSTOMER_CHANGE, () => {
-				this.invoice.receiver.address = registry.getRegistry().address;
-			});
-			table.addCell(registry, '6');	
-		}
 		
-		if(this.invoice.isRawdoc() && this.invoice.getRegistry().documentCountry == 'ES' 
-				&& !isValid(this.invoice.getRegistry().document) && this.invoice.getRegistry().id) {
-			let data = {
-   				id: this.invoice.getRegistry().id,
-	   	    	additional_info: []
-    		};
-   			getRegistry(data).then(r => {
-				if(isValid(r.document)) {
-					this.invoice.getRegistry().document = r.document;
-				}
-       		});					
-		}
 
 		table.addRow(); // ----- ROW 3
 
