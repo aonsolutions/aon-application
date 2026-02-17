@@ -68,7 +68,8 @@ public class Mod303Writer {
 		,ARABA_2019		(mod303 -> (mod303.isAraba() && mod303.getYear() >= 2019 && mod303.getYear() < 2022)	, Mod303WriterARABA2019::new)		
 		,ARABA_2017		(mod303 -> (mod303.isAraba() && mod303.getYear() >= 2016 && mod303.getYear() < 2019)	, Mod303WriterARABA2017::new)
 
-		,BIZKAIA_2025	(mod303 -> (mod303.isBizkaia() && mod303.getYear() >= 2025)	, Mod303WriterBIZKAIA2025::new)
+		,BIZKAIA_2026	(mod303 -> (mod303.isBizkaia() && mod303.getYear() >= 2026)	, Mod303WriterBIZKAIA2026::new)
+		,BIZKAIA_2025	(mod303 -> (mod303.isBizkaia() && mod303.getYear() == 2025)	, Mod303WriterBIZKAIA2025::new)
 		,BIZKAIA_2023	(mod303 -> (mod303.isBizkaia() && mod303.getYear() >= 2023 && mod303.getYear() <= 2024)	, Mod303WriterBIZKAIA2023::new)
 		,BIZKAIA_2017	(mod303 -> (mod303.isBizkaia() && mod303.getYear() < 2023) 	, Mod303WriterBIZKAIA2017::new)
 		

@@ -903,6 +903,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,BZ_C032("303-BZ032" ,false,"32","Porcentaje de tributaci\u00F3n en Bizkaia")
 	,BZ_C033("303-BZ033" ,false,"33","Cuota atribuible a Bizkaia")
 	,BZ_C034("303-BZ034" ,false,"34","Cuota a compensar de periodos anteriores")
+	,BZ_C044("303-BZ044" ,false,"44","Pago a cuenta de entregas de gasolinas, gas\u00F3leos y biocarburantes posteriores a la ultimaci\u00F3n del r\u00E9gimen dep\u00F3sito distinto del aduanero")
 	,BZ_C035("303-BZ035" ,false,"35","Resultado de la regularizaci\u00F3n anual")
 	
 	,BZ_C036("303-BZ036" ,false,"36",CT_S11R.getDescription())

@@ -122,6 +122,10 @@ public abstract class Mod303Declaration {
 		
 // BIZKAIA ----------------------------------------------------------------------------------------
 		
+		,BIZKAIA_2026 {
+			@Override boolean accept(Mod303 mod) { return Mod303BIZKAIA2026Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303BIZKAIA2026Declaration();}
+		}		
 		,BIZKAIA_2025 {
 			@Override boolean accept(Mod303 mod) { return Mod303BIZKAIA2025Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303BIZKAIA2025Declaration();}

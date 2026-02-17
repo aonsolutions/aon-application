@@ -15,9 +15,9 @@ import com.esferalia.aon.occam.impl.jooq.dao.mod390HF.Mod390HFDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod303BIZKAIA2025Declaration extends Mod303BIZKAIA {
+class Mod303BIZKAIA2026Declaration extends Mod303BIZKAIA {
 	
-	protected Mod303BIZKAIA2025Declaration() {
+	protected Mod303BIZKAIA2026Declaration() {
 				
 	}
 	public static final double PERCENT_21 = 21.0;
@@ -31,7 +31,7 @@ class Mod303BIZKAIA2025Declaration extends Mod303BIZKAIA {
 	public static final double SURCHARGE_PERCENT_05 = 0.5;	
 
 	public static boolean accept(Mod303 mod) {
-		return mod.isBizkaia() && mod.getPeriod() != Period.T4 && mod.getPeriod() != Period.M12 && mod.getYear() == 2025;
+		return mod.isBizkaia() && mod.getPeriod() != Period.T4 && mod.getPeriod() != Period.M12 && mod.getYear() >= 2026;
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
@@ -165,23 +165,25 @@ class Mod303BIZKAIA2025Declaration extends Mod303BIZKAIA {
 		,BZ_C031	(Mod303Key.BZ_C031,null,null,null,"BZ_C023-BZ_C030",null)
 		// Regularización de cuotas (art.80.cinco.5a Norma Foral del IVA)
 		,BZ_C045	(Mod303Key.BZ_C045)
-		// Porcentaje de tributaci\u00F3n en Bizkaia
+		// Porcentaje de tributación en Bizkaia
 		,BZ_C032	(Mod303Key.BZ_C032,null,null,(ctx,mod) -> add(Mod303Key.BZ_C032,mod,100.0),null,null)
 		// Cuota atribuible a Bizkaia
 		,BZ_C033	(Mod303Key.BZ_C033,null,null,null,"(BZ_C031+BZ_C045)*BZ_C032/100",null)
 		// Cuota a compensar de periodos anteriores
 		,BZ_C034	(Mod303Key.BZ_C034,null,null, (ctx,mod) -> add( Mod303Key.BZ_C034, mod, getPendingCompesateAmounts( ctx, mod )),null,null)
-		// Resultado de la regularizaci\u00F3n anual
+		// Pago a cuenta de entregas de gasolinas, gasóleos y biocarburantes posteriores a la ultimación del régimen depósito distinto del aduanero
+		,BZ_C044	(Mod303Key.BZ_C044)
+		// Resultado de la regularización anual
 		,BZ_C035	(Mod303Key.BZ_C035)
 		// Resultado
-		,BZ_C036	(Mod303Key.BZ_C036,null,null,null,"BZ_C033-BZ_C034+BZ_C035",null)   
+		,BZ_C036	(Mod303Key.BZ_C036,null,null,null,"BZ_C033-BZ_C034+BZ_C035-BZ_C044",null)   
 		// A compensar
 		,BZ_C038	(Mod303Key.BZ_C038,null,null,null,"isToCompensate()?round(BZ_C036*-1):0.0",null)
 		// A devolver
 		,BZ_C039	(Mod303Key.BZ_C039,null,null,null,"isToPayback()?round(BZ_C036*-1):0.0",null)
 		// A ingresar
 		,BZ_C040	(Mod303Key.BZ_C040,null,null,null,"isToDeposit()?BZ_C036:0.0",null)
-		// Cumplimentar s\u00F3lo en caso de que se trate de una autoliquidaci\u00F3n complementaria: ingresado anteriormente
+		// Cumplimentar sólo en caso de que se trate de una autoliquidación complementaria: ingresado anteriormente
 		,BZ_C041	(Mod303Key.BZ_C041,null,null,
 			(ctx,mod) -> {
 				if (mod.isComplementary()) {
@@ -192,7 +194,7 @@ class Mod303BIZKAIA2025Declaration extends Mod303BIZKAIA {
 							.sum());						
 				}
 			})
-		// Cumplimentar s\u00F3lo en caso de que se trate de una autoliquidaci\u00F3n complementaria: devuelto anteriormente
+		// Cumplimentar sólo en caso de que se trate de una autoliquidación complementaria: devuelto anteriormente
 		,BZ_C042	(Mod303Key.BZ_C042,null,null,
 			(ctx,mod) -> {
 				if (mod.isComplementary()) {
