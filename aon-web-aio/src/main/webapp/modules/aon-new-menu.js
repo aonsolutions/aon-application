@@ -405,8 +405,7 @@ export class AonNewMenu extends AonElement {
 		            this.removeOldNewDialogContents();
 		
 		            let newFixedButton = document.querySelector('aon-new-fixed-button .newFixedButton');
-		            console.log(newFixedButton, newFixedButton.classList.contains('open'));
-		
+		            
 		            if (newFixedButton.classList.contains('open')) {
 		                let newDialogMenu = this.getElement('newDialogMenu');
 		                newDialogMenu.close();
@@ -425,11 +424,11 @@ export class AonNewMenu extends AonElement {
 	    let newFixedButton = this.getElement('newFixedButton');
 	    
 	    if(LS.getFixedButton() === 'on'){
-			newFixedButton.classList.remove('hidden');
-			aonMenuAppHover.classList.add('hidden');
+			if(newFixedButton) newFixedButton.classList.remove('hidden');
+			if(aonMenuAppHover) aonMenuAppHover.classList.add('hidden');
 		} else {
-			newFixedButton.classList.add('hidden');
-			aonMenuAppHover.classList.remove('hidden');
+			if(newFixedButton) newFixedButton.classList.add('hidden');
+			if(aonMenuAppHover) aonMenuAppHover.classList.remove('hidden');
 		}
 	}
 
@@ -641,7 +640,6 @@ export class AonNewMenu extends AonElement {
 
 	hideTopNav() {
 		let topnav = this.getElement(this.AON_MENU_TOPNAV);
-		console.log('hideTopNav', topnav);
 		topnav.classList.remove(CSS.AON_MENU_TOP_NAV_VISIBLE);
 		topnav.classList.add(CSS.AON_MENU_TOP_NAV_HIDE);
 	}
@@ -962,7 +960,7 @@ export class AonNewMenu extends AonElement {
 	closeEmptyApps(){
 		let aonMenuTopnav = this.getElement(this.AON_MENU_TOPNAV);
 		let aonTopMenuDiv = this.getElement('aonTopMenuDiv');
-			
+		
 		if ((aonMenuTopnav && aonMenuTopnav.childNodes.length == 0) || (aonTopMenuDiv && aonTopMenuDiv.childNodes.length == 0)) {
 			this.close();
 		}
