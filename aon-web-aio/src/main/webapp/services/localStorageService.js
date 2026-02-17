@@ -31,6 +31,7 @@ export const AON_THEME = '/css/theme/aon.css';
 export const DARK_THEME = '/css/theme/dark.css';
 export const DARK_BETA_THEME = '/css/theme/darkBeta.css';
 export const FUTURE_THEME = '/css/theme/future.css';
+export const CUSTOM_THEME = '/css/theme/customview.css';
 
 
 export const BETA = 'beta';
@@ -146,7 +147,7 @@ export const setAppMenu = (value) => {
 }
 
 export const getTheme = () => {
-    return get(THEME) || '/css/theme/aon.css';
+    return get(THEME);
 }
 
 export const setTheme = (theme) => {

@@ -27,7 +27,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "CustomViewServlet", urlPatterns = {"/customview/*"})
+@WebServlet(name = "CustomViewServlet", urlPatterns = {"/css/theme/customview.css","/css/theme/customview.gwt.css"})
 public class CustomViewServlet extends HttpServlet {
 		
 	private static final Logger LOGGER  = Logger.getLogger(CustomViewServlet.class.getName());
@@ -63,7 +63,8 @@ public class CustomViewServlet extends HttpServlet {
 			.and(f.getAppProperty().eq(AonApp.CUSTOM_VIEW.value())
 			.and(f.getActiveProperty().eq((byte) 1)))).count() > 0;
 		if(customView == true) {
-			try ( InputStream is = req.getServletContext().getResourceAsStream("/css/theme/customView.css")
+			
+			try ( InputStream is = req.getServletContext().getResourceAsStream(req.getServletPath())
 					) {
 				Map<String, String> paramsMap = new HashMap<>();
 
@@ -76,9 +77,11 @@ public class CustomViewServlet extends HttpServlet {
 			             .or(p.getNameProperty().eq(AppParam.AON_CUSTOMIZE_SUPPORT_PHONE.toString())) 
 			             .or(p.getNameProperty().eq(AppParam.AON_CUSTOMIZE_ID.toString())) 
 			             .or(p.getNameProperty().eq(AppParam.AON_CUSTOMIZE_HERITABLE_ID.toString())) 
-			             .or(p.getNameProperty().eq(AppParam.AON_CUSTOMIZE_TITLE.toString())))
+			             .or(p.getNameProperty().eq(AppParam.AON_CUSTOMIZE_TITLE.toString()))
+			             .or(p.getNameProperty().eq(AppParam.AON_CUSTOMIZE_THEME.toString())))
 						).forEach(p -> paramsMap.put(p.getName(), p.getValue()));
 
+				String theme = paramsMap.get(AppParam.AON_CUSTOMIZE_THEME.toString());
 				String email = paramsMap.get(AppParam.AON_CUSTOMIZE_SUPPORT_EMAIL.toString());
 				String phone = paramsMap.get(AppParam.AON_CUSTOMIZE_SUPPORT_PHONE.toString());
 				String title = paramsMap.get(AppParam.AON_CUSTOMIZE_TITLE.toString());
@@ -118,6 +121,9 @@ public class CustomViewServlet extends HttpServlet {
 				byte [] bytes = is.readAllBytes();
 				String css = new String(bytes, StandardCharsets.UTF_8);
 			
+				css = AonStringUtils.replace(css, "themeCustomGwt", theme == null ? "/css/theme/aon.gwt.css" : theme.replace(".css", ".gwt.css"));
+				css = AonStringUtils.replace(css, "themeCustom", theme== null ? "/css/theme/aon.css" : theme);
+
 				css = AonStringUtils.replace(css, "phoneCustom", phone==null ? "" : phone);
 				if (phone==null) {
 					css = AonStringUtils.replace(css, "phoneIcon", "none");

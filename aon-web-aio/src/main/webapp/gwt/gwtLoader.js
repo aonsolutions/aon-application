@@ -230,8 +230,9 @@
 						idocument.body.appendChild(style)
 					})
 					.finally( () => {
-						if ( LS.getTheme() ) {
-							fetch(`${LS.getTheme()?.replace('.css', '.gwt')}.css`)
+						let theme = LS.getTheme() || LS.CUSTOM_THEME;
+						if ( theme ) {
+							fetch(`${theme?.replace('.css', '.gwt')}.css`)
 							.then(response => response.text())
 							.then((text) => {
 								let style = idocument.createElement('style');
