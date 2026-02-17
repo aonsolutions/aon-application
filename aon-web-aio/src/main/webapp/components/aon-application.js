@@ -794,7 +794,7 @@ export class AonApplication extends AonElement {
         li.style.display = "flex";
         li.style.alignItems = "center";
       } else {
-        span.style.marginLeft = '28px';
+        // span.style.marginLeft = '28px';
       }
       li.appendChild(span);
 
