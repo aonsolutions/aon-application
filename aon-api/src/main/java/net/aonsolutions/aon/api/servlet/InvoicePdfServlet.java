@@ -2,6 +2,7 @@ package net.aonsolutions.aon.api.servlet;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Date;
 import java.util.logging.Logger;
 
 import org.json.JSONObject;
@@ -104,31 +105,24 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 						+ "&t=" + invoice.getTotal();  
 			InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
 			String tbaiId = "";
-			if(icc.isTbai() || icc.isLroe()) {
+			Date expDate = invoice.getExpDate() != null ? invoice.getExpDate() : invoice.getIssueDate();
+			if(icc.isTbai(expDate) || icc.isLroe(expDate)) {
 				try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 					TbaiData tbaiData = TbaiData.getInstance(ctx, icc);
 					String tbaiUrl = tbaiData.getTbaiUrl(domainId, invoice.getId());
 					qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
 					tbaiId = tbaiData.getTbaiId(domainId, invoice.getId());
 				}
-			} else if(icc.isVerifactu() || icc.isNoVerifactu()) {
+			} else if(icc.isVerifactu(expDate) || icc.isNoVerifactu(expDate)) {
 				if (invoice.getCommunicationInfo() != null) {
 					InvoiceInfo info = invoice.getCommunicationInfo().get(
-						icc.isVerifactu() 
+						icc.isVerifactu(expDate) 
 							? InvoiceCommunicationType.VERIFACTU 
 							: InvoiceCommunicationType.NO_VERIFACTU);
 					if (info != null) {
 						qrUrl = info.getCheckUrl();
 					}
 				}
-//				Integer invoiceId = invoice.getId();
-//				InvoiceData data = AON.getInvoiceData(new Domain().setName(domainName).setId(domainId), new User().setLogin(login), f -> 
-//				f.getDomainProperty().eq(domainId)
-//				.and(f.getInvoiceProperty().eq(invoiceId))
-//				.and(f.getNameProperty().eq("VERIFACTU_QR")));
-//				if(data != null && AonStringUtils.isNotBlank(data.getValue())) {
-//					qrUrl = data.getValue();
-//				}
 			}
 			if(company.getRegistry().getDomain().isGarage()) {	
 				invoice.detailStream().forEach(d -> {

@@ -56,6 +56,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
@@ -608,7 +609,8 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				+ "&t=" + invoice.getTotal();  
 		InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(api.getOccam());
 		String tbaiId = "";
-		if(icc.isTbai() || icc.isLroe()) {
+		Date expDate = invoice.getExpDate() != null ? invoice.getExpDate() : invoice.getIssueDate();
+		if(icc.isTbai(expDate) || icc.isLroe(expDate)) {
 			try(CloseableAONContext ctx = AONContext.getAONContext(api.getDomain(), api.getUser())) {
 				TbaiData tbaiData = TbaiData.getInstance(ctx, icc);
 				String tbaiUrl = tbaiData.getTbaiUrl(api.getDomain().getId(), invoice.getId());
@@ -616,6 +618,16 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				tbaiId = tbaiData.getTbaiId(api.getDomain().getId(), invoice.getId());				
 			}
 
+		} else if(icc.isVerifactu(expDate) || icc.isNoVerifactu(expDate)) {
+			if (invoice.getCommunicationInfo() != null) {
+				InvoiceInfo info = invoice.getCommunicationInfo().get(
+					icc.isVerifactu(expDate) 
+						? InvoiceCommunicationType.VERIFACTU 
+						: InvoiceCommunicationType.NO_VERIFACTU);
+				if (info != null) {
+					qrUrl = info.getCheckUrl();
+				}
+			}
 		}
 		if(company.getRegistry().getDomain().isGarage()) {	
 			invoice.detailStream().forEach(d -> {

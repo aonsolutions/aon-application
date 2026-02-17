@@ -83,6 +83,15 @@
 	height: calc(100vh - 68px);
 }
 
+#aonHome:has(.aonMenuTopNavVisible) .aonMenuSidenav {
+	height: calc(100vh - 136px);
+	margin-top: 68px;
+}
+
+#aonHome:has(.aonMenuTopNavHide) .aonMenuSidenav {
+	height: calc(100vh - 68px);
+}
+
 #aonHome:has(.aonMenuTopNavVisible) .rightPanel {
 	height: calc(100vh - 136px);
 	margin-top: 69px;
@@ -2457,11 +2466,6 @@ aon-search > span {
 .aonCheckbox:hover>input:focus,
 .aonCheckbox>input:active {
 	opacity: 0;
-}
-
-.aonCheckbox>span::after{
-	top: 2;
-	left: 0;
 }
 
 .menu-option {
