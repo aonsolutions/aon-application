@@ -91,6 +91,8 @@ export class AonHeader extends AonElement {
 		this.AON_HEADER_COMPANY_LIST_BUTTON = this.AON_HEADER_COMPANY_LIST + 'Button';
 		this.AON_HEADER_HOME = this.BASE_ID + 'Home';
 		this.AON_HEADER_HOME_BUTTON = this.AON_HEADER_HOME + 'Button';
+		this.AON_HEADER_SEARCH_DIV = this.BASE_ID + 'SearchDiv';
+		this.AON_HEADER_SEARCH_BUTTON = this.AON_HEADER_SEARCH_DIV + 'Button';
 		this.AON_HEADER_COMPANY = this.BASE_ID + 'Company';
 		this.AON_HEADER_COMPANY_NAME = this.AON_HEADER_COMPANY + 'Name';
 		this.AON_HEADER_DIALOG_HELP_OPTION = this.BASE_ID + 'DialogHelpOption';
@@ -200,6 +202,16 @@ export class AonHeader extends AonElement {
 		aonHeaderCompanyList.appendChild(aonHeaderHomeCompanyListButton);
 
 		aonHeaderButtons.appendChild(aonHeaderCompanyList);
+		
+		let aonHeaderSearchDiv = this.createElement(TAG.SPAN);
+		aonHeaderSearchDiv.id = this.AON_HEADER_SEARCH_DIV;
+
+		let aonHeaderSearchButton = new AonIconButton();
+		aonHeaderSearchButton.id = this.AON_HEADER_SEARCH_BUTTON;
+		aonHeaderSearchButton.icon = "search";
+		aonHeaderSearchDiv.appendChild(aonHeaderSearchButton);
+
+		aonHeaderButtons.appendChild(aonHeaderSearchDiv);
 
 		let aonHeaderHelp = this.createElement(TAG.SPAN);
 		aonHeaderHelp.id = this.AON_HEADER_HELP;
@@ -286,7 +298,26 @@ export class AonHeader extends AonElement {
 				aonLogo.style.display = "block";
 				let aonHeaderApp = this.getElement('aonHeaderApp');
 				aonHeaderApp.style.display = 'none';
+				document.querySelectorAll('.aonNewMenuSideNavLi').forEach(li => li.classList.remove('aonMenuSidenavLiSeleted'));
 			});
+			
+			let aonHeaderSearchButton = this.getElement(this.AON_HEADER_SEARCH_BUTTON);
+			let searchWidget = this.getElement(this.AON_HEADER_SEARCH);
+			aonHeaderSearchButton.addEventListener('click', () => {
+				
+				searchWidget.classList.add('open');
+				
+				let searchBoxWidgetInput = document.querySelector('#aonHeaderSearchBox input');
+				setTimeout(() => { searchBoxWidgetInput.focus(); }, 500);
+			});
+			
+			document.addEventListener('click', (event) => {
+			  if (!searchWidget.contains(event.target) && !aonHeaderSearchButton.contains(event.target)) {
+			    searchWidget.classList.remove('open');
+			  }
+			});
+
+			
 			if (!this.newTheme) {
 				let aonHeaderHelpButton = this.getElement(this.BASE_ID + 'HelpButton');
 				aonHeaderHelpButton.addEventListener('click', () => {

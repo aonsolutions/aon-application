@@ -5577,3 +5577,7 @@ aon-calendar-menu.menu-open .calendar-menu-option:nth-child(4) {
 #aonInvoiceSidenavFutureManagement {
 	display: none;
 }
+
+#aonHeaderSearchDiv{
+	display: none;
+}
