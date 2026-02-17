@@ -209,6 +209,8 @@
 #aonMenuListAppImgTop-invoice,
 #aonMenuListAppImgTop-warehouse,
 #aonMenuListAppImgTop-documental,
+#aonMenuListAppImgTop-accounting,
+#aonMenuListAppImgTop-fiscal,
 #aonMenuListAppImgTop-messenger,
 #aonMenuListAppImgTop-payroll,
 #aonMenuListAppImgTop-aonApplication,
@@ -287,12 +289,23 @@
 	mask-image: url('/icons/graduation-cap.svg') ;
 }
 
-#aonMenuListAppImgTop-accountingMenu {
+#aonMenuListAppImgTop-accountingMenu,
+#aonMenuListAppImgTop-accounting {
     mask-image: url('/icons/calculator.svg') ;
 }
 
-#aonMenuListAppImgTop-fiscalMenu {
+#aonMenuListAppImgTop-fiscalMenu,
+#aonMenuListAppImgTop-fiscal  {
     mask-image: url('/icons/building-2.svg') ;
+}
+
+#aonMenuListAppImgTop-fiscal,
+#aonMenuListAppImgTop-accounting{
+	color: transparent !important;
+}
+
+#aonMenuListAppImgTop-fiscal{
+	scale: 1;
 }
 
 #aonMenuListAppImgTop-payroll,
@@ -407,10 +420,6 @@ i[id$="aonDocumentalSheetToolbarHeaderToolSectionDownloadFileButtonIcon"] {
 
 #aonEventAddToolbarHeaderToolSectionhistoricButtonIcon{
 	mask-image: url('/icons/clipboard-list.svg') ;
-}
-
-#aonMenuList-new {
-	display: none;
 }
 
 
@@ -2169,7 +2178,7 @@ i[id$="aonDocumentalSheetToolbarHeaderToolSectionSendFileButtonIcon"]{
 	mask-image: url('/icons/line-chart.svg');
 }
 
-#aonHeaderSearchDialogMenu i.material-icons[icon="calculate"]  {
+#aonHeaderSearchDialogMenu i.material-icons[icon="calculate"]{
 	mask-image: url('/icons/calculator.svg');
 }
 
@@ -2447,6 +2456,10 @@ aon-search > span {
 }
 
 .newMenuContent{
+	align-items: start;
+}
+
+.newMenuContent.isFixedButton{
 	align-items: end;
 }
 
@@ -2539,6 +2552,9 @@ aon-search > span {
   opacity: 1;
 }
 
+#aonHeaderSearch.open + * #aonHeaderCompany{
+	display: none !important;
+}
 
 #aonHeaderSearchDiv{
 	display: block;

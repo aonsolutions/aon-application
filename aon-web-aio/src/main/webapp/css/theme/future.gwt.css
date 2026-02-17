@@ -1275,3 +1275,7 @@ div:has( > .aon_icon_menu_collapse) {
 	border: none !important;
     cursor: pointer;
 }
+
+.aon_number_box{
+	padding-left: 0px;
+}
