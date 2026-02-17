@@ -218,6 +218,8 @@
 #aonMenuListAppImgTop-invoice,
 #aonMenuListAppImgTop-warehouse,
 #aonMenuListAppImgTop-documental,
+#aonMenuListAppImgTop-accounting,
+#aonMenuListAppImgTop-fiscal,
 #aonMenuListAppImgTop-messenger,
 #aonMenuListAppImgTop-payroll,
 #aonMenuListAppImgTop-aonApplication,
@@ -296,12 +298,23 @@
 	mask-image: url('/icons/graduation-cap.svg') ;
 }
 
-#aonMenuListAppImgTop-accountingMenu {
+#aonMenuListAppImgTop-accountingMenu,
+#aonMenuListAppImgTop-accounting {
     mask-image: url('/icons/calculator.svg') ;
 }
 
-#aonMenuListAppImgTop-fiscalMenu {
+#aonMenuListAppImgTop-fiscalMenu,
+#aonMenuListAppImgTop-fiscal  {
     mask-image: url('/icons/building-2.svg') ;
+}
+
+#aonMenuListAppImgTop-fiscal,
+#aonMenuListAppImgTop-accounting{
+	color: transparent !important;
+}
+
+#aonMenuListAppImgTop-fiscal{
+	scale: 1;
 }
 
 #aonMenuListAppImgTop-payroll,
@@ -416,10 +429,6 @@ i[id$="aonDocumentalSheetToolbarHeaderToolSectionDownloadFileButtonIcon"] {
 
 #aonEventAddToolbarHeaderToolSectionhistoricButtonIcon{
 	mask-image: url('/icons/clipboard-list.svg') ;
-}
-
-#aonMenuList-new {
-	display: none;
 }
 
 
@@ -617,7 +626,7 @@ aon-configuration-menu .suiteMenuContent  {
 }
 
 #aonMenuAnchor.close #aonMenuAnchorDiv {
-	padding: 0 1.25rem;
+	padding: 0 1.5rem;
 	margin-left: 0px;
 }
 
@@ -1490,7 +1499,8 @@ i[id$="aonNewDialogcloud_uploadIcon"],
 i[id$="aonNewDialogadd_commentIcon"],
 i[id$="aonNewDialogperson_addIcon"],
 #aon-search-buttonIconButton i,
-i[id$="aonHeaderSearchDivButtonIcon"]
+i[id$="aonHeaderSearchDivButtonIcon"],
+#accountingUploadInvoiceLabel i
 {
 	width: 24px;
 	height: 24px;
@@ -1636,7 +1646,8 @@ i[id$="aonNewDialognote_addIcon"] {
 
 
 i[id$="ToolbarHeaderToolSectionUploadFileButtonIcon"],
-i[id$="aonNewDialogcloud_uploadIcon"] {
+i[id$="aonNewDialogcloud_uploadIcon"],
+#accountingUploadInvoiceLabel i {
     mask-image: url('/icons/upload-cloud.svg') ;
 }
 
@@ -2176,7 +2187,7 @@ i[id$="aonDocumentalSheetToolbarHeaderToolSectionSendFileButtonIcon"]{
 	mask-image: url('/icons/line-chart.svg');
 }
 
-#aonHeaderSearchDialogMenu i.material-icons[icon="calculate"]  {
+#aonHeaderSearchDialogMenu i.material-icons[icon="calculate"]{
 	mask-image: url('/icons/calculator.svg');
 }
 
@@ -2454,6 +2465,10 @@ aon-search > span {
 }
 
 .newMenuContent{
+	align-items: start;
+}
+
+.newMenuContent.isFixedButton{
 	align-items: end;
 }
 
@@ -2541,12 +2556,16 @@ aon-search > span {
   opacity: 1;
 }
 
+#aonHeaderSearch.open + * #aonHeaderCompany{
+	display: none !important;
+}
 
 #aonHeaderSearchDiv{
 	display: block;
 }
 
-i[id$="aonHeaderSearchDivButtonIcon"]{
+i[id$="aonHeaderSearchDivButtonIcon"],
+#accountingUploadInvoiceLabel i{
 	background-color: #ffff;
 }
 
@@ -2554,4 +2573,13 @@ i[id$="aonHeaderSearchDivButtonIcon"]{
   left: 15 !important;
   right: 15;
   top: 65 !important;
+}
+
+#accountingUploadInvoice div{
+	width: 95%;
+}
+
+#accountingUploadInvoiceLabel{
+	justify-content: space-between;
+  	width: 100%;
 }

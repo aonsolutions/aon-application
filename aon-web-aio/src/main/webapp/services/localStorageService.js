@@ -14,6 +14,7 @@ export const AON_LANGUAGE = 'aon_language';
 export const ONLY_ONE = 'onlyOne';
 export const NEW_THEME = 'new_theme';
 export const SUITE = 'suite';
+export const FIXED_BUTTON = 'fixedButton';
 export const RIGHT_PANEL = 'rightPanel';
 export const TOP_MENU = 'aonMenuTopnav';
 export const LEFT_MENU = 'aonMenuSidenav';
@@ -206,6 +207,14 @@ export const getRightPanel = () => {
 
 export const setRightPanel = (panel) => {
     set(RIGHT_PANEL,panel);
+}
+
+export const getFixedButton = () => {
+    return get(FIXED_BUTTON) || 'on';
+}
+
+export const setFixedButton = (value) => {
+    set(FIXED_BUTTON,value);
 }
 
 export const removeRightPanel = () => {

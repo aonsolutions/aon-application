@@ -1239,6 +1239,8 @@ export class AonHeader extends AonElement {
 				favicon();
 				title();
 			}).catch(() => { });
+			
+			aonMenu.closeEmptyApps();
 		}
 		);
 
