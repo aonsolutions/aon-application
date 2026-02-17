@@ -1706,12 +1706,23 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			}
 			String qrUrl = domain.getName() + "/dip?source=invoice&id=" + inv.getId() ;  
 			String tbaiId = "";
-			if(isTbai() || isLroe()) {
+			Date expDate = invoice.getExpDate() != null ? invoice.getExpDate() : invoice.getIssueDate();
+			if(isTbai(expDate) || isLroe(expDate)) {
 				try(CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)) {
 					TbaiData tbaiData = TbaiData.getInstance(ctx, getInvoiceCommunicationConfiguration());
 					String tbaiUrl = tbaiData.getTbaiUrl( domain.getId(), invoice.getId());
 					qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
 					tbaiId = tbaiData.getTbaiId(domain.getId(), invoice.getId());
+				}
+			} else if(icc.isVerifactu(expDate) || icc.isNoVerifactu(expDate)) {
+				if (invoice.getCommunicationInfo() != null) {
+					InvoiceInfo info = invoice.getCommunicationInfo().get(
+						icc.isVerifactu(expDate) 
+							? InvoiceCommunicationType.VERIFACTU 
+							: InvoiceCommunicationType.NO_VERIFACTU);
+					if (info != null) {
+						qrUrl = info.getCheckUrl();
+					}
 				}
 			}
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -2262,6 +2273,14 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	public boolean isSif() 			{return getInvoiceCommunicationConfiguration().isSif();}
 	public boolean isSii() 			{return getInvoiceCommunicationConfiguration().isSii();}
 
+	public boolean isLroe(Date date) 		{return getInvoiceCommunicationConfiguration().isLroe(date);}
+	public boolean isTbai(Date date) 		{return getInvoiceCommunicationConfiguration().isTbai(date);}
+	public boolean isVerifactu(Date date) 	{return getInvoiceCommunicationConfiguration().isVerifactu(date);}
+	public boolean isNoVerifactu(Date date) {return getInvoiceCommunicationConfiguration().isNoVerifactu(date);}
+	public boolean isSif(Date date) 		{return getInvoiceCommunicationConfiguration().isSif(date);}
+	public boolean isSii(Date date) 		{return getInvoiceCommunicationConfiguration().isSii(date);}
+
+	
 	public boolean isAraba() 	{return getInvoiceCommunicationConfiguration().isAraba();}
 	public boolean isBizkaia() 	{return getInvoiceCommunicationConfiguration().isBizkaia();}
 	public boolean isGipuzkoa() {return getInvoiceCommunicationConfiguration().isGipuzkoa();}

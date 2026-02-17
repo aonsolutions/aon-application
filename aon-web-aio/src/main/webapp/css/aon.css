@@ -916,10 +916,6 @@ h1 {
 	transition: width .3s;
 }
 
-#aonMenuSidenav>ul {
-	margin-top: 68px;
-}
-
 #aonMenuSidenav.close {
 	width: 0px !important; /*13.75rem;*/
 	min-width: 0 !important; /*13.75rem;*/
@@ -3920,6 +3916,15 @@ background-image: url("../favicon.png");
 	height: calc(100vh - 48px);
 }
 
+#aonHome:has(.aonMenuTopNavVisible) .aonMenuSidenav {
+	height: calc(100vh - 116px);
+	margin-top: 68px;
+}
+
+#aonHome:has(.aonMenuTopNavHide) .aonMenuSidenav {
+	height: calc(100vh - 48px);
+}
+
 #aonHome:has(.aonMenuTopNavVisible) .rightPanel {
 	height: calc(100vh - 116px);
 	margin-top: 69px;
@@ -5575,5 +5580,9 @@ aon-calendar-menu.menu-open .calendar-menu-option:nth-child(4) {
 }
 
 #aonInvoiceSidenavFutureManagement {
+	display: none;
+}
+
+#aonHeaderSearchDiv{
 	display: none;
 }
