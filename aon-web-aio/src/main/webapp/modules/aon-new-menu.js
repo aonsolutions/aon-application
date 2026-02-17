@@ -385,8 +385,7 @@ export class AonNewMenu extends AonElement {
 		aonMenuTopnav.id = this.AON_MENU_TOPNAV;
 		aonMenuTopnav.className = CSS.AON_MENU_TOPNAV;
 		this.appendChild(aonMenuTopnav);
-		aonMenuTopnav.classList.add("aonNewMenuTopNav");
-		this.getRootPanel().style.marginTop = '1px'; //'69px';
+		aonMenuTopnav.classList.add(CSS.AON_MENU_TOP_NAV_HIDE);
 		this.buildMenuTopnav();
 
 		let header = this.getElement('aonHeaderWeb');
@@ -398,16 +397,26 @@ export class AonNewMenu extends AonElement {
 		aonSearchDialog.id = this.AON_MENU_SEARCH_DIALOG;
 		this.appendChild(aonSearchDialog);
 		
-		let aonNewFixedButton = this.getElement('newFixedButton');
-		if(aonNewFixedButton){
-			aonNewFixedButton.addEventListener(EVENT.CLICK, () => {
-				this.removeOldNewDialogContents();
-				
-				let newFixedButton = document.querySelector('aon-new-fixed-button .newFixedButton');
-				console.log(newFixedButton);
-				
-				this.showNewDialogMenu(newFixedButton, true);
-			});
+		if (!this._delegatedHandlerAdded) {
+
+		    document.addEventListener(EVENT.CLICK, (e) => {
+		        if (e.target.closest('.newFixedButton')) {
+		
+		            this.removeOldNewDialogContents();
+		
+		            let newFixedButton = document.querySelector('aon-new-fixed-button .newFixedButton');
+		            console.log(newFixedButton, newFixedButton.classList.contains('open'));
+		
+		            if (newFixedButton.classList.contains('open')) {
+		                let newDialogMenu = this.getElement('newDialogMenu');
+		                newDialogMenu.close();
+		            } else {
+		                this.showNewDialogMenu(newFixedButton, true);
+		            }
+		        }
+		    });
+		
+		    this._delegatedHandlerAdded = true;
 		}
 
 	}
@@ -620,34 +629,14 @@ export class AonNewMenu extends AonElement {
 
 	showTopNav() {
 		let topnav = this.getElement(this.AON_MENU_TOPNAV);
-		let rootPanel = this.getElement("rootPanel");
-		let rightPanel = this.getElement("aonRightPanel");
-
-		topnav.style.height = '68px';
-		rootPanel.style.marginTop = `${rootPanel.style.marginTop + 69}px`;
-		if (rightPanel) {
-			rightPanel.style.marginTop = topnav.offsetHeight;
-			rightPanel.style.height = `calc(100vh - 61px)`;
-
-		}
-
-		rootPanel.style.marginTop = "68px";
-		rootPanel.classList.add('rootPanelTopbar');
-		//rootPanel.style.height = `calc(100vh - 115px )`;
+		topnav.classList.remove(CSS.AON_MENU_TOP_NAV_HIDE);
+		topnav.classList.add(CSS.AON_MENU_TOP_NAV_VISIBLE);
 	}
 
 	hideTopNav() {
 		let topnav = this.getElement(this.AON_MENU_TOPNAV);
-		let rootPanel = this.getElement("rootPanel");
-		let rightPanel = this.getElement("aonRightPanel");
-		topnav.style.height = '0px';
-		if (rightPanel) {
-			rightPanel.style.marginTop = "1px";
-			rightPanel.style.height = `calc(100vh - 49px)`;
-		}
-		rootPanel.style.marginTop = "1px";
-
-		rootPanel.style.height = `calc(100vh - 50px)`;
+		topnav.classList.remove(CSS.AON_MENU_TOP_NAV_VISIBLE);
+		topnav.classList.add(CSS.AON_MENU_TOP_NAV_HIDE);
 	}
 
 	isTopNavVisible() {
@@ -684,7 +673,6 @@ export class AonNewMenu extends AonElement {
 		div.title = app.title;
 		let header = this.getElement("aonHeaderWeb");
 		let welcome = this.getElement("aonCompanyTabFilter");
-
 
 		if (app.symbol) {
 			let icon = this.createElement(TAG.SPAN);
@@ -1269,7 +1257,7 @@ export class AonNewMenu extends AonElement {
 			});
 		}
 
-		if (this.getDur().isDocumental() && !this.isBetaDoc()) {
+		if (this.getDur().isDocumental()) {
 			newMenuOptions.push({
 				fn: () => {
 					let input = this.createElement(TAG.INPUT);
@@ -1280,7 +1268,7 @@ export class AonNewMenu extends AonElement {
 					input.click();
 				},
 				icon: MATERIAL_ICONS.CLOUD_UPLOAD,
-				name: MSG.UPLOAD_DOCUMENT,
+				name: LS.isFutureTheme() ? 'Subir a mi nube' : MSG.UPLOAD_DOCUMENT,
 			});
 		}
 		if (this.getDur().isMessenger()) {
@@ -1326,7 +1314,7 @@ export class AonNewMenu extends AonElement {
 		if (LS.isFutureTheme()) {
 
 			let newDialogMenu = this.getElement('newDialogMenu');
-			newDialogMenu.setOptions(newMenuOptions);
+			newDialogMenu.setOptions(newMenuOptions, LS.isFutureTheme());
 			newDialogMenu.open(el, isFixedButton);
 
 		} else {

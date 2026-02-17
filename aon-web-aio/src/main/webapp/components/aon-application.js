@@ -118,7 +118,7 @@ export class AonApplication extends AonElement {
     this.appendChild(loader);
 
     let div = this.createDiv(); 
-    div.className = this.isMobile() ? 'aonMobileApplicationContent' :'aonFlex';
+    div.className = this.isMobile() ? CSS.AON_MOBILE_APPLICATION_CONTENT : CSS.AON_APPLICATION_CONTENT;
     this.appendChild(div);
 
     let leftSidenav = this.createDiv(this.SIDENAV, this.getSidenavClassName());

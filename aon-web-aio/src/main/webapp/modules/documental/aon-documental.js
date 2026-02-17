@@ -166,7 +166,7 @@ export class AonDocumental extends AonElement {
 		}
 
         let bool = await this.hasBidoq();
-		if(bool && this.isBetaDoc() && this.getDur().isDocumentalManager()){
+		if(bool && this.isBetaDoc() && this.getDur().isDocumentalManager() && !LS.isFutureTheme()){
 			aonDocumental.addToolbarOption2(ACTION.BIDOQ_IMPORT, () => this.importBidoqDocumentsToAon());
 		}
 
