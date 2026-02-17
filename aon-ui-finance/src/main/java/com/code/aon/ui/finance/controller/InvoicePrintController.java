@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -62,9 +63,11 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.project.ProjectTas;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -268,11 +271,22 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 						String qrUrl = occam.getDomainName() + "/dip?source=invoice&id=" + id;  
 						InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, occam.getDomain());
 						String tbaiId = "";
-						if(icc.isTbai()) {
+						Date expDate = invoice.getExpDate() != null ? invoice.getExpDate() : invoice.getIssueDate();
+						if(icc.isTbai(expDate) || icc.isLroe(expDate)) {
 							TbaiData tbaiData = TbaiData.getInstance(ctx, icc);
 							String tbaiUrl = tbaiData.getTbaiUrl(occam.getDomain(), invoice.getId());
 							qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
 							tbaiId = tbaiData.getTbaiId(occam.getDomain(), invoice.getId());
+						} else if(icc.isVerifactu(expDate) || icc.isNoVerifactu(expDate)) {
+							if (invoice.getCommunicationInfo() != null) {
+								InvoiceInfo info = invoice.getCommunicationInfo().get(
+									icc.isVerifactu(expDate) 
+										? InvoiceCommunicationType.VERIFACTU 
+										: InvoiceCommunicationType.NO_VERIFACTU);
+								if (info != null) {
+									qrUrl = info.getCheckUrl();
+								}
+							}
 						}
 						if(company.getRegistry().getDomain().isGarage()) {	
 							invoice.detailStream().forEach(d -> {

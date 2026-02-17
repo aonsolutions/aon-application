@@ -313,28 +313,21 @@ public class InvoiceValidation {
 	 */
 	private static final Consumer<InvoiceValidationContext> TBAI = ivc -> {
 		InvoiceCommunicationConfiguration icc = ivc.config.getCommunicationConfig();
-		if (icc.isTbai()) {
-			boolean accepted = true;
-			if(icc.isBizkaia()) {
-				accepted = InvoiceInfoDAO.getMap(
-						ivc.ctx
-						, icc 
-						, ivc.inv.getDomain()
-						, ivc.inv.getId()
-						, ivc.inv.getType()
-						, ivc.inv.getExpDate()
-						)
-					.map( ic -> ic.get(InvoiceCommunicationType.LROE) )
-					.filter( Objects::nonNull )
-					.map(info -> info.isAccepted() || info.isAcceptedWithErrors())
-					.orElse( true )
-				;
-			}
+		if(icc.isLroe() && icc.isBizkaia()) {
+			 DataResponse dr = DataResponseDAO.get(ivc.ctx, f -> f.getSourceProperty().eq(DataResponseSource.LROE.value())
+					.and(f.getSourceIdProperty().eq(ivc.inv.getId())), new Options().setFull(true));
+			 dr.getDetails().stream().filter(f -> f.getDataVariable().equals("info")).findFirst().ifPresent( d -> {
+				 if(AonStringUtils.isBlank(d.getDataValue()) || !d.getDataValue().contains("\"operacion\":\"AN_0\"")) {
+					 throw new AonCoreException(AonError.INVOICE_CANT_DELETE_TBAI.getMessage());
+				 }
+			 });	
+		} 
+		if (icc.isTbai() && (icc.isAraba() || icc.isGipuzkoa())) {
 			DataResponse dr = DataResponseDAO.get(ivc.ctx, f -> f.getSourceProperty().eq(DataResponseSource.TBAI.value())
 					.and(f.getSourceIdProperty().eq(ivc.inv.getId())), new Options().setFull(true));
-			String type = dr.getDetails().stream().filter(f -> f.getDataVariable().equals("type")).map(DataResponseDetail::getDataValue).findFirst().orElse("alta");
-			if(dr.getId() != null && "alta".equalsIgnoreCase(type) && accepted) {
-				throw new AonCoreException(AonError.INVOICE_CANT_DELETE_TBAI.getMessage());
+			
+			if(dr.getId() != null && !"baja".equalsIgnoreCase(dr.getCode())) {
+				throw new AonCoreException(AonError.INVOICE_CANT_DELETE_TBAI.getMessage());	
 			}
 		}
 	};

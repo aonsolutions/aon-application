@@ -83,6 +83,15 @@
 	height: calc(100vh - 68px);
 }
 
+#aonHome:has(.aonMenuTopNavVisible) .aonMenuSidenav {
+	height: calc(100vh - 136px);
+	margin-top: 68px;
+}
+
+#aonHome:has(.aonMenuTopNavHide) .aonMenuSidenav {
+	height: calc(100vh - 68px);
+}
+
 #aonHome:has(.aonMenuTopNavVisible) .rightPanel {
 	height: calc(100vh - 136px);
 	margin-top: 69px;
@@ -801,12 +810,12 @@ aon-configuration-menu .suiteMenuContent  {
 }
 
 .aonSidenav .aonAppMenuSidenavList{
-	padding: .625rem 1.25rem .625rem 2.5rem;	
+	padding: .425rem 1.25rem .425rem 2.5rem;	
 	position: relative;
 }
 
 .aonSidenav .aonAppMenuSidenavList.aonSubMenuOptions {
-	padding: .625rem 1.25rem .625rem 3rem;
+	padding: .425rem 1.25rem .425rem 3rem;
 }
 
 .aonSidenav .aonSidenavTitle {
@@ -2472,11 +2481,6 @@ aon-search > span {
 .aonCheckbox:hover>input:focus,
 .aonCheckbox>input:active {
 	opacity: 0;
-}
-
-.aonCheckbox>span::after{
-	top: 2;
-	left: 0;
 }
 
 .menu-option {
