@@ -3014,5 +3014,19 @@
     font-weight: bold;
 }
 
+/* ============================================================
+   ACCOUNTING PERIOD
+   ============================================================ */
 
+.aon-accounting-period-card{
+	min-width: 15rem;
+}
+
+.aon-accounting-period-title-input{
+	max-width: 10rem;
+}
+
+.aon-accounting-period-buttons{
+	padding-left: 5px;
+}
 

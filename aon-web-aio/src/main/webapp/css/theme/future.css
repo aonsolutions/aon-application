@@ -608,7 +608,7 @@ aon-configuration-menu .suiteMenuContent  {
 }
 
 #aonMenuAnchor.close #aonMenuAnchorDiv {
-	padding: 0 1.25rem;
+	padding: 0 1.5rem;
 	margin-left: 0px;
 }
 
@@ -1481,7 +1481,8 @@ i[id$="aonNewDialogcloud_uploadIcon"],
 i[id$="aonNewDialogadd_commentIcon"],
 i[id$="aonNewDialogperson_addIcon"],
 #aon-search-buttonIconButton i,
-i[id$="aonHeaderSearchDivButtonIcon"]
+i[id$="aonHeaderSearchDivButtonIcon"],
+#accountingUploadInvoiceLabel i
 {
 	width: 24px;
 	height: 24px;
@@ -1627,7 +1628,8 @@ i[id$="aonNewDialognote_addIcon"] {
 
 
 i[id$="ToolbarHeaderToolSectionUploadFileButtonIcon"],
-i[id$="aonNewDialogcloud_uploadIcon"] {
+i[id$="aonNewDialogcloud_uploadIcon"],
+#accountingUploadInvoiceLabel i {
     mask-image: url('/icons/upload-cloud.svg') ;
 }
 
@@ -2542,7 +2544,8 @@ aon-search > span {
 	display: block;
 }
 
-i[id$="aonHeaderSearchDivButtonIcon"]{
+i[id$="aonHeaderSearchDivButtonIcon"],
+#accountingUploadInvoiceLabel i{
 	background-color: #ffff;
 }
 
@@ -2550,4 +2553,13 @@ i[id$="aonHeaderSearchDivButtonIcon"]{
   left: 15 !important;
   right: 15;
   top: 65 !important;
+}
+
+#accountingUploadInvoice div{
+	width: 95%;
+}
+
+#accountingUploadInvoiceLabel{
+	justify-content: space-between;
+  	width: 100%;
 }
