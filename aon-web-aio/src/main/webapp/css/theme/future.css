@@ -792,12 +792,12 @@ aon-configuration-menu .suiteMenuContent  {
 }
 
 .aonSidenav .aonAppMenuSidenavList{
-	padding: .625rem 1.25rem .625rem 2.5rem;	
+	padding: .425rem 1.25rem .425rem 2.5rem;	
 	position: relative;
 }
 
 .aonSidenav .aonAppMenuSidenavList.aonSubMenuOptions {
-	padding: .625rem 1.25rem .625rem 3rem;
+	padding: .425rem 1.25rem .425rem 3rem;
 }
 
 .aonSidenav .aonSidenavTitle {
