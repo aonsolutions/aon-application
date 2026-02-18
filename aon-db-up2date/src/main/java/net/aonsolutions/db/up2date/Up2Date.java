@@ -591,6 +591,8 @@ public class Up2Date {
 			// SanitizeDomainRegistries.SANITIZE_SIG_AONSOLUTIONS_ORG,
 			// SMI2026Update.SMI2026UPDATE,
 			Customize.CUSTOMIZE_OPENGES,
+			Customize.CUSTOMIZE_AYUDAT,
+			Customize.CUSTOMIZE_INFOAUTONOMOS,
 			
 			
 			// ----------------------------------------------------------------
