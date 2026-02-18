@@ -41,20 +41,34 @@ public class Customize implements Update {
 	.setHeaderLogo("https://www.openges.es/images/logo.svg")
 	.setTitle("OpenGes  - Asesoría online para pymes y autónomos")
 	.setCompanyLogo("https://my.openges.es/v2/LOGOTIPO_VERSION_2_OPENGES-03.png")
+	.setVariable("AON_CUSTOMIZE_BUTTON_BACKGROUND", "linear-gradient(to right, #0f172a, #0f172a, #0E1030, #5de49e)")
 	;
 
 	public static final Customize CUSTOMIZE_INFOAUTONOMOS = 
 	new Customize(DOMAIN.NAME.likeRegex("^infoautonomos\\.aonsolutions\\.(org|net)$"))
 	.setTheme("/css/theme/future.css")
-	.setSupportEmail("info@openges.es")
-	.setSupportPhone("(+34) 900 730 037")
-	.setFavicon("https://openges.es/images/icons/icon.svg")
-	.setLoginLogo("https://www.openges.es/images/logo.svg")
-	.setHeaderLogo("https://www.openges.es/images/logo.svg")
-	.setTitle("OpenGes  - Asesoría online para pymes y autónomos")
-	.setCompanyLogo("https://my.openges.es/v2/LOGOTIPO_VERSION_2_OPENGES-03.png")
+	.setSupportPhone("900 525 576")
+	.setSupportEmail("asesoria@infoautonomos.com")
+	.setTitle("Asesoría Online para Autónomos y Pymes")
+	.setCompanyLogo("https://infoautonomos.aonsolutions.net/dist/logos/infoautonomos/logo.svg")
+	.setFavicon("https://infoautonomos.aonsolutions.net/dist/favicons/infoautonomos/favicon.svg")
+	.setLoginLogo("https://infoautonomos.aonsolutions.net/dist/logos/infoautonomos/logo-horizontal.svg")
+	.setHeaderLogo("https://infoautonomos.aonsolutions.net/dist/logos/infoautonomos/logo-horizontal.svg")
+	
+	.setVariable("AON_CUSTOMIZE_BUTTON_BACKGROUND", "linear-gradient(to right, #0f172a, #0f172a, #0E1030, #41e0e0)")
 	;
 	
+	public static final Customize CUSTOMIZE_AYUDAT = 
+	new Customize(DOMAIN.NAME.likeRegex("^ayudat\\.aonsolutions\\.(org|net)$"))
+	.setTheme("/css/theme/future.css")
+	.setSupportPhone("900 100 162")
+	.setSupportEmail("soporteclientes@ayudatpymes.es")
+	.setTitle("Ayuda T Pymes | Asesoría Online para Empresas y Autónomos")
+	.setCompanyLogo("https://ayudat.aonsolutions.net/dist/logos/ayudat/logo-gris.svg")
+	.setFavicon("https://ayudat.aonsolutions.net/dist/favicons/ayudat/favicon-light.svg")
+	.setLoginLogo("https://ayudat.aonsolutions.net/dist/logos/ayudat/logo-horizontal.svg")
+	.setHeaderLogo("https://ayudat.aonsolutions.net/dist/logos/ayudat/logo-horizontal.svg")
+	;
 	
 	// CUSTOM_VIEW(getEmptyModules(), "Vista Personalizada"),								// 20
 	
@@ -185,6 +199,11 @@ public class Customize implements Update {
 	
 	public Customize setCompanyLogo(String companyLogo) {
 		this.companyLogo = companyLogo;
+		return this;
+	}
+	
+	public Customize setVariable(String name, String value) {
+		appParams.put(name, value);
 		return this;
 	}
 	

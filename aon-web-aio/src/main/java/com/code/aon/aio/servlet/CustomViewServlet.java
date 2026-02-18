@@ -5,17 +5,18 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -31,6 +32,8 @@ import jakarta.servlet.http.HttpServletResponse;
 public class CustomViewServlet extends HttpServlet {
 		
 	private static final Logger LOGGER  = Logger.getLogger(CustomViewServlet.class.getName());
+	
+	private static final Pattern CUSTOMIZABLE_VARIABLE_PATTERN = Pattern.compile("--(?<name>aonCustomize[a-zA-Z0-9]+):");
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -90,34 +93,6 @@ public class CustomViewServlet extends HttpServlet {
 				String heritableIdStr = paramsMap.get(AppParam.AON_CUSTOMIZE_HERITABLE_ID.toString());
 				Integer heritableId = AonNumberUtils.toInteger(heritableIdStr);
 
-//				Attach faviconAttach = AON.getAttach(
-//						domainStr, 
-//					    customViewdomainId, 
-//					    "", 
-//					    p -> (p.getAttachModuleProperty().eq(id).or(p.getAttachModuleProperty().eq(heritableId)))
-//					         .and(p.getTypeProperty().eq((byte) 2))
-//					         .and(p.getDescriptionProperty().eq("favicon.svg")), 
-//					    AttachType.REGISTRY);
-//				Attach headerLogoAttach = AON.getAttach(
-//						domainStr, 
-//					    customViewdomainId, 
-//					    "", 
-//					    p -> (p.getAttachModuleProperty().eq(id).or(p.getAttachModuleProperty().eq(heritableId)))
-//					         .and(p.getTypeProperty().eq((byte) 2))
-//					         .and(p.getDescriptionProperty().eq("aon-header-logo")), 
-//					    AttachType.REGISTRY);
-//				Attach loginLogoAttach = AON.getAttach(
-//						domainStr, 
-//					    customViewdomainId, 
-//					    "", 
-//					    p -> (p.getAttachModuleProperty().eq(id).or(p.getAttachModuleProperty().eq(heritableId)))
-//					         .and(p.getTypeProperty().eq((byte) 2))
-//					         .and(p.getDescriptionProperty().eq("aon-login-logo")), 
-//					    AttachType.REGISTRY);
-				
-//				String headerLogoMd5 = getMd5(headerLogoAttach.getData());
-//				String faviconMd5 = getMd5(faviconAttach.getData());
-//				String loginLogoMd5 = getMd5(loginLogoAttach.getData());
 				byte [] bytes = is.readAllBytes();
 				String css = new String(bytes, StandardCharsets.UTF_8);
 			
@@ -137,7 +112,18 @@ public class CustomViewServlet extends HttpServlet {
 					css = AonStringUtils.replace(css, "titleIcon", "none");
 				}
 				css = AonStringUtils.replace(css, "faviconCustom", "cvDocument/faviconCustom");
-
+				
+				String[] customizableVariables = getThemeCustomizableVariables(req, theme == null ? "/css/theme/aon.css" : theme);
+				String customizableVariablesCss =
+				AON.getApplicationParameterStream(
+				        domainStr, 
+				        customViewdomainId, 
+				        "", 
+				        p -> p.getDomainProperty().eq(customViewdomainId)
+			            .and(p.getNameProperty().in(customizableVariables))
+						).map(appParam -> String.format("--%s: %s;", fromUpperUnderscoreToCamelCase(appParam.getName()), appParam.getValue()))
+						.collect(Collectors.joining("\n"));
+				css = AonStringUtils.replace(css, "/*aonCustomizableVariables*/", customizableVariablesCss);
 				
 				byte[] finalCssBytes = css.getBytes(StandardCharsets.UTF_8);
 				resp.setContentLength(finalCssBytes.length);  
@@ -164,5 +150,43 @@ public class CustomViewServlet extends HttpServlet {
 	     	sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
 	    }       
         return sb.toString();
+	}
+	
+	private static String[] getThemeCustomizableVariables(HttpServletRequest req, String theme) {
+		try ( InputStream is = req.getServletContext().getResourceAsStream(theme) ) {
+			byte [] bytes  = is.readAllBytes();
+			 // Assuming the CSS file is not too large to fit into memory
+			String css = new String(bytes, StandardCharsets.UTF_8);
+			// Extract customizable variables from the CSS content
+			return CUSTOMIZABLE_VARIABLE_PATTERN.matcher(css).results()
+					.map(m -> m.group("name"))
+					.map(CustomViewServlet::fromCamelCaseToUpperUnderscore)
+					.toArray(String[]::new);
+			
+		} catch (IOException e) {
+			return new String[0];
+		}
+	}
+	
+	private static String fromCamelCaseToUpperUnderscore(String camelCase) {
+	    return camelCase.replaceAll("([a-z])([A-Z])", "$1_$2").toUpperCase();
+	}
+	
+	private static String fromUpperUnderscoreToCamelCase(String upperUnderscore) {
+	    StringBuilder result = new StringBuilder();
+	    boolean nextUpper = false;
+	    for (char c : upperUnderscore.toCharArray()) {
+	        if (c == '_') {
+	            nextUpper = true;
+	        } else {
+	            if (nextUpper) {
+	                result.append(Character.toUpperCase(c));
+	                nextUpper = false;
+	            } else {
+	                result.append(Character.toLowerCase(c));
+	            }
+	        }
+	    }
+	    return result.toString();
 	}
 }
