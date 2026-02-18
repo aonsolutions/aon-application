@@ -2570,9 +2570,9 @@ i[id$="aonHeaderSearchDivButtonIcon"],
 }
 
 #aonHeaderSearchDialogMenuDialogMenuContent{
-  left: 15 !important;
+  left: auto !important;
   right: 15;
-  top: 65 !important;
+  top: 55 !important;
 }
 
 #accountingUploadInvoice div{

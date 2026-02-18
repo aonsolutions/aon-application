@@ -411,6 +411,13 @@ export class AonNewMenu extends AonElement {
 		                newDialogMenu.close();
 		            } else {
 		                this.showNewDialogMenu(newFixedButton, true);
+		                
+		                let searchWidget = this.getElement('aonHeaderSearch');
+		                if(searchWidget) searchWidget.classList.remove('open');
+		                
+		                let searchDialogWidget = this.getElement('aonHeaderSearchDialogMenu');
+						if (searchDialogWidget) searchDialogWidget.close();
+					
 		            }
 		        }
 		    });
