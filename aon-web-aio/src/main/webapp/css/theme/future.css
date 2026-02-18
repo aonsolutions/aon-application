@@ -67,10 +67,55 @@
 	height: 68px; /*4rem;*/
 	min-height: 68px; /*4rem;*/
 	background-color: var(--aonHeaderBackgroundColor);
+	position: relative;
 }
 
 #aonMenu:has(.aonMenuSidenav.close) .aonMenuTopnav {
 	margin-left: 68px;
+}
+
+#aonHome:has(.aonMenuTopNavVisible) .rootPanel {
+	height: calc(100vh - 136px);
+	margin-top: 68px;
+}
+
+#aonHome:has(.aonMenuTopNavHide) .rootPanel {
+	height: calc(100vh - 68px);
+}
+
+#aonHome:has(.aonMenuTopNavVisible) .aonMenuSidenav {
+	height: calc(100vh - 136px);
+	margin-top: 68px;
+}
+
+#aonHome:has(.aonMenuTopNavHide) .aonMenuSidenav {
+	height: calc(100vh - 68px);
+}
+
+#aonHome:has(.aonMenuTopNavVisible) .rightPanel {
+	height: calc(100vh - 136px);
+	margin-top: 69px;
+}
+
+#aonHome:has(.aonMenuTopNavHide) .rightPanel {
+	height: calc(100vh - 68px);
+	margin-top: 1px;
+}
+
+#aonHome:has(.aonMenuTopNavVisible) .aonApplicationContent {
+	height: calc(100vh - 201px);
+}
+
+#aonHome:has(.aonMenuTopNavHide) .aonApplicationContent {
+	height: calc(100vh - 133px);
+}
+
+#aonHome:has(.aonMenuTopNavVisible) .aonContentBeta .aonTable tbody {
+	height: calc(100vh - 301px);
+}
+
+#aonHome:has(.aonMenuTopNavHide) .aonContentBeta .aonTable tbody {
+	height: calc(100vh - 233px);
 }
 
 .aonMenuTopnav {
@@ -78,8 +123,6 @@
     border-color: var(--aonBackgroundColor);
     background-color: var(--aonBackgroundColor);
     margin-left: 237px;
-    
-    transition: margin .5s;
 }
 
 .aonMenuTopnav.closeSidenav{
@@ -175,6 +218,8 @@
 #aonMenuListAppImgTop-invoice,
 #aonMenuListAppImgTop-warehouse,
 #aonMenuListAppImgTop-documental,
+#aonMenuListAppImgTop-accounting,
+#aonMenuListAppImgTop-fiscal,
 #aonMenuListAppImgTop-messenger,
 #aonMenuListAppImgTop-payroll,
 #aonMenuListAppImgTop-aonApplication,
@@ -253,12 +298,23 @@
 	mask-image: url('/icons/graduation-cap.svg') ;
 }
 
-#aonMenuListAppImgTop-accountingMenu {
+#aonMenuListAppImgTop-accountingMenu,
+#aonMenuListAppImgTop-accounting {
     mask-image: url('/icons/calculator.svg') ;
 }
 
-#aonMenuListAppImgTop-fiscalMenu {
+#aonMenuListAppImgTop-fiscalMenu,
+#aonMenuListAppImgTop-fiscal  {
     mask-image: url('/icons/building-2.svg') ;
+}
+
+#aonMenuListAppImgTop-fiscal,
+#aonMenuListAppImgTop-accounting{
+	color: transparent !important;
+}
+
+#aonMenuListAppImgTop-fiscal{
+	scale: 1;
 }
 
 #aonMenuListAppImgTop-payroll,
@@ -365,16 +421,14 @@
     mask-image: url('/icons/user.svg') ;
 }
 
-#aonSigninToolbarHeaderToolSectionfile_downloadButtonIcon {
+#aonSigninToolbarHeaderToolSectionfile_downloadButtonIcon,
+i[id$="aonDocumentalToolbarHeaderToolSectionDownloadFileButtonIcon"],
+i[id$="aonDocumentalSheetToolbarHeaderToolSectionDownloadFileButtonIcon"] {
 	mask-image: url('/icons/download.svg') ;
 }
 
 #aonEventAddToolbarHeaderToolSectionhistoricButtonIcon{
 	mask-image: url('/icons/clipboard-list.svg') ;
-}
-
-#aonMenuList-new {
-	display: none;
 }
 
 
@@ -469,7 +523,7 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"].closeIcon {
 }
 
 .aonSidenavTitle{
-	margin-bottom: 20px;
+	margin-top: 10px;
 }
 
 aon-fiscal-menu .suiteMenuContent,
@@ -552,17 +606,15 @@ aon-configuration-menu .suiteMenuContent  {
 	width: 237px;
 	margin-left: 4px;
 	z-index: 2;
+	transition: none;
 }
 
 #aonMenuAnchor.close {
 	width: 68px;
-	background-color: white;
-	left: 0;
-	top: 68;
-	transition: width .2s;
 	border-radius: 0px;
-	transition: width 0.3s;
-	padding-left: 0;
+	top: 68px;
+	width: 75px;
+	background-color: #ffff;
 }
 
 #aonMenuAnchorDiv {
@@ -574,7 +626,7 @@ aon-configuration-menu .suiteMenuContent  {
 }
 
 #aonMenuAnchor.close #aonMenuAnchorDiv {
-	padding: 0 1.25rem;
+	padding: 0 1.5rem;
 	margin-left: 0px;
 }
 
@@ -614,6 +666,10 @@ aon-configuration-menu .suiteMenuContent  {
 
 #aonMenuSidenav.close #expandHirin {
 	padding: 0 .7rem !important;
+}
+
+#aonMenu #aonMenuSidenav{
+	transition: none;
 }
 
 /*
@@ -672,6 +728,10 @@ aon-configuration-menu .suiteMenuContent  {
 
 /* ========================== App Styles  ========================== */
 
+.aonContentBeta:has(#aonInvoiceHome) {
+  background-color: var(--aonBackgroundColor2) !important;
+}
+
 .aonSidenav,
 .aonToolbar,
 #aonParent .aonContentBeta,
@@ -694,7 +754,7 @@ aon-configuration-menu .suiteMenuContent  {
 #aonWarehouse .aonContentBeta,
 #aonMessenger .aonContentBeta,
 #aonOfficePanel .aonContentBeta {
-	padding: 1.25rem;
+	padding: 1.25rem 1.25rem 0 1.25rem;
 }
 
 .closeSidenav {
@@ -709,6 +769,7 @@ aon-configuration-menu .suiteMenuContent  {
 
 .aonSidenav {
   white-space:nowrap;
+  padding-top: .5rem;
 }
 
 .aonSidenav *,
@@ -749,12 +810,12 @@ aon-configuration-menu .suiteMenuContent  {
 }
 
 .aonSidenav .aonAppMenuSidenavList{
-	padding: .625rem 1.25rem .625rem 2.5rem;	
+	padding: .425rem 1.25rem .425rem 2.5rem;	
 	position: relative;
 }
 
 .aonSidenav .aonAppMenuSidenavList.aonSubMenuOptions {
-	padding: .625rem 1.25rem .625rem 3rem;
+	padding: .425rem 1.25rem .425rem 3rem;
 }
 
 .aonSidenav .aonSidenavTitle {
@@ -819,11 +880,6 @@ aon-configuration-menu .suiteMenuContent  {
 #aonOfficePanelSidenavTypesNewButtonIconButton {
 	width: 20.5px;
 	height: 20.5px;
-	
-	#i[id$='ToolbarHeaderToolSectionSearchAdvancedButtonIcon'] {
-	
-}
-	
 	background-color: var(--aonTopAppTextColor) !important;
 	mask-size: contain;
 	mask-position: center;
@@ -1430,7 +1486,21 @@ i[id$="ToolbarHeaderToolSectionArchivadasButtonIcon"],
 i[id$="ToolbarHeaderToolSectionCerradasButtonIcon"],
 i[id$="ToolbarHeaderToolSectiontoolbarLabelsButtonIcon"],
 i[id$="ToolbarHeaderToolSectionRestoreButtonIcon"],
-i[id$="aonSigninToolbarHeaderToolSectionsyncButtonIcon"]
+i[id$="aonSigninToolbarHeaderToolSectionsyncButtonIcon"],
+i[id$="aonDocumentalToolbarHeaderToolSectionSendFileButtonIcon"],
+i[id$="aonDocumentalToolbarHeaderToolSectionDownloadFileButtonIcon"],
+i[id$="aonDocumentalToolbarHeaderToolSectionDeleteFileButtonIcon"],
+i[id$="aonDocumentalSheetToolbarHeaderToolSectionSendFileButtonIcon"],
+i[id$="aonDocumentalSheetToolbarHeaderToolSectionDownloadFileButtonIcon"],
+i[id$="aonDocumentalSheetToolbarHeaderToolSectionDeleteFileButtonIcon"],
+i[id$="aonNewDialognote_addIcon"],
+i[id$="aonNewDialogaccount_balance_walletIcon"],
+i[id$="aonNewDialogcloud_uploadIcon"],
+i[id$="aonNewDialogadd_commentIcon"],
+i[id$="aonNewDialogperson_addIcon"],
+#aon-search-buttonIconButton i,
+i[id$="aonHeaderSearchDivButtonIcon"],
+#accountingUploadInvoiceLabel i
 {
 	width: 24px;
 	height: 24px;
@@ -1440,7 +1510,19 @@ i[id$="aonSigninToolbarHeaderToolSectionsyncButtonIcon"]
 	mask-repeat: no-repeat;
 }
 
-i[id$="ToolbarHeaderToolSectionRestoreButtonIcon"]{
+i[id$="aonNewDialogaccount_balance_walletIcon"] {
+	mask-image: url('/icons/coins.svg') ;
+}
+
+i[id$="aonNewDialogadd_commentIcon"] {
+	mask-image: url('/icons/message-square.svg') ;
+}
+
+i[id$="aonNewDialogperson_addIcon"] {
+	mask-image: url('/icons/user-plus.svg') ;
+}
+
+i[id$="aonNewDialogcloud_uploadIcon"]{
     mask-image: url('/icons/rotate-ccw.svg') ;	
 }
 
@@ -1548,7 +1630,9 @@ i[id$="ToolbarHeaderToolSectionNextButtonIcon"] {
     mask-image: url('/icons/chevron-right.svg') ;
 }
 
-i[id$="ToolbarHeaderToolSectionDeleteButtonIcon"] {
+i[id$="ToolbarHeaderToolSectionDeleteButtonIcon"],
+i[id$="aonDocumentalToolbarHeaderToolSectionDeleteFileButtonIcon"],
+i[id$="aonDocumentalSheetToolbarHeaderToolSectionDeleteFileButtonIcon"] {
 	mask-image: url('/icons/trash-2.svg') ;
 }
 
@@ -1556,8 +1640,14 @@ i[id$="ToolbarHeaderToolSectionBackButtonIcon"] {
 	mask-image: url('/icons/arrow-left.svg') ;
 }
 
+i[id$="aonNewDialognote_addIcon"] {
+	mask-image: url('/icons/file-plus-2.svg') ;
+}
 
-i[id$="ToolbarHeaderToolSectionUploadFileButtonIcon"] {
+
+i[id$="ToolbarHeaderToolSectionUploadFileButtonIcon"],
+i[id$="aonNewDialogcloud_uploadIcon"],
+#accountingUploadInvoiceLabel i {
     mask-image: url('/icons/upload-cloud.svg') ;
 }
 
@@ -1571,7 +1661,9 @@ i[id$="aonDocumentalToolbarHeaderToolSectionAddButtonIcon"]{
     mask-image: url('/icons/plus.svg') ;
 }
 
-i[id$="ToolbarHeaderToolSectionSearchSearchButtonIcon"] {
+i[id$="ToolbarHeaderToolSectionSearchSearchButtonIcon"],
+#aon-search-buttonIconButton i,
+i[id$="aonHeaderSearchDivButtonIcon"] {
     mask-image: url('/icons/search.svg') ;
 }
 
@@ -1608,7 +1700,7 @@ i[id$="aonOfficePanelToolbarHeaderToolSectionSearchAdvancedButtonIcon"] {
 
 .aonTable tbody {
 	padding-left: 0px !important;
-	padding-rigth: 0px !important;
+	padding-right: 0px !important;
 
 }
 
@@ -1838,7 +1930,9 @@ aon-right-panel {
 	 mask-image: url('/icons/phone.svg') ;
 }
 
-#aonContactIcon3{
+#aonContactIcon3,
+i[id$="aonDocumentalToolbarHeaderToolSectionSendFileButtonIcon"],
+i[id$="aonDocumentalSheetToolbarHeaderToolSectionSendFileButtonIcon"]{
 	 mask-image: url('/icons/mail.svg') ;
 }
 
@@ -2093,7 +2187,7 @@ aon-right-panel {
 	mask-image: url('/icons/line-chart.svg');
 }
 
-#aonHeaderSearchDialogMenu i.material-icons[icon="calculate"]  {
+#aonHeaderSearchDialogMenu i.material-icons[icon="calculate"]{
 	mask-image: url('/icons/calculator.svg');
 }
 
@@ -2236,7 +2330,7 @@ aon-new-fixed-button .newFixedButton .plus {
 .aonSwitch > span::after {
     content: "";
     position: absolute;
-    top: 6px;
+    top: 0.35rem;
     height: 1rem;
     width: 1rem;
     right: 1.1rem;
@@ -2256,6 +2350,7 @@ aon-new-fixed-button .newFixedButton .plus {
 
 .aonSwitch > input:checked + span::after {
 	background-color: var(--aonHeaderBackgroundColor);
+	transform: translateX(14px);
 }
 
 aon-input[readonly="true"] input, 
@@ -2367,4 +2462,124 @@ aon-search > span {
 
 .aonDialogContent > div:last-of-type{
 	padding: 0 1rem;
+}
+
+.newMenuContent{
+	align-items: start;
+}
+
+.newMenuContent.isFixedButton{
+	align-items: end;
+}
+
+.aonSidenav > div {
+	padding-bottom: 0px !important;
+}
+
+.aonCheckbox:hover>input,
+.aonCheckbox>input:focus,
+.aonCheckbox:hover>input:focus,
+.aonCheckbox>input:active {
+	opacity: 0;
+}
+
+.menu-option {
+	width: max-content;
+}
+
+.menu-children.open{
+	flex-direction: row;
+	margin-top: 10px;
+	padding-left: 0;
+}
+
+.menu-option.open{
+	width: 100%;
+	justify-content: center;	
+}
+
+.menu-option:hover i,
+.menu-children > div:hover i,
+.menu-option.open i {
+	background-color: #ffff;
+}
+
+/* Invoice Future Sidenav options */
+
+#aonInvoiceSidenavIncomes {
+	display: none;
+}
+
+#aonInvoiceSidenavExpenses {
+	display: none;
+}
+
+#aonInvoiceSidenavDocument {
+	display: none;
+}
+
+#aonInvoiceSidenavManagement {
+	display: none;
+}
+
+#aonInvoiceSidenavFutureIncomes {
+	display: block;
+}
+
+#aonInvoiceSidenavFutureExpenses {
+	display: block;
+}
+
+#aonInvoiceSidenavFutureDocument {
+	display: block;
+}
+
+#aonInvoiceSidenavFutureManagement {
+	display: block;
+}
+
+#aonHeaderSearch {
+  position: absolute;
+  top: 20;
+  right: 15;
+  z-index: 2;
+
+  transform: translateX(100%);
+  opacity: 0;
+
+  transition: transform .3s ease, opacity .2s ease;
+  pointer-events: none; /* evita clics cuando está oculto */
+}
+
+#aonHeaderSearch.open {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+#aonHeaderSearch.open + * #aonHeaderCompany{
+	display: none !important;
+}
+
+#aonHeaderSearchDiv{
+	display: block;
+}
+
+i[id$="aonHeaderSearchDivButtonIcon"],
+#accountingUploadInvoiceLabel i{
+	background-color: #ffff;
+}
+
+#aonHeaderSearchDialogMenuDialogMenuContent{
+  left: 15 !important;
+  right: 15;
+  top: 65 !important;
+}
+
+#accountingUploadInvoice div{
+	width: 95%;
+}
+
+#accountingUploadInvoiceLabel{
+	justify-content: space-between;
+  	width: 100%;
 }

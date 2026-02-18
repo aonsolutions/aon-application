@@ -44,8 +44,8 @@ import com.esferalia.aon.jooq.tables.records.SalaryPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.ISystemPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
@@ -437,6 +437,10 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 			insertMorePayment = insertMorePayment.set(SALARY_PAYMENT.IRPF, tax != null ? tax : 0.00);
 			insertMorePayment = insertMorePayment.set(SALARY_PAYMENT.QUOTE, quote != null ? quote : 0.00);
 			insertMorePayment = insertMorePayment.set(SALARY_PAYMENT.AMOUNT, amount != null ? amount : 0.00);
+			
+			if ( !(payment instanceof ISystemPayment) ) {
+				insertMorePayment = insertMorePayment.set(SALARY_PAYMENT.EXPRESSION, AonStringUtils.substring(payment.getExpression(), 0 , SALARY_PAYMENT.EXPRESSION.getDataType().length()));
+			}
 		}
 
 		prevPaymentRecord.setIrpf(tax);
@@ -732,6 +736,11 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 
 	private static Double round(Double value) {
 		return value != null ? BigDecimal.valueOf(value).setScale(3, RoundingMode.HALF_DOWN).doubleValue() : null;
+	}
+
+	private static boolean isExtra(IPayment payment) {
+		return ( PaymentType.CRA_0004 == payment.getType() || 
+				 AonStringUtils.equals(payment.getName(), "PAGA_EXTRA") );  
 	}
 
 	// ------------------------------------------------------------------------

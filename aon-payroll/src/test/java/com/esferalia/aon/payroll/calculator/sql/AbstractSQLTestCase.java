@@ -142,8 +142,9 @@ public abstract class AbstractSQLTestCase {
 		public String issue;
 		public Integer concept;
 		public String expression;
+		public String description = UNSET;
 		public String quoteExpression = UNSET;
-	}
+		}
 
 	public static class Payment {
 		public Month month;
@@ -744,7 +745,7 @@ public abstract class AbstractSQLTestCase {
 					.set(AGREEMENT_PAYMENT.TYPE, (byte) PaymentType.CRA_0004.ordinal())
 					.set(AGREEMENT_PAYMENT.START_DATE, startDate)
 					.set(AGREEMENT_PAYMENT.EXPRESSION, extra.expression)
-					.set(AGREEMENT_PAYMENT.DESCRIPTION, extra.expression)
+					.set(AGREEMENT_PAYMENT.DESCRIPTION, extra.description == UNSET ? extra.expression : extra.description)
 					.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, PAYMENT.getName())
 					.set(AGREEMENT_PAYMENT.SALARY_TYPE, extra.month != null ? (byte) EXTRA.ordinal(): (byte) SalaryType.SALARY.ordinal() )
 					.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, extra.quoteExpression == UNSET ? String.format("%s/12", PAYMENT.getName()): extra.quoteExpression).returning()

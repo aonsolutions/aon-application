@@ -236,9 +236,18 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			salary.getPayments().stream()
 			.filter( p -> isNotProrrated(salary,p))
 			.distinct().forEach( salaryPayment -> 
-			getContractPaymentByDescription(salaryPayment, extraPayments)
+			getContractPaymentByDescriptionAndExpression(salaryPayment, extraPayments)
 			.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
 			);
+
+			if ( payments.isEmpty() )  {
+				salary.getPayments().stream()
+				.filter( p -> isNotProrrated(salary,p))
+				.distinct().forEach( salaryPayment -> 
+				getContractPaymentByDescription(salaryPayment, extraPayments)
+				.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
+				);
+			}
 			
 			
 //			if ( payments.isEmpty() )  {
@@ -487,6 +496,17 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		return payment;
 	}
 
+	private Optional<IContractPayment> getContractPaymentByDescriptionAndExpression(com.esferalia.aon.occam.api.model.Salary.Payment salaryPayment, Collection<IContractPayment> contractPayments ) {
+		for (IContractPayment contractPayment : contractPayments) {
+			if ( AonStringUtils.equals(contractPayment.getDescription(), salaryPayment.getDescription()) && 
+					AonStringUtils.equals(contractPayment.getExpression(), salaryPayment.getExpression()) ) {
+				return Optional.of(contractPayment);
+			}
+		}
+		
+		return Optional.empty();
+	}
+	
 	private Optional<IContractPayment> getContractPaymentByDescription(com.esferalia.aon.occam.api.model.Salary.Payment salaryPayment, Collection<IContractPayment> contractPayments ) {
 		for (IContractPayment contractPayment : contractPayments) {
 			if ( AonStringUtils.equals(contractPayment.getDescription(), salaryPayment.getDescription()) ) {

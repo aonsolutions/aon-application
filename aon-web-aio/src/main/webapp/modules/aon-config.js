@@ -118,7 +118,42 @@ export class AonConfig extends AonElement {
 			   rightPanel.close(); 
 			}
 		});
+		
+		if(LS.isFutureTheme() && this.isBeta()){
+			let fixedButtonDiv = this.createDiv();
+            fixedButtonDiv.className = CSS.AON_CONFIG_APPS;
+            fixedButtonDiv.style.width = '100%';
+    
+            let fixedButtonTitle = this.createSpan(); 
+            fixedButtonTitle.className =  `${CSS.AON_CONFIG_APPS}Title`;
+            fixedButtonTitle.innerHTML = "Anclar botón de 'Nuevo'";
+            fixedButtonDiv.appendChild(fixedButtonTitle);
+    
+            let fixedButtonSwitch = new AonSwitch();
+	        fixedButtonSwitch.id = 'fixedButtonSwitch';
+	        console.log('LS.getFixedButton()', LS.getFixedButton());
+	        fixedButtonSwitch.checked = LS.getFixedButton() === 'on';
+	        fixedButtonDiv.appendChild(fixedButtonSwitch);
+    
+            this.appendChild(fixedButtonDiv);
 
+            fixedButtonSwitch.addEventListener(EVENT.CHANGE, () => {
+                LS.setFixedButton(LS.getFixedButton() === 'on' ? 'off' : 'on');
+               	
+               	let newFixedButton = this.getElement('newFixedButton');
+               	let aonMenuAppHover = this.getElement('aonMenuList-new');
+               	
+               	if(LS.getFixedButton() === 'on'){
+					newFixedButton.classList.remove('hidden');
+					aonMenuAppHover.classList.add('hidden');
+				} else {
+					newFixedButton.classList.add('hidden');
+					aonMenuAppHover.classList.remove('hidden');
+				}
+               	
+            });
+		}
+		
         let themesCard = new AonCard();
         themesCard.id = this.THEMES_CARD;
         themesCard.title = MSG.THEME_SELECTION;

@@ -161,6 +161,14 @@ export const AON_COMPANY_DIV = 'aonCompanyDiv';
 export const AON_COMPANY_TITLE_DIV = 'aonCompanyTitleDiv';
 export const AON_COMPANY_FILTER_EMPTY = 'aonCompanyFilterEmpty';
 export const AON_COMPANY_FILTER_LOADING = 'aonCompanyFilterLoading';
+
+export const AON_APPLICATION_CONTENT = 'aonApplicationContent';
+
+// AON MENU | aon.css
+export const AON_MENU_TOP_NAV_HIDE = 'aonMenuTopNavHide';
+export const AON_MENU_TOP_NAV_VISIBLE = 'aonMenuTopNavVisible';
+
+
 // aon-figma.css
 
 export const AON_LOGIN = 'aonLogin';

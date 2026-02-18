@@ -98,7 +98,7 @@ export class AonAccountingBeta extends AonElement {
 			}
 
 			let uploadInv = new AonNewUpload();
-	       	uploadInv.id = this.UPLOAD_INVOICE;
+	       	uploadInv.id = "accountingUploadInvoice";
 	       	uploadInv.setMessage(MSG.UPLOAD_INVOICE);
 	       	uploadInv.setType("Invoice");
 			this.getApplication().addSidenavWidget2(utilitiesOptions, uploadInv);	

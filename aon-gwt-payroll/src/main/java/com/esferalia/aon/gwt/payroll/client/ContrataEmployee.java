@@ -47,7 +47,6 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -2415,6 +2414,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		if (AonStringUtils.isNotBlank(contractType) && (AonStringUtils.equalsIgnoreCase(contractType, "402")
 				|| AonStringUtils.equalsIgnoreCase(contractType, "502")) && null == endDate)
 			showWarning("Fecha fin", "Los contratos 402 y 502 deben tener definido la fecha fin del contrato");
+		else if (null != contrataEmployeeObject.getContractData().getJourneyType() && 
+				( AonStringUtils.isBlank(contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData().getJourneyDurationHours()) || AonStringUtils.equals(contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData().getJourneyDurationHours(), "0000") ) )
+			showWarning("Duraci\u00f3n Jornada", "Es obligatorio indicar la duraci\u00f3n de la jornada (horas/minutos)");
 		else {
 			showLoading("Notificando contrato...");
 			contrataEmployeeObject.sendContract(s -> {

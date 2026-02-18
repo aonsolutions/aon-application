@@ -14,6 +14,7 @@ export const AON_LANGUAGE = 'aon_language';
 export const ONLY_ONE = 'onlyOne';
 export const NEW_THEME = 'new_theme';
 export const SUITE = 'suite';
+export const FIXED_BUTTON = 'fixedButton';
 export const RIGHT_PANEL = 'rightPanel';
 export const TOP_MENU = 'aonMenuTopnav';
 export const LEFT_MENU = 'aonMenuSidenav';
@@ -31,6 +32,7 @@ export const AON_THEME = '/css/theme/aon.css';
 export const DARK_THEME = '/css/theme/dark.css';
 export const DARK_BETA_THEME = '/css/theme/darkBeta.css';
 export const FUTURE_THEME = '/css/theme/future.css';
+export const CUSTOM_THEME = '/css/theme/customview.css';
 
 
 export const BETA = 'beta';
@@ -73,7 +75,7 @@ export const closeSession = () => {
     setPortalChecked(portalChecked);
 }
 
-export const getLanguage = () => get(AON_LANGUAGE);
+export const getLanguage = () => get(AON_LANGUAGE) || 'es';
 
 export const setLanguage = (value) => {
     set(AON_LANGUAGE, value);
@@ -205,6 +207,14 @@ export const getRightPanel = () => {
 
 export const setRightPanel = (panel) => {
     set(RIGHT_PANEL,panel);
+}
+
+export const getFixedButton = () => {
+    return get(FIXED_BUTTON) || 'on';
+}
+
+export const setFixedButton = (value) => {
+    set(FIXED_BUTTON,value);
 }
 
 export const removeRightPanel = () => {

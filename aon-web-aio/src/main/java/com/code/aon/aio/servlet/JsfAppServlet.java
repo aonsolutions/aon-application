@@ -109,7 +109,7 @@ public class JsfAppServlet extends HttpServlet {
 
 	private void initDesktopController(HttpServletRequest req) {
 		AppController appController =  (AppController) AonUtil.getRegisteredBean(AppController.CONTROLLER_NAME);
-		appController.setTheme(req.getParameter(THEME));
+		appController.setTheme(getTheme(req));
 		appController.setViewId(req.getParameter(VIEW_ID));
 		appController.setAction(req.getParameter(ACTION));
 		appController.setActionListener(req.getParameter(ACTION_LISTENER));
@@ -237,6 +237,15 @@ public class JsfAppServlet extends HttpServlet {
 		ELContext elContext = FacesContext.getCurrentInstance().getELContext();
 		ExpressionFactory expressionFactory = FacesContext.getCurrentInstance().getApplication().getExpressionFactory();
 		expressionFactory.createValueExpression(elContext, elExpression, Object.class).getValue(elContext);
+	}
+	
+	
+	private String getTheme(HttpServletRequest req) {
+		String theme = req.getParameter(THEME);
+		if ( AonStringUtils.isBlank(theme) ) {
+			return "/css/theme/customview.css";
+		}
+		return theme;
 	}
 	
 }

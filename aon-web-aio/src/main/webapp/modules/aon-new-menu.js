@@ -385,8 +385,7 @@ export class AonNewMenu extends AonElement {
 		aonMenuTopnav.id = this.AON_MENU_TOPNAV;
 		aonMenuTopnav.className = CSS.AON_MENU_TOPNAV;
 		this.appendChild(aonMenuTopnav);
-		aonMenuTopnav.classList.add("aonNewMenuTopNav");
-		this.getRootPanel().style.marginTop = '1px'; //'69px';
+		aonMenuTopnav.classList.add(CSS.AON_MENU_TOP_NAV_HIDE);
 		this.buildMenuTopnav();
 
 		let header = this.getElement('aonHeaderWeb');
@@ -398,18 +397,39 @@ export class AonNewMenu extends AonElement {
 		aonSearchDialog.id = this.AON_MENU_SEARCH_DIALOG;
 		this.appendChild(aonSearchDialog);
 		
-		let aonNewFixedButton = this.getElement('newFixedButton');
-		if(aonNewFixedButton){
-			aonNewFixedButton.addEventListener(EVENT.CLICK, () => {
-				this.removeOldNewDialogContents();
-				
-				let newFixedButton = document.querySelector('aon-new-fixed-button .newFixedButton');
-				console.log(newFixedButton);
-				
-				this.showNewDialogMenu(newFixedButton, true);
-			});
-		}
+		if (!this._delegatedHandlerAdded) {
 
+		    document.addEventListener(EVENT.CLICK, (e) => {
+		        if (e.target.closest('.newFixedButton')) {
+		
+		            this.removeOldNewDialogContents();
+		
+		            let newFixedButton = document.querySelector('aon-new-fixed-button .newFixedButton');
+		            
+		            if (newFixedButton.classList.contains('open')) {
+		                let newDialogMenu = this.getElement('newDialogMenu');
+		                newDialogMenu.close();
+		            } else {
+		                this.showNewDialogMenu(newFixedButton, true);
+		            }
+		        }
+		    });
+		
+		    this._delegatedHandlerAdded = true;
+		}
+		
+		
+		// Check if fixed new button is needed
+	    let aonMenuAppHover = this.getElement('aonMenuList-new');
+	    let newFixedButton = this.getElement('newFixedButton');
+	    
+	    if(LS.getFixedButton() === 'on'){
+			if(newFixedButton) newFixedButton.classList.remove('hidden');
+			if(aonMenuAppHover) aonMenuAppHover.classList.add('hidden');
+		} else {
+			if(newFixedButton) newFixedButton.classList.add('hidden');
+			if(aonMenuAppHover) aonMenuAppHover.classList.remove('hidden');
+		}
 	}
 
 	buildMenuLeftop() {
@@ -472,7 +492,6 @@ export class AonNewMenu extends AonElement {
 					);
 			}
 		}
-
 
 	}
 
@@ -571,7 +590,7 @@ export class AonNewMenu extends AonElement {
 		aonTopMenuDiv.id = "aonTopMenuDiv";
 
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
-
+		
 		for (let item in TOP_MENU_APPS) {
 
 			let app = TOP_MENU_APPS[item];
@@ -581,7 +600,7 @@ export class AonNewMenu extends AonElement {
 					continue;
 				} else {
 					let appElement = this.buildTopApp(app);
-
+					
 					appElement.classList.add("aonNewMenuTopNavAppElement");
 					app.color = "var(--aonTopMenuNotAvailable)";
 					aonTopMenuDiv.appendChild(appElement);
@@ -591,16 +610,11 @@ export class AonNewMenu extends AonElement {
 
 			let appElement = this.buildTopApp(app);
 			aonTopMenuDiv.appendChild(appElement);
-
 		}
 
 
 		this.clearElement(aonMenuTopnav);
 		aonMenuTopnav.appendChild(aonTopMenuDiv);
-
-		if (aonTopMenuDiv.childElementCount === 0) {
-			this.hideTopNav();
-		}
 	}
 
 	reloadTopNav() {
@@ -620,34 +634,14 @@ export class AonNewMenu extends AonElement {
 
 	showTopNav() {
 		let topnav = this.getElement(this.AON_MENU_TOPNAV);
-		let rootPanel = this.getElement("rootPanel");
-		let rightPanel = this.getElement("aonRightPanel");
-
-		topnav.style.height = '68px';
-		rootPanel.style.marginTop = `${rootPanel.style.marginTop + 69}px`;
-		if (rightPanel) {
-			rightPanel.style.marginTop = topnav.offsetHeight;
-			rightPanel.style.height = `calc(100vh - 61px)`;
-
-		}
-
-		rootPanel.style.marginTop = "68px";
-		rootPanel.classList.add('rootPanelTopbar');
-		//rootPanel.style.height = `calc(100vh - 115px )`;
+		topnav.classList.remove(CSS.AON_MENU_TOP_NAV_HIDE);
+		topnav.classList.add(CSS.AON_MENU_TOP_NAV_VISIBLE);
 	}
 
 	hideTopNav() {
 		let topnav = this.getElement(this.AON_MENU_TOPNAV);
-		let rootPanel = this.getElement("rootPanel");
-		let rightPanel = this.getElement("aonRightPanel");
-		topnav.style.height = '0px';
-		if (rightPanel) {
-			rightPanel.style.marginTop = "1px";
-			rightPanel.style.height = `calc(100vh - 49px)`;
-		}
-		rootPanel.style.marginTop = "1px";
-
-		rootPanel.style.height = `calc(100vh - 50px)`;
+		topnav.classList.remove(CSS.AON_MENU_TOP_NAV_VISIBLE);
+		topnav.classList.add(CSS.AON_MENU_TOP_NAV_HIDE);
 	}
 
 	isTopNavVisible() {
@@ -684,7 +678,6 @@ export class AonNewMenu extends AonElement {
 		div.title = app.title;
 		let header = this.getElement("aonHeaderWeb");
 		let welcome = this.getElement("aonCompanyTabFilter");
-
 
 		if (app.symbol) {
 			let icon = this.createElement(TAG.SPAN);
@@ -962,6 +955,15 @@ export class AonNewMenu extends AonElement {
 		let ul = this.getElement('aonMenuList');
 		let li = this.getElement('aonMenuList' + app.app);
 		ul.removeChild(li);
+	}
+	
+	closeEmptyApps(){
+		let aonMenuTopnav = this.getElement(this.AON_MENU_TOPNAV);
+		let aonTopMenuDiv = this.getElement('aonTopMenuDiv');
+		
+		if ((aonMenuTopnav && aonMenuTopnav.childNodes.length == 0) || (aonTopMenuDiv && aonTopMenuDiv.childNodes.length == 0)) {
+			this.close();
+		}
 	}
 
 	close() {
@@ -1269,7 +1271,7 @@ export class AonNewMenu extends AonElement {
 			});
 		}
 
-		if (this.getDur().isDocumental() && !this.isBetaDoc()) {
+		if (this.getDur().isDocumental()) {
 			newMenuOptions.push({
 				fn: () => {
 					let input = this.createElement(TAG.INPUT);
@@ -1280,7 +1282,7 @@ export class AonNewMenu extends AonElement {
 					input.click();
 				},
 				icon: MATERIAL_ICONS.CLOUD_UPLOAD,
-				name: MSG.UPLOAD_DOCUMENT,
+				name: LS.isFutureTheme() ? 'Subir a mi nube' : MSG.UPLOAD_DOCUMENT,
 			});
 		}
 		if (this.getDur().isMessenger()) {
@@ -1326,7 +1328,7 @@ export class AonNewMenu extends AonElement {
 		if (LS.isFutureTheme()) {
 
 			let newDialogMenu = this.getElement('newDialogMenu');
-			newDialogMenu.setOptions(newMenuOptions);
+			newDialogMenu.setOptions(newMenuOptions, LS.isFutureTheme());
 			newDialogMenu.open(el, isFixedButton);
 
 		} else {

@@ -19,10 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.config.EnterpriseDataAddAudit;
+import net.aonsolutions.db.up2date.customize.Customize;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.tgss.MEITrainingUpdate2026;
-import net.aonsolutions.db.up2date.timecontrol.CalendarPersonalDaysAlter;
 
 public class Up2Date {
 
@@ -588,9 +586,12 @@ public class Up2Date {
 			// FlexibleInsurancePremiumsInsert.FLEXIBLEINSURANCEPREMIUMSINSERT,
 			// PlusTransporte0001Insert.PLUSTRANSPORTE0001INSERT,
 			// SociosCoopBases2025Update.SOCIOSCOOPBASES2025UPDATE,
-			MEITrainingUpdate2026.MEITRAININGUPDATE2026,
-			
+			// MEITrainingUpdate2026.MEITRAININGUPDATE2026,
 			// AlterFsMod347Detail2025Bis.ALTER_FS_MOD_347_DETAIL_2025_BIS,
+			// SanitizeDomainRegistries.SANITIZE_SIG_AONSOLUTIONS_ORG,
+			// SMI2026Update.SMI2026UPDATE,
+			Customize.CUSTOMIZE_OPENGES,
+			
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
@@ -615,10 +616,10 @@ public class Up2Date {
 			//LocationRegistryAlter.LOCATION_REGISTRY_ALTER,
 			//TimecontrolLocationAlter.TIMECONTROL_LOCATION_ALTER
 			
-//			CalendarHolidaysAlter.CALENDAR_HOLIDAYS_ALTER,
-			CalendarPersonalDaysAlter.CALENDAR_PERSONAL_DAYS_ALTER,
+			// CalendarHolidaysAlter.CALENDAR_HOLIDAYS_ALTER,
+			// CalendarPersonalDaysAlter.CALENDAR_PERSONAL_DAYS_ALTER,
 
-			EnterpriseDataAddAudit.ENTERPRISE_DATA_ADD_AUDIT
+			// EnterpriseDataAddAudit.ENTERPRISE_DATA_ADD_AUDIT
 	};
 
 	// ------------------------------------------------------------------------

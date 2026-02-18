@@ -2457,6 +2457,25 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_REFRIGERADO_ANUAL", "P_REFRIG_A");
 		variablesMap.put("TRIENIO_PAGA_UNICA_ANUAL", "TRI_PU_A");
 		variablesMap.put("PLUS_DOMINGOS_Y_FESTIVOS_ZONA_TURISTICA_HORAS", "P_DOM_FEST_ZT_H");
+		
+		// Act. 16/11/26
+		variablesMap.put("PENSIONES_SOBRE_COMPLEMENTO_MENSUAL", "PENS_COMP_M");
+		variablesMap.put("PENSIONES_SOBRE_PLUS_EXTRASALARIAL_MENSUAL", "PENS_PEXTRA_M");
+		variablesMap.put("PLUS_CIERRE_MENSUAL", "P_CIERRE_M");
+		variablesMap.put("PLUS_DOMINGOS_Y_FESTIVOS_DIARIO", "P_DOM_FEST_D");
+		variablesMap.put("PLUS_IDIOMAS_MENSUAL", "P_IDIOMAS_M");
+		variablesMap.put("PLUS_NOCTURNIDAD_MENSUAL", "P_NOCT_M");
+		variablesMap.put("PLUS_PRIMERA_SALIDA_DIARIO", "P_1SAL_D");
+		variablesMap.put("PLUS_PRIMERA_SALIDA_FESTIVOS_DIARIO", "P_1SAL_FEST_D");
+		variablesMap.put("PLUS_RETEN_HORAS", "P_RETEN_H");
+		variablesMap.put("PLUS_VENTA_INTERNET_ANUAL", "P_VTA_INT_A");
+		variablesMap.put("QUEBRANDO_DE_MONEDA_MENSUAL", "QMON_M");
+		variablesMap.put("RETEN_FESTIVOS_DIARIO", "RETEN_FEST_D");
+		variablesMap.put("SALARIO_CONVENIO_ANUAL_ANUAL", "SAL_CONV_A");
+		variablesMap.put("SALARIO_CONVENIO_MENSUAL", "SAL_CONV_M");
+		variablesMap.put("TRABAJO_A_DISTANCIA_O_TELETRABAJO_ANUAL", "T_DIST_A");
+		variablesMap.put("TRABAJO_A_DISTANCIA_O_TELETRABAJO_MENSUAL", "T_DIST_M");
+		variablesMap.put("TURNICIDAD_HORAS", "TURN_H");
 
 
 	}

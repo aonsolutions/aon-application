@@ -401,6 +401,9 @@ public enum AppParam {
 	, INVOICE_PRINT_CONFIG_BACKGROUND
 	
 	, OCR_DEFAULT_ITEM
+	
+	, AON_CUSTOMIZE_THEME
+		
 	;
 
 	public String getValue() {

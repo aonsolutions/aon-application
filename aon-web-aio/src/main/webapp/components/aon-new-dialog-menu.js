@@ -7,6 +7,8 @@ import { AonIconButton } from './aon-icon-button.js';
 export class AonNewDialogMenu extends AonElement {
 
 	CONTENT;
+	
+	_options;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -49,6 +51,12 @@ export class AonNewDialogMenu extends AonElement {
 	open(el = undefined, isFixedButton = false) {
 	    const dialog = this.getElement(this.id);
 	    
+	    let content = this.getElement(this.CONTENT);
+	    if(isFixedButton === true)
+	    	content.classList.add('isFixedButton');
+	    else
+	    	content.classList.remove('isFixedButton');
+	    
 	    this.isFixedButton = isFixedButton; 
 	    this.lastEl = el;
 	    
@@ -68,7 +76,7 @@ export class AonNewDialogMenu extends AonElement {
 	            content.style.display = "";
 	
 	            // Posición: ENCIMA del botón
-	            const top = rect.top - contentHeight - 70; // 60px de separación
+	            const top = rect.top - contentHeight - (this._options.length * 60); // 60px de separación
 	
 	            content.style.top = `${top}px`;
 	            content.style.right = `30px`;
@@ -88,13 +96,15 @@ export class AonNewDialogMenu extends AonElement {
 	
 	    dialog.classList.remove("hidden");
 	
+		let newFixedButton = document.querySelector('aon-new-fixed-button .newFixedButton');
+		
 		if (!isFixedButton) {
 		    const iconEl = this.getElement('aonMenuListAppImgTop-new');
 		    iconEl.classList.add('open');
-	    } else {
-			let newFixedButton = document.querySelector('aon-new-fixed-button .newFixedButton');
-		    newFixedButton.classList.add('open');
-	    }
+		    if(newFixedButton)
+		    	 newFixedButton.classList.add('open');
+	    } else
+			newFixedButton.classList.add('open');
 	    
 	}
 	
@@ -112,7 +122,7 @@ export class AonNewDialogMenu extends AonElement {
 	    content.style.display = "";
 	
 	    // Posición encima del botón flotante
-	    const top = rect.top - contentHeight - 70;
+	    const top = rect.top - contentHeight - 60;
 	
 	    content.style.top = `${top}px`;
 	    content.style.right = `30px`;
@@ -131,16 +141,18 @@ export class AonNewDialogMenu extends AonElement {
 		if(newFixedButton) newFixedButton.classList.remove('open');
 	}
 
-	setOptions(options = []) {
+	setOptions(options = [], isFixedButton = false) {
 		const content = this.getElement(this.CONTENT);
 		content.innerHTML = "";
 
+		this._options = options;
+
 		options.forEach(option => {
-			content.appendChild(this.createOption(option));
+			content.appendChild(this.createOption(option, isFixedButton));
 		});
 	}
 
-	createOption(option) {
+	createOption(option, isFixedButton = false) {
 		const wrapper = this.createElement(TAG.DIV);
 
 		const item = this.createElement(TAG.DIV);
@@ -150,13 +162,14 @@ export class AonNewDialogMenu extends AonElement {
 		text.textContent = option.name;
 		item.appendChild(text);
 
-		if (option.icon) {
+		if (option.icon && isFixedButton) {
 			let ic = document.createElement('i');
+			ic.id = `aonNewDialog${option.icon}Icon`;
 			ic.className = 'material-icons';
 			ic.style.verticalAlign = 'middle';
 			ic.style.fontSize = `24px`;
 			ic.innerHTML = option.icon;
-			ic.setAttribute('icon', option.icon);
+			ic.setAttribute('icn', option.icon);
 			item.appendChild(ic);
 		}
 
@@ -168,7 +181,7 @@ export class AonNewDialogMenu extends AonElement {
 			children.classList.add("menu-children");
 
 			option.options.forEach(child => {
-				children.appendChild(this.createOption(child));
+				children.appendChild(this.createOption(child, false));
 			});
 
 			item.addEventListener(EVENT.CLICK, (e) => {

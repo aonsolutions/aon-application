@@ -56,7 +56,7 @@ export class AonParent extends AonElement {
 	connectedCallback () {
 		this.init({id:'active', active: true, domainActive:true});
 		
-		if(LS.isNewTheme()) {
+		if(!LS.isFutureTheme()) {
 			let newFixedButton = this.getElement('newFixedButton');
 			if(newFixedButton)
 				newFixedButton.classList.add('hidden');
@@ -111,6 +111,8 @@ export class AonParent extends AonElement {
 						LS.setDomainId(aonMenu.getDur().getDomain().getId());
 						LS.setDomainName(aonMenu.getDur().getDomain().getName());
 						aonMenu.open();
+						aonMenu.closeEmptyApps();
+						
 					})
 					.catch((err) => {
 						reject(err);

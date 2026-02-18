@@ -402,11 +402,6 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 	padding-top: 10px;
 }
 
-.aonMenu {
-	position: relative;
-	height: calc(100vh - 61px);
-}
-
 .rootPanel {
 	z-index: 3;
 	background-color: #fafafa;
@@ -421,10 +416,6 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 	border-top: 1px solid rgba(0, 0, 0, 0.1);
 	margin-left: 68px;
 	transition: margin-left .3s;
-}
-
-.rootPanelTopbar {
-	height: calc(100vh - 115px);
 }
 
 #rootPanel>div {
@@ -925,10 +916,6 @@ h1 {
 	transition: width .3s;
 }
 
-#aonMenuSidenav>ul {
-	margin-top: 68px;
-}
-
 #aonMenuSidenav.close {
 	width: 0px !important; /*13.75rem;*/
 	min-width: 0 !important; /*13.75rem;*/
@@ -1091,7 +1078,6 @@ h1 {
 	left: 0;
 	transition-duration: 500ms;
 	overflow-x: hidden;
-	height: calc(100vh - 9.5rem);
 	border: 0px none;
 	background-color: #fafafa;
 }
@@ -1104,7 +1090,6 @@ h1 {
 	right: 0;
 	transition-duration: 500ms;
 	overflow-x: hidden;
-	height: calc(100vh - 9.5rem);
 	border: 0px none;
 	background-color: #fafafa;
 }
@@ -1147,7 +1132,6 @@ h1 {
 	width: 100%;
 	display: block;
 	transition: 0.5s;
-	height: calc(100vh - 9rem);
 	overflow-y: auto;
 	border-radius: 0px;
 	background-color: var(--aonContentBeta);
@@ -3910,6 +3894,63 @@ background-image: url("../favicon.png");
 	font-size: 11px;
 }
 
+
+/* Aon Application */
+
+.aonApplicationContent {
+	display: flex;
+}
+
+/* Menu */
+
+.aonMenu {
+	position: relative;
+}
+
+#aonHome:has(.aonMenuTopNavVisible) .rootPanel {
+	height: calc(100vh - 116px);
+	margin-top: 68px;
+}
+
+#aonHome:has(.aonMenuTopNavHide) .rootPanel {
+	height: calc(100vh - 48px);
+}
+
+#aonHome:has(.aonMenuTopNavVisible) .aonMenuSidenav {
+	height: calc(100vh - 116px);
+	margin-top: 68px;
+}
+
+#aonHome:has(.aonMenuTopNavHide) .aonMenuSidenav {
+	height: calc(100vh - 48px);
+}
+
+#aonHome:has(.aonMenuTopNavVisible) .rightPanel {
+	height: calc(100vh - 116px);
+	margin-top: 69px;
+}
+
+#aonHome:has(.aonMenuTopNavHide) .rightPanel {
+	height: calc(100vh - 48px);
+	margin-top: 1px;
+}
+
+#aonHome:has(.aonMenuTopNavVisible) .aonApplicationContent {
+	height: calc(100vh - 166px);
+}
+
+#aonHome:has(.aonMenuTopNavHide) .aonApplicationContent {
+	height: calc(100vh - 98px);
+}
+
+#aonHome:has(.aonMenuTopNavVisible) .aonContentBeta .aonTable tbody {
+	height: calc(100vh - 220px);
+}
+
+#aonHome:has(.aonMenuTopNavHide) .aonContentBeta .aonTable tbody {
+	height: calc(100vh - 152px);
+}
+
 .aonNewMenuAppSelectionLogo {
 	display: block;
 	filter: none;
@@ -3923,8 +3964,12 @@ background-image: url("../favicon.png");
 	width: 68px;
 }
 
-.aonNewMenuTopNav {
+.aonMenuTopNavHide {
 	height: 0px;
+}
+
+.aonMenuTopNavVisible {
+	height: 68px;
 }
 
 .aonNewMenuLeftTopDiv {
@@ -5520,3 +5565,24 @@ aon-calendar-menu.menu-open .calendar-menu-option:nth-child(4) {
 	}
 }
 
+/* Invoice Future Sidenav options */
+
+#aonInvoiceSidenavFutureIncomes {
+	display: none;
+}
+
+#aonInvoiceSidenavFutureExpenses {
+	display: none;
+}
+
+#aonInvoiceSidenavFutureDocument {
+	display: none;
+}
+
+#aonInvoiceSidenavFutureManagement {
+	display: none;
+}
+
+#aonHeaderSearchDiv{
+	display: none;
+}
