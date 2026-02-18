@@ -2542,13 +2542,13 @@ aon-search > span {
   position: absolute;
   top: 20;
   right: 15;
-  z-index: 2;
+  z-index: 5;
 
   transform: translateX(100%);
   opacity: 0;
 
   transition: transform .3s ease, opacity .2s ease;
-  pointer-events: none; /* evita clics cuando está oculto */
+  /* pointer-events: none; evita clics cuando está oculto */
 }
 
 #aonHeaderSearch.open {
@@ -2570,9 +2570,9 @@ i[id$="aonHeaderSearchDivButtonIcon"],
 }
 
 #aonHeaderSearchDialogMenuDialogMenuContent{
-  left: 15 !important;
+  left: auto !important;
   right: 15;
-  top: 65 !important;
+  top: 55 !important;
 }
 
 #accountingUploadInvoice div{

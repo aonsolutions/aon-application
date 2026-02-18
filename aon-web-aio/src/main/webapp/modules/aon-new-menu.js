@@ -411,24 +411,18 @@ export class AonNewMenu extends AonElement {
 		                newDialogMenu.close();
 		            } else {
 		                this.showNewDialogMenu(newFixedButton, true);
+		                
+		                let searchWidget = this.getElement('aonHeaderSearch');
+		                if(searchWidget) searchWidget.classList.remove('open');
+		                
+		                let searchDialogWidget = this.getElement('aonHeaderSearchDialogMenu');
+						if (searchDialogWidget) searchDialogWidget.close();
+					
 		            }
 		        }
 		    });
 		
 		    this._delegatedHandlerAdded = true;
-		}
-		
-		
-		// Check if fixed new button is needed
-	    let aonMenuAppHover = this.getElement('aonMenuList-new');
-	    let newFixedButton = this.getElement('newFixedButton');
-	    
-	    if(LS.getFixedButton() === 'on'){
-			if(newFixedButton) newFixedButton.classList.remove('hidden');
-			if(aonMenuAppHover) aonMenuAppHover.classList.add('hidden');
-		} else {
-			if(newFixedButton) newFixedButton.classList.add('hidden');
-			if(aonMenuAppHover) aonMenuAppHover.classList.remove('hidden');
 		}
 	}
 

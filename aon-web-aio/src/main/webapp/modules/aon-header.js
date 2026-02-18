@@ -932,159 +932,164 @@ export class AonHeader extends AonElement {
 		let aonHeaderSearchDialogMenu = aonHeader.getElement(this.AON_HEADER_SEARCH_DIALOG_MENU);
 
 		let aonHeaderSearchBoxValue = aonHeaderSearchBox.value;
+		
+		if(!aonHeaderSearchBoxValue || aonHeaderSearchBoxValue.length === 0){
+			aonHeaderSearchDialogMenu.close();
+		} else {
 
-		getCompanies().then(companies => {
-			let searchCompanies = companies.filter(company => {
-				const name = AonStringUtils.containsMatching(company?.name, aonHeaderSearchBoxValue);
-				if (name) return true;
-				const document = AonStringUtils.containsMatching(company?.document, aonHeaderSearchBoxValue);
-				if (document) return true;
-				const email = company?.emails?.some(email => AonStringUtils.containsMatching(email, aonHeaderSearchBoxValue));
-				if (email) return true;
-				const phone = company?.phones?.some(phone => AonStringUtils.containsMatching(phone, aonHeaderSearchBoxValue));
-				if (phone) return true;
-
-				return false;
-			});
-
-			let searchOptions = [];
-
-			let title = searchCompanies.length == 1 ? `${MSG.ONE} ${MSG.ENTERPRISE}` : `${searchCompanies.length} ${MSG.ENTERPRISES}`;
-			searchOptions.push({
-				icon: MATERIAL_ICONS.BUSINESS,
-				name: `<span style="font-weight: bold; cursor: default" header >${title}</span>`,
-			});
-
-			searchCompanies.slice(0, 10).forEach(company => {
-
-				const companyName = this.decorateMatching(company.name, aonHeaderSearchBoxValue);
-				const companyDocument = this.decorateMatching(company.document, aonHeaderSearchBoxValue);
-				const companyEmail = this.decorateMatching(company.emails.find(email => AonStringUtils.containsMatching(email, aonHeaderSearchBoxValue)), aonHeaderSearchBoxValue);
-				const companyPhone = this.decorateMatching(company.phones.find(phone => AonStringUtils.containsMatching(phone, aonHeaderSearchBoxValue)), aonHeaderSearchBoxValue);
-
-				searchOptions.push({
-					id: `Company${company.id}`,
-					icon: aonHeader.getIcon(company),
-					name: `<span>${companyName}&nbsp;${companyEmail}&nbsp;${companyPhone}</span><span style="float:right;">${companyDocument}<i id="Company${company.id}Copy" style="display: none; vertical-align: middle; font-size: 16px;" class="${CSS.MATERIAL_SYMBOLS_OUTLINED}">${MATERIAL_ICONS.CONTENT_COPY}</i></span>`,
-					title: `${company.domain}`,
-					fn: () => { aonHeader.companySelection(company); },
+			getCompanies().then(companies => {
+				let searchCompanies = companies.filter(company => {
+					const name = AonStringUtils.containsMatching(company?.name, aonHeaderSearchBoxValue);
+					if (name) return true;
+					const document = AonStringUtils.containsMatching(company?.document, aonHeaderSearchBoxValue);
+					if (document) return true;
+					const email = company?.emails?.some(email => AonStringUtils.containsMatching(email, aonHeaderSearchBoxValue));
+					if (email) return true;
+					const phone = company?.phones?.some(phone => AonStringUtils.containsMatching(phone, aonHeaderSearchBoxValue));
+					if (phone) return true;
+	
+					return false;
 				});
-			});
-
-			searchOptions.push({
-				icon: MATERIAL_ICONS.GROUP,
-				name: `<span id="${this.AON_HEADER_SEARCH_DIALOG_MENU}Employees" style="font-weight: bold; cursor: default" class="${CSS.AON_COMPANY_FILTER_LOADING}" header >${MSG.EMPLOYEES}</span>`,
-			});
-
-			aonHeaderSearchDialogMenu.getContent().style.minWidth = `${aonHeaderSearchBox.offsetWidth * 1.5}px`;
-
-			const top = aonHeaderSearchBox.getBoundingClientRect().bottom;
-			const left = aonHeaderSearchBox.getBoundingClientRect().left;
-			aonHeaderSearchDialogMenu.setMenuOptions(searchOptions, top, left);
-			aonHeaderSearchDialogMenu.open();
-
-			// Copy & Paste of company domain URL.
-			this.setupDomainUrlCopy(searchOptions);
-
-			let firstDayOfMonth = new Date();
-			firstDayOfMonth.setUTCHours(0, 0, 0, 0);
-			firstDayOfMonth.setUTCMonth(firstDayOfMonth.getUTCMonth() - 1, 1); // Set to first day of the previous month
-
-			getAllContracts({ to: firstDayOfMonth.toISOString(), status: true, pattern: aonHeaderSearchBoxValue, limit: 26 })
-				.then(contracts => {
-
-					let searchOptions = [];
-					contracts
-						.map(contract => {
-							contract.company = companies.find(company => company.domain == contract.domain);
-							return contract;
-						})
-						.filter(contract => contract.company)
-						.slice(0, 10)
-						.forEach(contract => {
-							const contractName = this.decorateMatching(contract.name, aonHeaderSearchBoxValue);
-							const contractDocument = this.decorateMatching(contract.document, aonHeaderSearchBoxValue);
-							const contractSSNumber = this.decorateMatching(contract.ssNumber, aonHeaderSearchBoxValue);
-							const contractEndDate = contract.end_date ? `(${new Date(contract.end_date).toLocaleDateString()})` : '';
-
-							const contractIdentifier = (this.isDecorated(contractSSNumber) && !this.isDecorated(contractDocument)) ? contractSSNumber : contractDocument;
-
-							searchOptions.push({
-								icon: MATERIAL_ICONS.PERSON,
-								name: `<span>${contractName}</span><span style="margin-left: 16px" >${contractIdentifier}</span><span style="margin-left: 16px" >${contractEndDate}</span><span style="float:right;">${contract.company.name}</span>`,
-								fn: () => {
-									this.companySelection(contract.company, false, () => { GWT.iLoad(GWT.EMPLOYEES, undefined, { employeeSearch: contract.document || contract.name }) });
-								},
-							});
-						});
-					aonHeaderSearchDialogMenu.addMenuOptions(searchOptions);
-
-					let employeesSpan = aonHeaderSearchDialogMenu.getElement(`${this.AON_HEADER_SEARCH_DIALOG_MENU}Employees`);
-					employeesSpan.innerText = `${contracts.length > 25 ? '>' : ''} ${contracts.length} ${MSG.EMPLOYEES}`;
-					employeesSpan.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
-
-					let applicationsOptions = [];
-					let aonMenu = this.getElement('aonMenu');
-					let searchApplicationsOptions = aonMenu.getApplicationsOptions()?.filter(application => AonStringUtils.containsMatching(application.name, aonHeaderSearchBoxValue));
-
-					let applicationsTitle = searchApplicationsOptions.length == 1 ? `${MSG.ONE} ${MSG.APPLICATION}` : `${searchApplicationsOptions.length} ${MSG.APPLICATIONS}`;
-					applicationsOptions.push({
-						icon: MATERIAL_ICONS.APPLICATIONS,
-						name: `<span style="font-weight: bold; cursor: default" header >${applicationsTitle}</span>`,
+	
+				let searchOptions = [];
+	
+				let title = searchCompanies.length == 1 ? `${MSG.ONE} ${MSG.ENTERPRISE}` : `${searchCompanies.length} ${MSG.ENTERPRISES}`;
+				searchOptions.push({
+					icon: MATERIAL_ICONS.BUSINESS,
+					name: `<span style="font-weight: bold; cursor: default" header >${title}</span>`,
+				});
+	
+				searchCompanies.slice(0, 10).forEach(company => {
+	
+					const companyName = this.decorateMatching(company.name, aonHeaderSearchBoxValue);
+					const companyDocument = this.decorateMatching(company.document, aonHeaderSearchBoxValue);
+					const companyEmail = this.decorateMatching(company.emails.find(email => AonStringUtils.containsMatching(email, aonHeaderSearchBoxValue)), aonHeaderSearchBoxValue);
+					const companyPhone = this.decorateMatching(company.phones.find(phone => AonStringUtils.containsMatching(phone, aonHeaderSearchBoxValue)), aonHeaderSearchBoxValue);
+	
+					searchOptions.push({
+						id: `Company${company.id}`,
+						icon: aonHeader.getIcon(company),
+						name: `<span>${companyName}&nbsp;${companyEmail}&nbsp;${companyPhone}</span><span style="float:right;">${companyDocument}<i id="Company${company.id}Copy" style="display: none; vertical-align: middle; font-size: 16px;" class="${CSS.MATERIAL_SYMBOLS_OUTLINED}">${MATERIAL_ICONS.CONTENT_COPY}</i></span>`,
+						title: `${company.domain}`,
+						fn: () => { aonHeader.companySelection(company); },
 					});
-					searchApplicationsOptions.slice(0, 10).forEach(applicationOption => {
-						const appicationName = this.decorateMatching(applicationOption.name, aonHeaderSearchBoxValue);
-						applicationsOptions.push({ ...applicationOption, name: `<span>${appicationName}</span>` });
-					});
-					aonHeaderSearchDialogMenu.addMenuOptions(applicationsOptions);
-
-					aonHeaderSearchDialogMenu.addMenuOptions([{
-						icon: MATERIAL_ICONS.HELP,
-						name: `<span id="${this.AON_HEADER_SEARCH_DIALOG_MENU}Help" style="font-weight: bold; cursor: default" class="${CSS.AON_COMPANY_FILTER_LOADING}" header >${MSG.HELP}</span>`,
-					}]);
-
-					getHelpDatas({ pattern: aonHeaderSearchBoxValue, limit: 11 })
-						.then(helpDatas => {
-
-							let helpOptions = [];
-							helpDatas.forEach(helpData => {
-								const helpFile = helpData.file;
-								const helpTitle = this.decorateMatching(helpData.title, aonHeaderSearchBoxValue);
-								const helpFileName = helpFile.replace(/\.[^/.]+$/, '');
-
-								let tooltipUrl;
-								if (helpData.uri.lastIndexOf('#') == -1) {
-									tooltipUrl = AonStringUtils.b64EncodeUnicode(`../../Tooltip/?page=0&filename=${helpFile}`);
-								} else {
-									const helpName = helpData.uri.substr(helpData.uri.lastIndexOf('#') + 1);
-									tooltipUrl = AonStringUtils.b64EncodeUnicode(`../../Tooltip/?name=${helpName}&filename=${helpFileName}`);
-								}
-
-								helpOptions.push({
-									icon: MATERIAL_ICONS.OPEN_IN_NEW,
-									title: `${helpTitle} ${helpFile}`,
-									name: `<span style="text-transform : uppercase;" >${helpTitle}</span><span style="float:right;">${helpFileName}</span>`,
+				});
+	
+				searchOptions.push({
+					icon: MATERIAL_ICONS.GROUP,
+					name: `<span id="${this.AON_HEADER_SEARCH_DIALOG_MENU}Employees" style="font-weight: bold; cursor: default" class="${CSS.AON_COMPANY_FILTER_LOADING}" header >${MSG.EMPLOYEES}</span>`,
+				});
+	
+				aonHeaderSearchDialogMenu.getContent().style.minWidth = `${aonHeaderSearchBox.offsetWidth * 1.5}px`;
+	
+				const top = aonHeaderSearchBox.getBoundingClientRect().bottom;
+				const left = aonHeaderSearchBox.getBoundingClientRect().left;
+				aonHeaderSearchDialogMenu.setMenuOptions(searchOptions, top, left);
+				aonHeaderSearchDialogMenu.open();
+	
+				// Copy & Paste of company domain URL.
+				this.setupDomainUrlCopy(searchOptions);
+	
+				let firstDayOfMonth = new Date();
+				firstDayOfMonth.setUTCHours(0, 0, 0, 0);
+				firstDayOfMonth.setUTCMonth(firstDayOfMonth.getUTCMonth() - 1, 1); // Set to first day of the previous month
+	
+				getAllContracts({ to: firstDayOfMonth.toISOString(), status: true, pattern: aonHeaderSearchBoxValue, limit: 26 })
+					.then(contracts => {
+	
+						let searchOptions = [];
+						contracts
+							.map(contract => {
+								contract.company = companies.find(company => company.domain == contract.domain);
+								return contract;
+							})
+							.filter(contract => contract.company)
+							.slice(0, 10)
+							.forEach(contract => {
+								const contractName = this.decorateMatching(contract.name, aonHeaderSearchBoxValue);
+								const contractDocument = this.decorateMatching(contract.document, aonHeaderSearchBoxValue);
+								const contractSSNumber = this.decorateMatching(contract.ssNumber, aonHeaderSearchBoxValue);
+								const contractEndDate = contract.end_date ? `(${new Date(contract.end_date).toLocaleDateString()})` : '';
+	
+								const contractIdentifier = (this.isDecorated(contractSSNumber) && !this.isDecorated(contractDocument)) ? contractSSNumber : contractDocument;
+	
+								searchOptions.push({
+									icon: MATERIAL_ICONS.PERSON,
+									name: `<span>${contractName}</span><span style="margin-left: 16px" >${contractIdentifier}</span><span style="margin-left: 16px" >${contractEndDate}</span><span style="float:right;">${contract.company.name}</span>`,
 									fn: () => {
-										window.open(helpData.uri, '_blank');
+										this.companySelection(contract.company, false, () => { GWT.iLoad(GWT.EMPLOYEES, undefined, { employeeSearch: contract.document || contract.name }) });
 									},
-									options: [
-										{
-											name: `<div style='width: 50rem;' ><iframe style='height: 16rem; width: 100%; border: none;' src='html/pdfjs/viewer.html?encoded=true&amp;file=${tooltipUrl}#zoom=page-width'><iframe></div>`
-										}
-									],
 								});
 							});
-							aonHeaderSearchDialogMenu.addMenuOptions(helpOptions);
-
-							let helpSpan = aonHeaderSearchDialogMenu.getElement(`${this.AON_HEADER_SEARCH_DIALOG_MENU}Help`);
-							helpSpan.innerText = `${helpDatas.length > 10 ? '>' : ''} ${helpDatas.length} ${MSG.HELP_RESULTS}`;
-							helpSpan.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
-
+						aonHeaderSearchDialogMenu.addMenuOptions(searchOptions);
+	
+						let employeesSpan = aonHeaderSearchDialogMenu.getElement(`${this.AON_HEADER_SEARCH_DIALOG_MENU}Employees`);
+						employeesSpan.innerText = `${contracts.length > 25 ? '>' : ''} ${contracts.length} ${MSG.EMPLOYEES}`;
+						employeesSpan.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
+	
+						let applicationsOptions = [];
+						let aonMenu = this.getElement('aonMenu');
+						let searchApplicationsOptions = aonMenu.getApplicationsOptions()?.filter(application => AonStringUtils.containsMatching(application.name, aonHeaderSearchBoxValue));
+	
+						let applicationsTitle = searchApplicationsOptions.length == 1 ? `${MSG.ONE} ${MSG.APPLICATION}` : `${searchApplicationsOptions.length} ${MSG.APPLICATIONS}`;
+						applicationsOptions.push({
+							icon: MATERIAL_ICONS.APPLICATIONS,
+							name: `<span style="font-weight: bold; cursor: default" header >${applicationsTitle}</span>`,
 						});
-				}).catch(error => console.log(error));
-
-
-		});
+						searchApplicationsOptions.slice(0, 10).forEach(applicationOption => {
+							const appicationName = this.decorateMatching(applicationOption.name, aonHeaderSearchBoxValue);
+							applicationsOptions.push({ ...applicationOption, name: `<span>${appicationName}</span>` });
+						});
+						aonHeaderSearchDialogMenu.addMenuOptions(applicationsOptions);
+	
+						aonHeaderSearchDialogMenu.addMenuOptions([{
+							icon: MATERIAL_ICONS.HELP,
+							name: `<span id="${this.AON_HEADER_SEARCH_DIALOG_MENU}Help" style="font-weight: bold; cursor: default" class="${CSS.AON_COMPANY_FILTER_LOADING}" header >${MSG.HELP}</span>`,
+						}]);
+	
+						getHelpDatas({ pattern: aonHeaderSearchBoxValue, limit: 11 })
+							.then(helpDatas => {
+	
+								let helpOptions = [];
+								helpDatas.forEach(helpData => {
+									const helpFile = helpData.file;
+									const helpTitle = this.decorateMatching(helpData.title, aonHeaderSearchBoxValue);
+									const helpFileName = helpFile.replace(/\.[^/.]+$/, '');
+	
+									let tooltipUrl;
+									if (helpData.uri.lastIndexOf('#') == -1) {
+										tooltipUrl = AonStringUtils.b64EncodeUnicode(`../../Tooltip/?page=0&filename=${helpFile}`);
+									} else {
+										const helpName = helpData.uri.substr(helpData.uri.lastIndexOf('#') + 1);
+										tooltipUrl = AonStringUtils.b64EncodeUnicode(`../../Tooltip/?name=${helpName}&filename=${helpFileName}`);
+									}
+	
+									helpOptions.push({
+										icon: MATERIAL_ICONS.OPEN_IN_NEW,
+										title: `${helpTitle} ${helpFile}`,
+										name: `<span style="text-transform : uppercase;" >${helpTitle}</span><span style="float:right;">${helpFileName}</span>`,
+										fn: () => {
+											window.open(helpData.uri, '_blank');
+										},
+										options: [
+											{
+												name: `<div style='width: 50rem;' ><iframe style='height: 16rem; width: 100%; border: none;' src='html/pdfjs/viewer.html?encoded=true&amp;file=${tooltipUrl}#zoom=page-width'><iframe></div>`
+											}
+										],
+									});
+								});
+								aonHeaderSearchDialogMenu.addMenuOptions(helpOptions);
+	
+								let helpSpan = aonHeaderSearchDialogMenu.getElement(`${this.AON_HEADER_SEARCH_DIALOG_MENU}Help`);
+								helpSpan.innerText = `${helpDatas.length > 10 ? '>' : ''} ${helpDatas.length} ${MSG.HELP_RESULTS}`;
+								helpSpan.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
+	
+							});
+					}).catch(error => console.log(error));
+	
+	
+			});
+		}
 
 	}
 
@@ -1110,8 +1115,12 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderSearchBox = aonHeader.getElement(this.AON_HEADER_SEARCH_BOX);
 		let aonHeaderSearchDialogMenu = aonHeader.getElement(this.AON_HEADER_SEARCH_DIALOG_MENU);
+		
+		let aonHeaderSearchBoxValue = aonHeaderSearchBox ? aonHeaderSearchBox.value : '';
 
-		if (aonHeaderSearchDialogMenu.hasContent()) {
+		// Only show if searchBok has value replace old
+		// if (aonHeaderSearchDialogMenu.hasContent())
+		if (aonHeaderSearchBoxValue && aonHeaderSearchBoxValue.length !== 0) {
 			aonHeaderSearchDialogMenu.getContent().style.minWidth = `${aonHeaderSearchBox.offsetWidth * 1.5}px`;
 			aonHeaderSearchDialogMenu.open();
 		}
@@ -1241,6 +1250,19 @@ export class AonHeader extends AonElement {
 			}).catch(() => { });
 			
 			aonMenu.closeEmptyApps();
+			
+			// Check if fixed new button is needed
+		    let aonMenuAppHover = this.getElement('aonMenuList-new');
+		    let newFixedButton = this.getElement('newFixedButton');
+		    
+		    if(LS.getFixedButton() === 'on' && LS.isFutureTheme()){
+				if(newFixedButton) newFixedButton.classList.remove('hidden');
+				if(aonMenuAppHover) aonMenuAppHover.classList.add('hidden');
+			} else {
+				if(newFixedButton) newFixedButton.classList.add('hidden');
+				if(aonMenuAppHover) aonMenuAppHover.classList.remove('hidden');
+			}
+			
 		}
 		);
 
