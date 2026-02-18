@@ -67,12 +67,21 @@ export const closeSession = () => {
     let portalChecked = localStorage.getItem(PORTAL_CHECKED);
     
     localStorage.clear();
+
+	if (theme)
+    	localStorage.setItem(THEME,theme);
     
-    setTheme(theme);
-    setLanguage(language);
-    setTopMenu(topMenu);
-    setLeftMenu(leftMenu);
-    setPortalChecked(portalChecked);
+	if (language)
+        localStorage.setItem(AON_LANGUAGE, language);
+    
+	if (topMenu)
+        localStorage.setItem(TOP_MENU, topMenu);
+    
+	if (leftMenu)
+        localStorage.setItem(LEFT_MENU, leftMenu);
+    
+	if (portalChecked)
+        localStorage.setItem(PORTAL_CHECKED, portalChecked);
 }
 
 export const getLanguage = () => get(AON_LANGUAGE) || 'es';
