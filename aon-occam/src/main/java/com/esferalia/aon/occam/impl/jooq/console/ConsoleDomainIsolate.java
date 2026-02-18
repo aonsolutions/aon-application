@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.console;
 
+import static com.esferalia.aon.jooq.tables.UrlShorten.URL_SHORTEN;
 import static com.esferalia.aon.jooq.tables.ActionEntry.ACTION_ENTRY;
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
@@ -132,6 +133,7 @@ public class ConsoleDomainIsolate {
 				.filter(t -> !DOMAIN.getName().equals(t.getTable().getName()))
 				.filter(t -> !SESSION.getName().equals(t.getTable().getName()))
 				.filter(t -> !ACTION_ENTRY.getName().equals(t.getTable().getName()))
+				.filter(t -> !URL_SHORTEN.getName().equals(t.getTable().getName()))
 				.count());
 			
 			if (params.getFromConnection().getDomain().isEnableHeredity() && params.mustFlatten()) {
