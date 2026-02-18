@@ -110,10 +110,20 @@ export class AonDesktop extends AonElement {
 			let expandButtonDiv = this.getElement('aonExpandButtonDiv');
 			if (expandButtonDiv) expandButtonDiv.style.display = 'block';
 			
-			let newFixedButton = this.getElement('newFixedButton');
-			if(newFixedButton)
-				newFixedButton.classList.remove('hidden');
-	
+		}
+		
+		// Check if fixed new button is needed
+		if(LS.isFutureTheme()){
+			let aonMenuAppHover = this.getElement('aonMenuList-new');
+		    let newFixedButton = this.getElement('newFixedButton');
+		    
+		    if(LS.getFixedButton() === 'on'){
+				if(newFixedButton) newFixedButton.classList.remove('hidden');
+				if(aonMenuAppHover) aonMenuAppHover.classList.add('hidden');
+			} else {
+				if(newFixedButton) newFixedButton.classList.add('hidden');
+				if(aonMenuAppHover) aonMenuAppHover.classList.remove('hidden');
+			}
 		}
 
 		this.initialize();

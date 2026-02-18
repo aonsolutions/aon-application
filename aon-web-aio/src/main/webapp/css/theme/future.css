@@ -2542,13 +2542,13 @@ aon-search > span {
   position: absolute;
   top: 20;
   right: 15;
-  z-index: 2;
+  z-index: 5;
 
   transform: translateX(100%);
   opacity: 0;
 
   transition: transform .3s ease, opacity .2s ease;
-  pointer-events: none; /* evita clics cuando está oculto */
+  /* pointer-events: none; evita clics cuando está oculto */
 }
 
 #aonHeaderSearch.open {

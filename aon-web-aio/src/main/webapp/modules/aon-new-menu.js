@@ -417,19 +417,6 @@ export class AonNewMenu extends AonElement {
 		
 		    this._delegatedHandlerAdded = true;
 		}
-		
-		
-		// Check if fixed new button is needed
-	    let aonMenuAppHover = this.getElement('aonMenuList-new');
-	    let newFixedButton = this.getElement('newFixedButton');
-	    
-	    if(LS.getFixedButton() === 'on'){
-			if(newFixedButton) newFixedButton.classList.remove('hidden');
-			if(aonMenuAppHover) aonMenuAppHover.classList.add('hidden');
-		} else {
-			if(newFixedButton) newFixedButton.classList.add('hidden');
-			if(aonMenuAppHover) aonMenuAppHover.classList.remove('hidden');
-		}
 	}
 
 	buildMenuLeftop() {
