@@ -2,9 +2,11 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Auth.AUTH;
 import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -12,10 +14,14 @@ import org.jooq.Record;
 import org.jooq.Record8;
 
 import com.esferalia.aon.jooq.extension.DSLExtensions;
+import com.esferalia.aon.jooq.tables.records.UserAppRoleRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.AuthProperties;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.Auth;
 
 public class AuthDAO {
@@ -68,14 +74,6 @@ public class AuthDAO {
 			.fetch().stream().map(new AuthFiller()).findFirst().orElse(new Auth());
 	}
 	
-	public static Integer[] getAuthDomains (AONContext ctx, byte[] auth) {
-		return ctx.getDslContext()
-			.select(USER.DOMAIN)
-			.from(USER)
-			.where(USER.AUTH.eq(auth))
-			.fetch().stream().map(r -> r.getValue(USER.DOMAIN)).toArray(Integer[]::new);
-	}
-
 	public static Integer[] getAuthScopes (AONContext ctx, byte[] auth) {
 		return ctx.getDslContext()
 			.select(USER_SCOPE.SCOPE)
@@ -86,6 +84,32 @@ public class AuthDAO {
 						.from(USER)
 						.where(USER.AUTH.eq(auth))))
 			.fetch().stream().map(r -> r.getValue(USER_SCOPE.SCOPE)).toArray(Integer[]::new);
+	}
+
+	public static Integer[] getAuthDomains (AONContext ctx, byte[] auth) {
+		return ctx.getDslContext()
+			.select()
+			.from(USER)
+			.where(USER.AUTH.eq(auth))
+			.fetch(USER.DOMAIN).stream().toArray(Integer[]::new);
+	}
+
+	public static DomainUserRoles[] getAuthDomainsUserRoles (AONContext ctx, byte[] auth) {
+		return ctx.getDslContext()
+			.select()
+			.from(USER)
+			.join(USER_APP_ROLE)
+			.on(USER_APP_ROLE.USER_ID.eq(USER.ID))
+			.where(USER.AUTH.eq(auth))
+			//.and(USER_APP_ROLE.APP.eq((byte)-1))
+			.fetchStreamInto(USER_APP_ROLE)
+			.collect(Collectors.groupingBy(UserAppRoleRecord::getDomain))
+			.entrySet().stream().map( e -> 
+					new DomainUserRoles()
+					.setDomain(new Domain().setId(e.getKey()))
+					.setDomainUserRoles(e.getValue().stream().map(UserAppRoleRecord::getRole).map(AonRole::safeValueOf).toList())
+			)
+			.toArray(DomainUserRoles[]::new);
 	}
 
 	public static byte[] unHexUuid(AONContext ctx, String uuid) {
