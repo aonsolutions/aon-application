@@ -76,6 +76,7 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
     private AonCustomListBox lbAnnualHolidays = new AonCustomListBox("Tipo D\u00edas Vac.");
     private AonCustomListBox lbHoliday = new AonCustomListBox("Calendario de festivos asociados");
 
+    private FlowPanel showHidePanel = new FlowPanel();
     private AonToolbarButton showHide = new AonToolbarButton("", AON.CSS.aonIconMenuCollapse());
 
     private Integer domain;
@@ -105,7 +106,8 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
         container.add(messagePanel);
         
         showHide = new AonToolbarButton("", AON.CSS.aonIconMenuCollapse());
-    	showHide.ensureDebugId("collapseMenuWorkplaceCalendar");
+    	showHide.getElement().setId("collapseMenuWorkplaceCalendar");
+    	showHide.getElement().getStyle().setProperty("margin-top", ".8rem");
     	
     	showHide.addClickHandler(e -> {
             if (!westShow) {
@@ -127,6 +129,9 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
             }
             westShow = !westShow;
         });
+    	
+    	showHidePanel.getElement().setId("showHidePanelWorkplaceCalendar");
+    	showHidePanel.add(showHide);
 
         centerPanel = new SimpleLayoutPanel();
         centerPanel.setHeight("100%");
@@ -216,7 +221,7 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
         
         formContent.clear();
         
-        formContent.ensureDebugId("workplaceCalendarForm");
+        formContent.getElement().setId("workplaceCalendarForm");
         
         txtDescription = new AonCustomTextBox("Descripci\u00f3n");
         txtComment = new AonCustomTextArea("Comentarios");
@@ -337,7 +342,7 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
         formContent.add(lbHoliday);
         formContent.add(txtComment);
 
-        form.add(showHide);
+        form.add(showHidePanel);
         form.add(formContent);
     }
     

@@ -252,7 +252,7 @@ public class AnnualCalendarWidget extends FlowPanel {
             if (h.getDetails() != null) {
                 for (HolidayDetail d : h.getDetails()) {
                     Date date = d.getDate();
-                    if (date.getMonth() == month && date.getDate() == day) {
+                    if (date.getYear() == (year - 1900) && date.getMonth() == month && date.getDate() == day) {
                     	
                     	FlowPanel holidayPanel = new FlowPanel();
                     	Label holidayDesc = new Label(d.getDescription());

@@ -477,14 +477,6 @@
 		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M172-292v-28h438v28H172Zm596-35L613-480l155-152 20 20-135 132 135 133-20 20ZM172-466v-28h326v28H172Zm0-174v-28h438v28H172Z"/></svg>');
 }
 
-#gwt-debug-collapseMenuWorkplaceCalendar.aon_icon_menu_collapse{
-	background-size: 24px !important;
-	background-image:
-		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M172-292v-28h438v28H172Zm596-35L613-480l155-152 20 20-135 132 135 133-20 20ZM172-466v-28h326v28H172Zm0-174v-28h438v28H172Z"/></svg>') !important;
-	mask-image: none !important;
-	background-color: transparent !important;
-}
-
 .aon_icon_send {
 	background-size: 24px;
 	background-image:
