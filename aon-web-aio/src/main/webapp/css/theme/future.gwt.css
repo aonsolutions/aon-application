@@ -1246,19 +1246,22 @@ div:has( > .aon_icon_menu_collapse) {
 	background-color: white;
 }
 
-.aon-annual-data,
-.aon-holidays {
-	/*
-	flex-direction: column;
-  	justify-content: start;
-  	align-items: start;
-  	*/
-  	gap: 0rem;
-}
-
 .aon-annual-data div, 
 .aon-holidays div {
 	margin-right: 0px;
+}
+
+#gwt-debug-workplaceCalendarForm{
+	display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#gwt-debug-workplaceCalendarForm .aon_custom_text_box,
+#gwt-debug-workplaceCalendarForm .aon_custom_text_box_no_border,
+#gwt-debug-workplaceCalendarForm .aon_custom_text_area {
+	margin: 0;
+	width: 100%;
 }
 
 /* ============================================================
@@ -1279,3 +1282,4 @@ div:has( > .aon_icon_menu_collapse) {
 .aon_number_box{
 	padding-left: 0px;
 }
+

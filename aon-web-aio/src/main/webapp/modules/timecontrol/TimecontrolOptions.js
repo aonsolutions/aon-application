@@ -19,7 +19,6 @@ import * as GWT from '../../gwt/gwt.js';
   export const workplacesCalendar = () => {
 	let application = document.querySelector(TAG.AON_APPLICATION);
     application.removeToolbarOptions();
-    application.closeSidenav();
     GWT.iLoad(GWT.WORKPLACES_CALENDAR, application.CONTENT);
   }
 
