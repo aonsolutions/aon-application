@@ -329,7 +329,7 @@ public enum ContextVariable implements IResourceable {
 	FELLOWS("BECARIOS", VariableType.UNKNOWN),
 	TRAINING("FORMACION", VariableType.UNKNOWN),
 	LEARNING("APRENDIZAJE", VariableType.UNKNOWN),
-	ASSIMILATE("ASMILADOS", VariableType.UNKNOWN),
+	ASSIMILATE("ASIMILADOS", VariableType.UNKNOWN),
 	REPRESENTATIVES("REPRESENTANTES", VariableType.UNKNOWN),
 	
 	CCC_TYPE("CCC_TYPE", VariableType.INTEGER),
