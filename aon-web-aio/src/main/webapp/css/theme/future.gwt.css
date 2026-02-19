@@ -1251,18 +1251,31 @@ div:has( > .aon_icon_menu_collapse) {
 	margin-right: 0px;
 }
 
-#gwt-debug-workplaceCalendarForm{
+#workplaceCalendarForm{
 	display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-#gwt-debug-workplaceCalendarForm .aon_custom_text_box,
-#gwt-debug-workplaceCalendarForm .aon_custom_text_box_no_border,
-#gwt-debug-workplaceCalendarForm .aon_custom_text_area {
+#workplaceCalendarForm .aon_custom_text_box,
+#workplaceCalendarForm .aon_custom_text_box_no_border,
+#workplaceCalendarForm .aon_custom_text_area {
 	margin: 0;
 	width: 100%;
 }
+
+#collapseMenuWorkplaceCalendar.aon_icon_menu_collapse{
+	background-size: 24px !important;
+	background-image:
+		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M172-292v-28h438v28H172Zm596-35L613-480l155-152 20 20-135 132 135 133-20 20ZM172-466v-28h326v28H172Zm0-174v-28h438v28H172Z"/></svg>') !important;
+	mask-image: none !important;
+	background-color: transparent !important;
+}
+
+#showHidePanelWorkplaceCalendar{
+	background-color: #fff;
+}
+
 
 /* ============================================================
    ACCOUNTING PERIOD
@@ -1282,4 +1295,3 @@ div:has( > .aon_icon_menu_collapse) {
 .aon_number_box{
 	padding-left: 0px;
 }
-

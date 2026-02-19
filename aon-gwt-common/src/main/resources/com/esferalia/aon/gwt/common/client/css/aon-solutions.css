@@ -3063,6 +3063,13 @@
     font-weight: bold;
 }
 
+#showHidePanelWorkplaceCalendar{
+	height: 3.1rem;
+    width: 100%;
+    position: sticky;
+    top: 0;
+    background-color: #fafafa;
+}
 
 /* ============================================================
    ACCOUNTING PERIOD
