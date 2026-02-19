@@ -30,6 +30,7 @@
 }
 
 :root {
+	
 	--aonTopMenuSpecial: transparent;
 	
 	--aonBackgroundColor: #ffffff;
@@ -44,6 +45,13 @@
 	--aonTimecontrol: none;
 	--aonMessenger: none;
 	--aonPayroll: none;
+	
+	
+	--aonCustomizeButtonBackground: linear-gradient(to right, #0f172a, #0f172a, #0E1030, #586078);
+}
+
+body {
+	--aonTheme: /css/theme/future.css;
 }
 
 .aonBody{
@@ -585,6 +593,7 @@ aon-configuration-menu .suiteMenuContent  {
 }
 
 #expandHirin:hover {
+	background:var(--aonCustomizeButtonBackground);
 	background-position: 100% 0;
 	color: white;
 }
@@ -893,7 +902,7 @@ aon-configuration-menu .suiteMenuContent  {
 	align-items: flex-start;
 	margin-top: 0.5rem; /*Warn*/
 	transition: background .3s ease;
-	background: linear-gradient(to right, #0f172a, #0f172a, #0E1030, #586078);
+	background: var(--aonCustomizeButtonBackground);
 }
 
 .aonUpload * {
@@ -1142,7 +1151,7 @@ aon-configuration-menu .suiteMenuContent  {
 }
 
 .aonLoginButton  {
-	background: linear-gradient(to right, #0f172a, #0f172a, #0E1030, #586078);
+	background: var(--aonCustomizeButtonBackground);
 	background-position-x: 0%;
 	background-position-y: 0%;
 	background-size: auto;

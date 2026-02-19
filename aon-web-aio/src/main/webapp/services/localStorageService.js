@@ -32,6 +32,7 @@ export const AON_THEME = '/css/theme/aon.css';
 export const DARK_THEME = '/css/theme/dark.css';
 export const DARK_BETA_THEME = '/css/theme/darkBeta.css';
 export const FUTURE_THEME = '/css/theme/future.css';
+export const CUSTOM_THEME = '/css/theme/customview.css';
 
 
 export const BETA = 'beta';
@@ -59,19 +60,28 @@ export const remove = (item) => {
 }
 
 export const closeSession = () => {
-    let theme = getTheme();
-    let language = getLanguage();    
-    let topMenu = getTopMenu();
-    let leftMenu = getLeftMenu();
-    let portalChecked = getPortalChecked();
+    let theme = localStorage.getItem(THEME);
+    let topMenu = localStorage.getItem(TOP_MENU);
+    let leftMenu = localStorage.getItem(LEFT_MENU);
+	let language = localStorage.getItem(AON_LANGUAGE);    
+    let portalChecked = localStorage.getItem(PORTAL_CHECKED);
     
     localStorage.clear();
+
+	if (theme)
+    	localStorage.setItem(THEME,theme);
     
-    setTheme(theme);
-    setLanguage(language);
-    setTopMenu(topMenu);
-    setLeftMenu(leftMenu);
-    setPortalChecked(portalChecked);
+	if (language)
+        localStorage.setItem(AON_LANGUAGE, language);
+    
+	if (topMenu)
+        localStorage.setItem(TOP_MENU, topMenu);
+    
+	if (leftMenu)
+        localStorage.setItem(LEFT_MENU, leftMenu);
+    
+	if (portalChecked)
+        localStorage.setItem(PORTAL_CHECKED, portalChecked);
 }
 
 export const getLanguage = () => get(AON_LANGUAGE) || 'es';
@@ -147,7 +157,7 @@ export const setAppMenu = (value) => {
 }
 
 export const getTheme = () => {
-    return get(THEME) || '/css/theme/aon.css';
+    return get(THEME);
 }
 
 export const setTheme = (theme) => {

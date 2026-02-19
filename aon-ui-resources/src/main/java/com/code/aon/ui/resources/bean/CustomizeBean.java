@@ -54,6 +54,8 @@ public class CustomizeBean implements Serializable {
 	
 	private static final String SOURCE_VERSION = "sourceVersion";
 
+	private String theme;
+
 	private String toolbarLogo;
 
 	private String favicon;
@@ -91,6 +93,7 @@ public class CustomizeBean implements Serializable {
 	private Integer companyId;
 	
 	private String sourceVersion;
+	
 
 	public CustomizeBean() {
 		this.fontStyle = getColorStyle(FONT_STYLE_DEFAULT);
@@ -218,6 +221,7 @@ public class CustomizeBean implements Serializable {
 	
 	protected void loadValues( Connection connection ) {
 		this.domainId = getCompanyDomain(connection);
+		updateTheme(connection);
 		updateApplicationTitle(connection);
 		updateSupportTelephone(connection);
 		updateSupportEmail(connection);
@@ -242,6 +246,10 @@ public class CustomizeBean implements Serializable {
 		return null;				
 	}
 	
+	private void updateTheme( Connection connection ) {
+		this.theme = getValue( connection, AppParam.AON_CUSTOMIZE_THEME);
+	}
+
 	private void updateApplicationTitle( Connection connection ) {
 		this.applicationTitle = getValue( connection, AppParam.AON_CUSTOMIZE_TITLE);
 	}
@@ -297,7 +305,11 @@ public class CustomizeBean implements Serializable {
 	
 	private String getColorStyle( String color ) {
 		return "color: " + color + " !important;";
-	}		
+	}
+	
+	public String getTheme() {
+		return theme;
+	}
 
 	public String getApplicationVersion() {
 		return applicationVersion;
