@@ -133,7 +133,6 @@ public class ConsoleDomainIsolate {
 				.filter(t -> !DOMAIN.getName().equals(t.getTable().getName()))
 				.filter(t -> !SESSION.getName().equals(t.getTable().getName()))
 				.filter(t -> !ACTION_ENTRY.getName().equals(t.getTable().getName()))
-				.filter(t -> !URL_SHORTEN.getName().equals(t.getTable().getName()))
 				.count());
 			
 			if (params.getFromConnection().getDomain().isEnableHeredity() && params.mustFlatten()) {
@@ -787,6 +786,7 @@ public class ConsoleDomainIsolate {
 		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"Generating tables script"));
 		tables.stream()
 			.filter(t -> t.field(DOMAIN_FIELD) != null )
+			.filter(t -> !URL_SHORTEN.getName().equals(t.getName()))
 			.forEach(t -> addTable(params, t, stack));
 	}
 
