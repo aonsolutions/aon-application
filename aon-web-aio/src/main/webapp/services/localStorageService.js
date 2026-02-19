@@ -60,19 +60,28 @@ export const remove = (item) => {
 }
 
 export const closeSession = () => {
-    let theme = getTheme();
-    let language = getLanguage();    
-    let topMenu = getTopMenu();
-    let leftMenu = getLeftMenu();
-    let portalChecked = getPortalChecked();
+    let theme = localStorage.getItem(THEME);
+    let topMenu = localStorage.getItem(TOP_MENU);
+    let leftMenu = localStorage.getItem(LEFT_MENU);
+	let language = localStorage.getItem(AON_LANGUAGE);    
+    let portalChecked = localStorage.getItem(PORTAL_CHECKED);
     
     localStorage.clear();
+
+	if (theme)
+    	localStorage.setItem(THEME,theme);
     
-    setTheme(theme);
-    setLanguage(language);
-    setTopMenu(topMenu);
-    setLeftMenu(leftMenu);
-    setPortalChecked(portalChecked);
+	if (language)
+        localStorage.setItem(AON_LANGUAGE, language);
+    
+	if (topMenu)
+        localStorage.setItem(TOP_MENU, topMenu);
+    
+	if (leftMenu)
+        localStorage.setItem(LEFT_MENU, leftMenu);
+    
+	if (portalChecked)
+        localStorage.setItem(PORTAL_CHECKED, portalChecked);
 }
 
 export const getLanguage = () => get(AON_LANGUAGE) || 'es';

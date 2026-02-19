@@ -56,11 +56,10 @@ export class AonParent extends AonElement {
 	connectedCallback () {
 		this.init({id:'active', active: true, domainActive:true});
 		
-		if(!LS.isFutureTheme()) {
-			let newFixedButton = this.getElement('newFixedButton');
-			if(newFixedButton)
-				newFixedButton.classList.add('hidden');
-		}
+		let newFixedButton = this.getElement('newFixedButton');
+		if(newFixedButton)
+			newFixedButton.classList.add('hidden');
+			
 	}
 
 	init(filter) {
@@ -484,7 +483,8 @@ export class AonParent extends AonElement {
 		.finally(()=>{
 			//TODO: this.getApplication().stopLoader();
 		});
-	
+
+			
 
 	}
 
