@@ -5586,3 +5586,8 @@ aon-calendar-menu.menu-open .calendar-menu-option:nth-child(4) {
 #aonHeaderSearchDiv{
 	display: none;
 }
+
+#aonHeaderSearchDialogMenuDialogMenuContent{
+  height: 100%;
+  overflow-y: scroll; 
+}
