@@ -357,6 +357,7 @@ export class AonSearch extends AonElement {
 		buttonsPanel.style.display = "flex";
 		buttonsPanel.style.justifyContent = "center";
 		buttonsPanel.style.alignItems = "center";
+		buttonsPanel.style.marginTop = "1rem";
 
 		let reset = this.createElement(TAG.BUTTON);
 		reset.textContent = "Limpiar";
