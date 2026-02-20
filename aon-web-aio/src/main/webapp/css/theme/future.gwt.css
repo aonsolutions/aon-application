@@ -624,6 +624,11 @@ input, select, textarea,
 	mask-image: url('/icons/search.svg');
 }
 
+.aon_button.aon_icon_search:hover,
+.aon_button.aon_icon_menu_collapse:hover {
+    background-color: black;
+}
+
 .aon_icon_menu_collapse {
 	mask-image: url('/icons/chevron-down.svg');	
 }	

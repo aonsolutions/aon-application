@@ -145,8 +145,8 @@ public abstract class CCC extends ScrollPanel {
 		contextMenu = new TgssContextMenu();
 		
 		container = new SimplePanel();
-		container.getElement().getStyle().setProperty("max-height", "200px");
 		container.getElement().getStyle().setProperty("padding-left", "1px");
+		container.getElement().getStyle().setProperty("max-height", (Window.getClientHeight() - Window.getClientHeight()/3) + "px");
 		setWidget(container);
 		
 		onSearch();
