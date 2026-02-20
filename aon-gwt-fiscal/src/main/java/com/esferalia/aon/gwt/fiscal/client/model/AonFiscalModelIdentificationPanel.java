@@ -40,6 +40,7 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel> extends Sc
 	private ProvinceListBox province;
 	private AonTextBox zip;
 	private AonTextBox townCode;
+	private boolean paintTownCode;
 
 	public AonFiscalModelIdentificationPanel(T model) {
 		setStyleName(AON.CSS.aonScrollArea());
@@ -141,7 +142,10 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel> extends Sc
 			.addCell(new Label(AON.MSG.town()),AON.CSS.aonTableLabel())
 			.addCell(town);
 		
-		if (model.getModel() == FiscalModelType.M303 && model.isCanarias()) {
+		// Canarias: Se pide también el código del municipio en los modelos 303 y 421.
+		paintTownCode = (model.isCanarias() && (model.getModel() == FiscalModelType.M303 || model.getModel() == FiscalModelType.M421));
+		
+		if (paintTownCode) {
 			townCode = new AonTextBox();
 			townCode.setVisibleLength(5);
 			townCode.setMaxLength(5);
@@ -189,7 +193,6 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel> extends Sc
 		tab.addRow()
 			.addCell(new Label(AON.MSG.contactMail()),AON.CSS.aonTableLabel())
 			.addCell(contactMail);
-		
 
 		document.addValueChangeHandler(event -> {
 			model.setDocument(document.getValue());
@@ -286,7 +289,7 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel> extends Sc
 			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
 		
-		if (model.getModel() == FiscalModelType.M303 && model.isCanarias()) {
+		if (paintTownCode) {
 			townCode.addValueChangeHandler(event -> {
 				model.setTownCode(townCode.getValue());
 				ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
@@ -348,7 +351,7 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel> extends Sc
 		province.setEnabled(model.isEditable());
 		zip.setEnabled(model.isEditable());
 		
-		if (model.getModel() == FiscalModelType.M303 && model.isCanarias()) {
+		if (paintTownCode) {
 			townCode.setValue(model.getTownCode());
 			townCode.setEnabled(model.isEditable());
 		}

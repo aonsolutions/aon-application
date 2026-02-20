@@ -1099,8 +1099,16 @@ public enum ModuleInfo implements Serializable {
 			return MODULE;
 		}
 	}
-	
-	
+	, M63 {
+		@Override
+		public String getDescription() {
+			return "CUOTA DEVENGADA POR OPER.CORRIENTES";
+		}
+		@Override
+		public ModuleInfoType getType() {
+			return MODULE;
+		}
+	}
 	
 	,I01 {
 		@Override

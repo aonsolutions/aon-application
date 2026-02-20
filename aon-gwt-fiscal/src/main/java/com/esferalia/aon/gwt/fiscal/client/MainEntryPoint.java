@@ -201,6 +201,12 @@ public class MainEntryPoint implements EntryPoint {
 				com.esferalia.aon.gwt.fiscal.client.mod369.Model369.run();
 			}
 		},
+		Model421 {
+			@Override
+			void run() {				
+				com.esferalia.aon.gwt.fiscal.client.mod421.Model421.run();
+			}
+		}
 		;
 		abstract void run();
 	}
