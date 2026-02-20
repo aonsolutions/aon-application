@@ -595,6 +595,17 @@ input, select, textarea,
     background-image: url(/icons/arrow-left.svg);		
 }
 
+.aon_icon_refresh {
+    background-image: url(/icons/refresh-cw.svg);		
+}
+
+.aon_icon_filter_off {
+    background-image: url(/icons/filter-off.svg);		
+}
+
+.aon_icon_filter_on {
+    background-image: url(/icons/filter.svg);		
+}
 
 .aon_icon_search, 
 .aon-icon-search,
@@ -1285,11 +1296,26 @@ div:has( > .aon_icon_menu_collapse) {
 	--height-adjust: 75; 	
 }
 .aon-invoice-console-filter-panel {
-	--width-adjust: 400; 	
+	--width-adjust: 350; 	
+}
+
+.aon-invoice-console-panel {
+	margin-left: 1rem;	
+	margin-right: 1rem;	
+}
+
+.aon-invoice-console-panel > div:nth-child(3),
+.aon-invoice-console-panel .aon_search_panel {
+	margin-left: 0rem !important;
+	margin-right: 0rem !important;
 }
 
 .aon-invoice-console-panel .aon_scroll_area {
 	background-color: #fff ;
+}
+
+.aon-invoice-console-panel .aon_display_grid_header_row {
+	z-index: 1;
 }
 
 div.aon_custom_text_box_input:has( input){
