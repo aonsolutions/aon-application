@@ -51,7 +51,7 @@
 }
 
 body {
-	--aonTheme: /css/theme/future.css;
+	--isFutureTheme: true;
 }
 
 .aonBody{

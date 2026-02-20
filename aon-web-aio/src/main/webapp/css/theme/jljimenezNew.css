@@ -1,0 +1,5 @@
+@import url("/css/theme/future.css");
+
+:root {
+	--aonCustomizeButtonBackground: linear-gradient(to right, #0f172a, #0f172a, #0E1030, #586078);
+}
