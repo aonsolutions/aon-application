@@ -54,10 +54,13 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.jooq.tables.Timecontrol;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ContractExtendedData;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractExtendedDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
@@ -103,7 +106,20 @@ public class ContractDAO {
 		Integer[] domains = AuthDAO.getAuthDomains(ctx, auth);
 		Condition domainsCondition = DOMAIN.ID.in(domains).or(DOMAIN.PARENT.in(domains));
 		Condition userScopesDomain = DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.in(userScopes));
-
+		
+		// Skip child domains with user's roles redefined & doesn't have PAYROLL_MANAGER role.
+		try {
+			Integer[] skipDomains  =
+			Arrays.stream(AuthDAO.getAuthDomainsUserRoles(ctx, auth))
+			.filter(d -> !d.getDomainUserRoles().contains(AonRole.PAYROLL_MANAGER) 
+					&& !d.getDomainUserRoles().contains(AonRole.PAYROLL_PORTAL))
+			.map(DomainUserRoles::getDomain).map(Domain::getId).toArray(Integer[]::new);
+			if (skipDomains.length > 0)
+				domainsCondition = domainsCondition.and(DOMAIN.ID.notIn(skipDomains));
+		} catch (Exception e) {
+			// In case of any error getting user roles, skip filtering by them.
+		}
+		
 		Condition[] filterConditions = CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter);
 		
 		Condition[] allConditions = Stream
