@@ -51,7 +51,7 @@
 }
 
 body {
-	--aonTheme: /css/theme/future.css;
+	--isFutureTheme: true;
 }
 
 .aonBody{
@@ -595,6 +595,7 @@ aon-configuration-menu .suiteMenuContent  {
 #expandHirin:hover {
 	background:var(--aonCustomizeButtonBackground);
 	background-position: 100% 0;
+	background-size: 300% 100%;
 	color: white;
 }
 
@@ -2308,7 +2309,10 @@ aon-new-fixed-button .newFixedButton.open{
 }
 
 aon-new-fixed-button .newFixedButton:hover {
-    background-position: 100% 0px;
+    background: var(--aonCustomizeButtonBackground);
+	background-position: 100% 0px;
+	background-size: 300% 100%;
+    
 }
 
 aon-new-fixed-button .newFixedButton .plus {

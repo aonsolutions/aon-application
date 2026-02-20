@@ -46,7 +46,7 @@ public class Customize implements Update {
 
 	public static final Customize CUSTOMIZE_INFOAUTONOMOS = 
 	new Customize(DOMAIN.NAME.likeRegex("^infoautonomos\\.aonsolutions\\.(org|net)$"))
-	.setTheme("/css/theme/future.css")
+	.setTheme("/css/theme/jljimenezNew.css")
 	.setSupportPhone("900 525 576")
 	.setSupportEmail("asesoria@infoautonomos.com")
 	.setTitle("Asesoría Online para Autónomos y Pymes")
@@ -60,7 +60,7 @@ public class Customize implements Update {
 	
 	public static final Customize CUSTOMIZE_AYUDAT = 
 	new Customize(DOMAIN.NAME.likeRegex("^ayudat\\.aonsolutions\\.(org|net)$"))
-	.setTheme("/css/theme/future.css")
+	.setTheme("/css/theme/jljimenezNew.css")
 	.setSupportPhone("900 100 162")
 	.setSupportEmail("soporteclientes@ayudatpymes.es")
 	.setTitle("Ayuda T Pymes | Asesoría Online para Empresas y Autónomos")
