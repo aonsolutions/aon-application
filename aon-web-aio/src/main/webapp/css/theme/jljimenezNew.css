@@ -3,3 +3,36 @@
 :root {
 	--aonCustomizeButtonBackground: linear-gradient(to right, #0f172a, #0f172a, #0E1030, #586078);
 }
+
+.aonNewLogo, 
+.aonLoginLogo,
+.aonHeaderAppDiv {
+	width: 13.85rem;
+	height: 1.6875rem;
+	background-repeat: no-repeat;
+	background-position: left;
+}
+
+.aonNewLogo, 
+.aonHeaderAppDiv {
+	margin-left: 3.25rem !important;
+}
+
+.aonMenuAnchorDivSpan{
+	display: none;
+}
+
+#aonMenuAnchorDivIcon {
+	position: fixed;
+	top: 22px;
+	left: 22px;
+	
+	color:white;
+	background-color: white;	
+}
+
+#aonHome:has(.aonMenuTopNavVisible) .aonMenuSidenav {
+	z-index: 10;	
+	margin-top: 8px;
+}
+
