@@ -143,6 +143,13 @@ public class AonNumberUtils {
 		return 0;		
 	}
 
+	public static BigDecimal toBigDecimal(String value) {
+		if (AonStringUtils.isNotBlank(value)) {
+			return new BigDecimal(value);
+		}
+		return null;
+	}
+
 	public static String emptyIfNull(Integer value) {
 		if (value == null) return "";
 		return value.toString();

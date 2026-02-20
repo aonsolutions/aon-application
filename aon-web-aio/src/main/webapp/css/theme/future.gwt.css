@@ -1295,3 +1295,19 @@ div:has( > .aon_icon_menu_collapse) {
 .aon_number_box{
 	padding-left: 0px;
 }
+
+
+.aon-invoice-console-toolbar {
+	--height-adjust: 75; 	
+}
+.aon-invoice-console-filter-panel {
+	--width-adjust: 400; 	
+}
+
+.aon-invoice-console-panel .aon_scroll_area {
+	background-color: #fff ;
+}
+
+div.aon_custom_text_box_input:has( input){
+    border:none;
+}
