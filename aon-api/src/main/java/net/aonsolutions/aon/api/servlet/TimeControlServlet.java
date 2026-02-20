@@ -438,7 +438,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 
 		Location lc = new Location();
 		
-		if(!coordinates.isEmpty() || (coordinates.isEmpty() && null != params.opt("location"))) {
+		if(!coordinates.isEmpty() || (coordinates.isEmpty() && null != params.optIntegerObject("location", null))) {
 			Integer locationId = params.optInt("location");
 			  lc = locationId!=0
 				? AON_SOLUTIONS.getLocation(taskHolder.getDomain(), "",  f -> f.getIdProperty().eq(locationId) )
