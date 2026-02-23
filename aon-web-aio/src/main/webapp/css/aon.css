@@ -3775,7 +3775,6 @@ background-image: url("../favicon.png");
 }
 
 .aonHeaderCompany {
-	display: none;
 	height: 14px;
 	color: var(--aonGrayHeaderButtonsColor);
 }
@@ -3916,6 +3915,12 @@ background-image: url("../favicon.png");
 	height: calc(100vh - 48px);
 }
 
+#aonHome .aonMenuSidenav {
+	height: calc(100vh - 116px);
+	margin-top: 68px;
+}
+
+/*
 #aonHome:has(.aonMenuTopNavVisible) .aonMenuSidenav {
 	height: calc(100vh - 116px);
 	margin-top: 68px;
@@ -3924,6 +3929,7 @@ background-image: url("../favicon.png");
 #aonHome:has(.aonMenuTopNavHide) .aonMenuSidenav {
 	height: calc(100vh - 48px);
 }
+*/
 
 #aonHome:has(.aonMenuTopNavVisible) .rightPanel {
 	height: calc(100vh - 116px);
