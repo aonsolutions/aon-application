@@ -42,32 +42,32 @@
 	<dependencies>
 	
 		<!-- MODELOS 420, 417 Y 425	- EJERCICIO 2025 -->
-
+<!--
 		<dependency>
 			<groupId>org.grecasa</groupId>
 			<artifactId>pa-mod420</artifactId>
 			<version>9.2.0</version>
 			<scope>compile</scope>
 		</dependency>
-<!--		<dependency>
+		<dependency>
 			<groupId>org.grecasa</groupId>
 			<artifactId>pa-mod417</artifactId>
 			<version>2.2.0</version>
 			<scope>compile</scope>
 		</dependency>
--->		<dependency>
+		<dependency>
 			<groupId>org.grecasa</groupId>
 			<artifactId>pa-mod425</artifactId>
 			<version>6.3.0</version>
 			<scope>compile</scope>
 		</dependency>
-		
+-->		
 		<!-- MODELO 417 - EJERCICIO 2026 -->
 		
 		<dependency>
 			<groupId>org.grecasa</groupId>
 			<artifactId>pa-mod417</artifactId>
-			<version>2.3.0</version>
+			<version>2.3.1</version>
 			<scope>compile</scope>
 		</dependency>
 
