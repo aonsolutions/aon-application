@@ -534,10 +534,9 @@ export class AonHeader extends AonElement {
 			let aonHeaderSearch = this.getElement(this.BASE_ID + 'Search');
 			aonHeaderSearch.style.display = 'flex';
 
-			let aonHeaderHome = this.getElement(this.BASE_ID + 'Home');
 
-			let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
-			aonHeaderCompany.style.display = 'none';
+			let aonHeaderCompanyName = this.getElement(this.AON_HEADER_COMPANY_NAME);
+			this.getCompanyName().then( name =>  aonHeaderCompanyName.innerHTML = name ) ;
 
 			if (!LS.isNewTheme() && !this.newTheme) {
 				let aonShowMenu = this.getElement('aonShowMenu');
@@ -547,7 +546,6 @@ export class AonHeader extends AonElement {
 			let aonMenu = this.getElement('aonMenu');
 			aonMenu.removeAttribute('company');
 			aonMenu.removeAttribute('user');
-			//aonMenu.close();
 		}
 
 		LS.setCompanySelected(false);
@@ -593,6 +591,9 @@ export class AonHeader extends AonElement {
 		header2.className = 'aonHeader aonHeaderStart';
 		let applications = this.getElement('applications');
 		applications.className = 'aonMenuLeftopStart';
+		
+		let aonHeaderCompanyName = this.getElement(this.AON_HEADER_COMPANY_NAME);
+		this.getCompanyName().then( name =>  aonHeaderCompanyName.innerHTML = name ) ;
 	}
 
 	timeControlStatus(signin) {
@@ -674,12 +675,9 @@ export class AonHeader extends AonElement {
 		let aonHeaderHome = this.getElement(this.AON_HEADER_HOME);
 		aonHeaderHome.style.display = company ? 'block' : 'none';
 
-		let aonHeaderCompany = this.getElement(this.AON_HEADER_COMPANY);
-		aonHeaderCompany.style.display = company ? 'block' : 'none';
 
 		let aonHeaderCompanyName = this.getElement(this.AON_HEADER_COMPANY_NAME);
-		aonHeaderCompanyName.innerHTML = company ? company.name : '';
-
+		this.getCompanyName(company).then(name => aonHeaderCompanyName.innerHTML = name  ); 
 
 		if (onlyOne) {
 			// aonHeaderHome.style.right = '140px';
@@ -920,6 +918,10 @@ export class AonHeader extends AonElement {
 			else
 				this.getElement(elementId).style.display = 'none';
 		}
+	}
+	
+	setCompanyName(name) {
+		this.getElement(this.AON_HEADER_COMPANY_NAME).innerHTML = name;
 	}
 
 	getData() {
@@ -1326,6 +1328,15 @@ export class AonHeader extends AonElement {
 		a.appendChild(div);
 
 		return a;
+	}
+	
+	getCompanyName( company ) {
+		return new Promise((resolve) => {
+			if ( company )
+				resolve(company.name);
+			else
+				this.buildDur().then((dur) => resolve(dur.domain?.description) );
+		});
 	}
 }
 

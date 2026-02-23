@@ -25,10 +25,6 @@
     box-shadow: 0 .25rem .375rem 0 #0f172a0D;
 }
 
-#aonHeaderCompany{
-	display: initial !important;	
-}
-
 
 .aonNewLogo, 
 .aonLoginLogo,
@@ -101,7 +97,6 @@
 #aonMenuListAppImgTop-aonApplication,
 #aonMenuListAppImgTop-timecontrol,
 #aonMenuListAppImgTop-apps,
-#aonMenuListAppImgTop-expandHirin,
 #aonMenuListAppImgTop-contentIndex
  {
 	width: 25.5px;
@@ -180,4 +175,25 @@
 .aonMenuSidenav .aonNewMenuSideNavLi #aonMenuListAppImgTop-expandHirin:after,
 .aonMenuSidenav .aonNewMenuSideNavLi #aonMenuListAppImgTop-aonApplication:after {
 	display: none;
+}
+
+.suiteMenuContent {
+	margin: 1rem 1rem 0rem 0.5rem;
+}
+
+.aonCard.suiteMenuCardDiv {
+	border-radius: .375rem;	
+}
+
+.rootPanel > aon-fiscal-menu .suiteMenuDiv2,
+.rootPanel > aon-enterprise-menu .suiteMenuDiv2, 
+.rootPanel > aon-accounting-menu .suiteMenuDiv2 {
+	padding-top: 16px;
+	justify-content: left;
+} 
+
+.rootPanel > aon-fiscal-menu .suiteMenuContent,
+.rootPanel > aon-payroll-menu .suiteMenuContent,
+.rootPanel > aon-accounting-menu .suiteMenuContent {
+	background-color: transparent;
 }

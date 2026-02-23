@@ -91,14 +91,20 @@ body {
 	height: calc(100vh - 68px);
 }
 
-#aonHome:has(.aonMenuTopNavVisible) .aonMenuSidenav {
-	height: calc(100vh - 136px);
+#aonHome .aonMenuSidenav{
 	margin-top: 68px;
+ 	height: calc(100vh - 136px); 
+}
+
+/*
+#aonHome:has(.aonMenuTopNavVisible) .aonMenuSidenav {
+ 	height: calc(100vh - 136px); 
 }
 
 #aonHome:has(.aonMenuTopNavHide) .aonMenuSidenav {
-	height: calc(100vh - 68px);
+ height: calc(100vh - 68px); 
 }
+*/
 
 #aonHome:has(.aonMenuTopNavVisible) .rightPanel {
 	height: calc(100vh - 136px);
@@ -856,6 +862,7 @@ aon-configuration-menu .suiteMenuContent  {
 .aonSidenav .aonAppMenuSidenavListSelected {
 	border-radius: 0px;
     background-color: var(--aonBackgroundColor2);
+	border-left-color: transparent !important; /* we need override element style*/
 }
 
 .aonSidenav .aonSidenavTitle span {
@@ -2551,6 +2558,18 @@ aon-search > span {
 	display: block;
 }
 
+
+#aonInvoiceSidenav  ul ul .aonAppMenuSidenavList:hover,
+#aonInvoiceSidenav ul ul .aonAppMenuSidenavListSelected {
+	left: -12px;
+	width: calc(100% + 12px);
+}
+
+#aonInvoiceSidenav  ul ul .aonAppMenuSidenavList:hover span,
+#aonInvoiceSidenav ul ul .aonAppMenuSidenavListSelected span{
+	padding-left: 12px;
+}
+
 #aonHeaderSearch {
   position: absolute;
   top: 20;
@@ -2595,4 +2614,16 @@ i[id$="aonHeaderSearchDivButtonIcon"],
 #accountingUploadInvoiceLabel{
 	justify-content: space-between;
   	width: 100%;
+}
+
+
+#aonMenuListAppTitle-documental {
+	color: transparent;
+}
+
+#aonMenuListAppTitle-documental:before  {
+	content: 'Mi nube';
+	position: absolute;
+	display: inline-block;
+	color: rgb(66, 66, 66);
 }
