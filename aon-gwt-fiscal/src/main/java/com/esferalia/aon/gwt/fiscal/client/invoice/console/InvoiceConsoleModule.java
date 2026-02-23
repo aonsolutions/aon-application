@@ -6,6 +6,7 @@ import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDoma
 import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentUser;
 import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getRootPanel;
 
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,6 +15,7 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.Wnd;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
@@ -23,21 +25,25 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceConsoleAnalysis;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
 public class InvoiceConsoleModule  implements EntryPoint {
 	
 	private static final Logger LOGGER = Logger.getLogger( InvoiceConsoleModule.class.getName() );  
-	
+
+	private static final String AON_INVOICE_CONSOLE_FILTER_PANEL_STYLE = "aon-invoice-console-filter-panel";
+
+	private static final String AON_INVOICE_CONSOLE_TOOLBAR_STYLE = "aon-invoice-console-toolbar";
+
+	private static final String AON_INVOICE_CONSOLE_PANEL_STYLE = "aon-invoice-console-panel";
+
 	private static final CommonServiceAsync COMMON_SERVICE;
 	static {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
@@ -87,22 +93,44 @@ public class InvoiceConsoleModule  implements EntryPoint {
 	}
 	
 	private void loadModule( InvoiceModuleOptions opts ) {
-		aonLayoutPanel = new AonLayoutPanel(Unit.PX);
+		AonLayoutPanel aonLayoutPanel = new AonLayoutPanel(Unit.PX);
+		aonLayoutPanel.addStyleName(AON_INVOICE_CONSOLE_PANEL_STYLE);
 		
 		toolbar = new InvoiceConsoleToolbar(opts, selectionHandler);
+		toolbar.addStyleName(AON_INVOICE_CONSOLE_TOOLBAR_STYLE);
+		
+		
 		aonLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		
 		InvoiceConsoleFilter filterPanel = new InvoiceConsoleFilter(opts);
+		filterPanel.addStyleName(AON_INVOICE_CONSOLE_FILTER_PANEL_STYLE);
 		filterPanel.addValueChangeHandler(e -> search(opts, e.getValue()) );
 		aonLayoutPanel.addWest(filterPanel, FILTER_WIDTH);
 		
+		aonLayoutPanel.addAttachHandler(e -> {
+			Wnd.consoleLog("InvoiceConsoleModule attached, adjusting layout...");
+			
+			Wnd.getCSSOptionalVariable(toolbar, "height-adjust")
+			.map( AonNumberUtils::toInteger ).filter(Objects::nonNull)
+			.ifPresent( height -> aonLayoutPanel.setWidgetSize(toolbar, height) );
+
+			Wnd.getCSSOptionalVariable(filterPanel, "width-adjust")
+			.map( AonNumberUtils::toInteger ).filter(Objects::nonNull)
+			.ifPresent( width -> aonLayoutPanel.setWidgetSize(filterPanel, width) );
 		
+		});
+
 		toolbar.addClickHandlerToRefresh(e -> search(opts, filterPanel.getWidgetParams(opts) ) );
 		toolbar.addClickHandlerToWizard(e -> analyze(opts, filterPanel.getWidgetParams(opts) ) );
 		
 		toolbar.addClickHandlerToShowFilter(e -> {
 			aonLayoutPanel.setWidgetHidden(filterPanel, false);
-			aonLayoutPanel.setWidgetSize(filterPanel, FILTER_WIDTH);
+			
+			int filterWidth =
+			Wnd.getCSSOptionalVariable(filterPanel, "width-adjust")
+			.map( AonNumberUtils::toInteger ).filter(Objects::nonNull).orElse(FILTER_WIDTH);
+
+			aonLayoutPanel.setWidgetSize(filterPanel, filterWidth);
 			aonLayoutPanel.animate(200); 
 		});
 		
@@ -123,6 +151,7 @@ public class InvoiceConsoleModule  implements EntryPoint {
 		opts.getParentWidget().add(aonLayoutPanel);
 
 		filterPanel.initialize(opts);
+		
 	}
 	
 	private void closeFootPanel() {

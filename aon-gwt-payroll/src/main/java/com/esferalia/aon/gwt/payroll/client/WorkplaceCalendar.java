@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.calendar.Calendar;
 import com.esferalia.aon.occam.api.model.calendar.Holiday;
 import com.esferalia.aon.occam.api.model.calendar.HolidayDetail;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.logging.client.ConsoleLogHandler;
@@ -45,10 +46,8 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 public class WorkplaceCalendar extends AonCustomDockLayout {
 	
 	private class DayControl {
-	    String label;
 	    Supplier<Boolean> getterDay;
 	    Consumer<Boolean> setterDay;
-	    Supplier<Double> getterHours;
 	    Consumer<Double> setterHours;
 
 	    Label dayButton;
@@ -77,8 +76,8 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
     private AonCustomListBox lbAnnualHolidays = new AonCustomListBox("Tipo D\u00edas Vac.");
     private AonCustomListBox lbHoliday = new AonCustomListBox("Calendario de festivos asociados");
 
+    private FlowPanel showHidePanel = new FlowPanel();
     private AonToolbarButton showHide = new AonToolbarButton("", AON.CSS.aonIconMenuCollapse());
-    private AonToolbarButton createFestive = new AonToolbarButton("Nuevo Festivo", AON.CSS.aonIconEditCalendar());
 
     private Integer domain;
     private Workplace workplace;
@@ -96,11 +95,8 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
     );
 
     public WorkplaceCalendar(Workplace workplace) {
-        super(workplace.getDescription());
+        super(null);
         this.workplace = workplace;
-
-        hideToolbarFilterMessages();
-        hideSearchWidget();
 
         loaderOverlay.setStyleName("loader-overlay");
         add(loaderOverlay);
@@ -108,6 +104,34 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
         container = new HTMLPanel("");
         container.addStyleName(AON.CSS.aonFlexColumn());
         container.add(messagePanel);
+        
+        showHide = new AonToolbarButton("", AON.CSS.aonIconMenuCollapse());
+    	showHide.getElement().setId("collapseMenuWorkplaceCalendar");
+    	showHide.getElement().getStyle().setProperty("margin-top", ".8rem");
+    	
+    	showHide.addClickHandler(e -> {
+            if (!westShow) {
+                setWidgetSize(westPanel, 350);
+                animate(300);
+                formContent.getElement().getStyle().clearDisplay();
+                formCollapsibles.getElement().getStyle().clearDisplay();
+                formWorkingDays.getElement().getStyle().clearDisplay();
+                showHide.removeStyleName(AON.CSS.aonIconMenu());
+                showHide.addStyleName(AON.CSS.aonIconMenuCollapse());
+            } else {
+                setWidgetSize(westPanel, 70);
+                animate(300);
+                formContent.getElement().getStyle().setDisplay(Display.NONE);
+                formCollapsibles.getElement().getStyle().setDisplay(Display.NONE);
+                formWorkingDays.getElement().getStyle().setDisplay(Display.NONE);
+                showHide.removeStyleName(AON.CSS.aonIconMenuCollapse());
+                showHide.addStyleName(AON.CSS.aonIconMenu());
+            }
+            westShow = !westShow;
+        });
+    	
+    	showHidePanel.getElement().setId("showHidePanelWorkplaceCalendar");
+    	showHidePanel.add(showHide);
 
         centerPanel = new SimpleLayoutPanel();
         centerPanel.setHeight("100%");
@@ -116,11 +140,10 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
         container.add(centerPanel);
 
         westPanel.addStyleName(AON.CSS.aonFlexColumn());
+        westPanel.getElement().getStyle().setProperty("margin", "0");
         addWest(westPanel, 350);
 
         add(container);
-        
-        addButtonsToolbar();
 
         loadData();
     }
@@ -128,43 +151,12 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
     @Override
     protected void onClearFilter() {}
 
-    private void addButtonsToolbar() {
-    	showHide = new AonToolbarButton("", AON.CSS.aonIconMenuCollapse());
-    	showHide.ensureDebugId("collapseMenuWorkplaceCalendar");
-    	
-    	createFestive = new AonToolbarButton("Nuevo Festivo", AON.CSS.aonIconEditCalendar());
-    	
-        showHide.addClickHandler(e -> {
-            if (!westShow) {
-                setWidgetSize(westPanel, 350);
-                animate(300);
-                showHide.removeStyleName(AON.CSS.aonIconMenu());
-                showHide.addStyleName(AON.CSS.aonIconMenuCollapse());
-            } else {
-                setWidgetSize(westPanel, 0);
-                animate(300);
-                showHide.removeStyleName(AON.CSS.aonIconMenuCollapse());
-                showHide.addStyleName(AON.CSS.aonIconMenu());
-            }
-            westShow = !westShow;
-        });
-        
-        createFestive.addClickHandler(e -> openDateDialog(null));
-        
-        addToolbarButton(showHide);
-        addToolbarButton(createFestive);
-    }
-
     private void loadData() {
         getDomain(d -> {
             getHolidays(h -> {
                 getCalendar(c -> {
                 	if(c.isEmpty()) calendar = new Calendar().setDomain(domain);
                 	else calendar = c.get(0);
-
-                    createFestive.setEnabled(null != calendar.getId());
-                	
-                    setToolbarTitle(calendar.getDescription());
 
                     buildForm();
                     buildWorkingDays();
@@ -223,10 +215,13 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
 
     private void buildForm() {
         westPanel.clear();
-        westPanel.getElement().getStyle().setProperty("margin-left", "1rem");
 
         form.clear();
+        form.addStyleName(AON.CSS.aonFlexColumn());
+        
         formContent.clear();
+        
+        formContent.getElement().setId("workplaceCalendarForm");
         
         txtDescription = new AonCustomTextBox("Descripci\u00f3n");
         txtComment = new AonCustomTextArea("Comentarios");
@@ -347,9 +342,112 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
         formContent.add(lbHoliday);
         formContent.add(txtComment);
 
+        form.add(showHidePanel);
         form.add(formContent);
     }
+    
+    private void buildWorkingDays() {
+    	formWorkingDays.clear();
+	
+    	Label workingDaysLabel = new Label("Horario Laboral");
+    	workingDaysLabel.addStyleName("holiday-title");
+    	formWorkingDays.add(workingDaysLabel);
+    	
+    	List<DayControl> days = Arrays.asList(
+    		    createDay("L", calendar::isMonday, calendar::setMonday, calendar::getMondayHours, calendar::setMondayHours),
+    		    createDay("M", calendar::isTuesday, calendar::setTuesday, calendar::getTuesdayHours, calendar::setTuesdayHours),
+    		    createDay("X", calendar::isWednesday, calendar::setWednesday, calendar::getWednesdayHours, calendar::setWednesdayHours),
+    		    createDay("J", calendar::isThursday, calendar::setThursday, calendar::getThursdayHours, calendar::setThursdayHours),
+    		    createDay("V", calendar::isFriday, calendar::setFriday, calendar::getFridayHours, calendar::setFridayHours),
+    		    createDay("S", calendar::isSaturday, calendar::setSaturday, calendar::getSaturdayHours, calendar::setSaturdayHours),
+    		    createDay("D", calendar::isSunday, calendar::setSunday, calendar::getSundayHours, calendar::setSundayHours)
+    		);
 
+
+    	FlowPanel dialogContent = new FlowPanel();
+
+    	FlowPanel daysRow = new FlowPanel();
+    	daysRow.addStyleName("aon-workplace-calendar-working-row");
+    	
+    	Label daysLabel = new Label("D\u00edas:");
+    	daysRow.add(daysLabel);
+
+    	FlowPanel hoursRow = new FlowPanel();
+    	hoursRow.addStyleName("aon-workplace-calendar-working-row");
+    	
+    	Label hoursLabel = new Label("Hrs.:");
+    	hoursRow.add(hoursLabel);
+
+    	for (DayControl d : days) {
+    	    daysRow.add(d.dayButton);
+    	    hoursRow.add(d.hours);
+    	}
+
+    	dialogContent.add(daysRow);
+    	dialogContent.add(hoursRow);
+    	formWorkingDays.add(dialogContent);
+    	
+    	workingDaysLabel.addClickHandler(e -> {
+    		if(dialogContent.getStyleName().contains(AON.CSS.aonDisplayNone()))
+    			dialogContent.removeStyleName(AON.CSS.aonDisplayNone());
+    		else
+    			dialogContent.addStyleName(AON.CSS.aonDisplayNone());
+    	});
+    	
+    	form.add(formWorkingDays);
+    }
+
+    private DayControl createDay(
+            String label,
+            Supplier<Boolean> getterDay, Consumer<Boolean> setterDay,
+            Supplier<Double> getterHours, Consumer<Double> setterHours) {
+
+        DayControl d = new DayControl();
+        d.getterDay = getterDay;
+        d.setterDay = setterDay;
+        d.setterHours = setterHours;
+
+        // Botón del día
+        d.dayButton = new Label(label);
+        d.dayButton.addStyleName("aon-workplace-calendar-dayCircle");
+
+        boolean nonWorking = getterDay.get();
+        updateDayStyle(d.dayButton, nonWorking);
+
+        // Caja de horas
+        d.hours = new AonDoubleBox();
+        d.hours.setValue(getterHours.get());
+        d.hours.getElement().getStyle().setProperty("text-align", "center");
+        d.hours.setEnabled(!nonWorking);
+        d.hours.addValueChangeHandler(e -> {
+			d.setterDay.accept(d.getterDay.get());
+            d.setterHours.accept(d.hours.getValue());
+            saveCalendar(true);
+		});
+
+        // Evento click
+        d.dayButton.addClickHandler(e -> {
+            boolean newState = !d.getterDay.get(); // toggle
+            d.setterDay.accept(newState);
+
+            d.hours.setEnabled(!newState);
+            if (newState) d.hours.setValue(null);
+
+            updateDayStyle(d.dayButton, newState);
+            
+            d.setterDay.accept(d.getterDay.get());
+            d.setterHours.accept(d.hours.getValue());
+            saveCalendar(false);
+        });
+
+        return d;
+    }
+    
+    private void updateDayStyle(Label day, boolean nonWorking) {
+        if (nonWorking) day.addStyleName("nonWorking");
+        else day.removeStyleName("nonWorking");
+    }
+    
     private void buildHolidayCollapsibles() {
     	
     	formCollapsibles.clear();
@@ -499,53 +597,6 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
 
         return row;
     }
-    
-
-
-    private void buildWorkingDays() {
-    	formWorkingDays.clear();
-	
-    	Label workingDaysLabel = new Label("Horario Laboral");
-    	workingDaysLabel.addStyleName("holiday-title");
-    	formWorkingDays.add(workingDaysLabel);
-    	
-    	List<DayControl> days = Arrays.asList(
-    		    createDay("L", calendar::isMonday, calendar::setMonday, calendar::getMondayHours, calendar::setMondayHours),
-    		    createDay("M", calendar::isTuesday, calendar::setTuesday, calendar::getTuesdayHours, calendar::setTuesdayHours),
-    		    createDay("X", calendar::isWednesday, calendar::setWednesday, calendar::getWednesdayHours, calendar::setWednesdayHours),
-    		    createDay("J", calendar::isThursday, calendar::setThursday, calendar::getThursdayHours, calendar::setThursdayHours),
-    		    createDay("V", calendar::isFriday, calendar::setFriday, calendar::getFridayHours, calendar::setFridayHours),
-    		    createDay("S", calendar::isSaturday, calendar::setSaturday, calendar::getSaturdayHours, calendar::setSaturdayHours),
-    		    createDay("D", calendar::isSunday, calendar::setSunday, calendar::getSundayHours, calendar::setSundayHours)
-    		);
-
-
-    	FlowPanel dialogContent = new FlowPanel();
-
-    	FlowPanel daysRow = new FlowPanel();
-    	daysRow.addStyleName("aon-workplace-calendar-working-row");
-
-    	FlowPanel hoursRow = new FlowPanel();
-    	hoursRow.addStyleName("aon-workplace-calendar-working-row");
-
-    	for (DayControl d : days) {
-    	    daysRow.add(d.dayButton);
-    	    hoursRow.add(d.hours);
-    	}
-
-    	dialogContent.add(daysRow);
-    	dialogContent.add(hoursRow);
-    	formWorkingDays.add(dialogContent);
-    	
-    	workingDaysLabel.addClickHandler(e -> {
-    		if(dialogContent.getStyleName().contains(AON.CSS.aonDisplayNone()))
-    			dialogContent.removeStyleName(AON.CSS.aonDisplayNone());
-    		else
-    			dialogContent.addStyleName(AON.CSS.aonDisplayNone());
-    	});
-    	
-    	form.add(formWorkingDays);
-    }
 
     private void editHolidayDetail(HolidayDetail d) {
     	FlowPanel dialogContent = new FlowPanel();
@@ -654,58 +705,6 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
                 });
             }
         });
-    }
-    
-    private DayControl createDay(
-            String label,
-            Supplier<Boolean> getterDay, Consumer<Boolean> setterDay,
-            Supplier<Double> getterHours, Consumer<Double> setterHours) {
-
-        DayControl d = new DayControl();
-        d.label = label;
-        d.getterDay = getterDay;
-        d.setterDay = setterDay;
-        d.getterHours = getterHours;
-        d.setterHours = setterHours;
-
-        // Botón del día
-        d.dayButton = new Label(label);
-        d.dayButton.addStyleName("aon-workplace-calendar-dayCircle");
-
-        boolean nonWorking = getterDay.get();
-        updateDayStyle(d.dayButton, nonWorking);
-
-        // Caja de horas
-        d.hours = new AonDoubleBox();
-        d.hours.setValue(getterHours.get());
-        d.hours.setEnabled(!nonWorking);
-        d.hours.addValueChangeHandler(e -> {
-			d.setterDay.accept(d.getterDay.get());
-            d.setterHours.accept(d.hours.getValue());
-            saveCalendar(true);
-		});
-
-        // Evento click
-        d.dayButton.addClickHandler(e -> {
-            boolean newState = !d.getterDay.get(); // toggle
-            d.setterDay.accept(newState);
-
-            d.hours.setEnabled(!newState);
-            if (newState) d.hours.setValue(null);
-
-            updateDayStyle(d.dayButton, newState);
-            
-            d.setterDay.accept(d.getterDay.get());
-            d.setterHours.accept(d.hours.getValue());
-            saveCalendar(true);
-        });
-
-        return d;
-    }
-    
-    private void updateDayStyle(Label day, boolean nonWorking) {
-        if (nonWorking) day.addStyleName("nonWorking");
-        else day.removeStyleName("nonWorking");
     }
     
     private void saveCalendar(boolean showSuccess) {

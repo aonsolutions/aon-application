@@ -12,6 +12,7 @@ import { AonMobileList } from "../../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../../components/aon-table.js";
 import { AonIconButton } from "../../../../components/aon-icon-button.js";
 import { AonDateUtils } from "../../../utils/AonDateUtils.js";
+import * as LS from '../../../../services/localStorageService.js';
 
 
 export class AonEventDetailList extends AonElement {
@@ -108,8 +109,7 @@ export class AonEventDetailList extends AonElement {
 
 
   buildToolbarSearch(){
-    let btnSearch = this.applicationEl.addSearchOption();
-    btnSearch.disabled = true;
+    let btnSearch = this.applicationEl.addSearchOption(LS.isFutureTheme());
     const searchValueFn = ({detail})=>{
       if(detail) this.applicationParentEl.setDataFilter(detail);
     }

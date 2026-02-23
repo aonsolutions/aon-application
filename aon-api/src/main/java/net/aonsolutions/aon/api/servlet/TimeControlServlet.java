@@ -286,6 +286,10 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		endDate = AonDateUtils.addSeconds(endDate, -1);
 		Boolean active = api.getData().optString(IJsonNames.ACTIVE).isEmpty() || api.getData().getBoolean(IJsonNames.ACTIVE);
 		
+		Boolean withData = api.getData().optString("withData").isEmpty() || api.getData().getBoolean("withData");
+		
+		String search = api.getData().getString("search");
+		
 		if(!api.getData().optString(START_DATE).isEmpty()) 
 			startDate =  AonDateUtils.parse(api.getData().optString(START_DATE), FORMAT_DATE);
 		
@@ -295,6 +299,8 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		JSONArray array = new JSONArray();
 		AON_SOLUTIONS.getTimeControlStream(api.getDomain(), "", startDate, endDate)
 		.filter(f-> f.getTaskHolder()!=null && f.getTaskHolder().isActive().equals(active))
+		.filter(f-> (withData && f.getTime() > 0) || !withData)
+		.filter(f-> (f.getTaskHolder() != null && AonStringUtils.containsIgnoreCase(f.getTaskHolder().getName(), search)) || AonStringUtils.isBlank(search))
 		.forEach(tc -> 	array.put(tc.toJSON()));
 		
 		return array;

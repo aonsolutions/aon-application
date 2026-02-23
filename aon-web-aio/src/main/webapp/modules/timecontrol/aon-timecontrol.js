@@ -64,10 +64,10 @@ export class AonTimecontrol extends AonElement {
       
 	// Set selected sidebar  
     let aonSigninSidenavpresence = this.getElement('aonSigninSidenavpresence');
-    aonSigninSidenavpresence.classList.add('aonAppMenuSidenavListSelected');
+    aonSigninSidenavpresence && aonSigninSidenavpresence.classList.add('aonAppMenuSidenavListSelected');
     
     let aonSigninSidenavtoday = this.getElement('aonSigninSidenavtoday');
-    aonSigninSidenavtoday.classList.add('aonAppMenuSidenavListSelected');
+    aonSigninSidenavtoday && aonSigninSidenavtoday.classList.add('aonAppMenuSidenavListSelected');
     
   }
 
@@ -79,7 +79,9 @@ export class AonTimecontrol extends AonElement {
       period: period.value,
       startDate: period.startDate,
       endDate: period.endDate,
-      active:true
+      active:true,
+      withData: true,
+      search: ''
     }
   }
   paintView() {
@@ -96,40 +98,6 @@ export class AonTimecontrol extends AonElement {
     if(this.isEmployee()) data.options = [OPTIONS.PRESENCE];
     
     this.applicationEl.addSidenavOptions3(data);
-
-    const {TODAY, YESTERDAY, THIS_WEEK, LAST_WEEK, THIS_MONTH}  = SigninSidenav.PERIOD;
-    const options2 = [
-      {
-        ...TODAY,
-        fn: () => this.setDataFilter({period:TODAY.id})
-      },
-      {
-        ...YESTERDAY,
-        fn: () =>this.setDataFilter({period:YESTERDAY.id})
-      },
-      {
-        ...THIS_WEEK,
-        fn: () =>this.setDataFilter({period:THIS_WEEK.id})
-      },
-      {
-        ...LAST_WEEK,
-        fn: () =>this.setDataFilter({period:LAST_WEEK.id})
-      },
-      {
-        ...THIS_MONTH,
-        fn: () => this.setDataFilter({period:THIS_MONTH.id})
-      }
-    ];
-    
-    let data2 = {
-			id: "Periodo",
-			title: "Periodo",
-      name: "Periodo",
-      app: Apps.TIMECONTROL,
-      options: options2
-		}
-    
-    this.applicationEl.addSidenavOptions3(data2);
 
     if(this.getDur().isTimecontrol() && LS.isNewTheme() && !this.isMobile()) {
 			getTimeControl().then(r => {
@@ -155,9 +123,8 @@ export class AonTimecontrol extends AonElement {
   }
 
   async setDataFilter(data){
-	console.log('setDataFilter', data);
     try {
-      this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
+      //this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
       
       this.DATE_TMP =  null;
       if(data && data.period){
@@ -302,17 +269,6 @@ export class AonTimecontrol extends AonElement {
       aonSign.setTimeControl(r);
       div3.appendChild(aonSign);
       this.applicationEl.setContent(div3);
-      if(this.isMobile()){
-        const {TODAY, YESTERDAY, THIS_WEEK, THIS_MONTH}  = SigninSidenav.PERIOD;
-        let div = this.getElement("aonSigninContent");
-        const apps = [
-          {title: "Hoy", fn: () => this.setDataFilter({period:TODAY.id})},
-          {title: "Ayer", fn: () => this.setDataFilter({period:YESTERDAY.id})},
-          {title: "Semana actual", fn: () => this.setDataFilter({period:THIS_WEEK.id})},
-          {title: "Mes actual", fn: () => this.setDataFilter({period:THIS_MONTH.id})}
-        ]
-        div.appendChild(this.createApps(apps));
-      }
   }
 
   createApps(apps) {

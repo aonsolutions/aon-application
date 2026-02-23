@@ -115,7 +115,7 @@ export class AonJsfApp extends AonElement {
 		let themeInput = this.createElement(TAG.INPUT);
 		themeInput.type = 'hidden';
 		themeInput.name = 'theme';
-		themeInput.value = LS.getTheme();
+		themeInput.value = LS.getTheme() || LS.CUSTOM_THEME ;
 		form.appendChild(themeInput);
 
 		let elExpressionInput = this.createElement(TAG.INPUT);

@@ -34,6 +34,7 @@ export const DARK_BETA_THEME = '/css/theme/darkBeta.css';
 export const FUTURE_THEME = '/css/theme/future.css';
 export const CUSTOM_THEME = '/css/theme/customview.css';
 
+export const IS_FUTURE_THEME = 'isFutureTheme';
 
 export const BETA = 'beta';
 
@@ -188,8 +189,16 @@ export const setDarkTheme = (value) => {
 }
 
 export const isFutureTheme = () => {
-    let theme = get(THEME);
-    return theme && FUTURE_THEME == theme;
+	let isFutureTheme = get(IS_FUTURE_THEME);
+	if ( isFutureTheme == CONSTANT.TRUE ){ 
+		return true;
+	} else if ( isFutureTheme == CONSTANT.FALSE ){ 
+		return false;
+	} else {
+		let theme = get(THEME);
+		return theme && FUTURE_THEME == theme;
+    }
+	
 }
 
 export const isWhiteBrand = () => {

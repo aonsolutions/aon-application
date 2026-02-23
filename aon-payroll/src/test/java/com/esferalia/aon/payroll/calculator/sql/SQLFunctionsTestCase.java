@@ -1299,6 +1299,40 @@ public class SQLFunctionsTestCase extends
 	}
 
 	@Test
+	public void testFractionFunctionXIII() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		Date startDate = add(firstDayOfMonth, Calendar.DAY_OF_MONTH, 16);
+		Date endDate = getLastDayOfMonth(startDate);
+		ContractRecord contract = newContract(aonContext, startDate, Collections.singletonMap(ContextVariable.PARTIAL_FACTOR.getName(), "0.50"));
+		
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				getFirstDayOfMonth(startDate), 
+				getLastDayOfMonth(endDate), 
+				getLastDayOfMonth(endDate), 
+				contract);
+		//@formatter:on
+		
+		List<ITimedResult<Double>> results =  
+		ctx.getExpressionContext().eval("FRACCIONAR(1000.00)", 
+				getFirstDayOfMonth(startDate)
+				,getLastDayOfMonth(endDate), 
+				Double.class);
+	
+		Assert.assertEquals(1, results.size());
+		
+		Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, results.get(0).getPeriod().getEnd());
+		Assert.assertEquals(1000.00 , results.get(0).getValue());
+
+	}
+
+	@Test
 	public void testSumFunction() throws ExpressionException, SQLException {
 
 		Connection connection = getConnection();
