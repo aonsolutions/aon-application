@@ -7,6 +7,16 @@
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 		<ui:define name="toolbarContent">
+			<aon:if test="#{!skipBackButton and app.standAlone}">
+				<aon:commandButton id="#{toolbarID}-back" 
+					title="#{bundle.aon_key_cancel_accelerator}"
+					value="#{bundle.aon_list}"
+					action="#{backAction}" actionListener="#{controller.restoreBackupCriteria}"
+					styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+					accesskey="#{bundle.aon_key_cancel}">
+					<aon:actionListener method="#{backActionListener}" />
+				</aon:commandButton>
+			</aon:if>
 			<aon:if test="#{!skipClearButton}">
 				<aon:commandButton id="#{toolbarID}-clear"
 					value="#{bundle.aon_clear}"
@@ -24,7 +34,7 @@
 						value="#{controller.beanName}_search" />
 				</aon:commandButton>
 			</aon:if>
-			<aon:if test="#{!skipBackButton}">
+			<aon:if test="#{!skipBackButton and !app.standAlone}">
 				<aon:commandButton id="#{toolbarID}-back" 
 					title="#{bundle.aon_key_cancel_accelerator}"
 					value="#{bundle.aon_list}"

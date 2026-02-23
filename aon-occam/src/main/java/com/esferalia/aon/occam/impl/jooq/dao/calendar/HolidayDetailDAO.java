@@ -41,7 +41,8 @@ public class HolidayDetailDAO {
 		return ctx.getDslContext()
 				.select()
 				.from(HOLIDAY_DETAIL)
-				.where(HOLIDAY_DETAIL_PROPERTIES.getConditions(filter));
+				.where(HOLIDAY_DETAIL_PROPERTIES.getConditions(filter))
+				;
 	}
 	
 	public static Optional<HolidayDetail> get(AONContext ctx, HolidayDetailFilter filter) {
@@ -56,6 +57,7 @@ public class HolidayDetailDAO {
 	
 	public static Stream<HolidayDetail> getStream(AONContext ctx, HolidayDetailFilter filter){	
 		return select(ctx, filter)
+				.orderBy(HOLIDAY_DETAIL.DATE)
 				.fetch()
 				.stream()
 				.map(new HolidayDetailFiller());
@@ -63,6 +65,7 @@ public class HolidayDetailDAO {
 	
 	public static Stream<HolidayDetail> getStream(AONContext ctx, HolidayDetailFilter filter, Integer page, Integer perPage){	
 		return select(ctx, filter)	
+				.orderBy(HOLIDAY_DETAIL.DATE)
 				.offset(perPage * (page -1))
 				.fetch()
 				.stream()

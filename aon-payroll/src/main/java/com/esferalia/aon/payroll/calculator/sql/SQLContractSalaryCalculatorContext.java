@@ -5767,7 +5767,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		ITimedVariable<Double> totalWorkedDays = new ITimedVariable<Double>() {
 			@Override
 			public Period getPeriod() {
-				return new Period(SQLContractSalaryCalculatorContext.this.startDate,
+				return new Period(SQLContractSalaryCalculatorContext.this.contractStartDate,
 						SQLContractSalaryCalculatorContext.this.getEnd());
 			}
 
@@ -5780,13 +5780,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 				try {
 					double avgPartialFactor = getAverageVariable(PARTIAL_FACTOR.getName(),
-							SQLContractSalaryCalculatorContext.this.startDate,
+							SQLContractSalaryCalculatorContext.this.contractStartDate,
 							SQLContractSalaryCalculatorContext.this.getEnd(), 1.00);
 					double avgPaternityFactor = getAverageVariable(PATERNITY_FACTOR.getName(),
-							SQLContractSalaryCalculatorContext.this.startDate,
+							SQLContractSalaryCalculatorContext.this.contractStartDate,
 							SQLContractSalaryCalculatorContext.this.getEnd(), 1.00);
 					double avgMaternityFactor = getAverageVariable(MATERNITY_FACTOR.getName(),
-							SQLContractSalaryCalculatorContext.this.startDate,
+							SQLContractSalaryCalculatorContext.this.contractStartDate,
 							SQLContractSalaryCalculatorContext.this.getEnd(), 1.00);
 
 					return workDays * (avgPartialFactor == 0.00 ? 1.00 : avgPartialFactor)

@@ -244,7 +244,7 @@ export class AonSign extends AonElement {
 
 	async saveTimeCtrl(status) {
 		// Spinner
-		this.getApplication().startLoading();
+		if(this.applicationEl) this.applicationEl.startLoading();
 
 		this.disabledButton(true);
 
@@ -276,7 +276,7 @@ export class AonSign extends AonElement {
 
 					this.disabledButton(false);
 					this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
-					this.getApplication().stopLoading();
+					if(this.applicationEl) this.applicationEl.stopLoading();
 				} else
 					this.openReasonDialog(signin, timeOutPosition);
 
@@ -306,7 +306,7 @@ export class AonSign extends AonElement {
 
 				this.disabledButton(false);
 				this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
-				this.getApplication().stopLoading();
+				if(this.applicationEl) this.applicationEl.stopLoading();
 			}
 
 		} else if (signin.status == 'in' && signin.coordinates && signin.coordinates.length > 0) {
@@ -319,7 +319,7 @@ export class AonSign extends AonElement {
 
 				this.disabledButton(false);
 				this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
-				this.getApplication().stopLoading();
+				if(this.applicationEl) this.applicationEl.stopLoading();
 			} else
 				this.openReasonDialog(signin, timeOutPosition);
 
@@ -350,7 +350,7 @@ export class AonSign extends AonElement {
 		d.onclick = (e) => {
 			e.stopPropagation();
 			this.disabledButton(false);
-			this.getApplication().stopLoading();
+			if(this.applicationEl) this.applicationEl.stopLoading();
 		}
 
 
@@ -396,7 +396,7 @@ export class AonSign extends AonElement {
 
 				this.disabledButton(false);
 				this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
-				this.getApplication().stopLoading();
+				if(this.applicationEl) this.applicationEl.stopLoading();
 
 				d.close();
 			}));
@@ -431,7 +431,7 @@ export class AonSign extends AonElement {
 
 			this.disabledButton(false);
 			this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
-			this.getApplication().stopLoading();
+			if(this.applicationEl) this.applicationEl.stopLoading();
 
 			d.close();
 		});
@@ -448,7 +448,7 @@ export class AonSign extends AonElement {
 
 				this.disabledButton(false);
 				this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
-				this.getApplication().stopLoading();
+				if(this.applicationEl) this.applicationEl.stopLoading();
 
 				d.close();
 			}

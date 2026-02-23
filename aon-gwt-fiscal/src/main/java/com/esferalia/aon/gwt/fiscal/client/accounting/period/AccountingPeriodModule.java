@@ -165,9 +165,12 @@ public class AccountingPeriodModule  implements EntryPoint {
 		private AonTextBox title = new AonTextBox();
 		
 		private AccountingPeriodCard(final AccountingPeriodModuleOptions opt, AccountPeriod accountPeriod) {
+			addStyleName("aon-accounting-period-card");
+			
 			title.addStyleName(AON.CSS.aonBorderNone());
 			title.setValue(accountPeriod.getName());
 			title.addValueChangeHandler(event -> accountPeriod.setName(title.getValue()));
+			title.addStyleName("aon-accounting-period-title-input");
 			
 			this.setTitle(title);
 			
@@ -199,7 +202,7 @@ public class AccountingPeriodModule  implements EntryPoint {
 			InlineLabel statusLabel = new InlineLabel(AON.MSG.status());
 			statusLabel.setStyleName(AON.CSS.aonTableLabel());
 			ListBox status = new ListBox();
-			setWidth("150px");
+			
 			status.addItem("------","");
 			status.setStyleName( AON.CSS.aonMarginLeft());
 			status.addStyleName( AON.CSS.aonBorderNone());
@@ -287,6 +290,7 @@ public class AccountingPeriodModule  implements EntryPoint {
 			});
 			getMenuPanel().add(saveButton);
 			getMenuPanel().add(deleteButton);
+			getMenuPanel().addStyleName("aon-accounting-period-buttons");
 		}
 		
 		@Override

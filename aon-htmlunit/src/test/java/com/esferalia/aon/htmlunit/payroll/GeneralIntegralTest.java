@@ -3479,7 +3479,18 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertNotElement("cgc_e_tempPercentLabel");
 		uncheck("costsCheck-input");
 		
-		
+		draft("INDEFINIDO TIEMPO PARCIAL, < 30 DÍAS");
+		calculate(Calendar.FEBRUARY,2026);
+		check("costsCheck-input");
+		assertNotElement("cgc_e_tempPercentLabel");
+		uncheck("costsCheck-input");
+
+		draft("SUSTITUCIÓN TIEMPO COMPLETO, < 30 DÍAS");
+		calculate(Calendar.FEBRUARY,2026);
+		check("costsCheck-input");
+		assertNotElement("cgc_e_tempPercentLabel");
+		uncheck("costsCheck-input");
+	
 	}
 
 	@Test

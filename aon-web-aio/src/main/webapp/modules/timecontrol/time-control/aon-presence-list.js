@@ -56,7 +56,7 @@ export class AonPresenceList extends AonElement {
     this.applicationEl.addToolbarTitle("Presencia");
     this.applicationParentEl.periodSideNavDisplay(true);
 
-    this.FN_FILTER = ()=> {
+    this.FN_FILTER = (filter)=> {
       this._list = [];
       this.getTable();
     }
@@ -108,14 +108,41 @@ export class AonPresenceList extends AonElement {
         this._list = [];
         this.searchFilter = detail.search;
         this.applicationParentEl.setDataFilter({
-          active: detail.active,
+          active: detail.active === 'true',
           search:detail.search,
           period: detail.period,
           startDate: detail.startDate,
-          endDate: detail.endDate
+          endDate: detail.endDate,
+          withData: detail.withData === 'true'
         });
       });
     });
+    
+    btnSearch.addEventListener(EVENT.RESET_FILTER, ({ detail }) => {
+      clearTimeout(timeOut);
+      timeOut = setTimeout(() => {
+        this._list = [];
+        this.searchFilter = '';
+        this.applicationParentEl.setDataFilter({
+          active: true,
+          search: "",
+          period: "today",
+          startDate: detail.startDate,
+          endDate: detail.endDate,
+          withData: true
+        });
+        
+         let searchInput = this.getElement('aonSigninToolbarHeaderToolSectionSearchSearchInput');
+        if(searchInput) searchInput.value = '';
+        let aonSwitchFilter = this.getElement('aonSwitchFilter');
+        if(aonSwitchFilter) aonSwitchFilter.checked = true;
+        let aonWithDataSwitchFilter = this.getElement('aonWithDataSwitchFilter');
+        if(aonWithDataSwitchFilter) aonWithDataSwitchFilter.checked = true;
+      });
+    });
+
+	let filter = null;
+   	try {filter = {...this.applicationParentEl._filter};} catch (error) {}
 
     let inputsFilter = [
       ...PRESENCE_FILTER,
@@ -124,8 +151,16 @@ export class AonPresenceList extends AonElement {
         element: new AonSwitch(),
         id: "aonSwitchFilter",
         name:"active",
-        title:"Usuarios activos",
-        checked:true
+        title:"Operarios activos",
+        checked: filter?.active
+      },
+      {
+        type: CONSTANT.HTML_ELEMENT,
+        element: new AonSwitch(),
+        id: "aonWithDataSwitchFilter",
+        name:"withData",
+        title:"Con Datos",
+        checked: filter?.withData
       }
     ];
 

@@ -1,23 +1,34 @@
+@import url("themeCustom");
 :root {
-	--favicon: faviconCustom;
 	--title: titleCustom;
+	--name: "titleCustom";
+	--phone: "phoneCustom";
+	--email: "emailCustom";
+	--favicon: faviconCustom;
+	--logo: url("/cvDocument/logoCustom");
+	--loginLogo: url("/cvDocument/loginLogoCustom");
+	
+	/*aonCustomizableVariables*/	
 }
 
 .aonLogo{
-	background-image: url("cvDocument/logoCustom");
 	background-size: contain;
+	background-image: var(--logo);
 }
 
-.aonNewLogo{
-	background-image: url("cvDocument/logoCustom");
+.aonNewLogo,
+.aonHeaderAppDiv {
+	margin-left: 1.25rem;
 	background-size: contain;
+	background-image: var(--logo);
 }
 
 .aonLoginLogo{
-	background-image: url("cvDocument/loginLogoCustom");
 	background-size: contain;
+	background-image: var(--loginLogo);
 }
 
+#aonConfigThemesCard,
 #disabledAonConfigThemesCard{
 	display: none;
 }
@@ -32,8 +43,8 @@
 
 
 .aonSideNavFiscalCircle{
-  border: 1px solid var(--aonFiscal);
   color: var(--aonFiscal);
+	border: 1px solid var(--aonFiscal);
 }
 
 .aonAppMenuSidenavListSelected div {
@@ -43,7 +54,7 @@
 }
 
 .aonSupportName:after {
-  content: 'titleCustom';	
+  content: var(--name);	
 }
 
 #aonContactIcon1 {
@@ -51,7 +62,7 @@
 }
 
 .aonSupportTelephone:after {
-  content: 'phoneCustom';
+  content: var(--phone);
 }
 
 #aonContactIcon2 {
@@ -59,7 +70,7 @@
 }
 
 .aonSupportUsersEmail:after{
-  content: "emailCustom";
+  content: var(--email);
 }
 
 #aonContactIcon3 {
@@ -78,5 +89,5 @@
 Important. Keep this rule at the end of file 
 **/
 .aonTheme {
-	--aon-theme: 'AONCUSTONVIEW';
+	--aon-theme: 'AONCUSTOMVIEW';
 }

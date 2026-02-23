@@ -2861,6 +2861,8 @@
 .holiday-title {
     font-weight: bold;
     font-size: 0.95rem;
+    margin: 1rem 0 .5rem 0;
+    cursor: pointer;
 }
 
 /* Mensaje cuando no hay festivos */
@@ -3006,7 +3008,6 @@
     position: sticky;
     background-color: #fafafa;
     top: 0;
-    padding: 0.5rem 0;
 }
 
 .calendar-title {
@@ -3015,4 +3016,74 @@
 }
 
 
+.aon-workplace-calendar-dayCircle {
+    background: #ccc;
+  border-radius: 50%;
+  margin: 0.3rem;
+  cursor: pointer;
+  font-weight: bold;
+  text-align: center;
+  user-select: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: background 0.2s;
+  font-size: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.aon-workplace-calendar-dayCircle.nonWorking {
+    background: #d9534f;
+    color: white;
+}
+
+.aon-workplace-calendar-working-row {
+    display: flex;
+  gap: .5rem;
+  margin-bottom: .5rem;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.aon-workplace-calendar-working-row input{
+	width: 2rem;
+  	font-size: 12px;
+}
+
+.custom-tooltip {
+    background: #f1f5f9;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px #f1f5f9;
+    z-index: 9999;
+}
+
+.custom-tooltip-title {
+    font-weight: bold;
+}
+
+#showHidePanelWorkplaceCalendar{
+	height: 3.1rem;
+    width: 100%;
+    position: sticky;
+    top: 0;
+    background-color: #fafafa;
+}
+
+/* ============================================================
+   ACCOUNTING PERIOD
+   ============================================================ */
+
+.aon-accounting-period-card{
+	min-width: 15rem;
+}
+
+.aon-accounting-period-title-input{
+	max-width: 10rem;
+}
+
+.aon-accounting-period-buttons{
+	padding-left: 5px;
+}
 

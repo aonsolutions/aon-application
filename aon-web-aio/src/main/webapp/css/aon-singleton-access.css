@@ -9,7 +9,7 @@
 
 .aonSingletonCard {
 	margin: 16px;
-	padding: 24px;
+	padding: 24px !important;
 	max-width: 620px;
 }
 
@@ -30,7 +30,8 @@
 	gap: 8px;
 	justify-content: flex-end;
 	margin-top: 8px;
-	flex-wrap: wrap
+	flex-wrap: wrap;
+	border: none !important;
 }
 
 
