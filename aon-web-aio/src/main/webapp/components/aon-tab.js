@@ -94,6 +94,10 @@ export class AonTab extends AonElement {
     getTabByDatasetId(id){
         return document.querySelector(`[id*='${this.SPAN}'][data-id='${id}']`);
     }
+    
+    getSelectedTab(){
+		return document.querySelector(`aon-tab#${this.id} .aonTabItemTextSelected`);
+	}
 
 }
 if(!window.customElements.get('aon-tab')){

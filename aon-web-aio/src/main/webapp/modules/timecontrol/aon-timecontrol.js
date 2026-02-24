@@ -100,8 +100,10 @@ export class AonTimecontrol extends AonElement {
     this.applicationEl.addSidenavOptions3(data);
 
     if(this.getDur().isTimecontrol() && LS.isNewTheme() && !this.isMobile()) {
-			getTimeControl().then(r => {
-		    let data3 = {
+			
+		getTimeControl().then(r => {
+			
+	    let data3 = {
           id: "signing",
           title: MSG.SIGNING.toUpperCase(),
           name: MSG.SIGNING.toUpperCase(),
@@ -110,10 +112,11 @@ export class AonTimecontrol extends AonElement {
     
         let aonSign = new AonSign();
         this.applicationEl.addSidenavWidget2(data3, aonSign);
-				aonSign.buildSignin(r);
+		aonSign.buildSignin(r);
+        
         let aonHeader = this.getElement('aonHeader');
         aonHeader.timeControlStatus(r);
-			});
+		});
 		}
   }
 

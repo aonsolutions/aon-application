@@ -549,6 +549,15 @@ aon-configuration-menu .suiteMenuContent  {
   	margin: 1rem 1rem 0rem 0.5rem;	
 }
 
+.aonSideNavFiscalCircle{
+  min-width: 1.5rem;
+  min-height: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.6rem !important;
+}
+
 /* ========================== Sidenav Menu Styles  ========================== */
 
 #rootPanel {
@@ -757,7 +766,9 @@ aon-configuration-menu .suiteMenuContent  {
 #aonInvoice .aonContentBeta,
 #aonWarehouse .aonContentBeta,
 #aonMessenger .aonContentBeta,
-#aonOfficePanel .aonContentBeta {
+#aonOfficePanel .aonContentBeta,
+#aonFiscal .aonContentBeta,
+#aonAccounting .aonContentBeta {
 	border-radius: .375rem;
 	margin: 1rem 1rem 0rem 1rem;
 	background-color: var(--aonBackgroundColor);	
@@ -769,7 +780,9 @@ aon-configuration-menu .suiteMenuContent  {
 #aonInvoice .aonContentBeta,
 #aonWarehouse .aonContentBeta,
 #aonMessenger .aonContentBeta,
-#aonOfficePanel .aonContentBeta {
+#aonOfficePanel .aonContentBeta,
+#aonFiscal .aonContentBeta,
+#aonAccounting .aonContentBeta {
 	padding: 1.25rem 1.25rem 0 1.25rem;
 }
 
@@ -816,7 +829,8 @@ aon-configuration-menu .suiteMenuContent  {
 	mask-image: url('/icons/chevron-right.svg');
 }
 
-.aonAppMenuSidenavList i.material-icons {
+.aonAppMenuSidenavList i.material-icons,
+.aonAppMenuSidenavList aon-icon {
 	display: none;
 }
 
@@ -826,7 +840,7 @@ aon-configuration-menu .suiteMenuContent  {
 }
 
 .aonSidenav .aonAppMenuSidenavList{
-	padding: .425rem 1.25rem .425rem 2.5rem;	
+	padding: .425rem 1.25rem .425rem 2rem;	
 	position: relative;
 }
 
@@ -2431,11 +2445,13 @@ aon-search > span {
 	mask-image: url(/icons/edit.svg);
 }
 
-#aonMessengerToolbarHeaderToolSectionexcelButtonIconButton{
+#aonMessengerToolbarHeaderToolSectionexcelButtonIconButton,
+#aonLaboralToolbarHeaderToolSectionexcelButtonIconButton {
 	background-color: transparent !important; 
 }
 
-#aonMessengerToolbarHeaderToolSectionexcelButtonAonIcon {
+#aonMessengerToolbarHeaderToolSectionexcelButtonAonIcon,
+#aonLaboralToolbarHeaderToolSectionexcelButtonAonIcon {
 	background-color: black !important;
 }
 
