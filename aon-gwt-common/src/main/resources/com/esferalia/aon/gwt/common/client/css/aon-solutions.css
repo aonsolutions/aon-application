@@ -3017,7 +3017,7 @@
 
 
 .aon-workplace-calendar-dayCircle {
-    background: #ccc;
+  background: #fff;
   border-radius: 50%;
   margin: 0.3rem;
   cursor: pointer;
@@ -3030,12 +3030,14 @@
   font-size: 10px;
   display: flex;
   justify-content: center;
+  border: 1px solid #767676;
   align-items: center;
 }
 
 .aon-workplace-calendar-dayCircle.nonWorking {
     background: #d9534f;
     color: white;
+    border: none;
 }
 
 .aon-workplace-calendar-working-row {
@@ -3049,6 +3051,10 @@
 .aon-workplace-calendar-working-row input{
 	width: 2rem;
   	font-size: 12px;
+}
+
+.aon-workplace-calendar-working-row input:disabled{
+	background-color: #c0c0c0;
 }
 
 .custom-tooltip {

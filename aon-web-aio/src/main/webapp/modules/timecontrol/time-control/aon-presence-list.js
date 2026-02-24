@@ -127,12 +127,10 @@ export class AonPresenceList extends AonElement {
           active: true,
           search: "",
           period: "today",
-          startDate: detail.startDate,
-          endDate: detail.endDate,
           withData: true
         });
         
-         let searchInput = this.getElement('aonSigninToolbarHeaderToolSectionSearchSearchInput');
+        let searchInput = this.getElement('aonSigninToolbarHeaderToolSectionSearchSearchInput');
         if(searchInput) searchInput.value = '';
         let aonSwitchFilter = this.getElement('aonSwitchFilter');
         if(aonSwitchFilter) aonSwitchFilter.checked = true;
@@ -197,14 +195,17 @@ export class AonPresenceList extends AonElement {
 
   async getTableDesk() {
     const aonTable = this.getElement(this.TABLE_ID);
+    
     if (aonTable) {
       aonTable.removeColumns();
       aonTable.addColumn("", "string", "lettersHtml", "5%");
-      aonTable.addColumn(MSG.NAME, "string", "name", "33%");
-      aonTable.addColumn(MSG.LAST_STATUS, "", "lastStatus", "32%");
-      aonTable.addColumn("Tipo", "string", "reason", "10%");
+      aonTable.addColumn(MSG.NAME, "string", "name", "28%");
+      aonTable.addColumn(MSG.PERIOD, "string", "periodName", "25%");
       aonTable.addColumn(MSG.DURATION, "", "duration", "5%");
-      aonTable.addColumn(MSG.LAST_LOCATION, "string", "nameLocation", "15%");
+     
+	  aonTable.addColumn("Ult. Estado", "", "status", "12%");
+      aonTable.addColumn("Motivo", "string", "reason", "15%");
+      aonTable.addColumn("Ult. Ubicación", "string", "nameLocation", "15%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
@@ -285,6 +286,7 @@ export class AonPresenceList extends AonElement {
         let filter = null;
         try {filter = {...this.applicationParentEl._filter};} catch (error) {}
         const datos = await getTimeControlList(filter);
+        //console.log('--------- Aon Presence List ---------', filter, datos);
         if (datos) {
           sortBy(datos, 'last_date', 'desc').map(({
               time,
@@ -316,18 +318,27 @@ export class AonPresenceList extends AonElement {
               
               let reason = detail && detail.length > 0 ? detail[detail.length - 1].reasonValue : '';
               
+              let period = getPeriod(filter.period);
+              let statusString = newStatus == 'in' ? 'Entrada' : newStatus == 'pause' ? 'Pausa' : 'Salida';
+              
               data.push({
+				lettersHtml,
                 name,
-                lettersHtml,
+                periodName : period.value == "personalized" 
+                	? (`${period.name} (${AonDateUtils.getDayMonthOrFull(filter.startDate)} / ${AonDateUtils.getDayMonthOrFull(filter.endDate)})`)
+                	: period.value == "today"  || period.value == "yesterday" ? period.name : (`${period.name} (${AonDateUtils.getDayMonthOrFull(period.startDate)} / ${AonDateUtils.getDayMonthOrFull(period.endDate)})`),
+                duration: timeHour(Number(time)),
+                
+                status: statusString,
+                reason,
+                nameLocation,
+                
                 last_date,
                 coordinates,
                 last_location,
-                nameLocation,
                 taskHolderId,
                 textStatus,
-                status: newStatus,
-                duration: timeHour(Number(time)),
-                reason
+                
               });
             }
           );
@@ -351,7 +362,7 @@ export class AonPresenceList extends AonElement {
 		} catch (error) {
       this.showToast(error);
 		}
-		this.applicationEl.stopLoading();
+		this.appcationEl.stopLoading();
 	}
 
 	async getTimeControlPdf(startDate) {

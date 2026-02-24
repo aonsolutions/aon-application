@@ -417,6 +417,7 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
         // Caja de horas
         d.hours = new AonDoubleBox();
         d.hours.setValue(getterHours.get());
+        d.hours.removeStyleName("aon_number_box");
         d.hours.getElement().getStyle().setProperty("text-align", "center");
         d.hours.setEnabled(!nonWorking);
         d.hours.addValueChangeHandler(e -> {
@@ -468,7 +469,7 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
                 }
             }
     	
-    	Label festiveLabel = new Label("Festivos (" + totalCount + ")");
+    	Label festiveLabel = new Label("Festivos " + currentYear + " (" + totalCount + ")");
         festiveLabel.addStyleName("holiday-title");
         formCollapsibles.add(festiveLabel);
     	
@@ -746,7 +747,7 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
             currentYear,
             newYear -> {
                 currentYear = newYear;
-                buildAnnualCalendar();
+                loadData();
             },
             selectedDate -> openDateDialog(selectedDate)
         );

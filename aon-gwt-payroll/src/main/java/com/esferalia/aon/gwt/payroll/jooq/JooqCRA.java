@@ -223,16 +223,16 @@ public class JooqCRA {
 		// Domain Childs
 		List<Integer> domainChilds = getDomainChilds(dslContext, domainId, userId); 
 		
-		Record1<java.sql.Date> craMinDateRecord = dslContext.select(DSL.min(DSL.date(SALARY.START_DATE)))
-				.from(SALARY)
-				.where(SALARY.DOMAIN.eq(domainId).or(SALARY.DOMAIN.in(domainChilds)))
+		Record1<java.sql.Date> craMinDateRecord = dslContext.select(DSL.min(DSL.date(CRA_BATCH.DATE)))
+				.from(CRA_BATCH)
+				.where(CRA_BATCH.DOMAIN.eq(domainId).or(CRA_BATCH.DOMAIN.in(domainChilds)))
 				.fetchOne();
 		
 		Date craMinDate = craMinDateRecord.value1();
 		
-		Record1<java.sql.Date> craMaxDateRecord = dslContext.select(DSL.max(DSL.date(SALARY.END_DATE)))
-				.from(SALARY)
-				.where(SALARY.DOMAIN.eq(domainId).or(SALARY.DOMAIN.in(domainChilds)))
+		Record1<java.sql.Date> craMaxDateRecord = dslContext.select(DSL.max(DSL.date(CRA_BATCH.DATE)))
+				.from(CRA_BATCH)
+				.where(CRA_BATCH.DOMAIN.eq(domainId).or(CRA_BATCH.DOMAIN.in(domainChilds)))
 				.fetchOne();
 		
 		Date craMaxDate = craMaxDateRecord.value1();
