@@ -23,6 +23,7 @@ import {
 import { CompanyPieChart } from "./CompanyPieChart.js";
 import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
+import * as LS from '../../../services/localStorageService.js';
 
 
 export class AonCompanyCostsList extends AonElement {
@@ -80,7 +81,7 @@ export class AonCompanyCostsList extends AonElement {
   }
 
   buildToolbarSearch(){
-    let btnSearch = this.getApplication().addSearchOption();
+    let btnSearch = this.getApplication().addSearchOption(LS.isFutureTheme());
     btnSearch.disabled = true;
     const searchValueFn = ({detail})=>{
       if(detail) this.getApplicationParent().setDataFilter(detail);

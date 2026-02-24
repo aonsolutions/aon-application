@@ -56,8 +56,8 @@ export class AonCustomer extends AonReg {
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData() },
 			{ title: MSG.BANK_DATA, fn: () => {
 				this.showSaveButton();
-				if(this.clientFile)
-					this.hideSaveButton();
+				//if(this.clientFile)
+				//	this.hideSaveButton();
 				this.buildBankData();
 			}},
 			//{ title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional() }
@@ -70,8 +70,6 @@ export class AonCustomer extends AonReg {
 			this.options.push({ title: "Expedientes", fn: () => this.buildExpedienteData() });
 			this.options.push({ title: MSG.CUSTOMER_FEE, fn: () => this.buildCustomerFee() });
 			this.options.push({ title: MSG.INVOICES, fn: () => this.buildInvoices() });
-			
-			console.log("Registry Company", this.registry.registryCompany);
 			
 			if(this.registry.registryCompany) {
 				this.options.push({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
@@ -1197,11 +1195,16 @@ export class AonCustomer extends AonReg {
 			let medias = this.emails.concat(this.phones).concat(this.webs);
 			this.registry.setMedia(medias);
 			this.saveBool = false;
-
+			
 			saveCustomer(this.registry)
 				.then((registry) => {
 					this.registry.id = registry.id;
 					this.saveBool = true;
+					
+					let aonTab = this.getElement(this.TABS);
+					let selectedTab = aonTab.getSelectedTab();
+					selectedTab && selectedTab.click();
+					
 					this.showToast({
 						type: "success",
 						message: "Datos Guardados Correctamente",
