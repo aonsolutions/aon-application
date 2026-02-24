@@ -577,7 +577,7 @@ export class AonSignMobile extends AonElement {
 
 		if (signin.status === 'in') {
 			color = '#86D364';
-			time = signin.time + (new Date().getTime() - signin.in_date);
+			//time = signin.time + (new Date().getTime() - signin.in_date);
 			this.salida();
 			let timeId = Math.random();
 			localStorage.setItem(this.TIME_ID, timeId);
@@ -676,7 +676,8 @@ export class AonSignMobile extends AonElement {
 				};
 				let datos = await getTaskHolderTimeControl(filter);
 				if (datos) {
-					let sumHour = datos.reduce((total, { time, status, in_date }) => status && status.indexOf("in") >= 0 && in_date ? ((total + (new Date().getTime() - in_date)) + time) : total + time, 0);
+					//let sumHour = datos.reduce((total, { time, status, in_date }) => status && status.indexOf("in") >= 0 && in_date ? ((total + (new Date().getTime() - in_date)) + time) : total + time, 0);
+					let sumHour = datos.reduce((total, { time, status, in_date }) => total + time, 0);
 					if (sumHour > 0) {
 						let content = this.getElement(this.CONTENT);
 						const div = this.getElement(this.TOTAL_HOUR) || this.createElement(TAG.DIV);
