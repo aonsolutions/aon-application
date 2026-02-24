@@ -58,7 +58,7 @@ class Mod303WriterAEAT2026 implements IMod303Writer{
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_A13),1,0 ))
 		   ,(wr, mod) -> wr.append(!mod.isLastPeriod()?"0":AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_A14),1,0 ))
 		   ,(wr, mod) -> wr.append(!mod.isLastPeriod()?"0":AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_A11),1,0 )) // Sujeto pasivo con volumen anual de operaciones distinto de cero (art. 121 LIVA)
-		   ,(wr, mod) -> wr.append(mod.isQuarterPeriod() || mod.getPeriod() == Period.M01 ? "0" : "2") // FALTA - AÑADIR CAMPO - Sujeto pasivo con derecho a deducir pago a cuenta de entregas de gasolinas, gasóleos y biocarburantes posteriores a la ultimación del régimen de depósito distinto del aduanero
+		   ,(wr, mod) -> wr.append(mod.isQuarterPeriod() || (mod.getYear() == 2026 && mod.getPeriod() == Period.M01) ? "0" : mod.getAmount(Mod303Key.CT_A15)==1 ? "1" : "2") // Sujeto pasivo con derecho a deducir pago a cuenta de entregas de gasolinas, gasóleos y biocarburantes posteriores a la ultimación del régimen de depósito distinto del aduanero
 		   
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_C150),17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_C151), 5,2))
@@ -535,7 +535,7 @@ class Mod303WriterAEAT2026 implements IMod303Writer{
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C69),17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C70),17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C109),17,2))
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(0.0,17,2)) // FALTA - AÑADIR CAMPO - Resultado - Pago a cuenta de entregas de gasolinas, gasóleos y biocarburantes posteriores a la ultimación del régimen de depósito distinto del aduanero atribuible a la Administración del Estado (Suma de la casilla 36 de todos los modelos 319 correspondientes a entregas incluidas en esta autoliquidación) [112]
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C112),17,2)) // Resultado - Pago a cuenta de entregas de gasolinas, gasóleos y biocarburantes posteriores a la ultimación del régimen de depósito distinto del aduanero atribuible a la Administración del Estado (Suma de la casilla 36 de todos los modelos 319 correspondientes a entregas incluidas en esta autoliquidación) [112]
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C71),17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.isWithoutActivity() ? "X" : " ",1))  // Sin actividad
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.isComplementary() ? "X" : " ",1))    // Autoliquidación rectificativa
