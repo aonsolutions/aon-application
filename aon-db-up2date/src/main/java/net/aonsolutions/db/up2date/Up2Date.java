@@ -591,10 +591,10 @@ public class Up2Date {
 			// AlterFsMod347Detail2025Bis.ALTER_FS_MOD_347_DETAIL_2025_BIS,
 			// SanitizeDomainRegistries.SANITIZE_SIG_AONSOLUTIONS_ORG,
 			// SMI2026Update.SMI2026UPDATE,
+			// RealDecreeLaw1782025Art284XXFix.REALDECREELAW1782025ART284XXFIX,
 			// Customize.CUSTOMIZE_OPENGES,
 			// Customize.CUSTOMIZE_AYUDAT,
 			// Customize.CUSTOMIZE_INFOAUTONOMOS,
-			RealDecreeLaw1782025Art284XXFix.REALDECREELAW1782025ART284XXFIX,
 			
 			
 			// ----------------------------------------------------------------

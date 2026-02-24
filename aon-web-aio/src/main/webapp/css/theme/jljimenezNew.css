@@ -1,0 +1,205 @@
+@import url("/css/theme/future.css");
+
+:root {
+	--aonCustomizeButtonBackground: linear-gradient(to right, #0f172a, #0f172a, #0E1030, #586078);
+}
+
+ #loginContent{
+	background-color: var(--aonWhite) !important;
+}
+
+#loginDivForm{
+	border: none;
+    box-shadow: none;
+}
+
+.aonLoginSubTitle{
+    top: 4rem;
+	position: relative;
+}
+
+.aonLoginFormContent {
+	padding-top: 4rem;
+    background-color: #fff;
+    border: .0625rem solid #e2e8f0;
+    box-shadow: 0 .25rem .375rem 0 #0f172a0D;
+}
+
+
+.aonNewLogo, 
+.aonLoginLogo,
+.aonHeaderAppDiv {
+	width: 13.85rem;
+	height: 1.6875rem;
+	background-repeat: no-repeat;
+	background-position: left;
+}
+
+.aonNewLogo, 
+.aonHeaderAppDiv {
+	margin-left: 3.25rem !important;
+}
+
+
+.aonMenuAnchorDivSpan{
+	display: none;
+}
+
+#aonMenuAnchorDivIcon {
+	position: fixed;
+	top: 22px;
+	left: 22px;
+	
+	color:white;
+	background-color: white;	
+}
+
+#aonHome .aonMenuSidenav
+ {
+	z-index: 10;	
+	margin-top: 8px;
+}
+
+.aonParentDiv {
+	background-color: var(--aonBackgroundColor2);
+}
+
+.aonParentDiv >.aonWelcomeLogo {
+    padding:0px;
+	min-height: 170px;
+    min-width: 170px;
+    object-fit: cover;
+    overflow: hidden;
+    margin-right: auto;
+}
+
+.aonParentDiv > div:has(.aonCompanyDiv) {
+  	height: 100%;
+	width: calc(100% - 200px );
+	background-color: white;
+	border-top-right-radius: 6px;
+	border-bottom-right-radius: 6px;
+}
+
+#aonCompanyTabFilter {
+    min-height: 59px;
+}
+
+#aonMenuListAppImgTop-new,
+#aonMenuListAppImgTop-note,
+#aonMenuListAppImgTop-office,
+#aonMenuListAppImgTop-invoice,
+#aonMenuListAppImgTop-warehouse,
+#aonMenuListAppImgTop-documental,
+#aonMenuListAppImgTop-accounting,
+#aonMenuListAppImgTop-fiscal,
+#aonMenuListAppImgTop-messenger,
+#aonMenuListAppImgTop-payroll,
+#aonMenuListAppImgTop-aonApplication,
+#aonMenuListAppImgTop-timecontrol,
+#aonMenuListAppImgTop-apps,
+#aonMenuListAppImgTop-contentIndex
+ {
+	width: 25.5px;
+	height: 25.5px;
+	
+	mask-image: none;
+	color:transparent !important;	
+	
+	background-color:initial;
+	background-size: contain;
+	background-position: left;
+	background-repeat: no-repeat;
+} 
+
+#aonMenuListAppImgTop-new{
+	background-image: url('/icons/plus-circle.svg');
+}
+
+#aonMenuListAppImgTop-note {
+	background-image: url('/icons/bookmark.svg') ;
+}
+
+#aonMenuListAppImgTop-office{
+    background-image: url('/icons/briefcase.svg');
+}
+
+#aonMenuListAppImgTop-invoice{
+    background-image: url('/icons/file-bar-chart.svg');
+}
+
+#aonMenuListAppImgTop-warehouse {
+   background-image: url('/icons/shopping-cart.svg') ;
+}
+
+#aonMenuListAppImgTop-documental{
+	background-image: url('/icons/folder-open.svg') ;	
+}
+
+#aonMenuListAppImgTop-accounting {
+    background-image: url('/icons/calculator.svg') ;
+}
+
+#aonMenuListAppImgTop-fiscal  {
+    background-image: url('/icons/building-2.svg') ;
+}
+
+#aonMenuListAppImgTop-timecontrol {
+    background-image: url('/icons/timer.svg') ;
+}
+
+#aonMenuListAppImgTop-messenger{
+    background-image: url('/icons/subtitles.svg') ;
+}
+
+#aonMenuListAppImgTop-apps {
+	background-image: url('/icons/box.svg') ;
+}
+
+#aonMenuListAppImgTop-contentIndex {
+	background-image: url('/icons/graduation-cap.svg') ;
+}
+
+#aonMenuListAppImgTop-payroll {
+	background-image: url('/icons/users.svg') ;
+}
+
+
+
+.aonMenuSidenav .aonNewMenuSideNavLi .aonNewMenuAppDiv .aonNewMenuAppIcon:after {
+	content: '';
+	position: absolute;
+	left: 200px;
+	width: 17px;
+	height: 17px;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-image: url(/icons/info.svg);
+}
+
+
+.aonMenuSidenav .aonNewMenuSideNavLi #aonMenuListAppImgTop-expandHirin:after,
+.aonMenuSidenav .aonNewMenuSideNavLi #aonMenuListAppImgTop-aonApplication:after {
+	display: none;
+}
+
+.suiteMenuContent {
+	margin: 1rem 1rem 0rem 0.5rem;
+}
+
+.aonCard.suiteMenuCardDiv {
+	border-radius: .375rem;	
+}
+
+.rootPanel > aon-fiscal-menu .suiteMenuDiv2,
+.rootPanel > aon-enterprise-menu .suiteMenuDiv2, 
+.rootPanel > aon-accounting-menu .suiteMenuDiv2 {
+	padding-top: 16px;
+	justify-content: left;
+} 
+
+.rootPanel > aon-fiscal-menu .suiteMenuContent,
+.rootPanel > aon-payroll-menu .suiteMenuContent,
+.rootPanel > aon-accounting-menu .suiteMenuContent {
+	background-color: transparent;
+}

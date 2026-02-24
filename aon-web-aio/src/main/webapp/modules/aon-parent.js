@@ -109,6 +109,7 @@ export class AonParent extends AonElement {
 						LS.setDomainLogin(aonMenu.getDur().getUser().login);
 						LS.setDomainId(aonMenu.getDur().getDomain().getId());
 						LS.setDomainName(aonMenu.getDur().getDomain().getName());
+						this.getAonHeader().setCompanyName(aonMenu.getDur().getDomain().getDescription());
 						aonMenu.open();
 						aonMenu.closeEmptyApps();
 						

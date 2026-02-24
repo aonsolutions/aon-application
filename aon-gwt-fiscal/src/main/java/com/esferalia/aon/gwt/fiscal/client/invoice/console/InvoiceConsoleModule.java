@@ -114,7 +114,12 @@ public class InvoiceConsoleModule  implements EntryPoint {
 		
 		toolbar.addClickHandlerToShowFilter(e -> {
 			aonLayoutPanel.setWidgetHidden(filterPanel, false);
-			aonLayoutPanel.setWidgetSize(filterPanel, FILTER_WIDTH);
+			
+			int filterWidth =
+			Wnd.getCSSOptionalVariable(filterPanel, "width-adjust")
+			.map( AonNumberUtils::toInteger ).filter(Objects::nonNull).orElse(FILTER_WIDTH);
+
+			aonLayoutPanel.setWidgetSize(filterPanel, filterWidth);
 			aonLayoutPanel.animate(200); 
 		});
 		
