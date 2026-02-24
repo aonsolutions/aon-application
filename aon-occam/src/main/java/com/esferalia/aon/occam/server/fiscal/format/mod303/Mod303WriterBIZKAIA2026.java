@@ -21,7 +21,7 @@ public class Mod303WriterBIZKAIA2026 implements IMod303Writer{
 	private static SimpleDateFormat df = new SimpleDateFormat("MMMMM");
 	
 	private enum Mod303File {
-		 BIZKAIA_2025_R01 ( mod -> true ,new IPropertyFiller[] {
+		 BIZKAIA_R01 ( mod -> true ,new IPropertyFiller[] {
 			(wr, mod) -> wr.append("R01")			
 		   ,(wr, mod) -> wr.append("303")
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getYear(), 4,0))
@@ -35,13 +35,13 @@ public class Mod303WriterBIZKAIA2026 implements IMod303Writer{
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.convertDate(mod.getDescription(Mod303Key.BZ_C185_2)))
 		   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})
-		,BIZKAIA_2025_RA3 ( mod -> true ,new IPropertyFiller[] {
+		,BIZKAIA_RA3 ( mod -> true ,new IPropertyFiller[] {
 			(wr, mod) -> wr.append("RA3")
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFinanceBankAlias(),25))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFinanceIban(),24))
 		   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})
-		,BIZKAIA_2025_R05 ( mod -> true ,new IPropertyFiller[] {
+		,BIZKAIA_R05 ( mod -> true ,new IPropertyFiller[] {
 				(wr, mod) -> wr.append("R05")
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getName()
@@ -66,7 +66,7 @@ public class Mod303WriterBIZKAIA2026 implements IMod303Writer{
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getContactEmail(), 9))
 			   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 			})		
-		,BIZKAIA_2025_P00 ( mod -> true ,new IPropertyFiller[] {				
+		,BIZKAIA_P00 ( mod -> true ,new IPropertyFiller[] {				
 			    (wr, mod) -> {
 			    	if (mod.isComplementary()) {
 			    		wr.append("P00TX0001");
