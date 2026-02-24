@@ -328,7 +328,7 @@ body {
 }
 
 #aonMenuListAppImgTop-fiscal{
-	scale: 1;
+	scale: unset;
 }
 
 #aonMenuListAppImgTop-payroll,
