@@ -57,6 +57,7 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -73,6 +74,10 @@ public class JooqEnterpriseSalaryBuilder {
 			(byte) com.esferalia.aon.occam.api.model.type.SalaryType.L03.ordinal()
 		};
 	
+		private static final Byte[] PAYMENTS_INKIND = Arrays.stream(PaymentType.values())
+				.filter(PaymentType::isSalaryInKind).map(PaymentType::ordinal).map(AonNumberUtils::toByte)
+				.toArray(Byte[]::new);
+
 	/**
 	 * Method to generate the PDF enterprise payroll and place it into the OutputStream passed as parameter
 	 * @param outputStream The OutputStream which will contain the pdf
@@ -724,7 +729,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.innerJoin(WORKPLACE).onKey()
 		.innerJoin(ENTERPRISE).onKey()
 		.where(condition)
-		.and(SALARY_PAYMENT.TYPE.between(AonNumberUtils.toByte(13)).and(AonNumberUtils.toByte(26)))
+		.and(SALARY_PAYMENT.TYPE.in(PAYMENTS_INKIND))
 		.fetchStreamInto(SALARY_PAYMENT)
 		.filter(Objects::nonNull)
 		.forEach(sp -> {
@@ -925,6 +930,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.fetchStreamInto(SALARY_BONUS)
 		.collect(Collectors.toMap(SalaryBonusRecord::getSalary, SalaryBonusRecord::getAmount, (a1, a2) -> a1 + a2));
 		
+		
 		Map<Integer, Double> inKindDeductions = new LinkedHashMap<>();
 		ctx
 		.select()
@@ -935,7 +941,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.innerJoin(WORKPLACE).onKey()
 		.innerJoin(ENTERPRISE).onKey()
 		.where(condition)
-		.and(SALARY_PAYMENT.TYPE.between(AonNumberUtils.toByte(13)).and(AonNumberUtils.toByte(26)))
+		.and(SALARY_PAYMENT.TYPE.in(PAYMENTS_INKIND))
 		.fetchStreamInto(SALARY_PAYMENT)
 		.filter(Objects::nonNull)
 		.forEach(sp -> {
@@ -1115,7 +1121,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.innerJoin(WORKPLACE).onKey()
 		.innerJoin(ENTERPRISE).onKey()
 		.where(condition)
-		.and(SALARY_PAYMENT.TYPE.between(AonNumberUtils.toByte(13)).and(AonNumberUtils.toByte(26)))
+		.and(SALARY_PAYMENT.TYPE.in(PAYMENTS_INKIND))
 		.fetchStreamInto(SALARY_PAYMENT)
 		.filter(Objects::nonNull)
 		.forEach(sp -> {

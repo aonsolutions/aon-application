@@ -54,7 +54,8 @@
 	background-color: white;	
 }
 
-#aonHome:has(.aonMenuTopNavVisible) .aonMenuSidenav {
+#aonHome .aonMenuSidenav
+ {
 	z-index: 10;	
 	margin-top: 8px;
 }
@@ -136,11 +137,11 @@
 }
 
 #aonMenuListAppImgTop-accounting {
-    mask-image: url('/icons/calculator.svg') ;
+    background-image: url('/icons/calculator.svg') ;
 }
 
 #aonMenuListAppImgTop-fiscal  {
-    mask-image: url('/icons/building-2.svg') ;
+    background-image: url('/icons/building-2.svg') ;
 }
 
 #aonMenuListAppImgTop-timecontrol {
@@ -158,6 +159,11 @@
 #aonMenuListAppImgTop-contentIndex {
 	background-image: url('/icons/graduation-cap.svg') ;
 }
+
+#aonMenuListAppImgTop-payroll {
+	background-image: url('/icons/users.svg') ;
+}
+
 
 
 .aonMenuSidenav .aonNewMenuSideNavLi .aonNewMenuAppDiv .aonNewMenuAppIcon:after {
