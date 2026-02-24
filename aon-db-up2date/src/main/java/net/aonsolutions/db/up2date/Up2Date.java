@@ -593,8 +593,8 @@ public class Up2Date {
 			// SMI2026Update.SMI2026UPDATE,
 			// RealDecreeLaw1782025Art284XXFix.REALDECREELAW1782025ART284XXFIX,
 			// Customize.CUSTOMIZE_OPENGES,
-			Customize.CUSTOMIZE_AYUDAT,
-			Customize.CUSTOMIZE_INFOAUTONOMOS,
+			// Customize.CUSTOMIZE_AYUDAT,
+			// Customize.CUSTOMIZE_INFOAUTONOMOS,
 			
 			
 			// ----------------------------------------------------------------
