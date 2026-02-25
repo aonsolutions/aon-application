@@ -5138,6 +5138,11 @@ aon-agenda-all-days .day-header-right {
   align-items: baseline;
 }
 
+aon-agenda-all-days .day-header-right .day-diff-hours {
+  font-size: 11px;
+  color: #70757a;
+}
+
 aon-agenda-all-days .day-name {
   font-size: 11px;
   font-weight: 600;
@@ -5269,6 +5274,11 @@ aon-agenda-all-days .event {
   border-radius: 8px;
   font-size: 14px;
   line-height: 1.4;
+}
+
+aon-agenda-all-days .event .festive {
+   color: #e65d54;
+   font-weight: bold;
 }
 
 aon-agenda-all-days .event .time {
@@ -5596,6 +5606,7 @@ aon-calendar-menu.menu-open .calendar-menu-option:nth-child(4) {
 #aonHeaderSearchDialogMenuDialogMenuContent{
   height: 100%;
   overflow-y: scroll; 
+  top: 50 !important;
 }
 
 aonSwitchFilter{

@@ -13,6 +13,7 @@ export class AonAgendaAllDays extends AonElement {
 	_festivesContract = new Map(); // key: "YYYY-MM-DD" => value: array de eventos
 	_daysTypeContract = new Map(); // key: "YYYY-MM-DD" => value: array de eventos
 	_workingDays = []; // array dias laborables
+	_workingDaysHours = []; // array dias laborables
 	_eventsContract = new Map(); // key: "YYYY-MM-DD" => value: array de eventos
 	_loadedMonths = new Set(); // Para trackear qué meses ya se han cargado
 	_loadingMonths = new Set(); // Para trackear qué meses están cargándose AHORA
@@ -197,6 +198,7 @@ export class AonAgendaAllDays extends AonElement {
 
 			// Guardar dias laborables / no laborables semana
 			this._workingDays = contractDatos.workingDays;
+			this._workingDaysHours = contractDatos.workingDaysHours;
 
 			// Procesar y guardar eventos por fecha
 			//this.processContractEvents(contractDatos.events);
@@ -572,15 +574,30 @@ export class AonAgendaAllDays extends AonElement {
 			const dayEventData = this._events.get(day.key);
 
 			let totalHours = "0h 0m";
+			let workedTime = 0;
 			let eventsHtml = '';
 
 			if (dayEventData) {
+				workedTime = Number(dayEventData.dayData.time);
 				totalHours = timeHour(Number(dayEventData.dayData.time));
 				eventsHtml = this.renderDayEvents(dayEventData.details);
 			}
 			
 			daysTypeHtml += eventsHtml;
 			daysTypeHtml += '</div>';
+			
+			// Horas esperadas (Double[]) → convertir a minutos
+			let expectedTime = 0;
+			
+			const msecPerMinute = 1000 * 60;
+			const msecPerHour = msecPerMinute * 60;
+			if (this._workingDaysHours && this._workingDaysHours.length === 7) {
+			  expectedTime = (this._workingDaysHours[dayOfWeek] || 0) * msecPerHour;
+			}
+			
+			// Diferencia en minutos
+			const diffTime = workedTime - expectedTime;
+			const diffHours = this.formatDiffTime(diffTime);
 
 			// Obtener eventos contrato del día
 			const dayContractFestive = this._festivesContract.get(day.key);
@@ -625,7 +642,7 @@ export class AonAgendaAllDays extends AonElement {
 			            ${dayFestiveHtml}
 			          </div>
 			          <div class="day-header-right">
-			            <span class="total-hours">${totalHours} h</span>
+			            <span class="total-hours">${totalHours} h <span class="day-diff-hours">( ${diffHours} h )</span></span>
 			          </div>
 			        </div>
 			        <div class="day-content">
@@ -640,6 +657,14 @@ export class AonAgendaAllDays extends AonElement {
 
 		return el;
 	}
+	
+	formatDiffTime = (time) => {
+	  const sign = time < 0 ? "-" : "+";
+	  const absTime = Math.abs(time);
+	
+	  let formatted = AonDateUtils.timeParser(absTime).substring(0, 5);
+	  return `${sign}${formatted}`;
+	};
 
 	/* ---------------- RENDER EVENTS ---------------- */
 	renderDayEvents(events) {
@@ -698,7 +723,7 @@ export class AonAgendaAllDays extends AonElement {
 
 		return `
 			<div class="event">
-				<span class="reason">${event.description}</span>
+				<span class="reason festive">${event.description}</span>
 			</div>
 		`;
 	}
