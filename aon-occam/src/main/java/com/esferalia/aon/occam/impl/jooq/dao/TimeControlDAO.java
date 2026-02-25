@@ -409,13 +409,12 @@ public class TimeControlDAO {
 					.setStatus(TimeControlStatus.OUT)
 					.setDomain(tcd.getDomain()));
 		} 
-		
-//		else if (TimeControlStatus.IN.equals(tc.getStatus()) && AonDateUtils.isSameDay(tc.getInDate(), new Date())) {				
-//			// CASO NUEVO: IN abierto hoy - expandir hasta NOW
-//			
-//			Date now = new Date();
-//			tc.setTime(tc.getTime() + now.getTime() - tc.getInDate().getTime());
-//		}
+		else if (TimeControlStatus.IN.equals(tc.getStatus()) && AonDateUtils.isSameDay(tc.getInDate(), new Date())) {				
+			// CASO NUEVO: IN abierto hoy - expandir hasta NOW
+			
+			Date now = new Date();
+			tc.setTime(tc.getTime() + now.getTime() - tc.getInDate().getTime());
+		}
 
 		
 		tc.setStatus(tcd.getStatus());

@@ -12,6 +12,7 @@ import { AonTable } from "../../../../components/aon-table.js";
 import { AonToolbar } from "../../../../components/aon-toolbar.js";
 import { AonIconButton } from "../../../../components/aon-icon-button.js";
 import { AonDateUtils } from "../../../utils/AonDateUtils.js";
+import * as LS from '../../../../services/localStorageService.js';
 
 export class AonEventList extends AonElement {
   TABLE_ID;
@@ -121,8 +122,7 @@ export class AonEventList extends AonElement {
   }
 
   buildToolbarSearch(){
-    let btnSearch = this.applicationEl.addSearchOption();
-    btnSearch.disabled = true;
+	let btnSearch = this.applicationEl.addSearchOption(LS.isFutureTheme());
     const searchValueFn = ({detail})=>{
       if(detail) this.applicationParentEl.setDataFilter(detail);
     }
@@ -157,10 +157,10 @@ export class AonEventList extends AonElement {
       aonTable.removeColumns();
       const iconBack = !this.applicationParentEl.isEmployee() ? "arrow_back" : "";
       aonTable.addColumnIcon({title:MSG.BACK, name:iconBack, type:"string", id:"lettersHtml", width:"6%"}, ()=>this.back());
-      aonTable.addColumn(MSG.DATE, "date", "dateParse", "30%");
-      aonTable.addColumn("Tipo", "string", "reason", "15%");
-      aonTable.addColumn(MSG.DURATION, "string", "durationParse", "10%");
-      aonTable.addColumn(MSG.LAST_LOCATION, "string", "nameLocation", "20%");
+      aonTable.addColumn(MSG.DATE, "date", "dateParse", "35%");
+      //aonTable.addColumn("Tipo", "string", "reason", "15%");
+      aonTable.addColumn(MSG.DURATION, "string", "durationParse", "15%");
+      aonTable.addColumn(MSG.LAST_LOCATION, "string", "nameLocation", "25%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();

@@ -112,7 +112,72 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 		}
 	}
 	
+	@Test
+	public void testConsultancyManagerUserSearch() throws MalformedURLException, URISyntaxException {
+		String url = System.getProperty("integration.test.env.app.url",
+				"http://payroll-test.aonsolutions.org:8080/?jaas");
+		String user = System.getProperty("integration.test.env.app.user", "asesor");
+		String password = System.getProperty("integration.test.env.app.password", "org");
+
+		WebDriver webDriver = null;
+		try {
+			webDriver = newWebDriver();
+
+			login(webDriver, url, user, password);
+
+			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+			wait.ignoring(StaleElementReferenceException.class);
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("UlCompanies")));
+			
+			wait.until(ExpectedConditions.elementToBeClickable(By.id("search-input"))).sendKeys("asesor");
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHeaderSearchDialogMenuHelp")));
+			String empleados = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHeaderSearchDialogMenuEmployees"))).getText();
+			assertEquals("0 Empleados", empleados);
+
+
+		} catch (Exception e) {
+			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
+		} finally {
+			if (webDriver != null) {
+				webDriver.close();
+				webDriver.quit();
+			}
+		}
+	}
 	
+	@Test
+	public void testConsultancyManagerAdminSearch() throws MalformedURLException, URISyntaxException {
+		String url = System.getProperty("integration.test.env.app.url",
+				"http://payroll-test.aonsolutions.org:8080/?jaas");
+		String user = System.getProperty("integration.test.env.app.user", "admin");
+		String password = System.getProperty("integration.test.env.app.password", "org");
+
+		WebDriver webDriver = null;
+		try {
+			webDriver = newWebDriver();
+
+			login(webDriver, url, user, password);
+
+			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+			wait.ignoring(StaleElementReferenceException.class);
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("UlCompanies")));
+			
+			wait.until(ExpectedConditions.elementToBeClickable(By.id("search-input"))).sendKeys("asesor");
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHeaderSearchDialogMenuHelp")));
+			String empleados = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHeaderSearchDialogMenuEmployees"))).getText();
+			assertEquals("4 Empleados", empleados);
+
+
+		} catch (Exception e) {
+			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
+		} finally {
+			if (webDriver != null) {
+				webDriver.close();
+				webDriver.quit();
+			}
+		}
+	}
+
 	@Test
 	public void testMultiManagerUserMain() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",

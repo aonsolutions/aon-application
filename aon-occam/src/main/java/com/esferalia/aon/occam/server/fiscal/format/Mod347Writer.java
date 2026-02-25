@@ -278,7 +278,6 @@ public class Mod347Writer {
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getFourthQuarterAmount(), 16, 2))       // IMPORTE DE LAS OPERACIONES CUARTO TRIMESTRE
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getFourthQuarterRentalAmount(), 16, 2)) // IMPORTE ARRENDAMIENTO DE LOCALES DE NEGOCIO CUARTO TRIMESTRE
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(declared.getAssetFourthQuarterAmount(), 16, 2))  // IMPORTE PERCIBIDO POR TRANSMISIONES DE INMUEBLES SUJETAS A I.G.I.C. CUARTO TRIMESTRE
-//		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(declared.getBdns(),6,0) )  // FALTA Número de convocatoria BDNS
 		   ,(line, mod347, declared, asset) -> line.append("\r\n") 
 		})
 		

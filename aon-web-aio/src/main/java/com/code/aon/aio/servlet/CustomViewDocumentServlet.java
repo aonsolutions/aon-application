@@ -53,8 +53,8 @@ public class CustomViewDocumentServlet extends HttpServlet {
 		Domain domain = AON.getDomain(domainStr, 1, "", f -> f.getNameProperty().eq(domainStr));
 		Integer customViewdomainId = domain.getParentId() != null ? domain.getParentId() : domain.getId();
 
-		String idStr = AON.getApplicationParameter(domain.getName(), domain.getId(), "", AppParam.AON_CUSTOMIZE_ID).getValue();
-		String heritableIdStr = AON.getApplicationParameter(domain.getName(), domain.getId(), "", AppParam.AON_CUSTOMIZE_HERITABLE_ID).getValue();
+		String idStr = AON.getApplicationParameter(domain.getName(), customViewdomainId, "", AppParam.AON_CUSTOMIZE_ID).getValue();
+		String heritableIdStr = AON.getApplicationParameter(domain.getName(), customViewdomainId, "", AppParam.AON_CUSTOMIZE_HERITABLE_ID).getValue();
 		Integer id = AonNumberUtils.toInteger(idStr);
 		Integer heritableId = AonNumberUtils.toInteger(heritableIdStr);
 		

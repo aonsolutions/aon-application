@@ -244,7 +244,7 @@ export class AonSign extends AonElement {
 
 	async saveTimeCtrl(status) {
 		// Spinner
-		this.getApplication().startLoading();
+		if(this.applicationEl) this.applicationEl.startLoading();
 
 		this.disabledButton(true);
 
@@ -276,7 +276,7 @@ export class AonSign extends AonElement {
 
 					this.disabledButton(false);
 					this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
-					this.getApplication().stopLoading();
+					if(this.applicationEl) this.applicationEl.stopLoading();
 				} else
 					this.openReasonDialog(signin, timeOutPosition);
 
@@ -306,7 +306,7 @@ export class AonSign extends AonElement {
 
 				this.disabledButton(false);
 				this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
-				this.getApplication().stopLoading();
+				if(this.applicationEl) this.applicationEl.stopLoading();
 			}
 
 		} else if (signin.status == 'in' && signin.coordinates && signin.coordinates.length > 0) {
@@ -319,7 +319,7 @@ export class AonSign extends AonElement {
 
 				this.disabledButton(false);
 				this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
-				this.getApplication().stopLoading();
+				if(this.applicationEl) this.applicationEl.stopLoading();
 			} else
 				this.openReasonDialog(signin, timeOutPosition);
 
@@ -350,7 +350,7 @@ export class AonSign extends AonElement {
 		d.onclick = (e) => {
 			e.stopPropagation();
 			this.disabledButton(false);
-			this.getApplication().stopLoading();
+			if(this.applicationEl) this.applicationEl.stopLoading();
 		}
 
 
@@ -396,7 +396,7 @@ export class AonSign extends AonElement {
 
 				this.disabledButton(false);
 				this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
-				this.getApplication().stopLoading();
+				if(this.applicationEl) this.applicationEl.stopLoading();
 
 				d.close();
 			}));
@@ -431,7 +431,7 @@ export class AonSign extends AonElement {
 
 			this.disabledButton(false);
 			this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
-			this.getApplication().stopLoading();
+			if(this.applicationEl) this.applicationEl.stopLoading();
 
 			d.close();
 		});
@@ -448,7 +448,7 @@ export class AonSign extends AonElement {
 
 				this.disabledButton(false);
 				this.showToast({ code: 3, message: 'Marcaje realizado con exito', timeout: false });
-				this.getApplication().stopLoading();
+				if(this.applicationEl) this.applicationEl.stopLoading();
 
 				d.close();
 			}
@@ -539,7 +539,7 @@ export class AonSign extends AonElement {
 		const aonUserConnected = this.getElement('aonHeaderUserConnected');
 		const timeEl = this.getElement(this.TIME);
 		timeEl.style.cursor = "default";
-
+		
 		let time = signin.time;
 		localStorage.removeItem(this.TIME_ID);
 
@@ -547,7 +547,7 @@ export class AonSign extends AonElement {
 
 		if (signin.status === 'in') {
 			color = '#86D364';
-			time = signin.time + (new Date().getTime() - signin.in_date);
+			//time = signin.time + (new Date().getTime() - signin.in_date);
 			this.salida();
 			let timeId = Math.random();
 			localStorage.setItem(this.TIME_ID, timeId);
@@ -628,7 +628,9 @@ export class AonSign extends AonElement {
 				};
 				let datos = await getTaskHolderTimeControl(filter);
 				if (datos) {
-					let sumHour = datos.reduce((total, { time, status, in_date }) => status && status.indexOf("in") >= 0 && in_date ? ((total + (new Date().getTime() - in_date)) + time) : total + time, 0);
+					//let sumHour = datos.reduce((total, { time, status, in_date }) => status && status.indexOf("in") >= 0 && in_date ? ((total + (new Date().getTime() - in_date)) + time) : total + time, 0);
+					let sumHour = datos.reduce((total, { time, status, in_date }) => total + time, 0);
+					
 					if (sumHour > 0) {
 						let content = this.getElement(this.CONTENT);
 						const div = this.getElement(this.TOTAL_HOUR) || this.createElement(TAG.DIV);

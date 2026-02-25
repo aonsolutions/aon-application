@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.console;
 
+import static com.esferalia.aon.jooq.tables.UrlShorten.URL_SHORTEN;
 import static com.esferalia.aon.jooq.tables.ActionEntry.ACTION_ENTRY;
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
@@ -785,6 +786,7 @@ public class ConsoleDomainIsolate {
 		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"Generating tables script"));
 		tables.stream()
 			.filter(t -> t.field(DOMAIN_FIELD) != null )
+			.filter(t -> !URL_SHORTEN.getName().equals(t.getName()))
 			.forEach(t -> addTable(params, t, stack));
 	}
 

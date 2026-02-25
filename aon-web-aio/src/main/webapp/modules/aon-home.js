@@ -310,6 +310,7 @@ export class AonHome extends AonElement {
 			newFixedButton.id = 'newFixedButton';
 			newFixedButton.classList.add('hidden');
 		    this.appendChild(newFixedButton);
+		 
 		} else {
 			let dialogMenu = new AonDialogMenu();
 		    dialogMenu.id = this.OPTION_DIALOG;

@@ -51,6 +51,12 @@ export class AonNewDialogMenu extends AonElement {
 	open(el = undefined, isFixedButton = false) {
 	    const dialog = this.getElement(this.id);
 	    
+	    let content = this.getElement(this.CONTENT);
+	    if(isFixedButton === true)
+	    	content.classList.add('isFixedButton');
+	    else
+	    	content.classList.remove('isFixedButton');
+	    
 	    this.isFixedButton = isFixedButton; 
 	    this.lastEl = el;
 	    

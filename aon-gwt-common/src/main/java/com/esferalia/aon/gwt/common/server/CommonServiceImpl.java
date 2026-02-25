@@ -1346,10 +1346,15 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public List<User> getUsersForTaskHolder(String domainName, Integer domainId, String user, boolean all) throws AonCoreException {
 		Domain domain = AON.getDomain(domainName, domainId, user);
+		Domain parentDomain = domain.getParent();
+		
 		List<User> users;
-		if((domain.isEnableHeredity() || domain.getDomainType().equals(DomainType.OFFICE)) && null != domain.getParentId())
+		if( 
+			(domain.getDomainType().equals(DomainType.OFFICE) && (null != parentDomain && null != parentDomain.getId() && parentDomain.getDomainType().equals(DomainType.CONSULTANCY))) || 
+			(domain.getDomainType().equals(DomainType.ENTERPRISE) && (null != parentDomain && null != parentDomain.getId() && parentDomain.getDomainType().equals(DomainType.ENTERPRISE)))
+		) {
 			users = AON.getUserStream(new Domain().setName(domainName).setId(domainId), user, f -> f.getDomainProperty().eq(domainId).or(f.getDomainProperty().eq(domain.getParentId())), new Options().setFull(true)).collect(Collectors.toList());
-		else
+		} else
 			users = AON.getUserStream(new Domain().setName(domainName).setId(domainId), user, f -> f.getDomainProperty().eq(domainId), new Options().setFull(true)).collect(Collectors.toList());
 		
 		users.sort(Comparator.comparing(userIt -> normalizeName(userIt.getName())));

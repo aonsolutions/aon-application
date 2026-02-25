@@ -56,11 +56,10 @@ export class AonParent extends AonElement {
 	connectedCallback () {
 		this.init({id:'active', active: true, domainActive:true});
 		
-		if(LS.isNewTheme()) {
-			let newFixedButton = this.getElement('newFixedButton');
-			if(newFixedButton)
-				newFixedButton.classList.add('hidden');
-		}
+		let newFixedButton = this.getElement('newFixedButton');
+		if(newFixedButton)
+			newFixedButton.classList.add('hidden');
+			
 	}
 
 	init(filter) {
@@ -110,7 +109,10 @@ export class AonParent extends AonElement {
 						LS.setDomainLogin(aonMenu.getDur().getUser().login);
 						LS.setDomainId(aonMenu.getDur().getDomain().getId());
 						LS.setDomainName(aonMenu.getDur().getDomain().getName());
+						this.getAonHeader().setCompanyName(aonMenu.getDur().getDomain().getDescription());
 						aonMenu.open();
+						aonMenu.closeEmptyApps();
+						
 					})
 					.catch((err) => {
 						reject(err);
@@ -482,7 +484,8 @@ export class AonParent extends AonElement {
 		.finally(()=>{
 			//TODO: this.getApplication().stopLoader();
 		});
-	
+
+			
 
 	}
 

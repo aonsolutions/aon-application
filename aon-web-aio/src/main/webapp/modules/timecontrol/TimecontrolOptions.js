@@ -13,13 +13,12 @@ import * as GWT from '../../gwt/gwt.js';
   export const taskHolder = () => {
 	let application = document.querySelector(TAG.AON_APPLICATION);
     application.removeToolbarOptions();
-    application.setContent(new JSF.AonJsfTaskHolder())
+    GWT.iLoad(GWT.TASK_HOLDER_MODULE, application.CONTENT);
   }
   
   export const workplacesCalendar = () => {
 	let application = document.querySelector(TAG.AON_APPLICATION);
     application.removeToolbarOptions();
-    application.closeSidenav();
     GWT.iLoad(GWT.WORKPLACES_CALENDAR, application.CONTENT);
   }
 
@@ -28,10 +27,7 @@ import * as GWT from '../../gwt/gwt.js';
     name: MSG.PRESENCE,
     title: MSG.PRESENCE,
     icon: MATERIAL_ICONS.ACCOUNT_BOX,
-    fn: () => {
-      let tc = document.querySelector("aon-timecontrol");
-      tc.setDataFilter({period: SigninSidenav.PERIOD.TODAY.id});
-    }
+    fn: () => showView(SIGNIN_VIEWS.AON_PRESENCE_LIST)
   };
 
   export const LOCATION = {

@@ -615,7 +615,7 @@ h1 {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding-right: 1rem;
+	padding: 0 1rem;
 }
 
 .aonHeaderButton {
@@ -3775,7 +3775,6 @@ background-image: url("../favicon.png");
 }
 
 .aonHeaderCompany {
-	display: none;
 	height: 14px;
 	color: var(--aonGrayHeaderButtonsColor);
 }
@@ -3916,6 +3915,12 @@ background-image: url("../favicon.png");
 	height: calc(100vh - 48px);
 }
 
+#aonHome .aonMenuSidenav {
+	height: calc(100vh - 116px);
+	margin-top: 68px;
+}
+
+/*
 #aonHome:has(.aonMenuTopNavVisible) .aonMenuSidenav {
 	height: calc(100vh - 116px);
 	margin-top: 68px;
@@ -3924,6 +3929,7 @@ background-image: url("../favicon.png");
 #aonHome:has(.aonMenuTopNavHide) .aonMenuSidenav {
 	height: calc(100vh - 48px);
 }
+*/
 
 #aonHome:has(.aonMenuTopNavVisible) .rightPanel {
 	height: calc(100vh - 116px);
@@ -5584,5 +5590,26 @@ aon-calendar-menu.menu-open .calendar-menu-option:nth-child(4) {
 }
 
 #aonHeaderSearchDiv{
+	display: none;
+}
+
+#aonHeaderSearchDialogMenuDialogMenuContent{
+  height: 100%;
+  overflow-y: scroll; 
+}
+
+aonSwitchFilter{
+	margin: .5rem .3rem;
+}
+
+#aonWithDataSwitchFilter{
+	margin: .5rem 0 .5rem 1rem;
+}
+
+.aonSwitch{
+	line-height: 1.8;
+}
+
+#aonSigninToolbarHeaderToolSectionSearchCountFilter{
 	display: none;
 }

@@ -13,8 +13,64 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class AnnualCalendarWidget extends FlowPanel {
+	
+	public class CustomTooltip extends PopupPanel {
+
+	    private Widget content;
+	    private int offsetX = 12;
+	    private int offsetY = 12;
+
+	    public CustomTooltip() {
+	        this(new Label());
+	        ((Label) content).addStyleName("custom-tooltip-title");
+	    }
+
+	    public CustomTooltip(Widget widget) {
+	        super(true); // auto-hide
+	        this.content = widget;
+
+	        setStyleName("custom-tooltip");
+	        setWidget(content);
+	    }
+
+	    public void setOffset(int x, int y) {
+	        this.offsetX = x;
+	        this.offsetY = y;
+	    }
+
+	    public void showTooltip(String msg, int x, int y) {
+	        if (content instanceof Label) {
+	            ((Label) content).setText(msg);
+	        }
+
+	        // Primero mostramos para que GWT calcule el tamaño real
+	        setPopupPositionAndShow((offsetWidth, offsetHeight) -> {
+	            int finalX = x + offsetX;
+	            int finalY = y + offsetY;
+
+	            int viewportWidth = com.google.gwt.user.client.Window.getClientWidth();
+	            int viewportHeight = com.google.gwt.user.client.Window.getClientHeight();
+
+	            // Ajuste horizontal
+	            if (finalX + offsetWidth > viewportWidth) {
+	                finalX = x - offsetWidth - offsetX;
+	                if (finalX < 0) finalX = 0;
+	            }
+
+	            // Ajuste vertical
+	            if (finalY + offsetHeight > viewportHeight) {
+	                finalY = y - offsetHeight - offsetY;
+	                if (finalY < 0) finalY = 0;
+	            }
+
+	            setPopupPosition(finalX - 10, finalY - 10);
+	        });
+	    }
+	}
 
     private FlowPanel annualCalendar;
 
@@ -130,16 +186,31 @@ public class AnnualCalendarWidget extends FlowPanel {
 
             if (isWeekend(col)) {
                 lbl.addStyleName("weekend");
-                lbl.getElement().setTitle("No Laborable");
+                
+                CustomTooltip tooltip = new CustomTooltip();
+
+                lbl.addMouseOverHandler(e -> {
+                    String desc = "No Laborable";
+                    if (desc != null) {
+                        tooltip.showTooltip(desc, e.getClientX(), e.getClientY());
+                    }
+                });
+
+                lbl.addMouseOutHandler(e -> tooltip.hide());
             }
 
             if (isHoliday(month, day) || isOwnHoliday(month, day)) {
                 lbl.addStyleName(isHoliday(month, day) ? "holiday" : "own-holiday");
+                
 
-                String desc = getHolidayDescription(month, day);
-                if (desc != null) {
-                    lbl.getElement().setTitle(desc);
-                }
+            	Widget holidayWidget = getHolidayDescription(month, dayCopy);
+                CustomTooltip tooltip = new CustomTooltip(holidayWidget);
+
+                lbl.addMouseOverHandler(e -> {
+                	tooltip.showTooltip(null, e.getClientX(), e.getClientY());
+                });
+
+                lbl.addMouseOutHandler(e -> tooltip.hide());
             }
 
             grid.setWidget(row, col, lbl);
@@ -176,13 +247,20 @@ public class AnnualCalendarWidget extends FlowPanel {
 		}
 	}
 
-	private String getHolidayDescription(int month, int day) {
+	private Widget getHolidayDescription(int month, int day) {
         for (Holiday h : chain) {
             if (h.getDetails() != null) {
                 for (HolidayDetail d : h.getDetails()) {
                     Date date = d.getDate();
-                    if (date.getMonth() == month && date.getDate() == day) {
-                        return d.getDescription() + " (" + h.getDescription() + ")";
+                    if (date.getYear() == (year - 1900) && date.getMonth() == month && date.getDate() == day) {
+                    	
+                    	FlowPanel holidayPanel = new FlowPanel();
+                    	Label holidayDesc = new Label(d.getDescription());
+                    	holidayDesc.addStyleName("custom-tooltip-title");
+                    	holidayDesc.getElement().getStyle().setProperty("margin-bottom", ".5rem");
+                    	holidayPanel.add(holidayDesc);
+                    	holidayPanel.add(new Label(h.getDescription()));
+                    	return holidayPanel;
                     }
                 }
             }

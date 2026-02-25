@@ -19,12 +19,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.config.EnterpriseDataAddAudit;
+import net.aonsolutions.db.up2date.customize.Customize;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.registry.SanitizeDomainRegistries;
-import net.aonsolutions.db.up2date.tgss.MEITrainingUpdate2026;
-import net.aonsolutions.db.up2date.tgss.SMI2026Update;
-import net.aonsolutions.db.up2date.timecontrol.CalendarPersonalDaysAlter;
+import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art284XXFix;
 
 public class Up2Date {
 
@@ -593,7 +590,11 @@ public class Up2Date {
 			// MEITrainingUpdate2026.MEITRAININGUPDATE2026,
 			// AlterFsMod347Detail2025Bis.ALTER_FS_MOD_347_DETAIL_2025_BIS,
 			// SanitizeDomainRegistries.SANITIZE_SIG_AONSOLUTIONS_ORG,
-			SMI2026Update.SMI2026UPDATE,
+			// SMI2026Update.SMI2026UPDATE,
+			// RealDecreeLaw1782025Art284XXFix.REALDECREELAW1782025ART284XXFIX,
+			// Customize.CUSTOMIZE_OPENGES,
+			// Customize.CUSTOMIZE_AYUDAT,
+			// Customize.CUSTOMIZE_INFOAUTONOMOS,
 			
 			
 			// ----------------------------------------------------------------

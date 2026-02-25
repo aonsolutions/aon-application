@@ -37,7 +37,7 @@ class Mod303ARABA2025Declaration extends Mod303ARABA {
 		return mod.isAraba() 
 			&& mod.getPeriod() != Period.T4
 			&& mod.getPeriod() != Period.M12
-			&& mod.getYear() >= 2025		   
+			&& mod.getYear() == 2025		   
 		;
 	}
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{

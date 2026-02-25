@@ -167,9 +167,9 @@ public class Mod347DAO {
 	
 	public static Mod347 initialize(AONContext ctx, int year) {	
 		
-		// Ponemos por defecto el aÃ±o, segÃºn la fecha actual, si estamos en enero o febrero ponemos
-		// el aÃ±o anterior (se supone que queremos hacer el del ultimo periodo del aÃ±o anterior)
-		// en caso contrario ponemos el aÃ±o actual
+		// Ponemos por defecto el año, según la fecha actual, si estamos en enero o febrero ponemos
+		// el año anterior (se supone que queremos hacer el del ultimo periodo del año anterior)
+		// en caso contrario ponemos el año actual
 //		Date today = new Date();
 //		int year = AonDateUtils.getYear(today);		
 //		if (AonDateUtils.getMonth(today) == 0 || AonDateUtils.getMonth(today) == 1) {
@@ -472,7 +472,7 @@ public class Mod347DAO {
 			if (declared.isDeleted()) {
 				deleteDeclared(ctx, declared);
 			} else {
-				// Antes no se guardaba el dominio en las lineas, cuando se generaba el modelo, asÃ­
+				// Antes no se guardaba el dominio en las lineas, cuando se generaba el modelo, así
 				// que hago que siempre que se guarde, se ponga el dominio en las lineas
 				declared.setDomain(mod347.getDomain());
 				updateDeclared(ctx, declared);
@@ -1018,11 +1018,11 @@ public class Mod347DAO {
 	
 	private static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod347 mod347, final Mod347Declared declared) {
 		
-		// Tipo de Facturas segÃºn la clave de la linea del modelo que se le pasa (se hace la operacion inversa que cuando se crea el modelo)
+		// Tipo de Facturas según la clave de la linea del modelo que se le pasa (se hace la operacion inversa que cuando se crea el modelo)
 		final InvoiceType invoiceType1;
 		final InvoiceType invoiceType2;
 		
-		// Tipo de transaccion segÃºn si estÃ¡ marcado o no ISP (solo compras)
+		// Tipo de transaccion según si está marcado o no ISP (solo compras)
 		final InvoiceTransactionType invoiceTransaction1;
 		final InvoiceTransactionType invoiceTransaction2;
 		
@@ -1051,7 +1051,7 @@ public class Mod347DAO {
 			? declared.getDocument()
 			: AonStringUtils.substring(declared.getOperatorNif(),2); 
 		return getInvoiceBreakdown(ctx, fromDate, toDate, mod347)
-			.filter( vat -> AonStringUtils.equals(vat.getRegistryDocument(),registryDocument))
+			.filter( vat -> AonStringUtils.equals(AonStringUtils.trimToEmpty(vat.getRegistryDocument()),AonStringUtils.trimToEmpty(registryDocument)))
 			.filter( vat -> (vat.getTransaction() == invoiceTransaction1 || vat.getTransaction() == invoiceTransaction2 || vat.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY || (vat.getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY && vat.isService()) || (vat.getTransaction() == InvoiceTransactionType.CAN_CEU_MEL && vat.isService()) ) &&  // Nacional o ISP o intracomunitarias o servicios extracomunitarios
 		                    (vat.getInvoiceType() == invoiceType1 || vat.getInvoiceType() == invoiceType2) &&  				 // Tipo (Ventas o Compras/Gastos)		                    
 		                    (vat.isVatAccrualRegime() == declared.isVatAccrual())                                            // Criterio de caja		                    

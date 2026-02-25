@@ -274,7 +274,7 @@ public class AccountAppParamsController implements Serializable {
 				// nothing. Appears empty.
 			}
 		}
-		return account;	
+		return account == null ? new Account() : account;	
 	}
 	private void putAccount(AppParam param,Account account) {
 		ApplicationParameter appParam = parameters.get(param.getValue());

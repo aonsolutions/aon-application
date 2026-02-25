@@ -7,6 +7,7 @@ import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../environments/environmen
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import { Chart } from "chart.js/auto";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import * as LS from '../../../services/localStorageService.js';
 
 let chartCanva;
 let cardFilter;
@@ -73,7 +74,7 @@ export class AonCompanyCostsListNew extends AonElement {
   }
 
   buildToolbarSearch() {
-    let btnSearch = this.getApplication().addSearchOption();
+	let btnSearch = this.getApplication().addSearchOption(LS.isFutureTheme());
     btnSearch.disabled = true;
     const searchValueFn = ({ detail }) => {
       if (detail) getApplicationParent().setDataFilter(detail);

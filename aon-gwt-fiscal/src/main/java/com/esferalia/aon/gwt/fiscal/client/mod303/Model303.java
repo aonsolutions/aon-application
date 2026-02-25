@@ -359,10 +359,21 @@ public class Model303  implements EntryPoint {
 		
 // AEAT ----------------------------------------------------------------------------------------		
 		
-		AEAT_2024_T3 {
+		AEAT_2026 {
 			@Override
 			public boolean accept(Mod303 mod303) {
-				return (mod303.isAEAT() && mod303.getYear() > 2024)
+				return (mod303.isAEAT() && mod303.getYear() >= 2026);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303AEAT2026(mod303,cbk);
+			}
+		}
+		,AEAT_2024_T3 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isAEAT() && mod303.getYear() == 2025)
 					|| (mod303.isAEAT() && mod303.getYear() == 2024
 					&& ( 
 						mod303.getPeriod() == Period.M09
@@ -475,10 +486,21 @@ public class Model303  implements EntryPoint {
 		
 // ARABA ------------------------------------------------------------------------------------------
 
+		ARABA_2026 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isAraba() && mod303.getYear() >= 2026);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303ARABA2026(mod303,cbk);
+			}
+		},
 		ARABA_2023 {
 			@Override
 			public boolean accept(Mod303 mod303) {
-				return (mod303.isAraba() && mod303.getYear() >= 2023);
+				return (mod303.isAraba() && mod303.getYear() >= 2023 && mod303.getYear() <= 2025);
 			}
 
 			@Override
@@ -522,10 +544,21 @@ public class Model303  implements EntryPoint {
 		
 // BIZKAIA ----------------------------------------------------------------------------------------
 		
+		BIZKAIA_2026 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isBizkaia() && mod303.getYear() >= 2026);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303BIZKAIA2026(mod303,cbk);
+			}
+		},
 		BIZKAIA_2023 {
 			@Override
 			public boolean accept(Mod303 mod303) {
-				return (mod303.isBizkaia() && mod303.getYear() >= 2023);
+				return (mod303.isBizkaia() && mod303.getYear() >= 2023 && mod303.getYear() <= 2025);
 			}
 
 			@Override

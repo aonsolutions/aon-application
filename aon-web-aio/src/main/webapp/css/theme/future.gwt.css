@@ -595,6 +595,17 @@ input, select, textarea,
     background-image: url(/icons/arrow-left.svg);		
 }
 
+.aon_icon_refresh {
+    background-image: url(/icons/refresh-cw.svg);		
+}
+
+.aon_icon_filter_off {
+    background-image: url(/icons/filter-off.svg);		
+}
+
+.aon_icon_filter_on {
+    background-image: url(/icons/filter.svg);		
+}
 
 .aon_icon_search, 
 .aon-icon-search,
@@ -611,6 +622,11 @@ input, select, textarea,
 .aon_icon_search, 
 .aon-icon-search {
 	mask-image: url('/icons/search.svg');
+}
+
+.aon_button.aon_icon_search:hover,
+.aon_button.aon_icon_menu_collapse:hover {
+    background-color: black;
 }
 
 .aon_icon_menu_collapse {
@@ -1246,17 +1262,83 @@ div:has( > .aon_icon_menu_collapse) {
 	background-color: white;
 }
 
-.aon-annual-data,
-.aon-holidays {
-	/*
-	flex-direction: column;
-  	justify-content: start;
-  	align-items: start;
-  	*/
-  	gap: 0rem;
-}
-
 .aon-annual-data div, 
 .aon-holidays div {
 	margin-right: 0px;
+}
+
+#workplaceCalendarForm{
+	display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#workplaceCalendarForm .aon_custom_text_box,
+#workplaceCalendarForm .aon_custom_text_box_no_border,
+#workplaceCalendarForm .aon_custom_text_area {
+	margin: 0;
+	width: 100%;
+}
+
+#collapseMenuWorkplaceCalendar.aon_icon_menu_collapse{
+	background-size: 24px !important;
+	background-image:
+		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M172-292v-28h438v28H172Zm596-35L613-480l155-152 20 20-135 132 135 133-20 20ZM172-466v-28h326v28H172Zm0-174v-28h438v28H172Z"/></svg>') !important;
+	mask-image: none !important;
+	background-color: transparent !important;
+}
+
+#showHidePanelWorkplaceCalendar{
+	background-color: #fff;
+}
+
+
+/* ============================================================
+   ACCOUNTING PERIOD
+   ============================================================ */
+
+.aon-accounting-period-title-input{
+	max-width: 10rem;
+	border: none !important;
+    cursor: pointer;
+}
+
+.aon-accounting-period-card input{
+	border: none !important;
+    cursor: pointer;
+}
+
+.aon_number_box{
+	padding-left: 0px;
+}
+
+
+.aon-invoice-console-toolbar {
+	--height-adjust: 75; 	
+}
+.aon-invoice-console-filter-panel {
+	--width-adjust: 350; 	
+}
+
+.aon-invoice-console-panel {
+	margin-left: 1rem;	
+	margin-right: 1rem;	
+}
+
+.aon-invoice-console-panel > div:nth-child(3),
+.aon-invoice-console-panel .aon_search_panel {
+	margin-left: 0rem !important;
+	margin-right: 0rem !important;
+}
+
+.aon-invoice-console-panel .aon_scroll_area {
+	background-color: #fff ;
+}
+
+.aon-invoice-console-panel .aon_display_grid_header_row {
+	z-index: 1;
+}
+
+div.aon_custom_text_box_input:has( input){
+    border:none;
 }

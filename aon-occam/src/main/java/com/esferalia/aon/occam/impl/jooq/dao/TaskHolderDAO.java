@@ -233,7 +233,8 @@ public class TaskHolderDAO {
 
 	private static Condition paramsToCondition(AONContext ctx, TaskHolderParams params) {
 		Condition condition = DSL.trueCondition();
-		condition = TASK_HOLDER.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx));
+//		condition = TASK_HOLDER.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx));
+		condition = TASK_HOLDER.DOMAIN.eq(params.getDomain());
 		
 		if(null != params.getStatus())
 			condition = condition.and(TASK_HOLDER.ACTIVE.eq(params.getStatus() ? (byte)1 : (byte)0));
