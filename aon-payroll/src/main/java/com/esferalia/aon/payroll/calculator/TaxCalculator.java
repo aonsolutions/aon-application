@@ -159,10 +159,11 @@ public abstract class TaxCalculator {
 			if ( AonStringUtils.equals(IRPF_CTA_ESP.getName(), contractPayment.getName() ))
 				return 0.00; //tax
 			
-			if ( ContextVariable.FLEXIBLES.contains(contractPayment.getName() )) {
-				DefaultTaxCalculator.this.irpfBase += tax;
-				return tax;
-			}
+//			if ( ContextVariable.FLEXIBLES.contains(contractPayment.getName() )) {
+//				DefaultTaxCalculator.this.irpfBase += tax;
+//				DefaultTaxCalculator.this.inKindIrpfBase += tax;
+//				return tax;
+//			}
 			
 			PaymentType paymentType = contractPayment.getType();
 			PaymentTypeVisitor typeVisitor = new PaymentTypeVisitor() {

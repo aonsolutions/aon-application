@@ -4,6 +4,7 @@ import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_PASSWORD;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.LOGGER;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -110,6 +111,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		HtmlTable eventsTable = getElementById("eventsTable");
 		assertEquals(2, eventsTable.getRowCount());
 		uncheck("eventsCheck-input");
+		
+		assertNotNull(getElementByXpath("//span[@title='BASE_IRPF_ESPECIE']"));
+		
 	}
 
 
