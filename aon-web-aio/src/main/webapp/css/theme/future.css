@@ -834,6 +834,10 @@ aon-configuration-menu .suiteMenuContent  {
 	display: none;
 }
 
+.aonIconButton i.material-icons {
+	display: block;
+}
+
 .aonToolbarTitle,
 .aonSidenav .aonMenuItemSpan {
 	font-family: "Inter-medium", sans-serif;
@@ -887,35 +891,6 @@ aon-configuration-menu .suiteMenuContent  {
 
 .aonSidenavTitleButton {
 	margin-top: 0px;
-}
-
-#aonOfficePanelSidenavTypesList span{
-	display: inline-block;
-}
-
-.aonOfficePanelSidenavTypesListOption{
-	width: 20.5px;
-	height: 20.5px;
-	background-color: var(--aonTopAppTextColor) !important;
-	mask-size: contain;
-	mask-position: center;
-	mask-repeat: no-repeat;
-	mask-image: url('/icons/more-vertical.svg');
-	margin-right: .3rem;
-}
-
-.sidenavHover:hove .aonOfficePanelSidenavTypesListOption {
-	display: block !important;
-}
-
-#aonOfficePanelSidenavTypesNewButtonIconButton {
-	width: 20.5px;
-	height: 20.5px;
-	background-color: var(--aonTopAppTextColor) !important;
-	mask-size: contain;
-	mask-position: center;
-	mask-repeat: no-repeat;
-	mask-image: url('/icons/plus.svg');
 }
 
 .aonUpload {
@@ -2543,35 +2518,35 @@ aon-search > span {
 /* Invoice Future Sidenav options */
 
 #aonInvoiceSidenavIncomes {
-	display: none;
+	display: block;
 }
 
 #aonInvoiceSidenavExpenses {
-	display: none;
+	display: block;
 }
 
 #aonInvoiceSidenavDocument {
-	display: none;
+	display: block;
 }
 
 #aonInvoiceSidenavManagement {
-	display: none;
+	display: block;
 }
 
 #aonInvoiceSidenavFutureIncomes {
-	display: block;
+	display: none;
 }
 
 #aonInvoiceSidenavFutureExpenses {
-	display: block;
+	display: none;
 }
 
 #aonInvoiceSidenavFutureDocument {
-	display: block;
+	display: none;
 }
 
 #aonInvoiceSidenavFutureManagement {
-	display: block;
+	display: none;
 }
 
 
@@ -2642,4 +2617,10 @@ i[id$="aonHeaderSearchDivButtonIcon"],
 	position: absolute;
 	display: inline-block;
 	color: rgb(66, 66, 66);
+}
+
+.material-icons {
+  font-variation-settings: "FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;
+  font-size: 24px;
+  display: inline-block;
 }
