@@ -66,6 +66,12 @@
 		
 		<dependency>
 			<groupId>org.grecasa</groupId>
+			<artifactId>pa-mod420</artifactId>
+			<version>9.3.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.grecasa</groupId>
 			<artifactId>pa-mod417</artifactId>
 			<version>2.3.1</version>
 			<scope>compile</scope>
