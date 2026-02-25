@@ -588,16 +588,11 @@ export class AonAgendaAllDays extends AonElement {
 			
 			// Horas esperadas (Double[]) → convertir a minutos
 			let expectedTime = 0;
-			
 			const msecPerMinute = 1000 * 60;
 			const msecPerHour = msecPerMinute * 60;
 			if (this._workingDaysHours && this._workingDaysHours.length === 7) {
 			  expectedTime = (this._workingDaysHours[dayOfWeek] || 0) * msecPerHour;
 			}
-			
-			// Diferencia en minutos
-			const diffTime = workedTime - expectedTime;
-			const diffHours = this.formatDiffTime(diffTime);
 
 			// Obtener eventos contrato del día
 			const dayContractFestive = this._festivesContract.get(day.key);
@@ -605,7 +600,12 @@ export class AonAgendaAllDays extends AonElement {
 
 			if (dayContractFestive) {
 				dayFestiveHtml = this.renderContractFestive(dayContractFestive);
+				expectedTime = 0;
 			}
+			
+			// Diferencia en minutos
+			const diffTime = workedTime - expectedTime;
+			const diffHours = this.formatDiffTime(diffTime);
 
 			// Obtener eventos contrato del día
 			//const dayEventContractData = this._eventsContract.get(day.key);
