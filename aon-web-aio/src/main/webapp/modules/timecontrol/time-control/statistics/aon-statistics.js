@@ -94,9 +94,13 @@ export class AonStatistics extends AonElement {
       const firstDayOfWeek = new Date().getFirstDayOfWeek().setHours(0,0,0,0);
       for (const key in resp) {
         let { time, start_date, status, in_date } = resp[key];
+        
+        /*
         if(in_date && status && status.indexOf("in")>=0){
           time =  Number((new Date().getTime() - in_date)  + time);
         }
+        */
+        
         const newTime = this.timeToDecimal(time);
         const day =  new Date(start_date);
         let color = "rgba(189, 189, 189, 1)";
