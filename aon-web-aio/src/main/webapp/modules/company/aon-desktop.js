@@ -263,21 +263,21 @@ export class AonDesktop extends AonElement {
 			return false;
 		}
 
-		if (!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) &&
+		if (showError && !icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) &&
 			!icc.isVerifactu() && icc.verifactuInvoice) {
-			if (showError) this.showMessageError("Es obligatorio seleccionar Verifactu, ya que existe una factura Verifactu en el año actual.");
+			this.showMessageError("Es obligatorio seleccionar Verifactu, ya que existe una factura Verifactu en el año actual.");
 			return false;
 		}
 
-		if (!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) &&
+		if (showError && !icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) &&
 			!icc.isSii() && icc.siiInvoice) {
-			if (showError) this.showMessageError("Es obligatorio seleccionar SII, ya que existe una factura SII en el año actual.");
+			this.showMessageError("Es obligatorio seleccionar SII, ya que existe una factura SII en el año actual.");
 			return false;
 		}
 
-		if (!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) &&
+		if (showError && !icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) &&
 			!icc.isNoVerifactu() && icc.noVerifactuInvoice) {
-			if (showError) this.showMessageError("Es obligatorio seleccionar No Verifactu, ya que existe una factura No Verifactu en el año actual.");
+			this.showMessageError("Es obligatorio seleccionar No Verifactu, ya que existe una factura No Verifactu en el año actual.");
 			return false;
 		}
 
