@@ -3169,6 +3169,7 @@ export class AonInvoice extends AonElement {
 		dupInv.tbaiUrl = undefined;
 		dupInv.rectified = false;
 		dupInv.file = undefined;
+		dupInv.communicationInfo = undefined;
 		if(dupInv.finances) {
 			dupInv.finances.forEach((item, i) => {
 				dupInv.finances[i].id = undefined;
