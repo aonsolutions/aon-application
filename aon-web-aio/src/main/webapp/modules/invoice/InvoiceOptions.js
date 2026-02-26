@@ -1,6 +1,6 @@
 import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
 import * as GWT from "../../gwt/gwt.js";
-import * as JSF from "aio/modules/aon-jsf-app.js";
+import * as JSF from "../aon-jsf-app.js";
 import { AonInvoiceIssued } from "./aon-invoice-issued.js";
 import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
 
@@ -9,6 +9,13 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     let parent = application.getParent();
     parent.buildEmptyToolbarOptions();
     application.setContent(new JSF.AonJsfOffer());
+  }
+
+  export const jsfOfferFormLoad = () => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    let parent = application.getParent();
+    parent.buildEmptyToolbarOptions();
+    application.setContent(new JSF.AonJsfOfferForm());
   }
 
   export const gwtLoad = (option) => {
@@ -234,6 +241,13 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     id: CONSTANT.PROFORMA_INVOICES.initCap(),
     name: MSG.PROFORMA_INVOICES,
     icon: "edit_document",
+    actions: [
+      {
+        id: 'New',
+        icon: 'add',
+        action: () => newInvoice("emitida")
+      }
+    ],
     fn: () => invoiceList({ status: CONSTANT.INBOX, type: "emitida" })
   }
 
@@ -248,6 +262,13 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     id: CONSTANT.RAWDOC_INBOX_RECEIVED_NEW.initCap(),
     name: MSG.DRAFT + " F." + MSG.RECEIVEDS,
     icon: "edit_document",
+    actions: [
+      {
+        id: 'New',
+        icon: 'add',
+        action: () => newInvoice("recibida")
+      }
+    ],
     fn: () => invoiceList({ status: CONSTANT.INBOX, type: "recibida" })
   }
 
@@ -270,6 +291,13 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     id: CONSTANT.RAWDOC_INBOX_TICKET_NEW.initCap(),
     name: MSG.DRAFT + " " + MSG.SIMPLIFIED+"/"+MSG.TICKETS,
     icon: "edit_note",
+    actions: [
+      {
+        id: 'New',
+        icon: 'add',
+        action: () => newInvoice("ticket")
+      }
+    ],
     fn: () => invoiceList({ status: CONSTANT.INBOX, type: "ticket" })
   }
 
@@ -314,6 +342,13 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     id: CONSTANT.OTHER_INCOMES.initCap(),
     name: MSG.OTHER_INCOMES,
     icon: "add_card",
+    actions: [
+      {
+        id: 'New',
+        icon: 'add',
+        action: () => createOtherIncomes()
+      }
+    ],
     fn: () => income()
   }
 
@@ -321,6 +356,13 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     id: CONSTANT.OFFERS.initCap(),
     name: MSG.OFFERS,
     icon: MATERIAL_ICONS.CONTRACT,
+    actions: [
+      {
+        id: 'New',
+        icon: 'add',
+        action: () => jsfOfferFormLoad()
+      }
+    ],
     fn: () => jsfOfferLoad()
   }
 
@@ -328,6 +370,13 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     id: CONSTANT.OTHER_EXPENSES.initCap(),
     name: MSG.OTHER_EXPENSES,
     icon: "account_balance_wallet",
+    actions: [
+      {
+        id: 'New',
+        icon: 'add',
+        action: () => createOtherExpenses()
+      }
+    ],
     fn: () => expense()
   }
 
@@ -614,7 +663,7 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
   }
 
 
-  // ***** FUTURE STYLE *****
+  // ***** FUTURE (jljimenezNew) STYLE *****
 
   export const CREATE_INCOME_INVOICE = {
     id: 'FutureCreateIncomeInvoice',
@@ -677,13 +726,27 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     fn: () => invoiceList({ status: CONSTANT.INBOX, type: "emitida" })
   }
 
+  export const FUTURE_OTHER_INCOMES = {
+    id: 'Future' + CONSTANT.OTHER_INCOMES.initCap(),
+    name: MSG.OTHER_INCOMES,
+    icon: "add_card",
+    fn: () => income()
+  }
+
+  export const FUTURE_OFFERS = {
+    id: 'Future' + CONSTANT.OFFERS.initCap(),
+    name: MSG.OFFERS,
+    icon: MATERIAL_ICONS.CONTRACT,
+    fn: () => jsfOfferLoad()
+  }
+
 
   export const FUTURE_MAIN_INCOMES_LIST = {
     id: 'FutureIncomesList',
     title: MSG.LIST,
     name: MSG.LIST,
     opened: true,
-    options: [FUTURE_INVOICE_ISSUED_BETA, FUTURE_PROFORMA_INVOICES, OTHER_INCOMES, OFFERS ]
+    options: [FUTURE_INVOICE_ISSUED_BETA, FUTURE_PROFORMA_INVOICES, FUTURE_OTHER_INCOMES, FUTURE_OFFERS ]
   }
 
 
@@ -724,13 +787,20 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     icon: "edit_note",
     fn: () => invoiceList({ status: CONSTANT.INBOX, type: "ticket" })
   }
+  
+  export const FUTURE_OTHER_EXPENSES = {
+    id: 'Future' + CONSTANT.OTHER_EXPENSES.initCap(),
+    name: MSG.OTHER_EXPENSES,
+    icon: "account_balance_wallet",
+    fn: () => expense()
+  }
 
   export const FUTURE_MAIN_INCOMES_LIST_TRIAL = {
     id: 'FutureIncomesListTrial',
     title: MSG.LIST,
     name: MSG.LIST,
     opened: true,
-    options: [FUTURE_INVOICE_ISSUED_BETA, FUTURE_PROFORMA_INVOICES, OTHER_INCOMES ]
+    options: [FUTURE_INVOICE_ISSUED_BETA, FUTURE_PROFORMA_INVOICES, FUTURE_OTHER_INCOMES ]
   }
 
   export const FUTURE_MAIN_EXPENSES_CREATE = {
@@ -745,7 +815,7 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     title: MSG.LIST,
     name: MSG.LIST,
     opened: true,
-    options: [FUTURE_INVOICE_RECEIVED_BETA, FUTURE_RAWDOC_INBOX_RECEIVED_NEW, FUTURE_INVOICE_TICKET, FUTURE_RAWDOC_INBOX_TICKET_NEW, OTHER_EXPENSES] 
+    options: [FUTURE_INVOICE_RECEIVED_BETA, FUTURE_RAWDOC_INBOX_RECEIVED_NEW, FUTURE_INVOICE_TICKET, FUTURE_RAWDOC_INBOX_TICKET_NEW, FUTURE_OTHER_EXPENSES] 
   }
 
   export const FUTURE_MAIN_INCOMES = {

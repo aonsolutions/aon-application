@@ -26,6 +26,49 @@ public class MIModelo420RequestHandler implements RequestHandler<MIModelo420Requ
 		
 	}
 	
+// PRUEBAS ------------------------------------------------------------------------------------------------------------------------------	
+	
+//	private static String obtenerXML420() {
+//		String fileXML =
+//			"<DEC MOD=\"420\" ANY=\"2026\" PER=\"1T\">"+
+//			    "<IDE ACO=\"N\" RECC=\"N\" DRECC=\"N\" EOP=\"N\" ACR=\"N\">"+
+//			        "<OTP NIF=\"B50111111\" NRS=\"EMPRESA DE PRUEBA, S.L.\" SVP=\"CL\" NVP=\"SANTA ANA\" NPK=\"1\" ESC=\"\" PIS=\"\" PUE=\"\" LOC=\"UTEBO LOCALIDAD\" TEL=\"976000001\" MOV=\"600000000\" EMA=\"correo@correo.com\" POP=\"50\" CMU=\"50272\" CP=\"50180\"/>"+
+//			    "</IDE>"+
+//			    "<IGI_DEV TOT=\"37650\">"+
+//			        "<DEV BAS=\"10000\" TIP=\"000\" CUO=\"000\"/>"+
+//			        "<DEV BAS=\"20000\" TIP=\"300\" CUO=\"600\"/>"+
+//			        "<DEV BAS=\"30000\" TIP=\"500\" CUO=\"1500\"/>"+
+//			        "<DEV BAS=\"40000\" TIP=\"700\" CUO=\"2800\"/>"+
+//			        "<DEV BAS=\"50000\" TIP=\"950\" CUO=\"4750\"/>"+
+//			        "<DEV BAS=\"60000\" TIP=\"1500\" CUO=\"9000\"/>"+
+//			        "<DEV BAS=\"70000\" TIP=\"2000\" CUO=\"14000\"/>"+
+//			        "<DEV BAS=\"80000\" TIP=\"100\" CUO=\"800\"/>"+
+//			        "<OIN BAS=\"90000\" CUO=\"2000\"/>"+
+//			        "<MBC BAS=\"100000\" CUO=\"2200\"/>"+
+//			    "</IGI_DEV>"+
+//			    "<IGI_DED TOT=\"42000\">"+
+//			        "<OIC BAS=\"600000\" CUO=\"42000\"/>"+
+//			        "<OII BAS=\"000\" CUO=\"000\"/>"+
+//			        "<IMC BAS=\"000\" CUO=\"000\"/>"+
+//			        "<IMI BAS=\"000\" CUO=\"000\"/>"+
+//			        "<RED BAS=\"000\" CUO=\"000\"/>"+
+//			        "<CRA CUO=\"000\"/>"+
+//			        "<RBI CUO=\"000\"/>"+
+//			        "<RIA CUO=\"000\"/>"+
+//			        "<RPP CUO=\"000\"/>"+
+//			    "</IGI_DED>"+
+//			    "<LIQ DIF=\"-4350\" RCU=\"000\" CPA=\"000\" DAC=\"000\" RLI=\"-4350\"/>"+
+//			    "<RES TIP=\"C\" IMP=\"4350\"/>"+
+//			    "<ADI EOA=\"000\" ODD=\"000\"/>"+
+//			    "<RCC>"+
+//			        "<IEB BAS=\"000\" CUO=\"000\"/>"+
+//			        "<IAB BAS=\"000\" CUO=\"000\"/>"+
+//			    "</RCC>"+
+//			"</DEC>";
+//	    return fileXML;
+//    
+//	}
+//	
 //	private static String obtenerXML425() {
 //		String fileXML =
 //			"<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>" +
@@ -58,7 +101,7 @@ public class MIModelo420RequestHandler implements RequestHandler<MIModelo420Requ
 //		return fileXML;
 //		
 //	}
-
+//
 //	private static String obtenerXML417() {
 //		
 //		String fileXML = 
@@ -93,7 +136,7 @@ public class MIModelo420RequestHandler implements RequestHandler<MIModelo420Requ
 //    
 //    	return fileXML;
 //	}
-	
+//	
 //	private static String obtener415() {
 //		
 //		String fileTxt = 
@@ -110,11 +153,11 @@ public class MIModelo420RequestHandler implements RequestHandler<MIModelo420Requ
 //		return fileTxt;
 //	
 //	}
-	
+//	
 //	public static void main(String[] args) {
 //		
 //		MIModelo420Request input = new MIModelo420Request();
-//		input.setDeclaracion(Base64.getEncoder().encodeToString(obtenerXML417().getBytes()));
+//		input.setDeclaracion(Base64.getEncoder().encodeToString(obtenerXML420().getBytes()));
 ////		input.setDeclaracion(Base64.getEncoder().encodeToString(obtener415().getBytes()));
 //		input.setBorrador(false);
 //		
@@ -137,4 +180,8 @@ public class MIModelo420RequestHandler implements RequestHandler<MIModelo420Requ
 //		
 //	}
 	
+// --------------------------------------------------------------------------------------------------------------------------------------
+	
 }
+
+

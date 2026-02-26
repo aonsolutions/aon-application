@@ -320,6 +320,7 @@ export const AON_JSF_COMMERCIAL_PRODUCT_STAT = 'aon-jsf-commercial-product-stat'
 export const AON_JSF_COMMERCIAL_CATEGORY_STAT = 'aon-jsf-commercial-category-stat' ;
 export const AON_JSF_COMMERCIAL_GEOZONE_STAT = 'aon-jsf-commercial-geozone-stat' ;
 export const AON_JSF_OFFER = 'aon-jsf-offer' ;
+export const AON_JSF_OFFER_FORM = 'aon-jsf-offer-form' ;
 export const AON_JSF_OFFER_DETAIL_COMMISSION = 'aon-jsf-offer-detail-commission' ;
 export const AON_JSF_COMMISSION = 'aon-jsf-commission' ;
 export const AON_JSF_COMMISSION_CALC = 'aon-jsf-commission-calc' ;

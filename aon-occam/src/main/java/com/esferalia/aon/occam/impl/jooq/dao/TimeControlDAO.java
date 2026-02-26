@@ -459,6 +459,7 @@ public class TimeControlDAO {
 			
 			contractEvents.setFullTime(getFullTimeJourney(ctx, lastContractId));
 			contractEvents.setWorkingDays(getWorkingDays(ctx, lastContractId));
+			contractEvents.setWorkingDaysHours(getWorkingDaysHours(ctx, lastContractId));
 			
 			getContractFestives(ctx, startDate, endDate, contractFestives, taskHolderContracts);
 			getContractDaysTypes(ctx, startDate, endDate, contractDaysType, taskHolderContracts);
@@ -557,7 +558,8 @@ public class TimeControlDAO {
 							.setSource(TimeControlContractEventSource.FESTIVE)
 							.setStartDate(parseDateSqlToUtil(holidayRecord.get(HOLIDAY_DETAIL.DATE)))
 							.setEndDate(parseDateSqlToUtil(holidayRecord.get(HOLIDAY_DETAIL.DATE)))
-							.setDescription(holidayRecord.get(HOLIDAY_DETAIL.DESCRIPTION) + " (" + holidayRecord.get(HOLIDAY.DESCRIPTION) + ")")
+							.setDescription(holidayRecord.get(HOLIDAY_DETAIL.DESCRIPTION))
+							//.setAdditionalInfo(holidayRecord.get(HOLIDAY.DESCRIPTION))
 							;
 					
 					contractFestives.add(timeControlContractEvent);
@@ -756,6 +758,143 @@ public class TimeControlDAO {
 							break;
 						case "LABORABLE_SABADO":
 							workingDays[6] = Byte.parseByte(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						default:
+							break;
+					}
+				}
+			}
+		}
+		
+		return workingDays;
+	}
+	
+	private static Double[] getWorkingDaysHours(AONContext ctx, Integer contractId) {
+		Double[] workingDays = new Double[7];
+		
+		Record contractCalendarRecord = ctx.getDslContext().select(DSL.ifnull(CONTRACT.CALENDAR, PAYROLL_WORKPLACE.CALENDAR).as(CONTRACT.CALENDAR))
+				  .from(CONTRACT)
+				  .innerJoin(PAYROLL_WORKPLACE)
+				  .on(CONTRACT.WORKPLACE.eq(PAYROLL_WORKPLACE.WORKPLACE))
+				  .where(CONTRACT.ID.eq(contractId))
+				  .fetchOne();
+		
+		if (null != contractCalendarRecord){
+				
+			Result<Record> workingDaysRecords = ctx.getDslContext().select().from(CONTRACT_DATA)
+					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+					.and(CONTRACT_DATA.NAME.in(
+							"HORAS_LUNES",
+							"HORAS_MARTES",
+							"HORAS_MIERCOLES",
+							"HORAS_JUEVES",
+							"HORAS_VIERNES",
+							"HORAS_SABADO",
+							"HORAS_DOMINGO"
+					)).fetch();
+			
+			if(workingDaysRecords.isEmpty()) {
+				
+				// Default calendar working days
+				
+				Integer calendarId = contractCalendarRecord.get(CONTRACT.CALENDAR);
+				
+				Result<Record> calendarRecords = ctx.getDslContext().select().from(CALENDAR)
+						.where(CALENDAR.ID.eq(calendarId))
+						.fetch();
+				
+				for(Record calendarRecord : calendarRecords){
+					workingDays[0] = calendarRecord.get(CALENDAR.SUNDAY_HOURS);
+					workingDays[1] = calendarRecord.get(CALENDAR.MONDAY_HOURS);
+					workingDays[2] = calendarRecord.get(CALENDAR.TUESDAY_HOURS);
+					workingDays[3] = calendarRecord.get(CALENDAR.WEDNESDAY_HOURS);
+					workingDays[4] = calendarRecord.get(CALENDAR.THURSDAY_HOURS);
+					workingDays[5] = calendarRecord.get(CALENDAR.FRIDAY_HOURS);
+					workingDays[6] = calendarRecord.get(CALENDAR.SATURDAY_HOURS);
+				}
+				
+			} else {
+				
+				for(Record workingDaysRecord : workingDaysRecords) {
+					String name = workingDaysRecord.get(CONTRACT_DATA.NAME);
+					switch (name) {
+						case "HORAS_DOMINGO":
+							workingDays[0] = Double.parseDouble(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "HORAS_LUNES":
+							workingDays[1] = Double.parseDouble(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "HORASE_MARTES":
+							workingDays[2] = Double.parseDouble(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "HORAS_MIERCOLES":
+							workingDays[3] = Double.parseDouble(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "LHORAS_JUEVES":
+							workingDays[4] = Double.parseDouble(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "HORAS_VIERNES":
+							workingDays[5] = Double.parseDouble(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "HORAS_SABADO":
+							workingDays[6] = Double.parseDouble(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						default:
+							break;
+					}
+				}
+			}	
+		
+		} else {
+			
+			// Si vale 0 es laborable y si vale 1 es no laborables
+			Result<Record> workingDaysRecords = ctx.getDslContext().select().from(CONTRACT_DATA)
+					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+					.and(CONTRACT_DATA.NAME.in(
+							"HORAS_LUNES",
+							"HORAS_MARTES",
+							"HORAS_MIERCOLES",
+							"HORAS_JUEVES",
+							"HORAS_VIERNES",
+							"HORAS_SABADO",
+							"HORAS_DOMINGO"
+					)).fetch();
+			
+			if(workingDaysRecords.isEmpty()) {
+				
+				workingDays[0] = 0.00;
+				workingDays[1] = 8.00;
+				workingDays[2] = 8.00;
+				workingDays[3] = 8.00;
+				workingDays[4] = 8.00;
+				workingDays[5] = 8.00;
+				workingDays[6] = 0.00;
+			
+			} else {
+				
+				for(Record workingDaysRecord : workingDaysRecords) {
+					String name = workingDaysRecord.get(CONTRACT_DATA.NAME);
+					switch (name) {
+						case "HORAS_DOMINGO":
+							workingDays[0] = Double.parseDouble(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "HORAS_LUNES":
+							workingDays[1] = Double.parseDouble(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "HORAS_MARTES":
+							workingDays[2] = Double.parseDouble(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "HORAS_MIERCOLES":
+							workingDays[3] = Double.parseDouble(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "HORAS_JUEVES":
+							workingDays[4] = Double.parseDouble(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "HORAS_VIERNES":
+							workingDays[5] = Double.parseDouble(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
+							break;
+						case "HORAS_SABADO":
+							workingDays[6] = Double.parseDouble(workingDaysRecord.get(CONTRACT_DATA.EXPRESSION));
 							break;
 						default:
 							break;

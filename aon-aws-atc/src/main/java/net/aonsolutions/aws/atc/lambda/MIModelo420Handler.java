@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.grecasa.ext.pa.mod417.MIModelo417;
+import org.grecasa.ext.pa.mod420.MIModelo420;
 import org.grecasa.ext.pa.tributos.MIModeloComun;
 
 public class MIModelo420Handler {
@@ -14,7 +15,7 @@ public class MIModelo420Handler {
 		} else if (mensajes.isEmpty()) {
 			System.out.println("mensajes is empty");
 		} else {
-			System.err.println("Nº mensajes error: " + mensajes.size());
+			System.err.println("Nº mensajes error/aviso: " + mensajes.size());
 			for (String m : mensajes)
 				System.err.println("" + m);
 		}
@@ -55,7 +56,11 @@ public class MIModelo420Handler {
 			
 			if (resultado != null) {
 				result.setResultado(resultado);
+				System.out.println("INFO: DECLARACION CORRECTA");
+			} else {
+				System.err.println("INFO: DECLARACION ERRONEA");
 			}
+			
 			List<String> mensajes = miModelo.getMensajes() ;
 			if (miModelo.getMensajes() != null) {
 				mostrarMensajes(mensajes);
@@ -95,7 +100,11 @@ public class MIModelo420Handler {
 			
 			if (resultado != null) {
 				result.setResultado(new String(resultado, StandardCharsets.ISO_8859_1));
+				System.out.println("INFO: DECLARACION CORRECTA");
+			} else {
+				System.err.println("INFO: DECLARACION ERRONEA");
 			}
+			
 			List<String> mensajes = miModelo.getMensajes() ;
 			if (miModelo.getMensajes() != null) {
 				mostrarMensajes(mensajes);
@@ -111,10 +120,9 @@ public class MIModelo420Handler {
 	
 	private MIModeloComun getMiModelo(String declaracion) {
 		
-//		if (declaracion.contains("MOD=\"420\"")) {
-//			return new MIModelo420(getDownloadDir());
-//		} else 
-		if (declaracion.contains("MOD=\"417\"")) {
+		if (declaracion.contains("MOD=\"420\"")) {
+			return new MIModelo420(getDownloadDir());
+		} else if (declaracion.contains("MOD=\"417\"")) {
 			return new MIModelo417(getDownloadDir());
 		} else 
 //		if (declaracion.contains("MOD=\"425\"")) {
@@ -190,3 +198,5 @@ public class MIModelo420Handler {
 //	}
 
 }
+
+

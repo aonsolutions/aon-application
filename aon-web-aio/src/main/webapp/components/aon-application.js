@@ -827,11 +827,10 @@ export class AonApplication extends AonElement {
 
         option.actions.forEach((item, i) => {
           let button = this.createElement(TAG.SPAN);
-          button.style.right = "5px";
-          button.style.top = "0px";
+          let rightPX = 5 + (30 * i);
+          button.style.right = rightPX + "px";
           button.style.position = "absolute";
           let aonIconButton = new AonIconButton();
-          aonIconButton.classList.add('aonOfficePanelSidenavTypesListOption');
           aonIconButton.noHover = true;
           aonIconButton.icon = item.icon;
           aonIconButton.id = li.id + item.id;

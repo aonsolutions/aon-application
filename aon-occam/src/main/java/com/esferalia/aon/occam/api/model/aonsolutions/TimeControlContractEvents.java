@@ -13,6 +13,7 @@ public class TimeControlContractEvents implements Serializable {
 
 	private Boolean fullTime;
 	private Byte[] workingDays;
+	private Double[] workingDaysHours;
 	private List<TimeControlContractEvent> events;
 	private List<TimeControlContractEvent> festives;
 	private List<TimeControlContractEvent> contractDaysType;
@@ -37,6 +38,15 @@ public class TimeControlContractEvents implements Serializable {
 
 	public TimeControlContractEvents setWorkingDays(Byte[] workingDays) {
 		this.workingDays = workingDays;
+		return this;
+	}
+
+	public Double[] getWorkingDaysHours() {
+		return workingDaysHours;
+	}
+
+	public TimeControlContractEvents setWorkingDaysHours(Double[] workingDaysHours) {
+		this.workingDaysHours = workingDaysHours;
 		return this;
 	}
 
@@ -98,11 +108,17 @@ public class TimeControlContractEvents implements Serializable {
 			for(int i = 0; i < 7; i++)
 				workingDaysArr.put(workingDays[i]);
 		
+		JSONArray workingDaysHoursArr = new JSONArray();
+		if(null != getWorkingDaysHours())
+			for(int i = 0; i < 7; i++)
+				workingDaysHoursArr.put(workingDaysHours[i]);
+		
 		json.put("festives", festivesArr);
 		json.put("daysType", daysTypeArr);
 		json.put("contractITs", contractITsArr);
 		json.put("events", eventsArr);
 		json.put("workingDays", workingDaysArr);
+		json.put("workingDaysHours", workingDaysHoursArr);
 		
 		return json;
 	}
