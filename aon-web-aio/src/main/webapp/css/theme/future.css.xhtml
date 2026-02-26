@@ -176,6 +176,12 @@
 		border-bottom: 1px solid #e2e8f0 !important;
 	}
 	
+	.rich-table-header{
+		background-image: none;
+   		background-color: #e2e8f0;	
+		border-bottom: 1px solid #e2e8f0 !important;
+	}
+	
 	.aon-dataTable,
 	.aon-editDataTable {
 		border-bottom: none;
@@ -201,7 +207,8 @@
 	.aon-dataTable > tbody > tr > td,
 	.aon-editDataTable > tbody > tr > td,
 	.aon-dataTable-header > th,
-	.aon-editDataTable-header > th
+	.aon-editDataTable-header > th,
+	.rich-table-header > th
 	 {
 	 	color: #64748b;
 	 	height: 42px !important; /*3.625rem;*/
@@ -215,6 +222,45 @@
 		font-family: "Inter-bold", sans-serif;
 	}
 
+	.rich-shuttle-source-items, 
+	.rich-shuttle-target-items {
+		border-width: 1px;
+		border-style: solid;
+		border-color: #e2e8f0;
+		border-radius: .375rem;
+	}
+	
+	.rich-shuttle-controls > div {
+   		padding: 0.5rem;
+		background-image: none;
+		background-color: white;
+		border-width: 1px;
+		border-style: solid;
+		border-color: #e2e8f0;
+		border-radius: .375rem;
+	}
+	.rich-shuttle-controls > div > div {
+        border:none;
+        background-image: none;
+        background-color: transparent;
+    }
+	
+	.rich-shuttle-header-tab-cell,
+	.rich-shuttle-header-tab-cell-last{
+		border:none;
+		background-image: none;
+   		background-color: #e2e8f0;	
+	}
+	
+	 .rich-shuttle-source-row-selected{
+   		background-color: #e2e8f0;	
+	 }
+	 
+	.rich-shuttle-source-cell,
+	.rich-shuttle-source-cell-selected{
+   		padding: 0.5rem;
+	}
+	
 	.aon-icon-pdf{
 		background-image:  url(#{aonResource.resolve['/icons/file-pdf.svg']});
 	}
@@ -408,6 +454,24 @@
 		background-image: url(#{aonResource.resolve['/icons/folder-archive.svg']}) !important; 
 	}
 	
+	.aon-finding-toolbar-item.aon-icon-task-liberate{
+  		min-height: 24px;
+		padding-left: 32px;
+        background-image: url(#{aonResource.resolve['/icons/link-2-off.svg']}) !important; 
+	}
+	
+	.aon-finding-toolbar-item.aon-icon-newFolder{
+  		min-height: 24px;
+		padding-left: 32px;
+        background-image: url(#{aonResource.resolve['/icons/folder-plus.svg']}) !important; 
+    }
+	
+	.aon-finding-toolbar-item.aon-icon-deleteFolder{
+  		min-height: 24px;
+		padding-left: 32px;
+        background-image: url(#{aonResource.resolve['/icons/folder-x.svg']}) !important; 
+    }
+
 	.aon-icon-point-red{
 		background-image: url(#{aonResource.resolve['/icons/circle-red.svg']}) ;
 	}
@@ -1090,6 +1154,7 @@
     }
     
     
+    .aon-ConfigContent .aon-scroll-area,
     .aon-scroll-area:has(.aon-panelGrid) {
     	position: relative;
     }
@@ -1169,7 +1234,7 @@
   		background-size: inherit;	  
   		background-image: url(#{aonResource.resolve['/icons/eye.svg']}) ;
 	}
-	
+
 	.aon-icon-project-ok {
 		padding: 13px !important;
   		background-size: inherit;	  
@@ -1254,6 +1319,8 @@
 	}
 	
 	.aon-icon-attach-file{
+		min-width: 24px ;
+		min-height: 24px ;
 	    background-image: url(#{aonResource.resolve['/icons/paperclip.svg']}) ;
     }
 	
@@ -1291,7 +1358,7 @@
 	
 	.rich-inslider-field{
 		background-image: none ;
-	}aon-icon-sincronize
+	}
 	
 	.rich-inslider-tip {
 	    border-color: #cbd5e1;
@@ -1392,7 +1459,37 @@
        	background-image: url(#{aonResource.resolve['/icons/x-circle.svg']});
      }
      
+     .aon-icon-check {
+     	min-width: 24px ;
+     	min-height: 24px ;
+     	display: inline-block;
+     	background-position: center !important;
+       	background-image: url(#{aonResource.resolve['/icons/square.svg']});
+     }
+     
+     .aon-icon-checked {
+     	min-width: 24px ;
+     	min-height: 24px ;
+     	display: inline-block;
+     	background-position: center !important;
+       	background-image: url(#{aonResource.resolve['/icons/check-square.svg']});
+	}
+     
+     .aon-icon-index {
+     	min-width: 24px ;
+     	min-height: 24px ;
+       	background-image: url(#{aonResource.resolve['/icons/arrow-up.svg']});
+     }
+     
+     .aon-icon-tree-root{
+     	min-width: 24px ;
+     	min-height: 24px ;
+       	background-image: url(#{aonResource.resolve['/icons/network.svg']});
+     }
+
      .aon-icon-task-assume{
+     	min-width: 24px ;
+     	min-height: 24px ;
        	background-image: url(#{aonResource.resolve['/icons/briefcase.svg']});
      }
 
@@ -1535,6 +1632,16 @@
     	background-image: url(#{aonResource.resolve['/icons/user.svg']});
     }
 	
+  	.rich-modalpanel .rich-mp-content-table {
+		background-color: white ;
+	}
+	
+	.rich-tool-tip {
+  		border-radius: .375rem;
+  		border-color: #cbd5e1;
+		background-color:  #f1f5f9;
+	}
+
 </style>
 
 		
