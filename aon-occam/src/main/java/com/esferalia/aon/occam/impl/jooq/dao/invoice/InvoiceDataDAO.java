@@ -184,7 +184,7 @@ public class InvoiceDataDAO {
 	
 		private static final BiConsumer<AONContext, InvoiceData> EMPTY_VALUE = (ctx, invoiceData) -> {
 			if (invoiceData.getValue() == null) 
-				throw new AonCoreException("InvoiceData [" + invoiceData.getName() + "] - " + AonError.EMPTY_DATA.format("value")) ;
+				throw new AonCoreException(AonError.EMPTY_DATA.format("value")) ;
 		};
 		
 		private static final BiConsumer<AONContext, InvoiceData> AUTOCOMPLETE_START_DATE = (ctx, invoiceData) -> {
