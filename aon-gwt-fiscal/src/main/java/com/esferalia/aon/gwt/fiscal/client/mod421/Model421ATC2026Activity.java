@@ -61,10 +61,10 @@ class Model421ATC2026Activity extends DockLayoutPanel implements HasValueChangeH
 		private Label description = new Label();
 		private AonDoubleBox value = new AonDoubleBox(6);
 		private Label unit = new Label();
-		private AonDoubleBox factor = new AonDoubleBox(6);
-		private AonDoubleBox result = new AonDoubleBox(6);
+		private AonDoubleBox factor = new AonDoubleBox(6,4);
+		private AonDoubleBox result = new AonDoubleBox(6,4); // FALTA - SOLO PARA VER COMO SE ESTA CALCULANDO
 		
-		private Model421ATC2026ActivityModule( int index) {
+		private Model421ATC2026ActivityModule(int index) {
 			this.index = index;
 		}
 	}

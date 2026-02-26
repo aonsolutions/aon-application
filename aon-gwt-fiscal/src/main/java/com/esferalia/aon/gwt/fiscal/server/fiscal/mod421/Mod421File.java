@@ -7,7 +7,7 @@ import com.esferalia.aon.occam.api.fiscal.MODEL421;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod421;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
-import com.esferalia.aon.occam.impl.jooq.dao.mod421_2026.Mod421ToDEC;
+import com.esferalia.aon.occam.impl.jooq.dao.mod421_2026.Mod421ToDEC2026;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -34,12 +34,12 @@ public class Mod421File extends HttpServlet {
 			System.out.println("PASO 1");
 			
 			// Obtener el XML
-			String xml = Mod421ToDEC.getDeclaration(mod421); 
+			String xml = Mod421ToDEC2026.getDeclaration(mod421); 
 			
 			System.out.println("PASO 2. xml="+xml);
 			
-			// Pasarlo al modulo de impresión para obtener el fichero para la presentación 
-			ModelAdmonUtils.callAtcAwsFunction(xml, mod421, false, resp);
+			// FALTA - Pasarlo al modulo de impresión para obtener el fichero para la presentación 
+//			ModelAdmonUtils.callAtcAwsFunction(xml, mod421, false, resp);
 			
 			System.out.println("PASO 3. OK");
 			
