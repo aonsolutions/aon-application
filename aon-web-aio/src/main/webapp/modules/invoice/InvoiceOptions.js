@@ -1,6 +1,6 @@
 import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
 import * as GWT from "../../gwt/gwt.js";
-import * as JSF from "aio/modules/aon-jsf-app.js";
+import * as JSF from "../aon-jsf-app.js";
 import { AonInvoiceIssued } from "./aon-invoice-issued.js";
 import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
 
@@ -9,6 +9,13 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     let parent = application.getParent();
     parent.buildEmptyToolbarOptions();
     application.setContent(new JSF.AonJsfOffer());
+  }
+
+  export const jsfOfferFormLoad = () => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    let parent = application.getParent();
+    parent.buildEmptyToolbarOptions();
+    application.setContent(new JSF.AonJsfOfferForm());
   }
 
   export const gwtLoad = (option) => {
@@ -142,11 +149,6 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     let parent = application.getParent();
     parent.buildExpenseToolbarOptions();
     parent.aonNewExpense();
-  }
-
-
-  export const createOffer = () => {
-    alert("EN DESARROLLO. Use temporalmente la opción de presupuestos para crear un nuevo presupuesto.");
   }
 
   export const CREATE_INVOICE_ISSUED = {
@@ -358,7 +360,7 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
       {
         id: 'New',
         icon: 'add',
-        action: () => createOffer()
+        action: () => jsfOfferFormLoad()
       }
     ],
     fn: () => jsfOfferLoad()
@@ -731,7 +733,7 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     fn: () => income()
   }
 
-    export const FUTURE_OFFERS = {
+  export const FUTURE_OFFERS = {
     id: 'Future' + CONSTANT.OFFERS.initCap(),
     name: MSG.OFFERS,
     icon: MATERIAL_ICONS.CONTRACT,
