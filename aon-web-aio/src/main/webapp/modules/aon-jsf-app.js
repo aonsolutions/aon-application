@@ -562,6 +562,14 @@ export class AonJsfOffer extends AonJsfApp {
 	}
 }
 
+export class AonJsfOfferForm extends AonJsfApp {
+
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/offerForm.xhtml');
+	}
+}
+
 export class AonJsfCommercialStatSeller extends AonJsfApp {
 
 	constructor() {
@@ -1706,6 +1714,10 @@ if (!window.customElements.get(TAG.AON_JSF_COMMERCIAL_ACTIVITY)) {
 
 if (!window.customElements.get(TAG.AON_JSF_OFFER)) {
 	window.customElements.define(TAG.AON_JSF_OFFER, AonJsfOffer);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_OFFER_FORM)) {
+	window.customElements.define(TAG.AON_JSF_OFFER_FORM, AonJsfOfferForm);
 }
 
 if (!window.customElements.get(TAG.AON_JSF_COMMERCIAL_STAT_SELLER)) {

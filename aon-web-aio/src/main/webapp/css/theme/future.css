@@ -1491,7 +1491,7 @@ i[id$="ToolbarHeaderToolSectionSYNCHRONIZEButtonIcon"],
 i[id$="ToolbarHeaderToolSectionArchivadasButtonIcon"],
 i[id$="ToolbarHeaderToolSectionCerradasButtonIcon"],
 i[id$="ToolbarHeaderToolSectiontoolbarLabelsButtonIcon"],
-i[id$="ToolbarHeaderToolSectionRestoreButtonIcon"],
+/* i[id$="ToolbarHeaderToolSectionRestoreButtonIcon"], */
 i[id$="aonSigninToolbarHeaderToolSectionsyncButtonIcon"],
 i[id$="aonDocumentalToolbarHeaderToolSectionSendFileButtonIcon"],
 i[id$="aonDocumentalToolbarHeaderToolSectionDownloadFileButtonIcon"],
@@ -2408,11 +2408,11 @@ aon-search > span {
     border: .0625rem solid #cbd5e1 !important;
 }
 
-#aonDocumentalSidenavUserCategoriesList li > span:last-of-type,
+/* #aonDocumentalSidenavUserCategoriesList li > span:last-of-type,
 #aon-notesSidenavTagsList li > span:last-of-type,
 #aonWarehouseSidenavWarehousesList li > span:last-of-type {
 	display: block !important;
-}
+} */
 
 #aonDocumentalSidenavUserCategoriesList aon-icon-button.aonOfficePanelSidenavTypesListOption,
 #aon-notesSidenavTagsList aon-icon-button.aonOfficePanelSidenavTypesListOption,
