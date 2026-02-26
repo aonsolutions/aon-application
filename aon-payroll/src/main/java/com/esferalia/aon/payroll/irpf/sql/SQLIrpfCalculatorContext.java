@@ -174,6 +174,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		
 		Double extraProrrated = 0.00;
 		Double bonusProrrated = 0.00;
+		Double monthlyBase = 0.00 ;
 		Double monthlyAmount = 0.00 ;
 		
 		@Override
@@ -181,11 +182,12 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
 			super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
 			
-			if (!isExtra(payment) 
+			if (isMonthly(payment)) {
+				monthlyAmount += tax;
+				monthlyBase += quote;
+			} else if (!isExtra(payment) 
 				&& isBonus(payment) ) {
 				bonusProrrated += quote - tax;
-			} else if (isMonthly(payment)) {
-				monthlyAmount += tax;
 			} else if (isNonExtra(payment) ) {
 				extraProrrated += quote /*- tax */;
 			}
@@ -200,6 +202,10 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			return extraProrrated;
 		}
 		
+		public Double getMonthlyBase() {
+			return monthlyBase;
+		}
+
 		public Double getMonthlyAmount() {
 			return monthlyAmount;
 		}
@@ -1304,8 +1310,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	@Override
 	public CausaRegularizacion getCausaRegularizacion() {
 		if (irpfRegularizationRs == null) {
-			return (irpfBase > 0.00 && 
-					issuedSalaries.size() == AonDateUtils.getMonth(startDate) )? CausaRegularizacion.ONCE : null;
+			return (irpfBase > 0.00 
+					/*&& issuedSalaries.size() == AonDateUtils.getMonth(startDate)*/ )? CausaRegularizacion.ONCE : null;
 		}
 		try {
 			return getByOrdinal(
@@ -1586,6 +1592,9 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 				nextSocialSecurityContributons = ( salary.getSocialSecurityContributions() != null ? salary.getSocialSecurityContributions() : 0.00 )  * size;
 				
+				double monthlySocialSecurityContributions = builder.getMonthlyBase()
+						* salary.getSocialSecurityContributions() / salary.getCommonBase();
+				nextSocialSecurityContributons-= (size - 1) * monthlySocialSecurityContributions;
 				
 				
 				break;

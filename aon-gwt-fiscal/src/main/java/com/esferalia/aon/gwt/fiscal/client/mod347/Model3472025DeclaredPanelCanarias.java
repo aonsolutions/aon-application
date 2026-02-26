@@ -225,7 +225,7 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 		
 		panel.add(tab3);
 		
-		// FALTA - POR AHORA VOY A DEJAR EL BDNS PORQUE NO SE SI AL FINAL CANARIAS TAMBIEN LO PONDRA
+		// POR AHORA VOY A DEJAR EL BDNS PORQUE NO SE SI AL FINAL CANARIAS TAMBIEN LO PONDRA
 		// EL PROGRAMA DE AYUDA DEL 2025 NO LO LLEVA
 		// Importe percibido en metalico / Ejercicio / Importe operaciones criterio de caja / BDNS
 		

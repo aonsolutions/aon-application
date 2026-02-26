@@ -57,7 +57,6 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
-import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
@@ -202,20 +201,30 @@ public class SerfruitDAO {
 	
 	public static void saveDeliveryPackaging(AONContext ctx, Delivery delivery, List<SerfruitDeliveryPackaging> packaging) {
 		Warehouse w = getWarehouse(ctx, delivery);
-		StringBuilder builder = new StringBuilder();
+		StringBuilder builder = new StringBuilder();	
 		processPackaging(ctx, delivery, packaging, w, null, builder);
 		insertAttachPackaging(ctx, delivery, builder);
 	}
 
 	private static void processPackaging(AONContext ctx, Delivery delivery, List<SerfruitDeliveryPackaging> packaging, Warehouse w, Integer parentLine, StringBuilder builder) {
-	
-		packaging.stream().forEach(dp -> {
+		
+		packaging.stream()
+		.map(p -> {
+			if(p.getSscc() != null && p.getSscc().equalsIgnoreCase("generate") && p.getQuantity() == 0.0) {
+				if(p.getContent().size() == 1) {
+					p = p.getContent().get(0);
+				}
+				p.setSscc(PackagingDAO.generateSSCC(ctx, "9", "8424273", 9));
+			}
+			return p;
+		})
+		.forEach(dp -> {
 			if(dp.getDeliveryLine() == null) {
 				Integer maxLine = delivery.getDetails().stream().mapToInt(r -> r.getLine()).max().getAsInt() + 1;
 				insertDetail(ctx, delivery, dp, maxLine, w);
 
 				processPackaging(ctx, delivery, dp.getContent(), w, maxLine, builder);
-			
+				
 				if(dp.getSscc() != null) {
 					builder.append("[ENV=" + maxLine + ";LIN=" + getLine(dp) +";SSCC=" + dp.getSscc()+ "]");
 				} else {
@@ -223,7 +232,6 @@ public class SerfruitDAO {
 				}
 			}
  		});
-		
 	}
 	
 	private static void insertAttachPackaging(AONContext ctx, Delivery delivery, StringBuilder builder) {

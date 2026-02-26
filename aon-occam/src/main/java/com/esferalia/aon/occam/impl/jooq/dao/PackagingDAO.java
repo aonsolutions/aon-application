@@ -256,7 +256,7 @@ public class PackagingDAO {
 					.and(f.getProductProperty().eq(packaging.getContainer().getProduct()))
 					.and(f.getSerialNumberProperty().isNull()));
 			container = ItemDAO.save(ctx, containerBase.copy()
-					.setSerialNumber(generateSSCC(ctx))
+					.setSerialNumber(generateSSCC(ctx, "0", "8437016734", 6))
 					.setSerialDate(new Date()));
 			
 			packaging.getContainer().setItem(container.getId());
@@ -967,7 +967,7 @@ public class PackagingDAO {
 		List<Packaging> list = new LinkedList<>();
 		for(Integer i = 0; i < packaging.getCopies(); i++) {
 			Packaging p = packaging.copy(); 
-			String sscc = generateSSCC(ctx);
+			String sscc = generateSSCC(ctx, "0", "8437016734", 6);
 			Item container = packaging.getContainer().copy();
 			container.setId(null).setBarcode(null).setSerialNumber(sscc).setSerialDate(new Date()).setStatus(ProductStatus.ACTIVE);
 			container = ItemDAO.save(ctx, container);
@@ -1018,7 +1018,7 @@ public class PackagingDAO {
 		return list;
 	}
 	
-	private static String generateSSCC(AONContext ctx){
+	protected static String generateSSCC(AONContext ctx, String extensionDigit, String gs1CompanyPrefix, Integer aonNumberLength) {
 		ApplicationParameter param = AppParamDAO.fetchOne(ctx, AppParam.SSCC_LAST_NUMBER);
 		Integer number = 0;
 		if(param != null) {
@@ -1030,12 +1030,11 @@ public class PackagingDAO {
 					.setName(AppParam.SSCC_LAST_NUMBER)
 					.setValue(number.toString());
 		}
-		String aonNumber = AonStringUtils.leftPad(number.toString(), 6, "0");
+		String aonNumber = AonStringUtils.leftPad(number.toString(), aonNumberLength, "0");
 		AppParamDAO.saveApplicationParameter(ctx, param.setValue(number.toString()));
 
-		String sscc = "08437016734" + aonNumber;
+		String sscc = extensionDigit + gs1CompanyPrefix + aonNumber;
 		String control = calculateSsccControlDigit(sscc);
-		
 		return sscc + control;
 	}
 	

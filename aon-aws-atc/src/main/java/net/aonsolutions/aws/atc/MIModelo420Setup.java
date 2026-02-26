@@ -49,24 +49,19 @@ public class MIModelo420Setup {
 			
 			AWSLambda awsLambda = AWSLambdaClientBuilder.defaultClient();
 
-			UpdateFunctionCodeRequest updateFunctionCodeRequest = 
-			new UpdateFunctionCodeRequest()
-			.withImageUri(imageUri)
-			.withFunctionName(functionName)
-			;
+			UpdateFunctionCodeRequest updateFunctionCodeRequest = new UpdateFunctionCodeRequest()
+																		.withImageUri(imageUri)
+																		.withFunctionName(functionName);
 			
 //			UpdateFunctionCodeResult updateFunctionCodeResult = 
 			awsLambda.updateFunctionCode(updateFunctionCodeRequest);
 
-			GetFunctionConfigurationRequest getFunctionConfigRequest = 
-					new GetFunctionConfigurationRequest()
-					.withFunctionName(functionName);
+			GetFunctionConfigurationRequest getFunctionConfigRequest = new GetFunctionConfigurationRequest()
+																			.withFunctionName(functionName);
 			
-			awsLambda.waiters().functionUpdated()
-			.run(new WaiterParameters<GetFunctionConfigurationRequest>().withRequest(getFunctionConfigRequest));
+			awsLambda.waiters().functionUpdated().run(new WaiterParameters<GetFunctionConfigurationRequest>().withRequest(getFunctionConfigRequest));
 			
-			GetFunctionConfigurationResult functionConfigurationResult = 
-			awsLambda.getFunctionConfiguration(getFunctionConfigRequest);
+			GetFunctionConfigurationResult functionConfigurationResult = awsLambda.getFunctionConfiguration(getFunctionConfigRequest);
 			
 			System.out.printf("[ %s ] %s  %s \r\n", functionConfigurationResult.getFunctionName(), functionConfigurationResult.getLastModified(),  functionConfigurationResult.getLastUpdateStatus() );
 
@@ -81,11 +76,13 @@ public class MIModelo420Setup {
 //		try ( InputStream is = new FileInputStream(jarWithDependencies)) {
 //			setup("aon-atc-mod420" , ByteBuffer.wrap(is.readAllBytes()));
 //		}
-//		setup("aon-aws-atc" , "083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-aws-atc:test");
-//		setup("aon-aws-atc" , "083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-aws-atc:latest");
 		
-//		setup("aon-aws-atc-mod415" , "083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-aws-atc:m415test"); // Modelo 415 Ejercicio 2025
-		setup("aon-aws-atc-2026" , "083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-aws-atc:mXXXe2026test2"); // Resto de modelos Ejercicio 2026
+		// Ejercicio 2025
+//		setup("aon-aws-atc", "083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-aws-atc:latest"); // Resto de modelos Ejercicio 2025
+//		setup("aon-aws-atc-mod415", "083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-aws-atc:m415test"); // Modelo 415 Ejercicio 2025
+		
+		// Ejercicio 2026
+		setup("aon-aws-atc-2026", "083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-aws-atc:mXXXe2026test3"); // Resto de modelos Ejercicio 2026
 		
 	}
 }
