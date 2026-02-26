@@ -248,9 +248,6 @@ export class AonAgendaAllDays extends AonElement {
 	/* ---------------- PROCESS EVENTS ---------------- */
 	processEvents(datos) {
 		if (!datos || !Array.isArray(datos)) return;
-		
-		const now = Date.now();
-		const todayKey = AonDateUtils.format(new Date(), "YYYY-MM-DD");
 
 		datos.forEach(dayData => {
 			// Convertir start_date (timestamp en milisegundos) a fecha
@@ -259,18 +256,6 @@ export class AonAgendaAllDays extends AonElement {
 			
 			let time = dayData.time || 0;
 			const details = dayData.detail || [];
-			
-			// Sumar tiempo vivo SOLO si el día es hoy y el último evento es IN
-			if (
-				details.length > 0 &&
-				dateKey === todayKey
-			) {
-				const lastDetail = details[details.length - 1];
-	
-				if (lastDetail.status === 'in') {
-					time += now - lastDetail.date;
-				}
-			}
 
 			// Solo guardar si no existe ya (para no sobrescribir)
 			if (!this._events.has(dateKey)) {
@@ -417,7 +402,6 @@ export class AonAgendaAllDays extends AonElement {
 	scrollToToday(smooth) {
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
-		const todayKey = AonDateUtils.format(today, "YYYY-MM-DD");
 
 		// Buscar el día de hoy en todas las semanas renderizadas
 		let todayElement = null;
