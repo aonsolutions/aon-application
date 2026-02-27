@@ -91,14 +91,20 @@ body {
 	height: calc(100vh - 68px);
 }
 
-#aonHome:has(.aonMenuTopNavVisible) .aonMenuSidenav {
-	height: calc(100vh - 136px);
+#aonHome .aonMenuSidenav{
 	margin-top: 68px;
+ 	height: calc(100vh - 136px); 
+}
+
+/*
+#aonHome:has(.aonMenuTopNavVisible) .aonMenuSidenav {
+ 	height: calc(100vh - 136px); 
 }
 
 #aonHome:has(.aonMenuTopNavHide) .aonMenuSidenav {
-	height: calc(100vh - 68px);
+ height: calc(100vh - 68px); 
 }
+*/
 
 #aonHome:has(.aonMenuTopNavVisible) .rightPanel {
 	height: calc(100vh - 136px);
@@ -322,7 +328,7 @@ body {
 }
 
 #aonMenuListAppImgTop-fiscal{
-	scale: 1;
+	scale: unset;
 }
 
 #aonMenuListAppImgTop-payroll,
@@ -543,6 +549,15 @@ aon-configuration-menu .suiteMenuContent  {
   	margin: 1rem 1rem 0rem 0.5rem;	
 }
 
+.aonSideNavFiscalCircle{
+  min-width: 1.5rem;
+  min-height: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.6rem !important;
+}
+
 /* ========================== Sidenav Menu Styles  ========================== */
 
 #rootPanel {
@@ -751,7 +766,9 @@ aon-configuration-menu .suiteMenuContent  {
 #aonInvoice .aonContentBeta,
 #aonWarehouse .aonContentBeta,
 #aonMessenger .aonContentBeta,
-#aonOfficePanel .aonContentBeta {
+#aonOfficePanel .aonContentBeta,
+#aonFiscal .aonContentBeta,
+#aonAccounting .aonContentBeta {
 	border-radius: .375rem;
 	margin: 1rem 1rem 0rem 1rem;
 	background-color: var(--aonBackgroundColor);	
@@ -763,7 +780,9 @@ aon-configuration-menu .suiteMenuContent  {
 #aonInvoice .aonContentBeta,
 #aonWarehouse .aonContentBeta,
 #aonMessenger .aonContentBeta,
-#aonOfficePanel .aonContentBeta {
+#aonOfficePanel .aonContentBeta,
+#aonFiscal .aonContentBeta,
+#aonAccounting .aonContentBeta {
 	padding: 1.25rem 1.25rem 0 1.25rem;
 }
 
@@ -810,8 +829,13 @@ aon-configuration-menu .suiteMenuContent  {
 	mask-image: url('/icons/chevron-right.svg');
 }
 
-.aonAppMenuSidenavList i.material-icons {
+.aonAppMenuSidenavList i.material-icons,
+.aonAppMenuSidenavList aon-icon {
 	display: none;
+}
+
+.aonIconButton i.material-icons {
+	display: block;
 }
 
 .aonToolbarTitle,
@@ -820,7 +844,7 @@ aon-configuration-menu .suiteMenuContent  {
 }
 
 .aonSidenav .aonAppMenuSidenavList{
-	padding: .425rem 1.25rem .425rem 2.5rem;	
+	padding: .425rem 1.25rem .425rem 2rem;	
 	position: relative;
 }
 
@@ -856,6 +880,7 @@ aon-configuration-menu .suiteMenuContent  {
 .aonSidenav .aonAppMenuSidenavListSelected {
 	border-radius: 0px;
     background-color: var(--aonBackgroundColor2);
+	border-left-color: transparent !important; /* we need override element style*/
 }
 
 .aonSidenav .aonSidenavTitle span {
@@ -866,35 +891,6 @@ aon-configuration-menu .suiteMenuContent  {
 
 .aonSidenavTitleButton {
 	margin-top: 0px;
-}
-
-#aonOfficePanelSidenavTypesList span{
-	display: inline-block;
-}
-
-.aonOfficePanelSidenavTypesListOption{
-	width: 20.5px;
-	height: 20.5px;
-	background-color: var(--aonTopAppTextColor) !important;
-	mask-size: contain;
-	mask-position: center;
-	mask-repeat: no-repeat;
-	mask-image: url('/icons/more-vertical.svg');
-	margin-right: .3rem;
-}
-
-.sidenavHover:hove .aonOfficePanelSidenavTypesListOption {
-	display: block !important;
-}
-
-#aonOfficePanelSidenavTypesNewButtonIconButton {
-	width: 20.5px;
-	height: 20.5px;
-	background-color: var(--aonTopAppTextColor) !important;
-	mask-size: contain;
-	mask-position: center;
-	mask-repeat: no-repeat;
-	mask-image: url('/icons/plus.svg');
 }
 
 .aonUpload {
@@ -1495,7 +1491,7 @@ i[id$="ToolbarHeaderToolSectionSYNCHRONIZEButtonIcon"],
 i[id$="ToolbarHeaderToolSectionArchivadasButtonIcon"],
 i[id$="ToolbarHeaderToolSectionCerradasButtonIcon"],
 i[id$="ToolbarHeaderToolSectiontoolbarLabelsButtonIcon"],
-i[id$="ToolbarHeaderToolSectionRestoreButtonIcon"],
+/* i[id$="ToolbarHeaderToolSectionRestoreButtonIcon"], */
 i[id$="aonSigninToolbarHeaderToolSectionsyncButtonIcon"],
 i[id$="aonDocumentalToolbarHeaderToolSectionSendFileButtonIcon"],
 i[id$="aonDocumentalToolbarHeaderToolSectionDownloadFileButtonIcon"],
@@ -2412,11 +2408,11 @@ aon-search > span {
     border: .0625rem solid #cbd5e1 !important;
 }
 
-#aonDocumentalSidenavUserCategoriesList li > span:last-of-type,
+/* #aonDocumentalSidenavUserCategoriesList li > span:last-of-type,
 #aon-notesSidenavTagsList li > span:last-of-type,
 #aonWarehouseSidenavWarehousesList li > span:last-of-type {
 	display: block !important;
-}
+} */
 
 #aonDocumentalSidenavUserCategoriesList aon-icon-button.aonOfficePanelSidenavTypesListOption,
 #aon-notesSidenavTagsList aon-icon-button.aonOfficePanelSidenavTypesListOption,
@@ -2424,11 +2420,13 @@ aon-search > span {
 	mask-image: url(/icons/edit.svg);
 }
 
-#aonMessengerToolbarHeaderToolSectionexcelButtonIconButton{
+#aonMessengerToolbarHeaderToolSectionexcelButtonIconButton,
+#aonLaboralToolbarHeaderToolSectionexcelButtonIconButton {
 	background-color: transparent !important; 
 }
 
-#aonMessengerToolbarHeaderToolSectionexcelButtonAonIcon {
+#aonMessengerToolbarHeaderToolSectionexcelButtonAonIcon,
+#aonLaboralToolbarHeaderToolSectionexcelButtonAonIcon {
 	background-color: black !important;
 }
 
@@ -2520,35 +2518,47 @@ aon-search > span {
 /* Invoice Future Sidenav options */
 
 #aonInvoiceSidenavIncomes {
-	display: none;
+	display: block;
 }
 
 #aonInvoiceSidenavExpenses {
-	display: none;
+	display: block;
 }
 
 #aonInvoiceSidenavDocument {
-	display: none;
+	display: block;
 }
 
 #aonInvoiceSidenavManagement {
-	display: none;
+	display: block;
 }
 
 #aonInvoiceSidenavFutureIncomes {
-	display: block;
+	display: none;
 }
 
 #aonInvoiceSidenavFutureExpenses {
-	display: block;
+	display: none;
 }
 
 #aonInvoiceSidenavFutureDocument {
-	display: block;
+	display: none;
 }
 
 #aonInvoiceSidenavFutureManagement {
-	display: block;
+	display: none;
+}
+
+
+#aonInvoiceSidenav  ul ul .aonAppMenuSidenavList:hover,
+#aonInvoiceSidenav ul ul .aonAppMenuSidenavListSelected {
+	left: -12px;
+	width: calc(100% + 12px);
+}
+
+#aonInvoiceSidenav  ul ul .aonAppMenuSidenavList:hover span,
+#aonInvoiceSidenav ul ul .aonAppMenuSidenavListSelected span{
+	padding-left: 12px;
 }
 
 #aonHeaderSearch {
@@ -2595,4 +2605,22 @@ i[id$="aonHeaderSearchDivButtonIcon"],
 #accountingUploadInvoiceLabel{
 	justify-content: space-between;
   	width: 100%;
+}
+
+
+#aonMenuListAppTitle-documental {
+	color: transparent;
+}
+
+#aonMenuListAppTitle-documental:before  {
+	content: 'Mi nube';
+	position: absolute;
+	display: inline-block;
+	color: rgb(66, 66, 66);
+}
+
+.material-icons {
+  font-variation-settings: "FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;
+  font-size: 24px;
+  display: inline-block;
 }

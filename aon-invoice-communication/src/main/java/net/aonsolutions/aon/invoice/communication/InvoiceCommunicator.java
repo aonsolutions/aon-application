@@ -1008,7 +1008,8 @@ public class InvoiceCommunicator {
 		if ( tbaiInfo == null ) return;
 		AonCollectionUtils.stream(tbaiInfo.getRequests())
 			.forEach(r -> {
-				InvoiceCommunicationStatus status = r.getResponse().isOk() ? InvoiceCommunicationStatus.ACCEPTED : InvoiceCommunicationStatus.WRONG;
+				InvoiceCommunicationStatus status = r.getResponse() != null && r.getResponse().isOk() 
+						? InvoiceCommunicationStatus.ACCEPTED : InvoiceCommunicationStatus.WRONG;
 				InvoiceCommunicationHistoryMapValue map = h.computeIfAbsent(InvoiceCommunicationType.TBAI, 
 					k -> {
 						InvoiceInfo info = new InvoiceInfo()

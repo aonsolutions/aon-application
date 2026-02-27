@@ -14,401 +14,433 @@ import Apps, { TIMECONTROL } from "../../../services/app.js";
 import * as LS from '../../../services/localStorageService.js';
 
 export class AonPresenceList extends AonElement {
-  TABLE_ID;
-  searchFilter;
-  _list;
-  FN_FILTER;
-  static get observedAttributes() {
-    return [];
-  }
+	TABLE_ID;
 
-  get id() {
-    return this.getAttribute(CONSTANT.ID);
-  }
+	searchFilter;
+	_list;
 
-  set id(id) {
-    this.setAttribute(CONSTANT.ID, id);
-  }
+	_timeControlFilter;
+	_filter;
 
-  attributeChangedCallback(name, oldValue, newValue) {}
+	static get observedAttributes() {
+		return [];
+	}
 
-  constructor() {
-    super();
-  }
+	get id() {
+		return this.getAttribute(CONSTANT.ID);
+	}
 
-  connectedCallback() {
-    this.initialize();
-    this.build();
-  }
-  
-  disconnectedCallback() {
-    this.applicationParentEl.removeEventListener("filterParent", this.FN_FILTER);
-  }
+	set id(id) {
+		this.setAttribute(CONSTANT.ID, id);
+	}
 
-  initialize(){
-    this.id = this.id || SIGNIN_VIEWS.AON_PRESENCE_LIST;
-    this.TABLE_ID = this.id + "Table";
-    this._list = [];
+	constructor() {
+		super();
+	}
 
-    this.applicationEl = this.getApplication();
-    this.applicationParentEl = this.getApplicationParent();
+	connectedCallback() {
+		this.initialize();
+		this.build();
+	}
 
-    this.applicationEl.addToolbarTitle("Presencia");
-    this.applicationParentEl.periodSideNavDisplay(true);
+	initialize() {
+		this.id = this.id || SIGNIN_VIEWS.AON_PRESENCE_LIST;
+		this.TABLE_ID = this.id + "Table";
+		this._list = [];
 
-    this.FN_FILTER = (filter)=> {
-      this._list = [];
-      this.getTable();
-    }
+		this.applicationEl = this.getApplication();
+		this.applicationParentEl = this.getApplicationParent();
 
-  }
-  
-  build(){
-    this.paintView();
-    this.buildToolbar();
-    this.getTable();
-    
-    this.applicationParentEl.addEventListener("filterParent", this.FN_FILTER);
-  }
+		this.applicationEl.addToolbarTitle("Presencia");
+		
+		this.filterInit();
+	}
 
-  paintView() {
-    let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
-    aonTable.id = this.TABLE_ID;
-    this.appendChild(aonTable);
-  }
+	filterInit() {
+		const periodEnums = SigninSidenav.PERIOD;
+		const period = getPeriod(this.applicationParentEl.isEmployee() ? periodEnums.THIS_WEEK.id : periodEnums.TODAY.id);
+		this._filter = {
+			group: "DAY",
+			period: period.value,
+			startDate: period.startDate,
+			endDate: period.endDate,
+			active: true,
+			withData: true,
+			search: ''
+		}
+	}
 
-  buildToolbar() {
-    this.applicationEl.removeToolbarOptions();
-    
-    if(!this.applicationParentEl.isEmployee()){
-      if(this.isMobile()){
-        this.applicationEl.addFloatOption(SigninSidenav.ADD, () => this.aonEventAdd() );
-      } else {
-        this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () => this.aonEventAdd());
-      }
-    }
+	build() {
+		if(this._timeControlFilter){
+			this._filter = { ...this._filter, ...this._timeControlFilter };
+		}
+		
+		this.paintView();
+		this.buildToolbar();
+		this.getTable();
+	}
 
-    if(!this.isMobile()) {
-	  this.applicationEl.addToolbarOption2(SigninSidenav.REPORT, () => modalReport(this.applicationEl, this, "excel"));
-      //this.applicationEl.addToolbarOption2(SigninSidenav.MORE, ({target}) => this.dialogReport(target));
-    }
+	paintView() {
+		let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+		aonTable.id = this.TABLE_ID;
+		this.appendChild(aonTable);
+	}
 
-    this.buildToolbarSearch();
-    
-  }
+	buildToolbar() {
+		this.applicationEl.removeToolbarOptions();
 
-  buildToolbarSearch(){
-    let btnSearch = this.applicationEl.addSearchOption(LS.isFutureTheme());
-    
-    let timeOut = null;
+		if (!this.applicationParentEl.isEmployee()) {
+			if (this.isMobile()) {
+				this.applicationEl.addFloatOption(SigninSidenav.ADD, () => this.aonEventAdd());
+			} else {
+				this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () => this.aonEventAdd());
+			}
+		}
 
-    btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail})=>{
-      clearTimeout(timeOut);
-      timeOut = setTimeout(() => {
-        this._list = [];
-        this.searchFilter = detail.search;
-        this.applicationParentEl.setDataFilter({
-          active: detail.active === 'true',
-          search:detail.search,
-          period: detail.period,
-          startDate: detail.startDate,
-          endDate: detail.endDate,
-          withData: detail.withData === 'true'
-        });
-      });
-    });
-    
-    btnSearch.addEventListener(EVENT.RESET_FILTER, ({ detail }) => {
-      clearTimeout(timeOut);
-      timeOut = setTimeout(() => {
-        this._list = [];
-        this.searchFilter = '';
-        this.applicationParentEl.setDataFilter({
-          active: true,
-          search: "",
-          period: "today",
-          startDate: detail.startDate,
-          endDate: detail.endDate,
-          withData: true
-        });
-        
-         let searchInput = this.getElement('aonSigninToolbarHeaderToolSectionSearchSearchInput');
-        if(searchInput) searchInput.value = '';
-        let aonSwitchFilter = this.getElement('aonSwitchFilter');
-        if(aonSwitchFilter) aonSwitchFilter.checked = true;
-        let aonWithDataSwitchFilter = this.getElement('aonWithDataSwitchFilter');
-        if(aonWithDataSwitchFilter) aonWithDataSwitchFilter.checked = true;
-      });
-    });
+		if (!this.isMobile()) {
+			this.applicationEl.addToolbarOption2(SigninSidenav.REPORT, () => modalReport(this.applicationEl, this, "excel"));
+		}
 
-	let filter = null;
-   	try {filter = {...this.applicationParentEl._filter};} catch (error) {}
+		this.buildToolbarSearch();
 
-    let inputsFilter = [
-      ...PRESENCE_FILTER,
-      {
-        type: CONSTANT.HTML_ELEMENT,
-        element: new AonSwitch(),
-        id: "aonSwitchFilter",
-        name:"active",
-        title:"Operarios activos",
-        checked: filter?.active
-      },
-      {
-        type: CONSTANT.HTML_ELEMENT,
-        element: new AonSwitch(),
-        id: "aonWithDataSwitchFilter",
-        name:"withData",
-        title:"Con Datos",
-        checked: filter?.withData
-      }
-    ];
+	}
 
-    btnSearch.buildOptionsFilter(inputsFilter);//INPUTS
+	buildToolbarSearch() {
+		let btnSearch = this.applicationEl.addSearchOption(LS.isFutureTheme());
 
-    this.searchValueDefault();
-  }
+		let timeOut = null;
 
-  searchValueDefault(){
-    let periodEl = this.getElement("period");
-    if(periodEl){
-      periodEl.setOptions(getPeriod());
-      periodEl.addEventListener(EVENT.CHANGE, ({detail}) => {
-        if(detail){
-          const {startDate, endDate} = detail;
-          setValueName('startDate', startDate);
-          setValueName('endDate', endDate);
-        }
-      });
-    }
+		btnSearch.addEventListener(EVENT.SEARCH_NEW, ({ detail }) => {
+			clearTimeout(timeOut);
+			timeOut = setTimeout(() => {
+				this._list = [];
+				this.searchFilter = detail.search;
 
-    this.getElement("startDate").addEventListener(EVENT.CHANGE,()=>periodEl.value = "personalized");
-    this.getElement("endDate").addEventListener(EVENT.CHANGE,()=>periodEl.value = "personalized");
-  }
+				let newFilter = {
+					active: detail.active === 'true',
+					search: detail.search,
+					period: detail.period,
+					startDate: detail.startDate,
+					endDate: detail.endDate,
+					withData: detail.withData === 'true'
+				}
+				if (newFilter && newFilter.period) {
+					newFilter = { ...newFilter, ...getPeriod(newFilter.period) };
+				}
 
-  async getTable() {
-    this.applicationEl = await waitEl("#aonSignin");
-    this.applicationEl.startLoader();
-    if (this.isMobile()) await this.getTableMobile();
-    else await this.getTableDesk();
-    this.applicationEl.stopLoader();
-    this.applicationParentEl.changeFilter();
-  }
+				this._filter = { ...this._filter, ...newFilter };
 
-  async getTableDesk() {
-    const aonTable = this.getElement(this.TABLE_ID);
-    if (aonTable) {
-      aonTable.removeColumns();
-      aonTable.addColumn("", "string", "lettersHtml", "5%");
-      aonTable.addColumn(MSG.NAME, "string", "name", "33%");
-      aonTable.addColumn(MSG.LAST_STATUS, "", "lastStatus", "32%");
-      aonTable.addColumn("Tipo", "string", "reason", "10%");
-      aonTable.addColumn(MSG.DURATION, "", "duration", "5%");
-      aonTable.addColumn(MSG.LAST_LOCATION, "string", "nameLocation", "15%");
-      try {
-        const resp = await this.getData();
-        aonTable.removeRows();
-        resp.map((res) => {
-          let lastStatus = res.last_date ? `${res.textStatus} ${AonDateUtils.setDateTimestampDay(res.last_date)}` : null;
-          res.lastStatus = lastStatus;
-          if(res.status == "in"){
-            let durationMs = this.timeStringToMs(res.duration);
-            let elapsedMs = new Date().getTime() - res.last_date;
-            durationMs += elapsedMs; // Sumar los milisegundos transcurridos a la duración
-            res.duration = this.msToTimeString(durationMs); // Convertir de vuelta a "minutos:segundos"
-          }
-          // alert(JSON.stringify(res));
-          let tr = aonTable.addRow(res, (el) => this.aonEvent(el, res));
-          tr.id = "aonTimeControlRow";
-        });
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  }
+				this._list = [];
+				this.getTable();
 
-  async getTableMobile() {
-    const aonTable = this.getElement(this.TABLE_ID);
-    if (aonTable) {
-      try {
-        const resp = await this.getData();
-        aonTable.removeAllLi();
-        resp.map((res, idx) => {
-          let subtitle = null;
-          if(res.last_date){
-            const dateParse = dateCustomDayHour(res.last_date) || AonDateUtils.setDateTimestamp(res.last_date);
-            subtitle = `${res.reason && res.reason.length > 0 ? (res.reason + ' - ') : ''} ${dateParse} <span style="float: right;">${res.nameLocation}</span> `;
-          }
-          let options = {
-            iconHtmlCustom: `${res.lettersHtml} <span style="float: right;color: rgba(0,0,0,.54);">${res.duration}</span>`,
-            title: `${res.name}`,
-            subtitle
-          };
-          aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
-        });
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  }
+			});
+		});
 
-  dialogReport(button){
+		btnSearch.addEventListener(EVENT.RESET_FILTER, ({ detail }) => {
+			clearTimeout(timeOut);
+			timeOut = setTimeout(() => {
+				
+				this._list = [];
+				this.searchFilter = '';
+				
+				this.filterInit();
+
+				let searchInput = this.getElement('aonSigninToolbarHeaderToolSectionSearchSearchInput');
+				if (searchInput) searchInput.value = '';
+				
+				setValueName('period', this._filter.period);
+				setValueName('startDate', this._filter.startDate);
+				setValueName('endDate', this._filter.endDate);
+				
+				let aonSwitchFilter = this.getElement('aonSwitchFilter');
+				if (aonSwitchFilter) aonSwitchFilter.checked = true;
+				let aonWithDataSwitchFilter = this.getElement('aonWithDataSwitchFilter');
+				if (aonWithDataSwitchFilter) aonWithDataSwitchFilter.checked = true;
+
+				this._list = [];
+				this.getTable();
+			});
+		});
+		
+		// Search Inputs
+
+		let inputsFilter = [
+			...PRESENCE_FILTER,
+			{
+				type: CONSTANT.HTML_ELEMENT,
+				element: new AonSwitch(),
+				id: "aonSwitchFilter",
+				name: "active",
+				title: "Operarios activos",
+				checked: this._filter?.active
+			},
+			{
+				type: CONSTANT.HTML_ELEMENT,
+				element: new AonSwitch(),
+				id: "aonWithDataSwitchFilter",
+				name: "withData",
+				title: "Con Datos",
+				checked: this._filter?.withData
+			}
+		];
+
+		btnSearch.buildOptionsFilter(inputsFilter);
+
+		this.searchValueDefault();
+	}
+
+	searchValueDefault() {
+		let periodEl = this.getElement("period");
+		
+		if (periodEl) {
+			periodEl.setOptions(getPeriod());
+			periodEl.addEventListener(EVENT.CHANGE, ({ detail }) => {
+				if (detail) {
+					const { startDate, endDate } = detail;
+					setValueName('startDate', startDate);
+					setValueName('endDate', endDate);
+				}
+			});
+		}
+
+		this.getElement("startDate").addEventListener(EVENT.CHANGE, () => periodEl.value = "personalized");
+		this.getElement("endDate").addEventListener(EVENT.CHANGE, () => periodEl.value = "personalized");
+		
+		setValueName('period', this._filter.period);
+		setValueName('startDate', this._filter.startDate);
+		setValueName('endDate', this._filter.endDate);
+	}
+
+	async getTable() {
+		this.applicationEl = await waitEl("#aonSignin");
+		this.applicationEl.startLoader();
+		if (this.isMobile()) await this.getTableMobile();
+		else await this.getTableDesk();
+		this.applicationEl.stopLoader();
+	}
+
+	async getTableDesk() {
+		const aonTable = this.getElement(this.TABLE_ID);
+
+		if (aonTable) {
+			aonTable.removeColumns();
+			aonTable.addColumn("", "string", "lettersHtml", "5%");
+			aonTable.addColumn(MSG.NAME, "string", "name", "28%");
+			aonTable.addColumn(MSG.PERIOD, "string", "periodName", "25%");
+			aonTable.addColumn(MSG.DURATION, "", "duration", "5%");
+
+			aonTable.addColumn("Ult. Estado", "", "status", "12%");
+			aonTable.addColumn("Motivo", "string", "reason", "15%");
+			aonTable.addColumn("Ult. Ubicación", "string", "nameLocation", "15%");
+			try {
+				const resp = await this.getData();
+				aonTable.removeRows();
+				resp.map((res) => {
+					let lastStatus = res.last_date ? `${res.textStatus} ${AonDateUtils.setDateTimestampDay(res.last_date)}` : null;
+					res.lastStatus = lastStatus;
+					if (res.status == "in") {
+						let durationMs = this.timeStringToMs(res.duration);
+						let elapsedMs = new Date().getTime() - res.last_date;
+						durationMs += elapsedMs; // Sumar los milisegundos transcurridos a la duración
+						res.duration = this.msToTimeString(durationMs); // Convertir de vuelta a "minutos:segundos"
+					}
+					// alert(JSON.stringify(res));
+					let tr = aonTable.addRow(res, (el) => this.aonEvent(el, res));
+					tr.id = "aonTimeControlRow";
+				});
+			} catch (e) {
+				console.log(e);
+			}
+		}
+	}
+
+	async getTableMobile() {
+		const aonTable = this.getElement(this.TABLE_ID);
+		if (aonTable) {
+			try {
+				const resp = await this.getData();
+				aonTable.removeAllLi();
+				resp.map((res, idx) => {
+					let subtitle = null;
+					if (res.last_date) {
+						const dateParse = dateCustomDayHour(res.last_date) || AonDateUtils.setDateTimestamp(res.last_date);
+						subtitle = `${res.reason && res.reason.length > 0 ? (res.reason + ' - ') : ''} ${dateParse} <span style="float: right;">${res.nameLocation}</span> `;
+					}
+					let options = {
+						iconHtmlCustom: `${res.lettersHtml} <span style="float: right;color: rgba(0,0,0,.54);">${res.duration}</span>`,
+						title: `${res.name}`,
+						subtitle
+					};
+					aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
+				});
+			} catch (e) {
+				console.log(e);
+			}
+		}
+	}
+
+	dialogReport(button) {
 		const left = button.getBoundingClientRect().left;
-    let top  = button.getBoundingClientRect().top;
-    if(this.isMobile()) top = top - 50;
+		let top = button.getBoundingClientRect().top;
+		if (this.isMobile()) top = top - 50;
 
-    let options = [{
-      name: "Registro de jornada",
-      aonIcon: 'excel',
-      permission:true,
-      backgroundColor: Apps.TIMECONTROL.color,
-      fn: () => modalReport(this.applicationEl, this, "excel")
-    }, {
-      name: "Plantilla fichajes",
-      aonIcon: 'aon_pdf',
-      permission:true,
-      backgroundColor: Apps.TIMECONTROL.color,
-      fn: () => modalReport(this.applicationEl, this, "pdf")
-    }];
+		let options = [{
+			name: "Registro de jornada",
+			aonIcon: 'excel',
+			permission: true,
+			backgroundColor: Apps.TIMECONTROL.color,
+			fn: () => modalReport(this.applicationEl, this, "excel")
+		}, {
+			name: "Plantilla fichajes",
+			aonIcon: 'aon_pdf',
+			permission: true,
+			backgroundColor: Apps.TIMECONTROL.color,
+			fn: () => modalReport(this.applicationEl, this, "pdf")
+		}];
 
-    const d = this.applicationEl.getOptionDialog();
-    d.setMenuOptions(options, top, left);
-    d.open();
-  }
+		const d = this.applicationEl.getOptionDialog();
+		d.setMenuOptions(options, top, left);
+		d.open();
+	}
 
-  async getData() {
-    let data = [];
-    try {
-      if(this._list.length){
-        data = this._list;
-      } else {
-        let filter = null;
-        try {filter = {...this.applicationParentEl._filter};} catch (error) {}
-        const datos = await getTimeControlList(filter);
-        if (datos) {
-          sortBy(datos, 'last_date', 'desc').map(({
-              time,
-              last_date,
-              status,
-              coordinates,
-              last_location,
-              task_holder: { id: taskHolderId, name },
-              detail
-            }) => {
-              const newStatus = status.toLowerCase();
-              const lettersName = StringTwoLetters(name);
-              
-              const div = this.createElement(TAG.DIV);
-              div.id = "aonTimeControlTableDiv";
-              div.classList.add("profile-letters", newStatus);
-              div.innerText = lettersName;
+	async getData() {
+		let data = [];
+		try {
+			if (this._list.length) {
+				data = this._list;
+			} else {
+				const datos = await getTimeControlList(this._filter);
+				//console.log('--------- Aon Presence List ---------', this._filter, datos);
+				if (datos) {
+					sortBy(datos, 'last_date', 'desc').map(({
+						time,
+						last_date,
+						status,
+						coordinates,
+						last_location,
+						task_holder: { id: taskHolderId, name },
+						detail
+					}) => {
+						const newStatus = status.toLowerCase();
+						const lettersName = StringTwoLetters(name);
+
+						const div = this.createElement(TAG.DIV);
+						div.id = "aonTimeControlTableDiv";
+						div.classList.add("profile-letters", newStatus);
+						div.innerText = lettersName;
 
 
-              const lettersHtml = div.outerHTML;
-              const {name:textStatus} = getStatus(newStatus);
-              let nameLocation = "";
-              if (last_location && last_location.name) {
-                nameLocation = last_location.name;
-              } else if(!isEmptyObject(coordinates)) {
-                let aib = setAttributes(new AonIconButton(),{id: "iconLocation", noHover: "true", icon: iconAddLocation});
-                nameLocation = aib.outerHTML;
-              }
-              
-              let reason = detail && detail.length > 0 ? detail[detail.length - 1].reasonValue : '';
-              
-              data.push({
-                name,
-                lettersHtml,
-                last_date,
-                coordinates,
-                last_location,
-                nameLocation,
-                taskHolderId,
-                textStatus,
-                status: newStatus,
-                duration: timeHour(Number(time)),
-                reason
-              });
-            }
-          );
-          
-          //data = data.filter(d => d.duration != "00:00");
-          
-          this._list = data;
-          //console.log('aonPresenceList', data);
-          if(this.searchFilter) data = this.filterSearch(["name", "nameLocation"], data);
-        }
-      }
-    } catch (e) { console.log(e); }
-    return data;
-  }
+						const lettersHtml = div.outerHTML;
+						const { name: textStatus } = getStatus(newStatus);
+						let nameLocation = "";
+						if (last_location && last_location.name) {
+							nameLocation = last_location.name;
+						} else if (!isEmptyObject(coordinates)) {
+							let aib = setAttributes(new AonIconButton(), { id: "iconLocation", noHover: "true", icon: iconAddLocation });
+							nameLocation = aib.outerHTML;
+						}
+
+						let reason = detail && detail.length > 0 ? detail[detail.length - 1].reasonValue : '';
+
+						let period = getPeriod(this._filter.period);
+						let statusString = newStatus == 'in' ? 'Entrada' : newStatus == 'pause' ? 'Pausa' : 'Salida';
+
+						data.push({
+							lettersHtml,
+							name,
+							periodName: period.value == "personalized"
+								? (`${period.name} (${AonDateUtils.getDayMonthOrFull(this._filter.startDate)} / ${AonDateUtils.getDayMonthOrFull(this._filter.endDate)})`)
+								: period.value == "today" || period.value == "yesterday" ? period.name : (`${period.name} (${AonDateUtils.getDayMonthOrFull(period.startDate)} / ${AonDateUtils.getDayMonthOrFull(period.endDate)})`),
+							duration: timeHour(Number(time)),
+
+							status: statusString,
+							reason,
+							nameLocation,
+
+							last_date,
+							coordinates,
+							last_location,
+							taskHolderId,
+							textStatus,
+
+						});
+					}
+					);
+
+					this._list = data;
+					if (this.searchFilter) data = this.filterSearch(["name", "nameLocation"], data);
+				}
+			}
+		} catch (e) { console.log(e); }
+		return data;
+	}
 
 	async getTimeControlExcel(startYear) {
 		this.applicationEl.startLoading();
 		try {
-      let {active} = this.applicationParentEl._filter;
-			await getTimeControlExcel({startDate:startYear+"-01-01", endDate:startYear+"-12-31", active}); 
+			let { active } = this._filter;
+			await getTimeControlExcel({ startDate: startYear + "-01-01", endDate: startYear + "-12-31", active });
 		} catch (error) {
-      this.showToast(error);
+			this.showToast(error);
 		}
-		this.applicationEl.stopLoading();
+		this.appcationEl.stopLoading();
 	}
 
 	async getTimeControlPdf(startDate) {
 		this.applicationEl.startLoading();
 		try {
-			await getTimeControlPdf({startDate:startDate}); 
+			await getTimeControlPdf({ startDate: startDate });
 		} catch (error) {
-      this.showToast(error);
+			this.showToast(error);
 		}
 		this.applicationEl.stopLoading();
 	}
 
-  search(){
-    this._list = this.filterSearch(["name", "nameLocation"], this._list);
-    this.getTable();
-  }
+	search() {
+		this._list = this.filterSearch(["name", "nameLocation"], this._list);
+		this.getTable();
+	}
 
-  filterSearch(keys, lists){
-    let list = [];
-    if(this.searchFilter && lists.length){
-      list = lists.filter((lt)=> keys.some(key=>lt[key] && lt[key].toString().toLowerCase().includes(this.searchFilter.toLowerCase())));
-    }
-    return list;
-  }
+	filterSearch(keys, lists) {
+		let list = [];
+		if (this.searchFilter && lists.length) {
+			list = lists.filter((lt) => keys.some(key => lt[key] && lt[key].toString().toLowerCase().includes(this.searchFilter.toLowerCase())));
+		}
+		return list;
+	}
 
-  aonEvent({ target }, data) {
-    const parent = this.applicationParentEl;
-    if (iconAddLocation === target.textContent) {
-      parent.showView(SIGNIN_VIEWS.AON_LOCATION_ADD, data);
-    } else {
-      parent.showView(SIGNIN_VIEWS.AON_EVENT_LIST, data);
-    }
-  }
-  
-  aonEventAdd(){
-    this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_ADD, {date: new Date(), reload:true});
-  } 
-  
-  timeStringToMs(duration) {
-    if (duration.length === 5) {
-      duration = "00:" + duration; // Añadir "00:" al principio para representar las horas
-    }
-    const parts = duration.split(":"); // Dividir la cadena en minutos y segundos
-    const hours = parseInt(parts[0], 10);
-    const minutes = parseInt(parts[0], 10); // Obtener los minutos
-    const seconds = parseInt(parts[1], 10); // Obtener los segundos
-    return (minutes * 60 + seconds) * 1000; // Convertir todo a milisegundos
-  }
+	aonEvent({ target }, data) {
+		const parent = this.applicationParentEl;
+		if (iconAddLocation === target.textContent) {
+			parent.showView(SIGNIN_VIEWS.AON_LOCATION_ADD, data);
+		} else {
+			parent.showView(SIGNIN_VIEWS.AON_EVENT_LIST, data, this._filter);
+		}
+	}
 
-  msToTimeString(ms) {
-    const totalSeconds = Math.floor(ms / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    // Formatear con dos dígitos para horas, minutos y segundos
-    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-  }
+	aonEventAdd() {
+		this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_ADD, { date: new Date(), reload: true });
+	}
+
+	timeStringToMs(duration) {
+		if (duration.length === 5) {
+			duration = "00:" + duration; // Añadir "00:" al principio para representar las horas
+		}
+		const parts = duration.split(":"); // Dividir la cadena en minutos y segundos
+		const hours = parseInt(parts[0], 10);
+		const minutes = parseInt(parts[0], 10); // Obtener los minutos
+		const seconds = parseInt(parts[1], 10); // Obtener los segundos
+		return (minutes * 60 + seconds) * 1000; // Convertir todo a milisegundos
+	}
+
+	msToTimeString(ms) {
+		const totalSeconds = Math.floor(ms / 1000);
+		const hours = Math.floor(totalSeconds / 3600);
+		const minutes = Math.floor((totalSeconds % 3600) / 60);
+		const seconds = totalSeconds % 60;
+		// Formatear con dos dígitos para horas, minutos y segundos
+		return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+	}
 }
 
 

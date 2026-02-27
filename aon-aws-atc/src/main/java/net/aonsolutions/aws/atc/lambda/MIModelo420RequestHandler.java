@@ -24,37 +24,52 @@ public class MIModelo420RequestHandler implements RequestHandler<MIModelo420Requ
 //		else
 //			return new MIModelo420Handler().obtenerPresentacion415(declaracion); // Fichero para presentación
 		
-//		if (declaracion.startsWith("1415")) {
-//			// Modelo 415
-//			if (input.isBorrador())
-//				return new MIModelo420Handler().obtenerBorrador415(declaracion); // Borrador
-//			else
-//				return new MIModelo420Handler().obtenerPresentacion415(declaracion); // Fichero para presentación
-//		} else 
-//			if (declaracion.contains("MOD=\"425\"")) {
-//			// Modelo 425
-//			if (input.isBorrador())
-//				return new MIModelo420Handler().obtenerBorrador425(declaracion); // Borrador
-//			else
-//				return new MIModelo420Handler().obtenerPresentacion425(declaracion); // Fichero para presentación
-//		} else if (declaracion.contains("MOD=\"417\"")) {
-//			// Modelo 417
-//			if (input.isBorrador())
-//				return new MIModelo420Handler().obtenerBorrador417(declaracion); // Borrador
-//			else
-//				return new MIModelo420Handler().obtenerPresentacion417(declaracion); // Fichero para presentación
-//		} else if (declaracion.contains("MOD=\"420\"")) {
-//			// Modelo 420
-//			if (input.isBorrador())
-//				return new MIModelo420Handler().obtenerBorrador420(declaracion); // Borrador
-//			else
-//				return new MIModelo420Handler().obtenerPresentacion420(declaracion); // Fichero para presentación
-//		} else {
-//			return new MIModelo420Handler().errorModeloNoSoportado();
-//		}
 	}
 	
-//	private static String obtenerXML() {
+// PRUEBAS ------------------------------------------------------------------------------------------------------------------------------	
+	
+//	private static String obtenerXML420() {
+//		String fileXML =
+//			"<DEC MOD=\"420\" ANY=\"2026\" PER=\"1T\">"+
+//			    "<IDE ACO=\"N\" RECC=\"N\" DRECC=\"N\" EOP=\"N\" ACR=\"N\">"+
+//			        "<OTP NIF=\"B50111111\" NRS=\"EMPRESA DE PRUEBA, S.L.\" SVP=\"CL\" NVP=\"SANTA ANA\" NPK=\"1\" ESC=\"\" PIS=\"\" PUE=\"\" LOC=\"UTEBO LOCALIDAD\" TEL=\"976000001\" MOV=\"600000000\" EMA=\"correo@correo.com\" POP=\"50\" CMU=\"50272\" CP=\"50180\"/>"+
+//			    "</IDE>"+
+//			    "<IGI_DEV TOT=\"37650\">"+
+//			        "<DEV BAS=\"10000\" TIP=\"000\" CUO=\"000\"/>"+
+//			        "<DEV BAS=\"20000\" TIP=\"300\" CUO=\"600\"/>"+
+//			        "<DEV BAS=\"30000\" TIP=\"500\" CUO=\"1500\"/>"+
+//			        "<DEV BAS=\"40000\" TIP=\"700\" CUO=\"2800\"/>"+
+//			        "<DEV BAS=\"50000\" TIP=\"950\" CUO=\"4750\"/>"+
+//			        "<DEV BAS=\"60000\" TIP=\"1500\" CUO=\"9000\"/>"+
+//			        "<DEV BAS=\"70000\" TIP=\"2000\" CUO=\"14000\"/>"+
+//			        "<DEV BAS=\"80000\" TIP=\"100\" CUO=\"800\"/>"+
+//			        "<OIN BAS=\"90000\" CUO=\"2000\"/>"+
+//			        "<MBC BAS=\"100000\" CUO=\"2200\"/>"+
+//			    "</IGI_DEV>"+
+//			    "<IGI_DED TOT=\"42000\">"+
+//			        "<OIC BAS=\"600000\" CUO=\"42000\"/>"+
+//			        "<OII BAS=\"000\" CUO=\"000\"/>"+
+//			        "<IMC BAS=\"000\" CUO=\"000\"/>"+
+//			        "<IMI BAS=\"000\" CUO=\"000\"/>"+
+//			        "<RED BAS=\"000\" CUO=\"000\"/>"+
+//			        "<CRA CUO=\"000\"/>"+
+//			        "<RBI CUO=\"000\"/>"+
+//			        "<RIA CUO=\"000\"/>"+
+//			        "<RPP CUO=\"000\"/>"+
+//			    "</IGI_DED>"+
+//			    "<LIQ DIF=\"-4350\" RCU=\"000\" CPA=\"000\" DAC=\"000\" RLI=\"-4350\"/>"+
+//			    "<RES TIP=\"C\" IMP=\"4350\"/>"+
+//			    "<ADI EOA=\"000\" ODD=\"000\"/>"+
+//			    "<RCC>"+
+//			        "<IEB BAS=\"000\" CUO=\"000\"/>"+
+//			        "<IAB BAS=\"000\" CUO=\"000\"/>"+
+//			    "</RCC>"+
+//			"</DEC>";
+//	    return fileXML;
+//    
+//	}
+//	
+//	private static String obtenerXML425() {
 //		String fileXML =
 //			"<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>" +
 //			"<DEC MOD=\"425\" ANY=\"2025\" PER=\"0A\">" +
@@ -86,6 +101,41 @@ public class MIModelo420RequestHandler implements RequestHandler<MIModelo420Requ
 //		return fileXML;
 //		
 //	}
+//
+//	private static String obtenerXML417() {
+//		
+//		String fileXML = 
+//			"<DEC MOD=\"417\" ANY=\"2026\" PER=\"01\">" +
+//			    "<IDE RDM=\"N\" RECC=\"N\" DRECC=\"N\" EOP=\"N\" ACR=\"N\">" +
+//			        "<OTP NIF=\"B50111111\" NRS=\"EMPRESA DE PRUEBA, S.L.\" SVP=\"CL\" NVP=\"SANTA ANA\" NPK=\"1\" ESC=\"\" PIS=\"\" PUE=\"\" LOC=\"UTEBO LOCALIDAD\" TEL=\"976000001\" MOV=\"600000000\" EMA=\"correo@correo.com\" POP=\"50\" CMU=\"50272\" CP=\"50180\"/>" +
+//			    "</IDE>" +
+//			    "<IGI_DEV TOT=\"7000\">" +
+//			        "<DEV BAS=\"100000\" TIP=\"700\" CUO=\"7000\"/>" +
+//			        "<OIN BAS=\"000\" CUO=\"000\"/>" +
+//			        "<MBC BAS=\"000\" CUO=\"000\"/>" +
+//			    "</IGI_DEV>" +
+//			    "<IGI_DED TOT=\"31500\">" +
+//			        "<OIC BAS=\"150000\" CUO=\"31500\"/>" +
+//			        "<OII BAS=\"000\" CUO=\"000\"/>" +
+//			        "<IMC BAS=\"000\" CUO=\"000\"/>" +
+//			        "<IMI BAS=\"000\" CUO=\"000\"/>" +
+//			        "<RED BAS=\"000\" CUO=\"000\"/>" +
+//			        "<CRA CUO=\"000\"/>" +
+//			        "<RBI CUO=\"000\"/>" +
+//			        "<RIA CUO=\"000\"/>" +
+//			        "<RPP CUO=\"000\"/>" +
+//			    "</IGI_DED>" +
+//			    "<LIQ DIF=\"-24500\" RCU=\"000\" CPA=\"000\" DAC=\"000\" RLI=\"-24500\"/>" +
+//			    "<RES TIP=\"C\" IMP=\"24500\"/>" +
+//			    "<ADI EOA=\"000\" ODD=\"000\"/>" +
+//			    "<RCC>" +
+//			        "<IEB BAS=\"000\" CUO=\"000\"/>" +
+//			        "<IAB BAS=\"000\" CUO=\"000\"/>" +
+//			    "</RCC>" +
+//		    "</DEC>";
+//    
+//    	return fileXML;
+//	}
 //	
 //	private static String obtener415() {
 //		
@@ -107,7 +157,7 @@ public class MIModelo420RequestHandler implements RequestHandler<MIModelo420Requ
 //	public static void main(String[] args) {
 //		
 //		MIModelo420Request input = new MIModelo420Request();
-//		input.setDeclaracion(Base64.getEncoder().encodeToString(obtenerXML().getBytes()));
+//		input.setDeclaracion(Base64.getEncoder().encodeToString(obtenerXML420().getBytes()));
 ////		input.setDeclaracion(Base64.getEncoder().encodeToString(obtener415().getBytes()));
 //		input.setBorrador(false);
 //		
@@ -130,4 +180,8 @@ public class MIModelo420RequestHandler implements RequestHandler<MIModelo420Requ
 //		
 //	}
 	
+// --------------------------------------------------------------------------------------------------------------------------------------
+	
 }
+
+

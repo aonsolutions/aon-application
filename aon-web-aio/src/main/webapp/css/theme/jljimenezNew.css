@@ -25,10 +25,6 @@
     box-shadow: 0 .25rem .375rem 0 #0f172a0D;
 }
 
-#aonHeaderCompany{
-	display: initial !important;	
-}
-
 
 .aonNewLogo, 
 .aonLoginLogo,
@@ -58,7 +54,8 @@
 	background-color: white;	
 }
 
-#aonHome:has(.aonMenuTopNavVisible) .aonMenuSidenav {
+#aonHome .aonMenuSidenav
+ {
 	z-index: 10;	
 	margin-top: 8px;
 }
@@ -101,7 +98,6 @@
 #aonMenuListAppImgTop-aonApplication,
 #aonMenuListAppImgTop-timecontrol,
 #aonMenuListAppImgTop-apps,
-#aonMenuListAppImgTop-expandHirin,
 #aonMenuListAppImgTop-contentIndex
  {
 	width: 25.5px;
@@ -141,11 +137,11 @@
 }
 
 #aonMenuListAppImgTop-accounting {
-    mask-image: url('/icons/calculator.svg') ;
+    background-image: url('/icons/calculator.svg') ;
 }
 
 #aonMenuListAppImgTop-fiscal  {
-    mask-image: url('/icons/building-2.svg') ;
+    background-image: url('/icons/building-2.svg') ;
 }
 
 #aonMenuListAppImgTop-timecontrol {
@@ -164,6 +160,11 @@
 	background-image: url('/icons/graduation-cap.svg') ;
 }
 
+#aonMenuListAppImgTop-payroll {
+	background-image: url('/icons/users.svg') ;
+}
+
+
 
 .aonMenuSidenav .aonNewMenuSideNavLi .aonNewMenuAppDiv .aonNewMenuAppIcon:after {
 	content: '';
@@ -180,4 +181,59 @@
 .aonMenuSidenav .aonNewMenuSideNavLi #aonMenuListAppImgTop-expandHirin:after,
 .aonMenuSidenav .aonNewMenuSideNavLi #aonMenuListAppImgTop-aonApplication:after {
 	display: none;
+}
+
+.suiteMenuContent {
+	margin: 1rem 1rem 0rem 0.5rem;
+}
+
+.aonCard.suiteMenuCardDiv {
+	border-radius: .375rem;	
+}
+
+.rootPanel > aon-fiscal-menu .suiteMenuDiv2,
+.rootPanel > aon-enterprise-menu .suiteMenuDiv2, 
+.rootPanel > aon-accounting-menu .suiteMenuDiv2 {
+	padding-top: 16px;
+	justify-content: left;
+} 
+
+.rootPanel > aon-fiscal-menu .suiteMenuContent,
+.rootPanel > aon-payroll-menu .suiteMenuContent,
+.rootPanel > aon-accounting-menu .suiteMenuContent {
+	background-color: transparent;
+}
+
+/* Invoice Future Sidenav options */
+
+#aonInvoiceSidenavIncomes {
+	display: none;
+}
+
+#aonInvoiceSidenavExpenses {
+	display: none;
+}
+
+#aonInvoiceSidenavDocument {
+	display: none;
+}
+
+#aonInvoiceSidenavManagement {
+	display: none;
+}
+
+#aonInvoiceSidenavFutureIncomes {
+	display: block;
+}
+
+#aonInvoiceSidenavFutureExpenses {
+	display: block;
+}
+
+#aonInvoiceSidenavFutureDocument {
+	display: block;
+}
+
+#aonInvoiceSidenavFutureManagement {
+	display: block;
 }

@@ -451,27 +451,46 @@ export class AonApplication extends AonElement {
     sidenavTitle.appendChild(LS.isNewTheme() ? arrowTitleSpan : arrowTitle);
 
     sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
-      const ul = div.querySelector("ul");
-      if(ul){
+	  const ul = div.querySelector("ul");
+	  
+	  if(ul){
 		arrowTitleSpan.classList.toggle("closeIcon");
-        ul.classList.toggle(CSS.ELEMENT_HIDDEN);
-        if(ul.classList.contains(CSS.ELEMENT_HIDDEN)){
-          arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_MORE;
-          sidenavTitle.style.marginBottom = "0";
-        } else {
-          arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
-          sidenavTitle.style.marginBottom = "10px";
-        }
-      }
-    });  
+	    ul.classList.toggle(CSS.ELEMENT_HIDDEN);
+	    
+	    if(ul && ul.classList.contains(CSS.ELEMENT_HIDDEN)) {
+	      arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_MORE;
+	      sidenavTitle.style.marginBottom = "0";
+	    } else {
+	      arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
+	      sidenavTitle.style.marginBottom = "10px";
+	    }
+	  } else {
+		
+		let nodes = div.querySelectorAll(`:scope > div`);
+	  	let last = nodes[nodes.length- 1];
+		
+	   	if(last){
+			arrowTitleSpan.classList.toggle("closeIcon");
+		    ul && ul.classList.toggle(CSS.ELEMENT_HIDDEN);
+		    last && last.classList.toggle(CSS.ELEMENT_HIDDEN);
+		    
+		    if( (ul && ul.classList.contains(CSS.ELEMENT_HIDDEN)) || (last && last.classList.contains(CSS.ELEMENT_HIDDEN))) {
+		      arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_MORE;
+		      sidenavTitle.style.marginBottom = "0";
+		    } else {
+		      arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
+		      sidenavTitle.style.marginBottom = "10px";
+		    }
+	  	}
+	  }
+	});  
 
     let span = this.createElement(TAG.SPAN);
 	span.id = `aonSidenavTitle${data.id}Name`;
     span.innerHTML = data.name.toUpperCase();
     sidenavTitle.appendChild(span);
 
-    div.appendChild(sidenavTitle);
-    return div;
+    div.appendChild(sidenavTitle);    return div;
   }
 
    addSidenavOptionsList(data, options) {
@@ -808,11 +827,10 @@ export class AonApplication extends AonElement {
 
         option.actions.forEach((item, i) => {
           let button = this.createElement(TAG.SPAN);
-          button.style.right = "5px";
-          button.style.top = "0px";
+          let rightPX = 5 + (30 * i);
+          button.style.right = rightPX + "px";
           button.style.position = "absolute";
           let aonIconButton = new AonIconButton();
-          aonIconButton.classList.add('aonOfficePanelSidenavTypesListOption');
           aonIconButton.noHover = true;
           aonIconButton.icon = item.icon;
           aonIconButton.id = li.id + item.id;

@@ -1,0 +1,94 @@
+package com.esferalia.aon.occam.api.model.fiscal.mod303;
+
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
+
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
+import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
+import com.esferalia.aon.occam.api.model.type.Mod303Key;
+
+public enum Model3032026AEATResultScript implements IModelScript<Mod303Key> {
+	
+	 R04 ("Resultado",null,TITLE)
+	,RES001("Regularizaci\u00F3n cuotas art. 80.cinco.5\u00AA LIVA"
+		,new Mod303Key[]{Mod303Key.CT_C76},NONE)
+	,RES002("Suma de resultados"
+		,new Mod303Key[]{Mod303Key.CT_C64},COMPUTE)
+	,RES003("% Atribuible a la Administraci\u00F3n del Estado"
+		,new Mod303Key[]{Mod303Key.CT_C65},NONE)
+	,RES004("Atribuible a la Administraci\u00F3n del Estado"
+		,new Mod303Key[]{Mod303Key.CT_C66},COMPUTE)
+	,RES005("IVA a la importaci\u00F3n liquidado por la Aduana pendiente de ingreso"  
+		,new Mod303Key[]{Mod303Key.CT_C77},NONE)
+
+	,RES006A("Cuotas a compensar pendientes de periodos anteriores" 
+		,new Mod303Key[]{Mod303Key.CT_C110},COMPUTE_KEY)
+	,RES006B("Cuotas a compensar de periodos anteriores aplicadas en este periodo" 
+		,new Mod303Key[]{Mod303Key.CT_C78},NONE)
+	,RES006C("Cuotas a compensar de periodos previos pendientes para periodos posteriores (No se incluyen las cuotas a compensar generadas en este periodo)" 
+		,new Mod303Key[]{Mod303Key.CT_C87},COMPUTE)
+	
+	,RES007("Exclusivamente para sujetos pasivos que tributan conjuntamente a la Administraci\u00F3n "
+			+"del Estado y a las Diputaciones Forales Resultado de la regularizaci\u00F3n anual" 
+		,new Mod303Key[]{Mod303Key.CT_C68},NONE)
+
+	,RES008("Exclusivamente para determinados supuestos de autoliquidaci\u00F3n rectificativa por discrepancia de criterio administrativo que no deban incluirse en otras casillas. Otros ajustes"
+		,new Mod303Key[]{Mod303Key.CT_C108},NONE)
+	
+	,RES009("Resultado de la autoliquidaci\u00F3n" 
+		,new Mod303Key[]{Mod303Key.CT_C69},COMPUTE)
+	,RES010("Resultado a ingresar correspondiente a la anterior autoliquidaci\u00F3n o liquidaci\u00F3n administrativa del ejercicio y per\u00EDodo objeto de la autoliquidaci\u00F3n (En caso de segundas y siguientes autoliquidaciones rectificativas se considerar\u00E1 la \u00FAltima autoliquidaci\u00F3n con efectos -ver instrucciones del modelo 303-)"
+			,new Mod303Key[]{Mod303Key.CT_C70},COMPUTE_KEY)
+	,RES011("Devoluciones acordadas por la Agencia Tributaria como consecuencia de la tramitaci\u00F3n de anteriores autoliquidaciones correspondientes al ejercicio y per\u00EDodo objeto de la autoliquidaci\u00F3n"
+			,new Mod303Key[]{Mod303Key.CT_C109},NONE)
+	
+	,RES112(Mod303Key.CT_C112.getDescription(), new Mod303Key[]{Mod303Key.CT_C112}, NONE)	
+	
+	,RES012("RESULTADO"  
+		,new Mod303Key[]{Mod303Key.CT_C71},COMPUTE)
+	;
+	
+	private String label;
+	private Mod303Key[] keys;
+	private FiscalModelKeyInfo[] infoKeys;
+	
+	private Model3032026AEATResultScript(String label, Mod303Key[] keys,FiscalModelKeyInfo ... infoKeys) {
+		this.label = label;
+		this.keys = keys;
+		this.infoKeys = infoKeys;
+	}
+
+	@Override
+	public String getLabel() {
+		return label;
+	}
+	@Override
+	public Mod303Key[] getKeys() {
+		return keys;
+	}
+	@Override
+	public boolean isEnabled() {
+		return getInfoKeys()[0] != COMPUTE && getInfoKeys()[0] != TITLE;
+	}
+	@Override
+	public boolean isTitle() {
+		return getInfoKeys()[0] == TITLE;
+	}
+	@Override
+	public FiscalModelKeyInfo[] getInfoKeys() {
+		return infoKeys;
+	}
+	
+	@Override
+	public boolean hasGraphicParticularity() {
+		return false;
+	}
+
+	@Override
+	public boolean paintHeaderBefore() {
+		return false;
+	}
+
+}

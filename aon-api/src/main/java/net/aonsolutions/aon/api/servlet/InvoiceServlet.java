@@ -487,7 +487,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(api.getOccam());
-		String tbaiId = JsonUtils.getString(api.getData(), IJsonNames.TBAI_ID);
 		
 		if (invoice.isSales()) {
 			// ***********************************
@@ -518,7 +517,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		processInvoiceFile(api, invoice);
 		acceptTbai(icc, company, invoice);
 		acceptSii(api, icc, company, invoice);
-		saveInvoiceData(api, icc, invoice, tbaiId);
 		return getInvoice(api, invoice.getId(), invoice.messageStream().toList());
 	}
 	
@@ -568,31 +566,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 					throw new InvoiceCommunicationException( e );
 				}
 			}
-		}
-	}
-
-	public static void saveInvoiceData(AonApiData api, InvoiceCommunicationConfiguration icc, Invoice invoice, String tbaiId) throws UnsupportedEncodingException {
-		if(invoice.isSales() && icc.isTbai()){
-			String qrUrl = TbaiUri.getUrlQr(icc) + "?id=" + tbaiId + "&s="
-					+ (invoice.getSeries() != null ? invoice.getSeries() : "") + "&nf=" + invoice.getNumber() + "&i="
-					+ invoice.getTotal();
-			String crc = CRC8.calculate(qrUrl);
-			qrUrl = qrUrl + "&cr=" + crc;
-			
-			InvoiceData dataTbaiId = new InvoiceData()
-					.setDomain(invoice.getDomain())
-					.setInvoice(invoice.getId())
-					.setName(InvoiceDataName.TBAI_ID)
-					.setValue(tbaiId);
-			
-			InvoiceData dataTbaiUrl = new InvoiceData()
-					.setDomain(invoice.getDomain())
-					.setInvoice(invoice.getId())
-					.setName(InvoiceDataName.TBAI_URL)
-					.setValue(qrUrl);
-			
-			AON.saveInvoiceData(api.getDomain(), api.getUser(), dataTbaiId);
-			AON.saveInvoiceData(api.getDomain(), api.getUser(), dataTbaiUrl);
 		}
 	}
 	
