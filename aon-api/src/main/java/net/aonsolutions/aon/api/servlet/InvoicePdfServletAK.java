@@ -20,7 +20,9 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 
@@ -79,7 +81,9 @@ public class InvoicePdfServletAK extends AonApiHttpServlet {
 				.setQuantity(1.0)
 				.setPrepayment(false));
 			
-			PdfMaker.printInvoice(resp.getOutputStream(), company, invoice, config, "www.aonsolutions.es", logo.getData(), "");
+			InvoiceCommunicationConfiguration icc = new InvoiceCommunicationConfiguration();
+			icc.setAdministration(Administration.COMMON_TERRITORY);
+			PdfMaker.printInvoice(resp.getOutputStream(), company, icc, invoice, config, "www.aonsolutions.es", logo.getData(), "");
 			
 			responseFile(resp, "factura", MimeType.PDF);
 		} catch (IOException e) {

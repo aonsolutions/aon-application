@@ -296,7 +296,7 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 							});
 						}
 						
-						PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData(), tbaiId);
+						PdfMaker.printInvoice(out, company, icc, invoice, config, qrUrl, logo.getData(), tbaiId);
 						list.add(file);	
 					}
 				} catch (IOException e) {

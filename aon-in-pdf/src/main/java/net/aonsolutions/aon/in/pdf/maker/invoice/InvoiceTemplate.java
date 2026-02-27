@@ -87,6 +87,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -1767,7 +1768,9 @@ public class InvoiceTemplate {
 				drawTextRight(ctx.getContents(), new PDRectangle(x, y, 79, 15), percent, ctx.getTheme().getTextColor(), FONT, 7, 5, -12, i + TAX_PERCENTAGE);
 				x += 80;
 				
-				drawTextCenter(ctx.getContents(), new PDRectangle(x, y, 59, 15), tax.getTaxType().getName(), ctx.getTheme().getTextColor(), FONT, 7, -12, i + TAX_TYPE);
+				String taxName = TaxType.VAT.equals(tax.getTaxType()) && ctx.getAdministration().isCanarias()
+						? "IGIC" : tax.getTaxType().getName();
+				drawTextCenter(ctx.getContents(), new PDRectangle(x, y, 59, 15), taxName, ctx.getTheme().getTextColor(), FONT, 7, -12, i + TAX_TYPE);
 				x += 60;
 				
 				drawTextRight(ctx.getContents(), new PDRectangle(x, y, 49, 15), toLatinNumber(tax.getQuota() + tax.getSurchargeQuota()), ctx.getTheme().getTextColor(), FONT, 7, 5, -12, i + TAX_QUOTE);
