@@ -159,6 +159,7 @@ export const FILTER = 'filter';
 export const FINANCES = 'finances';
 export const FISCAL = 'fiscal';
 export const FOOTER = 'footer';
+export const FULLSCREEN = 'fullscreen';
 
 // ----- G
 
@@ -225,6 +226,7 @@ export const MATERIAL_OUTLINED = 'material_outlined';
 export const MATERIAL_ICONS_OUTLINED = 'material-icons-outlined';
 export const MAX = 'max';
 export const MAXLENGTH = 'maxlength';
+export const MENU = 'menu';
 export const MESSENGER = 'messenger';
 export const MIN = 'min';
 export const MOVABLE_CAPITAL = 'movableCapital';

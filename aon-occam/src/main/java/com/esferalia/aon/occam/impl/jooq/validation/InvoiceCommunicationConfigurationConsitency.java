@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.validation;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.impl.jooq.dao.EnterpriseDataDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class InvoiceCommunicationConfigurationConsitency {
 
@@ -107,7 +107,7 @@ public class InvoiceCommunicationConfigurationConsitency {
 	private static void checkNoSif(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
 		config.getNoSifData()
 			.map( cc -> cc.getStartDate() )
-			.map( InvoiceCommunicationDAO::minusOneDay	)
+			.map( AonDateUtils::previousDay )
 			.ifPresent( closeDate -> {
 				config.getSifData().ifPresent( cc -> EnterpriseDataDAO.updateEndDate(ctx, cc, closeDate));
 				config.getTbaiData().ifPresent( cc -> EnterpriseDataDAO.updateEndDate(ctx, cc, closeDate));
@@ -119,7 +119,7 @@ public class InvoiceCommunicationConfigurationConsitency {
 	private static void checkSif(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
 		config.getSifData()
 		.map( cc -> cc.getStartDate() )
-		.map( InvoiceCommunicationDAO::minusOneDay	)
+		.map( AonDateUtils::previousDay )
 		.ifPresent( closeDate -> {
 			config.getLroeData().ifPresent( cc -> EnterpriseDataDAO.updateEndDate(ctx, cc, closeDate));
 			config.getTbaiData().ifPresent( cc -> EnterpriseDataDAO.updateEndDate(ctx, cc, closeDate));

@@ -48,67 +48,67 @@ public class TbaiUri {
 	
 	public static String getUrlEmision(InvoiceCommunicationConfiguration icc) {
 		if (icc.isAraba())
-			return icc.isTbaiTest() ? URL_ARABA_EMISION_TEST : URL_ARABA_EMISION;
+			return icc.getTbaiData().map( tb -> tb.isTest()).orElse(false) ? URL_ARABA_EMISION_TEST : URL_ARABA_EMISION;
 		else if(icc.isBizkaia())
-			return icc.isLroeTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
+			return icc.getLroeData().map( tb -> tb.isTest()).orElse(false) ? URL_BIZKAIA_TEST : URL_BIZKAIA;
 		else if(icc.isGipuzkoa())
-			return icc.isTbaiTest() ? URL_GIPUZKOA_EMISION_TEST : URL_GIPUZKOA_EMISION;
+			return icc.getTbaiData().map( tb -> tb.isTest()).orElse(false) ? URL_GIPUZKOA_EMISION_TEST : URL_GIPUZKOA_EMISION;
 		return "";
 	}
 	
 	public static String getUrlAnulacion(InvoiceCommunicationConfiguration icc) {
 		if (icc.isAraba())
-			return icc.isTbaiTest() ? URL_ARABA_ANULACION_TEST : URL_ARABA_ANULACION;
+			return icc.getTbaiData().map( tb -> tb.isTest()).orElse(false) ? URL_ARABA_ANULACION_TEST : URL_ARABA_ANULACION;
 		else if(icc.isBizkaia())
-			return icc.isLroeTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
+			return icc.getLroeData().map( tb -> tb.isTest()).orElse(false) ? URL_BIZKAIA_TEST : URL_BIZKAIA;
 		else if(icc.isGipuzkoa())
-			return icc.isTbaiTest() ? URL_GIPUZKOA_ANULACION_TEST : URL_GIPUZKOA_ANULACION;
+			return icc.getTbaiData().map( tb -> tb.isTest()).orElse(false) ? URL_GIPUZKOA_ANULACION_TEST : URL_GIPUZKOA_ANULACION;
 		return "";
 	}
 	
 	public static String getUrlZuzendu(InvoiceCommunicationConfiguration icc) {
 		if (icc.isAraba())
-			return icc.isTbaiTest() ? URL_ARABA_ZUZENDU_TEST : URL_ARABA_ZUZENDU;
+			return icc.getTbaiData().map( tb -> tb.isTest()).orElse(false) ? URL_ARABA_ZUZENDU_TEST : URL_ARABA_ZUZENDU;
 		else if(icc.isBizkaia())
-			return icc.isLroeTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
+			return icc.getLroeData().map( tb -> tb.isTest()).orElse(false) ? URL_BIZKAIA_TEST : URL_BIZKAIA;
 		else if(icc.isGipuzkoa())
-			return icc.isTbaiTest() ? URL_GIPUZKOA_ZUZENDU_TEST : URL_GIPUZKOA_ZUZENDU;
+			return icc.getTbaiData().map( tb -> tb.isTest()).orElse(false) ? URL_GIPUZKOA_ZUZENDU_TEST : URL_GIPUZKOA_ZUZENDU;
 		return "";
 	}
 	
 	public static String getUrlZuzenduBaja(InvoiceCommunicationConfiguration icc) {
 		if (icc.isAraba())
-			return icc.isTbaiTest() ? URL_ARABA_ZUZENDU_BAJA_TEST : URL_ARABA_ZUZENDU_BAJA;
+			return icc.getTbaiData().map( tb -> tb.isTest()).orElse(false) ? URL_ARABA_ZUZENDU_BAJA_TEST : URL_ARABA_ZUZENDU_BAJA;
 		else if(icc.isBizkaia())
-			return icc.isLroeTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
+			return icc.getLroeData().map( tb -> tb.isTest()).orElse(false) ? URL_BIZKAIA_TEST : URL_BIZKAIA;
 		else if(icc.isGipuzkoa())
-			return icc.isTbaiTest() ? URL_GIPUZKOA_ZUZENDU_BAJA_TEST : URL_GIPUZKOA_ZUZENDU_BAJA;
+			return icc.getTbaiData().map( tb -> tb.isTest()).orElse(false) ? URL_GIPUZKOA_ZUZENDU_BAJA_TEST : URL_GIPUZKOA_ZUZENDU_BAJA;
 		return "";
 	}
 	
 	public static String getUrlOsatu(InvoiceCommunicationConfiguration icc) {
 		if (icc.isAraba())
-			return icc.isTbaiTest() ? URL_ARABA_OSATU_TEST : URL_ARABA_OSATU;
+			return icc.getTbaiData().map( tb -> tb.isTest()).orElse(false) ? URL_ARABA_OSATU_TEST : URL_ARABA_OSATU;
 		else if(icc.isBizkaia())
-			return icc.isLroeTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
+			return icc.getLroeData().map( tb -> tb.isTest()).orElse(false) ? URL_BIZKAIA_TEST : URL_BIZKAIA;
 		else if(icc.isGipuzkoa())
-			return icc.isTbaiTest() ? URL_GIPUZKOA_OSATU_TEST : URL_GIPUZKOA_OSATU;
+			return icc.getTbaiData().map( tb -> tb.isTest()).orElse(false) ? URL_GIPUZKOA_OSATU_TEST : URL_GIPUZKOA_OSATU;
 		return "";
 	}
 	
 	public static String getUrlConsulta(InvoiceCommunicationConfiguration icc) {
 		if(icc.isBizkaia())
-			return icc.isLroeTest() ? URL_BIZKAIA_CONSULTA_TEST : URL_BIZKAIA_CONSULTA;
+			return icc.getLroeData().map( tb -> tb.isTest()).orElse(false) ? URL_BIZKAIA_CONSULTA_TEST : URL_BIZKAIA_CONSULTA;
 		return "";
 	}
 	
 	public static String getUrlQr(InvoiceCommunicationConfiguration icc) {
 		if (icc.isAraba())
-			return icc.isTbaiTest() ? URL_ARABA_QR_TEST : URL_ARABA_QR;
+			return icc.getTbaiData().map( tb -> tb.isTest()).orElse(false) ? URL_ARABA_QR_TEST : URL_ARABA_QR;
 		else if(icc.isBizkaia())
-			return icc.isLroeTest() ? URL_BIZKAIA_QR_TEST : URL_BIZKAIA_QR;
+			return icc.getLroeData().map( tb -> tb.isTest()).orElse(false) ? URL_BIZKAIA_QR_TEST : URL_BIZKAIA_QR;
 		else if(icc.isGipuzkoa())
-			return icc.isTbaiTest() ? URL_GIPUZKOA_QR_TEST : URL_GIPUZKOA_QR;
+			return icc.getTbaiData().map( tb -> tb.isTest()).orElse(false) ? URL_GIPUZKOA_QR_TEST : URL_GIPUZKOA_QR;
 		return "";
 	}
 	

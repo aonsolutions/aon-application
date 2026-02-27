@@ -104,7 +104,7 @@ public class EnterpriseDataDAO {
 		return save(ctx, setEndDate(cc, endDate));
 	}
 	
-	public static EnterpriseData setEndDate(EnterpriseData cc, Date endDate) {
+	public static <T extends EnterpriseData> T setEndDate(T cc, Date endDate) {
 		Date startDate = cc.getStartDate();
 		if ( AonDateUtils.isBefore( endDate, startDate) ) {
 			cc.setDeleted(true);		
@@ -294,5 +294,5 @@ public class EnterpriseDataDAO {
 		}
 		
 	}
-
+	
 }

@@ -146,9 +146,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	public boolean isTbai(Date atDate) {
 		return getTbaiData( atDate).isPresent();
 	}
-	public boolean isTbaiTest() {
-		return getTbaiData().filter( cc -> cc.isTest() ).isPresent(); 
-	}
 	
 	// [ ------------------ LROE -------------------]
 	public Optional<CommunicationData> getLroeData() {
@@ -171,9 +168,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	public boolean isLroe(Date atDate )	{
 		return getLroeData( atDate ).isPresent();
-	}
-	public boolean isLroeTest() {
-		return getLroeData().filter( cc -> cc.isTest() ).isPresent(); 
 	}
 	
 	// [ ------------------ SII -------------------]
@@ -198,12 +192,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	public boolean isSii() {
 		return isSii(new Date());
 	}
-	public boolean isSiiTest() {
-		return isSiiTest( new Date() );
-	}
-	public boolean isSiiTest(Date atDate) {
-		return getSiiData( atDate ).filter( cc -> cc.isTest() ).isPresent();
-	}
 	
 	// [ --------------- VERIFACTU ----------------]
 	public Optional<CommunicationData> getVerifactuData() {
@@ -225,12 +213,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	public boolean isVerifactu() {
 		return isVerifactu(new Date());
-	}
-	public boolean isVerifactuTest() {
-		return isVerifactuTest( new Date() );
-	}
-	public boolean isVerifactuTest(Date atDate) {
-		return getVerifactuData( atDate ).filter( cc -> cc.isTest() ).isPresent();
 	}
 
 	// [ -------------- NO VERIFACTU ---------------]
@@ -254,12 +236,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	public boolean isNoVerifactu() {
 		return isNoVerifactu( new Date());
 	}
-	public boolean isNoVerifactuTest() {
-		return isNoVerifactuTest( new Date() );
-	}
-	public boolean isNoVerifactuTest(Date atDate) {
-		return getNoVerifactuData( atDate ).filter(cc -> cc.isTest() ).isPresent();
-	}
 
 	// [ ----------------- SIF ------------------]
 	public Optional<CommunicationData> getSifData() {
@@ -281,12 +257,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	public boolean isSif() {
 		return isSif(new Date());
-	}
-	public boolean isSifTest() {
-		return isSifTest(new Date());
-	}
-	public boolean isSifTest(Date atDate) {
-		return getSifData( atDate ).filter( cc -> cc.isTest() ).isPresent();
 	}
 	
 	// [ ----------------- NO SIF ------------------]

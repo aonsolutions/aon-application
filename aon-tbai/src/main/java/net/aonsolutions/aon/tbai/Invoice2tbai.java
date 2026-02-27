@@ -171,11 +171,12 @@ public class Invoice2tbai {
 		software.setLicenciaTBAI(DEVICE_NUMBER);
 		software.setNombre(SOFTWARE_NAME);
 		software.setVersion(SOFTWARE_VERSION);
-		if(icc.isAraba() && icc.isTbaiTest()) {
+		boolean tbaiTest = icc.getTbaiData().map( tb -> tb.isTest()).orElse(false);
+		if(icc.isAraba() && tbaiTest) {
 			software.setLicenciaTBAI(DEVICE_NUMBER_ARABA_TEST);
-		} else if(icc.isGipuzkoa() && icc.isTbaiTest()) {
+		} else if(icc.isGipuzkoa() && tbaiTest) {
 			software.setLicenciaTBAI(DEVICE_NUMBER_GIPUZKOA_TEST);
-		} else if(icc.isBizkaia() && icc.isTbaiTest()) {
+		} else if(icc.isBizkaia() && tbaiTest) {
 			entidad = new ticketbai.anulacion.EntidadDesarrolladoraType();
 			entidad.setNIF(NIF_BIZKAIA_TEST);
 			software.setEntidadDesarrolladora(entidad);
@@ -203,13 +204,14 @@ public class Invoice2tbai {
 		EntidadDesarrolladoraType entidad = new EntidadDesarrolladoraType();
 		entidad.setNIF("B01487271");
 		software.setEntidadDesarrolladora(entidad);
-		if(icc.isAraba() && icc.isTbaiTest())
+		boolean tbaiTest = icc.getTbaiData().map( tb -> tb.isTest()).orElse(false);
+		if(icc.isAraba() && tbaiTest)
 			software.setLicenciaTBAI(DEVICE_NUMBER_ARABA_TEST);
 		else software.setLicenciaTBAI(DEVICE_NUMBER);
 		software.setNombre(SOFTWARE_NAME);
 		software.setVersion(SOFTWARE_VERSION);
 	
-		if(icc.isBizkaia() && icc.isTbaiTest()) {
+		if(icc.isBizkaia() && tbaiTest) {
 			entidad = new EntidadDesarrolladoraType();
 			entidad.setNIF(NIF_BIZKAIA_TEST);
 			software.setEntidadDesarrolladora(entidad);

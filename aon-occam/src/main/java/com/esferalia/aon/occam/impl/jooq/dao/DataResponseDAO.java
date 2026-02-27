@@ -127,21 +127,44 @@ public class DataResponseDAO {
 			.orElse(null);
 	}
 	
-	public static boolean has(AONContext ctx, Integer domainId, DataResponseSource source, Integer year){	
+	public static boolean has(AONContext ctx, Integer domainId, DataResponseSource source, Integer year){
+		return has(ctx, domainId, source, AonDateUtils.getYearFirstDay(year), AonDateUtils.getYearLastDay(year));
+	}
+	public static boolean has(AONContext ctx, Integer domainId, DataResponseSource source, Date from, Date to){	
 		return ctx.getDslContext()
 			.select(DATA_RESPONSE.ID)
 			.from(DATA_RESPONSE)
 			.where(DATA_RESPONSE.DOMAIN.eq(domainId))
 			.and(DATA_RESPONSE.SOURCE.eq(source.value()))
 			.and(
-				DATA_RESPONSE.RESPONSE_DATE.between(AonDateUtils.toSql(AonDateUtils.getYearFirstDay(year)), AonDateUtils.toSql(AonDateUtils.getYearLastDay(year)))
-				.or(DATA_RESPONSE.CREATION_DATE.between(AonDateUtils.toTimestamp(AonDateUtils.getYearFirstDay(year)), AonDateUtils.toTimestamp(AonDateUtils.getYearLastDay(year))))
+				DATA_RESPONSE.RESPONSE_DATE.between(AonDateUtils.toSql(from), AonDateUtils.toSql(to))
+				.or(DATA_RESPONSE.CREATION_DATE.between(AonDateUtils.toTimestamp(from), AonDateUtils.toTimestamp(to)))
 				// Se filtra también por creation_date porque en algunos casos no se guarda response_date.
 			).limit(1)
 			.fetch()
 			.stream().findFirst().isPresent();
 	}
 	
+	public static boolean hasNotBeyond(AONContext ctx, Integer domainId, DataResponseSource source, Date to){
+		return !hasBeyond(ctx, domainId, source, to);
+	}
+	public static boolean hasBeyond(AONContext ctx, Integer domainId, DataResponseSource source, Date to){
+		to = AonDateUtils.setTimeToZero(to);
+		return ctx.getDslContext()
+			.select(DATA_RESPONSE.ID)
+			.from(DATA_RESPONSE)
+			.where(DATA_RESPONSE.DOMAIN.eq(domainId))
+			.and(DATA_RESPONSE.SOURCE.eq(source.value()))
+			.and(DATA_RESPONSE.RESPONSE_DATE.greaterThan(AonDateUtils.toSql(to))
+				.or(DATA_RESPONSE.CREATION_DATE.greaterThan(AonDateUtils.toTimestamp(to)))
+			)
+			.limit(1)
+			.fetch()
+			.stream()
+			.findFirst()
+			.isPresent();
+	}
+
 	public static DataResponse insertDataResponse(AONContext ctx, DataResponse dataResponse){	
 		Integer id = ctx.getDslContext().insertInto(DATA_RESPONSE)
 				.set(DATA_RESPONSE.DOMAIN, dataResponse.getDomain())

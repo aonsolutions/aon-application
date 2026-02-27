@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeAccepter;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -168,12 +169,32 @@ public class InvoiceInfoDAO {
 	
 	
 	private static void fixUrl(InvoiceCommunicationConfiguration icc, InvoiceInfo v) {
-		if (v != null
-			 && AonStringUtils.startsWith(v.getCheckUrl(), "?")) {
-				String urlQr = "https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR" + (v.getType().isNoVerifactu()? "NoVerifactu":"");
-				String urlQrTest = "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR" + (v.getType().isNoVerifactu()? "NoVerifactu":"");
-				v.setCheckUrl( (icc.isVerifactuTest()?urlQrTest:urlQr) + v.getCheckUrl());
-			}
+		if (v != null && AonStringUtils.startsWith(v.getCheckUrl(), "?")) {
+			v.setCheckUrl(
+				v.getType().accept( new InvoiceCommunicationTypeAccepter<String>() {
+					@Override public String visitSII() { return null; }
+					@Override public String visitTBAI() { return null; }
+					@Override public String visitLROE() { return null; }
+					@Override public String visitSERES() { return null; }
+					@Override public String visitEMAIL() { return null; }
+					@Override public String visitCLOSING() { return null; }
+					@Override public String visitNO_VERIFACTU() { return null; }
+					@Override public String visitSIF() { return null; }
+					@Override public String visitFACTURAE() {return null; }
+					
+					@Override 
+					public String visitVERIFACTU() { 
+						return icc.getVerifactuData()
+							.map( vd -> {
+								String urlQr = "https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR" + (v.getType().isNoVerifactu()? "NoVerifactu":"");
+								String urlQrTest = "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR" + (v.getType().isNoVerifactu()? "NoVerifactu":"");
+								return ( vd.isTest()?urlQrTest:urlQr ) + v.getCheckUrl();
+							})
+							.orElse(null);
+					}
+				})
+			);
+		}
 	}
 	// ************************************************************
 	// ********************** [WRITE] *****************************

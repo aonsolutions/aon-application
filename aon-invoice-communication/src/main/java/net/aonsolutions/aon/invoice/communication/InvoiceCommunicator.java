@@ -560,8 +560,9 @@ public class InvoiceCommunicator {
 		
 		// ************************************** [BORRAR AL SUBIR A PRODUCCION] ****
 		if (icc.isVerifactu()) {
-			if (!icc.isVerifactuTest())
-				throw new AonCoreException("La facturaci\u00F3n de cuotas no est\u00E1 permitida a\u00FAn en modo producci\u00F3n de VERIFACTU.");
+			icc.getVerifactuData()
+				.filter( d -> d.isNotTest() )
+				.orElseThrow(() -> new AonCoreException("La facturaci\u00F3n de cuotas no est\u00E1 permitida a\u00FAn en modo producci\u00F3n de VERIFACTU."));
 		}
 		// **************************************************************************
 		

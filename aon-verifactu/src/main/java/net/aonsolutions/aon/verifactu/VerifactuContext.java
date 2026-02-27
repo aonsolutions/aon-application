@@ -87,8 +87,11 @@ public class VerifactuContext  {
 		return getInvoiceCommunicatorContext().invoiceCount();
 	}
 	public boolean isVerifactuTest() {
-		return getInvoiceCommunicatorContext().getConfig().isVerifactuTest();
-
+		return getInvoiceCommunicatorContext()
+			.getConfig()
+			.getVerifactuData()
+			.map(vd -> vd.isTest())
+			.orElse(false);
 	}
 	public ConsoleLogger getLogger() {
 		return getInvoiceCommunicatorContext().getLogger();

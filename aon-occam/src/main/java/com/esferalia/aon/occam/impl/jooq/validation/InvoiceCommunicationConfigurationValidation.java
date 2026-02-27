@@ -14,6 +14,7 @@ public class InvoiceCommunicationConfigurationValidation {
 	
 	private static final Consumer<InvoiceCommunicationConfiguration> NO_SIF_VALIDATION = icc -> {
 		icc.getNoSifStream()
+			.filter(ed -> ed.isNotDeleted() )
 			.filter(ed -> ed.getEndDate() == null )
 			.map(ed -> ed.getStartDate())
 			.forEach(atDate -> {
@@ -26,6 +27,7 @@ public class InvoiceCommunicationConfigurationValidation {
 
 	private static final Consumer<InvoiceCommunicationConfiguration> SIF_VALIDATION = icc -> {
 		icc.getSifStream()
+			.filter(ed -> ed.isNotDeleted() )
 			.filter(sif -> sif.getEndDate() == null )
 			.map(sif -> sif.getStartDate())
 			.forEach(atDate -> {
@@ -40,6 +42,7 @@ public class InvoiceCommunicationConfigurationValidation {
 
 	private static final Consumer<InvoiceCommunicationConfiguration> SII_VALIDATION = icc -> {
 		icc.getSiiStream()
+			.filter(ed -> ed.isNotDeleted() )
 			.filter(sii -> sii.getEndDate() == null )
 			.map(sii -> sii.getStartDate())
 			.forEach(atDate -> {
@@ -54,6 +57,7 @@ public class InvoiceCommunicationConfigurationValidation {
 
 	private static final Consumer<InvoiceCommunicationConfiguration> VERIFACTU_VALIDATION = icc -> {
 		icc.getVerifactuStream()
+			.filter(ed -> ed.isNotDeleted() )
 			.filter(ed -> ed.getEndDate() == null )
 			.map(ed -> ed.getStartDate())
 			.forEach(atDate -> {
@@ -68,6 +72,7 @@ public class InvoiceCommunicationConfigurationValidation {
 
 	public static final Consumer<InvoiceCommunicationConfiguration> NO_VERIFACTU_VALIDATION = icc -> {
 		icc.getNoVerifactuStream()
+			.filter(ed -> ed.isNotDeleted() )
 			.filter(ed -> ed.getEndDate() == null )
 			.map(ed -> ed.getStartDate())
 			.forEach(atDate -> {
@@ -80,6 +85,35 @@ public class InvoiceCommunicationConfigurationValidation {
 			});
 	};
 	
+	public static final Consumer<InvoiceCommunicationConfiguration> TBAI_VALIDATION = icc -> {
+		icc.getTbaiStream()
+			.filter(ed -> ed.isNotDeleted() )
+			.filter(ed -> ed.getEndDate() == null )
+			.map(ed -> ed.getStartDate())
+			.forEach(atDate -> {
+				if (!icc.isAraba(atDate) && !icc.isGipuzkoa(atDate)) throw new AonCoreException( InvoiceCommunicationError.ICC_5003.getMessage() ); 
+				if (icc.isVerifactu(atDate)) throw new AonCoreException( InvoiceCommunicationError.ICC_5007.getMessage() );
+				if (icc.isNoVerifactu(atDate)) throw new AonCoreException( InvoiceCommunicationError.ICC_5008.getMessage() );
+				if (icc.isSif(atDate)) throw new AonCoreException( InvoiceCommunicationError.ICC_5009.getMessage() );
+				if (icc.isLroe(atDate)) throw new AonCoreException( InvoiceCommunicationError.ICC_5010.getMessage() );
+			});
+	};
+	
+	public static final Consumer<InvoiceCommunicationConfiguration> LROE_VALIDATION = icc -> {
+		icc.getLroeStream()
+			.filter(ed -> ed.isNotDeleted() )
+			.filter(ed -> ed.getEndDate() == null )
+			.map(ed -> ed.getStartDate())
+			.forEach(atDate -> {
+				if (!icc.isBizkaia(atDate)) throw new AonCoreException( InvoiceCommunicationError.ICC_5006.getMessage() );
+				if (icc.isVerifactu(atDate)) throw new AonCoreException( InvoiceCommunicationError.ICC_5011.getMessage() );
+				if (icc.isNoVerifactu(atDate)) throw new AonCoreException( InvoiceCommunicationError.ICC_5012.getMessage() );
+				if (icc.isSif(atDate)) throw new AonCoreException( InvoiceCommunicationError.ICC_5013.getMessage() );
+				if (icc.isSii(atDate)) throw new AonCoreException( InvoiceCommunicationError.ICC_5014.getMessage() );
+				if (icc.isTbai(atDate)) throw new AonCoreException( InvoiceCommunicationError.ICC_5015.getMessage() );
+			});
+	};
+
 	public static void validate(InvoiceCommunicationConfiguration icc) {
 		TBAI_VALIDATION
 			.andThen(LROE_VALIDATION)
@@ -94,28 +128,5 @@ public class InvoiceCommunicationConfigurationValidation {
 	public static void validate(AONContext ctx, InvoiceCommunicationConfiguration icc) throws AonCoreException{
 		validate(icc);
 	}
-	
-	
-	// ---------------------------- TO DO
-	private static final Consumer<InvoiceCommunicationConfiguration> TBAI_VALIDATION = icc -> {
-		if (icc.isTbai()) {
-			if (!icc.isAraba() && !icc.isGipuzkoa()) throw new AonCoreException( InvoiceCommunicationError.ICC_5003.getMessage() ); 
-			if (icc.isVerifactu()) throw new AonCoreException( InvoiceCommunicationError.ICC_5007.getMessage() );
-			if (icc.isNoVerifactu()) throw new AonCoreException( InvoiceCommunicationError.ICC_5008.getMessage() );
-			if (icc.isSif()) throw new AonCoreException( InvoiceCommunicationError.ICC_5009.getMessage() );
-			if (icc.isLroe()) throw new AonCoreException( InvoiceCommunicationError.ICC_5010.getMessage() );
-		}
-	};
-	
-	private static final Consumer<InvoiceCommunicationConfiguration> LROE_VALIDATION = icc -> {
-		if (icc.isLroe()) {
-			if (!icc.isBizkaia()) throw new AonCoreException( InvoiceCommunicationError.ICC_5006.getMessage() );
-			if (icc.isVerifactu()) throw new AonCoreException( InvoiceCommunicationError.ICC_5011.getMessage() );
-			if (icc.isNoVerifactu()) throw new AonCoreException( InvoiceCommunicationError.ICC_5012.getMessage() );
-			if (icc.isSif()) throw new AonCoreException( InvoiceCommunicationError.ICC_5013.getMessage() );
-			if (icc.isSii()) throw new AonCoreException( InvoiceCommunicationError.ICC_5014.getMessage() );
-			if (icc.isTbai()) throw new AonCoreException( InvoiceCommunicationError.ICC_5015.getMessage() );
-		}
-	};
 
 }

@@ -75,14 +75,21 @@ public class TbaiData {
 	}
 	
 	public boolean isTest() {
-		return getInvoiceCommunicationConfiguration().isTbaiTest();
+		return isTest(getInvoiceCommunicationConfiguration());
+	}
+	public boolean isTest(InvoiceCommunicationConfiguration icc) {
+		return getInvoiceCommunicationConfiguration()
+			.getTbaiData()
+			.map( tb -> tb.isTest())
+			.orElse(false)
+		;
 	}
 	private DataResponseSource getDataResponseSource() {
 		return isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
 	}
 	
 	public TicketBai getTicketBai(AONContext ctx, Domain domain, Integer invoice, InvoiceCommunicationConfiguration icc, boolean subsanar) throws Exception {
-		DataResponseSource source = icc.isTbaiTest()
+		DataResponseSource source = isTest( icc )
 			? DataResponseSource.TBAI_TEST
 			: DataResponseSource.TBAI;
 		DataResponse dr = DataResponseDAO.get(ctx, f -> 

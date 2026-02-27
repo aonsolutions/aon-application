@@ -37,4 +37,41 @@ export class EnterpriseData {
             this.updated = data.updated || false;
         }
     }
+
+    inRange( atDate ) {
+        if (!atDate) atDate = new Date();
+		return this.startDate
+			&& this.startDate <= atDate
+			&& (this.endDate == undefined || this.endDate >= atDate)
+		;
+    }
+
+    getExpressionObject() {
+        try {
+            return JSON.parse(this.expression);
+        } catch (e) {
+            if ("test" === this.expression) {
+                return {"test": true};
+            } else {
+                return {"test": false};
+            }
+        }
+    }
+
+    isTest() {
+        let expr = this.getExpressionObject();
+        return expr.test === true;
+    }
+
+    isNoSif() { return this.name === EnterpriseDataNames.ICC_NO_SIF; }
+    isLroe() { return this.name === EnterpriseDataNames.ICC_LROE; }
+    isSif() { return this.name === EnterpriseDataNames.ICC_SIF; }
+    isSii() { return this.name === EnterpriseDataNames.ICC_SII; }
+    isTbai() { return this.name === EnterpriseDataNames.ICC_TBAI; }
+    isSeres() { return this.name === EnterpriseDataNames.ICC_SERES; }
+    isEmail() { return this.name === EnterpriseDataNames.ICC_EMAIL; }
+    isVerifactu() { return this.name === EnterpriseDataNames.ICC_VERIFACTU; }
+    isNoVerifactu() { return this.name === EnterpriseDataNames.ICC_NO_VERIFACTU; }
+    isFacturae() { return this.name === EnterpriseDataNames.ICC_FACTURAE; }
+
 }

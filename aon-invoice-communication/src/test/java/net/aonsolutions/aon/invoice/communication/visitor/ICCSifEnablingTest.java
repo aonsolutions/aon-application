@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.impl.jooq.dao.ICCDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -25,7 +26,7 @@ class ICCSifEnablingTest extends ICCAbstractEnablingTest {
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
 		AonCoreException e = assertThrows(AonCoreException.class,  
-			() -> InvoiceCommunicationDAO.enableSif( getCtx(),getDomainId(), Administration.COMMON_TERRITORY, lastMonthFirstDay ));
+			() -> ICCDAO.enableSif( getCtx(),getDomainId(), Administration.COMMON_TERRITORY, lastMonthFirstDay ));
 		assertEquals( InvoiceCommunicationError.ICC_5005.getMessage(), e.getMessage() );
 	}
 
@@ -34,7 +35,7 @@ class ICCSifEnablingTest extends ICCAbstractEnablingTest {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableSif( getCtx(),getDomainId(), Administration.NAVARRA, lastMonthFirstDay );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableSif( getCtx(),getDomainId(), Administration.NAVARRA, lastMonthFirstDay );
 		printIcc(icc);
 		assertTrue( icc.isNavarra( today ) );
 		assertTrue( icc.isSif( today ) );
@@ -57,7 +58,7 @@ class ICCSifEnablingTest extends ICCAbstractEnablingTest {
 	void test_enable_sif_from_nothing_today() {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableSif( getCtx(),getDomainId(), Administration.NAVARRA, today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableSif( getCtx(),getDomainId(), Administration.NAVARRA, today );
 		printIcc(icc);
 		assertTrue( icc.isNavarra( today ) );
 		assertTrue( icc.isSif( today ) );
@@ -80,7 +81,7 @@ class ICCSifEnablingTest extends ICCAbstractEnablingTest {
 	void test_enable_sif_from_sii_today() {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableSiiNavarra( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableSiiNavarra( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.isNavarra( today ) );
@@ -100,7 +101,7 @@ class ICCSifEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isSif( today ) );
 
 		AonCoreException e = assertThrows(AonCoreException.class,  
-				() -> InvoiceCommunicationDAO.enableSif( getCtx(),getDomainId(), Administration.NAVARRA, today ));
+				() -> ICCDAO.enableSif( getCtx(),getDomainId(), Administration.NAVARRA, today ));
 		assertEquals( InvoiceCommunicationError.ICC_5023.getMessage(), e.getMessage() );
 	}
 	
@@ -110,7 +111,7 @@ class ICCSifEnablingTest extends ICCAbstractEnablingTest {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableNoSif( getCtx(),getDomainId(), Administration.NAVARRA, lastMonthFirstDay );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableNoSif( getCtx(),getDomainId(), Administration.NAVARRA, lastMonthFirstDay );
 		printIcc(icc);
 		assertTrue( icc.isNoSif( today ) );
 		assertTrue( icc.isNavarra( today ) );
@@ -128,7 +129,7 @@ class ICCSifEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isTbai( today ) );
 		assertFalse( icc.isLroe( today ) );
 
-		InvoiceCommunicationConfiguration icc2 = InvoiceCommunicationDAO.enableSif( getCtx(),getDomainId(), Administration.NAVARRA, today );
+		InvoiceCommunicationConfiguration icc2 = ICCDAO.enableSif( getCtx(),getDomainId(), Administration.NAVARRA, today );
 		printIcc(icc2);
 		assertTrue( icc2.isNavarra( today ) );
 		assertTrue( icc2.isSif( today ) );

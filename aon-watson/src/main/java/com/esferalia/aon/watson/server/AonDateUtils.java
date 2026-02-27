@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -1485,4 +1486,25 @@ public class AonDateUtils {
         return afterStart && beforeEnd;
     }
         
+	public static Date previousDay(Date endDate) {
+	    if (endDate == null) return null;
+	    Date date = new java.util.Date(endDate.getTime());
+	    Instant instant = date.toInstant();
+	    ZoneId zone = ZoneId.systemDefault();
+	    LocalDate localDate = instant.atZone(zone).toLocalDate().minusDays(1);
+	    return Date.from(localDate.atStartOfDay(zone).toInstant());
+	}
+	
+	public static Date nextDay(Date endDate) {
+	    if (endDate == null) return null;
+	    Date date = new java.util.Date(endDate.getTime());
+	    Instant instant = date.toInstant();
+	    ZoneId zone = ZoneId.systemDefault();
+	    LocalDate localDate = instant.atZone(zone).toLocalDate().plusDays(1);
+	    return Date.from(localDate.atStartOfDay(zone).toInstant());
+	}
+
+	public static Date setTimeToZero(Date date) {
+		return truncate(date, Calendar.DAY_OF_MONTH);		
+	}
 }

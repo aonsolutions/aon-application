@@ -108,7 +108,12 @@ public enum InvoiceCommunicationError {
 
 	ICC_6000("6000", "Verifactu se debe activar el uno de enero del año siguiente"),
 	ICC_6001("6001", "No Verifactu se debe activar el uno de enero del año siguiente"),
-	
+	ICC_6002("6002", "Si tributa en TERRITORIO COM\u00DAN o CANARIAS y emite facturas, debe activar VERIFACTU, NO VERIFATU o SII"),
+	ICC_6003("6003", "No se puede desactivar la opci\u00F3n. Existen facturas de {0} posteriores a la fecha {1,date,dd/MM/yyyy} registradas en el sistema."),
+	ICC_6004("6004", "No se puede desactivar la opci\u00F3n {0}. A fecha {1,date,dd/MM/yyyy} no está activada."),
+	ICC_6005("6005", "Si tributa en BIZKAIA y emite facturas, debe activar LROE / TicketBAI"),
+	ICC_6006("6006", "Si tributa en ALAVA o GIPUZKOA y emite facturas, debe activar TicketBAI"),
+
 	// TODO REFACTOR
 	AON_9000("9000", "Error interno."),
 	AON_9001("9001", "No se ha encontrado un valor para ClaveRegimen v\u00E1lido."),

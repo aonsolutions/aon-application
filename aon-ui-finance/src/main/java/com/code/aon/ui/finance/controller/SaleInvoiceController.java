@@ -971,7 +971,8 @@ public class SaleInvoiceController extends InvoiceController {
 
 				AON.deleteInvoice(domainName, invoice.getDomain(), login, invoice.getId());
 			} catch (Exception e) {
-				if(config.isTbaiTest()) {
+				boolean test = config.getTbaiData().map(tbaiData -> tbaiData.isTest()).orElse(false);
+				if(test) {
 					AON.deleteInvoice(domainName, invoice.getDomain(), login, invoice.getId());
 				} else {
 					e.printStackTrace();

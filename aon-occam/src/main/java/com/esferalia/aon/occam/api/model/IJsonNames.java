@@ -24,6 +24,7 @@ public final class IJsonNames {
 	public static final String ACCOUNT_PARAMS = "accountParams";
 	public static final String ACCOUNT_REPORT_PARAMS = "accountReportParams";
 	public static final String ACCRUAL_REGIME = "accrualRegime";
+	public static final String ACTION = "action";
 	public static final String ACTIVE = "active";
 	public static final String ACTIVE_CHILD_COUNT = "activeChildCount";
 	public static final String ACTIVITY = "activity";
@@ -266,6 +267,7 @@ public final class IJsonNames {
 	public static final String EPIGRAPH_SECTION = "epigraphSection";
 	public static final String ERROR = "error";
 	public static final String ERRORS = "errors";
+	public static final String EXEMPT_TYPE = "exemptType";
 	public static final String EXP_ACCOUNT = "expAccount";
 	public static final String EXP_DATE = "expDate";
 	public static final String EXPENSES = "expenses";
@@ -858,6 +860,5 @@ public final class IJsonNames {
 	public static final String YEAR = "year";
 	// ---------------------------------------------------------------------------------------------	[Z] 
 	public static final String ZIP = "zip";
-	
 
 }

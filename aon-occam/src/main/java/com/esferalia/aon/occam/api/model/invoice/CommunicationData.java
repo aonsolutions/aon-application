@@ -9,6 +9,7 @@ import static com.esferalia.aon.occam.api.model.EnterpriseDataNames.ICC_SII;
 import static com.esferalia.aon.occam.api.model.EnterpriseDataNames.ICC_TBAI;
 import static com.esferalia.aon.occam.api.model.EnterpriseDataNames.ICC_VERIFACTU;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Optional;
 
@@ -19,13 +20,13 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class CommunicationData extends EnterpriseData {
+public class CommunicationData extends EnterpriseData implements Serializable {
 
 	public enum ExemptType {
 		NO_SOFTWARE		("No utiliza sistema inform\u00E1tico de facturaci\u00F3n"),
 		NO_OBLIGATION	("Operaciones sin obligaci\u00F3n de emitir factura"),
 	    REAGP			("REAGP sin emisi\u00F3n de factura propia"),
-	    AUTHORIZATION	("Exenci\u00F3n autoriazada"),
+	    AUTHORIZATION	("Exenci\u00F3n autorizada"),
 	    ;
 
 	    private final String description;
@@ -47,12 +48,10 @@ public class CommunicationData extends EnterpriseData {
 		}
 	}
 
-	private static final String TEST = "test";
-	private static final String EXEMPT = "exempt";
-	private static final String EXEMPT_SEP = " - ";
-
 	private static final long serialVersionUID = 1260028550928443004L;
 	
+	private boolean test;
+	private ExemptType exemptType;
 	
 	@Override 
 	public CommunicationData setId(Integer id) {
@@ -101,25 +100,24 @@ public class CommunicationData extends EnterpriseData {
 	}
 
 	public boolean isTest() {
-		return AonStringUtils.containsIgnoreCase(getExpression(), TEST);
+		return test;
+	}
+	public boolean isNotTest() {
+		return !test;
 	}
 	public CommunicationData setTest(boolean test) {
-		if (isAdministration()) throw new AonCoreException("Only test data can be set with this method");
-		setExpression(test ? TEST : null);
+		this.test = test;
 		return this;
 	}
 	
 	public boolean isExempt() {
-		return AonStringUtils.startsWithIgnoreCase(getExpression(), EXEMPT);
+		return getExemptType() != null;
 	}
-	public Optional<ExemptType> getExemptCause() {
-		if (!isExempt()) return Optional.empty();
-		String cause = AonStringUtils.substringAfter(getExpression(), EXEMPT+EXEMPT_SEP);
-		return ExemptType.safeValueOf(cause);
+	public ExemptType getExemptType() {
+		return exemptType;
 	}
-	public CommunicationData setExemptCause(ExemptType cause) {
-		if (isExempt()) throw new AonCoreException("Only exempt data can be set with this method");
-		setExpression(cause == null ? EXEMPT : (EXEMPT + EXEMPT_SEP + cause.name()) );
+	public CommunicationData setExemptType(ExemptType exemptType) {
+		this.exemptType = exemptType;
 		return this;
 	}
 	

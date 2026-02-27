@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.impl.jooq.dao.ICCDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -88,7 +89,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableTbaiAraba( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableTbaiAraba( getCtx(),getDomainId(), today );
 		printIcc(icc);
 
 		assertTrue( icc.getAdministration().isPresent() );
@@ -120,7 +121,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableTbaiGipuzkoa( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableTbaiGipuzkoa( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -152,7 +153,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableTbaiArabaTest( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableTbaiArabaTest( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -168,8 +169,6 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		assertEquals( EnterpriseDataNames.ICC_TBAI.name(), ed.getName());
 		assertTrue( AonStringUtils.isNotBlank( ed.getExpression()));
 		assertTrue( ed.isTest() );
-		assertTrue( icc.isTbaiTest() );
-		assertFalse( icc.isLroeTest() );
 		assertNull( ed.getEndDate() );
 		assertTrue( AonDateUtils.isSameDay( ed.getStartDate(), today ));
 		
@@ -187,7 +186,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableTbaiGipuzkoaTest( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableTbaiGipuzkoaTest( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -203,8 +202,6 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		assertEquals( EnterpriseDataNames.ICC_TBAI.name(), ed.getName());
 		assertTrue( AonStringUtils.isNotBlank( ed.getExpression()));
 		assertTrue( ed.isTest() );
-		assertTrue( icc.isTbaiTest() );
-		assertFalse( icc.isLroeTest() );
 		assertNull( ed.getEndDate() );
 		assertTrue( AonDateUtils.isSameDay( ed.getStartDate(), today ));
 		
@@ -228,7 +225,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableLroe( getCtx(),getDomainId(), today);
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableLroe( getCtx(),getDomainId(), today);
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -260,7 +257,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableLroeTest( getCtx(),getDomainId(), today);
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableLroeTest( getCtx(),getDomainId(), today);
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -276,8 +273,6 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		assertEquals( EnterpriseDataNames.ICC_LROE.name(), ed.getName());
 		assertTrue( AonStringUtils.isNotBlank( ed.getExpression()));
 		assertTrue( ed.isTest() );
-		assertTrue( icc.isLroeTest() );
-		assertFalse( icc.isTbaiTest() );
 		assertNull( ed.getEndDate() );
 		assertTrue( AonDateUtils.isSameDay( ed.getStartDate(), today ));
 		
@@ -301,7 +296,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();	
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableVerifactu( getCtx(),getDomainId(), today);
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableVerifactu( getCtx(),getDomainId(), today);
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -333,7 +328,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableVerifactuCanarias( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableVerifactuCanarias( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -365,7 +360,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();	
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableVerifactuTest( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableVerifactuTest( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -381,8 +376,6 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		assertEquals( EnterpriseDataNames.ICC_VERIFACTU.name(), ed.getName());
 		assertTrue( AonStringUtils.isNotBlank( ed.getExpression()));
 		assertTrue( ed.isTest() );
-		assertFalse( icc.isLroeTest() );
-		assertFalse( icc.isTbaiTest() );
 		assertNull( ed.getEndDate() );
 		assertTrue( AonDateUtils.isSameDay( ed.getStartDate(), today ));
 		
@@ -400,7 +393,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();	
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableVerifactuCanariasTest( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableVerifactuCanariasTest( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -416,8 +409,6 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		assertEquals( EnterpriseDataNames.ICC_VERIFACTU.name(), ed.getName());
 		assertTrue( AonStringUtils.isNotBlank( ed.getExpression()));
 		assertTrue( ed.isTest() );
-		assertFalse( icc.isLroeTest() );
-		assertFalse( icc.isTbaiTest() );
 		assertNull( ed.getEndDate() );
 		assertTrue( AonDateUtils.isSameDay( ed.getStartDate(), today ));
 		
@@ -441,7 +432,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableNoVerifactu( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableNoVerifactu( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -473,7 +464,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableNoVerifactuTest( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableNoVerifactuTest( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -489,8 +480,6 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		assertEquals( EnterpriseDataNames.ICC_NO_VERIFACTU.name(), ed.getName());
 		assertTrue( AonStringUtils.isNotBlank( ed.getExpression()));
 		assertTrue( ed.isTest() );
-		assertFalse( icc.isLroeTest() );
-		assertFalse( icc.isTbaiTest() );
 		assertNull( ed.getEndDate() );
 		assertTrue( AonDateUtils.isSameDay( ed.getStartDate(), today ));
 		
@@ -508,7 +497,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableNoVerifactuCanarias( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableNoVerifactuCanarias( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -540,7 +529,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableNoVerifactuCanariasTest( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableNoVerifactuCanariasTest( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -556,8 +545,6 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		assertEquals( EnterpriseDataNames.ICC_NO_VERIFACTU.name(), ed.getName());
 		assertTrue( AonStringUtils.isNotBlank( ed.getExpression()));
 		assertTrue( ed.isTest() );
-		assertFalse( icc.isLroeTest() );
-		assertFalse( icc.isTbaiTest() );
 		assertNull( ed.getEndDate() );
 		assertTrue( AonDateUtils.isSameDay( ed.getStartDate(), today ));
 		
@@ -581,7 +568,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableSii( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -613,7 +600,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableSiiTest( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableSiiTest( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -629,8 +616,6 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		assertEquals( EnterpriseDataNames.ICC_SII.name(), ed.getName());
 		assertTrue( AonStringUtils.isNotBlank( ed.getExpression()));
 		assertTrue( ed.isTest() );
-		assertFalse( icc.isLroeTest() );
-		assertFalse( icc.isTbaiTest() );
 		assertNull( ed.getEndDate() );
 		assertTrue( AonDateUtils.isSameDay( ed.getStartDate(), today ));
 		
@@ -648,7 +633,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableSiiCanarias( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableSiiCanarias( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -680,7 +665,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableSiiCanariasTest( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableSiiCanariasTest( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -696,8 +681,6 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		assertEquals( EnterpriseDataNames.ICC_SII.name(), ed.getName());
 		assertTrue( AonStringUtils.isNotBlank( ed.getExpression()));
 		assertTrue( ed.isTest() );
-		assertFalse( icc.isLroeTest() );
-		assertFalse( icc.isTbaiTest() );
 		assertNull( ed.getEndDate() );
 		assertTrue( AonDateUtils.isSameDay( ed.getStartDate(), today ));
 		
@@ -715,8 +698,8 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		InvoiceCommunicationDAO.enableTbaiAraba( getCtx(),getDomainId(), today );
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableSiiAraba( getCtx(),getDomainId(), today );
+		ICCDAO.enableTbaiAraba( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableSiiAraba( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -754,8 +737,8 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationDAO.enableTbaiArabaTest( getCtx(),getDomainId(), today );
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableSiiArabaTest( getCtx(),getDomainId(), today );
+		ICCDAO.enableTbaiArabaTest( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableSiiArabaTest( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -771,16 +754,12 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		assertEquals( EnterpriseDataNames.ICC_TBAI.name(), ed0.getName());
 		assertTrue( AonStringUtils.isNotBlank( ed0.getExpression()));
 		assertTrue( ed0.isTest() );
-		assertTrue( icc.isTbaiTest() );
 
 		assertTrue( icc.getSiiData().isPresent() );
 		CommunicationData ed = icc.getSiiData().get();
 		assertEquals( EnterpriseDataNames.ICC_SII.name(), ed.getName());
 		assertTrue( AonStringUtils.isNotBlank( ed.getExpression()));
 		assertTrue( ed.isTest() );
-		assertFalse( icc.isLroeTest() );
-		assertTrue( icc.isTbaiTest() );
-		assertTrue( icc.isSiiTest() );
 		assertNull( ed.getEndDate() );
 		assertTrue( AonDateUtils.isSameDay( ed.getStartDate(), today ));
 		
@@ -798,8 +777,8 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		InvoiceCommunicationDAO.enableTbaiGipuzkoa( getCtx(),getDomainId(), today );
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableSiiGipuzkoa( getCtx(),getDomainId(), today );
+		ICCDAO.enableTbaiGipuzkoa( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableSiiGipuzkoa( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -837,7 +816,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableSiiGipuzkoaTest( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableSiiGipuzkoaTest( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -853,8 +832,6 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		assertEquals( EnterpriseDataNames.ICC_SII.name(), ed.getName());
 		assertTrue( AonStringUtils.isNotBlank( ed.getExpression()));
 		assertTrue( ed.isTest() );
-		assertFalse( icc.isLroeTest() );
-		assertFalse( icc.isTbaiTest() );
 		assertNull( ed.getEndDate() );
 		assertTrue( AonDateUtils.isSameDay( ed.getStartDate(), today ));
 		
@@ -872,7 +849,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableSiiNavarra( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableSiiNavarra( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -903,7 +880,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableSiiNavarraTest( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableSiiNavarraTest( getCtx(),getDomainId(), today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -919,8 +896,6 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		assertEquals( EnterpriseDataNames.ICC_SII.name(), ed.getName());
 		assertTrue( AonStringUtils.isNotBlank( ed.getExpression()));
 		assertTrue( ed.isTest() );
-		assertFalse( icc.isLroeTest() );
-		assertFalse( icc.isTbaiTest() );
 		assertNull( ed.getEndDate() );
 		assertTrue( AonDateUtils.isSameDay( ed.getStartDate(), today ));
 		
@@ -944,7 +919,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableSif( getCtx(),getDomainId(), NAVARRA, today );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableSif( getCtx(),getDomainId(), NAVARRA, today );
 		printIcc(icc);
 		
 		assertTrue( icc.getAdministration().isPresent() );
@@ -970,49 +945,15 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		assertTrue( icc.getNoSifData().isEmpty() );
 	}
 	
-	@Test
-	void test_set_sif_navarra_test() {
-		resetAndGetIcc();
-		Date yesterday = AonDateUtils.yesterday();
-		Date tomorrow = AonDateUtils.tomorrow();
-		Date today = AonDateUtils.today(); 
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableSifTest( getCtx(),getDomainId(), NAVARRA, today );
-		printIcc(icc);
-		
-		assertTrue( icc.getAdministration().isPresent() );
-		Administration admon = icc.getAdministration().get();
-		assertNotNull(admon);
-		assertSame( NAVARRA, admon);
-		
-		assertTrue( icc.getAdministration( yesterday ).isEmpty() );
-		assertTrue( icc.getAdministration( tomorrow ).isPresent() );
-		
-		assertTrue( icc.getSifData().isPresent() );
-		CommunicationData ed = icc.getSifData().get();
-		assertEquals( EnterpriseDataNames.ICC_SIF.name(), ed.getName());
-		assertTrue( AonStringUtils.isNotBlank( ed.getExpression()));
-		assertTrue( ed.isTest() );
-		assertTrue( icc.isSifTest() );
-		assertNull( ed.getEndDate() );
-		assertTrue( AonDateUtils.isSameDay( ed.getStartDate(), today ));
-		
-		assertTrue( icc.getVerifactuData().isEmpty() );
-		assertTrue( icc.getNoVerifactuData().isEmpty() );
-		assertTrue( icc.getLroeData().isEmpty() );
-		assertTrue( icc.getSiiData().isEmpty() );
-		assertTrue( icc.getTbaiData().isEmpty() );
-		assertTrue( icc.getNoSifData().isEmpty() );
-	}
-
 	// Consistency
 	@Test
 	void test_verifactu_common_territory_to_canarias() {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.enableVerifactu( getCtx(),getDomainId(), lastMonthFirstDay );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableVerifactu( getCtx(),getDomainId(), lastMonthFirstDay );
 		printIcc(icc);
-		InvoiceCommunicationConfiguration icc2 = InvoiceCommunicationDAO.enableVerifactuCanarias( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc2 = ICCDAO.enableVerifactuCanarias( getCtx(),getDomainId(), today );
 		printIcc(icc2);
 	}
 

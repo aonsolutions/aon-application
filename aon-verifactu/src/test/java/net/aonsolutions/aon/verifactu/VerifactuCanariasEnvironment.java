@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
+import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.payroll.Enterprise;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -37,8 +38,11 @@ final class VerifactuCanariasEnvironment extends VerifactuEnvironmentAbs {
 				setCommunicationConfigurationWithCertificate( InvoiceCommunicationDAO.get(getCtx(),getDomainId())); 
 			}
 			assertNotNull(getCommunicationConfigurationWithCertificate(),"communicationConfigurationWithCertificate NULL" );
-			assertTrue(getCommunicationConfigurationWithCertificate().isVerifactu() ,"communicationConfigurationWithCertificate VERIFACTU NO ACTIVO");
-			assertTrue(getCommunicationConfigurationWithCertificate().isVerifactuTest(),"communicationConfigurationWithCertificate NO ENTORNO TEST" );
+			InvoiceCommunicationConfiguration icc = getCommunicationConfigurationWithCertificate();
+			assertTrue(icc.isVerifactu() ,"communicationConfigurationWithCertificate VERIFACTU NO ACTIVO");
+			assertTrue(icc.getVerifactuData().isPresent());
+			CommunicationData vd = icc.getVerifactuData().get();
+			assertTrue(vd.isTest(),"communicationConfigurationWithCertificate NO ENTORNO TEST" );
 			Certificate c = AonSecret.getSigCert();
 			assertNotNull(c, "Verifactu Certificate NULL");
 			getCommunicationConfigurationWithCertificate().setCertificate(AonSecret.getSigCert()); 

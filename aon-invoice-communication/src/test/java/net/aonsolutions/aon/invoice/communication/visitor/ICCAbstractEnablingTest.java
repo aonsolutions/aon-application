@@ -22,16 +22,21 @@ abstract class ICCAbstractEnablingTest extends AbstractVerifactuTest {
 	protected void printIcc(InvoiceCommunicationConfiguration icc) {
 		System.out.println( " ------- InvoiceCommunicationConfiguration" );
 		icc.dataStream()
-			.forEach( ed ->
+			.forEach( ed -> {
+				String startDate = MessageFormat.format("{0,date,dd/MM/yyyy}", ed.getStartDate());
+				String endDate = ed.getEndDate() == null
+					? "--/--/----"
+					:MessageFormat.format("{0,date,dd/MM/yyyy}", ed.getEndDate());
 				System.out.println( (ed.isDirty() ? "(*)" : "  ") 
-					+ " - ("
-					+ AonStringUtils.rightPad( ed.getId() == null ? "" : AonNumberUtils.toString(ed.getId()), 10)
-					+ ") "
+					+ " - "
+					+ AonStringUtils.rightPad( "(" + (ed.getId() == null ? "" : AonNumberUtils.toString(ed.getId())) + ")", 10)
+					+ AonStringUtils.rightPad(startDate, 15)
+					+ AonStringUtils.rightPad(endDate, 15)
 					+ AonStringUtils.rightPad( AonStringUtils.defaultIfBlank(ed.getName()), 25)
 					+ AonStringUtils.rightPad( AonStringUtils.defaultIfBlank(ed.getExpression()) , 20)
-					+ AonStringUtils.rightPad(MessageFormat.format("{0,date,dd/MM/yyyy}", ed.getStartDate()), 15)
-					+ AonStringUtils.rightPad(MessageFormat.format("{0,date,dd/MM/yyyy}", ed.getEndDate()), 15)
-			));
+				);
+			}
+			);
 		System.out.println( " ------- " );
 		System.out.println( );
 	}

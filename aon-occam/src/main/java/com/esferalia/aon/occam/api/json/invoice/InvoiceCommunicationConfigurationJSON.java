@@ -59,45 +59,48 @@ public class InvoiceCommunicationConfigurationJSON {
 		if (config == null) return Optional.empty();
 		return Optional.of(		
 			new JSONObject()
-			.put(IJsonNames.ADMINISTRATION, config.getAdministration().map(a -> a.name()).orElse(null))
+			.put(IJsonNames.DATA, EnterpriseDataJSON.toJSON(config.dataStream()))
+			
+			.put(IJsonNames.ADMINISTRATION, config.getAdministration().map( Enum::name ).orElse(null))
 			.put(IJsonNames.ADMINISTRATION_HISTORY, EnterpriseDataJSON.toJSON(config.getAdministrationStream()))
 
 			.put(IJsonNames.TBAI_DATA, EnterpriseDataJSON.toJSON(config.getTbaiData().orElse(null)))
 			.put(IJsonNames.TBAI_DATA_HISTORY, EnterpriseDataJSON.toJSON(config.getTbaiStream()))
-//			.put(IJsonNames.TBAI_INVOICE, config.hasTbaiInvoice())
 			.put(IJsonNames.TBAI_INVOICE, false )
 			
 			.put(IJsonNames.LROE_DATA, EnterpriseDataJSON.toJSON(config.getLroeData().orElse(null)))
 			.put(IJsonNames.LROE_DATA_HISTORY, EnterpriseDataJSON.toJSON(config.getLroeStream()))
 			.put(IJsonNames.LROE_REGISTRY_DATE, config.getLroeRegistryDate())
-//			.put(IJsonNames.LROE_INVOICE,  config.hasLroeInvoice())
 			.put(IJsonNames.LROE_INVOICE, false )
 			
 			.put(IJsonNames.VERIFACTU_DATA, EnterpriseDataJSON.toJSON(config.getVerifactuData().orElse(null)))
 			.put(IJsonNames.VERIFACTU_DATA_HISTORY, EnterpriseDataJSON.toJSON(config.getVerifactuStream()))
-//			.put(IJsonNames.VERIFACTU_INVOICE, config.hasVerifactuInvoice())
 			.put(IJsonNames.VERIFACTU_INVOICE, false )
 			
 			.put(IJsonNames.NO_VERIFACTU_DATA, EnterpriseDataJSON.toJSON(config.getNoVerifactuData().orElse(null)))
 			.put(IJsonNames.NO_VERIFACTU_DATA_HISTORY, EnterpriseDataJSON.toJSON(config.getNoVerifactuStream()))
-//			.put(IJsonNames.NO_VERIFACTU_INVOICE, config.hasNoVerifactuInvoice())
 			.put(IJsonNames.NO_VERIFACTU_INVOICE,false )
 			
 			.put(IJsonNames.SII_DATA, EnterpriseDataJSON.toJSON(config.getSiiData().orElse(null)))
 			.put(IJsonNames.SII_DATA_HISTORY, EnterpriseDataJSON.toJSON(config.getSiiStream()))
 			.put(IJsonNames.SII_REGISTRY_DATE, config.getSiiRegistryDate())
-//			.put(IJsonNames.SII_INVOICE, config.hasSiiInvoice())
 			.put(IJsonNames.SII_INVOICE, false)
 			
 			.put(IJsonNames.SIF_DATA, EnterpriseDataJSON.toJSON(config.getSifData().orElse(null)))
 			.put(IJsonNames.SIF_DATA_HISTORY, EnterpriseDataJSON.toJSON(config.getSifStream()))
-//			.put(IJsonNames.SIF_INVOICE, config.hasSifInvoice())
 			.put(IJsonNames.SIF_INVOICE, false)
 			
 			.put(IJsonNames.NO_SIF_DATA, EnterpriseDataJSON.toJSON(config.getNoSifData().orElse(null)))
 			.put(IJsonNames.NO_SIF_DATA_HISTORY, EnterpriseDataJSON.toJSON(config.getNoSifStream()))
 			
-			.put(IJsonNames.DEFAULT_CERTIFICATE, config.getDefaultCertificate())		
+			.put(IJsonNames.DEFAULT_CERTIFICATE, config.getDefaultCertificate())
+			
+//			.put(IJsonNames.TBAI_INVOICE, config.hasTbaiInvoice())
+//			.put(IJsonNames.LROE_INVOICE,  config.hasLroeInvoice())
+//			.put(IJsonNames.VERIFACTU_INVOICE, config.hasVerifactuInvoice())
+//			.put(IJsonNames.NO_VERIFACTU_INVOICE, config.hasNoVerifactuInvoice())
+//			.put(IJsonNames.SII_INVOICE, config.hasSiiInvoice())
+//			.put(IJsonNames.SIF_INVOICE, config.hasSifInvoice())
 		);
 	}
 	
