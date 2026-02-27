@@ -5135,6 +5135,27 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		
 		
 	}
+	
+	@Test
+	public void testRETAI() throws ExpressionException, SQLException {
+
+		Consumer<IrpfResult> asserts = result -> assertAnnualRemuneration(
+				CommonUtil.round((1500.00 + 250.00) * 1.10
+						* (12 /*-result.getEffectiveDate().getMonth()*/ ), 3),
+				result.getAnnualRemuneration());
+
+		test(asserts, 
+			getFirstDayOfYear(getToday()),
+			null,
+			new String[] { "( P_1 + P_2 ) * 0.10 ",
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				}, 
+		new String[] {"BASE_IRPF * PORCENTAJE_IRPF" },
+		new Payment[] {},
+		SSRegimeType.SELF_EMPLOYED);
+	}
+
 
 	// ------------------------------------------------------------------------
 
