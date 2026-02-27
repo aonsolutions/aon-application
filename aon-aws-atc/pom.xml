@@ -62,7 +62,7 @@
 			<scope>compile</scope>
 		</dependency>
 -->		
-		<!-- MODELO 417 - EJERCICIO 2026 -->
+		<!-- MODELOS 417, 420, 421 - EJERCICIO 2026 -->
 		
 		<dependency>
 			<groupId>org.grecasa</groupId>
@@ -74,6 +74,12 @@
 			<groupId>org.grecasa</groupId>
 			<artifactId>pa-mod417</artifactId>
 			<version>2.3.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.grecasa</groupId>
+			<artifactId>pa-mod421</artifactId>
+			<version>7.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 

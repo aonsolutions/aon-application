@@ -62,7 +62,7 @@ class Model421ATC2026Activity extends DockLayoutPanel implements HasValueChangeH
 		private AonDoubleBox value = new AonDoubleBox(6);
 		private Label unit = new Label();
 		private AonDoubleBox factor = new AonDoubleBox(6,4);
-		private AonDoubleBox result = new AonDoubleBox(6,4); // FALTA - SOLO PARA VER COMO SE ESTA CALCULANDO
+		private AonDoubleBox result = new AonDoubleBox(6);
 		
 		private Model421ATC2026ActivityModule(int index) {
 			this.index = index;
@@ -417,14 +417,16 @@ class Model421ATC2026Activity extends DockLayoutPanel implements HasValueChangeH
 		AonDisplayTable tab = new AonDisplayTable();
 		tab.addStyleName(AON.CSS.aonMarginLeft());
 		tab.addStyleName(AON.CSS.aonMarginBottom());
-
+		
+		String labelText = callback.getModel().isLastPeriod() ? "Actividad de Temporada: N\u00BA de d\u00EDas de ejercicio de la actividad" : "Actividad de Temporada: N\u00BA de d\u00EDas de ejercicio de la actividad en el a\u00F1o anterior";
+		
 		tem.addValueChangeHandler(event -> {
 			if (tem.getValue() == null) tem.setValue(0,false);
 			callback.getActivity().setTem(tem.getValue());
 			ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
 		});
 		tab.addRow()
-			.addCell( new Label(AON.MSG.irpfActivityTem()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth600() )
+			.addCell( new Label(labelText), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth600() )
 			.addCell( tem);
 		
 //		emp.addValueChangeHandler(event ->  {

@@ -72,7 +72,7 @@ public class ModulesCanarias2026 {
 		,E_17211 ("17211","Tte. urbano colectivo.", 8.0,1,new Module[]{ new Module(1,ModuleInfo.M26,"Persona",525.18),new Module(2,ModuleInfo.M21,"Asiento",25.33)})
 		,E_17212 ("17212","Tte. por autotaxis.",15.0,10,new Module[]{ new Module(1,ModuleInfo.M26,"Persona",281.32),new Module(2,ModuleInfo.M12,"1000 Km",5.38)})
 		,E_17213 ("17213","Tte. viajeros por carretera.", 8.0,1,new Module[]{ new Module(1,ModuleInfo.M26,"Persona",525.18),new Module(2,ModuleInfo.M21,"Asiento",25.33)})
-		,E_1722A ("1722" ,"Tte. mercancias por carretera.",14.0,10,new Module[]{ new Module(1,ModuleInfo.M26,"Persona",600.17),new Module(2,ModuleInfo.M23,"Tonelada",56.27)},1)
+		,E_1722A ("1722" ,"Tte. mercancias por carretera.",14.0,10,new Module[]{ new Module(1,ModuleInfo.M26,"Persona",600.17),new Module(2,ModuleInfo.M23,"Tonelada",56.27)},1) 
 		,E_1722B ("1722" ,"Transporte de residuos por carretera.",14.0,1,new Module[]{ new Module(1,ModuleInfo.M26,"Persona",263.04),new Module(2,ModuleInfo.M23,"Tonelada",24.53)},2)
 		,E_17515 ("17515","Engrase y lavado de vehiculos.",14.0,30,new Module[]{ new Module(1,ModuleInfo.M26,"Persona",3073.84),new Module(2,ModuleInfo.M09,"Metro cua.",6.14)})
 		,E_1757  ("1757" ,"Servicio de mudanzas.",14.0,10,new Module[]{ new Module(1,ModuleInfo.M26,"Persona",859.64),new Module(2,ModuleInfo.M23,"Tonelada",38.64)})
@@ -92,7 +92,7 @@ public class ModulesCanarias2026 {
 		private Module[] vatModules;
 		private double vatPorc;
 		private double porcMin;
-//		private double limPers; // FALTA - NO SE SI ES NECESARIO
+//		private double limPers; 
 //		private double limExceso;
 		private int specialEpigraph; // Indicador auxiliar de actividad para determinados epígrafes
 		
@@ -156,7 +156,7 @@ public class ModulesCanarias2026 {
 		public double getPorcMin() {
 			return porcMin;
 		}
-		// FALTA - ESTO NO SE SI SE USA EN ALGUN SITIO
+		
 //		public double getLimPers() {
 //			return limPers;
 //		}
@@ -190,7 +190,7 @@ public class ModulesCanarias2026 {
 			return null;
 		}
 
-		// FALTA - PARA ESTOS EPIGRAFES VER EXACTAMENTE QUE VALORES TIENE EL CAMPO SPECIALEPIGRAPH PARA CADA UNO DE ELLOS
+		// FALTA - PARA ESTOS EPIGRAFES VER EXACTAMENTE QUE VALORES TIENE EL CAMPO SPECIALEPIGRAPH PARA CADA UNO DE ELLOS atributo SEC en el esquema XML
 		public static int getSpecialEpigraph(String code, String description) {
 			// Epígrafes que tienen indicador auxiliar, porque llevan el mismo código de epígrafe
 			if (AonStringUtils.equals(code,"16919")) {

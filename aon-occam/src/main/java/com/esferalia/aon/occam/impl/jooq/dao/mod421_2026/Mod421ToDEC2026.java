@@ -20,7 +20,6 @@ public class Mod421ToDEC2026 {
 	private Mod421ToDEC2026() {
 	}
 	
-	// FALTA 
 	public static String getDeclaration(Mod421 mod421) throws JAXBException {
 		DEC dec = Mod421ToDEC2026.getDEC(mod421);
 		StringWriter writer = new StringWriter();
@@ -40,33 +39,22 @@ public class Mod421ToDEC2026 {
 		dec.setANY(AonNumberUtils.toString(mod.getYear()));           // Ejercicio al que se refiere la autoliquidación
 		dec.setPER(mod.getPeriod().getName());                        // Período al que se refiere la autoliquidación: 1T, 2T, 3T, 4T
 		dec.setADM(mod.getAdmonAeat()); 							  // Código de la administración tributaria
-		dec.setACR(mod.getAmount(Mod421Key.X03) == 1.0 ? "X" : "");  // Concurso de acreedores
+		dec.setACR(mod.getAmount(Mod421Key.X03) == 1.0 ? "X" : "");   // Concurso de acreedores
 		
 		if (mod.isComplementary()) {
 			dec.setCOM("X");                     // Se establece con "X" cuando esta autoliquidación sea complementaria
 			dec.setNJA(mod.getReplacedNumber()); // Para una declaración complementaria se declara el número anterior de justificante
 		}
 		
-		addOTP(dec, mod);
+		addOTP(dec, mod); // Datos identificativos
 		
-		if (!mod.isWithoutActivity()) {
+		if (mod.isWithoutActivity()) {
+			dec.setAUT(new TAUTOLIQUIDACION());
+		} else {
 			dec.setAUT(getAut(dec, mod)); // Autoliquidación
 		}
 		
-//		dec.setIDE(getIde(mod)); // Datos identificativos y opciones tributarias 
-//		
-//		if (!mod.isWithoutActivity()) {
-//			dec.setIGIDEV(getIgiDev(mod));	// IGIC devengado
-//			dec.setIGIDED(getIgiDed(mod));  // IGIC deducible
-//			dec.setLIQ(getLiq(mod));	    // Liquidación
-//		}
-		
 		dec.setRESULTADOLIQUIDACION(getRes(mod));  // Resultado de la declaración
-//		
-//		if (!mod.isWithoutActivity()) {
-//			dec.setADI(getAdi(mod));  // Información adicional
-//			dec.setRCC(getRcc(mod));  // Datos exclusivos para sujetos acogidos al régimen especial de criterio de caja y/o destinatarios de operaciones afectadas por el mismo.	
-//		}
 		
 		return dec;
 		
@@ -101,35 +89,35 @@ public class Mod421ToDEC2026 {
 		TAUTOLIQUIDACION.EPIGRAFES epigrafes = new TAUTOLIQUIDACION.EPIGRAFES();
 
 		for (Mod421Activity activity : mod.getActivityList()) {
-			
-			TAUTOLIQUIDACION.EPIGRAFES.EPIGRAFE ep = new TAUTOLIQUIDACION.EPIGRAFES.EPIGRAFE();
-			
-			ep.setEPI(activity.getEpigraph());
-			ep.setSEC(Integer.toString(activity.getSpecialEpigraph()));
-			
-			ep.setMOD1(getAmount(activity.getModules().get(0).getFactor()));
-			ep.setMOD2(getAmount(activity.getModules().get(1).getFactor()));
-			ep.setMOD3(getAmount(activity.getModules().get(2).getFactor()));
-			ep.setMOD4(getAmount(activity.getModules().get(3).getFactor()));
-			ep.setMOD5(getAmount(activity.getModules().get(4).getFactor()));
-			ep.setMOD6(getAmount(activity.getModules().get(5).getFactor()));
-			ep.setMOD7(getAmount(activity.getModules().get(6).getFactor()));
-			ep.setTOT(getAmount(activity.getDev()));
-			
-			ep.setINDCOR(getAmount(activity.getIct()));
-			
-			if (mod.isLastPeriod()) {
-				ep.setCUOSOP(getAmount(activity.getSop()));
-				ep.setDIASEJECUR(Integer.toString(activity.getDia()));
-				ep.setCUORESULTTRIM(getAmount(activity.getCad()));				
-			} else {
-				ep.setDIASEJEANT(Integer.toString(activity.getTem()));
-				ep.setDIASTRICUR(Integer.toString(activity.getDia()));
-				ep.setCUORESTRIM(getAmount(activity.getRes()));
+			if (activity.isNotEmpty()) {
+				TAUTOLIQUIDACION.EPIGRAFES.EPIGRAFE ep = new TAUTOLIQUIDACION.EPIGRAFES.EPIGRAFE();
+				
+				ep.setEPI(activity.getEpigraph());
+				ep.setSEC(Integer.toString(activity.getSpecialEpigraph()));
+				
+				ep.setMOD1(getAmount(activity.getModules().get(0).getValue()));
+				ep.setMOD2(getAmount(activity.getModules().get(1).getValue()));
+				ep.setMOD3(getAmount(activity.getModules().get(2).getValue()));
+				ep.setMOD4(getAmount(activity.getModules().get(3).getValue()));
+				ep.setMOD5(getAmount(activity.getModules().get(4).getValue()));
+				ep.setMOD6(getAmount(activity.getModules().get(5).getValue()));
+				ep.setMOD7(getAmount(activity.getModules().get(6).getValue()));
+				ep.setTOT(getAmount(activity.getDev()));
+				
+				ep.setINDCOR(getAmount(activity.getIct()));
+				
+				if (mod.isLastPeriod()) {
+					ep.setCUOSOP(getAmount(activity.getSop()));
+					ep.setDIASEJECUR(Integer.toString(activity.getDia()));
+					ep.setCUORESULTTRIM(getAmount(activity.getCad()));				
+				} else {
+					ep.setDIASEJEANT(Integer.toString(activity.getTem()));
+					ep.setDIASTRICUR(Integer.toString(activity.getDia()));
+					ep.setCUORESTRIM(getAmount(activity.getIng()));
+				}
+				
+				epigrafes.getEPIGRAFE().add(ep);
 			}
-			
-			epigrafes.getEPIGRAFE().add(ep);
-		
 		}
 			
 		aut.setEPIGRAFES(epigrafes);
@@ -221,7 +209,6 @@ public class Mod421ToDEC2026 {
 	// --- METODOS AUXILIARES ---------------------------------------------------------------------------------------------------
 	
 	private static String getAmount(Mod421 mod, Mod421Key key) {
-//		return AonFiscalFileUtils.signed(mod.getAmount(key), ' ', '-', 4).trim();
 		return getAmount(mod.getAmount(key));
 	}
 	
@@ -229,18 +216,18 @@ public class Mod421ToDEC2026 {
 		return AonFiscalFileUtils.signed(amount, ' ', '-', 4).trim();
 	}
 	
-	// FALTA - VER SI ES NECESARIO - CAMBIAR CARACTERES NO PERMITIDOS (ACENTOS, &, ', ETC.) Y PONER EN MAYUSCULAS
+	// CAMBIAR CARACTERES NO PERMITIDOS (ACENTOS, &, ', ETC.) Y PONER EN MAYUSCULAS
 	private static String changeCharacters(String fileString) {
 		fileString = AonStringUtils.trimToEmpty(fileString);
-//		fileString = AonStringUtils.upperCase(fileString);
-//		fileString = fileString.replace("'", " ");
-//		fileString = fileString.replace("&", "Y");	
-//		fileString = fileString.replace("Á", "A");
-//		fileString = fileString.replace("É", "E");
-//		fileString = fileString.replace("Í", "I");
-//		fileString = fileString.replace("Ó", "O");
-//		fileString = fileString.replace("Ú", "U");
-//		fileString = fileString.replace("Ü", "U");		
+		fileString = AonStringUtils.upperCase(fileString);
+		fileString = fileString.replace("'", " ");
+		fileString = fileString.replace("&", "Y");	
+		fileString = fileString.replace("Á", "A");
+		fileString = fileString.replace("É", "E");
+		fileString = fileString.replace("Í", "I");
+		fileString = fileString.replace("Ó", "O");
+		fileString = fileString.replace("Ú", "U");
+		fileString = fileString.replace("Ü", "U");		
 		return fileString;
 	}
 	

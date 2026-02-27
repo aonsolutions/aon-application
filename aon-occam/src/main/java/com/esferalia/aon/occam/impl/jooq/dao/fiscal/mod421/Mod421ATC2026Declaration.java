@@ -778,7 +778,7 @@ class Mod421ATC2026Declaration extends Mod421ATC {
 		,A1M1I(Mod421Key.A1M1I, null, null, null, null, null
 			,mod -> mod.putAmount(Mod421Key.A1M1I, ensureModule(mod, 0, 0).getValue())
 			,mod -> ensureModule(mod, 0, 0).setValue(mod.getAmount(Mod421Key.A1M1I))
-			,(prev,cur) -> copyKey(prev,cur, Mod421Key.A1M1I))
+			,(prev,cur) -> copyKey(prev,cur, Mod421Key.A1M1I, Mod421Key.A1EP1))
 		,A1M1U(Mod421Key.A1M1U, null, null, null, null, null
 			,mod -> mod.putDescription(Mod421Key.A1M1U, ensureModule(mod, 0, 0).getUnit())
 			,mod -> ensureModule(mod, 0, 0).setUnit(mod.getDescription(Mod421Key.A1M1U))
@@ -1267,7 +1267,7 @@ class Mod421ATC2026Declaration extends Mod421ATC {
 		,A2M1I(Mod421Key.A2M1I, null, null, null, null, null
 			,mod -> mod.putAmount(Mod421Key.A2M1I, ensureModule(mod, 1, 0).getValue())
 			,mod -> ensureModule(mod, 1, 0).setValue(mod.getAmount(Mod421Key.A2M1I))
-			,(prev,cur) -> copyKey(prev,cur, Mod421Key.A2M1I))
+			,(prev,cur) -> copyKey(prev,cur, Mod421Key.A2M1I, Mod421Key.A2EP1))
 		,A2M1U(Mod421Key.A2M1U, null, null, null, null, null
 			,mod -> mod.putDescription(Mod421Key.A2M1U, ensureModule(mod, 1, 0).getUnit())
 			,mod -> ensureModule(mod, 1, 0).setUnit(mod.getDescription(Mod421Key.A2M1U))
@@ -1514,7 +1514,7 @@ class Mod421ATC2026Declaration extends Mod421ATC {
 		,A3M1I(Mod421Key.A3M1I, null, null, null, null, null
 			,mod -> mod.putAmount(Mod421Key.A3M1I, ensureModule(mod, 2, 0).getValue())
 			,mod -> ensureModule(mod, 2, 0).setValue(mod.getAmount(Mod421Key.A3M1I))
-			,(prev,cur) -> copyKey(prev,cur, Mod421Key.A3M1I))
+			,(prev,cur) -> copyKey(prev,cur, Mod421Key.A3M1I, Mod421Key.A3EP1))
 		,A3M1U(Mod421Key.A3M1U, null, null, null, null, null
 			,mod -> mod.putDescription(Mod421Key.A3M1U, ensureModule(mod, 2, 0).getUnit())
 			,mod -> ensureModule(mod, 2, 0).setUnit(mod.getDescription(Mod421Key.A3M1U))
@@ -1761,7 +1761,7 @@ class Mod421ATC2026Declaration extends Mod421ATC {
 		,A4M1I(Mod421Key.A4M1I, null, null, null, null, null
 			,mod -> mod.putAmount(Mod421Key.A4M1I, ensureModule(mod, 3, 0).getValue())
 			,mod -> ensureModule(mod, 3, 0).setValue(mod.getAmount(Mod421Key.A4M1I))
-			,(prev,cur) -> copyKey(prev,cur, Mod421Key.A4M1I))
+			,(prev,cur) -> copyKey(prev,cur, Mod421Key.A4M1I, Mod421Key.A4EP1))
 		,A4M1U(Mod421Key.A4M1U, null, null, null, null, null
 			,mod -> mod.putDescription(Mod421Key.A4M1U, ensureModule(mod, 3, 0).getUnit())
 			,mod -> ensureModule(mod, 3, 0).setUnit(mod.getDescription(Mod421Key.A4M1U))
@@ -3939,9 +3939,27 @@ class Mod421ATC2026Declaration extends Mod421ATC {
 	}
 
 	private static void copyKey(Mod421 previous, Mod421 current, Mod421Key key) {
+//		current.putAmount(key, previous.getAmount(key));		
+//		current.putDescription(key, previous.getDescription(key));
+		copyKey(previous, current, key, null);
+	}
+	
+	private static void copyKey(Mod421 previous, Mod421 current, Mod421Key key, Mod421Key epigraphKey) {
+		
+		// Los epigrafes agrarios no copian el dato del modelo anterior (se usa en el importe del único módulo de los agrarios)
+		// solo si no estamos haciendo una complementaria
+		if (epigraphKey != null) {
+			String epigraphCode = current.getDescription(epigraphKey);
+			if (AonStringUtils.isNotBlank(epigraphCode) && epigraphCode.trim().startsWith("0") && (current.getYear() != previous.getYear() || current.getPeriod() != previous.getPeriod())) {
+				return;
+			}
+		}
+		
 		current.putAmount(key, previous.getAmount(key));		
 		current.putDescription(key, previous.getDescription(key));
+		
 	}
+	
 
 //	private static void copySpecialEpigraphKey(Mod421 previous, Mod421 current, Mod421Key specialEpigraphKey, Mod421Key codeKey, Mod421Key descriptionKey) {
 //

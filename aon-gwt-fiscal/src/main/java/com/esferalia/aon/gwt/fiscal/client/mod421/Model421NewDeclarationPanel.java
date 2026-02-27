@@ -97,7 +97,7 @@ class Model421NewDeclarationPanel extends DockLayoutPanel {
 //		previousProratePercent = new AonDoubleBox(7);
 //		proratePercent = new AonDoubleBox(7);
 //		specialProrate = new CheckBox("Especial");
-		periodList = new PeriodListBox(true);
+		periodList = new PeriodListBox(false);
 		manualDeclaration = new CheckBox();
 		
 		admonList.setEnabled(false);
