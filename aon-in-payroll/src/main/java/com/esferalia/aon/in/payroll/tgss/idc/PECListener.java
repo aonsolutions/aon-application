@@ -328,7 +328,7 @@ class PECListener  implements IdcParserListener {
 	};
 
 	@SuppressWarnings("serial")
-	static final Map<String, String> PEC_BONUS_MAP = new HashMap<String, 	String>() {
+	static final Map<String, String> PEC_BONUS_MAP = new HashMap<String, String>() {
 		{
 			put("01", "BONIFICACIÓN INEM");
 			//put("03", "RED.CUOTA SS-PORCENT"); Not a Bonus 
@@ -502,6 +502,7 @@ class PECListener  implements IdcParserListener {
 	    BenefitsLoss benefitsLoss = new BenefitsLoss();
 	    benefitsLoss.setCcc(ccc);
 	    benefitsLoss.setNss(nss);
+	    benefitsLoss.setStartDate(start);
 	    benefitsLoss.setEndDate(end);
 	    benefitsLoss.setDescription(cause);
 	    benefitsLoss.setFormula(String.format(""
