@@ -2,7 +2,7 @@ import { AonElement } from "../../../../components/AonElement.js";
 import { getTaskHolder } from "../../../../services/taskHolderService.js";
 import { getTaskHolderContactEvents, getTaskHolderTimeControl } from "../../../../services/timeControlService.js";
 import { AonDateUtils } from "../../../utils/AonDateUtils.js";
-import { timeHour } from ".././utils.js";
+import { timeHour, timeHourShort } from ".././utils.js";
 import { AonCalendarMenu } from "./aon-calendar-menu.js";
 
 export class AonAgendaAllDays extends AonElement {
@@ -183,7 +183,7 @@ export class AonAgendaAllDays extends AonElement {
 
 			console.log(`✅ ${monthKey}: ${datos.length} eventos`);
 			console.log(datos);
-			
+
 			console.log(`✅ ${monthKey}: ${contractDatos.length} eventos contrato`);
 			console.log(contractDatos);
 
@@ -253,7 +253,7 @@ export class AonAgendaAllDays extends AonElement {
 			// Convertir start_date (timestamp en milisegundos) a fecha
 			const date = new Date(dayData.start_date);
 			const dateKey = AonDateUtils.format(date, "YYYY-MM-DD");
-			
+
 			let time = dayData.time || 0;
 			const details = dayData.detail || [];
 
@@ -557,97 +557,96 @@ export class AonAgendaAllDays extends AonElement {
 			// Mostrar todos los días, tengan eventos o no
 			const dayEventData = this._events.get(day.key);
 
-			let totalHours = "0h 0m";
+			let totalHours = "0:00";
 			let workedTime = 0;
 			let eventsHtml = '';
 
 			if (dayEventData) {
 				workedTime = Number(dayEventData.dayData.time);
-				totalHours = timeHour(Number(dayEventData.dayData.time));
+				totalHours = timeHourShort(Number(dayEventData.dayData.time));
 				eventsHtml = this.renderDayEvents(dayEventData.details);
 			}
-			
-			daysTypeHtml += eventsHtml;
-			daysTypeHtml += '</div>';
-			
+
 			// Horas esperadas (Double[]) → convertir a minutos
 			let expectedTime = 0;
 			const msecPerMinute = 1000 * 60;
 			const msecPerHour = msecPerMinute * 60;
 			if (this._workingDaysHours && this._workingDaysHours.length === 7) {
-			  expectedTime = (this._workingDaysHours[dayOfWeek] || 0) * msecPerHour;
+				expectedTime = (this._workingDaysHours[dayOfWeek] || 0) * msecPerHour;
 			}
 
-			// Obtener eventos contrato del día
 			const dayContractFestive = this._festivesContract.get(day.key);
+
+			// Festivo → 8 horas esperadas
+			if (dayContractFestive) {
+				totalHours = timeHourShort(expectedTime);
+				workedTime = expectedTime;
+			} else if (dayTypeContract && dayTypeContract.source === 'HOLIDAYS') {
+				// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
+				if (this._workingDays && this._workingDays[dayOfWeek] === 0) {
+					totalHours = timeHourShort(expectedTime);
+					workedTime = expectedTime;
+				} else {
+					totalHours = 0;
+					workedTime = 0;
+				}
+			}
+
+			daysTypeHtml += eventsHtml;
+			daysTypeHtml += '</div>';
+
+			// Obtener eventos contrato del día
 			let dayFestiveHtml = '';
 
 			if (dayContractFestive) {
 				dayFestiveHtml = this.renderContractFestive(dayContractFestive);
-				expectedTime = 0;
+				//expectedTime = 0;
 			}
-			
+
 			// Diferencia en minutos
 			const diffTime = workedTime - expectedTime;
 			const diffHours = this.formatDiffTime(diffTime);
 
-			// Obtener eventos contrato del día
-			//const dayEventContractData = this._eventsContract.get(day.key);
-			//let eventsContractHtml = '';
-
-			//if (dayEventContractData) {
-			//	eventsContractHtml = this.renderDayContractEvents(dayEventContractData);
-			//}
-
 			// Formatear nombre del día (3 primeras letras + punto)
 			const dayNameFull = AonDateUtils.dayName(day.date);
 			const dayNameShort = dayNameFull.substring(0, 3) + '.';
-
-			if (eventsHtml === '') {
-				dayEl.innerHTML = `
-			        <div class="day-header">
-			          <div class="day-header-left">
-			            <span class="day-name">${dayNameShort}</span>
-			            <span class="day-number ${dayFestiveHtml.length > 0 ? 'festive' : (dayTypeContract ? dayTypeContract.source.toLowerCase() : '')}">${day.date.getDate()}</span>
-			            ${dayFestiveHtml}
-			          </div>
-			        </div>
+			
+			let dayHtml = 
+					`<div class="day-header">`;
+					
+			dayHtml += 
+					      `<div class="day-header-left">
+				            <span class="day-name">${dayNameShort}</span>
+				            <span class="day-number ${dayFestiveHtml.length > 0 ? 'festive' : (dayTypeContract ? dayTypeContract.source.toLowerCase() : '')}">${day.date.getDate()}</span>
+				            ${dayFestiveHtml}
+				          </div>`;
+				      
+			if(today >= dayDate || (workedTime > 0 && this._workingDays[dayOfWeek] === 0) )
+				dayHtml += 
+						 `<div class="day-header-right">
+					        <span class="total-hours">${totalHours} h <span class="day-diff-hours">( ${diffHours} h )</span></span>
+					      </div>`;
+			
+			dayHtml +=	
+					`</div>
 			        <div class="day-content">
 			          ${daysTypeHtml}
-			        </div>
-			      `;
-				//${eventsContractHtml}
-			} else {
-				dayEl.innerHTML = `
-			        <div class="day-header">
-			          <div class="day-header-left">
-			            <span class="day-name">${dayNameShort}</span>
-			             <span class="day-number ${dayFestiveHtml.length > 0 ? 'festive' : (dayTypeContract ? dayTypeContract.source.toLowerCase() : '')}">${day.date.getDate()}</span>
-			            ${dayFestiveHtml}
-			          </div>
-			          <div class="day-header-right">
-			            <span class="total-hours">${totalHours} h <span class="day-diff-hours">( ${diffHours} h )</span></span>
-			          </div>
-			        </div>
-			        <div class="day-content">
-			          ${daysTypeHtml}
-			        </div>
-			      `;
-				//${eventsContractHtml}	
-			}
-
+			        </div>`;
+			
+			dayEl.innerHTML = dayHtml;
+			
 			el.appendChild(dayEl);
 		});
 
 		return el;
 	}
-	
+
 	formatDiffTime = (time) => {
-	  const sign = time < 0 ? "-" : "+";
-	  const absTime = Math.abs(time);
-	
-	  let formatted = AonDateUtils.timeParser(absTime).substring(0, 5);
-	  return `${sign}${formatted}`;
+		const sign = time < 0 ? "-" : "+";
+		const absTime = Math.abs(time);
+
+		let formatted = timeHourShort(absTime);
+		return `${sign} ${formatted}`;
 	};
 
 	/* ---------------- RENDER EVENTS ---------------- */
@@ -846,12 +845,12 @@ export class AonAgendaAllDays extends AonElement {
 					// No hay más eventos → cerrar con momento actual
 					tramos.push({
 						start: {
-							...startEvent, 
+							...startEvent,
 							status: 'current'
 						},
 						end: this.createNowEndEvent()
 					});
-				
+
 					i = startIndex + 1;
 				}
 			}
@@ -877,10 +876,10 @@ export class AonAgendaAllDays extends AonElement {
 
 		return tramos;
 	}
-	
+
 	createNowEndEvent() {
 		const now = Date.now();
-	
+
 		return {
 			status: 'current',
 			date: now,
@@ -1081,6 +1080,58 @@ export class AonAgendaAllDays extends AonElement {
 		const year = centerWeek.start.getFullYear().toString().slice(-2);
 		this.headerMonth.textContent = `${monthName.toUpperCase()} ${year}`;
 
+		// Calcular horas totales del mes (trabajadas / esperadas)
+		const monthHours = this.calculateMonthHours(centerWeek.start);
+		this.headerMonthHours.textContent = `Mes: ${monthHours}`;
+
+		// Actualizar rango: del día X al día Y
+		const firstDay = centerWeek.days[0].date;
+		const lastDay = centerWeek.days[6].date;
+
+		const firstDayNum = String(firstDay.getDate()).padStart(2, '0');
+		const lastDayNum = String(lastDay.getDate()).padStart(2, '0');
+
+		const firstDayMonthNum = String(firstDay.getMonth() + 1).padStart(2, '0');
+		const lastDayMontNum = String(lastDay.getMonth() + 1).padStart(2, '0');
+
+		this.headerRange.textContent = `${firstDayNum}/${firstDayMonthNum} – ${lastDayNum}/${lastDayMontNum}`;
+
+		// Calcular horas totales de la semana (trabajadas / esperadas)
+		const weekHours = this.calculateWeekHours(centerWeek);
+		this.headerWeekHours.textContent = `Sem.: ${weekHours}`;
+	}
+
+	/*
+	updateHeader() {
+		if (!this.weekHeight || this.weekHeight === 0) {
+			this.measureWeekHeight();
+		}
+
+		const scrollTop = this.scrollEl.scrollTop;
+		const scrollMiddle = scrollTop + (this.scrollEl.clientHeight / 2);
+
+		// Encontrar la semana visible más cercana al centro
+		let centerWeek = null;
+		let minDistance = Infinity;
+
+		this.visibleWeeks.forEach((data, offset) => {
+			const weekTop = data.element.offsetTop;
+			const weekMiddle = weekTop + (data.element.offsetHeight / 2);
+			const distance = Math.abs(weekMiddle - scrollMiddle);
+
+			if (distance < minDistance) {
+				minDistance = distance;
+				centerWeek = data.week;
+			}
+		});
+
+		if (!centerWeek) return;
+
+		// Actualizar mes con año (últimos 2 dígitos)
+		const monthName = AonDateUtils.monthName(centerWeek.start);
+		const year = centerWeek.start.getFullYear().toString().slice(-2);
+		this.headerMonth.textContent = `${monthName.toUpperCase()} ${year}`;
+
 		// Calcular horas totales del mes
 		const monthHours = this.calculateMonthHours(centerWeek.start);
 		this.headerMonthHours.textContent = `Mes: ${monthHours} h`;
@@ -1101,34 +1152,119 @@ export class AonAgendaAllDays extends AonElement {
 		const weekHours = this.calculateWeekHours(centerWeek);
 		this.headerWeekHours.textContent = `Sem.: ${weekHours} h`;
 	}
+	*/
 
 	/* ---------------- CALCULATE HOURS ---------------- */
-	calculateMonthHours(date) {
-		const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-		let totalMilliseconds = 0;
+	calculateMonthHours(centerDate) {
+		if (!centerDate) return "0:00 / 0:00 h";
 
-		// Sumar horas de todos los días del mes
-		this._events.forEach((eventData, dateKey) => {
-			if (dateKey.startsWith(monthKey)) {
-				totalMilliseconds += Number(eventData.dayData.time) || 0;
+		const year = centerDate.getFullYear();
+		const month = centerDate.getMonth();
+
+		const start = new Date(year, month, 1);
+		const end = new Date(year, month + 1, 0);
+
+		let totalWorked = 0;
+		let totalExpected = 0;
+
+		for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+			const day = new Date(d);
+			day.setHours(0, 0, 0, 0);
+
+			const dateKey = AonDateUtils.format(day, "YYYY-MM-DD");
+			const dayOfWeek = day.getDay();
+
+			// Horas trabajadas
+			const dayEventData = this._events.get(dateKey);
+			let workedTime = dayEventData ? Number(dayEventData.dayData.time || 0) : 0;
+
+			// Horas esperadas base
+			const hoursForDay = (this._workingDaysHours && this._workingDaysHours.length === 7)
+				? (this._workingDaysHours[dayOfWeek] || 0)
+				: 0;
+			let expectedTime = hoursForDay * 60 * 60 * 1000;
+
+			const dayTypeContract = this._daysTypeContract.get(dateKey);
+			const dayContractFestive = this._festivesContract.get(dateKey);
+
+			// Festivo → 0 horas esperadas
+			if (dayContractFestive) {
+				//expectedTime = 0;
+				workedTime = hoursForDay * 60 * 60 * 1000;
+			} else if (dayTypeContract && dayTypeContract.source === 'HOLIDAYS') {
+				// NUEVA REGLA:
+				// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
+				if (this._workingDays && this._workingDays[dayOfWeek] !== 0) {
+					//expectedTime = hoursForDay * 60 * 60 * 1000;
+					workedTime = hoursForDay * 60 * 60 * 1000;
+				} else {
+					// expectedTime = 0;
+					workedTime = hoursForDay * 60 * 60 * 1000;
+				}
 			}
-		});
 
-		return timeHour(totalMilliseconds);
+			totalWorked += workedTime;
+			totalExpected += expectedTime;
+		}
+
+		const workedStr = timeHour(totalWorked);
+		const expectedStr = timeHour(totalExpected);
+
+		return `${workedStr} / ${expectedStr} h`;
 	}
 
 	calculateWeekHours(week) {
-		let totalMilliseconds = 0;
+		if (!week || !week.days || week.days.length === 0) {
+			return "0h 0m / 0h 0m";
+		}
 
-		// Sumar horas de todos los días de la semana
-		week.days.forEach(day => {
-			const eventData = this._events.get(day.key);
-			if (eventData) {
-				totalMilliseconds += Number(eventData.dayData.time) || 0;
+		let totalWorked = 0;
+		let totalExpected = 0;
+
+		week.days.forEach(dayObj => {
+			const day = new Date(dayObj.date);
+			day.setHours(0, 0, 0, 0);
+
+			const dateKey = dayObj.key;
+			const dayOfWeek = day.getDay();
+
+			// Horas trabajadas
+			const dayEventData = this._events.get(dateKey);
+			let workedTime = dayEventData ? Number(dayEventData.dayData.time || 0) : 0;
+
+			// Horas esperadas base
+			const hoursForDay = (this._workingDaysHours && this._workingDaysHours.length === 7)
+				? (this._workingDaysHours[dayOfWeek] || 0)
+				: 0;
+			let expectedTime = hoursForDay * 60 * 60 * 1000;
+
+			const dayTypeContract = this._daysTypeContract.get(dateKey);
+			const dayContractFestive = this._festivesContract.get(dateKey);
+
+			// Festivo → 0 horas esperadas
+			if (dayContractFestive) {
+				//expectedTime = 0;
+				workedTime = hoursForDay * 60 * 60 * 1000;
+			} else if (dayTypeContract && dayTypeContract.source === 'HOLIDAYS') {
+				// NUEVA REGLA:
+				// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
+				if (this._workingDays && this._workingDays[dayOfWeek] !== 0) {
+					//expectedTime = hoursForDay * 60 * 60 * 1000;
+					workedTime = hoursForDay * 60 * 60 * 1000;
+				} else {
+					//expectedTime = 0;
+					workedTime = hoursForDay * 60 * 60 * 1000;
+				}
 			}
+
+			totalWorked += workedTime;
+			totalExpected += expectedTime;
 		});
 
-		return timeHour(totalMilliseconds);
+		const workedStr = timeHour(totalWorked);
+		const expectedStr = timeHour(totalExpected);
+
+		return `${workedStr} / ${expectedStr} h`;
 	}
 
 	/* ---------------- PUBLIC API ---------------- */

@@ -34,6 +34,10 @@ export const timeHour = (time) => {
   let arr = AonDateUtils.timeParser(time).split(":");
   return `${arr[0]}:${arr[1]}`;
 }
+export const timeHourShort = (time) => {
+  let arr = AonDateUtils.timeParserShort(time).split(":");
+  return `${arr[0]}:${arr[1]}`;
+}
 
 /**
  * 
