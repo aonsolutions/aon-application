@@ -54,7 +54,6 @@ import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.documentinterchange.markedcontent.PDMarkedContent;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -80,6 +79,7 @@ import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
@@ -831,10 +831,12 @@ public class InvoiceTest {
 //			logo = null;
 			
 			InvoiceTemplateContext context = new InvoiceTemplateContext(company, AonCollectionUtils.toList(invoice), config, "www.agenciatributaria.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
+			context.setAdministration(Administration.COMMON_TERRITORY);
 			InvoiceTemplate invoiceTemplate = new InvoiceTemplate(context);
 			invoiceTemplate.print(context, os);
 			
 			InvoiceTemplateContext context2 = new InvoiceTemplateContext(company, AonCollectionUtils.toList(invoice), config, "www.agenciatributaria.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
+			context2.setAdministration(Administration.COMMON_TERRITORY);
 			invoiceTemplate = new InvoiceTemplate(context2);
 			invoiceTemplate.print(context2, dos);
 			
@@ -1724,12 +1726,13 @@ public class InvoiceTest {
 			iList.add(invoice);
 			iList.add(null);
 			iList.add(invoice2);
-			
 			InvoiceTemplateContext context = new InvoiceTemplateContext(company, iList, config, "www.agenciatributaria.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
+			context.setAdministration(Administration.COMMON_TERRITORY);
 			InvoiceTemplate invoiceTemplate = new InvoiceTemplate(context);
 			invoiceTemplate.print(context, os);
 			
 			InvoiceTemplateContext context2 = new InvoiceTemplateContext(company, iList, config, "www.agenciatributaria.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
+			context2.setAdministration(Administration.COMMON_TERRITORY);
 			invoiceTemplate = new InvoiceTemplate(context2);
 			invoiceTemplate.print(context2, dos);
 			

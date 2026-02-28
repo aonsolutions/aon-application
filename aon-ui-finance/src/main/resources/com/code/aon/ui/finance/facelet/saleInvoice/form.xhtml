@@ -117,7 +117,7 @@
 						
 						<aon:htmlCommandLink id="saleInvoice-facturae"
 							value="#{bundle.finance_facturae}" target="_blank" 
-							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and saleInvoice.downloadFacturae}"
+							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and saleInvoice.downloadFacturae and !saleInvoice.proforma}"
 							action="#{saleInvoiceSigner.onDownloadFacturae}"
 							styleClass="aon-finding-toolbar-item aon-icon-mail-save">
 						</aon:htmlCommandLink>
@@ -200,14 +200,16 @@
 								onclick="Richfaces.showModalPanel('waitProccess')" 
 					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 						</aon:if>
-						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signMenuItem.xhtml">
-							<ui:param name="signController" value="#{saleInvoiceSigner}" />
-							<ui:param name="skipSignButton" value="#{saleInvoice.signed or !certificate.signable}" />
-							<ui:param name="skipCancelSignButton" value="#{!saleInvoice.signed}" />
-							<ui:param name="signButtonReRender" value="saleInvoiceForm" />
-						</ui:include>
+						<aon:if test="#{!saleInvoice.proforma}">>
+							<ui:include src="/com/code/aon/ui/sign/facelet/signer/signMenuItem.xhtml">
+								<ui:param name="signController" value="#{saleInvoiceSigner}" />
+								<ui:param name="skipSignButton" value="#{saleInvoice.signed or !certificate.signable}" />
+								<ui:param name="skipCancelSignButton" value="#{!saleInvoice.signed}" />
+								<ui:param name="signButtonReRender" value="saleInvoiceForm" />
+							</ui:include>
+						</aon:if>
 						
-						<aon:if test="#{saleInvoice.downloadFacturae}">
+						<aon:if test="#{saleInvoice.downloadFacturae and !saleInvoice.proforma}">
 							<aon:menuItem id="Facturae_info"
 								value="Información Facturae"
 								iconClass="aon-icon-info"
