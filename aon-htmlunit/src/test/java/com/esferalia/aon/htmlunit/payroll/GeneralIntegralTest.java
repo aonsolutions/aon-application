@@ -114,6 +114,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		assertNotNull(getElementByXpath("//span[@title='BASE_IRPF_ESPECIE']"));
 		
+		draft("RETRIBUCIÓN FLEXIBLE, IT");
+		calculate(Calendar.MAY, 2026);
+		assertValue("cgcBaseLabel", 1424.5, 0.05);
 	}
 
 
