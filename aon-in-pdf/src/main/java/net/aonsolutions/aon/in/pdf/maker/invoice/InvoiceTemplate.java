@@ -191,6 +191,13 @@ public class InvoiceTemplate {
 	}
 	
 	private void buildAonMetadata(InvoiceTemplateContext ctx) {
+		if(ctx.getInvoices() != null && !ctx.getInvoices().isEmpty()) {
+			ctx.getDocument().getDocumentInformation().setTitle(
+					ctx.getInvoices().size() > 1 
+					? "Facturas" 
+					: "Factura " + ctx.getInvoices().get(0).getReferenceCode());
+		}
+		
 		ctx.getDocument().getDocumentInformation().setCustomMetadataValue("ref_homologation", "RGE405069592024");
 		ctx.getDocument().getDocumentInformation().setCustomMetadataValue("software_name", "Aon Solutions");
 		ctx.getDocument().getDocumentInformation().setCustomMetadataValue("software_version", "9.23");
