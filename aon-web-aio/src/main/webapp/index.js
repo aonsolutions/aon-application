@@ -64,7 +64,7 @@ export const loadModule = () => {
 }
 
 export const loadTheme = async () => {	
-	let paramCss = getParam("theme") || LS.getTheme() || getCookie("theme");
+	let paramCss = getParam(LS.THEME) || LS.getTheme() ;
 	let mobileCss = UA.isAndroidOldApp() ? LS.AON_MOBILE_ANDROID : LS.AON_MOBILE_THEME;
 	if(UA.isAndroid35App()) mobileCss = LS.AON_MOBILE_ANDROID_35;
 	let themeUrl = UA.isMobile() ? mobileCss : (paramCss || LS.CUSTOM_THEME || LS.AON_THEME);
@@ -114,6 +114,7 @@ export const loadIsReadOnly = async  () => {
 		}
 	});
 }
+
 
 const loadScript = (url, module=false) => new Promise((resolve, reject) => {
     let script = document.querySelector(`script[src="${url}"]`);
@@ -174,15 +175,6 @@ const getParam = (paramName) => {
 	return searchParams.get(paramName);
 }
 
-const getCookie = (cookieName) => {
-	const cookieValue = decodeURIComponent(document.cookie)
-    .split(';')
-	.map((row) => row.trimStart() )
-    .find((row) => row.startsWith(`${cookieName}=`))
-    ?.split('=')[1];
-	
-	return cookieValue;  
-} 
  
 load();
 
