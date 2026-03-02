@@ -351,7 +351,8 @@ export class AonPresenceList extends AonElement {
 							periodName: period.value == "personalized"
 								? (`${period.name} (${AonDateUtils.getDayMonthOrFull(this._filter.startDate)} / ${AonDateUtils.getDayMonthOrFull(this._filter.endDate)})`)
 								: period.value == "today" || period.value == "yesterday" ? period.name : (`${period.name} (${AonDateUtils.getDayMonthOrFull(period.startDate)} / ${AonDateUtils.getDayMonthOrFull(period.endDate)})`),
-							duration: timeHour(Number(time)),
+							
+							duration: this.msToHoursMinutes(time),
 
 							status: statusString,
 							reason,
@@ -432,6 +433,11 @@ export class AonPresenceList extends AonElement {
 		const seconds = parseInt(parts[1], 10); // Obtener los segundos
 		return (minutes * 60 + seconds) * 1000; // Convertir todo a milisegundos
 	}
+	
+	formatThousands(n) {
+		console.log('formatThousands', n, n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+	    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+	}
 
 	msToTimeString(ms) {
 		const totalSeconds = Math.floor(ms / 1000);
@@ -439,8 +445,18 @@ export class AonPresenceList extends AonElement {
 		const minutes = Math.floor((totalSeconds % 3600) / 60);
 		const seconds = totalSeconds % 60;
 		// Formatear con dos dígitos para horas, minutos y segundos
-		return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+		return `${this.formatThousands(hours)}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 	}
+
+	msToHoursMinutes(ms) {
+	    const totalSeconds = Math.floor(ms / 1000);
+	    const hours = Math.floor(totalSeconds / 3600);
+	    const minutes = Math.floor((totalSeconds % 3600) / 60);
+	    const seconds = totalSeconds % 60;
+	
+	    return `${this.formatThousands(hours)}:${String(minutes).padStart(2, '0')}`;
+	}
+
 }
 
 

@@ -178,13 +178,6 @@ public class TimeControlDAO {
 				tcList.add(tc);
 				date = AonDateUtils.addDays(date, 1);
 			}
-//			list.stream().map(r -> AonDateUtils.getDateWithoutTime(r.getDate())).distinct().forEach(date -> {
-//				Date aDate = AonDateUtils.getDateWithoutTime(date);
-//				Date bDate = AonDateUtils.addDays(aDate, 1);
-//				Date cDate = AonDateUtils.addSeconds(bDate, -1);
-//				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> (f.getDate().compareTo(aDate) >= 0 && f.getDate().compareTo(cDate) <= 0)));
-//				tcList.add(tc);
-//			});
 		} else if(TimeControlGroup.WEEK.equals(group)) {
 			Date date = AonDateUtils.getFirstDayOfWeek(startDate);
 			while(date.compareTo(endDate) <= 0 ) {
@@ -195,12 +188,6 @@ public class TimeControlDAO {
 				tcList.add(tc);
 				date = AonDateUtils.addWeeks(date, 1);
 			}
-//			list.stream().map(r -> AonDateUtils.getFirstDayOfWeek(AonDateUtils.getDateWithoutTime(r.getDate()))).distinct().forEach(date -> {
-//				Date bDate = AonDateUtils.addDays(date, 7);
-//				Date cDate = AonDateUtils.addSeconds(bDate, -1);
-//				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> (f.getDate().compareTo(date) >= 0 && f.getDate().compareTo(cDate) <= 0)));
-//				tcList.add(tc);
-//			});
 		} else if(TimeControlGroup.MONTH.equals(group)) {
 			Date date = AonDateUtils.getMonthFirstDay(startDate);
 			while(date.compareTo(endDate) <= 0 ) {
@@ -213,13 +200,6 @@ public class TimeControlDAO {
 				tcList.add(tc);
 				date = AonDateUtils.addMonths(date, 1);
 			}
-//			list.stream().map(r -> AonDateUtils.getMonth(r.getDate()) +"/"+ AonDateUtils.getYear(r.getDate())).distinct().forEach(date -> {
-//				String[] a = date.split("/");
-//				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> (
-//						AonDateUtils.getMonth(f.getDate()) == Integer.parseInt(a[0])
-//						&& AonDateUtils.getYear(f.getDate()) == Integer.parseInt(a[1]))));
-//				tcList.add(tc);
-//			});
 		} else if(TimeControlGroup.YEAR.equals(group)) {
 			Date date = AonDateUtils.getYearFirstDay(startDate);
 			while(date.compareTo(endDate) <= 0 ) {
@@ -229,10 +209,6 @@ public class TimeControlDAO {
 				tcList.add(tc);
 				date = AonDateUtils.addYears(date, 1);
 			}
-//			list.stream().map(r -> AonDateUtils.getYear(r.getDate())).distinct().forEach(year -> {
-//				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> AonDateUtils.getYear(f.getDate()) == year));
-//				tcList.add(tc);
-//			});
 		}
 		return tcList.stream();
 	}
@@ -363,6 +339,7 @@ public class TimeControlDAO {
 		}
 	}
 	
+	/*
 	private static TimeControl buildTimeControl(AONContext ctx, Integer taskHolderId, Stream<TimeControlDetail> details, Date startDate, Date endDate, TimeControlGroup group) {
 		TimeControl tc = new TimeControl().setTime(0L);
 		details.forEach(r -> {
@@ -382,6 +359,91 @@ public class TimeControlDAO {
 				tc.setTaskHolder(r.getTaskHolder());
 			}
 			tc.getDetail().add(r);
+		});
+		
+		TimeControlDetail tcd = getLastTimeControlDetail(ctx, 
+			f -> 
+			f.getTaskHolderProperty().eq(taskHolderId)
+			.and(f.getIdProperty().ge(0)));
+
+		if(tc.getDetail().isEmpty() && TimeControlStatus.IN.equals(tcd.getStatus())  
+			&& AonDateUtils.isSameDay(AonDateUtils.addDays(new Date(), -1), tcd.getDate())) {
+			tc.setInDate(AonDateUtils.getDateWithoutTime(new Date()));
+			tc.setStatus(TimeControlStatus.IN);
+			tc.getDetail().add(new TimeControlDetail()
+					.setDate(AonDateUtils.getDateWithoutTime(new Date()))
+					.setStatus(TimeControlStatus.IN)
+					.setDomain(tcd.getDomain()));
+		} else if(TimeControlStatus.IN.equals(tc.getStatus()) 
+			&& tc.getInDate().compareTo(AonDateUtils.getDateWithoutTime(new Date())) < 0) {
+			Date d = AonDateUtils.addDays(tc.getInDate(), 1);
+			Date date = AonDateUtils.addSeconds(AonDateUtils.getDateWithoutTime(d), -1);
+			tc.setTime(tc.getTime() + date.getTime() - tc.getInDate().getTime());
+			tc.setInDate(null);
+			tc.setStatus(TimeControlStatus.OUT);
+			tc.getDetail().add(new TimeControlDetail()
+					.setDate(date)
+					.setStatus(TimeControlStatus.OUT)
+					.setDomain(tcd.getDomain()));
+		} 
+		else if (TimeControlStatus.IN.equals(tc.getStatus()) && AonDateUtils.isSameDay(tc.getInDate(), new Date())) {				
+			// CASO NUEVO: IN abierto hoy - expandir hasta NOW
+			
+			Date now = new Date();
+			tc.setTime(tc.getTime() + now.getTime() - tc.getInDate().getTime());
+		}
+
+		
+		tc.setStatus(tcd.getStatus());
+		
+		tc.setLastCoordinates(tcd.getCoordinates());
+		tc.setLastDate(tcd.getDate());
+		tc.setLastLocation(tcd.getLocation());
+		tc.setTaskHolder(TaskHolderDAO.get(ctx, f -> f.getIdProperty().eq(taskHolderId)));
+
+		tc.setStartDate(startDate);
+		tc.setEndDate(endDate);
+		tc.setGroup(group);
+		
+		return tc;
+	}
+	*/
+	
+	private static TimeControl buildTimeControl(AONContext ctx, Integer taskHolderId, Stream<TimeControlDetail> details, Date startDate, Date endDate, TimeControlGroup group) {
+		TimeControl tc = new TimeControl().setTime(0L);
+
+		details.forEach(r -> {
+
+		    if (tc.getStatus() == null) {
+		        tc.setInDate(r.getDate());
+		        tc.setStatus(r.getStatus());
+		        tc.getDetail().add(r);
+		        return;
+		    }
+
+		    boolean isOpen = tc.getInDate() != null;
+		    boolean isInOrPause = TimeControlStatus.IN.equals(r.getStatus()) || TimeControlStatus.PAUSE.equals(r.getStatus());
+		    boolean isOut = TimeControlStatus.OUT.equals(r.getStatus());
+
+		    // CERRAR TRAMO si hay uno abierto y el estado cambia
+		    if (isOpen && !tc.getStatus().equals(r.getStatus())) {
+		        tc.setTime(tc.getTime() + (r.getDate().getTime() - tc.getInDate().getTime()));
+		        tc.setInDate(null);
+		    }
+
+		    // ABRIR TRAMO si es IN o PAUSE
+		    if (isInOrPause) {
+		        tc.setInDate(r.getDate());
+		    }
+
+		    // OUT no abre tramo, solo cierra
+		    tc.setStatus(r.getStatus());
+
+		    if (tc.getTaskHolder() == null || tc.getTaskHolder().getId() == null) {
+		        tc.setTaskHolder(r.getTaskHolder());
+		    }
+
+		    tc.getDetail().add(r);
 		});
 		
 		TimeControlDetail tcd = getLastTimeControlDetail(ctx, 

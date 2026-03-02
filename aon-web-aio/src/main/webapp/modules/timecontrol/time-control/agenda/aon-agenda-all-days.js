@@ -578,7 +578,7 @@ export class AonAgendaAllDays extends AonElement {
 			const dayContractFestive = this._festivesContract.get(day.key);
 
 			// Vacaciones, permisos retribuidos, ITs (habra que filtrar dayTypeContract.source si queremos quitar alguno )
-			if (dayTypeContract &&  dayTypeContract.source ) {
+			if (dayTypeContract && dayTypeContract.source) {
 				// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
 				if (this._workingDays && this._workingDays[dayOfWeek] === 0) {
 					totalHours = timeHourShort(expectedTime);
@@ -607,31 +607,31 @@ export class AonAgendaAllDays extends AonElement {
 			// Formatear nombre del día (3 primeras letras + punto)
 			const dayNameFull = AonDateUtils.dayName(day.date);
 			const dayNameShort = dayNameFull.substring(0, 3) + '.';
-			
-			let dayHtml = 
-					`<div class="day-header">`;
-					
-			dayHtml += 
-					      `<div class="day-header-left">
+
+			let dayHtml =
+				`<div class="day-header">`;
+
+			dayHtml +=
+				`<div class="day-header-left">
 				            <span class="day-name">${dayNameShort}</span>
 				            <span class="day-number ${dayFestiveHtml.length > 0 ? 'festive' : (dayTypeContract ? dayTypeContract.source.toLowerCase() : '')}">${day.date.getDate()}</span>
 				            ${dayFestiveHtml}
 				          </div>`;
-				      
-			if((today >= dayDate && workedTime > 0) || (workedTime > 0 && this._workingDays[dayOfWeek] === 0) )
-				dayHtml += 
-						 `<div class="day-header-right">
+
+			if ((today >= dayDate && workedTime > 0) || (workedTime > 0 && this._workingDays[dayOfWeek] === 0))
+				dayHtml +=
+					`<div class="day-header-right">
 					        <span class="total-hours">${totalHours} h <span class="day-diff-hours">( ${diffHours} h )</span></span>
 					      </div>`;
-			
-			dayHtml +=	
-					`</div>
+
+			dayHtml +=
+				`</div>
 			        <div class="day-content">
 			          ${daysTypeHtml}
 			        </div>`;
-			
+
 			dayEl.innerHTML = dayHtml;
-			
+
 			el.appendChild(dayEl);
 		});
 
@@ -657,6 +657,8 @@ export class AonAgendaAllDays extends AonElement {
 
 		// Agrupar eventos en tramos
 		const tramos = this.groupEventsIntoTramos(sortedEvents);
+
+		console.log("Tramos", tramos);
 
 		return `
 			${tramos.map(tramo => {
@@ -789,9 +791,9 @@ export class AonAgendaAllDays extends AonElement {
 		while (i < events.length) {
 			const currentEvent = events[i];
 
-			// Solo procesar eventos que son 'in' o 'pause'
+			/* -------------------- CASO: IN -------------------- */
 			if (currentEvent.status === 'in') {
-				// Verificar si hay múltiples 'in' seguidos, quedarnos con el más tardío
+
 				let startIndex = i;
 				let nextIndex = i + 1;
 
@@ -802,7 +804,6 @@ export class AonAgendaAllDays extends AonElement {
 
 				const startEvent = events[startIndex];
 
-				// Buscar el siguiente evento que sea 'out' o 'pause'
 				let endIndex = startIndex + 1;
 				while (endIndex < events.length && events[endIndex].status === 'in') {
 					endIndex++;
@@ -811,49 +812,37 @@ export class AonAgendaAllDays extends AonElement {
 				if (endIndex < events.length) {
 					const endEvent = events[endIndex];
 
-					// Crear tramo in → pause/out
-					tramos.push({
-						start: startEvent,
-						end: endEvent
-					});
+					tramos.push({ start: startEvent, end: endEvent });
 
-					// Si el endEvent es 'pause', crear otro tramo desde 'pause' hasta el siguiente evento
 					if (endEvent.status === 'pause') {
-						let afterPauseIndex = endIndex + 1;
-						if (afterPauseIndex < events.length) {
-							// Buscar el siguiente out o in
-							const afterPauseEvent = events[afterPauseIndex];
+						const afterPauseIndex = endIndex + 1;
 
+						if (afterPauseIndex < events.length) {
 							tramos.push({
 								start: endEvent,
-								end: afterPauseEvent
+								end: events[afterPauseIndex]
 							});
-
-							i = afterPauseIndex + 1;
-						} else {
-							// Pause sin evento siguiente
-							i = endIndex + 1;
 						}
+
+						i = endIndex + 1;
 					} else {
-						// Era un 'out', continuar desde ahí
 						i = endIndex + 1;
 					}
+
 				} else {
-					// No hay más eventos → cerrar con momento actual
+					// Último evento = IN → tramo current
 					tramos.push({
-						start: {
-							...startEvent,
-							status: 'current'
-						},
+						start: { ...startEvent, status: 'current' },
 						end: this.createNowEndEvent()
 					});
 
 					i = startIndex + 1;
 				}
 			}
-			// Si es 'pause' sin un 'in' previo en este tramo
+			/* -------------------- CASO: PAUSE -------------------- */
 			else if (currentEvent.status === 'pause') {
-				let nextIndex = i + 1;
+				const nextIndex = i + 1;
+
 				if (nextIndex < events.length) {
 					tramos.push({
 						start: currentEvent,
@@ -861,22 +850,33 @@ export class AonAgendaAllDays extends AonElement {
 					});
 					i = nextIndex + 1;
 				} else {
-					// Pause sin evento siguiente
 					i++;
 				}
 			}
-			// Si es 'out', simplemente avanzar (no nos interesa)
+			/* -------------------- CASO: OUT -------------------- */
+			else if (currentEvent.status === 'out') {
+				i++;
+			}
 			else {
 				i++;
 			}
 		}
 
+		/* -------------------- TRAMO FINAL CURRENT -------------------- */
+		const last = events[events.length - 1];
+
+		// SOLO si el último es PAUSE (no IN)
+		if (last.status === 'pause') {
+			tramos.push({
+				start: { ...last, status: 'current' },
+				end: this.createNowEndEvent()
+			});
+		}
 		return tramos;
 	}
 
 	createNowEndEvent() {
 		const now = Date.now();
-
 		return {
 			status: 'current',
 			date: now,
@@ -884,6 +884,7 @@ export class AonAgendaAllDays extends AonElement {
 			cause: 'DEFAULT'
 		};
 	}
+
 
 	/* ---------------- EVENT LISTENERS ---------------- */
 	attachEventListeners() {
@@ -1131,7 +1132,7 @@ export class AonAgendaAllDays extends AonElement {
 			const dayTypeContract = this._daysTypeContract.get(dateKey);
 
 			// Vacaciones, permisos retribuidos, ITs (habra que filtrar dayTypeContract.source si queremos quitar alguno )
-			if (dayTypeContract &&  dayTypeContract.source ) {
+			if (dayTypeContract && dayTypeContract.source) {
 				// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
 				if (this._workingDays && this._workingDays[dayOfWeek] !== 0) {
 					//expectedTime = hoursForDay * 60 * 60 * 1000;
@@ -1147,7 +1148,7 @@ export class AonAgendaAllDays extends AonElement {
 		}
 
 		const workedStr = timeHourShort(totalWorked);
-		
+
 		// Diferencia en minutos
 		const diffTime = totalWorked - totalExpected;
 		const diffHours = this.formatDiffTime(diffTime);
@@ -1183,7 +1184,7 @@ export class AonAgendaAllDays extends AonElement {
 			const dayTypeContract = this._daysTypeContract.get(dateKey);
 
 			// Vacaciones, permisos retribuidos, ITs (habra que filtrar dayTypeContract.source si queremos quitar alguno )
-			if (dayTypeContract &&  dayTypeContract.source ) {
+			if (dayTypeContract && dayTypeContract.source) {
 				// NUEVA REGLA:
 				// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
 				if (this._workingDays && this._workingDays[dayOfWeek] !== 0) {
@@ -1200,7 +1201,7 @@ export class AonAgendaAllDays extends AonElement {
 		});
 
 		const workedStr = timeHourShort(totalWorked);
-		
+
 		// Diferencia en minutos
 		const diffTime = totalWorked - totalExpected;
 		const diffHours = this.formatDiffTime(diffTime);
