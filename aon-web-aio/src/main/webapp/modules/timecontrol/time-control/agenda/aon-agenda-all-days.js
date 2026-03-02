@@ -658,8 +658,6 @@ export class AonAgendaAllDays extends AonElement {
 		// Agrupar eventos en tramos
 		const tramos = this.groupEventsIntoTramos(sortedEvents);
 
-		console.log("Tramos", tramos);
-
 		return `
 			${tramos.map(tramo => {
 			// Formatear horas de inicio y fin
