@@ -5138,7 +5138,9 @@ aon-agenda-all-days .day-header-right {
   align-items: baseline;
 }
 
-aon-agenda-all-days .day-header-right .day-diff-hours {
+aon-agenda-all-days .day-header-right .day-diff-hours,
+aon-agenda-all-days .month-hours .day-diff-hours,
+aon-agenda-all-days .week-hours .day-diff-hours {
   font-size: 11px;
   color: #70757a;
 }

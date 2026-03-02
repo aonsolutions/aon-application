@@ -577,18 +577,15 @@ export class AonAgendaAllDays extends AonElement {
 
 			const dayContractFestive = this._festivesContract.get(day.key);
 
-			// Festivo → 8 horas esperadas
-			if (dayContractFestive) {
-				totalHours = timeHourShort(expectedTime);
-				workedTime = expectedTime;
-			} else if (dayTypeContract && dayTypeContract.source === 'HOLIDAYS') {
+			// Vacaciones, permisos retribuidos, ITs (habra que filtrar dayTypeContract.source si queremos quitar alguno )
+			if (dayTypeContract &&  dayTypeContract.source ) {
 				// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
 				if (this._workingDays && this._workingDays[dayOfWeek] === 0) {
 					totalHours = timeHourShort(expectedTime);
 					workedTime = expectedTime;
 				} else {
-					totalHours = 0;
-					workedTime = 0;
+					totalHours = timeHourShort(expectedTime);
+					workedTime = expectedTime;
 				}
 			}
 
@@ -621,7 +618,7 @@ export class AonAgendaAllDays extends AonElement {
 				            ${dayFestiveHtml}
 				          </div>`;
 				      
-			if(today >= dayDate || (workedTime > 0 && this._workingDays[dayOfWeek] === 0) )
+			if((today >= dayDate && workedTime > 0) || (workedTime > 0 && this._workingDays[dayOfWeek] === 0) )
 				dayHtml += 
 						 `<div class="day-header-right">
 					        <span class="total-hours">${totalHours} h <span class="day-diff-hours">( ${diffHours} h )</span></span>
@@ -1082,7 +1079,7 @@ export class AonAgendaAllDays extends AonElement {
 
 		// Calcular horas totales del mes (trabajadas / esperadas)
 		const monthHours = this.calculateMonthHours(centerWeek.start);
-		this.headerMonthHours.textContent = `Mes: ${monthHours}`;
+		this.headerMonthHours.innerHTML = `Mes: ${monthHours}`;
 
 		// Actualizar rango: del día X al día Y
 		const firstDay = centerWeek.days[0].date;
@@ -1098,65 +1095,12 @@ export class AonAgendaAllDays extends AonElement {
 
 		// Calcular horas totales de la semana (trabajadas / esperadas)
 		const weekHours = this.calculateWeekHours(centerWeek);
-		this.headerWeekHours.textContent = `Sem.: ${weekHours}`;
+		this.headerWeekHours.innerHTML = `Sem.: ${weekHours}`;
 	}
-
-	/*
-	updateHeader() {
-		if (!this.weekHeight || this.weekHeight === 0) {
-			this.measureWeekHeight();
-		}
-
-		const scrollTop = this.scrollEl.scrollTop;
-		const scrollMiddle = scrollTop + (this.scrollEl.clientHeight / 2);
-
-		// Encontrar la semana visible más cercana al centro
-		let centerWeek = null;
-		let minDistance = Infinity;
-
-		this.visibleWeeks.forEach((data, offset) => {
-			const weekTop = data.element.offsetTop;
-			const weekMiddle = weekTop + (data.element.offsetHeight / 2);
-			const distance = Math.abs(weekMiddle - scrollMiddle);
-
-			if (distance < minDistance) {
-				minDistance = distance;
-				centerWeek = data.week;
-			}
-		});
-
-		if (!centerWeek) return;
-
-		// Actualizar mes con año (últimos 2 dígitos)
-		const monthName = AonDateUtils.monthName(centerWeek.start);
-		const year = centerWeek.start.getFullYear().toString().slice(-2);
-		this.headerMonth.textContent = `${monthName.toUpperCase()} ${year}`;
-
-		// Calcular horas totales del mes
-		const monthHours = this.calculateMonthHours(centerWeek.start);
-		this.headerMonthHours.textContent = `Mes: ${monthHours} h`;
-
-		// Actualizar rango: del día X al día Y
-		const firstDay = centerWeek.days[0].date;
-		const lastDay = centerWeek.days[6].date;
-
-		const firstDayNum = String(firstDay.getDate()).padStart(2, '0');
-		const lastDayNum = String(lastDay.getDate()).padStart(2, '0');
-
-		const firstDayMonthNum = String(firstDay.getMonth() + 1).padStart(2, '0');
-		const lastDayMontNum = String(lastDay.getMonth() + 1).padStart(2, '0');
-
-		this.headerRange.textContent = `${firstDayNum}/${firstDayMonthNum} – ${lastDayNum}/${lastDayMontNum}`;
-
-		// Calcular horas totales de la semana
-		const weekHours = this.calculateWeekHours(centerWeek);
-		this.headerWeekHours.textContent = `Sem.: ${weekHours} h`;
-	}
-	*/
 
 	/* ---------------- CALCULATE HOURS ---------------- */
 	calculateMonthHours(centerDate) {
-		if (!centerDate) return "0:00 / 0:00 h";
+		if (!centerDate) return `0:00 h <span class="day-diff-hours">( + 0:00 h )</span>`;
 
 		const year = centerDate.getFullYear();
 		const month = centerDate.getMonth();
@@ -1185,14 +1129,9 @@ export class AonAgendaAllDays extends AonElement {
 			let expectedTime = hoursForDay * 60 * 60 * 1000;
 
 			const dayTypeContract = this._daysTypeContract.get(dateKey);
-			const dayContractFestive = this._festivesContract.get(dateKey);
 
-			// Festivo → 0 horas esperadas
-			if (dayContractFestive) {
-				//expectedTime = 0;
-				workedTime = hoursForDay * 60 * 60 * 1000;
-			} else if (dayTypeContract && dayTypeContract.source === 'HOLIDAYS') {
-				// NUEVA REGLA:
+			// Vacaciones, permisos retribuidos, ITs (habra que filtrar dayTypeContract.source si queremos quitar alguno )
+			if (dayTypeContract &&  dayTypeContract.source ) {
 				// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
 				if (this._workingDays && this._workingDays[dayOfWeek] !== 0) {
 					//expectedTime = hoursForDay * 60 * 60 * 1000;
@@ -1207,15 +1146,18 @@ export class AonAgendaAllDays extends AonElement {
 			totalExpected += expectedTime;
 		}
 
-		const workedStr = timeHour(totalWorked);
-		const expectedStr = timeHour(totalExpected);
+		const workedStr = timeHourShort(totalWorked);
+		
+		// Diferencia en minutos
+		const diffTime = totalWorked - totalExpected;
+		const diffHours = this.formatDiffTime(diffTime);
 
-		return `${workedStr} / ${expectedStr} h`;
+		return `${workedStr} h <span class="day-diff-hours">( ${diffHours} h )</span>`;
 	}
 
 	calculateWeekHours(week) {
 		if (!week || !week.days || week.days.length === 0) {
-			return "0h 0m / 0h 0m";
+			return `0:00 h <span class="day-diff-hours">( + 0:00 h )</span>`;
 		}
 
 		let totalWorked = 0;
@@ -1239,13 +1181,9 @@ export class AonAgendaAllDays extends AonElement {
 			let expectedTime = hoursForDay * 60 * 60 * 1000;
 
 			const dayTypeContract = this._daysTypeContract.get(dateKey);
-			const dayContractFestive = this._festivesContract.get(dateKey);
 
-			// Festivo → 0 horas esperadas
-			if (dayContractFestive) {
-				//expectedTime = 0;
-				workedTime = hoursForDay * 60 * 60 * 1000;
-			} else if (dayTypeContract && dayTypeContract.source === 'HOLIDAYS') {
+			// Vacaciones, permisos retribuidos, ITs (habra que filtrar dayTypeContract.source si queremos quitar alguno )
+			if (dayTypeContract &&  dayTypeContract.source ) {
 				// NUEVA REGLA:
 				// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
 				if (this._workingDays && this._workingDays[dayOfWeek] !== 0) {
@@ -1261,10 +1199,13 @@ export class AonAgendaAllDays extends AonElement {
 			totalExpected += expectedTime;
 		});
 
-		const workedStr = timeHour(totalWorked);
-		const expectedStr = timeHour(totalExpected);
+		const workedStr = timeHourShort(totalWorked);
+		
+		// Diferencia en minutos
+		const diffTime = totalWorked - totalExpected;
+		const diffHours = this.formatDiffTime(diffTime);
 
-		return `${workedStr} / ${expectedStr} h`;
+		return `${workedStr} h <span class="day-diff-hours">( ${diffHours} h )</span>`;
 	}
 
 	/* ---------------- PUBLIC API ---------------- */
