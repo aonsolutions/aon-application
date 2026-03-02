@@ -4109,7 +4109,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				double monthDays = s.getContextData(MONTH_DAYS.getName(), Collectors.averagingDouble(Double::parseDouble));
 				;
 				double quoteDays = s.getContextData(QUOTE_DAYS.getName(), summingDouble(Double::parseDouble));
-				double naturalDays = quoteDays == monthDays ? AonDateUtils.getMax(s.getEndDate(), Calendar.DAY_OF_MONTH)
+				double naturalDays = quoteDays == monthDays ?
+						new Period(s.getStartDate(), s.getEndDate()).getDays()
 						: quoteDays;
 
 				pair.snd += partial ? naturalDays : quoteDays;
