@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -23,6 +22,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
@@ -954,6 +954,15 @@ public class Invoice implements Serializable, HasAudit {
 	public Invoice setFileUrl(String fileUrl) {
 		this.fileUrl = fileUrl;
 		return this;
+	}
+
+	public Optional<InvoiceSource> getUniqueSource() {
+		return this.detailStream()
+			.map( id -> id.getSource() )
+			.distinct()
+			.limit(2)
+			.reduce((a, b) -> null) // Si hay más de uno, devuelve null. Factura con más de un source.
+		;
 	}
 	
 	// **********************************************************************************

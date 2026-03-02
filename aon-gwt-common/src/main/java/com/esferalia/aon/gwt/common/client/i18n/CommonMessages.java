@@ -2673,6 +2673,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Cuota R.E.")
 	String surchargeQuota();
 
+	@DefaultMessage("Cuota + R.E.")
+	String totalVat();
+
 	@DefaultMessage("Aplicar retenci\u00F3n")
 	String withholding();
 	

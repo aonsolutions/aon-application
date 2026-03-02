@@ -4,8 +4,6 @@ import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDoma
 import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDomainName;
 import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentUser;
 import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getRootPanel;
-import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.removeCustomer;
-import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.removeOfficeDomain;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;

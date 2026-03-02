@@ -9,6 +9,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FinanceUtil {
 
+	private static final String PROFORMA = "PROFORMA";
 	private static final int NUMBER_LENGTH = 6;
 
 	private FinanceUtil() {
@@ -50,7 +51,7 @@ public class FinanceUtil {
 	        sb.append(invoice.getSeries()).append("/");
 	    }
 	    if ( AonMathUtils.isLessThanZero(invoice.getNumber()) ) {
-	    	sb.append("PROFORMA");	
+	    	sb.append(PROFORMA);	
 	    } else {
 	    	sb.append(formatInvoiceNumber( invoice.getNumber() ) );
 	    }
@@ -60,7 +61,9 @@ public class FinanceUtil {
 	public static String getSalesReferenceCode( Invoice invoice ) {
 		if (invoice == null) throw new AonCoreException("Invoice cannot be null");
 		if (!invoice.isSales()) return invoice.getReferenceCode();
-		String referenceCode = formatInvoiceNumber( invoice.getNumber() );
+		String referenceCode = ( AonMathUtils.isLessThanZero(invoice.getNumber()) ) 
+	    	? PROFORMA
+    		: formatInvoiceNumber( invoice.getNumber() );
 		if (!AonStringUtils.isBlank(invoice.getSeries())) {
 			referenceCode = invoice.getSeries() + "/" + referenceCode;
 		}
