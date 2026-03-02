@@ -82,7 +82,6 @@ public class InvoicePdfServletAK extends AonApiHttpServlet {
 				.setPrepayment(false));
 			
 			InvoiceCommunicationConfiguration icc = new InvoiceCommunicationConfiguration();
-			icc.setAdministration(Administration.COMMON_TERRITORY);
 			PdfMaker.printInvoice(resp.getOutputStream(), company, icc, invoice, config, "www.aonsolutions.es", logo.getData(), "");
 			
 			responseFile(resp, "factura", MimeType.PDF);
