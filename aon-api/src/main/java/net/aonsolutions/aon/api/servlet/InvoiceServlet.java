@@ -619,7 +619,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
 		
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData(), tbaiId);
+		PdfMaker.printInvoice(out, company, icc, invoice, config, qrUrl, logo.getData(), tbaiId);
 		byte[] data = out.toByteArray();
 		PdfSigner signer = new PdfSigner();
 		byte[] signedData = signer.sign(checkCertificate(api), data);

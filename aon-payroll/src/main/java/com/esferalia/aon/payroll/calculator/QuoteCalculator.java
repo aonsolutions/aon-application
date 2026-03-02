@@ -498,6 +498,13 @@ public abstract class QuoteCalculator {
 			this.cgcBase = null;
 			this.cgpBase = null;
 			
+			String name = payment.getName();
+			
+			if ( ContextVariable.FLEXIBLES.stream().anyMatch(v -> StringUtils.equals(v, name) ) ) {
+				return Collections.singletonList(new TimedResult<Double>(quote, new Period(start,end), Collections.emptyMap()));
+			}
+
+			
 			
 			List<ITimedResult<Double>> quotesImpl = new ArrayList<ITimedResult<Double>>();
 
@@ -507,8 +514,6 @@ public abstract class QuoteCalculator {
 				context.containsVariable("BASE_" + PREST_IT, start,end))
 				return quotesImpl;
 			
-			String name = payment.getName();
-
 			if (quote == 0 &&
 				AonStringUtils.equals(PREST_IT, name))
 				return quotesImpl;

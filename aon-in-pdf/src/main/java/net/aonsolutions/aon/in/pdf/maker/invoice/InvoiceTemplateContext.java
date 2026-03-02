@@ -10,10 +10,12 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceThemeConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceTemplateContext {
 
+	Administration administration;
 	CompanyFull company;
 	List<Invoice> invoices;
 	PrintInvoiceConfiguration config;
@@ -44,6 +46,15 @@ public class InvoiceTemplateContext {
 		this.tbaiId = tbaiId;
 	}
 
+	public Administration getAdministration() {
+		return administration;
+	}
+	
+	public InvoiceTemplateContext setAdministration(Administration administration) {
+		this.administration = administration;
+		return this;
+	}
+	
 	public CompanyFull getCompany() {
 		return company;
 	}

@@ -1591,10 +1591,11 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				nextTotalIrpf = ( salary.getTotalIrpf() != null ? salary.getTotalIrpf() : 0.00 )  * size;
 
 				nextSocialSecurityContributons = ( salary.getSocialSecurityContributions() != null ? salary.getSocialSecurityContributions() : 0.00 )  * size;
-				
 				double monthlySocialSecurityContributions = builder.getMonthlyBase()
 						* salary.getSocialSecurityContributions() / salary.getCommonBase();
-				nextSocialSecurityContributons-= (size - 1) * monthlySocialSecurityContributions;
+				if ( AonNumberUtils.isValid(monthlySocialSecurityContributions) ) {
+					nextSocialSecurityContributons-= (size - 1) * monthlySocialSecurityContributions;
+				}
 				
 				
 				break;

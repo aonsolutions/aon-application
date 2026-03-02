@@ -59,6 +59,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.logging.log4j.util.LoaderUtil;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -7275,7 +7276,40 @@ public class IdcTest extends AbstractSQLTestCase {
 			});
 		}
 	}
+	
+	
+	@Test
+	public void testIdcSolidaridad() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SQLException, SalaryException, ParseException {
 
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcSolidaridad.pdf")) {
+			Collection<PEC> ssPECs = Idc.getSSPECs(is);
+			// 07 EXONERACION 			100,00 10 C.C.EXC.IT,OC-C.TOT. 01-01-2026 (1,30 EMPRESA 0,25 TRABJAD.) 
+			// 44 COT.ESP.SOLIDARIDAD 	  7,00 03 CONT.COMUN-C.EMPRESA 01-01-2026
+			// 44 COT.ESP.SOLIDARIDAD 	  2,00 54 CONT.COM.C.TRABAJAD. 01-01-2026			
+			
+			//ssPECs.stream().forEach( sspec -> System.out.println(sspec.getName() + " : " +  sspec.getFormula() ));
+
+			Date date = new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2026");
+
+			Salary salary = calculate(ssPECs, Collections.emptyList(), date );
+			
+			double cgcBase = salary.getCommonBase();
+			double cgpBase = salary.getProfessionalBase();
+			
+			salary.getCostS().forEach( deduction -> System.out.println(deduction.getName() + " : " + deduction.getAmount() + " (" + deduction.getExpression() + ")" + "," + deduction.getDescription() ));
+			//salary.getDeductionS().forEach( deduction -> System.out.println(deduction.getName() + " : " + deduction.getAmount() + " (" + deduction.getExpression() + ")" + "," + deduction.getDescription() ));
+			
+			assertEquals(cgcBase * ( 0.25  + 2.00 )/ 100.00 , salary.getSocialSecurityContributions(), DELTA);
+			assertEquals(cgcBase * ( 1.30  + 7.00 + 3.60 )/ 100.00 , salary.getTotalEnterprise(), DELTA);
+			
+			for (SalaryDeduction deduction : salary.getSalaryDeductions()) {
+			}
+
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+			}
+		}
+	}
 
 	private static java.sql.Date toSQL(java.util.Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());

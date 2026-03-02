@@ -2458,25 +2458,28 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("TRIENIO_PAGA_UNICA_ANUAL", "TRI_PU_A");
 		variablesMap.put("PLUS_DOMINGOS_Y_FESTIVOS_ZONA_TURISTICA_HORAS", "P_DOM_FEST_ZT_H");
 		
-		// Act. 16/11/26
+		// Act. 16/01/26
 		variablesMap.put("PENSIONES_SOBRE_COMPLEMENTO_MENSUAL", "PENS_COMP_M");
 		variablesMap.put("PENSIONES_SOBRE_PLUS_EXTRASALARIAL_MENSUAL", "PENS_PEXTRA_M");
 		variablesMap.put("PLUS_CIERRE_MENSUAL", "P_CIERRE_M");
-		variablesMap.put("PLUS_DOMINGOS_Y_FESTIVOS_DIARIO", "P_DOM_FEST_D");
-		variablesMap.put("PLUS_IDIOMAS_MENSUAL", "P_IDIOMAS_M");
-		variablesMap.put("PLUS_NOCTURNIDAD_MENSUAL", "P_NOCT_M");
 		variablesMap.put("PLUS_PRIMERA_SALIDA_DIARIO", "P_1SAL_D");
 		variablesMap.put("PLUS_PRIMERA_SALIDA_FESTIVOS_DIARIO", "P_1SAL_FEST_D");
 		variablesMap.put("PLUS_RETEN_HORAS", "P_RETEN_H");
 		variablesMap.put("PLUS_VENTA_INTERNET_ANUAL", "P_VTA_INT_A");
-		variablesMap.put("QUEBRANDO_DE_MONEDA_MENSUAL", "QMON_M");
 		variablesMap.put("RETEN_FESTIVOS_DIARIO", "RETEN_FEST_D");
-		variablesMap.put("SALARIO_CONVENIO_ANUAL_ANUAL", "SAL_CONV_A");
-		variablesMap.put("SALARIO_CONVENIO_MENSUAL", "SAL_CONV_M");
-		variablesMap.put("TRABAJO_A_DISTANCIA_O_TELETRABAJO_ANUAL", "T_DIST_A");
-		variablesMap.put("TRABAJO_A_DISTANCIA_O_TELETRABAJO_MENSUAL", "T_DIST_M");
 		variablesMap.put("TURNICIDAD_HORAS", "TURN_H");
 
+		// Act. 26/02/26
+		variablesMap.put("AYUDA_DIVERSIDAD_ANUAL", "AYUDA_DIV_A");
+		variablesMap.put("COMPLEMENTO_VIVIENDA_EN_TRASLADOS_ANUAL", "C_VIV_TRAS_A");
+		variablesMap.put("HORA_EXTRA_NOCTURA_FESTIVOS_DIARIO", "HEX_NOCT_FEST_D");
+		variablesMap.put("HORA_EXTRA_NOCTURA_FESTIVOS_MENSUAL", "HEX_NOCT_FEST_M");
+		variablesMap.put("HORA_NOCTURNA_DIARIO", "H_NOCT_D");
+		variablesMap.put("HORA_ORDINARIA_MENSUAL", "H_ORD_M");
+		variablesMap.put("VISPERA_DE_FESTIVO_HORAS", "VISP_FEST_H");
+		variablesMap.put("BOLSA_DE_ROPA_ANUAL", "BOLSA_ROPA_A");
+		variablesMap.put("PLUS_MEGA_DUO_ANUAL", "P_MEGA_DUO_A");
+		variablesMap.put("PLUS_SABADO_TARDE_ANUAL", "P_SAB_TARDE_A");
 
 	}
 	
