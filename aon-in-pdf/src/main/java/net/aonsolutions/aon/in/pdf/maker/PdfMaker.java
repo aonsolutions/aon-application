@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -37,9 +38,10 @@ public class PdfMaker {
 	 * @param invoice, Invoice Object
 	 * @param config, print invoice configuration
 	 */
-	public static void printInvoice(OutputStream out, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) {
+	public static void printInvoice(OutputStream out, CompanyFull company, InvoiceCommunicationConfiguration icc, Invoice invoice, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) {
 		try {
 			InvoiceTemplateContext context = new InvoiceTemplateContext(company, AonCollectionUtils.toList(invoice), config, qrUrl, logo, tbaiId);
+			context.setAdministration(icc.getAdministration());
 			InvoiceTemplate template = new InvoiceTemplate(context);
 			template.print(context, out);
 		} catch (CanNotCreatePdfException e) {
@@ -47,9 +49,10 @@ public class PdfMaker {
 		}		
 	}
 	
-	public static void printInvoice(OutputStream out, CompanyFull company, List<Invoice> invoices, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) {
+	public static void printInvoice(OutputStream out, CompanyFull company, InvoiceCommunicationConfiguration icc, List<Invoice> invoices, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) {
 		try {
 			InvoiceTemplateContext context = new InvoiceTemplateContext(company, invoices, config, qrUrl, logo, tbaiId);
+			context.setAdministration(icc.getAdministration());
 			InvoiceTemplate template = new InvoiceTemplate(context);
 			template.print(context, out);
 		} catch (CanNotCreatePdfException e) {

@@ -159,7 +159,8 @@ public class MultipleDownloadServlet extends HttpServlet{
 	
 	private LinkedList<File> getInvoiceFiles(Domain domain, User user, JSONObject json) {
 		Occam occam = new Occam().setDomain(domain.getId()).setDomainName(domain.getName()).setUser(user.getLogin());
-		
+		InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
+
 		LinkedList<Integer> ids = toList(json.optJSONArray("ids"));
 		Integer[] idsArray = ids.toArray(new Integer[ids.size()]);
 		LinkedList<File> list = new LinkedList<>();
@@ -226,7 +227,7 @@ public class MultipleDownloadServlet extends HttpServlet{
 							});
 						}
 						
-						PdfMaker.printInvoice(out, company, invoice, config, null, logo.getData(), "");
+						PdfMaker.printInvoice(out, company, icc, invoice, config, null, logo.getData(), "");
 						list.add(file);
 					}
 				} catch (IOException e) {
@@ -343,7 +344,7 @@ public class MultipleDownloadServlet extends HttpServlet{
 						});
 					}
 					
-					PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData(), tbaiId);
+					PdfMaker.printInvoice(out, company, icc, invoice, config, qrUrl, logo.getData(), tbaiId);
 					return file;
 	    		} catch (IOException e) {
     				e.printStackTrace();

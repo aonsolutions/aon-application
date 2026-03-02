@@ -131,7 +131,7 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 					if(pt != null)	d.setProjectName(d.getProjectName() + " - KMS. " + pt.getCounter());	
 				});
 			}
-			PdfMaker.printInvoice(resp.getOutputStream(), company, invoice, config, qrUrl, logo.getData(), tbaiId);
+			PdfMaker.printInvoice(resp.getOutputStream(), company, icc, invoice, config, qrUrl, logo.getData(), tbaiId);
 		
 			responseFile(resp, "factura", MimeType.PDF);
 		} catch (IOException e) {

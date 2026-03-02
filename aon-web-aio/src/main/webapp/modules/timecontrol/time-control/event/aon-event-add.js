@@ -51,7 +51,6 @@ export class AonEventAdd extends AonElement {
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
     this.applicationEl.addToolbarTitle("Registrar evento");
-    this.applicationParentEl.periodSideNavDisplay(false);
     this.TASK_HOLDER = this.applicationParentEl.TASK_HOLDER;
   }
 
@@ -170,8 +169,6 @@ export class AonEventAdd extends AonElement {
   	
   	let coordinatesInput = this.getElement("coordinates");
   	if(coordinatesInput.getValue() !== 'undefined') serialize.coordinates = coordinatesInput.getValue();
-  	
-  	console.log('getFormValues', serialize, this.TASK_HOLDER ? this.TASK_HOLDER.id : null);
     
     return {
       ...serialize,
@@ -310,8 +307,11 @@ export class AonEventAdd extends AonElement {
     let startDate = AonDateUtils.formatDateOrigin(this.data.date);
     if(this.data) data = {...this.data, start_date:startDate};
     if(this.START_DATE) startDate = AonDateUtils.formatDateOrigin(this.START_DATE);
-    this.applicationParentEl.DATE_TMP = {...this.applicationParentEl.DATE_TMP, startDate};
-    this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, data);
+    
+    if(data.task_holder)
+	    this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, data);
+	else 
+		this.applicationParentEl.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
   }
 
   async paintHistoric(){

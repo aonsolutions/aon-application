@@ -645,6 +645,9 @@ public class SistemaRED2AON {
 			return DeductionType.IMS;
 		case FOGASA_ENTERPRISE:
 			return DeductionType.FOGASA;
+		case SOLIDARITY_EMPLOYEE:
+		case SOLIDARITY_ENTERPRISE:
+			return DeductionType.SOLIDARITY;
 		default:
 			return DeductionType.BONUS;
 		}

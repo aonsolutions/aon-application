@@ -212,6 +212,20 @@ export const AonDateUtils = {
     let seconds = Math.floor(time / 1000);
     return addZero(hours, 2) + ":" + addZero(minutes, 2) + ":" + addZero(seconds, 2);
   },
+  timeParserShort: function (time) {
+    let msecPerMinute = 1000 * 60;
+    let msecPerHour = msecPerMinute * 60;
+
+    // Calcular las horas , minutos y segundos
+    let hours = Math.floor(time / msecPerHour);
+    time = time - hours * msecPerHour;
+
+    let minutes = Math.floor(time / msecPerMinute);
+    time = time - minutes * msecPerMinute;
+
+    let seconds = Math.floor(time / 1000);
+    return hours + ":" + addZero(minutes, 2) + ":" + addZero(seconds, 2);
+  },
   parse: function(dateStr) {
     dateStr = dateStr.replaceAll('"', '');
     let dateParse = Date.parse(dateStr);

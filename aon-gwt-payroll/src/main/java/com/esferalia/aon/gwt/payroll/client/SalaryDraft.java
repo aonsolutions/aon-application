@@ -272,7 +272,8 @@ public class SalaryDraft extends ResizeComposite
 			Deduction.Type.STRUCTURAL_OVERTIME, 
 			Deduction.Type.NON_STRUCTURAL_OVERTIME, 
 			Deduction.Type.FOGASA , 
-			Deduction.Type.MEI
+			Deduction.Type.MEI,
+			Deduction.Type.SOLIDARITY
 	};
 
 

@@ -2477,6 +2477,9 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("HORA_NOCTURNA_DIARIO", "H_NOCT_D");
 		variablesMap.put("HORA_ORDINARIA_MENSUAL", "H_ORD_M");
 		variablesMap.put("VISPERA_DE_FESTIVO_HORAS", "VISP_FEST_H");
+		variablesMap.put("BOLSA_DE_ROPA_ANUAL", "BOLSA_ROPA_A");
+		variablesMap.put("PLUS_MEGA_DUO_ANUAL", "P_MEGA_DUO_A");
+		variablesMap.put("PLUS_SABADO_TARDE_ANUAL", "P_SAB_TARDE_A");
 
 	}
 	
