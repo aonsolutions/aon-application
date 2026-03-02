@@ -123,7 +123,8 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 						Object[] objs = (Object[])obj;
 						if (objs[0] == null || ((WorkPlace)objs[0]).equals(calc.getWorkPlace())) {
 							calc.getDiscountExpression().setDiscountExpr(((DiscountExpression)objs[1]).getDiscountExpr());
-							return (Double)objs[2];
+							double unitPrice = (Double)objs[2];
+							if(unitPrice != 0) return unitPrice;
 						}
 					}
 				}

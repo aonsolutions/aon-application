@@ -81,6 +81,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -1235,6 +1236,8 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public String getInvoicePDF(String domainName, int domainId, String login, Integer officeDomain, Integer invoiceId) throws AonCoreException {
 		Occam occam = new Occam().setDomainName(domainName).setDomain(domainId).setUser(login);
+		InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
+
 		try (ByteArrayOutputStream os = new ByteArrayOutputStream(30 * 1024)){	
 			PrintInvoiceConfiguration config;
 			if(null == officeDomain)
@@ -1272,7 +1275,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 				});
 			}
 			
-			PdfMaker.printInvoice(os, company, invoice, config, qrUrl, logo.getData(), null);
+			PdfMaker.printInvoice(os, company, icc, invoice, config, qrUrl, logo.getData(), null);
 			
 			byte[] bytes = os.toByteArray();
 			

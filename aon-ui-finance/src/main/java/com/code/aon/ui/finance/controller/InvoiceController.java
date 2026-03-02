@@ -1735,7 +1735,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 				});
 			}
 			
-			PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData(), tbaiId);
+			PdfMaker.printInvoice(out, company, icc, invoice, config, qrUrl, logo.getData(), tbaiId);
 			byte[] data = out.toByteArray();
 			attachment = newAttachment(to, MimeType.MIME_PDF);
 			attachment.setData(data);
