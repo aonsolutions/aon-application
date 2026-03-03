@@ -43,17 +43,20 @@ export const BETADOC = 'betadoc';
 
 export const get = (item) => {
 	let value = getParam(item);
-	if ( value === null ){
+	if ( value == null ){
+		value = getCookie(item);
+	} 
+	if ( value == null ){
 		value = localStorage.getItem(item);
 	} 
-    if ( value === null ){ 
+    if ( value == null ){ 
         value = getComputedStyle(document.body).getPropertyValue(`--${item}`);
     } 
     return value;
 }
 
 export const set = (item, value) => {
-    localStorage.setItem(item, value);
+	localStorage.setItem(item, value);
 }
 
 export const remove = (item) => {
@@ -162,10 +165,14 @@ export const getTheme = () => {
 }
 
 export const setTheme = (theme) => {
-    if(theme){
-        set (THEME, theme); 
-    }else{
+	let cookie = getCookie(THEME);
+	if ( cookie && theme ){
+		setCookie(THEME, theme);
+	} else if( theme ){
+        set(THEME, theme); 
+    } else{
         remove(THEME);
+		removeCookie(THEME);
     }
     location.reload();
 }
@@ -394,4 +401,26 @@ const getParam = (paramName) => {
 	const searchParams = new URLSearchParams(queryString);
 	return searchParams.get(paramName);
 }
+
+const getCookie = (cookieName) => {
+	const cookieValue = decodeURIComponent(document.cookie)
+    .split(';')
+	.map((row) => row.trimStart() )
+    .find((row) => row.startsWith(`${cookieName}=`))
+    ?.split('=')[1];
+	
+	return cookieValue;  
+} 
+
+
+const removeCookie = (cookieName) => {
+  document.cookie = cookieName + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+ }
+
+const setCookie = (cookieName, cookieValue, expiresDate) => {
+  expiresDate = expiresDate || new Date(new Date().setUTCHours(23,59,59));	
+  let expires = "expires="+ new Date(expiresDate).toUTCString();
+  document.cookie = cookieName + "=" + cookieValue + ";" + expires + ";path=/";
+}
+
 
