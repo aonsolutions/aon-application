@@ -1,16 +1,32 @@
 package solutions.aon.sepe.toolkit;
 
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.SecureRandom;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.logging.Level;
 
-import org.apache.commons.logging.LogFactory;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
-import org.htmlunit.cssparser.parser.CSSErrorHandler;
-import org.htmlunit.cssparser.parser.CSSException;
+import org.apache.commons.logging.LogFactory;
 import org.htmlunit.BrowserVersion;
 import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.IncorrectnessListener;
@@ -18,6 +34,8 @@ import org.htmlunit.NicelyResynchronizingAjaxController;
 import org.htmlunit.ScriptException;
 import org.htmlunit.WebClient;
 import org.htmlunit.WebClientOptions;
+import org.htmlunit.cssparser.parser.CSSErrorHandler;
+import org.htmlunit.cssparser.parser.CSSException;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.DomNodeList;
 import org.htmlunit.html.HtmlElement;
@@ -65,6 +83,144 @@ public class HtmlUnitToolkit {
 		} catch (RuntimeException e) {
 			throw new InvalidCertificateException();
 		}
+	}
+	
+	public static WebClient getWebClientSepe(final InputStream certificateInputStream,
+	        final String certificatePassword, final String certificateType) throws InvalidCertificateException {
+	    try {
+	        char[] password = certificatePassword.toCharArray();
+
+	        KeyStore keyStore = KeyStore.getInstance(certificateType);
+	        keyStore.load(certificateInputStream, password);
+
+	        // Solo completar cadena si es necesario
+	        KeyStore finalKeyStore = needsChainCompletion(keyStore, password)
+	                ? addChainFromAIA(keyStore, password)
+	                : keyStore;
+
+	        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+	        kmf.init(finalKeyStore, password);
+
+	        TrustManager[] trustAll = new TrustManager[]{
+	            new X509TrustManager() {
+	                public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
+	                public void checkClientTrusted(X509Certificate[] c, String a) {}
+	                public void checkServerTrusted(X509Certificate[] c, String a) {}
+	            }
+	        };
+
+	        SSLContext sslContext = SSLContext.getInstance("TLS");
+	        sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
+	        
+	        WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
+	        disableLogging(webClient);
+	        webClient.getOptions().setCssEnabled(false);
+	        webClient.getOptions().setDownloadImages(false);
+	        webClient.getOptions().setUseInsecureSSL(true);
+	        webClient.setJavaScriptTimeout(15000);
+	        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+
+	        SSLContext.setDefault(sslContext);
+	        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+
+	        Path tempCert = Files.createTempFile("cert_", ".p12");
+	        try (OutputStream os = Files.newOutputStream(tempCert)) {
+	            finalKeyStore.store(os, password);
+	        }
+	        tempCert.toFile().deleteOnExit();
+
+	        webClient.getOptions().setSSLClientCertificate(
+	            tempCert.toUri().toURL(),
+	            certificatePassword,
+	            certificateType
+	        );
+
+	        return webClient;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw new InvalidCertificateException();
+	    }
+	}
+
+	private static boolean needsChainCompletion(KeyStore keyStore, char[] password) throws Exception {
+	    String alias = keyStore.aliases().nextElement();
+	    Certificate[] chain = keyStore.getCertificateChain(alias);
+	    boolean needs = chain == null || chain.length <= 1;
+	    System.out.println("Chain length: " + (chain == null ? 0 : chain.length) + " -> " 
+	        + (needs ? "completar cadena vía AIA" : "cadena completa, no es necesario completar"));
+	    return needs;
+	}
+	
+	private static KeyStore addChainFromAIA(KeyStore original, char[] password) throws Exception {
+	    String alias = original.aliases().nextElement();
+	    PrivateKey privateKey = (PrivateKey) original.getKey(alias, password);
+	    X509Certificate userCert = (X509Certificate) original.getCertificate(alias);
+
+	    List<Certificate> chain = new ArrayList<>();
+	    chain.add(userCert);
+
+	    List<X509Certificate> intermediates = downloadIntermediates(userCert);
+	    if (intermediates.isEmpty()) {
+	        System.out.println("No se encontraron intermedios, se usa el certificado tal cual.");
+	    } else {
+	        chain.addAll(intermediates);
+	    }
+
+	    KeyStore newKs = KeyStore.getInstance("PKCS12");
+	    newKs.load(null, password);
+	    newKs.setKeyEntry(alias, privateKey, password, chain.toArray(new Certificate[0]));
+
+	    System.out.println("Cadena final:");
+	    chain.forEach(c -> System.out.println("  Subject: " + ((X509Certificate) c).getSubjectX500Principal()));
+
+	    return newKs;
+	}
+
+	private static List<X509Certificate> downloadIntermediates(X509Certificate userCert) {
+	    String issuerCN = userCert.getIssuerX500Principal().getName();
+	    System.out.println("Issuer detectado: " + issuerCN);
+
+	    // Mapa de emisores conocidos con sus cadenas de intermedios (orden: intermedio -> raíz)
+	    if (issuerCN.contains("UANATACA CA1 2021")) {
+	        return downloadCertChain(
+	            "https://web.uanataca.com/common/project/pdf/autoridad-certificacion/07_subordinada-ca1-2021.cer",
+	            "https://web.uanataca.com/common/project/pdf/autoridad-certificacion/01_raiz-ca-2016.cer"
+	        );
+	    }
+
+	    // Añadir aquí otros emisores conocidos si aparecen en el futuro:
+	    // if (issuerCN.contains("OTRO EMISOR")) { return downloadCertChain(...); }
+
+	    System.out.println("Emisor no reconocido, no se añaden intermedios.");
+	    return Collections.emptyList();
+	}
+
+	private static List<X509Certificate> downloadCertChain(String... urls) {
+	    List<X509Certificate> certs = new ArrayList<>();
+	    CertificateFactory cf;
+	    try {
+	        cf = CertificateFactory.getInstance("X.509");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return certs;
+	    }
+
+	    for (String url : urls) {
+	        try {
+	            System.out.println("Descargando: " + url);
+	            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+	            conn.setConnectTimeout(5000);
+	            conn.setReadTimeout(5000);
+	            try (InputStream is = conn.getInputStream()) {
+	                X509Certificate cert = (X509Certificate) cf.generateCertificate(is);
+	                certs.add(cert);
+	                System.out.println("  OK: " + cert.getSubjectX500Principal());
+	            }
+	        } catch (Exception e) {
+	            System.err.println("Error descargando " + url + ": " + e.getMessage());
+	        }
+	    }
+	    return certs;
 	}
 
 	// GET THE WEB CLIENT OF HTMLUNIT
