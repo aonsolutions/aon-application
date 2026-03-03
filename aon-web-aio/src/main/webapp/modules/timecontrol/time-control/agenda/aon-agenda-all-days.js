@@ -621,7 +621,7 @@ export class AonAgendaAllDays extends AonElement {
 			if ((today >= dayDate && workedTime > 0) || (workedTime > 0 && this._workingDays[dayOfWeek] === 0))
 				dayHtml +=
 					`<div class="day-header-right">
-					        <span class="total-hours">${totalHours} h <span class="day-diff-hours">( ${diffHours} h )</span></span>
+					        <span class="total-hours">${totalHours} h / <span class="day-diff-hours ${diffHours.includes('-') ? 'negative' : 'positive'}">${diffHours} h</span></span>
 					      </div>`;
 
 			dayHtml +=
@@ -643,7 +643,7 @@ export class AonAgendaAllDays extends AonElement {
 		const absTime = Math.abs(time);
 
 		let formatted = timeHourShort(absTime);
-		return `${sign} ${formatted}`;
+		return `${sign}${formatted}`;
 	};
 
 	/* ---------------- RENDER EVENTS ---------------- */
@@ -1099,7 +1099,7 @@ export class AonAgendaAllDays extends AonElement {
 
 	/* ---------------- CALCULATE HOURS ---------------- */
 	calculateMonthHours(centerDate) {
-		if (!centerDate) return `0:00 h <span class="day-diff-hours">( + 0:00 h )</span>`;
+		if (!centerDate) return `0:00 h / <span class="day-diff-hours positive">+ 0:00 h</span>`;
 
 		const year = centerDate.getFullYear();
 		const month = centerDate.getMonth();
@@ -1151,7 +1151,7 @@ export class AonAgendaAllDays extends AonElement {
 		const diffTime = totalWorked - totalExpected;
 		const diffHours = this.formatDiffTime(diffTime);
 
-		return `${workedStr} h <span class="day-diff-hours">( ${diffHours} h )</span>`;
+		return `${workedStr} h / <span class="day-diff-hours ${diffHours.includes('-') ? 'negative' : 'positive'}">${diffHours} h</span>`;
 	}
 
 	calculateWeekHours(week) {
@@ -1204,7 +1204,7 @@ export class AonAgendaAllDays extends AonElement {
 		const diffTime = totalWorked - totalExpected;
 		const diffHours = this.formatDiffTime(diffTime);
 
-		return `${workedStr} h <span class="day-diff-hours">( ${diffHours} h )</span>`;
+		return `${workedStr} h / <span class="day-diff-hours ${diffHours.includes('-') ? 'negative' : 'positive'}">${diffHours} h</span>`;
 	}
 
 	/* ---------------- PUBLIC API ---------------- */

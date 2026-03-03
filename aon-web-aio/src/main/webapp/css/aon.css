@@ -5145,6 +5145,18 @@ aon-agenda-all-days .week-hours .day-diff-hours {
   color: #70757a;
 }
 
+aon-agenda-all-days .day-header-right .day-diff-hours.positive,
+aon-agenda-all-days .month-hours .day-diff-hours.positive,
+aon-agenda-all-days .week-hours .day-diff-hours.positive{
+	color: #137333;
+}
+
+aon-agenda-all-days .day-header-right .day-diff-hours.negative,
+aon-agenda-all-days .month-hours .day-diff-hours.negative,
+aon-agenda-all-days .week-hours .day-diff-hours.negative{
+	color: #d93025;
+}
+
 aon-agenda-all-days .day-name {
   font-size: 11px;
   font-weight: 600;
