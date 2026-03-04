@@ -2515,6 +2515,10 @@ aon-search > span {
 	background-color: #ffff;
 }
 
+#aonMenuBar-office {
+	display: block;
+}
+
 /* Invoice Future Sidenav options */
 
 #aonInvoiceSidenavIncomes {
