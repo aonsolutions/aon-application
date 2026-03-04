@@ -206,7 +206,8 @@ export const App = {
 	MARKETING: 'MARKETING',
 	TREASURY: 'TREASURY',
 	GROUPWARE: 'GROUPWARE',
-	SERES: 'SERES'
+	SERES: 'SERES',
+	AUTOBOOKING: 'AUTOBOOKING'
 }
 
 export const RegistryType = {

@@ -806,8 +806,9 @@ export class DomainUserRoles {
 	}
 	
 	isOffice() {
-		return this.hasOfficeRole() && (this.hasRole(Role.OFFICE) || this.hasRole(Role.OFFICE_PORTAL) || this.hasRole(Role.OFFICE_MANAGER || this.isAdmin()));
-			//&& (this.isAdmin() || this.hasRole(Role.OFFICE));
+		return this.hasOfficeRole() 
+			&& (this.hasRole(Role.OFFICE) || this.hasRole(Role.OFFICE_PORTAL) || this.hasRole(Role.OFFICE_MANAGER) 
+				|| this.isAdmin());
 	}
 
 	isOfficeUser() {
