@@ -5174,7 +5174,8 @@ aon-agenda-all-days .day-number {
   align-items: center;
 }
 
-aon-agenda-all-days .day.today .day-number {
+aon-agenda-all-days .day.today .day-number,
+aon-agenda-annual-summary .annual-month.current .annual-month-name {
   color: white !important;
   background-color: #1a73e8;
   padding: .2rem;
@@ -5377,6 +5378,219 @@ aon-agenda-all-days .event.it {
   color: white;
 }
 
+/* =====================================================
+   aon-calendar-container
+   El contenedor padre ocupa todo el espacio disponible.
+   Cada vista hija también ocupa el 100%.
+   ===================================================== */
+
+aon-calendar-container {
+  display: block;
+  height: 100%;
+  position: relative; /* necesario para que el menú flotante se posicione bien */
+}
+
+aon-calendar-container aon-agenda-all-days,
+aon-calendar-container aon-agenda-annual-summary {
+  display: block;
+  height: 100%;
+}
+
+/* =====================================================
+   aon-agenda-annual-summary — Cabecera
+   ===================================================== */
+
+aon-agenda-annual-summary {
+  display: block;
+  height: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+  color: #202124;
+}
+
+aon-agenda-annual-summary header.annual-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: white;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Navegación de año: < 2025 > */
+aon-agenda-annual-summary .year-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+aon-agenda-annual-summary .year-label {
+  font-size: 22px;
+  font-weight: 500;
+  min-width: 60px;
+  text-align: center;
+}
+
+aon-agenda-annual-summary .year-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 28px;
+  line-height: 1;
+  color: #5f6368;
+  padding: 0 4px;
+  border-radius: 50%;
+  transition: background 0.15s;
+}
+
+aon-agenda-annual-summary .year-btn:hover {
+  background: #f1f3f4;
+}
+
+/* Totales en la cabecera */
+aon-agenda-annual-summary .annual-totals {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #5f6368;
+  font-weight: 500;
+}
+
+aon-agenda-annual-summary .header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  font-size: 13px;
+  color: #5f6368;
+  font-weight: 500;
+}
+
+/* Reutilizamos las clases de diferencia de horas de la agenda */
+aon-agenda-annual-summary .day-diff-hours {
+  font-size: 11px;
+}
+aon-agenda-annual-summary .day-diff-hours.positive { color: #137333; }
+aon-agenda-annual-summary .day-diff-hours.negative { color: #d93025; }
+
+/* =====================================================
+   aon-agenda-annual-summary — Indicador de carga
+   ===================================================== */
+
+aon-agenda-annual-summary .annual-loading {
+  padding: 24px;
+  text-align: center;
+  color: #5f6368;
+  font-size: 14px;
+}
+
+/* =====================================================
+   aon-agenda-annual-summary — Scroll y meses
+   ===================================================== */
+
+aon-agenda-annual-summary .annual-scroll {
+  height: calc(100% - 80px); /* ajustar según la altura real de la cabecera */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: 24px;
+}
+
+/* Bloque de un mes */
+aon-agenda-annual-summary .annual-month {
+  padding: 16px 16px 8px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+aon-agenda-annual-summary .annual-month.current .annual-month-name{
+	padding: .2rem .4rem;
+}
+
+/* Cabecera del mes: nombre + estadísticas en la misma línea */
+aon-agenda-annual-summary .annual-month-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+aon-agenda-annual-summary .annual-month-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #202124;
+  letter-spacing: 0.5px;
+}
+
+aon-agenda-annual-summary .annual-month-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+aon-agenda-annual-summary .annual-month-hours {
+  font-size: 13px;
+  font-weight: 500;
+  color: #5f6368;
+}
+
+aon-agenda-annual-summary .annual-month-festives {
+  font-size: 12px;
+  color: #70757a;
+}
+
+/* =====================================================
+   Píldoras de tipos de día
+   Reutilizamos los colores de .event.X de la agenda,
+   pero en formato píldora compacta.
+   ===================================================== */
+
+aon-agenda-annual-summary .annual-month-pills {
+  display: flex;
+  flex-direction: column; /* una píldora por fila, al 100% */
+  gap: 5px;
+  padding-bottom: 10px;
+}
+
+aon-agenda-annual-summary .day-type-pill {
+  display: flex;          /* ocupa toda la fila */
+  align-items: center;
+  width: 100%;
+  padding: 6px 12px;
+  border-radius: 8px;     /* esquinas redondeadas pero no cápsula */
+  font-size: 13px;
+  font-weight: 500;
+  color: white;
+  box-sizing: border-box;
+}
+
+
+
+/* Los colores de cada tipo son exactamente los mismos
+   que usa .event.X en aon-agenda-all-days */
+
+aon-agenda-annual-summary .day-type-pill.festive        { background: #f7867f; } /* mismo rojo que .day-number.festive */
+aon-agenda-annual-summary .day-type-pill.holidays       { background: #52ab3c; }
+aon-agenda-annual-summary .day-type-pill.paid_leave     { background: #80bc70; }
+aon-agenda-annual-summary .day-type-pill.effecitve_days { background: #77e1d2; color: #202124; }
+aon-agenda-annual-summary .day-type-pill.inactivity     { background: #71b1e8; }
+aon-agenda-annual-summary .day-type-pill.ere            { background: #b91257; }
+aon-agenda-annual-summary .day-type-pill.ere_fza        { background: #B91257B3; }
+aon-agenda-annual-summary .day-type-pill.ere_fza_exo    { background: #B9125766; }
+aon-agenda-annual-summary .day-type-pill.strike         { background: #a09c13; }
+aon-agenda-annual-summary .day-type-pill.absence        { background: #733969; }
+aon-agenda-annual-summary .day-type-pill.partiality     { background: #9c85ee; }
+aon-agenda-annual-summary .day-type-pill.it             { background: #FF0000B8; }
+
+/* =====================================================
+   Botón activo en el menú (vista seleccionada)
+   ===================================================== */
+
+aon-calendar-menu .calendar-menu-option.active {
+  font-weight: 600;
+  background: #f1f3f4;
+}
+
 /* Contenedor principal del menú calendario */
 aon-calendar-menu {
 	display: block;
@@ -5491,7 +5705,6 @@ aon-calendar-menu .calendar-menu-popup {
 	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	display: flex;
     flex-direction: column;
-    gap: 10px;
 }
 
 /* Mostrar menú cuando está abierto */

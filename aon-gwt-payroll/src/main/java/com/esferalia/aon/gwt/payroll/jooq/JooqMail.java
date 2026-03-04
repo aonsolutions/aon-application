@@ -253,17 +253,22 @@ public class JooqMail {
 			Integer contractId = null == salaryRecord ? null : salaryRecord.get(SALARY.CONTRACT);
 			
 			if(null != contractId && !visitedContracts.contains(contractId)) {
-				Record rMediaEmailRecord = dslContext.select().from(RMEDIA)
+				Result<Record> rMediaEmailRecords = dslContext.select().from(RMEDIA)
 						.where(RMEDIA.MEDIA.eq((byte)4))
 						.and(RMEDIA.REGISTRY.eq(
 								dslContext.select(CONTRACT.PERSON).from(CONTRACT)
 									.where(CONTRACT.ID.eq(contractId))
 								)
-						).fetchOne();
+						).fetch();
 				
-				if(null == rMediaEmailRecord || rMediaEmailRecord.get(RMEDIA.VALUE).length() == 0) {
-					message += "<p>" + salaryRecord.get(SALARY.EMPLOYEE_NAME) + " no tiene email definido, reviselo en su perfil. </p>";
+				if(!rMediaEmailRecords.isEmpty()) {
+					Record rMediaEmailRecord = rMediaEmailRecords.get(0);
+					if(null == rMediaEmailRecord || rMediaEmailRecord.get(RMEDIA.VALUE).length() == 0) {
+						message += "<p>" + salaryRecord.get(SALARY.EMPLOYEE_NAME) + " no tiene email definido, reviselo en su perfil. </p>";
+					}
 				}
+				
+				
 				
 				visitedContracts.add(contractId);
 			}

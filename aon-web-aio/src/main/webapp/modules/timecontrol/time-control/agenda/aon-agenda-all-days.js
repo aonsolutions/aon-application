@@ -31,7 +31,7 @@ export class AonAgendaAllDays extends AonElement {
 		this.attachEventListeners();
 
 		// Configurar el menú calendario
-		this.setupCalendarMenu();
+		//this.setupCalendarMenu();
 
 		// Cargar eventos del mes actual inicialmente
 		await this.loadInitialEvents();
@@ -578,7 +578,7 @@ export class AonAgendaAllDays extends AonElement {
 			const dayContractFestive = this._festivesContract.get(day.key);
 
 			// Vacaciones, permisos retribuidos, ITs (habra que filtrar dayTypeContract.source si queremos quitar alguno )
-			if (dayTypeContract && dayTypeContract.source) {
+			if (dayTypeContract && (dayTypeContract.source === "IT" || dayTypeContract.source === "PAID_LEAVE")) {
 				// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
 				if (this._workingDays && this._workingDays[dayOfWeek] === 0) {
 					totalHours = timeHourShort(expectedTime);
@@ -726,7 +726,7 @@ export class AonAgendaAllDays extends AonElement {
 			case 'EFFECITVE_DAYS':
 				return 'Día Efectivo';
 			case 'INACTIVITY':
-				return 'Inactividad: ' + event.description;
+				return 'Inactividad: ' + event.description; 
 			case 'ABSENCE':
 				return 'Ausencia. ' + this.parsePartialityDescription(event.description);
 			case 'STRIKE':
@@ -738,11 +738,11 @@ export class AonAgendaAllDays extends AonElement {
 			case 'ERE_FZA_EXO':
 				return 'ERE Fuerza Mayor Exonerado. ' + this.parsePartialityDescription(event.description);
 			case 'PAID_LEAVE':
-				return 'Perm. Retribuido: ' + this.parsePaidLeaveDescription(event.description);
+				return 'Perm. Retribuido: ' + this.parsePaidLeaveDescription(event.description); // SI se suma
 			case 'PARTIALITY':
 				return this.parsePartialityDescription(event.description);
 			case 'IT':
-				return event.description;
+				return event.description; // SI SE SUMAN
 			default:
 				return 'Desconocido'
 		}
@@ -1130,7 +1130,7 @@ export class AonAgendaAllDays extends AonElement {
 			const dayTypeContract = this._daysTypeContract.get(dateKey);
 
 			// Vacaciones, permisos retribuidos, ITs (habra que filtrar dayTypeContract.source si queremos quitar alguno )
-			if (dayTypeContract && dayTypeContract.source) {
+			if (dayTypeContract && (dayTypeContract.source === "IT" || dayTypeContract.source === "PAID_LEAVE")) {
 				// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
 				if (this._workingDays && this._workingDays[dayOfWeek] !== 0) {
 					//expectedTime = hoursForDay * 60 * 60 * 1000;
@@ -1182,7 +1182,7 @@ export class AonAgendaAllDays extends AonElement {
 			const dayTypeContract = this._daysTypeContract.get(dateKey);
 
 			// Vacaciones, permisos retribuidos, ITs (habra que filtrar dayTypeContract.source si queremos quitar alguno )
-			if (dayTypeContract && dayTypeContract.source) {
+			if (dayTypeContract && (dayTypeContract.source === "IT" || dayTypeContract.source === "PAID_LEAVE")) {
 				// NUEVA REGLA:
 				// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
 				if (this._workingDays && this._workingDays[dayOfWeek] !== 0) {
