@@ -16,21 +16,17 @@ public interface Mod421ServiceAsync {
 	void getMod421s(Occam occam,AsyncCallback<LinkedList<Mod421>> callback);
 	void initialize(Occam occam, Mod421 mod421,AsyncCallback<Mod421> asyncCallback);
 	void create(Occam occam, Mod421 mod421, AsyncCallback<Mod421> callback);
-//	void reset(Occam occam, Mod421 model, AsyncCallback<Mod421> asyncCallback);
-
 	void delete(Occam occam, Mod421 mod421,AsyncCallback<Void> callback);
 	void save(Occam occam, Mod421 mod421,AsyncCallback<Mod421> asyncCallback);
 	void saveComments(Occam occam, Mod421 mod421,AsyncCallback<Mod421> asyncCallback);
 	void initializeForFinish(Occam occam, Mod421 mod421,AsyncCallback<Mod421> asyncCallback);
 	void calculate(Occam occam, Mod421 mod421,AsyncCallback<Mod421> callback);
-//	void calculateProrrate(Occam occam, Mod421 mod421, AsyncCallback<Mod421> callback);
 	void getInfo(Occam occam, Mod421 mod421, IModelScript<Mod421Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);
 	void markAsFinished(Occam occam, Mod421 mod421,AsyncCallback<Mod421> asyncCallback);
 	void markAsPending(Occam occam, Mod421 mod421,AsyncCallback<Mod421> asyncCallback);
 	void markAsSent(Occam occam, Mod421 mod421, AsyncCallback<Mod421> asyncCallback);
 	void markAsCustomerCheck(Occam occam, Mod421 mod421,AsyncCallback<Mod421> asyncCallback);
 	void getInvoice(Occam occam, int invoiceId, AsyncCallback<Invoice> asyncCallback);
-
 	void doRecord(Occam occam, Mod421 mod421, AsyncCallback<Mod421> callback);
 	void unrecord(Occam occam, Mod421 mod421, AsyncCallback<Mod421> callback);
 

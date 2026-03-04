@@ -33,10 +33,6 @@ public class MODEL421Impl implements IMODEL421 {
 	public Mod421 calculate(AONContext ctx, Mod421 mod421) {
 		return Mod421DAO.calculate(mod421);
 	}
-//	@Override
-//	public Mod421 calculateProrrate(AONContext ctx, Mod421 mod421) {
-//		return Mod421DAO.calculateProrrate(mod421);
-//	}
 	@Override
 	public Mod421 save(AONContext ctx, Mod421 mod421) {
 		return ctx.getDslContext().transactionResult(
@@ -99,12 +95,6 @@ public class MODEL421Impl implements IMODEL421 {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod421DAO.create(ctx,mod421));
 	}
-//	@Override
-//	public Mod421 reset(AONContext ctx, Mod421 mod421) {
-//		return ctx.getDslContext().transactionResult(
-//				configuration -> Mod421DAO.reset(ctx,mod421));
-//	}
-
 	@Override
 	public String getInfo(AONContext ctx, Mod421 mod421, IModelScript<Mod421Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod421InfoDAO.getInfo(ctx,mod421,script,infoKey);
@@ -119,12 +109,6 @@ public class MODEL421Impl implements IMODEL421 {
 				}
 			});
 	}
-	
-//	@Override
-//	public Mod421 aeatPresentation(AONContext ctx, Mod421 mod421, String aeatResponse) {
-//		return ctx.getDslContext().transactionResult(
-//			configuration -> Mod421DAO.aeatPresentation(ctx, mod421, aeatResponse));
-//	}
 
 	@Override
 	public Mod421 doRecord(AONContext ctx, Mod421 mod421){

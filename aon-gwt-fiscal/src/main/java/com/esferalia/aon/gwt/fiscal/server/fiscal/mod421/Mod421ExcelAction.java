@@ -16,7 +16,7 @@ public class Mod421ExcelAction extends ModelVAExcelAction<Mod421,Mod421Key> {
 
 	@Override
 	protected String getTitle() {
-		return "IGIC. Autoliquidaci\u00F3n RS";
+		return "I.G.I.C. R\u00E9gimen Simplificado. Autoliquidaci\u00F3n Trimestral.";
 	}
 
 	@Override

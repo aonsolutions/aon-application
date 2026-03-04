@@ -11,8 +11,6 @@ public class Mod421ActivityModule implements Serializable {
 	private String unit;
 	private double factor;
 	private double result;
-//	private boolean salariedStaff;
-//	private boolean noSalariedStaff;
 	
 	public String getDescription() {
 		return description;
@@ -54,26 +52,6 @@ public class Mod421ActivityModule implements Serializable {
 		return this;
 	}
 
-//	public boolean isSalariedStaff() {
-//		return salariedStaff;
-//	}
-//	public Mod421ActivityModule setSalariedStaff(boolean salariedStaff) {
-//		this.salariedStaff = salariedStaff;
-//		return this;
-//	}
-//
-//	public boolean isNoSalariedStaff() {
-//		return noSalariedStaff;
-//	}
-//	public Mod421ActivityModule setNoSalariedStaff(boolean noSalariedStaff) {
-//		this.noSalariedStaff = noSalariedStaff;
-//		return this;
-//	}
-	
-//	public boolean isStaff() {
-//		return isSalariedStaff() || isNoSalariedStaff();
-//	}
-
 	public static Mod421ActivityModule clone(Mod421ActivityModule toClone) {
 		return new Mod421ActivityModule()
 			.setDescription(toClone.getDescription())
@@ -81,10 +59,7 @@ public class Mod421ActivityModule implements Serializable {
 			.setUnit(toClone.getUnit()) 
 			.setFactor(toClone.getFactor())
 			.setResult(toClone.getResult())
-//			.setSalariedStaff(toClone.isSalariedStaff())
-//			.setNoSalariedStaff(toClone.isNoSalariedStaff())
 			;
 	}
-	
 
 }

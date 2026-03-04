@@ -25,7 +25,6 @@ class Model421ATC2026ActivitySelection extends ScrollPanel implements HasSelecti
 			.addCell( new Label(AON.MSG.description()));
 		
 		Arrays.stream(EpigraphCanarias.values())
-//			.filter(EpigraphCanarias::hasVATModules)
 			.forEach(epi -> {
 				AonDisplayGridRow row = table.addRow();
 				row.addStyleName(AON.CSS.aonClickable());

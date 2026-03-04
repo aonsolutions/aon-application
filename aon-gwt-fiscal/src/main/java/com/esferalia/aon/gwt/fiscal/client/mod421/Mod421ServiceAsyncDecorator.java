@@ -46,12 +46,6 @@ public class Mod421ServiceAsyncDecorator implements Mod421ServiceAsync {
 		fsa.create(occam, mod421,new AsyncCallbackWrapper<>(callback));
 	}
 
-//	@Override
-//	public void reset(Occam occam, Mod421 mod421, AsyncCallback<Mod421> callback) {
-//		AON.start();
-//		fsa.reset(occam, mod421,new AsyncCallbackWrapper<>(callback));
-//	}
-
 	@Override
 	public void save(Occam occam, Mod421 mod421, AsyncCallback<Mod421> callback) {
 		AON.start();
@@ -69,12 +63,6 @@ public class Mod421ServiceAsyncDecorator implements Mod421ServiceAsync {
 		AON.start();
 		fsa.calculate(occam, mod421, new AsyncCallbackWrapper<>(callback));
 	}
-
-//	@Override
-//	public void calculateProrrate(Occam occam, Mod421 mod421, AsyncCallback<Mod421> callback) {
-//		AON.start();
-//		fsa.calculateProrrate(occam, mod421, new AsyncCallbackWrapper<>(callback));
-//	}
 
 	@Override
 	public void initializeForFinish(Occam occam, Mod421 mod421, AsyncCallback<Mod421> callback) {
@@ -136,4 +124,5 @@ public class Mod421ServiceAsyncDecorator implements Mod421ServiceAsync {
 		AON.start();
 		fsa.unrecord(occam, mod421, new AsyncCallbackWrapper<>(callback));
 	}
+	
 }

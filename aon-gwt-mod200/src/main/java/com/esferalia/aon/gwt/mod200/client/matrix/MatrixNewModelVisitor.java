@@ -36,6 +36,8 @@ import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HF;
 import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HFModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.mod421.Model421;
+import com.esferalia.aon.gwt.fiscal.client.mod421.Model421ModuleOptions;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200ModuleOptions;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200Table;
@@ -57,6 +59,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
+import com.esferalia.aon.occam.api.model.fiscal.Mod421;
 import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.logging.client.ConsoleLogHandler;
@@ -996,6 +999,59 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 	@Override
 	public void visitM369() {
 		// EL MODELO 369 AUN NO ESTA EN LA MATRIZ		
+	}
+
+	@Override
+	public void visitM421() {
+		AonCustomPopup modelDialog = getModelDialog(AON.MSG.fiscalModelDescriptionlong(model.getModel()));
+		try {
+			Mod421 mod421 = new Mod421();
+			MatrixUtils.map(model,mod421);
+			Model421 model421 = new Model421();
+			Model421ModuleOptions options = new Model421ModuleOptions();
+			options.setParentWidget(modelDialog);
+			options.setDomainName(config.getDomain().getName());
+			options.setDomain( model.getDomain() );
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
+			options.setNewModel(mod421);
+			options.setEmbedded(true);
+			options.setBackButtonVisible(true);
+			options.setExternalCallback( new AonModuleCallback<Mod421>() {
+				
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onRemove(Mod421 removed) {
+					modelDialog.hide();
+					callback.onRemove(removed);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onFailure(caught);
+				}
+				
+				@Override
+				public void onExit(Mod421 edited) {
+					modelDialog.hide();
+					callback.onExit(edited);
+				}
+				
+				@Override
+				public void onChange(Mod421 changed) {
+					modelDialog.hide();
+					callback.onChange(changed);
+				}
+				
+			} );
+			modelDialog.addCloseHandler(event -> modelDialog.clear());
+			model421.onModuleLoad( options );
+			modelDialog.center();
+			modelDialog.show();
+		} catch (Exception t) {
+			callback.onFailure(t);
+		}
 	}	
 
 }

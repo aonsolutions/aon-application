@@ -61,14 +61,6 @@ class Model421FinishDeclarationPopup extends AonCustomDialog {
 		setAnimationEnabled(true);
 		initializeTable();
 		
-		// Si rectificativa con casilla 111 distinta de cero y a compensar, el efecto solo se crea con el importe de la casilla 111
-//		if (mod421.isAeatRectification()) { 
-//			if (mod421.getDeclarationResultType() == FiscalModelDeclarationType.COMPENSATE) 
-//				mod421.getFinance().setAmount(-mod421.getAmount(Mod421Key.CT_C111));
-//			else
-//				mod421.getFinance().setAmount(mod421.getDeclarationResult());				
-//		}
-		
 		// Resultado
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, new Label(AON.MSG.result()));
@@ -79,34 +71,12 @@ class Model421FinishDeclarationPopup extends AonCustomDialog {
 		tab.setWidget(row, 1, new Label(AON.FMT.format(mod421.getDeclarationResult())));
 		row++;
 		
-//		if (mod421.isAeatRectification()) {
-//			// Importe a compensar o a devolver, si es rectificativa y casilla 111 distinta de cero
-//			tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
-//			tab.setWidget(row, 0, new Label("Importe a compensar o a devolver"));
-//			tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonTextRight());
-//			tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonFontLarger());
-//			tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonPaddingRight());
-//			tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonBold());
-//			tab.setWidget(row, 1, new Label(AON.FMT.format( Math.abs(mod421.getDeclarationResult()) - mod421.getAmount(Mod421Key.CT_C111))));
-//			row++;
-//			
-//			// Importe a devolver como consecuencia de la rectificacion (casilla 111)
-//			tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
-//			tab.setWidget(row, 0, new Label("Importe a devolver por la rectificaci\u00F3n"));
-//			tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonTextRight());
-//			tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonFontLarger());
-//			tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonPaddingRight());
-//			tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonBold());
-//			tab.setWidget(row, 1, new Label(AON.FMT.format(mod421.getAmount(Mod421Key.CT_C111))));
-//			row++;
-//		}
-		
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		Label labelDeclarationType = new Label(AON.MSG.declarationType());
 		labelDeclarationType.addStyleName(AON.CSS.aonMarginTopSep());				
 		tab.setWidget(row, 0, labelDeclarationType);
 		
-		// "Sin actividad" o "A compensar y no es ultimo periodo y casilla 111 sin contenido"
+		// "Sin actividad" o "A compensar y no es ultimo periodo" 
 		if (mod421.getDeclarationResultType() == FiscalModelDeclarationType.NEGATIVE
 		 || (mod421.getDeclarationResultType() == FiscalModelDeclarationType.COMPENSATE && mod421.getPeriod() != Period.T4 && mod421.getPeriod() != Period.M12 && !mod421.isAeatRectification())) {
 			tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonTextCenter());
@@ -137,20 +107,11 @@ class Model421FinishDeclarationPopup extends AonCustomDialog {
 			if (AonMathUtils.isLessThanZero(mod421.getDeclarationResult()) ) {
 				if (mod421.isLastPeriod()) {
 					listBox.addItem(FiscalModelDeclarationType.PAYBACK.getDescription(), FiscalModelDeclarationType.PAYBACK.getValue());
-//					if (mod421.isAEAT()) {
-//						listBox.addItem(FiscalModelDeclarationType.PAYBACK_CCT.getDescription(), FiscalModelDeclarationType.PAYBACK_CCT.getValue());
-//					}
 				}
 				listBox.addItem(FiscalModelDeclarationType.COMPENSATE.getDescription(), FiscalModelDeclarationType.COMPENSATE.getValue());
 			} else {
 				listBox.addItem(FiscalModelDeclarationType.DEPOSIT.getDescription(), FiscalModelDeclarationType.DEPOSIT.getValue());
 				listBox.addItem(FiscalModelDeclarationType.BANK.getDescription(), FiscalModelDeclarationType.BANK.getValue());
-//				if (mod421.isAEAT()) {
-//					listBox.addItem(FiscalModelDeclarationType.DEPOSIT_CCT.getDescription(), FiscalModelDeclarationType.DEPOSIT_CCT.getValue());
-//					// Solicitud de Aplazamiento, solo a partir del 2024
-//					if (mod421.getYear() >= 2024)
-//						listBox.addItem(FiscalModelDeclarationType.DEFERRAL.getDescription(), FiscalModelDeclarationType.DEFERRAL.getValue());
-//				}
 			}
 			listBox.setEnabled(listBox.getItemCount() > 1);
 			listBox.addChangeHandler( event -> {
@@ -172,14 +133,6 @@ class Model421FinishDeclarationPopup extends AonCustomDialog {
 				aplazaLabel.setVisible(type == FiscalModelDeclarationType.DEFERRAL);
 				aplazaTable.setVisible(type == FiscalModelDeclarationType.DEFERRAL);
 				avisoLabel.setVisible(type == FiscalModelDeclarationType.DEFERRAL);
-				
-				// Si rectificativa con casilla 111 distinta de cero y a compensar, el efecto solo se crea con el importe de la casilla 111
-//				if (mod421.isAeatRectification()) { 
-//					if (type == FiscalModelDeclarationType.COMPENSATE) 
-//						mod421.getFinance().setAmount(-mod421.getAmount(Mod421Key.CT_C111));
-//					else
-//						mod421.getFinance().setAmount(mod421.getDeclarationResult());				
-//				}
 				
 			});
 			tab.setWidget(row, 1, listBox );
@@ -303,7 +256,6 @@ class Model421FinishDeclarationPopup extends AonCustomDialog {
 		
 		FlowPanel flowPanel = new FlowPanel();
 		flowPanel.setStyleName(AON.CSS.aonPadding());
-//		flowPanel.addStyleName(AON.CSS.aonMarginTop());
 		flowPanel.addStyleName(AON.CSS.aonTextCenter());
 		Button acceptButton = new Button();
 		acceptButton.setStyleName(AON.CSS.aonOkButton());

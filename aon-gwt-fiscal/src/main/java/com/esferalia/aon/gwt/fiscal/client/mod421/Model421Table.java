@@ -110,7 +110,6 @@ class Model421Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 		, SEC(AON.MSG.period()		, 75 ,AON.CSS.aonTextCenter())
 		, DCT(AON.MSG.status()		, 75 ,AON.CSS.aonTextCenter())
 		, CMP("C"					, 20 ,AON.CSS.aonTextCenter())
-//		, SST("S"					, 20 ,AON.CSS.aonTextCenter())
 		, DOC("Documento"			, 100,AON.CSS.aonTextLeft())
 		, AUTO(AON.MSG.name()		, 0  ,AON.CSS.aonTextLeft())
 		, RST(AON.MSG.result()		, 100,AON.CSS.aonTextRight())
@@ -172,11 +171,6 @@ class Model421Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 			comp.setStyleName(AON.CSS.aonIconLabel());
 			comp.addStyleName( mod421.isComplementary()?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck() );
 			
-//			InlineLabel sust = new InlineLabel();
-//			sust.setTitle( AON.MSG.replacement());
-//			sust.setStyleName(AON.CSS.aonIconLabel());
-//			sust.addStyleName( mod421.isReplacement()?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck() );
-			
 			AonDisplayGridRow row = tab.addRow();
 			row.addStyleName(AON.CSS.aonClickable());
 			row.addClickHandler(event -> SelectionEvent.fire(Model421Table.this, mod421));					
@@ -203,7 +197,6 @@ class Model421Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 				declarationResult.setText(AON.FMT.format(mod421.getDeclarationResult()));
 			}
 			row.addCell( comp , AON.CSS.aonTextCenter())
-//				.addCell( sust , AON.CSS.aonTextCenter())
 				.addCell( new InlineLabel(mod421.getDocument()))
 				.addCell( new InlineLabel(mod421.getFullName()))
 				.addCell( declarationResult, AON.CSS.aonTextRight())

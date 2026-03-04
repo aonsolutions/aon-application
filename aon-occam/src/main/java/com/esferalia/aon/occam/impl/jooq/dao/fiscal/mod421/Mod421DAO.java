@@ -108,7 +108,6 @@ public class Mod421DAO extends FiscalModelDAO {
 		mod421.getMessages().clear();
 		mod421.setAdministration(Administration.CANARIAS); // Solo Canarias
 		initializeFiscalModel(ctx, mod421);
-//		initializeProrrate(ctx, mod421);
 		try {
 			Mod421Declaration dec = Mod421Declaration.getInstance(mod421);
 			dec.initialize( ctx, mod421 );
@@ -131,84 +130,6 @@ public class Mod421DAO extends FiscalModelDAO {
 		return mod421;
 	}
 	
-//	private static void initializeProrrate(AONContext ctx, Mod421 mod421) {
-//		if (mod421.getYear() >= 2026) {
-//			initializeProrrateFrom2026(ctx, mod421);
-//		} else {
-//			initializeProrrateBefore2026(ctx, mod421);
-//		}
-//		
-//	}
-	
-//	private static void initializeProrrateBefore2026(AONContext ctx, Mod421 mod421) {
-//		if (mod421.getProratePercentKey() != null) {
-//			Pair<Double,String> prorrateInfo = getLastPeriodEffectiveModels(ctx, mod421)
-////			Pair<Double,String> prorrateInfo = getMod421s( ctx , mod421.getDomain())
-//				.filter(mod -> mod.getAdministration() == mod421.getAdministration() )
-//				.map(mod ->  new Pair<Double,String>(mod.getProratePercent(), mod.getSpecialProrateValue() ))
-//				.findFirst()
-//				.orElse(new Pair<>(0.0, "G"));
-//			if (AonMathUtils.equals(prorrateInfo.getLeft() ,100.0)) {
-//				prorrateInfo.setLeft( 0.0);
-//			}
-//			mod421.ensureDetail(mod421.getProratePercentKey()).setAmount(prorrateInfo.getLeft());
-//			mod421.ensureDetail(mod421.getProrateTypeKey()).setDescription(prorrateInfo.getRight());
-//			if (mod421.getPeriod().isLastPeriod() && (mod421.hasProrate() || mod421.hasPreviousProrate())) {
-//				mod421.ensureDetail(mod421.getPreviousProratePercentKey()).setAmount(prorrateInfo.getLeft());
-//				AccountingReportParams params = new AccountingReportParams()
-//						.setFromDate(AonDateUtils.getYearFirstDay(mod421.getYear()))
-//						.setToDate(AonDateUtils.getYearLastDay(mod421.getYear()));
-//				VATDAO.getVatBreakdown(ctx,params )
-//					.filter( VatContext::isSales )
-//					.forEach( vat -> {
-//						if (!vat.isVatSurchargeRegime() && vat.getVatRegime() != VATRegime.EXEMPT) {
-//							mod421.ensureDetail(Mod421Key.CM_070).addAmount( vat.getBase());
-//						}
-//						mod421.ensureDetail(Mod421Key.CM_071).addAmount( vat.getBase());		
-//					});
-//				calculateProrrate(mod421);
-//			}
-//		}
-//	}
-//	
-//	private static void initializeProrrateFrom2026(AONContext ctx, Mod421 mod421) {
-//		
-//		// Obtener prorrata del periodo anterior
-//		Pair<Double,String> prorrateInfo = getLastPeriodEffectiveModels(ctx, mod421)
-//			.filter(mod -> mod.getAdministration() == mod421.getAdministration() && mod.hasProrate())
-//			.map(mod -> new Pair<Double,String>(mod.getProratePercent(), mod.getSpecialProrateValue()))
-//			.findFirst()
-//			.orElse(null);
-//		
-//		if (prorrateInfo == null && mod421.hasProrate()) {
-//			prorrateInfo = new Pair<>(0.0, "G");
-//		}
-//		
-//		if (prorrateInfo != null) {
-//			mod421.setProrate(true);
-//			mod421.ensureDetail(mod421.getProratePercentKey()).setAmount(prorrateInfo.getLeft());
-//			mod421.ensureDetail(mod421.getProrateTypeKey()).setDescription(prorrateInfo.getRight());
-//			if (mod421.getPeriod().isLastPeriod()) {
-//				mod421.ensureDetail(mod421.getPreviousProratePercentKey()).setAmount(prorrateInfo.getLeft());
-//				mod421.putAmount(Mod421Key.CM_070, 0.0);
-//				mod421.putAmount(Mod421Key.CM_071, 0.0);
-//				AccountingReportParams params = new AccountingReportParams()
-//						.setFromDate(AonDateUtils.getYearFirstDay(mod421.getYear()))
-//						.setToDate(AonDateUtils.getYearLastDay(mod421.getYear()));
-//				VATDAO.getVatBreakdown(ctx,params )
-//					.filter( VatContext::isSales )
-//					.forEach( vat -> {
-//						if (!vat.isVatSurchargeRegime() && vat.getVatRegime() != VATRegime.EXEMPT) {
-//							mod421.ensureDetail(Mod421Key.CM_070).addAmount( vat.getBase());
-//						}
-//						mod421.ensureDetail(Mod421Key.CM_071).addAmount( vat.getBase());		
-//					});
-//				calculateProrrate(mod421);
-//			}
-//		}
-//			
-//	}
-	
 	public static Mod421 reset(AONContext ctx,Mod421 mod421) {
 		mod421.setMap(null);
 		initializeIdentificationData(ctx, mod421);
@@ -219,7 +140,6 @@ public class Mod421DAO extends FiscalModelDAO {
 	public static Mod421 simulate(AONContext ctx,Mod421 mod421) {
 		Mod421Declaration dec = Mod421Declaration.getInstance(mod421);
 		dec.createOnTheFly(ctx,mod421);
-//		dec.prorrateRegularization(ctx,mod421);
 		calculate(mod421);
 		dec.specificInitialization(mod421);
 		return mod421;
@@ -228,7 +148,6 @@ public class Mod421DAO extends FiscalModelDAO {
 	public static Mod421 create(AONContext ctx,Mod421 mod421) {
 		Mod421Declaration dec = Mod421Declaration.getInstance(mod421);
 		Set<Alcatraz> invoices = dec.createOnTheFly(ctx,mod421);
-//		dec.prorrateRegularization(ctx,mod421);
 		calculate(mod421);
 		dec.specificInitialization(mod421);
 		mod421 = save(ctx, mod421);
@@ -237,22 +156,6 @@ public class Mod421DAO extends FiscalModelDAO {
 		mod421.setInvoicesBound( AlcatrazDAO.hasAlcatrazBound(ctx, mod421.getId()));
 		return mod421;
 	}
-
-//	public static Mod421 calculateProrrate(Mod421 mod421) {
-//		if (mod421.hasProrate() || mod421.hasPreviousProrate()) {
-//			double c70 = AonMathUtils.round( mod421.ensureDetail(Mod421Key.CM_070).getAmount());
-//			double c71 = AonMathUtils.round( mod421.ensureDetail(Mod421Key.CM_071).getAmount());
-//			if (AonMathUtils.isNotZero(c71)) {
-//				double prorrate = (c70 * 100 / c71);
-//				prorrate = AonMathUtils.ceil(prorrate,0);
-//				if (AonMathUtils.isGreatherThan(prorrate,100.0)) prorrate = 100.0;
-//				mod421.ensureDetail(mod421.getProratePercentKey()).setAmount( prorrate );
-//			}
-//			mod421.ensureDetail(Mod421Key.CM_070).setAmount( c70 );
-//			mod421.ensureDetail(Mod421Key.CM_071).setAmount( c71 );
-//		}
-//		return mod421;
-//	}
 
 	public static Mod421 markAsPending(AONContext ctx,Mod421 mod421) {
 		FiscalModelValidation.statusChange(mod421, FiscalStatus.PENDING);
@@ -285,19 +188,6 @@ public class Mod421DAO extends FiscalModelDAO {
 		}
 		return mod421;
 	}
-
-//	public static Mod421 ATCPresentation(AONContext ctx, Mod421 mod421, String ATCResponse) {
-//		if (AonStringUtils.isNotBlank(ATCResponse)) {
-//			DataResponseDAO.insertATCResponse(ctx, mod421, ATCResponse);
-//			ATCResponse response = ATCJson.toJSON(ATCResponse.getBytes());
-//			Mod421 changed = get(ctx, mod421.getId());
-//			if (changed != null) {
-//				changed.setNumber(response.getJustificante());
-//				return markAsSent(ctx, changed);
-//			}
-//		}
-//		return mod421;
-//	}
 
 	public static Mod421 markAsSent(AONContext ctx,Mod421 mod421) {
 		FiscalModelValidation.statusChange(mod421, FiscalStatus.SENT);

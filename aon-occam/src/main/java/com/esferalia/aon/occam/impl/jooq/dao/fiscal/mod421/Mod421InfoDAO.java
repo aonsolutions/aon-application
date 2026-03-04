@@ -82,7 +82,6 @@ public class Mod421InfoDAO extends FiscalModelDAO {
 					public String visitProrratedModelInvoiceVatBreakdown() {
 						return Objects.requireNonNullElse(
 								getModelInvoicesInfo(ctx, mod421,keyDAO)
-//									.map( vt -> checkProrrated(mod421, vt))
 									.map( VatContextJSON::toJSON)
 									.collect(JSONArray::new,JSONArray::put,JSONArray::put)
 									,new JSONArray()).toString();
@@ -100,13 +99,10 @@ public class Mod421InfoDAO extends FiscalModelDAO {
 					public String visitModelInVatAccrualInvoice() {
 						return Objects.requireNonNullElse(
 								getModelInVatAccrualInvoicesInfo(ctx, mod421,keyDAO)
-//									.map( vt -> checkProrrated(mod421, vt))
 									.map( VatContextJSON::toJSON)
 									.collect(JSONArray::new,JSONArray::put,JSONArray::put)
 									,new JSONArray()).toString();
 					}
-
-					
 					
 					@Override 
 					public String visitModelInvoiceVatBreakdown() {
@@ -117,20 +113,6 @@ public class Mod421InfoDAO extends FiscalModelDAO {
 								,new JSONArray()).toString();
 					}
 					
-//					private VatContext checkProrrated(Mod421 mod421, VatContext vt) {
-//						if (Arrays.stream(script.getKeys()).filter(Objects::nonNull).anyMatch(dec::isProrrated)) {
-//							if (mod421.hasProrate() && mod421.isSpecialProrate()) {
-//								vt.setProrrateQuota(AonMathUtils.round(vt.getDeductibleQuota()));	
-//							}
-//						if (Mod421Declaration.mustApplyProrrate(mod421, vt)) {
-//							vt.setProrrated(true);
-//							vt.setSpecialProrrate(mod421.isSpecialProrate());
-//							vt.setProrratePercent( mod421.getProratePercent());	
-//							vt.setProrrateQuota(AonMathUtils.round(vt.getDeductibleQuota() * mod421.getProratePercent() / 100));
-//						} 
-//						}
-//						return vt;
-//					}
 				})
 			)
 			.findFirst()

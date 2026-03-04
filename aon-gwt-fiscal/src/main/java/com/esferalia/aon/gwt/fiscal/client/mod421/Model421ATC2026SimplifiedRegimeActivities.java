@@ -27,9 +27,6 @@ class Model421ATC2026SimplifiedRegimeActivities extends DockLayoutPanel implemen
 		void onRemove();
 	}
 	
-//	private Model421ATC2023ActivityFarmerTable farmerTable;
-//	private Model421ATC2023ActivityFarmer farmerActivityPanel;
-	
 	private Model421ATC2026ActivityTable activityTable;
 	private Model421ATC2026Activity activityPanel;
 	private SimpleLayoutPanel contentLayoutPanel;
@@ -42,9 +39,6 @@ class Model421ATC2026SimplifiedRegimeActivities extends DockLayoutPanel implemen
 		FlowPanel sidebarPanel = new FlowPanel();
 
 		contentLayoutPanel = new SimpleLayoutPanel();
-//		farmerTable = new Model421ATC2023ActivityFarmerTable(callback);
-//		sidebarPanel.add( AonGroupPanel.get(AON.MSG.farmerActivity(), farmerTable ) );
-//		farmerTable.addSelectionHandler( e -> selectFarmerActivity(callback, e.getSelectedItem().getIndex()) );
 		
 		activityTable = new Model421ATC2026ActivityTable(callback);
 		activityTable.addSelectionHandler( e -> selectActivity(callback, e.getSelectedItem().getIndex()) );
@@ -56,38 +50,7 @@ class Model421ATC2026SimplifiedRegimeActivities extends DockLayoutPanel implemen
 		add( contentLayoutPanel);
 	}
 	
-//	private void selectFarmerActivity(IModel421ATCSimplifiedRegimeCallback callback, int index) {
-//		activityTable.clearSelectedIndex();
-//		farmerActivityPanel = new Model421ATC2023ActivityFarmer( new IModel421ATCActivityCallback<Mod421ActivityFarmer>() {
-//					
-//			@Override
-//			public void onAccept() {
-//				ValueChangeEvent.<Mod421>fire(Model421ATC2026SimplifiedRegimeActivities.this, getModel());
-//			}
-//			
-//			@Override
-//			public void onRemove() {
-//				getModel().getActivityFarmerList().get( getActivity().getIndex() ).initialize();
-//				ValueChangeEvent.<Mod421>fire(Model421ATC2026SimplifiedRegimeActivities.this, getModel());
-//				selectFarmerActivity(callback, index);
-//			}
-//	
-//			@Override
-//			public Mod421ActivityFarmer getActivity() {
-//				return getModel().getActivityFarmerList().get(index);
-//			}
-//	
-//			@Override
-//			public Mod421 getModel() {
-//				return callback.getModel();
-//			}
-//		});
-//		farmerActivityPanel.addValueChangeHandler(ve -> ValueChangeEvent.<Mod421>fire(Model421ATC2026SimplifiedRegimeActivities.this, callback.getModel()));
-//		contentLayoutPanel.setWidget(farmerActivityPanel);
-//	}
-
 	private void selectActivity(IModel421ATCSimplifiedRegimeCallback callback, int index) {
-//		farmerTable.clearSelectedIndex();
 		activityPanel = new Model421ATC2026Activity( new IModel421ATCActivityCallback<Mod421Activity>() {
 					
 			@Override
@@ -123,10 +86,6 @@ class Model421ATC2026SimplifiedRegimeActivities extends DockLayoutPanel implemen
 	}
 
 	public void populate(Mod421 mod421) {
-//		farmerTable.paint();
-//		if (farmerTable.getSelectedIndex() != null) {
-//			farmerActivityPanel.populate(mod421.getActivityFarmerList().get(farmerTable.getSelectedIndex()), mod421.isEditable());
-//		}
 		activityTable.paint();
 		if (activityTable.getSelectedIndex() != null) {
 			activityPanel.populate(mod421.getActivityList().get(activityTable.getSelectedIndex()), mod421.isEditable());

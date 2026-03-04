@@ -12,9 +12,6 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 abstract class Model421ATC extends Model421Base {
 
-//	protected static final String SI_1 = "(1) SI";
-//	protected static final String NO_2 = "(2) NO";
-	
 	protected AonTextBox receiptBox;
 
 	protected Model421ATC(Mod421 mod421, Model421Callback cbk) {

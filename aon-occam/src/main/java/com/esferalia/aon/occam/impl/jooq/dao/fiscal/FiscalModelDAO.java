@@ -520,7 +520,6 @@ public class FiscalModelDAO {
 			}
 		}
 		fm.setStatus(FiscalStatus.PENDING);
-		// FALTA - TAMBIEN LO NECESITO AL MENOS EN CANARIAS EN EL MODELO 421 - VER SI SE PUEDE PONER EN LOS PARAMETROS FISCALES
 		if (fm.isAEAT() || (fm.isCanarias() && fm.getModel() == FiscalModelType.M421)) {
 			fm.setAdmonAeat(conf.fiscal().getAdministrationCode());
 		}
@@ -571,7 +570,6 @@ public class FiscalModelDAO {
 			fm.setStreetInitial( enterprise.getStreetType() == null?null:enterprise.getStreetType().getAeatCode() );
 			fm.setStreetName( AonStringUtils.left(enterprise.getAddress(),17) );
 			fm.setStreetNumber( enterprise.getNumber() ); 
-			// FALTA - HAY QUE TRAER EL NOMBRE DEL MUNICIPIO, NO LA LOCALIDAD COMO SE TRAE AHORA, AL MENOS EN CANARIAS O LA LOCALIDAD Y EL MUNICIPIO
 			fm.setTown(AonStringUtils.left(enterprise.getCity(),20));
 			if (fm.isCanarias()) {
 				fm.setTown(AonStringUtils.left(getMunicipalityCode(enterprise.getTown()),20));

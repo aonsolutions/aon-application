@@ -37,12 +37,6 @@ public class MODEL421 {
 		}
 	}
 
-//	public static Mod421 calculateProrrate(Occam occam, Mod421 mod421) {
-//		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-//			return getImpl().calculateProrrate(ctx, mod421);
-//		}
-//	}
-
 	public static Mod421 save(Occam occam, Mod421 mod421) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().save(ctx, mod421);
@@ -123,18 +117,6 @@ public class MODEL421 {
 	 	final CloseableAONContext ctx = AONContext.getAONContext(occam);
 	 	return getImpl().getInfo(ctx, mod421, key, () -> AONContext.closeQuietly(ctx));
 	}
-
-//	public static Mod421 aeatPresentation(Occam occam, Mod421 mod421, String aeatResponse) {
-//		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-//			return getImpl().aeatPresentation(ctx, mod421, aeatResponse);
-//		}
-//	}
-
-//	public static Mod421 reset(Occam occam, Mod421 mod421) {
-//		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-//			return getImpl().reset(ctx, mod421);
-//		}
-//	}
 
 	public static Mod421 doRecord(Occam occam, Mod421 mod421) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {

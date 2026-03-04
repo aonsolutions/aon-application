@@ -40,11 +40,6 @@ public class Mod421ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return MODEL421.calculate(occam, mod421);
 	}
 
-//	@Override
-//	public Mod421 calculateProrrate(Occam occam, Mod421 mod421) {
-//		return MODEL421.calculateProrrate(occam, mod421);
-//	}
-
 	@Override
 	public Mod421 save(Occam occam, Mod421 mod421) {
 		return MODEL421.save(occam, mod421);
@@ -79,10 +74,6 @@ public class Mod421ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public Mod421 create(Occam occam, Mod421 mod421) {
 		return MODEL421.create(occam, mod421);
 	}
-//	@Override
-//	public Mod421 reset(Occam occam, Mod421 mod421) {
-//		return MODEL421.reset(occam, mod421);
-//	}
 	@Override
 	public void delete(Occam occam, Mod421 mod421) {
 		MODEL421.delete(occam, mod421);

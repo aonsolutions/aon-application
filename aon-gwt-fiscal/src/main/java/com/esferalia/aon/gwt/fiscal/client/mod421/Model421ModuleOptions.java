@@ -17,6 +17,4 @@ public class Model421ModuleOptions extends  FiscalModelModuleOptions<Mod421> {
 		return this;
 	}
 	
-	
-	
 }

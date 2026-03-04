@@ -35,8 +35,8 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatComputeKeyInfo;
 import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatComputeKeyInfoGridPanel;
 import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatContext;
 import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatContextBreakdownGridPanel;
-import com.esferalia.aon.gwt.fiscal.client.mod421.Model421FinishDeclarationPopup.FinishDeclarationPopupCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod421.Model421.Model421Callback;
+import com.esferalia.aon.gwt.fiscal.client.mod421.Model421FinishDeclarationPopup.FinishDeclarationPopupCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelIdentificationPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
@@ -81,8 +81,8 @@ public abstract class Model421Base extends DockLayoutPanel  {
 	private static final Logger LOGGER = Logger.getLogger(Model421Base.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
-	}	
-//	protected static final String MODEL421_FILE = "/aon_gwt_fiscal/ms/Model421File";
+	}
+	
 	private static final String MODEL421_PRINT = "/aon_gwt_fiscal/ms/Model421Print";
 	private static final String MODEL421_BOX_INFO = "/aon_gwt_fiscal/ms/Model421BoxInfoPrint";
 
@@ -110,7 +110,6 @@ public abstract class Model421Base extends DockLayoutPanel  {
 	protected final AonToolbarButton saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave());
 	protected final AonToolbarButton cancelButton = new AonToolbarButton(AON.MSG.cancelAction(),AON.CSS.aonIconBack());
 	protected final AonToolbarButton deleteButton = new AonToolbarButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
-//	protected final AonToolbarButton resetButton = new AonToolbarButton(AON.MSG.resetAction(),AON.CSS.aonIconRefresh());
 	protected final AonToolbarButton printButton = new AonToolbarButton(AON.MSG.draft(),AON.CSS.aonIconExcel());
 	protected final AonToolbarButton markAsPendingButton = new AonToolbarButton(AON.MSG.reopen(),AON.CSS.aonIconModelReopen());
 	protected final AonToolbarButton markAsFinishedButton = new AonToolbarButton(AON.MSG.finish(),AON.CSS.aonIconModelFinish());
@@ -131,7 +130,6 @@ public abstract class Model421Base extends DockLayoutPanel  {
 	protected final InlineLabel manualLabel = new InlineLabel();
 	protected final InlineLabel adjLabel = new InlineLabel();
 	protected final InlineLabel replacedLabel = new InlineLabel();
-//	protected final InlineLabel prorataLabel = new InlineLabel();
 	protected final Label statusLabel = new Label();
 	
 	protected FormPanel diskForm = new FormPanel("_blank");
@@ -188,9 +186,6 @@ public abstract class Model421Base extends DockLayoutPanel  {
 		deleteButton.addClickHandler(event -> delete());
 		toolbarPanel.add(deleteButton);
 		
-//		resetButton.addClickHandler( event -> onReset());
-//		toolbarPanel.add(resetButton);		
-		
 		printButton.addClickHandler( event -> print());
 		toolbarPanel.add(printButton);
 		
@@ -231,11 +226,9 @@ public abstract class Model421Base extends DockLayoutPanel  {
 		auditButton.addClickHandler( event -> audit());
 		toolbarPanel.add(auditButton);
 		
-		
 		recordButton.addClickHandler( event -> doRecord());
 		recordButton.addStyleName(AON.CSS.aonMarginLeft());
 //		toolbarPanel.add(recordButton);
-		
 
 		unrecordButton.addClickHandler( event -> unRecord());
 		unrecordButton.addStyleName(AON.CSS.aonMarginLeft());
@@ -321,39 +314,16 @@ public abstract class Model421Base extends DockLayoutPanel  {
 	
 	private void refreshToolbarState() {
 		toolbarPanel.setTitle(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE,getModel().getFullName()));
-		// resetButton.setVisible(!getModel().isNew() && !getModel().isFinished() && !getModel().isSent());
-//		resetButton.setVisible(false);
-		// -----------------------
 		boolean canBeSaved = !getModel().isFinished() && !getModel().isSent() && !getModel().isRecorded(); 
 		auditButton.setVisible(!getModel().isNew());
 		newButton.setVisible(!getModel().isNew() && !getCallback().getOptions().isBackButtonVisible() && !getCallback().getOptions().hasExternalCallback());
 		cancelButton.setVisible(true);
 		saveButton.setVisible(canBeSaved);
-		recordButton.setVisible( 
-			  (getModel().isFinished() || getModel().isSent()) 
-			&& !getModel().isRecorded()
-//			&& !getModel().hasProrate()
-			);
-		unrecordButton.setVisible( (getModel().isFinished() || getModel().isSent()) 
-			&& getModel().isRecorded());
-		viewEntryButton.setVisible( (getModel().isFinished() || getModel().isSent()) 
-			&& getModel().isRecorded() 
-			&& viewEntryButton.isEnabled() );
-		
+		recordButton.setVisible((getModel().isFinished() || getModel().isSent()) && !getModel().isRecorded());
+		unrecordButton.setVisible((getModel().isFinished() || getModel().isSent()) && getModel().isRecorded());
+		viewEntryButton.setVisible((getModel().isFinished() || getModel().isSent()) && getModel().isRecorded() && viewEntryButton.isEnabled() );
 		deleteButton.setVisible(!getModel().isNew() && canBeSaved);
 		printButton.setVisible(!getModel().isNew());
-//		markAsPendingButton.setVisible(!getModel().isNew() && !getModel().isRecorded() &&
-//				(getModel().getStatus() == FiscalStatus.FINISHED 
-//				|| getModel().getStatus() == FiscalStatus.BATCHED
-//				|| getModel().getStatus() == FiscalStatus.SENT
-//				|| getModel().getStatus() == FiscalStatus.CUSTOMER_CHECK
-//				|| getModel().getStatus() == FiscalStatus.BLOCKED));
-//		markAsFinishedButton.setVisible(!getModel().isNew() &&
-//				(getModel().getStatus() == FiscalStatus.PENDING
-//				|| getModel().getStatus() == FiscalStatus.CUSTOMER_CHECK
-//				|| getModel().getStatus() == FiscalStatus.MISSING));
-//		markAsSentButton.setVisible(!getModel().isNew() &&
-//				(getModel().getStatus() == FiscalStatus.FINISHED));
 		markAsPendingButton.setVisible(!getModel().isNew() && !getModel().isRecorded() && FiscalModelUtils.canChangeStatus(getModel(), FiscalStatus.PENDING));
 		markAsFinishedButton.setVisible(!getModel().isNew() && FiscalModelUtils.canChangeStatus(getModel(), FiscalStatus.FINISHED));
 		markAsSentButton.setVisible(!getModel().isNew() && FiscalModelUtils.canChangeStatus(getModel(), FiscalStatus.SENT));
@@ -764,41 +734,26 @@ public abstract class Model421Base extends DockLayoutPanel  {
 						public void onSuccess(String result) {
 							popup.hide();
 							FlowPanel gridContainer = new FlowPanel();
-							// Casilla 111 solo muestra un texto para indicar como se calcula esa casilla
-//							if (script.getKeys() != null && script.getKeys().length == 1 && script.getKeys()[0] == Mod421Key.CT_C111) {
-//								JsVatComputeKeyInfoGridPanel grid = new JsVatComputeKeyInfoGridPanel();
-//								grid.setTitle(AON.MSG.calcDetail());
-//								grid.setSubTitle(AonStringUtils.join(
-//									Arrays.stream(script.getKeys())
-//										.filter( Objects::nonNull )
-//										.map( Mod421Key::getBoxFormatted )
-//										.reduce("", String::concat)
-//									, " " 
-//									, script.getLabel()));
-//									grid.addContent(getInfoC111());
-//								gridContainer.add(grid);
-//							} else {								
-								JavaScriptObject arrayObject = JsonUtils.safeEval(result);
-								JsArray<JsVatComputeInfo> array = arrayObject.cast();
-								for (int i = 0; i < array.length(); i++) {
-									JsVatComputeInfo computeInfo = array.get(i);
-									Mod421Key key = Mod421Key.valueOf(computeInfo.getKey());
-									JsVatComputeInfoGridPanel grid = new JsVatComputeInfoGridPanel() {
-	
-										@Override
-										protected String resolveKey(String keyString) {
-											Mod421Key key = Mod421Key.valueOf(keyString);
-											return key.getBoxAsString();
-										}
-										
-									};
-	
-									grid.setTitle(AON.MSG.calcDetail());
-									grid.setSubTitle(key.getBoxFormatted() + " - " + script.getLabel());
-									grid.addContent(computeInfo);
-									gridContainer.add(grid);
-								}
-//							}
+							JavaScriptObject arrayObject = JsonUtils.safeEval(result);
+							JsArray<JsVatComputeInfo> array = arrayObject.cast();
+							for (int i = 0; i < array.length(); i++) {
+								JsVatComputeInfo computeInfo = array.get(i);
+								Mod421Key key = Mod421Key.valueOf(computeInfo.getKey());
+								JsVatComputeInfoGridPanel grid = new JsVatComputeInfoGridPanel() {
+
+									@Override
+									protected String resolveKey(String keyString) {
+										Mod421Key key = Mod421Key.valueOf(keyString);
+										return key.getBoxAsString();
+									}
+									
+								};
+
+								grid.setTitle(AON.MSG.calcDetail());
+								grid.setSubTitle(key.getBoxFormatted() + " - " + script.getLabel());
+								grid.addContent(computeInfo);
+								gridContainer.add(grid);
+							}
 							callback.showInfoPanelWidget(gridContainer);
 							button.setEnabled(true);
 						}
@@ -1114,6 +1069,7 @@ public abstract class Model421Base extends DockLayoutPanel  {
 					}
 				});
 	}
+	
 	private void reopenDeclaration() {
 		markAsPendingButton.setEnabled(false);
 		if (getModel().isSent() && AonStringUtils.isNotBlank(getModel().getNumber())) {
@@ -1208,6 +1164,7 @@ public abstract class Model421Base extends DockLayoutPanel  {
 			}
 		});
 	}
+	
 	private void viewEntry() {
 		final Widget entryContainer = getCallback().getTabWidget( AON.MSG.accountEntry() );
 		if ( entryContainer instanceof HasWidgets) {
@@ -1305,7 +1262,6 @@ public abstract class Model421Base extends DockLayoutPanel  {
 		});
 	}
 
-
 	private void audit() {
 		AonAuditDialog dialog = new AonAuditDialog();
 		dialog.show(getModel());
@@ -1376,21 +1332,12 @@ public abstract class Model421Base extends DockLayoutPanel  {
 			replacedLabel.addStyleName(AON.CSS.aonLabelWithIcon());
 		}
 		if (getModel().isComplementary()) {
-			replacedLabel.setText( AON.MSG.complementary() + "/Rectificativa");
+			replacedLabel.setText( AON.MSG.complementary());
 			replacedLabel.setStyleName(AON.CSS.aonMarginLeft());
 			replacedLabel.addStyleName(AON.CSS.aonIconChecked());
 			replacedLabel.addStyleName(AON.CSS.aonLabelWithIcon());
 		}
 		marksPanels.add(replacedLabel);
-
-		//if (AonMathUtils.isNotZero(getModel().getProratePercent()) &&  !AonMathUtils.equals(getModel().getProratePercent(), 100.0)) {
-//		if (getModel().hasProrate()) {
-//			prorataLabel.setStyleName(AON.CSS.aonMarginLeft());
-//			prorataLabel.setText(AON.MSG.prorrata() + ": " + getModel().getProratePercent() + "%" + (getModel().isSpecialProrate()?" Especial":""));
-//			prorataLabel.addStyleName(AON.CSS.aonBold());
-//		}
-		marksPanels.add(replacedLabel);
-//		marksPanels.add(prorataLabel);
 		
 		manualLabel.setStyleName(AON.CSS.aonMarginLeft());
 		manualLabel.addStyleName(AON.CSS.aonLabelWithIcon());
@@ -1466,35 +1413,6 @@ public abstract class Model421Base extends DockLayoutPanel  {
 		}
 	}
 
-//	private void onReset() {
-//		resetButton.setEnabled(false);
-//		AonConfirmDialog cd = new AonConfirmDialog();
-//		cd.confirm(AON.MSG.confirmDeclarationinitializationAction(), new AonConfirmDialogCallback() {
-//
-//			@Override
-//			public void onAccept() {
-//				Model421.service.reset(getCallback().getOptions().getOccam(),getModel(),
-//						new AsyncCallback<Mod421>() {
-//							@Override
-//							public void onSuccess(Mod421 m421) {
-//								setDirty( true );
-//								selectAndPopulate(m421);
-//							}
-//
-//							@Override
-//							public void onFailure(Throwable caught) {
-//								getCallback().showError(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
-//								
-//							}
-//						});
-//			}
-//			@Override
-//			public void onCancel() {
-//				resetButton.setEnabled(true);
-//			}
-//		});
-//	}
-
 	protected void paintIdentificationTab(TabLayoutPanel tabPanel) {
 		identificationData = new AonFiscalModelIdentificationPanel<>( getModel() ) ;
 		identificationData.addValueChangeHandler(event -> {
@@ -1566,27 +1484,5 @@ public abstract class Model421Base extends DockLayoutPanel  {
 			diskForm.submit();
 		}
 	}
-	
-//	private String getInfoC111() {
-//		StringBuilder buf = new StringBuilder();
-//		buf.append("<div style=\"" +
-//				  "padding-right: 15px; padding-left: 15px; margin-right: auto; "
-//				+ "margin-left: auto; width:100%; display: flex;flex-wrap: wrap; "
-//				+ "justify-content: center; box-sizing: border-box"
-//				+ "\">")
-//			.append("<div style=\"" 
-//				+ "border-radius: 4px; background: #fff; box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);"
-//				+ "transition: .3s transform cubic-bezier(.155,1.105,.295,1.12),.3s box-shadow,.3s -webkit-transform cubic-bezier(.155,1.105,.295,1.12);"
-//				+ "padding: 4px 5px 5px 10px; margin: 20px 10px 10px 10px; cursor: pointer;"
-//				+ "flex: 0 1 40%; min-height: 120px; min-width: 350px; font-size: 1.2em;"
-//				+ "\">");
-//		buf.append("<div>S\u00F3lo tiene valor si es una autoliquidaci\u00F3n rectificativa, la casilla 70 tiene contenido y la casilla 71 es menor que cero. Adem\u00E1s es una casilla calculada de la siguiente forma:</div>");
-//        buf.append("<div>- Si Casilla69 \u2264 0 y Casilla70 \u2264 |Casilla71| entonces Casilla111 = Casilla70</div>");
-//        buf.append("<div>- Si Casilla69 \u2264 0 y Casilla70 > |Casilla71| entonces Casilla111 = |Casilla71|</div>");
-//        buf.append("<div>- Si Casilla69 > 0 entonces Casilla111 = |Casilla71|</div>");
-//		buf.append("</div>");
-//		buf.append("</div>");
-//		return buf.toString();		
-//	}
 	
 }

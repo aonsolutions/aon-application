@@ -23,13 +23,9 @@ public abstract class Mod421Declaration {
 	
 	private static final double ZERO = 0.0;
 	private static final String EMTPY_JSON = "{messages : []}";
-	// 1 de Julio del 2021		
-//	public static final Date IVA_2021_CHANGE_DATE =  Date.from(LocalDateTime.of(2021, 7, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());	
 
 	private enum Declarations {
 		
-// ATC ----------------------------------------------------------------------------------------		
-
 		 ATC_2026 {
 			@Override boolean accept(Mod421 mod) { return Mod421ATC2026Declaration.accept(mod);}
 			@Override Mod421Declaration get() {return new Mod421ATC2026Declaration();}
@@ -62,22 +58,6 @@ public abstract class Mod421Declaration {
 		detail.addAmount( amount );
 	}
 	
-//	public static boolean mustApplyProrrate(Mod421 mod,VatContext vat) {
-//		return (mod.hasProrate()) && 
-//			(!mod.isSpecialProrate() || (mod.isSpecialProrate() && vat.getActivity() == null));
-//	}
-	
-//	protected static void addProrrated(Mod421Key key,Mod421 mod,VatContext vat) {
-//		double amount = vat.getDeductibleQuota();
-//		if (mustApplyProrrate(mod,vat)) {
-//			mod.ensureDetail(Mod421Key.CM_072).addAmount(vat.getDeductibleQuota());
-//			amount = AonMathUtils.round(amount * mod.getProratePercent() / 100);
-//		} else {
-//			mod.ensureDetail(Mod421Key.CM_074).addAmount(vat.getDeductibleQuota());
-//		}
-//		add( key, mod, amount);
-//	}
-
 	protected static void set(Mod421Key key,Mod421 mod,double amount) {
 		mod.ensureDetail(key).setAccumulatedAmount(amount);
 		mod.ensureDetail(key).setResultAmount( amount );	
@@ -105,56 +85,6 @@ public abstract class Mod421Declaration {
 		}
 	}
 
-	// Cálculo de la regularización de la prorrata en el último periodo
-//	public void prorrateRegularization(AONContext ctx, Mod421 mod421){
-//		if (mod421.isLastPeriod() && getRegularizationKey() != null) {
-//			double lastPercent = mod421.getProratePercent();
-//			double prevPercent = mod421.getPreviousProratePercent();
-//			
-//			// A partir de 2026, se añade un check para indicar expresamente si se debe aplicar prorrata, sea el porcentaje que sea.
-//			// Por lo tanto, a partir de 2026 se comprueba unicamente si el modelo actual tiene prorrata y antes del 2026 se comprueba como se hacia antes
-//			boolean calculate = mod421.getYear() >= 2026 ? 
-//					mod421.hasProrate() : ((mod421.hasProrate() || mod421.hasPreviousProrate()) && AonNumberUtils.notEquals(lastPercent, prevPercent));
-//			
-//			if (calculate) {
-//				Mod421DAO.getPreviousEffectiveModels(ctx, mod421).forEach( fm -> {
-//					Mod421Declaration dec =  Mod421Declaration.getInstance(fm);
-//					MutableDouble sumProrratedMustDeclared = new MutableDouble();
-//					MutableDouble sumUnprorratedMustDeclared = new MutableDouble();
-//					VATDAO.getModelVatBreakdown(ctx, fm)
-//						.filter( br -> Arrays.stream(dec.getProrateKeys())
-//							.map(dec::getKey )
-//							.anyMatch(kd -> kd.acceptValue(fm, br)))
-//						.forEach(br -> {
-//							if (mustApplyProrrate(fm,br)) {
-//								sumProrratedMustDeclared.add(br.getDeductibleQuota());
-//							} else {
-//								sumUnprorratedMustDeclared.add(br.getDeductibleQuota());
-//							}
-//						});
-//					
-//					double declared = 0.0;
-//					if ( fm.getMap() != null && !fm.getMap().isEmpty()) {
-//						for(String key : fm.getMap().keySet() ) {
-//							if (isProrrated( Mod421Key.getKey(key))) {
-//								declared = declared + fm.getAmount(key); 
-//							}
-//						}
-//					}
-//					
-//					double prorratedAmount = AonMathUtils.round(sumProrratedMustDeclared.getValue());
-//					double unProrratedAmount = AonMathUtils.round(sumUnprorratedMustDeclared.getValue());
-//					double mustDeclared = AonMathUtils.round((prorratedAmount * lastPercent / 100) + unProrratedAmount);
-//					double difference  = AonMathUtils.round(mustDeclared - declared);
-//					mod421.ensureDetail(Mod421Key.CM_072).addAmount( prorratedAmount );
-//					mod421.ensureDetail(Mod421Key.CM_074).addAmount( unProrratedAmount );
-//					mod421.addAmount(getRegularizationKey(), difference);
-//				});
-//				
-//			}
-//		}
-//	}
-
 	public void fillSimplifiedRegime(Mod421 mod421){
 	}
 	public void populateSimplifiedRegime(Mod421 mod421){
@@ -165,15 +95,6 @@ public abstract class Mod421Declaration {
 		return null;
 	}
 	
-//	public boolean isProrrated(Mod421Key key) {
-//		if ( key != null && getProrateKeys() != null ) {
-//			for (Mod421Key pk : getProrateKeys()) {
-//				if (pk == key) return true;			
-//			}
-//		}
-//		return false;
-//	}
-
 	private static class KeyedVatContext  {
 		private IMod421KeyDAO key;
 		private VatContext vt;
@@ -231,60 +152,18 @@ public abstract class Mod421Declaration {
 		mod421.getMessages().clear();		
 		mod421.setDiffCalculationMandatory(false);
 		mod421.setDiffCalculationDisabled(true);
-//		boolean resolved = false;
-//		if (!mod421.isFirstPeriod() && mod421.getYear() == 2022 ) { 
-//			List<Integer> ids = FiscalModelDAO.getPreviousModels(ctx, mod421, Mod421::new)
-//				.map(FiscalModel::getId)
-//				.collect(Collectors.toCollection(LinkedList::new));
-//			if (ids != null && !ids.isEmpty()) {
-//				boolean something = ctx.getDslContext()
-//					.select(ALCATRAZ.ID)
-//					.from(ALCATRAZ)
-//					.where(ALCATRAZ.FS_MODEL.in(ids))
-//					.fetch()
-//					.stream()
-//					.findFirst()
-//					.isPresent();
-//				if (!something) {
-//					Date start = AonDateUtils.getYearFirstDay(mod421.getYear());
-//					Date end = FiscalUtils.getPeriodEnd(mod421);
-//					boolean existsInvoices = ctx.getDslContext()
-//						.select(INVOICE.ID)
-//						.from(INVOICE)
-//						.where(INVOICE.DOMAIN.eq(mod421.getDomain()))
-//						.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(start), AonDateUtils.toSql(end)))
-//						.limit(1)
-//						.fetch()
-//						.stream()
-//						.findFirst()
-//						.isPresent();
-//					if (existsInvoices) {
-//						mod421.setDiffCalculationMandatory(true);
-//						mod421.setDiffCalculationDisabled(false);			
-//						mod421.addMessage("Se han encontrado declaraciones en el ejercicio, anteriores a la que se pretende crear."
-//								+ " El nuevo módulo de IVA vincula las facturas con las declaraciones, de tal forma que dichas facturas no se podrán modificar ni borrar."
-//								+ " Para el correcto funcionamiento, se calculará el modelo por diferencia "
-//								+ "y se vincularán todas las facturas, desde el inicio del ejercicio, al modelo que se está creando."
-//								);
-//						resolved = true;
-//					}
-//				} 
-//			}
-//		}
-//		if (!resolved) {
-		// FALTA - HABRIA QUE VER SOLO LAS FACTURAS IMPUTADAS A CANARIAS
-			mod421.setGenerateFromYearStartAvailable(!mod421.isFirstPeriod());
-			if (mod421.isGenerateFromYearStartAvailable()) {
-				Map<Integer, Long> invoices = checkPreviousInvoices(ctx, mod421);
-				boolean existsInvoices = invoices != null && !invoices.isEmpty();
-				if (existsInvoices) {
-					mod421.addMessage("Se encontraron " + invoices.size() + " facturas no declaradas anteriores a la fecha "
-							+ "de inicio de la declaraci\u00F3n.");
-				}
-				mod421.setGenerateFromYearStartAvailable(existsInvoices);
-				mod421.setGenerateFromYearStart(existsInvoices);
+
+		mod421.setGenerateFromYearStartAvailable(!mod421.isFirstPeriod());
+		if (mod421.isGenerateFromYearStartAvailable()) {
+			Map<Integer, Long> invoices = checkPreviousInvoices(ctx, mod421);
+			boolean existsInvoices = invoices != null && !invoices.isEmpty();
+			if (existsInvoices) {
+				mod421.addMessage("Se encontraron " + invoices.size() + " facturas no declaradas anteriores a la fecha "
+						+ "de inicio de la declaraci\u00F3n.");
 			}
-//		}
+			mod421.setGenerateFromYearStartAvailable(existsInvoices);
+			mod421.setGenerateFromYearStart(existsInvoices);
+		}
 	}
 	
 	private Map<Integer, Long> checkPreviousInvoices(final AONContext ctx, final Mod421 mod421) {
@@ -311,9 +190,6 @@ public abstract class Mod421Declaration {
 	}
 	
 	private Stream<VatContext> getVatContextStream(AONContext ctx, Mod421 mod421) {
-//		if (mod421.isDraft()) {
-//			return VATDAO.getVatBreakdown(ctx,mod421);
-//		}
 		if (mustApplyReplacementSearch(mod421)) {
 			mod421.setDiffCalculationMandatory(true);
 			mod421.setDiffCalculationDisabled(false);
@@ -351,13 +227,6 @@ public abstract class Mod421Declaration {
 					&& Mod421Key.getKey(source.getType()).isDiffEnabled())
 				.forEach(source -> {
 					Mod421Key key = Mod421Key.getKey(source.getType());
-					
-					// ÑAPA! Debido al baile de casilla en el terce trimestre de 2024
-//					if ( key == Mod421Key.CT_C167 && AonMathUtils.equals(1.75,source.getAmount())) {
-//						source.setAmount(0.0);
-//					}
-					// ----------------
-					
 					IMod421KeyDAO keyDAO = getKey(key);
 					if (keyDAO != null) {
 						FiscalModelDetail target = mod421.ensureDetail(key);
@@ -381,13 +250,10 @@ public abstract class Mod421Declaration {
 	}
 
 	public Set<Alcatraz> createOnTheFly(AONContext ctx, Mod421 mod421) {
-//		if (hasSimplifiedRegime()) {
-			initializeSimplifiedRegime(ctx, mod421);
-//		}
+		initializeSimplifiedRegime(ctx, mod421);
 		firstInitialization(ctx, mod421);
 		if (!mod421.isManualDeclaration()) {
 			Set<Alcatraz> invoices = createFromInvoices(ctx,mod421);
-//			invoices.addAll( createVatAccrualKeysFromInvoices(ctx,mod421) );
 			resolveDiffCalculation(ctx, mod421);
 			return invoices;
 		}
@@ -421,14 +287,11 @@ public abstract class Mod421Declaration {
 	public abstract IMod421KeyDAO safeValueOf(Mod421 mod, String key);
 	public abstract IMod421KeyDAO valueOf(String string);
 	public abstract IMod421KeyDAO[] getKeys();
-//	public abstract Mod421Key[] getProrateKeys();
 	
-//	public abstract boolean hasSimplifiedRegime();
 	abstract void initializeSimplifiedRegime(AONContext ctx, Mod421 mod421);
 	
 	abstract Mod421 initialize(AONContext ctx, Mod421 mod421);
 	abstract double getResult(final Mod421 mod421);
 	abstract ComplementaryBeahaviour getComplementaryBehaviour(final Mod421 mod421);
-//	abstract Set<Alcatraz> createVatAccrualKeysFromInvoices(AONContext ctx, Mod421 mod421);
 	
 }

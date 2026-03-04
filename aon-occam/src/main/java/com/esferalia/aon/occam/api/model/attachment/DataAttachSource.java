@@ -42,7 +42,8 @@ public enum DataAttachSource implements Serializable {
 	VERIFACTU,
 	SIF,
 	NO_VERIFACTU, 
-	FACTURAE 
+	FACTURAE,
+	MOD421
 	;
 
 	public byte value() {

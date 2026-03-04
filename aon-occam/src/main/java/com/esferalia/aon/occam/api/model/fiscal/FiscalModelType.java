@@ -33,7 +33,7 @@ public enum FiscalModelType implements Serializable{
 	M240	("240","240"		, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { } },
 	SII		("SII","SII"		, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { } },
 	M369    ("369","369"		, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { visitor.visitM369();} },
-	M421    ("421","421"		, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { } },
+	M421    ("421","421"		, false){ @Override public void visit(IFiscalModelTypeVisitor visitor) { visitor.visitM421();} },
 	;
 
 	private String value;

@@ -20,21 +20,17 @@ public interface Mod421Service extends RemoteService {
 	LinkedList<Mod421> getMod421s(Occam occam) throws AonCoreException;
 	Mod421 initialize(Occam occam, Mod421 mod421) throws AonCoreException;
 	Mod421 create(Occam occam, Mod421 mod421) throws AonCoreException;
-//	Mod421 reset(Occam occam, Mod421 model) throws AonCoreException;
-	
 	void delete(Occam occam, Mod421 mod421) throws AonCoreException;
 	Mod421 save(Occam occam, Mod421 mod421) throws AonCoreException;
 	Mod421 saveComments(Occam occam, Mod421 mod421) throws AonCoreException;
 	Mod421 initializeForFinish(Occam occam, Mod421 mod421) throws AonCoreException;
 	Mod421 calculate(Occam occam, Mod421 mod421) throws AonCoreException;
-//	Mod421 calculateProrrate(Occam occam, Mod421 mod421) throws AonCoreException;
 	String getInfo(Occam occam, Mod421 mod421, IModelScript<Mod421Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
 	Mod421 markAsFinished(Occam occam, Mod421 mod421) throws AonCoreException;
 	Mod421 markAsPending(Occam occam, Mod421 mod421) throws AonCoreException;
 	Mod421 markAsSent(Occam occam, Mod421 mod421) throws AonCoreException;
 	Mod421 markAsCustomerCheck(Occam occam, Mod421 mod421) throws AonCoreException;
 	Invoice getInvoice(Occam occam, int invoiceId) throws AonCoreException;
-	
 	Mod421 doRecord(Occam occam, Mod421 mod421) throws AonCoreException;
 	Mod421 unrecord(Occam occam, Mod421 mod421) throws AonCoreException;
 	

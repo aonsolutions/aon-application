@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
@@ -48,13 +47,6 @@ class Model421ATC2026Activity extends DockLayoutPanel implements HasValueChangeH
 	
 	private AonIntegerBox tem = new AonIntegerBox(); // Actividades de temporada: Días ejercicio anterior
 	private AonIntegerBox dia = new AonIntegerBox(); // Días del trimestre o días ejercicio en actividades de temporada
-//	private AonIntegerBox emp = new AonIntegerBox();
-//	private ListBox lor = new ListBox();
-//	private ListBox dana = new ListBox();
-	
-//	private InlineLabel staffLabel = new InlineLabel(); 
-//	private InlineLabel deskLabel = new InlineLabel();
-//	private InlineLabel ovenLabel = new InlineLabel();
 
 	private class Model421ATC2026ActivityModule {
 		private final int index;
@@ -79,63 +71,11 @@ class Model421ATC2026Activity extends DockLayoutPanel implements HasValueChangeH
 			new Model421ATC2026ActivityModule(6),
 	};
 	
-//	private class Model421ATC2023ActivityDesk {
-//		private final int index;
-//		
-//		private AonIntegerBox capacity = new AonIntegerBox(4);
-//		private AonIntegerBox desk = new AonIntegerBox(6);
-//		private AonIntegerBox days = new AonIntegerBox(6);
-//		
-//		private Model421ATC2023ActivityDesk( int index) {
-//			this.index = index;
-//		}
-//	}
-	
-//	Model421ATC2023ActivityDesk[] desks = new Model421ATC2023ActivityDesk[] {
-//			new Model421ATC2023ActivityDesk(0),
-//			new Model421ATC2023ActivityDesk(1),
-//			new Model421ATC2023ActivityDesk(2),
-//			new Model421ATC2023ActivityDesk(3),
-//	};
-	
-//	private class Model421ATC2025ActivityOven {
-//		private final int index;
-//		
-//		private AonIntegerBox surface = new AonIntegerBox(7);  // Superficie del horno (dm2) (solo 4T a partir de 2025)
-//		private AonIntegerBox days = new AonIntegerBox(3);     // Días (solo 4T a partir de 2025)
-//		
-//		private Model421ATC2025ActivityOven(int index) {
-//			this.index = index;
-//		}
-//	}
-	
-//	Model421ATC2025ActivityOven[] ovens = new Model421ATC2025ActivityOven[] {
-//			new Model421ATC2025ActivityOven(0),
-//			new Model421ATC2025ActivityOven(1),
-//			new Model421ATC2025ActivityOven(2),
-//			new Model421ATC2025ActivityOven(3),
-//	};
-	
-	
-//	,A1T01("421-A1T01",false,"","Cuota devengada operaciones corrientes")
-//	,A1T02("421-A1T02",false,"","\u00CDndice corrector actividades de temporada")
-//	,A1T03("421-A1T03",false,"","Porcentaje de ingreso a cuenta (1T/2T/3T)")
-//	,A1T04("421-A1T04",false,"","Ingreso a cuenta (1T/2T/3T)")
-//	,A1T05("421-A1T05",false,"","1% de la cuota devengada por operaciones corrientes (4T)")
-//	,A1T06("421-A1T06",false,"","Resto de cuotas soportadas (4T)")
-//	,A1T07("421-A1T07",false,"","Compensaciones satisfechas a sujetos pasivos en R.E.A.G.P. (4T)")
-//	,A1T08("421-A1T08",false,"","Total cuotas soportadas operaciones corrientes (4T)")
-//	,A1T09("421-A1T09",false,"","RESULTADO (4T)")
-//	,A1T10("421-A1T10",false,"","Porcentaje cuota m\u00EDnima (4T)")
-//	,A1T11("421-A1T11",false,"","Cuota m\u00EDnima (4T)")
-//	,A1T12("421-A1T12",false,"","Cuota anual derivada r\u00E9gimen simplificado (4T)")
-
 	private AonDoubleBox dev = new AonDoubleBox();  // Cuota devengada operaciones corrientes
 	private AonDoubleBox ict = new AonDoubleBox();  // Indice corrector actividades de temporada
 	private AonDoubleBox por = new AonDoubleBox();  // Porcentaje de ingreso a cuenta (1T/2T/3T)
 	private AonDoubleBox ing = new AonDoubleBox();  // Ingreso a cuenta (1T/2T/3T)
 	private AonDoubleBox sop1 = new AonDoubleBox(); // 1% de la cuota devengada por operaciones corrientes (4T)
-//	private AonDoubleBox sop2 = new AonDoubleBox(); // Compensaciones satisfechas a sujetos pasivos en R.E.A.G.P. (4T)
 	private AonDoubleBox sopR = new AonDoubleBox(); // Resto de cuotas soportadas (4T)
 	private AonDoubleBox sop = new AonDoubleBox();  // Total cuotas soportadas operaciones corrientes (4T)
 	private AonDoubleBox res = new AonDoubleBox();  // RESULTADO (4T)
@@ -143,49 +83,11 @@ class Model421ATC2026Activity extends DockLayoutPanel implements HasValueChangeH
 	private AonDoubleBox cmn = new AonDoubleBox();  // Cuota mínima (4T)
 	private AonDoubleBox cad = new AonDoubleBox();  // Cuota anual derivada régimen simplificado (4T)
 	
-//	private AonDoubleBox lorcaReduction = new AonDoubleBox(); 
-//	private AonDoubleBox danaReduction = new AonDoubleBox();
-//	private AonDoubleBox red = new AonDoubleBox();
-	
-//	private AonDoubleBox ind = new AonDoubleBox();
-//	private AonDoubleBox por = new AonDoubleBox();
-//	private AonDoubleBox ing = new AonDoubleBox();
-	
-//	private AonDoubleBox sopx = new AonDoubleBox();
-//	private AonDoubleBox sopy = new AonDoubleBox();
-//	private AonDoubleBox sop = new AonDoubleBox();
-//	private AonDoubleBox ict = new AonDoubleBox();
-//	private AonDoubleBox res = new AonDoubleBox();
-//	private AonDoubleBox pcm = new AonDoubleBox();
-//	private AonDoubleBox dvc = new AonDoubleBox();
-//	private AonDoubleBox cmn = new AonDoubleBox();
-//	private AonDoubleBox cad = new AonDoubleBox();
-	
-//	private AonDoubleBox may19Hours = new AonDoubleBox(); 		//Mayores de 19 años
-//	private AonDoubleBox men19Hours = new AonDoubleBox(); 		//Menores de 19 años y trabajadores con contratos de aprendizaje o formación, que no sean discapacitados.
-//	private AonDoubleBox disHours = new AonDoubleBox(); 		//Discapacitados con grado de minusvalía igual o superior al 33 por 100
-//	private AonDoubleBox yearHours = new AonDoubleBox(); 		//Horas anuales
-	
-//	private AonDoubleBox ownerHours = new AonDoubleBox(); 		//Horas anuales del titular. (máximo 1.800 horas)
-//	private CheckBox ownerDis = new CheckBox(); 			//Indique si el titular es discapacitado en grado igual o superior al 33%
-//	private AonDoubleBox spouseHours = new AonDoubleBox(); 		//Horas anuales del cónyuge. (máximo 1.800 horas)
-//	private AonDoubleBox childMen18Hours = new AonDoubleBox(); 	//Horas anuales de los hijos menores de 18 años.
-
 	protected Model421ATC2026Activity(final IModel421ATCActivityCallback<Mod421Activity> callback) {
 		super(Unit.PX);
 		
 		setStyleName(AON.CSS.aonSelector());
 		addStyleName(AON.CSS.aonBackgroundLigthBlue());
-
-//		lor.addItem("-");
-//		lor.addItem("Realizada exclusivamente en Lorca");
-//		lor.addItem("Realizada en Lorca y otros municipios");
-//		lor.setWidth("250px");
-//		
-//		dana.addItem("-");
-//		dana.addItem("Exclusivamente en municipios afectados por la DANA");
-//		dana.addItem("En municipios afectados por la DANA y en otros municipios");
-//		dana.setWidth("370px");
 
 		addNorth(getToolbar( callback ), AonToolbar.HEIGTH);
 		
@@ -205,20 +107,8 @@ class Model421ATC2026Activity extends DockLayoutPanel implements HasValueChangeH
 		tabLayoutPanel.clear();
 		tabLayoutPanel.add(getAdditionalDataPanel(callback), AON.MSG.additionalData());
 		tabLayoutPanel.add(getModulesPanel(callback), AON.MSG.modules());
-//		if (staffModuleIndex(callback) != -1) {
-//			tabLayoutPanel.add(getModulesStaffDataPanel(callback), "Inf. M\u00F3dulo \"Personal\"");
-//		}
-//		if (deskModuleIndex(callback) != -1) {
-//			tabLayoutPanel.add(getModulesDeskDataPanel(callback), "Inf. M\u00F3dulo \"Mesas\"");
-//		}
-		// Desglose superficie del horno solo para 4T a partir de 2025
-//		if (callback.getModel().getYear() >= 2025 && callback.getModel().isLastPeriod() && ovenModuleIndex(callback) != -1) {
-//			tabLayoutPanel.add(getModulesOvenDataPanel(callback), "Inf. M\u00F3dulo \"Superficie del horno\"");
-//		}
 		tabLayoutPanel.add(getResultPanel(callback), AON.MSG.result());
-
 		tabLayoutPanel.selectTab(1, false);
-		
 		return tabLayoutPanel;
 	}
 
@@ -261,7 +151,6 @@ class Model421ATC2026Activity extends DockLayoutPanel implements HasValueChangeH
 		activitySelection.addSelectionHandler( event -> checkAccept(cbk, event.getSelectedItem()));
 		scroll.setWidget(activitySelection);
 		
-//		scroll.setWidget(activitySelection);
 		return scroll;
 	}
 
@@ -278,8 +167,7 @@ class Model421ATC2026Activity extends DockLayoutPanel implements HasValueChangeH
 		callback.getActivity().setEpigraph(selected.getEpigraph());
 		callback.getActivity().setSpecialEpigraph(selected.getSpecialEpigraph());
 		callback.getActivity().setDescription(selected.getDescription());
-		callback.getActivity().setPor(selected.getVatPorc());
-//		callback.getActivity().setMaxImport(selected.getLimExceso()); 
+		callback.getActivity().setPor(selected.getPorcIng());
 		callback.getActivity().setPcm(selected.getPorcMin());
 		if (callback.getActivity().getDia() == 0) {
 			@SuppressWarnings("deprecation")
@@ -293,15 +181,13 @@ class Model421ATC2026Activity extends DockLayoutPanel implements HasValueChangeH
 			CalendarUtil.addMonthsToDate(end,1);
 			callback.getActivity().setDia(  CalendarUtil.getDaysBetween(start, end) );
 		}
-		for (Module mod : selected.getVATModules()) {
+		for (Module mod : selected.getIgicModules()) {
 			callback.getActivity().getModules().add(new Mod421ActivityModule()
 				.setDescription(mod.getKey().getDescription())
 				.setValue(0.0)
 				.setUnit(mod.getUnit())
 				.setFactor(mod.getAmount())
 				.setResult(0.0)
-//				.setSalariedStaff(mod.isSalariedStaff())
-//				.setNoSalariedStaff(mod.isNoSalariedStaff())
 				);
 		}
 		contentContainer.setWidget(getActivityData( callback ));
@@ -314,73 +200,28 @@ class Model421ATC2026Activity extends DockLayoutPanel implements HasValueChangeH
 		toolbarLabel.setText(getTitle( act ));
 
 		tem.setValue(act.getTem(),false,true);
-//		emp.setValue(act.getEmp(),false,true);
 		dia.setValue(act.getDia(),false,true);
-//		lor.setSelectedIndex(act.getLor());
-//		dana.setSelectedIndex(act.getDana());
 		
 		Arrays.stream(modules).forEach(m -> populateModule(act,m) );
-//		Arrays.stream(desks).forEach(d -> populateDesk(act,d) );
-//		Arrays.stream(ovens).forEach(o -> populateOven(act,o) );
 		
 		dev.setValue(act.getDev(),false,true);
-//		lorcaReduction.setValue(act.getLorcaReduction(),false,true);
-//		danaReduction.setValue(act.getDanaReduction(),false,true);
-//		red.setValue(act.getRed(),false,true);
-//		ind.setValue(act.getInd(),false,true);
 		ict.setValue(act.getIct(),false,true);
 		por.setValue(act.getPor(),false,true);
 		ing.setValue(act.getIng(),false,true);
 		
 		sop1.setValue(act.getSop1(),false,true);
-//		sop2.setValue(act.getSop2(),false,true);
 		sopR.setValue(act.getSopR(),false,true);
 		sop.setValue(act.getSop(),false,true);
 		res.setValue(act.getRes(),false,true);
 		pcm.setValue(act.getPcm(),false,true);
-//		dvc.setValue(act.getDvc(),false,true);
 		cmn.setValue(act.getCmn(),false,true);
 		cad.setValue(act.getCad(),false,true);
 		
-//		may19Hours.setValue(act.getMay19Hours(),false,true);
-//		men19Hours.setValue(act.getMen19Hours(),false,true);
-//		disHours.setValue(act.getDisHours(),false,true);
-//		yearHours.setValue(act.getYearHours(),false,true);
-//		ownerHours.setValue(act.getOwnerHours(),false,true);
-//		ownerDis.setValue(act.isOwnerDis(),false);
-//		spouseHours.setValue(act.getSpouseHours(),false,true);
-//		childMen18Hours.setValue(act.getChildMen18Hours(),false,true);
-		
 		// Controlar si el modelo es editable, para habilitar o no los campos editables
-		
 		tem.setEnabled(isEditable);
-//		emp.setEnabled(isEditable);
-//		lor.setEnabled(act.getDana() != 1 && isEditable);
-//		dana.setEnabled(act.getLor() != 1 && isEditable);
 		dia.setEnabled(isEditable);
-//		may19Hours.setEnabled(isEditable);
-//		men19Hours.setEnabled(isEditable);
-//		disHours.setEnabled(isEditable);
-//		yearHours.setEnabled(isEditable);
-//		ownerHours.setEnabled(isEditable);
-//		ownerDis.setEnabled(isEditable);
-//		spouseHours.setEnabled(isEditable);
-//		childMen18Hours.setEnabled(isEditable);
-//		lorcaReduction.setEnabled(act.getLor() == 2 && isEditable);
-//		danaReduction.setEnabled(act.getDana() == 2 && isEditable);
-//		sop2.setEnabled(isEditable);
 		sopR.setEnabled(isEditable);
-//		dvc.setEnabled(isEditable);
 		Arrays.stream(modules).forEach(m -> m.value.setEnabled(AonStringUtils.isNotBlank(m.description.getText()) && isEditable));
-//		Arrays.stream(desks).forEach(d -> {
-//			d.capacity.setEnabled(isEditable);
-//			d.desk.setEnabled(isEditable);
-//			d.days.setEnabled(isEditable);
-//		});
-//		Arrays.stream(ovens).forEach(o -> {
-//			o.surface.setEnabled(isEditable);
-//			o.days.setEnabled(isEditable);
-//		});
 		
 	}
 	
@@ -395,21 +236,6 @@ class Model421ATC2026Activity extends DockLayoutPanel implements HasValueChangeH
 		m.value.setEnabled(filled);
 	}
 	
-//	private void populateDesk(Mod421Activity act, Model421ATC2023ActivityDesk d) {
-//		boolean filled = act.getModules().size() > d.index;
-//		Mod421ActivityDesk desk = filled?act.getDesks().get(d.index):new Mod421ActivityDesk();
-//		d.capacity.setValue(desk.getDeskCapacity());
-//		d.desk.setValue(desk.getDesks());
-//		d.days.setValue(desk.getDeskDays());
-//	}
-	
-//	private void populateOven(Mod421Activity act, Model421ATC2025ActivityOven o) {
-//		boolean filled = act.getModules().size() > o.index;
-//		Mod421ActivityOven oven = filled?act.getOvens().get(o.index):new Mod421ActivityOven();
-//		o.surface.setValue(oven.getOvenSurface());
-//		o.days.setValue(oven.getOvenDays());
-//	}
-
 	private Widget getAdditionalDataPanel(IModel421ATCActivityCallback<Mod421Activity> callback) {
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setStyleName(AON.CSS.aonScrollArea());
@@ -428,84 +254,6 @@ class Model421ATC2026Activity extends DockLayoutPanel implements HasValueChangeH
 		tab.addRow()
 			.addCell( new Label(labelText), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth600() )
 			.addCell( tem);
-		
-//		emp.addValueChangeHandler(event ->  {
-//			if (emp.getValue() == null) emp.setValue(0,false);
-//			callback.getActivity().setEmp(emp.getValue());
-//			ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//		});
-//		tab.addRow()
-//			.addCell( new Label(AON.MSG.irpfActivityEmp()), AON.CSS.aonBorderBottom() )
-//			.addCell( emp);
-		
-		// DANA y LORCA: Ultimo periodo de 2024, se realizan el cálculo del importe de la reducción aquí y además Lorca y DANA no se pueden marcar los dos, si uno de ellos está en exclusiva
-//		if (callback.getModel().getYear() == 2024 && callback.getModel().isLastPeriod()) {
-//			
-//			lor.setEnabled(callback.getActivity().getDana() != 1 && callback.getModel().isEditable());
-//			lor.addChangeHandler(event-> {
-//				callback.getActivity().setLor(lor.getSelectedIndex());
-//				
-//				// Reducción 20% de la cuota devengada, si exclusivamente en Lorca, en caso contrario, se deja a cero y que lo cumplimente el usuario
-//				if (lor.getSelectedIndex() == 1) {
-//					callback.getActivity().setLorcaReduction(AonMathUtils.round(callback.getActivity().getDev()*20/100));
-//					// Si Lorca exclusiva, no se puede marcar DANA
-//					callback.getActivity().setDana(0);
-//					callback.getActivity().setDanaReduction(0.0);
-//					dana.setSelectedIndex(0);
-//					dana.setEnabled(false);
-//					danaReduction.setValue(0.0, false, true);
-//					danaReduction.setEnabled(false);
-//				} else {
-//					callback.getActivity().setLorcaReduction(0.0);
-//					dana.setEnabled(true);
-//				}	
-//				lorcaReduction.setValue(callback.getActivity().getLorcaReduction(), false, true);
-//				lorcaReduction.setEnabled(callback.getActivity().getLor() == 2);
-//				
-//				ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//			});
-//			tab.addRow()
-//				.addCell( new Label("Actividad realizada en Lorca"), AON.CSS.aonBorderBottom() )
-//				.addCell( lor );
-//			
-//			dana.setEnabled(callback.getActivity().getLor() != 1 && callback.getModel().isEditable());
-//			dana.addChangeHandler(event-> {
-//				callback.getActivity().setDana(dana.getSelectedIndex());
-//				
-//				// Reducción 25% de la cuota devengada, si exclusivamente en municipios DANA, en caso contrario, se deja a cero y que lo cumplimente el usuario
-//				if (dana.getSelectedIndex() == 1) {
-//					callback.getActivity().setDanaReduction(AonMathUtils.round(callback.getActivity().getDev()*25/100));
-//					// Si DANA exclusiva, no se puede marcar Lorca
-//					callback.getActivity().setLor(0);
-//					callback.getActivity().setLorcaReduction(0.0);
-//					lor.setSelectedIndex(0);
-//					lor.setEnabled(false);
-//					lorcaReduction.setValue(0.0, false, true);
-//					lorcaReduction.setEnabled(false);
-//				} else {
-//					callback.getActivity().setDanaReduction(0.0);
-//					lor.setEnabled(true);
-//				}	
-//				danaReduction.setValue(callback.getActivity().getDanaReduction(), false, true);
-//				danaReduction.setEnabled(callback.getActivity().getDana() == 2);
-//				ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//			});			
-//			tab.addRow()
-//				.addCell(new Label("Actividad realizada en municipios afectados por la DANA 2024"), AON.CSS.aonBorderBottom())
-//				.addCell(dana);
-//			
-//		} else  if (callback.getModel().getYear() <= 2024) {
-//			
-//		    // Hasta 3T de 2024 (solo Lorca)
-//			lor.addChangeHandler(event-> {
-//				callback.getActivity().setLor(lor.getSelectedIndex());
-//				ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//			});
-//			tab.addRow()
-//				.addCell( new Label(AON.MSG.irpfActivityLor()), AON.CSS.aonBorderBottom() )
-//				.addCell( lor );
-//			
-//		}
 
 		dia.addValueChangeHandler(event -> {
 			if (dia.getValue() == null) dia.setValue(0,false);
@@ -519,201 +267,7 @@ class Model421ATC2026Activity extends DockLayoutPanel implements HasValueChangeH
 		scroll.setWidget(tab);
 		return scroll;
 	}
-
-//	private Widget getModulesStaffDataPanel(IModel421ATCActivityCallback<Mod421Activity> callback) {
-//		ScrollPanel scroll = new ScrollPanel();
-//		FlowPanel flowPanel = new FlowPanel();
-//		
-//		AonDisplayTable tab0 = new AonDisplayTable();
-//		tab0.addStyleName(AON.CSS.aonWidthAll());
-//		
-//		AonDisplayTable tab = new AonDisplayTable();
-//		tab.addStyleName(AON.CSS.aonMarginLeft());
-//		tab.addStyleName(AON.CSS.aonMarginBottom());
-//		
-//		tab.addRow()
-//			.addCell( new Label("Horas anuales"), AON.CSS.aonBold(), AON.CSS.aonWidthAuto() )
-//			.addCell( new Label("") , AON.CSS.aonWidth150());
-//
-//		may19Hours.addValueChangeHandler(event -> {
-//			if (may19Hours.getValue() == null) may19Hours.setValue(0.0,false);
-//			callback.getActivity().setMay19Hours(may19Hours.getValue());
-//			calculateStaff( callback  );
-//			ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//		});
-//		tab.addRow()
-//			.addCell( new Label(AON.MSG.may19Hours()), AON.CSS.aonBorderBottom() )
-//			.addCell( may19Hours);
-//		
-//		men19Hours.addValueChangeHandler(event -> {
-//			if (men19Hours.getValue() == null) men19Hours.setValue(0.0,false);
-//			callback.getActivity().setMen19Hours(men19Hours.getValue());
-//			calculateStaff( callback  );
-//			ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//		});
-//		tab.addRow()
-//			.addCell( new Label(AON.MSG.men19Hours()), AON.CSS.aonBorderBottom() )
-//			.addCell( men19Hours);
-//
-//		disHours.addValueChangeHandler(event -> {
-//			if (disHours.getValue() == null) disHours.setValue(0.0,false);
-//			callback.getActivity().setDisHours(disHours.getValue());
-//			calculateStaff( callback  );
-//			ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//		});
-//		tab.addRow()
-//			.addCell( new Label(AON.MSG.disHours()), AON.CSS.aonBorderBottom() )
-//			.addCell( disHours);
-//
-//		yearHours.addValueChangeHandler(event -> {
-//			if (yearHours.getValue() == null) yearHours.setValue(0.0,false);
-//			callback.getActivity().setYearHours(yearHours.getValue());
-//			calculateStaff( callback  );
-//			ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//		});
-//		tab.addRow()
-//			.addCell( new Label(AON.MSG.yearHours()), AON.CSS.aonBorderBottom() )
-//			.addCell( yearHours);
-//
-//		
-//		AonDisplayTable tab1 = new AonDisplayTable();
-//		tab1.addStyleName(AON.CSS.aonMarginLeft());
-//		tab1.addStyleName(AON.CSS.aonMarginBottom());
-//		
-//		tab1.addRow()
-//			.addCell( new Label("Horas anuales"), AON.CSS.aonBold(), AON.CSS.aonWidthAuto() )
-//			.addCell( new Label("") , AON.CSS.aonWidth150());
-//		ownerHours.addValueChangeHandler(event -> {
-//			if (ownerHours.getValue() == null) ownerHours.setValue(0.0,false);
-//			callback.getActivity().setOwnerHours(ownerHours.getValue());
-//			calculateStaff( callback  );
-//			ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//		});
-//		tab1.addRow()
-//			.addCell( new Label(AON.MSG.ownerHours()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidthAuto() )
-//			.addCell( ownerHours, AON.CSS.aonWidth150());
-//
-//		ownerDis.setText(AON.MSG.ownerDis());
-//		ownerDis.addClickHandler(event -> {
-//			if (ownerDis.getValue() == null) ownerDis.setValue(false,false);
-//			callback.getActivity().setOwnerDis(ownerDis.getValue());
-//			calculateStaff( callback  );
-//			ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//		});
-//		tab1.addRow()
-//			.addCell( ownerDis, AON.CSS.aonBorderBottom() )
-//			.addCell( new Label() );
-//
-//		spouseHours.addValueChangeHandler(event -> {
-//			if (spouseHours.getValue() == null) spouseHours.setValue(0.0,false);
-//			callback.getActivity().setSpouseHours(spouseHours.getValue());
-//			calculateStaff( callback  );
-//			ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//		});
-//		tab1.addRow()
-//			.addCell( new Label(AON.MSG.spouseHours()), AON.CSS.aonBorderBottom() )
-//			.addCell( spouseHours);
-//
-//		childMen18Hours.addValueChangeHandler(event -> {
-//			if (childMen18Hours.getValue() == null) childMen18Hours.setValue(0.0,false);
-//			callback.getActivity().setChildMen18Hours(childMen18Hours.getValue());
-//			calculateStaff( callback  );
-//			ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//		});
-//		tab1.addRow()
-//			.addCell( new Label(AON.MSG.childMen18Hours()), AON.CSS.aonBorderBottom() )
-//			.addCell( childMen18Hours);
-//
-//		tab0.addRow()
-//			.addCell(AonGroupPanel.get(AON.MSG.header1Table3(), tab),AON.CSS.aonWidthHalf())
-//			.addCell(AonGroupPanel.get(AON.MSG.noSalariedStaff(), tab1),AON.CSS.aonWidthHalf());
-//		
-//		flowPanel.add(tab0);
-//		
-//		FlowPanel footer = new FlowPanel();
-//		footer.setStyleName(AON.CSS.aonTextCenter());
-//		InlineLabel unitLabel = new InlineLabel("Unidades: ");
-//		unitLabel.setStyleName(AON.CSS.aonPaddingRight());
-//		
-//		staffLabel.setStyleName(AON.CSS.aonBold());
-//		
-//		footer.add(unitLabel);
-//		footer.add(staffLabel);
-//		flowPanel.add(footer);
-//		
-//		Label msg2 = new Label(AON.MSG.actMsg2());
-//		flowPanel.add(msg2);
-//		
-//		scroll.setWidget(flowPanel);
-//		return scroll;
-//	}
-
-//	private Widget getModulesDeskDataPanel(IModel421ATCActivityCallback<Mod421Activity> callback) {
-//		ScrollPanel scroll = new ScrollPanel();
-//		FlowPanel container = new FlowPanel();
-//		
-//		FlowPanel tabContainer = new FlowPanel();
-//		AonDisplayTable tab = new AonDisplayTable();
-//		tab.addStyleName(AON.CSS.aonMarginLeft());
-//		tab.addStyleName(AON.CSS.aonMarginBottom());
-//		
-//		tab.addHeaderRow()
-//			.addCell( new Label("Capacidad"), AON.CSS.aonWidth100(), AON.CSS.aonTextRight())
-//			.addCell( new Label("Mesas"), AON.CSS.aonWidth100(), AON.CSS.aonTextRight())
-//			.addCellIf(callback.getModel().isLastPeriod(),new Label("D\u00EDas"), AON.CSS.aonWidth100(), AON.CSS.aonTextRight())
-//		;	
-//	
-//		Arrays.stream(desks).forEach(d -> paintDeskRow(callback,tab,d) );
-//
-//		tabContainer.add(tab);
-//		container.add(tabContainer);
-//		
-//		FlowPanel footer = new FlowPanel();
-//		footer.setStyleName(AON.CSS.aonPaddingLeft());
-//		footer.addStyleName(AON.CSS.aonMarginTop());
-//		InlineLabel unitLabel = new InlineLabel("Unidades: ");
-//		unitLabel.setStyleName(AON.CSS.aonPaddingRight());
-//		
-//		deskLabel.setStyleName(AON.CSS.aonBold());
-//		
-//		footer.add(unitLabel);
-//		footer.add(deskLabel);
-//		container.add(footer);
-//		
-//		fillStaffLabel( callback );
-//		fillDeskLabel( callback );
-//		
-//		scroll.setWidget(container);
-//		return scroll;
-//	}	
 		
-//	private void paintDeskRow(IModel421ATCActivityCallback<Mod421Activity> callback, AonDisplayTable tab, Model421ATC2023ActivityDesk d) {
-//		d.capacity.addValueChangeHandler(event -> {
-//			if (d.capacity.getValue() == null) d.capacity.setValue(0,false);
-//			callback.getActivity().getDesks().get(d.index).setDeskCapacity(d.capacity.getValue());
-//			calculateDesks(callback);
-//			ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//		});
-//		d.desk.addValueChangeHandler(event -> {
-//			if (d.desk.getValue() == null) d.desk.setValue(0,false);
-//			callback.getActivity().getDesks().get(d.index).setDesks(d.desk.getValue());
-//			calculateDesks(callback);
-//			ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//		});
-//		d.days.addValueChangeHandler(event -> {
-//			if (d.days.getValue() == null) d.days.setValue(0,false);
-//			callback.getActivity().getDesks().get(d.index).setDeskDays(d.days.getValue());
-//			calculateDesks(callback);
-//			ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//		});
-//
-//		tab.addRow()
-//			.addCell(d.capacity, AON.CSS.aonTextRight())
-//			.addCell(d.desk, AON.CSS.aonTextRight())
-//			.addCellIf(callback.getModel().isLastPeriod(),d.days, AON.CSS.aonTextRight())
-//			;
-//	}
-
 	private Widget getModulesPanel(IModel421ATCActivityCallback<Mod421Activity> callback) {
 		ScrollPanel scroll = new ScrollPanel();
 		
@@ -741,8 +295,6 @@ class Model421ATC2026Activity extends DockLayoutPanel implements HasValueChangeH
 			callback.getActivity().getModules().get(m.index).setValue(m.value.getValue());
 			ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
 		});
-//		m.factor.setReadOnly(true);
-//		m.result.setReadOnly(true);
 		m.factor.setEnabled(false);
 		m.result.setEnabled(false);		
 
@@ -765,101 +317,36 @@ class Model421ATC2026Activity extends DockLayoutPanel implements HasValueChangeH
 		dev.setEnabled(false);
 		tab.addRow()
 			.addCell( new Label(AON.MSG.page6C()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
-			.addCell( new AonBoxLabel("C") )
 			.addCell( dev );
 		
-		// A partir de 2025 no hay reducciones, aunque se muestra la casilla, siempre está a cero
-//		if (callback.getModel().getYear() >= 2025) {
-//			red.setEnabled(false);			
-//		}
-//		else if (callback.getModel().getYear() == 2024 && callback.getModel().isLastPeriod()) {
-//			
-//			// Lorca y DANA: Ultimo periodo del 2024
-//			
-//			lorcaReduction.setEnabled(callback.getActivity().getLor() == 2 && callback.getModel().isEditable());
-//			lorcaReduction.addValueChangeHandler(event -> {
-//				if (lorcaReduction.getValue() == null) 
-//					lorcaReduction.setValue(0.0,false);
-//				callback.getActivity().setLorcaReduction(lorcaReduction.getValue());
-//				ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//			});
-//			tab.addRow()
-//				.addCell(new Label("Reducci\u00F3n por actividad realizada en Lorca"), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
-//				.addCell(new Label(""))
-//				.addCell(lorcaReduction);			
-//			
-//			danaReduction.setEnabled(callback.getActivity().getDana() == 2 && callback.getModel().isEditable());
-//			danaReduction.addValueChangeHandler(event -> {
-//				if (danaReduction.getValue() == null) 
-//					danaReduction.setValue(0.0,false);
-//				callback.getActivity().setDanaReduction(danaReduction.getValue());
-//				ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//			});
-//			tab.addRow()
-//				.addCell(new Label("Reducci\u00F3n por actividad realizada en municipios afectados por la DANA"), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
-//				.addCell(new Label(""))
-//				.addCell(danaReduction);
-//			
-//			red.setEnabled(false);
-//		} else if (callback.getModel().getYear() <= 2024) {
-//			// Lorca: Hasta 3T de 2024
-//			red.setEnabled(callback.getActivity().getLor() != 1);
-//		}
-//		
-//		red.addValueChangeHandler(event -> {
-//			if (red.getValue() == null) red.setValue(0.0,false);
-//			callback.getActivity().setRed(red.getValue());
-//			ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//		});
-//		tab.addRow()
-//			.addCell( new Label(AON.MSG.reductions() + ((callback.getModel().getYear() <= 2024) ? " (total)" : "")), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
-//			.addCell( new AonBoxLabel("D") )
-//			.addCell( red );
-		
-		ict.setEnabled(false);
-		tab.addRow()
-			.addCell( new Label(AON.MSG.tempIndex()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
-			.addCell( new AonBoxLabel("H") )
-			.addCell( ict );
-		
 		if (!callback.getModel().isLastPeriod()) {
+			
 			// 1T/2T/3T
-//			ind.setEnabled(false);
-//			tab.addRow()
-//				.addCell( new Label(AON.MSG.tempIndex()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
-//				.addCell( new AonBoxLabel("Z") )
-//				.addCell( ind );
+			
+			ict.setEnabled(false);
+			tab.addRow()
+				.addCell( new Label(AON.MSG.tempIndex()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
+				.addCell( ict );
 
 			por.setEnabled(false);
 			tab.addRow()
 				.addCell( new Label(AON.MSG.incomePercent()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
-				.addCell( new AonBoxLabel("E") )
 				.addCell( por );
 
 			ing.setEnabled(false);
 			tab.addRow()
 				.addCell( new Label(AON.MSG.income()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
-				.addCell( new AonBoxLabel("F") )
 				.addCell( ing );
+			
 		} else {
+			
 			// 4T
+			
 			sop1.setEnabled(false);
 			sop1.addStyleName(AON.CSS.aonMarginRight());
 			tab.addRow()
 				.addCell( new Label(AON.MSG.devQuota1()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
-				.addCell( new Label("") )
 				.addCell( sop1 );
-			
-//			sop2.addStyleName(AON.CSS.aonMarginRight());
-//			sop2.addValueChangeHandler(event -> {
-//				if (sop2.getValue() == null) sop2.setValue(0.0,false);
-//				callback.getActivity().setSop2(sop2.getValue());
-//				ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//			});
-//			tab.addRow()
-//				.addCell( new Label("Compensaciones REAGP"), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
-//				.addCell( new Label("") )
-//				.addCell( sop2 );
 			
 			sopR.addStyleName(AON.CSS.aonMarginRight());
 			sopR.addValueChangeHandler(event -> {
@@ -869,53 +356,36 @@ class Model421ATC2026Activity extends DockLayoutPanel implements HasValueChangeH
 			});
 			tab.addRow()
 				.addCell( new Label(AON.MSG.sopQuotaRest()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
-				.addCell( new Label("") )
 				.addCell( sopR );
 			
 			sop.setEnabled(false);
 			tab.addRow()
 				.addCell( new Label("Total " + AON.MSG.page6D()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
-				.addCell( new AonBoxLabel("G") )
 				.addCell( sop );
 			
-//			ict.setEnabled(false);
-//			tab.addRow()
-//				.addCell( new Label(AON.MSG.tempIndex()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
-//				.addCell( new AonBoxLabel("H") )
-//				.addCell( ict );
+			ict.setEnabled(false);
+			tab.addRow()
+				.addCell( new Label(AON.MSG.tempIndex()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
+				.addCell( ict );
 
 			res.setEnabled(false);
 			tab.addRow()
 				.addCell( new Label(AON.MSG.result()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
-				.addCell( new AonBoxLabel("I") )
 				.addCell( res );
 			
 			pcm.setEnabled(false);
 			tab.addRow()
 				.addCell( new Label(AON.MSG.page6G()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
-				.addCell( new AonBoxLabel("J") )
 				.addCell( pcm );
 
-//			dvc.addValueChangeHandler(event -> {
-//				if (dvc.getValue() == null) dvc.setValue(0.0,false);
-//				callback.getActivity().setDvc(dvc.getValue());
-//				ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//			});
-//			tab.addRow()
-//				.addCell( new Label(AON.MSG.page6H()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
-//				.addCell( new AonBoxLabel("K") )
-//				.addCell( dvc );
-			
 			cmn.setEnabled(false);
 			tab.addRow()
 				.addCell( new Label(AON.MSG.page6I()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
-				.addCell( new AonBoxLabel("L") )
 				.addCell( cmn );
 
 			cad.setEnabled(false);
 			tab.addRow()
 				.addCell( new Label(AON.MSG.yearSimplifiedQuota()), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
-				.addCell( new AonBoxLabel("M") )
 				.addCell( cad );
 		}
 		
@@ -929,206 +399,8 @@ class Model421ATC2026Activity extends DockLayoutPanel implements HasValueChangeH
 		return super.addHandler(handler, ValueChangeEvent.getType());
 	}
 	
-//	private void calculateStaff(IModel421ATCActivityCallback<Mod421Activity> callback ) {
-//		int staffIndex = staffModuleIndex(callback);
-//		if (staffIndex != -1) {
-//			if ( AonMathUtils.isZero( callback.getActivity().getYearHours() )) {
-//				callback.getActivity().setYearHours( 1800 );
-//			}
-//			double v0 = AonMathUtils.floor(callback.getActivity().getMay19Hours() / callback.getActivity().getYearHours());
-//			double v1 = AonMathUtils.floor(callback.getActivity().getMen19Hours() / callback.getActivity().getYearHours() * 0.60);
-//			double v2 = AonMathUtils.floor(callback.getActivity().getDisHours() / callback.getActivity().getYearHours() * 0.40);
-//			double v3 = AonMathUtils.floor(callback.getActivity().getOwnerHours() / callback.getActivity().getYearHours());
-//			if (callback.getActivity().isOwnerDis()) {
-//				v3 = AonMathUtils.floor(callback.getActivity().getOwnerHours() / callback.getActivity().getYearHours() * 0.75);	
-//			}
-//			double v4 = AonMathUtils.floor(callback.getActivity().getSpouseHours() / callback.getActivity().getYearHours() * 0.50);
-//			double v5 = AonMathUtils.floor(callback.getActivity().getChildMen18Hours() / callback.getActivity().getYearHours() * 0.50);
-//			double value = AonMathUtils.round(AonMathUtils.floor(v0 + v1 + v2 + v3 + v4 + v5 , 2));
-//			callback.getActivity().getModules().get( staffIndex ).setValue( value );
-//			fillStaffLabel( callback );
-//		} else {
-//			AonMessageDialog.show("Aviso", "No procede");
-//		}
-//	}
-	
-//	private int staffModuleIndex( IModel421ATCActivityCallback<Mod421Activity> callback ) {
-//		for (int x = 0; x < callback.getActivity().getModules().size(); x++) {
-//			String desc = callback.getActivity().getModules().get(x).getDescription();
-//			boolean hasStaff =  AonStringUtils.equals(desc,ModuleInfo.M01.getDescription())
-//				|| AonStringUtils.equals(desc,ModuleInfo.M15.getDescription())
-//				|| AonStringUtils.equals(desc,ModuleInfo.M16.getDescription())
-//				|| AonStringUtils.equals(desc,ModuleInfo.M26.getDescription())
-//				|| AonStringUtils.equals(desc,ModuleInfo.M27.getDescription())
-//				|| AonStringUtils.equals(desc,ModuleInfo.M56.getDescription())
-//				|| AonStringUtils.equals(desc,ModuleInfo.M59.getDescription())
-//				|| AonStringUtils.equals(desc,ModuleInfo.M62.getDescription());
-//			if (hasStaff) return x;
-//		}
-//		return -1;
-//	}
-	
-//	private void calculateDesks(IModel421ATCActivityCallback<Mod421Activity> callback ) {
-//		int deskIndex = deskModuleIndex(callback);
-//		if (deskIndex == -1) {
-//			AonMessageDialog.show("Aviso", "No procede");
-//		} else {
-//			double value = 0.0;
-//			for (Mod421ActivityDesk desk : callback.getActivity().getDesks()) {
-//				if ( callback.getModel().isLastPeriod()
-//					&& AonMathUtils.isZero(desk.getDeskDays())
-//					&& (AonMathUtils.isNotZero(desk.getDeskCapacity())
-//					 || AonMathUtils.isNotZero(desk.getDesks()) ) ) {
-//						desk.setDeskDays( isLeapYear(callback.getModel().getYear()) ? 366 : 365 );
-//				}
-//				double daysFactor = (callback.getModel().isLastPeriod())
-//					?(desk.getDeskDays() / (isLeapYear(callback.getModel().getYear()) ? 366.0 : 365.0) )
-//					:1.0;
-//				double factor = AonMathUtils.round(desk.getDeskCapacity() / 4.0);
-//				double v = (desk.getDesks() * factor * daysFactor);
-//				value = value + v;
-//			}
-//			value = AonMathUtils.round(value);
-//			callback.getActivity().getModules().get( deskIndex ).setValue( value );
-//			fillDeskLabel(callback);
-//		}
-//	}
-//
-//	private int deskModuleIndex(IModel421ATCActivityCallback<Mod421Activity> callback ) {
-//		for (int x = 0; x < callback.getActivity().getModules().size(); x++) {
-//			String desc = callback.getActivity().getModules().get(x).getDescription();
-//			boolean hasDesk =  AonStringUtils.equals(desc,ModuleInfo.M04.getDescription())
-//				|| AonStringUtils.equals(desc,ModuleInfo.M51.getDescription());
-//			if (hasDesk) return x;
-//		}
-//		return -1;
-//	}
-
-//	private void fillDeskLabel(IModel421ATCActivityCallback<Mod421Activity> callback) {
-//		int deskIndex = deskModuleIndex(callback);
-//		if (deskIndex == -1) {
-//			deskLabel.setText("");
-//		} else {
-//			double v = callback.getActivity().getModules().get( deskIndex ).getValue();
-//			deskLabel.setText( AON.FMT.format(v) );
-//		}
-//		
-//	}
-//
-//	private void fillStaffLabel(IModel421ATCActivityCallback<Mod421Activity> callback) {
-//		int staffIndex = staffModuleIndex(callback);
-//		if (staffIndex == -1) {
-//			staffLabel.setText("");
-//		} else {
-//			double v = callback.getActivity().getModules().get( staffIndex ).getValue();
-//			staffLabel.setText( AON.FMT.format(v) );
-//		}
-//		
-//	}
-	
     public static boolean isLeapYear(int year) {    	
         return ((year & 3) == 0) && ((year % 100) != 0 || (year % 400) == 0);
     }
-    
-//	private int ovenModuleIndex(IModel421ATCActivityCallback<Mod421Activity> callback) {
-//		for (int x = 0; x < callback.getActivity().getModules().size(); x++) {
-//			String desc = callback.getActivity().getModules().get(x).getDescription();
-//			boolean hasOven =  AonStringUtils.equals(desc,ModuleInfo.M14.getDescription());
-//			if (hasOven) 
-//				return x;
-//		}
-//		return -1;
-//	}
-	
-//	private Widget getModulesOvenDataPanel(IModel421ATCActivityCallback<Mod421Activity> callback) {
-//		ScrollPanel scroll = new ScrollPanel();
-//		FlowPanel container = new FlowPanel();
-//		
-//		FlowPanel tabContainer = new FlowPanel();
-//		AonDisplayTable tab = new AonDisplayTable();
-//		tab.addStyleName(AON.CSS.aonMarginLeft());
-//		tab.addStyleName(AON.CSS.aonMarginBottom());
-//		
-//		tab.addHeaderRow()
-//			.addCell(new Label("Superficie (dm2)"), AON.CSS.aonWidth100(), AON.CSS.aonTextRight())
-//			.addCell(new Label("D\u00EDas"), AON.CSS.aonWidth100(), AON.CSS.aonTextRight())
-//		;	
-//	
-//		Arrays.stream(ovens).forEach(o -> paintOvenRow(callback, tab, o) );
-//
-//		tabContainer.add(tab);
-//		container.add(tabContainer);
-//		
-//		FlowPanel footer = new FlowPanel();
-//		footer.setStyleName(AON.CSS.aonPaddingLeft());
-//		footer.addStyleName(AON.CSS.aonMarginTop());
-//		InlineLabel unitLabel = new InlineLabel("Unidades: ");
-//		unitLabel.setStyleName(AON.CSS.aonPaddingRight());
-//		
-//		ovenLabel.setStyleName(AON.CSS.aonBold());
-//		
-//		footer.add(unitLabel);
-//		footer.add(ovenLabel);
-//		container.add(footer);
-//		
-//		fillStaffLabel( callback );
-//		fillOvenLabel( callback );
-//		
-//		scroll.setWidget(container);
-//		return scroll;
-//	}
-	
-//	private void paintOvenRow(IModel421ATCActivityCallback<Mod421Activity> callback, AonDisplayTable tab, Model421ATC2025ActivityOven ov) {
-//		ov.surface.addValueChangeHandler(event -> {
-//			if (ov.surface.getValue() == null) ov.surface.setValue(0,false);
-//			callback.getActivity().getOvens().get(ov.index).setOvenSurface(ov.surface.getValue());
-//			calculateOvens(callback);
-//			ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//		});
-//		ov.days.addValueChangeHandler(event -> {
-//			if (ov.days.getValue() == null) ov.days.setValue(0,false);
-//			callback.getActivity().getOvens().get(ov.index).setOvenDays(ov.days.getValue());
-//			calculateOvens(callback);
-//			ValueChangeEvent.<Mod421Activity>fire(Model421ATC2026Activity.this, callback.getActivity());
-//		});
-//
-//		tab.addRow()
-//			.addCell(ov.surface, AON.CSS.aonTextRight())
-//			.addCell(ov.days, AON.CSS.aonTextRight())
-//			;
-//	}
-	
-//	private void calculateOvens(IModel421ATCActivityCallback<Mod421Activity> callback) {
-//		int ovenIndex = ovenModuleIndex(callback);
-//		if (ovenIndex == -1) {
-//			AonMessageDialog.show("Aviso", "No procede");
-//		} else {
-//			double value = 0.0;
-//			for (Mod421ActivityOven oven : callback.getActivity().getOvens()) {
-//				if (callback.getModel().isLastPeriod() && AonMathUtils.isZero(oven.getOvenDays()) && AonMathUtils.isNotZero(oven.getOvenSurface())) {
-//					oven.setOvenDays(isLeapYear(callback.getModel().getYear()) ? 366 : 365);
-//				}
-//				// FORMULA: SUPERFICIE/100 * DIAS/DIAS_AÑO (dos decimales, truncando)
-//				double daysFactor = (oven.getOvenDays() / (isLeapYear(callback.getModel().getYear()) ? 366.0 : 365.0));
-//				double factor = oven.getOvenSurface() / 100.0;
-//				double v = AonMathUtils.floor(factor * daysFactor); 
-//				value = value + v;
-//			}
-//			value = AonMathUtils.round(value);
-//			callback.getActivity().getModules().get(ovenIndex).setValue(value);			
-//			fillOvenLabel(callback);
-//		}
-//	}
-	
-//	private void fillOvenLabel(IModel421ATCActivityCallback<Mod421Activity> callback) {
-//		int ovenIndex = ovenModuleIndex(callback);
-//		if (ovenIndex == -1) {
-//			ovenLabel.setText("");
-//		} else {
-//			double v = callback.getActivity().getModules().get( ovenIndex ).getValue();
-//			ovenLabel.setText( AON.FMT.format(v) );
-//		}
-//		
-//	}
 	
 }

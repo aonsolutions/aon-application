@@ -88,60 +88,27 @@ public class ModulesCanarias2026 {
 		
 		private String epigraph;
 		private String description;
-//		private Module[] irpfModules;
-		private Module[] vatModules;
-		private double vatPorc;
-		private double porcMin;
-//		private double limPers; 
-//		private double limExceso;
-		private int specialEpigraph; // Indicador auxiliar de actividad para determinados epígrafes
+		private Module[] igicModules; 
+		private double porcIng;       // Porcentaje de ingreso a cuenta
+		private double porcMin;       // Porcentaje de cuota mínima
+		private int specialEpigraph;  // Indicador auxiliar de actividad para determinados epígrafes (16919 y 1722)
 		
-//		private EpigraphCanarias(String epigraph, String description, double vatPorc, double porcMin, double limPers, Module[] ivaModules) {
-//			this.epigraph = epigraph;
-//			this.description = description;
-//			this.vatPorc = vatPorc; 
-//			this.porcMin=porcMin;
-//			this.limPers=limPers;
-////			this.limExceso=limExceso;
-////			this.irpfModules=irpfModules;
-//			this.vatModules=ivaModules;
-//			this.specialEpigraph=0;
-//		}
-//		
-//		private EpigraphCanarias(String epigraph, String description, double vatPorc, double porcMin, double limPers, Module[] ivaModules, int specialEpigraph) {
-//			this.epigraph = epigraph;
-//			this.description = description;
-//			this.vatPorc = vatPorc; 
-//			this.porcMin=porcMin;
-//			this.limPers=limPers;
-////			this.limExceso=limExceso;
-////			this.irpfModules=irpfModules;
-//			this.vatModules=ivaModules;
-//			this.specialEpigraph=specialEpigraph;
-//		}
-		
-		private EpigraphCanarias(String epigraph, String description, double vatPorc, double porcMin, Module[] ivaModules) {
+		private EpigraphCanarias(String epigraph, String description, double porcIng, double porcMin, Module[] igicModules) {
 			this.epigraph = epigraph;
 			this.description = description;
-			this.vatPorc = vatPorc; 
-			this.porcMin=porcMin;
-//			this.limPers=limPers;
-//			this.limExceso=limExceso;
-//			this.irpfModules=irpfModules;
-			this.vatModules=ivaModules;
-			this.specialEpigraph=0;
+			this.porcIng = porcIng; 
+			this.porcMin = porcMin;
+			this.igicModules = igicModules;
+			this.specialEpigraph = 0;
 		}
 		
-		private EpigraphCanarias(String epigraph, String description, double vatPorc, double porcMin, Module[] ivaModules, int specialEpigraph) {
+		private EpigraphCanarias(String epigraph, String description, double porcIng, double porcMin, Module[] igicModules, int specialEpigraph) {
 			this.epigraph = epigraph;
 			this.description = description;
-			this.vatPorc = vatPorc; 
-			this.porcMin=porcMin;
-//			this.limPers=limPers;
-//			this.limExceso=limExceso;
-//			this.irpfModules=irpfModules;
-			this.vatModules=ivaModules;
-			this.specialEpigraph=specialEpigraph;
+			this.porcIng = porcIng; 
+			this.porcMin = porcMin;
+			this.igicModules = igicModules;
+			this.specialEpigraph = specialEpigraph;
 		}
 		
 		public String getEpigraph() {
@@ -150,32 +117,16 @@ public class ModulesCanarias2026 {
 		public String getDescription() {
 			return description;
 		}
-		public double getVatPorc() {
-			return vatPorc;
+		public double getPorcIng() {
+			return porcIng;
 		}
 		public double getPorcMin() {
 			return porcMin;
 		}
-		
-//		public double getLimPers() {
-//			return limPers;
-//		}
-		
-//		public double getLimExceso() {
-//			return limExceso;
-//		}
-//		public Module[] getIRPFModules() {
-//			return irpfModules;
-//		}
-		public Module[] getVATModules() {
-			return vatModules;
+		public Module[] getIgicModules() {
+			return igicModules;
 		}
-//		public boolean hasVATModules() {
-//			return vatModules != null;
-//		}
-//		public boolean hasIRPFModules() {
-//			return irpfModules != null;
-//		}
+		
 		@Override
 		public int getSpecialEpigraph() {
 			return specialEpigraph;
@@ -190,7 +141,6 @@ public class ModulesCanarias2026 {
 			return null;
 		}
 
-		// FALTA - PARA ESTOS EPIGRAFES VER EXACTAMENTE QUE VALORES TIENE EL CAMPO SPECIALEPIGRAPH PARA CADA UNO DE ELLOS atributo SEC en el esquema XML
 		public static int getSpecialEpigraph(String code, String description) {
 			// Epígrafes que tienen indicador auxiliar, porque llevan el mismo código de epígrafe
 			if (AonStringUtils.equals(code,"16919")) {
@@ -211,93 +161,5 @@ public class ModulesCanarias2026 {
 		}
 		
 	}
-	
-//	public static void main(String[] args) {
-//		
-//		// Leer un fichero de texto con los epígrafes y sus módulos, para generar el código de esta clase.
-//		
-//		String ruta = "c:\\tmp\\ResModulos.txt";
-//        try {
-//            // Lee todas las líneas y las guarda en una lista
-//            List<String> lineas = Files.readAllLines(Paths.get(ruta), StandardCharsets.ISO_8859_1);
-//            
-//            for (String linea : lineas) {
-//                
-//                String epigraph = linea.substring(0, 5).trim();
-//                String description = linea.substring(24, 549).trim();
-//                int specialEpigraph = EpigraphCanarias.getSpecialEpigraph(epigraph, description);
-//                
-//				EpigraphCanarias epigraphCanarias = EpigraphCanarias.getEpigraph(epigraph, specialEpigraph);
-//				if (epigraphCanarias == null) {
-//					System.err.println(epigraph + " - " + specialEpigraph + " - " + "ERROR: EPIGRAFE NO ENCONTRADO");
-//				} else {
-//					// Descripción del epígrafe
-//					if (!description.endsWith(".")) {
-//						description = description + ".";
-//					}
-//					
-//					if (!AonStringUtils.equalsIgnoreCase(description, epigraphCanarias.getDescription().trim())) {
-//						System.err.println(epigraph + " - " + specialEpigraph + " - " + description + " - " + epigraphCanarias.getDescription());
-//					} else {
-//						System.out.println(epigraph + " - " + specialEpigraph + " - " + description + " - " + epigraphCanarias.getDescription());
-//					}
-//										
-//	                // Porcentaje cuota trimestral
-//	                String vatPorcStr = linea.substring(1650, 1655).trim();
-//	                if (epigraph.startsWith("0")) {
-//	                	vatPorcStr = linea.substring(1640, 1645).trim(); // Agrarios	
-//	                }
-//	                double vatPorc = Double.parseDouble(vatPorcStr) / 100.0;
-//	                
-//					if (epigraphCanarias.getVatPorc() != vatPorc) {
-//						System.err.println(epigraph + " - " + specialEpigraph + " - CUOTA TRIM - " + vatPorc + " - " + epigraphCanarias.getVatPorc());
-//					} else {
-//						System.out.println(epigraph + " - " + specialEpigraph + " - CUOTA TRIM - " + vatPorc + " - " + epigraphCanarias.getVatPorc());
-//					}
-//					
-//	                // Porcentaje cuota mínima
-//	                vatPorcStr = linea.substring(1645, 1650).trim();
-//	                double vatPorcMin = Double.parseDouble(vatPorcStr) / 100.0;
-//	                
-//					if (epigraphCanarias.getPorcMin() != vatPorcMin) {
-//						System.err.println(epigraph + " - " + specialEpigraph + " - CUOTA MIN - " + vatPorcMin + " - " + epigraphCanarias.getPorcMin());
-//					} else {
-//						System.out.println(epigraph + " - " + specialEpigraph + " - CUOTA MIN - " + vatPorcMin + " - " + epigraphCanarias.getPorcMin());
-//					}
-//
-//					// Indice cuota por operaciones corrientes
-//	                vatPorcStr = linea.substring(1635, 1640).trim();
-//	                double indiceCuota = Double.parseDouble(vatPorcStr) / 1000.0;
-//	                
-//					if (epigraph.startsWith("0") && epigraphCanarias.getVATModules()[0].getAmount() != indiceCuota) {
-//						System.err.println(epigraph + " - " + specialEpigraph + " - INDICE CUOTA OP. CORR. - " + indiceCuota + " - " + (epigraph.startsWith("0") ? epigraphCanarias.getVATModules()[0].getAmount() : "0.0"));
-//					} else {
-//						System.out.println(epigraph + " - " + specialEpigraph + " - INDICE CUOTA OP. CORR. - " + indiceCuota + " - " + (epigraph.startsWith("0") ? epigraphCanarias.getVATModules()[0].getAmount() : "0.0"));
-//					}
-//
-//					// Modulos
-//					for (int modulo=0; modulo<7; modulo++) {
-//		                int sumar = modulo * 116;
-//		                String descripcionModulo = linea.substring(1658+sumar, 1733+sumar).trim();
-//		                String unidadModulo = linea.substring(1736+sumar, 1761+sumar).trim();
-//		                vatPorcStr = linea.substring(1761+sumar, 1771+sumar).trim();
-//		                double cuotaModulo = Double.parseDouble(vatPorcStr) / 10000.0;
-//		                
-//		                System.out.println(epigraph + " - " + specialEpigraph + " - " + descripcionModulo + " - " + (modulo < epigraphCanarias.getVATModules().length ? epigraphCanarias.getVATModules()[modulo].getKey().getDescription() : ""));
-//		                System.out.println(epigraph + " - " + specialEpigraph + " - " + unidadModulo + " - " + (modulo < epigraphCanarias.getVATModules().length ? epigraphCanarias.getVATModules()[modulo].getUnit() : ""));
-//		                
-//						if (!epigraph.startsWith("0") && modulo < epigraphCanarias.getVATModules().length && epigraphCanarias.getVATModules()[modulo].getAmount() != cuotaModulo) {
-//							System.err.println(epigraph + " - " + specialEpigraph + " - " + cuotaModulo + " - " + (epigraph.startsWith("0") || modulo >= epigraphCanarias.getVATModules().length ? "0.0" : epigraphCanarias.getVATModules()[modulo].getAmount()));
-//						} else {
-//							System.out.println(epigraph + " - " + specialEpigraph + " - " + cuotaModulo + " - " + (epigraph.startsWith("0") || modulo >= epigraphCanarias.getVATModules().length ? "0.0" : epigraphCanarias.getVATModules()[modulo].getAmount()));
-//						}
-//					}
-//				}
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//	}
 	
 }
