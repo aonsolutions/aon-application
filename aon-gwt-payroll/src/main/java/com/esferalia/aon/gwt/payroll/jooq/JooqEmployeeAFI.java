@@ -1265,10 +1265,12 @@ public class JooqEmployeeAFI {
 		
 		Integer domainId = domainRecords.get(0).get(DOMAIN.ID);
 		
-		Record enterpriseDataRecord = dslContext.select().from(ENTERPRISE_DATA)
+		Result<Record> enterpriseDataRecords = dslContext.select().from(ENTERPRISE_DATA)
 				.where(ENTERPRISE_DATA.NAME.eq("PAY_ss_pension_plan_mutual_PAY"))
 				.and(ENTERPRISE_DATA.DOMAIN.eq(domainId))
-				.fetchOne();
+				.fetch();
+		
+		Record enterpriseDataRecord = enterpriseDataRecords.get(0);
 		
 		return null != enterpriseDataRecord && AonStringUtils.isNotBlank(enterpriseDataRecord.get(ENTERPRISE_DATA.EXPRESSION));
 		

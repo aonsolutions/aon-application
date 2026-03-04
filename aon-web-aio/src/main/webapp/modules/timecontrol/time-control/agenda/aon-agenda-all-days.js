@@ -577,18 +577,15 @@ export class AonAgendaAllDays extends AonElement {
 
 			const dayContractFestive = this._festivesContract.get(day.key);
 
-			// Festivo → 8 horas esperadas
-			if (dayContractFestive) {
-				totalHours = timeHourShort(expectedTime);
-				workedTime = expectedTime;
-			} else if (dayTypeContract && dayTypeContract.source === 'HOLIDAYS') {
+			// Vacaciones, permisos retribuidos, ITs (habra que filtrar dayTypeContract.source si queremos quitar alguno )
+			if (dayTypeContract && dayTypeContract.source) {
 				// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
 				if (this._workingDays && this._workingDays[dayOfWeek] === 0) {
 					totalHours = timeHourShort(expectedTime);
 					workedTime = expectedTime;
 				} else {
-					totalHours = 0;
-					workedTime = 0;
+					totalHours = timeHourShort(expectedTime);
+					workedTime = expectedTime;
 				}
 			}
 
@@ -610,31 +607,31 @@ export class AonAgendaAllDays extends AonElement {
 			// Formatear nombre del día (3 primeras letras + punto)
 			const dayNameFull = AonDateUtils.dayName(day.date);
 			const dayNameShort = dayNameFull.substring(0, 3) + '.';
-			
-			let dayHtml = 
-					`<div class="day-header">`;
-					
-			dayHtml += 
-					      `<div class="day-header-left">
+
+			let dayHtml =
+				`<div class="day-header">`;
+
+			dayHtml +=
+				`<div class="day-header-left">
 				            <span class="day-name">${dayNameShort}</span>
 				            <span class="day-number ${dayFestiveHtml.length > 0 ? 'festive' : (dayTypeContract ? dayTypeContract.source.toLowerCase() : '')}">${day.date.getDate()}</span>
 				            ${dayFestiveHtml}
 				          </div>`;
-				      
-			if(today >= dayDate || (workedTime > 0 && this._workingDays[dayOfWeek] === 0) )
-				dayHtml += 
-						 `<div class="day-header-right">
-					        <span class="total-hours">${totalHours} h <span class="day-diff-hours">( ${diffHours} h )</span></span>
+
+			if ((today >= dayDate && workedTime > 0) || (workedTime > 0 && this._workingDays[dayOfWeek] === 0))
+				dayHtml +=
+					`<div class="day-header-right">
+					        <span class="total-hours">${totalHours} h / <span class="day-diff-hours ${diffHours.includes('-') ? 'negative' : 'positive'}">${diffHours} h</span></span>
 					      </div>`;
-			
-			dayHtml +=	
-					`</div>
+
+			dayHtml +=
+				`</div>
 			        <div class="day-content">
 			          ${daysTypeHtml}
 			        </div>`;
-			
+
 			dayEl.innerHTML = dayHtml;
-			
+
 			el.appendChild(dayEl);
 		});
 
@@ -646,7 +643,7 @@ export class AonAgendaAllDays extends AonElement {
 		const absTime = Math.abs(time);
 
 		let formatted = timeHourShort(absTime);
-		return `${sign} ${formatted}`;
+		return `${sign}${formatted}`;
 	};
 
 	/* ---------------- RENDER EVENTS ---------------- */
@@ -792,9 +789,9 @@ export class AonAgendaAllDays extends AonElement {
 		while (i < events.length) {
 			const currentEvent = events[i];
 
-			// Solo procesar eventos que son 'in' o 'pause'
+			/* -------------------- CASO: IN -------------------- */
 			if (currentEvent.status === 'in') {
-				// Verificar si hay múltiples 'in' seguidos, quedarnos con el más tardío
+
 				let startIndex = i;
 				let nextIndex = i + 1;
 
@@ -805,7 +802,6 @@ export class AonAgendaAllDays extends AonElement {
 
 				const startEvent = events[startIndex];
 
-				// Buscar el siguiente evento que sea 'out' o 'pause'
 				let endIndex = startIndex + 1;
 				while (endIndex < events.length && events[endIndex].status === 'in') {
 					endIndex++;
@@ -814,49 +810,37 @@ export class AonAgendaAllDays extends AonElement {
 				if (endIndex < events.length) {
 					const endEvent = events[endIndex];
 
-					// Crear tramo in → pause/out
-					tramos.push({
-						start: startEvent,
-						end: endEvent
-					});
+					tramos.push({ start: startEvent, end: endEvent });
 
-					// Si el endEvent es 'pause', crear otro tramo desde 'pause' hasta el siguiente evento
 					if (endEvent.status === 'pause') {
-						let afterPauseIndex = endIndex + 1;
-						if (afterPauseIndex < events.length) {
-							// Buscar el siguiente out o in
-							const afterPauseEvent = events[afterPauseIndex];
+						const afterPauseIndex = endIndex + 1;
 
+						if (afterPauseIndex < events.length) {
 							tramos.push({
 								start: endEvent,
-								end: afterPauseEvent
+								end: events[afterPauseIndex]
 							});
-
-							i = afterPauseIndex + 1;
-						} else {
-							// Pause sin evento siguiente
-							i = endIndex + 1;
 						}
+
+						i = endIndex + 1;
 					} else {
-						// Era un 'out', continuar desde ahí
 						i = endIndex + 1;
 					}
+
 				} else {
-					// No hay más eventos → cerrar con momento actual
+					// Último evento = IN → tramo current
 					tramos.push({
-						start: {
-							...startEvent,
-							status: 'current'
-						},
+						start: { ...startEvent, status: 'current' },
 						end: this.createNowEndEvent()
 					});
 
 					i = startIndex + 1;
 				}
 			}
-			// Si es 'pause' sin un 'in' previo en este tramo
+			/* -------------------- CASO: PAUSE -------------------- */
 			else if (currentEvent.status === 'pause') {
-				let nextIndex = i + 1;
+				const nextIndex = i + 1;
+
 				if (nextIndex < events.length) {
 					tramos.push({
 						start: currentEvent,
@@ -864,22 +848,33 @@ export class AonAgendaAllDays extends AonElement {
 					});
 					i = nextIndex + 1;
 				} else {
-					// Pause sin evento siguiente
 					i++;
 				}
 			}
-			// Si es 'out', simplemente avanzar (no nos interesa)
+			/* -------------------- CASO: OUT -------------------- */
+			else if (currentEvent.status === 'out') {
+				i++;
+			}
 			else {
 				i++;
 			}
 		}
 
+		/* -------------------- TRAMO FINAL CURRENT -------------------- */
+		const last = events[events.length - 1];
+
+		// SOLO si el último es PAUSE (no IN)
+		if (last.status === 'pause') {
+			tramos.push({
+				start: { ...last, status: 'current' },
+				end: this.createNowEndEvent()
+			});
+		}
 		return tramos;
 	}
 
 	createNowEndEvent() {
 		const now = Date.now();
-
 		return {
 			status: 'current',
 			date: now,
@@ -887,6 +882,7 @@ export class AonAgendaAllDays extends AonElement {
 			cause: 'DEFAULT'
 		};
 	}
+
 
 	/* ---------------- EVENT LISTENERS ---------------- */
 	attachEventListeners() {
@@ -1082,7 +1078,7 @@ export class AonAgendaAllDays extends AonElement {
 
 		// Calcular horas totales del mes (trabajadas / esperadas)
 		const monthHours = this.calculateMonthHours(centerWeek.start);
-		this.headerMonthHours.textContent = `Mes: ${monthHours}`;
+		this.headerMonthHours.innerHTML = `Mes: ${monthHours}`;
 
 		// Actualizar rango: del día X al día Y
 		const firstDay = centerWeek.days[0].date;
@@ -1098,65 +1094,12 @@ export class AonAgendaAllDays extends AonElement {
 
 		// Calcular horas totales de la semana (trabajadas / esperadas)
 		const weekHours = this.calculateWeekHours(centerWeek);
-		this.headerWeekHours.textContent = `Sem.: ${weekHours}`;
+		this.headerWeekHours.innerHTML = `Sem.: ${weekHours}`;
 	}
-
-	/*
-	updateHeader() {
-		if (!this.weekHeight || this.weekHeight === 0) {
-			this.measureWeekHeight();
-		}
-
-		const scrollTop = this.scrollEl.scrollTop;
-		const scrollMiddle = scrollTop + (this.scrollEl.clientHeight / 2);
-
-		// Encontrar la semana visible más cercana al centro
-		let centerWeek = null;
-		let minDistance = Infinity;
-
-		this.visibleWeeks.forEach((data, offset) => {
-			const weekTop = data.element.offsetTop;
-			const weekMiddle = weekTop + (data.element.offsetHeight / 2);
-			const distance = Math.abs(weekMiddle - scrollMiddle);
-
-			if (distance < minDistance) {
-				minDistance = distance;
-				centerWeek = data.week;
-			}
-		});
-
-		if (!centerWeek) return;
-
-		// Actualizar mes con año (últimos 2 dígitos)
-		const monthName = AonDateUtils.monthName(centerWeek.start);
-		const year = centerWeek.start.getFullYear().toString().slice(-2);
-		this.headerMonth.textContent = `${monthName.toUpperCase()} ${year}`;
-
-		// Calcular horas totales del mes
-		const monthHours = this.calculateMonthHours(centerWeek.start);
-		this.headerMonthHours.textContent = `Mes: ${monthHours} h`;
-
-		// Actualizar rango: del día X al día Y
-		const firstDay = centerWeek.days[0].date;
-		const lastDay = centerWeek.days[6].date;
-
-		const firstDayNum = String(firstDay.getDate()).padStart(2, '0');
-		const lastDayNum = String(lastDay.getDate()).padStart(2, '0');
-
-		const firstDayMonthNum = String(firstDay.getMonth() + 1).padStart(2, '0');
-		const lastDayMontNum = String(lastDay.getMonth() + 1).padStart(2, '0');
-
-		this.headerRange.textContent = `${firstDayNum}/${firstDayMonthNum} – ${lastDayNum}/${lastDayMontNum}`;
-
-		// Calcular horas totales de la semana
-		const weekHours = this.calculateWeekHours(centerWeek);
-		this.headerWeekHours.textContent = `Sem.: ${weekHours} h`;
-	}
-	*/
 
 	/* ---------------- CALCULATE HOURS ---------------- */
 	calculateMonthHours(centerDate) {
-		if (!centerDate) return "0:00 / 0:00 h";
+		if (!centerDate) return `0:00 h / <span class="day-diff-hours positive">+ 0:00 h</span>`;
 
 		const year = centerDate.getFullYear();
 		const month = centerDate.getMonth();
@@ -1185,14 +1128,9 @@ export class AonAgendaAllDays extends AonElement {
 			let expectedTime = hoursForDay * 60 * 60 * 1000;
 
 			const dayTypeContract = this._daysTypeContract.get(dateKey);
-			const dayContractFestive = this._festivesContract.get(dateKey);
 
-			// Festivo → 0 horas esperadas
-			if (dayContractFestive) {
-				//expectedTime = 0;
-				workedTime = hoursForDay * 60 * 60 * 1000;
-			} else if (dayTypeContract && dayTypeContract.source === 'HOLIDAYS') {
-				// NUEVA REGLA:
+			// Vacaciones, permisos retribuidos, ITs (habra que filtrar dayTypeContract.source si queremos quitar alguno )
+			if (dayTypeContract && dayTypeContract.source) {
 				// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
 				if (this._workingDays && this._workingDays[dayOfWeek] !== 0) {
 					//expectedTime = hoursForDay * 60 * 60 * 1000;
@@ -1207,15 +1145,18 @@ export class AonAgendaAllDays extends AonElement {
 			totalExpected += expectedTime;
 		}
 
-		const workedStr = timeHour(totalWorked);
-		const expectedStr = timeHour(totalExpected);
+		const workedStr = timeHourShort(totalWorked);
 
-		return `${workedStr} / ${expectedStr} h`;
+		// Diferencia en minutos
+		const diffTime = totalWorked - totalExpected;
+		const diffHours = this.formatDiffTime(diffTime);
+
+		return `${workedStr} h / <span class="day-diff-hours ${diffHours.includes('-') ? 'negative' : 'positive'}">${diffHours} h</span>`;
 	}
 
 	calculateWeekHours(week) {
 		if (!week || !week.days || week.days.length === 0) {
-			return "0h 0m / 0h 0m";
+			return `0:00 h <span class="day-diff-hours">( + 0:00 h )</span>`;
 		}
 
 		let totalWorked = 0;
@@ -1239,13 +1180,9 @@ export class AonAgendaAllDays extends AonElement {
 			let expectedTime = hoursForDay * 60 * 60 * 1000;
 
 			const dayTypeContract = this._daysTypeContract.get(dateKey);
-			const dayContractFestive = this._festivesContract.get(dateKey);
 
-			// Festivo → 0 horas esperadas
-			if (dayContractFestive) {
-				//expectedTime = 0;
-				workedTime = hoursForDay * 60 * 60 * 1000;
-			} else if (dayTypeContract && dayTypeContract.source === 'HOLIDAYS') {
+			// Vacaciones, permisos retribuidos, ITs (habra que filtrar dayTypeContract.source si queremos quitar alguno )
+			if (dayTypeContract && dayTypeContract.source) {
 				// NUEVA REGLA:
 				// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
 				if (this._workingDays && this._workingDays[dayOfWeek] !== 0) {
@@ -1261,10 +1198,13 @@ export class AonAgendaAllDays extends AonElement {
 			totalExpected += expectedTime;
 		});
 
-		const workedStr = timeHour(totalWorked);
-		const expectedStr = timeHour(totalExpected);
+		const workedStr = timeHourShort(totalWorked);
 
-		return `${workedStr} / ${expectedStr} h`;
+		// Diferencia en minutos
+		const diffTime = totalWorked - totalExpected;
+		const diffHours = this.formatDiffTime(diffTime);
+
+		return `${workedStr} h / <span class="day-diff-hours ${diffHours.includes('-') ? 'negative' : 'positive'}">${diffHours} h</span>`;
 	}
 
 	/* ---------------- PUBLIC API ---------------- */

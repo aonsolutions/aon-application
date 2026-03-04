@@ -1,6 +1,7 @@
 import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
 import * as GWT from "../../gwt/gwt.js";
 import * as JSF from "../aon-jsf-app.js";
+import * as UA from "../../services/userAgentService.js";
 import { AonInvoiceIssued } from "./aon-invoice-issued.js";
 import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
 
@@ -388,12 +389,17 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
   }
 
   // MAIN OPTION
+  export const getMainIncomesList = () => {
+      return UA.isMobile()
+        ? [INVOICE_ISSUED_BETA, PROFORMA_INVOICES, OTHER_INCOMES]
+        : [INVOICE_ISSUED_BETA, PROFORMA_INVOICES, OTHER_INCOMES, OFFERS ]
+  }
 
   export const MAIN_INCOMES = {
     id: CONSTANT.INCOMES.initCap(),
     title: MSG.INCOMES,
     name: MSG.INCOMES,
-    options: [INVOICE_ISSUED_BETA, PROFORMA_INVOICES, OTHER_INCOMES, OFFERS ],
+    options: getMainIncomesList(),
     button: {
       id: CONSTANT.INCOMES.initCap() + 'Info',
       title: MSG.INFO_INCOMES,
@@ -740,15 +746,19 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     fn: () => jsfOfferLoad()
   }
 
+  export const getFutureMainIncomesList = () => {
+    return UA.isMobile()
+      ? [FUTURE_INVOICE_ISSUED_BETA, FUTURE_PROFORMA_INVOICES, FUTURE_OTHER_INCOMES]
+      : [FUTURE_INVOICE_ISSUED_BETA, FUTURE_PROFORMA_INVOICES, FUTURE_OTHER_INCOMES, FUTURE_OFFERS ]
+  }
 
   export const FUTURE_MAIN_INCOMES_LIST = {
     id: 'FutureIncomesList',
     title: MSG.LIST,
     name: MSG.LIST,
     opened: true,
-    options: [FUTURE_INVOICE_ISSUED_BETA, FUTURE_PROFORMA_INVOICES, FUTURE_OTHER_INCOMES, FUTURE_OFFERS ]
+    options: getFutureMainIncomesList()
   }
-
 
   export const FUTURE_INVOICE_RECEIVED_BETA = {
     id: 'Future' + CONSTANT.INVOICE_RECEIVED.initCap(),

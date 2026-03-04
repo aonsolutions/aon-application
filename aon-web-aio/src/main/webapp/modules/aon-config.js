@@ -3,7 +3,6 @@ import { MSG, CONSTANT, CSS, EVENT, TAG } from "../environments/environments.js"
 import { AonSwitch } from "../components/aon-switch.js";
 import { AonCard } from '../components/aon-card.js';
 import { Language } from '../models/Language.js';
-import { loadTheme } from '..';
 import * as LS from '../services/localStorageService.js';
 import { AonConfiguration } from './configuration/aon-configuration.js';
 
