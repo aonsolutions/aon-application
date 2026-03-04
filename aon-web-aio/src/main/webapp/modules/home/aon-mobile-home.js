@@ -15,7 +15,7 @@ import { isEmptyObject, sortBy, waitEl } from '../../services/utils.js';
 import { AonApps } from '../aon-apps.js';
 import { getWorkgroups } from '../../services/workgroupService.js';
 import { AonTimecontrol } from '../timecontrol/aon-timecontrol.js';
-import { AonAgendaAllDays } from '../timecontrol/time-control/agenda/aon-agenda-all-days.js';
+import { AonCalendarContainer } from '../timecontrol/time-control/agenda/aon-calendar-container.js';
 
 export class AonMobileHome extends AonElement {
 
@@ -247,8 +247,8 @@ export class AonMobileHome extends AonElement {
 		li.addEventListener('click', (ev) => {
 			ev.stopPropagation();
 			
-			let aonAgenda = new AonAgendaAllDays();
-			this.rootPanel(aonAgenda);
+			let aonAgendaContainer = new AonCalendarContainer();
+			this.rootPanel(aonAgendaContainer);
 			
 			/*
 			let timeControl = new AonTimecontrol();
