@@ -1106,6 +1106,8 @@ public class SalaryDraft extends ResizeComposite
 						return "BAJA_PERIODO_PRUEBA";
 					case DEATH_OF_EMPLOYEE:
 						return "FALLECIMIENTO_TRABAJADOR";
+					case VOLUNTARY_END:
+						return "BAJA_VOLUNTARIA";
 					}
 					return null;
 				}
@@ -8453,6 +8455,9 @@ public class SalaryDraft extends ResizeComposite
 			return Dismissal.CONDITIONS_CHANGE.getDescription();
 		else if ( AonStringUtils.equals("JUBILACION",obj.toString()))
 			return Dismissal.RETIREMENT.getDescription();
+		else if ( AonStringUtils.equals("BAJA_VOLUNTARIA",obj.toString()))
+			return Dismissal.VOLUNTARY_END.getDescription();
+
 		else if ( AonStringUtils.equals(Dismissal.UNFAIR.name(),obj.toString()))
 			return Dismissal.UNFAIR.getDescription();
 		else if ( AonStringUtils.equals(Dismissal.TEMP_END.name(),obj.toString()))
@@ -8469,7 +8474,9 @@ public class SalaryDraft extends ResizeComposite
 			return Dismissal.NOT_PASS_TRIAL_PERIOD.getDescription();
 		else if ( AonStringUtils.equals(Dismissal.DEATH_OF_EMPLOYEE.name(),obj.toString()))
 			return Dismissal.DEATH_OF_EMPLOYEE.getDescription();
-		
+		else if ( AonStringUtils.equals(Dismissal.VOLUNTARY_END.name(),obj.toString()))
+			return Dismissal.VOLUNTARY_END.getDescription();
+
 		try {
 			double value = Double.parseDouble(obj.toString());
 			value = BigDecimal.valueOf(value)
