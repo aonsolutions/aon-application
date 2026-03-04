@@ -2010,7 +2010,7 @@ if (!window.customElements.get(TAG.AON_JSF_ORDER_SERVER)) {
 }
 
 if (!window.customElements.get(TAG.AON_JSF_STOCK)) {
-	window.customElements.define(TAG.AON_JSF_INVENTORY, AonJsfStock);
+	window.customElements.define(TAG.AON_JSF_STOCK, AonJsfStock);
 }
 
 if (!window.customElements.get(TAG.AON_JSF_INVENTORY)) {

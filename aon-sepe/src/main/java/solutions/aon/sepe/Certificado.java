@@ -84,12 +84,12 @@ public class Certificado {
 			final String certificatePassword, final String certificateType, String nif, Date fecha)
 			throws IOException, SepeException, InterruptedException {
 
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+		try (WebClient webClient = HtmlUnitToolkit.getWebClientSepe(certificateInputStream, certificatePassword,
 				certificateType)) {
 
-			webClient.getOptions().setUseInsecureSSL(true);
-
 			HtmlPage htmlPage = firstPageSepeCert(webClient);
+			
+			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/test.html");
 			
 			HtmlAnchor hrefButton = HtmlUnitToolkit
 					.wait4(htmlPage,
@@ -175,7 +175,7 @@ public class Certificado {
 			final String certificatePassword, final String certificateType, Certificates certificates)
 			throws IOException, SepeException, InterruptedException {
 
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+		try (WebClient webClient = HtmlUnitToolkit.getWebClientSepe(certificateInputStream, certificatePassword, certificateType)) {
 
 			webClient.getOptions().setUseInsecureSSL(true);
 
@@ -515,10 +515,6 @@ public class Certificado {
 
 	private static HtmlPage firstPageSepeCert(WebClient webClient)
 			throws SepeException, IOException, InterruptedException {
-		
-		webClient.getOptions().setJavaScriptEnabled(true);
-		webClient.getOptions().setThrowExceptionOnScriptError(false);
-		webClient.setJavaScriptErrorListener(HtmlUnitToolkit.jascriptFunctionExceptionError());
 		
 		Page page = null;
 		Integer maxAttemps = 10;
