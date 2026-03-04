@@ -192,7 +192,7 @@ export class AonOfficePanel extends AonElement {
 		}
 		
 		// AUTOBOOKING
-		if(this.dur.isOfficeManager()){
+		if(this.dur.isOfficeManager() && (this.isBeta() || this.isAyudaTorInfoautonomos())) {
 			let autoBookingOptions = [];
 		
 			let service = ServiceOptions.AON_SERVICE;

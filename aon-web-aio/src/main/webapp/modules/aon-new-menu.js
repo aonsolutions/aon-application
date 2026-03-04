@@ -1001,7 +1001,7 @@ export class AonNewMenu extends AonElement {
 
 	isApp(app) {
 		if (OFFICE.app === app.app)
-			return this.getDur().isOfficeDomain() && (this.isBeta() || this.isAyudaTorInfoautonomos());
+			return this.getDur().isOffice();
 		//return this.getDur().hasOffice();
 		if (ACADEMY.app === app.app)
 			return this.getDur().isAcademy();
