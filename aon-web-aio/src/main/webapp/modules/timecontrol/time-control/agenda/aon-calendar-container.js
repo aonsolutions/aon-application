@@ -90,6 +90,13 @@ export class AonCalendarContainer extends AonElement {
     if (viewName === 'agenda') {
       this._agendaView.style.display  = '';      // mostrar
       this._annualView.style.display  = 'none';  // ocultar
+      
+      // Cuando se muestra el resumen, decirle qué año cargar
+      // (por defecto el año actual; el componente lo gestiona internamente)
+      if (typeof this._agendaView.reload === 'function') {
+        this._agendaView.reload();
+      }
+      
     } else {
       this._agendaView.style.display  = 'none';  // ocultar
       this._annualView.style.display  = '';      // mostrar

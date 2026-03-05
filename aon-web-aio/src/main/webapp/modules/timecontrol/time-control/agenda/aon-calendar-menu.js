@@ -61,7 +61,7 @@ export class AonCalendarMenu extends AonElement {
           </button>
 
           <!-- Resumen Anual -->
-          <button class="calendar-menu-option" data-action="annual">
+          <button class="calendar-menu-option" data-action="annual" data-view="agenda">
             <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24"
                  fill="none" stroke="currentColor" stroke-width="2"
                  stroke-linecap="round" stroke-linejoin="round">
@@ -76,7 +76,7 @@ export class AonCalendarMenu extends AonElement {
           </button>
 
           <!-- Agenda (volver a la vista de días) -->
-          <button class="calendar-menu-option" data-action="agenda">
+          <button class="calendar-menu-option" data-action="agenda" data-view="annual">
             <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24"
                  fill="none" stroke="currentColor" stroke-width="2"
                  stroke-linecap="round" stroke-linejoin="round">
@@ -210,10 +210,10 @@ export class AonCalendarMenu extends AonElement {
 
     // Marcamos el botón activo visualmente (clase 'active')
     this.querySelectorAll('[data-action]').forEach(btn => {
-      const btnView = btn.dataset.action; // 'agenda' o 'annual'
+      //const btnView = btn.dataset.action; // 'agenda' o 'annual'
 
       // Resaltar el botón de la vista activa
-      btn.classList.toggle('active', btnView === viewName);
+      //btn.classList.toggle('active', btnView === viewName);
 
       // Mostrar/ocultar opciones contextuales (data-view)
       const restrictedTo = btn.dataset.view; // 'agenda', 'annual' o undefined
