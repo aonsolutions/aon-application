@@ -995,9 +995,9 @@ export const Packs = {
 };
 
 export const AuxApps = { TOOLS };
-export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, AON_SALTRA, AUTOBOOKING };
-export const Services = { INVOFOX, OCR, CONVENIOS, BANK, AULA, API_SERVICE};
-export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, SERES, API_SERVICE, CUSTOM_VIEW };
+export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, AON_SALTRA };
+export const Services = { INVOFOX, OCR, CONVENIOS, BANK, AULA, API_SERVICE };
+export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, SERES, API_SERVICE, CUSTOM_VIEW, AUTOBOOKING };
 
 export const AllAonApps = [
   OFFICE,
