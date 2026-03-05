@@ -5296,6 +5296,11 @@ aon-agenda-all-days .event .festive {
    font-weight: bold;
 }
 
+aon-agenda-all-days .event .holiday {
+   color: #52ab3c;
+   font-weight: bold;
+}
+
 aon-agenda-all-days .event .time {
   font-size: 12px;
   opacity: 0.7;
@@ -5417,6 +5422,20 @@ aon-agenda-annual-summary header.annual-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+aon-agenda-annual-summary header.annual-header .header-row{
+	display: flex;
+	flex-direction: column;
+	gap: .5rem;
+}
+
+aon-agenda-annual-summary header.annual-header .header-row-right span{
+	text-align: right;
+}
+
+aon-agenda-annual-summary header.annual-header .annual-hours{
+	padding-left: 4px;
 }
 
 /* Navegación de año: < 2025 > */
@@ -5552,6 +5571,18 @@ aon-agenda-annual-summary .annual-month-pills {
   padding-bottom: 10px;
 }
 
+.day-type-pill {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 4px 8px;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+.pill-left { flex: 1; }
+.pill-right { text-align: right; white-space: nowrap; }
+
 aon-agenda-annual-summary .day-type-pill {
   display: flex;          /* ocupa toda la fila */
   align-items: center;
@@ -5565,9 +5596,13 @@ aon-agenda-annual-summary .day-type-pill {
 }
 
 
-
 /* Los colores de cada tipo son exactamente los mismos
    que usa .event.X en aon-agenda-all-days */
+
+aon-agenda-annual-summary .day-type-pill.pill-worked{
+	background: #D1D1D1;
+	color: #202124;
+}
 
 aon-agenda-annual-summary .day-type-pill.festive        { background: #f7867f; } /* mismo rojo que .day-number.festive */
 aon-agenda-annual-summary .day-type-pill.holidays       { background: #52ab3c; }

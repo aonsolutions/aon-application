@@ -2,8 +2,7 @@ import { AonElement } from "../../../../components/AonElement.js";
 import { getTaskHolder } from "../../../../services/taskHolderService.js";
 import { getTaskHolderContactEvents, getTaskHolderTimeControl } from "../../../../services/timeControlService.js";
 import { AonDateUtils } from "../../../utils/AonDateUtils.js";
-import { timeHour, timeHourShort } from ".././utils.js";
-import { AonCalendarMenu } from "./aon-calendar-menu.js";
+import { timeHourShort } from ".././utils.js";
 
 export class AonAgendaAllDays extends AonElement {
 
@@ -30,9 +29,6 @@ export class AonAgendaAllDays extends AonElement {
 		this.renderInitial();
 		this.attachEventListeners();
 
-		// Configurar el menú calendario
-		//this.setupCalendarMenu();
-
 		// Cargar eventos del mes actual inicialmente
 		await this.loadInitialEvents();
 
@@ -46,16 +42,6 @@ export class AonAgendaAllDays extends AonElement {
 			this._initialLoadComplete = true;
 			console.log('✅ Scroll infinito activado');
 		}, 1000);
-	}
-
-	setupCalendarMenu() {
-		setTimeout(() => {
-			if (this.aonCalendarMenu && typeof this.aonCalendarMenu.setOnTodayClick === 'function') {
-				this.aonCalendarMenu.setOnTodayClick(() => {
-					this.goToToday(true);
-				});
-			}
-		}, 200);
 	}
 
 	/* ---------------- STATE ---------------- */
@@ -105,11 +91,6 @@ export class AonAgendaAllDays extends AonElement {
 			this._taskHolder = userTaskHolder.id;
 			this._taskHolderName = userTaskHolder.name;
 		}
-
-		this.aonCalendarMenu = new AonCalendarMenu();
-		this.aonCalendarMenu.id = 'aonCalendarMenu';
-		this.appendChild(this.aonCalendarMenu);
-
 	}
 
 	/* ---------------- LOAD EVENTS ---------------- */
@@ -436,7 +417,7 @@ export class AonAgendaAllDays extends AonElement {
 		// Actualizar header después del scroll
 		setTimeout(() => {
 			this.updateHeader();
-		}, 600);
+		}, 500);
 	}
 
 	/* ---------------- WEEK MANAGEMENT ---------------- */
@@ -550,7 +531,7 @@ export class AonAgendaAllDays extends AonElement {
 			// Mostrar todos los tipos de días
 			let daysTypeHtml = '<div class="events">';
 
-			if (dayTypeContract) {
+			if (dayTypeContract && !dayTypeContract.source === 'HOLIDAYS') {
 				daysTypeHtml += this.renderDaysTypeEvents(dayTypeContract);
 			}
 
@@ -598,6 +579,8 @@ export class AonAgendaAllDays extends AonElement {
 			if (dayContractFestive) {
 				dayFestiveHtml = this.renderContractFestive(dayContractFestive);
 				//expectedTime = 0;
+			} else if (dayTypeContract && dayTypeContract.source === "HOLIDAYS") {
+				dayFestiveHtml = this.renderContractHoliday();
 			}
 
 			// Diferencia en minutos
@@ -614,7 +597,7 @@ export class AonAgendaAllDays extends AonElement {
 			dayHtml +=
 				`<div class="day-header-left">
 				            <span class="day-name">${dayNameShort}</span>
-				            <span class="day-number ${dayFestiveHtml.length > 0 ? 'festive' : (dayTypeContract ? dayTypeContract.source.toLowerCase() : '')}">${day.date.getDate()}</span>
+				            <span class="day-number ${dayContractFestive ? 'festive' : (dayTypeContract ? dayTypeContract.source.toLowerCase() : '')}">${day.date.getDate()}</span>
 				            ${dayFestiveHtml}
 				          </div>`;
 
@@ -704,6 +687,14 @@ export class AonAgendaAllDays extends AonElement {
 		return `
 			<div class="event">
 				<span class="reason festive">${event.description}</span>
+			</div>
+		`;
+	}
+	
+	renderContractHoliday() {
+		return `
+			<div class="event">
+				<span class="reason holiday">Vacaciones</span>
 			</div>
 		`;
 	}
@@ -1240,6 +1231,8 @@ export class AonAgendaAllDays extends AonElement {
 
 		// Recargar eventos iniciales
 		await this.loadInitialEvents();
+		
+		this.scrollToToday();
 
 		// Marcar como completo nuevamente
 		setTimeout(() => {

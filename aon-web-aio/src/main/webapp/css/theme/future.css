@@ -78,6 +78,14 @@ body {
 	position: relative;
 }
 
+.aonHeaderCompany{
+	height: 40px;
+	margin-right: 1rem;
+	display: flex !important;
+	align-items: center;
+	padding-top: .5rem;
+}
+
 #aonMenu:has(.aonMenuSidenav.close) .aonMenuTopnav {
 	margin-left: 68px;
 }
