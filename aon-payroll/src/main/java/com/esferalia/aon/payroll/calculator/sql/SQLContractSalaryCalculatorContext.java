@@ -3536,7 +3536,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		ctx.next();
 
 		SalaryBuilder salaryBuilder = new SalaryBuilder();
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(salaryBuilder);
 		Salary salary = calculator.calculate(ctx);
 
