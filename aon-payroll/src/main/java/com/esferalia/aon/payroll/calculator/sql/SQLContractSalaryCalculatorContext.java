@@ -3474,7 +3474,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	protected double getQuoteBase() throws ExpressionException, SQLException, SalaryException {
 
 		Calendar contractEnd = Calendar.getInstance();
-		contractEnd.setTime(contractEndDate);
+		contractEnd.setTime(Period.min(contractEndDate, endDate));
 		contractEnd.set(Calendar.DATE, 1);
 		Date monthStart = contractEnd.getTime();
 		contractEnd.set(Calendar.DATE, contractEnd.getActualMaximum(Calendar.DATE));
@@ -3492,6 +3492,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				// TODO: sure
 			}
 
+			@Override
+			protected double getQuoteBase() throws ExpressionException, SQLException, SalaryException {
+				throw new CheckException(
+						"Imposible calcular el salario regulador de la indemnizaci\u00F3n por despido");
+			}
+			
 			@Override
 			protected double getDaySalary() throws ExpressionException, SQLException, SalaryException {
 				throw new CheckException(
