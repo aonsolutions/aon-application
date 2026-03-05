@@ -641,21 +641,6 @@ export class DomainUserRoles {
 			&& (this.isAdmin() || this.hasRole(Role.INVOFOX));
 	}
 
-	// OCR INVOFOX
-
-	hasFacturae() {
-		return this.hasApp(App.FACTURAE);
-	}
-
-	hasParentFacturae() {
-		return this.hasParentApp(App.FACTURAE);
-	}
-
-	isFacturae() {
-		return (this.hasFacturae() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentFacturae()))
-			&& (this.isAdmin() || this.hasRole(Role.FACTURAE));
-	}
-
 	// SERES
 
 	hasSeres() {
@@ -669,6 +654,21 @@ export class DomainUserRoles {
 	isSeres() {
 		return (this.hasSeres() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentSeres()))
 			&& (this.isAdmin() || this.hasRole(Role.SERES));
+	}
+
+	// AUTOBOOKING
+
+	hasAutoBooking() {
+		return this.hasApp(App.AUTOBOOKING);
+	}
+
+	hasParentAutoBooking() {
+		return this.hasParentApp(App.AUTOBOOKING);
+	}
+
+	isAutoBooking() {
+		return (this.hasAutoBooking() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentAutoBooking()))
+			&& this.isOfficeManager();
 	}
 
 	// BANK
@@ -806,8 +806,9 @@ export class DomainUserRoles {
 	}
 	
 	isOffice() {
-		return this.hasOfficeRole() && (this.hasRole(Role.OFFICE) || this.hasRole(Role.OFFICE_PORTAL) || this.hasRole(Role.OFFICE_MANAGER || this.isAdmin()));
-			//&& (this.isAdmin() || this.hasRole(Role.OFFICE));
+		return this.hasOfficeRole() 
+			&& (this.hasRole(Role.OFFICE) || this.hasRole(Role.OFFICE_PORTAL) || this.hasRole(Role.OFFICE_MANAGER) 
+				|| this.isAdmin() || this.parentUser);
 	}
 
 	isOfficeUser() {

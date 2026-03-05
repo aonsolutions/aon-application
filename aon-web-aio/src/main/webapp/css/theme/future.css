@@ -893,7 +893,7 @@ aon-configuration-menu .suiteMenuContent  {
 	margin-top: 0px;
 }
 
-.aonUpload {
+#aonInvoiceHomeUploadInvoice .aonUpload {
 	border:none;
 	color: #fff;
 	align-items: flex-start;
@@ -902,14 +902,14 @@ aon-configuration-menu .suiteMenuContent  {
 	background: var(--aonCustomizeButtonBackground);
 }
 
-.aonUpload * {
+#aonInvoiceHomeUploadInvoice .aonUpload * {
 	color: #fff;
 }	
 
-.aonUpload:hover {
+#aonInvoiceHomeUploadInvoice .aonUpload:hover {
     background: #004bfb;
 }
-.aonNewUploadLabel{
+#aonInvoiceHomeUploadInvoice .aonNewUploadLabel{
 	color: #fff;
 	font-size: 1rem;
 	
@@ -2513,6 +2513,10 @@ aon-search > span {
 .menu-children > div:hover i,
 .menu-option.open i {
 	background-color: #ffff;
+}
+
+#aonMenuBar-office {
+	display: block;
 }
 
 /* Invoice Future Sidenav options */

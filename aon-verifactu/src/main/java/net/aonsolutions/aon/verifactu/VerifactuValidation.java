@@ -1292,8 +1292,10 @@ public class VerifactuValidation {
 		if (idOtro.getCodigoPais() != null) {
 			if (AonDocumentUtil.isValidComunitaryCountry(idOtro.getCodigoPais().value())) {
 				// - El campo CodigoPais indicado no coincide con los dos primeros d\u00EDgitos del identificador.
+				// Si es Grecia, el campo CodigoPais es diferente a los dos primeros d\u00EDgitos del identificador.
 				String prefix = AonStringUtils.substring(idOtro.getID(), 0, 2);
-				if (AonStringUtils.notEquals(prefix, idOtro.getCodigoPais().value())) {
+				if (AonStringUtils.notEquals(prefix, idOtro.getCodigoPais().value()) 
+					&& !idOtro.getCodigoPais().equals(CountryType2.GR)) {
 					vc.addError(InvoiceCommunicationError.VERIFACTU_1122);			
 				} else {
 					//- Cuando el tercero se identifique a través de la agrupación IDOtro e IDType sea "02", 

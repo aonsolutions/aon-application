@@ -559,21 +559,6 @@ public class DomainUserRoles implements Serializable {
 			&& (isAdmin() || hasRole(AonRole.INVOFOX));
 	}
 	
-	// FACTURAE
-	
-	public boolean hasFacturae() {
-		return hasApp(AonApp.FACTURAE);
-	}
-	
-	public boolean hasParentFacturae() {
-		return hasParentApp(AonApp.FACTURAE);
-	}
-	
-	public boolean isFacturae() {
-		return (hasFacturae() || ((isParentUser() || isEnterpriseChild()) && hasParentFacturae()))
-			&& (isAdmin() || hasRole(AonRole.FACTURAE));
-	}
-	
 	// SERES
 	
 	public boolean hasSeres() {
@@ -744,6 +729,22 @@ public class DomainUserRoles implements Serializable {
 	public boolean isOfficeManager() {
 		return hasRole(AonRole.OFFICE_MANAGER);
 	}
+	
+	// AUTO BOOKING
+	
+	public boolean hasAutoBooking() {
+		return hasApp(AonApp.AUTOBOOKING);
+	}
+	
+	public boolean hasParentAutoBooking() {
+		return hasParentApp(AonApp.AUTOBOOKING);
+	}
+	
+	public boolean isAutoBooking() {
+		return (hasAutoBooking() || (isEnterpriseChild() && hasParentAutoBooking()))
+			&& (isAdmin() || isOfficeManager());
+	}
+	
 	
 	public boolean isPortal() {
 		return getUser().isPortal();
