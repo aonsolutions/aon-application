@@ -2101,6 +2101,7 @@
 			<generator class="identity"/>
 			<key-column name="id" type="java.lang.Integer"/>
 		</primary-key>
+		<column name="type_0_unique" exclude="true" />
 		<foreign-key constraint-name="FK_RECORD_DATA_RATTACH">
 			<many-to-one property="attach" />
 		</foreign-key>
