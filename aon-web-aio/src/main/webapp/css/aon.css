@@ -5422,12 +5422,15 @@ aon-agenda-annual-summary header.annual-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-direction: column;
+  gap: .5rem;
 }
 
 aon-agenda-annual-summary header.annual-header .header-row{
 	display: flex;
-	flex-direction: column;
-	gap: .5rem;
+	justify-content: space-between;
+	width: 100%;
+  	align-items: center;
 }
 
 aon-agenda-annual-summary header.annual-header .header-row-right span{
@@ -5462,6 +5465,7 @@ aon-agenda-annual-summary .year-btn {
   padding: 0 4px;
   border-radius: 50%;
   transition: background 0.15s;
+  padding-bottom: 4px;
 }
 
 aon-agenda-annual-summary .year-btn:hover {
@@ -5531,6 +5535,19 @@ aon-agenda-annual-summary .annual-month-header {
   justify-content: space-between;
   align-items: baseline;
   margin-bottom: 10px;
+}
+
+aon-agenda-annual-summary .annual-month-day {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+}
+
+aon-agenda-annual-summary .annual-month-total-hours{
+	background-color: #f2f2f2;
+  padding: .3rem;
+  border-radius: .5rem;
+  font-size: 10px;
 }
 
 aon-agenda-annual-summary .annual-month-name {
@@ -5606,7 +5623,7 @@ aon-agenda-annual-summary .day-type-pill.pill-worked{
 
 aon-agenda-annual-summary .day-type-pill.festive        { background: #f7867f; } /* mismo rojo que .day-number.festive */
 aon-agenda-annual-summary .day-type-pill.holidays       { background: #52ab3c; }
-aon-agenda-annual-summary .day-type-pill.paid_leave     { background: #80bc70; }
+aon-agenda-annual-summary .day-type-pill.paid-leave     { background: #80bc70; }
 aon-agenda-annual-summary .day-type-pill.effecitve_days { background: #77e1d2; color: #202124; }
 aon-agenda-annual-summary .day-type-pill.inactivity     { background: #71b1e8; }
 aon-agenda-annual-summary .day-type-pill.ere            { background: #b91257; }

@@ -559,7 +559,7 @@ export class AonAgendaAllDays extends AonElement {
 			const dayContractFestive = this._festivesContract.get(day.key);
 
 			// Vacaciones, permisos retribuidos, ITs (habra que filtrar dayTypeContract.source si queremos quitar alguno )
-			if (dayTypeContract && (dayTypeContract.source === "IT" || dayTypeContract.source === "PAID_LEAVE")) {
+			if (dayTypeContract && (dayTypeContract.source === "IT" || dayTypeContract.source === "PAID_LEAVE" || dayTypeContract.source === "HOLIDAYS")) {
 				// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
 				if (this._workingDays && this._workingDays[dayOfWeek] === 0) {
 					totalHours = timeHourShort(expectedTime);
@@ -1121,7 +1121,7 @@ export class AonAgendaAllDays extends AonElement {
 			const dayTypeContract = this._daysTypeContract.get(dateKey);
 
 			// Vacaciones, permisos retribuidos, ITs (habra que filtrar dayTypeContract.source si queremos quitar alguno )
-			if (dayTypeContract && (dayTypeContract.source === "IT" || dayTypeContract.source === "PAID_LEAVE")) {
+			if (dayTypeContract && (dayTypeContract.source === "IT" || dayTypeContract.source === "PAID_LEAVE" || dayTypeContract.source === "HOLIDAYS")) {
 				// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
 				if (this._workingDays && this._workingDays[dayOfWeek] !== 0) {
 					//expectedTime = hoursForDay * 60 * 60 * 1000;
@@ -1173,7 +1173,7 @@ export class AonAgendaAllDays extends AonElement {
 			const dayTypeContract = this._daysTypeContract.get(dateKey);
 
 			// Vacaciones, permisos retribuidos, ITs (habra que filtrar dayTypeContract.source si queremos quitar alguno )
-			if (dayTypeContract && (dayTypeContract.source === "IT" || dayTypeContract.source === "PAID_LEAVE")) {
+			if (dayTypeContract && (dayTypeContract.source === "IT" || dayTypeContract.source === "PAID_LEAVE" || dayTypeContract.source === "HOLIDAYS")) {
 				// NUEVA REGLA:
 				// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
 				if (this._workingDays && this._workingDays[dayOfWeek] !== 0) {
