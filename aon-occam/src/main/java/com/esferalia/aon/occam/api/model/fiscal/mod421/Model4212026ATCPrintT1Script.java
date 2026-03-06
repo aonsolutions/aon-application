@@ -7,14 +7,9 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod421Key;
 
-public enum Model4212026ATCPrintScript implements IModelScript<Mod421Key> {
+public enum Model4212026ATCPrintT1Script implements IModelScript<Mod421Key> {
 	
 	  RES06(Mod421Key.C06.getDescription(), new Mod421Key[]{Mod421Key.C06})
-	 ,RES07(Mod421Key.C07.getDescription(), new Mod421Key[]{Mod421Key.C07})
-	 ,RES08(Mod421Key.C08.getDescription(), new Mod421Key[]{Mod421Key.C08})
-	 ,RES09(Mod421Key.C09.getDescription(), new Mod421Key[]{Mod421Key.C09})
-	 ,RES10(Mod421Key.C10.getDescription(), new Mod421Key[]{Mod421Key.C10})
-	 ,RES11(Mod421Key.C11.getDescription(), new Mod421Key[]{Mod421Key.C11})
 	 ,RES12(Mod421Key.C12.getDescription(), new Mod421Key[]{Mod421Key.C12})
 	 ,RES13(Mod421Key.C13.getDescription(), new Mod421Key[]{Mod421Key.C13})
 	 ,RES14(Mod421Key.C14.getDescription(), new Mod421Key[]{Mod421Key.C14})
@@ -29,7 +24,7 @@ public enum Model4212026ATCPrintScript implements IModelScript<Mod421Key> {
 	private Mod421Key[] keys;
 	private FiscalModelKeyInfo[] infoKeys;
 	
-	private Model4212026ATCPrintScript(String label, Mod421Key[] keys,FiscalModelKeyInfo ... infoKeys) {
+	private Model4212026ATCPrintT1Script(String label, Mod421Key[] keys,FiscalModelKeyInfo ... infoKeys) {
 		this.label = label;
 		this.keys = keys;
 		this.infoKeys = infoKeys;

@@ -421,10 +421,10 @@ public abstract class Model421Base extends DockLayoutPanel  {
 	}
 	
 	private int paintBox(FlexTable table, int row, int col, Mod421Key key) {
-		if (AonStringUtils.isNumeric(key.getBoxCode())) {
-			table.setWidget(row, col, new AonBoxLabel(key.getBoxCode()));
-		} else {
+		if (AonStringUtils.isBlank(key.getBoxCode())) {
 			table.setWidget(row, col, new Label());
+		} else {
+			table.setWidget(row, col, new AonBoxLabel(key.getBoxCode()));
 		}
 		return ++col;
 	}

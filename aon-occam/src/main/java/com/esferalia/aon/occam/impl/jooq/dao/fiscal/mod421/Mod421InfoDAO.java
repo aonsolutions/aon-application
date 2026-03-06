@@ -236,14 +236,18 @@ public class Mod421InfoDAO extends FiscalModelDAO {
 		StringBuilder buf = new StringBuilder();
 		for (Mod421Key key : script.getKeys() ) {
 			if (key != null) {
-				if (dec.getRegularizationKey() != null && dec.getRegularizationKey() == key) {
-					buf.append(  dec.getRegularizationExplain( ctx, mod421, key));
-					return buf.toString();
-				} else if (Arrays.stream(dec.getCompensationExplainKeys()).anyMatch(k -> k == key)) {
+//				if (dec.getRegularizationKey() != null && dec.getRegularizationKey() == key) {
+//					buf.append(  dec.getRegularizationExplain( ctx, mod421, key));
+//					return buf.toString();
+//				} else 
+				if (Arrays.stream(dec.getCompensationExplainKeys()).anyMatch(k -> k == key)) {
 					buf.append(  dec.getCompensationExplain( ctx, mod421, key));
 					return buf.toString();
 				} else if (Arrays.stream(dec.getSamePeriodExplainKeys()).anyMatch(k -> k == key)) {
 					buf.append(  dec.getSamePeriodExplain( ctx, mod421, key));
+					return buf.toString();
+				} else if (Arrays.stream(dec.getIngresoCuentaAnteriorExplainKeys()).anyMatch(k -> k == key)) {
+					buf.append(dec.getIngresoCuentaAnteriorExplain(ctx, mod421, key));
 					return buf.toString();
 				} else {
 					Mod421MVELContext mvelCtx = new Mod421MVELContext(mod421); 

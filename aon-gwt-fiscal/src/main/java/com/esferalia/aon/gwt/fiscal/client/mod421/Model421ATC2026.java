@@ -75,28 +75,37 @@ class Model421ATC2026 extends Model421ATC {
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
 		table.addStyleName(AON.CSS.aonMarginBottom());
-		
 		table.getColumnFormatter().setWidth(0, "auto");
 		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingLeft() );
 		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingRight() );
-		table.getColumnFormatter().setWidth(1, "40px");
+		table.getColumnFormatter().setWidth(1, "25px");
 		table.getColumnFormatter().setStyleName(1, AON.CSS.aonTextCenter());
-		table.getColumnFormatter().setWidth(2, WIDTH_140PX);
-		table.getColumnFormatter().setWidth(3, "50px");
+		table.getColumnFormatter().setWidth(2, "130px");
+		table.getColumnFormatter().setWidth(3, "25px");
+		table.getColumnFormatter().setStyleName(3, AON.CSS.aonTextCenter());
+		table.getColumnFormatter().setWidth(4, "130px");
+		table.getColumnFormatter().setWidth(5, "25px");
+		table.getColumnFormatter().setStyleName(5, AON.CSS.aonTextCenter());
+		table.getColumnFormatter().setWidth(6, "130px");
+		table.getColumnFormatter().setWidth(7, "30px");
+		table.getColumnFormatter().setStyleName(7, AON.CSS.aonTextCenter());
+		table.getColumnFormatter().setWidth(8, "130px");
+		table.getColumnFormatter().setWidth(9, "50px");
+		
 		resultScrollPanel.setWidget(table);
 		tabPanel.add(resultScrollPanel, AON.MSG.result());
 		
 		if (getModel().isLastPeriod()) {
-			paintDeclaration(table, Model4212026ATCResultT4Script.values(),3);			
+			paintDeclaration(table, Model4212026ATCResultT4Script.values(),9);
 		} else {
-			paintDeclaration(table, Model4212026ATCResultT1Script.values(),3);
+			paintDeclaration(table, Model4212026ATCResultT1Script.values(),9);
 		}
 		
 		paintEmptyRow(table);
 		paintEmptyRow(table);
 		paintEmptyRow(table);
 		paintEmptyRow(table);
-		paintScript(table, Model4212026ATCResultScript.values(),3);
+		paintScript(table, Model4212026ATCResultScript.values(),9);
 		
 	}
 

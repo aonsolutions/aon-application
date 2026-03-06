@@ -69,17 +69,17 @@ public enum Mod421Key implements IFiscalModelKey  {
 	,A1M7F("421-A1M7F",false,null, A1M1F.getDescription())
 	,A1M7R("421-A1M7R",false,null, A1M1R.getDescription())
 	 
-	,A1DEV("421-A1DEV",false,"","Cuota devengada operaciones corrientes")
+	,A1DEV("421-A1DEV",false,"DEV1","Cuota devengada operaciones corrientes")
 	,A1ICT("421-A1ICT",false,"","\u00CDndice corrector actividades de temporada")
 	,A1POR("421-A1POR",false,"","Porcentaje de ingreso a cuenta")
-	,A1ING("421-A1ING",false,"","Ingreso a cuenta")
+	,A1ING("421-A1ING",false,"ING1","Ingreso a cuenta")
 	,A1SO1("421-A1SO1",false,"","1% de la cuota devengada por operaciones corrientes")
 	,A1SOR("421-A1SOR",false,"","Resto de cuotas soportadas")
-	,A1SOP("421-A1SOP",false,"","Total cuotas soportadas operaciones corrientes")
+	,A1SOP("421-A1SOP",false,"SOP1","Total cuotas soportadas operaciones corrientes")
 	,A1RES("421-A1RES",false,"","RESULTADO")
 	,A1PCM("421-A1PCM",false,"","Porcentaje cuota m\u00EDnima")
 	,A1CMN("421-A1CMN",false,"","Cuota m\u00EDnima")
-	,A1CAD("421-A1CAD",false,"","Cuota anual derivada r\u00E9gimen simplificado")
+	,A1CAD("421-A1CAD",false,"CAD1","Cuota anual derivada r\u00E9gimen simplificado")
 	
 	// ACTIVIDAD 2
 	
@@ -125,17 +125,17 @@ public enum Mod421Key implements IFiscalModelKey  {
 	,A2M7F("421-A2M7F",false,null, A1M1F.getDescription())
 	,A2M7R("421-A2M7R",false,null, A1M1R.getDescription())
 	
-	,A2DEV("421-A2DEV",false,"",A1DEV.getDescription())
+	,A2DEV("421-A2DEV",false,"DEV2",A1DEV.getDescription())
 	,A2ICT("421-A2ICT",false,"",A1ICT.getDescription())
 	,A2POR("421-A2POR",false,"",A1POR.getDescription())
-	,A2ING("421-A2ING",false,"",A1ING.getDescription())
+	,A2ING("421-A2ING",false,"ING2",A1ING.getDescription())
 	,A2SO1("421-A2SO1",false,"",A1SO1.getDescription())
 	,A2SOR("421-A2SOR",false,"",A1SOR.getDescription())
-	,A2SOP("421-A2SOP",false,"",A1SOP.getDescription())
+	,A2SOP("421-A2SOP",false,"SOP2",A1SOP.getDescription())
 	,A2RES("421-A2RES",false,"",A1RES.getDescription())
 	,A2PCM("421-A2PCM",false,"",A1PCM.getDescription())
 	,A2CMN("421-A2CMN",false,"",A1CMN.getDescription())
-	,A2CAD("421-A2CAD",false,"",A1CAD.getDescription())
+	,A2CAD("421-A2CAD",false,"CAD2",A1CAD.getDescription())
 
 	// ACTIVIDAD 3 
 	
@@ -181,17 +181,17 @@ public enum Mod421Key implements IFiscalModelKey  {
 	,A3M7F("421-A3M7F",false,null, A1M1F.getDescription())
 	,A3M7R("421-A3M7R",false,null, A1M1R.getDescription())
 	
-	,A3DEV("421-A3DEV",false,"",A1DEV.getDescription())
+	,A3DEV("421-A3DEV",false,"DEV3",A1DEV.getDescription())
 	,A3ICT("421-A3ICT",false,"",A1ICT.getDescription())
 	,A3POR("421-A3POR",false,"",A1POR.getDescription())
-	,A3ING("421-A3ING",false,"",A1ING.getDescription())
+	,A3ING("421-A3ING",false,"ING3",A1ING.getDescription())
 	,A3SO1("421-A3SO1",false,"",A1SO1.getDescription())
 	,A3SOR("421-A3SOR",false,"",A1SOR.getDescription())
-	,A3SOP("421-A3SOP",false,"",A1SOP.getDescription())
+	,A3SOP("421-A3SOP",false,"SOP3",A1SOP.getDescription())
 	,A3RES("421-A3RES",false,"",A1RES.getDescription())
 	,A3PCM("421-A3PCM",false,"",A1PCM.getDescription())
 	,A3CMN("421-A3CMN",false,"",A1CMN.getDescription())
-	,A3CAD("421-A3CAD",false,"",A1CAD.getDescription())
+	,A3CAD("421-A3CAD",false,"CAD3",A1CAD.getDescription())
 	
 	// ACTIVIDAD 4
 	
@@ -237,17 +237,17 @@ public enum Mod421Key implements IFiscalModelKey  {
 	,A4M7F("421-A4M7F",false,null, A1M1F.getDescription())
 	,A4M7R("421-A4M7R",false,null, A1M1R.getDescription())
 	
-	,A4DEV("421-A4DEV",false,"",A1DEV.getDescription())
+	,A4DEV("421-A4DEV",false,"DEV4",A1DEV.getDescription())
 	,A4ICT("421-A4ICT",false,"",A1ICT.getDescription())
 	,A4POR("421-A4POR",false,"",A1POR.getDescription())
-	,A4ING("421-A4ING",false,"",A1ING.getDescription())
+	,A4ING("421-A4ING",false,"ING4",A1ING.getDescription())
 	,A4SO1("421-A4SO1",false,"",A1SO1.getDescription())
 	,A4SOR("421-A4SOR",false,"",A1SOR.getDescription())
-	,A4SOP("421-A4SOP",false,"",A1SOP.getDescription())
+	,A4SOP("421-A4SOP",false,"SOP4",A1SOP.getDescription())
 	,A4RES("421-A4RES",false,"",A1RES.getDescription())
 	,A4PCM("421-A4PCM",false,"",A1PCM.getDescription())
 	,A4CMN("421-A4CMN",false,"",A1CMN.getDescription())
-	,A4CAD("421-A4CAD",false,"",A1CAD.getDescription())
+	,A4CAD("421-A4CAD",false,"CAD4",A1CAD.getDescription())
 	
 	// RESULTADO
 
@@ -255,9 +255,9 @@ public enum Mod421Key implements IFiscalModelKey  {
 	,C07("421-C07",false,"07","Cuota anual devengada por operaciones corrientes")
 	,C08("421-C08",false,"08","Cuotas soportadas o satisfechas en el ejercicio por operaciones corrientes")
 	,C09("421-C09",false,"09","Cuota anual derivada del r\u00E9gimen simplificado")
-	,C10T1("421-C10T1",false,"","Cantidad a cuenta autoliquidaciones trimestrales anteriores (T1)")
-	,C10T2("421-C10T2",false,"","Cantidad a cuenta autoliquidaciones trimestrales anteriores (T2)")
-	,C10T3("421-C10T3",false,"","Cantidad a cuenta autoliquidaciones trimestrales anteriores (T3)")
+	,C10T1("421-C10T1",false,"T1","Cantidad a cuenta autoliquidaciones trimestrales anteriores (T1)")
+	,C10T2("421-C10T2",false,"T2","Cantidad a cuenta autoliquidaciones trimestrales anteriores (T2)")
+	,C10T3("421-C10T3",false,"T3","Cantidad a cuenta autoliquidaciones trimestrales anteriores (T3)")
 	,C10("421-C10",false,"10","Cantidad a cuenta autoliquidaciones trimestrales anteriores")
 	,C11("421-C11",false,"11","Diferencia")
 	
@@ -312,7 +312,11 @@ public enum Mod421Key implements IFiscalModelKey  {
 		return " [" + getBoxAsString() +"] ";
 	}
 	public String getBoxAsString() {
-		return AonStringUtils.leftPad(Integer.toString(getBox()), 3, '0');
+		if (AonStringUtils.isNumeric(box)) {
+			return AonStringUtils.leftPad(Integer.toString(getBox()), 3, '0');
+		} else {
+			return box;
+		}
 	}
 	
 	public static Mod421Key getKey(String value) {

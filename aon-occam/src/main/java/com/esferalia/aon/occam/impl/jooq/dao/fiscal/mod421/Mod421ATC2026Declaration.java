@@ -12,9 +12,11 @@ import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.w
 
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -26,6 +28,7 @@ import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraphCanarias;
 import com.esferalia.aon.occam.api.model.fiscal.modules.ModulesCanarias2026;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod421Key;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.ExplainRowManager;
@@ -63,6 +66,8 @@ class Mod421ATC2026Declaration extends Mod421ATC {
 	
 	private static final Mod421Key[] COMPENSATION_EXPLAIN_KEYS = new Mod421Key[] { Mod421Key.C17 };
 	private static final Mod421Key[] SAME_PERIOD_EXPLAIN_KEYS = new Mod421Key[] { Mod421Key.C18 };
+//	private static final Mod421Key[] INGRESO_CUENTA_ANTERIOR_EXPLAIN_KEYS = new Mod421Key[] { Mod421Key.C10T1, Mod421Key.C10T2, Mod421Key.C10T3 };
+	private static final Mod421Key[] INGRESO_CUENTA_ANTERIOR_EXPLAIN_KEYS = new Mod421Key[] { Mod421Key.C10 };
 	
 	private enum Mod421KeyDAO implements IMod421KeyDAO {
 
@@ -1065,11 +1070,12 @@ class Mod421ATC2026Declaration extends Mod421ATC {
 		, C08(Mod421Key.C08, null, null, null, "isLastPeriod()?(A1SOP+A2SOP+A3SOP+A4SOP):0.0", null)
 		// 09 Cuota anual derivada del régimen simplificado (4T)
 		, C09(Mod421Key.C09, null, null, null, "isLastPeriod()?(A1CAD+A2CAD+A3CAD+A4CAD):0.0", null)
-		// FALTA - OBTENERLO DE LOS TRIMESTRES ANTERIORES
+
 		// Desglose Cantidad a cuenta autoliquidaciones trimestrales anteriores (4T) 
-		, C10T1(Mod421Key.C10T1) // T1
-		, C10T2(Mod421Key.C10T2) // T2
-		, C10T3(Mod421Key.C10T3) // T3
+		, C10T1(Mod421Key.C10T1, null, null, (ctx,mod) -> add( Mod421Key.C10T1, mod, getIngresoCuentaAnterior(ctx, mod, Period.T1)), null, null)
+		, C10T2(Mod421Key.C10T2, null, null, (ctx,mod) -> add( Mod421Key.C10T2, mod, getIngresoCuentaAnterior(ctx, mod, Period.T2)), null, null)
+		, C10T3(Mod421Key.C10T3, null, null, (ctx,mod) -> add( Mod421Key.C10T3, mod, getIngresoCuentaAnterior(ctx, mod, Period.T3)), null, null)
+
 		// 10 Cantidad a cuenta autoliquidaciones trimestrales anteriores (4T)
 		, C10(Mod421Key.C10, null, null, null, "isLastPeriod()?(C10T1+C10T2+C10T3):0.0", null)
 		// 11 Diferencia (4T)
@@ -1358,7 +1364,7 @@ class Mod421ATC2026Declaration extends Mod421ATC {
 		
 	@Override
 	protected String getSamePeriodExplain( AONContext ctx, Mod421 mod421, Mod421Key key) {
-		return DeclarationInfoUtil.getExplain( ctx, mod421, key, Mod421DAO.getSamePeriodEffectiveModels(ctx, mod421), new ExplainRowManager());	
+		return DeclarationInfoUtil.getExplain( ctx, mod421, key, mod421.isComplementary() ? Mod421DAO.getSamePeriodEffectiveModels(ctx, mod421) : Stream.empty(), new ExplainRowManager());
 	}
 	
 	// -----------------------------------------------------------------------
@@ -1462,6 +1468,36 @@ class Mod421ATC2026Declaration extends Mod421ATC {
 		} else {
 			return specialEpigraph;
 		}
+	}
+	
+	@Override
+	public Mod421Key[] getIngresoCuentaAnteriorExplainKeys() {
+		return INGRESO_CUENTA_ANTERIOR_EXPLAIN_KEYS;
+	}
+
+	@Override
+	protected String getIngresoCuentaAnteriorExplain(AONContext ctx, Mod421 mod421, Mod421Key key) {
+		return DeclarationInfoUtil.getExplain( ctx, mod421, key, 
+				Mod421DAO.getPreviousEffectiveModels(ctx, mod421)
+						 .sorted(Comparator.comparing(FiscalModel::getPeriod))
+			, new ExplainRowManager() {
+				@Override
+				public String apply(FiscalModel fm) {
+					setSomething(true);
+					sum(fm.getAmount(Mod421Key.C06));
+					StringBuilder sb = new StringBuilder();
+					sb.append("<tr>")
+						.append( MessageFormat.format(styledTag, "td", paddingLeft+border) )
+							.append("Ingreso a Cuenta M" + fm.getModelFullName() + " [06]")
+						.append("</td>")
+						.append( MessageFormat.format(styledTag, "td", textRight+width150+border) )				
+							.append(DEC2.format(AonMathUtils.round(fm.getAmount(Mod421Key.C06))))
+						.append("</td>")
+					.append("</tr>")					
+					;
+					return sb.toString();
+				}
+			});	
 	}
 	
 }

@@ -91,9 +91,9 @@ public abstract class Mod421Declaration {
 	}
 	public void specificInitialization(Mod421 mod421) {
 	}
-	public Mod421Key getRegularizationKey() {
-		return null;
-	}
+//	public Mod421Key getRegularizationKey() {
+//		return null;
+//	}
 	
 	private static class KeyedVatContext  {
 		private IMod421KeyDAO key;
@@ -274,9 +274,11 @@ public abstract class Mod421Declaration {
 	protected String getCompensationExplain(AONContext ctx, Mod421 mod421, Mod421Key key) {
 		return EMTPY_JSON;
 	}
-	protected String getRegularizationExplain(AONContext ctx, Mod421 mod421, Mod421Key key) {
-		return EMTPY_JSON;
-	}
+	
+//	protected String getRegularizationExplain(AONContext ctx, Mod421 mod421, Mod421Key key) {
+//		return EMTPY_JSON;
+//	}
+	
 	public Mod421Key[] getSamePeriodExplainKeys() {
 		return new Mod421Key[] {};
 	}
@@ -293,5 +295,12 @@ public abstract class Mod421Declaration {
 	abstract Mod421 initialize(AONContext ctx, Mod421 mod421);
 	abstract double getResult(final Mod421 mod421);
 	abstract ComplementaryBeahaviour getComplementaryBehaviour(final Mod421 mod421);
+	
+	public Mod421Key[] getIngresoCuentaAnteriorExplainKeys() {
+		return new Mod421Key[] {};
+	}
+	protected String getIngresoCuentaAnteriorExplain(AONContext ctx, Mod421 mod421, Mod421Key key) {
+		return EMTPY_JSON;
+	}
 	
 }

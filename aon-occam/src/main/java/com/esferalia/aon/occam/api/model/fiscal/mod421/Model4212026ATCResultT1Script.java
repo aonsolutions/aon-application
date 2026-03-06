@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.api.model.type.Mod421Key;
 public enum Model4212026ATCResultT1Script implements IModelScript<Mod421Key> {
 	
 	 R00 ("AUTOLIQUIDACIONES ANTERIORES A LA \u00DALTIMA DEL EJERCICIO",null,TITLE)
-	,RES06(Mod421Key.C06.getDescription(), new Mod421Key[]{Mod421Key.C06}, COMPUTE)
+	,RES06(Mod421Key.C06.getDescription(), new Mod421Key[]{null, null, null, Mod421Key.C06}, COMPUTE)
 	;
 	
 	private String label;

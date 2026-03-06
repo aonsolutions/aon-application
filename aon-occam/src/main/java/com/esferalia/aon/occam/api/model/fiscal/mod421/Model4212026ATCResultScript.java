@@ -12,14 +12,15 @@ import com.esferalia.aon.occam.api.model.type.Mod421Key;
 
 public enum Model4212026ATCResultScript implements IModelScript<Mod421Key> {
 	
-	 RES12(Mod421Key.C12.getDescription(), new Mod421Key[]{Mod421Key.C12}, MODEL_INVOICE_VAT_BREAKDOWN)
-	,RES13(Mod421Key.C13.getDescription(), new Mod421Key[]{Mod421Key.C13}, NONE)
-	,RES14(Mod421Key.C14.getDescription(), new Mod421Key[]{Mod421Key.C14}, NONE)
-	,RES15(Mod421Key.C15.getDescription(), new Mod421Key[]{Mod421Key.C15}, MODEL_INVOICE_VAT_BREAKDOWN)
-	,RES16(Mod421Key.C16.getDescription(), new Mod421Key[]{Mod421Key.C16}, NONE)
-	,RES17(Mod421Key.C17.getDescription(), new Mod421Key[]{Mod421Key.C17}, COMPUTE_KEY)
-	,RES18(Mod421Key.C18.getDescription(), new Mod421Key[]{Mod421Key.C18}, COMPUTE_KEY)
-	,RES19(Mod421Key.C19.getDescription(), new Mod421Key[]{Mod421Key.C19}, COMPUTE)
+	 RES00 ("RESULTADO",null,TITLE) 
+	,RES12(Mod421Key.C12.getDescription(), new Mod421Key[]{null, null, null, Mod421Key.C12}, MODEL_INVOICE_VAT_BREAKDOWN)
+	,RES13(Mod421Key.C13.getDescription(), new Mod421Key[]{null, null, null, Mod421Key.C13}, NONE)
+	,RES14(Mod421Key.C14.getDescription(), new Mod421Key[]{null, null, null, Mod421Key.C14}, NONE)
+	,RES15(Mod421Key.C15.getDescription(), new Mod421Key[]{null, null, null, Mod421Key.C15}, MODEL_INVOICE_VAT_BREAKDOWN)
+	,RES16(Mod421Key.C16.getDescription(), new Mod421Key[]{null, null, null, Mod421Key.C16}, NONE)
+	,RES17(Mod421Key.C17.getDescription(), new Mod421Key[]{null, null, null, Mod421Key.C17}, COMPUTE_KEY)
+	,RES18(Mod421Key.C18.getDescription(), new Mod421Key[]{null, null, null, Mod421Key.C18}, COMPUTE_KEY)
+	,RES19(Mod421Key.C19.getDescription(), new Mod421Key[]{null, null, null, Mod421Key.C19}, COMPUTE)
 	;
 	
 	private String label;

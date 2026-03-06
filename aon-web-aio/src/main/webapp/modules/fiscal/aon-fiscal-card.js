@@ -455,7 +455,7 @@ export class AonFiscalCard extends AonElement {
     let territory = modelData.administration;
     if(model === "111" && territory === "ALAVA"){
       return "110";
-    } 
+    }
     return model;
   }
 
@@ -544,6 +544,8 @@ export class AonFiscalCard extends AonElement {
           return "IRPF Arrendamiento";
       case "123":
           return "IRPF Capital mobiliario";
+	  case "421":
+		  return "IGIC R\u00E9gimen Simplificado";
       default:
         return "";
     }

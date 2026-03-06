@@ -12,23 +12,27 @@ public class Model421PrintScriptProvider {
 			boolean accept(Mod421 mod421) {
 				return mod421.isCanarias() && mod421.getYear() >= 2026;
 			}
-	
 			@Override
-			IModelScript<Mod421Key>[] getScript() {
-				return Model4212026ATCPrintScript.values();
+			IModelScript<Mod421Key>[] getScriptT1() {
+				return Model4212026ATCPrintT1Script.values();
+			}
+			@Override
+			IModelScript<Mod421Key>[] getScriptT4() {
+				return Model4212026ATCPrintT4Script.values();
 			}
 		}
-
 		;
+		
 		abstract boolean accept(Mod421 mod421);
-		abstract IModelScript<Mod421Key>[] getScript();
+		abstract IModelScript<Mod421Key>[] getScriptT1();
+		abstract IModelScript<Mod421Key>[] getScriptT4();
 	}
 
 	public static IModelScript<Mod421Key>[] obtainScript(Mod421 mod421) {
 		IModelScript<Mod421Key>[] ms = null;
-		for ( Model421Script script : Model421Script.values()) {
+		for (Model421Script script : Model421Script.values()) {
 			if (script.accept(mod421)) {
-				ms = script.getScript();
+				ms = mod421.isLastPeriod() ? script.getScriptT4() : script.getScriptT1();
 				break;
 			}
 		}
