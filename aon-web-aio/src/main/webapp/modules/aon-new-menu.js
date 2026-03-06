@@ -1396,6 +1396,9 @@ export class AonNewMenu extends AonElement {
 
 	getSupersetDashboard() {
 		return new Promise((resolve, reject) => {
+			reject("Superset dashboard disabled");
+		});
+/*		return new Promise((resolve, reject) => {
 			getApplicationParameters({ params: ['SUPERSET_DASHBOARD'] })
 				.then(appParams => {
 					if (appParams?.length > 0) {
@@ -1413,7 +1416,7 @@ export class AonNewMenu extends AonElement {
 				});
 			;
 		});
-	}
+*/	}
 
 	getApplicationsOptions() {
 
