@@ -554,6 +554,17 @@
 		<dispatcher>INCLUDE</dispatcher>
 	</filter-mapping>
 
+	<filter>
+		<display-name>Theme Filter</display-name>
+		<filter-name>themeFilter</filter-name>
+		<filter-class>com.code.aon.aio.filter.ThemeFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>themeFilter</filter-name>
+		<url-pattern>/aonTheme</url-pattern>
+	</filter-mapping>
+
 	<!-- DOMAIN MANAGER CONFIGURATION -->
 	<listener>
 		<listener-class>
