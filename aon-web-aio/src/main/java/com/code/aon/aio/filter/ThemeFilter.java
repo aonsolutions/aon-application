@@ -10,7 +10,9 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -70,6 +72,10 @@ public class ThemeFilter extends RequestFilter {
 		
 		Domain domain = AON.getDomain(domainName, 1, "", f -> f.getNameProperty().eq(domainName));
 
+		if (hasCustomView(domain)) {
+			return Optional.empty();
+		}
+
 		return 
 		AON.getApplicationParameterStream(
 				domain.getName(), 
@@ -82,6 +88,17 @@ public class ThemeFilter extends RequestFilter {
 		.sorted((p1, p2) -> p2.getDomain().compareTo(p1.getDomain())) // sorted by domain descending, so the most specific one is first 
 		.map(param -> param.getValue())
 		.findFirst();
+	}
+
+	private static boolean hasCustomView(Domain domain) {
+		Integer customViewdomainId = domain.getParentId() != null ? domain.getParentId() : domain.getId();
+		return AON_SOLUTIONS.getDomainApp(
+				domain.getName(), 
+				domain.getId(), 
+				"", 
+				f-> f.getDomainProperty().eq(customViewdomainId)
+				.and(f.getAppProperty().eq(AonApp.CUSTOM_VIEW.value())
+				.and(f.getActiveProperty().eq((byte) 1)))).count() > 0;
 	}
 	
 	
