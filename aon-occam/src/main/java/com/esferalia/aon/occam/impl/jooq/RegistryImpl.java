@@ -64,6 +64,7 @@ import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
+import com.esferalia.aon.occam.api.model.registry.RecordDataType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -95,6 +96,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.MarketingCampaignDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.NewsletterDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.QuestionDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RDirStaffDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RecordDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
@@ -495,17 +497,39 @@ public class RegistryImpl implements IRegistry{
 	}
 	
 	// -------------------- RECORD DATA
-	
+
 	@Override
+	@Deprecated
 	public Stream<RecordData> getRecordDataStream(AONContext ctx, RecordDataFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.getRecordDataStream(ctx, filter));
 	}
+
+	@Override
+	public Stream<RecordData> getRecordDataStream(AONContext ctx, RecordDataType type, Integer registryId) {
+		return RecordDataDAO.getStream(ctx, registryId);
+	}
 	
+	@Override
+	public Stream<RecordData> getRecordDataStream(AONContext ctx, Integer registryId) {
+		return RecordDataDAO.getStream(ctx, registryId);
+	}
+
+	@Override
+	public RecordData getRecordData(AONContext ctx, Integer id) {
+		return RecordDataDAO.get(ctx, id);
+	}
+
 	@Override
 	public RecordData saveRecordData(AONContext ctx, RecordData recordData) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.saveRecordData(ctx, recordData));
+				configuration -> RecordDataDAO.save(ctx, recordData));
+	}
+
+	@Override
+	public void deleteRecordData(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(
+				configuration -> RecordDataDAO.delete(ctx, id));
 	}
 	
 	// -------------------- Company

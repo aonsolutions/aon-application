@@ -52,7 +52,7 @@ export class Registry {
                 : [];
             this.paymethod = new RegistryPaymethod(registry.paymethod);
             this.dirty = registry.dirty;
-            this.record_data = new RecordData(registry.record_data);
+            this.record_data = registry.record_data;
 
             this.rsegment = registry.rsegment 
                 ? registry.rsegment.map(a => new RegistrySegment(a))
@@ -72,7 +72,7 @@ export class Registry {
             this.media = [];
             this.banks = [];
             this.paymethod = new RegistryPaymethod();
-            this.record_data = new RecordData();
+            this.record_data = [];
             this.rsegment = [];
         }
     }
@@ -241,15 +241,6 @@ export class Registry {
 
     setDirty(dirty) {
         this.dirty = dirty;
-        return this;
-    }
-
-    getRecordData() {
-        return this.record_data;
-    }
-
-    setRecordData(recordData) {
-        this.record_data = recordData;
         return this;
     }
 

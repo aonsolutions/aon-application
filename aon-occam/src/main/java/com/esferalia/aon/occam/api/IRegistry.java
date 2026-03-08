@@ -62,6 +62,7 @@ import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
+import com.esferalia.aon.occam.api.model.registry.RecordDataType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -196,8 +197,12 @@ public interface IRegistry {
 	public TargetFull getTargetFull(AONContext ctx, Integer registry);
 
 	// ------------------- RECORD DATA
-	public Stream<RecordData> getRecordDataStream(AONContext ctx, RecordDataFilter filter);
+	@Deprecated public Stream<RecordData> getRecordDataStream(AONContext ctx, RecordDataFilter filter);
+	public Stream<RecordData> getRecordDataStream(AONContext ctx, RecordDataType type, Integer registryId);
+	public Stream<RecordData> getRecordDataStream(AONContext ctx, Integer registryId);
+	public RecordData getRecordData(AONContext ctx, Integer id);
 	public RecordData saveRecordData(AONContext ctx, RecordData recordData);
+	public void deleteRecordData(AONContext ctx, Integer id);
 
 	// ------------------- COMPANY
 	public Stream<Company> getUserCompanyStream(AONContext ctx, Integer[] scopes);
