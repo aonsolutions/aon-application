@@ -166,7 +166,6 @@ export class AonBooking extends AonElement {
 		this.appendChild(content);
 
 		this.buildBooking();
-
 	}
 
 	buildTabs() {
@@ -242,12 +241,11 @@ export class AonBooking extends AonElement {
 				this.buildApps(content, BookingApps, dur);
 			}
 			this.buildTitle(content, MSG.SERVICES);
-			if(this.isConsole() || this.isBeta()) 
+			if(this.isConsole() || this.isBeta()) {
 				this.buildApps(content, ConsoleServices, dur);
-			else this.buildApps(content, Services, dur);
-	
-			this.buildTitle(content, MSG.CLASSIC_APPLICATIONS);
-			this.buildApps(content, ClassicApps, dur);
+				this.buildTitle(content, MSG.CLASSIC_APPLICATIONS);
+				this.buildApps(content, ClassicApps, dur);
+			} else this.buildApps(content, Services, dur);
 		}
 	}
 

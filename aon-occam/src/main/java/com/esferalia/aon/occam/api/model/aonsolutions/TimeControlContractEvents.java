@@ -14,6 +14,7 @@ public class TimeControlContractEvents implements Serializable {
 	private Boolean fullTime;
 	private Byte[] workingDays;
 	private Double[] workingDaysHours;
+	private Double annualHolidays;
 	private List<TimeControlContractEvent> events;
 	private List<TimeControlContractEvent> festives;
 	private List<TimeControlContractEvent> contractDaysType;
@@ -47,6 +48,15 @@ public class TimeControlContractEvents implements Serializable {
 
 	public TimeControlContractEvents setWorkingDaysHours(Double[] workingDaysHours) {
 		this.workingDaysHours = workingDaysHours;
+		return this;
+	}
+	
+	public Double getAnnualHolidays() {
+		return annualHolidays;
+	}
+
+	public TimeControlContractEvents setAnnualHolidays(Double annualHolidays) {
+		this.annualHolidays = annualHolidays;
 		return this;
 	}
 
@@ -119,6 +129,7 @@ public class TimeControlContractEvents implements Serializable {
 		json.put("events", eventsArr);
 		json.put("workingDays", workingDaysArr);
 		json.put("workingDaysHours", workingDaysHoursArr);
+		json.put("annualHolidays", annualHolidays);
 		
 		return json;
 	}

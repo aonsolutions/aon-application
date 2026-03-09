@@ -436,6 +436,9 @@ public class TimeControlServlet extends AonApiHttpServlet{
 	
 		Date date = !params.optString(IJsonNames.DATE).isEmpty() ?  new Date(params.optLong(IJsonNames.DATE)) : new Date();
 
+		if(date.after(new Date()))
+			throw new IllegalArgumentException("No se puede crear un fichaje a futuro");
+		
 		Location lc = new Location();
 		
 		if(!coordinates.isEmpty() || (coordinates.isEmpty() && null != params.optIntegerObject("location", null))) {

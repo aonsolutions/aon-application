@@ -19,9 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.customize.Customize;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art284XXFix;
+import net.aonsolutions.db.up2date.registry.RecordDataAlterTable;
 
 public class Up2Date {
 
@@ -624,6 +623,8 @@ public class Up2Date {
 			// CalendarPersonalDaysAlter.CALENDAR_PERSONAL_DAYS_ALTER,
 
 			// EnterpriseDataAddAudit.ENTERPRISE_DATA_ADD_AUDIT
+			
+			RecordDataAlterTable.RECORD_DATA_ALTER_TABLE
 	};
 
 	// ------------------------------------------------------------------------

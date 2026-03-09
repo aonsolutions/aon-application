@@ -103,10 +103,6 @@ public class DomainUserRolesController implements Serializable {
 	public boolean isOcr() {
 		return getDur().isOcr();
 	}
-	
-	public boolean isFacturae() {
-		return getDur().isFacturae();
-	}
 
 	public String getToken() {
 		if(token == null && getDur().getUser().getAuth().isEmpty()) {

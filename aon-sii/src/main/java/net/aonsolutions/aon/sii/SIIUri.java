@@ -14,59 +14,61 @@ public class SIIUri {
 	}
 	
 	/**
-	 * Entorno de PRODUCCION d�a 1 de julio 2017 
+	 * Entorno de PRODUCCION
 	 * @param SIIType type
 	 * @return URI
 	 */
 	protected String getURI(SIIType type, Administration place) {
+		if(Administration.NAVARRA.equals(place)) return "https://siihacienda.navarra.es/SII_PRODUCCION.proxy/SiiMensajesXsdHandlet.ashx";
+
 		if(SIIType.FACTURAS_EMITIDAS.equals(type)) {
 			if(Administration.COMMON_TERRITORY.equals(place)) return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP";
 			else if(Administration.ALAVA.equals(place)) return "https://sii.araba.eus/SSII-FACT/ws/fe/SiiFactFEV1SOAP";
 			else if(Administration.BIZKAIA.equals(place)) return "https://sii.bizkaia.eus/SSII-FACT/ws/fe/SiiFactFEV1SOAP";
 			else if(Administration.GIPUZKOA.equals(place)) return "https://sii.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/fe/SiiFactFEV1SOAP";
-			else //if(Administration.NAVARRA.equals(place)) 
-				return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP";
+			else return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP";
 		}
+		
 		if(SIIType.FACTURAS_EMITIDAS_COBROS.equals(type)) {
 			if(Administration.COMMON_TERRITORY.equals(place)) return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fe/SiiFactCOBV1SOAP";
 			else if(Administration.ALAVA.equals(place)) return "https://sii.araba.eus/SSII-FACT/ws/fe/SiiFactCOBV1SOAP";
 			else if(Administration.BIZKAIA.equals(place)) return "https://sii.bizkaia.eus/SSII-FACT/ws/fe/SiiFactCOBV1SOAP";
 			else if(Administration.GIPUZKOA.equals(place)) return "https://sii.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/fe/SiiFactCOBV1SOAP";
-			else //if(Administration.NAVARRA.equals(place)) 
-				return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fe/SiiFactCOBV1SOAP";
+			else return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fe/SiiFactCOBV1SOAP";
 		}
+		
 		if(SIIType.FACTURAS_RECIBIDAS.equals(type)) {
 			if(Administration.COMMON_TERRITORY.equals(place)) return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
 			else if(Administration.ALAVA.equals(place)) return "https://sii.araba.eus/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
 			else if(Administration.BIZKAIA.equals(place)) return "https://sii.bizkaia.eus/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
 			else if(Administration.GIPUZKOA.equals(place)) return "https://sii.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
-			else //if(Administration.NAVARRA.equals(place)) 
-				return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
+			else return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
 		}
+		
 		if(SIIType.FACTURAS_RECIBIDAS_PAGOS.equals(type)) {
 			if(Administration.COMMON_TERRITORY.equals(place)) return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fr/SiiFactPAGV1SOAP";
 			else if(Administration.ALAVA.equals(place)) return "https://sii.araba.eus/SSII-FACT/ws/fr/SiiFactPAGV1SOAP";
 			else if(Administration.BIZKAIA.equals(place)) return "https://sii.bizkaia.eus/SSII-FACT/ws/fr/SiiFactPAGV1SOAP";
 			else if(Administration.GIPUZKOA.equals(place)) return "https://sii.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/fr/SiiFactPAGV1SOAP";
-			else //if(Administration.NAVARRA.equals(place)) 
-				return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fr/SiiFactPAGV1SOAP";
+			else return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fr/SiiFactPAGV1SOAP";
 		}
+		
 		if(SIIType.BIENES_INVERSION.equals(type)) {
 			if(Administration.COMMON_TERRITORY.equals(place)) return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
 			else if(Administration.ALAVA.equals(place)) return "https://sii.araba.eus/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
 			else if(Administration.BIZKAIA.equals(place)) return "https://sii.bizkaia.eus/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
 			else if(Administration.GIPUZKOA.equals(place)) return "https://sii.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
-			else //if(Administration.NAVARRA.equals(place)) 
-				return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
+			else return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
 		}
+		
 		if(SIIType.OPERACIONES_INTRACOMUNITARIAS.equals(type)) {
 			if(Administration.COMMON_TERRITORY.equals(place)) return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/oi/SiiFactOIV1SOAP";
 			else if(Administration.ALAVA.equals(place)) return "https://sii.araba.eus/SSII-FACT/ws/oi/SiiFactOIV1SOAP";
 			else if(Administration.BIZKAIA.equals(place)) return "https://sii.bizkaia.eus/SSII-FACT/ws/oi/SiiFactOIV1SOAP";
 			else if(Administration.GIPUZKOA.equals(place)) return "https://sii.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/oi/SiiFactOIV1SOAP";
-			else //if(Administration.NAVARRA.equals(place)) 
-				return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/oi/SiiFactOIV1SOAP";
+			else return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/oi/SiiFactOIV1SOAP";
 		}
+		
 		if(SIIType.COBROS_METALICO.equals(type) 
 				|| SIIType.OPERACIONES_SEGUROS.equals(type)
 				|| SIIType.AGENCIAS_VIAJES.equals(type)) {
@@ -74,150 +76,78 @@ public class SIIUri {
 			else if(Administration.ALAVA.equals(place)) return "https://sii.araba.eus/SSII-FACT/ws/pm/SiiFactCMV1SOAP";
 			else if(Administration.BIZKAIA.equals(place)) return "https://sii.bizkaia.eus/SSII-FACT/ws/pm/SiiFactCMV1SOAP";
 			else if(Administration.GIPUZKOA.equals(place)) return "https://sii.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/pm/SiiFactCMV1SOAP";
-			else //if(Administration.NAVARRA.equals(place)) 
-				return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/pm/SiiFactCMV1SOAP";
+			else return "https://www1.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/pm/SiiFactCMV1SOAP";
 		}
+		
 		return "";
 	}
 	
 	/**
-	 * Entorno de PRODUCCION d�a 1 de julio 2017 para acceso con certificado de sello
-	 * @param SIIType type
-	 * @return URI
-	 */
-	protected String getURISello(SIIType type, Administration place) {
-		if(SIIType.FACTURAS_EMITIDAS.equals(type)) {
-			if(Administration.COMMON_TERRITORY.equals(place)) return "https://www10.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP";
-			else if(Administration.ALAVA.equals(place)) return "https://pruebas-sii.araba.eus/SSII-FACT/ws/fe/SiiFactFEV1SOAP";
-			else if(Administration.BIZKAIA.equals(place)) return "https://apps.bizkaia.eus/SSII-FACT/ws/fe/SiiFactFEV1SOAP";
-			else if(Administration.GIPUZKOA.equals(place)) return "https://sii.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/fe/SiiFactFEV1SOAP";
-			else //if(Administration.NAVARRA.equals(place)) 
-				return "https://www10.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP";
-		}
-		if(SIIType.FACTURAS_EMITIDAS_COBROS.equals(type)) {
-			if(Administration.COMMON_TERRITORY.equals(place)) return "https://www10.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fe/SiiFactCOBV1SOAP";
-			else if(Administration.ALAVA.equals(place)) return "https://pruebas-sii.araba.eus/SSII-FACT/ws/fe/SiiFactCOBV1SOAP";
-			else if(Administration.BIZKAIA.equals(place)) return "https://apps.bizkaia.eus/SSII-FACT/ws/fe/SiiFactCOBV1SOAP";
-			else if(Administration.GIPUZKOA.equals(place)) return "https://sii.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/fe/SiiFactCOBV1SOAP";
-			else //if(Administration.NAVARRA.equals(place)) 
-				return "https://www10.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fe/SiiFactCOBV1SOAP";
-		}
-		if(SIIType.FACTURAS_RECIBIDAS.equals(type)) {
-			if(Administration.COMMON_TERRITORY.equals(place)) return "https://www10.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
-			else if(Administration.ALAVA.equals(place)) return "https://pruebas-sii.araba.eus/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
-			else if(Administration.BIZKAIA.equals(place)) return "https://apps.bizkaia.eus/wlpl/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
-			else if(Administration.GIPUZKOA.equals(place)) return "https://sii.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
-			else //if(Administration.NAVARRA.equals(place)) 
-				return "https://www10.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
-		}
-		if(SIIType.FACTURAS_RECIBIDAS_PAGOS.equals(type)) {
-			if(Administration.COMMON_TERRITORY.equals(place)) return "https://www10.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fr/SiiFactPAGV1SOAP";
-			else if(Administration.ALAVA.equals(place)) return "https://pruebas-sii.araba.eus/SSII-FACT/ws/fr/SiiFactPAGV1SOAP";
-			else if(Administration.BIZKAIA.equals(place)) return "https://apps.bizkaia.eus/SSII-FACT/ws/fr/SiiFactPAGV1SOAP";
-			else if(Administration.GIPUZKOA.equals(place)) return "https://sii.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/fr/SiiFactPAGV1SOAP";
-			else //if(Administration.NAVARRA.equals(place)) 
-				return "https://www10.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/fr/SiiFactPAGV1SOAP";
-		}
-		if(SIIType.BIENES_INVERSION.equals(type)) {
-			if(Administration.COMMON_TERRITORY.equals(place)) return "https://www10.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
-			else if(Administration.ALAVA.equals(place)) return "https://pruebas-sii.araba.eus/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
-			else if(Administration.BIZKAIA.equals(place)) return "https://apps.bizkaia.eus/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
-			else if(Administration.GIPUZKOA.equals(place)) return "https://sii.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
-			else //if(Administration.NAVARRA.equals(place)) 
-				return "https://www10.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
-		}
-		if(SIIType.OPERACIONES_INTRACOMUNITARIAS.equals(type)) {
-			if(Administration.COMMON_TERRITORY.equals(place)) return "https://www10.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/oi/SiiFactOIV1SOAP";
-			else if(Administration.ALAVA.equals(place)) return "https://pruebas-sii.araba.eus/SSII-FACT/ws/oi/SiiFactOIV1SOAP";
-			else if(Administration.BIZKAIA.equals(place)) return "https://apps.bizkaia.eus/SSII-FACT/ws/oi/SiiFactOIV1SOAP";
-			else if(Administration.GIPUZKOA.equals(place)) return "https://sii.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/oi/SiiFactOIV1SOAP";
-			else //if(Administration.NAVARRA.equals(place)) 
-				return "https://www10.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/oi/SiiFactOIV1SOAP";
-		}
-		if(SIIType.COBROS_METALICO.equals(type) 
-				|| SIIType.OPERACIONES_SEGUROS.equals(type)
-				|| SIIType.AGENCIAS_VIAJES.equals(type)) {
-			if(Administration.COMMON_TERRITORY.equals(place)) return "https://www10.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/pm/SiiFactCMV1SOAP";
-			else if(Administration.ALAVA.equals(place)) return "https://pruebas-sii.araba.eus/SSII-FACT/ws/pm/SiiFactCMV1SOAP";
-			else if(Administration.BIZKAIA.equals(place)) return "https://apps.bizkaia.eus/SSII-FACT/ws/pm/SiiFactCMV1SOAP";
-			else if(Administration.GIPUZKOA.equals(place)) return "https://sii.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/pm/SiiFactCMV1SOAP";
-			else //if(Administration.NAVARRA.equals(place)) 
-				return "https://www10.agenciatributaria.gob.es/wlpl/SSII-FACT/ws/pm/SiiFactCMV1SOAP";
-		}
-		return "";
-	}
-	
-	/**
-	 * Entorno de PRUEBAS (tambien valido para acceso con certificados de sello)
+	 * Entorno de PRUEBAS
 	 * @param SIIType type
 	 * @return URI
 	 */
 	protected String getURIPruebas(SIIType type, Administration place) {
+		if(Administration.NAVARRA.equals(place)) return "https://siihacienda.navarra.es/SII_PRUEBAS.proxy/SiiMensajesXsdHandlet.ashx";
+
 		if(SIIType.FACTURAS_EMITIDAS.equals(type)) {
 			if(Administration.COMMON_TERRITORY.equals(place)) return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP";
 			else if(Administration.ALAVA.equals(place)) return "https://pruebas-sii.araba.eus/SSII-FACT/ws/fe/SiiFactFEV1SOAP";
 			else if(Administration.BIZKAIA.equals(place)) return "https://pruapps.bizkaia.eus/SSII-FACT/ws/fe/SiiFactFEV1SOAP";
-//			if(Administration.GIPUZKOA.equals(place)) return "https://prep9.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/fe/SiiFactFEV1SOAP";
 			else if(Administration.GIPUZKOA.equals(place)) return "https://sii-prep.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/fe/SiiFactFEV1SOAP";
-			else //if(Administration.NAVARRA.equals(place)) 
-				return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP";
+			else return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fe/SiiFactFEV1SOAP";
 		}
+		
 		if(SIIType.FACTURAS_EMITIDAS_COBROS.equals(type)) {
 			if(Administration.COMMON_TERRITORY.equals(place)) return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fe/SiiFactCOBV1SOAP"; 
 			else if(Administration.ALAVA.equals(place)) return "https://pruebas-sii.araba.eus/SSII-FACT/ws/fe/SiiFactCOBV1SOAP"; 
 			else if(Administration.BIZKAIA.equals(place)) return "https://pruapps.bizkaia.eus/SSII-FACT/ws/fe/SiiFactCOBV1SOAP"; 
-//			if(Administration.GIPUZKOA.equals(place)) return "https://prep9.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/fe/SiiFactCOBV1SOAP"; 
 			else if(Administration.GIPUZKOA.equals(place)) return "https://sii-prep.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/fe/SiiFactCOBV1SOAP"; 
-			else //if(Administration.NAVARRA.equals(place)) 
-				return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fe/SiiFactCOBV1SOAP";
+			else return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fe/SiiFactCOBV1SOAP";
 		}
+		
 		if(SIIType.FACTURAS_RECIBIDAS.equals(type)) {
 			if(Administration.COMMON_TERRITORY.equals(place)) return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
 			else if(Administration.ALAVA.equals(place)) return "https://pruebas-sii.araba.eus/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
 			else if(Administration.BIZKAIA.equals(place)) return "https://pruapps.bizkaia.eus/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
-//			if(Administration.GIPUZKOA.equals(place)) return "https://prep9.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
 			else if(Administration.GIPUZKOA.equals(place)) return "https://sii-prep.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
-			else //if(Administration.NAVARRA.equals(place)) 
-				return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
+			else return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
 		}
+		
 		if(SIIType.FACTURAS_RECIBIDAS_PAGOS.equals(type)) {
 			if(Administration.COMMON_TERRITORY.equals(place)) return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fr/SiiFactPAGV1SOAP";
 			else if(Administration.ALAVA.equals(place)) return "https://pruebas-sii.araba.eus/SSII-FACT/ws/fr/SiiFactPAGV1SOAP";
 			else if(Administration.BIZKAIA.equals(place)) return "https://pruapps.bizkaia.eus/SSII-FACT/ws/fr/SiiFactPAGV1SOAP";
-//			if(Administration.GIPUZKOA.equals(place)) return "https://prep9.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/fr/SiiFactPAGV1SOAP";
 			else if(Administration.GIPUZKOA.equals(place)) return "https://sii-prep.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/fr/SiiFactPAGV1SOAP";
-			else //if(Administration.NAVARRA.equals(place)) 
-				return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fr/SiiFactPAGV1SOAP";
+			else return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/fr/SiiFactPAGV1SOAP";
 		}
+
 		if(SIIType.BIENES_INVERSION.equals(type)) {
 			if(Administration.COMMON_TERRITORY.equals(place))return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
 			else if(Administration.ALAVA.equals(place))return "https://pruebas-sii.araba.eus/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
 			else if(Administration.BIZKAIA.equals(place))return "https://pruapps.bizkaia.eus/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
-//			if(Administration.GIPUZKOA.equals(place))return "https://prep9.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
 			else if(Administration.GIPUZKOA.equals(place))return "https://sii-prep.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
-			else //if(Administration.NAVARRA.equals(place))
-				return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
+			else return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
 		}
+
 		if(SIIType.OPERACIONES_INTRACOMUNITARIAS.equals(type)) {
 			if(Administration.COMMON_TERRITORY.equals(place)) return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/oi/SiiFactOIV1SOAP";
 			else if(Administration.ALAVA.equals(place)) return "https://pruebas-sii.araba.eus/SSII-FACT/ws/oi/SiiFactOIV1SOAP";
 			else if(Administration.BIZKAIA.equals(place)) return "https://pruapps.bizkaia.eus/SSII-FACT/ws/oi/SiiFactOIV1SOAP";
-//			if(Administration.GIPUZKOA.equals(place)) return "https://prep9.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/oi/SiiFactOIV1SOAP";
 			else if(Administration.GIPUZKOA.equals(place)) return "https://sii-prep.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/oi/SiiFactOIV1SOAP";
-			else // if(Administration.NAVARRA.equals(place))
-				return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
+			else return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
 		}
+
 		if(SIIType.COBROS_METALICO.equals(type) 
 				|| SIIType.OPERACIONES_SEGUROS.equals(type)
 				|| SIIType.AGENCIAS_VIAJES.equals(type)) {
 			if(Administration.COMMON_TERRITORY.equals(place)) return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/pm/SiiFactCMV1SOAP";
 			else if(Administration.ALAVA.equals(place)) return "https://pruebas-sii.araba.eus/SSII-FACT/ws/pm/SiiFactCMV1SOAP";
 			else if(Administration.BIZKAIA.equals(place)) return "https://pruapps.bizkaia.eus/SSII-FACT/ws/pm/SiiFactCMV1SOAP";
-//			if(Administration.GIPUZKOA.equals(place)) return "https://prep9.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/pm/SiiFactCMV1SOAP";
 			else if(Administration.GIPUZKOA.equals(place)) return "https://sii-prep.egoitza.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/pm/SiiFactCMV1SOAP";
-			else // if(Administration.NAVARRA.equals(place))
-				return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
+			else return "https://prewww1.aeat.es/wlpl/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
 		}
+		
 		return "";
 	}
 	
