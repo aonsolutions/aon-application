@@ -92,9 +92,6 @@ export class AonRecordData extends AonElement {
         type.value = this.getRecordData().getType().value;
         type.setOptions(RecordDataType.toArray());
 		type.addEventListener(EVENT.SELECT, () => {
-            alert(type.value);
-            alert(JSON.stringify(RecordDataType.safeValueOf(type.value)));
-
 			this.getRecordData().setType(RecordDataType.safeValueOf(type.value));
 		});
         table.addCell(type, 2);
@@ -147,7 +144,7 @@ export class AonRecordData extends AonElement {
         inscription.value = this.getRecordData().getRegistration();
         inscription.addEventListener(EVENT.CHANGE, () => {
             this.getRecordData().setRegistration(inscription.value);
-        })
+        });
         table.addCell(inscription, 3);
 
         table.addRow();
@@ -195,6 +192,7 @@ export class AonRecordData extends AonElement {
 
         let irus = createInput(this.RECORD_DATA_IRUS, MSG.IRUS);
         irus.value = this.getRecordData().getIrus();
+        irus.maxlength = '13';
         irus.addEventListener(EVENT.CHANGE, () => {
             this.getRecordData().setIrus(irus.value);
         });

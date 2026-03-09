@@ -109,7 +109,6 @@ export class AonAddress extends AonElement {
     let table = new AonBasicTable();
     table.id = this.EDIT;
   	table.style.display = "none";
-    if(!LS.isNewTheme()) table.style.backgroundColor = "#f1f1f1";
     this.appendChild(table);
 
     table.addRow();
