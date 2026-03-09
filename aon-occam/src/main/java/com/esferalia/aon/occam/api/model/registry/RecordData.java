@@ -19,8 +19,11 @@ public class RecordData implements Serializable{
 	private String section;
 	private String page;
 	private String sheet;
-	private String registration;	
+	private String registration;
 	private Integer attach;
+	private RecordDataType type;
+	private String irus;
+	private CommercialRegistryCode commercialRegistryCode;
 	
 	public Integer getId() {
 		return id;
@@ -120,4 +123,26 @@ public class RecordData implements Serializable{
 		this.attach = attach;
 		return this;
 	}
+	public RecordDataType getType() {
+		return type;
+	}
+	public RecordData setType(RecordDataType type) {
+		this.type = type;
+		return this;
+	}
+	public String getIrus() {
+		return irus;
+	}
+	public RecordData setIrus(String irus) {
+		this.irus = irus;
+		return this;
+	}
+	public CommercialRegistryCode getCommercialRegistryCode() {
+		return commercialRegistryCode;
+	}
+	public RecordData setCommercialRegistryCode(CommercialRegistryCode commercialRegistryCode) {
+		this.commercialRegistryCode = commercialRegistryCode;
+		return this;
+	}
 }
+

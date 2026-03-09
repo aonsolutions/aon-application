@@ -917,6 +917,7 @@ public class RegistryOldDAO {
 		
 	// ------------------- RECORD DATA
 
+	@Deprecated(forRemoval = true )
 	public static Stream<RecordData> getRecordDataStream(AONContext ctx, RecordDataFilter filter){
 		return ctx.getDslContext().select()
 				.from(RECORD_DATA)
@@ -924,12 +925,14 @@ public class RegistryOldDAO {
 				.fetch().stream().map(new RecordDataFiller());
 	}
 	
+	@Deprecated(forRemoval = true )
 	public static RecordData saveRecordData(AONContext ctx, RecordData recordData) {
 		return recordData.getId() != null 
 			? updateRecordData(ctx, recordData)
 			: insertRecordData(ctx, recordData); 
 	}
 	
+	@Deprecated(forRemoval = true )
 	private static RecordData insertRecordData(AONContext ctx, RecordData recordData){
 		Integer id = ctx.getDslContext().insertInto(RECORD_DATA)
 			.set(RECORD_DATA.DOMAIN, recordData.getDomain())
@@ -952,6 +955,8 @@ public class RegistryOldDAO {
 		ctx.log().debug("INSERT REGISTRY RECORD DATA ( registry: {0}) id: {1}",recordData.getRegistry(),recordData.getId());
 		return recordData;
 	}
+	
+	@Deprecated(forRemoval = true )
 	private static RecordData updateRecordData(AONContext ctx, RecordData recordData){
 		int count = ctx.getDslContext().update(RECORD_DATA)
 			.set(RECORD_DATA.DOMAIN, recordData.getDomain())

@@ -821,7 +821,10 @@ public class SalarySelect extends Composite {
 	}
 
 	private int getIndexOfSettle(Date date) {
-		return DateUtils.getDaysBetween(new Date(), date);
+		Employee employee = SalarySelect.this.salaryPreview
+				.getEmployee();
+		Date contractStartDate = employee.getStartDate();
+		return DateUtils.getDaysBetween(contractStartDate, date);
 
 	}
 

@@ -522,6 +522,7 @@ public class TimeControlDAO {
 			contractEvents.setFullTime(getFullTimeJourney(ctx, lastContractId));
 			contractEvents.setWorkingDays(getWorkingDays(ctx, lastContractId));
 			contractEvents.setWorkingDaysHours(getWorkingDaysHours(ctx, lastContractId));
+			contractEvents.setAnnualHolidays(getAnnualHolidays(ctx, lastContractId));
 			
 			getContractFestives(ctx, startDate, endDate, contractFestives, taskHolderContracts);
 			getContractDaysTypes(ctx, startDate, endDate, contractDaysType, taskHolderContracts);
@@ -535,7 +536,6 @@ public class TimeControlDAO {
 		
 		return contractEvents;
 	}
-	
 	private static Boolean getFullTimeJourney(AONContext ctx, Integer contractId) {
 		String journeyTypeEmployee = ctx.getDslContext().select()
 				  .from(CONTRACT_DATA)
@@ -576,7 +576,7 @@ public class TimeControlDAO {
 		else
 			return contractType;
 	}
-	
+
 	private static void getContractFestives(AONContext ctx, Date startDate, Date endDate, List<TimeControlContractEvent> contractFestives, Result<ContractRecord> taskHolderContracts) {
 		taskHolderContracts.forEach(taskHolderContract -> {
 			
@@ -966,6 +966,32 @@ public class TimeControlDAO {
 		}
 		
 		return workingDays;
+	}
+	
+	private static Double getAnnualHolidays(AONContext ctx, Integer contractId) {
+		Record contractCalendarRecord = ctx.getDslContext().select(DSL.ifnull(CONTRACT.CALENDAR, PAYROLL_WORKPLACE.CALENDAR).as(CONTRACT.CALENDAR))
+				  .from(CONTRACT)
+				  .innerJoin(PAYROLL_WORKPLACE)
+				  .on(CONTRACT.WORKPLACE.eq(PAYROLL_WORKPLACE.WORKPLACE))
+				  .where(CONTRACT.ID.eq(contractId))
+				  .fetchOne();
+		
+		if (null != contractCalendarRecord){
+			
+			Integer calendarId = contractCalendarRecord.get(CONTRACT.CALENDAR);
+			
+			Result<Record> calendarRecords = ctx.getDslContext().select().from(CALENDAR)
+					.where(CALENDAR.ID.eq(calendarId))
+					.fetch();
+			
+			if(!calendarRecords.isEmpty()) {
+				Record calendarRecord = calendarRecords.get(0);
+				return calendarRecord.get(CALENDAR.ANNUAL_HOLIDAYS);
+			}
+			
+		}
+		
+		return 0.00;
 	}
 	
 	private static java.util.Date parseDateSqlToUtil(Date date) {

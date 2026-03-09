@@ -1,6 +1,7 @@
 @import url("/css/theme/future.css");
 
 :root {
+	--favicon: https://ayudat.aonsolutions.net/cvDocument/faviconCustom;
 	--aonCustomizeButtonBackground: linear-gradient(to right, #0f172a, #0f172a, #0E1030, #586078);
 }
 
@@ -40,6 +41,15 @@
 	margin-left: 3.25rem !important;
 }
 
+.aonLogo,
+.aonNewLogo,
+.aonHeaderAppDiv {
+	background-image: url("https://ayudat.aonsolutions.net/cvDocument/logoCustom");
+}
+
+.aonLoginLogo {
+	background-image: url("https://ayudat.aonsolutions.net/cvDocument/loginLogoCustom");
+}
 
 .aonMenuAnchorDivSpan{
 	display: none;
@@ -68,7 +78,7 @@
     padding:0px;
 	min-height: 170px;
     min-width: 170px;
-    object-fit: cover;
+    object-fit: contain;
     overflow: hidden;
     margin-right: auto;
 }
@@ -165,6 +175,11 @@
 }
 
 
+.tooltip.visible {
+	white-space: nowrap;
+	min-width: max-content !important;
+	
+}
 
 .aonMenuSidenav .aonNewMenuSideNavLi .aonNewMenuAppDiv .aonNewMenuAppIcon:after {
 	content: '';

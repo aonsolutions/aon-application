@@ -10,7 +10,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum AonApp implements Serializable {
 	/**
-	 * FACTURA Y GESTIÓN - INVOICE & MANAGEMENT
+	 * FACTURA Y GESTIï¿½N - INVOICE & MANAGEMENT
 	 */
 	INVOICE(getEmptyModules(), "Facturas"), 											// 0
 	DOCUMENTAL(getDocumentalModules(), "Documental"),									// 1
@@ -53,7 +53,7 @@ public enum AonApp implements Serializable {
 	GROUPWARE(getGroupwareModules(), "Expedientes"),									// 35
 	INVOFOX(getEmptyModules(), "OCR Invofox"),											// 36
 	SERES(getEmptyModules(), "Seres"),													// 37
-	FACTURAE(getEmptyModules(), "Factura Electr\u00f3nica"),							// 38
+	AUTOBOOKING(getEmptyModules(), "Auto-Contratacion"),								// 38
 	CAU(getEmptyModules(), "Soporte"),													// 39
 	CAU_ADVANCE(getEmptyModules(), "Soporte Avanzado")									// 40
 	;
@@ -313,8 +313,8 @@ public enum AonApp implements Serializable {
 			return List.of(AonRole.INVOFOX);
 		case SERES:
 			return List.of(AonRole.SERES);
-		case FACTURAE:
-			return List.of(AonRole.FACTURAE);
+		case AUTOBOOKING:
+			return List.of();
 		default:
 			return List.of(AonRole.ENTERPRISE);
 		}

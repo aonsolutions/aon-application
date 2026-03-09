@@ -517,7 +517,27 @@ public class SellerWorkloadDAO {
 		System.out.println(invoiceList.size());
 		
 		SellerWorkloadContent sellerWorkloadContent = new SellerWorkloadContent()
-				.setFees(feeList)
+				.setFees(
+					feeList.stream()
+					.filter( fee -> {
+						return AonStringUtils.isBlank(params.getDescription()) || 
+							( AonStringUtils.containsIgnoreCase(fee.getCustomer().getName(), params.getDescription()) ||
+							  AonStringUtils.containsIgnoreCase(fee.getCustomer().getDocument(), params.getDescription()) ||
+							  AonStringUtils.containsIgnoreCase(fee.getCustomer().getAlias(), params.getDescription())
+							);
+					})
+					.collect(Collectors.toList()))
+				
+				.setInvoiceDetails(
+						invoiceList.stream()
+						.filter( invoice -> {
+							return AonStringUtils.isBlank(params.getDescription()) || 
+								( AonStringUtils.containsIgnoreCase(invoice.getInvoice().getRegistryName(), params.getDescription()) ||
+								  AonStringUtils.containsIgnoreCase(invoice.getInvoice().getRegistryDocument(), params.getDescription())
+								);
+						})
+						.collect(Collectors.toList()))
+				
 				.setInvoiceDetails(invoiceList);
 
 		return sellerWorkloadContent;
