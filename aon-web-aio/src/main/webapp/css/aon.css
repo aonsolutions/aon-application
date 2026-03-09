@@ -5040,7 +5040,8 @@ aon-agenda-all-days {
 
 /* ---------- Header ---------- */
 
-aon-agenda-all-days header {
+aon-agenda-all-days header,
+aon-agenda-annual-summary header {
   position: sticky;
   top: 0;
   z-index: 2;
@@ -5052,39 +5053,47 @@ aon-agenda-all-days header {
   align-items: flex-end;
 }
 
-aon-agenda-all-days .header-left {
+aon-agenda-all-days .header-left,
+aon-agenda-annual-summary .header-left {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-aon-agenda-all-days .header-right {
+aon-agenda-all-days .header-right,
+aon-agenda-annual-summary .header-right  {
   display: flex;
   flex-direction: column;
   gap: 4px;
   align-items: end;
 }
 
-aon-agenda-all-days .header-top {
+aon-agenda-all-days .header-top,
+aon-agenda-annual-summary .header-top {
   display: flex;
   align-items: baseline;
   gap: 8px;
+  align-items: center;
 }
 
-aon-agenda-all-days .month {
+aon-agenda-all-days .month,
+aon-agenda-annual-summary .month {
   font-size: 22px;
   font-weight: 500;
 }
 
 aon-agenda-all-days .month-hours,
 aon-agenda-all-days .week-hours,
-aon-agenda-all-days .total-hours {
+aon-agenda-all-days .total-hours,
+aon-agenda-annual-summary .annual-holidays,
+aon-agenda-annual-summary .today-hours {
   font-size: 13px;
   font-weight: 500;
   color: #5f6368;
 }
 
-aon-agenda-all-days .header-bottom {
+aon-agenda-all-days .header-bottom,
+aon-agenda-annual-summary .header-bottom {
   display: flex;
   align-items: baseline;
   gap: 4px;
@@ -5412,35 +5421,6 @@ aon-agenda-annual-summary {
   color: #202124;
 }
 
-aon-agenda-annual-summary header.annual-header {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  background: white;
-  padding: 12px 16px;
-  border-bottom: 1px solid #e0e0e0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: column;
-  gap: .5rem;
-}
-
-aon-agenda-annual-summary header.annual-header .header-row{
-	display: flex;
-	justify-content: space-between;
-	width: 100%;
-  	align-items: center;
-}
-
-aon-agenda-annual-summary header.annual-header .header-row-right span{
-	text-align: right;
-}
-
-aon-agenda-annual-summary header.annual-header .annual-hours{
-	padding-left: 4px;
-}
-
 /* Navegación de año: < 2025 > */
 aon-agenda-annual-summary .year-nav {
   display: flex;
@@ -5459,35 +5439,15 @@ aon-agenda-annual-summary .year-btn {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 28px;
+  font-size: 22px;
   line-height: 1;
   color: #5f6368;
-  padding: 0 4px;
   border-radius: 50%;
   transition: background 0.15s;
-  padding-bottom: 4px;
 }
 
 aon-agenda-annual-summary .year-btn:hover {
   background: #f1f3f4;
-}
-
-/* Totales en la cabecera */
-aon-agenda-annual-summary .annual-totals {
-  margin-top: 4px;
-  font-size: 13px;
-  color: #5f6368;
-  font-weight: 500;
-}
-
-aon-agenda-annual-summary .header-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-  font-size: 13px;
-  color: #5f6368;
-  font-weight: 500;
 }
 
 /* Reutilizamos las clases de diferencia de horas de la agenda */
@@ -5650,6 +5610,26 @@ aon-calendar-menu {
 	bottom: 85px;
 	right: 20px;
 	z-index: 1000;
+}
+
+/* Wrapper de los hijos del acordeón.
+   Empieza con altura 0 y sin overflow para que esté oculto.
+   La transición en max-height crea el efecto de deslizamiento. */
+aon-calendar-menu .incidencia-children {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+/* Los botones hijos tienen un sangrado visual para indicar jerarquía */
+aon-calendar-menu .incidencia-child {
+  padding-left: 36px; /* más sangrado que el botón padre */
+  background: #f9fafb;
+  font-size: 14px;
+}
+
+aon-calendar-menu .incidencia-child:hover:not(.disabled) {
+  background-color: #f1f3f4;
 }
 
 /* Contenedor de los elementos */
@@ -5858,6 +5838,49 @@ aon-calendar-menu.menu-open .calendar-menu-option:nth-child(4) {
 		padding: 12px 16px;
 		font-size: 14px;
 	}
+}
+
+/* =====================================================
+   aon-calendar-container-split
+   Nuevo contenedor que muestra los dos widgets
+   lado a lado, cada uno al 50%.
+   ===================================================== */
+
+aon-calendar-container-split {
+  display: block;
+  height: 100%;
+  position: relative;
+}
+
+/* El wrapper que distribuye los paneles en fila */
+aon-calendar-container-split .split-wrapper {
+  display: flex;        /* los hijos se colocan en fila */
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+}
+
+/* Cada panel ocupa exactamente la mitad */
+aon-calendar-container-split .split-panel {
+  flex: 1;              /* flex: 1 = "toma el espacio disponible por igual" */
+  min-width: 0;         /* evita que el contenido desborde el panel */
+  height: 100%;
+  overflow: hidden;     /* el scroll lo gestiona cada widget internamente */
+}
+
+/* Línea divisoria entre los dos paneles */
+aon-calendar-container-split .split-divider {
+  width: 1px;
+  background-color: #e0e0e0;
+  flex-shrink: 0;       /* que no se encoja aunque falte espacio */
+}
+
+/* Nos aseguramos de que los widgets hijos ocupen el 100% de su panel */
+aon-calendar-container-split aon-agenda-all-days,
+aon-calendar-container-split aon-agenda-annual-summary {
+  display: block;
+  height: 100%;
+  width: 100%;
 }
 
 /* Invoice Future Sidenav options */
