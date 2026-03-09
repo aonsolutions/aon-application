@@ -81,3 +81,10 @@ export const downloadRegistryExcel = (data) => openFileUrl(`${API_URL}/downloadR
 // CUSTOMER NOTES
 
 export const getRegistryNotes = (data) => get(REGISTRY_NOTES, data);
+
+
+
+// RECORD DATA
+
+export const saveRecordData = (data) => put(`${API_URL}/registry/recordData`, data);
+export const deleteRecordData = (id) => remove(`${API_URL}/registry/recordData`, {id});

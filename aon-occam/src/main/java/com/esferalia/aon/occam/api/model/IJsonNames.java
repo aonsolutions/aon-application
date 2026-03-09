@@ -132,6 +132,7 @@ public final class IJsonNames {
 	public static final String COMMENT = "comment";
 	public static final String COMMENTS = "comments";
 	public static final String COMMERCIAL = "commercial";
+	public static final String COMMERCIAL_REGISTRY_CODE = "commercialRegistryCode";
 	public static final String COMMISSION_TYPE = "commission_type";
 	public static final String COMMUNICATION = "communication";
 	public static final String COMMUNICATION_HISTORY = "communicationHistory";
@@ -165,8 +166,10 @@ public final class IJsonNames {
 	public static final String COST_CENTERS = "costCenters";
 	public static final String COUNT = "count";
 	public static final String COUNTRY = "country";
-	public static final String CREATION_DATE = "creation_date";
-	public static final String CREATION_USER = "creation_user";
+	@Deprecated public static final String CREATION_DATE = "creation_date";
+	public static final String CREATION_DATE2 = "creationDate";
+	@Deprecated public static final String CREATION_USER = "creation_user";
+	public static final String CREATION_USER2 = "creationUser";
 	public static final String CREDIT = "credit";
 	public static final String CREDITOR = "creditor";
 	public static final String CUSTOMER = "customer";
@@ -365,6 +368,7 @@ public final class IJsonNames {
 	public static final String INVOICE_TYPES = "invoiceTypes";
 	public static final String INVOICE_TYPE_UNDEDUCTIBLE = "invoiceTypeUndeductible";
 	public static final String INVOICES = "invoices";
+	public static final String IRUS = "irus";
 	public static final String IRPF = "irpf";
 	public static final String IRPF_PARAMS = "irpfParams";
 	public static final String IRPF_REGIME = "irpfRegime";

@@ -98,6 +98,9 @@ public class RegistryServlet extends AonApiHttpServlet {
 			case "/":
 				response(req, resp, getRegistry(api, api.getData()));
 				break;
+			case "/recordData":
+				response(req, resp, saveRecordData(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -108,12 +111,32 @@ public class RegistryServlet extends AonApiHttpServlet {
 	
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("EXAMPLE SERVLET - PUT METHOD");
+		LOGGER.info("REGISTRY SERVLET - PUT METHOD");
 		try {
 			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, saveRegistry(api));
+				break;
+			case "/recordData":
+				response(req, resp, saveRecordData(api));
+				break;
+			default:
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
+			}
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+	}
+	
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("REGISTRY SERVLET - PUT METHOD");
+		try {
+			AonApiData api = initialize(req);
+			switch (api.getPath()) {
+			case "/recordData":
+				response(req, resp, deleteRecordData(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -199,9 +222,7 @@ public class RegistryServlet extends AonApiHttpServlet {
 				
 				if(RegistryAdditionalInfo.RECORD_DATA.equals(rai)) {
 					object.put(rai.name().toLowerCase(),
-						RecordDataJSON.toJSON(
-							AON.getRecordData(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-								f -> f.getRegistryProperty().eq(registryId))));
+						RecordDataJSON.toJSON(AON.getRecordDataStream(api.getOccam(), registryId)));
 				}
 				
 				if(RegistryAdditionalInfo.RSEGMENT.equals(rai)) {
@@ -278,12 +299,12 @@ public class RegistryServlet extends AonApiHttpServlet {
 			    AON.saveRegistryPayMethod(api.getDomain(), api.getUser(), rpaymethod);
 		}
 		
-		if(json.opt(RegistryAdditionalInfo.RECORD_DATA.name().toLowerCase()) != null) {
-			RecordData recordData = RecordDataJSON.fromJSON(json.optJSONObject(RegistryAdditionalInfo.RECORD_DATA.name().toLowerCase()));
-			recordData.setDomain(registryDomain);
-			if(recordData.getRegistry() == null) recordData.setRegistry(registryId);
-			AON.saveRecordData(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), recordData);
-		}
+//		if(json.opt(RegistryAdditionalInfo.RECORD_DATA.name().toLowerCase()) != null) {
+//			RecordData recordData = RecordDataJSON.fromJSON(json.optJSONObject(RegistryAdditionalInfo.RECORD_DATA.name().toLowerCase()));
+//			recordData.setDomain(registryDomain);
+//			if(recordData.getRegistry() == null) recordData.setRegistry(registryId);
+//			AON.saveRecordData(api.getOccam(), recordData);
+//		}
 		
 		if(json.opt(RegistryAdditionalInfo.RSEGMENT.name().toLowerCase()) != null) {
 			JSONArray arr = json.optJSONArray(RegistryAdditionalInfo.RSEGMENT.name().toLowerCase());
@@ -301,6 +322,18 @@ public class RegistryServlet extends AonApiHttpServlet {
 				AON.saveRegistryProfile(api.getDomain(), api.getUser().getLogin(), registryId, rprofile.getQuestionAlias(), rprofile.getValue());
 			});
 		}
+	}
+	
+	private JSONObject saveRecordData(AonApiData api) {
+		RecordData recordData = RecordDataJSON.fromJSON(api.getData());
+		AON.saveRecordData(api.getOccam(), recordData);
+		return new JSONObject();
+	}
+	
+	private JSONObject deleteRecordData(AonApiData api) {
+		Integer id = api.getData().optInt(IJsonNames.ID);
+		AON.deleteRecordData(api.getOccam(), id);
+		return new JSONObject();
 	}
 	
 	private JSONObject getRegistryAddress(AonApiData api) {
