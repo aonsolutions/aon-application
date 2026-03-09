@@ -736,6 +736,10 @@ div.aon_flex_block.aon_scroll_area {
 	background-color: #fff;
 }
 	
+#rootPanel > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(3) > .aon_toolbar {
+	margin: 0;
+}
+
 .gwt-SplitLayoutPanel-VDragger {
 	cursor: row-resize;
 	background-color: #f1f5f9 !important;
