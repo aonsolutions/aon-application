@@ -58,7 +58,7 @@ function handler () {
     IGNORE_TABLES=$(echo ${EVENT_DATA} | jq -r .queryStringParameters.ignore_table | sed -e 's/null//' -e 's/,/ /g' -e 's/%\([0-9A-F][0-9A-F]\)/\\\\\x\1/g' | xargs echo -e )
 
     MYSQL="mysql -h $HOST -u $USER --password=$PASSWORD $DATABASE"
-    DUMP="mysqldump $SKIP_COMMENTS $REPLACE -h $HOST -u $USER --password=$PASSWORD --single-transaction"
+    DUMP="mysqldump $SKIP_COMMENTS $REPLACE -h $HOST -u $USER --password=$PASSWORD --single-transaction --set-gtid-purged=OFF"
 
     DOMAIN_ID=$($MYSQL -e "SELECT \`id\` FROM \`domain\` WHERE \`name\`='$DOMAIN'" -sN 2>/dev/null)
 
