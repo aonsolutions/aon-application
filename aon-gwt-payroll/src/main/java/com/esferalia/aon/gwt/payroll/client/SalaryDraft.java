@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -1106,6 +1107,8 @@ public class SalaryDraft extends ResizeComposite
 						return "BAJA_PERIODO_PRUEBA";
 					case DEATH_OF_EMPLOYEE:
 						return "FALLECIMIENTO_TRABAJADOR";
+					case VOLUNTARY_END:
+						return "BAJA_VOLUNTARIA";
 					}
 					return null;
 				}
@@ -5604,14 +5607,16 @@ public class SalaryDraft extends ResizeComposite
 	    };
 	    
 	    List<Variable> contractContext = context.stream().filter( v -> v.getScope() == Scope.CONTRACT).sorted(variableComparator).collect(Collectors.toList());	
-	    contractContext.addAll( context.stream().filter( v -> v.getScope() == Scope.AGREEMENT && (v instanceof UndefinedPaymentVariable) ).sorted(variableComparator).collect(Collectors.toList()) );
+	    contractContext.addAll( context.stream().filter( v -> ( v.getScope() == Scope.AGREEMENT || salaryDraftObject.isSettle() ) && (v instanceof UndefinedPaymentVariable) ).sorted(variableComparator).collect(Collectors.toList()) );
+
+	    Predicate<Variable> notAtContractContext =  v  -> contractContext.stream().noneMatch(c -> c.getName().equals(v.getName()));
+
+	    List<Variable> agreementContext = context.stream().filter( v -> v.getScope() == Scope.AGREEMENT).filter( notAtContractContext ).sorted(variableComparator).collect(Collectors.toList());
 	    
-	    List<Variable> agreementContext = context.stream().filter( v -> v.getScope() == Scope.AGREEMENT && !(v instanceof UndefinedPaymentVariable) ).sorted(variableComparator).collect(Collectors.toList());
+	    List<Variable> systemContext = context.stream().filter( v -> v.getScope() == Scope.SYSTEM).filter( notAtContractContext ).sorted(variableComparator).collect(Collectors.toList());
+	    List<Variable> applicationContext = context.stream().filter( v -> v.getScope() == Scope.APPLICATION).filter( notAtContractContext ).sorted(variableComparator).collect(Collectors.toList());
 	    
-	    List<Variable> systemContext = context.stream().filter( v -> v.getScope() == Scope.SYSTEM).sorted(variableComparator).collect(Collectors.toList());
-	    List<Variable> applicationContext = context.stream().filter( v -> v.getScope() == Scope.APPLICATION).sorted(variableComparator).collect(Collectors.toList());
-	    
-	    List<Variable> salaryContext = context.stream().filter( v -> v.getScope() == Scope.SALARY).sorted(variableComparator).collect(Collectors.toList());
+	    List<Variable> salaryContext = context.stream().filter( v -> v.getScope() == Scope.SALARY).filter( notAtContractContext ).sorted(variableComparator).collect(Collectors.toList());
 	    
 	    dumpContext(systemContextTable,  systemContext);
 	    dumpContext(systemContextTable,  applicationContext);
@@ -8453,6 +8458,9 @@ public class SalaryDraft extends ResizeComposite
 			return Dismissal.CONDITIONS_CHANGE.getDescription();
 		else if ( AonStringUtils.equals("JUBILACION",obj.toString()))
 			return Dismissal.RETIREMENT.getDescription();
+		else if ( AonStringUtils.equals("BAJA_VOLUNTARIA",obj.toString()))
+			return Dismissal.VOLUNTARY_END.getDescription();
+
 		else if ( AonStringUtils.equals(Dismissal.UNFAIR.name(),obj.toString()))
 			return Dismissal.UNFAIR.getDescription();
 		else if ( AonStringUtils.equals(Dismissal.TEMP_END.name(),obj.toString()))
@@ -8469,7 +8477,9 @@ public class SalaryDraft extends ResizeComposite
 			return Dismissal.NOT_PASS_TRIAL_PERIOD.getDescription();
 		else if ( AonStringUtils.equals(Dismissal.DEATH_OF_EMPLOYEE.name(),obj.toString()))
 			return Dismissal.DEATH_OF_EMPLOYEE.getDescription();
-		
+		else if ( AonStringUtils.equals(Dismissal.VOLUNTARY_END.name(),obj.toString()))
+			return Dismissal.VOLUNTARY_END.getDescription();
+
 		try {
 			double value = Double.parseDouble(obj.toString());
 			value = BigDecimal.valueOf(value)

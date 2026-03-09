@@ -520,6 +520,18 @@ export const AON_SALTRA = {
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
+export const AUTOBOOKING = {
+  app: "autobooking",
+  title: MSG.AUTOBOOKING,
+  description: MSG.AUTOBOOKING,
+  icon: AON_ICONS.AON_APP,
+  color: "var(--aonBlue)", 
+  logo: "../assets/aon.png",
+  price: " ", 
+  is: (dur) => new DomainUserRoles(dur).isAutoBooking(),
+  has: (dur) => new DomainUserRoles(dur).hasAutoBooking(),
+};
+
 export const ALMA = {
   app: "alma",
   title: "Alma",
@@ -541,19 +553,6 @@ export const OCR = {
   price: " ",
   is: (dur) => new DomainUserRoles(dur).isOcr(),
   has: (dur) => new DomainUserRoles(dur).hasOcr(),
-};
-
-export const FACTURAE = {
-  app: "facturae",
-  title: "Factura Electrónica",
-  description: "Factura Electrónica.",
-  icon: AON_ICONS.AON_APP,
-  color: "#EA6D41",
-  backgroundColor: "rgba(234, 109, 65, .2)",
-  hover: 'aonSidenavHover',
-  price: " ",
-  is: () => true,
-  has: () => true, 
 };
 
 
@@ -997,8 +996,8 @@ export const Packs = {
 
 export const AuxApps = { TOOLS };
 export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, AON_SALTRA };
-export const Services = { INVOFOX, OCR, CONVENIOS, BANK, AULA, API_SERVICE};
-export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, SERES, API_SERVICE, FACTURAE, CUSTOM_VIEW };
+export const Services = { INVOFOX, OCR, CONVENIOS, BANK, AULA, API_SERVICE };
+export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, SERES, API_SERVICE, CUSTOM_VIEW, AUTOBOOKING };
 
 export const AllAonApps = [
   OFFICE,

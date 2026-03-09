@@ -1001,8 +1001,7 @@ export class AonNewMenu extends AonElement {
 
 	isApp(app) {
 		if (OFFICE.app === app.app)
-			return this.getDur().isOfficeDomain() && (this.isBeta() || this.isAyudaTorInfoautonomos());
-		//return this.getDur().hasOffice();
+			return this.getDur().isOffice();
 		if (ACADEMY.app === app.app)
 			return this.getDur().isAcademy();
 		if (COMMERCE.app === app.app)
@@ -1396,6 +1395,9 @@ export class AonNewMenu extends AonElement {
 
 	getSupersetDashboard() {
 		return new Promise((resolve, reject) => {
+			reject("Superset dashboard disabled");
+		});
+/*		return new Promise((resolve, reject) => {
 			getApplicationParameters({ params: ['SUPERSET_DASHBOARD'] })
 				.then(appParams => {
 					if (appParams?.length > 0) {
@@ -1413,7 +1415,7 @@ export class AonNewMenu extends AonElement {
 				});
 			;
 		});
-	}
+*/	}
 
 	getApplicationsOptions() {
 

@@ -1,45 +1,45 @@
 import * as LS from '../../services/localStorageService.js';
+import { RecordDataType, CommercialRegistryCode } from './RecordDataEnums.js';
 
 export class RecordData {
+
     id;
     domain;
     registry;
-	creationDate;
-	description;
-	notary;
-	number;
-	recordDate;
-	volume;
-	section;
-	page;
-	sheet;
-	registration;	
-	attach;
-    
+    creationDate;
+    description;
+    notary;
+    number;
+    recordDate;
+    volume;
+    section;
+    page;
+    sheet;
+    registration;
+    attach;
+    type;
+    irus;
+    commercialRegistryCode;
+
     constructor(recordData) {
-        if(recordData) {
-            this.id = recordData.id;
-            this.domain = recordData.domain || LS.getDomainId();
-            this.registry = recordData.registry;
-            this.creationDate = recordData.creationDate;
-            this.description = recordData.description || 'Escritura de constitución';
-            this.notary = recordData.notary || '';
-            this.number = recordData.number || '';
-            this.recordDate = recordData.recordDate;
-            this.volume = recordData.volume || '';
-            this.section = recordData.section || '';
-            this.page = recordData.page || '';
-            this.sheet = recordData.sheet || '';
-            this.registration = recordData.registration || 'Inscrita en el Registro mercantil';	
-            this.attach = recordData.attach;
-        } else {
-            this.description = 'Escritura de constitución';
-            this.registration = 'Inscrita en el Registro mercantil';
-            this.volume = '';
-            this.section = '';
-            this.page = '';
-            this.sheet = '';
-        }
+        const d = recordData || {};
+        this.id = d.id;
+        this.domain = d.domain || LS.getDomainId();
+        this.registry = d.registry;
+        this.creationDate = d.creationDate;
+        this.description = d.description || 'Escritura de constitución';
+        this.notary = d.notary || '';
+        this.number = d.number || '';
+        this.recordDate = d.recordDate;
+        this.volume = d.volume || '';
+        this.section = d.section || '';
+        this.page = d.page || '';
+        this.sheet = d.sheet || '';
+        this.registration = d.registration || 'Inscrita en el Registro mercantil';
+        this.attach = d.attach;
+        this.type = d.type ? RecordDataType.safeValueOfName(d.type) : RecordDataType.OTHER_REGISTRATIONS;
+        this.irus = d.irus || '';
+        this.commercialRegistryCode = CommercialRegistryCode.safeValueOfCode(d.commercialRegistryCode);
     }
 
     getId() {
@@ -47,7 +47,7 @@ export class RecordData {
     }
 
     setId(id) {
-        this.id = id; 
+        this.id = id;
         return this;
     }
 
@@ -56,15 +56,15 @@ export class RecordData {
     }
 
     setDomain(domain) {
-        this.domain = domain; 
+        this.domain = domain;
         return this;
     }
 
-    getRegistry(){
+    getRegistry() {
         return this.registry;
     }
-    
-    setRegistry(registry){ 
+
+    setRegistry(registry) {
         this.registry = registry;
         return this;
     }
@@ -93,7 +93,7 @@ export class RecordData {
 
     setDescription(description) {
         this.description = description;
-        return this.description;
+        return this;
     }
 
     getNotary() {
@@ -102,7 +102,7 @@ export class RecordData {
 
     setNotary(notary) {
         this.notary = notary;
-        return notary;
+        return this;
     }
 
     getNumber() {
@@ -131,7 +131,7 @@ export class RecordData {
         this.section = section;
         return this;
     }
-    
+
     getPage() {
         return this.page;
     }
@@ -140,7 +140,7 @@ export class RecordData {
         this.page = page;
         return this;
     }
-    
+
     getSheet() {
         return this.sheet;
     }
@@ -152,7 +152,7 @@ export class RecordData {
 
     getRegistration() {
         return this.registration;
-    }	
+    }
 
     setRegistration(registration) {
         this.registration = registration;
@@ -165,7 +165,56 @@ export class RecordData {
 
     setAttach(attach) {
         this.attach = attach;
-        return this; 
+        return this;
+    }
+
+    getType() {
+        return this.type;
+    }
+
+    setType(type) {
+        this.type = type;
+        return this;
+    }
+
+    getIrus() {
+        return this.irus;
+    }
+
+    setIrus(irus) {
+        this.irus = irus;
+        return this;
+    }
+
+    getCommercialRegistryCode() {
+        return this.commercialRegistryCode;
+    }
+
+    setCommercialRegistryCode(commercialRegistryCode) {
+        this.commercialRegistryCode = commercialRegistryCode;
+        return this;
+    }
+
+    toJSON() {
+        return {
+            id: this.id,
+            domain: this.domain,
+            registry: this.registry,
+            creationDate: this.creationDate,
+            description: this.description,
+            notary: this.notary,
+            number: this.number,
+            recordDate: this.recordDate,
+            volume: this.volume,
+            section: this.section,
+            page: this.page,
+            sheet: this.sheet,
+            registration: this.registration,
+            attach: this.attach,
+            type: this.type ? this.type.name : null,
+            irus: this.irus,
+            commercialRegistryCode: this.commercialRegistryCode ? this.commercialRegistryCode.code : null
+        }
     }
 
 }

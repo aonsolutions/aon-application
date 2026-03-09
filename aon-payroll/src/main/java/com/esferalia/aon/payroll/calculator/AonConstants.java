@@ -38,6 +38,8 @@ public class AonConstants {
 	public static DismissalType NOT_PASS_TRIAL_PERIOD = DismissalType.NOT_PASS_TRIAL_PERIOD;
 	@Variable(ContextVariable.DEATH_OF_EMPLOYEE)
 	public static DismissalType DEATH_OF_EMPLOYEE = DismissalType.DEATH_OF_EMPLOYEE;
+	@Variable(ContextVariable.VOLUNTARY_END)
+	public static DismissalType VOLUNTARY_END = DismissalType.VOLUNTARY_END;
 
 	@Variable(ContextVariable.NON_WORKING)
 	public static Double NON_WORKING = -1.00;

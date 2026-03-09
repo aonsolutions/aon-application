@@ -1,8 +1,8 @@
 import { AonElement } from './AonElement.js';
 import { CONSTANT, EVENT, TAG, MATERIAL_ICONS, MSG } from '../environments/environments.js';
-import { AonInput } from './aon-input.js';
 import { AonBasicTable } from './aon-basic-table.js';
 import { Bank } from '../modules/registry/bank/Bank.js';
+import { createInput } from './CreateComponent.js';
 
 export class AonIban extends AonElement {
 
@@ -67,10 +67,7 @@ export class AonIban extends AonElement {
 
   build() {
     this.clear();
-    let aonInput = new AonInput();
-    aonInput.id = this.INPUT;
-    aonInput.description = MSG.BANK_ACCOUNT;
-    aonInput.title = this.bank.fullName;
+    let aonInput = createInput(this.INPUT, MSG.BANK_ACCOUNT);
     aonInput.value = this.bank.fullName;
     this.appendChild(aonInput);
     aonInput.readonly = CONSTANT.READONLY;
@@ -96,14 +93,11 @@ export class AonIban extends AonElement {
     let table = new AonBasicTable();
     table.id = this.EDIT;
 		table.style.display = "none";
-    table.style.backgroundColor = "#f1f1f1";
     this.appendChild(table);
 
     table.addRow();
 
-    let ibanInput = new AonInput();
-    ibanInput.id = this.IBAN;
-    ibanInput.description = 'IBAN';
+    let ibanInput = createInput(this.IBAN, "IBAN");
     ibanInput.readonly = this.isReadonly();
     ibanInput.value = this.bank.getBankAccount().getIban();
     ibanInput.addEventListener(EVENT.CHANGE, () => {
@@ -118,17 +112,13 @@ export class AonIban extends AonElement {
 
     table.addRow();
 
-    let bankInput = new AonInput();
-    bankInput.id = this.BANK;
-    bankInput.description = MSG.BANK;
+    let bankInput = createInput(this.BANK, MSG.BANK);
     bankInput.readonly = true;
     bankInput.value = this.bank.getBankAccount().getBank();
     
     table.addCell(bankInput, 1);
 
-    let bicInput = new AonInput();
-    bicInput.id = this.BIC;
-    bicInput.description = MSG.BIC_SWIFT;
+    let bicInput = createInput(this.BIC, MSG.BIC_SWIFT);
     bicInput.readonly = this.isReadonly();
     bicInput.value = this.bank.getBic();
     bicInput.addEventListener(EVENT.CHANGE, () => {

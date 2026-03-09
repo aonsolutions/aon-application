@@ -7,6 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import com.esferalia.aon.occam.test.registry.bank.RegistryBankAONTest;
 import com.esferalia.aon.occam.test.registry.bank.RegistryBankDAOTest;
+import com.esferalia.aon.occam.test.registry.recordData.RecordDataTestSuite;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -23,7 +24,9 @@ import com.esferalia.aon.occam.test.registry.bank.RegistryBankDAOTest;
 	
 	// bank
 	RegistryBankDAOTest.class,
-	RegistryBankAONTest.class
+	RegistryBankAONTest.class,
+
+	RecordDataTestSuite.class,
 })
 public class RegistryTestSuite {
 	

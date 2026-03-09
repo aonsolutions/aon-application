@@ -43,7 +43,7 @@ public enum DismissalType {
 	 CONDITIONS_CHANGE{
 		 @Override
 		 public<T> T accept(Visitor<T> visitor) {
-			return visitor.visitVoluntaryEnd(this);
+			return visitor.visitConditionsChange(this);
 		}
 	 },
 	 NOT_PASS_TRIAL_PERIOD{
@@ -57,7 +57,13 @@ public enum DismissalType {
 		 public<T> T accept(Visitor<T> visitor) {
 			return visitor.visitDeathOfEmployee(this);
 		}
-	 },	
+	 },
+	 VOLUNTARY_END  {
+		 @Override
+		 public<T> T accept(Visitor<T> visitor) {
+			return visitor.visitVoluntaryEnd(this);
+		}
+	 }
 	;
 	 
 	 
@@ -68,9 +74,10 @@ public enum DismissalType {
 		T visitTempEnd(DismissalType type);
 		T visitRetirement(DismissalType type);
 		T visitDefiniteEnd(DismissalType type);
-		T visitVoluntaryEnd(DismissalType type);
+		T visitConditionsChange(DismissalType type);
 		T visitNotPassTrialPeriod(DismissalType type);
 		T visitDeathOfEmployee(DismissalType type);
+		T visitVoluntaryEnd(DismissalType type);
 	}
 	
 	public abstract <T> T accept(Visitor<T> visitor );

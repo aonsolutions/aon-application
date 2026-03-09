@@ -87,7 +87,7 @@ public enum Country implements Serializable {
 	GH("GHANA","GH","GHA",288,4,34),
 	GI("GIBRALTAR","GI","GIB",292,4,23),
 	GD("GRANADA","GD","GRD",308,4,34),
-	GR("GRECIA","GR", "EL", "GRC",300,3,27),
+	GR("GRECIA","GR", "GRC",300,3,27),
 	GL("GROENLANDIA","GL","GRL",304,4,18),
 	GP("GUADALUPE","GP", "FR", "GLP",312,5,27),
 	GU("GUAM","GU","GUM",316,4,34),
