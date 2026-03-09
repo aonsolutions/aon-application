@@ -1,37 +1,28 @@
 import { AonElement } from "../../../../components/AonElement.js";
 
-/**
- * COMPONENTE MENÚ: aon-calendar-menu
- *
- * Cambios respecto a la versión anterior:
- *   - Ya no necesita recibir callbacks directamente (setOnTodayClick).
- *     Ahora lanza CustomEvents que el padre (aon-calendar-container) escucha.
- *   - Las opciones "Hoy" y "Mes Actual" se muestran/ocultan
- *     según la vista activa, gracias al método público setActiveView().
- *   - El texto "Vista Anual" pasa a llamarse "Resumen Anual".
- *   - El texto "Vista Mensual" pasa a llamarse "Agenda".
- */
 export class AonCalendarMenu extends AonElement {
 
-  constructor() {
-    super();
-    this._isOpen       = false;
-    this._activeView   = 'agenda'; // 'agenda' | 'annual'
-    this._initialized  = false;
-  }
+	constructor() {
+		super();
+		this._isOpen = false;
+		this._activeView = 'agenda'; // 'agenda' | 'annual'
+		this._initialized = false;
+		this._incidenciaOpen = false;
+		this._incidenciaChildren = null;
+	}
 
-  connectedCallback() {
-    if (!this._initialized) {
-      this._initialized = true;
-      this.initializeComponent();
-    }
-  }
+	connectedCallback() {
+		if (!this._initialized) {
+			this._initialized = true;
+			this.initializeComponent();
+		}
+	}
 
-  initializeComponent() {
-    this.innerHTML = `
+	initializeComponent() {
+		this.innerHTML = `
       <div class="calendar-menu-container">
 
-        <!-- Botón flotante principal (el icono de calendario) -->
+        <!-- Botón flotante principal (FAB) -->
         <button class="calendar-fab" aria-label="Menú de calendario">
           <svg class="calendar-icon" width="24" height="24" viewBox="0 0 24 24"
                fill="none" stroke="currentColor" stroke-width="2"
@@ -46,8 +37,8 @@ export class AonCalendarMenu extends AonElement {
         <!-- Menú desplegable -->
         <div class="calendar-menu-popup">
 
-          <!-- Solicitud (deshabilitado por ahora) -->
-          <button class="calendar-menu-option disabled" data-action="request" disabled>
+          <!-- ── INCIDENCIA (acordeón padre) ── -->
+          <button class="calendar-menu-option incidencia-toggle" data-action="incidencia-toggle">
             <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24"
                  fill="none" stroke="currentColor" stroke-width="2"
                  stroke-linecap="round" stroke-linejoin="round">
@@ -55,10 +46,42 @@ export class AonCalendarMenu extends AonElement {
               <polyline points="14 2 14 8 20 8"></polyline>
               <line x1="16" y1="13" x2="8" y2="13"></line>
               <line x1="16" y1="17" x2="8" y2="17"></line>
-              <polyline points="10 9 9 9 8 9"></polyline>
             </svg>
             <span>Solicitud</span>
+            <!-- Flecha que rota cuando el acordeón se abre -->
+            <svg class="incidencia-arrow" width="16" height="16" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round"
+                 style="margin-left: auto; transition: transform 0.25s ease;">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
           </button>
+
+          <!-- ── Hijos del acordeón (ocultos por defecto) ── -->
+          <div class="incidencia-children">
+            <button class="calendar-menu-option incidencia-child" data-action="fichaje">
+              <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+              <span>Modificación Fichaje</span>
+            </button>
+            <button class="calendar-menu-option incidencia-child" data-action="vacaciones">
+              <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+              <span>Solicitud Vacaciones</span>
+            </button>
+          </div>
 
           <!-- Resumen Anual -->
           <button class="calendar-menu-option" data-action="annual" data-view="agenda">
@@ -75,7 +98,7 @@ export class AonCalendarMenu extends AonElement {
             <span>Resumen Anual</span>
           </button>
 
-          <!-- Agenda (volver a la vista de días) -->
+          <!-- Agenda -->
           <button class="calendar-menu-option" data-action="agenda" data-view="annual">
             <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24"
                  fill="none" stroke="currentColor" stroke-width="2"
@@ -128,112 +151,122 @@ export class AonCalendarMenu extends AonElement {
       </div>
     `;
 
-    this.fabButton  = this.querySelector('.calendar-fab');
-    this.menuPopup  = this.querySelector('.calendar-menu-popup');
-    this.closeButton = this.querySelector('.calendar-close-btn');
+		this.fabButton = this.querySelector('.calendar-fab');
+		this.menuPopup = this.querySelector('.calendar-menu-popup');
+		this.closeButton = this.querySelector('.calendar-close-btn');
+		this._incidenciaChildren = this.querySelector('.incidencia-children');
 
-    this.setupEventListeners();
+		this.setupEventListeners();
+		this.setActiveView(this._activeView);
+	}
 
-    // Aplicar el estado inicial (agenda activa por defecto)
-    this.setActiveView(this._activeView);
-  }
+	setupEventListeners() {
+		// Abrir/cerrar el menú al pulsar el FAB
+		this.fabButton.addEventListener('click', e => {
+			e.stopPropagation();
+			this.toggleMenu();
+		});
 
-  setupEventListeners() {
-    // Abrir/cerrar el menú al pulsar el botón flotante
-    this.fabButton.addEventListener('click', e => {
-      e.stopPropagation();
-      this.toggleMenu();
-    });
+		// Cerrar con la X
+		this.closeButton.addEventListener('click', e => {
+			e.stopPropagation();
+			this.closeMenu();
+		});
 
-    // Cerrar con la X
-    this.closeButton.addEventListener('click', e => {
-      e.stopPropagation();
-      this.closeMenu();
-    });
+		// Cerrar al hacer click fuera del menú
+		document.addEventListener('click', e => {
+			if (this._isOpen && !this.contains(e.target)) {
+				this.closeMenu();
+			}
+		});
 
-    // Cerrar al hacer click fuera del menú
-    document.addEventListener('click', e => {
-      if (this._isOpen && !this.contains(e.target)) {
-        this.closeMenu();
-      }
-    });
+		// Delegación de eventos: un solo listener para todas las opciones
+		this.menuPopup.addEventListener('click', e => {
+			const btn = e.target.closest('[data-action]');
+			if (!btn || btn.disabled) return;
+			e.stopPropagation();
+			this.handleMenuAction(btn.dataset.action);
+		});
+	}
 
-    // Manejar clicks en opciones del menú
-    // Usamos delegación de eventos: un solo listener en el popup
-    // que detecta en qué botón se hizo click gracias a data-action.
-    this.menuPopup.addEventListener('click', e => {
-      const btn = e.target.closest('[data-action]');
-      if (!btn || btn.disabled) return;
-      e.stopPropagation();
-      this.handleMenuAction(btn.dataset.action);
-    });
-  }
+	handleMenuAction(action) {
+		// El acordeón no cierra el menú, solo expande/colapsa los hijos
+		if (action === 'incidencia-toggle') {
+			this.toggleIncidencia();
+			return;
+		}
 
-  handleMenuAction(action) {
-    this.closeMenu();
+		// Cualquier otra acción cierra el menú y lanza su evento
+		this.closeMenu();
 
-    /**
-     * En lugar de llamar directamente a funciones de otros componentes,
-     * lanzamos un CustomEvent que "sube" por el árbol del DOM.
-     *
-     * bubbles: true → el evento sube al padre, abuelo, etc.
-     * composed: true → cruza los límites de Shadow DOM (por si acaso)
-     *
-     * El componente padre (aon-calendar-container) lo escucha y reacciona.
-     */
-    const eventMap = {
-      'annual':        'calendar-show-annual',
-      'agenda':        'calendar-show-agenda',
-      'today':         'calendar-go-today',
-      'current-month': 'calendar-go-current-month',
-    };
+		const eventMap = {
+			'annual': 'calendar-show-annual',
+			'agenda': 'calendar-show-agenda',
+			'today': 'calendar-go-today',
+			'current-month': 'calendar-go-current-month',
+			'fichaje': 'calendar-fichaje',
+			'vacaciones': 'calendar-vacaciones',
+		};
 
-    const eventName = eventMap[action];
-    if (eventName) {
-      this.dispatchEvent(new CustomEvent(eventName, { bubbles: true, composed: true }));
-    }
-  }
+		const eventName = eventMap[action];
+		if (eventName) {
+			this.dispatchEvent(new CustomEvent(eventName, { bubbles: true, composed: true }));
+		}
+	}
 
-  /**
-   * setActiveView(viewName)
-   *
-   * El padre llama a este método para decirle al menú
-   * qué vista está activa. El menú usa esa info para
-   * mostrar u ocultar las opciones contextuales.
-   *
-   * data-view="agenda"  → solo visible cuando la agenda está activa
-   * data-view="annual"  → solo visible cuando el resumen anual está activo
-   * Sin data-view        → siempre visible
-   */
-  setActiveView(viewName) {
-    this._activeView = viewName;
+	toggleIncidencia() {
+		this._incidenciaOpen = !this._incidenciaOpen;
 
-    // Marcamos el botón activo visualmente (clase 'active')
-    this.querySelectorAll('[data-action]').forEach(btn => {
-      //const btnView = btn.dataset.action; // 'agenda' o 'annual'
+		const children = this._incidenciaChildren;
+		const arrow = this.querySelector('.incidencia-arrow');
 
-      // Resaltar el botón de la vista activa
-      //btn.classList.toggle('active', btnView === viewName);
+		if (this._incidenciaOpen) {
+			// scrollHeight = altura real del contenido sin restricciones
+			children.style.maxHeight = children.scrollHeight + 'px';
+			if (arrow) arrow.style.transform = 'rotate(180deg)';
+		} else {
+			children.style.maxHeight = '0px';
+			if (arrow) arrow.style.transform = 'rotate(0deg)';
+		}
+	}
 
-      // Mostrar/ocultar opciones contextuales (data-view)
-      const restrictedTo = btn.dataset.view; // 'agenda', 'annual' o undefined
-      if (restrictedTo) {
-        // Esta opción solo se muestra para una vista concreta
-        btn.style.display = restrictedTo === viewName ? '' : 'none';
-      }
-    });
-  }
+	setActiveView(viewName) {
+		this._activeView = viewName;
 
-  toggleMenu() { this._isOpen ? this.closeMenu() : this.openMenu(); }
-  openMenu()   { this._isOpen = true;  this.classList.add('menu-open'); }
-  closeMenu()  { this._isOpen = false; this.classList.remove('menu-open'); }
+		this.querySelectorAll('[data-action]').forEach(btn => {
+			const restrictedTo = btn.dataset.view; // 'agenda', 'annual' o undefined
+			if (restrictedTo) {
+				btn.style.display = restrictedTo === viewName ? '' : 'none';
+			}
+		});
+	}
 
-  // Mantenemos este método por compatibilidad con código antiguo
-  setOnTodayClick(callback) {
-    this._onTodayClick = callback;
-  }
+	toggleMenu() { this._isOpen ? this.closeMenu() : this.openMenu(); }
+
+	openMenu() {
+		this._isOpen = true;
+		this.classList.add('menu-open');
+	}
+
+	closeMenu() {
+		this._isOpen = false;
+		this.classList.remove('menu-open');
+
+		// Colapsar el acordeón al cerrar el menú
+		this._incidenciaOpen = false;
+		if (this._incidenciaChildren) {
+			this._incidenciaChildren.style.maxHeight = '0px';
+		}
+		const arrow = this.querySelector('.incidencia-arrow');
+		if (arrow) arrow.style.transform = 'rotate(0deg)';
+	}
+
+	// Mantenemos por compatibilidad con código antiguo
+	setOnTodayClick(callback) {
+		this._onTodayClick = callback;
+	}
 }
 
 if (!customElements.get('aon-calendar-menu')) {
-  window.customElements.define('aon-calendar-menu', AonCalendarMenu);
+	window.customElements.define('aon-calendar-menu', AonCalendarMenu);
 }
