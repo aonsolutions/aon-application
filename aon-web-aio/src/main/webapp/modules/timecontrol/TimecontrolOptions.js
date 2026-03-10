@@ -29,6 +29,14 @@ import * as GWT from '../../gwt/gwt.js';
     icon: MATERIAL_ICONS.ACCOUNT_BOX,
     fn: () => showView(SIGNIN_VIEWS.AON_PRESENCE_LIST)
   };
+  
+  export const AGENDA = {
+    id: 'timecontrol-agenda',
+    name: 'Agenda',
+    title: 'Agenda',
+    icon: MATERIAL_ICONS.CALENDAR_VIEW_DAY,
+    fn: () => showView(SIGNIN_VIEWS.AON_TIMECONTROL_AGENDA)
+  };
 
   export const LOCATION = {
     id: CONSTANT.LOCATION,

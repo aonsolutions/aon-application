@@ -19,6 +19,7 @@ import 'aoncss';
 import { AonSign } from "./aon-sign.js";
 import { AonStatistics } from "./time-control/statistics/aon-statistics.js";
 import { getPosition } from "../../services/maps.js";
+import { AonCalendarContainerSplit } from "./time-control/agenda/aon-calendar-container-split.js";
 
 export class AonTimecontrol extends AonElement {
 	AON_SIGNIN;
@@ -81,7 +82,11 @@ export class AonTimecontrol extends AonElement {
 		}
 
 		let data = OPTIONS.TIMECONTROL;
-		if (this.isEmployee()) data.options = [OPTIONS.PRESENCE];
+		
+		if (this.isEmployee()) 
+			data.options = [OPTIONS.PRESENCE];
+		else if(!this.isMobile() && data.options)
+			data.options.push(OPTIONS.AGENDA);
 
 		this.applicationEl.addSidenavOptions3(data);
 
@@ -170,6 +175,9 @@ export class AonTimecontrol extends AonElement {
 						}
 						if (data.add) { aonView.add = data.add; }
 					}
+					break;
+				case SIGNIN_VIEWS.AON_TIMECONTROL_AGENDA:
+					aonView = new AonCalendarContainerSplit();
 					break;
 				case SIGNIN_VIEWS.AON_STATISTICS:
 					this.buildTimeControl();

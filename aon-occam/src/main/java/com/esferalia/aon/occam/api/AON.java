@@ -185,6 +185,7 @@ import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
+import com.esferalia.aon.occam.api.model.registry.RecordDataType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -6163,21 +6164,47 @@ public class AON {
 	}
 	
 	// ------------------- RECORD DATA
-	
+
+	@Deprecated(forRemoval = true )
 	public static Stream<RecordData> getRecordDataStream(String domainName, Integer domainId, String login, RecordDataFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().getRecordDataStream(ctx, filter);
 		}
 	}
-		
+
+	@Deprecated(forRemoval = true )
 	public static RecordData getRecordData(String domainName, Integer domainId, String login, RecordDataFilter filter) {
 		return getRecordDataStream(domainName, domainId, login, filter)
 			.findFirst().orElse(new RecordData());
 	}
-		
-	public static RecordData saveRecordData(String domainName, Integer domainId, String login, RecordData recordData) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+
+	public static Stream<RecordData> getRecordDataStream(Occam occam, RecordDataType type, Integer registryId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getRegistry().getRecordDataStream(ctx, type, registryId);
+		}
+	}
+	
+	public static Stream<RecordData> getRecordDataStream(Occam occam, Integer registryId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getRegistry().getRecordDataStream(ctx, registryId);
+		}
+	}
+	
+	public static RecordData getRecordData(Occam occam, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getRegistry().getRecordData(ctx, id);
+		}
+	}
+
+	public static RecordData saveRecordData(Occam occam, RecordData recordData) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			return getRegistry().saveRecordData(ctx, recordData);
+		}
+	}
+
+	public static void deleteRecordData(Occam occam, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			getRegistry().deleteRecordData(ctx, id);
 		}
 	}
 	

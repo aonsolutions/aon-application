@@ -91,7 +91,7 @@ export class AonInvoiceHome extends AonElement {
 
         let uploadInv = new AonNewUpload();
         uploadInv.id = this.UPLOAD_INVOICE;
-        uploadInv.setMessage(MSG.UPLOAD_INVOICE);
+        uploadInv.setMessage("Arrastra o selecciona para subir facturas");
         uploadInv.setType("Invoice");
         upload.appendChild(uploadInv);
     }
