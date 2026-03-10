@@ -264,7 +264,9 @@ public class TimeControlDAO {
 		if(null != tcd.getReason()) 
 			sets.set(TIMECONTROL.CAUSE, tcd.getReason().value());
 		
-		if(null != tcd.getReason() && AonStringUtils.isBlank(tcd.getComments())) 
+		if(null != tcd.getReason() && AonStringUtils.isBlank(tcd.getComments()) && null != tcd.getLocation().getId() && null != tcd.getLocation().getType()) 
+			sets.set(TIMECONTROL.COMMENTS, tcd.getLocation().getType().getDescription());
+		else if(null != tcd.getReason() && AonStringUtils.isBlank(tcd.getComments()))
 			sets.set(TIMECONTROL.COMMENTS, tcd.getReason().getDescription());
 		
 		Integer id = sets.returning(TIMECONTROL.ID).fetchOne().getValue(TIMECONTROL.ID);

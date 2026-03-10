@@ -52,7 +52,7 @@ export class AonPresenceList extends AonElement {
 		this.applicationParentEl = this.getApplicationParent();
 
 		this.applicationEl.addToolbarTitle("Presencia");
-		
+
 		this.filterInit();
 	}
 
@@ -71,10 +71,10 @@ export class AonPresenceList extends AonElement {
 	}
 
 	build() {
-		if(this._timeControlFilter){
+		if (this._timeControlFilter) {
 			this._filter = { ...this._filter, ...this._timeControlFilter };
 		}
-		
+
 		this.paintView();
 		this.buildToolbar();
 		this.getTable();
@@ -139,19 +139,19 @@ export class AonPresenceList extends AonElement {
 		btnSearch.addEventListener(EVENT.RESET_FILTER, ({ detail }) => {
 			clearTimeout(timeOut);
 			timeOut = setTimeout(() => {
-				
+
 				this._list = [];
 				this.searchFilter = '';
-				
+
 				this.filterInit();
 
 				let searchInput = this.getElement('aonSigninToolbarHeaderToolSectionSearchSearchInput');
 				if (searchInput) searchInput.value = '';
-				
+
 				setValueName('period', this._filter.period);
 				setValueName('startDate', this._filter.startDate);
 				setValueName('endDate', this._filter.endDate);
-				
+
 				let aonSwitchFilter = this.getElement('aonSwitchFilter');
 				if (aonSwitchFilter) aonSwitchFilter.checked = true;
 				let aonWithDataSwitchFilter = this.getElement('aonWithDataSwitchFilter');
@@ -161,7 +161,7 @@ export class AonPresenceList extends AonElement {
 				this.getTable();
 			});
 		});
-		
+
 		// Search Inputs
 
 		let inputsFilter = [
@@ -191,7 +191,7 @@ export class AonPresenceList extends AonElement {
 
 	searchValueDefault() {
 		let periodEl = this.getElement("period");
-		
+
 		if (periodEl) {
 			periodEl.setOptions(getPeriod());
 			periodEl.addEventListener(EVENT.CHANGE, ({ detail }) => {
@@ -205,7 +205,7 @@ export class AonPresenceList extends AonElement {
 
 		this.getElement("startDate").addEventListener(EVENT.CHANGE, () => periodEl.value = "personalized");
 		this.getElement("endDate").addEventListener(EVENT.CHANGE, () => periodEl.value = "personalized");
-		
+
 		setValueName('period', this._filter.period);
 		setValueName('startDate', this._filter.startDate);
 		setValueName('endDate', this._filter.endDate);
@@ -310,7 +310,7 @@ export class AonPresenceList extends AonElement {
 				data = this._list;
 			} else {
 				const datos = await getTimeControlList(this._filter);
-				//console.log('--------- Aon Presence List ---------', this._filter, datos);
+				console.log('--------- Aon Presence List ---------', this._filter, datos);
 				if (datos) {
 					sortBy(datos, 'last_date', 'desc').map(({
 						time,
@@ -344,6 +344,7 @@ export class AonPresenceList extends AonElement {
 
 						let period = getPeriod(this._filter.period);
 						let statusString = newStatus == 'in' ? 'Entrada' : newStatus == 'pause' ? 'Pausa' : 'Salida';
+						let lastDateString = this.msToDateHourMinute(last_date);
 
 						data.push({
 							lettersHtml,
@@ -351,10 +352,10 @@ export class AonPresenceList extends AonElement {
 							periodName: period.value == "personalized"
 								? (`${period.name} (${AonDateUtils.getDayMonthOrFull(this._filter.startDate)} / ${AonDateUtils.getDayMonthOrFull(this._filter.endDate)})`)
 								: period.value == "today" || period.value == "yesterday" ? period.name : (`${period.name} (${AonDateUtils.getDayMonthOrFull(period.startDate)} / ${AonDateUtils.getDayMonthOrFull(period.endDate)})`),
-							
+
 							duration: this.msToHoursMinutes(time),
 
-							status: statusString,
+							status: lastDateString,
 							reason,
 							nameLocation,
 
@@ -433,10 +434,10 @@ export class AonPresenceList extends AonElement {
 		const seconds = parseInt(parts[1], 10); // Obtener los segundos
 		return (minutes * 60 + seconds) * 1000; // Convertir todo a milisegundos
 	}
-	
+
 	formatThousands(n) {
 		console.log('formatThousands', n, n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
-	    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+		return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 	}
 
 	msToTimeString(ms) {
@@ -449,12 +450,23 @@ export class AonPresenceList extends AonElement {
 	}
 
 	msToHoursMinutes(ms) {
-	    const totalSeconds = Math.floor(ms / 1000);
-	    const hours = Math.floor(totalSeconds / 3600);
-	    const minutes = Math.floor((totalSeconds % 3600) / 60);
-	    const seconds = totalSeconds % 60;
-	
-	    return `${this.formatThousands(hours)}:${String(minutes).padStart(2, '0')}`;
+		const totalSeconds = Math.floor(ms / 1000);
+		const hours = Math.floor(totalSeconds / 3600);
+		const minutes = Math.floor((totalSeconds % 3600) / 60);
+		const seconds = totalSeconds % 60;
+
+		return `${this.formatThousands(hours)}:${String(minutes).padStart(2, '0')}`;
+	}
+
+	msToDateHourMinute(ms) {
+		const date = new Date(ms);
+
+		const dd = String(date.getDate()).padStart(2, '0');
+		const mm = String(date.getMonth() + 1).padStart(2, '0');
+		const hh = String(date.getHours()).padStart(2, '0');
+		const min = String(date.getMinutes()).padStart(2, '0');
+
+		return `${dd}/${mm} ${hh}:${min}`;
 	}
 
 }

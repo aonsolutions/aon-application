@@ -902,7 +902,7 @@ aon-configuration-menu .suiteMenuContent  {
 }
 
 #aonInvoiceHomeUploadInvoice .aonUpload,
-#accountingUploadInvoiceDiv .aonUpload {
+#accountingUploadInvoice .aonUpload {
 	border:none;
 	color: #fff;
 	align-items: flex-start;
@@ -912,16 +912,16 @@ aon-configuration-menu .suiteMenuContent  {
 }
 
 #aonInvoiceHomeUploadInvoice .aonUpload *,
-#accountingUploadInvoiceDiv .aonUpload * {
+#accountingUploadInvoice .aonUpload * {
 	color: #fff;
 }	
 
 #aonInvoiceHomeUploadInvoice .aonUpload:hover,
-#accountingUploadInvoiceDiv .aonUpload:hover {
+#accountingUploadInvoice .aonUpload:hover {
     background: #004bfb;
 }
 #aonInvoiceHomeUploadInvoice .aonNewUploadLabel,
-#accountingUploadInvoiceDiv .aonNewUploadLabel {
+#accountingUploadInvoice .aonNewUploadLabel {
 	color: #fff;
 	font-size: 1rem;
 }
@@ -2638,4 +2638,36 @@ i[id$="aonHeaderSearchDivButtonIcon"],
   font-variation-settings: "FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;
   font-size: 24px;
   display: inline-block;
+}
+
+#aonConfigurationRegistryBankCardTable .aonIconButton {
+	top: 15px;
+}
+
+#aonConfigurationRegistryBankCardTable .aonInputBox .aonIconButton {
+	top: 0px;
+}
+
+#aonConfigurationRegistryMediaCardEmailTable .aonIconButton {
+	top: 15px;
+}
+
+#aonConfigurationRegistryMediaCardEmailTable .aonInputBox .aonIconButton {
+	top: 0px;
+}
+
+#aonConfigurationRegistryMediaCardPhoneTable .aonIconButton {
+	top: 15px;
+}
+
+#aonConfigurationRegistryMediaCardPhoneTable .aonInputBox .aonIconButton {
+	top: 0px;
+}
+
+#aonConfigurationRegistryMediaCardWebTable .aonIconButton {
+	top: 15px;
+}
+
+#aonConfigurationRegistryMediaCardWebTable .aonInputBox .aonIconButton {
+	top: 0px;
 }
