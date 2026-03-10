@@ -38,8 +38,8 @@ public class Mod421ValidatePrintATC extends HttpServlet {
 			
 			System.out.println("PASO 2. xml="+xml);
 			
-			// FALTA - Pasarlo al modulo de impresión para obtener el borrador pdf
-//			ModelAdmonUtils.callAtcAwsFunction(xml, mod421, true, resp);
+			// Pasarlo al modulo de impresión para obtener el borrador pdf
+			ModelAdmonUtils.callAtcAwsFunction(xml, mod421, true, resp);
 			
 			System.out.println("PASO 3. OK");
 			

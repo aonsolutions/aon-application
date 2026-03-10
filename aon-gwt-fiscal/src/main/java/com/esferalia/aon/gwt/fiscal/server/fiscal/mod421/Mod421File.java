@@ -38,8 +38,8 @@ public class Mod421File extends HttpServlet {
 			
 			System.out.println("PASO 2. xml="+xml);
 			
-			// FALTA - Pasarlo al modulo de impresión para obtener el fichero para la presentación 
-//			ModelAdmonUtils.callAtcAwsFunction(xml, mod421, false, resp);
+			// Pasarlo al modulo de impresión para obtener el fichero para la presentación 
+			ModelAdmonUtils.callAtcAwsFunction(xml, mod421, false, resp);
 			
 			System.out.println("PASO 3. OK");
 			

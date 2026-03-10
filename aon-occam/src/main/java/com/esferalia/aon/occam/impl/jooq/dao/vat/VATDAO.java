@@ -30,6 +30,7 @@ import org.jooq.SelectOnConditionStep;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.InvoiceTax;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
@@ -51,6 +52,7 @@ import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -68,6 +70,8 @@ public class VATDAO  {
 	private static final Field<Integer> ALCATRAZ_INVOICE_ID = ALCATRAZ.INVOICE.as("alcatrazInvoice");
 	private static final Field<Integer> ALCATRAZ_FINANCE_ID = ALCATRAZ.FINANCE.as("alcatrazFinance");
 	private static final Field<Integer> ALCATRAZ_FINANCE_TRACKING_ID = ALCATRAZ.FINANCE_TRACKING.as("alcatrazFinanceTracking");
+	
+	private static final InvoiceTax retInvoiceTax = INVOICE_TAX.as("retInvoiceTax"); // Para el tipo de retención IRPF
 	
 	private static final Field<?>[] INVOICE_FIELDS = new Field[]{
 	 	 INVOICE.ID					,INVOICE.SERIES				,INVOICE.NUMBER		
@@ -87,7 +91,8 @@ public class VATDAO  {
 		 INVOICE_TAX.BASE				,INVOICE_TAX.PERCENTAGE		
 		,INVOICE_TAX.QUOTA				,INVOICE_TAX.SURCHARGE			
 		,INVOICE_TAX.SURCHARGE_QUOTA	,INVOICE_TAX.DEDUCTIBLE_PERCENT
-		,INVOICE_TAX.DEDUCTIBLE_QUOTA	,INVOICE_TAX.VAT_DEDUCTION_TYPE};
+		,INVOICE_TAX.DEDUCTIBLE_QUOTA	,INVOICE_TAX.VAT_DEDUCTION_TYPE
+		,retInvoiceTax.WITHHOLDING_TYPE };
 	
 	private static final Field<?>[] INVOICE_DUA_FIELDS = new Field[]{
 		INVOICE_FISCAL.VAT_UNION, INVOICE_FISCAL.VAT_UNION_EXTERNAL, INVOICE_FISCAL.VAT_IMPORTATION, INVOICE_DUA.ID};
@@ -140,6 +145,7 @@ public class VATDAO  {
 			.leftOuterJoin(INVOICE_DUA).on(INVOICE_DUA.INVOICE_IMPORT.equal(INVOICE.ID))
 			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(INVOICE.ACTIVITY))
 			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
+			.leftOuterJoin(retInvoiceTax).on(retInvoiceTax.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(retInvoiceTax.TAX_TYPE.equal(TaxType.RETENTION.value())))
 			;
 	}
 	
@@ -154,6 +160,7 @@ public class VATDAO  {
 			.leftOuterJoin(INVOICE_DUA).on(INVOICE_DUA.INVOICE_IMPORT.equal(INVOICE.ID))
 			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(INVOICE.ACTIVITY))
 			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
+			.leftOuterJoin(retInvoiceTax).on(retInvoiceTax.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(retInvoiceTax.TAX_TYPE.equal(TaxType.RETENTION.value())))
 			;
 	}
 
@@ -264,6 +271,7 @@ public class VATDAO  {
 			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+			.leftOuterJoin(retInvoiceTax).on(retInvoiceTax.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(retInvoiceTax.TAX_TYPE.equal(TaxType.RETENTION.value())))
 		;
 	}
 	private static SelectOnConditionStep<Record1<Integer>> getCritCajaSelectCount(AONContext ctx) {
@@ -278,6 +286,7 @@ public class VATDAO  {
 			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+			.leftOuterJoin(retInvoiceTax).on(retInvoiceTax.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(retInvoiceTax.TAX_TYPE.equal(TaxType.RETENTION.value())))
 		;
 	}
 	private static Stream<VatContext> getCritCajaVatBreakdown(AONContext ctx, AccountingReportParams params) {
@@ -365,6 +374,7 @@ public class VATDAO  {
 			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+			.leftOuterJoin(retInvoiceTax).on(retInvoiceTax.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(retInvoiceTax.TAX_TYPE.equal(TaxType.RETENTION.value())))
 			;		
 	}
 	
@@ -667,6 +677,8 @@ public class VATDAO  {
 						rec.getValue(INVOICE_DETAIL.SOURCE),
 						rec.getValue(INVOICE.RETENTION_QUOTA)))
 				.setRegistry(rec.getValue(INVOICE.REGISTRY))
+				
+				.setWithholdingType(WithholdingType.safeValueOf(rec.getValue(retInvoiceTax.WITHHOLDING_TYPE)))
 			;
 		}
 		

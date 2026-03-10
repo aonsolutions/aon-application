@@ -30,7 +30,7 @@ public class MIModelo420Handler {
 		return str == null || str.trim().isEmpty();
 	}
 	
-// MODELOS 417, 420 y 425 ----------------------------------------------------------------------------
+// MODELOS 417, 420, 421 y 425 ----------------------------------------------------------------------------
 	
 	public MIModelo420Result obtenerPresentacion(String declaracion) {
 		
@@ -125,7 +125,7 @@ public class MIModelo420Handler {
 			return new MIModelo420(getDownloadDir());
 		} else if (declaracion.contains("MOD=\"417\"")) {
 			return new MIModelo417(getDownloadDir());
-		} if (declaracion.contains("MOD=\"421\"")) {
+		} else if (declaracion.contains("MOD=\"421\"")) {
 			return new MIModelo421(getDownloadDir());
 		} else 
 //		if (declaracion.contains("MOD=\"425\"")) {
@@ -201,5 +201,3 @@ public class MIModelo420Handler {
 //	}
 
 }
-
-

@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod421Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.ExplainRowManager;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
@@ -1083,14 +1084,18 @@ class Mod421ATC2026Declaration extends Mod421ATC {
 		
 		// 12 Cuotas devengadas por entregas o transmisiones de activos fijos y por inversión del sujeto pasivo
 		,C12(Mod421Key.C12,
-				(mod, vat) -> (entregasActivosFijosFilterSimp(vat, mod) || operacionesISPFilterSimp(vat, mod)),
+				(mod, vat) -> ((entregasActivosFijosFilterSimp(vat, mod) || operacionesISPFilterSimp(vat, mod)) && !vat.isRectification()),
 				(ctx, mod, vat) -> add(Mod421Key.C12, mod, vat.getDeductibleQuota()), null, null, null)
 		
 		// 13 Cuotas devengadas por arrendamiento de bienes inmuebles
-		,C13(Mod421Key.C13)  // FALTA - VER SI SE PUEDE OBTENER DE ALGUNA FORMA
+		,C13(Mod421Key.C13,
+				(mod, vat) -> (devengadasArrendamientosFilterSimp(vat, mod) && !vat.isRectification()),
+				(ctx, mod, vat) -> add(Mod421Key.C13, mod, vat.getDeductibleQuota()), null, null, null)  
 		
 		// 14 Rectificación de cuotas impositivas repercutidas
-		,C14(Mod421Key.C14)  // FALTA - VER SI SE PUEDE OBTENER DE ALGUNA FORMA
+		,C14(Mod421Key.C14,
+				(mod, vat) -> (repercutidasRectificacionFilterSimp(vat, mod)),
+				(ctx, mod, vat) -> add(Mod421Key.C14, mod, vat.getDeductibleQuota()), null, null, null)  
 		
 		// 15 Cuotas deducibles por adquisiciones o importaciones de activos fijos		
 		,C15(Mod421Key.C15,
@@ -1098,7 +1103,7 @@ class Mod421ATC2026Declaration extends Mod421ATC {
 				(ctx, mod, vat) -> add(Mod421Key.C15, mod, vat.getDeductibleQuota()), null, null, null)
 		
 		// 16 Cuotas deducibles correspondientes a la actividad de arrendamiento de bienes inmuebles
-		,C16(Mod421Key.C16)  // FALTA - VER SI SE PUEDE OBTENER DE ALGUNA FORMA
+		,C16(Mod421Key.C16)  
 		
 		// 17 Cuotas del I.G.I.C. a compensar de peridos anteriores
 		,C17(Mod421Key.C17, null, null, (ctx,mod) -> add( Mod421Key.C17, mod, getPendingCompesateAmounts( ctx, mod )), null, null)
@@ -1249,6 +1254,14 @@ class Mod421ATC2026Declaration extends Mod421ATC {
 	// -----------------------------------------------------------------------
 	// --------------------------------------------------------------- FILTROS
 	// -----------------------------------------------------------------------
+	
+	private static boolean repercutidasRectificacionFilterSimp(VatContext vat, Mod421 mod) {
+		return vat.isVatSimplifiedRegime(VATRegime.SIMPLIFIED) && vat.isSales() && vat.isRectification();
+	}
+	
+	private static boolean devengadasArrendamientosFilterSimp(VatContext vat, Mod421 mod) {
+		return vat.isVatSimplifiedRegime(VATRegime.SIMPLIFIED) && vat.isSales() && vat.getWithholdingType() == WithholdingType.RENTING;
+	}
 
 	private static boolean entregasActivosFijosFilterSimp(VatContext vat, Mod421 mod) {
 		return vat.isVatSimplifiedRegime(VATRegime.SIMPLIFIED) && vat.isSales() && vat.isInvestment();
