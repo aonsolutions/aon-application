@@ -294,7 +294,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 					return new JSONObject();
 				}
 			}
-			if (config.isTbai()) {
+			if (config.isTbai() || config.isLroe()) {
 				boolean accepted = true;
 				if(config.isBizkaia()) {
 					try(CloseableAONContext ctx = AONContext.getAONContext(api.getDomain(), api.getUser())) {
@@ -316,7 +316,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 						throw new AonApiException(e.getMessage());
 					}
 				}
-				
 			}
 		}
 		// ***********************************
