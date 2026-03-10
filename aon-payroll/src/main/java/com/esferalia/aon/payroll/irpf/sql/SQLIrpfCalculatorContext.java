@@ -634,7 +634,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 							@Override
 							public Object gross(double gross, Date start, Date end)
 									throws ExpressionException, SQLException, SalaryException {
-								throw new RemoveException(LIQUID_ERR_MSG);
+								return gross;
 							}
 							
 						};
