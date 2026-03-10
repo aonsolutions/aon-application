@@ -116,7 +116,8 @@ export const SIGNIN_VIEWS = {
   AON_EVENT_ADD:"aonEventAdd",
   AON_LOCATION_LIST:"aonLocationList",
   AON_LOCATION_ADD:"aonLocationAdd",
-  AON_STATISTICS: "aonStatistics"
+  AON_STATISTICS: "aonStatistics",
+  AON_TIMECONTROL_AGENDA: "aonTimecontrolAgenda"
 };
 
 export const iconAddLocation = "add_location";

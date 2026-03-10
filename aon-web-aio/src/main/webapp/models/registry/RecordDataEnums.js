@@ -5,7 +5,6 @@ export const RecordDataType = Object.freeze({
     OTHER_REGISTRATIONS:    { value: 3, name: 'OTHER_REGISTRATIONS', description: 'Otras Inscripciones' },
 
     safeValueOf(i) {
-        alert(i);
         if (i == null) return null;
         return Object.values(this).find(v => v?.value == i) ?? null;
     },

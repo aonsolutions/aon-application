@@ -18,7 +18,19 @@ export class AonAgendaAnnualSummary extends AonElement {
 	_sourcesWithHours = new Set(['EFFECITVE_DAYS', 'PAID_LEAVE', 'PARTIALITY', 'IT', 'HOLIDAYS']);
 
 	async connectedCallback() {
-		await this.buildShell();
+	  // Creamos una promesa y guardamos su función "resolve"
+	  // para poder dispararla manualmente cuando queramos.
+	  // Es como preparar un pistolín de salida: lo armamos ahora,
+	  // pero lo disparamos cuando el componente esté listo.
+	  this._readyResolve = null;
+	  this.ready = new Promise(resolve => {
+	    this._readyResolve = resolve;
+	  });
+	
+	  await this.buildShell();
+	
+	  // ¡Ya estamos listos! Disparamos la señal.
+	  this._readyResolve();
 	}
 
 	async buildShell() {
@@ -26,17 +38,17 @@ export class AonAgendaAnnualSummary extends AonElement {
 		// Fila superior: Año (izq) | Vacaciones disfrutadas / restantes (drch)
 		// Fila inferior: Totales anuales (izq) | Hoy dd/MM horas / diff (drch)
 		this.innerHTML = `
-      <header class="annual-header">
-        <div class="header-row">
-          <div class="year-nav">
+      <header>
+        <div class="header-left">
+          <div class="header-top">
             <button class="year-btn prev-year" aria-label="Año anterior">&#8249;</button>
             <span class="year-label"></span>
             <button class="year-btn next-year" aria-label="Año siguiente">&#8250;</button>
           </div>
-          <span class="annual-holidays"></span>
+          <span class="header-bottom" id="annual-hours"></span>
         </div>
-        <div class="header-row header-row-right">
-          <span class="annual-hours"></span>
+        <div class="header-right">
+          <span class="annual-holidays"></span>
           <span class="today-hours"></span>
         </div>
       </header>
@@ -44,7 +56,7 @@ export class AonAgendaAnnualSummary extends AonElement {
     `;
 
 		this._yearLabel      = this.querySelector('.year-label');
-		this._annualHours    = this.querySelector('.annual-hours');
+		this._annualHours    = this.querySelector('#annual-hours');
 		this._annualHolidays = this.querySelector('.annual-holidays');
 		this._todayHours     = this.querySelector('.today-hours');
 		this._scrollEl       = this.querySelector('.annual-scroll');
@@ -101,6 +113,8 @@ export class AonAgendaAnnualSummary extends AonElement {
 	// ── API PÚBLICA ──────────────────────────────────────────────────────────
 
 	async loadYear(year) {
+		console.log("loadYear Summary", year, this._taskHolder);
+		
 		if (!this._taskHolder) return;
 
 		this._year = year;
