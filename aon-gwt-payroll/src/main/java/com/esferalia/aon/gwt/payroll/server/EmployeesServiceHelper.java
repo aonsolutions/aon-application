@@ -1030,29 +1030,27 @@ public class EmployeesServiceHelper {
 			byte data[] = null;
 			try {
 				data = SistemaRED.getIDC(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, nss, startDate);
-				Map<ContextVariable, IdcContractData> contractData = com.esferalia.aon.in.payroll.tgss.idc.Idc.getContractData(data);
+				Map<ContextVariable, Collection<IdcContractData>> contractDatas = com.esferalia.aon.in.payroll.tgss.idc.Idc.getContractData(data);
 				for ( ContextVariable v : stringVars ) {
-					if ( contractData.containsKey(v) ) {					
+					for ( IdcContractData idcContractData : contractDatas.getOrDefault(v, Collections.emptyList()) ) {
 						StringVariable variable = new StringVariable();
 						variable.setName(v.getName());
-						IdcContractData idcContractData = contractData.get(v);
 						variable.setValue(idcContractData.data());
 						variable.setStartDate(idcContractData.startDate());
-						variable.setEndDate(idcContractData.endDate());				
+						variable.setEndDate(idcContractData.endDate());
 						ssContractData.get(v.getName()).add(variable);
-						variable.setExpression(String.format("\"%s\"", contractData.get(v).toString()));
+						variable.setExpression(String.format("\"%s\"", idcContractData.data()).toString());
 					}
 				}
 				for ( ContextVariable v : numberVars ) {
-					if ( contractData.containsKey(v) ) {
+					for ( IdcContractData idcContractData : contractDatas.getOrDefault(v, Collections.emptyList()) ) {
 						NumberVariable variable = new NumberVariable();
 						variable.setName(v.getName());
-						IdcContractData idcContractData = contractData.get(v);
 						variable.setValue(idcContractData.data());
 						variable.setStartDate(idcContractData.startDate());
 						variable.setEndDate(idcContractData.endDate());				
 						ssContractData.get(v.getName()).add(variable);
-						variable.setExpression(contractData.get(v).toString());
+						variable.setExpression(idcContractData.data().toString());
 					}
 				}
 				endDate = AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1);

@@ -3,9 +3,7 @@ package com.esferalia.aon.in.payroll.tgss.idc;
 import static com.esferalia.aon.in.payroll.tgss.idc.PEC.isBonus;
 import static com.esferalia.aon.in.payroll.tgss.idc.PEC.isCost;
 import static com.esferalia.aon.in.payroll.tgss.idc.PEC.isDeduction;
-import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 import static com.esferalia.aon.occam.api.model.type.DeductionType.BONUS;
 import static com.esferalia.aon.occam.api.model.type.DeductionType.JOB_TRAINING;
@@ -59,7 +57,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.logging.log4j.util.LoaderUtil;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -117,7 +114,6 @@ import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.mchange.util.AssertException;
 
-import junit.framework.AssertionFailedError;
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Liquidacion;
@@ -1424,26 +1420,50 @@ public class IdcTest extends AbstractSQLTestCase {
 	@Test
 	public void testIdcContractData() throws IOException, UnknownPDFException {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idc.pdf")) {
-			Map<ContextVariable, IdcContractData> contractData = Idc.getContractData(is);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2).data(), "100");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP).data(), "08");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_PERCENT).data(), 1.70);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_PERCENT).data(), 1.30);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT).data(), 1.55);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT).data(), 5.50);
+			Map<ContextVariable, Collection<IdcContractData>> contractData = Idc.getContractData(is);
+			contractData.get(ContextVariable.TC2).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), "100");
+			});
+			contractData.get(ContextVariable.QUOTE_GROUP).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), "08");
+			});
+			contractData.get(ContextVariable.IT_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 1.70);
+			});
+			contractData.get(ContextVariable.IMS_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 1.30);
+			});
+			contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 1.55);
+			});
+			contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 5.50);
+			});
 		}
 	}
 
 	@Test
 	public void testIdcContractDataI() throws IOException, UnknownPDFException {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcI.pdf")) {
-			Map<ContextVariable, IdcContractData> contractData = Idc.getContractData(is);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2).data(), "189");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP).data(), "10");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_PERCENT).data(), 1.70);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_PERCENT).data(), 1.30);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT).data(), 1.55);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT).data(), 5.50);
+			Map<ContextVariable, Collection<IdcContractData>> contractData = Idc.getContractData(is);
+			contractData.get(ContextVariable.TC2).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), "189");
+			});
+			contractData.get(ContextVariable.QUOTE_GROUP).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), "10");
+			});
+			contractData.get(ContextVariable.IT_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 1.70);
+			});
+			contractData.get(ContextVariable.IMS_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 1.30);
+			});
+			contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 1.55);
+			});
+			contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 5.50);
+			});
 			org.junit.Assert.assertFalse(contractData.containsKey(ContextVariable.OCCUPATION));
 			
 		}
@@ -1452,24 +1472,44 @@ public class IdcTest extends AbstractSQLTestCase {
 	@Test
 	public void testIdcContractDataII() throws IOException, UnknownPDFException {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcII.pdf")) {
-			Map<ContextVariable, IdcContractData> contractData = Idc.getContractData(is);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2).data(), "100");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP).data(), "01");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.OCCUPATION).data(), "a");
+			Map<ContextVariable, Collection<IdcContractData>> contractData = Idc.getContractData(is);
+			contractData.get(ContextVariable.TC2).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), "100");
+			});
+			contractData.get(ContextVariable.QUOTE_GROUP).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), "01");
+			});
+			contractData.get(ContextVariable.OCCUPATION).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), "a");
+			});
 		}
 	}
 
 	@Test
 	public void testIdcContractDataIII() throws IOException, UnknownPDFException {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcIII.pdf")) {
-			Map<ContextVariable, IdcContractData> contractData = Idc.getContractData(is);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2).data(), "289");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP).data(), "07");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.PARTIAL_FACTOR).data(), 0.750);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_PERCENT).data(), 1.70);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_PERCENT).data(), 1.30);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT).data(), 1.55);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT).data(), 5.50);
+			Map<ContextVariable, Collection<IdcContractData>> contractData = Idc.getContractData(is);
+			contractData.get(ContextVariable.TC2).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), "289");
+			});
+			contractData.get(ContextVariable.QUOTE_GROUP).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), "07");
+			});
+			contractData.get(ContextVariable.PARTIAL_FACTOR).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 0.750);
+			});
+			contractData.get(ContextVariable.IT_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 1.70);
+			});
+			contractData.get(ContextVariable.IMS_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 1.30);
+			});
+			contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 1.55);
+			});
+			contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 5.50);
+			});
 			org.junit.Assert.assertFalse(contractData.containsKey(ContextVariable.OCCUPATION));
 		}
 	}
@@ -1477,27 +1517,53 @@ public class IdcTest extends AbstractSQLTestCase {
 	@Test
 	public void testIdcContractDataIV() throws IOException, UnknownPDFException {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcIV.pdf")) {
-			Map<ContextVariable, IdcContractData> contractData = Idc.getContractData(is);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2).data(), "100");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP).data(), "02");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_PERCENT).data(), 0.80);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_PERCENT).data(), 0.70);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT).data(), 1.55);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT).data(), 5.50);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.OCCUPATION).data(), "a");
+			Map<ContextVariable, Collection<IdcContractData>> contractData = Idc.getContractData(is);
+			contractData.get(ContextVariable.TC2).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), "100");
+			});
+			contractData.get(ContextVariable.QUOTE_GROUP).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), "02");
+			});
+			contractData.get(ContextVariable.IT_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 0.80);
+			});
+			contractData.get(ContextVariable.IMS_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 0.70);
+			});
+			contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 1.55);
+			});
+			contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 5.50);
+			});
+			contractData.get(ContextVariable.OCCUPATION).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), "a");
+			});
 		}
 	}
 
 	@Test
 	public void testIdcContractDataXII() throws IOException, UnknownPDFException {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcXII.pdf")) {
-			Map<ContextVariable, IdcContractData> contractData = Idc.getContractData(is);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2).data(), "189");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP).data(), "09");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_PERCENT).data(), 3.35);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_PERCENT).data(), 3.35);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT).data(), 1.55);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT).data(), 5.50);
+			Map<ContextVariable, Collection<IdcContractData>> contractData = Idc.getContractData(is);
+			contractData.get(ContextVariable.TC2).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), "189");
+			});
+			contractData.get(ContextVariable.QUOTE_GROUP).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), "09");
+			});
+			contractData.get(ContextVariable.IT_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 3.35);
+			});
+			contractData.get(ContextVariable.IMS_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 3.35);
+			});
+			contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 1.55);
+			});
+			contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT).forEach(idcContractData -> {
+				org.junit.Assert.assertEquals(idcContractData.data(), 5.50);
+			});
 			org.junit.Assert.assertFalse(contractData.containsKey(ContextVariable.OCCUPATION));
 		}
 	}
@@ -1507,7 +1573,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			ExpressionException, SalaryException, SQLException {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcIX.pdf")) {
-			Map<ContextVariable, IdcContractData> contractData = Idc.getContractData(is);
+			Map<ContextVariable, Collection<IdcContractData>> contractData = Idc.getContractData(is);
 			org.junit.Assert.assertFalse(contractData.containsKey(ContextVariable.OCCUPATION));
 		}
 	}
@@ -6665,20 +6731,22 @@ public class IdcTest extends AbstractSQLTestCase {
 			
 			
 			ssPECs.stream().forEach( sspec -> System.out.println("SSPEC : "+ sspec.getName() + " : " +  sspec.getFormula() ));
-			
-			Map<ContextVariable, IdcContractData> ssData = Idc.getContractData(idc);
+
+			Map<ContextVariable, Collection<IdcContractData>> ssData = Idc.getContractData(idc);
 			Date date = new SimpleDateFormat("dd-MM-yyyy").parse("01-04-2024");
 			Collection<Data> datas = new ArrayList<>();
 			
-			ssData.forEach( (var, value) -> {
-				datas.add( new Data() {
-					{
-						startDate = date;
-						name = var.getName();
-						expression = String.valueOf(value.data());
-						startDate = value.startDate();
-						endDate = value.endDate();
-					}
+			ssData.forEach((var, value) -> {
+				value.forEach(idcContractData -> {
+					datas.add(new Data() {
+						{
+							startDate = date;
+							name = var.getName();
+							startDate = idcContractData.startDate();
+							endDate = idcContractData.endDate();
+							expression = String.valueOf(idcContractData.data());
+						}
+					});
 				});
 			});
 
@@ -6865,22 +6933,24 @@ public class IdcTest extends AbstractSQLTestCase {
 			// 40 TIPO COT. ESPEC. SEA	100,00		62	FOGASA-FP/CUOT.TOTAL
 			// 06 DECREMENTO DE TIPOS	  2,64		03	CONT.COMUN-C.EMPRESA
 			
-			Map<ContextVariable, IdcContractData> ssData = Idc.getContractData(idc);
+			Map<ContextVariable, Collection<IdcContractData>> ssData = Idc.getContractData(idc);
 			
 			ssPECs.stream().forEach( sspec -> System.out.println("SSPEC: " + sspec.getName() + " : " +  sspec.getFormula() ));
 
 			Date date = new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2025");
 			Collection<Data> datas = new ArrayList<>();
 			
-			ssData.forEach( (var, value) -> {
-				datas.add( new Data() {
-					{
-						startDate = date;
-						name = var.getName();
-						expression = String.valueOf(value.data());
-						startDate = value.startDate();
-						endDate = value.endDate();
-					}
+			ssData.forEach((var, value) -> {
+				value.forEach(idcContractData -> {
+					datas.add(new Data() {
+						{
+							startDate = date;
+							name = var.getName();
+							startDate = idcContractData.startDate();
+							endDate = idcContractData.endDate();
+							expression = String.valueOf(idcContractData.data());
+						}
+					});
 				});
 			});
 			datas.add( new Data() {
@@ -6962,23 +7032,25 @@ public class IdcTest extends AbstractSQLTestCase {
 			Collection<PEC> ssPECs = Idc.getSSPECs(idc);
 			// 40 TIPO COT. ESPEC. SEA	100,00		62	FOGASA-FP/CUOT.TOTAL
 			// 06 DECREMENTO DE TIPOS	  2,64		03	CONT.COMUN-C.EMPRESA
-			
-			Map<ContextVariable, IdcContractData> ssData = Idc.getContractData(idc);
-			
+
+			Map<ContextVariable, Collection<IdcContractData>> ssData = Idc.getContractData(idc);
+
 			ssPECs.stream().forEach( sspec -> System.out.println("SSPEC: " + sspec.getName() + " : " +  sspec.getFormula() ));
 
 			Date date = new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2025");
 			Collection<Data> datas = new ArrayList<>();
 			
-			ssData.forEach( (var, value) -> {
-				datas.add( new Data() {
-					{
-						startDate = date;
-						name = var.getName();
-						expression = String.valueOf(value.data());
-						startDate = value.startDate();
-						endDate = value.endDate();
-					}
+			ssData.forEach((var, value) -> {
+				value.forEach(idcContractData -> {
+					datas.add(new Data() {
+						{
+							startDate = date;
+							name = var.getName();
+							startDate = idcContractData.startDate();
+							endDate = idcContractData.endDate();
+							expression = String.valueOf(idcContractData.data());
+						}
+					});
 				});
 			});
 			datas.add( new Data() {
@@ -7052,17 +7124,27 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testIdc39SEAII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SQLException, SalaryException, ParseException {
+		testIdcXXXIXSEAII("idc39.pdf");
+	}
+
+	@Test
 	public void testIdcXXXIXSEAII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
 			ExpressionException, SQLException, SalaryException, ParseException {
+		testIdcXXXIXSEAII("idcXXXIX.pdf");
+	}
 
-		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXXIX.pdf")) {
+	public void testIdcXXXIXSEAII(String path) throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+	ExpressionException, SQLException, SalaryException, ParseException {
+		try (InputStream is = IdcTest.class.getResourceAsStream(path)) {
 			byte[] idc = is.readAllBytes();
 			
 			Collection<PEC> ssPECs = Idc.getSSPECs(idc);
 			// 40 TIPO COT. ESPEC. SEA	100,00		62	FOGASA-FP/CUOT.TOTAL
 			// 06 DECREMENTO DE TIPOS	  2,64		03	CONT.COMUN-C.EMPRESA
 			
-			Map<ContextVariable, IdcContractData> ssData = Idc.getContractData(idc);
+			Map<ContextVariable, Collection<IdcContractData>> ssData = Idc.getContractData(idc);
 			
 			ssPECs.stream().forEach( sspec -> System.out.println("SSPEC: " + sspec.getName() + " : " +  sspec.getFormula() ));
 
@@ -7070,15 +7152,19 @@ public class IdcTest extends AbstractSQLTestCase {
 			Collection<Data> datas = new ArrayList<>();
 			
 
-		    ssData.forEach( (var, value) -> {
-				datas.add( new Data() {
-					{
-						startDate = date;
-						name = var.getName();
-						expression = String.valueOf(value.data());
-						startDate = value.startDate();
-						endDate = value.endDate();
-					}
+			ssData.forEach((var, value) -> {
+				value.forEach(idcContractData -> {
+					datas.add(new Data() {
+						{
+							startDate = date;
+							name = var.getName();
+							expression = String.valueOf(idcContractData.data());
+							startDate = idcContractData.startDate();
+							endDate = idcContractData.endDate();
+						}
+					});
+					System.out.println("DATA: " + var.getName() + " = " + idcContractData.data() + ", "
+							+ idcContractData.startDate() + " - " + idcContractData.endDate());
 				});
 			});
 
@@ -7202,8 +7288,14 @@ public class IdcTest extends AbstractSQLTestCase {
 					System.out.println("COST :" + cost.getName() + ": " + cost.getAmount());
 				else if ( cost.getName().equals("DESMPL_E") || cost.getName().equals("RED_DESMPL_E"))
 					System.out.println("COST :" + cost.getName() + ": " + cost.getAmount());
+				else
+					System.out.println("COST :" + cost.getName() + ": " + cost.getAmount());
 			}
-			
+
+//			salary.getSalaryDatas().stream().sorted((d1,d2) -> d1.getName().compareTo(d2.getName())).forEach( d -> {
+//				System.out.println(d.getName() + " = " + d.getExpression() + " [ " + d.getStartDate() + ".." + d.getEndDate() +" ]");
+//			});
+
 //			salary.getSalaryDatas().forEach( d -> {
 //				if ( d.getName().equals("BASE_CGC_E")) {
 //					System.out.println(d.getName() + " = " + d.getExpression() + " [ " + d.getStartDate() + ".." + d.getEndDate() +" ]");
@@ -7256,20 +7348,22 @@ public class IdcTest extends AbstractSQLTestCase {
 			
 			
 			ssPECs.stream().forEach( sspec -> System.out.println("SSPEC : "+ sspec.getName() + " : " +  sspec.getFormula() ));
-			
-			Map<ContextVariable, IdcContractData> ssData = Idc.getContractData(idc);
+
+			Map<ContextVariable, Collection<IdcContractData>> ssData = Idc.getContractData(idc);
 			Date date = new SimpleDateFormat("dd-MM-yyyy").parse("02-12-2024");
 			Collection<Data> datas = new ArrayList<>();
 			
-			ssData.forEach( (var, value) -> {
-				datas.add( new Data() {
-					{
-						startDate = date;
-						name = var.getName();
-						expression = String.valueOf(value.data());
-						startDate = value.startDate();
-						endDate = value.endDate();
-					}
+			ssData.forEach((var, value) -> {
+				value.forEach(idcContractData -> {
+					datas.add(new Data() {
+						{
+							startDate = date;
+							name = var.getName();
+							expression = String.valueOf(idcContractData.data());
+							startDate = idcContractData.startDate();
+							endDate = idcContractData.endDate();
+						}
+					});
 				});
 			});
 
@@ -7334,8 +7428,8 @@ public class IdcTest extends AbstractSQLTestCase {
 			// 03 RED.CUOTA SS-PORCENT	 95,00	43 C.COMUN.-CUOTA TOTAL		01-07-2025	29-08-2025			
 			
 			ssPECs.stream().forEach( pec -> System.out.println("PEC: " + pec.getName() + " [" + pec.getStartDate() + " .. " + pec.getEndDate() + "]" ));
-			
-			Map<ContextVariable, IdcContractData> ssData = Idc.getContractData(idc);
+
+			Map<ContextVariable, Collection<IdcContractData>> ssData = Idc.getContractData(idc);
 
 			Date startDate = new SimpleDateFormat("dd-MM-yyyy").parse("01-07-2025");
 			Date endDate = new SimpleDateFormat("dd-MM-yyyy").parse("29-08-2025");
@@ -7346,8 +7440,10 @@ public class IdcTest extends AbstractSQLTestCase {
 			});
 			
 			ssData.values().stream().forEach(data -> {
-				Assert.assertEquals(toSQL(startDate), data.startDate());
-				Assert.assertEquals(toSQL(endDate), data.endDate());
+				data.forEach(idcContractData -> {
+					Assert.assertEquals(toSQL(startDate), idcContractData.startDate());
+					Assert.assertEquals(toSQL(endDate), idcContractData.endDate());
+				});
 			});
 		}
 	}
