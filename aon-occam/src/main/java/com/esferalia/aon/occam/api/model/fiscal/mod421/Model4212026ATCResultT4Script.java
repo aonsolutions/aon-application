@@ -14,9 +14,6 @@ public enum Model4212026ATCResultT4Script implements IModelScript<Mod421Key> {
 	,RES07(Mod421Key.C07.getDescription(), new Mod421Key[]{null, null, null, Mod421Key.C07}, COMPUTE)
 	,RES08(Mod421Key.C08.getDescription(), new Mod421Key[]{null, null, null, Mod421Key.C08}, COMPUTE)
 	,RES09(Mod421Key.C09.getDescription(), new Mod421Key[]{null, null, null, Mod421Key.C09}, COMPUTE)
-//	,RES10T1(Mod421Key.C10T1.getDescription(), new Mod421Key[]{Mod421Key.C10T1}, NONE)
-//	,RES10T2(Mod421Key.C10T2.getDescription(), new Mod421Key[]{Mod421Key.C10T2}, NONE)
-//	,RES10T3(Mod421Key.C10T3.getDescription(), new Mod421Key[]{Mod421Key.C10T3}, NONE)
 	,RES10(Mod421Key.C10.getDescription(), new Mod421Key[]{Mod421Key.C10T1, Mod421Key.C10T2, Mod421Key.C10T3, Mod421Key.C10}, COMPUTE_KEY)
 	,RES11(Mod421Key.C11.getDescription(), new Mod421Key[]{null, null, null, Mod421Key.C11}, COMPUTE)
 	;

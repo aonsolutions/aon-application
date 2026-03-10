@@ -15,8 +15,8 @@ public class Mod421Activity implements Serializable {
 	private String description;
 	private int specialEpigraph;
 	
-	private int tem;			// Actividad de temporada: Número de días de ejercicio en año anterior
-	private int dia;			// Número de días de ejercicio de la actividad en el trimestre o numero de días de ejercicio en el año para las actividades de temporada en el 4T
+	private int tem;			// Actividad de temporada: Número de días de ejercicio de la actividad (año anterior o año actual)
+	private int dia;			// Número de días de ejercicio de la actividad en el trimestre
 
 	private double dev;			// Cuota devengada operaciones corrientes
 	private double ict;			// Indice corrector de actividades de temporada

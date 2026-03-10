@@ -67,7 +67,6 @@ class Mod421ATC2026Declaration extends Mod421ATC {
 	
 	private static final Mod421Key[] COMPENSATION_EXPLAIN_KEYS = new Mod421Key[] { Mod421Key.C17 };
 	private static final Mod421Key[] SAME_PERIOD_EXPLAIN_KEYS = new Mod421Key[] { Mod421Key.C18 };
-//	private static final Mod421Key[] INGRESO_CUENTA_ANTERIOR_EXPLAIN_KEYS = new Mod421Key[] { Mod421Key.C10T1, Mod421Key.C10T2, Mod421Key.C10T3 };
 	private static final Mod421Key[] INGRESO_CUENTA_ANTERIOR_EXPLAIN_KEYS = new Mod421Key[] { Mod421Key.C10 };
 	
 	private enum Mod421KeyDAO implements IMod421KeyDAO {

@@ -30,10 +30,6 @@ public enum Model4212026ATCPrintT1Script implements IModelScript<Mod421Key> {
 		this.infoKeys = infoKeys;
 	}
 
-//	private static String getDescription(Mod421Key key) {
-//		return AonStringUtils.trim(AonStringUtils.substringBefore(key.getDescription(), AonStringUtils.HYPHEN));
-//	}
-
 	@Override
 	public String getLabel() {
 		return label;

@@ -45,8 +45,8 @@ class Model421ATC2026Activity extends DockLayoutPanel implements HasValueChangeH
 	final SimpleLayoutPanel contentContainer;
 	final TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(26, Unit.PX);
 	
-	private AonIntegerBox tem = new AonIntegerBox(); // Actividades de temporada: Días ejercicio anterior
-	private AonIntegerBox dia = new AonIntegerBox(); // Días del trimestre o días ejercicio en actividades de temporada
+	private AonIntegerBox tem = new AonIntegerBox(); // Actividades de temporada: Días ejercicio anterior o dias ejercicio actual
+	private AonIntegerBox dia = new AonIntegerBox(); // Días de actividad en el trimestre
 
 	private class Model421ATC2026ActivityModule {
 		private final int index;

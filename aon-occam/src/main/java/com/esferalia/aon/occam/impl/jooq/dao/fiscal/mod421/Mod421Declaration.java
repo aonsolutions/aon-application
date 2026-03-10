@@ -91,9 +91,6 @@ public abstract class Mod421Declaration {
 	}
 	public void specificInitialization(Mod421 mod421) {
 	}
-//	public Mod421Key getRegularizationKey() {
-//		return null;
-//	}
 	
 	private static class KeyedVatContext  {
 		private IMod421KeyDAO key;
@@ -274,10 +271,6 @@ public abstract class Mod421Declaration {
 	protected String getCompensationExplain(AONContext ctx, Mod421 mod421, Mod421Key key) {
 		return EMTPY_JSON;
 	}
-	
-//	protected String getRegularizationExplain(AONContext ctx, Mod421 mod421, Mod421Key key) {
-//		return EMTPY_JSON;
-//	}
 	
 	public Mod421Key[] getSamePeriodExplainKeys() {
 		return new Mod421Key[] {};
