@@ -1372,8 +1372,6 @@ export class AonInvoice extends AonElement {
 		div.appendChild(totalSpan);
 
 		let total = this.createAonNumber(this.TOTAL, MSG.TOTAL, this.invoice.total);
-		total.value;
-		total.onChange(() => this.onChangeInvoiceTotal(total.value));
 		total.readonly = this.invoice.isReadonly()
 			|| this.invoice.taxes.filter(f => TaxType.IVA === f.tax).length > 1
 			|| this.invoice.details.length > 0;
@@ -1387,6 +1385,7 @@ export class AonInvoice extends AonElement {
 			|| this.invoice.taxes.filter(f => TaxType.IVA === f.tax).length > 1
 			|| this.invoice.details.length > 0;
 		// *****
+		total.onChange(() => this.onChangeInvoiceTotal(total.value));
 
 
 
@@ -1805,7 +1804,6 @@ export class AonInvoice extends AonElement {
 		// ----- TAX BASE
 
 		let base = this.createAonNumber(this.TAX_BASE + i, MSG.BASE, tax.base);
-		base.onChange(() => this.onChangeTaxBase(tax, base.value, i))
 		taxesTable.addCell(base);
 		base.readonly = this.invoice.isReadonly()
 			|| this.invoice.details.length > 0
@@ -1813,6 +1811,8 @@ export class AonInvoice extends AonElement {
 
 		if (this.invoice.details.length > 0 || tax.type.includes('IRPF'))
 			base.disabled = CONSTANT.TRUE;
+
+		base.onChange(() => this.onChangeTaxBase(tax, base.value, i));
 
 		// ----- TAX QUOTA
 
@@ -2054,26 +2054,26 @@ export class AonInvoice extends AonElement {
 		// ----- DETAIL QUANTITY
 
 		let quantity = this.createAonNumber(this.DETAIL_QUANTITY + i, MSG.QUANTITY, detail.quantity);
-		quantity.onChange(() => this.onChangeDetailQuantity(detail, quantity.value, i));
 		let td2 = table.addCell(quantity);
 		td2.style.verticalAlign = "bottom";
-		quantity.readonly = this.invoice.isReadonly()
+		quantity.readonly = this.invoice.isReadonly();
+		quantity.onChange(() => this.onChangeDetailQuantity(detail, quantity.value, i));
 
 		// ----- DETAIL PRICE
 
 		let price = this.createAonNumber(this.DETAIL_PRICE + i, MSG.PRICE, detail.price);
-		price.onChange(() => this.onChangeDetailPrice(detail, price.value, i));
 		let td3 = table.addCell(price);
 		td3.style.verticalAlign = "bottom";
-		price.readonly = this.invoice.isReadonly()
+		price.readonly = this.invoice.isReadonly();
+		price.onChange(() => this.onChangeDetailPrice(detail, price.value, i));
 
 		// ----- DETAIL DISCOUNT
 
 		let discount = this.createAonNumber(this.DETAIL_DISCOUNT + i, '%Dto', detail.discount);
-		discount.onChange(() => this.onChangeDetailDiscount(detail, discount.value, i));
 		let td4 = table.addCell(discount);
 		td4.style.verticalAlign = "bottom";
-		discount.readonly = this.invoice.isReadonly()
+		discount.readonly = this.invoice.isReadonly();
+		discount.onChange(() => this.onChangeDetailDiscount(detail, discount.value, i));
 
 		// ----- DETAIL AMOUNT
 
@@ -2226,25 +2226,25 @@ export class AonInvoice extends AonElement {
 		// ----- DETAIL QUANTITY
 
 		let quantity = this.createAonNumber(this.DETAIL_QUANTITY + 'Dialog' + i, MSG.QUANTITY, detail.quantity);
-		quantity.onChange(() => this.onChangeDetailQuantity(detail, quantity.value, i, true));
 		table.addCell(quantity);
-		quantity.readonly = this.invoice.isReadonly()
+		quantity.readonly = this.invoice.isReadonly();
+		quantity.onChange(() => this.onChangeDetailQuantity(detail, quantity.value, i, true));
 
 		// ----- DETAIL PRICE
 
 		let price = this.createAonNumber(this.DETAIL_PRICE + 'Dialog' + i, MSG.PRICE, detail.price);
-		price.onChange(() => this.onChangeDetailPrice(detail, price.value, i, true));
 		table.addCell(price);
-		price.readonly = this.invoice.isReadonly()
+		price.readonly = this.invoice.isReadonly();
+		price.onChange(() => this.onChangeDetailPrice(detail, price.value, i, true));
 
 		// table.addRow(); // ----- ROW 3
 
 		// ----- DETAIL DISCOUNT
 
 		let discount = this.createAonNumber(this.DETAIL_DISCOUNT + 'Dialog' + i, '%Dto', detail.discount);
-		discount.onChange(() => this.onChangeDetailDiscount(detail, discount.value, i, true));
 		table.addCell(discount);
-		discount.readonly = this.invoice.isReadonly()
+		discount.readonly = this.invoice.isReadonly();
+		discount.onChange(() => this.onChangeDetailDiscount(detail, discount.value, i, true));
 
 		// ----- DETAIL AMOUNT
 
@@ -2590,13 +2590,13 @@ export class AonInvoice extends AonElement {
 
 	buildFinanceAmount(table, id, finance, i) {
 		let amount = this.createAonNumber(id, MSG.AMOUNT, finance.amount);
+		table.addCell(amount);
+		amount.readonly = this.invoice.isReadonly();
 		amount.onChange(() => {
 			this.setFocus(amount.id);
 			finance.amount = amount.value;
 			this.invoice.setFinance(finance, i);
 		});
-		table.addCell(amount);
-		amount.readonly = this.invoice.isReadonly()
 	}
 
 	getInvoiceTitle() {
