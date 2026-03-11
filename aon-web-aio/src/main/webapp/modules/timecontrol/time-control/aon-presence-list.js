@@ -226,12 +226,12 @@ export class AonPresenceList extends AonElement {
 			aonTable.removeColumns();
 			aonTable.addColumn("", "string", "lettersHtml", "5%");
 			aonTable.addColumn(MSG.NAME, "string", "name", "28%");
-			aonTable.addColumn(MSG.PERIOD, "string", "periodName", "25%");
-			aonTable.addColumn(MSG.DURATION, "", "duration", "5%");
+			aonTable.addColumn(MSG.PERIOD, "string", "periodName", "29%");
+			aonTable.addColumn("Acumulado", "", "duration", "5%");
 
-			aonTable.addColumn("Ult. Estado", "", "status", "12%");
-			aonTable.addColumn("Motivo", "string", "reason", "15%");
-			aonTable.addColumn("Ult. Ubicación", "string", "nameLocation", "15%");
+			aonTable.addColumn("Estado", "", "status", "8%");
+			aonTable.addColumn("Fecha/Hora", "string", "lastDate", "15%");
+			aonTable.addColumn("Ubicación", "string", "nameLocation", "15%");
 			try {
 				const resp = await this.getData();
 				aonTable.removeRows();
@@ -332,39 +332,37 @@ export class AonPresenceList extends AonElement {
 
 						const lettersHtml = div.outerHTML;
 						const { name: textStatus } = getStatus(newStatus);
-						let nameLocation = "";
+						
+						let locationName;
 						if (last_location && last_location.name) {
-							nameLocation = last_location.name;
-						} else if (!isEmptyObject(coordinates)) {
-							let aib = setAttributes(new AonIconButton(), { id: "iconLocation", noHover: "true", icon: iconAddLocation });
-							nameLocation = aib.outerHTML;
+							locationName = last_location.name;
 						}
 
-						let reason = detail && detail.length > 0 ? detail[detail.length - 1].reasonValue : '';
+						let reason = '';
+						if (detail && detail.length > 0) {
+						  const last = [...detail].reverse().find(item => item.status === 'in');
+						  reason = last ? last.comments : '';
+						}
 
 						let period = getPeriod(this._filter.period);
-						let statusString = newStatus == 'in' ? 'Entrada' : newStatus == 'pause' ? 'Pausa' : 'Salida';
 						let lastDateString = this.msToDateHourMinute(last_date);
 
 						data.push({
 							lettersHtml,
 							name,
-							periodName: period.value == "personalized"
-								? (`${period.name} (${AonDateUtils.getDayMonthOrFull(this._filter.startDate)} / ${AonDateUtils.getDayMonthOrFull(this._filter.endDate)})`)
-								: period.value == "today" || period.value == "yesterday" ? period.name : (`${period.name} (${AonDateUtils.getDayMonthOrFull(period.startDate)} / ${AonDateUtils.getDayMonthOrFull(period.endDate)})`),
+							periodName: AonDateUtils.getPeriodName(
+								period,
+								this._filter.startDate,  // solo se usa si period.value === "personalized"
+								this._filter.endDate
+							),
 
-							duration: this.msToHoursMinutes(time),
+							duration: `${this.msToHoursMinutes(time)} h`,
 
-							status: lastDateString,
-							reason,
-							nameLocation,
-
-							last_date,
-							coordinates,
-							last_location,
-							taskHolderId,
-							textStatus,
-
+							status: textStatus,
+							lastDate: lastDateString,
+							nameLocation: reason,
+							
+							taskHolderId
 						});
 					}
 					);
@@ -399,7 +397,7 @@ export class AonPresenceList extends AonElement {
 	}
 
 	search() {
-		this._list = this.filterSearch(["name", "nameLocation"], this._list);
+		this._list = this.filterSearch(["name", "nameLocation"], thi._list);
 		this.getTable();
 	}
 
