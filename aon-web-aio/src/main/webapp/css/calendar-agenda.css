@@ -5,6 +5,7 @@ aon-agenda-all-days {
   height: 100%;
   font-family: system-ui, -apple-system, BlinkMacSystemFont;
   color: #202124;
+  position: relative;
 }
 
 /* ---------- Header ---------- */
@@ -77,6 +78,37 @@ aon-agenda-all-days .week-label {
 
 aon-agenda-all-days .range {
   font-weight: 400;
+}
+
+aon-agenda-all-days .today-floating-btn {
+    /* Posicionamiento: flota sobre el scroll, pegado bajo el header */
+    position: absolute;
+    top: calc(5rem + 8px);
+    z-index: 10;
+
+    /* Centrado horizontal dentro del componente padre */
+    left: 0;
+    right: 0;
+    width: fit-content;
+    margin: 0 auto;
+
+    /* Estilos visuales */
+    background: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(26, 115, 232, 0.35);
+    transition: background 0.2s;
+}
+
+aon-agenda-all-days .today-floating-btn:hover {
+    background: #1765cc;
+    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.45);
 }
 
 /* ---------- Scroll container ---------- */
@@ -485,6 +517,7 @@ aon-agenda-annual-summary .annual-month-name {
   font-weight: 600;
   color: #202124;
   letter-spacing: 0.5px;
+  cursor: pointer;
 }
 
 aon-agenda-annual-summary .annual-month-stats {
