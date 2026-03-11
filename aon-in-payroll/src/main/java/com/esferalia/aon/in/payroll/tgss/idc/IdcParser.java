@@ -75,7 +75,6 @@ public class IdcParser {
 	public static void parse(String text, IdcParserListener listener) throws IOException, UnknownPDFException {
 //		System.out.println(text);
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
-			
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
 			Matcher matcher = find(reader, EMPLOYEE_NAME);
@@ -83,8 +82,8 @@ public class IdcParser {
 			String fullName = matcher.group("name");
 
 			matcher = find(reader, EMPLOYEE_NSS_TYPEDOC_DOC_GENDER_BIRTHDATE);
-
-			String nss = AonStringUtils.leftPad(matcher.group("province"), 2, '0') + AonStringUtils.leftPad(matcher.group("nss"), 10, '0');
+			
+			String nss = AonStringUtils.leftPad(matcher.group("province"),2,'0') + matcher.group("nss");
 
 			onEmployee(listener, fullName, nss);
 
@@ -94,7 +93,7 @@ public class IdcParser {
 			matcher = find(reader, ENTERPRISE_NAME_CCC_CIF);
 
 			String socialReason = matcher.group("name");
-			String enterpriseCCC = AonStringUtils.leftPad(matcher.group("province"), 2, '0') + AonStringUtils.leftPad(matcher.group("ccc"), 9, '0');
+			String enterpriseCCC = AonStringUtils.leftPad(matcher.group("province"),2,'0') + matcher.group("ccc");
 			String enterpriseCIF = matcher.group("cif");
 
 			matcher = find(reader, ENTERPRISE_ACTIVITY_REGIME);
@@ -129,7 +128,7 @@ public class IdcParser {
 				listener.onRlce(matcher.group("rlce"));
 
 			matcher = find(reader, CONTRACT_PARTIALCOEF_DATE_AGE);
-			if (hasData(matcher.group("partialCoef"))) {
+			if (isNotZero(matcher.group("partialCoef"))) {
 				listener.onContractPartialCoeficient(matcher.group("partialCoef"));
 			}
 
@@ -168,7 +167,7 @@ public class IdcParser {
 			if (hasData(matcher.group("realJourney"))) {
 				listener.onContractAgrarianRealJourney(matcher.group("realJourney"));
 			}
-			if (hasData(matcher.group("realJourneyProvided"))) {
+			if (isNotZero(matcher.group("realJourneyProvided"))) {
 				listener.onContractAgrarianRealJourneyProvided(matcher.group("realJourneyProvided"));
 			}
 
@@ -233,6 +232,12 @@ public class IdcParser {
 			Double unemployment = hasData(matcher.group("unemployment"))
 					? Double.parseDouble(matcher.group("unemployment").replace(",", "."))
 					: null;
+			if ( it != null && it >= 10 ) {
+				it = it / 100;
+			}
+			if ( ims != null && ims >= 10 ) {
+				ims = ims / 100;
+			}
 			listener.onEmployeeQuoteTypes(it, ims, unemployment);
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -283,7 +288,11 @@ public class IdcParser {
 	}
 
 	private static boolean hasData(String data) {
-		return !StringUtils.isBlank(data);
+		return AonStringUtils.isNotBlank(data) ;
+	}
+	
+	private static boolean isNotZero(String data) {
+		return AonNumberUtils.todouble(data) != 0.00;
 	}
 
 	private static Matcher find(BufferedReader reader, Pattern pattern) throws IOException, UnknownPDFException {
@@ -326,15 +335,16 @@ public class IdcParser {
 	protected static final Pattern EMPLOYEE_NAME = Pattern.compile("^NOMBRE\\s*Y\\s*APELLIDOS\\s*:\\s*(?<name>.+)$",
 			Pattern.CASE_INSENSITIVE);
 
-	// NSS: 11 1058186657 DOC.IDENTIFICATIVO: D.N.I. NUM: 052300641K SEXO: MUJER
-	// NACIMIENTO: 30-04-1964
+	// NSS: 11 1058186657 DOC.IDENTIFICATIVO: D.N.I. NUM: 052300641K SEXO: MUJER NACIMIENTO: 30-04-1964
+	// NSS:  1  1005185924 DOC.IDENTIFICATIVO: D.N.I. NUM: 044679529M SEXO: VARON NACIMIENTO: 03-05-1975
 	protected static final Pattern EMPLOYEE_NSS_TYPEDOC_DOC_GENDER_BIRTHDATE = Pattern.compile(
-			"^NSS\\s*:\\s*(?<province>\\d{1,2})\\s+(?<nss>\\d{8,12})\\s+DOC\\.?\\s*IDENTIFICATIVO\\s*:\\s*(?<docType>[\\w\\.\\s]+?)\\s+NUM\\s*:\\s*(?<doc>[A-Z0-9]+)\\s+SEXO\\s*:\\s*(?<gender>[A-Z¡…Õ”⁄‹—a-z·ÈÌÛ˙¸Ò]+)\\s+NACIMIENTO\\s*:\\s*(?<birthDate>\\d{2}-\\d{2}-\\d{4})$",
+			"^NSS\\s*:\\s*(?<province>[0-9]{1,2})\\s*(?<nss>[0-9]+)\\s*DOC.\\s*IDENTIFICATIVO\\s*:\\s*(?<docType>.*)NUM\\s*:\\s*(?<doc>.+)SEXO\\s*:\\s*(?<gender>.*)NACIMIENTO\\s*:\\s*(?<birthDate>[0-9]+-[0-9]+-[0-9]+)$",
 			Pattern.CASE_INSENSITIVE);
 
 	// RAZ”N SOCIAL: SOUTHWEST GOLF S.L. CCC: 11 112501771 DNI/NIE/CIF: 9 0B85729648
+	// RAZ”N SOCIAL: AON SOLUTIONS S.L.  CCC: 1 105360062  DNI/NIE/CIF: 9 0B01487271
 	protected static final Pattern ENTERPRISE_NAME_CCC_CIF = Pattern.compile(
-			"^RAZ”N\\s*SOCIAL\\s*:\\s*(?<name>.+?)\\s+CCC\\s*:\\s*(?<province>\\d{1,2})\\s+(?<ccc>\\d+)\\s+DNI/NIE/CIF\\s*:\\s*(?<type>\\d)\\s+(?<cif>[A-Z0-9]+)$",
+			"^RAZ”N\\s*SOCIAL\\s*:\\s*(?<name>.+)CCC\\s*:\\s*(?<province>[0-9]{1,2})\\s*(?<ccc>[0-9]+)\\s*DNI/NIE/CIF\\s*:\\s*(?<type>[0-9]{1})\\s*(?<cif>.+)$",
 			Pattern.CASE_INSENSITIVE);
 
 	// ACTIVIDAD ECONOMICA: 9311 GestiÛn de instalaciones deportivas REGIMEN:
@@ -361,16 +371,14 @@ public class IdcParser {
 
 	// COEF.TIEMPO PARCIAL: 500 REDUCCI”N JORNADA/COEFIC: FECHA: 01-11-2019 EDAD: 55
 	protected static final Pattern CONTRACT_PARTIALCOEF_DATE_AGE = Pattern.compile(
-			"^COEF\\.\\s*TIEMPO\\s*PARCIAL\\s*:\\s*(?<partialCoef>\\d{1,3})?\\s*REDUCCI”N\\s*JORNADA/COEFIC\\s*:\\s*FECHA\\s*:\\s*(?<date>\\d{2}-\\d{2}-\\d{4})?\\s*EDAD\\s*:\\s*(?<age>\\d+)?$"
-//	"^COEF\\.\\s*TIEMPO\\s*PARCIAL\\s*:\\s*(?<partialCoef>[0-9]{3})?.*REDUCCI”N\\s*JORNADA/COEFIC\\s*:.*FECHA\\s*:\\s*(?<date>[0-9]+-[0-9]+-[0-9]+)\\s*EDAD\\s*:\\s*(?<age>[0-9]+)?$"
+			"^COEF\\.\\s*TIEMPO\\s*PARCIAL\\s*:\\s*(?<partialCoef>[0-9]{3})?.*REDUCCI”N\\s*JORNADA/COEFIC\\s*:.*FECHA\\s*:\\s*(?<date>[0-9]+-[0-9]+-[0-9]+)\\s*EDAD\\s*:\\s*(?<age>[0-9]+)?$"
 //	"^COEF\\.\\s*TIEMPO\\s*PARCIAL\\s*:\\s*(?<partialCoef>[0-9]{3})?.*REDUCCI”N\\s*JORNADA/COEFIC\\s*:\\s*FECHA\\s*:\\s*(?<date>[0-9]+-[0-9]+-[0-9]+)\\s*EDAD\\s*:\\s*(?<age>[0-9]+)?$"
 			, Pattern.CASE_INSENSITIVE);
 
 	// GC/M*: 08 RELEVO: TIPO DE INACTIVIDAD/COEFIC: T.ACT.PAR.PR.COVID19/300
 	// C.C.C.: 0111 11 112501771
 	protected static final Pattern CONTRACT_QUOTEGROUP_MONTHLY_INACTIVITY_COMPLETECCC = Pattern.compile(
-			"^GC/M\\*:\\s*(?<quoteGroup>\\d{2})(?:/(?<monthly>\\S))?\\s*RELEVO:\\s*(?<relevo>\\S*)\\s*TIPO\\s+DE\\s+INACTIVIDAD/COEFIC:\\s*(?<inactivity>.*?)\\s*C\\.C\\.C\\.\\s*:\\s*(?<completeCCC>[\\d\\s]+)?$"
-// "^GC/M\\*:\\s*(?<quoteGroup>[0-9]{2})/?(?<monthly>.)?\\S*\\s*RELEVO\\s*:\\s*\\S*\\s*TIPO\\s*DE\\s*INACTIVIDAD/COEFIC\\s*:\\s*(?<inactivity>.*)C\\.C\\.C\\.:\\s*(?<completeCCC>[0-9]{4}\\s*[0-9]{2}\\s*[0-9]+)?$"
+			"^GC/M\\*:\\s*(?<quoteGroup>[0-9]{2})/?(?<monthly>.)?\\S*\\s*RELEVO\\s*:\\s*\\S*\\s*TIPO\\s*DE\\s*INACTIVIDAD/COEFIC\\s*:\\s*(?<inactivity>.*)C\\.C\\.C\\.:\\s*(?<completeCCC>[0-9]{1,4}\\s*[0-9]{1,2}\\s*[0-9]+)?$"
 //	"^GC/M\\*:\\s*(?<quoteGroup>[0-9]{2})/?(?<monthly>.)?\\S*\\s*RELEVO\\s*:\\s*TIPO\\s*DE\\s*INACTIVIDAD\\/COEFIC\\s*:\\s*(?<inactivity>.*)C\\.C\\.C\\.:\\s*(?<completeCCC>[0-9]{4}\\s*[0-9]{2}\\s*[0-9]+)?$"
 			, Pattern.CASE_INSENSITIVE);
 

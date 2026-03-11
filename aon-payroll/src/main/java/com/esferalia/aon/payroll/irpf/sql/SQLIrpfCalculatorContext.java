@@ -83,6 +83,7 @@ import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -153,6 +154,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			+ IrpfDataAscendantsColumns.IRPF_DATA + " = ? ";
 	
 	
+	private static final String LIQUID_ERR_MSG = "Lo sentimos no soportamos la funcionalidad NETO en extras si esta activado el c\u00E1lculo autom\u00E1tico de IRPF.";
+
 	private static class SimpleIrpfContractPayment extends SimpleContractPayment {
 
 		private int extraId = 0;
@@ -260,8 +263,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		@Override
 		public Object liquid(double liquid, Date start, Date end)
 				throws ExpressionException, SQLException, SalaryException {
-			throw new InterruptedException(
-					"Lo sentimos no soportamos la funcionalidad NETO en extras si esta activado el c\u00E1lculo autom\u00E1tico de IRPF.");
+			throw new RemoveException( LIQUID_ERR_MSG);
 		}
 
 		public Collection<IContractEmbargo> getContractEmbargos()
@@ -624,19 +626,18 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 								agreementCriteria) {
 							
 							@Override
-								public Object liquid(double liquid, Date start, Date end)
-										throws ExpressionException, SQLException, SalaryException {
-									return super.liquid(liquid, start, end);
-								}
+							public Object liquid(double liquid, Date start, Date end)
+									throws ExpressionException, SQLException, SalaryException {
+								throw new RemoveException(LIQUID_ERR_MSG);
+							}
 							
 							@Override
-							protected IContractSalaryCalculatorContext getLiquidCalculatorContext(
-									Connection conn, Date startDate, Date endDate, Date issueDate,
-									Criteria criteria, double solve, double liquid) {
-								return super.getLiquidCalculatorContext(conn, startDate, endDate, issueDate, criteria, solve, liquid);
+							public Object gross(double gross, Date start, Date end)
+									throws ExpressionException, SQLException, SalaryException {
+								return gross;
 							}
+							
 						};
-						//return super.newSQLContractExtraCalculatorContext(paymentId, paymentName, paymentMonth, agreementCriteria);
 					}
 				};
 				return extraCtx.next() ? extraCtx : null;

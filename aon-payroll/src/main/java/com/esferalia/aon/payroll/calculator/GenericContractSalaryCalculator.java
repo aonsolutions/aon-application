@@ -1793,12 +1793,19 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			return; // TODO : must be done in context ?
 		}
 
+		String name = contractPayment.getName();
+		
+		if ( isRemove(contractPayment) ) {
+			onRemove(contractPayment);
+			addResult(expressionContext, name, start, end, 0.00);
+			return;
+		}
+		
 		expressionContext.setVariable(
 				ContextVariable.PAYMENT_VARIABLE, 
 				new PaymentVariable(contractPayment),
 				paymentStart, paymentEnd);
 
-		String name = contractPayment.getName();
 		
 		try {
 			List<ITimedResult<Double>> results = expressionContext.eval(contractPayment.getExpression(), paymentStart,
@@ -2787,5 +2794,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	private static boolean isSSPEC(IContractDeduction deduction) {
 		return AonStringUtils.startsWith(deduction.getExpression(), "/*epoch");
 	}
+
+	private static boolean isRemove(IContractPayment contractPayment) {
+		return AonStringUtils.equals(AonStringUtils.remove(contractPayment.getExpression(), ' '), "REMOVE()" );
+	}
+
 }
 

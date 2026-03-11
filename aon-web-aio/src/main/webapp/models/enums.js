@@ -233,6 +233,16 @@ export const DAYS = [
 	SATURDAY
 ];
 
+export const DAYS_ABR =[
+	"Dom",
+	"Lun",
+	"Mar",
+	"Mie",
+	"Jue",
+	"Vie",
+	"Sab"
+];
+
 export const MONTHS =[
 	JANUARY,
 	FEBRUARY,
