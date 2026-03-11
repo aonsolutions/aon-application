@@ -1305,6 +1305,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	private Map<Double, Double> liquids;
 	private Map<Double, Double> payments;
+	private Map<Double, Double> solveLiquids;
+	private Map<Double, Double> solvePayments;
 
 	private Set<IContractBonus> contextBonus;
 	private Set<IContractDeduction> contextDeduction;
@@ -1417,6 +1419,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		this.liquids = new HashMap<>();
 		this.payments = new HashMap<>();
+		this.solveLiquids = new HashMap<>();
+		this.solvePayments = new HashMap<>();
 		this.contextBonus = new HashSet<>();
 		this.contextDeduction = new HashSet<>();
 
@@ -2652,7 +2656,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	private boolean filterCoop(ISystemPayment systemPayment) {
 		int ssRegime = getInt(SQLConstants.CONTRACT, ContractColumns.SS_REGIME);
-		System.out.println("SSRegime: " + ssRegime + " - Payment domain: " + (systemPayment.getDomain() == (-1 * ssRegime ) ));
 		return ssRegime == 1 && systemPayment.getDomain() == (-1 * ssRegime);
 	}
 
@@ -2946,17 +2949,21 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 			@Override
 			public double value(double solve) {
-
 				try {
+					if (SQLContractSalaryCalculatorContext.this.solveLiquids.containsKey(solve)) {
+						return SQLContractSalaryCalculatorContext.this.solveLiquids.get(solve);
+					}
+
 					IContractSalaryCalculatorContext ctx = getLiquidCalculatorContext(connection, start, end, issueDate,
 							contractCriteria, solve, liquid);
-					// ContractSalaryCalculator<Salary> calculator = new
-					// ContractSalaryCalculator<Salary>();
+
 					SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>() {
+						@Override
 						protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
 							return TaxCalculator.getTaxCalculator(ctx);
 						};
 						
+						@Override
 						protected void fillData(IContractSalaryCalculatorContext ctx) throws SalaryException {};
 					};
 					calculator.setSalaryBuilder(new SalaryBuilder());
@@ -2979,6 +2986,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					if (Math.abs(zero) <= solver.getAbsoluteAccuracy())
 						SQLContractSalaryCalculatorContext.this.onLiquid(salary);
 
+					System.out.println("Trying NETO: " + solve + " => " + zero + " (liquid: " + liquid + ", totalLiquid: " + salary.getTotalLiquid() + ")");
+
+					SQLContractSalaryCalculatorContext.this.solveLiquids.put(solve, zero);
+					
 					return zero;
 
 				} catch (SalaryException e) {
@@ -3017,11 +3028,15 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		result = solver.solve(Byte.MAX_VALUE, new UnivariateFunction() {
 
 			@Override
-			public double value(double x) {
+			public double value(double solve) {
 
 				try {
+					if ( SQLContractSalaryCalculatorContext.this.solvePayments.containsKey(solve)) {
+						return SQLContractSalaryCalculatorContext.this.solvePayments.get(solve);
+					}
+					
 					ISQLContractSalaryCalculatorContext ctx = getPaymentCalculatorContext(connection, start, end, end,
-							contractCriteria, x);
+							contractCriteria, solve);
 					SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>() {
 						// skip extras from BRUTO
 						protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
@@ -3033,7 +3048,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					calculator.setSalaryBuilder(new SalaryBuilder());
 
 					ISalary salary = calculator.calculate(ctx);
-					return payment - salary.getTotalPayment();
+					
+					double zero = payment - salary.getTotalPayment();
+					SQLContractSalaryCalculatorContext.this.solvePayments.put(solve, zero);
+					
+					return zero;
 				} catch (SalaryException e) {
 					throw new RuntimeException(e);
 				}

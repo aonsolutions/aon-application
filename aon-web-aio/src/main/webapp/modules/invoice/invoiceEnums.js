@@ -380,7 +380,7 @@ export const getTaxType = (percentage) => {
 }
 
 export const getTaxTypeName = (type, mobile, administration) => {
-  if("CANARIAS" == administration) {
+  if(TaxType.IVA === type && "CANARIAS" == administration) {
     return 'IGIC';
   } else if(TaxType.IVA === type) {
     return 'IVA';
@@ -400,7 +400,7 @@ export const getTaxTypeName = (type, mobile, administration) => {
 }
 
 export const getTaxPercentageOption = (type, administration, surcharge, agri) => {
-  if("CANARIAS" == administration) {
+  if(TaxType.IVA === type && "CANARIAS" == administration) {
     return TaxVatIGICPercentage;
   } else if(TaxType.IVA_RE === type || surcharge) {
     return TaxVatREPercentage;

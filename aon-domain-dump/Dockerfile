@@ -1,15 +1,27 @@
-FROM public.ecr.aws/lambda/provided:al2
+FROM public.ecr.aws/lambda/provided:latest
 
 # Install AWS command-line
-RUN yum install --assumeyes aws-cli
+RUN dnf install --assumeyes aws-cli
 
 # Install mysqldump
-RUN yum install --assumeyes mariadb
+#RUN yum install --assumeyes mariadb
+
+RUN dnf install --assumeyes wget
+RUN wget https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm 
+RUN rpm --install mysql80-community-release-el9-1.noarch.rpm
+# We need the public key of mysql to install the software. 
+RUN rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
+# install mysql client
+RUN dnf install mysql-community-client -y
+# Test version
+RUN mysqldump --version
 
 # Install command-line JSON processor
-RUN yum install --assumeyes jq
+RUN dnf install --assumeyes jq
+RUN dnf install --assumeyes gzip
+RUN dnf install --assumeyes findutils
 
-RUN yum clean all
+RUN dnf clean all
 
 # Copy custom runtime bootstrap
 COPY bootstrap ${LAMBDA_RUNTIME_DIR}
