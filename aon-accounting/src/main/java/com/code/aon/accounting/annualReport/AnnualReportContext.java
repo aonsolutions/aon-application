@@ -20,6 +20,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.RegistryMedia;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.model.registry.RecordDataType;
 
 /**
  * Contexto para la ejecución de la Memeria Contable o cualquier otro informe del mismo tipo.
@@ -83,6 +84,9 @@ public class AnnualReportContext {
 				IManagerBean bean = BeanManager.getManagerBean(RecordData.class);
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.RECORD_DATA_REGISTRY_ID), getCompany().getId());
+				// FALTA - SACAR EL DE CONSTITUCION, NO SE DONDE SE USARA ESTO EN TODA LA APLICACION
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.RECORD_DATA_TYPE), RecordDataType.INCORPORATION.value());
+				
 				List<ITransferObject> list = bean.getList(null);
 				if (list != null && list.size() > 0 ) {
 					ITransferObject to = list.get(0);
@@ -242,6 +246,22 @@ public class AnnualReportContext {
 			return "<ERROR>";
 		}
 	}
+	
+	/**
+	 * Devuelve el municipio de la empresa. Es el dato incluido en la dirección principal de la empresa.
+	 * @return
+	 */
+	public String municipioEmpresa() {
+		try {
+			RegistryAddress raddress = getCompany().getDefaultAddress();
+			if (raddress != null) {
+				return raddress.getMunicipalityCode();
+			}
+			return null;
+		} catch (ManagerBeanException e) {
+			return "<ERROR>";
+		}
+	}
 
 	/**
 	 * Devuelve la localidad de la empresa. Es el dato incluido en la dirección principal de la empresa.
@@ -365,6 +385,26 @@ public class AnnualReportContext {
 	 */
 	public String hojaRegistroMercantil(){
 		return (getRecordData() != null) ? getRecordData().getSheet() : null;
+	}	
+	
+	/**
+	 * Devuelve el dato "Codigo de Registro Mercantil" introducido en la solapa de
+	 * "Datos Registrales" de la pantalla "Datos de Empresa".
+	 * 
+	 * @return Cadena de caracteres.
+	 */
+	public String codigoRegistroMercantil(){
+		return (getRecordData() != null && getRecordData().getCommercialRegistryCode() != null) ? Byte.toString(getRecordData().getCommercialRegistryCode()) : null;
+	}
+	
+	/**
+	 * Devuelve el dato "IRUS" introducido en la solapa de
+	 * "Datos Registrales" de la pantalla "Datos de Empresa".
+	 * 
+	 * @return Cadena de caracteres.
+	 */
+	public String irusRegistroMercantil(){
+		return (getRecordData() != null) ? getRecordData().getIrus() : null;
 	}	
 	
 	/**

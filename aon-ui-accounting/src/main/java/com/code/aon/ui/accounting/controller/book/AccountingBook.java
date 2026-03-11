@@ -124,8 +124,20 @@ public class AccountingBook implements Comparable<AccountingBook>, Serializable 
 		this.attachId = attachId;
 	}
 
+	// FALTA - NOMBRE DEL FICHERO <NOMBRE>_XXX.<EXTENSION> DONDE XXX ES EL NUMERO RELLENO CEROS
+//	public String getName() {
+//		return bookType + "_" + getNumber() + "." + getMimeType().getExtension();
+//	}
+	
 	public String getName() {
-		return bookType + "_" + getNumber() + "." + getMimeType().getExtension();
+		String name = "" + bookType;
+		if (bookType == BookType.BAL_SUMS1 || bookType == BookType.BAL_SUMS2 || bookType == BookType.BAL_SUMS3 || bookType == BookType.BAL_SUMS4) {
+			name = "BAL_SUMS";
+		} else if (bookType == BookType.IVAR || bookType == BookType.IVAS || bookType == BookType.IVAI) {
+			name = "IVA";
+		}
+		String numberStr = String.format("%03d", getNumber());
+		return name + "_" + numberStr + "." + getMimeType().getExtension();
 	}
 	
 	public boolean isBalanceReport() {
