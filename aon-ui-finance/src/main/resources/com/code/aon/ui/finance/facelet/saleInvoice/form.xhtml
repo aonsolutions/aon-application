@@ -474,39 +474,86 @@
 						</ui:include>
 					</aon:panelGrid>
 
-					<aon:div styleClass="aon-margin-top">
-						<aon:panelGrid columns="2" styleClass="aon-width-all"
-							columnClasses="aon-panelGrid-odd aon-width-140,
-								aon-panelGrid-even aon-width-auto">
-
-							<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formCommonContent.xhtml">
-								<ui:param name="invoiceController" value="#{saleInvoice}" />
-								<ui:param name="addressController" value="#{saleInvoiceAddress}" />
-								<ui:param name="detailController" value="#{saleInvoiceDetail}" />
-								<ui:param name="financeController" value="#{saleInvoiceFinance}" />
-								<ui:param name="formName" value="saleInvoiceForm" />
-							</ui:include>
-
-						</aon:panelGrid>
-					</aon:div>
+					<aon:if test="#{!app.standAlone}">
+						<aon:div styleClass="aon-margin-top">
+							<aon:panelGrid columns="2" styleClass="aon-width-all"
+								columnClasses="aon-panelGrid-odd aon-width-140,
+									aon-panelGrid-even aon-width-auto">
+	
+								<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formCommonContent.xhtml">
+									<ui:param name="invoiceController" value="#{saleInvoice}" />
+									<ui:param name="addressController" value="#{saleInvoiceAddress}" />
+									<ui:param name="detailController" value="#{saleInvoiceDetail}" />
+									<ui:param name="financeController" value="#{saleInvoiceFinance}" />
+									<ui:param name="formName" value="saleInvoiceForm" />
+								</ui:include>
+	
+							</aon:panelGrid>
+						</aon:div>
+					</aon:if>
+				</aon:if>
+				<aon:if test="#{app.standAlone and !saleInvoice.nevv}">
+	                <aon:panelTabSet id="invoiceSalesPanelTab" selectedTab="invoiceSalesDetailTab">
+	                        <aon:panelTab id="invoiceSalesDetailTab" 
+	                                label="#{bundle.finance_invoice_lines}">
+								<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formDetail.xhtml">
+									<ui:param name="invoiceController" value="#{saleInvoice}" />
+									<ui:param name="detailController" value="#{saleInvoiceDetail}" />
+									<aon:if test="#{!aonConfiguration.bean.invoice.showTasData}">
+										<ui:param name="projectLabel" value="#{bundle.aon_project}" />
+									</aon:if>
+									<aon:if test="#{aonConfiguration.bean.invoice.showTasData}">
+										<ui:param name="projectLabel" value="#{bundle.tas_project_tas}" />
+									</aon:if>
+								</ui:include>
+	                        </aon:panelTab>
+	                        <aon:panelTab id="invoiceSalesFinanceTab" 
+	                                label="#{bundle.finance_checking}">
+								<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formFinance.xhtml">
+									<ui:param name="invoiceController" value="#{saleInvoice}" />
+									<ui:param name="detailController" value="#{saleInvoiceDetail}" />
+									<ui:param name="financeController" value="#{saleInvoiceFinance}" />
+								</ui:include>
+	                        </aon:panelTab>
+	                        <aon:panelTab id="invoiceSalesCommonTab" 
+	                                label="#{bundle.aon_additional_data}">
+								<aon:div styleClass="aon-margin-top">
+									<aon:panelGrid columns="2" styleClass="aon-width-all"
+										columnClasses="aon-panelGrid-odd aon-width-140,
+											aon-panelGrid-even aon-width-auto">
+			
+										<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formCommonContent.xhtml">
+											<ui:param name="invoiceController" value="#{saleInvoice}" />
+											<ui:param name="addressController" value="#{saleInvoiceAddress}" />
+											<ui:param name="detailController" value="#{saleInvoiceDetail}" />
+											<ui:param name="financeController" value="#{saleInvoiceFinance}" />
+											<ui:param name="formName" value="saleInvoiceForm" />
+										</ui:include>
+			
+									</aon:panelGrid>
+								</aon:div>
+	                        </aon:panelTab>
+	                </aon:panelTabSet>
+                </aon:if>
+				
+				<aon:if test="#{!app.standAlone}">
+					<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formDetail.xhtml">
+						<ui:param name="invoiceController" value="#{saleInvoice}" />
+						<ui:param name="detailController" value="#{saleInvoiceDetail}" />
+						<aon:if test="#{!aonConfiguration.bean.invoice.showTasData}">
+							<ui:param name="projectLabel" value="#{bundle.aon_project}" />
+						</aon:if>
+						<aon:if test="#{aonConfiguration.bean.invoice.showTasData}">
+							<ui:param name="projectLabel" value="#{bundle.tas_project_tas}" />
+						</aon:if>
+					</ui:include>
+					<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formFinance.xhtml">
+						<ui:param name="invoiceController" value="#{saleInvoice}" />
+						<ui:param name="detailController" value="#{saleInvoiceDetail}" />
+						<ui:param name="financeController" value="#{saleInvoiceFinance}" />
+					</ui:include>
 				</aon:if>
 
-				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formDetail.xhtml">
-					<ui:param name="invoiceController" value="#{saleInvoice}" />
-					<ui:param name="detailController" value="#{saleInvoiceDetail}" />
-					<aon:if test="#{!aonConfiguration.bean.invoice.showTasData}">
-						<ui:param name="projectLabel" value="#{bundle.aon_project}" />
-					</aon:if>
-					<aon:if test="#{aonConfiguration.bean.invoice.showTasData}">
-						<ui:param name="projectLabel" value="#{bundle.tas_project_tas}" />
-					</aon:if>
-				</ui:include>
-
-				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formFinance.xhtml">
-					<ui:param name="invoiceController" value="#{saleInvoice}" />
-					<ui:param name="detailController" value="#{saleInvoiceDetail}" />
-					<ui:param name="financeController" value="#{saleInvoiceFinance}" />
-				</ui:include>
 			</aon:div>
 
 		</aon:form>
@@ -568,7 +615,7 @@
 		</aon:if>
 		<aon:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
 			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
-		</aon:if>saleInvoiceForm
+		</aon:if>
 		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
 			<ui:param name="signButtonreRender" value="saleInvoiceForm" />
 			<aon:methodParam name="signActionListener" value="#{saleInvoiceSigner.onSign}" type="actionListener" />

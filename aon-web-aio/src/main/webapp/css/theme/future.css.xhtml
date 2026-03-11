@@ -567,6 +567,7 @@
 	.rich-tab-inactive,
 	.rich-tabhdr-cell-inactive{ 
 		border:none;
+		cursor: pointer;
 		background-color: var(--aonBackgroundColor2);
 	}
 	
@@ -1642,6 +1643,8 @@
 		background-color:  #f1f5f9;
 	}
 	
+	[id$='InvoiceForm:dataTable'] [id$='InvoiceForm:InvoiceAddress'],	
+	[id$='InvoiceForm:dataTable'] [id$='InvoiceForm:InvoiceReferenceCodeDiv'],
 	[id$='InvoiceForm'] .aon-panelGrid-even:nth-child(4) > *:not(:has(input) )
 	{
 	  border-radius: .375rem;
@@ -1649,6 +1652,34 @@
 	  padding: 0.5rem .75rem .5rem .75rem;
 	  background-color: var(--aonBackgroundColor2,#f2f2f2) !important;
 	}
+
+	[id$='InvoiceForm:dataTable'] [id$='InvoiceForm:InvoiceReferenceCodeDiv']{
+		margin-right: 0.75rem;
+	}
+	
+	[id$='InvoiceForm:dataTable'] table:has( > tbody > tr > td > div[id$='InvoiceForm:InvoiceReferenceCodeDiv'] ){
+		padding-left: 0px;
+	}
+	
+	[id$='InvoiceForm:financeContainer'] > .aon-group,
+	[id$='InvoiceForm:invoiceDetailContainer'] > .aon-group{
+			margin: 0px ;
+			padding: 0px ;
+	}
+
+	[id='aonContent:saleInvoiceForm:invoiceSalesPanelTab'].aon-panelTabSet,
+	[id='aonContent:expenseInvoiceForm:expenseInvoicePanelTab'].aon-panelTabSet,
+	[id='aonContent:purchaseInvoiceForm:purchaseInvoicePanelTab'].aon-panelTabSet {
+	    margin-bottom: 0px;
+	    height:calc(100vh - 372px) ;
+	}
+
+	[id$='InvoiceForm:invoiceDetailsDiv'],
+	[id$='InvoiceForm:invoiceFinancesDiv'] {
+	    overflow-y: scroll;
+	    height: calc(100vh - 472px) ;
+	}
+
 </style>
 
 		
