@@ -85,7 +85,8 @@ export class AonTimecontrol extends AonElement {
 		
 		if (this.isEmployee()) 
 			data.options = [OPTIONS.PRESENCE];
-		else if(!this.isMobile() && data.options)
+		
+		if(!this.isMobile() && data.options && !data.options.includes(OPTIONS.AGENDA))
 			data.options.push(OPTIONS.AGENDA);
 
 		this.applicationEl.addSidenavOptions3(data);

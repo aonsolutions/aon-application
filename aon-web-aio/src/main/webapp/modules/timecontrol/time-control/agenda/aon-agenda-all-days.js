@@ -690,7 +690,7 @@ export class AonAgendaAllDays extends AonElement {
 			</div>
 		`;
 	}
-	
+
 	renderContractHoliday() {
 		return `
 			<div class="event">
@@ -717,7 +717,7 @@ export class AonAgendaAllDays extends AonElement {
 			case 'EFFECITVE_DAYS':
 				return 'Día Efectivo';
 			case 'INACTIVITY':
-				return 'Inactividad: ' + event.description; 
+				return 'Inactividad: ' + event.description;
 			case 'ABSENCE':
 				return 'Ausencia. ' + this.parsePartialityDescription(event.description);
 			case 'STRIKE':
@@ -1118,22 +1118,26 @@ export class AonAgendaAllDays extends AonElement {
 				: 0;
 			let expectedTime = hoursForDay * 60 * 60 * 1000;
 
-			const dayTypeContract = this._daysTypeContract.get(dateKey);
+			// Regla 1: festivo de contrato → todo a 0
+			const festive = this._festivesContract.get(dateKey);
+			if (!festive) {
+				const dayTypeContract = this._daysTypeContract.get(dateKey);
 
-			// Vacaciones, permisos retribuidos, ITs (habra que filtrar dayTypeContract.source si queremos quitar alguno )
-			if (dayTypeContract && (dayTypeContract.source === "IT" || dayTypeContract.source === "PAID_LEAVE" || dayTypeContract.source === "HOLIDAYS")) {
-				// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
-				if (this._workingDays && this._workingDays[dayOfWeek] !== 0) {
-					//expectedTime = hoursForDay * 60 * 60 * 1000;
-					workedTime = hoursForDay * 60 * 60 * 1000;
-				} else {
-					// expectedTime = 0;
-					workedTime = hoursForDay * 60 * 60 * 1000;
+				// Vacaciones, permisos retribuidos, ITs (habra que filtrar dayTypeContract.source si queremos quitar alguno )
+				if (dayTypeContract && (dayTypeContract.source === "IT" || dayTypeContract.source === "PAID_LEAVE" || dayTypeContract.source === "HOLIDAYS")) {
+					// Si el día es laborable (_workingDays[dayOfWeek] === 0) y HOLIDAYS → sumar horas esperadas
+					if (this._workingDays && this._workingDays[dayOfWeek] !== 0) {
+						//expectedTime = hoursForDay * 60 * 60 * 1000;
+						workedTime = hoursForDay * 60 * 60 * 1000;
+					} else {
+						// expectedTime = 0;
+						workedTime = hoursForDay * 60 * 60 * 1000;
+					}
 				}
-			}
 
-			totalWorked += workedTime;
-			totalExpected += expectedTime;
+				totalWorked += workedTime;
+				totalExpected += expectedTime;
+			}
 		}
 
 		const workedStr = timeHourShort(totalWorked);
@@ -1203,6 +1207,64 @@ export class AonAgendaAllDays extends AonElement {
 		this.scrollToToday(smooth);
 	}
 
+	async goToMonth(year, month) {
+		// Fecha: primer día del mes pedido
+		const target = new Date(year, month, 1);
+
+		// Cargar el mes si aún no se ha cargado
+		const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
+		if (!this._loadedMonths.has(monthKey)) {
+			await this.loadMonthEvents(target);
+			// Actualizar los límites cargados para el scroll infinito
+			if (!this._firstLoadedMonth || target < this._firstLoadedMonth)
+				this._firstLoadedMonth = new Date(year, month, 1);
+			if (!this._lastLoadedMonth || target > this._lastLoadedMonth)
+				this._lastLoadedMonth = new Date(year, month, 1);
+		}
+
+		// Reutilizar el goToDate() ya existente
+		console.log('goToDate', target);
+		this.goToDate(target);
+	}
+
+	goToDate(date) {
+		const targetStart = AonDateUtils.startOfWeek(date);
+		const diffMs = targetStart - this.baseDate;
+		const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+		const offset = Math.floor(diffDays / 7);
+
+		// Asegurarse de que la semana está renderizada
+		this.mountWeek(offset);
+
+		// Esperar un frame para que el DOM esté pintado
+		requestAnimationFrame(() => {
+			const weekData = this.visibleWeeks.get(offset);
+			if (!weekData) return;
+
+			// Buscar el día exacto dentro de la semana comparando la fecha
+			const targetKey = AonDateUtils.format(date, 'YYYY-MM-DD');
+			const dayEls = weekData.element.querySelectorAll('.day');
+
+			// Recorremos los 7 días del bloque y buscamos el que coincide
+			let targetDayEl = null;
+			dayEls.forEach(dayEl => {
+				// El día guarda su número en .day-number; lo identificamos
+				// comparando el offset del día dentro de la semana
+				const dayIndex = Array.from(dayEls).indexOf(dayEl); // 0=lun … 6=dom
+				const dayDate = new Date(targetStart);
+				dayDate.setDate(dayDate.getDate() + dayIndex);
+				if (AonDateUtils.format(dayDate, 'YYYY-MM-DD') === targetKey) {
+					targetDayEl = dayEl;
+				}
+			});
+
+			// Si encontramos el día exacto, scroll hasta él; si no, a la semana
+			const elToScroll = targetDayEl ?? weekData.element;
+			elToScroll.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		});
+	}
+
+	/*
 	goToDate(date) {
 		const targetStart = AonDateUtils.startOfWeek(date);
 		const diffMs = targetStart - this.baseDate;
@@ -1218,6 +1280,7 @@ export class AonAgendaAllDays extends AonElement {
 			weekData.element.scrollIntoView({ behavior: 'auto', block: 'start' });
 		}
 	}
+	*/
 
 	/* ---------------- RELOAD DATA ---------------- */
 	async reload() {
@@ -1231,7 +1294,7 @@ export class AonAgendaAllDays extends AonElement {
 
 		// Recargar eventos iniciales
 		await this.loadInitialEvents();
-		
+
 		this.scrollToToday();
 
 		// Marcar como completo nuevamente
