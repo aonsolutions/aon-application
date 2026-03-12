@@ -619,8 +619,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Tramo tramo = trabajador.getTramos().getTramo().get(0);
 	assertTramoActivoNormalFormacionEnAlternancia(tramo);
 
-	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getTramosBases(connection, startDate, endDate,
-		ccc, contract);
+	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresYTramos);
 
 	org.junit.Assert.assertEquals(1, bases.size());
 
@@ -5645,8 +5644,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	assertTramoIT15PrimerosDiasDiario(tramosTrabajadores.get(1));
 	assertTramoActivoNormal(tramosTrabajadores.get(0));
 
-	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramosBases = getTramosBases(connection, startDate,
-		endDate, ccc, contract);
+	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramosBases = getBases(connection, trabajadoresTramos);
 
 	assertEquals(3, tramosBases.size());
 
@@ -7073,7 +7071,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	;
 
 	net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = getTrabajadoresTramos(
-		connection, contract, startDate, endDate, ccc, "L00");
+		connection, startDate, endDate, ccc, "L00");
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresTramos);
 	org.junit.Assert.assertEquals(1, bases.size());
@@ -7167,7 +7165,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	;
 
 	net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = getTrabajadoresTramos(
-		connection, contract, startDate, endDate, ccc, "L00");
+		connection, startDate, endDate, ccc, "L00");
 
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresTramos);
 	org.junit.Assert.assertEquals(1, bases.size());
@@ -8153,7 +8151,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = bases.getLiquidacion().get(0)
 		.getLiquidacionMes().get(0).getTrabajadores().getTrabajador().get(0).getTramos().getTramo();
 
-	Assert.assertEquals(2, tramos.size());
+	Assert.assertEquals(3, tramos.size());
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo0 = tramos.get(0);
 	assertDato(tramo0.getDatosTramo().getDato(), "C", "500", "400");
@@ -8161,8 +8159,14 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = tramos.get(1);
 	assertDato(tramo1.getDatosTramo().getDato(), "C", "500",
+			Integer.toString(1000));
+		assertDato(tramo1.getDatosTramo().getDato(), "C", "603",
+			Integer.toString(1000 ));
+
+	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo2 = tramos.get(2);
+	assertDato(tramo2.getDatosTramo().getDato(), "C", "500",
 		Integer.toString(100 * (get(endDate, Calendar.DAY_OF_MONTH) - 6)));
-	assertDato(tramo1.getDatosTramo().getDato(), "C", "601",
+	assertDato(tramo2.getDatosTramo().getDato(), "C", "601",
 		Integer.toString(100 * (get(endDate, Calendar.DAY_OF_MONTH) - 6)));
 
     }
@@ -8916,6 +8920,42 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
     }
 
     // -------------------------------------------------------------------------
+    protected net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos getTrabajadoresTramos(
+    	    Connection connection, Date startDate, Date endDate, String ccc, String tipo)
+    	    throws JAXBException, IOException {
+
+
+    	Calendar calendar = Calendar.getInstance();
+    	calendar.setTime(startDate);
+    	String mes = Integer.toString(calendar.get(MONTH) + 1);
+    	String anho = Integer.toString(calendar.get(YEAR));
+
+    	ByteArrayOutputStream trabajadoresTramosOs = new ByteArrayOutputStream();
+    	TrabajadoresTramos.generate(connection, "0000", // autorizado,
+    		mes, // desdeAnhoMes,
+    		anho, // desdeAnho,
+    		mes, // hastaMes,
+    		anho, // hastaAnho,
+    		mes, // ctrlMes,
+    		anho, // ctrlAnho,
+    		tipo, // tipo,
+    		new String[] { "0111" + "" + ccc }, // cccs
+    		trabajadoresTramosOs);
+    	trabajadoresTramosOs.flush();
+
+    	ByteArrayInputStream trabajadoresTramosIs = new ByteArrayInputStream(trabajadoresTramosOs.toByteArray());
+
+    	net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
+    		.unmarshal(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
+    			trabajadoresTramosIs);
+
+    	trabajadoresTramosIs.close();
+    	trabajadoresTramosOs.close();
+
+    	return trabajadoresTramos;
+
+    }
+
     protected net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos getTrabajadoresTramos(
 	    Connection connection, ContractRecord contract, Date startDate, Date endDate, String ccc, String tipo)
 	    throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
