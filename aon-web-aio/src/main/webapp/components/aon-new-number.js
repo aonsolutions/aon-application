@@ -98,8 +98,6 @@ export class AonNewNumber extends AonNewInput {
 		input.style.textAlign = 'right';
 		if (this.value) input.value = this.value;
 
-		let lastValue = input.value;
-
 		input.addEventListener(EVENT.KEYPRESS, (ev) => {
 			let keyChar = String.fromCharCode(ev.which || ev.keyCode);
 			let reg = new RegExp(/[^0-9]/g);
@@ -113,8 +111,6 @@ export class AonNewNumber extends AonNewInput {
 		});
 
 		input.addEventListener(EVENT.FOCUS, ({ target }) => {
-			lastValue = target.value;
-
 			let value = target.value;
 			if (value) input.value = this.onFocus(value);
 			input.select();
@@ -126,10 +122,6 @@ export class AonNewNumber extends AonNewInput {
 			if (value) {
 				let newValue = this.onBlur2(value);
 				this.value = this.onFocus(newValue);
-			}
-
-			if (value !== lastValue) {
-				this.dispatchEvent(new Event(EVENT.CHANGE));
 			}
 
 			this.dispatchEvent(new Event(EVENT.BLUR));
@@ -146,7 +138,7 @@ export class AonNewNumber extends AonNewInput {
 				this.value = input.value.replace('-', '');
 			}
 
-			this.dispatchEvent(new Event(EVENT.CHANGE));
+			this.dispatchEvent(new Event(EVENT.CHANGE_NUMBER));
 		});
 	}
 
@@ -172,7 +164,7 @@ export class AonNewNumber extends AonNewInput {
     }
 
     onChange(fn) {
-        this.addEventListener(EVENT.CHANGE, fn);
+        this.addEventListener(EVENT.CHANGE_NUMBER, fn);
     }
 
     onInput(fn) {
