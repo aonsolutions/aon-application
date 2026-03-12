@@ -1,10 +1,10 @@
 import { AonElement } from '../components/AonElement.js';
 import { AonAvatar } from '../components/aon-avatar.js';
 import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "../environments/environments.js";
-import { closeSession, getAuth } from '../services/service.js';
-import { AonConfiguration } from '../modules/configuration/aon-configuration.js';
-import {AonUser} from '../modules/user/aon-user.js';
+import { changePassword, closeSession, getAuth } from '../services/service.js';
 import * as LS from '../services/localStorageService.js';
+import { AonDialog } from '../components/aon-dialog.js';
+import { createInput } from '../components/CreateComponent.js';
 
 export class AonLoginPanel extends AonElement {
 
@@ -13,6 +13,9 @@ export class AonLoginPanel extends AonElement {
 	LOGOUT;
 	EDITBUTTON;
 	CHANGEPASSWORD;
+
+	EDIT_PASSWORD_DIALOG;
+
 	rightPanel; // Añadido para guardar la referencia al rightPanel
 
 	get id() {
@@ -40,6 +43,7 @@ export class AonLoginPanel extends AonElement {
 		this.LOGOUT = this.id + 'Logout';
 		this.CHANGEPASSWORD = this.id + 'ChangePassword';
 		this.EDITBUTTON = this.id + 'EditButton';
+		this.EDIT_PASSWORD_DIALOG = this.id + 'EditPasswordDialog';
 	}
 
 	build() {
@@ -127,8 +131,7 @@ export class AonLoginPanel extends AonElement {
 			divPassword.className = 'aonUserPasswordLink configCardText';
 			divPassword.innerText =  MSG.CHANGE_PASSWORD;
 			divPassword.addEventListener("click", (e) => {
-				let aonUser = new AonUser();
-				aonUser.editPassword();
+				this.editPassword();
 			});
 			
 			loginContent.appendChild(divPassword);
@@ -224,6 +227,43 @@ export class AonLoginPanel extends AonElement {
 		div.className = "userPanelImage profile-letters";
 		div.innerHTML = letters;
 		return div;
+	}
+
+	editPassword() {
+		let dialog = this.getElement(this.EDIT_PASSWORD_DIALOG);
+		if (!dialog) {
+			dialog = new AonDialog();
+			dialog.id = this.EDIT_PASSWORD_DIALOG;
+			this.appendChild(dialog);
+		}
+		
+		dialog.clear();
+
+		if(this.isMobile()) {
+			dialog.type = "fullscreen";
+		} else {
+			dialog.width = '400px';
+		}
+		dialog.setTitle("Cambiar Contraseña");
+
+		let div = document.createElement("div");
+
+		let oldPassword = createInput("aonConfigurationUserCardOldPassword", "Contraseña");
+		oldPassword.type = "password";
+		div.appendChild(oldPassword);
+	
+		let newPassword = createInput("aonConfigurationUserCardNewPassword", "Repetir Contraseña");
+		newPassword.type = "password";
+		div.appendChild(newPassword);
+
+		dialog.setContent(div);
+
+		dialog.addAcceptAction(() => {
+			changePassword({oldPassword:oldPassword.value, newPassword:newPassword.value}, this.sessionData).then(()=>{
+				this.showToast({message:MSG.SAVED_DATA, type:CONSTANT.SUCCESS});
+			}).catch(e=>this.showError(e))
+		});
+		dialog.open();
 	}
 }
 

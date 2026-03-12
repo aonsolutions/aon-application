@@ -950,35 +950,55 @@ public class SaleInvoiceController extends InvoiceController {
 	}
 	
 	private void anularInvoice() {
-		if(isTbaiInvoice()) {
+		if(isTbaiInvoice() || isSiiInvoice()) {
 			Invoice inv = (Invoice) getTo();
 			String domainName = AonUtil.getDomainName();
 			String login = UserUtils.getInstance().getLoggedUser().getLogin();
 			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
 			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
+			Domain domain = new Domain()
+					.setName(domainName)
+					.setId(invoice.getDomain());
+	
 			Occam occam = new Occam()
-				.setDomainName(domainName)
-				.setDomain(invoice.getDomain())
-				.setUser(login);
+					.setDomainName(domainName)
+					.setDomain(invoice.getDomain())
+					.setUser(login);
 			InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(occam);
 			config.setCertificate(getCertData());
-			try {
-				checkCertificate();
-				TbaiMain tbai = new TbaiMain();
-				tbai.createAnulacionTBAI(company, invoice, config);
-				// NUEVO ANULAR
-				// TBAI.getInstance().cancel(config, company, invoice);
+			if(isTbaiInvoice()) {
+				try {
+					checkCertificate();
+					TbaiMain tbai = new TbaiMain();
+					tbai.createAnulacionTBAI(company, invoice, config);
+					// NUEVO ANULAR
+					// TBAI.getInstance().cancel(config, company, invoice);
 
-				AON.deleteInvoice(domainName, invoice.getDomain(), login, invoice.getId());
-			} catch (Exception e) {
-				if(config.isTbaiTest()) {
 					AON.deleteInvoice(domainName, invoice.getDomain(), login, invoice.getId());
-				} else {
+				} catch (Exception e) {
+					if(config.isTbaiTest()) {
+						AON.deleteInvoice(domainName, invoice.getDomain(), login, invoice.getId());
+					} else {
+						e.printStackTrace();
+						AonUtil.addErrorMessage(e.getMessage());
+					}
+				}
+			} else if(isSiiInvoice()) {
+				try {
+					SIIManager manager = SIIManager.getInstance(config);
+				
+					AccountingReportParams params = new AccountingReportParams();
+					params.setDomain(inv.getDomain());
+					params.setInvoices(new Integer[] {invoice.getId()});
+					LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(occam, params, "")
+							.collect(Collectors.toCollection(LinkedList::new));
+					manager.bajaFacturas(domain, login, company, invoice, contextList, null);
+				} catch (Exception e) {
 					e.printStackTrace();
 					AonUtil.addErrorMessage(e.getMessage());
 				}
 			}
-		} 
+		}
 	}
 	
 	@Override
