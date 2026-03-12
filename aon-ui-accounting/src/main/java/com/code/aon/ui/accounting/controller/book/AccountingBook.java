@@ -124,7 +124,7 @@ public class AccountingBook implements Comparable<AccountingBook>, Serializable 
 		this.attachId = attachId;
 	}
 
-	// FALTA - NOMBRE DEL FICHERO <NOMBRE>_XXX.<EXTENSION> DONDE XXX ES EL NUMERO RELLENO CEROS
+	// FALTA - NOMBRE DEL FICHERO <NOMBRE>_NNN.<EXTENSION> DONDE NNN ES EL NUMERO RELLENO CEROS, EXCEPTO OTROS QUE SERA <NOMBRE>_N.<EXTENSION>
 //	public String getName() {
 //		return bookType + "_" + getNumber() + "." + getMimeType().getExtension();
 //	}
@@ -136,7 +136,7 @@ public class AccountingBook implements Comparable<AccountingBook>, Serializable 
 		} else if (bookType == BookType.IVAR || bookType == BookType.IVAS || bookType == BookType.IVAI) {
 			name = "IVA";
 		}
-		String numberStr = String.format("%03d", getNumber());
+		String numberStr = bookType == BookType.OTROS ? String.format("%01d", getNumber()) : String.format("%03d", getNumber());
 		return name + "_" + numberStr + "." + getMimeType().getExtension();
 	}
 	

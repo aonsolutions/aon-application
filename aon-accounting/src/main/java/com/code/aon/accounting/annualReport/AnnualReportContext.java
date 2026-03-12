@@ -269,7 +269,7 @@ public class AnnualReportContext {
 	}
 
 	/**
-	 * Devuelve la localidad de la empresa. Es el dato incluido en la dirección principal de la empresa.
+	 * Devuelve la localidad (localidad + provincia) de la empresa. Es el dato incluido en la dirección principal de la empresa.
 	 * @return
 	 */
 	public String localidadEmpresa() {
@@ -277,6 +277,22 @@ public class AnnualReportContext {
 			RegistryAddress raddress = getCompany().getDefaultAddress();
 			if (raddress != null) {
 				return raddress.getLocation();
+			}
+			return null;
+		} catch (ManagerBeanException e) {
+			return "<ERROR>";
+		}
+	}
+	
+	/**
+	 * Devuelve la localidad (solo localidad) de la empresa. Es el dato incluido en la dirección principal de la empresa.
+	 * @return
+	 */
+	public String localidadSimpleEmpresa() {
+		try {
+			RegistryAddress raddress = getCompany().getDefaultAddress();
+			if (raddress != null) {
+				return raddress.getCity();
 			}
 			return null;
 		} catch (ManagerBeanException e) {
