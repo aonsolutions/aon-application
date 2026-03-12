@@ -481,8 +481,12 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"].closeIcon {
 /* ========================== Suite Menu Styles ========================== */
 
 .suiteMenuContent{
-	padding-left: 1.5rem;
+	margin: 1rem 0;
 	background-color: var(--aonBackgroundColor2);	
+}
+
+.suiteMenuDiv{
+	margin: 0;
 }
 
 .suiteMenuContent .aonSidenavTitle {
@@ -495,19 +499,11 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"].closeIcon {
 
 .suiteMenuContent aon-card {
 	display: block;
-	width: calc(33.33% - 1rem);
-	min-width: 29rem;
 	box-sizing: border-box;
-
-	margin-left: 0px;
-	max-width: none;
-	max-height: none;
-
 	border-radius: .375rem;
 	background-color: #fff;
+	margin-left: 0;
 }
-
-
 
 .suiteMenuContent  .aonCardTitleSection * {
   font-size: 1.25rem;
@@ -523,10 +519,11 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"].closeIcon {
 }
 
 .suiteMenuContent  .aonCard {
+	border-radius: 5px;
 	padding: 0px;
 	margin: 0px;
+	min-width: auto;
 }
-
 
 .suiteMenuCardDataDiv {
 	margin-top: 0px;
@@ -548,13 +545,23 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"].closeIcon {
 	margin-top: 10px;
 }
 
-aon-fiscal-menu .suiteMenuContent,
-aon-payroll-menu .suiteMenuContent ,
-aon-accounting-menu .suiteMenuContent,
-aon-configuration-menu .suiteMenuContent  {
-	background-color: #fff;
-	border-radius: .375rem;
-  	margin: 1rem 1rem 0rem 0.5rem;	
+/*
+.suiteMenuDiv2{
+	padding: 0 1rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+	gap: 1rem;
+}
+*/
+
+.suiteMenuCardCard{
+	min-width: auto;
+	max-width: none;
+	margin-left: 1rem;
+}
+
+.suiteMenuCardCard .aonCardTitle{
+	margin: 0 1rem 1rem;
 }
 
 .aonSideNavFiscalCircle{
@@ -1321,6 +1328,7 @@ ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover span {
 
 .aonCard {
 	border:none;
+	height: 100%;
 }
 
 .aonCardTitle{
