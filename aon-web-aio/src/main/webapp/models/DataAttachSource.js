@@ -21,6 +21,18 @@ export const DataAttachSource = {
   MOD202: 19,
   MOD190: 20,
   LROE: 21,
+  MOD180: 22,
+  MOD193: 23,
+  MOD184: 24,
+  MOD347: 25,
+  MOD349: 26,
+  MOD200: 27,
+  MOD369: 28,
+  VERIFACTU: 29,
+  SIF: 30,
+  NO_VERIFACTU: 31, 
+  FACTURAE: 32,
+  MOD421: 33,
 };
 
 DataAttachSource.getValueByName = function (name) {

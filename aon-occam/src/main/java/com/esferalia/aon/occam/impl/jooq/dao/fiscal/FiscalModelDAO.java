@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.ResourceBundle;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -519,7 +520,7 @@ public class FiscalModelDAO {
 			}
 		}
 		fm.setStatus(FiscalStatus.PENDING);
-		if (fm.isAEAT()) {
+		if (fm.isAEAT() || (fm.isCanarias() && fm.getModel() == FiscalModelType.M421)) {
 			fm.setAdmonAeat(conf.fiscal().getAdministrationCode());
 		}
 		boolean isCompanyDeponent = AonStringUtils.isBlank(fm.getDocument()) || AonStringUtils.equals(fm.getDocument(),conf.getCompany().getDocument()); 
@@ -569,11 +570,14 @@ public class FiscalModelDAO {
 			fm.setStreetInitial( enterprise.getStreetType() == null?null:enterprise.getStreetType().getAeatCode() );
 			fm.setStreetName( AonStringUtils.left(enterprise.getAddress(),17) );
 			fm.setStreetNumber( enterprise.getNumber() ); 
-			fm.setTown( AonStringUtils.left(enterprise.getCity(),20));
+			fm.setTown(AonStringUtils.left(enterprise.getCity(),20));
+			if (fm.isCanarias()) {
+				fm.setTown(AonStringUtils.left(getMunicipalityCode(enterprise.getTown()),20));
+			}
 			fm.setProvince(enterprise.getProvince()==null?"":enterprise.getProvince().toString());
 			fm.setZip(AonStringUtils.defaultIfBlank(enterprise.getZip(), "00000"));
-			if (fm.getModel() == FiscalModelType.M303 && fm.isCanarias()) {
-				fm.setTownCode(AonStringUtils.defaultIfBlank(enterprise.getTown(), "00000"));
+			if (fm.isCanarias() && (fm.getModel() == FiscalModelType.M303 || fm.getModel() == FiscalModelType.M421)) {
+				fm.setTownCode(AonStringUtils.defaultIfBlank(enterprise.getTown(), "00000")); // Código municipio (Canarias, modelos 420/417 y 421)
 			}
 			fm.setPhone(enterprise.getPhone() );
 		}
@@ -768,6 +772,19 @@ public class FiscalModelDAO {
 			.where(FS_MODEL.ID.eq(modelId))
 			.execute()
 			;
+	}
+	
+	// Buscar Nombre Municipio, según codigo municipio
+	public static String getMunicipalityCode(String municipalityCode) {
+		if (AonStringUtils.isNotBlank(municipalityCode)) {
+			ResourceBundle municipalities = ResourceBundle.getBundle("com.code.aon.common.i18n.municipalities");
+			return municipalities.getString(municipalityCode);
+//			
+//			for (String key : municipalities.keySet())		    
+//				if (key != null && key.startsWith(AonStringUtils.left(cp, 2)) && AonStringUtils.startsWith(municipalities.getString(key), AonStringUtils.trimToEmpty(poblacion)))
+//					return key;
+		}
+		return null;
 	}
 	
 }

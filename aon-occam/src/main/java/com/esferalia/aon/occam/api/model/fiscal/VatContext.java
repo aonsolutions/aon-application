@@ -75,7 +75,7 @@ public class VatContext implements Serializable {
 	private Period rectificatePeriod;       // Periodo de la factura rectificada (se utiliza al generar el Modelo 349)
 	private boolean vatUnion;               // Ventanilla Unica (OSS) - Régimen de la Unión (Ventas)
 	private boolean vatUnionExternal;       // Ventanilla Unica (OSS) - Régimen Exterior a la Unión (Ventas)
-	private WithholdingType withholdingType; // Tipo de retención (se usa en la generación del modelo 415 Canarias)
+	private WithholdingType withholdingType; // Tipo de retención (se usa en la generación de algunos modelos de Canarias)
 	
 	// GETTERS Y SETTERS ------------------------------------------------------------------------------------------
 	

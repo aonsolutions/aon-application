@@ -74,7 +74,6 @@ public class Mod131WriterAEAT2025 implements IMod131Writer{
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod131Key.C01),17,2)) // Liquidación (3) - I. Activ. económicas estimac. objetiva - Suma de rendimientos netos [01]
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod131Key.C02),17,2)) // Liquidación (3) - I. Activ. económicas estimac. objetiva - Pago fraccionado previo: suma de resultados [02]
 
-		   // FALTA - ESTOS DATOS DESGLOSADOS CREO QUE NO HAY FORMA DE INTRODUCIRLOS AHORA EN AON ??
 		   ,(wr, mod) -> wr.append(mod.getAmount(Mod131Key.C03_1)==1?"1":"2")                        // Actividades sin posibilidad de determinar datos base - Deducción por rentas obtenidas en Ceuta y Melilla
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod131Key.C03),10,2))   // Actividades sin posibilidad de determinar datos base - Volumen de ventas o ingresos del trimestre
 //		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod131Key.C03_2),10,2))
@@ -85,7 +84,6 @@ public class Mod131WriterAEAT2025 implements IMod131Writer{
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod131Key.C03),17,2)) // Liquidación (3) - II. Activ. económicas estimac. objetiva distintas - Volumen de ventas o ingresos [03]
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod131Key.C04),17,2)) // Liquidación (3) - II. Activ. económicas estimac. objetiva distintas - Pago fraccionado previo [04]
 		   
-		   // FALTA - ESTOS DATOS DESGLOSADOS CREO QUE NO HAY FORMA DE INTRODUCIRLOS AHORA EN AON ??
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod131Key.C05),10,2))    // Actividades agrícolas, ganaderas y forestales - A) VOLUMEN DE INGRESOS DEL TRIMESTRE (excepto Ceuta y Melilla) (incluye subvenciones corrientes y compensación IVA) - Ingresos de explotaciones ordinarias                                                                                                                                                            
 //		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod131Key.C05_1),10,2))  //                                                                                                                                                                                                                                                                                                                                                                       
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod131Key.C05_2),10,2))  // Actividades agrícolas, ganaderas y forestales - A) VOLUMEN DE INGRESOS DEL TRIMESTRE (excepto Ceuta y Melilla) (incluye subvenciones corrientes y compensación IVA) - Ingresos de explotaciones prioritarias (Reducción 25% agricultores jóvenes D.A. sexta Ley IRPF)                                                                                                 

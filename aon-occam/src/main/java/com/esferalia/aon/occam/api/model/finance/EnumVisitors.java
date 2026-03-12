@@ -132,6 +132,7 @@ public class EnumVisitors {
 		void visitM202();
 		void visitM303();
 		void visitM369();
+		void visitM421();
 	}
 	
 	public static interface IFiscalModelKeyInfoVisitor<T> {

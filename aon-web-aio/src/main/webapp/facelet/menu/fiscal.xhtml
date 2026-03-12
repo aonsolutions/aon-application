@@ -129,6 +129,20 @@
 										</aon:commandLink>
 									</aon:div>
 									
+									<!-- *********************** [MODELO 421] -->
+									<aon:div rendered="#{fiscalParams.canarias}">
+										<aon:commandLink id="gwt_mod421" action="gwt_mod421" 
+											title="IGIC. R&#233;gimen Simplificado. Autoliquidaci&#243;n." styleClass="aon-menu-fiscal">
+											<aon:outputText rendered="#{fiscalParams.aeat or fiscalParams.canarias}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="&#160;"/>
+											<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="&#160;"/>
+											<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="&#160;"/>
+											<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="&#160;"/>
+											<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="&#160;"/>
+											<aon:outputText rendered="#{fiscalParams.canarias}" styleClass="aon-menu-fiscal-model aon-menu-icon-canarias" value="421"/>
+											<aon:outputText styleClass="aon-menu-fiscal-label" value="IGIC. R&#233;gimen Simplificado. Autoliquidaci&#243;n."/>
+										</aon:commandLink>
+									</aon:div>
+									
 									<!-- *********************** [MODELO 369] -->
 									<aon:div rendered="#{fiscalParams.aeat}">
 										<aon:commandLink id="gwt_mod369" action="gwt_mod369" 

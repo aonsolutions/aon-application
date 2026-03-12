@@ -91,6 +91,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod421;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
@@ -117,6 +118,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod130.Mod130DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod131.Mod131DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod202.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod421.Mod421DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.irpf.IRPFDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390HF.Mod390HFDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
@@ -244,6 +246,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			models.addAll( Mod130DAO.getMod130s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			models.addAll( Mod131DAO.getMod131s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			models.addAll( Mod202DAO.getMod202s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
+			models.addAll( Mod421DAO.getMod421s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			
 			// Comprobar si está configurado "Presentación automática de modelos" y "Entorno de Pruebas de la AEAT"
 			int presModelAutoEnabled = AppParamDAO.fetchIntValue(ctx, AppParam.FS_PRES_MODEL_AUTO_ENABLED);
@@ -1576,6 +1579,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 			case M303:
 				model = Mod303DAO.get(ctx, id);
 				break;
+			case M421:
+				model = Mod421DAO.get(ctx, id);
+				break;
 			default:				
 				throw new AonApiException("Unexpected value FiscalModelType: " + modelType);
 		}
@@ -1593,6 +1599,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			case M131: Mod131DAO.markAsFinished(ctx, (Mod131) model); break;	
 			case M202: Mod202DAO.markAsFinished(ctx, (Mod202) model); break;
 			case M303: Mod303DAO.markAsFinished(ctx, (Mod303) model); break;
+			case M421: Mod421DAO.markAsFinished(ctx, (Mod421) model); break;
 			default: throw new AonApiException("Unexpected value FiscalModelType: " + model.getModel());			
 		}
 		
@@ -1608,6 +1615,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			case M131: Mod131DAO.markAsCustomerRejected(ctx, (Mod131) model, reasonReject); break;
 			case M202: Mod202DAO.markAsCustomerRejected(ctx, (Mod202) model, reasonReject); break;
 			case M303: Mod303DAO.markAsCustomerRejected(ctx, (Mod303) model, reasonReject); break;
+			case M421: Mod421DAO.markAsCustomerRejected(ctx, (Mod421) model, reasonReject); break;
 			default: throw new AonApiException("Unexpected value FiscalModelType: " + model.getModel());
 		}
 		
