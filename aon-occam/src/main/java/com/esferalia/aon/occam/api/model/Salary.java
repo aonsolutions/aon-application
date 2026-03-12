@@ -1053,23 +1053,21 @@ public class Salary implements Serializable {
 	public Salary setContextData(String name, String value, Date startDate,
 			Date endDate) {
 
-		List<ContextData> datas = contextdata.get(name);
-		if (datas == null)
-			contextdata.put(name, datas = new ArrayList<ContextData>(1));
-
+		List<ContextData> datas = contextdata.computeIfAbsent(name, k -> new ArrayList<>());
+		
 		ContextData contextData = new ContextData();
 		contextData.endDate = endDate;
 		contextData.startDate = startDate;
 		contextData.expression = value;
-		int index = Collections.binarySearch(datas, contextData, 
-				(d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
-		if ( index >= 0 ) {
-			datas.set(index, contextData);
+		int index = Collections.binarySearch(datas, contextData,
+				(d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
+		if (index >= 0) {
+			datas.add(index, contextData);
 		} else {
 			// index = -(insertion_point) - 1
 			// index + insertion_point = -1
-			// insertion_point = -index -1 
-			int insertionPoint = -index -1;
+			// insertion_point = -index -1
+			int insertionPoint = -index - 1;
 			datas.add(insertionPoint, contextData);
 		}
 		return this;
