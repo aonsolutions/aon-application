@@ -1,7 +1,6 @@
 package net.aonsolutions.aon.api.servlet;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,7 +54,6 @@ import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.finance.ApiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistoryMapValue;
-import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
@@ -118,7 +116,6 @@ import net.aonsolutions.aon.sii.SIIManager;
 import net.aonsolutions.aon.tbai.CRC8;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
-import net.aonsolutions.aon.tbai.TbaiUri;
 
 @WebServlet(name = "AonInvoiceServlet", urlPatterns = {"/ms/api/invoice/*"})
 public class InvoiceServlet extends AonApiHttpServlet{
@@ -318,30 +315,8 @@ public class InvoiceServlet extends AonApiHttpServlet{
 					return new JSONObject();
 				}
 			}
-			if (config.isTbai()) {
-				boolean accepted = true;
-				if(config.isBizkaia()) {
-					try(CloseableAONContext ctx = AONContext.getAONContext(api.getDomain(), api.getUser())) {
-						accepted = InvoiceInfoDAO.getMap(ctx, config, invoice)
-								.map( ic -> ic.get(InvoiceCommunicationType.LROE) )
-								.filter( Objects::nonNull )
-								.map(info -> info.isAccepted() || info.isAcceptedWithErrors())
-								.orElse( true )
-							;
-					}
-				}
-				if (accepted) {
-					config.setCertificate(checkCertificate(api));
-					TbaiMain tbai = new TbaiMain();
-					try {
-						tbai.createAnulacionTBAI(company, invoice, config);
-					} catch (Exception e) {
-						e.printStackTrace();
-						throw new AonApiException(e.getMessage());
-					}
-				}
-				
-			}
+			anularTbai(api, config, company, invoice);
+			anularSii(api, config, company, invoice);
 		}
 		// ***********************************
 		
@@ -572,6 +547,32 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
 	}
 	
+	public static void anularTbai(AonApiData api, InvoiceCommunicationConfiguration config, Company company,  Invoice invoice) throws Exception {
+		if (config.isTbai() || config.isLroe()) {
+			boolean accepted = true;
+			if(config.isBizkaia()) {
+				try(CloseableAONContext ctx = AONContext.getAONContext(api.getDomain(), api.getUser())) {
+					accepted = InvoiceInfoDAO.getMap(ctx, config, invoice)
+							.map( ic -> ic.get(InvoiceCommunicationType.LROE) )
+							.filter( Objects::nonNull )
+							.map(info -> info.isAccepted() || info.isAcceptedWithErrors())
+							.orElse( true )
+						;
+				}
+			}
+			if (accepted) {
+				config.setCertificate(checkCertificate(api));
+				TbaiMain tbai = new TbaiMain();
+				try {
+					tbai.createAnulacionTBAI(company, invoice, config);
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new AonApiException(e.getMessage());
+				}
+			}
+		}
+	}
+	
 	public static void acceptSii(AonApiData api, InvoiceCommunicationConfiguration icc, Company company,  Invoice invoice) throws Exception {
 		if(invoice.isSales() && icc.isSii()) {
 			try {
@@ -583,6 +584,27 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(api.getOccam(), params, "")
 						.collect(Collectors.toCollection(LinkedList::new));		
 				manager.suministroFacturas(api.getDomain(), api.getUser().getLogin(), company, invoice, contextList, null);
+			} catch (Exception e) {
+				if (e instanceof InvoiceCommunicationException ice) {
+					throw ice;
+				} else {
+					throw new InvoiceCommunicationException( e );
+				}
+			}
+		}
+	}
+	
+	public static void anularSii(AonApiData api, InvoiceCommunicationConfiguration icc, Company company,  Invoice invoice)  throws Exception {
+		if(invoice.isSales() && icc.isSii()) {
+			try {
+				SIIManager manager = SIIManager.getInstance(icc);
+				
+				AccountingReportParams params = new AccountingReportParams();
+				params.setDomain(api.getOccam().getDomain());
+				params.setInvoices(new Integer[] {invoice.getId()});
+				LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(api.getOccam(), params, "")
+						.collect(Collectors.toCollection(LinkedList::new));		
+				manager.bajaFacturas(api.getDomain(), api.getUser().getLogin(), company, invoice, contextList, null);
 			} catch (Exception e) {
 				if (e instanceof InvoiceCommunicationException ice) {
 					throw ice;

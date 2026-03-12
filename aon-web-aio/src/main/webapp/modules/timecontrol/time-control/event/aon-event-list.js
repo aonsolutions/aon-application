@@ -312,25 +312,31 @@ export class AonEventList extends AonElement {
 
 					const lettersHtml = `<div id="aonTimeControlTableDiv" class="profile-letters ${prefix ? "font" : ""} ${newStatus}">${prefix}</div>`;
 
-					const nameLocation = r.last_location && r.last_location.name ? r.last_location.name : "";
-
 					let dateParse = r.dateParse = firstLetters(AonDateUtils.setFullDate(r.start_date));
 					if (isMobile) {
 						const groupV = r.group;
 						dateParse = groupV && groupV.indexOf("DAY") >= 0 ? AonDateUtils.formatDate(r.start_date) + " - " + AonDateUtils.formatDate(r.end_date) : firstLetters(AonDateUtils.setDateTpDay(r.start_date))
 					}
 
-					let reason = r.detail && r.detail.length > 0 ? r.detail[r.detail.length - 1].reasonValue : '';
+					let locationName;
+					if (r.last_location && r.last_location.name) {
+						locationName = r.last_location.name;
+					}
+
+					let reason = '';
+					if (r.detail && r.detail.length > 0) {
+					  const last = [...r.detail].reverse().find(item => item.status === 'in');
+					  reason = last ? last.comments : '';
+					}
 
 					data.push({
 						...r,
 						lettersHtml,
 						dateParse,
-						nameLocation,
+						nameLocation: locationName || reason,
 						textStatus: textStatus.name,
 						status: newStatus,
 						durationParse: timeHour(Number(r.time)),
-						reason
 					});
 				}
 				);

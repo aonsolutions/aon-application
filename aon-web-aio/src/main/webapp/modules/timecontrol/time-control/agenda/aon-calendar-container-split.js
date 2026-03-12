@@ -42,6 +42,15 @@ export class AonCalendarContainerSplit extends AonElement {
 
 		// Ahora sí, el taskHolder ya está cargado y podemos pedir el año
 		this._annualView.loadYear(new Date().getFullYear());
+		
+		this._agendaView.enableTodayButton();
+
+		// Cuando el usuario hace click en un mes del resumen,
+		// navegar a ese mes en la agenda de la izquierda.
+		this._annualView.addEventListener('annual-month-click', e => {
+			const { year, month } = e.detail;
+			this._agendaView.goToMonth(year, month);
+		});
 	}
 }
 
