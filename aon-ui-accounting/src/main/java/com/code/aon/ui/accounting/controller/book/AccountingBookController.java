@@ -193,16 +193,16 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 			
 			books.add( new AccountingBook( 1, 0, 1,MimeType.MIME_PDF,BookType.DIARIO	,false)); // Diario
 			books.add( new AccountingBook( 2, 1, 1,MimeType.MIME_PDF,BookType.MAYOR		,false)); // Mayor
-			books.add( new AccountingBook( 3, 2, 1,MimeType.MIME_PDF,BookType.BAL_SUMS1	,false)); // Balances de comprobación (sumas y saldos)
-			books.add( new AccountingBook( 4, 3, 2,MimeType.MIME_PDF,BookType.BAL_SUMS2	,false)); // Balances de comprobación (sumas y saldos)
-			books.add( new AccountingBook( 5, 4, 3,MimeType.MIME_PDF,BookType.BAL_SUMS3	,false)); // Balances de comprobación (sumas y saldos)
-			books.add( new AccountingBook( 6, 5, 4,MimeType.MIME_PDF,BookType.BAL_SUMS4	,false)); // Balances de comprobación (sumas y saldos)
-			books.add( new AccountingBook( 7, 6, 1,MimeType.MIME_PDF,BookType.IVAR		,false)); // IVA o Facturas emitidas
-			books.add( new AccountingBook( 8, 7, 2,MimeType.MIME_PDF,BookType.IVAS		,false)); // IVA o Facturas recibidas
-			books.add( new AccountingBook( 9, 8, 3,MimeType.MIME_PDF,BookType.IVAI		,false)); // IVA
-			books.add( new AccountingBook(10, 9, 1,MimeType.MIME_PDF,BookType.PER_GAN	,false)); // Libro de Pérdidas y Ganancias
-			books.add( new AccountingBook(11,10, 1,MimeType.MIME_PDF,BookType.BALANCES	,false)); // Balances
-			books.add( new AccountingBook(12,11, 2,MimeType.MIME_PDF,BookType.BALANCES	,false)); // Balances
+			books.add( new AccountingBook( 3, 2, 1,MimeType.MIME_PDF,BookType.BAL_SUMS1	,true)); // Balances de comprobación (sumas y saldos)
+			books.add( new AccountingBook( 3, 3, 2,MimeType.MIME_PDF,BookType.BAL_SUMS2	,true)); // Balances de comprobación (sumas y saldos)
+			books.add( new AccountingBook( 3, 4, 3,MimeType.MIME_PDF,BookType.BAL_SUMS3	,true)); // Balances de comprobación (sumas y saldos)
+			books.add( new AccountingBook( 3, 5, 4,MimeType.MIME_PDF,BookType.BAL_SUMS4	,true)); // Balances de comprobación (sumas y saldos)
+			books.add( new AccountingBook( 4, 6, 1,MimeType.MIME_PDF,BookType.IVAR		,true)); // IVA o Facturas emitidas
+			books.add( new AccountingBook( 4, 7, 1,MimeType.MIME_PDF,BookType.IVAS		,true)); // IVA o Facturas recibidas
+			books.add( new AccountingBook( 4, 8, 1,MimeType.MIME_PDF,BookType.IVAI		,true)); // IVA
+			books.add( new AccountingBook( 5, 9, 1,MimeType.MIME_PDF,BookType.PER_GAN	,false)); // Libro de Pérdidas y Ganancias
+			books.add( new AccountingBook( 6,10, 1,MimeType.MIME_PDF,BookType.BALANCES	,true)); // Balances
+			books.add( new AccountingBook( 6,11, 1,MimeType.MIME_PDF,BookType.BALANCES	,true)); // Balances
 			
 		}
 		setModel( new SerializableListDataModel(books));
@@ -366,6 +366,18 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 		if (isCoverEnabled()) {
 			mergeRunner.addRunner(coverAccountingBookRunner);
 		}
+		
+		// FALTA - SUMAS Y SALDOS, LIBROS DE IVA Y BALANCES, VAN EN UN SOLO PDF SEPARADOS DEL RESTO Y DE OTROS
+		PDFMergerBookRunner mergeRunnerSum = getMergerBookRunner(BookType.BAL_SUMS1, "Balances de sumas y saldos");
+		boolean addedSum = false;
+		
+		PDFMergerBookRunner mergeRunnerIva = getMergerBookRunner(BookType.IVAI, "Libros de IVA");
+		boolean addedIva = false;
+		
+		PDFMergerBookRunner mergeRunnerBal = getMergerBookRunner(BookType.BALANCES, "Balances");
+		boolean addedBal = false;
+		// -----
+		
 		boolean added = false;
 		for (AccountingBook book : bookList ) {
 			
@@ -374,11 +386,31 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 			IAccountingBookRunner runner = manager.getRunner(context);
 			
 			if (book.isMergeable()) {
-				if (!added) {
-					runners.add(mergeRunner);
-					added = true;
+				if (book.getBookType() == BookType.BAL_SUMS1 || book.getBookType() == BookType.BAL_SUMS2 || book.getBookType() == BookType.BAL_SUMS3 || book.getBookType() == BookType.BAL_SUMS4) {
+					if (!addedSum) {
+						runners.add(mergeRunnerSum);
+						addedSum = true;
+					}
+					mergeRunnerSum.addRunner(runner);
+				} else if (book.getBookType() == BookType.IVAR || book.getBookType() == BookType.IVAS || book.getBookType() == BookType.IVAI) {
+					if (!addedIva) {
+						runners.add(mergeRunnerIva);
+						addedIva = true;
+					}
+					mergeRunnerIva.addRunner(runner);
+				} else if (book.getBookType() == BookType.BALANCES) {
+					if (!addedBal) {
+						runners.add(mergeRunnerBal);
+						addedBal = true;
+					}
+					mergeRunnerBal.addRunner(runner);
+				} else {
+					if (!added) {
+						runners.add(mergeRunner);
+						added = true;
+					}
+					mergeRunner.addRunner(runner);
 				}
-				mergeRunner.addRunner(runner);		
 			} else {
 				if (isCoverEnabled()) {
 					PDFMergerBookRunner bookMergeRunner = getMergerBookRunner(book.getBookType(), book.getDescription());
@@ -492,8 +524,11 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 		params.getParams().setPeriod(getPeriod());
 		AnnualReportContext ctx = new AnnualReportContext(params);
 		StringBuffer buf = new StringBuffer();
+		
+		// FALTA - Nombre del Registro Mercantil
 		buf.append(100);
-		buf.append(IAccountingConstants.EMPTY);
+//		buf.append(IAccountingConstants.EMPTY);
+		buf.append(StringUtils.upperCase(ctx.nombreRegistroMercantil()));
 		buf.append(IAccountingConstants.CR);
 		// Fecha
 		buf.append(101);

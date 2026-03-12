@@ -2,6 +2,7 @@ package com.code.aon.accounting.annualReport;
 
 import java.util.Date;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -20,6 +21,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.RegistryMedia;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.model.registry.CommercialRegistryCode;
 import com.esferalia.aon.occam.api.model.registry.RecordDataType;
 
 /**
@@ -255,7 +257,10 @@ public class AnnualReportContext {
 		try {
 			RegistryAddress raddress = getCompany().getDefaultAddress();
 			if (raddress != null) {
-				return raddress.getMunicipalityCode();
+				if (raddress.getMunicipalityCode() != null) {
+					ResourceBundle bundle = ResourceBundle.getBundle("com.code.aon.common.i18n.municipalities");
+					return bundle.getString(raddress.getMunicipalityCode());
+				}
 			}
 			return null;
 		} catch (ManagerBeanException e) {
@@ -394,8 +399,33 @@ public class AnnualReportContext {
 	 * @return Cadena de caracteres.
 	 */
 	public String codigoRegistroMercantil(){
-		return (getRecordData() != null && getRecordData().getCommercialRegistryCode() != null) ? Byte.toString(getRecordData().getCommercialRegistryCode()) : null;
+		String code = null;
+		if (getRecordData() != null && getRecordData().getCommercialRegistryCode() != null) {
+			CommercialRegistryCode commercialRegistryCode = CommercialRegistryCode.safeValueOf(getRecordData().getCommercialRegistryCode());
+			if (commercialRegistryCode != null) {
+				code = commercialRegistryCode.getCode();
+			}
+		}
+		return code;
 	}
+	
+	/**
+	 * Devuelve el dato "Codigo Registro Mercantil" (descripcion) introducido en la solapa de
+	 * "Datos Registrales" de la pantalla "Datos de Empresa".
+	 * 
+	 * @return Cadena de caracteres.
+	 */
+	public String nombreRegistroMercantil(){
+		String code = null;
+		if (getRecordData() != null && getRecordData().getCommercialRegistryCode() != null) {
+			CommercialRegistryCode commercialRegistryCode = CommercialRegistryCode.safeValueOf(getRecordData().getCommercialRegistryCode());
+			if (commercialRegistryCode != null) {
+				code = commercialRegistryCode.getDescription();
+			}
+		}
+		return code;
+	}
+	
 	
 	/**
 	 * Devuelve el dato "IRUS" introducido en la solapa de
