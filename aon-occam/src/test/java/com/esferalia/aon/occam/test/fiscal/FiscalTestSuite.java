@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.test.fiscal.mod202.Mod202TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod303.Mod303TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod349.Mod349TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod390hf.Mod390HFTestSuite;
+import com.esferalia.aon.occam.test.fiscal.mod421.Mod421TestSuite;
 import com.esferalia.aon.occam.test.fiscal.model.FiscalModelTestSuite;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -38,6 +39,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 	Mod190TestSuite.class,
 	Mod349TestSuite.class,
 	Mod202TestSuite.class,
+	Mod421TestSuite.class,
 })
 public class FiscalTestSuite {
 
