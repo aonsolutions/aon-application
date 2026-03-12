@@ -1,6 +1,7 @@
 export const BLUR = 'blur';
 export const INPUT = 'input';
 export const CHANGE = 'change';
+export const CHANGE_NUMBER = 'changeNumber';
 export const CLICK = 'click';
 export const DBLCLICK = 'dblclick';
 export const CLICK_TITLE = 'clickTitle';

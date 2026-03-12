@@ -93,51 +93,54 @@ export class AonNewNumber extends AonNewInput {
     }
 
     buildNumber() {
-        let input = this.getElement(this.INPUT);
-        input.value = this.value;
-        input.style.textAlign = 'right';
-        if(this.value) input.value = this.value;
+		let input = this.getElement(this.INPUT);
+		input.value = this.value;
+		input.style.textAlign = 'right';
+		if (this.value) input.value = this.value;
 
-        input.addEventListener(EVENT.KEYPRESS, (ev) => {
-            let keyChar = String.fromCharCode(ev.which || ev.keyCode);
-            let reg = new RegExp(/[^0-9]/g);
-            if (this.format) reg = new RegExp(/[^0-9\.,]/g);
-            if('-' === keyChar) {
-                if(input.value.includes('-')){
-                    ev.preventDefault();
-                }
-            } else if (reg.test(keyChar)) ev.preventDefault();
-            this.dispatchEvent(new Event(EVENT.KEYPRESS));
-        });
+		input.addEventListener(EVENT.KEYPRESS, (ev) => {
+			let keyChar = String.fromCharCode(ev.which || ev.keyCode);
+			let reg = new RegExp(/[^0-9]/g);
+			if (this.format) reg = new RegExp(/[^0-9\.,]/g);
+			if ('-' === keyChar) {
+				if (input.value.includes('-')) {
+					ev.preventDefault();
+				}
+			} else if (reg.test(keyChar)) ev.preventDefault();
+			this.dispatchEvent(new Event(EVENT.KEYPRESS));
+		});
 
-        input.addEventListener(EVENT.FOCUS, ({ target }) => {
-            let value = target.value;
-            if (value) input.value = this.onFocus(value);
-            input.select();
-            this.dispatchEvent(new Event(EVENT.FOCUS));
-        });
+		input.addEventListener(EVENT.FOCUS, ({ target }) => {
+			let value = target.value;
+			if (value) input.value = this.onFocus(value);
+			input.select();
+			this.dispatchEvent(new Event(EVENT.FOCUS));
+		});
 
-        input.addEventListener(EVENT.BLUR, ({ target }) => {
-            let value = target.value;
-            if (value) {
-                let newValue = this.onBlur2(value);
-                this.value = this.onFocus(newValue);
-            }
-            this.dispatchEvent(new Event(EVENT.BLUR));
-        });
+		input.addEventListener(EVENT.BLUR, ({ target }) => {
+			let value = target.value;
+			if (value) {
+				let newValue = this.onBlur2(value);
+				this.value = this.onFocus(newValue);
+			}
 
-        input.addEventListener(EVENT.CHANGE, ({ target }) => {
-            let value = target.value;
-            if (value) {
-                let newValue = this.onBlur2(value);
-                this.value = this.onFocus(newValue);
-            }
-            if(input.value.includes('-') && '-' !== input.value.charAt(0)) {
-                input.value = input.value.replace('-', '');
-                this.value = input.value.replace('-', '');
-            }
-        });
-    }
+			this.dispatchEvent(new Event(EVENT.BLUR));
+		});
+
+		input.addEventListener(EVENT.CHANGE, ({ target }) => {
+			let value = target.value;
+			if (value) {
+				let newValue = this.onBlur2(value);
+				this.value = this.onFocus(newValue);
+			}
+			if (input.value.includes('-') && '-' !== input.value.charAt(0)) {
+				input.value = input.value.replace('-', '');
+				this.value = input.value.replace('-', '');
+			}
+
+			this.dispatchEvent(new Event(EVENT.CHANGE_NUMBER));
+		});
+	}
 
     addIcon(icon) {
         let div = this.getElement(this.DIV);
@@ -161,7 +164,7 @@ export class AonNewNumber extends AonNewInput {
     }
 
     onChange(fn) {
-        this.addEventListener(EVENT.CHANGE, fn);
+        this.addEventListener(EVENT.CHANGE_NUMBER, fn);
     }
 
     onInput(fn) {
