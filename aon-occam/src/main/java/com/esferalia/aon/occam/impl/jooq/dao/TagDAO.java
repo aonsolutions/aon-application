@@ -96,26 +96,28 @@ public class TagDAO {
 	}
 
 	public static Tag save(AONContext ctx, Tag tag){
-		return (null == tag.getId()) ? insertTag(ctx, tag) : updateTag(ctx, tag);
+		return tag.getId() != null 
+			? updateTag(ctx, tag)
+			: insertTag(ctx, tag);
 	}
 	
-	public static Tag updateTag(AONContext ctx, Tag tag){
+	private static Tag updateTag(AONContext ctx, Tag tag){
 		ctx.getDslContext().update(TAG)
 			.set(TAG.NAME, tag.getName())
 			.set(TAG.COLOR, tag.getColor())
 			.set(TAG.DOMAIN, tag.getDomain())
-			.set(TAG.TYPE, tag.getType())
+			.set(TAG.TYPE, tag.getType().value())
 			.where(TAG.ID.eq(tag.getId()))
 			.execute();
 		return tag;
 	}
 	
-	public static Tag insertTag(AONContext ctx, Tag tag) {
+	private static Tag insertTag(AONContext ctx, Tag tag) {
 		ctx.getDslContext()
 				.insertInto(TAG)
 				.set(TAG.DOMAIN, ctx.getDomainId())
 				.set(TAG.NAME, tag.getName())
-				.set(TAG.TYPE, tag.getType())
+				.set(TAG.TYPE, tag.getType().value())
 				.set(TAG.COLOR, (tag.getColor() != null) ? tag.getColor() : null)
 				.execute();
 		return tag;
@@ -142,7 +144,7 @@ public class TagDAO {
 					.setColor(r.getValue(alias.COLOR))
 					.setDomain(r.getValue(alias.DOMAIN))
 					.setName(r.getValue(alias.NAME))
-					.setTagType(TagType.safeValueOf(r.getValue(alias.TYPE)));
+					.setType(TagType.safeValueOf(r.getValue(alias.TYPE)));
 		}
 	
 	}

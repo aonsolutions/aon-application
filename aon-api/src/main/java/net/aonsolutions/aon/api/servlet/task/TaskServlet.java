@@ -395,15 +395,9 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 
 	private JSONObject saveTaskTag(AonApiData api) {
-		Domain domain = api.getDomain();
-		Tag tag = TagJSON.fromJSON(api.getData());
-		if(tag.getId()!=null) {
-			AON.updateTag(domain.getName(), domain.getId(), api.getUser().getLogin(), tag); 
-		} else {
-			tag = AON.insertTag(domain.getName(), domain.getId(), api.getUser().getLogin(), tag);
-		}
-
-		return TagJSON.toJSON(tag);
+		return TagJSON.toJSON(
+			AON.saveTag(api.getOccam(), TagJSON.fromJSON(api.getData()))
+		);
 	}
 
 	private JSONObject saveTaskAttach(AonApiData api) {

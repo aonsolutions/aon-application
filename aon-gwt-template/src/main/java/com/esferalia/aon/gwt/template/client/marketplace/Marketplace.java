@@ -216,7 +216,7 @@ public class Marketplace extends Composite {
 				hide();
 				TextBox tb = (TextBox) flex_table.getWidget(0, 1); 
 				tagAux.setName(tb.getText());
-				tagAux.setType(TagType.MARKETPLACE.value());
+				tagAux.setType(TagType.MARKETPLACE);
 				impl.updateMarketplaceTag(getDomain(), getUser(), tagAux, new AsyncCallback<Tag>() {
 					@Override public void onSuccess(Tag result) {
 						loadTagPanel();

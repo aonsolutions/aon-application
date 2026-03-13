@@ -1160,7 +1160,11 @@ public class Asserts {
 	public static void assertEqualsTag(Tag expected, Tag actual) {
 		assertEquals("Id",expected.getId(), actual.getId());
 		assertEquals("Domain",expected.getDomain(), actual.getDomain());
-		assertEquals("Type",expected.getType(), actual.getType());
+		if(expected.getType() != null && actual.getType() != null) {
+			assertEquals("Type", expected.getType().value(), actual.getType().value());
+		} else {
+			assertEquals("Type", expected.getType(), actual.getType());
+		}
 		assertEquals("Name",expected.getName(), actual.getName());
 		assertEquals("Color",expected.getColor(), actual.getColor());
 		assertEquals("StartDate",expected.getStartDate(), actual.getStartDate());
