@@ -1,9 +1,10 @@
 import { AonBasicTable } from "../../components/aon-basic-table.js";
 import { AonIconButton } from "../../components/aon-icon-button.js";
 import { AonElement } from "../../components/AonElement.js";
-import { createCard } from "../../components/CreateComponent.js";
+import { createCard, createSelect } from "../../components/CreateComponent.js";
 import { AON_ICONS, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
-import { getCommunicationHistory } from "../../services/invoiceService.js";
+import { getAeatCertificates } from "../../services/documentalService.js";
+import { communicateInvoice, getCommunicationHistory } from "../../services/invoiceService.js";
 
 export class AonInvoiceCommunication extends AonElement {
 
@@ -58,6 +59,7 @@ export class AonInvoiceCommunication extends AonElement {
                     let key = keys[i];
 
                     let info = hist[key].communicationInfo;
+                    let ok = this.isCommunicationStatusOk(info.communicationType, info.communicationStatus);
 
                     table.addRow();
 
@@ -77,14 +79,14 @@ export class AonInvoiceCommunication extends AonElement {
 
                     let icon = this.createElement(TAG.I);
                     icon.className = "material-icons";
-                    icon.title = this.getCommunicationStatusLabel(info.communicationStatus);
-                    icon.style.color = this.getCommunicationStatusColor(info.communicationStatus);
-                    icon.innerHTML = history.ok ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
+                    icon.title = this.getCommunicationStatusLabel(info.communicationType, info.communicationStatus);
+                    icon.style.color = this.getCommunicationStatusColor(info.communicationType, info.communicationStatus);
+                    icon.innerHTML = ok ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
                     table.addCell(icon);
 
                     let span2 = this.createElement(TAG.SPAN);
-                    span2.innerHTML = this.getCommunicationStatusLabel(info.communicationStatus);
-                    span2.style.color = this.getCommunicationStatusColor(info.communicationStatus);
+                    span2.innerHTML = this.getCommunicationStatusLabel(info.communicationType, info.communicationStatus);
+                    span2.style.color = this.getCommunicationStatusColor(info.communicationType, info.communicationStatus);
                     table.addCell(span2);
 
                     let infoDate = info.modification_date ?
@@ -98,6 +100,14 @@ export class AonInvoiceCommunication extends AonElement {
                     let span4 = this.createElement(TAG.SPAN);
                     span4.innerHTML = infoUser ? infoUser : "";
                     table.addCell(span4);
+
+                    if(!ok ) {
+                        let communicateButton = new AonIconButton();
+                        communicateButton.icon = MATERIAL_ICONS.SEND;
+                        communicateButton.title = "Comunicar";
+                        communicateButton.addEventListener(EVENT.CLICK, () => this.communicateInvoice(info.communicationType));
+                        table.addCell(communicateButton);
+                    }
 
                     let commHist = hist[key].communicationHistory;
 
@@ -135,8 +145,8 @@ export class AonInvoiceCommunication extends AonElement {
 
         let icon = this.createElement(TAG.I);
         icon.className = "material-icons";
-        icon.title = this.getCommunicationStatusLabel(commHist.status);;
-        icon.style.color = this.getCommunicationStatusColor(commHist.status);
+        icon.title = this.getCommunicationStatusLabel(commHist.type, commHist.status);
+        icon.style.color = this.getCommunicationStatusColor(commHist.type, commHist.status);
         icon.innerHTML = commHist.ok ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
         table.addCell(icon);
 
@@ -228,7 +238,7 @@ export class AonInvoiceCommunication extends AonElement {
             typeIconButton.icon = MATERIAL_ICONS.MAIL;
         } else if ("CLOSING" === type) {
             typeIconButton.icon = MATERIAL_ICONS.LOCK;
-        } else if ("VERIFACTU" === type) {
+        } else if ("VERIFACTU" === type || "NO_VERIFACTU" === type) {
             typeIconButton.aonIcon = AON_ICONS.AON_AEAT;
         } else if ("SIF" === type) {
             typeIconButton.icon = MATERIAL_ICONS.SIF;
@@ -239,8 +249,9 @@ export class AonInvoiceCommunication extends AonElement {
         return typeIconButton;
     }
 
-    getCommunicationStatusLabel(status) {
-        if ("PENDING" === status) return "Pendiente";
+    getCommunicationStatusLabel(type, status) {
+        if ("PENDING" === status && type === "NO_VERIFACTU") return "Aceptada";
+        else if("PENDING" === status) return "Pendiente";
         else if ("ACCEPTED" === status) return "Aceptada";
         else if ("ACCEPTED_WITH_ERRORS" === status) return "Aceptada con errores";
         else if ("EXTERNALLY_COMMUNICATED" === status) return "Com. Externamente";
@@ -248,13 +259,75 @@ export class AonInvoiceCommunication extends AonElement {
         else return "Sin Estado";
     }
 
-    getCommunicationStatusColor(status) {
-        if ("PENDING" === status) return "orange";
+    getCommunicationStatusColor(type, status) {
+        if ("PENDING" === status && type === "NO_VERIFACTU") return "green";
+        else if ("PENDING" === status) return "orange";
         else if ("ACCEPTED" === status) return "green";
         else if ("ACCEPTED_WITH_ERRORS" === status) return "yellow";
         else if ("EXTERNALLY_COMMUNICATED" === status) return "blue";
         else if ("WRONG" === status) return "red"
         else return "gray";
+    }
+
+
+    isCommunicationStatusOk(type, status) {
+        if ("PENDING" === status && type === "NO_VERIFACTU") return true;
+        else if ("PENDING" === status) return false;
+        else if ("ACCEPTED" === status) return true;
+        else if ("ACCEPTED_WITH_ERRORS" === status) return true;
+        else if ("EXTERNALLY_COMMUNICATED" === status) return true;
+        else if ("WRONG" === status) return false;
+        else return false;
+    }
+
+    communicateInvoice(type) {
+		if("LROE" === type || "VERIFACTU" === type || "TBAI" === type || "SII" === type) {	
+			this.certificateDialog((certificate) => this.communicatingInvoice(type, certificate));
+		} else  this.communicatingInvoice(type);
+	}
+
+    certificateDialog(action) {
+        let dialog = this.getApplication().getDialog();
+        dialog.clear();
+        if(!this.isMobile()) dialog.width = '400px';
+        dialog.setTitle("Comunicar factura");
+    
+        let certSelect = createSelect("cert", MSG.CERTIFICATE);
+        certSelect.setAlias("id", "name");	
+    
+        getAeatCertificates().then(certs => certSelect.setOptions(certs));
+        dialog.setContent(certSelect);
+        dialog.addAcceptAction(() => action(certSelect.value));
+        dialog.open();
+    }
+    
+    communicatingInvoice(type, certificate) {
+        console.log("CERTIFICADO: " + certificate);
+        let div = this.createDiv();
+        let dialog = this.getApplication().getDialog();
+        dialog.clear();
+        if(!this.isMobile()) dialog.width = '400px';
+        dialog.setTitle("Comunicando factura");
+        dialog.setContent(div);
+        dialog.open();
+   
+        let icDiv = this.createDiv("invoiceCommunicationDiv" + i);
+        icDiv.innerHTML = invoice.reference + " - comunicando...";
+        div.appendChild(icDiv);
+        let data = {
+            type,
+            invoice,
+            certificate
+        }
+        communicateInvoice(data).then(() => {
+            icDiv.innerHTML = invoice.reference + " - comunicada con éxito";
+            icDiv.style.color = "green";
+            icDiv.style.fontWeight = "bold";
+        }).catch(e => {
+            icDiv.innerHTML = invoice.reference + " - ERROR: " + e.message;
+            icDiv.style.color = "red";
+            icDiv.style.fontWeight = "bold";
+        });
     }
 }
 if (!window.customElements.get(TAG.AON_INVOICE_COMMUNICATION)) {

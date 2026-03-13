@@ -489,7 +489,7 @@ public class Model131Activity2025 extends DockLayoutPanel implements HasValueCha
 
 		ceu.addValueChangeHandler(event -> onFieldChange(callback));
 		table.addRow()
-			.addCell(new Label(callback.getModel().isLastPeriod() ? "Deducci\u00F3n por rentas obtenidas en Ceuta, Melilla o La Palma" : AON.MSG.irpfActivityCeu()), AON.CSS.aonBold())
+			.addCell(new Label(callback.getModel().getYear() == 2025 && callback.getModel().isLastPeriod() ? "Deducci\u00F3n por rentas obtenidas en Ceuta, Melilla o La Palma" : AON.MSG.irpfActivityCeu()), AON.CSS.aonBold())
 			.addCell(ceu);
 		
 		loc.addValueChangeHandler(event -> onFieldChange(callback));

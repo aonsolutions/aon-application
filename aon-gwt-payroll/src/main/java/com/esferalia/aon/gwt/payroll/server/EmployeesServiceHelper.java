@@ -2157,7 +2157,7 @@ public class EmployeesServiceHelper {
 		};
 	
 		ctx.setListener(listener);
-		ctx.next();
+//		ctx.next();
 	
 		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
 				draft, ctx) {
@@ -2167,8 +2167,8 @@ public class EmployeesServiceHelper {
 			}
 		};
 		draftCtx.setListener(listener);
-		
-		draftCtx.loadDraftContext(ctx.getExpressionContext());
+		draftCtx.next();
+//		draftCtx.loadDraftContext(ctx.getExpressionContext());
 
 		return draftCtx;
 	}

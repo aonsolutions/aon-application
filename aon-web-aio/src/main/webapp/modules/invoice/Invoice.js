@@ -342,12 +342,13 @@ export class Invoice {
   }
 
   isVatEnabled() {
-    return (this.isNacional() && !this.isExempt())
+    return (this.isEmitida() && this.isNacional() && !this.isExempt())
       || (this.isRecibida() && 
             (this.isIntracommunity()
               || (this.isExtracommunity && this.isService())
               || (this.isCcm() && this.isService())
               || this.isIsp()
+              || this.isNacional()
             )
           );
       // || TODO REGIMEN DE IMPORTACION    

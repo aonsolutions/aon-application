@@ -46,8 +46,7 @@ const getModelNumber = (administration, model)=>{
   let modelText = newModel;
   if(newModel === "111" && administration === "ALAVA") {
     modelText = "110";
-  } 
-
+  }
   return modelText;
 }
 

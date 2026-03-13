@@ -426,6 +426,7 @@ public enum ContextVariable implements IResourceable {
 	
 	PLUS_BASE("BASE_ADICIONAL", VariableType.DOUBLE),
 	
+	NEW_DELAY("NUEVO_ATRASO", VariableType.BOOLEAN, false),
 	;
 
 	public static final String ALL = "_P";

@@ -55,6 +55,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
+import com.esferalia.aon.occam.api.model.fiscal.Mod421;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
@@ -1392,5 +1393,10 @@ public class Asserts {
 			assertEqualsInvoice(expected.getInvoice(),actual.getInvoice());
 		}
 	}
+	
+	public static void assertMod421(Mod421 expected, Mod421 actual) {
+		assertFiscalModel(expected, actual);
+	}
+	
 	
 }

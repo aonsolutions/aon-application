@@ -306,11 +306,18 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 description: "Modelo 420/417 ",
                 title: "IGIC Autoliquidación",
                 action: () => GWT.iLoad(GWT.MODEL_303)
-            }, {
+            }, 
+			{
+                description: "Modelo 421 ",
+                title: "IGIC Régimen Simplificado",
+                action: () => GWT.iLoad(GWT.MODEL_421)
+            }, 
+			{
                 description: "Modelo 425 ",
                 title: "IGIC Declaración resumen anual",
                 action: () => GWT.iLoad(GWT.MODEL_390)
-            }, {
+            }, 
+            {
                 description: "Modelo 415 ",
                 title: "Declaración anual operaciones con terceras personas",
                 action: () => GWT.iLoad(GWT.MODEL_347)
