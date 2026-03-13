@@ -224,7 +224,7 @@ export class AonAccountingBeta extends AonElement {
 		return aonAccountingMenu.getOptions();
 	}
 
-		uploadInvoiceAccounting(input, files) {
+	uploadInvoiceAccounting(input, files) {
 		getCompanyActivities({}).then(activities => {
 			let data = { uploaded: 0 };
 			if(activities.length > 1) {
