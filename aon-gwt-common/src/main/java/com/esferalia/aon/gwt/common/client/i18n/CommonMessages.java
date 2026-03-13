@@ -165,6 +165,7 @@ public interface CommonMessages extends Messages {
 		,"M240"		,"Libro-registro de operaciones econ\u00F3micas de personas jur\u00EDdicas"
 		,"SII"		,"Suministro inmediato de informaci\u00F3n"
 		,"M369"		,"Declaraciones de IVA del r\u00E9gimen One Stop Shop (OSS)"
+		,"M421"     ,"I.G.I.C. R\u00E9gimen Simplificado. Autoliquidaci\u00F3n Trimestral." 
 		})	
 	String fiscalModelDescriptionlong(@Select FiscalModelType f);
 

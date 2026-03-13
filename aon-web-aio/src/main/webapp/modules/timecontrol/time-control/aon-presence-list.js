@@ -333,15 +333,16 @@ export class AonPresenceList extends AonElement {
 						const lettersHtml = div.outerHTML;
 						const { name: textStatus } = getStatus(newStatus);
 						
-						let nameLocation = "";
+						let locationName;
 						if (last_location && last_location.name) {
-							nameLocation = last_location.name;
-						} else if (!isEmptyObject(coordinates)) {
-							let aib = setAttributes(new AonIconButton(), { id: "iconLocation", noHover: "true", icon: iconAddLocation });
-							nameLocation = aib.outerHTML;
+							locationName = last_location.name;
 						}
 
-						let reason = detail && detail.length > 0 ? detail[detail.length - 1].reasonValue : '';
+						let reason = '';
+						if (detail && detail.length > 0) {
+						  const last = [...detail].reverse().find(item => item.status === 'in');
+						  reason = last ? last.comments : '';
+						}
 
 						let period = getPeriod(this._filter.period);
 						let lastDateString = this.msToDateHourMinute(last_date);
@@ -360,6 +361,8 @@ export class AonPresenceList extends AonElement {
 							status: textStatus,
 							lastDate: lastDateString,
 							nameLocation: reason,
+							
+							taskHolderId
 						});
 					}
 					);

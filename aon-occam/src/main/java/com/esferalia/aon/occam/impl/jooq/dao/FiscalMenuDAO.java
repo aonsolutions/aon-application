@@ -72,6 +72,7 @@ public class FiscalMenuDAO {
 				@Override public void visitM390HF() {	/* Resolved in visitM111() */ }
 				@Override public void visitM202() {	/* Resolved in visitM111() */ }
 				@Override public void visitM303() {	/* Resolved in visitM111() */ }
+				@Override public void visitM421() {	/* Resolved in visitM111() */ }
 								
 				@Override 
 				public void visitM111() {

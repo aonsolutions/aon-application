@@ -3633,6 +3633,7 @@ background-image: url("../favicon.png");
 	display: flex;
 }
 
+/*
 .suiteMenuDiv2 {
 	width: 100%;
 	display: flex;
@@ -3642,6 +3643,14 @@ background-image: url("../favicon.png");
 	justify-content: center;
 	padding-right: 20px;
 	padding-bottom: 70px;
+}
+*/
+
+.suiteMenuDiv2{
+	padding: 0 1rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+	gap: 1rem;
 }
 
 .suiteMenuSideNavCardCard {
@@ -3669,17 +3678,15 @@ background-image: url("../favicon.png");
 }
 
 .suiteMenuCardCard {
-	min-width: 375px;
-	max-width: 375px;
 	display: flex;
-	max-height: 375px;
-	margin-left: 10px;
+	width: 100%;
 }
 
 .suiteMenuCardDiv {
 	box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
 	border-radius: 2px;
-	min-width: 375px;
+	width: 100%;
+  	margin: 0;
 }
 
 .suiteMenuCardDataDiv {

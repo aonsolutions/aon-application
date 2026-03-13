@@ -32,7 +32,8 @@ const TAX_MODEL_NUMBER  = {
   "130":"130",
   "131":"131", 
   "202":"202",
-  "390":"390"
+  "390":"390",
+  "421":"421"
 };
 
 const TAX_MODEL_TEXT = {
@@ -43,6 +44,7 @@ const TAX_MODEL_TEXT = {
   "130":"IRPF Pago Fraccionado (ED)", 
   "131":"IRPF Pago Fraccionado (EO)",
   "202":"Imp. Sociedades. Pago Fraccionado",
+  "421":"IGIC R\u00E9gimen Simplificado"
 };
 
 const TAX_PERIOD  = {

@@ -189,6 +189,7 @@ public class TimeControlDetail implements Serializable {
 		json.put("date", getDate().getTime());
 		json.put("reason", getReason() != null ? getReason().name() : null);
 		json.put("reasonValue", getReason() != null ? getReason().getDescription() : null);
+		json.put("comments", getComments());
 		
 		if(getCoordinates() != null) {
 			json.put("coordinates", getCoordinates().toJSON());

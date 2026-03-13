@@ -9,7 +9,7 @@ export class AonSuiteMenu extends AonElement {
 
     SIDE_MENU;
     CONTENT;
-    TITLE;
+    //TITLE;
     NEW_BUTTON;
     UPLOAD_BUTTON;
     OPTIONS;
@@ -34,7 +34,7 @@ export class AonSuiteMenu extends AonElement {
         this.id = 'aonSuiteMenu';
         this.SIDE_MENU = this.id + 'SideMenu';
         this.CONTENT = this.id + 'Content';
-        this.TITLE = this.id + 'Title';
+        //this.TITLE = this.id + 'Title';
         this.NEW_BUTTON = this.id + 'NewButton';
         this.UPLOAD_BUTTON = this.id + 'UploadButton';
         this.CONF_BUTTON = this.id + 'ConfButton';
@@ -148,10 +148,12 @@ export class AonSuiteMenu extends AonElement {
         div.classList.add("suiteMenuDiv");
         content.appendChild(div);
 
+		/*
         let title = this.createDiv();
         title.id = this.TITLE;
         title.className = "aonSidenavTitle";
         div.appendChild(title);
+		*/
 
         let div2 = this.createDiv();
         div2.classList.add("suiteMenuDiv2");
@@ -164,6 +166,7 @@ export class AonSuiteMenu extends AonElement {
             });
     }
 
+	/*
     setTitle(title) {
         this.title = title;
         let titleElement = this.getElement(this.TITLE);
@@ -171,6 +174,7 @@ export class AonSuiteMenu extends AonElement {
             titleElement.innerHTML = this.title;
         }
     }
+    */
 
     buildSideNavCard(sideMenu, id) {
         let card = new AonCard();

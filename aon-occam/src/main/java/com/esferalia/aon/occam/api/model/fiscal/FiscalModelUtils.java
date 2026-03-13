@@ -79,6 +79,9 @@ public class FiscalModelUtils {
 		// ********** MODELO 369 ********** 
 		,M369	("369",mod -> mod.getModel() == FiscalModelType.M369)
 		
+		// ********** MODELO 421 **********
+		,M421	("421",mod -> (mod.getModel() == FiscalModelType.M421), "I.G.I.C. R\u00E9gimen Simplificado. Autoliquidaci\u00F3n Trimestral." )
+		
 		;
 		
 		private String name;

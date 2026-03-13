@@ -275,54 +275,28 @@ export class AonEventDetailList extends AonElement {
 						const textStatus = status.name;
 						const lettersHtml = `<div class="profile-letters ${newStatus}">${textStatus.substr(0, 1)}</div>`;
 
-						let nameLocation = "";
+						let locationName;
 						if (detail.location && detail.location.name) {
-							nameLocation = detail.location.name;
-						} else if (!isEmptyObject(detail.coordinates)) {
-							let aib = setAttributes(new AonIconButton(), { id: "iconLocation", noHover: "true", icon: iconAddLocation });
-							nameLocation = aib.outerHTML;
+							locationName = detail.location.name;
 						}
-
-						let reason = detail.reasonValue ? detail.reasonValue : '';
+	
+						let reason = '';
+						if (detail && detail.length > 0) {
+						  const last = [...detail].reverse().find(item => item.status === 'in');
+						  reason = last ? last.comments : '';
+						}
 
 						data.push({
 							...detail,
 							lettersHtml,
 							textStatus,
 							status: newStatus,
-							nameLocation,
+							nameLocation: locationName || reason,
 							dateParse: AonDateUtils.setDateTimestamp(detail.date),
 							reason
 						});
 
 					});
-
-					/*
-					const newStatus = resp.status.toLowerCase();
-					const status = getStatus(newStatus);
-					const textStatus = status.name;
-					const lettersHtml = `<div class="profile-letters ${newStatus}">${textStatus.substr(0, 1)}</div>`;
-
-					let nameLocation = "";
-					if (resp.location && resp.location.name) {
-						nameLocation = resp.location.name;
-					} else if (!isEmptyObject(resp.coordinates)) {
-						let aib = setAttributes(new AonIconButton(), { id: "iconLocation", noHover: "true", icon: iconAddLocation });
-						nameLocation = aib.outerHTML;
-					}
-
-					let reason = resp.reasonValue ? resp.reasonValue : '';
-
-					data.push({
-						...resp,
-						lettersHtml,
-						textStatus,
-						status: newStatus,
-						nameLocation,
-						dateParse: AonDateUtils.setDateTimestamp(resp.date),
-						reason
-					});
-					*/
 
 				});
 			}
