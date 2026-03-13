@@ -526,18 +526,21 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 		StringBuffer buf = new StringBuffer();
 		
 		// FALTA - Nombre del Registro Mercantil
-		buf.append(100);
-//		buf.append(IAccountingConstants.EMPTY);
-		buf.append(StringUtils.upperCase(ctx.nombreRegistroMercantil()));
-		buf.append(IAccountingConstants.CR);
+//		buf.append(100);
+////		buf.append(IAccountingConstants.EMPTY);
+//		buf.append(StringUtils.upperCase(ctx.nombreRegistroMercantil()));
+//		buf.append(IAccountingConstants.CR);
+		appendLine(buf, "100", ctx.nombreRegistroMercantil(), 0);
 		// Fecha de la solicitud
-		buf.append(101);
-		buf.append(dateFormatter.format(new Date()));
-		buf.append(IAccountingConstants.CR);
+//		buf.append(101);
+//		buf.append(dateFormatter.format(new Date()));
+//		buf.append(IAccountingConstants.CR);
+		appendLine(buf, "101", dateFormatter.format(new Date()), 0);
 		// Nombre empresa
-		buf.append(102);
-		buf.append(StringUtils.substring(ctx.empresa(),0, 32));
-		buf.append(IAccountingConstants.CR);
+//		buf.append(102);
+//		buf.append(StringUtils.substring(ctx.empresa(),0, 32));
+//		buf.append(IAccountingConstants.CR);
+		appendLine(buf, "102", ctx.empresa(), 32);
 		// Apellido 1
 //		buf.append(103);
 //		buf.append(IAccountingConstants.EMPTY);
@@ -547,58 +550,69 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 //		buf.append(IAccountingConstants.EMPTY);
 //		buf.append(IAccountingConstants.CR);
 		// NIF
-		buf.append(105);
-		buf.append(StringUtils.substring(ctx.nifEmpresa(),0, 9));
-		buf.append(IAccountingConstants.CR);
-		// Calle
-		buf.append(106);
-		buf.append(StringUtils.substring(ctx.domicilioEmpresa(),0, 32));
-		buf.append(IAccountingConstants.CR);
+//		buf.append(105);
+//		buf.append(StringUtils.substring(ctx.nifEmpresa(),0, 9));
+//		buf.append(IAccountingConstants.CR);
+		appendLine(buf, "105", ctx.nifEmpresa(), 9);
+		// Domicilio
+//		buf.append(106);
+//		buf.append(StringUtils.substring(ctx.domicilioEmpresa(),0, 32));
+//		buf.append(IAccountingConstants.CR);
+		appendLine(buf, "106", ctx.domicilioEmpresa(), 32);
 		// Localidad
 //		buf.append(107);
 //		buf.append(StringUtils.substring(ctx.localidadEmpresa(),0, 32));
 //		buf.append(IAccountingConstants.CR);
-		// FALTA - Ciudad
+		// FALTA - Municipio - SI LE PASO EL CODIGO DE MUNICIPIO LEGALIA NO LO PILLA, SI LE PASO EL NOMBRE DEL MUNICIPIO LO PILLA SI ESTA TAL Y COMO LEGALIA LO TIENE SI VARIA ALGUNA PALABRA ENTONCES NO LO PILLA
 //		buf.append(107);
 //		buf.append(StringUtils.substring(ctx.municipioEmpresa() == null ? ctx.localidadSimpleEmpresa() : ctx.municipioEmpresa(),0, 32));
 //		buf.append(IAccountingConstants.CR);
+		appendLine(buf, "107", ctx.municipioEmpresa() == null ? ctx.localidadSimpleEmpresa() : ctx.municipioEmpresa(), 32);
 		// Código Postal
-		buf.append(108);
-		buf.append(StringUtils.substring(ctx.codigoPostalEmpresa(),0, 32));
-		buf.append(IAccountingConstants.CR);
+//		buf.append(108);
+//		buf.append(StringUtils.substring(ctx.codigoPostalEmpresa(),0, 32));
+//		buf.append(IAccountingConstants.CR);
+		appendLine(buf, "108", ctx.codigoPostalEmpresa(), 5);
 		// Código de Provincia
-		buf.append(109);
-		buf.append(StringUtils.substring(ctx.codigoProvinciaEmpresa(),0, 5));
-		buf.append(IAccountingConstants.CR);
+//		buf.append(109);
+//		buf.append(StringUtils.substring(ctx.codigoProvinciaEmpresa(),0, 5));
+//		buf.append(IAccountingConstants.CR);
+		appendLine(buf, "109", ctx.codigoProvinciaEmpresa(), 2);
 		// Fax
-		buf.append(110);
-		buf.append(StringUtils.substring(ctx.faxEmpresa(),0, 10));
-		buf.append(IAccountingConstants.CR);
+//		buf.append(110);
+//		buf.append(StringUtils.substring(ctx.faxEmpresa(),0, 10));
+//		buf.append(IAccountingConstants.CR);
+		appendLine(buf, "110", ctx.faxEmpresa(), 10);
 		// Telefono
-		buf.append(111);
-		buf.append(StringUtils.substring(ctx.telefonoEmpresa(),0, 10));
-		buf.append(IAccountingConstants.CR);
-		// FALTA - Código de Registro
-		buf.append(112);
-		buf.append(StringUtils.substring(ctx.codigoRegistroMercantil(),0, 5));
-		buf.append(IAccountingConstants.CR);
+//		buf.append(111);
+//		buf.append(StringUtils.substring(ctx.telefonoEmpresa(),0, 10));
+//		buf.append(IAccountingConstants.CR);
+		appendLine(buf, "111", ctx.telefonoEmpresa(), 10);
+		// FALTA - Código de Registro - SI LE PASO SOLO EL CODIGO, SIN PASARLE EL NOMBRE CON LA CLAVE 100 NO LO PILLA
+//		buf.append(112);
+//		buf.append(StringUtils.substring(ctx.codigoRegistroMercantil(),0, 5));
+//		buf.append(IAccountingConstants.CR);
+		appendLine(buf, "112", ctx.codigoRegistroMercantil(), 5);
 		// Tomo
-		buf.append(201);
-		buf.append(StringUtils.substring(ctx.tomoRegistroMercantil(),0, 6));
-		buf.append(IAccountingConstants.CR);
+//		buf.append(201);
+//		buf.append(StringUtils.substring(ctx.tomoRegistroMercantil(),0, 6));
+//		buf.append(IAccountingConstants.CR);
+		appendLine(buf, "201", ctx.tomoRegistroMercantil(), 6);
 		// Folio
-		buf.append(204);
-		buf.append(StringUtils.substring(ctx.folioRegistroMercantil(),0, 6));
-		buf.append(IAccountingConstants.CR);
+//		buf.append(204);
+//		buf.append(StringUtils.substring(ctx.folioRegistroMercantil(),0, 6));
+//		buf.append(IAccountingConstants.CR);
+		appendLine(buf, "204", ctx.folioRegistroMercantil(), 6);
 		// FALTA - DEJARLO POR DEFECTO PARA QUE LO PONGA POR DEFECTO EL PROGRAMA DEL REGISTRO MERCANTIL
 		// Tipo Registro
 //		buf.append(205);
 //		buf.append(StringUtils.substring(ctx.registroMercantil(),0, 6));
 //		buf.append(IAccountingConstants.CR);
 		// Hoja Registral
-		buf.append(206);
-		buf.append(StringUtils.substring(ctx.hojaRegistroMercantil(),0, 6));
-		buf.append(IAccountingConstants.CR);
+//		buf.append(206);
+//		buf.append(StringUtils.substring(ctx.hojaRegistroMercantil(),0, 6));
+//		buf.append(IAccountingConstants.CR);
+		appendLine(buf, "206", ctx.hojaRegistroMercantil(), 6);
 		// Otros
 //		buf.append(207);
 //		buf.append(IAccountingConstants.EMPTY);
@@ -607,7 +621,7 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 		buf.append(501);
 		buf.append(runners.size());
 		buf.append(IAccountingConstants.CR);
-
+		
 		StringBuffer buf2 = new StringBuffer();
 
 		int i = 1;
@@ -647,23 +661,35 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 	    IOUtils.copy(reader, zout);
 		zout.closeEntry();
 		
-		// FALTA - Nombre empresa
+		// FALTA - NOMBRE EMPRESA E IRUS
 		StringBuffer buf3 = new StringBuffer();
-		buf3.append(ctx.empresa());
-		buf3.append(IAccountingConstants.CR);
-		
-		// FALTA - IRUS		
-		buf3.append("IRUS=" + StringUtils.trimToEmpty(ctx.irusRegistroMercantil()));
-		buf3.append(IAccountingConstants.CR);
+		appendLine(buf3, "", ctx.empresa(), 0);                    // Nombre empresa
+		appendLine(buf3, "IRUS=", ctx.irusRegistroMercantil(), 0); // IRUS
 
 		ze = new ZipEntry(DESC_TXT);
 	    zout.putNextEntry(ze);
+	    // FALTA 
 //	    reader = new StringReader(ctx.empresa());
 	    reader = new StringReader(buf3.toString());
 	    IOUtils.copy(reader, zout);
 		zout.closeEntry();
 	}
 
+	private void appendLine(StringBuffer buf, String code, String value, int maxLength) {
+		
+		value = StringUtils.upperCase(value);
+		value = StringUtils.trimToEmpty(value);
+		
+		if (maxLength > 0) {
+			value = StringUtils.substring(value, 0, maxLength);
+		}
+		
+		buf.append(code);
+		buf.append(value);
+		buf.append(IAccountingConstants.CR);
+		
+	}
+	
 	public boolean isNumberVisible() {
 		AccountingBook book = getSelectedBook();
 		if (book.isMergeable()) {
