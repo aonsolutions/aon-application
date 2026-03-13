@@ -1849,7 +1849,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		});
 	}
 
-	public final boolean next(NextHook hook) throws SQLException, ExpressionException {
+	public boolean next(NextHook hook) throws SQLException, ExpressionException {
 
 		boolean next = this.resultSet.next();
 		if (next) {

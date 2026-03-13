@@ -39,6 +39,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONEY_IRPF_B
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHLY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHLY_PAYMENTS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.NEW_DELAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATIONAL_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OFF_DAYS;
@@ -2416,6 +2417,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				try {
 					fillData(ctx,
 					new String[] { 
+							NEW_DELAY.getName(),
 							DELAY_CAUSE.getName(),
 							PARTIAL_FACTOR.getName(),
 							COMMON_DISEASE_DAYS_1_3.getName(),
