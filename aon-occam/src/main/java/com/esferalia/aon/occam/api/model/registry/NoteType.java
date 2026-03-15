@@ -15,7 +15,13 @@ public enum NoteType implements Serializable {
     CUSTOMER_STATUS,
     PAYROLL,
     FISCAL,
-    ACCOUNTING
+    ACCOUNTING,
+    COMMERCIAL,
+    MANAGEMENT,
+    TREASURY,
+    WAREHOUSE,
+    GROUPWARE,
+    MARKETING
     ;
 	
 	private NoteType() {}

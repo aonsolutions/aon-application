@@ -19,7 +19,6 @@ export class AonWarehouseMenu extends AonSuiteMenu {
         this.clear();
         this.initialize();
         this.build();
-        this.setTitle("Opciones de almacén");
     }
 
     almacenInitialize() {
@@ -144,11 +143,6 @@ export class AonWarehouseMenu extends AonSuiteMenu {
             }]
         }];
     }
-    /*
-    build() {
-        
-    }
-    */
 }
 if(!window.customElements.get(TAG.AON_WAREHOUSE_MENU)){
     window.customElements.define(TAG.AON_WAREHOUSE_MENU, AonWarehouseMenu);
