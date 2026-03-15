@@ -432,7 +432,7 @@ public class MarketingCampaignDAO {
 		// Check tag
 		if(null != marketingAction.getTag() && null == marketingAction.getTag().getId() && AonStringUtils.isNotBlank(marketingAction.getTag().getName())) {
 			// Insert tag
-			Tag insertedTag = TagDAO.insertTag(ctx, marketingAction.getTag()); 
+			Tag insertedTag = TagDAO.save(ctx, marketingAction.getTag()); 
 			marketingAction.getTag().setId(insertedTag.getId());
 		}
 		
@@ -469,7 +469,7 @@ public class MarketingCampaignDAO {
 		// Check tag
 		if(null != marketingAction.getTag() && null == marketingAction.getTag().getId() && AonStringUtils.isNotBlank(marketingAction.getTag().getName())) {
 			// Insert tag
-			Tag insertedTag = TagDAO.insertTag(ctx, marketingAction.getTag()); 
+			Tag insertedTag = TagDAO.save(ctx, marketingAction.getTag()); 
 			marketingAction.getTag().setId(insertedTag.getId());
 		}
 		

@@ -74,6 +74,7 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.TagDAO.TagFiller;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -272,7 +273,7 @@ public class TaskOldDAO {
 	
 	public static Stream<Tag> getTaskLabelStream(AONContext ctx, TaskTagFilter filter){
 		return ctx.getDslContext().select().from(TAG).join(TASK_TAG).on(TAG.ID.eq(TASK_TAG.TAG))
-			.where(TASK_TAG_PROPERTIES.getConditions(filter)).fetchInto(TAG).stream().map(new FullTagFiller());
+			.where(TASK_TAG_PROPERTIES.getConditions(filter)).fetchInto(TAG).stream().map(new TagFiller());
 	}
 	
 	
@@ -948,18 +949,6 @@ public class TaskOldDAO {
 					.setDomain(r.getValue(WORKGROUP.DOMAIN))
 					.setDescription(r.getValue(WORKGROUP.DESCRIPTION))
 					.setStatus(WorkgroupStatus.safeValueOf(r.getValue(WORKGROUP.STATUS)));
-		}
-	}
-	
-	
-	private static class FullTagFiller implements Function<TagRecord, Tag> {
-		@Override
-		public Tag apply(TagRecord r) {
-			return new Tag().setId(r.getId())
-					.setColor(r.getColor())
-					.setDomain(r.getDomain())
-					.setName(r.getName())
-					.setType(r.getType());		
 		}
 	}
 	

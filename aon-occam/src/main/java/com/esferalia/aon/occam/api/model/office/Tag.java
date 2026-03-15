@@ -15,7 +15,7 @@ public class Tag implements Serializable, HasId {
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private Integer domain;
-	private byte type;
+	private TagType type;
 	private String name;
 	private String color;
 	private Date startDate;
@@ -41,21 +41,12 @@ public class Tag implements Serializable, HasId {
 		return this.domain;
 	}
 
-	public Tag setType(byte type) {
+	public Tag setType(TagType type) {
 		this.type = type;
 		return this;
 	}
 	
-	public Tag setTagType(TagType tagType) {
-		if(tagType!=null) this.type = tagType.value();
-		return this;
-	}
-	
-	public TagType getTagType() {
-		return TagType.safeValueOf(type);
-	}
-
-	public byte getType() {
+	public TagType getType() {
 		return type;
 	}
 
@@ -105,15 +96,15 @@ public class Tag implements Serializable, HasId {
 	}
 
 	public boolean isTagType() {
-		return this.type == TagType.OFFICE_TYPE.value();
+		return TagType.OFFICE_TYPE.equals(getType());
 	}
 	
 	public boolean isTagPriority() {
-		return this.type == TagType.OFFICE_PRIORITY.value();
+		return TagType.OFFICE_PRIORITY.equals(getType());
 	}
 	
 	public boolean isTagStatus() {
-		return this.type == TagType.OFFICE_STATUS.value();
+		return TagType.OFFICE_STATUS.equals(getType());
 	}	
 	
 	public boolean isEmpty() {

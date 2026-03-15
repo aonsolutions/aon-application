@@ -156,9 +156,9 @@ public class DownloadTaskStatExcelServlet extends HttpServlet {
 			Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, task.getWorkgroup());
 			
 			LinkedList<Tag> label = AON.getTaskLabelList(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(task.getId()));
-			LinkedList<Label> labels = label.stream().filter(l -> l.getType() == TagType.TASK_LABEL.value()).map(new TagToLabelFiller(domain, userName))
+			LinkedList<Label> labels = label.stream().filter(l -> TagType.TASK_TYPE.equals(l.getType())).map(new TagToLabelFiller(domain, userName))
 					.collect(Collectors.toCollection(LinkedList::new)); 
-			Label type = label.stream().filter(l -> l.getType() == TagType.TASK_TYPE.value()).map(new TagToLabelFiller(domain, userName))
+			Label type = label.stream().filter(l -> TagType.TASK_TYPE.equals(l.getType())).map(new TagToLabelFiller(domain, userName))
 					.findFirst().orElse(new Label());
 			
 	        Row taskrow = hoja.createRow(cont++);

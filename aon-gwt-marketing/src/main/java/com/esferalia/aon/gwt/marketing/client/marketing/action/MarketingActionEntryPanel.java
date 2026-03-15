@@ -404,7 +404,7 @@ public abstract class MarketingActionEntryPanel extends AonCustomDockLayout {
 			if(AonStringUtils.contains(tagSuggestBox.getValue(), '[')) {
 				marketingAction.setTag(new Tag().setId(Integer.parseInt(tagSuggestBox.getValue().split("\\[")[1].split("\\]")[0])));
 			} else {
-				marketingAction.setTag(new Tag().setDomain(marketingAction.getDomain()).setTagType(TagType.MARKETING).setName(tagSuggestBox.getValue()));
+				marketingAction.setTag(new Tag().setDomain(marketingAction.getDomain()).setType(TagType.MARKETING).setName(tagSuggestBox.getValue()));
 			}
 		} else marketingAction.setTag(null);
 		

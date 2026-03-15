@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.registry.RecordDataAlterTable;
+import net.aonsolutions.db.up2date.security.DeleteDomainAppApp7;
 
 public class Up2Date {
 
@@ -624,7 +625,8 @@ public class Up2Date {
 
 			// EnterpriseDataAddAudit.ENTERPRISE_DATA_ADD_AUDIT
 			
-			RecordDataAlterTable.RECORD_DATA_ALTER_TABLE
+			RecordDataAlterTable.RECORD_DATA_ALTER_TABLE,
+			DeleteDomainAppApp7.DELETE_DOMAIN_APP_APP7
 	};
 
 	// ------------------------------------------------------------------------

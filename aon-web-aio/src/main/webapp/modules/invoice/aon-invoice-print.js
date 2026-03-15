@@ -1,12 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
 
-import '../../components/aon-date.js';
-import '../../components/aon-input.js';
-import '../../components/aon-slider.js';
-import '../../components/aon-viewer.js';
-import '../../components/aon-switch.js';
-import '../../components/aon-card.js';
-
 import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
 import { getPrintInvoiceConfiguration, savePrintInvoiceConfiguration } from '../../services/invoiceService.js';
 import { getReader } from '../../services/utils.js';
@@ -15,7 +8,6 @@ import * as LS from '../../services/localStorageService.js';
 import { AonUpload } from '../../components/aon-upload.js';
 import { AonViewer } from '../../components/aon-viewer.js';
 import { getAttach } from '../../services/fileService.js';
-import { AonSelect } from '../../components/aon-select.js';
 import { Language } from '../../models/Language.js';
 import { Theme } from './Themes.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
@@ -25,6 +17,7 @@ import { AonSwitch } from '../../components/aon-switch.js';
 import { AonCard } from '../../components/aon-card.js';
 import { AonSlider } from '../../components/aon-slider.js';
 import { AonDialog } from '../../components/aon-dialog.js';
+import { createSelect } from '../../components/CreateComponent.js';
 
 export class AonInvoicePrint extends AonElement {
 
@@ -225,7 +218,7 @@ export class AonInvoicePrint extends AonElement {
       {value: "1", name: 'Solo Títulos'},
       {value: "2", name: 'Títulos y Cuerpo'}, 
     ]
-    let border = this.createAonElement(new AonSelect(), this.BORDER, MSG.BORDER);
+    let border = createSelect(this.BORDER, MSG.BORDER);
     border.setOptions(borderOptions);
     border.value = this.printConfiguration.border;
     table.addCell(border, 1).style.height = '60px';
@@ -262,17 +255,6 @@ export class AonInvoicePrint extends AonElement {
 
     table.addRow();
 
-    // let rgpd  = this.createAonElement(new AonInput(), this.RGPD, MSG.RGPD_URL);
-    // rgpd.value = this.printConfiguration.rgpd;
-    // rgpd.addEventListener(EVENT.CHANGE, () => {
-    //   this.printConfiguration.rgpd = rgpd.value;
-    //   if(this.autosave) this.save();
-    //   this.dispatchEvent(new Event(EVENT.CHANGE));
-    // })
-    // table.addCell(rgpd, 2).style.height = '60px';;
-
-    // table.addRow();
-
     const languages = [
       {value: Language.SPANISH, name: MSG.SPANISH},
       {value: Language.ENGLISH, name: MSG.ENGLISH},
@@ -282,7 +264,7 @@ export class AonInvoicePrint extends AonElement {
       {value: Language.GALICIAN, name: MSG.GALICIAN},
     ];
 
-    let language = this.createAonElement(new AonSelect(), this.LANGUAGE, MSG.LANGUAGE);
+    let language = createSelect(this.LANGUAGE, MSG.LANGUAGE);
     language.setOptions(languages);
     language.value = this.printConfiguration.language;
     language.onChange(() => {
@@ -304,7 +286,7 @@ export class AonInvoicePrint extends AonElement {
     table.addCell(bt, 1);
     bt.addRow();
 
-    let themeSelect = this.createAonElement(new AonSelect(), this.THEME, MSG.THEME) ;
+    let themeSelect = createSelect(this.THEME, MSG.THEME) ;
     themeSelect.setOptions(themes);
     themeSelect.value = this.printConfiguration.theme.theme;
     themeSelect.addEventListener('change', () => {
