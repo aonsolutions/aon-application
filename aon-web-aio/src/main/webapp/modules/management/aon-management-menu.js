@@ -23,7 +23,6 @@ export class AonManagementMenu extends AonSuiteMenu {
         this.initialize();
    		await this.managementInitialize();
         this.build();
-        this.setTitle("Opciones de gestión");
     }
 
     async initInvoiceConfiguration() {
@@ -213,11 +212,6 @@ export class AonManagementMenu extends AonSuiteMenu {
             }]
         }];
     }
-    /*
-    build() {
-        
-    }
-    */
 }
 if(!window.customElements.get(TAG.AON_MANAGEMENT_MENU)){
     window.customElements.define(TAG.AON_MANAGEMENT_MENU, AonManagementMenu);
