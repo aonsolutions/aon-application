@@ -71,6 +71,12 @@ import { AonPayrollBeta } from './payroll/aon-payroll-beta.js';
 import { getInvoiceCount } from '../services/invoiceService.js';
 import { getRelationShipCompany } from '../services/registryService.js';
 import { AonTooltip } from '../components/aon-tooltip.js';
+import { AonCommercialBeta } from './commercial/aon-commercial-beta.js';
+import { AonManagementBeta } from './management/aon-management-beta.js';
+import { AonTreasuryBeta } from './treasury/aon-treasury-beta.js';
+import { AonWarehouseBeta } from './warehouse/aon-warehouse-beta.js';
+import { AonGroupwareBeta } from './groupware/aon-groupware-beta.js';
+import { AonMarketingBeta } from './marketing/aon-marketing-beta.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -330,21 +336,21 @@ export class AonNewMenu extends AonElement {
 			case ACCOUNTING_MENU.app:
 				return this.isDomainManagementAvailable() ? new AonAccountingMenu() : new AonAccountingBeta();
 			case COMMERCIAL_MENU.app:
-				return new AonCommercialMenu();
+				return this.isDomainManagementAvailable() ? new AonCommercialMenu() : new AonCommercialBeta();
 			case GROUPWARE_MENU.app:
-				return new AonGroupwareMenu();
+				return this.isDomainManagementAvailable() ? new AonGroupwareMenu() : new AonGroupwareBeta();
 			case MANAGEMENT_MENU.app:
-				return new AonManagementMenu();
+				return this.isDomainManagementAvailable() ? new AonManagementMenu() : new AonManagementBeta();
 			case TREASURY_MENU.app:
-				return new AonTreasuryMenu();
+				return this.isDomainManagementAvailable() ? new AonTreasuryMenu() : new AonTreasuryBeta();
 			case WAREHOUSE_MENU.app:
-				return new AonWarehouseMenu();
+				return this.isDomainManagementAvailable() ? new AonWarehouseMenu() : new AonWarehouseBeta();
 			case FISCAL_MENU.app:
 				return this.isDomainManagementAvailable() ? new AonFiscalMenu() : new AonFiscalBeta();
 			case PAYROLL_MENU.app:
 				return this.isDomainManagementAvailable() ? new AonPayrollMenu() : new AonPayrollBeta();
 			case MARKETING_MENU.app:
-				return new AonMarketingMenu();
+				return this.isDomainManagementAvailable() ? new AonMarketingMenu() : new AonMarketingBeta();
 			case CONFIGURATION_MENU.app:
 				return new AonConfiguration();
 			case ACADEMY.app:

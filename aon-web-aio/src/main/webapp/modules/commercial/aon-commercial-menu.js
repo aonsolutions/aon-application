@@ -1,4 +1,4 @@
-import { MSG, CSS, EVENT, TAG } from '../../environments/environments.js'; 
+import { TAG } from '../../environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from '../../gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
@@ -19,7 +19,6 @@ export class AonCommercialMenu extends AonSuiteMenu {
         this.clear();
         this.initialize();
         this.build();
-        this.setTitle("Opciones comerciales");
     }
 
     comercialInitialize() {
@@ -156,11 +155,6 @@ export class AonCommercialMenu extends AonSuiteMenu {
             }]
         }];
     }
-    /*
-    build() {
-        
-    }
-    */
 }
 if(!window.customElements.get(TAG.AON_COMMERCIAL_MENU)){
     window.customElements.define(TAG.AON_COMMERCIAL_MENU, AonCommercialMenu);
