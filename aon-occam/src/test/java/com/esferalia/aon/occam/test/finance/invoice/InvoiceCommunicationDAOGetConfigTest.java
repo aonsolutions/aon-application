@@ -10,6 +10,7 @@ import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -53,6 +54,7 @@ public class InvoiceCommunicationDAOGetConfigTest extends AbstractOccamTest {
 		Date startDate = AonDateUtils.getMonthFirstDay(AonDateUtils.addMonths(today, -1));
 		CommunicationData data = new CommunicationData()
 			.setDomain(DOMAIN_ID)
+			.setDataName(EnterpriseDataNames.ICC_SII)
 			.setAdministration(Administration.COMMON_TERRITORY)
 			.setStartDate(startDate);
 		ICCDAO.enableSii(ctx, DOMAIN_ID, data);
@@ -71,6 +73,7 @@ public class InvoiceCommunicationDAOGetConfigTest extends AbstractOccamTest {
 		Date today = AonDateUtils.today();
 		Date startDate = AonDateUtils.getMonthFirstDay(AonDateUtils.addMonths(today, -1));
 		CommunicationData data = new CommunicationData()
+			.setDataName(EnterpriseDataNames.ICC_VERIFACTU)
 			.setDomain(DOMAIN_ID)
 			.setAdministration(Administration.COMMON_TERRITORY)
 			.setStartDate(startDate);
@@ -90,6 +93,7 @@ public class InvoiceCommunicationDAOGetConfigTest extends AbstractOccamTest {
 		Date startDate = AonDateUtils.getMonthFirstDay(AonDateUtils.addMonths(today, -1));
 		CommunicationData data = new CommunicationData()
 			.setDomain(DOMAIN_ID)
+			.setDataName(EnterpriseDataNames.ICC_LROE)
 			.setAdministration(Administration.BIZKAIA)
 			.setStartDate(startDate);
 		ICCDAO.enableLroe(ctx, DOMAIN_ID, data);
@@ -108,6 +112,7 @@ public class InvoiceCommunicationDAOGetConfigTest extends AbstractOccamTest {
 		Date startDate = AonDateUtils.getMonthFirstDay(AonDateUtils.addMonths(today, -1));
 		CommunicationData data = new CommunicationData()
 			.setDomain(DOMAIN_ID)
+			.setDataName(EnterpriseDataNames.ICC_TBAI)
 			.setAdministration(Administration.GIPUZKOA)
 			.setStartDate(startDate);
 		ICCDAO.enableTbai(ctx, DOMAIN_ID, data);
