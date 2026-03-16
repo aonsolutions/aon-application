@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.invoice;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
@@ -14,6 +15,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProcessOutput;
+import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
@@ -50,9 +52,10 @@ public class InvoiceCommunicationPanel extends FlowPanel implements HasValueChan
 			options.getCommunicationConfiguration()
 				.ifPresentOrElse( 
 					icc -> {
-						icc
-							.getTypes( invoice.getType(), invoice.getExpDate())
-							.forEach( type -> add( new InvoiceCommunicationIcon( options, invoice, type, null )));
+						icc.typesStream( invoice.getType(), invoice.getExpDate())
+							.map( CommunicationData::getCommunicationType )
+							.flatMap( Optional::stream )
+							.forEach( type -> add( new InvoiceCommunicationIcon( options, invoice, type, null ) ) );
 						if (icc.isNoSif( invoice.getExpDate())) {
 							add( new InvoiceCommunicationIcon( options, invoice ));		
 						}

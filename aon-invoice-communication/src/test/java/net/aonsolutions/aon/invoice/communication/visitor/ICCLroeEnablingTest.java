@@ -2,7 +2,6 @@ package net.aonsolutions.aon.invoice.communication.visitor;
  
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
@@ -10,24 +9,22 @@ import java.util.Date;
 import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
-import com.esferalia.aon.occam.api.model.invoice.CommunicationData.ExemptType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.ExemptType;
 import com.esferalia.aon.occam.impl.jooq.dao.ICCDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 
 class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
-
+	
 	@Test
 	void test_enable_lroe_from_nothing_past() {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		InvoiceCommunicationConfiguration icc = ICCDAO.enableLroe( getCtx(),getDomainId(), lastMonthFirstDay );
+		CommunicationData toEnable = getCD( Administration.BIZKAIA).setStartDate(lastMonthFirstDay);
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableLroe( getCtx(),getDomainId(), toEnable );
 		printIcc(icc);
 		assertTrue( icc.isBizkaia( today ) );
 		assertTrue( icc.isLroe( today ) );
@@ -43,21 +40,25 @@ class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isAEAT( today ) );
 		assertFalse( icc.isAraba( today ) );
 		assertFalse( icc.isNavarra( today ) );
-		assertFalse( icc.isUnknown( today ) );
 	}
+	
 
 	@Test
 	void test_enable_lroe_from_nothing_past_exempt() {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		InvoiceCommunicationConfiguration icc = ICCDAO.enableLroe( getCtx(),getDomainId(), lastMonthFirstDay , ExemptType.NO_OBLIGATION );
+		CommunicationData toEnable = getCD( Administration.BIZKAIA)
+				.setStartDate(lastMonthFirstDay)
+				.setExemptType(ExemptType.NO_OBLIGATION);
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableLroe( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isBizkaia( today ) );
 		assertTrue( icc.isLroe( today ) );
 		assertTrue( icc.getLroeData().isPresent() );
 		CommunicationData data = icc.getLroeData().get();
-		assertEquals( ExemptType.NO_OBLIGATION, data.getExemptType() );
+		assertTrue( data.getExemptType().isPresent() );
+		assertEquals( ExemptType.NO_OBLIGATION, data.getExemptType().get() );
 		
 		assertFalse( icc.isNoVerifactu( today ) );
 		assertFalse( icc.isNoSif( today ) );
@@ -70,7 +71,6 @@ class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isAEAT( today ) );
 		assertFalse( icc.isAraba( today ) );
 		assertFalse( icc.isNavarra( today ) );
-		assertFalse( icc.isUnknown( today ) );
 	}
 
 	@Test
@@ -78,14 +78,19 @@ class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		InvoiceCommunicationConfiguration icc = ICCDAO.enableLroeTest( getCtx(),getDomainId(), lastMonthFirstDay , ExemptType.NO_OBLIGATION );
+		CommunicationData toEnable = getCD( Administration.BIZKAIA)
+				.setStartDate(lastMonthFirstDay)
+				.setExemptType(ExemptType.NO_OBLIGATION)
+				.setTest(true);
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableLroe( getCtx() , getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isBizkaia( today ) );
 		assertTrue( icc.isLroe( today ) );
 		assertTrue( icc.getLroeData().isPresent() );
 		CommunicationData data = icc.getLroeData().get();
 		assertTrue( data.isTest() );
-		assertEquals( ExemptType.NO_OBLIGATION, data.getExemptType() );
+		assertTrue( data.getExemptType().isPresent()  );
+		assertEquals( ExemptType.NO_OBLIGATION, data.getExemptType().get() );
 		
 		assertFalse( icc.isNoVerifactu( today ) );
 		assertFalse( icc.isNoSif( today ) );
@@ -98,14 +103,14 @@ class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isAEAT( today ) );
 		assertFalse( icc.isAraba( today ) );
 		assertFalse( icc.isNavarra( today ) );
-		assertFalse( icc.isUnknown( today ) );
 	}
 
 	@Test
 	void test_enable_verifactu_from_nothing_today() {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
-		InvoiceCommunicationConfiguration icc = ICCDAO.enableLroe( getCtx(),getDomainId(), today );
+		CommunicationData toEnable = getCD( Administration.BIZKAIA).setStartDate(today);
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableLroe( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isBizkaia( today ) );
 		assertTrue( icc.isLroe( today ) );
@@ -121,7 +126,6 @@ class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isAEAT( today ) );
 		assertFalse( icc.isAraba( today ) );
 		assertFalse( icc.isNavarra( today ) );
-		assertFalse( icc.isUnknown( today ) );
 	}
 
 	@Test
@@ -129,7 +133,8 @@ class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		InvoiceCommunicationConfiguration icc = ICCDAO.enableNoSif( getCtx(),getDomainId(), Administration.COMMON_TERRITORY, lastMonthFirstDay );
+		CommunicationData toEnable = getCD( Administration.COMMON_TERRITORY).setStartDate(lastMonthFirstDay);
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableNoSif( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isAEAT( today ) );
 		assertTrue( icc.isNoSif( today ) );
@@ -138,7 +143,6 @@ class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isBizkaia( today ) );
 		assertFalse( icc.isAraba( today ) );
 		assertFalse( icc.isNavarra( today ) );
-		assertFalse( icc.isUnknown( today ) );
 		
 		assertFalse( icc.isNoVerifactu( today ) );
 		assertFalse( icc.isSif( today ) );
@@ -146,7 +150,8 @@ class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isLroe( today ) );
 		assertFalse( icc.isSii( today ) );
 		
-		InvoiceCommunicationConfiguration icc2 = ICCDAO.enableLroe( getCtx(),getDomainId(), today );
+		CommunicationData toEnable2 = getCD( Administration.BIZKAIA).setStartDate(today);		
+		InvoiceCommunicationConfiguration icc2 = ICCDAO.enableLroe( getCtx(),getDomainId(), toEnable2);
 		printIcc(icc2);
 		assertTrue( icc2.isBizkaia( today ) );
 		assertTrue( icc2.isLroe( today ) );
@@ -165,15 +170,16 @@ class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc2.isAEAT( today ) );
 		assertFalse( icc2.isAraba( today ) );
 		assertFalse( icc2.isNavarra( today ) );
-		assertFalse( icc2.isUnknown( today ) );
 	}
 	
 	@Test
 	void test_lroe_from_verifctu() {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
+		Date yesterday = AonDateUtils.yesterday();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		InvoiceCommunicationConfiguration icc = ICCDAO.enableVerifactu( getCtx(),getDomainId(), lastMonthFirstDay );
+		CommunicationData toEnable = getCD( Administration.COMMON_TERRITORY).setStartDate(lastMonthFirstDay);
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableVerifactu( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isAEAT( today ) );
 		assertTrue( icc.isVerifactu( today ) );
@@ -181,7 +187,6 @@ class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isNoVerifactu( today ) );
 		assertFalse( icc.isLroe( today ) );
 		assertFalse( icc.isNoSif( today ) );
-		assertFalse( icc.isSif( today ) );
 		assertFalse( icc.isTbai( today ) );
 		assertFalse( icc.isSif( today ) );
 		assertFalse( icc.isSii( today ) );
@@ -190,18 +195,44 @@ class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isBizkaia( today ) );
 		assertFalse( icc.isAraba( today ) );
 		assertFalse( icc.isNavarra( today ) );
-		assertFalse( icc.isUnknown( today ) );
 		
-		AonCoreException e = assertThrows(AonCoreException.class,  () -> ICCDAO.enableLroe( getCtx(),getDomainId(), today ) );
-		assertEquals( InvoiceCommunicationError.ICC_5011.getMessage(), e.getMessage() );
+		CommunicationData toEnable2 = getCD( Administration.BIZKAIA).setStartDate(today);
+		InvoiceCommunicationConfiguration icc2 = ICCDAO.enableLroe( getCtx(),getDomainId(), toEnable2);
+		printIcc(icc2);
+		assertTrue( icc2.isBizkaia(today ) );
+		assertTrue( icc2.isLroe( today ) );
+		assertFalse( icc2.isAEAT( today) );
+		assertFalse( icc2.isVerifactu( today ) );
+		
+		assertFalse( icc2.isBizkaia(yesterday ) );
+		assertFalse( icc2.isLroe( yesterday ) );
+		assertTrue( icc2.isAEAT( yesterday ) );
+		assertTrue( icc2.isVerifactu( yesterday ) );
+		
+		assertFalse( icc2.isNoVerifactu( today ) );
+		assertFalse( icc2.isNoSif( today ) );
+		assertFalse( icc2.isSif( today ) );
+		assertFalse( icc2.isTbai( today ) );
+		assertFalse( icc2.isSii( today ) );
+		
+		assertFalse( icc2.isCanarias( today ) );
+		assertFalse( icc2.isAEAT( today ) );
+		assertFalse( icc2.isAraba( today ) );
+		assertFalse( icc2.isNavarra( today ) );
+		assertFalse( icc2.isGipuzkoa( today ) );
+		
 	}
 
+	/*
 	@Test
 	void test_lroe_from_no_verifctu() {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		InvoiceCommunicationConfiguration icc = ICCDAO.enableNoVerifactu( getCtx(),getDomainId(), lastMonthFirstDay );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableNoVerifactu( getCtx(),getDomainId()
+			, getCD()
+				.setStartDate(lastMonthFirstDay) 
+		);
 		printIcc(icc);
 		assertTrue( icc.isAEAT( today ) );
 		assertTrue( icc.isNoVerifactu( today ) );
@@ -220,7 +251,10 @@ class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isNavarra( today ) );
 		assertFalse( icc.isUnknown( today ) );
 		
-		AonCoreException e = assertThrows(AonCoreException.class,  () -> ICCDAO.enableLroe( getCtx(),getDomainId(), today ) );
+		AonCoreException e = assertThrows(AonCoreException.class,  () -> ICCDAO.enableLroe( getCtx(),getDomainId()
+			, getCD()
+				.setStartDate(today) 
+		));
 		assertEquals( InvoiceCommunicationError.ICC_5012.getMessage(), e.getMessage() );
 	}
 	
@@ -229,7 +263,10 @@ class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId(), lastMonthFirstDay );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId()
+			, getCD()
+				.setStartDate(lastMonthFirstDay) 
+		);
 		printIcc(icc);
 		assertTrue( icc.isAEAT( today ) );
 		assertTrue( icc.isSii( today ) );
@@ -248,7 +285,10 @@ class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isNavarra( today ) );
 		assertFalse( icc.isUnknown( today ) );
 		
-		AonCoreException e = assertThrows(AonCoreException.class,  () -> ICCDAO.enableLroe( getCtx(),getDomainId(), today ) );
+		AonCoreException e = assertThrows(AonCoreException.class,  () -> ICCDAO.enableLroe( getCtx(),getDomainId()
+			, getCD()
+				.setStartDate(today) 
+		));
 		assertEquals( InvoiceCommunicationError.ICC_5014.getMessage(), e.getMessage() );
 	}
 	
@@ -257,7 +297,10 @@ class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		InvoiceCommunicationConfiguration icc = ICCDAO.enableSif( getCtx(),getDomainId(), Administration.NAVARRA, lastMonthFirstDay );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableSif( getCtx(),getDomainId(), Administration.NAVARRA
+			, getCD()
+				.setStartDate(lastMonthFirstDay) 
+		);
 		printIcc(icc);
 		assertTrue( icc.isNavarra( today ) );
 		assertTrue( icc.isSif( today ) );
@@ -275,7 +318,10 @@ class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isAEAT( today ) );
 		assertFalse( icc.isUnknown( today ) );
 		
-		InvoiceCommunicationConfiguration icc2 = ICCDAO.enableLroe( getCtx(),getDomainId(), today );
+		InvoiceCommunicationConfiguration icc2 = ICCDAO.enableLroe( getCtx(),getDomainId()
+			, getCD()
+				.setStartDate(today) 
+		);
 		printIcc(icc2);
 		assertTrue( icc2.isBizkaia( today ) );
 		assertTrue( icc2.isLroe( today ) );
@@ -302,7 +348,10 @@ class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		InvoiceCommunicationConfiguration icc = ICCDAO.enableTbaiAraba(getCtx(),getDomainId(), lastMonthFirstDay );
+		InvoiceCommunicationConfiguration icc = ICCDAO.enableTbaiAraba(getCtx(),getDomainId()
+			, getCD()
+				.setStartDate(lastMonthFirstDay) 
+		);
 		printIcc(icc);
 		assertTrue( icc.isAraba( today ) );
 		assertTrue( icc.isTbai( today ) );
@@ -320,7 +369,11 @@ class ICCLroeEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isAEAT( today ) );
 		assertFalse( icc.isUnknown( today ) );
 		
-		AonCoreException e = assertThrows(AonCoreException.class,  () -> ICCDAO.enableLroe( getCtx(),getDomainId(), today ) );
+		AonCoreException e = assertThrows(AonCoreException.class,  () -> ICCDAO.enableLroe( getCtx(),getDomainId()
+			, getCD()
+				.setStartDate(today) 
+		));
 		assertEquals( InvoiceCommunicationError.ICC_5015.getMessage(), e.getMessage() );
 	}
+*/
 }

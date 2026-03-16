@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProcessOutput;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.watson.mutable.MutableBoolean;
 import com.google.gwt.core.client.Scheduler;
@@ -109,9 +110,10 @@ class InvoiceConsoleToolbar extends AonToolbar {
 			.ifPresent( icc -> selectionHandler.stream()
 				.filter(i -> i.getCommunicationInfo() != null )
 				.forEach( i -> 
-					icc.getTypes()
-						.stream()
-						.forEach( t -> {
+					icc.typesStream()
+						.filter( cd -> cd.getCommunicationType().isPresent() )
+						.forEach( cd -> {
+							InvoiceCommunicationType t = cd.getCommunicationType().get();
 							try {
 								t.visit( new InvoiceCommunicationTypeVisitor() {
 										

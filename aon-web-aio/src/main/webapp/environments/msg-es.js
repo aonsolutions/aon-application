@@ -197,6 +197,7 @@ export const EXERCISE = "Ejercicio";
 export const EXEMPTION_CAUSE = "Causa de Exención";
 export const EXIT = 'Salida';
 export const EXEMPT = 'Exento';
+export const EXEMPTION = 'Exención';
 export const EXPENSE = 'Gasto';
 export const EXPENSES = 'Gastos';
 export const EXPIRATIONS = 'Vencimientos';

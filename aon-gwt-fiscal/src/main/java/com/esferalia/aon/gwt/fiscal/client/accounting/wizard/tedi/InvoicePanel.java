@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -27,6 +28,7 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
+import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -250,8 +252,9 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				&& getCallback().getConfiguration().getCommunicationConfig() != null
 				&& getCallback().getConfiguration().getCommunicationConfig().hasCommunication( invType, expDate )) {
 				// Si tiene por tipo y fecha tiene comunicación, de permite la edición si es externa o está pendiente.
-				List<InvoiceCommunicationType> types = getCallback().getConfiguration().getCommunicationConfig().getTypes( invType, expDate );
-				for (InvoiceCommunicationType type : types ) {
+				List<CommunicationData> datas = getCallback().getConfiguration().getCommunicationConfig().getTypes( invType, expDate );
+				for (CommunicationData data : datas) {
+					InvoiceCommunicationType type = data.getCommunicationType().orElse(null); 
 					InvoiceInfo info = getWrapper().getInvoice().getInvoiceInfo( type ).orElse( null );
 					if (info != null 
 						&& info.getStatus() != null

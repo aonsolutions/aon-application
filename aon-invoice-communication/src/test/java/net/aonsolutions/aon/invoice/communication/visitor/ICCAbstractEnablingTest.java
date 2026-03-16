@@ -45,7 +45,7 @@ abstract class ICCAbstractEnablingTest extends AbstractVerifactuTest {
 		int count = getCtx().getDslContext()
 			.delete(ENTERPRISE_DATA)
 			.where(ENTERPRISE_DATA.DOMAIN.eq(getDomainId()))
-			.and(ENTERPRISE_DATA.NAME.like( InvoiceCommunicationDAO.ICC_PREFIX))
+			.and(ENTERPRISE_DATA.NAME.in( InvoiceCommunicationDAO.SUPPORTED_TYPES))
 			.execute();
 		getCtx().log().info("Configuración borrada para el dominio {0}: {1} registros eliminados", getDomainId(), count);
 		InvoiceCommunicationConfiguration icc = new InvoiceCommunicationConfiguration();

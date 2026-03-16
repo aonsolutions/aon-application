@@ -52,10 +52,12 @@ public class TbaiSigner extends XadesSigner {
     }
 	
 	private AdESPolicy getPolicyTbai(InvoiceCommunicationConfiguration icc) {
-	  	if(icc.isAraba()) {
-	   		return POLICY_TBAI_ARABA;
-	   	} else if(icc.isBizkaia()) {
-	   		return POLICY_TBAI_BIZKAIA;
-	   	} else return POLICY_TBAI_GIPUZKOA;    		
+		if (icc.isLroe()) {
+			return POLICY_TBAI_BIZKAIA;
+		} 
+		return icc.getTbaiData()
+			.filter(tbaiData -> tbaiData.isAraba())
+			.map(tbaiData -> POLICY_TBAI_ARABA)
+			.orElseGet(() -> POLICY_TBAI_GIPUZKOA);
 	}
 }

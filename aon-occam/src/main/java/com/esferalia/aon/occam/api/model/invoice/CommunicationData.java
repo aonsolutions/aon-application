@@ -16,40 +16,14 @@ import java.util.Optional;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
 import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.occam.api.model.type.ExemptType;
+import com.esferalia.aon.watson.util.AonUtils;
 
 public class CommunicationData extends EnterpriseData implements Serializable {
-
-	public enum ExemptType {
-		NO_SOFTWARE		("No utiliza sistema inform\u00E1tico de facturaci\u00F3n"),
-		NO_OBLIGATION	("Operaciones sin obligaci\u00F3n de emitir factura"),
-	    REAGP			("REAGP sin emisi\u00F3n de factura propia"),
-	    AUTHORIZATION	("Exenci\u00F3n autorizada"),
-	    ;
-
-	    private final String description;
-
-	    private ExemptType(String description) {
-	        this.description = description;
-	    }
-
-	    public String getDescription() {
-	        return description;
-	    }
-
-		public static Optional<ExemptType> safeValueOf(String cause) {
-			if (AonStringUtils.isBlank(cause)) return Optional.empty();
-			String c = AonStringUtils.trimToNull(cause);
-			return AonCollectionUtils.stream(values())
-				.filter(et -> AonStringUtils.equalsIgnoreCase(et.name(), c))
-				.findFirst();
-		}
-	}
-
+	
 	private static final long serialVersionUID = 1260028550928443004L;
 	
+	private Administration administration;
 	private boolean test;
 	private ExemptType exemptType;
 	
@@ -106,28 +80,29 @@ public class CommunicationData extends EnterpriseData implements Serializable {
 		return !test;
 	}
 	public CommunicationData setTest(boolean test) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.test, test) );
 		this.test = test;
 		return this;
 	}
 	
 	public boolean isExempt() {
-		return getExemptType() != null;
+		return getExemptType().isPresent();
 	}
-	public ExemptType getExemptType() {
-		return exemptType;
+	public Optional<ExemptType> getExemptType() {
+		return Optional.ofNullable(exemptType);
 	}
 	public CommunicationData setExemptType(ExemptType exemptType) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.exemptType, exemptType) );
 		this.exemptType = exemptType;
 		return this;
 	}
 	
 	public Optional<Administration> getAdministration() {
-		if (!isAdministration()) return Optional.empty();
-		return Optional.ofNullable(Administration.safeValueOf(getExpression()));
+		return Optional.ofNullable(this.administration);
 	}
-	public CommunicationData setAdministration(Administration admon) {
-		if (!isAdministration()) throw new AonCoreException("Only administration data can be set with this method");
-		setExpression(admon == null ? null : admon.name());
+	public CommunicationData setAdministration(Administration administration) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.administration, administration) );
+		this.administration = administration;
 		return this;
 	}
 	
@@ -137,11 +112,26 @@ public class CommunicationData extends EnterpriseData implements Serializable {
 
 	public boolean isAdministration() { return getDataName() == ICC_ADMINISTRATION; }
 	public boolean isTBai() { return getDataName() == ICC_TBAI; }
+	public boolean isNotTBai() { return getDataName() != ICC_TBAI; }
 	public boolean isLroe() { return getDataName() == ICC_LROE; }
+	public boolean isNotLroe() { return getDataName() != ICC_LROE; }
 	public boolean isSii() { return getDataName() == ICC_SII; }
+	public boolean isNotSii() { return getDataName() != ICC_SII; }
 	public boolean isVerifactu() { return getDataName() == ICC_VERIFACTU; }
+	public boolean isNotVerifactu() { return getDataName() != ICC_VERIFACTU; }
 	public boolean isNoVerifactu() { return getDataName() == ICC_NO_VERIFACTU; }
+	public boolean isNotNoVerifactu() { return getDataName() != ICC_NO_VERIFACTU; }
 	public boolean isSif() { return getDataName() == ICC_SIF; }
+	public boolean isNotSif() { return getDataName() != ICC_SIF; }
 	public boolean isNoSif() { return getDataName() == ICC_NO_SIF; }
+	public boolean isNotNoSif() { return getDataName() != ICC_NO_SIF; }
+	
+	public boolean isAraba() {return getAdministration().map(a -> a.isAraba()).orElse(false);}
+	public boolean isGipuzkoa() {return getAdministration().map(a -> a.isGipuzkoa()).orElse(false);}
+	public boolean isBizkaia() {return getAdministration().map(a -> a.isBizkaia()).orElse(false);}
+	public boolean isNavarra() {return getAdministration().map(a -> a.isNavarra()).orElse(false);}
+	public boolean isAEAT() {return getAdministration().map(a -> a.isAEAT()).orElse(false);}
+	public boolean isCanarias() {return getAdministration().map(a -> a.isCanarias()).orElse(false);}
+	
 
 }

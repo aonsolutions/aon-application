@@ -55,7 +55,7 @@ class VerifactuVentaExentaE1Test extends AbstractVerifactuTest {
 	void ventaNoActTest() throws InvoiceCommunicationException {
 		List<Invoice> invoices = AonCollectionUtils.toList(getTestInvoice());
 		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
-		VerifactuContext vc = new VerifactuContext(icc);
+		VerifactuContext vc = new VerifactuContext(icc, getEnvironment().getEnablerData(icc.getConfig()));
 		assertInvoice( vc );
 	}
 		
@@ -64,7 +64,7 @@ class VerifactuVentaExentaE1Test extends AbstractVerifactuTest {
 		Invoice facesInvoice = VerifactuTestsUtils.toFacesInvoice( getTestInvoice() );
 		List<Invoice> invoices = AonCollectionUtils.toList( facesInvoice );
 		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
-		VerifactuContext vc = new VerifactuContext(icc);
+		VerifactuContext vc = new VerifactuContext(icc, getEnvironment().getEnablerData(icc.getConfig()));
 		assertInvoice( vc );
 	}
 

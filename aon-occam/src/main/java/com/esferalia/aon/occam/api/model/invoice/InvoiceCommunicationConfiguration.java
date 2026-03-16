@@ -20,13 +20,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	private LinkedList<CommunicationData> datas = new LinkedList<>();
-	
-//	private boolean tbaiInvoice;
-//	private boolean lroeInvoice;
-//	private boolean siiInvoice;
-//	private boolean verifactuInvoice;
-//	private boolean noVerifactuInvoice;
-//	private boolean sifInvoice;
 
 	private Integer defaultCertificate;
 	private Certificate certificate;
@@ -44,6 +37,10 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		if (datas == null) this.datas = new LinkedList<>();
 		this.datas = datas;
 		return this;
+	}
+	public Stream<CommunicationData> dataStream(Date atDate) {
+		return AonCollectionUtils.stream( this.datas )
+			.filter( cc -> cc.inRange(atDate));
 	}
 	public Stream<CommunicationData> dataStream() {
 		return AonCollectionUtils.stream( this.datas );
@@ -72,49 +69,49 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	
 	
 	// [ --------------- ADMINISTRATION -----------------]
-	public Stream<CommunicationData> getAdministrationStream() {
-		return dataStream().filter( cc -> cc.isAdministration() );
-	}
-	public Optional<Administration> getAdministration() {
-		return getAdministration( new Date() );
-	}
-	public Optional<CommunicationData> getAdministrationData( Date atDate) {
-		return getAdministrationStream()
-			.filter(cc -> cc.inRange(atDate))
-			.findFirst();
-	}
-	public Optional<Administration> getAdministration( Date atDate) {
-		return getAdministrationStream()
-			.filter(cc -> cc.inRange(atDate))
-			.map(cc -> cc.getAdministration())
-			.filter(Optional::isPresent)
-			.map(Optional::get)
-			.findFirst()
-		;	
-	}
-	
-	public boolean isBizkaia() 	{return isBizkaia(new Date());}
-	public boolean isAraba() 	{return isAraba(new Date());}
-	public boolean isGipuzkoa() {return isGipuzkoa(new Date());}
-	public boolean isNavarra() 	{return isNavarra(new Date());}
-	public boolean isAEAT() 	{return isAEAT(new Date());}
-	public boolean isCanarias() {return isCanarias(new Date());}
-	public boolean isUnknown()  {return isUnknown(new Date());}
-
-	public boolean isBizkaia(Date atDate) 		{return getAdministration(atDate).filter( a -> a.isBizkaia()).isPresent();}
-	public boolean isNotBizkaia(Date atDate)	{return !isBizkaia( atDate);}
-	public boolean isAraba(Date atDate) 		{return getAdministration(atDate).filter( a -> a.isAraba()).isPresent();}
-	public boolean isNotAraba(Date atDate) 		{return !isAraba( atDate);}
-	public boolean isGipuzkoa(Date atDate) 		{return getAdministration(atDate).filter( a -> a.isGipuzkoa()).isPresent();}
-	public boolean isNotGipuzkoa(Date atDate)	{return !isGipuzkoa( atDate);}
-	public boolean isNavarra(Date atDate) 		{return getAdministration(atDate).filter( a -> a.isNavarra()).isPresent();}
-	public boolean isNotNavarra(Date atDate)	{return !isNavarra( atDate);}
-	public boolean isAEAT(Date atDate) 			{return getAdministration(atDate).filter( a -> a.isAEAT()).isPresent();}
-	public boolean isNotAEAT(Date atDate) 		{return !isAEAT( atDate);}
-	public boolean isCanarias(Date atDate) 		{return getAdministration(atDate).filter( a -> a.isCanarias()).isPresent();}
-	public boolean isNotCanarias(Date atDate)	{return !isCanarias( atDate);}
-	public boolean isUnknown(Date atDate) 		{return getAdministration(atDate).filter( a -> a.isUnknown()).isPresent() || getAdministration(atDate).isEmpty();}
-	public boolean isNoUnknown() 				{return !isUnknown(new Date());}
+//	public Stream<CommunicationData> getAdministrationStream() {
+//		return dataStream().filter( cc -> cc.isAdministration() );
+//	}
+//	public Optional<Administration> getAdministration() {
+//		return getAdministration( new Date() );
+//	}
+//	public Optional<CommunicationData> getAdministrationData( Date atDate) {
+//		return getAdministrationStream()
+//			.filter(cc -> cc.inRange(atDate))
+//			.findFirst();
+//	}
+//	public Optional<Administration> getAdministration( Date atDate) {
+//		return getAdministrationStream()
+//			.filter(cc -> cc.inRange(atDate))
+//			.map(cc -> cc.getAdministration())
+//			.filter(Optional::isPresent)
+//			.map(Optional::get)
+//			.findFirst()
+//		;	
+//	}
+//	
+//	public boolean isBizkaia() 	{return isBizkaia(new Date());}
+//	public boolean isAraba() 	{return isAraba(new Date());}
+//	public boolean isGipuzkoa() {return isGipuzkoa(new Date());}
+//	public boolean isNavarra() 	{return isNavarra(new Date());}
+//	public boolean isAEAT() 	{return isAEAT(new Date());}
+//	public boolean isCanarias() {return isCanarias(new Date());}
+//	public boolean isUnknown()  {return isUnknown(new Date());}
+//
+//	public boolean isBizkaia(Date atDate) 		{return getAdministration(atDate).filter( a -> a.isBizkaia()).isPresent();}
+//	public boolean isNotBizkaia(Date atDate)	{return !isBizkaia( atDate);}
+//	public boolean isAraba(Date atDate) 		{return getAdministration(atDate).filter( a -> a.isAraba()).isPresent();}
+//	public boolean isNotAraba(Date atDate) 		{return !isAraba( atDate);}
+//	public boolean isGipuzkoa(Date atDate) 		{return getAdministration(atDate).filter( a -> a.isGipuzkoa()).isPresent();}
+//	public boolean isNotGipuzkoa(Date atDate)	{return !isGipuzkoa( atDate);}
+//	public boolean isNavarra(Date atDate) 		{return getAdministration(atDate).filter( a -> a.isNavarra()).isPresent();}
+//	public boolean isNotNavarra(Date atDate)	{return !isNavarra( atDate);}
+//	public boolean isAEAT(Date atDate) 			{return getAdministration(atDate).filter( a -> a.isAEAT()).isPresent();}
+//	public boolean isNotAEAT(Date atDate) 		{return !isAEAT( atDate);}
+//	public boolean isCanarias(Date atDate) 		{return getAdministration(atDate).filter( a -> a.isCanarias()).isPresent();}
+//	public boolean isNotCanarias(Date atDate)	{return !isCanarias( atDate);}
+//	public boolean isUnknown(Date atDate) 		{return getAdministration(atDate).filter( a -> a.isUnknown()).isPresent() || getAdministration(atDate).isEmpty();}
+//	public boolean isNoUnknown() 				{return !isUnknown(new Date());}
 
 	// [ --------------- STREAMS -----------------]
 	public Stream<CommunicationData> getTbaiStream() 		{return dataStream().filter( cc -> cc.isTBai() );}
@@ -327,20 +324,32 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		return hasCommunication(invoiceType, new Date());
 	}
 	public boolean hasCommunication(InvoiceType invoiceType, Date expDate) {
-		return AonCollectionUtils.isNotEmpty(getTypes(invoiceType, expDate));
+		return typesStream(invoiceType, expDate)
+			.anyMatch( cc -> !cc.isNoSif() );
 	}
 	
-	public List<InvoiceCommunicationType> getTypes() {
+	public List<CommunicationData> getTypes() {
 		return getTypes(InvoiceType.SALES, new Date());
 	}
-	public List<InvoiceCommunicationType> getTypes(InvoiceType invoiceType ) {
+	public List<CommunicationData> getTypes(InvoiceType invoiceType ) {
 		return getTypes(invoiceType , new Date());
 	}
-	public List<InvoiceCommunicationType> getTypes(Date atDate) {
+	public List<CommunicationData> getTypes(Date atDate) {
 		return getTypes(InvoiceType.SALES, atDate);
 	}
-	
-	public List<InvoiceCommunicationType> getTypes(InvoiceType invoiceType ,Date atDate) {
+	public Stream<CommunicationData> typesStream() {
+		return typesStream(InvoiceType.SALES, new Date());
+	}
+	public Stream<CommunicationData> typesStream(InvoiceType invoiceType) {
+		return AonCollectionUtils.stream(getTypes(invoiceType));
+	}
+	public Stream<CommunicationData> typesStream(Date atDate) {
+		return AonCollectionUtils.stream(getTypes(atDate));
+	}
+	public Stream<CommunicationData> typesStream(InvoiceType invoiceType ,Date atDate) {
+		return AonCollectionUtils.stream(getTypes(invoiceType, atDate));
+	}
+	public List<CommunicationData> getTypes(InvoiceType invoiceType ,Date atDate) {
 		InvoiceCommunicationTypeEngine engine = new InvoiceCommunicationTypeEngine();
 		return engine.getTypes(this, invoiceType, atDate);
 	}
@@ -351,10 +360,10 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	public boolean isCertificateNeeded( InvoiceType invoiceType ) {
 		return AonCollectionUtils.stream(getTypes(invoiceType))
 			.anyMatch(t -> 
-				   t == InvoiceCommunicationType.VERIFACTU
-				|| t == InvoiceCommunicationType.LROE
-				|| t == InvoiceCommunicationType.TBAI
-				|| t == InvoiceCommunicationType.SII
+				   t.isVerifactu()
+				|| t.isLroe()
+				|| t.isTBai()
+				|| t.isSii()
 			)
 		;
 	}
@@ -376,6 +385,32 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	public Optional<CommunicationData> getData(EnterpriseDataNames name, Date atDate) {
 		if (name == EnterpriseDataNames.ICC_NO_SIF) return getNoSifData(atDate);
 		return InvoiceCommunicationType.get( name).flatMap( t -> getData(t, atDate) );
+	}
+	
+	public boolean isAraba() { return isAraba(new Date()); }
+	public boolean isAraba(Date atDate) { return dataStream(atDate).anyMatch(cc -> cc.isAraba()); }
+	public boolean isGipuzkoa() { return isGipuzkoa(new Date()); }
+	public boolean isGipuzkoa(Date atDate) { return dataStream(atDate).anyMatch( cc -> cc.isGipuzkoa()); }
+	public boolean isBizkaia() { return isBizkaia(new Date()); }
+	public boolean isBizkaia(Date atDate) { return dataStream(atDate).anyMatch( cc -> cc.isBizkaia()); }
+	public boolean isNavarra() { return isNavarra(new Date()); }
+	public boolean isNavarra(Date atDate) { return dataStream(atDate).anyMatch( cc -> cc.isNavarra()); }
+	public boolean isCanarias() { return isCanarias(new Date()); }
+	public boolean isCanarias(Date atDate) { return dataStream(atDate).anyMatch( cc -> cc.isCanarias()); }
+	public boolean isAEAT() { return isAEAT(new Date()); }
+	public boolean isAEAT(Date atDate) { return dataStream(atDate).anyMatch( cc -> cc.isAEAT()); }
+	
+	public Optional<Administration> getAdministration() {
+		return getAdministration(new Date());
+	}
+	public Optional<Administration> getAdministration(Date atDate) {
+		if (isAEAT(atDate)) return Optional.of(Administration.COMMON_TERRITORY);
+		if (isCanarias(atDate)) return Optional.of(Administration.CANARIAS);
+		if (isBizkaia(atDate)) return Optional.of(Administration.BIZKAIA);
+		if (isGipuzkoa(atDate)) return Optional.of(Administration.GIPUZKOA);
+		if (isAraba(atDate)) return Optional.of(Administration.ALAVA);
+		if (isNavarra(atDate)) return Optional.of(Administration.NAVARRA);
+		return Optional.empty();
 	}
 	
 }

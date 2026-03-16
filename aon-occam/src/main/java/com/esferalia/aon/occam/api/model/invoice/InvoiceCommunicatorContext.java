@@ -15,7 +15,6 @@ public class InvoiceCommunicatorContext {
 	
 	private final Domain domain; 
 	private final User user;
-	private ConsoleLogger logger;
 	private final Integer certificateId;
 	private final List<Invoice> invoices;
 	private InvoiceCommunicationConfiguration config;
@@ -25,6 +24,7 @@ public class InvoiceCommunicatorContext {
 	private boolean preserveRawdocOnDeletion;
 	private boolean failOnWrongValidation = true;
 	private InvoiceCommunicationQuery communicationQuery;
+	private ConsoleLogger logger;
 	
 	private static final ConsoleLogger VOID_CONSOLE_LOOGER = new ConsoleLogger() {
 
@@ -57,7 +57,6 @@ public class InvoiceCommunicatorContext {
 	public Integer getCertificateId() {
 		return certificateId;
 	}
-	
 	public Stream<Invoice> invoiceStream() {
 		return AonCollectionUtils.stream(invoices);
 	}

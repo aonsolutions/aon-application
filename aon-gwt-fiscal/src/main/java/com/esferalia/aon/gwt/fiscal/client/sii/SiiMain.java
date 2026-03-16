@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
+import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
@@ -111,7 +112,9 @@ public class SiiMain extends DockLayoutPanel {
 			public void onSuccess(InvoiceCommunicationConfiguration result) {
 				setConfiguration(result);
 				FiscalModel sii = new FiscalModel();
-				sii.setAdministration(result.getAdministration().orElse(null));
+				result.getSiiData()
+					.flatMap(CommunicationData::getAdministration)
+					.ifPresent(administration -> sii.setAdministration(administration));
 				sii.setModel(FiscalModelType.SII);
 				sii.setName(options.getConfiguration().getCompany().getName());
 				sii.setDocument(options.getConfiguration().getCompany().getDocument());

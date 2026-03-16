@@ -28,7 +28,7 @@ import { addCounter, transferCounter } from './InvoiceCounter.js';
 import { createDate, createEmail, createInput, createNumber, createSelect, createSuggestion, createTextarea } from '../../components/CreateComponent.js';
 import { getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrashPendingFromOption } from './InvoiceUtils.js';
 import { BankAccount } from '../registry/bank/BankAccount.js';
-import { InvoiceCommunicationConfiguration } from '../../models/InvoiceCommunicationConfiguration.js';
+import { InvoiceCommunicationConfig } from '../../models/InvoiceCommunicationConfig.js';
 import { AonInvoiceCommunication } from './aon-invoice-communication.js';
 
 import * as GWT from '../../gwt/gwt.js';
@@ -88,7 +88,7 @@ export class AonInvoice extends AonElement {
 
 	async connectedCallback() {
 		this.configuration = await getApiConfiguration();
-		this.icc = new InvoiceCommunicationConfiguration(this.configuration.communication);
+		this.icc = new InvoiceCommunicationConfig(this.configuration.communication);
 
 		this.initialize();
 		this.initializeFunctions();
@@ -311,13 +311,6 @@ export class AonInvoice extends AonElement {
 		if (this.getInvoice().isEmitida()) {
 			if (!this.icc.hasCommunication() && !this.icc.isNoSif()) {
 				this.showMessageError("La configuración de facturación no está completa. Por favor, revise la configuración.");
-				return false;
-			}
-
-			if (!this.icc.getAdministration().isUnknown() && (this.icc.hasCommunication() || this.icc.willBeCommunication() || this.icc.isNoSif())) {
-				return true;
-			} else {
-				this.showMessageError("La configuración de facturación no está completa. Es obligatorio selecionar una administración para la comunicación electrónica de facturas.");
 				return false;
 			}
 		}
@@ -587,16 +580,18 @@ export class AonInvoice extends AonElement {
 	}
 
 	buildCommunicationToolbar(invoiceToolbar) {
-		if (this.icc.isVerifactuTest()) {
-			let vaction = {
-				id: 'Communication_verifactu_test',
-				name: "VERIFACTUENTORNOTEST",
-				title: "VERIFACTU ENTORNO TEST",
-				icon: MATERIAL_ICONS.WARNING
-			};
-			let vtb = invoiceToolbar.addButtonTitle(vaction, () => window.alert("VERIFACTU ENTORNO TEST"));
-			vtb.getButton().style.color = "red";
-		}
+		this.icc.data
+            .filter(ed => ed.test  )
+			.forEach(ed => {
+				let vaction = {
+					id: `CommunicationTest${ed.name}`,
+					name: `ENTORNOTEST${ed.name}`,
+					title: `${ed.name} ENTORNO TEST`,
+					icon: MATERIAL_ICONS.WARNING
+				};
+				let vtb = invoiceToolbar.addButtonTitle(vaction, () => window.alert(`${ed.name} ENTORNO TEST`));
+				vtb.getButton().style.color = "red";
+			});
 
 		if (this.hasCommunicationInfo()) {
 			let ci = this.getInvoice().communicationInfo;
@@ -665,7 +660,7 @@ export class AonInvoice extends AonElement {
 
 	hasCommunicationInfo() {
 		return this.getInvoice()
-			&& this.icc.hasCommunicationByType(this.getInvoice().type)
+			&& this.icc.hasCommunication(this.getInvoice().type)
 			&& this.getInvoice().communicationInfo
 			&& Object.keys(this.getInvoice().communicationInfo).length > 0;
 	}
@@ -2742,59 +2737,58 @@ export class AonInvoice extends AonElement {
 		if (!ok) return;
 
 		if (!this.isInvofoxInvoice() && this.getInvoice().isEmitida()) this.getInvoice().setReference(undefined);
-		if (this.invoice.isEmitida() && this.icc.hasCommunication() && !this.icc.isSif() && !this.icc.isNoVerifactu()) {
+		if (this.invoice.isEmitida() && this.icc.needCertificate()) {
 			let d = this.getApplication().getDialog();
 			d.clear();
 			if (!this.isMobile()) d.width = '400px';
 			d.setTitle(MSG.ACCEPT);
 
-			if (this.icc.isTbai() || this.icc.isLroe() || this.icc.isVerifactu() || this.icc.isSii()) {
-				let certSelect = createSelect("cert", "Certificado");
-				getAeatCertificates().then(certs => {
-					certSelect.setOptions(certs.map(s => {
-						return {
-							value: s.id,
-							name: s.name
+			let certSelect = createSelect("cert", "Certificado");
+			getAeatCertificates().then(certs => {
+				certSelect.setOptions(certs.map(s => {
+					return {
+						value: s.id,
+						name: s.name
+					}
+				}));
+			});
+			d.setContent(certSelect);
+			d.addAcceptAction(() => {
+				this.getApplication().startLoader();
+				this.accept = false;
+				let data = this.getInvoice();
+				data.cert = certSelect.value;
+				data.messages = undefined;
+				acceptInvoice(data).then(r => {
+					this.updateCounter(this.getAcceptFromOption(), this.getAcceptToOption(), 1);
+					this.invoice = new Invoice(r);
+					this.getApplication().stopLoader();
+					this.reload();
+				}).catch(e => {
+					this.accept = true;
+					this.getApplication().stopLoader();
+					// this.showError(e)
+					if (typeof e === "string") {
+						try {
+							e = JSON.parse(e);
+						} catch (err) {
+							console.error("No es un JSON válido:", err);
+							return;
 						}
-					}));
-				});
-				d.setContent(certSelect);
-				d.addAcceptAction(() => {
-					this.getApplication().startLoader();
-					this.accept = false;
-					let data = this.getInvoice();
-					data.cert = certSelect.value;
-					data.messages = undefined;
-					acceptInvoice(data).then(r => {
-						this.updateCounter(this.getAcceptFromOption(), this.getAcceptToOption(), 1);
-						this.invoice = new Invoice(r);
-						this.getApplication().stopLoader();
-						this.reload();
-					}).catch(e => {
-						this.accept = true;
-						this.getApplication().stopLoader();
-						// this.showError(e)
-						if (typeof e === "string") {
-							try {
-								e = JSON.parse(e);
-							} catch (err) {
-								console.error("No es un JSON válido:", err);
-								return;
-							}
-						}
-						if (e && e.messages) {
-							if (this.invoice.messages) {
-								this.invoice.messages.push(...e.messages);
-							} else {
-								this.invoice.messages = e.messages;
-							}
-							this.reload();
+					}
+					if (e && e.messages) {
+						if (this.invoice.messages) {
+							this.invoice.messages.push(...e.messages);
 						} else {
-							this.showError(e);
+							this.invoice.messages = e.messages;
 						}
-					});
+						this.reload();
+					} else {
+						this.showError(e);
+					}
 				});
-			}
+			});
+			
 			d.open();
 		} else if (this.accept) {
 			this.getApplication().startLoader();

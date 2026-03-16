@@ -8,8 +8,6 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAdministrationVisitor;
-import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -469,10 +467,9 @@ enum ClaveRegimen {
 	
 	private DetalleType getBasic( VerifactuContext vc, InvoiceBreakdown ib ) {
 		DetalleType detalle = new DetalleType();
-		TipoImpuesto tipoImpuesto = vc.getConfig().getAdministration()
-			.filter( a -> a == Administration.CANARIAS )
-			.map(a -> TipoImpuesto.IGIC)
-			.orElse(TipoImpuesto.IVA);
+		TipoImpuesto tipoImpuesto = vc.getEnablerData().isCanarias()
+			?TipoImpuesto.IGIC
+			:TipoImpuesto.IVA;
 		detalle.setImpuesto(tipoImpuesto.getValue());
 		detalle.setClaveRegimen( this.getValue() );
 		detalle.setBaseImponibleOimporteNoSujeto(VerifactuUtils.toString(ib.getBase()));

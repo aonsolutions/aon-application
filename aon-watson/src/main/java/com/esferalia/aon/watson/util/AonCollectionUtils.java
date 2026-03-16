@@ -159,4 +159,14 @@ public class AonCollectionUtils {
 	    }
 	    return result;
 	}
+
+	public static <T> boolean in(T[] array, T t) {
+		if (array == null) return false;
+		return AonCollectionUtils.stream(array)
+			.anyMatch(e -> AonObjectUtils.equals( e, t) );
+	}
+	public static <T> boolean notIn(T[] array, T t) {
+		return !in(array, t);
+	}
+	
 }

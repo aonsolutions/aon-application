@@ -106,11 +106,9 @@ public class EnterpriseDataDAO {
 	
 	public static <T extends EnterpriseData> T setEndDate(T cc, Date endDate) {
 		Date startDate = cc.getStartDate();
-		if ( AonDateUtils.isBefore( endDate, startDate) ) {
-			cc.setDeleted(true);		
-		} else { 
-			cc.setEndDate( endDate );
-		}
+		cc.setEndDate( endDate );
+		cc.setDeleted( !AonDateUtils.isAfter( endDate, startDate) );		
+		System.out.println( "Closing data " + cc.getDataName() + " with end date " + endDate + " (start date: " + startDate + ", deleted: " + cc.isDeleted() + ")" );
 		return cc;
 	}
 	
@@ -132,7 +130,7 @@ public class EnterpriseDataDAO {
 			.returning(ENTERPRISE_DATA.ID)
 			.fetchOne()
 			.getId();
-		enterpriseData.setId(id);
+		enterpriseData.setId(id).setDirty(false);
 		ctx.log().debug("INSERT ENTERPRISE_DATA id: " + id);		
 		return enterpriseData;
 	}
@@ -153,7 +151,7 @@ public class EnterpriseDataDAO {
 		.where(ENTERPRISE_DATA.ID.eq(enterpriseData.getId()))
 		.execute();		
 		ctx.log().debug("UPDATE ENTERPRISE_DATA id: " + enterpriseData.getId());		
-		return enterpriseData;
+		return enterpriseData.setDirty(false);
 	}
 	
 	public static void delete(AONContext ctx, Integer id){

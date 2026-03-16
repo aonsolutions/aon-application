@@ -1,32 +1,36 @@
 import { AonElement } from "../../components/AonElement.js";
 import { AonDialog } from '../../components/aon-dialog.js';
-import { EVENT, MSG, TAG } from "../../environments/environments.js";
-import { EnterpriseDataNames } from "../../models/EnterpriseData.js";
+import { EVENT, MSG, TAG, CONSTANT } from "../../environments/environments.js";
+import { EnterpriseData, EnterpriseDataNames } from "../../models/EnterpriseData.js";
 import { AonBasicTable } from "../../components/aon-basic-table.js";
-import { getInvoiceCommunicationConfiguration, updateAdministration, updateNoSif
-    , updateNoVerifactu, updateVerifactu, updateSii, updateTbai, updateLroe } from "../../services/invoiceService.js";
-import { createCard, createDate, createSelect, createSwitch } from "../../components/CreateComponent.js";
+import { getInvoiceCommunicationConfig, updateICC } from "../../services/invoiceService.js";
+import { createCard, createDate, createSelect, CreateComponent } from "../../components/CreateComponent.js";
 import { InvoiceCommunicationConfig } from "../../models/InvoiceCommunicationConfig.js";
-import { Administration, ADMINISTRATIONS_WITH_UNKNOWN } from "../../models/Administration.js";
+import { Administration, ADMINISTRATIONS } from "../../models/Administration.js";
 import { ExemptType, EXEMPT_TYPES } from "../../models/ExemptType.js";
+import { AonDateUtils } from '../utils/AonDateUtils.js';
+import { AonCheckbox } from '../../components/aon-checkbox.js';
 
 export class AonInvoiceCommunicationConfig extends AonElement {
 
     /** @type {InvoiceCommunicationConfig} */ 
     icc;
-    today = new Date();
-    /** @type {AonDialog} */ 
-    dialog;
+    infoDate = new Date();
+    builders = [];
+    NO_VERIFACTU_BUILDER;
+    VERIFACTU_BUILDER;
+    SII_BUILDER;
+    TBAI_BUILDER;
+    LROE_BUILDER;
+    SIF_BUILDER;
+
+    EDIT = "edit";
+    ENABLE = "enable";
+    DISABLE = "disable";
 
     async connectedCallback() {
-        this.icc = await getInvoiceCommunicationConfiguration();
-        if (this.icc) {
-            this.icc = this.icc instanceof InvoiceCommunicationConfig
-                ? this.icc
-                : new InvoiceCommunicationConfig(this.icc);
-        }
-        await this.buildDur();
         this.initialize();
+        await this.initializeConfiguration();
         this.build();
     }
 
@@ -37,25 +41,98 @@ export class AonInvoiceCommunicationConfig extends AonElement {
         this.COMMUNICATION_CARD = this.id + 'CommunicationCard';
         this.COMMUNICATION_CARD_DIV = this.COMMUNICATION_CARD + 'Div';
         this.COMMUNICATION_CARD_TABLE = this.COMMUNICATION_CARD + 'Table';
-        this.ADMINISTRATION = this.COMMUNICATION_CARD_TABLE + 'Administration';
-        this.NO_SIF  = this.COMMUNICATION_CARD_TABLE + 'NoSIF';
-        this.NO_VERIFACTU = this.COMMUNICATION_CARD_TABLE + 'NoVerifactu';
-        this.NO_VERIFACTU_INFO = this.NO_VERIFACTU + 'Info';
-        this.VERIFACTU = this.COMMUNICATION_CARD_TABLE + 'Verifactu';
-        this.VERIFACTU_INFO = this.VERIFACTU + 'Info';
-        this.SII = this.COMMUNICATION_CARD_TABLE + 'Sii';
-        this.SII_INFO = this.SII + 'Info';
-        this.TBAI = this.COMMUNICATION_CARD_TABLE + 'Tbai';
-        this.TBAI_INFO = this.TBAI + 'Info';
-        this.LROE = this.COMMUNICATION_CARD_TABLE + 'Lroe';
-        this.LROE_INFO = this.LROE + 'Info';
+        this.COMMUNICATION_CARD_DATA_TABLE = this.COMMUNICATION_CARD + 'DataTable';
+        this.COMMUNICATION_CARD_OPTIONS_DIV = this.COMMUNICATION_CARD + 'OptionsDiv';
         this.DIALOG = this.COMMUNICATION_CARD + 'Dialog';
         this.DIALOG_TABLE = this.DIALOG + 'Table';
+        this.DIALOG_ADMINISTRATION = this.DIALOG + 'Administration';
         this.DIALOG_START_DATE = this.DIALOG_TABLE + 'StartDate';
-        this.DIALOG_EXEMPT = this.DIALOG_TABLE + 'Exempt';
+        this.DIALOG_END_DATE = this.DIALOG_TABLE + 'EndDate';
         this.DIALOG_EXEMPT_TYPE = this.DIALOG_TABLE + 'ExemptType';
+        this.DIALOG_ACCEPT_CHECK  = this.DIALOG_TABLE + 'AcceptCheck';
+    }
 
-        // this.FACTURAE = this.COMMUNICATION_CARD_TABLE + 'Facturae';
+    DATA_NAME_TO_MSG = {
+        [EnterpriseDataNames.ICC_NO_VERIFACTU] : MSG.NO_VERIFACTU,
+        [EnterpriseDataNames.ICC_VERIFACTU]    : MSG.VERIFACTU,
+        [EnterpriseDataNames.ICC_SII]          : MSG.SII,
+        [EnterpriseDataNames.ICC_TBAI]         : MSG.TICKETBAI,
+        [EnterpriseDataNames.ICC_LROE]         : MSG.LROE,
+        [EnterpriseDataNames.ICC_SIF]          : MSG.SIF,
+    };
+
+    DATA_NAME_TO_BUILDER = () => ({
+        [EnterpriseDataNames.ICC_NO_VERIFACTU] : this.NO_VERIFACTU_BUILDER,
+        [EnterpriseDataNames.ICC_VERIFACTU]    : this.VERIFACTU_BUILDER,
+        [EnterpriseDataNames.ICC_SII]          : this.SII_BUILDER,
+        [EnterpriseDataNames.ICC_TBAI]         : this.TBAI_BUILDER,
+        [EnterpriseDataNames.ICC_LROE]         : this.LROE_BUILDER,
+        [EnterpriseDataNames.ICC_SIF]          : this.SIF_BUILDER,
+    });
+
+    ACTION_TO_MSG = {
+        [this.EDIT]    : 'Editar ',
+        [this.ENABLE]  : 'Activar ',
+        [this.DISABLE] : 'Desactivar ',
+    };
+    async initializeConfiguration() {
+        this.icc = await getInvoiceCommunicationConfig();
+        if (this.icc) {
+            this.icc = this.icc instanceof InvoiceCommunicationConfig
+                ? this.icc
+                : new InvoiceCommunicationConfig(this.icc);
+        }
+        this.NO_VERIFACTU_BUILDER = {
+            name : EnterpriseDataNames.ICC_NO_VERIFACTU,
+            active : this.icc.isNoVerifactu(this.infoDate),
+            administrations: [ADMINISTRATIONS.COMMON_TERRITORY, ADMINISTRATIONS.CANARIAS],
+            optId : this.NO_VERIFACTU,
+            optMsg : MSG.NO_VERIFACTU,
+        };
+        this.VERIFACTU_BUILDER = {
+            name : EnterpriseDataNames.ICC_VERIFACTU,
+            active : this.icc.isVerifactu(this.infoDate),
+            administrations: [ADMINISTRATIONS.COMMON_TERRITORY, ADMINISTRATIONS.CANARIAS],
+            optId : this.VERIFACTU,
+            optMsg : MSG.VERIFACTU,
+        };
+        this.SII_BUILDER = {
+            name : EnterpriseDataNames.ICC_SII,
+            active : this.icc.isSii(this.infoDate),
+            administrations: [ADMINISTRATIONS.COMMON_TERRITORY, ADMINISTRATIONS.CANARIAS, ADMINISTRATIONS.ALAVA
+                , ADMINISTRATIONS.GIPUZKOA, ADMINISTRATIONS.NAVARRA],
+            optId : this.SII,
+            optMsg : MSG.SII,
+        };
+        this.TBAI_BUILDER = {
+            name : EnterpriseDataNames.ICC_TBAI,
+            active : this.icc.isTbai(this.infoDate),
+            administrations: [ADMINISTRATIONS.ALAVA, ADMINISTRATIONS.GIPUZKOA],
+            optId : this.TBAI,
+            optMsg : MSG.TICKETBAI,
+        };
+        this.LROE_BUILDER = {
+            name : EnterpriseDataNames.ICC_LROE,
+            active : this.icc.isLroe(this.infoDate),
+            administrations: [ADMINISTRATIONS.BIZKAIA],
+            optId : this.LROE,
+            optMsg : MSG.LROE,
+        };
+        this.SIF_BUILDER = {
+            name : EnterpriseDataNames.ICC_SIF,
+            active : this.icc.isSif(this.infoDate),
+            administrations: [ADMINISTRATIONS.NAVARRA],
+            optId : this.SIF,
+            optMsg : MSG.SIF,
+        };
+        this.builders = [
+            this.NO_VERIFACTU_BUILDER,
+            this.VERIFACTU_BUILDER,
+            this.SII_BUILDER,
+            this.TBAI_BUILDER,
+            this.LROE_BUILDER,
+            this.SIF_BUILDER
+        ];
     }
 
     build() {
@@ -65,273 +142,233 @@ export class AonInvoiceCommunicationConfig extends AonElement {
         div.style.width = '100%';
         this.appendChild(div);
         this.buildCard(div);
-        this.buildDialog(div);
     }
 
-    showAndReload(icc) {
+    showAndReload() {
         this.showMessage(MSG.SAVED_DATA);
-        this.reload(icc);
+        this.reload();
     }
 
     async showErrorAndReload(e) {
         this.showError(e);
-        this.icc = await getInvoiceCommunicationConfiguration();
-        if (this.icc) {
-            this.icc = this.icc instanceof InvoiceCommunicationConfig
-                ? this.icc
-                : new InvoiceCommunicationConfig(this.icc);
-        }
-        this.reload(this.icc);
+        this.reload();
     }
 
-    reload(icc) {
-        if (icc != undefined) {
-            this.icc = icc instanceof InvoiceCommunicationConfig
-                ? icc
-                : new InvoiceCommunicationConfig(icc);
-        }
+    async reload() {
+        await this.initializeConfiguration();
+        this.reloadCard();
+    }
+
+    reloadCard() {
         let parent = this.getElement(this.DIV);
         this.clearElement(parent);
         this.buildCard(parent);
-        this.buildDialog(parent);
     }
 
     buildCard(parent) {
         let card = createCard(this.COMMUNICATION_CARD, MSG.INVOICE_COMMUNICATION);
-        card.style.width = '50%';
+        card.style.width = '80%';
         parent.appendChild(card);
 
         let content = this.createElement(TAG.DIV);
         content.id = this.COMMUNICATION_CARD_DIV;
         card.setContent(content);
 
+        this.buildDataTable(content);
+
         let table = new AonBasicTable();
         table.id = this.COMMUNICATION_CARD_TABLE;
         content.appendChild(table);
-
-        this.buildAdministration(table);
-        this.buildNoSif(table);
-        this.buildNoVerifactu(table);
-        this.buildVerifactu(table);
-        this.buildSii(table);
-        this.buildTbai(table);
-        this.buildLroe(table);
-        // this.buildFacturae(table);
+        this.buildOptions( content );
     }
 
-    buildAdministration(table) {
+    buildDataTable(content) {
+        let table = new AonBasicTable();
+        table.id = this.COMMUNICATION_CARD_DATA_TABLE;
+        content.appendChild(table);
+        
         table.addRow();
-        let administration = createSelect(this.ADMINISTRATION, 'Administración en la que tributa la empresa');
-        table.addCell(administration, 2).style.height = '50px';
-        administration.setOptions(Object.values(ADMINISTRATIONS_WITH_UNKNOWN));
-        if (  this.icc.getAdministration() && this.icc.getAdministration().value) {
-            administration.setValue(this.icc.getAdministration().value);
-        } else {
-            administration.setValue(Administration.UNKNOWN);
-        }
-        administration.addEventListener(EVENT.CHANGE, () => {
-            this.icc.setAdministration( new Administration(administration.getValue()))
-            this.reload(this.icc);
+
+        let cellAdmSpan = this.createSpan();
+        cellAdmSpan.innerHTML = MSG.ADMINISTRATION;
+        let cellAdm = table.addHeaderCell(cellAdmSpan);
+        cellAdm.style.width = 'auto';
+        cellAdm.style.minWidth = '300px';
+
+        let cellComSpan = this.createSpan();
+        cellComSpan.innerHTML = MSG.COMMUNICATION;
+        let cellCom = table.addHeaderCell(cellComSpan);
+        cellCom.style.width = '300px';
+
+        let cellFromSpan = this.createSpan();
+        cellFromSpan.innerHTML = MSG.FROM;
+        let cellFrom = table.addHeaderCell(cellFromSpan);
+        cellFrom.style.width = '150px';
+
+        let cellToSpan = this.createSpan();
+        cellToSpan.innerHTML = MSG.TO;
+        let cellTo = table.addHeaderCell(cellToSpan);
+        cellTo.style.width = '150px';
+
+        let cellExemptionSpan = this.createSpan();
+        cellExemptionSpan.style.width = "150px";
+        cellExemptionSpan.innerHTML = MSG.EXEMPTION;
+        let cellExemption = table.addHeaderCell(cellExemptionSpan);
+        cellExemption.style.width = '150px';
+
+        let cellTestSpan = this.createSpan();
+        let cellTest = table.addHeaderCell(cellTestSpan);
+        cellTest.style.width = '30px';
+
+        let cellEditSpan = this.createSpan();
+        let cellEdit = table.addHeaderCell(cellEditSpan);
+        cellEdit.style.width = '20px';
+
+        this.icc?.data
+            .filter( cd => !cd.isAdministration() )
+            .forEach( cd => this.addDataRow(table, cd));
+    }
+
+    addDataRow(tab, cd) {
+        tab.addRow();
+
+        let admSpan = this.createSpan();
+        admSpan.style.whiteSpace = "nowrap";
+        admSpan.innerHTML = cd.administration.name;
+        tab.addCell(admSpan);        
+
+        let comSpan = this.createSpan();
+        comSpan.innerHTML = this.DATA_NAME_TO_MSG[cd.name] ?? cd.name;
+        tab.addCell(comSpan);        
+
+        let startDateSpan = this.createSpan();
+        startDateSpan.innerHTML = AonDateUtils.formatDate(cd.startDate);
+        tab.addCell(startDateSpan);
+        
+        let endDateSpan = this.createSpan();
+        endDateSpan.innerHTML =  cd.endDate
+            ?AonDateUtils.formatDate(cd.endDate)
+            :"En adelante";
+        tab.addCell(endDateSpan);
+
+        let exemptTypeSpan = this.createSpan();
+        exemptTypeSpan.innerHTML = cd.exemptType
+            ?cd.exemptType.name
+            :"------";
+        let cellExempt = tab.addCell(exemptTypeSpan);
+        cellExempt.style.textOverflow = "ellipsis";
+        cellExempt.style.overflow = "hidden";
+        cellExempt.style.whiteSpace = "nowrap";
+        cellExempt.style.maxWidth = "150px";
+
+
+        let testSpan  = this.createSpan();
+        testSpan.innerHTML = cd.test?`(T)`:'';
+        tab.addCell(testSpan);
+        
+        let icon = CreateComponent.createAonIconButton({
+            attributes:{
+                id:tab.id+cd.id+"Button",
+                icon:"edit",
+                title:`${MSG.EDIT}`,
+            },
+            events:{
+                click: () => {
+                    const admons = this.DATA_NAME_TO_BUILDER()[cd.name]?.administrations ?? [];
+                    this.showDialog(this.EDIT, admons, cd);
+                }
+            }
+            });
+        tab.addCell(icon);
+
+        let disableIcon = CreateComponent.createAonIconButton({
+            attributes: {
+                id: tab.id + cd.id + "DisableButton",
+                icon: "delete_sweep",
+                title: this.ACTION_TO_MSG[this.DISABLE] ,
+            },
+            events: {
+                click: () => {
+                    if (cd.endDate) {
+                        let administration = cd.administration?.value;
+                        let startDate = cd.startDate;
+                        let startDateString = startDate
+                            ?startDate.toLocaleDateString('en-CA') + 'T00:00:00.000Z'
+                            :undefined;
+                        let endDateString = cd.endDate.toLocaleDateString('en-CA') + 'T00:00:00.000Z';
+                        let payload = {
+                            action : this.DISABLE,
+                            id: cd?.id,
+                            administration : administration,
+                            name : cd.name,
+                            startDate: startDateString,
+                            endDate: endDateString,
+                            exemptType: cd.exemptType?.value
+                        };
+                        this.submitICC( payload );
+
+                    } else {
+                        const admons = this.DATA_NAME_TO_BUILDER()[cd.name]?.administrations ?? [];
+                        this.showDialog(this.DISABLE, admons, cd);
+                    }
+                }
+            }
+        });
+        tab.addCell(disableIcon);
+    }
+
+    buildOptions( content ) {
+        let optionsDiv = this.createDiv();
+        optionsDiv.id = this.COMMUNICATION_CARD_OPTIONS_DIV;
+        optionsDiv.style.marginTop = '30px';
+        content.appendChild(optionsDiv);
+        this.builders
+            .filter( builder => !builder.active )
+            .forEach( builder => this.buildOption(optionsDiv, builder));
+    }
+
+    buildOption( container, builder ) {
+        let optSpan  = this.createSpan();
+        container.appendChild(optSpan);
+        let enterpriseData = new EnterpriseData();
+        enterpriseData.name = builder.name;
+        enterpriseData.exemptType = builder.exemptType;
+        enterpriseData.startDate = new Date();
+
+        let switcher = this.createSpan( builder.optId);
+        switcher.innerHTML = "[Activar "+builder.optMsg +"]";
+        switcher.style.fontWeight = 'bold';
+        switcher.style.textDecoration = 'underline';
+        switcher.style.marginLeft = '10px';
+        switcher.style.cursor = 'pointer';
+        optSpan.appendChild(switcher);
+        switcher.addEventListener(EVENT.CLICK, () => {
+            this.showDialog( 
+                this.ENABLE,
+                builder.administrations,
+                enterpriseData
+            );
         });
     }
 
-    buildNoSif(table) {
-        table.addRow();
-        let noSifSwitch = createSwitch(this.NO_SIF, 'La empresa emite facturas oficiales con la aplicación');
-        noSifSwitch.checked = !this.icc.isNoSif(this.today);
-        noSifSwitch.addEventListener(EVENT.CHANGE, () => this.updateNoSif(noSifSwitch.isChecked(),this.today));
-        table.addCell(noSifSwitch, 2).style.height = '50px';
-    }
+    showDialog( actionToPerform, administrations, cd) {
+        let parent = this.getElement(this.DIV);
+        let dialog = this.getElement(this.DIALOG);
 
-    buildNoVerifactu(table) {
-        if (this.icc.isNoVerifactu() || this.icc.isCanarias() || this.icc.isCommonTerritory()) {
-            table.addRow();
-            let noVerifactuSwitch = createSwitch( this.NO_VERIFACTU, MSG.NO_VERIFACTU);
-            noVerifactuSwitch.checked = this.icc.isNoVerifactu(this.today);
-            table.addCell(noVerifactuSwitch).style.height = '50px';
-            noVerifactuSwitch.addEventListener(EVENT.CHANGE, () => {
-                this.showDialog( 
-                    "Opciones NO VERIFACTU",
-                    (date, exemptType) => this.updateNoVerifactu(noVerifactuSwitch.isChecked(), date, exemptType)
-                );
-            });
-            let infoDiv  = this.createElement(TAG.DIV);
-            this.icc.getNoVerifactuStream()
-                .forEach( ed => infoDiv.appendChild(this.getInfo(ed)));
-            table.addCell(infoDiv).style.height = '50px';
+        if (!dialog) {
+            dialog = new AonDialog();
+            dialog.id = this.DIALOG;
+            dialog.type = "other";
+            dialog.autoclose = false;
+            if(!this.isMobile()) dialog.width = '600px';
+            parent.appendChild(dialog);
         }
-    }
-
-    buildVerifactu(table) {
-        if (this.icc.isVerifactu() || this.icc.isCanarias() || this.icc.isCommonTerritory()) {
-            table.addRow();
-            let verifactuSwitch = createSwitch( this.VERIFACTU, MSG.VERIFACTU);
-            verifactuSwitch.checked = this.icc.isVerifactu(this.today);
-            table.addCell(verifactuSwitch).style.height = '50px';
-
-            verifactuSwitch.addEventListener(EVENT.CHANGE, () => {
-                this.showDialog( 
-                    "Opciones VERIFACTU",
-                    (date, exemptType) => this.updateVerifactu(verifactuSwitch.isChecked(), date, exemptType)
-                );
-            });
-            let infoDiv  = this.createElement(TAG.DIV);
-            this.icc.getVerifactuStream()
-                .forEach( ed => infoDiv.appendChild(this.getInfo(ed)));
-            table.addCell(infoDiv).style.height = '50px';
-        }
-    }
-
-    buildSii(table) {
-        if (this.icc.isSii() 
-         || this.icc.isAlava() 
-         || this.icc.isGipuzkoa() 
-         || this.icc.isCommonTerritory() 
-         || this.icc.isNavarra() 
-         || this.icc.isCanarias()) {
-            table.addRow();
-            let siiSwitch = createSwitch( this.SII, MSG.SII);
-            siiSwitch.checked = this.icc.isSii(this.today);
-            table.addCell(siiSwitch).style.height = '50px';
-            siiSwitch.addEventListener(EVENT.CHANGE, () => {
-                this.showDialog( 
-                    "Opciones SII",
-                    (date, exemptType) => this.updateSii(siiSwitch.isChecked(), date, exemptType)
-                );
-            });
-            let infoDiv  = this.createElement(TAG.DIV);
-            this.icc.getSiiStream()
-                .forEach( ed => infoDiv.appendChild(this.getInfo(ed)));
-            table.addCell(infoDiv).style.height = '50px';
-        }
-    }
-
-    buildTbai(table) {
-        if (this.icc.isTbai() || this.icc.isAlava() || this.icc.isGipuzkoa()) {
-            table.addRow();
-            let tbaiSwitch = createSwitch( this.TBAI, MSG.TICKETBAI);
-            tbaiSwitch.checked = this.icc.isTbai(this.today);
-            table.addCell(tbaiSwitch).style.height = '50px';
-            tbaiSwitch.addEventListener(EVENT.CHANGE, () => {
-                this.showDialog( 
-                    "Opciones Ticket Bai",
-                    (date, exemptType) => this.updateTbai(tbaiSwitch.isChecked(), date, exemptType)
-                );
-            });
-            let infoDiv  = this.createElement(TAG.DIV);
-            this.icc.getTbaiStream()
-                .forEach( ed => infoDiv.appendChild(this.getInfo(ed)));
-            table.addCell(infoDiv).style.height = '50px';
-        }
-    }
-
-    buildLroe(table) {
-        if (this.icc.isLroe() || this.icc.isBizkaia() ) {
-            table.addRow();
-            let lroeSwitch = createSwitch(this.LROE, MSG.LROE);
-            lroeSwitch.checked = this.icc.isLroe(this.today);
-            table.addCell(lroeSwitch).style.height = '50px';
-            lroeSwitch.addEventListener(EVENT.CHANGE, () => {
-                this.showDialog( 
-                    "Opciones LROE / Ticket Bai",
-                    (date, exemptType) => this.updateLroe(lroeSwitch.isChecked(), date, exemptType)
-                );
-            });
-            let infoDiv  = this.createElement(TAG.DIV);
-            this.icc.getLroeStream()
-                .forEach( ed => infoDiv.appendChild(this.getInfo(ed)));
-            table.addCell(infoDiv).style.height = '50px';
-        }
-    }
-
-    // UPDATING METHODS
-    getInfo(data) {
-        let infoDiv  = this.createElement(TAG.DIV);
-        infoDiv.style.fontStyle = 'italic';
-        if (data.isTest()) {
-            infoDiv.innerHTML = `[TEST] `;
-        }
-        let startDate = data.startDate;
-        if (startDate) {
-            infoDiv.innerHTML += `Desde: ${startDate.toLocaleDateString()}`;
-        }
-        if (infoDiv.innerHTML) {
-            infoDiv.innerHTML += ' - ';
-        }
-        let endDate = data.endDate;
-        if (endDate) {
-            infoDiv.innerHTML += `Hasta: ${endDate.toLocaleDateString()}`;
-        } else {
-            infoDiv.innerHTML += 'En adelante';
-        }
-        return infoDiv;
-    }
-
-    payload( checked, enterpriseDataName, date ) {
-        console.log("Tipo de cheked " + typeof checked);
-        let action = checked ? 'enable' : 'disable';
-        let payload = {
-            action : action,
-            name: enterpriseDataName,
-            date: date,
-            administration: this.icc?.getAdministration()?.value
-        };
-        console.log("PAYLOAD --> ", JSON.stringify(payload));
-        return payload;
-    }
-
-    updateAdministration(checked, date) { 
-        updateAdministration(this.payload( checked, EnterpriseDataNames.ADMINISTRATION, date ))
-            .then( icc => this.showAndReload(icc))
-            .catch( e => this.showErrorAndReload(e));
-    }
-
-    updateNoSif(checked, date) { 
-        updateNoSif(this.payload( checked, EnterpriseDataNames.NO_SIF, date ))
-            .then( icc => this.showAndReload(icc))
-            .catch( e => this.showErrorAndReload(e));
-    }
-
-    updateNoVerifactu(checked, date) { 
-        updateNoVerifactu(this.payload( checked, EnterpriseDataNames.NO_VERIFACTU, date ))
-            .then( icc => this.showAndReload(icc))
-            .catch( e => this.showErrorAndReload(e));
-    }
-
-    updateVerifactu(checked, date) { 
-        updateVerifactu(this.payload( checked, EnterpriseDataNames.VERIFACTU, date ))
-            .then( icc => this.showAndReload(icc))
-            .catch( e => this.showErrorAndReload(e));
-    }
-    updateSii(checked, date) {
-        updateSii   (this.payload( checked, EnterpriseDataNames.SII, date ))
-            .then( icc => this.showAndReload(icc))
-            .catch( e => this.showErrorAndReload(e));
-    }
-
-    updateTbai(checked, date) { 
-        updateTbai(this.payload( checked, EnterpriseDataNames.TBAI, date ))
-            .then( icc => this.showAndReload(icc))
-            .catch( e => this.showErrorAndReload(e));
-    }
-
-    updateLroe(checked, date) { 
-        updateLroe(this.payload( checked, EnterpriseDataNames.LROE, date ))
-            .then( icc => this.showAndReload(icc))
-            .catch( e => this.showError(e));
-    }
-
-    buildDialog( parent ) {
-        this.dialog = new AonDialog();
-        this.dialog.id = this.DIALOG;
-        this.dialog.type = "other";
-        if(!this.isMobile()) this.dialog.width = '600px';
-        parent.appendChild(this.dialog);
+        dialog.clear();
 
         let div = this.createElement(TAG.DIV);
         div.style.margin = '15px';
 
-        this.dialog.setContent(div);
+        dialog.setContent(div);
 
 		let aviso = this.createDiv();
 		aviso.style.backgroundColor = '#fde400ff';
@@ -346,36 +383,125 @@ export class AonInvoiceCommunicationConfig extends AonElement {
         div.appendChild(tab);
         
         tab.addRow();
+        let administration = createSelect(this.DIALOG_ADMINISTRATION, 'Administración en la que tributa la empresa');
+        tab.addCell(administration);
+        administration.setOptions(administrations);
+        let admon = cd.administration?.value;
+        if (!admon) {
+            if (this.icc.isAlava(this.infoDate)) admon = ADMINISTRATIONS.ALAVA.value;
+            else if (this.icc.isGipuzkoa(this.infoDate)) admon = ADMINISTRATIONS.GIPUZKOA.value;
+            else if (this.icc.isBizkaia(this.infoDate)) admon = ADMINISTRATIONS.BIZKAIA.value;
+            else if (this.icc.isNavarra(this.infoDate)) admon = ADMINISTRATIONS.NAVARRA.value;
+            else if (this.icc.isCanarias(this.infoDate)) admon = ADMINISTRATIONS.CANARIAS.value;
+            else if (this.icc.isCommonTerritory(this.infoDate)) admon = ADMINISTRATIONS.COMMON_TERRITORY.value;
+        }
+        if (admon && administrations.some( a => a.value === admon )) {
+            administration.setValue(admon);
+        }
+        administration.addEventListener(EVENT.CHANGE, () => {
+            cd.administration = new Administration(administration.getValue());
+            dialog.setTitle(this.getDialogTitle( actionToPerform, cd));
+        });
+
+        tab.addRow();
         let startDate  = createDate( this.DIALOG_START_DATE, MSG.FROM);
-        startDate.setDate(this.today);
+        if (this.EDIT === actionToPerform) {
+            startDate.setDate(cd.startDate);
+        } else {
+            startDate.setDate(this.infoDate);
+        }
         tab.addCell(startDate)
         
+        if (this.DISABLE === actionToPerform || this.EDIT === actionToPerform) {
+            tab.addRow();
+            let endDate  = createDate( this.DIALOG_END_DATE, MSG.TO);
+            endDate.setDate(cd.endDate);
+            tab.addCell(endDate);
+        }
+
+        let exemptTypeSelect = createSelect(this.DIALOG_EXEMPT_TYPE, 'Causa de la exención');
+
         tab.addRow();
-        let exempt = createSwitch(this.DIALOG_EXEMPT, MSG.EXEMPT);
-        let exemptType = createSelect(this.DIALOG_EXEMPT_TYPE, 'Causa de la exención');
-        exempt.addEventListener(EVENT.CHANGE, () => {
-            exemptType.disabled = !exempt.checked;
-            if (!exempt.checked) {
-                exemptType.setValue(ExemptType.EMPTY.value);
-            }
+        tab.addCell(exemptTypeSelect, 2).style.height = '50px';
+        exemptTypeSelect.setOptions(Object.values(EXEMPT_TYPES));
+        exemptTypeSelect.setValue(cd.exemptType?.value ?? EXEMPT_TYPES.EMPTY.value);
+        exemptTypeSelect.addEventListener(EVENT.CHANGE, () => {
+            cd.exemptType = new ExemptType(exemptTypeSelect.getValue());
+            dialog.setTitle(this.getDialogTitle( actionToPerform, cd));
         });
 
-        tab.addCell(exempt);
-
-        tab.addRow();
-        tab.addCell(exemptType, 2).style.height = '50px';
-        exemptType.setOptions(Object.values(EXEMPT_TYPES));
-    }
- 
-    showDialog( title, callback ) {
-        this.dialog.setTitle(title);
-        this.dialog.addCancelAction(() => this.reload());
-        this.dialog.addAcceptAction(() => {
+        dialog.setTitle(this.getDialogTitle(actionToPerform, cd));
+        dialog.addCancelAction(() => this.reload());
+        dialog.addAcceptAction(() => {
+            let administration = this.getElement(this.DIALOG_ADMINISTRATION).value;
             let date = this.getElement(this.DIALOG_START_DATE).date;
-            let exemptType = this.getElement(this.DIALOG_EXEMPT_TYPE).value;
-            callback(date, exemptType);
+            let startDateString = date
+                ?date.toLocaleDateString('en-CA') + 'T00:00:00.000Z'
+                :undefined;
+            let endDate = (this.DISABLE === actionToPerform || this.EDIT === actionToPerform) 
+                ? this.getElement(this.DIALOG_END_DATE).date 
+                : undefined;
+            let endDateString = endDate
+                ?endDate.toLocaleDateString('en-CA') + 'T00:00:00.000Z'
+                :undefined;
+            let exemptType = new ExemptType(this.getElement(this.DIALOG_EXEMPT_TYPE).value);
+            let payload = {
+                action : actionToPerform,
+                id: cd?.id,
+                administration : administration,
+                name : cd.name,
+                startDate: startDateString,
+                endDate: endDateString,
+                exemptType: exemptType?.value
+            };
+            this.submitICC(payload);
         });
-        this.dialog.open();
+        dialog.getButtonAccept().disabled = true;
+
+        let conditions = this.createDiv();
+        div.appendChild(conditions);
+        let table = new AonBasicTable();
+        table.style.top = '20px';
+        table.style.position = 'relative';
+        conditions.appendChild(table);
+        table.addRow();
+
+        let checkBox = new AonCheckbox();
+        checkBox.id = this.DIALOG_ACCEPT_CHECK;
+        let td = table.addCell(checkBox)
+        checkBox.addEventListener(EVENT.CHANGE, () => {
+            dialog.getButtonAccept().disabled = !checkBox.isChecked();
+        });
+        td.style.width = '15px';
+        let span3 = this.createElement(TAG.SPAN);
+        span3.innerHTML = 'He leido y acepto las <a target="_blank" class="aonLink" href="http://aonsolutions.es/docs/aon_condiciones_generales_del_contrato.pdf">CONDICIONES GENERALES</a> del contrato de licencia de software y los términos <a target="_blank" class="aonLink" href="https://aonsolutions.es/docs/Aon-Declaracion%20Responsable%20VeriFactu.pdf">DECLARACIÓN RESPONSABLE del SIF</a> (Sistema Informático de facturación)';
+        table.addCell(span3);
+
+        dialog.open();
+    }
+
+    getDialogTitle(actionToPerform, enterpriseData) {
+        let title = (this.ACTION_TO_MSG[actionToPerform] ?? '')
+            + (this.DATA_NAME_TO_MSG[enterpriseData.name] ?? '');
+        title = title.toUpperCase();
+        if (enterpriseData.isExempt()) {
+            title = `${title} con exención`;
+        }
+        let adm = new Administration( enterpriseData.administration?.value );
+        if (adm && adm.name) {
+            title += ` en ${adm.name}`;
+        }
+        return title;
+    }
+
+    // ---------------------------------------
+    // ----------------- [ ENABLE METHODS ] --
+    // ---------------------------------------    
+    submitICC(payload) { 
+        console.log("Payload a enviar: ", payload);
+        updateICC(payload)
+            .then( icc => this.showAndReload())
+            .catch( e => this.showErrorAndReload(e));
     }
 }
 

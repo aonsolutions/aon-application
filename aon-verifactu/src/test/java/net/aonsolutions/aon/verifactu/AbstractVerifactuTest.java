@@ -24,10 +24,12 @@ import org.junit.platform.commons.logging.LoggerFactory;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationPhaseListener;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.mysql.cj.jdbc.Driver;
@@ -246,4 +248,12 @@ public abstract class AbstractVerifactuTest {
 	protected String getUser() {
 		return getEnvironment().getUser();
 	}
+	
+	protected CommunicationData getCD(Administration admon) {
+		return new CommunicationData()
+			.setDomain( getDomainId() )
+			.setAdministration( admon )
+		;
+	}	
+	
 }

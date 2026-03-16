@@ -56,7 +56,7 @@ class VerifactuVentaNacionalSimpleCriterioCajaTest extends AbstractVerifactuTest
 	void ventaNoActTest() throws InvoiceCommunicationException {
 		List<Invoice> invoices = AonCollectionUtils.toList( getTestInvoice() );
 		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
-		VerifactuContext vc = new VerifactuContext(icc);
+		VerifactuContext vc = new VerifactuContext(icc, getEnvironment().getEnablerData(icc.getConfig()));
 		assertInvoice( vc );
 	}
 		
@@ -67,7 +67,7 @@ class VerifactuVentaNacionalSimpleCriterioCajaTest extends AbstractVerifactuTest
 		invoice.setActivity(InvoiceTypes.getActivityGeneral(getEnvironment().getCtx(), getEnvironment().getDomainId()));
 		invoices.add( invoice );
 		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
-		VerifactuContext vc = new VerifactuContext(icc);
+		VerifactuContext vc = new VerifactuContext(icc, getEnvironment().getEnablerData(icc.getConfig()));
 		assertInvoice( vc );
 	}
 	
@@ -76,7 +76,7 @@ class VerifactuVentaNacionalSimpleCriterioCajaTest extends AbstractVerifactuTest
 		Invoice facesInvoice = VerifactuTestsUtils.toFacesInvoice( getTestInvoice() );
 		List<Invoice> invoices = AonCollectionUtils.toList( facesInvoice );
 		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
-		VerifactuContext vc = new VerifactuContext(icc);
+		VerifactuContext vc = new VerifactuContext(icc, getEnvironment().getEnablerData(icc.getConfig()));
 		assertInvoice( vc );
 	}
 

@@ -1,3 +1,5 @@
+import { Administration, ADMINISTRATIONS } from "./Administration.js";
+import { EXEMPT_TYPES, ExemptType } from "./ExemptType.js";
 
 export const EnterpriseDataNames = Object.freeze({
 	ICC_ADMINISTRATION: 'ICC_ADMINISTRATION',
@@ -18,10 +20,15 @@ export class EnterpriseData {
     id; // Integer
     domain; // Integer
     enterprise; // Integer
+    /** @type {Administration} */
+    administration; 
     name; // String
     expression; // String 
     startDate; // Date
     endDate; // Date
+    test; // boolean
+    /** @type {ExemptType} */
+    exemptType;
 
     updated; // boolean 
 
@@ -35,6 +42,34 @@ export class EnterpriseData {
             this.startDate = data.startDate ? new Date(data.startDate) : undefined;
             this.endDate = data.endDate ? new Date(data.endDate) : undefined;
             this.updated = data.updated || false;
+            this.exemptType = EXEMPT_TYPES.EMPTY;           
+            this.administration = ADMINISTRATIONS.UNKNOWN;
+            
+            try {
+                let exprObj = JSON.parse(this.expression);
+                if (exprObj) {
+                    this.administration = exprObj.administration
+                        ? new Administration(exprObj.administration)
+                        : ADMINISTRATIONS.UNKNOWN;
+                    this.exemptType = exprObj.exemptType
+                        ? new ExemptType(exprObj.exemptType)
+                        : EXEMPT_TYPES.EMPTY;
+                    this.test = exprObj.test === true;
+                }
+
+            } catch (e) {
+                if (this.isAdministration()) {
+                    this.administration = this.expression
+                        ? new Administration(this.expression)
+                        : ADMINISTRATIONS.UNKNOWN;
+                } else if ("test" === this.expression) {
+                    this.test = true;
+                } else {
+                    this.test = false;
+                }
+            }
+
+
         }
     }
 
@@ -46,23 +81,11 @@ export class EnterpriseData {
 		;
     }
 
-    getExpressionObject() {
-        try {
-            return JSON.parse(this.expression);
-        } catch (e) {
-            if ("test" === this.expression) {
-                return {"test": true};
-            } else {
-                return {"test": false};
-            }
-        }
+    isExempt() {
+        return this.exemptType === null || this.exemptType?.name === EXEMPT_TYPES.EMPTY.name;
     }
-
-    isTest() {
-        let expr = this.getExpressionObject();
-        return expr.test === true;
-    }
-
+    
+    isAdministration() { return this.name === EnterpriseDataNames.ICC_ADMINISTRATION; }
     isNoSif() { return this.name === EnterpriseDataNames.ICC_NO_SIF; }
     isLroe() { return this.name === EnterpriseDataNames.ICC_LROE; }
     isSif() { return this.name === EnterpriseDataNames.ICC_SIF; }
@@ -73,5 +96,13 @@ export class EnterpriseData {
     isVerifactu() { return this.name === EnterpriseDataNames.ICC_VERIFACTU; }
     isNoVerifactu() { return this.name === EnterpriseDataNames.ICC_NO_VERIFACTU; }
     isFacturae() { return this.name === EnterpriseDataNames.ICC_FACTURAE; }
+
+    isCommonTerritory() { return this.administration?.name === ADMINISTRATIONS.COMMON_TERRITORY.name; }
+    isCanarias() { return this.administration?.name === ADMINISTRATIONS.CANARIAS.name; }
+    isAlava() { return this.administration?.name === ADMINISTRATIONS.ALAVA.name; }
+    isBizkaia() { return this.administration?.name === ADMINISTRATIONS.BIZKAIA.name; }
+    isGipuzkoa() { return this.administration?.name === ADMINISTRATIONS.GIPUZKOA.name; }
+    isNavarra() { return this.administration?.name === ADMINISTRATIONS.NAVARRA.name; }
+    isUnknown() { return this.administration?.name === ADMINISTRATIONS.UNKNOWN.name; }
 
 }

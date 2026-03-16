@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
+import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
@@ -42,8 +43,8 @@ public class NOVERIFACTU {
 	// ************************************************ [ACCEPT] ****
 	// **************************************************************
 	
-	public static VerifactuContext accept(AONContext ctx, InvoiceCommunicatorContext invoiceCommunicatorContext, InvoiceCommunicationPhaseListener phase) throws InvoiceCommunicationException {
-		VerifactuContext vc = new VerifactuContext( invoiceCommunicatorContext )
+	public static VerifactuContext accept(AONContext ctx, InvoiceCommunicatorContext invoiceCommunicatorContext, CommunicationData enablerData, InvoiceCommunicationPhaseListener phase) throws InvoiceCommunicationException {
+		VerifactuContext vc = new VerifactuContext( invoiceCommunicatorContext, enablerData )
 			.setBlockchain( VERIFACTU.getBlockchain(ctx) )
 			.setOperation(InvoiceCommunicationOperation.REGISTER)
 		;
@@ -97,8 +98,8 @@ public class NOVERIFACTU {
 	// **************************************************************
 	// ************************************************ [CANCEL] ****
 	// **************************************************************
-	public static VerifactuContext cancel(AONContext ctx, InvoiceCommunicatorContext invoiceCommunicatorContext) throws InvoiceCommunicationException {
-		VerifactuContext vc = new VerifactuContext( invoiceCommunicatorContext )
+	public static VerifactuContext cancel(AONContext ctx, InvoiceCommunicatorContext invoiceCommunicatorContext, CommunicationData enablerData) throws InvoiceCommunicationException {
+		VerifactuContext vc = new VerifactuContext( invoiceCommunicatorContext, enablerData )
 			.setBlockchain( VERIFACTU.getBlockchain(ctx) )
 			.setOperation(InvoiceCommunicationOperation.ANNULMENT);
 		return cancel(ctx, vc);

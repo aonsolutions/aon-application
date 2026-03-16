@@ -32,7 +32,6 @@ import org.w3c.dom.NodeList;
 
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
@@ -48,12 +47,9 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataRequestDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
@@ -83,9 +79,6 @@ class VerifactuInvoiceCommunicationCancelTest extends AbsInvoiceCommunicationCan
 
 	@Override 
 	protected void save(Invoice invoice) throws InvoiceCommunicationException {
-		Domain domain = DomainDAO.getDomain(getEnvironment().getCtx(), getEnvironment().getDomainId());
-		User user = UserDAO.get(getEnvironment().getCtx(), getEnvironment().getDomainId(), getEnvironment().getUser())
-			.orElseThrow(() -> new IllegalStateException("User not found: " + getEnvironment().getUser()));
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
 		InvoiceCommunicatorContext cc = getEnvironment().getInvoiceCommunicatorContextWithCertificate( invoices ); 
 		InvoiceCommunicator.acceptInvoice(cc);

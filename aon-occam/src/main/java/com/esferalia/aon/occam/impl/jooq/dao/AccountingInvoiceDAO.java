@@ -57,7 +57,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -853,20 +852,20 @@ public class AccountingInvoiceDAO {
 			InvoiceCommunicationConfiguration icc = config.getCommunicationConfig();
 			if (icc.hasCommunication( invoice.getType() )) {
 				AonCollectionUtils.stream( icc.getTypes(invoice.getType()) )
-					.filter( t -> invoice.isSales() 
+					.filter( cd -> invoice.isSales() 
 						|| (!invoice.isSales()
-							&& t != InvoiceCommunicationType.VERIFACTU
-							&& t != InvoiceCommunicationType.NO_VERIFACTU
-							&& t != InvoiceCommunicationType.TBAI
-							&& t != InvoiceCommunicationType.LROE
-							&& t != InvoiceCommunicationType.SII
+							&& cd.isNotVerifactu()
+							&& cd.isNotNoVerifactu()
+							&& cd.isNotTBai()
+							&& cd.isNotLroe()
+							&& cd.isNotSii()
 						   )
 					)
-					.map( t -> new InvoiceInfo()
+					.map( cd -> new InvoiceInfo()
 						.setDomain( invoice.getDomain() )
 						.setInvoice( invoice.getId() )
-						.setType( t )
 						.setStatus( InvoiceCommunicationStatus.EXTERNALLY_COMMUNICATED ) 
+						.setType( cd.getCommunicationType().orElse(null))
 					)
 					.forEach( info -> InvoiceInfoDAO.save(ctx, info) )
 				;

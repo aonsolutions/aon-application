@@ -1,11 +1,12 @@
-import { TAG } from '../../environments/environments.js'; 
-import { AonSuiteMenu } from '../aon-suite-menu.js';
-import { isPersonaFisica } from '../../services/documentUtils.js';
+import { TAG } from '../../environments/environments.js';
+import { InvoiceCommunicationConfig } from '../../models/InvoiceCommunicationConfig.js';
 import { getCompany } from '../../services/companyService.js';
+import { isPersonaFisica } from '../../services/documentUtils.js';
 import { getInvoiceConfiguration } from '../../services/invoiceService.js';
-import { InvoiceCommunicationConfiguration } from '../../models/InvoiceCommunicationConfiguration.js';
+import { AonSuiteMenu } from '../aon-suite-menu.js';
 
 import * as GWT from '../../gwt/gwt.js';
+import { Administration, ADMINISTRATIONS } from '../../models/Administration.js';
 
 export class AonFiscalMenu extends AonSuiteMenu {
 
@@ -40,7 +41,10 @@ export class AonFiscalMenu extends AonSuiteMenu {
  
     async initInvoiceConfiguration() {
         let c = await getInvoiceConfiguration();
-        this.icc = new InvoiceCommunicationConfiguration(c.communication);
+        this.icc = new InvoiceCommunicationConfig(c.communication);
+        this.administration = c.administration
+            ? new Administration(c.administration)
+            : ADMINISTRATIONS.COMMON_TERRITORY;
     }
 
     async fiscalInitialize() {
@@ -70,8 +74,8 @@ export class AonFiscalMenu extends AonSuiteMenu {
 		await this.initInvoiceConfiguration();
         this.options = [{
             title: 'IVA AEAT',
-            visible: this.icc?.isCommonTerritory() || this.icc?.isCanarias(),
-            disabled: !(this.icc?.isCommonTerritory() || this.icc?.isCanarias()),
+            visible: this.administration.isCommonTerritory() || this.administration.isCanarias() || this.administration.isUnknown(),
+            disabled: !(this.administration.isCommonTerritory() || this.administration.isCanarias() || this.administration.isUnknown()),
             options: [{
                 description: "Modelo 303 ",
                 title: "IVA Autoliquidación",
@@ -101,8 +105,8 @@ export class AonFiscalMenu extends AonSuiteMenu {
             filter: () => this.isNotDomainManagementAvailable()
         }, {
             title: 'IRPF AEAT',
-            visible: this.icc?.isCommonTerritory() || this.icc?.isCanarias(),
-            disabled: !(this.icc?.isCommonTerritory() || this.icc?.isCanarias()),
+            visible: this.administration.isCommonTerritory() || this.administration.isCanarias() || this.administration.isUnknown(),
+            disabled: !(this.administration.isCommonTerritory() || this.administration.isCanarias() || this.administration.isUnknown()),
             options: [{
                 description: "Modelo 111 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, permios y determinadas ganancias patrimoniales e imputaciones de renta",
@@ -135,8 +139,8 @@ export class AonFiscalMenu extends AonSuiteMenu {
             filter: () => this.isNotDomainManagementAvailable()
         }, {
             title: 'AEAT',
-            visible: this.icc?.isCommonTerritory() || this.icc?.isCanarias(),
-            disabled: !(this.icc?.isCommonTerritory() || this.icc?.isCanarias()),
+            visible: this.administration.isCommonTerritory() || this.administration.isCanarias() || this.administration.isUnknown(),
+            disabled: !(this.administration.isCommonTerritory() || this.administration.isCanarias() || this.administration.isUnknown()),
             options: [{
                 description: "Modelo 130 ",
                 description2: " |Profes./Empresar.",
@@ -161,8 +165,8 @@ export class AonFiscalMenu extends AonSuiteMenu {
             filter: () => this.isNotDomainManagementAvailable()
         }, {
             title: 'IVA Forales',
-            visible: this.icc?.isAlava()  || this.icc?.isGipuzkoa() || this.icc?.isBizkaia(),
-            disabled: !(this.icc?.isAlava()  || this.icc?.isGipuzkoa() || this.icc?.isBizkaia()),
+            visible: this.administration.isAlava()  || this.administration.isGipuzkoa() || this.administration.isBizkaia() || this.administration.isUnknown(),
+            disabled: !(this.administration.isAlava()  || this.administration.isGipuzkoa() || this.administration.isBizkaia() || this.administration.isUnknown()),
             options: [{
                 description: "Modelo 303 ",
                 description2: " |320 Gipuzkoa",
@@ -183,14 +187,14 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
-                disabled: !this.icc?.isSii(),
+                disabled: !this.icc?.hasSiiHistory(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()
         }, {
             title: 'IRPF Forales',
-            visible: this.icc?.isAlava()  || this.icc?.isGipuzkoa() || this.icc?.isBizkaia(),
-            disabled: !(this.icc?.isAlava()  || this.icc?.isGipuzkoa() || this.icc?.isBizkaia()),
+            visible: this.administration.isAlava()  || this.administration.isGipuzkoa() || this.administration.isBizkaia() || this.administration.isUnknown(),
+            disabled: !(this.administration.isAlava()  || this.administration.isGipuzkoa() || this.administration.isBizkaia() || this.administration.isUnknown()),
             options: [{
                 description: "Modelo 110/111 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
@@ -223,24 +227,24 @@ export class AonFiscalMenu extends AonSuiteMenu {
             filter: () => this.isNotDomainManagementAvailable()
         }, {
             title: 'LROE Bizkaia',
-            visible: this.icc?.isBizkaia(),
-            disabled: !this.icc?.isBizkaia(),
+            visible: this.administration.isBizkaia() || this.administration.isUnknown(),
+            disabled: !(this.administration.isBizkaia() || this.administration.isUnknown()),
             options: [{
                 description: "Modelo 140 ",
                 title: "Libro-registro de operaciones económicas de personas físicas",
-                disabled: !this.icc?.isLroe() || !isPersonaFisica(this.company.document),
+                disabled: !this.icc?.hasLroeHistory() || !isPersonaFisica(this.company.document),
                 action: () => GWT.iLoad(GWT.MODEL_140)
             }, {
                 description: "Modelo 240 ",
                 tite: "Libro-registro de operaciones económicas de sociedades",
-                disabled: !this.icc?.isLroe() || isPersonaFisica(this.company.document),
+                disabled: !this.icc?.hasLroeHistory() || isPersonaFisica(this.company.document),
                 action: () => GWT.iLoad(GWT.MODEL_240)
             }],
             filter: () => this.isNotDomainManagementAvailable()
         }, {
             title: 'IVA Navarra',
-            visible: this.icc?.isNavarra(),
-            disabled: !this.icc?.isNavarra(),
+            visible: this.administration.isNavarra() || this.administration.isUnknown(),
+            disabled: !(this.administration.isNavarra() || this.administration.isUnknown()),
             options: [{
                 description: "Modelo F69 ",
                 title: "Autoliquidación",
@@ -260,14 +264,14 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
-                // disabled: !this.icc?.isSii(),
+                disabled: !this.icc?.hasSiiHistory(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()
         }, {
             title: 'IRPF Navarra',
-            visible: this.icc?.isNavarra(),
-            disabled: !this.icc?.isNavarra(),
+            visible: this.administration.isNavarra() || this.administration.isUnknown(),
+            disabled: !(this.administration.isNavarra() || this.administration.isUnknown()),
             options: [{
                 description: "Modelo 745/715 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
@@ -300,8 +304,8 @@ export class AonFiscalMenu extends AonSuiteMenu {
             filter: () => this.isNotDomainManagementAvailable()
         }, {
             title: 'IGIC Canarias',
-            visible: this.icc?.isCanarias(),
-            disabled: !this.icc?.isCanarias(),
+            visible: this.administration.isCanarias() || this.administration.isUnknown(),
+            disabled: !(this.administration.isCanarias() || this.administration.isUnknown()),
             options: [{
                 description: "Modelo 420/417 ",
                 title: "IGIC Autoliquidación",

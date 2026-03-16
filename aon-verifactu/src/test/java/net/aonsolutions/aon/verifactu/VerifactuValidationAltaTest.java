@@ -64,7 +64,7 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 		invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
 		InvoiceCommunicatorContext icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
-		VerifactuContext vc = new VerifactuContext(icc);
+		VerifactuContext vc = new VerifactuContext(icc, getEnvironment().getEnablerData(icc.getConfig()));
 		if (completeIcc != null) {
 			completeIcc.complete(icc);
 		}

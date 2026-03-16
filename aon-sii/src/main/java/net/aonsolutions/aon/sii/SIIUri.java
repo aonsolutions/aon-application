@@ -1,7 +1,9 @@
 package net.aonsolutions.aon.sii;
 
+import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 public class SIIUri {
 
@@ -152,9 +154,10 @@ public class SIIUri {
 	}
 	
 	public String getURI(InvoiceCommunicationConfiguration icc, SIIType type) {
-		return icc.getSiiData()
-			.filter( sd -> sd.isTest() )
-			.map( sd -> getURIPruebas(type, sd.getAdministration().orElse( null )) )
-			.orElse(getURI(type, icc.getAdministration().orElse( null )));
+		CommunicationData cd = icc.getSiiData().orElseThrow( () -> new AonCoreException("No se han podido obtener los datos de SII") );
+		if (cd.isTest()) {
+			return getURIPruebas(type, cd.getAdministration().orElse( null ));
+		}  
+		return getURI(type, cd.getAdministration().orElse( null ));
 	}
 }

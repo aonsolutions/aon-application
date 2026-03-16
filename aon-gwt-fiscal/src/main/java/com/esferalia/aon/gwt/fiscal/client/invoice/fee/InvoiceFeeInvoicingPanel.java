@@ -191,7 +191,9 @@ class InvoiceFeeInvoicingPanel extends DockLayoutPanel implements Focusable {
 				
 				StringBuilder desc = new StringBuilder(AON.MSG.communicateInvoices());
 				desc.append(" ");
-				AonCollectionUtils.stream(icc.getTypes())
+				icc.typesStream()
+					.map( t -> t.getCommunicationType() )
+					.flatMap( Optional::stream )
 					.forEach( t -> {
 						if (desc.length() > 0) desc.append(", ");
 						desc.append("[");

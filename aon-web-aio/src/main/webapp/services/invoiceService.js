@@ -12,16 +12,8 @@ export const getPrintInvoiceConfiguration = (data) =>  get(`${API_URL}/invoice/p
 export const savePrintInvoiceConfiguration = (data) =>  post(`${API_URL}/invoice/print_configuration`, data);
 
 // INVOICE COMMUNICATION
-export const getInvoiceCommunicationConfiguration = (data) =>  get(`${API_URL}/invoice/communication_configuration`, data);
-
-export const updateAdministration = (data) =>  post(`${API_URL}/invoice/updateAdministration`, data);
-export const updateNoSif = (data) =>  post(`${API_URL}/invoice/updateNoSif`, data);
-export const updateNoVerifactu = (data) =>  post(`${API_URL}/invoice/updateNoVerifactu`, data);
-export const updateVerifactu = (data) =>  post(`${API_URL}/invoice/updateVerifactu`, data);
-export const updateSii = (data) =>  post(`${API_URL}/invoice/updateSii`, data);
-export const updateTbai = (data) =>  post(`${API_URL}/invoice/updateTbai`, data);
-export const updateLroe = (data) =>  post(`${API_URL}/invoice/updateLroe`, data);
-
+export const getInvoiceCommunicationConfig  = (data) =>  get(`${API_URL}/invoice/communication_configuration`, data);
+export const updateICC = (data) =>  post(`${API_URL}/invoice/updateICC`, data);
 
 // INVOICE
 export const getSalesSeries = (data) => get(`${API_URL}/invoice/series`, data)

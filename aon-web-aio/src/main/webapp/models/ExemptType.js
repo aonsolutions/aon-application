@@ -1,6 +1,6 @@
 export const EXEMPT_TYPES = Object.freeze({
     EMPTY: {
-        value: undefined,
+        value: 'EMPTY',
         name: '------------'
     },
     NO_SOFTWARE: {

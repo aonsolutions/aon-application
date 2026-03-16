@@ -45,7 +45,7 @@ class VerifactuValidationAnulacionTest extends AbstractVerifactuTest {
 	private void assertInvoice(Invoice invoice, CompleteInvoiceCommunicatorContext completeIcc, CompleteRegistroFacturaType complete) throws InvoiceCommunicationException {
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
 		InvoiceCommunicatorContext icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
-		VerifactuContext vc = new VerifactuContext(icc)
+		VerifactuContext vc = new VerifactuContext(icc, getEnvironment().getEnablerData(icc.getConfig()))
 			.setOperation(InvoiceCommunicationOperation.ANNULMENT);
 		if (completeIcc != null) {
 			completeIcc.complete(icc);

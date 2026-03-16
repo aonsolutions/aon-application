@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -1506,5 +1507,16 @@ public class AonDateUtils {
 
 	public static Date setTimeToZero(Date date) {
 		return truncate(date, Calendar.DAY_OF_MONTH);		
+	}
+
+	public static Date setTimeToEndOfDay(Date date) {
+		return Date.from(
+		    date.toInstant()
+		        .atZone(ZoneId.systemDefault())
+		        .toLocalDate()
+		        .atTime(LocalTime.MAX)
+		        .atZone(ZoneId.systemDefault())
+		        .toInstant()
+			);
 	}
 }

@@ -106,7 +106,7 @@ public class InvoiceInfoDAO {
 				,Map::putAll
 			);
 		
-		if(icc.isTbai(invoiceType, atDate) && !icc.isBizkaia(atDate)) {
+		if (icc.isTbai(invoiceType, atDate)) {
 			DataResponseSource drs = icc.getTbaiData(atDate)
 				.filter(cc -> cc.isTest())
 				.map( cc -> DataResponseSource.TBAI_TEST )
@@ -139,6 +139,8 @@ public class InvoiceInfoDAO {
 		}
 		if (AonCollectionUtils.isEmpty(enumMap)) {
 			AonCollectionUtils.stream(icc.getTypes(invoiceType, atDate))
+				.map( t -> t.getCommunicationType() )
+				.flatMap(Optional::stream)
 				.forEach( t -> enumMap.computeIfAbsent(t, 
 					k -> new InvoiceInfo()
 					.setType(t)

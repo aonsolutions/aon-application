@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
@@ -39,15 +40,16 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
-import com.esferalia.aon.occam.api.model.invoice.CommunicationData.ExemptType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataRequestType;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.type.ExemptType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.EnterpriseDataDAO.EnterpriseDataFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.InvoiceFiller;
@@ -66,10 +68,19 @@ public class InvoiceCommunicationDAO {
 	private static final DataAttach DATA_ATTACH_REQUEST = DATA_ATTACH.as("data_attach_request");
 	private static final DataAttach DATA_ATTACH_RESPONSE = DATA_ATTACH.as("data_attach_response");
 	private static final String TEST = "test";
-	private static final String EXEMPT = "exempt";
+	private static final String ADMINISTRATION = "administration";
 	private static final String EXEMPT_TYPE = "exemptType";
 	
-	public static final String ICC_PREFIX = "ICC_%";
+	public static final String[] SUPPORTED_TYPES = new String[] {
+		EnterpriseDataNames.ICC_ADMINISTRATION.name(),
+		EnterpriseDataNames.ICC_LROE.name(),
+		EnterpriseDataNames.ICC_SII.name(),
+		EnterpriseDataNames.ICC_TBAI.name(),
+		EnterpriseDataNames.ICC_VERIFACTU.name(),
+		EnterpriseDataNames.ICC_NO_VERIFACTU.name(),
+		EnterpriseDataNames.ICC_SIF.name(),
+		EnterpriseDataNames.ICC_NO_SIF.name(),
+	};
 	
 	private InvoiceCommunicationDAO() {
 
@@ -83,13 +94,6 @@ public class InvoiceCommunicationDAO {
 		InvoiceCommunicationConfiguration config = new InvoiceCommunicationConfiguration();
 		fillDatas(ctx, domainId, config);
 
-//		config.setTbaiInvoice(DataResponseDAO.has(ctx, domainId, DataResponseSource.TBAI, AonDateUtils.getCurrentYear()));
-//		config.setLroeInvoice(DataResponseDAO.has(ctx, domainId, DataResponseSource.LROE, AonDateUtils.getCurrentYear()));
-//		config.setSiiInvoice(DataResponseDAO.has(ctx, domainId, DataResponseSource.SII, AonDateUtils.getCurrentYear()));
-//		config.setVerifactuInvoice(DataResponseDAO.has(ctx, domainId, DataResponseSource.VERIFACTU, AonDateUtils.getCurrentYear()));	
-//		config.setSifInvoice(DataResponseDAO.has(ctx, domainId, DataResponseSource.SIF, AonDateUtils.getCurrentYear()));
-//		config.setNoVerifactuInvoice(DataResponseDAO.has(ctx, domainId, DataResponseSource.NO_VERIFACTU, AonDateUtils.getCurrentYear()));
-		
 		// Fecha de registro contable que se envía al LROE. Fecha de Auditoria (creation_date) o Fecha de IVA (tax_date)
 		AppParamDAO.get(ctx, domainId, AppParam.TBAI_REGISTRY_DATE).ifPresent( p -> config.setLroeRegistryDate(p.getValue()));
 
@@ -107,20 +111,64 @@ public class InvoiceCommunicationDAO {
 	
 	private static void fillDatas(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
 		if ( config == null ) throw new AonCoreException("No config");
+		
+		// Se recuperan primero las administraciones para luego asignarlas a las comunicaciones que no tengan 
+		// administración asignada pero que coincidan en fecha de inicio.
+		InvoiceCommunicationConfiguration administrationsConfig = new InvoiceCommunicationConfiguration();
 		ctx.getDslContext()
 			.select()
 			.from(ENTERPRISE_DATA)
 			.where(ENTERPRISE_DATA.DOMAIN.eq(domainId)
-					.and(ENTERPRISE_DATA.NAME.like(ICC_PREFIX)))
+				.and(ENTERPRISE_DATA.NAME.eq(EnterpriseDataNames.ICC_ADMINISTRATION.name())))
 			.orderBy(ENTERPRISE_DATA.NAME, ENTERPRISE_DATA.START_DATE)
 			.fetch()
 			.stream()
 			.map( r -> new CommunicationDataFiller().apply(r) )
-			.forEach( cc -> config.addData(cc) )
+			.forEach( administrationsConfig::addData )
 		;
+		
+		// Se busca en el resto de tipos de comunicación y se asigna la administración correspondiente a las 
+		// que no tengan administración pero coincidan en fecha de inicio con alguna administración.
+		ctx.getDslContext()
+			.select()
+			.from(ENTERPRISE_DATA)
+			.where(ENTERPRISE_DATA.DOMAIN.eq(domainId)
+					.and(ENTERPRISE_DATA.NAME.in(SUPPORTED_TYPES)))
+			.orderBy(ENTERPRISE_DATA.NAME, ENTERPRISE_DATA.START_DATE)
+			.fetch()
+			.stream()
+			.map( r -> new CommunicationDataFiller().apply(r) )
+			.map( d -> {
+				if (d.getAdministration().isEmpty()) {
+					administrationsConfig
+						.dataStream()
+						.filter( ad -> ad.getDataName() == EnterpriseDataNames.ICC_ADMINISTRATION )	
+						.filter(ad -> ad.inRange(d.getStartDate()))
+						.findFirst()
+						.flatMap( ad -> ad.getAdministration() )
+						.ifPresent( a -> d.setAdministration(a));
+				}
+				return d;
+			})
+			.forEach( config::addData )
+		;
+		
+		config.dataStream()
+			.filter( d -> !d.isAdministration())
+			.filter( d -> d.getAdministration().isEmpty() )
+			.forEach( d -> {
+				administrationsConfig
+					.dataStream()
+					.filter( ad -> ad.getDataName() == EnterpriseDataNames.ICC_ADMINISTRATION )	
+					.filter(ad -> ad.inRange(d.getStartDate()))
+					.findFirst()
+					.flatMap( ad -> ad.getAdministration() )
+					.ifPresent( a -> d.setAdministration(a));
+				printEnterpriseData(d);
+		});
 	}
 	
-	static class CommunicationDataFiller extends Filler implements Function<Record, CommunicationData> {
+	public static class CommunicationDataFiller extends Filler implements Function<Record, CommunicationData> {
 
 		@Override
 		public CommunicationData apply(Record r) {
@@ -130,15 +178,19 @@ public class InvoiceCommunicationDAO {
 				try {
 					JSONObject json = new JSONObject(exp);
 					cc.setTest( JsonUtils.getboolean(json, TEST) );
-					ExemptType.safeValueOf(JsonUtils.getString(json, EXEMPT_TYPE))
-						.ifPresent( et -> cc.setExemptType(et) );
+					cc.setAdministration( Administration.safeValueOf(JsonUtils.getString(json, ADMINISTRATION)));					
+					ExemptType.safeValueOf(JsonUtils.getString(json, EXEMPT_TYPE)).ifPresent( cc::setExemptType );
 				} catch (Exception e) {
-					if (AonStringUtils.equalsIgnoreCase(TEST, exp)) {
-						cc.setTest(true);
+					if (cc.isAdministration() ) {
+						cc.setAdministration( Administration.safeValueOf(cc.getExpression()));					
+					} else {
+						if (AonStringUtils.equalsIgnoreCase(TEST, exp)) {
+							cc.setTest(true);
+						}
 					}
-					cc.setExpression(exp);
 				}
 			}
+			cc.setDirty(false);
 			return cc;
 		}
 		
@@ -154,34 +206,34 @@ public class InvoiceCommunicationDAO {
 		String endDate = ed.getEndDate() == null
 			? "--/--/----"
 			:MessageFormat.format("{0,date,dd/MM/yyyy}", ed.getEndDate());
-		System.out.println( (ed.isDirty() ? "(*)" : "  ") 
+		System.out.println( (ed.isDirty() ? "(*)" : "   ") 
+			+ (ed.isDeleted() ? " (D) " : "     ") 
 			+ " - "
 			+ AonStringUtils.rightPad( "(" + (ed.getId() == null ? "" : AonNumberUtils.toString(ed.getId())) + ")", 10)
 			+ AonStringUtils.rightPad(startDate, 15)
 			+ AonStringUtils.rightPad(endDate, 15)
 			+ AonStringUtils.rightPad( AonStringUtils.defaultIfBlank(ed.getName()), 25)
+			+ AonStringUtils.rightPad( AonStringUtils.defaultIfBlank(ed.getAdministration().map(Enum::name).orElse("---------")), 20)
 			+ AonStringUtils.rightPad( AonStringUtils.defaultIfBlank(ed.getExpression()) , 20)
 		);
 	}
 
 	public static InvoiceCommunicationConfiguration save(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
 		ctx.checkWrite();
-		InvoiceCommunicationConfigurationValidation.validate(ctx, config);
+		InvoiceCommunicationConfigurationValidation.validate(config);
 		for (CommunicationData d : config.getDataList()) {
 			if ( !d.isAdministration()) {
 				JSONObject json = new JSONObject();
 				if (d.isTest()) {
 					json.put(TEST, true);
 				}
-				if (d.isExempt()) {
-					json.put(EXEMPT, d.isExempt());
-					json.put(EXEMPT_TYPE, d.getExemptType() != null ? d.getExemptType().name() : null);
-				}
+				json.put(EXEMPT_TYPE, d.getExemptType().map( ExemptType::name ).orElse(null) );
+				json.put(ADMINISTRATION, d.getAdministration().map( Enum::name).orElse(null));
 				if (!JsonUtils.isEmpty(json)) {
 					d.setExpression( json.toString() );
 				}
 			}
-//			printEnterpriseData( d );
+			printEnterpriseData( d );
 			EnterpriseDataDAO.save(ctx, d );
 		}
 		
@@ -417,126 +469,4 @@ public class InvoiceCommunicationDAO {
 				Boolean.toString(true));
 	}
 }
-
-//private static InvoiceCommunicationConfiguration checkConfigurationConsistency(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-//if(config.isNoSif()) {
-//	if(config.isSif()) {
-//		updateEndDate(ctx, domainId, config.getSifData(), config.getNoSifData().getStartDate());
-//		fillSif(ctx, domainId, config);
-//	}
-//	
-//	if(config.isTbai()) {
-//		updateEndDate(ctx, domainId, config.getTbaiData(), config.getNoSifData().getStartDate());
-//		fillTbai(ctx, domainId, config);
-//	}
-//	
-//	if(config.isNoVerifactu()) {
-//		updateEndDate(ctx, domainId, config.getNoVerifactuData(), config.getNoSifData().getStartDate());
-//		fillNoVerifactu(ctx, domainId, config);
-//	}
-//	
-//	if(config.isVerifactu()) {
-//		updateEndDate(ctx, domainId, config.getVerifactuData(), config.getNoSifData().getStartDate());
-//		fillVerifactu(ctx, domainId, config);
-//	}
-//}
-//
-//if(config.isSif() && !config.isSifTest()) {
-//	if(config.isLroe()) {
-//		updateEndDate(ctx, domainId, config.getSifData(), config.getLroeData().getStartDate());
-//		fillSif(ctx, domainId, config);
-//	}
-//	
-//	if(config.isTbai()) {
-//		updateEndDate(ctx, domainId, config.getSifData(), config.getTbaiData().getStartDate());
-//		fillSif(ctx, domainId, config);
-//	}
-//	
-//	if(config.isNoVerifactu()) {
-//		updateEndDate(ctx, domainId, config.getSifData(), config.getNoVerifactuData().getStartDate());
-//		fillSif(ctx, domainId, config);
-//	}
-//	
-//	if(config.isVerifactu()) {
-//		updateEndDate(ctx, domainId, config.getSifData(), config.getVerifactuData().getStartDate());
-//		fillSif(ctx, domainId, config);
-//	}
-//	
-//	if(config.isSii()) {
-//		updateEndDate(ctx, domainId, config.getSifData(), config.getSiiData().getStartDate());
-//		fillSif(ctx, domainId, config);
-//	}
-//
-//	if(config.isAEAT() || config.isCanarias()) {
-//		if(!config.hasVerifactuInvoice() && !config.hasNoVerifactuInvoice() && !config.hasSifInvoice()) {
-//			EnterpriseDataDAO.update(ctx, config.getSifData().setName(EnterpriseDataNames.ICC_NO_VERIFACTU.name()));
-//			fillSif(ctx, domainId, config);
-//			fillNoVerifactu(ctx, domainId, config);	
-//		}
-//		
-//		if(!config.hasVerifactuInvoice()) {
-//			if(config.willBeNoVerifactu()) {
-//				config.getNoVerifactuDataHistory().stream().filter(f -> f.getStartDate().after(new Date())).findFirst()
-//				.ifPresent(ed -> EnterpriseDataDAO.delete(ctx, ed.getId()));
-//			}
-//			EnterpriseDataDAO.update(ctx, config.getSifData().setName(EnterpriseDataNames.ICC_NO_VERIFACTU.name()));
-//			fillSif(ctx, domainId, config);
-//			fillNoVerifactu(ctx, domainId, config);
-//			
-//			ctx.getDslContext().update(INVOICE_INFO)
-//			.set(INVOICE_INFO.TYPE, InvoiceCommunicationType.NO_VERIFACTU.value())
-//			.where(INVOICE_INFO.DOMAIN.eq(domainId)
-//				.and(INVOICE_INFO.TYPE.eq(InvoiceCommunicationType.SIF.value()))
-//				.and(INVOICE_INFO.CREATION_DATE.ge(AonDateUtils.toTimestamp(AonDateUtils.getYearFirstDay(new Date()))))
-//			)
-//			.execute();
-//			
-//			ctx.getDslContext().update(INVOICE_BATCH)
-//			.set(INVOICE_BATCH.TYPE, InvoiceCommunicationType.NO_VERIFACTU.value())
-//			.where(INVOICE_BATCH.DOMAIN.eq(domainId)
-//				.and(INVOICE_BATCH.TYPE.eq(InvoiceCommunicationType.SIF.value()))
-//				.and(INVOICE_BATCH.CREATION_DATE.ge(AonDateUtils.toTimestamp(AonDateUtils.getYearFirstDay(new Date()))))
-//			)
-//			.execute();
-//			
-//			ctx.getDslContext().update(DATA_RESPONSE)
-//			.set(DATA_RESPONSE.SOURCE, DataResponseSource.NO_VERIFACTU.value())
-//			.where(DATA_RESPONSE.DOMAIN.eq(domainId)
-//				.and(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SIF.value()))
-//				.and(DATA_RESPONSE.CREATION_DATE.ge(AonDateUtils.toTimestamp(AonDateUtils.getYearFirstDay(new Date()))))
-//			)
-//			.execute();
-//		}
-//		
-//		if(config.hasVerifactuInvoice()) {
-//			updateEndDate(ctx, domainId, config.getSifData(), new Date());
-//			fillSif(ctx, domainId, config);
-//			
-//			EnterpriseData vd = new EnterpriseData()
-//					.setDomain(domainId)
-//					.setEnterprise( config.getSifData().getEnterprise() )
-//					.setName(EnterpriseDataNames.ICC_VERIFACTU.name())
-//					.setStartDate( new Date() );
-//			EnterpriseDataDAO.insert(ctx, vd);
-//		}
-//	}
-//}
-//
-//return config;
-//}
-//
-//private static void updateEndDate(AONContext ctx, Integer domainId, EnterpriseData data, Date endDate) {
-//data.setEndDate(endDate);
-//EnterpriseDataDAO.update(ctx, data);
-//}
-//
-//private static List<EnterpriseData> getIccHistory(AONContext ctx, Integer domainId, EnterpriseDataNames name) {
-//return EnterpriseDataDAO.getList(ctx, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq(name.name())));
-//}
-//
-//private static EnterpriseData getIccData(List<EnterpriseData> history) {
-//if(history == null || history.isEmpty()) return null;
-//return history.stream().filter(f -> (f.getStartDate() != null && f.getStartDate().before(new Date()))
-//		&& (f.getEndDate() == null || f.getEndDate().after(new Date()))).findFirst().orElse(null);
-//}
 

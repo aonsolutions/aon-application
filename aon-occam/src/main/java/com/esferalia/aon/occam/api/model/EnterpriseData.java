@@ -160,7 +160,7 @@ public class EnterpriseData implements Serializable, HasAudit {
 		if (atDate == null) return false;
 		return getStartDate() != null 
 			&& !atDate.before(getStartDate())
-			&& (getEndDate() == null || getEndDate().after(atDate))
+			&& (getEndDate() == null || !atDate.after(getEndDate()))
 		;
 	}
 

@@ -176,7 +176,7 @@ class VerifactuCommunicationSaveTest extends AbstractVerifactuTest {
 			InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate(invoices);
 			Invoice inv = InvoiceDAO.save(getEnvironment().getCtx(), invoice);
 			invoices = AonCollectionUtils.toList(inv);
-			VerifactuContext vc = VERIFACTU.accept(getEnvironment().getCtx(), icc, PHASE_LISTENER);
+			VerifactuContext vc = VERIFACTU.accept(getEnvironment().getCtx(), icc, getEnvironment().getEnablerData(icc.getConfig()), PHASE_LISTENER);
 			assertNotNull(vc);
 			assertNotNull(vc.getResponse());
 			assertNotNull(vc.getResponse().getResponse());

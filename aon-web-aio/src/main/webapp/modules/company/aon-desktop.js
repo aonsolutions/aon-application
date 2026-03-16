@@ -1,63 +1,52 @@
-import { AonElement } from '../../components/AonElement.js';
-import { Apps, ClassicApps, getAppsByDur } from '../../services/app.js';
-import { getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral, getTrailData, getCompanyOne, getCompanyActivities, saveInvoiceConfiguration, getInvoiceConfiguration, closeSession } from '../../services/service.js';
-import { getAccessBidoq } from '../../services/bidoqService.js';
-import { DomainUserRoles } from '../../models/DomainUserRoles.js';
-import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
-import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.js';
-import { AonDocumental } from '../documental/aon-documental.js';
-import { AonSign } from '../timecontrol/aon-sign.js';
-import { AonTimecontrol } from '../timecontrol/aon-timecontrol.js';
-import { uploadDocuments, uploadOption } from "../documental/DocumentalUtils.js";
-import { AonMessenger } from '../messenger/aon-messenger.js';
+import '../../components/aon-application.js';
+import { AonCard } from '../../components/aon-card.js';
+import { AonDialog } from '../../components/aon-dialog.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
-import { AonInvoicePanel } from '../invoice/aon-invoice-panel.js';
-import * as OPTION from '../invoice/InvoiceOptions.js';
+import '../../components/aon-icon.js';
+import { AonNewUpload } from '../../components/aon-new-upload.js';
+import { AonUploadToast } from '../../components/aon-upload-toast.js';
+import { AonElement } from '../../components/AonElement.js';
+import { createSelect } from '../../components/CreateComponent.js';
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import * as GWT from "../../gwt/gwt.js";
+import { DomainUserRoles } from '../../models/DomainUserRoles.js';
+import { InvoiceCommunicationConfig } from '../../models/InvoiceCommunicationConfig.js';
+import { Apps, ClassicApps, getAppsByDur } from '../../services/app.js';
+import { getAccessBidoq } from '../../services/bidoqService.js';
 import * as LS from "../../services/localStorageService.js";
-import { TASK_SOURCE } from '../messenger/MessengerEnums.js';
+import { getNoteCount } from '../../services/noteService.js';
+import { getCompanyActivities, getCompanyOne, getDomainNotice, getDomainUserRoles, getInvoiceCommunicationConfig, getModelsFiscal, getPeriodLaboral, getTaskCount, getTaskHolder, getTimeControl } from '../../services/service.js';
+import { sortBy, waitEl } from '../../services/utils.js';
+import { AonAccounting } from '../accounting/aon-accounting.js';
+import { AonBankCard } from '../accounting/aon-bank-card.js';
+import { AonDashboardChargePayments } from '../accounting/aon-dashboard-charge-payments.js';
+import { AonDashboardSalesPurchases } from '../accounting/aon-dashboard-sales-purchases.js';
+import { AonDashboardGraphicsTrial } from '../accounting/aon-graphics-dashboard-trial.js';
+import { AonJsfAccountingGraph, AonJsfContractGraph, AonJsfPayrollGraph } from '../aon-jsf-app.js';
+import { AonDocumentalCard } from '../documental/aon-documental-card.js';
+import { AonDocumental } from '../documental/aon-documental.js';
+import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.js';
+import { uploadOption } from "../documental/DocumentalUtils.js";
+import { AonFiscalCard } from '../fiscal/aon-fiscal-card.js';
 import { AonFiscal } from '../fiscal/aon-fiscal.js';
+import { AonModelMatrixCard } from '../fiscal/aon-model-matrix-card.js';
+import { FiscalUtils } from '../fiscal/FiscalUtils.js';
+import { AonInvoiceCommunicationConfig } from '../invoice/aon-invoice-communication-config.js';
+import { AonInvoicePanel } from '../invoice/aon-invoice-panel.js';
+import { AonTrial } from '../invoice/aon-trial.js';
+import * as OPTION from '../invoice/InvoiceOptions.js';
+import { generateJobId } from '../invoice/InvoiceUtils.js';
 import { AonLaboral } from '../laboral/aon-laboral.js';
 import { AonSaltra } from '../laboral/aon-saltra.js';
-import '../../components/aon-icon.js';
-import '../../components/aon-application.js';
-import { getOfficeProjects } from '../../services/projectService.js';
-import { Project } from '../../models/project/Project.js';
-import { getNoteCount } from '../../services/noteService.js';
-import { AonAccounting } from '../accounting/aon-accounting.js';
-import { Attach } from '../../models/Attach.js';
-import { AonWarehouse } from '../warehouse/aon-warehouse.js';
-import { AonNewUpload } from '../../components/aon-new-upload.js'
-import { AonDashboardButton } from '../../components/aon-dashboard-button.js';
-import { AonCard } from '../../components/aon-card.js';
-import { AonDashboardGraphicsTrial } from '../accounting/aon-graphics-dashboard-trial.js';
-import { AonFiscalCard } from '../fiscal/aon-fiscal-card.js';
-import { AonModelMatrixCard } from '../fiscal/aon-model-matrix-card.js';
-import { AonStatistics } from '../timecontrol/time-control/statistics/aon-statistics.js';
-import { AonPayrollCard } from '../laboral/payroll/aon-payroll-card.js';
-import { AonMessengerCard } from '../messenger/aon-messenger-card.js';
-import { getModelsFiscal } from '../../services/service.js';
-import { sortBy, waitEl } from '../../services/utils.js';
-import { FiscalUtils } from '../fiscal/FiscalUtils.js';
-import { AonBankCard } from '../accounting/aon-bank-card.js';
-import { AonDocumentalCard } from '../documental/aon-documental-card.js';
 import { AonCompanyCostsCard, paintCompanyCostPieChart } from '../laboral/company/aon-company-costs-card.js';
-import { AonUploadToast } from '../../components/aon-upload-toast.js';
-import { AonDashboardChargePayments } from '../accounting/aon-dashboard-charge-payments.js';
-import { AonDialog } from '../../components/aon-dialog.js';
+import { AonPayrollCard } from '../laboral/payroll/aon-payroll-card.js';
 import { AonMarketing } from '../marketing/aon-marketing.js';
-import { MessegerUtils } from '../messenger/utils/MessengerUtils.js';
-import { generateJobId } from '../invoice/InvoiceUtils.js';
-import { AonTrial } from '../invoice/aon-trial.js';
-import { AonDashboardSalesPurchases } from '../accounting/aon-dashboard-sales-purchases.js';
-import { AonJsfAccountingGraph, AonJsfPayrollGraph, AonJsfContractGraph } from '../aon-jsf-app.js';
-import { createSelect } from '../../components/CreateComponent.js';
-import { InvoiceCommunicationConfiguration } from '../../models/InvoiceCommunicationConfiguration.js';
-import { AonInvoiceCommunicationConfiguration } from '../invoice/aon-invoice-communication-configuration.js';
-import { isPersonaFisica, isValid } from '../../services/documentUtils.js';
-import { Invoice } from '../invoice/Invoice.js';
-import { AonCheckbox } from '../../components/aon-checkbox.js';
-import { AonBasicTable } from '../../components/aon-basic-table.js';
+import { AonMessenger } from '../messenger/aon-messenger.js';
+import { TASK_SOURCE } from '../messenger/MessengerEnums.js';
+import { AonSign } from '../timecontrol/aon-sign.js';
+import { AonTimecontrol } from '../timecontrol/aon-timecontrol.js';
+import { AonStatistics } from '../timecontrol/time-control/statistics/aon-statistics.js';
+import { AonWarehouse } from '../warehouse/aon-warehouse.js';
 
 export class AonDesktop extends AonElement {
 
@@ -67,9 +56,6 @@ export class AonDesktop extends AonElement {
 	INPUT_DOCUMENT_FILE;
 	appOption;
 	SIDENAV_ACTIVITY_SUMMARY;
-
-
-	conditionsAccepted; // Invoice Configuration  conditions.
 
 	static get observedAttributes() {
 		return [];
@@ -132,9 +118,8 @@ export class AonDesktop extends AonElement {
 		this.dur = new DomainUserRoles(r);
 		this.build();
 
-		await this.getInvoiceConfiguration();
-		if (!this.checkConfigurationComplete(this.ic, false) && !this.getDur().isParentUser()
-			&& (this.getDur().isInvoice() || this.getDur().isManagement()))
+		await this.getInvoiceCommunicationConfig();
+		if (!this.icc.isNoSif() && !this.icc.hasCommunication())
 			this.buildInvoiceConfigurationDialog();
 	}
 
@@ -148,8 +133,9 @@ export class AonDesktop extends AonElement {
 		}
 	}
 
-	async getInvoiceConfiguration() {
-		this.ic = await getInvoiceConfiguration();
+	async getInvoiceCommunicationConfig() {
+		let config = await getInvoiceCommunicationConfig();
+		this.icc = new InvoiceCommunicationConfig(config);
 	}
 
 	buildInvoiceConfigurationDialog() {
@@ -161,132 +147,29 @@ export class AonDesktop extends AonElement {
 			dialog.autoclose = false;
 			this.getElement(dialog.BUTTON_CLOSE).style.display = 'none';
 		}
-
-		let communication = new AonInvoiceCommunicationConfiguration();
-		communication.setConfiguration(this.ic);
-		communication.onChange(() => {
-			this.ic = communication.getConfiguration();
-			let com = communication.getCommunicationConfiguration();
-			if (com instanceof InvoiceCommunicationConfiguration) {
-				this.ic.communication = com.toJSON();
-			} else {
-				this.ic.communication = new InvoiceCommunicationConfiguration(com).toJSON();
-			}
-		});
-
+		let communication = new AonInvoiceCommunicationConfig();
 		let div = this.createDiv();
-
-		let aviso = this.createDiv();
-		aviso.style.backgroundColor = '#fde400ff';
-		aviso.style.padding = '10px';
-		aviso.style.margin = '10px';
-		aviso.innerHTML = "<span style='color:red'>Aviso Importante</span>: Como usuario de AON SIF (Sistema de Facturación) adaptado a la normativa de la \"ley antifraude\" y regulado por el Reglamento RRSIF (RD 1007/2023), debe cumplimentar los datos que se solicitan a continuación. El Cliente es el único responsable de la correcta activación de la modalidad de comunicación, configuración del software y validación de su certificado digital en el software para la comunicación de facturas a la Administración Tributaria (AEAT o Haciendas Forales) a través de los sistemas VeriFactu, No VeriFactu, LROE o Ticket BAI. <br><b>AON SOLUTIONS, S.L.U. no será responsable</b> de información no veraz o incorrecta incluida por el usuario en el SIF.</br>";
-
-		div.appendChild(aviso);
 		div.appendChild(communication);
-
 		dialog.clear();
 		dialog.setTitle(MSG.INVOICE_CONFIGURATION);
 		dialog.setContent(div);
 
-		this.buildConditions(div);
-
-		dialog.addAction2({
-			id: "Salir",
-			title: "Salir",
-			icon: MATERIAL_ICONS.ARROW_BACK,
-			position: "left",
-		}, () => {
-			if (this.getDur().isParentUser()) {
-				this.getAonHeader().goToParent();
-			} else {
-				closeSession();
+		dialog.addAction(
+			{ 	id: "ComunicationCountinueBtn",
+				title:"Continuar"}
+			, async () => {
+				await this.getInvoiceCommunicationConfig();
+				if (!this.icc.isNoSif() && !this.icc.hasCommunication()) {
+					this.buildInvoiceConfigurationDialog();
+				}
 			}
-		});
-
-		dialog.addAcceptAction(() => {
-			if (this.checkConfigurationComplete(this.ic, true)) {
-				saveInvoiceConfiguration(this.ic);
-			} else {
-				this.buildInvoiceConfigurationDialog();
-			}
-		});
+		);
 
 		dialog.open();
 	}
 
 	getAonHeader() {
 		return document.querySelector(TAG.AON_HEADER);
-	}
-
-	buildConditions(parent) {
-		let conditions = this.createDiv();
-		parent.appendChild(conditions);
-		let table = new AonBasicTable();
-		table.style.top = '20px';
-		table.style.position = 'relative';
-		conditions.appendChild(table);
-		table.addRow();
-
-		let checkBox = new AonCheckbox();
-		checkBox.setCh
-		let td = table.addCell(checkBox)
-		td.style.width = '15px';
-		let span3 = this.createElement(TAG.SPAN);
-		span3.innerHTML = 'He leido y acepto las <a target="_blank" class="aonLink" href="http://aonsolutions.es/docs/aon_condiciones_generales_del_contrato.pdf">CONDICIONES GENERALES</a> del contrato de licencia de software y los términos <a target="_blank" class="aonLink" href="https://aonsolutions.es/docs/Aon-Declaracion%20Responsable%20VeriFactu.pdf">DECLARACIÓN RESPONSABLE del SIF</a> (Sistema Informático de facturación)';
-		table.addCell(span3);
-
-		checkBox.addEventListener(EVENT.CHANGE, () => {
-			this.conditionsAccepted = checkBox.isChecked();
-		});
-	}
-
-	checkConfigurationComplete(config, showError) {
-		let isSpain = config && config.company && config.company.documentCountry && config.company.documentCountry === 'ES';
-		if (showError && !isSpain) return true;
-		if (showError && !this.conditionsAccepted) {
-			this.showMessageError("Debe aceptar las condiciones para continuar.");
-			return false;
-		}
-		if (!config || !config.company || !config.company.document || !config.communication) return false;
-		let icc = new InvoiceCommunicationConfiguration(config.communication);
-		if (!isValid(config.company.document) && isSpain) {
-			if (showError) this.showMessageError("El NIF/CIF de la empresa no es válido.");
-			return false;
-		}
-		if (isPersonaFisica(config.company.document) && !(config.company.person || config.person)) {
-			if (showError) this.showMessageError("Es obligatorio rellenar todos los datos de la persona física.");
-			return false;
-		}
-		if (!icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) && !icc.isSii() && !icc.willBeSii() && !icc.isVerifactu() && !icc.willBeVerifactu() && !icc.isNoVerifactu() && !icc.willBeNoVerifactu()) {
-			if (showError) this.showMessageError("Es obligatorio selecionar Verifactu, No Verifactu o SII para empresas del territorio común.");
-			return false;
-		}
-
-		if (showError && !icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) &&
-			!icc.isVerifactu() && icc.verifactuInvoice) {
-			this.showMessageError("Es obligatorio seleccionar Verifactu, ya que existe una factura Verifactu en el año actual.");
-			return false;
-		}
-
-		if (showError && !icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) &&
-			!icc.isSii() && icc.siiInvoice) {
-			this.showMessageError("Es obligatorio seleccionar SII, ya que existe una factura SII en el año actual.");
-			return false;
-		}
-
-		if (showError && !icc.isNoSif() && (icc.isCommonTerritory() || icc.isCanarias()) &&
-			!icc.isNoVerifactu() && icc.noVerifactuInvoice) {
-			this.showMessageError("Es obligatorio seleccionar No Verifactu, ya que existe una factura No Verifactu en el año actual.");
-			return false;
-		}
-
-		if (!icc.getAdministration().isUnknown() && (icc.hasCommunication() || icc.willBeCommunication() || icc.isNoSif())) {
-			return true;
-		} else {
-			if (showError) this.showMessageError("Es obligatorio selecionar una administración para la comunicación electrónica de facturas.");
-			return false;
-		}
 	}
 
 	build() {

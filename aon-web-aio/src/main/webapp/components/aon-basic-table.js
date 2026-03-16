@@ -15,6 +15,7 @@ export class AonBasicTable extends AonElement {
   TABLE;
   TABLE_ROW;
 
+  thead;
   rows;
 
   constructor() {
@@ -38,6 +39,25 @@ export class AonBasicTable extends AonElement {
     table.id = this.TABLE;
     table.className = CSS.AON_WIDTH_ALL;
     this.appendChild(table);
+  }
+  addHeader() {
+    this.thead = this.createElement("thead");
+    this.getElement(this.TABLE).appendChild(this.thead);
+    let tr = this.createElement(TAG.TR);
+    tr.id = this.TABLE_ROW + "header";
+    this.thead.appendChild(tr);
+  }
+
+  addHeaderCell(elem, colspan, row) {
+    if (!this.thead) {
+      this.addHeader();
+    }
+    let tr = this.getElement(this.TABLE_ROW + "header");
+    let td = this.createElement(TAG.TH);
+    td.colSpan = colspan || '1';
+    td.appendChild(elem);
+    tr.appendChild(td);
+    return td;
   }
 
   addCell(elem, colspan, row) {

@@ -11,7 +11,7 @@ public class InvoiceCommunicationConfigurationConsitency {
 	}
 	
 	public static InvoiceCommunicationConfiguration check(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-		checkAdministration(ctx, domainId, config);
+//		checkAdministration(ctx, domainId, config);
 		checkNoSif(ctx, domainId, config);
 		checkSif(ctx, domainId, config);
 //		if(config.isSif() && !config.isSifTest()) {
@@ -98,11 +98,11 @@ public class InvoiceCommunicationConfigurationConsitency {
 		return config;
 	}
 	
-	private static void checkAdministration(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
-		config.getAdministrationStream()
-			.filter( cc -> cc.getAdministration().filter( a -> a.isUnknown()).isPresent() )
-			.forEach( cc -> EnterpriseDataDAO.delete(ctx, cc.getId()) );
-	}
+//	private static void checkAdministration(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
+//		config.getAdministrationStream()
+//			.filter( cc -> cc.getAdministration().filter( a -> a.isUnknown()).isPresent() )
+//			.forEach( cc -> EnterpriseDataDAO.delete(ctx, cc.getId()) );
+//	}
 
 	private static void checkNoSif(AONContext ctx, Integer domainId, InvoiceCommunicationConfiguration config) {
 		config.getNoSifData()

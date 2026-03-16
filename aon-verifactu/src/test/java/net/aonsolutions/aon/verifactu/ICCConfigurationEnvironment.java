@@ -3,11 +3,13 @@ package net.aonsolutions.aon.verifactu;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
@@ -50,6 +52,16 @@ final class ICCConfigurationEnvironment extends VerifactuEnvironmentAbs {
 	@Override
 	public void initializeDomain(AONContext ctx) {
 		// NOTHING TO DO
+	}
+
+	@Override
+	public CommunicationData getEnablerData( InvoiceCommunicationConfiguration config ) {
+		return getEnablerData(config, new Date());
+	}
+	@Override
+	public CommunicationData getEnablerData(InvoiceCommunicationConfiguration config, Date atDate) {
+		// NOTHING TO RETURN
+		return null;
 	}
 
 }

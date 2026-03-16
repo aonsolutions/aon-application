@@ -224,7 +224,7 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 	private VerifactuContext doCommunicate(Invoice invoice) throws InvoiceCommunicationException {
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
 		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate(invoices);
-		VerifactuContext vc = new VerifactuContext(icc);
+		VerifactuContext vc = new VerifactuContext(icc, getEnvironment().getEnablerData(icc.getConfig()));
 		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(getEnvironment().getCtx(), InvoiceCommunicationType.VERIFACTU,vc, EMPTY_VERIFACTU_PHASE_LISTENER);
 		vc.setRequest( request );
 		Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);

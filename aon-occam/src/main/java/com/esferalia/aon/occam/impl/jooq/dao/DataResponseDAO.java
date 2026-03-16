@@ -21,6 +21,7 @@ import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -150,13 +151,14 @@ public class DataResponseDAO {
 	}
 	public static boolean hasBeyond(AONContext ctx, Integer domainId, DataResponseSource source, Date to){
 		to = AonDateUtils.setTimeToZero(to);
+		Date endOfDay = AonDateUtils.setTimeToEndOfDay(to);
 		return ctx.getDslContext()
 			.select(DATA_RESPONSE.ID)
 			.from(DATA_RESPONSE)
 			.where(DATA_RESPONSE.DOMAIN.eq(domainId))
 			.and(DATA_RESPONSE.SOURCE.eq(source.value()))
 			.and(DATA_RESPONSE.RESPONSE_DATE.greaterThan(AonDateUtils.toSql(to))
-				.or(DATA_RESPONSE.CREATION_DATE.greaterThan(AonDateUtils.toTimestamp(to)))
+				.or(DATA_RESPONSE.CREATION_DATE.greaterThan(AonDateUtils.toTimestamp(endOfDay)))
 			)
 			.limit(1)
 			.fetch()

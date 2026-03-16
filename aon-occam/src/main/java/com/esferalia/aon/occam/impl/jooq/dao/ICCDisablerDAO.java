@@ -2,8 +2,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import java.text.MessageFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.function.Supplier;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
@@ -32,16 +30,15 @@ class ICCDisablerDAO {
 		return close(dc);
 	}
 
-	static InvoiceCommunicationConfiguration close(AONContext ctx, Integer domainId, Date atDate, EnterpriseDataNames name, Date endDate) {
+	private static InvoiceCommunicationConfiguration close(AONContext ctx, Integer domainId, CommunicationData toDisable) {
+		Date atDate = toDisable.getStartDate();
+		EnterpriseDataNames name = toDisable.getDataName();
+		Date endDate = toDisable.getEndDate();
 		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, domainId);
-		CommunicationData toDisable = config.getData( name, atDate)
-			.map( d -> EnterpriseDataDAO.setEndDate( d, endDate)) 
-			.orElseThrow( () -> new AonCoreException( 
-				MessageFormat.format( InvoiceCommunicationError.ICC_6004.getMessage()
-					, InvoiceCommunicationType.get(name).map(t -> t.getAbbr()).orElse( "?" )
-					, atDate)))
-		;
-		DisablerContext dc = new DisablerContext( ctx, domainId, config, atDate, toDisable);
+		CommunicationData ensuredToDisable = config.getData( name, atDate)
+			.orElse( toDisable );
+		ensuredToDisable = EnterpriseDataDAO.setEndDate( ensuredToDisable, endDate);
+		DisablerContext dc = new DisablerContext( ctx, domainId, config, atDate, ensuredToDisable);
 		return close(dc);
 	}
 	
@@ -62,8 +59,8 @@ class ICCDisablerDAO {
 		
 	}
 	
-	static InvoiceCommunicationConfiguration disable(AONContext ctx, Integer domainId, Date atDate, EnterpriseDataNames name, Date endDate) {
-		InvoiceCommunicationConfiguration config = close(ctx, domainId, atDate, name, endDate );
+	static InvoiceCommunicationConfiguration disable(AONContext ctx, Integer domainId, CommunicationData toDisable) {
+		InvoiceCommunicationConfiguration config = close(ctx, domainId, toDisable );
 		return InvoiceCommunicationDAO.save(ctx, domainId, config);
 	}
 	
@@ -91,31 +88,26 @@ class ICCDisablerDAO {
 			toDisable.getCommunicationType()
 				.ifPresent( t -> checkCommunicatedInvoices(ec.ctx, ec.domainId, t, toDisable.getEndDate() ));
 
-			// Aseguramos la comunicación para el día siguiente.
+			// Aseguramos la comunicación para el día siguiente.....
 			Date nextDay = AonDateUtils.nextDay( toDisable.getEndDate() );
-			List<InvoiceCommunicationType> newTypes = ec.config.getTypes( nextDay );
-			if (AonCollectionUtils.isEmpty( newTypes )) {
-				// Si no hay tipos de comunicación para el día siguiente, intentamos habilitar el periodo anterior.
+			if (AonCollectionUtils.isEmpty( ec.config.getTypes( nextDay ) )) {
+				// Si no hay tipos de comunicación para el día siguiente, se intenta habilitar el periodo anterior.
 				if (!hasCommunicatedInvoices(ec.ctx, ec.domainId, toDisable)) {
 					tryToEnablePrevious( ec.ctx, ec.domainId, ec.config,  toDisable);
 				}
 			}
 			
-			// Si no hay tipos de comunicación para el día siguiente Lanzamos una excepción.
-			List<InvoiceCommunicationType> newTypes2 = ec.config.getTypes( nextDay );
-			if (AonCollectionUtils.isEmpty( newTypes2 )) {
-				ec.config.getAdministration()
-					.ifPresent( a -> {
-						if (a.isAEAT() || a.isCanarias()) {
-							throw new AonCoreException( InvoiceCommunicationError.ICC_6002.getMessage() );
-						} else if (a.isAraba() || a.isGipuzkoa() ) {
-							throw new AonCoreException( InvoiceCommunicationError.ICC_6006.getMessage() );
-						} else if (a.isBizkaia()) {
-							throw new AonCoreException( InvoiceCommunicationError.ICC_6005.getMessage() );
-						}
-					});
+			// Si aún así no hay tipos de comunicación para el día siguiente se lanza una excepción.
+			if (AonCollectionUtils.isEmpty( ec.config.getTypes( nextDay ) )) {
 				throw new AonCoreException( InvoiceCommunicationError.ICC_6002.getMessage() );
+			} else {
+				// Si hay tipos de comunicación para el día siguiente, se elimina el periodo cerrado, 
+				// siempre que no haya facturas comunicadas en dicho periodo.
+				if (!hasCommunicatedInvoices(ec.ctx, ec.domainId, toDisable)) {
+					toDisable.setDeleted( true );
+				}
 			}
+			
 			return ec.config;
 		}
 		
@@ -137,24 +129,13 @@ class ICCDisablerDAO {
 							, endDate)));
 		}
 		
-		@Override 
-		public InvoiceCommunicationConfiguration visitNO_VERIFACTU() {
-			return disable(ec.toDisable);
-		}
-		
-		@Override 
-		public InvoiceCommunicationConfiguration visitVERIFACTU() {
-			return disable(ec.toDisable); 
-		}
-		@Override 
-		public InvoiceCommunicationConfiguration visitSII() {
-			return disable(ec.toDisable);
-		}
-
-		public InvoiceCommunicationConfiguration visitNoSif() {return ec.config;}
-		@Override public InvoiceCommunicationConfiguration visitSIF() {return ec.config;}
-		@Override public InvoiceCommunicationConfiguration visitLROE() {return ec.config;}
-		@Override public InvoiceCommunicationConfiguration visitTBAI() {return ec.config;}
+		@Override public InvoiceCommunicationConfiguration visitNO_VERIFACTU() 	{return disable(ec.toDisable);}
+		@Override public InvoiceCommunicationConfiguration visitVERIFACTU()  	{return disable(ec.toDisable);}
+		@Override public InvoiceCommunicationConfiguration visitSII() 			{return disable(ec.toDisable);}
+		@Override public InvoiceCommunicationConfiguration visitSIF() 			{return disable(ec.toDisable);}
+		@Override public InvoiceCommunicationConfiguration visitLROE() 			{return disable(ec.toDisable);}
+		@Override public InvoiceCommunicationConfiguration visitTBAI() 			{return disable(ec.toDisable);}
+		public InvoiceCommunicationConfiguration visitNoSif() 					{return disable(ec.toDisable);}
 		
 		@Override public InvoiceCommunicationConfiguration visitSERES() { return ec.config; }
 		@Override public InvoiceCommunicationConfiguration visitEMAIL() { return ec.config; }
@@ -162,216 +143,4 @@ class ICCDisablerDAO {
 		@Override public InvoiceCommunicationConfiguration visitFACTURAE() { return ec.config; }
 	}
 	
-	/*
-	
-	static InvoiceCommunicationConfiguration enable(AONContext ctx, Integer domainId, Administration admon, CommunicationData data) {
-		if (admon == null
-		 || data == null 
-		 || data.getStartDate() == null
-		 || data.getName() == null 
-		 || data.getDataName() == null) throw new AonCoreException( InvoiceCommunicationError.ICC_5000.getMessage() );
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, domainId);
-		
-		enableAdministration( config, admon, data.getStartDate());
-		
-		CommunicationEnabler ce = new CommunicationEnabler( new EnablerContext(config, admon, data) );
-		if ( data.isNoSif() ) {
-			ce.visitNoSif();
-		} else {
-			data.getCommunicationType().ifPresent( t -> t.accept( ce ) );
-		}
-		return InvoiceCommunicationDAO.save(ctx, domainId, config);
-	}
-	
-	static void enableAdministration(InvoiceCommunicationConfiguration config, Administration admon, Date date) {
-		config.getAdministrationData(date)
-		.ifPresentOrElse(
-			currentAdmonData -> {
-				currentAdmonData.getAdministration()
-					.ifPresentOrElse( 
-						a -> {
-							if ( a != admon) {
-								EnterpriseDataDAO.closeData( currentAdmonData, date);
-								config.addData( new CommunicationData()
-										.setDataName(ICC_ADMINISTRATION)
-										.setExpression(admon.name())
-										.setStartDate(date) );
-							}
-						}
-						,() -> {
-							currentAdmonData
-								.setExpression(admon.name())
-								.setStartDate(date);
-						}
-					);
-			}
-			,() -> {
-				config.addData( new CommunicationData()
-					.setDataName(ICC_ADMINISTRATION)
-					.setExpression(admon.name())
-					.setStartDate(date) );
-				
-			}
-		);
-	}
-	
-	private static class CommunicationEnabler implements InvoiceCommunicationTypeAccepter<Void> {
-		private final EnablerContext ec;
-		
-		CommunicationEnabler(EnablerContext context) {
-			this.ec = context;
-		}
-		
-		private boolean isEnabled( EnterpriseDataNames n ) {
-			return ec.config.getData( n , ec.data.getStartDate())
-				.filter( d -> d.getDataName() == ec.data.getDataName() )
-				.isPresent();
-		}
-		private boolean isNotEnabled(EnterpriseDataNames n) {
-			return !isEnabled( n );
-		}
-		
-		private boolean isEnabled( InvoiceCommunicationType t ) {
-			return ec.config.getData( t , ec.data.getStartDate())
-				.filter( d -> d.getDataName() == ec.data.getDataName() )
-				.isPresent();
-		}
-		private boolean isNotEnabled(InvoiceCommunicationType t) {
-			return !isEnabled( t );
-		}
-		
-		private void enable() {
-			ec.config.addData( new CommunicationData()
-				.setDataName(ec.data.getDataName())
-				.setTest( ec.data.isTest() )
-				.setStartDate(ec.data.getStartDate())
-				.setExemptType( ec.data.getExemptType()) 
-			);
-		}
-		
-		public Void visitNoSif() {
-			if (isNotEnabled( ICC_NO_SIF ) ) {
-				AonCollectionUtils.stream(EnterpriseDataNames.getInvoiceCommunicationTypesNames())
-					.filter( n -> n != ICC_LROE )
-					.filter( n -> n != ICC_SII )
-					.forEach( n -> 
-						ec.config.getData(n, ec.data.getStartDate())
-						.ifPresent( d -> EnterpriseDataDAO.closeData(d, ec.data.getStartDate())) 
-					);
-				enable();
-			}
-			return null;
-		}
-		
-		@Override 
-		public Void visitVERIFACTU() {
-			if (isNotEnabled( InvoiceCommunicationType.VERIFACTU ) ) {
-				if (ec.config.isNotAEAT(ec.data.getStartDate()) && ec.config.isNotCanarias(ec.data.getStartDate())) {
-					throw new AonCoreException( InvoiceCommunicationError.ICC_5001.getMessage() );
-				}
-				if (ec.config.isLroe( ec.data.getStartDate() )) throw new AonCoreException( InvoiceCommunicationError.ICC_5011.getMessage() );
-				if (ec.config.isTbai( ec.data.getStartDate() )) throw new AonCoreException( InvoiceCommunicationError.ICC_5007.getMessage() );
-				
-				ec.config.getNoSifData(ec.data.getStartDate()).ifPresent( d -> EnterpriseDataDAO.closeData(d, ec.data.getStartDate()));
-				ec.config.getSifData(ec.data.getStartDate()).ifPresent( d -> EnterpriseDataDAO.closeData(d, ec.data.getStartDate()));
-				ec.config.getNoVerifactuData(ec.data.getStartDate()).ifPresent( d -> EnterpriseDataDAO.closeData(d, ec.data.getStartDate()));
-				
-				Date nextYearFirstDay = AonDateUtils.getYearFirstDay(AonDateUtils.getCurrentYear() + 1);
-				boolean hasSii = ec.config.getSiiData(ec.data.getStartDate()).isPresent(); 
-				if ( hasSii) {
-					if (!AonDateUtils.isSameDay( ec.data.getStartDate(), nextYearFirstDay)) {
-						throw new AonCoreException( InvoiceCommunicationError.ICC_6000.getMessage() );
-					}
-					if ( hasSii ) ec.config.getSiiData(ec.data.getStartDate()).ifPresent( d -> EnterpriseDataDAO.closeData(d, ec.data.getStartDate()));
-					
-				}
-				enable();
-			}
-			return null; 
-		}
-		@Override 
-		public Void visitNO_VERIFACTU() {
-			if (isNotEnabled( InvoiceCommunicationType.NO_VERIFACTU ) ) {
-				if (ec.config.isNotAEAT(ec.data.getStartDate()) && ec.config.isNotCanarias(ec.data.getStartDate())) {
-					throw new AonCoreException( InvoiceCommunicationError.ICC_5001.getMessage() );
-				}
-				if (ec.config.isLroe( ec.data.getStartDate() )) throw new AonCoreException( InvoiceCommunicationError.ICC_5012.getMessage() );
-				if (ec.config.isTbai( ec.data.getStartDate() )) throw new AonCoreException( InvoiceCommunicationError.ICC_5008.getMessage() );
-				
-				ec.config.getNoSifData(ec.data.getStartDate()).ifPresent( d -> EnterpriseDataDAO.closeData(d, ec.data.getStartDate()));
-				ec.config.getSifData(ec.data.getStartDate()).ifPresent( d -> EnterpriseDataDAO.closeData(d, ec.data.getStartDate()));
-				
-				Date nextYearFirstDay = AonDateUtils.getYearFirstDay(AonDateUtils.getCurrentYear() + 1);
-				boolean hasSii = ec.config.getSiiData(ec.data.getStartDate()).isPresent(); 
-				boolean hasVerifactu = ec.config.getVerifactuData(ec.data.getStartDate()).isPresent();
-				if ( hasSii || hasVerifactu) {
-					if (!AonDateUtils.isSameDay( ec.data.getStartDate(), nextYearFirstDay)) {
-						throw new AonCoreException( InvoiceCommunicationError.ICC_6001.getMessage() );
-					}
-					if ( hasSii ) ec.config.getSiiData(ec.data.getStartDate()).ifPresent( d -> EnterpriseDataDAO.closeData(d, ec.data.getStartDate()));
-					if ( hasVerifactu ) ec.config.getVerifactuData(ec.data.getStartDate()).ifPresent( d -> EnterpriseDataDAO.closeData(d, ec.data.getStartDate()));
-				}
-				
-				enable(); 
-			}
-			return null; 
-		}
-		
-		@Override 
-		public Void visitSIF() { 
-			if (isNotEnabled( InvoiceCommunicationType.SIF ) ) {
-				if (ec.config.isNotNavarra(ec.data.getStartDate()) ) {
-					throw new AonCoreException( InvoiceCommunicationError.ICC_5005.getMessage() );
-				}
-				ec.config.getNoSifData(ec.data.getStartDate()).ifPresent( d -> EnterpriseDataDAO.closeData(d, ec.data.getStartDate()));
-				enable();
-			}
-			return null; 
-		}
-		
-		@Override 
-		public Void visitLROE() {
-			if (isNotEnabled( InvoiceCommunicationType.LROE ) ) {
-				if (ec.config.isNotBizkaia(ec.data.getStartDate()) ) {
-					throw new AonCoreException( InvoiceCommunicationError.ICC_5006.getMessage() );
-				}
-				ec.config.getNoSifData(ec.data.getStartDate()).ifPresent( d -> EnterpriseDataDAO.closeData(d, ec.data.getStartDate()));
-				ec.config.getSifData(ec.data.getStartDate()).ifPresent( d -> EnterpriseDataDAO.closeData(d, ec.data.getStartDate()));
-				enable(); 
-			}
-			return null; 
-		}
-
-		@Override 
-		public Void visitTBAI() {
-			if (isNotEnabled( InvoiceCommunicationType.TBAI ) ) {
-				if (ec.config.isNotAraba(ec.data.getStartDate()) && ec.config.isNotGipuzkoa(ec.data.getStartDate())) {
-					throw new AonCoreException( InvoiceCommunicationError.ICC_5003.getMessage() );
-				}
-				ec.config.getNoSifData(ec.data.getStartDate()).ifPresent( d -> EnterpriseDataDAO.closeData(d, ec.data.getStartDate()));
-				ec.config.getSifData(ec.data.getStartDate()).ifPresent( d -> EnterpriseDataDAO.closeData(d, ec.data.getStartDate()));
-				enable();
-			}
-			return null; 
-		}
-		
-		
-		@Override 
-		public Void visitSII() {
-			if (isNotEnabled( InvoiceCommunicationType.SII ) ) {
-				if (ec.config.isBizkaia(ec.data.getStartDate()) || ec.config.isUnknown( ec.data.getStartDate() )) {
-					throw new AonCoreException( InvoiceCommunicationError.ICC_5004.getMessage() );
-				}
-				ec.config.getNoSifData(ec.data.getStartDate()).ifPresent( d -> EnterpriseDataDAO.closeData(d, ec.data.getStartDate()));
-				enable(); 
-			}
-			return null; 
-		}
-		
-		@Override public Void visitSERES() { return null; }
-		@Override public Void visitEMAIL() { return null; }
-		@Override public Void visitCLOSING() { return null; }
-		@Override public Void visitFACTURAE() { return null; }
-	}
-	*/	
 }

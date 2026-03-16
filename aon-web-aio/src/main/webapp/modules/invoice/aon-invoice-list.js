@@ -421,7 +421,7 @@ export class AonInvoiceList extends AonElement {
 	}
 
 	communicateInvoices() {
-		if(this.icc.isTbai() || this.icc.isLroe() || this.icc.isVerifactu() || this.icc.isSii()) {	
+		if(this.icc.needCertificate()) {	
 			this.certificateDialog((certificate) => this.communicatingInvoices(certificate));
 		} else  this.communicatingInvoices();
 	}
@@ -487,7 +487,7 @@ export class AonInvoiceList extends AonElement {
 		});
 	}
 
-	  setIcc(icc) {this.icc = icc; }
+	setIcc(icc) {this.icc = icc; }
 
 	deleteForeverInvoices() {
 		let aonInvoice = this.getElement('aonInvoice');

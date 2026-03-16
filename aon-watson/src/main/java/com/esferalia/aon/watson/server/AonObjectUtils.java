@@ -23,6 +23,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -893,5 +895,20 @@ public class AonObjectUtils {
      * @since 3.2
      */
     public static <T> T CONST(final T v) { return v; }
+    
+    public static <T> boolean optionalEquals(Optional<T> a, Optional<T> b) {
+        return Objects.equals(a, b);
+    }    
+    public static <T> boolean optionalNotEquals(Optional<T> a, Optional<T> b) {
+    	return !optionalEquals(a, b); 
+    }
 
+    public static <T> boolean presentAndEquals(Optional<T> a, Optional<T> b) {
+        return a.isPresent() && b.isPresent() && Objects.equals(a.get(), b.get());
+    }
+    public static <T> boolean presentAndNotEquals(Optional<T> a, Optional<T> b) {
+		return !presentAndEquals(a, b); 
+	}
+    
+    
 }

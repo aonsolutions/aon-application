@@ -313,7 +313,7 @@ public class InvoiceValidation {
 	 */
 	private static final Consumer<InvoiceValidationContext> TBAI = ivc -> {
 		InvoiceCommunicationConfiguration icc = ivc.config.getCommunicationConfig();
-		if(icc.isLroe() && icc.isBizkaia()) {
+		if(icc.isLroe()) {
 			 DataResponse dr = DataResponseDAO.get(ivc.ctx, f -> f.getSourceProperty().eq(DataResponseSource.LROE.value())
 					.and(f.getSourceIdProperty().eq(ivc.inv.getId())), new Options().setFull(true));
 			 dr.getDetails().stream().filter(f -> f.getDataVariable().equals("info")).findFirst().ifPresent( d -> {
@@ -322,7 +322,7 @@ public class InvoiceValidation {
 				 }
 			 });	
 		} 
-		if (icc.isTbai() && (icc.isAraba() || icc.isGipuzkoa())) {
+		if (icc.isTbai()) {
 			DataResponse dr = DataResponseDAO.get(ivc.ctx, f -> f.getSourceProperty().eq(DataResponseSource.TBAI.value())
 					.and(f.getSourceIdProperty().eq(ivc.inv.getId())), new Options().setFull(true));
 			

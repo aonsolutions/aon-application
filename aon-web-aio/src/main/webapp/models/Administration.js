@@ -29,37 +29,6 @@ export const ADMINISTRATIONS = Object.freeze({
     }
 });
 
-export const ADMINISTRATIONS_WITH_UNKNOWN = Object.freeze({
-    UNKNOWN: {
-        value: 'UNKNOWN',
-        name: ' -------- '
-    },
-    ALAVA: {
-        value: 'ALAVA',
-        name: 'Araba/Alava'
-    },
-    BIZKAIA: {
-        value: 'BIZKAIA',
-        name: 'Bizkaia'
-    }, 
-    GIPUZKOA: {
-        value: 'GIPUZKOA',
-        name: 'Gipuzkoa'
-    },
-    NAVARRA: {
-        value: 'NAVARRA',
-        name: 'Navarra'
-    },
-    COMMON_TERRITORY: {
-        value: 'COMMON_TERRITORY',
-        name: 'Territorio Común'
-    },
-    CANARIAS: {
-        value: 'CANARIAS',
-        name: 'A.T. Canaria'
-    },
-});
-
 export class Administration {
 
     value;
