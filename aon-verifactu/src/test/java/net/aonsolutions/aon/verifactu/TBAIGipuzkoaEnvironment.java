@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
@@ -60,6 +61,7 @@ final class TBAIGipuzkoaEnvironment extends VerifactuEnvironmentAbs {
 		CommunicationData cd = new CommunicationData()
 			.setDomain(ctx.getDomainId())
 			.setEnterprise(enterprise.getId())
+			.setDataName(EnterpriseDataNames.ICC_TBAI)
 			.setStartDate(AonDateUtils.yesterday())
 			.setTest(true)
 			.setAdministration(Administration.GIPUZKOA)

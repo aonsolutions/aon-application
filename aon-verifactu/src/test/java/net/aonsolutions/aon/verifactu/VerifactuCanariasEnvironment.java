@@ -7,6 +7,7 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
@@ -56,6 +57,7 @@ final class VerifactuCanariasEnvironment extends VerifactuEnvironmentAbs {
 		CommunicationData cd = new CommunicationData()
 			.setDomain(ctx.getDomainId())
 			.setEnterprise(enterprise.getId())
+			.setDataName(EnterpriseDataNames.ICC_VERIFACTU)
 			.setStartDate(AonDateUtils.yesterday())
 			.setTest(true)
 			.setAdministration(Administration.CANARIAS)
