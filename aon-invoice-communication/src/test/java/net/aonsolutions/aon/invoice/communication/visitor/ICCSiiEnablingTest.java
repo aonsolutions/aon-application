@@ -7,6 +7,7 @@ import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -21,7 +22,9 @@ class ICCSiiEnablingTest extends ICCAbstractEnablingTest {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		CommunicationData toEnable = getCD(Administration.COMMON_TERRITORY).setStartDate(lastMonthFirstDay );
+		CommunicationData toEnable = getCD(Administration.COMMON_TERRITORY)
+			.setDataName( EnterpriseDataNames.ICC_SII)
+			.setStartDate(lastMonthFirstDay );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isSii( today ) );
@@ -45,7 +48,9 @@ class ICCSiiEnablingTest extends ICCAbstractEnablingTest {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		CommunicationData toEnable = getCD(Administration.CANARIAS).setStartDate(lastMonthFirstDay );
+		CommunicationData toEnable = getCD(Administration.CANARIAS)
+				.setDataName( EnterpriseDataNames.ICC_SII)
+				.setStartDate(lastMonthFirstDay );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isSii( today ) );
@@ -69,7 +74,9 @@ class ICCSiiEnablingTest extends ICCAbstractEnablingTest {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		CommunicationData toEnable = getCD(Administration.NAVARRA).setStartDate(lastMonthFirstDay );
+		CommunicationData toEnable = getCD(Administration.NAVARRA)
+				.setDataName( EnterpriseDataNames.ICC_SII)
+				.setStartDate(lastMonthFirstDay );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isSii( today ) );
@@ -93,7 +100,9 @@ class ICCSiiEnablingTest extends ICCAbstractEnablingTest {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		CommunicationData toEnable = getCD(Administration.ALAVA).setStartDate(lastMonthFirstDay );
+		CommunicationData toEnable = getCD(Administration.ALAVA)
+				.setDataName( EnterpriseDataNames.ICC_SII)
+				.setStartDate(lastMonthFirstDay );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isSii( today ) );
@@ -117,7 +126,9 @@ class ICCSiiEnablingTest extends ICCAbstractEnablingTest {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		CommunicationData toEnable = getCD(Administration.GIPUZKOA).setStartDate(lastMonthFirstDay );
+		CommunicationData toEnable = getCD(Administration.GIPUZKOA)
+				.setDataName( EnterpriseDataNames.ICC_SII)
+				.setStartDate(lastMonthFirstDay );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isSii( today ) );
@@ -141,7 +152,9 @@ class ICCSiiEnablingTest extends ICCAbstractEnablingTest {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		CommunicationData toEnable = getCD(Administration.COMMON_TERRITORY).setStartDate(lastMonthFirstDay );
+		CommunicationData toEnable = getCD(Administration.COMMON_TERRITORY)
+				.setDataName( EnterpriseDataNames.ICC_NO_SIF)
+				.setStartDate(lastMonthFirstDay );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableNoSif( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isAEAT( today ) );
@@ -159,7 +172,9 @@ class ICCSiiEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isSii( today ) );
 		assertFalse( icc.isGipuzkoa( today ) );
 
-		CommunicationData toEnable2 = getCD(Administration.ALAVA).setStartDate(today );
+		CommunicationData toEnable2 = getCD(Administration.ALAVA)
+				.setDataName( EnterpriseDataNames.ICC_SII)
+				.setStartDate(today );
 		InvoiceCommunicationConfiguration icc2 = ICCDAO.enableSii( getCtx(),getDomainId(), toEnable2);
 		printIcc(icc2);
 		assertTrue( icc2.isAraba( today ) );

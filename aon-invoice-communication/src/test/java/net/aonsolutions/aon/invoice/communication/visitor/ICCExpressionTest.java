@@ -25,7 +25,9 @@ class ICCExpressionTest extends ICCAbstractEnablingTest {
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
 		CommunicationData cd = getCD( Administration.COMMON_TERRITORY )
-				.setStartDate(lastMonthFirstDay ).setTest( true ); 
+				.setDataName( EnterpriseDataNames.ICC_NO_VERIFACTU )
+				.setStartDate(lastMonthFirstDay )
+				.setTest( true ); 
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableNoVerifactu( getCtx(),getDomainId(), cd);
 		printIcc(icc);
 		assertTrue( icc.isNoVerifactu( today ) );
@@ -54,6 +56,7 @@ class ICCExpressionTest extends ICCAbstractEnablingTest {
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
 		CommunicationData cd = getCD( Administration.CANARIAS )
+				.setDataName( EnterpriseDataNames.ICC_VERIFACTU )
 				.setStartDate(lastMonthFirstDay ); 
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableVerifactu( getCtx(),getDomainId(), cd);
 		printIcc(icc);
@@ -83,6 +86,7 @@ class ICCExpressionTest extends ICCAbstractEnablingTest {
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
 		CommunicationData cd = getCD( Administration.COMMON_TERRITORY)
+				.setDataName( EnterpriseDataNames.ICC_VERIFACTU )
 				.setStartDate(lastMonthFirstDay )
 				.setTest( true )
 				.setExemptType( ExemptType.NO_OBLIGATION); 

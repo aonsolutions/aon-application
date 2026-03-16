@@ -90,6 +90,7 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date today = AonDateUtils.today(); 
 		
 		CommunicationData cd = getCD( ALAVA )
+			.setDataName( EnterpriseDataNames.ICC_TBAI )
 			.setStartDate( today );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableTbai( getCtx(),getDomainId(), cd);
 		printIcc(icc);
@@ -121,7 +122,9 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( GIPUZKOA ).setStartDate( today );
+		CommunicationData toEnable = getCD( GIPUZKOA )
+				.setDataName( EnterpriseDataNames.ICC_TBAI )
+				.setStartDate( today );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableTbai( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		
@@ -159,7 +162,10 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( ALAVA ).setStartDate( today ).setTest( true );
+		CommunicationData toEnable = getCD( ALAVA )
+				.setDataName( EnterpriseDataNames.ICC_TBAI )
+				.setStartDate( today )
+				.setTest( true );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableTbai( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		
@@ -197,7 +203,10 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( GIPUZKOA ).setStartDate( today ).setTest( true );
+		CommunicationData toEnable = getCD( GIPUZKOA )
+				.setDataName( EnterpriseDataNames.ICC_TBAI )
+				.setStartDate( today )
+				.setTest( true );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableTbai( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		
@@ -240,7 +249,9 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( BIZKAIA ).setStartDate( today );
+		CommunicationData toEnable = getCD( BIZKAIA )
+			.setDataName( EnterpriseDataNames.ICC_LROE )
+			.setStartDate( today );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableLroe( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		
@@ -277,7 +288,10 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( BIZKAIA ).setStartDate( today ).setTest( true );
+		CommunicationData toEnable = getCD( BIZKAIA )
+				.setDataName( EnterpriseDataNames.ICC_LROE )
+				.setStartDate( today )
+				.setTest( true );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableLroe( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		
@@ -322,7 +336,9 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();	
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( COMMON_TERRITORY).setStartDate( today );
+		CommunicationData toEnable = getCD( COMMON_TERRITORY)
+				.setDataName( EnterpriseDataNames.ICC_VERIFACTU )
+				.setStartDate( today );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableVerifactu( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		
@@ -359,7 +375,9 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD(CANARIAS).setStartDate( today );
+		CommunicationData toEnable = getCD(CANARIAS)
+				.setDataName( EnterpriseDataNames.ICC_VERIFACTU )
+				.setStartDate( today );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableVerifactu( getCtx(),getDomainId(), toEnable );
 		printIcc(icc);
 		
@@ -396,7 +414,9 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();	
 		Date today = AonDateUtils.today(); 
-		CommunicationData toEnable = getCD( COMMON_TERRITORY ).setStartDate( today ).setTest( true );
+		CommunicationData toEnable = getCD( COMMON_TERRITORY )
+				.setDataName( EnterpriseDataNames.ICC_VERIFACTU )
+				.setStartDate( today ).setTest( true );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableVerifactu( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		
@@ -430,7 +450,9 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();	
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( CANARIAS ).setStartDate( today ).setTest( true );
+		CommunicationData toEnable = getCD( CANARIAS )
+			.setDataName( EnterpriseDataNames.ICC_VERIFACTU )
+			.setStartDate( today ).setTest( true );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableVerifactu( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		
@@ -474,7 +496,9 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( COMMON_TERRITORY ).setStartDate( today );
+		CommunicationData toEnable = getCD( COMMON_TERRITORY )
+			.setDataName( EnterpriseDataNames.ICC_NO_VERIFACTU )
+			.setStartDate( today );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableNoVerifactu( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		
@@ -511,7 +535,9 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( COMMON_TERRITORY ).setStartDate( today ).setTest( true );
+		CommunicationData toEnable = getCD( COMMON_TERRITORY )
+				.setDataName( EnterpriseDataNames.ICC_NO_VERIFACTU )
+				.setStartDate( today ).setTest( true );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableNoVerifactu( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		
@@ -549,7 +575,9 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( CANARIAS ).setStartDate( today );
+		CommunicationData toEnable = getCD( CANARIAS )
+				.setDataName( EnterpriseDataNames.ICC_NO_VERIFACTU )
+				.setStartDate( today );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableNoVerifactu( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		
@@ -586,7 +614,10 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( CANARIAS ).setStartDate( today ).setTest( true );
+		CommunicationData toEnable = getCD( CANARIAS )
+				.setDataName( EnterpriseDataNames.ICC_NO_VERIFACTU )
+				.setStartDate( today )
+				.setTest( true );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableNoVerifactu( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		
@@ -630,7 +661,9 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( COMMON_TERRITORY ).setStartDate( today );
+		CommunicationData toEnable = getCD( COMMON_TERRITORY )
+				.setDataName( EnterpriseDataNames.ICC_SII )
+				.setStartDate( today );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		
@@ -667,7 +700,10 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( COMMON_TERRITORY ).setStartDate( today ).setTest( true );
+		CommunicationData toEnable = getCD( COMMON_TERRITORY )
+				.setDataName( EnterpriseDataNames.ICC_SII )
+				.setStartDate( today )
+				.setTest( true );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		
@@ -705,7 +741,9 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( CANARIAS ).setStartDate( today );
+		CommunicationData toEnable = getCD( CANARIAS )
+				.setDataName( EnterpriseDataNames.ICC_SII )
+				.setStartDate( today );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		
@@ -742,7 +780,10 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( CANARIAS ).setStartDate( today ).setTest( true );
+		CommunicationData toEnable = getCD( CANARIAS )
+				.setDataName( EnterpriseDataNames.ICC_SII )
+				.setStartDate( today )
+				.setTest( true );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		
@@ -779,9 +820,13 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( ALAVA ).setStartDate( today );
+		CommunicationData toEnable = getCD( ALAVA )
+				.setDataName( EnterpriseDataNames.ICC_TBAI )
+				.setStartDate( today );
 		ICCDAO.enableTbai( getCtx(),getDomainId(), toEnable);
-		CommunicationData toEnableSii = getCD( ALAVA ).setStartDate( today );
+		CommunicationData toEnableSii = getCD( ALAVA )
+				.setDataName( EnterpriseDataNames.ICC_SII )
+				.setStartDate( today );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId(), toEnableSii);
 		printIcc(icc);
 		
@@ -828,9 +873,15 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( ALAVA ).setStartDate( today ).setTest( true );
+		CommunicationData toEnable = getCD( ALAVA )
+				.setDataName( EnterpriseDataNames.ICC_TBAI )
+				.setStartDate( today )
+				.setTest( true );
 		ICCDAO.enableTbai( getCtx(),getDomainId(), toEnable);
-		CommunicationData toEnableSii = getCD( ALAVA ).setStartDate( today ).setTest( true );
+		CommunicationData toEnableSii = getCD( ALAVA )
+				.setDataName( EnterpriseDataNames.ICC_SII )
+				.setStartDate( today )
+				.setTest( true );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId(), toEnableSii);
 		printIcc(icc);
 		
@@ -877,9 +928,13 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( GIPUZKOA ).setStartDate( today );
+		CommunicationData toEnable = getCD( GIPUZKOA )
+				.setDataName( EnterpriseDataNames.ICC_TBAI )
+				.setStartDate( today );
 		ICCDAO.enableTbai( getCtx(),getDomainId(), toEnable);
-		CommunicationData toEnableSii = getCD( GIPUZKOA ).setStartDate( today );
+		CommunicationData toEnableSii = getCD( GIPUZKOA )
+				.setDataName( EnterpriseDataNames.ICC_SII )
+				.setStartDate( today );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId(), toEnableSii);
 		printIcc(icc);
 		
@@ -926,7 +981,10 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( GIPUZKOA ).setStartDate( today ).setTest( true );
+		CommunicationData toEnable = getCD( GIPUZKOA )
+				.setDataName( EnterpriseDataNames.ICC_SII )
+				.setStartDate( today )
+				.setTest( true );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		
@@ -963,7 +1021,9 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( NAVARRA ).setStartDate( today );
+		CommunicationData toEnable = getCD( NAVARRA )
+				.setDataName( EnterpriseDataNames.ICC_SII )
+				.setStartDate( today );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		
@@ -999,7 +1059,10 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( NAVARRA ).setStartDate( today ).setTest( true );
+		CommunicationData toEnable = getCD( NAVARRA )
+				.setDataName( EnterpriseDataNames.ICC_SII )
+				.setStartDate( today )
+				.setTest( true );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		
@@ -1042,7 +1105,9 @@ class InvoiceCommunicationConfigTest extends AbstractVerifactuTest {
 		Date yesterday = AonDateUtils.yesterday();
 		Date tomorrow = AonDateUtils.tomorrow();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD( NAVARRA ).setStartDate( today );
+		CommunicationData toEnable = getCD( NAVARRA )
+				.setDataName( EnterpriseDataNames.ICC_SIF )
+				.setStartDate( today );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableSif( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		

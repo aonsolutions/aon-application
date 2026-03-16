@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
@@ -53,7 +54,9 @@ class ICCDAOTest extends ICCAbstractEnablingTest {
         @DisplayName("Dirty flags must be false after read")
         void apply_testDirtyFlag() {
             InvoiceCommunicationConfiguration icc = ICCDAO.enableNoVerifactu(getCtx(), getDomainId()
-        		, getCD( Administration.COMMON_TERRITORY ).setStartDate(lastMonthFirstDay ).setTest(true))
+        		, getCD( Administration.COMMON_TERRITORY )
+        			.setDataName( EnterpriseDataNames.ICC_NO_VERIFACTU )
+        			.setStartDate(lastMonthFirstDay ).setTest(true))
             ;
             printIcc(icc);
             assertFalse( icc.dataStream().anyMatch( d -> d.isDirty() ));
@@ -63,7 +66,9 @@ class ICCDAOTest extends ICCAbstractEnablingTest {
         @DisplayName("Expresion JSON con test=true, isTest() debe ser true")
         void apply_jsonWithTestTrue_setsTestFlag() {
             InvoiceCommunicationConfiguration icc = ICCDAO.enableNoVerifactu(getCtx(), getDomainId()
-        		, getCD( Administration.COMMON_TERRITORY ).setStartDate(lastMonthFirstDay ).setTest(true))
+        		, getCD( Administration.COMMON_TERRITORY )
+        			.setDataName( EnterpriseDataNames.ICC_NO_VERIFACTU )
+        			.setStartDate(lastMonthFirstDay ).setTest(true))
             ;
             printIcc(icc);
 
@@ -77,7 +82,10 @@ class ICCDAOTest extends ICCAbstractEnablingTest {
         @DisplayName("Expresion JSON con exemptType valido, exemptType debe setearse")
         void apply_jsonWithValidExemptType_setsExemptType() {
             InvoiceCommunicationConfiguration icc = ICCDAO.enableNoVerifactu(getCtx(), getDomainId()
-    			, getCD( Administration.COMMON_TERRITORY ).setStartDate(lastMonthFirstDay ).setExemptType(ExemptType.NO_SOFTWARE))
+    			, getCD( Administration.COMMON_TERRITORY )
+    				.setDataName( EnterpriseDataNames.ICC_NO_VERIFACTU )
+    				.setStartDate(lastMonthFirstDay )
+    				.setExemptType(ExemptType.NO_SOFTWARE))
     		;
             printIcc(icc);
 
@@ -92,7 +100,10 @@ class ICCDAOTest extends ICCAbstractEnablingTest {
         @DisplayName("Expresion JSON con test=true y exemptType, ambos campos deben setearse")
         void apply_jsonWithTestAndExemptType_setsBothFields() {
             InvoiceCommunicationConfiguration icc = ICCDAO.enableNoVerifactu(getCtx(), getDomainId()
-        		, getCD( Administration.COMMON_TERRITORY ).setStartDate(lastMonthFirstDay ).setExemptType(ExemptType.AUTHORIZATION).setTest(true))
+        		, getCD( Administration.COMMON_TERRITORY )
+        			.setDataName( EnterpriseDataNames.ICC_NO_VERIFACTU )
+        			.setStartDate(lastMonthFirstDay )
+        			.setExemptType(ExemptType.AUTHORIZATION).setTest(true))
 			;
             printIcc(icc);
 
@@ -107,7 +118,9 @@ class ICCDAOTest extends ICCAbstractEnablingTest {
         @DisplayName("Sin expresion (enable sin test ni exemptType), isTest false y exemptType null")
         void apply_noExpression_defaultValues() {
             InvoiceCommunicationConfiguration icc = ICCDAO.enableNoVerifactu(getCtx(), getDomainId()
-        		, getCD( Administration.COMMON_TERRITORY ).setStartDate(lastMonthFirstDay ))
+        		, getCD( Administration.COMMON_TERRITORY )
+        			.setDataName( EnterpriseDataNames.ICC_NO_VERIFACTU )
+        			.setStartDate(lastMonthFirstDay ))
     		;
             printIcc(icc);
 
@@ -291,7 +304,9 @@ class ICCDAOTest extends ICCAbstractEnablingTest {
         @DisplayName("get() tras enableNoVerifactuTest, configuracion refleja el cambio")
         void get_afterEnable_reflectsChange() {
             ICCDAO.enableNoVerifactu(getCtx(), getDomainId()
-        		, getCD( Administration.COMMON_TERRITORY ).setStartDate(lastMonthFirstDay ).setTest(true))
+        		, getCD( Administration.COMMON_TERRITORY )
+        			.setDataName( EnterpriseDataNames.ICC_NO_VERIFACTU )
+        			.setStartDate(lastMonthFirstDay ).setTest(true))
             ;
             InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(getCtx(), getDomainId());
 

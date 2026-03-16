@@ -103,7 +103,7 @@ class ICCDisablerDAO {
 			} else {
 				// Si hay tipos de comunicación para el día siguiente, se elimina el periodo cerrado, 
 				// siempre que no haya facturas comunicadas en dicho periodo.
-				if (!hasCommunicatedInvoices(ec.ctx, ec.domainId, toDisable)) {
+				if (toDisable.isNotNoSif() && !hasCommunicatedInvoices(ec.ctx, ec.domainId, toDisable)) {
 					toDisable.setDeleted( true );
 				}
 			}

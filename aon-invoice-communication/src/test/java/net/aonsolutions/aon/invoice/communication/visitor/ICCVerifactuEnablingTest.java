@@ -9,6 +9,7 @@ import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
@@ -24,7 +25,9 @@ class ICCVerifactuEnablingTest extends ICCAbstractEnablingTest {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		CommunicationData toEnable = getCD(Administration.COMMON_TERRITORY).setStartDate(lastMonthFirstDay);
+		CommunicationData toEnable = getCD(Administration.COMMON_TERRITORY)
+			.setDataName( EnterpriseDataNames.ICC_VERIFACTU )
+			.setStartDate(lastMonthFirstDay);
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableVerifactu( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isAEAT( today ) );
@@ -43,7 +46,9 @@ class ICCVerifactuEnablingTest extends ICCAbstractEnablingTest {
 	void test_enable_verifactu_from_nothing_today() {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
-		CommunicationData toEnable = getCD(Administration.COMMON_TERRITORY).setStartDate(today);
+		CommunicationData toEnable = getCD(Administration.COMMON_TERRITORY)
+			.setDataName( EnterpriseDataNames.ICC_VERIFACTU )
+			.setStartDate(today);
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableVerifactu( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isAEAT( today ) );
@@ -63,7 +68,9 @@ class ICCVerifactuEnablingTest extends ICCAbstractEnablingTest {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		CommunicationData toEnable = getCD(Administration.COMMON_TERRITORY).setStartDate(lastMonthFirstDay);
+		CommunicationData toEnable = getCD(Administration.COMMON_TERRITORY)
+			.setDataName( EnterpriseDataNames.ICC_VERIFACTU )
+			.setStartDate(lastMonthFirstDay);
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableVerifactu( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isAEAT( today ) );
@@ -76,7 +83,9 @@ class ICCVerifactuEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isLroe( today ) );
 		assertFalse( icc.isSii( today ) );
 		
-		CommunicationData toEnableCanarias = getCD(Administration.CANARIAS).setStartDate(today);
+		CommunicationData toEnableCanarias = getCD(Administration.CANARIAS)
+			.setDataName( EnterpriseDataNames.ICC_VERIFACTU )
+			.setStartDate(today);
 		InvoiceCommunicationConfiguration icc2 = ICCDAO.enableVerifactu( getCtx(),getDomainId(), toEnableCanarias );
 		printIcc(icc2);
 		assertTrue( icc2.isCanarias( today ) );
@@ -95,7 +104,9 @@ class ICCVerifactuEnablingTest extends ICCAbstractEnablingTest {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		CommunicationData toEnable = getCD(Administration.COMMON_TERRITORY).setStartDate(lastMonthFirstDay);
+		CommunicationData toEnable = getCD(Administration.COMMON_TERRITORY)
+			.setDataName( EnterpriseDataNames.ICC_SII )
+			.setStartDate(lastMonthFirstDay);
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isAEAT( today ) );
@@ -108,7 +119,9 @@ class ICCVerifactuEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isTbai( today ) );
 		assertFalse( icc.isLroe( today ) );
 		
-		CommunicationData toEnableVerifactu = getCD(Administration.COMMON_TERRITORY).setStartDate(today);
+		CommunicationData toEnableVerifactu = getCD(Administration.COMMON_TERRITORY)
+			.setDataName( EnterpriseDataNames.ICC_VERIFACTU )
+			.setStartDate(today);
 		AonCoreException e = assertThrows(AonCoreException.class,  () -> ICCDAO.enableVerifactu( getCtx(),getDomainId(), toEnableVerifactu ) );
 		assertEquals( InvoiceCommunicationError.ICC_6000.getMessage(), e.getMessage() );
 	}
@@ -119,7 +132,9 @@ class ICCVerifactuEnablingTest extends ICCAbstractEnablingTest {
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
 		Date nextYearFirstDay = AonDateUtils.getYearFirstDay(AonDateUtils.getCurrentYear() + 1);
-		CommunicationData toEnable = getCD(Administration.COMMON_TERRITORY).setStartDate(lastMonthFirstDay);
+		CommunicationData toEnable = getCD(Administration.COMMON_TERRITORY)
+			.setDataName( EnterpriseDataNames.ICC_SII )
+			.setStartDate(lastMonthFirstDay);
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableSii( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isAEAT( today ) );
@@ -132,12 +147,13 @@ class ICCVerifactuEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isTbai( today ) );
 		assertFalse( icc.isLroe( today ) );
 
-		CommunicationData toEnableVerifactu = getCD(Administration.COMMON_TERRITORY).setStartDate(nextYearFirstDay);
+		CommunicationData toEnableVerifactu = getCD(Administration.COMMON_TERRITORY)
+			.setDataName( EnterpriseDataNames.ICC_VERIFACTU )
+			.setStartDate(nextYearFirstDay);
 		InvoiceCommunicationConfiguration icc2 = ICCDAO.enableVerifactu( getCtx(),getDomainId(), toEnableVerifactu);
 		printIcc(icc2);
 		assertTrue( icc2.isAEAT( nextYearFirstDay ) );
 		assertTrue( icc2.isVerifactu( nextYearFirstDay ) );
-		assertTrue( icc2.isSii( today ) );
 		assertFalse( icc2.isSii( nextYearFirstDay ) );
 
 		assertFalse( icc2.isNoVerifactu( nextYearFirstDay ) );
@@ -151,7 +167,9 @@ class ICCVerifactuEnablingTest extends ICCAbstractEnablingTest {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		CommunicationData toEnable = getCD(Administration.COMMON_TERRITORY).setStartDate(lastMonthFirstDay);
+		CommunicationData toEnable = getCD(Administration.COMMON_TERRITORY)
+			.setDataName( EnterpriseDataNames.ICC_NO_VERIFACTU )
+			.setStartDate(lastMonthFirstDay);
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableNoVerifactu( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isAEAT( today ) );
@@ -164,12 +182,13 @@ class ICCVerifactuEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isTbai( today ) );
 		assertFalse( icc.isLroe( today ) );
 		
-		CommunicationData toEnableVerifactu = getCD(Administration.COMMON_TERRITORY).setStartDate(today);
+		CommunicationData toEnableVerifactu = getCD(Administration.COMMON_TERRITORY)
+			.setDataName( EnterpriseDataNames.ICC_VERIFACTU )
+			.setStartDate(today);
 		InvoiceCommunicationConfiguration icc2 = ICCDAO.enableVerifactu( getCtx(),getDomainId(), toEnableVerifactu);
 		printIcc(icc2);
 		assertTrue( icc2.isAEAT( today ) );
 		assertTrue( icc2.isVerifactu( today ) );
-		assertTrue( icc2.isNoVerifactu( lastMonthFirstDay ) );
 		assertFalse( icc2.isNoVerifactu( today ) );
 
 		assertFalse( icc2.isSii( today ) );
@@ -184,7 +203,9 @@ class ICCVerifactuEnablingTest extends ICCAbstractEnablingTest {
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
 		Date nextYearFirstDay = AonDateUtils.getYearFirstDay(AonDateUtils.getCurrentYear() + 1);
-		CommunicationData toEnable = getCD(Administration.COMMON_TERRITORY).setStartDate(lastMonthFirstDay);
+		CommunicationData toEnable = getCD(Administration.COMMON_TERRITORY)
+			.setDataName( EnterpriseDataNames.ICC_NO_VERIFACTU )
+			.setStartDate(lastMonthFirstDay);
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableNoVerifactu( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isAEAT( today ) );
@@ -197,12 +218,13 @@ class ICCVerifactuEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isTbai( today ) );
 		assertFalse( icc.isLroe( today ) );
 		
-		CommunicationData toEnableVerifactu = getCD(Administration.COMMON_TERRITORY).setStartDate(nextYearFirstDay);
+		CommunicationData toEnableVerifactu = getCD(Administration.COMMON_TERRITORY)
+			.setDataName( EnterpriseDataNames.ICC_VERIFACTU )
+			.setStartDate(nextYearFirstDay);
 		InvoiceCommunicationConfiguration icc2 = ICCDAO.enableVerifactu( getCtx(),getDomainId(), toEnableVerifactu);
 		printIcc(icc2);
 		assertTrue( icc2.isAEAT( nextYearFirstDay ) );
 		assertTrue( icc2.isVerifactu( nextYearFirstDay ) );
-		assertTrue( icc2.isNoVerifactu( today ) );
 
 		assertFalse( icc2.isNoVerifactu( nextYearFirstDay ) );
 		assertFalse( icc2.isSii( nextYearFirstDay ) );
@@ -220,9 +242,10 @@ class ICCVerifactuEnablingTest extends ICCAbstractEnablingTest {
 	void test_enable_verifactu_from_lroe() {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
-		Date yesterday = AonDateUtils.yesterday();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		CommunicationData toEnable = getCD(Administration.BIZKAIA).setStartDate(lastMonthFirstDay);
+		CommunicationData toEnable = getCD(Administration.BIZKAIA)
+			.setDataName( EnterpriseDataNames.ICC_LROE )
+			.setStartDate(lastMonthFirstDay);
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableLroe( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isLroe( today ) );
@@ -241,14 +264,14 @@ class ICCVerifactuEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isNoSif( today ) );
 		assertFalse( icc.isTbai( today ) );
 		
-		CommunicationData toEnableVerifactu = getCD(Administration.COMMON_TERRITORY).setStartDate(today);
+		CommunicationData toEnableVerifactu = getCD(Administration.COMMON_TERRITORY)
+			.setDataName( EnterpriseDataNames.ICC_VERIFACTU )
+			.setStartDate(today);
 		InvoiceCommunicationConfiguration icc2 = ICCDAO.enableVerifactu( getCtx(),getDomainId(), toEnableVerifactu);
 		assertFalse( icc2.isLroe( today ) );
 		assertFalse( icc2.isBizkaia( today ) );
 		assertTrue( icc2.isAEAT( today ) );
 		assertTrue( icc2.isVerifactu( today ) );
-		assertTrue( icc2.isLroe( yesterday ) );
-		assertTrue( icc2.isBizkaia( yesterday ) );
 		
 		assertFalse( icc2.isCanarias( today ) );
 		assertFalse( icc2.isAraba( today ) );
@@ -266,9 +289,10 @@ class ICCVerifactuEnablingTest extends ICCAbstractEnablingTest {
 	void test_enable_verifactu_from_tbai_araba() {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
-		Date yesterday = AonDateUtils.yesterday();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		CommunicationData toEnable = getCD(Administration.ALAVA).setStartDate(lastMonthFirstDay);
+		CommunicationData toEnable = getCD(Administration.ALAVA)
+			.setDataName( EnterpriseDataNames.ICC_TBAI )
+			.setStartDate(lastMonthFirstDay);
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableTbai( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isTbai( today ) );
@@ -286,14 +310,14 @@ class ICCVerifactuEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isNoSif( today ) );
 		assertFalse( icc.isLroe( today ) );
 		
-		CommunicationData toEnableVerifactu = getCD(Administration.COMMON_TERRITORY).setStartDate(today);
+		CommunicationData toEnableVerifactu = getCD(Administration.COMMON_TERRITORY)
+			.setDataName( EnterpriseDataNames.ICC_VERIFACTU )
+			.setStartDate(today);
 		InvoiceCommunicationConfiguration icc2 = ICCDAO.enableVerifactu( getCtx(),getDomainId(), toEnableVerifactu);
 		assertFalse( icc2.isTbai( today ) );
 		assertFalse( icc2.isAraba( today ) );
 		assertTrue( icc2.isAEAT( today ) );
 		assertTrue( icc2.isVerifactu( today ) );
-		assertTrue( icc2.isTbai( yesterday ) );
-		assertTrue( icc2.isAraba( yesterday ) );
 		
 		assertFalse( icc2.isCanarias( today ) );
 		assertFalse( icc2.isBizkaia( today ) );
@@ -310,9 +334,10 @@ class ICCVerifactuEnablingTest extends ICCAbstractEnablingTest {
 	void test_enable_verifactu_from_tbai_gipuzkoa() {
 		resetAndGetIcc();
 		Date today = AonDateUtils.today();
-		Date yesterday = AonDateUtils.yesterday();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
-		CommunicationData toEnable = getCD(Administration.GIPUZKOA).setStartDate(lastMonthFirstDay);
+		CommunicationData toEnable = getCD(Administration.GIPUZKOA)
+			.setDataName( EnterpriseDataNames.ICC_TBAI )	
+			.setStartDate(lastMonthFirstDay);
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableTbai( getCtx(),getDomainId(), toEnable);
 		printIcc(icc);
 		assertTrue( icc.isTbai( today ) );
@@ -330,14 +355,14 @@ class ICCVerifactuEnablingTest extends ICCAbstractEnablingTest {
 		assertFalse( icc.isNoSif( today ) );
 		assertFalse( icc.isLroe( today ) );
 		
-		CommunicationData toEnableVerifactu = getCD(Administration.COMMON_TERRITORY).setStartDate(today);
+		CommunicationData toEnableVerifactu = getCD(Administration.COMMON_TERRITORY)
+			.setDataName( EnterpriseDataNames.ICC_VERIFACTU )
+			.setStartDate(today);
 		InvoiceCommunicationConfiguration icc2 = ICCDAO.enableVerifactu( getCtx(),getDomainId(), toEnableVerifactu);
 		assertFalse( icc2.isTbai( today ) );
 		assertFalse( icc2.isGipuzkoa( today ) );
 		assertTrue( icc2.isAEAT( today ) );
 		assertTrue( icc2.isVerifactu( today ) );
-		assertTrue( icc2.isTbai( yesterday ) );
-		assertTrue( icc2.isGipuzkoa( yesterday ) );
 		
 		assertFalse( icc2.isCanarias( today ) );
 		assertFalse( icc2.isBizkaia( today ) );

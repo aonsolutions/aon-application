@@ -8,6 +8,7 @@ import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
@@ -25,6 +26,7 @@ class ICCNoVerifactuDisablingTest extends ICCAbstractEnablingTest {
 		Date today = AonDateUtils.today();
 		Date lastMonthFirstDay = AonDateUtils.getMonthFirstDay( AonDateUtils.addMonths( today, -1 ));
 		CommunicationData toEnable = getCD(Administration.COMMON_TERRITORY)
+			.setDataName( EnterpriseDataNames.ICC_NO_VERIFACTU)
 			.setStartDate( lastMonthFirstDay )
 			.setTest( true );
 		InvoiceCommunicationConfiguration icc = ICCDAO.enableNoVerifactu( getCtx(),getDomainId(), toEnable);
@@ -33,11 +35,11 @@ class ICCNoVerifactuDisablingTest extends ICCAbstractEnablingTest {
 		assertTrue( icc.isNoVerifactu( today ) );
 		
 		CommunicationData toDisable = getCD(Administration.COMMON_TERRITORY)
+			.setDataName( EnterpriseDataNames.ICC_NO_VERIFACTU)
 			.setStartDate( lastMonthFirstDay )
 			.setEndDate( lastMonthFirstDay )
 			.setTest( true );
 		AonCoreException e = assertThrows(AonCoreException.class,  () -> ICCDAO.disableNoVerifactu( getCtx(),getDomainId(), toDisable));
-		e.printStackTrace();
 		assertEquals( InvoiceCommunicationError.ICC_6002.getMessage(), e.getMessage() );
 		
 	}
