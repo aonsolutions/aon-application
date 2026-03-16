@@ -10,6 +10,7 @@ import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -36,6 +37,7 @@ public class InvoiceCommunicationDAOSaveConfigTest extends AbstractOccamTest {
 		Date startDate = AonDateUtils.getMonthFirstDay(AonDateUtils.addMonths(today, -1));
 		CommunicationData data = new CommunicationData()
 			.setDomain(DOMAIN_ID)
+			.setDataName(EnterpriseDataNames.ICC_SII)
 			.setAdministration(Administration.COMMON_TERRITORY)
 			.setStartDate(startDate);
 
@@ -52,6 +54,7 @@ public class InvoiceCommunicationDAOSaveConfigTest extends AbstractOccamTest {
 		Date startDate = AonDateUtils.getMonthFirstDay(AonDateUtils.addMonths(today, -1));
 		CommunicationData data = new CommunicationData()
 			.setDomain(DOMAIN_ID)
+			.setDataName(EnterpriseDataNames.ICC_VERIFACTU)
 			.setAdministration(Administration.COMMON_TERRITORY)
 			.setStartDate(startDate);
 
@@ -68,6 +71,7 @@ public class InvoiceCommunicationDAOSaveConfigTest extends AbstractOccamTest {
 		Date startDate = AonDateUtils.getMonthFirstDay(AonDateUtils.addMonths(today, -1));
 		CommunicationData data = new CommunicationData()
 			.setDomain(DOMAIN_ID)
+			.setDataName(EnterpriseDataNames.ICC_LROE)
 			.setAdministration(Administration.BIZKAIA)
 			.setStartDate(startDate);
 
@@ -84,6 +88,7 @@ public class InvoiceCommunicationDAOSaveConfigTest extends AbstractOccamTest {
 		Date startDate = AonDateUtils.getMonthFirstDay(AonDateUtils.addMonths(today, -1));
 		CommunicationData data = new CommunicationData()
 			.setDomain(DOMAIN_ID)
+			.setDataName(EnterpriseDataNames.ICC_NO_VERIFACTU)
 			.setAdministration(Administration.COMMON_TERRITORY)
 			.setStartDate(startDate)
 			.setExemptType(ExemptType.NO_SOFTWARE);
@@ -102,6 +107,7 @@ public class InvoiceCommunicationDAOSaveConfigTest extends AbstractOccamTest {
 		Date startDate = AonDateUtils.getMonthFirstDay(AonDateUtils.addMonths(today, -1));
 		CommunicationData data = new CommunicationData()
 			.setDomain(DOMAIN_ID)
+			.setDataName(EnterpriseDataNames.ICC_NO_VERIFACTU)
 			.setAdministration(Administration.COMMON_TERRITORY)
 			.setStartDate(startDate)
 			.setTest(true);
@@ -120,7 +126,8 @@ public class InvoiceCommunicationDAOSaveConfigTest extends AbstractOccamTest {
 		Date startDate = AonDateUtils.getMonthFirstDay(AonDateUtils.addMonths(today, -1));
 		CommunicationData data = new CommunicationData()
 			.setDomain(DOMAIN_ID)
-			.setAdministration(Administration.COMMON_TERRITORY)
+			.setDataName(EnterpriseDataNames.ICC_SIF)
+			.setAdministration(Administration.NAVARRA)
 			.setStartDate(startDate);
 
 		InvoiceCommunicationConfiguration result = ICCDAO.enableSif(ctx, DOMAIN_ID, data);
@@ -135,6 +142,7 @@ public class InvoiceCommunicationDAOSaveConfigTest extends AbstractOccamTest {
 		Date startDate = AonDateUtils.getMonthFirstDay(AonDateUtils.addMonths(today, -1));
 		CommunicationData data = new CommunicationData()
 			.setDomain(DOMAIN_ID)
+			.setDataName(EnterpriseDataNames.ICC_NO_SIF)
 			.setAdministration(Administration.COMMON_TERRITORY)
 			.setStartDate(startDate);
 
