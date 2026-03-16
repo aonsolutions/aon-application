@@ -1,12 +1,12 @@
 import { AonElement } from "../../components/AonElement.js";
 import { getCompany } from "../../services/service.js";
 import { AonApplication } from '../../components/aon-application.js';
-import { CONSTANT, MSG } from '../../environments/environments.js';
-import { AonWarehouseMenu } from "./aon-warehouse-menu.js";
+import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
+import { AonGroupwareMenu } from "./aon-groupware-menu.js";
 
-export class AonWarehouseBeta extends AonElement {
+export class AonGroupware extends AonElement {
 
-	AON_WAREHOUSE_BETA;
+	GROUPWARE;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -22,7 +22,7 @@ export class AonWarehouseBeta extends AonElement {
 
 	connectedCallback() {
 		this.initialize();
-		this.createApplication(this.AON_WAREHOUSE_BETA, MSG.WAREHOUSE, new AonApplication());
+		this.createApplication(this.GROUPWARE, MSG.GROUPWARE, new AonApplication());
 		
 		this.buildDur().then(() => {
 			getCompany().then(company => {
@@ -33,18 +33,18 @@ export class AonWarehouseBeta extends AonElement {
 	}
 
 	initialize() {
-		this.AON_WAREHOUSE_BETA = "aonWarehouseBeta";
+		this.GROUPWARE = "aonGroupware";
 	}
 
 	build() {
 		this.buildToolbar();
 		this.buildSidenav();
-		this.buildWarehouseMenu();
+		this.buildGroupwareMenu();
 	}
 	
 	buildToolbar(){
 		this.getApplication().removeToolbarOptions();
-		this.getApplication().addCompanyNotes(this.company.registry, 'WAREHOUSE');
+		this.getApplication().addCompanyNotes(this.company.registry, 'GROUPWARE');
 	}
 
 	buildSidenav() {
@@ -53,20 +53,16 @@ export class AonWarehouseBeta extends AonElement {
 				id: "observations",
 				icon: "speaker_notes",
 				name: "Observaciones",
-				fn: () => this.buildObservations('WAREHOUSE'),
+				fn: () => this.buildObservations('GROUPWARE'),
 			}
 		];
 		this.getApplication().addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);
 	}
 
-	buildWarehouseMenu() {
-		this.getApplication().setContent(new AonWarehouseMenu());
-	}
-
-	getApplication() {
-		return this.getElement(this.AON_WAREHOUSE_BETA);
+	buildGroupwareMenu() {
+		this.getApplication().setContent(new AonGroupwareMenu());
 	}
 }
-if(!window.customElements.get("aon-warehouse-beta")) {
-	window.customElements.define("aon-warehouse-beta", AonWarehouseBeta);
+if(!window.customElements.get(TAG.AON_GROUPWARE)) {
+	window.customElements.define(TAG.AON_GROUPWARE, AonGroupware);
 }

@@ -31,6 +31,10 @@ export const P = 'p';
 
 // COMPONENTS
 
+export const AON_ACADEMY = 'aon-academy';
+export const AON_COMMERCE = 'aon-commerce';
+export const AON_COMMERCIAL = 'aon-commercial';
+export const AON_GARAGE = 'aon-garage';
 export const AON_ELEMENT = 'aon-element';
 export const AON_ADDRESS = 'aon-address';
 export const AON_APPLICATION = 'aon-application';
@@ -92,6 +96,7 @@ export const AON_TABLE = 'aon-table';
 export const AON_TOAST = 'aon-toast';
 export const AON_TOOLTIP = 'aon-tooltip';
 export const AON_TOOLBAR = 'aon-toolbar';
+export const AON_TREASURY = 'aon-treasury';
 export const AON_VIEWER = 'aon-viewer';
 export const AON_NOTIFICATION_PANEL = 'aon-notification-panel'
 export const AON_NOTIFICATION_ICON = 'aon-notification-icon';

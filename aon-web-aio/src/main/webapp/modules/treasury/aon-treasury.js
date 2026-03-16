@@ -1,12 +1,15 @@
 import { AonElement } from "../../components/AonElement.js";
 import { getCompany } from "../../services/service.js";
 import { AonApplication } from '../../components/aon-application.js';
-import { CONSTANT, MSG } from '../../environments/environments.js';
-import { AonWarehouseMenu } from "./aon-warehouse-menu.js";
+import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
+import * as LS from '../../services/localStorageService.js';
+import { AonTreasuryMenu } from "./aon-treasury-menu.js";
 
-export class AonWarehouseBeta extends AonElement {
+export class AonTreasury extends AonElement {
+	
+	TREASURY;
+	righPanel;
 
-	AON_WAREHOUSE_BETA;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -22,7 +25,7 @@ export class AonWarehouseBeta extends AonElement {
 
 	connectedCallback() {
 		this.initialize();
-		this.createApplication(this.AON_WAREHOUSE_BETA, MSG.WAREHOUSE, new AonApplication());
+		this.createApplication(this.TREASURY, MSG.TREASURY, new AonApplication());
 		
 		this.buildDur().then(() => {
 			getCompany().then(company => {
@@ -33,18 +36,19 @@ export class AonWarehouseBeta extends AonElement {
 	}
 
 	initialize() {
-		this.AON_WAREHOUSE_BETA = "aonWarehouseBeta";
+		this.TREASURY = "aonTreasury";
 	}
 
 	build() {
 		this.buildToolbar();
 		this.buildSidenav();
-		this.buildWarehouseMenu();
+		this.buildTreasuryMenu();		
 	}
 	
 	buildToolbar(){
 		this.getApplication().removeToolbarOptions();
-		this.getApplication().addCompanyNotes(this.company.registry, 'WAREHOUSE');
+		let company = LS.getCompany();
+		this.getApplication().addCompanyNotes(company.registry, 'TREASURY');
 	}
 
 	buildSidenav() {
@@ -53,20 +57,17 @@ export class AonWarehouseBeta extends AonElement {
 				id: "observations",
 				icon: "speaker_notes",
 				name: "Observaciones",
-				fn: () => this.buildObservations('WAREHOUSE'),
+				fn: () => this.buildObservations('TREASURY'),
 			}
 		];
 		this.getApplication().addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);
 	}
 
-	buildWarehouseMenu() {
-		this.getApplication().setContent(new AonWarehouseMenu());
+	buildTreasuryMenu() {
+		let menu = new AonTreasuryMenu();
+		menu.setDur(this.getDur());
+		this.getApplication().setContent(menu);
 	}
+}
 
-	getApplication() {
-		return this.getElement(this.AON_WAREHOUSE_BETA);
-	}
-}
-if(!window.customElements.get("aon-warehouse-beta")) {
-	window.customElements.define("aon-warehouse-beta", AonWarehouseBeta);
-}
+window.customElements.define(TAG.AON_TREASURY, AonTreasury);
