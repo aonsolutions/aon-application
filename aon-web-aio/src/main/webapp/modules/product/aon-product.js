@@ -8,17 +8,14 @@ import {CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
-import { AonInput } from '../../components/aon-input.js';
-import { AonSelect } from '../../components/aon-select.js';
-
 import { Product } from '../../models/product/Product.js';
-import { AonNumber } from '../../components/aon-number.js';
 import { Item } from '../../models/product/Item.js';
 import { getProductCategories, saveItem, saveProduct } from '../../services/productService.js';
 import { TaxIVAPercentage, TaxIVAPercentage2, TaxRetentionPercentage, TaxRetentionPercentage2 } from '../invoice/invoiceEnums.js';
 import { AonMobileProductList } from './aon-mobile-product-list.js';
 import { AonProductList } from './aon-product-list.js';
 import * as OPTION from '../invoice/InvoiceOptions.js';
+import { createInput, createNumber, createSelect } from '../../components/CreateComponent.js';
 
 export class AonProduct extends AonElement {
 
@@ -335,24 +332,15 @@ export class AonProduct extends AonElement {
 	}
 
 	createSelect(id, title) {
-		let select = new AonSelect();
-		select.id = id;
-		select.title = title;
-		return select;
+		return createSelect(id, title);
 	}
 
 	createInput(id, title) {
-		let select = new AonInput();
-		select.id = id;
-		select.description = title;
-		return select;
+		return createInput(id, title);
 	}
 
 	createNumber(id, title) {
-		let number = new AonNumber();
-		number.id = id;
-		number.description = title;
-		return number;
+		return createNumber(id, title);
 	}
 }
 

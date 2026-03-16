@@ -71,7 +71,6 @@ import { AonPayrollBeta } from './payroll/aon-payroll-beta.js';
 import { getInvoiceCount } from '../services/invoiceService.js';
 import { getRelationShipCompany } from '../services/registryService.js';
 import { AonTooltip } from '../components/aon-tooltip.js';
-import { AonCommercialBeta } from './commercial/aon-commercial-beta.js';
 import { AonManagementBeta } from './management/aon-management-beta.js';
 import { AonWarehouseBeta } from './warehouse/aon-warehouse-beta.js';
 import { AonMarketingBeta } from './marketing/aon-marketing-beta.js';

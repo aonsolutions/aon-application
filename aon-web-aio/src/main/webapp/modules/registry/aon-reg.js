@@ -19,7 +19,6 @@ import { AonSelect } from '../../components/aon-select.js';
 import { AonTab } from '../../components/aon-tab.js';
 import { Bank } from './bank/Bank.js';
 import { AonIban } from '../../components/aon-iban.js';
-import { AonNumber } from '../../components/aon-number.js';
 import { getPaymethods } from '../../services/invoiceService.js';
 import * as GWT from '../../gwt/gwt.js';
 import * as ACTION from '../actions.js';
@@ -178,6 +177,7 @@ export class AonReg extends AonElement {
 	
 	buildGeneralData() {
 		let div = this.getElement(this.DIV);
+		div.style.display = 'flex';
 		this.clearElement(div);
 		this.buildGeneralCard(div);
 		this.buildMediaCard(div);
@@ -185,6 +185,7 @@ export class AonReg extends AonElement {
 
 	buildBankData() {
 		let div = this.getElement(this.DIV);
+		div.style.display = 'flex';
 		this.clearElement(div);
 		this.buildBankAccountCard(div);
 		this.buildPaymethodCard(div);

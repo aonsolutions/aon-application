@@ -14,7 +14,6 @@ import { AonSelect } from "../../../components/aon-select.js";
 import { getWorkgroups } from "../../../services/workgroupService.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { Workgroup } from "../../../models/project/Workgroup.js";
-import { AonInput } from "../../../components/aon-input.js";
 import { AonTaskholderWorkgroupList } from "./aon-taskholder-workgroup-list.js";
 
 export class AonTaskHolder extends AonReg {
@@ -75,18 +74,14 @@ export class AonTaskHolder extends AonReg {
 
     table.addRow();
 
-    let nameInput = new AonInput();
-    nameInput.id = "aonConfigurationGeneralName";
-    nameInput.description = MSG.NAME;
+    let nameInput = createInput("aonConfigurationGeneralName", MSG.NAME);
     nameInput.value = this.registry.getName();
     nameInput.addEventListener(EVENT.CHANGE, () =>
       this.registry.setName(nameInput.value)
     );
     table.addCell(nameInput);
 
-    let documentInput = new AonInput();
-    documentInput.id = "aonConfigurationGeneralNif";
-    documentInput.description = MSG.NIF;
+    let documentInput = createInput("aonConfigurationGeneralNif", MSG.NIF);
     documentInput.value = this.registry.getDocument();
     documentInput.addEventListener(EVENT.CHANGE, () =>
       this.registry.setDocument(documentInput.value)
