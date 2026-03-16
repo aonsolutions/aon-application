@@ -1127,7 +1127,25 @@ public class SalaryDraft extends ResizeComposite
 
 	}
 
-	
+	static class NewDelayEditorFactory extends BooleanEditorFactory {
+
+		public NewDelayEditorFactory() {
+			super();
+		}
+		
+		@Override
+		public boolean accept(Variable variable) {
+			return "NUEVO_ATRASO".equalsIgnoreCase(variable.getName()) && super.accept(variable);
+		}
+		
+		@Override
+		public TextListBox create(Variable variable) {
+			TextListBox textListBox = super.create(variable);
+			textListBox.addStyleName("aon-WriteOnly");
+			return textListBox;
+		}
+		
+	}
 
 	static class BooleanEditorFactory implements VariableEditorFactory<TextListBox> {
 	    
@@ -7930,6 +7948,7 @@ public class SalaryDraft extends ResizeComposite
 					"COEFICIENTE_ERE_FZA", 
 					"COEFICIENTE_ERE_FZA_EXONERADO", 
 					"COEFICIENTE_HUELGA"  ), 
+			new NewDelayEditorFactory(),
 			new EventConstantEditorFactory("ATRASO", "PAGA_EXTRA_[0-9]+_[0-9]+"), 
 			new AgreementConstantEditorFactory(), 
 			new ConstantEditorFactory("SMI"), 

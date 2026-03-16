@@ -6505,6 +6505,12 @@ public class AON {
 			return getCommon().getTagList(ctx, params);
 		}
 	}
+
+	public static Tag saveTag(Occam occam, Tag tag){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getCommon().saveTag(ctx, tag);
+		}
+	}
 	
 	public static Tag saveTag(String domainName, Integer domainId, String login, Tag tag){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
@@ -6512,21 +6518,14 @@ public class AON {
 		}
 	}
 	
+	@Deprecated(forRemoval = true )
 	public static Tag insertTag(String domainName, Integer domainId, String login, Tag tag) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getCommon().insertTag(ctx, tag);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+		return saveTag(domainName, domainId, login, tag);
 	}
 
+	@Deprecated(forRemoval = true )
 	public static Tag updateTag(String domainName, Integer domainId, String login, Tag tag) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getCommon().updateTag(ctx, tag);
-		}
+		return saveTag(domainName, domainId, login, tag);
 	}
 
 	public static void deleteTag(String domainName, Integer domainId, String login, Tag tag) {

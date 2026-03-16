@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.console;
 
-import static com.esferalia.aon.jooq.tables.UrlShorten.URL_SHORTEN;
+import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.ActionEntry.ACTION_ENTRY;
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
@@ -22,6 +22,7 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Session.SESSION;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
+import static com.esferalia.aon.jooq.tables.UrlShorten.URL_SHORTEN;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
@@ -500,8 +501,15 @@ public class ConsoleDomainIsolate {
 			if (selectCount == null) {
 				selectCount = Integer.valueOf(0);
 			}
+			
+			Field<?>[] fields = t.getTable().fields();
+			if ( AonStringUtils.equals(RECORD_DATA.getName(),t.getTable().getName())) {
+				fields = AonCollectionUtils.stream( fields )
+					.filter( f -> AonStringUtils.notEquals( RECORD_DATA.TYPE_0_UNIQUE.getName(), f.getName()))
+					.toArray( n -> new Field<?>[n]);
+			}
 			SelectConditionStep<Record> select = params.getFromDslContext()
-				.select()
+				.select( fields )
 				.from(t.getTable().asTable())
 				.where(getDomainField(t.getTable()).equal(params.getFromConnection().getDomain().getId()));
 			t.setTotalProgress(  selectCount );

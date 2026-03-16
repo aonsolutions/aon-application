@@ -2,14 +2,12 @@ import { AonElement } from '../components/AonElement.js';
 import { MSG, CSS, EVENT, TAG, CONSTANT } from '../environments/environments.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonButton } from '../components/aon-button.js';
-import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME, APPS } from '../services/app.js';
 import { AonCard } from '../components/aon-card.js';
-import * as LS from '../services/localStorageService.js';
+
 export class AonSuiteMenu extends AonElement {
 
     SIDE_MENU;
     CONTENT;
-    TITLE;
     NEW_BUTTON;
     UPLOAD_BUTTON;
     OPTIONS;
@@ -34,7 +32,6 @@ export class AonSuiteMenu extends AonElement {
         this.id = 'aonSuiteMenu';
         this.SIDE_MENU = this.id + 'SideMenu';
         this.CONTENT = this.id + 'Content';
-        this.TITLE = this.id + 'Title';
         this.NEW_BUTTON = this.id + 'NewButton';
         this.UPLOAD_BUTTON = this.id + 'UploadButton';
         this.CONF_BUTTON = this.id + 'ConfButton';
@@ -50,7 +47,6 @@ export class AonSuiteMenu extends AonElement {
         let divFlex = this.createDiv();
         divFlex.className = "aonFlex";
         this.appendChild(divFlex);
-        // this.getApplication().setContent(divFlex);
 
         let sideMenu = this.createDiv();
         sideMenu.id = this.SIDE_MENU;
@@ -148,11 +144,6 @@ export class AonSuiteMenu extends AonElement {
         div.classList.add("suiteMenuDiv");
         content.appendChild(div);
 
-        let title = this.createDiv();
-        title.id = this.TITLE;
-        title.className = "aonSidenavTitle";
-        div.appendChild(title);
-
         let div2 = this.createDiv();
         div2.classList.add("suiteMenuDiv2");
         content.appendChild(div2);
@@ -162,14 +153,6 @@ export class AonSuiteMenu extends AonElement {
             .forEach((opt, i) => {
                 this.buildCard(opt, i, div2);
             });
-    }
-
-    setTitle(title) {
-        this.title = title;
-        let titleElement = this.getElement(this.TITLE);
-        if (titleElement) {
-            titleElement.innerHTML = this.title;
-        }
     }
 
     buildSideNavCard(sideMenu, id) {

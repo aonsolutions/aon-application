@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.grecasa.ext.pa.mod417.MIModelo417;
 import org.grecasa.ext.pa.mod420.MIModelo420;
+import org.grecasa.ext.pa.mod421.MIModelo421;
 import org.grecasa.ext.pa.tributos.MIModeloComun;
 
 public class MIModelo420Handler {
@@ -29,7 +30,7 @@ public class MIModelo420Handler {
 		return str == null || str.trim().isEmpty();
 	}
 	
-// MODELOS 417, 420 y 425 ----------------------------------------------------------------------------
+// MODELOS 417, 420, 421 y 425 ----------------------------------------------------------------------------
 	
 	public MIModelo420Result obtenerPresentacion(String declaracion) {
 		
@@ -124,6 +125,8 @@ public class MIModelo420Handler {
 			return new MIModelo420(getDownloadDir());
 		} else if (declaracion.contains("MOD=\"417\"")) {
 			return new MIModelo417(getDownloadDir());
+		} else if (declaracion.contains("MOD=\"421\"")) {
+			return new MIModelo421(getDownloadDir());
 		} else 
 //		if (declaracion.contains("MOD=\"425\"")) {
 //			return new MIModelo425(getDownloadDir());
@@ -198,5 +201,3 @@ public class MIModelo420Handler {
 //	}
 
 }
-
-

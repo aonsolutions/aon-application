@@ -154,8 +154,6 @@ public interface ICommon {
 	
 	// TAG
 	public Stream<Tag> getTagStream(AONContext ctx, TagFilter filter);
-	public Tag insertTag(AONContext ctx, Tag tag);
-	public Tag updateTag(AONContext ctx, Tag tag);
 	public void deleteTag(AONContext ctx, TagFilter filter);
 	
 	public LinkedList<Tag> getTagList(CloseableAONContext ctx, TagParams params);

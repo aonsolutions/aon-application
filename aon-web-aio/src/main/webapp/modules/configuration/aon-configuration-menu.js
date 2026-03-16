@@ -23,7 +23,6 @@ export class AonConfigurationMenu extends AonSuiteMenu {
             this.clear();
             this.initialize();
             this.build();
-            this.setTitle("Opciones de configuración");
         })
     }
 

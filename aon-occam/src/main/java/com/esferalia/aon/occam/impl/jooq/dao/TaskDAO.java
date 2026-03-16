@@ -410,7 +410,7 @@ public class TaskDAO {
 			.from(TAG)
 			.where(TAG.DOMAIN.eq(task.getDomain().getId()))
 			.and(DSL.upper(TAG.NAME).eq(name))
-			.and(TAG.TYPE.eq(tag.getTagType().value()))
+			.and(TAG.TYPE.eq(tag.getType().value()))
 			.fetchStreamInto(TAG)
 			.findFirst();
 			
@@ -428,7 +428,7 @@ public class TaskDAO {
 				.insertInto(TAG)
 				.set(TAG.DOMAIN, task.getDomain().getId())
 				.set(TAG.NAME, tag.getName())
-				.set(TAG.TYPE, tag.getTagType().value());
+				.set(TAG.TYPE, tag.getType().value());
 				if(tag.getColor()!=null) {					
 					condition.set(TAG.COLOR, tag.getColor());
 				}

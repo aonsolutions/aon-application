@@ -82,7 +82,7 @@ public class MIModelo420Setup {
 //		setup("aon-aws-atc-mod415", "083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-aws-atc:m415test"); // Modelo 415 Ejercicio 2025
 		
 		// Ejercicio 2026
-		setup("aon-aws-atc-2026", "083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-aws-atc:mXXXe2026test3"); // Resto de modelos Ejercicio 2026
+		setup("aon-aws-atc-2026", "083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-aws-atc:m4XXe2026latest"); // Resto de modelos Ejercicio 2026
 		
 	}
 }

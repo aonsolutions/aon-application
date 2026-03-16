@@ -1,4 +1,4 @@
-import { MSG, CSS, EVENT, TAG } from '../../environments/environments.js'; 
+import { TAG } from '../../environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from '../../gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
@@ -19,7 +19,6 @@ export class AonTreasuryMenu extends AonSuiteMenu {
         this.clear();
         this.initialize();
         this.build();
-        this.setTitle("Opciones de tesorería");
     }
 
     tesoreriaInitialize() {
@@ -180,11 +179,6 @@ export class AonTreasuryMenu extends AonSuiteMenu {
             }]
         }];
     }
-    /*
-    build() {
-        
-    }
-    */
 }
 if(!window.customElements.get(TAG.AON_TREASURY_MENU)){
     window.customElements.define(TAG.AON_TREASURY_MENU, AonTreasuryMenu);

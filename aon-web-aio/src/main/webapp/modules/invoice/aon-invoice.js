@@ -552,7 +552,7 @@ export class AonInvoice extends AonElement {
 			&& !((this.icc.isNoSif() || !this.checkConfiguration()) && this.getInvoice().file.path && this.getInvoice().file.path.includes('download_invoice_pdf')))
 			|| (!this.icc.isNoSif() && this.invoice.isEmitida())) {
 			invoiceToolbar.addButtonTitle(ACTION.SHOW_FILE, () => this.showFile(true));
-		} else if (!this.invoice.isEmitida()) {
+		} else if (!this.invoice.isEmitida() && this.invoice.isInbox()) {
 			invoiceToolbar.addButtonTitle(ACTION.ADD_FILE, () => this.addInvoiceFile());
 		}
 		this.buildCommunicationToolbar(invoiceToolbar);

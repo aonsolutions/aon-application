@@ -226,6 +226,11 @@
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod369.xhtml</to-view-id>
 		</navigation-case>
 		
+		<navigation-case>
+			<from-outcome>gwt_mod421</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod421.xhtml</to-view-id>
+		</navigation-case>
+		
 	</navigation-rule>
 
 	<!-- =================== Accounting ========================== -->

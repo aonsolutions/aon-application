@@ -1152,10 +1152,10 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 				for(Integer i = 0; i < array.length; i++){
 					String s = array[i];
 					if(!s.isEmpty() && !" ".equals(s)){
-						Tag tag = tagList.stream().filter(t -> t.getType() == TagType.PRODUCT.value() && t.getName().equals(s)).findFirst().orElse(new Tag());
+						Tag tag = tagList.stream().filter(t -> TagType.PRODUCT.equals(t.getType()) && t.getName().equals(s)).findFirst().orElse(new Tag());
 						if(tag.getId() == null){
 							tag = AON.insertTag(domain.getName(), domain.getId(), user.getLogin(),
-								new Tag().setDomain(domain.getId()).setName(s).setType(TagType.PRODUCT.value()));
+								new Tag().setDomain(domain.getId()).setName(s).setType(TagType.PRODUCT));
 							tagList.add(tag);
 						}
 						pts.add(tag);
@@ -1481,7 +1481,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 			break;
 		case "Formato":
 			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
-				Tag tag = tagList.stream().filter(tt -> tt.getType() == TagType.PACKING.value() && tt.getName().equals(toString(value))).findFirst().orElse(new Tag());
+				Tag tag = tagList.stream().filter(tt -> TagType.PACKING.equals(tt.getType()) && tt.getName().equals(toString(value))).findFirst().orElse(new Tag());
 				if(tag.getId() != null)product.getItem().get(0).setPackFormatTag(tag);
 				else{
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAG_NOT_EXIST.getMessage());
@@ -1500,7 +1500,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 		case "Formato Unidades":
 			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
-				Tag tag = tagList.stream().filter(tt -> tt.getType() == TagType.PACKING.value() && tt.getName().equals(toString(value))).findFirst().orElse(new Tag());
+				Tag tag = tagList.stream().filter(tt -> TagType.PACKING.equals(tt.getType()) && tt.getName().equals(toString(value))).findFirst().orElse(new Tag());
 				if(tag.getId() != null)product.getItem().get(0).setPackUnitsTag(tag);
 				else{
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAG_NOT_EXIST.getMessage());
@@ -1518,7 +1518,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 			break;
 		case "Formato Medida":
 			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
-				Tag tag = tagList.stream().filter(tt -> tt.getType() == TagType.PACKING.value() && tt.getName().equals(toString(value))).findFirst().orElse(new Tag());
+				Tag tag = tagList.stream().filter(tt -> TagType.PACKING.equals(tt.getType()) && tt.getName().equals(toString(value))).findFirst().orElse(new Tag());
 				if(tag.getId() != null) product.getItem().get(0).setPackMeasurementTag(tag);
 				else{
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAG_NOT_EXIST.getMessage());

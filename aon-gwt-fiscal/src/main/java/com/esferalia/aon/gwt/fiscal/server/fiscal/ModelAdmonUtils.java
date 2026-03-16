@@ -639,6 +639,11 @@ public class ModelAdmonUtils {
 				// EL MODELO 369 NO PERMITE LA PRESENTACION DIRECTA, NI VALIDACION/BORRADOR
 			}
 
+			@Override
+			public void visitM421() {
+				// EL MODELO 421 NO PERMITE LA PRESENTACION DIRECTA (ES DE CANARIAS)
+			}
+
 		});
 		return output.toByteArray();
 	}
@@ -725,6 +730,11 @@ public class ModelAdmonUtils {
 					@Override 
 					public void visitM369() {
 						// EL MODELO 369 NO PERMITE LA PRESENTACION DIRECTA
+					}
+
+					@Override
+					public void visitM421() {
+						// EL MODELO 421 NO PERMITE LA PRESENTACION DIRECTA (ES DE CANARIAS)						
 					}
 
 				});
@@ -823,6 +833,10 @@ public class ModelAdmonUtils {
 			@Override 
 			public void visitM369() {
 				// EL MODELO 369 NO PERMITE LA PRESENTACION DIRECTA
+			}
+			@Override
+			public void visitM421() {
+				// EL MODELO 421 NO PERMITE LA PRESENTACION DIRECTA (ES DE CANARIAS)				
 			}
 			
 		});

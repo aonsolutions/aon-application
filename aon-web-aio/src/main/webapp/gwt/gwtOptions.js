@@ -442,6 +442,13 @@ export const MODEL_369 = {
   entryPoint: 'Model369'
 };
 
+export const MODEL_421 = {
+  title: "Modelo 421",
+  name: "Modelo 421",
+  module: GWT_FISCAL,
+  entryPoint: 'Model421'
+};
+
 export const MODEL_SII = {
   title: "Modelo SII",
   name: "Modelo SII",

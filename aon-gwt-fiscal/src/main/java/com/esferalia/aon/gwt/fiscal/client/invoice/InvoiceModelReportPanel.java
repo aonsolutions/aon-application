@@ -42,6 +42,8 @@ import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HF;
 import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HFModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.mod421.Model421;
+import com.esferalia.aon.gwt.fiscal.client.mod421.Model421ModuleOptions;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -62,6 +64,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
+import com.esferalia.aon.occam.api.model.fiscal.Mod421;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Window;
@@ -1006,6 +1009,56 @@ class InvoiceModelReportPanel extends ScrollPanel{
 
 		@Override public void visitM200()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
 		@Override public void visitM369()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
+		
+		@Override
+		public void visitM421() {
+			AonCustomPopup modelDialog = getModelDialog(AON.MSG.fiscalModelDescriptionlong(model.getModel()));
+			try {
+				Model421 model421 = new Model421();
+				Model421ModuleOptions options = new Model421ModuleOptions();
+				options.setParentWidget(modelDialog);
+				options.setDomainName(opt.getConfiguration().getDomain().getName());
+				options.setDomain( model.getDomain() );
+				options.setUser(opt.getConfiguration().getUser().getLogin());
+				options.setConfiguration(opt.getConfiguration());
+				options.setFiscalModelId( model.getId() );
+				options.setEmbedded(true);
+				options.setBackButtonVisible(true);
+				options.setExternalCallback( new AonModuleCallback<Mod421>() {
+					
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onRemove(Mod421 removed) {
+						modelDialog.hide();
+						callback.onRemove(removed);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onFailure(caught);
+					}
+					
+					@Override
+					public void onExit(Mod421 edited) {
+						modelDialog.hide();
+						callback.onExit(edited);
+					}
+					
+					@Override
+					public void onChange(Mod421 changed) {
+						modelDialog.hide();
+						callback.onChange(changed);
+					}
+					
+				} );
+				model421.onModuleLoad( options );
+				modelDialog.center();
+				modelDialog.show();
+			} catch (Exception t) {
+				callback.onFailure(t);
+			}
+		}
 
 	}
 	

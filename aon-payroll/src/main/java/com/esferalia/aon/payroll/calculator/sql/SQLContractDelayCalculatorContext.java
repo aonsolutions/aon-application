@@ -90,6 +90,8 @@ import com.esferalia.aon.watson.util.AonUtils;
 public class SQLContractDelayCalculatorContext extends
 		SQLContractSalaryCalculatorContext {
 	
+	private static final SalaryType [] DEFAULT_TYPES = { SalaryType.SALARY, SalaryType.DELAY };
+	
 	private static final String MONTH_LEAVE_DAYS = "DIAS_IT_MES";
 	private static final String ERE_DAYS = Arrays.stream(ContextVariable.ERE_DAYSS).map(v -> "'"+v.getName()+"'" ).collect(Collectors.joining(","));
 	private static final String ERE_BASES = Arrays.stream(ContextVariable.ERE_BASES).map(v -> "'"+v.getName()+"'" ).collect(Collectors.joining(","));
@@ -454,7 +456,12 @@ public class SQLContractDelayCalculatorContext extends
     public boolean next() throws SQLException, ExpressionException {
 		return super.next() && initDifferencePayments();
     }
-
+	
+	@Override
+    public boolean next(NextHook hook) throws SQLException, ExpressionException {
+		return super.next(hook) && initDifferencePayments();
+    }
+	
 	@Override
 	public SalaryType getSalaryType() {
 		return SalaryType.DELAY;
@@ -713,12 +720,15 @@ public class SQLContractDelayCalculatorContext extends
 			}
 		};
 
-		return new ExtrasDelayPaymentBuilder(getConnection(), extraPaymentDecorator);
+		return new ExtrasDelayPaymentBuilder(getConnection(), extraPaymentDecorator, DEFAULT_TYPES);
 
 	}
 
 	private boolean initDifferencePayments()
 			throws ExpressionException, SQLException {
+
+		SalaryType[] salaryTypes = getSalaryTypes();
+		
 
 		Date startDate = getStartDate();
 		Date endDate = getEndDate();
@@ -776,8 +786,8 @@ public class SQLContractDelayCalculatorContext extends
 			while (ctx.next()) {
 				try {
 					ISalary salary = calculator.calculate(ctx);
-					differencePayments.addAll(delayPaymentBuilder.getContractPayments());
-					differencePayments.addAll(extrasDelayPaymentBuilder.getContractPayments());
+					differencePayments.addAll(delayPaymentBuilder.getContractPayments(salaryTypes));
+					differencePayments.addAll(extrasDelayPaymentBuilder.getContractPayments(salaryTypes));
 				} catch (SalaryException e) {
 					return false;
 				}
@@ -789,6 +799,30 @@ public class SQLContractDelayCalculatorContext extends
 		salaryBonuses.addAll(delayBonusBuilder.getContractBonuses());
 		salaryBonusDeductions.addAll(delayBonusDeductionBuilder.getContractBonusDeductions());
 		return true;
+	}
+	
+	private SalaryType[] getSalaryTypes() {
+		try {
+			boolean newDelay =
+			getExpressionContext().eval(ContextVariable.NEW_DELAY.getName(), getStartDate(), getEndDate(), Boolean.class).stream()
+				.allMatch(ITimedResult<Boolean>::getValue);
+			return newDelay  ?  DEFAULT_TYPES : new SalaryType[] { SalaryType.SALARY };
+		} catch (UndefinedVariablesException e) {
+			getExpressionContext().putVariable(
+					ContextVariable.NEW_DELAY.getName(), 
+					new ExpressionVariable<>(true, 
+					new Period(getStartDate(), getEndDate()), 
+					new ExpressionImpl()
+					.setScope(ExpressionScope.CONTRACT)
+					.setName(ContextVariable.NEW_DELAY.getName())
+					.setExpression("true")
+					));
+			getExpressionContext().readVariable(ContextVariable.NEW_DELAY.getName(), getStartDate(), getEndDate(),
+					Boolean.class);
+			return DEFAULT_TYPES;
+		} catch (ExpressionException e) {
+			return DEFAULT_TYPES;
+		}
 	}
 	
 	private PaymentType getPaymentType(PaymentType def) {
@@ -1693,12 +1727,12 @@ public class SQLContractDelayCalculatorContext extends
 			//System.out.printf("*[%1$td-%2$td] %3$s : %4$f,  %5$f \r\n", startDate, endDate, description, amount, quote);
 		}
 
-		public Collection<IContractPayment> getContractPayments()
+		public Collection<IContractPayment> getContractPayments(SalaryType []types)
 				throws SQLException {
 
 			Set<String> fields = values.keySet();
-
-			Map<String, Double> paidValues = getPaidSalary(fields, SalaryType.SALARY, SalaryType.DELAY);
+			
+			Map<String, Double> paidValues = getPaidSalary(fields, types);
 
 			Map<String, Double> diffValues = new HashMap<String, Double>();
 			
@@ -1914,7 +1948,7 @@ public class SQLContractDelayCalculatorContext extends
 				;
 
 		public ExtrasDelayPaymentBuilder(Connection connection,
-				IDelayPaymentDecorator paymentDecorator) throws SQLException {
+				IDelayPaymentDecorator paymentDecorator, SalaryType[] types) throws SQLException {
 			super(connection, paymentDecorator);
 			super.setValue(SalaryColumns.CGC_BASE, 0.00);
 			super.setValue(SalaryColumns.IRPF_BASE, 0.00);
@@ -1961,8 +1995,8 @@ public class SQLContractDelayCalculatorContext extends
 		}
 		
 		@Override
-		public Collection getContractPayments() throws SQLException {
-			Collection contractPayments = super.getContractPayments();
+		public Collection getContractPayments(SalaryType [] types) throws SQLException {
+			Collection contractPayments = super.getContractPayments(types);
 			super.setValue(SalaryColumns.IRPF_BASE, 0.00);
 			super.setValue(SalaryColumns.TOTAL_PAYMENT, 0.00);
 			return contractPayments;
