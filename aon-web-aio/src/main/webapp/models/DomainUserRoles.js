@@ -713,12 +713,28 @@ export class DomainUserRoles {
 		return this.hasAon() && (this.isAdmin() || this.hasRole(Role.AON_AIO) || this.hasRole(Role.AON) || this.hasRole(Role.AIO));
 	}
 
+	hasBidoq() {
+		return this.hasApp(App.BIDOQ);
+	}
+
+	hasParentBidoq() {
+		return this.hasParentApp(App.BIDOQ);
+	}
+
 	isBidoq() {
-		return this.hasApp(App.BIDOQ) && (this.isAdmin() || this.hasRole(Role.BIDOQ));
+		return this.hasBidoq() && (this.isAdmin() || this.hasRole(Role.BIDOQ));
+	}
+
+	hasSelfconta() {
+		return this.hasApp(App.SELFCONTA);
+	}
+
+	hasParentSelfconta() {
+		return this.hasParentApp(App.SELFCONTA);
 	}
 
 	isSelfconta() {
-		return this.hasApp(App.SELFCONTA) && (this.isAdmin() || this.hasRole(Role.SELFCONTA));
+		return this.hasSelfconta() && (this.isAdmin() || this.hasRole(Role.SELFCONTA));
 	}
 
 	hasSaltra() {
@@ -730,7 +746,7 @@ export class DomainUserRoles {
 	}
 
 	isSaltra() {
-		return this.hasApp(App.SALTRA);
+		return this.hasSaltra();
 		//  && (this.isAdmin() || this.hasRole(Role.SALTRA))
 		// || this.isSaltraPortal() || this.isSaltraManager();
 	}

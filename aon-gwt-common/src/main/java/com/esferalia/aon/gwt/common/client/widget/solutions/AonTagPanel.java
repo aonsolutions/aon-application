@@ -56,7 +56,7 @@ public class AonTagPanel extends AonCustomDialog {
 		
 		Tag newTag = new Tag()
 				.setDomain(domainId)
-				.setTagType(tagType)
+				.setType(tagType)
 				.setStartDate(new Date())
 				;
 		

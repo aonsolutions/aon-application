@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.TagJSON;
 import com.esferalia.aon.occam.api.json.invoice.FinanceJSON;
 import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -297,7 +298,7 @@ public class DocumentalServlet extends AonApiHttpServlet{
 		JSONArray tagArray = new JSONArray();
 		if(attach.getTagList() != null)
 			attach.getTagList().stream().forEach(r -> {
-				tagArray.put(tagToJSON(r));
+				tagArray.put(TagJSON.toJSON(r));
 			});
 		
 		JSONObject f = new JSONObject();
@@ -325,15 +326,6 @@ public class DocumentalServlet extends AonApiHttpServlet{
 			.put(IJsonNames.TAGS, tagArray)
 			.put(IJsonNames.TYPE, type)
 			.put(IJsonNames.FILE, f);
-	}
-	
-	public static JSONObject tagToJSON(Tag tag){	
-		return new JSONObject()
-			.put(IJsonNames.ID,tag.getId())
-			.put(IJsonNames.DOMAIN, tag.getDomain())
-			.put(IJsonNames.NAME, tag.getName())
-			.put(IJsonNames.TYPE, tag.getType())
-			.put(IJsonNames.COLOR, tag.getColor());
 	}
 	
 	public static JSONObject categoryToJSON(Category category){	

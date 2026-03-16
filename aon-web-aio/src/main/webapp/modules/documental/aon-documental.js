@@ -1,22 +1,17 @@
 import { AonElement } from '../../components/AonElement.js';
 import {
-	DocumentalSidenav, ASESOR_TYPE_OPTION,
-	ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION,
-	EMPLOYEE_TYPE, ASESOR_TYPE, ENTERPRISE_TYPE
+	DocumentalSidenav, EMPLOYEE_TYPE, ASESOR_TYPE, ENTERPRISE_TYPE
 } from './DocumentalEnums.js';
 import {
 	getCategories, getTags, createTag, createCategory, editCategory,
-	deleteCategory, editTag, deleteTag, uploadFileDocumental, getScopes,
-	getDomainUserRoles, getDocument, getS3Category, getS3Document, getS3Document_File,
+	deleteCategory, editTag, deleteTag, getScopes,
+	getDomainUserRoles, getDocument, getS3Category, getS3Document,
 	getBidoqDocuments, checkBidoq
 } from '../../services/service.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
-import { AonSelect } from '../../components/aon-select.js';
 import { MSG, MATERIAL_ICONS, EVENT, CONSTANT } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
-import { AonInput } from '../../components/aon-input.js';
 import { AonNewInput } from '../../components/aon-new-input';
-import { getReader } from '../../services/utils.js';
 import Apps from '../../services/app.js';
 import { AonApplication } from '../../components/aon-application.js';
 
@@ -31,6 +26,8 @@ import { AonUploadToast } from '../../components/aon-upload-toast.js';
 import { AonSwitch } from '../../components/aon-switch.js';
 
 import * as LS from '../../services/localStorageService.js';
+import { createInput } from '../../components/CreateComponent.js';
+import { IFRAME } from '../../environments/aonTag.js';
 
 export class AonDocumental extends AonElement {
 	_filter;
@@ -165,10 +162,11 @@ export class AonDocumental extends AonElement {
 			this.addDocumentOptions();
 		}
 
-        let bool = await this.hasBidoq();
-		if(bool && this.isBetaDoc() && this.getDur().isDocumentalManager() && !LS.isFutureTheme()){
-			aonDocumental.addToolbarOption2(ACTION.BIDOQ_IMPORT, () => this.importBidoqDocumentsToAon());
+		if(this.getDur().isBidoq()) {
+        	let bool = await this.hasBidoq();
+			if(bool) aonDocumental.addToolbarOption2(ACTION.BIDOQ_IMPORT, () => this.importBidoqDocumentsToAon());
 		}
+
 
 		this.addTypeOptions();
 		this.addCategoryOptions();
@@ -518,13 +516,7 @@ export class AonDocumental extends AonElement {
         d.clear();
         if (!this.isMobile()) d.width = '400px';
         d.setTitle(MSG.ADD_CATEGORY);
-        let input = this.isBetaDoc() ? new AonNewInput() : new AonInput();
-        input.id = "aonDocumentalAddCategory";
-        if(this.isBetaDoc()){
-          input.title = MSG.CATEGORY; 
-        } else {
-          input.description = MSG.CATEGORY;
-        }
+        let input = createInput("aonDocumentalAddCategory", MSG.CATEGORY);
         d.setContent(input);
 
         d.addAcceptAction(() => {
@@ -542,13 +534,7 @@ export class AonDocumental extends AonElement {
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.EDIT_CATEGORY);
-		let input = this.isBetaDoc() ? new AonNewInput() : new AonInput();
-		input.id = "aonDocumentalAddCategory";
-        if(this.isBetaDoc()){
-          input.title = MSG.CATEGORY; 
-        } else {
-          input.description = MSG.CATEGORY;
-        }
+		let input = createInput("aonDocumentalAddCategory", MSG.CATEGORY);
 		if (category.name) input.value = category.name;
 		d.setContent(input);
 		d.addAcceptAction(() => {
@@ -631,9 +617,7 @@ export class AonDocumental extends AonElement {
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.ADD_TAG);
-		let input = new AonInput();
-		input.id = "aonDocumentalAddTag";
-		input.description = MSG.TAG;
+		let input = createInput("aonDocumentalAddTag", MSG.TAG);
 		d.setContent(input);
 		d.addAcceptAction(() => {
 			if (!input.value.isEmpty()) {
@@ -649,9 +633,7 @@ export class AonDocumental extends AonElement {
 		let d = document.getElementById(this.getApplication().DIALOG);
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
-		let input = new AonInput();
-		input.id = "aonDocumentalAddTag";
-		input.description = MSG.TAG;
+		let input = createInput("aonDocumentalAddTag", MSG.TAG);
 		if (tag.name) input.value = tag.name;
 		d.setContent(input);
 		d.setTitle(MSG.EDIT_TAG);

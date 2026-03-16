@@ -1,9 +1,6 @@
 import { saveCompany } from "../../services/service.js";
-import {CONSTANT, TAG } from '../../environments/environments.js'; 
+import { CONSTANT, TAG } from '../../environments/environments.js'; 
 import { AonReg } from '../registry/aon-reg.js';
-
-import '../../components/aon-address.js';
-import '../../components/aon-input.js';
 
 export class AonCompany extends AonReg {
 
