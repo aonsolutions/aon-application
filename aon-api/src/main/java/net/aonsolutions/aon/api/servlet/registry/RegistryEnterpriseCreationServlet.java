@@ -203,6 +203,10 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 							rrelationship.setRegistry(customer.getId());
 							rrelationship.setRelatedRegistry(company.getId());
 							rrelationship.setComments(company.getDomain().getName());
+							
+							// Check Comments
+							if(AonStringUtils.isNotBlank(rrelationship.getComments()) && AonStringUtils.length(rrelationship.getComments()) >  64)
+								throw new IllegalArgumentException("La URL de este dominio es demasiado larga. Por favor p\u00f3ngase en contacto con soporte.");
 
 							RegistryRelationshipDAO.save(ctx, rrelationship);
 							
@@ -252,9 +256,12 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 								rrelationship.setRegistry(customer.getId());
 								rrelationship.setRelatedRegistry(company.getId());
 								rrelationship.setComments(company.getDomain().getName());
+								
+								// Check Comments
+								if(AonStringUtils.isNotBlank(rrelationship.getComments()) && AonStringUtils.length(rrelationship.getComments()) >  64)
+									throw new IllegalArgumentException("La URL de este dominio es demasiado larga. Por favor p\u00f3ngase en contacto con soporte.");
 
 								RegistryRelationshipDAO.save(ctx, rrelationship);
-								
 								
 								createUserAuth(ctx, company, customer, email);
 
@@ -346,6 +353,10 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 								rrelationship.setRelatedRegistry(company.getId());
 								rrelationship.setComments(company.getDomain().getName());
 
+								// Check Comments
+								if(AonStringUtils.isNotBlank(rrelationship.getComments()) && AonStringUtils.length(rrelationship.getComments()) >  64)
+									throw new IllegalArgumentException("La URL de este dominio es demasiado larga. Por favor p\u00f3ngase en contacto con soporte.");
+
 								RegistryRelationshipDAO.save(ctx, rrelationship);
 								
 								sendEnterpriseSyncMail(api, ctx, customer);
@@ -395,9 +406,12 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 									rrelationship.setRelatedRegistry(company.getId());
 									rrelationship.setComments(company.getDomain().getName());
 
+									// Check Comments
+									if(AonStringUtils.isNotBlank(rrelationship.getComments()) && AonStringUtils.length(rrelationship.getComments()) >  64)
+										throw new IllegalArgumentException("La URL de este dominio es demasiado larga. Por favor p\u00f3ngase en contacto con soporte.");
+
 									RegistryRelationshipDAO.save(ctx, rrelationship);
-									
-									
+
 									createUserAuth(ctx, company, customer, email);
 
 									urlMail = company.getDomain().getName();
