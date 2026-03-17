@@ -10,9 +10,9 @@ import * as ACTION from '../actions.js';
 import { AonTreasuryMenu } from "./aon-treasury-menu.js";
 
 export class AonTreasuryBeta extends AonElement {
+	
 	AON_TREASURY_BETA;
 	ROOT_PANEL;
-	dur;
 	righPanel;
 
 
@@ -31,15 +31,12 @@ export class AonTreasuryBeta extends AonElement {
 	connectedCallback() {
 		this.initialize();
 		this.createApplication(this.AON_TREASURY_BETA, MSG.TREASURY, new AonApplication());
-		
-		getDomainUserRoles({}).then(r => {
-			this.dur = new DomainUserRoles(r);
+		this.buildDur().then(() => {
 			getCompany().then(company => {
 				this.company = company;
 				this.build();
 			});
-
-		}).catch(() => this.build());
+		});
 	}
 
 	initialize() {
@@ -162,7 +159,9 @@ export class AonTreasuryBeta extends AonElement {
 
 
 	buildTreasuryMenu() {
-		this.getApplication().setContent(new AonTreasuryMenu());
+		let menu = new AonTreasuryMenu();
+		menu.setDur(this.getDur());
+		this.getApplication().setContent(menu);
 		if (this.rightPanel && this.rightPanel.isOpen()) {
 			this.rightPanel.close();
 			this.getApplication().style.gridTemplateColumns = "";
