@@ -56,7 +56,10 @@ class InvoiceCommunicationIcon extends InlineLabel {
 
 	private String  getStatusDescription(InvoiceCommunicationType type, InvoiceCommunicationStatus status) {
 		if (type == InvoiceCommunicationType.NO_VERIFACTU && status == InvoiceCommunicationStatus.PENDING) {
-			return "Emitida/No comunicada";
+			return "Archivada";
+		}
+		if (type == InvoiceCommunicationType.SIF && status == InvoiceCommunicationStatus.ACCEPTED) {
+			return "Archivada";
 		}
 		return status == null ? InvoiceCommunicationStatus.PENDING.getDescription() : status.getDescription();
 	}

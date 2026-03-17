@@ -28,7 +28,7 @@ import { addCounter, transferCounter } from './InvoiceCounter.js';
 import { createDate, createEmail, createInput, createNumber, createSelect, createSuggestion, createTextarea } from '../../components/CreateComponent.js';
 import { getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrashPendingFromOption } from './InvoiceUtils.js';
 import { BankAccount } from '../registry/bank/BankAccount.js';
-import { InvoiceCommunicationConfig } from '../../models/InvoiceCommunicationConfig.js';
+import { getCommunicationStatusColor, getCommunicationStatusLabel, getCommunicationTypeLabel, InvoiceCommunicationConfig } from '../../models/InvoiceCommunicationConfig.js';
 import { AonInvoiceCommunication } from './aon-invoice-communication.js';
 
 import * as GWT from '../../gwt/gwt.js';
@@ -600,39 +600,24 @@ export class AonInvoice extends AonElement {
 				let key = keys[i];
 				let communicationStatus = ci[key].communicationStatus;
 				let checkURL = ci[key].checkUrl;
-				let fn = (checkURL)
-					? () => open(checkURL)
-					: undefined;
+				let title = getCommunicationTypeLabel(key) + " " + getCommunicationStatusLabel(key, communicationStatus);
+				let fn = undefined;
+				if (checkURL) {
+					title = ` Comprobar (${title})`;
+					fn = () => open(checkURL);
+				}
 				let action = {
 					id: 'Communication_' + key,
-					name: key + " " + this.getCommunicationStatusLabel(communicationStatus),
-					title: key + " " + this.getCommunicationStatusLabel(communicationStatus),
+					name: title,
+					title: title,
 					icon: MATERIAL_ICONS.QR_CODE_2
 				};
 				let aib = invoiceToolbar.addButtonTitle(action, fn);
 				if (aib && communicationStatus) {
-					aib.getButton().style.color = this.getCommunicationStatusColor(communicationStatus);
+					aib.getButton().style.color = getCommunicationStatusColor(key, communicationStatus);
 				}
 			}
 		}
-	}
-
-	getCommunicationStatusLabel(status) {
-		if ("PENDING" === status) return "Pendiente";
-		else if ("ACCEPTED" === status) return "Aceptada";
-		else if ("ACCEPTED_WITH_ERRORS" === status) return "Aceptada con errores";
-		else if ("EXTERNALLY_COMMUNICATED" === status) return "Com. Externamente";
-		else if ("WRONG" === status) return "Incorrecta";
-		else return "Sin Estado";
-	}
-
-	getCommunicationStatusColor(status) {
-		if ("PENDING" === status) return "orange";
-		else if ("ACCEPTED" === status) return "green";
-		else if ("ACCEPTED_WITH_ERRORS" === status) return "yellow";
-		else if ("EXTERNALLY_COMMUNICATED" === status) return "blue";
-		else if ("WRONG" === status) return "red"
-		else return "gray";
 	}
 
 	buildContent() {
@@ -660,7 +645,7 @@ export class AonInvoice extends AonElement {
 
 	hasCommunicationInfo() {
 		return this.getInvoice()
-			&& this.icc.hasCommunication(this.getInvoice().type)
+			//&& this.icc.hasCommunication(this.getInvoice().isEmitida(), this.getInvoice().date ) 
 			&& this.getInvoice().communicationInfo
 			&& Object.keys(this.getInvoice().communicationInfo).length > 0;
 	}
@@ -2737,7 +2722,8 @@ export class AonInvoice extends AonElement {
 		if (!ok) return;
 
 		if (!this.isInvofoxInvoice() && this.getInvoice().isEmitida()) this.getInvoice().setReference(undefined);
-		if (this.invoice.isEmitida() && this.icc.needCertificate()) {
+		let atDate = new Date();
+		if (this.invoice.isEmitida() && this.icc.needCertificate(true, atDate)) {
 			let d = this.getApplication().getDialog();
 			d.clear();
 			if (!this.isMobile()) d.width = '400px';
