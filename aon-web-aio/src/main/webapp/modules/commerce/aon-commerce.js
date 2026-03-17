@@ -1,12 +1,12 @@
 import { AonElement } from "../../components/AonElement.js";
 import { getCompany } from "../../services/service.js";
 import { AonApplication } from '../../components/aon-application.js';
-import { CONSTANT, MSG } from '../../environments/environments.js';
-import { AonMarketingMenu } from "./aon-marketing-menu.js";
+import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
+import { AonCommerceMenu } from "./aon-commerce-menu.js";
 
-export class AonMarketingBeta extends AonElement {
+export class AonCommerce extends AonElement {
 
-	AON_MARKETING_BETA;
+	COMMERCE;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -22,7 +22,7 @@ export class AonMarketingBeta extends AonElement {
 
 	connectedCallback() {
 		this.initialize();
-		this.createApplication(this.AON_MARKETING_BETA, MSG.MARKETING, new AonApplication());
+		this.createApplication(this.COMMERCE, MSG.COMMERCE, new AonApplication());
 		
 		this.buildDur().then(() => {
 			getCompany().then(company => {
@@ -33,18 +33,18 @@ export class AonMarketingBeta extends AonElement {
 	}
 
 	initialize() {
-		this.AON_MARKETING_BETA = "aonMarketingBeta";
+		this.COMMERCE = "aonCommerce";
 	}
 
 	build() {
 		this.buildToolbar();
 		this.buildSidenav();
-		this.buildMarketingMenu();
+		this.buildCommerceMenu();
 	}
 	
 	buildToolbar(){
 		this.getApplication().removeToolbarOptions();
-		this.getApplication().addCompanyNotes(this.company.id, 'MARKETING');
+		this.getApplication().addCompanyNotes(this.company.id, 'COMMERCE');
 	}
 
 	buildSidenav() {
@@ -53,16 +53,16 @@ export class AonMarketingBeta extends AonElement {
 				id: "observations",
 				icon: "speaker_notes",
 				name: "Observaciones",
-				fn: () => this.buildObservations('MARKETING'),
+				fn: () => this.buildObservations('COMMERCE'),
 			}
 		];
 		this.getApplication().addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);
 	}
 
-	buildMarketingMenu() {
-		this.getApplication().setContent(new AonMarketingMenu());
+	buildCommerceMenu() {
+		this.getApplication().setContent(new AonCommerceMenu());
 	}
 }
-if(!window.customElements.get("aon-marketing-beta")) {
-	window.customElements.define("aon-marketing-beta", AonMarketingBeta);
+if(!window.customElements.get(TAG.AON_COMMERCE)) {
+	window.customElements.define(TAG.AON_COMMERCE, AonCommerce);
 }

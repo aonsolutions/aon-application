@@ -806,23 +806,20 @@ export class DomainUserRoles {
 		return this.hasConsole();
 	}
 
+	// CONSULTANCY
+
+	isConsultancy() {
+		return this.getDomain().getDomainType() == 'CONSULTANCY';
+	}
+
 	// OFFICE
 	
-	isOfficeDomain(){
+	hasOffice() {
 		return this.getDomain().getDomainType() == 'OFFICE';
 	}
 	
-	hasOfficeRole() {
-		return this.getDomain().getDomainType() == 'OFFICE' || this.getDomain().getDomainType() == 'CONSULTANCY';
-	}
-	
-
-	hasOffice() {
-		return this.getDomain().getDomainType() == 'OFFICE' && (this.isOfficeUser() || this.isOfficePortal() || this.isOfficeManager());
-	}
-	
 	isOffice() {
-		return this.hasOfficeRole() 
+		return this.hasOffice() 
 			&& (this.hasRole(Role.OFFICE) || this.hasRole(Role.OFFICE_PORTAL) || this.hasRole(Role.OFFICE_MANAGER) 
 				|| this.isAdmin() || this.parentUser);
 	}
@@ -832,7 +829,7 @@ export class DomainUserRoles {
 	}
 
 	isOfficePortal() {
-		return this.hasOfficeRole() && (this.hasRole(Role.OFFICE_PORTAL) || this.hasParentRole(Role.OFFICE_PORTAL));
+		return this.hasOffice() && (this.hasRole(Role.OFFICE_PORTAL) || this.hasParentRole(Role.OFFICE_PORTAL));
 			//&& (this.isAdmin() || this.hasRole(Role.OFFICE_PORTAL));
 	}
 

@@ -190,7 +190,7 @@ export class AonUserList extends AonElement {
 		setFilter(this.filter);
 		getUserRoles({user: user.id}, this.sessionData).then(roles => {
 			user.roles = roles;
-			let aonUser = this.isBeta() || this.isAyudaTorInfoautonomos() ? new AonNewUser() : new AonUser();
+			let aonUser = new AonNewUser();
 			aonUser.sessionData = this.sessionData;
 			aonUser.parent = this.parent;
 			aonUser.id = 'aonUser-' + user.id;

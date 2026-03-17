@@ -1,12 +1,12 @@
 import { AonElement } from "../../components/AonElement.js";
 import { getCompany } from "../../services/service.js";
 import { AonApplication } from '../../components/aon-application.js';
-import { CONSTANT, MSG } from '../../environments/environments.js';
-import { AonMarketingMenu } from "./aon-marketing-menu.js";
+import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
+import { AonGarageMenu } from "./aon-garage-menu.js";
 
-export class AonMarketingBeta extends AonElement {
+export class AonGarage extends AonElement {
 
-	AON_MARKETING_BETA;
+	GARAGE;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -22,7 +22,7 @@ export class AonMarketingBeta extends AonElement {
 
 	connectedCallback() {
 		this.initialize();
-		this.createApplication(this.AON_MARKETING_BETA, MSG.MARKETING, new AonApplication());
+		this.createApplication(this.GARAGE, MSG.GARAGE, new AonApplication());
 		
 		this.buildDur().then(() => {
 			getCompany().then(company => {
@@ -33,18 +33,18 @@ export class AonMarketingBeta extends AonElement {
 	}
 
 	initialize() {
-		this.AON_MARKETING_BETA = "aonMarketingBeta";
+		this.GARAGE = "aonGarage";
 	}
 
 	build() {
 		this.buildToolbar();
 		this.buildSidenav();
-		this.buildMarketingMenu();
+		this.buildGarageMenu();
 	}
 	
 	buildToolbar(){
 		this.getApplication().removeToolbarOptions();
-		this.getApplication().addCompanyNotes(this.company.id, 'MARKETING');
+		this.getApplication().addCompanyNotes(this.company.id, 'GARAGE');
 	}
 
 	buildSidenav() {
@@ -53,16 +53,16 @@ export class AonMarketingBeta extends AonElement {
 				id: "observations",
 				icon: "speaker_notes",
 				name: "Observaciones",
-				fn: () => this.buildObservations('MARKETING'),
+				fn: () => this.buildObservations('GARAGE'),
 			}
 		];
 		this.getApplication().addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);
 	}
 
-	buildMarketingMenu() {
-		this.getApplication().setContent(new AonMarketingMenu());
+	buildGarageMenu() {
+		this.getApplication().setContent(new AonGarageMenu());
 	}
 }
-if(!window.customElements.get("aon-marketing-beta")) {
-	window.customElements.define("aon-marketing-beta", AonMarketingBeta);
+if(!window.customElements.get(TAG.AON_GARAGE)) {
+	window.customElements.define(TAG.AON_GARAGE, AonGarage);
 }
