@@ -24,7 +24,8 @@ export const WHITE_BRAND = 'aonConfigWhiteBrandSwitch';
 export const COMPANY_SELECTED = 'companySelected';
 export const PORTAL_CHECKED = "portalChecked"
 
-export const THEME = 'aonTheme';
+export const APP = 'AONAPP';
+export const THEME = 'AONTHEME';
 export const AON_MOBILE_THEME = '/css/theme/aon-mobile.css';
 export const AON_MOBILE_ANDROID = 'css/theme/aon-mobile-android.css';
 export const AON_MOBILE_ANDROID_35 = 'css/theme/aon-mobile-android-35.css';
@@ -70,7 +71,9 @@ export const closeSession = () => {
 	let language = localStorage.getItem(AON_LANGUAGE);    
     let portalChecked = localStorage.getItem(PORTAL_CHECKED);
     
+	removeCookie(APP);
     localStorage.clear();
+	
 
 	if (theme)
     	localStorage.setItem(THEME,theme);
@@ -406,7 +409,7 @@ const getCookie = (cookieName) => {
 	const cookieValue = decodeURIComponent(document.cookie)
     .split(';')
 	.map((row) => row.trimStart() )
-    .find((row) => row.startsWith(`${cookieName}=`))
+    .find((row) => row.toUpperCase().startsWith(`${cookieName.toUpperCase()}=`))
     ?.split('=')[1];
 	
 	return cookieValue;  
@@ -414,10 +417,19 @@ const getCookie = (cookieName) => {
 
 
 const removeCookie = (cookieName) => {
-  document.cookie = cookieName + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+	decodeURIComponent(document.cookie)
+	.split(';')
+	.map((row) => row.trimStart() )
+	.filter((row) => row.toUpperCase().startsWith(`${cookieName.toUpperCase()}=`))
+	?.map((row) => row.split('=')[0])
+	.forEach((cookie) => {
+		document.cookie = cookie + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+	});
+
  }
 
 const setCookie = (cookieName, cookieValue, expiresDate) => {
+  removeCookie(cookieName);
   expiresDate = expiresDate || new Date(new Date().setUTCHours(23,59,59));	
   let expires = "expires="+ new Date(expiresDate).toUTCString();
   document.cookie = cookieName + "=" + cookieValue + ";" + expires + ";path=/";

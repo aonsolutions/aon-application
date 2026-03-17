@@ -207,7 +207,8 @@ export class AonNewMenu extends AonElement {
 					this.rootPanel(this.getDur().isDomainManagementAvailable() ? new AonParent() : new AonDesktop());
 					break;
 				case AON_CLASSIC.app:
-					open(location.protocol + '//' + localStorage.getItem('aon_domain_name') + (location.port ? ":" + location.port : "") + '/login?token=' + localStorage.getItem('aon_session_id'))
+					this.setCookie('AONAPP', '/original', new Date().setHours(23, 59, 59, 999)); 
+					open(location.protocol + '//' + localStorage.getItem('aon_domain_name') + (location.port ? ":" + location.port : "") + '/?token=' + localStorage.getItem('aon_session_id'))
 					return;
 				case Apps.CONSOLE.app:
 					this.rootPanel(new AonConsole());
@@ -314,6 +315,10 @@ export class AonNewMenu extends AonElement {
 
 	}
 
+	setCookie(name, value, expires) {
+		document.cookie = `${name}=${value}; path=/; expires=${new Date(expires).toGMTString()}; SameSite=Lax"}`;
+	}
+	
 	removeOldNewDialogContents() {
 		const elements = document.querySelectorAll('#newDialogDialogMenuContent');
 		elements.forEach(element => element.remove());

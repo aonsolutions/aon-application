@@ -26,8 +26,12 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class ThemeFilter extends RequestFilter {
 
-	private static final String PATH_PARAM = "path";
-	private static final String THEME_COOKIE_NAME = "aonTheme";
+	
+	private static final String DEFAULT_APP_PATH = "/app";
+	
+	private static final String APP_PARAM_NAME = "APP";
+	private static final String APP_COOKIE_NAME = "AONAPP";
+	private static final String THEME_COOKIE_NAME = "AONTHEME";
 	
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -37,15 +41,32 @@ public class ThemeFilter extends RequestFilter {
 			getLogger().error("Error setting theme cookie", e);
 		}
 
-		String path = getForwardPath(request);
-		request.getRequestDispatcher(path).forward(request, response);
+		String path = DEFAULT_APP_PATH;
+		try {
+			path = getForwardPath(request, DEFAULT_APP_PATH);
+		} catch (Exception e) {
+			getLogger().error("Error determining forward path, using default: " + DEFAULT_APP_PATH, e);
+		}
+
+		try {
+			request.getRequestDispatcher(path).forward(request, response);
+		} catch (Exception e) {
+			((org.apache.catalina.connector.RequestFacade) request).authenticate((HttpServletResponse)response);
+		}
 	}
 
-	protected String getForwardPath( ServletRequest request) {
-		if ( request instanceof HttpServletRequest httpRequest) {
-			return AonStringUtils.defaultIfBlank(httpRequest.getParameter(PATH_PARAM), "/");
+	protected String getForwardPath( ServletRequest request, String def) {
+		String appParam  = request.getParameter(APP_PARAM_NAME);
+		if (AonStringUtils.isNotBlank(appParam)) {
+			return appParam;
 		}
-		return "/";
+		
+		String appCookie = getCookie(request, APP_COOKIE_NAME).orElse(null);
+		if (AonStringUtils.isNotBlank(appCookie)) {
+			return appCookie;
+		}
+		
+		return getDefaultApp(request).orElse(def);
 	}
 	
 	@Override
@@ -89,6 +110,26 @@ public class ThemeFilter extends RequestFilter {
 		.map(param -> param.getValue())
 		.findFirst();
 	}
+	
+	private static Optional<String> getDefaultApp(ServletRequest request) {
+		String domainName = request.getServerName();
+		
+		Domain domain = AON.getDomain(domainName, 1, "", f -> f.getNameProperty().eq(domainName));
+
+		return 
+		AON.getApplicationParameterStream(
+				domain.getName(), 
+				domain.getId(), 
+				"",  
+				f -> f.getNameProperty().eq(AppParam.AON_DEFAULT_APP.name())
+				.and(f.getDomainProperty().in( new Integer[] {domain.getId(), domain.getParentId(),0 /*console*/ } ))
+				)
+		.filter(param -> AonStringUtils.isNotBlank(param.getValue()))
+		.sorted((p1, p2) -> p2.getDomain().compareTo(p1.getDomain())) // sorted by domain descending, so the most specific one is first 
+		.map(param -> param.getValue())
+		.findFirst();
+	}
+	
 
 	private static boolean hasCustomView(Domain domain) {
 		Integer customViewdomainId = domain.getParentId() != null ? domain.getParentId() : domain.getId();
@@ -127,5 +168,24 @@ public class ThemeFilter extends RequestFilter {
 		}
 		return true;
 	}
+	private static Optional<String> getCookie(ServletRequest request, String name) {
+		if (request instanceof HttpServletRequest httpRequest) {
+			return getCookie(httpRequest, name);
+		}
+		return Optional.empty();
+	}
 
+	private static Optional<String> getCookie(HttpServletRequest request, String name) {
+		Cookie[] cookies = request.getCookies();
+		if ( cookies == null || cookies.length == 0) {
+			return Optional.empty();
+		}
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equalsIgnoreCase(name) ) {
+					return Optional.of(cookie.getValue());
+				}
+			
+		}
+		return Optional.empty();
+	}
 }

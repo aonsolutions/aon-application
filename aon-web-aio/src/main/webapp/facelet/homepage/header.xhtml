@@ -2495,6 +2495,14 @@
 	  			localStorage.setItem('aon_domain_login', '#{domainSwitcher.currentUser}');
 	  			localStorage.setItem('aon_domain_name', '#{domainSwitcher.currentDomainNameURL}');
 	  			localStorage.setItem('aon_domain_document', '#{domainSwitcher.currentDomainDocument}');
+	  			
+			}
+			
+			function openNewDesing() {
+				initLocalStorage();
+				var midnight = new Date();
+				midnight.setHours(23,59,59,0);
+				document.cookie = "AONAPP=/app; path=/; expires=" + midnight.toGMTString() + "; SameSite=Lax";
 			}
 			
 			/**
@@ -2554,7 +2562,7 @@
 						style="color: #002469;"
 						value="/"
 						styleClass="aon-top-menu-item"
-						onclick="initLocalStorage(); return true;"
+						onclick="openNewDesing(); return true;"
 					>
 						<aon:outputText
 						value="open_in_new"  

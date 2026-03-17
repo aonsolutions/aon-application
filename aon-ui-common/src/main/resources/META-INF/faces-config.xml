@@ -129,12 +129,12 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>logout</from-outcome>
-			<to-view-id>/classic</to-view-id>
+			<to-view-id>/</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>start</from-outcome>
-			<to-view-id>/classic</to-view-id>
+			<to-view-id>/</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
