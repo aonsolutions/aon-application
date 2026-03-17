@@ -44,7 +44,7 @@ export class AonAcademy extends AonElement {
 	
 	buildToolbar(){
 		this.getApplication().removeToolbarOptions();
-		this.getApplication().addCompanyNotes(this.company.registry, 'ACADEMY');
+		this.getApplication().addCompanyNotes(this.company.id, 'ACADEMY');
 	}
 
 	buildSidenav() {

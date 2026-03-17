@@ -44,7 +44,7 @@ export class AonCommerce extends AonElement {
 	
 	buildToolbar(){
 		this.getApplication().removeToolbarOptions();
-		this.getApplication().addCompanyNotes(this.company.registry, 'COMMERCE');
+		this.getApplication().addCompanyNotes(this.company.id, 'COMMERCE');
 	}
 
 	buildSidenav() {

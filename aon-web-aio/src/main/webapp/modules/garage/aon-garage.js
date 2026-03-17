@@ -44,7 +44,7 @@ export class AonGarage extends AonElement {
 	
 	buildToolbar(){
 		this.getApplication().removeToolbarOptions();
-		this.getApplication().addCompanyNotes(this.company.registry, 'GARAGE');
+		this.getApplication().addCompanyNotes(this.company.id, 'GARAGE');
 	}
 
 	buildSidenav() {

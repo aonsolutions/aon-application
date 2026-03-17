@@ -726,3 +726,16 @@ export const PROJECT_TAS_MODULE = {
   entryPoint: 'ProjectTasExcelModule'
 };
 
+export const STOCK_FORECAST = {
+  title: "Aprovisionamiento según consumo",
+  module: GWT_AIO,
+  entryPoint: 'warehouse',
+  subEntryPoint: 'stockForecast'
+}
+
+export const MOVEMENT_LIST = {
+  title: "Listado de movimientos",
+  module: GWT_AIO,
+  entryPoint: 'warehouse',
+  subEntryPoint: 'movementList'
+}

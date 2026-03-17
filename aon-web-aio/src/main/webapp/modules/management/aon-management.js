@@ -2,14 +2,11 @@ import { AonElement } from "../../components/AonElement.js";
 import { getCompany } from "../../services/service.js";
 import { AonApplication } from '../../components/aon-application.js';
 import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
-import * as LS from '../../services/localStorageService.js';
-import { AonTreasuryMenu } from "./aon-treasury-menu.js";
+import { AonManagementMenu } from "./aon-management-menu.js";
 
-export class AonTreasury extends AonElement {
-	
-	TREASURY;
-	righPanel;
+export class AonManagement extends AonElement {
 
+	MANAGEMENT;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -25,7 +22,7 @@ export class AonTreasury extends AonElement {
 
 	connectedCallback() {
 		this.initialize();
-		this.createApplication(this.TREASURY, MSG.TREASURY, new AonApplication());
+		this.createApplication(this.MANAGEMENT, MSG.MANAGEMENT, new AonApplication());
 		
 		this.buildDur().then(() => {
 			getCompany().then(company => {
@@ -36,18 +33,18 @@ export class AonTreasury extends AonElement {
 	}
 
 	initialize() {
-		this.TREASURY = "aonTreasury";
+		this.MANAGEMENT = "aonManagementBeta";
 	}
 
 	build() {
 		this.buildToolbar();
 		this.buildSidenav();
-		this.buildTreasuryMenu();		
+		this.buildManagementMenu();
 	}
 	
 	buildToolbar(){
 		this.getApplication().removeToolbarOptions();
-		this.getApplication().addCompanyNotes(this.company.id, 'TREASURY');
+		this.getApplication().addCompanyNotes(this.company.id, 'MANAGEMENT');
 	}
 
 	buildSidenav() {
@@ -56,17 +53,16 @@ export class AonTreasury extends AonElement {
 				id: "observations",
 				icon: "speaker_notes",
 				name: "Observaciones",
-				fn: () => this.buildObservations('TREASURY'),
+				fn: () => this.buildObservations('MANAGEMENT'),
 			}
 		];
 		this.getApplication().addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);
 	}
-
-	buildTreasuryMenu() {
-		let menu = new AonTreasuryMenu();
-		menu.setDur(this.getDur());
-		this.getApplication().setContent(menu);
+	
+	buildManagementMenu() {
+		this.getApplication().setContent(new AonManagementMenu());
 	}
 }
-
-window.customElements.define(TAG.AON_TREASURY, AonTreasury);
+if(!window.customElements.get(TAG.AON_MANAGEMENT)) {
+	window.customElements.define(TAG.AON_MANAGEMENT, AonManagement);
+}

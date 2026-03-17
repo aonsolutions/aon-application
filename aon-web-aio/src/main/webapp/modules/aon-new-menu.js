@@ -1,9 +1,9 @@
 import { AonElement } from '../components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET, TOP_MENU_APPS_HOME, getConstNewApps, EXPAND_HIRIND, CONTENT_INDEX, MESSENGER, } from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET, getConstNewApps, EXPAND_HIRIND, CONTENT_INDEX, MESSENGER, } from '../services/app.js';
 import { COMMERCE, OFFICE, GARAGE, ACADEMY } from "../services/app.js";
 
 import { ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU, ENTERPRISE_MENU, CONSOLE_MENU } from "../services/app.js"
-import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
+import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
 import { AonDocumental } from '../modules/documental/aon-documental.js';
 import '../modules/project/aon-project-panel.js';
 import * as GWT from '../gwt/gwt.js';
@@ -19,7 +19,6 @@ import { AonLaboral } from '../modules/laboral/aon-laboral.js';
 import { AonComunica } from '../modules/laboral/aon-comunica.js';
 import { AonAccounting } from '../modules/accounting/aon-accounting.js';
 import { AonIcon } from '../components/aon-icon.js';
-import { AonNote } from '../modules/note/aon-note.js';
 import { AonInvoicePanel } from '../modules/invoice/aon-invoice-panel.js';
 import { AonOfficePanel } from '../modules/office/aon-office-panel.js';
 import { AonConsole } from '../modules/console/aon-console.js';
@@ -33,21 +32,8 @@ import { TASK_SOURCE } from '../modules/messenger/MessengerEnums.js';
 import { uploadDocuments } from "../modules/documental/DocumentalUtils.js";
 
 import { AonNewDesktop } from './aon-new-desktop.js';
-import { AonAccountingMenu } from './accounting/aon-accounting-menu.js';
 import { AonAccountingBeta } from './accounting/aon-accounting-beta.js';
-import { AonCommercialMenu } from './commercial/aon-commercial-menu.js';
-import { AonManagementMenu } from './management/aon-management-menu.js';
-import { AonTreasuryMenu } from './treasury/aon-treasury-menu.js';
-import { AonGroupwareMenu } from './groupware/aon-groupware-menu.js';
-import { AonWarehouseMenu } from './warehouse/aon-warehouse-menu.js';
-import { AonFiscalMenu } from './fiscal/aon-fiscal-menu.js';
 import { AonFiscalBeta } from './fiscal/aon-fiscal-beta.js';
-import { AonPayrollMenu } from './payroll/aon-payroll-menu.js';
-import { AonMarketingMenu } from './marketing/aon-marketing-menu.js';
-import { AonAcademyMenu } from './academy/aon-academy-menu.js';
-import { AonCommerceMenu } from './commerce/aon-commerce-menu.js';
-import { AonGarageMenu } from './garage/aon-garage-menu.js';
-import { AonConfigurationMenu } from './configuration/aon-configuration-menu.js';
 import { AonConfiguration } from '../modules/configuration/aon-configuration.js';
 import { AonEnterpriseMenu } from './enterprise/aon-enterprise-menu.js';
 import { AonConsoleMenu } from './console/aon-console-menu.js';
@@ -58,7 +44,6 @@ import { AonParent } from "./aon-parent.js";
 
 import { generateJobId } from '../modules/invoice/InvoiceUtils.js';
 
-import { getApplicationParameters } from '../services/applicationParameterService.js';
 import { AonSuiteMenu } from './aon-suite-menu.js';
 import { AonIncome } from './invoice/aon-income.js';
 import { AonExpense } from './invoice/aon-expense.js';
@@ -71,7 +56,6 @@ import { AonPayrollBeta } from './payroll/aon-payroll-beta.js';
 import { getInvoiceCount } from '../services/invoiceService.js';
 import { getRelationShipCompany } from '../services/registryService.js';
 import { AonTooltip } from '../components/aon-tooltip.js';
-import { AonManagementBeta } from './management/aon-management-beta.js';
 import { AonWarehouseBeta } from './warehouse/aon-warehouse-beta.js';
 import { AonMarketingBeta } from './marketing/aon-marketing-beta.js';
 import { AonTreasury } from './treasury/aon-treasury.js';
@@ -80,6 +64,7 @@ import { AonGroupware } from './groupware/aon-groupware.js';
 import { AonCommerce } from './commerce/aon-commerce.js';
 import { AonGarage } from './garage/aon-garage.js';
 import { AonCommercial } from './commercial/aon-commercial.js';
+import { AonManagement } from './management/aon-management.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -343,7 +328,7 @@ export class AonNewMenu extends AonElement {
 			case GROUPWARE_MENU.app:
 				return new AonGroupware();
 			case MANAGEMENT_MENU.app:
-				return new AonManagementBeta();
+				return new AonManagement();
 			case TREASURY_MENU.app:
 				return new AonTreasury();
 			case WAREHOUSE_MENU.app:

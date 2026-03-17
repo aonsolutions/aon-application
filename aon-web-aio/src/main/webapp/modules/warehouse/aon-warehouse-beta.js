@@ -44,7 +44,7 @@ export class AonWarehouseBeta extends AonElement {
 	
 	buildToolbar(){
 		this.getApplication().removeToolbarOptions();
-		this.getApplication().addCompanyNotes(this.company.registry, 'WAREHOUSE');
+		this.getApplication().addCompanyNotes(this.company.id, 'WAREHOUSE');
 	}
 
 	buildSidenav() {

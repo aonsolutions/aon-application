@@ -44,7 +44,7 @@ export class AonGroupware extends AonElement {
 	
 	buildToolbar(){
 		this.getApplication().removeToolbarOptions();
-		this.getApplication().addCompanyNotes(this.company.registry, 'GROUPWARE');
+		this.getApplication().addCompanyNotes(this.company.id, 'GROUPWARE');
 	}
 
 	buildSidenav() {
