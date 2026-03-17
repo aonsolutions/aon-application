@@ -21,7 +21,10 @@ public enum NoteType implements Serializable {
     TREASURY,
     WAREHOUSE,
     GROUPWARE,
-    MARKETING
+    MARKETING,
+    ACADEMY,
+    COMMERCE,
+    GARAGE
     ;
 	
 	private NoteType() {}

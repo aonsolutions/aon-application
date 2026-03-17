@@ -1,9 +1,6 @@
 import { AonElement } from '../../../components/AonElement.js';
 import { AonCard } from "../../../components/aon-card.js";
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js'; 
-import { AonInput } from '../../../components/aon-input.js';
-import { AonSelect } from '../../../components/aon-select.js';
-import { AonNumber } from '../../../components/aon-number.js';
 import { Elaboration } from '../../../models/elaboration/Elaboration.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { AonIconButton } from '../../../components/aon-icon-button.js';
@@ -16,6 +13,7 @@ import { printFile } from '../../../services/actionService.js';
 import * as ACTION from '../../actions.js';
 import * as UA from '../../../services/userAgentService.js';
 import * as LS from '../../../services/localStorageService.js';
+import { createNumber, createSelect } from '../../../components/CreateComponent.js';
 
 export class AonMobilePackage extends AonElement {
 
@@ -270,24 +268,15 @@ export class AonMobilePackage extends AonElement {
 	}
 
 	createSelect(id, title) {
-		let select = new AonSelect();
-		select.id = id;
-		select.title = title;
-		return select;
+		return createSelect(id, title);
 	}
 
 	createInput(id, title) {
-		let select = new AonInput();
-		select.id = id;
-		select.description = title;
-		return select;
+		return createInput(id, title);
 	}
 
 	createNumber(id, title) {
-		let number = new AonNumber();
-		number.id = id;
-		number.description = title;
-		return number;
+		return createNumber(id, title);
 	}
 
 	setElaborationToolbar(toolbar) {

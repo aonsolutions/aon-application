@@ -8,10 +8,6 @@ import {AonButton} from "../../components/aon-button.js";
 import {CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 
 import * as ACTION from '../actions.js';
-import { AonInput } from '../../components/aon-input.js';
-import { AonSelect } from '../../components/aon-select.js';
-
-import { AonNumber } from '../../components/aon-number.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonDialog } from '../../components/aon-dialog.js';
@@ -19,6 +15,7 @@ import { getDeliveries, getDelivery } from '../../services/warehouseService.js';
 import { getDeliveryPackaging, getItem, getPackaging, getProducts, saveDeliveryPackaging } from '../../services/productService.js';
 import { MOBILE_ACTION, mobileAction } from '../../services/mobileService.js';
 import { openBarcode } from '../../services/actionService.js';
+import { createInput, createSelect } from '../../components/CreateComponent.js';
 
 export class AonMobileSale extends AonElement {
 
@@ -173,9 +170,7 @@ export class AonMobileSale extends AonElement {
 			});
 		} else {
 			table.addRow();
-			let deliverySelect = new AonSelect();
-			deliverySelect.id = this.id + 'DialogDelivery';
-			deliverySelect.title = MSG.DELIVERY;
+			let deliverySelect = createSelect(this.id + 'DialogDelivery', MSG.DELIVERY);
 			deliverySelect.addEventListener(EVENT.SELECT, () => {
 				this.packaging.delivery = deliverySelect.value;
 				this.buildProductPackaging(table, detail);
@@ -210,9 +205,7 @@ export class AonMobileSale extends AonElement {
 
 	buildNewDelivery(table, detail) {
 		table.addRow();
-		let deliverySelect = new AonSelect();
-		deliverySelect.id = this.id + 'DialogDelivery';
-		deliverySelect.title = MSG.DELIVERY;
+		let deliverySelect = createSelect(this.id + 'DialogDelivery', MSG.DELIVERY);
 		deliverySelect.disabled = true;
 		
 		let td = table.addCell(deliverySelect);
@@ -235,7 +228,7 @@ export class AonMobileSale extends AonElement {
 	buildProductPackaging(table, detail) {
 		table.addRow();
 		
-		let product = this.createInput(this.PACKAGING_PRODUCT, MSG.CONTAINER + ' (SSCC)');
+		let product = createInput(this.PACKAGING_PRODUCT, MSG.CONTAINER + ' (SSCC)');
 		product.id = this.DELIVERY_PRODUCT;
 		let td = table.addCell(product);
 		td.style.width = '100%';
@@ -296,9 +289,7 @@ export class AonMobileSale extends AonElement {
 
 	buildNewPackaging(table, detail) {
 		table.addRow();
-		let envaseSelect = new AonSelect();
-		envaseSelect.id = this.id + 'DialogEnvase';
-		envaseSelect.title = 'Nuevo Envase';
+		let envaseSelect = createSelect(this.id + 'DialogEnvase', 'Nuevo Envase');
 		envaseSelect.addEventListener(EVENT.SELECT, () => {
 			let cont = this.sale.carrierPacking ? 1 : 2;
 			while(table.rows > cont) {
@@ -343,7 +334,7 @@ export class AonMobileSale extends AonElement {
 	buildNewPackagingContent(table, detail) {
 		table.addRow();
 
-		let product2 = this.createInput(this.PACKAGING_PRODUCT, "Envase Origen");
+		let product2 = createInput(this.PACKAGING_PRODUCT, "Envase Origen");
 		product2.id = 'product2';
 		let td = table.addCell(product2);
 		td.style.width = '100%';
@@ -362,7 +353,7 @@ export class AonMobileSale extends AonElement {
 				let composition = [];
 				Array.prototype.forEach.call(r.item.itemComposition, i => {
 					table.addRow();
-					let product3 = this.createInput(this.PACKAGING_PRODUCT, "Contenedor Producto / Lote");
+					let product3 = createInput(this.PACKAGING_PRODUCT, "Contenedor Producto / Lote");
 					product3.value = i.description;
 					product3.id = this.DELIVERY_PRODUCT2;
 					product3.disabled = true;
@@ -376,7 +367,7 @@ export class AonMobileSale extends AonElement {
 					let quantityValue = (q < i.quantity) 
 						? q : i.quantity;
 					detail.delivered = detail.delivered + quantityValue;
-					let quantity = this.createInput(this.PACKAGING_PRODUCT, "Cantidad");
+					let quantity = createInput(this.PACKAGING_PRODUCT, "Cantidad");
 					quantity.id = this.DELIVERY_QUANTITY;
 					quantity.value = quantityValue;
 					let td2 = table.addCell(quantity);
@@ -407,7 +398,7 @@ export class AonMobileSale extends AonElement {
 	buildPackagingContent(table, detail, container) {
 		Array.prototype.forEach.call(container.item.itemComposition, i => {
 			table.addRow();
-			let product2 = this.createInput(this.PACKAGING_PRODUCT, "Contenedor Producto / Lote");
+			let product2 = createInput(this.PACKAGING_PRODUCT, "Contenedor Producto / Lote");
 			product2.id = this.DELIVERY_PRODUCT2;
 			product2.value = i.description;
 			product2.id = 'product2';
@@ -417,7 +408,7 @@ export class AonMobileSale extends AonElement {
 	
 			table.addRow();
 	
-			let quantity = this.createInput(this.PACKAGING_PRODUCT, "Cantidad");
+			let quantity = createInput(this.PACKAGING_PRODUCT, "Cantidad");
 			quantity.id = this.DELIVERY_QUANTITY;
 			quantity.value = i.quantity;
 			let td2 = table.addCell(quantity);
@@ -464,27 +455,6 @@ export class AonMobileSale extends AonElement {
 		card.id = id;
 		card.title = title;
 		return card;
-	}
-
-	createSelect(id, title) {
-		let select = new AonSelect();
-		select.id = id;
-		select.title = title;
-		return select;
-	}
-
-	createInput(id, title) {
-		let select = new AonInput();
-		select.id = id;
-		select.description = title;
-		return select;
-	}
-
-	createNumber(id, title) {
-		let number = new AonNumber();
-		number.id = id;
-		number.description = title;
-		return number;
 	}
 }
 

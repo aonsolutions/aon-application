@@ -11,6 +11,7 @@ export class AonToolbar extends AonElement {
 	TITLE_SECTION_SPAN;
 	TITLE_SECTION_OPTION;
 	TOOL_SECTION;
+	TOOL_SECTION_TITLE;
 
 	static get observedAttributes() {
 		return [CONSTANT.TITLE, CONSTANT.OPTION];
@@ -87,6 +88,7 @@ export class AonToolbar extends AonElement {
 		this.TITLE_SECTION_SPAN = this.TITLE_SECTION + 'Span';
 		this.TITLE_SECTION_OPTION = this.TITLE_SECTION + 'Option';
 		this.TOOL_SECTION = this.HEADER + 'ToolSection';
+		this.TOOL_SECTION_TITLE = this.TOOL_SECTION + 'Title';
 	}
 
 	build() {
@@ -333,11 +335,10 @@ export class AonToolbar extends AonElement {
 	}
 
 	addTitleToolSection(title, uppercase = true) {
-		const id = this.TOOL_SECTION + 'Title';
-		if(this.getElement(id) == null) {
+		if(this.getElement(this.TOOL_SECTION_TITLE) == null) {
 			this.addSeparator();
 			let span = this.createElement(TAG.SPAN);
-			span.id = id;
+			span.id = this.TOOL_SECTION_TITLE;
 			span.style.marginRight = "10px";
 			if(title) span.innerHTML = uppercase ? title.toString().toUpperCase() : title;
 			let titleSection = this.getElement(this.TOOL_SECTION);

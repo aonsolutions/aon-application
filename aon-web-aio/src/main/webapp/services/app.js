@@ -635,8 +635,8 @@ export const OFFICE = {
       name: "Empleado",
     },
   ],
-  is: (dur) => new DomainUserRoles(dur).isOfficeUser() || new DomainUserRoles(dur).isOfficePortal() || new DomainUserRoles(dur).isOfficeManager(),
-  has: (dur) => new DomainUserRoles(dur).hasOfficeRole() 
+  is: (dur) => new DomainUserRoles(dur).isOffice(),
+  has: (dur) => new DomainUserRoles(dur).hasOffice() 
 };
 
 export const API_SERVICE = {

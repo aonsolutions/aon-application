@@ -86,11 +86,11 @@ export class AonWarehouseMenu extends AonSuiteMenu {
             }, {
                 description: "Aprovisionamiento según consumo",
                 title: "Aprovisionamiento según consumo",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.STOCK_FORECAST)
             }, {
                 description: "Listado de movimientos",
                 title: "Listado de movimientos",
-                action: () => alert("description")
+                action: () => GWT.iLoad(GWT.MOVEMENT_LIST)
             }]
         }, {
             title: 'Control de Existencias',
@@ -124,7 +124,7 @@ export class AonWarehouseMenu extends AonSuiteMenu {
             }, {
                 description: "Etiquetas Envio",
                 title: "Etiquetas Envio",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfCorporateIdentityLabel)
             }]
         }, {
             title: 'Almacenes',
@@ -139,7 +139,8 @@ export class AonWarehouseMenu extends AonSuiteMenu {
             }, {
                 description: "Impresión de etiquetas de productos",
                 title: "Impresión de etiquetas de productos",
-                action: () => alert("description")
+                action: () => this.rootPanel(new JSF.AonJsfItemTagPrint)
+                
             }]
         }];
     }

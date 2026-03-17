@@ -8,7 +8,7 @@ import { AonConfiguration } from './configuration/aon-configuration.js';
 
 
 export class AonConfig extends AonElement {
-  
+
     TOP_NAV_SWITCH;
     SIDE_NAV_SWITCH;
     APPS_SWITCH;
@@ -17,7 +17,7 @@ export class AonConfig extends AonElement {
     LANG_CARD;
     THEMES_CARD;
     TYPE_CARD;
-	ROOT_PANEL;
+    ROOT_PANEL;
 
 
     get id() {
@@ -30,7 +30,9 @@ export class AonConfig extends AonElement {
 
     connectedCallback() {
         this.initialize();
-        this.build();
+        this.buildDur().then(() => {
+            this.build();
+        });
     }
 
     initialize() {
@@ -41,28 +43,27 @@ export class AonConfig extends AonElement {
         this.LANG_CARD = this.id + 'HelpLangCard';
         this.THEMES_CARD = this.id + 'ThemesCard';
         this.TYPE_CARD = this.id + 'TypeCard';
-		this.ROOT_PANEL = 'rootPanel';
+        this.ROOT_PANEL = 'rootPanel';
 
     }
 
     build() {
-
-        let sideNavDiv= this.createDiv();
+        let sideNavDiv = this.createDiv();
         sideNavDiv.className = CSS.AON_CONFIG_SIDE_NAV;
 
-        let sideNavTitle = this.createSpan(); 
-        sideNavTitle.className =  `${CSS.AON_CONFIG_SIDE_NAV}Title`;
+        let sideNavTitle = this.createSpan();
+        sideNavTitle.className = `${CSS.AON_CONFIG_SIDE_NAV}Title`;
         sideNavTitle.innerHTML = MSG.SIDE_MENU;
         sideNavDiv.appendChild(sideNavTitle);
 
         let topNavDiv = this.createDiv();
         topNavDiv.className = CSS.AON_CONFIG_TOP_NAV;
-        
-        let topNavTitle = this.createSpan(); 
-        topNavTitle.className =  `${CSS.AON_CONFIG_TOP_NAV}Title`;
+
+        let topNavTitle = this.createSpan();
+        topNavTitle.className = `${CSS.AON_CONFIG_TOP_NAV}Title`;
         topNavTitle.innerHTML = MSG.SUITE_MENU;
         topNavDiv.appendChild(topNavTitle);
-        
+
         let topNavSwitch = new AonSwitch();
         topNavSwitch.id = this.TOP_NAV_SWITCH;
         topNavSwitch.checked = aonMenu.isTopNavVisible();
@@ -70,20 +71,20 @@ export class AonConfig extends AonElement {
 
         this.appendChild(topNavDiv);
 
-        if(this.isCSSLoaded("beta")){
+        if (this.isCSSLoaded("beta")) {
             let appsDiv = this.createDiv();
             appsDiv.className = CSS.AON_CONFIG_APPS;
-    
-            let appsTitle = this.createSpan(); 
-            appsTitle.className =  `${CSS.AON_CONFIG_APPS}Title`;
+
+            let appsTitle = this.createSpan();
+            appsTitle.className = `${CSS.AON_CONFIG_APPS}Title`;
             appsTitle.innerHTML = "Mostrar todas las apps";
             appsDiv.appendChild(appsTitle);
-    
+
             let appsSwitch = new AonSwitch();
             appsSwitch.id = this.APPS_SWITCH;
             appsSwitch.checked = LS.isAppMenu();
             appsDiv.appendChild(appsSwitch);
-    
+
             this.appendChild(appsDiv);
 
             appsSwitch.addEventListener(EVENT.CHANGE, () => {
@@ -92,67 +93,69 @@ export class AonConfig extends AonElement {
                 aonMenu.reloadTopNav();
             });
         }
-		
-		let configDiv = this.createSpan();
-		configDiv.className = "configCardText";
 
-		let configContentIndexI = this.createElement(TAG.I);
-		configContentIndexI.className = CSS.MATERIAL_ICONS;
-		configContentIndexI.classList.add("aonHelpI");
-		configContentIndexI.innerHTML= "construction";
-		configDiv.appendChild(configContentIndexI);
+        if (this.getDur().isAdmin()) {
+            let configDiv = this.createSpan();
+            configDiv.className = "configCardText";
 
-		let configContentIndexSpan = this.createDiv();
-		configContentIndexSpan.className = CSS.AON_CARD_TEXT;
-        configContentIndexSpan.classList.add("aonHelpSpan2");
-		configContentIndexSpan.innerHTML = LS.isFutureTheme() ? "Empresa" : "Cofiguración Datos de Empresa";
-		configDiv.appendChild(configContentIndexSpan);
-		this.appendChild(configDiv);
-		
-		configDiv.addEventListener(EVENT.CLICK, () => {
-			let aonConfiguration = new AonConfiguration();
-			this.rootPanel(aonConfiguration);
-			let rightPanel = document.querySelector('aon-right-panel'); 
-			if (rightPanel) {
-			   rightPanel.close(); 
-			}
-		});
-		
-		if(LS.isFutureTheme() && this.isBeta()){
-			let fixedButtonDiv = this.createDiv();
+            let configContentIndexI = this.createElement(TAG.I);
+            configContentIndexI.className = CSS.MATERIAL_ICONS;
+            configContentIndexI.classList.add("aonHelpI");
+            configContentIndexI.innerHTML = "construction";
+            configDiv.appendChild(configContentIndexI);
+
+            let configContentIndexSpan = this.createDiv();
+            configContentIndexSpan.className = CSS.AON_CARD_TEXT;
+            configContentIndexSpan.classList.add("aonHelpSpan2");
+            configContentIndexSpan.innerHTML = this.getDur().isConsultancy() ? MSG.ENVIRONMENT : MSG.COMPANY;
+            configDiv.appendChild(configContentIndexSpan);
+            this.appendChild(configDiv);
+
+            configDiv.addEventListener(EVENT.CLICK, () => {
+                let aonConfiguration = new AonConfiguration();
+                this.rootPanel(aonConfiguration);
+                let rightPanel = document.querySelector('aon-right-panel');
+                if (rightPanel) {
+                    rightPanel.close();
+                }
+            });
+        }
+
+        if (LS.isFutureTheme() && this.isBeta()) {
+            let fixedButtonDiv = this.createDiv();
             fixedButtonDiv.className = CSS.AON_CONFIG_APPS;
             fixedButtonDiv.style.width = '100%';
-    
-            let fixedButtonTitle = this.createSpan(); 
-            fixedButtonTitle.className =  `${CSS.AON_CONFIG_APPS}Title`;
+
+            let fixedButtonTitle = this.createSpan();
+            fixedButtonTitle.className = `${CSS.AON_CONFIG_APPS}Title`;
             fixedButtonTitle.innerHTML = "Anclar botón de 'Nuevo'";
             fixedButtonDiv.appendChild(fixedButtonTitle);
-    
+
             let fixedButtonSwitch = new AonSwitch();
-	        fixedButtonSwitch.id = 'fixedButtonSwitch';
-	        console.log('LS.getFixedButton()', LS.getFixedButton());
-	        fixedButtonSwitch.checked = LS.getFixedButton() === 'on';
-	        fixedButtonDiv.appendChild(fixedButtonSwitch);
-    
+            fixedButtonSwitch.id = 'fixedButtonSwitch';
+            console.log('LS.getFixedButton()', LS.getFixedButton());
+            fixedButtonSwitch.checked = LS.getFixedButton() === 'on';
+            fixedButtonDiv.appendChild(fixedButtonSwitch);
+
             this.appendChild(fixedButtonDiv);
 
             fixedButtonSwitch.addEventListener(EVENT.CHANGE, () => {
                 LS.setFixedButton(LS.getFixedButton() === 'on' ? 'off' : 'on');
-               	
-               	let newFixedButton = this.getElement('newFixedButton');
-               	let aonMenuAppHover = this.getElement('aonMenuList-new');
-               	
-               	if(LS.getFixedButton() === 'on'){
-					newFixedButton.classList.remove('hidden');
-					aonMenuAppHover.classList.add('hidden');
-				} else {
-					newFixedButton.classList.add('hidden');
-					aonMenuAppHover.classList.remove('hidden');
-				}
-               	
+
+                let newFixedButton = this.getElement('newFixedButton');
+                let aonMenuAppHover = this.getElement('aonMenuList-new');
+
+                if (LS.getFixedButton() === 'on') {
+                    newFixedButton.classList.remove('hidden');
+                    aonMenuAppHover.classList.add('hidden');
+                } else {
+                    newFixedButton.classList.add('hidden');
+                    aonMenuAppHover.classList.remove('hidden');
+                }
+
             });
-		}
-		
+        }
+
         let themesCard = new AonCard();
         themesCard.id = this.THEMES_CARD;
         themesCard.title = MSG.THEME_SELECTION;
@@ -164,9 +167,9 @@ export class AonConfig extends AonElement {
 
         let themesDiv = this.createDiv();
         themesDiv.appendChild(this.buildThemeData(MSG.STANDARD, '/css/theme/aon.css'));
-        themesDiv.appendChild(this.buildThemeData(MSG.CLASSIC,'/css/theme/classic.css'));
-        themesDiv.appendChild(this.buildThemeData(MSG.DARK,'/css/theme/dark.css'));
-		themesDiv.appendChild(this.buildThemeData(MSG.FUTURE,'/css/theme/future.css'));
+        themesDiv.appendChild(this.buildThemeData(MSG.CLASSIC, '/css/theme/classic.css'));
+        themesDiv.appendChild(this.buildThemeData(MSG.DARK, '/css/theme/dark.css'));
+        themesDiv.appendChild(this.buildThemeData(MSG.FUTURE, '/css/theme/future.css'));
         themesCard.setContent(themesDiv);
 
         let langCard = new AonCard();
@@ -179,44 +182,44 @@ export class AonConfig extends AonElement {
         langCardDiv.style.boxShadow = 'none';
 
         let langsDiv = this.createDiv();
-        langsDiv.appendChild(this.buildLanguageData(MSG.SPANISH , Language.SPANISH));
-        langsDiv.appendChild(this.buildLanguageData("English" , Language.ENGLISH));
-        langsDiv.appendChild(this.buildLanguageData("Français" , Language.FRENCH));
-        langsDiv.appendChild(this.buildLanguageData("Deutsch" , Language.DEUTSCH));
-        langsDiv.appendChild(this.buildLanguageData("Euskara" , Language.BASQUE));
-        langsDiv.appendChild(this.buildLanguageData("Català" , Language.CATALAN));
-        langsDiv.appendChild(this.buildLanguageData("Galego" , Language.GALICIAN));
+        langsDiv.appendChild(this.buildLanguageData(MSG.SPANISH, Language.SPANISH));
+        langsDiv.appendChild(this.buildLanguageData("English", Language.ENGLISH));
+        langsDiv.appendChild(this.buildLanguageData("Français", Language.FRENCH));
+        langsDiv.appendChild(this.buildLanguageData("Deutsch", Language.DEUTSCH));
+        langsDiv.appendChild(this.buildLanguageData("Euskara", Language.BASQUE));
+        langsDiv.appendChild(this.buildLanguageData("Català", Language.CATALAN));
+        langsDiv.appendChild(this.buildLanguageData("Galego", Language.GALICIAN));
         langCard.setContent(langsDiv);
 
         topNavSwitch.addEventListener(EVENT.CHANGE, () => {
             let topnav = this.getElement("aonMenuTopnav");
 
-            if(LS.isTopMenu()) {
-            	aonMenu.showTopNav();
+            if (LS.isTopMenu()) {
+                aonMenu.showTopNav();
             } else {
                 aonMenu.hideTopNav();
             };
-			
-		});
+
+        });
 
         let openButton = this.getElement("openNotificationButton");
-		openButton.style.display = "none";
+        openButton.style.display = "none";
     }
 
     isCSSLoaded(cssFileName) {
-		for (let sheet of document.styleSheets) {
-			if (sheet.href && sheet.href.includes(cssFileName)) {
-				return true;
-			}
-		}
-		return false;
-	}
+        for (let sheet of document.styleSheets) {
+            if (sheet.href && sheet.href.includes(cssFileName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-    buildThemeData(value,theme){
+    buildThemeData(value, theme) {
         let div = this.createDiv();
         div.style.title = "Temas";
         div.className = "configPanelLanguageDiv";
-        
+
         let i = this.createElement(TAG.I);
         i.className = CSS.MATERIAL_ICONS + " configPanelLanguageI";
         div.appendChild(i);
@@ -226,23 +229,23 @@ export class AonConfig extends AonElement {
         span.innerHTML = value;
         div.appendChild(span);
 
-        if(theme == LS.getTheme()) {
+        if (theme == LS.getTheme()) {
             i.innerHTML = "done";
             span.style.fontWeight = "bold";
             div.classList.add('selected');
-        }else{
+        } else {
             i.innerHTML = "palette";
         }
 
         div.addEventListener(EVENT.CLICK, () => {
-			div.classList.toggle('selected');
+            div.classList.toggle('selected');
             LS.setTheme(theme);
         })
 
         return div;
     }
 
-    buildLanguageData(value,language) {
+    buildLanguageData(value, language) {
         let div = this.createDiv();
         div.style.title = "Idioma";
         div.className = "configPanelLanguageDiv";
@@ -250,32 +253,32 @@ export class AonConfig extends AonElement {
         let i = this.createElement(TAG.I);
         i.className = CSS.MATERIAL_ICONS + " configPanelLanguageI";
         div.appendChild(i);
-        
+
         let span = this.createElement(TAG.SPAN);
         span.className = CSS.AON_CARD_TEXT;
         span.innerHTML = value;
         div.appendChild(span);
 
-        if(language == LS.getLanguage()) {
+        if (language == LS.getLanguage()) {
             i.innerHTML = "done";
             span.style.fontWeight = "bold";
             div.classList.add('selected');
-        }else{
-            i.innerHTML= "language";
+        } else {
+            i.innerHTML = "language";
         }
 
         div.addEventListener(EVENT.CLICK, () => {
-			div.classList.toggle('selected');
+            div.classList.toggle('selected');
             LS.setLanguage(language);
         })
-    
-        return div;     
+
+        return div;
     }
 
     getTopButton() {
         return this.getElement(this.TOP_NAV_SWITCH);
     }
 }
-if(!window.customElements.get(TAG.AON_CONFIG)){
+if (!window.customElements.get(TAG.AON_CONFIG)) {
     window.customElements.define(TAG.AON_CONFIG, AonConfig);
 }

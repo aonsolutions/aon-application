@@ -1,5 +1,4 @@
 import { AonDate } from "../../components/aon-date.js";
-import { AonInput } from "../../components/aon-input.js";
 import { AonSelect } from "../../components/aon-select.js";
 import { MSG, EVENT } from "../../environments/environments.js";
 import { ProjectHolder } from "../../models/project/ProjectHolder.js";
@@ -8,6 +7,7 @@ import { ActivityType } from "../../models/ActivityType.js";
 import { deleteProjectType, saveActivityType, saveProjectType } from "../../services/projectService.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
 import { AonCheckbox } from "../../components/aon-checkbox.js";
+import { createInput } from "../../components/CreateComponent.js";
 
 /**
  * 
@@ -326,9 +326,7 @@ const buildDialogProjectType = (parent, type) => {
     
     dialog.setTitle(isEdit ? MSG.EDIT : MSG.ADD);
 
-    let aonInput = new AonInput();
-    aonInput.id = "eeeInputType";
-    aonInput.description = MSG.TYPE;
+    let aonInput = createInput("eeeInputType", MSG.TYPE);
     if(projectType.getDescription()) {
         aonInput.value = projectType.getDescription();
     }
@@ -375,9 +373,7 @@ const buildDialogActivityType = (parent, type=null, projectTypeId=null) => {
     let div = document.createElement("div");
     dialog.setContent(div);
 
-    let aonInput = new AonInput();
-    aonInput.id = "activityType98";
-    aonInput.description = MSG.ACTIVITY;
+    let aonInput = createInput("activityType98", MSG.ACTIVITY);
     if(activityType.getDescription()) {
         aonInput.value = activityType.getDescription();
     }
