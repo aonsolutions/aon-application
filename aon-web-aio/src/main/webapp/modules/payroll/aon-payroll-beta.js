@@ -60,7 +60,7 @@ export class AonPayrollBeta extends AonElement {
 				id: "observations",
 				icon: "speaker_notes",
 				name: "Observaciones",
-				fn: () => this.buildObservations(),
+				fn: () => this.getApplication().buildObservations('PAYROLL'),
 			});
 
 			this.getApplication().addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);

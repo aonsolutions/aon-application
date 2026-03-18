@@ -62,7 +62,7 @@ export class AonAccountingBeta extends AonElement {
 				id: "observations",
 				icon: "speaker_notes",
 				name: "Observaciones",
-				fn: () => this.buildObservations('ACCOUNTING'),
+				fn: () => this.getApplication().buildObservations('ACCOUNTING'),
 			});
 
 			aonAccountingBeta.addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);

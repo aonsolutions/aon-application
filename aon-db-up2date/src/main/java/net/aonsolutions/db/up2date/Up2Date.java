@@ -625,8 +625,8 @@ public class Up2Date {
 
 			// EnterpriseDataAddAudit.ENTERPRISE_DATA_ADD_AUDIT
 			
-			RecordDataAlterTable.RECORD_DATA_ALTER_TABLE,
-			DeleteDomainAppApp7.DELETE_DOMAIN_APP_APP7
+			RecordDataAlterTable.RECORD_DATA_ALTER_TABLE
+			// DeleteDomainAppApp7.DELETE_DOMAIN_APP_APP7
 	};
 
 	// ------------------------------------------------------------------------
