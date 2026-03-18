@@ -106,8 +106,8 @@ export class AonConfigurationMenu extends AonSuiteMenu {
             {
                 description: "Asignación contable por tipo de forma de pago",
                 title: "Asignación contable por tipo de forma de pago",
-                action: () => alert("Asignación contable por tipo de forma de pago"),
-                filter: () => this.isDomainManagementAvailable()
+                action: () => this.rootPanel(new JSF.AonJsfPayMethodTypeDetail()),
+                nofilter: () => this.isDomainManagementAvailable()
             }, {
                 description: "Conceptos Bancarios",
                 title: "Conceptos Bancarios",
