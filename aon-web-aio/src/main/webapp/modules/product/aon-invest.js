@@ -1,9 +1,5 @@
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonCard } from '../../components/aon-card.js';
-import { AonDate } from '../../components/aon-date.js';
-import { AonInput } from '../../components/aon-input.js';
-import { AonNumber } from '../../components/aon-number.js';
-import { AonSelect } from '../../components/aon-select.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import {AonElement} from '../../components/AonElement.js';
 import { TAG, CONSTANT, MSG, EVENT } from '../../environments/environments.js';
@@ -13,6 +9,7 @@ import { deleteInvestAsset, saveInvestAsset } from '../../services/productServic
 import * as ACTION from '../actions.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonInvestList } from './aon-invest-list.js';
+import { createNumber, createSelect } from '../../components/CreateComponent.js';
 
 export class AonInvest extends AonElement {
 
@@ -104,7 +101,7 @@ export class AonInvest extends AonElement {
 
 		table.addRow();
 
-		let activitySelect = this.createSelect(this.INVEST_ACTIVITY, MSG.ACTIVITY);
+		let activitySelect = createSelect(this.INVEST_ACTIVITY, MSG.ACTIVITY);
 		activitySelect.setAlias('id', 'description');		
 		activitySelect.addEventListener(EVENT.SELECT, () => {
 			this.investAsset.activity = {
@@ -214,33 +211,22 @@ export class AonInvest extends AonElement {
 	}
 
 	createSelect(id, title) {
-		let select = new AonSelect();
-		select.id = id;
-		select.title = title;
-		return select;
+		return createSelect(id, title);
 	}
 
 	createInput(id, title) {
-		let select = new AonInput();
-		select.id = id;
-		select.description = title;
-		return select;
+		return createInput(id, title);
 	}
 
 	createNumber(id, title) {
-		let number = new AonNumber();
-		number.id = id;
-		number.description = title;
+		let number = createNumber(id, title);
 		number.format = CONSTANT.TRUE;
 		number.decimals = "2";
 		return number;
 	}
 
 	createDate(id, title) {
-		let date = new AonDate();
-		date.id = id;
-		date.title = title;
-		return date;
+		return createDate(id, title);
 	}
 }
 if(!window.customElements.get(TAG.AON_INVEST)){

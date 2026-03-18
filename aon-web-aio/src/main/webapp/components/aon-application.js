@@ -14,6 +14,9 @@ import { AonLoader } from "./aon-loader.js";
 import { AonDialogMenu } from "./aon-dialog-menu.js";
 import { AonDialog } from "./aon-dialog.js";
 import { AonToast } from "./aon-toast.js";
+import { getRegistryNotes } from "../services/registryService.js";
+import * as ACTION from "../modules/actions.js";
+import * as GWT from '../gwt/gwt.js';
 
 export class AonApplication extends AonElement {
   
@@ -284,8 +287,8 @@ export class AonApplication extends AonElement {
     sidenav.style.flexBasis = "0px";
     sidenav.classList.add("closeSidenav");
     
-	let toolbar = this.getElement(this.TOOLBAR);
-	toolbar.toogleClose();
+	  let toolbar = this.getElement(this.TOOLBAR);
+	  toolbar.toogleClose();
   }
 
   toogleRightSidenav() {
@@ -1358,6 +1361,111 @@ export class AonApplication extends AonElement {
       this.buildDragAndDrop(false);
     }
   }
+
+  addCompanyNotes(registry, source) {
+    window.addEventListener("message", (event) => {
+          if ( (event.origin === "null" || event.origin === window.origin) 
+            && event.data?.type === "REGISTRY_NOTE_SAVED" ) {
+            
+            // This payload if needed info from GWT
+            // const customerRegistry = event.data.payload;
+            
+            getRegistryNotes({registry, source}).then(notes => {
+                let countNotes = notes.filter(item => item.date).length;
+                let countObservations = notes.filter(item => !item.date && item.comments && item.comments.trim() !== "").length;
+                
+                countNotes += countObservations;
+                
+                let notesTitle = `${countNotes > 0 ? (countNotes == 1 ? countNotes + ' Anotación' : countNotes + ' Anotaciones') : 'Sin Anotaciones'}`;
+                
+                let titleToolbar = this.getElement(this.getToolbar().TOOL_SECTION_TITLE);
+
+                titleToolbar.innerHTML = notesTitle;
+                
+                let existsNotes = notes.some(item => item.date);
+                let notesIconId = this.getToolbar().TOOL_SECTION + ACTION.NOTES.id + "ButtonIcon";
+                let notesIcon = this.getElement(notesIconId);
+                if(existsNotes)
+                  notesIcon.style.color = 'green';
+                else
+                  notesIcon.style.color = 'rgb(95, 99, 104)';
+              });
+          }
+        });
+        
+        getRegistryNotes({registry, source}).then(notes => {
+              let countNotes = notes.filter(item => item.date).length;
+              let countObservations = notes.filter(item => !item.date && item.comments && item.comments.trim() !== "").length;
+              
+              countNotes += countObservations;
+              
+              let notesTitle = `${countNotes > 0 ? (countNotes == 1 ? countNotes + ' Anotación' : countNotes + ' Anotaciones') : 'Sin Anotaciones'}`;
+              
+              this.getApplication().addTitleToolSection(notesTitle, false);
+              
+              this.getApplication().addToolbarOption2(ACTION.NOTES, () => this.buildObservations(source));
+              
+              let existsNotes = notes.some(item => item.date);
+              
+              if(existsNotes) {
+                let notesIconId = this.getToolbar().TOOL_SECTION + ACTION.NOTES.id + "ButtonIcon";
+                let notesIcon = this.getElement(notesIconId);
+                notesIcon.style.color = 'green';
+              }
+              
+              let existsObservation = notes.some(item => !item.date && item.comments && item.comments.trim() !== "");
+              if(existsObservation) this.buildObservations(source);	
+        });
+  }
+
+  buildObservations(source) {
+      let rightSidenav = this.getApplication().getRightSidenav();
+      this.clearElement(rightSidenav);
+  
+      let notesIconId = this.getToolbar().TOOL_SECTION + ACTION.NOTES.id + "ButtonIcon";
+      let notesIcon = this.getElement(notesIconId);
+  
+      let div = this.createElement(TAG.DIV);
+      div.style = `
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          height: 100%;
+        `;
+      div.id = "customerNotesId";
+  
+      if (rightSidenav.style.flexBasis === "0px" || rightSidenav.style.flexBasis.length == 0) {
+        rightSidenav.appendChild(div);
+  
+        // Loader
+        let loaderSpan = this.createElement(TAG.SPAN);
+        loaderSpan.className = CONSTANT.SPIN;
+        loaderSpan.style.display = 'flex';
+        loaderSpan.style.height = '100%';
+        loaderSpan.style.justifyContent = 'center';
+        loaderSpan.style.alignItems = 'center';
+  
+        let aib = new AonIconButton();
+        aib.id = 'spinLoader';
+        aib.icon = 'sync';
+        aib.title = 'Cargando...';
+        loaderSpan.appendChild(aib);
+  
+        div.appendChild(loaderSpan);
+  
+        let company = LS.getCompany();
+  
+        localStorage.setItem("customer", company.registry);
+        localStorage.setItem("notesSource", source);
+  
+        GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
+      }
+      
+      notesIcon.classList.toggle("material-icons-selected");
+  
+      this.getApplication().toogleRightSidenav();
+    }
+  
 }
 if(!window.customElements.get('aon-application')){
   window.customElements.define("aon-application", AonApplication);

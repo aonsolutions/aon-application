@@ -188,6 +188,7 @@ export const ENGLISH = 'English';
 export const ENTERPRISE = 'Enterprise';
 export const ENTERPRISES = 'Enterprises';
 export const ENTRY = 'Entry';
+export const ENVIRONMENT = 'Environment';
 export const EQUIVALENCE_SURCHARGE = 'Equivalence Surcharge';
 export const EXERCISE = "Exercise";
 export const EXEMPTION_CAUSE = "Exemption Cause";

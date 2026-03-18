@@ -8,15 +8,14 @@ import {CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
-import { AonInput } from '../../components/aon-input.js';
 import { AonRegistry } from '../../components/aon-registry.js';
-import { AonSelect } from '../../components/aon-select.js';
 import { getProjectTypes, saveProject, deleteProject } from '../../services/projectService.js';
 
 import { getWorkgroups } from '../../services/workgroupService.js';
 import { getTastHolders } from '../../services/taskHolderService.js';
 import { Project } from '../../models/project/Project.js';
 import { AonProjectList } from './aon-project-list.js';
+import { createInput, createSelect } from '../../components/CreateComponent.js';
 
 export class AonProject extends AonElement {
     PROJECT_TOOLBAR;
@@ -206,17 +205,11 @@ export class AonProject extends AonElement {
 	}
 
 	createSelect(id, title) {
-		let select = new AonSelect();
-		select.id = id;
-		select.title = title;
-		return select;
+		return createSelect(id, title);
 	}
 
 	createInput(id, title) {
-		let select = new AonInput();
-		select.id = id;
-		select.description = title;
-		return select;
+		return createInput(id, title);
 	}
 }
 

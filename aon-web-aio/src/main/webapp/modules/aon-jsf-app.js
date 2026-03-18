@@ -1529,6 +1529,14 @@ export class AonJsfPosShift extends AonJsfApp {
 	}
 }
 
+
+export class AonJsfCorporateIdentityLabel extends AonJsfApp {
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/corporateIdentityLabel.xhtml');
+	}
+}
+
 export class AonJsfItemTagPrint extends AonJsfApp {
 	
 	constructor() {
@@ -2172,6 +2180,10 @@ if (!window.customElements.get(TAG.AON_JSF_POS_SHIFT)) {
 if (!window.customElements.get(TAG.AON_JSF_ITEM_TAG_PRINT)) {
 	window.customElements.define(TAG.AON_JSF_ITEM_TAG_PRINT, AonJsfItemTagPrint);
 }
+
+if (!window.customElements.get(TAG.AON_JSF_CORPORATE_IDENTITY_LABEL)) {
+	window.customElements.define(TAG.AON_JSF_CORPORATE_IDENTITY_LABEL, AonJsfCorporateIdentityLabel);
+}	
 
 if (!window.customElements.get(TAG.AON_JSF_EXPIRED_PASSWORD)) {
 	window.customElements.define(TAG.AON_JSF_EXPIRED_PASSWORD, AonJsfExpiredPassword);

@@ -31,6 +31,12 @@ export const P = 'p';
 
 // COMPONENTS
 
+export const AON_ACADEMY = 'aon-academy';
+export const AON_COMMERCE = 'aon-commerce';
+export const AON_COMMERCIAL = 'aon-commercial';
+export const AON_GROUPWARE = 'aon-groupware';
+export const AON_GARAGE = 'aon-garage';
+export const AON_MANAGEMENT = 'aon-management';
 export const AON_ELEMENT = 'aon-element';
 export const AON_ADDRESS = 'aon-address';
 export const AON_APPLICATION = 'aon-application';
@@ -92,6 +98,7 @@ export const AON_TABLE = 'aon-table';
 export const AON_TOAST = 'aon-toast';
 export const AON_TOOLTIP = 'aon-tooltip';
 export const AON_TOOLBAR = 'aon-toolbar';
+export const AON_TREASURY = 'aon-treasury';
 export const AON_VIEWER = 'aon-viewer';
 export const AON_NOTIFICATION_PANEL = 'aon-notification-panel'
 export const AON_NOTIFICATION_ICON = 'aon-notification-icon';
@@ -432,6 +439,7 @@ export const AON_JSF_POS_CLOSING = 'aon-jsf-pos-closing';
 export const AON_JSF_POS_INVOICE = 'aon-jsf-pos-invoice';
 export const AON_JSF_POS_FINANCE = 'aon-jsf-pos-finance';
 export const AON_JSF_ITEM_TAG_PRINT = 'aon-jsf-item-tag-print';
+export const AON_JSF_CORPORATE_IDENTITY_LABEL = 'aon-jsf-corporate-identity-label';
 
 export const AON_GARAGE_MENU = 'aon-garage-menu';
 

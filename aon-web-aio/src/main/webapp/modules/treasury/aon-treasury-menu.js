@@ -98,9 +98,6 @@ export class AonTreasuryMenu extends AonSuiteMenu {
                     title: "Proyección de Cuotas",
                     action: () => GWT.iLoad(GWT.FEE_PROJECTION)
                 }*/
-
-
-
             ]
         }, {
             title: 'Movimientos Bancarios',

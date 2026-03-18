@@ -84,7 +84,7 @@ public class LoginServlet extends HttpServlet {
 				httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} else {
 				httpResponse.setHeader("p3p", "CP=\"NOI ADM DEV COM NAV OUR STP\"");
-				httpResponse.sendRedirect("classic");				
+				httpResponse.sendRedirect("original");				
 			}
 			String initAction = httpRequest.getParameter("initAction");
 			if(initAction != null) {

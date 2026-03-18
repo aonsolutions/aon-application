@@ -1,8 +1,60 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd" >
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+<style type="text/css">
+body {
+	color: #222;
+	font-size: 12px;
+	font-family: sans-serif;
+	background: #fff url('/images/errorLoginBack.png') left top repeat-x;
+}
+
+h1 {
+	font-size: 150%;
+	font-family: 'Trebuchet MS', Verdana, sans-serif;
+	color: #000
+}
+
+#page {
+	font-size: 122%;
+	width: 720px;
+	margin: 144px auto 0 auto;
+	text-align: left;
+	line-height: 1.2;
+}
+
+#message {
+	padding-right: 400px;
+	min-height: 360px;
+	background: transparent url('/images/errorLogin.png') right top no-repeat;
+}
+
+.boton {
+	font-size: 12px;
+	font-family: Verdana, Helvetica;
+	font-weight: bold;
+	color: white;
+	background: #638cb5;
+	border: 0px;
+	width: 80px;
+	height: 26px;
+}
+</style>
+<meta http-equiv="Content-Type"
+	content="application/xhtml; charset=utf-8" />
+<link rel="shortcut icon" href="http://www.aonsolutions.es/favicon.ico"
+	type="image/x-icon" />
+<title>Error en acceso</title>
 </head>
 <body>
-	<jsp:forward page="/home.jsf" />
+	<div id="page">
+		<div id="message">
+			<h1>Error</h1>
+			<p>El enlace que has seguido ha caducado. Por favor, pruebe el nuevo enlace.</p>
+			<p>&#160;</p>
+			<form name="form1" action="/" method="post">
+				<input type="submit" value="Probar" class="boton">
+			</form>
+		</div>
+	</div>
 </body>
 </html>

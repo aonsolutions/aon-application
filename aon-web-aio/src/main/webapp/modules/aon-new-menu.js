@@ -1,9 +1,9 @@
 import { AonElement } from '../components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET, TOP_MENU_APPS_HOME, getConstNewApps, EXPAND_HIRIND, CONTENT_INDEX, MESSENGER, } from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET, getConstNewApps, EXPAND_HIRIND, CONTENT_INDEX, MESSENGER, } from '../services/app.js';
 import { COMMERCE, OFFICE, GARAGE, ACADEMY } from "../services/app.js";
 
 import { ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU, ENTERPRISE_MENU, CONSOLE_MENU } from "../services/app.js"
-import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
+import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
 import { AonDocumental } from '../modules/documental/aon-documental.js';
 import '../modules/project/aon-project-panel.js';
 import * as GWT from '../gwt/gwt.js';
@@ -19,7 +19,6 @@ import { AonLaboral } from '../modules/laboral/aon-laboral.js';
 import { AonComunica } from '../modules/laboral/aon-comunica.js';
 import { AonAccounting } from '../modules/accounting/aon-accounting.js';
 import { AonIcon } from '../components/aon-icon.js';
-import { AonNote } from '../modules/note/aon-note.js';
 import { AonInvoicePanel } from '../modules/invoice/aon-invoice-panel.js';
 import { AonOfficePanel } from '../modules/office/aon-office-panel.js';
 import { AonConsole } from '../modules/console/aon-console.js';
@@ -33,21 +32,8 @@ import { TASK_SOURCE } from '../modules/messenger/MessengerEnums.js';
 import { uploadDocuments } from "../modules/documental/DocumentalUtils.js";
 
 import { AonNewDesktop } from './aon-new-desktop.js';
-import { AonAccountingMenu } from './accounting/aon-accounting-menu.js';
 import { AonAccountingBeta } from './accounting/aon-accounting-beta.js';
-import { AonCommercialMenu } from './commercial/aon-commercial-menu.js';
-import { AonManagementMenu } from './management/aon-management-menu.js';
-import { AonTreasuryMenu } from './treasury/aon-treasury-menu.js';
-import { AonGroupwareMenu } from './groupware/aon-groupware-menu.js';
-import { AonWarehouseMenu } from './warehouse/aon-warehouse-menu.js';
-import { AonFiscalMenu } from './fiscal/aon-fiscal-menu.js';
 import { AonFiscalBeta } from './fiscal/aon-fiscal-beta.js';
-import { AonPayrollMenu } from './payroll/aon-payroll-menu.js';
-import { AonMarketingMenu } from './marketing/aon-marketing-menu.js';
-import { AonAcademyMenu } from './academy/aon-academy-menu.js';
-import { AonCommerceMenu } from './commerce/aon-commerce-menu.js';
-import { AonGarageMenu } from './garage/aon-garage-menu.js';
-import { AonConfigurationMenu } from './configuration/aon-configuration-menu.js';
 import { AonConfiguration } from '../modules/configuration/aon-configuration.js';
 import { AonEnterpriseMenu } from './enterprise/aon-enterprise-menu.js';
 import { AonConsoleMenu } from './console/aon-console-menu.js';
@@ -58,7 +44,6 @@ import { AonParent } from "./aon-parent.js";
 
 import { generateJobId } from '../modules/invoice/InvoiceUtils.js';
 
-import { getApplicationParameters } from '../services/applicationParameterService.js';
 import { AonSuiteMenu } from './aon-suite-menu.js';
 import { AonIncome } from './invoice/aon-income.js';
 import { AonExpense } from './invoice/aon-expense.js';
@@ -71,12 +56,15 @@ import { AonPayrollBeta } from './payroll/aon-payroll-beta.js';
 import { getInvoiceCount } from '../services/invoiceService.js';
 import { getRelationShipCompany } from '../services/registryService.js';
 import { AonTooltip } from '../components/aon-tooltip.js';
-import { AonCommercialBeta } from './commercial/aon-commercial-beta.js';
-import { AonManagementBeta } from './management/aon-management-beta.js';
-import { AonTreasuryBeta } from './treasury/aon-treasury-beta.js';
 import { AonWarehouseBeta } from './warehouse/aon-warehouse-beta.js';
-import { AonGroupwareBeta } from './groupware/aon-groupware-beta.js';
 import { AonMarketingBeta } from './marketing/aon-marketing-beta.js';
+import { AonTreasury } from './treasury/aon-treasury.js';
+import { AonAcademy } from './academy/aon-academy.js';
+import { AonGroupware } from './groupware/aon-groupware.js';
+import { AonCommerce } from './commerce/aon-commerce.js';
+import { AonGarage } from './garage/aon-garage.js';
+import { AonCommercial } from './commercial/aon-commercial.js';
+import { AonManagement } from './management/aon-management.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -219,7 +207,8 @@ export class AonNewMenu extends AonElement {
 					this.rootPanel(this.getDur().isDomainManagementAvailable() ? new AonParent() : new AonDesktop());
 					break;
 				case AON_CLASSIC.app:
-					open(location.protocol + '//' + localStorage.getItem('aon_domain_name') + (location.port ? ":" + location.port : "") + '/login?token=' + localStorage.getItem('aon_session_id'))
+					this.setCookie('AONAPP', '/original', new Date().setHours(23, 59, 59, 999)); 
+					open(location.protocol + '//' + localStorage.getItem('aon_domain_name') + (location.port ? ":" + location.port : "") + '/?token=' + localStorage.getItem('aon_session_id'))
 					return;
 				case Apps.CONSOLE.app:
 					this.rootPanel(new AonConsole());
@@ -326,6 +315,10 @@ export class AonNewMenu extends AonElement {
 
 	}
 
+	setCookie(name, value, expires) {
+		document.cookie = `${name}=${value}; path=/; expires=${new Date(expires).toGMTString()}; SameSite=Lax"}`;
+	}
+	
 	removeOldNewDialogContents() {
 		const elements = document.querySelectorAll('#newDialogDialogMenuContent');
 		elements.forEach(element => element.remove());
@@ -334,31 +327,31 @@ export class AonNewMenu extends AonElement {
 	getAonSuiteMenu(app) {
 		switch (app.app) {
 			case ACCOUNTING_MENU.app:
-				return this.isDomainManagementAvailable() ? new AonAccountingMenu() : new AonAccountingBeta();
+				return new AonAccountingBeta();
 			case COMMERCIAL_MENU.app:
-				return this.isDomainManagementAvailable() ? new AonCommercialMenu() : new AonCommercialBeta();
+				return  new AonCommercial();
 			case GROUPWARE_MENU.app:
-				return this.isDomainManagementAvailable() ? new AonGroupwareMenu() : new AonGroupwareBeta();
+				return new AonGroupware();
 			case MANAGEMENT_MENU.app:
-				return this.isDomainManagementAvailable() ? new AonManagementMenu() : new AonManagementBeta();
+				return new AonManagement();
 			case TREASURY_MENU.app:
-				return this.isDomainManagementAvailable() ? new AonTreasuryMenu() : new AonTreasuryBeta();
+				return new AonTreasury();
 			case WAREHOUSE_MENU.app:
-				return this.isDomainManagementAvailable() ? new AonWarehouseMenu() : new AonWarehouseBeta();
+				return new AonWarehouseBeta();
 			case FISCAL_MENU.app:
-				return this.isDomainManagementAvailable() ? new AonFiscalMenu() : new AonFiscalBeta();
+				return new AonFiscalBeta();
 			case PAYROLL_MENU.app:
-				return this.isDomainManagementAvailable() ? new AonPayrollMenu() : new AonPayrollBeta();
+				return new AonPayrollBeta();
 			case MARKETING_MENU.app:
-				return this.isDomainManagementAvailable() ? new AonMarketingMenu() : new AonMarketingBeta();
+				return new AonMarketingBeta();
 			case CONFIGURATION_MENU.app:
 				return new AonConfiguration();
 			case ACADEMY.app:
-				return new AonAcademyMenu();
+				return new AonAcademy();
 			case COMMERCE.app:
-				return new AonCommerceMenu();
+				return new AonCommerce();
 			case GARAGE.app:
-				return new AonGarageMenu();
+				return new AonGarage();
 			case ENTERPRISE_MENU.app:
 				return new AonEnterpriseMenu();
 			case CONSOLE_MENU.app:
@@ -1083,9 +1076,7 @@ export class AonNewMenu extends AonElement {
 		if (MenuApps.TOOLS.app === app.app)
 			return this.isBeta() && !LS.isNewTheme();
 		if (MenuApps.OFFICE.app === app.app)
-			return (this.isBeta() || this.getDur().isOffice())
-				&& this.getDur().hasOffice()
-				&& this.getDur().isManagementManager();
+			return this.getDur().isOffice();
 		if (MenuApps.MARKETING.app === app.app)
 			return this.isBeta() && this.getDur().isMarketing();
 		if (MenuApps.WAREHOUSE.app === app.app) {
