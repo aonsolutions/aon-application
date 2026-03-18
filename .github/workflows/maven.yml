@@ -278,12 +278,12 @@ jobs:
         -DskipTests=${SKIP_INTEGRATION_TESTS} \
         -Dintegration.test.user=admin \
         -Dintegration.test.password=org \
-        -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/classic \
-        -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/classic \
-        -Dintegration.test.agrarian.payroll.url=http://agrarian-payroll-test.aonsolutions.org:8080/classic \
-        -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/classic \
-        -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/classic \
-        -Dintegration.test.artist.payroll.url=http://artist-payroll-test.aonsolutions.org:8080/classic \
+        -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/original \
+        -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/original \
+        -Dintegration.test.agrarian.payroll.url=http://agrarian-payroll-test.aonsolutions.org:8080/original \
+        -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/original \
+        -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/original \
+        -Dintegration.test.artist.payroll.url=http://artist-payroll-test.aonsolutions.org:8080/original \
         -Dtest='!GeneralEnterpriseTest' -f aon-htmlunit/pom.xml integration-test
 
     - name: Build production version with Maven

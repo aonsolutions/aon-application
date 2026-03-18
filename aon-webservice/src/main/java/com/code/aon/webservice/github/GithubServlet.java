@@ -212,7 +212,7 @@ public class GithubServlet extends HttpServlet{
 			Tag t = new Tag().setColor(label.getString(MSG.COLOR))
 					.setDomain(domain.getId())
 					.setName(label.getString(MSG.NAME))
-					.setType(TagType.TASK_LABEL.value());
+					.setType(TagType.TASK_LABEL);
 			tag = AON.insertTag(domain.getName(), domain.getId(), login, t);
 		}
 		TaskTag taskTag = new TaskTag().setDomain(domain.getId()).setTask(task.getId()).setTag(tag.getId());

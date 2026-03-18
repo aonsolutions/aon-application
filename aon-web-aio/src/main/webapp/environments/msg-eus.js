@@ -186,6 +186,7 @@ export const ENGLISH = 'Ingelesa';
 export const ENTERPRISE = 'Enpresa';
 export const ENTERPRISES = 'Enpresak';
 export const ENTRY = 'Sarrera';
+export const ENVIRONMENT = 'Ingurunea';
 export const EQUIVALENCE_SURCHARGE = 'Baliokidetasun Errekargua';
 export const EXEMPTION_CAUSE = 'Salbuespenaren Arrazoia';
 export const EXIT = 'Irteera';

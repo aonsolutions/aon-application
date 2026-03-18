@@ -478,7 +478,7 @@ export const BIDOQ = {
   logo: "../assets/apps/bidoq.png",
   price: " ", 
   is: (dur) => new DomainUserRoles(dur).isBidoq(),
-  has: (dur) => new DomainUserRoles(dur).isBidoq(),
+  has: (dur) => new DomainUserRoles(dur).hasBidoq(),
 };
 
 export const SELFCONTA = {
@@ -488,7 +488,7 @@ export const SELFCONTA = {
   logo: "../assets/apps/selfconta.png",
   price: " ", 
   is: (dur) => new DomainUserRoles(dur).isSelfconta(),
-  has: (dur) => new DomainUserRoles(dur).isSelfconta(),
+  has: (dur) => new DomainUserRoles(dur).hasSelfconta(),
 };
 
 export const AON_SALTRA = {
@@ -635,8 +635,8 @@ export const OFFICE = {
       name: "Empleado",
     },
   ],
-  is: (dur) => new DomainUserRoles(dur).isOfficeUser() || new DomainUserRoles(dur).isOfficePortal() || new DomainUserRoles(dur).isOfficeManager(),
-  has: (dur) => new DomainUserRoles(dur).hasOfficeRole() 
+  is: (dur) => new DomainUserRoles(dur).isOffice(),
+  has: (dur) => new DomainUserRoles(dur).hasOffice() 
 };
 
 export const API_SERVICE = {

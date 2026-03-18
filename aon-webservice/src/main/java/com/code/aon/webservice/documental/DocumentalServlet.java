@@ -371,7 +371,7 @@ public class DocumentalServlet extends AonApiHttpServlet{
 	
 	private JSONObject createTag(Domain domain, String login, JSONObject json) {
 		Tag tag = new Tag().setName(json.getString(IJsonNames.NAME))
-				.setType(TagType.RATTACH.value())
+				.setType(TagType.RATTACH)
 				.setDomain(domain.getId());
 		
 		tag = AON.insertTag(domain.getName(), domain.getId(), login, tag);

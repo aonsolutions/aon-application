@@ -1,7 +1,6 @@
 import { AonAvatar } from '../../components/aon-avatar.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
-import { AonInput } from '../../components/aon-input.js';
 import { AonElement } from '../../components/AonElement.js';
 import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { changePassword, getAuth, insertAvatar } from '../../services/authService.js';
@@ -9,6 +8,7 @@ import { downscaleImage } from '../../services/compressImg.js';
 import { getReader } from '../../services/utils.js';
 // import { AonDialog } from '../../components/aon-dialog.js';
 import {closeSession } from  '../../services/service.js';
+import { createInput } from '../../components/CreateComponent.js';
 
 
 export class AonMobileProfile extends AonElement {
@@ -126,16 +126,12 @@ export class AonMobileProfile extends AonElement {
 
         let div = document.createElement("div");
 
-        let oldPassword = new AonInput();
-        oldPassword.id = "oldPassword";
+        let oldPassword = createInput("oldPassword", "Contraseña");
         oldPassword.type = "password";
-        oldPassword.description = "Contraseña";
         div.appendChild(oldPassword);
 
-        let newPassword = new AonInput();
-        newPassword.id = "newPassword";
+        let newPassword = createInput("newPassword", "Repetir Contraseña");
         newPassword.type = "password";
-        newPassword.description = "Repetir Contraseña";
         div.appendChild(newPassword);
 
 		d.setContent(div);

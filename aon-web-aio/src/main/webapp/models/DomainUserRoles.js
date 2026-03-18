@@ -713,12 +713,28 @@ export class DomainUserRoles {
 		return this.hasAon() && (this.isAdmin() || this.hasRole(Role.AON_AIO) || this.hasRole(Role.AON) || this.hasRole(Role.AIO));
 	}
 
+	hasBidoq() {
+		return this.hasApp(App.BIDOQ);
+	}
+
+	hasParentBidoq() {
+		return this.hasParentApp(App.BIDOQ);
+	}
+
 	isBidoq() {
-		return this.hasApp(App.BIDOQ) && (this.isAdmin() || this.hasRole(Role.BIDOQ));
+		return this.hasBidoq() && (this.isAdmin() || this.hasRole(Role.BIDOQ));
+	}
+
+	hasSelfconta() {
+		return this.hasApp(App.SELFCONTA);
+	}
+
+	hasParentSelfconta() {
+		return this.hasParentApp(App.SELFCONTA);
 	}
 
 	isSelfconta() {
-		return this.hasApp(App.SELFCONTA) && (this.isAdmin() || this.hasRole(Role.SELFCONTA));
+		return this.hasSelfconta() && (this.isAdmin() || this.hasRole(Role.SELFCONTA));
 	}
 
 	hasSaltra() {
@@ -730,7 +746,7 @@ export class DomainUserRoles {
 	}
 
 	isSaltra() {
-		return this.hasApp(App.SALTRA);
+		return this.hasSaltra();
 		//  && (this.isAdmin() || this.hasRole(Role.SALTRA))
 		// || this.isSaltraPortal() || this.isSaltraManager();
 	}
@@ -790,23 +806,20 @@ export class DomainUserRoles {
 		return this.hasConsole();
 	}
 
+	// CONSULTANCY
+
+	isConsultancy() {
+		return this.getDomain().getDomainType() == 'CONSULTANCY';
+	}
+
 	// OFFICE
 	
-	isOfficeDomain(){
+	hasOffice() {
 		return this.getDomain().getDomainType() == 'OFFICE';
 	}
 	
-	hasOfficeRole() {
-		return this.getDomain().getDomainType() == 'OFFICE' || this.getDomain().getDomainType() == 'CONSULTANCY';
-	}
-	
-
-	hasOffice() {
-		return this.getDomain().getDomainType() == 'OFFICE' && (this.isOfficeUser() || this.isOfficePortal() || this.isOfficeManager());
-	}
-	
 	isOffice() {
-		return this.hasOfficeRole() 
+		return this.hasOffice() 
 			&& (this.hasRole(Role.OFFICE) || this.hasRole(Role.OFFICE_PORTAL) || this.hasRole(Role.OFFICE_MANAGER) 
 				|| this.isAdmin() || this.parentUser);
 	}
@@ -816,7 +829,7 @@ export class DomainUserRoles {
 	}
 
 	isOfficePortal() {
-		return this.hasOfficeRole() && (this.hasRole(Role.OFFICE_PORTAL) || this.hasParentRole(Role.OFFICE_PORTAL));
+		return this.hasOffice() && (this.hasRole(Role.OFFICE_PORTAL) || this.hasParentRole(Role.OFFICE_PORTAL));
 			//&& (this.isAdmin() || this.hasRole(Role.OFFICE_PORTAL));
 	}
 

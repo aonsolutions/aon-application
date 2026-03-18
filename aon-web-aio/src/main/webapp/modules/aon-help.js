@@ -46,7 +46,7 @@ export class AonHelp extends AonElement {
 	
 	buildForCompanies() {
 		this.buildForAll();
-		if ((this.dur.isDomainPayer()) || (this.dur.hasOffice())){
+		if ((this.dur.isDomainPayer()) || (this.dur.isOffice())){
 			let rightPanelAboutContactCard = new AonCard();
 			rightPanelAboutContactCard.id = this.ABOUT_CONTACT_CARD;
 			rightPanelAboutContactCard.title = MSG.CONTACT_DATA2;

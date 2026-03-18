@@ -1,5 +1,4 @@
 package net.aonsolutions.aon.api.servlet.registry;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -13,13 +12,12 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.CONSOLE;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.CustomerJSON;
 import com.esferalia.aon.occam.api.json.DomainJSON;
-import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryRelationshipJSON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -34,7 +32,6 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
-import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -49,7 +46,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.AuthDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -57,7 +53,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import net.aonsolutions.aon.api.servlet.AonRouting;
@@ -344,6 +339,10 @@ public class RelationshipServlet extends AonApiHttpServlet {
 		Scope scope;
 		
 		if(null != company.getDomain()) {
+			
+			// Check Comments
+			if(AonStringUtils.isNotBlank(rrelationship.getComments()) && AonStringUtils.length(rrelationship.getComments()) >  64)
+				throw new IllegalArgumentException("La URL de este dominio es demasiado larga. Por favor p\u00f3ngase en contacto con soporte.");
 			
 			// Check Scope
 			Integer domainScope = company.getDomain().getScope();

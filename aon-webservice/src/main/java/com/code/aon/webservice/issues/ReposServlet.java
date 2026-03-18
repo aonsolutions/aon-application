@@ -11,12 +11,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -35,7 +29,6 @@ import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TagColor;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
-import com.esferalia.aon.occam.api.model.task.TaskHolderType;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
@@ -45,6 +38,12 @@ import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "ReposServlet", urlPatterns = { 	"/repos/*" ,
@@ -367,7 +366,7 @@ public class ReposServlet extends HttpServlet{
 					Random rnd = new Random();		
 					Tag tag = new Tag().setName(json.getString(MSG.NAME))
 						.setDomain(domain.getId())
-						.setType((byte) json.getInt(MSG.TYPE))
+						.setType(TagType.safeValueOf((byte) json.getInt(MSG.TYPE)))
 						.setColor(TagColor.values()[rnd.nextInt(9)].getColor());
 					Tag t = AON.insertTag(domain.getName(), domain.getId(), userName, tag);
 					object = new Label().setId(t.getId()).setName(t.getName()).toJSON();
@@ -436,7 +435,7 @@ public class ReposServlet extends HttpServlet{
 		Integer taskId = DB.getTaskId(domain, userName, Integer.parseInt(taskNumber));
 		JSONArray array = new JSONArray();
 		AON.getTaskLabelStream(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(taskId))
-			.filter(t -> t.getType() == TagType.TASK_LABEL.value()).map(new TagToLabelFiller(domain, userName))
+			.filter(t -> TagType.TASK_LABEL.equals(t.getType())).map(new TagToLabelFiller(domain, userName))
 			.forEach(r -> array.put(r.toJSON()));
 		return array;
 	}
@@ -444,7 +443,7 @@ public class ReposServlet extends HttpServlet{
 	private JSONObject getTypeJSON(Domain domain, String userName, String taskNumber) {
 		Integer taskId = DB.getTaskId(domain, userName, Integer.parseInt(taskNumber));
 		Stream<Tag> st = AON.getTaskLabelStream(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(taskId));
-		return st.filter(t -> t.getType() == TagType.TASK_TYPE.value()).map(new TagToLabelFiller(domain, userName)).findFirst().orElse(new Label()).toJSON();	
+		return st.filter(t -> TagType.TASK_TYPE.equals(t.getType())).map(new TagToLabelFiller(domain, userName)).findFirst().orElse(new Label()).toJSON();	
 	}
 	
 	private JSONObject getPriorityJSON(Domain domain, String userName, String taskNumber) {
@@ -533,9 +532,9 @@ public class ReposServlet extends HttpServlet{
 		Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 		Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, task.getWorkgroup());
 		LinkedList<Tag> label = AON.getTaskLabelList(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(task.getId())); 
-		LinkedList<Label> labels = label.stream().filter(l -> l.getType() == TagType.TASK_LABEL.value()).map(new TagToLabelFiller(domain, userName))
+		LinkedList<Label> labels = label.stream().filter(l -> TagType.TASK_LABEL.equals(l.getType())).map(new TagToLabelFiller(domain, userName))
 				.collect(Collectors.toCollection(LinkedList::new)); 
-		Label type = label.stream().filter(l -> l.getType() == TagType.TASK_TYPE.value()).map(new TagToLabelFiller(domain, userName))
+		Label type = label.stream().filter(l -> TagType.TASK_TYPE.equals(l.getType())).map(new TagToLabelFiller(domain, userName))
 				.findFirst().orElse(new Label());
 		Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
 		Boolean principal = DB.isPrincipal(domain, userName, task);
@@ -550,9 +549,9 @@ public class ReposServlet extends HttpServlet{
 		Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 		Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, padre.getWorkgroup());
 		LinkedList<Tag> label = AON.getTaskLabelList(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(padre.getId())); 
-		LinkedList<Label> labels = label.stream().filter(l -> l.getType() == TagType.TASK_LABEL.value()).map(new TagToLabelFiller(domain, userName))
+		LinkedList<Label> labels = label.stream().filter(l -> TagType.TASK_LABEL.equals(l.getType())).map(new TagToLabelFiller(domain, userName))
 				.collect(Collectors.toCollection(LinkedList::new)); 
-		Label type = label.stream().filter(l -> l.getType() == TagType.TASK_TYPE.value()).map(new TagToLabelFiller(domain, userName))
+		Label type = label.stream().filter(l -> TagType.TASK_TYPE.equals(l.getType())).map(new TagToLabelFiller(domain, userName))
 				.findFirst().orElse(new Label());
 		Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
 		Boolean principal = DB.isPrincipal(domain, userName, task);
@@ -567,9 +566,9 @@ public class ReposServlet extends HttpServlet{
 			Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 			Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, task.getWorkgroup());
 			LinkedList<Tag> label = AON.getTaskLabelList(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(task.getId()));
-			LinkedList<Label> labels = label.stream().filter(l -> l.getType() == TagType.TASK_LABEL.value()).map(new TagToLabelFiller(domain, userName))
+			LinkedList<Label> labels = label.stream().filter(l -> TagType.TASK_LABEL.equals(l.getType())).map(new TagToLabelFiller(domain, userName))
 					.collect(Collectors.toCollection(LinkedList::new)); 
-			Label type = label.stream().filter(l -> l.getType() == TagType.TASK_TYPE.value()).map(new TagToLabelFiller(domain, userName))
+			Label type = label.stream().filter(l -> TagType.TASK_TYPE.equals(l.getType())).map(new TagToLabelFiller(domain, userName))
 					.findFirst().orElse(new Label());
 			Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
 			Boolean principal = DB.isPrincipal(domain, userName, task);
@@ -583,9 +582,9 @@ public class ReposServlet extends HttpServlet{
 		JSONArray array = new JSONArray();
 		DB.getFaqTaskStream(domain, userName, filter).forEach(task -> {
 			LinkedList<Tag> label = AON.getTaskLabelList(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(task.getId()));
-			LinkedList<Label> labels = label.stream().filter(l -> l.getType() == TagType.TASK_LABEL.value()).map(new TagToLabelFiller(domain, userName))
+			LinkedList<Label> labels = label.stream().filter(l -> TagType.TASK_LABEL.equals(l.getType())).map(new TagToLabelFiller(domain, userName))
 					.collect(Collectors.toCollection(LinkedList::new)); 
-			Label type = label.stream().filter(l -> l.getType() == TagType.TASK_TYPE.value()).map(new TagToLabelFiller(domain, userName))
+			Label type = label.stream().filter(l -> TagType.TASK_TYPE.equals(l.getType())).map(new TagToLabelFiller(domain, userName))
 					.findFirst().orElse(new Label());
 			Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
 			Boolean principal = DB.isPrincipal(domain, userName, task);
@@ -673,9 +672,9 @@ public class ReposServlet extends HttpServlet{
 			Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 			Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, padre.getWorkgroup());
 			LinkedList<Tag> label = AON.getTaskLabelList(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(padre.getId()));
-			LinkedList<Label> labels = label.stream().filter(l -> l.getType() == TagType.TASK_LABEL.value()).map(new TagToLabelFiller(domain, userName))
+			LinkedList<Label> labels = label.stream().filter(l -> TagType.TASK_LABEL.equals(l.getType())).map(new TagToLabelFiller(domain, userName))
 					.collect(Collectors.toCollection(LinkedList::new)); 
-			Label type = label.stream().filter(l -> l.getType() == TagType.TASK_TYPE.value()).map(new TagToLabelFiller(domain, userName))
+			Label type = label.stream().filter(l -> TagType.TASK_TYPE.equals(l.getType())).map(new TagToLabelFiller(domain, userName))
 					.findFirst().orElse(new Label());
 			Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
 			Boolean principal = DB.isPrincipal(domain, userName, task);
@@ -693,9 +692,9 @@ public class ReposServlet extends HttpServlet{
 			Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 			Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, task.getWorkgroup());
 			LinkedList<Tag> label = AON.getTaskLabelList(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(task.getId()));
-			LinkedList<Label> labels = label.stream().filter(l -> l.getType() == TagType.TASK_LABEL.value()).map(new TagToLabelFiller(domain, userName))
+			LinkedList<Label> labels = label.stream().filter(l -> TagType.TASK_LABEL.equals(l.getType())).map(new TagToLabelFiller(domain, userName))
 					.collect(Collectors.toCollection(LinkedList::new)); 
-			Label type = label.stream().filter(l -> l.getType() == TagType.TASK_TYPE.value()).map(new TagToLabelFiller(domain, userName))
+			Label type = label.stream().filter(l -> TagType.TASK_TYPE.equals(l.getType())).map(new TagToLabelFiller(domain, userName))
 					.findFirst().orElse(new Label());
 			Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
 			Boolean principal = DB.isPrincipal(domain, userName, task);

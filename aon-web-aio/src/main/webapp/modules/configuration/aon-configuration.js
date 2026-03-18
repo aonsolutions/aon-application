@@ -1,12 +1,6 @@
 import { AonElement } from "../../components/AonElement.js";
 import { getAuth, getCompany, getDomainUserRoles, getRegistry, saveServiceAccount, getCompanyOne, getRelationShipCompany, getSiblingsOffice } from "../../services/service.js";
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
-import "../../components/aon-card.js";
-import "../../components/aon-input.js";
-import "../marketplace/aon-marketplace.js";
-import "../user/aon-user-list.js";
-import "../company/aon-company-list.js";
-
 import { AonCompanyList } from "../company/aon-company-list.js";
 import { AonCompany } from "../company/aon-company.js";
 import { AonApplication } from '../../components/aon-application.js';
@@ -26,20 +20,20 @@ import { AonMessengerConfig } from "../messenger/aon-messenger-config.js";
 import { AonBooking } from '../marketplace/aon-booking.js';
 import { AonComunicaConfig } from "../laboral/aon-comunica-config.js";
 import { AonServiceAccountList } from "../user/aon-service-account-list.js";
-import { AonInput } from "../../components/aon-input.js";
 import { AonNewsList } from "../news/news/aon-news-list.js";
 import { AonCustomerList } from "../registry/customer/aon-customer-list.js";
+import { createInput } from "../../components/CreateComponent.js";
 
 export class AonConfiguration extends AonElement {
+
 	AON_CONFIGURATION;
-	ROOT_PANEL
+
 	COMPANY;
 	COMPANY_LIST;
 	CUSTOMER_LIST;
 
 	selected;
 	company;
-	dur;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -73,22 +67,16 @@ export class AonConfiguration extends AonElement {
 		this.initialize();
 		this.createApplication(this.AON_CONFIGURATION, MSG.SETTING, new AonApplication());
 
-		getDomainUserRoles({}).then(r => {
-			this.dur = new DomainUserRoles(r);
+		this.buildDur().then(() => {
 			getCompany().then(company => {
 				this.company = company;
 				this.build();
 			});
-
-		}).catch(() => {
-			console.error("Error loading domain user roles of company");
-			this.build()
 		});
 	}
 
 	initialize() {
 		this.AON_CONFIGURATION = "aonConfiguration";
-		this.ROOT_PANEL = "rootPanel";
 		this.COMPANY = this.AON_CONFIGURATION + "Company";
 		this.COMPANY_LIST = this.AON_CONFIGURATION + "CompanyList";
 		this.CUSTOMER_LIST = this.AON_CONFIGURATION + "CustomerList";
@@ -134,7 +122,7 @@ export class AonConfiguration extends AonElement {
 
 		let companyOptions = [];
 
-		if (this.dur.isAdmin() || (!this.dur.isEmployee() && !this.isMobile())) {
+		if (this.getDur().isAdmin() || (!this.getDur().isEmployee() && !this.isMobile())) {
 			companyOptions.push({
 				name: MSG.GENERAL_INFORMATION,
 				icon: MATERIAL_ICONS.BUSINESS,
@@ -142,7 +130,7 @@ export class AonConfiguration extends AonElement {
 			});
 		}
 
-		if (this.dur.isAdmin()) {
+		if (this.getDur().isAdmin()) {
 			companyOptions.push({
 				name: MSG.USER_MANAGEMENT,
 				icon: MATERIAL_ICONS.PEOPLE,
@@ -162,7 +150,7 @@ export class AonConfiguration extends AonElement {
 				fn: () => this.buildGroups(),
 			});
 
-			if (this.dur.isApiService()) {
+			if (this.getDur().isApiService()) {
 				companyOptions.push({
 					name: MSG.SERVICE_ACCOUNTS,
 					icon: MATERIAL_ICONS.API,
@@ -170,7 +158,7 @@ export class AonConfiguration extends AonElement {
 				});
 			}
 
-			if (!this.isMobile() && ( (!this.dur.isTrial() && !this.dur.hasBeenTrial()) || this.dur.isParentUser()) ) {
+			if (!this.isMobile() && ( (!this.getDur().isTrial() && !this.getDur().hasBeenTrial()) || this.getDur().isParentUser()) ) {
 				companyOptions.push({
 					name: MSG.HIRING,
 					icon: MATERIAL_ICONS.STORE_MALL_DIRECTORY,
@@ -201,7 +189,7 @@ export class AonConfiguration extends AonElement {
 
 		if (localStorage.getItem("aon_domain_id")) {
 			let appOptions = [];
-			if (this.dur.isInvoice()) {
+			if (this.getDur().isInvoice()) {
 				appOptions.push({
 					name: INVOICE.title,
 					icon: MATERIAL_ICONS.MONITORING,
@@ -209,7 +197,7 @@ export class AonConfiguration extends AonElement {
 				});
 			}
 
-			if (!this.dur.isEmployee()) {
+			if (!this.getDur().isEmployee()) {
 				appOptions.push({
 					id: MESSENGER.title,
 					name: MESSENGER.title,
@@ -218,14 +206,14 @@ export class AonConfiguration extends AonElement {
 				});
 			}
 
-			if (this.dur.isSaltraManager()) {
+			if (this.getDur().isSaltraManager()) {
 				appOptions.push({
 					id: AON_SALTRA.title,
 					name: AON_SALTRA.title,
 					icon: MATERIAL_ICONS.ALTERNATE_EMAIL,
 					fn: () => this.buildComunicaConfiguration(),
 				});
-			} else if (this.dur.isComunicaManager()) {
+			} else if (this.getDur().isComunicaManager()) {
 				appOptions.push({
 					id: COMUNICA.title,
 					name: COMUNICA.title,
@@ -234,7 +222,7 @@ export class AonConfiguration extends AonElement {
 				});
 			}
 
-			if (!this.dur.isEmployee() && this.isBeta()) {
+			if (!this.getDur().isEmployee() && this.isBeta()) {
 				appOptions.push({
 					id: "notice",
 					icon: "rss_feed",
@@ -343,8 +331,7 @@ export class AonConfiguration extends AonElement {
 
 		let div = this.createElement(TAG.DIV);
 
-		let input = this.createAonElement(new AonInput(), CONSTANT.NAME, MSG.NAME);
-		input.description = MSG.NAME;
+		let input = createInput(CONSTANT.NAME, MSG.NAME);
 		div.appendChild(input);
 
 		d.clear();

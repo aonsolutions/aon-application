@@ -1,14 +1,13 @@
+import { AonElement } from '../../../components/AonElement.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { AonCard } from '../../../components/aon-card.js';
-import { AonDate } from '../../../components/aon-date.js';
-import { AonInput } from '../../../components/aon-input.js';
-import { AonSelect } from '../../../components/aon-select.js';
 import { AonToolbar } from '../../../components/aon-toolbar.js';
-import {AonElement} from '../../../components/AonElement.js';
+import { createInput, createSelect } from '../../../components/CreateComponent.js';
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js';
 import { ToolbarType } from '../../../models/enums.js';
 import { printDeliveryTag } from '../../../services/bartenderService.js';
 import { AonCustomerSuggestion } from '../../registry/customer/aon-customer-suggestion.js';
+
 export class AonDeliveryTag extends AonElement {
 
 	TOOLBAR;
@@ -104,16 +103,16 @@ export class AonDeliveryTag extends AonElement {
 
 		table.addRow();
 
-		let url = this.createAonElement(new AonInput(), this.URL, MSG.LINK)
+		let url = createInput(this.URL, MSG.LINK);
 		url.value = this.url;
 		url.addEventListener(EVENT.CHANGE, () => this.url = url.value);
 		table.addCell(url, 2);
 
 		table.addRow();
 
-		let printer = this.createAonElement(new AonSelect(), this.PRINTER, MSG.PRINTER);
+		let printer = createSelect(this.PRINTER, MSG.PRINTER);
 		table.addCell(printer);
-		printer.options = JSON.stringify([{
+		printer.setOptions([{
 			name: 'ZEBRA 93',
 			value: 'ZEBRA 93'
 		},{
@@ -126,9 +125,9 @@ export class AonDeliveryTag extends AonElement {
 			this.printer = printer.value;
  		});
 
-		let tag = this.createAonElement(new AonSelect(), this.TAG, MSG.TAG);
+		let tag = createSelect(this.TAG, MSG.TAG);
 		table.addCell(tag);
-		tag.options = JSON.stringify([{
+		tag.setOptions([{
 			name: 'Mercadona',
 			value: 'mercadona'
 		},{
@@ -166,13 +165,13 @@ export class AonDeliveryTag extends AonElement {
 
 		table.addRow();
 
-		let gtin = this.createAonElement(new AonInput(), this.GTIN, 'GTIN');
+		let gtin = createInput(this.GTIN, 'GTIN');
 		table.addCell(gtin);
 		gtin.addEventListener(EVENT.CHANGE, () => {
 			this.data.GTIN = gtin.value;
 		});
 
-		let box = this.createAonElement(new AonInput(), this.BOX, 'Cajas');
+		let box = createInput(this.BOX, 'Cajas');
 		table.addCell(box);
 		box.addEventListener(EVENT.CHANGE, () => {
 			this.data.CANTIDAD = box.value;
@@ -180,13 +179,13 @@ export class AonDeliveryTag extends AonElement {
 
 		table.addRow();
 
-		let lote = this.createAonElement(new AonInput(), this.LOTE, 'Lote');
+		let lote = createInput(this.LOTE, 'Lote');
 		table.addCell(lote);
 		lote.addEventListener(EVENT.CHANGE, () => {
 			this.data.LOTE = lote.value;
 		});
 
-		let fecha = this.createAonElement(new AonDate(), this.DATE, 'Fecha');
+		let fecha = createDate(this.DATE, 'Fecha');
 		table.addCell(fecha);
 		fecha.addEventListener(EVENT.CHANGE, () => {
 			this.data.F_CONSUMO_PREFERENTE = fecha.value;
@@ -194,7 +193,7 @@ export class AonDeliveryTag extends AonElement {
 
 		table.addRow();
 		
-		let sscc = this.createAonElement(new AonInput(), this.SSCC, 'SSCC');
+		let sscc = createInput(this.SSCC, 'SSCC');
 		table.addCell(sscc, 2);
 		sscc.addEventListener(EVENT.CHANGE, () => {
 			this.data.SSCC = sscc.value;
@@ -208,13 +207,13 @@ export class AonDeliveryTag extends AonElement {
 
 		table.addRow();
 
-		let gtin = this.createAonElement(new AonInput(), this.GTIN, 'GTIN');
+		let gtin = createInput(this.GTIN, 'GTIN');
 		table.addCell(gtin);
 		gtin.addEventListener(EVENT.CHANGE, () => {
 			this.data.GTIN = gtin.value;
 		});
 
-		let box = this.createAonElement(new AonInput(), this.BOX, 'Cajas');
+		let box = createInput(this.BOX, 'Cajas');
 		table.addCell(box);
 		box.addEventListener(EVENT.CHANGE, () => {
 			this.data.CANTIDAD = box.value;
@@ -222,13 +221,13 @@ export class AonDeliveryTag extends AonElement {
 
 		table.addRow();
 
-		let lote = this.createAonElement(new AonInput(), this.LOTE, 'Lote');
+		let lote = createInput(this.LOTE, 'Lote');
 		table.addCell(lote);
 		lote.addEventListener(EVENT.CHANGE, () => {
 			this.data.LOTE = lote.value;
 		});
 
-		let fecha = this.createAonElement(new AonDate(), this.DATE, 'Fecha');
+		let fecha = createDate(this.DATE, 'Fecha');
 		table.addCell(fecha);
 		fecha.addEventListener(EVENT.CHANGE, () => {
 			this.data.F_CONSUMO_PREFERENTE = fecha.value;
@@ -236,13 +235,13 @@ export class AonDeliveryTag extends AonElement {
 
 		table.addRow();
 		
-		let sscc = this.createAonElement(new AonInput(), this.SSCC, 'SSCC');
+		let sscc = createInput(this.SSCC, 'SSCC');
 		table.addCell(sscc);
 		sscc.addEventListener(EVENT.CHANGE, () => {
 			this.data.SSCC = sscc.value;
 		});
 
-		let sales = this.createAonElement(new AonInput(), this.SALES, 'Pedido');
+		let sales = createInput(this.SALES, 'Pedido');
 		table.addCell(sales);
 		sales.addEventListener(EVENT.CHANGE, () => {
 			this.data.ORDEN_COMPRA = sales.value;
@@ -267,7 +266,7 @@ export class AonDeliveryTag extends AonElement {
 
 		table.addRow();
 		
-		let transporte = this.createAonElement(new AonInput(), this.TRANSPORTE, 'Transporte');
+		let transporte = createInput(this.TRANSPORTE, 'Transporte');
 		table.addCell(transporte, 2);
 		transporte.addEventListener(EVENT.CHANGE, () => {
 			this.data.AGENCIA_TRANSPORTE = '';
@@ -275,13 +274,13 @@ export class AonDeliveryTag extends AonElement {
 
 		table.addRow();
 		
-		let sscc = this.createAonElement(new AonInput(), this.SSCC, 'SSCC');
+		let sscc = createInput(this.SSCC, 'SSCC');
 		table.addCell(sscc);
 		sscc.addEventListener(EVENT.CHANGE, () => {
 			// this.data.SSCC = sscc.value;
 		});
 
-		let delivery = this.createAonElement(new AonInput(), this.DELIVERY, 'Albaran');
+		let delivery = createInput(this.DELIVERY, 'Albaran');
 		table.addCell(delivery);
 		delivery.addEventListener(EVENT.CHANGE, () => {
 			// this.data.DELIVERY = delivery.value;

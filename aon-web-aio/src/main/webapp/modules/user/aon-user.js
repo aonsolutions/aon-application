@@ -18,9 +18,9 @@ import { AonMobileUserList } from './aon-mobile-user-list.js';
 import { AonUserList } from './aon-user-list.js';
 import { getNextUser, getPreviousUser, getUsers, updateUser, deleteUserCache } from './UserCache.js';
 import { AonSwitch } from '../../components/aon-switch.js';
-import { AonInput } from '../../components/aon-input.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import { AonCard } from '../../components/aon-card.js';
+import { createInput } from '../../components/CreateComponent.js';
 
 export class AonUser extends AonElement {
 
@@ -527,16 +527,12 @@ export class AonUser extends AonElement {
 
 		let div = document.createElement("div");
 
-        let oldPassword = new AonInput();
-        oldPassword.id = "aonConfigurationUserCardOldPassword";
+        let oldPassword = createInput("aonConfigurationUserCardOldPassword", "Contraseña");
         oldPassword.type = "password";
-        oldPassword.description = "Contraseña";
         div.appendChild(oldPassword);
 
-        let newPassword = new AonInput();
-        newPassword.id = "aonConfigurationUserCardNewPassword";
+	    let newPassword = createInput("aonConfigurationUserCardNewPassword", "Repetir Contraseña");
         newPassword.type = "password";
-        newPassword.description = "Repetir Contraseña";
         div.appendChild(newPassword);
 
 		d.setContent(div);

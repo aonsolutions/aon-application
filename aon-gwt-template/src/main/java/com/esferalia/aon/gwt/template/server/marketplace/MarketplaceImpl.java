@@ -76,7 +76,7 @@ public class MarketplaceImpl extends AonStatelessRemoteServiceServlet implements
 	@Override
 	public Tag addMarketplaceTag(Domain domain, User user, String name){
 		return DBMarketplace.insertMarketplaceTag(domain, user,new Tag()
-			.setDomain(domain.getId()).setName(name).setType(TagType.MARKETPLACE.value()));
+			.setDomain(domain.getId()).setName(name).setType(TagType.MARKETPLACE));
 	}
 
 	@Override

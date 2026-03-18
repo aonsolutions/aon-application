@@ -349,6 +349,15 @@
 	</servlet-mapping>
 
 	<servlet>
+    	<servlet-name>original</servlet-name>
+    	<jsp-file>/original</jsp-file>
+	</servlet> 
+	<servlet-mapping>
+		<servlet-name>original</servlet-name>
+		<url-pattern>/original</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
     	<servlet-name>classic</servlet-name>
     	<jsp-file>/classic</jsp-file>
 	</servlet> 
@@ -562,7 +571,7 @@
 
 	<filter-mapping>
 		<filter-name>themeFilter</filter-name>
-		<url-pattern>/aonTheme</url-pattern>
+		<url-pattern>/</url-pattern>
 	</filter-mapping>
 
 	<!-- DOMAIN MANAGER CONFIGURATION -->
@@ -578,7 +587,7 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>AuditFilter</filter-name>
-		<url-pattern>/classic</url-pattern>
+		<url-pattern>/original</url-pattern>
 	</filter-mapping>
 
 	<!-- Listener, that enables Audit Sessions per User. -->
@@ -602,10 +611,12 @@
 		<listener-class>
 			com.code.aon.ui.audit.session.AonStartupServletContextListener</listener-class>
 	</listener>
-
+	
+	<!--
 	<welcome-file-list>
 		<welcome-file>app</welcome-file>
 	</welcome-file-list>
+	-->
 
 	<security-constraint>
 		<web-resource-collection>
@@ -634,8 +645,8 @@
 			<url-pattern>*.jsp</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>classic</web-resource-name>
-			<url-pattern>/classic</url-pattern>
+			<web-resource-name>original</web-resource-name>
+			<url-pattern>/original</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>User</role-name>
