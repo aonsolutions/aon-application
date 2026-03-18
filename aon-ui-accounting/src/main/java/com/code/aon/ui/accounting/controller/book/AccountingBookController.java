@@ -177,7 +177,6 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 			books.add( new AccountingBook( 1, 3, 1,MimeType.MIME_PDF,BookType.IVAI		,true ));
 			books.add( new AccountingBook( 2, 4, 1,MimeType.MIME_PDF,BookType.PER_GAN	,true ));
 		} else {
-			// FALTA - AQUI DESMARCAR TODOS POR DEFECTO O AL MENOS LOS QUE INDICA LA NORMATIVA PARA QUE SE HAGAN SEPARADOS
 //			books.add( new AccountingBook( 1, 0, 1,MimeType.MIME_PDF,BookType.DIARIO	,false)); // Diario
 //			books.add( new AccountingBook( 2, 1, 1,MimeType.MIME_PDF,BookType.MAYOR		,true )); // Mayor
 //			books.add( new AccountingBook( 2, 2, 1,MimeType.MIME_PDF,BookType.BAL_SUMS1	,true )); // Balances de comprobación (sumas y saldos)
@@ -191,18 +190,19 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 //			books.add( new AccountingBook( 2,10, 1,MimeType.MIME_PDF,BookType.BALANCES	,true )); // Balances
 //			books.add( new AccountingBook( 2,11, 1,MimeType.MIME_PDF,BookType.BALANCES	,true )); // Balances
 			
+			// FALTA - SE DEJAN MARCADOS POR DEFECTO SOLO BALSUMS, IVA Y BALANCES
 			books.add( new AccountingBook( 1, 0, 1,MimeType.MIME_PDF,BookType.DIARIO	,false)); // Diario
 			books.add( new AccountingBook( 2, 1, 1,MimeType.MIME_PDF,BookType.MAYOR		,false)); // Mayor
-			books.add( new AccountingBook( 3, 2, 1,MimeType.MIME_PDF,BookType.BAL_SUMS1	,true)); // Balances de comprobación (sumas y saldos)
-			books.add( new AccountingBook( 3, 3, 2,MimeType.MIME_PDF,BookType.BAL_SUMS2	,true)); // Balances de comprobación (sumas y saldos)
-			books.add( new AccountingBook( 3, 4, 3,MimeType.MIME_PDF,BookType.BAL_SUMS3	,true)); // Balances de comprobación (sumas y saldos)
-			books.add( new AccountingBook( 3, 5, 4,MimeType.MIME_PDF,BookType.BAL_SUMS4	,true)); // Balances de comprobación (sumas y saldos)
-			books.add( new AccountingBook( 4, 6, 1,MimeType.MIME_PDF,BookType.IVAR		,true)); // IVA o Facturas emitidas
-			books.add( new AccountingBook( 4, 7, 1,MimeType.MIME_PDF,BookType.IVAS		,true)); // IVA o Facturas recibidas
-			books.add( new AccountingBook( 4, 8, 1,MimeType.MIME_PDF,BookType.IVAI		,true)); // IVA
+			books.add( new AccountingBook( 3, 2, 1,MimeType.MIME_PDF,BookType.BAL_SUMS1	,true));  // Balances de comprobación (sumas y saldos 01-03)
+			books.add( new AccountingBook( 3, 3, 2,MimeType.MIME_PDF,BookType.BAL_SUMS2	,true));  // Balances de comprobación (sumas y saldos 01-06)
+			books.add( new AccountingBook( 3, 4, 3,MimeType.MIME_PDF,BookType.BAL_SUMS3	,true));  // Balances de comprobación (sumas y saldos 01-09)
+			books.add( new AccountingBook( 3, 5, 4,MimeType.MIME_PDF,BookType.BAL_SUMS4	,true));  // Balances de comprobación (sumas y saldos 01-12)
+			books.add( new AccountingBook( 4, 6, 1,MimeType.MIME_PDF,BookType.IVAR		,true));  // IVA (IVA Repercutido)
+			books.add( new AccountingBook( 4, 7, 1,MimeType.MIME_PDF,BookType.IVAS		,true));  // IVA (IVA Soportado)
+			books.add( new AccountingBook( 4, 8, 1,MimeType.MIME_PDF,BookType.IVAI		,true));  // IVA (IVA Inversión)
 			books.add( new AccountingBook( 5, 9, 1,MimeType.MIME_PDF,BookType.PER_GAN	,false)); // Libro de Pérdidas y Ganancias
-			books.add( new AccountingBook( 6,10, 1,MimeType.MIME_PDF,BookType.BALANCES	,true)); // Balances
-			books.add( new AccountingBook( 6,11, 1,MimeType.MIME_PDF,BookType.BALANCES	,true)); // Balances
+			books.add( new AccountingBook( 6,10, 1,MimeType.MIME_PDF,BookType.BALANCES	,true));  // Balances
+			books.add( new AccountingBook( 6,11, 1,MimeType.MIME_PDF,BookType.BALANCES	,true));  // Balances
 			
 		}
 		setModel( new SerializableListDataModel(books));
@@ -381,6 +381,12 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 		boolean added = false;
 		for (AccountingBook book : bookList ) {
 			
+			// FALTA - EL DIARIO Y EL MAYOR SIEMPRE DEBEN IR SEPARADOS
+			if (book.getBookType() == BookType.DIARIO || book.getBookType() == BookType.MAYOR) {
+				book.setMergeable(false);
+			}
+			// -----
+			
 			AccountingBookRunnerManager manager = new AccountingBookRunnerManager();
 			AccountingBookContext context = new AccountingBookContext(book,this);
 			IAccountingBookRunner runner = manager.getRunner(context);
@@ -523,100 +529,24 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 		params.setParams(new SummaryProviderParameters(AonUtil.getDomainName()));
 		params.getParams().setPeriod(getPeriod());
 		AnnualReportContext ctx = new AnnualReportContext(params);
+		
 		StringBuffer buf = new StringBuffer();
 		
-		// FALTA - Nombre del Registro Mercantil
-//		buf.append(100);
-////		buf.append(IAccountingConstants.EMPTY);
-//		buf.append(StringUtils.upperCase(ctx.nombreRegistroMercantil()));
-//		buf.append(IAccountingConstants.CR);
-		appendLine(buf, "100", ctx.nombreRegistroMercantil(), 0);
-		// Fecha de la solicitud
-//		buf.append(101);
-//		buf.append(dateFormatter.format(new Date()));
-//		buf.append(IAccountingConstants.CR);
-		appendLine(buf, "101", dateFormatter.format(new Date()), 0);
-		// Nombre empresa
-//		buf.append(102);
-//		buf.append(StringUtils.substring(ctx.empresa(),0, 32));
-//		buf.append(IAccountingConstants.CR);
-		appendLine(buf, "102", ctx.empresa(), 32);
-		// Apellido 1
-//		buf.append(103);
-//		buf.append(IAccountingConstants.EMPTY);
-//		buf.append(IAccountingConstants.CR);
-		// Apellido 1
-//		buf.append(104);
-//		buf.append(IAccountingConstants.EMPTY);
-//		buf.append(IAccountingConstants.CR);
-		// NIF
-//		buf.append(105);
-//		buf.append(StringUtils.substring(ctx.nifEmpresa(),0, 9));
-//		buf.append(IAccountingConstants.CR);
-		appendLine(buf, "105", ctx.nifEmpresa(), 9);
-		// Domicilio
-//		buf.append(106);
-//		buf.append(StringUtils.substring(ctx.domicilioEmpresa(),0, 32));
-//		buf.append(IAccountingConstants.CR);
-		appendLine(buf, "106", ctx.domicilioEmpresa(), 32);
-		// Localidad
-//		buf.append(107);
-//		buf.append(StringUtils.substring(ctx.localidadEmpresa(),0, 32));
-//		buf.append(IAccountingConstants.CR);
-		// FALTA - Municipio - SI LE PASO EL CODIGO DE MUNICIPIO LEGALIA NO LO PILLA, SI LE PASO EL NOMBRE DEL MUNICIPIO LO PILLA SI ESTA TAL Y COMO LEGALIA LO TIENE SI VARIA ALGUNA PALABRA ENTONCES NO LO PILLA
-//		buf.append(107);
-//		buf.append(StringUtils.substring(ctx.municipioEmpresa() == null ? ctx.localidadSimpleEmpresa() : ctx.municipioEmpresa(),0, 32));
-//		buf.append(IAccountingConstants.CR);
-		appendLine(buf, "107", ctx.municipioEmpresa() == null ? ctx.localidadSimpleEmpresa() : ctx.municipioEmpresa(), 32);
-		// Código Postal
-//		buf.append(108);
-//		buf.append(StringUtils.substring(ctx.codigoPostalEmpresa(),0, 32));
-//		buf.append(IAccountingConstants.CR);
-		appendLine(buf, "108", ctx.codigoPostalEmpresa(), 5);
-		// Código de Provincia
-//		buf.append(109);
-//		buf.append(StringUtils.substring(ctx.codigoProvinciaEmpresa(),0, 5));
-//		buf.append(IAccountingConstants.CR);
-		appendLine(buf, "109", ctx.codigoProvinciaEmpresa(), 2);
-		// Fax
-//		buf.append(110);
-//		buf.append(StringUtils.substring(ctx.faxEmpresa(),0, 10));
-//		buf.append(IAccountingConstants.CR);
-		appendLine(buf, "110", ctx.faxEmpresa(), 10);
-		// Telefono
-//		buf.append(111);
-//		buf.append(StringUtils.substring(ctx.telefonoEmpresa(),0, 10));
-//		buf.append(IAccountingConstants.CR);
-		appendLine(buf, "111", ctx.telefonoEmpresa(), 10);
-		// FALTA - Código de Registro - SI LE PASO SOLO EL CODIGO, SIN PASARLE EL NOMBRE CON LA CLAVE 100 NO LO PILLA
-//		buf.append(112);
-//		buf.append(StringUtils.substring(ctx.codigoRegistroMercantil(),0, 5));
-//		buf.append(IAccountingConstants.CR);
-		appendLine(buf, "112", ctx.codigoRegistroMercantil(), 5);
-		// Tomo
-//		buf.append(201);
-//		buf.append(StringUtils.substring(ctx.tomoRegistroMercantil(),0, 6));
-//		buf.append(IAccountingConstants.CR);
-		appendLine(buf, "201", ctx.tomoRegistroMercantil(), 6);
-		// Folio
-//		buf.append(204);
-//		buf.append(StringUtils.substring(ctx.folioRegistroMercantil(),0, 6));
-//		buf.append(IAccountingConstants.CR);
-		appendLine(buf, "204", ctx.folioRegistroMercantil(), 6);
-		// FALTA - DEJARLO POR DEFECTO PARA QUE LO PONGA POR DEFECTO EL PROGRAMA DEL REGISTRO MERCANTIL
-		// Tipo Registro
-//		buf.append(205);
-//		buf.append(StringUtils.substring(ctx.registroMercantil(),0, 6));
-//		buf.append(IAccountingConstants.CR);
-		// Hoja Registral
-//		buf.append(206);
-//		buf.append(StringUtils.substring(ctx.hojaRegistroMercantil(),0, 6));
-//		buf.append(IAccountingConstants.CR);
-		appendLine(buf, "206", ctx.hojaRegistroMercantil(), 6);
-		// Otros
-//		buf.append(207);
-//		buf.append(IAccountingConstants.EMPTY);
-//		buf.append(IAccountingConstants.CR);
+		appendLine(buf, "100", ctx.nombreRegistroMercantil(), 0);    	// Nombre del Registro Mercantil
+		appendLine(buf, "101", dateFormatter.format(new Date()), 0); 	// Fecha de la solicitud
+		appendLine(buf, "102", ctx.empresa(), 32); 						// Nombre empresa
+		appendLine(buf, "105", ctx.nifEmpresa(), 9); 					// NIF
+		appendLine(buf, "106", ctx.domicilioEmpresa(), 32); 			// Domicilio
+		appendLine(buf, "107", ctx.municipioEmpresa() == null ? ctx.localidadSimpleEmpresa() : ctx.municipioEmpresa(), 32); // Municipio
+		appendLine(buf, "108", ctx.codigoPostalEmpresa(), 5); 			// Código Postal
+		appendLine(buf, "109", ctx.codigoProvinciaEmpresa(), 2); 		// Código de Provincia
+		appendLine(buf, "110", ctx.faxEmpresa(), 10); 					// Fax 
+		appendLine(buf, "111", ctx.telefonoEmpresa(), 10); 				// Telefono
+		appendLine(buf, "112", ctx.codigoRegistroMercantil(), 5); 		// Código de Registro
+		appendLine(buf, "201", ctx.tomoRegistroMercantil(), 6); 		// Tomo
+		appendLine(buf, "204", ctx.folioRegistroMercantil(), 6); 		// Folio
+		appendLine(buf, "206", ctx.hojaRegistroMercantil(), 6); 		// Hoja Registral
+		
 		// Número total de libros presentados
 		buf.append(501);
 		buf.append(runners.size());
@@ -661,15 +591,13 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 	    IOUtils.copy(reader, zout);
 		zout.closeEntry();
 		
-		// FALTA - NOMBRE EMPRESA E IRUS
+		// NOMBRE EMPRESA E IRUS (VAN EN EL ARCHIVO DESC.TXT)
 		StringBuffer buf3 = new StringBuffer();
 		appendLine(buf3, "", ctx.empresa(), 0);                    // Nombre empresa
 		appendLine(buf3, "IRUS=", ctx.irusRegistroMercantil(), 0); // IRUS
 
 		ze = new ZipEntry(DESC_TXT);
 	    zout.putNextEntry(ze);
-	    // FALTA 
-//	    reader = new StringReader(ctx.empresa());
 	    reader = new StringReader(buf3.toString());
 	    IOUtils.copy(reader, zout);
 		zout.closeEntry();

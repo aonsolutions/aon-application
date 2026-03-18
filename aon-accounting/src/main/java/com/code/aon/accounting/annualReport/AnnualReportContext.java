@@ -86,13 +86,9 @@ public class AnnualReportContext {
 				IManagerBean bean = BeanManager.getManagerBean(RecordData.class);
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.RECORD_DATA_REGISTRY_ID), getCompany().getId());
-				
-				// FALTA - SACAR EL DE CONSTITUCION, NO SE DONDE SE USARA ESTO EN TODA LA APLICACION
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.RECORD_DATA_TYPE), RecordDataType.INCORPORATION.value());
-				
-//				List<ITransferObject> list = bean.getList(null);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.RECORD_DATA_TYPE), RecordDataType.INCORPORATION.value()); // Tipo Constitución
+
 				List<ITransferObject> list = bean.getList(criteria);
-				
 				if (list != null && list.size() > 0 ) {
 					ITransferObject to = list.get(0);
 					recordData = (RecordData) to;
