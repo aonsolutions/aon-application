@@ -1643,9 +1643,9 @@
 		background-color:  #f1f5f9;
 	}
 	
-	[id$='InvoiceForm:dataTable'] [id$='InvoiceForm:InvoiceAddress'],	
-	[id$='InvoiceForm:dataTable'] [id$='InvoiceForm:InvoiceReferenceCodeDiv'],
-	[id$='InvoiceForm'] .aon-panelGrid-even:nth-child(4) > *:not(:has(input) )
+	[id$='InvoiceForm:dataTable'] [id$='InvoiceForm:InvoiceAddress']:not(:has(input) ):not(:has(select) ),	
+	[id$='InvoiceForm:dataTable'] [id$='InvoiceForm:InvoiceReferenceCodeDiv']:not(:has(input) ):not(:has(select) ),
+	[id$='InvoiceForm'] .aon-panelGrid-even:nth-child(4) > *:not(:has(input) ):not(:has(select) )
 	{
 	  border-radius: .375rem;
 	  border: 0.0625rem solid #cbd5e1;
@@ -1683,6 +1683,10 @@
 	[id$='aonContent:newDomainForm'] .aon-panelGrid-even {
     	padding-top: 40px !important;
     }
+
+	.aon-panelGrid-even:has(textarea[id$='InvoiceForm:Invoice_comments']) {
+		padding-top: 40px !important;
+	}
 
 </style>
 
