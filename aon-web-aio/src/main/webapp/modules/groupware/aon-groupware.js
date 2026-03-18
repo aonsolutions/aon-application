@@ -53,7 +53,7 @@ export class AonGroupware extends AonElement {
 				id: "observations",
 				icon: "speaker_notes",
 				name: "Observaciones",
-				fn: () => this.buildObservations('GROUPWARE'),
+				fn: () => this.getApplication().buildObservations('GROUPWARE'),
 			}
 		];
 		this.getApplication().addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);
