@@ -1642,13 +1642,51 @@
 		background-color:  #f1f5f9;
 	}
 	
-	[id$='InvoiceForm'] .aon-panelGrid-even:nth-child(4) > *:not(:has(input) )
+	[id$='InvoiceForm:dataTable'] [id$='InvoiceForm:InvoiceAddress']:not(:has(input) ):not(:has(select) ),	
+	[id$='InvoiceForm:dataTable'] [id$='InvoiceForm:InvoiceReferenceCodeDiv']:not(:has(input) ):not(:has(select) ),
+	[id$='InvoiceForm'] .aon-panelGrid-even:nth-child(4) > *:not(:has(input) ):not(:has(select) )
 	{
 	  border-radius: .375rem;
 	  border: 0.0625rem solid #cbd5e1;
 	  padding: 0.5rem .75rem .5rem .75rem;
 	  background-color: var(--aonBackgroundColor2,#f2f2f2) !important;
 	}
+
+	[id$='InvoiceForm:dataTable'] [id$='InvoiceForm:InvoiceReferenceCodeDiv']{
+		margin-right: 0.75rem;
+	}
+	
+	[id$='InvoiceForm:dataTable'] table:has( > tbody > tr > td > div[id$='InvoiceForm:InvoiceReferenceCodeDiv'] ){
+		padding-left: 0px;
+	}
+	
+	[id$='InvoiceForm:financeContainer'] > .aon-group,
+	[id$='InvoiceForm:invoiceDetailContainer'] > .aon-group{
+			margin: 0px ;
+			padding: 0px ;
+	}
+
+	[id='aonContent:saleInvoiceForm:invoiceSalesPanelTab'].aon-panelTabSet,
+	[id='aonContent:expenseInvoiceForm:expenseInvoicePanelTab'].aon-panelTabSet,
+	[id='aonContent:purchaseInvoiceForm:purchaseInvoicePanelTab'].aon-panelTabSet {
+	    margin-bottom: 0px;
+	    height:calc(100vh - 372px) ;
+	}
+
+	[id$='1InvoiceForm:invoiceDetailsDiv'],
+	[id$='1InvoiceForm:invoiceFinancesDiv'] {
+	    overflow-y: scroll;
+	    height: calc(100vh - 472px) ;
+	}
+	
+	[id$='aonContent:newDomainForm'] .aon-panelGrid-even {
+    	padding-top: 40px !important;
+    }
+
+	.aon-panelGrid-even:has(textarea[id$='InvoiceForm:Invoice_comments']) {
+		padding-top: 40px !important;
+	}
+
 </style>
 
 		

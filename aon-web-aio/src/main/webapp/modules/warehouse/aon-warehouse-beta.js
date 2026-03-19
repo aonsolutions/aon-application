@@ -53,7 +53,7 @@ export class AonWarehouseBeta extends AonElement {
 				id: "observations",
 				icon: "speaker_notes",
 				name: "Observaciones",
-				fn: () => this.buildObservations('WAREHOUSE'),
+				fn: () => this.getApplication().buildObservations('WAREHOUSE')
 			}
 		];
 		this.getApplication().addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);

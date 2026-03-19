@@ -53,7 +53,7 @@ export class AonCommercial extends AonElement {
 				id: "observations",
 				icon: "speaker_notes",
 				name: "Observaciones",
-				fn: () => this.buildObservations('COMMERCIAL'),
+				fn: () => this.getApplication().buildObservations('COMMERCIAL'),
 			}
 		];
 		this.getApplication().addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);
