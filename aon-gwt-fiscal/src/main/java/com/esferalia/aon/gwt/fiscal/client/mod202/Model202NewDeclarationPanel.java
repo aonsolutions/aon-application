@@ -132,7 +132,7 @@ public class Model202NewDeclarationPanel extends DockLayoutPanel {
 			initialize( cbk );
 		});
 
-		complementary.setText(AON.MSG.complementary());
+//		complementary.setText(AON.MSG.complementary());
 		complementary.addClickHandler(event -> {
 			cbk.getModel().setComplementary(complementary.getValue());
 			replacement.setEnabled(!complementary.getValue());
@@ -143,7 +143,7 @@ public class Model202NewDeclarationPanel extends DockLayoutPanel {
 			
 		});
 
-		replacement.setText(AON.MSG.replacement());
+//		replacement.setText(AON.MSG.replacement());
 		replacement.addClickHandler(event -> {
 			cbk.getModel().setReplacement(replacement.getValue());
 			complementary.setEnabled(!replacement.getValue());
@@ -205,7 +205,7 @@ public class Model202NewDeclarationPanel extends DockLayoutPanel {
 	private void paintComplementary(Model202Callback callback, AonDisplayTable tab) {
 		if (callback.getModel().isComplementaryDeclarationAvailable()) {
 			tab.addRow()
-				.addCell(new Label(),AON.CSS.aonTableLabel())
+				.addCell(new Label(AON.MSG.complementary()),AON.CSS.aonTableLabel())
 				.addCell(complementary);
 		}
 	}
@@ -213,7 +213,7 @@ public class Model202NewDeclarationPanel extends DockLayoutPanel {
 	private void paintReplacement(Model202Callback callback, AonDisplayTable tab) {
 		if (callback.getModel().isReplacementDeclarationAvailable() ) {
 			tab.addRow()
-				.addCell(new Label(),AON.CSS.aonTableLabel())
+				.addCell(new Label(AON.MSG.replacement()),AON.CSS.aonTableLabel())
 				.addCell(replacement);
 		}
 		

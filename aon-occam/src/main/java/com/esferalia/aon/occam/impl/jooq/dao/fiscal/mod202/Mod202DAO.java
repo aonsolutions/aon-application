@@ -20,6 +20,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
+import com.esferalia.aon.occam.api.model.type.CNAE2009ToCNAE2025;
+import com.esferalia.aon.occam.api.model.type.CNAE2025;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
@@ -53,6 +55,7 @@ public class Mod202DAO extends FiscalModelDAO {
 	}
 	
 	protected static Mod202 fillFiscalModel(Mod202 mod202) {
+		
 		String date = mod202.getDescription(Mod202Key.P02);
 		mod202.setInitialDate(null);
 		if (AonStringUtils.isNotEmpty( date )) {
@@ -60,12 +63,14 @@ public class Mod202DAO extends FiscalModelDAO {
 			mod202.setInitialDate(AonDateUtils.parse( date, formatter));
 		}
 		
-		String cnaeCode = mod202.getDescription(Mod202Key.P03);
-		mod202.setCnae(null);
-		if (AonStringUtils.isNotEmpty( cnaeCode )) {
-			CNAE2009 cnae = CNAE2009.valueOfCode(cnaeCode); 
-			mod202.setCnae(cnae);
-		}
+//		String cnaeCode = mod202.getDescription(Mod202Key.P03);
+//		mod202.setCnae(null);
+//		if (AonStringUtils.isNotEmpty( cnaeCode )) {
+//			CNAE2009 cnae = CNAE2009.valueOfCode(cnaeCode); 
+//			mod202.setCnae(cnae);
+//		}
+		mod202.setCnae(mod202.getDescription(Mod202Key.P03));
+		
 		return mod202;
 	}
 	
@@ -148,15 +153,17 @@ public class Mod202DAO extends FiscalModelDAO {
 		} else {
 			mod202.putDescription(Mod202Key.P02,null);
 		}
-		if (mod202.getCnae() != null ) {
-			try {
-				mod202.putDescription(Mod202Key.P03, mod202.getCnae().getCode());
-			} catch (NumberFormatException e) {
-				mod202.putDescription(Mod202Key.P03,null);
-			}
-		} else {
-			mod202.putDescription(Mod202Key.P03,null);
-		}
+		
+//		if (mod202.getCnae() != null ) {
+//			try {
+//				mod202.putDescription(Mod202Key.P03, mod202.getCnae().getCode());
+//			} catch (NumberFormatException e) {
+//				mod202.putDescription(Mod202Key.P03,null);
+//			}
+//		} else {
+//			mod202.putDescription(Mod202Key.P03,null);
+//		}
+		mod202.putDescription(Mod202Key.P03, mod202.getCnae());
 
 	}
 	
@@ -283,16 +290,44 @@ public class Mod202DAO extends FiscalModelDAO {
 		return mod202;
 	}
 	
-	static String getMainActivityCNAE(AONContext ctx,Mod202 mod) {
+	// FALTA - SE OBTIENE EL CNAE DE LA ACTIVIDAD PRINCIPAL DE LA EMPRESA (CNAE2009 HASTA 2025 Y CNAE2025 A PARTIR DE 2026)
+	// EL PROBLEMA ES QUE AHORA NO EXISTE EL CNAE2025 EN LA ACTIVIDAD PRINCIPAL DE LA EMPRESA, POR AHORA SE GRABA EL EQUIVALENTE.
+	// CRITERIO PARA OBTENER EL CNAE2025 A PARTIR DEL CNAE2009:
+	// - SI EL CNAE2009 TIENE UN SOLO EQUIVALENTE EN EL CNAE2025, SE GRABA ESE CNAE2025
+	// - SI EL CNAE2009 TIENE VARIOS EQUIVALENTES EN EL CNAE2025, SE BUSCA ENTRE ESOS EQUIVALENTES EL QUE TENGA EL MISMO CODIGO 
+	//   QUE EL CNAE2009, SI SE ENCUENTRA SE GRABA ESE CNAE2025, SI NO SE ENCUENTRA SE DEJA VACIO PARA QUE EL USUARIO LO RELLENE 
+	//   MANUALMENTE CON EL QUE REALMENTE LE CORRESPONDA
+	static String getMainActivityCNAE(AONContext ctx, Mod202 mod) {
 		Date atDate = AonDateUtils.getDate(mod.getYear(), mod.getPeriod().getStartMonth(),1);
 		EnterpriseActivity activity  = CompanyDAO.getEnterpriseActivities(ctx, ctx.getDomainId(), atDate)
 			.filter( ea -> ea.isPrincipal() )
 			.findFirst()
 			.orElse(null);
-		String cnaeCode = activity==null?null:activity.getCnaeCode();
+		String cnaeCode = activity == null ? null : activity.getCnaeCode();		
 		cnaeCode = AonStringUtils.substring(cnaeCode,0,2) + "." + AonStringUtils.substring(cnaeCode,2,4);
- 		CNAE2009 cnae = CNAE2009.valueOfCode(cnaeCode);
-		mod.setCnae(cnae);
+		
+		if (mod.getYear() >= 2026) {
+			// A PARTIR DEL EJERCICIO 2026 SE GRABA EL EQUIVALENTE CNAE2025 DEL CNAE2009 GRABADO EN LA ACTIVIDAD, PORQUE LA ACTIVIDAD NO TIENE CNAE2025
+			CNAE2009ToCNAE2025 cn = CNAE2009ToCNAE2025.valueOfCode(cnaeCode);
+			CNAE2025 cnae2025 = null;
+			if (cn != null) {
+				if (cn.getCode2025().length > 1) {
+					for (String code2025 : cn.getCode2025()) {
+						if (code2025.equals(cnaeCode)) {
+							cnae2025 = CNAE2025.valueOfCode(code2025);
+							break;
+						}
+					}
+				} else {
+					cnae2025 = CNAE2025.valueOfCode(cn.getCode2025()[0]);
+				}
+			}
+			mod.setCnae(cnae2025 == null ? null : cnae2025.getCode());
+		} else {
+			// Hasta el ejercicio 2025 se graba el CNAE2009
+	 		CNAE2009 cnae2009 = CNAE2009.valueOfCode(cnaeCode);
+			mod.setCnae(cnae2009 == null ? null : cnae2009.getCode());
+		}
 		return cnaeCode;
 	}
 	

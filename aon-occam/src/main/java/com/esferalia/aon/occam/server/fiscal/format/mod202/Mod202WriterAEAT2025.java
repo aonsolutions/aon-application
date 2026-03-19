@@ -55,7 +55,7 @@ public class Mod202WriterAEAT2025 implements IMod202Writer{
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.year(mod.getYear()))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.getMod202Period(mod)) 
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod202Key.P02),8))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getCnae()==null?"0000":AonStringUtils.remove(mod.getCnae().getCode(), "."),4))
+			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getCnae()==null?"0000":AonStringUtils.remove(mod.getCnae(), "."),4))
 			
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X01)))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X02)))

@@ -84,7 +84,7 @@ public class Model2022023AEAT extends Model202Base {
 	
 	private void paintCNAERow(FlexTable table, final Model202Callback callback, IModelScript<Mod202Key> script) {
 		int row = table.getRowCount();
-		CNAE2009 cn = callback.getModel().getCnae();
+		CNAE2009 cn = CNAE2009.valueOfCode(callback.getModel().getCnae());
 		table.setWidget(row, 0,new Label(script.getLabel()));
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
@@ -104,7 +104,7 @@ public class Model2022023AEAT extends Model202Base {
 		final AonCnae2009Panel cnae2009Panel = new AonCnae2009Panel();
 		cnae2009Panel.addSelectionHandler(event -> {
 			CNAE2009 selected = event.getSelectedItem();
-			callback.getModel().setCnae(selected);
+			callback.getModel().setCnae(selected.getCode());
 			cnaeBox.setValue( selected.getCode());
 			cnaeLabel.setText( selected.getDescription() );
 			calculateAndRefresh( callback );
