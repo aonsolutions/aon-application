@@ -1348,12 +1348,12 @@ div.aon_custom_text_box_input:has( input){
     border:none;
 }
 
-.popupContent div[style*='overflow: auto'] {
+.aon_custom_dialog .popupContent div[style*='overflow: auto'] {
 	scrollbar-width: auto;
 	height: 30.5rem !important;
 }
 
-.popupContent .aon_custom_card[style*='max-width'] {
+.aon_custom_dialog .popupContent .aon_custom_card[style*='max-width'] {
 	max-width: max-content !important;
 }
 
