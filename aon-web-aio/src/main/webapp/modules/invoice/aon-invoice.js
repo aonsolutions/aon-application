@@ -533,7 +533,10 @@ export class AonInvoice extends AonElement {
 		}
 
 		if (this.showRejected()) invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
-		if (this.showDelete()) invoiceToolbar.addButton2(ACTION.DELETE, () => this.getInvoice().isPending() ? this.trashPendingInvoice() : this.trashInvoice());
+		
+		if (this.showDelete()) invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
+		if (this.showAnnulled()) invoiceToolbar.addButton2(ACTION.CANCEL_INVOICE, () => this.cancelInvoice());
+
 		if (this.showDeleteForever()) invoiceToolbar.addButton2(ACTION.DELETE_FOREVER, () => this.removeInvoice());
 		if (this.showRestore()) invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 		if (this.showAccept()) invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
@@ -561,7 +564,11 @@ export class AonInvoice extends AonElement {
 
 	showDelete() {
 		return !this.getInvoice().isFeeSource()
-			&& (this.getInvoice().isRejected() || this.getInvoice().isInbox() || this.getInvoice().isPending());
+			&& !this.getInvoice().isCommunicated()
+			&& (this.getInvoice().isRejected() || this.getInvoice().isInbox());
+	}
+	showAnnulled() {
+		return !this.getInvoice().isRawdoc() && this.getInvoice().isPending();
 	}
 
 	showDeleteForever() {
@@ -3210,55 +3217,95 @@ export class AonInvoice extends AonElement {
 		else return OPTION.RAWDOC_INBOX_RECEIVED_NEW;
 	}
 
+	cancelInvoice() {
+		let dialog = this.getApplication().getDialog();
+		dialog.clear();
+		if (!this.isMobile()) dialog.width = '400px';
+		dialog.setTitle("Anular factura");
+
+		let content = this.createDiv();
+		dialog.setContent(content);
+
+		let atDate = new Date();	// TODO Invoice.ExpDate!!
+
+		let aviso = this.createDiv();
+		aviso.style.marginTop = '10px';
+		aviso.style.width = '90%';
+		aviso.style.marginLeft = 'auto';
+		aviso.style.marginRight = 'auto';
+		aviso.style.border = 'solid gray 1px';
+		aviso.style.padding = '10px';
+		aviso.style.fontWeight = 'bold';
+		aviso.style.backgroundColor = 'LightPink';
+		aviso.style.textAlign = 'center';
+		
+		let wrnMsg1  = this.createSpan();
+		wrnMsg1.innerText = "Al anular no se podrá reutilizar el número de factura.";
+		aviso.appendChild(wrnMsg1);
+		let wrnMsg2  = this.createSpan();
+		wrnMsg2.innerText = "El número de la factura anulada se mantiene en el registro.";
+		aviso.appendChild(wrnMsg2);
+		let wrnMsg3  = this.createSpan();
+		wrnMsg3.innerText = "(Este número no se recicla ni desaparece)";
+		aviso.appendChild(wrnMsg3);
+
+		content.appendChild(aviso);
+
+		if (this.icc.needCertificate(true, atDate)) {
+			let certDiv  = this.createDiv();
+			certDiv.style.marginTop = '10px';
+			let data = { id: this.getInvoice().id };
+			let certSelect = createSelect("cert", "Certificado");
+			getAeatCertificates().then(certs => {
+				certSelect.setOptions(certs.map(s => {
+					return {
+						value: s.id,
+						name: s.name
+					}
+				}));
+			});
+			certSelect.addEventListener(EVENT.SELECT, () => {
+				dialog.getButtonAccept().disabled = !certSelect.value;
+			});
+
+			certDiv.appendChild(certSelect);
+			content.appendChild(certDiv);
+			dialog.addAcceptAction(() => {
+				this.getApplication().startLoader();
+				let data = this.getInvoice();
+				data.cert = certSelect.value;
+				this.deleteInvoice( data );
+			});
+			dialog.getButtonAccept().disabled = true;
+		} else {
+			dialog.addAcceptAction(() => {
+				this.getApplication().startLoader();
+				let data = this.getInvoice();
+				this.deleteInvoice( data );
+			});
+		}
+		dialog.open();
+	}
+
 	trashPendingInvoice() {
 		this.getApplication().confirmDialog(
 			MSG.DELETE
 			, MSG.DELETE_CONFIRM + " la factura?"
-			, () => {
-				let data = { id: this.getInvoice().id };
-				if (this.getInvoice().canBeAnnulled()) {
-					let d = this.getApplication().getDialog();
-					d.clear();
-					if (!this.isMobile()) d.width = '400px';
-					d.setTitle("Anular");
-					let certSelect = createSelect("cert", "Certificado");
-					getAeatCertificates().then(certs => {
-						certSelect.setOptions(certs.map(s => {
-							return {
-								value: s.id,
-								name: s.name
-							}
-						}));
-					});
-					d.setContent(certSelect);
-					d.addAcceptAction(() => {
-						this.getApplication().startLoader();
-						let data = this.getInvoice();
-						data.cert = certSelect.value;
-						deleteInvoice(data).then(() => {
-							this.getApplication().stopLoader();
-							this.updateCounter(getTrashPendingFromOption(this.invoice), OPTION.RAWDOC_TRASH, 1);
-							this.showMessage(MSG.DELETED_DATA);
-							this.back();
-						}).catch(e => {
-							this.getApplication().stopLoader();
-							this.showError(e);
-						});
-					});
-					d.open();
-				} else {
-					this.getApplication().startLoader();
-					deleteInvoice(data).then(() => {
-						this.getApplication().stopLoader();
-						this.updateCounter(getTrashPendingFromOption(this.invoice), OPTION.RAWDOC_TRASH, 1);
-						this.showMessage(MSG.DELETED_DATA);
-						this.back();
-					}).catch(e => {
-						this.getApplication().stopLoader();
-						this.showError(e);
-					});
-				}
-			});
+			, () => this.deleteInvoice());
+	}
+
+	deleteInvoice(d) {
+		let data = d || { id: this.getInvoice().id };
+		this.getApplication().startLoader();
+		deleteInvoice(data).then(() => {
+			this.getApplication().stopLoader();
+			this.updateCounter(getTrashPendingFromOption(this.invoice), OPTION.RAWDOC_TRASH, 1);
+			this.showMessage(MSG.DELETED_DATA);
+			this.back();
+		}).catch(e => {
+			this.getApplication().stopLoader();
+			this.showError(e);
+		});
 	}
 
 	restoreInvoice() {

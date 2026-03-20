@@ -133,5 +133,12 @@ public class CommunicationData extends EnterpriseData implements Serializable {
 	public boolean isAEAT() {return getAdministration().map(a -> a.isAEAT()).orElse(false);}
 	public boolean isCanarias() {return getAdministration().map(a -> a.isCanarias()).orElse(false);}
 	
+	public boolean isCertificateNeeded() {
+		return isVerifactu()
+			|| isLroe()
+			|| isTBai()
+			|| isSii();
+	}
+	
 
 }

@@ -1,8 +1,9 @@
 import { CONSTANT } from "../../environments/environments.js";
 import { RegistryType } from "../../models/enums.js";
-import { round, now } from "../../services/utils.js";
-import { getSurchargeByVat, TaxType, WithholdingType } from "./invoiceEnums.js";
+import { INVOICE_COMMUNICATION_STATUSES, INVOICE_COMMUNICATION_TYPES } from "../../models/InvoiceCommunicationConfig.js";
 import * as LS from '../../services/localStorageService.js';
+import { now, round } from "../../services/utils.js";
+import { getSurchargeByVat, TaxType, WithholdingType } from "./invoiceEnums.js";
 
 export class Invoice {
 
@@ -444,19 +445,10 @@ export class Invoice {
   getTbaiUrl()      { throw new Error("Invoice.js getTbaiUrl() Not Supported!");}
   getVerifactuUrl() { throw new Error("Invoice.js getVerifactuUrl() Not Supported!");}
   
-  canBeAnnulled() {
-    if (!this.id) return false;
-    if (!this.communicationInfo || Object.keys(this.communicationInfo).length === 0) {
-      return false;
-    }
-    let validSources = ["VERIFACTU", "TBAI", "LROE"];
-    let validStatuses = ["ACCEPTED", "ACCEPTED_WITH_ERRORS"];
-    return validSources.some(src => {
-      let info = this.communicationInfo[src];
-      return info && validStatuses.includes(info.communicationStatus);
-    });
+  isCommunicated() {
+    return this.communicationInfo && Object.keys(this.communicationInfo).length > 0;  
   }
-  
+
   setService(service) {
     this.service = service;
     return this;

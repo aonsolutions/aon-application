@@ -136,6 +136,7 @@ export const BOLD = "Negrita"; //TODO
 export const CAMPAIGN = "Campaña";
 export const CAMPAIGNS = "Campañas";
 export const CANCEL = MSG.CANCEL;
+export const CANCEL_INVOICE = "Anular"; // TODO
 export const CATEGORY = MSG.CATEGORY;
 export const CAU = "Cau";// TODO
 export const CARRIER = "Agencia de Transporte"; // TODO

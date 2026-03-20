@@ -37,6 +37,12 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceInfoDAO {
 	
+	private static final String VERIFACTU_QR_URL = "https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR";
+	private static final String VERIFACTU_QR_URL_TEST = "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR";
+
+	private static final String NO_VERIFACTU_QR_URL = VERIFACTU_QR_URL + "NoVerifactu";
+	private static final String NO_VERIFACTU_QR_URL_TEST = VERIFACTU_QR_URL_TEST + "NoVerifactu";
+	
 	private static final String TBAIURL = "tbaiUrl";
 	
 	private InvoiceInfoDAO() {
@@ -100,6 +106,7 @@ public class InvoiceInfoDAO {
 			.fetch()
 			.stream()
 			.map(r -> InvoiceInfoFiller.build(ctx, r))
+			.map(info -> fixUrl( icc, info ) )
 			.collect(
 				 () -> new EnumMap<InvoiceCommunicationType,InvoiceInfo>(InvoiceCommunicationType.class)
 				,(m, v) -> m.put(v.getType(), v)
@@ -111,9 +118,11 @@ public class InvoiceInfoDAO {
 				.filter(cc -> cc.isTest())
 				.map( cc -> DataResponseSource.TBAI_TEST )
 				.orElse( DataResponseSource.TBAI );
-			// DataResponseSource drs = icc.isTbaiTest( atDate ) ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
-			if(!enumMap.containsKey(InvoiceCommunicationType.TBAI)) {
-				List<Boolean> list =  DataResponseDAO.getStream(ctx, f -> f.getDomainProperty().eq(domainId).and(f.getSourceProperty().eq(drs.value())).and(f.getSourceIdProperty().eq(invoiceId)))
+			if (!enumMap.containsKey(InvoiceCommunicationType.TBAI)) {
+				List<Boolean> list =  DataResponseDAO.getStream(ctx, f -> 
+							f.getDomainProperty().eq(domainId)
+							.and(f.getSourceProperty().eq(drs.value()))
+							.and(f.getSourceIdProperty().eq(invoiceId)))
 						.map(r -> "ok".equalsIgnoreCase(r.getCode()))
 						.collect(Collectors.toList());
 				if(!list.isEmpty()) {
@@ -137,6 +146,7 @@ public class InvoiceInfoDAO {
 				enumMap.get(InvoiceCommunicationType.TBAI).setCheckUrl(url);	 
 			}
 		}
+		
 		if (AonCollectionUtils.isEmpty(enumMap)) {
 			AonCollectionUtils.stream(icc.getTypes(invoiceType, atDate))
 				.map( t -> t.getCommunicationType() )
@@ -149,19 +159,6 @@ public class InvoiceInfoDAO {
 					.setStatus( t.isNoVerifactu()?null:InvoiceCommunicationStatus.PENDING))
 			);
 		}
-
-		// Esto es debido a que la dirección del QR no cabe en los 128 caracteres de invoice_data
-		// TODO --> aumentar tamaño en BD o grabar la información en sucesivas filas .....
-		// Es una buena ñapa puesto que debería guardarse la URL completa :(
-		if (enumMap.containsKey(InvoiceCommunicationType.VERIFACTU)) {
-			InvoiceInfo v = enumMap.get(InvoiceCommunicationType.VERIFACTU);
-			fixUrl( icc, v );
-		}
-		
-		if (enumMap.containsKey(InvoiceCommunicationType.NO_VERIFACTU)) {
-			InvoiceInfo v = enumMap.get(InvoiceCommunicationType.NO_VERIFACTU);
-			fixUrl( icc, v );
-		}
 		
 		// ---------------------------------------------------------------------------------------
 		
@@ -170,33 +167,35 @@ public class InvoiceInfoDAO {
 	}
 	
 	
-	private static void fixUrl(InvoiceCommunicationConfiguration icc, InvoiceInfo v) {
-		if (v != null && AonStringUtils.startsWith(v.getCheckUrl(), "?")) {
-			v.setCheckUrl(
-				v.getType().accept( new InvoiceCommunicationTypeAccepter<String>() {
+	private static InvoiceInfo fixUrl(InvoiceCommunicationConfiguration icc, InvoiceInfo info) {
+		if (info != null && AonStringUtils.startsWith(info.getCheckUrl(), "?")) {
+			info.setCheckUrl(
+				info.getType().accept( new InvoiceCommunicationTypeAccepter<String>() {
 					@Override public String visitSII() { return null; }
 					@Override public String visitTBAI() { return null; }
 					@Override public String visitLROE() { return null; }
 					@Override public String visitSERES() { return null; }
 					@Override public String visitEMAIL() { return null; }
 					@Override public String visitCLOSING() { return null; }
-					@Override public String visitNO_VERIFACTU() { return null; }
-					@Override public String visitSIF() { return null; }
 					@Override public String visitFACTURAE() {return null; }
 					
+					@Override public String visitSIF() { return null; }
+					
+					@Override public String visitNO_VERIFACTU() {
+						return icc.getNoVerifactuData()	
+							.map( vd -> ( vd.isTest()?NO_VERIFACTU_QR_URL_TEST:NO_VERIFACTU_QR_URL ) + info.getCheckUrl())
+							.orElse(null);
+					}
 					@Override 
 					public String visitVERIFACTU() { 
 						return icc.getVerifactuData()
-							.map( vd -> {
-								String urlQr = "https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR" + (v.getType().isNoVerifactu()? "NoVerifactu":"");
-								String urlQrTest = "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR" + (v.getType().isNoVerifactu()? "NoVerifactu":"");
-								return ( vd.isTest()?urlQrTest:urlQr ) + v.getCheckUrl();
-							})
+							.map( vd -> ( vd.isTest()?VERIFACTU_QR_URL_TEST:VERIFACTU_QR_URL ) + info.getCheckUrl())
 							.orElse(null);
 					}
 				})
 			);
 		}
+		return info;
 	}
 	// ************************************************************
 	// ********************** [WRITE] *****************************

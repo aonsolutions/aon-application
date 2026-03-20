@@ -2363,6 +2363,8 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 				if (getInvoice() != null && getInvoice().isProforma()) {
 					this.expeditionDate = new Date();	
 				} else {
+					// No seguro de esto, pero para evitar problemas con facturas antiguas ç
+					// sin fecha de expedición, se pone la fecha de emisión
 					this.expeditionDate = getInvoice().getIssueDate();
 				}
 			}
@@ -2373,13 +2375,13 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		this.expeditionDate = expDate;
 	}
 	
-	public boolean hasCommunication() { return getInvoiceCommunicationConfiguration().hasCommunication( getExpeditionDate() ); }
-	public boolean isLroe() 		{return getInvoiceCommunicationConfiguration().isLroe(getExpeditionDate());}
-	public boolean isTbai() 		{return getInvoiceCommunicationConfiguration().isTbai(getExpeditionDate());}
-	public boolean isVerifactu() 	{return getInvoiceCommunicationConfiguration().isVerifactu(getExpeditionDate());}
-	public boolean isNoVerifactu() 	{return getInvoiceCommunicationConfiguration().isNoVerifactu(getExpeditionDate());}
-	public boolean isSif() 			{return getInvoiceCommunicationConfiguration().isSif(getExpeditionDate());}
-	public boolean isSii() 			{return getInvoiceCommunicationConfiguration().isSii(getExpeditionDate());}
+	public boolean hasCommunication() 	{return getInvoiceCommunicationConfiguration().hasCommunication( getExpeditionDate() ); }
+	public boolean isLroe() 			{return getInvoiceCommunicationConfiguration().isLroe(getExpeditionDate());}
+	public boolean isTbai() 			{return getInvoiceCommunicationConfiguration().isTbai(getExpeditionDate());}
+	public boolean isVerifactu() 		{return getInvoiceCommunicationConfiguration().isVerifactu(getExpeditionDate());}
+	public boolean isNoVerifactu() 		{return getInvoiceCommunicationConfiguration().isNoVerifactu(getExpeditionDate());}
+	public boolean isSif() 				{return getInvoiceCommunicationConfiguration().isSif(getExpeditionDate());}
+	public boolean isSii() 				{return getInvoiceCommunicationConfiguration().isSii(getExpeditionDate());}
 
 	public boolean isLroe(Date date) 		{return getInvoiceCommunicationConfiguration().isLroe(date);}
 	public boolean isTbai(Date date) 		{return getInvoiceCommunicationConfiguration().isTbai(date);}

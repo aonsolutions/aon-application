@@ -70,6 +70,7 @@ export const BUTTON = 'button';
 
 // ----- C
 export const CAMPAIGN = 'campaign';
+export const CANCEL_INVOICE = 'cancelInvoice';
 export const CARD = 'card';
 export const CARRIER = 'carrier';
 export const CATEGORY = 'category';

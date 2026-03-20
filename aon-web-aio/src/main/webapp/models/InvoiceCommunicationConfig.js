@@ -1,7 +1,7 @@
 import { CONSTANT, MSG } from "../environments/environments";
 import { EnterpriseData } from "./EnterpriseData";
 
-export const INVOICE_COMMUNITACTION_TYPES = Object.freeze({
+export const INVOICE_COMMUNICATION_TYPES = Object.freeze({
 	LROE: 'LROE',
 	TBAI: 'TBAI',
 	SII: 'SII',
@@ -175,20 +175,20 @@ export class InvoiceCommunicationStatus {
 }
 
 export function getCommunicationTypeLabel(type) {
-    if (INVOICE_COMMUNITACTION_TYPES.LROE === type) return MSG.LROE;
-    else if (INVOICE_COMMUNITACTION_TYPES.SII === type) return MSG.SII;
-    else if (INVOICE_COMMUNITACTION_TYPES.SIF === type) return MSG.SIF;
-    else if (INVOICE_COMMUNITACTION_TYPES.VERIFACTU === type) return MSG.VERIFACTU;
-    else if (INVOICE_COMMUNITACTION_TYPES.NO_VERIFACTU === type) return MSG.NO_VERIFACTU;
-    else if (INVOICE_COMMUNITACTION_TYPES.FACTURAE === type) return MSG.FACTURAE;
-    else if (INVOICE_COMMUNITACTION_TYPES.SERES === type) return MSG.SERES;
-    else if (INVOICE_COMMUNITACTION_TYPES.EMAIL === type) return MSG.EMAIL;
-    else if (INVOICE_COMMUNITACTION_TYPES.TBAI === type) return MSG.TICKETBAI;
+    if (INVOICE_COMMUNICATION_TYPES.LROE === type) return MSG.LROE;
+    else if (INVOICE_COMMUNICATION_TYPES.SII === type) return MSG.SII;
+    else if (INVOICE_COMMUNICATION_TYPES.SIF === type) return MSG.SIF;
+    else if (INVOICE_COMMUNICATION_TYPES.VERIFACTU === type) return MSG.VERIFACTU;
+    else if (INVOICE_COMMUNICATION_TYPES.NO_VERIFACTU === type) return MSG.NO_VERIFACTU;
+    else if (INVOICE_COMMUNICATION_TYPES.FACTURAE === type) return MSG.FACTURAE;
+    else if (INVOICE_COMMUNICATION_TYPES.SERES === type) return MSG.SERES;
+    else if (INVOICE_COMMUNICATION_TYPES.EMAIL === type) return MSG.EMAIL;
+    else if (INVOICE_COMMUNICATION_TYPES.TBAI === type) return MSG.TICKETBAI;
     else return type;
 }
 
 export function getCommunicationStatusColor(type, status) {
-    if (INVOICE_COMMUNICATION_STATUSES.PENDING.value === status && type === INVOICE_COMMUNITACTION_TYPES.NO_VERIFACTU) 
+    if (INVOICE_COMMUNICATION_STATUSES.PENDING.value === status && type === INVOICE_COMMUNICATION_TYPES.NO_VERIFACTU) 
         return CONSTANT.GREEN;
     else if (INVOICE_COMMUNICATION_STATUSES.PENDING.value === status) return CONSTANT.ORANGE;
     else if (INVOICE_COMMUNICATION_STATUSES.ACCEPTED.value === status) return CONSTANT.GREEN;
@@ -199,9 +199,9 @@ export function getCommunicationStatusColor(type, status) {
 }
 
 export function getCommunicationStatusLabel(type, status) {
-    if (INVOICE_COMMUNICATION_STATUSES.PENDING.value === status && type === INVOICE_COMMUNITACTION_TYPES.NO_VERIFACTU) 
+    if (INVOICE_COMMUNICATION_STATUSES.PENDING.value === status && type === INVOICE_COMMUNICATION_TYPES.NO_VERIFACTU) 
         return MSG.ARCHIVED;
-    else if (INVOICE_COMMUNICATION_STATUSES.ACCEPTED.value === status && type === INVOICE_COMMUNITACTION_TYPES.SIF) 
+    else if (INVOICE_COMMUNICATION_STATUSES.ACCEPTED.value === status && type === INVOICE_COMMUNICATION_TYPES.SIF) 
         return MSG.ARCHIVED;
     else if(INVOICE_COMMUNICATION_STATUSES.PENDING.value === status) return MSG.PENDING;
     else if (INVOICE_COMMUNICATION_STATUSES.ACCEPTED.value === status) return MSG.ACCEPTED;
@@ -212,7 +212,7 @@ export function getCommunicationStatusLabel(type, status) {
 }
 
 export function isCommunicationStatusOk(type, status) {
-    if (INVOICE_COMMUNICATION_STATUSES.PENDING.value === status && type === INVOICE_COMMUNITACTION_TYPES.NO_VERIFACTU) 
+    if (INVOICE_COMMUNICATION_STATUSES.PENDING.value === status && type === INVOICE_COMMUNICATION_TYPES.NO_VERIFACTU) 
         return true;
     else if (INVOICE_COMMUNICATION_STATUSES.PENDING.value === status) return false;
     else if (INVOICE_COMMUNICATION_STATUSES.ACCEPTED.value === status) return true;

@@ -284,6 +284,7 @@ export const RECEIPT = 'receipt';
 export const REFRESH = 'refresh';
 export const REMOVE = 'remove';
 export const REMOVE_CIRCLE = 'remove_circle';
+export const REMOVE_DONE = 'remove_done';
 export const REPORT = 'report';
 export const ROOM = 'room';
 export const RSS_FEED = 'rss_feed';
