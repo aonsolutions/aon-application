@@ -491,6 +491,36 @@
 							</aon:panelGrid>
 						</aon:div>
 					</aon:if>
+					<aon:if test="#{app.standAlone}">
+						<aon:div rendered="#{saleInvoice.rectifier}">
+
+							<aon:outputFormat styleClass="aon-bold aon-label-error"
+								value="#{bundle.finance_invoice_rectifier_message2}">
+								<f:param
+									value="#{saleInvoice.to.rectificationInvoice.referenceCode}" />
+							</aon:outputFormat>
+							<aon:if test="#{saleInvoice.rectificationInvoiceNull}">
+
+								<aon:commandLink id="Invoice_rectificationInvoiceAdd"
+									immediate="true" styleClass="aon-icon-new"
+									style="margin-left: 5px; padding-left: 20px;"
+									title="Añadir Factura Rectificada"
+									reRender="showAddRectificationInvoiceWindow">
+									<f:setPropertyActionListener
+										target="#{saleInvoice.showAddRectificationInvoiceWindow}"
+										value="#{true}" />
+								</aon:commandLink>
+							</aon:if>
+						</aon:div>
+						<aon:div rendered="#{saleInvoice.rectified}">
+							<aon:outputFormat styleClass="aon-bold aon-label-error"
+								value="#{bundle.finance_invoice_rectified_message2}">
+								<f:param
+									value="#{saleInvoice.to.rectificationInvoicesString}" />
+							</aon:outputFormat>
+						</aon:div>
+					</aon:if>
+
 				</aon:if>
 				<aon:if test="#{app.standAlone and !saleInvoice.nevv}">
 	                <aon:panelTabSet id="invoiceSalesPanelTab" selectedTab="invoiceSalesDetailTab">
