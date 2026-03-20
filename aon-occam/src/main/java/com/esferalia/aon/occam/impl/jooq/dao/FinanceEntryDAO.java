@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -25,6 +26,7 @@ import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceRecorder;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO.FinanceOrder;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO.FullFinanceFiller;
@@ -226,27 +228,85 @@ public class FinanceEntryDAO {
 			throw new AonCoreException( AonError.WRONG_PERIOD.format( tracking.getTrackingDate() ) );
 		}
 		Finance finance = tracking.getFinance();
+		Integer act = Optional.ofNullable(finance.getInvoice())
+			.flatMap( Invoice::optActivity )
+			.map( ac -> ac.getId() )
+			.orElse(null)
+		;
 		AccountEntry ae = new AccountEntry()
 			.setDomain(ctx.getDomainId())
 			.setPeriod(period.getId())
 			.setEntryDate(tracking.getTrackingDate())
 			.setEntryType(entryType)
-			.setActivity(finance.getInvoice()==null && finance.getInvoice().getActivity() == null
-				? null : finance.getInvoice().getActivity().getId())
+			.setActivity(act)
 			.setSecurityLevel(finance.getSecurityLevel());
 		FinanceEntry financeEntry = new FinanceEntry();
 		financeEntry.setAccountEntry(ae);
 		financeEntry.setBankAccount( tracking.getPayAccount());
 		if (finance.getRegistryAccountId() == null) {
 			Invoice invoice = finance.getInvoice();
-			if (invoice == null || finance.getRegistry() == null || finance.getRegistry().getId() == null) {
-				throw new AonCoreException( AonError.FINANCE_TRACKING_NO_REGISTRY_ACCOUNT.getMessage() );	
-			}
-			if (invoice.getType() == null ) {
-				throw new AonCoreException( AonError.INVOICE_EMPTY_TYPE.getMessage() );
-			}
-			invoice.getType().visit(invoice, new IInvoiceTypeVisitor<Void>() {
-				private void fill( Account acc) {
+			if (invoice != null) {
+				if (finance.getRegistry() == null || finance.getRegistry().getId() == null) {
+					throw new AonCoreException( AonError.FINANCE_TRACKING_NO_REGISTRY_ACCOUNT.getMessage() );	
+				}
+				if (invoice.getType() == null ) {
+					throw new AonCoreException( AonError.INVOICE_EMPTY_TYPE.getMessage() );
+				}
+				invoice.getType().visit(invoice, new IInvoiceTypeVisitor<Void>() {
+					private void fill( Account acc) {
+						if (acc == null) {
+							throw new AonCoreException( AonError.FINANCE_TRACKING_NO_REGISTRY_ACCOUNT.getMessage() );	
+						}
+						finance.setRegistryAccountId(acc.getId());
+						finance.setRegistryAccountCode(acc.getCode());
+						finance.setRegistryAccountDescription(acc.getDescription());
+					}
+					
+					@Override
+					public Void visitSales(Invoice invoice) {
+						fill( CustomerDAO.getCustomerAccount(ctx, finance.getRegistry().getId()));
+						return null;
+					}
+					
+					@Override
+					public Void visitPurchase(Invoice invoice) {
+						fill( SupplierDAO.getSupplierAccount(ctx, finance.getRegistry().getId()));
+						return null;
+					}
+					
+					@Override
+					public Void visitExpenses(Invoice invoice) {
+						fill( CreditorDAO.getCreditorAccount(ctx, finance.getRegistry().getId()));
+						return null;
+					}
+					@Override
+					public Void visitUndeductible(Invoice invoice) {
+						visitExpenses(invoice);
+						return null;
+					}
+					
+				});
+			} else {
+				Registry registry = finance.getRegistry();
+				if (registry == null) {
+					throw new AonCoreException( AonError.FINANCE_TRACKING_NO_REGISTRY_ACCOUNT.getMessage() );	
+				}
+				if (finance.isPayment()) {
+					Account acc = SupplierDAO.getSupplierAccount(ctx, registry.getId());
+					if (acc == null) {
+						acc = CreditorDAO.getCreditorAccount(ctx, registry.getId());
+					}
+					if (acc == null) {
+						throw new AonCoreException( AonError.FINANCE_TRACKING_NO_REGISTRY_ACCOUNT.getMessage() );	
+					}
+					finance.setRegistryAccountId(acc.getId());
+					finance.setRegistryAccountCode(acc.getCode());
+					finance.setRegistryAccountDescription(acc.getDescription());
+				} else {
+					Account acc = CustomerDAO.getCustomerAccount(ctx, registry.getId());
+					if (acc == null) {
+						acc = CustomerDAO.ensureAccount(ctx, registry.getId());
+					}
 					if (acc == null) {
 						throw new AonCoreException( AonError.FINANCE_TRACKING_NO_REGISTRY_ACCOUNT.getMessage() );	
 					}
@@ -254,31 +314,7 @@ public class FinanceEntryDAO {
 					finance.setRegistryAccountCode(acc.getCode());
 					finance.setRegistryAccountDescription(acc.getDescription());
 				}
-				
-				@Override
-				public Void visitSales(Invoice invoice) {
-					fill( CustomerDAO.getCustomerAccount(ctx, finance.getRegistry().getId()));
-					return null;
-				}
-				
-				@Override
-				public Void visitPurchase(Invoice invoice) {
-					fill( SupplierDAO.getSupplierAccount(ctx, finance.getRegistry().getId()));
-					return null;
-				}
-				
-				@Override
-				public Void visitExpenses(Invoice invoice) {
-					fill( CreditorDAO.getCreditorAccount(ctx, finance.getRegistry().getId()));
-					return null;
-				}
-				@Override
-				public Void visitUndeductible(Invoice invoice) {
-					visitExpenses(invoice);
-					return null;
-				}
-				
-			});
+			}
 		}
 		financeEntry.add(finance);
 		return FinanceRecorder.recordFinanceEntry(financeEntry);

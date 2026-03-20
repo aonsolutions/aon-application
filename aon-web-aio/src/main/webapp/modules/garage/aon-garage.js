@@ -53,7 +53,7 @@ export class AonGarage extends AonElement {
 				id: "observations",
 				icon: "speaker_notes",
 				name: "Observaciones",
-				fn: () => this.buildObservations('GARAGE'),
+				fn: () => this.getApplication().buildObservations('GARAGE'),
 			}
 		];
 		this.getApplication().addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);
