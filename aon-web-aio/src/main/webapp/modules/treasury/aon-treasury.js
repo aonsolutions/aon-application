@@ -56,7 +56,7 @@ export class AonTreasury extends AonElement {
 				id: "observations",
 				icon: "speaker_notes",
 				name: "Observaciones",
-				fn: () => this.buildObservations('TREASURY'),
+				fn: () => this.getApplication().buildObservations('TREASURY'),
 			}
 		];
 		this.getApplication().addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);

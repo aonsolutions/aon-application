@@ -226,16 +226,17 @@ input, select, textarea,
 	background:initial ;
 }
 
-.aon_scroll_area{
-	padding: 0px 1.5em 1.5em 1.5em;	
+.aon_scroll_area {
+	padding: 0px 1.5em 1.5em 1.5em !important;	
 }
+
 
 .aon_grid_header,
 .aon_custom_table_header,
 .aon_custom_table_footer,
 .aon_display_grid_header_row ,
 .dataGridWidget > div:first-child {
-  top: 0px;
+  top: -1px;
   height: 3.625rem;
   font-size: 14.875px;
   padding-top: 8px;
@@ -1346,3 +1347,13 @@ div:has( > .aon_icon_menu_collapse) {
 div.aon_custom_text_box_input:has( input){
     border:none;
 }
+
+.popupContent div[style*='overflow: auto'] {
+	scrollbar-width: auto;
+	height: 30.5rem !important;
+}
+
+.popupContent .aon_custom_card[style*='max-width'] {
+	max-width: max-content !important;
+}
+

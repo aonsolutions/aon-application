@@ -53,7 +53,7 @@ export class AonAcademy extends AonElement {
 				id: "observations",
 				icon: "speaker_notes",
 				name: "Observaciones",
-				fn: () => this.buildObservations('ACADEMY'),
+				fn: () => this.getApplication().buildObservations('ACADEMY'),
 			}
 		];
 		this.getApplication().addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);
