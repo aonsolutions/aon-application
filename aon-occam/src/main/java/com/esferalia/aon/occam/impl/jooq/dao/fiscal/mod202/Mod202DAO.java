@@ -5,8 +5,10 @@ import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -292,11 +294,6 @@ public class Mod202DAO extends FiscalModelDAO {
 	
 	// FALTA - SE OBTIENE EL CNAE DE LA ACTIVIDAD PRINCIPAL DE LA EMPRESA (CNAE2009 HASTA 2025 Y CNAE2025 A PARTIR DE 2026)
 	// EL PROBLEMA ES QUE AHORA NO EXISTE EL CNAE2025 EN LA ACTIVIDAD PRINCIPAL DE LA EMPRESA, POR AHORA SE GRABA EL EQUIVALENTE.
-	// CRITERIO PARA OBTENER EL CNAE2025 A PARTIR DEL CNAE2009:
-	// - SI EL CNAE2009 TIENE UN SOLO EQUIVALENTE EN EL CNAE2025, SE GRABA ESE CNAE2025
-	// - SI EL CNAE2009 TIENE VARIOS EQUIVALENTES EN EL CNAE2025, SE BUSCA ENTRE ESOS EQUIVALENTES EL QUE TENGA EL MISMO CODIGO 
-	//   QUE EL CNAE2009, SI SE ENCUENTRA SE GRABA ESE CNAE2025, SI NO SE ENCUENTRA SE DEJA VACIO PARA QUE EL USUARIO LO RELLENE 
-	//   MANUALMENTE CON EL QUE REALMENTE LE CORRESPONDA
 	static String getMainActivityCNAE(AONContext ctx, Mod202 mod) {
 		Date atDate = AonDateUtils.getDate(mod.getYear(), mod.getPeriod().getStartMonth(),1);
 		EnterpriseActivity activity  = CompanyDAO.getEnterpriseActivities(ctx, ctx.getDomainId(), atDate)
@@ -308,20 +305,7 @@ public class Mod202DAO extends FiscalModelDAO {
 		
 		if (mod.getYear() >= 2026) {
 			// A PARTIR DEL EJERCICIO 2026 SE GRABA EL EQUIVALENTE CNAE2025 DEL CNAE2009 GRABADO EN LA ACTIVIDAD, PORQUE LA ACTIVIDAD NO TIENE CNAE2025
-			CNAE2009ToCNAE2025 cn = CNAE2009ToCNAE2025.valueOfCode(cnaeCode);
-			CNAE2025 cnae2025 = null;
-			if (cn != null) {
-				if (cn.getCode2025().length > 1) {
-					for (String code2025 : cn.getCode2025()) {
-						if (code2025.equals(cnaeCode)) {
-							cnae2025 = CNAE2025.valueOfCode(code2025);
-							break;
-						}
-					}
-				} else {
-					cnae2025 = CNAE2025.valueOfCode(cn.getCode2025()[0]);
-				}
-			}
+			CNAE2025 cnae2025 = getCNAE2025ByDefault(cnaeCode) ;
 			mod.setCnae(cnae2025 == null ? null : cnae2025.getCode());
 		} else {
 			// Hasta el ejercicio 2025 se graba el CNAE2009
@@ -330,5 +314,113 @@ public class Mod202DAO extends FiscalModelDAO {
 		}
 		return cnaeCode;
 	}
+	
+	// Devuelve el CNAE2025 por defecto, para el código CNAE2009 que se le pasa como parámetro
+	// CRITERIO PARA OBTENER EL CNAE2025 A PARTIR DEL CNAE2009:
+	// - SI EL CNAE2009 TIENE UN SOLO EQUIVALENTE EN EL CNAE2025, SE DEVUELVE ESE CNAE2025
+	// - SI EL CNAE2009 TIENE VARIOS EQUIVALENTES EN EL CNAE2025, SE BUSCA EN LA LISTA DE CONVERSION ESPECIFICA, 
+	//   SI NO EXISTE EN ESA LISTA, SE BUSCA EL QUE TENGA EL MISMO CODIGO, SI NO SE ENCUENTRA SE DEVUELVE NULO
+	public static CNAE2025 getCNAE2025ByDefault(String code2009) {
+		
+		Map<String, String> conversionEspecifica = new HashMap<>();
+		conversionEspecifica.put("01.49", "01.48");
+		conversionEspecifica.put("14.13", "14.21");
+		conversionEspecifica.put("14.14", "14.22");
+		conversionEspecifica.put("14.19", "14.29");
+		conversionEspecifica.put("16.10", "16.11");
+		conversionEspecifica.put("16.29", "16.28");
+		conversionEspecifica.put("22.19", "22.12");
+		conversionEspecifica.put("22.23", "22.24");
+		conversionEspecifica.put("22.29", "22.26");
+		conversionEspecifica.put("23.61", "");
+		conversionEspecifica.put("25.11", "");
+		conversionEspecifica.put("25.61", "");
+		conversionEspecifica.put("28.49", "28.42");
+		conversionEspecifica.put("30.30", "");
+		conversionEspecifica.put("35.14", "35.15");
+		conversionEspecifica.put("35.15", "35.12");
+		conversionEspecifica.put("35.16", "35.11");
+		conversionEspecifica.put("35.17", "35.11");
+		conversionEspecifica.put("35.18", "35.12");
+		conversionEspecifica.put("35.19", "");
+		conversionEspecifica.put("38.21", "");
+		conversionEspecifica.put("38.22", "");
+		conversionEspecifica.put("38.32", "38.21");
+		conversionEspecifica.put("41.21", "41.01");
+		conversionEspecifica.put("41.22", "41.02");
+		conversionEspecifica.put("43.29", "43.24");
+		conversionEspecifica.put("43.39", "43.35");
+		conversionEspecifica.put("45.11", "");
+		conversionEspecifica.put("45.19", "");
+		conversionEspecifica.put("45.31", "46.72");
+		conversionEspecifica.put("45.32", "47.82");
+		conversionEspecifica.put("45.40", "");
+		conversionEspecifica.put("46.51", "46.50");
+		conversionEspecifica.put("46.52", "46.50");
+		conversionEspecifica.put("46.65", "46.47");
+		conversionEspecifica.put("46.66", "46.89");
+		conversionEspecifica.put("46.69", "46.64");
+		conversionEspecifica.put("46.71", "46.81");
+		conversionEspecifica.put("46.72", "46.82");
+		conversionEspecifica.put("46.73", "46.83");
+		conversionEspecifica.put("46.74", "46.84");
+		conversionEspecifica.put("46.75", "46.85");
+		conversionEspecifica.put("46.76", "46.86");
+		conversionEspecifica.put("46.77", "46.87");
+		conversionEspecifica.put("47.19", "47.12");
+		conversionEspecifica.put("47.29", "47.27");
+		conversionEspecifica.put("47.41", "47.40");
+		conversionEspecifica.put("47.42", "47.40");
+		conversionEspecifica.put("47.43", "47.40");
+		conversionEspecifica.put("47.59", "47.55");
+		conversionEspecifica.put("47.63", "47.69");
+		conversionEspecifica.put("47.64", "47.63");
+		conversionEspecifica.put("47.65", "47.64");
+		conversionEspecifica.put("47.81", "47.11");
+		conversionEspecifica.put("47.82", "47.12");
+		conversionEspecifica.put("47.89", "47.12");
+		conversionEspecifica.put("47.99", "47.12");
+		conversionEspecifica.put("49.10", "");
+		conversionEspecifica.put("49.32", "49.33");
+		conversionEspecifica.put("52.29", "52.26");
+		conversionEspecifica.put("56.10", "");
+		conversionEspecifica.put("61.20", "61.10");
+		conversionEspecifica.put("63.11", "63.10");
+		conversionEspecifica.put("63.12", "63.91");
+		conversionEspecifica.put("64.20", "64.21");
+		conversionEspecifica.put("64.30", "");
+		conversionEspecifica.put("66.12", "66.14");
+		conversionEspecifica.put("74.10", "74.14");
+		conversionEspecifica.put("74.90", "74.99");
+		conversionEspecifica.put("82.11", "82.10");
+		conversionEspecifica.put("82.19", "");
+		conversionEspecifica.put("86.90", "86.99");
+		conversionEspecifica.put("90.03", "");
+		conversionEspecifica.put("91.04", "");
+		conversionEspecifica.put("96.01", "96.10");
+		conversionEspecifica.put("96.02", "");
+		
+		CNAE2025 cnae2025 = null;	
+		CNAE2009ToCNAE2025 cn = CNAE2009ToCNAE2025.valueOfCode(code2009);
+		if (cn != null) {
+			if (cn.getCode2025().length > 1) {
+				if (conversionEspecifica.containsKey(code2009)) {
+					cnae2025 = CNAE2025.valueOfCode(conversionEspecifica.get(code2009));					
+				} else {
+					for (String code2025 : cn.getCode2025()) {
+						if (code2025.equals(code2009)) {
+							cnae2025 = CNAE2025.valueOfCode(code2025);
+							break;
+						}
+					}
+				}
+			} else {
+				cnae2025 = CNAE2025.valueOfCode(cn.getCode2025()[0]);
+			}
+		}
+		return cnae2025;
+			
+	}
+
 	
 }
