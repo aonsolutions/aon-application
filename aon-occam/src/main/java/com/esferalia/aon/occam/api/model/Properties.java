@@ -1858,7 +1858,27 @@ public interface Properties {
 		Property<Date> getStartProperty();
 		Property<Date> getEndProperty();
 	}
-	
+
+	public interface CatalogueItemProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getCatalogueProperty();
+		Property<Integer> getProductProperty();
+		Property<Integer> getItemProperty();
+		Property<Double> getQuantityProperty();
+		Property<Double> getPriceProperty();
+		Property<Double> getDiscountProperty();
+	}
+
+	public interface CatalogueCategoryProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getCatalogueProperty();
+		Property<Integer> getCategoryProperty();
+		Property<Double> getQuantityProperty();
+		Property<Double> getDiscountProperty();
+	}
+
 	public interface RattachTagProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

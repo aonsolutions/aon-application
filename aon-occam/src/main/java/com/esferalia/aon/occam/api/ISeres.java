@@ -13,5 +13,7 @@ public interface ISeres {
 	
 	public EdiCodes getEdiCodes(AONContext ctx, Delivery delivery);
 	public EdiCodes getEdiCodes(AONContext ctx, Invoice invoice);
+	
+	public double getUnitPrice(AONContext ctx, Integer customer, Integer item);
 
 }
