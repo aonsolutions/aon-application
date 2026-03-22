@@ -997,7 +997,7 @@ public class SistemaRED2AON {
 	}
 
 
-	private static String toString(Object obj) {
+	public static String toString(Object obj) {
 		if (obj == null)
 			return null;
 		if (obj instanceof String) {

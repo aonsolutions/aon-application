@@ -109,9 +109,15 @@ public class Idc {
 				contractData.computeIfAbsent(ContextVariable.IMS_PERCENT, k -> new ArrayList<>()).add( new IdcContractData(ims, startDate, endDate) );
 			}
 			
-			if (Objects.nonNull(unemployment)) {
-				contractData.computeIfAbsent(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, k -> new ArrayList<>()).add( new IdcContractData(unemployment == 7.05 ? 1.55 : 1.60, startDate, endDate) );
-				contractData.computeIfAbsent(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT, k -> new ArrayList<>()).add( new IdcContractData(unemployment == 7.05 ? 5.50 : 6.70, startDate, endDate));
+			if (Objects.nonNull(unemployment) && unemployment == 7.05 ) {
+				contractData.computeIfAbsent(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, k -> new ArrayList<>()).add( new IdcContractData(1.55, startDate, endDate) );
+				contractData.computeIfAbsent(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT, k -> new ArrayList<>()).add(new IdcContractData( 5.50 , startDate, endDate));
+			} else if (Objects.nonNull(unemployment) && unemployment == 8.30 ) {
+				contractData.computeIfAbsent(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, k -> new ArrayList<>()).add( new IdcContractData( 1.60, startDate, endDate) );
+				contractData.computeIfAbsent(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT, k -> new ArrayList<>()).add( new IdcContractData(6.70, startDate, endDate));
+			} else if (Objects.nonNull(unemployment) && unemployment == 0.00 ) {
+				contractData.computeIfAbsent(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, k -> new ArrayList<>()).add( new IdcContractData( 0.00, startDate, endDate) );
+				contractData.computeIfAbsent(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT, k -> new ArrayList<>()).add( new IdcContractData(0.00, startDate, endDate));
 			}
 		}
 		

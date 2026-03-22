@@ -462,11 +462,11 @@ public class IdcTest extends AbstractSQLTestCase {
 
 				@Override
 				public void onEmployeeQuoteTypes(Double it, Double ims, Double unemployment) {
+					System.out.println("IT:" + it + " I.M.S:" + ims + " DESEMPLEO:" + unemployment);
 					assertEquals(it, 1.70, 0.00);
 					assertEquals(ims, 1.30, 0.00);
 					assertEquals(unemployment, 7.05, 0.00);
 					onEmployeeQuoteTypes.set(true);
-					System.out.println("IT:" + it + " I.M.S:" + ims + " DESEMPLEO:" + unemployment);
 				}
 
 			});
@@ -4411,12 +4411,12 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			ContractData unemployEmployeePercentData = contractDatas
 					.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT.getName());
-			Assert.assertNull(unemployEmployeePercentData);
+			Assert.assertEquals(0.00, Double.parseDouble(unemployEmployeePercentData.getExpression()), DELTA);
 
 			ContractData unemployEnterprisePercentData = contractDatas
 					.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT.getName());
-			Assert.assertNull(unemployEnterprisePercentData);
-
+			Assert.assertEquals(0.00, Double.parseDouble(unemployEnterprisePercentData.getExpression()), DELTA);
+			
 			ContractData partialFactorData = contractDatas.get(ContextVariable.PARTIAL_FACTOR.getName());
 			Assert.assertNull(partialFactorData);
 
@@ -7482,6 +7482,140 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 
+	@Test
+	public void testIdcPracticasRemuneradas() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+	ExpressionException, SQLException, SalaryException, ParseException {
+		testIdcPracticasRemuneradas("idcPracticasRemuneradas.pdf");
+	}
+
+	@Test
+	public void testIdcPracticasRemuneradasII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+	ExpressionException, SQLException, SalaryException, ParseException {
+		testIdcPracticasRemuneradas("idcPracticasRemuneradasII.pdf");
+	}
+
+	public void testIdcPracticasRemuneradas(String path) throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SQLException, SalaryException, ParseException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream(path)) {
+			
+			byte[] data = is.readAllBytes();
+
+			Collection<PEC> ssPECs = Idc.getSSPECs(data);
+			//09 EXCLUSIONES100,0053PF DES FOG FP -C.TOT13-01-2026FPJ
+			//03 RED.CUOTA SS-PORCENT95,0043C.COMUN.-CUOTA TOTAL13-01-2026NCI			
+			
+			Collection<Data> datas = new ArrayList<>();
+			Idc.getContractData(data).forEach((var, values) -> {
+				values.forEach(value -> datas.add(new Data() {
+					{ 	name = var.getName(); 
+						startDate = value.startDate();
+						endDate = value.endDate();
+						expression = SistemaRED2AON.toString(value.data());
+					}
+				}));
+				values.forEach(value -> System.out.println("DATA: " + var.getName() + " = " + value.data() + ", "
+						+ value.startDate() + " - " + value.endDate()));
+			});
+
+
+			ssPECs.stream().forEach( sspec -> System.out.println("SSPEC: " + sspec.getName() + " : " +  sspec.getFormula() ));
+
+			Date date = new SimpleDateFormat("dd-MM-yyyy").parse("01-02-2026");
+
+			Salary salary = calculate(ssPECs, datas, date );
+			
+			double cgcBase = salary.getCommonBase();
+			double cgpBase = salary.getProfessionalBase();
+			
+			salary.getCostS().forEach( deduction -> System.out.println(deduction.getName() + " : " + deduction.getAmount() + " (" + deduction.getExpression() + ")" + "," + deduction.getDescription() ));
+			//salary.getDeductionS().forEach( deduction -> System.out.println(deduction.getName() + " : " + deduction.getAmount() + " (" + deduction.getExpression() + ")" + "," + deduction.getDescription() ));
+			
+			//	PORCENTAJE_CGC=		 4.70
+			//	PORCENTAJE_CGC_E=	23.60
+			//
+			//	OCUPACION_IT=		 1.40
+			//	OCUPACION_IMS=		 2.20
+			//
+			//	PORCENTAJE_MEI=		 0.10
+			//	PORCENTAJE_MEI_E=	 0.50
+
+			assertEquals(cgcBase * 4.70/100.00 * 0.05 + cgcBase * (0.10)/100.00 , salary.getSocialSecurityContributions(), DELTA);
+			assertEquals(cgcBase * 23.60/100.00 * 0.05 + cgcBase * 0.50/100.00 + cgcBase * 3.60/100.00 , salary.getTotalEnterprise(), DELTA);
+			
+			for (SalaryDeduction deduction : salary.getSalaryDeductions()) {
+			}
+
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+			}
+		}
+	}
+
+	@Test
+	public void testIdcPracticasRemuneradasIII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException,
+			IOException, ExpressionException, SQLException, SalaryException, ParseException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcPracticasRemuneradasIII.pdf" )) {
+
+			byte[] data = is.readAllBytes();
+
+			Collection<PEC> ssPECs = Idc.getSSPECs(data);
+			// 09 EXCLUSIONES100,0053PF DES FOG FP -C.TOT13-01-2026FPJ
+			// 03 RED.CUOTA SS-PORCENT95,0043C.COMUN.-CUOTA TOTAL13-01-2026NCI
+
+			Collection<Data> datas = new ArrayList<>();
+			Idc.getContractData(data).forEach((var, values) -> {
+				values.forEach(value -> datas.add(new Data() {
+					{
+						name = var.getName();
+						startDate = value.startDate();
+						endDate = value.endDate();
+						expression = SistemaRED2AON.toString(value.data());
+					}
+				}));
+				values.forEach(value -> System.out.println("DATA: " + var.getName() + " = " + value.data() + ", "
+						+ value.startDate() + " - " + value.endDate()));
+			});
+
+			ssPECs.stream()
+					.forEach(sspec -> System.out.println("SSPEC: " + sspec.getName() + " : " + sspec.getFormula()));
+
+			Date date = new SimpleDateFormat("dd-MM-yyyy").parse("01-04-2025");
+
+			Salary salary = calculate(ssPECs, datas, date);
+
+			double cgcBase = salary.getCommonBase();
+			double cgpBase = salary.getProfessionalBase();
+
+			salary.getCostS()
+					.forEach(deduction -> System.out.println(deduction.getName() + " : " + deduction.getAmount() + " ("
+							+ deduction.getExpression() + ")" + "," + deduction.getDescription()));
+			// salary.getDeductionS().forEach( deduction ->
+			// System.out.println(deduction.getName() + " : " + deduction.getAmount() + " ("
+			// + deduction.getExpression() + ")" + "," + deduction.getDescription() ));
+
+			// PORCENTAJE_CGC= 4.70
+			// PORCENTAJE_CGC_E= 23.60
+			//
+			// OCUPACION_IT= 0.80
+			// OCUPACION_IMS= 0.70
+			//
+			// PORCENTAJE_MEI= 0.10
+			// PORCENTAJE_MEI_E= 0.50
+
+			assertEquals(cgcBase * 4.70 / 100.00 * 0.05 + cgcBase * (0.10) / 100.00,
+					salary.getSocialSecurityContributions(), DELTA);
+			assertEquals(cgcBase * 23.60 / 100.00 * 0.05 + cgcBase * (0.50) / 100.00 + cgcBase * 3.60/100.00 , salary.getTotalEnterprise(),
+					DELTA);
+
+			for (SalaryDeduction deduction : salary.getSalaryDeductions()) {
+			}
+
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+			}
+		}
+	}
+	
 	private static java.sql.Date toSQL(java.util.Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());
 	}
