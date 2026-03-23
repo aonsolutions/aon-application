@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -8172,12 +8173,9 @@ public class Municipalities {
 		return provinceMunicipalities;
 	}
 	
-	public String getZipByMunicipalityName(String municipality) {
-		for(Entry<String, String> e : municipalities.entrySet())
-			if(AonStringUtils.equalsIgnoreCase(municipality, e.getValue()))
-				return e.getKey();
-		
-		return null;
+	public Entry<String, String> getZipByMunicipalityName(String municipality) {
+		Optional<Entry<String, String>> municipalityOpt = municipalities.entrySet().stream().filter(e -> AonStringUtils.startsWithIgnoreCase(e.getValue(), municipality)).findFirst();
+		return municipalityOpt.isEmpty() ? null : municipalityOpt.get();
 	}
 	
 	public Integer getMunicipalityIndex(String provinceCode, String municipalityCode){
