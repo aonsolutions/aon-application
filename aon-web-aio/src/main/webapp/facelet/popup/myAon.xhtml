@@ -545,13 +545,25 @@
 											actionListener="#{retentionReport.onReset}"
 											value="#{bundle.fiscal_retention_report_module}" />
 									</aon:div>	
+
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_sii_new-myAon"
+											rendered="#{actionDenied.renderedOption('gwt_sii_new-myAon')}"
+											action="gwt_sii_new-myAon"
+											title="SII - Suministro Inmediato de Información"
+											value="SII - Suministro Inmediato de Información" />
+									</aon:div>
+									
+									<!--
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_sii-myAon"
 											rendered="#{actionDenied.renderedOption('gwt_sii-myAon')}"
 											action="gwt_sii-myAon"
 											title="SII - Suministro Inmediato de Información"
 											value="SII - Suministro Inmediato de Información" />
-									</aon:div>		
+									</aon:div>
+									-->
+									
 									<!-- *********************** [MODELO 347] --> 
 									<aon:div styleClass="aon-direct-access-list-element"> 
 										<aon:commandLink id="gwt_mod347-myAon" 

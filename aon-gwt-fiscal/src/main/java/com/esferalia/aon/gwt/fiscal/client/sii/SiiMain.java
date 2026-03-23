@@ -233,6 +233,7 @@ public class SiiMain extends DockLayoutPanel {
 	
 	AonToolbarButton sendButton;
 	AonToolbarButton bajaButton;
+	AonToolbarButton prepareButton;
 	
 	private Widget getToolbar() {
 		AonToolbar toolbarPanel = new AonToolbar(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE, getModel().getFullName()));
@@ -247,6 +248,11 @@ public class SiiMain extends DockLayoutPanel {
 		bajaButton.setVisible(false);
 		toolbarPanel.add(bajaButton);
 		
+		if(options.getConfiguration().getDomain().getName().contains("udapa")) {
+			prepareButton = new AonToolbarButton("Preparar SII", AON.CSS.aonIconRefresh());
+			prepareButton.addClickHandler(event -> prepareNewSii());
+			toolbarPanel.add(prepareButton);
+		}
 		AonToolbarSearchBox searchBox = new AonToolbarSearchBox() {
 			
 			@Override
@@ -324,6 +330,50 @@ public class SiiMain extends DockLayoutPanel {
 				}
 			};
 			certPopup.center();
+	}
+	
+	private void prepareNewSii() {
+		ListBox year = new ListBox();
+		year.addItem("2026", "2026");
+		year.addItem("2025", "2025");		
+		year.addItem("2024", "2024");
+		year.addItem("2023", "2023");
+		year.addItem("2022", "2022");
+		year.addItem("2021", "2021");
+		year.addItem("2020", "2020");
+		year.addItem("2019", "2019");
+		year.addItem("2018", "2018");
+		year.addItem("2017", "2017");
+		year.addItem("2016", "2016");
+		year.setSelectedIndex(0);
+		
+		AonDialog dialog = new AonDialog("Informaci\u00f3n SII", year) {
+
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+
+			@Override
+			protected void onAccept() {
+				SII_SERVICE.prepareNewSii(options.getDomainName(), options.getDomain(), options.getUser(), Integer.valueOf(year.getSelectedValue()), new AsyncCallback<Void>() {
+					
+					@Override
+					public void onSuccess(Void result) {
+						Window.alert("SII preparado para el a\u00f1o " + year.getSelectedValue());
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Error preparando el SII para el a\u00f1o " + year.getSelectedValue() + ": " + caught.getMessage());
+					}
+				});
+				hide();
+			}
+		};
+		dialog.setAutoHideEnabled(true);
+		dialog.getCancel().setVisible(false);
+		dialog.center();
 	}
 
 	private VerticalPanel advancedSearchPanel() {

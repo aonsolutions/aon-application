@@ -39,4 +39,5 @@ public interface InvoiceCommunicationService extends RemoteService {
 
 	String getRequestUrl(String domainName, int domainId, String login, Integer dataResponse);
 	String getResponseUrl(String domainName, int domainId, String login, Integer dataResponse);
+	void prepareNewSii(String domainName, int domainId, String user, Integer year);
 }
