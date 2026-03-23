@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -12,7 +11,8 @@ public class Mod202 extends FiscalModel implements Serializable {
 
 	private static final long serialVersionUID = 3614782856588153510L;
 
-	private CNAE2009 cnae;
+//	private CNAE2009 cnae; // En el ejercicio 2026 se cambia al CNAE2025, lo cambio a String 
+	private String cnae;
 	private Date initialDate;
 	
 	public Mod202() {
@@ -62,9 +62,6 @@ public class Mod202 extends FiscalModel implements Serializable {
 		throw new UnsupportedOperationException("Unsupported method! (Now diff is implicit)");
 	}
 
-	
-	
-	
 //	public Mod202Key getDeclarationTypeKey() {
 //		if (getAdministration() == null) return null;
 //		else if (isAEAT()) return Mod202Key.P01;
@@ -84,11 +81,18 @@ public class Mod202 extends FiscalModel implements Serializable {
 		// return getDescription(Mod202Key.P01);
 		return getDeclarationResultType().getValue();
 	}
+
+//	public CNAE2009 getCnae() {
+//		return cnae;
+//	}
+//	public void setCnae(CNAE2009 cnae) {
+//		this.cnae = cnae;
+//	}
 	
-	public CNAE2009 getCnae() {
+	public String getCnae() {
 		return cnae;
 	}
-	public void setCnae(CNAE2009 cnae) {
+	public void setCnae(String cnae) {
 		this.cnae = cnae;
 	}
 

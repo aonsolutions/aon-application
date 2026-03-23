@@ -50,9 +50,8 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel> extends Sc
 		setWidget(tab);
 		
 		document = new AonDocumentTextBox();
-		
 		nameLabel = new InlineLabel(AON.MSG.nameCompanyName());
-		surnameLabel  = new InlineLabel(AON.MSG.surname());
+		surnameLabel = new InlineLabel(" y " + AON.MSG.surname());
 		FlowPanel nameLabels = new FlowPanel();
 		nameLabels.add(nameLabel);
 		nameLabels.add(surnameLabel);
@@ -100,7 +99,7 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel> extends Sc
 		streetName.setMaxLength(40);
 		address1.add(streetName);
 		tab.addRow()
-			.addCell(new Label(),AON.CSS.aonTableLabel())
+			.addCell(new Label(AON.MSG.address()),AON.CSS.aonTableLabel())
 			.addCell(address1);
 		
 		FlowPanel address2 = new FlowPanel();
