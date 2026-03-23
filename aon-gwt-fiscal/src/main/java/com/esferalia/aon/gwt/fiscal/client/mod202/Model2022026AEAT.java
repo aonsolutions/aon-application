@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod202;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2009Panel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2025Panel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod202.Model2022025AddDataAEATScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod202.Model2022025AddInfoAEATScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod202.Model2022025LiquidationAEATScript;
-import com.esferalia.aon.occam.api.model.type.CNAE2009;
+import com.esferalia.aon.occam.api.model.type.CNAE2025;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -22,9 +22,9 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
-public class Model2022025AEAT extends Model202Base {
+public class Model2022026AEAT extends Model202Base {
 	
-	public Model2022025AEAT(Model202Callback callback) {
+	public Model2022026AEAT(Model202Callback callback) {
 		super(callback);
 	}
 	
@@ -33,38 +33,44 @@ public class Model2022025AEAT extends Model202Base {
 		public TaxTypeListBox() {
 			this.setWidth("130px");
 			this.addItem("---", "");
-			this.addItem("00");
-			this.addItem("01");
-			this.addItem("04");
-			this.addItem("10");
-			this.addItem("15");
-			this.addItem("23");
-			this.addItem("24");
-			this.addItem("25");
-			this.addItem("30");
-			this.addItem("00/23");
-			this.addItem("00/21/22");
-			this.addItem("00/24");
-			this.addItem("00/25");
-			this.addItem("21/22");
-			this.addItem("20/23");
-			this.addItem("20/24");
-			this.addItem("20/25");
-			this.addItem("18/19/21/22");
-			this.addItem("12/15");
-			this.addItem("25/30");
-			this.addItem("23/30");
-			this.addItem("24/30");
-			this.addItem("21/22/30");
-			this.addItem("15/30");
-			this.addItem("04/23");
-			this.addItem("04/21/22");
-			this.addItem("04/24");
-			this.addItem("04/25");
-			this.addItem("23/23N");
-			this.addItem("24/24N");
-			this.addItem("25/25N");
-			this.addItem("21/22/21N/22N");
+			this.addItem("00");            // (Fondo pensiones)                                                                                           
+			this.addItem("01");            // (SICAV y SII)                                                                                               
+			this.addItem("04");            // (ZEC)                                                                                                       
+			this.addItem("10");            // (Entidad sin fines lucrativos)                                                                              
+			this.addItem("15");            // (Entidad nueva creación)                                                                                    
+			this.addItem("24");            // (ERD 25)                                                                                                    
+			this.addItem("23");            // (Microempresa 24) (ERD 26)                                                                                                    
+			this.addItem("25");            // (Tipo general) (cooperativa + tipo general = Resultados cooperativos 25% y Resultados extracooperativos 25%)
+			this.addItem("30");            // (Entidad de crédito, hidrocarburos)                                                                         
+			this.addItem("00/23");         // (SOCIMI + microempresa 24) (SOCIMI + ERD 26)
+			this.addItem("00/21/22");      // (SOCIMI + microempresa 25)                                                                                  
+			this.addItem("00/19/21");      // (SOCIMI + microempresa 26)
+			this.addItem("00/24");         // (SOCIMI + ERD 25)
+			this.addItem("00/25");         // (SOCIMI + tipo general)                                                                                     
+			this.addItem("21/22");         // (microempresa 25),  (cooperativa + microempresa 25 = R. cooperativos 21/22 y R. extracooperativos 21/22)    
+			this.addItem("19/21");         // (microempresa 26),  (cooperativa + microempresa 26 = R. cooperativos 19/21 y R. extracooperativos 19/21)
+			this.addItem("20/23");         // (Cooperativa f. protegida + microempresa 24 = R. cooperativos 20% y R. extracooperativos 23%) (Cooperativa f. protegida + ERD 26 = R. cooperativos 20% y R. extracooperativos 23%)
+			this.addItem("20/24");         // (Cooperativa f. protegida + ERD 25 = R. cooperativos 20% y R. extracooperativos 24%)                        
+			this.addItem("20/25");         // (Cooperativa f. protegida + tipo general = R. cooperativos 20% y R. extracooperativos 25%)                  
+			this.addItem("18/19/21/22");   // (Cooperativa f. protegida + microempresa 25 = R. cooperativos 18/19 y R. extracooperativos 21/22)
+			this.addItem("16/18/19/21");   // (Cooperativa f. protegida + microempresa 26 = R. cooperativos 16/18 y R. extracooperativos 19/21)           
+			this.addItem("12/15");         // (Cooperativa f. protegida + entidad nueva creación = R. cooperativos 12 y R. extracooperativos 15)          
+			this.addItem("25/30");         // (cooperativa de crédito + tipo general = R. cooperativos 25 y R. extracooperativos 30)                      
+			this.addItem("23/30");         // (cooperativa de crédito + microempresa 24 = R. cooperativos 23% y R. extracooperativos 30%) (cooperativa de crédito + ERD 26 = R. cooperativos 23% y R. extracooperativos 30%)
+			this.addItem("24/30");         // (cooperativa de crédito + ERD 25 = R. cooperativos 24% y R. extracooperativos 30%)                          
+			this.addItem("21/22/30");      // (cooperativa de crédito + microempresa 25 = R. cooperativos 21/22 y R. extracooperativos 30%)               
+			this.addItem("19/21/30");      // (cooperativa de crédito + microempresa 26 = R. cooperativos 19/21 y R. extracooperativos 30%)
+			this.addItem("15/30");         // (cooperativa de crédito + entidad nueva creación = R. cooperativos 15% y R. extracooperativos 30%)          
+			this.addItem("04/23");         // (ZEC + microempresa 24) (ZEC + ERD 26)
+			this.addItem("04/21/22");      // (ZEC + microempresa 25)                                                                                     
+			this.addItem("04/19/21");      // (ZEC + microempresa 26)
+			this.addItem("04/24");         // (ZEC + ERD 25)                                                                                              
+			this.addItem("04/25");         // (ZEC + tipo general)                                                                                        
+			this.addItem("23/23N");        // (Naviera rég.tonelaje + microempresa 24) (Naviera rég.tonelaje + ERD 26)
+			this.addItem("24/24N");        // (Naviera rég.tonelaje + ERD 25)
+			this.addItem("25/25N");        // (Naviera rég.tonelaje + tipo general)                                                                       
+			this.addItem("21/22/21N/22N"); // (Naviera rég.tonelaje 21N/22N+ microempresa 25 21/22)
+			this.addItem("19/21/19N/21N"); // (Naviera rég.tonelaje 19N/21N+ microempresa 26 19/21)                                                       
 		}
 		
 		public void setSelectedValue(String value) {
@@ -136,14 +142,24 @@ public class Model2022025AEAT extends Model202Base {
 
 	@Override
 	protected void paintParticularyRow(FlexTable table, Model202Callback callback, IModelScript<Mod202Key> script) {
-		if (script == Model2022025AddDataAEATScript.R01_P02) paintDateRow(table, callback, script);
-		if (script == Model2022025AddDataAEATScript.R01_P03) paintCNAERow(table, callback, script);
 		
-		if (script == Model2022025AddDataAEATScript.R02_X08) paintX08(table, callback, script); // Tipo de gravamen del Impuesto sobre Sociedades del ejercicio en curso
-		if (script == Model2022025AddDataAEATScript.R02_X09) paintX09(table, callback, script);
+		if (script == Model2022025AddDataAEATScript.R01_P02) 
+			paintDateRow(table, callback, script);
 		
-		if (script == Model2022025LiquidationAEATScript.X00) paintX00(table, callback, script);
-		if (script == Model2022025AddInfoAEATScript.AIA02) paintR62(table, callback, script);
+		if (script == Model2022025AddDataAEATScript.R01_P03) 
+			paintCNAERow(table, callback, script);
+		
+		if (script == Model2022025AddDataAEATScript.R02_X08) 
+			paintX08(table, callback, script); // Tipo de gravamen del Impuesto sobre Sociedades del ejercicio en curso
+		
+		if (script == Model2022025AddDataAEATScript.R02_X09) 
+			paintX09(table, callback, script);
+		
+		if (script == Model2022025LiquidationAEATScript.X00) 
+			paintX00(table, callback, script);
+		
+		if (script == Model2022025AddInfoAEATScript.AIA02) 
+			paintR62(table, callback, script);
 		
 		if (script == Model2022025AddDataAEATScript.R00_X15
 		 || script == Model2022025AddDataAEATScript.R00_X16
@@ -162,37 +178,38 @@ public class Model2022025AEAT extends Model202Base {
 		 || script == Model2022025AddInfoAEATScript.AIA01) {
 			paintCheckRow(table, callback, script);
 		}
+		
 	}
 	
 	private void paintCNAERow(FlexTable table, final Model202Callback callback, IModelScript<Mod202Key> script) {
 		int row = table.getRowCount();
-		CNAE2009 cn = CNAE2009.valueOfCode(callback.getModel().getCnae());
-		table.setWidget(row, 0,new Label(script.getLabel() + " (CNAE2009)"));
+		CNAE2025 cn = CNAE2025.valueOfCode(callback.getModel().getCnae());
+		table.setWidget(row, 0,new Label(script.getLabel() + " (CNAE2025)"));
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 		
-		final InlineLabel cnaeLabel = new InlineLabel(cn!=null?cn.getDescription():"");
+		final InlineLabel cnaeLabel = new InlineLabel(cn != null ? cn.getDescription() : "");
 		cnaeLabel.setStyleName(AON.CSS.aonMarginLeft());
 
 		FlowPanel cnaePanel = new FlowPanel();
 		final AonTextBox cnaeBox = new AonTextBox();
-		cnaeBox.setValue(cn!=null?cn.getCode():"");
+		cnaeBox.setValue(cn != null ? cn.getCode() : "");
 		cnaeBox.setVisibleLength(4);
 		cnaeBox.setMaxLength(4);
 		cnaeBox.setReadOnly(true);
 		cnaePanel.add(cnaeBox);
 		AonTableButton cnaeButton = new AonTableButton(AON.MSG.mainActivityCNAE(), AON.CSS.aonIconSearch());
 		cnaeButton.addStyleName(AON.CSS.aonMarginLeft());
-		final AonCnae2009Panel cnae2009Panel = new AonCnae2009Panel();
-		cnae2009Panel.addSelectionHandler(event -> {
-			CNAE2009 selected = event.getSelectedItem();
+		final AonCnae2025Panel cnae2025Panel = new AonCnae2025Panel();
+		cnae2025Panel.addSelectionHandler(event -> {
+			CNAE2025 selected = event.getSelectedItem();
 			callback.getModel().setCnae(selected.getCode());
 			cnaeBox.setValue( selected.getCode());
 			cnaeLabel.setText( selected.getDescription() );
 			calculateAndRefresh( callback );
 			markAsDirty(callback);
 		});
-		cnaeButton.addClickHandler(event -> cnae2009Panel.onShow());
+		cnaeButton.addClickHandler(event -> cnae2025Panel.onShow());
 		cnaePanel.add(cnaeButton);
 		cnaePanel.add(cnaeLabel);
 		table.setWidget(row, 1, cnaePanel );

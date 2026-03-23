@@ -288,10 +288,21 @@ public class Model202  implements EntryPoint {
 	}
 	
 	enum Model202Declarations {
+		AEAT_2026 {
+			@Override
+			public boolean accept(Mod202 mod202) {
+				return mod202.isAEAT() && mod202.getYear() >= 2026;
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Model202Callback cbk) {
+				return new Model2022026AEAT(cbk);
+			}
+		},
 		AEAT_2025 {
 			@Override
 			public boolean accept(Mod202 mod202) {
-				return mod202.isAEAT() && mod202.getYear() >= 2025;
+				return mod202.isAEAT() && mod202.getYear() == 2025;
 			}
 
 			@Override

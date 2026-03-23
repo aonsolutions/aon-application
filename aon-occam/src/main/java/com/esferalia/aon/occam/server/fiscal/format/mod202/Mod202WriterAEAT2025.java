@@ -55,8 +55,7 @@ public class Mod202WriterAEAT2025 implements IMod202Writer{
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.year(mod.getYear()))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.getMod202Period(mod)) 
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod202Key.P02),8))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getCnae()==null?"0000":AonStringUtils.remove(mod.getCnae().getCode(), "."),4))
-			
+			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getCnae()==null ? "0000" : AonStringUtils.remove(mod.getCnae(), "."),4))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X01)))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X02)))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X19)))
@@ -68,8 +67,8 @@ public class Mod202WriterAEAT2025 implements IMod202Writer{
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X20)))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X14)))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod202Key.X08),15))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.X09),1 ,0))
-			,(wr,mod) -> wr.append(mod.getAmount(Mod202Key.X00) == 0?'A':'B')
+			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.X09),1,0))
+			,(wr,mod) -> wr.append(mod.getAmount(Mod202Key.X00) == 0 ? 'A' : 'B')
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C01),17))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C02),17))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C03),17))
@@ -127,7 +126,6 @@ public class Mod202WriterAEAT2025 implements IMod202Writer{
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C32),17))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C33),17))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C34),17))
-			
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.A01)))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod202Key.A02),22))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A03),17))

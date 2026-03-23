@@ -550,7 +550,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	public static void acceptSii(AonApiData api, InvoiceCommunicationConfiguration icc, Company company,  Invoice invoice) throws Exception {
-		if(invoice.isSales() && icc.isSii()) {
+		if(invoice.isSales() && icc.isSii() && !icc.isTbai()) {
 			try {
 				SIIManager manager = SIIManager.getInstance(icc);
 				
@@ -571,7 +571,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	public static void anularSii(AonApiData api, InvoiceCommunicationConfiguration icc, Company company,  Invoice invoice)  throws Exception {
-		if(invoice.isSales() && icc.isSii()) {
+		if(invoice.isSales() && icc.isSii() && !icc.isTbai()) {
 			try {
 				SIIManager manager = SIIManager.getInstance(icc);
 				
