@@ -87,7 +87,7 @@ public class CatalogueDAO {
 		
 		ctx.log().debug("INSERT TARIFF id: {0}", catalogue.getId());		
 		
-		return catalogue;
+		return get(ctx, id);
 	}
 
 	public static Catalogue update(AONContext ctx, Catalogue catalogue) {
@@ -104,7 +104,7 @@ public class CatalogueDAO {
 		
 		ctx.log().debug("UPDATE CATALOGUE id: {0}. ({1} rows)", catalogue.getId(), count);
 		
-		return catalogue;
+		return get(ctx, catalogue.getId());
 	}
 
 	public static void delete(AONContext ctx, Integer id) {

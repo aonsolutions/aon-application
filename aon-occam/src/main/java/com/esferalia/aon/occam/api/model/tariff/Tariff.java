@@ -17,6 +17,7 @@ public class Tariff implements Serializable {
 	public Integer getId() {
 		return id;
 	}
+	
 	public Tariff setId(Integer id) {
 		this.id = id;
 		return this;
@@ -25,6 +26,7 @@ public class Tariff implements Serializable {
 	public Integer getDomain() {
 		return domain;
 	}
+	
 	public Tariff setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
@@ -33,6 +35,7 @@ public class Tariff implements Serializable {
 	public String getCode() {
 		return code;
 	}
+	
 	public Tariff setCode(String code) {
 		this.code = code;
 		return this;
@@ -41,6 +44,7 @@ public class Tariff implements Serializable {
 	public String getName() {
 		return name;
 	}
+	
 	public Tariff setName(String name) {
 		this.name = name;
 		return this;
@@ -49,6 +53,7 @@ public class Tariff implements Serializable {
 	public boolean isPurchase() {
 		return purchase;
 	}
+	
 	public Tariff setPurchase(boolean purchase) {
 		this.purchase = purchase;
 		return this;
@@ -57,6 +62,7 @@ public class Tariff implements Serializable {
 	public double getDiscount() {
 		return discount;
 	}
+	
 	public Tariff setDiscount(double discount) {
 		this.discount = discount;
 		return this;
@@ -65,6 +71,7 @@ public class Tariff implements Serializable {
 	public boolean isActive() {
 		return active;
 	}
+	
 	public Tariff setActive(boolean active) {
 		this.active = active;
 		return this;
