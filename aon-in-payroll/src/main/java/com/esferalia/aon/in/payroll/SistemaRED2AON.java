@@ -683,7 +683,7 @@ public class SistemaRED2AON {
 
 					@Override
 					public void onContractData(Date startDate, Date endDate,
-							Map<ContextVariable, IdcContractData> contractData) {
+							Map<ContextVariable, Collection<IdcContractData>> contractData) {
 						addData(contractData, userLogin, domainName, domainId, startDate, endDate, ccc, naf);
 					}
 				});
@@ -726,7 +726,7 @@ public class SistemaRED2AON {
 				}
 
 				@Override
-				public void onContractData(Date startDate, Date endDate, Map<ContextVariable, IdcContractData> contractData) {
+				public void onContractData(Date startDate, Date endDate, Map<ContextVariable, Collection<IdcContractData>> contractData) {
 				}
 			});
 
@@ -778,12 +778,13 @@ public class SistemaRED2AON {
 
 	}
 
-	public static void addData(Map<ContextVariable, IdcContractData> data, String userLogin, String domainName, Integer domainId,
+	public static void addData(Map<ContextVariable, Collection<IdcContractData>> data, String userLogin, String domainName, Integer domainId,
 			Date startDate, Date endDate, String ccc, String naf) {
 
 		ContractData contractDatas[] = data
-				.entrySet().stream().map(e -> new ContractData().setStartDate(e.getValue().startDate()).setEndDate(e.getValue().endDate())
-						.setName(e.getKey().getName()).setExpression(toString(e.getValue().data())))
+				.entrySet().stream().flatMap(e -> e.getValue().stream().map(idcContractData -> new ContractData()
+						.setStartDate(idcContractData.startDate()).setEndDate(idcContractData.endDate())
+						.setName(e.getKey().getName()).setExpression(toString(idcContractData.data()))))
 				.toArray(ContractData[]::new);
 
 		PAYROLL.setData(domainName, domainId, userLogin, ccc, naf, startDate, endDate, contractDatas);
@@ -996,7 +997,7 @@ public class SistemaRED2AON {
 	}
 
 
-	private static String toString(Object obj) {
+	public static String toString(Object obj) {
 		if (obj == null)
 			return null;
 		if (obj instanceof String) {

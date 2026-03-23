@@ -10,9 +10,11 @@
 	<aon:div id="financeContainer">
 		<aon:if test="#{detailController.model.rowCount > 0 or financeController.model.rowCount > 0}">
 			<aon:panel>
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.finance_checking}" />
-				</f:facet>
+				<aon:if test="#{!app.standAlone}">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.finance_checking}" />
+					</f:facet>
+				</aon:if>
 
 				<aon:div styleClass="aon-bold aon-margin-bottom"
 					rendered="#{!invoiceController.readOnly and financeController.advancedFinancesAvailable}">

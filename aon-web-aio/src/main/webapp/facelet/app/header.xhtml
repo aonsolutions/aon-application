@@ -3228,6 +3228,30 @@
     	visibility: hidden;
 	}
 	
+	[id$='InvoiceForm:invoiceDetailsDiv'],
+	[id$='InvoiceForm:invoiceFinancesDiv'] {
+	    overflow-y: scroll;
+	    height: calc(100vh - 390px) ;
+	}
+
+	[id='aonContent:saleInvoiceForm:invoiceSalesPanelTab'].aon-panelTabSet,
+	[id='aonContent:expenseInvoiceForm:expenseInvoicePanelTab'].aon-panelTabSet,
+	[id='aonContent:purchaseInvoiceForm:purchaseInvoicePanelTab'].aon-panelTabSet {
+	    margin-bottom: 0px;
+	    height:calc(100vh - 290px) ;
+	}
+
+	[id='aonContent:saleInvoiceForm:invoiceSalesPanelTab'].aon-panelTabSet .aon-panelTabSet-headerClass > table,
+	[id='aonContent:expenseInvoiceForm:expenseInvoicePanelTab'].aon-panelTabSet .aon-panelTabSet-headerClass > table,
+	[id='aonContent:purchaseInvoiceForm:purchaseInvoicePanelTab'].aon-panelTabSet .aon-panelTabSet-headerClass > table{
+		padding-top: 0px ;
+	}
+
+	[id$='InvoiceForm:dataTable'] [id$='InvoiceForm:InvoiceAddress']{
+	    width: max-content;
+    }	
+
+	
 	</style>
 
 		

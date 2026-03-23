@@ -351,7 +351,7 @@ export class AonEventDetailList extends AonElement {
 		if (el && iconAddLocation === el.target.textContent) {
 			this.applicationParentEl.showView(SIGNIN_VIEWS.AON_LOCATION_ADD, { coordinates: data.coordinates });
 		} else {
-			this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_ADD, data);
+			this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_ADD, data, this._eventDatailListFilter);
 		}
 	}
 

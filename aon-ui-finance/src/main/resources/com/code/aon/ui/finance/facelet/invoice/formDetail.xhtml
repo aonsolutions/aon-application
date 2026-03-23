@@ -11,9 +11,11 @@
 	<aon:div id="invoiceDetailContainer" styleClass="aon-padding-top">
 		<aon:if test="#{!invoiceController.nevv}">
 			<aon:panel>
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.finance_invoice_lines}" />
-				</f:facet>
+				<aon:if test="#{!app.standAlone}">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.finance_invoice_lines}" />
+					</f:facet>
+				</aon:if>
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 					<ui:param name="dataTableId" value="invoiceDetails" />
