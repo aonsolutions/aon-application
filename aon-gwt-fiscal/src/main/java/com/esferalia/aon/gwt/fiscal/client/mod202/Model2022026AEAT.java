@@ -184,7 +184,7 @@ public class Model2022026AEAT extends Model202Base {
 	private void paintCNAERow(FlexTable table, final Model202Callback callback, IModelScript<Mod202Key> script) {
 		int row = table.getRowCount();
 		CNAE2025 cn = CNAE2025.valueOfCode(callback.getModel().getCnae());
-		table.setWidget(row, 0,new Label(script.getLabel()));
+		table.setWidget(row, 0,new Label(script.getLabel() + " (CNAE2025)"));
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 		
