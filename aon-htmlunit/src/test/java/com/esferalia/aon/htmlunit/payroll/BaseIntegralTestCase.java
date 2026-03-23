@@ -61,7 +61,7 @@ public abstract class BaseIntegralTestCase {
 	// ------------------------------------------------------------------------
 		
 	protected static  void setup(String url, String user, String password) throws Exception {
-		shutUp();
+		//shutUp();
 		LOGGER.setLevel(Level.WARNING);
 		webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
 		webClient.setAjaxController(new NicelyResynchronizingAjaxController());
@@ -277,7 +277,7 @@ public abstract class BaseIntegralTestCase {
 		int month = calendar.get(Calendar.MONTH)+1;
 		int end = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 		System.out.println(getText("periodLabel"));
-		wait4Regex("periodLabel", String.format( new Locale("es","ES"),"[0-9]+/%2$d/%1$d - [0-9]+/%2$d/%1$d", year, month, end));
+		wait4Regex("periodLabel", String.format( new Locale("es","ES"),"[0-9]+/[0-9]+/%1$d - [0-9]+/%2$d/%1$d", year, month, end));
 	}
 
 	/**
