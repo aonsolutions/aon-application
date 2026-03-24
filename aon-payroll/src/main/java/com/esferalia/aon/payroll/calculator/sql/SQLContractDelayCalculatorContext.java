@@ -630,7 +630,7 @@ public class SQLContractDelayCalculatorContext extends
 		}
 		
 		
-		periods = getPeriods(ContextVariable.DELAY_EXTRA_HOURS);
+		periods = getEvalPeriods(ContextVariable.DELAY_EXTRA_HOURS);
 
 		for (Period period : periods) {
 
@@ -675,9 +675,17 @@ public class SQLContractDelayCalculatorContext extends
 		}
 		
 		return payments;
-
+		
 	}
 
+	public List<Period> getEvalPeriods(ContextVariable var) {
+		try {
+			return this.getExpressionContext().eval(var.getName(), getStartDate(), getEndDate()).stream()
+			.map(ITimedResult::getPeriod).toList();
+		} catch (ExpressionException e) {
+		}
+		return Collections.emptyList();
+	}
 
 	private void override (ContractExpressionContext ctx, Double value, ContextVariable ...ctxVars  ) {
 		for ( ContextVariable ctxVar : ctxVars ) {
