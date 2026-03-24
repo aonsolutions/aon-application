@@ -23,7 +23,7 @@ public interface AccountingReportService extends RemoteService {
 
 	// --------------------------------------------------------------- ACCOUNT
 	// STATEMENT
-	AccountStatementReport getAccountStatement(String domainName, String user, int domain, AccountingReportParams params) throws AonCoreException;
+	AccountStatementReport getAccountStatement(Occam occam, AccountingReportParams params) throws AonCoreException;
 
 	LinkedList<AccountStatement> getAccountBalance(String domainName, int domain, String user, AccountingReportParams params) throws AonCoreException;
 
