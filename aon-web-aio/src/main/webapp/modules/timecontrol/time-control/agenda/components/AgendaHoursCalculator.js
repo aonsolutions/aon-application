@@ -32,6 +32,9 @@ export class AgendaHoursCalculator {
 	 */
 	getDayHours(dateKey, dayOfWeek) {
 		const msPerHour = 1000 * 60 * 60;
+		
+		// Los festivos de contrato no cuentan
+		if (this.data.festivesContract.has(dateKey)) return { workedTime: 0, expectedTime: 0 };
 
 		const hoursForDay  = this.data.workingDaysHours.length === 7
 			? (this.data.workingDaysHours[dayOfWeek] || 0) : 0;
