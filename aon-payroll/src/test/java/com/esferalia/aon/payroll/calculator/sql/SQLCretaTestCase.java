@@ -2155,6 +2155,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		addBonus(aonContext, contract, concept, null);
 		//@formatter:on
 
+	// 0002 HORAS EXTRAORDINARIAS   (STRUCTURAL_OVERTIME_BASE)
 	addPayment(aonContext, contract, "", "100.00", "_P", "_P", PaymentType.CRA_0002);
 
 	ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection,
@@ -2220,17 +2221,17 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Assert.assertEquals(prestIts.get(3).getStartDate(), workStartDate);
 	Assert.assertEquals(prestIts.get(3).getEndDate(), endDate);
 
-	List<ContextData> structuralBases = datas.get(ContextVariable.STRUCTURAL_OVERTIME_BASE.getName());
-	Assert.assertEquals(1, structuralBases.size());
-	Assert.assertEquals(structuralBases.get(0).getStartDate(), startDate);
-	Assert.assertEquals(structuralBases.get(0).getEndDate(), endDate);
-	Assert.assertEquals(0.00, Double.parseDouble(structuralBases.get(0).getExpression()), DELTA);
-
 	List<ContextData> nonStructuralBases = datas.get(ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName());
 	Assert.assertEquals(1, nonStructuralBases.size());
-	Assert.assertEquals(nonStructuralBases.get(0).getStartDate(), workStartDate);
+	Assert.assertEquals(nonStructuralBases.get(0).getStartDate(), startDate);
 	Assert.assertEquals(nonStructuralBases.get(0).getEndDate(), endDate);
-	Assert.assertEquals(100.00, Double.parseDouble(nonStructuralBases.get(0).getExpression()), DELTA);
+	Assert.assertEquals(0.00, Double.parseDouble(nonStructuralBases.get(0).getExpression()), DELTA);
+
+	List<ContextData> structuralBases = datas.get(ContextVariable.STRUCTURAL_OVERTIME_BASE.getName());
+	Assert.assertEquals(1, structuralBases.size());
+	Assert.assertEquals(structuralBases.get(0).getStartDate(), workStartDate);
+	Assert.assertEquals(structuralBases.get(0).getEndDate(), endDate);
+	Assert.assertEquals(100.00, Double.parseDouble(structuralBases.get(0).getExpression()), DELTA);
     }
 
     @Test

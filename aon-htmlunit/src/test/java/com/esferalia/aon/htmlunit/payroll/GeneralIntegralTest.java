@@ -3561,6 +3561,21 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgpBaseLabel", 1381.20);
 	}
 
+	@Test
+	public void TestHorasExtras() throws Exception {
+
+		if (!isDisplayed("extraordinarias,_horas"))
+			open("horas_extras");
+
+		wait4Id("extraordinarias,_horas");
+
+		draft("EXTRAORDINARIAS, HORAS");
+		calculate(Calendar.JANUARY,2026);
+		double hExtraBase = getText("hExtraBaseLabel");
+		assertText("structural_overtime", hExtraBase * 4.7 / 100.00);
+		
+	}
+
 	// -------------------------------------------------------------------------
 	
 	private void changeDisplayedHolidays(boolean flag) throws IndexOutOfBoundsException, IOException, InterruptedException{
