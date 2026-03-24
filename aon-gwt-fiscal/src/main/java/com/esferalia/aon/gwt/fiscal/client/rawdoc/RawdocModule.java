@@ -219,6 +219,7 @@ public class RawdocModule  implements EntryPoint {
 			final PopupPanel infoPanel = new PopupPanel( true, true );
 			infoPanel.setWidth( "600px");
 			infoPanel.setHeight("400px");
+			
 			FlowPanel configCheck = new FlowPanel();
 			configCheck.setStyleName(AON.CSS.aonWidthAll());
 			configCheck.addStyleName(AON.CSS.aonPadding());
@@ -239,7 +240,9 @@ public class RawdocModule  implements EntryPoint {
 			;
 			configCheck.add(errors);
 			
-			infoPanel.add(configCheck);
+			ScrollPanel scroll = new ScrollPanel();
+			scroll.setWidget(configCheck);
+			infoPanel.add(scroll);
 			infoPanel.center();
 			infoPanel.show();
 		}

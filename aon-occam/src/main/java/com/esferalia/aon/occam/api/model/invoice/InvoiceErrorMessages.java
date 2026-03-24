@@ -35,6 +35,7 @@ public enum InvoiceErrorMessages implements Serializable {
 	C018("No se ha podido determinar el tipo de factura"),
 	C019("La fecha del vencimiento no es correcta."),
 	C020("La divisa de la factura no es euro"),
+	C021("Titular bloqueado ({0})"),
 	
 	C050("Error comunicaci\u00F3n: \"{0}\" \"{1}\""),
 	C051("Factura comunicada con errores: \"{0}\" \"{1}\""),
