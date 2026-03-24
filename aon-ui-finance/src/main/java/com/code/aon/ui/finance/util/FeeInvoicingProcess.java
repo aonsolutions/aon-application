@@ -211,9 +211,7 @@ public class FeeInvoicingProcess implements ILongProcess {
 				e.printStackTrace();
 				AonUtil.addErrorMessage("Error during SII invoice communication: " + e.getMessage());
 			}
-		}
-		
-		if(config.isSii()) {
+		} else if(config.isSii()) {
 			try {
 				SIIManager manager = SIIManager.getInstance(config);
 					

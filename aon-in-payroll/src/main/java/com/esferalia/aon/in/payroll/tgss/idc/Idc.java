@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,7 +19,6 @@ import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.watson.util.Pair;
 
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos;
 
@@ -59,7 +59,7 @@ public class Idc {
 
 	public static interface IdcListener{
 		void onSSPECs(Date startDate, Date endDate, Collection<PEC> SSPecs);
-		void onContractData( Date startDate, Date endDate, Map<ContextVariable,IdcContractData> contractData);
+		void onContractData( Date startDate, Date endDate, Map<ContextVariable,Collection<IdcContractData>> contractData);
 	}
 
 	public static record IdcContractData (Object data, Date startDate, Date endDate) {}; 
@@ -72,46 +72,52 @@ public class Idc {
 		private Date startDate;
 		
 		
-		private Map<ContextVariable,IdcContractData> contractData = new HashMap<>();
+		private Map<ContextVariable,Collection<IdcContractData>> contractData = new HashMap<>();
 		
 		@Override
 		public void onContractType(String contractType) {
-			contractData.put(ContextVariable.TC2, new IdcContractData(contractType, startDate, endDate));
+			contractData.computeIfAbsent(ContextVariable.TC2, k -> new ArrayList<>()).add( new IdcContractData(contractType, startDate, endDate));
 		}
 		
 		@Override
 		public void onRlce(String rlce) {
 			if(AonStringUtils.containsIgnoreCase(rlce, "PRACT. NO LAB. EMP"))
-				contractData.put(ContextVariable.TC2, new IdcContractData("000", startDate, endDate));
+				contractData.computeIfAbsent(ContextVariable.TC2, k -> new ArrayList<>()).add( new IdcContractData("000", startDate, endDate));
 		}
 
 		@Override
 		public void onContractOcupation(String ocupation) {
-			contractData.put(ContextVariable.OCCUPATION, new IdcContractData(ocupation.toLowerCase(), startDate, endDate));
+			contractData.computeIfAbsent(ContextVariable.OCCUPATION, k -> new ArrayList<>()).add( new IdcContractData(ocupation.toLowerCase(), startDate, endDate));
 		}
 		
 		@Override
 		public void onContractPartialCoeficient(String coeficient) {
-			contractData.put(ContextVariable.PARTIAL_FACTOR, new IdcContractData(AonNumberUtils.todouble(coeficient)/1000.00, startDate, endDate) );
+			contractData.computeIfAbsent(ContextVariable.PARTIAL_FACTOR, k -> new ArrayList<>()).add( new IdcContractData(AonNumberUtils.todouble(coeficient)/1000.00, startDate, endDate) );
 		}
 		
 		@Override
 		public void onContractQuoteGroup(String quoteGroup) {
-			contractData.put(ContextVariable.QUOTE_GROUP, new IdcContractData(quoteGroup, startDate, endDate) );
+			contractData.computeIfAbsent(ContextVariable.QUOTE_GROUP, k -> new ArrayList<>()).add( new IdcContractData(quoteGroup, startDate, endDate) );
 		}
 				
 		@Override
 		public void onEmployeeQuoteTypes(Double it, Double ims, Double unemployment) {
 			if (Objects.nonNull(it)) {
-				contractData.put(ContextVariable.IT_PERCENT, new IdcContractData(it, startDate, endDate) );
+				contractData.computeIfAbsent(ContextVariable.IT_PERCENT, k -> new ArrayList<>()).add( new IdcContractData(it, startDate, endDate) );
 			}
 			if (Objects.nonNull(ims)) {
-				contractData.put(ContextVariable.IMS_PERCENT, new IdcContractData(ims, startDate, endDate));
+				contractData.computeIfAbsent(ContextVariable.IMS_PERCENT, k -> new ArrayList<>()).add( new IdcContractData(ims, startDate, endDate) );
 			}
 			
-			if (Objects.nonNull(unemployment)) {
-				contractData.put(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT,  new IdcContractData(unemployment == 7.05 ? 1.55 : 1.60, startDate, endDate) );
-				contractData.put(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT, new IdcContractData(unemployment == 7.05 ? 5.50 : 6.70, startDate, endDate));
+			if (Objects.nonNull(unemployment) && unemployment == 7.05 ) {
+				contractData.computeIfAbsent(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, k -> new ArrayList<>()).add( new IdcContractData(1.55, startDate, endDate) );
+				contractData.computeIfAbsent(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT, k -> new ArrayList<>()).add(new IdcContractData( 5.50 , startDate, endDate));
+			} else if (Objects.nonNull(unemployment) && unemployment == 8.30 ) {
+				contractData.computeIfAbsent(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, k -> new ArrayList<>()).add( new IdcContractData( 1.60, startDate, endDate) );
+				contractData.computeIfAbsent(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT, k -> new ArrayList<>()).add( new IdcContractData(6.70, startDate, endDate));
+			} else if (Objects.nonNull(unemployment) && unemployment == 0.00 ) {
+				contractData.computeIfAbsent(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, k -> new ArrayList<>()).add( new IdcContractData( 0.00, startDate, endDate) );
+				contractData.computeIfAbsent(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT, k -> new ArrayList<>()).add( new IdcContractData(0.00, startDate, endDate));
 			}
 		}
 		
@@ -128,7 +134,7 @@ public class Idc {
 			if ( AonStringUtils.equals(code, "06") && AonStringUtils.equals(quota, "03") ) {
 					try {
 						double percent = NUMBER_FORMAT.parse(portTipo).doubleValue();
-						contractData.put(ContextVariable.CGC_ENTERPRISE_PERCENT, 
+						contractData.computeIfAbsent(ContextVariable.CGC_ENTERPRISE_PERCENT, k -> new ArrayList<>()).add(
 						new IdcContractData(new Object() { 
 							@Override
 							public String toString() {
@@ -149,7 +155,7 @@ public class Idc {
 			return startDate;
 		}
 		
-		public Map<ContextVariable, IdcContractData> getContractData() {
+		public Map<ContextVariable, Collection<IdcContractData>> getContractData() {
 			return contractData;
 		}
 		
@@ -170,13 +176,13 @@ public class Idc {
 		idcListener.onContractData(contractDataListener.getStartDate(), contractDataListener.getEndDate(), contractDataListener.getContractData());
 	}
 
-	public static  Map<ContextVariable,IdcContractData> getContractData(byte data []) throws IOException, UnknownPDFException {
+	public static  Map<ContextVariable,Collection<IdcContractData>> getContractData(byte data []) throws IOException, UnknownPDFException {
 		try ( InputStream is = new ByteArrayInputStream(data)) {
 			return getContractData(is);
 		}
 	}
 
-	public static  Map<ContextVariable,IdcContractData> getContractData(InputStream is) throws IOException, UnknownPDFException {
+	public static  Map<ContextVariable,Collection<IdcContractData>> getContractData(InputStream is) throws IOException, UnknownPDFException {
 		ContractDataListener contractDataListener = new ContractDataListener();
 		IdcParser.parse(is, contractDataListener);
 		return contractDataListener.getContractData();

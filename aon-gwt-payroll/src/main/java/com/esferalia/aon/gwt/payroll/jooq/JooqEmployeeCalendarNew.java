@@ -382,7 +382,7 @@ public class JooqEmployeeCalendarNew {
 		Record contractCalendarRecord = dslContext.select(DSL.ifnull(CONTRACT.CALENDAR, PAYROLL_WORKPLACE.CALENDAR).as(CONTRACT.CALENDAR))
 				  .from(CONTRACT)
 				  .innerJoin(PAYROLL_WORKPLACE)
-				  .on(CONTRACT.WORKPLACE.eq(PAYROLL_WORKPLACE.WORKPLACE))
+				  .on(CONTRACT.WORKPLACE.eq(PAYROLL_WORKPLACE.WORKPLACE).and(CONTRACT.DOMAIN.eq(PAYROLL_WORKPLACE.DOMAIN)))
 				  .where(CONTRACT.ID.eq(contractId))
 				  .fetchOne();
 		
@@ -561,7 +561,7 @@ public class JooqEmployeeCalendarNew {
 		Record contractCalendarRecord = dslContext.select(DSL.ifnull(CONTRACT.CALENDAR, PAYROLL_WORKPLACE.CALENDAR).as(CONTRACT.CALENDAR))
 				  .from(CONTRACT)
 				  .innerJoin(PAYROLL_WORKPLACE)
-				  .on(CONTRACT.WORKPLACE.eq(PAYROLL_WORKPLACE.WORKPLACE))
+				  .on(CONTRACT.WORKPLACE.eq(PAYROLL_WORKPLACE.WORKPLACE).and(CONTRACT.DOMAIN.eq(PAYROLL_WORKPLACE.DOMAIN)))
 				  .where(CONTRACT.ID.eq(contractId))
 				  .fetchOne();
 		

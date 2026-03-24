@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
@@ -88,6 +89,11 @@ public class SERES {
             return getSeres().getEdiCodes(ctx, invoice);
         }
     }
-	
+
+	public static Double getUnitPrice(Occam occam, Integer customer, Integer item) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getSeres().getUnitPrice(ctx, customer, item);
+		}
+	}
 
 }

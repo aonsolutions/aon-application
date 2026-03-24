@@ -6,6 +6,8 @@ import static com.esferalia.aon.jooq.tables.Auth.AUTH;
 import static com.esferalia.aon.jooq.tables.AuthDevice.AUTH_DEVICE;
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Catalogue.CATALOGUE;
+import static com.esferalia.aon.jooq.tables.CatalogueCategory.CATALOGUE_CATEGORY;
+import static com.esferalia.aon.jooq.tables.CatalogueItem.CATALOGUE_ITEM;
 import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
 import static com.esferalia.aon.jooq.tables.Commission.COMMISSION;
 import static com.esferalia.aon.jooq.tables.CommissionCategory.COMMISSION_CATEGORY;
@@ -78,7 +80,9 @@ import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
+import com.esferalia.aon.occam.api.model.Filter.CatalogueCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CatalogueFilter;
+import com.esferalia.aon.occam.api.model.Filter.CatalogueItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionFilter;
@@ -131,6 +135,8 @@ import com.esferalia.aon.occam.api.model.Properties.AgreementLevelCategoryProper
 import com.esferalia.aon.occam.api.model.Properties.ApplicationParameterProperties;
 import com.esferalia.aon.occam.api.model.Properties.AuthDeviceProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
+import com.esferalia.aon.occam.api.model.Properties.CatalogueCategoryProperties;
+import com.esferalia.aon.occam.api.model.Properties.CatalogueItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.CatalogueProperties;
 import com.esferalia.aon.occam.api.model.Properties.CategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.CommissionCategoryProperties;
@@ -1597,6 +1603,40 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getPurchaseProperty() {return new FilterDAO.PropertyDAO<Byte>(CATALOGUE.PURCHASE);}
 		@Override public Property<Date> getStartProperty() {return new FilterDAO.PropertyDAO<Date>(CATALOGUE.START_DATE);}
 		@Override public Property<Date> getEndProperty() {return new FilterDAO.PropertyDAO<Date>(CATALOGUE.END_DATE);}
+	}
+
+	protected static class CatalogueItemPropertiesDAO implements CatalogueItemProperties {
+		protected Condition[] getConditions(CatalogueItemFilter filter) {
+			if (filter == null) return new Condition[0];
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(CATALOGUE_ITEM.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(CATALOGUE_ITEM.DOMAIN);}
+		@Override public Property<Integer> getCatalogueProperty() {return new FilterDAO.PropertyDAO<Integer>(CATALOGUE_ITEM.CATALOGUE);}
+		@Override public Property<Integer> getProductProperty() {return new FilterDAO.PropertyDAO<Integer>(CATALOGUE_ITEM.PRODUCT);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(CATALOGUE_ITEM.ITEM);}
+		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(CATALOGUE_ITEM.QUANTITY);}
+		@Override public Property<Double> getPriceProperty() {return new FilterDAO.PropertyDAO<Double>(CATALOGUE_ITEM.PRICE);}
+		@Override public Property<Double> getDiscountProperty() {return new FilterDAO.PropertyDAO<Double>(CATALOGUE_ITEM.DISCOUNT);}
+	}
+
+	protected static class CatalogueCategoryPropertiesDAO implements CatalogueCategoryProperties {
+		protected Condition[] getConditions(CatalogueCategoryFilter filter) {
+			if (filter == null) return new Condition[0];
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(CATALOGUE_CATEGORY.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(CATALOGUE_CATEGORY.DOMAIN);}
+		@Override public Property<Integer> getCatalogueProperty() {return new FilterDAO.PropertyDAO<Integer>(CATALOGUE_CATEGORY.CATALOGUE);}
+		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(CATALOGUE_CATEGORY.CATEGORY);}
+		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(CATALOGUE_CATEGORY.QUANTITY);}
+		@Override public Property<Double> getDiscountProperty() {return new FilterDAO.PropertyDAO<Double>(CATALOGUE_CATEGORY.DISCOUNT);}
 	}
 
 	protected static class TariffPropertiesDAO implements TariffProperties {

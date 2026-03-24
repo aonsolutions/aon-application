@@ -406,6 +406,15 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		Calendar calendar = Calendar.getInstance();
 
+		//13/02/2018
+		draft("FIN, DE OBRA");
+		calendar.set(2018, Calendar.MARCH, 31);
+		settle(calendar.getTime());
+		assertValue("totalPaymentLabel", 
+				55.19 + 
+				347.24 + 
+				( 55.19 + 347.24 + 1027.65 + 548.08 ) * 7.00 / 100.00); // FIN OBRA 7% SOBRE TOTAL_PAGADO
+
 		draft("FIN, CONTRATO TEMPORAL");
 
 		calendar.set(2017, Calendar.FEBRUARY, 23);
@@ -463,6 +472,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		double minCgcBase = 42.00 * 10.00;
 		assertValue("cgcBaseLabel", minCgcBase);
 		assertValue("cgpBaseLabel", minCgcBase);
+		
+		
 
 	}
 

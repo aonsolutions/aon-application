@@ -370,7 +370,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 				holidaysTypeLB.setEnabled(false);
 				
 				this.settleHolidayData.setVisible(true);
-				long days = DateUtils.getDaysBetween(this.contractEndDate, this.holidayDate);
+				long days = DateUtils.getDaysBetween(this.contractEndDate, this.holidayDate) + 1;
 				holidaysEndDB.setValue(this.holidayDate);
 				holidaysTB.setValue(days + "");
 				

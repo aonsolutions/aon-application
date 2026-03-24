@@ -714,9 +714,7 @@ public class SaleInvoiceController extends InvoiceController {
 					try (CloseableAONContext ctx =  AONContext.getAONContext(company.getDomain(), "")) {
 						setTbaiUrl(TbaiData.getInstance(ctx, config).getTbaiUrl(company.getDomain().getId(), invoice.getId()));
 					}
-				}
-				
-				if(config.isSii()) {
+				} else if(config.isSii()) {
 					try {
 						SIIManager manager = SIIManager.getInstance(config);
 							

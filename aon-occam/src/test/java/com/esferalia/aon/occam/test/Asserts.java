@@ -85,6 +85,9 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
+import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
+import com.esferalia.aon.occam.api.model.catalogue.CatalogueCategory;
+import com.esferalia.aon.occam.api.model.catalogue.CatalogueItem;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
@@ -452,6 +455,38 @@ public class Asserts {
 		assertEquals("Purchase",expected.isPurchase(), actual.isPurchase());
 		assertEquals("Discount",expected.getDiscount(), actual.getDiscount(), DELTA);
 		assertEquals("Active",expected.isActive(), actual.isActive());
+	}
+
+	public static void assertEqualsCatalogue(Catalogue expected, Catalogue actual) {
+		assertEqualsNulls("Catalogue", expected, actual);
+		assertEquals("Id", expected.getId(), actual.getId());
+		assertEquals("Domain", expected.getDomain(), actual.getDomain());
+		assertEquals("Name", expected.getName(), actual.getName());
+		assertEquals("Purchase", expected.isPurchase(), actual.isPurchase());
+		assertEquals("Start", expected.getStart(), actual.getStart());
+		assertEquals("End", expected.getEnd(), actual.getEnd());
+	}
+
+	public static void assertEqualsCatalogueItem(CatalogueItem expected, CatalogueItem actual) {
+		assertEqualsNulls("CatalogueItem", expected, actual);
+		assertEquals("Id", expected.getId(), actual.getId());
+		assertEquals("Domain", expected.getDomain(), actual.getDomain());
+		assertEquals("Catalogue", expected.getCatalogue(), actual.getCatalogue());
+		assertEquals("Product", expected.getProduct(), actual.getProduct());
+		assertEquals("Item", expected.getItem(), actual.getItem());
+		assertEquals("Quantity", expected.getQuantity(), actual.getQuantity(), DELTA);
+		assertEquals("Price", expected.getPrice(), actual.getPrice(), DELTA);
+		assertEquals("Discount", expected.getDiscount(), actual.getDiscount(), DELTA);
+	}
+
+	public static void assertEqualsCatalogueCategory(CatalogueCategory expected, CatalogueCategory actual) {
+		assertEqualsNulls("CatalogueCategory", expected, actual);
+		assertEquals("Id", expected.getId(), actual.getId());
+		assertEquals("Domain", expected.getDomain(), actual.getDomain());
+		assertEquals("Catalogue", expected.getCatalogue(), actual.getCatalogue());
+		assertEquals("Category", expected.getCategory(), actual.getCategory());
+		assertEquals("Quantity", expected.getQuantity(), actual.getQuantity(), DELTA);
+		assertEquals("Discount", expected.getDiscount(), actual.getDiscount(), DELTA);
 	}
 	
 	public static void assertEqualsProduct(Product expected, Product actual) {

@@ -831,13 +831,26 @@ public abstract class EmployeeWidget extends FlowPanel {
 		});
 		
 		addressMunicipality.getSuggestBox().addSelectionHandler(e -> {
-			String cityCode = municipalities.getZipByMunicipalityName(addressMunicipality.getValue());
-			onEmployeeAddressMunicipalityChange(addressMunicipality.getValue(), cityCode);
+			if(AonStringUtils.isBlank(addressMunicipality.getValue()))
+				onEmployeeAddressMunicipalityChange(null, null);
+			else {
+				Entry<String, String> city = municipalities.getZipByMunicipalityName(addressMunicipality.getValue());
+				
+				addressMunicipality.setValue(city.getValue(), false);
+				onEmployeeAddressMunicipalityChange(city.getValue(), city.getKey());
+			}
+			
 		});
 		
 		addressMunicipality.getSuggestBox().addValueChangeHandler(e -> {
-			String cityCode = municipalities.getZipByMunicipalityName(addressMunicipality.getValue());
-			onEmployeeAddressMunicipalityChange(addressMunicipality.getValue(), cityCode);
+			if(AonStringUtils.isBlank(addressMunicipality.getValue()))
+				onEmployeeAddressMunicipalityChange(null, null);
+			else {
+				Entry<String, String> city = municipalities.getZipByMunicipalityName(addressMunicipality.getValue());
+				
+				addressMunicipality.setValue(city.getValue(), false);
+				onEmployeeAddressMunicipalityChange(city.getValue(), city.getKey());
+			}
 		});
 		
 		mobile.addValueChangeHandler(e -> onEmployeeMobileChange(this.mobile.getValue()));

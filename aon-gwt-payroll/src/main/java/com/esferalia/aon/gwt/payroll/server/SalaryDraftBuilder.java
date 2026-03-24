@@ -1875,29 +1875,78 @@ public class SalaryDraftBuilder
 			return getDbItemCounterParts(dbItems, (ICompositeItem<?>) compositeItem);
 		}
 		
-		List<T> nameMatchDbItems = new LinkedList<T>();
-		List<T> fullMatchDbItems = new LinkedList<T>();
 
 		String name = item.getName();
 		Enum<?> type = item.getType();
+		Double amount = item.getAmount();
 		String description = item.getDescription();
-		for (T dbPayment : dbItems) {
-			if (!StringUtils.equals(name, dbPayment.getName())) {
-				continue;
-			}
-			if (StringUtils.isBlank(name)
-					&& !equals(type, dbPayment.getType())) {
-				continue;
-			}
-			nameMatchDbItems.add(dbPayment);
-			if (!StringUtils.equals(description, dbPayment.getDescription())) {
-				continue;
-			}
-			fullMatchDbItems.add(dbPayment);
+
+		
+		if ( AonStringUtils.isNotBlank(name) && AonStringUtils.isNotBlank(description) ) {
+			List<T> fullMatchDbItems = dbItems.stream()
+					.filter(dbPayment -> AonStringUtils.equals(name, dbPayment.getName()))
+					.filter(dbPayment -> AonStringUtils.equals(description, dbPayment.getDescription()))
+					.toList();
+			if (!fullMatchDbItems.isEmpty())	
+				return fullMatchDbItems;
+		}
+		
+		
+		if ( AonStringUtils.isNotBlank(description) ) {
+			List<T> descriptionMatchDbItems = dbItems.stream()
+					.filter(dbPayment -> AonStringUtils.equalsIgnoreCase(description, dbPayment.getDescription()))
+					.toList();
+			if (!descriptionMatchDbItems.isEmpty())	
+				return descriptionMatchDbItems;
+			
+			String normalizedDescription = normalize(description);
+			descriptionMatchDbItems = dbItems.stream()
+					.filter(dbPayment -> AonStringUtils.equals(normalizedDescription, normalize(dbPayment.getDescription())))
+					.toList();
+
+			if (!descriptionMatchDbItems.isEmpty())	
+				return descriptionMatchDbItems;
+		}
+		
+		if ( AonStringUtils.isNotBlank(name) && AonNumberUtils.isValid(amount) ) {
+			List<T> nameAmountMatchDbItems = dbItems.stream()
+					.filter(dbPayment -> AonStringUtils.equalsIgnoreCase(name, dbPayment.getName()))
+					.filter(dbPayment -> AonNumberUtils.equals(amount, dbPayment.getAmount()))
+					.limit(1)
+					.toList();
+			if (!nameAmountMatchDbItems.isEmpty())	
+				return nameAmountMatchDbItems;
 		}
 
-		return fullMatchDbItems.size() > 0 ? fullMatchDbItems
-				: nameMatchDbItems;
+		if ( AonStringUtils.isNotBlank(name) ) {
+			List<T> nameMatchDbItems = dbItems.stream()
+					.filter(dbPayment -> AonStringUtils.equalsIgnoreCase(name, dbPayment.getName()))
+					.toList();
+			if (!nameMatchDbItems.isEmpty())	
+				return nameMatchDbItems;
+		}
+		
+
+		if ( type != null && AonNumberUtils.isValid(amount) ) {
+			List<T> typeAmountMatchDbItems = dbItems.stream()
+					.filter(dbPayment -> equals(type, dbPayment.getType()))
+					.filter(dbPayment -> AonNumberUtils.equals(amount, dbPayment.getAmount()))
+					.limit(1)
+					.toList();
+			if (!typeAmountMatchDbItems.isEmpty())	
+				return typeAmountMatchDbItems;
+		}
+		
+		if ( type != null ) {
+			List<T> typeMatchDbItems = dbItems.stream()
+					.filter(dbPayment -> equals(type, dbPayment.getType()))
+					.toList();
+			if (!typeMatchDbItems.isEmpty())	
+				return typeMatchDbItems;
+		}
+
+		return Collections.emptyList();
+		
 	}
 
 	private static <T extends ISalaryItem<?>> List<T> getSsItemCounterParts(
@@ -2194,6 +2243,21 @@ public class SalaryDraftBuilder
 		default:
 			return var.getName();
 		}
+	}
+	
+	private static String normalize(String str) {
+		if ( AonStringUtils.isBlank(str) ) 
+			return "";
+		
+		// without accents
+		String normalized = AonStringUtils.normalized(str);
+		// only letters, numbers and _ 
+		normalized = normalized.replaceAll("\\W", "");
+		// without underscores
+		normalized = normalized.replaceAll("_", "");
+		
+		// only numbers and letters, in upper case
+		return normalized.toUpperCase();
 	}
 	
 	

@@ -24,6 +24,9 @@ import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
+import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
+import com.esferalia.aon.occam.api.model.catalogue.CatalogueCategory;
+import com.esferalia.aon.occam.api.model.catalogue.CatalogueItem;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
@@ -85,10 +88,12 @@ import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.CarrierDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CatalogueDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.OfferDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductCategoryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectTypeDAO;
@@ -435,6 +440,48 @@ public class AonFaker {
 			.setPurchase( AonRandom.gt(50) )
 			.setDiscount( AonRandom.getDouble(0, 100, 2))
 			.setActive( !AonRandom.gt(2) );
+	}
+
+	public static Catalogue getCatalogue( AONContext ctx ) {
+		return new Catalogue()
+			.setDomain(ctx.getDomainId())
+			.setName(faker.commerce().department())
+			.setPurchase(AonRandom.gt(50))
+			.setStart(new Date());
+	}
+
+	public static CatalogueItem getCatalogueItem( AONContext ctx ) {
+		Catalogue catalogue = CatalogueDAO.getStream(ctx, p -> p.getDomainProperty().eq(ctx.getDomainId()))
+			.findFirst().orElse(null);
+		if (catalogue == null || catalogue.getId() == null) catalogue = CatalogueDAO.insert(ctx, getCatalogue(ctx));
+
+		Product product = ProductDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if (product == null || product.getId() == null) product = ProductDAO.save(ctx, getProduct(ctx));
+
+		return new CatalogueItem()
+			.setDomain(ctx.getDomainId())
+			.setCatalogue(catalogue.getId())
+			.setProduct(product.getId())
+			.setItem(null)
+			.setQuantity(AonRandom.getDouble(0, 100, 4))
+			.setPrice(AonRandom.getDouble(0, 1000, 4))
+			.setDiscount(AonRandom.getDouble(0, 100, 2));
+	}
+
+	public static CatalogueCategory getCatalogueCategory( AONContext ctx ) {
+		Catalogue catalogue = CatalogueDAO.getStream(ctx, p -> p.getDomainProperty().eq(ctx.getDomainId()))
+			.findFirst().orElse(null);
+		if (catalogue == null || catalogue.getId() == null) catalogue = CatalogueDAO.insert(ctx, getCatalogue(ctx));
+
+		ProductCategory category = ProductCategoryDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if (category == null || category.getId() == null) category = ProductCategoryDAO.insert(ctx, getProductCategory(ctx));
+
+		return new CatalogueCategory()
+			.setDomain(ctx.getDomainId())
+			.setCatalogue(catalogue.getId())
+			.setCategory(category.getId())
+			.setQuantity(AonRandom.getDouble(0, 100, 4))
+			.setDiscount(AonRandom.getDouble(0, 100, 2));
 	}
 	
 	public static PayMethod getPayMethod( AONContext ctx ) {

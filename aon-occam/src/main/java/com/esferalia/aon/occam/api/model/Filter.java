@@ -731,7 +731,17 @@ public interface Filter extends Serializable{
 	public interface CatalogueFilter{
 		Filter filter(CatalogueProperties properties);
 	}
-	
+
+	@FunctionalInterface
+	public interface CatalogueItemFilter{
+		Filter filter(CatalogueItemProperties properties);
+	}
+
+	@FunctionalInterface
+	public interface CatalogueCategoryFilter{
+		Filter filter(CatalogueCategoryProperties properties);
+	}
+
 	@FunctionalInterface
 	public interface RattachTagFilter{
 		Filter filter(RattachTagProperties properties);

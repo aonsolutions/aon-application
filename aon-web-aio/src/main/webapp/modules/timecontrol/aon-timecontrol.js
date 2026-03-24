@@ -130,6 +130,8 @@ export class AonTimecontrol extends AonElement {
 			}
 
 			this.applicationEl.removeToolbarOptions();
+			
+			console.log('showView', view, data, filter)
 
 			switch (view) {
 				case SIGNIN_VIEWS.AON_PRESENCE_LIST:
@@ -163,6 +165,9 @@ export class AonTimecontrol extends AonElement {
 					} else if (this.TASK_HOLDER) {
 						aonView.data = { task_holder: this.TASK_HOLDER };
 					}
+					
+					if(filter) aonView._eventDatailListFilter = filter;
+					
 					break;
 				case SIGNIN_VIEWS.AON_LOCATION_LIST:
 					aonView = new AonLocationList();
@@ -185,10 +190,14 @@ export class AonTimecontrol extends AonElement {
 					break;
 			}
 
-			if (aonView) {
+			if (aonView && 
+					!(aonView === SIGNIN_VIEWS.AON_PRESENCE_LIST || aonView === SIGNIN_VIEWS.AON_EVENT_LIST || aonView === SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST)
+			) {
+				
 				aonView.id = view;
 				if (filter) aonView.filter = filter;
 				this.applicationEl.setContent(aonView);
+				
 			}
 
 			resolve(true);
