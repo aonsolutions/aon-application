@@ -794,6 +794,7 @@ public class InvoiceCommunicationDAO {
 	// *************************************************************
 	// ********************** [PREPARE NEW SII] ********************
 	// *************************************************************
+
 	public static void prepareNewSii(AONContext ctx) {
 		ctx.getDslContext()
 			.select(DATA_RESPONSE.SOURCE_ID,DATA_RESPONSE_DETAIL.DATA_VALUE)
@@ -822,4 +823,31 @@ public class InvoiceCommunicationDAO {
 				Boolean.toString(true));
 	}
 
+	public static void prepareNewSii(AONContext ctx, Integer year) {
+		Date from = AonDateUtils.getYearFirstDay(year);
+		Date to = AonDateUtils.getYearLastDay(year);
+		ctx.getDslContext()
+			.select(DATA_RESPONSE.SOURCE_ID,DATA_RESPONSE_DETAIL.DATA_VALUE)
+			.from(DATA_RESPONSE)
+			.join(INVOICE).on(INVOICE.ID.eq(DATA_RESPONSE.SOURCE_ID))
+			.join(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE.ID.eq(DATA_RESPONSE_DETAIL.DATA_RESPONSE))
+			.where(DATA_RESPONSE.DOMAIN.eq(ctx.getDomainId()))
+			.and(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()))
+			.and(DATA_RESPONSE_DETAIL.DOMAIN.eq(ctx.getDomainId()))
+			.and(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq("status"))
+			.and(DATA_RESPONSE.CREATION_DATE.ge(AonDateUtils.toTimestamp(from)))
+			.and(DATA_RESPONSE.CREATION_DATE.le(AonDateUtils.toTimestamp(to)))
+			.fetch()
+			.stream()
+			.forEach( r -> {
+				Integer invoiceId = r.getValue(DATA_RESPONSE.SOURCE_ID);
+				String st = r.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE);
+				InvoiceInfo info = new InvoiceInfo()
+					.setDomain(ctx.getDomainId())
+					.setInvoice(invoiceId)
+					.setType(InvoiceCommunicationType.SII)
+					.setStatus(InvoiceCommunicationStatus.safeValueOf(st));
+				InvoiceInfoDAO.save(ctx, info);
+		});
+	}
 }

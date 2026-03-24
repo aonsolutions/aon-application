@@ -67,6 +67,15 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 	}
 	
 	@Override
+	public void prepareNewSii(String domainName, int domainId, String user, Integer year) {
+		Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(domainId)
+				.setUser(user);
+		AON.prepareNewSii(occam, year);
+	}
+	
+	@Override
 	public LinkedList<Invoice> getInvoices(Occam occam, InvoiceCommunicationParams params) {
 		return AON.getCommunicationInvoices(occam, params);
 	}

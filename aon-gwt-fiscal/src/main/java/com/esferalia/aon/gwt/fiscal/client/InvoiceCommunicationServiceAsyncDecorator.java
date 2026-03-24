@@ -123,6 +123,9 @@ public class InvoiceCommunicationServiceAsyncDecorator implements InvoiceCommuni
 		ssa.getResponseUrl(domainName, domainId, login, dataResponse, new AsyncCallbackWrapper<>(callback));	
 	}
 
-	
-	
+	@Override
+	public void prepareNewSii(String domainName, int domainId, String user, Integer year, AsyncCallback<Void> callback) {
+		AON.start();
+		ssa.prepareNewSii(domainName, domainId, user, year, new AsyncCallbackWrapper<>(null));
+	}
 }
