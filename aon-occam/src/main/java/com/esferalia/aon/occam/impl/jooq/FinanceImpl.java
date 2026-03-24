@@ -172,6 +172,7 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
+	@Deprecated
 	public Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilter filter, Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceSIIDAO.getSiiInvoiceStream(ctx, filter, pending, aceptada, aceptadaErrores,incorrecta, anulada, sii));
@@ -732,6 +733,11 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public void prepareNewSii(AONContext ctx) {
 		ctx.getDslContext().transaction(configuration -> InvoiceCommunicationDAO.prepareNewSii(ctx));
+	}
+	
+	@Override
+	public void prepareNewSii(AONContext ctx, Integer year) {
+		ctx.getDslContext().transaction(configuration -> InvoiceCommunicationDAO.prepareNewSii(ctx, year));
 	}
 	
 	@Override

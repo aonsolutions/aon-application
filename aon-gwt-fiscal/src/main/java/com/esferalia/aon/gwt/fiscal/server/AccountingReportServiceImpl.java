@@ -29,9 +29,8 @@ public class AccountingReportServiceImpl extends AonStatelessRemoteServiceServle
 	}
 	
 	@Override
-	public AccountStatementReport getAccountStatement(String domainName, String user,
-			int domain, AccountingReportParams params) throws AonCoreException {
-		return ACCOUNTING.getAccountStatement(domainName,domain,user,params);
+	public AccountStatementReport getAccountStatement(Occam occam, AccountingReportParams params) throws AonCoreException {
+		return ACCOUNTING.getAccountStatement(occam,params);
 	}
 	
 	@Override

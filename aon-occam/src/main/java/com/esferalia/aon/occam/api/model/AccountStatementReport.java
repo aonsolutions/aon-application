@@ -4,13 +4,18 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+
 public class AccountStatementReport implements Serializable {
 	
 	private static final long serialVersionUID = -3255950085921957296L;
+	private static final int LIMIT = 1000;
+	
 	private AccountingReportParams params;
 	
 	private LinkedList<AccountStatement> summary;
 	private LinkedList<AccountStatement> details;
+	private int offset = 0;
 	
 	public AccountingReportParams  getParams() {
 		return params;
@@ -42,4 +47,20 @@ public class AccountStatementReport implements Serializable {
 		this.details = details;
 	}
 	
+	public int getLimit() {
+		return LIMIT;
+	}
+	public int getOffset() {
+		return offset;
+	}
+	public void setOffset(int offset) {
+		this.offset = offset;
+	}
+	public boolean rendered() {
+		return AonCollectionUtils.size(details) <= getLimit()
+			|| getOffset() == AonCollectionUtils.size(details);
+	}
+	public int incrementOffset() {
+		return ++this.offset;
+	}
 }
