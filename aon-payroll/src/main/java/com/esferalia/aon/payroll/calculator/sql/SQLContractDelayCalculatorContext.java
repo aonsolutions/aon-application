@@ -535,6 +535,11 @@ public class SQLContractDelayCalculatorContext extends
 				"Atrasos en la Nómina");
 	}
 	
+	protected String getDescriptionForExtraHoursDelay(IContractPayment payment, int ordinal) {
+		return String.format(
+				"Atrasos en las Horas Extras");
+	}
+
 	protected <T extends ISalary> ISalaryBuilder<T> getSalaryBuilder(ISalaryBuilder<T> salaryBuilder)
 	{
 		return salaryBuilder;
@@ -623,7 +628,46 @@ public class SQLContractDelayCalculatorContext extends
         			payments.add(itPayment);
 			}
 		}
+		
+		
+		periods = getPeriods(ContextVariable.DELAY_EXTRA_HOURS);
 
+		for (Period period : periods) {
+
+			double totalWorkedDays = getTotalDays(period, ContextVariable.WORKED_DAYS);
+			
+			ContractPayment extraHoursPayment = 
+			new DelayPaymentBuilder.DelayContractPayment();
+			extraHoursPayment.setId(Integer.MIN_VALUE);
+			extraHoursPayment.setStartDate(period.getStart());
+			extraHoursPayment.setEndDate(period.getEnd());
+			extraHoursPayment.setSalaryType(SalaryType.DELAY);
+
+			extraHoursPayment.setType(getPaymentType(PaymentType.CRA_0008));
+			extraHoursPayment.setIrpfExpression(ContextVariable.ALL);
+			extraHoursPayment.setDescription(getDescriptionForExtraHoursDelay(extraHoursPayment, payments.size()));
+			extraHoursPayment.setExpression(
+					String.format(
+					Locale.ROOT,
+					"/*var:%s*/"
+					+ "%s/%f*%s", 
+					ContextVariable.DELAY_EXTRA_HOURS.getName(), 
+					ContextVariable.DELAY_EXTRA_HOURS.getName(), 
+					totalWorkedDays , 
+					ContextVariable.WORKED_DAYS.getName() 
+					));
+			extraHoursPayment.setQuoteExpression(
+					String.format(
+					Locale.ROOT,
+					"/*var:%s*/"
+					+ "BASE_CGP_BRUTA += %s; SELF.setBaseVariable('BASE_ESTR', ( isdef BASE_ESTR ? BASE_ESTR: 0.00 )  + %s ); 0.00", 
+					ContextVariable.DELAY_EXTRA_HOURS.getName(), 
+					ContextVariable.ALL,
+					ContextVariable.ALL
+					));
+
+			payments.add(extraHoursPayment);
+		}
 		
 		if ( payments.isEmpty() )  {
 			ExpressionImpl expression = new ExpressionImpl().setName(ContextVariable.DELAY_AMOUNT.getName()).setScope(ExpressionScope.SYSTEM);

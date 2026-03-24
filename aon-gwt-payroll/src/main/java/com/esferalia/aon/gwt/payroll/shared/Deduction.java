@@ -37,8 +37,8 @@ public class Deduction extends Item<Deduction.Type> implements Reports.Deduction
 				put(PROFESSIONAL_CONTINGENCY, "Contingencias Profesionales");
 				put(UNEMPLOYMENT, "Desempleo");
 				put(JOB_TRAINING, "Formaci\u00f3n Profesional");
-				put(STRUCTURAL_OVERTIME, "Horas Extraordinarias Fuerza Mayor");
-				put(NON_STRUCTURAL_OVERTIME, "Resto Horas Extraordinarias");
+				put(NON_STRUCTURAL_OVERTIME, "Horas Extraordinarias Fuerza Mayor");
+				put(STRUCTURAL_OVERTIME, "Resto Horas Extraordinarias");
 				put(IRPF, "IRPF");
 				put(ADVANCE_PAYMENT, "Anticipo");
 				put(IN_KIND, "Valor de productos en especie");

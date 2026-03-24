@@ -12,13 +12,13 @@ public enum PaymentType implements IResourceable{
 	CRA_0002(true,false){
 		@Override
 		public void accept(PaymentTypeVisitor visitor) {
-			visitor.visitNonStructuralHours(this);
+			visitor.visitStructuralHours(this);
 		}
 	},
 	CRA_0003(true,false){
 		@Override
 		public void accept(PaymentTypeVisitor visitor) {
-			visitor.visitStructuralHours(this);
+			visitor.visitNonStructuralHours(this);
 		}
 	},
 	CRA_0004(true,false),
