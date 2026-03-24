@@ -93,8 +93,8 @@ export class AonConfig extends AonElement {
                 aonMenu.reloadTopNav();
             });
         }
-
-        if (this.getDur().isAdmin()) {
+        
+        if (!this.getDur().isEmployee()) {
             let configDiv = this.createSpan();
             configDiv.className = "configCardText";
 
