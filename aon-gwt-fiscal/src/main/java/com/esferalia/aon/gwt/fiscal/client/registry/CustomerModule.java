@@ -1,5 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.registry;
 
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDomain;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDomainName;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentUser;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getRootPanel;
+
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -25,7 +30,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonSimpleDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -35,7 +39,7 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.gargoylesoftware.htmlunit.javascript.host.animations.Animation;
+import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
@@ -54,9 +58,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
-import com.google.gwt.core.client.EntryPoint;
 
 public class CustomerModule  implements EntryPoint {
 	

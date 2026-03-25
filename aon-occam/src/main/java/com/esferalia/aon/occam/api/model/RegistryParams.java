@@ -15,6 +15,7 @@ public class RegistryParams implements Serializable{
 	private String user;
 	private SecurityLevel securityLevel; 
 	private boolean hasConfidentialityRole;
+	private String description;
 	
 	private Integer id;
 	private DocumentType documentType;
@@ -73,6 +74,14 @@ public class RegistryParams implements Serializable{
 	}
 	public RegistryParams setHasConfidentialityRole(boolean hasConfidentialityRole) {
 		this.hasConfidentialityRole = hasConfidentialityRole;
+		return this;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+	public RegistryParams setDescription(String description) {
+		this.description = description;
 		return this;
 	}
 	
