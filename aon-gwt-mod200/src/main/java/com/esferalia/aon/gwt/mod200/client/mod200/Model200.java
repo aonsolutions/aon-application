@@ -65,6 +65,9 @@ import com.esferalia.aon.gwt.mod200.client.mod200.e2024.Mod2002024Service;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2024.Mod2002024ServiceAsync;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2024.Mod2002024ServiceAsyncDecorator;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2024.Model2002024;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2025.Mod2002025Service;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2025.Mod2002025ServiceAsync;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2025.Mod2002025ServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013;
@@ -115,6 +118,7 @@ public class Model200 extends MainEntryPoint {
 	static Mod2002022ServiceAsync mod2002022Service;
 	static Mod2002023ServiceAsync mod2002023Service;
 	static Mod2002024ServiceAsync mod2002024Service;
+	static Mod2002025ServiceAsync mod2002025Service;
 	
 	private Model200ModuleOptions options;
 
@@ -122,6 +126,14 @@ public class Model200 extends MainEntryPoint {
 	private SimpleLayoutPanel declarationContainer;
 	
 	private Model200Table model200Table;
+	
+	public static Mod2002025ServiceAsync getMod2002025Service() {
+		if (mod2002025Service == null) {
+			Mod2002025ServiceAsync mod2002025ServiceRaw = GWT.create(Mod2002025Service.class);
+			mod2002025Service = new Mod2002025ServiceAsyncDecorator(mod2002025ServiceRaw);
+		}
+		return mod2002025Service;
+	}
 	
 	public static Mod2002024ServiceAsync getMod2002024Service() {
 		if (mod2002024Service == null) {

@@ -1,9 +1,9 @@
-package com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2024;
+package com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2025;
 
 import static com.esferalia.aon.jooq.tables.FsModel200.FS_MODEL200;
 import static com.esferalia.aon.jooq.tables.FsModel200Detail.FS_MODEL200_DETAIL;
 import static com.esferalia.aon.jooq.tables.FsModel200Registry.FS_MODEL200_REGISTRY;
-import static com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2024.Mod2002024Initialization.INITIALIZE_EXPRESSION_MAP;
+import static com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2025.Mod2002025Initialization.INITIALIZE_EXPRESSION_MAP;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -46,14 +46,14 @@ import com.esferalia.aon.occam.mod200.api.model.UteBase;
 import com.esferalia.aon.occam.mod200.api.model.UteForeign;
 import com.esferalia.aon.occam.mod200.api.model.UteParticipation;
 import com.esferalia.aon.occam.mod200.api.model.UteParticipationBis;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024Character;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024KeyDC;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2025.Mod2002025;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2025.Mod2002025Character;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2025.Mod2002025Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2025.Mod2002025KeyDC;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.Mod200DAO;
-import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2023.Mod2002023DAO;
-import com.esferalia.aon.occam.mod200.server.format.mod200_2024.Mod2002024Import2023;
+import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2024.Mod2002024DAO;
+import com.esferalia.aon.occam.mod200.server.format.mod200_2025.Mod2002025Import2024;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -61,14 +61,14 @@ import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod2002024DAO  {
+public class Mod2002025DAO  {
 	
 	@FunctionalInterface
 	private static interface IPopulater {
-		boolean populate(Mod2002024 mod, FsModel200RegistryRecord reg);
+		boolean populate(Mod2002025 mod, FsModel200RegistryRecord reg);
 	}
 
-	private enum Mod2002024RegistryType {
+	private enum Mod2002025RegistryType {
 		 ADMINISTRATOR ( 
 			(mod,reg) -> mod.getAdministrators().add(new Mod200CompanyAdministrator()
 				.setDocument( reg.getDocument())
@@ -194,7 +194,7 @@ public class Mod2002024DAO  {
 		
 		private IPopulater populater;
 		
-		private Mod2002024RegistryType(IPopulater populater){
+		private Mod2002025RegistryType(IPopulater populater){
 			this.populater = populater;
 		}
 		
@@ -202,28 +202,28 @@ public class Mod2002024DAO  {
 			return reg.getType() == this.ordinal();
 		}
 
-		private void _populate(Mod2002024 mod,FsModel200RegistryRecord reg) {
+		private void _populate(Mod2002025 mod,FsModel200RegistryRecord reg) {
 			if ( accept(reg) ) {
 				this.populater.populate(mod, reg);
 			}
 		}
 		
-		public static void populate(Mod2002024 mod,FsModel200RegistryRecord reg) {
-			Mod2002024RegistryType type = Mod2002024RegistryType.safeValueOf(reg.getType());
+		public static void populate(Mod2002025 mod,FsModel200RegistryRecord reg) {
+			Mod2002025RegistryType type = Mod2002025RegistryType.safeValueOf(reg.getType());
 			if (type != null) {
 				type._populate(mod, reg);
 			}
 		}
 		
-		private static Mod2002024RegistryType safeValueOf( Byte i ) {
+		private static Mod2002025RegistryType safeValueOf( Byte i ) {
 			if (i == null) return null;
 			return safeValueOf( i.intValue() ); 
 		}
 		
-		private static Mod2002024RegistryType safeValueOf( Integer i ) {
+		private static Mod2002025RegistryType safeValueOf( Integer i ) {
 			if (i == null) return null;
-			if (i < 0 || i >= Mod2002024RegistryType.values().length) return null;
-			return Mod2002024RegistryType.values()[i];
+			if (i < 0 || i >= Mod2002025RegistryType.values().length) return null;
+			return Mod2002025RegistryType.values()[i];
 		}
 
 		private byte byteValue() {
@@ -234,36 +234,36 @@ public class Mod2002024DAO  {
 	
 	private static final IAccMiningKeyAccept ACCEPTER = key -> {
 		try {
-			// Comprobar si la clave está en Mod2002024Key
-			return (Mod2002024Key.valueOf((String) key) != null);
+			// Comprobar si la clave está en Mod2002025Key
+			return (Mod2002025Key.valueOf((String) key) != null);
 		} catch (IllegalArgumentException e) {
 			try {
-				// Si no lo está, comprobar si está en Mod2002024KeyDC (Detalle correcciones)
-				return (Mod2002024KeyDC.valueOf((String) key) != null);
+				// Si no lo está, comprobar si está en Mod2002025KeyDC (Detalle correcciones)
+				return (Mod2002025KeyDC.valueOf((String) key) != null);
 			} catch (IllegalArgumentException e2) {
 				return false;
 			}
 		}
 	};	
 
-	public static Mod2002024 save(AONContext ctx, Mod2002024 mod200) {
+	public static Mod2002025 save(AONContext ctx, Mod2002025 mod200) {
 		try {
 			ctx.log().info("------ [START] SAVE MOD 200");
 			
 			// Fechas inicio y fin de periodo para tipo de periodo = 1
 			if (mod200.getPeriodType() == 1) {
-				mod200.setPeriodStart(AonDateUtils.getYearFirstDay(2024));
-				mod200.setPeriodEnd(AonDateUtils.getYearLastDay(2024));
+				mod200.setPeriodStart(AonDateUtils.getYearFirstDay(2025));
+				mod200.setPeriodEnd(AonDateUtils.getYearLastDay(2025));
 			}
 			
 			// Casillas estados contables (Balance y PYG)
-			mod200.setBooleanValue(Mod2002024Key.C0050, (mod200.getBalanceType() == BalanceType.NORMAL));
-			mod200.setBooleanValue(Mod2002024Key.C0051, (mod200.getBalanceType() == BalanceType.ABREVIADO));
-			mod200.setBooleanValue(Mod2002024Key.C0052, (mod200.getBalanceType() == BalanceType.PYMES));
+			mod200.setBooleanValue(Mod2002025Key.C0050, (mod200.getBalanceType() == BalanceType.NORMAL));
+			mod200.setBooleanValue(Mod2002025Key.C0051, (mod200.getBalanceType() == BalanceType.ABREVIADO));
+			mod200.setBooleanValue(Mod2002025Key.C0052, (mod200.getBalanceType() == BalanceType.PYMES));
 			
-			mod200.setBooleanValue(Mod2002024Key.C0053, (mod200.getPygType() == BalanceType.NORMAL));
-			mod200.setBooleanValue(Mod2002024Key.C0054, (mod200.getPygType() == BalanceType.ABREVIADO));
-			mod200.setBooleanValue(Mod2002024Key.C0055, (mod200.getPygType() == BalanceType.PYMES));
+			mod200.setBooleanValue(Mod2002025Key.C0053, (mod200.getPygType() == BalanceType.NORMAL));
+			mod200.setBooleanValue(Mod2002025Key.C0054, (mod200.getPygType() == BalanceType.ABREVIADO));
+			mod200.setBooleanValue(Mod2002025Key.C0055, (mod200.getPygType() == BalanceType.PYMES));
 			
 			if ( AonStringUtils.length(mod200.getDocument()) > 9)
 				throw new AonCoreException("El documento del presentador no puede superar 9 caracteres.");
@@ -285,7 +285,7 @@ public class Mod2002024DAO  {
 				throw new AonCoreException("El NIF del secretario no puede superar 9 caracteres.");
 			if ( mod200.getSecretary() != null && AonStringUtils.length(mod200.getSecretary().getName()) > 25) 
 				throw new AonCoreException("El nombre del secretario no puede superar 9 caracteres.");
-			Mod2002024 mod = null;
+			Mod2002025 mod = null;
 			if (mod200.getId() == null) {
 				mod = insert(ctx, mod200);
 			} else {
@@ -299,7 +299,7 @@ public class Mod2002024DAO  {
 		}
 	}
 	
-	private static Mod2002024 insert(AONContext ctx, Mod2002024 mod200)  {
+	private static Mod2002025 insert(AONContext ctx, Mod2002025 mod200)  {
         mod200.setCreationUser(ctx.getUser());
 		mod200.setCreationDate(new Timestamp(System.currentTimeMillis()));        
 		mod200.setFsModel(Mod200DAO.saveFsModel(ctx, mod200)); 
@@ -364,7 +364,7 @@ public class Mod2002024DAO  {
 		return mod200;
 	}
 	
-	private static void insertRegistry(AONContext ctx,Mod2002024 mod200) {
+	private static void insertRegistry(AONContext ctx,Mod2002025 mod200) {
 		
 		LinkedList<FsModel200RegistryRecord> list = new LinkedList<FsModel200RegistryRecord>();
 		FsModel200RegistryRecord detail = null;
@@ -375,7 +375,7 @@ public class Mod2002024DAO  {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
-				detail.setType( Mod2002024RegistryType.ADMINISTRATOR.byteValue());
+				detail.setType( Mod2002025RegistryType.ADMINISTRATOR.byteValue());
 				detail.setDocument(AonStringUtils.substring(ca.getDocument(),0,9));
 				detail.setName(AonStringUtils.substring(ca.getName(),0,45));
 				detail.setRepresentative( (byte) (ca.isRepresentative()?1:0) );
@@ -391,7 +391,7 @@ public class Mod2002024DAO  {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
-				detail.setType(Mod2002024RegistryType.PARTICPATION_OUT.byteValue());
+				detail.setType(Mod2002025RegistryType.PARTICPATION_OUT.byteValue());
 				detail.setDocument(AonStringUtils.substring(cp.getDocument(),0,9));
 				detail.setName(AonStringUtils.substring(cp.getName(),0,45));
 				detail.setProvince( (byte) cp.getProvince() );
@@ -421,7 +421,7 @@ public class Mod2002024DAO  {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
-				detail.setType(Mod2002024RegistryType.PARTICPATION_IN.byteValue());
+				detail.setType(Mod2002025RegistryType.PARTICPATION_IN.byteValue());
 				detail.setDocument(AonStringUtils.substring(cp.getDocument(),0,9));
 				detail.setName(AonStringUtils.substring(cp.getName(),0,45));
 				detail.setProvince( (byte) cp.getProvince() );
@@ -440,7 +440,7 @@ public class Mod2002024DAO  {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
-				detail.setType(Mod2002024RegistryType.MINOR_ENTITIES.byteValue());
+				detail.setType(Mod2002025RegistryType.MINOR_ENTITIES.byteValue());
 				detail.setName(AonStringUtils.substring(me.getName(),0,40));
 				detail.setDocument(AonStringUtils.substring(me.getDocument(),0,9));
 				list.add(detail);
@@ -453,7 +453,7 @@ public class Mod2002024DAO  {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
-				detail.setType(Mod2002024RegistryType.UTE_FOREIGN.byteValue());
+				detail.setType(Mod2002025RegistryType.UTE_FOREIGN.byteValue());
 				detail.setName(AonStringUtils.substring(ute.getIdentification(),0,45));
 				detail.setCountry( ute.getCountry() );
 				detail.setAValue(ute.getVolume());
@@ -470,7 +470,7 @@ public class Mod2002024DAO  {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
-				detail.setType(Mod2002024RegistryType.REPRESENTATIVE.byteValue());
+				detail.setType(Mod2002025RegistryType.REPRESENTATIVE.byteValue());
 				detail.setDocument(AonStringUtils.substring(lr.getDocument(),0,9));
 				detail.setNotary(AonStringUtils.substring(lr.getNotary(),0,20));
 				detail.setNotaryDate( lr.getNotaryDate()==null?null:new java.sql.Date( lr.getNotaryDate().getTime() ) );
@@ -485,7 +485,7 @@ public class Mod2002024DAO  {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
-				detail.setType(Mod2002024RegistryType.UTE_PARTICIPATION.byteValue());
+				detail.setType(Mod2002025RegistryType.UTE_PARTICIPATION.byteValue());
 				detail.setDocument(AonStringUtils.substring(ute.getDocument(),0,9));
 				detail.setProvince( (byte) ute.getProvince() );
 				detail.setCountry( ute.getCountry() );
@@ -503,7 +503,7 @@ public class Mod2002024DAO  {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
-				detail.setType(Mod2002024RegistryType.UTE_BASE.byteValue());
+				detail.setType(Mod2002025RegistryType.UTE_BASE.byteValue());
 				detail.setNominalValue(ute.getBase());				
 				detail.setIncomes(ute.getAmount());
 				detail.setPercent(ute.getPercent());
@@ -517,7 +517,7 @@ public class Mod2002024DAO  {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
-				detail.setType(Mod2002024RegistryType.GROUP_ENTITIES.byteValue());
+				detail.setType(Mod2002025RegistryType.GROUP_ENTITIES.byteValue());
 				detail.setDocument(ge.getDocument());
 				detail.setCountry(ge.getCountry());
 				list.add(detail);
@@ -531,7 +531,7 @@ public class Mod2002024DAO  {
 					detail = new FsModel200RegistryRecord();
 					detail.setFsModel200(mod200.getId());
 					detail.setDomain(mod200.getDomain());
-					detail.setType(Mod2002024RegistryType.ESTABLISHMENTS.byteValue());
+					detail.setType(Mod2002025RegistryType.ESTABLISHMENTS.byteValue());
 					detail.setDocument(AonStringUtils.substring(es,0,9));
 					list.add(detail);
 				}
@@ -545,7 +545,7 @@ public class Mod2002024DAO  {
 					detail = new FsModel200RegistryRecord();
 					detail.setFsModel200(mod200.getId());
 					detail.setDomain(mod200.getDomain());
-					detail.setType(Mod2002024RegistryType.FILM_PRODUCTIONS.byteValue());
+					detail.setType(Mod2002025RegistryType.FILM_PRODUCTIONS.byteValue());
 					detail.setDocument(AonStringUtils.substring(fp,0,9));
 					list.add(detail);
 				}
@@ -559,7 +559,7 @@ public class Mod2002024DAO  {
 					detail = new FsModel200RegistryRecord();
 					detail.setFsModel200(mod200.getId());
 					detail.setDomain(mod200.getDomain());
-					detail.setType(Mod2002024RegistryType.SICAV_1.byteValue());
+					detail.setType(Mod2002025RegistryType.SICAV_1.byteValue());
 					detail.setDocument(AonStringUtils.substring(s1,0,9));  
 					list.add(detail);
 				}
@@ -573,7 +573,7 @@ public class Mod2002024DAO  {
 					detail = new FsModel200RegistryRecord();
 					detail.setFsModel200(mod200.getId());
 					detail.setDomain(mod200.getDomain());
-					detail.setType(Mod2002024RegistryType.SICAV_2.byteValue());
+					detail.setType(Mod2002025RegistryType.SICAV_2.byteValue());
 					detail.setDocument(AonStringUtils.substring(s2,0,9));  
 					list.add(detail);
 				}
@@ -586,7 +586,7 @@ public class Mod2002024DAO  {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
-				detail.setType(Mod2002024RegistryType.TITULAR_REAL.byteValue());
+				detail.setType(Mod2002025RegistryType.TITULAR_REAL.byteValue());
 				detail.setDocument(tr.getDocument());
 				detail.setName(tr.getName());
 				detail.setRepresentative((byte) tr.getDocumentType());
@@ -604,7 +604,7 @@ public class Mod2002024DAO  {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
-				detail.setType(Mod2002024RegistryType.UTE_PARTICIPATION_BIS.byteValue());
+				detail.setType(Mod2002025RegistryType.UTE_PARTICIPATION_BIS.byteValue());
 				detail.setDocument(ute.getDocument());
 				detail.setName(ute.getName());
 				detail.setProvince((byte) ute.getProvince());
@@ -642,11 +642,11 @@ public class Mod2002024DAO  {
 		}
 	}
 
-	private static void insertDetail(AONContext ctx, Mod2002024 mod200) {
+	private static void insertDetail(AONContext ctx, Mod2002025 mod200) {
 		LinkedList<FsModel200DetailRecord> list = new LinkedList<FsModel200DetailRecord>();
 		FsModel200DetailRecord detail = null;
-		// Insertamos los valores de Mod2002024Key
-		for (Mod2002024Key k : Mod2002024Key.values()) {
+		// Insertamos los valores de Mod2002025Key
+		for (Mod2002025Key k : Mod2002025Key.values()) {
 			DoubleVariableEx dv = null;	
 			if (mod200.getDraftMap().containsKey(k)) {
 				dv = mod200.getDraftMap().get(k);
@@ -662,8 +662,8 @@ public class Mod2002024DAO  {
 				list.add(detail);
 			}
 		}
-		// Insertamos los valores de Mod2002024KeyDC (Detalle correcciones)
-		for (Mod2002024KeyDC k : Mod2002024KeyDC.values()) {
+		// Insertamos los valores de Mod2002025KeyDC (Detalle correcciones)
+		for (Mod2002025KeyDC k : Mod2002025KeyDC.values()) {
 			DoubleVariableEx dv = null;	
 			if (mod200.getDraftMap().containsKey(k)) {
 				dv = mod200.getDraftMap().get(k);
@@ -683,7 +683,7 @@ public class Mod2002024DAO  {
 		ctx.log().info("\t\t MOD 200 DETAIL (" + list.size() + " rows)");
 	}
 	
-	private static Mod2002024 update(AONContext ctx, Mod2002024 mod200)  {		
+	private static Mod2002025 update(AONContext ctx, Mod2002025 mod200)  {		
         mod200.setModificationUser(ctx.getUser());
 		mod200.setModificationDate(new Timestamp( System.currentTimeMillis()));
 		mod200.setFsModel(Mod200DAO.saveFsModel(ctx, mod200)); 
@@ -760,7 +760,7 @@ public class Mod2002024DAO  {
 		ctx.log().info("\t\t MOD 200 REGISTRY DELETED (" + count + " rows)");
 	}
 	
-	public static void delete(AONContext ctx, Mod2002024 mod200 )  {
+	public static void delete(AONContext ctx, Mod2002025 mod200 )  {
 		try {
 			int id = mod200.getId();
 			ctx.log().info("------ [START] DELETE MOD 200 ["+id+"]");
@@ -778,20 +778,20 @@ public class Mod2002024DAO  {
 			
 	}
 
-	public static Mod2002024 getById(AONContext ctx, int id ) {
+	public static Mod2002025 getById(AONContext ctx, int id ) {
 		FsModel200Record rec = ctx.getDslContext()
 				.selectFrom(FS_MODEL200)
 				.where(FS_MODEL200.ID.equal(id))
 				.fetchOne();
-		Mod2002024 mod200 = populateMod200(ctx,rec);
+		Mod2002025 mod200 = populateMod200(ctx,rec);
 		initializeActiveMap(mod200);
 		return mod200;
 	}
 	
-	public static Mod2002024 createNewMod200(AONContext ctx, int year) {
+	public static Mod2002025 createNewMod200(AONContext ctx, int year) {
 		try {
 			ctx.log().info("------ [INI] createNewMod200");
-			Mod2002024 mod200 = new Mod2002024();
+			Mod2002025 mod200 = new Mod2002025();
 			mod200.setDomain(ctx.getDomainId());
 			mod200.setYear(year);
 			mod200.setStatus(FiscalStatus.PENDING);
@@ -804,18 +804,18 @@ public class Mod2002024DAO  {
 		}
 	}
 	
-//	public static Mod2002024 getByYear(AONContext ctx, int year) {
+//	public static Mod2002025 getByYear(AONContext ctx, int year) {
 //		return getByYear(ctx, year, true);
 //	}
 //	
-//	public static Mod2002024 getByYear(AONContext ctx, int year, boolean initialize) {
+//	public static Mod2002025 getByYear(AONContext ctx, int year, boolean initialize) {
 //		Result<FsModel200Record> result = ctx.getDslContext()
 //				.selectFrom(FS_MODEL200)
 //				.where(FS_MODEL200.DOMAIN.equal(ctx.getDomainId()))
 //				.and(FS_MODEL200.YEAR.equal(year))
 //				.fetch();
 //		FsModel200Record rec = null;
-//		Mod2002024 mod200 = null; 
+//		Mod2002025 mod200 = null; 
 //		if (result != null && result.isNotEmpty()) {
 //			rec = result.get(0);
 //			mod200 = populateMod200(ctx,rec);
@@ -830,9 +830,9 @@ public class Mod2002024DAO  {
 //		return mod200;
 //	}
 
-	private static Mod2002024 getMod200(FsModel200Record rec) {
+	private static Mod2002025 getMod200(FsModel200Record rec) {
 		
-		Mod2002024 mod200 = new Mod2002024();
+		Mod2002025 mod200 = new Mod2002025();
 		mod200.setId(rec.getId());
 		mod200.setYear(rec.getYear());
 		mod200.setDomain(rec.getDomain());
@@ -887,23 +887,23 @@ public class Mod2002024DAO  {
 		return mod200;
 	}
 	
-	private static Mod2002024 populateMod200(AONContext ctx, FsModel200Record rec) {
-		Mod2002024 mod200 = null;
+	private static Mod2002025 populateMod200(AONContext ctx, FsModel200Record rec) {
+		Mod2002025 mod200 = null;
 		if (rec != null) {
 			mod200 = getMod200(rec);
 			fillDetail(mod200,ctx);
-			final Mod2002024 mod = mod200;
+			final Mod2002025 mod = mod200;
 			ctx.getDslContext() 
 				.selectFrom(FS_MODEL200_REGISTRY)
 				.where(	FS_MODEL200_REGISTRY.FS_MODEL200.equal(mod200.getId()))
 				.fetch()
 				.stream()
-				.forEach(reg -> Mod2002024RegistryType.populate(mod, reg));
+				.forEach(reg -> Mod2002025RegistryType.populate(mod, reg));
 		}
 		return mod200;
 	}
 	
-	private static void fillDetail(Mod2002024 mod200,AONContext ctx) {
+	private static void fillDetail(Mod2002025 mod200,AONContext ctx) {
 		
 		HashMap<String,Double> map = new HashMap<String,Double>();
 		Result<FsModel200DetailRecord> result = ctx.getDslContext()
@@ -912,13 +912,13 @@ public class Mod2002024DAO  {
 			 	.fetch();
 		for (FsModel200DetailRecord det : result) {
 			try {
-				// Comprobamos si la clave es de Mod2002024Key
-				Mod2002024Key.valueOf(det.getKey());
+				// Comprobamos si la clave es de Mod2002025Key
+				Mod2002025Key.valueOf(det.getKey());
 				map.put(det.getKey(),det.getValue());
 			} catch (IllegalArgumentException e) {
 				try {
-					// Comprobamos si la clave es de Mod2002024KeyDC (Detalle correcciones)
-					Mod2002024KeyDC.valueOf(det.getKey());
+					// Comprobamos si la clave es de Mod2002025KeyDC (Detalle correcciones)
+					Mod2002025KeyDC.valueOf(det.getKey());
 					map.put(det.getKey(),det.getValue());
 				} catch (IllegalArgumentException e2) {
 					System.out.println( "WARNING: Clave "+ det.getKey()+" no encontrada!" );
@@ -927,8 +927,8 @@ public class Mod2002024DAO  {
 		}
 
 		DoubleVariableEx v = null;
-		// Cargamos las claves de Mod2002024Key
-		for (Mod2002024Key key : Mod2002024Key.values() ) {
+		// Cargamos las claves de Mod2002025Key
+		for (Mod2002025Key key : Mod2002025Key.values() ) {
 			v = new DoubleVariableEx( key );
 			if (map.containsKey(key.toString())) {
 				v.setValue( map.get(key.toString()));
@@ -938,8 +938,8 @@ public class Mod2002024DAO  {
 			mod200.addVariable(v);
 		}
 		
-		// Cargamos las claves de Mod2002024KeyDC (Detalle correcciones)
-		for (Mod2002024KeyDC key : Mod2002024KeyDC.values() ) {
+		// Cargamos las claves de Mod2002025KeyDC (Detalle correcciones)
+		for (Mod2002025KeyDC key : Mod2002025KeyDC.values() ) {
 			v = new DoubleVariableEx( key );
 			if (map.containsKey(key.toString())) {
 				v.setValue( map.get(key.toString()));
@@ -950,43 +950,43 @@ public class Mod2002024DAO  {
 		}
 
 		BalanceType bt = null;
-		if (map.containsKey( Mod2002024Key.C0050.toString() )) {
+		if (map.containsKey( Mod2002025Key.C0050.toString() )) {
 			bt = BalanceType.NORMAL;
-		} else if (map.containsKey( Mod2002024Key.C0051.toString() )) {
+		} else if (map.containsKey( Mod2002025Key.C0051.toString() )) {
 			bt = BalanceType.ABREVIADO;
-		} else if (map.containsKey( Mod2002024Key.C0052.toString() )) {
+		} else if (map.containsKey( Mod2002025Key.C0052.toString() )) {
 			bt = BalanceType.PYMES;
 		}
 		mod200.setBalanceType( bt );
 		
 		EcpnType et = EcpnType.NO_CONSTA;
-		if (map.containsKey( Mod2002024Key.C0075.toString() )) {
+		if (map.containsKey( Mod2002025Key.C0075.toString() )) {
 			et = EcpnType.NORMAL;
-		} else if (map.containsKey( Mod2002024Key.C0076.toString() )) {
+		} else if (map.containsKey( Mod2002025Key.C0076.toString() )) {
 			et = EcpnType.ABREVIADO;
-		} else if (map.containsKey( Mod2002024Key.C0077.toString() )) {
+		} else if (map.containsKey( Mod2002025Key.C0077.toString() )) {
 			et = EcpnType.PYMES;
 		}
 		mod200.setEcpnType(et);
 		
 		bt = null;
-		if (map.containsKey( Mod2002024Key.C0053.toString() )) {
+		if (map.containsKey( Mod2002025Key.C0053.toString() )) {
 			bt = BalanceType.NORMAL;
-		} else if (map.containsKey( Mod2002024Key.C0054.toString() )) {
+		} else if (map.containsKey( Mod2002025Key.C0054.toString() )) {
 			bt = BalanceType.ABREVIADO;
-		} else if (map.containsKey( Mod2002024Key.C0055.toString() )) {
+		} else if (map.containsKey( Mod2002025Key.C0055.toString() )) {
 			bt = BalanceType.PYMES;
 		}
 		mod200.setPygType( bt );
 	}
 	
-	public static Mod2002024 initializeNewMod200(AONContext ctx, Mod2002024 mod200) {
+	public static Mod2002025 initializeNewMod200(AONContext ctx, Mod2002025 mod200) {
 		
-		Mod2002023 old = Mod2002023DAO.getLastModel2023(ctx);
+		Mod2002024 old = Mod2002024DAO.getLastModel2024(ctx);
 		if (old != null && old.getId() != null) { 
-			ctx.log().info("------ [START] INITIALIZE NEW MOD 200 FROM MOD 200 2023");
+			ctx.log().info("------ [START] INITIALIZE NEW MOD 200 FROM MOD 200 2024");
 			mod200.setEnterprise(old.getEnterprise());
-			Mod2002024Import2023.import2023(mod200,old);
+			Mod2002025Import2024.import2024(mod200,old);
 			mod200.setInitializedFromLastYear(true);
 		} else {
 			ctx.log().info("------ [START] INITIALIZE NEW MOD 200 FROM CONFIGURATION");
@@ -1023,7 +1023,7 @@ public class Mod2002024DAO  {
 		return mod200;
 	}
 
-	public static Mod2002024 initializeMod200(AONContext ctx, Mod2002024 mod200) {
+	public static Mod2002025 initializeMod200(AONContext ctx, Mod2002025 mod200) {
 		try {
 			ctx.log().info("------ [START] INITIALIZE MOD 200");
 			if (!mod200.isInitializedFromLastYear()) {
@@ -1054,7 +1054,7 @@ public class Mod2002024DAO  {
 			}
 			
 			// Datos grupo mercantil, no se graban si hemos desmarcado el caracter 0081, 0082 o 0039
-			if (mod200.isNotChecked(Mod2002024Key.C0081) && mod200.isNotChecked(Mod2002024Key.C0082) && mod200.isNotChecked(Mod2002024Key.C0039)) {		
+			if (mod200.isNotChecked(Mod2002025Key.C0081) && mod200.isNotChecked(Mod2002025Key.C0082) && mod200.isNotChecked(Mod2002025Key.C0039)) {		
 				mod200.setUltimateDocument("");            // Grupo mercantil - Datos de la sociedad matriz última: NIF
 				mod200.setUltimateName("");				   // Grupo mercantil - Datos de la sociedad matriz última: Razón social
 				mod200.setUltimateGroupName("");		   // Grupo mercantil - Datos de la sociedad matriz última: Nombre de grupo 
@@ -1064,30 +1064,30 @@ public class Mod2002024DAO  {
 			
 			// Grupos de sociedades, art. 42 código de comercio, incluidas entidades de crédito y aseguradoras
 			// NIF de las entidades del grupo, dejarlo vacio si no se ha marcado el caracter 00039
-			if (mod200.isNotChecked(Mod2002024Key.C0039)) {
+			if (mod200.isNotChecked(Mod2002025Key.C0039)) {
 				mod200.getGroupEntities().clear();
 			}
 			
 			// No residentes con más de un establecimiento permanente
 			// NIF establecimientos permanentes, dejarlo vacio si no se ha marcado el caracter 00021
-			if (mod200.isNotChecked(Mod2002024Key.C0021)) {
+			if (mod200.isNotChecked(Mod2002025Key.C0021)) {
 				mod200.getEstablishments().clear(); 
 			}
 			
 			// Agrupaciones de interés económico y UTES - Relación de Partícipes (apartado C)
 			// Dejarlo vacio si no se ha marcado el carácter 00013, 00085 o 00014
-			if (mod200.isNotChecked(Mod2002024Key.C0013) && mod200.isNotChecked(Mod2002024Key.C0085) && mod200.isNotChecked(Mod2002024Key.C0014)) {
+			if (mod200.isNotChecked(Mod2002025Key.C0013) && mod200.isNotChecked(Mod2002025Key.C0085) && mod200.isNotChecked(Mod2002025Key.C0014)) {
 				mod200.getUteParticipations().clear();				
 			}
 			
 			// Agrupaciones de interés económico y UTES - Partícipes
 			// Dejarlo vacio si no se ha marcado el carácter 00089
-			if (mod200.isNotChecked(Mod2002024Key.C0089)) {				
+			if (mod200.isNotChecked(Mod2002025Key.C0089)) {				
 				mod200.getUteParticipationsBis().clear();
 			}
 			
-			// Inicialización estados contables (solo afecta a claves de Mod2002024Key)
-			Mod2002024MVELContext mvelCtx = new Mod2002024MVELContext( mod200, ACCEPTER );		
+			// Inicialización estados contables (solo afecta a claves de Mod2002025Key)
+			Mod2002025MVELContext mvelCtx = new Mod2002025MVELContext( mod200, ACCEPTER );		
 			AccMiningParameters params = getParams(ctx,mod200);			
 			if (params != null) {
 				params.setAccountLevel(5); // AHORA PARA OBTENER LOS SALDOS SE DEBE PONER A 5 DIGITOS
@@ -1099,7 +1099,7 @@ public class Mod2002024DAO  {
 			addCharacters(mvelCtx,mod200);
 			addBalanceCharacters(mvelCtx,mod200);
 			DoubleVariableEx dv = null;
-			for (Mod2002024Key k : INITIALIZE_EXPRESSION_MAP.keySet()) {
+			for (Mod2002025Key k : INITIALIZE_EXPRESSION_MAP.keySet()) {
 				String stringKey = k.toString();
 				String expression = INITIALIZE_EXPRESSION_MAP.get(k);
 				mvelCtx.put(stringKey, 0.0 );
@@ -1127,18 +1127,18 @@ public class Mod2002024DAO  {
 		}
 	}
 	
-	private static void fillMod202(AONContext ctx,Mod2002024 mod200) {
+	private static void fillMod202(AONContext ctx,Mod2002025 mod200) {
 		Mod202DAO.getMod202s(ctx, mod200.getDomain())
 				.filter(mod -> mod.getYear() == mod200.getYear() && (mod.isFinished() || mod.isSent()))
 				.forEach(mod -> {
 					Mod202 mod202 = Mod202DAO.get(ctx, mod.getId());
-					Mod2002024Key key = null;
+					Mod2002025Key key = null;
 					if (mod202.getPeriod() == Period.T1) {
-						key = Mod2002024Key.BN601;
+						key = Mod2002025Key.BN601;
 					} else if (mod202.getPeriod() == Period.T2) {
-						key = Mod2002024Key.BN603;
+						key = Mod2002025Key.BN603;
 					} else if (mod202.getPeriod() == Period.T3) {
-						key = Mod2002024Key.BN605;
+						key = Mod2002025Key.BN605;
 					}
 					if (key != null) {
 						DoubleVariableEx dv = new DoubleVariableEx(key);
@@ -1148,19 +1148,19 @@ public class Mod2002024DAO  {
 				});
 	}
 
-	public static Mod2002024 calculate(Mod2002024 mod200) {
+	public static Mod2002025 calculate(Mod2002025 mod200) {
 		return calculate(mod200,true);		
 	}
 	
-	private static Mod2002024 calculate(Mod2002024 mod200, boolean addToDraft) {
+	private static Mod2002025 calculate(Mod2002025 mod200, boolean addToDraft) {
 		try {
-			Mod2002024MVELContext ctx = new Mod2002024MVELContext( mod200, ACCEPTER );
+			Mod2002025MVELContext ctx = new Mod2002025MVELContext( mod200, ACCEPTER );
 			
 			// No asignamos Expression Map al contexto MVEL, para ganar en velocidad de cálculo del 
 			// modelo, cada vez que se modifica una casilla (dado el numero de casillas que tiene el
 			// modelo actualmente). Eso obliga a que en COMPUTE_EXPRESSION_MAP estén introducidos los
 			// datos, siguiendo el orden de los cálculos que se deban realizar
-//			ctx.setExpressionMap(Mod2002024Compute.COMPUTE_EXPRESSION_MAP);			
+//			ctx.setExpressionMap(Mod2002025Compute.COMPUTE_EXPRESSION_MAP);			
 			
 			// Añadir valores de keysMap
 			for (DoubleVariableEx dv : mod200.getKeysMap().values()) {
@@ -1178,14 +1178,14 @@ public class Mod2002024DAO  {
 				}
 			}
 			
-			// Actualmente las casillas calculadas solo son de Mod2002024Key
+			// Actualmente las casillas calculadas solo son de Mod2002025Key
 			DoubleVariableEx v = null;
-			for (Mod2002024Key k : Mod2002024Compute.COMPUTE_EXPRESSION_MAP.keySet()) {
+			for (Mod2002025Key k : Mod2002025Compute.COMPUTE_EXPRESSION_MAP.keySet()) {
 				String stringKey = k.toString();
 				DoubleVariableEx existingVariable = mod200.getVariable(k);
 				Double existingValue = ( existingVariable == null )?0.0:existingVariable.getValue();
 				ctx.put(stringKey, existingValue);
-				Object ret = ctx.evaluateExpression(k,Mod2002024Compute.COMPUTE_EXPRESSION_MAP.get(k));
+				Object ret = ctx.evaluateExpression(k,Mod2002025Compute.COMPUTE_EXPRESSION_MAP.get(k));
 				if (ret instanceof Double) {
 					Double calculated = (Double) ret;
 					ctx.put(stringKey, calculated);
@@ -1202,7 +1202,7 @@ public class Mod2002024DAO  {
 			}
 			
 			// Grabar Importe a ingresar o devolver (amount) y tipo de ingreso o devolucion (result_type, dev_type y pay_type)  
-			v = mod200.getVariable(Mod2002024Key.BN621);
+			v = mod200.getVariable(Mod2002025Key.BN621);
 			mod200.setResultType(null);
 			if (v == null || v.getValue() == 0) {
 				// Cuota cero
@@ -1232,7 +1232,7 @@ public class Mod2002024DAO  {
 		}
 	}
 	
-	private static AccMiningParameters getParams(AONContext ctx,Mod2002024 mod200) throws AonCoreException {
+	private static AccMiningParameters getParams(AONContext ctx,Mod2002025 mod200) throws AonCoreException {
 		AccMiningParameters params = new AccMiningParameters();
 		params.setDomain(mod200.getDomain());
 		params.setYear(mod200.getYear());
@@ -1248,23 +1248,23 @@ public class Mod2002024DAO  {
 		return params;
 	}
 
-	private static void addCharacters(Mod2002024MVELContext ctx, Mod2002024 mod200) {
-		// Caracteres de la declaración, solo están en Mod2002024Key
-		for (Mod2002024Key[] block : Mod2002024Character.CHARACTERS_KEYS)
-		  for (Mod2002024Key key : block) {
+	private static void addCharacters(Mod2002025MVELContext ctx, Mod2002025 mod200) {
+		// Caracteres de la declaración, solo están en Mod2002025Key
+		for (Mod2002025Key[] block : Mod2002025Character.CHARACTERS_KEYS)
+		  for (Mod2002025Key key : block) {
 			DoubleVariableEx dv = mod200.getKeysMap().get(key);
 			ctx.put(key.toString(), (dv != null && dv.getBooleanValue() )); 
 		  }		
 	}
 	
-	private static void initializeActiveMap(Mod2002024 mod200) {
-		// Actualmente la visualizacion de determinadas casillas solo afecta a Mod2002024Key
-		Mod2002024MVELContext ctx = new Mod2002024MVELContext( mod200, ACCEPTER );
-		ctx.setExpressionMap(Mod2002024Activation.ACTIVE_EXPRESSION_MAP);
+	private static void initializeActiveMap(Mod2002025 mod200) {
+		// Actualmente la visualizacion de determinadas casillas solo afecta a Mod2002025Key
+		Mod2002025MVELContext ctx = new Mod2002025MVELContext( mod200, ACCEPTER );
+		ctx.setExpressionMap(Mod2002025Activation.ACTIVE_EXPRESSION_MAP);
 		addCharacters(ctx,mod200);
 		addBalanceCharacters(ctx,mod200);
-		for (Mod2002024Key key : Mod2002024Key.values() ) {
-			if (Mod2002024Activation.ACTIVE_EXPRESSION_MAP.containsKey(key) ) {
+		for (Mod2002025Key key : Mod2002025Key.values() ) {
+			if (Mod2002025Activation.ACTIVE_EXPRESSION_MAP.containsKey(key) ) {
 				Object ret = ctx.get( key.toString() );
 				if (ret instanceof Boolean && ((Boolean) ret) ) {
 					mod200.getVisibleMap().put(key,true);
@@ -1275,22 +1275,22 @@ public class Mod2002024DAO  {
 		}
 	}
 
-	private static void addBalanceCharacters(Mod2002024MVELContext ctx, Mod2002024 mod200) {
-		ctx.put(Mod2002024Key.C0050.toString(), mod200.getBalanceType() == BalanceType.NORMAL);
-		ctx.put(Mod2002024Key.C0051.toString(), mod200.getBalanceType() == BalanceType.ABREVIADO);
-		ctx.put(Mod2002024Key.C0052.toString(), mod200.getBalanceType() == BalanceType.PYMES);
+	private static void addBalanceCharacters(Mod2002025MVELContext ctx, Mod2002025 mod200) {
+		ctx.put(Mod2002025Key.C0050.toString(), mod200.getBalanceType() == BalanceType.NORMAL);
+		ctx.put(Mod2002025Key.C0051.toString(), mod200.getBalanceType() == BalanceType.ABREVIADO);
+		ctx.put(Mod2002025Key.C0052.toString(), mod200.getBalanceType() == BalanceType.PYMES);
 		
-		ctx.put(Mod2002024Key.C0075.toString(), mod200.getEcpnType() == EcpnType.NORMAL);
-		ctx.put(Mod2002024Key.C0076.toString(), mod200.getEcpnType() == EcpnType.ABREVIADO);
-		ctx.put(Mod2002024Key.C0077.toString(), mod200.getEcpnType() == EcpnType.PYMES);
+		ctx.put(Mod2002025Key.C0075.toString(), mod200.getEcpnType() == EcpnType.NORMAL);
+		ctx.put(Mod2002025Key.C0076.toString(), mod200.getEcpnType() == EcpnType.ABREVIADO);
+		ctx.put(Mod2002025Key.C0077.toString(), mod200.getEcpnType() == EcpnType.PYMES);
 
-		ctx.put(Mod2002024Key.C0053.toString(), mod200.getPygType() == BalanceType.NORMAL);
-		ctx.put(Mod2002024Key.C0054.toString(), mod200.getPygType() == BalanceType.ABREVIADO);
-		ctx.put(Mod2002024Key.C0055.toString(), mod200.getPygType() == BalanceType.PYMES);
+		ctx.put(Mod2002025Key.C0053.toString(), mod200.getPygType() == BalanceType.NORMAL);
+		ctx.put(Mod2002025Key.C0054.toString(), mod200.getPygType() == BalanceType.ABREVIADO);
+		ctx.put(Mod2002025Key.C0055.toString(), mod200.getPygType() == BalanceType.PYMES);
 	}
 
 	// Presentación Directa del Modelo: Grabar Respuesta AEAT (PDF) y marcar el modelo como enviado
-	public static Mod2002024 aeatPresentation(AONContext ctx, Mod2002024 mod, String aeatResponse) {
+	public static Mod2002025 aeatPresentation(AONContext ctx, Mod2002025 mod, String aeatResponse) {
 		if (AonStringUtils.isNotBlank(aeatResponse)) {
 			
 			// Primero borramos el que ya exista previamente, para que se quede solo el último PDF presentado (bien cargado manualmente o grabado por la AEAT)
@@ -1310,23 +1310,6 @@ public class Mod2002024DAO  {
 			}
 		}
 		return mod;
-	}
-	
-	// Obtiene el último modelo 200 del ejercicio 2024 (Presentado, Finalizado o Pendiente, en ese orden) (Estos son los únicos estados posibles actualmente en el modelo 200)
-	public static Mod2002024 getLastModel2024(AONContext ctx) {
-		Result<FsModel200Record> result = ctx.getDslContext()
-				.selectFrom(FS_MODEL200)
-				.where(FS_MODEL200.DOMAIN.equal(ctx.getDomainId()))
-				.and(FS_MODEL200.YEAR.equal(2024))
-				.orderBy(FS_MODEL200.STATUS.desc(), FS_MODEL200.ID.desc())
-				.fetch();
-		FsModel200Record rec = null;
-		Mod2002024 mod200 = null; 
-		if (result != null && result.isNotEmpty()) {
-			rec = result.get(0);
-			mod200 = populateMod200(ctx,rec);
-		}
-		return mod200;
-	}
+	}	
 	
 }
