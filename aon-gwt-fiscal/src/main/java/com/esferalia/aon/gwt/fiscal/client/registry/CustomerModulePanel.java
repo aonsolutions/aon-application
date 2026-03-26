@@ -40,15 +40,10 @@ public abstract class CustomerModulePanel extends AonCustomDockLayout {
 	
 	private AonCustomMultiSelectBox status = new AonCustomMultiSelectBox("Estado");
 	
-//	private AonCustomListBox sort = new AonCustomListBox("Ordenar Por");
-//	private AonCustomListBox asc = new AonCustomListBox("Orden");
-	
 	private RegistryModuleOptions options;
 	
-	//private CustomerPanel customerPanel;
-	
 	public CustomerModulePanel(RegistryModuleOptions options) {
-		super("Agentes Comerciales");
+		super("Clientes");
 		
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
 		REGISTRY_SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
@@ -272,8 +267,6 @@ public abstract class CustomerModulePanel extends AonCustomDockLayout {
 			.setDomain(options.getDomain())
 			.setUser(options.getUser())
 			.setDescription(getSearchTextBox().getValue())
-//			.setOrderBy(sort.getValue())
-//			.setAsc(Boolean.parseBoolean(asc.getValue()))
 			;
 		
 		params.setActive(status.getSelectedOptions().contains("Activo"));
