@@ -42,9 +42,10 @@ public class FBatchPaymentExcelAction extends AbsExcelAction implements Consumer
     	addCell( "Importe: " + fbatch.getBatchDetails().stream().mapToDouble(detail -> detail.getFinance().getAmount()).sum() );
     	addCell( "" );
     	addCell( "Banco: " + fbatch.getRbank().getBankAccount().toString() );
+    	addCell( "BIC / SWIFT: " + fbatch.getRbank().getBic() );
     	
     	sheet.addMergedRegion(new CellRangeAddress(2, 2, 1, 2));
-    	sheet.addMergedRegion(new CellRangeAddress(2, 2, 3, 4));
+    	sheet.addMergedRegion(new CellRangeAddress(2, 2, 4, 5));
     	
     	row = sheet.createRow(rowCount++);
     }
@@ -85,7 +86,10 @@ public class FBatchPaymentExcelAction extends AbsExcelAction implements Consumer
 	    sheet.setColumnWidth(cellCount++, 20*256);		    
 	    
 	    CellUtil.createCell(row, cellCount, "Cuenta Bancaria", headerCellStyle);
-	    sheet.setColumnWidth(cellCount++, 30*256);		    
+	    sheet.setColumnWidth(cellCount++, 30*256);		
+	    
+	    CellUtil.createCell(row, cellCount, "BIC / SWIFT", headerCellStyle);
+	    sheet.setColumnWidth(cellCount++, 30*256);		
 	    
 	     CellUtil.createCell(row, cellCount, "Precio", headerCellStyle);
 	    sheet.setColumnWidth(cellCount++, 10*256);		    
@@ -102,6 +106,7 @@ public class FBatchPaymentExcelAction extends AbsExcelAction implements Consumer
 		addCell( finance.getRegistryName() );
 		addCell( finance.getPayMethodName() );
 		addCell( finance.getBankAccountSafeValue() );
+		addCell( finance.getBic() );
 		addCell( finance.getAmount() );
 		
 	}
