@@ -13,7 +13,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
-import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.logging.client.ConsoleLogHandler;
@@ -65,7 +65,7 @@ public class CustomerModuleNew implements EntryPoint {
 		customerModulePanel = new CustomerModulePanel(options) {
 
 			@Override
-			protected void onSellerCreate(Seller seller) {
+			protected void onCustomerCreate(CustomerFull customerFull) {
 				// TODO Auto-generated method stub
 				
 			}};
