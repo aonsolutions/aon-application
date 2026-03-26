@@ -558,6 +558,7 @@ public class InvoiceDAO {
 	public static Invoice validate(AONContext ctx, Invoice invoice, Integer rawdocId) {
 		AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate());
 		InvoiceAutoComplete.completeInvoice2(ctx, aonCtx, invoice);
+		InvoiceValidation.validateIssue(ctx, invoice);
 		InvoiceValidation.validateInvoice(ctx, aonCtx, invoice);
 		return invoice;
 	}
@@ -565,6 +566,7 @@ public class InvoiceDAO {
 	public static Invoice accept(AONContext ctx, final Invoice invoice, Integer rawdocId) {
 		AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate());
 		InvoiceAutoComplete.completeInvoice2(ctx, aonCtx, invoice);
+		InvoiceValidation.validateIssue(ctx, invoice);
 		InvoiceValidation.validateInvoice(ctx, aonCtx, invoice);
 		if (!invoice.hasFinances()) {
 			AonCollectionUtils.stream( FinanceDAO.getFinancesForInvoice(ctx, invoice))
@@ -1827,6 +1829,7 @@ public class InvoiceDAO {
 				|| AonNumberUtils.notEquals(inv.getNumber(), invoice.getNumber())) {
 			throw new AonCoreException("Incoherencia entre lo grabado y lo que se quiere emitir");	
 		}
+		InvoiceValidation.validateIssue(ctx, invoice);
 		if (invoice.getNumber() < 0) {
 			Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
 			Integer number = getNextNumber(ctx, types, invoice.getSeries());
@@ -1871,12 +1874,14 @@ public class InvoiceDAO {
 		return rectifyInvoice(ctx, invoiceId, data, true);
 	}
 	public static Invoice rectifyInvoice(AONContext ctx, Integer invoiceId, InvoiceRectificationData data, boolean save) {
-		if ( invoiceId == null ) throw new AonCoreException("ID es un dato requerido");
-		if ( data == null ) throw new AonCoreException("La informaci�n para la rectificaci�n es un dato requerido");
+		if ( invoiceId == null ) throw new AonCoreException( AonError.EMPTY_ID.getMessage());
+		if ( data == null ) throw new AonCoreException(AonError.INVOICE_INVALID_RECTIFICATION_DATA.getMessage());
 		Invoice source = getFullInvoice(ctx, invoiceId);
-		if ( source == null ) throw new AonCoreException("Factura no encontrada");
-		if ( source.getNumber() < 0) throw new AonCoreException("No se puede rectificar una fatura proforma");
-
+		if ( source == null ) throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
+		if ( source.getNumber() < 0) throw new AonCoreException(AonError.INVOICE_INVALID_RECTIFICATION_PROFORMA.getMessage());
+		if ( AonDateUtils.isBefore( data.getIssueDate(), source.getIssueDate()) ) {
+			throw new AonCoreException(AonError.INVOICE_INVALID_RECTIFICATION_DATE.getMessage() );	
+		}
 		RectificationType oldRectificationType = source.getRectificationType();
 		
 		mergeRecitificationData(source, data);
