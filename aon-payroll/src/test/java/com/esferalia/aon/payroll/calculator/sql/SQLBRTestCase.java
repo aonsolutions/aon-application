@@ -1293,13 +1293,13 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 			Date endDate = getLastDayOfMonth(startDate);
 			smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract)) ;
-			//System.out.println( "N�mina [" + startDate + "," + endDate + "] : "  );
+			//System.out.println( "Nómina [" + startDate + "," + endDate + "] : "  );
 			days += get(endDate, Calendar.DAY_OF_MONTH) - get(Period.max(startDate, contractStartDate), Calendar.DAY_OF_MONTH) +1; 
 			startDate = add(startDate, Calendar.MONTH, 1);
 		}
 		
 		//AON.getSalaries(aonContext, f -> f.getContractProperty().eq(contract.getId()))
-		//.forEach( s -> System.out.println("N�mina [" + s.getStartDate() + "," + s.getEndDate() + "] : "  + s.getCommonContingenciesBase()));
+		//.forEach( s -> System.out.println("Nómina [" + s.getStartDate() + "," + s.getEndDate() + "] : "  + s.getCommonContingenciesBase()));
 
 		startDate = add(startDate, Calendar.MONTH, 1);
 		Date endDate = getLastDayOfMonth(startDate);

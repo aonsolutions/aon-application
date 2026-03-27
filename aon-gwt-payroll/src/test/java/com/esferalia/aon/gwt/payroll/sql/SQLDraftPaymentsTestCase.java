@@ -67,7 +67,7 @@ public class SQLDraftPaymentsTestCase extends AbstractSQLTestCase {
 		addPayment(aonContext, contract, 
 		contract.getStartDate(), 
 		null, 
-		"@{DIAS_ENFERMEDAD_COMUN_21} D�AS DE IT", 
+		"@{DIAS_ENFERMEDAD_COMUN_21} DÍAS DE IT", 
 		" /*read-only*/DIAS_ENFERMEDAD_COMUN_21 * BASE_REGULADORA * 0.75 * (isdef COEFICIENTE_IT ? COEFICIENTE_IT : 1.00)/**/", 
 		"_P", 
 		"DIAS_COTIZADOS * (isdef COEFICIENTE_IT ? COEFICIENTE_IT : 1.00) * BASE_REGULADORA", 
@@ -110,7 +110,7 @@ public class SQLDraftPaymentsTestCase extends AbstractSQLTestCase {
 		calculator.calculate(ctx);
 		
 		salaryDraft.getPayments().forEach( p -> System.out.println(p.getDescription() +":" + p.getAmount()));
-		salaryDraft.getPayments().forEach( p -> org.junit.assertEquals("31 D�AS DE IT", p.getDescription()) );
+		salaryDraft.getPayments().forEach( p -> org.junit.assertEquals("31 DÍAS DE IT", p.getDescription()) );
 		
 
 	}
@@ -144,7 +144,7 @@ public class SQLDraftPaymentsTestCase extends AbstractSQLTestCase {
 		addPayment(aonContext, contract, 
 		contract.getStartDate(), 
 		null, 
-		"VACACIONES @{DIAS_VACACIONES} D�AS", 
+		"VACACIONES @{DIAS_VACACIONES} DÍAS", 
 		"/*read-only*/DIAS_VACACIONES * 66.66/**/", 
 		"_P", 
 		"_P", 
@@ -193,7 +193,7 @@ public class SQLDraftPaymentsTestCase extends AbstractSQLTestCase {
 		salaryDraft.getPayments().forEach( p -> System.out.println(p.getDescription() +":" + p.getAmount()));
 		salaryDraft.getPayments().forEach( p -> {
 			if ( p.getExpression().contains("DIAS_VACACIONES"))
-				org.junit.assertEquals("VACACIONES 8 D�AS", p.getDescription());
+				org.junit.assertEquals("VACACIONES 8 DÍAS", p.getDescription());
 		} );
 		
 

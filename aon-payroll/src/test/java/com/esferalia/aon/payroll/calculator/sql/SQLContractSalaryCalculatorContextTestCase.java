@@ -747,7 +747,7 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 
 		try {
-			ctx.getExpressionContext().eval("SELF.addBonus('BONIFICACI�N', 'CUOTA_EMPRESARIAL'); 0.00", startDate, endDate);
+			ctx.getExpressionContext().eval("SELF.addBonus('BONIFICACIÓN', 'CUOTA_EMPRESARIAL'); 0.00", startDate, endDate);
 			for ( IContractBonus bonus: ctx.getContractBonus()) {
 				System.out.println(bonus.getDescription() + " = " + bonus.getExpression());
 				throw new SuccessException();

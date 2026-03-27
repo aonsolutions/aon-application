@@ -449,7 +449,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 			},
 			new Payment() { 
 				{ 
-					description = "RETRIBUCI�N EN ESPECIE"; 
+					description = "RETRIBUCIÓN EN ESPECIE"; 
 					expression =  "SALARIO_BASE * 0.10"; 
 					type =  PaymentType.CRA_0013;
 				}
@@ -463,7 +463,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 			},
 			new Payment() { 
 				{ 
-					description = "GASTOS DE LOCMOCI�N Y DISTANCIA"; 
+					description = "GASTOS DE LOCMOCIÓN Y DISTANCIA"; 
 					expression =  "69.6969696"; 
 					type =  PaymentType.CRA_0042;
 				}
@@ -513,7 +513,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 				},
 				new Payment() { 
 					{ 
-						description = "RETRIBUCI�N EN ESPECIE"; 
+						description = "RETRIBUCIÓN EN ESPECIE"; 
 						expression =  "SALARIO_BASE * 0.10"; 
 						type =  PaymentType.CRA_0013;
 					}
@@ -527,7 +527,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 				},
 				new Payment() { 
 					{ 
-						description = "GASTOS DE LOCMOCI�N Y DISTANCIA"; 
+						description = "GASTOS DE LOCMOCIÓN Y DISTANCIA"; 
 						expression =  "69.6969696"; 
 						type =  PaymentType.CRA_0042;
 					}

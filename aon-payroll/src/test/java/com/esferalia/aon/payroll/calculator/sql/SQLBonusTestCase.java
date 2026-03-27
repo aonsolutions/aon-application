@@ -131,7 +131,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				"CHECK(COEFICIENTE_PARCIALIDAD>=0.50,'La jornada debe ser al menos del 50%');"+
 				"TC2S='100,200,300,150,250,350,130,230,330';"+
 				"CHECK(TC2S.indexOf(TC2)>=0,'El contrato debe ser %s', TC2S);"+
-				"FIN_BONIF=DIA(A�O(INICIO_CONTRATO,2),-1);"+
+				"FIN_BONIF=DIA(AÑO(INICIO_CONTRATO,2),-1);"+
 				"CHECK(INICIO_NOMINA <= FIN_BONIF, 'La Tarifa Reducida finalizo el %1$td/%1$tm/%1$tY', FIN_BONIF);"+
 				"DIAS_NO_BONIF=MAX(0,DIAS(FIN,FIN_BONIF)); "+
 				"500.00  * (DIAS_COTIZADOS - DIAS_NO_BONIF) * COEFICIENTE_PARCIALIDAD / DIAS_MES * PORCENTAJE_CGC_E/100"+
@@ -146,10 +146,10 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				"CHECK((C=COEFICIENTE_PARCIALIDAD)>=0.50,'La jornada debe ser al menos del 50%');"+
 				"T='100,200,300,150,250,350,130,230,330';"+
 				"CHECK(T.indexOf(TC2)>=0,'El contrato debe ser %s',T);"+
-				"I=A�O((O=INICIO_CONTRATO),2);"+
+				"I=AÑO((O=INICIO_CONTRATO),2);"+
 				"CHECK(FIN_NOMINA>=I,'La Tarifa Reducida (<10) comienza el %1$td/%1$tm/%1$tY',I);"+
 				"N=MAX(0,DIAS(I,(A=INICIO)));"+
-				"F=DIA(A�O(O,3),-1);"+
+				"F=DIA(AÑO(O,3),-1);"+
 				"CHECK(A<=F,'La Tarifa Reducida (<10) finalizo el %1$td/%1$tm/%1$tY',F);"+
 				"N+=MAX(0,DIAS(FIN,F));"+
 				"250.00*(DIAS_COTIZADOS-N)*C/DIAS_MES*PORCENTAJE_CGC_E/100"+
@@ -477,7 +477,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				"CHECK((C=COEFICIENTE_PARCIALIDAD)>=0.50,'La jornada debe ser al menos del 50%');"+
 				"TC2S='100,200,300';"+
 				"CHECK(TC2S.indexOf(TC2)>=0,'El contrato debe ser %s', TC2S);"+
-				"FIN_BONIF=DIA(A�O(INICIO_CONTRATO,2),-1);"+
+				"FIN_BONIF=DIA(AÑO(INICIO_CONTRATO,2),-1);"+
 				"CHECK(INICIO_NOMINA <= FIN_BONIF, 'La Tarifa Plana finalizo el %1$td/%1$tm/%1$tY', FIN_BONIF);"+
 				"N=MAX(0,DIAS(FIN,FIN_BONIF)); "+
 				"D = (C < 1.00 ? ( C < 75.00 ? 50.00 : 75.00 ) : 100.00);"+
@@ -493,10 +493,10 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				"CHECK((C=COEFICIENTE_PARCIALIDAD)>=0.50,'La jornada debe ser al menos del 50%');"+
 				"T='100,200,300';"+
 				"CHECK(T.indexOf(TC2)>=0,'El contrato debe ser %s',T);"+
-				"I=A�O(INICIO_CONTRATO,2);"+
+				"I=AÑO(INICIO_CONTRATO,2);"+
 				"CHECK(FIN_NOMINA>=I,'La Tarifa Plana (<10) comienza el %1$td/%1$tm/%1$tY',I);"+
 				"N=MAX(0,DIAS(I,(A=INICIO)));"+
-				"F=DIA(A�O(INICIO_CONTRATO,3),-1);"+
+				"F=DIA(AÑO(INICIO_CONTRATO,3),-1);"+
 				"CHECK(INICIO_NOMINA<=F,'La Tarifa Plana (<10) finalizo el %1$td/%1$tm/%1$tY',F);"+
 				"N+=MAX(0,DIAS(FIN,F));"+
 				"TRACE('N=%f\r\n', N);"+

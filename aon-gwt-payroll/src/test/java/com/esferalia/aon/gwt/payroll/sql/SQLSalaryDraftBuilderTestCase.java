@@ -83,7 +83,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		addPayment(aonContext, contract, 
 		contract.getStartDate(), 
 		null, 
-		"@{DIAS_ENFERMEDAD_COMUN_21} D�AS DE IT", 
+		"@{DIAS_ENFERMEDAD_COMUN_21} DÍAS DE IT", 
 		" /*read-only*/DIAS_ENFERMEDAD_COMUN_21 * BASE_REGULADORA * 0.75 * (isdef COEFICIENTE_IT ? COEFICIENTE_IT : 1.00)/**/", 
 		"_P", 
 		"DIAS_COTIZADOS * (isdef COEFICIENTE_IT ? COEFICIENTE_IT : 1.00) * BASE_REGULADORA", 
@@ -119,7 +119,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		calculator.calculate(ctx);
 		
 		salaryDraft.getPayments().forEach( p -> System.out.println(p.getDescription() +":" + p.getAmount()));
-		salaryDraft.getPayments().forEach( p -> org.junit.assertEquals("31 D�AS DE IT", p.getDescription()) );
+		salaryDraft.getPayments().forEach( p -> org.junit.assertEquals("31 DÍAS DE IT", p.getDescription()) );
 		
 
 	}
@@ -314,7 +314,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribuci�n Dineraria",
+		"IRPF Retribución Dineraria",
 		"BASE_IRPF_DINERO * PORCENTAJE_IRPF/100.00");
 
 		addSSRegimeDeduction(
@@ -323,7 +323,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribuci�n en Especie",
+		"IRPF Retribución en Especie",
 		"_P=(BASE_IRPF_ESPECIE * PORCENTAJE_IRPF/100.00 - (isdef IRPF_CTA_ESP ? IRPF_CTA_ESP : 0.00)); (_P > 0.0049 ) ? _P : HIDE()");
 
 		addSSRegimeDeduction(
@@ -485,7 +485,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribuci�n Dineraria",
+		"IRPF Retribución Dineraria",
 		"BASE_IRPF_DINERO * PORCENTAJE_IRPF/100.00");
 
 		addSSRegimeDeduction(
@@ -494,7 +494,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribuci�n en Especie",
+		"IRPF Retribución en Especie",
 		"_P=(BASE_IRPF_ESPECIE * PORCENTAJE_IRPF/100.00 - (isdef IRPF_CTA_ESP ? IRPF_CTA_ESP : 0.00)); (_P > 0.0049 ) ? _P : HIDE()");
 
 		addSSRegimeDeduction(
@@ -670,7 +670,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribuci�n Dineraria",
+		"IRPF Retribución Dineraria",
 		"BASE_IRPF_DINERO * PORCENTAJE_IRPF/100.00");
 
 		addSSRegimeDeduction(
@@ -679,7 +679,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribuci�n en Especie",
+		"IRPF Retribución en Especie",
 		"_P=(BASE_IRPF_ESPECIE * PORCENTAJE_IRPF/100.00 - (isdef IRPF_CTA_ESP ? IRPF_CTA_ESP : 0.00)); (_P > 0.0049 ) ? _P : HIDE()");
 
 		addSSRegimeDeduction(
@@ -871,7 +871,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribuci�n Dineraria",
+		"IRPF Retribución Dineraria",
 		"BASE_IRPF_DINERO * PORCENTAJE_IRPF/100.00");
 
 		addSSRegimeDeduction(
@@ -880,7 +880,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribuci�n en Especie",
+		"IRPF Retribución en Especie",
 		"_P=(BASE_IRPF_ESPECIE * PORCENTAJE_IRPF/100.00 - (isdef IRPF_CTA_ESP ? IRPF_CTA_ESP : 0.00)); (_P > 0.0049 ) ? _P : HIDE()");
 
 		addSSRegimeDeduction(
@@ -1068,7 +1068,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribuci�n Dineraria",
+		"IRPF Retribución Dineraria",
 		"BASE_IRPF_DINERO * PORCENTAJE_IRPF/100.00");
 
 		addSSRegimeDeduction(
@@ -1077,7 +1077,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribuci�n en Especie",
+		"IRPF Retribución en Especie",
 		"_P=(BASE_IRPF_ESPECIE * PORCENTAJE_IRPF/100.00 - (isdef IRPF_CTA_ESP ? IRPF_CTA_ESP : 0.00)); (_P > 0.0049 ) ? _P : HIDE()");
 
 		addSSRegimeDeduction(
@@ -1258,7 +1258,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 				SSRegimeType.GENERAL, 
 				add(getFirstDayOfYear(getToday()),Calendar.YEAR,-10),
 				PaymentType.CRA_0054, 
-				"(CAUSA_INDEMNIZACION == IMPROCEDENTE) ? 45 * A�OS_TRABAJADOS * SALARIO_DIA : REMOVE()",
+				"(CAUSA_INDEMNIZACION == IMPROCEDENTE) ? 45 * AÑOS_TRABAJADOS * SALARIO_DIA : REMOVE()",
 				null ,
 				null, 
 				SalaryType.SETTLE);
@@ -1269,7 +1269,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 				SSRegimeType.GENERAL, 
 				add(getToday(),Calendar.YEAR,-5), 
 				PaymentType.CRA_0054, 
-				"(CAUSA_INDEMNIZACION == IMPROCEDENTE)? 33 * A�OS_TRABAJADOS * SALARIO_DIA : REMOVE()",
+				"(CAUSA_INDEMNIZACION == IMPROCEDENTE)? 33 * AÑOS_TRABAJADOS * SALARIO_DIA : REMOVE()",
 				null ,
 				null, 
 				SalaryType.SETTLE);

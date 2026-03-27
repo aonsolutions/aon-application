@@ -374,7 +374,7 @@ public class SQLCostTestCase extends AbstractSQLTestCase {
 			AONContext aonContext = new AONContext(conn);
 			
 			addPayment(aonContext, contract, "DIAS VACACIONES NO DISFRUTADOS", "DIAS_VACACIONES_NO_DISFRUTADOS * ( SALARIO_DIA + SALARIO_VARIABLE_DIA )", "_P", "_P", PaymentType.CRA_0006 , SalaryType.SETTLE );
-			addPayment(aonContext, contract, "INDEMNIZACION FIN CONTRATO TEMPORAL", "DIAS_INDEMNIZACION_FIN(INICIO_CONTRATO) * A�OS_TRABAJADOS * SALARIO_DIA", "_P", null, PaymentType.CRA_0054 , SalaryType.SETTLE );
+			addPayment(aonContext, contract, "INDEMNIZACION FIN CONTRATO TEMPORAL", "DIAS_INDEMNIZACION_FIN(INICIO_CONTRATO) * AÑOS_TRABAJADOS * SALARIO_DIA", "_P", null, PaymentType.CRA_0054 , SalaryType.SETTLE );
 			
 
 			//@formatter:off

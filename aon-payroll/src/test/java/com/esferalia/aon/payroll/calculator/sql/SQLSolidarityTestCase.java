@@ -538,23 +538,23 @@ public class SQLSolidarityTestCase extends AbstractSQLTestCase {
 				});
 		
 		addSSRegimeDeduction(aonContext, SSRegimeType.GENERAL, startDate, DeductionType.SOLIDARITY, "SOLIDARIDAD_I",
-				"Solidaridad. Exceso hasta el 10% base m�xima",
+				"Solidaridad. Exceso hasta el 10% base máxima",
 				"BASE_SOLIDARIDAD_I * PORCENTAJE_SOLIDARIDAD_I / 100.00");
 		addSSRegimeDeduction(aonContext, SSRegimeType.GENERAL, startDate, DeductionType.SOLIDARITY, "SOLIDARIDAD_II",
-				"Solidaridad. Exceso desde el 10% hasta el 50% base m�xima",
+				"Solidaridad. Exceso desde el 10% hasta el 50% base máxima",
 				"BASE_SOLIDARIDAD_II * PORCENTAJE_SOLIDARIDAD_II / 100.00");
 		addSSRegimeDeduction(aonContext, SSRegimeType.GENERAL, startDate, DeductionType.SOLIDARITY, "SOLIDARIDAD_III",
-				"Solidaridad. Exceso superior al 50% de la base m�xima",
+				"Solidaridad. Exceso superior al 50% de la base máxima",
 				"BASE_SOLIDARIDAD_III * PORCENTAJE_SOLIDARIDAD_III / 100.00");
 
 		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, startDate, DeductionType.SOLIDARITY, "SOLIDARIDAD_I_E",
-				"Solidaridad. Exceso hasta el 10% base m�xima",
+				"Solidaridad. Exceso hasta el 10% base máxima",
 				"BASE_SOLIDARIDAD_I * PORCENTAJE_SOLIDARIDAD_I_E / 100.00");
 		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, startDate, DeductionType.SOLIDARITY, "SOLIDARIDAD_II_E",
-				"Solidaridad. Exceso desde el 10% hasta el 50% base m�xima",
+				"Solidaridad. Exceso desde el 10% hasta el 50% base máxima",
 				"BASE_SOLIDARIDAD_II * PORCENTAJE_SOLIDARIDAD_II_E / 100.00");
 		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, startDate, DeductionType.SOLIDARITY, "SOLIDARIDAD_III_E",
-				"Solidaridad. Exceso superior al 50% de la base m�xima",
+				"Solidaridad. Exceso superior al 50% de la base máxima",
 				"BASE_SOLIDARIDAD_III * PORCENTAJE_SOLIDARIDAD_III_E / 100.00");
 	}
 
