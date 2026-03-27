@@ -1,13 +1,13 @@
 package com.esferalia.aon.salary.expression;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class VariablesTestCase {
 
@@ -25,20 +25,20 @@ public class VariablesTestCase {
 				calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 		Date month_end = calendar.getTime();
 		Period month = new Period(month_start, month_end);
-		
+
 		// Test one, unique value
 		variables.put("TEST_VARS", new TimedObject<Double>(100.00, month));
 		List<ITimedVariable<?>> test_vars = variables.get("TEST_VARS");
 		assertEquals(test_vars.size(), 1);
 		assertEquals(test_vars.get(0).getPeriod(), month);
 		assertEquals(test_vars.get(0).getValue(month), 100.00);
-		
+
 
 		calendar.set(Calendar.DAY_OF_MONTH,10);
 		Date month_tenth = calendar.getTime();
 		calendar.set(Calendar.DAY_OF_MONTH,20);
 		Date month_twentieth = calendar.getTime();
-		
+
 		calendar.set(Calendar.DAY_OF_MONTH,9);
 		Date month_ninth = calendar.getTime();
 		calendar.set(Calendar.DAY_OF_MONTH,21);
@@ -54,7 +54,7 @@ public class VariablesTestCase {
 		assertEquals(test_vars.get(1).getValue(new Period(month_tenth,month_twentieth)), 200.00);
 		assertEquals(test_vars.get(2).getPeriod(), new Period(month_twentyfirst,month_end));
 		assertEquals(test_vars.get(2).getValue(new Period(month_twentyfirst,month_end)), 100.00);
-		
+
 
 		// Test put a value in the start of existing one
 		variables.put("TEST_VARS", new TimedObject<Double>(1.00, new Period(month_start,month_start)));
@@ -75,7 +75,7 @@ public class VariablesTestCase {
 		calendar.set(Calendar.DAY_OF_MONTH,
 				calendar.getActualMaximum(Calendar.DAY_OF_MONTH)-1);
 		Date month_penultime = calendar.getTime();
-	
+
 		assertEquals(test_vars.get(0).getPeriod(), new Period(month_start,month_start));
 		assertEquals(test_vars.get(0).getValue(new Period(month_start,month_start)), 1.00);
 		assertEquals(test_vars.get(1).getPeriod(), new Period(month_second,month_ninth));
@@ -103,11 +103,11 @@ public class VariablesTestCase {
 		Date month_tenth = calendar.getTime();
 		calendar.set(Calendar.DAY_OF_MONTH,9);
 		Date month_ninth = calendar.getTime();
-		
+
 		Variables variables = new Variables(var -> Collections.emptyList());
 		variables.put("TEST_VARS", new TimedObject<Double>(1.00, new Period(month_start, month_ninth)));
 		variables.put("TEST_VARS", new TimedObject<Double>(2.00, new Period(month_tenth, month_end)));
-		
+
 		// Test whole override
 		Variables other_variables = new Variables(var -> Collections.emptyList());
 		other_variables.put("TEST_VARS", new TimedObject<Double>(10.00, new Period(month_start, month_ninth)));
@@ -118,12 +118,12 @@ public class VariablesTestCase {
 		assertEquals(test_vars.get(0).getValue(new Period(month_start, month_ninth)), 10.00);
 		assertEquals(test_vars.get(1).getPeriod(), new Period(month_tenth, month_end));
 		assertEquals(test_vars.get(1).getValue(new Period(month_tenth, month_end)), 20.00);
-		
+
 		calendar.set(Calendar.DAY_OF_MONTH,15);
 		Date month_fiftenth = calendar.getTime();
 		calendar.set(Calendar.DAY_OF_MONTH,25);
 		Date month_twenthyfifth = calendar.getTime();
-		
+
 		calendar.set(Calendar.DAY_OF_MONTH,14);
 		Date month_fourteenth = calendar.getTime();
 		calendar.set(Calendar.DAY_OF_MONTH,26);
