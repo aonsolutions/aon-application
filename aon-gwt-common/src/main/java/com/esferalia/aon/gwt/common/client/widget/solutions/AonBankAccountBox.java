@@ -8,8 +8,6 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasKeyUpHandlers;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -62,6 +60,7 @@ public class AonBankAccountBox extends SimplePanel implements HasValueChangeHand
 		
 		this.setWidget(dataPanel);
 		
+		/*
 		InlineLabel ibanLabel = new InlineLabel(ibanMode?"IBAN:":"CCC:");
 		ibanLabel.setStyleName(AON.CSS.aonInnerLabel());
 		ibanLabel.addStyleName(AON.CSS.aonTextUnderline());
@@ -80,7 +79,7 @@ public class AonBankAccountBox extends SimplePanel implements HasValueChangeHand
 			}
 		});
 		dataPanel.add(ibanLabel);
-
+		*/
 		
 		countryBox.setValue(this.bankAccount.getCountry());
 		countryBox.setVisible(ibanMode);
@@ -101,7 +100,7 @@ public class AonBankAccountBox extends SimplePanel implements HasValueChangeHand
 		check.setStyleName(AON.CSS.aonInputText());
 		check.addStyleName(AON.CSS.aonMarginLeftSep());
 		check.setMaxLength(2);
-		check.setVisibleLength(2);
+		check.setVisibleLength(1);
 		check.setValue( this.bankAccount.getCheck());
 		check.setVisible(ibanMode);
 		check.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -121,7 +120,7 @@ public class AonBankAccountBox extends SimplePanel implements HasValueChangeHand
 		ccc1.setStyleName(AON.CSS.aonInputText());
 		ccc1.addStyleName(AON.CSS.aonMarginLeftSep());
 		ccc1.setMaxLength(4);
-		ccc1.setVisibleLength(4);
+		ccc1.setVisibleLength(3);
 		ccc1.setValue( this.bankAccount.getCCC1());
 		ccc1.setVisible(!ibanMode);
 		ccc1.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -137,7 +136,7 @@ public class AonBankAccountBox extends SimplePanel implements HasValueChangeHand
 		ccc2.setStyleName(AON.CSS.aonInputText());
 		ccc2.addStyleName(AON.CSS.aonMarginLeftSep());
 		ccc2.setMaxLength(4);
-		ccc2.setVisibleLength(4);
+		ccc2.setVisibleLength(3);
 		ccc2.setValue( this.bankAccount.getCCC2());
 		ccc2.setVisible(!ibanMode);
 		ccc2.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -153,7 +152,7 @@ public class AonBankAccountBox extends SimplePanel implements HasValueChangeHand
 		ccc3.setStyleName(AON.CSS.aonInputText());
 		ccc3.addStyleName(AON.CSS.aonMarginLeftSep());
 		ccc3.setMaxLength(2);
-		ccc3.setVisibleLength(2);
+		ccc3.setVisibleLength(3);
 		ccc3.setValue( this.bankAccount.getCCC3());
 		ccc3.setVisible(!ibanMode);
 		ccc3.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -185,7 +184,7 @@ public class AonBankAccountBox extends SimplePanel implements HasValueChangeHand
 		bban1.setStyleName(AON.CSS.aonInputText());
 		bban1.addStyleName(AON.CSS.aonMarginLeftSep());
 		bban1.setMaxLength(4);
-		bban1.setVisibleLength(4);
+		bban1.setVisibleLength(3);
 		bban1.setValue( this.bankAccount.getBban1());
 		bban1.setVisible(ibanMode);
 		bban1.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -201,7 +200,7 @@ public class AonBankAccountBox extends SimplePanel implements HasValueChangeHand
 		bban2.setStyleName(AON.CSS.aonInputText());
 		bban2.addStyleName(AON.CSS.aonMarginLeftSep());
 		bban2.setMaxLength(4);
-		bban2.setVisibleLength(4);
+		bban2.setVisibleLength(3);
 		bban2.setValue( this.bankAccount.getBban2());
 		bban2.setVisible(ibanMode);
 		bban2.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -217,7 +216,7 @@ public class AonBankAccountBox extends SimplePanel implements HasValueChangeHand
 		bban3.setStyleName(AON.CSS.aonInputText());
 		bban3.addStyleName(AON.CSS.aonMarginLeftSep());
 		bban3.setMaxLength(4);
-		bban3.setVisibleLength(4);
+		bban3.setVisibleLength(3);
 		bban3.setValue( this.bankAccount.getBban3());
 		bban3.setVisible(ibanMode);
 		bban3.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -233,7 +232,7 @@ public class AonBankAccountBox extends SimplePanel implements HasValueChangeHand
 		bban4.setStyleName(AON.CSS.aonInputText());
 		bban4.addStyleName(AON.CSS.aonMarginLeftSep());
 		bban4.setMaxLength(4);
-		bban4.setVisibleLength(4);
+		bban4.setVisibleLength(3);
 		bban4.setValue( this.bankAccount.getBban4());
 		bban4.setVisible(ibanMode);
 		bban4.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -249,7 +248,7 @@ public class AonBankAccountBox extends SimplePanel implements HasValueChangeHand
 		bban5.setStyleName(AON.CSS.aonInputText());
 		bban5.addStyleName(AON.CSS.aonMarginLeftSep());
 		bban5.setMaxLength(4);
-		bban5.setVisibleLength(4);
+		bban5.setVisibleLength(3);
 		bban5.setValue( this.bankAccount.getBban5());
 		bban5.setVisible(ibanMode);
 		bban5.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -265,7 +264,7 @@ public class AonBankAccountBox extends SimplePanel implements HasValueChangeHand
 		bban6.setStyleName(AON.CSS.aonInputText());
 		bban6.addStyleName(AON.CSS.aonMarginLeftSep());
 		bban6.setMaxLength(4);
-		bban6.setVisibleLength(4);
+		bban6.setVisibleLength(3);
 		bban6.setValue( this.bankAccount.getBban6());
 		bban6.setVisible(ibanMode);
 		bban6.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -281,7 +280,7 @@ public class AonBankAccountBox extends SimplePanel implements HasValueChangeHand
 		bban7.setStyleName(AON.CSS.aonInputText());
 		bban7.addStyleName(AON.CSS.aonMarginLeftSep());
 		bban7.setMaxLength(4);
-		bban7.setVisibleLength(4);
+		bban7.setVisibleLength(3);
 		bban7.setValue( this.bankAccount.getBban7());
 		bban7.setVisible(ibanMode);
 		bban7.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -297,7 +296,7 @@ public class AonBankAccountBox extends SimplePanel implements HasValueChangeHand
 		bban8.setStyleName(AON.CSS.aonInputText());
 		bban8.addStyleName(AON.CSS.aonMarginLeftSep());
 		bban8.setMaxLength(2);
-		bban8.setVisibleLength(2);
+		bban8.setVisibleLength(1);
 		bban8.setValue( this.bankAccount.getBban8());
 		bban8.setVisible(ibanMode);
 		bban8.addValueChangeHandler(new ValueChangeHandler<String>() {

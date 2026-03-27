@@ -61,7 +61,8 @@ public class AonRegistryBankGrid extends SimpleLayoutPanel {
 			.addCell(new InlineLabel(AON.MSG.bankAccount()))
 			.addCell(new InlineLabel(AON.MSG.description()))
 			.addCell(new InlineLabel("Bic / Swift"))
-			.addCell(new InlineLabel("Activo"));
+			.addCell(new InlineLabel("Activo"))
+			.addCell(new InlineLabel(""));
 	}
 	
 	/**
@@ -73,7 +74,7 @@ public class AonRegistryBankGrid extends SimpleLayoutPanel {
 		
 		// ***************************************************************** [BANK ACCOUNT]		
 		final AonBankAccountBox aonBankAccountBox = new AonBankAccountBox();
-		aonBankAccountBox.setWidth("350px");
+		aonBankAccountBox.setWidth("410px");
 		aonBankAccountBox.setValue(registryBank.getBankAccount());
 		aonBankAccountBox.addValueChangeHandler(event -> registryBank.setBankAccount(aonBankAccountBox.getValue()));
 		

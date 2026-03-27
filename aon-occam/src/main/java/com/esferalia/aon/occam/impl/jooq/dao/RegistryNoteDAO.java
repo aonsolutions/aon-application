@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class RegistryNoteDAO {
 	
@@ -151,6 +152,30 @@ public class RegistryNoteDAO {
 			.where(RNOTE_PROPERTIES.getConditions(filter))
 			.execute();
 		ctx.log().debug("DELETE REGISTRY NOTE: ({0} rows)", count);
+	}
+
+	public static void saveRegistryObservation(AONContext ctx, Integer domain, Integer registry, String observation) {
+		RegistryNote existingObservation = get(ctx, f -> f.getRegistryProperty().eq(registry).and(f.getNoteTypeProperty().eq(NoteType.OBSERVATION.value())));
+		
+		if(AonStringUtils.isBlank(observation) && null != existingObservation.getId())
+			delete(ctx, existingObservation.getId());
+		else if(AonStringUtils.isNotBlank(observation)) {
+			if(null != existingObservation.getId()) {
+				existingObservation.setComments(observation);
+				update(ctx, existingObservation);
+			} else {
+				RegistryNote newObservation = new RegistryNote()
+						.setDomain(domain)
+						.setRegistry(registry)
+						.setDescription("Observaci\u00f3n")
+						.setComments(observation)
+						.setNoteType(NoteType.OBSERVATION)
+						.setNoteDate(new java.util.Date())
+						.setSecurityLevel(SecurityLevel.OFFICIAL);
+				insert(ctx, newObservation);
+			}
+		}
+		
 	}	
 
 }
