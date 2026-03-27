@@ -452,8 +452,8 @@ public class Mod2002025Behaviour {
 		
 		// Desglose Casilla 565
 		addBreakdown(Mod2002025BN565Key.values(), Mod2002025Key.BN565);
-		addBreakdown(Mod2002025BN565_1Key.values(), Mod2002025Key.BN1689, Mod2002025Key.BN1692, Mod2002025Key.BN1695, Mod2002025Key.BN1698);
-		addBreakdown(Mod2002025BN565_2Key.values(), Mod2002025Key.BN1701, Mod2002025Key.BN1704, Mod2002025Key.BN1729, Mod2002025Key.BN1079);
+		addBreakdown(Mod2002025BN565_1Key.values(), Mod2002025Key.BN1692, Mod2002025Key.BN1695, Mod2002025Key.BN1698);
+		addBreakdown(Mod2002025BN565_2Key.values(), Mod2002025Key.BN1704, Mod2002025Key.BN1729, Mod2002025Key.BN1079);
 				
 		// Desglose Casilla 1040
 		addBreakdown(Mod2002025BN1040Key.values(), Mod2002025Key.BN1040, new byte[] {1,3});
@@ -556,7 +556,7 @@ public class Mod2002025Behaviour {
 	static { 
 		
 		// Régimen especial de la reserva para inversiones en Canarias (Ley 19/1994)		
-		addBreakdown(Mod2002025RIC_1Key.values(), Mod2002025Key.RC3312); // No lleva fila de totales, pero se deshabilita la ultima fila porque es calculada
+		addBreakdown(Mod2002025RIC_1Key.values(), Mod2002025Key.RC3627); // No lleva fila de totales, pero se deshabilita la ultima fila porque es calculada
 		
 		// REGIMEN DE COOPERATIVAS - Determinacion de la base imponible
 		addBreakdown(Mod2002025LQ554Key.values(), new Mod2002025Key[] {Mod2002025Key.CP2837, Mod2002025Key.CP553}, new byte[] {}); // Lleva 2 filas de totales y no lleva columnas de totales
@@ -565,7 +565,7 @@ public class Mod2002025Behaviour {
 		addBreakdown(Mod2002025LQ561Key.values(), Mod2002025Key.LQ561);
 		
 		// Régimen especial de la reserva para inversiones en las Illes Balears (DA 70 Ley 31/2022)		
-		addBreakdown(Mod2002025RIIB_1Key.values(),Mod2002025Key.RB1708); // No lleva fila de totales, pero la casilla de la última fila se deshabilita porque es calculada
+		addBreakdown(Mod2002025RIIB_1Key.values(),Mod2002025Key.RB3640); // No lleva fila de totales, pero la casilla de la última fila se deshabilita porque es calculada
 		
 	}
 	

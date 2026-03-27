@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 
 // Régimen especial de buques y empresas navieras en Canarias: desglose de la compensación de bases imponibles negativas
-public enum Mod2002025LQ243Key implements Serializable, IMod200KeysProvider  {
+public enum Mod2002025LQ243Key implements Serializable, IMod200KeysProvider {
 	
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9
@@ -22,13 +22,15 @@ public enum Mod2002025LQ243Key implements Serializable, IMod200KeysProvider  {
 	,C04(new Mod2002025Key[]{Mod2002025Key.LQ202 , Mod2002025Key.LQ214 , Mod2002025Key.LQ215 }, "Compensaci\u00F3n de base imponible resto actividades a\u00F1o 2022")
 	,C05(new Mod2002025Key[]{Mod2002025Key.LQ987 , Mod2002025Key.LQ988 , Mod2002025Key.LQ989 }, "Compensaci\u00F3n de base imponible especial a\u00F1o 2023")
 	,C06(new Mod2002025Key[]{Mod2002025Key.LQ1010, Mod2002025Key.LQ1177, Mod2002025Key.LQ1200}, "Compensaci\u00F3n de base imponible resto actividades a\u00F1o 2023")
-	,C07(new Mod2002025Key[]{Mod2002025Key.LQ033 , Mod2002025Key.LQ047 , Mod2002025Key.LQ091 }, "Compensaci\u00F3n de base imponible especial a\u00F1o 2025(*)")
-	,C08(new Mod2002025Key[]{Mod2002025Key.LQ092 , Mod2002025Key.LQ097 , Mod2002025Key.LQ098 }, "Compensaci\u00F3n de base imponible resto actividades a\u00F1o 2025(*)")
-	,C09(new Mod2002025Key[]{Mod2002025Key.LQ1886, Mod2002025Key.LQ1887, Mod2002025Key.LQ1888}, "Subtotal de compensaci\u00F3n de base imponible especial") 
-	,C10(new Mod2002025Key[]{Mod2002025Key.LQ1889, Mod2002025Key.LQ1890, Mod2002025Key.LQ1891}, "Subtotal de compensaci\u00F3n de base imponible resto actividades")
-	,C11(new Mod2002025Key[]{Mod2002025Key.LQ216 , Mod2002025Key.LQ243 , Mod2002025Key.LQ265 }, "Total")
-	,C12(new Mod2002025Key[]{Mod2002025Key.LQ266 , null		           , Mod2002025Key.LQ267 }, "Compensaci\u00F3n de base imponible especial a\u00F1o 2025")
-	,C13(new Mod2002025Key[]{Mod2002025Key.LQ290 , null            	   , Mod2002025Key.LQ344 }, "Compensaci\u00F3n de base imponible resto actividades a\u00F1o 2025")
+	,C07(new Mod2002025Key[]{Mod2002025Key.LQ033 , Mod2002025Key.LQ047 , Mod2002025Key.LQ091 }, "Compensaci\u00F3n de base imponible especial a\u00F1o 2024")
+	,C08(new Mod2002025Key[]{Mod2002025Key.LQ092 , Mod2002025Key.LQ097 , Mod2002025Key.LQ098 }, "Compensaci\u00F3n de base imponible resto actividades a\u00F1o 2024")
+	,C09(new Mod2002025Key[]{Mod2002025Key.LQ3405, Mod2002025Key.LQ3406, Mod2002025Key.LQ3407}, "Compensaci\u00F3n de base imponible especial a\u00F1o 2025(*)")
+	,C10(new Mod2002025Key[]{Mod2002025Key.LQ3408, Mod2002025Key.LQ3409, Mod2002025Key.LQ3410}, "Compensaci\u00F3n de base imponible resto actividades a\u00F1o 2025(*)")
+	,C11(new Mod2002025Key[]{Mod2002025Key.LQ1886, Mod2002025Key.LQ1887, Mod2002025Key.LQ1888}, "Subtotal de compensaci\u00F3n de base imponible especial") 
+	,C12(new Mod2002025Key[]{Mod2002025Key.LQ1889, Mod2002025Key.LQ1890, Mod2002025Key.LQ1891}, "Subtotal de compensaci\u00F3n de base imponible resto actividades")
+	,C13(new Mod2002025Key[]{Mod2002025Key.LQ216 , Mod2002025Key.LQ243 , Mod2002025Key.LQ265 }, "Total")
+	,C14(new Mod2002025Key[]{Mod2002025Key.LQ266 , null		           , Mod2002025Key.LQ267 }, "Compensaci\u00F3n de base imponible especial a\u00F1o 2025")
+	,C15(new Mod2002025Key[]{Mod2002025Key.LQ290 , null            	   , Mod2002025Key.LQ344 }, "Compensaci\u00F3n de base imponible resto actividades a\u00F1o 2025")
 	;
 	 
     private String description;

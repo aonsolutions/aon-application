@@ -24,9 +24,10 @@ public enum Mod2002025BN1344Key implements Serializable, IMod200KeysProvider {
 	,C07(new Mod2002025Key[]{Mod2002025Key.BN199 	,Mod2002025Key.BN203 	,Mod2002025Key.BN204 	,Mod2002025Key.BN205	,Mod2002025Key.BN206 	},"D.I. interna 2021")
 	,C08(new Mod2002025Key[]{Mod2002025Key.BN394 	,Mod2002025Key.BN436 	,Mod2002025Key.BN437 	,Mod2002025Key.BN438	,Mod2002025Key.BN2076	},"D.I. interna 2022")
 	,C09(new Mod2002025Key[]{Mod2002025Key.BN1270	,Mod2002025Key.BN1271	,Mod2002025Key.BN1299	,Mod2002025Key.BN1318   ,Mod2002025Key.BN1360	},"D.I. interna 2023")
-	,C10(new Mod2002025Key[]{Mod2002025Key.BN467 	,Mod2002025Key.BN586 	,Mod2002025Key.BN259 	,Mod2002025Key.BN260    ,Mod2002025Key.BN261 	},"D.I. interna 2025(*)")
-	,C11(new Mod2002025Key[]{Mod2002025Key.BN1342	,null				  	,Mod2002025Key.BN1343	,Mod2002025Key.BN1344 	,Mod2002025Key.BN1345	},"Total")
-	,C12(new Mod2002025Key[]{null				 	,Mod2002025Key.BN103B	,null					,null 			  		,null 			   		},"Tipo de gravamen 2025")
+	,C10(new Mod2002025Key[]{Mod2002025Key.BN467 	,Mod2002025Key.BN586 	,Mod2002025Key.BN259 	,Mod2002025Key.BN260    ,Mod2002025Key.BN261 	},"D.I. interna 2024")
+	,C11(new Mod2002025Key[]{Mod2002025Key.BN3411	,Mod2002025Key.BN3412	,Mod2002025Key.BN3413	,Mod2002025Key.BN3414   ,Mod2002025Key.BN3415	},"D.I. interna 2025(*)")
+	,C12(new Mod2002025Key[]{Mod2002025Key.BN1342	,null				  	,Mod2002025Key.BN1343	,Mod2002025Key.BN1344 	,Mod2002025Key.BN1345	},"Total")
+	,C13(new Mod2002025Key[]{null				 	,Mod2002025Key.BN103B	,null					,null 			  		,null 			   		},"Tipo de gravamen 2025")
 	;
 	 
     private String description;

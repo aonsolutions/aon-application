@@ -31,7 +31,7 @@ public class Mod2002025 extends Mod200 {
 
 	private boolean initializedFromLastYear;
 	
-	private String cnae;  
+	private String cnae;  // CNAE-2025
 	
 	private int periodType;
 	private Date periodStart;
@@ -385,24 +385,12 @@ public class Mod2002025 extends Mod200 {
 	public void setUltimateDocument(String ultimateDocument) {
 		this.ultimateDocument = ultimateDocument;
 	}
-//	public Country getUltimateDocumentCountry() {
-//		return ultimateDocumentCountry;
-//	}
-//	public void setUltimateDocumentCountry(Country ultimateDocumentCountry) {
-//		this.ultimateDocumentCountry = ultimateDocumentCountry;
-//	}
 	public String getUltimateName() {
 		return ultimateName;
 	}
 	public void setUltimateName(String ultimateName) {
 		this.ultimateName = ultimateName;
 	}
-//	public Country getUltimateCountry() {
-//		return ultimateCountry;
-//	}
-//	public void setUltimateCountry(Country ultimateCountry) {
-//		this.ultimateCountry = ultimateCountry;
-//	}
 	
 	public HashMap<IMod200Key, DoubleVariableEx> getKeysMap() {
 		return keysMap;

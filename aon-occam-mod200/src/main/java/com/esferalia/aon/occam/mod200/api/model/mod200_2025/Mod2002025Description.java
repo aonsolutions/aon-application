@@ -77,8 +77,8 @@ public class Mod2002025Description {
 		DESCRIPTION_MAP.put(Mod2002025Key.C0007,"Imputaci\u00F3n en base imp. rentas positivas art. 100 LIS");
 		DESCRIPTION_MAP.put(Mod2002025Key.C0009,"Entidad dominante de grupo fiscal");
 		DESCRIPTION_MAP.put(Mod2002025Key.C0010,"Entidad dependiente de grupo fiscal");
-		DESCRIPTION_MAP.put(Mod2002025Key.C0081,"Filial grupo multinacional");
-		DESCRIPTION_MAP.put(Mod2002025Key.C0082,"Sociedad matriz \u00FAltima grupo multinacional");		
+		DESCRIPTION_MAP.put(Mod2002025Key.C0081,"Filial grupo multinacional o grupo nacional de gran magnitud");
+		DESCRIPTION_MAP.put(Mod2002025Key.C0082,"Sociedad matriz \u00FAltima grupo multinacional o grupo nacional de gran magnitud");		
 		DESCRIPTION_MAP.put(Mod2002025Key.C0026,"Entidad inactiva");
 		DESCRIPTION_MAP.put(Mod2002025Key.C0027,"Base imponible negativa o cero");
 		DESCRIPTION_MAP.put(Mod2002025Key.C0030,"Transmisi\u00F3n elementos patrimoniales arts. 27.2.d) y 77.1 LIS");

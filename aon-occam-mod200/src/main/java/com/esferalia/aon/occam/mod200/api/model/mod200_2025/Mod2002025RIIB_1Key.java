@@ -8,7 +8,8 @@ import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 public enum Mod2002025RIIB_1Key implements Serializable, IMod200KeysProvider {
 	
 	 C01(new Mod2002025Key[]{Mod2002025Key.RB1707, Mod2002025Key.RB2914, Mod2002025Key.RB2915, null				   , Mod2002025Key.RB1936, Mod2002025Key.RB2917},"RIIB 2023")
-	,C02(new Mod2002025Key[]{null				 , null				   , null				 , Mod2002025Key.RB1708, null				 , Mod2002025Key.RB1709},"RIIB 2025")
+	,C02(new Mod2002025Key[]{Mod2002025Key.RB3636, Mod2002025Key.RB3637, Mod2002025Key.RB3638, null				   , Mod2002025Key.RB3639, Mod2002025Key.RB1709},"RIIB 2024")
+	,C03(new Mod2002025Key[]{null				 , null				   , null				 , Mod2002025Key.RB3640, null				 , Mod2002025Key.RB3641},"RIIB 2025")
 	;
 	 
     private String description;
