@@ -2,9 +2,9 @@ package com.esferalia.aon.salary.deduction;
 
 import java.util.Locale;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.salary.enumeration.DeductionType;
 
@@ -30,17 +30,17 @@ public class DeductionsTestCase {
 			deductions.put(type, d);
 		}
 		
-		Assert.assertEquals(deductions.getCommonContingency().getAmount(), (double)DeductionType.COMMON_CONTINGENCY.ordinal());
-		Assert.assertEquals(deductions.getCommonContingency().getName(), DeductionType.COMMON_CONTINGENCY.name());
-		Assert.assertEquals(deductions.getJobTraining().getAmount(), (double)DeductionType.JOB_TRAINING.ordinal());
-		Assert.assertEquals(deductions.getJobTraining().getName(), DeductionType.JOB_TRAINING.name());
-		Assert.assertEquals(deductions.getIrpf().getAmount(), (double)DeductionType.IRPF.ordinal());
-		Assert.assertEquals(deductions.getIrpf().getName(), DeductionType.IRPF.name());
-		Assert.assertEquals(deductions.getAdvancePayment().getAmount(), (double)DeductionType.ADVANCE_PAYMENT.ordinal());
-		Assert.assertEquals(deductions.getAdvancePayment().getName(), DeductionType.ADVANCE_PAYMENT.name());
-		Assert.assertEquals(deductions.getOther().getAmount(), (double)DeductionType.OTHER.ordinal());
-		Assert.assertEquals(deductions.getOther().getName(), DeductionType.OTHER.name());
-		Assert.assertEquals(deductions.getUnemployment().getAmount(), (double)DeductionType.UNEMPLOYMENT.ordinal());
+		assertEquals(deductions.getCommonContingency().getAmount(), (double)DeductionType.COMMON_CONTINGENCY.ordinal());
+		assertEquals(deductions.getCommonContingency().getName(), DeductionType.COMMON_CONTINGENCY.name());
+		assertEquals(deductions.getJobTraining().getAmount(), (double)DeductionType.JOB_TRAINING.ordinal());
+		assertEquals(deductions.getJobTraining().getName(), DeductionType.JOB_TRAINING.name());
+		assertEquals(deductions.getIrpf().getAmount(), (double)DeductionType.IRPF.ordinal());
+		assertEquals(deductions.getIrpf().getName(), DeductionType.IRPF.name());
+		assertEquals(deductions.getAdvancePayment().getAmount(), (double)DeductionType.ADVANCE_PAYMENT.ordinal());
+		assertEquals(deductions.getAdvancePayment().getName(), DeductionType.ADVANCE_PAYMENT.name());
+		assertEquals(deductions.getOther().getAmount(), (double)DeductionType.OTHER.ordinal());
+		assertEquals(deductions.getOther().getName(), DeductionType.OTHER.name());
+		assertEquals(deductions.getUnemployment().getAmount(), (double)DeductionType.UNEMPLOYMENT.ordinal());
 		
 	}
 
@@ -64,23 +64,23 @@ public class DeductionsTestCase {
 			deductions.put(type, d);
 		}
 		
-		Assert.assertEquals(deductions.getCommonContingency().getAmount(), (double)DeductionType.COMMON_CONTINGENCY.ordinal()*3);
-		Assert.assertEquals(deductions.getCommonContingency().getName(), DeductionType.COMMON_CONTINGENCY.name());
-		Assert.assertEquals(deductions.getCommonContingency().getExpression(), null);
-		Assert.assertEquals(deductions.getJobTraining().getAmount(), (double)DeductionType.JOB_TRAINING.ordinal()*3);
-		Assert.assertEquals(deductions.getJobTraining().getName(), DeductionType.JOB_TRAINING.name());
-		Assert.assertEquals(deductions.getJobTraining().getExpression(), null);
-		Assert.assertEquals(deductions.getIrpf().getAmount(), (double)DeductionType.IRPF.ordinal()*3);
-		Assert.assertEquals(deductions.getIrpf().getName(), DeductionType.IRPF.name());
-		Assert.assertEquals(deductions.getIrpf().getExpression(), null);
-		Assert.assertEquals(deductions.getAdvancePayment().getAmount(), (double)DeductionType.ADVANCE_PAYMENT.ordinal()*3);
-		Assert.assertEquals(deductions.getAdvancePayment().getName(), DeductionType.ADVANCE_PAYMENT.name());
-		Assert.assertEquals(deductions.getAdvancePayment().getExpression(), null);
-		Assert.assertEquals(deductions.getOther().getAmount(), (double)DeductionType.OTHER.ordinal()*3);
-		Assert.assertEquals(deductions.getOther().getName(), DeductionType.OTHER.name());
-		Assert.assertEquals(deductions.getOther().getExpression(), null);
-		Assert.assertEquals(deductions.getUnemployment().getAmount(), (double)DeductionType.UNEMPLOYMENT.ordinal()*3);
-		Assert.assertEquals(deductions.getUnemployment().getExpression(), null);
+		assertEquals(deductions.getCommonContingency().getAmount(), (double)DeductionType.COMMON_CONTINGENCY.ordinal()*3);
+		assertEquals(deductions.getCommonContingency().getName(), DeductionType.COMMON_CONTINGENCY.name());
+		assertEquals(deductions.getCommonContingency().getExpression(), null);
+		assertEquals(deductions.getJobTraining().getAmount(), (double)DeductionType.JOB_TRAINING.ordinal()*3);
+		assertEquals(deductions.getJobTraining().getName(), DeductionType.JOB_TRAINING.name());
+		assertEquals(deductions.getJobTraining().getExpression(), null);
+		assertEquals(deductions.getIrpf().getAmount(), (double)DeductionType.IRPF.ordinal()*3);
+		assertEquals(deductions.getIrpf().getName(), DeductionType.IRPF.name());
+		assertEquals(deductions.getIrpf().getExpression(), null);
+		assertEquals(deductions.getAdvancePayment().getAmount(), (double)DeductionType.ADVANCE_PAYMENT.ordinal()*3);
+		assertEquals(deductions.getAdvancePayment().getName(), DeductionType.ADVANCE_PAYMENT.name());
+		assertEquals(deductions.getAdvancePayment().getExpression(), null);
+		assertEquals(deductions.getOther().getAmount(), (double)DeductionType.OTHER.ordinal()*3);
+		assertEquals(deductions.getOther().getName(), DeductionType.OTHER.name());
+		assertEquals(deductions.getOther().getExpression(), null);
+		assertEquals(deductions.getUnemployment().getAmount(), (double)DeductionType.UNEMPLOYMENT.ordinal()*3);
+		assertEquals(deductions.getUnemployment().getExpression(), null);
 		
 	}
 }

@@ -1,9 +1,8 @@
 package com.esferalia.aon.salary.deduction;
 
-import static org.junit.Assert.*;
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.salary.enumeration.DeductionType;
 
@@ -22,11 +21,11 @@ public class CompositeDeductionTestCase {
 		
 		CompositeDeduction composite = new CompositeDeduction(d);
 		
-		Assert.assertEquals(composite.getName(), "NAME");
-		Assert.assertEquals(composite.getAmount(), 100.00);
-		Assert.assertEquals(composite.getExpression(), "EXPRESSION");
-		Assert.assertEquals(composite.getDescription(), "DESCRIPTION");
-		Assert.assertEquals(composite.getType(), DeductionType.OTHER);
+		assertEquals(composite.getName(), "NAME");
+		assertEquals(composite.getAmount(), 100.00);
+		assertEquals(composite.getExpression(), "EXPRESSION");
+		assertEquals(composite.getDescription(), "DESCRIPTION");
+		assertEquals(composite.getType(), DeductionType.OTHER);
 		
 	}
 	
@@ -52,11 +51,11 @@ public class CompositeDeductionTestCase {
 		
 		CompositeDeduction composite = new CompositeDeduction(d1, d2);
 		
-		Assert.assertEquals(composite.getName(), "NAME");
-		Assert.assertEquals(composite.getAmount(), 200.00);
-		Assert.assertEquals(composite.getExpression(), "EXPRESSION");
-		Assert.assertEquals(composite.getDescription(), "DESCRIPTION");
-		Assert.assertEquals(composite.getType(), DeductionType.OTHER);
+		assertEquals(composite.getName(), "NAME");
+		assertEquals(composite.getAmount(), 200.00);
+		assertEquals(composite.getExpression(), "EXPRESSION");
+		assertEquals(composite.getDescription(), "DESCRIPTION");
+		assertEquals(composite.getType(), DeductionType.OTHER);
 		
 	}
 
@@ -89,11 +88,11 @@ public class CompositeDeductionTestCase {
 		
 		CompositeDeduction composite = new CompositeDeduction(d1, d2, d3);
 		
-		Assert.assertEquals(composite.getName(), "NAME");
-		Assert.assertEquals(composite.getAmount(), 600.00);
-		Assert.assertEquals(composite.getExpression(), "EXPRESSION");
-		Assert.assertEquals(composite.getDescription(), "DESCRIPTION");
-		Assert.assertEquals(composite.getType(), DeductionType.OTHER);
+		assertEquals(composite.getName(), "NAME");
+		assertEquals(composite.getAmount(), 600.00);
+		assertEquals(composite.getExpression(), "EXPRESSION");
+		assertEquals(composite.getDescription(), "DESCRIPTION");
+		assertEquals(composite.getType(), DeductionType.OTHER);
 		
 	}
 
@@ -126,11 +125,11 @@ public class CompositeDeductionTestCase {
 		
 		CompositeDeduction composite = new CompositeDeduction(d1, d2, d3);
 		
-		Assert.assertEquals(composite.getName(), null);
-		Assert.assertEquals(composite.getAmount(), 600.00);
-		Assert.assertEquals(composite.getExpression(), "EXPRESSION");
-		Assert.assertEquals(composite.getDescription(), "DESCRIPTION");
-		Assert.assertEquals(composite.getType(), DeductionType.OTHER);
+		assertEquals(composite.getName(), null);
+		assertEquals(composite.getAmount(), 600.00);
+		assertEquals(composite.getExpression(), "EXPRESSION");
+		assertEquals(composite.getDescription(), "DESCRIPTION");
+		assertEquals(composite.getType(), DeductionType.OTHER);
 		
 	}
 
@@ -163,11 +162,11 @@ public class CompositeDeductionTestCase {
 		
 		CompositeDeduction composite = new CompositeDeduction(d1, d2, d3);
 		
-		Assert.assertEquals(composite.getName(), null);
-		Assert.assertEquals(composite.getAmount(), 600.00);
-		Assert.assertEquals(composite.getExpression(), null);
-		Assert.assertEquals(composite.getDescription(), null);
-		Assert.assertEquals(composite.getType(), DeductionType.OTHER);
+		assertEquals(composite.getName(), null);
+		assertEquals(composite.getAmount(), 600.00);
+		assertEquals(composite.getExpression(), null);
+		assertEquals(composite.getDescription(), null);
+		assertEquals(composite.getType(), DeductionType.OTHER);
 		
 	}
 
@@ -200,11 +199,11 @@ public class CompositeDeductionTestCase {
 		
 		CompositeDeduction composite = new CompositeDeduction(d1, d2, d3);
 		
-		Assert.assertEquals(composite.getName(), null);
-		Assert.assertEquals(composite.getAmount(), 600.00);
-		Assert.assertEquals(composite.getExpression(), null);
-		Assert.assertEquals(composite.getDescription(), null);
-		Assert.assertEquals(composite.getType(), null);
+		assertEquals(composite.getName(), null);
+		assertEquals(composite.getAmount(), 600.00);
+		assertEquals(composite.getExpression(), null);
+		assertEquals(composite.getDescription(), null);
+		assertEquals(composite.getType(), null);
 		
 	}
 	
@@ -235,11 +234,11 @@ public class CompositeDeductionTestCase {
 		
 		CompositeDeduction composite = new CompositeDeduction(d1, d2, d3);
 		
-		Assert.assertEquals(composite.getName(), null);
-		Assert.assertEquals(composite.getAmount(), 600.00);
-		Assert.assertEquals(composite.getExpression(), null);
-		Assert.assertEquals(composite.getDescription(), "DESCRIPTION");
-		Assert.assertEquals(composite.getType(), null);
+		assertEquals(composite.getName(), null);
+		assertEquals(composite.getAmount(), 600.00);
+		assertEquals(composite.getExpression(), null);
+		assertEquals(composite.getDescription(), "DESCRIPTION");
+		assertEquals(composite.getType(), null);
 		
 	}
 	
