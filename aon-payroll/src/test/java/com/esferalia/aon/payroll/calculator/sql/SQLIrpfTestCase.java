@@ -137,13 +137,13 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		}
 
 		@Override
-		public int getAÃ±oNacimiento() {
+		public int getAñoNacimiento() {
 			return 1975;
 		}
 
 		@Override
 		public String getComunidadAutonoma() {
-			return "ARABA/ÃLAVA";
+			return "ARABA/ÁLAVA";
 		}
 
 		@Override
@@ -2118,7 +2118,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		addPayment(aonContext, contract, add(startDate, Calendar.MONTH, -1), null, "SALARIO BASE", "2500.00", "_P", "_P", PaymentType.CRA_0001 );
 		addPayment(aonContext, contract, add(startDate, Calendar.MONTH, -1), null, "PLUS SALARIAL", "250.00", "_P", "_P", PaymentType.CRA_0001 );
 		
-		addPayment(aonContext, contract, contract.getStartDate(), null, "INDEMNIZACIÃ“N", "10000.00", "_P", null, PaymentType.CRA_0054, SalaryType.SETTLE  );
+		addPayment(aonContext, contract, contract.getStartDate(), null, "INDEMNIZACIÓN", "10000.00", "_P", null, PaymentType.CRA_0054, SalaryType.SETTLE  );
 
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
@@ -3566,7 +3566,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				new String [] {
 						"BASE_CGC * 4.70 / 100.00", // 4.70% Contingencias Comunes
 						"BASE_CGP * 1.55 / 100.00", // 1.55% Desempleo
-						"BASE_CGP * 0.10 / 100.00", // 0.10% FormaciÃ³n Profesional
+						"BASE_CGP * 0.10 / 100.00", // 0.10% Formación Profesional
 						"BASE_CGP * 0.15 / 100.00", // 0.15% Mecanismo Equidad Intergeneracional
 						"PORCENTAJE_IRPF / 100.00 * BASE_IRPF"
 				}, 
@@ -3621,12 +3621,12 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 					Descendiente descendiente = new Descendiente() {
 
 						@Override
-						public Integer getAÃ±oNacimiento() {
+						public Integer getAñoNacimiento() {
 							return 1975;
 						}
 
 						@Override
-						public Integer getAÃ±oAdopcion() {
+						public Integer getAñoAdopcion() {
 							return 1975;
 						}
 
@@ -3664,7 +3664,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 					Ascendiente ascendiente = new Ascendiente() {
 
 						@Override
-						public Integer getAÃ±oNacimiento() {
+						public Integer getAñoNacimiento() {
 							return 2015;
 						}
 

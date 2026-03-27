@@ -78,8 +78,8 @@ public class RespuestaTestCase {
 					net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador tytTrabajador = getTrabajador(tytLiquidacionMes, resTrabajador).orElseThrow(() -> new NoSuchElementException(resTrabajador.getNaf()));
 					for ( Tramo resTramo : resTrabajador.getTramos().getTramo() ) {
 						if ( isError(resTramo, "R9503")) { 
-							// Tramo inexistente en AfiliaciÃ³n para ese trabajador
-							getTramo(tytTrabajador, resTramo).ifPresent(t -> fail("Tramo inexistente en AfiliaciÃ³n para ese trabajador"));
+							// Tramo inexistente en Afiliación para ese trabajador
+							getTramo(tytTrabajador, resTramo).ifPresent(t -> fail("Tramo inexistente en Afiliación para ese trabajador"));
 						}
 					}
 				}

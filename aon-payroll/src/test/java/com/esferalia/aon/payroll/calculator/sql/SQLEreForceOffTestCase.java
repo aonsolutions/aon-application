@@ -105,7 +105,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				});
 		
 		PaymentConceptRecord ere = addConcept(aonContext, getEreVariable().getName());
-		addPayment(aonContext, contract, ere, "SELF.addBonus('ERTE EXONERACIÃ“N DE CUOTAS','CUOTA_EMPRESARIAL * COEFICIENTE_ERE_FZA_EXONERADO');0.00" , 
+		addPayment(aonContext, contract, ere, "SELF.addBonus('ERTE EXONERACIÓN DE CUOTAS','CUOTA_EMPRESARIAL * COEFICIENTE_ERE_FZA_EXONERADO');0.00" , 
 		String.format("%s * BASE_REGULADORA", getDaysVariable()));
 		
 
@@ -198,7 +198,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				});
 		
 		PaymentConceptRecord ere = addConcept(aonContext, getEreVariable().getName());
-		addPayment(aonContext, contract, ere, "SELF.addBonus('ERTE EXONERACIÃ“N DE CUOTAS','CUOTA_EMPRESARIAL * COEFICIENTE_ERE_FZA_EXONERADO');0.00" , 
+		addPayment(aonContext, contract, ere, "SELF.addBonus('ERTE EXONERACIÓN DE CUOTAS','CUOTA_EMPRESARIAL * COEFICIENTE_ERE_FZA_EXONERADO');0.00" , 
 		String.format("%s * BASE_REGULADORA", getDaysVariable()));
 		
 
@@ -290,7 +290,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				});
 		
 		PaymentConceptRecord ere = addConcept(aonContext, getEreVariable().getName());
-		addPayment(aonContext, contract, ere, "SELF.addBonus('ERTE EXONERACIÃ“N DE CUOTAS','CUOTA_EMPRESARIAL * COEFICIENTE_ERE_FZA_EXONERADO');0.00" , 
+		addPayment(aonContext, contract, ere, "SELF.addBonus('ERTE EXONERACIÓN DE CUOTAS','CUOTA_EMPRESARIAL * COEFICIENTE_ERE_FZA_EXONERADO');0.00" , 
 		String.format("%s * BASE_REGULADORA", getDaysVariable()));
 		
 
@@ -386,7 +386,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				});
 		
 		PaymentConceptRecord ere = addConcept(aonContext, getEreVariable().getName());
-		addPayment(aonContext, contract, ere, "SELF.addBonus('ERTE EXONERACIÃ“N DE CUOTAS','CUOTA_EMPRESARIAL * COEFICIENTE_ERE_FZA_EXONERADO');0.00" , 
+		addPayment(aonContext, contract, ere, "SELF.addBonus('ERTE EXONERACIÓN DE CUOTAS','CUOTA_EMPRESARIAL * COEFICIENTE_ERE_FZA_EXONERADO');0.00" , 
 		String.format("%s * BASE_REGULADORA", getDaysVariable()));
 		
 

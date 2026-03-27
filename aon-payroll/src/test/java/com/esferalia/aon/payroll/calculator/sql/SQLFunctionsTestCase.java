@@ -207,7 +207,7 @@ public class SQLFunctionsTestCase extends
 		
 		List<ITimedResult<java.util.Date>>  date = 
 				ctx.getExpressionContext().eval(
-						String.format("A√ëO(FECHA(%d,%d,%d),1)", 
+						String.format("A—O(FECHA(%d,%d,%d),1)", 
 								get(today, Calendar.YEAR),
 								get(today, Calendar.MONTH)+1,
 								get(today, Calendar.DATE)
@@ -219,7 +219,7 @@ public class SQLFunctionsTestCase extends
 
 		List<ITimedResult<Integer>>  month = 
 				ctx.getExpressionContext().eval(
-						String.format("A√ëO(FECHA(%d,%d,%d))", 
+						String.format("A—O(FECHA(%d,%d,%d))", 
 								get(today, Calendar.YEAR),
 								get(today, Calendar.MONTH)+1,
 								get(today, Calendar.DATE)
@@ -461,7 +461,7 @@ public class SQLFunctionsTestCase extends
 		
 		
 		List<ITimedResult<java.util.Date>>  lastDayOfYear = 
-				ctx.getExpressionContext().eval("FIN_A√ëO(TODAY)" 
+				ctx.getExpressionContext().eval("FIN_A—O(TODAY)" 
 						, startDate
 						, endDate, java.util.Date.class);
 		
@@ -493,7 +493,7 @@ public class SQLFunctionsTestCase extends
 		
 		List<ITimedResult<java.util.Date>>  firstDayOfYear = 
 				ctx.getExpressionContext().eval(
-						String.format("INICIO_A√ëO(FECHA(%d,%d,%d))", 
+						String.format("INICIO_A—O(FECHA(%d,%d,%d))", 
 								get(today, Calendar.YEAR),
 								get(today, Calendar.MONTH)+1,
 								10
@@ -910,7 +910,7 @@ public class SQLFunctionsTestCase extends
 				newContract(aonContext, add(getToday(), Calendar.YEAR, -5), Collections.emptyMap()));
 		//@formatter:on
 		
-		List<ITimedResult<Double>> result =  ctx.getExpressionContext().eval("INPUT('/*user*/ANTIG√úEDAD(100.00, TRIENIO)/**/','Hello World!!!');", 
+		List<ITimedResult<Double>> result =  ctx.getExpressionContext().eval("INPUT('/*user*/ANTIG‹EDAD(100.00, TRIENIO)/**/','Hello World!!!');", 
 				startDate
 				,endDate, 
 				Double.class);
@@ -937,7 +937,7 @@ public class SQLFunctionsTestCase extends
 		//@formatter:on
 		
 		try {
- 			List<ITimedResult<Double>> result =  ctx.getExpressionContext().eval("INPUT('/*user*/ANTIG√úEDAD(100.00, TRIENIO)/**/','Hello World!!!');REMOVE();", 
+ 			List<ITimedResult<Double>> result =  ctx.getExpressionContext().eval("INPUT('/*user*/ANTIG‹EDAD(100.00, TRIENIO)/**/','Hello World!!!');REMOVE();", 
 					startDate
 					,endDate, 
 					Double.class);
@@ -947,7 +947,7 @@ public class SQLFunctionsTestCase extends
 		}
 	
 		try {
- 			List<ITimedResult<Double>> result =  ctx.getExpressionContext().eval("INPUT(\"/*user*/ANTIG√úEDAD(100.00, TRIENIO)/**/\",\"Hello World!!!\");REMOVE();", 
+ 			List<ITimedResult<Double>> result =  ctx.getExpressionContext().eval("INPUT(\"/*user*/ANTIG‹EDAD(100.00, TRIENIO)/**/\",\"Hello World!!!\");REMOVE();", 
 					startDate
 					,endDate, 
 					Double.class);
@@ -957,7 +957,7 @@ public class SQLFunctionsTestCase extends
 		}
 
 		try {
- 			List<ITimedResult<Double>> result =  ctx.getExpressionContext().eval("INPUT(\"/*user*/ANTIG√úEDAD(100.00, TRIENIO)/**/\",DIAS_MES);REMOVE();", 
+ 			List<ITimedResult<Double>> result =  ctx.getExpressionContext().eval("INPUT(\"/*user*/ANTIG‹EDAD(100.00, TRIENIO)/**/\",DIAS_MES);REMOVE();", 
 					startDate
 					,endDate, 
 					Double.class);
@@ -985,7 +985,7 @@ public class SQLFunctionsTestCase extends
 				newContract(aonContext, add(getToday(), Calendar.YEAR, -5), Collections.emptyMap()));
 		//@formatter:on
 		
-		List<ITimedResult<Double>> result =  ctx.getExpressionContext().eval("INPUT(' /*user*/(1.00) * ANTIG√úEDAD(100.00, TRIENIO)/**/ '   ,  ' Hello World!!!'  );", 
+		List<ITimedResult<Double>> result =  ctx.getExpressionContext().eval("INPUT(' /*user*/(1.00) * ANTIG‹EDAD(100.00, TRIENIO)/**/ '   ,  ' Hello World!!!'  );", 
 				startDate
 				,endDate, 
 				Double.class);
@@ -993,7 +993,7 @@ public class SQLFunctionsTestCase extends
 		assertEquals(1, result.size());
 		assertEquals(100.00, result.get(0).getValue());
 
-		result =  ctx.getExpressionContext().eval("INPUT(\" /*user*/(1.00) * ANTIG√úEDAD(100.00, TRIENIO)/**/ \"   ,  \" Hello World!!!\"  );", 
+		result =  ctx.getExpressionContext().eval("INPUT(\" /*user*/(1.00) * ANTIG‹EDAD(100.00, TRIENIO)/**/ \"   ,  \" Hello World!!!\"  );", 
 				startDate
 				,endDate, 
 				Double.class);
@@ -1001,7 +1001,7 @@ public class SQLFunctionsTestCase extends
 		assertEquals(1, result.size());
 		assertEquals(100.00, result.get(0).getValue());
 	
-		result =  ctx.getExpressionContext().eval("INPUT(\" /*user*/(1.00) * ANTIG√úEDAD(100.00, TRIENIO)/**/ \"   ,  ' Hello World!!!' );", 
+		result =  ctx.getExpressionContext().eval("INPUT(\" /*user*/(1.00) * ANTIG‹EDAD(100.00, TRIENIO)/**/ \"   ,  ' Hello World!!!' );", 
 				startDate
 				,endDate, 
 				Double.class);
@@ -1672,12 +1672,12 @@ public class SQLFunctionsTestCase extends
 		//@formatter:on
 
 		// 1. DESPIDO IMPROCEDENTE 										-- Salario diario x meses x 2,75: 11182.22[1827]
-		// 2. EXTINCI√ìN DEL CONTRATO POR VOLUNTAD DEL TRABAJADOR EN CASO DE INCUMPLIMIENTO GRAVE DEL EMPRESARIO -- Salario diario x meses x 2,75: 11182.22[1827]
-		// 3. EXTINCI√ìN POR CAUSAS OBJETIVAS PROCEDENTE Y TRABAJADOR INDEFINIDO NO FIJO 			-- Salario diario x meses x 20 / 12: 6777.1[1827]
+		// 2. EXTINCI”N DEL CONTRATO POR VOLUNTAD DEL TRABAJADOR EN CASO DE INCUMPLIMIENTO GRAVE DEL EMPRESARIO -- Salario diario x meses x 2,75: 11182.22[1827]
+		// 3. EXTINCI”N POR CAUSAS OBJETIVAS PROCEDENTE Y TRABAJADOR INDEFINIDO NO FIJO 			-- Salario diario x meses x 20 / 12: 6777.1[1827]
 		// 4. DESPIDO COLECTIVO PROCEDENTE 									-- Salario diario x meses x 20 / 12: 6777.1[1827]
-		// 5. MOVILIDAD GEOGR√ÅFICA 										-- Salario diario x meses x 20 / 12: 6777.1[1827]
-		// 6. MODIFICACI√ìN SUSTANCIAL DE CONDICIONES DE TRABAJO 						-- Salario diario x meses x 20 / 12: 6777.1[1827]
-		// 7. EXTINCI√ìN DEL CONTRATO TEMPORAL - Contrato celebrado a partir del 1-1-2015 			-- Salario diario x dias x 12 / 365: 4003.98[1827]
+		// 5. MOVILIDAD GEOGR¡FICA 										-- Salario diario x meses x 20 / 12: 6777.1[1827]
+		// 6. MODIFICACI”N SUSTANCIAL DE CONDICIONES DE TRABAJO 						-- Salario diario x meses x 20 / 12: 6777.1[1827]
+		// 7. EXTINCI”N DEL CONTRATO TEMPORAL - Contrato celebrado a partir del 1-1-2015 			-- Salario diario x dias x 12 / 365: 4003.98[1827]
 		
 		Map<Integer, Map<String, Object>> cgpjIndemnizaciones = new HashMap<>();
 		Map<String, Object> indemnizacion = new HashMap<>();
@@ -1687,13 +1687,13 @@ public class SQLFunctionsTestCase extends
 		indemnizacion.put("days", 1827);
 		cgpjIndemnizaciones.put(1, indemnizacion);
 		indemnizacion = new HashMap<>();
-		indemnizacion.put("title", "2. EXTINCI√ìN DEL CONTRATO POR VOLUNTAD DEL TRABAJADOR EN CASO DE INCUMPLIMIENTO GRAVE DEL EMPRESARIO");
+		indemnizacion.put("title", "2. EXTINCI”N DEL CONTRATO POR VOLUNTAD DEL TRABAJADOR EN CASO DE INCUMPLIMIENTO GRAVE DEL EMPRESARIO");
 		indemnizacion.put("description", "-- Salario diario x meses x 2,75:");
 		indemnizacion.put("amount", 11182.22);
 		indemnizacion.put("days", 1827);
 		cgpjIndemnizaciones.put(2, indemnizacion);
 		indemnizacion = new HashMap<>();
-		indemnizacion.put("title", "3. EXTINCI√ìN POR CAUSAS OBJETIVAS PROCEDENTE Y TRABAJADOR INDEFINIDO NO FIJO");
+		indemnizacion.put("title", "3. EXTINCI”N POR CAUSAS OBJETIVAS PROCEDENTE Y TRABAJADOR INDEFINIDO NO FIJO");
 		indemnizacion.put("description", "- Salario diario x meses x 20 / 12:");
 		indemnizacion.put("amount", 11182.22);
 		indemnizacion.put("days", 1827);
@@ -1705,19 +1705,19 @@ public class SQLFunctionsTestCase extends
 		indemnizacion.put("days", 1827);
 		cgpjIndemnizaciones.put(4, indemnizacion);
 		indemnizacion = new HashMap<>();
-		indemnizacion.put("title", "5. MOVILIDAD GEOGR√ÅFICA");
+		indemnizacion.put("title", "5. MOVILIDAD GEOGR¡FICA");
 		indemnizacion.put("description", "-- Salario diario x meses x 20 / 12:");
 		indemnizacion.put("amount", 11182.22);
 		indemnizacion.put("days", 1827);
 		cgpjIndemnizaciones.put(5, indemnizacion);
 		indemnizacion = new HashMap<>();
-		indemnizacion.put("title", "6. MODIFICACI√ìN SUSTANCIAL");
+		indemnizacion.put("title", "6. MODIFICACI”N SUSTANCIAL");
 		indemnizacion.put("description", "-- Salario diario x meses x 20 / 12:");
 		indemnizacion.put("amount", 11182.22);
 		indemnizacion.put("days", 1827);
 		cgpjIndemnizaciones.put(6, indemnizacion);
 		indemnizacion = new HashMap<>();
-		indemnizacion.put("title", "7. EXTINCI√ìN DEL CONTRATO TEMPORAL");
+		indemnizacion.put("title", "7. EXTINCI”N DEL CONTRATO TEMPORAL");
 		indemnizacion.put("description", "-- Contrato celebrado a partir del 1-1-2015 - Salario diario x dias x 12 / 365:");
 		indemnizacion.put("amount", 11182.22);
 		indemnizacion.put("days", 1827);

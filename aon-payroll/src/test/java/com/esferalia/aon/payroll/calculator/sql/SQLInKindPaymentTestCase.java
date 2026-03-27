@@ -250,7 +250,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IN_KIND, 
 		"IRPF",
-		"Retribuci贸n Dineraria",
+		"Retribuci髇 Dineraria",
 		"BASE_IRPF_DINERO * PORCENTAJE_IRPF/100");
 
 		addSSRegimeDeduction(
@@ -259,7 +259,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IN_KIND, 
 		"IRPF",
-		"Retribuci贸n en Especie",
+		"Retribuci髇 en Especie",
 		"BASE_IRPF_ESPECIE * PORCENTAJE_IRPF/100");
 
 		//@formatter:off
@@ -326,7 +326,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IN_KIND, 
 		ContextVariable.IN_KIND.getName(),
-		"RETRIBUCI脫N EN ESPECIE",
+		"RETRIBUCI覰 EN ESPECIE",
 		"isdef _EN_ESPECIE ? SUM(_EN_ESPECIE) : HIDE()");
 		
 		addSSRegimeDeduction(
@@ -335,7 +335,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"Retribuci贸n Dineraria",
+		"Retribuci髇 Dineraria",
 		"BASE_IRPF_DINERO * PORCENTAJE_IRPF/100");
 
 		addSSRegimeDeduction(
@@ -344,7 +344,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"Retribuci贸n en Especie",
+		"Retribuci髇 en Especie",
 		"BASE_IRPF_ESPECIE * PORCENTAJE_IRPF/100");
 
 		//@formatter:off
@@ -414,7 +414,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IN_KIND, 
 		ContextVariable.IN_KIND.getName(),
-		"RETRIBUCI脫N EN ESPECIE",
+		"RETRIBUCI覰 EN ESPECIE",
 		"isdef _EN_ESPECIE ? SUM(_EN_ESPECIE) : HIDE()");
 		
 		addSSRegimeDeduction(
@@ -423,7 +423,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"Retribuci贸n Dineraria",
+		"Retribuci髇 Dineraria",
 		"BASE_IRPF_DINERO * PORCENTAJE_IRPF/100");
 
 		addSSRegimeDeduction(
@@ -432,7 +432,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"Retribuci贸n en Especie",
+		"Retribuci髇 en Especie",
 		"BASE_IRPF_ESPECIE * PORCENTAJE_IRPF/100");
 
 		//@formatter:off
