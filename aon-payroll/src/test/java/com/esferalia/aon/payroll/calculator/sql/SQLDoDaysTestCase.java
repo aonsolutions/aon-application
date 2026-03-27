@@ -9,7 +9,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_FACTOR
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -18,7 +18,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
@@ -462,7 +462,7 @@ public class SQLDoDaysTestCase extends AbstractSQLTestCase {
 			contract.getStartDate(), 
 			contract.getEndDate(), 
 			addConcept(aonContext, "FIX_BASE_CGC_MIN"), 
-			"COTIZACIÓN MÍNIMA POR CONTINGENCIAS COMUNES :-)", 
+			"COTIZACIï¿½N Mï¿½NIMA POR CONTINGENCIAS COMUNES :-)", 
 			"/*default*/(/*user*/0.00/**/)", 
 			"/*fixBaseCgcMin*/BASE_CGP_BRUTA=BASE_CGP=MAX(_B,_A);_P", 
 			"/*fixBaseCgcMin*/_A=BASE_CGP;_B=BASE_CGP_BRUTA;MAX(_P,(BASE_CGC - BASE_CGC_BRUTA))", 

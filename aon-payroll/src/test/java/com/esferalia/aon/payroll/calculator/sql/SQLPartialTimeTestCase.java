@@ -48,8 +48,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
@@ -123,7 +123,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 					connection, startDate, endDate, issueDate, contract);
 			Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getTotalPayment() , DELTA );
+			org.junit.assertEquals( 1750.00 / 2,  salary.getTotalPayment() , DELTA );
 			for ( SalaryData data: salary.getSalaryDatas() ) {
 				System.out.println(data.getName() + "= " + data.getExpression() );
 			}
@@ -177,7 +177,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, issueDate, contract);
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		org.junit.Assert.assertEquals( 1750.00 / 4 * workedDays / 30 ,  salary.getTotalPayment() , DELTA );
+		org.junit.assertEquals( 1750.00 / 4 * workedDays / 30 ,  salary.getTotalPayment() , DELTA );
 	}
 
 
@@ -227,7 +227,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, issueDate, contract);
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		org.junit.Assert.assertEquals( 1750.00 / 4 * workedDays / 30 ,  salary.getTotalPayment() , DELTA );
+		org.junit.assertEquals( 1750.00 / 4 * workedDays / 30 ,  salary.getTotalPayment() , DELTA );
 	}
 
 	@Test
@@ -278,7 +278,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, issueDate, contract);
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		org.junit.Assert.assertEquals( 1750.00 / 4 * workedDays / 30 ,  salary.getTotalPayment() , DELTA );
+		org.junit.assertEquals( 1750.00 / 4 * workedDays / 30 ,  salary.getTotalPayment() , DELTA );
 		
 		
 		
@@ -335,7 +335,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, issueDate, contract);
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		org.junit.Assert.assertEquals( 1750.00 / 4 * workedDays / 30 ,  salary.getTotalPayment() , DELTA );
+		org.junit.assertEquals( 1750.00 / 4 * workedDays / 30 ,  salary.getTotalPayment() , DELTA );
 		
 		
 		
@@ -390,7 +390,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, issueDate, contract);
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		org.junit.Assert.assertEquals( 1750.00 / 4 * workedDays / 30 ,  salary.getTotalPayment() , DELTA );
+		org.junit.assertEquals( 1750.00 / 4 * workedDays / 30 ,  salary.getTotalPayment() , DELTA );
 		
 		for ( SalaryData data : salary.getSalaryDatas())
 			System.out.println(data.getName() + " = " + data.getExpression());
@@ -451,7 +451,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, issueDate, contract);
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		org.junit.Assert.assertEquals( 1750.00 / 4 * workedDays / 30 ,  salary.getTotalPayment() , DELTA );
+		org.junit.assertEquals( 1750.00 / 4 * workedDays / 30 ,  salary.getTotalPayment() , DELTA );
 		
 		
 		
@@ -501,7 +501,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 					connection, startDate, endDate, issueDate, contract);
 			Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 			
-			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getCommonBase() , DELTA );
+			org.junit.assertEquals( 1750.00 / 2,  salary.getCommonBase() , DELTA );
 
 			startDate = add(startDate, Calendar.MONTH, 1); 
 			
@@ -554,7 +554,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 					connection, startDate, endDate, issueDate, contract);
 			Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 			double salaryHours = salary.getSalaryData(WORKED_HOURS.getName(), Number.class ).doubleValue();
-			org.junit.Assert.assertEquals( 66.66 * salaryHours,  salary.getCommonBase() , DELTA );
+			org.junit.assertEquals( 66.66 * salaryHours,  salary.getCommonBase() , DELTA );
 
 			startDate = add(startDate, Calendar.MONTH, 1); 
 			
@@ -614,7 +614,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 					connection, startDate, endDate, issueDate, contract);
 			Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 			
-			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getCommonBase() , DELTA );
+			org.junit.assertEquals( 1750.00 / 2,  salary.getCommonBase() , DELTA );
 
 			startDate = add(startDate, Calendar.MONTH, 1); 
 			
@@ -677,7 +677,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 					connection, startDate, endDate, issueDate, contract);
 			Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 			double salaryHours = salary.getSalaryData(WORKED_HOURS.getName(), Number.class ).doubleValue();
-			org.junit.Assert.assertEquals( 66.66 * salaryHours,  salary.getCommonBase() , DELTA );
+			org.junit.assertEquals( 66.66 * salaryHours,  salary.getCommonBase() , DELTA );
 			startDate = add(startDate, Calendar.MONTH, 1); 
 			
 		}
@@ -727,7 +727,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 					connection, startDate, endDate, issueDate, contract);
 			Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getTotalPayment() , DELTA );
+			org.junit.assertEquals( 1750.00 / 2,  salary.getTotalPayment() , DELTA );
 			for ( SalaryData data: salary.getSalaryDatas() ) {
 				System.out.println(data.getName() + "= " + data.getExpression() );
 			}
@@ -775,7 +775,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 			for ( SalaryData data: salary.getSalaryDatas() ) {
 				System.out.println(data.getName() + "= " + data.getExpression() );
 			}
-			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getTotalPayment() , DELTA );
+			org.junit.assertEquals( 1750.00 / 2,  salary.getTotalPayment() , DELTA );
 			startDate = add(startDate, Calendar.MONTH, 1); 
 			
 		}
@@ -783,7 +783,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore()
+	@Disabled()
 	public void testPartialMonthlyXVI()
 			throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -835,7 +835,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 					connection, startDate, endDate, issueDate, contract);
 			Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-			org.junit.Assert.assertEquals( 1750.00  /( 35.00 / 20.00),  salary.getTotalPayment() , DELTA );
+			org.junit.assertEquals( 1750.00  /( 35.00 / 20.00),  salary.getTotalPayment() , DELTA );
 			for ( SalaryData data: salary.getSalaryDatas() ) {
 				System.out.println(data.getName() + "= " + data.getExpression() );
 			}
@@ -889,8 +889,8 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 //			for ( SalaryData data: salary.getSalaryDatas() ) {
 //				System.out.println(data.getName() + " = " + data.getExpression() );
 //			}
-			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getTotalPayment() , DELTA );
-			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getCommonBase() , DELTA );
+			org.junit.assertEquals( 1750.00 / 2,  salary.getTotalPayment() , DELTA );
+			org.junit.assertEquals( 1750.00 / 2,  salary.getCommonBase() , DELTA );
 			startDate = add(startDate, Calendar.MONTH, 1); 
 			
 		}
@@ -935,8 +935,8 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 					connection, startDate, endDate, issueDate, contract);
 			Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 
-			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getTotalPayment() , DELTA );
-			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getCommonBase() , DELTA );
+			org.junit.assertEquals( 1750.00 / 2,  salary.getTotalPayment() , DELTA );
+			org.junit.assertEquals( 1750.00 / 2,  salary.getCommonBase() , DELTA );
 			startDate = add(startDate, Calendar.MONTH, 1); 
 			
 		}
@@ -975,8 +975,8 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 			}
 			int monthDays = get(endDate, DAY_OF_MONTH);
 			int itDays = monthDays - 15;
-			org.junit.Assert.assertEquals( 1750.00 / 2 / 30 * 15 +  1750.00 / 2 / monthDays * itDays ,  salary.getTotalPayment() , DELTA );
-			org.junit.Assert.assertEquals( 1750.00 / 2 / 30 * 15 + 1750.00 / 2 / monthDays * itDays ,  salary.getCommonBase() , DELTA );
+			org.junit.assertEquals( 1750.00 / 2 / 30 * 15 +  1750.00 / 2 / monthDays * itDays ,  salary.getTotalPayment() , DELTA );
+			org.junit.assertEquals( 1750.00 / 2 / 30 * 15 + 1750.00 / 2 / monthDays * itDays ,  salary.getCommonBase() , DELTA );
 			startDate = add(startDate, Calendar.MONTH, 1); 
 			
 		}
@@ -1050,7 +1050,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = get(endDate, Calendar.DAY_OF_MONTH );
 		
-		org.junit.Assert.assertEquals( 
+		org.junit.assertEquals( 
 		1750.00 / monthDays * 10  * ( 15.00 / 40.00) +
 		1750.00 / monthDays * (monthDays-10)  * ( 20.00 / 40.00) 
 		,  salary.getTotalPayment() , DELTA );

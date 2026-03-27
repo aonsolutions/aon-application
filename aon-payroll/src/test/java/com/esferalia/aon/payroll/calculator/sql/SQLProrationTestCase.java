@@ -12,8 +12,8 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collections;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -91,8 +91,8 @@ public class SQLProrationTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" = " + p.getAmount() ));
 		
-		org.junit.Assert.assertEquals(999.99+99.99+9.99,salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99,salary.getTotalPayment(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
 		
 		startDate = getFirstDayOfMonth(lastDayOfDecember);
 		endDate = getLastDayOfMonth(lastDayOfDecember);
@@ -104,8 +104,8 @@ public class SQLProrationTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" = " + p.getAmount() ));
 		
-		org.junit.Assert.assertEquals(999.99+99.99+9.99+1200.00,salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99+1200.00,salary.getTotalPayment(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
 		
 	}
 
@@ -171,8 +171,8 @@ public class SQLProrationTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" = " + p.getAmount() ));
 		
-		org.junit.Assert.assertEquals(999.99+99.99+9.99,salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(999.99+99.99+9.99 + 1200.00/3,salary.getCommonBase(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99,salary.getTotalPayment(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99 + 1200.00/3,salary.getCommonBase(), DELTA);
 		
 		startDate = getFirstDayOfMonth(lastDayOfDecember);
 		endDate = getLastDayOfMonth(lastDayOfDecember);
@@ -184,8 +184,8 @@ public class SQLProrationTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" = " + p.getAmount() ));
 		
-		org.junit.Assert.assertEquals(999.99+99.99+9.99+1200.00,salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(999.99+99.99+9.99 + 1200.00/3,salary.getCommonBase(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99+1200.00,salary.getTotalPayment(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99 + 1200.00/3,salary.getCommonBase(), DELTA);
 		
 	}
 	
@@ -250,8 +250,8 @@ public class SQLProrationTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" = " + p.getAmount() ));
 		
-		org.junit.Assert.assertEquals(999.99+99.99+9.99,salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(999.99+99.99+9.99,salary.getCommonBase(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99,salary.getTotalPayment(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99,salary.getCommonBase(), DELTA);
 
 		startDate = getFirstDayOfMonth(firstDayOfJuly);
 		endDate = getLastDayOfMonth(firstDayOfJuly);
@@ -263,8 +263,8 @@ public class SQLProrationTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" = " + p.getAmount() ));
 		
-		org.junit.Assert.assertEquals(999.99+99.99+9.99,salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99,salary.getTotalPayment(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
 		
 		startDate = getFirstDayOfMonth(lastDayOfDecember);
 		endDate = getLastDayOfMonth(lastDayOfDecember);
@@ -276,8 +276,8 @@ public class SQLProrationTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" = " + p.getAmount() ));
 		
-		org.junit.Assert.assertEquals(999.99+99.99+9.99+1200.00,salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99+1200.00,salary.getTotalPayment(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
 		
 	}
 	
@@ -342,8 +342,8 @@ public class SQLProrationTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" = " + p.getAmount() ));
 		
-		org.junit.Assert.assertEquals(999.99+99.99+9.99,salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(999.99+99.99+9.99,salary.getCommonBase(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99,salary.getTotalPayment(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99,salary.getCommonBase(), DELTA);
 
 		startDate = getFirstDayOfMonth(firstDayOfJuly);
 		endDate = getLastDayOfMonth(firstDayOfJuly);
@@ -355,8 +355,8 @@ public class SQLProrationTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" = " + p.getAmount() ));
 		
-		org.junit.Assert.assertEquals(999.99+99.99+9.99,salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99,salary.getTotalPayment(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
 		
 		startDate = getFirstDayOfMonth(lastDayOfDecember);
 		endDate = getLastDayOfMonth(lastDayOfDecember);
@@ -368,8 +368,8 @@ public class SQLProrationTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" = " + p.getAmount() ));
 		
-		org.junit.Assert.assertEquals(999.99+99.99+9.99+1200.00,salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99+1200.00,salary.getTotalPayment(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
 		
 	}
 	
@@ -433,8 +433,8 @@ public class SQLProrationTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" = " + p.getAmount() ));
 		
-		org.junit.Assert.assertEquals(999.99+99.99+9.99,salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(999.99+99.99+9.99,salary.getCommonBase(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99,salary.getTotalPayment(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99,salary.getCommonBase(), DELTA);
 
 		startDate = getFirstDayOfMonth(firstDayOfJuly);
 		endDate = getLastDayOfMonth(firstDayOfJuly);
@@ -446,8 +446,8 @@ public class SQLProrationTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" = " + p.getAmount() ));
 		
-		org.junit.Assert.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getTotalPayment(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
 		
 		startDate = getFirstDayOfMonth(lastDayOfDecember);
 		endDate = getLastDayOfMonth(lastDayOfDecember);
@@ -459,13 +459,13 @@ public class SQLProrationTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" = " + p.getAmount() ));
 		
-		org.junit.Assert.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getTotalPayment(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
 		
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testTemporaryCRA004III() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -526,8 +526,8 @@ public class SQLProrationTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" = " + p.getAmount() ));
 		
-		org.junit.Assert.assertEquals(999.99+99.99+9.99,salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(999.99+99.99+9.99,salary.getCommonBase(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99,salary.getTotalPayment(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99,salary.getCommonBase(), DELTA);
 
 		startDate = getFirstDayOfMonth(firstDayOfJuly);
 		endDate = getLastDayOfMonth(firstDayOfJuly);
@@ -539,8 +539,8 @@ public class SQLProrationTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" = " + p.getAmount() ));
 		
-		org.junit.Assert.assertEquals(999.99+99.99+9.99,salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99,salary.getTotalPayment(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
 		
 		startDate = getFirstDayOfMonth(lastDayOfDecember);
 		endDate = getLastDayOfMonth(lastDayOfDecember);
@@ -552,8 +552,8 @@ public class SQLProrationTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" = " + p.getAmount() ));
 		
-		org.junit.Assert.assertEquals(999.99+99.99+9.99+1200.00,salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99+1200.00,salary.getTotalPayment(), DELTA);
+		org.junit.assertEquals(999.99+99.99+9.99 + 1200.00/6,salary.getCommonBase(), DELTA);
 		
 	}
 	

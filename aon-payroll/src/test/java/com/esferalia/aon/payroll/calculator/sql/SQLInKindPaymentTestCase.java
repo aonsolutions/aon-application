@@ -3,14 +3,14 @@ package com.esferalia.aon.payroll.calculator.sql;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.DAY_OF_MONTH;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
@@ -28,7 +28,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 
@@ -250,7 +250,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IN_KIND, 
 		"IRPF",
-		"Retribución Dineraria",
+		"Retribuciï¿½n Dineraria",
 		"BASE_IRPF_DINERO * PORCENTAJE_IRPF/100");
 
 		addSSRegimeDeduction(
@@ -259,7 +259,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IN_KIND, 
 		"IRPF",
-		"Retribución en Especie",
+		"Retribuciï¿½n en Especie",
 		"BASE_IRPF_ESPECIE * PORCENTAJE_IRPF/100");
 
 		//@formatter:off
@@ -326,7 +326,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IN_KIND, 
 		ContextVariable.IN_KIND.getName(),
-		"RETRIBUCIÓN EN ESPECIE",
+		"RETRIBUCIï¿½N EN ESPECIE",
 		"isdef _EN_ESPECIE ? SUM(_EN_ESPECIE) : HIDE()");
 		
 		addSSRegimeDeduction(
@@ -335,7 +335,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"Retribución Dineraria",
+		"Retribuciï¿½n Dineraria",
 		"BASE_IRPF_DINERO * PORCENTAJE_IRPF/100");
 
 		addSSRegimeDeduction(
@@ -344,7 +344,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"Retribución en Especie",
+		"Retribuciï¿½n en Especie",
 		"BASE_IRPF_ESPECIE * PORCENTAJE_IRPF/100");
 
 		//@formatter:off
@@ -414,7 +414,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IN_KIND, 
 		ContextVariable.IN_KIND.getName(),
-		"RETRIBUCIÓN EN ESPECIE",
+		"RETRIBUCIï¿½N EN ESPECIE",
 		"isdef _EN_ESPECIE ? SUM(_EN_ESPECIE) : HIDE()");
 		
 		addSSRegimeDeduction(
@@ -423,7 +423,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"Retribución Dineraria",
+		"Retribuciï¿½n Dineraria",
 		"BASE_IRPF_DINERO * PORCENTAJE_IRPF/100");
 
 		addSSRegimeDeduction(
@@ -432,7 +432,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"Retribución en Especie",
+		"Retribuciï¿½n en Especie",
 		"BASE_IRPF_ESPECIE * PORCENTAJE_IRPF/100");
 
 		//@formatter:off

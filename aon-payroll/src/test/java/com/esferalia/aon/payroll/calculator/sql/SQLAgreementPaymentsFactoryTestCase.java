@@ -1,14 +1,14 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;

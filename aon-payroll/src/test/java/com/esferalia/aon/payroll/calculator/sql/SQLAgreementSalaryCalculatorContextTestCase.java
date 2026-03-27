@@ -11,9 +11,9 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
@@ -29,7 +29,7 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLAgreementSalaryCalculatorContextTestCase extends AbstractSQLTestCase {
 
@@ -115,7 +115,7 @@ public class SQLAgreementSalaryCalculatorContextTestCase extends AbstractSQLTest
 		
 		cleanSystemDeductions(aonContext);
 		
-		Assert.assertTrue( salary.getTotalIrpf() > 0.00 );
+		assertTrue( salary.getTotalIrpf() > 0.00 );
 		
 		
 	}

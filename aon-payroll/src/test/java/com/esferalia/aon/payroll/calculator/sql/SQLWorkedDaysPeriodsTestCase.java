@@ -24,9 +24,9 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -75,19 +75,19 @@ public class SQLWorkedDaysPeriodsTestCase extends SQLAbstractPeriodsTestCase {
 				.getExpressionContext().eval(format("%s", getDaysVariable()),
 						startDate, endDate, Double.class);
 
-		Assert.assertEquals(2, quoteDays.size());
-		Assert.assertEquals(getDaysVariable().getName(),
+		assertEquals(2, quoteDays.size());
+		assertEquals(getDaysVariable().getName(),
 				(double) (get(factorChangeDate, DAY_OF_MONTH)-1)*0.50, 
 				quoteDays.get(0).getValue(),
 				DELTA);
-		Assert.assertEquals(getDaysVariable().getName(), 
+		assertEquals(getDaysVariable().getName(), 
 				quoteDays.get(0).getPeriod(),
 				new Period(startDate, add(factorChangeDate, DAY_OF_MONTH,-1)));
-		Assert.assertEquals(getDaysVariable().getName(),
+		assertEquals(getDaysVariable().getName(),
 				(double) (get(endDate, DAY_OF_MONTH) - get(factorChangeDate, DAY_OF_MONTH) +1 ) * 0.25, 
 				quoteDays.get(1).getValue(),
 				DELTA);
-		Assert.assertEquals(getDaysVariable().getName(), 
+		assertEquals(getDaysVariable().getName(), 
 				quoteDays.get(1).getPeriod(),
 				new Period(factorChangeDate, endDate));
 	}
@@ -121,12 +121,12 @@ public class SQLWorkedDaysPeriodsTestCase extends SQLAbstractPeriodsTestCase {
 				.getExpressionContext().eval(format("%s", getDaysVariable()),
 						startDate, endDate, Double.class);
 
-		Assert.assertEquals(1, quoteDays.size());
-		Assert.assertEquals(getDaysVariable().getName(),
+		assertEquals(1, quoteDays.size());
+		assertEquals(getDaysVariable().getName(),
 				(double) get(endDate, DAY_OF_MONTH) * 0.50, 
 				quoteDays.get(0).getValue(),
 				DELTA);
-		Assert.assertEquals(getDaysVariable().getName(), 
+		assertEquals(getDaysVariable().getName(), 
 				quoteDays.get(0).getPeriod(),
 				new Period(startDate, endDate));
 	}

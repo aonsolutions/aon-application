@@ -23,8 +23,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
@@ -50,7 +50,7 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLCRA0055TestCase extends AbstractSQLTestCase {
 
@@ -104,8 +104,8 @@ public class SQLCRA0055TestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount() );
 				
-		org.junit.Assert.assertEquals( 1000.00, salary.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals( 1000.00, salary.getTotalPayment(), DELTA);
+		org.junit.assertEquals( 1000.00, salary.getCommonBase(), DELTA);
+		org.junit.assertEquals( 1000.00, salary.getTotalPayment(), DELTA);
 		
 	}
 

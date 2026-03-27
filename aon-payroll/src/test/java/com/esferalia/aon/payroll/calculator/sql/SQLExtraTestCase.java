@@ -22,8 +22,8 @@ import static java.lang.String.format;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -35,8 +35,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
@@ -73,7 +73,7 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLExtraTestCase extends AbstractSQLTestCase {
 
@@ -156,7 +156,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		});
 		Salary extra = contractSalaryCalculator.calculate(extraCtx);
 
-		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1500.00, extra.getTotalPayment(), DELTA );
+		assertEquals(String.format("%s",TOTAL_PAYMENT), 1500.00, extra.getTotalPayment(), DELTA );
 		
 		
 	}
@@ -221,28 +221,28 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.2 * 1000.00)/6 + (0.9 * 1000.00)/12), salary.getExtraPayProration(), DELTA);
+		assertEquals(((1.2 * 1000.00)/6 + (0.9 * 1000.00)/12), salary.getExtraPayProration(), DELTA);
 		
 		// JUNE
 		startDate = add(startDate, MONTH, 5);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.2 * 1000.00)/6 + (0.9 * 1000.00)/12), salary.getExtraPayProration(), DELTA);
+		assertEquals(((1.2 * 1000.00)/6 + (0.9 * 1000.00)/12), salary.getExtraPayProration(), DELTA);
 		
 		// JULY
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.1 * 1000.00)/6 + (0.9 * 1000.00)/12), salary.getExtraPayProration(), DELTA);
+		assertEquals(((1.1 * 1000.00)/6 + (0.9 * 1000.00)/12), salary.getExtraPayProration(), DELTA);
 
 		// DECEMBER
 		startDate = add(startDate, MONTH, 5);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.1 * 1000.00)/6 + (0.9 * 1000.00)/12), salary.getExtraPayProration(), DELTA);
+		assertEquals(((1.1 * 1000.00)/6 + (0.9 * 1000.00)/12), salary.getExtraPayProration(), DELTA);
 	}
 
 	@Test
@@ -336,56 +336,56 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.2 * 1000.00)/6 + (0.6 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
+		assertEquals(((1.2 * 1000.00)/6 + (0.6 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
 		
 		// MARCH
 		startDate = add(startDate, MONTH, 2);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.2 * 1000.00)/6 + (0.6 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
+		assertEquals(((1.2 * 1000.00)/6 + (0.6 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
 		
 		// APRIL
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.2 * 1000.00)/6 + (0.7 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
+		assertEquals(((1.2 * 1000.00)/6 + (0.7 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
 
 		// JUNE
 		startDate = add(startDate, MONTH, 2);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.2 * 1000.00)/6 + (0.7 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
+		assertEquals(((1.2 * 1000.00)/6 + (0.7 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
 
 		// JULY
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.1 * 1000.00)/6 + (0.8 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
+		assertEquals(((1.1 * 1000.00)/6 + (0.8 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
 
 		// SEPTEMBER
 		startDate = add(startDate, MONTH, 2);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.1 * 1000.00)/6 + (0.8 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
+		assertEquals(((1.1 * 1000.00)/6 + (0.8 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
 
 		// OCTOBER
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.1 * 1000.00)/6 + (0.9 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
+		assertEquals(((1.1 * 1000.00)/6 + (0.9 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
 
 		// DECEMBER
 		startDate = add(startDate, MONTH, 2);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.1 * 1000.00)/6 + (0.9 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
+		assertEquals(((1.1 * 1000.00)/6 + (0.9 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
 	}
 
 	@Test
@@ -468,12 +468,12 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Date startDate = getFirstDayOfYear(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1000.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1000.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
 		
 		addPayment(aonContext, contract, startDate, endDate, "ESTANCIA", "500", "_P", "_P", PaymentType.CRA_0042, SalaryType.SALARY);
 		
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1000.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1000.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(MONTH, 6);
@@ -488,7 +488,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Salary extra = new SmartContractSalaryCalculator<Salary>( 
 				new SalaryBuilder())
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, issueDate));
-		Assert.assertEquals( 1000.00, extra.getTotalPayment(), DELTA);
+		assertEquals( 1000.00, extra.getTotalPayment(), DELTA);
 		
 		calendar.set(MONTH, 11);
 		calendar.set(DAY_OF_MONTH, 15);
@@ -502,7 +502,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		extra = new SmartContractSalaryCalculator<Salary>( 
 				new SalaryBuilder())
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, issueDate));
-		Assert.assertEquals( 1000.00, extra.getTotalPayment(), DELTA);
+		assertEquals( 1000.00, extra.getTotalPayment(), DELTA);
 	}
 
 	@Test
@@ -593,13 +593,13 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, add(startDate, DAY_OF_MONTH, 15 ), endDate, null);
 
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1600.00 / 2, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals( 500.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1600.00 / 2, salary.getTotalPayment(), DELTA);
+		assertEquals( 500.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
 		
 		addPayment(aonContext, contract, startDate, endDate, "ESTANCIA", "500", "_P", "_P", PaymentType.CRA_0042, SalaryType.SALARY);
 		
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 500.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
+		assertEquals( 500.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(MONTH, 6);
@@ -614,7 +614,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Salary extra = new SmartContractSalaryCalculator<Salary>( 
 				new SalaryBuilder())
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, issueDate));
-		Assert.assertEquals( 1000.00/6 * 5.5  , extra.getTotalPayment(), DELTA);
+		assertEquals( 1000.00/6 * 5.5  , extra.getTotalPayment(), DELTA);
 		
 		calendar.set(MONTH, 11);
 		calendar.set(DAY_OF_MONTH, 15);
@@ -628,7 +628,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		extra = new SmartContractSalaryCalculator<Salary>( 
 				new SalaryBuilder())
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, issueDate));
-		Assert.assertEquals( 1000.00, extra.getTotalPayment(), DELTA);
+		assertEquals( 1000.00, extra.getTotalPayment(), DELTA);
 	}
 
 	@Test
@@ -763,12 +763,12 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Date startDate = getFirstDayOfYear(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1600.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1600.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
 		
 		addPayment(aonContext, contract, startDate, endDate, "ESTANCIA", "500", "_P", "_P", PaymentType.CRA_0042, SalaryType.SALARY);
 		
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1600.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1600.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(MONTH, 6);
@@ -783,7 +783,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Salary extra = new SmartContractSalaryCalculator<Salary>( 
 				new SalaryBuilder())
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, issueDate));
-		Assert.assertEquals( 1600.00, extra.getTotalPayment(), DELTA);
+		assertEquals( 1600.00, extra.getTotalPayment(), DELTA);
 		
 		calendar.set(MONTH, 11);
 		calendar.set(DAY_OF_MONTH, 15);
@@ -797,7 +797,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		extra = new SmartContractSalaryCalculator<Salary>( 
 				new SalaryBuilder())
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, issueDate));
-		Assert.assertEquals( 1600.00, extra.getTotalPayment(), DELTA);
+		assertEquals( 1600.00, extra.getTotalPayment(), DELTA);
 	}
 
 	@Test
@@ -868,12 +868,12 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Date startDate = getFirstDayOfYear(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1600.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1600.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
 		
 		addPayment(aonContext, contract, startDate, endDate, "ESTANCIA", "500", "_P", "_P", PaymentType.CRA_0042, SalaryType.SALARY);
 		
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1600.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1600.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(MONTH, 6);
@@ -888,7 +888,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Salary extra = new SmartContractSalaryCalculator<Salary>( 
 				new SalaryBuilder())
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, issueDate));
-		Assert.assertEquals( 1600.00/2.00, extra.getTotalPayment(), DELTA);
+		assertEquals( 1600.00/2.00, extra.getTotalPayment(), DELTA);
 		
 	}
 
@@ -978,12 +978,12 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Date startDate = getFirstDayOfYear(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1600.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1600.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
 		
 		//addPayment(aonContext, contract, startDate, endDate, "ESTANCIA", "500", "_P", "_P", PaymentType.CRA_0042, SalaryType.SALARY);
 		
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1600.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1600.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(MONTH, 6);
@@ -998,7 +998,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Salary extra = new SmartContractSalaryCalculator<Salary>( 
 				new SalaryBuilder())
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, issueDate));
-		Assert.assertEquals( 1600.00, extra.getTotalPayment(), DELTA);
+		assertEquals( 1600.00, extra.getTotalPayment(), DELTA);
 		
 		calendar.set(MONTH, 11);
 		calendar.set(DAY_OF_MONTH, 15);
@@ -1012,7 +1012,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		extra = new SmartContractSalaryCalculator<Salary>( 
 				new SalaryBuilder())
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, issueDate));
-		Assert.assertEquals( 1600.00, extra.getTotalPayment(), DELTA);
+		assertEquals( 1600.00, extra.getTotalPayment(), DELTA);
 		
 		
 		calendar.set(MONTH,3);
@@ -1023,8 +1023,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		startDate = getFirstDayOfMonth(startIT);
 		endDate = getLastDayOfMonth(startDate);
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 0.00, salary.getExtraPayProration(), DELTA);
-		Assert.assertEquals( 1600.00 + 1600.00/12*3, salary.getCommonBase(), DELTA);
+		assertEquals( 0.00, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1600.00 + 1600.00/12*3, salary.getCommonBase(), DELTA);
 
 		calendar.set(MONTH, 6);
 		calendar.set(DAY_OF_MONTH, 1);
@@ -1033,7 +1033,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				new SalaryBuilder())
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, issueDate));
 		
-		Assert.assertEquals( 1600.00/2.00, extra.getTotalPayment(), DELTA);
+		assertEquals( 1600.00/2.00, extra.getTotalPayment(), DELTA);
 
 		calendar.set(MONTH, 11);
 		calendar.set(DAY_OF_MONTH, 15);
@@ -1042,7 +1042,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				new SalaryBuilder())
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, issueDate));
 		
-		Assert.assertEquals( 0.00, extra.getTotalPayment(), DELTA);
+		assertEquals( 0.00, extra.getTotalPayment(), DELTA);
 		
 		
 	}
@@ -1089,14 +1089,14 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Date startDate = getFirstDayOfYear(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1600.00 + 1600.00 / 12 * 3, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals( 1600.00 + 1600.00 / 12 * 3, salary.getCommonBase(), DELTA);
+		assertEquals( 1600.00 + 1600.00 / 12 * 3, salary.getTotalPayment(), DELTA);
+		assertEquals( 1600.00 + 1600.00 / 12 * 3, salary.getCommonBase(), DELTA);
 		
 		addPayment(aonContext, contract, startDate, endDate, "ESTANCIA", "500", "_P", "_P", PaymentType.CRA_0042, SalaryType.SALARY);
 		
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1600.00 + 1600.00 / 12 * 3 + 500.00, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals( 1600.00 + 1600.00 / 12 * 3 + 500.00, salary.getCommonBase(), DELTA);
+		assertEquals( 1600.00 + 1600.00 / 12 * 3 + 500.00, salary.getTotalPayment(), DELTA);
+		assertEquals( 1600.00 + 1600.00 / 12 * 3 + 500.00, salary.getCommonBase(), DELTA);
 
 	}
 
@@ -1145,14 +1145,14 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Date startDate = getFirstDayOfYear(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1600.00 + 1000.00 / 12 * 3, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals( 1600.00 + 1000.00 / 12 * 3, salary.getCommonBase(), DELTA);
+		assertEquals( 1600.00 + 1000.00 / 12 * 3, salary.getTotalPayment(), DELTA);
+		assertEquals( 1600.00 + 1000.00 / 12 * 3, salary.getCommonBase(), DELTA);
 		
 		addPayment(aonContext, contract, startDate, endDate, "ESTANCIA", "500", "_P", "_P", PaymentType.CRA_0042, SalaryType.SALARY);
 		
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1600.00 + 1000.00 / 12 * 3 + 500.00, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals( 1600.00 + 1000.00 / 12 * 3 + 500.00, salary.getCommonBase(), DELTA);
+		assertEquals( 1600.00 + 1000.00 / 12 * 3 + 500.00, salary.getTotalPayment(), DELTA);
+		assertEquals( 1600.00 + 1000.00 / 12 * 3 + 500.00, salary.getCommonBase(), DELTA);
 
 	}
 
@@ -1205,14 +1205,14 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, add(startDate, DAY_OF_MONTH, 15), endDate, null);
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1600.00/2.00 + 1000.00/2.00 / 12 * 3, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals( 1600.00/2.00 + 1000.00/2.00 / 12 * 3, salary.getCommonBase(), DELTA);
+		assertEquals( 1600.00/2.00 + 1000.00/2.00 / 12 * 3, salary.getTotalPayment(), DELTA);
+		assertEquals( 1600.00/2.00 + 1000.00/2.00 / 12 * 3, salary.getCommonBase(), DELTA);
 		
 		addPayment(aonContext, contract, startDate, endDate, "ESTANCIA", "500", "_P", "_P", PaymentType.CRA_0042, SalaryType.SALARY);
 		
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1600.00/2.00 + 1000.00/2.00 / 12 * 3 + 500.00, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals( 1600.00/2.00 + 1000.00/2.00 / 12 * 3 + 500.00, salary.getCommonBase(), DELTA);
+		assertEquals( 1600.00/2.00 + 1000.00/2.00 / 12 * 3 + 500.00, salary.getTotalPayment(), DELTA);
+		assertEquals( 1600.00/2.00 + 1000.00/2.00 / 12 * 3 + 500.00, salary.getCommonBase(), DELTA);
 
 	}
 
@@ -1276,9 +1276,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1875.00, salary.getTotalPayment(), DELTA);
+		assertEquals(String.format("%s",TOTAL_PAYMENT), 1875.00, salary.getTotalPayment(), DELTA);
 		
-		Assert.assertEquals(String.format("%s",ContextVariable.CGC_BASE), 1875.00 + (1875.00*2/12), salary.getCommonBase(), DELTA);
+		assertEquals(String.format("%s",ContextVariable.CGC_BASE), 1875.00 + (1875.00*2/12), salary.getCommonBase(), DELTA);
 		
 
 	}
@@ -1395,9 +1395,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1875.00, salary.getTotalPayment(), DELTA);
+		assertEquals(String.format("%s",TOTAL_PAYMENT), 1875.00, salary.getTotalPayment(), DELTA);
 		
-		Assert.assertEquals(String.format("%s",ContextVariable.CGC_BASE), 1875.00 + (1750.00*2/12), salary.getCommonBase(), DELTA);
+		assertEquals(String.format("%s",ContextVariable.CGC_BASE), 1875.00 + (1750.00*2/12), salary.getCommonBase(), DELTA);
 		
 
 	}
@@ -1483,13 +1483,13 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		Salary extra = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
 		
-		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1100.00, extra.getTotalPayment(), DELTA );
+		assertEquals(String.format("%s",TOTAL_PAYMENT), 1100.00, extra.getTotalPayment(), DELTA );
 		
 		for ( Date date = startDate; date.compareTo(endDate) <= 0; date = add(date, MONTH, 1) ) {
 			ISQLContractSalaryCalculatorContext ctx = 
 					getContractSalaryCalculatorContext(connection, date, getLastDayOfMonth(date), getLastDayOfMonth(date), contract);
 			Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-			Assert.assertEquals( 1100.00/12, salary.getExtraPayProration(), DELTA );
+			assertEquals( 1100.00/12, salary.getExtraPayProration(), DELTA );
 		}
 		
 	}
@@ -1574,13 +1574,13 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		Salary extra = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
 		
-		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1100.00, extra.getTotalPayment(), DELTA );
+		assertEquals(String.format("%s",TOTAL_PAYMENT), 1100.00, extra.getTotalPayment(), DELTA );
 		
 		for ( Date date = startDate; date.compareTo(endDate) <= 0; date = add(date, MONTH, 1) ) {
 			ISQLContractSalaryCalculatorContext ctx = 
 					getContractSalaryCalculatorContext(connection, date, getLastDayOfMonth(date), getLastDayOfMonth(date), contract);
 			Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-			Assert.assertEquals( 1100.00/12, salary.getExtraPayProration(), DELTA );
+			assertEquals( 1100.00/12, salary.getExtraPayProration(), DELTA );
 		}
 
 	}
@@ -1667,7 +1667,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1100.00 /2, salary.getTotalPayment(), DELTA );
+		assertEquals(String.format("%s",TOTAL_PAYMENT), 1100.00 /2, salary.getTotalPayment(), DELTA );
 		
 		
 	}
@@ -1753,7 +1753,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1100.00 * 3/12, salary.getTotalPayment(), DELTA );
+		assertEquals(String.format("%s",TOTAL_PAYMENT), 1100.00 * 3/12, salary.getTotalPayment(), DELTA );
 		
 
 	}
@@ -1837,7 +1837,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1100.00, salary.getTotalPayment(), DELTA );
+		assertEquals(String.format("%s",TOTAL_PAYMENT), 1100.00, salary.getTotalPayment(), DELTA );
 		
 
 	}
@@ -1923,7 +1923,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1100.00 * 3/6, salary.getTotalPayment(), DELTA );
+		assertEquals(String.format("%s",TOTAL_PAYMENT), 1100.00 * 3/6, salary.getTotalPayment(), DELTA );
 		
 
 	}
@@ -2014,13 +2014,13 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		Salary extra = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
 		
-		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1100.00 * 0.5, extra.getTotalPayment(), DELTA );
+		assertEquals(String.format("%s",TOTAL_PAYMENT), 1100.00 * 0.5, extra.getTotalPayment(), DELTA );
 		
 		for ( Date date = startDate; date.compareTo(endDate) <= 0; date = add(date, MONTH, 1) ) {
 			ISQLContractSalaryCalculatorContext ctx = 
 					getContractSalaryCalculatorContext(connection, date, getLastDayOfMonth(date), getLastDayOfMonth(date), contract);
 			Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-			Assert.assertEquals( (1100.00/12)*0.5, salary.getExtraPayProration(), DELTA );
+			assertEquals( (1100.00/12)*0.5, salary.getExtraPayProration(), DELTA );
 		}
 		
 	}
@@ -2115,13 +2115,13 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		Salary extra = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
 		
-		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1100.00 * (16/40.00), extra.getTotalPayment(), DELTA );
+		assertEquals(String.format("%s",TOTAL_PAYMENT), 1100.00 * (16/40.00), extra.getTotalPayment(), DELTA );
 		
 		for ( Date date = startDate; date.compareTo(endDate) <= 0; date = add(date, MONTH, 1) ) {
 			ISQLContractSalaryCalculatorContext ctx = 
 					getContractSalaryCalculatorContext(connection, date, getLastDayOfMonth(date), getLastDayOfMonth(date), contract);
 			Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-			Assert.assertEquals( (1100.00/12)*(16/40.00), salary.getExtraPayProration(), DELTA );
+			assertEquals( (1100.00/12)*(16/40.00), salary.getExtraPayProration(), DELTA );
 		}
 		
 	}
@@ -2192,7 +2192,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
 		
-		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1875.00, salary.getTotalPayment(), DELTA);
+		assertEquals(String.format("%s",TOTAL_PAYMENT), 1875.00, salary.getTotalPayment(), DELTA);
 		
 
 	}
@@ -2261,7 +2261,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
 		
-		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1875.00, salary.getTotalPayment(), DELTA);
+		assertEquals(String.format("%s",TOTAL_PAYMENT), 1875.00, salary.getTotalPayment(), DELTA);
 		
 
 	}
@@ -2323,8 +2323,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1200.00, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(String.format("%s",ContextVariable.CGC_BASE), 1200.00 + (1200.00*2/12), salary.getCommonBase(), DELTA);
+		assertEquals(String.format("%s",TOTAL_PAYMENT), 1200.00, salary.getTotalPayment(), DELTA);
+		assertEquals(String.format("%s",ContextVariable.CGC_BASE), 1200.00 + (1200.00*2/12), salary.getCommonBase(), DELTA);
 
 	}
 
@@ -2385,8 +2385,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1200.00, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(String.format("%s",ContextVariable.CGC_BASE), 1200.00 + (1200.00*2/12), salary.getCommonBase(), DELTA);
+		assertEquals(String.format("%s",TOTAL_PAYMENT), 1200.00, salary.getTotalPayment(), DELTA);
+		assertEquals(String.format("%s",ContextVariable.CGC_BASE), 1200.00 + (1200.00*2/12), salary.getCommonBase(), DELTA);
 
 	}
 	
@@ -2444,8 +2444,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1200.00, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(String.format("%s",ContextVariable.CGC_BASE), 1200.00 + (1200.00*2/12), salary.getCommonBase(), DELTA);
+		assertEquals(String.format("%s",TOTAL_PAYMENT), 1200.00, salary.getTotalPayment(), DELTA);
+		assertEquals(String.format("%s",ContextVariable.CGC_BASE), 1200.00 + (1200.00*2/12), salary.getCommonBase(), DELTA);
 
 	}
 	
@@ -2488,8 +2488,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 
 		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 600.00  + (600.00*2/12), salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(String.format("%s",ContextVariable.CGC_BASE), 600.00  + (600.00*2/12), salary.getCommonBase(), DELTA);
+		assertEquals(String.format("%s",TOTAL_PAYMENT), 600.00  + (600.00*2/12), salary.getTotalPayment(), DELTA);
+		assertEquals(String.format("%s",ContextVariable.CGC_BASE), 600.00  + (600.00*2/12), salary.getCommonBase(), DELTA);
 
 	}
 
@@ -2541,9 +2541,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract))
 		;
 		
-		Assert.assertEquals((1000.00 + 500.00 + 250.00 + 125.00) * ( 1.00 + 1.00/6.00 ), salary.getTotalPayment());
-		Assert.assertEquals((1000.00 + 500.00 + 250.00 + 125.00) * ( 1.00 + 1.00/6.00 ), salary.getIrpfBase());
-		Assert.assertEquals((1000.00 + 500.00 + 250.00 + 125.00) * ( 1.00 + 1.00/6.00 ), salary.getCommonBase());
+		assertEquals((1000.00 + 500.00 + 250.00 + 125.00) * ( 1.00 + 1.00/6.00 ), salary.getTotalPayment());
+		assertEquals((1000.00 + 500.00 + 250.00 + 125.00) * ( 1.00 + 1.00/6.00 ), salary.getIrpfBase());
+		assertEquals((1000.00 + 500.00 + 250.00 + 125.00) * ( 1.00 + 1.00/6.00 ), salary.getCommonBase());
 	}
 
 	@Test
@@ -2594,9 +2594,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract))
 		;
 		
-		Assert.assertEquals((1000.00 + 500.00 + 250.00 + 125.00) * ( 1.00 + 1.00/6.00 ), salary.getTotalPayment());
-		Assert.assertEquals((1000.00 + 500.00 + 250.00 + 125.00) * ( 1.00 + 1.00/6.00 ), salary.getIrpfBase());
-		Assert.assertEquals((1000.00 + 500.00 + 250.00 + 125.00) * ( 1.00 + 1.00/6.00 ), salary.getCommonBase());
+		assertEquals((1000.00 + 500.00 + 250.00 + 125.00) * ( 1.00 + 1.00/6.00 ), salary.getTotalPayment());
+		assertEquals((1000.00 + 500.00 + 250.00 + 125.00) * ( 1.00 + 1.00/6.00 ), salary.getIrpfBase());
+		assertEquals((1000.00 + 500.00 + 250.00 + 125.00) * ( 1.00 + 1.00/6.00 ), salary.getCommonBase());
 	}
 
 	@Test
@@ -2648,9 +2648,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract))
 		;
 		
-		Assert.assertEquals((950.00) * ( 1.00 + 1.00/6.00 ), salary.getTotalPayment());
-		Assert.assertEquals((950.00) * ( 1.00 + 1.00/6.00 ), salary.getIrpfBase());
-		Assert.assertEquals((950.00) * ( 1.00 + 1.00/6.00 ), salary.getCommonBase());
+		assertEquals((950.00) * ( 1.00 + 1.00/6.00 ), salary.getTotalPayment());
+		assertEquals((950.00) * ( 1.00 + 1.00/6.00 ), salary.getIrpfBase());
+		assertEquals((950.00) * ( 1.00 + 1.00/6.00 ), salary.getCommonBase());
 	}
 
 	@Test
@@ -2704,13 +2704,13 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract))
 		;
 		
-		Assert.assertEquals((900.00/2.00) * ( 1.00 + 1.00/6.00 ), salary.getTotalPayment());
-		Assert.assertEquals((900.00/2.00) * ( 1.00 + 1.00/6.00 ), salary.getIrpfBase());
-		Assert.assertEquals((900.00/2.00) * ( 1.00 + 1.00/6.00 ), salary.getCommonBase(),DELTA);
+		assertEquals((900.00/2.00) * ( 1.00 + 1.00/6.00 ), salary.getTotalPayment());
+		assertEquals((900.00/2.00) * ( 1.00 + 1.00/6.00 ), salary.getIrpfBase());
+		assertEquals((900.00/2.00) * ( 1.00 + 1.00/6.00 ), salary.getCommonBase(),DELTA);
 	}
 
 	@Test
-	@Ignore("But...not yet")
+	@Disabled("But...not yet")
 	public void testIRPF() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -2765,10 +2765,10 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 
 		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1200.00, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(String.format("%s",CGC_BASE), 1200.00 + (1200.00*2/12), salary.getCommonBase(), DELTA);
+		assertEquals(String.format("%s",TOTAL_PAYMENT), 1200.00, salary.getTotalPayment(), DELTA);
+		assertEquals(String.format("%s",CGC_BASE), 1200.00 + (1200.00*2/12), salary.getCommonBase(), DELTA);
 
-		Assert.assertEquals(String.format("%s",IRPF_PERCENT), salary.getIrpfBase() * 6.6/100.00, salary.getTotalIrpf(), DELTA);
+		assertEquals(String.format("%s",IRPF_PERCENT), salary.getIrpfBase() * 6.6/100.00, salary.getTotalIrpf(), DELTA);
 		
 		calendar.set(MONTH, Calendar.MARCH);
 		calendar.set(DAY_OF_MONTH, 31);
@@ -2783,8 +2783,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, marchExtra, year, issueDate);
 
 		Salary extra = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
-		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1200.00/12.00 * 7 , extra.getTotalPayment(), DELTA);
-		Assert.assertEquals(String.format("%s",IRPF_PERCENT), 1200.00/2 * 6.6/100.00, extra.getTotalIrpf(), DELTA);
+		assertEquals(String.format("%s",TOTAL_PAYMENT), 1200.00/12.00 * 7 , extra.getTotalPayment(), DELTA);
+		assertEquals(String.format("%s",IRPF_PERCENT), 1200.00/2 * 6.6/100.00, extra.getTotalIrpf(), DELTA);
 	}
 
 	@Test
@@ -2859,8 +2859,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 		
 		// 
 		// MARCH
@@ -2873,8 +2873,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1000.00 * 3 / 12.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1000.00 * 3 / 12.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 		
 		// 
 		// JULY
@@ -2887,8 +2887,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * 7 / 12.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * 7 / 12.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		// 
 		// DECEMBER
@@ -2901,8 +2901,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 	}
 
 	@Test
@@ -2982,8 +2982,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 		
 		// 
 		// MARCH
@@ -2996,8 +2996,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1000.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1000.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 		
 		calendar.set(MONTH, Calendar.MARCH);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -3012,8 +3012,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		// 
 		// JULY
@@ -3026,8 +3026,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * 6 /12, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * 6 /12, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		calendar.set(MONTH, Calendar.JUNE);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -3042,8 +3042,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		// 
 		// DECEMBER
@@ -3056,8 +3056,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		calendar.set(MONTH, Calendar.DECEMBER);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -3072,8 +3072,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 	}
 
 	@Test
@@ -3153,8 +3153,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 		
 		// 
 		// MARCH
@@ -3167,8 +3167,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1000.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1000.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 		
 		// 
 		// JULY
@@ -3181,8 +3181,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 550.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 550.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		// 
 		// DECEMBER
@@ -3195,8 +3195,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 	}
 
 	@Test
@@ -3279,8 +3279,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 550.00 , salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 550.00 + ( 550.00 /6.00 ) + 500.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 550.00 , salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 550.00 + ( 550.00 /6.00 ) + 500.00/12.00, salary.getCommonBase(), DELTA);
 		
 		// 
 		// MARCH
@@ -3293,8 +3293,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1000.00 * 10.50 / 12.00 , salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1000.00 * 10.50 / 12.00 , salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 		
 		calendar.set(MONTH, Calendar.MARCH);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -3309,8 +3309,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		// 
 		// JULY
@@ -3323,8 +3323,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * 4.50 / 12.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * 4.50 / 12.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		calendar.set(MONTH, Calendar.JUNE);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -3339,8 +3339,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		// 
 		// DECEMBER
@@ -3353,8 +3353,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * 10.50 / 12.00 , salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * 10.50 / 12.00 , salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		calendar.set(MONTH, Calendar.DECEMBER);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -3369,8 +3369,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 	}
 
 	@Test
@@ -3457,8 +3457,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 * 10 / 30 , salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), (1100.00 * 10 / 30) + ( (1100.00 * 10 / 30) /6.00 ) + (1000.00 * 10 / 30)/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 * 10 / 30 , salary.getTotalPayment(), DELTA);
+		assertEquals(ContextVariable.CGC_BASE.getName(), (1100.00 * 10 / 30) + ( (1100.00 * 10 / 30) /6.00 ) + (1000.00 * 10 / 30)/12.00, salary.getCommonBase(), DELTA);
 		
 		// 
 		// MARCH
@@ -3471,8 +3471,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 * 21/30.00 + 1000.00 * ( 9.00 + 10.00/30.00 + 21.00/30.00 )  / 12.00 , salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), (1100.00 * 21/30.00)  + ( (1100.00 * 21/30.00)/6.00 ) + (1000.00 * 21/30.00)/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 * 21/30.00 + 1000.00 * ( 9.00 + 10.00/30.00 + 21.00/30.00 )  / 12.00 , salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), (1100.00 * 21/30.00)  + ( (1100.00 * 21/30.00)/6.00 ) + (1000.00 * 21/30.00)/12.00, salary.getCommonBase(), DELTA);
 		
 		calendar.set(MONTH, Calendar.MARCH);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -3487,8 +3487,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 * 21/30.00, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), (1100.00 * 21/30.00)  + ( (1100.00 * 21/30.00)/6.00 ) + (1000.00 * 21/30.00)/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 * 21/30.00, salary.getTotalPayment(), DELTA);
+		assertEquals(ContextVariable.CGC_BASE.getName(), (1100.00 * 21/30.00)  + ( (1100.00 * 21/30.00)/6.00 ) + (1000.00 * 21/30.00)/12.00, salary.getCommonBase(), DELTA);
 
 		// 
 		// JULY
@@ -3501,8 +3501,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * ( 3.00 + 10.00/30.00 + 21.00/30.00 ) / 12.00, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * ( 3.00 + 10.00/30.00 + 21.00/30.00 ) / 12.00, salary.getTotalPayment(), DELTA);
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		calendar.set(MONTH, Calendar.JUNE);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -3517,8 +3517,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment(), DELTA);
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		// 
 		// DECEMBER
@@ -3531,8 +3531,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * ( 9.00 + 10.00/30.00 + 21.00/30.00 ) / 12.00 , salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * ( 9.00 + 10.00/30.00 + 21.00/30.00 ) / 12.00 , salary.getTotalPayment(), DELTA);
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		calendar.set(MONTH, Calendar.DECEMBER);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -3547,8 +3547,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment(), DELTA);
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 	}
 
 	@Test
@@ -3646,8 +3646,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00 + 1100.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00 + 1100.00/12.00, salary.getCommonBase(), DELTA);
 		
 		// 
 		// MARCH
@@ -3660,8 +3660,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1000.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00 + 1100.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1000.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00 + 1100.00/12.00, salary.getCommonBase(), DELTA);
 		
 		calendar.set(MONTH, Calendar.MARCH);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -3676,8 +3676,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00 + 1100.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00 + 1100.00/12.00, salary.getCommonBase(), DELTA);
 
 		// 
 		// JULY
@@ -3690,8 +3690,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * 6 /12, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00 + 1100.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * 6 /12, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00 + 1100.00/12.00, salary.getCommonBase(), DELTA);
 
 		calendar.set(MONTH, Calendar.JUNE);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -3706,8 +3706,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00 + 1100.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00 + 1100.00/12.00, salary.getCommonBase(), DELTA);
 
 		// 
 		// DECEMBER
@@ -3720,8 +3720,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + (1100.00 * 3 / 12.00), salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00 + 1100.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + (1100.00 * 3 / 12.00), salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00 + 1100.00/12.00, salary.getCommonBase(), DELTA);
 
 		calendar.set(MONTH, Calendar.DECEMBER);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -3737,16 +3737,16 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		salary = new SmartContractSalaryCalculator<Salary>(compositeSalaryBuilder)
 		.calculate(getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate));
 		jooqSalaryBuilder.execute();
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 , salary.getTotalPayment(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 , salary.getTotalPayment(), DELTA);
 
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * 3 / 12.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00 + 1100.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * 3 / 12.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00 + 1100.00/12.00, salary.getCommonBase(), DELTA);
 	}
 
 	@Test
-	@Ignore("Not yet...")
+	@Disabled("Not yet...")
 	public void testExtrasAtSalaryVII() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -3809,7 +3809,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 
-		Assert.assertEquals(ContextVariable.TOTAL_LIQUID.getName(), 1200.00 , salary.getTotalLiquid());
+		assertEquals(ContextVariable.TOTAL_LIQUID.getName(), 1200.00 , salary.getTotalLiquid());
 
 		// 
 		// DECEMBER
@@ -3822,8 +3822,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + 1100.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + 1100.00/12.00, salary.getCommonBase(), DELTA);
 
 	}
 	
@@ -3927,9 +3927,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ), salary.getCommonBase(), DELTA);
-		Assert.assertEquals(( 1100.00/6.00 ), salary.getExtraPayProration(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ), salary.getCommonBase(), DELTA);
+		assertEquals(( 1100.00/6.00 ), salary.getExtraPayProration(), DELTA);
 		
 	}
 
@@ -4039,7 +4039,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		});
 		Salary extra = contractSalaryCalculator.calculate(extraCtx);
 
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00/12.00 * 5 , extra.getTotalPayment(), 0.005 );
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00/12.00 * 5 , extra.getTotalPayment(), 0.005 );
 	}
 
 	@Test
@@ -4152,8 +4152,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		});
 		Salary extra = contractSalaryCalculator.calculate(extraCtx);
 
-		Assert.assertEquals(ContextVariable.EXTRA_PAY.getName(), ( 1000.00 + 10.00 * 15.00) /12.00 * 5 , extraPayProration / 2.00 , 0.005 );
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), ( 1000.00 + 10.00 * 15.00) /12.00 * 5 , extra.getTotalPayment(), 0.005 );
+		assertEquals(ContextVariable.EXTRA_PAY.getName(), ( 1000.00 + 10.00 * 15.00) /12.00 * 5 , extraPayProration / 2.00 , 0.005 );
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), ( 1000.00 + 10.00 * 15.00) /12.00 * 5 , extra.getTotalPayment(), 0.005 );
 	}
 
 	@Test
@@ -4259,7 +4259,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		});
 		Salary extra = contractSalaryCalculator.calculate(extraCtx);
 
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), extraPayProration / 2.00 , extra.getTotalPayment(), 0.005 );
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), extraPayProration / 2.00 , extra.getTotalPayment(), 0.005 );
 	}
 
 	@Test
@@ -4372,12 +4372,12 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		});
 		Salary extra = contractSalaryCalculator.calculate(extraCtx);
 
-		Assert.assertEquals(ContextVariable.EXTRA_PAY.getName(), ( 1000.00 + 10.00 * 15.00) /12.00 * 5 , extraPayProration / 2.00 , 0.005 );
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), ( 1000.00 + 10.00 * 15.00) /12.00 * 5 , extra.getTotalPayment(), 0.005 );
+		assertEquals(ContextVariable.EXTRA_PAY.getName(), ( 1000.00 + 10.00 * 15.00) /12.00 * 5 , extraPayProration / 2.00 , 0.005 );
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), ( 1000.00 + 10.00 * 15.00) /12.00 * 5 , extra.getTotalPayment(), 0.005 );
 	}
 
 	@Test
-	@Ignore("Not yet...")
+	@Disabled("Not yet...")
 	public void testExtrasAtSalaryX() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -4454,8 +4454,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 		
 		// 
 		// MARCH
@@ -4468,8 +4468,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1000.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1000.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 		
 		calendar.set(MONTH, Calendar.MARCH);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -4484,8 +4484,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		// 
 		// JULY
@@ -4501,8 +4501,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * 6 /12, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * 6 /12, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		calendar.set(MONTH, Calendar.JUNE);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -4517,8 +4517,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		// 
 		// DECEMBER
@@ -4531,8 +4531,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		calendar.set(MONTH, Calendar.DECEMBER);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -4547,8 +4547,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 	}
 
 	@Test
@@ -4634,8 +4634,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		//for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 		//	System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 		
 		// 
 		// MARCH
@@ -4648,8 +4648,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		//for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 		//	System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1000.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1000.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 		
 		calendar.set(MONTH, Calendar.MARCH);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -4663,8 +4663,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		// 
 		// JULY
@@ -4677,8 +4677,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		//for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 		//	System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		calendar.set(MONTH, Calendar.JUNE);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -4693,8 +4693,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		// 
 		// DECEMBER
@@ -4707,8 +4707,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 /*+ 1100.00*/, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 /*+ 1100.00*/, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		calendar.set(MONTH, Calendar.DECEMBER);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -4723,8 +4723,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 	}
 
 	@Test
@@ -4801,7 +4801,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount() + "(" + p.getQuote() +")"));
 		
-		org.junit.Assert.assertEquals((1100.00 + 1100.00), (double) salary.getTotalPayment(), 0.01);
+		org.junit.assertEquals((1100.00 + 1100.00), (double) salary.getTotalPayment(), 0.01);
 		
 		endDate = getLastDayOfMonth(startDate);
 		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
@@ -4818,7 +4818,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount() + "(" + p.getQuote() +")"));
 		
-		org.junit.Assert.assertEquals((1100.00 + 1100.00), (double) salary.getTotalPayment(), 0.01);
+		org.junit.assertEquals((1100.00 + 1100.00), (double) salary.getTotalPayment(), 0.01);
 		
 		// 
 		// EXTRA 
@@ -4830,7 +4830,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		//salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount() + "(" + p.getQuote() +")"));
 		
-		//org.junit.Assert.assertEquals((1150.00 + 1100.00 + 50.00/6), (double) salary.getTotalPayment(), 0.01);
+		//org.junit.assertEquals((1150.00 + 1100.00 + 50.00/6), (double) salary.getTotalPayment(), 0.01);
 
 	}
 
@@ -4922,7 +4922,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount() + "(" + p.getQuote() +")"));
 		
-		org.junit.Assert.assertEquals((1100.00 + 1100.00/6 * 4), (double) salary.getTotalPayment(), 0.01);
+		org.junit.assertEquals((1100.00 + 1100.00/6 * 4), (double) salary.getTotalPayment(), 0.01);
 		
 
 	}
@@ -5033,9 +5033,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		//salary.getSalaryPayments().forEach( p -> System.out.println(p.getExpression() + " : " + p.getAmount() +", " + p.getQuote() ));
 		
-		org.junit.Assert.assertEquals(1100.00 +  ( 1111.11 * 100 ) / (100.00 - 13.43 ), salary.getTotalPayment(), 0.00);
+		org.junit.assertEquals(1100.00 +  ( 1111.11 * 100 ) / (100.00 - 13.43 ), salary.getTotalPayment(), 0.00);
 
-		org.junit.Assert.assertEquals(( 1111.11 * 100 ) / (100.00 - 13.43 ) / 12 * 3, salary.getExtraPayProration(), 0.00);
+		org.junit.assertEquals(( 1111.11 * 100 ) / (100.00 - 13.43 ) / 12 * 3, salary.getExtraPayProration(), 0.00);
 
 		AgreementExtraRecord agreementExtra = getExtra(aonContext, agreement.getId(), "15/05" );
 		
@@ -5056,7 +5056,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				p.getContractProperty().eq(contract.getId())
 				.and(p.getIsExtraProperty().eq(true)));
 		salaries.forEach( s -> {
-			org.junit.Assert.assertEquals(1111.11, s.getTotalLiquid(), 0.00);
+			org.junit.assertEquals(1111.11, s.getTotalLiquid(), 0.00);
 		});
 		
 		ctx = 
@@ -5069,7 +5069,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		//salary.getSalaryPayments().forEach( p -> System.out.println(p.getExpression() + " : " + p.getAmount() +", " + p.getQuote() ));
 		
-		org.junit.Assert.assertEquals(1100.00, salary.getTotalPayment(), 0.00);
+		org.junit.assertEquals(1100.00, salary.getTotalPayment(), 0.00);
 
 	}
 	
@@ -5111,9 +5111,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()))
 		.forEach( s -> {
-		    org.junit.Assert.assertEquals( 1200.00 , s.getTotalPayment() , 0.00 );
-		    org.junit.Assert.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.00 );
-		    org.junit.Assert.assertEquals( 1200.00 * 7 / 6, s.getCommonContingenciesBase() , 0.00 );
+		    org.junit.assertEquals( 1200.00 , s.getTotalPayment() , 0.00 );
+		    org.junit.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.00 );
+		    org.junit.assertEquals( 1200.00 * 7 / 6, s.getCommonContingenciesBase() , 0.00 );
 		    System.out.println( s.getStartDate() + " -. " + s.getExtraProrationBase() );
 		});
 
@@ -5128,9 +5128,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Date juneStartDate = startDate;
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().eq(juneStartDate)) ) 
 		.forEach( s -> {
-		    org.junit.Assert.assertEquals( 2400.00 , s.getTotalPayment() , 0.00 );
-		    org.junit.Assert.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.00 );
-		    org.junit.Assert.assertEquals( 1200.00 * 7 / 6, s.getCommonContingenciesBase() , 0.00 );
+		    org.junit.assertEquals( 2400.00 , s.getTotalPayment() , 0.00 );
+		    org.junit.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.00 );
+		    org.junit.assertEquals( 1200.00 * 7 / 6, s.getCommonContingenciesBase() , 0.00 );
 		    System.out.println( s.getStartDate() + " -. " + s.getExtraProrationBase() + ", " + s.getTotalPayment());
 		});
 		
@@ -5152,9 +5152,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().gt(juneStartDate)))
 		.forEach( s -> {
-		    org.junit.Assert.assertEquals( 1200.00 , s.getTotalPayment() , 0.00 );
-		    org.junit.Assert.assertEquals( 1000.00 / 6, s.getExtraProrationBase() , 0.01 );
-		    org.junit.Assert.assertEquals( 1200.00 + 1000.00 / 6, s.getCommonContingenciesBase() , 0.01 );
+		    org.junit.assertEquals( 1200.00 , s.getTotalPayment() , 0.00 );
+		    org.junit.assertEquals( 1000.00 / 6, s.getExtraProrationBase() , 0.01 );
+		    org.junit.assertEquals( 1200.00 + 1000.00 / 6, s.getCommonContingenciesBase() , 0.01 );
 		    System.out.println( s.getStartDate() + " -. " + s.getExtraProrationBase() );
 		});
 
@@ -5169,9 +5169,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Date decemberStartDate = startDate;
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().eq(decemberStartDate)) ) 
 		.forEach( s -> {
-		    org.junit.Assert.assertEquals( 1000.00 / 6, s.getExtraProrationBase() , 0.01 );
-		    org.junit.Assert.assertEquals( 1200.00 + 1000.00 / 6, s.getCommonContingenciesBase() , 0.01 );
-		    org.junit.Assert.assertEquals( 2200.00 , s.getTotalPayment() , 0.05 );
+		    org.junit.assertEquals( 1000.00 / 6, s.getExtraProrationBase() , 0.01 );
+		    org.junit.assertEquals( 1200.00 + 1000.00 / 6, s.getCommonContingenciesBase() , 0.01 );
+		    org.junit.assertEquals( 2200.00 , s.getTotalPayment() , 0.05 );
 		    System.out.println( s.getStartDate() + " -. " + s.getExtraProrationBase() + ", " + s.getTotalPayment());
 		});
 	}
@@ -5214,9 +5214,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()))
 		.forEach( s -> {
-		    org.junit.Assert.assertEquals( 1200.00 , s.getTotalPayment() , 0.00 );
-		    org.junit.Assert.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.00 );
-		    org.junit.Assert.assertEquals( 1200.00 * 7 / 6, s.getCommonContingenciesBase() , 0.00 );
+		    org.junit.assertEquals( 1200.00 , s.getTotalPayment() , 0.00 );
+		    org.junit.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.00 );
+		    org.junit.assertEquals( 1200.00 * 7 / 6, s.getCommonContingenciesBase() , 0.00 );
 		    System.out.println( s.getStartDate() + " -. " + s.getExtraProrationBase() );
 		});
 
@@ -5231,9 +5231,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Date juneStartDate = startDate;
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().eq(juneStartDate)) ) 
 		.forEach( s -> {
-		    org.junit.Assert.assertEquals( 2400.00 , s.getTotalPayment() , 0.00 );
-		    org.junit.Assert.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.00 );
-		    org.junit.Assert.assertEquals( 1200.00 * 7 / 6, s.getCommonContingenciesBase() , 0.00 );
+		    org.junit.assertEquals( 2400.00 , s.getTotalPayment() , 0.00 );
+		    org.junit.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.00 );
+		    org.junit.assertEquals( 1200.00 * 7 / 6, s.getCommonContingenciesBase() , 0.00 );
 		    System.out.println( s.getStartDate() + " -. " + s.getExtraProrationBase() + ", " + s.getTotalPayment());
 		});
 		
@@ -5257,9 +5257,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().gt(juneStartDate)))
 		.forEach( s -> {
-		    org.junit.Assert.assertEquals( 1200.00 , s.getTotalPayment() , 0.00 );
-		    org.junit.Assert.assertEquals( 1000.00 / 6, s.getExtraProrationBase() , 0.01 );
-		    org.junit.Assert.assertEquals( 1200.00 + 1000.00 / 6, s.getCommonContingenciesBase() , 0.01 );
+		    org.junit.assertEquals( 1200.00 , s.getTotalPayment() , 0.00 );
+		    org.junit.assertEquals( 1000.00 / 6, s.getExtraProrationBase() , 0.01 );
+		    org.junit.assertEquals( 1200.00 + 1000.00 / 6, s.getCommonContingenciesBase() , 0.01 );
 		    System.out.println( s.getStartDate() + " -. " + s.getExtraProrationBase() );
 		});
 
@@ -5277,9 +5277,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Date decemberStartDate = startDate;
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().eq(decemberStartDate)) ) 
 		.forEach( s -> {
-		    org.junit.Assert.assertEquals( 1000.00 / 6, s.getExtraProrationBase() , 0.01 );
-		    org.junit.Assert.assertEquals( 1200.00 + 1000.00 / 6, s.getCommonContingenciesBase() , 0.01 );
-		    org.junit.Assert.assertEquals( 2200.00 , s.getTotalPayment() , 0.05 );
+		    org.junit.assertEquals( 1000.00 / 6, s.getExtraProrationBase() , 0.01 );
+		    org.junit.assertEquals( 1200.00 + 1000.00 / 6, s.getCommonContingenciesBase() , 0.01 );
+		    org.junit.assertEquals( 2200.00 , s.getTotalPayment() , 0.05 );
 		    System.out.println( s.getStartDate() + " -. " + s.getExtraProrationBase() + ", " + s.getTotalPayment());
 		});
 	}
@@ -5320,9 +5320,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()))
 		.forEach( s -> {
-		    org.junit.Assert.assertEquals( 1200.00 , s.getTotalPayment() , 0.00 );
-		    org.junit.Assert.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.00 );
-		    org.junit.Assert.assertEquals( 1200.00 + 1200.00/6.00, s.getCommonContingenciesBase() , 0.00 );
+		    org.junit.assertEquals( 1200.00 , s.getTotalPayment() , 0.00 );
+		    org.junit.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.00 );
+		    org.junit.assertEquals( 1200.00 + 1200.00/6.00, s.getCommonContingenciesBase() , 0.00 );
 		    System.out.println( s.getStartDate() + " -. " + s.getExtraProrationBase()  + "," + s.getTotalPayment());
 		});
 
@@ -5337,9 +5337,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Date juneStartDate = startDate;
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().eq(juneStartDate)) ) 
 		.forEach( s -> {
-		    org.junit.Assert.assertEquals( 1800.00 , s.getTotalPayment() , 0.00 );
-		    org.junit.Assert.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.00 );
-		    org.junit.Assert.assertEquals( 1200.00 + 1200.00/6.00, s.getCommonContingenciesBase() , 0.00 );
+		    org.junit.assertEquals( 1800.00 , s.getTotalPayment() , 0.00 );
+		    org.junit.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.00 );
+		    org.junit.assertEquals( 1200.00 + 1200.00/6.00, s.getCommonContingenciesBase() , 0.00 );
 		    System.out.println( s.getStartDate() + " -. " + s.getExtraProrationBase() + ", " + s.getTotalPayment());
 		});
 		
@@ -5355,9 +5355,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().gt(juneStartDate)))
 		.forEach( s -> {
-		    org.junit.Assert.assertEquals( 1200.00 , s.getTotalPayment() , 0.00 );
-		    org.junit.Assert.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.01 );
-		    org.junit.Assert.assertEquals( 1200.00 + 1200.00/6.00, s.getCommonContingenciesBase() , 0.01 );
+		    org.junit.assertEquals( 1200.00 , s.getTotalPayment() , 0.00 );
+		    org.junit.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.01 );
+		    org.junit.assertEquals( 1200.00 + 1200.00/6.00, s.getCommonContingenciesBase() , 0.01 );
 		    System.out.println( s.getStartDate() + " -. " + s.getExtraProrationBase() );
 		});
 
@@ -5372,9 +5372,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Date decemberStartDate = startDate;
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().eq(decemberStartDate)) ) 
 		.forEach( s -> {
-		    org.junit.Assert.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.01 );
-		    org.junit.Assert.assertEquals( 1200.00 + 1200.00 / 6, s.getCommonContingenciesBase() , 0.01 );
-		    org.junit.Assert.assertEquals( 1200.00 + 1200.00 , s.getTotalPayment() , 0.05 );
+		    org.junit.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.01 );
+		    org.junit.assertEquals( 1200.00 + 1200.00 / 6, s.getCommonContingenciesBase() , 0.01 );
+		    org.junit.assertEquals( 1200.00 + 1200.00 , s.getTotalPayment() , 0.05 );
 		    System.out.println( s.getStartDate() + " -. " + s.getExtraProrationBase() + ", " + s.getTotalPayment());
 		});
 		
@@ -5391,9 +5391,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().eq(decemberStartDate)) ) 
 		.forEach( s -> {
-		    org.junit.Assert.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.01 );
-		    org.junit.Assert.assertEquals( 1200.00 + 1200.00 / 6, s.getCommonContingenciesBase() , 0.01 );
-		    org.junit.Assert.assertEquals( 1200.00 + 1200.00 , s.getTotalPayment() , 0.05 );
+		    org.junit.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.01 );
+		    org.junit.assertEquals( 1200.00 + 1200.00 / 6, s.getCommonContingenciesBase() , 0.01 );
+		    org.junit.assertEquals( 1200.00 + 1200.00 , s.getTotalPayment() , 0.05 );
 		    System.out.println( s.getStartDate() + " -. " + s.getExtraProrationBase() + ", " + s.getTotalPayment());
 		});
 	}
@@ -5483,7 +5483,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount() + "(" + p.getQuote() +")"));
 		
-		org.junit.Assert.assertEquals((1100.00 / 6 * 5 ), (double) salary.getTotalPayment(), 0.01);
+		org.junit.assertEquals((1100.00 / 6 * 5 ), (double) salary.getTotalPayment(), 0.01);
 
 		for ( startDate = firstDayOfYear ;  get(startDate, Calendar.MONTH) < Calendar.DECEMBER; startDate = add(startDate, Calendar.MONTH, 1)  ) {
 			endDate = getLastDayOfMonth(startDate);
@@ -5501,7 +5501,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount() + "(" + p.getQuote() +")"));
 		
-		org.junit.Assert.assertEquals((0.00), (double) salary.getTotalPayment(), 0.01);
+		org.junit.assertEquals((0.00), (double) salary.getTotalPayment(), 0.01);
 
 	}
 	
@@ -5560,7 +5560,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount() + "(" + p.getQuote() +")"));
 		
-		org.junit.Assert.assertEquals((1100.00 / 12 * 6 ), (double) salary.getTotalPayment(), 0.01);
+		org.junit.assertEquals((1100.00 / 12 * 6 ), (double) salary.getTotalPayment(), 0.01);
 
 		for (  ;  get(startDate, Calendar.MONTH) < Calendar.DECEMBER; startDate = add(startDate, Calendar.MONTH, 1)  ) {
 			endDate = getLastDayOfMonth(startDate);
@@ -5587,7 +5587,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount() + "(" + p.getQuote() +")"));
 		
-		org.junit.Assert.assertEquals((1100.00 / 12 * 6 ), (double) salary.getTotalPayment(), 0.01);
+		org.junit.assertEquals((1100.00 / 12 * 6 ), (double) salary.getTotalPayment(), 0.01);
 
 	}
 
@@ -5684,9 +5684,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount() + "(" + p.getQuote() +")"));
 		
-		org.junit.Assert.assertEquals((1100.00 / 30 * 28  + 60.00), (double) salary.getTotalPayment(), 0.01);
+		org.junit.assertEquals((1100.00 / 30 * 28  + 60.00), (double) salary.getTotalPayment(), 0.01);
 		
-		org.junit.Assert.assertEquals((1100.00 / 30 * 28  + 10.00), (double) salary.getCommonBase(), 0.01);
+		org.junit.assertEquals((1100.00 / 30 * 28  + 10.00), (double) salary.getCommonBase(), 0.01);
 
 	}
 
@@ -5770,7 +5770,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		double totalPayment = 
 		AON.getSalaries(aonContext,  p -> p.getContractProperty().eq(contract.getId()))
 		.collect(Collectors.summingDouble(s -> s.getTotalPayment()));
-		org.junit.Assert.assertEquals(1100.00 * ( 7.00/6.00 ) * 2.00, totalPayment, 0.001 );
+		org.junit.assertEquals(1100.00 * ( 7.00/6.00 ) * 2.00, totalPayment, 0.001 );
 		
 		// November
 		startDate = add(startDate,Calendar.MONTH,1);
@@ -5812,7 +5812,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 			p.getContractProperty().eq(contract.getId())
 				.and(p.getStartDateProperty().eq(firstDayNovember)))
 		.collect(Collectors.summingDouble(s -> s.getTotalPayment()));
-		org.junit.Assert.assertEquals(1100.00, totalPayment, 0.001 );
+		org.junit.assertEquals(1100.00, totalPayment, 0.001 );
 
 		// December
 		startDate = add(startDate,Calendar.MONTH,1);
@@ -5828,7 +5828,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 			p.getContractProperty().eq(contract.getId())
 				.and(p.getStartDateProperty().eq(firstDayDecember)))
 		.collect(Collectors.summingDouble(s -> s.getTotalPayment()));
-		org.junit.Assert.assertEquals(1100.00 + 1100.00/12.00 * 2.00, totalPayment, 0.001 );
+		org.junit.assertEquals(1100.00 + 1100.00/12.00 * 2.00, totalPayment, 0.001 );
 		
 		
 	}
@@ -5891,8 +5891,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 		
 		// 
 		// MARCH
@@ -5905,8 +5905,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1000.00 * 3 / 12.00, salary.getTotalPayment());
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1000.00 * 3 / 12.00, salary.getTotalPayment());
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 		
 		// 
 		// JULY
@@ -5919,8 +5919,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * 7 / 12.00, salary.getTotalPayment(), 10.00);
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * 7 / 12.00, salary.getTotalPayment(), 10.00);
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 
 		// 
 		// DECEMBER
@@ -5933,8 +5933,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 		
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00, salary.getTotalPayment(),  10.00);
-		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00, salary.getTotalPayment(),  10.00);
+		assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 	}
 
 	@Test
@@ -6590,7 +6590,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate))
 		.getSalary();
 		
-		Assert.assertEquals(1110.00, salary.getTotalPayment(), DELTA);
+		assertEquals(1110.00, salary.getTotalPayment(), DELTA);
 		
 
 	}
@@ -6647,8 +6647,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract))
 		;
 		
-		Assert.assertEquals(1000.00, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(1000.00 / 6, salary.getExtraPayProration(), DELTA);
+		assertEquals(1000.00, salary.getTotalPayment(), DELTA);
+		assertEquals(1000.00 / 6, salary.getExtraPayProration(), DELTA);
 			
 
 		Calendar calendar = Calendar.getInstance();
@@ -6664,7 +6664,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate))
 		.getSalary();
 		
-		Assert.assertEquals(1000.00, salary.getTotalPayment(), DELTA);
+		assertEquals(1000.00, salary.getTotalPayment(), DELTA);
 		
 
 	}
@@ -6736,7 +6736,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate))
 		.getSalary();
 		
-		Assert.assertEquals(1110.00, salary.getTotalPayment(), DELTA);
+		assertEquals(1110.00, salary.getTotalPayment(), DELTA);
 		
 
 	}
@@ -6806,8 +6806,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract))
 		;
 		
-		Assert.assertEquals(1100.00, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(1100.00 / 6, salary.getExtraPayProration(), DELTA);
+		assertEquals(1100.00, salary.getTotalPayment(), DELTA);
+		assertEquals(1100.00 / 6, salary.getExtraPayProration(), DELTA);
 			
 
 		Calendar calendar = Calendar.getInstance();
@@ -6823,7 +6823,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate))
 		.getSalary();
 		
-		Assert.assertEquals(1100.00, salary.getTotalPayment(), DELTA);
+		assertEquals(1100.00, salary.getTotalPayment(), DELTA);
 		
 
 	}
@@ -6849,7 +6849,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		//@formatter:off
 		
 		addPayment(aonContext, contract, contract.getStartDate(), null, "SALARIO BASE", "1100.00", "_P", "_P", CRA_0001);
-		addPayment(aonContext, contract, contract.getStartDate(), null, "PAGA EXTRA PRORR.", "SALARIO_BASE+ANTIGÜEDAD", "_P", "_P", CRA_0004);
+		addPayment(aonContext, contract, contract.getStartDate(), null, "PAGA EXTRA PRORR.", "SALARIO_BASE+ANTIGï¿½EDAD", "_P", "_P", CRA_0004);
 
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(getToday());
@@ -6859,7 +6859,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract))
 		;
 		
-		Assert.assertEquals(1100.00 + 1100.00 / 12, salary.getTotalPayment(), DELTA);
+		assertEquals(1100.00 + 1100.00 / 12, salary.getTotalPayment(), DELTA);
 			
 
 		
@@ -6920,7 +6920,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate))
 		.getSalary();
 		
-		Assert.assertEquals(666.66, salary.getTotalPayment(), DELTA);
+		assertEquals(666.66, salary.getTotalPayment(), DELTA);
 		
 
 	}
@@ -6979,7 +6979,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate))
 		.getSalary();
 		
-		Assert.assertEquals(666.66, salary.getTotalPayment(), DELTA);
+		assertEquals(666.66, salary.getTotalPayment(), DELTA);
 		
 		calendar.set(MONTH, Calendar.JULY);
 		calendar.set(DAY_OF_MONTH, 1);
@@ -6992,7 +6992,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate))
 		.getSalary();
 		
-		Assert.assertEquals(666.66/2.00, salary.getTotalPayment(), DELTA);
+		assertEquals(666.66/2.00, salary.getTotalPayment(), DELTA);
 
 	}
 
@@ -7078,7 +7078,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate))
 		.getSalary();
 		
-		Assert.assertEquals(1110.00, salary.getTotalPayment(), DELTA);
+		assertEquals(1110.00, salary.getTotalPayment(), DELTA);
 		
 
 	}
@@ -7178,7 +7178,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate))
 		.getSalary();
 		
-		Assert.assertEquals(1110.00 - (1110.00/12 * 5), salary.getTotalPayment(), DELTA);
+		assertEquals(1110.00 - (1110.00/12 * 5), salary.getTotalPayment(), DELTA);
 		
 
 	}
@@ -7278,13 +7278,13 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate))
 		.getSalary();
 		
-		Assert.assertEquals(1110.00/12 * 6 + 1210.00/12 * 6, salary.getTotalPayment(), DELTA);
+		assertEquals(1110.00/12 * 6 + 1210.00/12 * 6, salary.getTotalPayment(), DELTA);
 	
 
 	}
 
 	@Test
-	@Ignore("Rollback")
+	@Disabled("Rollback")
 	public void testProrratedBaseI() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -7320,10 +7320,10 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 
-		Assert.assertEquals(1200.00 + 1200.00 / 6 , salary.getIrpfBase(), DELTA);
-		Assert.assertEquals(1200.00 + 1200.00 / 6 , salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1200.00 + 1200.00 / 6 , salary.getRemuneration(), DELTA);
-		Assert.assertEquals(1200.00 / 6 , salary.getExtraPayProration(), DELTA);
+		assertEquals(1200.00 + 1200.00 / 6 , salary.getIrpfBase(), DELTA);
+		assertEquals(1200.00 + 1200.00 / 6 , salary.getCommonBase(), DELTA);
+		assertEquals(1200.00 + 1200.00 / 6 , salary.getRemuneration(), DELTA);
+		assertEquals(1200.00 / 6 , salary.getExtraPayProration(), DELTA);
 		
 		
 
@@ -7368,9 +7368,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 
-		Assert.assertEquals(100.00 + 100.00 / 6 , salary.getIrpfBase(), DELTA);
-		Assert.assertEquals(1050.00 , salary.getCommonBase(), DELTA);
-		Assert.assertEquals(100.00 + 100.00 / 6 , salary.getRemuneration(), DELTA);
+		assertEquals(100.00 + 100.00 / 6 , salary.getIrpfBase(), DELTA);
+		assertEquals(1050.00 , salary.getCommonBase(), DELTA);
+		assertEquals(100.00 + 100.00 / 6 , salary.getRemuneration(), DELTA);
 
 	}
 
@@ -7413,9 +7413,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 
-		Assert.assertEquals(100.00 + 70.00 / 6 , salary.getIrpfBase(), DELTA);
-		Assert.assertEquals(100.00 + 70.00 / 6 , salary.getCommonBase(), DELTA);
-		Assert.assertEquals(100.00 + 70.00 / 6 , salary.getRemuneration(), DELTA);
+		assertEquals(100.00 + 70.00 / 6 , salary.getIrpfBase(), DELTA);
+		assertEquals(100.00 + 70.00 / 6 , salary.getCommonBase(), DELTA);
+		assertEquals(100.00 + 70.00 / 6 , salary.getRemuneration(), DELTA);
 
 	}
 
@@ -7458,9 +7458,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 
-		Assert.assertEquals(100.00 + 20.00 , salary.getIrpfBase(), DELTA);
-		Assert.assertEquals(100.00 + 20.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(100.00 + 20.00 , salary.getRemuneration(), DELTA);
+		assertEquals(100.00 + 20.00 , salary.getIrpfBase(), DELTA);
+		assertEquals(100.00 + 20.00, salary.getCommonBase(), DELTA);
+		assertEquals(100.00 + 20.00 , salary.getRemuneration(), DELTA);
 
 	}
 
@@ -7503,9 +7503,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 
-		Assert.assertEquals(100.00 + 100.00 / 6 , salary.getIrpfBase(), DELTA);
-		Assert.assertEquals(1050.00 , salary.getCommonBase(), DELTA);
-		Assert.assertEquals(100.00 + 100.00 / 6 , salary.getRemuneration(), DELTA);
+		assertEquals(100.00 + 100.00 / 6 , salary.getIrpfBase(), DELTA);
+		assertEquals(1050.00 , salary.getCommonBase(), DELTA);
+		assertEquals(100.00 + 100.00 / 6 , salary.getRemuneration(), DELTA);
 
 	}
 
@@ -7547,14 +7547,14 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 
-		Assert.assertEquals(100.00 + 100.00 / 6 , salary.getIrpfBase(), DELTA);
-		Assert.assertEquals(1050.00 , salary.getCommonBase(), DELTA);
-		Assert.assertEquals(100.00 + 100.00 / 6 , salary.getRemuneration(), DELTA);
+		assertEquals(100.00 + 100.00 / 6 , salary.getIrpfBase(), DELTA);
+		assertEquals(1050.00 , salary.getCommonBase(), DELTA);
+		assertEquals(100.00 + 100.00 / 6 , salary.getRemuneration(), DELTA);
 
 	}
 
 	@Test
-	@Ignore("Not Yet")
+	@Disabled("Not Yet")
 	public void testProrratedBaseVII() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -7593,10 +7593,10 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 
-		Assert.assertEquals(100.00 , salary.getIrpfBase(), DELTA);
-		Assert.assertEquals(1050.00 , salary.getCommonBase(), DELTA);
-		Assert.assertEquals(100.00, salary.getRemuneration(), DELTA);
-		Assert.assertEquals(100.00/6.00, salary.getExtraPayProration(), DELTA);
+		assertEquals(100.00 , salary.getIrpfBase(), DELTA);
+		assertEquals(1050.00 , salary.getCommonBase(), DELTA);
+		assertEquals(100.00, salary.getRemuneration(), DELTA);
+		assertEquals(100.00/6.00, salary.getExtraPayProration(), DELTA);
 
 	}
 
@@ -7645,9 +7645,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 
-		Assert.assertEquals(1125.90 + 1125.90 /12 *2 , salary.getIrpfBase(), DELTA);
-		Assert.assertEquals(1125.90 + 1125.90 /12 *2 , salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1125.90 + 1125.90 /12 *2 , salary.getRemuneration(), DELTA);
+		assertEquals(1125.90 + 1125.90 /12 *2 , salary.getIrpfBase(), DELTA);
+		assertEquals(1125.90 + 1125.90 /12 *2 , salary.getCommonBase(), DELTA);
+		assertEquals(1125.90 + 1125.90 /12 *2 , salary.getRemuneration(), DELTA);
 
 	}
 
@@ -7731,12 +7731,12 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
 
-		Assert.assertEquals( 1343.00 / 30 * 2 /* 1000.00 / 30 * 2 + 1100.00 / 30 * 2  /6.00 */, salary.getCommonBase(), DELTA);
+		assertEquals( 1343.00 / 30 * 2 /* 1000.00 / 30 * 2 + 1100.00 / 30 * 2  /6.00 */, salary.getCommonBase(), DELTA);
 
 	}
 
 	@Test
-	@Ignore("Not Yet")
+	@Disabled("Not Yet")
 	public void testExtrasWithOutPaymentsI() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -7803,7 +7803,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		});
 		Salary extra = contractSalaryCalculator.calculate(extraCtx);
 
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), ( 1000.00 + 100.00 )  , extra.getTotalPayment(), 0.005 );
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), ( 1000.00 + 100.00 )  , extra.getTotalPayment(), 0.005 );
 	}
 
 	@Test
@@ -7903,7 +7903,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		});
 		Salary extra = contractSalaryCalculator.calculate(extraCtx);
 
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1010.00/12.00 * 4 , extra.getTotalPayment(), 0.005 );
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1010.00/12.00 * 4 , extra.getTotalPayment(), 0.005 );
 	}
 
 	@Test
@@ -7998,7 +7998,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 						connection, startDate, endDate, endDate, contract);
 				Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-				Assert.assertEquals(ContextVariable.EXTRA_PAY.getName(), 1333.00/12.00 * 2.00 , salary.getExtraPayProration(), 0.005 );
+				assertEquals(ContextVariable.EXTRA_PAY.getName(), 1333.00/12.00 * 2.00 , salary.getExtraPayProration(), 0.005 );
 			}
 
 		calendar.set(MONTH, Calendar.DECEMBER);
@@ -8014,7 +8014,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		});
 		Salary extra = contractSalaryCalculator.calculate(extraCtx);
 
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1333.00/12.00 * 4 , extra.getTotalPayment(), 0.005 );
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1333.00/12.00 * 4 , extra.getTotalPayment(), 0.005 );
 	}
 
 	@Test
@@ -8109,7 +8109,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 						connection, startDate, endDate, endDate, contract);
 				Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-				Assert.assertEquals(ContextVariable.EXTRA_PAY.getName(), 1333.00/12.00 * 2.00 , salary.getExtraPayProration(), 0.005 );
+				assertEquals(ContextVariable.EXTRA_PAY.getName(), 1333.00/12.00 * 2.00 , salary.getExtraPayProration(), 0.005 );
 			}
 
 		calendar.set(MONTH, Calendar.DECEMBER);
@@ -8125,7 +8125,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		});
 		Salary extra = contractSalaryCalculator.calculate(extraCtx);
 
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1333.00/12.00, extra.getTotalPayment(), 0.005 );
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1333.00/12.00, extra.getTotalPayment(), 0.005 );
 	}
 
 	@Test
@@ -8220,7 +8220,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 						connection, startDate, endDate, endDate, contract);
 				Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-				Assert.assertEquals(ContextVariable.EXTRA_PAY.getName(), (1333.00/12.00)/2.00 * 2.00 , salary.getExtraPayProration(), 0.005 );
+				assertEquals(ContextVariable.EXTRA_PAY.getName(), (1333.00/12.00)/2.00 * 2.00 , salary.getExtraPayProration(), 0.005 );
 			}
 
 		calendar.set(MONTH, Calendar.DECEMBER);
@@ -8236,7 +8236,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		});
 		Salary extra = contractSalaryCalculator.calculate(extraCtx);
 
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), (1333.00/12.00)/2.00, extra.getTotalPayment(), 0.005 );
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), (1333.00/12.00)/2.00, extra.getTotalPayment(), 0.005 );
 	}
 
 	// ------------------------------------------------------------------------
@@ -8308,8 +8308,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract))
 		;
 		
-		org.junit.Assert.assertEquals(1110.00, salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(1110.00/12.00 * 3.00, salary.getExtraPayProration(), DELTA);
+		org.junit.assertEquals(1110.00, salary.getTotalPayment(), DELTA);
+		org.junit.assertEquals(1110.00/12.00 * 3.00, salary.getExtraPayProration(), DELTA);
 
 	}
 	
@@ -8330,7 +8330,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 					new Extra() {
 						{
 							this.concept = conceptPagaExtra.getId();
-							this.expression = "/*OTOÑO*/(SALARIO_BASE + PLUS_SALARIAL)";
+							this.expression = "/*OTOï¿½O*/(SALARIO_BASE + PLUS_SALARIAL)";
 							this.month = Month.SEPTEMBER;
 							this.start = "01/01";
 							this.end = "30/09";
@@ -8341,7 +8341,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 						{
 							this.concept = conceptPagaExtra.getId();
 							//(MES(INICIO_NOMINA) > 9 )?INPUT("(/*user*/SALARIO_BASE + ANTIGUEDAD/**/) * 3.00 / 12.00 ",PAGA_EXTRA_HELP):HIDE()
-							this.expression = "/*OTOÑO*/(SALARIO_BASE + PLUS_SALARIAL)";
+							this.expression = "/*OTOï¿½O*/(SALARIO_BASE + PLUS_SALARIAL)";
 							this.month = Month.DECEMBER;
 							this.start = "01/10";
 							this.end = "31/12";
@@ -8456,7 +8456,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		extra.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" : " + p.getAmount() ));
 
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), ( 1000.00 + 10.00 * 15.00) / 12 * 6, extra.getTotalPayment(), 0.005 );
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), ( 1000.00 + 10.00 * 15.00) / 12 * 6, extra.getTotalPayment(), 0.005 );
 	}
 
 	@Test
@@ -8548,7 +8548,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate))
 		.getSalary();
 		
-		Assert.assertEquals(1110.00/ 12 * 9 + ( 55.55+33.33+66.66 ) , salary.getTotalPayment(), DELTA);
+		assertEquals(1110.00/ 12 * 9 + ( 55.55+33.33+66.66 ) , salary.getTotalPayment(), DELTA);
 		
 
 	}
@@ -8640,7 +8640,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() +" = " + p.getAmount() + "," + p.getQuote() ));
 		
-		Assert.assertEquals(1110.00  + 1110.00/ 12 * 9 + ( 55.55+33.33+66.66 ) , salary.getTotalPayment(), DELTA);
+		assertEquals(1110.00  + 1110.00/ 12 * 9 + ( 55.55+33.33+66.66 ) , salary.getTotalPayment(), DELTA);
 
 	}
 	
@@ -8775,7 +8775,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" : " + p.getAmount() ));
 
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1010.00 /  6 * 4 , salary.getTotalPayment(), 0.005 );
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1010.00 /  6 * 4 , salary.getTotalPayment(), 0.005 );
 	}
 
 	@Test
@@ -8920,9 +8920,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		//salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" : " + p.getAmount() ));
 
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1010.00 + 1000.00 / 12 * 3.00, salary.getTotalPayment(), 0.005);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1010.00 + 1000.00 / 12 * 3.00, salary.getTotalPayment(), 0.005);
 		
-		org.junit.Assert.assertEquals(31, salary.getTimeUnits(),0);
+		org.junit.assertEquals(31, salary.getTimeUnits(),0);
 	}
 	
 	@Test
@@ -9074,11 +9074,11 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		//salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" : " + p.getAmount() ));
 
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1010.00 + 1000.00 / 12 * 2.00, salary.getTotalPayment(), 0.005);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1010.00 + 1000.00 / 12 * 2.00, salary.getTotalPayment(), 0.005);
 
-		Assert.assertEquals(1010.00 / 12.00 * 2 + 1000.00 / 12.00 , salary.getExtraPayProration(), 0.005);
+		assertEquals(1010.00 / 12.00 * 2 + 1000.00 / 12.00 , salary.getExtraPayProration(), 0.005);
 
-		org.junit.Assert.assertEquals(31, salary.getTimeUnits(),0);
+		org.junit.assertEquals(31, salary.getTimeUnits(),0);
 	}
 
 	@Test
@@ -9223,9 +9223,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		//salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" : " + p.getAmount() ));
 
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1010.00 + 1000.00 / 12 * 2.00, salary.getTotalPayment(), 0.005);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1010.00 + 1000.00 / 12 * 2.00, salary.getTotalPayment(), 0.005);
 
-		Assert.assertEquals(1010.00 / 12.00 * 2 + 1000.00 / 12.00 , salary.getExtraPayProration(), 0.005);
+		assertEquals(1010.00 / 12.00 * 2 + 1000.00 / 12.00 , salary.getExtraPayProration(), 0.005);
 	}
 
 
@@ -9371,9 +9371,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		//salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" : " + p.getAmount() ));
 
-		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1010.00 + 1000.00 / 12 * 2.00, salary.getTotalPayment(), 0.005);
+		assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1010.00 + 1000.00 / 12 * 2.00, salary.getTotalPayment(), 0.005);
 
-		Assert.assertEquals(1000.00 / 12.00 , salary.getExtraPayProration(), 0.005);
+		assertEquals(1000.00 / 12.00 , salary.getExtraPayProration(), 0.005);
 	}
 
 	protected void addBaseCgcMin(AONContext aonContext) {
@@ -9455,11 +9455,11 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
 	
-		org.junit.Assert.assertEquals(1100.00 *2, salary.getTotalPayment(), DELTA);
+		org.junit.assertEquals(1100.00 *2, salary.getTotalPayment(), DELTA);
 	}
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void testOverridePayments() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -9538,12 +9538,12 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Date startDate = getFirstDayOfYear(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1000.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1000.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
 		
 		addPayment(aonContext, contract, startDate, endDate, "ESTANCIA", "500", "_P", "_P", PaymentType.CRA_0042, SalaryType.SALARY);
 		
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1000.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1000.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(MONTH, 6);
@@ -9558,7 +9558,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Salary extra = new SmartContractSalaryCalculator<Salary>( 
 				new SalaryBuilder())
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, issueDate));
-		Assert.assertEquals( 1000.00, extra.getTotalPayment(), DELTA);
+		assertEquals( 1000.00, extra.getTotalPayment(), DELTA);
 		
 		calendar.set(MONTH, 11);
 		calendar.set(DAY_OF_MONTH, 15);
@@ -9572,7 +9572,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		extra = new SmartContractSalaryCalculator<Salary>( 
 				new SalaryBuilder())
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, issueDate));
-		Assert.assertEquals( 1000.00, extra.getTotalPayment(), DELTA);
+		assertEquals( 1000.00, extra.getTotalPayment(), DELTA);
 	}
 
 	@Test
@@ -9650,12 +9650,12 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Date startDate = getFirstDayOfYear(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1000.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1000.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
 		
 		addPayment(aonContext, contract, startDate, endDate, "ESTANCIA", "500", "_P", "_P", PaymentType.CRA_0042, SalaryType.SALARY);
 		
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1000.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1000.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(MONTH, 6);
@@ -9670,7 +9670,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Salary extra = new SmartContractSalaryCalculator<Salary>( 
 				new SalaryBuilder())
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, issueDate));
-		Assert.assertEquals( 1000.00, extra.getTotalPayment(), DELTA);
+		assertEquals( 1000.00, extra.getTotalPayment(), DELTA);
 		
 		calendar.set(MONTH, 11);
 		calendar.set(DAY_OF_MONTH, 15);
@@ -9684,7 +9684,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		extra = new SmartContractSalaryCalculator<Salary>( 
 				new SalaryBuilder())
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, issueDate));
-		Assert.assertEquals( 1000.00, extra.getTotalPayment(), DELTA);
+		assertEquals( 1000.00, extra.getTotalPayment(), DELTA);
 	}
 
 	@Test
@@ -9747,7 +9747,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		addPayment(aonContext, contract, salarioBaseConcept, 
 				String.format("1000.00 * %s / %s", WORKED_DAYS , MONTH_DAYS )
 				);
-		addPayment(aonContext, contract, antiguedadOneConcept, "ANTIGÜEDAD(1400.00 , 1) / 14 * DIAS_TRABAJADOS / DIAS_MES  " );
+		addPayment(aonContext, contract, antiguedadOneConcept, "ANTIGï¿½EDAD(1400.00 , 1) / 14 * DIAS_TRABAJADOS / DIAS_MES  " );
 
 		addPayment(aonContext, contract, antiguedadTwoConcept, "REMOVE()");
 		
@@ -9764,7 +9764,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 			}
 		}).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
 		salary.getPaymentS().forEach( p -> System.out.println(p.getExpression() + ": " + p.getAmount() + ", " + p.getQuote()  ));
-		Assert.assertEquals( 1100.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
+		assertEquals( 1100.00 / 12 * 3, salary.getExtraPayProration(), DELTA);
 		
 
 		Calendar calendar = Calendar.getInstance();
@@ -9783,7 +9783,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		extra.getPaymentS().forEach( p -> System.out.println(p.getExpression() + ": " + p.getAmount() + ", " + p.getQuote()  ));
 		
-		Assert.assertEquals( 1100.00, extra.getTotalPayment(), DELTA);
+		assertEquals( 1100.00, extra.getTotalPayment(), DELTA);
 		
 		calendar.set(MONTH, 11);
 		calendar.set(DAY_OF_MONTH, 15);
@@ -9797,7 +9797,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		extra = new SmartContractSalaryCalculator<Salary>( 
 				new SalaryBuilder())
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, issueDate));
-		Assert.assertEquals( 1100.00, extra.getTotalPayment(), DELTA);
+		assertEquals( 1100.00, extra.getTotalPayment(), DELTA);
 	}
 
 	@Test

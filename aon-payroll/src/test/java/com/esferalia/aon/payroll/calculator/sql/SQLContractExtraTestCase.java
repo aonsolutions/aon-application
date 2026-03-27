@@ -1,13 +1,13 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;

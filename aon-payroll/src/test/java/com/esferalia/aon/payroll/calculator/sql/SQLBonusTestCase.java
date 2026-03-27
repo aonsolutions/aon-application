@@ -21,7 +21,7 @@ import static java.util.Calendar.DATE;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.SalaryDeduction;
@@ -66,7 +66,7 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author rtrepiana
@@ -131,7 +131,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				"CHECK(COEFICIENTE_PARCIALIDAD>=0.50,'La jornada debe ser al menos del 50%');"+
 				"TC2S='100,200,300,150,250,350,130,230,330';"+
 				"CHECK(TC2S.indexOf(TC2)>=0,'El contrato debe ser %s', TC2S);"+
-				"FIN_BONIF=DIA(AÑO(INICIO_CONTRATO,2),-1);"+
+				"FIN_BONIF=DIA(Aï¿½O(INICIO_CONTRATO,2),-1);"+
 				"CHECK(INICIO_NOMINA <= FIN_BONIF, 'La Tarifa Reducida finalizo el %1$td/%1$tm/%1$tY', FIN_BONIF);"+
 				"DIAS_NO_BONIF=MAX(0,DIAS(FIN,FIN_BONIF)); "+
 				"500.00  * (DIAS_COTIZADOS - DIAS_NO_BONIF) * COEFICIENTE_PARCIALIDAD / DIAS_MES * PORCENTAJE_CGC_E/100"+
@@ -146,10 +146,10 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				"CHECK((C=COEFICIENTE_PARCIALIDAD)>=0.50,'La jornada debe ser al menos del 50%');"+
 				"T='100,200,300,150,250,350,130,230,330';"+
 				"CHECK(T.indexOf(TC2)>=0,'El contrato debe ser %s',T);"+
-				"I=AÑO((O=INICIO_CONTRATO),2);"+
+				"I=Aï¿½O((O=INICIO_CONTRATO),2);"+
 				"CHECK(FIN_NOMINA>=I,'La Tarifa Reducida (<10) comienza el %1$td/%1$tm/%1$tY',I);"+
 				"N=MAX(0,DIAS(I,(A=INICIO)));"+
-				"F=DIA(AÑO(O,3),-1);"+
+				"F=DIA(Aï¿½O(O,3),-1);"+
 				"CHECK(A<=F,'La Tarifa Reducida (<10) finalizo el %1$td/%1$tm/%1$tY',F);"+
 				"N+=MAX(0,DIAS(FIN,F));"+
 				"250.00*(DIAS_COTIZADOS-N)*C/DIAS_MES*PORCENTAJE_CGC_E/100"+
@@ -171,7 +171,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				.filter(d -> d.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY ).count();
 		workDays = workDays > 0 ? monthDays - (get(getToday(), Calendar.DAY_OF_MONTH) - 1) : workDays;
 		
-		Assert.assertEquals((1000.00 * workDays / monthDays * 23.60 / 100),
+		assertEquals((1000.00 * workDays / monthDays * 23.60 / 100),
 				salary.getTotalEnterprise(), DELTA);
 
 		// Next month. 500 bonus full filled.
@@ -181,7 +181,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 						getLastDayOfMonth(add(getToday(), MONTH, 1)),
 						getLastDayOfMonth(add(getToday(), MONTH, 1)), contract));
 
-		Assert.assertEquals((1000.00 * 23.60 / 100),
+		assertEquals((1000.00 * 23.60 / 100),
 				salary.getTotalEnterprise(), DELTA);
 
 		addIT(aonContext,
@@ -205,9 +205,9 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 						getLastDayOfMonth(add(getToday(), MONTH, 1)), contract));
 
 		monthDays = getMax(add(getToday(), MONTH, 1), Calendar.DAY_OF_MONTH);
-		Assert.assertEquals((1500.00 * ( monthDays - 3 ) / monthDays),
+		assertEquals((1500.00 * ( monthDays - 3 ) / monthDays),
 				salary.getTotalPayment(), DELTA);
-		Assert.assertEquals((1000.00 * 23.60 / 100),
+		assertEquals((1000.00 * 23.60 / 100),
 				salary.getTotalEnterprise(), DELTA);
 
 		// Next year. 500 bonus full filled.
@@ -217,7 +217,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 						getLastDayOfMonth(add(getToday(), YEAR, 1)),
 						getLastDayOfMonth(add(getToday(), YEAR, 1)), contract));
 
-		Assert.assertEquals((1000.00 * 23.60 / 100),
+		assertEquals((1000.00 * 23.60 / 100),
 				salary.getTotalEnterprise(), DELTA);
 
 		// After two years. 500 bonus partial filled & 250 too. Yes two bonus.
@@ -230,7 +230,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		monthDays = getMax(add(getToday(), YEAR, 2), Calendar.DAY_OF_MONTH);
 		int bonusIDays = get(add(getToday(), YEAR, 2), DAY_OF_MONTH) - 1;
 		int bonusIIDays = monthDays - bonusIDays;
-		Assert.assertEquals(
+		assertEquals(
 				((1500.00 - 500.00 * bonusIDays / monthDays) * 23.60 / 100)
 						- (250.00 * bonusIIDays / monthDays * 23.60 / 100),
 				salary.getTotalEnterprise(), DELTA);
@@ -253,7 +253,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				getLastDayOfMonth(add(add(getToday(), YEAR, 2), MONTH, 1)),
 				contract));
 
-		Assert.assertEquals((1250.00) * 23.60 / 100,
+		assertEquals((1250.00) * 23.60 / 100,
 				salary.getTotalEnterprise(), DELTA);
 
 		calculator = new ContractSalaryCalculator<Salary>(new SalaryBuilder());
@@ -273,7 +273,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		bonusIIDays = get(add(getToday(), YEAR, 3), DAY_OF_MONTH) - 1;
 		monthDays = getMax(add(getToday(), YEAR, 3), Calendar.DAY_OF_MONTH);
 		
-		Assert.assertEquals(
+		assertEquals(
 				(1500.00 - 250.00 * bonusIIDays / monthDays) * 23.60 / 100,
 				salary.getTotalEnterprise(), DELTA);
 
@@ -294,7 +294,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				getLastDayOfMonth(add(add(getToday(), YEAR, 3), MONTH, 1)),
 				contract));
 
-		Assert.assertEquals((1500.00) * 23.60 / 100,
+		assertEquals((1500.00) * 23.60 / 100,
 				salary.getTotalEnterprise(), DELTA);
 
 		// TC2 Invalid '110'
@@ -318,7 +318,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				connection, getFirstDayOfMonth(add(getToday(), MONTH, 1)),
 				getLastDayOfMonth(add(getToday(), MONTH, 1)),
 				getLastDayOfMonth(add(getToday(), MONTH, 1)), contract));
-		Assert.assertEquals((1500.00) * 23.60 / 100,
+		assertEquals((1500.00) * 23.60 / 100,
 				salary.getTotalEnterprise(), DELTA);
 
 		// COEFICIENTE_PARCIALIDAD too low.
@@ -343,7 +343,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				connection, getFirstDayOfMonth(add(getToday(), MONTH, 1)),
 				getLastDayOfMonth(add(getToday(), MONTH, 1)),
 				getLastDayOfMonth(add(getToday(), MONTH, 1)), contract));
-		Assert.assertEquals((1500.00) * 23.60 / 100 * 0.25,
+		assertEquals((1500.00) * 23.60 / 100 * 0.25,
 				salary.getTotalEnterprise(), DELTA);
 		
 
@@ -372,7 +372,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 
 		monthDays = getMax(getToday(), Calendar.DAY_OF_MONTH);
 		workDays = monthDays - (get(getToday(), Calendar.DAY_OF_MONTH) - 1);
-		Assert.assertEquals((750.00 - 250.00) * workDays / monthDays * 23.60
+		assertEquals((750.00 - 250.00) * workDays / monthDays * 23.60
 				/ 100, salary.getTotalEnterprise(), DELTA);
 
 		// Second month . Half of 500 bonus...
@@ -380,14 +380,14 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				connection, getFirstDayOfMonth(add(getToday(), MONTH, 1)),
 				getLastDayOfMonth(add(getToday(), MONTH, 1)),
 				getLastDayOfMonth(add(getToday(), MONTH, 1)), contract));
-		Assert.assertEquals((750.00 - 250.00) * 23.60 / 100,
+		assertEquals((750.00 - 250.00) * 23.60 / 100,
 				salary.getTotalEnterprise(), DELTA);
 
 		salary = calculator.calculate(getContractSalaryCalculatorContext(
 				connection, getFirstDayOfMonth(getToday()),
 				getLastDayOfMonth(getToday()), getLastDayOfMonth(getToday()),
 				contract));
-		Assert.assertEquals((750.00 - 250.00) * ((double) workDays / monthDays)
+		assertEquals((750.00 - 250.00) * ((double) workDays / monthDays)
 				* 23.60 / 100, salary.getTotalEnterprise(), DELTA);
 
 		salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder())
@@ -398,7 +398,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		bonusIDays = get(add(getToday(), YEAR, 2), DAY_OF_MONTH) - 1;
 		monthDays = getMax(add(getToday(), YEAR, 2), Calendar.DAY_OF_MONTH);
 		bonusIIDays = monthDays - bonusIDays;
-		Assert.assertEquals((750.00 * 23.60 / 100)
+		assertEquals((750.00 * 23.60 / 100)
 				- (250.00 * bonusIDays / monthDays * 23.60 / 100)
 				- (125.00 * bonusIIDays / monthDays * 23.60 / 100),
 				salary.getTotalEnterprise(), DELTA);
@@ -411,7 +411,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		monthDays = getMax(add(getToday(), YEAR, 3), Calendar.DAY_OF_MONTH);
 		bonusIIDays = get(add(getToday(), YEAR, 3), DAY_OF_MONTH) - 1;
 		;
-		Assert.assertEquals((750.00 * 23.60 / 100)
+		assertEquals((750.00 * 23.60 / 100)
 				- (125.00 * bonusIIDays / monthDays * 23.60 / 100),
 				salary.getTotalEnterprise(), DELTA);
 
@@ -421,7 +421,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 						getLastDayOfMonth(add(getToday(), YEAR, 4)),
 						getLastDayOfMonth(add(getToday(), YEAR, 4)), contract));
 		monthDays = getMax(add(getToday(), YEAR, 2), Calendar.DAY_OF_MONTH);
-		Assert.assertEquals((750.00 * 23.60 / 100),
+		assertEquals((750.00 * 23.60 / 100),
 				salary.getTotalEnterprise(), DELTA);
 
 	}
@@ -477,7 +477,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				"CHECK((C=COEFICIENTE_PARCIALIDAD)>=0.50,'La jornada debe ser al menos del 50%');"+
 				"TC2S='100,200,300';"+
 				"CHECK(TC2S.indexOf(TC2)>=0,'El contrato debe ser %s', TC2S);"+
-				"FIN_BONIF=DIA(AÑO(INICIO_CONTRATO,2),-1);"+
+				"FIN_BONIF=DIA(Aï¿½O(INICIO_CONTRATO,2),-1);"+
 				"CHECK(INICIO_NOMINA <= FIN_BONIF, 'La Tarifa Plana finalizo el %1$td/%1$tm/%1$tY', FIN_BONIF);"+
 				"N=MAX(0,DIAS(FIN,FIN_BONIF)); "+
 				"D = (C < 1.00 ? ( C < 75.00 ? 50.00 : 75.00 ) : 100.00);"+
@@ -493,10 +493,10 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				"CHECK((C=COEFICIENTE_PARCIALIDAD)>=0.50,'La jornada debe ser al menos del 50%');"+
 				"T='100,200,300';"+
 				"CHECK(T.indexOf(TC2)>=0,'El contrato debe ser %s',T);"+
-				"I=AÑO(INICIO_CONTRATO,2);"+
+				"I=Aï¿½O(INICIO_CONTRATO,2);"+
 				"CHECK(FIN_NOMINA>=I,'La Tarifa Plana (<10) comienza el %1$td/%1$tm/%1$tY',I);"+
 				"N=MAX(0,DIAS(I,(A=INICIO)));"+
-				"F=DIA(AÑO(INICIO_CONTRATO,3),-1);"+
+				"F=DIA(Aï¿½O(INICIO_CONTRATO,3),-1);"+
 				"CHECK(INICIO_NOMINA<=F,'La Tarifa Plana (<10) finalizo el %1$td/%1$tm/%1$tY',F);"+
 				"N+=MAX(0,DIAS(FIN,F));"+
 				"TRACE('N=%f\r\n', N);"+
@@ -526,7 +526,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		int monthDays = getMax(getToday(), Calendar.DAY_OF_MONTH);
 		int workDays = monthDays - (get(getToday(), Calendar.DAY_OF_MONTH) - 1);
 		
-		Assert.assertEquals(
+		assertEquals(
 				100.00 * workDays / monthDays,
 				salary.getTotalEnterprise(), DELTA);
 
@@ -537,7 +537,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 						getLastDayOfMonth(add(getToday(), MONTH, 1)),
 						getLastDayOfMonth(add(getToday(), MONTH, 1)), contract));
 
-		Assert.assertEquals( 
+		assertEquals( 
 				100.00,
 				salary.getTotalEnterprise(), DELTA);
 
@@ -562,9 +562,9 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 						getLastDayOfMonth(add(getToday(), MONTH, 1)), contract));
 
 		monthDays = getMax(add(getToday(), MONTH, 1), Calendar.DAY_OF_MONTH);
-		Assert.assertEquals((1500.00 * ( monthDays - 3 ) / monthDays),
+		assertEquals((1500.00 * ( monthDays - 3 ) / monthDays),
 				salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(100.00,
+		assertEquals(100.00,
 				salary.getTotalEnterprise(), DELTA);
 
 		// Next year. 100 bonus full filled.
@@ -574,7 +574,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 						getLastDayOfMonth(add(getToday(), YEAR, 1)),
 						getLastDayOfMonth(add(getToday(), YEAR, 1)), contract));
 
-		Assert.assertEquals(100.00,
+		assertEquals(100.00,
 				salary.getTotalEnterprise(), DELTA);
 
 		// After two years. 100 bonus partial filled & 50% too. Yes two bonus.
@@ -587,7 +587,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		monthDays = getMax(add(getToday(), YEAR, 2), Calendar.DAY_OF_MONTH);
 		int bonusIDays = get(add(getToday(), YEAR, 2), DAY_OF_MONTH) - 1;
 		int bonusIIDays = monthDays - bonusIDays;
-		Assert.assertEquals(( 100.00 * bonusIDays / monthDays )
+		assertEquals(( 100.00 * bonusIDays / monthDays )
 				+ (1500.00 * bonusIIDays / monthDays * 23.6 / 100 * 0.50),
 				salary.getTotalEnterprise(), DELTA);
 
@@ -598,7 +598,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				getLastDayOfMonth(add(add(getToday(), YEAR, 2), MONTH, 1)),
 				getLastDayOfMonth(add(add(getToday(), YEAR, 2), MONTH, 1)),
 				contract));
-		Assert.assertEquals(750.00 * 23.60 / 100,
+		assertEquals(750.00 * 23.60 / 100,
 				salary.getTotalEnterprise(), DELTA);
 
 
@@ -609,7 +609,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				getLastDayOfMonth(add(getToday(), YEAR, 3)), contract));
 		monthDays = getMax(add(getToday(), YEAR, 3), DAY_OF_MONTH);
 		bonusIIDays = get(add(getToday(), YEAR, 3), DAY_OF_MONTH) - 1;
-		Assert.assertEquals(1500.00 * 23.60 / 100  -  750.00 * 23.60 / 100 * bonusIIDays / monthDays,
+		assertEquals(1500.00 * 23.60 / 100  -  750.00 * 23.60 / 100 * bonusIIDays / monthDays,
 				salary.getTotalEnterprise(), DELTA);
 
 		// After three years and one month . None bonus
@@ -620,7 +620,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				getLastDayOfMonth(add(add(getToday(), YEAR, 3), MONTH, 1)),
 				contract));
 
-		Assert.assertEquals((1500.00) * 23.60 / 100,
+		assertEquals((1500.00) * 23.60 / 100,
 				salary.getTotalEnterprise(), DELTA);
 
 		// TC2 Invalid '110'
@@ -635,7 +635,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				connection, getFirstDayOfMonth(add(getToday(), MONTH, 1)),
 				getLastDayOfMonth(add(getToday(), MONTH, 1)),
 				getLastDayOfMonth(add(getToday(), MONTH, 1)), contract));
-		Assert.assertEquals((1500.00) * 23.60 / 100,
+		assertEquals((1500.00) * 23.60 / 100,
 				salary.getTotalEnterprise(), DELTA);
 
 		// COEFICIENTE_PARCIALIDAD too low.
@@ -651,7 +651,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				connection, getFirstDayOfMonth(add(getToday(), MONTH, 1)),
 				getLastDayOfMonth(add(getToday(), MONTH, 1)),
 				getLastDayOfMonth(add(getToday(), MONTH, 1)), contract));
-		Assert.assertEquals((1500.00) * 23.60 / 100 * 0.25,
+		assertEquals((1500.00) * 23.60 / 100 * 0.25,
 				salary.getTotalEnterprise(), DELTA);
 
 		addData(aonContext, contract, getToday(), null,
@@ -670,7 +670,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				contract));
 		monthDays = getMax(getToday(), Calendar.DAY_OF_MONTH);
 		workDays = monthDays - (get(getToday(), Calendar.DAY_OF_MONTH) - 1);
-		Assert.assertEquals(50.00 * workDays / monthDays, salary.getTotalEnterprise(), DELTA);
+		assertEquals(50.00 * workDays / monthDays, salary.getTotalEnterprise(), DELTA);
 
 		// Second month . 50 bonus...
 		salary = calculator.calculate(getContractSalaryCalculatorContext(
@@ -678,7 +678,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				getFirstDayOfMonth(add(getToday(), MONTH, 1)),
 				getLastDayOfMonth(add(getToday(), MONTH, 1)),
 				getLastDayOfMonth(add(getToday(), MONTH, 1)), contract));
-		Assert.assertEquals(50.00,
+		assertEquals(50.00,
 				salary.getTotalEnterprise(), DELTA);
 
 		
@@ -690,7 +690,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		monthDays = getMax(add(getToday(), YEAR, 2), Calendar.DAY_OF_MONTH);
 		bonusIDays = get(add(getToday(), YEAR, 2), DAY_OF_MONTH) - 1;
 		bonusIIDays = monthDays - bonusIDays;
-		Assert.assertEquals(50.00 * bonusIDays / monthDays
+		assertEquals(50.00 * bonusIDays / monthDays
 				+ ( 750.00 * 23.60 / 100.00 * bonusIIDays / monthDays * 0.50),
 				salary.getTotalEnterprise(), DELTA);
 
@@ -699,7 +699,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 						getFirstDayOfMonth(add(add(getToday(), YEAR, 2),MONTH, 1)),
 						getLastDayOfMonth(add(add(getToday(), YEAR, 2),MONTH, 1)),
 						getLastDayOfMonth(add(add(getToday(), YEAR, 2),MONTH, 1)), contract));
-		Assert.assertEquals((750.00 * 0.50 * 23.60 / 100),
+		assertEquals((750.00 * 0.50 * 23.60 / 100),
 				salary.getTotalEnterprise(), DELTA);
 
 		salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder())
@@ -709,7 +709,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 						getLastDayOfMonth(add(getToday(), YEAR, 3)), contract));
 		bonusIIDays = get(add(getToday(), YEAR, 3), DAY_OF_MONTH) - 1;
 		monthDays = getMax(add(getToday(), YEAR, 3), Calendar.DAY_OF_MONTH);
-		Assert.assertEquals(750.00 * 23.60 / 100 - (750.00 * 0.50 * 23.60 / 100 * bonusIDays / monthDays),
+		assertEquals(750.00 * 23.60 / 100 - (750.00 * 0.50 * 23.60 / 100 * bonusIDays / monthDays),
 				salary.getTotalEnterprise(), DELTA);
 
 		salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder())
@@ -717,7 +717,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 						getFirstDayOfMonth(add(add(getToday(), YEAR, 3), MONTH,1)),
 						getLastDayOfMonth(add(add(getToday(), YEAR, 3), MONTH,1)),
 						getLastDayOfMonth(add(add(getToday(), YEAR, 3), MONTH,1)), contract));
-		Assert.assertEquals((750.00 * 23.60 / 100),
+		assertEquals((750.00 * 23.60 / 100),
 				salary.getTotalEnterprise(), DELTA);
 
 		salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder())
@@ -725,7 +725,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 						getFirstDayOfMonth(add(getToday(), YEAR, 4)),
 						getLastDayOfMonth(add(getToday(), YEAR, 4)),
 						getLastDayOfMonth(add(getToday(), YEAR, 4)), contract));
-		Assert.assertEquals((750.00 * 23.60 / 100),
+		assertEquals((750.00 * 23.60 / 100),
 				salary.getTotalEnterprise(), DELTA);
 
 	}
@@ -993,51 +993,51 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 					// 500 Base de contingencias comunes.
 					List<ContextData> datas = salary.getContextData()
 							.get(CGC_BASE.getName());
-					Assert.assertEquals(2, datas.size());
-					Assert.assertEquals(firstDayOfMonth, datas.get(0).getStartDate());
-					Assert.assertEquals(prevBonus, datas.get(0).getEndDate());
-					Assert.assertEquals(1500.00 * 10.00 / monthDays,
+					assertEquals(2, datas.size());
+					assertEquals(firstDayOfMonth, datas.get(0).getStartDate());
+					assertEquals(prevBonus, datas.get(0).getEndDate());
+					assertEquals(1500.00 * 10.00 / monthDays,
 							Double.parseDouble(datas.get(0).getExpression())
 							, DELTA);
-					Assert.assertEquals(startBonus, datas.get(1).getStartDate());
-					Assert.assertEquals(lastDayOfMonth, datas.get(1).getEndDate());
-					Assert.assertEquals(1500.00 *(monthDays-10)/ monthDays,
+					assertEquals(startBonus, datas.get(1).getStartDate());
+					assertEquals(lastDayOfMonth, datas.get(1).getEndDate());
+					assertEquals(1500.00 *(monthDays-10)/ monthDays,
 							Double.parseDouble(datas.get(1).getExpression())
 							,DELTA);
 
 					// 501 Base de Horas Extras Fuerza Mayor
 //					datas = salary.getContextData()
 //							.get(STRUCTURAL_OVERTIME_BASE.getName());
-//					Assert.assertEquals(2, datas.size());
-//					Assert.assertEquals(firstDayOfMonth, datas.get(0).getStartDate());
-//					Assert.assertEquals(prevBonus, datas.get(0).getEndDate());
-//					Assert.assertEquals(startBonus, datas.get(1).getStartDate());
-//					Assert.assertEquals(lastDayOfMonth, datas.get(1).getEndDate());
-//					Assert.assertEquals(0.00,
+//					assertEquals(2, datas.size());
+//					assertEquals(firstDayOfMonth, datas.get(0).getStartDate());
+//					assertEquals(prevBonus, datas.get(0).getEndDate());
+//					assertEquals(startBonus, datas.get(1).getStartDate());
+//					assertEquals(lastDayOfMonth, datas.get(1).getEndDate());
+//					assertEquals(0.00,
 //							Double.parseDouble(datas.get(0).getExpression()));
 
 					// 502 Base de Horas Extras
 //					datas = salary.getContextData()
 //							.get(NON_STRUCTURAL_OVERTIME_BASE.getName());
-//					Assert.assertEquals(2, datas.size());
-//					Assert.assertEquals(firstDayOfMonth, datas.get(0).getStartDate());
-//					Assert.assertEquals(prevBonus, datas.get(0).getEndDate());
-//					Assert.assertEquals(startBonus, datas.get(1).getStartDate());
-//					Assert.assertEquals(lastDayOfMonth, datas.get(1).getEndDate());
-//					Assert.assertEquals(0.00,
+//					assertEquals(2, datas.size());
+//					assertEquals(firstDayOfMonth, datas.get(0).getStartDate());
+//					assertEquals(prevBonus, datas.get(0).getEndDate());
+//					assertEquals(startBonus, datas.get(1).getStartDate());
+//					assertEquals(lastDayOfMonth, datas.get(1).getEndDate());
+//					assertEquals(0.00,
 //							Double.parseDouble(datas.get(0).getExpression()));
 
 					// 601 o 611 Base de Accidentes de Trabajo.
 					datas = salary.getContextData().get(CGP_BASE.getName());
-					Assert.assertEquals(2, datas.size());
-					Assert.assertEquals(firstDayOfMonth, datas.get(0).getStartDate());
-					Assert.assertEquals(prevBonus, datas.get(0).getEndDate());
-					Assert.assertEquals(1500.00 * 10.00 / monthDays,
+					assertEquals(2, datas.size());
+					assertEquals(firstDayOfMonth, datas.get(0).getStartDate());
+					assertEquals(prevBonus, datas.get(0).getEndDate());
+					assertEquals(1500.00 * 10.00 / monthDays,
 							Double.parseDouble(datas.get(0).getExpression())
 							, DELTA);
-					Assert.assertEquals(startBonus, datas.get(1).getStartDate());
-					Assert.assertEquals(lastDayOfMonth, datas.get(1).getEndDate());
-					Assert.assertEquals(1500.00 *(monthDays-10) / monthDays,
+					assertEquals(startBonus, datas.get(1).getStartDate());
+					assertEquals(lastDayOfMonth, datas.get(1).getEndDate());
+					assertEquals(1500.00 *(monthDays-10) / monthDays,
 							Double.parseDouble(datas.get(1).getExpression())
 							,DELTA);
 
@@ -1101,10 +1101,10 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(
 		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
 		
-		org.junit.Assert.assertEquals(1, salary.getSalaryBonus().size());
+		org.junit.assertEquals(1, salary.getSalaryBonus().size());
 	
 		for (SalaryBonus bonus : salary.getSalaryBonus()) {
-			org.junit.Assert.assertEquals(60.00, bonus.getAmount(), DELTA);
+			org.junit.assertEquals(60.00, bonus.getAmount(), DELTA);
 		}
 		
 
@@ -1163,7 +1163,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		calculator.setListener(new GenericContractSalaryCalculator.Listener() {
 			@Override
 			public void onCheckError(String message) {
-				org.junit.Assert.fail(message);
+				org.junit.fail(message);
 			}
 		});
 
@@ -1171,15 +1171,15 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		calculator.calculate(
 		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
 		
-		org.junit.Assert.assertEquals(1, salary.getSalaryBonus().size());
+		org.junit.assertEquals(1, salary.getSalaryBonus().size());
 	
 		
 		for (SalaryBonus bonus : salary.getSalaryBonus()) {
 			System.out.println(bonus.getDescription() +" = " + bonus.getAmount() );
 			if (AonStringUtils.equals(bonus.getDescription(), "BONIFICACI\u00D3N TUTORIA"))
-				org.junit.Assert.assertEquals(60.00, bonus.getAmount(), DELTA);
+				org.junit.assertEquals(60.00, bonus.getAmount(), DELTA);
 			else 
-				org.junit.Assert.fail("Unknown '" + bonus.getDescription() +"'");
+				org.junit.fail("Unknown '" + bonus.getDescription() +"'");
 		}
 		
 		calculateAndSave(connection, getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
@@ -1188,7 +1188,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()));
 		
 		salaries.forEach( s -> {
-		    org.junit.Assert.assertEquals(1, s.getBonuses().size());
+		    org.junit.assertEquals(1, s.getBonuses().size());
 		});
 
 	}
@@ -1247,10 +1247,10 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 			calculator.calculate(
 			getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
 			
-			org.junit.Assert.assertEquals(0, salary.getSalaryBonus().size());
+			org.junit.assertEquals(0, salary.getSalaryBonus().size());
 		
 			
-			org.junit.Assert.fail("No hours message");
+			org.junit.fail("No hours message");
 		} catch ( RuntimeException e ) {
 			System.out.println(e.getMessage());
 		}
@@ -1301,7 +1301,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		calculator.setListener(new GenericContractSalaryCalculator.Listener() {
 			@Override
 			public void onCheckError(String message) {
-				org.junit.Assert.fail(message);
+				org.junit.fail(message);
 			}
 		});
 
@@ -1309,15 +1309,15 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		calculator.calculate(
 		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
 		
-		org.junit.Assert.assertEquals(1, salary.getSalaryBonus().size());
+		org.junit.assertEquals(1, salary.getSalaryBonus().size());
 	
 		
 		for (SalaryBonus bonus : salary.getSalaryBonus()) {
 			System.out.println(bonus.getDescription() +" = " + bonus.getAmount() );
 			if (AonStringUtils.equals(bonus.getDescription(), "BONIF FORM. T.DISTAN"))
-				org.junit.Assert.assertEquals(60.00, bonus.getAmount(), DELTA);
+				org.junit.assertEquals(60.00, bonus.getAmount(), DELTA);
 			else 
-				org.junit.Assert.fail("Unknown '" + bonus.getDescription() +"'");
+				org.junit.fail("Unknown '" + bonus.getDescription() +"'");
 		}
 		
 		calculateAndSave(connection, getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
@@ -1326,7 +1326,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()));
 		
 		salaries.forEach( s -> {
-		    org.junit.Assert.assertEquals(1, s.getBonuses().size());
+		    org.junit.assertEquals(1, s.getBonuses().size());
 		});
 
 		
@@ -1378,7 +1378,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		calculator.setListener(new GenericContractSalaryCalculator.Listener() {
 			@Override
 			public void onCheckError(String message) {
-				org.junit.Assert.fail(message);
+				org.junit.fail(message);
 			}
 		});
 
@@ -1386,15 +1386,15 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		calculator.calculate(
 		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
 		
-		org.junit.Assert.assertEquals(1, salary.getSalaryBonus().size());
+		org.junit.assertEquals(1, salary.getSalaryBonus().size());
 	
 		
 		for (SalaryBonus bonus : salary.getSalaryBonus()) {
 			System.out.println(bonus.getDescription() +" = " + bonus.getAmount() );
 			if (AonStringUtils.equals(bonus.getDescription(), "BONIF FORM. T.PRESEN"))
-				org.junit.Assert.assertEquals(60.00, bonus.getAmount(), DELTA);
+				org.junit.assertEquals(60.00, bonus.getAmount(), DELTA);
 			else 
-				org.junit.Assert.fail("Unknown '" + bonus.getDescription() +"'");
+				org.junit.fail("Unknown '" + bonus.getDescription() +"'");
 		}
 		
 
@@ -1457,7 +1457,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		calculator.setListener(new GenericContractSalaryCalculator.Listener() {
 			@Override
 			public void onCheckError(String message) {
-				org.junit.Assert.fail(message);
+				org.junit.fail(message);
 			}
 		});
 
@@ -1465,17 +1465,17 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		calculator.calculate(
 		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
 		
-		org.junit.Assert.assertEquals(2, salary.getSalaryBonus().size());
+		org.junit.assertEquals(2, salary.getSalaryBonus().size());
 	
 		
 		for (SalaryBonus bonus : salary.getSalaryBonus()) {
 			System.out.println(bonus.getDescription() +" = " + bonus.getAmount() );
 			if (AonStringUtils.equals(bonus.getDescription(), "BONIFICACI\u00D3N TUTORIA"))
-				org.junit.Assert.assertEquals(60.00, bonus.getAmount(), DELTA);
+				org.junit.assertEquals(60.00, bonus.getAmount(), DELTA);
 			else if (AonStringUtils.equals(bonus.getDescription(), "BONIF FORM. T.DISTAN"))
-				org.junit.Assert.assertEquals(60.00, bonus.getAmount(), DELTA);
+				org.junit.assertEquals(60.00, bonus.getAmount(), DELTA);
 			else 
-				org.junit.Assert.fail("Unknown '" + bonus.getDescription() +"'");
+				org.junit.fail("Unknown '" + bonus.getDescription() +"'");
 		}
 		
 
@@ -1537,10 +1537,10 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 			calculator.calculate(
 			getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
 			
-			org.junit.Assert.assertEquals(0, salary.getSalaryBonus().size());
+			org.junit.assertEquals(0, salary.getSalaryBonus().size());
 		
 			
-			org.junit.Assert.fail("No hours message");
+			org.junit.fail("No hours message");
 		} catch ( RuntimeException e ) {
 			System.out.println(e.getMessage());
 		}
@@ -1602,8 +1602,8 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		}
 		
 
-		org.junit.Assert.assertEquals(3, salary.getSalaryDeductions().size());
-		org.junit.Assert.assertEquals(0.00, salary.getSocialSecurityContributions(), 0.00);
+		org.junit.assertEquals(3, salary.getSalaryDeductions().size());
+		org.junit.assertEquals(0.00, salary.getSocialSecurityContributions(), 0.00);
 
 		
 

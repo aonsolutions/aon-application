@@ -6,7 +6,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -538,23 +538,23 @@ public class SQLSolidarityTestCase extends AbstractSQLTestCase {
 				});
 		
 		addSSRegimeDeduction(aonContext, SSRegimeType.GENERAL, startDate, DeductionType.SOLIDARITY, "SOLIDARIDAD_I",
-				"Solidaridad. Exceso hasta el 10% base máxima",
+				"Solidaridad. Exceso hasta el 10% base mï¿½xima",
 				"BASE_SOLIDARIDAD_I * PORCENTAJE_SOLIDARIDAD_I / 100.00");
 		addSSRegimeDeduction(aonContext, SSRegimeType.GENERAL, startDate, DeductionType.SOLIDARITY, "SOLIDARIDAD_II",
-				"Solidaridad. Exceso desde el 10% hasta el 50% base máxima",
+				"Solidaridad. Exceso desde el 10% hasta el 50% base mï¿½xima",
 				"BASE_SOLIDARIDAD_II * PORCENTAJE_SOLIDARIDAD_II / 100.00");
 		addSSRegimeDeduction(aonContext, SSRegimeType.GENERAL, startDate, DeductionType.SOLIDARITY, "SOLIDARIDAD_III",
-				"Solidaridad. Exceso superior al 50% de la base máxima",
+				"Solidaridad. Exceso superior al 50% de la base mï¿½xima",
 				"BASE_SOLIDARIDAD_III * PORCENTAJE_SOLIDARIDAD_III / 100.00");
 
 		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, startDate, DeductionType.SOLIDARITY, "SOLIDARIDAD_I_E",
-				"Solidaridad. Exceso hasta el 10% base máxima",
+				"Solidaridad. Exceso hasta el 10% base mï¿½xima",
 				"BASE_SOLIDARIDAD_I * PORCENTAJE_SOLIDARIDAD_I_E / 100.00");
 		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, startDate, DeductionType.SOLIDARITY, "SOLIDARIDAD_II_E",
-				"Solidaridad. Exceso desde el 10% hasta el 50% base máxima",
+				"Solidaridad. Exceso desde el 10% hasta el 50% base mï¿½xima",
 				"BASE_SOLIDARIDAD_II * PORCENTAJE_SOLIDARIDAD_II_E / 100.00");
 		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, startDate, DeductionType.SOLIDARITY, "SOLIDARIDAD_III_E",
-				"Solidaridad. Exceso superior al 50% de la base máxima",
+				"Solidaridad. Exceso superior al 50% de la base mï¿½xima",
 				"BASE_SOLIDARIDAD_III * PORCENTAJE_SOLIDARIDAD_III_E / 100.00");
 	}
 

@@ -6,7 +6,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.DAY_OF_MONTH;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.RoundingMode;
 import java.sql.Connection;
@@ -18,8 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -88,13 +88,13 @@ public class SQLPeriodsTestCase extends AbstractSQLTestCase {
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()) )
 		.filter( d -> d.getName().equals(ContextVariable.CGC_BASE.getName())).collect(Collectors.toList());
 		
-		junit.framework.Assert.assertEquals(2, salaryData.size());
+		junit.framework.assertEquals(2, salaryData.size());
 		
-		Assert.assertEquals(salaryData.get(0).getStartDate(), startDate);
-		Assert.assertEquals(salaryData.get(0).getEndDate(), desmplEndDate);
+		assertEquals(salaryData.get(0).getStartDate(), startDate);
+		assertEquals(salaryData.get(0).getEndDate(), desmplEndDate);
 
-		Assert.assertEquals(salaryData.get(1).getStartDate(), desmplStartDate);
-		Assert.assertEquals(salaryData.get(1).getEndDate(), endDate);
+		assertEquals(salaryData.get(1).getStartDate(), desmplStartDate);
+		assertEquals(salaryData.get(1).getEndDate(), endDate);
 		
 	}
 
@@ -147,15 +147,15 @@ public class SQLPeriodsTestCase extends AbstractSQLTestCase {
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()) )
 		.filter( d -> d.getName().equals(ContextVariable.CGC_BASE.getName())).collect(Collectors.toList());
 		
-		junit.framework.Assert.assertEquals(2, salaryData.size());
+		junit.framework.assertEquals(2, salaryData.size());
 		
-		Assert.assertEquals(salaryData.get(0).getStartDate(), startDate);
-		Assert.assertEquals(salaryData.get(0).getEndDate(), desmplEndDate);
-		Assert.assertEquals(1250.00 / 31.00 * 11, Double.parseDouble(salaryData.get(0).getExpression()), 0.001);
+		assertEquals(salaryData.get(0).getStartDate(), startDate);
+		assertEquals(salaryData.get(0).getEndDate(), desmplEndDate);
+		assertEquals(1250.00 / 31.00 * 11, Double.parseDouble(salaryData.get(0).getExpression()), 0.001);
 
-		Assert.assertEquals(salaryData.get(1).getStartDate(), desmplStartDate);
-		Assert.assertEquals(salaryData.get(1).getEndDate(), endDate);
-		Assert.assertEquals(1250.00 / 31.00 * 20, Double.parseDouble(salaryData.get(1).getExpression()), 0.001);
+		assertEquals(salaryData.get(1).getStartDate(), desmplStartDate);
+		assertEquals(salaryData.get(1).getEndDate(), endDate);
+		assertEquals(1250.00 / 31.00 * 20, Double.parseDouble(salaryData.get(1).getExpression()), 0.001);
 		
 	}
 
@@ -210,15 +210,15 @@ public class SQLPeriodsTestCase extends AbstractSQLTestCase {
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()) )
 		.filter( d -> d.getName().equals(ContextVariable.CGC_BASE.getName())).collect(Collectors.toList());
 		
-		junit.framework.Assert.assertEquals(2, salaryData.size());
+		junit.framework.assertEquals(2, salaryData.size());
 		
-		Assert.assertEquals(salaryData.get(0).getStartDate(), startDate);
-		Assert.assertEquals(salaryData.get(0).getEndDate(), desmplEndDate);
-		Assert.assertEquals(1250.00 / 31.00 * 11, Double.parseDouble(salaryData.get(0).getExpression()), 0.001);
+		assertEquals(salaryData.get(0).getStartDate(), startDate);
+		assertEquals(salaryData.get(0).getEndDate(), desmplEndDate);
+		assertEquals(1250.00 / 31.00 * 11, Double.parseDouble(salaryData.get(0).getExpression()), 0.001);
 
-		Assert.assertEquals(salaryData.get(1).getStartDate(), desmplStartDate);
-		Assert.assertEquals(salaryData.get(1).getEndDate(), endDate);
-		Assert.assertEquals(1250.00 / 31.00 * 20, Double.parseDouble(salaryData.get(1).getExpression()), 0.001);
+		assertEquals(salaryData.get(1).getStartDate(), desmplStartDate);
+		assertEquals(salaryData.get(1).getEndDate(), endDate);
+		assertEquals(1250.00 / 31.00 * 20, Double.parseDouble(salaryData.get(1).getExpression()), 0.001);
 		
 	}
 
@@ -272,15 +272,15 @@ public class SQLPeriodsTestCase extends AbstractSQLTestCase {
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()) )
 		.filter( d -> d.getName().equals(ContextVariable.CGC_BASE.getName())).collect(Collectors.toList());
 		
-		junit.framework.Assert.assertEquals(2, salaryData.size());
+		junit.framework.assertEquals(2, salaryData.size());
 		
-		Assert.assertEquals(salaryData.get(0).getStartDate(), startDate);
-		Assert.assertEquals(salaryData.get(0).getEndDate(), desmplEndDate);
-		Assert.assertEquals(1250.00 / 30.00 * 11, Double.parseDouble(salaryData.get(0).getExpression()), 0.001);
+		assertEquals(salaryData.get(0).getStartDate(), startDate);
+		assertEquals(salaryData.get(0).getEndDate(), desmplEndDate);
+		assertEquals(1250.00 / 30.00 * 11, Double.parseDouble(salaryData.get(0).getExpression()), 0.001);
 
-		Assert.assertEquals(salaryData.get(1).getStartDate(), desmplStartDate);
-		Assert.assertEquals(salaryData.get(1).getEndDate(), endDate);
-		Assert.assertEquals(1250.00 / 30.00 * 19, Double.parseDouble(salaryData.get(1).getExpression()), 0.001);
+		assertEquals(salaryData.get(1).getStartDate(), desmplStartDate);
+		assertEquals(salaryData.get(1).getEndDate(), endDate);
+		assertEquals(1250.00 / 30.00 * 19, Double.parseDouble(salaryData.get(1).getExpression()), 0.001);
 		
 	}
 
@@ -339,20 +339,20 @@ public class SQLPeriodsTestCase extends AbstractSQLTestCase {
 		.collect(Collectors.toList())
 		;
 		
-		junit.framework.Assert.assertEquals(4, salaryData.size());
+		junit.framework.assertEquals(4, salaryData.size());
 		
-		Assert.assertEquals(salaryData.get(0).getStartDate(), startDate);
-		Assert.assertEquals(salaryData.get(0).getEndDate(), add(startITDate, Calendar.DAY_OF_MONTH,-1));
-		//Assert.assertEquals(1250.00 / 31.00 * 6, Double.parseDouble(salaryData.get(0).getExpression()), 0.001);
+		assertEquals(salaryData.get(0).getStartDate(), startDate);
+		assertEquals(salaryData.get(0).getEndDate(), add(startITDate, Calendar.DAY_OF_MONTH,-1));
+		//assertEquals(1250.00 / 31.00 * 6, Double.parseDouble(salaryData.get(0).getExpression()), 0.001);
 
-		Assert.assertEquals(salaryData.get(1).getStartDate(), startITDate);
-		Assert.assertEquals(salaryData.get(1).getEndDate(), add(startITDate, Calendar.DAY_OF_MONTH,2));
+		assertEquals(salaryData.get(1).getStartDate(), startITDate);
+		assertEquals(salaryData.get(1).getEndDate(), add(startITDate, Calendar.DAY_OF_MONTH,2));
 
-		Assert.assertEquals(salaryData.get(2).getStartDate(), add(startITDate, Calendar.DAY_OF_MONTH,3));
-		Assert.assertEquals(salaryData.get(2).getEndDate(), endITDate);
+		assertEquals(salaryData.get(2).getStartDate(), add(startITDate, Calendar.DAY_OF_MONTH,3));
+		assertEquals(salaryData.get(2).getEndDate(), endITDate);
 		
-		Assert.assertEquals(salaryData.get(3).getStartDate(), add(endITDate, Calendar.DAY_OF_MONTH,1));
-		Assert.assertEquals(salaryData.get(3).getEndDate(), endDate);
+		assertEquals(salaryData.get(3).getStartDate(), add(endITDate, Calendar.DAY_OF_MONTH,1));
+		assertEquals(salaryData.get(3).getEndDate(), endDate);
 	}
 
 	@Test
@@ -405,18 +405,18 @@ public class SQLPeriodsTestCase extends AbstractSQLTestCase {
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()) )
 		.filter( d -> d.getName().equals(ContextVariable.CGC_BASE.getName())).collect(Collectors.toList());
 		
-		junit.framework.Assert.assertEquals(2, salaryData.size());
+		junit.framework.assertEquals(2, salaryData.size());
 		
-		Assert.assertEquals(salaryData.get(0).getStartDate(), startDate);
-		Assert.assertEquals(salaryData.get(0).getEndDate(), tc2EndDate);
-		Assert.assertEquals(1250.00 / 31.00 * 11 * 0.5, Double.parseDouble(salaryData.get(0).getExpression()), 0.001);
+		assertEquals(salaryData.get(0).getStartDate(), startDate);
+		assertEquals(salaryData.get(0).getEndDate(), tc2EndDate);
+		assertEquals(1250.00 / 31.00 * 11 * 0.5, Double.parseDouble(salaryData.get(0).getExpression()), 0.001);
 
-		Assert.assertEquals(salaryData.get(1).getStartDate(), tc2StartDate);
-		Assert.assertEquals(salaryData.get(1).getEndDate(), endDate);
-		Assert.assertEquals(1250.00 / 31.00 * 20 * 0.5, Double.parseDouble(salaryData.get(1).getExpression()), 0.001);
+		assertEquals(salaryData.get(1).getStartDate(), tc2StartDate);
+		assertEquals(salaryData.get(1).getEndDate(), endDate);
+		assertEquals(1250.00 / 31.00 * 20 * 0.5, Double.parseDouble(salaryData.get(1).getExpression()), 0.001);
 		
 		
-		Assert.assertEquals(1250.00 * 0.5  , salary.getTotalPayment(), 0.001);
+		assertEquals(1250.00 * 0.5  , salary.getTotalPayment(), 0.001);
 		
 	}
 
@@ -471,7 +471,7 @@ public class SQLPeriodsTestCase extends AbstractSQLTestCase {
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()) )
 		.filter( d -> d.getName().equals(ContextVariable.CGC_BASE.getName())).collect(Collectors.toList());
 		
-		Assert.assertEquals(4, salaryData.size());
+		assertEquals(4, salaryData.size());
 		
 		Date endDate50 =  add(startDate, Calendar.DAY_OF_MONTH, 10);
 		Date startDate75 =  add(endDate50, Calendar.DAY_OF_MONTH, 1);
@@ -490,13 +490,13 @@ public class SQLPeriodsTestCase extends AbstractSQLTestCase {
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()) )
 		.filter( d -> d.getName().equals(ContextVariable.CGC_BASE.getName())).collect(Collectors.toList());
 		
-		Assert.assertEquals(2, salaryData.size());
+		assertEquals(2, salaryData.size());
 		
-		Assert.assertEquals(salaryData.get(0).getStartDate(), startDate);
-		Assert.assertEquals(salaryData.get(0).getEndDate(), endDate50);
+		assertEquals(salaryData.get(0).getStartDate(), startDate);
+		assertEquals(salaryData.get(0).getEndDate(), endDate50);
 
-		Assert.assertEquals(salaryData.get(1).getStartDate(), startDate75);
-		Assert.assertEquals(salaryData.get(1).getEndDate(), endDate);
+		assertEquals(salaryData.get(1).getStartDate(), startDate75);
+		assertEquals(salaryData.get(1).getEndDate(), endDate);
 		
 	}
 	
@@ -556,7 +556,7 @@ public class SQLPeriodsTestCase extends AbstractSQLTestCase {
 		salaryData.forEach( d -> System.out.println(d.getName() +" = " + d.getExpression() + ", " + d.getStartDate()));
 		
 		
-		Assert.assertEquals(1250.00 * 10.00 / 100.00  , salary.getSocialSecurityContributions(), 0.015);
+		assertEquals(1250.00 * 10.00 / 100.00  , salary.getSocialSecurityContributions(), 0.015);
 		
 	}
 	

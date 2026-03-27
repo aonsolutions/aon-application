@@ -13,9 +13,9 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
 import com.esferalia.aon.gwt.payroll.server.SalaryDraftBuilder;
@@ -83,7 +83,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		addPayment(aonContext, contract, 
 		contract.getStartDate(), 
 		null, 
-		"@{DIAS_ENFERMEDAD_COMUN_21} DÍAS DE IT", 
+		"@{DIAS_ENFERMEDAD_COMUN_21} Dï¿½AS DE IT", 
 		" /*read-only*/DIAS_ENFERMEDAD_COMUN_21 * BASE_REGULADORA * 0.75 * (isdef COEFICIENTE_IT ? COEFICIENTE_IT : 1.00)/**/", 
 		"_P", 
 		"DIAS_COTIZADOS * (isdef COEFICIENTE_IT ? COEFICIENTE_IT : 1.00) * BASE_REGULADORA", 
@@ -119,7 +119,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		calculator.calculate(ctx);
 		
 		salaryDraft.getPayments().forEach( p -> System.out.println(p.getDescription() +":" + p.getAmount()));
-		salaryDraft.getPayments().forEach( p -> org.junit.Assert.assertEquals("31 DÍAS DE IT", p.getDescription()) );
+		salaryDraft.getPayments().forEach( p -> org.junit.assertEquals("31 Dï¿½AS DE IT", p.getDescription()) );
 		
 
 	}
@@ -185,7 +185,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		calculator.calculate(ctx);
 		
 		salaryDraft.getPayments().forEach( p -> System.out.println(p.getDescription() +":" + p.getAmount()));
-		salaryDraft.getPayments().forEach( p -> org.junit.Assert.assertEquals("SALARIO BASE (66.66 x "+jornadasReales+" )", p.getDescription()) );
+		salaryDraft.getPayments().forEach( p -> org.junit.assertEquals("SALARIO BASE (66.66 x "+jornadasReales+" )", p.getDescription()) );
 		
 
 	}
@@ -272,7 +272,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		calculator.calculate(ctx);
 		
 		salaryDraft.getPayments().forEach( p -> System.out.println(p.getDescription() +":" + p.getAmount()));
-		salaryDraft.getPayments().stream().filter( p -> p.getDescription().startsWith("VACACIONES")).forEach( p -> org.junit.Assert.assertEquals("VACACIONES ("+jornadasReales + " x 66.66 )", p.getDescription()) );
+		salaryDraft.getPayments().stream().filter( p -> p.getDescription().startsWith("VACACIONES")).forEach( p -> org.junit.assertEquals("VACACIONES ("+jornadasReales + " x 66.66 )", p.getDescription()) );
 		
 
 	}
@@ -314,7 +314,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribución Dineraria",
+		"IRPF Retribuciï¿½n Dineraria",
 		"BASE_IRPF_DINERO * PORCENTAJE_IRPF/100.00");
 
 		addSSRegimeDeduction(
@@ -323,7 +323,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribución en Especie",
+		"IRPF Retribuciï¿½n en Especie",
 		"_P=(BASE_IRPF_ESPECIE * PORCENTAJE_IRPF/100.00 - (isdef IRPF_CTA_ESP ? IRPF_CTA_ESP : 0.00)); (_P > 0.0049 ) ? _P : HIDE()");
 
 		addSSRegimeDeduction(
@@ -413,7 +413,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(salaryDraftBuilder);
 		calculator.calculate(ctx);
 		
-		Assert.assertEquals(5, salaryDraft.getDeductions().size());
+		assertEquals(5, salaryDraft.getDeductions().size());
 		salaryDraft.getDeductions().forEach( d -> {
 		    System.out.println(d.getName() + " = " + d.getDescription() + "(" + d.getAmount() +")" );
 		});
@@ -423,10 +423,10 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		.filter( d -> "IRPF".equals(d.getName()))
 		.toArray(Deduction[]::new);
 		
-		Assert.assertEquals(1, irpfs.length);
-		Assert.assertFalse(irpfs[0] instanceof CompositeDeduction);
+		assertEquals(1, irpfs.length);
+		assertFalse(irpfs[0] instanceof CompositeDeduction);
 		
-		Assert.assertEquals("IRPF", irpfs[0].getDescription());
+		assertEquals("IRPF", irpfs[0].getDescription());
 		}
 		
 		for ( String name : new String [] {"CGC", "MEI", "FP", "DESMPL"} ) {
@@ -434,11 +434,11 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 				salaryDraft.getDeductions().stream()
 				.filter( d -> name.equals(d.getName()))
 				.toArray(Deduction[]::new);
-			Assert.assertEquals(1, deductions.length);
-			Assert.assertTrue(deductions[0] instanceof CompositeDeduction);
+			assertEquals(1, deductions.length);
+			assertTrue(deductions[0] instanceof CompositeDeduction);
 			Collection<Deduction> childDeductions = 
 			((CompositeDeduction) deductions[0] ).getChilds();
-			Assert.assertEquals(2, childDeductions.size());
+			assertEquals(2, childDeductions.size());
 			
 			childDeductions.forEach( d -> {
 			    System.out.println(d.getName() + " = " + d.getDescription() + "(" + d.getAmount() +")" );
@@ -485,7 +485,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribución Dineraria",
+		"IRPF Retribuciï¿½n Dineraria",
 		"BASE_IRPF_DINERO * PORCENTAJE_IRPF/100.00");
 
 		addSSRegimeDeduction(
@@ -494,7 +494,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribución en Especie",
+		"IRPF Retribuciï¿½n en Especie",
 		"_P=(BASE_IRPF_ESPECIE * PORCENTAJE_IRPF/100.00 - (isdef IRPF_CTA_ESP ? IRPF_CTA_ESP : 0.00)); (_P > 0.0049 ) ? _P : HIDE()");
 
 		addSSRegimeDeduction(
@@ -591,7 +591,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(salaryDraftBuilder);
 		calculator.calculate(ctx);
 		
-		Assert.assertEquals(6, salaryDraft.getDeductions().size());
+		assertEquals(6, salaryDraft.getDeductions().size());
 		salaryDraft.getDeductions().forEach( d -> {
 		    System.out.println(d.getName() + " = " + d.getDescription() + "(" + d.getAmount() +")" );
 		});
@@ -601,17 +601,17 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		.filter( d -> "IRPF".equals(d.getName()))
 		.toArray(Deduction[]::new);
 		
-		Assert.assertEquals(1, irpfs.length);
-		Assert.assertTrue(irpfs[0] instanceof CompositeDeduction);
+		assertEquals(1, irpfs.length);
+		assertTrue(irpfs[0] instanceof CompositeDeduction);
 		Collection<Deduction> irpfDeductions = 
 		((CompositeDeduction) irpfs[0] ).getChilds();
-		Assert.assertEquals(2, irpfDeductions.size());
+		assertEquals(2, irpfDeductions.size());
 		
 		irpfDeductions.forEach( d -> {
 		    System.out.println(d.getName() + " = " + d.getDescription() + "(" + d.getAmount() +")" );
 		});
 
-		Assert.assertEquals("IRPF", irpfs[0].getDescription());
+		assertEquals("IRPF", irpfs[0].getDescription());
 		}
 		
 		for ( String name : new String [] {"CGC", "MEI", "FP", "DESMPL"} ) {
@@ -619,11 +619,11 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 				salaryDraft.getDeductions().stream()
 				.filter( d -> name.equals(d.getName()))
 				.toArray(Deduction[]::new);
-			Assert.assertEquals(1, deductions.length);
-			Assert.assertTrue(deductions[0] instanceof CompositeDeduction);
+			assertEquals(1, deductions.length);
+			assertTrue(deductions[0] instanceof CompositeDeduction);
 			Collection<Deduction> childDeductions = 
 			((CompositeDeduction) deductions[0] ).getChilds();
-			Assert.assertEquals(2, childDeductions.size());
+			assertEquals(2, childDeductions.size());
 			
 			childDeductions.forEach( d -> {
 			    System.out.println(d.getName() + " = " + d.getDescription() + "(" + d.getAmount() +")" );
@@ -670,7 +670,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribución Dineraria",
+		"IRPF Retribuciï¿½n Dineraria",
 		"BASE_IRPF_DINERO * PORCENTAJE_IRPF/100.00");
 
 		addSSRegimeDeduction(
@@ -679,7 +679,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribución en Especie",
+		"IRPF Retribuciï¿½n en Especie",
 		"_P=(BASE_IRPF_ESPECIE * PORCENTAJE_IRPF/100.00 - (isdef IRPF_CTA_ESP ? IRPF_CTA_ESP : 0.00)); (_P > 0.0049 ) ? _P : HIDE()");
 
 		addSSRegimeDeduction(
@@ -792,7 +792,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(salaryDraftBuilder);
 		calculator.calculate(ctx);
 		
-		Assert.assertEquals(6, salaryDraft.getDeductions().size());
+		assertEquals(6, salaryDraft.getDeductions().size());
 		salaryDraft.getDeductions().forEach( d -> {
 		    System.out.println(d.getName() + " = " + d.getDescription() + "(" + d.getAmount() +")" );
 		});
@@ -802,17 +802,17 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		.filter( d -> "IRPF".equals(d.getName()))
 		.toArray(Deduction[]::new);
 		
-		Assert.assertEquals(1, irpfs.length);
-		Assert.assertTrue(irpfs[0] instanceof CompositeDeduction);
+		assertEquals(1, irpfs.length);
+		assertTrue(irpfs[0] instanceof CompositeDeduction);
 		Collection<Deduction> irpfDeductions = 
 		((CompositeDeduction) irpfs[0] ).getChilds();
-		Assert.assertEquals(2, irpfDeductions.size());
+		assertEquals(2, irpfDeductions.size());
 		
 		irpfDeductions.forEach( d -> {
 		    System.out.println(d.getName() + " = " + d.getDescription() + "(" + d.getAmount() +")" );
 		});
 
-		Assert.assertEquals("IRPF", irpfs[0].getDescription());
+		assertEquals("IRPF", irpfs[0].getDescription());
 		}
 		
 		for ( String name : new String [] {"CGC", "MEI", "FP", "DESMPL"} ) {
@@ -820,11 +820,11 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 				salaryDraft.getDeductions().stream()
 				.filter( d -> name.equals(d.getName()))
 				.toArray(Deduction[]::new);
-			Assert.assertEquals(1, deductions.length);
-			Assert.assertTrue(deductions[0] instanceof CompositeDeduction);
+			assertEquals(1, deductions.length);
+			assertTrue(deductions[0] instanceof CompositeDeduction);
 			Collection<Deduction> childDeductions = 
 			((CompositeDeduction) deductions[0] ).getChilds();
-			Assert.assertEquals(2, childDeductions.size());
+			assertEquals(2, childDeductions.size());
 			
 			childDeductions.forEach( d -> {
 			    System.out.println(d.getName() + " = " + d.getDescription() + "(" + d.getAmount() +")" );
@@ -871,7 +871,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribución Dineraria",
+		"IRPF Retribuciï¿½n Dineraria",
 		"BASE_IRPF_DINERO * PORCENTAJE_IRPF/100.00");
 
 		addSSRegimeDeduction(
@@ -880,7 +880,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribución en Especie",
+		"IRPF Retribuciï¿½n en Especie",
 		"_P=(BASE_IRPF_ESPECIE * PORCENTAJE_IRPF/100.00 - (isdef IRPF_CTA_ESP ? IRPF_CTA_ESP : 0.00)); (_P > 0.0049 ) ? _P : HIDE()");
 
 		addSSRegimeDeduction(
@@ -987,7 +987,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		});
 		System.out.println("DEDUCTIONS ================================================================");
 		
-		//Assert.assertEquals(6, salaryDraft.getDeductions().size());
+		//assertEquals(6, salaryDraft.getDeductions().size());
 		salaryDraft.getDeductions().forEach( d -> {
 		    System.out.println("\t" + d.getName() + " = " + d.getDescription() + "(" + d.getAmount() +")" );
 		});
@@ -998,18 +998,18 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		.filter( d -> "IRPF".equals(d.getName()))
 		.toArray(Deduction[]::new);
 		
-		Assert.assertEquals(1, irpfs.length);
-		Assert.assertTrue(irpfs[0] instanceof CompositeDeduction);
+		assertEquals(1, irpfs.length);
+		assertTrue(irpfs[0] instanceof CompositeDeduction);
 		Collection<Deduction> irpfDeductions = 
 		((CompositeDeduction) irpfs[0] ).getChilds();
-		Assert.assertEquals(2, irpfDeductions.size());
+		assertEquals(2, irpfDeductions.size());
 		
 		irpfDeductions.forEach( d -> {
 		    System.out.println("\t" + d.getName() + " = " + d.getDescription() + "(" + d.getAmount() +")" );
-		    Assert.assertTrue(d.getDescription().contains("IRPF "));
+		    assertTrue(d.getDescription().contains("IRPF "));
 		});
 
-		Assert.assertEquals("IRPF", irpfs[0].getDescription());
+		assertEquals("IRPF", irpfs[0].getDescription());
 		}
 		
 		for ( String name : new String [] {"CGC", "MEI", "FP", "DESMPL"} ) {
@@ -1018,11 +1018,11 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 				salaryDraft.getDeductions().stream()
 				.filter( d -> name.equals(d.getName()))
 				.toArray(Deduction[]::new);
-			Assert.assertEquals(1, deductions.length);
-			Assert.assertTrue(deductions[0] instanceof CompositeDeduction);
+			assertEquals(1, deductions.length);
+			assertTrue(deductions[0] instanceof CompositeDeduction);
 			Collection<Deduction> childDeductions = 
 			((CompositeDeduction) deductions[0] ).getChilds();
-			Assert.assertEquals(2, childDeductions.size());
+			assertEquals(2, childDeductions.size());
 			
 			childDeductions.forEach( d -> {
 			    System.out.println("\t" + d.getName() + " = " + d.getDescription() + "(" + d.getAmount() +")" );
@@ -1068,7 +1068,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribución Dineraria",
+		"IRPF Retribuciï¿½n Dineraria",
 		"BASE_IRPF_DINERO * PORCENTAJE_IRPF/100.00");
 
 		addSSRegimeDeduction(
@@ -1077,7 +1077,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		AonDateUtils.getFirstDayOfYear(getToday()),
 		DeductionType.IRPF, 
 		"IRPF",
-		"IRPF Retribución en Especie",
+		"IRPF Retribuciï¿½n en Especie",
 		"_P=(BASE_IRPF_ESPECIE * PORCENTAJE_IRPF/100.00 - (isdef IRPF_CTA_ESP ? IRPF_CTA_ESP : 0.00)); (_P > 0.0049 ) ? _P : HIDE()");
 
 		addSSRegimeDeduction(
@@ -1191,7 +1191,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		});
 		System.out.println("DEDUCTIONS ================================================================");
 		
-		//Assert.assertEquals(6, salaryDraft.getDeductions().size());
+		//assertEquals(6, salaryDraft.getDeductions().size());
 		salaryDraft.getDeductions().forEach( d -> {
 		    System.out.println("\t" + d.getName() + " = " + d.getDescription() + "(" + d.getAmount() +")" );
 		});
@@ -1202,18 +1202,18 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		.filter( d -> "IRPF".equals(d.getName()))
 		.toArray(Deduction[]::new);
 		
-		Assert.assertEquals(1, irpfs.length);
-		Assert.assertTrue(irpfs[0] instanceof CompositeDeduction);
+		assertEquals(1, irpfs.length);
+		assertTrue(irpfs[0] instanceof CompositeDeduction);
 		Collection<Deduction> irpfDeductions = 
 		((CompositeDeduction) irpfs[0] ).getChilds();
 		irpfDeductions.forEach( d -> {
 		    System.out.println("\t" + d.getName() + " = " + d.getDescription() + "(" + d.getAmount() +")" );
-		    Assert.assertTrue(d.getDescription().contains("IRPF "));
+		    assertTrue(d.getDescription().contains("IRPF "));
 		});
-		Assert.assertEquals(2, irpfDeductions.size());
+		assertEquals(2, irpfDeductions.size());
 		
 
-		Assert.assertEquals("IRPF", irpfs[0].getDescription());
+		assertEquals("IRPF", irpfs[0].getDescription());
 		}
 		
 		for ( String name : new String [] {"CGC", "MEI", "FP", "DESMPL"} ) {
@@ -1222,11 +1222,11 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 				salaryDraft.getDeductions().stream()
 				.filter( d -> name.equals(d.getName()))
 				.toArray(Deduction[]::new);
-			Assert.assertEquals(1, deductions.length);
-			Assert.assertTrue(deductions[0] instanceof CompositeDeduction);
+			assertEquals(1, deductions.length);
+			assertTrue(deductions[0] instanceof CompositeDeduction);
 			Collection<Deduction> childDeductions = 
 			((CompositeDeduction) deductions[0] ).getChilds();
-			Assert.assertEquals(2, childDeductions.size());
+			assertEquals(2, childDeductions.size());
 			
 			childDeductions.forEach( d -> {
 			    System.out.println("\t" + d.getName() + " = " + d.getDescription() + "(" + d.getAmount() +")" );
@@ -1236,7 +1236,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testJoinContext() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -1258,7 +1258,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 				SSRegimeType.GENERAL, 
 				add(getFirstDayOfYear(getToday()),Calendar.YEAR,-10),
 				PaymentType.CRA_0054, 
-				"(CAUSA_INDEMNIZACION == IMPROCEDENTE) ? 45 * AÑOS_TRABAJADOS * SALARIO_DIA : REMOVE()",
+				"(CAUSA_INDEMNIZACION == IMPROCEDENTE) ? 45 * Aï¿½OS_TRABAJADOS * SALARIO_DIA : REMOVE()",
 				null ,
 				null, 
 				SalaryType.SETTLE);
@@ -1269,7 +1269,7 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 				SSRegimeType.GENERAL, 
 				add(getToday(),Calendar.YEAR,-5), 
 				PaymentType.CRA_0054, 
-				"(CAUSA_INDEMNIZACION == IMPROCEDENTE)? 33 * AÑOS_TRABAJADOS * SALARIO_DIA : REMOVE()",
+				"(CAUSA_INDEMNIZACION == IMPROCEDENTE)? 33 * Aï¿½OS_TRABAJADOS * SALARIO_DIA : REMOVE()",
 				null ,
 				null, 
 				SalaryType.SETTLE);
@@ -1318,15 +1318,15 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		.peek( v -> System.out.println(v.getName() + " = '" + v.getValue() +"' " + v.getStartDate() + ".." + v.getEndDate()))
 		.count();
 		
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 
 		salaryDraft.getContext().stream()
 		.filter(v -> v.getName().equals("CAUSA_INDEMNIZACION"))
-		.forEach(v -> Assert.assertEquals(contractStartDate, v.getStartDate()) );
+		.forEach(v -> assertEquals(contractStartDate, v.getStartDate()) );
 
 		salaryDraft.getContext().stream()
 		.filter(v -> v.getName().equals("CAUSA_INDEMNIZACION"))
-		.forEach(v -> Assert.assertEquals(getToday(), v.getEndDate()) );
+		.forEach(v -> assertEquals(getToday(), v.getEndDate()) );
 }
 	
 

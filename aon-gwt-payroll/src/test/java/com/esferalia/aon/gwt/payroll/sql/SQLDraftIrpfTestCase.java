@@ -5,7 +5,7 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.MONTH;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collections;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
@@ -244,7 +244,7 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 			for ( SalaryDeduction d : salary.getSalaryDeductions() ) {
 				System.out.println(d.getExpression() + ": " + d.getAmount() );
 			}
-			org.junit.Assert.assertEquals(3, salary.getSalaryDeductions().size());
+			org.junit.assertEquals(3, salary.getSalaryDeductions().size());
 			
 		} catch (SalaryException e1) {
 		}
@@ -365,7 +365,7 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx =
 		EmployeesServiceHelper.getSalaryCalculatorContext(connection, draft, null);
 		draftCtx.setListener(irpf -> {			
-//			org.junit.Assert.assertEquals(1500.00*2*12, irpf.getIrpfResult().getAnnualRemuneration(), 0.001 );
+//			org.junit.assertEquals(1500.00*2*12, irpf.getIrpfResult().getAnnualRemuneration(), 0.001 );
 			System.out.println("AnnualRemuneration : " + irpf.getIrpfResult().getAnnualRemuneration());
 		});
 
@@ -378,7 +378,7 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 			for ( SalaryDeduction d : salary.getSalaryDeductions() ) {
 				System.out.println(d.getExpression() + ": " + d.getAmount() );
 			}
-			org.junit.Assert.assertEquals(1500.00*2, salary.getTotalPayment(), 0.001 );
+			org.junit.assertEquals(1500.00*2, salary.getTotalPayment(), 0.001 );
 			
 		} catch (SalaryException e1) {
 		}

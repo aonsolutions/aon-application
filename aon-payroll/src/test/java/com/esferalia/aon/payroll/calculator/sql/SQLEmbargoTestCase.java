@@ -17,7 +17,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
@@ -103,7 +103,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 			@Override
 			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 					Map<String, ITimedVariable<?>> context) {
-				org.junit.Assert.assertEquals(600.00*0.30,amount,0.01);
+				org.junit.assertEquals(600.00*0.30,amount,0.01);
 				super.addEmbargo(id, amount, description, embargo, context);
 			}
 		};
@@ -120,7 +120,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 			@Override
 			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 					Map<String, ITimedVariable<?>> context) {
-				org.junit.Assert.assertEquals(300.00 - 600.00*0.30, amount,DELTA);
+				org.junit.assertEquals(300.00 - 600.00*0.30, amount,DELTA);
 				super.addEmbargo(id, amount, description, embargo, context);
 			}
 		};
@@ -136,7 +136,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 			@Override
 			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 					Map<String, ITimedVariable<?>> context) {
-				org.junit.Assert.fail();;
+				org.junit.fail();;
 				super.addEmbargo(id, amount, description, embargo, context);
 			}
 		};
@@ -152,7 +152,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 			@Override
 			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 					Map<String, ITimedVariable<?>> context) {
-				org.junit.Assert.fail();;
+				org.junit.fail();;
 				super.addEmbargo(id, amount, description, embargo, context);
 			}
 		};
@@ -171,7 +171,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 			@Override
 			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 					Map<String, ITimedVariable<?>> context) {
-				org.junit.Assert.assertEquals(600.00*0.30,amount,0.01);
+				org.junit.assertEquals(600.00*0.30,amount,0.01);
 				super.addEmbargo(id, amount, description, embargo, context);
 			}
 		};
@@ -227,7 +227,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 			@Override
 			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 					Map<String, ITimedVariable<?>> context) {
-				org.junit.Assert.assertEquals(160.00,amount,0.01);
+				org.junit.assertEquals(160.00,amount,0.01);
 				super.addEmbargo(id, amount, description, embargo, context);
 			}
 		};
@@ -284,8 +284,8 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 			@Override
 			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 					Map<String, ITimedVariable<?>> context) {
-				org.junit.Assert.assertEquals("PTE. EMBARGAR: 120.0 Eur., (EMBARGADO: 180.0 Eur.)", description);
-				org.junit.Assert.assertEquals(600.00*0.30,amount,0.01);
+				org.junit.assertEquals("PTE. EMBARGAR: 120.0 Eur., (EMBARGADO: 180.0 Eur.)", description);
+				org.junit.assertEquals(600.00*0.30,amount,0.01);
 				super.addEmbargo(id, amount, description, embargo, context);
 			}
 		};
@@ -302,8 +302,8 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 			@Override
 			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 					Map<String, ITimedVariable<?>> context) {
-				org.junit.Assert.assertEquals("PTE. EMBARGAR: 0.0 Eur., (EMBARGADO: 300.0 Eur.)", description);
-				org.junit.Assert.assertEquals(300.00 - 600.00*0.30, amount,DELTA);
+				org.junit.assertEquals("PTE. EMBARGAR: 0.0 Eur., (EMBARGADO: 300.0 Eur.)", description);
+				org.junit.assertEquals(300.00 - 600.00*0.30, amount,DELTA);
 				super.addEmbargo(id, amount, description, embargo, context);
 			}
 		};
@@ -319,7 +319,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 			@Override
 			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 					Map<String, ITimedVariable<?>> context) {
-				org.junit.Assert.fail();;
+				org.junit.fail();;
 				super.addEmbargo(id, amount, description, embargo, context);
 			}
 		};
@@ -380,7 +380,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 			@Override
 			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 					Map<String, ITimedVariable<?>> context) {
-				org.junit.Assert.assertEquals(600.00*0.30,amount,0.01);
+				org.junit.assertEquals(600.00*0.30,amount,0.01);
 				super.addEmbargo(id, amount, description, embargo, context);
 			}
 		};
@@ -397,7 +397,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 			@Override
 			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 					Map<String, ITimedVariable<?>> context) {
-				org.junit.Assert.assertEquals(300.00 - 600.00*0.30, amount,DELTA);
+				org.junit.assertEquals(300.00 - 600.00*0.30, amount,DELTA);
 				super.addEmbargo(id, amount, description, embargo, context);
 			}
 		};
@@ -413,7 +413,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 			@Override
 			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 					Map<String, ITimedVariable<?>> context) {
-				org.junit.Assert.fail();;
+				org.junit.fail();;
 				super.addEmbargo(id, amount, description, embargo, context);
 			}
 		};
@@ -429,7 +429,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 			@Override
 			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 					Map<String, ITimedVariable<?>> context) {
-				org.junit.Assert.fail();;
+				org.junit.fail();;
 				super.addEmbargo(id, amount, description, embargo, context);
 			}
 		};
@@ -448,7 +448,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 			@Override
 			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 					Map<String, ITimedVariable<?>> context) {
-				org.junit.Assert.assertEquals(600.00*0.30,amount,0.01);
+				org.junit.assertEquals(600.00*0.30,amount,0.01);
 				super.addEmbargo(id, amount, description, embargo, context);
 			}
 		};
@@ -559,7 +559,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 			@Override
 			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 					Map<String, ITimedVariable<?>> context) {
-				org.junit.Assert.assertEquals((1550.00 - (950.00*12/14))*0.30  ,amount,0.01);
+				org.junit.assertEquals((1550.00 - (950.00*12/14))*0.30  ,amount,0.01);
 				super.addEmbargo(id, amount, description, embargo, context);
 			}
 		};
@@ -576,7 +576,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 			@Override
 			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 					Map<String, ITimedVariable<?>> context) {
-				org.junit.Assert.assertEquals((1550.00 - (950.00*12/14))*0.30  ,amount,0.01);
+				org.junit.assertEquals((1550.00 - (950.00*12/14))*0.30  ,amount,0.01);
 				super.addEmbargo(id, amount, description, embargo, context);
 			}
 		};
@@ -599,13 +599,13 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 				@Override
 				public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 						Map<String, ITimedVariable<?>> context) {
-					org.junit.Assert.assertEquals(500.00 - 2 * (1550.00 - (950.00*12/14))*0.30  ,amount,0.01);
+					org.junit.assertEquals(500.00 - 2 * (1550.00 - (950.00*12/14))*0.30  ,amount,0.01);
 					super.addEmbargo(id, amount, description, embargo, context);
 				}
 				
 				@Override
 				public void setTotalLiquid(Double totalLiquid) {
-					org.junit.Assert.assertEquals(1550.00 - (500.00 - 2 * (1550.00 - (950.00*12/14))*0.30)  ,totalLiquid,0.01);
+					org.junit.assertEquals(1550.00 - (500.00 - 2 * (1550.00 - (950.00*12/14))*0.30)  ,totalLiquid,0.01);
 					super.setTotalLiquid(totalLiquid);
 				}
 		});
@@ -716,7 +716,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 			@Override
 			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 					Map<String, ITimedVariable<?>> context) {
-				org.junit.Assert.assertEquals((1550.00 - (950.00*12/14))*0.30  ,amount,0.01);
+				org.junit.assertEquals((1550.00 - (950.00*12/14))*0.30  ,amount,0.01);
 				super.addEmbargo(id, amount, description, embargo, context);
 			}
 		};
@@ -733,7 +733,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 			@Override
 			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 					Map<String, ITimedVariable<?>> context) {
-				org.junit.Assert.assertEquals((1550.00 - (950.00*12/14))*0.30  ,amount,0.01);
+				org.junit.assertEquals((1550.00 - (950.00*12/14))*0.30  ,amount,0.01);
 				super.addEmbargo(id, amount, description, embargo, context);
 			}
 		};
@@ -767,7 +767,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 				@Override
 				public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 						Map<String, ITimedVariable<?>> context) {
-					org.junit.Assert.assertEquals(500.00 - 2 * (1550.00 - (950.00*12/14))*0.30  ,amount,0.01);
+					org.junit.assertEquals(500.00 - 2 * (1550.00 - (950.00*12/14))*0.30  ,amount,0.01);
 					super.addEmbargo(id, amount, description, embargo, context);
 				}
 				

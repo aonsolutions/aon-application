@@ -78,7 +78,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
@@ -109,7 +109,7 @@ import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author rtrepiana
@@ -361,7 +361,7 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		List<ITimedResult<Double>> workedDays = ctx.getExpressionContext()
 				.eval(format("%s", WORKED_DAYS), start, end, Double.class);
 
-		Assert.assertEquals(2, workedDays.size());
+		assertEquals(2, workedDays.size());
 		assertEquals(workedDays.get(0),
 				(double) ((changeDayOfMonth - 1) * 15d / 35d), start,
 				addDays(change, -1));
@@ -474,7 +474,7 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		List<ITimedResult<Double>> workDays = ctx.getExpressionContext().eval(
 				"DIAS_TRABAJADOS", start, end, Double.class);
 
-		Assert.assertEquals(2.00, workDays.get(0).getValue());
+		assertEquals(2.00, workDays.get(0).getValue());
 
 	}
 
@@ -526,7 +526,7 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		List<ITimedResult<Double>> workDays = ctx.getExpressionContext().eval(
 				"DIAS_TRABAJADOS", start, end, Double.class);
 		
-		Assert.assertEquals(7.00, workDays.get(0).getValue());
+		assertEquals(7.00, workDays.get(0).getValue());
 
 	}
 
@@ -564,50 +564,50 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 				.map(result -> result.getContext())
 				.forEach(
 						context -> {
-							Assert.assertTrue(
+							assertTrue(
 									String.format(MONTH_DAYS.getName()),
 									context.containsKey(MONTH_DAYS.getName()));
-							Assert.assertTrue(
+							assertTrue(
 									String.format(WORKED_DAYS.getName()),
 									context.containsKey(WORKED_DAYS.getName()));
-							Assert.assertTrue(String.format(TC2.getName()),
+							assertTrue(String.format(TC2.getName()),
 									context.containsKey(TC2.getName()));
-							Assert.assertTrue(String.format(PARTIAL_FACTOR
+							assertTrue(String.format(PARTIAL_FACTOR
 									.getName()), context
 									.containsKey(PARTIAL_FACTOR.getName()));
-							Assert.assertTrue(
+							assertTrue(
 									String.format(ERE_FACTOR.getName()),
 									context.containsKey(ERE_FACTOR.getName()));
-							Assert.assertTrue(
+							assertTrue(
 									String.format(STRIKE_DAYS.getName()),
 									context.containsKey(STRIKE_DAYS.getName()));
 
-							Assert.assertTrue(
+							assertTrue(
 									String.format(WEEK_HOURS.getName()),
 									context.containsKey(WEEK_HOURS.getName()));
-							Assert.assertTrue(
+							assertTrue(
 									String.format(MONDAY_HOURS.getName()),
 									context.containsKey(MONDAY_HOURS.getName()));
-							Assert.assertTrue(String.format(TUESDAY_HOURS
+							assertTrue(String.format(TUESDAY_HOURS
 									.getName()), context
 									.containsKey(TUESDAY_HOURS.getName()));
-							Assert.assertTrue(String.format(WEDNESDAY_HOURS
+							assertTrue(String.format(WEDNESDAY_HOURS
 									.getName()), context
 									.containsKey(WEDNESDAY_HOURS.getName()));
-							Assert.assertTrue(String.format(THURSDAY_HOURS
+							assertTrue(String.format(THURSDAY_HOURS
 									.getName()), context
 									.containsKey(THURSDAY_HOURS.getName()));
-							Assert.assertTrue(
+							assertTrue(
 									String.format(FRIDAY_HOURS.getName()),
 									context.containsKey(FRIDAY_HOURS.getName()));
-							Assert.assertTrue(String.format(SATURDAY_HOURS
+							assertTrue(String.format(SATURDAY_HOURS
 									.getName()), context
 									.containsKey(SATURDAY_HOURS.getName()));
-							Assert.assertTrue(
+							assertTrue(
 									String.format(SUNDAY_HOURS.getName()),
 									context.containsKey(SUNDAY_HOURS.getName()));
 
-							Assert.assertTrue(String.format(AGREEMENT_HOURS
+							assertTrue(String.format(AGREEMENT_HOURS
 									.getName()), context
 									.containsKey(AGREEMENT_HOURS.getName()));
 
@@ -654,16 +654,16 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 
 		List<ITimedResult<Double>> workDays = ctx.getExpressionContext().eval(
 				"DIAS_TRABAJADOS", start, end, Double.class);
-		Assert.assertEquals(2, workDays.size());
+		assertEquals(2, workDays.size());
 
-		Assert.assertEquals(7d / 4d, workDays.get(0).getValue());
-		Assert.assertEquals(new Period(start, sunday), workDays.get(0)
+		assertEquals(7d / 4d, workDays.get(0).getValue());
+		assertEquals(new Period(start, sunday), workDays.get(0)
 				.getPeriod());
 
-		Assert.assertEquals(
+		assertEquals(
 				(double) get(end, DAY_OF_MONTH) - get(sunday, DAY_OF_MONTH),
 				workDays.get(1).getValue());
-		Assert.assertEquals(new Period(add(sunday, DAY_OF_MONTH, 1), end),
+		assertEquals(new Period(add(sunday, DAY_OF_MONTH, 1), end),
 				workDays.get(1).getPeriod());
 
 	}
@@ -718,29 +718,29 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		
 		List<ITimedResult<Double>> workDays = ctx.getExpressionContext().eval(
 				"DIAS_TRABAJADOS", start, end, Double.class);
-		Assert.assertEquals(5, workDays.size());
+		assertEquals(5, workDays.size());
 
-		Assert.assertEquals(5.00, workDays.get(0).getValue());
-		Assert.assertEquals(new Period(start, add(start, DAY_OF_MONTH, 4)),
+		assertEquals(5.00, workDays.get(0).getValue());
+		assertEquals(new Period(start, add(start, DAY_OF_MONTH, 4)),
 				workDays.get(0).getPeriod());
 
-		Assert.assertEquals(7d / 4d, workDays.get(1).getValue());
-		Assert.assertEquals(new Period(_6day, _11day), workDays.get(1)
+		assertEquals(7d / 4d, workDays.get(1).getValue());
+		assertEquals(new Period(_6day, _11day), workDays.get(1)
 				.getPeriod());
 
-		Assert.assertEquals(1.00, workDays.get(2).getValue());
-		Assert.assertEquals(
+		assertEquals(1.00, workDays.get(2).getValue());
+		assertEquals(
 				new Period(add(_11day, DAY_OF_MONTH, 1), add(_11day,
 						DAY_OF_MONTH, 1)), workDays.get(2).getPeriod());
 
-		Assert.assertEquals(7d / 2d, workDays.get(3).getValue());
-		Assert.assertEquals(new Period(_15day, _22dayI), workDays.get(3)
+		assertEquals(7d / 2d, workDays.get(3).getValue());
+		assertEquals(new Period(_15day, _22dayI), workDays.get(3)
 				.getPeriod());
 
-		Assert.assertEquals(
+		assertEquals(
 				(double) get(end, DAY_OF_MONTH) - get(_22dayI, DAY_OF_MONTH),
 				workDays.get(4).getValue());
-		Assert.assertEquals(new Period(add(_22dayI, DAY_OF_MONTH, 1), end),
+		assertEquals(new Period(add(_22dayI, DAY_OF_MONTH, 1), end),
 				workDays.get(4).getPeriod());
 
 	}
@@ -775,16 +775,16 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 
 		List<ITimedResult<Double>> workDays = ctx.getExpressionContext().eval(
 				"DIAS_TRABAJADOS", start, end, Double.class);
-		Assert.assertEquals(1, workDays.size());
-		Assert.assertEquals((double) get(end, DAY_OF_MONTH), workDays.get(0)
+		assertEquals(1, workDays.size());
+		assertEquals((double) get(end, DAY_OF_MONTH), workDays.get(0)
 				.getValue());
 
 		ctx.getExpressionContext().setVariable(ERE_FACTOR, 0.25, start, end);
 
 		workDays = ctx.getExpressionContext().eval("DIAS_TRABAJADOS", start,
 				end, Double.class);
-		Assert.assertEquals(1, workDays.size());
-		Assert.assertEquals(get(end, DAY_OF_MONTH) * 0.75, workDays.get(0)
+		assertEquals(1, workDays.size());
+		assertEquals(get(end, DAY_OF_MONTH) * 0.75, workDays.get(0)
 				.getValue());
 
 	}
@@ -824,7 +824,7 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		List<ITimedResult<Double>> workedDays = ctx.getExpressionContext()
 				.eval(format("%s", WORKED_DAYS), start, end, Double.class);
 
-		Assert.assertEquals(1, workedDays.size());
+		assertEquals(1, workedDays.size());
 		assertEquals(workedDays.get(0), 13.00, start,
 				add(startIT, DAY_OF_MONTH, -1));
 	}
@@ -864,7 +864,7 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		List<ITimedResult<Double>> workedDays = ctx.getExpressionContext()
 				.eval(format("%s", WORKED_DAYS), start, end, Double.class);
 
-		Assert.assertEquals(2, workedDays.size());
+		assertEquals(2, workedDays.size());
 		assertEquals(workedDays.get(0), 13.00, start,
 				add(startIT, DAY_OF_MONTH, -1));
 		assertEquals(workedDays.get(1),
@@ -928,7 +928,7 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		List<ITimedResult<Double>> workedDays = ctx.getExpressionContext()
 				.eval(format("%s", WORKED_DAYS), start, end, Double.class);
 
-		Assert.assertEquals(5, workedDays.size());
+		assertEquals(5, workedDays.size());
 		assertEquals(workedDays.get(0), 5.00, start,
 				add(startITI, DAY_OF_MONTH, -1));
 		assertEquals(workedDays.get(1), 1.00, add(endITI, DAY_OF_MONTH, 1),
@@ -976,7 +976,7 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		try {
 			List<ITimedResult<Double>> workedDays = ctx.getExpressionContext()
 					.eval(format("%s", WORKED_DAYS), start, end, Double.class);
-			Assert.fail();
+			fail();
 		} catch (UndefinedVariablesException e) {
 
 		}
@@ -1862,24 +1862,24 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		.eval("DIAS_VACACIONES", startDate, endDate, Double.class);
 		
 		results.forEach( result -> {
-			org.junit.Assert.assertEquals(10.00, result.getValue(), 0.00);
-			org.junit.Assert.assertEquals(holidaysStartDate, result.getPeriod().getStart());
-			org.junit.Assert.assertEquals(holidaysEndDate, result.getPeriod().getEnd());
+			org.junit.assertEquals(10.00, result.getValue(), 0.00);
+			org.junit.assertEquals(holidaysStartDate, result.getPeriod().getStart());
+			org.junit.assertEquals(holidaysEndDate, result.getPeriod().getEnd());
 		});
 
 		results = 
 		ctx.getExpressionContext()
 		.eval("DIAS_TRABAJADOS", startDate, endDate, Double.class);
 		
-		org.junit.Assert.assertEquals(2, results.size());
-		org.junit.Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
-		org.junit.Assert.assertEquals(add(holidaysStartDate, Calendar.DAY_OF_MONTH, -1), results.get(0).getPeriod().getEnd());
-		org.junit.Assert.assertEquals(9.00, results.get(0).getValue(), 0.00);
+		org.junit.assertEquals(2, results.size());
+		org.junit.assertEquals(startDate, results.get(0).getPeriod().getStart());
+		org.junit.assertEquals(add(holidaysStartDate, Calendar.DAY_OF_MONTH, -1), results.get(0).getPeriod().getEnd());
+		org.junit.assertEquals(9.00, results.get(0).getValue(), 0.00);
 		
-		org.junit.Assert.assertEquals(add(holidaysEndDate, Calendar.DAY_OF_MONTH, 1), results.get(1).getPeriod().getStart());
-		org.junit.Assert.assertEquals(endDate, results.get(1).getPeriod().getEnd());
+		org.junit.assertEquals(add(holidaysEndDate, Calendar.DAY_OF_MONTH, 1), results.get(1).getPeriod().getStart());
+		org.junit.assertEquals(endDate, results.get(1).getPeriod().getEnd());
 		
-		org.junit.Assert.assertEquals(get(endDate, Calendar.DAY_OF_MONTH) - 19, results.get(1).getValue(), 0.00);
+		org.junit.assertEquals(get(endDate, Calendar.DAY_OF_MONTH) - 19, results.get(1).getValue(), 0.00);
 		
 	}
 	
@@ -1930,23 +1930,23 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		.eval("DIAS_VACACIONES", startDate, endDate, Double.class);
 		
 		results.forEach( result -> {
-			org.junit.Assert.assertEquals(10.00, result.getValue(), 0.00);
-			org.junit.Assert.assertEquals(holidaysStartDate, result.getPeriod().getStart());
-			org.junit.Assert.assertEquals(holidaysEndDate, result.getPeriod().getEnd());
+			org.junit.assertEquals(10.00, result.getValue(), 0.00);
+			org.junit.assertEquals(holidaysStartDate, result.getPeriod().getStart());
+			org.junit.assertEquals(holidaysEndDate, result.getPeriod().getEnd());
 		});
 
 		results = 
 		ctx.getExpressionContext()
 		.eval("DIAS_TRABAJADOS", startDate, endDate, Double.class);
 		
-		org.junit.Assert.assertEquals(2, results.size());
-		org.junit.Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
-		org.junit.Assert.assertEquals(add(holidaysStartDate, Calendar.DAY_OF_MONTH, -1), results.get(0).getPeriod().getEnd());
-		org.junit.Assert.assertEquals(9.00, results.get(0).getValue(), 0.00);
+		org.junit.assertEquals(2, results.size());
+		org.junit.assertEquals(startDate, results.get(0).getPeriod().getStart());
+		org.junit.assertEquals(add(holidaysStartDate, Calendar.DAY_OF_MONTH, -1), results.get(0).getPeriod().getEnd());
+		org.junit.assertEquals(9.00, results.get(0).getValue(), 0.00);
 		
-		org.junit.Assert.assertEquals(add(holidaysEndDate, Calendar.DAY_OF_MONTH, 1), results.get(1).getPeriod().getStart());
-		org.junit.Assert.assertEquals(endDate, results.get(1).getPeriod().getEnd());
-		org.junit.Assert.assertEquals(30 - 19, results.get(1).getValue(), 0.00);
+		org.junit.assertEquals(add(holidaysEndDate, Calendar.DAY_OF_MONTH, 1), results.get(1).getPeriod().getStart());
+		org.junit.assertEquals(endDate, results.get(1).getPeriod().getEnd());
+		org.junit.assertEquals(30 - 19, results.get(1).getValue(), 0.00);
 		
 //		results = 
 //		ctx.getExpressionContext()
@@ -1998,24 +1998,24 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		.eval("DIAS_VACACIONES", holidaysStartDate, holidaysStartDate, Double.class);
 		
 		results.forEach( result -> {
-			org.junit.Assert.assertEquals(1.00, result.getValue(), 0.00);
-			org.junit.Assert.assertEquals(holidaysStartDate, result.getPeriod().getStart());
-			org.junit.Assert.assertEquals(holidaysStartDate, result.getPeriod().getEnd());
+			org.junit.assertEquals(1.00, result.getValue(), 0.00);
+			org.junit.assertEquals(holidaysStartDate, result.getPeriod().getStart());
+			org.junit.assertEquals(holidaysStartDate, result.getPeriod().getEnd());
 		});
 
 		results = 
 		ctx.getExpressionContext()
 		.eval("DIAS_TRABAJADOS", startDate, endDate, Double.class);
 		
-		org.junit.Assert.assertEquals(2, results.size());
-		org.junit.Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
-		org.junit.Assert.assertEquals(add(holidaysStartDate, Calendar.DAY_OF_MONTH, -1), results.get(0).getPeriod().getEnd());
-		org.junit.Assert.assertEquals(9.00, results.get(0).getValue(), 0.00);
+		org.junit.assertEquals(2, results.size());
+		org.junit.assertEquals(startDate, results.get(0).getPeriod().getStart());
+		org.junit.assertEquals(add(holidaysStartDate, Calendar.DAY_OF_MONTH, -1), results.get(0).getPeriod().getEnd());
+		org.junit.assertEquals(9.00, results.get(0).getValue(), 0.00);
 		
-		org.junit.Assert.assertEquals(add(holidaysEndDate, Calendar.DAY_OF_MONTH, 1), results.get(1).getPeriod().getStart());
-		org.junit.Assert.assertEquals(endDate, results.get(1).getPeriod().getEnd());
+		org.junit.assertEquals(add(holidaysEndDate, Calendar.DAY_OF_MONTH, 1), results.get(1).getPeriod().getStart());
+		org.junit.assertEquals(endDate, results.get(1).getPeriod().getEnd());
 		
-		org.junit.Assert.assertEquals(get(endDate, Calendar.DAY_OF_MONTH) - 19, results.get(1).getValue(), 0.00);
+		org.junit.assertEquals(get(endDate, Calendar.DAY_OF_MONTH) - 19, results.get(1).getValue(), 0.00);
 		
 
 	}
@@ -2069,42 +2069,42 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		.eval("DIAS_VACACIONES", startDate, endDate, Double.class);
 		
 		results.forEach( result -> {
-			org.junit.Assert.assertEquals(10.00, result.getValue(), 0.00);
-			org.junit.Assert.assertEquals(holidaysStartDate, result.getPeriod().getStart());
-			org.junit.Assert.assertEquals(holidaysEndDate, result.getPeriod().getEnd());
+			org.junit.assertEquals(10.00, result.getValue(), 0.00);
+			org.junit.assertEquals(holidaysStartDate, result.getPeriod().getStart());
+			org.junit.assertEquals(holidaysEndDate, result.getPeriod().getEnd());
 		});
 
 		results = 
 		ctx.getExpressionContext()
 		.eval("DIAS_TRABAJADOS", startDate, endDate, Double.class);
 		
-		org.junit.Assert.assertEquals(2, results.size());
-		org.junit.Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
-		org.junit.Assert.assertEquals(add(holidaysStartDate, Calendar.DAY_OF_MONTH, -1), results.get(0).getPeriod().getEnd());
-		org.junit.Assert.assertEquals(9.00, results.get(0).getValue(), 0.00);
+		org.junit.assertEquals(2, results.size());
+		org.junit.assertEquals(startDate, results.get(0).getPeriod().getStart());
+		org.junit.assertEquals(add(holidaysStartDate, Calendar.DAY_OF_MONTH, -1), results.get(0).getPeriod().getEnd());
+		org.junit.assertEquals(9.00, results.get(0).getValue(), 0.00);
 		
-		org.junit.Assert.assertEquals(add(holidaysEndDate, Calendar.DAY_OF_MONTH, 1), results.get(1).getPeriod().getStart());
-		org.junit.Assert.assertEquals(endDate, results.get(1).getPeriod().getEnd());
+		org.junit.assertEquals(add(holidaysEndDate, Calendar.DAY_OF_MONTH, 1), results.get(1).getPeriod().getStart());
+		org.junit.assertEquals(endDate, results.get(1).getPeriod().getEnd());
 		
-		org.junit.Assert.assertEquals(11.00, results.get(1).getValue(), 0.00);
+		org.junit.assertEquals(11.00, results.get(1).getValue(), 0.00);
 		
 		results =
 		ctx.getExpressionContext()
 		.eval("DIAS_COTIZADOS", startDate, endDate, Double.class);
 
-		org.junit.Assert.assertEquals(3, results.size());
+		org.junit.assertEquals(3, results.size());
 
-		org.junit.Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
-		org.junit.Assert.assertEquals(add(holidaysStartDate, Calendar.DAY_OF_MONTH, -1), results.get(0).getPeriod().getEnd());
-		org.junit.Assert.assertEquals(9.00, results.get(0).getValue(), 0.00);
+		org.junit.assertEquals(startDate, results.get(0).getPeriod().getStart());
+		org.junit.assertEquals(add(holidaysStartDate, Calendar.DAY_OF_MONTH, -1), results.get(0).getPeriod().getEnd());
+		org.junit.assertEquals(9.00, results.get(0).getValue(), 0.00);
 		
-		org.junit.Assert.assertEquals(holidaysStartDate, results.get(1).getPeriod().getStart());
-		org.junit.Assert.assertEquals(holidaysEndDate, results.get(1).getPeriod().getEnd());
-		org.junit.Assert.assertEquals(10.00, results.get(1).getValue(), 0.00);
+		org.junit.assertEquals(holidaysStartDate, results.get(1).getPeriod().getStart());
+		org.junit.assertEquals(holidaysEndDate, results.get(1).getPeriod().getEnd());
+		org.junit.assertEquals(10.00, results.get(1).getValue(), 0.00);
 
-		org.junit.Assert.assertEquals(add(holidaysEndDate, Calendar.DAY_OF_MONTH, 1), results.get(2).getPeriod().getStart());
-		org.junit.Assert.assertEquals(endDate, results.get(2).getPeriod().getEnd());
-		org.junit.Assert.assertEquals(11.00, results.get(2).getValue(), 0.00);
+		org.junit.assertEquals(add(holidaysEndDate, Calendar.DAY_OF_MONTH, 1), results.get(2).getPeriod().getStart());
+		org.junit.assertEquals(endDate, results.get(2).getPeriod().getEnd());
+		org.junit.assertEquals(11.00, results.get(2).getValue(), 0.00);
 		
 		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);
 		new SmartContractSalaryCalculator(jooqSalaryBuilder).calculate(ctx);
@@ -2117,7 +2117,7 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		
 		
 		results = ctx.getExpressionContext().eval("BASE_REGULADORA", startDate, endDate, Double.class);
-		org.junit.Assert.assertEquals((1000.00 * 20 / 30.00 + 25.00 * 10.00) / 30 , results.get(0).getValue(), 0.0001);
+		org.junit.assertEquals((1000.00 * 20 / 30.00 + 25.00 * 10.00) / 30 , results.get(0).getValue(), 0.0001);
 
 	}
 
@@ -2170,49 +2170,49 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		.eval("DIAS_VACACIONES", startDate, endDate, Double.class);
 		
 		results.forEach( result -> {
-			org.junit.Assert.assertEquals(10.00, result.getValue(), 0.00);
-			org.junit.Assert.assertEquals(holidaysStartDate, result.getPeriod().getStart());
-			org.junit.Assert.assertEquals(holidaysEndDate, result.getPeriod().getEnd());
+			org.junit.assertEquals(10.00, result.getValue(), 0.00);
+			org.junit.assertEquals(holidaysStartDate, result.getPeriod().getStart());
+			org.junit.assertEquals(holidaysEndDate, result.getPeriod().getEnd());
 		});
 
 		results = 
 		ctx.getExpressionContext()
 		.eval("DIAS_TRABAJADOS", startDate, endDate, Double.class);
 		
-		org.junit.Assert.assertEquals(2, results.size());
-		org.junit.Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
-		org.junit.Assert.assertEquals(add(holidaysStartDate, Calendar.DAY_OF_MONTH, -1), results.get(0).getPeriod().getEnd());
-		org.junit.Assert.assertEquals(9.00, results.get(0).getValue(), 0.00);
+		org.junit.assertEquals(2, results.size());
+		org.junit.assertEquals(startDate, results.get(0).getPeriod().getStart());
+		org.junit.assertEquals(add(holidaysStartDate, Calendar.DAY_OF_MONTH, -1), results.get(0).getPeriod().getEnd());
+		org.junit.assertEquals(9.00, results.get(0).getValue(), 0.00);
 		
-		org.junit.Assert.assertEquals(add(holidaysEndDate, Calendar.DAY_OF_MONTH, 1), results.get(1).getPeriod().getStart());
-		org.junit.Assert.assertEquals(endDate, results.get(1).getPeriod().getEnd());
+		org.junit.assertEquals(add(holidaysEndDate, Calendar.DAY_OF_MONTH, 1), results.get(1).getPeriod().getStart());
+		org.junit.assertEquals(endDate, results.get(1).getPeriod().getEnd());
 		
-		org.junit.Assert.assertEquals(11.00, results.get(1).getValue(), 0.00);
+		org.junit.assertEquals(11.00, results.get(1).getValue(), 0.00);
 		
 		results =
 		ctx.getExpressionContext()
 		.eval("DIAS_COTIZADOS", startDate, endDate, Double.class);
 
-		org.junit.Assert.assertEquals(3, results.size());
+		org.junit.assertEquals(3, results.size());
 
-		org.junit.Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
-		org.junit.Assert.assertEquals(add(holidaysStartDate, Calendar.DAY_OF_MONTH, -1), results.get(0).getPeriod().getEnd());
-		org.junit.Assert.assertEquals(9.00, results.get(0).getValue(), 0.00);
+		org.junit.assertEquals(startDate, results.get(0).getPeriod().getStart());
+		org.junit.assertEquals(add(holidaysStartDate, Calendar.DAY_OF_MONTH, -1), results.get(0).getPeriod().getEnd());
+		org.junit.assertEquals(9.00, results.get(0).getValue(), 0.00);
 		
-		org.junit.Assert.assertEquals(holidaysStartDate, results.get(1).getPeriod().getStart());
-		org.junit.Assert.assertEquals(holidaysEndDate, results.get(1).getPeriod().getEnd());
-		org.junit.Assert.assertEquals(10.00, results.get(1).getValue(), 0.00);
+		org.junit.assertEquals(holidaysStartDate, results.get(1).getPeriod().getStart());
+		org.junit.assertEquals(holidaysEndDate, results.get(1).getPeriod().getEnd());
+		org.junit.assertEquals(10.00, results.get(1).getValue(), 0.00);
 
-		org.junit.Assert.assertEquals(add(holidaysEndDate, Calendar.DAY_OF_MONTH, 1), results.get(2).getPeriod().getStart());
-		org.junit.Assert.assertEquals(endDate, results.get(2).getPeriod().getEnd());
-		org.junit.Assert.assertEquals(11.00, results.get(2).getValue(), 0.00);
+		org.junit.assertEquals(add(holidaysEndDate, Calendar.DAY_OF_MONTH, 1), results.get(2).getPeriod().getStart());
+		org.junit.assertEquals(endDate, results.get(2).getPeriod().getEnd());
+		org.junit.assertEquals(11.00, results.get(2).getValue(), 0.00);
 		
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startDate, null, null);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		
 		
 		results = ctx.getExpressionContext().eval("BASE_REGULADORA", startDate, endDate, Double.class);
-		org.junit.Assert.assertEquals((1000.00 * 20 / 30.00 + 25.00 * 10.00) / 30 , results.get(0).getValue(), 0.0001);
+		org.junit.assertEquals((1000.00 * 20 / 30.00 + 25.00 * 10.00) / 30 , results.get(0).getValue(), 0.0001);
 
 	}
 
@@ -2284,7 +2284,7 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		 	System.out.println(payment.getDescription() + " = " + payment.getAmount());
 		});
 		
-		org.junit.Assert.assertEquals((1000.00 * 10 / 30.00 + 25.00 * 14.00), salary.getTotalPayment(), 0.004);
+		org.junit.assertEquals((1000.00 * 10 / 30.00 + 25.00 * 14.00), salary.getTotalPayment(), 0.004);
 
 	}
 
@@ -2432,9 +2432,9 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		List<ITimedResult<Double>> totalWorkedDays = ctx.getExpressionContext().eval(ContextVariable.TOTAL_WORKED_DAYS.getName(), start, end, Double.class);
 		
 		totalWorkedDays.forEach( r -> {
-			org.junit.Assert.assertEquals(r.getPeriod().getStart(), start);
-			org.junit.Assert.assertEquals(r.getPeriod().getEnd(), end);
-			org.junit.Assert.assertEquals(r.getValue(), AonDateUtils.get(end, Calendar.DAY_OF_MONTH) * 0.25, DELTA);
+			org.junit.assertEquals(r.getPeriod().getStart(), start);
+			org.junit.assertEquals(r.getPeriod().getEnd(), end);
+			org.junit.assertEquals(r.getValue(), AonDateUtils.get(end, Calendar.DAY_OF_MONTH) * 0.25, DELTA);
 			
 		});
 		
@@ -2467,9 +2467,9 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		List<ITimedResult<Double>> totalWorkedDays = ctx.getExpressionContext().eval(ContextVariable.TOTAL_WORKED_DAYS.getName(), start, end, Double.class);
 		
 		totalWorkedDays.forEach( r -> {
-			org.junit.Assert.assertEquals(r.getPeriod().getStart(), start);
-			org.junit.Assert.assertEquals(r.getPeriod().getEnd(), end);
-			org.junit.Assert.assertEquals(AonDateUtils.get(end, Calendar.DAY_OF_MONTH) * 0.5, r.getValue(), DELTA);
+			org.junit.assertEquals(r.getPeriod().getStart(), start);
+			org.junit.assertEquals(r.getPeriod().getEnd(), end);
+			org.junit.assertEquals(AonDateUtils.get(end, Calendar.DAY_OF_MONTH) * 0.5, r.getValue(), DELTA);
 			
 		});
 		
@@ -2501,9 +2501,9 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		List<ITimedResult<Double>> totalWorkedDays = ctx.getExpressionContext().eval(ContextVariable.TOTAL_WORKED_DAYS.getName(), start, end, Double.class);
 		
 		totalWorkedDays.forEach( r -> {
-			org.junit.Assert.assertEquals(r.getPeriod().getStart(), start);
-			org.junit.Assert.assertEquals(r.getPeriod().getEnd(), end);
-			org.junit.Assert.assertEquals(AonDateUtils.get(end, Calendar.DAY_OF_MONTH),r.getValue(),  DELTA);
+			org.junit.assertEquals(r.getPeriod().getStart(), start);
+			org.junit.assertEquals(r.getPeriod().getEnd(), end);
+			org.junit.assertEquals(AonDateUtils.get(end, Calendar.DAY_OF_MONTH),r.getValue(),  DELTA);
 			
 		});
 		
@@ -2537,9 +2537,9 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		List<ITimedResult<Double>> totalWorkedDays = ctx.getExpressionContext().eval(ContextVariable.TOTAL_WORKED_DAYS.getName(), start, end, Double.class);
 		
 		totalWorkedDays.forEach( r -> {
-			org.junit.Assert.assertEquals(r.getPeriod().getStart(), start);
-			org.junit.Assert.assertEquals(r.getPeriod().getEnd(), end);
-			org.junit.Assert.assertEquals(0.00, r.getValue(), DELTA);
+			org.junit.assertEquals(r.getPeriod().getStart(), start);
+			org.junit.assertEquals(r.getPeriod().getEnd(), end);
+			org.junit.assertEquals(0.00, r.getValue(), DELTA);
 			
 		});
 	}
@@ -2571,9 +2571,9 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		List<ITimedResult<Double>> totalWorkedDays = ctx.getExpressionContext().eval(ContextVariable.TOTAL_WORKED_DAYS.getName(), start, end, Double.class);
 		
 		totalWorkedDays.forEach( r -> {
-			org.junit.Assert.assertEquals(r.getPeriod().getStart(), start);
-			org.junit.Assert.assertEquals(r.getPeriod().getEnd(), end);
-			org.junit.Assert.assertEquals(10, r.getValue() , DELTA);
+			org.junit.assertEquals(r.getPeriod().getStart(), start);
+			org.junit.assertEquals(r.getPeriod().getEnd(), end);
+			org.junit.assertEquals(10, r.getValue() , DELTA);
 			
 		});
 	}
@@ -2606,9 +2606,9 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		List<ITimedResult<Double>> totalWorkedDays = ctx.getExpressionContext().eval(ContextVariable.TOTAL_WORKED_DAYS.getName(), start, end, Double.class);
 		
 		totalWorkedDays.forEach( r -> {
-			org.junit.Assert.assertEquals(r.getPeriod().getStart(), start);
-			org.junit.Assert.assertEquals(r.getPeriod().getEnd(), end);
-			org.junit.Assert.assertEquals(10 +  (AonDateUtils.get(end, Calendar.DAY_OF_MONTH) -10 ) * 0.5, r.getValue() , DELTA);
+			org.junit.assertEquals(r.getPeriod().getStart(), start);
+			org.junit.assertEquals(r.getPeriod().getEnd(), end);
+			org.junit.assertEquals(10 +  (AonDateUtils.get(end, Calendar.DAY_OF_MONTH) -10 ) * 0.5, r.getValue() , DELTA);
 			
 		});
 	}
@@ -2621,15 +2621,15 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 
 	protected void assertEquals(ITimedResult<Double> var, Double value,
 			Date start, Date end) {
-		Assert.assertEquals(new Period(start, end), var.getPeriod());
-		Assert.assertEquals(value, var.getValue(), DELTA);
+		assertEquals(new Period(start, end), var.getPeriod());
+		assertEquals(value, var.getValue(), DELTA);
 	}
 
 	protected void assertEquals(List<ITimedResult<Double>> vars, Double value,
 			Date start, Date end) {
-		Assert.assertEquals(1, vars.size());
-		Assert.assertEquals(value, vars.get(0).getValue(), DELTA);
-		Assert.assertEquals(new Period(start, end), vars.get(0).getPeriod());
+		assertEquals(1, vars.size());
+		assertEquals(value, vars.get(0).getValue(), DELTA);
+		assertEquals(new Period(start, end), vars.get(0).getPeriod());
 	}
 
 	protected void assertEquals(SQLContractSalaryCalculatorContext ctx,
@@ -2640,7 +2640,7 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 			workedDays = ctx.getExpressionContext()
 					.eval(format("%s", WORKED_DAYS), start, end, Double.class);
 		} catch ( UndefinedVariablesException e) {
-			Assert.assertEquals(0.00, value);
+			assertEquals(0.00, value);
 			return;
 		}
 
@@ -2650,14 +2650,14 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 			months++;
 
 		System.out.printf("%tF..%tF ( %d ): \r\n", start, end, months);
-		Assert.assertEquals(months, workedDays.size());
+		assertEquals(months, workedDays.size());
 
 		double values = 0.00;
 		for (ITimedResult<Double> workedDay : workedDays) {
 			double ctxMonthDays = ctx.getVariable(MONTH_DAYS,
 					workedDay.getPeriod(), Number.class).doubleValue();
 			if (monthDays != null)
-				Assert.assertEquals(monthDays, ctxMonthDays, DELTA);
+				assertEquals(monthDays, ctxMonthDays, DELTA);
 			System.out.printf("\t%tF..%tF : %f ( %f month days)\r\n", workedDay
 					.getPeriod().getStart(), workedDay.getPeriod().getEnd(),
 					workedDay.getValue(), ctxMonthDays);
@@ -2672,9 +2672,9 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		
 		System.out.printf("%f == %f \r\n", values, value );
 
-		Assert.assertEquals(start, workedDays.get(0).getPeriod().getStart());
-		Assert.assertEquals(end, workedDays.get(months - 1).getPeriod()
+		assertEquals(start, workedDays.get(0).getPeriod().getStart());
+		assertEquals(end, workedDays.get(months - 1).getPeriod()
 				.getEnd());
-		Assert.assertEquals(value, values, DELTA);
+		assertEquals(value, values, DELTA);
 	}
 }

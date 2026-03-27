@@ -23,8 +23,8 @@ import java.util.HashMap;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
@@ -58,7 +58,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.github.javafaker.Faker;
 import com.github.javafaker.Name;
-@Ignore
+@Disabled
 public class SQLCostTestCase extends AbstractSQLTestCase {
 	
 	private static final Faker FAKER = new Faker();
@@ -374,7 +374,7 @@ public class SQLCostTestCase extends AbstractSQLTestCase {
 			AONContext aonContext = new AONContext(conn);
 			
 			addPayment(aonContext, contract, "DIAS VACACIONES NO DISFRUTADOS", "DIAS_VACACIONES_NO_DISFRUTADOS * ( SALARIO_DIA + SALARIO_VARIABLE_DIA )", "_P", "_P", PaymentType.CRA_0006 , SalaryType.SETTLE );
-			addPayment(aonContext, contract, "INDEMNIZACION FIN CONTRATO TEMPORAL", "DIAS_INDEMNIZACION_FIN(INICIO_CONTRATO) * AÑOS_TRABAJADOS * SALARIO_DIA", "_P", null, PaymentType.CRA_0054 , SalaryType.SETTLE );
+			addPayment(aonContext, contract, "INDEMNIZACION FIN CONTRATO TEMPORAL", "DIAS_INDEMNIZACION_FIN(INICIO_CONTRATO) * Aï¿½OS_TRABAJADOS * SALARIO_DIA", "_P", null, PaymentType.CRA_0054 , SalaryType.SETTLE );
 			
 
 			//@formatter:off

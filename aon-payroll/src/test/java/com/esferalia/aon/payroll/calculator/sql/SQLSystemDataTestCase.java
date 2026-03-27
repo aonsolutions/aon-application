@@ -22,8 +22,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -41,7 +41,7 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLSystemDataTestCase extends AbstractSQLTestCase {
 
@@ -150,7 +150,7 @@ public class SQLSystemDataTestCase extends AbstractSQLTestCase {
 		});
 		calculator.calculate(ctx);
 
-		Assert.assertEquals(true, undefined.contains("JORNADAS_REALES"));
+		assertEquals(true, undefined.contains("JORNADAS_REALES"));
 
 		addData(aonContext, contract, firstDayOfYear, null,
 				new HashMap<String, String>() {
@@ -162,17 +162,17 @@ public class SQLSystemDataTestCase extends AbstractSQLTestCase {
 		ctx = getContractSalaryCalculatorContext(connection, firstDayOfMonth,
 				lastDayOfMonth, lastDayOfMonth, contract);
 
-		Assert.assertEquals(666,
+		assertEquals(666,
 				ctx.getExpressionContext()
 						.eval("CENTINEL", firstDayOfMonth, lastDayOfMonth)
 						.get(0).getValue());
 
-		Assert.assertEquals(32.74 * 1.00,
+		assertEquals(32.74 * 1.00,
 				ctx.getExpressionContext()
 						.eval("BASE_CGC_MIN", firstDayOfMonth, lastDayOfMonth)
 						.get(0).getValue());
 
-		Assert.assertEquals(32.74 * 1.00,
+		assertEquals(32.74 * 1.00,
 				ctx.getExpressionContext()
 						.eval("BASE_CGP_MIN", firstDayOfMonth, lastDayOfMonth)
 						.get(0).getValue());
@@ -183,15 +183,15 @@ public class SQLSystemDataTestCase extends AbstractSQLTestCase {
 		Salary salary = new ContractSalaryCalculator<Salary>(builder)
 				.calculate(ctx);
 
-		Assert.assertEquals("BASE_CGC_MIN", 32.74 * 1.00,
+		assertEquals("BASE_CGC_MIN", 32.74 * 1.00,
 				salary.getCommonBase());
-		Assert.assertEquals("BASE_CGP_MIN", 32.74 * 1.00,
+		assertEquals("BASE_CGP_MIN", 32.74 * 1.00,
 				salary.getProfessionalBase());
 
-		Assert.assertEquals("false",
+		assertEquals("false",
 				salary.getSalaryData("COTIZACION_MENSUAL"));
-		Assert.assertEquals("32.74", salary.getSalaryData("BASE_CGC_MIN_DIA"));
-		Assert.assertEquals("1", salary.getSalaryData("JORNADAS_REALES"));
+		assertEquals("32.74", salary.getSalaryData("BASE_CGC_MIN_DIA"));
+		assertEquals("1", salary.getSalaryData("JORNADAS_REALES"));
 
 	}
 
@@ -281,7 +281,7 @@ public class SQLSystemDataTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(48.88 * AonDateUtils.get(lastDayOfMonth,Calendar.DAY_OF_MONTH), salary.getCommonBase());
+		assertEquals(48.88 * AonDateUtils.get(lastDayOfMonth,Calendar.DAY_OF_MONTH), salary.getCommonBase());
 	}
 	
 	@Test
@@ -369,7 +369,7 @@ public class SQLSystemDataTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(4070.10, salary.getCommonBase(), DELTA);
+		assertEquals(4070.10, salary.getCommonBase(), DELTA);
 		
 	}
 	
@@ -460,7 +460,7 @@ public class SQLSystemDataTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryDatas().forEach(s -> System.out.println(s.getName() + " = " + s.getExpression()));
 		
-		Assert.assertEquals(270.00 * AonDateUtils.get(endDate,Calendar.DAY_OF_MONTH), salary.getCommonBase(), DELTA);
+		assertEquals(270.00 * AonDateUtils.get(endDate,Calendar.DAY_OF_MONTH), salary.getCommonBase(), DELTA);
 		
 	}
 	
@@ -556,7 +556,7 @@ public class SQLSystemDataTestCase extends AbstractSQLTestCase {
 		
 //		salary.getSalaryDatas().forEach(s -> System.out.println(s.getName() + " = " + s.getExpression()));
 		
-		Assert.assertEquals(4070.10, salary.getCommonBase(), DELTA);
+		assertEquals(4070.10, salary.getCommonBase(), DELTA);
 		
 	}
 	
@@ -683,7 +683,7 @@ public class SQLSystemDataTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(4070.10 - 3500, salary.getCommonBase(), DELTA);
+		assertEquals(4070.10 - 3500, salary.getCommonBase(), DELTA);
 		
 	}
 	
@@ -810,7 +810,7 @@ public class SQLSystemDataTestCase extends AbstractSQLTestCase {
 		calculateAndSave(connection, ctx);
 		
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contractId))
-			.forEach(s -> Assert.assertEquals(3950.00, s.getCommonContingenciesBase(), DELTA));
+			.forEach(s -> assertEquals(3950.00, s.getCommonContingenciesBase(), DELTA));
 		
 		// --------------------------------------- SECOND CONTRACT
 		ContractRecord contract2 = newContract(
@@ -849,7 +849,7 @@ public class SQLSystemDataTestCase extends AbstractSQLTestCase {
 		calculateAndSave(connection, ctx2);
 		
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract2Id).and(p.getStartDateProperty().eq(filterDate)))
-			.forEach(s -> Assert.assertEquals(4070.10 - 3950.00, s.getCommonContingenciesBase(), DELTA));
+			.forEach(s -> assertEquals(4070.10 - 3950.00, s.getCommonContingenciesBase(), DELTA));
 	
 		
 		// --------------------------------------- THIRD CONTRACT
@@ -888,11 +888,11 @@ public class SQLSystemDataTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(0.00, salary.getCommonBase(), DELTA);
+		assertEquals(0.00, salary.getCommonBase(), DELTA);
 		
 	}
 	
-	@Ignore("Test ingnored for deployment")
+	@Disabled("Test ingnored for deployment")
 	@Test
 	public void testSSRegimeArtistVII()
 			throws ExpressionException, SQLException, SalaryException {
@@ -1016,7 +1016,7 @@ public class SQLSystemDataTestCase extends AbstractSQLTestCase {
 		calculateAndSave(connection, ctx);
 		
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contractId))
-			.forEach(s -> Assert.assertEquals(3950.00, s.getCommonContingenciesBase(), DELTA));
+			.forEach(s -> assertEquals(3950.00, s.getCommonContingenciesBase(), DELTA));
 		
 		// --------------------------------------- SECOND CONTRACT
 		ContractRecord contract2 = newContract(
@@ -1055,7 +1055,7 @@ public class SQLSystemDataTestCase extends AbstractSQLTestCase {
 		calculateAndSave(connection, ctx2);
 		
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract2Id).and(p.getStartDateProperty().eq(filterDate)))
-			.forEach(s -> Assert.assertEquals(4070.10 - 3950.00, s.getCommonContingenciesBase(), DELTA));
+			.forEach(s -> assertEquals(4070.10 - 3950.00, s.getCommonContingenciesBase(), DELTA));
 	
 		
 		// --------------------------------------- THIRD CONTRACT
@@ -1095,7 +1095,7 @@ public class SQLSystemDataTestCase extends AbstractSQLTestCase {
 		Salary salary = calculator.calculate(ctx);
 		
 		// Fail cause BASE_CGC_MIN execute when it doesn't have to cause he is above BASE_CGC_MAX
-		Assert.assertEquals(0.00, salary.getCommonBase(), DELTA);
+		assertEquals(0.00, salary.getCommonBase(), DELTA);
 		
 	}
 	

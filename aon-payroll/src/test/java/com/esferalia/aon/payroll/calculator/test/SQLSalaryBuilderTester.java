@@ -1,6 +1,6 @@
 package com.esferalia.aon.payroll.calculator.test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

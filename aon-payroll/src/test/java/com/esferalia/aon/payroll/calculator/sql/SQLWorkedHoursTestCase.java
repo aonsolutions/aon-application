@@ -58,7 +58,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.lang.String.format;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.DAY_OF_WEEK;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -72,8 +72,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.CalendarRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -98,7 +98,7 @@ import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author rtrepiana
@@ -162,7 +162,7 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 			hours += ((Number) workedHour.getValue(workedHour.getPeriod()))
 					.doubleValue();
 
-		Assert.assertEquals(WORKED_HOURS.getName(), days * 8.00,  hours, 0.00);
+		assertEquals(WORKED_HOURS.getName(), days * 8.00,  hours, 0.00);
 	}
 
 	@Test
@@ -236,7 +236,7 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 					.doubleValue();
 		}
 
-		Assert.assertEquals(WORKED_HOURS.getName(), days * 8.00,  hours, 0.00);
+		assertEquals(WORKED_HOURS.getName(), days * 8.00,  hours, 0.00);
 	}
 
 	@Test
@@ -278,7 +278,7 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 
 		int days = get(endDate, DAY_OF_MONTH);
 
-		Assert.assertEquals(WORKED_HOURS.getName(), days, (int) hours);
+		assertEquals(WORKED_HOURS.getName(), days, (int) hours);
 	}
 
 	@Test
@@ -324,7 +324,7 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 								|| day.get(DAY_OF_WEEK) == Calendar.SATURDAY)
 										? 0.00 : 4.00));
 
-		Assert.assertEquals(WORKED_HOURS.getName(), expected, hours);
+		assertEquals(WORKED_HOURS.getName(), expected, hours);
 	}
 
 	@Test
@@ -371,11 +371,11 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 		if ( expected == 0.00 ) 
 			expected = 8.00;
 
-		Assert.assertEquals(WORKED_HOURS.getName(), expected, hours);
+		assertEquals(WORKED_HOURS.getName(), expected, hours);
 	}
 
 	@Test
-	@Ignore("Upps")
+	@Disabled("Upps")
 	public void testPartialTimeWorkHoursIV()
 			throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -423,7 +423,7 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 								|| day.get(DAY_OF_WEEK) == Calendar.TUESDAY)
 										? 0.00 : 4.00));
 
-		Assert.assertEquals(WORKED_HOURS.getName(), expected, hours);
+		assertEquals(WORKED_HOURS.getName(), expected, hours);
 
 		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);
 		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
@@ -440,7 +440,7 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 		for (ContextData data : datas)
 			hours += Double.parseDouble(data.getExpression());
 
-		Assert.assertEquals(WORKED_HOURS.getName(), expected, hours);
+		assertEquals(WORKED_HOURS.getName(), expected, hours);
 	}
 
 	@Test
@@ -482,7 +482,7 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 			hours += ((Number) workedHour.getValue(workedHour.getPeriod()))
 					.doubleValue();
 
-		Assert.assertEquals(WORKED_HOURS.getName(), 22.00, hours);
+		assertEquals(WORKED_HOURS.getName(), 22.00, hours);
 
 		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);
 		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
@@ -499,7 +499,7 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 		for (ContextData data : datas)
 			hours += Double.parseDouble(data.getExpression());
 
-		Assert.assertEquals(WORKED_HOURS.getName(), 22.00, hours);
+		assertEquals(WORKED_HOURS.getName(), 22.00, hours);
 	}
 
 	@Test
@@ -574,8 +574,8 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 			actualHours += Double.parseDouble(workedHour.getExpression());
 		}
 		
-		org.junit.Assert.assertEquals(expectedHours, actualHours, 0.00);
-		org.junit.Assert.assertEquals(3000.00 * 24.00/40.00, salary.getTotalPayment(), 0.00);
+		org.junit.assertEquals(expectedHours, actualHours, 0.00);
+		org.junit.assertEquals(3000.00 * 24.00/40.00, salary.getTotalPayment(), 0.00);
 	}
 
 	@Test
@@ -652,12 +652,12 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 			actualHours += Double.parseDouble(workedHour.getExpression());
 		}
 		
-		org.junit.Assert.assertEquals(expectedHours, actualHours, 0.00);
-		org.junit.Assert.assertEquals(3000.00 * 24.00/40.00, salary.getTotalPayment(), 0.00);
+		org.junit.assertEquals(expectedHours, actualHours, 0.00);
+		org.junit.assertEquals(3000.00 * 24.00/40.00, salary.getTotalPayment(), 0.00);
 	}
 
 	@Test
-	@Ignore("Upps ...")
+	@Disabled("Upps ...")
 	public void testPartialTimeWorkHoursVIII()
 			throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -722,8 +722,8 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 			actualHours += Double.parseDouble(workedHour.getExpression());
 		}
 		
-		org.junit.Assert.assertEquals(expectedHours, actualHours, 0.00);
-		org.junit.Assert.assertEquals(3000.00 * 24.00/40.00, salary.getTotalPayment(), 0.00);
+		org.junit.assertEquals(expectedHours, actualHours, 0.00);
+		org.junit.assertEquals(3000.00 * 24.00/40.00, salary.getTotalPayment(), 0.00);
 	}
 
 
@@ -824,7 +824,7 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 		//	expected =  ( get(endDate, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH) + 1 ) * 8 /*40/7.00*/; 
 			
 		if (expected > 0.00 )
-			Assert.assertEquals(WORKED_HOURS.getName(), expected, hours);
+			assertEquals(WORKED_HOURS.getName(), expected, hours);
 
 		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);
 		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
@@ -852,7 +852,7 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 //		if (expected == 0 ) 
 //			expected =  ( get(endDate, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH) + 1 ) * 8 /*40/7.00*/; 
 		if ( expected > 0.0 )
-			Assert.assertEquals(WORKED_HOURS.getName(), expected, hours);
+			assertEquals(WORKED_HOURS.getName(), expected, hours);
 		
 		
 
@@ -865,7 +865,7 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 
 		if (expected > 0.00 )
 			for (ContextData data : datas)
-				Assert.assertEquals(PARTIAL_FACTOR.getName(), 1.00, Double.parseDouble(data.getExpression()));
+				assertEquals(PARTIAL_FACTOR.getName(), 1.00, Double.parseDouble(data.getExpression()));
 		
 	}
 
@@ -1038,7 +1038,7 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 				.getVariables(SALARY_HOURS);
 
 		for (int i = 0; i < workedHours.size(); i++)
-			Assert.assertEquals(
+			assertEquals(
 					workedHours.get(i).getValue(workedHours.get(i).getPeriod()),
 					salaryHours.get(i)
 							.getValue(salaryHours.get(i).getPeriod()));
@@ -1089,11 +1089,11 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 		List<ITimedVariable<Object>> workedHours = ctx.getExpressionContext()
 				.getVariables(WORKED_HOURS);
 
-		Assert.assertEquals(2, workedHours.size());
-		Assert.assertEquals(
+		assertEquals(2, workedHours.size());
+		assertEquals(
 				new Period(startDate, add(startIt, DAY_OF_MONTH, -1)),
 				workedHours.get(0).getPeriod());
-		Assert.assertEquals(new Period(add(endIt, DAY_OF_MONTH, 1), endDate),
+		assertEquals(new Period(add(endIt, DAY_OF_MONTH, 1), endDate),
 				workedHours.get(1).getPeriod());
 
 	}
@@ -1215,7 +1215,7 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 		;
 		
 
-		org.junit.Assert.assertEquals(expectedHours, workedHours, 0.00 );
+		org.junit.assertEquals(expectedHours, workedHours, 0.00 );
 		
 	}
 
