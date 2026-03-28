@@ -34,6 +34,9 @@ public class SalaryEntry implements Serializable, IAccountEntryWrapper {
 	private double salaryDedSeize;
 	private Account salaryDedSeizeAccount;
 	
+	private double salaryDedInKind;
+	private Account salaryDedInKindAccount;
+
 	private double salaryOtherDeductions;
 	private Account salaryOtherDeductionsAccount;
 
@@ -172,6 +175,21 @@ public class SalaryEntry implements Serializable, IAccountEntryWrapper {
 		return this;
 	}
 	
+	public double getSalaryDedInKind() {
+		return salaryDedInKind;
+	}
+	public SalaryEntry setSalaryDedInKind(double salaryDedInKind) {
+		this.salaryDedInKind = salaryDedInKind;
+		return this;
+	}
+	public Account getSalaryDedInKindAccount() {
+		return salaryDedInKindAccount;
+	}
+	public SalaryEntry setSalaryDedInKindAccount(Account salaryDedInKindAccount) {
+		this.salaryDedInKindAccount = salaryDedInKindAccount;
+		return this;
+	}
+	
 	public double getSalaryOtherDeductions() {
 		return salaryOtherDeductions;
 	}
@@ -261,6 +279,7 @@ public class SalaryEntry implements Serializable, IAccountEntryWrapper {
 				- getEmployeeSocialInsurance()
 				- getSalaryDedAdvPayment()
 				- getSalaryOtherDeductions()
+				- getSalaryDedInKind()
 				- getSalaryDedSeize()
 				);
 	}

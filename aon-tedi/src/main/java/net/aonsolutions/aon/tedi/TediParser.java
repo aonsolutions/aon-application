@@ -1,6 +1,10 @@
 package net.aonsolutions.aon.tedi;
 
+import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
+import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
+import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,6 +40,8 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel.InvoiceErrorL
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
+import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
+import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
@@ -44,6 +50,7 @@ import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -478,6 +485,89 @@ public class TediParser {
 		}
 	};
 	
+	private static Consumer<TediParserContext> INVOICE_REGISTRY_STATUS = ctx -> {
+		TediResult result = ctx.getTediResult();
+		AccountingInvoice ai = result.getAccountingInvoice();
+		if (ai.getRegistry() != null && ai.getRegistry().getId() != null && ai.getRegistry().getType() != null) {
+			
+			ai.getRegistry().getType().visit( ai.getRegistry(), new IAccountingRegistryTypeVisitor() {
+
+				@Override
+				public void visitCustomer(AccountingRegistry reg) {
+					RegistryStatus rs = ctx.getAONContext().getDslContext().
+						select( CUSTOMER.STATUS )
+						.from(CUSTOMER)
+						.where(CUSTOMER.REGISTRY.eq(reg.getId()))
+						.fetch()
+						.stream()
+						.map( r -> RegistryStatus.safeValueOf(r.getValue(CUSTOMER.STATUS)) )
+						.findFirst()
+						.orElse(RegistryStatus.ACTIVE)
+					;
+					check(rs);
+				}
+
+				@Override
+				public void visitCreditor(AccountingRegistry reg) {
+					RegistryStatus rs = ctx.getAONContext().getDslContext().
+						select( CREDITOR.STATUS )
+						.from(CREDITOR)
+						.where(CREDITOR.REGISTRY.eq(reg.getId()))
+						.fetch()
+						.stream()
+						.map( r -> RegistryStatus.safeValueOf(r.getValue(CREDITOR.STATUS)) )
+						.findFirst()
+						.orElse(RegistryStatus.ACTIVE)
+					;
+					check(rs);
+				}
+
+				@Override
+				public void visitSupplier(AccountingRegistry reg) {
+					RegistryStatus rs = ctx.getAONContext().getDslContext().
+						select( SUPPLIER.STATUS )
+						.from(SUPPLIER)
+						.where(SUPPLIER.REGISTRY.eq(reg.getId()))
+						.fetch()
+						.stream()
+						.map( r -> RegistryStatus.safeValueOf(r.getValue(SUPPLIER.STATUS)) )
+						.findFirst()
+						.orElse(RegistryStatus.ACTIVE)
+					;
+					check(rs);
+				}
+
+				@Override
+				public void visitUndedCreditor(AccountingRegistry reg) {
+					visitCreditor(reg);
+				}
+				
+				private void check(RegistryStatus rs) {
+					if (rs == RegistryStatus.BLOCKED) {
+						String comments = 
+							ctx.getAONContext().getDslContext()
+							.select( RNOTE.COMMENTS )
+								.from(RNOTE)
+								.where(RNOTE.REGISTRY.eq(ai.getRegistry().getId()))
+								.and(RNOTE.NOTE_TYPE.eq( NoteType.OBSERVATION.value()))
+								.and(RNOTE.COMMENTS.isNotNull())
+								.and(RNOTE.COMMENTS.ne(""))
+								.orderBy(RNOTE.NOTE_DATE.desc())
+								.limit(1)
+								.fetch()
+								.stream()
+								.map( r -> r.getValue(RNOTE.COMMENTS))
+								.findFirst()
+								.orElse("Sin comentarios")
+							;
+						result.getAccountingInvoice().add( 
+							InvoiceErrorMessages.C021.err(InvoiceErrorKey.REGISTRY, comments) );
+					}
+				}
+			});
+		};
+		
+	};
 	private static boolean fillRegistry(TediParserContext ctx,Predicate<AccountingRegistry> filterExpression) {
 		TediResult result = ctx.getTediResult();
 		Invoice invoice = result.getInvoice();
@@ -491,8 +581,8 @@ public class TediParser {
 					.getAccountingRegistries(ctx.getAONContext(), f -> f.getDocumentProperty().eq(invoice.getRegistryDocument()))
 					.filter(filterExpression)
 					.collect(Collectors.toCollection(LinkedList::new));
-			if (registries != null && registries.size() > 0) {
-				if (registries.size() == 	1) {
+			if (AonCollectionUtils.isNotEmpty(registries)) {
+				if (AonCollectionUtils.size(registries) == 1) {
 					AccountingRegistry ar = registries.get(0);
 					AccountingInvoice ai = result.getAccountingInvoice();
 					ai.setRegistry(ar);
@@ -884,6 +974,7 @@ public class TediParser {
 		.andThen(INVOICE_NUMBER)
 		.andThen(INVOICE_REFERENCE_CODE)
 		.andThen(INVOICE_ADDRESS)
+		.andThen(INVOICE_REGISTRY_STATUS)
 		.andThen(INVOICE_DETAILS)
 		.andThen(INVOICE_VAT_BREAKDOWN)
 		.andThen(INVOICE_IRPF_BREAKDOWN)

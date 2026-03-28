@@ -1477,5 +1477,9 @@ public class AonDateUtils {
         boolean beforeEnd  = (end == null)   || !value.after(end);
         return afterStart && beforeEnd;
     }
+
+	public static boolean isFuture(Date issueDate) {
+		return issueDate != null && issueDate.after( today() );
+	}
         
 }

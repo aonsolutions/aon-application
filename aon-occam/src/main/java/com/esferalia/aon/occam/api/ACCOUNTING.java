@@ -369,8 +369,10 @@ public class ACCOUNTING {
 //	}
 
 	// ------------------------------ ACCOUNT STATEMENT
-	public static AccountStatementReport getAccountStatement(String domainName,
-			int domain, String user, AccountingReportParams params) {
+	public static AccountStatementReport getAccountStatement(Occam occam, AccountingReportParams params) {
+		return getAccountStatement(occam.getDomainName(), occam.getDomain(), occam.getUser(), params);
+	}
+	public static AccountStatementReport getAccountStatement(String domainName, int domain, String user, AccountingReportParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			AccountStatementReport report = new AccountStatementReport();
 			report.setParams(params);

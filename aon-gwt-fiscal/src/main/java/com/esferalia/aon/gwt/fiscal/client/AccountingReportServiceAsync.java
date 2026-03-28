@@ -19,7 +19,7 @@ public interface AccountingReportServiceAsync {
 	void getDomainPeriods(Occam occam, AsyncCallback<LinkedList<AccountPeriod>> callback);
 
 	// ACCOUNT STATEMENT
-	void getAccountStatement(String domainName, String user, int domain, AccountingReportParams params, AsyncCallback<AccountStatementReport> callback) throws AonCoreException;
+	void getAccountStatement(Occam occam, AccountingReportParams params, AsyncCallback<AccountStatementReport> callback) throws AonCoreException;
 
 	void getAccountBalance(String domainName, int domain, String user, AccountingReportParams params, AsyncCallback<LinkedList<AccountStatement>> callback) throws AonCoreException;
 

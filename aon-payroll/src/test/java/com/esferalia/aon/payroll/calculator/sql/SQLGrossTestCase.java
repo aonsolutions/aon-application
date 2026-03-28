@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
@@ -573,6 +574,73 @@ public class SQLGrossTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
 	}
 	
+	@Test
+	public void testMultipleGross() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:off
+
+		ContractRecord contract1 = newContract(aonContext,  
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+				}, new String[] { 
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+						"BRUTO(3333.00 * DIAS_TRABAJADOS / DIAS_MES)" ,
+						}
+				, new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" }, null);
+
+		ContractRecord contract2 = newContract(aonContext,  
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+				}, new String[] { 
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+						"BRUTO(3333.00 * DIAS_TRABAJADOS / DIAS_MES)" ,
+						}
+				, new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" }, null);
+		ContractRecord contract3 = newContract(aonContext,  
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+				}, new String[] { 
+						"BRUTO(3333.00 * DIAS_TRABAJADOS / DIAS_MES)" ,
+						}
+				, new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" }, null);
+		//@formatter:on
+		
+		
+		Criteria criteria = new Criteria();
+		criteria.addExpression(ExpressionUtilities.getOrExpression(
+				ExpressionUtilities.getOrExpression(
+					ExpressionUtilities.getEqualExpression( CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract1.getId()),
+					ExpressionUtilities.getEqualExpression( CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract2.getId())
+				),
+				ExpressionUtilities.getEqualExpression( CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract3.getId()))
+				);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		while ( ctx.next() ) {
+		
+			Salary salary = new ContractSalaryCalculator<>( new SalaryBuilder()).calculate(ctx);
+			Assert.assertEquals( 3333.00, salary.getTotalPayment() , DELTA);
+		}
+		
+		
+	}
+
 	// ------------------------------------------------------------------------
 
 

@@ -396,6 +396,19 @@
 										</aon:commandLink>
 									</aon:div>
 									<aon:div>
+										<aon:commandLink id="gwt_sii_new-fiscal" action="gwt_sii_new-fiscal" 
+											title="SII - Suministro Inmediato de Información" styleClass="aon-menu-fiscal">
+											<aon:outputText rendered="#{fiscalParams.aeat || fiscalParams.canarias}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="SII"/>
+											<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="SII"/>
+											<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="SII"/>
+											<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="SII"/>
+											<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="SII"/>
+											<aon:outputText rendered="#{fiscalParams.canarias}" styleClass="aon-menu-fiscal-model aon-menu-icon-canarias" value="&#160;"/>
+											<aon:outputText styleClass="aon-menu-fiscal-label" value="SII - Suministro Inmediato de Información" />
+										</aon:commandLink>
+									</aon:div>
+									<!-- 									
+									<aon:div>
 										<aon:commandLink id="gwt_sii-fiscal" action="gwt_sii-fiscal" 
 											title="SII - Suministro Inmediato de Información" styleClass="aon-menu-fiscal">
 											<aon:outputText rendered="#{fiscalParams.aeat || fiscalParams.canarias}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="SII"/>
@@ -406,7 +419,8 @@
 											<aon:outputText rendered="#{fiscalParams.canarias}" styleClass="aon-menu-fiscal-model aon-menu-icon-canarias" value="&#160;"/>
 											<aon:outputText styleClass="aon-menu-fiscal-label" value="SII - Suministro Inmediato de Información" />
 										</aon:commandLink>
-									</aon:div>		
+									</aon:div> 
+									-->		
 								</aon:div>
 							</aon:panelGrid>
 						</aon:panelGroup>

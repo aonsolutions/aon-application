@@ -26,40 +26,40 @@ public class AccountingReportServiceAsyncDecorator implements AccountingReportSe
 	@Override
 	public void getDomainPeriods(Occam occam, AsyncCallback<LinkedList<AccountPeriod>> callback) {
 		AON.start();
-		fsa.getDomainPeriods(occam, new AsyncCallbackWrapper<LinkedList<AccountPeriod>>(callback));
+		fsa.getDomainPeriods(occam, new AsyncCallbackWrapper<>(callback));
 	}
 
 	// ACCOUNT STATEMENT
 	@Override
-	public void getAccountStatement(String domainName, String user, int domain, AccountingReportParams params, AsyncCallback<AccountStatementReport> callback) {
+	public void getAccountStatement(Occam occam, AccountingReportParams params, AsyncCallback<AccountStatementReport> callback) {
 		AON.start();
-		fsa.getAccountStatement(domainName, user, domain, params, new AsyncCallbackWrapper<AccountStatementReport>(callback));
+		fsa.getAccountStatement(occam, params, new AsyncCallbackWrapper<>(callback));
 	}
 
 	// ACCOUNT TRIAL BALANCE
 	@Override
 	public void getAccountTrialBalanceReport(String domainName, String user, int domain, AccountingReportParams params, AsyncCallback<AccountTrialBalanceReport> callback) {
 		AON.start();
-		fsa.getAccountTrialBalanceReport(domainName, user, domain, params, new AsyncCallbackWrapper<AccountTrialBalanceReport>(callback));
+		fsa.getAccountTrialBalanceReport(domainName, user, domain, params, new AsyncCallbackWrapper<>(callback));
 	}
 
 	// ACCOUNT TRIAL BALANCE
 	@Override
 	public void getAccountBalanceReport(String domainName, String user, int domain, AccountingReportParams params, AsyncCallback<AccountBalanceReport> callback) {
 		AON.start();
-		fsa.getAccountBalanceReport(domainName, user, domain, params, new AsyncCallbackWrapper<AccountBalanceReport>(callback));
+		fsa.getAccountBalanceReport(domainName, user, domain, params, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
 	public void getAccountBalance(String domainName, int domain, String user, AccountingReportParams params, AsyncCallback<LinkedList<AccountStatement>> callback) {
 		AON.start();
-		fsa.getAccountBalance(domainName, domain, user, params, new AsyncCallbackWrapper<LinkedList<AccountStatement>>(callback));
+		fsa.getAccountBalance(domainName, domain, user, params, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
 	public void getAccountOperatingReport(String domainName, String user, int domain, AccountingReportParams params, AsyncCallback<AccountOperatingReport> callback) {
 		AON.start();
-		fsa.getAccountOperatingReport(domainName, user, domain, params, new AsyncCallbackWrapper<AccountOperatingReport>(callback));
+		fsa.getAccountOperatingReport(domainName, user, domain, params, new AsyncCallbackWrapper<>(callback));
 
 	}
 

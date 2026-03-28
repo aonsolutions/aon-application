@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
+@Deprecated
 public class InvoiceSIIDAO {
 	
 	private InvoiceSIIDAO() {

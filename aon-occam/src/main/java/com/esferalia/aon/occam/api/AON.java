@@ -2072,6 +2072,7 @@ public class AON {
 		}
 	}
 	
+	@Deprecated
 	public static Stream<Invoice> getSiiInvoiceStream(String domainName, Integer domainId, String login, InvoiceFilter filter
 			, Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii){
 		CloseableAONContext ctx = null;
@@ -8185,6 +8186,12 @@ public class AON {
 	public static void prepareNewSii(Occam occam) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			getFinance().prepareNewSii(ctx);
+		}
+	}
+	
+	public static void prepareNewSii(Occam occam, Integer year) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			getFinance().prepareNewSii(ctx, year);
 		}
 	}
 
