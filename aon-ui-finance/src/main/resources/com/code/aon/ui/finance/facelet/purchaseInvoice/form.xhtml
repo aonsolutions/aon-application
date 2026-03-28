@@ -255,6 +255,36 @@
 							</aon:panelGrid>
 						</aon:div>
 					</aon:if>
+					
+					<aon:if test="#{app.standAlone}">
+						<aon:div rendered="#{purchaseInvoice.rectifier}">
+
+							<aon:outputFormat styleClass="aon-bold aon-label-error"
+								value="#{bundle.finance_invoice_rectifier_message2}">
+								<f:param
+									value="#{purchaseInvoice.to.rectificationInvoice.referenceCode}" />
+							</aon:outputFormat>
+							<aon:if test="#{purchaseInvoice.rectificationInvoiceNull}">
+
+								<aon:commandLink id="Invoice_rectificationInvoiceAdd"
+									immediate="true" styleClass="aon-icon-new"
+									style="margin-left: 5px; padding-left: 20px;"
+									title="Añadir Factura Rectificada"
+									reRender="showAddRectificationInvoiceWindow">
+									<f:setPropertyActionListener
+										target="#{purchaseInvoice.showAddRectificationInvoiceWindow}"
+										value="#{true}" />
+								</aon:commandLink>
+							</aon:if>
+						</aon:div>
+						<aon:div rendered="#{purchaseInvoice.rectified}">
+							<aon:outputFormat styleClass="aon-bold aon-label-error"
+								value="#{bundle.finance_invoice_rectified_message2}">
+								<f:param
+									value="#{purchaseInvoice.to.rectificationInvoicesString}" />
+							</aon:outputFormat>
+						</aon:div>
+					</aon:if>
 				</aon:if>
 
 				<aon:if test="#{app.standAlone and !purchaseInvoice.nevv}">
