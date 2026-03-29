@@ -1,21 +1,21 @@
 /**
- * 
+ *
  */
 package com.esferalia.aon.salary.expression;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mvel2.MVEL;
 import org.mvel2.PropertyAccessException;
 
 import com.esferalia.aon.salary.expression.ExpressionContext.UnknownUndefVarException;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
-
-import junit.framework.Assert;
 
 /**
  * @author rtrepiana
@@ -27,114 +27,114 @@ public class ExpressionContextTestCase {
 	public void testGetUndefinedProperty() throws UnknownUndefVarException {
 		try {
 			MVEL.eval("100+NO_DEFINIDA*4");
-			Assert.fail();
+			fail();
 		} catch (PropertyAccessException e) {
-			Assert.assertEquals("NO_DEFINIDA", ExpressionContext
+			assertEquals("NO_DEFINIDA", ExpressionContext
 					.getUndefinedProperty(e, (PeriodMap) null));
 		}
 
 		try {
 			MVEL.eval("100 * 100 /*un comentario inofensivo ?*/ + NO_DEFINIDA");
-			Assert.fail();
+			fail();
 		} catch (PropertyAccessException e) {
-			Assert.assertEquals("NO_DEFINIDA", ExpressionContext
+			assertEquals("NO_DEFINIDA", ExpressionContext
 					.getUndefinedProperty(e, (PeriodMap) null));
 		}
 		try {
 			MVEL.eval("NO_DEFINIDA + 100 * 100 /*un comentario inofensivo ?*/");
-			Assert.fail();
+			fail();
 		} catch (PropertyAccessException e) {
-			Assert.assertEquals("NO_DEFINIDA", ExpressionContext
+			assertEquals("NO_DEFINIDA", ExpressionContext
 					.getUndefinedProperty(e, (PeriodMap) null));
 		}
 
 		try {
 			MVEL.eval(
 					"100 * 100 /*un comentario inofensivo ?*/ + NO_DEFINIDA + 100 * 100 /*un comentario inofensivo ?*/");
-			Assert.fail();
+			fail();
 		} catch (PropertyAccessException e) {
-			Assert.assertEquals("NO_DEFINIDA", ExpressionContext
+			assertEquals("NO_DEFINIDA", ExpressionContext
 					.getUndefinedProperty(e, (PeriodMap) null));
 		}
 
 		try {
 			MVEL.eval("(100) + (NO_DEFINIDA) + 400");
-			Assert.fail();
+			fail();
 		} catch (PropertyAccessException e) {
-			Assert.assertEquals("NO_DEFINIDA", ExpressionContext
+			assertEquals("NO_DEFINIDA", ExpressionContext
 					.getUndefinedProperty(e, (PeriodMap) null));
 		}
 
 		try {
 			MVEL.eval(
 					"(100) + {'1':'HOLA','2':'ADIOS','3':'...'}[NO_DEFINIDA] + 400");
-			Assert.fail();
+			fail();
 		} catch (PropertyAccessException e) {
-			Assert.assertEquals("NO_DEFINIDA", ExpressionContext
+			assertEquals("NO_DEFINIDA", ExpressionContext
 					.getUndefinedProperty(e, (PeriodMap) null));
 		}
 
 		try {
 			MVEL.eval("(100) + F(FF(NO_DEFINIDA)) + 400");
-			Assert.fail();
+			fail();
 		} catch (PropertyAccessException e) {
-			Assert.assertEquals("NO_DEFINIDA", ExpressionContext
+			assertEquals("NO_DEFINIDA", ExpressionContext
 					.getUndefinedProperty(e, (PeriodMap) null));
 		}
 
 		try {
 			MVEL.eval("(100) + F(FF(NO_DEFINIDA&100)) + 400");
-			Assert.fail();
+			fail();
 		} catch (PropertyAccessException e) {
-			Assert.assertEquals("NO_DEFINIDA", ExpressionContext
+			assertEquals("NO_DEFINIDA", ExpressionContext
 					.getUndefinedProperty(e, (PeriodMap) null));
 		}
 
 		try {
 			MVEL.eval("(100) + F(FF(NO_DEFINIDA[0])) + 400");
-			Assert.fail();
+			fail();
 		} catch (PropertyAccessException e) {
-			Assert.assertEquals("NO_DEFINIDA", ExpressionContext
+			assertEquals("NO_DEFINIDA", ExpressionContext
 					.getUndefinedProperty(e, (PeriodMap) null));
 		}
 
 		try {
 			MVEL.eval("X");
-			Assert.fail();
+			fail();
 		} catch (PropertyAccessException e) {
-			Assert.assertEquals("X", ExpressionContext.getUndefinedProperty(e,
+			assertEquals("X", ExpressionContext.getUndefinedProperty(e,
 					(PeriodMap) null));
 		}
 
 		try {
 			MVEL.eval(" X  ");
-			Assert.fail();
+			fail();
 		} catch (PropertyAccessException e) {
-			Assert.assertEquals("X", ExpressionContext.getUndefinedProperty(e,
+			assertEquals("X", ExpressionContext.getUndefinedProperty(e,
 					(PeriodMap) null));
 		}
 
 		try {
 			MVEL.eval(" \r\nX  ");
-			Assert.fail();
+			fail();
 		} catch (PropertyAccessException e) {
-			Assert.assertEquals("X", ExpressionContext.getUndefinedProperty(e,
+			assertEquals("X", ExpressionContext.getUndefinedProperty(e,
 					(PeriodMap) null));
 		}
 
 		try {
 			MVEL.eval("1!=1?X:Y");
-			Assert.fail();
+			fail();
 		} catch (PropertyAccessException e) {
-			Assert.assertEquals("Y", ExpressionContext.getUndefinedProperty(e,
+			assertEquals("Y", ExpressionContext.getUndefinedProperty(e,
 					(PeriodMap) null));
 		}
 
 		try {
 			MVEL.eval("100+100000+X");
-			Assert.fail();
+			fail();
 		} catch (PropertyAccessException e) {
-			Assert.assertEquals("X", ExpressionContext.getUndefinedProperty(e,
+			assertEquals("X", ExpressionContext.getUndefinedProperty(e,
 					(PeriodMap) null));
 		}
 
@@ -156,22 +156,22 @@ public class ExpressionContextTestCase {
 
 		try {
 			context.eval("NO_DEFINIDA", start, end, Double.class);
-			Assert.fail();
+			fail();
 		} catch (PropertyAccessException e) {
 		} catch (UndefinedVariablesException e) {
-			Assert.assertEquals("NO_DEFINIDA", e.getVariableNames()[0]);
+			assertEquals("NO_DEFINIDA", e.getVariableNames()[0]);
 		} catch (ExpressionException e) {
-			Assert.fail();
+			fail();
 		}
 
 		try {
 			context.eval("100*NO_DEFINIDA", start, end, Double.class);
-			Assert.fail();
+			fail();
 		} catch (PropertyAccessException e) {
 		} catch (UndefinedVariablesException e) {
-			Assert.assertEquals("NO_DEFINIDA", e.getVariableNames()[0]);
+			assertEquals("NO_DEFINIDA", e.getVariableNames()[0]);
 		} catch (ExpressionException e) {
-			Assert.fail();
+			fail();
 		}
 		try {
 			context.setVariable("DIAS_MES", 30, start, end);
@@ -197,9 +197,9 @@ public class ExpressionContextTestCase {
 
 			List<ITimedResult<Double>> results = context.eval(expression, start,
 					end, Double.class);
-			Assert.assertEquals(1056.90, results.get(0).getValue());
+			assertEquals(1056.90, results.get(0).getValue());
 		} catch (UndefinedVariablesException e) {
-			Assert.fail(e.getMessage());
+			fail(e.getMessage());
 		}
 
 		try {
@@ -226,9 +226,9 @@ public class ExpressionContextTestCase {
 
 			List<ITimedResult<Double>> results = context.eval(expression, start,
 					end, Double.class);
-			Assert.assertEquals(1056.90, results.get(0).getValue());
+			assertEquals(1056.90, results.get(0).getValue());
 		} catch (UndefinedVariablesException e) {
-			Assert.fail(e.getMessage());
+			fail(e.getMessage());
 		}
 
 		try {
@@ -255,9 +255,9 @@ public class ExpressionContextTestCase {
 
 			List<ITimedResult<Double>> results = context.eval(expression, start,
 					end, Double.class);
-			Assert.assertEquals(1056.90, results.get(0).getValue());
+			assertEquals(1056.90, results.get(0).getValue());
 		} catch (UndefinedVariablesException e) {
-			Assert.fail(e.getMessage());
+			fail(e.getMessage());
 		}
 
 	}
@@ -267,18 +267,18 @@ public class ExpressionContextTestCase {
 
 		String expression = "GRUPO_COTIZACION";
 		Set<String> variables = ExpressionContext.getVariableSet(expression);
-		Assert.assertEquals(1, variables.size());
-		Assert.assertEquals(true, variables.contains("GRUPO_COTIZACION"));
+		assertEquals(1, variables.size());
+		assertEquals(true, variables.contains("GRUPO_COTIZACION"));
 
 		expression = "3262.50 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)";
 		variables = ExpressionContext.getVariableSet(expression);
-		Assert.assertEquals(2, variables.size());
-		Assert.assertEquals(true, variables.contains("DIAS_MES"));
-		Assert.assertEquals(true, variables.contains("DIAS_NOMINA"));
+		assertEquals(2, variables.size());
+		assertEquals(true, variables.contains("DIAS_MES"));
+		assertEquals(true, variables.contains("DIAS_NOMINA"));
 
 		expression = "[\"a\": 0.65, \"b\": 1.00, \"d\": 3.35, \"e\": 1.80, \"f\": 3.35, \"g\": 2.10, \"h\": 1.40]";
 		variables = ExpressionContext.getVariableSet(expression);
-		Assert.assertEquals(0, variables.size());
+		assertEquals(0, variables.size());
 
 		expression = "def(total_liquido){ MAX(((total_liquido - SMI) * 0.30),0)+MAX(((total_liquido - 2 * SMI ) * 0.20),0) + MAX((( total_liquido - 3 * SMI ) * 0.10),0) +MAX((( total_liquido - 4 * SMI ) * 0.15),0) + MAX((( total_liquido - 5 * SMI ) * 0.15),0)}";
 		variables = ExpressionContext.getVariableSet(expression);
@@ -293,11 +293,11 @@ public class ExpressionContextTestCase {
 		// +" [GRUPO_COTIZACION]";
 		// variables = ExpressionContext.getVariableSet(expression);
 		//
-		// Assert.assertEquals(true, variables.contains("TIEMPO_COMPLETO"));
-		// Assert.assertEquals(true, variables.contains("DIAS_NOMINA"));
-		// Assert.assertEquals(true, variables.contains("HORAS_NOMINA"));
-		// Assert.assertEquals(true, variables.contains("DIAS_MES"));
-		// Assert.assertEquals(true, variables.contains("GRUPO_COTIZACION"));
+		// assertEquals(true, variables.contains("TIEMPO_COMPLETO"));
+		// assertEquals(true, variables.contains("DIAS_NOMINA"));
+		// assertEquals(true, variables.contains("HORAS_NOMINA"));
+		// assertEquals(true, variables.contains("DIAS_MES"));
+		// assertEquals(true, variables.contains("GRUPO_COTIZACION"));
 
 	}
 
@@ -306,8 +306,8 @@ public class ExpressionContextTestCase {
 
 		ExpressionContext ctx = new ExpressionContext();
 		Period period = new Period(new Date(), new Date());
-		
-		
+
+
 		IExpression baseCgcMin = new IExpression() {
 
 			@Override
@@ -333,7 +333,7 @@ public class ExpressionContextTestCase {
 			}
 		};
 
-		
+
 		IExpression monthDays = new IExpression() {
 
 			@Override
@@ -362,30 +362,30 @@ public class ExpressionContextTestCase {
 
 
 		ctx.putVariable(baseCgcMin.getName(), new ExpressionContext.DeferredExpressionVariable<Double>(
-				period, 
+				period,
 				baseCgcMin));
 		ctx.putVariable(monthDays.getName(), new ExpressionContext.DeferredExpressionVariable<Double>(
-				period, 
+				period,
 				monthDays));
 		ctx.setVariable("TIEMPO_COMPLETO", true, period.getStart(), period.getEnd());
 		ctx.setVariable("DIAS_NOMINA", 30.00, period.getStart(), period.getEnd());
-		
+
 		List<ITimedResult<Double>> results = ctx.eval(
 				baseCgcMin.getName(),
-				period.getStart(), 
-				period.getEnd(), 
+				period.getStart(),
+				period.getEnd(),
 				Double.class);
 
-		Assert.assertEquals(1, results.size());
-		Assert.assertEquals(1056.90,
+		assertEquals(1, results.size());
+		assertEquals(1056.90,
 				results.get(0).getValue(results.get(0).getPeriod()));
 
-		Assert.assertEquals(4, results.get(0).getContext().size());
-		
-		Assert.assertEquals(30.00, results.get(0).getContext()
+		assertEquals(4, results.get(0).getContext().size());
+
+		assertEquals(30.00, results.get(0).getContext()
 				.get("DIAS_NOMINA").getValue(period));
 
-		Assert.assertEquals(30.00, results.get(0).getContext()
+		assertEquals(30.00, results.get(0).getContext()
 				.get("DIAS_MES").getValue(period));
 	}
 
