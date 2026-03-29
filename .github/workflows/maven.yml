@@ -217,7 +217,7 @@ jobs:
         echo "RESUME_FROM=${CHANGED_PROJECTS:=aon-web-aio}" >> $GITHUB_ENV
 
     - name: Build with Maven
-      run: mvn -B -Dgwt.jjs.maxThreads=1 -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} --projects ${RESUME_FROM} --also-make-dependents -T 1C clean install
+      run: mvn -B -Dgwt.jjs.maxThreads=1 -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} --projects ${RESUME_FROM} --also-make-dependents clean install
 
     - name: Setup context for Docker
       run: |
