@@ -31,6 +31,7 @@ public class AccountingConfig implements Serializable {
 	private Account salaryChargedRetInKind;
 	private Account defaultSocialInsurance;
 	private Account defaultPendingSalary;
+	private Account salaryDedInKind;
 	private Account salaryOtherDeductions;
 	private Account salaryDedAdvPayment;
 	private Account salaryDedSeize;
@@ -245,7 +246,13 @@ public class AccountingConfig implements Serializable {
 		this.salaryDedAdvPayment = salaryDedAdvPayment;
 		return this;
 	}
-	
+	public Account getSalaryDedInKind() {
+		return salaryDedInKind;
+	}
+	public AccountingConfig setSalaryDedInKind(Account salaryDedInKind) {
+		this.salaryDedInKind = salaryDedInKind;
+		return this;
+	}
 	public Account getSalaryOtherDeductions() {
 		return salaryOtherDeductions;
 	}

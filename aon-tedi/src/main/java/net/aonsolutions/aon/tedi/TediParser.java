@@ -439,9 +439,9 @@ public class TediParser {
 		if (ctx.getTediResult().getInvoice().getIssueDate() == null
 			&& ctx.getTediResult().getInvoice().getRegistry() != null) {
 			ctx.getTediResult().getInvoice().setIssueDate( new Date());
-			ctx.getTediResult().getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.ISSUE_DATE
-					,InvoiceErrorKey.ISSUE_DATE.getDescription()
-					, new SimpleDateFormat("dd/MM/yyyy").format(new Date())));
+//			ctx.getTediResult().getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.ISSUE_DATE
+//					,InvoiceErrorKey.ISSUE_DATE.getDescription()
+//					, new SimpleDateFormat("dd/MM/yyyy").format(new Date())));
 		}
 	};
 
@@ -465,13 +465,13 @@ public class TediParser {
 					result.getTedi().getSender().setName(ar.getName());
 					if (result.getInvoice().getType() == InvoiceType.PURCHASE) {
 						result.getInvoice().setType( InvoiceType.EXPENSES );
-						result.getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.TYPE,InvoiceErrorKey.TYPE.getDescription(),InvoiceType.EXPENSES.getDescription()));
+//						result.getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.TYPE,InvoiceErrorKey.TYPE.getDescription(),InvoiceType.EXPENSES.getDescription()));
 					}
 				} else  if (ar.getType() == AccountingRegistryType.SUPPLIER) {
 					result.getTedi().getSender().setName(ar.getName());
 					if (result.getInvoice().getType() != InvoiceType.PURCHASE) {
 						result.getInvoice().setType( InvoiceType.PURCHASE );
-						result.getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.TYPE,InvoiceErrorKey.TYPE.getDescription(),InvoiceType.PURCHASE.getDescription()));
+//						result.getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.TYPE,InvoiceErrorKey.TYPE.getDescription(),InvoiceType.PURCHASE.getDescription()));
 					}
 				}
 			}
@@ -599,7 +599,7 @@ public class TediParser {
 		}
 		if (result.getInvoice().getRegistryDocumentCountry() == null) {
 			result.getInvoice().setRegistryDocumentCountry(Country.ES);
-			result.getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.RDOCUMENT_COUNTRY,InvoiceErrorKey.RDOCUMENT_COUNTRY.getDescription(),Country.ES.getIso2()));
+//			result.getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.RDOCUMENT_COUNTRY,InvoiceErrorKey.RDOCUMENT_COUNTRY.getDescription(),Country.ES.getIso2()));
 		}
 		return false;
 	}		
@@ -610,7 +610,7 @@ public class TediParser {
 			if (willOverflow(INVOICE.SERIES, ctx.getTediResult().getInvoice().getSeries())) {
 				String series = AonStringUtils.substring(ctx.getTediResult().getInvoice().getSeries(), 0, INVOICE.SERIES.getDataType().length());
 				ctx.getTediResult().getInvoice().setSeries( series );	
-				ctx.getTediResult().getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.SERIES,InvoiceErrorKey.SERIES.getDescription(), series ));	
+//				ctx.getTediResult().getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.SERIES,InvoiceErrorKey.SERIES.getDescription(), series ));	
 			}
 		}
 	};
@@ -621,7 +621,7 @@ public class TediParser {
 			if (result.getTedi().getNumber() != null) {
 				result.getInvoice().setNumber(result.getTedi().getNumber());
 			} else {
-				result.getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.NUMBER, InvoiceErrorKey.NUMBER.getDescription(), 0) );
+//				result.getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.NUMBER, InvoiceErrorKey.NUMBER.getDescription(), 0) );
 				result.getInvoice().setNumber(0);
 			}
 		}
@@ -944,10 +944,10 @@ public class TediParser {
 			.filter( m -> m != null)
 			.filter( m -> AonStringUtils.isNotBlank( m.getMessage())) 
 			.map( m -> m.getLevel() == null
-				?InvoiceErrorMessages.C300.wrn( InvoiceErrorKey.GENERIC, m.getMessage() )
+				?InvoiceErrorMessages.C300.wrn( InvoiceErrorKey.OCR, m.getMessage() )
 				:m.getLevel().visit( new InvoiceErrorLevelVisitor<InvoiceError>() {
-					@Override public InvoiceError visitINF() {return InvoiceErrorMessages.C300.inf( InvoiceErrorKey.GENERIC, m.getMessage());}
-					@Override public InvoiceError visitWRN() {return InvoiceErrorMessages.C300.wrn( InvoiceErrorKey.GENERIC, m.getMessage());}
+					@Override public InvoiceError visitINF() {return InvoiceErrorMessages.C300.inf( InvoiceErrorKey.OCR, m.getMessage());}
+					@Override public InvoiceError visitWRN() {return InvoiceErrorMessages.C300.wrn( InvoiceErrorKey.OCR, m.getMessage());}
 					@Override public InvoiceError visitERR() {return visitWRN();}
 				})
 			)

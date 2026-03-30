@@ -33,6 +33,7 @@ import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
+import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.enumeration.ProductType;
@@ -40,6 +41,7 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class AccountEntryInvoiceWriter implements Serializable {
@@ -179,9 +181,9 @@ public class AccountEntryInvoiceWriter implements Serializable {
 		double total = getPriceStrategy().getTotalPrice(invoice, invoice);
 		boolean ignoreTaxFree = !invoice.isSales() && (invoice.isIntracommunity() || invoice.isOtherISP() || (!invoice.isNational() && invoice.isService()));
 		List<TaxBreakDown> taxBreakDownList = getPriceStrategy().getTaxBreakDowns(invoice, invoice, ignoreTaxFree);
-		Map<Account, Double> retentionQuotas = obtainRetentionQuotasPerAccount(taxBreakDownList, invoice);
-		Map<Account, Double> taxQuotas = obtainTaxQuotasPerAccount(taxBreakDownList, invoice, ignoreTaxFree);
-		Map<Account, Double> bases = obtainBasesPerAccount(invoice);
+		Map<Account, Double> retentionQuotas = obtainRetentionQuotasPerAccount(taxBreakDownList, invoice, save);
+		Map<Account, Double> taxQuotas = obtainTaxQuotasPerAccount(taxBreakDownList, invoice, ignoreTaxFree, save);
+		Map<Account, Double> bases = obtainBasesPerAccount(invoice, save);
 		List<AccountEntryDetail> details = insertEntryDetails(entry, account, 
 					obtainConcept(invoice, total), invoice.getDocumentNumber(), 
 					total, retentionQuotas, taxQuotas, bases, save);
@@ -204,18 +206,20 @@ public class AccountEntryInvoiceWriter implements Serializable {
 		return recordInvoice(invoice, false);
 	}
 	
-	private Map<Account, Double> obtainRetentionQuotasPerAccount(List<TaxBreakDown> taxBreakDownList, Invoice invoice) throws ManagerBeanException {
+	private Map<Account, Double> obtainRetentionQuotasPerAccount(List<TaxBreakDown> taxBreakDownList, Invoice invoice, boolean save) throws ManagerBeanException {
 		TaxRecordingTo recordingTo = new TaxRecordingTo();
 		for (TaxBreakDown taxBreakDown : taxBreakDownList) {
 			if (taxBreakDown.getTaxType().equals(TaxType.RETENTION)) {
 				recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), CommonUtil.round(taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota()));
-				insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getAccount());
+				if (save) {
+					insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getAccount());
+				}
 			}
 		}
 		return recordingTo.getTaxQuotaAccountMap();
 	}
 
-	private Map<Account, Double> obtainTaxQuotasPerAccount(List<TaxBreakDown> taxBreakDownList, Invoice invoice, boolean ignoreTaxFree) throws ManagerBeanException {
+	private Map<Account, Double> obtainTaxQuotasPerAccount(List<TaxBreakDown> taxBreakDownList, Invoice invoice, boolean ignoreTaxFree, boolean save) throws ManagerBeanException {
 		TaxRecordingTo recordingTo = new TaxRecordingTo();
 		for (TaxBreakDown taxBreakDown : taxBreakDownList) {
 			if (!taxBreakDown.getTaxType().equals(TaxType.RETENTION)) {
@@ -228,10 +232,14 @@ public class AccountEntryInvoiceWriter implements Serializable {
 						throw new ManagerBeanException("No se ha definido cuenta contable para el IVA");
 					}
 					recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), quota);
-					insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getAccount());
+					if (save) {
+						insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getAccount());
+					}
 					if (ignoreTaxFree) {
 						recordingTo.addTaxQuotaAccount(taxBreakDown.getBalancingAccount(), CommonUtil.round(quota * (-1)));
-						insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getBalancingAccount());
+						if (save) {
+							insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getBalancingAccount());
+						}
 					} else {
 						if (taxBreakDown.getDeductibleQuota() != CommonUtil.round(taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota())) {
 							Account account = AccountingUtil.obtainDefaultAccount(AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC);
@@ -240,7 +248,9 @@ public class AccountEntryInvoiceWriter implements Serializable {
 							}
 							quota = CommonUtil.round(taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota() - taxBreakDown.getDeductibleQuota());
 							recordingTo.addTaxQuotaAccount(account, quota);
-							insertInvoiceTaxAccount(invoice, taxBreakDown, account);
+							if (save) {
+								insertInvoiceTaxAccount(invoice, taxBreakDown, account);
+							}
 						}
 					}
 				} else {
@@ -249,10 +259,14 @@ public class AccountEntryInvoiceWriter implements Serializable {
 						throw new ManagerBeanException("No se ha definido cuenta contable para el IVA");
 					}
 					recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), quota);
-					insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getAccount());
+					if (save) {
+						insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getAccount());
+					}
 					if (ignoreTaxFree) {
 						recordingTo.addTaxQuotaAccount(taxBreakDown.getBalancingAccount(), CommonUtil.round(quota * (-1)));
-						insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getBalancingAccount());
+						if (save) {
+							insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getBalancingAccount());
+						}
 					} 
 				}
 			}
@@ -260,8 +274,8 @@ public class AccountEntryInvoiceWriter implements Serializable {
 		return recordingTo.getTaxQuotaAccountMap();
 	}
 	
-	private Map<Account, Double> obtainBasesPerAccount(Invoice invoice) throws ManagerBeanException {
-		Map<Account, Double> basesPerAccount = new HashMap<Account, Double>();
+	private Map<Account, Double> obtainBasesPerAccount(Invoice invoice, boolean save) throws ManagerBeanException {
+		Map<Account, Double> basesPerAccount = new HashMap<>();
 		if (invoice.isInvestment()) {
 			if (!invoice.isSales()) {
 				fillPurchaseBasesPerAccountFromAmortization(invoice, basesPerAccount);	
@@ -269,13 +283,13 @@ public class AccountEntryInvoiceWriter implements Serializable {
 				fillSaleBasesPerAccountFromAmortization(invoice, basesPerAccount);
 			}
 		} else {
-			fillBasesPerAccountFromInvoiceDetail(invoice, basesPerAccount);
+			fillBasesPerAccountFromInvoiceDetail(invoice, basesPerAccount, save);
 		}
 		if (basesPerAccount.size() > 1) {
 			double diffBase = invoice.getTaxableBase();
 			Iterator<Account> iter = basesPerAccount.keySet().iterator();
 			while (iter.hasNext()) {
-				Account account = (Account)iter.next();
+				Account account = iter.next();
 				double base = CommonUtil.round(basesPerAccount.get(account).doubleValue());
 				if (iter.hasNext()) {
 					basesPerAccount.put(account, CommonUtil.round(base, 4));
@@ -288,7 +302,7 @@ public class AccountEntryInvoiceWriter implements Serializable {
 		return basesPerAccount;
 	}
 
-	private void fillBasesPerAccountFromInvoiceDetail(Invoice invoice, Map<Account, Double> basesPerAccount) throws ManagerBeanException {
+	private void fillBasesPerAccountFromInvoiceDetail(Invoice invoice, Map<Account, Double> basesPerAccount, boolean save) throws ManagerBeanException {
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
@@ -308,21 +322,19 @@ public class AccountEntryInvoiceWriter implements Serializable {
 				if (invoiceDetail.isPrepayment()) {
 					account = obtainPrepaymentDefaultAccount();
 				} else {
-					if (invoice.isSales()) {
-						account = obtainSalesDefaultAccount();
-					} else if (invoice.isPurchase()) {
-						account = obtainPurchaseDefaultAccount();	
-					} else {
-						IManagerBean invoiceDetailAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
-						Criteria crit = new Criteria();
-						crit.addEqualExpression(invoiceDetailAccountBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_ID), invoiceDetail.getId());
-						List<ITransferObject> listAccounts = invoiceDetailAccountBean.getList(crit);
-						if ( listAccounts != null && listAccounts.size() > 0) {
-							InvoiceDetailAccount toAccount = (InvoiceDetailAccount) listAccounts.get(0);
-							account = toAccount.getAccount();
-						}
-						if (account == null) {
-							account = obtainPurchaseDefaultAccount();
+					if (invoiceDetail.getSource() == InvoiceSource.TEDI) {
+						account = obtainAccountFromInvoiceDetailAccount(invoiceDetail);
+					} 
+					if (account == null) {		
+						if (invoice.isSales()) {
+							account = obtainSalesDefaultAccount();
+						} else if (invoice.isPurchase()) {
+							account = obtainPurchaseDefaultAccount();	
+						} else {
+							account = obtainAccountFromInvoiceDetailAccount(invoiceDetail);
+							if (account == null) {
+								account = obtainPurchaseDefaultAccount();
+							}
 						}
 					}
 				}
@@ -330,8 +342,22 @@ public class AccountEntryInvoiceWriter implements Serializable {
 			double base = invoiceDetail.getTaxableBase();
 			base += (basesPerAccount.containsKey(account)) ? basesPerAccount.get(account).doubleValue() : 0;
 			basesPerAccount.put(account, CommonUtil.round(base, 4));
-			insertInvoiceDetailAccount(invoiceDetail, account);
+			if (save) {
+				insertInvoiceDetailAccount(invoiceDetail, account);
+			}
 		}
+	}
+	
+	private Account obtainAccountFromInvoiceDetailAccount(InvoiceDetail invoiceDetail) throws ManagerBeanException {
+		IManagerBean invoiceDetailAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
+		Criteria crit = new Criteria();
+		crit.addEqualExpression(invoiceDetailAccountBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_ID), invoiceDetail.getId());
+		List<ITransferObject> listAccounts = invoiceDetailAccountBean.getList(crit);
+		if ( AonCollectionUtils.isNotEmpty(listAccounts) ) {
+			InvoiceDetailAccount toAccount = (InvoiceDetailAccount) listAccounts.get(0);
+			return toAccount.getAccount();
+		}
+		return null;
 	}
 	
 	private void fillPurchaseBasesPerAccountFromAmortization(Invoice invoice,Map<Account, Double> basesPerAccount) throws ManagerBeanException {
@@ -341,7 +367,7 @@ public class AccountEntryInvoiceWriter implements Serializable {
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_INVOICE_SALES), false);
 		List<ITransferObject> list = bean.getList(criteria);
 		// De momento solo se puede vincular una ficha de amortizacion a una factura.
-		if (list != null && list.size() > 0) {
+		if (AonCollectionUtils.isNotEmpty( list ) ) {
 			AmortizationInvoice ai = (AmortizationInvoice) list.get(0);
 			basesPerAccount.put(ai.getAmortization().getFixedAssetAccount(), invoice.getTaxableBase());		
 		}
@@ -354,7 +380,7 @@ public class AccountEntryInvoiceWriter implements Serializable {
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_INVOICE_SALES), true);
 		List<ITransferObject> list = bean.getList(criteria);
 		// De momento solo se puede vincular una factura a una ficha de amortizacion.
-		if (list != null && list.size() > 0) {
+		if (AonCollectionUtils.isNotEmpty(list) ) {
 			AmortizationInvoice ai = (AmortizationInvoice) list.get(0);
 			double amount = ai.getAmortization().getAmount();
 			basesPerAccount.put(ai.getAmortization().getFixedAssetAccount(), amount);
@@ -365,7 +391,7 @@ public class AccountEntryInvoiceWriter implements Serializable {
 			criteria.addOrder(detailBean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_FROM_DATE), false);
 			list = detailBean.getList(criteria);
 			double accumulated = 0.0;
-			if (list != null && list.size() > 0) {
+			if ( AonCollectionUtils.isNotEmpty( list ) ) {
 				AmortizationDetail ad = (AmortizationDetail) list.get(0);
 				accumulated = ad.getAccumulated();
 				basesPerAccount.put(ai.getAmortization().getAccumulatedAccount(), CommonUtil.round(accumulated*(-1),2));	
@@ -391,11 +417,29 @@ public class AccountEntryInvoiceWriter implements Serializable {
 	}
 	
 	private void insertInvoiceDetailAccount(InvoiceDetail invoiceDetail, Account account) throws ManagerBeanException {
+		if (account == null) return;
 		IManagerBean invoiceDetailAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
-		InvoiceDetailAccount invoiceDetailAccount = new InvoiceDetailAccount();
-		invoiceDetailAccount.setInvoiceDetail(invoiceDetail);
-		invoiceDetailAccount.setAccount(account);
-		invoiceDetailAccountBean.insert(invoiceDetailAccount);
+		boolean exists = false;
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailAccountBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_ID), invoiceDetail.getId());
+		List<ITransferObject> list = invoiceDetailAccountBean.getList(criteria);
+		if (AonCollectionUtils.isNotEmpty(list)) {
+			for (ITransferObject to : list) {
+				InvoiceDetailAccount ida = (InvoiceDetailAccount) to;
+				if (ida.getAccount() != null && ida.getAccount().getId().equals(account.getId())) {
+					exists = true;
+				} else {
+					invoiceDetailAccountBean.remove(ida);
+				}
+			}
+		}
+
+		if (!exists) {
+			InvoiceDetailAccount invoiceDetailAccount = new InvoiceDetailAccount();
+			invoiceDetailAccount.setInvoiceDetail(invoiceDetail);
+			invoiceDetailAccount.setAccount(account);
+			invoiceDetailAccountBean.insert(invoiceDetailAccount);
+		}
 	}
 
 	private void insertInvoiceTaxAccount(Invoice invoice, TaxBreakDown taxBreakDown, Account account) throws ManagerBeanException {
@@ -465,7 +509,7 @@ public class AccountEntryInvoiceWriter implements Serializable {
 			String concept,	String documentNumber, double invoiceTotal, 
 			Map<Account, Double> retentionQuotasPerAccount, Map<Account, Double> taxQuotasPerAccount, 
 			Map<Account, Double> basesPerAccount, boolean save) throws ManagerBeanException {
-		List<AccountEntryDetail> details = new LinkedList<AccountEntryDetail>();
+		List<AccountEntryDetail> details = new LinkedList<>();
 		IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		// Primer Apunte (Cliente o Proveedor)
 		AccountEntryDetail entryDetail = new AccountEntryDetail();

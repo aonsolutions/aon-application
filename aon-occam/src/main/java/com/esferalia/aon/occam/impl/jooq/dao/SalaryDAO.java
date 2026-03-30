@@ -167,8 +167,9 @@ public class SalaryDAO {
 						Byte type = ded.get(SALARY_DEDUCTION.TYPE);
 						if (AonNumberUtils.equals(type, DEDUCTION_ADVANCE) ) {
 							entry.setSalaryDedAdvPayment(AonMathUtils.round(entry.getSalaryDedAdvPayment() + amount));
-						} else if (AonNumberUtils.equals(type,DEDUCTION_TYPE_OTHER) 
-								|| AonNumberUtils.equals(type,DEDUCTION_IN_KIND) ){
+						} else if (AonNumberUtils.equals(type,DEDUCTION_IN_KIND)) {
+							entry.setSalaryDedInKind( AonMathUtils.round(entry.getSalaryDedInKind() + amount));
+						} else if (AonNumberUtils.equals(type,DEDUCTION_TYPE_OTHER)){
 							entry.setSalaryOtherDeductions( AonMathUtils.round(entry.getSalaryOtherDeductions() + amount));
 						}
 				});

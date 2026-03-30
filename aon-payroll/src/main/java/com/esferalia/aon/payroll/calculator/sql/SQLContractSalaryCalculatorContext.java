@@ -1852,6 +1852,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	public boolean next(NextHook hook) throws SQLException, ExpressionException {
 
 		boolean next = this.resultSet.next();
+		
+		liquids.clear();
+		payments.clear();
+		solveLiquids.clear();
+		solvePayments.clear();
+		
 		if (next) {
 			initContractExpressionCtx(hook);
 		} else {
