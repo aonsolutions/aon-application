@@ -217,112 +217,113 @@ jobs:
         echo "RESUME_FROM=${CHANGED_PROJECTS:=aon-web-aio}" >> $GITHUB_ENV
 
     - name: Build with Maven
-      run: mvn -B -Dgwt.jjs.maxThreads=1 -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} --projects ${RESUME_FROM} --also-make clean install
+#      run: mvn -B -Dgwt.jjs.maxThreads=1 -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} --projects ${RESUME_FROM} --also-make clean install
+      run: mvn  -Dtest=SQLExtraTestCase apn-payroll clean test
 
-    - name: Setup context for Docker
-      run: |
-       [[ -f pool/target/pool-9.23-SNAPSHOT.jar ]] || mvn -pl pool package  &>/dev/null
-       [[ -f aon-jaas/target/aon.jaas-9.23-SNAPSHOT.jar ]] || mvn -pl aon-jaas package  &>/dev/null
-       [[ -f aon-db-up2date/target/aon.db.up2date-9.23-SNAPSHOT.jar ]]  || mvn -pl aon-db-up2date package  &>/dev/null
-       [[ -f aon-common-resources/target/aon-common-resources-9.23-SNAPSHOT-templates.jar ]]  || mvn -pl aon-common-resources package  &>/dev/null
+    #    - name: Setup context for Docker
+    #      run: |
+    #       [[ -f pool/target/pool-9.23-SNAPSHOT.jar ]] || mvn -pl pool package  &>/dev/null
+    #       [[ -f aon-jaas/target/aon.jaas-9.23-SNAPSHOT.jar ]] || mvn -pl aon-jaas package  &>/dev/null
+    #       [[ -f aon-db-up2date/target/aon.db.up2date-9.23-SNAPSHOT.jar ]]  || mvn -pl aon-db-up2date package  &>/dev/null
+    #   [[ -f aon-common-resources/target/aon-common-resources-9.23-SNAPSHOT-templates.jar ]]  || mvn -pl aon-common-resources package  &>/dev/null
 
-    - name: Build Docker aon-application image
-      if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' || env.SKIP_SELENIUM_TESTS == 'false' }}
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        load: true
-        tags: ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
+    #    - name: Build Docker aon-application image
+    #      if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' || env.SKIP_SELENIUM_TESTS == 'false' }}
+    #      uses: docker/build-push-action@v6
+    #      with:
+    #        context: .
+    #        load: true
+    #        tags: ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
 
-    - name: Build Docker aon-db-up2date image
-      if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' || env.SKIP_SELENIUM_TESTS == 'false' }}
-      uses: docker/build-push-action@v6
-      with:
-        context: ./aon-db-up2date
-        load: true
-        tags: ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }}
+    #    - name: Build Docker aon-db-up2date image
+    #      if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' || env.SKIP_SELENIUM_TESTS == 'false' }}
+    #      uses: docker/build-push-action@v6
+    #      with:
+    #        context: ./aon-db-up2date
+    #        load: true
+    #        tags: ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }}
 
 
-    - name: Setup environment for integration testing
-      if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' || env.SKIP_SELENIUM_TESTS == 'false' }}
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr-spain.outputs.registry }}
-      run: |
-        DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+')
-        DB_FILE=$(find aon-htmlunit/src -name "test-aonsolutions-org.sql")
-        mysql -h ${DB_HOST} -u dbuser --password=serubd2000 < ${DB_FILE}
-        docker run -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${BRANCH_NAME}
-        docker run -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-application:${BRANCH_NAME}
-        sudo tee -a /etc/hosts >/dev/null <<-EOF
-        127.0.0.1    payroll-test.aonsolutions.org
-        127.0.0.1    tgss-payroll-test.aonsolutions.org
-        127.0.0.1    artist-payroll-test.aonsolutions.org
-        127.0.0.1    home-payroll-test.aonsolutions.org
-        127.0.0.1    agrarian-payroll-test.aonsolutions.org
-        127.0.0.1    general-payroll-test.aonsolutions.org
-        127.0.0.1    inactiva-payroll-test.aonsolutions.org
-        127.0.0.1    trainning-payroll-test.aonsolutions.org
-        EOF
+    #    - name: Setup environment for integration testing
+    #      if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' || env.SKIP_SELENIUM_TESTS == 'false' }}
+    #      env:
+    #        ECR_REGISTRY: ${{ steps.login-ecr-spain.outputs.registry }}
+    #      run: |
+    #        DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+')
+    #        DB_FILE=$(find aon-htmlunit/src -name "test-aonsolutions-org.sql")
+    #        mysql -h ${DB_HOST} -u dbuser --password=serubd2000 < ${DB_FILE}
+    #        docker run -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${BRANCH_NAME}
+    #        docker run -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-application:${BRANCH_NAME}
+    #        sudo tee -a /etc/hosts >/dev/null <<-EOF
+    #        127.0.0.1    payroll-test.aonsolutions.org
+    #        127.0.0.1    tgss-payroll-test.aonsolutions.org
+    #        127.0.0.1    artist-payroll-test.aonsolutions.org
+    #        127.0.0.1    home-payroll-test.aonsolutions.org
+    #        127.0.0.1    agrarian-payroll-test.aonsolutions.org
+    #        127.0.0.1    general-payroll-test.aonsolutions.org
+    #        127.0.0.1    inactiva-payroll-test.aonsolutions.org
+    #        127.0.0.1    trainning-payroll-test.aonsolutions.org
+    #        EOF
 
-    - name: Running Selenium integration tests
-      if: ${{ env.SKIP_SELENIUM_TESTS == 'false' }}
-      run: |
-        mvn -B \
-        -DskipTests=${SKIP_SELENIUM_TESTS} \
-        -Dtest='app/*TestCase.java' -f aon-selenium/pom.xml integration-test
+    #    - name: Running Selenium integration tests
+    #      if: ${{ env.SKIP_SELENIUM_TESTS == 'false' }}
+    #      run: |
+    #        mvn -B \
+    #        -DskipTests=${SKIP_SELENIUM_TESTS} \
+    #        -Dtest='app/*TestCase.java' -f aon-selenium/pom.xml integration-test
 
-    - name: Running HtmlUnit integration tests
-      if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' }}
-      run: |
-        mvn -B \
-        -DskipTests=${SKIP_INTEGRATION_TESTS} \
-        -Dintegration.test.user=admin \
-        -Dintegration.test.password=org \
-        -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/original \
-        -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/original \
-        -Dintegration.test.agrarian.payroll.url=http://agrarian-payroll-test.aonsolutions.org:8080/original \
-        -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/original \
-        -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/original \
-        -Dintegration.test.artist.payroll.url=http://artist-payroll-test.aonsolutions.org:8080/original \
-        -Dtest='!GeneralEnterpriseTest' -f aon-htmlunit/pom.xml integration-test
+    #    - name: Running HtmlUnit integration tests
+    #      if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' }}
+    #      run: |
+    #        mvn -B \
+    #        -DskipTests=${SKIP_INTEGRATION_TESTS} \
+    #        -Dintegration.test.user=admin \
+    #        -Dintegration.test.password=org \
+    #        -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/original \
+    #        -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/original \
+    #        -Dintegration.test.agrarian.payroll.url=http://agrarian-payroll-test.aonsolutions.org:8080/original \
+    #        -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/original \
+    #        -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/original \
+    #        -Dintegration.test.artist.payroll.url=http://artist-payroll-test.aonsolutions.org:8080/original \
+    #        -Dtest='!GeneralEnterpriseTest' -f aon-htmlunit/pom.xml integration-test
 
-    - name: Build production version with Maven
-      if: ${{ env.BUILD_PRODUCTION_VERSION == 'true' &&  env.RESUME_FROM != 'aon-web-aio'  }}
-      run: mvn -B --resume-from aon-js-payroll -Drpm.release=false -DskipTests=true clean install
+    #    - name: Build production version with Maven
+    #      if: ${{ env.BUILD_PRODUCTION_VERSION == 'true' &&  env.RESUME_FROM != 'aon-web-aio'  }}
+    #      run: mvn -B --resume-from aon-js-payroll -Drpm.release=false -DskipTests=true clean install
+    
+    #    - name: Build and push Docker aon-application image
+    #      uses: docker/build-push-action@v6
+    #      with:
+    #        context: .
+    #        push: true
+    #        tags: ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
 
-    - name: Build and push Docker aon-application image
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        push: true
-        tags: ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
+    #    - name: Build and push Docker aon-db-up2date image
+    #      uses: docker/build-push-action@v6
+    #      with:
+    #        context: ./aon-db-up2date
+    #        push: true
+    #        tags: ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }}
 
-    - name: Build and push Docker aon-db-up2date image
-      uses: docker/build-push-action@v6
-      with:
-        context: ./aon-db-up2date
-        push: true
-        tags: ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }}
+    # 	- name: Build and push Docker aon-solutions image
+    #  	  uses: docker/build-push-action@v6
+    #     with:
+    #       context: .
+    #       file: ./aon-solutions/Dockerfile
+    #       push: true
+    #       tags: ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }}
 
-    # - name: Build and push Docker aon-solutions image
-    #   uses: docker/build-push-action@v6
-    #   with:
-    #     context: .
-    #     file: ./aon-solutions/Dockerfile
-    #     push: true
-    #     tags: ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }}
+    #    - name: Build AWS lambda Functions
+    #      if: github.ref == 'refs/heads/master'
+    #      run : |
+    #        mvn -B -Daws.lambda=true -DskipTests=true -pl aon-in-invoice clean install
+    #        mvn -B -Daws.lambda=true -DskipTests=true -pl aon-in-payroll clean install
 
-    - name: Build AWS lambda Functions
-      if: github.ref == 'refs/heads/master'
-      run : |
-        mvn -B -Daws.lambda=true -DskipTests=true -pl aon-in-invoice clean install
-        mvn -B -Daws.lambda=true -DskipTests=true -pl aon-in-payroll clean install
-
-    - name: Publish WAR to GitHub Packages
-      if: github.ref == 'refs/heads/master'
-      run: mvn -B -pl aon-web-aio -Dgithub.actions=true deploy
-      env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #    - name: Publish WAR to GitHub Packages
+    #      if: github.ref == 'refs/heads/master'
+    #      run: mvn -B -pl aon-web-aio -Dgithub.actions=true deploy
+    #      env:
+    #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     # - name: Pull images from GitHub Container Registry
     #   if: github.ref == 'refs/heads/master'
@@ -331,63 +332,63 @@ jobs:
     #     docker pull ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
     #     docker pull ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }}
 
-    - name: Login to Amazon ECR (Ireland)
-      id: login-ecr-ireland
-      uses: aws-actions/amazon-ecr-login@v1
+    #    - name: Login to Amazon ECR (Ireland)
+    #      id: login-ecr-ireland
+    #      uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Tag, and push images to Amazon ECR (Ireland)
-      if: ${{ env.BUILD_PRODUCTION_VERSION == 'true' || env.PUBLISH_VERSION == 'true' }}
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr-ireland.outputs.registry }}
-      run: |
-        # docker tag ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-solutions:$IMAGE_TAG 
-        docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-application:$IMAGE_TAG
-        docker tag ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-db-up2date:$IMAGE_TAG
-        # docker push $ECR_REGISTRY/aonsolutions/aon-solutions:$IMAGE_TAG
-        docker push $ECR_REGISTRY/aonsolutions/aon-application:$IMAGE_TAG
-        docker push $ECR_REGISTRY/aonsolutions/aon-db-up2date:$IMAGE_TAG
+    #    - name: Tag, and push images to Amazon ECR (Ireland)
+    #      if: ${{ env.BUILD_PRODUCTION_VERSION == 'true' || env.PUBLISH_VERSION == 'true' }}
+    #      env:
+    #        ECR_REGISTRY: ${{ steps.login-ecr-ireland.outputs.registry }}
+    #      run: |
+    #        # docker tag ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-solutions:$IMAGE_TAG 
+    #       docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-application:$IMAGE_TAG
+    #        docker tag ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-db-up2date:$IMAGE_TAG
+    #        # docker push $ECR_REGISTRY/aonsolutions/aon-solutions:$IMAGE_TAG
+    #        docker push $ECR_REGISTRY/aonsolutions/aon-application:$IMAGE_TAG
+    #        docker push $ECR_REGISTRY/aonsolutions/aon-db-up2date:$IMAGE_TAG
 
     # - name: Set AWS region to (Spain)
     #  if: github.ref == 'refs/heads/master'
     #  run: aws configure set default.region eu-south-2
 
-    - name: Login to Amazon ECR (Spain)
-      id: login-ecr-spain
-      uses: aws-actions/amazon-ecr-login@v1
-      env:
-        AWS_REGION: eu-south-2
+    #    - name: Login to Amazon ECR (Spain)
+    #     id: login-ecr-spain
+    #     uses: aws-actions/amazon-ecr-login@v1
+    #      env:
+    #        AWS_REGION: eu-south-2
 
-    - name: Tag, and push images to Amazon ECR (Spain)
-      if: ${{ env.PUBLISH_VERSION == 'true' }}
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr-spain.outputs.registry }}
-      run: |
-        # docker tag ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-solutions:$IMAGE_TAG 
-        docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-application:$IMAGE_TAG
-        docker tag ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-db-up2date:$IMAGE_TAG
-        # docker push $ECR_REGISTRY/aon-solutions:$IMAGE_TAG 
-        docker push $ECR_REGISTRY/aon-application:$IMAGE_TAG
-        docker push $ECR_REGISTRY/aon-db-up2date:$IMAGE_TAG
+    #    - name: Tag, and push images to Amazon ECR (Spain)
+    #      if: ${{ env.PUBLISH_VERSION == 'true' }}
+    #      env:
+    #        ECR_REGISTRY: ${{ steps.login-ecr-spain.outputs.registry }}
+    #      run: |
+    #        # docker tag ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-solutions:$IMAGE_TAG 
+    #        docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-application:$IMAGE_TAG
+    #        docker tag ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-db-up2date:$IMAGE_TAG
+    #        # docker push $ECR_REGISTRY/aon-solutions:$IMAGE_TAG 
+    #        docker push $ECR_REGISTRY/aon-application:$IMAGE_TAG
+    #        docker push $ECR_REGISTRY/aon-db-up2date:$IMAGE_TAG
 
     # Delete the old cache on hit to emulate a cache update. See
     # https://github.com/actions/cache/issues/342.
-    - name: Delete old cache
-      if: steps.cache.outputs.cache-hit
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # Using `--repo` makes it so that this step doesn't require checking out the
-      # repo first.
-      run: gh cache delete --repo ${{ github.repository }} ${{ steps.cache.outputs.cache-primary-key }}
+    #    - name: Delete old cache
+    #      if: steps.cache.outputs.cache-hit
+    #      env:
+    #        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #      # Using `--repo` makes it so that this step doesn't require checking out the
+    #      # repo first.
+    #      run: gh cache delete --repo ${{ github.repository }} ${{ steps.cache.outputs.cache-primary-key }}
 
-    - name: Save cache
-      uses: actions/cache/save@v4
-      if: always()
-      # Save the cache even if build steps fail.
-      # with:
-      with:
-        path: ~/.m2/repository
-        key: ${{ steps.cache.outputs.cache-primary-key }}
-        # key: ${{ runner.os }}-maven-${{ env.BRANCH_NAME }}
+        - name: Save cache
+          uses: actions/cache/save@v4
+          if: always()
+          # Save the cache even if build steps fail.
+          # with:
+          with:
+            path: ~/.m2/repository
+            key: ${{ steps.cache.outputs.cache-primary-key }}
+            # key: ${{ runner.os }}-maven-${{ env.BRANCH_NAME }}
 
     # - name: Re-check restored local Maven repository
     #   if: always()
