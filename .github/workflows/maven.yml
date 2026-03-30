@@ -16,7 +16,7 @@ on:
         required: true
         default: 'snapshot'
       resumeFrom:
-        description: 'Resume from specified project'
+        description: 'Build specified project'
         type: string
         required: true
         default: 'changed'
@@ -29,17 +29,17 @@ on:
         description: 'Skip unit tests'
         type: boolean
         required: true
-        default: false
+        default: true
       skipSeleniumTests:
         description: 'Skip Selenium integration tests'
         type: boolean
         required: true
-        default: false
+        default: true
       skipIntegrationTests:
         description: 'Skip HtmlUnit integration  tests'
         type: boolean
         required: true
-        default: false
+        default: true
       buildProductionVersion:
         description: 'Build production version'
         type: boolean
@@ -217,7 +217,7 @@ jobs:
         echo "RESUME_FROM=${CHANGED_PROJECTS:=aon-web-aio}" >> $GITHUB_ENV
 
     - name: Build with Maven
-      run: mvn -B -Dgwt.jjs.maxThreads=1 -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} --projects ${RESUME_FROM} --also-make-dependents -T 1C clean install
+      run: mvn -B -Dgwt.jjs.maxThreads=1 -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} --projects ${RESUME_FROM} --also-make clean install
 
     - name: Setup context for Docker
       run: |
