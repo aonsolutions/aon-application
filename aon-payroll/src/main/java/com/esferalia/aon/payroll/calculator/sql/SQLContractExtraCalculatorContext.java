@@ -626,6 +626,8 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		if ( end.before(paymentEnd) && isNotBlank(payment.getName()))
 			expressionContext.setVariable(payment.getName(), 0.00, next(end), paymentEnd);
 		
+		System.out.println(payment.getName() + ": " + results.stream().map(r -> String.format("[%s - %s]: %f", r.getPeriod().getStart(), r.getPeriod().getEnd(), r.getValue())).collect(Collectors.joining(", ")));
+		
 	}
 
 	protected void addResult(ExpressionContext expressionContext, IContractPayment payment, Date resultStart,
