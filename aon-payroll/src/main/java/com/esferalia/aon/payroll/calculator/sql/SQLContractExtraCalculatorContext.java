@@ -605,6 +605,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		if ( results.size() == 1 && isConstant(payment, results)) {
 			results = expressionContext.eval(String.format("%s(%s)", ContextVariable.FRACTIONATE, payment.getExpression()), paymentStart, paymentEnd,
 					Double.class);
+			System.out.println(String.format("FRACTIONATE [%s]: %f [%s - %s]", payment.getName(), results.get(0).getValue(), paymentStart, paymentEnd));
 		}
 		
 		for (ITimedResult<Double> result : results) {
@@ -616,6 +617,8 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			double resultValue = resultDouble != null ? resultDouble : 0.00;
 
 			addResult(expressionContext, payment, resultStart, resultEnd, resultValue);
+			
+			System.out.println(String.format("ADD [%s]: %f [%s - %s]", payment.getName(), resultValue, resultStart, resultEnd));
 		}
 		Date start = results.get(0).getPeriod().getStart();
 		if ( start.after(paymentStart) && isNotBlank(payment.getName())) {
