@@ -37,6 +37,7 @@ import * as OPTION from './InvoiceOptions.js';
 import * as LS from '../../services/localStorageService.js';
 import * as JSF from '../aon-jsf-app.js';
 import { isValid } from '../../services/documentUtils.js';
+import { AonChat } from '../../components/aon-chat.js';
 
 
 export class AonInvoice extends AonElement {
@@ -126,7 +127,6 @@ export class AonInvoice extends AonElement {
 		this.RECTIFY_CONTENT_SERIES = this.RECTIFY_CONTENT + CONSTANT.RECTIFY_SERIES.initCap();
 		this.RECTIFY_CONTENT_DATE = this.RECTIFY_CONTENT + CONSTANT.RECTIFY_DATE.initCap();
 		this.RECTIFY_CONTENT_CAUSE = this.RECTIFY_CONTENT + CONSTANT.RECTIFY_CAUSE.initCap();
-		this.REMARKS_CARD = this.DATA + 'RemarksCard';
 		this.FILE = this.id + 'File';
 		this.INPUT_FILE = this.id + 'InputFile'
 		this.invoice = this.invoice || new Invoice().setType(this.type);
@@ -363,25 +363,16 @@ export class AonInvoice extends AonElement {
 			let general = this.getElement(this.GENERAL);
 			let generalCard = this.getElement(this.GENERAL_CARD);
 			let tax = this.getElement(this.TAX);
-			let remarksCard = this.getElement(this.REMARKS_CARD);
 			let commentCard = this.getElement(this.COMMENT_CARD);
 
 			if (window.innerWidth && window.innerWidth > 1100 && !this.fileOpened) {
 				if (general) general.style.display = 'flex';
 				if (generalCard) generalCard.style.width = '50%';
 				if (tax) tax.style.width = '50%';
-				let hasComment = this.invoice.comments && this.invoice.comments != undefined && this.invoice.comments != '';
-				let hasRemarks = this.invoice.remarks && this.invoice.remarks.length > 0;
-				if (hasComment && hasRemarks) {
-					if (remarksCard) remarksCard.style.width = '50%';
-					if (commentCard) commentCard.style.width = '50%';
-				}
-
 			} else if (window.innerWidth && window.innerWidth < 1050) {
 				if (general) general.style.display = 'block';
 				if (generalCard) generalCard.style.width = '100%';
 				if (tax) tax.style.width = '100%';
-				if (remarksCard) remarksCard.style.width = '100%';
 				if (commentCard) commentCard.style.width = '100%';
 			}
 
@@ -474,12 +465,6 @@ export class AonInvoice extends AonElement {
 				let d = document.getElementById(this.getApplication().OPTION_DIALOG);
 				let moreActions = [];
 				if (this.getInvoice().isInbox()) {
-					let remarks = ACTION.REMARKS;
-					remarks.permission = true;
-					remarks.backgroundColor = INVOICE.color;
-					remarks.fn = () => this.addInvoiceRemarks();
-					moreActions.push(remarks);
-
 					let comment = ACTION.COMMENT;
 					comment.permission = true;
 					comment.backgroundColor = INVOICE.color;
@@ -555,6 +540,7 @@ export class AonInvoice extends AonElement {
 		} else if (!this.invoice.isEmitida() && this.invoice.isInbox()) {
 			invoiceToolbar.addButtonTitle(ACTION.ADD_FILE, () => this.addInvoiceFile());
 		}
+		invoiceToolbar.addButtonTitle(ACTION.COMMENT, () => this.showLog());
 		this.buildCommunicationToolbar(invoiceToolbar);
 	}
 
@@ -745,48 +731,12 @@ export class AonInvoice extends AonElement {
 		parent.appendChild(commentsDiv);
 
 		let hasComment = this.invoice.comments && this.invoice.comments != undefined && this.invoice.comments != '';
-		let hasRemarks = this.invoice.remarks && this.invoice.remarks.length > 0;
 
-		let remarksCard = new AonCard();
-		remarksCard.id = this.REMARKS_CARD;
-		remarksCard.title = MSG.REMARKS;
-		if (hasComment && hasRemarks)
-			remarksCard.style.width = '50%';
-		else remarksCard.style.width = '100%';
-
-		if (!hasRemarks) remarksCard.className = CSS.AON_NONE;
-		commentsDiv.appendChild(remarksCard);
-
-		remarksCard.setContentHTML('');
-		remarksCard.setBackground('#ffc');
-
-		if (hasRemarks) {
-			let ul = this.createElement(TAG.UL);
-			ul.classList.add(CSS.AON_UL);
-			ul.style.width = '100%';
-			remarksCard.setContent(ul);
-			this.invoice.remarks.forEach((item, i) => {
-				if (item.reason) {
-					let li = this.createElement(TAG.LI);
-					li.style.backgrounColor = 'transparent !important';
-					let strs1 = item.reason + '';
-					strs1.split('\n').forEach(str => {
-						let span = this.createElement(TAG.SPAN);
-						span.innerHTML = str;
-						li.appendChild(span);
-						li.appendChild(this.createElement('br'));
-					});
-					ul.appendChild(li);
-				}
-			});
-		}
 
 		let commentsCard = new AonCard();
 		commentsCard.id = this.COMMENT_CARD;
 		commentsCard.title = MSG.COMMENT;
-		if (hasComment && hasRemarks)
-			commentsCard.style.width = '50%';
-		else commentsCard.style.width = '100%';
+		commentsCard.style.width = '100%';
 		if (!hasComment) commentsCard.className = CSS.AON_NONE;
 		commentsDiv.appendChild(commentsCard);
 
@@ -2651,15 +2601,99 @@ export class AonInvoice extends AonElement {
 		d.open();
 	}
 
+	showLog() {
+		let invoiceToolbar = this.getElement(this.TOOLBAR);
+		
+		let commentButton = this.getElement(invoiceToolbar.TITLE_SECTION + 'CommentButton');
+		let commentVisible = MATERIAL_ICONS.COMMENTS_DISABLED === commentButton.icon;
+
+		let showFileButton = this.getElement(invoiceToolbar.TITLE_SECTION + 'ShowFileButton');
+		if(showFileButton) showFileButton.icon = MATERIAL_ICONS.VISIBILITY;
+
+		let rightDiv = this.getElement(this.FILE);
+		let dataDiv = this.getElement(this.DATA);
+
+		let general = this.getElement(this.GENERAL);
+		let communication = this.getElement(this.COMMUNICATION);		
+		
+		if(commentVisible) {
+			commentButton.icon = MATERIAL_ICONS.COMMENT;
+			rightDiv.style.display = 'none';
+			dataDiv.style.width = '100%';
+
+			if (general) general.style.display = 'flex';
+			if (communication) communication.style.display = 'flex';
+		}  else {
+			commentButton.icon = MATERIAL_ICONS.COMMENTS_DISABLED;
+			rightDiv.style.display = 'block';
+			rightDiv.style.width = '50%';
+			dataDiv.style.width = '50%';
+
+			if (general) general.style.display = 'block';
+			if (communication) communication.style.display = 'block';
+
+			this.clearElement(rightDiv);
+
+			let chat =  new AonChat();
+			chat.workflows = this.getInvoice().remarks.map(r => {
+				let remark = {}; 
+				remark.action = r.action;
+				if(r.status == 'Rechazado') {
+					remark.action = {
+						title: 'Rechazada',
+						icon: MATERIAL_ICONS.REPORT,
+						color: 'red'
+					};
+				}
+
+				if(r.status == 'Papelera') {
+					remark.action = {
+						title: 'Enviado a papelera',
+						icon: MATERIAL_ICONS.DELETE,
+						color: 'gray'
+					};
+				}
+
+				if(r.status == 'Procesado') {
+					remark.action = {
+						title: 'Procesada',
+						icon: MATERIAL_ICONS.DOCUMENT_SCANNER,
+						color: 'gray'
+					};
+				}
+				remark.user = r.user;
+				remark.date = r.date;
+				remark.comment = r.comment || r.reason;
+				return remark;
+			}) || [];
+			chat.onComment((event) => {
+				this.invoice.remarks.push(event.detail);
+				alert(JSON.stringify(this.invoice.remarks, null, 2));
+				this.save();
+			});
+
+			rightDiv.appendChild(chat);
+		}
+
+		if (general) {
+			this.buildDetailCard();
+			this.buildFinanceCard();
+		}
+	}
+
 	showFile(reload) {
 		let invoiceToolbar = this.getElement(this.TOOLBAR);
 		let button = this.getElement(invoiceToolbar.TITLE_SECTION + 'ShowFileButton');
-		let visible = 'visibility_off' === button.icon;
+		let visible = MATERIAL_ICONS.VISIBILITY_OFF === button.icon;
+
+		let commentButton = this.getElement(invoiceToolbar.TITLE_SECTION + 'CommentButton');
+		if(commentButton) commentButton.icon = MATERIAL_ICONS.COMMENT;
+
 		let fileDiv = this.getElement(this.FILE);
 		let dataDiv = this.getElement(this.DATA);
 		this.fileOpened = !visible;
 		if (visible) {
-			button.icon = 'visibility';
+			button.icon = MATERIAL_ICONS.VISIBILITY;
 			fileDiv.style.display = 'none';
 			dataDiv.style.width = '100%';
 
@@ -2669,7 +2703,7 @@ export class AonInvoice extends AonElement {
 			let communication = this.getElement(this.COMMUNICATION);
 			if (communication) communication.style.display = 'flex';
 		} else {
-			button.icon = 'visibility_off';
+			button.icon = MATERIAL_ICONS.VISIBILITY_OFF;
 			fileDiv.style.display = 'block';
 			fileDiv.style.width = '50%';
 			dataDiv.style.width = '50%';
@@ -2864,7 +2898,7 @@ export class AonInvoice extends AonElement {
 				let dateStr = dt.getDay() + '/' + month + '/' + dt.getYear() + ' ' + dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
 				let comment = {
 					date: dateStr,
-					user: '',
+					user: LS.getDomainLogin(),
 					status: 'Rechazado',
 					reason: ta.value
 				};
