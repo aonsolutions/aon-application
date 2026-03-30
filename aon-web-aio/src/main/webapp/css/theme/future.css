@@ -262,7 +262,9 @@ body {
 #aonMenuListAppImgTop-contentIndex,
 #aonMenuAnchorDivIcon,
 #aonSigninToolbarHeaderToolSectionfile_downloadButtonIcon,
-#aonEventAddToolbarHeaderToolSectionhistoricButtonIcon
+#aonEventAddToolbarHeaderToolSectionhistoricButtonIcon,
+#createEnterpriseButtonIcon,
+#removeEnterpriseButtonIcon
  {
 	width: 25.5px;
 	height: 25.5px;
@@ -483,6 +485,14 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"].closeIcon {
 .suiteMenuContent{
 	margin: 1rem 0;
 	background-color: var(--aonBackgroundColor2);	
+}
+
+aon-fiscal-menu .suiteMenuContent{
+	margin: 0;
+}
+
+aon-fiscal-menu .suiteMenuDiv2{
+	padding: 0;
 }
 
 .suiteMenuDiv{
@@ -789,6 +799,12 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"].closeIcon {
 	background-color: var(--aonBackgroundColor);	
 }
 
+#aonFiscalBetaContent.aonContentBeta{
+	margin: 1rem 1rem 0rem 1rem;
+}
+
+#aonFiscalBetaContent.aonContentBeta #rootPanel > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(3)
+
 #aonSignin .aonContentBeta,
 #aonDocumental .aonContentBeta,
 #aonLaboral .aonContentBeta,
@@ -962,7 +978,7 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"].closeIcon {
 	max-height: 6rem;
 	right: 0;
 	padding: .5rem 1rem;
-	margin-right: 1rem;
+	margin-right: 3rem;
 }
 
 .aonParentDiv {
@@ -970,7 +986,8 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"].closeIcon {
 }
 
 .aonCompanyDiv {
-	margin: 2rem 0px 0px 2rem; ;
+	/*margin: 2rem 0px 0px 2rem;*/
+	padding: 2rem;
 }
 
 #aonCompanySpanTitle {
@@ -999,7 +1016,12 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"].closeIcon {
 }
 
 #aonCompanyTabFilter{
-	width:auto;
+	width: 100%;
+	background-color: var(--aonBackgroundColor2);
+}
+
+.aonTab .aonTabItem{
+	padding: 0;
 }
 
 .aonTab .aonTabItemText {
@@ -1040,7 +1062,7 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"].closeIcon {
 
 #UlCompanies .aonLiBeta {
 	min-height: 78px;
-	margin-right: 1.5rem;
+	/*margin-right: 1.5rem;*/
 }
 
 #UlCompanies li {
@@ -1656,7 +1678,8 @@ i[id$="ToolbarHeaderToolSectionNextButtonIcon"] {
 
 i[id$="ToolbarHeaderToolSectionDeleteButtonIcon"],
 i[id$="aonDocumentalToolbarHeaderToolSectionDeleteFileButtonIcon"],
-i[id$="aonDocumentalSheetToolbarHeaderToolSectionDeleteFileButtonIcon"] {
+i[id$="aonDocumentalSheetToolbarHeaderToolSectionDeleteFileButtonIcon"],
+#removeEnterpriseButtonIcon {
 	mask-image: url('/icons/trash-2.svg') ;
 }
 
@@ -1681,7 +1704,8 @@ i[id$="ToolbarHeaderToolSectionRefreshButtonIcon"] {
 
 i[id$="ToolbarHeaderToolSectionAddInvoiceButtonIcon"],
 i[id$="ToolbarHeaderToolSectionaddButtonIcon"],
-i[id$="aonDocumentalToolbarHeaderToolSectionAddButtonIcon"]{
+i[id$="aonDocumentalToolbarHeaderToolSectionAddButtonIcon"],
+#createEnterpriseButtonIcon{
     mask-image: url('/icons/plus.svg') ;
 }
 
