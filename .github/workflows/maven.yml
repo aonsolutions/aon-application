@@ -14,7 +14,7 @@ on:
         description: 'Maven command line'
         type: string
         required: true
-        default: 'mvn -DskipTests=true -Dgwt.working=true -T 1C  clean install'
+        default: '-DskipTests=true -Dgwt.working=true -T 1C  clean install'
     #      imageTag:
     #        description: 'Docker image tag'
     #        type: string
@@ -89,7 +89,7 @@ env:
   BROWSER: ${{ github.event.inputs.browser || 'chrome' }}
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   IMAGE_TAG: ${{ github.event.inputs.imageTag || 'snapshot' }}
-  MAVEN_CLI: ${{ github.event.inputs.mavenCli || 'mvn clean install' }}
+  MAVEN_CLI: ${{ github.event.inputs.mavenCli || 'clean install' }}
   RESUME_FROM: ${{ github.event.inputs.resumeFrom || '.' }}
   COMMIT_BEFORE: ${{ github.event.inputs.commitBefore || 'HEAD' }}
   JAVA_VERSION: ${{ github.event.inputs.javaVersion || 21 }}
@@ -216,7 +216,7 @@ jobs:
         EOF
 
     - name: Build with Maven
-      run: ${MAVEN_CLI}
+      run: mvn ${MAVEN_CLI}
     #      run: mvn -B -Dgwt.jjs.maxThreads=1 -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} --projects ${RESUME_FROM} --also-make clean install
 
     #    - name: Setup context for Docker
