@@ -117,6 +117,7 @@ export class Invoice {
       else this.remarks = [];
     
       this.selfconta = invoice.selfconta || false;
+      this.amortization = invoice.amortization || undefined;
 
       this.activity = invoice.activity;
       this.signed = invoice.signed;

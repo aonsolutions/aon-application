@@ -1747,7 +1747,7 @@ i[id$="aonOfficePanelToolbarHeaderToolSectionSearchAdvancedButtonIcon"] {
 }
 
 .aonTable tbody tr:hover, .aonTableTrChecked {
-  background-color: inherit;
+  background-color: var(--aonBackgroundColor2);
 }
 
 /* ========================== TimeControl Styles  ========================== */

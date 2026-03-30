@@ -38,6 +38,7 @@ import * as LS from '../../services/localStorageService.js';
 import * as JSF from '../aon-jsf-app.js';
 import { isValid } from '../../services/documentUtils.js';
 import { AonChat } from '../../components/aon-chat.js';
+import { AonEmail } from '../../components/aon-email.js';
 
 
 export class AonInvoice extends AonElement {
@@ -363,7 +364,6 @@ export class AonInvoice extends AonElement {
 			let general = this.getElement(this.GENERAL);
 			let generalCard = this.getElement(this.GENERAL_CARD);
 			let tax = this.getElement(this.TAX);
-			let commentCard = this.getElement(this.COMMENT_CARD);
 
 			if (window.innerWidth && window.innerWidth > 1100 && !this.fileOpened) {
 				if (general) general.style.display = 'flex';
@@ -373,7 +373,6 @@ export class AonInvoice extends AonElement {
 				if (general) general.style.display = 'block';
 				if (generalCard) generalCard.style.width = '100%';
 				if (tax) tax.style.width = '100%';
-				if (commentCard) commentCard.style.width = '100%';
 			}
 
 			if (window.innerWidth && window.innerWidth < 900) {
@@ -472,6 +471,14 @@ export class AonInvoice extends AonElement {
 					moreActions.push(comment);
 				}
 
+				if(this.isBeta() && !this.getInvoice().amortization && this.getInvoice().isRawdoc() && !this.getInvoice().isEmitida()) {
+					let inmobilized = ACTION.ADD_INMOBILIZED;
+					inmobilized.permission = true;
+					inmobilized.backgroundColor = INVOICE.color;
+					inmobilized.fn = () => this.buildInmobilized();
+					moreActions.push(inmobilized);
+				}
+
 				if (this.getInvoice().isEmitida()) {
 					let send = ACTION.SEND_INVOICE;
 					send.permission = true;
@@ -541,6 +548,7 @@ export class AonInvoice extends AonElement {
 			invoiceToolbar.addButtonTitle(ACTION.ADD_FILE, () => this.addInvoiceFile());
 		}
 		invoiceToolbar.addButtonTitle(ACTION.COMMENT, () => this.showLog());
+		if(this.invoice.amortization) invoiceToolbar.addButtonTitle(ACTION.AMORTIZATION, () => this.buildInmobilized(this.invoice.amortization));
 		this.buildCommunicationToolbar(invoiceToolbar);
 	}
 
@@ -741,8 +749,7 @@ export class AonInvoice extends AonElement {
 		commentsDiv.appendChild(commentsCard);
 
 		commentsCard.setContentHTML('');
-		// commentsCard.setBackground('#ECC0EF');
-		commentsCard.setBackground('#D3D8FF');
+		commentsCard.setBackground('#f5f5f5');
 
 		if (hasComment) {
 			let div = this.createElement(TAG.DIV);
@@ -2884,29 +2891,47 @@ export class AonInvoice extends AonElement {
 	}
 
 	rejectInvoice() {
+
+		let div = this.createDiv();
+
+		// let email = new AonEmail();
+		// email.id = 'rejectInvoiceEmail';
+		// email.title = MSG.EMAIL;
+		// div.appendChild(email);
+
+		let textArea = this.createElement('textarea');
+		textArea.id = 'commentTextArea';
+		textArea.maxLength = 256;
+		textArea.className = 'aonTextarea';
+		div.appendChild(textArea);
+
 		let d = this.getApplication().getDialog();
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.REJECT);
-		d.setContentHTML('<textarea id="commentTextArea" maxlength="256" class="aonTextarea"> </textarea>');
+		d.setContent(div);
 		d.addAcceptAction(() => {
-			let ta = this.getElement('commentTextArea');
-			if (!ta.value.isEmpty()) {
-				let dt = new Date()
-				let m = dt.getMonth() + 1;
-				let month = m < 10 ? '0' + m : m;
-				let dateStr = dt.getDay() + '/' + month + '/' + dt.getYear() + ' ' + dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
-				let comment = {
-					date: dateStr,
-					user: LS.getDomainLogin(),
-					status: 'Rechazado',
-					reason: ta.value
-				};
-				this.invoice.remarks.push(comment);
-			}
+			let dt = new Date()
+			let m = dt.getMonth() + 1;
+			let month = m < 10 ? '0' + m : m;
+			let dateStr = dt.getDay() + '/' + month + '/' + dt.getYear() + ' ' + dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
+			let comment = {
+				date: dateStr,
+				user: LS.getDomainLogin(),
+				status: 'Rechazado',
+				action: {
+					title: 'Rechazada',
+					icon: MATERIAL_ICONS.REPORT,
+					color: 'red'
+				},
+				comment: textArea.value
+			};
+			this.invoice.remarks.push(comment);
+
 			this.invoice.status = CONSTANT.REJECTED;
 			this.build();
 			this.save();
+			// ENVIAR POR EMAIL SI SE HA INTRODUCIDO EMAIL
 			this.updateCounter(getRejectFromOption(this.invoice), OPTION.RAWDOC_REJECT, 1);
 		});
 
@@ -2966,6 +2991,51 @@ export class AonInvoice extends AonElement {
 		d.setContent(textarea);
 		d.addAcceptAction(() => {
 			this.invoice.comments = textarea.value;
+			this.reload();
+		});
+		d.open();
+	}
+
+	buildInmobilized(amortization) {
+		let aonInvoice = this.getElement('aonInvoice');
+		let d = document.getElementById(aonInvoice.DIALOG);
+
+		let div = this.createDiv();
+
+		let date = createDate(this.id + 'InmbobilizedDate', MSG.DATE);
+		date.setDate(amortization ? amortization.date : this.invoice.date);
+		div.appendChild(date);	
+
+		let description = createInput( this.id + 'InmbobilizedDescription', MSG.DESCRIPTION);
+		description.value = amortization ? amortization.description : '';
+		div.appendChild(description);
+
+		let type = createSelect(this.id + 'InmbobilizedType', MSG.TYPE);
+		type.value = amortization ? amortization.type : '';
+		div.appendChild(type);
+
+		let period = createSelect(this.id + 'InmbobilizedPeriod', MSG.PERIOD);
+		period.value = amortization ? amortization.period : '';
+		div.appendChild(period);
+
+		let amount = this.createAonNumber(this.id + 'InmbobilizedAmount', MSG.AMOUNT);
+		amount.value = amortization ? amortization.amount : '';
+		div.appendChild(amount);
+
+		d.clear();
+		if (!this.isMobile()) d.width = '400px';
+		d.setTitle("Añadir Inmovilizado");
+		d.setContent(div);
+		d.addAcceptAction(() => {
+			this.invoice.amortization = {
+				description: description.value,
+				amount: amount.value,
+				date: date.getDateValue(),
+				type: type.value,
+				period: period.value
+			};
+
+			this.save();
 			this.reload();
 		});
 		d.open();
