@@ -6590,6 +6590,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		.calculate(getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate))
 		.getSalary();
 		
+		salary.getPaymentS().forEach(payment -> System.out.println(payment.getDescription() + " = " + payment.getAmount() ));
+		
 		Assert.assertEquals(1110.00, salary.getTotalPayment(), DELTA);
 		
 
