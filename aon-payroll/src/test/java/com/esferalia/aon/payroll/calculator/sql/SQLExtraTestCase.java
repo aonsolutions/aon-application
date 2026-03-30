@@ -6538,7 +6538,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				new Extra[] { 
 				new Extra() {
 					{
-						this.expression = "SALARIO_BASE + PLUS_SALARIAL + ANTIGUEDAD";
+						this.expression = "SALARIO_BASE";
 						this.month = Month.DECEMBER;
 						this.start = "01/01";
 						this.end = "31/12";
@@ -6547,7 +6547,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				}, 
 				new Extra() {
 					{
-						this.expression = "SALARIO_BASE + PLUS_SALARIAL + ANTIGUEDAD";
+						this.expression = "SALARIO_BASE";
 						this.month = Month.JULY;
 						this.start = "01/07 -1";
 						this.end = "30/06";
