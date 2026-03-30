@@ -240,6 +240,12 @@ public enum InvoiceErrorKey implements Serializable {
 			visitor.visitCommunication(t);
 		}
 	},
+	OCR("OCR") {
+		@Override
+		public <T> void visit(InvoiceErrorKeyVisitor<T> visitor, T t) {
+			visitor.visitOCR(t);
+		}
+	},
 	;
 
 	private String description;

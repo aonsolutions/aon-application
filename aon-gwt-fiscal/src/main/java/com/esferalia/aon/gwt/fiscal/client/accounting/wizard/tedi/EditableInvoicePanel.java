@@ -32,6 +32,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoicePanel.InvoicePanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoiceRectificationDataPanel.InvoiceRectificationDataPanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceCommunicationIconsPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceMassagesList;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceConsoleTextPanel;
 import com.esferalia.aon.occam.api.model.Account;
@@ -496,22 +497,38 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			&& invoiceCallback.getInvoice().getInvoice() != null
 			&& invoiceCallback.getInvoice().isTediParsed() 
 			&& invoiceCallback.getInvoice().hasMessages() ) {
-			AonTableButton tediButton  = new AonTableButton("Avisos proceso OCR",AON.CSS.aonIconWarning());
+			AonTableButton tediButton  = new AonTableButton("Avisos proceso OCR",AON.CSS.aonIconWarningRed());
 			tediButton.addStyleName(AON.CSS.aonMarginRight());
 			tediButton.addStyleName(AON.CSS.aonMarginLeft());
+			tediButton.addStyleName(AON.CSS.aonBlink());
 			tediButton.getElement().getStyle().setColor("red");
-			tediButton.addClickHandler(event -> {
-				tediButton.removeStyleName(AON.CSS.aonBlink());
-				final AonCustomPopup dialog = new AonCustomPopup();
-				dialog.setWidth((Window.getClientWidth() - 100) + "px");
-				dialog.setHeight((Window.getClientHeight() - 100) + "px");
-				dialog.setCaption( "Avisos proceso OCR");
-				TediProblemsList problemsPanel = new TediProblemsList( invoiceCallback.getInvoice().getInvoice() );
-				dialog.add( problemsPanel );
+			regTable.add(tediButton);
+
+			final AonCustomPopup dialog = new AonCustomPopup();
+			dialog.setWidth("600px");
+			dialog.setHeight((Window.getClientHeight() - 100) + "px");
+			dialog.setCaption( "Avisos proceso OCR");
+			InvoiceMassagesList messagesPanel = new InvoiceMassagesList( invoiceCallback.getInvoice().getInvoice() );
+			dialog.add( messagesPanel );
+			messagesPanel.addClickHandler( event -> dialog.hide() );
+			messagesPanel.addKeyUpHandler( event -> {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER || event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+					dialog.hide();
+				}
+			});
+			
+			Scheduler.get().scheduleDeferred(() -> {
 				dialog.center();
 				dialog.show();
+				Scheduler.get().scheduleDeferred(() -> messagesPanel.setFocus( true ) );
 			});
-			regTable.add(tediButton);
+			
+			tediButton.addClickHandler(event -> {
+				tediButton.removeStyleName(AON.CSS.aonBlink());
+				dialog.center();
+				dialog.show();
+				Scheduler.get().scheduleDeferred(() -> messagesPanel.setFocus( true ) );
+			});
 		}
 		
 		if (invoiceCallback.getInvoice() != null 

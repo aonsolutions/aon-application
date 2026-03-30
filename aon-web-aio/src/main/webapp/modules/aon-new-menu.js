@@ -1243,7 +1243,7 @@ export class AonNewMenu extends AonElement {
 										let uploadToast = this.getElement('aonUploadToast');
 										if (!uploadToast) {
 											uploadToast = new AonUploadToast();
-											this.getApplication().getContent().appendChild(uploadToast);
+											document.body.appendChild(uploadToast);
 										}
 
 										uploadToast.setJobId(generateJobId());
@@ -1259,7 +1259,7 @@ export class AonNewMenu extends AonElement {
 									let uploadToast = this.getElement('aonUploadToast');
 									if (!uploadToast) {
 										uploadToast = new AonUploadToast();
-										this.getApplication().getContent().appendChild(uploadToast);
+										document.body.appendChild(uploadToast);
 									}
 
 									uploadToast.setJobId(generateJobId());
@@ -1278,11 +1278,11 @@ export class AonNewMenu extends AonElement {
 				{
 					name: 'Nuevo ingreso',
 					icon: 'add_card',
-					fn: () => this.getApplication().setContent(new AonIncome(new Income()))
+					fn: () => this.newIncome()
 				}, {
 					name: "Nuevo gasto",
 					icon: MATERIAL_ICONS.ACCOUNT_BALANCE_WALLET,
-					fn: () => this.getApplication().setContent(new AonExpense(new Expense()))
+					fn: () => this.newExpense()
 				}
 			];
 
@@ -1384,6 +1384,26 @@ export class AonNewMenu extends AonElement {
 		let appName = app.app[0].toUpperCase() + app.app.slice(1);
 		appsDiv.className = `${CSS.AON_MENU_LEFTOP}${appName}`
 		//appsDiv.className = `${CSS.AON_MENU_LEFTOP} ${CSS.AON_MENU_LEFTOP}${appName}`		
+	}
+
+	async newIncome() {
+		let invoicePanel = new AonInvoicePanel();
+		invoicePanel.option = OPTION.CREATE_OTHER_INCOMES;
+		invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonNewIncome());
+		this.rootPanel(invoicePanel);
+		this.setAppClassName(Apps.INVOICE);
+		this.setSelectedMenuSidenav(Apps.INVOICE);
+		this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail: { app: Apps.INVOICE } }));
+	}
+
+	async newExpense() {
+		let invoicePanel = new AonInvoicePanel();
+		invoicePanel.option = OPTION.CREATE_OTHER_EXPENSES;
+		invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonNewExpense());
+		this.rootPanel(invoicePanel);
+		this.setAppClassName(Apps.INVOICE);
+		this.setSelectedMenuSidenav(Apps.INVOICE);
+		this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail: { app: Apps.INVOICE } }));
 	}
 
 	async newInvoice(invoice) {

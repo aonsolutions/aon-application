@@ -40,4 +40,5 @@ public interface InvoiceErrorKeyVisitor<T> {
 	void visitWithholding(T t);
 	void visitExpenseAccount(T t);
 	void visitCommunication(T t);
+	void visitOCR(T t);
 }

@@ -40,6 +40,7 @@ export class AonAccountingBeta extends AonElement {
 	}
 
 	initialize() {
+		this.id = "aonAccountingBetaId";
 		this.AON_ACCOUNTING_BETA = "aonAccountingBeta";
 	}
 

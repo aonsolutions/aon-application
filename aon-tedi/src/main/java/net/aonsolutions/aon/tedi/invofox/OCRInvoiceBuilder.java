@@ -389,7 +389,8 @@ public class OCRInvoiceBuilder {
 	    try {
 	    	fillReferenceCode(ocr.getOCRInvoice(), ocr.getInvoice());
 	    } catch (OCRZeroValueException e) {
-	    	ocr.add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.NUMBER, InvoiceErrorKey.NUMBER.getDescription(), 0) );
+	    	// ocr.add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.NUMBER, InvoiceErrorKey.NUMBER.getDescription(), 0) );
+	    	// Nothing
 	    } catch (OCRBlankValueException e) {
 	    	ocr.add( InvoiceErrorMessages.C001.inf(InvoiceErrorKey.NUMBER, InvoiceErrorKey.NUMBER.getDescription()) );
 	    }
