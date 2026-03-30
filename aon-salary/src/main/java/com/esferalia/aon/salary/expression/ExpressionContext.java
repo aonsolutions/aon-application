@@ -641,7 +641,7 @@ public class ExpressionContext {
 
 	public List<ITimedVariable<?>> putVariable(Object name, ITimedVariable<?> timedVariable) {
 		if ( name.equals("SALARIO_BASE") ) {
-			System.out.println("ExpressionContext.setVariable " + name + " = " + timedVariable.getValue(timedVariable.getPeriod()) + " [" + timedVariable.getPeriod().getStart() + ", " + timedVariable.getPeriod().getEnd() + "]");
+			System.err.println("ExpressionContext.setVariable " + name + " = " + timedVariable.getValue(timedVariable.getPeriod()) + " [" + timedVariable.getPeriod().getStart() + ", " + timedVariable.getPeriod().getEnd() + "]");
 			Thread.dumpStack();
 		}
 		return variables.put(name.toString(), timedVariable);
