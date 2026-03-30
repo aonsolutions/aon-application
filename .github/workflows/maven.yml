@@ -209,13 +209,6 @@ jobs:
         sessionVariables=SQL_SAFE_UPDATES=1
         EOF
 
-    #    - name: Get changed projects
-    #      if: ${{ env.RESUME_FROM == 'changed' }}
-    #      run: |
-    #        REACTOR_PROJECTS=$(mvn -q --also-make exec:exec -Dexec.executable="pwd"  | while read path; do [[ $path != `pwd` ]] && echo ${path#`pwd`/}; done | sed ':a;N;$!ba;s/\n/|/g')
-    #        CHANGED_PROJECTS=$(git diff --name-only  ${COMMIT_BEFORE} | cut -d/ -f1 | grep  -E $REACTOR_PROJECTS  | sort -u | sed ':a;N;$!ba;s/\n/,/g' )
-    #        echo "RESUME_FROM=${CHANGED_PROJECTS:=aon-web-aio}" >> $GITHUB_ENV
-
     - name: Build with Maven
       run: mvn  -Dtest=SQLExtraTestCase apn-payroll clean test
     #      run: mvn -B -Dgwt.jjs.maxThreads=1 -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} --projects ${RESUME_FROM} --also-make clean install
@@ -380,15 +373,15 @@ jobs:
     #      # repo first.
     #      run: gh cache delete --repo ${{ github.repository }} ${{ steps.cache.outputs.cache-primary-key }}
 
-        - name: Save cache
-          uses: actions/cache/save@v4
-          if: always()
-          # Save the cache even if build steps fail.
-          # with:
-          with:
-            path: ~/.m2/repository
-            key: ${{ steps.cache.outputs.cache-primary-key }}
-            # key: ${{ runner.os }}-maven-${{ env.BRANCH_NAME }}
+    - name: Save cache
+      uses: actions/cache/save@v4
+      if: always()
+      # Save the cache even if build steps fail.
+      # with:
+      with:
+       path: ~/.m2/repository
+       key: ${{ steps.cache.outputs.cache-primary-key }}
+       # key: ${{ runner.os }}-maven-${{ env.BRANCH_NAME }}
 
     # - name: Re-check restored local Maven repository
     #   if: always()
