@@ -210,7 +210,7 @@ jobs:
         EOF
 
     - name: Build with Maven
-      run: mvn  -Dtest=SQLExtraTestCase apn-payroll clean test
+      run: mvn  -Dtest=SQLExtraTestCase aon-payroll clean test
     #      run: mvn -B -Dgwt.jjs.maxThreads=1 -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} --projects ${RESUME_FROM} --also-make clean install
 
     #    - name: Setup context for Docker
