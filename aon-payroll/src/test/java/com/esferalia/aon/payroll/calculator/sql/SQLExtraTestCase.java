@@ -6572,7 +6572,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		addData(aonContext, contract, contract.getStartDate(), null, "PLUS_SALARIAL", "100.00 * 1.00");
 
-		addPayment(aonContext, contract, contract.getStartDate(), null, salarioBaseConcept, "SALARIO BASE", "1000.00 * DIAS_TRABAJADOS / DIAS_MES", "_P", "_P", PaymentType.CRA_0000);
+		addPayment(aonContext, contract, contract.getStartDate(), null, salarioBaseConcept, "SALARIO BASE", "1000.00 * DIAS_TRABAJADOS / DIAS_MES", "_P", "_P", PaymentType.CRA_0001);
 		addPayment(aonContext, contract, contract.getStartDate(), null, plusSalarialConcept, "PLUS SALARIAL", "PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0000);
 		addPayment(aonContext, contract, contract.getStartDate(), null, antiguedadConcept, "ANTIGUEDAD", "10.00", "_P", "_P", PaymentType.CRA_0000);
 		
