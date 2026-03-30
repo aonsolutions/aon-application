@@ -1,15 +1,25 @@
 package net.aonsolutions.aon.api.servlet;
 import static net.aonsolutions.invofox.OCRDocumentsParams.normalize;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -265,11 +275,11 @@ public class InvofoxServlet extends AonApiHttpServlet {
 					OCRDocumentsResponse resp = OCRInvofox.getDocuments(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), params);			
 					resp.getDocuments().ifPresent( docs -> {
 						docs.stream().forEach( doc -> {
-							doc.getId().ifPresent( id -> rawdocDocument(api, id));
+							doc.getId().ifPresentOrElse( id -> rawdocDocument(api, id), () -> loadDocument(api, invofoxConfiguration, ocrCompany.getId(), rawdoc));
 						});
 					});
 				}
-			}			
+			}	
 		}
 		
 		
@@ -300,6 +310,8 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		
 		return new JSONObject();
 	}
+	
+
 	
 	private static String generateJobId() {
 		Date date = new Date();
@@ -1093,18 +1105,91 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		return items;
 	}
 	
-	public static void main(String[] args) {
+	// LOAD INVOFOX DOCUMENT
+	
+	private static void loadDocument(AonApiData api,InvofoxConfiguration invofoxConfiguration, String company, Integer rawdocId) {
+		AON.getRawdocFull(api.getOccam(), rawdocId).ifPresent(rawdoc -> {
+			JSONObject rawdocJSON = new JSONObject(rawdoc.getJson());
+			JSONObject fileJSON = JsonUtils.getJSONObject(rawdocJSON, IJsonNames.FILE);
+			if(fileJSON != null && !fileJSON.isEmpty() && JsonUtils.has(fileJSON, "s3Bucket") && JsonUtils.has(fileJSON, "s3Key")) {
+				String s3Bucket = JsonUtils.getString(fileJSON, "s3Bucket");
+				String s3Key = JsonUtils.getString(fileJSON, "s3Key");
+				
+				String downloadURL = S3.getInstance().getURL(s3Bucket, s3Key).toExternalForm();
+				JSONObject clientData = new JSONObject()
+						.put("loadS3",
+								new JSONObject().put("key", s3Key)
+										.put("user", rawdoc.getCreationUser())
+										.put("domain", api.getDomain().getName())
+										.put("bucket", s3Bucket))
+						.put("rawdoc", rawdocId);
+
+				try {
+					loadDocuments(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), company, clientData, invofoxConfiguration.isBeta(), downloadURL);
+				} catch (URISyntaxException | IOException | InterruptedException e) {
+					e.printStackTrace();
+				}	
+			}
+		});
+	}
+	
+	protected static JSONObject loadDocuments(String apiKey, String apiUrl, String company, JSONObject clientData, boolean beta, String... urls) throws URISyntaxException, IOException, InterruptedException {
+		Map<String, String> params = new HashMap<>();
+		JSONObject infoJSON = new JSONObject();
+		infoJSON.put("type", "invoice");
+		infoJSON.put("company", company);
+		infoJSON.put("useSplitter", "false");
+		infoJSON.put("clientData", clientData);
+		params.put("info", infoJSON.toString());
+			
+		JSONArray urlArray = new JSONArray();
+		Arrays.stream(urls).forEach(urlArray::put);
+
+		params.put("urls",urlArray.toString());
+		String path = "v1/ingest/uploads";
 		
-		InvofoxConfiguration invofoxConfiguration = new InvofoxConfiguration()
-				.setApiKey("$2b$10$31wq.rieRasaDXjsuMP.6OZMF2KZnQ8fNahNMot3WdLRqx86lrVEq")
-				.setApiUrl("https://api.invofox.com")
-				.setEnvironment("64804a43d883e2000ac0423a");
-		
-		String documentId = "68e75613eef3d0d34a3969e1";
-		
-		OCRDocumentResponse response = OCRInvofox.getDocument(invofoxConfiguration.getApiKey(),
-				invofoxConfiguration.getApiUrl(), documentId);
-		
-		System.out.println(response.getDocument().get().getData().get());
+		return postMultipartForm(apiKey, apiUrl, path, params);
+	}
+	
+	private static JSONObject postMultipartForm(String apiKey, String apiUrl, String path, Map<String, ?> params)
+			throws URISyntaxException, IOException, InterruptedException {
+
+		String boundary = "---------------------------7360350682899180152152769264";
+		StringBuilder form = new StringBuilder();
+		form.append(String.format("--%s", boundary));
+		params.forEach((name, value) -> {
+			form.append(String.format("\r%nContent-Disposition: form-data; name=\"%s\"\r%n", name));
+			form.append(String.format("\r%n%s\r%n", value));
+			form.append(String.format("--%s", boundary));
+		});
+		form.append(String.format("--\r%n"));
+
+		System.out.println(form.toString());
+
+		HttpRequest httpRequest = HttpRequest.newBuilder(new URI(String.format("%s/%s", apiUrl, path)))
+				.setHeader("x-api-key", apiKey).setHeader("Accept", "application/json")
+				.setHeader("Content-Type", "multipart/form-data; boundary=" + boundary)
+				.POST(BodyPublishers.ofString(form.toString())).build();
+
+		HttpResponse<String> response = HttpClient.newHttpClient().send(httpRequest, BodyHandlers.ofString());
+		checkResponse(response);
+
+		return new JSONObject(response.body());
+	}
+	
+	/**
+	 * @param response
+	 */
+	private static void checkResponse(HttpResponse<String> response) {
+		int statusCode = response.statusCode();
+
+		System.out.println("RESPONSE : " + response.body());
+
+		if (statusCode == 400) {
+			String body = response.body();
+			JSONObject err = new JSONObject(body);
+			String code = err.getString("code");
+			throw new IllegalArgumentException(code);
+		}
 	}
 }

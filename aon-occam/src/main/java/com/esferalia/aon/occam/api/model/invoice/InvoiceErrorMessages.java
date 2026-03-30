@@ -17,7 +17,7 @@ public enum InvoiceErrorMessages implements Serializable {
 	C000("Error: \"{0}\" "),
 	C001("No se ha indicado el dato \"{0}\" y es obligatorio"),
 	C002("La longitud de el dato \"{0}\" supera los {1} caracteres m\u00E1ximos permitidos"),
-	C003("El sistema ha inicializado el dato \"{0}\" con el valor [{1}]"),
+	// C003("El sistema ha inicializado el dato \"{0}\" con el valor [{1}]"),
 	C004("Formato inv\u00E1lido en el dato \"{0}\""),
 	C005("Ya existe una factura con esa Serie/N\u00FAmero."),
 	C006("Ya existe una factura del titular con ese N\u00FAmero de referencia."),

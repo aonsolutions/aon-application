@@ -77,6 +77,14 @@ public class RegistryUtils {
 		if (statusFilter != null) {
 			prop = prop.and(statusFilter);
 		}
+		
+		if(AonStringUtils.isNoneEmpty(params.getDescription()))
+			prop = prop.and(
+					p.getDocumentProperty().likeIgnoreCase(params.getDescription())
+					.or(p.getNameProperty().likeIgnoreCase(params.getDescription()))
+					.or(p.getAliasProperty().likeIgnoreCase(params.getDescription()))
+			);
+		
 		return prop;
 	}
 	

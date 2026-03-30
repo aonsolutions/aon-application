@@ -2,7 +2,10 @@ package net.aonsolutions.aon.tedi;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -10,10 +13,13 @@ import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import solutions.aon.aws.s3.S3;
@@ -39,7 +45,15 @@ public class TEDI {
 		boolean mustCloseCtx =  tctx.getAONContext() == null; 
 		AONContext ctx = tctx.getAONContext();
 		try {
+			List<InvoiceError> errors = result.getAccountingInvoice()
+				.getInvoice()
+				.messageStream()
+				.collect(Collectors.toCollection(LinkedList::new));
 			result.getAccountingInvoice().clearMessages();
+			AonCollectionUtils.stream(errors)
+				.filter( e -> e.getContext() != null)
+				.filter( e -> e.getContext().getKey() == InvoiceErrorKey.OCR )
+				.forEach( e -> result.getAccountingInvoice().getInvoice().addMessage(e) );
 			if (ctx == null) {
 				fillAONContext( tctx );
 				ctx = tctx.getAONContext();
