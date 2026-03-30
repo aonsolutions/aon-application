@@ -8,13 +8,13 @@ public enum PaymentType {
 	CRA_0002{
 		@Override
 		public void accept(PaymentTypeVisitor visitor) {
-			visitor.visitNonStructuralHours(this);
+			visitor.visitStructuralHours(this);
 		}
 	},
 	CRA_0003 {
 		@Override
 		public void accept(PaymentTypeVisitor visitor) {
-			visitor.visitStructuralHours(this);
+			visitor.visitNonStructuralHours(this);
 		}
 	},
 	CRA_0004,

@@ -426,6 +426,24 @@ public abstract class QuoteCalculator {
 					? bases.get(LACK_PERIOD.getName()) : 0.00;
 		}
 
+		@Override
+		public Double getStructuralBase() throws AonException {
+			try {
+				return getSum(STRUCTURAL_OVERTIME_BASE, context, salaryStart, salaryEnd);
+			} catch (ExpressionException e) {
+				return super.getStructuralBase();
+			}
+		}
+		
+		@Override
+		public Double getNonStructuralBase() throws AonException {
+			try {
+				return getSum(NON_STRUCTURAL_OVERTIME_BASE, context, salaryStart, salaryEnd);
+			} catch (ExpressionException e) {
+				return super.getNonStructuralBase();
+			}
+		}
+
 		protected double getQuote(IContractPayment payment, Date start,
 				Date end, double amount) throws AonException {
 			String quoteExpr = payment.getQuoteExpression();

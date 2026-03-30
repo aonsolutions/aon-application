@@ -33,6 +33,7 @@ public enum AonError implements Serializable{
 	// -----------------------------------------------------------
 	// --------------------- COMMON ------------------------------
 	// -----------------------------------------------------------
+	,EMPTY_ID("No se ha indicado un identificador.")
 	,EMPTY_ENTERPRISE("No se ha indicado una empresa.")
 	,EMPTY_DATE_FROM("No se ha indicado una fecha 'desde'.")
 	,EMPTY_DATE_TO("No se ha indicado una fecha 'hasta'.")
@@ -218,13 +219,18 @@ public enum AonError implements Serializable{
 	,INVOICE_RECTIFIED_NOT_FOUND("Factura rectificada no encontrada.")
 	,INVOICE_RECTIFIED_ALREADY_RECTIFIED("La factura a rectificar ya ha sido rectificada por la factura {0} del día {1,date,dd/MM/yyyy}")
 	,INVOICE_INVALID_RECTIFICATION_DATA("Los datos necesarios para rectificar la factura, no son correctos.")
+	,INVOICE_INVALID_RECTIFICATION_DATE("La fecha de la factura rectificativa es anterior a la de la rectificada.")
 	,INVOICE_INVALID_RECTIFICATION_TYPE("No se permite rectificar una factura con el tipo {0}.")
+	,INVOICE_INVALID_RECTIFICATION_PROFORMA("No se permite rectificar una factura proforma")
 	,INVOICE_CANT_DELETE_RECTIFIED("No es posible borrar la factura porque est\u00E1 rectificada. Borre primero la factura rectificativa.")
 	,INVOICE_CANT_DELETE_DUA_LINKED("No es posible borrar la factura porque est\u00E1 vinculada a un documento DUA.")
 	,INVOICE_CANT_DELETE_SII("No es posible borrar la factura porque est\u00E1 enviada al SII. Dar de baja la factura en el SII.")
 	,INVOICE_CANT_DELETE_TBAI("No es posible borrar la factura porque est\u00E1 enviada a Ticket Bai. Dar de baja la factura en Ticket Bai.")
 	,INVOICE_CANT_DELETE_VERIFACTU("No es posible borrar la factura porque est\u00E1 enviada a Verifactu. Dar de baja la factura en Verifactu.")
 	,INVOICE_CANT_DELETE_MODEL("Imposible borrar o modificar, la factura ha sido declarada en modelos fiscales: {0}")
+	,INVOICE_EXP_DATE_BEFORE_DATE("La fecha de operaci\u00F3on es posterior a la fecha de expedici\u00F3on")
+	,INVOICE_EXP_DATE_PAST_MONTH_LIMIT("La fecha de operaci\u00F3on es anterior al pasado mes")
+	,INVOICE_EXP_DATE_CURRENT_MONTH_LIMIT("La fecha de operaci\u00F3on es anterior al mes en curso")
 	,TRACKING_CANT_DELETE_MODEL("Imposible borrar o modificar, el vto. ha sido declarada en modelos fiscales: {0}")
 	
 	// --------------------------------------------- RECORDER

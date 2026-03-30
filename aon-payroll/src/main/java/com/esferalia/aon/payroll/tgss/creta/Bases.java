@@ -2221,9 +2221,9 @@ public class Bases {
 			
 			put("537", new C537CretaData(ADDITIONAL_BASE.getName()));
 
-			put("501", new CCretaData(STRUCTURAL_OVERTIME_BASE.getName()));
+			put("501", new CCretaData(NON_STRUCTURAL_OVERTIME_BASE.getName()));
 			put("502", new CCretaData(
-					NON_STRUCTURAL_OVERTIME_BASE.getName()));
+					STRUCTURAL_OVERTIME_BASE.getName()));
 			put("563", new CCretaData(ContextVariable.PREST_IT));
 
 			put("601", new NonNegativeCCretaData(CGP_BASE.getName()));

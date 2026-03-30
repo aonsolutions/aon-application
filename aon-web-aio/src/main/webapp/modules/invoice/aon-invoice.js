@@ -1726,7 +1726,6 @@ export class AonInvoice extends AonElement {
 					bic: bank ? bank.bic : ""
 				};
 				this.invoice.finances = [finance];
-				this.invoice.setFinances(this.invoice.finances);
 			}
 			if (registry.transaction) this.invoice.setTransaction(registry.transaction);
 			else {

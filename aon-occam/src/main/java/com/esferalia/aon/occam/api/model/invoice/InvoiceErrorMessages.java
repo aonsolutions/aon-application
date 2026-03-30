@@ -17,7 +17,7 @@ public enum InvoiceErrorMessages implements Serializable {
 	C000("Error: \"{0}\" "),
 	C001("No se ha indicado el dato \"{0}\" y es obligatorio"),
 	C002("La longitud de el dato \"{0}\" supera los {1} caracteres m\u00E1ximos permitidos"),
-	C003("El sistema ha inicializado el dato \"{0}\" con el valor [{1}]"),
+	// C003("El sistema ha inicializado el dato \"{0}\" con el valor [{1}]"),
 	C004("Formato inv\u00E1lido en el dato \"{0}\""),
 	C005("Ya existe una factura con esa Serie/N\u00FAmero."),
 	C006("Ya existe una factura del titular con ese N\u00FAmero de referencia."),
@@ -35,6 +35,7 @@ public enum InvoiceErrorMessages implements Serializable {
 	C018("No se ha podido determinar el tipo de factura"),
 	C019("La fecha del vencimiento no es correcta."),
 	C020("La divisa de la factura no es euro"),
+	C021("Titular bloqueado ({0})"),
 	
 	C050("Error comunicaci\u00F3n: \"{0}\" \"{1}\""),
 	C051("Factura comunicada con errores: \"{0}\" \"{1}\""),

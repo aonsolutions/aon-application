@@ -165,6 +165,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_warning")
 	String aonIconWarning();
 
+	@ClassName("aon_icon_warning_red")
+	String aonIconWarningRed();
+
 	@ClassName("aon_icon_minimize")
 	String aonIconMinimize();
 
@@ -882,6 +885,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_width_half")
 	String aonWidthHalf();
+	
+	@ClassName("aon_width_fit_content")
+	String aonWidthFitContent();
 	
 	@ClassName("aon_width_almost_all")
 	String aonWidthAlmostAll();
@@ -1715,5 +1721,6 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_model_matrix_bullet_small_button")
 	String aonModelMatrixBulletSmallButton();
+
 }
 

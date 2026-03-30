@@ -136,6 +136,7 @@ import com.esferalia.aon.occam.api.model.project.ProjectTas;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.payroll.EnterpriseActivity;
+import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -857,6 +858,11 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	public void onRectify(ActionEvent event) throws ManagerBeanException {
 		RectificationInvoicingManager manager = new RectificationInvoicingManager();
 		Invoice rectifier = null;
+		if ( AonDateUtils.isBefore( getRectificationDate(), getInvoice().getIssueDate()) ) {
+			String message = AonError.INVOICE_INVALID_RECTIFICATION_DATE.getMessage();
+			AonUtil.addErrorMessage( message );
+			throw new AbortProcessingException(message);
+		}
 		if (getInvoice().isSales()) {
 			if (getRectificationNumber() == 0) {
 				updateRectificationNumber(getRectificationSeries());

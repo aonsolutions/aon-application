@@ -1496,7 +1496,17 @@ public class AccountingInvoiceDAO {
 	}
 	
 	public static AccountingInvoice rectifyInvoice(AONContext ctx, Integer invoiceId, InvoiceRectificationData data) {
+		if ( invoiceId == null ) throw new AonCoreException( AonError.EMPTY_ID.getMessage());
+		if ( data == null ) throw new AonCoreException(AonError.INVOICE_INVALID_RECTIFICATION_DATA.getMessage());
 		AccountingInvoice ai = getAccountingInvoiceFromInvoice(ctx, invoiceId);
+		if ( ai == null ) throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
+		Invoice source = ai.getInvoice();
+		if ( source == null ) throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
+		if ( source.getNumber() < 0) throw new AonCoreException(AonError.INVOICE_INVALID_RECTIFICATION_PROFORMA.getMessage());
+		if ( AonDateUtils.isBefore( data.getIssueDate(), source.getIssueDate()) ) {
+			throw new AonCoreException(AonError.INVOICE_INVALID_RECTIFICATION_DATE.getMessage() );	
+		}
+		
 		RectificationType oldRectificationType = ai.getInvoice().getRectificationType();
 		AccountPeriod ap = AccountPeriodDAO.getPeriod(ctx, data.getIssueDate());
 		if (ap == null) {

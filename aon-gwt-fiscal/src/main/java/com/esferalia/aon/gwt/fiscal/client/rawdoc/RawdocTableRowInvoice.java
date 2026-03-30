@@ -9,7 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
-import com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceMessagesLabel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceMessagesLabel;
 import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule.RawdocCallback;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;

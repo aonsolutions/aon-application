@@ -236,7 +236,7 @@ public class SiiMain extends DockLayoutPanel {
 	
 	AonToolbarButton sendButton;
 	AonToolbarButton bajaButton;
-	AonToolbarButton prepareButton;
+//	AonToolbarButton prepareButton;
 	
 	private Widget getToolbar() {
 		AonToolbar toolbarPanel = new AonToolbar(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE, getModel().getFullName()));
@@ -251,11 +251,11 @@ public class SiiMain extends DockLayoutPanel {
 		bajaButton.setVisible(false);
 		toolbarPanel.add(bajaButton);
 		
-		if(options.getConfiguration().getDomain().getName().contains("udapa")) {
-			prepareButton = new AonToolbarButton("Preparar SII", AON.CSS.aonIconRefresh());
-			prepareButton.addClickHandler(event -> prepareNewSii());
-			toolbarPanel.add(prepareButton);
-		}
+//		if(options.getConfiguration().getDomain().getName().contains("udapa")) {
+//			prepareButton = new AonToolbarButton("Preparar SII", AON.CSS.aonIconRefresh());
+//			prepareButton.addClickHandler(event -> prepareNewSii());
+//			toolbarPanel.add(prepareButton);
+//		}
 		AonToolbarSearchBox searchBox = new AonToolbarSearchBox() {
 			
 			@Override

@@ -1084,15 +1084,19 @@
 	{
         padding: 0 1.5rem;
 		border: none;
-	    background-color: #0f172a;
+	    background-color: #0f172a !important;
 	 	border-radius: 4px;
-		color: #fff;
+		color: #fff !important;
 		cursor: pointer;
 		font-family: var(--aonFontFamily);
 		height: 3rem;
 		letter-spacing: .75px;
 		margin-top: 1rem;
 		width:fit-content;
+    }
+    
+    .aon-search-lookup-button:hover{
+		color: #fff !important;
     }
     
     .aon-search-commandButton-right{
@@ -1687,6 +1691,24 @@
 	.aon-panelGrid-even:has(textarea[id$='InvoiceForm:Invoice_comments']) {
 		padding-top: 40px !important;
 	}
+	
+	.aon-panelGrid .aon-panelGrid .tbl-tab-search-odd,
+    .aon-panelGrid .aon-panelGrid .aon-panelGrid-odd
+    {
+        position: initial;
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+    }
+    
+    .aon-panelGrid .aon-panelGrid .tbl-tab-search-even,
+    .aon-panelGrid .aon-panelGrid .aon-panelGrid-even {
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+    }
+	
+	[id$='domainUserList']  .aon-dataScroller {
+	    margin-top: 2.5rem;
+    }
 
 </style>
 

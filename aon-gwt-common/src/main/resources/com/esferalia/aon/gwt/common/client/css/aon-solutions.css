@@ -113,6 +113,8 @@
 .aon_icon_error { background-image: iconError;}
 @url iconWarning aonIconWarning;
 .aon_icon_warning { background-image: iconWarning;}
+@url iconWarningRed aonIconWarningRed;
+.aon_icon_warning_red { background-image: iconWarningRed;}
 @url iconMinimize aonIconMinimize;
 .aon_icon_minimize { background-image: iconMinimize;}
 @url iconMaximize aonIconMaximize;
@@ -741,6 +743,9 @@
 }
 .aon_width_half {
 	width: 50%;
+}
+.aon_width_fit_content {
+	width: fit-content;
 }
 .aon_height_all {
 	height: 100%;
