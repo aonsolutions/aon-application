@@ -93,8 +93,8 @@ export class AonConfig extends AonElement {
                 aonMenu.reloadTopNav();
             });
         }
-
-        if (this.getDur().isAdmin()) {
+        
+        if (!this.getDur().isEmployee()) {
             let configDiv = this.createSpan();
             configDiv.className = "configCardText";
 
@@ -121,7 +121,7 @@ export class AonConfig extends AonElement {
             });
         }
 
-        if (LS.isFutureTheme() && this.isBeta()) {
+        if (LS.isFutureTheme()) {
             let fixedButtonDiv = this.createDiv();
             fixedButtonDiv.className = CSS.AON_CONFIG_APPS;
             fixedButtonDiv.style.width = '100%';

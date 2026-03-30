@@ -207,7 +207,8 @@ export class AonNewMenu extends AonElement {
 					this.rootPanel(this.getDur().isDomainManagementAvailable() ? new AonParent() : new AonDesktop());
 					break;
 				case AON_CLASSIC.app:
-					open(location.protocol + '//' + localStorage.getItem('aon_domain_name') + (location.port ? ":" + location.port : "") + '/login?token=' + localStorage.getItem('aon_session_id'))
+					this.setCookie('AONAPP', '/original', new Date().setHours(23, 59, 59, 999)); 
+					open(location.protocol + '//' + localStorage.getItem('aon_domain_name') + (location.port ? ":" + location.port : "") + '/?token=' + localStorage.getItem('aon_session_id'))
 					return;
 				case Apps.CONSOLE.app:
 					this.rootPanel(new AonConsole());
@@ -314,6 +315,10 @@ export class AonNewMenu extends AonElement {
 
 	}
 
+	setCookie(name, value, expires) {
+		document.cookie = `${name}=${value}; path=/; expires=${new Date(expires).toGMTString()}; SameSite=Lax"}`;
+	}
+	
 	removeOldNewDialogContents() {
 		const elements = document.querySelectorAll('#newDialogDialogMenuContent');
 		elements.forEach(element => element.remove());
@@ -1198,7 +1203,7 @@ export class AonNewMenu extends AonElement {
 										let uploadToast = this.getElement('aonUploadToast');
 										if (!uploadToast) {
 											uploadToast = new AonUploadToast();
-											this.getApplication().getContent().appendChild(uploadToast);
+											document.body.appendChild(uploadToast);
 										}
 
 										uploadToast.setJobId(generateJobId());
@@ -1214,7 +1219,7 @@ export class AonNewMenu extends AonElement {
 									let uploadToast = this.getElement('aonUploadToast');
 									if (!uploadToast) {
 										uploadToast = new AonUploadToast();
-										this.getApplication().getContent().appendChild(uploadToast);
+										document.body.appendChild(uploadToast);
 									}
 
 									uploadToast.setJobId(generateJobId());
@@ -1233,11 +1238,11 @@ export class AonNewMenu extends AonElement {
 				{
 					name: 'Nuevo ingreso',
 					icon: 'add_card',
-					fn: () => this.getApplication().setContent(new AonIncome(new Income()))
+					fn: () => this.newIncome()
 				}, {
 					name: "Nuevo gasto",
 					icon: MATERIAL_ICONS.ACCOUNT_BALANCE_WALLET,
-					fn: () => this.getApplication().setContent(new AonExpense(new Expense()))
+					fn: () => this.newExpense()
 				}
 			];
 
@@ -1339,6 +1344,26 @@ export class AonNewMenu extends AonElement {
 		let appName = app.app[0].toUpperCase() + app.app.slice(1);
 		appsDiv.className = `${CSS.AON_MENU_LEFTOP}${appName}`
 		//appsDiv.className = `${CSS.AON_MENU_LEFTOP} ${CSS.AON_MENU_LEFTOP}${appName}`		
+	}
+
+	async newIncome() {
+		let invoicePanel = new AonInvoicePanel();
+		invoicePanel.option = OPTION.CREATE_OTHER_INCOMES;
+		invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonNewIncome());
+		this.rootPanel(invoicePanel);
+		this.setAppClassName(Apps.INVOICE);
+		this.setSelectedMenuSidenav(Apps.INVOICE);
+		this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail: { app: Apps.INVOICE } }));
+	}
+
+	async newExpense() {
+		let invoicePanel = new AonInvoicePanel();
+		invoicePanel.option = OPTION.CREATE_OTHER_EXPENSES;
+		invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonNewExpense());
+		this.rootPanel(invoicePanel);
+		this.setAppClassName(Apps.INVOICE);
+		this.setSelectedMenuSidenav(Apps.INVOICE);
+		this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_SELECT, { detail: { app: Apps.INVOICE } }));
 	}
 
 	async newInvoice(invoice) {

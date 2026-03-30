@@ -43,4 +43,6 @@ public interface InvoiceCommunicationServiceAsync {
 	void getResponseUrl(String domainName, int domainId, String login, Integer dataResponse, AsyncCallback<String> callback);
 
 	void addDocumentInvoice(String domainName, int domainId, String user, Invoice invoice, AsyncCallback<Void> callback);
+	
+	void prepareNewSii(String domainName, int domainId, String user, Integer year, AsyncCallback<Void> callback);
 }

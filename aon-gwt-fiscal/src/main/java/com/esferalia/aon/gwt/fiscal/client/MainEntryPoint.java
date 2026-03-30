@@ -43,6 +43,7 @@ import com.esferalia.aon.gwt.fiscal.client.product.ProductModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerFee;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModule;
+import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModuleNew;
 import com.esferalia.aon.gwt.fiscal.client.registry.DomainBookingResumeModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.SupplierModule;
 import com.esferalia.aon.gwt.fiscal.client.sales.SalesModule;
@@ -452,8 +453,10 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					CustomerModule customerModule = new CustomerModule();
+					CustomerModuleNew customerModule = new CustomerModuleNew();
 					customerModule.onModuleLoad();
+//					CustomerModule customerModule = new CustomerModule();
+//					customerModule.onModuleLoad();
 				}
 				
 			});

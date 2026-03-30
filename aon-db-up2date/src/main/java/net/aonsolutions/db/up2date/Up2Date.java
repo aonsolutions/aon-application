@@ -20,8 +20,10 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
+import net.aonsolutions.db.up2date.payroll.FinObra7PercentFix;
 import net.aonsolutions.db.up2date.registry.RecordDataAlterTable;
 import net.aonsolutions.db.up2date.security.DeleteDomainAppApp7;
+import net.aonsolutions.db.up2date.tgss.ExtraHoursSwap;
 
 public class Up2Date {
 
@@ -595,6 +597,8 @@ public class Up2Date {
 			// Customize.CUSTOMIZE_OPENGES,
 			// Customize.CUSTOMIZE_AYUDAT,
 			// Customize.CUSTOMIZE_INFOAUTONOMOS,
+			// FinObra7PercentFix.FINOBRA7PERCENTFIX,
+			ExtraHoursSwap.EXTRAHOURSSWAP,
 			
 			
 			// ----------------------------------------------------------------
@@ -625,8 +629,8 @@ public class Up2Date {
 
 			// EnterpriseDataAddAudit.ENTERPRISE_DATA_ADD_AUDIT
 			
-			RecordDataAlterTable.RECORD_DATA_ALTER_TABLE,
-			DeleteDomainAppApp7.DELETE_DOMAIN_APP_APP7
+			// RecordDataAlterTable.RECORD_DATA_ALTER_TABLE
+			// DeleteDomainAppApp7.DELETE_DOMAIN_APP_APP7
 	};
 
 	// ------------------------------------------------------------------------

@@ -406,6 +406,15 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		Calendar calendar = Calendar.getInstance();
 
+		//13/02/2018
+		draft("FIN, DE OBRA");
+		calendar.set(2018, Calendar.MARCH, 31);
+		settle(calendar.getTime());
+		assertValue("totalPaymentLabel", 
+				55.19 + 
+				347.24 + 
+				( 55.19 + 347.24 + 1027.65 + 548.08 ) * 7.00 / 100.00); // FIN OBRA 7% SOBRE TOTAL_PAGADO
+
 		draft("FIN, CONTRATO TEMPORAL");
 
 		calendar.set(2017, Calendar.FEBRUARY, 23);
@@ -463,6 +472,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		double minCgcBase = 42.00 * 10.00;
 		assertValue("cgcBaseLabel", minCgcBase);
 		assertValue("cgpBaseLabel", minCgcBase);
+		
+		
 
 	}
 
@@ -3548,6 +3559,21 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.FEBRUARY,2026);
 		assertValue("cgcBaseLabel", 1381.20);
 		assertValue("cgpBaseLabel", 1381.20);
+	}
+
+	@Test
+	public void TestHorasExtras() throws Exception {
+
+		if (!isDisplayed("extraordinarias,_horas"))
+			open("horas_extras");
+
+		wait4Id("extraordinarias,_horas");
+
+		draft("EXTRAORDINARIAS, HORAS");
+		calculate(Calendar.JANUARY,2026);
+		double hExtraBase = getText("hExtraBaseLabel");
+		assertText("structural_overtime", hExtraBase * 4.7 / 100.00);
+		
 	}
 
 	// -------------------------------------------------------------------------

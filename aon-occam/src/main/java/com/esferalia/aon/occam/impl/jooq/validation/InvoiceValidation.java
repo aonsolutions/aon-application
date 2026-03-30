@@ -4,6 +4,8 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDua.INVOICE_DUA;
 
 import java.text.MessageFormat;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +33,6 @@ import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
@@ -277,6 +278,31 @@ public class InvoiceValidation {
 		}
 	};
 	
+	private static final Consumer<InvoiceValidationContext> RECTIFICATION_INVOICE_DATE = ivc -> {
+		if (ivc.inv.getId() == null
+			&& ivc.inv.getIssueDate() != null
+			&& ivc.inv.isRectifier() 
+			&& ivc.inv.getRectificationInvoice() != null) {
+			ivc.ctx.getDslContext().select( INVOICE.ISSUE_DATE )
+				.from(INVOICE)
+				.where(INVOICE.ID.eq(ivc.inv.getRectificationInvoice()))
+				.fetch()
+				.stream()
+				.map( r -> r.getValue(INVOICE.ISSUE_DATE) )
+				.peek( sourceDate -> System.out.println( sourceDate 
+						+ " ----- "
+						+ ivc.inv.getIssueDate()
+						+ " ----- "
+						+  AonDateUtils.isBefore( ivc.inv.getIssueDate(), sourceDate )))
+				.filter( sourceDate -> AonDateUtils.isBefore( ivc.inv.getIssueDate(), sourceDate ) )
+				.findFirst()
+				.ifPresent( r -> {
+					throw new AonCoreException(AonError.INVOICE_INVALID_RECTIFICATION_DATE.getMessage() );
+				});
+		}
+		
+	};
+	
 	private static final Consumer<InvoiceValidationContext> RECTIFICATION_DATA = ivc -> {
 		if (ivc.inv.getId() == null 
 			&& ivc.inv.isRectifier() 
@@ -360,6 +386,38 @@ public class InvoiceValidation {
 		}
 	};
 
+	/**
+	 * El dominio de la factura no puede estar vacio.
+	 */
+	private static final Consumer<InvoiceValidationContext> ISSUE_OPE_DATE_FUTURE = ivc -> {
+		if ( AonDateUtils.isFuture( ivc.inv.getIssueDate() )   ) 
+			throw new AonCoreException(AonError.INVOICE_EXP_DATE_BEFORE_DATE.getMessage());
+	};
+	
+	private static final Consumer<InvoiceValidationContext> ISSUE_EXP_DATE_LIMIT = ivc -> {
+		Date today = AonDateUtils.today();
+		int day = AonDateUtils.getDay( today );
+		if (day > 16) {
+			Date currentMonthFirDay = AonDateUtils.getMonthFirstDay( today );
+			if ( AonDateUtils.isBefore( ivc.inv.getIssueDate(), currentMonthFirDay ) ) {
+				throw new AonCoreException(AonError.INVOICE_EXP_DATE_CURRENT_MONTH_LIMIT.getMessage());
+			}
+		} else {
+			Date lastMonthFirstDay = Date.from( 
+				today.toInstant()
+                	.atZone(ZoneId.systemDefault())
+                	.with(TemporalAdjusters.firstDayOfMonth())
+                	.minusMonths(1)
+                	.toLocalDate()
+                	.atStartOfDay(ZoneId.systemDefault())
+                	.toInstant()
+		        );
+			if ( AonDateUtils.isBefore( ivc.inv.getIssueDate(), lastMonthFirstDay)) {
+				throw new AonCoreException(AonError.INVOICE_EXP_DATE_PAST_MONTH_LIMIT.getMessage());
+			}
+		}
+	};
+
 	public static void validateInvoice(AONContext ctx,AonConfiguration config,Invoice inv) throws AonCoreException {
 		EMPTY_DOMAIN
 			.andThen(EMPTY_DATE)
@@ -375,6 +433,7 @@ public class InvoiceValidation {
 			.andThen(CHECK_TEN_YEARS)
 			.andThen(CHECK_FINANCES)
 			.andThen(ALCATRAZ)
+			.andThen(RECTIFICATION_INVOICE_DATE)
 			.andThen(RECTIFICATION_DATA)
 			.accept(new InvoiceValidationContext(ctx,config,inv));
 
@@ -405,6 +464,14 @@ public class InvoiceValidation {
 		.andThen(VERIFACTU)
 		.andThen(ALCATRAZ)
 		.accept(new InvoiceValidationContext(ctx,config,inv));
+	}
+
+	public static void validateIssue(AONContext ctx, Invoice invoice) {
+		if (invoice != null && invoice.isSales()) {
+			ISSUE_OPE_DATE_FUTURE
+				.andThen(ISSUE_EXP_DATE_LIMIT)
+				.accept(new InvoiceValidationContext(ctx,null,invoice));
+		}
 	}
 
 }

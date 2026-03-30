@@ -82,8 +82,8 @@ public class IdcParser {
 			String fullName = matcher.group("name");
 
 			matcher = find(reader, EMPLOYEE_NSS_TYPEDOC_DOC_GENDER_BIRTHDATE);
-			
-			String nss = AonStringUtils.leftPad(matcher.group("province"),2,'0') + matcher.group("nss");
+
+			String nss = AonStringUtils.leftPad(matcher.group("province"),2,'0') + AonStringUtils.leftPad(matcher.group("nss"), 10, '0');
 
 			onEmployee(listener, fullName, nss);
 
@@ -93,7 +93,7 @@ public class IdcParser {
 			matcher = find(reader, ENTERPRISE_NAME_CCC_CIF);
 
 			String socialReason = matcher.group("name");
-			String enterpriseCCC = AonStringUtils.leftPad(matcher.group("province"),2,'0') + matcher.group("ccc");
+			String enterpriseCCC = AonStringUtils.leftPad(matcher.group("province"),2,'0') + AonStringUtils.leftPad(matcher.group("ccc"), 9, '0');
 			String enterpriseCIF = matcher.group("cif");
 
 			matcher = find(reader, ENTERPRISE_ACTIVITY_REGIME);
@@ -118,7 +118,7 @@ public class IdcParser {
 				}
 			}
 
-			if (hasData(matcher.group("contractType"))) {
+			if (isNotZero(matcher.group("contractType"))) {
 				listener.onContractType(matcher.group("contractType"));
 			}
 
@@ -226,12 +226,12 @@ public class IdcParser {
 
 			matcher = find(reader, TOTAL_CLV);
 			matcher = find(reader, QUOTATION_TYPES);
-			Double it = hasData(matcher.group("it")) ? Double.parseDouble(matcher.group("it").replace(",", ".")) : null;
-			Double ims = hasData(matcher.group("ims")) ? Double.parseDouble(matcher.group("ims").replace(",", "."))
-					: null;
+			Double it = isNotZero(matcher.group("it")) ? Double.parseDouble(matcher.group("it").replace(",", ".")) : null;
+			Double ims = isNotZero(matcher.group("ims")) ? Double.parseDouble(matcher.group("ims").replace(",", ".")): null;
 			Double unemployment = hasData(matcher.group("unemployment"))
 					? Double.parseDouble(matcher.group("unemployment").replace(",", "."))
-					: null;
+					: hasData(matcher.group("excluded")) ? 0.00 : null;
+			
 			if ( it != null && it >= 10 ) {
 				it = it / 100;
 			}
@@ -292,7 +292,7 @@ public class IdcParser {
 	}
 	
 	private static boolean isNotZero(String data) {
-		return AonNumberUtils.todouble(data) != 0.00;
+		return AonNumberUtils.todouble(AonStringUtils.replace(data, ",", ".")) != 0.00;
 	}
 
 	private static Matcher find(BufferedReader reader, Pattern pattern) throws IOException, UnknownPDFException {
@@ -371,14 +371,14 @@ public class IdcParser {
 
 	// COEF.TIEMPO PARCIAL: 500 REDUCCIÓN JORNADA/COEFIC: FECHA: 01-11-2019 EDAD: 55
 	protected static final Pattern CONTRACT_PARTIALCOEF_DATE_AGE = Pattern.compile(
-			"^COEF\\.\\s*TIEMPO\\s*PARCIAL\\s*:\\s*(?<partialCoef>[0-9]{3})?.*REDUCCIÓN\\s*JORNADA/COEFIC\\s*:.*FECHA\\s*:\\s*(?<date>[0-9]+-[0-9]+-[0-9]+)\\s*EDAD\\s*:\\s*(?<age>[0-9]+)?$"
+			"^COEF\\.\\s*TIEMPO\\s*PARCIAL\\s*:\\s*(?<partialCoef>[0-9]{1,3})?.*REDUCCIÓN\\s*JORNADA/COEFIC\\s*:.*FECHA\\s*:\\s*(?<date>[0-9]+-[0-9]+-[0-9]+)?\\s*EDAD\\s*:\\s*(?<age>[0-9]+)?$"
 //	"^COEF\\.\\s*TIEMPO\\s*PARCIAL\\s*:\\s*(?<partialCoef>[0-9]{3})?.*REDUCCIÓN\\s*JORNADA/COEFIC\\s*:\\s*FECHA\\s*:\\s*(?<date>[0-9]+-[0-9]+-[0-9]+)\\s*EDAD\\s*:\\s*(?<age>[0-9]+)?$"
 			, Pattern.CASE_INSENSITIVE);
 
 	// GC/M*: 08 RELEVO: TIPO DE INACTIVIDAD/COEFIC: T.ACT.PAR.PR.COVID19/300
 	// C.C.C.: 0111 11 112501771
 	protected static final Pattern CONTRACT_QUOTEGROUP_MONTHLY_INACTIVITY_COMPLETECCC = Pattern.compile(
-			"^GC/M\\*:\\s*(?<quoteGroup>[0-9]{2})/?(?<monthly>.)?\\S*\\s*RELEVO\\s*:\\s*\\S*\\s*TIPO\\s*DE\\s*INACTIVIDAD/COEFIC\\s*:\\s*(?<inactivity>.*)C\\.C\\.C\\.:\\s*(?<completeCCC>[0-9]{1,4}\\s*[0-9]{1,2}\\s*[0-9]+)?$"
+			"^GC/M\\*:\\s*(?<quoteGroup>[0-9]{2})/?(?<monthly>.)?\\S*\\s*RELEVO\\s*:\\s*\\S*\\s*TIPO\\s*DE\\s*INACTIVIDAD/COEFIC\\s*:\\s*(?<inactivity>.*)C\\.C\\.C\\.:\\s*(?<completeCCC>.*)?$"
 //	"^GC/M\\*:\\s*(?<quoteGroup>[0-9]{2})/?(?<monthly>.)?\\S*\\s*RELEVO\\s*:\\s*TIPO\\s*DE\\s*INACTIVIDAD\\/COEFIC\\s*:\\s*(?<inactivity>.*)C\\.C\\.C\\.:\\s*(?<completeCCC>[0-9]{4}\\s*[0-9]{2}\\s*[0-9]+)?$"
 			, Pattern.CASE_INSENSITIVE);
 
@@ -427,7 +427,7 @@ public class IdcParser {
 	// TIPOS DE COTIZACIÓN* CONTINGENCIAS PROFESIONALES: IT: 1,70 I.M.S.: 1,30
 	// TOTAL: 3,00 DESEMPLEO: 7,05
 	protected static final Pattern QUOTATION_TYPES = Pattern.compile(
-			"^TIPOS\\s*DE\\s*COTIZACIÓN\\*\\s*CONTINGENCIAS\\s*PROFESIONALES:\\s*IT:\\s*(?<it>[0-9,]+)?\\s*I\\.M\\.S\\.:\\s*(?<ims>[0-9,]+)?.*DESEMPLEO:\\s*(?<unemployment>[0-9,]+)?(EXCLUIDO)?$",
+			"^TIPOS\\s*DE\\s*COTIZACIÓN\\*\\s*CONTINGENCIAS\\s*PROFESIONALES:\\s*IT:\\s*(?<it>[0-9,]+)?\\s*I\\.M\\.S\\.:\\s*(?<ims>[0-9,]+)?.*DESEMPLEO:\\s*(?<unemployment>[0-9,]+)?(?<excluded>EXCLUIDO)?$",
 			Pattern.CASE_INSENSITIVE);
 
 	// POR TRABAJADOR:CAUSA:ALTA 3 MESES PREVIOS CONTRATO INDEFINIDO

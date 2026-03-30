@@ -55,6 +55,8 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 	private AonAccountBox salaryDedAdvPaymentAccount;
 	private AonDoubleBox  salaryDedSeize;
 	private AonAccountBox salaryDedSeizeAccount;
+	private AonDoubleBox  salaryDedInKind;
+	private AonAccountBox salaryDedInKindAccount;
 	private AonDoubleBox  salaryOtherDeductions;
 	private AonAccountBox salaryOtherDeductionsAccount;
 	private AonDoubleBox  irpf;
@@ -269,7 +271,31 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		flexTable.setWidget(row, 3, salaryDedSeizeAccount);
 		flexTable.getCellFormatter().setStyleName(row, 3, AON.CSS.aonWidthAuto());
 		row++;
-
+// ***
+		label = new Label(AON.MSG.salaryDeductionsInKind());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
+		flexTable.setWidget(row, 0, label);
+		salaryDedInKind = new AonDoubleBox();
+		salaryDedInKind.setValue(0.0);
+		salaryDedInKind.addValueChangeHandler( event -> {
+			getWrapper().setSalaryDedInKind(event.getValue());
+			valueChanged();
+		});
+		flexTable.setWidget(row, 1, salaryDedInKind);
+		label = new Label(AON.MSG.accountAbr());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
+		flexTable.setWidget(row, 2, label);
+		salaryDedInKindAccount = createAccountBox();
+		salaryDedInKindAccount.addSelectionHandler( event -> {
+			getWrapper().setSalaryDedInKindAccount(event.getSelectedItem());
+			valueChanged();
+		});
+		flexTable.setWidget(row, 3, salaryDedInKindAccount);
+		flexTable.getCellFormatter().setStyleName(row, 3, AON.CSS.aonWidthAuto());
+		row++;
+// ***
 		label = new Label(AON.MSG.salaryOtherDeductions());
 		label.setStyleName(AON.CSS.aonInnerLabel());
 		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
@@ -434,6 +460,7 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			.setSalaryCompensationAccount(getCallback().getConfiguration().accounting().getDefaultCompensation())
 			.setSalaryDedAdvPaymentAccount(getCallback().getConfiguration().accounting().getSalaryDedAdvPayment())
 			.setSalaryDedSeizeAccount(getCallback().getConfiguration().accounting().getSalaryDedSeize())
+			.setSalaryDedInKindAccount(getCallback().getConfiguration().accounting().getSalaryDedInKind())
 			.setSalaryOtherDeductionsAccount(getCallback().getConfiguration().accounting().getSalaryOtherDeductions())
 			.setIrpfAccount(getCallback().getConfiguration().accounting().getSalaryChargedRet())
 			.setInKindIrpfAccount(getCallback().getConfiguration().accounting().getSalaryChargedRetInKind())
@@ -468,6 +495,7 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		wrp.setSalaryDedAdvPaymentAccount(getWrapper().getSalaryDedAdvPaymentAccount());
 		wrp.setSalaryDedSeizeAccount(getWrapper().getSalaryDedSeizeAccount());
 		wrp.setSalaryOtherDeductionsAccount(getWrapper().getSalaryOtherDeductionsAccount());
+		wrp.setSalaryDedInKindAccount(getWrapper().getSalaryDedInKindAccount());
 		wrp.setIrpfAccount(getWrapper().getIrpfAccount());
 		wrp.setInKindIrpfAccount(getWrapper().getInKindIrpfAccount());
 		wrp.setEmployeeSocialInsuranceAccount(getWrapper().getEmployeeSocialInsuranceAccount());
@@ -510,7 +538,9 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		salaryDedAdvPayment.setValue(getWrapper().getSalaryDedAdvPayment());
 		setAccount(salaryDedAdvPaymentAccount,getWrapper().getSalaryDedAdvPaymentAccount());		
 		salaryDedSeize.setValue(getWrapper().getSalaryDedSeize());
-		setAccount(salaryDedSeizeAccount,getWrapper().getSalaryDedSeizeAccount());		
+		setAccount(salaryDedSeizeAccount,getWrapper().getSalaryDedSeizeAccount());
+		salaryDedInKind.setValue(getWrapper().getSalaryDedInKind());
+		setAccount(salaryDedInKindAccount,getWrapper().getSalaryDedInKindAccount());
 		salaryOtherDeductions.setValue(getWrapper().getSalaryOtherDeductions());
 		setAccount(salaryOtherDeductionsAccount,getWrapper().getSalaryOtherDeductionsAccount());		
 		irpf.setValue(getWrapper().getIrpf());
@@ -596,6 +626,9 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		} else if (check(getWrapper().getSalaryOtherDeductions(),getWrapper().getSalaryOtherDeductionsAccount())) {
 			String msg = "Debe indicar una cuenta contable para el valor 'Otras deducciones'";		
 			getCallback().getModule().onError(msg);
+		} else if (check(getWrapper().getSalaryOtherDeductions(),getWrapper().getSalaryDedInKindAccount())) {
+			String msg = "Debe indicar una cuenta contable para el valor 'Deducciones en especie'";		
+			getCallback().getModule().onError(msg);
 		} else if (check(getWrapper().getCompanySocialInsurance(),getWrapper().getCompanySocialInsuranceAccount())) {
 			String msg = "Debe indicar una cuenta contable para el valor 'Seg.Social Empresa'";			
 			getCallback().getModule().onError(msg);
@@ -676,6 +709,19 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			);
 		}
 
+		if (getWrapper().getSalaryDedInKind() != 0 
+			&& getWrapper().getSalaryDedInKindAccount() != null 
+			&& getWrapper().getSalaryDedInKindAccount().getId() != null) {
+			list.add(new AccountEntryDetail()
+				.setAccountId(getWrapper().getSalaryDedInKindAccount().getId())
+				.setAccountCode(getWrapper().getSalaryDedInKindAccount().getCode())
+				.setAccountDescription(getWrapper().getSalaryDedInKindAccount().getDescription())
+				.setBalancingAccountId(null)
+				.setConcept(getWrapper().getConcept())
+				.setCredit(getWrapper().getSalaryDedInKind())
+			);
+		}
+		
 		if (getWrapper().getSalaryOtherDeductions() != 0 
 			&& getWrapper().getSalaryOtherDeductionsAccount() != null 
 			&& getWrapper().getSalaryOtherDeductionsAccount().getId() != null) {

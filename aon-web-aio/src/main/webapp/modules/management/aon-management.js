@@ -53,7 +53,7 @@ export class AonManagement extends AonElement {
 				id: "observations",
 				icon: "speaker_notes",
 				name: "Observaciones",
-				fn: () => this.buildObservations('MANAGEMENT'),
+				fn: () => this.getApplication().buildObservations('MANAGEMENT')
 			}
 		];
 		this.getApplication().addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);

@@ -41,7 +41,7 @@ public class FBatchPaymentReportServlet extends HttpServlet {
 			
 			fbatch.getBatchDetails().stream().map(detail -> detail.getFinance()).forEach(action);
 
-			String fileName = "RemesaNominas_" + DATE_FORMAT.format(fbatch.getIssueDate()) ;
+			String fileName = fbatch.getDescription() + DATE_FORMAT.format(fbatch.getIssueDate()) ;
 			resp.setContentType(MimeType.MS_EXCEL_2007.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\""+ fileName + ".xlsx\";");
 			action.finalize(resp.getOutputStream());

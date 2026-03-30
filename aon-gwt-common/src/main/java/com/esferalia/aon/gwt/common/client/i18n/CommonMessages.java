@@ -3976,6 +3976,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Embargo")
 	String seize();
 	
+	@DefaultMessage("Deducciones en espcie.")
+	String salaryDeductionsInKind();
+	
 	@DefaultMessage("Otras deducciones.")
 	String salaryOtherDeductions();
 	

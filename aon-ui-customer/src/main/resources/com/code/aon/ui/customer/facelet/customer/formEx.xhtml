@@ -43,141 +43,21 @@
 						</aon:div>
 					</aon:if>
 					
-					<aon:panelGrid id="infoDataTable"
-						styleClass="aon-margin-top aon-width-all aonCard" columns="2"
-						columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even aon-width-auto">
-	
-						<aon:if test="#{aonConfiguration.bean.customer.showTariff}">
-							<aon:outputLabel for="Customer_tariff_id"
-								value="#{bundle.report_tariff}" />
-							<aon:selectOneMenu id="Customer_tariff_id"
-								value="#{customer.to.tariff}">
-								<f:selectItem itemLabel="-" value="#{null}" />
-								<f:selectItems value="#{configCollections.salesTariffs}" />
-							</aon:selectOneMenu>
-						</aon:if>
-
-						<aon:if test="#{aonConfiguration.bean.customer.showFinanceFeeData or aonConfiguration.bean.customer.showDeliveryData}">
-							<aon:outputText value="#{bundle.customer_invoicing_info}" />
-							<aon:div styleClass="aon-selectMultiCheckbox" >
-								<aon:if test="#{aonConfiguration.bean.customer.showDeliveryData}">
-									<aon:outputText	styleClass="aon-margin-left aon-bold"
-										value="#{bundle.config_series_deliveries}:" />
-									<aon:selectBooleanCheckbox id="Customer_deliveryGrouped" styleClass="aon-margin-left"
-										value="#{customer.to.deliveryGrouped}" />
-									<aon:outputLabel for="Customer_deliveryGrouped" styleClass="aon-italic"
-										value="#{bundle.customer_invoiceGrouped}" />
-									<aon:selectBooleanCheckbox id="Customer_deliveryValuated" styleClass="aon-margin-left"
-										value="#{customer.to.deliveryValuated}" />
-									<aon:outputLabel for="Customer_deliveryValuated" styleClass="aon-italic"
-										value="#{bundle.customer_printValuated}" />
-								</aon:if>
-
-								<aon:outputText	styleClass="aon-margin-left aon-bold"
-									value="#{bundle.aon_module_groupware}:" />
-								<aon:selectBooleanCheckbox id="Customer_projectGrouped" styleClass="aon-margin-left"
-									value="#{customer.to.projectGrouped}" />
-								<aon:outputLabel for="Customer_projectGrouped" styleClass="aon-italic"
-										value="#{bundle.customer_invoiceGrouped}" />
-							</aon:div>
-						</aon:if>
-
-						<aon:if test="#{company.ediSupportEnabled or company.EInvoice}">
-							<aon:outputText value="#{bundle.aon_edi}" title="#{bundle.aon_edi_title}" />
-							<aon:div id="eInvoice-panel" styleClass="aon-selectMultiCheckbox" >
-								<aon:if test="#{company.EInvoice}">
-									<aon:selectBooleanCheckbox id="Customer_eInvoice"
-										styleClass="aon-margin-left" value="#{customer.to.EInvoice}"
-										title="#{bundle.aon_activate}/#{bundle.aon_deactivate} #{bundle.customer_eInvoice}"
-										valueChangeListener="#{customer.eInvoiceChange}">
-										<a4j:support event="onchange" ajaxSingle="true"
-											reRender="customerTab" />
-									</aon:selectBooleanCheckbox>
-									<aon:outputLabel for="Customer_eInvoice"
-										value="#{bundle.customer_eInvoice}" />
-								</aon:if>
-								<aon:if test="#{company.ediSupportEnabled}">
-									<aon:selectBooleanCheckbox id="Customer_edi"
-										styleClass="aon-margin-left"
-										value="#{customerEdiSupport.enabled}"
-										title="#{bundle.aon_activate}/#{bundle.aon_deactivate} #{bundle.aon_edi_message}"
-										valueChangeListener="#{customer.ediChange}">
-										<a4j:support event="onchange" ajaxSingle="true"
-											reRender="eInvoice-panel, customerTab" />
-									</aon:selectBooleanCheckbox>
-									<aon:outputLabel for="Customer_edi"
-										value="#{bundle.aon_edi_message}" />
-									<aon:if test="#{customerEdiSupport.enabled}">
-										<aon:outputText	styleClass="aon-margin-left aon-bold"
-											value="| Seresnet:" />
-										<aon:selectBooleanCheckbox id="Customer_seres_autoCommitDelivery" styleClass="aon-margin-left"
-											value="#{customerEdiSupport.seresAutoCommitDelivery}" />
-										<aon:outputLabel for="Customer_seres_autoCommitDelivery" styleClass="aon-italic"
-											value="Envío auto. albaranes" />
-										<aon:selectBooleanCheckbox id="Customer_seres_invoicingMainAddress" styleClass="aon-margin-left"
-											value="#{customerEdiSupport.seresInvoicingMainAddress}" />
-										<aon:outputLabel for="Customer_seres_invoicingMainAddress" styleClass="aon-italic"
-											value="Facturar a dir. principal" />
-									</aon:if>
-								</aon:if>
-							</aon:div>
-						</aon:if>
-
-						<aon:if test="#{!customer.nevv and customer.to.invoicingGroup.id != null}">
-							<aon:outputLabel value="#{bundle.customer_invoicingGroup}" />
-							<aon:div>
-								<aon:outputText	value="#{customer.to.invoicingGroup.description}" />
-								<aon:if test="#{customer.invoicingGroupInMyScopes}">
-									<aon:commandLink id="invoicingGroup_link" immediate="true"
-										styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
-										value="&#160;" title="#{bundle.aon_go}"
-										actionListener="#{customer.onLoadInvoicingGroup}"
-										action="invoicingGroup_form"
-										reRender="aonContent" />
-								</aon:if>
-							</aon:div>
-						</aon:if>
-	
-						<aon:if test="#{!customer.nevv and aonRole.accountingOperator and aonConfiguration.bean.customer.showAccount}">
-							<aon:outputLabel for="Account_id" value="#{bundle.finance_account}" />
-							<aon:panelGrid id="accountContainer" columns="2" columnClasses="none,none">
-								<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
-									<ui:param name="lookupTo" value="#{customer.to.account}" />
-									<ui:param name="lookupReRender" value="accountLookupButtons" />
-								</ui:include>
-								<aon:div id="accountLookupButtons">
-									<aon:commandButton
-										value="#{bundle.account_synchronize}"
-										title="#{bundle.account_synchronize}"
-										style="border: #808080 1px solid;"
-										styleClass="aon-finding-toolbar-item aon-icon-refresh"
-										rendered="#{customer.accountSynchronizable}"
-										actionListener="#{customer.onAccountSynchronize}"
-										reRender="accountContainer">
-									</aon:commandButton>
-									<aon:commandButton
-										value="#{bundle.account_new_account}" 
-										title="#{bundle.account_new_account}"
-										style="border: #808080 1px solid;"
-										styleClass="aon-finding-toolbar-item aon-icon-reset"
-										rendered="#{customer.to.account == null or customer.to.account.id == null}"
-										actionListener="#{customer.onNewAccount}"
-										reRender="accountContainer">
-									</aon:commandButton>
-								</aon:div>
-							</aon:panelGrid>
-						</aon:if>
-
-						<aon:outputLabel for="Observation"
-							value="#{bundle.registry_observation}" />
-						<aon:inputTextarea id="Observation" cols="120" rows="3"
-							value="#{customerObservation.observation.comments}" />
-
-					</aon:panelGrid>
+					<aon:if test="#{!app.standAlone}">
+						<ui:include src="/com/code/aon/ui/customer/facelet/customer/formInfoContent.xhtml" >
+						</ui:include>
+					</aon:if>
 
 					</aon:div>
 					
 					<aon:panelTabSet id="customerTab" selectedTab="#{customer.selectedTab}">
+
+						<aon:if test="#{app.standAlone}">
+							<aon:panelTab id="info" label="#{bundle.admin_global_general_data}">
+								<ui:include src="/com/code/aon/ui/customer/facelet/customer/formInfoContent.xhtml" >
+								</ui:include>
+							</aon:panelTab>
+						</aon:if>
 
 						<aon:panelTab id="address"	label="#{bundle.registry_address_module}">
 							<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
@@ -190,7 +70,7 @@
 								<ui:param name="controller" value="#{customerMedia}" />
 							</ui:include>
 						</aon:panelTab>
-
+						
 						<aon:if test="#{aonConfiguration.bean.customer.showFinanceData}">
 							<aon:panelTab id="finance" label="#{bundle.registry_finance_data_module}">
 								<aon:panel>

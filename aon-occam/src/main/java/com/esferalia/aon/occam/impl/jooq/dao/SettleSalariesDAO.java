@@ -451,6 +451,7 @@ public class SettleSalariesDAO {
 	        .replace("ª", "")
 	        .replace("\u00AA", "")
 	        .replace("\u00B0", "")
+	        .replace("&", "AND")
 	        ;
     }
 	

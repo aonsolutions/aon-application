@@ -1852,6 +1852,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	public boolean next(NextHook hook) throws SQLException, ExpressionException {
 
 		boolean next = this.resultSet.next();
+		
+		liquids.clear();
+		payments.clear();
+		solveLiquids.clear();
+		solvePayments.clear();
+		
 		if (next) {
 			initContractExpressionCtx(hook);
 		} else {
@@ -3579,6 +3585,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	}
 
+	protected double getTotalPaid() throws ExpressionException, SQLException, SalaryException {
+		int contractId = getId();
+		return AON.getSalaries(new AONContext(connection), p -> p.getIsSettlementProperty().eq(false).and(p.getContractProperty().eq(contractId)))
+				.collect(Collectors.summingDouble(com.esferalia.aon.occam.api.model.Salary::getTotalPayment));
+
+	}
+
 	public static long getAvailableDays(Date start, Date end) {
 		long workedDays = CommonUtil.getDaysBetweenDates(start, end);
 		workedDays += 1;
@@ -4843,6 +4856,19 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 								return getQuoteBase();
 							} catch (Exception e) {
 								throw new ExpressionExceptionWrapper(new InvalidVariables(e.getMessage(), getName()));
+							}
+						}
+					});
+			this.implicitExpressionContext.putVariable("TOTAL_PAGADO",
+					new LazyTimedExpressionConstant<Double>("TOTAL_PAGADO", ExpressionScope.CONTRACT) {
+						@Override
+						public Double create() {
+							try {
+								return getTotalPaid();
+							} catch (Exception e) {
+								// throw new ExpressionExceptionWrapper(new InvalidVariables(e.getMessage(),
+								// getName()));
+								throw new ExpressionExceptionWrapper(new UndefinedVariablesException(getName()));
 							}
 						}
 					});

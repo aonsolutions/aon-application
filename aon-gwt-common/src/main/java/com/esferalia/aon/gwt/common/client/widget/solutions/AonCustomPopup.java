@@ -80,6 +80,10 @@ public class AonCustomPopup extends PopupPanel implements HasClickHandlers {
 		dockLayoutPanel.add(child);
 	}
 	
+	public Button getCloseButton() {
+		return closeButton;
+	}
+	
 	@Override
 	public HandlerRegistration addClickHandler(ClickHandler handler) {
 		return super.addHandler(handler, ClickEvent.getType());

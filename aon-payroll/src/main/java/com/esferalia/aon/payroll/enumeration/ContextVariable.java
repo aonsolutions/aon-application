@@ -385,6 +385,7 @@ public enum ContextVariable implements IResourceable {
 	
 	DELAY_AMOUNT("ATRASO", VariableType.DOUBLE, false ),
 	DELAY_QUOTE("COTIZACION_ATRASO", VariableType.DOUBLE, false ),
+	DELAY_EXTRA_HOURS("HORAS_EXTRA_ATRASO", VariableType.DOUBLE, false ),
 	
 	JANUARY("ENERO", VariableType.INTEGER),
 	FEBRUARY("FEBRERO", VariableType.INTEGER),

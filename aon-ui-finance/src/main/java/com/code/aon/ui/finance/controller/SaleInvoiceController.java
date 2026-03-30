@@ -714,9 +714,7 @@ public class SaleInvoiceController extends InvoiceController {
 					try (CloseableAONContext ctx =  AONContext.getAONContext(company.getDomain(), "")) {
 						setTbaiUrl(TbaiData.getInstance(ctx, config).getTbaiUrl(company.getDomain().getId(), invoice.getId()));
 					}
-				}
-				
-				if(config.isSii()) {
+				} else if(config.isSii()) {
 					try {
 						SIIManager manager = SIIManager.getInstance(config);
 							
@@ -1099,6 +1097,8 @@ public class SaleInvoiceController extends InvoiceController {
 			return getCommunicationStatus(InvoiceCommunicationType.NO_VERIFACTU);
 		} else if (isSifInvoice()) {
 			return getCommunicationStatus(InvoiceCommunicationType.SIF);
+		} else if (isSiiInvoice()) {
+			return getCommunicationStatus(InvoiceCommunicationType.SII);
 		} else {
 			return InvoiceCommunicationStatus.PENDING;
 		}
@@ -1170,6 +1170,7 @@ public class SaleInvoiceController extends InvoiceController {
 			? StringUtils.upperCase(InvoiceCommunicationStatus.PENDING.getDescription()) 
 			: StringUtils.upperCase(getCommunicationStatus().getDescription());
 	}
+	
 	public String getCommunicationStatusIcon() {
 		if (getCommunicationStatus() == null) return "aon-icon-point-orange";
 		MutableObject<String> ret = new MutableObject<>();

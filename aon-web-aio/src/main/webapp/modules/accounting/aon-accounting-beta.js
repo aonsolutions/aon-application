@@ -40,6 +40,7 @@ export class AonAccountingBeta extends AonElement {
 	}
 
 	initialize() {
+		this.id = "aonAccountingBetaId";
 		this.AON_ACCOUNTING_BETA = "aonAccountingBeta";
 	}
 
@@ -62,7 +63,7 @@ export class AonAccountingBeta extends AonElement {
 				id: "observations",
 				icon: "speaker_notes",
 				name: "Observaciones",
-				fn: () => this.buildObservations('ACCOUNTING'),
+				fn: () => this.getApplication().buildObservations('ACCOUNTING'),
 			});
 
 			aonAccountingBeta.addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);

@@ -57,7 +57,9 @@ public class PeriodAmortizationController extends BasicController {
 	private double totalAccumulated;
 	private double totalAllocation;
 	private double totalPending;
-	private SummaryProvider summaryProvider;	
+	private SummaryProvider summaryProvider;
+	
+	private boolean initialized = false;
 	
 	@SuppressWarnings("unchecked")
 	public List<AmortizationDetail> getAmortizationList() throws ManagerBeanException {
@@ -149,7 +151,13 @@ public class PeriodAmortizationController extends BasicController {
 	public void setFixedAssetAccount(Account fixedAssetAccount) {
 		this.fixedAssetAccount = fixedAssetAccount;
 	}
-
+	
+	@Override
+	public void onEditSearch(ActionEvent event) {
+		super.onEditSearch(event);
+		initialized = false;
+	}	
+	
 	@Override
 	public void onSearch(ActionEvent event) {
 		try {
@@ -210,37 +218,40 @@ public class PeriodAmortizationController extends BasicController {
 	}
 
 	public DataModel getCalculatedModel() throws ManagerBeanException {
-		DataModel model = super.getModel();
-
-		setTotalAmount(0);
-		setTotalAllocation(0);
-		setTotalAccumulated(0);
-		setTotalPending(0);
-
-		for (int i = 0; i < model.getRowCount(); i++) {
-			model.setRowIndex(i);
-			AmortizationDetail detail = (AmortizationDetail) model.getRowData();
-			Amortization a = detail.getAmortization();
+		if (!initialized) {
+			DataModel model = super.getModel();
 			
-			double accumulated = 0.0;
-			Criteria c = new Criteria();
-			c.addEqualExpression(getManagerBean().getFieldName(IEntityAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), a.getId());
-			c.addLessThanExpression(getManagerBean().getFieldName(IEntityAlias.AMORTIZATION_DETAIL_FROM_DATE), period.getDeadline());
-			ProjectionList pl = new ProjectionList();
-			pl.add(Projection.sum(getManagerBean().getFieldName(IEntityAlias.AMORTIZATION_DETAIL_ALLOCATION)));
-			List<?> list = getManagerBean().getList(pl, c);
-			if (list != null && list.size() > 0 && list.get(0) != null) {
-				accumulated = (Double) list.get(0);	
+			setTotalAmount(0);
+			setTotalAllocation(0);
+			setTotalAccumulated(0);
+			setTotalPending(0);
+			
+			for (int i = 0; i < model.getRowCount(); i++) {
+				model.setRowIndex(i);
+				AmortizationDetail detail = (AmortizationDetail) model.getRowData();
+				Amortization a = detail.getAmortization();
+				
+				double accumulated = 0.0;
+				Criteria c = new Criteria();
+				c.addEqualExpression(getManagerBean().getFieldName(IEntityAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), a.getId());
+				c.addLessThanExpression(getManagerBean().getFieldName(IEntityAlias.AMORTIZATION_DETAIL_FROM_DATE), period.getDeadline());
+				ProjectionList pl = new ProjectionList();
+				pl.add(Projection.sum(getManagerBean().getFieldName(IEntityAlias.AMORTIZATION_DETAIL_ALLOCATION)));
+				List<?> list = getManagerBean().getList(pl, c);
+				if (list != null && list.size() > 0 && list.get(0) != null) {
+					accumulated = (Double) list.get(0);	
+				}
+				double pending = CommonUtil.round(a.getAmount() - accumulated);
+				
+				detail.setAccumulated(accumulated);
+				detail.setPending(pending);
+				
+				setTotalAmount(CommonUtil.round(getTotalAmount()) + a.getAmount());
+				setTotalAllocation(CommonUtil.round(getTotalAllocation()) + detail.getAllocation());
+				setTotalAccumulated(CommonUtil.round(getTotalAccumulated()) + accumulated);
+				setTotalPending(CommonUtil.round(getTotalPending()) + pending);
 			}
-			double pending = CommonUtil.round(a.getAmount() - accumulated);
-			
-			detail.setAccumulated(accumulated);
-			detail.setPending(pending);
-
-			setTotalAmount(CommonUtil.round(getTotalAmount()) + a.getAmount());
-			setTotalAllocation(CommonUtil.round(getTotalAllocation()) + detail.getAllocation());
-			setTotalAccumulated(CommonUtil.round(getTotalAccumulated()) + accumulated);
-			setTotalPending(CommonUtil.round(getTotalPending()) + pending);
+			initialized = true;
 		}
 		return model;
 	}

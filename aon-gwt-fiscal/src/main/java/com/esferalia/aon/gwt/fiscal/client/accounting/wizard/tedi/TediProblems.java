@@ -5,7 +5,9 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccoun
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.occam.api.model.tedi.ICallback;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
@@ -80,6 +82,8 @@ public class TediProblems extends ScrollPanel {
 	
 							@Override
 							public void onAccept(TediResult result) {
+								AccountEntry ae = InvoiceRecorder.getInvoiceEntry(result.getAccountingInvoice());
+								result.getAccountingInvoice().setAccountEntry(ae);
 								SERVICE.validateInvoice(
 									callback.getOccam().getDomainName()
 									,callback.getOccam().getUser()

@@ -251,12 +251,16 @@
 		<aon:outputText styleClass="aon-bold"
 			value="#{invoiceController.address}" 
 			rendered="#{addressController.to.id != null or (invoiceController.readOnly and invoiceController.to.registryAddress.id != null)}">
-			<aon:abbreviateConverter maxWidth="30" />
+			<aon:if test="#{!app.standAlone}" >
+				<aon:abbreviateConverter maxWidth="30" />
+			</aon:if>
 		</aon:outputText>
 		<aon:outputText styleClass="aon-margin-left aon-bold"
 			value="#{invoiceController.location}"
 			rendered="#{addressController.to.id != null or (invoiceController.readOnly and invoiceController.to.registryAddress.id != null)}">
-			<aon:abbreviateConverter maxWidth="25" />
+			<aon:if test="#{!app.standAlone}" >
+				<aon:abbreviateConverter maxWidth="25" />
+			</aon:if>
 		</aon:outputText>
 		<aon:div layout="inline" styleClass="aon-margin-left">
 			<aon:commandButton id="invoiceAddressButton"

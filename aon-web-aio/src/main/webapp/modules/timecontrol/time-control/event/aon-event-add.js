@@ -24,6 +24,9 @@ export class AonEventAdd extends AonElement {
   TOOLBAR;
   START_DATE
   TASK_HOLDER;
+  
+  _eventDatailListFilter;
+  
   static get observedAttributes() {
     return [CONSTANT.DATA];
   }
@@ -309,9 +312,9 @@ export class AonEventAdd extends AonElement {
     if(this.START_DATE) startDate = AonDateUtils.formatDateOrigin(this.START_DATE);
     
     if(data.task_holder)
-	    this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, data);
+	    this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, data, this._eventDatailListFilter);
 	else 
-		this.applicationParentEl.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
+		this.applicationParentEl.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST, undefined, this._eventDatailListFilter);
   }
 
   async paintHistoric(){

@@ -65,53 +65,24 @@ public class Invofox {
 		throw new NoSuchCompanyException(String.format("No company with taxId '%s'", cif));
 	}
 
-	protected static JSONObject newLoadBatch(String apiKey, String apiUrl, String company)
-			throws URISyntaxException, IOException, InterruptedException {
+	protected static JSONObject newLoadBatch(String apiKey, String apiUrl, String company) throws URISyntaxException, IOException, InterruptedException {
 		JSONObject loadBatch = postJSON(apiKey, apiUrl, "loadBatches", Collections.singletonMap("company", company));
 		return loadBatch.getJSONObject("result");
 	}
 
-	protected static JSONObject loadDocuments(String apiKey, String apiUrl, DocumentType type, String company,
-			String loadBatch, JSONObject clientData, boolean beta, String... urls)
-			throws URISyntaxException, IOException, InterruptedException {
-
+	protected static JSONObject loadDocuments(String apiKey, String apiUrl, DocumentType type, String company, JSONObject clientData, boolean beta, String... urls) throws URISyntaxException, IOException, InterruptedException {
 		Map<String, String> params = new HashMap<>();
-//		if(beta) {
-			JSONObject infoJSON = new JSONObject();
-			infoJSON.put("type", type.getValue());
-			infoJSON.put("company", company);
-			infoJSON.put("useSplitter", "false");
-			infoJSON.put("clientData", clientData);
-			
-//			infoJSON.put("loadBatch", loadBatch);
-//			infoJSON.put("closeBatch", "false");
-//			infoJSON.put("useClassifier", "true");
-			
-			params.put("info", infoJSON.toString());
-//			type, company, data, clientData, useSplitter, contentHash
-//		} else {
-//			params.put("type", type.getValue());
-//			params.put("company", company);
-//
-//			params.put("loadBatch", loadBatch);
-//			params.put("closeBatch", "false");
-//
-//			params.put("useSplitter", "false");
-//			params.put("useClassifier", "true");
-//			
-//			params.put("clientData", clientData.toString());
-//
-//			Map<String, ?> knownData = Collections.emptyMap();
-//			params.put("knownData", new JSONObject(knownData).toString());
-//		
-//		} 
+		JSONObject infoJSON = new JSONObject();
+		infoJSON.put("type", type.getValue());
+		infoJSON.put("company", company);
+		infoJSON.put("useSplitter", "false");
+		infoJSON.put("clientData", clientData);
+		params.put("info", infoJSON.toString());
 			
 		JSONArray urlArray = new JSONArray();
 		Arrays.stream(urls).forEach(urlArray::put);
 
 		params.put("urls",urlArray.toString());
-//		params.put("urls", Arrays.stream(urls).collect(Collectors.joining(",")));
-//		String path = beta ? "v1/ingest/uploads" : "documents/bulk";
 		String path = "v1/ingest/uploads";
 		
 		return postMultipartForm(apiKey, apiUrl, path, params);

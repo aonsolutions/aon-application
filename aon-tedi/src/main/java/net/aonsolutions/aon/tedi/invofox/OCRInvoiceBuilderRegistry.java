@@ -43,7 +43,7 @@ class OCRInvoiceBuilderRegistry {
 		    }
 		    if (ocr.getInvoice().getRegistryDocumentCountry() == null) {
 				ocr.getInvoice().setRegistryDocumentCountry(Country.ES);
-				ocr.add(InvoiceErrorMessages.C003.inf(InvoiceErrorKey.RDOCUMENT_COUNTRY,InvoiceErrorKey.RDOCUMENT_COUNTRY.getDescription(), Country.ES.getIso2()));
+				// ocr.add(InvoiceErrorMessages.C003.inf(InvoiceErrorKey.RDOCUMENT_COUNTRY,InvoiceErrorKey.RDOCUMENT_COUNTRY.getDescription(), Country.ES.getIso2()));
 		    }
 		    return false;
 		}		

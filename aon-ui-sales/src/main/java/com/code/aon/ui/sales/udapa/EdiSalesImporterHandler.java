@@ -52,8 +52,10 @@ import com.esferalia.aon.file.seres.udapa.sales.data.ERE1C;
 import com.esferalia.aon.file.seres.udapa.sales.data.ERE1L;
 import com.esferalia.aon.file.seres.udapa.sales.data.ERE1T;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.SERES;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.seres.reader.udapa.UdapaSalesReader;
 
@@ -246,7 +248,10 @@ public class EdiSalesImporterHandler implements Serializable {
 								Double ediLineQuantity = ere1l.getCantidadPedida_21_();
 								Tag customerPackingTag = searchPackingTag(customerRegistryNote);
 								Double quantity = obtainQuantity(ediLineQuantity, customerPackingTag, rItem);
-								Double price = rItem.getPrice();
+
+								Occam occam = new Occam().setDomain(sales.getDomain()).setDomainName(AonUtil.getDomainName()).setUser(AonUtil.getRemoteUser());
+								Double price = SERES.getUnitPrice(occam, rItem.getRegistry().getId(), rItem.getItem().getId());
+
 								DiscountExpression discount = rItem.getDiscountExpression();
 								if (testing) {
 									detailController.onReset(event);
