@@ -619,6 +619,8 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			addResult(expressionContext, payment, resultStart, resultEnd, resultValue);
 			
 			System.out.println(String.format("ADD [%s]: %f [%s - %s]", payment.getName(), resultValue, resultStart, resultEnd));
+			
+			
 		}
 		Date start = results.get(0).getPeriod().getStart();
 		if ( start.after(paymentStart) && isNotBlank(payment.getName())) {
@@ -664,8 +666,10 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			Date prevEnd = prev.getPeriod().getEnd();
 			try {
 				Number prevValue = prev.getValue(prev.getPeriod());
-				if (valueStart.compareTo(prevStart) < 0)
+				if (valueStart.compareTo(prevStart) < 0) {
 					expressionContext.setVariable(name, resultValue, valueStart, prev(prevStart));
+					System.out.println(String.format("*ADD [%s]: %f [%s - %s]", name, resultValue, valueStart, prev(prevStart)));
+				}
 				
 				double value = resultValue ; 
 				if (isResultVariabl(prev))
@@ -673,7 +677,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 				
 				expressionContext.setVariable(name, value, prevStart,
 						prevEnd);
-				
+				System.out.println(String.format("**ADD [%s]: %f [%s - %s]", name, value, prevStart, prevEnd));
 				
 				valueStart = next(prevEnd);
 			} catch (Exception e) {
@@ -681,8 +685,10 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			}
 		}
 		
-		if (valueStart.compareTo(resultEnd) <= 0)
+		if (valueStart.compareTo(resultEnd) <= 0) {
 			expressionContext.setVariable(name, resultValue, valueStart, resultEnd);
+			System.out.println(String.format("***ADD [%s]: %f [%s - %s]", name, resultValue, valueStart, resultEnd));
+		}
 	}
 
 	private void initMonthVariables(ExpressionContext ctx) throws UndefinedVariablesException, ExpressionException {
