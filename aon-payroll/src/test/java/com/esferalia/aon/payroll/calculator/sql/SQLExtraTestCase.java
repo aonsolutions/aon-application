@@ -6586,7 +6586,16 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		AgreementExtraRecord extra = getExtra(aonContext, agreement.getId(), "15/12");
 		
 		ISalary salary = 
-		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder() {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				System.out.println(description + " = " + amount + " ( quote : " + quote + " )" );
+				context.forEach((key, value) -> System.out.println("   " + key + " = " + value.getValue(value.getPeriod()) + " " + value.getPeriod().getStart() + " - " + value.getPeriod().getEnd() ) );
+			}
+		})
 		.calculate(getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate))
 		.getSalary();
 		
