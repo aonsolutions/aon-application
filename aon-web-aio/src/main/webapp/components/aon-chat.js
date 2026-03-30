@@ -8,6 +8,7 @@ import * as LS from "../services/localStorageService";
 
 export class AonChat extends AonElement {
 
+  description;
   workflows;
 
   get id() {
@@ -81,13 +82,14 @@ export class AonChat extends AonElement {
   }
 
   buildChatWorkflow = () => {
-    if (this.workflows.length == 0) {
+    if (this.workflows.length == 0 && !this.description) {
       let noMessage = this.createDiv();
       noMessage.innerHTML = 'No hay mensajes para mostrar';
       noMessage.style.fontSize = '1em';
       noMessage.style.color = CSS.variable(COLORS.GRAYSON);
       chat.appendChild(noMessage);
     } else {
+      this.buildDescription();
       this.workflows.forEach(workflow => {
         this.buildWorkflow(workflow);
       });
@@ -192,6 +194,36 @@ export class AonChat extends AonElement {
       comment.style.paddingTop = "5px";
       comment.style.wordWrap = "break-word";
       comment.innerHTML = workflow.comment;
+      messageBox.appendChild(comment);
+
+      chat.appendChild(messageBox);
+    }
+  }
+
+  buildDescription = () => {
+    if (this.description) {
+      let chat = this.getElement("chat");
+      let messageBox = this.createDiv();
+      messageBox.classList.add(CSS.FLEX_COLUMN);
+      messageBox.classList.add(CSS.IMG_MAX_WIDTH);
+      messageBox.classList.add(CSS.AON_NOT_RICH);
+      messageBox.style.margin = "5px";
+      messageBox.style.padding = '15px';
+      messageBox.style.background = "#f5f5f5";
+      messageBox.style.boxShadow = '0px 2px 6px rgba(0,0,0,.1)';
+      messageBox.style.borderRadius = '5px';
+      messageBox.style.position = "relative";
+      messageBox.style.width = '100%';    
+  
+      let comment = this.createDiv();
+      comment.classList.add(CSS.MESSAGE_CONTENT);
+      comment.style.fontSize = "1em";
+      comment.style.textAlign = "left";
+      comment.style.fontWeight = "400";
+      comment.style.color = CSS.variable(COLORS.GRAYSON);
+      comment.style.paddingTop = "5px";
+      comment.style.wordWrap = "break-word";
+      comment.innerHTML = this.description;
       messageBox.appendChild(comment);
 
       chat.appendChild(messageBox);
