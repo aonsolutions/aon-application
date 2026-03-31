@@ -4,7 +4,8 @@ import {
 	getCompanyActivities, getPaymethods, getRegistryBanks, sendInvoice2Mail, getSalesSeries,
 	signInvoice, getApiConfiguration, getAeatCertificates, downloadFacturae, getCustomerEmails,
 	getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, getRegistrySuggestedAccount,
-	getPaymethod, getRegistry
+	getPaymethod, getRegistry,
+	getAmortizationTypes
 } from '../../services/service.js';
 import { Invoice, getDocumentNumber } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -39,6 +40,7 @@ import * as JSF from '../aon-jsf-app.js';
 import { isValid } from '../../services/documentUtils.js';
 import { AonChat } from '../../components/aon-chat.js';
 import { AonEmail } from '../../components/aon-email.js';
+import { AmortizationPeriod } from '../../models/amortization/AmortizationEnums.js';
 
 
 export class AonInvoice extends AonElement {
@@ -3011,11 +3013,15 @@ export class AonInvoice extends AonElement {
 		div.appendChild(description);
 
 		let type = createSelect(this.id + 'InmbobilizedType', MSG.TYPE);
-		type.value = amortization ? amortization.type : '';
 		div.appendChild(type);
+		getAmortizationTypes().then(types => {
+			type.setOptions(types.map(t => { return { value: t.id, name: t.description };	}));
+			if (amortization) type.value = amortization.type;
+		});
 
 		let period = createSelect(this.id + 'InmbobilizedPeriod', MSG.PERIOD);
 		period.value = amortization ? amortization.period : '';
+		period.setOptions(AmortizationPeriod.toArray());
 		div.appendChild(period);
 
 		let amount = this.createAonNumber(this.id + 'InmbobilizedAmount', MSG.AMOUNT);

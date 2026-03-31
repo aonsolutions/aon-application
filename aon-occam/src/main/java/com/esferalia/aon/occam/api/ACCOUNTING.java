@@ -759,7 +759,6 @@ public class ACCOUNTING {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) { 
 			AmortizationTypeValidation.validateParams(params, ctx);
 			return getAccounting().getAmortizationTypeList(ctx, params);
-
 		}
 	}
 
