@@ -307,10 +307,10 @@ export class AonParent extends AonElement {
 		let parentDiv = this.createDiv();
 		parentDiv.className = CSS.AON_PARENT_DIV;
 		this.getApplication().setContent(parentDiv);
-		
+
 		let aonDialogEnterpriseOptions = new AonDialogMenu();
-	    aonDialogEnterpriseOptions.id = "aonDialogEnterpriseOptions";
-	    parentDiv.appendChild(aonDialogEnterpriseOptions);
+		aonDialogEnterpriseOptions.id = "aonDialogEnterpriseOptions";
+		parentDiv.appendChild(aonDialogEnterpriseOptions);
 
 		let welcomeDiv = this.createDiv();
 		welcomeDiv.className = CSS.AON_WELCOME_DIV;
@@ -412,45 +412,48 @@ export class AonParent extends AonElement {
 
 			filterTabs.appendChild(companyFilterTabA);
 		}
+		
+		companyFilterTabDiv.appendChild(filterTabs);
 
 		// Options button (create/delete enterprises)
-		let enterpriseSpanButton = this.createElement(TAG.SPAN);
-		let aonIconB = new AonIconButton();
-        aonIconB.id = "enterpriseButtonsIconOption";
-        aonIconB.icon = MATERIAL_ICONS.MORE_VERT;
-        enterpriseSpanButton.appendChild(aonIconB);
-        enterpriseSpanButton.addEventListener(EVENT.CLICK, () => {
-			let optionsButtons = [
-				{
-					...ACTION.ADD,
-					name: 'Crear Empresa',
-					fn: () => this.rootPanel(new JSF.AonJsfNewDomain)
-				},
-				{
-					...ACTION.DELETE,
-					name: 'Borrar Empresa',
-					fn: () => this.rootPanel(new JSF.AonJsfRemoveDomain)
-				}
-			];
-			
-			let top = enterpriseSpanButton.getBoundingClientRect().top + 10;
-		    let left = enterpriseSpanButton.getBoundingClientRect().left + 50;
-		    let d = this.getElement('aonDialogEnterpriseOptions');
-		    let options = optionsButtons.map(({ icon, aonIcon, name, fn }) => {
-		      return {
-		        aonIcon,
-		        icon,
-		        name,
-		        fn: () => fn(),
-		      };
-		    });
-		
-		    d.setMenuOptions(options, top, left);
-		    d.open();
-		});
+		if (!this.isAyudaTorInfoautonomos()) {
+			let enterpriseSpanButton = this.createElement(TAG.SPAN);
+			let aonIconB = new AonIconButton();
+			aonIconB.id = "enterpriseButtonsIconOption";
+			aonIconB.icon = MATERIAL_ICONS.MORE_VERT;
+			enterpriseSpanButton.appendChild(aonIconB);
+			enterpriseSpanButton.addEventListener(EVENT.CLICK, () => {
+				let optionsButtons = [
+					{
+						...ACTION.ADD,
+						name: 'Crear Empresa',
+						fn: () => this.rootPanel(new JSF.AonJsfNewDomain)
+					},
+					{
+						...ACTION.DELETE,
+						name: 'Borrar Empresa',
+						fn: () => this.rootPanel(new JSF.AonJsfRemoveDomain)
+					}
+				];
 
-		companyFilterTabDiv.appendChild(filterTabs);
-		companyFilterTabDiv.appendChild(enterpriseSpanButton);
+				let top = enterpriseSpanButton.getBoundingClientRect().top + 10;
+				let left = enterpriseSpanButton.getBoundingClientRect().left + 50;
+				let d = this.getElement('aonDialogEnterpriseOptions');
+				let options = optionsButtons.map(({ icon, aonIcon, name, fn }) => {
+					return {
+						aonIcon,
+						icon,
+						name,
+						fn: () => fn(),
+					};
+				});
+
+				d.setMenuOptions(options, top, left);
+				d.open();
+			});
+			
+			companyFilterTabDiv.appendChild(enterpriseSpanButton);
+		}
 
 		companyDiv.appendChild(companyTitleDiv);
 		companyDiv.appendChild(companyFilterTabDiv);

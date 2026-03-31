@@ -25,13 +25,13 @@ public class Mod111Writer {
 	}
 	
 	private enum Writers {
-		 AEAT_2019		(mod111 -> (mod111.isAEAT() && mod111.getYear() >= 2019) 	, Mod111WriterAEAT2019::new)
-		,AEAT_2016		(mod111 -> (mod111.isAEAT() && mod111.getYear() >= 2016 && mod111.getYear() < 2019)
-				 																	, Mod111WriterAEAT2016::new)
-		,BIZKAIA_2016	(mod111 -> (mod111.isBizkaia() && mod111.getYear() >= 2016) , Mod111WriterBIZKAIA2016::new)
-		,ARABA_2016		(mod111 -> (mod111.isAraba() && mod111.getYear() >= 2016 )	, Mod111WriterARABA2016::new)
+		 AEAT_2019		(mod111 -> (mod111.isAEAT() && mod111.getYear() >= 2019), Mod111WriterAEAT2019::new)
+		,AEAT_2016		(mod111 -> (mod111.isAEAT() && mod111.getYear() >= 2016 && mod111.getYear() < 2019), Mod111WriterAEAT2016::new)
+		,BIZKAIA_2016	(mod111 -> (mod111.isBizkaia() && mod111.getYear() >= 2016), Mod111WriterBIZKAIA2016::new)
+		,ARABA_2016		(mod111 -> (mod111.isAraba() && mod111.getYear() >= 2016 ), Mod111WriterARABA2016::new)
 		,GIPUZKOA_2016	(mod111 -> (mod111.isGipuzkoa() && mod111.getYear() >= 2016), Mod111WriterGIPUZKOA2016::new)
-		,NAVARRA_2016	(mod111 -> (mod111.isNavarra() && mod111.getYear() >= 2016), Mod111WriterNAVARRA2016::new)
+		,NAVARRA_2026	(mod111 -> (mod111.isNavarra() && mod111.getYear() >= 2026), Mod111WriterNAVARRA2026::new)
+		,NAVARRA_2016	(mod111 -> (mod111.isNavarra() && mod111.getYear() >= 2016 && mod111.getYear() <= 2025), Mod111WriterNAVARRA2016::new)
 		;
 		private IModelAccepter accepter;
 		private IWriterInstance instancer;
@@ -47,7 +47,6 @@ public class Mod111Writer {
 		}
 	}
 
-	
 	public static void fillWriter(Mod111 mod111, Writer wr) throws IOException {
 		boolean filled = false;
 		for (Writers writer : Writers.values()) {
@@ -58,7 +57,7 @@ public class Mod111Writer {
 		}
 		wr.flush();
 		if (!filled) {
-			throw new AonCoreException("La generaci\u00F3n de el modelo no est\u00E1 soportada.");
+			throw new AonCoreException("La generaci\u00F3n del modelo no est\u00E1 soportada.");
 		}
 	}
 	

@@ -238,7 +238,7 @@ export const setRightPanel = (panel) => {
 }
 
 export const getFixedButton = () => {
-    return get(FIXED_BUTTON) || 'on';
+    return get(FIXED_BUTTON) || 'off';
 }
 
 export const setFixedButton = (value) => {
