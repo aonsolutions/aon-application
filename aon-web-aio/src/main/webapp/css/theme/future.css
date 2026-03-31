@@ -1590,7 +1590,7 @@ button:has( > i[id$="ToolbarHeaderToolSectionSaveButtonIcon"]) {
 	height: 32px;
   	padding: 0px;
   	margin-bottom: 2px;	  
-	
+	margin-right: 15px;
 	
 }	
 
@@ -1771,7 +1771,7 @@ i[id$="aonOfficePanelToolbarHeaderToolSectionSearchAdvancedButtonIcon"] {
 }
 
 .aonTable tbody tr:hover, .aonTableTrChecked {
-  background-color: inherit;
+  background-color: var(--aonBackgroundColor2);
 }
 
 /* ========================== TimeControl Styles  ========================== */
