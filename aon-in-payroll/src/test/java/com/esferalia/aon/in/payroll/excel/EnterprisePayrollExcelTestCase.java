@@ -1,6 +1,6 @@
 package com.esferalia.aon.in.payroll.excel;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.in.payroll.csv.IEnterprisePayroll;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
