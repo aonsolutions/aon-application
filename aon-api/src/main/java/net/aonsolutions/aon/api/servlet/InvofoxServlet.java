@@ -273,11 +273,13 @@ public class InvofoxServlet extends AonApiHttpServlet {
 									.replace("]", "%5D")
 									);
 					OCRDocumentsResponse resp = OCRInvofox.getDocuments(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), params);			
-					resp.getDocuments().ifPresent( docs -> {
-						docs.stream().forEach( doc -> {
-							doc.getId().ifPresentOrElse( id -> rawdocDocument(api, id), () -> loadDocument(api, invofoxConfiguration, ocrCompany.getId(), rawdoc));
-						});
-					});
+					if(resp.getDocuments().isPresent() && resp.getDocuments().get().isEmpty()) {
+						loadDocument(api, invofoxConfiguration, ocrCompany.getId(), rawdoc);
+					} else if(resp.getDocuments().isPresent()) {
+						resp.getDocuments().get().stream().forEach( doc -> {
+							doc.getId().ifPresent( id -> rawdocDocument(api, id));
+						});						
+					}
 				}
 			}	
 		}
