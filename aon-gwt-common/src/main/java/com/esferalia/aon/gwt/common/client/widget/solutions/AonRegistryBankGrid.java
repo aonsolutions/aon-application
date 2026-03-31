@@ -81,14 +81,14 @@ public class AonRegistryBankGrid extends SimpleLayoutPanel {
 		// ***************************************************************** [DESCRIPTION]		
 		final AonTextBox descriptionText = new AonTextBox();
 		descriptionText.setValue(registryBank.getAlias());
-		descriptionText.setVisibleLength(18);
+		descriptionText.setVisibleLength(10);
 		descriptionText.setMaxLength(20);
 		descriptionText.addValueChangeHandler(event -> registryBank.setAlias(descriptionText.getValue()));
 
 		// ***************************************************************** [BIC / SWIFT]		
 		final AonTextBox bicText = new AonTextBox();
 		bicText.setValue(registryBank.getBic());
-		bicText.setVisibleLength(10);
+		bicText.setVisibleLength(11);
 		bicText.setMaxLength(15);
 		bicText.addValueChangeHandler(event -> registryBank.setBic(bicText.getValue()));
 		
