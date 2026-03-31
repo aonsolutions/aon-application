@@ -7,17 +7,17 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCreditorFullPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomerFullPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel.AonRegistryFullPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSimpleDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.RegistryParams;
-import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 
-public abstract class CustomerModulePanel extends AonCustomDockLayout {
+public abstract class CreditorModulePanel extends AonCustomDockLayout {
 	
 	private static RegistryServiceAsync REGISTRY_SERVICE;
 	
@@ -37,14 +37,14 @@ public abstract class CustomerModulePanel extends AonCustomDockLayout {
 	private HTMLPanel messagePanel = new HTMLPanel("");
 	
 	private SimplePanel centerPanel;
-	private CustomerPanel customerPanel;
+	private CreditorPanel creditorPanel;
 	
 	private AonCustomMultiSelectBox status = new AonCustomMultiSelectBox("Estado");
 	
 	private RegistryModuleOptions options;
 	
-	public CustomerModulePanel(RegistryModuleOptions options) {
-		super("Clientes");
+	public CreditorModulePanel(RegistryModuleOptions options) {
+		super("Acreedores");
 		
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
 		REGISTRY_SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
@@ -111,106 +111,117 @@ public abstract class CustomerModulePanel extends AonCustomDockLayout {
 		selectedOptions.add("Activo");
 		status.setSelectedOptions(selectedOptions);
 		
-		customerPanel.resetSearchOffset();
+		creditorPanel.resetSearchOffset();
 		
 		onSearch( options );
 	}
 
 	private void addButtonsToolbar() {
-		AonToolbarButton newButton = new AonToolbarButton( "Nuevo Cliente", AON.CSS.aonIconAdd());
+		AonToolbarButton newButton = new AonToolbarButton( "Nuevo Acreedor", AON.CSS.aonIconAdd());
 		newButton.addClickHandler(e -> {
-			CustomerFull newCustomer = CustomerFull.initialize(options.getDomain());
-			selectCustomer(options, newCustomer, new AonRegistryFullPanelCallback<CustomerFull>() {
+			final AonSimpleDialog dialog = new AonSimpleDialog();
+			dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
+			dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
+			dialog.setCaption(AON.MSG.creditor());
+			AonCreditorFullPanel aonCreditorFullPanel = new AonCreditorFullPanel(options, CreditorFull.initialize(options.getDomain()), new AonRegistryFullPanelCallback<CreditorFull>() {
+				
 				@Override
 				public void onError(Throwable caught) {
-					AonMessagePanel.showError(messagePanel, caught.getMessage());
+					AonMessagePanel.showError(messagePanel,caught.getMessage());
 				}
-					
+				
 				@Override
-				public void onAccept(CustomerFull rf) {
-					customerPanel.resetSearchOffset();
+				public void onAccept(CreditorFull cf) {
+					dialog.hide();
+					creditorPanel.resetSearchOffset();
 					onSearch( options );
 				}
-
+				
 				@Override
 				public void onCancel() {
+					dialog.hide();
 					// Empty method
 				}
 
 				@Override
-				public void onDocumenthanged(CustomerFull registryFull) {
+				public void onDocumenthanged(CreditorFull creditorFull) {
 					// Empty method
 				}
-
+				
 				@Override
 				public void setFocus(boolean b) {
-					// Empty method	
+					// Empty method
 				}
 			});
+			dialog.add( aonCreditorFullPanel );
+			dialog.center();
+			dialog.show();
+			
+			Scheduler.get().scheduleDeferred(() -> aonCreditorFullPanel.setFocus(true));
 		});
 		
 		addToolbarButton(newButton);
 	}
 	
-	private void selectCustomer(RegistryModuleOptions opt, CustomerFull customer, AonRegistryFullPanelCallback<CustomerFull> panelCallback) {
+	private void selectCreditor(RegistryModuleOptions opt, CreditorFull creditor, AonRegistryFullPanelCallback<CreditorFull> panelCallback) {
 		final AonSimpleDialog dialog = new AonSimpleDialog();
 		dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
 		dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
-		dialog.setCaption(AON.MSG.customer());
+		dialog.setCaption(AON.MSG.creditor());
 		
-		AonCustomerFullPanel aonCustomerFullPanel = new AonCustomerFullPanel(opt, customer, new AonRegistryFullPanelCallback<CustomerFull>() {
+		AonCreditorFullPanel aonCreditorFullPanel = new AonCreditorFullPanel(opt, creditor, new AonRegistryFullPanelCallback<CreditorFull>() {
 			@Override
 			public void setFocus(boolean b) {
 				if (panelCallback != null) panelCallback.setFocus(b);
 			}
-			
+					
 			@Override
 			public void onError(Throwable caught) {
 				if (panelCallback != null) panelCallback.onError(caught);
 			}
-			
+					
 			@Override
 			public void onCancel() {
 				dialog.hide();
 				if (panelCallback != null) panelCallback.onCancel();
 			}
-			
+					
 			@Override
-			public void onAccept(CustomerFull rf) {
+			public void onAccept(CreditorFull cf) {
 				dialog.hide();
-				if (panelCallback != null) panelCallback.onAccept(rf);
-				customerPanel.resetSearchOffset();
+				if (panelCallback != null) panelCallback.onAccept(cf);
+				creditorPanel.resetSearchOffset();
 				onSearch( options );
 			}
+			
 			@Override
-			public void onDocumenthanged(CustomerFull registryFull) {
-				if (panelCallback != null) panelCallback.onDocumenthanged(registryFull);
-			}	
+			public void onDocumenthanged(CreditorFull creditorFull) {
+				if (panelCallback != null) panelCallback.onDocumenthanged(creditorFull);
+			}
 		});
-		
-		dialog.add( aonCustomerFullPanel );
+		dialog.add( aonCreditorFullPanel );
 		dialog.center();
 		dialog.show();
 		
-		Scheduler.get().scheduleDeferred(() -> aonCustomerFullPanel.setFocus(true));				
+		Scheduler.get().scheduleDeferred(() -> aonCreditorFullPanel.setFocus(true));
 	}
-
+	
 	public void onSearch( RegistryModuleOptions options ) {
 		RegistryParams params = getWidgetParams( options );
 		centerPanel.clear();
-		customerPanel = new CustomerPanel(params, centerPanel) {
+		creditorPanel = new CreditorPanel(params, centerPanel) {
 
 			@Override
-			protected void onCustomerOpen(Customer customer) {
+			protected void onCreditorOpen(Creditor creditor) {
 				// Open dialog customer
-				selectCustomer(options, customer, new AonRegistryFullPanelCallback<CustomerFull>() {
+				selectCreditor(options, creditor, new AonRegistryFullPanelCallback<CreditorFull>() {
 					@Override
 					public void onError(Throwable caught) {
 						AonMessagePanel.showError(messagePanel, caught.getMessage());
 					}
 						
 					@Override
-					public void onAccept(CustomerFull rf) {
+					public void onAccept(CreditorFull rf) {
 						// Add new customer to table
 					}
 
@@ -220,7 +231,7 @@ public abstract class CustomerModulePanel extends AonCustomDockLayout {
 					}
 
 					@Override
-					public void onDocumenthanged(CustomerFull registryFull) {
+					public void onDocumenthanged(CreditorFull registryFull) {
 						// Empty method
 					}
 
@@ -238,15 +249,15 @@ public abstract class CustomerModulePanel extends AonCustomDockLayout {
 		
 		};
 		
-		centerPanel.setWidget(customerPanel);
+		centerPanel.setWidget(creditorPanel);
 	}
 	
-	private void selectCustomer(RegistryModuleOptions opt, Customer customer, AonRegistryFullPanelCallback<CustomerFull> panelCallback) {
+	private void selectCreditor(RegistryModuleOptions opt, Creditor creditor, AonRegistryFullPanelCallback<CreditorFull> panelCallback) {
 		
-		REGISTRY_SERVICE.getCustomerFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), customer.getId(), new AsyncCallback<CustomerFull>() {	
+		REGISTRY_SERVICE.getCreditorFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), creditor.getId(), new AsyncCallback<CreditorFull>() {	
 			@Override
-			public void onSuccess(CustomerFull result) {
-				selectCustomer(opt, result, panelCallback);
+			public void onSuccess(CreditorFull result) {
+				selectCreditor(opt, result, panelCallback);
 			}
 			
 			@Override
@@ -275,6 +286,6 @@ public abstract class CustomerModulePanel extends AonCustomDockLayout {
 		return getWidgetParams(options);
 	}
 	
-	protected abstract void onCustomerCreate(CustomerFull customerFull);
+	protected abstract void onCreditorCreate(CreditorFull creditor);
 
 }

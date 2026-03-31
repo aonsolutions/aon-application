@@ -40,12 +40,11 @@ import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod240.Model240;
 import com.esferalia.aon.gwt.fiscal.client.product.ProductCatalogueModule;
 import com.esferalia.aon.gwt.fiscal.client.product.ProductModule;
-import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModule;
+import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModuleNew;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerFee;
-import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModuleNew;
 import com.esferalia.aon.gwt.fiscal.client.registry.DomainBookingResumeModule;
-import com.esferalia.aon.gwt.fiscal.client.registry.SupplierModule;
+import com.esferalia.aon.gwt.fiscal.client.registry.SupplierModuleNew;
 import com.esferalia.aon.gwt.fiscal.client.sales.SalesModule;
 import com.esferalia.aon.gwt.fiscal.client.sii.Sii;
 import com.esferalia.aon.gwt.fiscal.client.target.TargetEnterpriseModule;
@@ -53,9 +52,12 @@ import com.esferalia.aon.gwt.fiscal.client.tariff.TariffModule;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
+import com.google.gwt.dom.client.BodyElement;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -339,6 +341,8 @@ public class MainEntryPoint implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
+		ensureGwtSelector();
+		
 		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);	
 		String elementTarget = getParameter(GWT.getModuleName(), ELEMENT_TARGET);
 		if(getToken() != null) {
@@ -515,7 +519,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					CreditorModule creditorModule = new CreditorModule();
+					CreditorModuleNew creditorModule = new CreditorModuleNew();
 					creditorModule.onModuleLoad();
 				}
 				
@@ -530,7 +534,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					SupplierModule supplierModule = new SupplierModule();
+					SupplierModuleNew supplierModule = new SupplierModuleNew();
 					supplierModule.onModuleLoad();
 				}
 				
@@ -1109,6 +1113,14 @@ public class MainEntryPoint implements EntryPoint {
 		
 	}
 	
+	public static void ensureGwtSelector() {
+		BodyElement body = Document.get().getBody();
+		String className = body.getClassName();
+		if (AonStringUtils.isBlank(className)
+				|| (className.indexOf("gwt-Selector") == -1))
+			body.addClassName("gwt-Selector");
+
+	}
 	
 	protected Occam getOccam() {
 		return new Occam()

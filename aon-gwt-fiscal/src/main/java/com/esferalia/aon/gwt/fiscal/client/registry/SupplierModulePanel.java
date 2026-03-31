@@ -9,15 +9,15 @@ import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomerFullPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel.AonRegistryFullPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSimpleDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSupplierFullPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.RegistryParams;
-import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 
-public abstract class CustomerModulePanel extends AonCustomDockLayout {
+public abstract class SupplierModulePanel extends AonCustomDockLayout {
 	
 	private static RegistryServiceAsync REGISTRY_SERVICE;
 	
@@ -37,14 +37,14 @@ public abstract class CustomerModulePanel extends AonCustomDockLayout {
 	private HTMLPanel messagePanel = new HTMLPanel("");
 	
 	private SimplePanel centerPanel;
-	private CustomerPanel customerPanel;
+	private SupplierPanel supplierPanel;
 	
 	private AonCustomMultiSelectBox status = new AonCustomMultiSelectBox("Estado");
 	
 	private RegistryModuleOptions options;
 	
-	public CustomerModulePanel(RegistryModuleOptions options) {
-		super("Clientes");
+	public SupplierModulePanel(RegistryModuleOptions options) {
+		super("Proveedores");
 		
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
 		REGISTRY_SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
@@ -111,54 +111,67 @@ public abstract class CustomerModulePanel extends AonCustomDockLayout {
 		selectedOptions.add("Activo");
 		status.setSelectedOptions(selectedOptions);
 		
-		customerPanel.resetSearchOffset();
+		supplierPanel.resetSearchOffset();
 		
 		onSearch( options );
 	}
 
 	private void addButtonsToolbar() {
-		AonToolbarButton newButton = new AonToolbarButton( "Nuevo Cliente", AON.CSS.aonIconAdd());
+		AonToolbarButton newButton = new AonToolbarButton( "Nuevo Proveedor", AON.CSS.aonIconAdd());
 		newButton.addClickHandler(e -> {
-			CustomerFull newCustomer = CustomerFull.initialize(options.getDomain());
-			selectCustomer(options, newCustomer, new AonRegistryFullPanelCallback<CustomerFull>() {
+
+			final AonSimpleDialog dialog = new AonSimpleDialog();
+			dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
+			dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
+			dialog.setCaption(AON.MSG.supplier());
+			AonSupplierFullPanel aonSupplierFullPanel = new AonSupplierFullPanel(options, SupplierFull.initialize(options.getDomain()), new AonRegistryFullPanelCallback<SupplierFull>() {
+				
 				@Override
 				public void onError(Throwable caught) {
 					AonMessagePanel.showError(messagePanel, caught.getMessage());
 				}
-					
+				
 				@Override
-				public void onAccept(CustomerFull rf) {
-					customerPanel.resetSearchOffset();
+				public void onAccept(SupplierFull sf) {
+					dialog.hide();
+					supplierPanel.resetSearchOffset();
 					onSearch( options );
 				}
-
+				
 				@Override
 				public void onCancel() {
-					// Empty method
+					dialog.hide();
 				}
 
 				@Override
-				public void onDocumenthanged(CustomerFull registryFull) {
+				public void onDocumenthanged(SupplierFull supplierFull) {
 					// Empty method
 				}
-
+				
 				@Override
 				public void setFocus(boolean b) {
-					// Empty method	
+					// Empty method
 				}
 			});
+			
+			dialog.add( aonSupplierFullPanel );
+			dialog.center();
+			dialog.show();
+			
+			Scheduler.get().scheduleDeferred(() -> aonSupplierFullPanel.setFocus(true));
+			
 		});
 		
 		addToolbarButton(newButton);
 	}
 	
-	private void selectCustomer(RegistryModuleOptions opt, CustomerFull customer, AonRegistryFullPanelCallback<CustomerFull> panelCallback) {
+	private void selectSupplier(RegistryModuleOptions opt, SupplierFull supplier,  AonRegistryFullPanelCallback<SupplierFull> panelCallback) {
 		final AonSimpleDialog dialog = new AonSimpleDialog();
 		dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
 		dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
-		dialog.setCaption(AON.MSG.customer());
+		dialog.setCaption(AON.MSG.supplier());
 		
-		AonCustomerFullPanel aonCustomerFullPanel = new AonCustomerFullPanel(opt, customer, new AonRegistryFullPanelCallback<CustomerFull>() {
+		AonSupplierFullPanel aonSupplierFullPanel = new AonSupplierFullPanel(opt, supplier, new AonRegistryFullPanelCallback<SupplierFull>() {
 			@Override
 			public void setFocus(boolean b) {
 				if (panelCallback != null) panelCallback.setFocus(b);
@@ -176,41 +189,41 @@ public abstract class CustomerModulePanel extends AonCustomDockLayout {
 			}
 			
 			@Override
-			public void onAccept(CustomerFull rf) {
+			public void onAccept(SupplierFull sf) {
 				dialog.hide();
-				if (panelCallback != null) panelCallback.onAccept(rf);
-				customerPanel.resetSearchOffset();
+				if (panelCallback != null) panelCallback.onAccept(sf);
+				supplierPanel.resetSearchOffset();
 				onSearch( options );
 			}
 			@Override
-			public void onDocumenthanged(CustomerFull registryFull) {
-				if (panelCallback != null) panelCallback.onDocumenthanged(registryFull);
-			}	
+			public void onDocumenthanged(SupplierFull supplierFull) {
+				if (panelCallback != null) panelCallback.onDocumenthanged(supplierFull);
+			}
+
 		});
-		
-		dialog.add( aonCustomerFullPanel );
+		dialog.setWidget( aonSupplierFullPanel );
 		dialog.center();
 		dialog.show();
 		
-		Scheduler.get().scheduleDeferred(() -> aonCustomerFullPanel.setFocus(true));				
+		Scheduler.get().scheduleDeferred(() -> aonSupplierFullPanel.setFocus(true));	
 	}
-
+	
 	public void onSearch( RegistryModuleOptions options ) {
 		RegistryParams params = getWidgetParams( options );
 		centerPanel.clear();
-		customerPanel = new CustomerPanel(params, centerPanel) {
+		supplierPanel = new SupplierPanel(params, centerPanel) {
 
 			@Override
-			protected void onCustomerOpen(Customer customer) {
+			protected void onSupplierOpen(Supplier supplier) {
 				// Open dialog customer
-				selectCustomer(options, customer, new AonRegistryFullPanelCallback<CustomerFull>() {
+				selectSupplier(options, supplier, new AonRegistryFullPanelCallback<SupplierFull>() {
 					@Override
 					public void onError(Throwable caught) {
 						AonMessagePanel.showError(messagePanel, caught.getMessage());
 					}
 						
 					@Override
-					public void onAccept(CustomerFull rf) {
+					public void onAccept(SupplierFull rf) {
 						// Add new customer to table
 					}
 
@@ -220,7 +233,7 @@ public abstract class CustomerModulePanel extends AonCustomDockLayout {
 					}
 
 					@Override
-					public void onDocumenthanged(CustomerFull registryFull) {
+					public void onDocumenthanged(SupplierFull registryFull) {
 						// Empty method
 					}
 
@@ -238,15 +251,15 @@ public abstract class CustomerModulePanel extends AonCustomDockLayout {
 		
 		};
 		
-		centerPanel.setWidget(customerPanel);
+		centerPanel.setWidget(supplierPanel);
 	}
 	
-	private void selectCustomer(RegistryModuleOptions opt, Customer customer, AonRegistryFullPanelCallback<CustomerFull> panelCallback) {
+	private void selectSupplier(RegistryModuleOptions opt, Supplier supplier, AonRegistryFullPanelCallback<SupplierFull> panelCallback) {
 		
-		REGISTRY_SERVICE.getCustomerFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), customer.getId(), new AsyncCallback<CustomerFull>() {	
+		REGISTRY_SERVICE.getSupplierFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), supplier.getId(), new AsyncCallback<SupplierFull>() {
 			@Override
-			public void onSuccess(CustomerFull result) {
-				selectCustomer(opt, result, panelCallback);
+			public void onSuccess(SupplierFull result) {
+				selectSupplier(opt, result, panelCallback);
 			}
 			
 			@Override
@@ -275,6 +288,6 @@ public abstract class CustomerModulePanel extends AonCustomDockLayout {
 		return getWidgetParams(options);
 	}
 	
-	protected abstract void onCustomerCreate(CustomerFull customerFull);
+	protected abstract void onSupplierCreate(SupplierFull supplierFull);
 
 }

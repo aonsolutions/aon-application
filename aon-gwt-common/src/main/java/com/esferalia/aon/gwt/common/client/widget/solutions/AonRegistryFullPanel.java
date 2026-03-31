@@ -28,8 +28,8 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class AonRegistryFullPanel<R extends RegistryFull<?>> extends DockLayoutPanel implements Focusable {
-	public static final int MIN_WIDTH = 850;
-	public static final int MIN_HEIGHT = 650;
+	public static final int MIN_WIDTH = 950;
+	public static final int MIN_HEIGHT = 700;
 	private RegistryServiceAsync service;
 
 	private static final Logger LOGGER = Logger.getLogger(AonRegistryFullPanel.class.getName());
@@ -55,11 +55,12 @@ public abstract class AonRegistryFullPanel<R extends RegistryFull<?>> extends Do
 		this.setStyleName(AON.CSS.aonSelector());
 		this.addStyleName(AON.CSS.aonScrollArea());
 		
-		AonToolbar toolbar = new AonToolbar();
-		addButtons(options, toolbar, registryFull, callback);
-		this.addNorth(toolbar, AonToolbar.HEIGTH);
+		FlowPanel buttons = new FlowPanel();
+    	buttons.setStyleName(AON.CSS.aonTextCenter());
+		addButtons(options, buttons, registryFull, callback);
+		this.addSouth(buttons, AonToolbar.HEIGTH);
 		
-		this.addNorth(rootPanel, 250);
+		this.addNorth(rootPanel, 350);
 
 		addRegistry(options, registryFull,callback);
 		addExtended(options, registryFull,callback);
@@ -198,5 +199,5 @@ public abstract class AonRegistryFullPanel<R extends RegistryFull<?>> extends Do
 		return service;
 	}
 	
-	protected abstract void addButtons(AonModuleOptions<?> options, AonToolbar toolbar, R registryFull,AonRegistryFullPanelCallback<R> callback);	
+	protected abstract void addButtons(AonModuleOptions<?> options, FlowPanel buttons, R registryFull,AonRegistryFullPanelCallback<R> callback);	
 }
