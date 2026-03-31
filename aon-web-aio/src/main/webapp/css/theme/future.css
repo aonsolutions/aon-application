@@ -432,9 +432,9 @@ body {
     mask-image: url('/icons/help-circle.svg') ;
 }
 	
-#aonHeaderConfigButtonIcon{
+#aonHeaderConfigButtonIcon,
+#aonConfig > span > i {
     mask-image: url('/icons/settings.svg') ;
-	
 }
 
 #aonHeaderNotificationButtonIcon {
@@ -2010,10 +2010,6 @@ i[id$="aonDocumentalSheetToolbarHeaderToolSectionSendFileButtonIcon"]{
 
 #openNotificationButton > button > i {
 	mask-image: url('/icons/external-link.svg') ;
-}
-
-#aonConfig > span > i {
-	mask-image: url('/icons/settings-2.svg');
 }
 
 .rightPanel div[id$="CardContent"] > div > div{

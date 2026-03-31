@@ -26,7 +26,6 @@ export class AonFiscalMenu extends AonSuiteMenu {
 	        this.initialize();
        		await this.fiscalInitialize();
 	        this.build();
-	        this.setTitle("Opciones fiscales");
 		})
     }
 
