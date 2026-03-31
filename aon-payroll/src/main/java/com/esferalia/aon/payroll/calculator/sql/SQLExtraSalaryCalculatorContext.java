@@ -31,6 +31,7 @@ import com.esferalia.aon.payroll.calculator.ISystemPayment;
 import com.esferalia.aon.payroll.calculator.sql.FilterCollection.Filter;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.payroll.sql.AbstractSQL.IAgreementPayment;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
@@ -89,7 +90,12 @@ public class SQLExtraSalaryCalculatorContext implements
 		
 		@Override
 		protected Filter<IContractPayment> getExtraPaymentFilter() {
-			return  e -> e.getScope() == ExpressionScope.APPLICATION || e.getId() == paymentId; 
+			return  e -> {
+				String name = ( e instanceof DelegateContractPayment delegatePayment ) ? delegatePayment.getPayment().getName() : e.getName() ;
+				return e.getScope() == ExpressionScope.APPLICATION 
+						||( e.getScope() == ExpressionScope.AGREEMENT && e.getId() == paymentId )
+						||( AonStringUtils.equalsIgnoreCase(name, paymentName) && e.getId() == paymentId );
+			};
 		}
 		
 		@Override

@@ -25,6 +25,8 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -66,6 +68,7 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.SinRegistroPrevioType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.TipoOperacionType;
 
+@Order(Integer.MAX_VALUE)
 class VerifactuCommunicationCancelTest extends AbstractVerifactuTest {
 
 	@Override protected Environment getEnvironment() { return VERIFACTU_ENV; }

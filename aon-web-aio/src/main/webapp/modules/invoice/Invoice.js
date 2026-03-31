@@ -111,8 +111,13 @@ export class Invoice {
       };
       this.file = invoice.file || undefined;
       this.comments = invoice.comments || '';
-      this.remarks = invoice.remarks || [];
+     
+      if(invoice.remarks && Array.isArray(invoice.remarks)) this.remarks = invoice.remarks;
+      else if(invoice.remarks && typeof invoice.remarks === 'string') this.remarks = JSON.parse(invoice.remarks);
+      else this.remarks = [];
+    
       this.selfconta = invoice.selfconta || false;
+      this.amortization = invoice.amortization || undefined;
 
       this.activity = invoice.activity;
       this.signed = invoice.signed;

@@ -23,7 +23,7 @@ import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.FinObra7PercentFix;
 import net.aonsolutions.db.up2date.registry.RecordDataAlterTable;
 import net.aonsolutions.db.up2date.security.DeleteDomainAppApp7;
-import net.aonsolutions.db.up2date.tgss.ExtraHoursSwap;
+import net.aonsolutions.db.up2date.tgss.BasesMin2026Update;
 
 public class Up2Date {
 
@@ -598,7 +598,8 @@ public class Up2Date {
 			// Customize.CUSTOMIZE_AYUDAT,
 			// Customize.CUSTOMIZE_INFOAUTONOMOS,
 			// FinObra7PercentFix.FINOBRA7PERCENTFIX,
-			ExtraHoursSwap.EXTRAHOURSSWAP,
+			// ExtraHoursSwap.EXTRAHOURSSWAP,
+			BasesMin2026Update.BASESMIN2026UPDATE,
 			
 			
 			// ----------------------------------------------------------------
