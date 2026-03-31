@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -36,7 +36,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLSpecialDeductionsTestCase extends AbstractSQLTestCase {
 
@@ -100,9 +100,9 @@ public class SQLSpecialDeductionsTestCase extends AbstractSQLTestCase {
 		ISalary salary = calculator.calculate(ctx);
 		
 		
-		Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_PAYMENT), 500.00, salary.getTotalPayment());
-		Assert.assertEquals(String.format("%s :", ContextVariable.CGC_BASE), 100.00, salary.getCommonBase());
-		Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_LIQUID), 500.00 - ( 100*0.50) , salary.getTotalLiquid());
+		assertEquals(500.00, salary.getTotalPayment(), String.format("%s :", ContextVariable.TOTAL_PAYMENT));
+		assertEquals(100.00, salary.getCommonBase(), String.format("%s :", ContextVariable.CGC_BASE));
+		assertEquals(500.00 - ( 100*0.50), salary.getTotalLiquid(), String.format("%s :", ContextVariable.TOTAL_LIQUID));
 	}
 
 	@Test
@@ -161,9 +161,9 @@ public class SQLSpecialDeductionsTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
 		double expected = 1750.00 * 26 / monthDays;
-		Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_PAYMENT), expected, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(String.format("%s :", ContextVariable.CGC_BASE), expected , salary.getCommonBase(), DELTA);
-		Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_LIQUID), expected - ( expected * 6.35/100.00) - 26.57 , salary.getTotalLiquid(), DELTA);
+		assertEquals(expected, salary.getTotalPayment(), DELTA, String.format("%s :", ContextVariable.TOTAL_PAYMENT));
+		assertEquals(expected, salary.getCommonBase(), DELTA, String.format("%s :", ContextVariable.CGC_BASE));
+		assertEquals(expected - ( expected * 6.35/100.00) - 26.57, salary.getTotalLiquid(), DELTA, String.format("%s :", ContextVariable.TOTAL_LIQUID));
 	}
 
 	@Test
@@ -223,9 +223,9 @@ public class SQLSpecialDeductionsTestCase extends AbstractSQLTestCase {
 		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
 		int workedDays = get(endContractDate, Calendar.DAY_OF_MONTH);
 		double expected = 1750.00 * workedDays / monthDays;
-		org.junit.Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_PAYMENT), expected, salary.getTotalPayment(),DELTA);
-		org.junit.Assert.assertEquals(String.format("%s :", ContextVariable.CGC_BASE), expected , salary.getCommonBase(),DELTA);
-		org.junit.Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_LIQUID), expected - ( expected * 6.35/100.00) - 26.57 , salary.getTotalLiquid(), DELTA);
+		assertEquals(expected, salary.getTotalPayment(), DELTA, String.format("%s :", ContextVariable.TOTAL_PAYMENT));
+		assertEquals(expected, salary.getCommonBase(), DELTA, String.format("%s :", ContextVariable.CGC_BASE));
+		assertEquals(expected - ( expected * 6.35/100.00) - 26.57, salary.getTotalLiquid(), DELTA, String.format("%s :", ContextVariable.TOTAL_LIQUID));
 
 		// *************** EUKE
 		// Añado DELTA al assert
@@ -235,7 +235,7 @@ public class SQLSpecialDeductionsTestCase extends AbstractSQLTestCase {
 		// El error era:
 		// 		junit.framework.AssertionFailedError: 
 		//				TOTAL_LIQUIDO : expected:<792.8675> but was:<792.8675000000001>
-		Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_LIQUID), expected - ( expected * 6.35/100.00) - 26.57 , salary.getTotalLiquid(), DELTA);
+		assertEquals(expected - ( expected * 6.35/100.00) - 26.57, salary.getTotalLiquid(), DELTA, String.format("%s :", ContextVariable.TOTAL_LIQUID));
 	
 		startDate = getFirstDayOfMonth(startContractDate);
 		endDate = getLastDayOfMonth(startDate);
@@ -257,9 +257,9 @@ public class SQLSpecialDeductionsTestCase extends AbstractSQLTestCase {
 		monthDays = get(endDate, Calendar.DAY_OF_MONTH);
 		workedDays = monthDays - ( get(startContractDate, Calendar.DAY_OF_MONTH) -1 );
 		expected = 1750.00 * workedDays / monthDays;
-		org.junit.Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_PAYMENT), expected, salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(String.format("%s :", ContextVariable.CGC_BASE), expected , salary.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_LIQUID), expected - ( expected * 6.35/100.00), salary.getTotalLiquid(), DELTA);
+		assertEquals(expected, salary.getTotalPayment(), DELTA, String.format("%s :", ContextVariable.TOTAL_PAYMENT));
+		assertEquals(expected, salary.getCommonBase(), DELTA, String.format("%s :", ContextVariable.CGC_BASE));
+		assertEquals(expected - ( expected * 6.35/100.00), salary.getTotalLiquid(), DELTA, String.format("%s :", ContextVariable.TOTAL_LIQUID));
 	}
 
 	// ------------------------------------------------------------------------

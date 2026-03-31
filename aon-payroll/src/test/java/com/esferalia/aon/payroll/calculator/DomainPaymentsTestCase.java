@@ -1,14 +1,14 @@
 package com.esferalia.aon.payroll.calculator;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.AonVersion;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -69,7 +69,7 @@ public class DomainPaymentsTestCase {
 			else if (AonStringUtils.equals(payment.getExpression(), "55"))
 				assertEquals(payment.getDomain(), 55);
 			else
-				Assert.fail();
+				fail();
 		}
 
 		// Test override one 'EXTRA'
@@ -90,7 +90,7 @@ public class DomainPaymentsTestCase {
 			else if (AonStringUtils.equals(payment.getExpression(), "55"))
 				assertEquals(payment.getDomain(), 55);
 			else
-				Assert.fail();
+				fail();
 		}
 		
 		// Test override partially
@@ -114,7 +114,7 @@ public class DomainPaymentsTestCase {
 			else if (AonStringUtils.equals(payment.getExpression(), "55"))
 				assertEquals(payment.getDomain(), 55);
 			else
-				Assert.fail();
+				fail();
 		}
 	}
 

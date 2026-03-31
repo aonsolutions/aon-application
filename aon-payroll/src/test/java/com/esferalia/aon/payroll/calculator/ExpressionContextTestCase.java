@@ -4,9 +4,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -58,7 +58,7 @@ public class ExpressionContextTestCase {
 		List<ITimedResult<Double>> results = expressionContext.eval("DEFERRED", issue, end, Double.class);
 
 		long last = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-		Assert.assertEquals(results.get(0).getValue() ,(last -15.00) );
+		assertEquals(results.get(0).getValue() ,(last -15.00) );
 		
 	}
 

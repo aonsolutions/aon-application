@@ -34,8 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
@@ -66,7 +66,7 @@ import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author rtrepiana
@@ -107,7 +107,7 @@ public class SQLFunctionsTestCase extends
 						)
 						, startDate
 						, endDate, java.util.Date.class);
-		Assert.assertEquals(today, new Date(date.get(0).getValue().getTime()));
+		assertEquals(today, new Date(date.get(0).getValue().getTime()));
 	}
 
 	@Test
@@ -139,7 +139,7 @@ public class SQLFunctionsTestCase extends
 						)
 						, startDate
 						, endDate, java.util.Date.class);
-		Assert.assertEquals(getLastDayOfMonth(today), new Date(date.get(0).getValue().getTime()));
+		assertEquals(getLastDayOfMonth(today), new Date(date.get(0).getValue().getTime()));
 	}
 
 	@Test
@@ -171,7 +171,7 @@ public class SQLFunctionsTestCase extends
 						, startDate
 						, endDate, java.util.Date.class);
 		
-		Assert.assertEquals(add(today, Calendar.MONTH, 1), new Date(date.get(0).getValue().getTime()));
+		assertEquals(add(today, Calendar.MONTH, 1), new Date(date.get(0).getValue().getTime()));
 
 		List<ITimedResult<Integer>>  month = 
 				ctx.getExpressionContext().eval(
@@ -183,7 +183,7 @@ public class SQLFunctionsTestCase extends
 						, startDate
 						, endDate, Integer.class);
 		
-		Assert.assertEquals(get(today, Calendar.MONTH)+1, (int)month.get(0).getValue());
+		assertEquals(get(today, Calendar.MONTH)+1, (int)month.get(0).getValue());
 	}
 
 	@Test
@@ -215,7 +215,7 @@ public class SQLFunctionsTestCase extends
 						, startDate
 						, endDate, java.util.Date.class);
 		
-		Assert.assertEquals(add(today, Calendar.YEAR, 1), new Date(date.get(0).getValue().getTime()));
+		assertEquals(add(today, Calendar.YEAR, 1), new Date(date.get(0).getValue().getTime()));
 
 		List<ITimedResult<Integer>>  month = 
 				ctx.getExpressionContext().eval(
@@ -227,7 +227,7 @@ public class SQLFunctionsTestCase extends
 						, startDate
 						, endDate, Integer.class);
 		
-		Assert.assertEquals(get(today, Calendar.YEAR), (int)month.get(0).getValue());
+		assertEquals(get(today, Calendar.YEAR), (int)month.get(0).getValue());
 	}
 
 	@Test
@@ -259,7 +259,7 @@ public class SQLFunctionsTestCase extends
 						, startDate
 						, endDate, java.util.Date.class);
 		
-		Assert.assertEquals(add(today, Calendar.DAY_OF_MONTH, 1), new Date(date.get(0).getValue().getTime()));
+		assertEquals(add(today, Calendar.DAY_OF_MONTH, 1), new Date(date.get(0).getValue().getTime()));
 
 		List<ITimedResult<Integer>>  month = 
 				ctx.getExpressionContext().eval(
@@ -271,7 +271,7 @@ public class SQLFunctionsTestCase extends
 						, startDate
 						, endDate, Integer.class);
 		
-		Assert.assertEquals(get(today, Calendar.DATE), (int)month.get(0).getValue());
+		assertEquals(get(today, Calendar.DATE), (int)month.get(0).getValue());
 	}
 
 	@Test
@@ -319,7 +319,7 @@ public class SQLFunctionsTestCase extends
 						, startDate
 						, endDate, Boolean.class);
 
-		Assert.assertEquals(Boolean.FALSE, compare.get(0).getValue());
+		assertEquals(Boolean.FALSE, compare.get(0).getValue());
 
 	}
 
@@ -356,7 +356,7 @@ public class SQLFunctionsTestCase extends
 						, endDate, Integer.class);
 		
 
-		Assert.assertEquals(10, (int)days.get(0).getValue());
+		assertEquals(10, (int)days.get(0).getValue());
 
 		days = 
 				ctx.getExpressionContext().eval(
@@ -372,7 +372,7 @@ public class SQLFunctionsTestCase extends
 						, endDate, Integer.class);
 		
 
-		Assert.assertEquals(100, (int)days.get(0).getValue());
+		assertEquals(100, (int)days.get(0).getValue());
 
 	}
 
@@ -406,8 +406,8 @@ public class SQLFunctionsTestCase extends
 						, endDate, java.util.Date.class);
 		
 
-		Assert.assertEquals(1, firstDayOfMonth.size());
-		Assert.assertEquals(getFirstDayOfMonth(today), firstDayOfMonth.get(0).getValue());
+		assertEquals(1, firstDayOfMonth.size());
+		assertEquals(getFirstDayOfMonth(today), firstDayOfMonth.get(0).getValue());
 
 
 	}
@@ -436,8 +436,8 @@ public class SQLFunctionsTestCase extends
 						, endDate, java.util.Date.class);
 		
 
-		Assert.assertEquals(1, lastDayOfMonth.size());
-		Assert.assertEquals(getLastDayOfMonth(getToday()), lastDayOfMonth.get(0).getValue());
+		assertEquals(1, lastDayOfMonth.size());
+		assertEquals(getLastDayOfMonth(getToday()), lastDayOfMonth.get(0).getValue());
 
 
 	}
@@ -466,8 +466,8 @@ public class SQLFunctionsTestCase extends
 						, endDate, java.util.Date.class);
 		
 
-		Assert.assertEquals(1, lastDayOfYear.size());
-		Assert.assertEquals(AonDateUtils.getLastDayOfYear(getToday()), lastDayOfYear.get(0).getValue());
+		assertEquals(1, lastDayOfYear.size());
+		assertEquals(AonDateUtils.getLastDayOfYear(getToday()), lastDayOfYear.get(0).getValue());
 
 
 	}
@@ -502,8 +502,8 @@ public class SQLFunctionsTestCase extends
 						, endDate, java.util.Date.class);
 		
 
-		Assert.assertEquals(1, firstDayOfYear.size());
-		Assert.assertEquals(AonDateUtils.getFirstDayOfYear(today), firstDayOfYear.get(0).getValue());
+		assertEquals(1, firstDayOfYear.size());
+		assertEquals(AonDateUtils.getFirstDayOfYear(today), firstDayOfYear.get(0).getValue());
 
 
 	}
@@ -537,12 +537,12 @@ public class SQLFunctionsTestCase extends
 		
 		ctx.getExpressionContext().eval(String.format("%s('%s')", SYSTEM, MONTH_DAYS), getToday(), end, Double.class)
 		.stream()
-		.forEach(result-> Assert.assertEquals(String.format("%s('%s')", SYSTEM, MONTH_DAYS), (double) getMax(end, DAY_OF_MONTH), result.getValue()));
+		.forEach(result-> assertEquals((double) getMax(end, DAY_OF_MONTH), result.getValue(), String.format("%s('%s')", SYSTEM, MONTH_DAYS)));
 		
 
 		ctx.getExpressionContext().eval(String.format("%s", MONTH_DAYS), getToday(), end, Double.class)
 		.stream()
-		.forEach(result-> Assert.assertEquals(String.format("%s", MONTH_DAYS), 666.00, result.getValue()));
+		.forEach(result-> assertEquals(666.00, result.getValue(), String.format("%s", MONTH_DAYS)));
 	}
 
 	@Test
@@ -575,12 +575,12 @@ public class SQLFunctionsTestCase extends
 		
 		ctx.getExpressionContext().eval("SYS_DIAS_MES", getToday(), end, Double.class)
 		.stream()
-		.forEach(result-> Assert.assertEquals(String.format("%s('%s')", SYSTEM, MONTH_DAYS), (double) getMax(end, DAY_OF_MONTH), result.getValue()));
+		.forEach(result-> assertEquals((double) getMax(end, DAY_OF_MONTH), result.getValue(), String.format("%s('%s')", SYSTEM, MONTH_DAYS)));
 		
 
 		ctx.getExpressionContext().eval(String.format("%s", MONTH_DAYS), getToday(), end, Double.class)
 		.stream()
-		.forEach(result-> Assert.assertEquals(String.format("%s", MONTH_DAYS), 666.00, result.getValue()));
+		.forEach(result-> assertEquals(666.00, result.getValue(), String.format("%s", MONTH_DAYS)));
 	}
 
 	@Test
@@ -620,13 +620,13 @@ public class SQLFunctionsTestCase extends
 		
 		ctx.getExpressionContext().eval(String.format("%s('%s')", SYSTEM, MONTH_DAYS), getToday(), end, Double.class)
 		.stream()
-		.forEach(result-> Assert.assertEquals(String.format("%s('%s')", SYSTEM, MONTH_DAYS), (double) getMax(end, DAY_OF_MONTH), result.getValue()));
+		.forEach(result-> assertEquals((double) getMax(end, DAY_OF_MONTH), result.getValue(), String.format("%s('%s')", SYSTEM, MONTH_DAYS)));
 		ctx.getExpressionContext().eval(String.format("%s('%s')", AGREEMENT, MONTH_DAYS), getToday(), end, Double.class)
 		.stream()
-		.forEach(result-> Assert.assertEquals(String.format("%s('%s')", AGREEMENT, MONTH_DAYS), 69.00, result.getValue()));
+		.forEach(result-> assertEquals(69.00, result.getValue(), String.format("%s('%s')", AGREEMENT, MONTH_DAYS)));
 		ctx.getExpressionContext().eval(String.format("%s", MONTH_DAYS), getToday(), end, Double.class)
 		.stream()
-		.forEach(result-> Assert.assertEquals(String.format("%s", MONTH_DAYS), 666.00, result.getValue()));
+		.forEach(result-> assertEquals(666.00, result.getValue(), String.format("%s", MONTH_DAYS)));
 		
 		Date startDate = getToday();
 		Date endDate = getLastDayOfMonth(startDate);
@@ -641,13 +641,13 @@ public class SQLFunctionsTestCase extends
 		ctx.next();
 		ctx.getExpressionContext().eval(String.format("%s('%s')", SYSTEM, MONTH_DAYS), getToday(), end, Double.class)
 		.stream()
-		.forEach(result-> Assert.assertEquals(String.format("%s('%s')", SYSTEM, MONTH_DAYS), (double) getMax(end, DAY_OF_MONTH), result.getValue()));
+		.forEach(result-> assertEquals((double) getMax(end, DAY_OF_MONTH), result.getValue(), String.format("%s('%s')", SYSTEM, MONTH_DAYS)));
 		ctx.getExpressionContext().eval(String.format("%s('%s')", AGREEMENT, MONTH_DAYS), getToday(), end, Double.class)
 		.stream()
-		.forEach(result-> Assert.assertEquals(String.format("%s('%s')", AGREEMENT, MONTH_DAYS), 96.00, result.getValue()));
+		.forEach(result-> assertEquals(96.00, result.getValue(), String.format("%s('%s')", AGREEMENT, MONTH_DAYS)));
 		ctx.getExpressionContext().eval(String.format("%s", MONTH_DAYS), getToday(), end, Double.class)
 		.stream()
-		.forEach(result-> Assert.assertEquals(String.format("%s", MONTH_DAYS), 666.00, result.getValue()));
+		.forEach(result-> assertEquals(666.00, result.getValue(), String.format("%s", MONTH_DAYS)));
 
 	
 		startDate = getToday();
@@ -663,13 +663,13 @@ public class SQLFunctionsTestCase extends
 		ctx.next();
 		ctx.getExpressionContext().eval(String.format("%s('%s')", SYSTEM, MONTH_DAYS), getToday(), end, Double.class)
 		.stream()
-		.forEach(result-> Assert.assertEquals(String.format("%s('%s')", SYSTEM, MONTH_DAYS), (double) getMax(end, DAY_OF_MONTH), result.getValue()));
+		.forEach(result-> assertEquals((double) getMax(end, DAY_OF_MONTH), result.getValue(), String.format("%s('%s')", SYSTEM, MONTH_DAYS)));
 		ctx.getExpressionContext().eval(String.format("%s('%s')", AGREEMENT, MONTH_DAYS), getToday(), end, Double.class)
 		.stream()
-		.forEach(result-> Assert.assertEquals(String.format("%s('%s')", AGREEMENT, MONTH_DAYS), 99.00, result.getValue()));
+		.forEach(result-> assertEquals(99.00, result.getValue(), String.format("%s('%s')", AGREEMENT, MONTH_DAYS)));
 		ctx.getExpressionContext().eval(String.format("%s", MONTH_DAYS), getToday(), end, Double.class)
 		.stream()
-		.forEach(result-> Assert.assertEquals(String.format("%s", MONTH_DAYS), 666.00, result.getValue()));
+		.forEach(result-> assertEquals(666.00, result.getValue(), String.format("%s", MONTH_DAYS)));
 	}
 
 	
@@ -698,10 +698,10 @@ public class SQLFunctionsTestCase extends
 		
 		} catch ( CheckException e ) {
 				System.out.println(e.getMessage());
-				Assert.assertEquals("Hello World!!!", e.getMessage());
+				assertEquals(e.getMessage(), "Hello World!!!");
 				return;
 		} 
-		Assert.fail();
+		fail();
 	}
 
 	@Test
@@ -729,10 +729,10 @@ public class SQLFunctionsTestCase extends
 		
 		} catch ( UndefinedVariablesException e ) {
 				System.out.println(e.getVariableNames()[0]);
-				Assert.assertEquals("NO_DEFINIDA", e.getVariableNames()[0]);
+				assertEquals(e.getVariableNames()[0], "NO_DEFINIDA");
 				return;
 		} 
-		Assert.fail();
+		fail();
 	}
 
 	@Test
@@ -757,8 +757,8 @@ public class SQLFunctionsTestCase extends
 					,endDate, 
 					Double.class);
 		
-		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(100.00, result.get(0).getValue());
+		assertEquals(1, result.size());
+		assertEquals(100.00, result.get(0).getValue());
 	}
 
 	@Test
@@ -799,9 +799,9 @@ public class SQLFunctionsTestCase extends
 					,endDate, 
 					Double.class);
 		
-		Assert.assertEquals(2, result.size());
-		Assert.assertEquals(100.00 * 10 / get(endDate, DAY_OF_MONTH) , result.get(0).getValue());
-		Assert.assertEquals(200.00 * (get(endDate, DAY_OF_MONTH) -10)/ get(endDate, DAY_OF_MONTH) , result.get(1).getValue());
+		assertEquals(2, result.size());
+		assertEquals(100.00 * 10 / get(endDate, DAY_OF_MONTH) , result.get(0).getValue());
+		assertEquals(200.00 * (get(endDate, DAY_OF_MONTH) -10)/ get(endDate, DAY_OF_MONTH) , result.get(1).getValue());
 		
 	}
 	
@@ -830,10 +830,10 @@ public class SQLFunctionsTestCase extends
 		
 		} catch ( CheckException e ) {
 				System.out.println(e.getMessage());
-				Assert.assertEquals("Hello World!!!", e.getMessage());
+				assertEquals(e.getMessage(), "Hello World!!!");
 				return;
 		} 
-		Assert.fail();
+		fail();
 	}
 	
 	@Test
@@ -861,10 +861,10 @@ public class SQLFunctionsTestCase extends
 		
 		} catch ( CheckException e ) {
 				System.out.println(e.getMessage());
-				Assert.assertEquals("Hello World!!!", e.getMessage());
+				assertEquals(e.getMessage(), "Hello World!!!");
 				return;
 		} 
-		Assert.fail();
+		fail();
 	}
 
 	@Test
@@ -889,8 +889,8 @@ public class SQLFunctionsTestCase extends
 				,endDate, 
 				Double.class);
 	
-		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(100.00, result.get(0).getValue());
+		assertEquals(1, result.size());
+		assertEquals(100.00, result.get(0).getValue());
 	}
 
 	@Test
@@ -915,8 +915,8 @@ public class SQLFunctionsTestCase extends
 				,endDate, 
 				Double.class);
 	
-		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(100.00, result.get(0).getValue());
+		assertEquals(1, result.size());
+		assertEquals(100.00, result.get(0).getValue());
 	}
 
 	@Test
@@ -941,7 +941,7 @@ public class SQLFunctionsTestCase extends
 					startDate
 					,endDate, 
 					Double.class);
-			Assert.fail();
+			fail();
 		} catch ( RemoveException e ) {
 			
 		}
@@ -951,7 +951,7 @@ public class SQLFunctionsTestCase extends
 					startDate
 					,endDate, 
 					Double.class);
-			Assert.fail();
+			fail();
 		} catch ( RemoveException e ) {
 			
 		}
@@ -961,7 +961,7 @@ public class SQLFunctionsTestCase extends
 					startDate
 					,endDate, 
 					Double.class);
-			Assert.fail();
+			fail();
 		} catch ( RemoveException e ) {
 			
 		}
@@ -990,24 +990,24 @@ public class SQLFunctionsTestCase extends
 				,endDate, 
 				Double.class);
 	
-		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(100.00, result.get(0).getValue());
+		assertEquals(1, result.size());
+		assertEquals(100.00, result.get(0).getValue());
 
 		result =  ctx.getExpressionContext().eval("INPUT(\" /*user*/(1.00) * ANTIGÜEDAD(100.00, TRIENIO)/**/ \"   ,  \" Hello World!!!\"  );", 
 				startDate
 				,endDate, 
 				Double.class);
 	
-		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(100.00, result.get(0).getValue());
+		assertEquals(1, result.size());
+		assertEquals(100.00, result.get(0).getValue());
 	
 		result =  ctx.getExpressionContext().eval("INPUT(\" /*user*/(1.00) * ANTIGÜEDAD(100.00, TRIENIO)/**/ \"   ,  ' Hello World!!!' );", 
 				startDate
 				,endDate, 
 				Double.class);
 	
-		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(100.00, result.get(0).getValue());
+		assertEquals(1, result.size());
+		assertEquals(100.00, result.get(0).getValue());
 	
 	}
 
@@ -1043,18 +1043,18 @@ public class SQLFunctionsTestCase extends
 				,endDate, 
 				Double.class);
 	
-		Assert.assertEquals(2, results.size());
+		assertEquals(2, results.size());
 		
 		double monthDays = get(endDate, DAY_OF_MONTH);
 		double workedDays = monthDays - 10;
 		
-		Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
-		Assert.assertEquals(add(startIT, DAY_OF_MONTH,-1), results.get(0).getPeriod().getEnd());
-		Assert.assertEquals(1000.00*10/workedDays, results.get(0).getValue());
+		assertEquals(startDate, results.get(0).getPeriod().getStart());
+		assertEquals(add(startIT, DAY_OF_MONTH,-1), results.get(0).getPeriod().getEnd());
+		assertEquals(1000.00*10/workedDays, results.get(0).getValue());
 
-		Assert.assertEquals(add(endIT, DAY_OF_MONTH,1), results.get(1).getPeriod().getStart());
-		Assert.assertEquals(endDate, results.get(1).getPeriod().getEnd());
-		Assert.assertEquals(1000.00*(monthDays-20)/workedDays, results.get(1).getValue());
+		assertEquals(add(endIT, DAY_OF_MONTH,1), results.get(1).getPeriod().getStart());
+		assertEquals(endDate, results.get(1).getPeriod().getEnd());
+		assertEquals(1000.00*(monthDays-20)/workedDays, results.get(1).getValue());
 	}
 
 	@Test
@@ -1082,11 +1082,11 @@ public class SQLFunctionsTestCase extends
 				,endDate, 
 				Double.class);
 	
-		Assert.assertEquals(1, results.size());
+		assertEquals(1, results.size());
 		
-		Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, results.get(0).getPeriod().getEnd());
-		Assert.assertEquals(1000.00, results.get(0).getValue());
+		assertEquals(startDate, results.get(0).getPeriod().getStart());
+		assertEquals(endDate, results.get(0).getPeriod().getEnd());
+		assertEquals(1000.00, results.get(0).getValue());
 
 	}
 	
@@ -1130,15 +1130,15 @@ public class SQLFunctionsTestCase extends
 				startDate
 				,endDate, 
 				Double.class);
-		Assert.assertEquals(2, results.size());
+		assertEquals(2, results.size());
 		
-		Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
-		Assert.assertEquals(add(startOffDate, Calendar.DAY_OF_MONTH, -1), results.get(0).getPeriod().getEnd());
+		assertEquals(startDate, results.get(0).getPeriod().getStart());
+		assertEquals(add(startOffDate, Calendar.DAY_OF_MONTH, -1), results.get(0).getPeriod().getEnd());
 
-		Assert.assertEquals(add(endOffDate, Calendar.DAY_OF_MONTH, 1), results.get(1).getPeriod().getStart());
-		Assert.assertEquals(endDate, results.get(1).getPeriod().getEnd());
+		assertEquals(add(endOffDate, Calendar.DAY_OF_MONTH, 1), results.get(1).getPeriod().getStart());
+		assertEquals(endDate, results.get(1).getPeriod().getEnd());
 		
-		Assert.assertEquals(10.00, results.get(0).getValue() + results.get(1).getValue() /*+ results.get(2).getValue()*/);
+		assertEquals(10.00, results.get(0).getValue() + results.get(1).getValue() /*+ results.get(2).getValue()*/);
 
 	}
 
@@ -1218,19 +1218,19 @@ public class SQLFunctionsTestCase extends
 				,aprilEnd, 
 				Double.class);
 	
-		Assert.assertEquals(2, results.size());
+		assertEquals(2, results.size());
 		
-		Assert.assertEquals(aprilStart, results.get(0).getPeriod().getStart());
-		Assert.assertEquals(april15, results.get(0).getPeriod().getEnd());
-		Assert.assertEquals(1000.00/3*2, results.get(0).getValue());
+		assertEquals(aprilStart, results.get(0).getPeriod().getStart());
+		assertEquals(april15, results.get(0).getPeriod().getEnd());
+		assertEquals(1000.00/3*2, results.get(0).getValue());
 
-		Assert.assertEquals(april16, results.get(1).getPeriod().getStart());
-		Assert.assertEquals(aprilEnd, results.get(1).getPeriod().getEnd());
-		Assert.assertEquals(1000.00/3, results.get(1).getValue());
+		assertEquals(april16, results.get(1).getPeriod().getStart());
+		assertEquals(aprilEnd, results.get(1).getPeriod().getEnd());
+		assertEquals(1000.00/3, results.get(1).getValue());
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testFractionFunctionFebruary() throws ExpressionException, SQLException {
 
 		Connection connection = getConnection();
@@ -1281,21 +1281,21 @@ public class SQLFunctionsTestCase extends
 				,februaryEnd, 
 				Double.class);
 	
-		Assert.assertEquals(2, results.size());
+		assertEquals(2, results.size());
 		
-		Assert.assertEquals(februaryStart, results.get(0).getPeriod().getStart());
-		Assert.assertEquals(february11, results.get(0).getPeriod().getEnd());
+		assertEquals(februaryStart, results.get(0).getPeriod().getStart());
+		assertEquals(february11, results.get(0).getPeriod().getEnd());
 
-		Assert.assertEquals(february12, results.get(1).getPeriod().getStart());
-		Assert.assertEquals(februaryEnd, results.get(1).getPeriod().getEnd());
+		assertEquals(february12, results.get(1).getPeriod().getStart());
+		assertEquals(februaryEnd, results.get(1).getPeriod().getEnd());
 		
 		System.out.println("1-. " + results.get(0).getValue() );
 		System.out.println("2-. " + results.get(1).getValue() );
 		
-		Assert.assertEquals(1000.00 , results.get(0).getValue() + results.get(1).getValue() );
+		assertEquals(1000.00 , results.get(0).getValue() + results.get(1).getValue() );
 		
-		Assert.assertEquals(1000.00/29 * 11, results.get(0).getValue());
-		Assert.assertEquals(1000.00/29 * 18, results.get(1).getValue());
+		assertEquals(1000.00/29 * 11, results.get(0).getValue());
+		assertEquals(1000.00/29 * 18, results.get(1).getValue());
 	}
 
 	@Test
@@ -1324,11 +1324,11 @@ public class SQLFunctionsTestCase extends
 				,getLastDayOfMonth(endDate), 
 				Double.class);
 	
-		Assert.assertEquals(1, results.size());
+		assertEquals(1, results.size());
 		
-		Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, results.get(0).getPeriod().getEnd());
-		Assert.assertEquals(1000.00 , results.get(0).getValue());
+		assertEquals(startDate, results.get(0).getPeriod().getStart());
+		assertEquals(endDate, results.get(0).getPeriod().getEnd());
+		assertEquals(1000.00 , results.get(0).getValue());
 
 	}
 
@@ -1358,9 +1358,9 @@ public class SQLFunctionsTestCase extends
 				,endDate, 
 				Double.class);
 	
-		Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, results.get(0).getPeriod().getEnd());
-		Assert.assertEquals(0.00, results.get(0).getValue());
+		assertEquals(startDate, results.get(0).getPeriod().getStart());
+		assertEquals(endDate, results.get(0).getPeriod().getEnd());
+		assertEquals(0.00, results.get(0).getValue());
 		
 	}
 
@@ -1406,7 +1406,7 @@ public class SQLFunctionsTestCase extends
 				,lastDayOfMonth, 
 				Double.class);
 	
-		Assert.assertEquals(1750.00 * 10 / 30, results.get(0).getValue(), DELTA);
+		assertEquals(1750.00 * 10 / 30, results.get(0).getValue(), DELTA);
 		
 	}
 	
@@ -1452,7 +1452,7 @@ public class SQLFunctionsTestCase extends
 				,lastDayOfMonth, 
 				Double.class);
 	
-		Assert.assertEquals(1750.00 * 10 / 30, results.get(0).getValue(), DELTA);
+		assertEquals(1750.00 * 10 / 30, results.get(0).getValue(), DELTA);
 	
 		calculateAndSave(connection, ctx);
 		
@@ -1472,7 +1472,7 @@ public class SQLFunctionsTestCase extends
 				,lastDayOfMonth, 
 				Double.class);
 	
-		Assert.assertEquals(1750.00 * 10 / 30, results.get(0).getValue(), DELTA);
+		assertEquals(1750.00 * 10 / 30, results.get(0).getValue(), DELTA);
 		
 	}
 	
@@ -1518,7 +1518,7 @@ public class SQLFunctionsTestCase extends
 				,lastDayOfMonth, 
 				Double.class);
 	
-		Assert.assertEquals(1750.00 * 10 / 30, results.get(0).getValue(), DELTA);
+		assertEquals(1750.00 * 10 / 30, results.get(0).getValue(), DELTA);
 	
 		calculateAndSave(connection, ctx);
 		
@@ -1538,7 +1538,7 @@ public class SQLFunctionsTestCase extends
 				,lastDayOfMonth, 
 				Double.class);
 	
-		Assert.assertEquals(1750.00 * 10 / 30, results.get(0).getValue(), DELTA);
+		assertEquals(1750.00 * 10 / 30, results.get(0).getValue(), DELTA);
 		
 	}
 	
@@ -1574,9 +1574,9 @@ public class SQLFunctionsTestCase extends
 				,endDate, 
 				Double.class);
 	
-		Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, results.get(0).getPeriod().getEnd());
-		Assert.assertEquals(sum, results.get(0).getValue());
+		assertEquals(startDate, results.get(0).getPeriod().getStart());
+		assertEquals(endDate, results.get(0).getPeriod().getEnd());
+		assertEquals(sum, results.get(0).getValue());
 		
 	}
 
@@ -1605,11 +1605,11 @@ public class SQLFunctionsTestCase extends
 				,endDate, 
 				Double.class);
 	
-		Assert.assertEquals(1, results.size());
+		assertEquals(1, results.size());
 		
-		Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
-		Assert.assertEquals(endDate, results.get(0).getPeriod().getEnd());
-		Assert.assertEquals(1000.00, results.get(0).getValue());
+		assertEquals(startDate, results.get(0).getPeriod().getStart());
+		assertEquals(endDate, results.get(0).getPeriod().getEnd());
+		assertEquals(1000.00, results.get(0).getValue());
 
 	}
 
@@ -1638,9 +1638,9 @@ public class SQLFunctionsTestCase extends
 				endDate, 
 				Object.class);
 		
-		org.junit.Assert.assertEquals(1, results.size());
-		org.junit.Assert.assertEquals(endDate, results.get(0).getPeriod().getEnd());
-		org.junit.Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
+		assertEquals(1, results.size());
+		assertEquals(endDate, results.get(0).getPeriod().getEnd());
+		assertEquals(startDate, results.get(0).getPeriod().getStart());
 		
 		Map<Integer,Map<String,Object>> compensations = (Map<Integer,Map<String,Object>>) results.get(0).getValue();
 		
@@ -1736,7 +1736,7 @@ public class SQLFunctionsTestCase extends
 	    		return;
 		}
 		
-		Assert.fail();
+		fail();
     		
 	}
 
@@ -1779,13 +1779,13 @@ public class SQLFunctionsTestCase extends
 		AON.getSalaryData(aonContext, props -> props.getContractProperty().eq(contract.getId()))
 		.forEach( salary -> {
 			List<ContextData> salaryHours = salary.getContextData().get("HORAS_NOMINA");
-			org.junit.Assert.assertEquals(2, salaryHours.size());
+			assertEquals(2, salaryHours.size());
 			salaryHours.sort((s1,s2) -> s1.getStartDate().compareTo(s2.getStartDate()));
 			salaryHours.forEach( h -> System.out.println("HORAS_NOMINA :" + h.getExpression() ) );
-			org.junit.Assert.assertEquals(salaryHours.get(0).getStartDate(), firsDayOfMonth);
-			org.junit.Assert.assertEquals(salaryHours.get(0).getEndDate(), add(firsDayOfMonth, DAY_OF_MONTH,9));
-			org.junit.Assert.assertEquals(salaryHours.get(1).getStartDate(), add(firsDayOfMonth, DAY_OF_MONTH,10));
-			org.junit.Assert.assertEquals(salaryHours.get(1).getEndDate(), lastDayOfMonth);
+			assertEquals(salaryHours.get(0).getStartDate(), firsDayOfMonth);
+			assertEquals(salaryHours.get(0).getEndDate(), add(firsDayOfMonth, DAY_OF_MONTH,9));
+			assertEquals(salaryHours.get(1).getStartDate(), add(firsDayOfMonth, DAY_OF_MONTH,10));
+			assertEquals(salaryHours.get(1).getEndDate(), lastDayOfMonth);
 		});
 		;
 		
@@ -1857,27 +1857,27 @@ public class SQLFunctionsTestCase extends
 		AON.getSalaryData(aonContext, props -> props.getContractProperty().eq(contract.getId()))
 		.forEach( salary -> {
 			List<ContextData> salaryHours = salary.getContextData().get("HORAS_NOMINA");
-			org.junit.Assert.assertEquals(2, salaryHours.size());
+			assertEquals(2, salaryHours.size());
 			salaryHours.sort((s1,s2) -> s1.getStartDate().compareTo(s2.getStartDate()));
 			salaryHours.forEach( h -> System.out.println("HORAS_NOMINA :" + h.getExpression() + ", "+ h.getStartDate() ) );
-			org.junit.Assert.assertEquals(salaryHours.get(0).getStartDate(), firstDayOfMonth);
-			org.junit.Assert.assertEquals(salaryHours.get(0).getEndDate(), firstDayOfMonth);
+			assertEquals(salaryHours.get(0).getStartDate(), firstDayOfMonth);
+			assertEquals(salaryHours.get(0).getEndDate(), firstDayOfMonth);
 			
-			org.junit.Assert.assertEquals(salaryHours.get(1).getStartDate(), add(firstDayOfMonth, DAY_OF_MONTH,1));
-			org.junit.Assert.assertEquals(salaryHours.get(1).getEndDate(), lastDayOfMonth);
-			org.junit.Assert.assertEquals(1.00, Double.parseDouble(salaryHours.get(0).getExpression()), 0.00);
+			assertEquals(salaryHours.get(1).getStartDate(), add(firstDayOfMonth, DAY_OF_MONTH,1));
+			assertEquals(salaryHours.get(1).getEndDate(), lastDayOfMonth);
+			assertEquals(1.00, Double.parseDouble(salaryHours.get(0).getExpression()), 0.00);
 
 			List<ContextData> baseCgc = salary.getContextData().get("BASE_CGC");
-			org.junit.Assert.assertEquals(2, baseCgc.size());
+			assertEquals(2, baseCgc.size());
 			baseCgc.sort((s1,s2) -> s1.getStartDate().compareTo(s2.getStartDate()));
 			baseCgc.forEach( h -> System.out.println("BASE_CGC :" + h.getExpression() + ", "+ h.getStartDate() ) );
-			org.junit.Assert.assertEquals(baseCgc.get(0).getStartDate(), firstDayOfMonth);
-			org.junit.Assert.assertEquals(baseCgc.get(0).getEndDate(), firstDayOfMonth);
-			org.junit.Assert.assertEquals(6.78, Double.parseDouble(baseCgc.get(0).getExpression()), 0.00);
+			assertEquals(baseCgc.get(0).getStartDate(), firstDayOfMonth);
+			assertEquals(baseCgc.get(0).getEndDate(), firstDayOfMonth);
+			assertEquals(6.78, Double.parseDouble(baseCgc.get(0).getExpression()), 0.00);
 			
-			org.junit.Assert.assertEquals(baseCgc.get(1).getStartDate(), add(firstDayOfMonth, DAY_OF_MONTH,1));
-			org.junit.Assert.assertEquals(baseCgc.get(1).getEndDate(), lastDayOfMonth);
-			org.junit.Assert.assertEquals(5.00/40.00 * 1125.90 - 6.78, Double.parseDouble(baseCgc.get(1).getExpression()), 0.00);
+			assertEquals(baseCgc.get(1).getStartDate(), add(firstDayOfMonth, DAY_OF_MONTH,1));
+			assertEquals(baseCgc.get(1).getEndDate(), lastDayOfMonth);
+			assertEquals(5.00/40.00 * 1125.90 - 6.78, Double.parseDouble(baseCgc.get(1).getExpression()), 0.00);
 		});
 		;
 		
@@ -1952,27 +1952,27 @@ public class SQLFunctionsTestCase extends
 		AON.getSalaryData(aonContext, props -> props.getContractProperty().eq(contract.getId()))
 		.forEach( salary -> {
 			List<ContextData> salaryHours = salary.getContextData().get("HORAS_NOMINA");
-			org.junit.Assert.assertEquals(2, salaryHours.size());
+			assertEquals(2, salaryHours.size());
 			salaryHours.sort((s1,s2) -> s1.getStartDate().compareTo(s2.getStartDate()));
 			salaryHours.forEach( h -> System.out.println("HORAS_NOMINA :" + h.getExpression() + ", "+ h.getStartDate() ) );
-			org.junit.Assert.assertEquals(salaryHours.get(0).getStartDate(), firstDayOfApril);
-			org.junit.Assert.assertEquals(salaryHours.get(0).getEndDate(), add(firstDayOfApril, DAY_OF_MONTH,28));
+			assertEquals(salaryHours.get(0).getStartDate(), firstDayOfApril);
+			assertEquals(salaryHours.get(0).getEndDate(), add(firstDayOfApril, DAY_OF_MONTH,28));
 			
-			org.junit.Assert.assertEquals(salaryHours.get(1).getStartDate(), lastDayOfApril);
-			org.junit.Assert.assertEquals(salaryHours.get(1).getEndDate(), lastDayOfApril);
-			org.junit.Assert.assertEquals(1.00, Double.parseDouble(salaryHours.get(1).getExpression()), 0.00);
+			assertEquals(salaryHours.get(1).getStartDate(), lastDayOfApril);
+			assertEquals(salaryHours.get(1).getEndDate(), lastDayOfApril);
+			assertEquals(1.00, Double.parseDouble(salaryHours.get(1).getExpression()), 0.00);
 
 			List<ContextData> baseCgc = salary.getContextData().get("BASE_CGC");
-			org.junit.Assert.assertEquals(2, baseCgc.size());
+			assertEquals(2, baseCgc.size());
 			baseCgc.sort((s1,s2) -> s1.getStartDate().compareTo(s2.getStartDate()));
 			baseCgc.forEach( h -> System.out.println("BASE_CGC :" + h.getExpression() + ", "+ h.getStartDate() ) );
-			org.junit.Assert.assertEquals(baseCgc.get(0).getStartDate(), firstDayOfApril);
-			org.junit.Assert.assertEquals(baseCgc.get(0).getEndDate(), add(firstDayOfApril, DAY_OF_MONTH,28));
-			org.junit.Assert.assertEquals(5.00/40.00 * 1125.90 - 6.78, Double.parseDouble(baseCgc.get(0).getExpression()), 0.00);
+			assertEquals(baseCgc.get(0).getStartDate(), firstDayOfApril);
+			assertEquals(baseCgc.get(0).getEndDate(), add(firstDayOfApril, DAY_OF_MONTH,28));
+			assertEquals(5.00/40.00 * 1125.90 - 6.78, Double.parseDouble(baseCgc.get(0).getExpression()), 0.00);
 			
-			org.junit.Assert.assertEquals(baseCgc.get(1).getStartDate(), lastDayOfApril);
-			org.junit.Assert.assertEquals(baseCgc.get(1).getEndDate(), lastDayOfApril);
-			org.junit.Assert.assertEquals(6.78, Double.parseDouble(baseCgc.get(1).getExpression()), 0.00);
+			assertEquals(baseCgc.get(1).getStartDate(), lastDayOfApril);
+			assertEquals(baseCgc.get(1).getEndDate(), lastDayOfApril);
+			assertEquals(6.78, Double.parseDouble(baseCgc.get(1).getExpression()), 0.00);
 		});
 		;
 		
@@ -2025,7 +2025,7 @@ public class SQLFunctionsTestCase extends
 						, startDate
 						, endDate, ExpressionScope.class );
 		
-		Assert.assertEquals(ExpressionScope.APPLICATION, scopes.get(0).getValue());
+		assertEquals(ExpressionScope.APPLICATION, scopes.get(0).getValue());
 
 		ctx.getExpressionContext().eval(
 			String.format("AMBITO('%s') == APPLICATION ",
@@ -2033,7 +2033,7 @@ public class SQLFunctionsTestCase extends
 			)
 			, startDate
 			, endDate, Boolean.class )
-		.forEach( r -> org.junit.Assert.assertTrue(r.getValue()) );
+		.forEach( r -> assertTrue(r.getValue()) );
 
 		scopes = 
 			ctx.getExpressionContext().eval(
@@ -2043,7 +2043,7 @@ public class SQLFunctionsTestCase extends
 					, startDate
 					, endDate, ExpressionScope.class );
 	
-		Assert.assertEquals(ExpressionScope.CONTRACT, scopes.get(0).getValue());
+		assertEquals(ExpressionScope.CONTRACT, scopes.get(0).getValue());
 
 		ctx.getExpressionContext().eval(
 			String.format("AMBITO('%s') == CONTRACT ",
@@ -2051,7 +2051,7 @@ public class SQLFunctionsTestCase extends
 			)
 			, startDate
 			, endDate, Boolean.class )
-		.forEach( r -> org.junit.Assert.assertTrue(r.getValue()) );
+		.forEach( r -> assertTrue(r.getValue()) );
 
 		scopes = 
 			ctx.getExpressionContext().eval(
@@ -2060,28 +2060,28 @@ public class SQLFunctionsTestCase extends
 					, startDate
 					, endDate, ExpressionScope.class );
 	
-		Assert.assertEquals(ExpressionScope.AGREEMENT, scopes.get(0).getValue());
+		assertEquals(ExpressionScope.AGREEMENT, scopes.get(0).getValue());
 
 		ctx.getExpressionContext().eval(
 			String.format("AMBITO('SALARIO_MENSUAL') == AGREEMENT "
 			)
 			, startDate
 			, endDate, Boolean.class )
-		.forEach( r -> org.junit.Assert.assertTrue(r.getValue()) );
+		.forEach( r -> assertTrue(r.getValue()) );
 
 		ctx.getExpressionContext().eval(
 			String.format("AMBITO('SALARIO_MENSUAL') < CONTRACT "
 			)
 			, startDate
 			, endDate, Boolean.class )
-		.forEach( r -> org.junit.Assert.assertTrue(r.getValue()) );
+		.forEach( r -> assertTrue(r.getValue()) );
 
 		ctx.getExpressionContext().eval(
 			String.format("AMBITO('SALARIO_MENSUAL') < APPLICATION "
 			)
 			, startDate
 			, endDate, Boolean.class )
-		.forEach( r -> org.junit.Assert.assertFalse(r.getValue()) );
+		.forEach( r -> assertFalse(r.getValue()) );
 	}
 
 	@Test
@@ -2119,7 +2119,7 @@ public class SQLFunctionsTestCase extends
 						String.format("SUMIFDEF('VAR1', 'VAR2', 'VAR3', 'VAR4', 'VAR5', 'VAR6', 'VAR7', 'VAR8', 'VAR9')")
 						, startDate
 						, endDate, Number.class);
-		Assert.assertEquals(9.0, sum.get(0).getValue());
+		assertEquals(9.0, sum.get(0).getValue());
 	}
 
 	@Test
@@ -2150,7 +2150,7 @@ public class SQLFunctionsTestCase extends
 						String.format("SUMIFDEF('VAR1', 'VAR2', 'VAR3', 'VAR4', 'VAR5', 'VAR6', 'VAR7', 'VAR8', 'VAR9')")
 						, startDate
 						, endDate, Number.class);
-		Assert.assertEquals(9.0, sum.stream().collect(Collectors.summingDouble( r -> r.getValue().doubleValue()) ), 0.00);
+		assertEquals(9.0, sum.stream().collect(Collectors.summingDouble( r -> r.getValue().doubleValue()) ), 0.00);
 	}
 
 	@Test
@@ -2184,7 +2184,7 @@ public class SQLFunctionsTestCase extends
 						String.format("SUMIFDEF('VAR1', 'VAR2', 'VAR3', 'VAR4', 'VAR5', 'VAR6', 'VAR7', 'VAR8', 'VAR9')")
 						, startDate
 						, endDate, Number.class);
-		Assert.assertEquals(18.0, sum.stream().collect(Collectors.summingDouble( r -> r.getValue().doubleValue()) ), 0.00);
+		assertEquals(18.0, sum.stream().collect(Collectors.summingDouble( r -> r.getValue().doubleValue()) ), 0.00);
 	}
 
 	@Test
@@ -2215,7 +2215,7 @@ public class SQLFunctionsTestCase extends
 						String.format("SUMIFDEF('VAR1', 'VAR2', 'VAR3', 'VAR4', 'VAR5', 'VAR6', 'VAR7', 'VAR8', 'VAR9')")
 						, startDate
 						, endDate, Number.class);
-		Assert.assertEquals(4.0, sum.stream().collect(Collectors.summingDouble( r -> r.getValue().doubleValue()) ), 0.00);
+		assertEquals(4.0, sum.stream().collect(Collectors.summingDouble( r -> r.getValue().doubleValue()) ), 0.00);
 	}
 
 	@Test
@@ -2243,7 +2243,7 @@ public class SQLFunctionsTestCase extends
 						String.format("SUMIFDEF('VAR1', 'VAR2', 'VAR3', 'VAR4', 'VAR5', 'VAR6', 'VAR7', 'VAR8', 'VAR9')")
 						, startDate
 						, endDate, Number.class);
-		Assert.assertEquals(0.0, sum.stream().collect(Collectors.summingDouble( r -> r.getValue().doubleValue()) ), 0.00);
+		assertEquals(0.0, sum.stream().collect(Collectors.summingDouble( r -> r.getValue().doubleValue()) ), 0.00);
 	}
 	//------------------------------------------------------------------------
 	

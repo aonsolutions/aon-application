@@ -11,9 +11,9 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.util.Calendar.DATE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -27,8 +27,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mvel2.CompileException;
 
 import com.code.aon.common.AonException;
@@ -67,7 +67,7 @@ import com.esferalia.aon.salary.expression.Period;
 //import com.esferalia.aon.salary.expression.CompileException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLContractSalaryCalculatorContextTestCase extends
 		AbstractSQLTestCase {
@@ -118,7 +118,7 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder())
 				.calculate(getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract));
 		
-		org.junit.Assert.assertEquals(1100.00, salary.getTotalPayment(), 0.00);
+		assertEquals(1100.00, salary.getTotalPayment(), 0.00);
 		//salary.getSalaryDatas().forEach( d -> System.out.println( d.getName() + " : " + d.getExpression() ));
 		
 	}
@@ -158,7 +158,7 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		double defaultIrpf = ctx.getExpressionContext().eval("PORCENTAJE_IRPF", firstDayOfMonth, lastDayOfMonth, Double.class ).stream().collect(Collectors.summingDouble( ITimedResult::getValue));
 		double systemIrpf = ctx.getExpressionContext().eval("SISTEMA('PORCENTAJE_IRPF')", firstDayOfMonth, lastDayOfMonth, Double.class ).stream().collect(Collectors.summingDouble( ITimedResult::getValue));
 		
-		org.junit.Assert.assertEquals(defaultIrpf, systemIrpf, 0.00);
+		assertEquals(defaultIrpf, systemIrpf, 0.00);
 	}
 
 
@@ -239,7 +239,7 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 					+ "]");
 		}
 
-		Assert.assertEquals("ECSS_E", 3, costs);
+		assertEquals(3, costs, "ECSS_E");
 
 		ctx = new SQLContractSalaryCalculatorContext(connection, start, end,
 				end, criteria);
@@ -248,8 +248,8 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		Salary salary = new ContractSalaryCalculator<Salary>(
 				new SalaryBuilder()).calculate(ctx);
 
-		Assert.assertEquals("ECSS_E", 350.00, salary.getSalaryCosts().stream()
-				.collect(Collectors.summingDouble(cost -> cost.getAmount())));
+		assertEquals(350.00, salary.getSalaryCosts().stream()
+				.collect(Collectors.summingDouble(cost -> cost.getAmount())), "ECSS_E");
 
 	}
 
@@ -303,7 +303,7 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 					+ "]");
 		}
 
-		Assert.assertEquals(4, costs);
+		assertEquals(4, costs);
 
 		ctx = new SQLContractSalaryCalculatorContext(connection, start, end,
 				end, criteria);
@@ -312,7 +312,7 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		Salary salary = new ContractSalaryCalculator<Salary>(
 				new SalaryBuilder()).calculate(ctx);
 
-		Assert.assertEquals(
+		assertEquals(
 				500.00 + 666.00 + 111.00,
 				salary.getSalaryCosts()
 						.stream()
@@ -323,7 +323,7 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 	}
 
 	@Test
-	@Ignore("Deprecated...")
+	@Disabled("Deprecated...")
 	public void testRedefinedImplicit() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -425,71 +425,58 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 
 		ITimedVariable<?> userWorkedDays = redefinedMap.get(WORKED_DAYS
 				.getName());
-		Assert.assertEquals(String.format("%s", WORKED_DAYS), 666,
-				userWorkedDays.getValue(userWorkedDays.getPeriod()));
+		assertEquals(666, userWorkedDays.getValue(userWorkedDays.getPeriod()), String.format("%s", WORKED_DAYS));
 		ITimedVariable<?> systemWorkedDays = implicitMap.get(WORKED_DAYS
 				.getName());
-		Assert.assertEquals(String.format("%s", WORKED_DAYS), 33.00,
-				systemWorkedDays.getValue(systemWorkedDays.getPeriod()));
+		assertEquals(33.00, systemWorkedDays.getValue(systemWorkedDays.getPeriod()), String.format("%s", WORKED_DAYS));
 
 		ITimedVariable<?> userMonthDays = redefinedMap
 				.get(MONTH_DAYS.getName());
-		Assert.assertEquals(String.format("%s", MONTH_DAYS), 33,
-				userMonthDays.getValue(userMonthDays.getPeriod()));
+		assertEquals(33, userMonthDays.getValue(userMonthDays.getPeriod()), String.format("%s", MONTH_DAYS));
 		ITimedVariable<?> systemMonthDays = implicitMap.get(MONTH_DAYS
 				.getName());
-		Assert.assertEquals(String.format("%s", MONTH_DAYS),
-				getMax(getToday(), DATE),
-				systemMonthDays.getValue(systemMonthDays.getPeriod()));
+		assertEquals(getMax(getToday(), DATE), systemMonthDays.getValue(systemMonthDays.getPeriod()), String.format("%s", MONTH_DAYS));
 
 		ITimedVariable<?> userCustomDays = redefinedMap.get("_"
 				+ Long.toString(customVarI));
-		Assert.assertEquals("_" + Long.toString(customVarI), customVarI * 100,
-				((Number) userCustomDays.getValue(userCustomDays.getPeriod()))
-						.longValue());
+		assertEquals(customVarI * 100, ((Number) userCustomDays.getValue(userCustomDays.getPeriod()))
+						.longValue(), "_" + Long.toString(customVarI));
 		ITimedVariable<?> systemCustomDays = implicitMap.get("_"
 				+ Long.toString(customVarI));
-		Assert.assertEquals("_" + Long.toString(customVarI), customVarI,
-				((Number) systemCustomDays.getValue(systemCustomDays
-						.getPeriod())).longValue());
+		assertEquals(customVarI, ((Number) systemCustomDays.getValue(systemCustomDays
+						.getPeriod())).longValue(), "_" + Long.toString(customVarI));
 
 		ITimedVariable<?> userCustomIIDays = redefinedMap.get("_"
 				+ Long.toString(customVarII));
-		Assert.assertEquals("_" + Long.toString(customVarII),
-				customVarII * 1000, ((Number) userCustomIIDays
-						.getValue(userCustomIIDays.getPeriod())).longValue());
+		assertEquals(customVarII * 1000, ((Number) userCustomIIDays
+						.getValue(userCustomIIDays.getPeriod())).longValue(), "_" + Long.toString(customVarII));
 		ITimedVariable<?> systemCustomIIDays = implicitMap.get("_"
 				+ Long.toString(customVarII));
-		Assert.assertEquals("_" + Long.toString(customVarII), customVarII,
-				((Number) systemCustomIIDays.getValue(systemCustomIIDays
-						.getPeriod())).longValue());
+		assertEquals(customVarII, ((Number) systemCustomIIDays.getValue(systemCustomIIDays
+						.getPeriod())).longValue(), "_" + Long.toString(customVarII));
 
 		ITimedVariable<?> userCustomIIIDays = redefinedMap.get("_"
 				+ Long.toString(customVarIII));
-		Assert.assertEquals("_" + Long.toString(customVarIII),
-				customVarIII * 10000, ((Number) userCustomIIIDays
-						.getValue(userCustomIIIDays.getPeriod())).longValue());
+		assertEquals(customVarIII * 10000, ((Number) userCustomIIIDays
+						.getValue(userCustomIIIDays.getPeriod())).longValue(), "_" + Long.toString(customVarIII));
 		ITimedVariable<?> systemCustomIIIDays = implicitMap.get("_"
 				+ Long.toString(customVarIII));
-		Assert.assertEquals("_" + Long.toString(customVarIII), customVarIII,
-				((Number) systemCustomIIIDays.getValue(systemCustomIIIDays
-						.getPeriod())).longValue());
+		assertEquals(customVarIII, ((Number) systemCustomIIIDays.getValue(systemCustomIIIDays
+						.getPeriod())).longValue(), "_" + Long.toString(customVarIII));
 
 		ITimedVariable<?> userCustomVIDays = redefinedMap.get("_"
 				+ Long.toString(customVarVI));
 		try {
-			Assert.assertEquals("_" + Long.toString(customVarVI),
-					customVarVI * 2000, ((Number) userCustomVIDays
+			assertEquals(customVarVI * 2000, ((Number) userCustomVIDays
 							.getValue(userCustomVIDays.getPeriod()))
-							.longValue());
+							.longValue(), "_" + Long.toString(customVarVI));
 		} catch (ExpressionExceptionWrapper e) {
 
 		}
 		ITimedVariable<?> systemCustomVIDays = implicitMap.get("_"
 				+ Long.toString(customVarVI));
-		Assert.assertEquals("_" + Long.toString(customVarVI), customVarVI,
-				((Number) systemCustomVIDays.getValue(systemCustomVIDays
-						.getPeriod())).longValue());
+		assertEquals(customVarVI, ((Number) systemCustomVIDays.getValue(systemCustomVIDays
+						.getPeriod())).longValue(), "_" + Long.toString(customVarVI));
 	}
 
 	@Test
@@ -506,11 +493,11 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		List<Period> split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
 				.split(worked, leaves);
 		
-		Assert.assertEquals(2, split.size());
-		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
-		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getEnd());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE,1), split.get(1).getStart());
-		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(1).getEnd());
+		assertEquals(2, split.size());
+		assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getEnd());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE,1), split.get(1).getStart());
+		assertEquals(getLastDayOfMonth(getToday()), split.get(1).getEnd());
 
 	
 		leaves.add(new Period(getLastDayOfMonth(getToday()),
@@ -518,13 +505,13 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 
 		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
 				.split(worked, leaves);
-		Assert.assertEquals(3, split.size());
-		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
-		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getEnd());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE,1), split.get(1).getStart());
-		Assert.assertEquals(add(getLastDayOfMonth(getToday()),DATE,-1), split.get(1).getEnd());
-		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(2).getStart());
-		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(2).getEnd());
+		assertEquals(3, split.size());
+		assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getEnd());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE,1), split.get(1).getStart());
+		assertEquals(add(getLastDayOfMonth(getToday()),DATE,-1), split.get(1).getEnd());
+		assertEquals(getLastDayOfMonth(getToday()), split.get(2).getStart());
+		assertEquals(getLastDayOfMonth(getToday()), split.get(2).getEnd());
 		
 		leaves.add(new Period(add(getFirstDayOfMonth(getToday()),DATE, 13),
 				add(getFirstDayOfMonth(getToday()),DATE, 19)));
@@ -533,17 +520,17 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
 				.split(worked, leaves);
 		
-		Assert.assertEquals(5, split.size());
-		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
-		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getEnd());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE,1), split.get(1).getStart());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 12), split.get(1).getEnd());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 13), split.get(2).getStart());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 19), split.get(2).getEnd());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 20), split.get(3).getStart());
-		Assert.assertEquals(add(getLastDayOfMonth(getToday()),DATE, -1), split.get(3).getEnd());
-		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(4).getStart());
-		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(4).getEnd());
+		assertEquals(5, split.size());
+		assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getEnd());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE,1), split.get(1).getStart());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 12), split.get(1).getEnd());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 13), split.get(2).getStart());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 19), split.get(2).getEnd());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 20), split.get(3).getStart());
+		assertEquals(add(getLastDayOfMonth(getToday()),DATE, -1), split.get(3).getEnd());
+		assertEquals(getLastDayOfMonth(getToday()), split.get(4).getStart());
+		assertEquals(getLastDayOfMonth(getToday()), split.get(4).getEnd());
 
 		//
 		List<Period> whole = new ArrayList<Period>();
@@ -551,18 +538,18 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 				getLastDayOfMonth(getToday())));
 		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
 				.split(worked, whole);
-		Assert.assertEquals(1, split.size());
-		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
-		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(0).getEnd());
+		assertEquals(1, split.size());
+		assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		assertEquals(getLastDayOfMonth(getToday()), split.get(0).getEnd());
 	
 		whole = new ArrayList<Period>();
 		whole.add(new Period(add(getFirstDayOfMonth(getToday()), DATE, -1),
 				add(getLastDayOfMonth(getToday()), DATE, 1)));
 		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
 				.split(worked, whole);
-		Assert.assertEquals(1, split.size());
-		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
-		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(0).getEnd());
+		assertEquals(1, split.size());
+		assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		assertEquals(getLastDayOfMonth(getToday()), split.get(0).getEnd());
 
 		//--
 		List<Period> one = new ArrayList<Period>();
@@ -570,77 +557,77 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 				add(getFirstDayOfMonth(getToday()),DATE, 20)));
 		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
 				.split(worked, one);
-		Assert.assertEquals(3, split.size());
-		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 9), split.get(0).getEnd());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 10), split.get(1).getStart());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 20), split.get(1).getEnd());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 21), split.get(2).getStart());
-		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(2).getEnd());
+		assertEquals(3, split.size());
+		assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 9), split.get(0).getEnd());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 10), split.get(1).getStart());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 20), split.get(1).getEnd());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 21), split.get(2).getStart());
+		assertEquals(getLastDayOfMonth(getToday()), split.get(2).getEnd());
 
 		one = new ArrayList<Period>();
 		one.add(new Period(add(getFirstDayOfMonth(getToday()),DATE, 0),
 				add(getFirstDayOfMonth(getToday()),DATE, 20)));
 		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
 				.split(worked, one);
-		Assert.assertEquals(2, split.size());
-		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 20), split.get(0).getEnd());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 21), split.get(1).getStart());
-		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(1).getEnd());
+		assertEquals(2, split.size());
+		assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 20), split.get(0).getEnd());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 21), split.get(1).getStart());
+		assertEquals(getLastDayOfMonth(getToday()), split.get(1).getEnd());
 		
 		one = new ArrayList<Period>();
 		one.add(new Period(add(getFirstDayOfMonth(getToday()),DATE, -100),
 				add(getFirstDayOfMonth(getToday()),DATE, 20)));
 		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
 				.split(worked, one);
-		Assert.assertEquals(2, split.size());
-		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 20), split.get(0).getEnd());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 21), split.get(1).getStart());
-		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(1).getEnd());
+		assertEquals(2, split.size());
+		assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 20), split.get(0).getEnd());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 21), split.get(1).getStart());
+		assertEquals(getLastDayOfMonth(getToday()), split.get(1).getEnd());
 		
 		one = new ArrayList<Period>();
 		one.add(new Period(add(getFirstDayOfMonth(getToday()),DATE, -1),
 				add(getFirstDayOfMonth(getToday()),DATE, 20)));
 		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
 				.split(worked, one);
-		Assert.assertEquals(2, split.size());
-		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 20), split.get(0).getEnd());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 21), split.get(1).getStart());
-		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(1).getEnd());
+		assertEquals(2, split.size());
+		assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 20), split.get(0).getEnd());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 21), split.get(1).getStart());
+		assertEquals(getLastDayOfMonth(getToday()), split.get(1).getEnd());
 
 		one = new ArrayList<Period>();
 		one.add(new Period(add(getFirstDayOfMonth(getToday()),DATE, 10),
 				add(getFirstDayOfMonth(getToday()),DATE, 200)));
 		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
 				.split(worked, one);
-		Assert.assertEquals(2, split.size());
-		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 9), split.get(0).getEnd());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 10), split.get(1).getStart());
-		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(1).getEnd());
+		assertEquals(2, split.size());
+		assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 9), split.get(0).getEnd());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 10), split.get(1).getStart());
+		assertEquals(getLastDayOfMonth(getToday()), split.get(1).getEnd());
 		
 		one = new ArrayList<Period>();
 		one.add(new Period(add(getFirstDayOfMonth(getToday()),DATE, 10),
 				add(getLastDayOfMonth(getToday()),DATE, 1)));
 		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
 				.split(worked, one);
-		Assert.assertEquals(2, split.size());
-		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 9), split.get(0).getEnd());
-		Assert.assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 10), split.get(1).getStart());
-		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(1).getEnd());
+		assertEquals(2, split.size());
+		assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 9), split.get(0).getEnd());
+		assertEquals(add(getFirstDayOfMonth(getToday()),DATE, 10), split.get(1).getStart());
+		assertEquals(getLastDayOfMonth(getToday()), split.get(1).getEnd());
 
 		List<Period> nu11 = new ArrayList<Period>();
 		nu11.add(new Period(getFirstDayOfMonth(getToday()),
 				null));
 		split = SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext
 				.split(worked, nu11);
-		Assert.assertEquals(1, split.size());
-		Assert.assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
-		Assert.assertEquals(getLastDayOfMonth(getToday()), split.get(0).getEnd());
+		assertEquals(1, split.size());
+		assertEquals(getFirstDayOfMonth(getToday()), split.get(0).getStart());
+		assertEquals(getLastDayOfMonth(getToday()), split.get(0).getEnd());
 
 	}
 	
@@ -667,65 +654,65 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 
 		try {
 			ctx.getExpressionContext().eval("GTZDO(P1+P2)", start, end);
-			Assert.fail();
+			fail();
 		} catch ( CompileException e ) {
 		
 		}
 	
 		try {
 			ctx.getExpressionContext().eval("GTZDO((P1)+P2)", start, end);
-			Assert.fail();
+			fail();
 		} catch ( CompileException e ) {
 		}
 
 		try {
 			ctx.getExpressionContext().eval("GTZDO((P1+P2))", start, end);
-			Assert.fail();
+			fail();
 		} catch ( CompileException e ) {
 		}
 
 		try {
 			ctx.getExpressionContext().eval("GTZDO(P1+(P2))", start, end);
-			Assert.fail();
+			fail();
 		} catch ( CompileException e ) {
 		}
 
 		try {
 			ctx.getExpressionContext().eval("GTZDO( P1 + P2 ,1)", start, end);
-			Assert.fail();
+			fail();
 		} catch ( CompileException e ) {
 		}
 
 		try {
 			ctx.getExpressionContext().eval("GTZDO( P1 + P2 ,1, 360)", start, end);
-			Assert.fail();
+			fail();
 		} catch ( CompileException e ) {
 		}
 		try {
 			ctx.getExpressionContext().eval("GTZDO( P1 + (P2 * 100) ,1, 360)", start, end);
-			Assert.fail();
+			fail();
 		} catch ( CompileException e ) {
 		}
 
 		try {
 			ctx.getExpressionContext().eval("GTZDO( (P1) + (P2 * 100) ,1, 360)", start, end);
-			Assert.fail();
+			fail();
 		} catch ( CompileException e ) {
 		}
 		try {
 			ctx.getExpressionContext().eval("GTZDO( (P1) + (P2 * 100) ,1, 360)", start, end);
-			Assert.fail();
+			fail();
 		} catch ( CompileException e ) {
 		}
 		try {
 			ctx.getExpressionContext().eval("GTZDO()", start, end);
-			Assert.fail();
+			fail();
 		} catch ( CompileException e ) {
 		}
 
 		try {
 			ctx.getExpressionContext().eval("GTZDO(P,4) + GTZDO(P,1,3)", start, end);
-			Assert.fail();
+			fail();
 		} catch ( CompileException e ) {
 		}
 	}
@@ -752,7 +739,7 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 				System.out.println(bonus.getDescription() + " = " + bonus.getExpression());
 				throw new SuccessException();
 			}
-			org.junit.Assert.fail();
+			fail();
 		} catch ( SuccessException e ) {
 		}
 	}
@@ -860,9 +847,9 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		List<ITimedResult<Double>> partyDays = getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract).getExpressionContext()
 		.eval(PARTY_DAYS.getName(), firstDayOfMonth, lastDayOfMonth,Double.class);
 		
-		org.junit.Assert.assertEquals(holidays.size(), partyDays.size());
+		assertEquals(holidays.size(), partyDays.size());
 		
-		org.junit.Assert.assertEquals(holidays.size(), partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
+		assertEquals(holidays.size(), partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
 		
 	}
 
@@ -915,9 +902,9 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		List<ITimedResult<Double>> partyDays = getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract).getExpressionContext()
 		.eval(PARTY_DAYS.getName(), firstDayOfMonth, lastDayOfMonth,Double.class);
 		
-		org.junit.Assert.assertEquals(1, partyDays.size());
+		assertEquals(1, partyDays.size());
 		
-		org.junit.Assert.assertEquals(10, partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
+		assertEquals(10, partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
 		
 	}
 
@@ -978,9 +965,9 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		List<ITimedResult<Double>> partyDays = getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract).getExpressionContext()
 		.eval(PARTY_DAYS.getName(), firstDayOfMonth, lastDayOfMonth,Double.class);
 		
-		org.junit.Assert.assertEquals(1, partyDays.size());
+		assertEquals(1, partyDays.size());
 		
-		org.junit.Assert.assertEquals(10 - noWorkingDays.size(), partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
+		assertEquals(10 - noWorkingDays.size(), partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
 		
 	}
 
@@ -1057,7 +1044,7 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		List<ITimedResult<Double>> partyDays = getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract).getExpressionContext()
 		.eval(PARTY_DAYS.getName(), firstDayOfMonth, lastDayOfMonth,Double.class);
 		
-		org.junit.Assert.assertEquals(10 - noWorkingDays.size(), partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
+		assertEquals(10 - noWorkingDays.size(), partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
 		
 	}
 
@@ -1113,7 +1100,7 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		List<ITimedResult<Double>> partyDays = getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract).getExpressionContext()
 		.eval(PARTY_DAYS.getName(), firstDayOfMonth, lastDayOfMonth,Double.class);
 		
-		org.junit.Assert.assertEquals(0 , partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
+		assertEquals(0 , partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
 		
 	}
 
@@ -1169,8 +1156,8 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		List<ITimedResult<Double>> partyDays = getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract).getExpressionContext()
 		.eval(PARTY_DAYS.getName(), firstDayOfMonth, lastDayOfMonth,Double.class);
 		
-		org.junit.Assert.assertEquals(1, partyDays.size());
-		org.junit.Assert.assertEquals(10 , partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
+		assertEquals(1, partyDays.size());
+		assertEquals(10 , partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
 		
 	}
 	
@@ -1202,8 +1189,8 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		List<ITimedResult<Double>> partyDays = getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract).getExpressionContext()
 		.eval(PARTY_DAYS.getName(), firstDayOfMonth, lastDayOfMonth,Double.class);
 		
-		org.junit.Assert.assertEquals(1, partyDays.size());
-		org.junit.Assert.assertEquals(10 , partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
+		assertEquals(1, partyDays.size());
+		assertEquals(10 , partyDays.stream().collect(Collectors.summingDouble(ITimedObject<Double>::getValue)), 0.00);
 		
 	}
 
@@ -1274,19 +1261,19 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 
 		addSSRegimeData(aonContext, SSRegimeType.GENERAL, contract.getStartDate(), contract.getEndDate(), Collections.singletonMap("PORCENTAJE_CGC", "4.6"));
 		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
-				.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(4.6, r.getValue()));		
+				.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> assertEquals(4.6, r.getValue()));		
 		
 		addCCCData(aonContext, CCCType.PRINCIPAL, contract.getStartDate(), contract.getEndDate(), Collections.singletonMap("PORCENTAJE_CGC", "5.6"));
 		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
-		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(5.6, r.getValue()));		
+		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> assertEquals(5.6, r.getValue()));		
 		
 		addDomainData(aonContext, parentDomain.getId(), firstDayOfMonth, lastDayOfMonth, Collections.singletonMap("PORCENTAJE_CGC", "6.6"));
 		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
-		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(6.6, r.getValue()));
+		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> assertEquals(6.6, r.getValue()));
 		
 		addDomainData(aonContext, domain.getId(), firstDayOfMonth, lastDayOfMonth, Collections.singletonMap("PORCENTAJE_CGC", "8.6"));
 		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
-		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(8.6, r.getValue()));		
+		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> assertEquals(8.6, r.getValue()));		
 		
 	}
 
@@ -1365,23 +1352,23 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 
 		addSSRegimeData(aonContext, SSRegimeType.GENERAL, contract.getStartDate(), contract.getEndDate(), Collections.singletonMap("PORCENTAJE_CGC", "4.6"));
 		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
-				.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(4.6, r.getValue()));		
+				.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> assertEquals(4.6, r.getValue()));		
 		
 		addCCCData(aonContext, CCCType.PRINCIPAL, contract.getStartDate(), contract.getEndDate(), Collections.singletonMap("PORCENTAJE_CGC", "5.6"));
 		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
-		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(5.6, r.getValue()));		
+		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> assertEquals(5.6, r.getValue()));		
 		
 		addDomainData(aonContext, parentDomain.getId(), firstDayOfMonth, lastDayOfMonth, Collections.singletonMap("PORCENTAJE_CGC", "6.6"));
 		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
-		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(6.6, r.getValue()));
+		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> assertEquals(6.6, r.getValue()));
 		
 		addData(aonContext, category, firstDayOfMonth, lastDayOfMonth, Collections.singletonMap("PORCENTAJE_CGC", "7.6"));
 		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
-		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(7.6, r.getValue()));		
+		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> assertEquals(7.6, r.getValue()));		
 
 		addDomainData(aonContext, domain.getId(), firstDayOfMonth, lastDayOfMonth, Collections.singletonMap("PORCENTAJE_CGC", "8.6"));
 		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
-		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(8.6, r.getValue()));		
+		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> assertEquals(8.6, r.getValue()));		
 		
 	}
 	// ------------------------------------------------------------------------

@@ -83,7 +83,7 @@ import static java.lang.String.format;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -96,8 +96,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
@@ -146,7 +146,7 @@ import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLITTestCase extends AbstractSQLTestCase {
 
@@ -189,8 +189,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, contract);
 		
 		List<ITimedResult<java.util.Date>> results = ctx.getExpressionContext().eval(ContextVariable.IT_START.getName(), startDate, endDate, java.util.Date.class);
-		Assert.assertEquals(1, results.size());
-		Assert.assertEquals(startITDate, results.get(0).getValue());
+		assertEquals(1, results.size());
+		assertEquals(startITDate, results.get(0).getValue());
 		
 		for ( int i = 1; i < 12 ; i++ ) {
 			startDate = AonDateUtils.add(getFirstDayOfMonth(getToday()), MONTH,i);
@@ -199,8 +199,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					connection, startDate, endDate, endDate, contract);
 			results = ctx.getExpressionContext().eval(ContextVariable.IT_START.getName(), startDate, endDate, java.util.Date.class);
 			System.out.println(startDate + " : " + startITDate + ", " + results.get(0).getValue());
-			Assert.assertEquals(1, results.size());
-			Assert.assertEquals(startITDate, results.get(0).getValue());
+			assertEquals(1, results.size());
+			assertEquals(startITDate, results.get(0).getValue());
 		}
 	}
 	
@@ -230,13 +230,13 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, contract);
 		
 		List<ITimedResult<Integer>> results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate, Integer.class);
-		Assert.assertEquals(1, results.size());
+		assertEquals(1, results.size());
 		int itLenght = get(endDate, DAY_OF_MONTH) - get(startITDate, DAY_OF_MONTH) +1 ;
-		Assert.assertEquals(itLenght, (int)results.get(0).getValue());
+		assertEquals(itLenght, (int)results.get(0).getValue());
 		
 		try {
 			ctx.getExpressionContext().eval(ContextVariable.IT_END.getName(), startDate, endDate, Date.class);
-			org.junit.Assert.fail(String.format("'%s' must not be defined ", ContextVariable.IT_END));
+			fail(String.format("'%s' must not be defined ", ContextVariable.IT_END));
 		} catch ( UndefinedVariablesException e ) {
 		}
 
@@ -247,9 +247,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					connection, startDate, endDate, endDate, contract);
 			results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate, Integer.class);
 			System.out.println(startDate + " : " + startITDate + ", " + results.get(0).getValue());
-			Assert.assertEquals(1, results.size());
+			assertEquals(1, results.size());
 			itLenght += get(endDate, DAY_OF_MONTH);
-			Assert.assertEquals(itLenght, (int)results.get(0).getValue());
+			assertEquals(itLenght, (int)results.get(0).getValue());
 		}
 	}
 
@@ -280,12 +280,12 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, contract);
 		
 		List<ITimedResult<Object>> results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate);
-		Assert.assertEquals(1, results.size());
-		Assert.assertEquals(34, ((Number)results.get(0).getValue()).intValue());
+		assertEquals(1, results.size());
+		assertEquals(34, ((Number)results.get(0).getValue()).intValue());
 
 		results = ctx.getExpressionContext().eval(ContextVariable.IT_END.getName(), startDate, endDate);
-		Assert.assertEquals(1, results.size());
-		Assert.assertEquals(endIt, (Date)results.get(0).getValue());
+		assertEquals(1, results.size());
+		assertEquals(endIt, (Date)results.get(0).getValue());
 		
 		startDate = AonDateUtils.add(getFirstDayOfMonth(getToday()), MONTH,1);
 		endDate = getLastDayOfMonth(startDate);
@@ -293,8 +293,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, contract);
 		results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate);
 		System.out.println(startDate + " : " + startITDate + ", " + results.get(0).getValue());
-		Assert.assertEquals(1, results.size());
-		Assert.assertEquals(34, ((Number)results.get(0).getValue()).intValue());
+		assertEquals(1, results.size());
+		assertEquals(34, ((Number)results.get(0).getValue()).intValue());
 
 	}
 
@@ -325,8 +325,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, contract);
 		
 		List<ITimedResult<Integer>> results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate, Integer.class);
-		Assert.assertEquals(1, results.size());
-		Assert.assertEquals(11, (int)results.get(0).getValue());
+		assertEquals(1, results.size());
+		assertEquals(11, (int)results.get(0).getValue());
 		
 		startITDate = add(endIt, DAY_OF_MONTH,5);
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
@@ -335,10 +335,10 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 		results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate, Integer.class);
-		Assert.assertEquals(2, results.size());
-		Assert.assertEquals(11, (int)results.get(0).getValue());
+		assertEquals(2, results.size());
+		assertEquals(11, (int)results.get(0).getValue());
 		int itLenght = get(endDate, DAY_OF_MONTH) - get(startITDate, DAY_OF_MONTH) +1 ;
-		Assert.assertEquals(itLenght, (int)results.get(1).getValue());
+		assertEquals(itLenght, (int)results.get(1).getValue());
 
 	}
 	
@@ -377,7 +377,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 
-		Assert.assertEquals(4, salary.getSalaryPayments().size());
+		assertEquals(4, salary.getSalaryPayments().size());
 
 	}
 
@@ -408,9 +408,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, contract);
 		
 		List<ITimedResult<Integer>> results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate, Integer.class);
-		Assert.assertEquals(1, results.size());
+		assertEquals(1, results.size());
 		int itLenght = get(getToday(), DAY_OF_MONTH) + (AonDateUtils.getMax(startITDate, DAY_OF_MONTH) - get(startITDate, DAY_OF_MONTH) + 1);
-		Assert.assertEquals(itLenght, (int)results.get(0).getValue());
+		assertEquals(itLenght, (int)results.get(0).getValue());
 		
 //		for ( int i = 1; i < 12 ; i++ ) {
 //			startDate = AonDateUtils.add(getFirstDayOfMonth(getToday()), MONTH,i);
@@ -419,9 +419,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 //					connection, startDate, endDate, endDate, contract);
 //			results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate, Integer.class);
 //			System.out.println(startDate + " : " + startITDate + ", " + results.get(0).getValue());
-//			Assert.assertEquals(1, results.size());
+//			assertEquals(1, results.size());
 //			itLenght += get(endDate, DAY_OF_MONTH);
-//			Assert.assertEquals(itLenght, (int)results.get(0).getValue());
+//			assertEquals(itLenght, (int)results.get(0).getValue());
 //		}
 	}
 
@@ -463,9 +463,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(0.00, salary.getTotalPayment());
-		Assert.assertEquals(0.00, salary.getTotalLiquid());
-		Assert.assertEquals(get(endDate, DAY_OF_MONTH) * 100.00, salary.getCommonBase());
+		assertEquals(0.00, salary.getTotalPayment());
+		assertEquals(0.00, salary.getTotalLiquid());
+		assertEquals(get(endDate, DAY_OF_MONTH) * 100.00, salary.getCommonBase());
 
 	}
 
@@ -517,9 +517,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(0.00, salary.getTotalPayment());
-		Assert.assertEquals(0.00, salary.getTotalLiquid());
-		Assert.assertEquals(get(endDate, DAY_OF_MONTH) * 100.00, salary.getCommonBase());
+		assertEquals(0.00, salary.getTotalPayment());
+		assertEquals(0.00, salary.getTotalLiquid());
+		assertEquals(get(endDate, DAY_OF_MONTH) * 100.00, salary.getCommonBase());
 
 	}
 
@@ -571,7 +571,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(3500.00, salary.getCommonBase());
+		assertEquals(3500.00, salary.getCommonBase());
 
 	}
 
@@ -614,9 +614,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(0.00, salary.getTotalPayment());
-		Assert.assertEquals(0.00, salary.getTotalLiquid());
-		Assert.assertEquals(get(endDate, DAY_OF_MONTH) * 100.00, salary.getCommonBase());
+		assertEquals(0.00, salary.getTotalPayment());
+		assertEquals(0.00, salary.getTotalLiquid());
+		assertEquals(get(endDate, DAY_OF_MONTH) * 100.00, salary.getCommonBase());
 
 	}
 
@@ -664,8 +664,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		int activeDays = get(startITDate, Calendar.DAY_OF_MONTH);
 		int itDays = monthDays -activeDays;
 		double br = 1750.00 / monthDays ;
-		org.junit.Assert.assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals( 
+		assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
+		assertEquals( 
 			1750.00 * activeDays / monthDays 
 			+ ( Math.min(20.00, itDays ) * br * 0.60 ) 
 			+ ( Math.max(0.00, itDays - 20) * br * 0.75 ) 
@@ -682,8 +682,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		salary = calculator.calculate(ctx);
 		
-		org.junit.Assert.assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals( 1750.00 * 0.75 , salary.getTotalPayment(), DELTA);
+		assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
+		assertEquals( 1750.00 * 0.75 , salary.getTotalPayment(), DELTA);
 
 	}
 
@@ -731,8 +731,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		int activeDays = get(startITDate, Calendar.DAY_OF_MONTH);
 		int itDays = monthDays -activeDays;
 		double br = 1750.00 / monthDays ;
-		org.junit.Assert.assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals( 
+		assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
+		assertEquals( 
 			1750.00 * activeDays / monthDays 
 			+ ( Math.min(20.00, itDays ) * br * 0.60 ) 
 			+ ( Math.max(0.00, itDays - 20) * br * 0.75 ) 
@@ -749,8 +749,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		salary = calculator.calculate(ctx);
 		
-		org.junit.Assert.assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals( 1750.00 * 0.75 , salary.getTotalPayment(), DELTA);
+		assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
+		assertEquals( 1750.00 * 0.75 , salary.getTotalPayment(), DELTA);
 
 	}
 
@@ -798,8 +798,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		int activeDays = get(startITDate, Calendar.DAY_OF_MONTH) -1 ;
 		int itDays = monthDays -activeDays;
 		double br = 1750.00 / monthDays ;
-		org.junit.Assert.assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals( 
+		assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
+		assertEquals( 
 			1750.00 * activeDays / monthDays 
 			+ ( Math.min(20.00, itDays ) * br * 0.60 ) 
 			+ ( Math.max(0.00, itDays - 20) * br * 0.75 ) 
@@ -816,8 +816,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		salary = calculator.calculate(ctx);
 		
-		org.junit.Assert.assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals( 1750.00 * 0.75 , salary.getTotalPayment(), DELTA);
+		assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
+		assertEquals( 1750.00 * 0.75 , salary.getTotalPayment(), DELTA);
 
 	}
 
@@ -886,7 +886,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount() + ", "+ p.getQuote() );
 
-		Assert.assertEquals(4 /*payments*/ * 2 /*tramos activo*/, salary.getSalaryPayments().size());
+		assertEquals(4 /*payments*/ * 2 /*tramos activo*/, salary.getSalaryPayments().size());
 
 	}
 
@@ -925,7 +925,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 
-		Assert.assertEquals(2, salary.getSalaryPayments().size());
+		assertEquals(2, salary.getSalaryPayments().size());
 
 	}
 
@@ -964,7 +964,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 
-		Assert.assertEquals(2, salary.getSalaryPayments().size());
+		assertEquals(2, salary.getSalaryPayments().size());
 
 	}
 
@@ -1006,7 +1006,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		}
 		
 
-		Assert.assertEquals( salary.getCommonBase() * 4.70d/100, salary.getTotalDeduction(), DELTA);
+		assertEquals( salary.getCommonBase() * 4.70d/100, salary.getTotalDeduction(), DELTA);
 
 	}
 
@@ -1050,7 +1050,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		}
 		
 
-		Assert.assertEquals( salary.getCommonBase() * 4.70d/100, salary.getTotalDeduction(), DELTA);
+		assertEquals( salary.getCommonBase() * 4.70d/100, salary.getTotalDeduction(), DELTA);
 
 	}
 
@@ -1095,7 +1095,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		}
 		
 
-		Assert.assertEquals( salary.getCommonBase() * 4.70d/100, salary.getTotalDeduction(), DELTA);
+		assertEquals( salary.getCommonBase() * 4.70d/100, salary.getTotalDeduction(), DELTA);
 
 	}
 
@@ -1140,7 +1140,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		}
 		
 
-		Assert.assertEquals( salary.getCommonBase() * 4.70d/100, salary.getTotalDeduction(), DELTA);
+		assertEquals( salary.getCommonBase() * 4.70d/100, salary.getTotalDeduction(), DELTA);
 
 	}
 	@Test
@@ -1183,7 +1183,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		}
 		
 
-		Assert.assertEquals( salary.getProfessionalBase() * 1.65d/100, salary.getTotalDeduction(), DELTA);
+		assertEquals( salary.getProfessionalBase() * 1.65d/100, salary.getTotalDeduction(), DELTA);
 
 	}
 
@@ -1268,35 +1268,35 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		long count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == startDate.getDate())
-		.peek(data->Assert.assertEquals(1750.00 * 4/30.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(1750.00 * 4/30.00, Double.parseDouble(data.getExpression())))
 		.count();
 		
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// + 3
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == startITDate.getDate())
-		.peek(data->Assert.assertEquals(100.00 * 3.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(100.00 * 3.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// + 2  (Here ADJUST)
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 8)
-		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),10))
-		.peek(data->Assert.assertEquals(100.00 * 2.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(data.getEndDate().getDate(),10))
+		.peek(data->assertEquals(100.00 * 2.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// + 21
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 11)
-		.peek(data->Assert.assertEquals(1750.00 * 21/30.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(1750.00 * 21/30.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		//  = 30
 		
 		
@@ -1384,34 +1384,34 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		long count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == startDate.getDate())
-		.peek(data->Assert.assertEquals(1750.00 * 4/31.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(1750.00 * 4/31.00, Double.parseDouble(data.getExpression())))
 		.count();
 		
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// 3
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == startITDate.getDate())
-		.peek(data->Assert.assertEquals(100.00 * 3.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(100.00 * 3.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// 3
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 8)
-		.peek(data->Assert.assertEquals(100.00 * 3.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(100.00 * 3.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// 21
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 11)
-		.peek(data->Assert.assertEquals(1750.00 * 21/31.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(1750.00 * 21/31.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// 31
 
@@ -1496,45 +1496,45 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		long count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 1)
-		.peek(data->Assert.assertEquals(1750.00 * 4/30.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(1750.00 * 4/30.00, Double.parseDouble(data.getExpression())))
 		.count();
 		
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// + 3
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == startITDate.getDate())
-		.peek(data->Assert.assertEquals(100.00 * 3.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(100.00 * 3.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// + 12
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 8)
-		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),19))
-		.peek(data->Assert.assertEquals(100.00 * 12.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(data.getEndDate().getDate(),19))
+		.peek(data->assertEquals(100.00 * 12.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// + 5
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 20)
-		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),24))
-		.peek(data->Assert.assertEquals(100.00 * 5.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(data.getEndDate().getDate(),24))
+		.peek(data->assertEquals(100.00 * 5.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// + 6 ( ADJUST )
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 25)
-		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),31))
-		.peek(data->Assert.assertEquals(100.00 * 6.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(data.getEndDate().getDate(),31))
+		.peek(data->assertEquals(100.00 * 6.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
@@ -1549,9 +1549,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		// One period , 30 ( NO adjust ) 
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
-		.peek(data->Assert.assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
@@ -1566,9 +1566,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		// One period , 30 ( YES adjust ) 
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
-		.peek(data->Assert.assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 	}
 	
 
@@ -1658,45 +1658,45 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		long count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 1)
-		.peek(data->Assert.assertEquals(1750.00 * 4/30.00 * 0.5, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(1750.00 * 4/30.00 * 0.5, Double.parseDouble(data.getExpression())))
 		.count();
 		
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// + 3
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == startITDate.getDate())
-		.peek(data->Assert.assertEquals(100.00 * 3.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(100.00 * 3.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// + 12
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 8)
-		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),19))
-		.peek(data->Assert.assertEquals(100.00 * 12.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(data.getEndDate().getDate(),19))
+		.peek(data->assertEquals(100.00 * 12.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// + 5
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 20)
-		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),24))
-		.peek(data->Assert.assertEquals(100.00 * 5.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(data.getEndDate().getDate(),24))
+		.peek(data->assertEquals(100.00 * 5.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// + 7 ( NOT ADJUST PARTIAL)
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 25)
-		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),31))
-		.peek(data->Assert.assertEquals(100.00 * 7.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(data.getEndDate().getDate(),31))
+		.peek(data->assertEquals(100.00 * 7.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
@@ -1711,9 +1711,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		// One period , 30 ( NO adjust ) 
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
-		.peek(data->Assert.assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
@@ -1728,9 +1728,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		// One period , 31 ( NO adjust partial ) 
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
-		.peek(data->Assert.assertEquals(100.00 * 31.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(100.00 * 31.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 	}
 	
 
@@ -1827,35 +1827,35 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		long count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == startDate.getDate())
-		.peek(data->Assert.assertEquals(1750.00 * 4/31.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(1750.00 * 4/31.00, Double.parseDouble(data.getExpression())))
 		.count();
 		
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// + 3
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == startITDate.getDate())
-		.peek(data->Assert.assertEquals(100.00 * 3.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(100.00 * 3.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// + 3  (No ADJUST)
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 8)
-		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),10))
-		.peek(data->Assert.assertEquals(100.00 * 3.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(data.getEndDate().getDate(),10))
+		.peek(data->assertEquals(100.00 * 3.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// + 21
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 11)
-		.peek(data->Assert.assertEquals(1750.00 * 21/31.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(1750.00 * 21/31.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		//  = 30
 		
 		
@@ -1955,10 +1955,10 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		long count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 1)
-		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),30))
-		.peek(data->Assert.assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(data.getEndDate().getDate(),30))
+		.peek(data->assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 	}
  
@@ -2056,10 +2056,10 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		long count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 1)
-		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),30))
-		.peek(data->Assert.assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(data.getEndDate().getDate(),30))
+		.peek(data->assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 	}
 
@@ -2157,10 +2157,10 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		long count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 1)
-		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),25))
-		.peek(data->Assert.assertEquals(100.00 * 25.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(data.getEndDate().getDate(),25))
+		.peek(data->assertEquals(100.00 * 25.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 	}
 
@@ -2265,7 +2265,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		.map( SalaryData::getExpression )
 		.peek(e -> System.out.println("DIAS_COTIZADOS = "+ e))
 		.collect(Collectors.summingDouble(Double::parseDouble));
-		org.junit.Assert.assertEquals(31, quotaDays, 0.00);
+		assertEquals(31, quotaDays, 0.00);
 	}
 
 	@Test
@@ -2337,26 +2337,26 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		long count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 1)
-		.peek(data->Assert.assertEquals(1750.00 * 4/30.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(1750.00 * 4/30.00, Double.parseDouble(data.getExpression())))
 		.count();
 		
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// + 5 ( Here ADJUST )
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == startITDate.getDate())
-		.peek(data->Assert.assertEquals(100.00 * 5.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(100.00 * 5.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);		
+		assertEquals(1, count);		
 		
 		// + 21
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 11)
-		.peek(data->Assert.assertEquals(1750.00 * 21/30.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(1750.00 * 21/30.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		//  = 30
 		
 		
@@ -2431,18 +2431,18 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		long count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 1)
-		.peek(data->Assert.assertEquals(1750.00 * 4/30.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(1750.00 * 4/30.00, Double.parseDouble(data.getExpression())))
 		.count();
 		
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// + 26 ( Here ADJUST )
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == startITDate.getDate())
-		.peek(data->Assert.assertEquals(100.00 * 26.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(100.00 * 26.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);		
+		assertEquals(1, count);		
 		
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
@@ -2457,9 +2457,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		// One period , 30 ( NO adjust ) 
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
-		.peek(data->Assert.assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);			startDate = add(startDate, MONTH, 1);
+		assertEquals(1, count);			startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
 		
 		ctx = getContractSalaryCalculatorContext(
@@ -2472,9 +2472,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		// One period , 30 ( YES adjust ) 
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
-		.peek(data->Assert.assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 	}
 	
@@ -2547,26 +2547,26 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		long count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 1)
-		.peek(data->Assert.assertEquals(1750.00 * 4/30.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(1750.00 * 4/30.00, Double.parseDouble(data.getExpression())))
 		.count();
 		
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// + 5 ( Here ADJUST )
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == add(startITDate,DAY_OF_MONTH,1).getDate())
-		.peek(data->Assert.assertEquals(100.00 * 5.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(100.00 * 5.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);		
+		assertEquals(1, count);		
 		
 		// + 21
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 11)
-		.peek(data->Assert.assertEquals(1750.00 * 21/30.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(1750.00 * 21/30.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		//  = 30
 		
 		
@@ -2642,18 +2642,18 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		long count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 1)
-		.peek(data->Assert.assertEquals(1750.00 * 4/30.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(1750.00 * 4/30.00, Double.parseDouble(data.getExpression())))
 		.count();
 		
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// + 26 ( Here ADJUST )
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == startITDate.getDate())
-		.peek(data->Assert.assertEquals(100.00 * 26.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(100.00 * 26.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);		
+		assertEquals(1, count);		
 		
 		for ( int i = 0; i < 4; i++ ) {
 			startDate = add(startDate, MONTH, 1);
@@ -2669,9 +2669,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			// One period , 30 
 			count = salary.getSalaryDatas().stream()
 			.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
-			.peek(data->Assert.assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
+			.peek(data->assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
 			.count();
-			Assert.assertEquals(1, count);			
+			assertEquals(1, count);			
 		}
 		
 		startDate = add(startDate, MONTH, 1);
@@ -2688,18 +2688,18 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 1)
-		.peek(data->Assert.assertEquals(100.00 * 9.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(100.00 * 9.00, Double.parseDouble(data.getExpression())))
 		.count();
 		
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 		
 		// + 21
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 11)
-		.peek(data->Assert.assertEquals(1750.00 * 21/30.00, Double.parseDouble(data.getExpression())))
+		.peek(data->assertEquals(1750.00 * 21/30.00, Double.parseDouble(data.getExpression())))
 		.count();
-		Assert.assertEquals(1, count);
+		assertEquals(1, count);
 	}
 	
 	@Test
@@ -2775,13 +2775,13 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		cleanSystemCosts(aonContext);
 
-		Assert.assertEquals(get(_545Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
-		Assert.assertEquals(30.00 * 100.00, salary.getCommonBase() );
+		assertEquals(get(_545Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
+		assertEquals(30.00 * 100.00, salary.getCommonBase() );
 		
-		Assert.assertEquals( get(_545Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
+		assertEquals( get(_545Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
 				salary.getSocialSecurityContributions(), DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				(30.00 * 100.00* 23.60 / 100.00)+ 
 				(-1)*get(_545Date, DAY_OF_MONTH)* 100.00 * 0.75
 				
@@ -2867,13 +2867,13 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
-		Assert.assertEquals(30.00 * 100.00, salary.getCommonBase() );
+		assertEquals(get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
+		assertEquals(30.00 * 100.00, salary.getCommonBase() );
 		
-		Assert.assertEquals( get(_365Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
+		assertEquals( get(_365Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
 				salary.getSocialSecurityContributions(), DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				(30.00 * 100.00* 23.60 / 100.00)+ 
 				(-1)*get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75
 				
@@ -2891,13 +2891,13 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		cleanSystemCosts(aonContext);
 
-		Assert.assertEquals(0.00,salary.getTotalPayment() );
-		Assert.assertEquals(30.00 * 100.00 , salary.getCommonBase() );
-		Assert.assertEquals((30.00 * 100.00* 23.60 / 100.00)
+		assertEquals(0.00,salary.getTotalPayment() );
+		assertEquals(30.00 * 100.00 , salary.getCommonBase() );
+		assertEquals((30.00 * 100.00* 23.60 / 100.00)
 				, salary.getTotalEnterprise()
 				, DELTA );
 		
-		Assert.assertEquals( 0.00, 
+		assertEquals( 0.00, 
 				salary.getSocialSecurityContributions(), DELTA);
 
 	}
@@ -2979,13 +2979,13 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
-		Assert.assertEquals(30.00 * 100.00, salary.getCommonBase() );
+		assertEquals(get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
+		assertEquals(30.00 * 100.00, salary.getCommonBase() );
 		
-		Assert.assertEquals( get(_365Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
+		assertEquals( get(_365Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
 				salary.getSocialSecurityContributions(), DELTA);
 
-		Assert.assertEquals(
+		assertEquals(
 				(30.00 * 100.00* 23.60 / 100.00)+ 
 				(-1)*get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75
 				
@@ -3003,13 +3003,13 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		cleanSystemCosts(aonContext);
 
-		Assert.assertEquals(0.00,salary.getTotalPayment() );
-		Assert.assertEquals(30.00 * 100.00 , salary.getCommonBase() );
-		Assert.assertEquals((30.00 * 100.00* 23.60 / 100.00)
+		assertEquals(0.00,salary.getTotalPayment() );
+		assertEquals(30.00 * 100.00 , salary.getCommonBase() );
+		assertEquals((30.00 * 100.00* 23.60 / 100.00)
 				, salary.getTotalEnterprise()
 				, DELTA );
 		
-		Assert.assertEquals( 0.00, 
+		assertEquals( 0.00, 
 				salary.getSocialSecurityContributions(), DELTA);
 
 	}
@@ -3085,13 +3085,13 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(get(_545Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
-		Assert.assertEquals( 30 * 100.00 , salary.getCommonBase() );
+		assertEquals(get(_545Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
+		assertEquals( 30 * 100.00 , salary.getCommonBase() );
 		
-		Assert.assertEquals( get(_545Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
+		assertEquals( get(_545Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
 				salary.getSocialSecurityContributions(), DELTA);
 
-		Assert.assertEquals((30.00* 100.00 * 23.60/100.00)+(-1)*get(_545Date, DAY_OF_MONTH)* 100.00 * 0.75, salary.getTotalEnterprise() );
+		assertEquals((30.00* 100.00 * 23.60/100.00)+(-1)*get(_545Date, DAY_OF_MONTH)* 100.00 * 0.75, salary.getTotalEnterprise() );
 
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
@@ -3104,12 +3104,12 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		cleanSystemCosts(aonContext);
 
-		Assert.assertEquals(0.00,salary.getTotalPayment() );
-		Assert.assertEquals(30 * 100.00, salary.getCommonBase() );
+		assertEquals(0.00,salary.getTotalPayment() );
+		assertEquals(30 * 100.00, salary.getCommonBase() );
 		
-		Assert.assertEquals( 0.00 , salary.getSocialSecurityContributions(), DELTA);
+		assertEquals( 0.00 , salary.getSocialSecurityContributions(), DELTA);
 
-		Assert.assertEquals((30.00 * 100.00* 23.60 / 100.00)
+		assertEquals((30.00 * 100.00* 23.60 / 100.00)
 				, salary.getTotalEnterprise()
 				, DELTA );
 	}
@@ -3174,8 +3174,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		cleanSystemCosts(aonContext);
 		Date _365Date = add(_366Date, Calendar.DAY_OF_MONTH , -1);
-		Assert.assertEquals(get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
-		Assert.assertEquals(30 * 100.00, salary.getCommonBase() );
+		assertEquals(get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
+		assertEquals(30 * 100.00, salary.getCommonBase() );
 		
 
 	}
@@ -3260,13 +3260,13 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		cleanSystemCosts(aonContext);
 
-		Assert.assertEquals(get(_365Date, DAY_OF_MONTH) * 100.00 * 0.75,salary.getTotalPayment() );
-		Assert.assertEquals(30 *100.00 , salary.getCommonBase() );
+		assertEquals(get(_365Date, DAY_OF_MONTH) * 100.00 * 0.75,salary.getTotalPayment() );
+		assertEquals(30 *100.00 , salary.getCommonBase() );
 		
-		Assert.assertEquals( get(_365Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
+		assertEquals( get(_365Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
 				salary.getSocialSecurityContributions(), DELTA);
 
-		Assert.assertEquals((30.00*100.00 * 23.60/100.00)+(-1)*get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75, salary.getTotalEnterprise() );
+		assertEquals((30.00*100.00 * 23.60/100.00)+(-1)*get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75, salary.getTotalEnterprise() );
 
 	}
 
@@ -3394,7 +3394,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			if ( d.getName().startsWith("BASE_CGC") )
 				System.out.println(d.getName() + " = " + d.getExpression() + ", " +  d.getStartDate() + "..." + d.getEndDate() );
 		
-		Assert.assertEquals(1310.40 + ( 1310.40 / 6 ), salary.getCommonBase(), DELTA);
+		assertEquals(1310.40 + ( 1310.40 / 6 ), salary.getCommonBase(), DELTA);
 		
 
 	}
@@ -3462,16 +3462,16 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = get(endDate, DAY_OF_MONTH);
 		
-		Assert.assertEquals( 1000.00, salary.getCommonBase(), DELTA );
+		assertEquals( 1000.00, salary.getCommonBase(), DELTA );
 		
 		for ( com.esferalia.aon.payroll.SalaryData d: salary.getSalaryDatas()) {
 			if ( d.getName().equals("BASE_CGC") ) {
 				if ( d.getStartDate().equals(startIt) ) 
-					Assert.assertEquals(1000.00 / monthDays, Double.parseDouble(d.getExpression()), DELTA);
+					assertEquals(1000.00 / monthDays, Double.parseDouble(d.getExpression()), DELTA);
 				else if ( d.getStartDate().equals(startDate) ) 
-					Assert.assertEquals(1000.00 / monthDays * ( monthDays -1 ), Double.parseDouble(d.getExpression()), DELTA); // TODO : DELTA????
+					assertEquals(1000.00 / monthDays * ( monthDays -1 ), Double.parseDouble(d.getExpression()), DELTA); // TODO : DELTA????
 				else 
-					Assert.fail("Unexpected BASE_CGC");
+					fail("Unexpected BASE_CGC");
 			}
 		}
 		
@@ -3541,16 +3541,16 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals( 1000.00, salary.getCommonBase(), DELTA );
+		assertEquals( 1000.00, salary.getCommonBase(), DELTA );
 		
 		for ( com.esferalia.aon.payroll.SalaryData d: salary.getSalaryDatas()) {
 			if ( d.getName().equals("BASE_CGC") ) {
 				if ( d.getStartDate().equals(startIt) ) 
-					Assert.assertEquals(1000.00/30.00, Double.parseDouble(d.getExpression()), DELTA);
+					assertEquals(1000.00/30.00, Double.parseDouble(d.getExpression()), DELTA);
 				else if ( d.getStartDate().equals(startDate) ) 
-					Assert.assertEquals(1000.00 * get(d.getEndDate(),  DAY_OF_MONTH) / 30.00, Double.parseDouble(d.getExpression()), DELTA); // TODO : DELTA????
+					assertEquals(1000.00 * get(d.getEndDate(),  DAY_OF_MONTH) / 30.00, Double.parseDouble(d.getExpression()), DELTA); // TODO : DELTA????
 				else 
-					Assert.fail("Unexpected BASE_CGC");
+					fail("Unexpected BASE_CGC");
 			}
 		}
 		
@@ -3620,7 +3620,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals( 1000.00, salary.getCommonBase(), DELTA );
+		assertEquals( 1000.00, salary.getCommonBase(), DELTA );
 		
 		for (SalaryPayment payment : salary.getSalaryPayments()) {
 			System.out.println(payment.getDescription() + " = " + payment.getAmount() + " (" + payment.getQuote() + ")");
@@ -3629,11 +3629,11 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		for ( com.esferalia.aon.payroll.SalaryData d: salary.getSalaryDatas()) {
 			if ( d.getName().equals("BASE_CGC") ) {
 				if ( d.getStartDate().equals(startIt) ) 
-					Assert.assertEquals(0.00, Double.parseDouble(d.getExpression()), DELTA);
+					assertEquals(0.00, Double.parseDouble(d.getExpression()), DELTA);
 				else if ( d.getStartDate().equals(startDate) ) 
-					Assert.assertEquals(1000.00, Double.parseDouble(d.getExpression()), DELTA); // TODO : DELTA????
+					assertEquals(1000.00, Double.parseDouble(d.getExpression()), DELTA); // TODO : DELTA????
 				else 
-					Assert.fail("Unexpected BASE_CGC");
+					fail("Unexpected BASE_CGC");
 			}
 		}
 		
@@ -3703,16 +3703,16 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = get(endDate, DAY_OF_MONTH);
 		
-		Assert.assertEquals( 1000.00, salary.getCommonBase(), DELTA );
+		assertEquals( 1000.00, salary.getCommonBase(), DELTA );
 		
 		for ( com.esferalia.aon.payroll.SalaryData d: salary.getSalaryDatas()) {
 			if ( d.getName().equals("BASE_CGC") ) {
 				if ( d.getStartDate().equals(startIt) ) 
-					Assert.assertEquals(1000.00 / monthDays * 2.00, Double.parseDouble(d.getExpression()), DELTA);
+					assertEquals(1000.00 / monthDays * 2.00, Double.parseDouble(d.getExpression()), DELTA);
 				else if ( d.getStartDate().equals(startDate) ) 
-					Assert.assertEquals(1000.00 / monthDays * ( monthDays - 2.00), Double.parseDouble(d.getExpression()), DELTA); // TODO : DELTA????
+					assertEquals(1000.00 / monthDays * ( monthDays - 2.00), Double.parseDouble(d.getExpression()), DELTA); // TODO : DELTA????
 				else 
-					Assert.fail("Unexpected BASE_CGC");
+					fail("Unexpected BASE_CGC");
 			}
 		}
 		
@@ -3785,16 +3785,16 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = get(endDate, DAY_OF_MONTH);
 		
-		Assert.assertEquals( 1000.00, salary.getCommonBase(), DELTA );
+		assertEquals( 1000.00, salary.getCommonBase(), DELTA );
 		
 		for ( com.esferalia.aon.payroll.SalaryData d: salary.getSalaryDatas()) {
 			if ( d.getName().equals("BASE_CGC") ) {
 				if ( d.getStartDate().equals(startIt) ) 
-					Assert.assertEquals(1000.00 / monthDays* 2.00, Double.parseDouble(d.getExpression()), DELTA);
+					assertEquals(1000.00 / monthDays* 2.00, Double.parseDouble(d.getExpression()), DELTA);
 				else if ( d.getStartDate().equals(startDate) ) 
-					Assert.assertEquals(1000.00 / monthDays * ( monthDays -2 ), Double.parseDouble(d.getExpression()), DELTA); // TODO : DELTA????
+					assertEquals(1000.00 / monthDays * ( monthDays -2 ), Double.parseDouble(d.getExpression()), DELTA); // TODO : DELTA????
 				else 
-					Assert.fail("Unexpected BASE_CGC");
+					fail("Unexpected BASE_CGC");
 			}
 		}
 		
@@ -3881,7 +3881,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		}
 
 		
-		org.junit.Assert.assertEquals(1100.00 + ( 1000.00/6), salary.getCommonBase(), DELTA);
+		assertEquals(1100.00 + ( 1000.00/6), salary.getCommonBase(), DELTA);
 	}
 
 	@Test
@@ -3928,7 +3928,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					return;
 		}
 
-		Assert.fail();
+		fail();
 
 	}
 
@@ -3986,14 +3986,14 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				ITimedVariable<?> factor = context.get(ContextVariable.PATERNITY_FACTOR.getName() );
 				if ( factor == null )
 					return;
-				Assert.assertEquals(ExpressionScope.CONTRACT,((IExpressionVariable<?>) factor).getExpression().getScope());
+				assertEquals(ExpressionScope.CONTRACT,((IExpressionVariable<?>) factor).getExpression().getScope());
 			}
 		});
 		Salary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(0.00, salary.getTotalPayment());
-		Assert.assertEquals(0.00, salary.getTotalLiquid());
-		Assert.assertEquals(get(endDate, DAY_OF_MONTH) * 100.00, salary.getCommonBase(), DELTA);
+		assertEquals(0.00, salary.getTotalPayment());
+		assertEquals(0.00, salary.getTotalLiquid());
+		assertEquals(get(endDate, DAY_OF_MONTH) * 100.00, salary.getCommonBase(), DELTA);
 		
 		
 		startDate = getFirstDayOfMonth(getToday());
@@ -4009,7 +4009,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					java.util.Date startDate, java.util.Date endDate, IPayment payment,
 					Map<String, ITimedVariable<?>> context) {
 				if ( payment.getName().equals(ContextVariable.MATERNITY.getName()) )
-					Assert.assertTrue(context.containsKey(ContextVariable.PATERNITY_FACTOR.getName()));
+					assertTrue(context.containsKey(ContextVariable.PATERNITY_FACTOR.getName()));
 			}
 			
 		});
@@ -4017,8 +4017,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		int monthDays = get(endDate, Calendar.DATE) ;
 		int workedDays = get(startITDate, Calendar.DATE) -1;
-		Assert.assertEquals(1750.00 * workedDays / monthDays, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(1750.00 * workedDays / monthDays + (monthDays - workedDays ) * 100.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00 * workedDays / monthDays, salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00 * workedDays / monthDays + (monthDays - workedDays ) * 100.00, salary.getCommonBase(), DELTA);
 	}
 
 	@Test
@@ -4071,8 +4071,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(1750.00 * 1/2, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(get(endDate, DAY_OF_MONTH) * 100.00 * 0.50 + 1750.00 * 1/2 , salary.getCommonBase(), DELTA);
+		assertEquals(1750.00 * 1/2, salary.getTotalPayment(), DELTA);
+		assertEquals(get(endDate, DAY_OF_MONTH) * 100.00 * 0.50 + 1750.00 * 1/2 , salary.getCommonBase(), DELTA);
 		
 		// Cret@ 
 		ctx = getContractSalaryCalculatorContext(
@@ -4091,38 +4091,38 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					// 500 Base de contingencias comunes.
 					List<ContextData> datas = s.getContextData()
 							.get(CGC_BASE.getName());
-					Assert.assertEquals(1, datas.size());
-					Assert.assertEquals(startDate, datas.get(0).getStartDate());
-					Assert.assertEquals(endDate, datas.get(0).getEndDate());
-					Assert.assertEquals(1750.00 * 0.5,
+					assertEquals(1, datas.size());
+					assertEquals(startDate, datas.get(0).getStartDate());
+					assertEquals(endDate, datas.get(0).getEndDate());
+					assertEquals(1750.00 * 0.5,
 							Double.parseDouble(datas.get(0).getExpression()));
 
 					// 635 o 634 Base de Accidentes de Trabajo.
 					datas = s.getContextData().get(CGP_BASE.getName());
-					Assert.assertEquals(1, datas.size());
-					Assert.assertEquals(startDate, datas.get(0).getStartDate());
-					Assert.assertEquals(endDate, datas.get(0).getEndDate());
-					Assert.assertEquals(1750.00 * 0.5,
+					assertEquals(1, datas.size());
+					assertEquals(startDate, datas.get(0).getStartDate());
+					assertEquals(endDate, datas.get(0).getEndDate());
+					assertEquals(1750.00 * 0.5,
 							Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
 					datas = s.getContextData()
 							.get(MATERNITY_BASE.getName());
-					Assert.assertEquals(1, datas.size());
-					Assert.assertEquals(startDate, datas.get(0).getStartDate());
-					Assert.assertEquals(endDate, datas.get(0).getEndDate());
-					Assert.assertEquals(100.00 * get(endDate, DAY_OF_MONTH) * 0.5,
+					assertEquals(1, datas.size());
+					assertEquals(startDate, datas.get(0).getStartDate());
+					assertEquals(endDate, datas.get(0).getEndDate());
+					assertEquals(100.00 * get(endDate, DAY_OF_MONTH) * 0.5,
 							Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
 					datas = s.getContextData()
 							.get(WORKED_HOURS.getName());
-					Assert.assertEquals(1, datas.size());
-					Assert.assertEquals(startDate, datas.get(0).getStartDate());
-					Assert.assertEquals(endDate, datas.get(0).getEndDate());
+					assertEquals(1, datas.size());
+					assertEquals(startDate, datas.get(0).getStartDate());
+					assertEquals(endDate, datas.get(0).getEndDate());
 					long workDays = new Period(startDate, endDate).daysStream()
 					.filter(day -> day.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY)
 					.filter(day -> day.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY)
 					.count();
-					Assert.assertEquals(workDays * 8 * 0.5,
+					assertEquals(workDays * 8 * 0.5,
 							Double.parseDouble(datas.get(0).getExpression()), DELTA);
 					
 				});
@@ -4155,56 +4155,56 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					// 500 Base de contingencias comunes.
 					List<ContextData> datas = s.getContextData()
 							.get(CGC_BASE.getName());
-					Assert.assertEquals(2, datas.size());
+					assertEquals(2, datas.size());
 					
-					Assert.assertEquals(start, datas.get(0).getStartDate());
-					Assert.assertEquals(add(startITDate, DAY_OF_MONTH, -1), datas.get(0).getEndDate());
-					Assert.assertEquals(1750.00 * workDays / monthDays,
+					assertEquals(start, datas.get(0).getStartDate());
+					assertEquals(add(startITDate, DAY_OF_MONTH, -1), datas.get(0).getEndDate());
+					assertEquals(1750.00 * workDays / monthDays,
 							Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
-					Assert.assertEquals(startITDate, datas.get(1).getStartDate());
-					Assert.assertEquals(end, datas.get(1).getEndDate());
-					Assert.assertEquals(1750.00 * itDays / monthDays * 0.5,
+					assertEquals(startITDate, datas.get(1).getStartDate());
+					assertEquals(end, datas.get(1).getEndDate());
+					assertEquals(1750.00 * itDays / monthDays * 0.5,
 							Double.parseDouble(datas.get(1).getExpression()), DELTA);
 					
 
 					// 601 o 611 Base de Accidentes de Trabajo.
 					datas = s.getContextData().get(CGP_BASE.getName());
-					Assert.assertEquals(2, datas.size());
-					Assert.assertEquals(2, datas.size());
+					assertEquals(2, datas.size());
+					assertEquals(2, datas.size());
 					
-					Assert.assertEquals(start, datas.get(0).getStartDate());
-					Assert.assertEquals(add(startITDate, DAY_OF_MONTH, -1), datas.get(0).getEndDate());
-					Assert.assertEquals(1750.00 * workDays / monthDays,
+					assertEquals(start, datas.get(0).getStartDate());
+					assertEquals(add(startITDate, DAY_OF_MONTH, -1), datas.get(0).getEndDate());
+					assertEquals(1750.00 * workDays / monthDays,
 							Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
-					Assert.assertEquals(startITDate, datas.get(1).getStartDate());
-					Assert.assertEquals(end, datas.get(1).getEndDate());
-					Assert.assertEquals(1750.00 * itDays / monthDays * 0.5,
+					assertEquals(startITDate, datas.get(1).getStartDate());
+					assertEquals(end, datas.get(1).getEndDate());
+					assertEquals(1750.00 * itDays / monthDays * 0.5,
 							Double.parseDouble(datas.get(1).getExpression()), DELTA);
 
 					datas = s.getContextData()
 							.get(MATERNITY_BASE.getName());
-					Assert.assertEquals(1, datas.size());
-					Assert.assertEquals(startITDate, datas.get(0).getStartDate());
-					Assert.assertEquals(end, datas.get(0).getEndDate());
-					Assert.assertEquals(100.00 * itDays * 0.5,
+					assertEquals(1, datas.size());
+					assertEquals(startITDate, datas.get(0).getStartDate());
+					assertEquals(end, datas.get(0).getEndDate());
+					assertEquals(100.00 * itDays * 0.5,
 							Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
 					datas = s.getContextData()
 							.get(WORKED_HOURS.getName());
-					Assert.assertEquals(2, datas.size());
-					Assert.assertEquals(start, datas.get(0).getStartDate());
-					Assert.assertEquals(add(startITDate, DAY_OF_MONTH, -1), datas.get(0).getEndDate());
+					assertEquals(2, datas.size());
+					assertEquals(start, datas.get(0).getStartDate());
+					assertEquals(add(startITDate, DAY_OF_MONTH, -1), datas.get(0).getEndDate());
 
-					Assert.assertEquals(startITDate, datas.get(1).getStartDate());
-					Assert.assertEquals(end, datas.get(1).getEndDate());
+					assertEquals(startITDate, datas.get(1).getStartDate());
+					assertEquals(end, datas.get(1).getEndDate());
 					long workingDays = new Period(datas.get(1).getStartDate(), datas.get(1).getEndDate())
 					.daysStream()
 					.filter(day -> day.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY)
 					.filter(day -> day.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY)
 					.count();
-					Assert.assertEquals(workingDays * 8 * 0.5,
+					assertEquals(workingDays * 8 * 0.5,
 							Double.parseDouble(datas.get(1).getExpression()), DELTA);
 				});
 		;
@@ -4263,9 +4263,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Salary salary = calculator.calculate(ctx);
 		
 		int monthDays = get(startDate, Calendar.DAY_OF_MONTH);
-		Assert.assertEquals(1750.00 * 9 / 30 + 1750.00 * 21 / 30 * 0.5 , salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		//Assert.assertEquals(get(endDate, DAY_OF_MONTH) * 100.00 * 0.50 + 1750.00 * 1/2 , salary.getCommonBase());
+		assertEquals(1750.00 * 9 / 30 + 1750.00 * 21 / 30 * 0.5 , salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		//assertEquals(get(endDate, DAY_OF_MONTH) * 100.00 * 0.50 + 1750.00 * 1/2 , salary.getCommonBase());
 		
 		
 	}
@@ -4333,14 +4333,14 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				ITimedVariable<?> factor = context.get(ContextVariable.PATERNITY_FACTOR.getName() );
 				if ( factor == null )
 					return;
-				Assert.assertEquals(ExpressionScope.CONTRACT,((IExpressionVariable<?>) factor).getExpression().getScope());
+				assertEquals(ExpressionScope.CONTRACT,((IExpressionVariable<?>) factor).getExpression().getScope());
 				
 			}
 		});
 		Salary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00/2.00, salary.getTotalPayment());
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00/2.00, salary.getTotalPayment());
 		
 		
 		startDate = getFirstDayOfMonth(getToday());
@@ -4357,7 +4357,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					Map<String, ITimedVariable<?>> context) {
 				System.out.println(payment.getDescription() + " = " + amount + "," + quote + "[" + startDate + ".." + endDate +"]");
 				if ( payment.getName().equals(ContextVariable.MATERNITY.getName()) )
-					Assert.assertTrue(context.containsKey(ContextVariable.PATERNITY_FACTOR.getName()));
+					assertTrue(context.containsKey(ContextVariable.PATERNITY_FACTOR.getName()));
 			}
 			
 		});
@@ -4365,10 +4365,10 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		int monthDays = get(endDate, Calendar.DATE) ;
 		int workedDays = get(startITDate, Calendar.DATE) -1;
-		Assert.assertEquals(
+		assertEquals(
 				1750.00 * workedDays / monthDays 
 				+ 1750.00 * (monthDays - workedDays ) / monthDays * 0.5, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(1750.00 , salary.getCommonBase(), DELTA);
+		assertEquals(1750.00 , salary.getCommonBase(), DELTA);
 	}
 
 
@@ -4435,14 +4435,14 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				ITimedVariable<?> factor = context.get(ContextVariable.PATERNITY_FACTOR.getName() );
 				if ( factor == null )
 					return;
-				Assert.assertEquals(ExpressionScope.CONTRACT,((IExpressionVariable<?>) factor).getExpression().getScope());
+				assertEquals(ExpressionScope.CONTRACT,((IExpressionVariable<?>) factor).getExpression().getScope());
 				
 			}
 		});
 		Salary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00/2.00, salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00/2.00, salary.getTotalPayment(), DELTA);
 		
 		
 		startDate = getFirstDayOfMonth(getToday());
@@ -4459,7 +4459,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					Map<String, ITimedVariable<?>> context) {
 				System.out.println(payment.getDescription() + " = " + amount + "," + quote + "[" + startDate + ".." + endDate +"]");
 				if ( payment.getName().equals(ContextVariable.MATERNITY.getName()) )
-					Assert.assertTrue(context.containsKey(ContextVariable.PATERNITY_FACTOR.getName()));
+					assertTrue(context.containsKey(ContextVariable.PATERNITY_FACTOR.getName()));
 			}
 			
 		});
@@ -4467,8 +4467,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		int monthDays = get(endDate, Calendar.DATE) ;
 		int workedDays = get(startITDate, Calendar.DATE) -1;
-		Assert.assertEquals(1750.00 , salary.getCommonBase(), DELTA);
-		Assert.assertEquals(
+		assertEquals(1750.00 , salary.getCommonBase(), DELTA);
+		assertEquals(
 				1750.00 * workedDays / monthDays 
 				+ 1750.00 * (monthDays - workedDays ) / monthDays * 0.5, salary.getTotalPayment(), DELTA);
 	}
@@ -4543,7 +4543,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					Map<String, ITimedVariable<?>> context) {
 				System.out.println(payment.getDescription() + " = " + amount + "," + quote + "[" + startDate + ".." + endDate +"]");
 				if ( payment.getName().equals(ContextVariable.MATERNITY.getName()) )
-					Assert.assertTrue(context.containsKey(ContextVariable.PATERNITY_FACTOR.getName()));
+					assertTrue(context.containsKey(ContextVariable.PATERNITY_FACTOR.getName()));
 			}
 			
 		});
@@ -4551,8 +4551,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		int monthDays = get(endDate, Calendar.DATE) ;
 		int workedDays = get(startPaternityDate, Calendar.DATE) -1;
-		Assert.assertEquals(1750.00 , salary.getCommonBase(), DELTA);
-		Assert.assertEquals(
+		assertEquals(1750.00 , salary.getCommonBase(), DELTA);
+		assertEquals(
 				1750.00 * workedDays / monthDays 
 				+ 1750.00 * (monthDays - workedDays ) / monthDays * 0.5, salary.getTotalPayment(), DELTA);
 	}
@@ -4622,7 +4622,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = get(endDate, Calendar.DAY_OF_MONTH );
 		int paternityDays = get(endITDate, Calendar.DAY_OF_MONTH);
-		org.junit.Assert.assertEquals(
+		assertEquals(
 				1750.00 * paternityDays / monthDays * 0.5 + 
 				1750.00 * ( monthDays - paternityDays ) / monthDays , salary.getTotalPayment(), DELTA);
 		
@@ -4689,7 +4689,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = get(endDate, Calendar.DAY_OF_MONTH );
 		int paternityDays = get(endITDate, Calendar.DAY_OF_MONTH);
-		org.junit.Assert.assertEquals(
+		assertEquals(
 				1750.00 * paternityDays / monthDays * 0.5 + 
 				1750.00 * ( monthDays - paternityDays ) / monthDays , salary.getTotalPayment(), DELTA);
 		
@@ -4751,7 +4751,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = get( endDate, Calendar.DAY_OF_MONTH );
 		
-		org.junit.Assert.assertEquals( 1750.00 * 0.75 * 0.50 , salary.getTotalPayment(), DELTA);
+		assertEquals( 1750.00 * 0.75 * 0.50 , salary.getTotalPayment(), DELTA);
 		
 		
 	}
@@ -4876,7 +4876,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		
-		Assert.assertEquals(( 1750.00/ 30.00 ) * (10 + 6 * 0.75) , salary.getTotalPayment());
+		assertEquals(( 1750.00/ 30.00 ) * (10 + 6 * 0.75) , salary.getTotalPayment());
 
 	}
 	
@@ -4925,8 +4925,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(66.66 * 30.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(0.75 * 66.66 * get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), DELTA);
+		assertEquals(66.66 * 30.00, salary.getCommonBase(), DELTA);
+		assertEquals(0.75 * 66.66 * get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), DELTA);
 	}
 
 	@Test
@@ -4980,7 +4980,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		startDate = stopDate;
 		contract.setStartDate(stopDate);
 		int updated = contract.update();
-		Assert.assertEquals(1, updated);
+		assertEquals(1, updated);
 		
 		
 		Date endDate = getLastDayOfMonth(startDate);
@@ -4992,8 +4992,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 		double br = 1750.00 / 30.00;
-		Assert.assertEquals(0.75 * br * get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(br * 30.00, salary.getCommonBase(), DELTA);
+		assertEquals(0.75 * br * get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), DELTA);
+		assertEquals(br * 30.00, salary.getCommonBase(), DELTA);
 	}
 
 	@Test
@@ -5042,11 +5042,11 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 
-		//Assert.assertEquals(66.66 * 10.00, salary.getCommonBase(), DELTA);
+		//assertEquals(66.66 * 10.00, salary.getCommonBase(), DELTA);
 		long quoteDays = Math.round(salary.getCommonBase() / 66.66); //Double.parseDouble(salary.getSalaryData(QUOTE_DAYS.toString()));
 		System.out.println("DIAS COTIZADOS : " + quoteDays );
 		//System.out.println("NICIO CONTRATO : " + get(contractStart, DAY_OF_MONTH) );
-		Assert.assertEquals(0.75 * 66.66 * /*(30.00 - get(contractStart, DAY_OF_MONTH) + 1 )*/ 10 , salary.getTotalPayment(), DELTA);
+		assertEquals(0.75 * 66.66 * /*(30.00 - get(contractStart, DAY_OF_MONTH) + 1 )*/ 10 , salary.getTotalPayment(), DELTA);
 	}
 	
 	@Test
@@ -5094,8 +5094,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(0.75 * 1750.00/30.00 * get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(1750.00/30.00 * 30.00, salary.getCommonBase(), DELTA);
+		assertEquals(0.75 * 1750.00/30.00 * get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00/30.00 * 30.00, salary.getCommonBase(), DELTA);
 	}
 	
 	@Test
@@ -5153,14 +5153,14 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		int it21Days =  get(endDate, DAY_OF_MONTH) - get(contract.getStartDate(),DAY_OF_MONTH);
 		
-		Assert.assertEquals(
+		assertEquals(
 				0.75 * 1750.00/30.00 * it21Days 
 				+  0.60 * 1750.00/30.00 , salary.getTotalPayment(), DELTA);
 		if ( get(contract.getStartDate(),DAY_OF_MONTH) == 1 ) {
-		    Assert.assertEquals(1750.00/30.00 * 30.00, salary.getCommonBase(), DELTA);
+		    assertEquals(1750.00/30.00 * 30.00, salary.getCommonBase(), DELTA);
 		}
 		else {
-		    Assert.assertEquals(1750.00/30.00 * Math.min( it21Days + 1, 30.00 ), salary.getCommonBase(), DELTA);
+		    assertEquals(1750.00/30.00 * Math.min( it21Days + 1, 30.00 ), salary.getCommonBase(), DELTA);
 		}
 	}
 
@@ -5219,8 +5219,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
 
-		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
 
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
@@ -5235,8 +5235,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
 
-		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
 	}
 
 
@@ -5301,8 +5301,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
 
-		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
 
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
@@ -5317,8 +5317,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
 
-		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
 	}
 
 
@@ -5416,9 +5416,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
 
-		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
 		int activeDays =  get(startITDate, DAY_OF_MONTH) -1 ;
-		Assert.assertEquals(1500.00 / 30 * activeDays 
+		assertEquals(1500.00 / 30 * activeDays 
 							+ 1750.00/30.00 * ( get(endDate, DAY_OF_MONTH) - activeDays ) , 
 							
 							salary.getTotalPayment(), DELTA);
@@ -5436,11 +5436,11 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
 
-		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
 	}
 	
-	@Ignore("BRUTO it's no yet 'SMART' supported")
+	@Disabled("BRUTO it's no yet 'SMART' supported")
 	@Test
 	public void testITWithConstantIV() throws ExpressionException, SQLException,
 			SalaryException {
@@ -5501,8 +5501,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
 
-		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
 
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
@@ -5517,8 +5517,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
 
-		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
 	}
 
 	@Test
@@ -5578,8 +5578,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
 
-		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
 
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
@@ -5594,8 +5594,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
 
-		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
 	}
 
 	@Test
@@ -5655,8 +5655,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		
 
-		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
 
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
@@ -5671,8 +5671,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println("2-." + payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
 
-		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00, salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00, salary.getTotalPayment(), DELTA);
 	}
 	
 	
@@ -5737,8 +5737,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println("1-." + payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
 
-		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
 
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
@@ -5753,14 +5753,14 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println("2-." + payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
 
-		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00, salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00, salary.getTotalPayment(), DELTA);
 	}
 	
 
 	
 	@Test
-	@Ignore("Not yet fixed")
+	@Disabled("Not yet fixed")
 	public void testITWithConstantIX() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -5816,8 +5816,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
 
-		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
 
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
@@ -5832,8 +5832,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
 
-		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
 	}
 
 	@Test
@@ -5899,9 +5899,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
 		
-		Assert.assertEquals(1750.00 / monthDays * 0.50, salary.getTotalPayment(), DELTA);
+		assertEquals(1750.00 / monthDays * 0.50, salary.getTotalPayment(), DELTA);
 		String workedHours = salary.getSalaryData(ContextVariable.WORKED_HOURS.getName());
-		//Assert.assertEquals(40.00/ 7.00 * 0.50, Double.parseDouble(workedHours), DELTA);
+		//assertEquals(40.00/ 7.00 * 0.50, Double.parseDouble(workedHours), DELTA);
 	}
 
 	@Test
@@ -5945,10 +5945,10 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount()
 					+ " (" + payment.getExpression() + ")");
 			if ( PREST_IT.equals(payment.getName() ))
-					Assert.assertEquals("DIAS_ENFERMEDAD_COMUN_366 * 0.00", payment.getExpression());	
+					assertEquals(payment.getExpression(), "DIAS_ENFERMEDAD_COMUN_366 * 0.00");	
 		}
 
-		Assert.assertEquals(5, salary.getSalaryPayments().size());
+		assertEquals(5, salary.getSalaryPayments().size());
 
 	}
 
@@ -5993,10 +5993,10 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount()
 					+ " (" + payment.getExpression() + ")");
 			if ( PREST_IT.equals(payment.getName() ))
-					Assert.assertEquals("DIAS_ENFERMEDAD_COMUN_366 * 0.00", payment.getExpression());	
+					assertEquals(payment.getExpression(), "DIAS_ENFERMEDAD_COMUN_366 * 0.00");	
 		}
 
-		Assert.assertEquals(5, salary.getSalaryPayments().size());
+		assertEquals(5, salary.getSalaryPayments().size());
 
 		startITDate = add(add(getFirstDayOfMonth(getToday()), Calendar.MONTH, 1), DAY_OF_MONTH,10);
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
@@ -6015,7 +6015,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount()
 					+ " (" + payment.getExpression() + ")");
 			if ( PREST_IT.equals(payment.getName() ))
-				Assert.assertEquals(String.format("BASE_REGULADORA * 1.00 * %s_1_3 * (isdef %s ? %s : 1.00)",  COMMON_DISEASE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR), payment.getExpression());	
+				assertEquals(payment.getExpression(), String.format("BASE_REGULADORA * 1.00 * %s_1_3 * (isdef %s ? %s : 1.00)",  COMMON_DISEASE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR));	
 		}
 	}
 
@@ -6060,10 +6060,10 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount()
 					+ " (" + payment.getExpression() + ")");
 			if ( PREST_IT.equals(payment.getName() ))
-					Assert.assertEquals("DIAS_ENFERMEDAD_PROFESIONAL_366 * 0.00", payment.getExpression());	
+					assertEquals(payment.getExpression(), "DIAS_ENFERMEDAD_PROFESIONAL_366 * 0.00");	
 		}
 
-		Assert.assertEquals(5, salary.getSalaryPayments().size());
+		assertEquals(5, salary.getSalaryPayments().size());
 
 	}
 
@@ -6108,10 +6108,10 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount()
 					+ " (" + payment.getExpression() + ")");
 			if ( PREST_IT.equals(payment.getName() ))
-					Assert.assertEquals("DIAS_ENFERMEDAD_PROFESIONAL_366 * 0.00", payment.getExpression());	
+					assertEquals(payment.getExpression(), "DIAS_ENFERMEDAD_PROFESIONAL_366 * 0.00");	
 		}
 
-		Assert.assertEquals(5, salary.getSalaryPayments().size());
+		assertEquals(5, salary.getSalaryPayments().size());
 
 		startITDate = add(add(getFirstDayOfMonth(getToday()), Calendar.MONTH, 1), DAY_OF_MONTH,10);
 		addIT(aonContext, contract, LeaveType.OCCUPATIONAL_DISEASE, startITDate,
@@ -6130,7 +6130,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount()
 					+ " (" + payment.getExpression() + ")");
 		}
-		Assert.assertEquals(5, salary.getSalaryPayments().size());
+		assertEquals(5, salary.getSalaryPayments().size());
 	}
 
 	
@@ -6186,7 +6186,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount()
 					+ " (" + payment.getExpression() + "," + payment.getQuote() + ")");
 			if ( PREST_IT.equals(payment.getName() ))
-				org.junit.Assert.assertNotEquals("DIAS_ENFERMEDAD_PROFESIONAL_366 * 0.00", payment.getExpression());	
+				assertNotEquals("DIAS_ENFERMEDAD_PROFESIONAL_366 * 0.00", payment.getExpression());	
 		}
 
 	}
@@ -6243,7 +6243,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount()
 					+ " (" + payment.getExpression() + "," + payment.getQuote() + ")");
 			if ( PREST_IT.equals(payment.getName() ))
-				org.junit.Assert.assertNotEquals("DIAS_ENFERMEDAD_COMUN_366 * 0.00", payment.getExpression());	
+				assertNotEquals("DIAS_ENFERMEDAD_COMUN_366 * 0.00", payment.getExpression());	
 		}
 
 	}
@@ -6289,7 +6289,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
-		org.junit.Assert.assertEquals(1000.00, salary.getCommonBase(), DELTA);
+		assertEquals(1000.00, salary.getCommonBase(), DELTA);
 		
 		
 		Date startITDate = add(getToday(), DAY_OF_MONTH, -600);
@@ -6313,11 +6313,11 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		    	quote += payment.getQuote();
 //			System.out.println(payment.getName() + " = " + payment.getAmount()
 //					+ " (" + payment.getExpression() + "," + payment.getQuote() + ")");
-			org.junit.Assert.assertEquals(DIRECT_PAY.getName(), payment.getName());	
+			assertEquals(payment.getName(), DIRECT_PAY.getName());	
 		}
-        	org.junit.Assert.assertEquals(1000.00, salary.getCommonBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, quote, DELTA);
+        	assertEquals(1000.00, salary.getCommonBase(), DELTA);
+        	assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
+        	assertEquals(1000.00, quote, DELTA);
 		
 		startDate = getFirstDayOfMonth(startITDate);
 		endDate = getLastDayOfMonth(startDate);
@@ -6337,13 +6337,13 @@ public class SQLITTestCase extends AbstractSQLTestCase {
         				+ " (" + payment.getExpression() + "," + payment.getQuote() + ")");
         	}
         	
-        	org.junit.Assert.assertEquals(1000.00, salary.getCommonBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, quote, DELTA);
+        	assertEquals(1000.00, salary.getCommonBase(), DELTA);
+        	assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
+        	assertEquals(1000.00, quote, DELTA);
 
-        	org.junit.Assert.assertEquals(1000.00, quote, DELTA);
-		org.junit.Assert.assertEquals(1000.00, salary.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
+        	assertEquals(1000.00, quote, DELTA);
+		assertEquals(1000.00, salary.getCommonBase(), DELTA);
+		assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
 		
 		startDate = getFirstDayOfMonth(add(startITDate, Calendar.DAY_OF_MONTH, 265));
 		endDate = getLastDayOfMonth(startDate);
@@ -6363,9 +6363,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
         				+ " (" + payment.getExpression() + "," + payment.getQuote() + ")");
         	}
         	
-        	org.junit.Assert.assertEquals(1000.00, salary.getCommonBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, quote, DELTA);
+        	assertEquals(1000.00, salary.getCommonBase(), DELTA);
+        	assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
+        	assertEquals(1000.00, quote, DELTA);
 
 		startDate = getFirstDayOfMonth(add(startITDate, Calendar.DAY_OF_MONTH, 365));
 		endDate = getLastDayOfMonth(startDate);
@@ -6385,9 +6385,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
         				+ " (" + payment.getExpression() + "," + payment.getQuote() + ")");
         	}
         	
-        	org.junit.Assert.assertEquals(1000.00, salary.getCommonBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, quote, DELTA);
+        	assertEquals(1000.00, salary.getCommonBase(), DELTA);
+        	assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
+        	assertEquals(1000.00, quote, DELTA);
 	}
 
 	@Test
@@ -6436,7 +6436,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
-		org.junit.Assert.assertEquals(1000.00, salary.getCommonBase(), DELTA);
+		assertEquals(1000.00, salary.getCommonBase(), DELTA);
 		
 		
 		Date startITDate = add(getToday(), Calendar.MONTH, -1);
@@ -6458,11 +6458,11 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		    	quote += payment.getQuote();
         		System.out.println(payment.getName() + " = " + payment.getAmount()
 			+ " (" + payment.getExpression() + "," + payment.getQuote() + ")");
-			org.junit.Assert.assertEquals(MATERNITY.getName(), payment.getName());	
+			assertEquals(payment.getName(), MATERNITY.getName());	
 		}
-        	org.junit.Assert.assertEquals(1000.00, salary.getCommonBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, quote, DELTA);
+        	assertEquals(1000.00, salary.getCommonBase(), DELTA);
+        	assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
+        	assertEquals(1000.00, quote, DELTA);
 		
         	System.out.println("=======================================");
         	
@@ -6484,9 +6484,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
         				+ " (" + payment.getExpression() + "," + payment.getQuote() + ")");
         	}
         	
-        	org.junit.Assert.assertEquals(1000.00, salary.getCommonBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, quote, DELTA);
+        	assertEquals(1000.00, salary.getCommonBase(), DELTA);
+        	assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
+        	assertEquals(1000.00, quote, DELTA);
 
 	}
 
@@ -6536,7 +6536,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
-		org.junit.Assert.assertEquals(1000.00, salary.getCommonBase(), DELTA);
+		assertEquals(1000.00, salary.getCommonBase(), DELTA);
 		
 		
 		Date startITDate = add(getToday(), Calendar.MONTH, -1);
@@ -6559,11 +6559,11 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		    	quote += payment.getQuote();
         		System.out.println(payment.getName() + " = " + payment.getAmount()
 			+ " (" + payment.getExpression() + "," + payment.getQuote() + ")");
-			//org.junit.Assert.assertEquals(MATERNITY.getName(), payment.getName());	
+			//assertEquals(payment.getName(), MATERNITY.getName());	
 		}
-        	org.junit.Assert.assertEquals(1000.00, salary.getCommonBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, quote, DELTA);
+        	assertEquals(1000.00, salary.getCommonBase(), DELTA);
+        	assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
+        	assertEquals(1000.00, quote, DELTA);
 		
         	System.out.println("=======================================");
         	
@@ -6585,9 +6585,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
         				+ " (" + payment.getExpression() + "," + payment.getQuote() + ")");
         	}
         	
-        	org.junit.Assert.assertEquals(1000.00, salary.getCommonBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, quote, DELTA);
+        	assertEquals(1000.00, salary.getCommonBase(), DELTA);
+        	assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
+        	assertEquals(1000.00, quote, DELTA);
 
 	}
 	
@@ -6637,7 +6637,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
-		org.junit.Assert.assertEquals(1000.00, salary.getCommonBase(), DELTA);
+		assertEquals(1000.00, salary.getCommonBase(), DELTA);
 		
 		
 		Date startITDate = add(getToday(), Calendar.MONTH, -1);
@@ -6659,11 +6659,11 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		    	quote += payment.getQuote();
         		System.out.println(payment.getName() + " = " + payment.getAmount()
 			+ " (" + payment.getExpression() + "," + payment.getQuote() + ")");
-			org.junit.Assert.assertEquals(MATERNITY.getName(), payment.getName());	
+			assertEquals(payment.getName(), MATERNITY.getName());	
 		}
-        	org.junit.Assert.assertEquals(1000.00, salary.getCommonBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, quote, DELTA);
+        	assertEquals(1000.00, salary.getCommonBase(), DELTA);
+        	assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
+        	assertEquals(1000.00, quote, DELTA);
 		
         	System.out.println("=======================================");
         	
@@ -6685,9 +6685,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
         				+ " (" + payment.getExpression() + "," + payment.getQuote() + ")");
         	}
         	
-        	org.junit.Assert.assertEquals(1000.00, salary.getCommonBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
-        	org.junit.Assert.assertEquals(1000.00, quote, DELTA);
+        	assertEquals(1000.00, salary.getCommonBase(), DELTA);
+        	assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
+        	assertEquals(1000.00, quote, DELTA);
 
 	}
 
@@ -6727,7 +6727,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		int workDays = (get(startITDate, Calendar.DAY_OF_MONTH) -1 );
 		System.out.println("workDays:" + workDays + "," + startITDate );
-		Assert.assertEquals( (1750.0 ) * workDays/30.00, salary.getTotalPayment());
+		assertEquals( (1750.0 ) * workDays/30.00, salary.getTotalPayment());
 
 	}
 
@@ -6783,10 +6783,10 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		}
 		
 		int monthDays = get(endDate, DAY_OF_MONTH);
-		Assert.assertEquals( 1750.00 * 10 / monthDays , salary.getTotalPayment(), DELTA);
-		Assert.assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
+		assertEquals( 1750.00 * 10 / monthDays , salary.getTotalPayment(), DELTA);
+		assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
 
-		Assert.assertEquals( 1750.00 * 10 / monthDays * 4.70 / 100.00 , salary.getTotalDeduction(), DELTA);
+		assertEquals( 1750.00 * 10 / monthDays * 4.70 / 100.00 , salary.getTotalDeduction(), DELTA);
 		
 		double totalCost = 0.00;
 		for (com.esferalia.aon.payroll.SalaryCost cost : salary
@@ -6796,7 +6796,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			totalCost += cost.getAmount();
 		}
 		
-		Assert.assertEquals( 1750.00 * 10.00 / 100.00 , salary.getTotalEnterprise(), DELTA);
+		assertEquals( 1750.00 * 10.00 / 100.00 , salary.getTotalEnterprise(), DELTA);
 	}
 
 	@Test
@@ -6846,7 +6846,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		}
 
 		
-		Assert.assertEquals( (1750.00/30.00 ) * get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), 0.05);
+		assertEquals( (1750.00/30.00 ) * get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), 0.05);
 	}
 
 	@Test
@@ -6896,7 +6896,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		}
 
 		
-		Assert.assertEquals( (1750.00 / 30.00 ) * get(endDate, Calendar.DAY_OF_MONTH) , salary.getTotalPayment(), 0.05);
+		assertEquals( (1750.00 / 30.00 ) * get(endDate, Calendar.DAY_OF_MONTH) , salary.getTotalPayment(), 0.05);
 	}
 
 	@Test
@@ -6948,8 +6948,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		}
 
 		
-		Assert.assertEquals( (1750.00 / 30.00 ) * 31 * 0.5 , salary.getTotalPayment(), 0.05);
-		Assert.assertEquals( (1750.00 / 30.00 ) * 31 * 0.5 , salary.getCommonBase(), 0.05);
+		assertEquals( (1750.00 / 30.00 ) * 31 * 0.5 , salary.getTotalPayment(), 0.05);
+		assertEquals( (1750.00 / 30.00 ) * 31 * 0.5 , salary.getCommonBase(), 0.05);
 
 	}
 
@@ -7035,7 +7035,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(d.getName() + " = "+ d.getExpression() + "[" + d.getStartDate() + ".." + d.getEndDate() + "]");
 		});
 
-		Assert.assertEquals(1500.00, salary.getCommonBase(), DELTA);
+		assertEquals(1500.00, salary.getCommonBase(), DELTA);
 
 	}
 
@@ -7122,8 +7122,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(d.getName() + " = "+ d.getExpression() + "[" + d.getStartDate() + ".." + d.getEndDate() + "]");
 		});
 
-		Assert.assertEquals(1500.00, salary.getCommonBase(), DELTA);
-//		Assert.assertEquals(1250.00, salary.getProfessionalBase());
+		assertEquals(1500.00, salary.getCommonBase(), DELTA);
+//		assertEquals(1250.00, salary.getProfessionalBase());
 
 	}
 
@@ -7215,8 +7215,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(d.getName() + " = "+ d.getExpression() + "[" + d.getStartDate() + ".." + d.getEndDate() + "]");
 		});
 
-		Assert.assertEquals(1500.00, salary.getCommonBase());
-//		Assert.assertEquals(1250.00, salary.getProfessionalBase());
+		assertEquals(1500.00, salary.getCommonBase());
+//		assertEquals(1250.00, salary.getProfessionalBase());
 
 	}
 
@@ -7303,8 +7303,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(d.getName() + " = "+ d.getExpression() + "[" + d.getStartDate() + ".." + d.getEndDate() + "]");
 		});
 
-		Assert.assertEquals(1500.00, salary.getCommonBase());
-//		Assert.assertEquals(1250.00, salary.getProfessionalBase());
+		assertEquals(1500.00, salary.getCommonBase());
+//		assertEquals(1250.00, salary.getProfessionalBase());
 
 	}
 
@@ -7437,7 +7437,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			calculator.setSalaryBuilder(new SalaryBuilder());
 			Salary salary = calculator.calculate(ctx);
 			int days = get(endDate, Calendar.DAY_OF_MONTH);
-			org.junit.Assert.assertEquals( days * 1750.00/30.00 , salary.getTotalPayment(), DELTA );
+			assertEquals( days * 1750.00/30.00 , salary.getTotalPayment(), DELTA );
 			System.out.println(startDate + "..." + endDate + "... OK ");
 			startDate = add(startDate, Calendar.MONTH, 1);
 			endDate = getLastDayOfMonth(startDate);
@@ -7482,7 +7482,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			calculator.setSalaryBuilder(new SalaryBuilder());
 			Salary salary = calculator.calculate(ctx);
 			int days = get(endDate, Calendar.DAY_OF_MONTH);
-			org.junit.Assert.assertEquals( days * 1750.00/30.00 , salary.getTotalPayment(), DELTA );
+			assertEquals( days * 1750.00/30.00 , salary.getTotalPayment(), DELTA );
 			System.out.println(startDate + "..." + endDate + "... OK ");
 			startDate = add(startDate, Calendar.MONTH, 1);
 			endDate = getLastDayOfMonth(startDate);
@@ -7533,7 +7533,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 
-		Assert.assertEquals(2, salary.getSalaryPayments().size());
+		assertEquals(2, salary.getSalaryPayments().size());
 
 	}
 
@@ -7569,20 +7569,20 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, contract);
 		
 		List<ITimedResult<Number>> results = ctx.getExpressionContext().eval(ContextVariable.LEAVE_DAYS.getName(), startDate, endDate, Number.class);
-		Assert.assertEquals(2, results.size());
-		Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
-		Assert.assertEquals(add(startDate, Calendar.DAY_OF_MONTH,9), results.get(0).getPeriod().getEnd());
+		assertEquals(2, results.size());
+		assertEquals(startDate, results.get(0).getPeriod().getStart());
+		assertEquals(add(startDate, Calendar.DAY_OF_MONTH,9), results.get(0).getPeriod().getEnd());
 	
-		Assert.assertEquals(add(startDate, Calendar.DAY_OF_MONTH,21), results.get(1).getPeriod().getStart());
-		Assert.assertEquals(endDate, results.get(1).getPeriod().getEnd());
+		assertEquals(add(startDate, Calendar.DAY_OF_MONTH,21), results.get(1).getPeriod().getStart());
+		assertEquals(endDate, results.get(1).getPeriod().getEnd());
 
 		results = ctx.getExpressionContext().eval(ContextVariable.COMMON_DISEASE_DAYS_21.getName(), startDate, endDate, Number.class);
-		Assert.assertEquals(2, results.size());
-		Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
-		Assert.assertEquals(add(startDate, Calendar.DAY_OF_MONTH,9), results.get(0).getPeriod().getEnd());
+		assertEquals(2, results.size());
+		assertEquals(startDate, results.get(0).getPeriod().getStart());
+		assertEquals(add(startDate, Calendar.DAY_OF_MONTH,9), results.get(0).getPeriod().getEnd());
 	
-		Assert.assertEquals(add(startDate, Calendar.DAY_OF_MONTH,21), results.get(1).getPeriod().getStart());
-		Assert.assertEquals(endDate, results.get(1).getPeriod().getEnd());
+		assertEquals(add(startDate, Calendar.DAY_OF_MONTH,21), results.get(1).getPeriod().getStart());
+		assertEquals(endDate, results.get(1).getPeriod().getEnd());
 	}
 	
 	@Test
@@ -7633,7 +7633,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 
-		Assert.assertEquals(1750.00, salary.getCommonBase());
+		assertEquals(1750.00, salary.getCommonBase());
 
 	}
 
@@ -7763,8 +7763,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		long prestIt4_15 =
 		salary.getSalaryPayments().stream().filter( p -> p.getExpression().contains("_4_15")).count();
 		
-		org.junit.Assert.assertEquals(1, prestIt1_3);
-		org.junit.Assert.assertEquals(1, prestIt4_15);
+		assertEquals(1, prestIt1_3);
+		assertEquals(1, prestIt4_15);
 
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contractII);
@@ -7784,8 +7784,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		prestIt4_15 =
 		salary.getSalaryPayments().stream().filter( p -> p.getExpression().contains("_4_15")).count();
 		
-		org.junit.Assert.assertEquals(0, prestIt1_3);
-		org.junit.Assert.assertEquals(1, prestIt4_15);
+		assertEquals(0, prestIt1_3);
+		assertEquals(1, prestIt4_15);
 	}
 	
 	
@@ -7843,7 +7843,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, contract);
 		
 		ctx.getExpressionContext().eval(ContextVariable.REGULATORY_BASE.getName(), startIT, endDate)
-		.forEach(  r ->  org.junit.Assert.assertEquals(2000.00 / 30.00, ((Number) r.getValue()).doubleValue(), DELTA));
+		.forEach(  r ->  assertEquals(2000.00 / 30.00, ((Number) r.getValue()).doubleValue(), DELTA));
 
 	}
 
@@ -7905,7 +7905,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, contract);
 		
 		ctx.getExpressionContext().eval(ContextVariable.REGULATORY_BASE.getName(), startIT, endDate)
-		.forEach(  r ->  org.junit.Assert.assertEquals(2000.00 / 30.00, ((Number) r.getValue()).doubleValue(), DELTA));
+		.forEach(  r ->  assertEquals(2000.00 / 30.00, ((Number) r.getValue()).doubleValue(), DELTA));
 
 	}
 	@Test
@@ -7964,7 +7964,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		double brExtraHours = totalExtraHours  * 66.66 / totalDays ;
 		
 		ctx.getExpressionContext().eval(ContextVariable.REGULATORY_BASE.getName(), startIT, endDate)
-		.forEach (  r ->  org.junit.Assert.assertEquals(1750.00 / 30.00  + brExtraHours , ((Number) r.getValue()).doubleValue(), DELTA));
+		.forEach (  r ->  assertEquals(1750.00 / 30.00  + brExtraHours , ((Number) r.getValue()).doubleValue(), DELTA));
 
 	}
 
@@ -8027,7 +8027,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		double brExtraHours = totalExtraHours  * 66.66 / totalDays ;
 		
 		ctx.getExpressionContext().eval(ContextVariable.REGULATORY_BASE.getName(), startDate, endDate)
-		.forEach (  r ->  org.junit.Assert.assertEquals(1750.00 / 30.00  + brExtraHours , ((Number) r.getValue()).doubleValue(), DELTA));
+		.forEach (  r ->  assertEquals(1750.00 / 30.00  + brExtraHours , ((Number) r.getValue()).doubleValue(), DELTA));
 
 	}
 
@@ -8090,7 +8090,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		double brExtraHours = totalExtraHours  * 66.66 / 365 ;
 		
 		ctx.getExpressionContext().eval(ContextVariable.REGULATORY_BASE.getName(), startDate, endDate)
-		.forEach (  r ->  org.junit.Assert.assertEquals(1750.00 / 30.00  + brExtraHours , ((Number) r.getValue()).doubleValue(), DELTA));
+		.forEach (  r ->  assertEquals(1750.00 / 30.00  + brExtraHours , ((Number) r.getValue()).doubleValue(), DELTA));
 
 	}
 
@@ -8135,12 +8135,12 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, contract);
 		
 		ctx.getExpressionContext().eval(ContextVariable.REGULATORY_BASE.getName(), startIT, endDate)
-		.forEach(  r ->  org.junit.Assert.assertEquals(2000.00 / 30.00, ((Number) r.getValue()).doubleValue(), DELTA));
+		.forEach(  r ->  assertEquals(2000.00 / 30.00, ((Number) r.getValue()).doubleValue(), DELTA));
 
 	}
 
 	@Test
-	@Ignore("Needs review")
+	@Disabled("Needs review")
 	public void testBaseRegulatoryPartial() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -8188,7 +8188,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, contract);
 		
 		ctx.getExpressionContext().eval(ContextVariable.REGULATORY_BASE.getName(), startIT, endDate)
-		.forEach(  r ->  org.junit.Assert.assertEquals(( 1750.00 + 1750.00 + 2000.00 ) / 90.00 * 0.75,  ((Number) r.getValue()).doubleValue(), DELTA));
+		.forEach(  r ->  assertEquals(( 1750.00 + 1750.00 + 2000.00 ) / 90.00 * 0.75,  ((Number) r.getValue()).doubleValue(), DELTA));
 
 	}
 
@@ -8240,7 +8240,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, contract);
 		
 		ctx.getExpressionContext().eval(ContextVariable.REGULATORY_BASE.getName(), startIT, endDate)
-		.forEach(  r ->  org.junit.Assert.assertEquals(1750.00 / 30.00 * 0.75,  ((Number) r.getValue()).doubleValue(), DELTA));
+		.forEach(  r ->  assertEquals(1750.00 / 30.00 * 0.75,  ((Number) r.getValue()).doubleValue(), DELTA));
 
 	}
 
@@ -8291,7 +8291,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, contract);
 		
 		ctx.getExpressionContext().eval(ContextVariable.REGULATORY_BASE.getName(), startIT, endDate)
-		.forEach(  r ->  org.junit.Assert.assertEquals(1750.00 / 30.00 ,  ((Number) r.getValue()).doubleValue(), DELTA));
+		.forEach(  r ->  assertEquals(1750.00 / 30.00 ,  ((Number) r.getValue()).doubleValue(), DELTA));
 
 	}
 
@@ -8352,9 +8352,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
 		
-		Assert.assertEquals(4 + 3 , salary.getSalaryPayments().size());
-		org.junit.Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals(1750.00 / monthDays * ( monthDays - 15) + 1750.00 / monthDays * 5 * 0.60  , salary.getTotalPayment(), DELTA);
+		assertEquals(4 + 3 , salary.getSalaryPayments().size());
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00 / monthDays * ( monthDays - 15) + 1750.00 / monthDays * 5 * 0.60  , salary.getTotalPayment(), DELTA);
 
 	}
 
@@ -8407,9 +8407,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
 		
-		Assert.assertEquals(4 + 1 , salary.getSalaryPayments().size());
-		org.junit.Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals(1750.00 / monthDays * ( monthDays - 15) , salary.getTotalPayment(), DELTA);
+		assertEquals(4 + 1 , salary.getSalaryPayments().size());
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00 / monthDays * ( monthDays - 15) , salary.getTotalPayment(), DELTA);
 
 	}
 
@@ -8461,9 +8461,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
 		
-		Assert.assertEquals(4 + 1 , salary.getSalaryPayments().size());
-		org.junit.Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals(1750.00 / monthDays * ( monthDays - 15) , salary.getTotalPayment(), DELTA);
+		assertEquals(4 + 1 , salary.getSalaryPayments().size());
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00 / monthDays * ( monthDays - 15) , salary.getTotalPayment(), DELTA);
 
 	}
 	// ------------------------------------------------------------------------

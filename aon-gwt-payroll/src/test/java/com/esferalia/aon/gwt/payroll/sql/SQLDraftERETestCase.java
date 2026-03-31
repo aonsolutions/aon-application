@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
 import com.esferalia.aon.gwt.payroll.server.SalaryDraftBuilder;
@@ -52,7 +52,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.Payments;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLDraftERETestCase extends SQLERETestCase {
 	
@@ -383,14 +383,14 @@ public class SQLDraftERETestCase extends SQLERETestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 
-		Assert.assertEquals(
+		assertEquals(
 				((1500.00 + 250.00) * 1.10 )*(get(endDate, DAY_OF_MONTH) - ereDays) / get(endDate, DAY_OF_MONTH), 
 				salary.getTotalPayment(),
 				DELTA);
 
-		Assert.assertEquals((1750.00 * 1.10), salary.getCommonBase(), DELTA);
+		assertEquals((1750.00 * 1.10), salary.getCommonBase(), DELTA);
 
-		Assert.assertEquals(salary.getTotalPayment() * 0.15,
+		assertEquals(salary.getTotalPayment() * 0.15,
 				salary.getSocialSecurityContributions(), DELTA);
 		
 		

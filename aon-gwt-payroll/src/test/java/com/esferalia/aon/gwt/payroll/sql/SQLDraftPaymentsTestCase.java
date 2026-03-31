@@ -12,7 +12,8 @@ import java.util.Calendar;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.esferalia.aon.gwt.payroll.server.SalaryDraftBuilder;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -110,7 +111,7 @@ public class SQLDraftPaymentsTestCase extends AbstractSQLTestCase {
 		calculator.calculate(ctx);
 		
 		salaryDraft.getPayments().forEach( p -> System.out.println(p.getDescription() +":" + p.getAmount()));
-		salaryDraft.getPayments().forEach( p -> org.junit.Assert.assertEquals("31 DÍAS DE IT", p.getDescription()) );
+		salaryDraft.getPayments().forEach( p -> assertEquals("31 DÍAS DE IT", p.getDescription()) );
 		
 
 	}
@@ -193,7 +194,7 @@ public class SQLDraftPaymentsTestCase extends AbstractSQLTestCase {
 		salaryDraft.getPayments().forEach( p -> System.out.println(p.getDescription() +":" + p.getAmount()));
 		salaryDraft.getPayments().forEach( p -> {
 			if ( p.getExpression().contains("DIAS_VACACIONES"))
-				org.junit.Assert.assertEquals("VACACIONES 8 DÍAS", p.getDescription());
+				assertEquals("VACACIONES 8 DÍAS", p.getDescription());
 		} );
 		
 

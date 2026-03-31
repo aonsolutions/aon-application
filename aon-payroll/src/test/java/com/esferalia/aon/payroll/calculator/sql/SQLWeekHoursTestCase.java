@@ -42,7 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -57,7 +57,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author rtrepiana
@@ -130,10 +130,10 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 						SUNDAY_HOURS.getName()} ) 
 		{
 			List<ContextData> data = datas.get(hoursVar);
-			Assert.assertEquals(hoursVar, 1, data.size());
-			Assert.assertEquals(hoursVar,startDate,data.get(0).getStartDate());
-			Assert.assertEquals(hoursVar,endDate, data.get(0).getEndDate());
-			Assert.assertEquals(hoursVar, 1.00, Double.parseDouble(data.get(0).getExpression()));
+			assertEquals(1, data.size(), hoursVar);
+			assertEquals(startDate, data.get(0).getStartDate(), hoursVar);
+			assertEquals(endDate, data.get(0).getEndDate(), hoursVar);
+			assertEquals(1.00, Double.parseDouble(data.get(0).getExpression()), hoursVar);
 		}
 
 	}
@@ -194,10 +194,10 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		) 
 		{
 			List<ContextData> data = datas.get(hoursVar);
-			Assert.assertEquals(hoursVar, 1, data.size());
-			Assert.assertEquals(hoursVar,contractStartDate,data.get(0).getStartDate());
-			Assert.assertEquals(hoursVar,endDate, data.get(0).getEndDate());
-			Assert.assertEquals(hoursVar, 2.00, Double.parseDouble(data.get(0).getExpression()));
+			assertEquals(1, data.size(), hoursVar);
+			assertEquals(contractStartDate, data.get(0).getStartDate(), hoursVar);
+			assertEquals(endDate, data.get(0).getEndDate(), hoursVar);
+			assertEquals(2.00, Double.parseDouble(data.get(0).getExpression()), hoursVar);
 		}
 
 		for ( String hoursVar : new String[]{						
@@ -208,10 +208,10 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		) 
 		{
 			List<ContextData> data = datas.get(hoursVar);
-			Assert.assertEquals(hoursVar, 1, data.size());
-			Assert.assertEquals(hoursVar,contractStartDate,data.get(0).getStartDate());
-			Assert.assertEquals(hoursVar,endDate, data.get(0).getEndDate());
-			Assert.assertEquals(hoursVar, 6.00, Double.parseDouble(data.get(0).getExpression()));
+			assertEquals(1, data.size(), hoursVar);
+			assertEquals(contractStartDate, data.get(0).getStartDate(), hoursVar);
+			assertEquals(endDate, data.get(0).getEndDate(), hoursVar);
+			assertEquals(6.00, Double.parseDouble(data.get(0).getExpression()), hoursVar);
 		}
 
 		for ( String hoursVar : new String[]{						
@@ -221,10 +221,10 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		) 
 		{
 			List<ContextData> data = datas.get(hoursVar);
-			Assert.assertEquals(hoursVar, 1, data.size());
-			Assert.assertEquals(hoursVar,contractStartDate,data.get(0).getStartDate());
-			Assert.assertEquals(hoursVar,endDate, data.get(0).getEndDate());
-			Assert.assertEquals(hoursVar, -1.00, Double.parseDouble(data.get(0).getExpression()));
+			assertEquals(1, data.size(), hoursVar);
+			assertEquals(contractStartDate, data.get(0).getStartDate(), hoursVar);
+			assertEquals(endDate, data.get(0).getEndDate(), hoursVar);
+			assertEquals(-1.00, Double.parseDouble(data.get(0).getExpression()), hoursVar);
 		}
 	}
 	@Test
@@ -283,10 +283,10 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		) 
 		{
 			List<ContextData> data = datas.get(hoursVar);
-			Assert.assertEquals(hoursVar, 1, data.size());
-			Assert.assertEquals(hoursVar,contractStartDate,data.get(0).getStartDate());
-			Assert.assertEquals(hoursVar,endDate, data.get(0).getEndDate());
-			Assert.assertEquals(hoursVar, 2.00, Double.parseDouble(data.get(0).getExpression()));
+			assertEquals(1, data.size(), hoursVar);
+			assertEquals(contractStartDate, data.get(0).getStartDate(), hoursVar);
+			assertEquals(endDate, data.get(0).getEndDate(), hoursVar);
+			assertEquals(2.00, Double.parseDouble(data.get(0).getExpression()), hoursVar);
 		}
 
 		for ( String hoursVar : new String[]{						
@@ -297,10 +297,10 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		) 
 		{
 			List<ContextData> data = datas.get(hoursVar);
-			Assert.assertEquals(hoursVar, 1, data.size());
-			Assert.assertEquals(hoursVar,contractStartDate,data.get(0).getStartDate());
-			Assert.assertEquals(hoursVar,endDate, data.get(0).getEndDate());
-			Assert.assertEquals(hoursVar, 6.00, Double.parseDouble(data.get(0).getExpression()));
+			assertEquals(1, data.size(), hoursVar);
+			assertEquals(contractStartDate, data.get(0).getStartDate(), hoursVar);
+			assertEquals(endDate, data.get(0).getEndDate(), hoursVar);
+			assertEquals(6.00, Double.parseDouble(data.get(0).getExpression()), hoursVar);
 		}
 	}
 
@@ -360,7 +360,7 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		) 
 		{
 			List<ContextData> data = datas.get(hoursVar);
-			Assert.assertNull(data);
+			assertNull(data);
 		}
 		
 	}
@@ -424,10 +424,10 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		) 
 		{
 			List<ContextData> data = datas.get(hoursVar);
-			Assert.assertEquals(hoursVar, 1, data.size());
-			Assert.assertEquals(hoursVar,startDate,data.get(0).getStartDate());
-			Assert.assertEquals(hoursVar,contractEndDate, data.get(0).getEndDate());
-			Assert.assertEquals(hoursVar, 2.00, Double.parseDouble(data.get(0).getExpression()));
+			assertEquals(1, data.size(), hoursVar);
+			assertEquals(startDate, data.get(0).getStartDate(), hoursVar);
+			assertEquals(contractEndDate, data.get(0).getEndDate(), hoursVar);
+			assertEquals(2.00, Double.parseDouble(data.get(0).getExpression()), hoursVar);
 		}
 
 		for ( String hoursVar : new String[]{						
@@ -438,10 +438,10 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		) 
 		{
 			List<ContextData> data = datas.get(hoursVar);
-			Assert.assertEquals(hoursVar, 1, data.size());
-			Assert.assertEquals(hoursVar,startDate,data.get(0).getStartDate());
-			Assert.assertEquals(hoursVar,contractEndDate, data.get(0).getEndDate());
-			Assert.assertEquals(hoursVar, 6.00, Double.parseDouble(data.get(0).getExpression()));
+			assertEquals(1, data.size(), hoursVar);
+			assertEquals(startDate, data.get(0).getStartDate(), hoursVar);
+			assertEquals(contractEndDate, data.get(0).getEndDate(), hoursVar);
+			assertEquals(6.00, Double.parseDouble(data.get(0).getExpression()), hoursVar);
 		}
 	}
 
@@ -505,10 +505,10 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		) 
 		{
 			List<ContextData> data = datas.get(hoursVar);
-			Assert.assertEquals(hoursVar, 1, data.size());
-			Assert.assertEquals(hoursVar,startDate,data.get(0).getStartDate());
-			Assert.assertEquals(hoursVar,endDate, data.get(0).getEndDate());
-			Assert.assertEquals(hoursVar, 2.00, Double.parseDouble(data.get(0).getExpression()));
+			assertEquals(1, data.size(), hoursVar);
+			assertEquals(startDate, data.get(0).getStartDate(), hoursVar);
+			assertEquals(endDate, data.get(0).getEndDate(), hoursVar);
+			assertEquals(2.00, Double.parseDouble(data.get(0).getExpression()), hoursVar);
 		}
 
 		for ( String hoursVar : new String[]{						
@@ -519,10 +519,10 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		) 
 		{
 			List<ContextData> data = datas.get(hoursVar);
-			Assert.assertEquals(hoursVar, 1, data.size());
-			Assert.assertEquals(hoursVar,startDate,data.get(0).getStartDate());
-			Assert.assertEquals(hoursVar,endDate, data.get(0).getEndDate());
-			Assert.assertEquals(hoursVar, 6.00, Double.parseDouble(data.get(0).getExpression()));
+			assertEquals(1, data.size(), hoursVar);
+			assertEquals(startDate, data.get(0).getStartDate(), hoursVar);
+			assertEquals(endDate, data.get(0).getEndDate(), hoursVar);
+			assertEquals(6.00, Double.parseDouble(data.get(0).getExpression()), hoursVar);
 		}
 	}
 
@@ -592,15 +592,15 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		) 
 		{
 			List<ContextData> data = datas.get(hoursVar);
-			Assert.assertEquals(hoursVar, 2, data.size());
+			assertEquals(2, data.size(), hoursVar);
 			
-			Assert.assertEquals(hoursVar,startDate,data.get(0).getStartDate());
-			Assert.assertEquals(hoursVar,add(breakDate, DAY_OF_MONTH,-1), data.get(0).getEndDate());
-			Assert.assertEquals(hoursVar, 2.00, Double.parseDouble(data.get(0).getExpression()));
+			assertEquals(startDate, data.get(0).getStartDate(), hoursVar);
+			assertEquals(add(breakDate, DAY_OF_MONTH,-1), data.get(0).getEndDate(), hoursVar);
+			assertEquals(2.00, Double.parseDouble(data.get(0).getExpression()), hoursVar);
 
-			Assert.assertEquals(hoursVar,breakDate,data.get(1).getStartDate());
-			Assert.assertEquals(hoursVar,endDate, data.get(1).getEndDate());
-			Assert.assertEquals(hoursVar, 3.00, Double.parseDouble(data.get(1).getExpression()));
+			assertEquals(breakDate, data.get(1).getStartDate(), hoursVar);
+			assertEquals(endDate, data.get(1).getEndDate(), hoursVar);
+			assertEquals(3.00, Double.parseDouble(data.get(1).getExpression()), hoursVar);
 		}
 
 		for ( String hoursVar : new String[]{						
@@ -611,14 +611,14 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		) 
 		{
 			List<ContextData> data = datas.get(hoursVar);
-			Assert.assertEquals(hoursVar, 2, data.size());
-			Assert.assertEquals(hoursVar,startDate,data.get(0).getStartDate());
-			Assert.assertEquals(hoursVar,add(breakDate, DAY_OF_MONTH,-1), data.get(0).getEndDate());
-			Assert.assertEquals(hoursVar, 6.00, Double.parseDouble(data.get(0).getExpression()));
+			assertEquals(2, data.size(), hoursVar);
+			assertEquals(startDate, data.get(0).getStartDate(), hoursVar);
+			assertEquals(add(breakDate, DAY_OF_MONTH,-1), data.get(0).getEndDate(), hoursVar);
+			assertEquals(6.00, Double.parseDouble(data.get(0).getExpression()), hoursVar);
 
-			Assert.assertEquals(hoursVar,breakDate,data.get(1).getStartDate());
-			Assert.assertEquals(hoursVar,endDate, data.get(1).getEndDate());
-			Assert.assertEquals(hoursVar, 3.00, Double.parseDouble(data.get(1).getExpression()));
+			assertEquals(breakDate, data.get(1).getStartDate(), hoursVar);
+			assertEquals(endDate, data.get(1).getEndDate(), hoursVar);
+			assertEquals(3.00, Double.parseDouble(data.get(1).getExpression()), hoursVar);
 		}
 	}
 
@@ -688,15 +688,15 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		) 
 		{
 			List<ContextData> data = datas.get(hoursVar);
-			Assert.assertEquals(hoursVar, 2, data.size());
+			assertEquals(2, data.size(), hoursVar);
 			
-			Assert.assertEquals(hoursVar,startDate,data.get(0).getStartDate());
-			Assert.assertEquals(hoursVar,add(breakDate, DAY_OF_MONTH,-1), data.get(0).getEndDate());
-			Assert.assertEquals(hoursVar, 2.00, Double.parseDouble(data.get(0).getExpression()));
+			assertEquals(startDate, data.get(0).getStartDate(), hoursVar);
+			assertEquals(add(breakDate, DAY_OF_MONTH,-1), data.get(0).getEndDate(), hoursVar);
+			assertEquals(2.00, Double.parseDouble(data.get(0).getExpression()), hoursVar);
 
-			Assert.assertEquals(hoursVar,breakDate,data.get(1).getStartDate());
-			Assert.assertEquals(hoursVar,endDate, data.get(1).getEndDate());
-			Assert.assertEquals(hoursVar, 3.00, Double.parseDouble(data.get(1).getExpression()));
+			assertEquals(breakDate, data.get(1).getStartDate(), hoursVar);
+			assertEquals(endDate, data.get(1).getEndDate(), hoursVar);
+			assertEquals(3.00, Double.parseDouble(data.get(1).getExpression()), hoursVar);
 		}
 
 		for ( String hoursVar : new String[]{						
@@ -707,14 +707,14 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		) 
 		{
 			List<ContextData> data = datas.get(hoursVar);
-			Assert.assertEquals(hoursVar, 2, data.size());
-			Assert.assertEquals(hoursVar,startDate,data.get(0).getStartDate());
-			Assert.assertEquals(hoursVar,add(breakDate, DAY_OF_MONTH,-1), data.get(0).getEndDate());
-			Assert.assertEquals(hoursVar, 6.00, Double.parseDouble(data.get(0).getExpression()));
+			assertEquals(2, data.size(), hoursVar);
+			assertEquals(startDate, data.get(0).getStartDate(), hoursVar);
+			assertEquals(add(breakDate, DAY_OF_MONTH,-1), data.get(0).getEndDate(), hoursVar);
+			assertEquals(6.00, Double.parseDouble(data.get(0).getExpression()), hoursVar);
 
-			Assert.assertEquals(hoursVar,breakDate,data.get(1).getStartDate());
-			Assert.assertEquals(hoursVar,endDate, data.get(1).getEndDate());
-			Assert.assertEquals(hoursVar, 3.00, Double.parseDouble(data.get(1).getExpression()));
+			assertEquals(breakDate, data.get(1).getStartDate(), hoursVar);
+			assertEquals(endDate, data.get(1).getEndDate(), hoursVar);
+			assertEquals(3.00, Double.parseDouble(data.get(1).getExpression()), hoursVar);
 		}
 	}
 	@Test
@@ -774,20 +774,20 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 						SATURDAY_HOURS.getName()} ) 
 		{
 			List<ContextData> data = datas.get(hoursVar);
-			Assert.assertEquals(hoursVar, 1, data.size());
-			Assert.assertEquals(hoursVar,startDate,data.get(0).getStartDate());
-			Assert.assertEquals(hoursVar,endDate, data.get(0).getEndDate());
-			Assert.assertEquals(hoursVar, 1.00, Double.parseDouble(data.get(0).getExpression()));
+			assertEquals(1, data.size(), hoursVar);
+			assertEquals(startDate, data.get(0).getStartDate(), hoursVar);
+			assertEquals(endDate, data.get(0).getEndDate(), hoursVar);
+			assertEquals(1.00, Double.parseDouble(data.get(0).getExpression()), hoursVar);
 		}
 
 		for ( String hoursVar : new String[]{						
 				SUNDAY_HOURS.getName()} ) 
 		{
 			List<ContextData> data = datas.get(hoursVar);
-			Assert.assertEquals(hoursVar, 1, data.size());
-			Assert.assertEquals(hoursVar,startDate,data.get(0).getStartDate());
-			Assert.assertEquals(hoursVar,endDate, data.get(0).getEndDate());
-			Assert.assertEquals(hoursVar, 0.00, Double.parseDouble(data.get(0).getExpression()));
+			assertEquals(1, data.size(), hoursVar);
+			assertEquals(startDate, data.get(0).getStartDate(), hoursVar);
+			assertEquals(endDate, data.get(0).getEndDate(), hoursVar);
+			assertEquals(0.00, Double.parseDouble(data.get(0).getExpression()), hoursVar);
 		}
 
 	}
@@ -849,20 +849,20 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 						SATURDAY_HOURS.getName()} ) 
 		{
 			List<ContextData> data = datas.get(hoursVar);
-			Assert.assertEquals(hoursVar, 1, data.size());
-			Assert.assertEquals(hoursVar,startDate,data.get(0).getStartDate());
-			Assert.assertEquals(hoursVar,endDate, data.get(0).getEndDate());
-			Assert.assertEquals(hoursVar, 1.00, Double.parseDouble(data.get(0).getExpression()));
+			assertEquals(1, data.size(), hoursVar);
+			assertEquals(startDate, data.get(0).getStartDate(), hoursVar);
+			assertEquals(endDate, data.get(0).getEndDate(), hoursVar);
+			assertEquals(1.00, Double.parseDouble(data.get(0).getExpression()), hoursVar);
 		}
 
 		for ( String hoursVar : new String[]{						
 				SUNDAY_HOURS.getName()} ) 
 		{
 			List<ContextData> data = datas.get(hoursVar);
-			Assert.assertEquals(hoursVar, 1, data.size());
-			Assert.assertEquals(hoursVar,startDate,data.get(0).getStartDate());
-			Assert.assertEquals(hoursVar,endDate, data.get(0).getEndDate());
-			Assert.assertEquals(hoursVar, 0.00, Double.parseDouble(data.get(0).getExpression()));
+			assertEquals(1, data.size(), hoursVar);
+			assertEquals(startDate, data.get(0).getStartDate(), hoursVar);
+			assertEquals(endDate, data.get(0).getEndDate(), hoursVar);
+			assertEquals(0.00, Double.parseDouble(data.get(0).getExpression()), hoursVar);
 		}
 
 	}

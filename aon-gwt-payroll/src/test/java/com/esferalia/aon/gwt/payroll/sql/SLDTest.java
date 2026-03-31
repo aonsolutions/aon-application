@@ -8,8 +8,8 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.gwt.payroll.util.SLD;
 import com.esferalia.aon.in.payroll.pdf.jooq.JooqPDFSalaryBuilder;
@@ -18,7 +18,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.SistemaRED.Regime;
 import solutions.aon.seg.social.exception.SegSocialException;
-@Ignore
+@Disabled
 public class SLDTest {
 
 	@Test
@@ -72,7 +72,7 @@ public class SLDTest {
 		}
 	}
 	
-	@Ignore
+	@Disabled
 	@Test
 	public void testGetSLDCostsByNAFS() throws FileNotFoundException, SegSocialException, SQLException {
 		try (Connection connection = DriverManager

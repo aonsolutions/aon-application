@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.HashMap;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
@@ -35,7 +35,7 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLAgreementTestCase extends AbstractSQLTestCase {
 
@@ -73,7 +73,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				endDate, criteria);
 		ctx.next();
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(String.format("%s", TOTAL_PAYMENT), 100.00, salary.getTotalPayment());
+		assertEquals(100.00, salary.getTotalPayment(), String.format("%s", TOTAL_PAYMENT));
 
 		addPayments(aonContext, contract.getDomain(), agreement, getFirstDayOfYear(getToday()),
 				new Payment[] { new Payment() {
@@ -86,12 +86,12 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				});
 
 		// First of all ensure that agreement domain and contract domain are different.
-		Assert.assertNotSame("DOMAIN", agreement.getDomain(), contract.getDomain());
+		assertNotSame(agreement.getDomain(), contract.getDomain(), "DOMAIN");
 
 		ctx = new SQLContractSalaryCalculatorContext(connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(String.format("%s", TOTAL_PAYMENT), 666.00, salary.getTotalPayment());
+		assertEquals(666.00, salary.getTotalPayment(), String.format("%s", TOTAL_PAYMENT));
 
 		addPayments(aonContext, agreement, getFirstDayOfYear(getToday()), new Payment[] { new Payment() {
 			{
@@ -105,7 +105,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 		ctx = new SQLContractSalaryCalculatorContext(connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(String.format("%s", TOTAL_PAYMENT), 666.00, salary.getTotalPayment());
+		assertEquals(666.00, salary.getTotalPayment(), String.format("%s", TOTAL_PAYMENT));
 
 		addPayments(aonContext, contract.getDomain(), agreement, getFirstDayOfYear(getToday()),
 				new Payment[] { new Payment() {
@@ -120,7 +120,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 		ctx = new SQLContractSalaryCalculatorContext(connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(String.format("%s", TOTAL_PAYMENT), 666.00 * 2, salary.getTotalPayment());
+		assertEquals(666.00 * 2, salary.getTotalPayment(), String.format("%s", TOTAL_PAYMENT));
 
 		addPayments(aonContext, contract.getDomain(), agreement, getFirstDayOfYear(getToday()),
 				new Payment[] { new Payment() {
@@ -135,7 +135,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 		ctx = new SQLContractSalaryCalculatorContext(connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(String.format("%s", TOTAL_PAYMENT), 666.00 * 3, salary.getTotalPayment());
+		assertEquals(666.00 * 3, salary.getTotalPayment(), String.format("%s", TOTAL_PAYMENT));
 	}
 
 	@Test
@@ -197,7 +197,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
 	}
 
 	@Test
@@ -262,7 +262,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
 	}
 
 	@Test
@@ -327,7 +327,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
 	}
 
 
@@ -395,7 +395,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
 	}
 
 	@Test
@@ -463,7 +463,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
 	}
 
 	@Test
@@ -542,7 +542,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 		}
 		
 		
-		org.junit.Assert.assertEquals((3330 + 3000/6) /2 , salary.getTotalPayment(), 0.00);
+		assertEquals((3330 + 3000/6) /2 , salary.getTotalPayment(), 0.00);
 	}
 
 
@@ -643,7 +643,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 		}
 		
 		
-		org.junit.Assert.assertEquals(3000 + 330 + 3000/6, salary.getTotalPayment(), 0.00);
+		assertEquals(3000 + 330 + 3000/6, salary.getTotalPayment(), 0.00);
 
 		Date startITDate = AonDateUtils.add(contractStartDate, Calendar.DAY_OF_MONTH, 5);
 		Date endITDate = AonDateUtils.add(startITDate, Calendar.DAY_OF_MONTH, 15);
@@ -658,7 +658,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 		}
 		
 		
-		org.junit.Assert.assertEquals(3000 + 330 + 3000/6, salary.getTotalPayment(), 0.00);
+		assertEquals(3000 + 330 + 3000/6, salary.getTotalPayment(), 0.00);
 	}
 
 	@Test
@@ -733,14 +733,14 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((3330 * 0.75) / 2, salary.getTotalPayment(), 0.00);
-		org.junit.Assert.assertEquals((3300 / 6.0 * 0.75) / 2, salary.getExtraPayProration(), 0.00);
+		assertEquals((3330 * 0.75) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((3300 / 6.0 * 0.75) / 2, salary.getExtraPayProration(), 0.00);
 		
 		//salary.getSalaryDatas()
 		//.stream().filter(d -> ContextVariable.CGC_BASE.getName().equals(d.getName()))
 		//.forEach( d -> System.out.println(d.getName() +" = " + d.getExpression()));
 		
-		org.junit.Assert.assertEquals(((3330 * 0.75)/2) + ((3300 / 6.0 * 0.75) / 2) , salary.getCommonBase(), 0.00);
+		assertEquals(((3330 * 0.75)/2) + ((3300 / 6.0 * 0.75) / 2) , salary.getCommonBase(), 0.00);
 	}
 
 	@Test
@@ -820,10 +820,10 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 
 		;
 		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
-		org.junit.Assert.assertEquals((3330 * 0.25) / 30 * 15, salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals((3300 / 6 * 0.25) / 30 * 15, salary.getExtraPayProration(), DELTA);
+		assertEquals((3330 * 0.25) / 30 * 15, salary.getTotalPayment(), DELTA);
+		assertEquals((3300 / 6 * 0.25) / 30 * 15, salary.getExtraPayProration(), DELTA);
 
-		org.junit.Assert.assertEquals(( (3330 * 0.25) + (3300 / 6 * 0.25) ) / 30 * 15, salary.getCommonBase(), DELTA);
+		assertEquals(( (3330 * 0.25) + (3300 / 6 * 0.25) ) / 30 * 15, salary.getCommonBase(), DELTA);
 	}
 
 	@Test
@@ -892,7 +892,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((3330) / 2 * 0.50, salary.getTotalPayment(), 0.00);
+		assertEquals((3330) / 2 * 0.50, salary.getTotalPayment(), 0.00);
 	}
 
 	@Test
@@ -962,7 +962,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((3330) * 0.50, salary.getTotalPayment(), 0.00);
+		assertEquals((3330) * 0.50, salary.getTotalPayment(), 0.00);
 	}
 
 	@Test
@@ -1032,8 +1032,8 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
-		org.junit.Assert.assertEquals((3300) / 12, salary.getExtraPayProration(), 0.00);
+		assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((3300) / 12, salary.getExtraPayProration(), 0.00);
 	}
 
 	@Test
@@ -1105,8 +1105,8 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((3330/2)*0.5, salary.getTotalPayment(), 0.00);
-		org.junit.Assert.assertEquals((3300/12)*0.5, salary.getExtraPayProration(), 0.00);
+		assertEquals((3330/2)*0.5, salary.getTotalPayment(), 0.00);
+		assertEquals((3300/12)*0.5, salary.getExtraPayProration(), 0.00);
 		
 	}
 
@@ -1177,8 +1177,8 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals(3330/2.00 + 3330/4.00 , salary.getTotalPayment(), 0.00);
-		org.junit.Assert.assertEquals(3300/12.00 + 3300/24.00, salary.getExtraPayProration(), 0.00);
+		assertEquals(3330/2.00 + 3330/4.00 , salary.getTotalPayment(), 0.00);
+		assertEquals(3300/12.00 + 3300/24.00, salary.getExtraPayProration(), 0.00);
 	}
 	
 	@Test
@@ -1246,7 +1246,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
 		
 		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
 		
@@ -1262,7 +1262,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((4440) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((4440) / 2, salary.getTotalPayment(), 0.00);
 		
 		
 	}
@@ -1332,7 +1332,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
 		
 		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
 		
@@ -1348,7 +1348,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((4440) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((4440) / 2, salary.getTotalPayment(), 0.00);
 		
 		
 	}
@@ -1418,7 +1418,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
 		
 		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
 		
@@ -1434,7 +1434,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((4440) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((4440) / 2, salary.getTotalPayment(), 0.00);
 		
 		addData(aonContext, agreement, firstDayOfYear, new HashMap<String, String>() {
 			{
@@ -1448,7 +1448,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((5550) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((5550) / 2, salary.getTotalPayment(), 0.00);
 		
 
 	}
@@ -1518,7 +1518,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
 		
 		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
 		
@@ -1534,7 +1534,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((4440) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((4440) / 2, salary.getTotalPayment(), 0.00);
 		
 		addData(aonContext, agreement, firstDayOfYear, new HashMap<String, String>() {
 			{
@@ -1548,7 +1548,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((6660) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((6660) / 2, salary.getTotalPayment(), 0.00);
 		
 
 	}
@@ -1619,7 +1619,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
 		
 		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
 		
@@ -1635,7 +1635,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((4440) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((4440) / 2, salary.getTotalPayment(), 0.00);
 		
 		addData(aonContext, agreement, firstDayOfYear, new HashMap<String, String>() {
 			{
@@ -1649,7 +1649,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((6660) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((6660) / 2, salary.getTotalPayment(), 0.00);
 		
 
 	}
@@ -1720,7 +1720,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
 
 		addData(aonContext, category, add(firstDayOfYear, Calendar.YEAR, -1), add(firstDayOfYear, Calendar.DAY_OF_MONTH, -1 ), new HashMap<String, String>() {
 			{
@@ -1734,7 +1734,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((4440) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((4440) / 2, salary.getTotalPayment(), 0.00);
 		
 		
 		addData(aonContext, category, firstDayOfYear, null, new HashMap<String, String>() {
@@ -1749,7 +1749,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
 
 		;
-		org.junit.Assert.assertEquals((6660) / 2, salary.getTotalPayment(), 0.00);
+		assertEquals((6660) / 2, salary.getTotalPayment(), 0.00);
 		
 
 	}
