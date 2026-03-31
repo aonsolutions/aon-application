@@ -17,6 +17,7 @@ import { AonToast } from "./aon-toast.js";
 import { getRegistryNotes } from "../services/registryService.js";
 import * as ACTION from "../modules/actions.js";
 import * as GWT from '../gwt/gwt.js';
+import { getCompany } from "../services/companyService.js";
 
 export class AonApplication extends AonElement {
   
@@ -1418,7 +1419,7 @@ export class AonApplication extends AonElement {
         });
   }
 
-  buildObservations(source) {
+  async buildObservations(source) {
       let rightSidenav = this.getApplication().getRightSidenav();
       this.clearElement(rightSidenav);
   
@@ -1454,8 +1455,13 @@ export class AonApplication extends AonElement {
         div.appendChild(loaderSpan);
   
         let company = LS.getCompany();
+        if(!company){
+			company = await getCompany();
+			localStorage.setItem("customer", company.id);
+		} else
+			localStorage.setItem("customer", company.registry);
   
-        localStorage.setItem("customer", company.registry);
+        
         localStorage.setItem("notesSource", source);
   
         GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
