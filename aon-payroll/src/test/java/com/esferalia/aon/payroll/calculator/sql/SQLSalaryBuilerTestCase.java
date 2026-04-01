@@ -13,7 +13,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
@@ -29,7 +29,7 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLSalaryBuilerTestCase extends AbstractSQLTestCase {
 
@@ -74,7 +74,7 @@ public class SQLSalaryBuilerTestCase extends AbstractSQLTestCase {
 		int salaries = calculateAndSave(connection, ctx);
 
 		// Only one salary saved to DB.
-		Assert.assertEquals(1, salaries);
+		assertEquals(1, salaries);
 		
 		AON.getSalaries(aonContext, 
 		props->props.getContractProperty().eq(contract.getId()))
@@ -85,7 +85,7 @@ public class SQLSalaryBuilerTestCase extends AbstractSQLTestCase {
 					System.out.println("totalDeduction : " + salary.getTotalDeduction() );
 					System.out.println("totalLiquid  + totalDeduction: " + ( salary.getTotalLiquid() + salary.getTotalDeduction()) );
 
-					Assert.assertEquals(salary.getTotalPayment() , salary.getTotalLiquid() + salary.getTotalDeduction(), DELTA);
+					assertEquals(salary.getTotalPayment() , salary.getTotalLiquid() + salary.getTotalDeduction(), DELTA);
 
 				}
 		);
@@ -138,7 +138,7 @@ public class SQLSalaryBuilerTestCase extends AbstractSQLTestCase {
 		int salaries = calculateAndSave(connection, ctx);
 
 		// Only one salary saved to DB.
-		Assert.assertEquals(1, salaries);
+		assertEquals(1, salaries);
 		
 		AON.getSalaries(aonContext, 
 		props->props.getContractProperty().eq(contract.getId()))
@@ -150,7 +150,7 @@ public class SQLSalaryBuilerTestCase extends AbstractSQLTestCase {
 					System.out.println("inKindIrpfBase : " + salary.getInkindIrpfBase() );
 					System.out.println("irpfBase  + moneyIrpfBase: " + ( BigDecimal.valueOf(salary.getMoneyIrpfBase()).add( BigDecimal.valueOf(salary.getInkindIrpfBase()))) );
 					
-					Assert.assertEquals(BigDecimal.valueOf(salary.getIrpfBase()) ,  BigDecimal.valueOf(salary.getMoneyIrpfBase()).add( BigDecimal.valueOf(salary.getInkindIrpfBase())) );
+					assertEquals(BigDecimal.valueOf(salary.getMoneyIrpfBase()).add( BigDecimal.valueOf(salary.getInkindIrpfBase())), BigDecimal.valueOf(salary.getIrpfBase()));
 				}
 		);
 

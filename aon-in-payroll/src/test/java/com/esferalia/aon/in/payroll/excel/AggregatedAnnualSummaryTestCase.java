@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.Deduction;
@@ -31,7 +31,7 @@ public class AggregatedAnnualSummaryTestCase {
 		Map<String, AggregatedAnnualYearlyEntry> mainMap = new LinkedHashMap<String, AggregatedAnnualYearlyEntry>();
 		for (int i=0; i< faker.number().numberBetween(0, 10); i++) {
 			String[] months = {"ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"};
-			String[] quarters = {"1º TRIM", "2º TRIM", "3º TRIM", "4º TRIM"};
+			String[] quarters = {"1\u00ba TRIM", "2\u00ba TRIM", "3\u00ba TRIM", "4\u00ba TRIM"};
 			String[] periods = type == MONTHLY ? months : quarters;
 			
 			Map<String, AggregatedAnnualEntry> map = new LinkedHashMap<String, AggregatedAnnualEntry>();

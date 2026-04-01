@@ -1,9 +1,9 @@
 package com.esferalia.aon.in.payroll.pdf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,17 +15,17 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 
-@Ignore
+@Disabled
 public class PdfTest {
-//	@Ignore
+//	@Disabled
 	@Test
 	public void testOmega() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("omega/COVAIN.pdf") ){
@@ -68,7 +68,7 @@ public class PdfTest {
 	
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void testDsi() throws IOException, UnknownPDFException{
 		try (InputStream is = PdfTest.class.getResourceAsStream("dsi_nomina_1pag.pdf")){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -195,11 +195,11 @@ public class PdfTest {
 							break;
 						case "Contingencias comunes":
 							break;
-						case "Formación Profesional":
+						case "Formaci\u00f3n Profesional":
 							break;
 						case "Desempleo":
 							break;
-						case "Impuesto sobre la renta de las personas físicas":
+						case "Impuesto sobre la renta de las personas f\u00edsicas":
 							break;
 						case "DESCUENTO 1":
 							break;
@@ -251,7 +251,7 @@ public class PdfTest {
 								fail("Wrong cost amount");
 							}
 							break;
-						case "Formación Profesional":
+						case "Formaci\u00f3n Profesional":
 							if(amount!=6.3d) {
 								fail("Wrong cost amount");
 							}
@@ -429,7 +429,7 @@ public class PdfTest {
 	
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void testDsiAt() throws IOException, UnknownPDFException{
 		try (InputStream is = PdfTest.class.getResourceAsStream("dsi_at.pdf")){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -470,7 +470,7 @@ public class PdfTest {
 				@Override
 				public void setCategory(String category) {
 					System.out.println(category);
-					assertEquals("DEPTA. 1ª", category);
+					assertEquals("DEPTA. 1\u00aa", category);
 				}
 				//5th line
 				@Override
@@ -561,11 +561,11 @@ public class PdfTest {
 							break;
 						case "Contingencias comunes":
 							break;
-						case "Formación Profesional":
+						case "Formaci\u00f3n Profesional":
 							break;
 						case "Desempleo":
 							break;
-						case "Impuesto sobre la renta de las personas físicas":
+						case "Impuesto sobre la renta de las personas f\u00edsicas":
 							break;
 						case "DESCUENTO 1":
 							break;
@@ -617,7 +617,7 @@ public class PdfTest {
 								fail("Wrong cost amount");
 							}
 							break;
-						case "Formación Profesional":
+						case "Formaci\u00f3n Profesional":
 							if(amount!=7.24d) {
 								fail("Wrong cost amount");
 							}
@@ -927,9 +927,9 @@ public class PdfTest {
 					switch (description) {
 						case "Salario Base":
 							break;
-						case "Antigüedad":
+						case "Antig\u00fcedad":
 							break;
-						case "Plus Manutención":
+						case "Plus Manutenci\u00f3n":
 							break;
 						case "P.p.extras":
 							break;
@@ -957,11 +957,11 @@ public class PdfTest {
 							break;
 						case "Contingencias comunes":
 							break;
-						case "Formación Profesional":
+						case "Formaci\u00f3n Profesional":
 							break;
 						case "Desempleo":
 							break;
-						case "Impuesto sobre la renta de las personas físicas":
+						case "Impuesto sobre la renta de las personas f\u00edsicas":
 							break;
 						default:
 							fail("Unrecognized deduction concept: "+description+", length: "+description.length());
@@ -1175,7 +1175,7 @@ public class PdfTest {
 								fail("Wrong cost amount");
 							}
 							break;
-						case "Formación Profesional":
+						case "Formaci\u00f3n Profesional":
 							if(amount!=7.56d) {
 								fail("Wrong cost amount");
 							}
@@ -1245,7 +1245,7 @@ public class PdfTest {
 				@Override
 				public void setTotalDeduction(Double totalDeduction) {
 					if(totalDeduction==null) {
-						fail("Fallo en la nómina "+cont);
+						fail("Fallo en la n\u00f3mina "+cont);
 					}
 					cont++;
 				}
@@ -1272,7 +1272,7 @@ public class PdfTest {
 	}
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void testA3Excessive() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("NOMINAS ATSP 2020.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -1289,7 +1289,7 @@ public class PdfTest {
 	}
 	
 //	@Test
-//	@Ignore
+//	@Disabled
 //	public void hfhffh() throws IOException, UnknownPDFException {
 //		try ( InputStream is = PdfTest.class.getResourceAsStream("dsi_paga_extra.pdf") ){
 //			SalaryPDFParser.parse(is, new SalaryBuilder());
@@ -1316,7 +1316,7 @@ public class PdfTest {
 				@Override
 				public void setEnterpriseAddress(String enterpriseAddress) {
 					System.out.println(enterpriseAddress);
-					assertEquals("PZ JESÚS DE MEDINACELLI, 6   22", enterpriseAddress);
+					assertEquals("PZ JES\u00daS DE MEDINACELLI, 6   22", enterpriseAddress);
 				}
 				@Override
 				public void setEmployeeDocument(String employeeDocument) {
@@ -1345,7 +1345,7 @@ public class PdfTest {
 				@Override
 				public void setCategory(String category) {
 					System.out.println(category);
-					assertEquals("OFICIAL 1ª", category);
+					assertEquals("OFICIAL 1\u00aa", category);
 				}
 				
 				
@@ -1414,11 +1414,11 @@ public class PdfTest {
 							break;
 						case "Contingencias comunes":
 							break;
-						case "Formación Profesional":
+						case "Formaci\u00f3n Profesional":
 							break;
 						case "Desempleo":
 							break;
-						case "Impuesto sobre la renta de las personas físicas":
+						case "Impuesto sobre la renta de las personas f\u00edsicas":
 							break;
 						case "DESCUENTO 1":
 							break;
@@ -1632,7 +1632,7 @@ public class PdfTest {
 								fail("Wrong cost amount");
 							}
 							break;
-						case "Formación Profesional":
+						case "Formaci\u00f3n Profesional":
 							if(amount!=.69) {
 								fail("Wrong cost amount");
 							}
@@ -1642,7 +1642,7 @@ public class PdfTest {
 								fail("Wrong cost amount");
 							}
 							break;
-						case "Impuesto sobre la renta de las personas físicas":
+						case "Impuesto sobre la renta de las personas f\u00edsicas":
 							if(amount!=99.2) {
 								fail("Wrong cost amount");
 							}
@@ -1945,11 +1945,11 @@ public class PdfTest {
 							break;
 						case "Contingencias comunes":
 							break;
-						case "Formación Profesional":
+						case "Formaci\u00f3n Profesional":
 							break;
 						case "Desempleo":
 							break;
-						case "Impuesto sobre la renta de las personas físicas":
+						case "Impuesto sobre la renta de las personas f\u00edsicas":
 							break;
 						case "No estructurales":
 							break;
@@ -2236,11 +2236,11 @@ public class PdfTest {
 							break;
 						case "Contingencias comunes":
 							break;
-						case "Formación Profesional":
+						case "Formaci\u00f3n Profesional":
 							break;
 						case "Desempleo":
 							break;
-						case "Impuesto sobre la renta de las personas físicas":
+						case "Impuesto sobre la renta de las personas f\u00edsicas":
 							break;
 						case "No estructurales":
 							break;
@@ -2471,7 +2471,7 @@ public class PdfTest {
 								fail("Wrong cost amount");
 							}
 							break;
-						case "Formación Profesional":
+						case "Formaci\u00f3n Profesional":
 							if(amount!=8.78) {
 								fail("Wrong cost amount");
 							}
@@ -2765,7 +2765,7 @@ public class PdfTest {
 	
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testAltai() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa/EXTRA DIC.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {

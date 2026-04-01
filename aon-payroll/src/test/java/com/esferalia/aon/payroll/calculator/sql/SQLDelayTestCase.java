@@ -19,7 +19,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.RoundingMode;
 import java.sql.Connection;
@@ -33,8 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
@@ -77,7 +77,7 @@ import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLDelayTestCase extends AbstractSQLTestCase {
 
@@ -140,11 +140,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		
-		Assert.assertEquals(100.00, delay.getTotalPayment());
-		Assert.assertEquals(100.00, delay.getCommonBase());
-		Assert.assertEquals(100.00, delay.getRawCommonBase());
-		Assert.assertEquals(100.00, delay.getProfessionalBase());
-		Assert.assertEquals(100.00, delay.getIrpfBase());
+		assertEquals(100.00, delay.getTotalPayment());
+		assertEquals(100.00, delay.getCommonBase());
+		assertEquals(100.00, delay.getRawCommonBase());
+		assertEquals(100.00, delay.getProfessionalBase());
+		assertEquals(100.00, delay.getIrpfBase());
 	}
 
 	@Test
@@ -200,11 +200,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		
-		Assert.assertEquals(150.00, delay.getTotalPayment());
-		Assert.assertEquals(150.00, delay.getCommonBase());
-		Assert.assertEquals(150.00, delay.getRawCommonBase());
-		Assert.assertEquals(150.00, delay.getProfessionalBase());
-		Assert.assertEquals(150.00, delay.getIrpfBase());
+		assertEquals(150.00, delay.getTotalPayment());
+		assertEquals(150.00, delay.getCommonBase());
+		assertEquals(150.00, delay.getRawCommonBase());
+		assertEquals(150.00, delay.getProfessionalBase());
+		assertEquals(150.00, delay.getIrpfBase());
 		
 
 	}
@@ -266,9 +266,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		}
 		
 		int monthDays = AonDateUtils.getMax(changeDate, Calendar.DAY_OF_MONTH);
-		Assert.assertEquals(140.00 + ( 10.00 * (monthDays - 15 ) / monthDays  ), delay.getIrpfBase(), DELTA);
-		Assert.assertEquals(140.00 + ( 10.00 * (monthDays - 15 ) / monthDays  ), delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(140.00 + ( 10.00 * (monthDays - 15 ) / monthDays  ), delay.getCommonBase(), DELTA);
+		assertEquals(140.00 + ( 10.00 * (monthDays - 15 ) / monthDays  ), delay.getIrpfBase(), DELTA);
+		assertEquals(140.00 + ( 10.00 * (monthDays - 15 ) / monthDays  ), delay.getTotalPayment(), DELTA);
+		assertEquals(140.00 + ( 10.00 * (monthDays - 15 ) / monthDays  ), delay.getCommonBase(), DELTA);
 		
 
 	}
@@ -380,9 +380,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		
-		Assert.assertEquals(150.00 + 15.00/12*10 + 15.00/12*10, delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(150.00 + 15.00/12*10 + 15.00/12*10, delay.getCommonBase(), DELTA );
-		Assert.assertEquals(150.00 + 15.00/12*10 + 15.00/12*10, delay.getIrpfBase(), DELTA);
+		assertEquals(150.00 + 15.00/12*10 + 15.00/12*10, delay.getTotalPayment(), DELTA);
+		assertEquals(150.00 + 15.00/12*10 + 15.00/12*10, delay.getCommonBase(), DELTA );
+		assertEquals(150.00 + 15.00/12*10 + 15.00/12*10, delay.getIrpfBase(), DELTA);
 		
 
 	}
@@ -496,9 +496,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		
-		Assert.assertEquals(12 + 3, delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(12 + 3, delay.getCommonBase(), DELTA );
-		Assert.assertEquals(12 + 3, delay.getIrpfBase(), DELTA);
+		assertEquals(12 + 3, delay.getTotalPayment(), DELTA);
+		assertEquals(12 + 3, delay.getCommonBase(), DELTA );
+		assertEquals(12 + 3, delay.getIrpfBase(), DELTA);
 		
 
 	}
@@ -604,9 +604,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		
-		Assert.assertEquals(0.00, delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(0.00, delay.getCommonBase(), DELTA );
-		Assert.assertEquals(0.00, delay.getIrpfBase(), DELTA);
+		assertEquals(0.00, delay.getTotalPayment(), DELTA);
+		assertEquals(0.00, delay.getCommonBase(), DELTA );
+		assertEquals(0.00, delay.getIrpfBase(), DELTA);
 		
 
 	}
@@ -853,9 +853,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Salary salary = delayCalculator.calculate(delayCtx);
 		jooqSalaryBuilder.execute();
 		
-		org.junit.Assert.assertEquals(0.00  , salary.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(0.00  , salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals( 3000.00 /12 * 11  , salary.getCommonBase(), DELTA);
+		assertEquals(0.00  , salary.getIrpfBase(), DELTA);
+		assertEquals(0.00  , salary.getTotalPayment(), DELTA);
+		assertEquals( 3000.00 /12 * 11  , salary.getCommonBase(), DELTA);
 
 //		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 //				connection, startDate, endDate, endDate, contract);
@@ -865,7 +865,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 //			System.out.println( p.getDescription() + ": " + p.getAmount() );
 //		}
 //		
-//		org.junit.Assert.assertEquals(3000.00/12 * 6.3 , salary.getTotalPayment(), DELTA);
+//		assertEquals(3000.00/12 * 6.3 , salary.getTotalPayment(), DELTA);
 		
 	}
 
@@ -968,9 +968,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		delayCalculator.setSalaryBuilder(salaryBuilder);
 		Salary salary = delayCalculator.calculate(delayCtx);
 		
-		org.junit.Assert.assertEquals(0.00  , salary.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(0.00  , salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals( 0.00 , salary.getCommonBase(), DELTA);
+		assertEquals(0.00  , salary.getIrpfBase(), DELTA);
+		assertEquals(0.00  , salary.getTotalPayment(), DELTA);
+		assertEquals( 0.00 , salary.getCommonBase(), DELTA);
 
 	}
 
@@ -1063,9 +1063,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		// 2021-07-10
 		//
-		org.junit.Assert.assertEquals(100.00 * 11  , salary.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals(100.00 * 2 + 100.00 * 9 / 30.00 , salary.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(100.00 * 2 + 100.00 * 9 / 30.00 , salary.getTotalPayment(), DELTA);
+		assertEquals(100.00 * 11  , salary.getCommonBase(), DELTA);
+		assertEquals(100.00 * 2 + 100.00 * 9 / 30.00 , salary.getIrpfBase(), DELTA);
+		assertEquals(100.00 * 2 + 100.00 * 9 / 30.00 , salary.getTotalPayment(), DELTA);
 
 	}
 
@@ -1155,9 +1155,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Salary salary = delayCalculator.calculate(delayCtx);
 		jooqSalaryBuilder.execute();
 		
-		org.junit.Assert.assertEquals(0.00  , salary.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(0.00  , salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals( 3000.00 /12 * 11  , salary.getCommonBase(), DELTA);
+		assertEquals(0.00  , salary.getIrpfBase(), DELTA);
+		assertEquals(0.00  , salary.getTotalPayment(), DELTA);
+		assertEquals( 3000.00 /12 * 11  , salary.getCommonBase(), DELTA);
 
 	}
 	
@@ -1250,9 +1250,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		// 2021-07-10
 		//
-		org.junit.Assert.assertEquals(100.00 * 11 , salary.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals(100.00 * 1 + 100.00 * 9 / 30.00 + 50.00 * 21/30 + 50.00 * 9, salary.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(100.00 * 1 + 100.00 * 9 / 30.00 + 50.00 * 21/30 + 50.00 * 9 , salary.getTotalPayment(), DELTA);
+		assertEquals(100.00 * 11 , salary.getCommonBase(), DELTA);
+		assertEquals(100.00 * 1 + 100.00 * 9 / 30.00 + 50.00 * 21/30 + 50.00 * 9, salary.getIrpfBase(), DELTA);
+		assertEquals(100.00 * 1 + 100.00 * 9 / 30.00 + 50.00 * 21/30 + 50.00 * 9 , salary.getTotalPayment(), DELTA);
 
 	}
 	
@@ -1356,20 +1356,20 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		// 2021-07-10
 		//
-		org.junit.Assert.assertEquals(100.00 * 11 , salary.getCommonBase(), DELTA);
+		assertEquals(100.00 * 11 , salary.getCommonBase(), DELTA);
 
 		// Remember adjust monthly last ERTE ( partial )  period 
 		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
 		int erteDays_50 = monthDays - 9;
 		
-		org.junit.Assert.assertEquals(100.00 * 1 + 100.00 * 9 / 30.00 + 50 * erteDays_50 / 30.00 + 50.00 * 6, salary.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(100.00 * 1 + 100.00 * 9 / 30.00 + 50 * erteDays_50 / 30.00 + 50.00 * 6 , salary.getTotalPayment(), DELTA);
+		assertEquals(100.00 * 1 + 100.00 * 9 / 30.00 + 50 * erteDays_50 / 30.00 + 50.00 * 6, salary.getIrpfBase(), DELTA);
+		assertEquals(100.00 * 1 + 100.00 * 9 / 30.00 + 50 * erteDays_50 / 30.00 + 50.00 * 6 , salary.getTotalPayment(), DELTA);
 
 	}
 	
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testERTEV() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -1465,9 +1465,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Salary salary = delayCalculator.calculate(delayCtx);
 		jooqSalaryBuilder.execute();
 		
-		org.junit.Assert.assertEquals( 75*12  , salary.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals(75.00*6 + 75.00/2*5 + 75.00/30*9 + 75.00/2/30*21 , salary.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(75.00*6 + 75.00/2*5 + 75.00/30*9 + 75.00/2/30*21 , salary.getTotalPayment(), DELTA);
+		assertEquals( 75*12  , salary.getCommonBase(), DELTA);
+		assertEquals(75.00*6 + 75.00/2*5 + 75.00/30*9 + 75.00/2/30*21 , salary.getIrpfBase(), DELTA);
+		assertEquals(75.00*6 + 75.00/2*5 + 75.00/30*9 + 75.00/2/30*21 , salary.getTotalPayment(), DELTA);
 
 	}
 
@@ -1558,9 +1558,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Salary salary = delayCalculator.calculate(delayCtx);
 		jooqSalaryBuilder.execute();
 		
-		org.junit.Assert.assertEquals( 3000.00 /12 * 11  , salary.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals(0.00  , salary.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(0.00  , salary.getTotalPayment(), DELTA);
+		assertEquals( 3000.00 /12 * 11  , salary.getCommonBase(), DELTA);
+		assertEquals(0.00  , salary.getIrpfBase(), DELTA);
+		assertEquals(0.00  , salary.getTotalPayment(), DELTA);
 
 //		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 //				connection, startDate, endDate, endDate, contract);
@@ -1570,7 +1570,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 //			System.out.println( p.getDescription() + ": " + p.getAmount() );
 //		}
 //		
-//		org.junit.Assert.assertEquals(250.00 * 6.3 + 125.00 * 5.7  + 1750 * 0.5, salary.getTotalPayment(), DELTA);
+//		assertEquals(250.00 * 6.3 + 125.00 * 5.7  + 1750 * 0.5, salary.getTotalPayment(), DELTA);
 //		
 	}
 
@@ -1670,8 +1670,8 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		jooqSalaryBuilder.execute();
 		
 		int monthDays = AonDateUtils.getMax(startITDate, Calendar.DAY_OF_MONTH);
-		Assert.assertEquals(90.00 + ( 10/30.00*(monthDays-11) ) + ( 10/30.00 * 8 * 0.60 ) , salary.getIrpfBase(), DELTA);
-		Assert.assertEquals(90.00 + ( 10/30.00*(monthDays-11) ) + ( 10/30.00 * 8 * 0.60 ) , salary.getTotalPayment(), DELTA);
+		assertEquals(90.00 + ( 10/30.00*(monthDays-11) ) + ( 10/30.00 * 8 * 0.60 ) , salary.getIrpfBase(), DELTA);
+		assertEquals(90.00 + ( 10/30.00*(monthDays-11) ) + ( 10/30.00 * 8 * 0.60 ) , salary.getTotalPayment(), DELTA);
 
 			
 		
@@ -1683,26 +1683,26 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 			.forEach( delay -> 
 				{
 					Double cgcBase = delay.getContextData(ContextVariable.CGC_BASE.getName(), Collectors.summingDouble(expression-> Double.parseDouble(expression)));
-					Assert.assertEquals(100.00, cgcBase, DELTA);
+					assertEquals(100.00, cgcBase, DELTA);
 					
 					List<ContextData> cgcBases = delay.getContextData().get(ContextVariable.CGC_BASE.getName());
-					Assert.assertEquals(13, cgcBases.size());
+					assertEquals(13, cgcBases.size());
 					
 					Date startCreta = getFirstDayOfMonth(getToday());
 					Date endCreta = getLastDayOfMonth(startCreta);
 					
-					Assert.assertEquals(startCreta, cgcBases.get(0).getStartDate());
-					Assert.assertEquals(endCreta, cgcBases.get(0).getEndDate());
+					assertEquals(startCreta, cgcBases.get(0).getStartDate());
+					assertEquals(endCreta, cgcBases.get(0).getEndDate());
 					
 					startCreta = add(endCreta, DAY_OF_MONTH, 1);
 					endCreta = getLastDayOfMonth(startCreta);
 					
-					Assert.assertEquals(startCreta, cgcBases.get(1).getStartDate());
-					Assert.assertEquals(add(startITDate, DAY_OF_MONTH,-1), cgcBases.get(1).getEndDate());
-					Assert.assertEquals(startITDate, cgcBases.get(2).getStartDate());
-					Assert.assertEquals(endITDate, cgcBases.get(3).getEndDate());
-					Assert.assertEquals(add(endITDate,DAY_OF_MONTH,1), cgcBases.get(4).getStartDate());
-					Assert.assertEquals(endCreta, cgcBases.get(4).getEndDate());
+					assertEquals(startCreta, cgcBases.get(1).getStartDate());
+					assertEquals(add(startITDate, DAY_OF_MONTH,-1), cgcBases.get(1).getEndDate());
+					assertEquals(startITDate, cgcBases.get(2).getStartDate());
+					assertEquals(endITDate, cgcBases.get(3).getEndDate());
+					assertEquals(add(endITDate,DAY_OF_MONTH,1), cgcBases.get(4).getStartDate());
+					assertEquals(endCreta, cgcBases.get(4).getEndDate());
 					
 					
 					
@@ -1714,7 +1714,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 			return;
 		} 
 		
-		Assert.fail("No delay!!!!!!!!!!!!!!!!!");
+		fail("No delay!!!!!!!!!!!!!!!!!");
 
 	}
 
@@ -1808,32 +1808,32 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 			.forEach( delay -> 
 				{
 					Double cgcBase = delay.getContextData(ContextVariable.CGC_BASE.getName(), Collectors.summingDouble(expression-> Double.parseDouble(expression)));
-					Assert.assertEquals(100.00, cgcBase, DELTA);
+					assertEquals(100.00, cgcBase, DELTA);
 					
 					List<ContextData> cgcBases = delay.getContextData().get(ContextVariable.CGC_BASE.getName());
 					// 10, 1-3, 4-15, 16-20, 21 
-					Assert.assertEquals(14, cgcBases.size());
+					assertEquals(14, cgcBases.size());
 					
 					Date startCreta = getFirstDayOfMonth(getToday());
 					Date endCreta = getLastDayOfMonth(startCreta);
 					
-					Assert.assertEquals(startCreta, cgcBases.get(0).getStartDate());
-					Assert.assertEquals(endCreta, cgcBases.get(0).getEndDate());
+					assertEquals(startCreta, cgcBases.get(0).getStartDate());
+					assertEquals(endCreta, cgcBases.get(0).getEndDate());
 					
 					startCreta = add(endCreta, DAY_OF_MONTH, 1);
 					endCreta = getLastDayOfMonth(startCreta);
 					
-					Assert.assertEquals(startCreta, cgcBases.get(1).getStartDate());
-					Assert.assertEquals(add(startITDate, DAY_OF_MONTH,-1), cgcBases.get(1).getEndDate());
+					assertEquals(startCreta, cgcBases.get(1).getStartDate());
+					assertEquals(add(startITDate, DAY_OF_MONTH,-1), cgcBases.get(1).getEndDate());
 					// 06,07,08 09-23, 24-
-					Assert.assertEquals(startITDate, cgcBases.get(2).getStartDate());
-					Assert.assertEquals(add(startITDate,DAY_OF_MONTH,2), cgcBases.get(2).getEndDate());
-					Assert.assertEquals(add(startITDate,DAY_OF_MONTH,3), cgcBases.get(3).getStartDate());
-					Assert.assertEquals(add(startITDate,DAY_OF_MONTH,14), cgcBases.get(3).getEndDate());
-					Assert.assertEquals(add(startITDate,DAY_OF_MONTH,15), cgcBases.get(4).getStartDate());
-					Assert.assertEquals(add(startITDate,DAY_OF_MONTH,19), cgcBases.get(4).getEndDate());
-					Assert.assertEquals(add(startITDate,DAY_OF_MONTH,20), cgcBases.get(5).getStartDate());
-					Assert.assertEquals(getLastDayOfMonth(startITDate), cgcBases.get(5).getEndDate());
+					assertEquals(startITDate, cgcBases.get(2).getStartDate());
+					assertEquals(add(startITDate,DAY_OF_MONTH,2), cgcBases.get(2).getEndDate());
+					assertEquals(add(startITDate,DAY_OF_MONTH,3), cgcBases.get(3).getStartDate());
+					assertEquals(add(startITDate,DAY_OF_MONTH,14), cgcBases.get(3).getEndDate());
+					assertEquals(add(startITDate,DAY_OF_MONTH,15), cgcBases.get(4).getStartDate());
+					assertEquals(add(startITDate,DAY_OF_MONTH,19), cgcBases.get(4).getEndDate());
+					assertEquals(add(startITDate,DAY_OF_MONTH,20), cgcBases.get(5).getStartDate());
+					assertEquals(getLastDayOfMonth(startITDate), cgcBases.get(5).getEndDate());
 					
 					
 					throw new Sucessfull();
@@ -1843,7 +1843,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 			return;
 		} 
 		
-		Assert.fail("No delay!!!!!!!!!!!!!!!!!");
+		fail("No delay!!!!!!!!!!!!!!!!!");
 
 	}
 	
@@ -1938,9 +1938,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
 		double adjust = + ((monthDays-30) * 10.00/30.00 );
-		Assert.assertEquals(10.00,delay.getCommonBase());
-		Assert.assertEquals(10.00 + adjust,delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(10.00 + adjust,delay.getIrpfBase(), DELTA);
+		assertEquals(10.00,delay.getCommonBase());
+		assertEquals(10.00 + adjust,delay.getTotalPayment(), DELTA);
+		assertEquals(10.00 + adjust,delay.getIrpfBase(), DELTA);
 	}
 
 	@Test
@@ -2017,9 +2017,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
 		double adjust = + ((monthDays-30) * 10.00/30.00 );
-		Assert.assertEquals(10.00 + adjust ,delay.getIrpfBase(), DELTA);
-		Assert.assertEquals(10.00 + adjust,delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(10.00,delay.getCommonBase(), DELTA);
+		assertEquals(10.00 + adjust ,delay.getIrpfBase(), DELTA);
+		assertEquals(10.00 + adjust,delay.getTotalPayment(), DELTA);
+		assertEquals(10.00,delay.getCommonBase(), DELTA);
 	}
 
 	@Test
@@ -2102,9 +2102,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
 		double adjust = + ((monthDays-30) * 10.00/30.00 );
-		Assert.assertEquals(10.00 + adjust ,delay.getIrpfBase(), DELTA);
-		Assert.assertEquals(10.00 + adjust,delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(10.00,delay.getCommonBase(), DELTA);
+		assertEquals(10.00 + adjust ,delay.getIrpfBase(), DELTA);
+		assertEquals(10.00 + adjust,delay.getTotalPayment(), DELTA);
+		assertEquals(10.00,delay.getCommonBase(), DELTA);
 	}
 
 	@Test
@@ -2186,9 +2186,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
 		double adjust = + ((monthDays-30) * 10.00/30.00 );
-		Assert.assertEquals(10.00 + adjust ,delay.getIrpfBase(), DELTA);
-		Assert.assertEquals(10.00 + adjust ,delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(10.00,delay.getCommonBase(), DELTA);
+		assertEquals(10.00 + adjust ,delay.getIrpfBase(), DELTA);
+		assertEquals(10.00 + adjust ,delay.getTotalPayment(), DELTA);
+		assertEquals(10.00,delay.getCommonBase(), DELTA);
 	}
 
 
@@ -2265,7 +2265,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					props.getContractProperty().eq(contract.getId()))
 		.forEach(s -> {
 			
-			Assert.assertEquals(1750.00, s.getTotalPayment() );
+			assertEquals(1750.00, s.getTotalPayment() );
 			
 			System.out.println("CGC_BASE :" + s.getCommonContingenciesBase() );
 			System.out.println("IRPF_BASE :" + s.getIrpfBase() );
@@ -2303,9 +2303,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					System.out.println("DELAY IRPF_BASE :" + delay.getIrpfBase() );
 					System.out.println("DELAY TOTAL_PAYMENT :" + delay.getTotalPayment() );
 					
-					Assert.assertEquals((166.00+66.00) * 10.00, delay.getCommonContingenciesBase() );
-					Assert.assertEquals((166.00+66.00) * 10.00, delay.getIrpfBase() );
-					Assert.assertEquals((166.00+66.00) * 10.00, delay.getTotalPayment() );
+					assertEquals((166.00+66.00) * 10.00, delay.getCommonContingenciesBase() );
+					assertEquals((166.00+66.00) * 10.00, delay.getIrpfBase() );
+					assertEquals((166.00+66.00) * 10.00, delay.getTotalPayment() );
 
 					
 				}
@@ -2322,32 +2322,32 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					System.out.println(delay.getContextData(ContextVariable.CGC_BASE.getName(), Collectors.joining(",") ));
 					
 					Double cgcBase = delay.getContextData(ContextVariable.CGC_BASE.getName(), Collectors.summingDouble(expression-> Double.parseDouble(expression)));
-					Assert.assertEquals((166.00+66.00)*10, cgcBase, DELTA);
+					assertEquals((166.00+66.00)*10, cgcBase, DELTA);
 					
 					List<ContextData> cgcBases = delay.getContextData().get(ContextVariable.CGC_BASE.getName());
 					// 10, 1-3, 4-15, 16-20, 21 
-					Assert.assertEquals(14, cgcBases.size());
+					assertEquals(14, cgcBases.size());
 					
 					Date startCreta = getFirstDayOfMonth(getToday());
 					Date endCreta = getLastDayOfMonth(startCreta);
 					
-					Assert.assertEquals(startCreta, cgcBases.get(0).getStartDate());
-					Assert.assertEquals(endCreta, cgcBases.get(0).getEndDate());
+					assertEquals(startCreta, cgcBases.get(0).getStartDate());
+					assertEquals(endCreta, cgcBases.get(0).getEndDate());
 					
 					startCreta = add(endCreta, DAY_OF_MONTH, 1);
 					endCreta = getLastDayOfMonth(startCreta);
 					
-					Assert.assertEquals(startCreta, cgcBases.get(1).getStartDate());
-					Assert.assertEquals(add(startITDate, DAY_OF_MONTH,-1), cgcBases.get(1).getEndDate());
+					assertEquals(startCreta, cgcBases.get(1).getStartDate());
+					assertEquals(add(startITDate, DAY_OF_MONTH,-1), cgcBases.get(1).getEndDate());
 					// 06,07,08 09-23, 24-
-					Assert.assertEquals(startITDate, cgcBases.get(2).getStartDate());
-					Assert.assertEquals(add(startITDate,DAY_OF_MONTH,2), cgcBases.get(2).getEndDate());
-					Assert.assertEquals(add(startITDate,DAY_OF_MONTH,3), cgcBases.get(3).getStartDate());
-					Assert.assertEquals(add(startITDate,DAY_OF_MONTH,14), cgcBases.get(3).getEndDate());
-					Assert.assertEquals(add(startITDate,DAY_OF_MONTH,15), cgcBases.get(4).getStartDate());
-					Assert.assertEquals(add(startITDate,DAY_OF_MONTH,19), cgcBases.get(4).getEndDate());
-					Assert.assertEquals(add(startITDate,DAY_OF_MONTH,20), cgcBases.get(5).getStartDate());
-					Assert.assertEquals(getLastDayOfMonth(startITDate), cgcBases.get(5).getEndDate());
+					assertEquals(startITDate, cgcBases.get(2).getStartDate());
+					assertEquals(add(startITDate,DAY_OF_MONTH,2), cgcBases.get(2).getEndDate());
+					assertEquals(add(startITDate,DAY_OF_MONTH,3), cgcBases.get(3).getStartDate());
+					assertEquals(add(startITDate,DAY_OF_MONTH,14), cgcBases.get(3).getEndDate());
+					assertEquals(add(startITDate,DAY_OF_MONTH,15), cgcBases.get(4).getStartDate());
+					assertEquals(add(startITDate,DAY_OF_MONTH,19), cgcBases.get(4).getEndDate());
+					assertEquals(add(startITDate,DAY_OF_MONTH,20), cgcBases.get(5).getStartDate());
+					assertEquals(getLastDayOfMonth(startITDate), cgcBases.get(5).getEndDate());
 					
 					
 					throw new Sucessfull();
@@ -2357,7 +2357,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 			return;
 		} 
 		
-		Assert.fail("No delay!!!!!!!!!!!!!!!!!");
+		fail("No delay!!!!!!!!!!!!!!!!!");
 
 	}
 
@@ -2517,15 +2517,15 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 
 						int dayOfMonth = get(startDate, Calendar.DAY_OF_MONTH);
 						if ( dayOfMonth == 1 )
-							org.junit.Assert.assertEquals( 8.00, (double) amount, DELTA);
+							assertEquals( 8.00, (double) amount, DELTA);
 						else if ( dayOfMonth == 9 )
-							org.junit.Assert.assertEquals( ( 3 * 0.60 ), (double) amount,  DELTA);
+							assertEquals( ( 3 * 0.60 ), (double) amount,  DELTA);
 						else if ( dayOfMonth == 12 )
-							org.junit.Assert.assertEquals( ( 12 * 0.15  + 12 * 0.60 ), (double) amount,  DELTA);
+							assertEquals( ( 12 * 0.15  + 12 * 0.60 ), (double) amount,  DELTA);
 						else if ( dayOfMonth == 22 )
-							org.junit.Assert.assertEquals( ( 5 * 0.15 + 5 * 0.60 ), (double) amount,  DELTA);
+							assertEquals( ( 5 * 0.15 + 5 * 0.60 ), (double) amount,  DELTA);
 						else if ( dayOfMonth == 29 )
-							org.junit.Assert.assertEquals( ( 2 * 0.25 + 2 * 0.75 ), (double) amount,  DELTA);
+							assertEquals( ( 2 * 0.25 + 2 * 0.75 ), (double) amount,  DELTA);
 							
 					}
 				});
@@ -2533,8 +2533,8 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Salary delay = delayCalculator.calculate(delayCtx);
 		delay.getSalaryPayments().forEach(p -> System.out.println( p.getDescription() + " = " + p.getAmount() +", " + p.getQuote()));
 		
-		org.junit.Assert.assertEquals(30.00, delay.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals(
+		assertEquals(30.00, delay.getCommonBase(), DELTA);
+		assertEquals(
 		 8 							// 01 - 07 
 		 + 3 * 0.60 				// 08 - 10
 		 + 12 * 0.15  + 12 * 0.60	// 11 - 22 
@@ -2546,7 +2546,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testCommonDiseaseITAndGtzdoConstant() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -2647,9 +2647,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					Map<String, ITimedVariable<?>> context) {
 				if ( startDate.compareTo(startITDate) >= 0 ) {
 					//System.out.println(description + " = " + amount +", " + quote + "(" + startDate +"..." + endDate + "");
-					Assert.assertEquals(0.00, amount);
-					Assert.assertEquals(0.00, quote);
-					Assert.assertEquals(0.00, tax);
+					assertEquals(0.00, amount);
+					assertEquals(0.00, quote);
+					assertEquals(0.00, tax);
 					
 				}
 				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
@@ -2669,9 +2669,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					System.out.println("DELAY IRPF_BASE :" + delay.getIrpfBase() );
 					System.out.println("DELAY TOTAL_PAYMENT :" + delay.getTotalPayment() );
 					
-					Assert.assertEquals((166.00+66.00) * 6 / 30, delay.getCommonContingenciesBase() );
-					Assert.assertEquals((166.00+66.00) * 6 / 30, delay.getIrpfBase() );
-					Assert.assertEquals((166.00+66.00) * 6 / 30, delay.getTotalPayment() );
+					assertEquals((166.00+66.00) * 6 / 30, delay.getCommonContingenciesBase() );
+					assertEquals((166.00+66.00) * 6 / 30, delay.getIrpfBase() );
+					assertEquals((166.00+66.00) * 6 / 30, delay.getTotalPayment() );
 					
 				}
 			);
@@ -2687,41 +2687,41 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					System.out.println(delay.getContextData(ContextVariable.CGC_BASE.getName(), Collectors.joining(",") ));
 					
 					Double cgcBase = delay.getContextData(ContextVariable.CGC_BASE.getName(), Collectors.summingDouble(expression-> Double.parseDouble(expression)));
-					Assert.assertEquals((166.00+66.00) * 6 / 30, cgcBase, DELTA);
+					assertEquals((166.00+66.00) * 6 / 30, cgcBase, DELTA);
 					
 					List<ContextData> cgcBases = delay.getContextData().get(ContextVariable.CGC_BASE.getName());
-					Assert.assertEquals(5, cgcBases.size());
+					assertEquals(5, cgcBases.size());
 					
 					Date startCreta = add(getFirstDayOfMonth(getToday()), MONTH,1);
 					Date endCreta = add(startITDate, DAY_OF_MONTH,-1); //getLastDayOfMonth(startCreta);
 					
-					Assert.assertEquals(startCreta, cgcBases.get(0).getStartDate());
-					Assert.assertEquals(endCreta, cgcBases.get(0).getEndDate());
-					Assert.assertEquals((166.00+66.00) * 6 / 30, Double.parseDouble(cgcBases.get(0).getExpression()) );
+					assertEquals(startCreta, cgcBases.get(0).getStartDate());
+					assertEquals(endCreta, cgcBases.get(0).getEndDate());
+					assertEquals((166.00+66.00) * 6 / 30, Double.parseDouble(cgcBases.get(0).getExpression()) );
 					
 					startCreta = startITDate;
 					endCreta = add(startCreta, DAY_OF_MONTH,2);
-					Assert.assertEquals(startCreta, cgcBases.get(1).getStartDate());
-					Assert.assertEquals(endCreta, cgcBases.get(1).getEndDate());
-					Assert.assertEquals(0.00, Double.parseDouble(cgcBases.get(1).getExpression()) );
+					assertEquals(startCreta, cgcBases.get(1).getStartDate());
+					assertEquals(endCreta, cgcBases.get(1).getEndDate());
+					assertEquals(0.00, Double.parseDouble(cgcBases.get(1).getExpression()) );
 
 					startCreta = add(endCreta, DAY_OF_MONTH, 1);
 					endCreta = add(startCreta, DAY_OF_MONTH,11);
-					Assert.assertEquals(startCreta, cgcBases.get(2).getStartDate());
-					Assert.assertEquals(endCreta, cgcBases.get(2).getEndDate());
-					Assert.assertEquals(0.00, Double.parseDouble(cgcBases.get(2).getExpression()) );
+					assertEquals(startCreta, cgcBases.get(2).getStartDate());
+					assertEquals(endCreta, cgcBases.get(2).getEndDate());
+					assertEquals(0.00, Double.parseDouble(cgcBases.get(2).getExpression()) );
 					
 					startCreta = add(endCreta, DAY_OF_MONTH, 1);
 					endCreta = add(startCreta, DAY_OF_MONTH,4);
-					Assert.assertEquals(startCreta, cgcBases.get(3).getStartDate());
-					Assert.assertEquals(endCreta, cgcBases.get(3).getEndDate());
-					Assert.assertEquals(0.00, Double.parseDouble(cgcBases.get(3).getExpression()) );
+					assertEquals(startCreta, cgcBases.get(3).getStartDate());
+					assertEquals(endCreta, cgcBases.get(3).getEndDate());
+					assertEquals(0.00, Double.parseDouble(cgcBases.get(3).getExpression()) );
 
 					startCreta = add(endCreta, DAY_OF_MONTH, 1);
 					endCreta = getLastDayOfMonth(startCreta);
-					Assert.assertEquals(startCreta, cgcBases.get(4).getStartDate());
-					Assert.assertEquals(endCreta, cgcBases.get(4).getEndDate());
-					Assert.assertEquals(0.00, Double.parseDouble(cgcBases.get(4).getExpression()) );
+					assertEquals(startCreta, cgcBases.get(4).getStartDate());
+					assertEquals(endCreta, cgcBases.get(4).getEndDate());
+					assertEquals(0.00, Double.parseDouble(cgcBases.get(4).getExpression()) );
 
 					throw new Sucessfull();
 				}
@@ -2730,7 +2730,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 			return;
 		} 
 		
-		Assert.fail("No delay!!!!!!!!!!!!!!!!!");
+		fail("No delay!!!!!!!!!!!!!!!!!");
 
 	}
 
@@ -2808,9 +2808,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		}
 		AON.getSalaries(aonContext, props -> props.getContractProperty().eq(contract.getId()).and(props.getIsSalaryProperty().eq(true)))
 		.forEach( salary  -> {
-			Assert.assertEquals(2318.09 + 2318.09 *0.04, salary.getTotalPayment(), 0.01);
-			Assert.assertEquals(2318.09 + 2318.09 *0.04, salary.getIrpfBase(), 0.01);
-			Assert.assertEquals(2318.09 + 2318.09 *0.04 + (2318.09 + 2318.09 *0.04)/6 , salary.getCommonContingenciesBase(), 0.01);
+			assertEquals(2318.09 + 2318.09 *0.04, salary.getTotalPayment(), 0.01);
+			assertEquals(2318.09 + 2318.09 *0.04, salary.getIrpfBase(), 0.01);
+			assertEquals(2318.09 + 2318.09 *0.04 + (2318.09 + 2318.09 *0.04)/6 , salary.getCommonContingenciesBase(), 0.01);
 		});
 		;
 		
@@ -2840,10 +2840,10 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		AON.getSalaries(aonContext, props -> props.getContractProperty().eq(contract.getId()).and(props.getIsDelayProperty().eq(true)))
 		.forEach( delay  -> {
-			Assert.assertEquals(0.00, delay.getTotalPayment());
-			Assert.assertEquals(0.00, delay.getTotalLiquid());
-			Assert.assertEquals(0.00, delay.getIrpfBase());
-			Assert.assertEquals(0.00, delay.getCommonContingenciesBase());
+			assertEquals(0.00, delay.getTotalPayment());
+			assertEquals(0.00, delay.getTotalLiquid());
+			assertEquals(0.00, delay.getIrpfBase());
+			assertEquals(0.00, delay.getCommonContingenciesBase());
 		});
 		;
 		
@@ -2912,11 +2912,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		
-		Assert.assertEquals(100.00, delay.getTotalPayment());
-		Assert.assertEquals(100.00, delay.getCommonBase());
-		Assert.assertEquals(100.00, delay.getRawCommonBase());
-		Assert.assertEquals(100.00, delay.getProfessionalBase());
-		Assert.assertEquals(100.00, delay.getIrpfBase());
+		assertEquals(100.00, delay.getTotalPayment());
+		assertEquals(100.00, delay.getCommonBase());
+		assertEquals(100.00, delay.getRawCommonBase());
+		assertEquals(100.00, delay.getProfessionalBase());
+		assertEquals(100.00, delay.getIrpfBase());
 	}
 	
 	
@@ -2972,11 +2972,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		
-		Assert.assertEquals(20.00, delay.getTotalPayment());
-		Assert.assertEquals(20.00, delay.getCommonBase());
-		Assert.assertEquals(20.00, delay.getRawCommonBase());
-		Assert.assertEquals(20.00, delay.getProfessionalBase());
-		Assert.assertEquals(20.00, delay.getIrpfBase());
+		assertEquals(20.00, delay.getTotalPayment());
+		assertEquals(20.00, delay.getCommonBase());
+		assertEquals(20.00, delay.getRawCommonBase());
+		assertEquals(20.00, delay.getProfessionalBase());
+		assertEquals(20.00, delay.getIrpfBase());
 	}
 	
 	
@@ -3032,15 +3032,15 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		
-		Assert.assertEquals(0.00, delay.getTotalPayment());
-		Assert.assertEquals(0.00, delay.getCommonBase());
-		Assert.assertEquals(0.00, delay.getRawCommonBase());
-		Assert.assertEquals(0.00, delay.getProfessionalBase());
-		Assert.assertEquals(0.00, delay.getIrpfBase());
+		assertEquals(0.00, delay.getTotalPayment());
+		assertEquals(0.00, delay.getCommonBase());
+		assertEquals(0.00, delay.getRawCommonBase());
+		assertEquals(0.00, delay.getProfessionalBase());
+		assertEquals(0.00, delay.getIrpfBase());
 	}
 	
 	@Test
-	@Ignore("Not yet implemented")
+	@Disabled("Not yet implemented")
 	public void testDelaysOnCalculateAgreementIII() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -3092,11 +3092,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		
-		Assert.assertEquals(0.00, delay.getTotalPayment());
-		Assert.assertEquals(0.00, delay.getCommonBase());
-		Assert.assertEquals(0.00, delay.getRawCommonBase());
-		Assert.assertEquals(0.00, delay.getProfessionalBase());
-		Assert.assertEquals(0.00, delay.getIrpfBase());
+		assertEquals(0.00, delay.getTotalPayment());
+		assertEquals(0.00, delay.getCommonBase());
+		assertEquals(0.00, delay.getRawCommonBase());
+		assertEquals(0.00, delay.getProfessionalBase());
+		assertEquals(0.00, delay.getIrpfBase());
 	}
 
 	@Test
@@ -3170,11 +3170,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")" + payment.getQuote() );
 		}
 		
-		Assert.assertEquals(100.00, delay.getTotalPayment());
-		Assert.assertEquals(100.00, delay.getCommonBase());
-		Assert.assertEquals(100.00, delay.getRawCommonBase());
-		Assert.assertEquals(100.00, delay.getProfessionalBase());
-		Assert.assertEquals(100.00, delay.getIrpfBase());
+		assertEquals(100.00, delay.getTotalPayment());
+		assertEquals(100.00, delay.getCommonBase());
+		assertEquals(100.00, delay.getRawCommonBase());
+		assertEquals(100.00, delay.getProfessionalBase());
+		assertEquals(100.00, delay.getIrpfBase());
 	}
 
 	@Test
@@ -3215,9 +3215,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					// 500 Base de contingencias comunes.
 					List<ContextData> datas = salary.getContextData()
 							.get(CGC_BASE.getName());
-					Assert.assertEquals(2, datas.size());
-					Assert.assertEquals(startDate, datas.get(0).getStartDate());
-					Assert.assertEquals(bonusStartDate, datas.get(1).getStartDate());
+					assertEquals(2, datas.size());
+					assertEquals(startDate, datas.get(0).getStartDate());
+					assertEquals(bonusStartDate, datas.get(1).getStartDate());
 				});
 		;
 		
@@ -3241,11 +3241,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		
-		Assert.assertEquals(10.00, delay.getCommonBase());
-		Assert.assertEquals(10.00, delay.getRawCommonBase());
-		Assert.assertEquals(10.00, delay.getTotalPayment());
-		Assert.assertEquals(10.00, delay.getProfessionalBase());
-		Assert.assertEquals(10.00, delay.getIrpfBase());
+		assertEquals(10.00, delay.getCommonBase());
+		assertEquals(10.00, delay.getRawCommonBase());
+		assertEquals(10.00, delay.getTotalPayment());
+		assertEquals(10.00, delay.getProfessionalBase());
+		assertEquals(10.00, delay.getIrpfBase());
 	}
 	
 	@Test
@@ -3306,11 +3306,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")" );
 		}
 		
-		Assert.assertEquals(10.00, delay.getTotalPayment());
-		Assert.assertEquals(10.00, delay.getCommonBase());
-		Assert.assertEquals(10.00, delay.getRawCommonBase());
-		Assert.assertEquals(10.00, delay.getProfessionalBase());
-		Assert.assertEquals(10.00, delay.getIrpfBase());
+		assertEquals(10.00, delay.getTotalPayment());
+		assertEquals(10.00, delay.getCommonBase());
+		assertEquals(10.00, delay.getRawCommonBase());
+		assertEquals(10.00, delay.getProfessionalBase());
+		assertEquals(10.00, delay.getIrpfBase());
 	}
 	
 	@Test
@@ -3419,9 +3419,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		// 2021-07-10
 		//
-		org.junit.Assert.assertEquals(100.00   , salary.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals(100.00 * 9 / 30.00 , salary.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(100.00 * 9 / 30.00 , salary.getTotalPayment(), DELTA);
+		assertEquals(100.00   , salary.getCommonBase(), DELTA);
+		assertEquals(100.00 * 9 / 30.00 , salary.getIrpfBase(), DELTA);
+		assertEquals(100.00 * 9 / 30.00 , salary.getTotalPayment(), DELTA);
 
 	}
 
@@ -3522,12 +3522,12 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Salary salary = delayCalculator.calculate(delayCtx);
 		jooqSalaryBuilder.execute();
 		
-		org.junit.Assert.assertEquals(100.00   , salary.getCommonBase(), DELTA);
+		assertEquals(100.00   , salary.getCommonBase(), DELTA);
 		// Remember adjust monthly last IT period 
 		int monthDays = AonDateUtils.getMax(endITDate, Calendar.DAY_OF_MONTH);
 		int workedDays = monthDays - 2;
-		org.junit.Assert.assertEquals(100.00 * workedDays / 30.00 , salary.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(100.00 * workedDays / 30.00 , salary.getTotalPayment(), DELTA);
+		assertEquals(100.00 * workedDays / 30.00 , salary.getIrpfBase(), DELTA);
+		assertEquals(100.00 * workedDays / 30.00 , salary.getTotalPayment(), DELTA);
 
 	}
 
@@ -3635,12 +3635,12 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Salary salary = delayCalculator.calculate(delayCtx);
 		jooqSalaryBuilder.execute();
 		
-		org.junit.Assert.assertEquals(100.00   , salary.getCommonBase(), DELTA);
+		assertEquals(100.00   , salary.getCommonBase(), DELTA);
 		// Remember adjust monthly last IT period 
 		int monthDays = AonDateUtils.getMax(endITDate, Calendar.DAY_OF_MONTH);
 		int workedDays = monthDays - 2;
-		org.junit.Assert.assertEquals(100.00 * workedDays / 30.00 , salary.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(100.00 * workedDays / 30.00 , salary.getTotalPayment(), DELTA);
+		assertEquals(100.00 * workedDays / 30.00 , salary.getIrpfBase(), DELTA);
+		assertEquals(100.00 * workedDays / 30.00 , salary.getTotalPayment(), DELTA);
 
 	}
 
@@ -3751,12 +3751,12 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		// 2021-07-10
 		//
-		org.junit.Assert.assertEquals(100.00   , salary.getCommonBase(), DELTA);
+		assertEquals(100.00   , salary.getCommonBase(), DELTA);
 		// Remember adjust monthly last IT period 
 		int monthDays = AonDateUtils.getMax(endITDate, Calendar.DAY_OF_MONTH);
 		int activeDays = monthDays - 2;
-		org.junit.Assert.assertEquals(100.00 * activeDays / 30.00 , salary.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(100.00 * activeDays / 30.00 , salary.getTotalPayment(), DELTA);
+		assertEquals(100.00 * activeDays / 30.00 , salary.getIrpfBase(), DELTA);
+		assertEquals(100.00 * activeDays / 30.00 , salary.getTotalPayment(), DELTA);
 
 	}
 
@@ -3872,12 +3872,12 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Salary salary = delayCalculator.calculate(delayCtx);
 		jooqSalaryBuilder.execute();
 		
-		org.junit.Assert.assertEquals(100.00   , salary.getCommonBase(), DELTA);
+		assertEquals(100.00   , salary.getCommonBase(), DELTA);
 		// Not monthly adjust for payment ... so 
 		int monthDays = AonDateUtils.getMax(startITDate, Calendar.DAY_OF_MONTH);
 		int itDays_4_15 = ( monthDays - 27 );
-		org.junit.Assert.assertEquals(100.00 * 24 / 30.00  + 100.00 * itDays_4_15 / 30.00 * 0.60 , salary.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(100.00 * 24 / 30.00  + 100.00 * itDays_4_15 / 30.00 * 0.60, salary.getTotalPayment(), DELTA);
+		assertEquals(100.00 * 24 / 30.00  + 100.00 * itDays_4_15 / 30.00 * 0.60 , salary.getIrpfBase(), DELTA);
+		assertEquals(100.00 * 24 / 30.00  + 100.00 * itDays_4_15 / 30.00 * 0.60, salary.getTotalPayment(), DELTA);
 
 	}
 
@@ -3995,12 +3995,12 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		// 2021-07-10
 		//
-		org.junit.Assert.assertEquals(100.00   , salary.getCommonBase(), DELTA);
+		assertEquals(100.00   , salary.getCommonBase(), DELTA);
 		// Not monthly adjust for payment ... so 
 		int monthDays = AonDateUtils.getMax(startITDate, Calendar.DAY_OF_MONTH);
 		int itDays_4_15 = ( monthDays - 27 );
-		org.junit.Assert.assertEquals(100.00 * 24 / 30.00  + 100.00 * itDays_4_15 / 30.00 * 0.60 , salary.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(100.00 * 24 / 30.00  + 100.00 * itDays_4_15 / 30.00 * 0.60, salary.getTotalPayment(), DELTA);
+		assertEquals(100.00 * 24 / 30.00  + 100.00 * itDays_4_15 / 30.00 * 0.60 , salary.getIrpfBase(), DELTA);
+		assertEquals(100.00 * 24 / 30.00  + 100.00 * itDays_4_15 / 30.00 * 0.60, salary.getTotalPayment(), DELTA);
 
 	}
 	
@@ -4074,18 +4074,18 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 //					+ " (" + payment.getExpression() + ")");
 //		}
 
-		org.junit.Assert.assertEquals(17, delay.getSalaryPayments().size());
+		assertEquals(17, delay.getSalaryPayments().size());
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
-		org.junit.Assert.assertEquals(1, distinct);
+		assertEquals(1, distinct);
 		
 		double expected = 10.00 * 7 + 6.66 + 3.33 + 12.22 ;
 		
-		Assert.assertEquals(expected, delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
-		Assert.assertEquals(expected, delay.getIrpfBase(), DELTA);
+		assertEquals(expected, delay.getTotalPayment(), DELTA);
+		assertEquals(expected, delay.getCommonBase(), DELTA);
+		assertEquals(expected, delay.getRawCommonBase(), DELTA);
+		assertEquals(expected, delay.getProfessionalBase(), DELTA);
+		assertEquals(expected, delay.getIrpfBase(), DELTA);
 	}
 	
 	
@@ -4144,15 +4144,15 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
 					+ " (" + payment.getExpression() + ")");
 		}
-		org.junit.Assert.assertEquals(10, delay.getSalaryPayments().size());
+		assertEquals(10, delay.getSalaryPayments().size());
 		
 		double expected = 60.66 ;
 		
-		Assert.assertEquals(expected, delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
-		Assert.assertEquals(expected, delay.getIrpfBase(), DELTA);
+		assertEquals(expected, delay.getTotalPayment(), DELTA);
+		assertEquals(expected, delay.getCommonBase(), DELTA);
+		assertEquals(expected, delay.getRawCommonBase(), DELTA);
+		assertEquals(expected, delay.getProfessionalBase(), DELTA);
+		assertEquals(expected, delay.getIrpfBase(), DELTA);
 	}
 
 	@Test
@@ -4206,15 +4206,15 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		
-		org.junit.Assert.assertEquals(20, delay.getSalaryPayments().size());
+		assertEquals(20, delay.getSalaryPayments().size());
 		
 		double expected = 0.00 ;
 		
-		Assert.assertEquals(expected, delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
-		Assert.assertEquals(expected, delay.getIrpfBase(), DELTA);
+		assertEquals(expected, delay.getTotalPayment(), DELTA);
+		assertEquals(expected, delay.getCommonBase(), DELTA);
+		assertEquals(expected, delay.getRawCommonBase(), DELTA);
+		assertEquals(expected, delay.getProfessionalBase(), DELTA);
+		assertEquals(expected, delay.getIrpfBase(), DELTA);
 	}
 
 	@Test
@@ -4300,11 +4300,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getQuote() + ")");
 		}
 		
-		Assert.assertEquals(0.00, delay.getTotalPayment());
-		Assert.assertEquals(10000.00, delay.getCommonBase());
-		Assert.assertEquals(10000.00, delay.getRawCommonBase());
-		Assert.assertEquals(10000.00, delay.getProfessionalBase());
-		Assert.assertEquals(0.00, delay.getIrpfBase());
+		assertEquals(0.00, delay.getTotalPayment());
+		assertEquals(10000.00, delay.getCommonBase());
+		assertEquals(10000.00, delay.getRawCommonBase());
+		assertEquals(10000.00, delay.getProfessionalBase());
+		assertEquals(0.00, delay.getIrpfBase());
 	}
 
 	@Test
@@ -4401,11 +4401,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 //			System.out.println(data.getName() + " = '" + data.getExpression() +"'");
 //		}
 
-		Assert.assertEquals(0.00, delay.getTotalPayment());
-		Assert.assertEquals(10000.00, delay.getCommonBase());
-		Assert.assertEquals(10000.00, delay.getRawCommonBase());
-		Assert.assertEquals(10000.00, delay.getProfessionalBase());
-		Assert.assertEquals(0.00, delay.getIrpfBase());
+		assertEquals(0.00, delay.getTotalPayment());
+		assertEquals(10000.00, delay.getCommonBase());
+		assertEquals(10000.00, delay.getRawCommonBase());
+		assertEquals(10000.00, delay.getProfessionalBase());
+		assertEquals(0.00, delay.getIrpfBase());
 	}
 
 	@Test
@@ -4494,7 +4494,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
-		org.junit.Assert.assertEquals(19, delay.getSalaryPayments().size());
+		assertEquals(19, delay.getSalaryPayments().size());
 
 		List<SalaryData> cgcBases =
 		delay.getSalaryDatas().stream()
@@ -4503,32 +4503,32 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
 		.collect(Collectors.toList());
 		
-		org.junit.Assert.assertEquals(3, cgcBases.size());
-		org.junit.Assert.assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
-		org.junit.Assert.assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), cgcBases.get(0).getEndDate());
+		assertEquals(3, cgcBases.size());
+		assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
+		assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), cgcBases.get(0).getEndDate());
 		
-		org.junit.Assert.assertEquals(overrideITStartDate, cgcBases.get(1).getStartDate());
-		org.junit.Assert.assertEquals(overrideITEndDate, cgcBases.get(1).getEndDate());
-		org.junit.Assert.assertEquals(0, Double.parseDouble(cgcBases.get(1).getExpression()), 0.00);
+		assertEquals(overrideITStartDate, cgcBases.get(1).getStartDate());
+		assertEquals(overrideITEndDate, cgcBases.get(1).getEndDate());
+		assertEquals(0, Double.parseDouble(cgcBases.get(1).getExpression()), 0.00);
 
-		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(2).getStartDate());
-		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(2).getEndDate());
+		assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(2).getStartDate());
+		assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(2).getEndDate());
 		
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
-		org.junit.Assert.assertEquals(1, distinct);
+		assertEquals(1, distinct);
 		
 		double expected = 10.00 * 7 + 6.66 + 3.33 + 12.22 ;
 		
-		Assert.assertEquals(expected, delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
-		Assert.assertEquals(expected, delay.getIrpfBase(), DELTA);
+		assertEquals(expected, delay.getTotalPayment(), DELTA);
+		assertEquals(expected, delay.getCommonBase(), DELTA);
+		assertEquals(expected, delay.getRawCommonBase(), DELTA);
+		assertEquals(expected, delay.getProfessionalBase(), DELTA);
+		assertEquals(expected, delay.getIrpfBase(), DELTA);
 		
-		org.junit.Assert.assertEquals(PaymentType.CRA_0012.name(), delay.getSalaryData(ContextVariable.DELAY_CAUSE.getName()));
+		assertEquals(PaymentType.CRA_0012.name(), delay.getSalaryData(ContextVariable.DELAY_CAUSE.getName()));
 
-		delay.getSalaryPayments().stream().filter( p -> p.getAmount() > 0.00 ).forEach( p -> org.junit.Assert.assertEquals(PaymentType.CRA_0012, p.getType()) );
+		delay.getSalaryPayments().stream().filter( p -> p.getAmount() > 0.00 ).forEach( p -> assertEquals(PaymentType.CRA_0012, p.getType()) );
 	}
 
 	@Test
@@ -4602,7 +4602,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
-		org.junit.Assert.assertEquals(18, delay.getSalaryPayments().size());
+		assertEquals(18, delay.getSalaryPayments().size());
 
 		List<SalaryData> cgcBases =
 		delay.getSalaryDatas().stream()
@@ -4611,27 +4611,27 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
 		.collect(Collectors.toList());
 		
-		org.junit.Assert.assertEquals(2, cgcBases.size());
-		org.junit.Assert.assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
-		org.junit.Assert.assertEquals(overrideITEndDate, cgcBases.get(0).getEndDate());
-		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(1).getStartDate());
-		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(1).getEndDate());
+		assertEquals(2, cgcBases.size());
+		assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
+		assertEquals(overrideITEndDate, cgcBases.get(0).getEndDate());
+		assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(1).getStartDate());
+		assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(1).getEndDate());
 		
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
-		org.junit.Assert.assertEquals(1, distinct);
+		assertEquals(1, distinct);
 		
 		double expected = 10.00 * 7 + 6.66 + 3.33 + 12.22 ;
 		
-		Assert.assertEquals(expected, delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
-		Assert.assertEquals(expected, delay.getIrpfBase(), DELTA);
+		assertEquals(expected, delay.getTotalPayment(), DELTA);
+		assertEquals(expected, delay.getCommonBase(), DELTA);
+		assertEquals(expected, delay.getRawCommonBase(), DELTA);
+		assertEquals(expected, delay.getProfessionalBase(), DELTA);
+		assertEquals(expected, delay.getIrpfBase(), DELTA);
 		
-		org.junit.Assert.assertEquals(PaymentType.CRA_0008.name(), delay.getSalaryData(ContextVariable.DELAY_CAUSE.getName()));
+		assertEquals(PaymentType.CRA_0008.name(), delay.getSalaryData(ContextVariable.DELAY_CAUSE.getName()));
 
-		delay.getSalaryPayments().stream().filter( p -> p.getAmount() > 0.00 ).forEach( p -> org.junit.Assert.assertEquals(PaymentType.CRA_0008, p.getType()) );
+		delay.getSalaryPayments().stream().filter( p -> p.getAmount() > 0.00 ).forEach( p -> assertEquals(PaymentType.CRA_0008, p.getType()) );
 	}
 
 	@Test
@@ -4705,7 +4705,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
-		org.junit.Assert.assertEquals(18, delay.getSalaryPayments().size());
+		assertEquals(18, delay.getSalaryPayments().size());
 
 		List<SalaryData> cgcBases =
 		delay.getSalaryDatas().stream()
@@ -4714,25 +4714,25 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
 		.collect(Collectors.toList());
 		
-		org.junit.Assert.assertEquals(2, cgcBases.size());
+		assertEquals(2, cgcBases.size());
 		
-		org.junit.Assert.assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
-		org.junit.Assert.assertEquals(overrideITEndDate, cgcBases.get(0).getEndDate());
+		assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
+		assertEquals(overrideITEndDate, cgcBases.get(0).getEndDate());
 
-		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(1).getStartDate());
-		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(1).getEndDate());
+		assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(1).getStartDate());
+		assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(1).getEndDate());
 		
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
-		org.junit.Assert.assertEquals(1, distinct);
+		assertEquals(1, distinct);
 		
 		double expected = 10.00 * 7 + 6.66 + 3.33 + 12.22 ;
 		
-		Assert.assertEquals(expected, delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
-		Assert.assertEquals(expected, delay.getIrpfBase(), DELTA);
+		assertEquals(expected, delay.getTotalPayment(), DELTA);
+		assertEquals(expected, delay.getCommonBase(), DELTA);
+		assertEquals(expected, delay.getRawCommonBase(), DELTA);
+		assertEquals(expected, delay.getProfessionalBase(), DELTA);
+		assertEquals(expected, delay.getIrpfBase(), DELTA);
 	}
 
 	@Test
@@ -4807,7 +4807,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
-		org.junit.Assert.assertEquals(19, delay.getSalaryPayments().size());
+		assertEquals(19, delay.getSalaryPayments().size());
 
 		List<SalaryData> cgcBases =
 		delay.getSalaryDatas().stream()
@@ -4816,28 +4816,28 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
 		.collect(Collectors.toList());
 		
-		org.junit.Assert.assertEquals(3, cgcBases.size());
-		org.junit.Assert.assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
-		org.junit.Assert.assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), cgcBases.get(0).getEndDate());
+		assertEquals(3, cgcBases.size());
+		assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
+		assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), cgcBases.get(0).getEndDate());
 		
-		org.junit.Assert.assertEquals(overrideITStartDate, cgcBases.get(1).getStartDate());
-		org.junit.Assert.assertEquals(overrideITEndDate, cgcBases.get(1).getEndDate());
-		org.junit.Assert.assertEquals(0, Double.parseDouble(cgcBases.get(1).getExpression()), 0.00);
+		assertEquals(overrideITStartDate, cgcBases.get(1).getStartDate());
+		assertEquals(overrideITEndDate, cgcBases.get(1).getEndDate());
+		assertEquals(0, Double.parseDouble(cgcBases.get(1).getExpression()), 0.00);
 
-		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(2).getStartDate());
-		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(2).getEndDate());
+		assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(2).getStartDate());
+		assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(2).getEndDate());
 		
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
-		org.junit.Assert.assertEquals(1, distinct);
+		assertEquals(1, distinct);
 		
 		double expected = 10.00 * 7 + 6.66 + 3.33 + 12.22 ;
 		
-		Assert.assertEquals(expected, delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
-		Assert.assertEquals(expected, delay.getIrpfBase(), DELTA);
+		assertEquals(expected, delay.getTotalPayment(), DELTA);
+		assertEquals(expected, delay.getCommonBase(), DELTA);
+		assertEquals(expected, delay.getRawCommonBase(), DELTA);
+		assertEquals(expected, delay.getProfessionalBase(), DELTA);
+		assertEquals(expected, delay.getIrpfBase(), DELTA);
 	}
 
 	@Test
@@ -4912,7 +4912,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
-		org.junit.Assert.assertEquals(18, delay.getSalaryPayments().size());
+		assertEquals(18, delay.getSalaryPayments().size());
 
 		List<SalaryData> cgcBases =
 		delay.getSalaryDatas().stream()
@@ -4921,24 +4921,24 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
 		.collect(Collectors.toList());
 		
-		org.junit.Assert.assertEquals(2, cgcBases.size());
+		assertEquals(2, cgcBases.size());
 		
-		org.junit.Assert.assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
-		org.junit.Assert.assertEquals(overrideITEndDate, cgcBases.get(0).getEndDate());
-		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(1).getStartDate());
-		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(1).getEndDate());
+		assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
+		assertEquals(overrideITEndDate, cgcBases.get(0).getEndDate());
+		assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(1).getStartDate());
+		assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(1).getEndDate());
 		
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
-		org.junit.Assert.assertEquals(1, distinct);
+		assertEquals(1, distinct);
 		
 		double expected = 10.00 * 7 + 6.66 + 3.33 + 12.22 ;
 		
-		Assert.assertEquals(expected, delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
-		Assert.assertEquals(expected, delay.getIrpfBase(), DELTA);
+		assertEquals(expected, delay.getTotalPayment(), DELTA);
+		assertEquals(expected, delay.getCommonBase(), DELTA);
+		assertEquals(expected, delay.getRawCommonBase(), DELTA);
+		assertEquals(expected, delay.getProfessionalBase(), DELTA);
+		assertEquals(expected, delay.getIrpfBase(), DELTA);
 	}
 
 	@Test
@@ -5013,7 +5013,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
-		org.junit.Assert.assertEquals(17, delay.getSalaryPayments().size());
+		assertEquals(17, delay.getSalaryPayments().size());
 
 		List<SalaryData> cgcBases =
 		delay.getSalaryDatas().stream()
@@ -5022,19 +5022,19 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
 		.collect(Collectors.toList());
 		
-		org.junit.Assert.assertEquals(1, cgcBases.size());
+		assertEquals(1, cgcBases.size());
 		
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
-		org.junit.Assert.assertEquals(1, distinct);
+		assertEquals(1, distinct);
 		
 		double expected = 10.00 * 7 + 3.33 + 12.22 ;
 		
-		Assert.assertEquals(expected, delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
-		Assert.assertEquals(expected, delay.getIrpfBase(), DELTA);
+		assertEquals(expected, delay.getTotalPayment(), DELTA);
+		assertEquals(expected, delay.getCommonBase(), DELTA);
+		assertEquals(expected, delay.getRawCommonBase(), DELTA);
+		assertEquals(expected, delay.getProfessionalBase(), DELTA);
+		assertEquals(expected, delay.getIrpfBase(), DELTA);
 	}
 
 	@Test
@@ -5118,7 +5118,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
-		org.junit.Assert.assertEquals(19, delay.getSalaryPayments().size());
+		assertEquals(19, delay.getSalaryPayments().size());
 
 		List<SalaryData> cgcBases =
 		delay.getSalaryDatas().stream()
@@ -5133,32 +5133,32 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
 		.collect(Collectors.toList());
 		
-		org.junit.Assert.assertEquals(10, partialFactors.size());
+		assertEquals(10, partialFactors.size());
 		
 		partialFactors.stream().allMatch(d -> Double.parseDouble(d.getExpression()) == 0.25 ); 
 		
-		org.junit.Assert.assertEquals(3, cgcBases.size());
-		org.junit.Assert.assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
-		org.junit.Assert.assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), cgcBases.get(0).getEndDate());
+		assertEquals(3, cgcBases.size());
+		assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
+		assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), cgcBases.get(0).getEndDate());
 		
-		org.junit.Assert.assertEquals(overrideITStartDate, cgcBases.get(1).getStartDate());
-		org.junit.Assert.assertEquals(overrideITEndDate, cgcBases.get(1).getEndDate());
-		org.junit.Assert.assertEquals(0, Double.parseDouble(cgcBases.get(1).getExpression()), 0.00);
+		assertEquals(overrideITStartDate, cgcBases.get(1).getStartDate());
+		assertEquals(overrideITEndDate, cgcBases.get(1).getEndDate());
+		assertEquals(0, Double.parseDouble(cgcBases.get(1).getExpression()), 0.00);
 
-		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(2).getStartDate());
-		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(2).getEndDate());
+		assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(2).getStartDate());
+		assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(2).getEndDate());
 		
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
-		org.junit.Assert.assertEquals(1, distinct);
+		assertEquals(1, distinct);
 		
 		double expected = 10.00 * 7 * 0.25 + 6.66 + 3.33 + 12.22 ;
 		
-		Assert.assertEquals(expected, delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
-		Assert.assertEquals(expected, delay.getIrpfBase(), DELTA);
+		assertEquals(expected, delay.getTotalPayment(), DELTA);
+		assertEquals(expected, delay.getCommonBase(), DELTA);
+		assertEquals(expected, delay.getRawCommonBase(), DELTA);
+		assertEquals(expected, delay.getProfessionalBase(), DELTA);
+		assertEquals(expected, delay.getIrpfBase(), DELTA);
 	}
 
 	@Test
@@ -5250,7 +5250,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
-		org.junit.Assert.assertEquals(19, delay.getSalaryPayments().size());
+		assertEquals(19, delay.getSalaryPayments().size());
 
 		List<SalaryData> cgcBases =
 		delay.getSalaryDatas().stream()
@@ -5259,32 +5259,32 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
 		.collect(Collectors.toList());
 		
-		org.junit.Assert.assertEquals(3, cgcBases.size());
-		org.junit.Assert.assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
-		org.junit.Assert.assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), cgcBases.get(0).getEndDate());
+		assertEquals(3, cgcBases.size());
+		assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
+		assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), cgcBases.get(0).getEndDate());
 		
-		org.junit.Assert.assertEquals(overrideITStartDate, cgcBases.get(1).getStartDate());
-		org.junit.Assert.assertEquals(overrideITEndDate, cgcBases.get(1).getEndDate());
-		org.junit.Assert.assertEquals(0.0, Double.parseDouble(cgcBases.get(1).getExpression()), 0.00);
+		assertEquals(overrideITStartDate, cgcBases.get(1).getStartDate());
+		assertEquals(overrideITEndDate, cgcBases.get(1).getEndDate());
+		assertEquals(0.0, Double.parseDouble(cgcBases.get(1).getExpression()), 0.00);
 
-		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(2).getStartDate());
-		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(2).getEndDate());
+		assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(2).getStartDate());
+		assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(2).getEndDate());
 		
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
-		org.junit.Assert.assertEquals(1, distinct);
+		assertEquals(1, distinct);
 		
 		double expected = 10.00 * 7 + 6.66 + 3.33 + 12.22 ;
 		
-		Assert.assertEquals(10.00 * 7 , delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
-		Assert.assertEquals(10.00 * 7 , delay.getIrpfBase(), DELTA);
+		assertEquals(10.00 * 7 , delay.getTotalPayment(), DELTA);
+		assertEquals(expected, delay.getCommonBase(), DELTA);
+		assertEquals(expected, delay.getRawCommonBase(), DELTA);
+		assertEquals(expected, delay.getProfessionalBase(), DELTA);
+		assertEquals(10.00 * 7 , delay.getIrpfBase(), DELTA);
 		
-		org.junit.Assert.assertEquals(PaymentType.CRA_0012.name(), delay.getSalaryData(ContextVariable.DELAY_CAUSE.getName()));
+		assertEquals(PaymentType.CRA_0012.name(), delay.getSalaryData(ContextVariable.DELAY_CAUSE.getName()));
 
-		delay.getSalaryPayments().stream().filter( p -> p.getAmount() > 0.00 ).forEach( p -> org.junit.Assert.assertEquals(PaymentType.CRA_0012, p.getType()) );
+		delay.getSalaryPayments().stream().filter( p -> p.getAmount() > 0.00 ).forEach( p -> assertEquals(PaymentType.CRA_0012, p.getType()) );
 	}
 
 	@Test
@@ -5383,7 +5383,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
-		org.junit.Assert.assertEquals(23, delay.getSalaryPayments().size());
+		assertEquals(23, delay.getSalaryPayments().size());
 
 		List<SalaryData> cgcBases =
 		delay.getSalaryDatas().stream()
@@ -5393,31 +5393,31 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
 		.collect(Collectors.toList());
 		
-		org.junit.Assert.assertEquals(2, cgcBases.size());
-		org.junit.Assert.assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
-		org.junit.Assert.assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), cgcBases.get(0).getEndDate());
+		assertEquals(2, cgcBases.size());
+		assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
+		assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), cgcBases.get(0).getEndDate());
 		
-		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(1).getStartDate());
-		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(1).getEndDate());
+		assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(1).getStartDate());
+		assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(1).getEndDate());
 		
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
-		org.junit.Assert.assertEquals(1, distinct);
+		assertEquals(1, distinct);
 		
 		double expected = 10.00 * 7 + 6.66 + 3.33 + 12.22 ;
 		
-		Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
+		assertEquals(expected, delay.getCommonBase(), DELTA);
+		assertEquals(expected, delay.getRawCommonBase(), DELTA);
+		assertEquals(expected, delay.getProfessionalBase(), DELTA);
 		
 		int workDays = get( getLastDayOfMonth(overrideITStartDate), DAY_OF_MONTH) - 10;
 		
-		Assert.assertEquals(10.00 * 9 + ( 10.00 / 30 *  workDays ) , delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(10.00 * 9 + ( 10.00 / 30 *  workDays ) , delay.getIrpfBase(), DELTA);
+		assertEquals(10.00 * 9 + ( 10.00 / 30 *  workDays ) , delay.getTotalPayment(), DELTA);
+		assertEquals(10.00 * 9 + ( 10.00 / 30 *  workDays ) , delay.getIrpfBase(), DELTA);
 		
-		org.junit.Assert.assertEquals(PaymentType.CRA_0012.name(), delay.getSalaryData(ContextVariable.DELAY_CAUSE.getName()));
+		assertEquals(PaymentType.CRA_0012.name(), delay.getSalaryData(ContextVariable.DELAY_CAUSE.getName()));
 
-		delay.getSalaryPayments().stream().filter( p -> p.getAmount() > 0.00 ).forEach( p -> org.junit.Assert.assertEquals(PaymentType.CRA_0012, p.getType()) );
+		delay.getSalaryPayments().stream().filter( p -> p.getAmount() > 0.00 ).forEach( p -> assertEquals(PaymentType.CRA_0012, p.getType()) );
 	}
 
 	@Test
@@ -5517,7 +5517,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
-		org.junit.Assert.assertEquals(24, delay.getSalaryPayments().size());
+		assertEquals(24, delay.getSalaryPayments().size());
 
 		List<SalaryData> cgcBases =
 		delay.getSalaryDatas().stream()
@@ -5527,32 +5527,32 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
 		.collect(Collectors.toList());
 		
-		org.junit.Assert.assertEquals(4, cgcBases.size());
-		org.junit.Assert.assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
-		org.junit.Assert.assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), cgcBases.get(0).getEndDate());
+		assertEquals(4, cgcBases.size());
+		assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
+		assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), cgcBases.get(0).getEndDate());
 		
-		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(3).getStartDate());
-		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(3).getEndDate());
+		assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(3).getStartDate());
+		assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(3).getEndDate());
 		
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
-		org.junit.Assert.assertEquals(1, distinct);
+		assertEquals(1, distinct);
 		
 		double expected = 10.00 * 7.00 + 9.00 + 6.66 + 3.33 + 12.22 ;
 		
-		Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
+		assertEquals(expected, delay.getCommonBase(), DELTA);
+		assertEquals(expected, delay.getRawCommonBase(), DELTA);
+		assertEquals(expected, delay.getProfessionalBase(), DELTA);
 		
 		
 		int workDays = get( getLastDayOfMonth(overrideITStartDate), DAY_OF_MONTH) - 10;
 
-		Assert.assertEquals(10.00 * 9.00 + 3.00 + ( 10.00 / 30.00 *  workDays ) , delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(10.00 * 9.00 + 3.00 + ( 10.00 / 30.00 *  workDays ) , delay.getIrpfBase(), DELTA);
+		assertEquals(10.00 * 9.00 + 3.00 + ( 10.00 / 30.00 *  workDays ) , delay.getTotalPayment(), DELTA);
+		assertEquals(10.00 * 9.00 + 3.00 + ( 10.00 / 30.00 *  workDays ) , delay.getIrpfBase(), DELTA);
 		
-		org.junit.Assert.assertEquals(PaymentType.CRA_0012.name(), delay.getSalaryData(ContextVariable.DELAY_CAUSE.getName()));
+		assertEquals(PaymentType.CRA_0012.name(), delay.getSalaryData(ContextVariable.DELAY_CAUSE.getName()));
 
-		delay.getSalaryPayments().stream().filter( p -> p.getAmount() > 0.00 ).forEach( p -> org.junit.Assert.assertEquals(PaymentType.CRA_0012, p.getType()) );
+		delay.getSalaryPayments().stream().filter( p -> p.getAmount() > 0.00 ).forEach( p -> assertEquals(PaymentType.CRA_0012, p.getType()) );
 	}
 
 	@Test
@@ -5625,11 +5625,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		
-		Assert.assertEquals(0.00, delay.getTotalPayment());
-		Assert.assertEquals(0.00, delay.getCommonBase());
-		Assert.assertEquals(0.00, delay.getRawCommonBase());
-		Assert.assertEquals(0.00, delay.getProfessionalBase());
-		Assert.assertEquals(0.00, delay.getIrpfBase());
+		assertEquals(0.00, delay.getTotalPayment());
+		assertEquals(0.00, delay.getCommonBase());
+		assertEquals(0.00, delay.getRawCommonBase());
+		assertEquals(0.00, delay.getProfessionalBase());
+		assertEquals(0.00, delay.getIrpfBase());
 		
 		for (com.esferalia.aon.payroll.SalaryDeduction deduction : delay
 				.getSalaryDeductions()) {
@@ -5637,7 +5637,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + deduction.getExpression() + ")");
 		}
 
-		Assert.assertEquals(0.00, delay.getTotalDeduction());
+		assertEquals(0.00, delay.getTotalDeduction());
 
 		addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");
 
@@ -5659,11 +5659,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		
-		Assert.assertEquals(10.00, delay.getTotalPayment());
-		Assert.assertEquals(10.00, delay.getCommonBase());
-		Assert.assertEquals(10.00, delay.getRawCommonBase());
-		Assert.assertEquals(10.00, delay.getProfessionalBase());
-		Assert.assertEquals(10.00, delay.getIrpfBase());
+		assertEquals(10.00, delay.getTotalPayment());
+		assertEquals(10.00, delay.getCommonBase());
+		assertEquals(10.00, delay.getRawCommonBase());
+		assertEquals(10.00, delay.getProfessionalBase());
+		assertEquals(10.00, delay.getIrpfBase());
 		
 		for (com.esferalia.aon.payroll.SalaryDeduction deduction : delay
 				.getSalaryDeductions()) {
@@ -5671,7 +5671,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + deduction.getExpression() + ")");
 		}
 
-		Assert.assertEquals(10.00 * 10.00 / 100.00, delay.getTotalDeduction(), DELTA);
+		assertEquals(10.00 * 10.00 / 100.00, delay.getTotalDeduction(), DELTA);
 	}
 
 
@@ -5729,11 +5729,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		}
 
 		
-		org.junit.Assert.assertEquals(100.00, delay.getTotalPayment(), 0.00);
-		org.junit.Assert.assertEquals(100.00, delay.getCommonBase(), 0.00);
-		org.junit.Assert.assertEquals(100.00, delay.getRawCommonBase(), 0.00);
-		org.junit.Assert.assertEquals(100.00, delay.getProfessionalBase(), 0.00);
-		org.junit.Assert.assertEquals(100.00, delay.getIrpfBase(), 0.00);
+		assertEquals(100.00, delay.getTotalPayment(), 0.00);
+		assertEquals(100.00, delay.getCommonBase(), 0.00);
+		assertEquals(100.00, delay.getRawCommonBase(), 0.00);
+		assertEquals(100.00, delay.getProfessionalBase(), 0.00);
+		assertEquals(100.00, delay.getIrpfBase(), 0.00);
 
 		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
@@ -5768,11 +5768,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		delay = delayCalculator.calculate(delayCtx);
 
-		org.junit.Assert.assertEquals(50.00, delay.getTotalPayment(), 0.00);
-		org.junit.Assert.assertEquals(50.00, delay.getCommonBase(), 0.00);
-		org.junit.Assert.assertEquals(50.00, delay.getRawCommonBase(), 0.00);
-		org.junit.Assert.assertEquals(50.00, delay.getProfessionalBase(), 0.00);
-		org.junit.Assert.assertEquals(50.00, delay.getIrpfBase(), 0.00);
+		assertEquals(50.00, delay.getTotalPayment(), 0.00);
+		assertEquals(50.00, delay.getCommonBase(), 0.00);
+		assertEquals(50.00, delay.getRawCommonBase(), 0.00);
+		assertEquals(50.00, delay.getProfessionalBase(), 0.00);
+		assertEquals(50.00, delay.getIrpfBase(), 0.00);
 	}
 
 	@Test
@@ -5900,11 +5900,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		double expected = 160.00 + 1.67 * 16.00;
 //		System.out.println("EXPECTED :" + expected);
 		
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getTotalPayment(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00 , delay.getCommonBase(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getRawCommonBase(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getProfessionalBase(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getIrpfBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getTotalPayment(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00 , delay.getCommonBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getRawCommonBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getProfessionalBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getIrpfBase(), 0.05);
 
 		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
@@ -5930,7 +5930,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		    public void addPayment(Double amount, Double quote, Double tax, String description,
 		            java.util.Date startDate, java.util.Date endDate, IPayment payment,
 		            Map<String, ITimedVariable<?>> context) {
-			org.junit.Assert.assertEquals(0.00, amount, 0.00);
+			assertEquals(0.00, amount, 0.00);
 //			System.out.println("[" + startDate + "..." + endDate + "] :" + payment.getName() + " [ "
 //				+ description + "] :" + amount + " (" + payment.getExpression() + ")");
 		        super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
@@ -5938,11 +5938,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		delay = delayCalculator.calculate(delayCtx);
 
-		org.junit.Assert.assertEquals(0.00, delay.getTotalPayment(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getCommonBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getRawCommonBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getProfessionalBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getIrpfBase(), 0.00);
+		assertEquals(0.00, delay.getTotalPayment(), 0.00);
+		assertEquals(0.00, delay.getCommonBase(), 0.00);
+		assertEquals(0.00, delay.getRawCommonBase(), 0.00);
+		assertEquals(0.00, delay.getProfessionalBase(), 0.00);
+		assertEquals(0.00, delay.getIrpfBase(), 0.00);
 		
 		// Now One month 
 		
@@ -5959,7 +5959,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		    public void addPayment(Double amount, Double quote, Double tax, String description,
 		            java.util.Date startDate, java.util.Date endDate, IPayment payment,
 		            Map<String, ITimedVariable<?>> context) {
-			org.junit.Assert.assertEquals(0.00, amount, 0.00);
+			assertEquals(0.00, amount, 0.00);
 //			System.out.println("[" + startDate + "..." + endDate + "] :" + payment.getName() + " [ "
 //				+ description + "] :" + amount + " (" + payment.getExpression() + ")");
 		        super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
@@ -5967,11 +5967,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		delay = delayCalculator.calculate(delayCtx);
 
-		org.junit.Assert.assertEquals(0.00, delay.getTotalPayment(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getCommonBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getRawCommonBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getProfessionalBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getIrpfBase(), 0.00);
+		assertEquals(0.00, delay.getTotalPayment(), 0.00);
+		assertEquals(0.00, delay.getCommonBase(), 0.00);
+		assertEquals(0.00, delay.getRawCommonBase(), 0.00);
+		assertEquals(0.00, delay.getProfessionalBase(), 0.00);
+		assertEquals(0.00, delay.getIrpfBase(), 0.00);
 		
 		delayCtx = new SQLContractDelayCalculatorContext(connection, 
 			getFirstDayOfMonth(add(delayMonth, MONTH, 2)), 
@@ -5985,7 +5985,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		    public void addPayment(Double amount, Double quote, Double tax, String description,
 		            java.util.Date startDate, java.util.Date endDate, IPayment payment,
 		            Map<String, ITimedVariable<?>> context) {
-			org.junit.Assert.assertEquals(0.00, amount, 0.00);
+			assertEquals(0.00, amount, 0.00);
 			System.out.println("[" + startDate + "..." + endDate + "] :" + payment.getName() + " [ "
 				+ description + "] :" + amount + " (" + payment.getExpression() + ")");
 		        super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
@@ -5993,11 +5993,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		delay = delayCalculator.calculate(delayCtx);
 
-		org.junit.Assert.assertEquals(0.00, delay.getTotalPayment(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getCommonBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getRawCommonBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getProfessionalBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getIrpfBase(), 0.00);
+		assertEquals(0.00, delay.getTotalPayment(), 0.00);
+		assertEquals(0.00, delay.getCommonBase(), 0.00);
+		assertEquals(0.00, delay.getRawCommonBase(), 0.00);
+		assertEquals(0.00, delay.getProfessionalBase(), 0.00);
+		assertEquals(0.00, delay.getIrpfBase(), 0.00);
 	}
 
 	@Test
@@ -6125,11 +6125,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		double expected = 160.00 + 1.67 * 16.00;
 		System.out.println("EXPECTED :" + expected);
 		
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getTotalPayment(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00 , delay.getCommonBase(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getRawCommonBase(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getProfessionalBase(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getIrpfBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getTotalPayment(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00 , delay.getCommonBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getRawCommonBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getProfessionalBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getIrpfBase(), 0.05);
 
 		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
@@ -6155,7 +6155,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		    public void addPayment(Double amount, Double quote, Double tax, String description,
 		            java.util.Date startDate, java.util.Date endDate, IPayment payment,
 		            Map<String, ITimedVariable<?>> context) {
-			//org.junit.Assert.assertEquals(0.00, amount, 0.00);
+			//assertEquals(0.00, amount, 0.00);
 			System.out.println("[" + startDate + "..." + endDate + "] :" + payment.getName() + " [ "
 				+ description + "] :" + amount + " (" + payment.getExpression() + ")");
 		        super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
@@ -6163,11 +6163,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		delay = delayCalculator.calculate(delayCtx);
 
-		org.junit.Assert.assertEquals(0.00, delay.getTotalPayment(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getCommonBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getRawCommonBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getProfessionalBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getIrpfBase(), 0.00);
+		assertEquals(0.00, delay.getTotalPayment(), 0.00);
+		assertEquals(0.00, delay.getCommonBase(), 0.00);
+		assertEquals(0.00, delay.getRawCommonBase(), 0.00);
+		assertEquals(0.00, delay.getProfessionalBase(), 0.00);
+		assertEquals(0.00, delay.getIrpfBase(), 0.00);
 	}
 
 	
@@ -6296,11 +6296,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		double expected = 160.00 + 1.67 * 16.00;
 //		System.out.println("EXPECTED :" + expected);
 		
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getTotalPayment(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00 , delay.getCommonBase(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getRawCommonBase(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getProfessionalBase(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getIrpfBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getTotalPayment(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00 , delay.getCommonBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getRawCommonBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getProfessionalBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getIrpfBase(), 0.05);
 
 		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
@@ -6338,11 +6338,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		expected = 160.00 + 1.66 * 16.00;
 //		System.out.println("EXPECTED :" + expected);
 		
-		org.junit.Assert.assertEquals(160.00 + 1.66 * 16.00, delay.getTotalPayment(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.66 * 16.00 , delay.getCommonBase(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.66 * 16.00, delay.getRawCommonBase(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.66 * 16.00, delay.getProfessionalBase(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.66 * 16.00, delay.getIrpfBase(), 0.05);
+		assertEquals(160.00 + 1.66 * 16.00, delay.getTotalPayment(), 0.05);
+		assertEquals(160.00 + 1.66 * 16.00 , delay.getCommonBase(), 0.05);
+		assertEquals(160.00 + 1.66 * 16.00, delay.getRawCommonBase(), 0.05);
+		assertEquals(160.00 + 1.66 * 16.00, delay.getProfessionalBase(), 0.05);
+		assertEquals(160.00 + 1.66 * 16.00, delay.getIrpfBase(), 0.05);
 		
 		calculator = new SmartContractSalaryCalculator<ISalary>();
 		jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
@@ -6368,7 +6368,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		    public void addPayment(Double amount, Double quote, Double tax, String description,
 		            java.util.Date startDate, java.util.Date endDate, IPayment payment,
 		            Map<String, ITimedVariable<?>> context) {
-			org.junit.Assert.assertEquals(0.00, amount, 0.00);
+			assertEquals(0.00, amount, 0.00);
 //			System.out.println("[" + startDate + "..." + endDate + "] :" + payment.getName() + " [ "
 //				+ description + "] :" + amount + " (" + payment.getExpression() + ")");
 		        super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
@@ -6376,11 +6376,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		delay = delayCalculator.calculate(delayCtx);
 
-		org.junit.Assert.assertEquals(0.00, delay.getTotalPayment(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getCommonBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getRawCommonBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getProfessionalBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getIrpfBase(), 0.00);
+		assertEquals(0.00, delay.getTotalPayment(), 0.00);
+		assertEquals(0.00, delay.getCommonBase(), 0.00);
+		assertEquals(0.00, delay.getRawCommonBase(), 0.00);
+		assertEquals(0.00, delay.getProfessionalBase(), 0.00);
+		assertEquals(0.00, delay.getIrpfBase(), 0.00);
 		
 		// Now One month 
 		
@@ -6397,7 +6397,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		    public void addPayment(Double amount, Double quote, Double tax, String description,
 		            java.util.Date startDate, java.util.Date endDate, IPayment payment,
 		            Map<String, ITimedVariable<?>> context) {
-			org.junit.Assert.assertEquals(0.00, amount, 0.00);
+			assertEquals(0.00, amount, 0.00);
 //			System.out.println("[" + startDate + "..." + endDate + "] :" + payment.getName() + " [ "
 //				+ description + "] :" + amount + " (" + payment.getExpression() + ")");
 		        super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
@@ -6405,11 +6405,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		delay = delayCalculator.calculate(delayCtx);
 
-		org.junit.Assert.assertEquals(0.00, delay.getTotalPayment(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getCommonBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getRawCommonBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getProfessionalBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getIrpfBase(), 0.00);
+		assertEquals(0.00, delay.getTotalPayment(), 0.00);
+		assertEquals(0.00, delay.getCommonBase(), 0.00);
+		assertEquals(0.00, delay.getRawCommonBase(), 0.00);
+		assertEquals(0.00, delay.getProfessionalBase(), 0.00);
+		assertEquals(0.00, delay.getIrpfBase(), 0.00);
 		
 		delayCtx = new SQLContractDelayCalculatorContext(connection, 
 			getFirstDayOfMonth(add(delayMonth, MONTH, 2)), 
@@ -6423,7 +6423,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		    public void addPayment(Double amount, Double quote, Double tax, String description,
 		            java.util.Date startDate, java.util.Date endDate, IPayment payment,
 		            Map<String, ITimedVariable<?>> context) {
-			org.junit.Assert.assertEquals(0.00, amount, 0.00);
+			assertEquals(0.00, amount, 0.00);
 			System.out.println("[" + startDate + "..." + endDate + "] :" + payment.getName() + " [ "
 				+ description + "] :" + amount + " (" + payment.getExpression() + ")");
 		        super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
@@ -6431,11 +6431,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		delay = delayCalculator.calculate(delayCtx);
 
-		org.junit.Assert.assertEquals(0.00, delay.getTotalPayment(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getCommonBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getRawCommonBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getProfessionalBase(), 0.00);
-		org.junit.Assert.assertEquals(0.00, delay.getIrpfBase(), 0.00);
+		assertEquals(0.00, delay.getTotalPayment(), 0.00);
+		assertEquals(0.00, delay.getCommonBase(), 0.00);
+		assertEquals(0.00, delay.getRawCommonBase(), 0.00);
+		assertEquals(0.00, delay.getProfessionalBase(), 0.00);
+		assertEquals(0.00, delay.getIrpfBase(), 0.00);
 	}
 
 	@Test
@@ -6534,7 +6534,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
 		delay.getSalaryDatas().stream().filter(d -> d.getName().equals(ContextVariable.DELAY_CAUSE.getName()))
-				.forEach(v -> org.junit.Assert.assertEquals(v.getExpression(), "CRA_0033"));
+				.forEach(v -> assertEquals(v.getExpression(), "CRA_0033"));
 		
 //		for (com.esferalia.aon.payroll.SalaryPayment payment : delay
 //				.getSalaryPayments()) {
@@ -6542,19 +6542,19 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 //					+ " (" + payment.getExpression() + ")" + payment.getType());
 //		}
 
-		org.junit.Assert.assertEquals(10, delay.getSalaryPayments().size());
+		assertEquals(10, delay.getSalaryPayments().size());
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
-		org.junit.Assert.assertEquals(1, distinct);
+		assertEquals(1, distinct);
 		
 		double expected = 100.00 * 10 ;
 		
-		org.junit.Assert.assertEquals(0.00, delay.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
-		org.junit.Assert.assertEquals(0.00, delay.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(-(4.6 / 100.00 * expected ), delay.getTotalLiquid(), DELTA);
-		org.junit.Assert.assertEquals(expected, delay.getTotalEnterprise(), DELTA);
+		assertEquals(0.00, delay.getTotalPayment(), DELTA);
+		assertEquals(expected, delay.getCommonBase(), DELTA);
+		assertEquals(expected, delay.getProfessionalBase(), DELTA);
+		assertEquals(0.00, delay.getIrpfBase(), DELTA);
+		assertEquals(-(4.6 / 100.00 * expected ), delay.getTotalLiquid(), DELTA);
+		assertEquals(expected, delay.getTotalEnterprise(), DELTA);
 		
 		
 		delayCtx = new SQLContractPPECalculatorContext(connection, getFirstDayOfMonth(getToday()), add(startDate, DAY_OF_MONTH, -1), endDate, criteria);
@@ -6585,7 +6585,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				), 
 				startDate, endDate, Double.class)
 				.stream().collect(Collectors.summingDouble( ITimedResult::getValue));
-		org.junit.Assert.assertEquals(4.6 / 100 * expected, ppeDelays, DELTA);
+		assertEquals(4.6 / 100 * expected, ppeDelays, DELTA);
 		
 		ppeDelays = 
 				ctx.getExpressionContext().eval(
@@ -6601,7 +6601,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				), 
 				startDate, endDate, Double.class)
 				.stream().collect(Collectors.summingDouble( ITimedResult::getValue));
-		org.junit.Assert.assertEquals(4.6 / 100 * expected, ppeDelays, DELTA);
+		assertEquals(4.6 / 100 * expected, ppeDelays, DELTA);
 
 		ppeDelays = 
 				ctx.getExpressionContext().eval(
@@ -6617,7 +6617,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				), 
 				startDate, endDate, Double.class)
 				.stream().collect(Collectors.summingDouble( ITimedResult::getValue));
-		org.junit.Assert.assertEquals(4.6 / 100 * expected, ppeDelays, DELTA);
+		assertEquals(4.6 / 100 * expected, ppeDelays, DELTA);
 
 		ppeDelays = 
 				ctx.getExpressionContext().eval(
@@ -6633,7 +6633,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				), 
 				startDate, endDate, Double.class)
 				.stream().collect(Collectors.summingDouble( ITimedResult::getValue));
-		org.junit.Assert.assertEquals(4.6 / 100 * expected, ppeDelays, DELTA);
+		assertEquals(4.6 / 100 * expected, ppeDelays, DELTA);
 	}
 
 	@Test
@@ -6738,7 +6738,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
 		delay.getSalaryDatas().stream().filter(d -> d.getName().equals(ContextVariable.DELAY_CAUSE.getName()))
-				.forEach(v -> org.junit.Assert.assertEquals(v.getExpression(), "CRA_0033"));
+				.forEach(v -> assertEquals(v.getExpression(), "CRA_0033"));
 		
 		List<ContextData> salaryHours = AON.getSalaryData( new AONContext(connection) , 
 		p -> p.getContractProperty().eq(contract.getId()))
@@ -6752,23 +6752,23 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		for (int i = 0; i < salaryHours.size(); i++) {
 			Double delayHour = Double.parseDouble(delayHours.get(i).getExpression());
 			Double salaryHour = Double.parseDouble(salaryHours.get(i).getExpression());
-			org.junit.Assert.assertEquals(salaryHour, delayHour, DELTA );
+			assertEquals(salaryHour, delayHour, DELTA );
 			
 		}	
 		
-		org.junit.Assert.assertEquals(10, delay.getSalaryPayments().size());
+		assertEquals(10, delay.getSalaryPayments().size());
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
-		org.junit.Assert.assertEquals(1, distinct);
+		assertEquals(1, distinct);
 		
 		double expected = 100.00 * 10 ;
 		
-		org.junit.Assert.assertEquals(0.00, delay.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
-		org.junit.Assert.assertEquals(0.00, delay.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(-(4.6 / 100.00 * expected ), delay.getTotalLiquid(), DELTA);
-		org.junit.Assert.assertEquals(expected, delay.getTotalEnterprise(), DELTA);
+		assertEquals(0.00, delay.getTotalPayment(), DELTA);
+		assertEquals(expected, delay.getCommonBase(), DELTA);
+		assertEquals(expected, delay.getProfessionalBase(), DELTA);
+		assertEquals(0.00, delay.getIrpfBase(), DELTA);
+		assertEquals(-(4.6 / 100.00 * expected ), delay.getTotalLiquid(), DELTA);
+		assertEquals(expected, delay.getTotalEnterprise(), DELTA);
 		
 		
 	}
@@ -6875,7 +6875,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
 		delay.getSalaryDatas().stream().filter(d -> d.getName().equals(ContextVariable.DELAY_CAUSE.getName()))
-				.forEach(v -> org.junit.Assert.assertEquals(v.getExpression(), "CRA_0033"));
+				.forEach(v -> assertEquals(v.getExpression(), "CRA_0033"));
 		
 		List<ContextData> salaryHours = AON.getSalaryData( new AONContext(connection) , 
 		p -> p.getContractProperty().eq(contract.getId()))
@@ -6889,23 +6889,23 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		for (int i = 0; i < salaryHours.size(); i++) {
 			Double delayHour = Double.parseDouble(delayHours.get(i).getExpression());
 			Double salaryHour = Double.parseDouble(salaryHours.get(i).getExpression());
-			org.junit.Assert.assertEquals(salaryHour, delayHour, DELTA );
+			assertEquals(salaryHour, delayHour, DELTA );
 			
 		}	
 		
-		org.junit.Assert.assertEquals(10, delay.getSalaryPayments().size());
+		assertEquals(10, delay.getSalaryPayments().size());
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
-		org.junit.Assert.assertEquals(1, distinct);
+		assertEquals(1, distinct);
 		
 		double expected = 100.00 * 10 ;
 		
-		org.junit.Assert.assertEquals(0.00, delay.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
-		org.junit.Assert.assertEquals(0.00, delay.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(-(4.6 / 100.00 * expected ), delay.getTotalLiquid(), DELTA);
-		org.junit.Assert.assertEquals(expected, delay.getTotalEnterprise(), DELTA);
+		assertEquals(0.00, delay.getTotalPayment(), DELTA);
+		assertEquals(expected, delay.getCommonBase(), DELTA);
+		assertEquals(expected, delay.getProfessionalBase(), DELTA);
+		assertEquals(0.00, delay.getIrpfBase(), DELTA);
+		assertEquals(-(4.6 / 100.00 * expected ), delay.getTotalLiquid(), DELTA);
+		assertEquals(expected, delay.getTotalEnterprise(), DELTA);
 		
 		
 	}
@@ -7020,7 +7020,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
 //		delay.getSalaryDatas().stream().filter(d -> d.getName().equals(ContextVariable.DELAY_CAUSE.getName()))
-//				.forEach(v -> org.junit.Assert.assertEquals(v.getExpression(), "CRA_0033"));
+//				.forEach(v -> assertEquals(v.getExpression(), "CRA_0033"));
 //		
 //		List<ContextData> salaryHours = AON.getSalaryData( new AONContext(connection) , 
 //		p -> p.getContractProperty().eq(contract.getId()))
@@ -7034,14 +7034,14 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 //		for (int i = 0; i < salaryHours.size(); i++) {
 //			Double delayHour = Double.parseDouble(delayHours.get(i).getExpression());
 //			Double salaryHour = Double.parseDouble(salaryHours.get(i).getExpression());
-//			org.junit.Assert.assertEquals(salaryHour, delayHour, DELTA );
+//			assertEquals(salaryHour, delayHour, DELTA );
 //			
 //		}	
 		
-		org.junit.Assert.assertEquals(9, delay.getSalaryPayments().size());
+		assertEquals(9, delay.getSalaryPayments().size());
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
-		org.junit.Assert.assertEquals(1, distinct);
+		assertEquals(1, distinct);
 		
 		int itStartDay =  get(itStartDate, Calendar.DAY_OF_MONTH );
 		int itStartDays =  get( getLastDayOfMonth(itStartDate), Calendar.DAY_OF_MONTH);
@@ -7054,12 +7054,12 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				+ 100.00 * 0.5 * ( itEndDays - itEndDay - 1 ) / itEndDays 
 				;
 		
-		org.junit.Assert.assertEquals(0.00, delay.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals(expected, delay.getCommonBase(), 0.5);
-		org.junit.Assert.assertEquals(expected, delay.getProfessionalBase(), 0.5);
-		org.junit.Assert.assertEquals(0.00, delay.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(-(4.6 / 100.00 * expected ), delay.getTotalLiquid(), DELTA);
-		org.junit.Assert.assertEquals(expected, delay.getTotalEnterprise(), 0.5);
+		assertEquals(0.00, delay.getTotalPayment(), DELTA);
+		assertEquals(expected, delay.getCommonBase(), 0.5);
+		assertEquals(expected, delay.getProfessionalBase(), 0.5);
+		assertEquals(0.00, delay.getIrpfBase(), DELTA);
+		assertEquals(-(4.6 / 100.00 * expected ), delay.getTotalLiquid(), DELTA);
+		assertEquals(expected, delay.getTotalEnterprise(), 0.5);
 		
 		
 	}
@@ -7120,11 +7120,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		
-		Assert.assertEquals(100.00, delay.getTotalPayment());
-		Assert.assertEquals(100.00, delay.getCommonBase());
-		Assert.assertEquals(100.00, delay.getRawCommonBase());
-		Assert.assertEquals(100.00, delay.getProfessionalBase());
-		Assert.assertEquals(100.00, delay.getIrpfBase());
+		assertEquals(100.00, delay.getTotalPayment());
+		assertEquals(100.00, delay.getCommonBase());
+		assertEquals(100.00, delay.getRawCommonBase());
+		assertEquals(100.00, delay.getProfessionalBase());
+		assertEquals(100.00, delay.getIrpfBase());
 	}
 
 	@Test
@@ -7184,10 +7184,10 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		
-		Assert.assertEquals(100.00, delay.getTotalPayment());
-		Assert.assertEquals(0.00, delay.getCommonBase());
-		Assert.assertEquals(0.00, delay.getProfessionalBase());
-		Assert.assertEquals(100.00, delay.getIrpfBase());
+		assertEquals(100.00, delay.getTotalPayment());
+		assertEquals(0.00, delay.getCommonBase());
+		assertEquals(0.00, delay.getProfessionalBase());
+		assertEquals(100.00, delay.getIrpfBase());
 	}
 
 	@Test
@@ -7267,14 +7267,14 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 			AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().eq(ctx.getStartDate())) ).findAny()
 			.ifPresentOrElse(salary -> {
 				List<Bonus> bonuses = salary.getBonuses();
-				org.junit.Assert.assertEquals(1, bonuses.size());
+				assertEquals(1, bonuses.size());
 				Bonus bonus = bonuses.get(0);
-				org.junit.Assert.assertEquals(128.00,bonus.getAmount(), DELTA);
+				assertEquals(128.00,bonus.getAmount(), DELTA);
 				salary.getContextData().get("BONF_SEPE_E").forEach(value -> {
 					System.out.println("  BONF_SEPE_E : " + value.getExpression() );
 				});
 			}, 
-			() -> org.junit.Assert.fail("No salary found for contract " + contract.getId() + " and date " + ctx.getStartDate() ) );
+			() -> fail("No salary found for contract " + contract.getId() + " and date " + ctx.getStartDate() ) );
 		}
 		
 		addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");
@@ -7297,17 +7297,17 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		Collection<SalaryBonus> bonuses = delay.getBonus();
-		org.junit.Assert.assertEquals(0, bonuses.size());
+		assertEquals(0, bonuses.size());
 		bonuses.forEach(bonus -> {
 			System.out.println("   Bonus -> " + bonus.getDescription() + " : " + bonus.getAmount() );
-			org.junit.Assert.assertEquals(0, bonus.getAmount(), DELTA);
+			assertEquals(0, bonus.getAmount(), DELTA);
 		});
 		
-		Assert.assertEquals(100.00, delay.getTotalPayment());
-		Assert.assertEquals(100.00, delay.getCommonBase());
-		Assert.assertEquals(100.00, delay.getRawCommonBase());
-		Assert.assertEquals(100.00, delay.getProfessionalBase());
-		Assert.assertEquals(100.00, delay.getIrpfBase());
+		assertEquals(100.00, delay.getTotalPayment());
+		assertEquals(100.00, delay.getCommonBase());
+		assertEquals(100.00, delay.getRawCommonBase());
+		assertEquals(100.00, delay.getProfessionalBase());
+		assertEquals(100.00, delay.getIrpfBase());
 	}
 
 	@Test
@@ -7387,14 +7387,14 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 			AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().eq(ctx.getStartDate())) ).findAny()
 			.ifPresentOrElse(salary -> {
 				List<Bonus> bonuses = salary.getBonuses();
-				org.junit.Assert.assertEquals(1, bonuses.size());
+				assertEquals(1, bonuses.size());
 				Bonus bonus = bonuses.get(0);
-				org.junit.Assert.assertEquals(60.00,bonus.getAmount(), DELTA);
+				assertEquals(60.00,bonus.getAmount(), DELTA);
 				salary.getContextData().get("BONF_SEPE_E").forEach(value -> {
 					System.out.println("  BONF_SEPE_E : " + value.getExpression() );
 				});
 			}, 
-			() -> org.junit.Assert.fail("No salary found for contract " + contract.getId() + " and date " + ctx.getStartDate() ) );
+			() -> fail("No salary found for contract " + contract.getId() + " and date " + ctx.getStartDate() ) );
 		}
 		
 		addPayment(aonContext, contract, "100.00 * DIAS_TRABAJADOS / DIAS_MES");
@@ -7417,17 +7417,17 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		Collection<SalaryBonus> bonuses = delay.getBonus();
-		org.junit.Assert.assertEquals(10, bonuses.size());
+		assertEquals(10, bonuses.size());
 		bonuses.forEach(bonus -> {
 			System.out.println("   Bonus -> " + bonus.getDescription() + " : " + bonus.getAmount() );
-			org.junit.Assert.assertEquals(6.00, bonus.getAmount(), DELTA);
+			assertEquals(6.00, bonus.getAmount(), DELTA);
 		});
 		
-		Assert.assertEquals(1000.00, delay.getTotalPayment());
-		Assert.assertEquals(1000.00, delay.getCommonBase());
-		Assert.assertEquals(1000.00, delay.getRawCommonBase());
-		Assert.assertEquals(1000.00, delay.getProfessionalBase());
-		Assert.assertEquals(1000.00, delay.getIrpfBase());
+		assertEquals(1000.00, delay.getTotalPayment());
+		assertEquals(1000.00, delay.getCommonBase());
+		assertEquals(1000.00, delay.getRawCommonBase());
+		assertEquals(1000.00, delay.getProfessionalBase());
+		assertEquals(1000.00, delay.getIrpfBase());
 	}
 
 	@Test
@@ -7483,11 +7483,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				List<Deduction> bonuses = salary.getDeductions().stream()
 						.filter(d -> d.getDeductionType() == com.esferalia.aon.occam.api.model.type.DeductionType.BONUS)
 						.toList();
-				org.junit.Assert.assertEquals(1, bonuses.size());
+				assertEquals(1, bonuses.size());
 				Deduction bonus = bonuses.get(0);
-				org.junit.Assert.assertEquals(-28.00,bonus.getAmount(), DELTA);
+				assertEquals(-28.00,bonus.getAmount(), DELTA);
 			}, 
-			() -> org.junit.Assert.fail("No salary found for contract " + contract.getId() + " and date " + ctx.getStartDate() ) );
+			() -> fail("No salary found for contract " + contract.getId() + " and date " + ctx.getStartDate() ) );
 		}
 		
 		addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");
@@ -7513,17 +7513,17 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		List<SalaryDeduction> bonuses = delay.getSalaryDeductions().stream()
 				.filter(d -> d.getDeductionType() == DeductionType.BONUS)
 				.toList();
-		org.junit.Assert.assertEquals(0, bonuses.size());
+		assertEquals(0, bonuses.size());
 		bonuses.forEach(bonus -> {
 			System.out.println("   Bonus -> " + bonus.getDescription() + " : " + bonus.getAmount() );
-			org.junit.Assert.assertEquals(0, bonus.getAmount(), DELTA);
+			assertEquals(0, bonus.getAmount(), DELTA);
 		});
 		
-		Assert.assertEquals(100.00, delay.getTotalPayment());
-		Assert.assertEquals(100.00, delay.getCommonBase());
-		Assert.assertEquals(100.00, delay.getRawCommonBase());
-		Assert.assertEquals(100.00, delay.getProfessionalBase());
-		Assert.assertEquals(100.00, delay.getIrpfBase());
+		assertEquals(100.00, delay.getTotalPayment());
+		assertEquals(100.00, delay.getCommonBase());
+		assertEquals(100.00, delay.getRawCommonBase());
+		assertEquals(100.00, delay.getProfessionalBase());
+		assertEquals(100.00, delay.getIrpfBase());
 	}
 
 	@Test
@@ -7579,11 +7579,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				List<Deduction> bonuses = salary.getDeductions().stream()
 						.filter(d -> d.getDeductionType() == com.esferalia.aon.occam.api.model.type.DeductionType.BONUS)
 						.toList();
-				org.junit.Assert.assertEquals(1, bonuses.size());
+				assertEquals(1, bonuses.size());
 				Deduction bonus = bonuses.get(0);
-				org.junit.Assert.assertEquals(-17.50,bonus.getAmount(), DELTA);
+				assertEquals(-17.50,bonus.getAmount(), DELTA);
 			}, 
-			() -> org.junit.Assert.fail("No salary found for contract " + contract.getId() + " and date " + ctx.getStartDate() ) );
+			() -> fail("No salary found for contract " + contract.getId() + " and date " + ctx.getStartDate() ) );
 		}
 		
 		addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");
@@ -7609,17 +7609,17 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		List<SalaryDeduction> bonuses = delay.getSalaryDeductions().stream()
 				.filter(d -> d.getDeductionType() == DeductionType.BONUS)
 				.toList();
-		org.junit.Assert.assertEquals(10, bonuses.size());
+		assertEquals(10, bonuses.size());
 		bonuses.forEach(bonus -> {
 			System.out.println("   Bonus -> " + bonus.getDescription() + " : " + bonus.getAmount() );
-			org.junit.Assert.assertEquals(-0.1, bonus.getAmount(), DELTA);
+			assertEquals(-0.1, bonus.getAmount(), DELTA);
 		});
 		
-		Assert.assertEquals(100.00, delay.getTotalPayment());
-		Assert.assertEquals(100.00, delay.getCommonBase());
-		Assert.assertEquals(100.00, delay.getRawCommonBase());
-		Assert.assertEquals(100.00, delay.getProfessionalBase());
-		Assert.assertEquals(100.00, delay.getIrpfBase());
+		assertEquals(100.00, delay.getTotalPayment());
+		assertEquals(100.00, delay.getCommonBase());
+		assertEquals(100.00, delay.getRawCommonBase());
+		assertEquals(100.00, delay.getProfessionalBase());
+		assertEquals(100.00, delay.getIrpfBase());
 	}
 
 
@@ -7748,11 +7748,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		double expected = 160.00 + 1.67 * 16.00;
 //		System.out.println("EXPECTED :" + expected);
 		
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getTotalPayment(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00 , delay.getCommonBase(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getRawCommonBase(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getProfessionalBase(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getIrpfBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getTotalPayment(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00 , delay.getCommonBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getRawCommonBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getProfessionalBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getIrpfBase(), 0.05);
 
 		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
@@ -7780,7 +7780,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		    public void addPayment(Double amount, Double quote, Double tax, String description,
 		            java.util.Date startDate, java.util.Date endDate, IPayment payment,
 		            Map<String, ITimedVariable<?>> context) {
-//			org.junit.Assert.assertEquals(10.00, amount, 0.00);
+//			assertEquals(10.00, amount, 0.00);
 //			System.out.println("[" + startDate + "..." + endDate + "] :" + payment.getName() + " [ "
 //				+ description + "] :" + amount + " (" + payment.getExpression() + ")");
 		        super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
@@ -7788,11 +7788,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		delay = delayCalculator.calculate(delayCtx);
 
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getTotalPayment(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00 , delay.getCommonBase(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getRawCommonBase(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getProfessionalBase(), 0.05);
-		org.junit.Assert.assertEquals(160.00 + 1.67 * 16.00, delay.getIrpfBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getTotalPayment(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00 , delay.getCommonBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getRawCommonBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getProfessionalBase(), 0.05);
+		assertEquals(160.00 + 1.67 * 16.00, delay.getIrpfBase(), 0.05);
 		
 		// Now One month 
 		
@@ -7809,7 +7809,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		    public void addPayment(Double amount, Double quote, Double tax, String description,
 		            java.util.Date startDate, java.util.Date endDate, IPayment payment,
 		            Map<String, ITimedVariable<?>> context) {
-//			org.junit.Assert.assertEquals(0.00, amount, 0.00);
+//			assertEquals(0.00, amount, 0.00);
 //			System.out.println("[" + startDate + "..." + endDate + "] :" + payment.getName() + " [ "
 //				+ description + "] :" + amount + " (" + payment.getExpression() + ")");
 		        super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
@@ -7817,11 +7817,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		delay = delayCalculator.calculate(delayCtx);
 
-		org.junit.Assert.assertEquals(10.00 + 1.67, delay.getTotalPayment(), 0.05);
-		org.junit.Assert.assertEquals(10.00 + 1.67 , delay.getCommonBase(), 0.05);
-		org.junit.Assert.assertEquals(10.00 + 1.67, delay.getRawCommonBase(), 0.05);
-		org.junit.Assert.assertEquals(10.00 + 1.67, delay.getProfessionalBase(), 0.05);
-		org.junit.Assert.assertEquals(10.00 + 1.67, delay.getIrpfBase(), 0.05);
+		assertEquals(10.00 + 1.67, delay.getTotalPayment(), 0.05);
+		assertEquals(10.00 + 1.67 , delay.getCommonBase(), 0.05);
+		assertEquals(10.00 + 1.67, delay.getRawCommonBase(), 0.05);
+		assertEquals(10.00 + 1.67, delay.getProfessionalBase(), 0.05);
+		assertEquals(10.00 + 1.67, delay.getIrpfBase(), 0.05);
 		
 		delayCtx = new SQLContractDelayCalculatorContext(connection, 
 			getFirstDayOfMonth(add(delayMonth, MONTH, 2)), 
@@ -7835,7 +7835,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		    public void addPayment(Double amount, Double quote, Double tax, String description,
 		            java.util.Date startDate, java.util.Date endDate, IPayment payment,
 		            Map<String, ITimedVariable<?>> context) {
-			//org.junit.Assert.assertEquals(0.00, amount, 0.00);
+			//assertEquals(0.00, amount, 0.00);
 			System.out.println("[" + startDate + "..." + endDate + "] :" + payment.getName() + " [ "
 				+ description + "] :" + amount + " (" + payment.getExpression() + ")");
 		        super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
@@ -7843,11 +7843,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		delay = delayCalculator.calculate(delayCtx);
 
-		org.junit.Assert.assertEquals(10.00 * 6 + 1.67 * 6, delay.getTotalPayment(), 0.05);
-		org.junit.Assert.assertEquals(10.00 * 6 + 1.67 * 6, delay.getCommonBase(), 0.05);
-		org.junit.Assert.assertEquals(10.00 * 6 + 1.67 * 6, delay.getRawCommonBase(), 0.05);
-		org.junit.Assert.assertEquals(10.00 * 6 + 1.67 * 6, delay.getProfessionalBase(), 0.05);
-		org.junit.Assert.assertEquals(10.00 * 6 + 1.67 * 6, delay.getIrpfBase(), 0.05);
+		assertEquals(10.00 * 6 + 1.67 * 6, delay.getTotalPayment(), 0.05);
+		assertEquals(10.00 * 6 + 1.67 * 6, delay.getCommonBase(), 0.05);
+		assertEquals(10.00 * 6 + 1.67 * 6, delay.getRawCommonBase(), 0.05);
+		assertEquals(10.00 * 6 + 1.67 * 6, delay.getProfessionalBase(), 0.05);
+		assertEquals(10.00 * 6 + 1.67 * 6, delay.getIrpfBase(), 0.05);
 	}
 	
 	
@@ -7927,24 +7927,24 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 
-		org.junit.Assert.assertEquals(20, delay.getSalaryPayments().size());
+		assertEquals(20, delay.getSalaryPayments().size());
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
-		org.junit.Assert.assertEquals(1, distinct);
+		assertEquals(1, distinct);
 		
 		double extraHours = 16.66 + 13.33 + 112.22;
 		double expected = 10.00 * 7 + 6.66 + 3.33 + 12.22  ;
 		
-		Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
-		Assert.assertEquals(expected + extraHours, delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(expected + extraHours, delay.getIrpfBase(), DELTA);
+		assertEquals(expected, delay.getCommonBase(), DELTA);
+		assertEquals(expected, delay.getRawCommonBase(), DELTA);
+		assertEquals(expected + extraHours, delay.getTotalPayment(), DELTA);
+		assertEquals(expected + extraHours, delay.getIrpfBase(), DELTA);
 
-		Assert.assertEquals(extraHours, delay.getOvertimeBase(), DELTA);
-		Assert.assertEquals(expected + extraHours, delay.getProfessionalBase(), DELTA);
+		assertEquals(extraHours, delay.getOvertimeBase(), DELTA);
+		assertEquals(expected + extraHours, delay.getProfessionalBase(), DELTA);
 		
 		
-		Assert.assertEquals( ( delay.getCommonBase() + delay.getOvertimeBase() )  * 4.70 / 100 + delay.getProfessionalBase()  * 1.66 / 100.00, delay.getSocialSecurityContributions(), DELTA);
+		assertEquals( ( delay.getCommonBase() + delay.getOvertimeBase() )  * 4.70 / 100 + delay.getProfessionalBase()  * 1.66 / 100.00, delay.getSocialSecurityContributions(), DELTA);
 
 	}
 	
@@ -8027,24 +8027,24 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 
-		org.junit.Assert.assertEquals(20, delay.getSalaryPayments().size());
+		assertEquals(20, delay.getSalaryPayments().size());
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
-		org.junit.Assert.assertEquals(1, distinct);
+		assertEquals(1, distinct);
 		
 		double extraHours = 160.00 + 130.00 + 200.00;
 		double expected = 10.00 * 7 + 6.66 + 3.33 + 12.22  ;
 		
-		Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
-		Assert.assertEquals(expected + extraHours, delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(expected + extraHours, delay.getIrpfBase(), DELTA);
+		assertEquals(expected, delay.getCommonBase(), DELTA);
+		assertEquals(expected, delay.getRawCommonBase(), DELTA);
+		assertEquals(expected + extraHours, delay.getTotalPayment(), DELTA);
+		assertEquals(expected + extraHours, delay.getIrpfBase(), DELTA);
 
-		Assert.assertEquals(extraHours, delay.getOvertimeBase(), DELTA);
-		Assert.assertEquals(expected + extraHours, delay.getProfessionalBase(), DELTA);
+		assertEquals(extraHours, delay.getOvertimeBase(), DELTA);
+		assertEquals(expected + extraHours, delay.getProfessionalBase(), DELTA);
 		
 		
-		Assert.assertEquals( 
+		assertEquals( 
 				( delay.getCommonBase() + delay.getOvertimeBase() )  * 4.70 / 100 
 				+ delay.getProfessionalBase()  * 1.66 / 100.00, 
 		delay.getSocialSecurityContributions(), DELTA);

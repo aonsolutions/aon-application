@@ -8,9 +8,9 @@ import java.util.Date;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -28,7 +28,7 @@ public class SLDSalariesTestCase {
 	private static double DELTA = 0.001; 
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void testGetSalaries() throws IOException, SegSocialException {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("/solutions/aon/seg/social/AyudaTFNMT.p12") ){
 			
@@ -72,22 +72,22 @@ public class SLDSalariesTestCase {
 				
 				double totalDeductions = salary.getDeductions()
 				.stream().collect(Collectors.summingDouble(d -> d.getAmount()));
-				Assert.assertEquals(salary.getEmployeeSSNumber(), salary.getTotalSSContributions(), totalDeductions , DELTA);
-				
-				
+				Assertions.assertEquals(salary.getTotalSSContributions(), totalDeductions, DELTA, salary.getEmployeeSSNumber());
+
+
 				double totalCgpBase = salary.getContextData(ContextVariable.CGP_BASE.getName()
 				, Collectors.summingDouble(s->Double.parseDouble(s)));
-				Assert.assertEquals(salary.getEmployeeSSNumber(), salary.getProfessionalContingenciesBase(), totalCgpBase , DELTA);
+				Assertions.assertEquals(salary.getProfessionalContingenciesBase(), totalCgpBase, DELTA, salary.getEmployeeSSNumber());
 
 				double totalCgcBase = salary.getContextData(ContextVariable.CGC_BASE.getName()
 				, Collectors.summingDouble(s->Double.parseDouble(s)));
-				Assert.assertEquals(salary.getEmployeeSSNumber(), salary.getCommonContingenciesBase(), totalCgcBase , DELTA);
-				
+				Assertions.assertEquals(salary.getCommonContingenciesBase(), totalCgcBase, DELTA, salary.getEmployeeSSNumber());
+
 				double totalCosts = salary.getCosts()
 				.stream().collect(Collectors.summingDouble(d -> d.getAmount()));
 				double totalBonus = salary.getBonuses()
 				.stream().collect(Collectors.summingDouble(d -> d.getAmount()));
-				Assert.assertEquals(salary.getEmployeeSSNumber(), salary.getTotalEnterprise(), totalCosts -totalBonus, DELTA);
+				Assertions.assertEquals(salary.getTotalEnterprise(), totalCosts -totalBonus, DELTA, salary.getEmployeeSSNumber());
 				
 				
 			} ));
@@ -95,7 +95,7 @@ public class SLDSalariesTestCase {
 	}
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void testGetSalariesByPeriod() throws IOException, SegSocialException {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("/solutions/aon/seg/social/AyudaTFNMT.p12") ){
 			
@@ -165,22 +165,22 @@ public class SLDSalariesTestCase {
 					
 					double totalDeductions = salary.getDeductions()
 					.stream().collect(Collectors.summingDouble(d -> d.getAmount()));
-					Assert.assertEquals(salary.getEmployeeSSNumber(), salary.getTotalSSContributions(), totalDeductions , DELTA);
-					
+					Assertions.assertEquals(salary.getTotalSSContributions(), totalDeductions, DELTA, salary.getEmployeeSSNumber());
+
 
 					double totalCgpBase = salary.getContextData(ContextVariable.CGP_BASE.getName()
 					, Collectors.summingDouble(s-> Double.parseDouble(s)));
-					Assert.assertEquals(salary.getEmployeeSSNumber(), salary.getProfessionalContingenciesBase(), totalCgpBase , DELTA);
+					Assertions.assertEquals(salary.getProfessionalContingenciesBase(), totalCgpBase, DELTA, salary.getEmployeeSSNumber());
 
 					double totalCgcBase = salary.getContextData(ContextVariable.CGC_BASE.getName()
 					, Collectors.summingDouble(s->Double.parseDouble(s)));
-					Assert.assertEquals(salary.getEmployeeSSNumber(), salary.getCommonContingenciesBase(), totalCgcBase , DELTA);
-					
+					Assertions.assertEquals(salary.getCommonContingenciesBase(), totalCgcBase, DELTA, salary.getEmployeeSSNumber());
+
 					double totalCosts = salary.getCosts()
 					.stream().collect(Collectors.summingDouble(d -> d.getAmount()));
 					double totalBonus = salary.getBonuses()
 					.stream().collect(Collectors.summingDouble(d -> d.getAmount()));
-					Assert.assertEquals(salary.getEmployeeSSNumber(), salary.getTotalEnterprise(), totalCosts -totalBonus, DELTA);
+					Assertions.assertEquals(salary.getTotalEnterprise(), totalCosts -totalBonus, DELTA, salary.getEmployeeSSNumber());
 					
 					sumSalary.setTotalEnterprise(sumSalary.getTotalEnterprise() + totalCosts -totalBonus);
 					sumSalary.setTotalSSContributions(sumSalary.getTotalSSContributions() + totalDeductions);
@@ -212,7 +212,7 @@ public class SLDSalariesTestCase {
     		actual = 0.00;
     	if ( expected == null )
     		expected = 0.00;
-    	Assert.assertEquals(message, expected , actual, DELTA);
+    	Assertions.assertEquals(expected , actual, DELTA, message);
     }
 	
 

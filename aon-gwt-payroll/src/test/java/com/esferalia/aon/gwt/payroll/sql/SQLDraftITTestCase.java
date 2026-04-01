@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
 import com.esferalia.aon.gwt.payroll.server.SalaryDraftCalculatorContext;
@@ -56,7 +56,7 @@ import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLDraftITTestCase extends SQLITTestCase {
 
@@ -163,14 +163,14 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 			
 			@Override
 			public void onRedefinedImplicit(String name, ITimedVariable<?> redefined, ITimedVariable<?> implicit) {
-				Assert.fail(name);
+				fail(name);
 			}
 		});
 		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
 		calculator.setListener(new ContractSalaryCalculator.Listener(){
 			@Override
 			public void onCheckError(IContractPayment payment, String message) {
-				Assert.fail(message);
+				fail(message);
 				super.onCheckError(payment, message);
 			}
 			
@@ -186,13 +186,13 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 				ITimedVariable<?> factor = context.get(ContextVariable.PATERNITY_FACTOR.getName() );
 				if ( factor == null )
 					return;
-				Assert.assertEquals(ExpressionScope.SALARY,((IExpressionVariable<?>) factor).getExpression().getScope());
+				assertEquals(ExpressionScope.SALARY,((IExpressionVariable<?>) factor).getExpression().getScope());
 			}
 		});
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(1750.00 * 1/2, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(get(endDate, DAY_OF_MONTH) * 100.00 * 0.50 + 1750.00 * 1/2 , salary.getCommonBase(), DELTA);
+		assertEquals(1750.00 * 1/2, salary.getTotalPayment(), DELTA);
+		assertEquals(get(endDate, DAY_OF_MONTH) * 100.00 * 0.50 + 1750.00 * 1/2 , salary.getCommonBase(), DELTA);
 		
 		// Cret@ 
 		ctx = EmployeesServiceHelper.getSalaryCalculatorContext(connection,
@@ -211,26 +211,26 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 					// 535 Base de contingencias comunes.
 					List<ContextData> datas = s.getContextData()
 							.get(CGC_BASE.getName());
-					Assert.assertEquals(1, datas.size());
-					Assert.assertEquals(startDate, datas.get(0).getStartDate());
-					Assert.assertEquals(endDate, datas.get(0).getEndDate());
-					Assert.assertEquals(1750.00 * 0.5,
+					assertEquals(1, datas.size());
+					assertEquals(startDate, datas.get(0).getStartDate());
+					assertEquals(endDate, datas.get(0).getEndDate());
+					assertEquals(1750.00 * 0.5,
 							Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
 					// 635 o 634 Base de Accidentes de Trabajo.
 					datas = s.getContextData().get(CGP_BASE.getName());
-					Assert.assertEquals(1, datas.size());
-					Assert.assertEquals(startDate, datas.get(0).getStartDate());
-					Assert.assertEquals(endDate, datas.get(0).getEndDate());
-					Assert.assertEquals(1750.00 * 0.5,
+					assertEquals(1, datas.size());
+					assertEquals(startDate, datas.get(0).getStartDate());
+					assertEquals(endDate, datas.get(0).getEndDate());
+					assertEquals(1750.00 * 0.5,
 							Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
 					datas = s.getContextData()
 							.get(MATERNITY_BASE.getName());
-					Assert.assertEquals(1, datas.size());
-					Assert.assertEquals(startDate, datas.get(0).getStartDate());
-					Assert.assertEquals(endDate, datas.get(0).getEndDate());
-					Assert.assertEquals(100.00 * get(endDate, DAY_OF_MONTH) * 0.5,
+					assertEquals(1, datas.size());
+					assertEquals(startDate, datas.get(0).getStartDate());
+					assertEquals(endDate, datas.get(0).getEndDate());
+					assertEquals(100.00 * get(endDate, DAY_OF_MONTH) * 0.5,
 							Double.parseDouble(datas.get(0).getExpression()), DELTA);
 				});
 		;
@@ -261,40 +261,40 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 					// 500 Base de contingencias comunes.
 					List<ContextData> datas = s.getContextData()
 							.get(CGC_BASE.getName());
-					Assert.assertEquals(2, datas.size());
+					assertEquals(2, datas.size());
 					
-					Assert.assertEquals(start, datas.get(0).getStartDate());
-					Assert.assertEquals(add(startITDate, DAY_OF_MONTH, -1), datas.get(0).getEndDate());
-					Assert.assertEquals(1750.00 * workDays / monthDays,
+					assertEquals(start, datas.get(0).getStartDate());
+					assertEquals(add(startITDate, DAY_OF_MONTH, -1), datas.get(0).getEndDate());
+					assertEquals(1750.00 * workDays / monthDays,
 							Double.parseDouble(datas.get(0).getExpression()),DELTA);
 
-					Assert.assertEquals(startITDate, datas.get(1).getStartDate());
-					Assert.assertEquals(end, datas.get(1).getEndDate());
-					Assert.assertEquals(1750.00 * itDays / monthDays * 0.5,
+					assertEquals(startITDate, datas.get(1).getStartDate());
+					assertEquals(end, datas.get(1).getEndDate());
+					assertEquals(1750.00 * itDays / monthDays * 0.5,
 							Double.parseDouble(datas.get(1).getExpression()), DELTA);
 					
 
 					// 601 o 611 Base de Accidentes de Trabajo.
 					datas = s.getContextData().get(CGP_BASE.getName());
-					Assert.assertEquals(2, datas.size());
-					Assert.assertEquals(2, datas.size());
+					assertEquals(2, datas.size());
+					assertEquals(2, datas.size());
 					
-					Assert.assertEquals(start, datas.get(0).getStartDate());
-					Assert.assertEquals(add(startITDate, DAY_OF_MONTH, -1), datas.get(0).getEndDate());
-					Assert.assertEquals(1750.00 * workDays / monthDays,
+					assertEquals(start, datas.get(0).getStartDate());
+					assertEquals(add(startITDate, DAY_OF_MONTH, -1), datas.get(0).getEndDate());
+					assertEquals(1750.00 * workDays / monthDays,
 							Double.parseDouble(datas.get(0).getExpression()),DELTA);
 
-					Assert.assertEquals(startITDate, datas.get(1).getStartDate());
-					Assert.assertEquals(end, datas.get(1).getEndDate());
-					Assert.assertEquals(1750.00 * itDays / monthDays * 0.5,
+					assertEquals(startITDate, datas.get(1).getStartDate());
+					assertEquals(end, datas.get(1).getEndDate());
+					assertEquals(1750.00 * itDays / monthDays * 0.5,
 							Double.parseDouble(datas.get(1).getExpression()), DELTA);
 
 					datas = s.getContextData()
 							.get(MATERNITY_BASE.getName());
-					Assert.assertEquals(1, datas.size());
-					Assert.assertEquals(startITDate, datas.get(0).getStartDate());
-					Assert.assertEquals(end, datas.get(0).getEndDate());
-					Assert.assertEquals(100.00 * itDays * 0.5,
+					assertEquals(1, datas.size());
+					assertEquals(startITDate, datas.get(0).getStartDate());
+					assertEquals(end, datas.get(0).getEndDate());
+					assertEquals(100.00 * itDays * 0.5,
 							Double.parseDouble(datas.get(0).getExpression()),DELTA);
 				});
 		;
@@ -360,10 +360,10 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount()
 					+ " (" + payment.getExpression() + ")");
 			if ( PREST_IT.equals(payment.getName() ))
-					Assert.assertEquals("DIAS_ENFERMEDAD_COMUN_366 * 0.00", payment.getExpression());	
+					assertEquals("DIAS_ENFERMEDAD_COMUN_366 * 0.00", payment.getExpression());	
 		}
 
-		Assert.assertEquals(5, salary.getSalaryPayments().size());
+		assertEquals(5, salary.getSalaryPayments().size());
 
 	}
 	

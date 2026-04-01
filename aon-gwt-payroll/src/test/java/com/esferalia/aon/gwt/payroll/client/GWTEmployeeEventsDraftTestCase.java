@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.EvalException;
@@ -47,7 +47,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 
@@ -58,7 +58,7 @@ import junit.framework.Assert;
 public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 	
-	@Before
+	@BeforeEach
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -856,23 +856,23 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 		// employeeEventsDraft
 		employeeEventsDraft.setEventsDraftObject(employeeDraftObject);
 
-		Assert.assertEquals(8, employeeEventsDraft.eventsTable.getRowCount());
-		Assert.assertEquals(9, employeeEventsDraft.eventsTable.getCellCount(2));
-		Assert.assertEquals("Semana",
+		assertEquals(8, employeeEventsDraft.eventsTable.getRowCount());
+		assertEquals(9, employeeEventsDraft.eventsTable.getCellCount(2));
+		assertEquals("Semana",
 				employeeEventsDraft.dateRangeListBox.getSelectedItemText());
 
-		// Assert.assertEquals("DIAS_EFECTIVOS" ,
+		// assertEquals("DIAS_EFECTIVOS" ,
 		// employeeEventsDraft.eventsTable.getWidget(2, 0).getTitle());
 
 		for (int i = 2; i < employeeEventsDraft.eventsTable.getRowCount(); i++)
 			System.out.println("Incidencia: "
 					+ employeeEventsDraft.eventsTable.getText(i, 0));
 
-		Assert.assertEquals("HORAS_TRABAJADAS",
+		assertEquals("HORAS_TRABAJADAS",
 				employeeEventsDraft.eventsTable.getText(2, 0));
-		Assert.assertEquals("DIAS_AUSENCIA",
+		assertEquals("DIAS_AUSENCIA",
 				employeeEventsDraft.eventsTable.getText(3, 0));
-		Assert.assertEquals("DIAS_HUELGA",
+		assertEquals("DIAS_HUELGA",
 				employeeEventsDraft.eventsTable.getText(4, 0));
 
 		checkRangeDates(employeeEventsDraft);
@@ -889,14 +889,14 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 		startDate = DateUtils.getFirstDayOfWorkWeek(today);
 		endDate = DateUtils.getLastDayOfWorkWeek(today);
 		
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+		assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
 		
 		employeeEventsDraft.onPreviousDateRangeButton(null);
 		endDate = DateUtils.addDays2Date(startDate, -1);
 		startDate = DateUtils.getFirstDayOfWorkWeek(endDate);
 		
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+		assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.onPreviousDateRangeButton(null);
@@ -907,7 +907,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 		endDate = DateUtils.addDays2Date(startDate, -1);
 		startDate = DateUtils.getFirstDayOfWorkWeek(endDate);
 		
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+		assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.onPreviousDateRangeButton(null);
@@ -922,19 +922,19 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 		startDate = DateUtils.addDays2Date(endDate, 1);
 		endDate = DateUtils.getLastDayOfWorkWeek(startDate);
 		
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+		assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.dateRangeListBox.setSelectedIndex(1);
 		employeeEventsDraft.onDateRangeListBoxChanged(null);
-		Assert.assertEquals("Mes",
+		assertEquals("Mes",
 				employeeEventsDraft.dateRangeListBox.getSelectedItemText());
 		
 		aux = DateUtils.copyDateOnly(startDate);		
 		startDate = DateUtils.getFirstDayOfMonth(aux);
 		endDate = DateUtils.getLastDayOfMonth(aux);
 
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+		assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.onNextDateRangeButton(null);
@@ -945,7 +945,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 		startDate = DateUtils.addDays2Date(endDate, 1);
 		endDate = DateUtils.getLastDayOfMonth(startDate);
 		
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+		assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.onNextDateRangeButton(null);
@@ -956,88 +956,88 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 		startDate = DateUtils.addDays2Date(endDate, 1);
 		endDate = DateUtils.getLastDayOfMonth(startDate);
 
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+		assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.onPreviousDateRangeButton(null);
 		endDate = DateUtils.addDays2Date(startDate, -1);
 		startDate = DateUtils.getFirstDayOfMonth(endDate);
 		
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+		assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.onPreviousDateRangeButton(null);
 		endDate = DateUtils.addDays2Date(startDate, -1);
 		startDate = DateUtils.getFirstDayOfMonth(endDate);
 		
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+		assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.onPreviousDateRangeButton(null);
 		endDate = DateUtils.addDays2Date(startDate, -1);
 		startDate = DateUtils.getFirstDayOfMonth(endDate);
 		
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+		assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
 		
 		employeeEventsDraft.onPreviousDateRangeButton(null);
 		endDate = DateUtils.addDays2Date(startDate, -1);
 		startDate = DateUtils.getFirstDayOfMonth(endDate);
 
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+		assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.onPreviousDateRangeButton(null);
 		endDate = DateUtils.addDays2Date(startDate, -1);
 		startDate = DateUtils.getFirstDayOfMonth(endDate);
 
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+		assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
 		employeeEventsDraft.onPreviousDateRangeButton(null);
 		endDate = DateUtils.addDays2Date(startDate, -1);
 		startDate = DateUtils.getFirstDayOfMonth(endDate);
 
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+		assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.onPreviousDateRangeButton(null);
 		endDate = DateUtils.addDays2Date(startDate, -1);
 		startDate = DateUtils.getFirstDayOfMonth(endDate);
 
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
-				employeeEventsDraft.dateRangeLabel.getText());
-		
-		employeeEventsDraft.onPreviousDateRangeButton(null);
-		endDate = DateUtils.addDays2Date(startDate, -1);
-		startDate = DateUtils.getFirstDayOfMonth(endDate);
-
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+		assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
 		
 		employeeEventsDraft.onPreviousDateRangeButton(null);
 		endDate = DateUtils.addDays2Date(startDate, -1);
 		startDate = DateUtils.getFirstDayOfMonth(endDate);
 
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+		assertEquals(getDateRangeLabelText(startDate, endDate),
+				employeeEventsDraft.dateRangeLabel.getText());
+		
+		employeeEventsDraft.onPreviousDateRangeButton(null);
+		endDate = DateUtils.addDays2Date(startDate, -1);
+		startDate = DateUtils.getFirstDayOfMonth(endDate);
+
+		assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.dateRangeListBox.setSelectedIndex(0);
 		employeeEventsDraft.onDateRangeListBoxChanged(null);
 		
-		Assert.assertEquals("Semana",
+		assertEquals("Semana",
 				employeeEventsDraft.dateRangeListBox.getSelectedItemText());
 		aux = DateUtils.copyDateOnly(startDate);
 		startDate = DateUtils.getFirstDayOfWorkWeek(aux);
 		endDate = DateUtils.getLastDayOfWorkWeek(aux);
 		
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+		assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
 
 		employeeEventsDraft.onPreviousDateRangeButton(null);
 		endDate = DateUtils.addDays2Date(startDate, -1);
 		startDate = DateUtils.getFirstDayOfWorkWeek(endDate);
 		
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+		assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
 		
 		employeeEventsDraft.onNextDateRangeButton(null);
@@ -1056,7 +1056,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 		startDate = DateUtils.addDays2Date(endDate, 1);
 		endDate = DateUtils.getLastDayOfWorkWeek(startDate);
 		
-		Assert.assertEquals(getDateRangeLabelText(startDate, endDate),
+		assertEquals(getDateRangeLabelText(startDate, endDate),
 				employeeEventsDraft.dateRangeLabel.getText());
 
 	}

@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
@@ -53,7 +53,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public class GWTSalaryDraftTestCase extends GWTTestCase {
 
-	@Before
+	@BeforeEach
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -824,7 +824,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 		salaryDraftWidget.setSalaryDraftObject(salaryDraftObject);
 
 		//@formatter:off
-//		Assert.assertEquals("EMPLOYEE DOCUMENT", 
+//		assertEquals("EMPLOYEE DOCUMENT", 
 //				salaryDraft.getEmployeeDocument(),
 //				salaryDraftWidget.employeeDocumentLabel.getText());
 		//@formatter:on

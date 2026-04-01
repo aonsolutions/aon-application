@@ -23,8 +23,8 @@ import java.util.HashMap;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
@@ -58,7 +58,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.github.javafaker.Faker;
 import com.github.javafaker.Name;
-@Ignore
+@Disabled
 public class SQLCostTestCase extends AbstractSQLTestCase {
 	
 	private static final Faker FAKER = new Faker();

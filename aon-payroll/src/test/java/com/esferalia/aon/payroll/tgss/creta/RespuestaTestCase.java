@@ -13,8 +13,8 @@ import java.util.NoSuchElementException;
 
 import javax.xml.bind.JAXBException;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
 import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Dato;
@@ -64,7 +64,7 @@ public class RespuestaTestCase {
 								if ( isError(resDato, "R9582")) {
 									// Datos solicitados obligatorios no informados
 									DatoSolicitado tytDato = getDatoSolicitado(tytTramo, resDato).orElseThrow( () -> new NoSuchElementException(resDato.getTipoDato()+resDato.getCodigo()));
-									Assert.assertEquals("B", tytDato.getIndicadorObligatoriedad());
+									assertEquals(tytDato.getIndicadorObligatoriedad(), "B");
 								}
 							}
 						}
@@ -79,7 +79,7 @@ public class RespuestaTestCase {
 					for ( Tramo resTramo : resTrabajador.getTramos().getTramo() ) {
 						if ( isError(resTramo, "R9503")) { 
 							// Tramo inexistente en Afiliación para ese trabajador
-							getTramo(tytTrabajador, resTramo).ifPresent(t -> Assert.fail("Tramo inexistente en Afiliación para ese trabajador"));
+							getTramo(tytTrabajador, resTramo).ifPresent(t -> fail("Tramo inexistente en Afiliación para ese trabajador"));
 						}
 					}
 				}

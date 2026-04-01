@@ -61,7 +61,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -81,7 +81,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author rtrepiana
@@ -123,7 +123,7 @@ public class SQLWeekDaysTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		Set<SalaryPayment> salaryPayments = salary.getSalaryPayments();
-		Assert.assertEquals(7, salaryPayments.size());
+		assertEquals(7, salaryPayments.size());
 		
 		String weekVarDays [] = new String[8];
 		weekVarDays[MONDAY] = MONDAY_DAYS.getName();
@@ -148,7 +148,7 @@ public class SQLWeekDaysTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getDescription() + " = " +  weekDays.get(p.getDescription()) + ", " + p.getAmount());
 		
 		for ( SalaryPayment p: salaryPayments)
-			Assert.assertEquals(weekDays.get(p.getDescription()), p.getAmount());
+			assertEquals(p.getAmount(), weekDays.get(p.getDescription()));
 		
 
 	}
@@ -185,7 +185,7 @@ public class SQLWeekDaysTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		Set<SalaryPayment> salaryPayments = salary.getSalaryPayments();
-		Assert.assertEquals(7, salaryPayments.size());
+		assertEquals(7, salaryPayments.size());
 		
 		String weekVarDays [] = new String[8];
 		weekVarDays[MONDAY] = MONDAY_DAYS.getName();
@@ -211,7 +211,7 @@ public class SQLWeekDaysTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getDescription() + " = " +  weekDays.get(p.getDescription()) + ", " + p.getAmount());
 		
 		for ( SalaryPayment p: salaryPayments)
-			Assert.assertEquals(weekDays.get(p.getDescription()), p.getAmount());
+			assertEquals(p.getAmount(), weekDays.get(p.getDescription()));
 		
 
 	}
@@ -250,7 +250,7 @@ public class SQLWeekDaysTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		Set<SalaryPayment> salaryPayments = salary.getSalaryPayments();
-		Assert.assertEquals(7, salaryPayments.size());
+		assertEquals(7, salaryPayments.size());
 		
 		String weekVarDays [] = new String[8];
 		weekVarDays[MONDAY] = MONDAY_DAYS.getName();
@@ -275,7 +275,7 @@ public class SQLWeekDaysTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getDescription() + " = " +  weekDays.get(p.getDescription()) + ", " + p.getAmount());
 		
 		for ( SalaryPayment p: salaryPayments)
-			Assert.assertEquals(p.getDescription(), weekDays.get(p.getDescription()), p.getAmount());
+			assertEquals(weekDays.get(p.getDescription()), p.getAmount(), p.getDescription());
 		
 
 	}

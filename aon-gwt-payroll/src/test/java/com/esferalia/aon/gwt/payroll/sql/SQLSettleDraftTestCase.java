@@ -5,8 +5,8 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -27,12 +27,12 @@ public class SQLSettleDraftTestCase extends
 	
 	SalaryDraft draft ;
 	
-	@Before
+	@BeforeEach
 	public void newDraft() {
 		draft = new SalaryDraft();
 	}
 	
-	@After
+	@AfterEach
 	public void nullDraft() {
 		draft = null;
 	}
