@@ -1,9 +1,11 @@
 import { AonElement } from "../../components/AonElement.js";
 import { getCompany } from "../../services/service.js";
 import { AonApplication } from '../../components/aon-application.js';
-import { CONSTANT, MSG } from '../../environments/environments.js';
+import { CONSTANT, MATERIAL_ICONS, MSG } from '../../environments/environments.js';
 import { AonPayrollMenu } from './aon-payroll-menu.js';
 import * as JSF from '../aon-jsf-app.js';
+import { AonComunicaConfig } from "../laboral/aon-comunica-config.js";
+import { AON_SALTRA, COMUNICA } from "../../services/app.js";
 
 export class AonPayrollBeta extends AonElement {
 	
@@ -55,6 +57,22 @@ export class AonPayrollBeta extends AonElement {
 				name: "Parametros Contratos",
 				fn: () => this.getApplication().setContent(new JSF.AonJsfContractParams()),
 			});
+			
+			if (this.getDur().isSaltraManager()) {
+				configurationOptions.push({
+					id: AON_SALTRA.title,
+					name: AON_SALTRA.title,
+					icon: MATERIAL_ICONS.ALTERNATE_EMAIL,
+					fn: () => this.buildComunicaConfiguration(),
+				});
+			} else if (this.getDur().isComunicaManager()) {
+				configurationOptions.push({
+					id: COMUNICA.title,
+					name: COMUNICA.title,
+					icon: MATERIAL_ICONS.ALTERNATE_EMAIL,
+					fn: () => this.buildComunicaConfiguration(),
+				});
+			}
 
 			configurationOptions.push({
 				id: "observations",
@@ -99,6 +117,10 @@ export class AonPayrollBeta extends AonElement {
 		let aonPayrollMenu = new AonPayrollMenu();
 		aonPayrollMenu.setDur(this.getDur());
 		return aonPayrollMenu.getOptions();
+	}
+	
+	buildComunicaConfiguration() {
+		this.getApplication().setContent(new AonComunicaConfig());
 	}
 }
 if(!window.customElements.get("aon-payroll-beta")) {

@@ -24,7 +24,6 @@ export class AonAccountingMenu extends AonSuiteMenu {
            this.clear();
            this.initialize();
            this.build();
-           this.setTitle("Opciones de contabilidad");
 		})
 	}
 

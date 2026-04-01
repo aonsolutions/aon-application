@@ -95,7 +95,7 @@ public class AonRegistryAddressGrid extends SimpleLayoutPanel {
 		final AonTextBox addressText = new AonTextBox();
 		addressText.setValue(registryAddress.getAddress());
 		addressText.addStyleName(AON.CSS.aonMarginLeftSep());
-		addressText.setVisibleLength(30);
+		addressText.setVisibleLength(20);
 		addressText.setMaxLength(64);
 		addressText.addValueChangeHandler(event -> registryAddress.setAddress(addressText.getValue()));
 		
@@ -118,13 +118,13 @@ public class AonRegistryAddressGrid extends SimpleLayoutPanel {
 		// ***************************************************************** [CITY]
 		final AonTextBox cityText = new AonTextBox();
 		cityText.setValue(registryAddress.getCity());
-		cityText.setVisibleLength(25);
+		cityText.setVisibleLength(15);
 		cityText.setMaxLength(64);
 		cityText.addValueChangeHandler(event -> registryAddress.setCity(cityText.getValue()));
 		
 		// ***************************************************************** [GEOZONE]
 		final ListBox geozoneBox = new ListBox();
-		geozoneBox.setWidth("90px");
+		geozoneBox.setWidth("100px");
 		if (options.getConfiguration().hasGeozones()) {
 			zipText.addValueChangeHandler(event -> {
 				if (!AonStringUtils.isBlank( zipText.getValue())) {
