@@ -109,11 +109,11 @@ public class LoginTestCase extends AppBaseTestCase {
 			);
 			wait.until(ExpectedConditions.elementToBeClickable(By.id("aonHeaderHelpButton"))).click();
 			
-			WebElement aonHelpSwitchSupport = wait.until(ExpectedConditions.elementToBeClickable(By.id("aonHelpSwitchSupport")));
-			if ( Objects.equals(aonHelpSwitchSupport.getAttribute("value"), "false" ))
-				aonHelpSwitchSupport.click();
+			WebElement aonHelpSwitchSupportInput = wait.until(ExpectedConditions.elementToBeClickable(By.id("aonHelpSwitchSupportInput")));
+			if ( !aonHelpSwitchSupportInput.isSelected())
+				wait.until(ExpectedConditions.elementToBeClickable(By.id("aonHelpSwitchSupport"))).click();
 			
-			wait.until(ExpectedConditions.attributeToBe(By.id("aonHelpSwitchSupportInput"), "value", "true"));
+			wait.until(ExpectedConditions.elementToBeSelected(By.id("aonHelpSwitchSupportInput")));
 			
 		} catch (Exception e) {
 			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
