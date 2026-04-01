@@ -428,12 +428,12 @@ public class Mod2002025Compute {
 		// Casilla 1033: Reserva de nivelación - Reducción de la base imponible 
 		// Lleva cálculos especiales en las casillas de la columna 2
 //		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ1962,"LQ1961-LQ1602");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ2239,"LQ2238-LQ1603");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ2411,"computeLQ1033_1(LQ2410,LQ1604,LQ2239)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ1730,"computeLQ1033_1(LQ1109,LQ1605,LQ2239+LQ2411)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ1404,"computeLQ1033_1(LQ1406,LQ1405,LQ2239+LQ2411+LQ1730)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ2777,"computeLQ1033_1(LQ2776,LQ2778,LQ2239+LQ2411+LQ1730+LQ1404)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ455 ,"computeLQ1033_1(LQ2776,LQ2778,LQ2239+LQ2411+LQ1730+LQ1404+LQ2777)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ2411,"LQ2410-LQ1604");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ1730,"computeLQ1033_1(LQ1109,LQ1605,LQ2411)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ1404,"computeLQ1033_1(LQ1406,LQ1405,LQ2411+LQ1730)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ2777,"computeLQ1033_1(LQ2776,LQ2778,LQ2411+LQ1730+LQ1404)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ455 ,"computeLQ1033_1(LQ454 ,LQ456 ,LQ2411+LQ1730+LQ1404+LQ2777)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ3596,"computeLQ1033_1(LQ3595,LQ3597,LQ2411+LQ1730+LQ1404+LQ2777+LQ455)");
 		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ1034A,"computeLQ1034A()"); // Penúltima fila (casillas 1034 y 1731)
 		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ1731,"LQ1034A");
@@ -526,7 +526,7 @@ public class Mod2002025Compute {
 		
 	    // Casilla 588: Deducciones para incentivar determinadas actividades (Cap. IV Tit. VI, DT 24ª.3 LIS y art. 27.3 primero Ley 49/2002)
 		// Lleva 2 totales, la fila de las casillas 634, 635 y 636 y la fila de las casillas 831, 588, 832		
-		addBreakdown(Mod2002025BN588Key.values(), Mod2002025Key.BN635, true, Mod2002025Key.BN2365, Mod2002025Key.BN1683); 
+		addBreakdown(Mod2002025BN588Key.values(), Mod2002025Key.BN635, true, Mod2002025Key.BN2371, Mod2002025Key.BN1683); 
 		addBreakdown(Mod2002025BN588Key.values(), Mod2002025Key.BN588, true, null, Mod2002025Key.BN1683);
 		
 		// Casilla 1039: Deducciones por producciones cinematográficas extranjeras (art. 36.2 LIS)
@@ -540,15 +540,13 @@ public class Mod2002025Compute {
 
 		// Casilla 565: Deducción donaciones a entidades sin fines de lucro (Ley 49/2002). Tiene dos apartados con varios subtotales
 		// Donaciones de carácter general 
-		addBreakdown(Mod2002025BN565_1Key.values(), Mod2002025Key.BN1689, true, Mod2002025Key.BN997, Mod2002025Key.BN997);
-		addBreakdown(Mod2002025BN565_1Key.values(), Mod2002025Key.BN1692, true, Mod2002025Key.BN246, Mod2002025Key.BN405);
-		addBreakdown(Mod2002025BN565_1Key.values(), Mod2002025Key.BN1695, true, Mod2002025Key.BN246, Mod2002025Key.BN405);
-		addBreakdown(Mod2002025BN565_1Key.values(), Mod2002025Key.BN1698, true, Mod2002025Key.BN1689, Mod2002025Key.BN1695);
+		addBreakdown(Mod2002025BN565_1Key.values(), Mod2002025Key.BN1692, true, Mod2002025Key.BN246, Mod2002025Key.BN3552);
+		addBreakdown(Mod2002025BN565_1Key.values(), Mod2002025Key.BN1695, true, Mod2002025Key.BN246, Mod2002025Key.BN3552);
+		addBreakdown(Mod2002025BN565_1Key.values(), Mod2002025Key.BN1698, true, Mod2002025Key.BN1692, Mod2002025Key.BN1695);
 		// Donaciones para actividades prioritarias de mecenazgo y otras con derecho a deducción incrementada
-		addBreakdown(Mod2002025BN565_2Key.values(), Mod2002025Key.BN1701, true, Mod2002025Key.BN930, Mod2002025Key.BN930);
-		addBreakdown(Mod2002025BN565_2Key.values(), Mod2002025Key.BN1704, true, Mod2002025Key.BN933, Mod2002025Key.BN432);
-		addBreakdown(Mod2002025BN565_2Key.values(), Mod2002025Key.BN1729, true, Mod2002025Key.BN933, Mod2002025Key.BN432);
-		addBreakdown(Mod2002025BN565_2Key.values(), Mod2002025Key.BN1079, true, Mod2002025Key.BN1701, Mod2002025Key.BN1729);
+		addBreakdown(Mod2002025BN565_2Key.values(), Mod2002025Key.BN1704, true, Mod2002025Key.BN933, Mod2002025Key.BN3564);
+		addBreakdown(Mod2002025BN565_2Key.values(), Mod2002025Key.BN1729, true, Mod2002025Key.BN933, Mod2002025Key.BN3564);
+		addBreakdown(Mod2002025BN565_2Key.values(), Mod2002025Key.BN1079, true, Mod2002025Key.BN1704, Mod2002025Key.BN1729);
 		// Total deducciones a entidades sin fines de lucro (Ley 49/2002)
 		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.BN598,"BN1698+BN1079");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.BN565,"BN1699+BN1080");
@@ -782,18 +780,21 @@ public class Mod2002025Compute {
 		// Reversión de las pérdidas por deterioro de valores representativos de la participación en el capital...
 		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.RV991, "RV941-RV2810-RV990");
 		
+		// FALTA - REVISAR CON DOC PADIS
 		// Régimen especial de la reserva para inversiones en Canarias. La última columna no sigue la regla estandar y no tiene fila de totales		
-		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.RC996 ,"RC1165-RC928-RC938-RC1985");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.RC1175,"RC1744-RC1168-RC1172-RC1986");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.RC1821,"RC2807-RC1745-RC1746-RC2430");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.RC2822,"RC2975-RC2808-RC2809-RC2977");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.RC3312,"RC3352+RC3353-RC3354");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.RC3313,"RC927-RC3312");  
+		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.RC3313,"RC3623-RC3624-RC3625-RC3626");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.RC3627,"RC3630+RC3631-RC3632");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.RC3313,"RC927-RC3627");  
 	
+		// FALTA - REVISAR CON DOC PADIS
 		// Régimen especial de la reserva para inversiones en las Illes Balears. La última columna no sigue la regla estandar y no tiene fila de totales
 		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.RB2917,"RB1707-RB2914-RB2915-RB1936");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.RB1708,"RB2362-RB2941+RB2363+RB2364-RB2374");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.RB1709,"RB2918-RB1708");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.RB1709,"RB3636-RB3637-RB3638-RB3639");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.RB3641,"RB3642-RB2374+RB3643+RB3644-RB3645");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.RB1709,"RB2918-RB3640");
 				
 	}
 

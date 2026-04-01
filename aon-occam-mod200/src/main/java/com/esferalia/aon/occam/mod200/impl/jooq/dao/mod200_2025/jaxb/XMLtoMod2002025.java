@@ -24,7 +24,9 @@ public class XMLtoMod2002025 {
 
 	private static void fillPagina03(MOD2002025 mod, Mod2002025 mod200) {
 		TipoPagina03 pag = mod.getNormal().getBalance().getPagina03();
-		if (pag==null) return;
+		if (pag==null) 
+			return;
+		
 		addVariable(mod200,Mod2002025Key.BA103,pag.getT00103());
 		addVariable(mod200,Mod2002025Key.BA104,pag.getT00104());
 		addVariable(mod200,Mod2002025Key.BA105,pag.getT00105());
@@ -74,7 +76,9 @@ public class XMLtoMod2002025 {
 
 	private static void fillPagina04(MOD2002025 mod, Mod2002025 mod200) {
 		TipoPagina04 pag = mod.getNormal().getBalance().getPagina04();
-		if (pag==null) return;
+		if (pag==null) 
+			return;
+		
 		addVariable(mod200,Mod2002025Key.BA151, pag.getT00151());
 		addVariable(mod200,Mod2002025Key.BA152, pag.getT00152());
 		addVariable(mod200,Mod2002025Key.BA153, pag.getT00153());
@@ -106,7 +110,9 @@ public class XMLtoMod2002025 {
 	
 	private static void fillPagina05(MOD2002025 mod, Mod2002025 mod200) {
 		TipoPagina05 pag = mod.getNormal().getBalance().getPagina05();
-		if (pag==null) return;
+		if (pag==null) 
+			return;
+		
 		addVariable(mod200,Mod2002025Key.BP188, pag.getT00188());
 		addVariable(mod200,Mod2002025Key.BP189, pag.getT00189());
 		addVariable(mod200,Mod2002025Key.BP764, pag.getT00764());
@@ -161,7 +167,9 @@ public class XMLtoMod2002025 {
 	}
 	
 	private static void fillPagina06(MOD2002025 mod, Mod2002025 mod200) {
-		if (mod.getNormal().getBalance() == null) return;
+		if (mod.getNormal().getBalance() == null) 
+			return;
+		
 		TipoPagina06 pag = mod.getNormal().getBalance().getPagina06();
 		addVariable(mod200,Mod2002025Key.BP785, pag.getT00785());
 		addVariable(mod200,Mod2002025Key.BP787, pag.getT00787());
@@ -198,20 +206,15 @@ public class XMLtoMod2002025 {
 		addVariable(mod200,Mod2002025Key.PG256, pag.getT00256());
 		addVariable(mod200,Mod2002025Key.PG257, pag.getT00257());
 		addVariable(mod200,Mod2002025Key.PG711, pag.getT00711());
-//		addVariable(mod200,Mod2002025Key.PG705, pag.getT00705());
 		addVariable(mod200,Mod2002025Key.PG706, pag.getT00706());
 		addVariable(mod200,Mod2002025Key.PG707, pag.getT00707());
 		addVariable(mod200,Mod2002025Key.PG708, pag.getT00708());
 		addVariable(mod200,Mod2002025Key.PG258, pag.getT00258());
 		addVariable(mod200,Mod2002025Key.PG259, pag.getT00259());
-//		addVariable(mod200,Mod2002025Key.PG260, pag.getT00260());
-//		addVariable(mod200,Mod2002025Key.PG261, pag.getT00261());
 		addVariable(mod200,Mod2002025Key.PG760, pag.getT00760());
 		addVariable(mod200,Mod2002025Key.PG761, pag.getT00761());
-//		addVariable(mod200,Mod2002025Key.PG262, pag.getT00262());
 		addVariable(mod200,Mod2002025Key.PG762, pag.getT00762());
 		addVariable(mod200,Mod2002025Key.PG763, pag.getT00763());
-//		addVariable(mod200,Mod2002025Key.PG770, pag.getT00770());
 		addVariable(mod200,Mod2002025Key.PG771, pag.getT00771());
 		addVariable(mod200,Mod2002025Key.PG772, pag.getT00772());
 		addVariable(mod200,Mod2002025Key.PG263, pag.getT00263());
@@ -236,14 +239,11 @@ public class XMLtoMod2002025 {
 		addVariable(mod200,Mod2002025Key.PG284, pag.getT00284());
 		addVariable(mod200,Mod2002025Key.PG285, pag.getT00285());
 		addVariable(mod200,Mod2002025Key.PG286, pag.getT00286());
-//		addVariable(mod200,Mod2002025Key.PG288, pag.getT00288());
 		addVariable(mod200,Mod2002025Key.PG289, pag.getT00289());
 		addVariable(mod200,Mod2002025Key.PG290, pag.getT00290());
-//		addVariable(mod200,Mod2002025Key.PG291, pag.getT00291());
 		addVariable(mod200,Mod2002025Key.PG292, pag.getT00292());
 		addVariable(mod200,Mod2002025Key.PG293, pag.getT00293());
 		addVariable(mod200,Mod2002025Key.PG710, pag.getT00710());
-//		addVariable(mod200,Mod2002025Key.PG791, pag.getT00791());
 		addVariable(mod200,Mod2002025Key.PG792, pag.getT00792());
 		addVariable(mod200,Mod2002025Key.PG793, pag.getT00793());
 		addVariable(mod200,Mod2002025Key.PG294, pag.getT00294());
@@ -252,7 +252,9 @@ public class XMLtoMod2002025 {
 	
 	private static void fillPagina08(MOD2002025 mod, Mod2002025 mod200) {
 		TipoPagina08 pag = mod.getNormal().getCuentaPyG().getPagina08();
-		if (pag==null) return;
+		if (pag==null) 
+			return;
+		
 		addVariable(mod200,Mod2002025Key.PG299, pag.getT00299());
 		addVariable(mod200,Mod2002025Key.PG300, pag.getT00300());
 		addVariable(mod200,Mod2002025Key.PG302, pag.getT00302());
@@ -287,10 +289,13 @@ public class XMLtoMod2002025 {
 	private static void fillPagina09(MOD2002025 mod, Mod2002025 mod200) {
 		
 		// A partir del 2016, no tiene por que venir el ECPN, pues es voluntario
-		if (mod.getNormal().getCambiosPN()==null) return;
+		if (mod.getNormal().getCambiosPN()==null) 
+			return;
 		
 		TipoPagina09 pag = mod.getNormal().getCambiosPN().getPagina09();
-		if (pag==null) return;
+		if (pag==null) 
+			return;
+		
 		addVariable(mod200,Mod2002025Key.T0336, pag.getT00336());
 		addVariable(mod200,Mod2002025Key.T0337, pag.getT00337());
 		addVariable(mod200,Mod2002025Key.T0338, pag.getT00338());
@@ -313,10 +318,13 @@ public class XMLtoMod2002025 {
 	private static void fillPagina10(MOD2002025 mod, Mod2002025 mod200) {
 		
 		// A partir del 2016, no tiene por que venir el ECPN pues es voluntario
-		if (mod.getNormal().getCambiosPN()==null) return;
+		if (mod.getNormal().getCambiosPN()==null) 
+			return;
 		
 		TipoPagina10 pag = mod.getNormal().getCambiosPN().getPagina10();
-		if (pag==null) return;
+		if (pag==null) 
+			return;
+		
 		addVariable(mod200,Mod2002025Key.TC380, pag.getT00380());
 		addVariable(mod200,Mod2002025Key.TC381, pag.getT00381());
 		addVariable(mod200,Mod2002025Key.TC382, pag.getT00382());
@@ -441,10 +449,13 @@ public class XMLtoMod2002025 {
 	private static void fillPagina11(MOD2002025 mod, Mod2002025 mod200) {
 
 		// A partir del 2016, no tiene por que venir el ECPN pues es voluntario
-		if (mod.getNormal().getCambiosPN()==null) return;
+		if (mod.getNormal().getCambiosPN()==null) 
+			return;
 
 		TipoPagina11 pag = mod.getNormal().getCambiosPN().getPagina11();
-		if (pag==null) return;
+		if (pag==null) 
+			return;
+		
 		addVariable(mod200,Mod2002025Key.TC387, pag.getT00387());
 		addVariable(mod200,Mod2002025Key.TC388, pag.getT00388());
 		addVariable(mod200,Mod2002025Key.TC389, pag.getT00389());
@@ -540,11 +551,11 @@ public class XMLtoMod2002025 {
 	
 	private static void addVariable(Mod2002025 mod200, Mod2002025Key key, Number d) {
 		DoubleVariableEx dv = new DoubleVariableEx(key);
-		dv.setValue(d==null?0:d.doubleValue());
+		dv.setValue(d == null ? 0.0 : d.doubleValue());
 		mod200.addVariable(dv);
 		// Se añade tambien a draft, para que se repinten los datos en todas las páginas, despues de cargar el fichero
 		dv = new DoubleVariableEx(key);
-		dv.setValue(d==null?0:d.doubleValue());
+		dv.setValue(d == null ? 0.0 : d.doubleValue());
 		mod200.addDraftVariable(dv);
 	}
 	

@@ -1744,5 +1744,10 @@ public enum Mod2002025Key implements IMod200Key {
 		return null;
 	}
 	
+	
+	public static void main(String[] args) {
+		System.out.println(Mod2002025Key.values().length);
+	}	
+	
 }
 

@@ -1306,6 +1306,7 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		
 	}
 	
+	// FALTA - REVISAR CON DOC PADIS
 	// Cálculo del importe de la columna 2 del desglose de la casilla [1033]
 	// La clave 01033 (aumentos) sólo podrá tener contenido cuando la base imponible (clave 00552) sea negativa 
 	// (excepto en los supuestos de extinción de entidad (clave 00072) y de último período permitido para la adición) 
@@ -1314,7 +1315,7 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 	public double computeLQ1033_1(double col1, double col3, double suma) throws AonCoreException {
 		
 		double lq552 = getValue(Mod2002025Key.LQ552);
-		double lq2239 = getValue(Mod2002025Key.LQ2239);
+		double lq2411 = getValue(Mod2002025Key.LQ2411);
 		
 		if (lq552>=0 && !isChecked(C0072)) {
 			// Base imponible [552] positiva o cero, [col2] = 0 
@@ -1323,8 +1324,8 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			// Base imponible [552] negativa, [col2] = [col1] - [col3] con el limite de la [552]
 			double col2 = col1-col3;
 			double total = suma + col2;			
-			if (total > (Math.abs(lq552)+lq2239)) {
-				col2 = col2 - (total - (Math.abs(lq552)+lq2239));
+			if (total > (Math.abs(lq552)+lq2411)) {
+				col2 = col2 - (total - (Math.abs(lq552)+lq2411));
 			}
 			return col2;		
 		}		
@@ -1501,6 +1502,7 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		return result;
 	}
 	
+	// FALTA - REVISAR CON DOC PADIS
 	// TRAMO 1 DE DEDUCCIONES Y BONIFICACIONES
 	private static final Mod2002025Key[] TRAMO_1 = new Mod2002025Key[] {
 			Mod2002025Key.BN567,
@@ -1561,16 +1563,15 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			Mod2002025Key.BN258
 	};
 	
+	// FALTA - REVISAR CON DOC PADIS
 	// TRAMO 2 DEDUCCIONES
 	private static final Mod2002025Key[] TRAMO_2 = new Mod2002025Key[] {			
 			Mod2002025Key.BN583,
-//			Mod2002025Key.BN467,
-			Mod2002025Key.BN498,
+//			Mod2002025Key.BN498,
 			Mod2002025Key.BN473,
 			Mod2002025Key.BN181,
-//			Mod2002025Key.BN032,
 			Mod2002025Key.BN532,
-			Mod2002025Key.BN023,
+//			Mod2002025Key.BN023,
 			Mod2002025Key.BN946,
 			Mod2002025Key.BN041,
 			Mod2002025Key.BN961,
@@ -1597,7 +1598,6 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			Mod2002025Key.BN1854,
 			Mod2002025Key.BN2500,
 			Mod2002025Key.BN1354,
-//			Mod2002025Key.BN750,			
 			Mod2002025Key.BN2222,
 			Mod2002025Key.BN2225,
 			Mod2002025Key.BN2092,
@@ -1642,66 +1642,36 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			Mod2002025Key.BN1076,
 			Mod2002025Key.BN2456,
 			Mod2002025Key.BN1370,
-//			Mod2002025Key.BN1627,
-//			Mod2002025Key.BN1708,
-//			Mod2002025Key.BN2363,
-			Mod2002025Key.BN2366,
+//			Mod2002025Key.BN2366,
 			Mod2002025Key.BN2372,
-//			Mod2002025Key.BN2375,
-//			Mod2002025Key.BN2378,
-//			Mod2002025Key.BN260,
-//			Mod2002025Key.BN263,
-//			Mod2002025Key.BN269,
-//			Mod2002025Key.BN273,
-//			Mod2002025Key.BN295,
-//			Mod2002025Key.BN298,
-//			Mod2002025Key.BN316,
-//			Mod2002025Key.BN349,
-			Mod2002025Key.BN353,
-//			Mod2002025Key.BN367,
-//			Mod2002025Key.BN401,
-//			Mod2002025Key.BN423,
-			Mod2002025Key.BN428,
-//			Mod2002025Key.BN431,
-			Mod2002025Key.BN434,
-//			Mod2002025Key.BN440,
-//			Mod2002025Key.BN453,
-//			Mod2002025Key.BN456,
-//			Mod2002025Key.BN469,
-//			Mod2002025Key.BN479,
-//			Mod2002025Key.BN502,
-//			Mod2002025Key.BN511,
-			Mod2002025Key.BN523,
-//			Mod2002025Key.BN816,
-			Mod2002025Key.BN2459,
+//			Mod2002025Key.BN353,
+//			Mod2002025Key.BN428,
+//			Mod2002025Key.BN434,
+//			Mod2002025Key.BN523,
+//			Mod2002025Key.BN2459,
 			Mod2002025Key.BN875,
-//			Mod2002025Key.BN879,
-			Mod2002025Key.BN906,
-			Mod2002025Key.BN955,
-			Mod2002025Key.BN1087,
-			Mod2002025Key.BN1110,
-			Mod2002025Key.BN1144,
-			Mod2002025Key.BN1150,
-			Mod2002025Key.BN1153,
-			Mod2002025Key.BN1156,
+//			Mod2002025Key.BN906,
+//			Mod2002025Key.BN955,
+//			Mod2002025Key.BN1087,
+//			Mod2002025Key.BN1110,
+//			Mod2002025Key.BN1144,
+//			Mod2002025Key.BN1150,
+//			Mod2002025Key.BN1153,
+//			Mod2002025Key.BN1156,
 			Mod2002025Key.BN1180,
 			Mod2002025Key.BN1207,
-//			Mod2002025Key.BN1218,
-			Mod2002025Key.BN1221,
+//			Mod2002025Key.BN1221,
 			Mod2002025Key.BN1229,
-			Mod2002025Key.BN1235,
-			Mod2002025Key.BN1238,
-			Mod2002025Key.BN1262,
-			Mod2002025Key.BN1265,
-			Mod2002025Key.BN1268,
-			Mod2002025Key.BN1273,
-			Mod2002025Key.BN1282,
-//			Mod2002025Key.BN1884,
+//			Mod2002025Key.BN1235,
+//			Mod2002025Key.BN1238,
+//			Mod2002025Key.BN1262,
+//			Mod2002025Key.BN1265,
+//			Mod2002025Key.BN1268,
+//			Mod2002025Key.BN1273,
+//			Mod2002025Key.BN1282,
 			Mod2002025Key.BN1901,
-			Mod2002025Key.BN1904,
-//			Mod2002025Key.BN1995,
+//			Mod2002025Key.BN1904,
 			Mod2002025Key.BN1908,
-//			Mod2002025Key.BN2025,
 			Mod2002025Key.BN2027,
 			Mod2002025Key.BN2030,
 			Mod2002025Key.BN2033,
@@ -1710,16 +1680,14 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			Mod2002025Key.BN2042,
 			Mod2002025Key.BN2053,
 			Mod2002025Key.BN2058,
-			Mod2002025Key.BN2285,
+//			Mod2002025Key.BN2285,
 			Mod2002025Key.BN089,
 			Mod2002025Key.BN1684,
 			Mod2002025Key.BN829,
 			Mod2002025Key.BN1522,
 			Mod2002025Key.BN291,
-//			Mod2002025Key.BN991,
-//			Mod2002025Key.BN917,
-			Mod2002025Key.BN998,
-			Mod2002025Key.BN931,
+//			Mod2002025Key.BN998,
+//			Mod2002025Key.BN931,
 			Mod2002025Key.BN247,
 			Mod2002025Key.BN819,
 			Mod2002025Key.BN934,
@@ -1756,10 +1724,10 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			Mod2002025Key.BN1327,
 			Mod2002025Key.BN1372,
 			Mod2002025Key.BN1375,
-			Mod2002025Key.BN2576,
-			Mod2002025Key.BN2692,
-			Mod2002025Key.BN2695,
-			Mod2002025Key.BN2698,
+//			Mod2002025Key.BN2576,
+//			Mod2002025Key.BN2692,
+//			Mod2002025Key.BN2695,
+//			Mod2002025Key.BN2698,
 			Mod2002025Key.BN395,
 			Mod2002025Key.BN422,
 			Mod2002025Key.BN430,
@@ -1788,6 +1756,7 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			Mod2002025Key.BN2070
 	};
 
+	// FALTA - REVISAR CON DOC PADIS
 	// TRAMO 3 DE DEDUCCIONES 
 	private static final Mod2002025Key[] TRAMO_3 = new Mod2002025Key[] {			
 			Mod2002025Key.BN2082,
@@ -1801,9 +1770,7 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			Mod2002025Key.BN880,
 			Mod2002025Key.BN1929,
 			Mod2002025Key.BN2191,
-//			Mod2002025Key.BN881,  // EN EL PADIS ESTA PUESTO, PERO EN EL MODELO NO EXISTE, LA LINEA DEL 2004 SE QUITA
-//			Mod2002025Key.BN867,
-			Mod2002025Key.BN940,
+//			Mod2002025Key.BN940,
 			Mod2002025Key.BN192,
 			Mod2002025Key.BN614,
 			Mod2002025Key.BN257,

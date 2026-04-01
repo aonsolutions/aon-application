@@ -156,6 +156,7 @@ public class Mod2002025Initialization {
 		INITIALIZE_EXPRESSION_MAP.put(Mod2002025Key.PG762,"sap({601,602})");
 		INITIALIZE_EXPRESSION_MAP.put(Mod2002025Key.PG763,"sap({611,612})");
 
+		// FALTA - REVISAR CON MANUAL O DOC PADIS
 		// ASI ES COMO LO PONE EN EL MANUAL PRACTICO, PONE LA MISMA CUENTA PARA LAS CASILLAS 771 Y 772, NO SE SI ESTA EQUIVOCADO Y EN LA 772 SERIAN EL RESTO
 //		Consumo de existencias de socios (cooperativas) (N, P, A)		[00770]		(605), 6063, 6083, 6093, 617*
 //		- Compras efectuadas a los socios (cooperativas) (N,P,A).		[00771]		(605)

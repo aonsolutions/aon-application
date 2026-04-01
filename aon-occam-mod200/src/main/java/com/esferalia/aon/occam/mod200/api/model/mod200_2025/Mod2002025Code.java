@@ -56,6 +56,7 @@ public class Mod2002025Code {
 		CODE_MAP.put(Mod2002025Key.RV000, "");   // Reversión de las pérdidas por deterioro de valores representativos... Número de período impositivo
 		CODE_MAP.put(Mod2002025Key.ING01, "");   // Resultado a ingresar correspondiente a la anterior autoliquidación o liquidación administrativa correspondiente al período impositivo 2025, previos a la rectificación  
 		CODE_MAP.put(Mod2002025Key.ING02, "");   // Resultado a ingresar correspondiente a la anterior autoliquidación o liquidación administrativa correspondiente al periodo impositivo 2025, que se anula con la presentación de esta autoliquidación rectificativa  
+		CODE_MAP.put(Mod2002025Key.MILLON, "");  // Entidad cuyo importe neto de la cifra de negocios durante los 12 meses anteriores a la fecha en que se inicie el período impositivo al que corresponda esta reducción es inferior a 1 millón de euros
 		
 	}
 	

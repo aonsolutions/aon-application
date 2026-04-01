@@ -804,32 +804,6 @@ public class Mod2002025DAO  {
 		}
 	}
 	
-//	public static Mod2002025 getByYear(AONContext ctx, int year) {
-//		return getByYear(ctx, year, true);
-//	}
-//	
-//	public static Mod2002025 getByYear(AONContext ctx, int year, boolean initialize) {
-//		Result<FsModel200Record> result = ctx.getDslContext()
-//				.selectFrom(FS_MODEL200)
-//				.where(FS_MODEL200.DOMAIN.equal(ctx.getDomainId()))
-//				.and(FS_MODEL200.YEAR.equal(year))
-//				.fetch();
-//		FsModel200Record rec = null;
-//		Mod2002025 mod200 = null; 
-//		if (result != null && result.isNotEmpty()) {
-//			rec = result.get(0);
-//			mod200 = populateMod200(ctx,rec);
-//		}
-//		if (initialize) {
-//			if (mod200 == null) {
-//				createNewMod200(ctx, year);
-//			} else {
-//				initializeActiveMap(mod200);
-//			}
-//		}
-//		return mod200;
-//	}
-
 	private static Mod2002025 getMod200(FsModel200Record rec) {
 		
 		Mod2002025 mod200 = new Mod2002025();
@@ -885,6 +859,7 @@ public class Mod2002025DAO  {
 	    mod200.setNrsAnexoVI(rec.getNrsAnexovi());
 	    mod200.setNrc(rec.getNrc()); 
 		return mod200;
+		
 	}
 	
 	private static Mod2002025 populateMod200(AONContext ctx, FsModel200Record rec) {
@@ -1004,11 +979,11 @@ public class Mod2002025DAO  {
 			mod200.setName(conf.getCompany().getName());
 			mod200.setEnterprisePhone1(conf.fiscal().getContactPhone());
 			mod200.setEnterprisePhone2(conf.fiscal().getContactCellular());
-//			Administration adm = conf.fiscal().getAdministration(Administration.COMMON_TERRITORY);
-//			mod200.setAdministration(adm);
 			mod200.setAdministration(Administration.COMMON_TERRITORY);
 			mod200.setInitializedFromLastYear(false);
 			
+			// FALTA - LA ACTIVIDAD PRINCIPAL TIENE EL CNAE2009 Y EN EL MODELO 200 AHORA SE PIDE EL CNAE2025
+			//         SI NO SE AÑADE EL CAMPO EN LA CONFIGURACION, HABRA QUE HACER UNA CONVERSION
 			// CNAE - Se coge de la actividad principal (solo si está indicado a 4 dígitos)			
 			AonConfiguration configuration = ConfigurationDAO.getConfiguration(ctx);			
 			if (configuration.getMainActivity() != null) {

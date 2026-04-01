@@ -544,7 +544,7 @@ public class Mod2002025Behaviour {
 
 		// Dotaciones por deterioro de créditos u otros activos derivados de las posibles insolvencias de los deudores no
 	    // vinculados con el contribuyente y otras del art. 11.12 LIS con posibilidad de conversión en crédito exigible
-		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.LM2806, new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.LM3622, new Boolean[]{FALSE,TRUE}); 
 		addBreakdown(Mod2002025LM1494Key.values(), Mod2002025Key.LM1494, new byte[]{});  // No lleva columnas de totales
 		
 		// Reversión de las pérdidas por deterioro de valores representativos de la participación en el capital o en los fondos
@@ -580,7 +580,7 @@ public class Mod2002025Behaviour {
 	
 	static { 
 		
-		// Partícipes de agrupaciones de interés económico y UTES (cumplimentación voluntaria)
+		// Partícipes de agrupaciones de interés económico y UTES
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.UT1279, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.UT1455, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.UT1456, new Boolean[]{FALSE,TRUE});
@@ -643,6 +643,7 @@ public class Mod2002025Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.TR1629,new Boolean[]{FALSE,TRUE}); 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.TR1630,new Boolean[]{FALSE,TRUE}); 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.TR1587,new Boolean[]{FALSE,TRUE});
+		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.TR1583,new Boolean[]{FALSE,TRUE}); 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.TR1585,new Boolean[]{FALSE,TRUE});
 		
@@ -655,12 +656,15 @@ public class Mod2002025Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.TR2480,new Boolean[]{FALSE,TRUE}); 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.TR2482,new Boolean[]{FALSE,TRUE}); 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.TR2484,new Boolean[]{FALSE,TRUE});
+		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.TR1646,new Boolean[]{FALSE,TRUE}); 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.TR1647,new Boolean[]{FALSE,TRUE}); 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.TR1648,new Boolean[]{FALSE,TRUE}); 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.TR1649,new Boolean[]{FALSE,TRUE}); 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.TR2486,new Boolean[]{FALSE,TRUE});
+		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.TR2488,new Boolean[]{FALSE,TRUE});
+		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.TR1654,new Boolean[]{FALSE,TRUE}); 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.TR1655,new Boolean[]{FALSE,TRUE}); 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002025Key.TR1656,new Boolean[]{FALSE,TRUE}); 
