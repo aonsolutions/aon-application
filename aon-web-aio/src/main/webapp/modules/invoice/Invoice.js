@@ -113,8 +113,14 @@ export class Invoice {
       this.comments = invoice.comments || '';
      
       if(invoice.remarks && Array.isArray(invoice.remarks)) this.remarks = invoice.remarks;
-      else if(invoice.remarks && typeof invoice.remarks === 'string') this.remarks = JSON.parse(invoice.remarks);
-      else this.remarks = [];
+      else if(invoice.remarks && typeof invoice.remarks === 'string' && invoice.remarks.isNotEmpty()) {
+        try {
+          this.remarks = JSON.parse(invoice.remarks);
+        } catch(e) {  
+          this.remarks = [];
+          this.remarksDescription = invoice.remarks;
+        } 
+      } else this.remarks = [];
     
       this.selfconta = invoice.selfconta || false;
       this.amortization = invoice.amortization || undefined;
@@ -241,6 +247,11 @@ export class Invoice {
       });
     }
     return this;
+  }
+
+  hasRemarks() {
+    return (this.remarks && this.remarks.length > 0)
+        || (this.remarksDescription && this.remarksDescription.isNotEmpty());
   }
 
   getSeries() {

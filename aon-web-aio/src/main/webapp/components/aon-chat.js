@@ -10,7 +10,8 @@ export class AonChat extends AonElement {
 
   description;
   workflows;
-
+  readonly;
+  
   get id() {
     return this.getAttribute(CONSTANT.ID);
   }
@@ -29,6 +30,7 @@ export class AonChat extends AonElement {
 
   initialize() {
     this.workflows = this.workflows || [];
+    this.readonly = this.readonly || false;
     // [
     //   {
     //     action: {
@@ -60,7 +62,8 @@ export class AonChat extends AonElement {
   build() {
     this.buildChat();
     this.buildChatWorkflow();
-    this.buildTextArea();
+
+    if(!this.readonly) this.buildTextArea();
   }
 
   buildChat = () => {

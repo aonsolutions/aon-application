@@ -549,7 +549,8 @@ export class AonInvoice extends AonElement {
 		} else if (!this.invoice.isEmitida() && this.invoice.isInbox()) {
 			invoiceToolbar.addButtonTitle(ACTION.ADD_FILE, () => this.addInvoiceFile());
 		}
-		invoiceToolbar.addButtonTitle(ACTION.COMMENT, () => this.showLog());
+		if(this.invoice.isRawdoc() || (!this.invoice.isRawdoc() && this.invoice.hasRemarks())) 
+			invoiceToolbar.addButtonTitle(ACTION.COMMENT, () => this.showLog());
 		if(this.invoice.amortization) invoiceToolbar.addButtonTitle(ACTION.AMORTIZATION, () => this.buildInmobilized(this.invoice.amortization));
 		this.buildCommunicationToolbar(invoiceToolbar);
 	}
@@ -2644,6 +2645,8 @@ export class AonInvoice extends AonElement {
 			this.clearElement(rightDiv);
 
 			let chat =  new AonChat();
+			chat.readonly = !this.invoice.isRawdoc();
+			if(this.invoice.remarksDescription) chat.description = this.invoice.remarksDescription;
 			chat.workflows = this.getInvoice().remarks.map(r => {
 				let remark = {}; 
 				remark.action = r.action;
@@ -2677,7 +2680,6 @@ export class AonInvoice extends AonElement {
 			}) || [];
 			chat.onComment((event) => {
 				this.invoice.remarks.push(event.detail);
-				alert(JSON.stringify(this.invoice.remarks, null, 2));
 				this.save();
 			});
 
