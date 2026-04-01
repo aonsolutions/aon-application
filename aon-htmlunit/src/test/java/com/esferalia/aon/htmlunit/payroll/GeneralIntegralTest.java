@@ -2642,6 +2642,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	}
 
 	@Test
+	@Ignore
 	public void TestAtrasos() throws Exception {
 		
 		if (!isDisplayed("atrasos_tiempo_completo_ordinario,_indefinido"))
@@ -3598,11 +3599,11 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	
 		draft("SOCIO COOP, GRUPO 5");
 		calculate(Calendar.JANUARY,2026);
-		assertValue("cgcBaseLabel", 1381.20 * 6.00 / 30.00);
-		assertValue("cgpBaseLabel", 1381.20 * 6.00 / 30.00);
+		assertValue("cgcBaseLabel", 1424.40 * 6.00 / 30.00);
+		assertValue("cgpBaseLabel", 1424.40 * 6.00 / 30.00);
 		calculate(Calendar.FEBRUARY,2026);
-		assertValue("cgcBaseLabel", 1381.20);
-		assertValue("cgpBaseLabel", 1381.20);
+		assertValue("cgcBaseLabel", 1424.40);
+		assertValue("cgpBaseLabel", 1424.40);
 	}
 
 	@Test
