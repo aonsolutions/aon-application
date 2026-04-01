@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
+import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
@@ -38,6 +39,7 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccoun
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
+import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
@@ -186,4 +188,9 @@ public interface IAccounting {
 	public Stream<AccountingIncome> getAccountingIncomes(CloseableAONContext ctx, int domain, String query, int offset, int limit, IDAOCallback cbk) throws AonCoreException;
 	public AccountingIncome saveAccountingIncome(AONContext ctx, AccountingIncome income) throws AonCoreException;
 	public void deleteAccountingIncome(AONContext ctx, AccountEntry ae) throws AonCoreException;
+
+	// **************************************** [AMORTIZATION]
+	public LinkedList<Amortization> getAmortizations(AONContext ctx, Integer domain);
+	public LinkedList<Amortization> getAmortizations(AONContext ctx, AmortizationParams params);
+	public Amortization saveAmortization(AONContext ctx, Amortization am);
 }

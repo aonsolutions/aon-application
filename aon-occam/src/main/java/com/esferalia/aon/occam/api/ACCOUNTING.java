@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
+import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
@@ -42,6 +43,7 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccoun
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
+import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
@@ -755,6 +757,13 @@ public class ACCOUNTING {
 
 	// AMORTIZATION TYPE
 	
+	public static List<AmortizationType> getAmortizationTypeList(Occam occam, int domain) throws AonCoreException {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) { 
+			AmortizationTypeParams params = new AmortizationTypeParams().setDomain(domain);
+			AmortizationTypeValidation.validateParams(params, ctx);
+			return getAccounting().getAmortizationTypeList(ctx, params);
+		}
+	}
 	public static List<AmortizationType> getAmortizationTypeList(String domainName, int domain, String user, AmortizationTypeParams params) throws AonCoreException {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) { 
 			AmortizationTypeValidation.validateParams(params, ctx);
@@ -852,4 +861,24 @@ public class ACCOUNTING {
 		}
 	}
 
+	// *******************************************************
+	// **************************************** [AMORTIZATION]
+	// *******************************************************
+	public static LinkedList<Amortization> getAmortizations(Occam occam, Integer domain) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getAccounting().getAmortizations(ctx, domain);			
+		}
+	}
+
+	public static LinkedList<Amortization> getAmortizations(Occam occam, AmortizationParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getAccounting().getAmortizations(ctx, params);
+		}
+	}
+
+	public static Amortization saveAmortization(Occam occam, Amortization am) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getAccounting().saveAmortization(ctx, am);
+		}
+	}
 }
