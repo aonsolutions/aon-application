@@ -97,7 +97,13 @@ export class AonConfigurationMenu extends AonSuiteMenu {
             }, {
                 description: "Consola de facturación",
                 title: "Consola de facturación",
-                action: () => GWT.iLoad(GWT.INVOICE_CONSOLE)
+                action: () => GWT.iLoad(GWT.INVOICE_CONSOLE),
+                filter: () => this.isNotDomainManagementAvailable()
+            }, {
+                description: "Carga de datos desde ficheros Excel",
+                title: "Carga de datos desde ficheros Excel",
+                action: () => GWT.iLoad(GWT.IMPORT),
+                filter: () => this.isDomainManagementAvailable()
             }
             ]
         }, {
@@ -184,7 +190,8 @@ export class AonConfigurationMenu extends AonSuiteMenu {
                 title: "Descarga de datos en formato Excel",
                 action: () => GWT.iLoad(GWT.INVOICE_REPORT),
                 filter: () => this.isNotDomainManagementAvailable()
-            }]
+            }],
+            filter: () => this.isNotDomainManagementAvailable()
 		},{
 			title: 'Configuración',
 	            options: [{
