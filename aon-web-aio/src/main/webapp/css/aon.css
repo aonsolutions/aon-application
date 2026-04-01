@@ -420,6 +420,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 	transition: margin-left .3s;
 }
 
+#rootPanel.domainManagementAvailable {
+	margin-left: 0px !important;
+}
+
 #rootPanel>div {
 	background-color: transparent;
 }
@@ -994,6 +998,10 @@ h1 {
 	background-color: var(--aonHeaderBackgroundColor);
 }
 
+#aonTopMenuDiv .aonMenuApp #documental #aonMenuListAppImgTop-documental{
+	color: var(--aonTopMenuAvailable) !important;
+}
+
 .aonCompanyDiv {
 	width: 60%;
 	display: flex;
@@ -1003,6 +1011,13 @@ h1 {
 	justify-content: start;
 	align-items: start;
 	margin: 0 auto;
+}
+
+.companyFilterTab{
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+	align-items: center;
 }
 
 .aonCompanyTitleDiv {

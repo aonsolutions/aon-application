@@ -1,7 +1,7 @@
 package com.esferalia.aon.in.payroll.pdf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,8 +17,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.in.payroll.pdf.jooq.JooqPDFSalaryBuilder;
 import com.esferalia.aon.occam.api.AONContext;
@@ -26,7 +26,7 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
-@Ignore
+@Disabled
 public class JooqPdfTest {
 	@Test
 	public void testOmega() throws IOException, UnknownPDFException, SQLException {
@@ -66,7 +66,7 @@ public class JooqPdfTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testA3() throws IOException, UnknownPDFException, SQLException {
 		try (InputStream is = PdfTest.class.getResourceAsStream("year_payrolls_lorena.pdf");
 				Connection connection = DriverManager
@@ -594,7 +594,7 @@ public class JooqPdfTest {
 	}
 
 	@Test
-	@Ignore
+@Disabled
 	public void testDsiAt() throws IOException, UnknownPDFException, SQLException {
 		try (InputStream is = PdfTest.class.getResourceAsStream("dsi_at.pdf");
 				Connection connection = DriverManager
@@ -1193,7 +1193,7 @@ public class JooqPdfTest {
 	
 	
 	@Test
-	@Ignore
+@Disabled
 	public void testA3Finiquito() throws IOException, UnknownPDFException, SQLException {
 		try (InputStream is = PdfTest.class.getResourceAsStream("nominaA3Finiquito.pdf");
 				Connection connection = DriverManager

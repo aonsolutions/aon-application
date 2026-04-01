@@ -1740,7 +1740,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 					@Override
 					public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
 							Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
-						if ( contractPayment.getId().equals(((IContractPayment)payment).getId()) ) {						
+						if ( contractPayment.getScope() == ((IContractPayment)payment).getScope() &&
+								contractPayment.getId().equals(((IContractPayment)payment).getId()) ) {		
 							extraQuotes.add(quote);
 						} else if (
 							lastDayOfMonth.before(extraEnDate) &&

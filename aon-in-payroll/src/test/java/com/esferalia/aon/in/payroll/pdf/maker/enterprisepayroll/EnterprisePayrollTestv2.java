@@ -12,8 +12,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
@@ -60,7 +60,7 @@ public class EnterprisePayrollTestv2 {
 						AonDateUtils.getLastDayOfMonth(new Date()),
 						AonDateUtils.getLastDayOfMonth(new Date()),
 						f.name().fullName(), 
-						"Nómina",
+						"N\u00f3mina",
 						f.number().randomDouble(2, 0, 99999),
 						f.number().randomDouble(2, 0, 99999),
 						f.number().randomDouble(2, 0, 99999),
@@ -88,7 +88,7 @@ public class EnterprisePayrollTestv2 {
 						AonDateUtils.getLastDayOfMonth(new Date()),
 						AonDateUtils.getLastDayOfMonth(new Date()),
 						f.name().fullName(), 
-						"Nómina",
+						"N\u00f3mina",
 						f.number().randomDouble(2, 0, 99999),
 						f.number().randomDouble(2, 0, 99999),
 						f.number().randomDouble(2, 0, 99999),
@@ -116,7 +116,7 @@ public class EnterprisePayrollTestv2 {
 						AonDateUtils.getLastDayOfMonth(new Date()),
 						AonDateUtils.getLastDayOfMonth(new Date()),
 						f.name().fullName(), 
-						"Nómina",
+						"N\u00f3mina",
 						f.number().randomDouble(2, 0, 99999),
 						f.number().randomDouble(2, 0, 99999),
 						f.number().randomDouble(2, 0, 99999),
@@ -143,7 +143,7 @@ public class EnterprisePayrollTestv2 {
 			ssEntries.put(f.pokemon().location(),categoria5);
 			ssEntries.put(f.pokemon().location(),categoria6);
 
-			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "NÓMINA EMPRESA", f.zelda().game() + " S.L",	entries, ssEntries);
+			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "N\u00d3MINA EMPRESA", f.zelda().game() + " S.L",	entries, ssEntries);
 			printEnterprisePayroll(payroll,new FileOutputStream("ListadoCostesPDF.pdf"),Optional.of(new Locale("Es")));
 			
 		} catch (IOException | CanNotCreatePdfException e) {
@@ -171,7 +171,7 @@ public class EnterprisePayrollTestv2 {
 					AonDateUtils.getLastDayOfMonth(new Date()),
 					AonDateUtils.getLastDayOfMonth(new Date()),
 					FAKER.name().fullName(), 
-					"Nómina",
+					"N\u00f3mina",
 					FAKER.number().randomDouble(2, 0, 99999),
 					FAKER.number().randomDouble(2, 0, 99999),
 					FAKER.number().randomDouble(2, 0, 99999),
@@ -194,7 +194,7 @@ public class EnterprisePayrollTestv2 {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testEnterprisePayroll2() {
 
 		try {
@@ -210,7 +210,7 @@ public class EnterprisePayrollTestv2 {
 
 			for (int i = 0; i < 4; i++) {
 				String cat = "Categoria " + i;
-				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, null, null, null, null, null, null, "Nómina",
+				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, null, null, null, null, null, null, "N\u00f3mina",
 						null, null, null, null, null, null, 9999.99, 9.99, 9999.99);
 
 				categoria1.put(cat, e);
@@ -220,7 +220,7 @@ public class EnterprisePayrollTestv2 {
 			
 			for (int i = 0; i < 4; i++) {
 				String cat = "cet " + i;
-				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, null, null, null, null, null, null, "Nómina",
+				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, null, null, null, null, null, null, "N\u00f3mina",
 						null, null, null, null, null, null, 9999.99, 9.999,9999.99);
 
 				categoria1.put(cat, e);
@@ -230,7 +230,7 @@ public class EnterprisePayrollTestv2 {
 			
 			for (int i = 0; i < 4; i++) {
 				String cat = "Categoria " + i;
-				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.SEG_SOCIAL, null, null, null, null, null, null, "Nómina",
+				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.SEG_SOCIAL, null, null, null, null, null, null, "N\u00f3mina",
 						null, null, null, null, null, null, 29999.99, null,9999.99);
 
 				categoria3.put(cat, e);
@@ -247,7 +247,7 @@ public class EnterprisePayrollTestv2 {
 			ssEntries.put("Donosti",categoria5);
 			ssEntries.put("Bilbao",categoria6);
 
-			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "NÓMINA EMPRESA", "AON SOLUTIONS S.L",	entries, ssEntries);
+			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "N\u00d3MINA EMPRESA", "AON SOLUTIONS S.L",	entries, ssEntries);
 			PdfMaker.printEnterprisePayroll(payroll,new ByteArrayOutputStream(),Optional.of(new Locale("Es")));
 			
 		} catch (IOException | CanNotCreatePdfException e) {

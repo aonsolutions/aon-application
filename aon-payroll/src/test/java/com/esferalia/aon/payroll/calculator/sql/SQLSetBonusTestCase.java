@@ -6,7 +6,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -17,8 +17,8 @@ import java.util.Collections;
 
 import javax.xml.bind.JAXBException;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
@@ -318,7 +318,7 @@ public class SQLSetBonusTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore("Not real case")
+	@Disabled("Not real case")
 	public void testSetBonusFromScratchIII()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
 		Connection connection = getConnection();

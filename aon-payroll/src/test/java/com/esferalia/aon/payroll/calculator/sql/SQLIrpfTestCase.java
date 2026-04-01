@@ -27,9 +27,9 @@ import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.DAY_OF_YEAR;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -46,8 +46,8 @@ import java.util.function.Consumer;
 
 import org.jooq.Record;
 import org.jooq.impl.DSL;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
@@ -100,7 +100,7 @@ import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionException
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLIrpfTestCase extends AbstractSQLTestCase {
 
@@ -573,7 +573,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, start, end, issue, criteria);
 
-		Assert.assertEquals(2.00 , ctx.getIrpf());
+		assertEquals(2.00 , ctx.getIrpf());
 
 	}
 
@@ -853,7 +853,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		for ( com.esferalia.aon.payroll.SalaryDeduction deduction : salary.getSalaryDeductions())
 			System.out.println(deduction.getDescription() + " = " + deduction.getAmount());
 		
-		Assert.assertEquals(1, salary.getSalaryDeductions().size());
+		assertEquals(1, salary.getSalaryDeductions().size());
 	}
 
 	@Test
@@ -1124,7 +1124,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	public void testLiquidExtras() throws ExpressionException, SQLException {
 
 		Consumer<IrpfResult> asserts = result -> {
-//			Assert.fail();
+//			fail();
 		};
 
 		try {
@@ -1203,7 +1203,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 
 		try {
 			ctx.getIrpf();
-			Assert.fail();
+			fail();
 		} catch (OnIrpfOutcome e) {
 			System.out.println(e.getMessage());
 		}
@@ -1530,10 +1530,10 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			startDate = add(startDate, Calendar.MONTH, 1); 
 		}
 		
-		org.junit.Assert.assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[1]).distinct().count());
-		org.junit.Assert.assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[3]).distinct().count());
-		org.junit.Assert.assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[0]).distinct().count() <= 2);
-		org.junit.Assert.assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[2]).distinct().count() <=2 );
+		assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[1]).distinct().count());
+		assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[3]).distinct().count());
+		assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[0]).distinct().count() <= 2);
+		assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[2]).distinct().count() <=2 );
 		
 		Double irpfs [] = 
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()))
@@ -1600,12 +1600,12 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			startDate = add(startDate, Calendar.MONTH, 1); 
 		}
 		
-		org.junit.Assert.assertEquals(12, irpfResults.size());
+		assertEquals(12, irpfResults.size());
 
-		org.junit.Assert.assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[1]).distinct().count());
-		org.junit.Assert.assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[3]).distinct().count());
-		org.junit.Assert.assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[0]).distinct().count() <= 2);
-		org.junit.Assert.assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[2]).distinct().count() <=2 );
+		assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[1]).distinct().count());
+		assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[3]).distinct().count());
+		assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[0]).distinct().count() <= 2);
+		assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[2]).distinct().count() <=2 );
 		
 		Double irpfs [] = 
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()))
@@ -1722,10 +1722,10 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		}
 		
 		for ( int i= 0; i < 12 ; i++ ) {
-			org.junit.Assert.assertEquals(expectedIrpfResults.get(i)[0], irpfResults.get(i)[0], 0.1);
-			org.junit.Assert.assertEquals(expectedIrpfResults.get(i)[1], irpfResults.get(i)[1]);
-			org.junit.Assert.assertEquals(expectedIrpfResults.get(i)[2], irpfResults.get(i)[2], 0.1 / 100.00 * 12  * 2750.00 );
-			org.junit.Assert.assertEquals(expectedIrpfResults.get(i)[3], irpfResults.get(i)[3]);
+			assertEquals(expectedIrpfResults.get(i)[0], irpfResults.get(i)[0], 0.1);
+			assertEquals(expectedIrpfResults.get(i)[1], irpfResults.get(i)[1]);
+			assertEquals(expectedIrpfResults.get(i)[2], irpfResults.get(i)[2], 0.1 / 100.00 * 12  * 2750.00 );
+			assertEquals(expectedIrpfResults.get(i)[3], irpfResults.get(i)[3]);
 		}
 		
 	}
@@ -1782,10 +1782,10 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			startDate = add(startDate, Calendar.MONTH, 1); 
 		}
 		
-		org.junit.Assert.assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[1]).distinct().count());
-		org.junit.Assert.assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[3]).distinct().count());
-		org.junit.Assert.assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[0]).distinct().count() <= 2);
-		org.junit.Assert.assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[2]).distinct().count() <=2 );
+		assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[1]).distinct().count());
+		assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[3]).distinct().count());
+		assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[0]).distinct().count() <= 2);
+		assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[2]).distinct().count() <=2 );
 		
 	}
 
@@ -1878,10 +1878,10 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			startDate = add(startDate, Calendar.MONTH, 1); 
 		}
 		
-		org.junit.Assert.assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[1]).distinct().count());
-		org.junit.Assert.assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[3]).distinct().count());
-		org.junit.Assert.assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[0]).distinct().count() <=2);
-		org.junit.Assert.assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[2]).distinct().count() <=2 );
+		assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[1]).distinct().count());
+		assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[3]).distinct().count());
+		assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[0]).distinct().count() <=2);
+		assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[2]).distinct().count() <=2 );
 		
 	}
 
@@ -1996,10 +1996,10 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			startDate = add(startDate, Calendar.MONTH, 1); 
 		}
 		
-		org.junit.Assert.assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[1]).distinct().count());
-		org.junit.Assert.assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[3]).distinct().count());
-		org.junit.Assert.assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[0]).distinct().count() <=2);
-//		org.junit.Assert.assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[2]).distinct().count() <=2 );
+		assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[1]).distinct().count());
+		assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[3]).distinct().count());
+		assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[0]).distinct().count() <=2);
+//		assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[2]).distinct().count() <=2 );
 		
 	}
 
@@ -2074,10 +2074,10 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			
 		}
 		
-		org.junit.Assert.assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[1]).distinct().count());
-		org.junit.Assert.assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[3]).distinct().count());
-		org.junit.Assert.assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[0]).distinct().count() <= 2);
-		//TODO: org.junit.Assert.assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[2]).distinct().count() <=2 );
+		assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[1]).distinct().count());
+		assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[3]).distinct().count());
+		assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[0]).distinct().count() <= 2);
+		//TODO: assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[2]).distinct().count() <=2 );
 		
 		Double irpfs [] = 
 		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()))
@@ -2149,8 +2149,8 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		System.out.println( "I.R.P.F : " + salary.getTotalIrpf());
-		org.junit.Assert.assertTrue(salary.getTotalPayment() > 0.00 );
-		org.junit.Assert.assertTrue(salary.getTotalIrpf() > 0.00 );
+		assertTrue(salary.getTotalPayment() > 0.00 );
+		assertTrue(salary.getTotalIrpf() > 0.00 );
 	}
 
 	@Test
@@ -2239,7 +2239,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			public void onIrpf(IrpfOutcome irpfOutcome) {
 				irpf[0] = irpfOutcome.getIrpfResult().getIrpf();
 				assertAnnualRemuneration(3300.00 * 14, irpfOutcome.getIrpfResult().getAnnualRemuneration());
-				org.junit.Assert.assertEquals( 3300.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
+				assertEquals( 3300.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
 			}
 		});
 		ctx.getIrpf();
@@ -2258,9 +2258,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				@Override
 				public void onIrpf(IrpfOutcome irpfOutcome) {
 					assertAnnualRemuneration(3300.00 * 14, irpfOutcome.getIrpfResult().getAnnualRemuneration());
-					org.junit.Assert.assertEquals( 3300.00  * irpf[0] * j / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
-					org.junit.Assert.assertEquals( 3300.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
-					org.junit.Assert.assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), 0.0);
+					assertEquals( 3300.00  * irpf[0] * j / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
+					assertEquals( 3300.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
+					assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), 0.0);
 				}
 			});
 			ctx.getIrpf();
@@ -2282,9 +2282,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			@Override
 			public void onIrpf(IrpfOutcome irpfOutcome) {
 				assertAnnualRemuneration(3300.00 * 14, irpfOutcome.getIrpfResult().getAnnualRemuneration());
-//				org.junit.Assert.assertEquals( 3300.00  * irpf[0] * 6 / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
-				org.junit.Assert.assertEquals( 3300.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
-				org.junit.Assert.assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), 0.0);
+//				assertEquals( 3300.00  * irpf[0] * 6 / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
+				assertEquals( 3300.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
+				assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), 0.0);
 			}
 		});
 		extraCtx.getIrpf();
@@ -2292,9 +2292,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, issueDate);
 		SmartContractSalaryCalculator<Salary> contractSalaryCalculator = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder());
 		Salary extra = contractSalaryCalculator.calculate(extraCtx);
-		org.junit.Assert.assertEquals( 3300.00/2.00  , extra.getTotalPayment(), 0.0);
-		org.junit.Assert.assertEquals( 3300.00/2.00  , extra.getIrpfBase(), 0.0);
-		org.junit.Assert.assertEquals( 3300.00/2.00 * irpf[0]  / 100.00 , extra.getTotalIrpf(), 0.0);
+		assertEquals( 3300.00/2.00  , extra.getTotalPayment(), 0.0);
+		assertEquals( 3300.00/2.00  , extra.getIrpfBase(), 0.0);
+		assertEquals( 3300.00/2.00 * irpf[0]  / 100.00 , extra.getTotalIrpf(), 0.0);
 		
 		extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, issueDate);
 		calculateAndSave(connection, extraCtx);
@@ -2306,9 +2306,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			@Override
 			public void onIrpf(IrpfOutcome irpfOutcome) {
 				assertAnnualRemuneration(3300.00 * 14, irpfOutcome.getIrpfResult().getAnnualRemuneration());
-				org.junit.Assert.assertEquals( 3300.00  * irpf[0] * 6 / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
-				org.junit.Assert.assertEquals( 3300.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
-				org.junit.Assert.assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), 0.0);
+				assertEquals( 3300.00  * irpf[0] * 6 / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
+				assertEquals( 3300.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
+				assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), 0.0);
 			}
 		});
 		ctx.getIrpf();
@@ -2325,9 +2325,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				@Override
 				public void onIrpf(IrpfOutcome irpfOutcome) {
 					assertAnnualRemuneration(3300.00 * 14, irpfOutcome.getIrpfResult().getAnnualRemuneration());
-					org.junit.Assert.assertEquals( 3300.00  * irpf[0] * ( 7.5 + j) / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
-					org.junit.Assert.assertEquals( 3300.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
-					org.junit.Assert.assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), 0.0);
+					assertEquals( 3300.00  * irpf[0] * ( 7.5 + j) / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
+					assertEquals( 3300.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
+					assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), 0.0);
 				}
 			});
 			ctx.getIrpf();
@@ -2347,18 +2347,18 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			@Override
 			public void onIrpf(IrpfOutcome irpfOutcome) {
 				assertAnnualRemuneration(3300.00 * 14, irpfOutcome.getIrpfResult().getAnnualRemuneration());
-//				org.junit.Assert.assertEquals( 3300.00  * irpf[0] * 6 / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
-				org.junit.Assert.assertEquals( 3300.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
-				org.junit.Assert.assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), 0.0);
+//				assertEquals( 3300.00  * irpf[0] * 6 / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
+				assertEquals( 3300.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
+				assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), 0.0);
 			}
 		});
 		extraCtx.getIrpf();
 		
 		extra = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, issueDate));
-		org.junit.Assert.assertEquals( 3300.00  , extra.getTotalPayment(), 0.0);
-		org.junit.Assert.assertEquals( 3300.00  , extra.getIrpfBase(), 0.0);
-		org.junit.Assert.assertEquals( 3300.00 * irpf[0]  / 100.00 , extra.getTotalIrpf(), 0.0);
+		assertEquals( 3300.00  , extra.getTotalPayment(), 0.0);
+		assertEquals( 3300.00  , extra.getIrpfBase(), 0.0);
+		assertEquals( 3300.00 * irpf[0]  / 100.00 , extra.getTotalIrpf(), 0.0);
 
 	}
 
@@ -2465,7 +2465,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			public void onIrpf(IrpfOutcome irpfOutcome) {
 				irpf[0] = irpfOutcome.getIrpfResult().getIrpf();
 				assertAnnualRemuneration( 42000.00 + 4200.00 + 100.00*12 + (42000.00+ 4200.00) * 5 / 100.00 + (42000.00+ 4200.00 + (42000.00+ 4200.00) * 5 / 100.00) * 10 / 100.00 , irpfOutcome.getIrpfResult().getAnnualRemuneration());
-//				org.junit.Assert.assertEquals( 3300.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
+//				assertEquals( 3300.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
 			}
 		});
 		ctx.getIrpf();
@@ -2473,7 +2473,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testExtrasIII() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -2559,7 +2559,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			public void onIrpf(IrpfOutcome irpfOutcome) {
 				irpf[0] = irpfOutcome.getIrpfResult().getIrpf();
 				assertAnnualRemuneration(2200.00 * 14, irpfOutcome.getIrpfResult().getAnnualRemuneration());
-				org.junit.Assert.assertEquals( 2200.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), DELTA);
+				assertEquals( 2200.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), DELTA);
 			}
 		});
 		ctx.getIrpf();
@@ -2578,9 +2578,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				@Override
 				public void onIrpf(IrpfOutcome irpfOutcome) {
 					assertAnnualRemuneration(2200.00 * 14, irpfOutcome.getIrpfResult().getAnnualRemuneration());
-					org.junit.Assert.assertEquals( 2200.00  * irpf[0] * j / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), DELTA);
-					org.junit.Assert.assertEquals( 2200.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), DELTA);
-					org.junit.Assert.assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), DELTA);
+					assertEquals( 2200.00  * irpf[0] * j / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), DELTA);
+					assertEquals( 2200.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), DELTA);
+					assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), DELTA);
 				}
 			});
 			ctx.getIrpf();
@@ -2602,9 +2602,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			@Override
 			public void onIrpf(IrpfOutcome irpfOutcome) {
 				assertAnnualRemuneration(2200.00 * 14, irpfOutcome.getIrpfResult().getAnnualRemuneration());
-//				org.junit.Assert.assertEquals( 2200.00  * irpf[0] * 6 / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
-				org.junit.Assert.assertEquals( 2200.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
-				org.junit.Assert.assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), 0.0);
+//				assertEquals( 2200.00  * irpf[0] * 6 / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
+				assertEquals( 2200.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
+				assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), 0.0);
 			}
 		});
 		extraCtx.getIrpf();
@@ -2612,9 +2612,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, issueDate);
 		SmartContractSalaryCalculator<Salary> contractSalaryCalculator = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder());
 		Salary extra = contractSalaryCalculator.calculate(extraCtx);
-		org.junit.Assert.assertEquals( 2200.00/2.00  , extra.getTotalPayment(), 0.0);
-		org.junit.Assert.assertEquals( 2200.00/2.00  , extra.getIrpfBase(), 0.0);
-		org.junit.Assert.assertEquals( 2200.00/2.00 * irpf[0]  / 100.00 , extra.getTotalIrpf(), 0.0);
+		assertEquals( 2200.00/2.00  , extra.getTotalPayment(), 0.0);
+		assertEquals( 2200.00/2.00  , extra.getIrpfBase(), 0.0);
+		assertEquals( 2200.00/2.00 * irpf[0]  / 100.00 , extra.getTotalIrpf(), 0.0);
 		
 		extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, issueDate);
 		calculateAndSave(connection, extraCtx);
@@ -2626,9 +2626,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			@Override
 			public void onIrpf(IrpfOutcome irpfOutcome) {
 				assertAnnualRemuneration(2200.00 * 14, irpfOutcome.getIrpfResult().getAnnualRemuneration());
-				org.junit.Assert.assertEquals( 2200.00  * irpf[0] * 6 / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
-				org.junit.Assert.assertEquals( 2200.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
-				org.junit.Assert.assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), 0.0);
+				assertEquals( 2200.00  * irpf[0] * 6 / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
+				assertEquals( 2200.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
+				assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), 0.0);
 			}
 		});
 		ctx.getIrpf();
@@ -2645,9 +2645,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				@Override
 				public void onIrpf(IrpfOutcome irpfOutcome) {
 					assertAnnualRemuneration(2200.00 * 14, irpfOutcome.getIrpfResult().getAnnualRemuneration());
-					org.junit.Assert.assertEquals( 2200.00  * irpf[0] * ( 7.5 + j) / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
-					org.junit.Assert.assertEquals( 2200.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
-					org.junit.Assert.assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), 0.0);
+					assertEquals( 2200.00  * irpf[0] * ( 7.5 + j) / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
+					assertEquals( 2200.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
+					assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), 0.0);
 				}
 			});
 			ctx.getIrpf();
@@ -2667,18 +2667,18 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			@Override
 			public void onIrpf(IrpfOutcome irpfOutcome) {
 				assertAnnualRemuneration(2200.00 * 14, irpfOutcome.getIrpfResult().getAnnualRemuneration());
-//				org.junit.Assert.assertEquals( 2200.00  * irpf[0] * 6 / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
-				org.junit.Assert.assertEquals( 2200.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
-				org.junit.Assert.assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), 0.0);
+//				assertEquals( 2200.00  * irpf[0] * 6 / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
+				assertEquals( 2200.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
+				assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), 0.0);
 			}
 		});
 		extraCtx.getIrpf();
 		
 		extra = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, issueDate));
-		org.junit.Assert.assertEquals( 2200.00  , extra.getTotalPayment(), 0.0);
-		org.junit.Assert.assertEquals( 2200.00  , extra.getIrpfBase(), 0.0);
-		org.junit.Assert.assertEquals( 2200.00 * irpf[0]  / 100.00 , extra.getTotalIrpf(), 0.0);
+		assertEquals( 2200.00  , extra.getTotalPayment(), 0.0);
+		assertEquals( 2200.00  , extra.getIrpfBase(), 0.0);
+		assertEquals( 2200.00 * irpf[0]  / 100.00 , extra.getTotalIrpf(), 0.0);
 	}
 
 	@Test
@@ -3096,9 +3096,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 					System.out.println("AnnualIrpf:" + irpfOutcome.getIrpfResult().getAnnualIrpf());
 					System.out.println("AnnualRemuneration:" + irpfOutcome.getIrpfResult().getAnnualRemuneration());
 				
-					org.junit.Assert.assertEquals(2.00, irpfOutcome.getIrpfResult().getIrpf(), 0.00);
-					org.junit.Assert.assertEquals(500.00*12 * 2 /100, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.00);
-					org.junit.Assert.assertEquals(500.00*12, irpfOutcome.getIrpfResult().getAnnualRemuneration(), 0.00);
+					assertEquals(2.00, irpfOutcome.getIrpfResult().getIrpf(), 0.00);
+					assertEquals(500.00*12 * 2 /100, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.00);
+					assertEquals(500.00*12, irpfOutcome.getIrpfResult().getAnnualRemuneration(), 0.00);
 				}
 			});
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
@@ -3167,9 +3167,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 					System.out.println("AnnualIrpf:" + irpfOutcome.getIrpfResult().getAnnualIrpf());
 					System.out.println("AnnualRemuneration:" + irpfOutcome.getIrpfResult().getAnnualRemuneration());
 				
-					org.junit.Assert.assertEquals(2.00, irpfOutcome.getIrpfResult().getIrpf(), 0.00);
-					org.junit.Assert.assertEquals((500.00*12 + 1000.00) * 2 /100, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.00);
-					org.junit.Assert.assertEquals((500.00*12 + 1000.00), irpfOutcome.getIrpfResult().getAnnualRemuneration(), 0.00);
+					assertEquals(2.00, irpfOutcome.getIrpfResult().getIrpf(), 0.00);
+					assertEquals((500.00*12 + 1000.00) * 2 /100, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.00);
+					assertEquals((500.00*12 + 1000.00), irpfOutcome.getIrpfResult().getAnnualRemuneration(), 0.00);
 				}
 			});
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
@@ -3182,7 +3182,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testTemporaryIII() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -3238,9 +3238,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 					System.out.println("AnnualIrpf:" + irpfOutcome.getIrpfResult().getAnnualIrpf());
 					System.out.println("AnnualRemuneration:" + irpfOutcome.getIrpfResult().getAnnualRemuneration());
 				
-					org.junit.Assert.assertEquals(2.00, irpfOutcome.getIrpfResult().getIrpf(), 0.00);
-					org.junit.Assert.assertEquals((500.00*12 + 100.00), irpfOutcome.getIrpfResult().getAnnualRemuneration(), 0.00);
-					org.junit.Assert.assertEquals((500.00*12 + 100.00) * 2 /100, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.00);
+					assertEquals(2.00, irpfOutcome.getIrpfResult().getIrpf(), 0.00);
+					assertEquals((500.00*12 + 100.00), irpfOutcome.getIrpfResult().getAnnualRemuneration(), 0.00);
+					assertEquals((500.00*12 + 100.00) * 2 /100, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.00);
 				}
 			});
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
@@ -3309,9 +3309,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 					System.out.println("AnnualIrpf:" + irpfOutcome.getIrpfResult().getAnnualIrpf());
 					System.out.println("AnnualRemuneration:" + irpfOutcome.getIrpfResult().getAnnualRemuneration());
 				
-					org.junit.Assert.assertEquals(2.00, irpfOutcome.getIrpfResult().getIrpf(), 0.00);
-					org.junit.Assert.assertEquals((500.00*12 + 1000.00) * 2 /100, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.00);
-					org.junit.Assert.assertEquals((500.00*12 + 1000.00), irpfOutcome.getIrpfResult().getAnnualRemuneration(), 0.00);
+					assertEquals(2.00, irpfOutcome.getIrpfResult().getIrpf(), 0.00);
+					assertEquals((500.00*12 + 1000.00) * 2 /100, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.00);
+					assertEquals((500.00*12 + 1000.00), irpfOutcome.getIrpfResult().getAnnualRemuneration(), 0.00);
 				}
 			});
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
@@ -3383,9 +3383,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 						System.out.println("PaidRemuneration:" + irpfOutcome.getIrpfRegularization().getPaidRemuneration());
 					}
 				
-					org.junit.Assert.assertEquals(2.00, irpfOutcome.getIrpfResult().getIrpf(), 0.00);
-					org.junit.Assert.assertEquals((500.00*12 + 1000.00), irpfOutcome.getIrpfResult().getAnnualRemuneration(), 0.00);
-					org.junit.Assert.assertEquals((500.00*12 + 1000.00) * 2 /100, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.00);
+					assertEquals(2.00, irpfOutcome.getIrpfResult().getIrpf(), 0.00);
+					assertEquals((500.00*12 + 1000.00), irpfOutcome.getIrpfResult().getAnnualRemuneration(), 0.00);
+					assertEquals((500.00*12 + 1000.00) * 2 /100, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.00);
 				}
 			});
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
@@ -3458,9 +3458,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 						System.out.println("PaidRemuneration:" + irpfOutcome.getIrpfRegularization().getPaidRemuneration());
 					}
 				
-					org.junit.Assert.assertEquals(2.00, irpfOutcome.getIrpfResult().getIrpf(), 0.00);
-					org.junit.Assert.assertEquals((500.00*12 + 1000.00), irpfOutcome.getIrpfResult().getAnnualRemuneration(), 0.00);
-					org.junit.Assert.assertEquals((500.00*12 + 1000.00) * 2 /100, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.00);
+					assertEquals(2.00, irpfOutcome.getIrpfResult().getIrpf(), 0.00);
+					assertEquals((500.00*12 + 1000.00), irpfOutcome.getIrpfResult().getAnnualRemuneration(), 0.00);
+					assertEquals((500.00*12 + 1000.00) * 2 /100, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.00);
 				}
 			});
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
@@ -3533,9 +3533,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 						System.out.println("PaidRemuneration:" + irpfOutcome.getIrpfRegularization().getPaidRemuneration());
 					}
 				
-					org.junit.Assert.assertEquals(2.00, irpfOutcome.getIrpfResult().getIrpf(), 0.00);
-					org.junit.Assert.assertEquals((500.00*12 + 1000.00), irpfOutcome.getIrpfResult().getAnnualRemuneration(), 0.00);
-					org.junit.Assert.assertEquals((500.00*12 + 1000.00) * 2 /100, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.00);
+					assertEquals(2.00, irpfOutcome.getIrpfResult().getIrpf(), 0.00);
+					assertEquals((500.00*12 + 1000.00), irpfOutcome.getIrpfResult().getAnnualRemuneration(), 0.00);
+					assertEquals((500.00*12 + 1000.00) * 2 /100, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.00);
 				}
 			});
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
@@ -3600,7 +3600,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 					}
 					
 					assertAnnualRemuneration((2000.00 * 12 + ( ctx.getStartDate().compareTo(bonusStartDate) >= 0 ? 1000.00 : 0.00 )), irpfOutcome.getIrpfResult().getAnnualRemuneration(), 0.00);
-					org.junit.Assert.assertEquals((irpfOutcome.getIrpfResult().getAnnualRemuneration() * 6.5 / 100.00 ), irpfOutcome.getIrpfResult().getDeducciblesExpenses(), 0.1);
+					assertEquals((irpfOutcome.getIrpfResult().getAnnualRemuneration() * 6.5 / 100.00 ), irpfOutcome.getIrpfResult().getDeducciblesExpenses(), 0.1);
 				}
 			});
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
@@ -3651,7 +3651,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			});
 		} catch ( Exception e ) {
 			if ( AonStringUtils.equalsIgnoreCase(e.getCause().getMessage(), "Error al calcular el IRPF") ) { 
-				org.junit.Assert.fail();
+				fail();
 			}
 			System.out.println(e.getCause().getMessage());
 		}
@@ -3690,7 +3690,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			});
 		} catch ( Exception e ) {
 			if ( AonStringUtils.equalsIgnoreCase(e.getCause().getMessage(), "Error al calcular el IRPF") ) { 
-				org.junit.Assert.fail();
+				fail();
 			}
 			System.out.println(e.getCause().getMessage());
 		}
@@ -3705,7 +3705,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			});
 		} catch ( Exception e ) {
 			if ( AonStringUtils.equalsIgnoreCase(e.getCause().getMessage(), "Error al calcular el IRPF") ) { 
-				org.junit.Assert.fail();
+				fail();
 			}
 			System.out.println(e.getCause().getMessage());
 		}
@@ -3719,7 +3719,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			});
 		} catch ( Exception e ) {
 			if ( AonStringUtils.equalsIgnoreCase(e.getCause().getMessage(), "Error al calcular el IRPF") ) { 
-				org.junit.Assert.fail();
+				fail();
 			}
 			System.out.println(e.getCause().getMessage());
 		}
@@ -3733,7 +3733,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			});
 		} catch ( Exception e ) {
 			if ( AonStringUtils.equalsIgnoreCase(e.getCause().getMessage(), "Error al calcular el IRPF") ) { 
-				org.junit.Assert.fail();
+				fail();
 			}
 			System.out.println(e.getCause().getMessage());
 		}
@@ -3747,7 +3747,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			});
 		} catch ( Exception e ) {
 			if ( AonStringUtils.equalsIgnoreCase(e.getCause().getMessage(), "Error al calcular el IRPF") ) { 
-				org.junit.Assert.fail();
+				fail();
 			}
 			System.out.println(e.getCause().getMessage());
 		}
@@ -3761,7 +3761,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			});
 		} catch ( Exception e ) {
 			if ( AonStringUtils.equalsIgnoreCase(e.getCause().getMessage(), "Error al calcular el IRPF") ) { 
-				org.junit.Assert.fail();
+				fail();
 			}
 			System.out.println(e.getCause().getMessage());
 		}
@@ -3787,7 +3787,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			});
 		} catch ( Exception e ) {
 			if ( AonStringUtils.equalsIgnoreCase(e.getCause().getMessage(), "Error al calcular el IRPF") ) { 
-				org.junit.Assert.fail();
+				fail();
 			}
 			System.out.println(e.getCause().getMessage());
 		}
@@ -3801,7 +3801,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			});
 		} catch ( Exception e ) {
 			if ( AonStringUtils.equalsIgnoreCase(e.getCause().getMessage(), "Error al calcular el IRPF") ) { 
-				org.junit.Assert.fail();
+				fail();
 			}
 			System.out.println(e.getCause().getMessage());
 		}
@@ -3845,7 +3845,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			
 			@Override
 			public void onIrpf(IrpfOutcome irpfOutcome) {
-				org.junit.Assert.assertNull(irpfOutcome.getIrpfData().getDisabilityLevel()) ;
+				assertNull(irpfOutcome.getIrpfData().getDisabilityLevel()) ;
 			}
 		});
 		double nullIrpf = ctx.getIrpf();
@@ -3869,14 +3869,14 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			@Override
 			public void onIrpf(IrpfOutcome irpfOutcome) {
 				System.out.println("DISCAPACIDAD = " + irpfOutcome.getIrpfData().getDisabilityLevel().getName(new Locale("es")) );
-				org.junit.Assert.assertEquals(DisabilityLevel.GT_EQ_33_LT_65, irpfOutcome.getIrpfData().getDisabilityLevel()) ;
+				assertEquals(DisabilityLevel.GT_EQ_33_LT_65, irpfOutcome.getIrpfData().getDisabilityLevel()) ;
 			}
 		});
 		
 		double gtEq33Lt65Irpf = ctx.getIrpf();
 		
 		System.out.println( gtEq33Lt65Irpf + " < " + nullIrpf);
-		org.junit.Assert.assertTrue(gtEq33Lt65Irpf < nullIrpf);
+		assertTrue(gtEq33Lt65Irpf < nullIrpf);
 
 		startDate = add(startDate, Calendar.DAY_OF_MONTH, 1);
 		endDate = getLastDayOfMonth(add(startDate, Calendar.MONTH, 1));
@@ -3901,14 +3901,14 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			@Override
 			public void onIrpf(IrpfOutcome irpfOutcome) {
 				System.out.println("DISCAPACIDAD = " + irpfOutcome.getIrpfData().getDisabilityLevel().getName(new Locale("es")) );
-				org.junit.Assert.assertEquals(DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE, irpfOutcome.getIrpfData().getDisabilityLevel()) ;
+				assertEquals(DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE, irpfOutcome.getIrpfData().getDisabilityLevel()) ;
 			}
 		});
 		
 		gtEq33Lt65Irpf = ctx.getIrpf();
 		
 		System.out.println( gtEq33Lt65Irpf + " < " + nullIrpf);
-		org.junit.Assert.assertTrue(gtEq33Lt65Irpf < nullIrpf);
+		assertTrue(gtEq33Lt65Irpf < nullIrpf);
 
 		startDate = add(startDate, Calendar.DAY_OF_MONTH, 1);
 		endDate = getLastDayOfMonth(add(startDate, Calendar.MONTH, 1));
@@ -3932,14 +3932,14 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			@Override
 			public void onIrpf(IrpfOutcome irpfOutcome) {
 				System.out.println("DISCAPACIDAD = " + irpfOutcome.getIrpfData().getDisabilityLevel().getName(new Locale("es")) );
-				org.junit.Assert.assertEquals(DisabilityLevel.GT_EQ_65, irpfOutcome.getIrpfData().getDisabilityLevel()) ;
+				assertEquals(DisabilityLevel.GT_EQ_65, irpfOutcome.getIrpfData().getDisabilityLevel()) ;
 			}
 		});
 		
 		double gtEq65Irpf = ctx.getIrpf();
 		
 		System.out.println( gtEq65Irpf + " < " + nullIrpf);
-		org.junit.Assert.assertTrue(gtEq65Irpf < nullIrpf);
+		assertTrue(gtEq65Irpf < nullIrpf);
 
 		startDate = add(startDate, Calendar.DAY_OF_MONTH, 1);
 		endDate = getLastDayOfMonth(add(startDate, Calendar.MONTH, 1));
@@ -3960,14 +3960,14 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		ctx.setListener(new IListener() {
 			@Override
 			public void onIrpf(IrpfOutcome irpfOutcome) {
-				org.junit.Assert.assertNull(irpfOutcome.getIrpfData().getDisabilityLevel()) ;
+				assertNull(irpfOutcome.getIrpfData().getDisabilityLevel()) ;
 			}
 		});
 		
 		double irpf = ctx.getIrpf();
 		
 		System.out.println( irpf + " == " + nullIrpf);
-		org.junit.Assert.assertTrue(irpf == nullIrpf);
+		assertTrue(irpf == nullIrpf);
 	}
 
 	@Test
@@ -4007,7 +4007,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			
 			@Override
 			public void onIrpf(IrpfOutcome irpfOutcome) {
-				org.junit.Assert.assertNull(irpfOutcome.getIrpfData().getDisabilityLevel()) ;
+				assertNull(irpfOutcome.getIrpfData().getDisabilityLevel()) ;
 			}
 		});
 		double nullIrpf = ctx.getIrpf();
@@ -4045,9 +4045,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				System.out.println("DescendentsFirst : " + irpfOutcome.getIrpfResult().getDescendentsFirst() );
 				System.out.println("Descendents65 : " + irpfOutcome.getIrpfResult().getDescendents65Entirely() );
 				System.out.println("Descendents65Total : " + irpfOutcome.getIrpfResult().getDescendents65Total() );
-				org.junit.Assert.assertEquals((long)1, (long)irpfOutcome.getIrpfResult().getDescendentsFirst()) ;
-				org.junit.Assert.assertEquals((long)1, (long)irpfOutcome.getIrpfResult().getDescendents65Entirely()) ;
-				org.junit.Assert.assertEquals((long)1, (long)irpfOutcome.getIrpfResult().getDescendents65Total()) ;
+				assertEquals((long)1, (long)irpfOutcome.getIrpfResult().getDescendentsFirst()) ;
+				assertEquals((long)1, (long)irpfOutcome.getIrpfResult().getDescendents65Entirely()) ;
+				assertEquals((long)1, (long)irpfOutcome.getIrpfResult().getDescendents65Total()) ;
 
 			}
 		});
@@ -4055,7 +4055,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		double gt65Irpf = ctx.getIrpf();
 		
 		System.out.println( gt65Irpf + " < " + nullIrpf);
-		org.junit.Assert.assertTrue(gt65Irpf < nullIrpf);
+		assertTrue(gt65Irpf < nullIrpf);
 
 		startDate = add(startDate, Calendar.DAY_OF_MONTH, 1);
 		endDate = getLastDayOfMonth(add(startDate, Calendar.MONTH, 1));
@@ -4091,9 +4091,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				System.out.println("DescendentsFirst : " + irpfOutcome.getIrpfResult().getDescendentsFirst() );
 				System.out.println("Descendents3365 : " + irpfOutcome.getIrpfResult().getDescendents33_65Entirely() );
 				System.out.println("Descendents3365Total : " + irpfOutcome.getIrpfResult().getDescendents33_65Total() );
-				org.junit.Assert.assertEquals((long)1, (long)irpfOutcome.getIrpfResult().getDescendentsFirst()) ;
-				org.junit.Assert.assertEquals((long)1, (long)irpfOutcome.getIrpfResult().getDescendents33_65Entirely()) ;
-				org.junit.Assert.assertEquals((long)1, (long)irpfOutcome.getIrpfResult().getDescendents33_65Total()) ;
+				assertEquals((long)1, (long)irpfOutcome.getIrpfResult().getDescendentsFirst()) ;
+				assertEquals((long)1, (long)irpfOutcome.getIrpfResult().getDescendents33_65Entirely()) ;
+				assertEquals((long)1, (long)irpfOutcome.getIrpfResult().getDescendents33_65Total()) ;
 
 			}
 		});
@@ -4101,7 +4101,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 
 		double gt33lt65Irpf = ctx.getIrpf();
 		System.out.println( gt65Irpf + " < " + gt33lt65Irpf);
-		org.junit.Assert.assertTrue(gt65Irpf < gt33lt65Irpf);
+		assertTrue(gt65Irpf < gt33lt65Irpf);
 
 		startDate = add(startDate, Calendar.DAY_OF_MONTH, 1);
 		endDate = getLastDayOfMonth(add(startDate, Calendar.MONTH, 1));
@@ -4153,7 +4153,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				irpfDatas[0] = irpfOutcome.getIrpfData();
 				irpfResults[0] = irpfOutcome.getIrpfResult();
 				irpfRegularizations[0] = irpfOutcome.getIrpfRegularization();
-				org.junit.Assert.assertNull(irpfOutcome.getIrpfData().getDeductHomeLoan()) ;
+				assertNull(irpfOutcome.getIrpfData().getDeductHomeLoan()) ;
 			}
 		});
 		double nullIrpf = ctx.getIrpf();
@@ -4182,7 +4182,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				irpfRegularizations[1] = irpfOutcome.getIrpfRegularization();
 				
 				System.out.println("VIVIENDA = " + irpfOutcome.getIrpfData().getDeductHomeLoan().getName(new Locale("es")) );
-				org.junit.Assert.assertEquals(DeductHomeLoan.AFTER_01_01_2001, irpfOutcome.getIrpfData().getDeductHomeLoan()) ;
+				assertEquals(DeductHomeLoan.AFTER_01_01_2001, irpfOutcome.getIrpfData().getDeductHomeLoan()) ;
 				
 			}
 		});
@@ -4191,7 +4191,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		double deductHomeLoanIrpf = ctx.getIrpf();
 		
 		System.out.println( deductHomeLoanIrpf + " < " + nullIrpf);
-		org.junit.Assert.assertTrue(deductHomeLoanIrpf < nullIrpf);
+		assertTrue(deductHomeLoanIrpf < nullIrpf);
 
 	}
 
@@ -4239,7 +4239,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				irpfDatas[0] = irpfOutcome.getIrpfData();
 				irpfResults[0] = irpfOutcome.getIrpfResult();
 				irpfRegularizations[0] = irpfOutcome.getIrpfRegularization();
-				org.junit.Assert.assertNull(irpfOutcome.getIrpfData().getDeductHomeLoan()) ;
+				assertNull(irpfOutcome.getIrpfData().getDeductHomeLoan()) ;
 			}
 		});
 		double nullIrpf = ctx.getIrpf();
@@ -4275,7 +4275,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		double irpfDataIrpf = ctx.getIrpf();
 		
 		System.out.println( irpfDataIrpf + " == " + nullIrpf);
-		org.junit.Assert.assertTrue(irpfDataIrpf == nullIrpf);
+		assertTrue(irpfDataIrpf == nullIrpf);
 
 	}
 
@@ -4323,7 +4323,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			@Override
 			public void onIrpf(IrpfOutcome irpfOutcome) {
 				System.out.println(irpfOutcome.getIrpfResult().getIrpf());
-			    	org.junit.Assert.assertEquals(1190, irpfOutcome.getBirthYear());
+			    	assertEquals(1190, irpfOutcome.getBirthYear());
 			}
 		});
 		ctx.getIrpf();
@@ -4339,7 +4339,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			@Override
 			public void onIrpf(IrpfOutcome irpfOutcome) {
 				System.out.println(irpfOutcome.getIrpfResult().getIrpf());
-			    	org.junit.Assert.assertEquals(Calendar.getInstance().get(Calendar.YEAR)+25, irpfOutcome.getBirthYear());
+			    	assertEquals(Calendar.getInstance().get(Calendar.YEAR)+25, irpfOutcome.getBirthYear());
 			}
 			
 			
@@ -4355,7 +4355,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			@Override
 			public void onIrpf(IrpfOutcome irpfOutcome) {
 				System.out.println(irpfOutcome.getIrpfResult().getIrpf());
-			    	org.junit.Assert.assertEquals(Calendar.getInstance().get(Calendar.YEAR)-30, irpfOutcome.getBirthYear());
+			    	assertEquals(Calendar.getInstance().get(Calendar.YEAR)-30, irpfOutcome.getBirthYear());
 			}
 		});
 		ctx.getIrpf();
@@ -4421,7 +4421,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				System.out.println("AnnualRemuneration:" + irpfOutcome.getIrpfResult().getAnnualRemuneration());
 				
 				double annualRemuneration = irpfOutcome.getIrpfResult().getAnnualRemuneration();
-				org.junit.Assert.assertEquals(1000.00 * 6.00 + annualRemunerations[0]/2, annualRemuneration, DELTA);
+				assertEquals(1000.00 * 6.00 + annualRemunerations[0]/2, annualRemuneration, DELTA);
 			}
 		});
 		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
@@ -4488,7 +4488,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				System.out.println("AnnualRemuneration:" + irpfOutcome.getIrpfResult().getAnnualRemuneration());
 				
 				double annualRemuneration = irpfOutcome.getIrpfResult().getAnnualRemuneration();
-				org.junit.Assert.assertEquals(annualRemunerations[0] / 2, annualRemuneration, DELTA);
+				assertEquals(annualRemunerations[0] / 2, annualRemuneration, DELTA);
 			}
 		});
 		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
@@ -4555,7 +4555,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				System.out.println("AnnualRemuneration:" + irpfOutcome.getIrpfResult().getAnnualRemuneration());
 				
 				double annualRemuneration = irpfOutcome.getIrpfResult().getAnnualRemuneration();
-				org.junit.Assert.assertEquals(1000.00 * 3.00  + annualRemunerations[0] * 9/12  , annualRemuneration, DELTA);
+				assertEquals(1000.00 * 3.00  + annualRemunerations[0] * 9/12  , annualRemuneration, DELTA);
 			}
 		});
 		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
@@ -4628,7 +4628,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				System.out.println(
 					"AnnualRemuneration:" + irpfOutcome.getIrpfResult().getAnnualRemuneration());
 				
-				org.junit.Assert.assertNotNull(irpfOutcome.getIrpfRegularization());
+				assertNotNull(irpfOutcome.getIrpfRegularization());
 				
 				System.out.println(
 					"PaidRemuneration:" + irpfOutcome.getIrpfRegularization().getPaidRemuneration());
@@ -4636,11 +4636,11 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 					"PaidIrpf:" + irpfOutcome.getIrpfRegularization().getPaidIrpf());
 
 				
-				org.junit.Assert.assertEquals( 1000.00 * 7, irpfOutcome.getIrpfRegularization().getPaidRemuneration(), 0.00 );
-				org.junit.Assert.assertEquals( 2.00 * 7, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.00 );
+				assertEquals( 1000.00 * 7, irpfOutcome.getIrpfRegularization().getPaidRemuneration(), 0.00 );
+				assertEquals( 2.00 * 7, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.00 );
 
 				double annualRemuneration = irpfOutcome.getIrpfResult().getAnnualRemuneration();
-				org.junit.Assert.assertEquals(1000.00 * 7 + annualRemunerations[0] / 2,
+				assertEquals(1000.00 * 7 + annualRemunerations[0] / 2,
 					annualRemuneration, DELTA);
 			    }
 			});
@@ -4695,7 +4695,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 
 		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 
-		//org.junit.Assert.assertEquals( chargeDate, ctx.getIrpfDate() );
+		//assertEquals( chargeDate, ctx.getIrpfDate() );
 
 	}
 
@@ -4743,8 +4743,8 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
 		
-		org.junit.Assert.assertEquals( salary.getTotalPayment(), 1000.00 , 0.00);
-		org.junit.Assert.assertEquals( salary.getIrpfBase() * 10 / 100.00, salary.getTotalIrpf() , 0.00);
+		assertEquals( salary.getTotalPayment(), 1000.00 , 0.00);
+		assertEquals( salary.getIrpfBase() * 10 / 100.00, salary.getTotalIrpf() , 0.00);
  
 	}
 
@@ -4800,7 +4800,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		});
 		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
-		//org.junit.Assert.assertEquals( chargeDate, ctx.getIrpfDate() );
+		//assertEquals( chargeDate, ctx.getIrpfDate() );
 
 	}
 
@@ -4861,7 +4861,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		});
 		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
-		//org.junit.Assert.assertEquals( chargeDate, ctx.getIrpfDate() );
+		//assertEquals( chargeDate, ctx.getIrpfDate() );
 
 	}
 
@@ -4909,7 +4909,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		january2024Ctx.setListener(irpfOutcome -> {
 			assertAnnualRemuneration( 15120.00, irpfOutcome.getIrpfResult().getAnnualRemuneration(), DELTA);
 			assertDeduccibleExpenses(978.26, irpfOutcome.getIrpfResult().getDeducciblesExpenses(), DELTA);
-			org.junit.Assert.assertEquals(0.25, irpfOutcome.getIrpfResult().getIrpf(), DELTA);
+			assertEquals(0.25, irpfOutcome.getIrpfResult().getIrpf(), DELTA);
 		});
 		new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>( new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP))).calculate(january2024Ctx);
 		
@@ -4921,7 +4921,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		march2024Ctx.setListener(irpfOutcome -> {
 			assertAnnualRemuneration( 15120.00, irpfOutcome.getIrpfResult().getAnnualRemuneration(), DELTA);
 			assertDeduccibleExpenses(978.26, irpfOutcome.getIrpfResult().getDeducciblesExpenses(), DELTA);
-			org.junit.Assert.assertEquals(0.00, irpfOutcome.getIrpfResult().getIrpf(), DELTA);
+			assertEquals(0.00, irpfOutcome.getIrpfResult().getIrpf(), DELTA);
 		});
 		new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>( new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP))).calculate(march2024Ctx);
 		
@@ -5015,7 +5015,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			System.out.println("Payment: " + p.getDescription() + " - " + p.getAmount());
 		});
 		
-		assertEquals(salary100.getSalaryData(IRPF_PERCENT.getName()), salary300.getSalaryData(IRPF_PERCENT.getName()));
+		assertEquals(salary300.getSalaryData(IRPF_PERCENT.getName()), salary100.getSalaryData(IRPF_PERCENT.getName()));
 	
 	}
 
@@ -5439,70 +5439,70 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	}
 	
 	private static void assertIrpfDataEquals(IrpfData irpfData1, IrpfData irpfData2) {
-		org.junit.Assert.assertEquals(irpfData1.getAnnualRemuneration(), irpfData2.getAnnualRemuneration());
-		org.junit.Assert.assertEquals(irpfData1.getDeducciblesExpenses(), irpfData2.getDeducciblesExpenses());
-		org.junit.Assert.assertEquals(irpfData1.getDeductHomeLoan(), irpfData2.getDeductHomeLoan());
-		org.junit.Assert.assertEquals(irpfData1.getDescendientCount(), irpfData2.getDescendientCount());
-		org.junit.Assert.assertEquals(irpfData1.getFamilySituation(), irpfData2.getFamilySituation());
-		org.junit.Assert.assertEquals(irpfData1.getFoodAnnuity(), irpfData2.getFoodAnnuity());
-		org.junit.Assert.assertEquals(irpfData1.getIrregular18_2Reduction(), irpfData2.getIrregular18_2Reduction());
-		org.junit.Assert.assertEquals(irpfData1.getIrregular18_3Reduction(), irpfData2.getIrregular18_3Reduction());
-		org.junit.Assert.assertEquals(irpfData1.getRequestIrpf(), irpfData2.getRequestIrpf());
-		org.junit.Assert.assertEquals(irpfData1.getSpousalSupport(), irpfData2.getSpousalSupport());
-		org.junit.Assert.assertEquals(irpfData1.getSpouseDocument(), irpfData2.getSpouseDocument());
-		org.junit.Assert.assertEquals(irpfData1.getDisabilityLevel(), irpfData2.getDisabilityLevel());
+		assertEquals(irpfData1.getAnnualRemuneration(), irpfData2.getAnnualRemuneration());
+		assertEquals(irpfData1.getDeducciblesExpenses(), irpfData2.getDeducciblesExpenses());
+		assertEquals(irpfData1.getDeductHomeLoan(), irpfData2.getDeductHomeLoan());
+		assertEquals(irpfData1.getDescendientCount(), irpfData2.getDescendientCount());
+		assertEquals(irpfData1.getFamilySituation(), irpfData2.getFamilySituation());
+		assertEquals(irpfData1.getFoodAnnuity(), irpfData2.getFoodAnnuity());
+		assertEquals(irpfData1.getIrregular18_2Reduction(), irpfData2.getIrregular18_2Reduction());
+		assertEquals(irpfData1.getIrregular18_3Reduction(), irpfData2.getIrregular18_3Reduction());
+		assertEquals(irpfData1.getRequestIrpf(), irpfData2.getRequestIrpf());
+		assertEquals(irpfData1.getSpousalSupport(), irpfData2.getSpousalSupport());
+		assertEquals(irpfData1.getSpouseDocument(), irpfData2.getSpouseDocument());
+		assertEquals(irpfData1.getDisabilityLevel(), irpfData2.getDisabilityLevel());
 	}
 
 	private static void assertIrpfResultEquals(IrpfResult irpfResult1, IrpfResult irpfResult2) {
-		org.junit.Assert.assertEquals(irpfResult1.getDeducciblesExpenses(), irpfResult2.getDeducciblesExpenses());
-		org.junit.Assert.assertEquals(irpfResult1.getDeduct80Bis(), irpfResult2.getDeduct80Bis());
-		org.junit.Assert.assertEquals(irpfResult1.getDeductHomeLoanAmount(), irpfResult2.getDeductHomeLoanAmount());
-		org.junit.Assert.assertEquals(irpfResult1.getIrregular18_2Reduction(), irpfResult2.getIrregular18_2Reduction());
-		org.junit.Assert.assertEquals(irpfResult1.getIrregular18_3Reduction(), irpfResult2.getIrregular18_3Reduction());
+		assertEquals(irpfResult1.getDeducciblesExpenses(), irpfResult2.getDeducciblesExpenses());
+		assertEquals(irpfResult1.getDeduct80Bis(), irpfResult2.getDeduct80Bis());
+		assertEquals(irpfResult1.getDeductHomeLoanAmount(), irpfResult2.getDeductHomeLoanAmount());
+		assertEquals(irpfResult1.getIrregular18_2Reduction(), irpfResult2.getIrregular18_2Reduction());
+		assertEquals(irpfResult1.getIrregular18_3Reduction(), irpfResult2.getIrregular18_3Reduction());
 
-		org.junit.Assert.assertEquals(irpfResult1.getMinimunAscendents(), irpfResult2.getMinimunAscendents());
-		org.junit.Assert.assertEquals(irpfResult1.getAscendents33_65Entirely(), irpfResult2.getAscendents33_65Entirely());
-		org.junit.Assert.assertEquals(irpfResult1.getAscendents33_65Total(), irpfResult2.getAscendents33_65Total());
-		org.junit.Assert.assertEquals(irpfResult1.getAscendentsMayor75Entirely(), irpfResult2.getAscendentsMayor75Entirely());
-		org.junit.Assert.assertEquals(irpfResult1.getAscendentsMayor75Total(), irpfResult2.getAscendentsMayor75Total());
-		org.junit.Assert.assertEquals(irpfResult1.getAscendentsMinor75Entirely(), irpfResult2.getAscendentsMinor75Entirely());
-		org.junit.Assert.assertEquals(irpfResult1.getAscendentsMinor75Total(), irpfResult2.getAscendentsMinor75Total());
-		org.junit.Assert.assertEquals(irpfResult1.getAscendentsMovingEntirely(), irpfResult2.getAscendentsMovingEntirely());
-		org.junit.Assert.assertEquals(irpfResult1.getAscendentsMovingTotal(), irpfResult2.getAscendentsMovingTotal());
+		assertEquals(irpfResult1.getMinimunAscendents(), irpfResult2.getMinimunAscendents());
+		assertEquals(irpfResult1.getAscendents33_65Entirely(), irpfResult2.getAscendents33_65Entirely());
+		assertEquals(irpfResult1.getAscendents33_65Total(), irpfResult2.getAscendents33_65Total());
+		assertEquals(irpfResult1.getAscendentsMayor75Entirely(), irpfResult2.getAscendentsMayor75Entirely());
+		assertEquals(irpfResult1.getAscendentsMayor75Total(), irpfResult2.getAscendentsMayor75Total());
+		assertEquals(irpfResult1.getAscendentsMinor75Entirely(), irpfResult2.getAscendentsMinor75Entirely());
+		assertEquals(irpfResult1.getAscendentsMinor75Total(), irpfResult2.getAscendentsMinor75Total());
+		assertEquals(irpfResult1.getAscendentsMovingEntirely(), irpfResult2.getAscendentsMovingEntirely());
+		assertEquals(irpfResult1.getAscendentsMovingTotal(), irpfResult2.getAscendentsMovingTotal());
 
-		org.junit.Assert.assertEquals(irpfResult1.getMinimunDescendents(), irpfResult2.getMinimunDescendents());
-		org.junit.Assert.assertEquals(irpfResult1.getTwoOrMoreDescendentsMin(), irpfResult2.getTwoOrMoreDescendentsMin());
-		org.junit.Assert.assertEquals(irpfResult1.getDescendentsFirst(), irpfResult2.getDescendentsFirst());
-		org.junit.Assert.assertEquals(irpfResult1.getDescendentsSecond(), irpfResult2.getDescendentsSecond());
-		org.junit.Assert.assertEquals(irpfResult1.getDescendentsThird(), irpfResult2.getDescendentsThird());
-		org.junit.Assert.assertEquals(irpfResult1.getDescendents65Total(), irpfResult2.getDescendents65Total());
-		org.junit.Assert.assertEquals(irpfResult1.getDescendents65Entirely(), irpfResult2.getDescendents65Entirely());
-		org.junit.Assert.assertEquals(irpfResult1.getDescendents33_65Total(), irpfResult2.getDescendents33_65Total());
-		org.junit.Assert.assertEquals(irpfResult1.getDescendents33_65Entirely(), irpfResult2.getDescendents33_65Entirely());
-		org.junit.Assert.assertEquals(irpfResult1.getDescendentsMovingEntirely(), irpfResult2.getDescendentsMovingEntirely());
-		org.junit.Assert.assertEquals(irpfResult1.getDescendentsMovingTotal(), irpfResult2.getDescendentsMovingTotal());
-		org.junit.Assert.assertEquals(irpfResult1.getDescendentsRemainderEntirely(), irpfResult2.getDescendentsRemainderEntirely());
-		org.junit.Assert.assertEquals(irpfResult1.getDescendentsRemainderTotal(), irpfResult2.getDescendentsRemainderTotal());
-		org.junit.Assert.assertEquals(irpfResult1.getDescendentsFourthSubsequentTotal(), irpfResult2.getDescendentsFourthSubsequentTotal());
-		org.junit.Assert.assertEquals(irpfResult1.getDescendentsFourthSubsequentEntirely(), irpfResult2.getDescendentsFourthSubsequentEntirely());
+		assertEquals(irpfResult1.getMinimunDescendents(), irpfResult2.getMinimunDescendents());
+		assertEquals(irpfResult1.getTwoOrMoreDescendentsMin(), irpfResult2.getTwoOrMoreDescendentsMin());
+		assertEquals(irpfResult1.getDescendentsFirst(), irpfResult2.getDescendentsFirst());
+		assertEquals(irpfResult1.getDescendentsSecond(), irpfResult2.getDescendentsSecond());
+		assertEquals(irpfResult1.getDescendentsThird(), irpfResult2.getDescendentsThird());
+		assertEquals(irpfResult1.getDescendents65Total(), irpfResult2.getDescendents65Total());
+		assertEquals(irpfResult1.getDescendents65Entirely(), irpfResult2.getDescendents65Entirely());
+		assertEquals(irpfResult1.getDescendents33_65Total(), irpfResult2.getDescendents33_65Total());
+		assertEquals(irpfResult1.getDescendents33_65Entirely(), irpfResult2.getDescendents33_65Entirely());
+		assertEquals(irpfResult1.getDescendentsMovingEntirely(), irpfResult2.getDescendentsMovingEntirely());
+		assertEquals(irpfResult1.getDescendentsMovingTotal(), irpfResult2.getDescendentsMovingTotal());
+		assertEquals(irpfResult1.getDescendentsRemainderEntirely(), irpfResult2.getDescendentsRemainderEntirely());
+		assertEquals(irpfResult1.getDescendentsRemainderTotal(), irpfResult2.getDescendentsRemainderTotal());
+		assertEquals(irpfResult1.getDescendentsFourthSubsequentTotal(), irpfResult2.getDescendentsFourthSubsequentTotal());
+		assertEquals(irpfResult1.getDescendentsFourthSubsequentEntirely(), irpfResult2.getDescendentsFourthSubsequentEntirely());
 
-		org.junit.Assert.assertEquals(irpfResult1.getFoodAnnuity(), irpfResult2.getFoodAnnuity());
-		org.junit.Assert.assertEquals(irpfResult1.getMinimunPersonal(), irpfResult2.getMinimunPersonal());
+		assertEquals(irpfResult1.getFoodAnnuity(), irpfResult2.getFoodAnnuity());
+		assertEquals(irpfResult1.getMinimunPersonal(), irpfResult2.getMinimunPersonal());
 
-		org.junit.Assert.assertEquals(irpfResult1.getMinimunPersonal(), irpfResult2.getMinimunPersonal());
-		org.junit.Assert.assertEquals(irpfResult1.getMinimunDisability(), irpfResult2.getMinimunDisability());
-		org.junit.Assert.assertEquals(irpfResult1.getMinimunPersonalFamily(), irpfResult2.getMinimunPersonalFamily());
-		org.junit.Assert.assertEquals(irpfResult1.getSocialSecurityPensioner(), irpfResult2.getSocialSecurityPensioner());
-		org.junit.Assert.assertEquals(irpfResult1.getSpousalSupport(), irpfResult2.getSpousalSupport());
-		org.junit.Assert.assertEquals(irpfResult1.getWorkDisabilityReduction(), irpfResult2.getWorkDisabilityReduction());
-		org.junit.Assert.assertEquals(irpfResult1.getWorkMovingReduction(), irpfResult2.getWorkMovingReduction());
-		org.junit.Assert.assertEquals(irpfResult1.getWorkProlongationReduction(), irpfResult2.getWorkProlongationReduction());
-		org.junit.Assert.assertEquals(irpfResult1.getWorkRemunerationReduction(), irpfResult2.getWorkRemunerationReduction());
+		assertEquals(irpfResult1.getMinimunPersonal(), irpfResult2.getMinimunPersonal());
+		assertEquals(irpfResult1.getMinimunDisability(), irpfResult2.getMinimunDisability());
+		assertEquals(irpfResult1.getMinimunPersonalFamily(), irpfResult2.getMinimunPersonalFamily());
+		assertEquals(irpfResult1.getSocialSecurityPensioner(), irpfResult2.getSocialSecurityPensioner());
+		assertEquals(irpfResult1.getSpousalSupport(), irpfResult2.getSpousalSupport());
+		assertEquals(irpfResult1.getWorkDisabilityReduction(), irpfResult2.getWorkDisabilityReduction());
+		assertEquals(irpfResult1.getWorkMovingReduction(), irpfResult2.getWorkMovingReduction());
+		assertEquals(irpfResult1.getWorkProlongationReduction(), irpfResult2.getWorkProlongationReduction());
+		assertEquals(irpfResult1.getWorkRemunerationReduction(), irpfResult2.getWorkRemunerationReduction());
 
-		org.junit.Assert.assertEquals(irpfResult1.getIrpf(), irpfResult2.getIrpf());
-		org.junit.Assert.assertEquals(irpfResult1.getBaseIrpf(), irpfResult2.getBaseIrpf());
-		org.junit.Assert.assertEquals(irpfResult1.getAnnualIrpf(), irpfResult2.getAnnualIrpf());
-		org.junit.Assert.assertEquals(irpfResult1.getAnnualRemuneration(), irpfResult2.getAnnualRemuneration());
+		assertEquals(irpfResult1.getIrpf(), irpfResult2.getIrpf());
+		assertEquals(irpfResult1.getBaseIrpf(), irpfResult2.getBaseIrpf());
+		assertEquals(irpfResult1.getAnnualIrpf(), irpfResult2.getAnnualIrpf());
+		assertEquals(irpfResult1.getAnnualRemuneration(), irpfResult2.getAnnualRemuneration());
 	}
 	
 }

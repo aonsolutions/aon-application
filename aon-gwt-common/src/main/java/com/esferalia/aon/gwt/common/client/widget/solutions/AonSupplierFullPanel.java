@@ -6,12 +6,18 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextArea;
 
 public class AonSupplierFullPanel extends AonRegistryFullPanel<SupplierFull> implements Focusable {
 	
@@ -35,7 +41,27 @@ public class AonSupplierFullPanel extends AonRegistryFullPanel<SupplierFull> imp
 		AonDisplayTable displayTab = getNewTab();
 		getRootPanel().add(displayTab);
 		addScopeRow( displayTab, options, supplierFull.ensureSupplier());
+		addStatusRow(displayTab, options, supplierFull.ensureSupplier());
+		addObservationRow(displayTab, options, supplierFull.ensureSupplier());
 		addAccountRow(displayTab, options, supplierFull);
+	}
+	
+	private void addStatusRow(AonDisplayTable displayTab, AonModuleOptions<?> options, Supplier ensureSupplier) {
+		// ***************************************************************** [REGISTRY STATUS]
+		ListBox status = new ListBox();
+		for(int i=0; i < RegistryStatus.values().length; i++)
+			status.addItem(RegistryStatus.values()[i].getDescription());
+		status.setSelectedIndex(ensureSupplier.getStatus().ordinal());
+		status.addChangeHandler(e -> ensureSupplier.setStatus(RegistryStatus.safeValueOf(status.getSelectedValue())));
+		addBasicRow(displayTab, new InlineLabel(AON.MSG.status()),status);	
+	}
+	
+	private void addObservationRow(AonDisplayTable displayTab, AonModuleOptions<?> options, Supplier ensureSupplier) {
+		// ***************************************************************** [REGISTRY OBSERVATION]
+		TextArea observation = new TextArea();
+		observation.setValue(ensureSupplier.getObservation());
+		observation.addValueChangeHandler(e -> ensureSupplier.setObservation(e.getValue()));
+		addBasicRow(displayTab, new InlineLabel("Observaciones"), observation);	
 	}
 	
 	private void addFiscalInfo(AonModuleOptions<?> options, SupplierFull supplierFull) {
@@ -79,31 +105,45 @@ public class AonSupplierFullPanel extends AonRegistryFullPanel<SupplierFull> imp
 	}
 	
 	@Override
-	protected void addButtons(AonModuleOptions<?> options,AonToolbar toolbar, SupplierFull supplierFull, AonRegistryFullPanelCallback<SupplierFull> callback) {
-		final AonToolbarButton okButton = new AonToolbarButton(AON.MSG.accept(), AON.CSS.aonIconAccept());
-    	okButton.addClickHandler(event -> {
-			okButton.setEnabled(false);
-			getService().save(options.getDomainName(), options.getDomain(), options.getUser(), supplierFull, new AsyncCallback<SupplierFull>() {
-				@Override
-				public void onSuccess(SupplierFull result) {
-					callback.onAccept(result);
-				}
+	protected void addButtons(AonModuleOptions<?> options, FlowPanel buttons, SupplierFull supplierFull, AonRegistryFullPanelCallback<SupplierFull> callback) {
+		final Button okButton = new Button();
+    	okButton.setStyleName(AON.CSS.aonOkButton());
+    	okButton.setText( AON.MSG.accept());
+    	okButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				okButton.setEnabled(false);
+				getService().save(options.getDomainName(), options.getDomain(), options.getUser(), supplierFull, new AsyncCallback<SupplierFull>() {
+					@Override
+					public void onSuccess(SupplierFull result) {
+						callback.onAccept(result);
+					}
 
-				@Override
-				public void onFailure(Throwable caught) {
-					okButton.setEnabled(true);
-					callback.onError(caught);
-				}
-			});
+					@Override
+					public void onFailure(Throwable caught) {
+						okButton.setEnabled(true);
+						callback.onError(caught);
+					}
+				});
+			}
 		});
-    	toolbar.add(okButton);
     	
-    	final AonToolbarButton cancelButton = new AonToolbarButton(AON.MSG.cancelAction(), AON.CSS.aonIconCancel());
-    	cancelButton.addClickHandler(event -> {
-			cancelButton.setEnabled(false);
-			callback.onCancel();
+    	buttons.add(okButton);
+    	
+    	final Button cancelButton = new Button();
+    	cancelButton.setStyleName(AON.CSS.aonCancelButton());
+    	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
+    	cancelButton.setText( AON.MSG.cancelAction());
+    	cancelButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				cancelButton.setEnabled(false);
+				callback.onCancel();
+			}
 		});
-    	toolbar.add(cancelButton);
+    	buttons.add(cancelButton);
 	}
 	
 	public void setAccountEnabled(boolean enabled) {

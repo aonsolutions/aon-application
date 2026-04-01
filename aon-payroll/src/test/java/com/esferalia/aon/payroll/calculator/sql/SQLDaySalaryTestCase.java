@@ -76,10 +76,10 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.velocity.runtime.parser.node.GetExecutor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -143,8 +143,8 @@ public class SQLDaySalaryTestCase extends AbstractSQLTestCase {
 		
 		List<ITimedResult<Double>> daySalaries = 
 				ctx.getExpressionContext().eval("SALARIO_DIA", startDate, endDate, Double.class);
-		Assert.assertEquals(1, daySalaries.size());
-		Assert.assertEquals( ( 22000.00 / 12  + 220.00 + 22 + 2 ) * 12 /365 , daySalaries.get(0).getValue(), DELTA);
+		assertEquals(1, daySalaries.size());
+		assertEquals( ( 22000.00 / 12  + 220.00 + 22 + 2 ) * 12 /365 , daySalaries.get(0).getValue(), DELTA);
 	}
 
 	@Test
@@ -190,8 +190,8 @@ public class SQLDaySalaryTestCase extends AbstractSQLTestCase {
 		
 		List<ITimedResult<Double>> daySalaries = 
 				ctx.getExpressionContext().eval("SALARIO_DIA", startDate, endDate, Double.class);
-		Assert.assertEquals(1, daySalaries.size());
-		Assert.assertEquals( ( 22000.00 / 12  + 220.00 + 22 + 2 ) * 12 /365 , daySalaries.get(0).getValue(), DELTA);
+		assertEquals(1, daySalaries.size());
+		assertEquals( ( 22000.00 / 12  + 220.00 + 22 + 2 ) * 12 /365 , daySalaries.get(0).getValue(), DELTA);
 	}
 
 

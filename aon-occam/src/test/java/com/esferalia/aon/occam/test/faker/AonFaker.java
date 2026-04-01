@@ -445,7 +445,7 @@ public class AonFaker {
 	public static Catalogue getCatalogue( AONContext ctx ) {
 		return new Catalogue()
 			.setDomain(ctx.getDomainId())
-			.setName(faker.commerce().department())
+			.setName(AonRandom.string(0, 1, 30))
 			.setPurchase(AonRandom.gt(50))
 			.setStart(new Date());
 	}

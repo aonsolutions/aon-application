@@ -8,8 +8,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.person.enumeration.Gender;
 import com.esferalia.aon.in.payroll.excel.IRemunerationRecordEntry.Schedule;

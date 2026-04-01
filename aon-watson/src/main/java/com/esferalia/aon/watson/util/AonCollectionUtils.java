@@ -152,4 +152,8 @@ public class AonCollectionUtils {
 		return map.size();
 	}
 
+	public static void clear(Collection<?> collection) {
+		if (collection != null) collection.clear();
+	}
+
 }

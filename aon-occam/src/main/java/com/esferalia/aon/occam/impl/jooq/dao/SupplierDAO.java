@@ -21,7 +21,9 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
+import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -240,6 +242,9 @@ public class SupplierDAO {
 		if (full.getRegistry() != null && full.getRegistry().getAccount() != null) {
 			full.setAccount(AccountDAO.get(ctx, full.getRegistry().getAccount()));	
 		}
+		RegistryNote observationNote = RegistryNoteDAO.get(ctx, f -> f.getRegistryProperty().eq(id).and(f.getNoteTypeProperty().eq(NoteType.OBSERVATION.value())));
+		if(null != observationNote.getId())
+			full.getRegistry().setObservation(observationNote.getComments());
 		return full;
 	}
 	
@@ -247,7 +252,9 @@ public class SupplierDAO {
 		ctx.checkWrite();
 		SupplierAutoComplete.autoComplete(ctx, supplierFull.getRegistry());
 		SupplierValidation.validate(ctx, supplierFull.getRegistry());
+		String observation = supplierFull.getRegistry().getObservation();
 		supplierFull.setRegistry(SupplierDAO.save(ctx, supplierFull.getRegistry()));
+		RegistryNoteDAO.saveRegistryObservation(ctx, supplierFull.getDomain(), supplierFull.getRegistry().getId(), observation);
 		RegistryDAO.saveChilds(ctx, supplierFull);
 		return getFull(ctx, supplierFull.getId());
 	}

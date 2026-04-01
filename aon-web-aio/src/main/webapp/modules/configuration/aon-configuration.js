@@ -180,11 +180,11 @@ export class AonConfiguration extends AonElement {
 						fn: () => this.buildPlans(),
 					});
 				}
-				aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
+				aonConfiguration.addSidenavOptions(this.getDur().isConsultancy() ? MSG.ENVIRONMENT.toUpperCase() : MSG.COMPANY.toUpperCase(), companyOptions);
 			}).catch(e => {	
-				aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
+				aonConfiguration.addSidenavOptions(this.getDur().isConsultancy() ? MSG.ENVIRONMENT.toUpperCase() : MSG.COMPANY.toUpperCase(), companyOptions);
 			});
-		} else aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
+		} else aonConfiguration.addSidenavOptions(this.getDur().isConsultancy() ? MSG.ENVIRONMENT.toUpperCase() : MSG.COMPANY.toUpperCase(), companyOptions);
 		
 
 		if (localStorage.getItem("aon_domain_id")) {

@@ -3,7 +3,9 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.AmortizationType.AMORTIZATION_TYPE;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -37,6 +39,18 @@ public class AmortizationTypeDAO {
 		}
 	}
 	
+	public static Optional<AmortizationType> get(AONContext ctx, Integer domain, Integer id) {
+		return ctx.getDslContext()
+			.select().from(AMORTIZATION_TYPE)
+			.join(DOMAIN).on(DOMAIN.ID.eq(AMORTIZATION_TYPE.DOMAIN))
+			.where(AMORTIZATION_TYPE.ID.eq(id))
+			.and(AMORTIZATION_TYPE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+			.fetch()
+			.stream()
+			.map(new AmortizationTypeFiller())
+			.findFirst();
+	}
+	
 	public static List<AmortizationType> getList(AONContext ctx, AmortizationTypeParams params) {
 		AmortizationTypeValidation.validateParams(params, ctx);
 		Condition condition = createAmortizationTypeCondition(params);
@@ -51,7 +65,7 @@ public class AmortizationTypeDAO {
 				.limit(params.getLimit())
 				.stream()
 				.map(new AmortizationTypeFiller())
-				.collect(Collectors.toList());
+				.collect(Collectors.toCollection( LinkedList::new ));
 	}
 	
 	private static Condition createAmortizationTypeCondition(AmortizationTypeParams params) {

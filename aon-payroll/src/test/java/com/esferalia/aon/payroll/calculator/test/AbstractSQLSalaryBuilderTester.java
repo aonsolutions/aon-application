@@ -1,6 +1,6 @@
 package com.esferalia.aon.payroll.calculator.test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -76,7 +76,7 @@ public abstract class AbstractSQLSalaryBuilderTester<T extends ISalary> extends 
 		String msg = 
 			String.format("[%s][%s]: %s", 
 					enterpriseDocument, employeeDocument, field  );
-		assertEquals(msg, expected, CommonUtil.round(actual), (double) 0.9);
+		assertEquals(expected, CommonUtil.round(actual), (double) 0.9, msg);
 	}
 	
 	abstract protected Double getOtherDouble(String field) throws SQLException;

@@ -8,8 +8,6 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasKeyUpHandlers;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -62,6 +60,7 @@ public class AonBankAccountBox extends SimplePanel implements HasValueChangeHand
 		
 		this.setWidget(dataPanel);
 		
+		/*
 		InlineLabel ibanLabel = new InlineLabel(ibanMode?"IBAN:":"CCC:");
 		ibanLabel.setStyleName(AON.CSS.aonInnerLabel());
 		ibanLabel.addStyleName(AON.CSS.aonTextUnderline());
@@ -80,7 +79,7 @@ public class AonBankAccountBox extends SimplePanel implements HasValueChangeHand
 			}
 		});
 		dataPanel.add(ibanLabel);
-
+		*/
 		
 		countryBox.setValue(this.bankAccount.getCountry());
 		countryBox.setVisible(ibanMode);

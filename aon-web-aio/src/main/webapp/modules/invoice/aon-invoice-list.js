@@ -98,16 +98,16 @@ export class AonInvoiceList extends AonElement {
 
 		aonInvoiceTable.addEventListener('select', () => {
 			let aonInvoice = this.getElement('aonInvoice');
-			if(aonInvoiceTable.selected.length === 1) {
+			if(aonInvoiceTable.selected.length === 0){
+				this.removeInvoiceActions();
+				aonInvoice.removeToolbarOption(ACTION.REPROCESS);
+			} else {
 				this.addInvoiceActions();
 				if(this.getDur().isInvofox()) {
 					this.rp = true;
 					aonInvoice.addToolbarOption2(ACTION.REPROCESS, () => this.refreshProcessing());
 				}
-			} else if(aonInvoiceTable.selected.length === 0){
-				this.removeInvoiceActions();
-				aonInvoice.removeToolbarOption(ACTION.REPROCESS);
-			} else aonInvoice.removeToolbarOption(ACTION.REPROCESS);
+			} 
 		});	
 	}
 
@@ -413,7 +413,8 @@ export class AonInvoiceList extends AonElement {
 			toolbar.addSeparator();
 			aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
 			aonInvoice.addToolbarOption2(ACTION.SEND_INVOICE, () => this.sendInvoices());
-			if(this.isSig()) aonInvoice.addToolbarOption2(ACTION.COMMUNICATE_INVOICE, () => this.communicateInvoices());
+			if(this.isSig() || this.getDur().isAlpha()) 
+				aonInvoice.addToolbarOption2(ACTION.COMMUNICATE_INVOICE, () => this.communicateInvoices());
 		} else if(this.isProcessing()) {
 			toolbar.addSeparator();
 			aonInvoice.addToolbarOption2(ACTION.DELETE_FOREVER, () => this.deleteForeverInvoices());
@@ -507,7 +508,7 @@ export class AonInvoiceList extends AonElement {
 		if(this.rp) {
 			this.rp = false;
 			this.getApplication().startLoading();
-			let rawdoc = this.getTable().selected.map(r => r.id);
+			let rawdoc = this.getTable().selected.filter(f =>  f.status === 'processing').map(r => r.id);
 			refreshProcessing({rawdoc}).then(r => {
 				this.getApplication().stopLoading();
 			    let parent = this.getApplication().getParent();

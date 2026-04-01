@@ -5,6 +5,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IAccount;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
 public class SupplierFull extends RegistryFull<Supplier> implements IAccount<SupplierFull> {
 
@@ -37,6 +38,7 @@ public class SupplierFull extends RegistryFull<Supplier> implements IAccount<Sup
 			.setDocumentType(DocumentType.CIF)
 			.setDocumentCountry(Country.ES)
 			.setNationality(Country.ES);
+		full.getRegistry().setStatus(RegistryStatus.ACTIVE);
 		full.setAccount(new Account());
 		full.initializeChilds();
 		return full;

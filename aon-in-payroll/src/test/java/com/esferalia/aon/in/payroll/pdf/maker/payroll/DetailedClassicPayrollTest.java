@@ -1,6 +1,6 @@
 package com.esferalia.aon.in.payroll.pdf.maker.payroll;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
@@ -130,7 +130,7 @@ public class DetailedClassicPayrollTest {
 				.setAddress2(Optional.of("Vitoria-Gasteiz"))
 				.setCif(Optional.of("58595859M"))
 				.setCcc(Optional.of("8935713546370"))
-				.setEmployee(Optional.of("Iker Gónzalez Con Apellido Inventado de la Fuente Pérez Abech"))
+				.setEmployee(Optional.of("Iker G\u00f3nzalez Con Apellido Inventado de la Fuente P\u00e9rez Abech"))
 				.setNif(Optional.of("47227931-F"))
 				.setNss(Optional.of("11004767999"))
 				.setProfessionalGroup(Optional.of("Director"))
@@ -189,7 +189,7 @@ public class DetailedClassicPayrollTest {
 				.setAddress2(Optional.of("Vitoria-Gazteiz"))
 				.setCif(Optional.of("58595859M"))
 				.setCcc(Optional.of("8935713546370"))
-				.setEmployee(Optional.of("Iker Gónzalez Con Apellido Inventado de la Fuente Pérez Abech"))
+				.setEmployee(Optional.of("Iker G\u00f3nzalez Con Apellido Inventado de la Fuente P\u00e9rez Abech"))
 				.setNif(Optional.of("47227931-F"))
 				.setNss(Optional.of("11004767999"))
 				.setProfessionalGroup(Optional.of("Director"))
@@ -294,7 +294,7 @@ public class DetailedClassicPayrollTest {
 				.setAddress2(Optional.of("Vitoria-Gazteiz"))
 				.setCif(Optional.of("58595859M"))
 				.setCcc(Optional.of("8935713546370"))
-				.setEmployee(Optional.of("Iker Gónzalez Con Apellido Inventado de la Fuente Pérez Abech"))
+				.setEmployee(Optional.of("Iker G\u00f3nzalez Con Apellido Inventado de la Fuente P\u00e9rez Abech"))
 				.setNif(Optional.of("47227931-F"))
 				.setNss(Optional.of("11004767999"))
 				.setProfessionalGroup(Optional.of("Director"))

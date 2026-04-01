@@ -1,15 +1,13 @@
 package com.esferalia.aon.salary.expression;
 
-import static org.junit.Assert.fail;
-
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PeriodTestCase {
 
@@ -36,12 +34,12 @@ public class PeriodTestCase {
 		for( Period p: sub )
 			System.out.printf("%1$tY/%1$tm/%1$td..%2$tY/%2$tm/%2$td\r\n", p1.getStart(), p.getEnd());
 		
-		Assert.assertTrue(sub.size() == 1);
-		Assert.assertEquals(sub.get(0).getStart(),p1.getStart());
+		assertTrue(sub.size() == 1);
+		assertEquals(sub.get(0).getStart(),p1.getStart());
 		
 		calendar.setTime(d2);
 		calendar.add(Calendar.DAY_OF_MONTH, -1);
-		Assert.assertEquals(sub.get(0).getEnd(),calendar.getTime());
+		assertEquals(sub.get(0).getEnd(),calendar.getTime());
 	}
 
 }
