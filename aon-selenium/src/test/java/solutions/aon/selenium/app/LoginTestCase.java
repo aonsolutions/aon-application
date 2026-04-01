@@ -107,9 +107,9 @@ public class LoginTestCase extends AppBaseTestCase {
 			js.executeScript(
 			    "let d = document.getElementById('aonDesktopInvoiceConfigurationDialog'); if(d) d.close();"
 			);
-			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHeaderHelpButton"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.id("aonHeaderHelpButton"))).click();
 			
-			WebElement aonHelpSwitchSupport = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHelpSwitchSupport")));
+			WebElement aonHelpSwitchSupport = wait.until(ExpectedConditions.elementToBeClickable(By.id("aonHelpSwitchSupport")));
 			if ( Objects.equals(aonHelpSwitchSupport.getAttribute("value"), "false" ))
 				aonHelpSwitchSupport.click();
 			
@@ -228,8 +228,8 @@ public class LoginTestCase extends AppBaseTestCase {
 			    "let d = document.getElementById('aonDesktopInvoiceConfigurationDialog'); if(d) d.close();"
 			);
 
-			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("invoice"))).click();
-			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonInvoiceSidenavOffers"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.id("invoice"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.id("aonInvoiceSidenavOffers"))).click();
 			
 			WebElement aonJsfAppFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAppFrame")));
 			webDriver.switchTo().frame(aonJsfAppFrame);
@@ -263,8 +263,8 @@ public class LoginTestCase extends AppBaseTestCase {
 			js.executeScript(
 			    "let d = document.getElementById('aonDesktopInvoiceConfigurationDialog'); if(d) d.close();"
 			);
-			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonCompanyTabFilter-inactive"))).click();
-			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#UlCompanies .aonLiSpan"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.id("aonCompanyTabFilter-inactive"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#UlCompanies .aonLiSpan"))).click();
 
 			WebElement aonJsfAccountingGraphFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAccountingGraphFrame")));
 			webDriver.switchTo().frame(aonJsfAccountingGraphFrame);
