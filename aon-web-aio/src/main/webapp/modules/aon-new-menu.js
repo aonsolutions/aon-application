@@ -65,6 +65,8 @@ import { AonCommerce } from './commerce/aon-commerce.js';
 import { AonGarage } from './garage/aon-garage.js';
 import { AonCommercial } from './commercial/aon-commercial.js';
 import { AonManagement } from './management/aon-management.js';
+import { AonConfigurationEnviroment } from './configuration/aon-configuration-enviroment.js';
+import { AonMarketing } from './marketing/aon-marketing.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -261,6 +263,9 @@ export class AonNewMenu extends AonElement {
 				case ENTERPRISE_MENU.app:
 					this.rootPanel(this.getDur().isDomainManagementAvailable() ? new AonParent() : new AonDesktop());
 					break;
+				case CONFIGURATION_MENU.app:
+					this.rootPanel(this.getDur().isDomainManagementAvailable() ? new AonConfigurationEnviroment() : new AonConfiguration());
+					break;
 				case ACCOUNTING_MENU.app:
 				case FISCAL_MENU.app:
 				case PAYROLL_MENU.app:
@@ -270,7 +275,6 @@ export class AonNewMenu extends AonElement {
 				case TREASURY_MENU.app:
 				case WAREHOUSE_MENU.app:
 				case MARKETING_MENU.app:
-				case CONFIGURATION_MENU.app:
 				case ACADEMY.app:
 				case COMMERCE.app:
 				case GARAGE.app:
@@ -622,6 +626,19 @@ export class AonNewMenu extends AonElement {
 					topMenuApps.push(DOCUMENTAL);
 				}
 			}
+			
+			// Transformación del menú de configuración
+			topMenuApps = topMenuApps.map(app => {
+			    if (app === CONFIGURATION_MENU) {
+			        return {
+			            ...app,
+			            symbol: MATERIAL_ICONS.MONITORING,
+			            title: MSG.MANAGEMENT,
+			            description: MSG.MANAGEMENT
+			        };
+			    }
+			    return app;
+			});
 		}
 
 		for (let item in topMenuApps) {
@@ -645,9 +662,14 @@ export class AonNewMenu extends AonElement {
 			aonTopMenuDiv.appendChild(appElement);
 		}
 
-
 		this.clearElement(aonMenuTopnav);
 		aonMenuTopnav.appendChild(aonTopMenuDiv);
+		
+		if (this.getDur().isDomainManagementAvailable()) {
+			let managementMenuBar = this.getElement(`aonMenuBar-configurationMenu`);
+			console.log('managementMenuBar', managementMenuBar);
+			if(managementMenuBar) managementMenuBar.classList.add('aonMenuBarConfigurationMenuConsultancy');
+		}
 	}
 
 	reloadTopNav() {

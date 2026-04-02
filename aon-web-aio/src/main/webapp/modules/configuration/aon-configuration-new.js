@@ -14,7 +14,6 @@ import { AonReg } from "../registry/aon-reg.js";
 import * as GWT from '../../gwt/gwt.js';
 import { Registry } from "../../models/registry/Registry.js";
 import { AonInvoiceConfiguration } from "../invoice/aon-invoice-configuration.js";
-import { AonConfigurationMenu } from './aon-configuration-menu.js';
 import { AonMessengerConfig } from "../messenger/aon-messenger-config.js";
 import { AonBooking } from '../marketplace/aon-booking.js';
 import { AonServiceAccountList } from "../user/aon-service-account-list.js";
@@ -76,7 +75,7 @@ export class AonConfigurationNew extends AonElement {
 	}
 
 	initialize() {
-		this.AON_CONFIGURATION = "aonConfiguration";
+		this.AON_CONFIGURATION = "aonConfigurationNew";
 		this.COMPANY = this.AON_CONFIGURATION + "Company";
 		this.COMPANY_LIST = this.AON_CONFIGURATION + "CompanyList";
 		this.CUSTOMER_LIST = this.AON_CONFIGURATION + "CustomerList";
@@ -131,12 +130,19 @@ export class AonConfigurationNew extends AonElement {
 			});
 		}
 
-		if (this.getDur().isConsultancy())
+		if (!this.isMobile() && ((!this.getDur().isTrial() && !this.getDur().hasBeenTrial()) || this.getDur().isParentUser())) {
 			companyOptions.push({
-				name: MSG.PERSONALIZATION,
-				icon: MATERIAL_ICONS.BUSINESS,
-				fn: () => this.getApplication().setContent(new JSF.AonJsfComapanyCustomize()),
+				name: MSG.HIRING,
+				icon: MATERIAL_ICONS.STORE_MALL_DIRECTORY,
+				fn: () => this.buildStore(),
 			});
+		}
+
+		companyOptions.push({
+			name: MSG.SCOPES,
+			icon: MATERIAL_ICONS.BUSINESS,
+			fn: () => GWT.iLoad(GWT.SCOPE_MODULE, this.getApplication().CONTENT),
+		});
 
 		if (this.company && this.company.registry && this.company.domain) {
 			getRelationShipCompany({
@@ -145,7 +151,7 @@ export class AonConfigurationNew extends AonElement {
 			}).then(relationshipCompany => {
 
 				if (relationshipCompany.rrelationship) {
-					securityOptions.push({
+					companyOptions.push({
 						name: MSG.HIRING + ' (Planes)',
 						icon: MATERIAL_ICONS.STORE_MALL_DIRECTORY,
 						fn: () => this.buildPlans(),
@@ -167,13 +173,6 @@ export class AonConfigurationNew extends AonElement {
 				icon: MATERIAL_ICONS.PEOPLE,
 				fn: () => this.buildUser(),
 			});
-			if (this.company && this.company.domain && !this.company.domain.parentId) {
-				securityOptions.push({
-					name: MSG.COMPANY_MANAGEMENT,
-					icon: MATERIAL_ICONS.BUSINESS,
-					fn: () => this.buildCompanyList(),
-				});
-			}
 
 			securityOptions.push({
 				name: MSG.GROUP_MANAGEMENT,
@@ -181,6 +180,16 @@ export class AonConfigurationNew extends AonElement {
 				fn: () => this.buildGroups(),
 			});
 
+			/*
+			if (this.company && this.company.domain && !this.company.domain.parentId) {
+				securityOptions.push({
+					name: MSG.COMPANY_MANAGEMENT,
+					icon: MATERIAL_ICONS.BUSINESS,
+					fn: () => this.buildCompanyList(),
+				});
+			}
+			*/
+			
 			if (this.getDur().isApiService()) {
 				securityOptions.push({
 					name: MSG.SERVICE_ACCOUNTS,
@@ -188,19 +197,22 @@ export class AonConfigurationNew extends AonElement {
 					fn: () => this.buildServiceAccount(),
 				});
 			}
-
-			if (!this.isMobile() && ((!this.getDur().isTrial() && !this.getDur().hasBeenTrial()) || this.getDur().isParentUser())) {
-				securityOptions.push({
-					name: MSG.HIRING,
-					icon: MATERIAL_ICONS.STORE_MALL_DIRECTORY,
-					fn: () => this.buildStore(),
-				});
-			}
+			
 		}
 
 		aonConfiguration.addSidenavOptions(MSG.SECURITY.toUpperCase(), securityOptions);
 
-		if (!this.getDur().isConsultancy()){
+		let classicViewOptions = [];
+
+		classicViewOptions.push({
+			name: MSG.GLOBAL_CONFIGURATION,
+			icon: MATERIAL_ICONS.SETTINGS,
+			fn: () => this.getApplication().setContent(new JSF.AonJsfGlobalConfig()),
+		});
+
+		aonConfiguration.addSidenavOptions(MSG.CLASSIC_VIEW.toUpperCase(), classicViewOptions);
+
+		if (!this.getDur().isConsultancy()) {
 
 			if (localStorage.getItem("aon_domain_id")) {
 				let appOptions = [];
@@ -211,7 +223,7 @@ export class AonConfigurationNew extends AonElement {
 						fn: () => this.buildInvoiceConfiguration(),
 					});
 				}
-	
+
 				if (!this.getDur().isEmployee()) {
 					appOptions.push({
 						id: MESSENGER.title,
@@ -220,7 +232,7 @@ export class AonConfigurationNew extends AonElement {
 						fn: () => this.buildMessengerConfiguration(),
 					});
 				}
-	
+
 				if (!this.getDur().isEmployee() && this.isBeta()) {
 					appOptions.push({
 						id: "notice",
@@ -229,26 +241,13 @@ export class AonConfigurationNew extends AonElement {
 						fn: () => this.buildNews(),
 					});
 				}
-	
+
 				aonConfiguration.addSidenavOptions(MSG.APPLICATIONS.toUpperCase(), appOptions);
 			}
-			
+
 		}
 
-		if (localStorage.getItem("aon_domain_id") && this.isBeta()) {
-			let menuOptions = [];
-
-			menuOptions.push({
-				id: "options panel",
-				icon: "dashboard",
-				name: "Panel Configuración",
-				fn: () => this.buildConfigurationMenu(),
-			});
-
-			aonConfiguration.addSidenavOptions(MSG.MENU.toUpperCase(), menuOptions);
-		}
-
-		this.buildConfigurationMenu();
+		this.buildGeneral();
 	}
 
 	buildPersonal() {
@@ -280,6 +279,7 @@ export class AonConfigurationNew extends AonElement {
 		getCompanyOne(data).then(cp => {
 			let aonRegistry = new AonReg();
 			aonRegistry.id = this.getApplication().id + 'Registry';
+			aonRegistry.enviromentOptions = true;
 			aonRegistry.setShowLogo(true);
 			aonRegistry.setRegistry(cp);
 			this.getApplication().setContent(aonRegistry);
@@ -353,10 +353,6 @@ export class AonConfigurationNew extends AonElement {
 
 	buildMessengerConfiguration() {
 		this.getApplication().setContent(new AonMessengerConfig());
-	}
-
-	buildConfigurationMenu() {
-		this.getApplication().setContent(new AonConfigurationMenu());
 	}
 
 	buildNews() {
@@ -457,12 +453,6 @@ export class AonConfigurationNew extends AonElement {
 	hiddenStore() {
 		return false;
 	}
-
-	/*
-	getApplication() {
-		return this.getElement(this.AON_CONFIGURATION);
-	}
-	*/
 }
 
 window.customElements.define("aon-configuration-new", AonConfigurationNew);

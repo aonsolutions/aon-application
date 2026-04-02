@@ -1306,14 +1306,6 @@ export class AonJsfContractParams extends AonJsfApp {
 	}
 }
 
-export class AonJsfComapanyCustomize extends AonJsfApp {
-	
-	constructor() {
-		super();
-		this.setViewId('/facelet/app/companyCustomize.xhtml');
-	}
-}
-
 export class AonJsfBalance extends AonJsfApp {
 
 	constructor() {

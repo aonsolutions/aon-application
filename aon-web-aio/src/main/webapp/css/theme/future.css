@@ -350,6 +350,10 @@ body {
     mask-image: url('/icons/settings-2.svg') ;
 }
 
+.aonMenuBarConfigurationMenuConsultancy #aonMenuListAppImgTop-configurationMenu{
+	mask-image: url('/icons/file-bar-chart.svg') ;
+}
+
 #aonMenuListAppImgTop-enterpriseMenu {
     mask-image: url('/icons/building.svg') ;
 }
@@ -793,7 +797,8 @@ aon-fiscal-menu .suiteMenuDiv2{
 #aonMessenger .aonContentBeta,
 #aonOfficePanel .aonContentBeta,
 #aonFiscal .aonContentBeta,
-#aonAccounting .aonContentBeta {
+#aonAccounting .aonContentBeta,
+#aonConfigurationNew .aonContentBeta{
 	border-radius: .375rem;
 	margin: 1rem 1rem 0rem 1rem;
 	background-color: var(--aonBackgroundColor);	
@@ -813,7 +818,8 @@ aon-fiscal-menu .suiteMenuDiv2{
 #aonMessenger .aonContentBeta,
 #aonOfficePanel .aonContentBeta,
 #aonFiscal .aonContentBeta,
-#aonAccounting .aonContentBeta {
+#aonAccounting .aonContentBeta,
+#aonConfigurationNew .aonContentBeta {
 	padding: 1.25rem 1.25rem 0 1.25rem;
 }
 
