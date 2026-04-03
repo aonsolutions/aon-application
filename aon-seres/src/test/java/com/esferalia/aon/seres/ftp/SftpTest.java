@@ -1,8 +1,8 @@
 package com.esferalia.aon.seres.ftp;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.seres.SeresInfo;
 import com.esferalia.aon.seres.Seres;
@@ -37,7 +37,7 @@ public class SftpTest {
 				.setPort(PORT);
 		try {
 			connect(info);
-			fail("Host Nulo, no se debería de haber conectado");
+			fail("Host Nulo, no se deberï¿½a de haber conectado");
 		} catch (JSchException e) {
 			if(!e.getMessage().contains("host must not be null")) {
 				fail(e.getMessage());
@@ -54,7 +54,7 @@ public class SftpTest {
 			.setPort(PORT);
 		try {
 			connect(info);
-			fail("Host Erroneo, no se debería de haber conectado.");
+			fail("Host Erroneo, no se deberï¿½a de haber conectado.");
 		} catch (JSchException e) {
 			if(!e.getMessage().contains("UnknownHostException")) {
 				fail(e.getMessage());
@@ -70,7 +70,7 @@ public class SftpTest {
 			.setPort(PORT);
 		try {
 			connect(info);
-			fail("Usuario Nulo, no se debería de haber conectado.");
+			fail("Usuario Nulo, no se deberï¿½a de haber conectado.");
 		} catch (JSchException e) {
 //			if(!e.getMessage().contains("Auth fail")) {
 //				fail(e.getMessage());
@@ -87,7 +87,7 @@ public class SftpTest {
 			.setPort(PORT);
 		try {
 			connect(info);
-			fail("Usuario Erroneo, no se debería de haber conectado.");
+			fail("Usuario Erroneo, no se deberï¿½a de haber conectado.");
 		} catch (JSchException e) {
 			if(!e.getMessage().contains("Auth fail")) {
 				fail(e.getMessage());
@@ -103,7 +103,7 @@ public class SftpTest {
 			.setPort(PORT);
 		try {
 			connect(info);
-			fail("Contraseña Nula, no se debería de haber conectado.");
+			fail("Contraseï¿½a Nula, no se deberï¿½a de haber conectado.");
 		} catch (JSchException e) {
 			if(!e.getMessage().contains("Auth fail")) {
 				fail(e.getMessage());
@@ -120,7 +120,7 @@ public class SftpTest {
 			.setPort(PORT);
 		try {
 			connect(info);
-			fail("Contraseña Erroneo, no se debería de haber conectado.");
+			fail("Contraseï¿½a Erroneo, no se deberï¿½a de haber conectado.");
 		} catch (JSchException e) {
 			if(!e.getMessage().contains("Auth fail")) {
 				fail(e.getMessage());
