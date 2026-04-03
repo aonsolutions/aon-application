@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
+import static com.esferalia.aon.jooq.tables.AmortizationInvoice.AMORTIZATION_INVOICE;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
@@ -65,6 +66,7 @@ import com.esferalia.aon.occam.api.model.InvoiceNotice;
 import com.esferalia.aon.occam.api.model.InvoiceUserData;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
@@ -110,6 +112,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.accounting.amortization.AmortizationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
@@ -332,6 +335,8 @@ public class InvoiceDAO {
 			
 			invoice.setDoc(InvoiceDocDAO.get(ctx, invoice.getDomain(), invoice.getId()).orElse(null));
 			invoice.addCommunicationInfo(InvoiceInfoDAO.getMap(ctx, invoice).orElse(null));
+			
+			fillAmortization(ctx, invoice);
 		}
 		return invoice;
 	}
@@ -605,7 +610,36 @@ public class InvoiceDAO {
 			)
 		);
 		
+		if(invoice.getAmortization() != null) {
+			Amortization amortization = saveAmortization(ctx, invoice);
+			invoice.setAmortization(amortization);
+		}
 		return invoice;
+	}
+	
+	private static void fillAmortization(AONContext ctx, Invoice invoice) {
+		Integer amortizationId = ctx.getDslContext().select()
+			.from(AMORTIZATION_INVOICE)
+			.where(AMORTIZATION_INVOICE.DOMAIN.eq(invoice.getDomain()))
+			.and(AMORTIZATION_INVOICE.INVOICE.eq(invoice.getId()))
+			.fetch().stream().map(r -> r.getValue(AMORTIZATION_INVOICE.AMORTIZATION))
+			.findFirst().orElse(null);
+		Amortization amortization = AmortizationDAO.get(ctx, invoice.getDomain(), amortizationId).orElse(null);
+		invoice.setAmortization(amortization);
+	}
+	
+	private static Amortization saveAmortization(AONContext ctx, Invoice invoice) {
+		if(invoice.getAmortization() != null) {
+			
+			Amortization amortization = AmortizationDAO.save(ctx, invoice.getAmortization());
+			ctx.getDslContext().insertInto(AMORTIZATION_INVOICE)	
+				.set(AMORTIZATION_INVOICE.DOMAIN, invoice.getDomain())
+				.set(AMORTIZATION_INVOICE.AMORTIZATION, amortization.getId())
+				.set(AMORTIZATION_INVOICE.INVOICE, invoice.getId())
+				.set(AMORTIZATION_INVOICE.SALES, invoice.isSales() ? (byte) 1 : (byte) 0)				
+				.execute();
+		}
+		return null;
 	}
 	
 	public static Invoice accept2(AONContext ctx, final Invoice invoice, Optional<Integer> rawdocId) {
@@ -1072,6 +1106,11 @@ public class InvoiceDAO {
 			;
 			RawdocDAO.save(ctx, rawdoc);
 		}
+		
+		ctx.getDslContext().delete(AMORTIZATION_INVOICE)
+			.where(AMORTIZATION_INVOICE.INVOICE.eq(id))
+			.execute();
+		
 		return invoice;
 	}
 
