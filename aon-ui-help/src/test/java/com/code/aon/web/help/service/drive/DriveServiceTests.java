@@ -1,10 +1,9 @@
 package com.code.aon.web.help.service.drive;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.web.help.service.drive.exception.GoogleDriveException;
 import com.google.api.services.drive.Drive;
@@ -13,7 +12,7 @@ public class DriveServiceTests {
 
 	private static Drive connection;
 	
-	@BeforeClass 
+	@BeforeAll
 	public static void connect() throws GoogleDriveException {
 		DriveServiceTests.connection = DriveService.connect();
 	}

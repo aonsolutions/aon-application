@@ -1,6 +1,6 @@
 package com.code.aon.test.ql;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /*
  * Created on 19-nov-2003
@@ -10,7 +10,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.ql.antlr.ExpressionBuilder;
 import com.code.aon.ql.antlr.QlLexer;
@@ -23,7 +23,7 @@ import antlr.RecognitionException;
 import antlr.TokenStreamException;
 
 /**
- * @author Raúl Trepiana
+ * @author Raï¿½l Trepiana
  *  
  */
 public class ToqlParserTest {
