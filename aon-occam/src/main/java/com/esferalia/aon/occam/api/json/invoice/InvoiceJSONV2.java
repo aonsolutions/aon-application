@@ -12,7 +12,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.json.AccountJSON;
-import com.esferalia.aon.occam.api.json.AmortizationJSON;
 import com.esferalia.aon.occam.api.json.EnterpriseActivityJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.ScopeJSON;
@@ -73,7 +72,6 @@ class InvoiceJSONV2 {
 			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
 			.setActivity(EnterpriseActivityJSON.from(JsonUtils.getJSONObject(json, IJsonNames.ACTIVITY)).orElse(null))
 			.setInvestAsset(JsonUtils.getInteger(json, IJsonNames.INVEST_ASSET))
-			.setAmortization(AmortizationJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.AMORTIZATION)))
 			.setProject(JsonUtils.getInteger(json, IJsonNames.PROJECT))
 			.setSeries(JsonUtils.getString(json, IJsonNames.SERIES))
 			.setNumber(JsonUtils.getInt(json, IJsonNames.NUMBER))
@@ -371,7 +369,6 @@ class InvoiceJSONV2 {
 			.put(IJsonNames.DOMAIN, inv.getDomain())
 			.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.to(inv.optActivity()).orElse(null))
 			.put(IJsonNames.INVEST_ASSET, inv.getInvestAsset())
-			.put(IJsonNames.AMORTIZATION, inv.getAmortization() != null ? AmortizationJSON.toJSON(inv.getAmortization()) : JSONObject.NULL)
 			.put(IJsonNames.PROJECT, inv.getProject())
 			.put(IJsonNames.SERIES, inv.getSeries())
 			.put(IJsonNames.NUMBER, inv.getNumber())

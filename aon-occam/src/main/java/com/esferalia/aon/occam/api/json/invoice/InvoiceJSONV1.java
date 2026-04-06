@@ -11,7 +11,6 @@ import java.util.stream.Collector;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.json.AmortizationJSON;
 import com.esferalia.aon.occam.api.json.EnterpriseActivityJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
@@ -110,7 +109,6 @@ class InvoiceJSONV1 {
 			.setMessages(messages)
 			.setTediCategory(JsonUtils.getString(json, IJsonNames.CATEGORY))
 			.setActivity(EnterpriseActivityJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ACTIVITY)))
-			.setAmortization(AmortizationJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.AMORTIZATION)))
 			.setDoc(InvoiceDocJSON.from(JsonUtils.getJSONObject(json, IJsonNames.INVOICE_DOC)).orElse(null))
 			.addCommunicationInfo(getCommunicationInfo( JsonUtils.getJSONObject(json, IJsonNames.COMMUNICATION_INFO) ).orElse(null))
 		;
@@ -176,7 +174,6 @@ class InvoiceJSONV1 {
 			.put(IJsonNames.DETAILS, InvoiceDetailJSON.toJSON(invoice.getDetails()))
 			.put(IJsonNames.FINANCES, FinanceJSON.toJSON(invoice.getFinances()))
 			.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(invoice.getActivity()))
-			.put(IJsonNames.AMORTIZATION, invoice.getAmortization() != null ? AmortizationJSON.toJSON(invoice.getAmortization()) : JSONObject.NULL)
 			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(invoice.getScope()))
 			.put(IJsonNames.INVOICE_DOC, invoice.getDoc().map(InvoiceDocJSON::to).orElse(null))
 			.put(IJsonNames.COMMUNICATION_INFO, getCommunicationInfoJSON(invoice.getCommunicationInfo()).orElse(null))

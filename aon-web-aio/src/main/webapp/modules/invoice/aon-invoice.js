@@ -301,6 +301,9 @@ export class AonInvoice extends AonElement {
 		if (this.getInvoice()?.communicationInfo) {
 			this.options.push({ title: MSG.COMMUNICATION, fn: () => this.buildCommunication() });
 		}
+		if (this.getInvoice()?.isInvestment()) {
+			this.options.push({ title: MSG.AMORTIZATION, fn: () => this.buildAmortization() });
+		}
 	}
 
 	checkConfiguration() {
@@ -3004,39 +3007,27 @@ export class AonInvoice extends AonElement {
 		let div = this.createDiv();
 
 		let date = createDate(this.id + 'InmbobilizedDate', MSG.DATE);
-		date.setDate(amortization ? amortization.initialDate : this.invoice.date);
-		date.readonly = this.invoice.isReadonly();
+		date.setDate(amortization ? amortization.date : this.invoice.date);
 		div.appendChild(date);	
-		
+
 		let description = createInput( this.id + 'InmbobilizedDescription', MSG.DESCRIPTION);
 		description.value = amortization ? amortization.description : '';
-		description.readonly = this.invoice.isReadonly();
 		div.appendChild(description);
 
-		if(this.invoice.isRawdoc()) {
-			let type = createSelect(this.id + 'InmbobilizedType', MSG.TYPE);
-			type.setAlias("id", "description");
-			type.readonly = this.invoice.isReadonly();
-			div.appendChild(type);
-			getAmortizationTypes().then(types => {
-				type.setOptions(types);
-				if (amortization && amortization.amortizationType) type.value = amortization.amortizationType.id;
-			});
-		}
+		let type = createSelect(this.id + 'InmbobilizedType', MSG.TYPE);
+		div.appendChild(type);
+		getAmortizationTypes().then(types => {
+			type.setOptions(types.map(t => { return { value: t.id, name: t.description };	}));
+			if (amortization) type.value = amortization.type;
+		});
 
 		let period = createSelect(this.id + 'InmbobilizedPeriod', MSG.PERIOD);
-		period.setAlias("value", "description");
-		period.readonly = this.invoice.isReadonly();
-		period.value = amortization ? amortization.feePeriod : AmortizationPeriod.YEARLY.value;
+		period.value = amortization ? amortization.period : '';
 		period.setOptions(AmortizationPeriod.toArray());
 		div.appendChild(period);
 
-		let percentage = this.createAonNumber(this.id + 'InmbobilizedPercentage', MSG.PERCENTAGE, amortization ? amortization.percentage : 0.0);
-		percentage.min = 0;
-		percentage.max = 100;
-		div.appendChild(percentage);
-
-		let amount = this.createAonNumber(this.id + 'InmbobilizedAmount', MSG.AMOUNT, amortization ? amortization.amount : 0.0);
+		let amount = this.createAonNumber(this.id + 'InmbobilizedAmount', MSG.AMOUNT);
+		amount.value = amortization ? amortization.amount : '';
 		div.appendChild(amount);
 
 		d.clear();
@@ -3044,19 +3035,16 @@ export class AonInvoice extends AonElement {
 		d.setTitle("Añadir Inmovilizado");
 		d.setContent(div);
 		d.addAcceptAction(() => {
-			if(this.invoice.isRawdoc()) {
-				this.invoice.amortization = {
-					domain: this.invoice.domain,
-					description: description.value,
-					amount: parseFloat(amount.value),
-					percentage: parseFloat(percentage.value),
-					initialDate: date.getDateValue(),
-					amortizationType: type.getValueObject(),
-					feePeriod: period.value
-				};
-				this.save();
-				this.reload();
-			}
+			this.invoice.amortization = {
+				description: description.value,
+				amount: amount.value,
+				date: date.getDateValue(),
+				type: type.value,
+				period: period.value
+			};
+
+			this.save();
+			this.reload();
 		});
 		d.open();
 	}
@@ -3306,7 +3294,6 @@ export class AonInvoice extends AonElement {
 		dupInv.rectified = false;
 		dupInv.file = undefined;
 		dupInv.communicationInfo = undefined;
-		dupInv.amortization = undefined;
 		if (dupInv.finances) {
 			dupInv.finances.forEach((item, i) => {
 				dupInv.finances[i].id = undefined;

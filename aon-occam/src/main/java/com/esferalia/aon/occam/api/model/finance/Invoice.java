@@ -13,7 +13,6 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
-import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
@@ -42,7 +41,6 @@ public class Invoice implements Serializable, HasAudit {
 	private Integer domain;
 	private EnterpriseActivity activity;
 	private Integer investAsset;			//**
-	private Amortization amortization;		//**
 	private Integer project;				//**
 	private String series;
 	private int number;
@@ -167,13 +165,6 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	public Invoice setInvestAsset(Integer investAsset) {
 		this.investAsset = investAsset;
-		return this;
-	}
-	public Amortization getAmortization() {
-		return amortization;
-	}
-	public Invoice setAmortization(Amortization amortization) {
-		this.amortization = amortization;
 		return this;
 	}
 	public Integer getProject() {
@@ -725,13 +716,13 @@ public class Invoice implements Serializable, HasAudit {
 	public boolean isOutputVatEnabled() {
 		return !isUndeductible() && (
 			(isSales() && isNational())				// Venta Nacional
-			|| mustApplyISP()						// Aplicar la inversiï¿½n de sujeto pasivo.
+			|| mustApplyISP()						// Aplicar la inversión de sujeto pasivo.
 			|| (isSales()  							//  |
 				&& isVatImportationAvailable() 		//  | Regimen importacioon IOSS
 				&& isVatImportation()				//  | 
 				&& isVatImportationAmountValid())	//  |
-			|| isVatUnion() 						// Regimen Uniï¿½n UOSS  
-			|| isVatUnionExternal() 				//  Regimen Exterior Uniï¿½n UOSS
+			|| isVatUnion() 						// Regimen Unión UOSS  
+			|| isVatUnionExternal() 				//  Regimen Exterior Unión UOSS
 			)
 		;
 	}
@@ -750,7 +741,7 @@ public class Invoice implements Serializable, HasAudit {
 				&& isVatImportationAvailable() 		//  |
 				&& isVatImportation()				//  | Regimen importacioon
 				&& isVatImportationAmountValid())	//  |
-			|| mustApplyISP())						// Aplicar la inversiï¿½n de sujeto pasivo.
+			|| mustApplyISP())						// Aplicar la inversión de sujeto pasivo.
 		;
 	}
 	public boolean isVatImportationAmountValid() {
