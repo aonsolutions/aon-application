@@ -29,7 +29,7 @@ public class AmortizationJSON {
 	}
 
 	public static Amortization fromJSON(JSONObject json) {
-		if (json == null) return new Amortization();
+		if (JsonUtils.isEmpty(json)) return null;
 		Amortization amortization = new Amortization()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
