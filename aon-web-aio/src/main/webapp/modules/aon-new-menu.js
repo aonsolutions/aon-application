@@ -1,5 +1,5 @@
 import { AonElement } from '../components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET, getConstNewApps, EXPAND_HIRIND, CONTENT_INDEX, MESSENGER, } from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET, getConstNewApps, EXPAND_HIRIND, CONTENT_INDEX, MESSENGER, DOCUMENTAL, } from '../services/app.js';
 import { COMMERCE, OFFICE, GARAGE, ACADEMY } from "../services/app.js";
 
 import { ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU, ENTERPRISE_MENU, CONSOLE_MENU } from "../services/app.js"
@@ -65,6 +65,8 @@ import { AonCommerce } from './commerce/aon-commerce.js';
 import { AonGarage } from './garage/aon-garage.js';
 import { AonCommercial } from './commercial/aon-commercial.js';
 import { AonManagement } from './management/aon-management.js';
+import { AonConfigurationEnviroment } from './configuration/aon-configuration-enviroment.js';
+import { AonMarketing } from './marketing/aon-marketing.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -207,7 +209,7 @@ export class AonNewMenu extends AonElement {
 					this.rootPanel(this.getDur().isDomainManagementAvailable() ? new AonParent() : new AonDesktop());
 					break;
 				case AON_CLASSIC.app:
-					this.setCookie('AONAPP', '/original', new Date().setHours(23, 59, 59, 999)); 
+					this.setCookie('AONAPP', '/original', new Date().setHours(23, 59, 59, 999));
 					open(location.protocol + '//' + localStorage.getItem('aon_domain_name') + (location.port ? ":" + location.port : "") + '/?token=' + localStorage.getItem('aon_session_id'))
 					return;
 				case Apps.CONSOLE.app:
@@ -258,6 +260,12 @@ export class AonNewMenu extends AonElement {
 				case HomeApps.APPLICATIONS.app:
 					this.showApplicationsDialog();
 					break;
+				case ENTERPRISE_MENU.app:
+					this.rootPanel(this.getDur().isDomainManagementAvailable() ? new AonParent() : new AonDesktop());
+					break;
+				case CONFIGURATION_MENU.app:
+					this.rootPanel(this.getDur().isDomainManagementAvailable() ? new AonConfigurationEnviroment() : new AonConfiguration());
+					break;
 				case ACCOUNTING_MENU.app:
 				case FISCAL_MENU.app:
 				case PAYROLL_MENU.app:
@@ -267,11 +275,9 @@ export class AonNewMenu extends AonElement {
 				case TREASURY_MENU.app:
 				case WAREHOUSE_MENU.app:
 				case MARKETING_MENU.app:
-				case CONFIGURATION_MENU.app:
 				case ACADEMY.app:
 				case COMMERCE.app:
 				case GARAGE.app:
-				case ENTERPRISE_MENU.app:
 				case CONSOLE_MENU.app:
 					this.rootPanelMenu(this.getAonSuiteMenu(app));
 					break;
@@ -318,7 +324,7 @@ export class AonNewMenu extends AonElement {
 	setCookie(name, value, expires) {
 		document.cookie = `${name}=${value}; path=/; expires=${new Date(expires).toGMTString()}; SameSite=Lax"}`;
 	}
-	
+
 	removeOldNewDialogContents() {
 		const elements = document.querySelectorAll('#newDialogDialogMenuContent');
 		elements.forEach(element => element.remove());
@@ -329,7 +335,7 @@ export class AonNewMenu extends AonElement {
 			case ACCOUNTING_MENU.app:
 				return new AonAccountingBeta();
 			case COMMERCIAL_MENU.app:
-				return  new AonCommercial();
+				return new AonCommercial();
 			case GROUPWARE_MENU.app:
 				return new AonGroupware();
 			case MANAGEMENT_MENU.app:
@@ -395,33 +401,54 @@ export class AonNewMenu extends AonElement {
 		let aonSearchDialog = new AonDialogMenu();
 		aonSearchDialog.id = this.AON_MENU_SEARCH_DIALOG;
 		this.appendChild(aonSearchDialog);
-		
+
 		if (!this._delegatedHandlerAdded) {
 
-		    document.addEventListener(EVENT.CLICK, (e) => {
-		        if (e.target.closest('.newFixedButton')) {
-		
-		            this.removeOldNewDialogContents();
-		
-		            let newFixedButton = document.querySelector('aon-new-fixed-button .newFixedButton');
-		            
-		            if (newFixedButton.classList.contains('open')) {
-		                let newDialogMenu = this.getElement('newDialogMenu');
-		                newDialogMenu.close();
-		            } else {
-		                this.showNewDialogMenu(newFixedButton, true);
-		                
-		                let searchWidget = this.getElement('aonHeaderSearch');
-		                if(searchWidget) searchWidget.classList.remove('open');
-		                
-		                let searchDialogWidget = this.getElement('aonHeaderSearchDialogMenu');
+			document.addEventListener(EVENT.CLICK, (e) => {
+				if (e.target.closest('.newFixedButton')) {
+
+					this.removeOldNewDialogContents();
+
+					let newFixedButton = document.querySelector('aon-new-fixed-button .newFixedButton');
+
+					if (newFixedButton.classList.contains('open')) {
+						let newDialogMenu = this.getElement('newDialogMenu');
+						newDialogMenu.close();
+					} else {
+						this.showNewDialogMenu(newFixedButton, true);
+
+						let searchWidget = this.getElement('aonHeaderSearch');
+						if (searchWidget) searchWidget.classList.remove('open');
+
+						let searchDialogWidget = this.getElement('aonHeaderSearchDialogMenu');
 						if (searchDialogWidget) searchDialogWidget.close();
-					
-		            }
-		        }
-		    });
-		
-		    this._delegatedHandlerAdded = true;
+
+					}
+				}
+			});
+
+			this._delegatedHandlerAdded = true;
+		}
+
+		// Hide sidenav if its parent
+		if(this.getDur().isDomainManagementAvailable()){
+			let aonMenuSidenav = this.getElement('aonMenuSidenav');
+			aonMenuSidenav.style.display = 'none';
+			
+			let aonMenuAnchor = this.getElement('aonMenuAnchor');
+			aonMenuAnchor.style.display = 'none';
+			
+			let aonMenuTopnav = this.getElement('aonMenuTopnav');
+			aonMenuTopnav.style.marginLeft = '0';
+			
+			let rootPanel = this.getElement('rootPanel');
+			rootPanel.classList.add('domainManagementAvailable');
+		} else {
+			let aonMenuAnchor = this.getElement('aonMenuAnchor');
+			aonMenuAnchor.style.display = 'block';
+			
+			let rootPanel = this.getElement('rootPanel');
+			rootPanel.classList.remove('domainManagementAvailable');
 		}
 	}
 
@@ -583,17 +610,47 @@ export class AonNewMenu extends AonElement {
 		aonTopMenuDiv.id = "aonTopMenuDiv";
 
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
-		
-		for (let item in TOP_MENU_APPS) {
 
-			let app = TOP_MENU_APPS[item];
+		let topMenuApps = [...TOP_MENU_APPS];
+
+		if (this.getDur().isDomainManagementAvailable()) {
+			const idx = topMenuApps.indexOf(CONFIGURATION_MENU);
+
+			// Solo añadir si no existe ya
+			if (!topMenuApps.includes(DOCUMENTAL)) {
+				// Insertar antes de CONFIGURATION_MENU
+				if (idx !== -1) {
+					topMenuApps.splice(idx, 0, DOCUMENTAL);
+				} else {
+					// Fallback por si CONFIGURATION_MENU no está
+					topMenuApps.push(DOCUMENTAL);
+				}
+			}
+			
+			// Transformación del menú de configuración
+			topMenuApps = topMenuApps.map(app => {
+			    if (app === CONFIGURATION_MENU) {
+			        return {
+			            ...app,
+			            symbol: MATERIAL_ICONS.MONITORING,
+			            title: MSG.MANAGEMENT,
+			            description: MSG.MANAGEMENT
+			        };
+			    }
+			    return app;
+			});
+		}
+
+		for (let item in topMenuApps) {
+
+			let app = topMenuApps[item];
 
 			if (!this.isApp(app)) {
 				if (!showAllApps || excludedApps.includes(app.app)) {
 					continue;
 				} else {
 					let appElement = this.buildTopApp(app);
-					
+
 					appElement.classList.add("aonNewMenuTopNavAppElement");
 					app.color = "var(--aonTopMenuNotAvailable)";
 					aonTopMenuDiv.appendChild(appElement);
@@ -605,9 +662,14 @@ export class AonNewMenu extends AonElement {
 			aonTopMenuDiv.appendChild(appElement);
 		}
 
-
 		this.clearElement(aonMenuTopnav);
 		aonMenuTopnav.appendChild(aonTopMenuDiv);
+		
+		if (this.getDur().isDomainManagementAvailable()) {
+			let managementMenuBar = this.getElement(`aonMenuBar-configurationMenu`);
+			console.log('managementMenuBar', managementMenuBar);
+			if(managementMenuBar) managementMenuBar.classList.add('aonMenuBarConfigurationMenuConsultancy');
+		}
 	}
 
 	reloadTopNav() {
@@ -949,11 +1011,11 @@ export class AonNewMenu extends AonElement {
 		let li = this.getElement('aonMenuList' + app.app);
 		ul.removeChild(li);
 	}
-	
-	closeEmptyApps(){
+
+	closeEmptyApps() {
 		let aonMenuTopnav = this.getElement(this.AON_MENU_TOPNAV);
 		let aonTopMenuDiv = this.getElement('aonTopMenuDiv');
-		
+
 		if ((aonMenuTopnav && aonMenuTopnav.childNodes.length == 0) || (aonTopMenuDiv && aonTopMenuDiv.childNodes.length == 0)) {
 			this.close();
 		}
@@ -1141,7 +1203,7 @@ export class AonNewMenu extends AonElement {
 	}
 
 	showNewDialogMenu(el, isFixedButton = false) {
-		
+
 		let newMenuOptions = [];
 		if (this.getDur().isInvoice()) {
 			let optionsMenu = [
@@ -1310,8 +1372,8 @@ export class AonNewMenu extends AonElement {
 				}
 			});
 		}
-		
-		
+
+
 		const top = el.getBoundingClientRect().top;
 		const left = el.getBoundingClientRect().right;
 
@@ -1455,6 +1517,7 @@ export class AonNewMenu extends AonElement {
 							let found = applicationsOptions.find(opt => opt.name.localeCompare(name) == 0);
 							if (found)
 								return;
+								
 							applicationsOptions.push({
 								name,
 								icon: topMenuApp.symbol,

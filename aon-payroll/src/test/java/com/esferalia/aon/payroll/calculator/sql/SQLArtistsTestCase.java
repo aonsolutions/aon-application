@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collections;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -27,7 +27,7 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author rtrepiana
@@ -133,8 +133,8 @@ public class SQLArtistsTestCase extends AbstractSQLTestCase {
 		
 		ISalary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(666.66 + 500.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(666.66 + 500.00, salary.getProfessionalBase(), DELTA);
+		assertEquals(666.66 + 500.00, salary.getCommonBase(), DELTA);
+		assertEquals(666.66 + 500.00, salary.getProfessionalBase(), DELTA);
 		
 		
 	}

@@ -14,7 +14,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.stream.Stream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.esferalia.aon.jooq.tables.records.BonusConceptRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -131,10 +132,10 @@ public class SQLCRUDETestCase extends AbstractSQLTestCase {
 		PAYROLL.deleteContracts(domain, "login", contract.getId());
 		
 		PAYROLL.getContract(domain.getName(), domain.getId(), "login", p -> p.getIdProperty().eq(contract.getId()))
-		.ifPresent( c -> org.junit.Assert.fail("Contracts NOT deleted!!!!!!!!!!!!" ));
+		.ifPresent( c -> fail("Contracts NOT deleted!!!!!!!!!!!!" ));
 
 		AON.getSalaries(domain, "login", p -> p.getContractProperty().eq(contract.getId())).findAny()
-		.ifPresent( c -> org.junit.Assert.fail("Contracts NOT deleted!!!!!!!!!!!!" ));
+		.ifPresent( c -> fail("Contracts NOT deleted!!!!!!!!!!!!" ));
 
 	}
 

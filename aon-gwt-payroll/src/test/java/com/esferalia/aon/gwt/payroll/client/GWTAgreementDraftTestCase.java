@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.EvalException;
@@ -48,7 +48,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 
@@ -95,7 +95,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 				
 				callback.onSuccess(draft);
 			} catch (Throwable t) {
-				Assert.fail(t.getMessage());
+				fail(t.getMessage());
 			}
 		}
 
@@ -664,7 +664,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		}		
 	}
 
-	@Before
+	@BeforeEach
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1315,13 +1315,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		agreementDraftWidget.setAgreementDraftObject(agreementDraftObject);
 
 		// only two rows , one for headers and another one for add a new payment
-		Assert.assertEquals(2, agreementDraftWidget.paymentsTable.getRowCount());
+		assertEquals(2, agreementDraftWidget.paymentsTable.getRowCount());
 
 		// only two rows , one for headers and another one for add a new extra
-		Assert.assertEquals(2, agreementDraftWidget.extrasTable.getRowCount());
+		assertEquals(2, agreementDraftWidget.extrasTable.getRowCount());
 
 		// only three rows , one for headers and another for add a new level
-		Assert.assertEquals(2, agreementDraftWidget.salaryTable.getRowCount());
+		assertEquals(2, agreementDraftWidget.salaryTable.getRowCount());
 
 	}
 

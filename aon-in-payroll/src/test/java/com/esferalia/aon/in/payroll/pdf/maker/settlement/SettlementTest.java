@@ -3,7 +3,7 @@ package com.esferalia.aon.in.payroll.pdf.maker.settlement;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.NumberToolkit.random;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.StringToolkit.lorem;
 import static com.esferalia.aon.in.payroll.pdf.maker.PdfMaker.printSettlement;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,7 +16,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
@@ -293,7 +293,7 @@ public class SettlementTest {
 
 			Map<Integer, ArrayList<PDFPayment>> payments = new HashMap<>();
 			ArrayList<PDFPayment> pl = new ArrayList<>();
-			pl.add(new PDFPayment(2d, "Prestación IT"));
+			pl.add(new PDFPayment(2d, "Prestaci\u00f3n IT"));
 			payments.put(100, pl);
 			
 			builder.setEmployeeName(employeeName.toUpperCase()).setEmployeeNIF(employeeNif)

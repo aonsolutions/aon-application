@@ -1305,6 +1305,7 @@ export class AonJsfContractParams extends AonJsfApp {
 		this.setViewId('/facelet/app/contractParams.xhtml');
 	}
 }
+
 export class AonJsfBalance extends AonJsfApp {
 
 	constructor() {

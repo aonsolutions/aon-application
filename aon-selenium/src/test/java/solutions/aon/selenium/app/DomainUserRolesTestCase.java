@@ -232,7 +232,7 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 			    "let d = document.getElementById('aonDesktopInvoiceConfigurationDialog'); if(d) d.close();"
 			);
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonDesktopMainContent")));
-			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("contentIndex"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.id("contentIndex"))).click();
 
  			WebElement aonJsfAppFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAppFrame")));
 			webDriver.switchTo().frame(aonJsfAppFrame);

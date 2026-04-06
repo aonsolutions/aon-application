@@ -5,6 +5,7 @@ import { AonCard } from '../components/aon-card.js';
 import { Language } from '../models/Language.js';
 import * as LS from '../services/localStorageService.js';
 import { AonConfiguration } from './configuration/aon-configuration.js';
+import { AonConfigurationNew } from './configuration/aon-configuration-new.js';
 
 
 export class AonConfig extends AonElement {
@@ -101,7 +102,7 @@ export class AonConfig extends AonElement {
             let configContentIndexI = this.createElement(TAG.I);
             configContentIndexI.className = CSS.MATERIAL_ICONS;
             configContentIndexI.classList.add("aonHelpI");
-            configContentIndexI.innerHTML = "construction";
+            configContentIndexI.innerHTML = "settings";
             configDiv.appendChild(configContentIndexI);
 
             let configContentIndexSpan = this.createDiv();
@@ -112,7 +113,12 @@ export class AonConfig extends AonElement {
             this.appendChild(configDiv);
 
             configDiv.addEventListener(EVENT.CLICK, () => {
-                let aonConfiguration = new AonConfiguration();
+				let aonConfiguration;
+				if(this.getDur().isConsultancy())
+					aonConfiguration = new AonConfigurationNew();
+				else
+                	aonConfiguration = new AonConfiguration();
+                	
                 this.rootPanel(aonConfiguration);
                 let rightPanel = document.querySelector('aon-right-panel');
                 if (rightPanel) {

@@ -54,3 +54,4 @@ export const AON_APPLICATION_SELECT = "apSelect";
 export const BUILD = "build";
 export const SUBMIT = "submit";
 export const AON_APPLICATION_OPEN = "apOpen";
+export const COMMENT = "comment";

@@ -26,6 +26,7 @@ import { AonDateUtils } from '../utils/AonDateUtils.js';
 import { getCompanyBanks } from '../../services/companyService.js';
 import { AonRecordDataList } from './recordData/aon-record-data-list.js';
 import { createInput, createNumber, createSelect } from '../../components/CreateComponent.js';
+import { getCompany } from '../../services/localStorageService.js';
 
 export class AonReg extends AonElement {
 
@@ -38,6 +39,8 @@ export class AonReg extends AonElement {
 	clientFile;
 
 	segments;
+	
+	enviromentOptions;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -49,6 +52,7 @@ export class AonReg extends AonElement {
 
 	constructor () {
 		super();
+		
 	}
 
 	connectedCallback () {
@@ -124,6 +128,22 @@ export class AonReg extends AonElement {
 		this.phones = [];
 		this.oneAddress = this.oneAddress || true;
 		this.segments = [];
+		
+		// Si no hay company en el LS es que estamos en el entorno
+		/*
+		this.options = this.options || 
+			getCompany() ?
+			[
+				{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},
+				{ title: MSG.BANK_DATA, fn: () => this.buildBankData()},
+				{ title: MSG.REGISTRATION_DATA, fn: () => this.buildRegistralData()},
+				{ title: MSG.CERTIFICATES, fn: () => this.buildCertificates()}
+			]:
+			[
+				{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},
+				{ title: MSG.CERTIFICATES, fn: () => this.buildCertificates()}
+			];
+		*/
 		this.options = this.options || [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},
 			{ title: MSG.BANK_DATA, fn: () => this.buildBankData()},
@@ -146,7 +166,14 @@ export class AonReg extends AonElement {
 		if(this.registry.id && this.registry.getCreationUser){
 			toolbar.addButtonTitle(ACTION.AUDIT, () => this.audit());
 		}
-
+		
+		console.log('enviromentOptions', this.enviromentOptions)
+		if(this.enviromentOptions)
+			this.options = [
+				{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},
+				{ title: MSG.CERTIFICATES, fn: () => this.buildCertificates()}
+			];
+			
 		this.buildTabs();
 
 		let div = this.createElement(TAG.DIV);

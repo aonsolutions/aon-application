@@ -5,7 +5,7 @@ import java.io.StringReader;
 import java.util.Scanner;
 
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;

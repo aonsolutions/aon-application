@@ -61,7 +61,8 @@ public class AonRegistryBankGrid extends SimpleLayoutPanel {
 			.addCell(new InlineLabel(AON.MSG.bankAccount()))
 			.addCell(new InlineLabel(AON.MSG.description()))
 			.addCell(new InlineLabel("Bic / Swift"))
-			.addCell(new InlineLabel("Activo"));
+			.addCell(new InlineLabel("Activo"))
+			.addCell(new InlineLabel(""));
 	}
 	
 	/**
@@ -73,21 +74,21 @@ public class AonRegistryBankGrid extends SimpleLayoutPanel {
 		
 		// ***************************************************************** [BANK ACCOUNT]		
 		final AonBankAccountBox aonBankAccountBox = new AonBankAccountBox();
-		aonBankAccountBox.setWidth("350px");
+		aonBankAccountBox.setWidth("410px");
 		aonBankAccountBox.setValue(registryBank.getBankAccount());
 		aonBankAccountBox.addValueChangeHandler(event -> registryBank.setBankAccount(aonBankAccountBox.getValue()));
 		
 		// ***************************************************************** [DESCRIPTION]		
 		final AonTextBox descriptionText = new AonTextBox();
 		descriptionText.setValue(registryBank.getAlias());
-		descriptionText.setVisibleLength(18);
+		descriptionText.setVisibleLength(10);
 		descriptionText.setMaxLength(20);
 		descriptionText.addValueChangeHandler(event -> registryBank.setAlias(descriptionText.getValue()));
 
 		// ***************************************************************** [BIC / SWIFT]		
 		final AonTextBox bicText = new AonTextBox();
 		bicText.setValue(registryBank.getBic());
-		bicText.setVisibleLength(10);
+		bicText.setVisibleLength(11);
 		bicText.setMaxLength(15);
 		bicText.addValueChangeHandler(event -> registryBank.setBic(bicText.getValue()));
 		

@@ -7,14 +7,13 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomerFullPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonSimpleDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel.AonRegistryFullPanelCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSimpleDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.RegistryParams;
@@ -129,7 +128,8 @@ public abstract class CustomerModulePanel extends AonCustomDockLayout {
 					
 				@Override
 				public void onAccept(CustomerFull rf) {
-					// Add new customer to table
+					customerPanel.resetSearchOffset();
+					onSearch( options );
 				}
 
 				@Override
@@ -153,15 +153,12 @@ public abstract class CustomerModulePanel extends AonCustomDockLayout {
 	}
 	
 	private void selectCustomer(RegistryModuleOptions opt, CustomerFull customer, AonRegistryFullPanelCallback<CustomerFull> panelCallback) {
-		
 		final AonSimpleDialog dialog = new AonSimpleDialog();
 		dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
 		dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
-		
-		//final AonCustomDialog dialog = new AonCustomDialog();
 		dialog.setCaption(AON.MSG.customer());
 		
-		AonCustomerFullPanel customerPanel = new AonCustomerFullPanel(opt, customer, new AonRegistryFullPanelCallback<CustomerFull>() {
+		AonCustomerFullPanel aonCustomerFullPanel = new AonCustomerFullPanel(opt, customer, new AonRegistryFullPanelCallback<CustomerFull>() {
 			@Override
 			public void setFocus(boolean b) {
 				if (panelCallback != null) panelCallback.setFocus(b);
@@ -182,6 +179,8 @@ public abstract class CustomerModulePanel extends AonCustomDockLayout {
 			public void onAccept(CustomerFull rf) {
 				dialog.hide();
 				if (panelCallback != null) panelCallback.onAccept(rf);
+				customerPanel.resetSearchOffset();
+				onSearch( options );
 			}
 			@Override
 			public void onDocumenthanged(CustomerFull registryFull) {
@@ -189,14 +188,11 @@ public abstract class CustomerModulePanel extends AonCustomDockLayout {
 			}	
 		});
 		
-		dialog.add( customerPanel );
+		dialog.add( aonCustomerFullPanel );
 		dialog.center();
 		dialog.show();
 		
-		Scheduler.get().scheduleDeferred(() -> customerPanel.setFocus(true));
-		
-//		dialog.add( customerPanel );
-//		dialog.showLoaded();				
+		Scheduler.get().scheduleDeferred(() -> aonCustomerFullPanel.setFocus(true));				
 	}
 
 	public void onSearch( RegistryModuleOptions options ) {

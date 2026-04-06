@@ -15,7 +15,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -29,7 +29,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author rtrepiana
@@ -79,7 +79,7 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		ISalary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(1000.00 * 11 / 30, salary.getTotalPayment());
+		assertEquals(1000.00 * 11 / 30, salary.getTotalPayment());
 
 	}
 
@@ -123,7 +123,7 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		Salary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(1000.00 * 11 / 30, salary.getTotalPayment());
+		assertEquals(1000.00 * 11 / 30, salary.getTotalPayment());
 
 	}
 
@@ -167,7 +167,7 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		Salary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(1000.00 * 11 / 30, salary.getTotalPayment());
+		assertEquals(1000.00 * 11 / 30, salary.getTotalPayment());
 
 	}
 
@@ -215,7 +215,7 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() + " = " + p.getAmount() ));
 
-		Assert.assertEquals(1000.00 * 9 / 30, salary.getTotalPayment());
+		assertEquals(1000.00 * 9 / 30, salary.getTotalPayment());
 
 	}
 
@@ -265,10 +265,10 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(1000.00 * (get(endDate, Calendar.DAY_OF_MONTH) -11) / 30.00 , salary.getTotalLiquid(), DELTA);
+		assertEquals(1000.00 * (get(endDate, Calendar.DAY_OF_MONTH) -11) / 30.00 , salary.getTotalLiquid(), DELTA);
 		
 		Set<com.esferalia.aon.payroll.SalaryPayment> payments = salary.getSalaryPayments();
-		Assert.assertEquals(2, payments.size());
+		assertEquals(2, payments.size());
 		
 		
 
@@ -314,7 +314,7 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		Salary salary = calculator.calculate(ctx);		
 
-		Assert.assertEquals(1000.00 * 11 / 30, salary.getTotalLiquid(), DELTA);
+		assertEquals(1000.00 * 11 / 30, salary.getTotalLiquid(), DELTA);
 
 	}
 
@@ -359,7 +359,7 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		ISalary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(1000.00 * 9 / 30, salary.getTotalPayment());
+		assertEquals(1000.00 * 9 / 30, salary.getTotalPayment());
 
 	}
 
@@ -410,10 +410,10 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(1000.00 * (get(endDate, Calendar.DAY_OF_MONTH) -11) / 30 , salary.getTotalPayment(), DELTA);
+		assertEquals(1000.00 * (get(endDate, Calendar.DAY_OF_MONTH) -11) / 30 , salary.getTotalPayment(), DELTA);
 		
 		Set<com.esferalia.aon.payroll.SalaryPayment> payments = salary.getSalaryPayments();
-		Assert.assertEquals(2, payments.size());
+		assertEquals(2, payments.size());
 		
 		
 
@@ -473,10 +473,10 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(1000.00 * (get(endDate, Calendar.DAY_OF_MONTH) -11) / 30 , salary.getTotalPayment(), DELTA);
+		assertEquals(1000.00 * (get(endDate, Calendar.DAY_OF_MONTH) -11) / 30 , salary.getTotalPayment(), DELTA);
 		
 		Set<com.esferalia.aon.payroll.SalaryPayment> payments = salary.getSalaryPayments();
-		Assert.assertEquals(3, payments.size());
+		assertEquals(3, payments.size());
 		
 		
 		// 10-11-12-13-14-15 , 20-21-22-23-24

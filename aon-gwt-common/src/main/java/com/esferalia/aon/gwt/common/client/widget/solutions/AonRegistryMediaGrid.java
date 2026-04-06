@@ -85,7 +85,7 @@ public class AonRegistryMediaGrid extends SimpleLayoutPanel {
 		
 		final AonTextBox commentsBox = new AonTextBox();
 		commentsBox.setValue(registryMedia.getComment());
-		commentsBox.setVisibleLength(35);
+		commentsBox.setVisibleLength(25);
 		commentsBox.setMaxLength(64);
 		commentsBox.addValueChangeHandler(event -> registryMedia.setComment(commentsBox.getValue()));
 		
@@ -148,23 +148,23 @@ public class AonRegistryMediaGrid extends SimpleLayoutPanel {
 				// Empty method
 			}
 			@Override public void visitFixedPhone() {
-				valueBox.setVisibleLength(15);
+				valueBox.setVisibleLength(25);
 				valueBox.setMaxLength(15);
 			}
 			@Override public void visitCellular() { 
-				valueBox.setVisibleLength(15);
+				valueBox.setVisibleLength(25);
 				valueBox.setMaxLength(15);
 			}
 			@Override public void visitFax() {
-				valueBox.setVisibleLength(15);
+				valueBox.setVisibleLength(25);
 				valueBox.setMaxLength(15);
 			}
 			@Override public void visitEmail() { 
-				valueBox.setVisibleLength(35);
+				valueBox.setVisibleLength(25);
 				valueBox.setMaxLength(64);
 			}
 			@Override public void visitWeb() { 
-				valueBox.setVisibleLength(35);
+				valueBox.setVisibleLength(25);
 				valueBox.setMaxLength(64);
 			} 
 		};

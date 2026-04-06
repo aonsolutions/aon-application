@@ -38,12 +38,20 @@ class RawdocLogPanel extends ScrollPanel  {
 					.addCell( new Label(getValue(json,IJsonNames.DATE)))
 					.addCell( new Label(getValue(json,IJsonNames.STATUS)))
 					.addCell( new Label(getValue(json,IJsonNames.USER)))
-					.addCell( new Label(getValue(json,IJsonNames.REASON)))
+					.addCell( new Label(getCommentValue(json)))
 				;
 				}
 			}
 			setWidget(grid);
 		}
+	}
+	
+	private String getCommentValue(JSONObject json) {
+		String comment = getValue(json,IJsonNames.COMMENT);
+		if (AonStringUtils.isBlank(comment)) {
+			comment = getValue(json, IJsonNames.REASON);
+		}
+		return comment;
 	}
 	
 	private String getValue(JSONObject json, String attr) {

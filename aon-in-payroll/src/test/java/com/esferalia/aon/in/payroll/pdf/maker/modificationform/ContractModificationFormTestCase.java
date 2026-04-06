@@ -1,6 +1,6 @@
 package com.esferalia.aon.in.payroll.pdf.maker.modificationform;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -10,7 +10,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.in.payroll.pdf.maker.form.bean.ModificationForm;
 import com.esferalia.aon.in.payroll.pdf.maker.form.bean.ModificationForm.ClientData;
@@ -31,7 +31,7 @@ public class ContractModificationFormTestCase {
 			
 			RegistryAddress rAddress = new RegistryAddress()
 					.setAddress("Nombre de calle inventado")
-					.setAddress2("Edificio inventado de la montaña de la ciudad del norte de la provincia de al lado")
+					.setAddress2("Edificio inventado de la monta\u00f1a de la ciudad del norte de la provincia de al lado")
 					.setAddress3("Puerta 288")
 					.setAlias("Fake Street")
 					.setCity("Quintanilla de Vivar")
@@ -44,12 +44,12 @@ public class ContractModificationFormTestCase {
 			CompanyData companyData = new ModificationForm.CompanyData()
 					.setLogo(getLogo())
 					.setSignature(getSignature())
-					.setName("NOMBRE DE LA COMPAÑÍA, S.L.")
+					.setName("NOMBRE DE LA COMPA\u00d1\u00cdA, S.L.")
 					.setDocument("B12345678")
 					.setCcc("11122534302")
 					.setAddress(rAddress);
 			ClientData employeeData = new ModificationForm.ClientData()
-					.setName("Díaz de Vivar, Rodrigo")
+					.setName("D\u00edaz de Vivar, Rodrigo")
 					.setDocument("12345678M")
 					.setSocialSecurityNum("555501234")
 					.setSeniorityDate(new Date())
@@ -58,7 +58,7 @@ public class ContractModificationFormTestCase {
 			ModificationForm form = new ModificationForm()
 					.setCompanyData(companyData)
 					.setClientData(employeeData)
-//					.setModificationTitle("MODIFICACIÓN DEL CONTRATO DE TRABAJO")
+//					.setModificationTitle("MODIFICACI\u00d3N DEL CONTRATO DE TRABAJO")
 					.setSepeId("12345678910111213")
 					.setModificationDate(new Date())
 					.setContractStartDate(new Date())
@@ -114,7 +114,7 @@ public class ContractModificationFormTestCase {
 			ModificationForm form = new ModificationForm()
 					.setCompanyData(companyData)
 					.setClientData(employeeData)
-//					.setModificationTitle("MODIFICACIÓN DEL CONTRATO DE TRABAJO")
+//					.setModificationTitle("MODIFICACI\u00d3N DEL CONTRATO DE TRABAJO")
 					.setSepeId(possibleNull("12345678910111213", nullProbability))
 					.setModificationDate(possibleNull(new Date(), nullProbability))
 					.setContractStartDate(possibleNull(new Date(), nullProbability))

@@ -2,15 +2,15 @@ package com.esferalia.aon.payroll.calculator;
 
 import static com.esferalia.aon.salary.expression.ExpressionScope.AGREEMENT;
 import static com.esferalia.aon.salary.expression.ExpressionScope.CONTRACT;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -54,7 +54,7 @@ public class CompositePaymentsTestCase {
 			else if (AonStringUtils.equals(payment.getExpression(), "CONTRACT"))
 				assertEquals(payment.getScope(), CONTRACT);
 			else
-				Assert.fail();
+				fail();
 		}
 
 		// Test override one 'EXTRA'
@@ -75,7 +75,7 @@ public class CompositePaymentsTestCase {
 			else if (AonStringUtils.equals(payment.getExpression(), "CONTRACT"))
 				assertEquals(payment.getScope(), CONTRACT);
 			else
-				Assert.fail();
+				fail();
 		}
 		
 		// Test override partially
@@ -97,7 +97,7 @@ public class CompositePaymentsTestCase {
 			else if (AonStringUtils.equals(payment.getExpression(), "CONTRACT"))
 				assertEquals(payment.getScope(), CONTRACT);
 			else
-				Assert.fail();
+				fail();
 		}
 	}
 
