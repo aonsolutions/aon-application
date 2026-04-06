@@ -4,8 +4,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -24,7 +24,7 @@ public class StatTest {
 	
 	private static CloseableAONContext ctx;
 	
-	@BeforeClass
+	@BeforeAll
 	public static void beforeClass() {
 		ctx = AONContext.getAONContext( DOMAIN_NAME, DOMAIN_ID, USER_NAME );
 		
@@ -64,7 +64,7 @@ public class StatTest {
 		writer.close();
 	}
 	
-	@AfterClass
+	@AfterAll
 	public static void afterClass() {
 		ctx.close();
 	}

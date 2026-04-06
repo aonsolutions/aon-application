@@ -1,29 +1,25 @@
 package com.esferalia.aon.watson.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
 public class SmartSearchTest {
 	
 
-	@Rule
-	public TestName name = new TestName();
-	
-	@Before
-	public void showTestName() {
+	@BeforeEach
+	public void showTestName(TestInfo testInfo) {
 		System.out.println("\n--------------------------------------------------------");
-		System.out.println("  " + name.getMethodName());
+		System.out.println("  " + testInfo.getDisplayName());
 		System.out.println("---------------------------------------------------------");
 	}
 	
@@ -47,37 +43,37 @@ public class SmartSearchTest {
 	
 	@Test 
 	public void generalLevenshteinDistanceTest() {
-		matching("Las n髆inas de importaci髇", "La n髆inas d imprtaci髇");		
+		matching("Las n贸minas de importaci贸n", "La n贸minas d imprtaci贸n");		
 	}
 
 	@Test
 	public void accentVariationTest() {		
-		matching("Importaci髇 de n髆inas y trabajadores", "nomina");
+		matching("Importaci贸n de n贸minas y trabajadores", "nomina");
 	}
 	
 	@Test
 	public void accentBigVariationFailTest() {
-		notMatching("Importaci髇 de n髆inas y trabajadores", "nominaaa");
+		notMatching("Importaci贸n de n贸minas y trabajadores", "nominaaa");
 	}
 	
 	@Test
 	public void capitalVariationTest() {		
-		matching("IMPORTACI覰 DE N覯INAS Y TRABAJADORES", "nomina");
+		matching("IMPORTACI脫N DE N脫MINAS Y TRABAJADORES", "nomina");
 	}
 	
 	@Test 
 	public void containingStringTest() {
-		matching("IMPORTACI覰 DE N覯INAS Y TRABAJADORES", "nom");
+		matching("IMPORTACI脫N DE N脫MINAS Y TRABAJADORES", "nom");
 	}
 	
 	@Test
 	public void containsFractionTest() {
-		matching("IMPORTACI覰", "imp");		
+		matching("IMPORTACI脫N", "imp");		
 	}
 	
 	@Test
 	public void nWithTildeTest() {		
-		matching("NI袿S EN EL PARQUE", "ninos");		
+		matching("NI脩OS EN EL PARQUE", "ninos");		
 	}
 	
 	@Test 
@@ -94,15 +90,15 @@ public class SmartSearchTest {
 	@Test
 	public void getMatchingWordTest() {
 		final String searcher = "nom";
-		final String text = "IMPORTACI覰 DE N髆inas Y TRABAJADORES";
+		final String text = "IMPORTACI脫N DE N贸minas Y TRABAJADORES";
 
-		assertEquals("N髆inas",AonStringUtils.getMatchingWord(text, searcher));	
+		assertEquals("N贸minas",AonStringUtils.getMatchingWord(text, searcher));	
 	}
 	
 	@Test
 	public void getMatchingTest() {
 		final String searcher = "nom trabajidores";
-		final String text = "IMPORTACI覰 DE N髆inas Y TRABAJADORES";
+		final String text = "IMPORTACI脫N DE N贸minas Y TRABAJADORES";
 
 		
 		List<String> matching = AonStringUtils.getMatching(text, searcher);
@@ -110,11 +106,11 @@ public class SmartSearchTest {
 			fail("Incorrect matching word number");
 		}
 		
-		System.out.println(" EXPECTING: \"N髆inas\" , \"TRABAJADORES\" ");
+		System.out.println(" EXPECTING: \"N贸minas\" , \"TRABAJADORES\" ");
 		System.out.println(" GET: \"" + matching.get(0) + "\" ");
 		System.out.println(" GET: \"" + matching.get(1) + "\" ");
 		
-		assertEquals("N髆inas", matching.get(0));
+		assertEquals("N贸minas", matching.get(0));
 		assertEquals("TRABAJADORES", matching.get(1));
 		System.out.println("\n SUCCESS.");
 	}
@@ -122,7 +118,7 @@ public class SmartSearchTest {
 	@Test
 	public void getMatchingMultipleSpacingTest() {
 		final String searcher = "2";
-		final String text = "IMPORTACI覰   DE N髆inas  TRABAJADORES";		
+		final String text = "IMPORTACI脫N   DE N贸minas  TRABAJADORES";		
 		List<String> matching = AonStringUtils.getMatching(text, searcher);
 		 
 		assertEquals(0, matching.size());
@@ -133,10 +129,10 @@ public class SmartSearchTest {
 	public void searchFilterTest() {
 		
 		LinkedList<String> results = new LinkedList<>();
-		results.add("Modelo 303 - I.V.A. Autoliquidaci髇");
+		results.add("Modelo 303 - I.V.A. Autoliquidaci贸n");
 		results.add("Modelo 347 - Resumen anual de operaciones");
 		results.add("Modelo 349 - Resumen de operaciones intracomunitarias");
-		results.add("Modelo 390 - Declaraci髇 Resumen Anual IVA");
+		results.add("Modelo 390 - Declaraci贸n Resumen Anual IVA");
 		results.add("Modelo 111 - Retenciones e ingresos a cuenta sobre rendimientos de trabajo");
 		results.add("Modelo 115 - Retenciones e ingresos a cuenta sobre determinadas rentas");
 		results.add("Modelo 123 - Retenciones e ingresos a cuenta sobre determinados rendimientos");

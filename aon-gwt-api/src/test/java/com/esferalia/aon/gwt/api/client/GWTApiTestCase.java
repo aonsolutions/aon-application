@@ -3,8 +3,6 @@
  */
 package com.esferalia.aon.gwt.api.client;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.IssueFilter;
@@ -26,7 +24,6 @@ public class GWTApiTestCase extends GWTTestCase {
 	    return "com.esferalia.aon.gwt.api.Api";
 	}
 	
-	@BeforeClass
 	public void testCreateRepository() {
 		System.out.println("======== >>> Creando repositorio de prueba .....");
 		
@@ -63,7 +60,6 @@ public class GWTApiTestCase extends GWTTestCase {
 		});
 	}
 	
-	@Test
 	public void testGetOpenIssues() {
 		IssueFilter f = new IssueFilter().setState("open");
 		Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME, DOMAIN_ID);		
@@ -85,7 +81,6 @@ public class GWTApiTestCase extends GWTTestCase {
 		});
 	}
 	
-	@Test
 	public void testGetClosedIssues() {
 		IssueFilter f = new IssueFilter().setState("closed");
 		Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME, DOMAIN_ID);		
@@ -107,7 +102,6 @@ public class GWTApiTestCase extends GWTTestCase {
 		});
 	}
 	
-	@Test
 	public void testGetAllIssues() {
 		IssueFilter f = new IssueFilter().setState("all");
 		Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME, DOMAIN_ID);		
