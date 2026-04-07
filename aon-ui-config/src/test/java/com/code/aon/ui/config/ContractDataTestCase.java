@@ -1,13 +1,12 @@
 package com.code.aon.ui.config;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -24,7 +23,7 @@ public class ContractDataTestCase {
 					fail("Empty must matching all");
 				}
 				String replaced = DomainData.replace(name, "",  string -> "<b>" + string + "</b>");
-				Assert.assertEquals(name, replaced);
+				assertEquals(name, replaced);
 			}
 		}
 	}
@@ -35,8 +34,8 @@ public class ContractDataTestCase {
 		{
 			
 			for ( String name = in.readLine(); name != null ; name = in.readLine() ) {
-				for ( String match : AonStringUtils.getMatching(name, "ç") ) {
-					Assert.assertFalse("match: '"+ match+ "'", AonStringUtils.isBlank(match));
+				for ( String match : AonStringUtils.getMatching(name, "ï¿½") ) {
+					assertFalse(AonStringUtils.isBlank(match), "match: '"+ match+ "'");
 				}
 			}
 		}
@@ -51,7 +50,7 @@ public class ContractDataTestCase {
 			for ( String name = in.readLine(); name != null ; name = in.readLine() ) {
 				for ( String match : AonStringUtils.getMatching(name, "a") ) {
 					String replaced = DomainData.replace(name, match,  string -> "<b>" + string + "</b>");
-					Assert.assertTrue("match: '"+ replaced+ "'", AonStringUtils.containsIgnoreCase(replaced, "<b>"+match+"</b>"));
+					assertTrue(AonStringUtils.containsIgnoreCase(replaced, "<b>"+match+"</b>"), "match: '"+ replaced+ "'");
 				}
 			}
 		}

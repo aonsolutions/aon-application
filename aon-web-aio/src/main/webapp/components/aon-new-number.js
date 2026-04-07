@@ -43,6 +43,24 @@ export class AonNewNumber extends AonNewInput {
         this.setAttribute('maxDecimal', maxDecimal);
     }
 
+    get min() {
+        let v = this.getAttribute('min');
+        return v !== null ? parseFloat(v) : null;
+    }
+
+    set min(min) {
+        this.setAttribute('min', min);
+    }
+
+    get max() {
+        let v = this.getAttribute('max');
+        return v !== null ? parseFloat(v) : null;
+    }
+
+    set max(max) {
+        this.setAttribute('max', max);
+    }
+
     attributeChangedCallback(name, oldValue, newValue) {
         if (CONSTANT.VALUE === name) {
             let input = this.getElement(this.INPUT);
@@ -98,6 +116,8 @@ export class AonNewNumber extends AonNewInput {
 		input.style.textAlign = 'right';
 		if (this.value) input.value = this.value;
 
+        let lastValue = input.value;
+        
 		input.addEventListener(EVENT.KEYPRESS, (ev) => {
 			let keyChar = String.fromCharCode(ev.which || ev.keyCode);
 			let reg = new RegExp(/[^0-9]/g);
@@ -122,6 +142,13 @@ export class AonNewNumber extends AonNewInput {
 			if (value) {
 				let newValue = this.onBlur2(value);
 				this.value = this.onFocus(newValue);
+				let numeric = parseFloat(this.value);
+				if (this.min !== null && numeric < this.min) { this.value = String(this.min); input.value = this.onBlur2(String(this.min)); }
+				if (this.max !== null && numeric > this.max) { this.value = String(this.max); input.value = this.onBlur2(String(this.max)); }
+			}
+
+            if (value !== lastValue) {
+				this.dispatchEvent(new Event(EVENT.CHANGE_NUMBER));
 			}
 
 			this.dispatchEvent(new Event(EVENT.BLUR));
@@ -138,7 +165,7 @@ export class AonNewNumber extends AonNewInput {
 				this.value = input.value.replace('-', '');
 			}
 
-			this.dispatchEvent(new Event(EVENT.CHANGE_NUMBER));
+			// this.dispatchEvent(new Event(EVENT.CHANGE_NUMBER));
 		});
 	}
 

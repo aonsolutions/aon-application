@@ -45,12 +45,14 @@ export class AonFiscalBeta extends AonElement {
 
 		if (localStorage.getItem("aon_domain_id")) {
 			let configurationOptions = [];
-			configurationOptions.push({
-				id: "parameters",
-				icon: "settings_applications",
-				name: "Parametros",
-				fn: () => this.getApplication().setContent(new JSF.AonJsfFiscalParams()),
-			});
+			
+			if(!this.getDur().isConsultancy())
+				configurationOptions.push({
+					id: "parameters",
+					icon: "settings_applications",
+					name: "Parametros",
+					fn: () => this.getApplication().setContent(new JSF.AonJsfFiscalParams()),
+				});
 
 			configurationOptions.push({
 				id: "observations",
@@ -62,7 +64,7 @@ export class AonFiscalBeta extends AonElement {
 			aonFiscalBeta.addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);
 		}
 
-		if (localStorage.getItem("aon_domain_id") && this.isBeta()) {
+		if (localStorage.getItem("aon_domain_id") && this.isBeta() && !this.getDur().isConsultancy()) {
 			let menuOptions = [];
 
 			menuOptions.push({

@@ -229,7 +229,8 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		        title: "Festivos",
 		        action: () => this.rootPanel(new JSF.AonJsfHolidays),
 		        filter: () => this.isNotDomainManagementAvailable()
-		    }]
+		    }],
+		    filter: () => !this.isDomainManagementAvailable()
 		},{
 		    title: 'Modelos Tributarios',
 		    options: [{

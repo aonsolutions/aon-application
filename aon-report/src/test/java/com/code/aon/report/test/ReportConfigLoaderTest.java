@@ -1,20 +1,23 @@
 package com.code.aon.report.test;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.code.aon.report.config.ReportConfig;
 import com.code.aon.report.config.ReportConfigurationManager;
 import com.code.aon.report.config.ReportConfigurationParser;
 
+import org.junit.jupiter.api.Test;
+
 /**
  * @author Consulting & Development. ecastellano - 14-nov-2005
  *
  */
-public class ReportConfigLoaderTest extends TestCase {
+public class ReportConfigLoaderTest {
 
 	/**
-	 * 
+	 *
 	 */
+	@Test
 	public void testReadConfiguration() {
         try {
 			ReportConfigurationParser parser = ReportConfigurationParser.getInstance();

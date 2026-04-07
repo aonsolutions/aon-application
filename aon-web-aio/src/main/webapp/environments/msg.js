@@ -588,6 +588,7 @@ export const PENDING_INVOICES = MSG.PENDING_INVOICES;
 export const PENDING_REVIEW = MSG.PENDING_REVIEW;
 export const PENDING_TASKS = MSG.PENDING_TASKS;
 export const PENDINGS = MSG.PENDINGS;
+export const PERCENTAGE = 'Porcentaje'; //TODO
 export const PERIOD = 'Periodo';
 export const PERSONALIZED = 'Personalizado';
 export const PERSONALIZATION = 'Personalización';
