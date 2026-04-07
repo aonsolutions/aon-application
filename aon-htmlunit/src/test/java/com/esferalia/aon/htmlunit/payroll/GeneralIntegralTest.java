@@ -3557,6 +3557,27 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	}
 
 	@Test
+	public void TestOrdenPjc2972026() throws Exception {
+		
+		if (!isDisplayed("corta_duracion_2026,_art._28"))
+			open("orden_pjc_297/2026");
+
+
+		wait4Id("corta_duracion_2026,_art._28");
+
+		draft("CORTA DURACIÓN 2026, ART. 28");
+		calculate(Calendar.FEBRUARY,2026);
+		check("costsCheck-input");
+		assertNotElement("cgc_e_tempPercentLabel");
+		uncheck("costsCheck-input");
+		calculate(Calendar.MARCH,2026);
+		check("costsCheck-input");
+		assertText("cgc_e_tempPercentLabel", "33,62 %");
+		uncheck("costsCheck-input");
+	
+	}
+
+	@Test
 	public void TestBasesSociosCoop() throws Exception {
 		
 		if ( !isDisplayed("socio_coop,_grupo_1") )
