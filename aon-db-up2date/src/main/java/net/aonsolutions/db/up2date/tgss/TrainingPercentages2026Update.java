@@ -117,6 +117,17 @@ public class TrainingPercentages2026Update implements Update {
 			.set(SYSTEM_COST.END_DATE, DSL.castNull(SYSTEM_COST.END_DATE))
 			.execute();
 
+			// MEI
+			
+			// Close old  MEI_E 
+			dslContext.update(SYSTEM_COST)
+			.set(SYSTEM_COST.TYPE, (byte) 13 )
+			.where(SYSTEM_COST.DOMAIN.eq(DOMAIN))
+			.and(SYSTEM_COST.CODE.in("MEI_E"))
+			.and(SYSTEM_COST.END_DATE.isNull())
+			.execute();
+
+
 			// ---------------------------------------------------------
 			// FP
 			
