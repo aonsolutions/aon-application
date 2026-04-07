@@ -55,7 +55,6 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DatePicker;
 
@@ -107,9 +106,6 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	
 	@UiField
 	HTMLPanel settleHolidayData;
-
-	@UiField
-	TextBox holidaysTB;
 	
 	@UiField
 	DateBoxEx holidaysEndDB;
@@ -366,13 +362,10 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 			this.afiTypeLB.setSelectedIndex(2);
 			if(null != this.holidayDate) {
 				holidaysEndDB.setEnabled(false);
-				holidaysTB.setEnabled(false);
 				holidaysTypeLB.setEnabled(false);
 				
 				this.settleHolidayData.setVisible(true);
-				long days = DateUtils.getDaysBetween(this.contractEndDate, this.holidayDate) + 1;
 				holidaysEndDB.setValue(this.holidayDate);
-				holidaysTB.setValue(days + "");
 				
 				if(this.contractEndDate.equals(this.holidayDate)) {
 					this.holidaysTypeLB.setVisible(false);
