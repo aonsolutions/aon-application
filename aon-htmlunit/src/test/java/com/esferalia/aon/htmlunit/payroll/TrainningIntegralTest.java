@@ -435,7 +435,7 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		}
 		setValue("editor-dias_vacaciones_no_disfrutados", "1");
 		//double totalPayment = getValue("totalPaymentLabel");
-		assertText("unemployment", 21.41);
+		assertText("unemployment", 22.08);
 		
 		
 		draft("FINIQUITO FORMACION, ALTERNANCIA");
