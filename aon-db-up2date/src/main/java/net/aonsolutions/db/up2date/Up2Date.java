@@ -20,12 +20,12 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.FinObra7PercentFix;
-import net.aonsolutions.db.up2date.registry.RecordDataAlterTable;
-import net.aonsolutions.db.up2date.security.DeleteDomainAppApp7;
-import net.aonsolutions.db.up2date.tgss.BasesMin2026Update;
+import net.aonsolutions.db.up2date.tgss.FellowsBases2026Update;
+import net.aonsolutions.db.up2date.tgss.FellowsPercentages2026Update;
 import net.aonsolutions.db.up2date.tgss.HomeBases2026Update;
-import net.aonsolutions.db.up2date.tgss.HomeSolidarityRemoveFix;
+import net.aonsolutions.db.up2date.tgss.SociosCoopBases2026Update;
+import net.aonsolutions.db.up2date.tgss.TrainingPercentages2026Update;
+import net.aonsolutions.db.up2date.tgss.TrainningBases2026Update;
 
 public class Up2Date {
 
@@ -604,7 +604,11 @@ public class Up2Date {
 			// BasesMin2026Update.BASESMIN2026UPDATE,
 			// HomeSolidarityRemoveFix.HOME_SOLIDARITY_REMOVE_FIX,
 			HomeBases2026Update.HOMEBASES2026UPDATE,
-			
+			FellowsBases2026Update.FELLOWSBASES2026UPDATE,
+			TrainningBases2026Update.TRAINNINGBASES2026UPDATE,
+			FellowsPercentages2026Update.FELLOWSPERCENTAGES2026UPDATE,
+			TrainingPercentages2026Update.TRAINNINGPERCENTAGES2026UPDATE,
+			SociosCoopBases2026Update.SOCIOSCOOPBASES2026UPDATE,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
