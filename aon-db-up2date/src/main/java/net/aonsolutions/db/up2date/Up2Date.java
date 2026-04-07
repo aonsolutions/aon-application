@@ -23,6 +23,7 @@ import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.tgss.FellowsBases2026Update;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2026Update;
 import net.aonsolutions.db.up2date.tgss.HomeBases2026Update;
+import net.aonsolutions.db.up2date.tgss.SociosCoopBases2026Update;
 import net.aonsolutions.db.up2date.tgss.TrainingPercentages2026Update;
 import net.aonsolutions.db.up2date.tgss.TrainningBases2026Update;
 
@@ -607,6 +608,7 @@ public class Up2Date {
 			TrainningBases2026Update.TRAINNINGBASES2026UPDATE,
 			FellowsPercentages2026Update.FELLOWSPERCENTAGES2026UPDATE,
 			TrainingPercentages2026Update.TRAINNINGPERCENTAGES2026UPDATE,
+			SociosCoopBases2026Update.SOCIOSCOOPBASES2026UPDATE,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
