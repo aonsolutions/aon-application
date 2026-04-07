@@ -469,3 +469,17 @@ export const BIDOQ_IMPORT = {
     title: 'Importar Bidoq',
     image: "../assets/apps/bidoq.png"
 }
+
+export const ADD_INMOBILIZED = {
+    id: "AddInmobilized",
+    name: "Añadir Inmovilizado",
+    title: "Añadir Inmovilizado",
+    icon: "book_6",
+};
+
+export const AMORTIZATION = {
+    id: "Amortization",
+    name: MSG.AMORTIZATION,
+    title: MSG.AMORTIZATION,
+    icon: "book_6",
+};

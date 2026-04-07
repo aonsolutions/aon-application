@@ -2,7 +2,7 @@ package net.aonsolutions.core.dbutils;
 
 import java.io.InputStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AonSQLFileTestCase {
 
@@ -14,7 +14,7 @@ public class AonSQLFileTestCase {
 		while( aonSQLFile.ready() ) {
 			System.out.println(aonSQLFile.getStatement());
 		}
-		org.junit.Assert.assertEquals(false, aonSQLFile.ready());
+		org.junit.jupiter.api.Assertions.assertEquals(false, aonSQLFile.ready());
 	}
 	
 }

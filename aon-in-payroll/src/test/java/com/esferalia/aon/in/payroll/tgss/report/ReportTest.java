@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.tgss.report.Employee.EmployeeBuilder;
@@ -57,16 +57,16 @@ public class ReportTest {
 			.collect(Collectors.toMap(e -> e.getNss(), e -> Collections.singletonList(e), ReportTest::union ));
 			
 			List<Employee> employee = map.get("010019805355");
-			Assert.assertEquals(1, employee.size());
+			Assertions.assertEquals(1, employee.size());
 
 			employee = map.get("011000572259");
-			Assert.assertEquals(1, employee.size());
+			Assertions.assertEquals(1, employee.size());
 
 			employee = map.get("011001022503");
-			Assert.assertEquals(2, employee.size());
+			Assertions.assertEquals(2, employee.size());
 
 			employee = map.get("011005151164");
-			Assert.assertEquals(1, employee.size());
+			Assertions.assertEquals(1, employee.size());
 		}
 	}
 
@@ -81,12 +81,12 @@ public class ReportTest {
 			List<Employee> employee = map.get("010019805355");
 
 			employee = map.get("011001022503");
-			Assert.assertEquals(2, employee.size());
+			Assertions.assertEquals(2, employee.size());
 		}
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testCCCVidaLaboralI() throws IOException, UnknownPDFException {
 		try (InputStream is = ReportTest.class.getResourceAsStream("cccvidalaboralI.pdf")){
 			Collection<Employee> employees = CCCLaboralLife.parse(is, new EmployeeBuilder());

@@ -35,6 +35,8 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerParams;
+import com.esferalia.aon.occam.api.model.registry.NoteType;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -499,6 +501,10 @@ public class CustomerDAO {
 		if (full.getRegistry() != null && full.getRegistry().getAccount() != null) {
 			full.setAccount(AccountDAO.get(ctx, full.getRegistry().getAccount()));	
 		}
+		RegistryNote observationNote = RegistryNoteDAO.get(ctx, f -> f.getRegistryProperty().eq(id).and(f.getNoteTypeProperty().eq(NoteType.OBSERVATION.value())));
+		if(null != observationNote.getId())
+			full.getRegistry().setObservation(observationNote.getComments());
+		
 		return full;
 	}
 
@@ -506,7 +512,13 @@ public class CustomerDAO {
 		ctx.checkWrite();
 		CustomerAutoComplete.autoComplete(ctx, customerFull.getRegistry());
 		CustomerValidation.validate(ctx, customerFull.getRegistry());
+		
+		String observation = customerFull.getRegistry().getObservation();
+		
 		customerFull.setRegistry(CustomerDAO.save(ctx, customerFull.getRegistry()));
+		
+		RegistryNoteDAO.saveRegistryObservation(ctx, customerFull.getDomain(), customerFull.getRegistry().getId(), observation);
+		
 		RegistryDAO.saveChilds(ctx, customerFull);
 		return getFull(ctx, customerFull.getId());
 	}

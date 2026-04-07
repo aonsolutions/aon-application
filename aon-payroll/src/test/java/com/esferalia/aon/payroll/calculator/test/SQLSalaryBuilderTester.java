@@ -1,6 +1,6 @@
 package com.esferalia.aon.payroll.calculator.test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -138,7 +138,7 @@ public class SQLSalaryBuilderTester<T extends ISalary> extends  AbstractSalaryBu
 		String msg = 
 			String.format("[%s]:%s", 
 					employeeDocument, field );
-		assertEquals(msg, expected, CommonUtil.round(actual), (double) 0.9);
+		assertEquals(expected, CommonUtil.round(actual), (double) 0.9, msg);
 	}
 
 	protected void assertDoubleFieldIfNotZero(String field, ResultSet rs  ) 
@@ -152,7 +152,7 @@ public class SQLSalaryBuilderTester<T extends ISalary> extends  AbstractSalaryBu
 		String msg = 
 			String.format("[%s]:%s", 
 					employeeDocument, field );
-		assertEquals(msg, expected, CommonUtil.round(actual), (double) 0.9);
+		assertEquals(expected, CommonUtil.round(actual), (double) 0.9, msg);
 	}
 
 	private void addField(String field, Object value) {

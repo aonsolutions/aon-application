@@ -19,15 +19,15 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
-import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
-import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.CreditorProperties;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
+import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -252,6 +252,9 @@ public class CreditorDAO {
 		if (full.getRegistry() != null && full.getRegistry().getAccount() != null) {
 			full.setAccount(AccountDAO.get(ctx, full.getRegistry().getAccount()));	
 		}
+		RegistryNote observationNote = RegistryNoteDAO.get(ctx, f -> f.getRegistryProperty().eq(id).and(f.getNoteTypeProperty().eq(NoteType.OBSERVATION.value())));
+		if(null != observationNote.getId())
+			full.getRegistry().setObservation(observationNote.getComments());
 		return full;
 	}
 
@@ -259,7 +262,9 @@ public class CreditorDAO {
 		ctx.checkWrite();
 		CreditorAutoComplete.autoComplete(ctx, creditorFull.getRegistry());
 		CreditorValidation.validate(ctx, creditorFull.getRegistry());
+		String observation = creditorFull.getRegistry().getObservation();
 		creditorFull.setRegistry(CreditorDAO.save(ctx, creditorFull.getRegistry()));
+		RegistryNoteDAO.saveRegistryObservation(ctx, creditorFull.getDomain(), creditorFull.getRegistry().getId(), observation);
 		RegistryDAO.saveChilds(ctx, creditorFull);
 		creditorFull = getFull(ctx, creditorFull.getId());
 		return creditorFull;

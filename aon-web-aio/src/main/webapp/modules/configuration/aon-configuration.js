@@ -181,11 +181,11 @@ export class AonConfiguration extends AonElement {
 						fn: () => this.buildPlans(),
 					});
 				}
-				aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
+				aonConfiguration.addSidenavOptions(this.getDur().isConsultancy() ? MSG.ENVIRONMENT.toUpperCase() : MSG.COMPANY.toUpperCase(), companyOptions);
 			}).catch(e => {	
-				aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
+				aonConfiguration.addSidenavOptions(this.getDur().isConsultancy() ? MSG.ENVIRONMENT.toUpperCase() : MSG.COMPANY.toUpperCase(), companyOptions);
 			});
-		} else aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
+		} else aonConfiguration.addSidenavOptions(this.getDur().isConsultancy() ? MSG.ENVIRONMENT.toUpperCase() : MSG.COMPANY.toUpperCase(), companyOptions);
 		
 
 		if (localStorage.getItem("aon_domain_id")) {
@@ -212,6 +212,7 @@ export class AonConfiguration extends AonElement {
 				});
 			}
 
+			/*
 			if (this.getDur().isSaltraManager()) {
 				appOptions.push({
 					id: AON_SALTRA.title,
@@ -227,6 +228,7 @@ export class AonConfiguration extends AonElement {
 					fn: () => this.buildComunicaConfiguration(),
 				});
 			}
+			*/
 
 			if (!this.getDur().isEmployee() && this.isBeta()) {
 				appOptions.push({
@@ -364,9 +366,11 @@ export class AonConfiguration extends AonElement {
 		this.getApplication().setContent(new AonMessengerConfig());
 	}
 
+	/*
 	buildComunicaConfiguration() {
 		this.getApplication().setContent(new AonComunicaConfig());
 	}
+	*/
 
 	buildConfigurationMenu() {
 		this.getApplication().setContent(new AonConfigurationMenu());

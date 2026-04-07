@@ -1,12 +1,12 @@
 package com.esferalia.aon.in.payroll.csv;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -37,7 +37,7 @@ public class EnterprisePayrollCSVTestCase {
 		private Double employeeSS;
 		@JsonProperty("IRPF")
 		private Double irpf;
-		@JsonProperty("Líquido")
+		@JsonProperty("L\u00edquido")
 		private Double liquid;
 		@JsonProperty("Seg. Social empresa")
 		private Double enterpriseSS;
@@ -63,7 +63,7 @@ public class EnterprisePayrollCSVTestCase {
 		private Double cgp;
 		@JsonProperty("Desempleo")
 		private Double unemployment;
-		@JsonProperty("Formación profesional empleado")
+		@JsonProperty("Formaci\u00f3n profesional empleado")
 		private Double jobTraining;
 		@JsonProperty("Anticipos")
 		private Double advancedPayment;

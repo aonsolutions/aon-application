@@ -19,9 +19,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.jooq.tables.records.CalendarRecord;
@@ -100,7 +100,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
 		
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), actualDays, ctxActualDays);
+		assertEquals(actualDays, ctxActualDays, ContextVariable.ACTUAL_DAYS.getName());
 
 	}
 	
@@ -168,7 +168,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
 		
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), actualDays, ctxActualDays);
+		assertEquals(actualDays, ctxActualDays, ContextVariable.ACTUAL_DAYS.getName());
 
 		
 	}
@@ -244,7 +244,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
 		
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), actualDays, ctxActualDays);
+		assertEquals(actualDays, ctxActualDays, ContextVariable.ACTUAL_DAYS.getName());
 
 		
 	}
@@ -325,7 +325,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
 		
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), 0.00, ctxActualDays);
+		assertEquals(0.00, ctxActualDays, ContextVariable.ACTUAL_DAYS.getName());
 
 		
 	}
@@ -409,7 +409,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		double ctxActualDays = 0;
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), actualDays, ctxActualDays);
+		assertEquals(actualDays, ctxActualDays, ContextVariable.ACTUAL_DAYS.getName());
 
 		day.setTime(secondWeekEnd);
 		day.add(Calendar.DAY_OF_MONTH, 1);
@@ -441,7 +441,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		ctxActualDays = 0;
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), actualDays, ctxActualDays);
+		assertEquals(actualDays, ctxActualDays, ContextVariable.ACTUAL_DAYS.getName());
 
 	
 		addData(aonContext, 
@@ -462,7 +462,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		ctxActualDays = 0;
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), actualDays, ctxActualDays);
+		assertEquals(actualDays, ctxActualDays, ContextVariable.ACTUAL_DAYS.getName());
 
 		addData(aonContext, 
 				contract, 
@@ -481,7 +481,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		ctxActualDays = 0;
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), 1.0, ctxActualDays);
+		assertEquals(1.0, ctxActualDays, ContextVariable.ACTUAL_DAYS.getName());
 
 	}
 
@@ -531,7 +531,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
 		
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), actualDays, ctxActualDays);
+		assertEquals(actualDays, ctxActualDays, ContextVariable.ACTUAL_DAYS.getName());
 
 	}
 
@@ -625,7 +625,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
 		
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), actualDays, ctxActualDays);
+		assertEquals(actualDays, ctxActualDays, ContextVariable.ACTUAL_DAYS.getName());
 
 	}
 

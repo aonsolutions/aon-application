@@ -11,16 +11,16 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTUR
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.salary.expression.ExpressionScope.SYSTEM;
 import static com.esferalia.aon.watson.server.AonDateUtils.addDays;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.common.AonException;
 import com.esferalia.aon.payroll.ContractPayment;
@@ -62,15 +62,15 @@ public class QuoteCalculatorTestCase {
 		
 		for ( ContextVariable base : new ContextVariable[]{CGC_BASE, CGP_BASE}) {
 			List<ITimedVariable<Double>> cgcBases = ctx.getVariables(base);
-			Assert.assertEquals(1, cgcBases.size());
+			assertEquals(1, cgcBases.size());
 	
-			Assert.assertEquals( startDate, cgcBases.get(0).getPeriod().getStart());
-			Assert.assertEquals( endDate, cgcBases.get(0).getPeriod().getEnd());
-			Assert.assertEquals( 69.6969, cgcBases.get(0).getValue(cgcBases.get(0).getPeriod()));
+			assertEquals( startDate, cgcBases.get(0).getPeriod().getStart());
+			assertEquals( endDate, cgcBases.get(0).getPeriod().getEnd());
+			assertEquals( 69.6969, cgcBases.get(0).getValue(cgcBases.get(0).getPeriod()));
 		}
-		Assert.assertEquals(69.6969, quoteCalculator.getRawCgcBase());
+		assertEquals(69.6969, quoteCalculator.getRawCgcBase());
 		
-//		Assert.assertEquals(1000.00, quoteCalculator.getCgcBase());
+//		assertEquals(1000.00, quoteCalculator.getCgcBase());
 		
 		
 		
@@ -97,17 +97,17 @@ public class QuoteCalculatorTestCase {
 		
 		for ( ContextVariable base : new ContextVariable[]{CGC_BASE, CGP_BASE}) {
 		List<ITimedVariable<Double>> cgcBases = ctx.getVariables(base);
-			Assert.assertEquals(2, cgcBases.size());
+			assertEquals(2, cgcBases.size());
 			
-			Assert.assertEquals( startDate, cgcBases.get(0).getPeriod().getStart());
-			Assert.assertEquals( addDays(startDate, 14), cgcBases.get(0).getPeriod().getEnd());
-			Assert.assertEquals( 33.33, cgcBases.get(0).getValue(cgcBases.get(0).getPeriod()));
+			assertEquals( startDate, cgcBases.get(0).getPeriod().getStart());
+			assertEquals( addDays(startDate, 14), cgcBases.get(0).getPeriod().getEnd());
+			assertEquals( 33.33, cgcBases.get(0).getValue(cgcBases.get(0).getPeriod()));
 	
-			Assert.assertEquals( addDays(startDate, 15), cgcBases.get(1).getPeriod().getStart());
-			Assert.assertEquals( endDate, cgcBases.get(1).getPeriod().getEnd());
-			Assert.assertEquals( 66.66, cgcBases.get(1).getValue(cgcBases.get(1).getPeriod()));
+			assertEquals( addDays(startDate, 15), cgcBases.get(1).getPeriod().getStart());
+			assertEquals( endDate, cgcBases.get(1).getPeriod().getEnd());
+			assertEquals( 66.66, cgcBases.get(1).getValue(cgcBases.get(1).getPeriod()));
 		}
-		Assert.assertEquals(66.66 + 33.33, quoteCalculator.getRawCgcBase());
+		assertEquals(66.66 + 33.33, quoteCalculator.getRawCgcBase());
 	}
 
 	@Test
@@ -132,12 +132,12 @@ public class QuoteCalculatorTestCase {
 		
 		for ( ContextVariable base : new ContextVariable[]{CGC_BASE, CGP_BASE}) {
 			List<ITimedVariable<Double>> cgcBases = ctx.getVariables(base);
-			Assert.assertEquals(days, cgcBases.size());
+			assertEquals(days, cgcBases.size());
 			for ( int i = 0; i< days; i++){
 				Date date = addDays(startDate, i);
-				Assert.assertEquals( date, cgcBases.get(i).getPeriod().getStart());
-				Assert.assertEquals( date, cgcBases.get(i).getPeriod().getEnd());
-				Assert.assertEquals( Math.min(Math.max((double)i,1.00), 20.00), cgcBases.get(i).getValue(cgcBases.get(i).getPeriod()));
+				assertEquals( date, cgcBases.get(i).getPeriod().getStart());
+				assertEquals( date, cgcBases.get(i).getPeriod().getEnd());
+				assertEquals( Math.min(Math.max((double)i,1.00), 20.00), cgcBases.get(i).getValue(cgcBases.get(i).getPeriod()));
 				System.out.println(i +"-." + date);
 			}
 		}
@@ -145,7 +145,7 @@ public class QuoteCalculatorTestCase {
 		for ( int i = 0; i< days; i++)
 			total += i;
 		
-		Assert.assertEquals(total, quoteCalculator.getRawCgcBase());
+		assertEquals(total, quoteCalculator.getRawCgcBase());
 
 	}
 
@@ -173,14 +173,14 @@ public class QuoteCalculatorTestCase {
 		
 		for ( ContextVariable base : new ContextVariable[]{CGC_BASE, CGP_BASE}) {
 			List<ITimedVariable<Double>> cgcBases = ctx.getVariables(base);
-			Assert.assertEquals(1, cgcBases.size());
-			Assert.assertEquals(startDate, cgcBases.get(0).getPeriod()
+			assertEquals(1, cgcBases.size());
+			assertEquals(startDate, cgcBases.get(0).getPeriod()
 					.getStart());
-			Assert.assertEquals(endDate, cgcBases.get(0).getPeriod().getEnd());
-			Assert.assertEquals(total,
+			assertEquals(endDate, cgcBases.get(0).getPeriod().getEnd());
+			assertEquals(total,
 					cgcBases.get(0).getValue(cgcBases.get(0).getPeriod()));
 		}
-		Assert.assertEquals(total, quoteCalculator.getRawCgcBase());
+		assertEquals(total, quoteCalculator.getRawCgcBase());
 	}
 	
 	@Test
@@ -213,12 +213,12 @@ public class QuoteCalculatorTestCase {
 		
 		for ( ContextVariable base : new ContextVariable[]{CGC_BASE, CGP_BASE}) {
 			List<ITimedVariable<Double>> cgcBases = ctx.getVariables(base);
-			Assert.assertEquals(days, cgcBases.size());
+			assertEquals(days, cgcBases.size());
 			for ( int i = 0; i< days; i++){
 				Date date = addDays(startDate, i);
-				Assert.assertEquals( date, cgcBases.get(i).getPeriod().getStart());
-				Assert.assertEquals( date, cgcBases.get(i).getPeriod().getEnd());
-				Assert.assertEquals( Math.min(Math.max((double)i * 2.00,1.00),20.00), cgcBases.get(i).getValue(cgcBases.get(i).getPeriod()));
+				assertEquals( date, cgcBases.get(i).getPeriod().getStart());
+				assertEquals( date, cgcBases.get(i).getPeriod().getEnd());
+				assertEquals( Math.min(Math.max((double)i * 2.00,1.00),20.00), cgcBases.get(i).getValue(cgcBases.get(i).getPeriod()));
 				System.out.println(i +"-." + date +", " + cgcBases.get(i).getValue(cgcBases.get(i).getPeriod()));
 			}
 		}
@@ -226,9 +226,9 @@ public class QuoteCalculatorTestCase {
 		for ( int i = 0; i< days; i++)
 			total += 2*i;
 		
-		Assert.assertEquals(total, quoteCalculator.getRawCgcBase());
-		Assert.assertEquals(total, quoteCalculator.getRawCgpBase());
-		Assert.assertEquals(total/2, quoteCalculator.getProExtBase());
+		assertEquals(total, quoteCalculator.getRawCgcBase());
+		assertEquals(total, quoteCalculator.getRawCgpBase());
+		assertEquals(total/2, quoteCalculator.getProExtBase());
 	}
 
 	@Test
@@ -262,16 +262,16 @@ public class QuoteCalculatorTestCase {
 		
 		for ( ContextVariable base : new ContextVariable[]{CGC_BASE, CGP_BASE}) {
 			List<ITimedVariable<Double>> cgcBases = ctx.getVariables(base);
-			Assert.assertEquals(1, cgcBases.size());
-			Assert.assertEquals(startDate, cgcBases.get(0).getPeriod()
+			assertEquals(1, cgcBases.size());
+			assertEquals(startDate, cgcBases.get(0).getPeriod()
 					.getStart());
-			Assert.assertEquals(endDate, cgcBases.get(0).getPeriod().getEnd());
-			Assert.assertEquals(30.00*20.00,
+			assertEquals(endDate, cgcBases.get(0).getPeriod().getEnd());
+			assertEquals(30.00*20.00,
 					cgcBases.get(0).getValue(cgcBases.get(0).getPeriod()));
 		}
-		Assert.assertEquals(total, quoteCalculator.getRawCgcBase());
-		Assert.assertEquals(total, quoteCalculator.getRawCgpBase());
-		Assert.assertEquals(total/2, quoteCalculator.getProExtBase());
+		assertEquals(total, quoteCalculator.getRawCgcBase());
+		assertEquals(total, quoteCalculator.getRawCgpBase());
+		assertEquals(total/2, quoteCalculator.getProExtBase());
 	}
 	
 	@Test
@@ -317,36 +317,36 @@ public class QuoteCalculatorTestCase {
 		
 		for ( ContextVariable base : new ContextVariable[]{CGC_BASE}) {
 			List<ITimedVariable<Double>> cgcBases = ctx.getVariables(base);
-			Assert.assertEquals(days, cgcBases.size());
+			assertEquals(days, cgcBases.size());
 			for ( int i = 0; i< days; i++){
 				Date date = addDays(startDate, i);
-				Assert.assertEquals( date, cgcBases.get(i).getPeriod().getStart());
-				Assert.assertEquals( date, cgcBases.get(i).getPeriod().getEnd());
-				Assert.assertEquals( Math.min(Math.max((double)i * 2.00, 1.00), 20.00), cgcBases.get(i).getValue(cgcBases.get(i).getPeriod()));
+				assertEquals( date, cgcBases.get(i).getPeriod().getStart());
+				assertEquals( date, cgcBases.get(i).getPeriod().getEnd());
+				assertEquals( Math.min(Math.max((double)i * 2.00, 1.00), 20.00), cgcBases.get(i).getValue(cgcBases.get(i).getPeriod()));
 				System.out.println(i +"-." + date +", " + cgcBases.get(i).getValue(cgcBases.get(i).getPeriod()));
 			}
 		}
 
 		for ( ContextVariable base : new ContextVariable[]{NON_STRUCTURAL_OVERTIME_BASE, STRUCTURAL_OVERTIME_BASE}) {
 			List<ITimedVariable<Double>> cgcBases = ctx.getVariables(base);
-			Assert.assertEquals(days, cgcBases.size());
+			assertEquals(days, cgcBases.size());
 			for ( int i = 0; i< days; i++){
 				Date date = addDays(startDate, i);
-				Assert.assertEquals( date, cgcBases.get(i).getPeriod().getStart());
-				Assert.assertEquals( date, cgcBases.get(i).getPeriod().getEnd());
-				Assert.assertEquals( (double)i * 1.00, cgcBases.get(i).getValue(cgcBases.get(i).getPeriod()));
+				assertEquals( date, cgcBases.get(i).getPeriod().getStart());
+				assertEquals( date, cgcBases.get(i).getPeriod().getEnd());
+				assertEquals( (double)i * 1.00, cgcBases.get(i).getValue(cgcBases.get(i).getPeriod()));
 				System.out.println(i +"-." + date +", " + cgcBases.get(i).getValue(cgcBases.get(i).getPeriod()));
 			}
 		}
 		
 		for ( ContextVariable base : new ContextVariable[]{CGP_BASE}) {
 			List<ITimedVariable<Double>> cgcBases = ctx.getVariables(base);
-			Assert.assertEquals(days, cgcBases.size());
+			assertEquals(days, cgcBases.size());
 			for ( int i = 0; i< days; i++){
 				Date date = addDays(startDate, i);
-				Assert.assertEquals( date, cgcBases.get(i).getPeriod().getStart());
-				Assert.assertEquals( date, cgcBases.get(i).getPeriod().getEnd());
-				Assert.assertEquals( Math.min(Math.max((double)i * 4.00, 1.00),20.00), cgcBases.get(i).getValue(cgcBases.get(i).getPeriod()));
+				assertEquals( date, cgcBases.get(i).getPeriod().getStart());
+				assertEquals( date, cgcBases.get(i).getPeriod().getEnd());
+				assertEquals( Math.min(Math.max((double)i * 4.00, 1.00),20.00), cgcBases.get(i).getValue(cgcBases.get(i).getPeriod()));
 				System.out.println(i +"-." + date +", " + cgcBases.get(i).getValue(cgcBases.get(i).getPeriod()));
 			}
 		}
@@ -355,11 +355,11 @@ public class QuoteCalculatorTestCase {
 		for ( int i = 0; i< days; i++)
 			total += 4*i;
 		
-		Assert.assertEquals(total/2, quoteCalculator.getRawCgcBase());
-		Assert.assertEquals(total, quoteCalculator.getRawCgpBase());
-		Assert.assertEquals(total/4, quoteCalculator.getProExtBase());
-		Assert.assertEquals(total/4, quoteCalculator.getStructuralBase());
-		Assert.assertEquals(total/4, quoteCalculator.getNonStructuralBase());
+		assertEquals(total/2, quoteCalculator.getRawCgcBase());
+		assertEquals(total, quoteCalculator.getRawCgpBase());
+		assertEquals(total/4, quoteCalculator.getProExtBase());
+		assertEquals(total/4, quoteCalculator.getStructuralBase());
+		assertEquals(total/4, quoteCalculator.getNonStructuralBase());
 	}
 
 	
@@ -405,42 +405,42 @@ public class QuoteCalculatorTestCase {
 			total += 4* i;
 		
 		List<ITimedVariable<Double>> cgcBases = ctx.getVariables(CGC_BASE);
-		Assert.assertEquals(1, cgcBases.size());
-		Assert.assertEquals(startDate, cgcBases.get(0).getPeriod()
+		assertEquals(1, cgcBases.size());
+		assertEquals(startDate, cgcBases.get(0).getPeriod()
 				.getStart());
-		Assert.assertEquals(endDate, cgcBases.get(0).getPeriod().getEnd());
-		Assert.assertEquals(30.00 * 20.00,
+		assertEquals(endDate, cgcBases.get(0).getPeriod().getEnd());
+		assertEquals(30.00 * 20.00,
 				cgcBases.get(0).getValue(cgcBases.get(0).getPeriod()));
 
 		List<ITimedVariable<Double>> cgpBases = ctx.getVariables(CGP_BASE);
-		Assert.assertEquals(1, cgpBases.size());
-		Assert.assertEquals(startDate, cgpBases.get(0).getPeriod()
+		assertEquals(1, cgpBases.size());
+		assertEquals(startDate, cgpBases.get(0).getPeriod()
 				.getStart());
-		Assert.assertEquals(endDate, cgpBases.get(0).getPeriod().getEnd());
-		Assert.assertEquals(30.00 * 20.00,
+		assertEquals(endDate, cgpBases.get(0).getPeriod().getEnd());
+		assertEquals(30.00 * 20.00,
 				cgpBases.get(0).getValue(cgpBases.get(0).getPeriod()));
 
 		List<ITimedVariable<Double>> structuralBases = ctx.getVariables(STRUCTURAL_OVERTIME_BASE);
-		Assert.assertEquals(1, structuralBases.size());
-		Assert.assertEquals(startDate, structuralBases.get(0).getPeriod()
+		assertEquals(1, structuralBases.size());
+		assertEquals(startDate, structuralBases.get(0).getPeriod()
 				.getStart());
-		Assert.assertEquals(endDate, structuralBases.get(0).getPeriod().getEnd());
-		Assert.assertEquals(total/4,
+		assertEquals(endDate, structuralBases.get(0).getPeriod().getEnd());
+		assertEquals(total/4,
 				structuralBases.get(0).getValue(structuralBases.get(0).getPeriod()));
 
 		List<ITimedVariable<Double>> nonStructuralBases = ctx.getVariables(NON_STRUCTURAL_OVERTIME_BASE);
-		Assert.assertEquals(1, nonStructuralBases.size());
-		Assert.assertEquals(startDate, nonStructuralBases.get(0).getPeriod()
+		assertEquals(1, nonStructuralBases.size());
+		assertEquals(startDate, nonStructuralBases.get(0).getPeriod()
 				.getStart());
-		Assert.assertEquals(endDate, nonStructuralBases.get(0).getPeriod().getEnd());
-		Assert.assertEquals(total/4,
+		assertEquals(endDate, nonStructuralBases.get(0).getPeriod().getEnd());
+		assertEquals(total/4,
 				nonStructuralBases.get(0).getValue(nonStructuralBases.get(0).getPeriod()));
 
-		Assert.assertEquals(total/2, quoteCalculator.getRawCgcBase());
-		Assert.assertEquals(total, quoteCalculator.getRawCgpBase());
-		Assert.assertEquals(total/4, quoteCalculator.getProExtBase());
-		Assert.assertEquals(total/4, quoteCalculator.getStructuralBase());
-		Assert.assertEquals(total/4, quoteCalculator.getNonStructuralBase());
+		assertEquals(total/2, quoteCalculator.getRawCgcBase());
+		assertEquals(total, quoteCalculator.getRawCgpBase());
+		assertEquals(total/4, quoteCalculator.getProExtBase());
+		assertEquals(total/4, quoteCalculator.getStructuralBase());
+		assertEquals(total/4, quoteCalculator.getNonStructuralBase());
 	}
 	
 	@Test
@@ -469,25 +469,25 @@ public class QuoteCalculatorTestCase {
 		
 		for ( ContextVariable base : new ContextVariable[]{CGC_BASE, CGP_BASE}) {
 			List<ITimedVariable<Double>> cgcBases = ctx.getVariables(base);
-			Assert.assertEquals(1, cgcBases.size());
+			assertEquals(1, cgcBases.size());
 			
-			Assert.assertEquals( startDate, cgcBases.get(0).getPeriod().getStart());
-			Assert.assertEquals( addDays(startDate, 14), cgcBases.get(0).getPeriod().getEnd());
-			Assert.assertEquals( 33.33, cgcBases.get(0).getValue(cgcBases.get(0).getPeriod()));
+			assertEquals( startDate, cgcBases.get(0).getPeriod().getStart());
+			assertEquals( addDays(startDate, 14), cgcBases.get(0).getPeriod().getEnd());
+			assertEquals( 33.33, cgcBases.get(0).getValue(cgcBases.get(0).getPeriod()));
 	
 		}
 
 		List<ITimedVariable<Double>> cgcBases = ctx.getVariables(MATERNITY_BASE);
-		Assert.assertEquals(1, cgcBases.size());
+		assertEquals(1, cgcBases.size());
 		
-		Assert.assertEquals( addDays(startDate, 15), cgcBases.get(0).getPeriod().getStart());
-		Assert.assertEquals( endDate, cgcBases.get(0).getPeriod().getEnd());
-		Assert.assertEquals( 66.66, cgcBases.get(0).getValue(cgcBases.get(0).getPeriod()));
+		assertEquals( addDays(startDate, 15), cgcBases.get(0).getPeriod().getStart());
+		assertEquals( endDate, cgcBases.get(0).getPeriod().getEnd());
+		assertEquals( 66.66, cgcBases.get(0).getValue(cgcBases.get(0).getPeriod()));
 
-		Assert.assertEquals(33.33, quoteCalculator.getRawCgcBase());
-		Assert.assertEquals(33.33, quoteCalculator.getRawCgpBase());
+		assertEquals(33.33, quoteCalculator.getRawCgcBase());
+		assertEquals(33.33, quoteCalculator.getRawCgpBase());
 
-		Assert.assertEquals(66.66, quoteCalculator.getMaternityBase());
+		assertEquals(66.66, quoteCalculator.getMaternityBase());
 	}
 
 	@Test
@@ -516,25 +516,25 @@ public class QuoteCalculatorTestCase {
 		
 		for ( ContextVariable base : new ContextVariable[]{CGC_BASE, CGP_BASE}) {
 			List<ITimedVariable<Double>> cgcBases = ctx.getVariables(base);
-			Assert.assertEquals(1, cgcBases.size());
+			assertEquals(1, cgcBases.size());
 			
-			Assert.assertEquals( startDate, cgcBases.get(0).getPeriod().getStart());
-			Assert.assertEquals( addDays(startDate, 14), cgcBases.get(0).getPeriod().getEnd());
-			Assert.assertEquals( 33.33, cgcBases.get(0).getValue(cgcBases.get(0).getPeriod()));
+			assertEquals( startDate, cgcBases.get(0).getPeriod().getStart());
+			assertEquals( addDays(startDate, 14), cgcBases.get(0).getPeriod().getEnd());
+			assertEquals( 33.33, cgcBases.get(0).getValue(cgcBases.get(0).getPeriod()));
 	
 		}
 
 		List<ITimedVariable<Double>> cgcBases = ctx.getVariables(ERE_BASE);
-		Assert.assertEquals(1, cgcBases.size());
+		assertEquals(1, cgcBases.size());
 		
-		Assert.assertEquals( addDays(startDate, 15), cgcBases.get(0).getPeriod().getStart());
-		Assert.assertEquals( endDate, cgcBases.get(0).getPeriod().getEnd());
-		Assert.assertEquals( 66.66, cgcBases.get(0).getValue(cgcBases.get(0).getPeriod()));
+		assertEquals( addDays(startDate, 15), cgcBases.get(0).getPeriod().getStart());
+		assertEquals( endDate, cgcBases.get(0).getPeriod().getEnd());
+		assertEquals( 66.66, cgcBases.get(0).getValue(cgcBases.get(0).getPeriod()));
 
-		Assert.assertEquals(33.33, quoteCalculator.getRawCgcBase());
-		Assert.assertEquals(33.33, quoteCalculator.getRawCgpBase());
+		assertEquals(33.33, quoteCalculator.getRawCgcBase());
+		assertEquals(33.33, quoteCalculator.getRawCgpBase());
 
-		Assert.assertEquals(66.66, quoteCalculator.getEreBase());
+		assertEquals(66.66, quoteCalculator.getEreBase());
 	}
 	
 	@Test
@@ -564,7 +564,7 @@ public class QuoteCalculatorTestCase {
 		Double quote = quoteCalculator.qu0te(fixedPayment, startDate, endDate, 10.00);
 		quote = quoteCalculator.qu0te(itPayment, startDate, startDate, 200.00);
 		
-//		Assert.assertEquals(CGC_BASE.name(), 1000.00, quote);
+//		assertEquals(CGC_BASE.name(), 1000.00, quote);
 		
 		List<ITimedResult<Double>> cgcBases = ctx.eval(CGC_BASE.getName(),startDate, endDate, Double.class);
 		for ( ITimedResult<Double> cgcBase: cgcBases )

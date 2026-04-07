@@ -1,14 +1,14 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -96,23 +96,23 @@ public class SQLAgreementPaymentsFactoryTestCase extends AbstractSQLTestCase {
 		Collection<ISystemPayment> parentPayments= factory.create(agreementKey);
 		assertEquals(parentPayments.size(), 3);
 		for (IContractPayment contractPayment : parentPayments) {
-			assertEquals( contractPayment.getName() + "_PARENT" , contractPayment.getExpression());
+			assertEquals(contractPayment.getExpression(), contractPayment.getName() + "_PARENT");
 		}
 
 		agreementKey = new AgreementKey(parentId, overrideId,0);
 		Collection<ISystemPayment> overridePayments= factory.create(agreementKey);
 		assertEquals(overridePayments.size(), 2);
 		for (IContractPayment contractPayment : overridePayments) {
-			assertEquals( contractPayment.getName() + "_OVERRIDE" , contractPayment.getExpression());
+			assertEquals(contractPayment.getExpression(), contractPayment.getName() + "_OVERRIDE");
 		}
 		
 		
 		Collection<ISystemPayment> payments = new DomainPayments(overridePayments, parentPayments );
 		for (IContractPayment payment : payments) {
 			if ( AonStringUtils.equals(payment.getName(), "BASE")) 
-				assertEquals( "BASE_PARENT" , payment.getExpression());
+				assertEquals(payment.getExpression(), "BASE_PARENT");
 			else if ( AonStringUtils.equals(payment.getName(), "EXTRA")) 
-				assertEquals( "EXTRA_OVERRIDE" , payment.getExpression());
+				assertEquals(payment.getExpression(), "EXTRA_OVERRIDE");
 			
 		}
 		

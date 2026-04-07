@@ -46,6 +46,7 @@ public final class IJsonNames {
 	public static final String AEAT_RECTIFICATION = "aeatRectification";
 	public static final String ALIAS = "alias";
 	public static final String ALLOW_CONCURRENT = "allowConcurrent";
+	public static final String AMORTIZATION = "amortization";
 	public static final String AMORTIZATION_DESCRIPTION = "amortizationDescription";
 	public static final String AMORTIZATION_PERCENT = "amortizationPercent";
 	public static final String AMORTIZATION_INITIAL_DATE = "amortizationInitialDate";

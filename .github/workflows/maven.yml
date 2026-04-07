@@ -166,7 +166,7 @@ jobs:
         sudo mysql -u root --password=root -v  <<-EOSQL
         --
         SET GLOBAL sql_mode = '';
-        SET GLOBAL time_zone = '+01:00';
+        SET GLOBAL time_zone = '+02:00';
         --
         CREATE USER 'dbuser'@'%' IDENTIFIED WITH mysql_native_password BY 'serubd2000' ;
         GRANT ALL ON *.* TO 'dbuser'@'%' ;

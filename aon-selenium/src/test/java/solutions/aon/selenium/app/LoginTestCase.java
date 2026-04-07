@@ -107,13 +107,13 @@ public class LoginTestCase extends AppBaseTestCase {
 			js.executeScript(
 			    "let d = document.getElementById('aonDesktopInvoiceConfigurationDialog'); if(d) d.close();"
 			);
-			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHeaderHelpButton"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.id("aonHeaderHelpButton"))).click();
 			
-			WebElement aonHelpSwitchSupport = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHelpSwitchSupport")));
-			if ( Objects.equals(aonHelpSwitchSupport.getAttribute("value"), "false" ))
-				aonHelpSwitchSupport.click();
+			WebElement aonHelpSwitchSupportInput = wait.until(ExpectedConditions.elementToBeClickable(By.id("aonHelpSwitchSupportInput")));
+			if ( !aonHelpSwitchSupportInput.isSelected())
+				wait.until(ExpectedConditions.elementToBeClickable(By.id("aonHelpSwitchSupport"))).click();
 			
-			wait.until(ExpectedConditions.attributeToBe(By.id("aonHelpSwitchSupportInput"), "value", "true"));
+			wait.until(ExpectedConditions.elementToBeSelected(By.id("aonHelpSwitchSupportInput")));
 			
 		} catch (Exception e) {
 			throw new AssertionError("Error during test execution: " + e.getMessage(), e);
@@ -228,8 +228,8 @@ public class LoginTestCase extends AppBaseTestCase {
 			    "let d = document.getElementById('aonDesktopInvoiceConfigurationDialog'); if(d) d.close();"
 			);
 
-			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("invoice"))).click();
-			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonInvoiceSidenavOffers"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.id("invoice"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.id("aonInvoiceSidenavOffers"))).click();
 			
 			WebElement aonJsfAppFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAppFrame")));
 			webDriver.switchTo().frame(aonJsfAppFrame);
@@ -263,8 +263,8 @@ public class LoginTestCase extends AppBaseTestCase {
 			js.executeScript(
 			    "let d = document.getElementById('aonDesktopInvoiceConfigurationDialog'); if(d) d.close();"
 			);
-			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonCompanyTabFilter-inactive"))).click();
-			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#UlCompanies .aonLiSpan"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.id("aonCompanyTabFilter-inactive"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#UlCompanies .aonLiSpan"))).click();
 
 			WebElement aonJsfAccountingGraphFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAccountingGraphFrame")));
 			webDriver.switchTo().frame(aonJsfAccountingGraphFrame);

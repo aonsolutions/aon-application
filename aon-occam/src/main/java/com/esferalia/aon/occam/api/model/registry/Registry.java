@@ -24,6 +24,8 @@ public class Registry implements Serializable{
 	private Country nationality;
 	private SecurityLevel securityLevel;
 	
+	private String observation;
+	
 	private boolean dirty;
 	private boolean selected;
 	private boolean global;
@@ -130,6 +132,15 @@ public class Registry implements Serializable{
 		return this;
 	}
 
+	public String getObservation() {
+		return observation;
+	}
+	public Registry setObservation(String observation) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.observation, observation) );
+		this.observation = observation;
+		return this;
+	}
+	
 	public boolean isDirty() {
 		return dirty;
 	}

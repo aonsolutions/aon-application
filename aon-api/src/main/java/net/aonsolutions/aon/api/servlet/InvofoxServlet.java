@@ -273,40 +273,16 @@ public class InvofoxServlet extends AonApiHttpServlet {
 									.replace("]", "%5D")
 									);
 					OCRDocumentsResponse resp = OCRInvofox.getDocuments(invofoxConfiguration.getApiKey(), invofoxConfiguration.getApiUrl(), params);			
-					resp.getDocuments().ifPresent( docs -> {
-						docs.stream().forEach( doc -> {
-							doc.getId().ifPresentOrElse( id -> rawdocDocument(api, id), () -> loadDocument(api, invofoxConfiguration, ocrCompany.getId(), rawdoc));
-						});
-					});
+					if(resp.getDocuments().isPresent() && resp.getDocuments().get().isEmpty()) {
+						loadDocument(api, invofoxConfiguration, ocrCompany.getId(), rawdoc);
+					} else if(resp.getDocuments().isPresent()) {
+						resp.getDocuments().get().stream().forEach( doc -> {
+							doc.getId().ifPresent( id -> rawdocDocument(api, id));
+						});						
+					}
 				}
 			}	
 		}
-		
-		
-		
-//		String jobId = generateJobId();
-//		Company company = AON.getCompany(api.getOccam(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
-//		AON.getRawdocStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-//				f -> f.getDomainProperty().eq(api.getDomain().getId())
-//					.and(f.getStatusProperty().eq(RawdocStatus.PROCESSING.value())))
-//		.forEach(r -> { 
-//			Date date = AonDateUtils.addMinutes(new Date(), -10);
-//			if(!AonStringUtils.isBlank(r.getS3Key()) && r.getCreationDate() != null && r.getCreationDate().before(date)) {
-//				String[] keyParams = r.getS3Key().split("/"); 
-//				StringBuilder newKey = new StringBuilder()
-//						.append(keyParams[0] + "/")
-//						.append(api.getDomain().getName() + "/")
-//						.append(company.getDocument() + "/")
-//						.append(keyParams[3] + "/")
-//						.append(jobId + "/")
-//						.append(keyParams[5]);
-//				
-//				S3.getInstance().copy(r.getS3Bucket(), r.getS3Bucket(), r.getS3Key(), newKey.toString());
-//				
-//				AON.rawdocDelete(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), r.getId());
-//				// S3.delete(r.getS3Bucket(), r.getS3Key());
-//			}
-//		});
 		
 		return new JSONObject();
 	}

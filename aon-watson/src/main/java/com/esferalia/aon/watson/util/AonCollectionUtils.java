@@ -169,4 +169,8 @@ public class AonCollectionUtils {
 		return !in(array, t);
 	}
 	
+	public static void clear(Collection<?> collection) {
+		if (collection != null) collection.clear();
+	}
+
 }

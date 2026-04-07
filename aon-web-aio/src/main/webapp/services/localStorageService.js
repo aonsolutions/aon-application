@@ -15,6 +15,7 @@ export const ONLY_ONE = 'onlyOne';
 export const NEW_THEME = 'new_theme';
 export const SUITE = 'suite';
 export const FIXED_BUTTON = 'fixedButton';
+export const HIDE_SIDENAV = 'hideSidenav';
 export const RIGHT_PANEL = 'rightPanel';
 export const TOP_MENU = 'aonMenuTopnav';
 export const LEFT_MENU = 'aonMenuSidenav';
@@ -237,8 +238,16 @@ export const setRightPanel = (panel) => {
     set(RIGHT_PANEL,panel);
 }
 
+export const getHideSidenav = () => {
+    return get(HIDE_SIDENAV) || 'on';
+}
+
+export const setHideSidenav = (value) => {
+    set(HIDE_SIDENAV,value);
+}
+
 export const getFixedButton = () => {
-    return get(FIXED_BUTTON) || 'on';
+    return get(FIXED_BUTTON) || 'off';
 }
 
 export const setFixedButton = (value) => {

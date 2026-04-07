@@ -1,30 +1,36 @@
 package com.code.aon.registry.test;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.registry.RegistryDocument;
 import com.code.aon.registry.enumeration.DocumentType;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
-public class TestRegistryDocument extends TestCase {
+public class TestRegistryDocument {
 
+	@Test
 	public void testNull6_0_X() throws Exception {
 		assertFalse(new RegistryDocument(null).isValid());
 		assertFalse(new RegistryDocument(null).isValidNIF());
 		assertFalse(new RegistryDocument(null).isValidCIF());
 	}
 
+	@Test
 	public void testNull() throws Exception {
 		assertFalse(new RegistryDocument(null,null,null).isValid());
 		assertFalse(new RegistryDocument(null,null,null).isValidNIF());
 		assertFalse(new RegistryDocument(null,null,null).isValidCIF());
 	}
 	
+	@Test
 	public void testEmpty() throws Exception {
 		assertFalse(new RegistryDocument(null,null,"").isValid());
 		assertFalse(new RegistryDocument(null,null,"").isValidNIF());
 		assertFalse(new RegistryDocument(null,null,"").isValidCIF());
 	}
+	@Test
 	public void testNIF() throws Exception {
 		assertTrue(new RegistryDocument(Country.ES,DocumentType.NIF,"44671367P").isValid());
 		assertTrue(new RegistryDocument(Country.ES,DocumentType.NIF,"44671367P").isValidNIF());
@@ -40,6 +46,7 @@ public class TestRegistryDocument extends TestCase {
 		assertFalse(new RegistryDocument(Country.ES,DocumentType.NIF,"44F73367P").isValid());
 	}
 
+	@Test
 	public void testNIE() throws Exception {
 		assertTrue(new RegistryDocument(Country.ES,DocumentType.NIE,"X0648572H").isValid());
 		assertTrue(new RegistryDocument(Country.ES,DocumentType.NIE,"X0648572H").isValidNIE());
@@ -58,6 +65,7 @@ public class TestRegistryDocument extends TestCase {
 		assertFalse(new RegistryDocument(Country.ES,DocumentType.NIE,"X24e  207Y").isValid());
 	}
 
+	@Test
 	public void testCIF() throws Exception {
 		assertTrue(new RegistryDocument(Country.ES,DocumentType.CIF,"A01035724").isValid());
 		assertTrue(new RegistryDocument(Country.ES,DocumentType.CIF,"A01253988").isValid());
@@ -65,14 +73,17 @@ public class TestRegistryDocument extends TestCase {
 		assertTrue(new RegistryDocument(Country.ES,DocumentType.CIF,"B14507610").isValid());
 	}
 
+	@Test
 	public void testComunidades() throws Exception {
 		assertTrue(new RegistryDocument(Country.ES,DocumentType.CIF,"Q0100122A").isValid());
 	}
 
+	@Test
 	public void testAyuntamientos() throws Exception {
 		assertTrue(new RegistryDocument(Country.ES,DocumentType.CIF,"P0104500D").isValid());
 	}
 
+	@Test
 	public void testSociendadesComunitarias() throws Exception {
 		assertTrue(new RegistryDocument(Country.ES,DocumentType.CIF,"D77009215").isValid());
 		assertFalse(new RegistryDocument(Country.ES,DocumentType.CIF,"0X289216S").isValid());

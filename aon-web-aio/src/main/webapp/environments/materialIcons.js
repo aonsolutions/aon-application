@@ -115,6 +115,7 @@ export const COGNITION_2 = "cognition_2";
 export const COMMENT = 'comment';
 export const COMMENT_BANK = 'comment_bank';
 export const COMMUNICATION = 'communication';
+export const COMMENTS_DISABLED = 'comments_disabled';
 export const COMMUTE = 'commute';
 export const COMPARE_ARROWS = 'compare_arrows';
 export const CONTACT_PAGE = 'contact_page';

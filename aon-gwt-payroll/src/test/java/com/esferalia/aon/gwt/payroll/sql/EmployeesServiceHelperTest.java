@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
@@ -33,11 +33,11 @@ public class EmployeesServiceHelperTest extends AbstractSQLTestCase {
 		List<Bonus> availableBonuses = getAvailableBonuses(connection, 0,
 				domainI.getId());
 
-		Assert.assertEquals(BonusType.values().length,availableBonuses.size());
+		assertEquals(BonusType.values().length,availableBonuses.size());
 		System.out.println(availableBonuses.size());
 
 		for (Bonus bonus : availableBonuses) {
-			Assert.assertEquals(bonus.getType().ordinal(),
+			assertEquals(bonus.getType().ordinal(),
 					Integer.parseInt(bonus.getExpression()));
 			System.out.println(bonus.getType().ordinal() + "-." + bonus.getDescription() + " = '" + bonus.getExpression() + "'");
 		}
@@ -59,11 +59,11 @@ public class EmployeesServiceHelperTest extends AbstractSQLTestCase {
 		List<Bonus> availableBonuses = getAvailableBonuses(connection, 0,
 				domains);
 
-		Assert.assertEquals(BonusType.values().length, availableBonuses.size());
+		assertEquals(BonusType.values().length, availableBonuses.size());
 		System.out.println(availableBonuses.size());
 
 		for (Bonus bonus : availableBonuses) {
-			Assert.assertEquals(bonus.getType().ordinal(),
+			assertEquals(bonus.getType().ordinal(),
 					Integer.parseInt(bonus.getExpression()));
 			System.out.println(bonus.getType().ordinal() + "-." + bonus.getDescription() + " = '" + bonus.getExpression() + "'");
 		}

@@ -1,20 +1,19 @@
 package com.esferalia.aon.in.payroll.img;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
+import java.util.stream.Stream;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 import com.esferalia.aon.occam.api.model.PersonDocument;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -22,12 +21,10 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
-@RunWith(Suite.class)
-
-@SuiteClasses({ PersonDocumentParserGlobalTest.PersonDocumentParserTest.class,
+@Suite
+@SelectClasses({ PersonDocumentParserGlobalTest.PersonDocumentParserTest.class,
 		PersonDocumentParserGlobalTest.PersonDocumentParserTest2.class,
 		PersonDocumentParserGlobalTest.PersonDocumentParserTest3.class, })
-
 public class PersonDocumentParserGlobalTest {
 
 	public static class PersonDocumentParserTest {
@@ -109,7 +106,7 @@ public class PersonDocumentParserGlobalTest {
 				assertEquals(expectedDni, actualDni);
 			}
 		}
-		
+
 		@Test
 		public void personDocumentParserBirthdateTest() throws Exception{
 			String file = "com/esferalia/aon/in/payroll/image/dniJuanma.png";
@@ -126,11 +123,11 @@ public class PersonDocumentParserGlobalTest {
 					e.printStackTrace();
 				}
 				Date actualDate = person.getBirthDate();
-		     
+
 		        assertEquals(expectedBirthDate, actualDate);
 			}
 		}
-		
+
 		@Test
 		public void personDocumentParserIssueDateTest() throws Exception{
 			String file = "com/esferalia/aon/in/payroll/image/dniJuanma.png";
@@ -150,7 +147,7 @@ public class PersonDocumentParserGlobalTest {
 				assertEquals(expectedIssueDate, actualIssueDate);
 			}
 		}
-		
+
 		@Test
 		public void personDocumentParserValidityDateTest() throws Exception{
 			String file = "com/esferalia/aon/in/payroll/image/dniJuanma.png";
@@ -180,21 +177,15 @@ public class PersonDocumentParserGlobalTest {
 
 	}
 
-	@RunWith(Parameterized.class)
 	public static class PersonDocumentParserTest2 {
-		private String fileName;
 
-		@Parameterized.Parameters
-		public static Collection<Object> fileNames() {
-			return Arrays.asList(new Object[] { "DNI-EUKE-1.jpg", "GenericDNI.jpeg", "dniJuanmaInvert.png" });
+		static Stream<String> fileNames() {
+			return Stream.of("DNI-EUKE-1.jpg", "GenericDNI.jpeg", "dniJuanmaInvert.png");
 		}
 
-		public PersonDocumentParserTest2(String fileName) {
-			this.fileName = fileName;
-		}
-
-		@Test
-		public void personDocumentParserOtherFormat() throws Exception {
+		@ParameterizedTest
+		@MethodSource("fileNames")
+		public void personDocumentParserOtherFormat(String fileName) throws Exception {
 			String file = "com/esferalia/aon/in/payroll/image/" + fileName;
 			ClassLoader classLoader = PersonDocumentParserGlobalTest.class.getClassLoader();
 			try (InputStream is = classLoader.getResourceAsStream(file)) {
@@ -209,23 +200,15 @@ public class PersonDocumentParserGlobalTest {
 
 	}
 
-	@RunWith(Parameterized.class)
 	public static class PersonDocumentParserTest3 {
 
-		private String fileName;
-
-		@Parameterized.Parameters
-		public static Collection<Object> fileNames() {
-			return Arrays
-					.asList(new Object[] { "pdf/dniJuanmaTorcido.pdf", "image/dniJuanmaTorcido.jpg", "image/dniJuanmaTorcido.png" });
+		static Stream<String> fileNames() {
+			return Stream.of("pdf/dniJuanmaTorcido.pdf", "image/dniJuanmaTorcido.jpg", "image/dniJuanmaTorcido.png");
 		}
 
-		public PersonDocumentParserTest3(String fileName) {
-			this.fileName = fileName;
-		}
-
-		@Test
-		public void personDocumentParserParameterizedTest() throws Exception {
+		@ParameterizedTest
+		@MethodSource("fileNames")
+		public void personDocumentParserParameterizedTest(String fileName) throws Exception {
 			String file = "com/esferalia/aon/in/payroll/" + fileName;
 			ClassLoader classLoader = PersonDocumentParserGlobalTest.class.getClassLoader();
 			try (InputStream is = classLoader.getResourceAsStream(file)) {
@@ -234,7 +217,7 @@ public class PersonDocumentParserGlobalTest {
 				String expectedName = "JUAN MANUEL";
 				String actualName = person.getName();
 				assertEquals(expectedName, actualName);
-				
+
 			}
 		}
 

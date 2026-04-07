@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -40,7 +40,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLReductionTestCase extends AbstractSQLTestCase {
 
@@ -80,11 +80,11 @@ public class SQLReductionTestCase extends AbstractSQLTestCase {
 				"DIAS_TRABAJADOS", startDate, endDate, Double.class);
 		
 		int lastDayOfMonth = get(getLastDayOfMonth(getToday()), Calendar.DATE);
-		Assert.assertEquals("DIAS TRABAJADOS", lastDayOfMonth * 0.50, workDays.get(0).getValue());
+		assertEquals(lastDayOfMonth * 0.50, workDays.get(0).getValue(), "DIAS TRABAJADOS");
 		
 		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals("TOTAL PAYMENT", 666.00 * 0.50, salary.getTotalPayment());
+		assertEquals(666.00 * 0.50, salary.getTotalPayment(), "TOTAL PAYMENT");
 
 
 	}
@@ -127,8 +127,8 @@ public class SQLReductionTestCase extends AbstractSQLTestCase {
 				"DIAS_TRABAJADOS", startDate, endDate, Double.class);
 		
 		final int lastDayOfMonth = get(getLastDayOfMonth(getToday()), Calendar.DATE);
-		Assert.assertEquals("DIAS TRABAJADOS", 11.0, workDays.get(0).getValue());
-		Assert.assertEquals("DIAS TRABAJADOS", (lastDayOfMonth -11) * 0.50, workDays.get(1).getValue());
+		assertEquals(11.0, workDays.get(0).getValue(), "DIAS TRABAJADOS");
+		assertEquals((lastDayOfMonth -11) * 0.50, workDays.get(1).getValue(), "DIAS TRABAJADOS");
 		
 		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder(connection);
 		new ContractSalaryCalculator<Salary>( jooqSalaryBuilder).calculate(ctx);
@@ -143,15 +143,15 @@ public class SQLReductionTestCase extends AbstractSQLTestCase {
 					// 500 Base de contingencias comunes.
 					List<ContextData> datas = s.getContextData()
 							.get(CGC_BASE.getName());
-					Assert.assertEquals(2, datas.size());
-					Assert.assertEquals(666.00 * 11 / lastDayOfMonth, Double.parseDouble(datas.get(0).getExpression()));
-					Assert.assertEquals(666.00 * 0.50 * (lastDayOfMonth -11) / lastDayOfMonth, Double.parseDouble(datas.get(1).getExpression()));
+					assertEquals(2, datas.size());
+					assertEquals(666.00 * 11 / lastDayOfMonth, Double.parseDouble(datas.get(0).getExpression()));
+					assertEquals(666.00 * 0.50 * (lastDayOfMonth -11) / lastDayOfMonth, Double.parseDouble(datas.get(1).getExpression()));
 
 					// 601 o 611 Base de Accidentes de Trabajo.
 					datas = s.getContextData().get(CGP_BASE.getName());
-					Assert.assertEquals(2, datas.size());
-					Assert.assertEquals(666.00 * 11 / lastDayOfMonth, Double.parseDouble(datas.get(0).getExpression()));
-					Assert.assertEquals(666.00 * 0.50 * (lastDayOfMonth -11) / lastDayOfMonth, Double.parseDouble(datas.get(1).getExpression()));
+					assertEquals(2, datas.size());
+					assertEquals(666.00 * 11 / lastDayOfMonth, Double.parseDouble(datas.get(0).getExpression()));
+					assertEquals(666.00 * 0.50 * (lastDayOfMonth -11) / lastDayOfMonth, Double.parseDouble(datas.get(1).getExpression()));
 
 				});
 		;
@@ -204,8 +204,8 @@ public class SQLReductionTestCase extends AbstractSQLTestCase {
 				"DIAS_TRABAJADOS", startDate, endDate, Double.class);
 		
 		final int lastDayOfMonth = get(getLastDayOfMonth(getToday()), Calendar.DATE);
-		Assert.assertEquals("DIAS TRABAJADOS", 11.0, workDays.get(0).getValue());
-		Assert.assertEquals("DIAS TRABAJADOS", (lastDayOfMonth -11) * 0.50, workDays.get(1).getValue());
+		assertEquals(11.0, workDays.get(0).getValue(), "DIAS TRABAJADOS");
+		assertEquals((lastDayOfMonth -11) * 0.50, workDays.get(1).getValue(), "DIAS TRABAJADOS");
 		
 		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder(connection);
 		new ContractSalaryCalculator<Salary>( jooqSalaryBuilder).calculate(ctx);
@@ -220,15 +220,15 @@ public class SQLReductionTestCase extends AbstractSQLTestCase {
 					// 500 Base de contingencias comunes.
 					List<ContextData> datas = s.getContextData()
 							.get(CGC_BASE.getName());
-					Assert.assertEquals(2, datas.size());
-					Assert.assertEquals(666.00 * 11 / lastDayOfMonth, Double.parseDouble(datas.get(0).getExpression()));
-					Assert.assertEquals(666.00 * 0.50 * (lastDayOfMonth -11) / lastDayOfMonth, Double.parseDouble(datas.get(1).getExpression()));
+					assertEquals(2, datas.size());
+					assertEquals(666.00 * 11 / lastDayOfMonth, Double.parseDouble(datas.get(0).getExpression()));
+					assertEquals(666.00 * 0.50 * (lastDayOfMonth -11) / lastDayOfMonth, Double.parseDouble(datas.get(1).getExpression()));
 
 					// 601 o 611 Base de Accidentes de Trabajo.
 					datas = s.getContextData().get(CGP_BASE.getName());
-					Assert.assertEquals(2, datas.size());
-					Assert.assertEquals(666.00 * 11 / lastDayOfMonth, Double.parseDouble(datas.get(0).getExpression()));
-					Assert.assertEquals(666.00 * 0.50 * (lastDayOfMonth -11) / lastDayOfMonth, Double.parseDouble(datas.get(1).getExpression()));
+					assertEquals(2, datas.size());
+					assertEquals(666.00 * 11 / lastDayOfMonth, Double.parseDouble(datas.get(0).getExpression()));
+					assertEquals(666.00 * 0.50 * (lastDayOfMonth -11) / lastDayOfMonth, Double.parseDouble(datas.get(1).getExpression()));
 
 				});
 		;

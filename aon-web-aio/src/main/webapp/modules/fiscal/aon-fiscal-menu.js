@@ -27,7 +27,6 @@ export class AonFiscalMenu extends AonSuiteMenu {
 	        this.initialize();
        		await this.fiscalInitialize();
 	        this.build();
-	        this.setTitle("Opciones fiscales");
 		})
     }
 
@@ -334,7 +333,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             options: [{
                 title: "Matriz de empresas y modelos fiscales",
                 description: "Matriz de empresas y modelos fiscales",
-                action: () => GWT.iLoad(GWT.MODEL_MATRIX)
+                action: () => GWT.iLoad(GWT.MODEL_MATRIX, this.getApplication().CONTENT)
             }],
             filter: () => this.isDomainManagementAvailable()
         }];

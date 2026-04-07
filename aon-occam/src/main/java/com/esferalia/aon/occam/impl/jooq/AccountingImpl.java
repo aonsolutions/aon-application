@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
+import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
@@ -43,6 +44,7 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccoun
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
+import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
@@ -74,6 +76,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryFormatter;
+import com.esferalia.aon.occam.impl.jooq.dao.accounting.amortization.AmortizationDAO;
 import com.esferalia.aon.occam.server.accounting.AccountEntryUtils;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -686,5 +689,22 @@ public class AccountingImpl implements IAccounting {
 	@Override
 	public void deleteAccountingIncome(AONContext ctx, AccountEntry ae) {
 		ctx.getDslContext().transaction( configuration -> AccountingIncomeDAO.delete(ctx, ae) );
+	}
+	// **************************************** [AMORTIZATION]
+	
+	@Override
+	public LinkedList<Amortization> getAmortizations(AONContext ctx, Integer domain) {
+		return AmortizationDAO.stream(ctx, domain)
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	@Override
+	public LinkedList<Amortization> getAmortizations(AONContext ctx, AmortizationParams params) {
+		return AmortizationDAO.stream(ctx, params)
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	@Override
+	public Amortization saveAmortization(AONContext ctx, Amortization am) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> AmortizationDAO.save(ctx, am) );	
 	}
 }

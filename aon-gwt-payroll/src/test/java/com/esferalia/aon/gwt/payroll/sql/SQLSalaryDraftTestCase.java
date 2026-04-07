@@ -7,7 +7,7 @@ import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
 import com.esferalia.aon.gwt.payroll.server.SalaryDraftBuilder;
@@ -48,7 +48,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import java.util.Calendar;
 
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 
@@ -150,7 +150,7 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 		.stream()
 		.filter(v -> AonStringUtils.equals(MONTH_DAYS.getName(), v.getName()))
 		.findAny()
-		.ifPresentOrElse(monthDays -> assertEquals("30.00", monthDays.getExpression()), org.junit.Assert::fail);
+		.ifPresentOrElse(monthDays -> assertEquals(monthDays.getExpression(), "30.00"), org.junit.Assert::fail);
 		;
 
 		salaryDraft.getContext()
@@ -199,92 +199,92 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 		
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		List<ContractBonusRecord>  bonuses = getBonus(aonContext, contract);
-		Assert.assertEquals(1, bonuses.size());
-		Assert.assertEquals(CONTRACT_BONUS.DOMAIN.getName(), contract.getDomain(), bonuses.get(0).getDomain());
-		Assert.assertEquals(CONTRACT_BONUS.BONUS_CONCEPT.getName(), concept.getId(), bonuses.get(0).getBonusConcept());
-		Assert.assertEquals(CONTRACT_BONUS.START_DATE.getName(), startDate, bonuses.get(0).getStartDate());
-		Assert.assertEquals(CONTRACT_BONUS.END_DATE.getName(), null, bonuses.get(0).getEndDate());
-		Assert.assertEquals(CONTRACT_BONUS.DESCRIPTION.getName(), "666.00", bonuses.get(0).getDescription());
-		Assert.assertEquals(CONTRACT_BONUS.EXPRESSION.getName(), null, bonuses.get(0).getExpression());
+		assertEquals(1, bonuses.size());
+		assertEquals(contract.getDomain(), bonuses.get(0).getDomain(), CONTRACT_BONUS.DOMAIN.getName());
+		assertEquals(concept.getId(), bonuses.get(0).getBonusConcept(), CONTRACT_BONUS.BONUS_CONCEPT.getName());
+		assertEquals(startDate, bonuses.get(0).getStartDate(), CONTRACT_BONUS.START_DATE.getName());
+		assertEquals(null, bonuses.get(0).getEndDate(), CONTRACT_BONUS.END_DATE.getName());
+		assertEquals("666.00", bonuses.get(0).getDescription(), CONTRACT_BONUS.DESCRIPTION.getName());
+		assertEquals(null, bonuses.get(0).getExpression(), CONTRACT_BONUS.EXPRESSION.getName());
 		
 		draftBonus.setId(bonuses.get(0).getId());
 		draftBonus.setDescriptionTemplate("Hello World!!!!");		
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		bonuses = getBonus(aonContext, contract);
-		Assert.assertEquals(1, bonuses.size());
-		Assert.assertEquals(CONTRACT_BONUS.DOMAIN.getName(), contract.getDomain(), bonuses.get(0).getDomain());
-		Assert.assertEquals(CONTRACT_BONUS.BONUS_CONCEPT.getName(), concept.getId(), bonuses.get(0).getBonusConcept());
-		Assert.assertEquals(CONTRACT_BONUS.START_DATE.getName(), startDate, bonuses.get(0).getStartDate());
-		Assert.assertEquals(CONTRACT_BONUS.END_DATE.getName(), null, bonuses.get(0).getEndDate());
-		Assert.assertEquals(CONTRACT_BONUS.DESCRIPTION.getName(), "Hello World!!!!", bonuses.get(0).getDescription());
-		Assert.assertEquals(CONTRACT_BONUS.EXPRESSION.getName(), null, bonuses.get(0).getExpression());
+		assertEquals(1, bonuses.size());
+		assertEquals(contract.getDomain(), bonuses.get(0).getDomain(), CONTRACT_BONUS.DOMAIN.getName());
+		assertEquals(concept.getId(), bonuses.get(0).getBonusConcept(), CONTRACT_BONUS.BONUS_CONCEPT.getName());
+		assertEquals(startDate, bonuses.get(0).getStartDate(), CONTRACT_BONUS.START_DATE.getName());
+		assertEquals(null, bonuses.get(0).getEndDate(), CONTRACT_BONUS.END_DATE.getName());
+		assertEquals("Hello World!!!!", bonuses.get(0).getDescription(), CONTRACT_BONUS.DESCRIPTION.getName());
+		assertEquals(null, bonuses.get(0).getExpression(), CONTRACT_BONUS.EXPRESSION.getName());
 		
 		draftBonus.setId(bonuses.get(0).getId());
 		draftBonus.setExpression("999");
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		bonuses = getBonus(aonContext, contract);
-		Assert.assertEquals(1, bonuses.size());
-		Assert.assertEquals(CONTRACT_BONUS.DOMAIN.getName(), contract.getDomain(), bonuses.get(0).getDomain());
-		Assert.assertEquals(CONTRACT_BONUS.BONUS_CONCEPT.getName(), concept.getId(), bonuses.get(0).getBonusConcept());
-		Assert.assertEquals(CONTRACT_BONUS.START_DATE.getName(), startDate, bonuses.get(0).getStartDate());
-		Assert.assertEquals(CONTRACT_BONUS.END_DATE.getName(), null, bonuses.get(0).getEndDate());
-		Assert.assertEquals(CONTRACT_BONUS.DESCRIPTION.getName(), "Hello World!!!!", bonuses.get(0).getDescription());
-		Assert.assertEquals(CONTRACT_BONUS.EXPRESSION.getName(), "999", bonuses.get(0).getExpression());
+		assertEquals(1, bonuses.size());
+		assertEquals(contract.getDomain(), bonuses.get(0).getDomain(), CONTRACT_BONUS.DOMAIN.getName());
+		assertEquals(concept.getId(), bonuses.get(0).getBonusConcept(), CONTRACT_BONUS.BONUS_CONCEPT.getName());
+		assertEquals(startDate, bonuses.get(0).getStartDate(), CONTRACT_BONUS.START_DATE.getName());
+		assertEquals(null, bonuses.get(0).getEndDate(), CONTRACT_BONUS.END_DATE.getName());
+		assertEquals("Hello World!!!!", bonuses.get(0).getDescription(), CONTRACT_BONUS.DESCRIPTION.getName());
+		assertEquals("999", bonuses.get(0).getExpression(), CONTRACT_BONUS.EXPRESSION.getName());
 		
 		draftBonus.setId(bonuses.get(0).getId());
 		draftBonus.setExpression("666.00");
 		draftBonus.setDescriptionTemplate("666.00");
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		bonuses = getBonus(aonContext, contract);
-		Assert.assertEquals(1, bonuses.size());
-		Assert.assertEquals(CONTRACT_BONUS.DOMAIN.getName(), contract.getDomain(), bonuses.get(0).getDomain());
-		Assert.assertEquals(CONTRACT_BONUS.BONUS_CONCEPT.getName(), concept.getId(), bonuses.get(0).getBonusConcept());
-		Assert.assertEquals(CONTRACT_BONUS.START_DATE.getName(), startDate, bonuses.get(0).getStartDate());
-		Assert.assertEquals(CONTRACT_BONUS.END_DATE.getName(), null, bonuses.get(0).getEndDate());
-		Assert.assertEquals(CONTRACT_BONUS.DESCRIPTION.getName(),"666.00", bonuses.get(0).getDescription());
-		Assert.assertEquals(CONTRACT_BONUS.EXPRESSION.getName(), null, bonuses.get(0).getExpression());
+		assertEquals(1, bonuses.size());
+		assertEquals(contract.getDomain(), bonuses.get(0).getDomain(), CONTRACT_BONUS.DOMAIN.getName());
+		assertEquals(concept.getId(), bonuses.get(0).getBonusConcept(), CONTRACT_BONUS.BONUS_CONCEPT.getName());
+		assertEquals(startDate, bonuses.get(0).getStartDate(), CONTRACT_BONUS.START_DATE.getName());
+		assertEquals(null, bonuses.get(0).getEndDate(), CONTRACT_BONUS.END_DATE.getName());
+		assertEquals("666.00", bonuses.get(0).getDescription(), CONTRACT_BONUS.DESCRIPTION.getName());
+		assertEquals(null, bonuses.get(0).getExpression(), CONTRACT_BONUS.EXPRESSION.getName());
 		
 		draftBonus.setId(bonuses.get(0).getId());
 		draftBonus.setExpression("REMOVE()");
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		bonuses = getBonus(aonContext, contract);
-		Assert.assertEquals(0, bonuses.size());
+		assertEquals(0, bonuses.size());
 	
 		
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		bonuses = getBonus(aonContext, contract);
-		Assert.assertEquals(0, bonuses.size());
+		assertEquals(0, bonuses.size());
 		
 		draftBonus.setExpression(null);
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		bonuses = getBonus(aonContext, contract);
-		Assert.assertEquals(1, bonuses.size());
-		Assert.assertEquals(CONTRACT_BONUS.DOMAIN.getName(), contract.getDomain(), bonuses.get(0).getDomain());
-		Assert.assertEquals(CONTRACT_BONUS.BONUS_CONCEPT.getName(), concept.getId(), bonuses.get(0).getBonusConcept());
-		Assert.assertEquals(CONTRACT_BONUS.START_DATE.getName(), startDate, bonuses.get(0).getStartDate());
-		Assert.assertEquals(CONTRACT_BONUS.END_DATE.getName(), null, bonuses.get(0).getEndDate());
-		Assert.assertEquals(CONTRACT_BONUS.DESCRIPTION.getName(),"666.00", bonuses.get(0).getDescription());
-		Assert.assertEquals(CONTRACT_BONUS.EXPRESSION.getName(), null, bonuses.get(0).getExpression());
+		assertEquals(1, bonuses.size());
+		assertEquals(contract.getDomain(), bonuses.get(0).getDomain(), CONTRACT_BONUS.DOMAIN.getName());
+		assertEquals(concept.getId(), bonuses.get(0).getBonusConcept(), CONTRACT_BONUS.BONUS_CONCEPT.getName());
+		assertEquals(startDate, bonuses.get(0).getStartDate(), CONTRACT_BONUS.START_DATE.getName());
+		assertEquals(null, bonuses.get(0).getEndDate(), CONTRACT_BONUS.END_DATE.getName());
+		assertEquals("666.00", bonuses.get(0).getDescription(), CONTRACT_BONUS.DESCRIPTION.getName());
+		assertEquals(null, bonuses.get(0).getExpression(), CONTRACT_BONUS.EXPRESSION.getName());
 	
 		draftBonus.setId(bonuses.get(0).getId());
 		draftBonus.setExpression("555.00");
 		draftBonus.setEndDate(getLastDayOfMonth(getToday()));
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		bonuses = getBonus(aonContext, contract);
-		Assert.assertEquals(2, bonuses.size());
-		Assert.assertEquals(CONTRACT_BONUS.DOMAIN.getName(), contract.getDomain(), bonuses.get(0).getDomain());
-		Assert.assertEquals(CONTRACT_BONUS.BONUS_CONCEPT.getName(), concept.getId(), bonuses.get(0).getBonusConcept());
-		Assert.assertEquals(CONTRACT_BONUS.START_DATE.getName(), startDate, bonuses.get(0).getStartDate());
-		Assert.assertEquals(CONTRACT_BONUS.END_DATE.getName(), getLastDayOfMonth(getToday()), bonuses.get(0).getEndDate());
-		Assert.assertEquals(CONTRACT_BONUS.DESCRIPTION.getName(),"666.00", bonuses.get(0).getDescription());
-		Assert.assertEquals(CONTRACT_BONUS.EXPRESSION.getName(), "555.00", bonuses.get(0).getExpression());
+		assertEquals(2, bonuses.size());
+		assertEquals(contract.getDomain(), bonuses.get(0).getDomain(), CONTRACT_BONUS.DOMAIN.getName());
+		assertEquals(concept.getId(), bonuses.get(0).getBonusConcept(), CONTRACT_BONUS.BONUS_CONCEPT.getName());
+		assertEquals(startDate, bonuses.get(0).getStartDate(), CONTRACT_BONUS.START_DATE.getName());
+		assertEquals(getLastDayOfMonth(getToday()), bonuses.get(0).getEndDate(), CONTRACT_BONUS.END_DATE.getName());
+		assertEquals("666.00", bonuses.get(0).getDescription(), CONTRACT_BONUS.DESCRIPTION.getName());
+		assertEquals("555.00", bonuses.get(0).getExpression(), CONTRACT_BONUS.EXPRESSION.getName());
 
-		Assert.assertEquals(CONTRACT_BONUS.DOMAIN.getName(), contract.getDomain(), bonuses.get(1).getDomain());
-		Assert.assertEquals(CONTRACT_BONUS.BONUS_CONCEPT.getName(), concept.getId(), bonuses.get(1).getBonusConcept());
-		Assert.assertEquals(CONTRACT_BONUS.START_DATE.getName(), add(getLastDayOfMonth(getToday()), Calendar.DAY_OF_MONTH, 1), bonuses.get(1).getStartDate());
-		Assert.assertEquals(CONTRACT_BONUS.END_DATE.getName(), null, bonuses.get(1).getEndDate());
-		Assert.assertEquals(CONTRACT_BONUS.DESCRIPTION.getName(),"666.00", bonuses.get(0).getDescription());
-		Assert.assertEquals(CONTRACT_BONUS.EXPRESSION.getName(), null, bonuses.get(1).getExpression());
+		assertEquals(contract.getDomain(), bonuses.get(1).getDomain(), CONTRACT_BONUS.DOMAIN.getName());
+		assertEquals(concept.getId(), bonuses.get(1).getBonusConcept(), CONTRACT_BONUS.BONUS_CONCEPT.getName());
+		assertEquals(add(getLastDayOfMonth(getToday()), Calendar.DAY_OF_MONTH, 1), bonuses.get(1).getStartDate(), CONTRACT_BONUS.START_DATE.getName());
+		assertEquals(null, bonuses.get(1).getEndDate(), CONTRACT_BONUS.END_DATE.getName());
+		assertEquals("666.00", bonuses.get(0).getDescription(), CONTRACT_BONUS.DESCRIPTION.getName());
+		assertEquals(null, bonuses.get(1).getExpression(), CONTRACT_BONUS.EXPRESSION.getName());
 		
 	}
 	
@@ -324,12 +324,12 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 		
 		List<ContractEmbargoRecord> embargos; 
 		embargos = getEmbargo(aonContext, contract);
-		Assert.assertEquals(1, embargos.size());
+		assertEquals(1, embargos.size());
 		ContractEmbargoRecord embargo = embargos.get(0); 
-		Assert.assertEquals(embargo.getExpression(), draftEmbargo.getExpression());
-		Assert.assertEquals(embargo.getDescription(), draftEmbargo.getDescriptionTemplate());
-		Assert.assertEquals(embargo.getStartDate(), draftEmbargo.getStartDate());
-		Assert.assertEquals(embargo.getEndDate(), draftEmbargo.getEndDate());
+		assertEquals(draftEmbargo.getExpression(), embargo.getExpression());
+		assertEquals(draftEmbargo.getDescriptionTemplate(), embargo.getDescription());
+		assertEquals(draftEmbargo.getStartDate(), embargo.getStartDate());
+		assertEquals(draftEmbargo.getEndDate(), embargo.getEndDate());
 		
 		// change expression & description...easy
 		draftEmbargo.setId(embargo.getId());
@@ -338,12 +338,12 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		embargos = getEmbargo(aonContext, contract);
-		Assert.assertEquals(1, embargos.size());
+		assertEquals(1, embargos.size());
 		embargo = embargos.get(0); 
-		Assert.assertEquals(embargo.getExpression(), draftEmbargo.getExpression());
-		Assert.assertEquals(embargo.getDescription(), draftEmbargo.getDescriptionTemplate());
-		Assert.assertEquals(embargo.getStartDate(), draftEmbargo.getStartDate());
-		Assert.assertEquals(embargo.getEndDate(), draftEmbargo.getEndDate());
+		assertEquals(draftEmbargo.getExpression(), embargo.getExpression());
+		assertEquals(draftEmbargo.getDescriptionTemplate(), embargo.getDescription());
+		assertEquals(draftEmbargo.getStartDate(), embargo.getStartDate());
+		assertEquals(draftEmbargo.getEndDate(), embargo.getEndDate());
 		
 		
 		// change start date... previous month
@@ -352,12 +352,12 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		embargos = getEmbargo(aonContext, contract);
-		Assert.assertEquals(1, embargos.size());
+		assertEquals(1, embargos.size());
 		embargo = embargos.get(0); 
-		Assert.assertEquals(embargo.getExpression(), draftEmbargo.getExpression());
-		Assert.assertEquals(embargo.getDescription(), draftEmbargo.getDescriptionTemplate());
-		Assert.assertEquals(embargo.getStartDate(), draftEmbargo.getStartDate());
-		Assert.assertEquals(embargo.getEndDate(), draftEmbargo.getEndDate());
+		assertEquals(draftEmbargo.getExpression(), embargo.getExpression());
+		assertEquals(draftEmbargo.getDescriptionTemplate(), embargo.getDescription());
+		assertEquals(draftEmbargo.getStartDate(), embargo.getStartDate());
+		assertEquals(draftEmbargo.getEndDate(), embargo.getEndDate());
 		
 		// change end date & expression... 
 		draftEmbargo.setId(embargo.getId());
@@ -366,18 +366,18 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		embargos = getEmbargo(aonContext, contract);
-		Assert.assertEquals(2, embargos.size());
+		assertEquals(2, embargos.size());
 		embargo = embargos.get(0); 
-		Assert.assertEquals(embargo.getExpression(), draftEmbargo.getExpression());
-		Assert.assertEquals(embargo.getDescription(), draftEmbargo.getDescriptionTemplate());
-		Assert.assertEquals(embargo.getStartDate(), draftEmbargo.getStartDate());
-		Assert.assertEquals(embargo.getEndDate(), draftEmbargo.getEndDate());
+		assertEquals(draftEmbargo.getExpression(), embargo.getExpression());
+		assertEquals(draftEmbargo.getDescriptionTemplate(), embargo.getDescription());
+		assertEquals(draftEmbargo.getStartDate(), embargo.getStartDate());
+		assertEquals(draftEmbargo.getEndDate(), embargo.getEndDate());
 	
 		embargo = embargos.get(1); 
-		Assert.assertEquals(embargo.getExpression(), "999.00");
-		Assert.assertEquals(embargo.getDescription(), draftEmbargo.getDescriptionTemplate());
-		Assert.assertEquals(embargo.getStartDate(), add(add(startMonth, Calendar.MONTH, 10),Calendar.DAY_OF_MONTH,1));
-		Assert.assertEquals(embargo.getEndDate(), null);
+		assertEquals("999.00", embargo.getExpression());
+		assertEquals(draftEmbargo.getDescriptionTemplate(), embargo.getDescription());
+		assertEquals(add(add(startMonth, Calendar.MONTH, 10),Calendar.DAY_OF_MONTH,1), embargo.getStartDate());
+		assertEquals(null, embargo.getEndDate());
 		
 		// Remove
 		draftEmbargo.setId(embargos.get(0).getId());
@@ -385,12 +385,12 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 		
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		embargos = getEmbargo(aonContext, contract);
-		Assert.assertEquals(1, embargos.size());
+		assertEquals(1, embargos.size());
 		embargo = embargos.get(0); 
-		Assert.assertEquals(embargo.getExpression(), "999.00");
-		Assert.assertEquals(embargo.getDescription(), draftEmbargo.getDescriptionTemplate());
-		Assert.assertEquals(embargo.getStartDate(), add(add(startMonth, Calendar.MONTH, 10),Calendar.DAY_OF_MONTH,1));
-		Assert.assertEquals(embargo.getEndDate(), null);
+		assertEquals("999.00", embargo.getExpression());
+		assertEquals(draftEmbargo.getDescriptionTemplate(), embargo.getDescription());
+		assertEquals(add(add(startMonth, Calendar.MONTH, 10),Calendar.DAY_OF_MONTH,1), embargo.getStartDate());
+		assertEquals(null, embargo.getEndDate());
 		
 		// Remove
 		draftEmbargo.setId(embargos.get(0).getId());
@@ -398,7 +398,7 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 		draftEmbargo.setEndDate(null);
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		embargos = getEmbargo(aonContext, contract);
-		Assert.assertEquals(0, embargos.size());
+		assertEquals(0, embargos.size());
 		
 	}
 
@@ -437,12 +437,12 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 		
 		List<ContractEmbargoRecord> embargos; 
 		embargos = getEmbargo(aonContext, contract);
-		Assert.assertEquals(1, embargos.size());
+		assertEquals(1, embargos.size());
 		ContractEmbargoRecord embargo = embargos.get(0); 
-		Assert.assertEquals(embargo.getExpression(), draftEmbargo.getExpression());
-		Assert.assertEquals(embargo.getDescription(), draftEmbargo.getDescriptionTemplate());
-		Assert.assertEquals(embargo.getStartDate(), draftEmbargo.getStartDate());
-		Assert.assertEquals(embargo.getEndDate(), draftEmbargo.getEndDate());
+		assertEquals(draftEmbargo.getExpression(), embargo.getExpression());
+		assertEquals(draftEmbargo.getDescriptionTemplate(), embargo.getDescription());
+		assertEquals(draftEmbargo.getStartDate(), embargo.getStartDate());
+		assertEquals(draftEmbargo.getEndDate(), embargo.getEndDate());
 		
 		// Save a Salary
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startMonth, endMonth, endMonth, contract);
@@ -457,7 +457,7 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 		draftEmbargo.setExpression("REMOVE()");
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		embargos = getEmbargo(aonContext, contract);
-		Assert.assertEquals(0, embargos.size());
+		assertEquals(0, embargos.size());
 
 		
 	}
@@ -497,12 +497,12 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 		
 		List<ContractEmbargoRecord> embargos; 
 		embargos = getEmbargo(aonContext, contract);
-		Assert.assertEquals(1, embargos.size());
+		assertEquals(1, embargos.size());
 		ContractEmbargoRecord embargo = embargos.get(0); 
-		Assert.assertEquals(embargo.getExpression(), draftEmbargo.getExpression());
-		Assert.assertEquals(embargo.getDescription(), draftEmbargo.getDescriptionTemplate());
-		Assert.assertEquals(embargo.getStartDate(), draftEmbargo.getStartDate());
-		Assert.assertEquals(embargo.getEndDate(), draftEmbargo.getEndDate());
+		assertEquals(draftEmbargo.getExpression(), embargo.getExpression());
+		assertEquals(draftEmbargo.getDescriptionTemplate(), embargo.getDescription());
+		assertEquals(draftEmbargo.getStartDate(), embargo.getStartDate());
+		assertEquals(draftEmbargo.getEndDate(), embargo.getEndDate());
 		
 		// Save a Salary
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startMonth, endMonth, endMonth, contract);
@@ -517,11 +517,11 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 		draftEmbargo.setExpression("777.00");
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		embargos = getEmbargo(aonContext, contract);
-		Assert.assertEquals(1, embargos.size());
+		assertEquals(1, embargos.size());
 		
 		List<SalaryEmbargoRecord> salaryEmbargos = getSalaryEmbargo(aonContext, contract);
-		Assert.assertEquals(1, salaryEmbargos.size());
-		Assert.assertEquals(-666, (int)salaryEmbargos.get(0).getContractEmbargo());
+		assertEquals(1, salaryEmbargos.size());
+		assertEquals(-666, (int)salaryEmbargos.get(0).getContractEmbargo());
 		
 
 		
@@ -563,12 +563,12 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 		
 		List<ContractEmbargoRecord> embargos; 
 		embargos = getEmbargo(aonContext, contract);
-		Assert.assertEquals(1, embargos.size());
+		assertEquals(1, embargos.size());
 		ContractEmbargoRecord embargo = embargos.get(0); 
-		Assert.assertEquals(embargo.getExpression(), draftEmbargo.getExpression());
-		Assert.assertEquals(embargo.getDescription(), draftEmbargo.getDescriptionTemplate());
-		Assert.assertEquals(embargo.getStartDate(), draftEmbargo.getStartDate());
-		Assert.assertEquals(embargo.getEndDate(), draftEmbargo.getEndDate());
+		assertEquals(draftEmbargo.getExpression(), embargo.getExpression());
+		assertEquals(draftEmbargo.getDescriptionTemplate(), embargo.getDescription());
+		assertEquals(draftEmbargo.getStartDate(), embargo.getStartDate());
+		assertEquals(draftEmbargo.getEndDate(), embargo.getEndDate());
 		
 		// Save a Salaries
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startMonth, endMonth, endMonth, contract);
@@ -585,11 +585,11 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 		
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		embargos = getEmbargo(aonContext, contract);
-		Assert.assertEquals(2, embargos.size());
+		assertEquals(2, embargos.size());
 		
 		List<SalaryEmbargoRecord> salaryEmbargos = getSalaryEmbargo(aonContext, contract);
-		Assert.assertEquals(1, salaryEmbargos.size());
-		Assert.assertEquals(embargos.get(0).getId(), salaryEmbargos.get(0).getContractEmbargo());
+		assertEquals(1, salaryEmbargos.size());
+		assertEquals(salaryEmbargos.get(0).getContractEmbargo(), embargos.get(0).getId());
 		
 
 		
@@ -632,12 +632,12 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 		
 		List<ContractEmbargoRecord> embargos; 
 		embargos = getEmbargo(aonContext, contract);
-		Assert.assertEquals(1, embargos.size());
+		assertEquals(1, embargos.size());
 		ContractEmbargoRecord embargo = embargos.get(0); 
-		Assert.assertEquals(embargo.getExpression(), draftEmbargo.getExpression());
-		Assert.assertEquals(embargo.getDescription(), draftEmbargo.getDescriptionTemplate());
-		Assert.assertEquals(embargo.getStartDate(), draftEmbargo.getStartDate());
-		Assert.assertEquals(embargo.getEndDate(), draftEmbargo.getEndDate());
+		assertEquals(draftEmbargo.getExpression(), embargo.getExpression());
+		assertEquals(draftEmbargo.getDescriptionTemplate(), embargo.getDescription());
+		assertEquals(draftEmbargo.getStartDate(), embargo.getStartDate());
+		assertEquals(draftEmbargo.getEndDate(), embargo.getEndDate());
 		
 		// Save a Salaries
 		for ( int i = 0; i < (12*4); i++) {
@@ -659,21 +659,21 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 		
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		embargos = getEmbargo(aonContext, contract);
-		Assert.assertEquals(2, embargos.size());
+		assertEquals(2, embargos.size());
 		
-		Assert.assertEquals(embargos.get(0).getExpression(), "666.00");
-		Assert.assertEquals(embargos.get(0).getStartDate(), startMonth);
-		Assert.assertEquals(embargos.get(0).getEndDate(), add(add(startMonth, Calendar.MONTH, 12), Calendar.DAY_OF_MONTH,-1));
+		assertEquals("666.00", embargos.get(0).getExpression());
+		assertEquals(startMonth, embargos.get(0).getStartDate());
+		assertEquals(add(add(startMonth, Calendar.MONTH, 12), Calendar.DAY_OF_MONTH,-1), embargos.get(0).getEndDate());
 		
-		Assert.assertEquals(embargos.get(1).getExpression(), draftEmbargo.getExpression());
-		Assert.assertEquals(embargos.get(1).getStartDate(), add(startMonth, Calendar.MONTH, 12));
-		Assert.assertEquals(embargos.get(1).getEndDate(), null);
+		assertEquals(draftEmbargo.getExpression(), embargos.get(1).getExpression());
+		assertEquals(add(startMonth, Calendar.MONTH, 12), embargos.get(1).getStartDate());
+		assertEquals(null, embargos.get(1).getEndDate());
 
 		List<SalaryEmbargoRecord> salaryEmbargos = getSalaryEmbargo(aonContext, contract);
 		for ( int i = 0 ; i < 12; i++)
-			Assert.assertEquals(embargos.get(0).getId(), salaryEmbargos.get(i).getContractEmbargo());
+			assertEquals(salaryEmbargos.get(i).getContractEmbargo(), embargos.get(0).getId());
 		for ( int i = 12 ; i < embargos.size(); i++)
-			Assert.assertEquals(-666, (int) salaryEmbargos.get(i).getContractEmbargo());
+			assertEquals(-666, (int) salaryEmbargos.get(i).getContractEmbargo());
 		
 		draftEmbargo.setId(embargos.get(0).getId());
 		draftEmbargo.setExpression("333.00");
@@ -683,33 +683,33 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		
 		embargos = getEmbargo(aonContext, contract);
-		Assert.assertEquals(4, embargos.size());
+		assertEquals(4, embargos.size());
 		salaryEmbargos = getSalaryEmbargo(aonContext, contract);
 
 		for ( int i = 0 ; i < 6; i++)
-			Assert.assertEquals(embargos.get(0).getId(), salaryEmbargos.get(i).getContractEmbargo());
+			assertEquals(salaryEmbargos.get(i).getContractEmbargo(), embargos.get(0).getId());
 		for ( int i = 6 ; i < 8; i++)
-			Assert.assertEquals(-666, (int)salaryEmbargos.get(i).getContractEmbargo());
+			assertEquals(-666, (int)salaryEmbargos.get(i).getContractEmbargo());
 		for ( int i = 8 ; i < 12; i++)
-			Assert.assertEquals(embargos.get(2).getId(), salaryEmbargos.get(i).getContractEmbargo());
+			assertEquals(salaryEmbargos.get(i).getContractEmbargo(), embargos.get(2).getId());
 		for ( int i = 12 ; i < embargos.size(); i++)
-			Assert.assertEquals(-666, (int) salaryEmbargos.get(i).getContractEmbargo());
+			assertEquals(-666, (int) salaryEmbargos.get(i).getContractEmbargo());
 		
 		draftEmbargo.setId(embargos.get(1).getId());
 		draftEmbargo.setExpression("REMOVE()");
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		
 		embargos = getEmbargo(aonContext, contract);
-		Assert.assertEquals(3, embargos.size());
+		assertEquals(3, embargos.size());
 		salaryEmbargos = getSalaryEmbargo(aonContext, contract);
 		for ( int i = 0 ; i < 6; i++)
-			Assert.assertEquals(embargos.get(0).getId(), salaryEmbargos.get(i).getContractEmbargo());
+			assertEquals(salaryEmbargos.get(i).getContractEmbargo(), embargos.get(0).getId());
 		for ( int i = 6 ; i < 8; i++)
-			Assert.assertEquals(-666, (int)salaryEmbargos.get(i).getContractEmbargo());
+			assertEquals(-666, (int)salaryEmbargos.get(i).getContractEmbargo());
 		for ( int i = 8 ; i < 12; i++)
-			Assert.assertEquals(embargos.get(1).getId(), salaryEmbargos.get(i).getContractEmbargo());
+			assertEquals(salaryEmbargos.get(i).getContractEmbargo(), embargos.get(1).getId());
 		for ( int i = 12 ; i < embargos.size(); i++)
-			Assert.assertEquals(-666, (int) salaryEmbargos.get(i).getContractEmbargo());
+			assertEquals(-666, (int) salaryEmbargos.get(i).getContractEmbargo());
 
 	}
 
@@ -753,12 +753,12 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 		
 		List<ContractBonusRecord> bonuses; 
 		bonuses = getBonus(aonContext, contract);
-		Assert.assertEquals(1, bonuses.size());
+		assertEquals(1, bonuses.size());
 		ContractBonusRecord bonus = bonuses.get(0); 
-		Assert.assertEquals(bonus.getExpression(), draftBonus.getExpression());
-		Assert.assertEquals(bonus.getDescription(), draftBonus.getDescriptionTemplate());
-		Assert.assertEquals(bonus.getStartDate(), draftBonus.getStartDate());
-		Assert.assertEquals(bonus.getEndDate(), draftBonus.getEndDate());
+		assertEquals(draftBonus.getExpression(), bonus.getExpression());
+		assertEquals(draftBonus.getDescriptionTemplate(), bonus.getDescription());
+		assertEquals(draftBonus.getStartDate(), bonus.getStartDate());
+		assertEquals(draftBonus.getEndDate(), bonus.getEndDate());
 		
 		// change expression & description...easy
 		draftBonus.setId(bonus.getId());
@@ -767,12 +767,12 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		bonuses = getBonus(aonContext, contract);
-		Assert.assertEquals(1, bonuses.size());
+		assertEquals(1, bonuses.size());
 		bonus = bonuses.get(0); 
-		Assert.assertEquals(bonus.getExpression(), draftBonus.getExpression());
-		Assert.assertEquals(bonus.getDescription(), draftBonus.getDescriptionTemplate());
-		Assert.assertEquals(bonus.getStartDate(), draftBonus.getStartDate());
-		Assert.assertEquals(bonus.getEndDate(), draftBonus.getEndDate());
+		assertEquals(draftBonus.getExpression(), bonus.getExpression());
+		assertEquals(draftBonus.getDescriptionTemplate(), bonus.getDescription());
+		assertEquals(draftBonus.getStartDate(), bonus.getStartDate());
+		assertEquals(draftBonus.getEndDate(), bonus.getEndDate());
 		
 		
 		// change start date... previous month
@@ -781,12 +781,12 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		bonuses = getBonus(aonContext, contract);
-		Assert.assertEquals(1, bonuses.size());
+		assertEquals(1, bonuses.size());
 		bonus = bonuses.get(0); 
-		Assert.assertEquals(bonus.getExpression(), draftBonus.getExpression());
-		Assert.assertEquals(bonus.getDescription(), draftBonus.getDescriptionTemplate());
-		Assert.assertEquals(bonus.getStartDate(), draftBonus.getStartDate());
-		Assert.assertEquals(bonus.getEndDate(), draftBonus.getEndDate());
+		assertEquals(draftBonus.getExpression(), bonus.getExpression());
+		assertEquals(draftBonus.getDescriptionTemplate(), bonus.getDescription());
+		assertEquals(draftBonus.getStartDate(), bonus.getStartDate());
+		assertEquals(draftBonus.getEndDate(), bonus.getEndDate());
 		
 		// change end date & expression... 
 		draftBonus.setId(bonus.getId());
@@ -795,18 +795,18 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		bonuses = getBonus(aonContext, contract);
-		Assert.assertEquals(2, bonuses.size());
+		assertEquals(2, bonuses.size());
 		bonus = bonuses.get(0); 
-		Assert.assertEquals(bonus.getExpression(), draftBonus.getExpression());
-		Assert.assertEquals(bonus.getDescription(), draftBonus.getDescriptionTemplate());
-		Assert.assertEquals(bonus.getStartDate(), draftBonus.getStartDate());
-		Assert.assertEquals(bonus.getEndDate(), draftBonus.getEndDate());
+		assertEquals(draftBonus.getExpression(), bonus.getExpression());
+		assertEquals(draftBonus.getDescriptionTemplate(), bonus.getDescription());
+		assertEquals(draftBonus.getStartDate(), bonus.getStartDate());
+		assertEquals(draftBonus.getEndDate(), bonus.getEndDate());
 	
 		bonus = bonuses.get(1); 
-		Assert.assertEquals(bonus.getExpression(), "999.00");
-		Assert.assertEquals(bonus.getDescription(), draftBonus.getDescriptionTemplate());
-		Assert.assertEquals(bonus.getStartDate(), add(add(startMonth, Calendar.MONTH, 10),Calendar.DAY_OF_MONTH,1));
-		Assert.assertEquals(bonus.getEndDate(), null);
+		assertEquals("999.00", bonus.getExpression());
+		assertEquals(draftBonus.getDescriptionTemplate(), bonus.getDescription());
+		assertEquals(add(add(startMonth, Calendar.MONTH, 10),Calendar.DAY_OF_MONTH,1), bonus.getStartDate());
+		assertEquals(null, bonus.getEndDate());
 		
 		// Remove
 		draftBonus.setId(bonuses.get(0).getId());
@@ -814,12 +814,12 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 		
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		bonuses = getBonus(aonContext, contract);
-		Assert.assertEquals(1, bonuses.size());
+		assertEquals(1, bonuses.size());
 		bonus = bonuses.get(0); 
-		Assert.assertEquals(bonus.getExpression(), "999.00");
-		Assert.assertEquals(bonus.getDescription(), draftBonus.getDescriptionTemplate());
-		Assert.assertEquals(bonus.getStartDate(), add(add(startMonth, Calendar.MONTH, 10),Calendar.DAY_OF_MONTH,1));
-		Assert.assertEquals(bonus.getEndDate(), null);
+		assertEquals("999.00", bonus.getExpression());
+		assertEquals(draftBonus.getDescriptionTemplate(), bonus.getDescription());
+		assertEquals(add(add(startMonth, Calendar.MONTH, 10),Calendar.DAY_OF_MONTH,1), bonus.getStartDate());
+		assertEquals(null, bonus.getEndDate());
 		
 		// Remove
 		draftBonus.setId(bonuses.get(0).getId());
@@ -827,7 +827,7 @@ public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
 		draftBonus.setEndDate(null);
 		SQLSalaryDraft.save(connection, draft, contract.getDomain(), null);
 		bonuses = getBonus(aonContext, contract);
-		Assert.assertEquals(0, bonuses.size());
+		assertEquals(0, bonuses.size());
 		
 	}
 

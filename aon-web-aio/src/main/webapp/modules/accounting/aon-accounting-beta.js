@@ -81,7 +81,8 @@ export class AonAccountingBeta extends AonElement {
 
 			aonAccountingBeta.addSidenavOptions(MSG.MENU.toUpperCase(), menuOptions);
 		}
-		if (localStorage.getItem("aon_domain_id")&&(this.getDur().isInvoice() && (this.getDur().isOcr() || this.getDur().isInvofox()))) {
+		
+		if ( localStorage.getItem("aon_domain_id") && !this.getDur().isConsultancy() && (this.getDur().isInvoice() && (this.getDur().isOcr() || this.getDur().isInvofox())) ) {
 	       let utilitiesOptions = {
 				id: "uploadInvoice",
 				title: MSG.UTILITIES.toUpperCase(),

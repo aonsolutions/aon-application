@@ -181,18 +181,23 @@ public enum AonError implements Serializable{
 	, BRAND_REPEAT("Ya existe una marca con el mismo nombre.")
 	
 	
+	// --------------------------------------------- AMORTIZATION
+	,AMORTIZATION_EMPTY_FIXED_ASSET_ACCOUNT("No se ha indicado tipo de amortizaci\u00F3n ni cuenta de inmovilizado")
+	,AMORTIZATION_EMPTY_ACCUMULATED_ACCOUNT("No se ha indicado tipo de amortizaci\u00F3n ni cuenta de acumulado")
+	,AMORTIZATION_EMPTY_ALLOCATION_ACCOUNT("No se ha indicado tipo de amortizaci\u00F3n ni cuenta de dotaci\u00F3n")
+	
 	// --------------------------------------------- AMORTIZATION TYPE
-	,AMORTIZATION_TYPE_NULL("El tipo de amortizacion es nulo.")
-	,AMORTIZATION_TYPE_NULL_DESCRIPTION("La descripcion del tipo de amortizacion es nula")
-	,AMORTIZATION_TYPE_NULL_FIXED_ASSET_ACCOUNT("El valor de la cuenta fija de activos es nulo")
-	,AMORTIZATION_TYPE_NULL_ACCUMULATED_ACCOUNT("El valor de la cuenta acumulada es nulo")
-	,AMORTIZATION_TYPE_NULL_ALLOCATION_ACCOUNT("El valor de la cuenta de asignacion es nulo")
+	,AMORTIZATION_TYPE_NULL("El tipo de amortizaci\u00F3n es nulo.")
+	,AMORTIZATION_TYPE_NULL_DESCRIPTION("La descripci\u00F3n del tipo de amortizacion es nula")
+	,AMORTIZATION_TYPE_NULL_FIXED_ASSET_ACCOUNT("El valor de la cuenta de inmovilizado es nulo")
+	,AMORTIZATION_TYPE_NULL_ACCUMULATED_ACCOUNT("El valor de la cuenta de acumulado es nulo")
+	,AMORTIZATION_TYPE_NULL_ALLOCATION_ACCOUNT("El valor de la cuenta de dotaci\u00F3n es nulo")
 	,AMORTIZATION_TYPE_NULL_PERCENTAGE("El valor del porcentaje es nulo")
-	,AMORTIZATION_TYPE_FIXED_ASSET_ACCOUNT_LENGTH("La longitud del dato para la cuenta fija excede el permitido")
-	,AMORTIZATION_TYPE_ACCUMULATED_ACCOUNT_LENGTH("La longitud del campo para la cuenta acumulada excede el permitido")
-	,AMORTIZATION_TYPE_ALLOCATION_ACCOUNT_LENGTH("La longitud del campo para la cuenta de asignacion excede el permitido")
-	,AMORTIZATION_TYPE_FIXED_DESCRIPTION_LENGTH("La longitud del campo para la descripcion excede el permitido")
-	,AMORTIZATION_TYPE_PARAMS_NULL("Los parametros son nulos")
+	,AMORTIZATION_TYPE_FIXED_ASSET_ACCOUNT_LENGTH("La longitud del dato para la de cuenta de inmovilizado excede el permitido")
+	,AMORTIZATION_TYPE_ACCUMULATED_ACCOUNT_LENGTH("La longitud del campo para la cuenta de acumulado excede el permitido")
+	,AMORTIZATION_TYPE_ALLOCATION_ACCOUNT_LENGTH("La longitud del campo para la cuenta de dotaci\u00F3n excede el permitido")
+	,AMORTIZATION_TYPE_FIXED_DESCRIPTION_LENGTH("La longitud del campo para la descripci\u00F3n excede el permitido")
+	,AMORTIZATION_TYPE_PARAMS_NULL("Los par\u00E1metros son nulos")
 	
 	// --------------------------------------------- INVOICE
 	,INVOICE_SAVE_ERROR("No se ha podido grabar la factura")

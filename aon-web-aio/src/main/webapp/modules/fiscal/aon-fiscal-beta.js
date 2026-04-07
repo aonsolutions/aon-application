@@ -3,6 +3,7 @@ import { getCompany } from "../../services/service.js";
 import { AonApplication } from '../../components/aon-application.js';
 import { CONSTANT, MSG } from '../../environments/environments.js';
 import * as JSF from '../aon-jsf-app.js';
+import * as GWT from '../../gwt/gwt.js';
 import { AonFiscalMenu } from './aon-fiscal-menu.js';
 
 export class AonFiscalBeta extends AonElement {
@@ -39,17 +40,19 @@ export class AonFiscalBeta extends AonElement {
 
 	build() {
 		this.buildToolbar();
-		
+
 		let aonFiscalBeta = this.getElement(this.AON_FISCAL_BETA);
 
 		if (localStorage.getItem("aon_domain_id")) {
 			let configurationOptions = [];
-			configurationOptions.push({
-				id: "parameters",
-				icon: "settings_applications",
-				name: "Parametros",
-				fn: () => this.getApplication().setContent(new JSF.AonJsfFiscalParams()),
-			});
+			
+			if(!this.getDur().isConsultancy())
+				configurationOptions.push({
+					id: "parameters",
+					icon: "settings_applications",
+					name: "Parametros",
+					fn: () => this.getApplication().setContent(new JSF.AonJsfFiscalParams()),
+				});
 
 			configurationOptions.push({
 				id: "observations",
@@ -61,7 +64,7 @@ export class AonFiscalBeta extends AonElement {
 			aonFiscalBeta.addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);
 		}
 
-		if (localStorage.getItem("aon_domain_id") && this.isBeta()) {
+		if (localStorage.getItem("aon_domain_id") && this.isBeta() && !this.getDur().isConsultancy()) {
 			let menuOptions = [];
 
 			menuOptions.push({
@@ -75,9 +78,16 @@ export class AonFiscalBeta extends AonElement {
 		}
 
 		this.buildFiscalMenu();
+
+		// Load fiscal matrix by default if its Entorno
+		if (this.getDur().isDomainManagementAvailable()) {
+			GWT.iLoad(GWT.MODEL_MATRIX, this.getApplication().CONTENT);
+			this.getApplication().closeSidenav();
+		}
+		
 	}
-	
-	buildToolbar(){
+
+	buildToolbar() {
 		this.getApplication().removeToolbarOptions();
 		this.getApplication().addCompanyNotes(this.company.id, 'FISCAL');
 	}
@@ -86,13 +96,13 @@ export class AonFiscalBeta extends AonElement {
 		this.getApplication().setContent(new AonFiscalMenu());
 	}
 
-	getOptions(){
+	getOptions() {
 		let aonFiscalMenu = new AonFiscalMenu();
 		aonFiscalMenu.setDur(this.getDur());
 		return aonFiscalMenu.getOptions();
 	}
 
 }
-if(!window.customElements.get("aon-fiscal-beta")) {
+if (!window.customElements.get("aon-fiscal-beta")) {
 	window.customElements.define("aon-fiscal-beta", AonFiscalBeta);
 }
