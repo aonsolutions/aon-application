@@ -8,19 +8,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.dsi.nominas.Traspaso;
 import com.esferalia.aon.dsi.nominas.model.Convenio;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
-@Ignore
-@RunWith(JUnit4.class)
+@Disabled
 public class TestParadox {
 	
 //	VARIOS TEST PARA CONEXION PARADOX NOMINAS OMEGA
@@ -29,12 +26,12 @@ public class TestParadox {
 	
 	private Connection conn;
 
-	@Before
+	@BeforeEach
 	public void connect() throws Exception {
 		conn = Traspaso.getDsiConnection(OMEGA_CONNECTION_STRING);
 	}
 
-	@After
+	@AfterEach
 	public void closeConnection() throws Exception {
 		if (conn != null) {
 			conn.close();
@@ -67,7 +64,7 @@ public class TestParadox {
 
     }	
 	
-	@Ignore
+	@Disabled
 	@Test
     public void testShowCount() throws SQLException {
 		
@@ -112,7 +109,7 @@ public class TestParadox {
 		
     }
 	
-	@Ignore
+	@Disabled
 	@Test
     public void testNullJoin() throws SQLException {
 		
@@ -136,7 +133,7 @@ public class TestParadox {
         
     }
 	
-	@Ignore
+	@Disabled
     @Test
     public void testWithParameters() throws SQLException {
 		
@@ -158,7 +155,7 @@ public class TestParadox {
         }
     }
 	
-	@Ignore
+	@Disabled
     @Test
     public void testConvenios() throws SQLException {
 		

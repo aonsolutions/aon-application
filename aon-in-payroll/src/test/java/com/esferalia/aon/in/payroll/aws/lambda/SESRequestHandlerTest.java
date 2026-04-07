@@ -2,9 +2,9 @@ package com.esferalia.aon.in.payroll.aws.lambda;
 
 import java.io.IOException;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.amazonaws.services.lambda.runtime.Context;
 
@@ -15,7 +15,7 @@ public class SESRequestHandlerTest {
 
     private static Object input;
 
-    @BeforeClass
+    @BeforeAll
     public static void createInput() throws IOException {
         // TODO: set up your sample input object here.
         input = null;
@@ -38,6 +38,6 @@ public class SESRequestHandlerTest {
         String output = handler.handleRequest(input, ctx);
 
         // TODO: validate output here if needed.
-        Assert.assertEquals("Hello from Lambda!", output);
+        Assertions.assertEquals("Hello from Lambda!", output);
     }
 }
