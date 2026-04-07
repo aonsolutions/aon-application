@@ -23,9 +23,11 @@ import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.tgss.FellowsBases2026Update;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2026Update;
 import net.aonsolutions.db.up2date.tgss.HomeBases2026Update;
+import net.aonsolutions.db.up2date.tgss.OrderPJC2972026Art28Update;
 import net.aonsolutions.db.up2date.tgss.SociosCoopBases2026Update;
 import net.aonsolutions.db.up2date.tgss.TrainingPercentages2026Update;
 import net.aonsolutions.db.up2date.tgss.TrainningBases2026Update;
+import net.aonsolutions.db.up2date.timecontrol.CalendarFixNulls;
 
 public class Up2Date {
 
@@ -609,10 +611,12 @@ public class Up2Date {
 			FellowsPercentages2026Update.FELLOWSPERCENTAGES2026UPDATE,
 			TrainingPercentages2026Update.TRAINNINGPERCENTAGES2026UPDATE,
 			SociosCoopBases2026Update.SOCIOSCOOPBASES2026UPDATE,
+			OrderPJC2972026Art28Update.ORDERPJC2972026ART28UPDATE,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
 			// MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
+			CalendarFixNulls.CALENDAR_FIX_NULLS,
 			DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS,
 			// RdocTag.RDOC_TAG,
 			// UpdateCategoryTree.UPDATE_CATEGORY_TREE,

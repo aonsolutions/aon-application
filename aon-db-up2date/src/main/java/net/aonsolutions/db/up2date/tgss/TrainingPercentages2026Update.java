@@ -118,53 +118,6 @@ public class TrainingPercentages2026Update implements Update {
 			.execute();
 
 			// ---------------------------------------------------------
-			// MEI
-			
-			SelectConditionStep<Record1<Integer>> meiConcept = 
-			DSL.select(DEDUCTION_CONCEPT.ID)
-			.from(DEDUCTION_CONCEPT)
-			.where(DEDUCTION_CONCEPT.DOMAIN.eq(0))
-			.and(DEDUCTION_CONCEPT.CODE.eq("MEI"));
-			
-			// Close old  MEI
-			dslContext.update(SYSTEM_DEDUCTION)
-			.set(SYSTEM_DEDUCTION.END_DATE, end2025Date)
-			.where(SYSTEM_DEDUCTION.DOMAIN.eq(DOMAIN))
-			.and(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT.eq(meiConcept))
-			.and(SYSTEM_DEDUCTION.END_DATE.isNull())
-			.execute();
-
-			// Insert new MEI
-			dslContext
-			.insertInto(SYSTEM_DEDUCTION)
-			.set(SYSTEM_DEDUCTION.DOMAIN, DOMAIN)
-			.set(SYSTEM_DEDUCTION.START_DATE, start2026Date)
-			.set(SYSTEM_DEDUCTION.EXPRESSION, "TOTAL_BASE_CGC > 0.00 ? 2.14 : 0.00" )
-			.set(SYSTEM_DEDUCTION.END_DATE, DSL.castNull(SYSTEM_DEDUCTION.END_DATE))
-			.set(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT, meiConcept )
-			.execute();
-			
-			// Close old  MEI_E 
-			dslContext.update(SYSTEM_COST)
-			.set(SYSTEM_COST.END_DATE, end2025Date)
-			.where(SYSTEM_COST.DOMAIN.eq(DOMAIN))
-			.and(SYSTEM_COST.CODE.in("MEI_E"))
-			.and(SYSTEM_COST.END_DATE.isNull())
-			.execute();
-
-			// Insert new MEI_E
-			dslContext
-			.insertInto(SYSTEM_COST)
-			.set(SYSTEM_COST.DOMAIN, DOMAIN)
-			.set(SYSTEM_COST.TYPE, (byte) 13 )
-			.set(SYSTEM_COST.CODE, "MEI_E" )
-			.set(SYSTEM_COST.START_DATE, start2026Date)
-			.set(SYSTEM_COST.DESCRIPTION, "MEI")
-			.set(SYSTEM_COST.EXPRESSION, "TOTAL_BASE_CGC_E > 0.00 ? 10.68 : 0.00" )
-			.set(SYSTEM_COST.END_DATE, DSL.castNull(SYSTEM_COST.END_DATE))
-			.execute();
-
-			// ---------------------------------------------------------
 			// FP
 			
 			SelectConditionStep<Record1<Integer>> fpConcept = 
