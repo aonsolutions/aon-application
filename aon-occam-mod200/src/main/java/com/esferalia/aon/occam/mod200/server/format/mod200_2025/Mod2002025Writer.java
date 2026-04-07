@@ -66,7 +66,7 @@ public class Mod2002025Writer {
 	private static final int DD = 2;  // Decimales por defecto para los importes
 	
 	private static final Mod2002025KeyDC[][] CORRECTIONS_KEYS = {
-			{ Mod2002025KeyDC.DC0073, Mod2002025KeyDC.DC2650 }, // Página 26B (from, to)
+			{ Mod2002025KeyDC.DC3646, Mod2002025KeyDC.DC2650 }, // Página 26B (from, to)
 			{ Mod2002025KeyDC.DC2654, Mod2002025KeyDC.DC2831 }, // Página 26C (from, to)
 			{ Mod2002025KeyDC.DC2574, Mod2002025KeyDC.DC2844 }, // Página 26D (from, to)
 			{ Mod2002025KeyDC.DC2984, Mod2002025KeyDC.DC3170 }, // Página 26E (from, to)
@@ -543,6 +543,20 @@ public class Mod2002025Writer {
     	
 	}
     
+    private static void addBreakdownFromConstants(Writer l, Mod2002025 m, Mod2002025Key[] keys) throws IOException {
+    	addBreakdownFromConstants(l, m, keys, false);
+	}
+    
+    private static void addBreakdownFromConstants(Writer l, Mod2002025 m, Mod2002025Key[] keys, boolean isComplementary) throws IOException {
+		
+    	for (Mod2002025Key key : keys) {
+    		if (key != null) {
+				addSignedKey(l, m, key, isComplementary);
+    		 }
+    	}
+    	
+	}
+    
     private static boolean addBreakdownCorrectionKeys(Writer l, Mod2002025 m, int page) throws IOException {
     	
     	Mod2002025KeyDC fromKey = CORRECTIONS_KEYS[page][0];
@@ -663,7 +677,6 @@ public class Mod2002025Writer {
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002025Key.C0066, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002025Key.C0078, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002025Key.C0056, 1, 0)
-//				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002025Key.C0083, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002025Key.C0006, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002025Key.C0015, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002025Key.C0079, 1, 0)
@@ -720,23 +733,6 @@ public class Mod2002025Writer {
 				,(line, mod200, label) -> line.append(mod200.getDoubleValue(Mod2002025Key.VOLOPE) == 2.0 ? "1" : "0")  // Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del período impositivo - de al menos 20 millones de euros pero inferior a 60 millones de euros
 				,(line, mod200, label) -> line.append(mod200.getDoubleValue(Mod2002025Key.VOLOPE) == 3.0 ? "1" : "0")  // Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del período impositivo - de al menos 60 millones de euros
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(21))  // RESERVADO PARA LA A.E.A.T. (Dejar en blanco) Incluye Nº Referencia
-				
-//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned(mod200.getBalanceType() == null ? 0 : mod200.getBalanceType().ordinal() + 1, 1, 0))
-//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned((mod200.getEcpnType() == null || mod200.getEcpnType() == EcpnType.NO_CONSTA) ? 0 : mod200.getEcpnType().ordinal() + 1, 1, 0))
-//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned(mod200.getPygType() == null || mod200.getDoubleValue(Mod2002025Key.C0026) == 1 ? 0 : mod200.getPygType().ordinal() + 1, 1, 0))
-//				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002025Key.C0061, 1, 0)
-//				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002025Key.C0068, 1, 0)				
-//				,(line, mod200, label) -> line.append("0") // Modelo de estados contables que se va a cumplimentar (No se usa, es solo para estados contables entidades de credito, entidades aseguradoras, sociedades de garantía reciproca e IIC) (No se usa en AON)
-//				,(line, mod200, label) -> line.append(AonStringUtils.isEmpty(mod200.getFiscalGroup()) ? AonFiscalFileUtils.spaces(7) : AonFiscalFileUtils.number(mod200.getFiscalGroup(), 7))
-//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantDocument(), 9))
-//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantIdentificationNumber(), 15))
-//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateDocument(), 15))       				// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: NIF o equivalente.
-//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(("ES".equals(Country.safeIso2(mod200.getUltimateDocumentCountry())) ? "" : Country.safeIso2(mod200.getUltimateDocumentCountry())), 2)) // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Código país (solo si no es España)
-//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateName(), 40))           				// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Nombre o razón social
-//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(Country.safeIso2(mod200.getUltimateCountry()), 2))  	// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: País o jurisdicción
-//				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002025Key.C0041, 9, 2)
-//				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002025Key.C0042, 9, 2)				
-				
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(20))  // Identificador cliente EEDD. RESERVADO PARA LAS EEDD.              
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(50))  // Nombre y Apellidos de la persona de contacto para incidencias     
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.zeros(9))    // Teléfono fijo de contacto para incidencias                        
@@ -1510,7 +1506,7 @@ public class Mod2002025Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.LQ501)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.LQ1230)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.LQ1231)
-				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025CorrectionKey.values(), Mod2002025Key.I0093, Mod2002025Key.D1573)  // Correcciones al resultado contable
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025CorrectionKey.values(), Mod2002025Key.I3401, Mod2002025Key.D1573)  // Correcciones al resultado contable
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
 			})
@@ -1752,7 +1748,15 @@ public class Mod2002025Writer {
 		, PAG16B("T20016B00", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label)
 				,(line, mod200, label) -> line.append(" ")				
-				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025BN590Key.values())				
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025BN590Key.values(), Mod2002025Key.BN854, Mod2002025Key.BN887)				
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
+				,(line, mod200, label) -> addEndLabel(line, label) 
+			})
+		
+		, PAG16C("T20016C00", new IPropertyFiller[] { 
+				 (line, mod200, label) -> addStartLabel(line, label)
+				,(line, mod200, label) -> line.append(" ")				
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025BN590Key.values(), Mod2002025Key.BN2287, Mod2002025Key.BN2080)				
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
 			})
@@ -1760,10 +1764,10 @@ public class Mod2002025Writer {
 		, PAG17("T20017000", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ") 
-				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025BN588Key.values(), Mod2002025Key.BN061, Mod2002025Key.BN830)
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025BN588Key.values(), Mod2002025Key.BN472, Mod2002025Key.BN830)
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
-		})
+			})
 		
 		, PAG18("T20018000", new IPropertyFiller[] { 
 				(line, mod200, label) -> {
@@ -1779,7 +1783,7 @@ public class Mod2002025Writer {
 							addNIF(line, mod200.getFilmProductions(), c++);
 						}
 						
-						addBreakdown(line, mod200, Mod2002025BN588Key.values(), Mod2002025Key.BN2365, null, isComplementary);
+						addBreakdown(line, mod200, Mod2002025BN588Key.values(), Mod2002025Key.BN2371, Mod2002025Key.BN3522, isComplementary);
 						
 						line.append(AonFiscalFileUtils.spaces(200)); // Reservado para la AEAT
 		
@@ -1792,6 +1796,7 @@ public class Mod2002025Writer {
 		, PAG18B("T20018B00", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ") 
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025BN588Key.values(), Mod2002025Key.BN3523, Mod2002025Key.BN832)
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025BN2315Key.values())
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025BN1039Key.values())				
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025BN2314Key.values())
@@ -1815,7 +1820,15 @@ public class Mod2002025Writer {
 				,(line, mod200, label) -> line.append(" ")
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025BN1040Key.values())
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025BN1041Key.values())
-				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025BN082Key.values())			
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025BN082Key.values(), Mod2002025Key.BN918, Mod2002025Key.BN1234A)			
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
+				,(line, mod200, label) -> addEndLabel(line, label) 
+			})
+		
+		, PAG19B("T20019B00", new IPropertyFiller[] { 
+				 (line, mod200, label) -> addStartLabel(line, label)
+				,(line, mod200, label) -> line.append(" ")
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025BN082Key.values(), Mod2002025Key.BN814, Mod2002025Key.BN130)			
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
 			})
@@ -1848,7 +1861,7 @@ public class Mod2002025Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.DC2309)	
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.DC2310)	
 				
-				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025LQ1032Key.values())
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025LQ1032Key.values()) // FALTA - AQUI ESTA LA CASILLA MILLON QUE ES UN CHECK A VER COMO SE PONE AL FINAL
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025LQ1033_1Key.values())
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025LQ1033_2Key.values())
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
@@ -1871,26 +1884,28 @@ public class Mod2002025Writer {
 		, PAG20D("T20020D00", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label)
 				,(line, mod200, label) -> line.append(" ")			
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID650)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID651)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID652)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID653)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID654)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID1270)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID1271)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID1522)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID655)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID656)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID658)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID091)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID092)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID660)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID662)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID664)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID665)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID666)				
-				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025LM1494Key.values())
+//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID650)
+//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID651)
+//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID652)
+//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID653)
+//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID654)
+//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID1270)
+//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID1271)
+//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID1522)
+//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID655)
+//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID656)
+//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID658)
+//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID091)
+//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID092)
+//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID660)
+//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID662)
+//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID664)
+//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID665)
+//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID666)
 				
+				,(line, mod200, label) -> addBreakdownFromConstants(line, mod200, Mod2002025Constants.INCOME_DISTRIBUTION_KEYS_1) // Aplicación de resultados: Base de reparto
+				,(line, mod200, label) -> addBreakdownFromConstants(line, mod200, Mod2002025Constants.INCOME_DISTRIBUTION_KEYS_2) // Aplicación de resultados: Aplicación
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025LM1494Key.values())
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002025Key.RV000, 2, 0 )  // Reversión de las pérdidas por deterioro de valores representativos - Número de período impositivo (*)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.RV941 )  // Reversión por deterioro de valores representativos - Dotaciones pendientes de integración a principio del período [00941]
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.RV2810)  // Reversión por deterioro de valores representativos - Dotaciones integradas en esta liquidación DT 16ª.1 y 2 LIS [02810]
@@ -2041,28 +2056,8 @@ public class Mod2002025Writer {
 							addUteParticipationBis(line, mod200, i2++);
 						}						
 						
-						// TOTALES Partícipes de Agrupaciones de interés económico y UTES
-						addSignedKey(line, mod200, Mod2002025Key.UT1279, isComplementary);  // Total - Datos relativos a la participación: Valoración de la participación al comienzo del período impositivo 
-						addSignedKey(line, mod200, Mod2002025Key.UT1455, isComplementary);  // Total - Datos relativos a la participación: Valoración de la participación al final del período impositivo
-						addSignedKey(line, mod200, Mod2002025Key.UT1456, isComplementary);  // Total - Datos relativos a la participación: Ingresos financieros de la participación
-						addSignedKey(line, mod200, Mod2002025Key.UT1458, isComplementary);  // Total - Importes imputados: Importe del resultado contable imputado
-						addSignedKey(line, mod200, Mod2002025Key.UT1459, isComplementary);  // Total - Importes imputados: Gastos financieros netos imputados
-						addSignedKey(line, mod200, Mod2002025Key.UT1460, isComplementary);  // Total - Importes imputados: Reserva de capitalización que no haya sido aplicada imputada
-						addSignedKey(line, mod200, Mod2002025Key.UT1461, isComplementary);  // Total - Importes imputados: Base imponible imputada
-						addSignedKey(line, mod200, Mod2002025Key.UT1467, isComplementary);  // Total - Importes imputados: Importe de la deducción generada por bases de deducción para evitar la doble imposición imputadas
-						addSignedKey(line, mod200, Mod2002025Key.UT1468, isComplementary);  // Total - Importes imputados: Importe bonificación generada de las bases de bonificación imputadas
-						addSignedKey(line, mod200, Mod2002025Key.UT1523, isComplementary);  // Total - Importes imputados: Importe de la deducción generada por activos fijos por bases de deducción por inversión en Canarias imputadas
-						addSignedKey(line, mod200, Mod2002025Key.UT1601, isComplementary);  // Total - Importes imputados: Importe de la deducción generada de investigación y desarrollo e innovación tecnológica por bases de deducción por inversión en Canarias imputadas
-						addSignedKey(line, mod200, Mod2002025Key.UT1638, isComplementary);  // Total - Importes imputados: Importe de la deducción generada de producciones cinematográficas españolas y espectáculos en vivo de artes escénicas y musicales por deducciones por inversión en Canarias imputadas
-						addSignedKey(line, mod200, Mod2002025Key.UT1639, isComplementary);  // Total - Importes imputados: Importe de la deducción generada del resto de deducciones por inversión en Canarias imputadas
-						addSignedKey(line, mod200, Mod2002025Key.UT1640, isComplementary);  // Total - Importes imputados: Importe de la deducción generada de investigación y desarrollo e innovación tecnológica por bases de deducción imputadas
-						addSignedKey(line, mod200, Mod2002025Key.UT1743, isComplementary);  // Total - Importes imputados: Importe de la deducción generada de producciones cinematográficas españolas y espectáculos en vivo de artes escénicas y musicales por bases de deducción imputadas
-						addSignedKey(line, mod200, Mod2002025Key.UT1909, isComplementary);  // Total - Importes imputados: Importe del resto de deducciones generadas para incentivar determinadas actividades por bases de deducción imputadas
-						addSignedKey(line, mod200, Mod2002025Key.UT1910, isComplementary);  // Total - Importes imputados: Importe del resto de deducciones generadas por bases de deducción imputadas no mencionadas anteriormente
-						addSignedKey(line, mod200, Mod2002025Key.UT1911, isComplementary);  // Total - Importes imputados: Retenciones e ingresos a cuenta imputados
-						addSignedKey(line, mod200, Mod2002025Key.UT1912, isComplementary);  // Total - Importes imputados: Dividendos y participaciones en beneficios percibidos procedentes de ejercicios anteriores a la adquisición de la participación
-						addSignedKey(line, mod200, Mod2002025Key.UT1934, isComplementary);  // Total - Importes imputados: Dividendos y participaciones en beneficios percibidos procedentes de ejercicios posteriores a la adquisición de la participación
-							
+						addBreakdownFromConstants(line, mod200, Mod2002025Constants.UTE_PARTICIPATION_BIS_KEYS, isComplementary); // TOTALES Partícipes de Agrupaciones de interés económico y UTES
+			
 						line.append(AonFiscalFileUtils.spaces(200)); // Reservado para la AEAT
 		
 						isComplementary = true;
@@ -2100,7 +2095,6 @@ public class Mod2002025Writer {
 		, PAG26B("T20026B00", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ")  // Indicador de página complementaria				
-//				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, Mod2002025KeyDC.DC0073, Mod2002025KeyDC.DC2650)
 				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, 0)
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) // Etiqueta fin de pagina
@@ -2109,7 +2103,6 @@ public class Mod2002025Writer {
 		, PAG26C("T20026C00", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ")  // Indicador de página complementaria
-//				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, Mod2002025KeyDC.DC2654, Mod2002025KeyDC.DC2831)
 				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, 1)
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) // Etiqueta fin de pagina
@@ -2118,7 +2111,6 @@ public class Mod2002025Writer {
 		, PAG26D("T20026D00", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ")  // Indicador de página complementaria
-//				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, Mod2002025KeyDC.DC2574, Mod2002025KeyDC.DC2844)
 				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, 2)
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) // Etiqueta fin de pagina
@@ -2127,7 +2119,6 @@ public class Mod2002025Writer {
 		, PAG26E("T20026E00", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ")  // Indicador de página complementaria
-//				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, Mod2002025KeyDC.DC2984, Mod2002025KeyDC.DC3170)
 				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, 3)
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) // Etiqueta fin de pagina
@@ -2136,7 +2127,6 @@ public class Mod2002025Writer {
 		, PAG26F("T20026F00", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ")  // Indicador de página complementaria
-//				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, Mod2002025KeyDC.DC3174, Mod2002025KeyDC.DC2293)
 				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, 4)
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) // Etiqueta fin de pagina
@@ -2145,7 +2135,6 @@ public class Mod2002025Writer {
 		, PAG26G("T20026G00", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ")  // Indicador de página complementaria
-//				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, Mod2002025KeyDC.DC3324, Mod2002025KeyDC.DC3400)
 				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, 5)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.DC2305)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.DC2301)
@@ -2270,41 +2259,6 @@ public class Mod2002025Writer {
 			if (this == Pages2025.PAG26) {
 				addPage = (mod200.isChecked(Mod2002025Key.C0028));
 			}
-//			
-//			// Páginas 26B: Solo si hay algún importe en la pagina
-//			if (this == Pages2025.PAG26B) {				
-//				addPage = addBreakdownCorrectionKeys(null, mod200, Mod2002025KeyDC.DC0073, Mod2002025KeyDC.DC2670);
-//			}
-//			
-//			// Páginas 26C: Solo si hay algún importe en la pagina			
-//			if (this == Pages2025.PAG26C) {
-//				addPage = addBreakdownCorrectionKeys(null, mod200, Mod2002025KeyDC.DC2674, Mod2002025KeyDC.DC2880);
-//			}
-//			
-//			// Páginas 26D: Solo si hay algún importe en la pagina
-//			if (this == Pages2025.PAG26D) {
-//				addPage = addBreakdownCorrectionKeys(null, mod200, Mod2002025KeyDC.DC3241, Mod2002025KeyDC.DC3040);
-//			}
-//
-//			// Páginas 26E: Solo si hay algún importe en la pagina
-//			if (this == Pages2025.PAG26E) {
-//				addPage = addBreakdownCorrectionKeys(null, mod200, Mod2002025KeyDC.DC3044, Mod2002025KeyDC.DC3240);
-//			}
-//			
-//			// Páginas 26F: Solo si hay algún importe en la pagina
-//			if (this == Pages2025.PAG26F) {
-//				addPage = addBreakdownCorrectionKeys(null, mod200, Mod2002025KeyDC.DC3246, Mod2002025KeyDC.DC3400) ||
-//						  mod200.getDoubleValue(Mod2002025Key.DC2305) != 0 ||
-//						  mod200.getDoubleValue(Mod2002025Key.DC2301) != 0 ||
-//						  mod200.getDoubleValue(Mod2002025Key.DC2303) != 0 ||
-//						  mod200.getDoubleValue(Mod2002025Key.DC2307) != 0 ||
-//						  mod200.getDoubleValue(Mod2002025Key.DC2309) != 0 ||
-//						  mod200.getDoubleValue(Mod2002025Key.DC2306) != 0 ||					
-//						  mod200.getDoubleValue(Mod2002025Key.DC2302) != 0 ||	
-//						  mod200.getDoubleValue(Mod2002025Key.DC2304) != 0 ||	
-//						  mod200.getDoubleValue(Mod2002025Key.DC2308) != 0 ||
-//						  mod200.getDoubleValue(Mod2002025Key.DC2310) != 0;
-//			}
 			
 			// Página 26B: Solo si hay algún importe en la pagina
 			if (this == Pages2025.PAG26B) {				
