@@ -30,11 +30,11 @@ import org.jooq.SQLDialect;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import net.aonsolutions.core.dbutils.AonSQLException;
 import com.code.aon.master.VersionManager;
@@ -47,7 +47,7 @@ import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.jooq.tables.records.SupplierRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 
-import junit.framework.Assert;
+import org.junit.jupiter.api.Assertions;
 
 public class AonDumpTestCase {
 
@@ -99,18 +99,18 @@ public class AonDumpTestCase {
 		return connection;
 	}
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUpBeforeClass() throws Exception {
 
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void tearDownAfterClass() throws Exception {
 //		if (connection != null)
 //			connection.close();
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		Settings settings = new Settings();
 		settings.setRenderSchema(false);
@@ -131,7 +131,7 @@ public class AonDumpTestCase {
 		dslContext.execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 	}
 
@@ -179,7 +179,7 @@ public class AonDumpTestCase {
 
 		List<String> _scopes = dslContext.select().from(SCOPE).where(SCOPE.DOMAIN.eq(domainId)).orderBy(SCOPE.DESCRIPTION).fetch(SCOPE.DESCRIPTION);
 		for ( int i = 0; i < scopes.length; i++ ) {
-			Assert.assertEquals(scopes[i].get(SCOPE.DESCRIPTION), _scopes.get(i));
+			Assertions.assertEquals(scopes[i].get(SCOPE.DESCRIPTION), _scopes.get(i));
 		}
 
 	}
@@ -289,12 +289,12 @@ public class AonDumpTestCase {
 		Record prurchasedetail = dslContext.select().from(PURCHASE_DETAIL).where(PURCHASE_DETAIL.DOMAIN.eq(domainId)).and(PURCHASE_DETAIL.SOURCE.eq((byte)0)).fetchOne();
 		Integer proposaldetailID = prurchasedetail.get(PURCHASE_DETAIL.SOURCE_ID);
 		Record proposal_detail = dslContext.select().from(PROPOSAL_DETAIL).where(PROPOSAL_DETAIL.ID.eq(proposaldetailID)).fetchOne();
-		Assert.assertEquals(proposal_detail.get(PROPOSAL_DETAIL.DESCRIPTION), "Test_descripcionPrueba");
+		Assertions.assertEquals(proposal_detail.get(PROPOSAL_DETAIL.DESCRIPTION), "Test_descripcionPrueba");
 
 		Record prurchasedetail2 = dslContext.select().from(PURCHASE_DETAIL).where(PURCHASE_DETAIL.DOMAIN.eq(domainId)).and(PURCHASE_DETAIL.SOURCE.eq((byte)2)).fetchOne();
 		Integer salesdetailID = prurchasedetail2.get(PURCHASE_DETAIL.SOURCE_ID);
 		Record sales_detail = dslContext.select().from(SALES_DETAIL).where(SALES_DETAIL.ID.eq(salesdetailID)).fetchOne();
-		Assert.assertEquals(sales_detail.get(SALES_DETAIL.DESCRIPTION), "Test_descripcionPrueba");
+		Assertions.assertEquals(sales_detail.get(SALES_DETAIL.DESCRIPTION), "Test_descripcionPrueba");
 
 
 

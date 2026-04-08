@@ -834,7 +834,8 @@ public abstract class EmployeeWidget extends FlowPanel {
 			if(AonStringUtils.isBlank(addressMunicipality.getValue()))
 				onEmployeeAddressMunicipalityChange(null, null);
 			else {
-				Entry<String, String> city = municipalities.getZipByMunicipalityName(addressMunicipality.getValue());
+				String provinceCode = getProvinceCode();
+				Entry<String, String> city = municipalities.getZipByMunicipalityName(provinceCode, addressMunicipality.getValue());
 				
 				addressMunicipality.setValue(city.getValue(), false);
 				onEmployeeAddressMunicipalityChange(city.getValue(), city.getKey());
@@ -846,7 +847,8 @@ public abstract class EmployeeWidget extends FlowPanel {
 			if(AonStringUtils.isBlank(addressMunicipality.getValue()))
 				onEmployeeAddressMunicipalityChange(null, null);
 			else {
-				Entry<String, String> city = municipalities.getZipByMunicipalityName(addressMunicipality.getValue());
+				String provinceCode = getProvinceCode();
+				Entry<String, String> city = municipalities.getZipByMunicipalityName(provinceCode, addressMunicipality.getValue());
 				
 				addressMunicipality.setValue(city.getValue(), false);
 				onEmployeeAddressMunicipalityChange(city.getValue(), city.getKey());
@@ -1041,8 +1043,7 @@ public abstract class EmployeeWidget extends FlowPanel {
 
 		for (com.esferalia.aon.gwt.payroll.shared.Country country : this.countries) {
 			addressProvince.addItem(country.getCountry().getName(), country.getCountry().getId().toString());
-			addressProvince.getElement().getElementsByTagName("option").getItem(addressProvince.getListBox().getItemCount() - 1)
-					.setAttribute("disabled", "disabled");
+			addressProvince.getElement().getElementsByTagName("option").getItem(addressProvince.getListBox().getItemCount() - 1).setAttribute("disabled", "disabled");
 			for (Geozone province : country.getProvinces())
 				addressProvince.addItem(province.getName(), province.getId().toString());
 		}
