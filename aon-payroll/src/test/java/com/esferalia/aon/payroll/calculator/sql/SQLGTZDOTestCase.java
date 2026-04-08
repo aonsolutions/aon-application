@@ -5252,6 +5252,85 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 		
 	}
+	
+	
+	@Test
+	public void testGtzdoTODO() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+
+		// @formatter:off
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P_0 + P_1";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P_0 + P_1";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, });
+		
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+					{
+						put(MONTH_DAYS.getName(), "30.00");
+					}
+				}, new String[] { 
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+						}
+				, new String[] {
+//						"BASE_CGC * 0.10", 
+//						"BASE_CGP * 0.05",
+//						"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, 
+				category);
+		//@formatter:on
+		addPayment(aonContext, contract, "GARANTIZADO","GTZDO(TODO,2, 365)" , "_P", "_P", PaymentType.CRA_0055);
+		addPrestIts(aonContext, contract);
+		
+		
+		Date startIt = getToday();
+		Date endIt = AonDateUtils.add(getToday(), Calendar.DATE, 100);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				endIt, 
+				null);
+		
+		addData(aonContext, contract, startIt, endIt, ContextVariable.REGULATORY_BASE, "100.00");
+		
+
+		Date startDate = getFirstDayOfMonth(add(startIt, Calendar.MONTH, 1));
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		salary.getPaymentS().forEach(p -> System.out.println(p.getExpression() + " = " + p.getAmount() + ", " + p.getQuote()));
+		
+		assertEquals(3000.00 , salary.getCommonBase(), DELTA);		
+		assertEquals(3000.00 , salary.getTotalPayment(), DELTA);		
+		
+	}
+	
 	@Test
 	@Disabled("Needs review")
 	public void testGtzdo4PartialSaved() throws ExpressionException, SQLException,
