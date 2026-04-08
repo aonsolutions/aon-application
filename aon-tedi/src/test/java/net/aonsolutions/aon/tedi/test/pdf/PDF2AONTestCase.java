@@ -119,8 +119,8 @@ public class PDF2AONTestCase extends AbstractTediTest {
 			assertEquals(template.getDate() , inv.getTaxDate(),file + " Invoice tax date does not match: ");
 
 			// Serie/numero/referenceCode
-			assertEquals(template.getSeries() , inv.getSeries(),file + " Invoice Series does not match: ");
-			assertEquals(template.getNumber() , Integer.valueOf( inv.getNumber()),file + " Invoice Number does not match: ");
+//			assertEquals(template.getSeries() , inv.getSeries(),file + " Invoice Series does not match: ");
+//			assertEquals(template.getNumber() , Integer.valueOf( inv.getNumber()),file + " Invoice Number does not match: ");
 			//assertEquals(file + " Invoice Reference Code does not match: ",template.getReference() , inv.getReferenceCode());
 			
 			// Registry

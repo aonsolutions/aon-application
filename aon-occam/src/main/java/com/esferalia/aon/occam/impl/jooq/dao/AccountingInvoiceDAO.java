@@ -842,11 +842,17 @@ public class AccountingInvoiceDAO {
 
 	public static void fillExternalSalesSeriesNumber(AONContext ctx, Invoice invoice) {
 		if (invoice.isSales()) { 
-			int y = AonDateUtils.getYear( invoice.getIssueDate() ) - 2000;
+			int y = invoice.getIssueDate() != null
+				?AonDateUtils.getYear( invoice.getIssueDate() )
+				:AonDateUtils.getCurrentYear();
+			y = y - 2000;
 			String prefix = invoice.isRectifier()?"REX":"EX";
 			String year = AonNumberUtils.toString(y);
 			invoice.setSeries( prefix + year );
-			invoice.setNumber( InvoiceDAO.getNextNumber(ctx, new Byte[]{invoice.getType().value()}, invoice.getSeries()));
+			int number = ctx != null
+				?InvoiceDAO.getNextNumber(ctx, new Byte[]{invoice.getType().value()}, invoice.getSeries())
+				:0;
+			invoice.setNumber( number);
 		}
 	}
 
