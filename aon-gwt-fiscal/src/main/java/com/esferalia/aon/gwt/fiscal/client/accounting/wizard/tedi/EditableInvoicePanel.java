@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -14,7 +13,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonFullDocument;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
@@ -51,7 +49,6 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType.InvoiceTransactionTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -121,7 +118,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	private CheckBox undeductible;
 	private InlineLabel invoiceTypeLabel;
 	private FocusPanel dropPanel; 	
-	private ListBox series;
+//	private ListBox series;
 	private TextBox referenceCode;
 	private AonDoubleBox invoiceTotal;
 	private AonDateBox taxDate;
@@ -973,9 +970,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 								result.setAccountEntry(invoiceCallback.getInvoice().getAccountEntry());
 								result.getInvoice().setIssueDate(invoiceCallback.getModule().getEntryDate());
 								result.getInvoice().setTaxDate(invoiceCallback.getModule().getEntryDate());
-								if (invoiceCallback.hasCommunication() || !result.getInvoice().isSales()) {
-									result.getInvoice().setReferenceCode(referenceCode.getValue());
-								}
+//								if (invoiceCallback.hasCommunication() || !result.getInvoice().isSales()) {
+//									result.getInvoice().setReferenceCode(referenceCode.getValue());
+//								}
 								// TODO Manage due dates for all finances.
 								result.getInvoice().getUniqueFinance()
 									.ifPresent(f -> f.setDueDate(invoiceCallback.getModule().getEntryDate()));
@@ -1007,7 +1004,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		ListBox workplaces = new ListBox();
 		InvoiceTransactionListBox transactionBox = new InvoiceTransactionListBox( isDefaultAdmonCanarias( invoiceCallback ) );
 		
-		AonIntegerBox number = new AonIntegerBox();
+//		AonIntegerBox number = new AonIntegerBox();
 		
 		checksTable = new FlowPanel();
 		checksLabel = new FlowPanel();
@@ -1056,18 +1053,18 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		issueDate.setValue(inv.getInvoice().getIssueDate());
 		transactionBox.setValue(inv.getTransaction());
 		
-		series = new ListBox();
+//		series = new ListBox();
 		referenceCode = new TextBox();
 		
-		if (!invoiceCallback.hasCommunication() && inv.isSales()) {
-			fillSeriesWidget(invoiceCallback, inv );
-			number.setValue(inv.getInvoice().getNumber());
-		}
+//		if (!invoiceCallback.hasCommunication() && inv.isSales()) {
+//			fillSeriesWidget(invoiceCallback, inv );
+//			number.setValue(inv.getInvoice().getNumber());
+//		}
 		
 		referenceCode.setValue(inv.getInvoice().getReferenceCode());
 		
-		series.setVisible( inv.isSales() );
-		number.setVisible( inv.isSales() );
+//		series.setVisible( inv.isSales() );
+//		number.setVisible( inv.isSales() );
 		
 		invoiceTotal = new AonDoubleBox();
 		invoiceTotal.setValue(inv.getTotalInvoice());
@@ -1437,7 +1434,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			invoiceCallback.getInvoice().getInvoice().setNormalRectifier(!invoiceCallback.getInvoice().getInvoice().isRectifier());
 			decorateInvoiceTypeLabel( invoiceCallback );
 			rectifier.paint(invoiceCallback.getInvoice().getInvoice().isRectifier());
-			fillSeriesWidget(invoiceCallback, inv);
+//			fillSeriesWidget(invoiceCallback, inv);
 			headerDataChanged(invoiceCallback);
 		});
 		rectifier.getElement().getStyle().setWidth(120, Unit.PX); 
@@ -1570,13 +1567,13 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// --------- NUMERO FACTURA ---------
 		// ----------------------------------
 		String l = AON.MSG.invoiceNumber();
-		if ( !invoiceCallback.hasCommunication() && inv.isSales() ) {
-			l = AON.MSG.seriesNumber();	
-		}
-		InlineLabel seriesNumberLabel = new InlineLabel(l);
-		seriesNumberLabel.setStyleName(AON.CSS.aonFlexLabel());
-		seriesNumberLabel.getElement().getStyle().setWidth(80,Unit.PX);
-		headerPanel4.add(seriesNumberLabel);
+//		if ( !invoiceCallback.hasCommunication() && inv.isSales() ) {
+//			l = AON.MSG.seriesNumber();	
+//		}
+		InlineLabel referenceCodeLabel = new InlineLabel(l);
+		referenceCodeLabel.setStyleName(AON.CSS.aonFlexLabel());
+		referenceCodeLabel.getElement().getStyle().setWidth(80,Unit.PX);
+		headerPanel4.add(referenceCodeLabel);
 		
 		// -------------------------
 		// --------- SERIE ---------
@@ -1588,92 +1585,92 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		FlowPanel referenceCodePanel = new FlowPanel();
 		referenceCodePanel.setStyleName(AON.CSS.aonNowrap());
 		referenceCodePanel.addStyleName(AON.CSS.aonFlexBlockInline());
-		referenceCodePanel.setVisible( false );
+//		referenceCodePanel.setVisible( false );
 		
-		series.addChangeHandler(event -> {
-			invoiceCallback.getInvoice().getInvoice().setSeries(series.getSelectedIndex()==0?null:series.getSelectedValue());
-			FINANCE_SERVICE.getInvoiceNextNumber(
-					invoiceCallback.getOccam()
-					,new Byte[]{invoiceCallback.getInvoice().getInvoice().getType().value()}
-					,invoiceCallback.getInvoice().getInvoice().getSeries()
-					,new AsyncCallback<Integer>() {
-
-						@Override
-						public void onFailure(Throwable caught) {
-							invoiceCallback.getModule().onError(caught.getMessage());
-						}
-
-						@Override
-						public void onSuccess(Integer result) {
-							number.setValue(result,false,true);
-							invoiceCallback.getInvoice().getInvoice().setNumber(result);
-							
-							String rc = AonStringUtils.leftPad(Integer.toString(invoiceCallback.getInvoice().getInvoice().getNumber()), 6, "0");
-							if (!AonStringUtils.isBlank(invoiceCallback.getInvoice().getInvoice().getSeries())) {
-								rc = invoiceCallback.getInvoice().getInvoice().getSeries() + "/" + rc;
-							}
-							invoiceCallback.getInvoice().getInvoice().setReferenceCode(rc);
-							if (AonStringUtils.isNotEmpty(referenceCode.getValue()) ) {
-								referenceCode.setValue( rc, false);
-							}
-							
-							invoiceCallback.paintEntry();
-							invoiceCallback.getInvoice().getAccountEntry().setDirty(true);
-							invoiceCallback.getModule().refreshIdLabel();
-						}
-					});
-		});
-		numberPanel.add(series);
+//		series.addChangeHandler(event -> {
+//			invoiceCallback.getInvoice().getInvoice().setSeries(series.getSelectedIndex()==0?null:series.getSelectedValue());
+//			FINANCE_SERVICE.getInvoiceNextNumber(
+//					invoiceCallback.getOccam()
+//					,new Byte[]{invoiceCallback.getInvoice().getInvoice().getType().value()}
+//					,invoiceCallback.getInvoice().getInvoice().getSeries()
+//					,new AsyncCallback<Integer>() {
+//
+//						@Override
+//						public void onFailure(Throwable caught) {
+//							invoiceCallback.getModule().onError(caught.getMessage());
+//						}
+//
+//						@Override
+//						public void onSuccess(Integer result) {
+//							number.setValue(result,false,true);
+//							invoiceCallback.getInvoice().getInvoice().setNumber(result);
+//							
+//							String rc = AonStringUtils.leftPad(Integer.toString(invoiceCallback.getInvoice().getInvoice().getNumber()), 6, "0");
+//							if (!AonStringUtils.isBlank(invoiceCallback.getInvoice().getInvoice().getSeries())) {
+//								rc = invoiceCallback.getInvoice().getInvoice().getSeries() + "/" + rc;
+//							}
+//							invoiceCallback.getInvoice().getInvoice().setReferenceCode(rc);
+//							if (AonStringUtils.isNotEmpty(referenceCode.getValue()) ) {
+//								referenceCode.setValue( rc, false);
+//							}
+//							
+//							invoiceCallback.paintEntry();
+//							invoiceCallback.getInvoice().getAccountEntry().setDirty(true);
+//							invoiceCallback.getModule().refreshIdLabel();
+//						}
+//					});
+//		});
+//		numberPanel.add(series);
 		
 		// -------------------------
 		// --------- NUMBER---------
 		// -------------------------
-		number.setStyleName(AON.CSS.aonMarginLeft());
-		number.addStyleName(AON.CSS.aonInputText());
-		number.addValueChangeHandler(event -> {
-			invoiceCallback.getInvoice().getInvoice().setNumber(number.getValue());
-			String rc = AonStringUtils.leftPad(Integer.toString(invoiceCallback.getInvoice().getInvoice().getNumber()), 6, "0");
-			if (!AonStringUtils.isBlank(invoiceCallback.getInvoice().getInvoice().getSeries())) {
-				rc = invoiceCallback.getInvoice().getInvoice().getSeries() + "/" + rc;
-			}
-			invoiceCallback.getInvoice().getInvoice().setReferenceCode(rc);
-			if (AonStringUtils.isNotEmpty(referenceCode.getValue()) ) {
-				referenceCode.setValue( rc, false);
-			}
-			invoiceCallback.paintEntry();
-			invoiceCallback.getInvoice().getAccountEntry().setDirty(true);
-			invoiceCallback.getModule().refreshIdLabel();
-		});
-		number.setVisibleLength(8);
-		number.setMaxLength(8);
-		numberPanel.add(number);
+//		number.setStyleName(AON.CSS.aonMarginLeft());
+//		number.addStyleName(AON.CSS.aonInputText());
+//		number.addValueChangeHandler(event -> {
+//			invoiceCallback.getInvoice().getInvoice().setNumber(number.getValue());
+//			String rc = AonStringUtils.leftPad(Integer.toString(invoiceCallback.getInvoice().getInvoice().getNumber()), 6, "0");
+//			if (!AonStringUtils.isBlank(invoiceCallback.getInvoice().getInvoice().getSeries())) {
+//				rc = invoiceCallback.getInvoice().getInvoice().getSeries() + "/" + rc;
+//			}
+//			invoiceCallback.getInvoice().getInvoice().setReferenceCode(rc);
+//			if (AonStringUtils.isNotEmpty(referenceCode.getValue()) ) {
+//				referenceCode.setValue( rc, false);
+//			}
+//			invoiceCallback.paintEntry();
+//			invoiceCallback.getInvoice().getAccountEntry().setDirty(true);
+//			invoiceCallback.getModule().refreshIdLabel();
+//		});
+//		number.setVisibleLength(8);
+//		number.setMaxLength(8);
+//		numberPanel.add(number);
 
 
 		// ----------------------------------
 		// --------- REFERENCE CODE ---------
 		// ----------------------------------
 
-		if (!invoiceCallback.hasCommunication() && inv.isSales()) {
-			AonTableButton showReference = new AonTableButton("Mostrar N\u00BA de factura", AON.CSS.aonIconEdit() );
-			showReference.addStyleName( AON.CSS.aonMarginLeft() );
-			showReference.addClickHandler( e -> {
-				if (referenceCodePanel.isVisible()) {
-					referenceCodePanel.setVisible( false );
-					showReference.removeStyleName( AON.CSS.aonIconEditRed() );
-					showReference.addStyleName( AON.CSS.aonIconEdit() );
-				} else {
-					referenceCodePanel.setVisible( true );
-					showReference.removeStyleName( AON.CSS.aonIconEdit() );
-					showReference.addStyleName( AON.CSS.aonIconEditRed() );
-				}
-			});
-			numberPanel.add(showReference);
+//		if (!invoiceCallback.hasCommunication() && inv.isSales()) {
+//			AonTableButton showReference = new AonTableButton("Mostrar N\u00BA de factura", AON.CSS.aonIconEdit() );
+//			showReference.addStyleName( AON.CSS.aonMarginLeft() );
+//			showReference.addClickHandler( e -> {
+//				if (referenceCodePanel.isVisible()) {
+//					referenceCodePanel.setVisible( false );
+//					showReference.removeStyleName( AON.CSS.aonIconEditRed() );
+//					showReference.addStyleName( AON.CSS.aonIconEdit() );
+//				} else {
+//					referenceCodePanel.setVisible( true );
+//					showReference.removeStyleName( AON.CSS.aonIconEdit() );
+//					showReference.addStyleName( AON.CSS.aonIconEditRed() );
+//				}
+//			});
+//			numberPanel.add(showReference);
 
 			InlineLabel invoiceNumberLabel = new InlineLabel(AON.MSG.invoiceNumber());
 			invoiceNumberLabel.setStyleName(AON.CSS.aonFlexLabel());
 			invoiceNumberLabel.getElement().getStyle().setWidth(80,Unit.PX);
 			referenceCodePanel.add(invoiceNumberLabel);
-		}
+//		}
 		
 		referenceCode.setStyleName(AON.CSS.aonInputText());
 		referenceCode.addValueChangeHandler(event -> {
@@ -1924,12 +1921,12 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		invoicePanel.setVisible(true);
 		
 		Scheduler.get().scheduleDeferred(() -> {
-			if (!invoiceCallback.hasCommunication() && invoiceCallback.getInvoice().isSales()) {
-				series.setFocus(true);
-			} else {
+//			if (!invoiceCallback.hasCommunication() && invoiceCallback.getInvoice().isSales()) {
+//				series.setFocus(true);
+//			} else {
 				referenceCode.setFocus(true);
-			}
-});
+//			}
+		});
 
 		if (invoiceCallback.getInvoice().isDuaLinked()) {
 			duaPanel = new InvoiceDUAPanel( invoiceCallback );
@@ -1946,28 +1943,28 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		return invoiceCallback.getConfiguration().fiscal().getAdministration(null) == Administration.CANARIAS;
 	}
 
-	private void fillSeriesWidget(InvoicePanelCallback invoiceCallback, AccountingInvoice inv) {
-		series.clear();
-		series.addItem(" --- ","");
-		if (AonCollectionUtils.isNotEmpty(invoiceCallback.getConfiguration().getInvoiceSalesSeries())) {
-			LinkedList<String> rectificationSeries = invoiceCallback.getConfiguration().getInvoiceRectificationSalesSeries();
-			for (String ser : invoiceCallback.getConfiguration().getInvoiceSalesSeries()) {
-				boolean rectifierSerie = (rectificationSeries != null && rectificationSeries.contains(ser));
-				if (!rectifierSerie || inv.getInvoice().isRectifier()) {
-					series.addItem(ser);
-				}
-			}
-		}
-
-		for (int i = 0; i < series.getItemCount(); i++) {
-			if (AonStringUtils.isBlank(inv.getInvoice().getSeries()) 
-					&& AonStringUtils.isBlank(series.getValue(i))
-					||  (AonStringUtils.equals(inv.getInvoice().getSeries(), series.getValue(i)))) {
-				series.setSelectedIndex(i);
-				break;
-			}
-		}
-	}
+//	private void fillSeriesWidget(InvoicePanelCallback invoiceCallback, AccountingInvoice inv) {
+//		series.clear();
+//		series.addItem(" --- ","");
+//		if (AonCollectionUtils.isNotEmpty(invoiceCallback.getConfiguration().getInvoiceSalesSeries())) {
+//			LinkedList<String> rectificationSeries = invoiceCallback.getConfiguration().getInvoiceRectificationSalesSeries();
+//			for (String ser : invoiceCallback.getConfiguration().getInvoiceSalesSeries()) {
+//				boolean rectifierSerie = (rectificationSeries != null && rectificationSeries.contains(ser));
+//				if (!rectifierSerie || inv.getInvoice().isRectifier()) {
+//					series.addItem(ser);
+//				}
+//			}
+//		}
+//
+//		for (int i = 0; i < series.getItemCount(); i++) {
+//			if (AonStringUtils.isBlank(inv.getInvoice().getSeries()) 
+//					&& AonStringUtils.isBlank(series.getValue(i))
+//					||  (AonStringUtils.equals(inv.getInvoice().getSeries(), series.getValue(i)))) {
+//				series.setSelectedIndex(i);
+//				break;
+//			}
+//		}
+//	}
 
 	protected void duaInvoiceChanged(IInvoicePanelCallback invoiceCallback) {
 		AccountingInvoice ai = invoiceCallback.getInvoice();

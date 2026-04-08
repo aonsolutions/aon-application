@@ -834,17 +834,19 @@ public class AccountingInvoiceDAO {
 	}
 
 	private static void fillSeriesNumberIfNeeded(AONContext ctx, AonConfiguration config, AccountingInvoice accInvoice) {
-		Invoice invoice = accInvoice.getInvoice();
-		InvoiceCommunicationConfiguration icc = config.getCommunicationConfig();
-		if (invoice.isSales() && icc.hasCommunication( invoice.getType() )) {
+		fillExternalSalesSeriesNumber(ctx, accInvoice.getInvoice());
+		if (AonStringUtils.isBlank(accInvoice.getInvoice().getReferenceCode())) {
+			throw new AonCoreException("Es obligatorio indicar el n\u00FAmero de factura.");
+		}
+	}
+
+	public static void fillExternalSalesSeriesNumber(AONContext ctx, Invoice invoice) {
+		if (invoice.isSales()) { 
 			int y = AonDateUtils.getYear( invoice.getIssueDate() ) - 2000;
 			String prefix = invoice.isRectifier()?"REX":"EX";
 			String year = AonNumberUtils.toString(y);
 			invoice.setSeries( prefix + year );
 			invoice.setNumber( InvoiceDAO.getNextNumber(ctx, new Byte[]{invoice.getType().value()}, invoice.getSeries()));
-			if (AonStringUtils.isBlank(invoice.getReferenceCode())) {
-				throw new AonCoreException("Es obligatorio indicar el n\u00FAmero de factura.");
-			}
 		}
 	}
 
@@ -1523,6 +1525,9 @@ public class AccountingInvoiceDAO {
 		ai.getInvoice().setDoc(null);
 		
 		InvoiceDAO.mergeRecitificationData(ai.getInvoice(), data);
+		
+		// ensure reference_code
+		ai.getInvoice().setReferenceCode(data.getReferenceCode());
 		
 		for (InvoiceVAT vat : ai.getVats()) {
 			vat.setBase( AonMathUtils.round(vat.getBase() * (-1),4));

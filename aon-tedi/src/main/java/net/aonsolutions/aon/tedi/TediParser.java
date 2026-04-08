@@ -604,27 +604,31 @@ public class TediParser {
 		return false;
 	}		
 	
-	private static Consumer<TediParserContext> INVOICE_SERIES = (ctx) -> {
-		if (ctx.getTediResult().getTedi().isEmitida()) {
-			ctx.getTediResult().getInvoice().setSeries(ctx.getTediResult().getTedi().getSeries());
-			if (willOverflow(INVOICE.SERIES, ctx.getTediResult().getInvoice().getSeries())) {
-				String series = AonStringUtils.substring(ctx.getTediResult().getInvoice().getSeries(), 0, INVOICE.SERIES.getDataType().length());
-				ctx.getTediResult().getInvoice().setSeries( series );	
-//				ctx.getTediResult().getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.SERIES,InvoiceErrorKey.SERIES.getDescription(), series ));	
-			}
-		}
-	};
+//	private static Consumer<TediParserContext> INVOICE_SERIES = (ctx) -> {
+//		if (ctx.getTediResult().getTedi().isEmitida()) {
+//			ctx.getTediResult().getInvoice().setSeries(ctx.getTediResult().getTedi().getSeries());
+//			if (willOverflow(INVOICE.SERIES, ctx.getTediResult().getInvoice().getSeries())) {
+//				String series = AonStringUtils.substring(ctx.getTediResult().getInvoice().getSeries(), 0, INVOICE.SERIES.getDataType().length());
+//				ctx.getTediResult().getInvoice().setSeries( series );	
+////				ctx.getTediResult().getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.SERIES,InvoiceErrorKey.SERIES.getDescription(), series ));	
+//			}
+//		}
+//	};
 	
-	private static Consumer<TediParserContext> INVOICE_NUMBER = (ctx) -> {
-		TediResult result = ctx.getTediResult();
-		if (result.getTedi().isEmitida()) {
-			if (result.getTedi().getNumber() != null) {
-				result.getInvoice().setNumber(result.getTedi().getNumber());
-			} else {
-//				result.getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.NUMBER, InvoiceErrorKey.NUMBER.getDescription(), 0) );
-				result.getInvoice().setNumber(0);
-			}
-		}
+//	private static Consumer<TediParserContext> INVOICE_NUMBER = (ctx) -> {
+//		TediResult result = ctx.getTediResult();
+//		if (result.getTedi().isEmitida()) {
+//			if (result.getTedi().getNumber() != null) {
+//				result.getInvoice().setNumber(result.getTedi().getNumber());
+//			} else {
+////				result.getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.NUMBER, InvoiceErrorKey.NUMBER.getDescription(), 0) );
+//				result.getInvoice().setNumber(0);
+//			}
+//		}
+//	};
+	
+	private static Consumer<TediParserContext> EXTERNAL_INVOICE_NUMBER = (ctx) -> {
+		AccountingInvoiceDAO.fillExternalSalesSeriesNumber(ctx.getAONContext(), ctx.getTediResult().getInvoice());
 	};
 	
 	private static Consumer<TediParserContext> INVOICE_REFERENCE_CODE = (ctx) -> {
@@ -635,9 +639,9 @@ public class TediParser {
 		}
 	};
 
-	private static boolean willOverflow(Field<String> field, String series) {
-		return (AonStringUtils.length(series) > field.getDataType().length());
-	}
+//	private static boolean willOverflow(Field<String> field, String data) {
+//		return (AonStringUtils.length(data) > field.getDataType().length());
+//	}
 
 	private static Consumer<TediParserContext> INVOICE_COMMENTS = (ctx) -> {
 		TediResult result = ctx.getTediResult();
@@ -970,8 +974,9 @@ public class TediParser {
 		.andThen(INVOICE_RECIBIDA_REGISTRY)
 		.andThen(INVOICE_TICKET_REGISTRY)
 		.andThen(INVOICE_ENSURE_ISSUE_DATE)
-		.andThen(INVOICE_SERIES)
-		.andThen(INVOICE_NUMBER)
+//		.andThen(INVOICE_SERIES)
+//		.andThen(INVOICE_NUMBER)
+		.andThen(EXTERNAL_INVOICE_NUMBER)
 		.andThen(INVOICE_REFERENCE_CODE)
 		.andThen(INVOICE_ADDRESS)
 		.andThen(INVOICE_REGISTRY_STATUS)
