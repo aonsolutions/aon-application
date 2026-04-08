@@ -86,6 +86,7 @@ public class Aio implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		AON.ensureInjected();
+		ensureGwtSelector();
 		
 		String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);
 		
@@ -505,8 +506,8 @@ public class Aio implements EntryPoint {
 			return domain.@com.esferalia.aon.occam.api.model.Domain::getName()();
 		});
 	}-*/;
-
-	private static void ensureGwtSelector() {
+	
+	public static void ensureGwtSelector() {
 		BodyElement body = Document.get().getBody();
 		String className = body.getClassName();
 		if (AonStringUtils.isBlank(className)
@@ -514,5 +515,4 @@ public class Aio implements EntryPoint {
 			body.addClassName("gwt-Selector");
 
 	}
-
 }
