@@ -416,6 +416,10 @@ export class AonParent extends AonElement {
 		companyFilterTabDiv.appendChild(filterTabs);
 
 		// Options button (create/delete enterprises)
+		let optionsSpan = this.createElement(TAG.SPAN);
+		optionsSpan.className = 'aonLiSpanSubtitle';
+		optionsSpan.innerHTML = 'Opciones';
+		
 		let enterpriseSpanButton = this.createElement(TAG.SPAN);
 		let aonIconB = new AonIconButton();
 		aonIconB.id = "enterpriseButtonsIconOption";
@@ -451,6 +455,7 @@ export class AonParent extends AonElement {
 			d.open();
 		});
 		
+		companyFilterTabDiv.appendChild(optionsSpan);
 		companyFilterTabDiv.appendChild(enterpriseSpanButton);
 
 		companyDiv.appendChild(companyTitleDiv);

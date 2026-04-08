@@ -114,7 +114,8 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			},{
 				description: "Balances oficiales",
 				title: "Balances oficiales",
-				action: () => GWT.iLoad(GWT.ACCOUNT_BALANCE_REPORT)
+				action: () => GWT.iLoad(GWT.ACCOUNT_BALANCE_REPORT),
+				filter: false, // remove 
 			}/*,{
 				description: "Cuenta de Explotación (P y G) ANALÍTICA",
 				title: "Cuenta de Explotación (P y G) ANALÍTICA",

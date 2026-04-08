@@ -103,7 +103,7 @@ export class AonConfigurationMenu extends AonSuiteMenu {
                 description: "Carga de datos desde ficheros Excel",
                 title: "Carga de datos desde ficheros Excel",
                 action: () => GWT.iLoad(GWT.IMPORT),
-                filter: () => this.isDomainManagementAvailable()
+                filter: () => this.isNotDomainManagementAvailable()
             }
             ]
         }, {
@@ -168,7 +168,8 @@ export class AonConfigurationMenu extends AonSuiteMenu {
                 description: "Catálogos",
                 title: "Catálogos",
                 action: () => this.rootPanel(new JSF.AonJsfCatalogue())
-            }]
+            }],
+            filter: () => this.isNotDomainManagementAvailable()
         }, {
             title: 'Utilidades Carga de Datos',
             options: [{
@@ -194,24 +195,24 @@ export class AonConfigurationMenu extends AonSuiteMenu {
             filter: () => this.isNotDomainManagementAvailable()
 		},{
 			title: 'Configuración',
-	            options: [{
-					description: "Configuración Global",
-					title: "Configuración Global",
-					action: () => this.rootPanel(new JSF.AonJsfGlobalConfig())
-				},{
-	                description: "Cuentas de Correo",
-	                title: "Cuentas de Correo",
-	                action: () => this.rootPanel(new JSF.AonJsfMailAccount())
-	            }, {
-	                description: "Firmas de Correo",
-	                title: "Firmas de Correo",
-	                action: () => this.rootPanel(new JSF.AonJsfMailSignature())
-	            }, {
-	                description: "Contactos",
-	                title: "Contactos",
-	                action: () => this.rootPanel(new JSF.AonJsfMailContact())
-	            }]
-            
+            options: [{
+				description: "Configuración Global",
+				title: "Configuración Global",
+				action: () => this.rootPanel(new JSF.AonJsfGlobalConfig())
+			},{
+                description: "Cuentas de Correo",
+                title: "Cuentas de Correo",
+                action: () => this.rootPanel(new JSF.AonJsfMailAccount())
+            }, {
+                description: "Firmas de Correo",
+                title: "Firmas de Correo",
+                action: () => this.rootPanel(new JSF.AonJsfMailSignature())
+            }, {
+                description: "Contactos",
+                title: "Contactos",
+                action: () => this.rootPanel(new JSF.AonJsfMailContact())
+            }],
+            filter: () => this.isNotDomainManagementAvailable()
         }];
     }
 

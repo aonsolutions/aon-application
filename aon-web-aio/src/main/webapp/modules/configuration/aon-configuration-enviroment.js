@@ -65,7 +65,7 @@ export class AonConfigurationEnviroment extends AonElement {
 
 	connectedCallback() {
 		this.initialize();
-		this.createApplication(this.AON_CONFIGURATION, MSG.SETTING, new AonApplication());
+		this.createApplication(this.AON_CONFIGURATION, MSG.MANAGEMENT, new AonApplication());
 
 		this.buildDur().then(() => {
 			getCompany().then(company => {
@@ -90,44 +90,13 @@ export class AonConfigurationEnviroment extends AonElement {
 		}
 
 		
-		if (localStorage.getItem("aon_domain_id")) {
-			let appOptions = [];
-			if (this.getDur().isInvoice()) {
-				appOptions.push({
-					name: INVOICE.title,
-					icon: MATERIAL_ICONS.MONITORING,
-					fn: () => this.buildInvoiceConfiguration(),
-				});
-			}
-
-			if (!this.getDur().isEmployee()) {
-				appOptions.push({
-					id: MESSENGER.title,
-					name: MESSENGER.title,
-					icon: MATERIAL_ICONS.SPEAKER_NOTES,
-					fn: () => this.buildMessengerConfiguration(),
-				});
-			}
-
-			if (!this.getDur().isEmployee() && this.isBeta()) {
-				appOptions.push({
-					id: "notice",
-					icon: "rss_feed",
-					name: "Comunicaciones",
-					fn: () => this.buildNews(),
-				});
-			}
-
-			aonConfiguration.addSidenavOptions(MSG.APPLICATIONS.toUpperCase(), appOptions);
-		}
-
 		if (localStorage.getItem("aon_domain_id") && this.isBeta()) {
 			let menuOptions = [];
 
 			menuOptions.push({
 				id: "options panel",
 				icon: "dashboard",
-				name: "Panel Configuración",
+				name: "Panel Opciones",
 				fn: () => this.buildConfigurationMenu(),
 			});
 
