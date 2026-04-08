@@ -673,22 +673,22 @@ public class AccountEntryModule  implements EntryPoint {
 				if (getOptions().isSessionLogTabVisible()) {
 					sessionLog.addSaved(AccountEntryModule.getWrapperArray(result.getAccountEntries()));
 				}
-				reset();
 				
-				if (getOptions().isSessionLogTabVisible()) {
-					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-						public void execute() {
-							tabLayout.selectTab( getSessionLogTabIndex() );					}
-					});
-				}
-
-				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-					public void execute() {
+				if (getOptions().isResetAfterAccept()) {
+					reset();
+					
+					if (getOptions().isSessionLogTabVisible()) {
+						Scheduler.get().scheduleDeferred(() -> tabLayout.selectTab( getSessionLogTabIndex() ));
+					}
+					
+					Scheduler.get().scheduleDeferred(() -> {
 						entryDate.setFocus(true);
 						entryDate.hideDatePicker();
 						entryDate.getTextBox().selectAll();
-					}
-				});
+					});
+				}
+				
+				
 				if (getOptions().hasExternalCallback()) {
 					getOptions().getExternalCallback().onChange(result);
 				}

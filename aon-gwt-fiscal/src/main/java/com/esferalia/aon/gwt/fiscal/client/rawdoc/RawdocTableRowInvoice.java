@@ -89,27 +89,32 @@ class RawdocTableRowInvoice extends RawdocTableRowAbs<Invoice> {
 								.setSessionLogTabVisible(false)
 								.setJournalTabVisible(false)
 								.setExtraInfoTabVisible(false)
+								.setResetAfterAccept(false)
 								.setExternalCallback(new ModuleCallback() {
 	
 									private static final long serialVersionUID = -2947804456883665519L;
 	
 									@Override
 									public void onRemove(IAccountEntryWrapper removed) {
+										entryDialog.clear();
 										entryDialog.hide();
 									}
 	
 									@Override
 									public void onFailure(Throwable caught) {
+										entryDialog.clear();
 										entryDialog.hide();
 									}
 	
 									@Override
 									public void onExit() {
+										entryDialog.clear();
 										entryDialog.hide();
 									}
 	
 									@Override
 									public void onChange(IAccountEntryWrapper changed) {
+										entryDialog.clear();
 										entryDialog.hide();
 										result.setAon((AccountingInvoice) changed);
 										StringBuilder buf = new StringBuilder();
