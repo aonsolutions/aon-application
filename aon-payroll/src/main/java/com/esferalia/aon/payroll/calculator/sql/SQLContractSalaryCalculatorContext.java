@@ -754,7 +754,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					} else {
 						// exp.setExpression(String.format("SELF.br(%s) * %d", IT_START,
 						// guaranteedDays));
-						exp.setExpression(String.format(Locale.US, "SELF.br(%s, %s) * %s", IT_START, type.name(), GUARANTEED_DAYS));
+						// exp.setExpression(String.format(Locale.US, "SELF.br(%s, %s) * %s", IT_START, type.name(), GUARANTEED_DAYS));
+						exp.setExpression(String.format(Locale.US, "%s * %s", ContextVariable.REGULATORY_BASE, GUARANTEED_DAYS));
 					}
 					exprCtx.addLazyExpression(exp, guarenteeStart, guarenteeEnd);
 

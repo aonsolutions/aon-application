@@ -61,7 +61,7 @@ export class AonFiscalBeta extends AonElement {
 				fn: () => this.buildObservations(),
 			});
 
-			aonFiscalBeta.addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);
+			aonFiscalBeta.addSidenavOptions(MSG.UTILITIES.toUpperCase(), configurationOptions);
 		}
 
 		if (localStorage.getItem("aon_domain_id") && this.isBeta() && !this.getDur().isConsultancy()) {
