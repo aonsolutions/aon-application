@@ -176,8 +176,8 @@ public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet im
 	}
 
 	@Override
-	public IAccountEntryWrapper updateSpecial(String domainName, int domain, String user, AccountEntryUpdate operation, IAccountEntryWrapper wrapper) throws AonCoreException {
-		return ACCOUNTING.updateSpecial(domainName, domain, user, operation, wrapper);
+	public IAccountEntryWrapper updateSpecial(Occam occam, AccountEntryUpdate operation, IAccountEntryWrapper wrapper) throws AonCoreException {
+		return ACCOUNTING.updateSpecial(occam, operation, wrapper);
 	}
 
 	@Override

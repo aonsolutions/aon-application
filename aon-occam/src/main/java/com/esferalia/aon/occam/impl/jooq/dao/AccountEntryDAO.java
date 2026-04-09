@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
+import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static com.esferalia.aon.jooq.tables.AmortizationDetail.AMORTIZATION_DETAIL;
 import static com.esferalia.aon.jooq.tables.AutoConcept.AUTO_CONCEPT;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
@@ -16,7 +17,6 @@ import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -48,7 +48,6 @@ import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AutoConcept;
-import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -59,8 +58,6 @@ import com.esferalia.aon.occam.api.model.Properties.AccountEntryDetailProperties
 import com.esferalia.aon.occam.api.model.Properties.AccountEntryProperties;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAccountEntryUpdateVisitor;
-import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
@@ -69,6 +66,7 @@ import com.esferalia.aon.occam.api.model.fiscal.AccountingBreakdown;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
+import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate.AccountEntryUpdateVisitor;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
@@ -83,6 +81,7 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class AccountEntryDAO {
@@ -949,7 +948,7 @@ public class AccountEntryDAO {
 	
 	
 	public static IAccountEntryWrapper  updateSpecial(AONContext ctx, AccountEntryUpdate operation, IAccountEntryWrapper wrapper) {
-		IAccountEntryUpdateVisitor visitor = new IAccountEntryUpdateVisitor() {
+		AccountEntryUpdateVisitor<IAccountEntryWrapper> visitor = new AccountEntryUpdateVisitor<>() {
 
 			@Override
 			public IAccountEntryWrapper visitManualType(IAccountEntryWrapper wrapper) {
@@ -1235,172 +1234,131 @@ public class AccountEntryDAO {
 	}
 	
 	public static LinkedList<AccountEntryUpdate> getAvailableAccountEntryUpdates(final AONContext ctx, IAccountEntryWrapper wrp) {
-		final  LinkedList<AccountEntryUpdate> list = new LinkedList<AccountEntryUpdate>();
-		IAccountEntryUpdateVisitor visitor = new IAccountEntryUpdateVisitor() {
+		AccountEntryUpdateVisitor<Boolean> visitor = new AccountEntryUpdateVisitor<>() {
 			
 			@Override
-			public IAccountEntryWrapper visitManualType(IAccountEntryWrapper wrapper) {
-				AccountEntry ae = wrapper.getAccountEntry();
-				if (ae != null && ae.getPeriod() != null && ae.isPeriodActive() && ae.getEntryType() == AccountEntryType.AMORTIZATION) {
-					boolean hasAmortizationDetail = ctx.getDslContext().fetchExists(
-						ctx.getDslContext().select()
+			public Boolean visitManualType(IAccountEntryWrapper wrapper) {
+				return wrapper.getAccountEntry().getEntryType() == AccountEntryType.AMORTIZATION
+					&& !(ctx.getDslContext()
+						.select(AMORTIZATION_DETAIL.ID)
 							.from(AMORTIZATION_DETAIL)
-							.where(AMORTIZATION_DETAIL.DOMAIN.eq(ae.getDomain()))
-							.and(AMORTIZATION_DETAIL.ACCOUNT_ENTRY.eq(ae.getId())));
-					if (!hasAmortizationDetail) {
-						list.add(AccountEntryUpdate.MANUAL_TYPE);			
-					}
-				}
-				return wrapper;
+							.where(AMORTIZATION_DETAIL.DOMAIN.eq(wrapper.getAccountEntry().getDomain()))
+							.and(AMORTIZATION_DETAIL.ACCOUNT_ENTRY.eq(wrapper.getAccountEntry().getId()))
+							.limit(1)
+							.fetch()
+							.stream()
+							.findAny()
+							.isPresent()
+						);
 			}
 			
 			@Override
-			public IAccountEntryWrapper visitOpeningType(IAccountEntryWrapper wrapper) {
-				AccountEntry ae = wrapper.getAccountEntry();
-				if (ae != null && ae.getPeriod() != null && ae.isPeriodActive() && ae.getEntryType() == AccountEntryType.MANUAL) {
-					boolean hasOpeningEntry = ctx.getDslContext().fetchExists(
-						ctx.getDslContext().select()
+			public Boolean visitOpeningType(IAccountEntryWrapper wrapper) {
+				return wrapper.getAccountEntry().getEntryType() == AccountEntryType.MANUAL
+					&& !(ctx.getDslContext()
+						.select(ACCOUNT_ENTRY.ID)
 							.from(ACCOUNT_ENTRY)
-							.where(ACCOUNT_ENTRY.DOMAIN.eq(ae.getDomain()))
-							.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ae.getPeriod()))
-							.and(ACCOUNT_ENTRY.ENTRY_TYPE.eq(AccountEntryType.OPENING.value())));
-					if (!hasOpeningEntry) {
-						list.add(AccountEntryUpdate.OPENING_TYPE);			
-					}
-				}
-				return wrapper;
+							.where(ACCOUNT_ENTRY.DOMAIN.eq(wrapper.getAccountEntry().getDomain()))
+							.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(wrapper.getAccountEntry().getPeriod()))
+							.and(ACCOUNT_ENTRY.ENTRY_TYPE.eq(AccountEntryType.OPENING.value()))
+							.limit(1)
+							.fetch()
+							.stream()
+							.findAny()
+							.isPresent()
+						);
 			}
 
 			@Override
-			public IAccountEntryWrapper visitSecurityLevel(IAccountEntryWrapper wrapper) {
-				AccountEntry ae = wrapper.getAccountEntry();
-				if (ae != null && ae.getPeriod() != null && ae.isPeriodActive()) {
-					User user = SecurityDAO.getUser(ctx);
-					if (user != null && user.hasConfidentialityRole()) {
-						list.add(AccountEntryUpdate.SECURITY_LEVEL);			
-					}
-				}
-				return wrapper;
+			public Boolean visitSecurityLevel(IAccountEntryWrapper wrapper) {
+				User user = SecurityDAO.getUser(ctx);
+				return (user != null && user.hasConfidentialityRole());
 			}
 			
 			@Override
-			public IAccountEntryWrapper visitInvestment(IAccountEntryWrapper wrapper) {
-				if (wrapper instanceof AccountingInvoice ai) {
-					AccountEntry ae = wrapper.getAccountEntry();
-					if (ae != null && ae.getPeriod() != null && (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
-						list.add(AccountEntryUpdate.INVESTMENT);
-					}
-				}
-				return wrapper;
+			public Boolean visitInvestment(IAccountEntryWrapper wrapper) {
+				return wrapper instanceof AccountingInvoice ai 
+					&& !isAlcatrazGuest(ai.getInvoice());
 			}
 
 			@Override
-			public IAccountEntryWrapper visitTaxDate(IAccountEntryWrapper wrapper) {
-				if (wrapper instanceof AccountingInvoice ai) {
-					AccountEntry ae = wrapper.getAccountEntry();
-					if (ae != null && ae.getPeriod() != null && (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
-						list.add(AccountEntryUpdate.TAX_DATE);
-					}
-				}
-				return wrapper;
+			public Boolean visitTaxDate(IAccountEntryWrapper wrapper) {
+				return wrapper instanceof AccountingInvoice ai 
+					&& !isAlcatrazGuest(ai.getInvoice());
 			}
 			
 			@Override
-			public IAccountEntryWrapper visitActivity(IAccountEntryWrapper wrapper) {
-				if (wrapper instanceof AccountingInvoice ai) {
-					AccountEntry ae = wrapper.getAccountEntry();
-					Collection<EnterpriseActivity> activities = CompanyDAO.getEnterpriseActivities(ctx,ctx.getDomainId(),ae.getEntryDate())
-							.collect(Collectors.toCollection(LinkedList::new));
-					if (activities != null && activities.size() > 1) {
-						if (ae != null && ae.getPeriod() != null && (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
-							list.add(AccountEntryUpdate.ACTIVITY);
-						}
-					}
-				}
-				return wrapper;
+			public Boolean visitActivity(IAccountEntryWrapper wrapper) {
+				return wrapper.getAccountEntry().getActivity() != null
+					&& (
+						!(wrapper instanceof AccountingInvoice)		// El apunte no es factura
+					  || (wrapper instanceof AccountingInvoice ai && !isAlcatrazGuest(ai.getInvoice()))
+					  )
+					&& CompanyDAO.getEnterpriseActivities(ctx,ctx.getDomainId(),wrapper.getAccountEntry().getEntryDate()).count() > 1;
 			}
 
 			@Override
-			public IAccountEntryWrapper visitService(IAccountEntryWrapper wrapper) {
-				if (wrapper instanceof AccountingInvoice ai) {
-					AccountEntry ae = wrapper.getAccountEntry();
-					if (ae != null && ae.getPeriod() != null && (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
-						if (ai.isSales() || ai.isPurchase()) {
-							list.add(AccountEntryUpdate.SERVICE);
-						}
-					}
-				}
-				return wrapper;
+			public Boolean visitService(IAccountEntryWrapper wrapper) {
+				return wrapper instanceof AccountingInvoice ai 
+					&& !isAlcatrazGuest(ai.getInvoice())
+					&& (ai.isSales() || ai.isPurchase());
 			}
 
 			@Override
-			public IAccountEntryWrapper visitVatAccrualPayment(IAccountEntryWrapper wrapper) {
-				if (wrapper instanceof AccountingInvoice) {
-					AccountingInvoice ai = (AccountingInvoice) wrapper; 
-					AccountEntry ae = wrapper.getAccountEntry();
-					if (ae != null && ae.getPeriod() != null && (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
-						list.add(AccountEntryUpdate.VAT_ACCRUAL_PAYMENT);
-					}
-				}
-				return wrapper;
+			public Boolean visitVatAccrualPayment(IAccountEntryWrapper wrapper) {
+				return (wrapper instanceof AccountingInvoice ai
+					&& !isAlcatrazGuest(ai.getInvoice()) 
+					&& hasNotPendingFinances(ai.getInvoice()));
 			}
 
 			@Override
-			public IAccountEntryWrapper visitWithholdingType(IAccountEntryWrapper wrapper) {
-				if (wrapper instanceof AccountingInvoice) {
-					AccountingInvoice ai = (AccountingInvoice) wrapper; 
-					AccountEntry ae = wrapper.getAccountEntry();
-					if (ae != null && ae.getPeriod() != null && (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
-						if (ai.getInvoice().isWithholding()) {
-							list.add(AccountEntryUpdate.WITHHOLDING_TYPE);
-						}
-					}
-				}
-				return wrapper;
+			public Boolean visitWithholdingType(IAccountEntryWrapper wrapper) {
+				return (wrapper instanceof AccountingInvoice ai) 
+					&& !isAlcatrazGuest(ai.getInvoice()) 
+					&& ai.getInvoice().isWithholding();
 			}
 
 			@Override
-			public IAccountEntryWrapper visitOperatingAccount(IAccountEntryWrapper wrapper) {
-				if (wrapper instanceof AccountingInvoice) {
-					AccountingInvoice ai = (AccountingInvoice) wrapper; 
-					AccountEntry ae = wrapper.getAccountEntry();
-					if (ae != null && ae.getPeriod() != null && (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
-						boolean add = false;
-						Integer account = null;
-						for (InvoiceVAT vat : ai.getVats() ) {
-							if ( account == null) {
-								account = vat.getExpAccount().map(a->a.getId()).orElse(null);
-								add = true;
-							}
-							if ( !AonNumberUtils.equals(account,vat.getExpAccount().map(a->a.getId()).orElse(null))) {
-								add = false;
-								break;
-							}
-						}
-						if ( add ) {
-							list.add(AccountEntryUpdate.OPERATING_ACCOUNT);
-						}
-					}
-				}
-				return wrapper;
+			public Boolean visitOperatingAccount(IAccountEntryWrapper wrapper) {
+				return wrapper instanceof AccountingInvoice ai 
+					&& !isAlcatrazGuest(ai.getInvoice())
+					&& AonCollectionUtils.isNotEmpty(ai.getVats())
+					&& AonCollectionUtils.stream(ai.getVats())
+				        .map(vat -> vat.getExpAccount().map(a -> a.getId()).orElse(null))
+				        .distinct()
+				        .count() == 1
+				; 
 			}
 			
-			private boolean hasPendingFinances( Invoice invoice) {
-				if (invoice.getFinances() != null && !invoice.getFinances().isEmpty()) {
-					boolean pendingFinances = false;
-					for (Finance finance : invoice.getFinances()) {
-						pendingFinances = pendingFinances || finance.isFullPending();
-					}
-					return pendingFinances;
-				}
-				return true;
+			private boolean isAlcatrazGuest( Invoice invoice) {
+				return ctx.getDslContext().select( ALCATRAZ.ID )
+					.from(ALCATRAZ)
+					.where(ALCATRAZ.INVOICE.eq(invoice.getId()))
+					.limit(1)
+					.fetch()
+					.stream()
+					.findFirst()
+					.isPresent()
+				;				
+			}
+			
+			private boolean hasNotPendingFinances( Invoice invoice) {
+				return invoice.financeStream()
+					.anyMatch(f -> !f.isFullPending());
 			}
 			
 		};
-		for (AccountEntryUpdate operation : AccountEntryUpdate.values()) {
-			operation.visit(visitor, wrp);
+		
+		if (wrp.getAccountEntry() != null 
+			&& wrp.getAccountEntry().getPeriod() != null 
+			&& wrp.getAccountEntry().isPeriodActive() ) {
+			
+			return AonCollectionUtils.stream( AccountEntryUpdate.values() )
+				.filter( op -> op.visit(visitor, wrp) )
+				.collect(Collectors.toCollection(LinkedList::new));
+				
 		}
-		return list;
+		return new LinkedList<>();
 	}
 
 	
