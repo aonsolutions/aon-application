@@ -70,8 +70,8 @@ public class Page12 extends PageAbs {
 	};		
 	
 	private static final String FOOTER_1 = "(*) S\u00F3lo debe cumplimentarse si tiene deducciones pendientes de aplicar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2025.";
-	private static final String FOOTER_588_1 = "(***) Excepto deducciones por producciones cinematogr\u00E1ficas extranjeras (art. 36.2 LIS) que se declaran en las casillas [01039] de la p\u00E1g. 14 y, en su caso, en la casilla [01042] de la p\u00E1g. 14 bis.";
-	private static final String FOOTER_588_2 = "(****) Programas cuya vigencia se inicia a partir de 2025: S\u00F3lo debe cumplimentarse esta fila si la entidad tiene un per\u00EDodo impositivo que no coincida con el a\u00F1o natural y ha realizado gastos con derecho a deducci\u00F3n a partir de 2025.";
+	private static final String FOOTER_588_1 = "(***) Excepto deducciones por producciones cinematogr\u00E1ficas extranjeras (art. 36.2 LIS) que se declaran en las casillas [01039] y, en su caso, en la casilla [01042] de la p\u00E1g. 14 bis.";
+	private static final String FOOTER_588_2 = "(****) Programas cuya vigencia se inicia a partir de 2025: S\u00F3lo debe cumplimentarse esta fila si la entidad tiene un per\u00EDodo impositivo que no coincida con el a\u00F1o natural y ha realizado gastos con derecho a deducci\u00F3n a partir de 2026.";
 	private static final String FOOTER_082 = "(**) Entre otros requisitos, ser\u00E1 necesario que transcurra, al menos, un a\u00F1o desde la finalizaci\u00F3n del per\u00EDodo impositivo en que se gener\u00F3 la deducci\u00F3n, sin que la misma haya sido objeto de aplicaci\u00F3n.";
 	
 	private FlowPanel filmPanel;

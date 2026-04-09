@@ -29,24 +29,24 @@ public class ParticipationPanel extends AonCustomDialog {
 		}
 	}
 
-	private AonDocumentTextBox document;
-	private AonTextBox name;
-	private ProvinceCountryListBox province;
-	private AonDoubleBox percent;
-	private AonDoubleBox nominalValue;
-	private AonDoubleBox bookValue;
-	private AonDoubleBox incomes;
-	private AonDoubleBox aValue; // a) Corrección de valor incluida en pérdidas y ganancias del período                        
-	private AonDoubleBox bValue; // b) Reversión de pérdidas por deterioro de valores
-	private AonDoubleBox cValue; // c) Eliminación del deterioro contable incluido en P y G                                
-	private AonDoubleBox dValue; // d) Eliminación del deterioro de valores repr. de partic. en el capital o fondos propios
-	private AonDoubleBox eValue; // e) Ajuste por la disminución de valor originada por criterio de valor razonable        
-	private AonDoubleBox fValue; // f) Efecto de la corrección valorativa en la BI del ejercicio (= a + b + c + d + e)         
-	private AonDoubleBox gValue; // g) Saldo de correcciones fiscales                                                      
-	private AonDoubleBox capital;
-	private AonDoubleBox reserve;
-	private AonDoubleBox otherAmounts;
-	private AonDoubleBox result;
+	private AonDocumentTextBox document; 		// NIF (o equivalente al NIF del país de residencia, si no tiene NIF en España)
+	private AonTextBox name; 					// Nombre o razón social
+	private ProvinceCountryListBox province;	// Código provincia /país
+	private AonDoubleBox percent; 				// Porcentaje de participación (%, con 2 decimales)
+	private AonDoubleBox nominalValue; 			// Valor nominal total de la participación
+	private AonDoubleBox bookValue; 			// Valor en libros (en el activo de la declarante) de la participación
+	private AonDoubleBox incomes; 				// Ingresos por Dividendos recibidos en el ejercicio declarado
+	private AonDoubleBox aValue; 				// a) Corrección de valor incluida en pérdidas y ganancias del período                        
+	private AonDoubleBox bValue; 				// b) Reversión de pérdidas por deterioro de valores
+	private AonDoubleBox cValue; 				// c) Eliminación del deterioro contable incluido en P y G                                
+	private AonDoubleBox dValue; 				// d) Eliminación del deterioro de valores repr. de partic. en el capital o fondos propios
+	private AonDoubleBox eValue; 				// e) Ajuste por la disminución de valor originada por criterio de valor razonable        
+	private AonDoubleBox fValue; 				// f) Efecto de la corrección valorativa en la BI del ejercicio (= a + b + c + d + e)         
+	private AonDoubleBox gValue; 				// g) Saldo de correcciones fiscales                                                      
+	private AonDoubleBox capital; 				// Capital
+	private AonDoubleBox reserve;				// Reservas y otras partidas de fondos propios
+	private AonDoubleBox otherAmounts; 			// Otras partidas del patrimonio neto
+	private AonDoubleBox result; 				// Resultado del último ejercicio
 	
 	private ParticipationPanelCallback callback;
 	private int index;
@@ -259,7 +259,7 @@ public class ParticipationPanel extends AonCustomDialog {
 		
 		rootPanel.add(getSubtitle(AON.MSG.partMsg8()));
 		
-		addSmallLabel("(Cumplimente este apartado para todas las participaciones en las que se haya tenido un porcentaje superior al 5% -\u00F3 al 1% si cotizan- a lo largo del per\u00EDodo, y cuyo valor nominal supere los 100.000 euros, incluyendo por tanto las participaciones transmitidas en el ejercicio. DT 16 LIS)");
+		addSmallLabel("(Cumplimente este apartado para todas las participaciones en las que se haya tenido un porcentaje superior al 5% -\u00F3 al 1% si cotizan- a lo largo del per\u00EDodo, y cuyo valor nominal supere los 100.000 euros, incluyendo por tanto las participaciones transmitidas en el ejercicio. DT 16\u00AA LIS)");
 		
 		AonDisplayTable tab3 = new AonDisplayTable();
 		tab3.addStyleName(AON.CSS.aonWidthAlmostAll());

@@ -182,6 +182,7 @@ public class Page01 extends PageAbs {
 			}
 		}
 		
+		// FALTA - REVISAR CON DOC PADIS QUE SE SIGUE HABILITANDO SOLO PARA ESOS CARACTERES
 		// GRUPO MERCANTIL (solo habilitados si caracteres 81, 82 o 39 marcados)
 		
 		AonDocumentTextBox ultimateDocument = new AonDocumentTextBox();           

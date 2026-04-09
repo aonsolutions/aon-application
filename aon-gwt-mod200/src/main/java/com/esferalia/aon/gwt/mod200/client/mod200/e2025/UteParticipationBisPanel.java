@@ -30,31 +30,31 @@ public class UteParticipationBisPanel extends AonCustomDialog {
 		}
 	}
 	
-	private AonDocumentTextBox document;
-	private AonTextBox name;
-	private ProvinceCountryListBox province;
-	private ListBox entityType;
-	private ListBox imputationCriteria;	
-	private AonDoubleBox c01279;  // Datos relativos a la participación: Valoración de la participación al comienzo del período impositivo                                                                                                       
-	private AonDoubleBox c01455;  // Datos relativos a la participación: Valoración de la participación al final del período impositivo                                                                                                          
-	private AonDoubleBox c01456;  // Datos relativos a la participación: Ingresos financieros de la participación                                                                                                                                
-	private AonDoubleBox c01458;  // Importes imputados: Importe del resultado contable imputado                                                                                                                                                 
-	private AonDoubleBox c01459;  // Importes imputados: Gastos financieros netos imputados                                                                                                                                                      
-	private AonDoubleBox c01460;  // Importes imputados: Reserva de capitalización que no haya sido aplicada imputada                                                                                                                            
-	private AonDoubleBox c01461;  // Importes imputados: Base imponible imputada                                                                                                                                                                 
-	private AonDoubleBox c01467;  // Importes imputados: Importe de la deducción generada por bases de deducción para evitar la doble imposición imputadas                                                                                       
-	private AonDoubleBox c01468;  // Importes imputados: Importe bonificación generada de las bases de bonificación imputadas                                                                                                                    
-	private AonDoubleBox c01523;  // Importes imputados: Importe de la deducción generada por activos fijos por bases de deducción por inversión en Canarias imputadas                                                                           
-	private AonDoubleBox c01601;  // Importes imputados: Importe de la deducción generada de investigación y desarrollo e innovación tecnológica por bases de deducción por inversión en Canarias imputadas                                      
-	private AonDoubleBox c01638;  // Importes imputados: Importe de la deducción generada de producciones cinematográficas españolas y espectáculos en vivo de artes escénicas y musicales por deducciones por inversión en Canarias imputadas   
-	private AonDoubleBox c01639;  // Importes imputados: Importe de la deducción generada del resto de deducciones por inversión en Canarias imputadas                                                                                           
-	private AonDoubleBox c01640;  // Importes imputados: Importe de la deducción generada de investigación y desarrollo e innovación tecnológica por bases de deducción imputadas                                                                
-	private AonDoubleBox c01743;  // Importes imputados: Importe de la deducción generada de producciones cinematográficas españolas y espectáculos en vivo de artes escénicas y musicales por bases de deducción imputadas                      
-	private AonDoubleBox c01909;  // Importes imputados: Importe del resto de deducciones generadas para incentivar determinadas actividades por bases de deducción imputadas                                                                    
-	private AonDoubleBox c01910;  // Importes imputados: Importe del resto de deducciones generadas por bases de deducción imputadas no mencionadas anteriormente                                                                                
-	private AonDoubleBox c01911;  // Importes imputados: Retenciones e ingresos a cuenta imputados                                                                                                                                               
-	private AonDoubleBox c01912;  // Importes imputados: Dividendos y participaciones en beneficios percibidos procedentes de ejercicios anteriores a la adquisición de la participación                                                         
-	private AonDoubleBox c01934;  // Importes imputados: Dividendos y participaciones en beneficios percibidos procedentes de ejercicios posteriores a la adquisición de la participación                                                        
+	private AonDocumentTextBox document; 		// NIF (o equivalente al NIF del país de residencia, si no tiene NIF en España)
+	private AonTextBox name; 					// Nombre o razón social
+	private ProvinceCountryListBox province;	// Código país // FALTA - COMPROBAR CON DOC PADIS QUE AHORA SOLO SE PIDE EL PAIS EN 2024 ERA PROVINCIA/PAIS
+	private ListBox entityType; 				// Tipo de entidad: 0 - No consta, 1 - Agrupación de interés económico española, 2 - Agrupación europea de interés económico, 3 - Unión temporal de empresas, 4 - Colaboraciones en el extranjero análogas a las uniones temporales
+	private ListBox imputationCriteria;			// Criterio de imputación art. 46.2 LIS: 0 - No consta, 1 - En la fecha de finalización del periodo impositivo de la entidad, 2 - En el siguiente periodo impositivo
+	private AonDoubleBox c01279;  				// Datos relativos a la participación: Valoración de la participación al comienzo del período impositivo                                                                                                       
+	private AonDoubleBox c01455;  				// Datos relativos a la participación: Valoración de la participación al final del período impositivo                                                                                                          
+	private AonDoubleBox c01456;  				// Datos relativos a la participación: Ingresos financieros de la participación                                                                                                                                
+	private AonDoubleBox c01458;  				// Importes imputados: Importe del resultado contable imputado                                                                                                                                                 
+	private AonDoubleBox c01459;  				// Importes imputados: Gastos financieros netos imputados                                                                                                                                                      
+	private AonDoubleBox c01460;  				// Importes imputados: Reserva de capitalización que no haya sido aplicada imputada                                                                                                                            
+	private AonDoubleBox c01461;  				// Importes imputados: Base imponible imputada                                                                                                                                                                 
+	private AonDoubleBox c01467;  				// Importes imputados: Importe de la deducción generada por bases de deducción para evitar la doble imposición imputadas                                                                                       
+	private AonDoubleBox c01468;  				// Importes imputados: Importe bonificación generada de las bases de bonificación imputadas                                                                                                                    
+	private AonDoubleBox c01523;  				// Importes imputados: Importe de la deducción generada por activos fijos por bases de deducción por inversión en Canarias imputadas                                                                           
+	private AonDoubleBox c01601;  				// Importes imputados: Importe de la deducción generada de investigación y desarrollo e innovación tecnológica por bases de deducción por inversión en Canarias imputadas                                      
+	private AonDoubleBox c01638;  				// Importes imputados: Importe de la deducción generada de producciones cinematográficas españolas y espectáculos en vivo de artes escénicas y musicales por deducciones por inversión en Canarias imputadas   
+	private AonDoubleBox c01639;  				// Importes imputados: Importe de la deducción generada del resto de deducciones por inversión en Canarias imputadas                                                                                           
+	private AonDoubleBox c01640;  				// Importes imputados: Importe de la deducción generada de investigación y desarrollo e innovación tecnológica por bases de deducción imputadas                                                                
+	private AonDoubleBox c01743;  				// Importes imputados: Importe de la deducción generada de producciones cinematográficas españolas y espectáculos en vivo de artes escénicas y musicales por bases de deducción imputadas                      
+	private AonDoubleBox c01909;  				// Importes imputados: Importe del resto de deducciones generadas para incentivar determinadas actividades por bases de deducción imputadas                                                                    
+	private AonDoubleBox c01910;  				// Importes imputados: Importe del resto de deducciones generadas por bases de deducción imputadas no mencionadas anteriormente                                                                                
+	private AonDoubleBox c01911;  				// Importes imputados: Retenciones e ingresos a cuenta imputados                                                                                                                                               
+	private AonDoubleBox c01912;  				// Importes imputados: Dividendos y participaciones en beneficios percibidos procedentes de ejercicios anteriores a la adquisición de la participación                                                         
+	private AonDoubleBox c01934;  				// Importes imputados: Dividendos y participaciones en beneficios percibidos procedentes de ejercicios posteriores a la adquisición de la participación                                                        
 	
 	private UteParticipationBisPanelCallback callback;
 	private int index;
@@ -69,7 +69,7 @@ public class UteParticipationBisPanel extends AonCustomDialog {
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
 		setModal(true);
-		setCaption("Part\u00EDcipes de agrupaciones de inter\u00E9s econ\u00F3mico y UTES (cumplimentaci\u00F3n voluntaria)");
+		setCaption("Part\u00EDcipes de agrupaciones de inter\u00E9s econ\u00F3mico y UTES");
 		paint();
 	}
 
@@ -271,14 +271,15 @@ public class UteParticipationBisPanel extends AonCustomDialog {
 		tab2.addStyleName(AON.CSS.aonBlockCenter());
 		rootPanel.add(tab2);
 		
-		c01279 = new AonDoubleBox();
-		c01279.addValueChangeHandler(event -> doubleValueChanged(c01279));
-		
-		c01455 = new AonDoubleBox();
-		c01455.addValueChangeHandler(event -> doubleValueChanged(c01455));
-		
-		c01456 = new AonDoubleBox();
-		c01456.addValueChangeHandler(event -> doubleValueChanged(c01456));		
+//		c01279 = new AonDoubleBox();
+//		c01279.addValueChangeHandler(event -> doubleValueChanged(c01279));
+//		c01455 = new AonDoubleBox();
+//		c01455.addValueChangeHandler(event -> doubleValueChanged(c01455));
+//		c01456 = new AonDoubleBox();
+//		c01456.addValueChangeHandler(event -> doubleValueChanged(c01456));
+		c01279 = addAonDoubleBox();
+		c01455 = addAonDoubleBox();
+		c01456 = addAonDoubleBox();
 
 		addRow(tab2, Mod2002025Key.UT1279.getDescription(), c01279, AON.CSS.aonWidth440());
 		addRow(tab2, Mod2002025Key.UT1455.getDescription(), c01455, AON.CSS.aonWidth440());
@@ -293,40 +294,57 @@ public class UteParticipationBisPanel extends AonCustomDialog {
 		tab3.addStyleName(AON.CSS.aonBlockCenter());
 		rootPanel.add(tab3);
 		
-		c01458 = new AonDoubleBox();
-		c01458.addValueChangeHandler(event -> doubleValueChanged(c01458));
-		c01459 = new AonDoubleBox();
-		c01459.addValueChangeHandler(event -> doubleValueChanged(c01459));
-		c01460 = new AonDoubleBox();
-		c01460.addValueChangeHandler(event -> doubleValueChanged(c01460));
-		c01461 = new AonDoubleBox();
-		c01461.addValueChangeHandler(event -> doubleValueChanged(c01461));
-		c01467 = new AonDoubleBox();
-		c01467.addValueChangeHandler(event -> doubleValueChanged(c01467));
-		c01468 = new AonDoubleBox();
-		c01468.addValueChangeHandler(event -> doubleValueChanged(c01468));
-		c01523 = new AonDoubleBox();
-		c01523.addValueChangeHandler(event -> doubleValueChanged(c01523));
-		c01601 = new AonDoubleBox();
-		c01601.addValueChangeHandler(event -> doubleValueChanged(c01601));
-		c01638 = new AonDoubleBox();
-		c01638.addValueChangeHandler(event -> doubleValueChanged(c01638));
-		c01639 = new AonDoubleBox();
-		c01639.addValueChangeHandler(event -> doubleValueChanged(c01639));
-		c01640 = new AonDoubleBox();
-		c01640.addValueChangeHandler(event -> doubleValueChanged(c01640));
-		c01743 = new AonDoubleBox();
-		c01743.addValueChangeHandler(event -> doubleValueChanged(c01743));
-		c01909 = new AonDoubleBox();
-		c01909.addValueChangeHandler(event -> doubleValueChanged(c01909));
-		c01910 = new AonDoubleBox();
-		c01910.addValueChangeHandler(event -> doubleValueChanged(c01910));
-		c01911 = new AonDoubleBox();
-		c01911.addValueChangeHandler(event -> doubleValueChanged(c01911));
-		c01912 = new AonDoubleBox();
-		c01912.addValueChangeHandler(event -> doubleValueChanged(c01912));
-		c01934 = new AonDoubleBox();
-		c01934.addValueChangeHandler(event -> doubleValueChanged(c01934));
+//		c01458 = new AonDoubleBox();
+//		c01458.addValueChangeHandler(event -> doubleValueChanged(c01458));
+//		c01459 = new AonDoubleBox();
+//		c01459.addValueChangeHandler(event -> doubleValueChanged(c01459));
+//		c01460 = new AonDoubleBox();
+//		c01460.addValueChangeHandler(event -> doubleValueChanged(c01460));
+//		c01461 = new AonDoubleBox();
+//		c01461.addValueChangeHandler(event -> doubleValueChanged(c01461));
+//		c01467 = new AonDoubleBox();
+//		c01467.addValueChangeHandler(event -> doubleValueChanged(c01467));
+//		c01468 = new AonDoubleBox();
+//		c01468.addValueChangeHandler(event -> doubleValueChanged(c01468));
+//		c01523 = new AonDoubleBox();
+//		c01523.addValueChangeHandler(event -> doubleValueChanged(c01523));
+//		c01601 = new AonDoubleBox();
+//		c01601.addValueChangeHandler(event -> doubleValueChanged(c01601));
+//		c01638 = new AonDoubleBox();
+//		c01638.addValueChangeHandler(event -> doubleValueChanged(c01638));
+//		c01639 = new AonDoubleBox();
+//		c01639.addValueChangeHandler(event -> doubleValueChanged(c01639));
+//		c01640 = new AonDoubleBox();
+//		c01640.addValueChangeHandler(event -> doubleValueChanged(c01640));
+//		c01743 = new AonDoubleBox();
+//		c01743.addValueChangeHandler(event -> doubleValueChanged(c01743));
+//		c01909 = new AonDoubleBox();
+//		c01909.addValueChangeHandler(event -> doubleValueChanged(c01909));
+//		c01910 = new AonDoubleBox();
+//		c01910.addValueChangeHandler(event -> doubleValueChanged(c01910));
+//		c01911 = new AonDoubleBox();
+//		c01911.addValueChangeHandler(event -> doubleValueChanged(c01911));
+//		c01912 = new AonDoubleBox();
+//		c01912.addValueChangeHandler(event -> doubleValueChanged(c01912));
+//		c01934 = new AonDoubleBox();
+//		c01934.addValueChangeHandler(event -> doubleValueChanged(c01934));
+		c01458 = addAonDoubleBox();
+		c01459 = addAonDoubleBox();
+		c01460 = addAonDoubleBox();
+		c01461 = addAonDoubleBox();
+		c01467 = addAonDoubleBox();
+		c01468 = addAonDoubleBox();
+		c01523 = addAonDoubleBox();
+		c01601 = addAonDoubleBox();
+		c01638 = addAonDoubleBox();
+		c01639 = addAonDoubleBox();
+		c01640 = addAonDoubleBox();
+		c01743 = addAonDoubleBox();
+		c01909 = addAonDoubleBox();
+		c01910 = addAonDoubleBox();
+		c01911 = addAonDoubleBox();
+		c01912 = addAonDoubleBox();
+		c01934 = addAonDoubleBox();
 		
 		addRow(tab3, Mod2002025Key.UT1458.getDescription(), c01458);    
 		addRow(tab3, Mod2002025Key.UT1459.getDescription(), c01459);   
@@ -371,7 +389,7 @@ public class UteParticipationBisPanel extends AonCustomDialog {
 		add(rootPanel);
 		
 	}
-	
+
 	private Label getSubtitle(String text) {
 		Label subtitle = new Label(text);
 		subtitle.setStyleName(AON.CSS.aonMarginTop());
@@ -397,6 +415,12 @@ public class UteParticipationBisPanel extends AonCustomDialog {
 			text.setValue(0.0,false);
 		}
 		setModified(true);
+	}
+	
+	private AonDoubleBox addAonDoubleBox() {
+		AonDoubleBox aonDoubleBox = new AonDoubleBox();
+		aonDoubleBox.addValueChangeHandler(event -> doubleValueChanged(aonDoubleBox));
+		return aonDoubleBox;
 	}
 
 }

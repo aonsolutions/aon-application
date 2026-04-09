@@ -59,11 +59,11 @@ public class Model2002025 extends DockLayoutPanel {
 	
 	AonToastModel commentsToast = null;
 
-	// Estado 
 	AonToolbarButton markAsFinishedButton;
 	AonToolbarButton markAsSentButton;
 	AonToolbarButton markAsPendingButton;
 	Label statusLabel;
+	
 	SimpleLayoutPanel pageContainer = new SimpleLayoutPanel();
 	
 	private Model200ModuleOptions options;
@@ -135,6 +135,7 @@ public class Model2002025 extends DockLayoutPanel {
 		boolean isNotNew = !mod200Object.getMod200().isNew();
 		FiscalStatus status = mod200Object.getMod200().getStatus();
 		
+		// Visible buttons
 		initializeButton.setVisible(!mod200Object.isInitialized());
 		saveButton.setVisible(mod200Object.isInitialized() && !mod200Object.getMod200().isFinished() && !mod200Object.getMod200().isSent());
 		removeButton.setVisible(isNotNew && !mod200Object.getMod200().isFinished() && !mod200Object.getMod200().isSent());
@@ -142,20 +143,17 @@ public class Model2002025 extends DockLayoutPanel {
 		aeatButton.setVisible(mod200Object.isInitialized());
 		commentsButton.setVisible(isNotNew);
 		auditButton.setVisible(isNotNew);
-		
-		// Estado
-		markAsFinishedButton.setVisible(isNotNew &&
-				(status == FiscalStatus.PENDING || status == FiscalStatus.CUSTOMER_CHECK || status == FiscalStatus.MISSING));
+		markAsFinishedButton.setVisible(isNotNew &&	(status == FiscalStatus.PENDING || status == FiscalStatus.CUSTOMER_CHECK || status == FiscalStatus.MISSING));
 		markAsSentButton.setVisible(isNotNew && (status == FiscalStatus.FINISHED));
-		markAsPendingButton.setVisible(isNotNew &&
-				(status == FiscalStatus.FINISHED || status == FiscalStatus.BATCHED || status == FiscalStatus.SENT || status == FiscalStatus.CUSTOMER_CHECK || status == FiscalStatus.BLOCKED));
-		
+		markAsPendingButton.setVisible(isNotNew && (status == FiscalStatus.FINISHED || status == FiscalStatus.BATCHED || status == FiscalStatus.SENT || status == FiscalStatus.CUSTOMER_CHECK || status == FiscalStatus.BLOCKED));
+
+		// Enabled buttons
 		saveButton.setEnabled(true);
-		
-		// Estado		
 		markAsFinishedButton.setEnabled(!isDirty());
 		markAsSentButton.setEnabled(!isDirty());
 		markAsPendingButton.setEnabled(!isDirty());
+		
+		// Label status
 		styleStatusLabel();
 		
 		// Pagina Agencia Tributaria
@@ -195,7 +193,6 @@ public class Model2002025 extends DockLayoutPanel {
 		}
 		
 		private void showPage(int page) {
-			
 			FlowPanel parent = 	(FlowPanel) getParent();
 			for (int i = 0 ; i < parent.getWidgetCount(); i++) {
 				parent.getWidget(i).removeStyleName(AON.CSS.aonBackgroundLigthGray());
@@ -208,17 +205,16 @@ public class Model2002025 extends DockLayoutPanel {
 			} else {
 				AonMessageDialog.warning(AON.MSG.pageNotAvailable());
 			}
-			
 		}
 		
 		private void checkAndShowPage(int page) {
-
 			if (mod200Object.isInitialized() ) {
 				showPage(page);
 			} else {
 				AonMessageDialog.warning(AON.MSG.mustInitialzeMod200());
 			}
 		}
+		
 	}
 
 	private PageAbs getPage( int i) {
@@ -343,30 +339,58 @@ public class Model2002025 extends DockLayoutPanel {
 		};		
 		
 		if (pages[i] == null) {
-			if (i ==  0) pages[i] = new Page00(cbk);
-			if (i ==  1) pages[i] = new Page01(cbk);
-			if (i ==  2) pages[i] = new Page02(cbk); 
-			if (i ==  3) pages[i] = new Page03(cbk); 
-			if (i ==  4) pages[i] = new Page04(cbk); 
-			if (i ==  5) pages[i] = new Page05(cbk); 
-			if (i ==  6) pages[i] = new Page06(cbk); 
-			if (i ==  7) pages[i] = new Page07(cbk); 
-			if (i ==  8) pages[i] = new Page08(cbk); 
-			if (i ==  9) pages[i] = new Page09(cbk); 
-			if (i == 10) pages[i] = new Page10(cbk); 
-			if (i == 11) pages[i] = new Page11(cbk); 
-			if (i == 12) pages[i] = new Page12(cbk);
-			if (i == 13) pages[i] = new Page13(cbk); 
-			if (i == 14) pages[i] = new Page14(cbk);
-			if (i == 15) pages[i] = new Page15(cbk); 
-			if (i == 16) pages[i] = new Page16(cbk); 
-			if (i == 17) pages[i] = new Page17(cbk);
-			if (i == 18) pages[i] = new Page18(cbk); 
-			if (i == 19) pages[i] = new Page19(cbk); 
-			if (i == 20) pages[i] = new Page20(cbk); 
-			if (i == 21) pages[i] = new Page21(cbk);
-			if (i == 22) pages[i] = new PageAEAT(cbk);
+//			if (i ==  0) pages[i] = new Page00(cbk);
+//			if (i ==  1) pages[i] = new Page01(cbk);
+//			if (i ==  2) pages[i] = new Page02(cbk); 
+//			if (i ==  3) pages[i] = new Page03(cbk); 
+//			if (i ==  4) pages[i] = new Page04(cbk); 
+//			if (i ==  5) pages[i] = new Page05(cbk); 
+//			if (i ==  6) pages[i] = new Page06(cbk); 
+//			if (i ==  7) pages[i] = new Page07(cbk); 
+//			if (i ==  8) pages[i] = new Page08(cbk); 
+//			if (i ==  9) pages[i] = new Page09(cbk); 
+//			if (i == 10) pages[i] = new Page10(cbk); 
+//			if (i == 11) pages[i] = new Page11(cbk); 
+//			if (i == 12) pages[i] = new Page12(cbk);
+//			if (i == 13) pages[i] = new Page13(cbk); 
+//			if (i == 14) pages[i] = new Page14(cbk);
+//			if (i == 15) pages[i] = new Page15(cbk); 
+//			if (i == 16) pages[i] = new Page16(cbk); 
+//			if (i == 17) pages[i] = new Page17(cbk);
+//			if (i == 18) pages[i] = new Page18(cbk); 
+//			if (i == 19) pages[i] = new Page19(cbk); 
+//			if (i == 20) pages[i] = new Page20(cbk); 
+//			if (i == 21) pages[i] = new Page21(cbk);
+//			if (i == 22) pages[i] = new PageAEAT(cbk);
+			
+			pages[i] = switch (i) {
+				case  0 -> new Page00(cbk);
+				case  1 -> new Page01(cbk);
+				case  2 -> new Page02(cbk);
+				case  3 -> new Page03(cbk);
+				case  4 -> new Page04(cbk);
+				case  5 -> new Page05(cbk);
+				case  6 -> new Page06(cbk);
+				case  7 -> new Page07(cbk);
+				case  8 -> new Page08(cbk);
+				case  9 -> new Page09(cbk);
+				case 10 -> new Page10(cbk);
+				case 11 -> new Page11(cbk);
+				case 12 -> new Page12(cbk);
+				case 13 -> new Page13(cbk);
+				case 14 -> new Page14(cbk);
+				case 15 -> new Page15(cbk);
+				case 16 -> new Page16(cbk);
+				case 17 -> new Page17(cbk);
+				case 18 -> new Page18(cbk);
+				case 19 -> new Page19(cbk);
+				case 20 -> new Page20(cbk);
+				case 21 -> new Page21(cbk);
+				case 22 -> new PageAEAT(cbk);
+				default -> null;
+			};
 		}
+		
 		return getPage(i);
 	}
 	
@@ -603,6 +627,7 @@ public class Model2002025 extends DockLayoutPanel {
 		styleCommentsButton();
 		
 		// Auditoria
+		
 		auditButton = new AonToolbarButton(AON.MSG.audit(), AON.CSS.aonIconAudit());
 		auditButton.addClickHandler( event -> audit());
 		toolbarPanel.add(auditButton);

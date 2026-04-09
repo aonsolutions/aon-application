@@ -64,7 +64,7 @@ public class Page18 extends PageAbs {
 		paintDescription(table1, "Dotaciones pendientes de integraci\u00F3n en per\u00EDodos futuros", 4, 0, false);
 		paintKeyField(table1,Mod2002025Key.RV991 , 4, 1, 10, false); // Dotaciones pendientes de integración en períodos futuros
 		
-		paintFooterNote(basePanel, "(*) Se indicar\u00E1 cual es el n\u00FAmero de per\u00EDodo impositivo objeto de declaraci\u00F3n a contar a partir de 1 de enero de 2025, considerando incluidos los per\u00EDodos inferiores a 12 meses.");
+		paintFooterNote(basePanel, "(*) Se indicar\u00E1 cual es el n\u00FAmero de per\u00EDodo impositivo objeto de declaraci\u00F3n a contar a partir de 1 de enero de 2024, considerando incluidos los per\u00EDodos inferiores a 12 meses.");
 				
 		// Activos por impuesto diferido DT 33 ...
 		
@@ -74,7 +74,7 @@ public class Page18 extends PageAbs {
 		paintAmountLabel(table2);
 		
 		row = 1;
-		addHeaderCell(table2,row, 5,AON.MSG.dot4_2());
+		addHeaderCell(table2, row, 5, AON.MSG.dot4_2());
 		table2.getFlexCellFormatter().setColSpan(row, 5, 4);
 		row++;
 		paintKeysProvider(Mod2002025LM1535Key.values(), table2, row, false, 
@@ -98,9 +98,9 @@ public class Page18 extends PageAbs {
 		paintAmountLabel(table3);
 		
 		row = 1;
-		addHeaderCell(table3,row, 3,AON.MSG.dot4_1());		
+		addHeaderCell(table3, row, 3, AON.MSG.dot4_1());		
 		table3.getFlexCellFormatter().setColSpan(row, 3, 3);
-		addHeaderCell(table3,row, 6,AON.MSG.dot4_2());
+		addHeaderCell(table3, row, 6, AON.MSG.dot4_2());
 		table3.getFlexCellFormatter().setColSpan(row, 6, 3);
 		row++;
 		paintKeysProvider(Mod2002025LM1561Key.values(), table3, row, false, 

@@ -35,8 +35,8 @@ public class Page17 extends PageAbs {
 			paintKeysProvider(Mod2002025RIC_1Key.values(), table1, row, false, 
 					"",
 					"Pendiente de materializar RIC a principio de per\u00EDodo", 
-					"Inversiones previstas letras A y B, art. 27.4 Ley 19/1994",
-					"Inversiones previstas letras B bis, C y D, art. 27.4 Ley 19/1994",
+					"Inversiones previstas letras A y B, art. 27.4 y DA 15\u00AA Ley 19/1994",
+					"Inversiones previstas letras B bis, C y D, art. 27.4 y DA 15\u00AA Ley 19/1994",
 					"Inversiones anticipadas consideradas materializaci\u00F3n de la RIC en esta liquidaci\u00F3n",
 					"Integrado en BI por incumplimiento de requisitos",
 					"Pendiente de materializar RIC al final de per\u00EDodo" );
@@ -57,8 +57,8 @@ public class Page17 extends PageAbs {
 			paintKeysProvider(Mod2002025RIC_2Key.values(), addTable("", 4, "150px"), 0, false, 
 					"",
 					"Pendiente de dotar RIC a principio de per\u00EDodo",
-					"Inversiones previstas letras A y B, art. 27.4 Ley 19/1994",
-					"Inversiones previstas letras B bis, C y D, art. 27.4 Ley 19/1994",
+					"Inversiones previstas letras A y B, art. 27.4 y DA 15\u00AA Ley 19/1994",
+					"Inversiones previstas letras B bis, C y D, art. 27.4 y DA 15\u00AA Ley 19/1994",
 					"Pendiente de dotar RIC al final de per\u00EDodo");
 		}
 		

@@ -11,7 +11,7 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2009Panel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2025Panel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
@@ -19,7 +19,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2025.Model2002025.Model2002025PageCallback;
-import com.esferalia.aon.occam.api.model.type.CNAE2009;
+import com.esferalia.aon.occam.api.model.type.CNAE2025;
 import com.esferalia.aon.occam.mod200.api.model.BalanceType;
 import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
 import com.esferalia.aon.occam.mod200.api.model.EcpnType;
@@ -105,8 +105,8 @@ public class Page00 extends PageAbs {
 		cnaeLabel.setText(null);
 		cnae.setValue(callback.getMod200Object().getMod200().getCnae());
 		if (!AonStringUtils.isEmpty(callback.getMod200Object().getMod200().getCnae())) {
-			CNAE2009 cnae2009 = CNAE2009.valueOfCode(callback.getMod200Object().getMod200().getCnae());
-			cnaeLabel.setText(cnae2009 == null ? null : cnae2009.getDescription());	
+			CNAE2025 cnae2025 = CNAE2025.valueOfCode(callback.getMod200Object().getMod200().getCnae());
+			cnaeLabel.setText(cnae2025 == null ? null : cnae2025.getDescription());	
 		}
 		
 		for (Mod2002025Key key : inputsCheckBox.keySet()) {
@@ -227,9 +227,9 @@ public class Page00 extends PageAbs {
 		cnae = new AonTextBox();
 		cnaeLabel = new InlineLabel();
 		
-		final AonCnae2009Panel cnae2009Panel = new AonCnae2009Panel();		
-		cnae2009Panel.addSelectionHandler(event -> {
-			CNAE2009 selected = event.getSelectedItem();
+		final AonCnae2025Panel cnae2025Panel = new AonCnae2025Panel();		
+		cnae2025Panel.addSelectionHandler(event -> {
+			CNAE2025 selected = event.getSelectedItem();
 			cnae.setValue(selected.getCode());
 			cnaeLabel.setText(selected.getDescription());
 			callback.getMod200Object().getMod200().setCnae(cnae.getValue());
@@ -243,7 +243,7 @@ public class Page00 extends PageAbs {
 		AonTableButton cnaeButton = new AonTableButton(AON.MSG.mainActivityCNAE(),AON.CSS.aonIconSearch());
 		cnaeButton.addStyleName(AON.CSS.aonMarginLeft());
 		cnaeButton.setTitle(AON.MSG.mainActivityCNAE());
-		cnaeButton.addClickHandler(event -> cnae2009Panel.onShow());
+		cnaeButton.addClickHandler(event -> cnae2025Panel.onShow());
 		otherInputs.add(cnaeButton);
 		
 		cnaeLabel.setStyleName(AON.CSS.aonMarginLeft());
@@ -308,7 +308,7 @@ public class Page00 extends PageAbs {
 		tab.addLabelWidgetRow(AON.MSG.document(), nif)
 		   .addLabelWidgetRow("Apellidos y nombre o raz\u00F3n social", companyName)
 		   .addLabelWidgetRow(AON.MSG.phone(), phones)
-		   .addLabelWidgetRow(AON.MSG.mainActivityCNAE(), cnaePanel)
+		   .addLabelWidgetRow(AON.MSG.mainActivityCNAE() + " (CNAE2025)", cnaePanel)
 		   .addLabelWidgetRow(AON.MSG.periodType(), periodType)
 		   .addLabelWidgetRow("", periodPanel)
 		   .addLabelWidgetRow(Mod2002025Key.X0001.getDescription(), agriculturalActivities)

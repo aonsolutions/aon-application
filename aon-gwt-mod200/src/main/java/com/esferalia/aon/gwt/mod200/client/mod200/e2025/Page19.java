@@ -35,7 +35,7 @@ public class Page19 extends PageAbs {
 
 	private FlowPanel panelB6;    // 6).- Deducción para evitar la doble imposición
 	private FlowPanel panelPar1;  // C) Relación de partícipes
-	private FlowPanel panelPar2;  // Partícipes de agrupaciones de interés económico y UTES (cumplimentación voluntaria)
+	private FlowPanel panelPar2;  // Partícipes de agrupaciones de interés económico y UTES
 	
 	private UteParticipationBisPanel uteParticipationBisPanel;
 
@@ -109,8 +109,8 @@ public class Page19 extends PageAbs {
 			paintB6Panel();
 			table1.setWidget(row++, 0, panelB6);
 	
-			row = paintTable(table1, row, UTE_KEYS_B7 , "7.- Bonificaciones:", "Base de la bonificaci\u00F3n", "Importe de la bonificaci\u00F3n");
-			row = paintTable(table1, row, UTE_KEYS_B8_1, "8.- Deducciones generadas en el periodo impositivo:", "Base de la deducci\u00F3n", "Importe de la deducci\u00F3n");
+			row = paintTable(table1, row, UTE_KEYS_B7 , "7.- Bonificaciones:", "Base de la bonificaci\u00F3n");
+			row = paintTable(table1, row, UTE_KEYS_B8_1, "8.- Deducciones generadas en el periodo impositivo:", "Base de la deducci\u00F3n");
 			row = paintTable(table1, row, UTE_KEYS_B8_2, "Informaci\u00F3n adicional para el c\u00E1lculo de l\u00EDmites de deducciones:");
 			
 			paintKey(table1, Mod2002025Key.UT062, row++);
@@ -127,16 +127,16 @@ public class Page19 extends PageAbs {
 		
 		}
 		
-		// Partícipes de agrupaciones de interés económico y UTES (cumplimentación voluntaria) (solo si caracter 00089 marcado)
+		// Partícipes de agrupaciones de interés económico y UTES (solo si caracter 00089 marcado)
 		if (isChecked(Mod2002025Key.C0089)) {
 			panelPar2 = new FlowPanel();
 			paintPar2Panel();
-			addTable("Part\u00EDcipes de agrupaciones de inter\u00E9s econ\u00F3mico y UTES (cumplimentaci\u00F3n voluntaria)").setWidget(0, 0, panelPar2);
+			addTable("Part\u00EDcipes de agrupaciones de inter\u00E9s econ\u00F3mico y UTES").setWidget(0, 0, panelPar2);
 		}		
 		
 	}
 	
-	private int paintTable(FlexTable table1, int row, Mod2002025Key[][] keys, String title, String... headers) {
+	private int paintTable(FlexTable table1, int row, Mod2002025Key[] keys, String title, String... headers) {
 		
 		paintDescription(table1, title, row, 0, false); 
 		int col = 1;
@@ -145,11 +145,10 @@ public class Page19 extends PageAbs {
 		}		
 		row++;
 		
-		for (Mod2002025Key[] key : keys) {
-			paintKeyDescription(table1, key[0], row, 0);			
+		for (Mod2002025Key key : keys) {
+			paintKeyDescription(table1, key, row, 0);			
 			table1.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPadding2Left()); 
-			paintKeyField(table1, key[0], row, 1);
-			paintKeyField(table1, key[1], row, 2);
+			paintKeyField(table1, key, row, 1);
 			row++;
 		}
 		
