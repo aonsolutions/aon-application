@@ -55,6 +55,10 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 		AonDisplayTable tab = new AonDisplayTable();
 		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
 		tab.addStyleName(AON.CSS.aonBlockCenter());
+		String sourceDesciption = "M\u00F3dulo origen: " 
+			+ ( source == InvoiceSource.TEDI
+				?"PORTAL"
+				:AonStringUtils.upperCase( source.getDescription() ));
 		tab.addRow()
 			.addCell( new Label("Factura de " + invoice.getType().getDescription())
 					,AON.CSS.aonBold(),AON.CSS.aonTextCenter()
@@ -64,7 +68,7 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 					,AON.CSS.aonFontSmall(),AON.CSS.aonWidth100())
 			.addCell( getAttributes( invoice )
 					,AON.CSS.aonWidthAuto(),AON.CSS.aonTextCenter())
-			.addCellIf( source != null , new Label( "M\u00F3dulo origen: " + source.getDescription() )
+			.addCellIf( source != null , new Label( sourceDesciption )
 					,AON.CSS.aonWidth200(),AON.CSS.aonColorGreen(),AON.CSS.aonTextCenter()
 					,AON.CSS.aonFontLarger(),AON.CSS.aonNowrap())
 		;

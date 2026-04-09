@@ -11,19 +11,6 @@ public class EnumVisitors {
 		T visitUndeductible(Invoice invoice);
 	}
 
-	public static interface IAccountEntryUpdateVisitor {
-		IAccountEntryWrapper visitManualType(IAccountEntryWrapper wrapper);
-		IAccountEntryWrapper visitOpeningType(IAccountEntryWrapper wrapper);
-		IAccountEntryWrapper visitSecurityLevel(IAccountEntryWrapper wrapper);
-		IAccountEntryWrapper visitInvestment(IAccountEntryWrapper wrapper);
-		IAccountEntryWrapper visitTaxDate(IAccountEntryWrapper wrapper);
-		IAccountEntryWrapper visitActivity(IAccountEntryWrapper wrapper);
-		IAccountEntryWrapper visitService(IAccountEntryWrapper wrapper);
-		IAccountEntryWrapper visitVatAccrualPayment(IAccountEntryWrapper wrapper);
-		IAccountEntryWrapper visitWithholdingType(IAccountEntryWrapper wrapper);
-		IAccountEntryWrapper visitOperatingAccount(IAccountEntryWrapper wrapper);
-	}
-
 	public static interface IWithholdingTypeVisitor<T> {
 		T visitProfessional(T t);
 		T visitRenting(T t);
