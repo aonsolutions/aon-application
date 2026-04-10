@@ -190,7 +190,7 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 //			books.add( new AccountingBook( 2,10, 1,MimeType.MIME_PDF,BookType.BALANCES	,true )); // Balances
 //			books.add( new AccountingBook( 2,11, 1,MimeType.MIME_PDF,BookType.BALANCES	,true )); // Balances
 			
-			// FALTA - SE DEJAN MARCADOS POR DEFECTO SOLO BALSUMS, IVA Y BALANCES
+			// SE DEJAN MARCADOS POR DEFECTO SOLO BALSUMS, IVA Y BALANCES
 			books.add( new AccountingBook( 1, 0, 1,MimeType.MIME_PDF,BookType.DIARIO	,false)); // Diario
 			books.add( new AccountingBook( 2, 1, 1,MimeType.MIME_PDF,BookType.MAYOR		,false)); // Mayor
 			books.add( new AccountingBook( 3, 2, 1,MimeType.MIME_PDF,BookType.BAL_SUMS1	,true));  // Balances de comprobación (sumas y saldos 01-03)
@@ -367,7 +367,7 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 			mergeRunner.addRunner(coverAccountingBookRunner);
 		}
 		
-		// FALTA - SUMAS Y SALDOS, LIBROS DE IVA Y BALANCES, VAN EN UN SOLO PDF SEPARADOS DEL RESTO Y DE OTROS
+		// SUMAS Y SALDOS, LIBROS DE IVA Y BALANCES, VAN EN UN SOLO PDF SEPARADOS DEL RESTO Y DE OTROS
 		PDFMergerBookRunner mergeRunnerSum = getMergerBookRunner(BookType.BAL_SUMS1, "Balances de sumas y saldos");
 		boolean addedSum = false;
 		
@@ -381,7 +381,7 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 		boolean added = false;
 		for (AccountingBook book : bookList ) {
 			
-			// FALTA - EL DIARIO Y EL MAYOR SIEMPRE DEBEN IR SEPARADOS
+			// EL DIARIO Y EL MAYOR SIEMPRE DEBEN IR SEPARADOS
 			if (book.getBookType() == BookType.DIARIO || book.getBookType() == BookType.MAYOR) {
 				book.setMergeable(false);
 			}

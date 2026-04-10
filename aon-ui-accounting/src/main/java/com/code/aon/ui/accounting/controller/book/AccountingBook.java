@@ -124,7 +124,7 @@ public class AccountingBook implements Comparable<AccountingBook>, Serializable 
 		this.attachId = attachId;
 	}
 
-	// FALTA - NOMBRE DEL FICHERO <NOMBRE>_NNN.<EXTENSION> DONDE NNN ES EL NUMERO RELLENO CEROS, EXCEPTO OTROS QUE SERA <NOMBRE>_N.<EXTENSION>
+	// NOMBRE DEL FICHERO <NOMBRE>_NNN.<EXTENSION> DONDE NNN ES EL NUMERO RELLENO CEROS, EXCEPTO OTROS QUE SERA <NOMBRE>_N.<EXTENSION>
 //	public String getName() {
 //		return bookType + "_" + getNumber() + "." + getMimeType().getExtension();
 //	}
