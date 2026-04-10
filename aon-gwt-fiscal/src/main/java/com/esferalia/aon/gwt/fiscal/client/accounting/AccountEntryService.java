@@ -50,7 +50,7 @@ public interface AccountEntryService extends RemoteService {
 	AccountingInvoice getRegistryLastAccountingInvoice(String domainName, int domain, String user, Integer registryId) throws AonCoreException;
 	LinkedList<SalaryEntry> getSalaryEntries(String domainName, int domain, String user, Date from, Date to) throws AonCoreException;
 	String getSalaryFormatted(String domainName, int domain, String user, Date from, Date to) throws AonCoreException;
-	IAccountEntryWrapper  updateSpecial(String domainName, int domain, String user, AccountEntryUpdate operation, IAccountEntryWrapper wrapper) throws AonCoreException;
+	IAccountEntryWrapper updateSpecial(Occam occam, AccountEntryUpdate operation, IAccountEntryWrapper wrapper) throws AonCoreException;
 	LinkedList<AccountEntryUpdate> getAvailableAccountEntryUpdates(String domainName, int domain, String user, IAccountEntryWrapper wrapper) throws AonCoreException;
 
 	// AMORTIZATION TYPE

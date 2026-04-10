@@ -1,5 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting;
 
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDomain;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDomainName;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentUser;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getRootPanel;
+
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.logging.Logger;
@@ -9,16 +14,12 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.widget.WithholdingTypeListBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MaximizeEvent;
@@ -31,7 +32,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
-
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.JournalPanelReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AccountPreviewPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.FinanceEntryPanel;
@@ -39,7 +39,8 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoicePanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.Manual;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.SalaryEntryPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.SessionLog;
-import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.SpecialUpdatePanel;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.SpecialUpdatePanel.SpecialUpdatePanelCallback;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountEntryWrapper;
@@ -50,14 +51,13 @@ import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.IAccountEntryTypeVisitor;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAccountEntryUpdateVisitor;
-import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -74,7 +74,6 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.layout.client.Layout.AnimationCallback;
 import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.logging.client.ConsoleLogHandler;
@@ -98,15 +97,23 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
-import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
-import com.google.gwt.core.client.EntryPoint;
-
-public class AccountEntryModule  implements EntryPoint {
+public class AccountEntryModule implements EntryPoint {
 	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
 		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
 		SafeHtml tab(String title, String icon);
 	}
 	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
+
+	static final AccountEntryServiceAsync ACCOUNT_ENTRY_SERVICE;
+	static {
+		AccountEntryServiceAsync accountEntryServiceRaw = GWT.create(AccountEntryService.class);
+		ACCOUNT_ENTRY_SERVICE = new AccountEntryServiceAsyncDecorator(accountEntryServiceRaw);
+	}
+	static final CommonServiceAsync COMMON_SERVICE;
+	static {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
+	}
 
 	private static final Logger LOGGER = Logger.getLogger(AccountEntryModule.class.getName());
 	static {
@@ -118,8 +125,6 @@ public class AccountEntryModule  implements EntryPoint {
 	private int journalTabIndex;
 	private int extraInfoTabIndex;
 	
-	static AccountEntryServiceAsync ACCOUNT_ENTRY_SERVICE;
-	static CommonServiceAsync COMMON_SERVICE;
 
 	private AccountEntryModuleOptions options;
 	private AccountEntry base;
@@ -265,11 +270,6 @@ public class AccountEntryModule  implements EntryPoint {
 
 		AON.ensureInjected();
 		
-		AccountEntryServiceAsync accountEntryServiceRaw = GWT.create(AccountEntryService.class);
-		ACCOUNT_ENTRY_SERVICE = new AccountEntryServiceAsyncDecorator(accountEntryServiceRaw);
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
-
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		dockLayoutPanel.setStyleName(AON.CSS.aonSelector());
 		toolbar = getToolbarPanel();
@@ -673,22 +673,22 @@ public class AccountEntryModule  implements EntryPoint {
 				if (getOptions().isSessionLogTabVisible()) {
 					sessionLog.addSaved(AccountEntryModule.getWrapperArray(result.getAccountEntries()));
 				}
-				reset();
 				
-				if (getOptions().isSessionLogTabVisible()) {
-					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-						public void execute() {
-							tabLayout.selectTab( getSessionLogTabIndex() );					}
-					});
-				}
-
-				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-					public void execute() {
+				if (getOptions().isResetAfterAccept()) {
+					reset();
+					
+					if (getOptions().isSessionLogTabVisible()) {
+						Scheduler.get().scheduleDeferred(() -> tabLayout.selectTab( getSessionLogTabIndex() ));
+					}
+					
+					Scheduler.get().scheduleDeferred(() -> {
 						entryDate.setFocus(true);
 						entryDate.hideDatePicker();
 						entryDate.getTextBox().selectAll();
-					}
-				});
+					});
+				}
+				
+				
 				if (getOptions().hasExternalCallback()) {
 					getOptions().getExternalCallback().onChange(result);
 				}
@@ -1667,269 +1667,292 @@ public class AccountEntryModule  implements EntryPoint {
 	protected void paintOperations(LinkedList<AccountEntryUpdate> updates ) {
 		final AonCustomDialog dialog = new AonCustomDialog();
 		dialog.setCaption(AON.MSG.specialUpdate());
-		dialog.setWidth("500px");
-		FlowPanel rootPanel = new FlowPanel();
-		rootPanel.setStyleName(AON.CSS.aonScrollArea());
-		AonDisplayTable table = new AonDisplayTable();
-		rootPanel.add(table);
-		table.addStyleName(AON.CSS.aonWidthAll());
-		for (AccountEntryUpdate update : updates ) {
-			AonDisplayTableRow updatePanel =  table.addRow();
-			InlineLabel descLabel = new InlineLabel(update.getDescription());
-			updatePanel.addCell(descLabel,AON.CSS.aonFlexGrow1());
-
-			IAccountEntryUpdateVisitor visitor = new IAccountEntryUpdateVisitor() {
-
-				@Override
-				public IAccountEntryWrapper visitManualType(IAccountEntryWrapper wrapper) {
-					updatePanel.addCell(new InlineLabel());
-					paintToggleButton( false );
-					return wrapper;
-				}
-
-				@Override
-				public IAccountEntryWrapper visitOpeningType(IAccountEntryWrapper wrapper) {
-					updatePanel.addCell(new InlineLabel());
-					paintToggleButton( false );
-					return wrapper;
-				}
-
-				@Override
-				public IAccountEntryWrapper visitSecurityLevel(IAccountEntryWrapper wrapper) {
-					updatePanel.addCell(new InlineLabel());
-					paintToggleButton( wrapper.getAccountEntry().isConfidential());
-					return wrapper;
-				}
-
-				@Override
-				public IAccountEntryWrapper visitInvestment(IAccountEntryWrapper wrapper) {
-					updatePanel.addCell(new InlineLabel());
-					if (wrapper instanceof AccountingInvoice) {
-						AccountingInvoice ai = (AccountingInvoice) wrapper;
-						paintToggleButton( ai.getInvoice().isInvestment());
-					}
-					return wrapper;
-				}
-
-
-				@Override
-				public IAccountEntryWrapper visitService(IAccountEntryWrapper wrapper) {
-					updatePanel.addCell(new InlineLabel());
-					if (wrapper instanceof AccountingInvoice) {
-						AccountingInvoice ai = (AccountingInvoice) wrapper;
-						paintToggleButton( ai.getInvoice().isService());
-					}
-					return wrapper;
-				}
-
-				@Override
-				public IAccountEntryWrapper visitVatAccrualPayment(IAccountEntryWrapper wrapper) {
-					updatePanel.addCell(new InlineLabel());
-					if (wrapper instanceof AccountingInvoice) {
-						AccountingInvoice ai = (AccountingInvoice) wrapper;
-						paintToggleButton( ai.getInvoice().isVatAccrualPayment());
-					}
-					return wrapper;
-				}
-				
-				@Override
-				public IAccountEntryWrapper visitTaxDate(IAccountEntryWrapper wrapper) {
-					if (wrapper instanceof AccountingInvoice) {
-						AccountingInvoice ai = (AccountingInvoice) wrapper; 
-						AonDateBox taxDate = new AonDateBox();
-						taxDate.setValue(ai.getInvoice().getTaxDate());
-						taxDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
-							
-							@Override
-							public void onValueChange(ValueChangeEvent<Date> event) {
-								ai.getInvoice().setTaxDate(event.getValue());		
-							}
-						});
-						updatePanel.addCell(taxDate);
-						paintOkButton();
-					} else {
-						updatePanel.addCell(new InlineLabel());	
-					}
-					return wrapper;
-				}
-
-				@Override
-				public IAccountEntryWrapper visitWithholdingType(IAccountEntryWrapper wrapper) {
-					if (wrapper instanceof AccountingInvoice) {
-						AccountingInvoice ai = (AccountingInvoice) wrapper; 
-						if (ai.getWithholdingData() != null) {
-							WithholdingTypeListBox withholdingType = new WithholdingTypeListBox();
-							withholdingType.setValue(ai.getWithholdingData().getWithholdingType());
-							withholdingType.addChangeHandler(new ChangeHandler() {
-								@Override
-								public void onChange(ChangeEvent event) {
-									ai.setWithholdingType( withholdingType.getValue() );
-								}
-							});
-							updatePanel.addCell(withholdingType);
-							paintOkButton();
-						} else {
-							updatePanel.addCell(new InlineLabel());
-						}
-					} else {
-						updatePanel.addCell(new InlineLabel());
-					}
-					return wrapper;
-				}
-
-				@Override
-				public IAccountEntryWrapper visitActivity(IAccountEntryWrapper wrapper) {
-					ListBox activity = new ListBox();
-					activity.setVisible(true);
-					activity.addItem("-- Todas --", "");
-					activity.setSelectedIndex(0);
-					int i = 1;
-					for (EnterpriseActivity ea : getOptions().getConfiguration().getActivities()) {
-						activity.addItem(ea.getDescription(), AonNumberUtils.toString( ea.getId()));
-						if (AonNumberUtils.equals(wrapper.getAccountEntry().getActivity(), ea.getId())  ) {
-							activity.setSelectedIndex(i);
-						}
-						i++;
-					}
-					activity.addChangeHandler(new ChangeHandler() {
-						@Override
-						public void onChange(ChangeEvent event) {
-							Integer act = AonNumberUtils.toInteger(activity.getSelectedValue());
-							wrapper.getAccountEntry().setActivity( act );
-						}
-					});
-					updatePanel.addCell(activity);
-					paintOkButton();
-					return wrapper;
-				}
-
-
-				@Override
-				public IAccountEntryWrapper visitOperatingAccount(IAccountEntryWrapper wrapper) {
-					if (wrapper instanceof AccountingInvoice) {
-						AccountingInvoice ai = (AccountingInvoice) wrapper; 
-						AonAccountBox account = new AonAccountBox(getOptions().getDomainName(),getOptions().getDomain(),getOptions().getUser());
-						final LinkedList<Account> suggestedAccounts = new LinkedList<>();
-						if (ai.getVats() != null && ai.getVats().size() > 0) {
-							InvoiceVAT vat = ai.getVats().get(0);
-							account.setAccount(vat.getExpAccount().orElse(null));
-							Account oldAccount = vat.getExpAccount().orElse(null);
-							suggestedAccounts.add(oldAccount);	
-						}
-						account.addSelectionHandler(event -> {
-							if (event.getSelectedItem() != null) {
-								if (suggestedAccounts .size() > 1) {
-									suggestedAccounts.set(1,  event.getSelectedItem());
-								} else {
-									suggestedAccounts.add(event.getSelectedItem());
-								}
-								ai.setSuggestedAccounts(suggestedAccounts);
-							}
-						});
-						updatePanel.addCell(account);
-						paintOkButton();
-					} else {
-						updatePanel.addCell(new InlineLabel());	
-					}
-					return wrapper;
-				}
-				
-				private void paintToggleButton(boolean value ) {
-					AonTableButton toggleButton = new AonTableButton( AON.MSG.accept() , value?AON.CSS.aonIconToggleOn():AON.CSS.aonIconToggleOff());
-					updatePanel.addCell(toggleButton);
-					toggleButton.addClickHandler(new ClickHandler() {
-						
-						@Override
-						public void onClick(ClickEvent event) {
-							toggleButton.setEnabled(false);
-							AonConfirmDialog acd = new AonConfirmDialog();
-							acd.confirm("Confirma \"" + update.getDescription()+"\"?", new AonConfirmDialogCallback() {
-								
-								@Override
-								public void onCancel() {
-									toggleButton.setEnabled(true);
-								}
-								
-								@Override
-								public void onAccept() {
-									ACCOUNT_ENTRY_SERVICE.updateSpecial(getOptions().getDomainName(),
-											getOptions().getDomain(),getOptions().getUser(), update, wizardContent.getEntryWrapper(), new AsyncCallback<IAccountEntryWrapper>() {
-												
-												@Override
-												public void onSuccess(IAccountEntryWrapper result) {
-													dialog.hide();
-													selectWizardContent(result.getAccountEntry().getId(), result);
-												}
-													
-												@Override
-												public void onFailure(Throwable caught) {
-													showError(caught.getMessage());
-												}
-											});							
-								}
-							});
-						}
-					});
-				}
-				
-				private void paintOkButton() {
-					AonTableButton okButton = new AonTableButton( AON.MSG.accept() , AON.CSS.aonIconAccept());
-					updatePanel.addCell(okButton);
-					okButton.addClickHandler(new ClickHandler() {
-						
-						@Override
-						public void onClick(ClickEvent event) {
-							okButton.setEnabled(false);
-							AonConfirmDialog acd = new AonConfirmDialog();
-							acd.confirm("Confirma \"" + update.getDescription()+"\"?", new AonConfirmDialogCallback() {
-								
-								@Override
-								public void onCancel() {
-									okButton.setEnabled(true);
-								}
-								
-								@Override
-								public void onAccept() {
-									ACCOUNT_ENTRY_SERVICE.updateSpecial(getOptions().getDomainName(),
-											getOptions().getDomain(),getOptions().getUser(), update, wizardContent.getEntryWrapper(), new AsyncCallback<IAccountEntryWrapper>() {
-												
-												@Override
-												public void onSuccess(IAccountEntryWrapper result) {
-													dialog.hide();
-													selectWizardContent(result.getAccountEntry().getId(), result);
-												}
-													
-												@Override
-												public void onFailure(Throwable caught) {			
-													showError(caught.getMessage());
-												}
-											});							
-								}
-							});
-						}
-					});
-				}
-			};
-			update.visit(visitor, wizardContent.getEntryWrapper());
+		SpecialUpdatePanel specialPanel = new SpecialUpdatePanel(getOptions() 
+			, wizardContent.getEntryWrapper()
+			, updates
+			, new SpecialUpdatePanelCallback() {
 			
-		}
-		FlowPanel buttonsPanel =  table.addFooterRow();
-		buttonsPanel.addStyleName(AON.CSS.aonTextCenter());
-    	final Button cancelButton = new Button();
-    	cancelButton.setStyleName(AON.CSS.aonCancelButton());
-    	cancelButton.addStyleName(AON.CSS.aonMarginTop());
-    	cancelButton.setText( AON.MSG.close());
-    	cancelButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				dialog.hide();
-			}
-		});
-    	buttonsPanel.add(cancelButton);
-
-		dialog.add( rootPanel );
+				@Override
+				public void onSuccess(IAccountEntryWrapper result) {
+					dialog.hide();
+					selectWizardContent(result.getAccountEntry().getId(), result);
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					showError(caught.getMessage());
+				}
+				
+				@Override
+				public void onCancel() {
+					dialog.hide();
+				}
+			});
+		dialog.add( specialPanel );
 		dialog.center();
 		dialog.show();
+		
+//		FlowPanel rootPanel = new FlowPanel();
+//		rootPanel.setStyleName(AON.CSS.aonScrollArea());
+//		AonDisplayTable table = new AonDisplayTable();
+//		rootPanel.add(table);
+//		table.addStyleName(AON.CSS.aonWidthAll());
+//		for (AccountEntryUpdate update : updates ) {
+//			AonDisplayTableRow updatePanel =  table.addRow();
+//			InlineLabel descLabel = new InlineLabel(update.getDescription());
+//			updatePanel.addCell(descLabel,AON.CSS.aonFlexGrow1());
+//
+//			IAccountEntryUpdateVisitor visitor = new IAccountEntryUpdateVisitor() {
+//
+//				@Override
+//				public IAccountEntryWrapper visitManualType(IAccountEntryWrapper wrapper) {
+//					updatePanel.addCell(new InlineLabel());
+//					paintToggleButton( false );
+//					return wrapper;
+//				}
+//
+//				@Override
+//				public IAccountEntryWrapper visitOpeningType(IAccountEntryWrapper wrapper) {
+//					updatePanel.addCell(new InlineLabel());
+//					paintToggleButton( false );
+//					return wrapper;
+//				}
+//
+//				@Override
+//				public IAccountEntryWrapper visitSecurityLevel(IAccountEntryWrapper wrapper) {
+//					updatePanel.addCell(new InlineLabel());
+//					paintToggleButton( wrapper.getAccountEntry().isConfidential());
+//					return wrapper;
+//				}
+//
+//				@Override
+//				public IAccountEntryWrapper visitInvestment(IAccountEntryWrapper wrapper) {
+//					updatePanel.addCell(new InlineLabel());
+//					if (wrapper instanceof AccountingInvoice) {
+//						AccountingInvoice ai = (AccountingInvoice) wrapper;
+//						paintToggleButton( ai.getInvoice().isInvestment());
+//					}
+//					return wrapper;
+//				}
+//
+//
+//				@Override
+//				public IAccountEntryWrapper visitService(IAccountEntryWrapper wrapper) {
+//					updatePanel.addCell(new InlineLabel());
+//					if (wrapper instanceof AccountingInvoice) {
+//						AccountingInvoice ai = (AccountingInvoice) wrapper;
+//						paintToggleButton( ai.getInvoice().isService());
+//					}
+//					return wrapper;
+//				}
+//
+//				@Override
+//				public IAccountEntryWrapper visitVatAccrualPayment(IAccountEntryWrapper wrapper) {
+//					updatePanel.addCell(new InlineLabel());
+//					if (wrapper instanceof AccountingInvoice) {
+//						AccountingInvoice ai = (AccountingInvoice) wrapper;
+//						paintToggleButton( ai.getInvoice().isVatAccrualPayment());
+//					}
+//					return wrapper;
+//				}
+//				
+//				@Override
+//				public IAccountEntryWrapper visitTaxDate(IAccountEntryWrapper wrapper) {
+//					if (wrapper instanceof AccountingInvoice) {
+//						AccountingInvoice ai = (AccountingInvoice) wrapper; 
+//						AonDateBox taxDate = new AonDateBox();
+//						taxDate.setValue(ai.getInvoice().getTaxDate());
+//						taxDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+//							
+//							@Override
+//							public void onValueChange(ValueChangeEvent<Date> event) {
+//								ai.getInvoice().setTaxDate(event.getValue());		
+//							}
+//						});
+//						updatePanel.addCell(taxDate);
+//						paintOkButton();
+//					} else {
+//						updatePanel.addCell(new InlineLabel());	
+//					}
+//					return wrapper;
+//				}
+//
+//				@Override
+//				public IAccountEntryWrapper visitWithholdingType(IAccountEntryWrapper wrapper) {
+//					if (wrapper instanceof AccountingInvoice) {
+//						AccountingInvoice ai = (AccountingInvoice) wrapper; 
+//						if (ai.getWithholdingData() != null) {
+//							WithholdingTypeListBox withholdingType = new WithholdingTypeListBox();
+//							withholdingType.setValue(ai.getWithholdingData().getWithholdingType());
+//							withholdingType.addChangeHandler(new ChangeHandler() {
+//								@Override
+//								public void onChange(ChangeEvent event) {
+//									ai.setWithholdingType( withholdingType.getValue() );
+//								}
+//							});
+//							updatePanel.addCell(withholdingType);
+//							paintOkButton();
+//						} else {
+//							updatePanel.addCell(new InlineLabel());
+//						}
+//					} else {
+//						updatePanel.addCell(new InlineLabel());
+//					}
+//					return wrapper;
+//				}
+//
+//				@Override
+//				public IAccountEntryWrapper visitActivity(IAccountEntryWrapper wrapper) {
+//					ListBox activity = new ListBox();
+//					activity.setVisible(true);
+//					activity.addItem("-- Todas --", "");
+//					activity.setSelectedIndex(0);
+//					int i = 1;
+//					for (EnterpriseActivity ea : getOptions().getConfiguration().getActivities()) {
+//						activity.addItem(ea.getDescription(), AonNumberUtils.toString( ea.getId()));
+//						if (AonNumberUtils.equals(wrapper.getAccountEntry().getActivity(), ea.getId())  ) {
+//							activity.setSelectedIndex(i);
+//						}
+//						i++;
+//					}
+//					activity.addChangeHandler(new ChangeHandler() {
+//						@Override
+//						public void onChange(ChangeEvent event) {
+//							Integer act = AonNumberUtils.toInteger(activity.getSelectedValue());
+//							wrapper.getAccountEntry().setActivity( act );
+//						}
+//					});
+//					updatePanel.addCell(activity);
+//					paintOkButton();
+//					return wrapper;
+//				}
+//
+//
+//				@Override
+//				public IAccountEntryWrapper visitOperatingAccount(IAccountEntryWrapper wrapper) {
+//					if (wrapper instanceof AccountingInvoice) {
+//						AccountingInvoice ai = (AccountingInvoice) wrapper; 
+//						AonAccountBox account = new AonAccountBox(getOptions().getDomainName(),getOptions().getDomain(),getOptions().getUser());
+//						final LinkedList<Account> suggestedAccounts = new LinkedList<>();
+//						if (ai.getVats() != null && ai.getVats().size() > 0) {
+//							InvoiceVAT vat = ai.getVats().get(0);
+//							account.setAccount(vat.getExpAccount().orElse(null));
+//							Account oldAccount = vat.getExpAccount().orElse(null);
+//							suggestedAccounts.add(oldAccount);	
+//						}
+//						account.addSelectionHandler(event -> {
+//							if (event.getSelectedItem() != null) {
+//								if (suggestedAccounts .size() > 1) {
+//									suggestedAccounts.set(1,  event.getSelectedItem());
+//								} else {
+//									suggestedAccounts.add(event.getSelectedItem());
+//								}
+//								ai.setSuggestedAccounts(suggestedAccounts);
+//							}
+//						});
+//						updatePanel.addCell(account);
+//						paintOkButton();
+//					} else {
+//						updatePanel.addCell(new InlineLabel());	
+//					}
+//					return wrapper;
+//				}
+//				
+//				private void paintToggleButton(boolean value ) {
+//					AonTableButton toggleButton = new AonTableButton( AON.MSG.accept() , value?AON.CSS.aonIconToggleOn():AON.CSS.aonIconToggleOff());
+//					updatePanel.addCell(toggleButton);
+//					toggleButton.addClickHandler(new ClickHandler() {
+//						
+//						@Override
+//						public void onClick(ClickEvent event) {
+//							toggleButton.setEnabled(false);
+//							AonConfirmDialog acd = new AonConfirmDialog();
+//							acd.confirm("Confirma \"" + update.getDescription()+"\"?", new AonConfirmDialogCallback() {
+//								
+//								@Override
+//								public void onCancel() {
+//									toggleButton.setEnabled(true);
+//								}
+//								
+//								@Override
+//								public void onAccept() {
+//									ACCOUNT_ENTRY_SERVICE.updateSpecial(getOptions().getDomainName(),
+//											getOptions().getDomain(),getOptions().getUser(), update, wizardContent.getEntryWrapper(), new AsyncCallback<IAccountEntryWrapper>() {
+//												
+//												@Override
+//												public void onSuccess(IAccountEntryWrapper result) {
+//													dialog.hide();
+//													selectWizardContent(result.getAccountEntry().getId(), result);
+//												}
+//													
+//												@Override
+//												public void onFailure(Throwable caught) {
+//													showError(caught.getMessage());
+//												}
+//											});							
+//								}
+//							});
+//						}
+//					});
+//				}
+//				
+//				private void paintOkButton() {
+//					AonTableButton okButton = new AonTableButton( AON.MSG.accept() , AON.CSS.aonIconAccept());
+//					updatePanel.addCell(okButton);
+//					okButton.addClickHandler(new ClickHandler() {
+//						
+//						@Override
+//						public void onClick(ClickEvent event) {
+//							okButton.setEnabled(false);
+//							AonConfirmDialog acd = new AonConfirmDialog();
+//							acd.confirm("Confirma \"" + update.getDescription()+"\"?", new AonConfirmDialogCallback() {
+//								
+//								@Override
+//								public void onCancel() {
+//									okButton.setEnabled(true);
+//								}
+//								
+//								@Override
+//								public void onAccept() {
+//									ACCOUNT_ENTRY_SERVICE.updateSpecial(getOptions().getDomainName(),
+//											getOptions().getDomain(),getOptions().getUser(), update, wizardContent.getEntryWrapper(), new AsyncCallback<IAccountEntryWrapper>() {
+//												
+//												@Override
+//												public void onSuccess(IAccountEntryWrapper result) {
+//													dialog.hide();
+//													selectWizardContent(result.getAccountEntry().getId(), result);
+//												}
+//													
+//												@Override
+//												public void onFailure(Throwable caught) {			
+//													showError(caught.getMessage());
+//												}
+//											});							
+//								}
+//							});
+//						}
+//					});
+//				}
+//			};
+//			update.visit(visitor, wizardContent.getEntryWrapper());
+//			
+//		}
+//		FlowPanel buttonsPanel =  table.addFooterRow();
+//		buttonsPanel.addStyleName(AON.CSS.aonTextCenter());
+//    	final Button cancelButton = new Button();
+//    	cancelButton.setStyleName(AON.CSS.aonCancelButton());
+//    	cancelButton.addStyleName(AON.CSS.aonMarginTop());
+//    	cancelButton.setText( AON.MSG.close());
+//    	cancelButton.addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				dialog.hide();
+//			}
+//		});
+//    	buttonsPanel.add(cancelButton);
+//		dialog.add( rootPanel );
+//		dialog.center();
+//		dialog.show();
 	}
 }

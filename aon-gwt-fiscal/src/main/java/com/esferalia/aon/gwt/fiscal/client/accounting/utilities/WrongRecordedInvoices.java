@@ -5,7 +5,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryPrinter;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoiceViewer;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
@@ -145,7 +145,7 @@ class WrongRecordedInvoices extends OptionBase {
 		entryDialog.setGlassEnabled(true);
 		entryDialog.setModal(true);
 		entryDialog.setCaption(AON.MSG.invoice());
-		InvoiceViewer viewer = new InvoiceViewer(invoice);
+		AonInvoiceViewer viewer = new AonInvoiceViewer(invoice);
 		viewer.addStyleName(AON.CSS.aonMarginTop());
 		entryDialog.add(viewer);
 		entryDialog.center();

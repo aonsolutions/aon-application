@@ -7,9 +7,12 @@ import com.esferalia.aon.gwt.marketing.client.question.QuestionModule;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
+import com.google.gwt.dom.client.BodyElement;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -35,6 +38,8 @@ public class MainEntryPoint implements EntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
+		ensureGwtSelector();
+		
 		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);	
 		if(getToken() != null) {
 			Occam occam = new Occam()
@@ -98,6 +103,15 @@ public class MainEntryPoint implements EntryPoint {
 			.setDomainName(getCurrentDomainName())
 			.setDomain(getCurrentDomain())
 			.setUser(getCurrentUser());
+	}
+	
+	public static void ensureGwtSelector() {
+		BodyElement body = Document.get().getBody();
+		String className = body.getClassName();
+		if (AonStringUtils.isBlank(className)
+				|| (className.indexOf("gwt-Selector") == -1))
+			body.addClassName("gwt-Selector");
+
 	}
 	
 	public static native String getToken()

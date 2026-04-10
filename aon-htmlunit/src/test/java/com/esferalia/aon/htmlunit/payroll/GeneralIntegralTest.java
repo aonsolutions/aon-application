@@ -3557,6 +3557,27 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	}
 
 	@Test
+	public void TestOrdenPjc2972026() throws Exception {
+		
+		if (!isDisplayed("corta_duracion_2026,_art._28"))
+			open("orden_pjc_297/2026");
+
+
+		wait4Id("corta_duracion_2026,_art._28");
+
+		draft("CORTA DURACIÓN 2026, ART. 28");
+		calculate(Calendar.FEBRUARY,2026);
+		check("costsCheck-input");
+		assertNotElement("cgc_e_tempPercentLabel");
+		uncheck("costsCheck-input");
+		calculate(Calendar.MARCH,2026);
+		check("costsCheck-input");
+		assertText("cgc_e_tempPercentLabel", "33,62 %");
+		uncheck("costsCheck-input");
+	
+	}
+
+	@Test
 	public void TestBasesSociosCoop() throws Exception {
 		
 		if ( !isDisplayed("socio_coop,_grupo_1") )
@@ -3565,39 +3586,69 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("socio_coop,_grupo_1");
 
 		draft("SOCIO COOP, GRUPO 1");
+//		calculate(Calendar.JANUARY,2025);
+//		assertValue("cgcBaseLabel", 868.20 * 6.00 / 30.00);
+//		assertValue("cgpBaseLabel", 868.20 * 6.00 / 30.00);
+//		calculate(Calendar.FEBRUARY,2025);
+//		assertValue("cgcBaseLabel", 868.20);
+//		assertValue("cgpBaseLabel", 868.20);
 		calculate(Calendar.JANUARY,2026);
-		assertValue("cgcBaseLabel", 868.20 * 6.00 / 30.00);
-		assertValue("cgpBaseLabel", 868.20 * 6.00 / 30.00);
+		assertValue("cgcBaseLabel", 895.20 * 6.00 / 30.00);
+		assertValue("cgpBaseLabel", 895.20 * 6.00 / 30.00);
 		calculate(Calendar.FEBRUARY,2026);
-		assertValue("cgcBaseLabel", 868.20);
-		assertValue("cgpBaseLabel", 868.20);
+		assertValue("cgcBaseLabel", 895.20);
+		assertValue("cgpBaseLabel", 895.20);
 
 		draft("SOCIO COOP, GRUPO 2");
+//		calculate(Calendar.JANUARY,2025);
+//		assertValue("cgcBaseLabel", 639.90 * 6.00 / 30.00);
+//		assertValue("cgpBaseLabel", 639.90 * 6.00 / 30.00);
+//		calculate(Calendar.FEBRUARY,2025);
+//		assertValue("cgcBaseLabel", 639.90);
+//		assertValue("cgpBaseLabel", 639.90);
 		calculate(Calendar.JANUARY,2026);
-		assertValue("cgcBaseLabel", 639.90 * 6.00 / 30.00);
-		assertValue("cgpBaseLabel", 639.90 * 6.00 / 30.00);
+		assertValue("cgcBaseLabel", 660.00 * 6.00 / 30.00);
+		assertValue("cgpBaseLabel", 660.00 * 6.00 / 30.00);
 		calculate(Calendar.FEBRUARY,2026);
-		assertValue("cgcBaseLabel", 639.90);
-		assertValue("cgpBaseLabel", 639.90);
+		assertValue("cgcBaseLabel", 660.00);
+		assertValue("cgpBaseLabel", 660.00);
 
 		draft("SOCIO COOP, GRUPO 3");
+//		calculate(Calendar.JANUARY,2025);
+//		assertValue("cgcBaseLabel", 556.80 * 6.00 / 30.00);
+//		assertValue("cgpBaseLabel", 556.80 * 6.00 / 30.00);
+//		calculate(Calendar.FEBRUARY,2025);
+//		assertValue("cgcBaseLabel", 556.80);
+//		assertValue("cgpBaseLabel", 556.80);
 		calculate(Calendar.JANUARY,2026);
-		assertValue("cgcBaseLabel", 556.80 * 6.00 / 30.00);
-		assertValue("cgpBaseLabel", 556.80 * 6.00 / 30.00);
+		assertValue("cgcBaseLabel", 574.20 * 6.00 / 30.00);
+		assertValue("cgpBaseLabel", 574.20 * 6.00 / 30.00);
 		calculate(Calendar.FEBRUARY,2026);
-		assertValue("cgcBaseLabel", 556.80);
-		assertValue("cgpBaseLabel", 556.80);
+		assertValue("cgcBaseLabel", 574.20);
+		assertValue("cgpBaseLabel", 574.20);
 
 		draft("SOCIO COOP, GRUPO 8");
+//		calculate(Calendar.JANUARY,2025);
+//		assertValue("cgcBaseLabel", 552.60 * 6.00 / 31.00);
+//		assertValue("cgpBaseLabel", 552.60 * 6.00 / 31.00);
+//		calculate(Calendar.FEBRUARY,2025);
+//		assertValue("cgcBaseLabel", 552.60);
+//		assertValue("cgpBaseLabel", 552.60);
 		calculate(Calendar.JANUARY,2026);
-		assertValue("cgcBaseLabel", 552.60 * 6.00 / 31.00);
-		assertValue("cgpBaseLabel", 552.60 * 6.00 / 31.00);
+		assertValue("cgcBaseLabel", 569.70 * 6.00 / 31.00);
+		assertValue("cgpBaseLabel", 569.70 * 6.00 / 31.00);
 		calculate(Calendar.FEBRUARY,2026);
-		assertValue("cgcBaseLabel", 552.60);
-		assertValue("cgpBaseLabel", 552.60);
+		assertValue("cgcBaseLabel", 569.70);
+		assertValue("cgpBaseLabel", 569.70);
 
 	
 		draft("SOCIO COOP, GRUPO 5");
+//		calculate(Calendar.JANUARY,2025);
+//		assertValue("cgcBaseLabel", 1381.20 * 6.00 / 30.00);
+//		assertValue("cgpBaseLabel", 1381.20 * 6.00 / 30.00);
+//		calculate(Calendar.FEBRUARY,2025);
+//		assertValue("cgcBaseLabel", 1381.20);
+//		assertValue("cgpBaseLabel", 1381.20);
 		calculate(Calendar.JANUARY,2026);
 		assertValue("cgcBaseLabel", 1424.40 * 6.00 / 30.00);
 		assertValue("cgpBaseLabel", 1424.40 * 6.00 / 30.00);

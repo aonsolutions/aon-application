@@ -38,7 +38,7 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 	
 	private AonCustomListBox period = new AonCustomListBox("Periocidad");
 	private AonCustomListBox scope = new AonCustomListBox("Ambito");
-	private AonCustomListBox active = new AonCustomListBox("Estado");
+	private AonCustomListBox active = new AonCustomListBox("Estado Agente");
 	private AonCustomListBox customer = new AonCustomListBox("Agentes");
 	private AonCustomMultiSelectBox customerStatus = new AonCustomMultiSelectBox("Estado Cliente");
 	private AonCustomListBox type = new AonCustomListBox("Tipo");
@@ -67,7 +67,7 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		
 		setSearchPlaceholder("Buscar por nombre ...");
 		
-		Date date = new Date();
+		Date date = DateUtils.getFirstDayOfMonth(new Date());
 		
 		period.addItem( "Mes anterior ("  + AonDateUtils.formatMonthYear(DateUtils.addMonths2Date(date, -1)) + ")", "0");
 		period.addItem( "Mes anterior y actual", "1");

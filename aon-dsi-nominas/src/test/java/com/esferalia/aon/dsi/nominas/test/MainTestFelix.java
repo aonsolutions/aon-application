@@ -6,34 +6,31 @@ import java.sql.SQLException;
 import java.util.Properties;
 import java.util.TimeZone;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.dsi.nominas.Traspaso;
 
-@Ignore
-@RunWith(JUnit4.class)
+@Disabled
 public class MainTestFelix {
 
 	// TEST QUE TRASPASA LOS DATOS, SOBRE UNA BASE DE DATOS YA EXISTENTE 
 	// Y UN DOMINIO PADRE YA EXISTENTE
 	
 	private final String AON_DB = "pro-aon-solutions-net";  // Base de datos ya existente
-	private final String OMEGA_DIRECTORIO = "/cometa32/nomin/010";  // Directorio de las tablas paradox de Nóminas Omega
+	private final String OMEGA_DIRECTORIO = "/cometa32/nomin/010";  // Directorio de las tablas paradox de Nï¿½minas Omega
 	private final int parentDomain = 5207;  // Dominio padre
 
 	private Connection aonConn;
 
-	@Before
+	@BeforeEach
 	public void setupAon() throws Exception {
 		aonConn = getAonConnection("jdbc:mysql://localhost/" + AON_DB, "dbuser", "serubd2000");		
 	}
 
-	@After
+	@AfterEach
 	public void teardownAon() throws Exception {
 		aonConn.close();
 	}
