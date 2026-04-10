@@ -8178,6 +8178,11 @@ public class Municipalities {
 		return municipalityOpt.isEmpty() ? null : municipalityOpt.get();
 	}
 	
+	public Entry<String, String> getZipByMunicipalityName(String provinceCode, String municipality) {
+		Optional<Entry<String, String>> municipalityOpt = municipalities.entrySet().stream().filter(e ->  AonStringUtils.startsWithIgnoreCase(e.getKey(), provinceCode) && AonStringUtils.startsWithIgnoreCase(e.getValue(), municipality)).findFirst();
+		return municipalityOpt.isEmpty() ? null : municipalityOpt.get();
+	}
+	
 	public Integer getMunicipalityIndex(String provinceCode, String municipalityCode){
 		ArrayList<String> provinceMunicipalities = new ArrayList<String>();
 		

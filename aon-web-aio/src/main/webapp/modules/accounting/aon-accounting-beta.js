@@ -3,6 +3,7 @@ import { getCompany } from "../../services/service.js";
 import { AonApplication } from '../../components/aon-application.js';
 import { CONSTANT, MSG } from '../../environments/environments.js';
 import * as JSF from '../aon-jsf-app.js';
+import * as GWT from '../../gwt/gwt.js';
 import { AonNewUpload } from '../../components/aon-new-upload.js'
 import { getCompanyActivities } from "../../services/companyService.js";
 import { AonUploadToast } from "../../components/aon-upload-toast.js";
@@ -50,23 +51,66 @@ export class AonAccountingBeta extends AonElement {
 		let aonAccountingBeta = this.getApplication();
 
 		if (localStorage.getItem("aon_domain_id")) {
-			let configurationOptions = [];
-			configurationOptions.push({
-				id: "parameters",
-				icon: "settings_applications",
-				name: "Parametros",
-				fn: () => this.getApplication().setContent(new JSF.AonJsfAccountingParams()),
-			});
-
+			let utilitiesOptions = [];
 			
-			configurationOptions.push({
+			if(!this.getDur().isDomainManagementAvailable())
+				utilitiesOptions.push({
+					id: "parameters",
+					icon: "settings_applications",
+					name: "Parametros",
+					fn: () => this.getApplication().setContent(new JSF.AonJsfAccountingParams()),
+				});
+
+			utilitiesOptions.push({
 				id: "observations",
 				icon: "speaker_notes",
 				name: "Observaciones",
 				fn: () => this.getApplication().buildObservations('ACCOUNTING'),
 			});
+			
+			if(this.getDur().isDomainManagementAvailable())
+				utilitiesOptions.push({
+					id: "utilidadesContables",
+					icon: "settings_applications",
+					name: "Utilidades Contables",
+					fn: () =>  GWT.iLoad(GWT.ACCOUNTING_UTILITIES, this.getApplication().CONTENT),
+				});
 
-			aonAccountingBeta.addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);
+			aonAccountingBeta.addSidenavOptions(MSG.UTILITIES.toUpperCase(), utilitiesOptions);
+			
+			if(this.getDur().isDomainManagementAvailable()){
+				let parametersOptions = [];
+				
+				parametersOptions.push({
+					id: "planGeneralContable",
+					icon: "settings_applications",
+					name: "Plan General Contable",
+					fn: () =>  GWT.iLoad(GWT.ACCOUNT_MODULE, this.getApplication().CONTENT), 
+				});
+				
+				parametersOptions.push({
+					id: "conceptosAutomaticos",
+					icon: "settings_applications",
+					name: "Conceptos Automáticos",
+					fn: () =>  this.getApplication().setContent(new JSF.AonJsfAutConcept()),
+				});
+				
+				parametersOptions.push({
+					id: "tablasTipoAmortizacion",
+					icon: "settings_applications",
+					name: "Tablas Tipo Amortización",
+					fn: () =>  GWT.iLoad(GWT.AMORTIZATION_TYPE, this.getApplication().CONTENT), 
+				});
+				
+				parametersOptions.push({
+					id: "depositoCuentas",
+					icon: "settings_applications",
+					name: "Depósito de cuentas (D2)",
+					fn: () =>  GWT.iLoad(GWT.DEPOSIT, this.getApplication().CONTENT), 
+				});
+				
+				aonAccountingBeta.addSidenavOptions("Parámetros".toUpperCase(), parametersOptions);
+			}
 		}
 
 		if (localStorage.getItem("aon_domain_id") && this.isBeta()) {
@@ -75,7 +119,7 @@ export class AonAccountingBeta extends AonElement {
 			menuOptions.push({
 				id: "options panel",
 				icon: "dashboard",
-				name: "Panel Contabilidad",
+				name: "Panel Opciones",
 				fn: () => this.buildAccountingMenu(),
 			});
 

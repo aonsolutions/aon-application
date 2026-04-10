@@ -5,36 +5,31 @@ import java.util.Date;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonErrorPanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoicePanel.InvoicePanelCallback;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class InvoiceRectificationDataPanel extends SimplePanel implements Focusable {
+class InvoiceRectificationDataPanel extends SimplePanel implements Focusable {
 	
-	public static interface InvoiceRectificationDataPanelCallback {
+	static interface InvoiceRectificationDataPanelCallback {
 		void onAccept(InvoiceRectificationData data);
 		void onCancel();
 	}
@@ -50,7 +45,7 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 	
 	private AonDateBox issueDate; 
 	
-	public void show(final InvoicePanelCallback invoiceCallback
+	void show(final InvoicePanelCallback invoiceCallback
 			, final InvoiceRectificationData data
 			, final InvoiceRectificationDataPanelCallback callback) {
 		setWidth("500px");
@@ -91,89 +86,89 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 		table.setWidget(row,1,issueDate);
 		row++;
 
-		if (data.isSales()) {
-			table.setWidget(row,0,new InlineLabel(AON.MSG.series()));
-			table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
-			
-			FlowPanel panel = new FlowPanel();
-			final ListBox seriesBox = new ListBox();
-			final AonIntegerBox number = new AonIntegerBox();
-			
-			seriesBox.addKeyUpHandler(keyUpHandler);
-			seriesBox.addItem(" ---- ", "");
-			seriesBox.addChangeHandler(new ChangeHandler() {
-				@Override
-				public void onChange(ChangeEvent event) {
-					data.setSeries(seriesBox.getSelectedIndex() == 0 ? null : seriesBox.getSelectedValue());
-					initializeFinanceService();
-					financeService.getInvoiceNextNumber(
-						 invoiceCallback.getOccam().getDomainName()
-						,invoiceCallback.getOccam().getDomain()
-						,invoiceCallback.getOccam().getUser()
-						,new Byte[]{data.getType().value()}
-						,data.getSeries()
-						, new AsyncCallback<Integer>() {
-
-							@Override
-							public void onFailure(Throwable caught) {
-								errorPanel.showError(caught.getMessage());
-							}
-
-							@Override
-							public void onSuccess(Integer result) {
-								number.setValue(result,false,true);
-								data.setNumber(result);
-							}
-						});
-				}
-			});
-
-			int i = 0;
-			 
-			if (invoiceCallback.getConfiguration() != null && invoiceCallback.getConfiguration().getInvoiceRectificationSalesSeries() != null) {
-				for (String series : invoiceCallback.getConfiguration().getInvoiceRectificationSalesSeries()) {
-					seriesBox.addItem(series,series);
-					if (i == 0) {
-						seriesBox.setSelectedIndex(1);
-						data.setSeries(series);
-						initializeFinanceService();
-						financeService.getInvoiceNextNumber(
-							 invoiceCallback.getOccam().getDomainName()
-							,invoiceCallback.getOccam().getDomain()
-							,invoiceCallback.getOccam().getUser()
-							,new Byte[]{data.getType().value()}
-							 , data.getSeries()
-							, new AsyncCallback<Integer>() {
-
-								@Override
-								public void onFailure(Throwable caught) {
-									errorPanel.showError(caught.getMessage());
-								}
-
-								@Override
-								public void onSuccess(Integer result) {
-									number.setValue(result,false,true);
-									data.setNumber(result);
-								}
-							});
-					}
-					i++;
-				}
-			}
-			panel.add(seriesBox);
-			
-			number.setStyleName(AON.CSS.aonMarginLeftSep());
-			number.addStyleName(AON.CSS.aonInputText());
-			number.addKeyUpHandler(keyUpHandler);
-			number.addValueChangeHandler(event -> data.setNumber(event.getValue()));
-			number.setVisibleLength(8);
-			number.setMaxLength(8);
-			panel.add(number);
-
-			table.setWidget(row,1,panel);
-			row++;
-		} else {
-			table.setWidget(row,0,new InlineLabel(AON.MSG.number()));
+//		if (data.isSales()) {
+//			table.setWidget(row,0,new InlineLabel(AON.MSG.series()));
+//			table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
+//			
+//			FlowPanel panel = new FlowPanel();
+//			final ListBox seriesBox = new ListBox();
+//			final AonIntegerBox number = new AonIntegerBox();
+//			
+//			seriesBox.addKeyUpHandler(keyUpHandler);
+//			seriesBox.addItem(" ---- ", "");
+//			seriesBox.addChangeHandler(new ChangeHandler() {
+//				@Override
+//				public void onChange(ChangeEvent event) {
+//					data.setSeries(seriesBox.getSelectedIndex() == 0 ? null : seriesBox.getSelectedValue());
+//					initializeFinanceService();
+//					financeService.getInvoiceNextNumber(
+//						 invoiceCallback.getOccam().getDomainName()
+//						,invoiceCallback.getOccam().getDomain()
+//						,invoiceCallback.getOccam().getUser()
+//						,new Byte[]{data.getType().value()}
+//						,data.getSeries()
+//						, new AsyncCallback<Integer>() {
+//
+//							@Override
+//							public void onFailure(Throwable caught) {
+//								errorPanel.showError(caught.getMessage());
+//							}
+//
+//							@Override
+//							public void onSuccess(Integer result) {
+//								number.setValue(result,false,true);
+//								data.setNumber(result);
+//							}
+//						});
+//				}
+//			});
+//
+//			int i = 0;
+//			 
+//			if (invoiceCallback.getConfiguration() != null && invoiceCallback.getConfiguration().getInvoiceRectificationSalesSeries() != null) {
+//				for (String series : invoiceCallback.getConfiguration().getInvoiceRectificationSalesSeries()) {
+//					seriesBox.addItem(series,series);
+//					if (i == 0) {
+//						seriesBox.setSelectedIndex(1);
+//						data.setSeries(series);
+//						initializeFinanceService();
+//						financeService.getInvoiceNextNumber(
+//							 invoiceCallback.getOccam().getDomainName()
+//							,invoiceCallback.getOccam().getDomain()
+//							,invoiceCallback.getOccam().getUser()
+//							,new Byte[]{data.getType().value()}
+//							 , data.getSeries()
+//							, new AsyncCallback<Integer>() {
+//
+//								@Override
+//								public void onFailure(Throwable caught) {
+//									errorPanel.showError(caught.getMessage());
+//								}
+//
+//								@Override
+//								public void onSuccess(Integer result) {
+//									number.setValue(result,false,true);
+//									data.setNumber(result);
+//								}
+//							});
+//					}
+//					i++;
+//				}
+//			}
+//			panel.add(seriesBox);
+//			
+//			number.setStyleName(AON.CSS.aonMarginLeftSep());
+//			number.addStyleName(AON.CSS.aonInputText());
+//			number.addKeyUpHandler(keyUpHandler);
+//			number.addValueChangeHandler(event -> data.setNumber(event.getValue()));
+//			number.setVisibleLength(8);
+//			number.setMaxLength(8);
+//			panel.add(number);
+//
+//			table.setWidget(row,1,panel);
+//			row++;
+//		} else {
+			table.setWidget(row,0,new InlineLabel(AON.MSG.invoiceNumber()));
 			table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 			TextBox referenceCode = new TextBox();
 			referenceCode.setStyleName(AON.CSS.aonInputText());
@@ -183,7 +178,7 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 			referenceCode.setMaxLength(32);
 			table.setWidget(row,1,referenceCode);
 			row++;
-		}
+//		}
 		
 		table.setWidget(row,0,new InlineLabel(AON.MSG.reason()));
 		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());

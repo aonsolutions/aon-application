@@ -24,6 +24,7 @@ public class AccountEntryModuleOptions extends  ModuleOptions<AccountEntryModule
 	private boolean journalTabVisible = true;
 	private boolean extraInfoTabVisible = true;
 	private boolean deleteButtonVisible = true;
+	private boolean resetAfterAccept = true;
 
 	public Integer getAccountEntryId() {
 		return accountEntryId;
@@ -149,4 +150,13 @@ public class AccountEntryModuleOptions extends  ModuleOptions<AccountEntryModule
 		return this;
 	}
 
+	public boolean isResetAfterAccept() {
+		return resetAfterAccept;
+	}
+	public AccountEntryModuleOptions setResetAfterAccept(boolean resetAfterAccept) {
+		this.resetAfterAccept = resetAfterAccept;
+		return this;
+	}
+
+	
 }

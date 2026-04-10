@@ -6,8 +6,8 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import aon.sepe.objects.Contract;
 import aon.sepe.objects.Contract.ContractBuilder;
@@ -28,7 +28,7 @@ public class TestContrato {
 
 
 	@Test
-	@Ignore
+	@Disabled
 	public void sendContrato() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH)) {
 			@SuppressWarnings("deprecation")
@@ -70,7 +70,7 @@ public class TestContrato {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void sendContractExtension() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH)) {
 			@SuppressWarnings("deprecation")
@@ -91,7 +91,7 @@ public class TestContrato {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void removeContrato() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH)) {
 			String ide = "0120220026115";
@@ -102,7 +102,7 @@ public class TestContrato {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void sendTransformation() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH)) {
 			@SuppressWarnings("deprecation")
@@ -114,8 +114,8 @@ public class TestContrato {
 					.setCodContract("189") // 189, 109
 					.setDateIniContract(fini).setDateComContract(fcomunicate).setJndType(JndType.JORNADA_MENSUAL)
 					.setDurationTypeJndHour("40").setDurationTypeJndMin("0").setCodOccupation("1311")
-					.setCodPaisWork(724).setCodMunWork("01059").setDiscontinuo(true) // ¿Realiza trabajos fijos
-																						// discontinuos o periódicos que
+					.setCodPaisWork(724).setCodMunWork("01059").setDiscontinuo(true) // ï¿½Realiza trabajos fijos
+																						// discontinuos o periï¿½dicos que
 																						// se repiten en fechas ciertas?
 			;
 
@@ -130,7 +130,7 @@ public class TestContrato {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void RemoveTransformation() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH)) {
 			String ide = "0120220026115";
@@ -141,7 +141,7 @@ public class TestContrato {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void sendCopyBasic() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH)) {
 			String ipf = "16262835H";
@@ -158,7 +158,7 @@ public class TestContrato {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void getContratoPdf() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH)) {
 			@SuppressWarnings("deprecation")
@@ -174,7 +174,7 @@ public class TestContrato {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void getCopyBasicPdf() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH)) {
 			@SuppressWarnings("deprecation")
@@ -191,7 +191,7 @@ public class TestContrato {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void getTransformationsPdf() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH)) {
 
@@ -208,7 +208,7 @@ public class TestContrato {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void getTransformationCopyBasicPdf() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH)) {
 			@SuppressWarnings("deprecation")
@@ -231,7 +231,7 @@ public class TestContrato {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void getContractExtensionPdf() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH)) {
 
@@ -250,7 +250,7 @@ public class TestContrato {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	@SuppressWarnings("deprecation")
 	public void getContractData() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH)) {
@@ -265,7 +265,7 @@ public class TestContrato {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	@SuppressWarnings("deprecation")
 	public void getTransformationData() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH)) {
@@ -285,7 +285,7 @@ public class TestContrato {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	@SuppressWarnings("deprecation")
 	public void getContractExtensionData() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH)) {
@@ -305,7 +305,7 @@ public class TestContrato {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void validateCert() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH)) {
 			Sepe.validateCert(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE);

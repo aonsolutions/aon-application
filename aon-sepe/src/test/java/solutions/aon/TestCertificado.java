@@ -6,8 +6,8 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import aon.sepe.objects.Certificates.CertificatesBuilder;
 import aon.sepe.objects.Certificates.TypeDuration;
 import aon.sepe.objects.QuoteData;
@@ -17,7 +17,7 @@ import solutions.aon.sepe.exceptions.SepeException;
 public class TestCertificado {
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testCertEnterprisePdf() {
 		try (final InputStream certificateInputStream = TestCertificado.class.getResourceAsStream("SEPE.p12")) {
 			String certificatePassword = "aon@FNMT";
@@ -34,7 +34,7 @@ public class TestCertificado {
 	}
 
 	@Test
-	@Ignore("SEND CERTIFICATE SEPE")
+	@Disabled("SEND CERTIFICATE SEPE")
 	public void testCertEnterprise() {
 		try (final InputStream certificateInputStream = TestCertificado.class.getResourceAsStream("AYUDAT.p12")) {
 			String certificatePassword = "SLLENsMMGPAkm3jF";

@@ -4,9 +4,9 @@ import java.util.Date;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import es.translogia.tedi.ewok.IConstants;
 import es.translogia.tedi.ewok.TediAddress;
@@ -42,48 +42,48 @@ public class TediEwokTest {
 	static {
 		System.out.println( "["+ TIMES + " times each] ");
 	}
-	@After
+	@AfterEach
 	public void afterEach() {
 		System.out.println("");
 	}
 	
 	private void assertNulls(Object left, Object right) {
 		if (left == null) {
-			Assert.assertNull(right);
+			Assertions.assertNull(right);
 		}
 		if (right == null) {
-			Assert.assertNull(left);
+			Assertions.assertNull(left);
 		}
 	}
 	private void assertEquals(Date left, Date right) {
 		assertNulls(left, right);
 		if (left != null && right != null) {
-			Assert.assertEquals(left, right);
+			Assertions.assertEquals(left, right);
 		}
 	}
 	private void assertEquals(String left, String right) {
 		if (left != null && right != null) {
-			Assert.assertEquals(left, right);
+			Assertions.assertEquals(left, right);
 		}
 	}
 	private void assertEquals(Double left, Double right) {
 		if (left != null && right != null) {
-			Assert.assertEquals(left, right,0);
+			Assertions.assertEquals(left, right,0);
 		}
 	}
 	private void assertEquals(Integer left, Integer right) {
 		if (left != null && right != null) {
-			Assert.assertEquals(left, right,0);
+			Assertions.assertEquals(left, right,0);
 		}
 	}
 	private void assertEquals(Boolean left, Boolean right) {
 		if (left != null && right != null) {
-			Assert.assertEquals(left, right);
+			Assertions.assertEquals(left, right);
 		}
 	}
 	private void assertEquals(Enum<?> left, Enum<?> right) {
 		if (left != null && right != null) {
-			Assert.assertEquals(left, right);
+			Assertions.assertEquals(left, right);
 		}
 	}
 	
@@ -164,9 +164,9 @@ public class TediEwokTest {
 		Object o = json.opt(IConstants.FROM);
 		if (o != null) {
 			if (o instanceof String[]) {
-				Assert.assertArrayEquals(emailInfo.getFrom(), (String[]) o);		
+				Assertions.assertArrayEquals(emailInfo.getFrom(), (String[]) o);		
 			} else {
-				Assert.fail("TediEmailInfo FROM is not a string array");
+				Assertions.fail("TediEmailInfo FROM is not a string array");
 			}
 		}
 		assertEquals(emailInfo.getFileName(), json.optString(IConstants.FILE_NAME));
