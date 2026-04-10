@@ -372,10 +372,12 @@ public abstract class EmployeeWidget extends FlowPanel {
 		row10.addStyleName(AON.CSS.aonItemFlex());
 		row10.setWidth("100%");
 		
-		partialityCoef.hideNearBy();
-		partialityCoef.setMaxWidth("9rem");
+		journeyType.setWidth("25%");
 		
-		journeyDuration.setWidth("200rem");
+		partialityCoef.hideNearBy();
+		partialityCoef.setWidth("25%");
+		
+		journeyDuration.setWidth("50%");
 		
 		row10.add(journeyType);
 		row10.add(journeyDuration);
