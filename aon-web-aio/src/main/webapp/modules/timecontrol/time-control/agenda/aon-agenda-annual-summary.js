@@ -261,18 +261,18 @@ export class AonAgendaAnnualSummary extends AonElement {
 		// Regla 1: festivo de contrato → todo a 0
 		const festive = this._festivesContract.get(dateKey);
 		if (festive) {
-			return { workedMs: 0, expectedMs: 0 };
+			return { workedMs: 0, expectedMs: 0, festiveMs: fichadasMs };
 		}
 
 		// Regla 2: HOLIDAYS, PAID_LEAVE o IT → esperadas + fichadas
 		const dayType = this._daysTypeContract.get(dateKey);
 		const src = dayType?.source;
 		if (src === 'HOLIDAYS' || src === 'PAID_LEAVE' || src === 'IT') {
-			return { workedMs: expectedMs + fichadasMs, expectedMs };
+			return { workedMs: expectedMs + fichadasMs, expectedMs, festiveMs: 0 };
 		}
 
 		// Regla 3: día normal → solo fichadas
-		return { workedMs: fichadasMs, expectedMs };
+		return { workedMs: fichadasMs, expectedMs, festiveMs: 0 };
 	}
 
 	// ── RENDERIZADO ──────────────────────────────────────────────────────────
@@ -299,26 +299,26 @@ export class AonAgendaAnnualSummary extends AonElement {
 		el.dataset.year = year;
 
 		// Horas del mes en la cabecera del mes (derecha)
-		const workedStr = this.msToHoursMinutes(stats.workedMs);
+		const workedStr = this.msToHoursMinutes(stats.workedMs + stats.festiveWorkedMs);
 		const expectedStr = this.msToHoursMinutes(stats.expectedMs);
 		const diffMs = stats.workedMs - stats.expectedMs;
 		const diffStr = this.formatDiffTime(diffMs);
 		const diffClass = diffMs < 0 ? 'negative' : 'positive';
 
 		el.innerHTML = `
-      <div class="annual-month-header">
-      	<div class="annual-month-day">
-        	<span class="annual-month-name">${monthName.toUpperCase()}</span>
-        	<span class="annual-month-total-hours">${expectedStr}</span>
-        </div>
-        <span class="annual-month-hours">
-          ${workedStr} h / <span class="day-diff-hours ${diffClass}">${diffStr} h</span>
-        </span>
-      </div>
-      <div class="annual-month-pills">
-        ${this.renderAllPills(stats)}
-      </div>
-    `;
+	      <div class="annual-month-header">
+	      	<div class="annual-month-day">
+	        	<span class="annual-month-name">${monthName.toUpperCase()}</span>
+	        	<span class="annual-month-total-hours">${expectedStr}</span>
+	        </div>
+	        <span class="annual-month-hours">
+	          ${workedStr} h / <span class="day-diff-hours ${diffClass}">${diffStr} h</span>
+	        </span>
+	      </div>
+	      <div class="annual-month-pills">
+	        ${this.renderAllPills(stats)}
+	      </div>
+	    `;
 
 		return el;
 	}
@@ -329,6 +329,7 @@ export class AonAgendaAnnualSummary extends AonElement {
 		let workedMs = 0;
 		let expectedMs = 0;
 		let workedDays = 0;
+		let festiveWorkedMs = 0;
 
 		// Mapa: source → { count, workedMs, expectedMs }
 		const bySource = new Map();
@@ -339,7 +340,11 @@ export class AonAgendaAnnualSummary extends AonElement {
 			const dateKey = AonDateUtils.format(day, 'YYYY-MM-DD');
 			const dow = day.getDay();
 
-			const { workedMs: dayWorked, expectedMs: dayExpected } = this.getDayWorkedMs(dateKey, dow);
+			const { workedMs: dayWorked, expectedMs: dayExpected, festiveMs } = this.getDayWorkedMs(dateKey, dow);
+
+			if (festiveMs > 0) {
+				festiveWorkedMs += festiveMs;
+			}
 
 			workedMs += dayWorked;
 			expectedMs += dayExpected;
@@ -357,13 +362,16 @@ export class AonAgendaAnnualSummary extends AonElement {
 			}
 
 			const festive = this._festivesContract.get(dateKey);
-			if (festive) festivesOfMonth.push(festive);
+			if (festive)
+				festivesOfMonth.push(festive);
+
 		}
 
-		return { workedMs, expectedMs, workedDays, bySource, festivesOfMonth };
+		return { workedMs, expectedMs, workedDays, bySource, festivesOfMonth, festiveWorkedMs };
+
 	}
 
-	renderAllPills({ workedMs, expectedMs, workedDays, bySource, festivesOfMonth }) {
+	renderAllPills({ workedMs, expectedMs, workedDays, bySource, festivesOfMonth, festiveWorkedMs }) {
 		const pills = [];
 
 		// ── Píldora por cada SOURCE presente ──
@@ -426,12 +434,19 @@ export class AonAgendaAnnualSummary extends AonElement {
 
 		// ── Festivos de contrato ──
 		if (festivesOfMonth.length > 0) {
+			const hasHours = festiveWorkedMs > 0;
+			const festiveStr = this.msToHoursMinutes(festiveWorkedMs);
+
 			pills.push(`
-        <span class="day-type-pill festive">
-          <span class="pill-left"><strong>${festivesOfMonth.length} día${festivesOfMonth.length !== 1 ? 's' : ''}</strong> - Festivos</span>
-        </span>
-      `);
+			    <span class="day-type-pill festive">
+			      <span class="pill-left">
+			        <strong>${festivesOfMonth.length} día${festivesOfMonth.length !== 1 ? 's' : ''}</strong> - Festivos
+			      </span>
+			      ${hasHours ? `<span class="pill-right">${festiveStr} h</span>` : ''}
+			    </span>
+			  `);
 		}
+
 
 		return pills.join('');
 	}
@@ -457,9 +472,9 @@ export class AonAgendaAnnualSummary extends AonElement {
 			const dateKey = AonDateUtils.format(day, 'YYYY-MM-DD');
 			const dow = day.getDay();
 
-			const { workedMs, expectedMs } = this.getDayWorkedMs(dateKey, dow);
+			const { workedMs, expectedMs, festiveMs } = this.getDayWorkedMs(dateKey, dow);
 
-			totalWorkedMs += workedMs;
+			totalWorkedMs += (workedMs + festiveMs);
 			totalExpectedMs += expectedMs;
 
 			// Contar vacaciones (HOLIDAYS)
@@ -468,7 +483,7 @@ export class AonAgendaAnnualSummary extends AonElement {
 
 			// Acumular "hasta hoy" solo si el día ya ha pasado (o es hoy)
 			if (day <= today) {
-				uptodayWorkedMs += workedMs;
+				uptodayWorkedMs += (workedMs + festiveMs);
 				uptodayExpectedMs += expectedMs;
 			}
 		}

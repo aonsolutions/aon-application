@@ -34,7 +34,7 @@ export class AgendaHoursCalculator {
 		const msPerHour = 1000 * 60 * 60;
 		
 		// Los festivos de contrato no cuentan
-		if (this.data.festivesContract.has(dateKey)) return { workedTime: 0, expectedTime: 0 };
+		//if (this.data.festivesContract.has(dateKey)) return { workedTime: 0, expectedTime: 0 };
 
 		const hoursForDay  = this.data.workingDaysHours.length === 7
 			? (this.data.workingDaysHours[dayOfWeek] || 0) : 0;
@@ -42,6 +42,9 @@ export class AgendaHoursCalculator {
 
 		const dayEventData = this.data.events.get(dateKey);
 		let workedTime     = dayEventData ? Number(dayEventData.dayData.time || 0) : 0;
+		
+		// Los festivos de contrato no cuentan
+		if (this.data.festivesContract.has(dateKey)) return { workedTime, expectedTime: 0 };
 
 		const dayTypeContract = this.data.daysTypeContract.get(dateKey);
 		if (dayTypeContract && (
@@ -90,7 +93,7 @@ export class AgendaHoursCalculator {
 			const dow     = day.getDay();
 
 			// Los festivos de contrato no cuentan
-			if (this.data.festivesContract.has(dateKey)) continue;
+			//if (this.data.festivesContract.has(dateKey)) continue;
 
 			const { workedTime, expectedTime } = this.getDayHours(dateKey, dow);
 			totalWorked   += workedTime;
