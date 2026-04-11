@@ -94,11 +94,19 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
         "<div class='loader'></div><div class='loader-text'>Cargando calendario</div>"
     );
 
+    public WorkplaceCalendar() {
+    	super(null);
+        initComponents();
+    }
+    
     public WorkplaceCalendar(Workplace workplace) {
         super(null);
-        this.workplace = workplace;
-
-        loaderOverlay.setStyleName("loader-overlay");
+        initComponents();
+        setWorkplace(workplace);
+    }
+    
+    private void initComponents() {
+    	loaderOverlay.setStyleName("loader-overlay");
         add(loaderOverlay);
 
         container = new HTMLPanel("");
@@ -144,7 +152,10 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
         addWest(westPanel, 350);
 
         add(container);
-
+    }
+    
+    public void setWorkplace(Workplace workplace) {
+    	this.workplace = workplace;
         loadData();
     }
 
