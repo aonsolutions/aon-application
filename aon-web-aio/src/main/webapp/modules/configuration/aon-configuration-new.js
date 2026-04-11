@@ -138,12 +138,6 @@ export class AonConfigurationNew extends AonElement {
 			});
 		}
 
-		companyOptions.push({
-			name: MSG.SCOPES,
-			icon: MATERIAL_ICONS.BUSINESS,
-			fn: () => GWT.iLoad(GWT.SCOPE_MODULE, this.getApplication().CONTENT),
-		});
-
 		if (this.company && this.company.registry && this.company.domain) {
 			getRelationShipCompany({
 				url: this.company.domain,
@@ -180,16 +174,12 @@ export class AonConfigurationNew extends AonElement {
 				fn: () => this.buildGroups(),
 			});
 
-			/*
-			if (this.company && this.company.domain && !this.company.domain.parentId) {
-				securityOptions.push({
-					name: MSG.COMPANY_MANAGEMENT,
-					icon: MATERIAL_ICONS.BUSINESS,
-					fn: () => this.buildCompanyList(),
-				});
-			}
-			*/
-			
+			securityOptions.push({
+				name: MSG.SCOPES,
+				icon: MATERIAL_ICONS.BUSINESS,
+				fn: () => GWT.iLoad(GWT.SCOPE_MODULE, this.getApplication().CONTENT),
+			});
+
 			if (this.getDur().isApiService()) {
 				securityOptions.push({
 					name: MSG.SERVICE_ACCOUNTS,
@@ -197,7 +187,7 @@ export class AonConfigurationNew extends AonElement {
 					fn: () => this.buildServiceAccount(),
 				});
 			}
-			
+
 		}
 
 		aonConfiguration.addSidenavOptions(MSG.SECURITY.toUpperCase(), securityOptions);
