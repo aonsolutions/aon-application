@@ -65,6 +65,7 @@ public class JooqPDFSettlementBuilder {
 		 CONDITIONS_CHANGE("Baja Voluntaria Modificación Condiciones"),
 		 NOT_PASS_TRIAL_PERIOD("Baja por no Superar el Periodo de Prueba"),
 		 DEATH_OF_EMPLOYEE("Fallecimiento del Trabajador"),
+		 VOLUNTARY_END("Baja Voluntaria")
 		;
 
 		private String description;

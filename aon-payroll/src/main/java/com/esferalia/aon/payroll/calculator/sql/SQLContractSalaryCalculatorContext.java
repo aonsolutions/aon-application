@@ -754,7 +754,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					} else {
 						// exp.setExpression(String.format("SELF.br(%s) * %d", IT_START,
 						// guaranteedDays));
-						exp.setExpression(String.format(Locale.US, "SELF.br(%s, %s) * %s", IT_START, type.name(), GUARANTEED_DAYS));
+						// exp.setExpression(String.format(Locale.US, "SELF.br(%s, %s) * %s", IT_START, type.name(), GUARANTEED_DAYS));
+						exp.setExpression(String.format(Locale.US, "%s * %s", ContextVariable.REGULATORY_BASE, GUARANTEED_DAYS));
 					}
 					exprCtx.addLazyExpression(exp, guarenteeStart, guarenteeEnd);
 
@@ -2992,8 +2993,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					if (Math.abs(zero) <= solver.getAbsoluteAccuracy())
 						SQLContractSalaryCalculatorContext.this.onLiquid(salary);
 
-					System.out.println("Trying NETO: " + solve + " => " + zero + " (liquid: " + liquid + ", totalLiquid: " + salary.getTotalLiquid() + ")");
-
 					SQLContractSalaryCalculatorContext.this.solveLiquids.put(solve, zero);
 					
 					return zero;
@@ -3018,6 +3017,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		result = solver.solve(Byte.MAX_VALUE, univariateFunction, -2.00 * liquid, 2.00 * liquid, liquid);
 
 		SQLContractSalaryCalculatorContext.this.liquids.put(liquid, result);
+		
+		solveLiquids.clear();
 
 		return result;
 	}

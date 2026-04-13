@@ -573,6 +573,94 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCommonDiseaseITWithLiquidI() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				format("NETO(2000 * %s / %s)", ContextVariable.WORKED_DAYS , ContextVariable.MONTH_DAYS )}, 
+				new String[] {
+				"BASE_CGC * 0.0", 
+				"BASE_CGP * 0.00",
+				"BASE_IRPF * 0.00/100" }
+				, null);
+		addPayment(aonContext, contract,addConcept(aonContext, "PREST_IT"),
+				"0.00 ", 
+				"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA");
+		//@formatter:on
+
+		
+		Date startITDate = set(set(getToday(), Calendar.DATE, 9), Calendar.MONTH, Calendar.APRIL);
+		int itDays = 18;
+		Date endITDate = addDays(startITDate, itDays - 1);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				endITDate, null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+
+		Salary salary = calculator.calculate(ctx);
+		
+		int monthDays = get(endDate, DAY_OF_MONTH);
+		assertEquals(2000.00
+				* (monthDays - itDays) / monthDays, salary.getTotalLiquid(), DELTA, format("%s :", TOTAL_LIQUID));
+		assertEquals(2000.00, salary.getCommonBase(), DELTA, format("%s :", CGC_BASE));
+
+	}
+
+	@Test
+	public void testCommonDiseaseITWithLiquidII() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				format("NETO(2000 * %s / %s)", ContextVariable.WORKED_DAYS , ContextVariable.MONTH_DAYS )}, 
+				new String[] {
+				"BASE_CGC * 0.0", 
+				"BASE_CGP * 0.00",
+				"BASE_IRPF * 0.00/100" }
+				, null);
+		addPayment(aonContext, contract,addConcept(aonContext, "PREST_IT"),
+				"0.00 ", 
+				"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA");
+		//@formatter:on
+
+		
+		Date startITDate = set(set(getToday(), Calendar.DATE, 9), Calendar.MONTH, Calendar.APRIL);
+		int itDays = 6;
+		Date endITDate = addDays(startITDate, itDays - 1);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				endITDate, null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+
+		Salary salary = calculator.calculate(ctx);
+		
+		int monthDays = get(endDate, DAY_OF_MONTH);
+		assertEquals(2000.00
+				* (monthDays - itDays) / monthDays, salary.getTotalLiquid(), DELTA, format("%s :", TOTAL_LIQUID));
+		assertEquals(2000.00, salary.getCommonBase(), DELTA, format("%s :", CGC_BASE));
+
+	}
+
+	@Test
 	public void testCommonDiseaseITWithPaymentAndIRPF()
 			throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();

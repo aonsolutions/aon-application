@@ -485,8 +485,8 @@ public class ACCOUNTING {
 	}
 
 
-	public static IAccountEntryWrapper updateSpecial(String domainName, int domain, String user, AccountEntryUpdate operation, IAccountEntryWrapper wrapper) {		
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+	public static IAccountEntryWrapper updateSpecial(Occam occam, AccountEntryUpdate operation, IAccountEntryWrapper wrapper) {		
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getAccounting().updateSpecial(ctx, operation, wrapper);
 		}
 	}

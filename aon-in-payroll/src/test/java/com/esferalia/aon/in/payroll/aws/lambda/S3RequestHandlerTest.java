@@ -4,14 +4,14 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.events.S3Event;
@@ -23,7 +23,7 @@ import com.amazonaws.services.s3.model.S3Object;
 /**
  * A simple test harness for locally invoking your Lambda function handler.
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class S3RequestHandlerTest {
 
     private final String CONTENT_TYPE = "image/jpeg";
@@ -37,7 +37,7 @@ public class S3RequestHandlerTest {
     @Captor
     private ArgumentCaptor<GetObjectRequest> getObjectRequest;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         event = TestUtils.parse("/s3-event.put.json", S3Event.class);
 
@@ -65,6 +65,6 @@ public class S3RequestHandlerTest {
         String output = handler.handleRequest(event, ctx);
 
         // TODO: validate output here if needed.
-        Assert.assertEquals(CONTENT_TYPE, output);
+        Assertions.assertEquals(CONTENT_TYPE, output);
     }
 }

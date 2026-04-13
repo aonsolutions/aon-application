@@ -164,9 +164,9 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 
 
 	@Override
-	public void updateSpecial(String domainName, int domain, String user, AccountEntryUpdate operation, IAccountEntryWrapper wrapper, AsyncCallback<IAccountEntryWrapper> callback) {
+	public void updateSpecial(Occam occam, AccountEntryUpdate operation, IAccountEntryWrapper wrapper, AsyncCallback<IAccountEntryWrapper> callback) {
 		AON.start();
-		fsa.updateSpecial(domainName, domain, user, operation, wrapper, new AsyncCallbackWrapper<>(callback));
+		fsa.updateSpecial(occam, operation, wrapper, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
