@@ -20,6 +20,8 @@ public interface SalaryProperties{
 	
 	Property<Date> getIssueDateProperty();
 	
+	Property<Date> getChargeDateProperty();
+
 	Property<Boolean> getIsL00Property();
 
 	Property<Boolean> getIsSalaryProperty();
