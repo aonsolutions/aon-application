@@ -150,7 +150,7 @@ export const DELETE_LOGO_CONFIRM = "Estàs segur d'eliminar el logo";
 export const DELETE_TAG = 'Esborrar Etiqueta';
 export const DELETE_TAX = 'Esborrar Impost';
 export const DELETE_WAREHOUSE = 'Esborrar Magatzem';
-export const DELETED_DATA = "Los datos se han eliminado correctamente";
+export const DELETED_DATA = "Les dades s'han eliminat correctament";
 export const DESCRIPTION = 'Descripció';
 export const DETAILED = 'Detallat';
 export const DEUTSCH = 'Alemany';
@@ -188,16 +188,19 @@ export const ENTERPRISES = 'Empresas';
 export const ENTRY = 'Entrada';
 export const ENVIRONMENT = 'Entorno';
 export const EQUIVALENCE_SURCHARGE = `Recàrrec d'Equivalència`;
+export const ERRORS = 'Errors';
 export const EXERCISE = 'Exercici';
 export const EXEMPTION_CAUSE = 'Causa d\'Exempció';
 export const EXIT = 'Sortida';
+export const EXPAND_HIRIND = 'Ampliar Contractació';
+export const EXPEDITION_DATE = 'Data d\'expedició';
 export const EXPENSE = 'Despesa';
 export const EXPENSES = 'Despeses';
 export const EXPIRATIONS = 'Venciments';
 export const EXPIRED = 'Caducat';
 export const EXPIRED_SESSION = 'Sessió expirada';
-export const ERRORS = 'Errors';
-export const EXPAND_HIRIND = 'Ampliar Contractació';
+
+
 
 // ----- F
 
@@ -358,6 +361,7 @@ export const OPEN = 'Obrir';
 export const OPEN_MENU = 'Obrir Menú';
 export const OPEN_REQUESTS = 'Sol·licituds Obertes';
 export const OPENED = 'Obert';
+export const OPERATION_DATE = 'Data d\'operació';
 export const OPTIONAL = "Opcional"; 
 export const OPTIONS = 'Opcions';
 export const OR_ACCESS = 'o ACCEDEIX';

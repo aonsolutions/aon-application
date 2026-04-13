@@ -188,28 +188,31 @@ export const ENTERPRISES = 'Enterprises';
 export const ENTRY = 'Entry';
 export const ENVIRONMENT = 'Environment';
 export const EQUIVALENCE_SURCHARGE = 'Equivalence Surcharge';
+export const ERRORS = 'Fehler';
 export const EXERCISE = 'Übung';
 export const EXEMPTION_CAUSE = 'Befreiungsgrund';
 export const EXIT = 'Exit';
-export const EXPENSE = 'Expense';
-export const EXPENSES = 'Expenses';
-export const EXPIRATIONS = 'Expirations';
+export const EXPAND_HIRIND = 'Erweitern Sie die Einstellungsmöglichkeiten';
+export const EXPEDITION_DATE = 'Expeditionsdatum';
+export const EXPENSE = 'Ausgabe';
+export const EXPENSES = 'Ausgaben';
+export const EXPIRATIONS = 'Ablaufdaten';
 export const EXPIRED = 'Abgelaufen';
 export const EXPIRED_SESSION = 'Sitzung abgelaufen';
-export const ERRORS = 'Fehler';
-export const EXPAND_HIRIND = 'Erweitern Sie die Einstellungsmöglichkeiten';
+
+
 
 // ----- F
 
 export const FAX = 'Fax';
-export const FILE = 'File';
-export const FILE_DATA = 'File Data'
-export const FILTER = "Filtro";
-export const FILTERS = "Filtros";
+export const FILE = 'Datei';
+export const FILE_DATA = 'Dateidaten'
+export const FILTER = "Filter";
+export const FILTERS = "Filter";
 export const FIND_LINKED_DOMAINS = "Finden Sie verknüpfte Domains";
 export const FISCAL = 'Finanzielle';
 export const FOOTER = 'Footer';
-export const FROM = 'From';
+export const FROM = 'Von';
 export const FRENCH = 'Französisch';
 export const FUTURE = 'Kommt bald...';
 
@@ -217,53 +220,53 @@ export const FUTURE = 'Kommt bald...';
 
 export const GALICIAN = 'Galician';
 export const GARAGE = 'Garage';
-export const GENERAL_INFORMATION = 'General Information';
+export const GENERAL_INFORMATION = 'Allgemeine Informationen';
 export const GET_INVOICE = 'Rechnung Bekommen';
 export const GET_INVOICES = 'Rechnungen Bekommen';
 export const GO_CONFIGURATION = 'Gehen Sie zu den Einstellungen';
-export const GROUP_DATA = 'Group Data';
-export const GROUP_MANAGEMENT = 'Group Management';
-export const GROUP = 'Group';
-export const GROUPWARE = 'Dateien';
-export const GROUPS = 'Groups';
+export const GROUP_DATA = 'Gruppendaten';
+export const GROUP_MANAGEMENT = 'Gruppenverwaltung';
+export const GROUP = 'Gruppe';
+export const GROUPWARE = 'Gruppenware';
+export const GROUPS = 'Gruppen';
 
 // ----- H
 
 export const HEADER = 'Header';
-export const HELP = 'Help';
+export const HELP = 'Hilfe';
 export const HELP_RESULTS = 'Ergebnisse in Hilfe';
 export const HIRING = 'Einstellen';
 export const HIRING_DATA = "Einstellungsdaten";
-export const HOLDER = 'Holder';
-export const HOLDERS = 'Holders';
-export const HOURS = "Hours";
-export const HOME = "Home";
-export const HISTORIC = "Historic";
+export const HOLDER = 'Inhaber';
+export const HOLDERS = 'Inhaber';
+export const HOURS = "Stunden";
+export const HOME = "Startseite";
+export const HISTORIC = "Historisch";
 
 // ----- I
 
-export const IN_DEVELOPMENT = 'This option is under development...';
-export const INACTIVE = 'Inactive';
-export const INACTIVES ='Inactive';
-export const INBOX = 'Inbox';
-export const INCLUDE_COMPANY_DATA = 'Include Company Data';
-export const INCLUDE_LOGO = 'Include Logo';
+export const IN_DEVELOPMENT = 'Diese Option befindet sich in der Entwicklung...';
+export const INACTIVE = 'Inaktiv';
+export const INACTIVES ='Inaktiv';
+export const INBOX = 'Posteingang';
+export const INCLUDE_COMPANY_DATA = 'Unternehmensdaten einbeziehen';
+export const INCLUDE_LOGO = 'Logo einbeziehen';
 export const INFORMATION = 'Information';
 export const INFO_INCOMES = "Abschnitt „Informationseinkommen“.";
 export const INFO_EXPENSES = "Informationen zum Abschnitt „Ausgaben“.";
 export const INFO_PENDING = "Informationen zum Abschnitt „Ohrringe“.";
-export const INVENTORIES = 'Inventories';
-export const INVENTORY = 'Inventory';
-export const INVESTMENT = 'Investment';
+export const INVENTORIES = 'Inventar';
+export const INVENTORY = 'Inventar';
+export const INVESTMENT = 'Investition';
 export const INVOICE = 'Rechnung';
-export const INVOICE_CONCEPTS = 'Invoice Concepts';
+export const INVOICE_CONCEPTS = 'Rechnungskonzepte';
 export const INVOICE_CONFIGURATION = 'Rechnungskonfiguration';
-export const INVOICE_DATA = 'Invoice Data';
-export const INVOICE_ISSUED = 'Invoice Issued';
-export const INVOICE_NUMBER = 'Invoice Number';
+export const INVOICE_DATA = 'Rechnungsdaten';
+export const INVOICE_ISSUED = 'Rechnung ausgestellt';
+export const INVOICE_NUMBER = 'Rechnungsnummer';
 export const INVOICE_OBJECT = 'Rechnungsobjekt';
 export const INVOICE_PRINTING = 'Rechnungsdruck';
-export const INVOICE_RECEIVED = 'Invoice Received';
+export const INVOICE_RECEIVED = 'Rechnung erhalten';
 export const INVOICES = 'Rechnungen';
 export const IRPF = 'IRPF';
 export const IS_REQUIRED = 'ist erforderlich';
@@ -354,12 +357,13 @@ export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = "Nur Domains ohne verknüpft
 export const ONLY_PORTAL = 'Only Portal';
 export const OPEN = 'Open';
 export const OPEN_MENU = 'Open Menu';
-export const OPEN_REQUESTS = 'Open Requests';
-export const OPENED = 'Opened';
+export const OPEN_REQUESTS = 'Offene Anfragen';
+export const OPENED = 'Geöffnet';
+export const OPERATION_DATE = 'Operationsdatum';
 export const OPTIONAL = "Optional"; 
-export const OPTIONS = 'Options';
+export const OPTIONS = 'Optionen';
 export const OR_ACCESS = 'oder ZUGANG';
-export const OTHER_SERVICES = 'Other Services';
+export const OTHER_SERVICES = 'Andere Dienstleistungen';
 
 
 // ----- P

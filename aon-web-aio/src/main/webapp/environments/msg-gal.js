@@ -189,16 +189,17 @@ export const ENTERPRISES = 'Empresas';
 export const ENTRY = 'Entrada';
 export const ENVIRONMENT = 'Entorno';
 export const EQUIVALENCE_SURCHARGE = 'Recargo de Equivalencia';
+export const ERRORS = 'Erros';
 export const EXEMPTION_CAUSE = 'Causa de Exención';
 export const EXERCISE = 'Exercicio';
 export const EXIT = 'Saída';
+export const EXPAND_HIRIND = 'Ampliar a contratación';
+export const EXPEDITION_DATE = 'Data de Expedición';
 export const EXPENSE = 'Gasto';
 export const EXPENSES = 'Gastos';
 export const EXPIRATIONS = 'Vencementos';
 export const EXPIRED = 'Expirado';
 export const EXPIRED_SESSION = 'Sessió expirada';
-export const ERRORS = 'Erros';
-export const EXPAND_HIRIND = 'Ampliar a contratación';
 
 // ----- F
 
@@ -359,6 +360,7 @@ export const OPEN = 'Abrir';
 export const OPEN_MENU = 'Abrir Menú';
 export const OPEN_REQUESTS = 'Solicitudes Abertas';
 export const OPENED = 'Aberto';
+export const OPERATION_DATE = 'Data de Operación';
 export const OPTIONAL = 'Opcional'; 
 export const OPTIONS = 'Opcións';
 export const OR_ACCESS = 'ou ACCESO';

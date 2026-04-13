@@ -404,7 +404,7 @@ public class InvoiceDAO {
 	}
 	
 	
-	static class InvoiceFiller extends Filler implements Function<Record,Invoice> {
+	public static class InvoiceFiller extends Filler implements Function<Record,Invoice> {
 
 		@Override
 		public Invoice apply(Record r) {

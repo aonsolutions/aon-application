@@ -13,6 +13,7 @@ export class Invoice {
   number;
   reference;
   date;
+  expDate;
   transaction;
   category;
   total;
@@ -72,6 +73,7 @@ export class Invoice {
         ? invoice.reference
         : (invoice.series ? invoice.series + '/' + invoice.number : invoice.number);
       this.date = invoice.date || now();
+      this.expDate = invoice.expDate;
       this.total = invoice.total || 0;
       this.type = invoice.type || 'emitida',
       this.category = invoice.category || '',
@@ -658,6 +660,20 @@ export class Invoice {
 
   getDateStr() {
     let date = new Date(this.date);
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+    return day + '/' + month + '/' + year;
+  }
+
+  getExpDate() {
+    if(!this.expDate) return undefined;
+    return new Date(this.expDate);
+  }
+
+  getExpDateStr() {
+    if(!this.expDate) return '';
+    let date = new Date(this.expDate);
     let day = date.getDate();
     let month = date.getMonth() + 1;
     let year = date.getFullYear();

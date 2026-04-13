@@ -141,6 +141,7 @@ export class AonInvoice extends AonElement {
 		this.NUMBER = CONSTANT.AON_INVOICE + CONSTANT.NUMBER.initCap();
 		this.REFERENCE = CONSTANT.AON_INVOICE + CONSTANT.REFERENCE.initCap();
 		this.DATE = CONSTANT.AON_INVOICE + CONSTANT.DATE.initCap();
+		this.EXP_DATE = CONSTANT.AON_INVOICE + "ExpDate";
 		this.TOTAL = CONSTANT.AON_INVOICE + CONSTANT.TOTAL.initCap();
 		this.REGISTRY = CONSTANT.AON_INVOICE + CONSTANT.REGISTRY.initCap();
 		this.CATEGORY = CONSTANT.AON_INVOICE + CONSTANT.CATEGORY.initCap();
@@ -1287,7 +1288,8 @@ export class AonInvoice extends AonElement {
 		numberSpan.appendChild(number);
 
 		// ----- REFERENCE
-		let referenceSpan = this.createTableSpan("45%", "2px");
+		let referenceWidth = !this.invoice.isRawdoc() && this.invoice.isEmitida() ? "25%" : "45%";
+		let referenceSpan = this.createTableSpan(referenceWidth, "2px");
 		div.appendChild(referenceSpan);
 
 		let reference = createInput(this.REFERENCE, MSG.REFERENCE);
@@ -1311,10 +1313,11 @@ export class AonInvoice extends AonElement {
 
 		// ----- DATE
 
-		let dateSpan = this.createTableSpan("30%", "2px");
+		let dateWidth = !this.invoice.isRawdoc() && this.invoice.isEmitida() ? "25%" : "30%";
+		let dateSpan = this.createTableSpan(dateWidth, "2px");
 		div.appendChild(dateSpan);
 
-		let date = createDate(this.DATE, MSG.DATE);
+		let date = createDate(this.DATE, MSG.OPERATION_DATE);
 		date.setDate(this.invoice.date);
 		if (this.invoice.isReadonly()) date.readonly = this.invoice.isReadonly();
 		date.addEventListener(EVENT.CHANGE, () => {
@@ -1322,6 +1325,16 @@ export class AonInvoice extends AonElement {
 		});
 		dateSpan.appendChild(date);
 
+		// ----- EXP DATE
+		if(!this.invoice.isRawdoc() && this.invoice.isEmitida()) {
+			let expDateSpan = this.createTableSpan("25%", "2px");
+			div.appendChild(expDateSpan);
+
+			let expDate = createDate(this.EXP_DATE, MSG.EXPEDITION_DATE);
+			expDate.setDate(this.invoice.expDate);
+			expDate.readonly = true;
+			expDateSpan.appendChild(expDate);
+		}
 
 		// ----- TOTAL
 

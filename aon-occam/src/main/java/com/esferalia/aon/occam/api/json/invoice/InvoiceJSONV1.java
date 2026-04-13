@@ -142,6 +142,7 @@ class InvoiceJSONV1 {
 	
 	static JSONObject toJSON(Invoice invoice) {
 		String date = AonDateUtils.format(invoice.getIssueDate(), AonDateUtils.DATE_TIME_FORMAT_AUX);
+		String expDate = AonDateUtils.format(invoice.getExpDate(), AonDateUtils.DATE_TIME_FORMAT_AUX);
 		
 		JSONObject json = new JSONObject()
 			.put(IJsonNames.STATUS, invoice.isRecorded() 
@@ -152,6 +153,7 @@ class InvoiceJSONV1 {
 			.put(IJsonNames.SERIES, invoice.getSeries())
 			.put(IJsonNames.NUMBER, invoice.getNumber())
 			.put(IJsonNames.DATE, date) //invoice.getIssueDate())
+			.put(IJsonNames.EXP_DATE, expDate)
 			.put(IJsonNames.REFERENCE, invoice.getReferenceCode())
 			.put(IJsonNames.TYPE, invoice.getType().getTediName())
 			.put(IJsonNames.TRANSACTION, invoice.getTransaction().getTediName())
