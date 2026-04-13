@@ -85,6 +85,16 @@ public class EntryPointUtils {
 		return $wnd.localStorage.removeItem("booking_domain_name");
 	}-*/;
 	
+	public static native String getRegistrySource()
+	/*-{
+		return $wnd.localStorage.getItem("registrySource");
+	}-*/;
+	
+	public static native int removeRegistrySource()
+	/*-{
+		return $wnd.localStorage.removeItem("registrySource");
+	}-*/;
+	
 	/**
 	 * Fetches a parameter passed to the module's nocache script.
 	 * 

@@ -121,6 +121,17 @@ export class AonConfigurationNew extends AonElement {
 		// Comapny
 
 		let companyOptions = [];
+		
+		if (this.getDur().isAdmin() && this.isBeta()) {
+			companyOptions.push({
+				name: MSG.GENERAL_INFORMATION + " (GWT)",
+				icon: MATERIAL_ICONS.BUSINESS,
+				fn: () => {
+					localStorage.setItem("registrySource", 'COMPANY');
+					GWT.iLoad(GWT.REGISTRY_ENTRY_MODULE, this.getApplication().CONTENT);
+				},
+			});
+		}
 
 		if (this.getDur().isAdmin() || (!this.getDur().isEmployee() && !this.isMobile())) {
 			companyOptions.push({
@@ -236,8 +247,13 @@ export class AonConfigurationNew extends AonElement {
 			}
 
 		}
-
-		this.buildGeneral();
+		
+		
+		if (this.getDur().isAdmin() && this.isBeta()) {
+			localStorage.setItem("registrySource", 'COMPANY');
+			GWT.iLoad(GWT.REGISTRY_ENTRY_MODULE, this.getApplication().CONTENT);
+		} else
+			this.buildGeneral();
 	}
 
 	buildPersonal() {
