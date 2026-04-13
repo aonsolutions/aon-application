@@ -82,6 +82,11 @@
       		<scope>compile</scope>
     	</dependency>
 		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.gwt.pdfjs</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>jakarta.faces</groupId>
 			<artifactId>jsf-api</artifactId>
 			<version>1.2_14</version>

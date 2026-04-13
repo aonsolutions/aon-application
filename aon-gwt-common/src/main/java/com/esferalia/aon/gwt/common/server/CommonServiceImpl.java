@@ -1,12 +1,20 @@
 package com.esferalia.aon.gwt.common.server;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,16 +37,21 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
+import com.esferalia.aon.occam.api.model.EmployeeSegSocial;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.EnterpriseData;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.InvestAsset;
@@ -58,6 +71,7 @@ import com.esferalia.aon.occam.api.model.ProjectParams;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.Relationship;
+import com.esferalia.aon.occam.api.model.SecondaryUserCertificate;
 import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
@@ -66,6 +80,7 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
@@ -127,6 +142,7 @@ import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -149,6 +165,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import net.aonsolutions.aon.in.pdf.maker.PdfMaker;
+import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.object.Employee;
+import solutions.aon.seg.social.object.SecondaryUser;
+import solutions.aon.sepe.Sepe;
 
 @WebServlet(name = "Aon Common Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Common", "/aon_gwt_mod200/ms/Common", "/aon_gwt_aio/ms/Common", "/aon_gwt_marketing/ms/Common"})
 public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implements CommonService {
@@ -1756,6 +1776,290 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public List<RegistryRelationship> getRegistryRelationships(String domainName, int domain, String user) throws AonCoreException {
 		return AON.getRegistryRelationships(domainName, domain, user);
+	}
+	
+	// **************************************************
+	// *********************** [CERTIFICATES]
+	// **************************************************
+
+
+	@Override
+	public DomainUserRoles getDomainUserRoles(String domainName, Integer domainId, String userLogin) throws AonCoreException {
+		User user = AON.getUser(domainName, domainId, userLogin);
+		return SECURITY.getDomainUserRoles(domainName, domainId, userLogin, user.getId());
+	}
+	
+	@Override
+	public List<Certificate> getCertificates(String domainName, Integer domainId, String userLogin, boolean withParent) throws AonCoreException {
+		try {
+			User user = AON.getUser(domainName, domainId, userLogin);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			
+			List<com.esferalia.aon.occam.api.model.Certificate> certificates = withParent 
+					? AON.getCertificatesWithParent(domainName, domainId, parentDomainId, userLogin, user.getId()) 
+					: AON.getCertificates(domainName, domainId, userLogin, user.getId());
+			
+			return certificates;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new AonCoreException(e.getMessage());
+		}
+	}
+	
+	@Override
+	public void deleteCertificate(String domainName, Integer domainId, String userLogin, Certificate certificate) throws AonCoreException {
+		AON.deleteCertificate(domainName, domainId, userLogin, 
+				certificate.getId(),
+				f -> f.getIdProperty().eq(certificate.getId()), null);
+	}
+	
+	@Override
+	public void downloadCertificate(String domainName, Integer domainId, String userLogin, Integer certificateId, String filePath) throws AonCoreException {
+		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(certificateId));
+		
+		File f = new File(filePath);
+		try {
+			FileOutputStream fos = new FileOutputStream(f);
+			fos.write(certificate.getData());
+			fos.close();
+		} catch (FileNotFoundException e) {
+			System.err.println("Archivo no encontrado");
+		} catch (IOException e) {
+			System.err.println("Error al escribir");
+		}
+	}
+	
+	@Override
+	public void verifyCertificate(String domainName, Integer domainId, String userLogin, Integer rattachId, List<CertificateType> tags) throws AonCoreException {
+		try {
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId));
+			
+			for(CertificateType tag : tags) {
+				if(tag == CertificateType.TGSS) {
+					InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
+					SistemaRED.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
+				}
+	
+				if(tag == CertificateType.SEPE) {
+					InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
+					Sepe.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
+				}
+			}
+		} catch (Exception e) {
+			if(AonStringUtils.equalsIgnoreCase(e.getMessage(), "java.io.IOException: keystore password was incorrect"))
+				throw new IllegalArgumentException("Contrase\u00F1a incorrecta");
+			
+			throw new IllegalArgumentException(e.getMessage());
+		} 
+	}
+	
+	@Override
+	public CertificateInfo getCertificateInfo(String domainName, Integer domainId, String userLogin, Integer certificateId) throws AonCoreException {
+		return AON.getCertificateInfo(domainName, domainId, userLogin, f -> f.getIdProperty().eq(certificateId));
+	}
+	
+	@Override
+	public List<SecondaryUserCertificate> getSecondaryUsers(String domainName, Integer domainId, String userLogin, Integer rattachId) throws AonCoreException {
+		try {
+			User user = AON.getUser(domainName, domainId, userLogin);
+			Certificate certificate = null;
+			
+			if(rattachId == null) {	
+				
+				certificate = AON.getCertificate(domainName, domainId, userLogin, user.getId(), "TGSS");
+			} else
+				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
+			
+			InputStream is = new ByteArrayInputStream(certificate.getData());
+			Collection<SecondaryUser> secondaryUsersCollection = SistemaRED.getSecondaryUsers(is, certificate.getPassword(), certificate.getType());
+			
+			List<SecondaryUser> secondaryUsers = new ArrayList<>(secondaryUsersCollection);
+			List<SecondaryUserCertificate> secondaryUsersCertificate = new ArrayList<>();
+			
+			for(SecondaryUser secondaryUser : secondaryUsers) {
+				secondaryUsersCertificate.add(new SecondaryUserCertificate(
+						secondaryUser.getAuthoritation(),
+						secondaryUser.getAuthoritationEntity(),
+						secondaryUser.getMainUserName(),
+						secondaryUser.getMainUserIpf(),
+						secondaryUser.getMainUserNaf(),
+						secondaryUser.getName(),
+						secondaryUser.getProvince(),
+						secondaryUser.getIpf(),
+						secondaryUser.getNaf(),
+						secondaryUser.getSituation(),
+						secondaryUser.getSituationDate(),
+						secondaryUser.getTelephone(),
+						secondaryUser.getFax(),
+						secondaryUser.getMobile(),
+						secondaryUser.getMail()
+				));
+			}
+			
+			return secondaryUsersCertificate;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AonCoreException(e.getMessage());
+		}
+	}
+	
+	private Certificate parseCertificate(Certificate certificate) {
+		return new Certificate()
+				.setData(certificate.getData())
+				.setPassword(certificate.getPassword())
+				.setType(certificate.getType());
+	}
+	
+	@Override
+	public String getSecondaryUsersPDF(String domainName, Integer domainId, String userLogin, Integer rattachId) throws AonCoreException {
+		try {
+			
+			Certificate certificate = null;
+			User user = AON.getUser(domainName, domainId, userLogin);
+			
+			Optional<ApplicationParameter> authParam = AON.getApplicationParameterStream(domainName, domainId, userLogin, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY"))).findFirst();
+			String authKey = null;
+			if(authParam.isEmpty() || AonStringUtils.isBlank(authParam.get().getValue())) {
+				EnterpriseData enterpriseData = AON.getEnterpriseData(new Domain().setName(domainName).setId(domainId), new User().setLogin(userLogin), f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY")));
+				if(null != enterpriseData && null != enterpriseData.getId()) authKey = enterpriseData.getExpression();
+			} else 
+				authKey = authParam.get().getValue();
+			
+			if(rattachId == null) {	
+				certificate = AON.getCertificate(domainName, domainId, userLogin, user.getId(), "TGSS");
+			} else
+				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
+			
+			byte[] data = SistemaRED.getSecondaryUsersPDF(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), authKey);
+			String base64Pdf = Base64.getEncoder().encodeToString(data);
+					
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+	
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+	
+			return dataUri;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AonCoreException(e.getMessage());
+		}
+		
+	}
+	
+	@Override
+	public String getAssignedCCCsPDF(String domainName, Integer domainId, String userLogin, Integer rattachId) throws AonCoreException {
+		try {
+			Certificate certificate = null;
+			User user = AON.getUser(domainName, domainId, userLogin);
+			
+			Optional<ApplicationParameter> authParam = AON.getApplicationParameterStream(domainName, domainId, userLogin, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY"))).findFirst();
+			String authKey = null;
+			
+			if(authParam.isEmpty() || AonStringUtils.isBlank(authParam.get().getValue())) {
+				EnterpriseData enterpriseData = AON.getEnterpriseData(new Domain().setName(domainName).setId(domainId), new User().setLogin(userLogin), f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY")));
+				if(null != enterpriseData && null != enterpriseData.getId()) authKey = enterpriseData.getExpression();
+			} else 
+				authKey = authParam.get().getValue();
+			
+			if(rattachId == null) {	
+				certificate = AON.getCertificate(domainName, domainId, userLogin, user.getId(), "TGSS");
+			} else
+				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
+			
+			byte[] data = SistemaRED.getAssignedCCCsPDF(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), authKey);
+			String base64Pdf = Base64.getEncoder().encodeToString(data);
+					
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AonCoreException(e.getMessage());
+		}
+	}
+	
+	@Override
+	public EmployeeSegSocial getIpfxNaf(String domainName, Integer domainId, String userLogin, ArrayList<String> nssList) throws AonCoreException {
+		try {	
+			User user = AON.getUser(domainName, domainId, userLogin);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, user.getId(), "TGSS");
+			
+			InputStream is = new ByteArrayInputStream(certificate.getData());
+			
+			Collection<Employee> employeeCollection = SistemaRED.ipfxnaf(is, certificate.getPassword(), certificate.getType(), nssList);
+			Employee employee = (Employee) employeeCollection.toArray()[0];
+			
+			EmployeeSegSocial employeeSegSocial = new EmployeeSegSocial(
+					employee.getNss(), 
+					employee.getName().orElse(null), 
+					employee.getBirthDate().orElse(null), 
+					employee.getIpf());
+			
+			return employeeSegSocial;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AonCoreException(e);
+		}
+	}
+	
+	@Override
+	public void deleteSecondaryUser(String domainName, Integer domainId, String userLogin, Integer rattachId, String ipfType, String ipf) throws AonCoreException {
+		try {	
+			Certificate certificate = null;
+			User user = AON.getUser(domainName, domainId, userLogin);
+			
+			if(rattachId == null) {	
+				certificate = AON.getCertificate(domainName, domainId, userLogin, user.getId(), "TGSS");
+			} else
+				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
+			
+			
+			InputStream is = new ByteArrayInputStream(certificate.getData());
+			SistemaRED.deleteSecondaryUser(is, certificate.getPassword(), certificate.getType(), ipfType, ipf);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AonCoreException(e);
+		}
+	}
+	
+	@Override
+	public void createSecondaryUser(String domainName, Integer domainId, String userLogin, Integer rattachId, String ipfType, String ipf, String naf) throws AonCoreException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Certificate certificate = null;
+			
+			if(rattachId == null) {
+				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+				
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+			} else
+				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
+			
+			InputStream is = new ByteArrayInputStream(certificate.getData());
+			SistemaRED.registerSecondaryUserByNie(is, certificate.getPassword(), certificate.getType(), ipfType, ipf, naf);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AonCoreException(e);
+		}
+	}
+	
+	// **************************************************
+	// *********************** [REGISTRY ENTRY]
+	// **************************************************
+	
+	@Override
+	public CompanyFull getCompanyFull(String domainName, int domain, String user) throws AonCoreException {
+		return AON.getCompanyFull(domainName, domain, user);
 	}
 
 }

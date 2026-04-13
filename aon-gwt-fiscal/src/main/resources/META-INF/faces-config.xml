@@ -383,5 +383,13 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	<!-- =================== Registry Entry Module ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_registry_entry_module</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/registryEntryModule.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 </faces-config>
 		

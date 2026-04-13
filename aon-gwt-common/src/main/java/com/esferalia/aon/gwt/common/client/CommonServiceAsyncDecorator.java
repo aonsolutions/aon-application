@@ -11,11 +11,14 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
+import com.esferalia.aon.occam.api.model.EmployeeSegSocial;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
@@ -32,6 +35,7 @@ import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.ProjectParams;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
+import com.esferalia.aon.occam.api.model.SecondaryUserCertificate;
 import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
@@ -40,6 +44,7 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
@@ -71,6 +76,7 @@ import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Category;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -94,6 +100,7 @@ import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -1478,6 +1485,92 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void requestBookingInfo(String domainName, int domain, String user, ProductBooking product, Integer customerRegistry, AsyncCallback<Void> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.requestBookingInfo(domainName, domain, user, product, customerRegistry, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	// **************************************************
+	// *********************** [CERTIFICATES]
+	// **************************************************
+
+	@Override
+	public void getDomainUserRoles(String domainName, Integer domainId, String user, AsyncCallback<DomainUserRoles> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getDomainUserRoles(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getCertificates(String domainName, Integer domainId, String user, boolean withParent, AsyncCallback<List<Certificate>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCertificates(domainName, domainId, user, withParent, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteCertificate(String domainName, Integer domainId, String user, Certificate certificate, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteCertificate(domainName, domainId, user, certificate, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void downloadCertificate(String domainName, Integer domainId, String user, Integer certificateId, String filePath, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.downloadCertificate(domainName, domainId, user, certificateId, filePath, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void verifyCertificate(String domainName, Integer domainId, String user, Integer certificateId, List<CertificateType> tags, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.verifyCertificate(domainName, domainId, user, certificateId, tags, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getCertificateInfo(String domainName, Integer domainId, String user, Integer certificateId, AsyncCallback<CertificateInfo> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCertificateInfo(domainName, domainId, user, certificateId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getSecondaryUsers(String domainName, Integer domainId, String user, Integer rattachId, AsyncCallback<List<SecondaryUserCertificate>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getSecondaryUsers(domainName, domainId, user, rattachId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getSecondaryUsersPDF(String domainName, Integer domainId, String user, Integer rattachId, AsyncCallback<String> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getSecondaryUsersPDF(domainName, domainId, user, rattachId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getAssignedCCCsPDF(String domainName, Integer domainId, String user, Integer rattachId, AsyncCallback<String> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getAssignedCCCsPDF(domainName, domainId, user, rattachId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getIpfxNaf(String domainName, Integer domainId, String user, ArrayList<String> nssList, AsyncCallback<EmployeeSegSocial> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getIpfxNaf(domainName, domainId, user, nssList, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteSecondaryUser(String domainName, Integer domainId, String user, Integer rattachId, String ipfType, String ipf, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteSecondaryUser(domainName, domainId, user, rattachId, ipfType, ipf, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void createSecondaryUser(String domainName, Integer domainId, String user, Integer rattachId, String ipfType, String ipf, String naf, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.createSecondaryUser(domainName, domainId, user, rattachId, ipfType, ipf, naf, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	// **************************************************
+	// *********************** [REGISTRY ENTRY]
+	// **************************************************
+
+	@Override
+	public void getCompanyFull(String domainName, int domain, String user, AsyncCallback<CompanyFull> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCompanyFull(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
 	}
 
 }
