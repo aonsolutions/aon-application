@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -231,11 +232,15 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			return true;
 		}
 
-		// Si todos los detalles son de origen ACCOUNT o TEDI
+		
+		// Si todos los detalles son de origen ACCOUNT o TEDI-Recibidas
 		if (getWrapper().getInvoice() != null && getWrapper().getInvoice().getDetails() != null) {
 			for (InvoiceDetail detail : getWrapper().getInvoice().getDetails()) {
 				LOGGER.info(detail.getSource().getDescription());
-				if (detail.getSource() != InvoiceSource.ACCOUNT) {
+				if  (detail.getSource() == InvoiceSource.ACCOUNT
+				 || (detail.getSource() == InvoiceSource.TEDI && !getWrapper().getInvoice().isSales() )) {
+					// Nothing, sigue siendo editable.
+				} else {
 					sourceAccount = false;
 					break;
 				}
