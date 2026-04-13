@@ -4718,7 +4718,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		}))
 		;
 		
-		assertEquals(2850 * 12, irpfResults[0], 0.00);
+		assertAnnualRemuneration(2850 * 12, irpfResults[0], 6, 0.00);
 		assertEquals(2850 * 6, irpfResults[1], 0.00);
 		
 	}
