@@ -4649,6 +4649,81 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testRegularizationFutureDelay() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date contractStartDate = getFirstDayOfYear(getToday());
+		
+		ContractRecord contract = newContract(aonContext, 
+				contractStartDate, 
+				null, 
+				new HashMap<String,String>() {
+					{
+						put("PORCENTAJE_IRPF", "SISTEMA('PORCENTAJE_IRPF')");
+					}
+				}, 
+				new String [] {
+						"2500.00",
+						"250.00",
+				}, 
+				new String [] {
+						"PORCENTAJE_IRPF / 100.00 * BASE_IRPF"
+				}, 
+				null);
+
+		Date startDate = null;
+		Date endDate = null;
+		for( int i = 0; i < 6; i++) {
+			startDate = getFirstDayOfMonth(add(contractStartDate, Calendar.MONTH, i));
+			endDate = getLastDayOfMonth(startDate);
+			calculateAndSave(connection, getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		}
+		
+		addPayment(aonContext, contract, contractStartDate, null, "ATRASO", "100.00", "_P", "_P", PaymentType.CRA_0000);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<>(connection);
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, contractStartDate, endDate, endDate, AonDateUtils.getLastDayOfYear(endDate), criteria);
+		delayCtx.next();
+		new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder)
+		.calculate(delayCtx);
+		jooqSalaryBuilder.execute();
+		
+		startDate = getFirstDayOfMonth(add(startDate, Calendar.MONTH, 1));
+		endDate = getLastDayOfMonth(startDate);
+		
+		double [] irpfResults = {0.00, 0.00};
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract, new Listener() {
+		    @Override
+		    public void onIrpf(IrpfOutcome irpfOutcome) {
+			super.onIrpf(irpfOutcome);
+			
+			System.out.println("Irpf:" + irpfOutcome.getIrpfResult().getIrpf());
+			System.out.println("BaseIrpf:" + irpfOutcome.getIrpfResult().getBaseIrpf());
+			System.out.println("AnnualIrpf:" + irpfOutcome.getIrpfResult().getAnnualIrpf());
+			System.out.println(
+				"AnnualRemuneration:" + irpfOutcome.getIrpfResult().getAnnualRemuneration());
+			System.out.println(
+				"PaidRemuneration:" + irpfOutcome.getIrpfRegularization().getPaidRemuneration());
+			System.out.println(
+				"PaidIrpf:" + irpfOutcome.getIrpfRegularization().getPaidIrpf());
+			
+			irpfResults[0] = irpfOutcome.getIrpfResult().getAnnualRemuneration();
+			irpfResults[1] = irpfOutcome.getIrpfRegularization().getPaidRemuneration();
+		    }
+		}))
+		;
+		
+		assertEquals(2850 * 12, irpfResults[0], 0.00);
+		assertEquals(2850 * 6, irpfResults[1], 0.00);
+		
+	}
+
+	@Test
 	public void testIrpfChargeDate() throws ExpressionException, SQLException, SalaryException {
 
 		Connection connection = getConnection();
