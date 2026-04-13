@@ -879,11 +879,13 @@ div[style*='height:55px'] > .aon_toolbar {
 	border-bottom: none !important;
 }
 
+/*
 .aon_flex_column.aon_custom_text_box,
 .aon_flex_column.aon_custom_text_area,
 .aon_flex_column.aon_custom_text_box_no_border {
     width: auto ;
 }
+*/
 
 .aon-MainCreta-Events *, 
 .aon-EmployeeTree-Events * {
