@@ -17,8 +17,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.apache.poi.ss.formula.functions.T;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
@@ -42,7 +40,6 @@ import com.esferalia.aon.gwt.payroll.client.MainCreta.AbstractCCCCretaRequestCom
 import com.esferalia.aon.gwt.payroll.client.MainCreta.SyncCallback;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptEvent;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptHandler;
-import com.esferalia.aon.gwt.payroll.server.CretaServlet;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -2453,7 +2450,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 //			add("Costes", getCost(), this::onCostsSelected);
 			add("Costes", getWorkplaceCostWidget(), this::onCostsWidgetSelected);
 			add("N\u00f3minas", getWorkplceSalary(), this::onSalariesSelected);
-			add("Calendario", getCalendarDraft(), this::onCalendarSelected);
+			//add("Calendario", getCalendarDraft(), this::onCalendarSelected);
 			add("Estad\u00edsticas", getStats(), this::onStatsSelected);
 			add("Partes IT", getWorkplceIT(), this::onITsSelected);
 			if ( Wnd.isSysAdmin() ) {
@@ -2483,7 +2480,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		void onCalendarSelected() {
 			employees.getWorkplaceCalendar(workplace, o -> getCalendarDraft().setCalendarDraftObject(null, o) );
 		}
-
+		
 		void onEventsSelected() {
 			employees.getWorkplaceEvents(workplace, o -> getEventsDraft().setEventsDraftObject(o));
 		}
@@ -2496,8 +2493,17 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			// NOOP
 		}
 		
+		void checkWorkplaceCalendar() {
+			if(null == this.workplace || this.getTabCount() > ( Wnd.isSysAdmin() ? 6 : 5 )) return;
+			add("Calendario", getWorkplaceCalendar(), this::onWorkplaceCalendarSelected);
+		}
+		
+		void onWorkplaceCalendarSelected() {
+			getWorkplaceCalendar().setWorkplace(workplace);
+		}
+		
 		void checkWorkplaceAgreements() {
-			if(null == this.workplace || null == this.workplace.getAgreement() || this.getTabCount() > 6) return;
+			if(null == this.workplace || null == this.workplace.getAgreement() || this.getTabCount() > ( Wnd.isSysAdmin() ? 7 : 6 )) return;
 			add("Convenio", getAgreementPreview(), this::onAgreementTabSelected);
 		}
 		
@@ -2527,7 +2533,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		
 		public void setWorkplace(Workplace workplace) {
 			this.workplace = workplace;
+			checkWorkplaceCalendar();
 			checkWorkplaceAgreements();
+			//checkWorkplaceCalendar();
 		}
 	}
 
@@ -2631,6 +2639,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private SalaryWidget workplaceSalary;
 	private ITWidget workplaceIT;
 	private CalendarDraft calendarDraft;
+	private WorkplaceCalendar workplaceCalendarDraft;
 	private SalaryDraft salaryDraft;
 	private SalaryPreview salaryPreview;
 	private EventsDraft eventsDraft;
@@ -3567,6 +3576,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		if (calendarDraft == null)
 			calendarDraft = new CalendarDraft();
 		return calendarDraft;
+	}
+	
+	private WorkplaceCalendar getWorkplaceCalendar() {
+		if (workplaceCalendarDraft == null)
+			workplaceCalendarDraft = new WorkplaceCalendar();
+		return workplaceCalendarDraft;
 	}
 
 	private EmployeeCalendarDraft getEmployeeCalendarDraft() {

@@ -777,12 +777,12 @@ public class FiscalModelDAO {
 	// Buscar Nombre Municipio, según codigo municipio
 	public static String getMunicipalityCode(String municipalityCode) {
 		if (AonStringUtils.isNotBlank(municipalityCode)) {
-			ResourceBundle municipalities = ResourceBundle.getBundle("com.code.aon.common.i18n.municipalities");
-			return municipalities.getString(municipalityCode);
-//			
-//			for (String key : municipalities.keySet())		    
-//				if (key != null && key.startsWith(AonStringUtils.left(cp, 2)) && AonStringUtils.startsWith(municipalities.getString(key), AonStringUtils.trimToEmpty(poblacion)))
-//					return key;
+			try {
+				ResourceBundle municipalities = ResourceBundle.getBundle("com.code.aon.common.i18n.municipalities");
+				return municipalities.getString(municipalityCode);
+			} catch (Exception e) {
+				// do nothing
+			}
 		}
 		return null;
 	}

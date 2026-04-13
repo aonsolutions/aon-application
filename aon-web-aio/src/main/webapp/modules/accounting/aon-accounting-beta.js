@@ -113,11 +113,11 @@ export class AonAccountingBeta extends AonElement {
 			}
 		}
 
-		if (localStorage.getItem("aon_domain_id") && this.isBeta()) {
+		if (localStorage.getItem("aon_domain_id")) {
 			let menuOptions = [];
 
 			menuOptions.push({
-				id: "options panel",
+				id: "optionsPanel",
 				icon: "dashboard",
 				name: "Panel Opciones",
 				fn: () => this.buildAccountingMenu(),
@@ -140,7 +140,9 @@ export class AonAccountingBeta extends AonElement {
 			this.getApplication().addSidenavWidget2(utilitiesOptions, uploadInv);	
 		}
 		
-		this.buildAccountingMenu();
+		// Load optionsPanel by default
+		let optionsPanel = this.getElement('aonAccountingBetaSidenavoptionsPanel');
+		optionsPanel && optionsPanel.click();
 	}
 	
 	buildToolbar() {

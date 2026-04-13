@@ -64,13 +64,13 @@ export class AonFiscalBeta extends AonElement {
 			aonFiscalBeta.addSidenavOptions(MSG.UTILITIES.toUpperCase(), configurationOptions);
 		}
 
-		if (localStorage.getItem("aon_domain_id") && this.isBeta() && !this.getDur().isConsultancy()) {
+		if (localStorage.getItem("aon_domain_id") && !this.getDur().isConsultancy()) {
 			let menuOptions = [];
 
 			menuOptions.push({
 				id: "options panel",
 				icon: "dashboard",
-				name: "Panel Contabilidad",
+				name: "Panel Opciones",
 				fn: () => this.buildFiscalMenu(),
 			});
 

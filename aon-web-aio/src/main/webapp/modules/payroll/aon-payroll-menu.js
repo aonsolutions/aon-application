@@ -81,11 +81,12 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		    options: [{
 		        description: "Cret@ - Sistema de Liquidación Directa",
 		        title: "Cret@ - Sistema de Liquidación Directa",
-		        action: () => GWT.iLoad(GWT.MAIN_CRETA)
+		        action: () => GWT.iLoad(GWT.MAIN_CRETA, this.getApplication().CONTENT),
+		        //action: () => GWT.iLoad(GWT.MAIN_CRETA)
 		    },{
 		        description: "CRA - Conceptos Retributivos Abonados",
 		        title: "CRA - Conceptos Retributivos Abonados",
-		        action: () => GWT.iLoad(GWT.MAIN_CRA)
+		        action: () => GWT.iLoad(GWT.MAIN_CRA, this.getApplication().CONTENT),
 		    },
 		    /*
 		    {
@@ -97,23 +98,23 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		    {
 		        description: "AFI - Régimen Especial Agrario Jornadas",
 		        title: "AFI - Régimen Especial Agrario Jornadas",
-		        action: () => GWT.iLoad(GWT.MAIN_AFI)
+		        action: () => GWT.iLoad(GWT.MAIN_AFI, this.getApplication().CONTENT),
 		    },{
 		        description: "AFI - Reduc. contribuciones planes de pensiones",
 		        title: "AFI - Reduc. contribuciones planes de pensiones",
-		        action: () => GWT.iLoad(GWT.PENSION_PLAN_AFI)
+		        action: () => GWT.iLoad(GWT.PENSION_PLAN_AFI, this.getApplication().CONTENT),
 		    }]
 		},{
 		    title: 'Procesos',
 		    options: [{
 		        description: "Calculo de Nóminas",
 		        title: "Calculo de Nóminas",
-		        action: () => GWT.iLoad(GWT.MAIN_CALCULATOR),
+		        action: () => GWT.iLoad(GWT.MAIN_CALCULATOR, this.getApplication().CONTENT),
 				filter: () => this.isDomainManagementAvailable()
 			},{
 		        description: "Impresión / eMail de Nóminas",
 		        title: "Impresión / eMail de Nóminas",
-		        action: () => GWT.iLoad(GWT.MAIN_SALARY_PRINT)
+		        action: () => GWT.iLoad(GWT.MAIN_SALARY_PRINT, this.getApplication().CONTENT),
 		    },{
 		        description: "Listado de costes",
 		        title: "Listado de costes",
@@ -122,7 +123,7 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		    },{
 		        description: "Resumen de actividad",
 		        title: "Resumen de actividad",
-		        action: () => GWT.iLoad(GWT.ACTIVITY_SUMMARY)
+		        action: () => GWT.iLoad(GWT.ACTIVITY_SUMMARY, this.getApplication().CONTENT),
 		    },{
 		        description: "Informe de personal asalariado",
 		        title: "Informe de personal asalariado",
@@ -136,7 +137,7 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		    },{
 		        description: "FIE - Importación masiva de I.T",
 		        title: "FIE - Importación masiva de I.T",
-		        action: () => GWT.iLoad(GWT.MASSIVE_FIE),
+		        action: () => GWT.iLoad(GWT.MASSIVE_FIE, this.getApplication().CONTENT),
 				filter: () => this.isDomainManagementAvailable()
 			}]
 		},{
@@ -179,19 +180,19 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		    options: [{
 		        description: "Convenios",
 		        title: "Convenios",
-		        action: () => GWT.iLoad(GWT.CONVENIOS)
+		        action: () => GWT.iLoad(GWT.CONVENIOS, this.getApplication().CONTENT),
 			},{
 		        description: "Modelos de contrato",
 		        title: "Modelos de contrato",
-		        action: () => this.rootPanel(new JSF.AonJsfContractOption)
+		        action: () => this.getApplication().setContent(new JSF.AonJsfContractOption)
 		    },{
 		        description: "Centros acreditados de formación",
 		        title: "Centros acreditados de formación",
-		        action: () => this.rootPanel(new JSF.AonJsfTrainningCenter)
+		        action: () => this.getApplication().setContent(new JSF.AonJsfTrainningCenter)
 		    },{
 		        description: "Festivos",
 		        title: "Festivos",
-		        action: () => this.rootPanel(new JSF.AonJsfHolidays)
+		        action: () => this.getApplication().setContent(new JSF.AonJsfHolidays)
 		    },{
 		        description: "Variables Calculo Entorno",
 		        title: "Variables Calculo Entorno",

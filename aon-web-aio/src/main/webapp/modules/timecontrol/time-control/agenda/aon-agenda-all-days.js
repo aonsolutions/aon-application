@@ -250,36 +250,7 @@ export class AonAgendaAllDays extends AonElement {
 
 		setTimeout(() => this._updateHeader(), 500);
 	}
-
-	/*
-	goToDate(date) {
-		const targetStart = AonDateUtils.startOfWeek(date);
-		const msPerWeek = 1000 * 60 * 60 * 24 * 7;
-		const offset = Math.floor((targetStart - this.baseDate) / msPerWeek);
-
-		this._mountWeek(offset);
-
-		requestAnimationFrame(() => {
-			const weekData = this.visibleWeeks.get(offset);
-			if (!weekData) return;
-
-			const targetKey = AonDateUtils.format(date, 'YYYY-MM-DD');
-			const dayEls = weekData.element.querySelectorAll('.day');
-			let targetDayEl = null;
-
-			dayEls.forEach((dayEl, i) => {
-				const d = new Date(targetStart);
-				d.setDate(d.getDate() + i);
-				console.log('targetKey', targetKey, AonDateUtils.format(d, 'YYYY-MM-DD') === targetKey);
-				if (AonDateUtils.format(d, 'YYYY-MM-DD') === targetKey) targetDayEl = dayEl;
-				console.log('targetDayEl', targetDayEl);
-			});
-
-			(targetDayEl ?? weekData.element).scrollIntoView({ behavior: 'smooth', block: 'start' });
-		});
-	}
-	*/
-
+	
 	goToDate(date) {
 		const targetStart = AonDateUtils.startOfWeek(date);
 
