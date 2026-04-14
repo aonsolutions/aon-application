@@ -56,7 +56,12 @@ export class AonInvoiceList extends AonElement {
 			let aonInvoiceTable = createList(this.TABLE); 
 			aonInvoiceTable.selectable = 'true';
 			this.appendChild(aonInvoiceTable);
-			aonInvoiceTable.addColumn(MSG.DATE, 'date', 'dateTable', '120px');
+			if (this.getFilter().status === 'accounting' && this.getFilter().type === 'sales') {
+				aonInvoiceTable.addColumn(MSG.OPERATION_DATE, 'date', 'dateTable', '120px');
+				aonInvoiceTable.addColumn(MSG.EXPEDITION_DATE, 'date', 'expDate', '120px');
+			} else {
+				aonInvoiceTable.addColumn(MSG.DATE, 'date', 'dateTable', '120px');
+			}
 			if (this.getFilter().status === 'accounting' && this.getFilter().type != 'sales') {
 				aonInvoiceTable.addColumn(MSG.INVOICE_DOCUMENT_NUMBER, 'string', 'documentNumber', '150px');
 			}

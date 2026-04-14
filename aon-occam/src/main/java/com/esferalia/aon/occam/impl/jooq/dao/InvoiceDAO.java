@@ -171,7 +171,16 @@ public class InvoiceDAO {
 
 	public static Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter){
 		return INVOICE_PROPERTIES.build(ctx.getDslContext().select().from(INVOICE)
-				.join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE)), filter)
+				.join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE))
+				, filter)				
+				.fetch().stream().map(new InvoiceFiller());
+	}
+	
+	public static Stream<Invoice> getInvoiceStreamWithFiscal(AONContext ctx, InvoiceFilter filter){
+		return INVOICE_PROPERTIES.build(ctx.getDslContext().select().from(INVOICE)
+				.join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE))
+				.leftOuterJoin(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.equal(INVOICE.ID))
+				, filter)				
 				.fetch().stream().map(new InvoiceFiller());
 	}
 	
@@ -404,7 +413,7 @@ public class InvoiceDAO {
 	}
 	
 	
-	static class InvoiceFiller extends Filler implements Function<Record,Invoice> {
+	public static class InvoiceFiller extends Filler implements Function<Record,Invoice> {
 
 		@Override
 		public Invoice apply(Record r) {

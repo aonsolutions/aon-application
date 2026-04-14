@@ -125,13 +125,13 @@ class InvoiceJSONV1 {
 	}
 	
 	private static Invoice getRectificationInvoice(JSONObject json) {
-		return new Invoice()
-			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
-			.setSeries(JsonUtils.getString(json, IJsonNames.SERIES))
-			.setNumber(JsonUtils.getInteger(json, IJsonNames.NUMBER))
-			.setIssueDate(JsonUtils.getDate(json, IJsonNames.DATE))
-			.setReferenceCode(JsonUtils.getString(json, IJsonNames.REFERENCE_CODE))
-		;
+		Invoice rectificationInvoice = new Invoice();
+		rectificationInvoice.setId(JsonUtils.getInteger(json, IJsonNames.ID));
+		rectificationInvoice.setSeries(JsonUtils.getString(json, IJsonNames.SERIES));
+		if(JsonUtils.has(json, IJsonNames.NUMBER)) rectificationInvoice.setNumber(JsonUtils.getInteger(json, IJsonNames.NUMBER));
+		rectificationInvoice.setIssueDate(JsonUtils.getDate(json, IJsonNames.DATE));
+		rectificationInvoice.setReferenceCode(JsonUtils.getString(json, IJsonNames.REFERENCE_CODE));
+		return rectificationInvoice;
 	}
 	
 	static JSONArray toJSON(List<Invoice> invoices) {
@@ -142,6 +142,7 @@ class InvoiceJSONV1 {
 	
 	static JSONObject toJSON(Invoice invoice) {
 		String date = AonDateUtils.format(invoice.getIssueDate(), AonDateUtils.DATE_TIME_FORMAT_AUX);
+		String expDate = AonDateUtils.format(invoice.getExpDate(), AonDateUtils.DATE_TIME_FORMAT_AUX);
 		
 		JSONObject json = new JSONObject()
 			.put(IJsonNames.STATUS, invoice.isRecorded() 
@@ -152,6 +153,7 @@ class InvoiceJSONV1 {
 			.put(IJsonNames.SERIES, invoice.getSeries())
 			.put(IJsonNames.NUMBER, invoice.getNumber())
 			.put(IJsonNames.DATE, date) //invoice.getIssueDate())
+			.put(IJsonNames.EXP_DATE, expDate)
 			.put(IJsonNames.REFERENCE, invoice.getReferenceCode())
 			.put(IJsonNames.TYPE, invoice.getType().getTediName())
 			.put(IJsonNames.TRANSACTION, invoice.getTransaction().getTediName())
