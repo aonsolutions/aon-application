@@ -101,6 +101,8 @@ public class Mod190Detail implements Serializable {
 	private boolean permanentDisabilityPension; // Nuevo 2025: Tipos de prestaciones de la Clave B.01 percibidas en el ejercicio: 03. Pensión por incapacidad permanente, total o parcial.
 	private boolean nonContributoryPension;	 	// Nuevo 2025: Tipos de prestaciones de la Clave B.01 percibidas en el ejercicio: 04. Pensión NO contributiva por invalidez o jubilación.
 	private boolean otherNonExemptPensions; 	// Nuevo 2025: Tipos de prestaciones de la Clave B.01 percibidas en el ejercicio: 05. Resto de prestaciones del artículo 17.2.a).1ª de la Ley IRPF, no exentas, distintas de las anteriores.
+	
+	private double forecastPlanContributions;   // Contribuciones empresariales a planes de pensiones, planes de previsión social empresarial y mutualidades de previsión social... (se utiliza solo para el certificado de retenciones)
 
 	public Integer getId() {
 		return id;
@@ -727,6 +729,15 @@ public class Mod190Detail implements Serializable {
 
 	public Mod190Detail setOtherNonExemptPensions(boolean otherNonExemptPensions) {
 		this.otherNonExemptPensions = otherNonExemptPensions;
+		return this;
+	}
+
+	public double getForecastPlanContributions() {
+		return forecastPlanContributions;
+	}
+
+	public Mod190Detail setForecastPlanContributions(double forecastPlanContributions) {
+		this.forecastPlanContributions = forecastPlanContributions;
 		return this;
 	}
 

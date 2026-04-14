@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2026;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.tgss.FellowsBases2026Update;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2026Update;
@@ -612,6 +613,8 @@ public class Up2Date {
 			TrainingPercentages2026Update.TRAINNINGPERCENTAGES2026UPDATE,
 			SociosCoopBases2026Update.SOCIOSCOOPBASES2026UPDATE,
 			OrderPJC2972026Art28Update.ORDERPJC2972026ART28UPDATE,
+			
+			AlterFsMod190Detail2026.ALTER_FS_MODEL_190_DETAIL_2026,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
