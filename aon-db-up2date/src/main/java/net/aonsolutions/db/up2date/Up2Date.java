@@ -26,6 +26,7 @@ import net.aonsolutions.db.up2date.tgss.FellowsPercentages2026Update;
 import net.aonsolutions.db.up2date.tgss.HomeBases2026Update;
 import net.aonsolutions.db.up2date.tgss.OrderPJC2972026Art28Update;
 import net.aonsolutions.db.up2date.tgss.SociosCoopBases2026Update;
+import net.aonsolutions.db.up2date.tgss.TrainingMEI2026Fix;
 import net.aonsolutions.db.up2date.tgss.TrainingPercentages2026Update;
 import net.aonsolutions.db.up2date.tgss.TrainningBases2026Update;
 import net.aonsolutions.db.up2date.timecontrol.CalendarFixNulls;
@@ -606,13 +607,14 @@ public class Up2Date {
 			// ExtraHoursSwap.EXTRAHOURSSWAP,
 			// BasesMin2026Update.BASESMIN2026UPDATE,
 			// HomeSolidarityRemoveFix.HOME_SOLIDARITY_REMOVE_FIX,
-			HomeBases2026Update.HOMEBASES2026UPDATE,
-			FellowsBases2026Update.FELLOWSBASES2026UPDATE,
-			TrainningBases2026Update.TRAINNINGBASES2026UPDATE,
-			FellowsPercentages2026Update.FELLOWSPERCENTAGES2026UPDATE,
-			TrainingPercentages2026Update.TRAINNINGPERCENTAGES2026UPDATE,
-			SociosCoopBases2026Update.SOCIOSCOOPBASES2026UPDATE,
-			OrderPJC2972026Art28Update.ORDERPJC2972026ART28UPDATE,
+			// HomeBases2026Update.HOMEBASES2026UPDATE,
+			// FellowsBases2026Update.FELLOWSBASES2026UPDATE,
+			// TrainningBases2026Update.TRAINNINGBASES2026UPDATE,
+			// FellowsPercentages2026Update.FELLOWSPERCENTAGES2026UPDATE,
+			// TrainingPercentages2026Update.TRAINNINGPERCENTAGES2026UPDATE,
+			// SociosCoopBases2026Update.SOCIOSCOOPBASES2026UPDATE,
+			// OrderPJC2972026Art28Update.ORDERPJC2972026ART28UPDATE,
+			TrainingMEI2026Fix.TRAININGMEI2026FIX,
 			
 			AlterFsMod190Detail2026.ALTER_FS_MODEL_190_DETAIL_2026,
 			
