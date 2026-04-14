@@ -9,13 +9,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonAddressPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAddressPanel.AonAddressPanelCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.watson.mutable.MutableInt;
@@ -162,8 +157,21 @@ public abstract class AddressTable extends ScrollPanel {
 	
 	private void paintHeader() {
 		tab.createHeader();
-		for ( COLS col : COLS.values()) 
-			tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
+		for ( COLS col : COLS.values()) {
+			if(col.equals(COLS.BUT)) {
+				FlowPanel buttonContainer = new FlowPanel();
+				buttonContainer.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+				
+				AonTableButton button = new AonTableButton("Nueva direcci\u00f3n", AON.CSS.aonIconAdd());
+				button.addStyleName(AON.CSS.aonCustomRowButtom());
+				button.addClickHandler(e -> createAddres());
+				buttonContainer.add(button);
+				
+				tab.addHeader(buttonContainer, col.getColWidth(), col.getStyles());
+			} else
+				tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
+		
+		}
 	}
 	
 	private void searchData() {
@@ -304,6 +312,29 @@ public abstract class AddressTable extends ScrollPanel {
 		});
 		
 		dialog.add( marketingCampaignPanel );
+		dialog.showLoaded();
+	}
+
+	private void createAddres() {
+		final AonCustomDialog dialog = new AonCustomDialog();
+		dialog.setCaption("Nueva Direcci\u00f3n");
+
+		final AonAddressPanel marketingCampaignPanel = new AonAddressPanel(domainName, domain, user, getAviableGeozones(), registry,
+				new AonAddressPanelCallback() {
+
+					@Override
+					public void onCancel() {
+						dialog.hide();
+					}
+
+					@Override
+					public void onAccept(RegistryAddress address) {
+						dialog.hide();
+						onSearch();
+					}
+				});
+
+		dialog.add(marketingCampaignPanel);
 		dialog.showLoaded();
 	}
 
