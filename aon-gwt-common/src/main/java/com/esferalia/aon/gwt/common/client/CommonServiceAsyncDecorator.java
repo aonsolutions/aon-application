@@ -1572,5 +1572,11 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.getCompanyFull(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void saveCompanyFull(String domainName, int domain, String user, CompanyFull companyFull, AsyncCallback<CompanyFull> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveCompanyFull(domainName, domain, user, companyFull, new AsyncCallbackWrapper<>(callback));
+	}
 
 }

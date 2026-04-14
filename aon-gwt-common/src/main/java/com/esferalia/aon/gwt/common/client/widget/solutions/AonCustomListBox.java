@@ -13,7 +13,7 @@ public class AonCustomListBox extends HTMLPanel implements Focusable {
 	
 	public AonCustomListBox(String title) {
 		super(EMPTY_STRING);
-		addStyleName(AON.CSS.aonFlexColumn());
+		addStyleName(AON.CSS.aonFlexColumn2());
 		addStyleName(AON.CSS.aonCustomTextBox());
 
 		createTitle(title);

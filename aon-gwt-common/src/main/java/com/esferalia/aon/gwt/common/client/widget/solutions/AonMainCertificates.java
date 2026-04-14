@@ -506,7 +506,7 @@ public class AonMainCertificates extends DeckPanel {
 		buttonsPanel.add(secondaryUsersButton);
 		buttonsPanel.add(checkCertificateButton);
 		buttonsPanel.add(deleteButton);
-		buttonsPanel.add(downloadButton);
+		//buttonsPanel.add(downloadButton);
 
 		table.addRow(row, certificateForL, COLS.DES.getColWidth());
 		table.addRow(row, representationL, COLS.BUD.getColWidth());

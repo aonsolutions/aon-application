@@ -529,5 +529,6 @@ public interface CommonService extends RemoteService {
 	// **************************************************
 	
 	CompanyFull getCompanyFull(String domainName, int domain, String user) throws AonCoreException;
-
+	CompanyFull saveCompanyFull(String domainName, int domain, String user, CompanyFull company) throws AonCoreException;
+	
 }
