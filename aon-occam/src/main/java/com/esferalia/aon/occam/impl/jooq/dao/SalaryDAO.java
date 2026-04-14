@@ -1199,6 +1199,11 @@ public class SalaryDAO {
 		}
 		
 		@Override
+		public Property<Date> getChargeDateProperty() {
+			return new FilterDAO.DatePropertyDAO(SALARY.CHARGE_DATE);
+		}
+		
+		@Override
 		public Property<Byte> getTypeProperty() {
 			return new FilterDAO.PropertyDAO<Byte>(SALARY.TYPE);
 		}

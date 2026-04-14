@@ -1208,6 +1208,10 @@ public abstract class AbstractSQLTestCase {
 		}
 	}
 
+	public static final void setData(AONContext aonContext, ContractRecord contract,Date startDate, Date endDate,String name, String expression) {
+		addData(aonContext, contract, startDate, endDate, Collections.singletonMap(name, expression));
+	}
+
 	public static final void setData(AONContext aonContext, ContractRecord contract,String name, String expression) {
 		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), name, expression);
 	}

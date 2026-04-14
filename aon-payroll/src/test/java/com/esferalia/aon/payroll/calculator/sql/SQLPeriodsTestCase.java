@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -34,7 +33,9 @@ import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class SQLPeriodsTestCase extends AbstractSQLTestCase {
@@ -560,6 +561,73 @@ public class SQLPeriodsTestCase extends AbstractSQLTestCase {
 		
 	}
 	
+	@Test
+	public void testDeductionPeriodsBase() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+				{
+					put("PORCENTAJE_CGC", "10.00");
+                	put(ContextVariable.TC2.getName(), "100");
+                	put(ContextVariable.QUOTE_GROUP.getName(), "\"01\"");
+                }
+				}, new String[] { 
+						"1250.00 * DIAS_TRABAJADOS / DIAS_MES" 
+						}
+				, new String[] {
+						"BASE_CGC * PORCENTAJE_CGC / 100.00 ", 
+				}, null);
+		
+		// January
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		addSystemData(aonContext, startDate, null, new HashMap<String, String>(){
+			{
+				put(ContextVariable.CGC_BASE_MIN.getName(), "GRUPO_COTIZACION; 1000.00 / DIAS_MES * DIAS_NOMINA");
+				put(ContextVariable.CGP_BASE_MIN.getName(), "GRUPO_COTIZACION; 1000.00 / DIAS_MES * DIAS_NOMINA");
+			}
+		});
+
+		Date startExclusionDate = add(startDate, Calendar.DAY_OF_MONTH, 18);
+		
+		addPayment(aonContext, contract, contract.getStartDate(), null, "PAGA_EXTRA", "100.00","_P","_P", PaymentType.CRA_0004);
+		
+		addCost(aonContext, contract, startExclusionDate, null,  "-1 * (BASE_CGC * PORCENTAJE_CGC / 100.00)", "EXCLUSION","EXCLUSION_CGC_E");
+		
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP) )).calculate(ctx);
+		
+		for ( SalaryPayment s : salary.getSalaryPayments() ) 
+			System.out.println(s.getDescription() + " = " + s.getAmount() + "," + s.getType() + ","+ s.getExpression());
+
+		for ( SalaryDeduction s : salary.getSalaryDeductions() ) 
+			System.out.println(s.getDescription() + " = " + s.getAmount() + "," + s.getType());
+		
+		List<SalaryData> salaryData = 
+		salary.getSalaryDatas().stream()
+		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()) )
+		.filter( d -> d.getName().equals(ContextVariable.CGC_BASE.getName())).toList();
+		
+		salaryData.forEach( d -> System.out.println(d.getName() +" = " + d.getExpression() + ", " + d.getStartDate()));
+		assertEquals(2, salaryData.size());
+		salaryData.forEach(d -> assertEquals(Double.parseDouble(d.getExpression()), 1350.00 / AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH) * new Period(d.getStartDate(), d.getEndDate()).getDays(), DELTA));
+		
+		
+		assertEquals(1350.00 * 10.00 / 100.00  , salary.getSocialSecurityContributions(), 0.015);
+		
+		
+		
+	}
+
 	@Test
 	public void testCostPercentsPeriodsI() throws ExpressionException, SQLException,
 			SalaryException {

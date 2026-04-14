@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.payroll.AgreementExtra.parseAgreementEndDate;
 import static com.esferalia.aon.payroll.AgreementExtra.parseAgreementStartDate;
+import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfYear;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -126,10 +127,11 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			+ ", (" + BONUS_SQL + ") AS BONUS " 
 			+ ", (" + MONTH_DAYS_SQL + ") AS MONTH_DAYS " 
 			+ " FROM  " + SQLConstants.SALARY 
-			+ " WHERE " + SalaryColumns.CONTRACT
-			+ " = ? " + " AND " + SalaryColumns.CHARGE_DATE
-			+ " BETWEEN   ? AND  ?  "
-			+ " AND " + SalaryColumns.TYPE + " IN  (0,1,2,3,7) " 
+			+ " WHERE " + SalaryColumns.CONTRACT + " = ? " 
+			+ "AND ("
+			+ "( " + SalaryColumns.CHARGE_DATE + " BETWEEN   ? AND  ?  " + " AND " + SalaryColumns.TYPE + " IN (0,1,2,7) )"
+			+ " OR ( " + SalaryColumns.CHARGE_DATE + " BETWEEN   ? AND  ?  " + " AND " + SalaryColumns.TYPE + " IN (3) )"
+			+ ")"
 			+ " ORDER BY " + SalaryColumns.END_DATE 
 			+ " ASC" + ", " + SalaryColumns.TYPE + " ASC";
 
@@ -1353,9 +1355,14 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		ResultSet salaryRs = null;
 		try {
 			irpfStart = getIrpfStart();
-			salaryStmt.setDate(2, new java.sql.Date(irpfStart.getTimeInMillis()));
+			java.sql.Date sqlIrpfStartDate = new java.sql.Date(irpfStart.getTimeInMillis());
+			salaryStmt.setDate(2, sqlIrpfStartDate);
 			Calendar salariesEnd = getSalariesEnd();
-			salaryStmt.setDate(3, new java.sql.Date(salariesEnd.getTimeInMillis()));
+			java.sql.Date sqlSalariesEndDate = new java.sql.Date(salariesEnd.getTimeInMillis());
+			salaryStmt.setDate(3, sqlSalariesEndDate);
+
+			salaryStmt.setDate(4, sqlIrpfStartDate);
+			salaryStmt.setDate(5, getLastDayOfYear(sqlIrpfStartDate));
 
 			salaryStmt.setInt(1, contractId);
 			salaryRs = salaryStmt.executeQuery();

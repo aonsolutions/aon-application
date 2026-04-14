@@ -5223,7 +5223,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		List<Period> offs = ctx.getPeriods(OFF_DAYS);
 		intersects = Period.sub(intersects, offs);
 
-		List<Period> nons = getPeriods(ctx, NON_WORKED_DAYS, v -> v != null && ((Number) v).doubleValue() > 0.00);
+		List<Period> nons = evalPeriods(ctx, NON_WORKED_DAYS, v -> v != null && ((Number) v).doubleValue() > 0.00);
 		intersects = Period.sub(intersects, nons);
 
 		// DropDays
@@ -5804,11 +5804,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	}
 
-	private static List<Period> getPeriods(ContractExpressionContext ctx, ContextVariable var,
+	private static List<Period> evalPeriods(ContractExpressionContext ctx, ContextVariable var,
 			Predicate<Object> predicate) {
 		return ctx.getPeriods(var).stream().flatMap(p -> {
 			try {
-				return ctx.dryEval(var.getName(), p.getStart(), p.getEnd(), Object.class).stream()
+				return ctx.eval(var.getName(), p.getStart(), p.getEnd(), Object.class).stream()
 						.filter(r -> predicate.test(r.getValue())).map(ITimedResult::getPeriod);
 			} catch (ExpressionException e) {
 				return Stream.empty();
@@ -5886,18 +5886,18 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			return;
 
 		List<Period> contractParty = new ArrayList<>();
-		contractParty.addAll(getPeriods(ctx, ContextVariable.PARTY_DAYS,
+		contractParty.addAll(evalPeriods(ctx, ContextVariable.PARTY_DAYS,
 				value -> value instanceof Number number && number.doubleValue() > 0));
 
 		List<Period> contractNonWorking = new ArrayList<>();
-		contractNonWorking.addAll(getPeriods(ctx, ContextVariable.NON_WORKING,
+		contractNonWorking.addAll(evalPeriods(ctx, ContextVariable.NON_WORKING,
 				value -> value instanceof Number number && number.doubleValue() > 0));
-		contractNonWorking.addAll(getPeriods(ctx, ContextVariable.PARTY_DAYS,
+		contractNonWorking.addAll(evalPeriods(ctx, ContextVariable.PARTY_DAYS,
 				value -> value instanceof Number number && number.doubleValue() <= 0));
 
 		Map<Integer, List<Period>> contractNonHours = new HashMap<>();
 		WEEK_HOURS_VARIABLES.forEach((day, hourVar) -> contractNonHours.put(day,
-				getPeriods(ctx, hourVar, value -> AonNumberUtils.todouble(value) <= 0)));
+				evalPeriods(ctx, hourVar, value -> AonNumberUtils.todouble(value) <= 0)));
 
 		Deque<TimedObject<Double>> holidays = new ArrayDeque<>();
 		new Period(contractStartDate, contractEndDate).forEachDay(day -> {

@@ -2460,7 +2460,8 @@ public class Bases {
 					ctx, 
 					liquidacion.getCcc(),
 					liquidacion.getTipo(),
-					liquidacionMes.getMesLiquidativo(), 
+					liquidacionMes.getMesLiquidativo(),
+					Optional.ofNullable(liquidacion.getFechaControl()),
 					trabajadores, 
 					cbs);
 			
@@ -2544,6 +2545,7 @@ public class Bases {
 			CtaCot ctaCot, 
 			String tipo,
 			Periodo mesLiquidativo,
+			Optional<Periodo> fechaControl,
 			Map<String, Trabajador<D>> trabajadores, 
 			BasesCallback... cbs) {
 
@@ -2557,7 +2559,15 @@ public class Bases {
 		calendar.set(Calendar.DAY_OF_MONTH,
 				calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 		Date endDate = calendar.getTime();
-
+		
+		Calendar ctrlCalendar = Utils.toCalendar(fechaControl.orElse(mesLiquidativo));
+		ctrlCalendar.set(Calendar.DAY_OF_MONTH,
+				ctrlCalendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+		Date startCtrlDate = ctrlCalendar.getTime();
+		ctrlCalendar.set(Calendar.DAY_OF_MONTH,
+				ctrlCalendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		Date endCtrlDate = ctrlCalendar.getTime();
+		
 		// @formatter:off
 		AON.getSalaryData(
 				ctx,
@@ -2566,7 +2576,8 @@ public class Bases {
 						.and(props.getStartDateProperty().le(endDate))
 						.and(props.getIsSalaryProperty().eq(AonStringUtils.containsIgnoreCase("L00,L02,L91", tipo)))
 						.and(props.getIsSettlementProperty().eq(AonStringUtils.equalsIgnoreCase("L13", tipo)))
-						.and(props.getIsDelayProperty().eq(AonStringUtils.containsIgnoreCase("L03,L90", tipo)))
+						.and(props.getIsDelayProperty().eq(AonStringUtils.containsIgnoreCase("L90", tipo))
+								.or(props.getIsDelayProperty().eq(AonStringUtils.containsIgnoreCase("L03", tipo)).and(props.getChargeDateProperty().between(startCtrlDate, endCtrlDate))))
 						)
 						.forEach(
 				salary -> trabajador(liquidacionMesBuilder, salary,

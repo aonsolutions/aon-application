@@ -685,6 +685,11 @@ export const PRODUCT_CATALOGUE_MODULE = {
   entryPoint: 'ProductCatalogueModule'
 };
 
+export const REGISTRY_ENTRY_MODULE = {
+  module: GWT_FISCAL,
+  entryPoint: 'RegistryEntryModule'
+};
+
 export const SYNC_SIG_CUSTOMER_DOMAIN = {
   module: GWT_FISCAL,
   entryPoint: 'SyncSigCustomerDomainModule'
