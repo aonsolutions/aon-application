@@ -419,6 +419,7 @@ export const RECENTLY_OPENED = "Vor kurzem eröffnet";
 export const RECORD = 'Record';
 export const RECORD_INVOICE = 'Record Invoice';
 export const RECTIFIED = 'Rectified';
+export const RECTIFIER = 'Rectifier';
 export const RECTIFY = 'Rectify';
 export const RECTIFY_INVOICE = 'Rectify Invoice';
 export const REFERENCE = 'Reference';

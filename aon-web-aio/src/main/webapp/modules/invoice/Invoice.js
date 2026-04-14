@@ -526,7 +526,8 @@ export class Invoice {
       id: invoice.id,
       series: invoice.series,
       number: invoice.number,
-      date: invoice.date
+      date: invoice.date,
+      referenceCode: invoice.referenceCode
     };
     return this;
   }

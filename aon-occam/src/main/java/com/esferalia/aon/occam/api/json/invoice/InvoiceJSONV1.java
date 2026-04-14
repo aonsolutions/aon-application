@@ -125,13 +125,13 @@ class InvoiceJSONV1 {
 	}
 	
 	private static Invoice getRectificationInvoice(JSONObject json) {
-		return new Invoice()
-			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
-			.setSeries(JsonUtils.getString(json, IJsonNames.SERIES))
-			.setNumber(JsonUtils.getInteger(json, IJsonNames.NUMBER))
-			.setIssueDate(JsonUtils.getDate(json, IJsonNames.DATE))
-			.setReferenceCode(JsonUtils.getString(json, IJsonNames.REFERENCE_CODE))
-		;
+		Invoice rectificationInvoice = new Invoice();
+		rectificationInvoice.setId(JsonUtils.getInteger(json, IJsonNames.ID));
+		rectificationInvoice.setSeries(JsonUtils.getString(json, IJsonNames.SERIES));
+		if(JsonUtils.has(json, IJsonNames.NUMBER)) rectificationInvoice.setNumber(JsonUtils.getInteger(json, IJsonNames.NUMBER));
+		rectificationInvoice.setIssueDate(JsonUtils.getDate(json, IJsonNames.DATE));
+		rectificationInvoice.setReferenceCode(JsonUtils.getString(json, IJsonNames.REFERENCE_CODE));
+		return rectificationInvoice;
 	}
 	
 	static JSONArray toJSON(List<Invoice> invoices) {

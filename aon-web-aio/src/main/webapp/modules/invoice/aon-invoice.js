@@ -137,7 +137,7 @@ export class AonInvoice extends AonElement {
 		this.SERIE = CONSTANT.AON_INVOICE + CONSTANT.SERIE.initCap();
 		this.SERVICE = CONSTANT.AON_INVOICE + CONSTANT.SERVICE.initCap();
 		this.INVESTMENT = CONSTANT.AON_INVOICE + CONSTANT.INVESTMENT.initCap();
-		this.RECTIFIED = CONSTANT.AON_INVOICE + CONSTANT.RECTIFIED.initCap();
+		this.RECTIFIER = CONSTANT.AON_INVOICE + CONSTANT.RECTIFIER.initCap();
 		this.NUMBER = CONSTANT.AON_INVOICE + CONSTANT.NUMBER.initCap();
 		this.REFERENCE = CONSTANT.AON_INVOICE + CONSTANT.REFERENCE.initCap();
 		this.DATE = CONSTANT.AON_INVOICE + CONSTANT.DATE.initCap();
@@ -1183,15 +1183,20 @@ export class AonInvoice extends AonElement {
 
 			// ----- RECTIFICATIVA
 
-			let rectified = new AonSwitch();
-			rectified.id = this.RECTIFIED;
-			rectified.title = MSG.RECTIFIED;
-			rectified.readonly = this.invoice.isReadonly();
-			div.appendChild(rectified);
-			rectified.addEventListener(EVENT.CHANGE, () => {
-				this.invoice.setRectified(rectified.checked);
+			let rectifier = new AonSwitch();
+			rectifier.id = this.RECTIFIER;
+			rectifier.title = MSG.RECTIFIER;
+			rectifier.readonly = this.invoice.isReadonly();
+			div.appendChild(rectifier);
+			rectifier.addEventListener(EVENT.CHANGE, () => {
+				if(rectifier.isChecked()) {
+					this.buildRectifedInvoiceDialog();
+				} else {
+					this.invoice.setRectifier(false);
+					this.invoice.rectificationInvoice = undefined;
+				}
 			});
-			rectified.checked = this.invoice.isRectified();
+			rectifier.checked = this.invoice.isRectifier();
 
 			const top = button.getBoundingClientRect().top;
 			const left = button.getBoundingClientRect().left;
@@ -1204,8 +1209,8 @@ export class AonInvoice extends AonElement {
 			investment.setWidth('150px');
 			investment.setMarginBottom('10px');
 
-			rectified.setWidth('150px');
-			rectified.setMarginBottom('10px');
+			rectifier.setWidth('150px');
+			rectifier.setMarginBottom('10px');
 		});
 
 		let table = new AonBasicTable();
@@ -3071,6 +3076,61 @@ export class AonInvoice extends AonElement {
 				this.reload();
 			}
 		});
+		d.open();
+	}
+
+	buildRectifedInvoiceDialog() {
+		let aonInvoice = this.getElement('aonInvoice');
+		let d = document.getElementById(aonInvoice.DIALOG);
+
+		let div = this.createDiv();
+
+		d.clear();
+		if (!this.isMobile()) d.width = '400px';
+		d.setTitle("Seleccione la factura rectificada");
+		d.setContent(div);
+
+		if(this.invoice.isEmitida()) {
+			let seriesOptions = this.configuration.series.filter(f => f.invoice);
+			let series = createSelect(this.id + 'RectifiedSeries', MSG.SERIE);
+			series.setOptions(seriesOptions);
+			series.setAlias("code", "code");
+			series.setValue(this.invoice.series);
+
+			div.appendChild(series);
+
+			let number = createNumber(this.id + 'RectifiedNumber', MSG.NUMBER);
+			div.appendChild(number);
+
+			let date = createDate(this.id + 'RectifiedDate', MSG.DATE);
+			date.setDate(new Date());
+			div.appendChild(date);
+
+			d.addAcceptAction(() => {
+				this.invoice.setRectificationInvoice({
+					series: series.value,
+					number: number.value,
+					date: date.getDateValue()
+				});
+				this.reload();
+			});
+		} else {
+			let reference = createInput(this.id + 'RectifiedReference', MSG.REFERENCE);
+			div.appendChild(reference);
+			
+			let date = createDate(this.id + 'RectifiedDate', MSG.DATE);
+			date.setDate(new Date());
+			div.appendChild(date);
+
+			d.addAcceptAction(() => {
+				this.invoice.setRectificationInvoice({
+					referenceCode: reference.value,
+					date: date.getDateValue()
+				});
+				this.reload();
+			});
+		}
+
 		d.open();
 	}
 
