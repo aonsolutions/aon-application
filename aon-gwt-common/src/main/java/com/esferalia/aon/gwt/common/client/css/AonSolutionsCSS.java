@@ -1015,6 +1015,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_flex_column")
 	String aonFlexColumn();
 	
+	@ClassName("aon_flex_column_2")
+	String aonFlexColumn2();
+	
 	@ClassName("aon_flex_wrap")
 	String aonFlexWrap();
 	

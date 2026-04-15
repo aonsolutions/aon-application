@@ -190,16 +190,19 @@ export const ENTERPRISES = 'Enterprises';
 export const ENTRY = 'Entry';
 export const ENVIRONMENT = 'Environment';
 export const EQUIVALENCE_SURCHARGE = 'Equivalence Surcharge';
+export const ERRORS = 'Errors';
 export const EXERCISE = "Exercise";
 export const EXEMPTION_CAUSE = "Exemption Cause";
 export const EXIT = 'Exit';
+export const EXPAND_HIRIND = 'Expand Hirind';
+export const EXPEDITION_DATE = 'Expedition Date';
 export const EXPENSE = 'Expense';
 export const EXPENSES = 'Expenses';
 export const EXPIRATIONS = 'Expirations';
 export const EXPIRED = 'Expired';
 export const EXPIRED_SESSION = 'Session expired';
-export const ERRORS = 'Errors';
-export const EXPAND_HIRIND = 'Expand Hirind';
+
+
 
 // ----- F
 
@@ -359,6 +362,7 @@ export const OPEN = 'Open';
 export const OPEN_MENU = 'Open Menu';
 export const OPEN_REQUESTS = 'Open Requests';
 export const OPENED = 'Opened';
+export const OPERATION_DATE = 'Operation Date';
 export const OPTIONAL = "Optional"; 
 export const OPTIONS = 'Options';
 export const OR_ACCESS = 'or ACCESS';
@@ -419,6 +423,7 @@ export const RECENTLY_OPENED = "Recently opened";
 export const RECORD = 'Record';
 export const RECORD_INVOICE = 'Record Invoice';
 export const RECTIFIED = 'Rectified';
+export const RECTIFIER = 'Rectifier';
 export const RECTIFY = 'Rectify';
 export const RECTIFY_INVOICE = 'Rectify Invoice';
 export const REFERENCE = 'Reference';

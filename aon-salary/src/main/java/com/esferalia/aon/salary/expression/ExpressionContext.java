@@ -848,22 +848,24 @@ public class ExpressionContext {
 					Collections.<String, ITimedVariable<?>> emptyMap()));
 			return Collections.singletonList(result);
 		}
+		
+		ExpressionContext dryCtx = new ExpressionContext(this);
+
 		Set<String> inputs = getVarNames(script);
-		List<PeriodMap> bindingsList = variables.getBindings(inputs, start, end);
+		List<PeriodMap> bindingsList = dryCtx.variables.getBindings(inputs, start, end);
 		try {
 
 			do {
 				try {
-					return eval(script, bindingsList, toType);
+					return dryCtx.eval(script, bindingsList, toType);
 				} catch (MacroException e) {
 					script = e.doMacro(script);
 					inputs = getVarNames(script);
-					bindingsList = variables.getBindings(inputs, start, end);
+					bindingsList = dryCtx.variables.getBindings(inputs, start, end);
 				}
 			} while (true);
 
 		} catch (DeferredException e) {
-			ExpressionContext dryCtx = new ExpressionContext(this);
 			e.eval(dryCtx, toType);
 			return dryCtx.dryEval(script, start, end, toType);
 		} catch (UnknownUndefVarException e) {

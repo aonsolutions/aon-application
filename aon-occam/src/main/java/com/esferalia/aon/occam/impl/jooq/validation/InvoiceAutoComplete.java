@@ -205,6 +205,56 @@ public class InvoiceAutoComplete {
 		if (inv.getRectificationType() == null) inv.setRectificationType(RectificationType.NONE);
 	};
 	
+	/**
+	 * Aseguramos los datos de la factura rectificada...
+	 */
+	public static final  BiConsumer<Invoice,AonConfigurationContext> COMPLETE_RECTIFIED_INVOICE = (inv,ctx) -> {
+		if(inv.isRectifier() && inv.getRectificationInvoice() == null) {
+			if(inv.isSales()) {
+				String series = inv.getRectificationInvoiceSeries();
+				Integer number = inv.getRectificationInvoiceNumber();
+				
+				Invoice rectifiedInvoice = InvoiceDAO.getInvoiceStreamWithFiscal(ctx.getContext(), f -> 
+						f.getDomainProperty().eq(inv.getDomain())
+						.and(f.getTypeProperty().eq(inv.getType().value()))
+						.and(f.getSeriesProperty().eq(series))
+						.and(f.getNumberProperty().eq(number))
+				).findFirst().orElse(null);
+				if(rectifiedInvoice != null) {
+					if(!inv.getRegistry().equals(rectifiedInvoice.getRegistry())) {
+						throw new AonCoreException("La factura rectificativa no puede tener un cliente diferente a la factura rectificada");
+					}
+					inv.setRectificationInvoice(rectifiedInvoice.getId());
+					inv.setRectificationInvoiceReference(rectifiedInvoice.getReferenceCode());
+					inv.setRectificationInvoiceSeries(rectifiedInvoice.getSeries());
+					inv.setRectificationInvoiceNumber(rectifiedInvoice.getNumber());
+					inv.setRectificationInvoiceDate(rectifiedInvoice.getExpDate());
+				} else {
+					// TODO GUARDAR DATOS EN INVOICE DATA??
+					throw new AonCoreException("No se ha encontrado la factura rectificada con serie " + series + " y número " + number);
+				}
+			} else {
+				String reference = inv.getRectificationInvoiceReference();
+				
+				Invoice rectifiedInvoice = InvoiceDAO.getInvoiceStream(ctx.getContext(), f -> 
+						f.getDomainProperty().eq(inv.getDomain())
+						.and(f.getTypeProperty().eq(inv.getType().value()))
+						.and(f.getReferenceCodeProperty().eq(reference))
+						.and(f.getRegistryProperty().eq(inv.getRegistry()))
+				).findFirst().orElse(null);
+
+				if(rectifiedInvoice != null) {
+					inv.setRectificationInvoice(rectifiedInvoice.getId());
+					inv.setRectificationInvoiceReference(rectifiedInvoice.getReferenceCode());
+					inv.setRectificationInvoiceDate(rectifiedInvoice.getIssueDate());
+				} else {
+					// TODO GUARDAR DATOS EN INVOICE DATA??
+					throw new AonCoreException("No se ha encontrado la factura rectificada con referencia " + reference);
+				}
+			}
+		}
+	};
+	
 	
 	/**
 	 * Aseguramos el nombre del titular de la factura.
@@ -845,6 +895,7 @@ public class InvoiceAutoComplete {
 		.andThen(COMPLETE_UNDEDUCTIBLE_REFERENCE_CODE)
 		.andThen(COMPLETE_TAX_DATE)
 		.andThen(COMPLETE_RECTIFICATION_TYPE)
+		.andThen(COMPLETE_RECTIFIED_INVOICE)
 		.andThen(COMPLETE_SCOPE2)
 		.andThen(COMPLETE_REGISTRY_DATA)
 		.andThen(ENSURE_REGISTRY_DATA)

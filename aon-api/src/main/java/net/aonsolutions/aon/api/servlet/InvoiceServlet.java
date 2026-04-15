@@ -420,6 +420,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		JSONObject json = new JSONObject()
 			.put(IJsonNames.ID, invoice.getId())
 			.put(IJsonNames.DATE, invoice.getIssueDate())
+			.put(IJsonNames.EXP_DATE, invoice.getExpDate())
 			.put(IJsonNames.REFERENCE, invoice.getNumber() > 0 ? invoice.getReferenceCode() : referenceAux)
 			.put(IJsonNames.NAME, invoice.getRegistryName())
 			.put(IJsonNames.TOTAL, invoice.getTotal())

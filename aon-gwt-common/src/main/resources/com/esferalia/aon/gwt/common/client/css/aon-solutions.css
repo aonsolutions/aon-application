@@ -1149,7 +1149,8 @@
 	align-items: center;
 }
 
-.aon_flex_column {
+.aon_flex_column,
+.aon_flex_column_2 {
     display: flex;
     flex-direction: column;
     gap: .5rem;

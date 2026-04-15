@@ -213,7 +213,7 @@ public abstract class Workplace extends ScrollPanel {
 			AonCustomTextBox calendar = new AonCustomTextBox("Calendario");
 			calendar.setValue(calendarDescription);
 			calendar.setEnable(false);
-			calendar.addButton(calendarButton);
+			//calendar.addButton(calendarButton);
 			
 			calendarWidget = calendar;
 		}

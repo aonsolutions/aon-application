@@ -8,13 +8,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMediaPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMediaPanel.AonMediaPanelCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -160,8 +155,21 @@ public abstract class MediaTable extends ScrollPanel {
 	
 	private void paintHeader() {
 		tab.createHeader();
-		for ( COLS col : COLS.values()) 
-			tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
+		for ( COLS col : COLS.values()) {
+			if(col.equals(COLS.BUT)) {
+				FlowPanel buttonContainer = new FlowPanel();
+				buttonContainer.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+				
+				AonTableButton button = new AonTableButton("Nuevo contacto", AON.CSS.aonIconAdd());
+				button.addStyleName(AON.CSS.aonCustomRowButtom());
+				button.addClickHandler(e -> createMedia());
+				buttonContainer.add(button);
+				
+				tab.addHeader(buttonContainer, col.getColWidth(), col.getStyles());
+			} else
+				tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
+		
+		}
 	}
 	
 	private void searchData() {
@@ -314,6 +322,30 @@ public abstract class MediaTable extends ScrollPanel {
 		});
 		
 		dialog.add( marketingCampaignPanel );
+		dialog.showLoaded();
+	}
+	
+
+
+	private void createMedia() {
+		final AonCustomDialog dialog = new AonCustomDialog();
+		dialog.setCaption("Nuevo Contacto");
+
+		final AonMediaPanel marketingCampaignPanel = new AonMediaPanel(domainName, domain, user, registry, new AonMediaPanelCallback() {
+
+					@Override
+					public void onCancel() {
+						dialog.hide();
+					}
+
+					@Override
+					public void onAccept(RegistryMedia media) {
+						dialog.hide();
+						onSearch();
+					}
+				});
+
+		dialog.add(marketingCampaignPanel);
 		dialog.showLoaded();
 	}
 

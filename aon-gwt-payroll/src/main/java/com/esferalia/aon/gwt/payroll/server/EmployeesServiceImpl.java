@@ -2803,11 +2803,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			// We asume that one enterprise one domain. This way SELECT it's
 			// more clear.
-			String sql = "SELECT" + " MONTH(" + SALARY + "." + SalaryColumns.ISSUE_DATE + ") " + monthCol + ", YEAR("
-					+ SALARY + "." + SalaryColumns.ISSUE_DATE + ") " + yearCol + " FROM " + ENTERPRISE + ", " + SALARY
-					+ " WHERE " + ENTERPRISE + "." + EnterpriseColumns.DOMAIN + " = " + SALARY + "."
-					+ SalaryColumns.DOMAIN + " AND " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = ?" + " AND "
-					+ SALARY + "." + SalaryColumns.TYPE + " < " + SalaryType.L00.ordinal() + " GROUP BY 1, 2"
+			String sql = "SELECT" 
+					+ " MONTH(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + monthCol 
+					+ ", YEAR("	+ SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol  
+					+ " FROM " + ENTERPRISE + ", " + SALARY
+					+ " WHERE " + ENTERPRISE + "." + EnterpriseColumns.DOMAIN + " = " + SALARY + "." + SalaryColumns.DOMAIN 
+					+ " AND " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = ?" 
+					+ " AND " + SALARY + "." + SalaryColumns.TYPE + " < " + SalaryType.L00.ordinal() 
+					+ " GROUP BY 1, 2"
 					+ " ORDER BY 2 , 1 ASC ";
 
 			stmt = connection.prepareStatement(sql);
@@ -2916,12 +2919,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			String yearCol = "YEAR";
 			String monthCol = "MONTH";
 
-			String sql = "SELECT" + " MONTH(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + monthCol + ", YEAR("
-					+ SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol + " FROM " + WORKPLACE + ", " + CONTRACT
-					+ ", " + SALARY + " WHERE" + " " + WORKPLACE + "." + WorkplaceColumns.ID + " = " + CONTRACT + "."
-					+ ContractColumns.WORKPLACE + " AND " + CONTRACT + "." + ContractColumns.ID + " = " + SALARY + "."
-					+ SalaryColumns.CONTRACT + " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = ?" + " AND "
-					+ SALARY + "." + SalaryColumns.TYPE + " < " + SalaryType.L00.ordinal() + " GROUP BY 1, 2"
+			String sql = "SELECT" 
+					+ " MONTH(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + monthCol 
+					+ ", YEAR("+ SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol 
+					+ " FROM " + WORKPLACE + ", " + CONTRACT + ", " + SALARY 
+					+ " WHERE" + " " + WORKPLACE + "." + WorkplaceColumns.ID + " = " + CONTRACT + "." + ContractColumns.WORKPLACE 
+					+ " AND " + CONTRACT + "." + ContractColumns.ID + " = " + SALARY + "." + SalaryColumns.CONTRACT 
+					+ " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = ?" 
+					+ " AND " + SALARY + "." + SalaryColumns.TYPE + " < " + SalaryType.L00.ordinal() 
+					+ " GROUP BY 1, 2"
 					+ " ORDER BY 2 , 1 ASC ";
 
 			stmt = connection.prepareStatement(sql);
@@ -2951,14 +2957,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			// We asume that one enterprise one domain. This way SELECT it's
 			// more clear.
 			
-			String sql = "SELECT" + " MONTH(" + SALARY + "." + SalaryColumns.ISSUE_DATE + ") " + monthCol + ", YEAR("
-					+ SALARY + "." + SalaryColumns.ISSUE_DATE + ") " + yearCol 
+			String sql = "SELECT" 
+					+ " MONTH(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + monthCol 
+					+ ", YEAR("	+ SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol 
 					+ " FROM " + WORKPLACE + ", " + SALARY + ", " + CONTRACT 
 					+ " WHERE " + SALARY + "." + SalaryColumns.CONTRACT + " = " + CONTRACT + "." + ContractColumns.ID 
 					+ " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = " + CONTRACT + "." + ContractColumns.WORKPLACE 
 					+ " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = ?"
-					+ " AND " + SALARY + "." + SalaryColumns.TYPE + " < " + SalaryType.L00.ordinal() + " GROUP BY 1, 2"
-					+ " ORDER BY 2 , 1 ASC ";
+					+ " AND " + SALARY + "." + SalaryColumns.TYPE + " < " + SalaryType.L00.ordinal() 
+					+ " GROUP BY 1, 2" + " ORDER BY 2 , 1 ASC ";
 			
 			// This SQL dont filter by workplace, just by domain
 //			String sql = "SELECT" + " MONTH(" + SALARY + "." + SalaryColumns.ISSUE_DATE + ") " + monthCol + ", YEAR("

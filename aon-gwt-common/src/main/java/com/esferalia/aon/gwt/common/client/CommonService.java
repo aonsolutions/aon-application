@@ -11,11 +11,14 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
+import com.esferalia.aon.occam.api.model.EmployeeSegSocial;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
@@ -32,6 +35,7 @@ import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.ProjectParams;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
+import com.esferalia.aon.occam.api.model.SecondaryUserCertificate;
 import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
@@ -40,6 +44,7 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
@@ -71,11 +76,11 @@ import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Category;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
-import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -95,6 +100,7 @@ import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -110,6 +116,7 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -499,5 +506,29 @@ public interface CommonService extends RemoteService {
 	
 	List<RegistryRelationship> getRegistryRelationships(String domainName, int domain, String user) throws AonCoreException;
 	void requestBookingInfo(String domainName, int domain, String user, ProductBooking product, Integer customerRegistry) throws AonCoreException;
+
+	// **************************************************
+	// *********************** [CERTIFICATES]
+	// **************************************************
+	
+	DomainUserRoles getDomainUserRoles(String domainName, Integer domainId, String user) throws AonCoreException;
+	List<Certificate> getCertificates(String domainName, Integer domainId, String user, boolean withParent) throws AonCoreException;
+	void deleteCertificate(String domainName, Integer domainId, String user, Certificate certificate) throws AonCoreException;
+	void downloadCertificate(String domainName, Integer domainId, String user, Integer certificateId, String filePath) throws AonCoreException;
+	void verifyCertificate(String domainName, Integer domainId, String user, Integer certificateId, List<CertificateType> tags) throws AonCoreException;
+	CertificateInfo getCertificateInfo(String domainName, Integer domainId, String user, Integer certificateId) throws AonCoreException;
+	List<SecondaryUserCertificate> getSecondaryUsers(String domainName, Integer domainId, String user, Integer rattachId) throws AonCoreException;
+	String getSecondaryUsersPDF(String domainName, Integer domainId, String user, Integer rattachId) throws AonCoreException;
+	String getAssignedCCCsPDF(String domainName, Integer domainId, String user, Integer rattachId) throws AonCoreException;
+	EmployeeSegSocial getIpfxNaf(String domainName, Integer domainId, String user, ArrayList<String> nssList) throws AonCoreException;
+	void deleteSecondaryUser(String domainName, Integer domainId, String user, Integer rattachId, String ipfType, String ipf) throws AonCoreException;
+	void createSecondaryUser(String domainName, Integer domainId, String user, Integer rattachId, String ipfType, String ipf, String naf) throws AonCoreException;
+	
+	// **************************************************
+	// *********************** [REGISTRY ENTRY]
+	// **************************************************
+	
+	CompanyFull getCompanyFull(String domainName, int domain, String user) throws AonCoreException;
+	CompanyFull saveCompanyFull(String domainName, int domain, String user, CompanyFull company) throws AonCoreException;
 	
 }

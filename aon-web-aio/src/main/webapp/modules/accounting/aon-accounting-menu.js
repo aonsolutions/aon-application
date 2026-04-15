@@ -249,23 +249,23 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			options: [{
 				description: "Plan General Contable",
 				title: "Plan General Contable",
-				action: () => this.rootPanel(new JSF.AonJsfAccount())
+				action: () => this.getApplication().setContent(new JSF.AonJsfAccount())
 			},{
 				description: "Conceptos Automáticos",
 				title: "Conceptos Automáticos",
-				action: () => this.rootPanel(new JSF.AonJsfAutConcept())
+				action: () => this.getApplication().setContent(new JSF.AonJsfAutConcept())
 			},{
 				description: "Definición de Balances",
 				title: "Definición de Balances",
-				action: () => this.rootPanel(new JSF.AonJsfBalance())
+				action: () => this.getApplication().setContent(new JSF.AonJsfBalance())
 			},{
 				description: "Tabla de Tipos de Amortización",
 				title: "Tabla de Tipos de Amortización",
-				action: () => this.rootPanel(new JSF.AonJsfAmortizationType())
+				action: () => this.getApplication().setContent(new JSF.AonJsfAmortizationType())
 			},{
 				description: "Utilidades y chequeos contables",
 				title: "Utilidades y chequeos contables",
-				action: () =>  GWT.iLoad(GWT.ACCOUNTING_UTILITIES)
+				action: () => GWT.iLoad(GWT.ACCOUNTING_UTILITIES, this.getApplication().CONTENT)
 			},{
 				description: "Utilidades y chequeos contables",
 				title: "Utilidades y chequeos contables",
@@ -278,7 +278,8 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			options: [{
 				description: "Depósito de cuentas (D2)",
 				title: "Depósito de cuentas (D2)",
-				action: () => GWT.iLoad(GWT.DEPOSIT_TEXT_MODE)
+				action: () => GWT.iLoad(GWT.DEPOSIT_TEXT_MODE, this.getApplication().CONTENT)
+				//action: () => GWT.iLoad(GWT.DEPOSIT_TEXT_MODE)
 			}
 		],
 			filter: () => this.isDomainManagementAvailable()

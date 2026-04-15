@@ -463,6 +463,7 @@ input, select, textarea,
 	box-sizing: border-box;
 	border: .0625rem solid #cbd5e1;
 	padding: .5rem .75rem .5rem .75rem !important;
+	width: 100%;
 }
 
 .aon_custom_text_box_no_border:hover.aon_custom_warning, .aon_custom_text_box:hover.aon_custom_warning, .aon_custom_text_area:hover.aon_custom_warning, .aon_custom_warning {
@@ -879,11 +880,13 @@ div[style*='height:55px'] > .aon_toolbar {
 	border-bottom: none !important;
 }
 
+/*
 .aon_flex_column.aon_custom_text_box,
 .aon_flex_column.aon_custom_text_area,
 .aon_flex_column.aon_custom_text_box_no_border {
     width: auto ;
 }
+*/
 
 .aon-MainCreta-Events *, 
 .aon-EmployeeTree-Events * {

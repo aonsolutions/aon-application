@@ -23,8 +23,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -65,6 +63,8 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 public class AccountingBookController implements ICollectionProvider, Serializable {
@@ -177,18 +177,33 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 			books.add( new AccountingBook( 1, 3, 1,MimeType.MIME_PDF,BookType.IVAI		,true ));
 			books.add( new AccountingBook( 2, 4, 1,MimeType.MIME_PDF,BookType.PER_GAN	,true ));
 		} else {
-			books.add( new AccountingBook( 1, 0, 1,MimeType.MIME_PDF,BookType.DIARIO	,false));
-			books.add( new AccountingBook( 2, 1, 1,MimeType.MIME_PDF,BookType.MAYOR		,true ));
-			books.add( new AccountingBook( 2, 2, 1,MimeType.MIME_PDF,BookType.BAL_SUMS1	,true ));
-			books.add( new AccountingBook( 2, 3, 1,MimeType.MIME_PDF,BookType.BAL_SUMS2	,true ));
-			books.add( new AccountingBook( 2, 4, 1,MimeType.MIME_PDF,BookType.BAL_SUMS3	,true ));
-			books.add( new AccountingBook( 2, 5, 1,MimeType.MIME_PDF,BookType.BAL_SUMS4	,true ));
-			books.add( new AccountingBook( 2, 6, 1,MimeType.MIME_PDF,BookType.IVAR		,true ));
-			books.add( new AccountingBook( 2, 7, 1,MimeType.MIME_PDF,BookType.IVAS		,true ));
-			books.add( new AccountingBook( 2, 8, 1,MimeType.MIME_PDF,BookType.IVAI		,true ));
-			books.add( new AccountingBook( 2, 9, 1,MimeType.MIME_PDF,BookType.PER_GAN	,true ));
-			books.add( new AccountingBook( 2,10, 1,MimeType.MIME_PDF,BookType.BALANCES	,true ));
-			books.add( new AccountingBook( 2,11, 1,MimeType.MIME_PDF,BookType.BALANCES	,true ));
+//			books.add( new AccountingBook( 1, 0, 1,MimeType.MIME_PDF,BookType.DIARIO	,false)); // Diario
+//			books.add( new AccountingBook( 2, 1, 1,MimeType.MIME_PDF,BookType.MAYOR		,true )); // Mayor
+//			books.add( new AccountingBook( 2, 2, 1,MimeType.MIME_PDF,BookType.BAL_SUMS1	,true )); // Balances de comprobación (sumas y saldos)
+//			books.add( new AccountingBook( 2, 3, 1,MimeType.MIME_PDF,BookType.BAL_SUMS2	,true )); // Balances de comprobación (sumas y saldos)
+//			books.add( new AccountingBook( 2, 4, 1,MimeType.MIME_PDF,BookType.BAL_SUMS3	,true )); // Balances de comprobación (sumas y saldos)
+//			books.add( new AccountingBook( 2, 5, 1,MimeType.MIME_PDF,BookType.BAL_SUMS4	,true )); // Balances de comprobación (sumas y saldos)
+//			books.add( new AccountingBook( 2, 6, 1,MimeType.MIME_PDF,BookType.IVAR		,true )); // IVA o Facturas emitidas
+//			books.add( new AccountingBook( 2, 7, 1,MimeType.MIME_PDF,BookType.IVAS		,true )); // IVA o Facturas recibidas
+//			books.add( new AccountingBook( 2, 8, 1,MimeType.MIME_PDF,BookType.IVAI		,true )); // IVA
+//			books.add( new AccountingBook( 2, 9, 1,MimeType.MIME_PDF,BookType.PER_GAN	,true )); // Libro de Pérdidas y Ganancias
+//			books.add( new AccountingBook( 2,10, 1,MimeType.MIME_PDF,BookType.BALANCES	,true )); // Balances
+//			books.add( new AccountingBook( 2,11, 1,MimeType.MIME_PDF,BookType.BALANCES	,true )); // Balances
+			
+			// SE DEJAN MARCADOS POR DEFECTO SOLO BALSUMS, IVA Y BALANCES
+			books.add( new AccountingBook( 1, 0, 1,MimeType.MIME_PDF,BookType.DIARIO	,false)); // Diario
+			books.add( new AccountingBook( 2, 1, 1,MimeType.MIME_PDF,BookType.MAYOR		,false)); // Mayor
+			books.add( new AccountingBook( 3, 2, 1,MimeType.MIME_PDF,BookType.BAL_SUMS1	,true));  // Balances de comprobación (sumas y saldos 01-03)
+			books.add( new AccountingBook( 3, 3, 2,MimeType.MIME_PDF,BookType.BAL_SUMS2	,true));  // Balances de comprobación (sumas y saldos 01-06)
+			books.add( new AccountingBook( 3, 4, 3,MimeType.MIME_PDF,BookType.BAL_SUMS3	,true));  // Balances de comprobación (sumas y saldos 01-09)
+			books.add( new AccountingBook( 3, 5, 4,MimeType.MIME_PDF,BookType.BAL_SUMS4	,true));  // Balances de comprobación (sumas y saldos 01-12)
+			books.add( new AccountingBook( 4, 6, 1,MimeType.MIME_PDF,BookType.IVAR		,true));  // IVA (IVA Repercutido)
+			books.add( new AccountingBook( 4, 7, 1,MimeType.MIME_PDF,BookType.IVAS		,true));  // IVA (IVA Soportado)
+			books.add( new AccountingBook( 4, 8, 1,MimeType.MIME_PDF,BookType.IVAI		,true));  // IVA (IVA Inversión)
+			books.add( new AccountingBook( 5, 9, 1,MimeType.MIME_PDF,BookType.PER_GAN	,false)); // Libro de Pérdidas y Ganancias
+			books.add( new AccountingBook( 6,10, 1,MimeType.MIME_PDF,BookType.BALANCES	,true));  // Balances
+			books.add( new AccountingBook( 6,11, 1,MimeType.MIME_PDF,BookType.BALANCES	,true));  // Balances
+			
 		}
 		setModel( new SerializableListDataModel(books));
 	}
@@ -351,19 +366,57 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 		if (isCoverEnabled()) {
 			mergeRunner.addRunner(coverAccountingBookRunner);
 		}
+		
+		// SUMAS Y SALDOS, LIBROS DE IVA Y BALANCES, VAN EN UN SOLO PDF SEPARADOS DEL RESTO Y DE OTROS
+		PDFMergerBookRunner mergeRunnerSum = getMergerBookRunner(BookType.BAL_SUMS1, "Balances de sumas y saldos");
+		boolean addedSum = false;
+		
+		PDFMergerBookRunner mergeRunnerIva = getMergerBookRunner(BookType.IVAI, "Libros de IVA");
+		boolean addedIva = false;
+		
+		PDFMergerBookRunner mergeRunnerBal = getMergerBookRunner(BookType.BALANCES, "Balances");
+		boolean addedBal = false;
+		// -----
+		
 		boolean added = false;
 		for (AccountingBook book : bookList ) {
+			
+			// EL DIARIO Y EL MAYOR SIEMPRE DEBEN IR SEPARADOS
+			if (book.getBookType() == BookType.DIARIO || book.getBookType() == BookType.MAYOR) {
+				book.setMergeable(false);
+			}
+			// -----
 			
 			AccountingBookRunnerManager manager = new AccountingBookRunnerManager();
 			AccountingBookContext context = new AccountingBookContext(book,this);
 			IAccountingBookRunner runner = manager.getRunner(context);
 			
 			if (book.isMergeable()) {
-				if (!added) {
-					runners.add(mergeRunner);
-					added = true;
+				if (book.getBookType() == BookType.BAL_SUMS1 || book.getBookType() == BookType.BAL_SUMS2 || book.getBookType() == BookType.BAL_SUMS3 || book.getBookType() == BookType.BAL_SUMS4) {
+					if (!addedSum) {
+						runners.add(mergeRunnerSum);
+						addedSum = true;
+					}
+					mergeRunnerSum.addRunner(runner);
+				} else if (book.getBookType() == BookType.IVAR || book.getBookType() == BookType.IVAS || book.getBookType() == BookType.IVAI) {
+					if (!addedIva) {
+						runners.add(mergeRunnerIva);
+						addedIva = true;
+					}
+					mergeRunnerIva.addRunner(runner);
+				} else if (book.getBookType() == BookType.BALANCES) {
+					if (!addedBal) {
+						runners.add(mergeRunnerBal);
+						addedBal = true;
+					}
+					mergeRunnerBal.addRunner(runner);
+				} else {
+					if (!added) {
+						runners.add(mergeRunner);
+						added = true;
+					}
+					mergeRunner.addRunner(runner);
 				}
-				mergeRunner.addRunner(runner);		
 			} else {
 				if (isCoverEnabled()) {
 					PDFMergerBookRunner bookMergeRunner = getMergerBookRunner(book.getBookType(), book.getDescription());
@@ -476,79 +529,29 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 		params.setParams(new SummaryProviderParameters(AonUtil.getDomainName()));
 		params.getParams().setPeriod(getPeriod());
 		AnnualReportContext ctx = new AnnualReportContext(params);
+		
 		StringBuffer buf = new StringBuffer();
-		buf.append(100);
-		buf.append(IAccountingConstants.EMPTY);
-		buf.append(IAccountingConstants.CR);
-		// Fecha
-		buf.append(101);
-		buf.append(dateFormatter.format(new Date()));
-		buf.append(IAccountingConstants.CR);
-		// Nombre empresa
-		buf.append(102);
-		buf.append(StringUtils.substring(ctx.empresa(),0, 32));
-		buf.append(IAccountingConstants.CR);
-		// Apellido 1
-		buf.append(103);
-		buf.append(IAccountingConstants.EMPTY);
-		buf.append(IAccountingConstants.CR);
-		// Apellido 1
-		buf.append(104);
-		buf.append(IAccountingConstants.EMPTY);
-		buf.append(IAccountingConstants.CR);
-		// NIF
-		buf.append(105);
-		buf.append(StringUtils.substring(ctx.nifEmpresa(),0, 9));
-		buf.append(IAccountingConstants.CR);
-		// Calle
-		buf.append(106);
-		buf.append(StringUtils.substring(ctx.domicilioEmpresa(),0, 32));
-		buf.append(IAccountingConstants.CR);
-		// Localidad
-		buf.append(107);
-		buf.append(StringUtils.substring(ctx.localidadEmpresa(),0, 32));
-		buf.append(IAccountingConstants.CR);
-		// C.P.
-		buf.append(108);
-		buf.append(StringUtils.substring(ctx.codigoPostalEmpresa(),0, 32));
-		buf.append(IAccountingConstants.CR);
-		// Provincia
-		buf.append(109);
-		buf.append(StringUtils.substring(ctx.codigoProvinciaEmpresa(),0, 5));
-		buf.append(IAccountingConstants.CR);
-		// Fax
-		buf.append(110);
-		buf.append(StringUtils.substring(ctx.faxEmpresa(),0, 10));
-		buf.append(IAccountingConstants.CR);
-		// Telefono
-		buf.append(111);
-		buf.append(StringUtils.substring(ctx.telefonoEmpresa(),0, 10));
-		buf.append(IAccountingConstants.CR);
-		// Tomo
-		buf.append(201);
-		buf.append(StringUtils.substring(ctx.tomoRegistroMercantil(),0, 6));
-		buf.append(IAccountingConstants.CR);
-		// Folio
-		buf.append(204);
-		buf.append(StringUtils.substring(ctx.folioRegistroMercantil(),0, 6));
-		buf.append(IAccountingConstants.CR);
-		// Tipo Registro
-		buf.append(205);
-		buf.append(StringUtils.substring(ctx.registroMercantil(),0, 6));
-		buf.append(IAccountingConstants.CR);
-		// Hoja Registral
-		buf.append(206);
-		buf.append(StringUtils.substring(ctx.hojaRegistroMercantil(),0, 6));
-		buf.append(IAccountingConstants.CR);
-		// Otros
-		buf.append(207);
-		buf.append(IAccountingConstants.EMPTY);
-		buf.append(IAccountingConstants.CR);
-
+		
+		appendLine(buf, "100", ctx.nombreRegistroMercantil(), 0);    	// Nombre del Registro Mercantil
+		appendLine(buf, "101", dateFormatter.format(new Date()), 0); 	// Fecha de la solicitud
+		appendLine(buf, "102", ctx.empresa(), 32); 						// Nombre empresa
+		appendLine(buf, "105", ctx.nifEmpresa(), 9); 					// NIF
+		appendLine(buf, "106", ctx.domicilioEmpresa(), 32); 			// Domicilio
+		appendLine(buf, "107", ctx.municipioEmpresa() == null ? ctx.localidadSimpleEmpresa() : ctx.municipioEmpresa(), 32); // Municipio
+		appendLine(buf, "108", ctx.codigoPostalEmpresa(), 5); 			// Código Postal
+		appendLine(buf, "109", ctx.codigoProvinciaEmpresa(), 2); 		// Código de Provincia
+		appendLine(buf, "110", ctx.faxEmpresa(), 10); 					// Fax 
+		appendLine(buf, "111", ctx.telefonoEmpresa(), 10); 				// Telefono
+		appendLine(buf, "112", ctx.codigoRegistroMercantil(), 5); 		// Código de Registro
+		appendLine(buf, "201", ctx.tomoRegistroMercantil(), 6); 		// Tomo
+		appendLine(buf, "204", ctx.folioRegistroMercantil(), 6); 		// Folio
+		appendLine(buf, "206", ctx.hojaRegistroMercantil(), 6); 		// Hoja Registral
+		
+		// Número total de libros presentados
 		buf.append(501);
 		buf.append(runners.size());
 		buf.append(IAccountingConstants.CR);
-
+		
 		StringBuffer buf2 = new StringBuffer();
 
 		int i = 1;
@@ -587,14 +590,34 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 	    reader = new StringReader(buf2.toString());
 	    IOUtils.copy(reader, zout);
 		zout.closeEntry();
+		
+		// NOMBRE EMPRESA E IRUS (VAN EN EL ARCHIVO DESC.TXT)
+		StringBuffer buf3 = new StringBuffer();
+		appendLine(buf3, "", ctx.empresa(), 0);                    // Nombre empresa
+		appendLine(buf3, "IRUS=", ctx.irusRegistroMercantil(), 0); // IRUS
 
 		ze = new ZipEntry(DESC_TXT);
 	    zout.putNextEntry(ze);
-	    reader = new StringReader( ctx.empresa());
+	    reader = new StringReader(buf3.toString());
 	    IOUtils.copy(reader, zout);
 		zout.closeEntry();
 	}
 
+	private void appendLine(StringBuffer buf, String code, String value, int maxLength) {
+		
+		value = StringUtils.upperCase(value);
+		value = StringUtils.trimToEmpty(value);
+		
+		if (maxLength > 0) {
+			value = StringUtils.substring(value, 0, maxLength);
+		}
+		
+		buf.append(code);
+		buf.append(value);
+		buf.append(IAccountingConstants.CR);
+		
+	}
+	
 	public boolean isNumberVisible() {
 		AccountingBook book = getSelectedBook();
 		if (book.isMergeable()) {

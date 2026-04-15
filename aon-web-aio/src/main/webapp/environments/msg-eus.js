@@ -188,15 +188,18 @@ export const ENTERPRISES = 'Enpresak';
 export const ENTRY = 'Sarrera';
 export const ENVIRONMENT = 'Ingurunea';
 export const EQUIVALENCE_SURCHARGE = 'Baliokidetasun Errekargua';
+export const ERRORS = 'Akatsak';
 export const EXEMPTION_CAUSE = 'Salbuespenaren Arrazoia';
 export const EXIT = 'Irteera';
+export const EXPAND_HIRIND = 'Kontratazioa Zabaldu';
+export const EXPEDITION_DATE = 'Expedizio Data';
 export const EXPENSE = 'Gastu';
 export const EXPENSES = 'Gastuak';
 export const EXPIRATIONS = 'Epemugak';
 export const EXPIRED = 'Iraungita';
 export const EXPIRED_SESSION = 'Saioa iraungi da';
-export const ERRORS = 'Akatsak';
-export const EXPAND_HIRIND = 'Kontratazioa Zabaldu';
+
+
 
 // ----- F
 
@@ -356,6 +359,7 @@ export const OPEN = 'Ireki';
 export const OPEN_MENU = 'Ireki Menua';
 export const OPEN_REQUESTS = 'Irekita Dauden Eskaerak';
 export const OPENED = 'Irekita';
+export const OPERATION_DATE = 'Operazio Data';
 export const OPTIONAL = "Aukerako";
 export const OPTIONS = 'Aukerak';
 export const OR_ACCESS = 'edo SARTU';
@@ -415,7 +419,8 @@ export const RECENTS = 'Berriak';
 export const RECENTLY_OPENED = "Berriki irekia";
 export const RECORD = 'Kontabilizatu';
 export const RECORD_INVOICE = 'Faktura Kontabilizatu';
-export const RECTIFIED = 'Zuzenketa';
+export const RECTIFIED = 'Zuzenduta';
+export const RECTIFIER = 'Zuzenketa';
 export const RECTIFY = 'Zuzendu';
 export const RECTIFY_INVOICE = 'Faktura Zuzendu';
 export const REFERENCE = 'Erreferentzia';

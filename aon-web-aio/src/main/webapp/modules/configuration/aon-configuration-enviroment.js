@@ -90,11 +90,11 @@ export class AonConfigurationEnviroment extends AonElement {
 		}
 
 		
-		if (localStorage.getItem("aon_domain_id") && this.isBeta()) {
+		if (localStorage.getItem("aon_domain_id")) {
 			let menuOptions = [];
 
 			menuOptions.push({
-				id: "options panel",
+				id: "optionsPanel",
 				icon: "dashboard",
 				name: "Panel Opciones",
 				fn: () => this.buildConfigurationMenu(),
@@ -102,8 +102,12 @@ export class AonConfigurationEnviroment extends AonElement {
 
 			aonConfiguration.addSidenavOptions(MSG.MENU.toUpperCase(), menuOptions);
 		}
-
-		this.buildConfigurationMenu();
+		
+		// Load optionsPanel by default
+		if (this.getDur().isDomainManagementAvailable()) {
+			let optionsPanel = this.getElement('aonConfigurationSidenavoptionsPanel');
+			optionsPanel && optionsPanel.click();
+		}
 	}
 
 	buildInvoiceConfiguration() {

@@ -121,9 +121,22 @@ export class AonConfigurationNew extends AonElement {
 		// Comapny
 
 		let companyOptions = [];
+		
+		if (this.getDur().isAdmin() && this.isBeta()) {
+			companyOptions.push({
+				id: "InformacionGeneralGWT",
+				name: MSG.GENERAL_INFORMATION + " (GWT)",
+				icon: MATERIAL_ICONS.BUSINESS,
+				fn: () => {
+					localStorage.setItem("registrySource", 'COMPANY');
+					GWT.iLoad(GWT.REGISTRY_ENTRY_MODULE, this.getApplication().CONTENT);
+				},
+			});
+		}
 
 		if (this.getDur().isAdmin() || (!this.getDur().isEmployee() && !this.isMobile())) {
 			companyOptions.push({
+				id: "InformacionGeneral",
 				name: MSG.GENERAL_INFORMATION,
 				icon: MATERIAL_ICONS.BUSINESS,
 				fn: () => this.buildGeneral(),
@@ -137,12 +150,6 @@ export class AonConfigurationNew extends AonElement {
 				fn: () => this.buildStore(),
 			});
 		}
-
-		companyOptions.push({
-			name: MSG.SCOPES,
-			icon: MATERIAL_ICONS.BUSINESS,
-			fn: () => GWT.iLoad(GWT.SCOPE_MODULE, this.getApplication().CONTENT),
-		});
 
 		if (this.company && this.company.registry && this.company.domain) {
 			getRelationShipCompany({
@@ -180,16 +187,12 @@ export class AonConfigurationNew extends AonElement {
 				fn: () => this.buildGroups(),
 			});
 
-			/*
-			if (this.company && this.company.domain && !this.company.domain.parentId) {
-				securityOptions.push({
-					name: MSG.COMPANY_MANAGEMENT,
-					icon: MATERIAL_ICONS.BUSINESS,
-					fn: () => this.buildCompanyList(),
-				});
-			}
-			*/
-			
+			securityOptions.push({
+				name: MSG.SCOPES,
+				icon: MATERIAL_ICONS.BUSINESS,
+				fn: () => GWT.iLoad(GWT.SCOPE_MODULE, this.getApplication().CONTENT),
+			});
+
 			if (this.getDur().isApiService()) {
 				securityOptions.push({
 					name: MSG.SERVICE_ACCOUNTS,
@@ -197,7 +200,7 @@ export class AonConfigurationNew extends AonElement {
 					fn: () => this.buildServiceAccount(),
 				});
 			}
-			
+
 		}
 
 		aonConfiguration.addSidenavOptions(MSG.SECURITY.toUpperCase(), securityOptions);
@@ -246,8 +249,15 @@ export class AonConfigurationNew extends AonElement {
 			}
 
 		}
-
-		this.buildGeneral();
+		
+		
+		if (this.getDur().isAdmin() && this.isBeta()) {
+			let genernalInfo = this.getElement('aonConfigurationNewSidenavInformacionGeneralGWT');
+			genernalInfo && genernalInfo.click();
+		} else{
+			let genernalInfo = this.getElement('aonConfigurationNewSidenavInformacionGeneral');
+			genernalInfo && genernalInfo.click();
+		}
 	}
 
 	buildPersonal() {

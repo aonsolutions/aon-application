@@ -188,7 +188,7 @@ export class AonPayrollBeta extends AonElement {
 		if(paramsOptions.length > 0)
 			this.getApplication().addSidenavOptions("Parámetros".toUpperCase(), paramsOptions);
 
-		if (localStorage.getItem("aon_domain_id") && this.isBeta()) {
+		if (localStorage.getItem("aon_domain_id")) {
 			let menuOptions = [];
 
 			menuOptions.push({
@@ -207,7 +207,6 @@ export class AonPayrollBeta extends AonElement {
 		if (this.getDur().isDomainManagementAvailable()) {
 			let resumenActividad = this.getElement('aonPayrollBetaSidenavresumenActividad');
 			resumenActividad && resumenActividad.click();
-			//GWT.iLoad(GWT.ACTIVITY_SUMMARY, this.getApplication().CONTENT);
 		}
 	}
 	
