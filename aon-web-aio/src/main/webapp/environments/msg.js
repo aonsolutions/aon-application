@@ -320,16 +320,8 @@ export const EXPIRATION_DATE = "Fecha expiración"; // TODO;
 export const EXPIRATIONS = MSG.EXPIRATIONS;
 export const EXPIRED = MSG.EXPIRED;
 export const EXPIRED_SESSION = MSG.EXPIRED_SESSION;
-export const EXTERNALLY_COMMUNICATED = "Comunicada Externamente"; // TODO
-export const ESTIMATED_TIME = "Tiempo estimado";
-export const ERROR = 'Error';
-export const ERRORS = MSG.ERRORS;
-export const ERR_EMPTY_VALUE = "Campos sin valor";
-export const ERR_LOW_CONFIDENCE = "Campos con poca confianza";
-export const EXAMPLE = "Example";
-export const EXEMPTION_CAUSE = MSG.EXEMPTION_CAUSE;
-export const EXERCISE = MSG.EXERCISE;
 export const EXPORTED = "Exportadas";
+export const EXTERNALLY_COMMUNICATED = "Comunicada Externamente"; // TODO
 
 // ----- F
 
