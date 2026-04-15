@@ -1,22 +1,23 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORK_DAYS;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.xml.ws.handler.MessageContext.Scope;
 
 import com.code.aon.common.AonException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
+import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -26,12 +27,15 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.ExpressionVariable;
-import com.esferalia.aon.salary.expression.IExpression;
-import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SQLContractPPECalculatorContext extends SQLContractSalaryCalculatorContext {
+	
+	private static final String RED_PPE_E = "RED_PPE_E";
+	private static final String PAID_PPE = "PPE_DEVENGADO";
+	
 	public SQLContractPPECalculatorContext(Connection connection, java.util.Date startDate, java.util.Date endDate,
 			java.util.Date issueDate, Criteria criteria) throws SQLException, ExpressionException {
 		super(connection, startDate, endDate, issueDate, criteria);
@@ -48,6 +52,7 @@ public class SQLContractPPECalculatorContext extends SQLContractSalaryCalculator
 	protected void initContractExpressionCtx(NextHook hook) throws SQLException, ExpressionException {
 		super.initContractExpressionCtx(hook);
 		overrideSalaryHours(getExpressionContext());
+		initDBPPEPayments(getExpressionContext());
 	}
 	
 	@Override
@@ -68,6 +73,7 @@ public class SQLContractPPECalculatorContext extends SQLContractSalaryCalculator
 	public Collection<IContractPayment> getContractPayments() throws AonException {
 		initMonthDays();
 		readDelayCause();
+		
 		return new FilterCollection<IContractPayment>(p -> ContextVariable.PPE.equals(p.getName()),
 				super.getContractPayments()) {
 			@Override
@@ -88,9 +94,19 @@ public class SQLContractPPECalculatorContext extends SQLContractSalaryCalculator
 					public String getExpression() {
 						return String.format("%s; %s", WORKED_DAYS.getName(), super.getExpression());
 					}
+					
+					@Override
+					public String getQuoteExpression() {
+						return String.format("(%s) - (isdef DIAS_TRABAJADOS ? IFNDEF(\"%s\",0.00) : 0.00) ", super.getQuoteExpression(), PAID_PPE);
+					}
 				};
 			}
 		};
+	}
+	
+	@Override
+	public Collection<IContractCost> getContractCosts() throws AonException {
+		return new FilterCollection<>(p -> AonStringUtils.notEquals(p.getName(), RED_PPE_E),super.getContractCosts());
 	}
 	
 	private void readDelayCause() {
@@ -155,6 +171,24 @@ public class SQLContractPPECalculatorContext extends SQLContractSalaryCalculator
 		if ( salaryHours == null || salaryHours == 0.00 )
 			throw new NullPointerException();
 		return salaryHours;
+	}
+	
+	private void initDBPPEPayments(ExpressionContext ctx) {
+		AON.getSalaryData(new AONContext(getConnection()), 
+				p -> p.getContractProperty().eq(this.getId())
+				//.and(p.getIsSalaryProperty().eq(Boolean.FALSE))
+				.and(p.getEndDateProperty().ge(getStartDate())
+				.and(p.getStartDateProperty().le(getEndDate()))))
+		.flatMap( salary -> salary.getContextData().getOrDefault(ContextVariable.BASE_PPE.getName(), Collections.emptyList()).stream() )
+		.forEach( data -> {
+			try {
+				ctx.addExpression(new ExpressionImpl().setName(PAID_PPE).setExpression(data.getExpression()).setScope(ExpressionScope.APPLICATION), data.getStartDate(), data.getEndDate());
+			} catch (ExpressionException e) {
+			}
+		});
+		;
+		
+		
 	}
 
 }
