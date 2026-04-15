@@ -1847,9 +1847,9 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			}
 		} catch (Exception e) {
 			if(AonStringUtils.equalsIgnoreCase(e.getMessage(), "java.io.IOException: keystore password was incorrect"))
-				throw new IllegalArgumentException("Contrase\u00F1a incorrecta");
+				throw new AonCoreException("Contrase\u00F1a incorrecta");
 			
-			throw new IllegalArgumentException(e.getMessage());
+			throw new AonCoreException(e.getMessage());
 		} 
 	}
 	
@@ -2007,7 +2007,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			return employeeSegSocial;
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new AonCoreException(e);
+			throw new AonCoreException(e.getMessage());
 		}
 	}
 	
@@ -2027,7 +2027,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			SistemaRED.deleteSecondaryUser(is, certificate.getPassword(), certificate.getType(), ipfType, ipf);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new AonCoreException(e);
+			throw new AonCoreException(e.getMessage());
 		}
 	}
 	
@@ -2049,7 +2049,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new AonCoreException(e);
+			throw new AonCoreException(e.getMessage());
 		}
 	}
 	

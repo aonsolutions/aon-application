@@ -128,7 +128,7 @@ export class AonConfigurationNew extends AonElement {
 				name: MSG.GENERAL_INFORMATION + " (GWT)",
 				icon: MATERIAL_ICONS.BUSINESS,
 				fn: () => {
-					localStorage.setItem("registrySource", 'COMPANY');
+					localStorage.setItem("registrySource", 'ENVIROMENT');
 					GWT.iLoad(GWT.REGISTRY_ENTRY_MODULE, this.getApplication().CONTENT);
 				},
 			});

@@ -39,7 +39,7 @@ public class InvalidCertificateException extends SegSocialException{
 					throw new InvalidCertificateException("El certificado ha expirado");
 			}
 		} catch (Exception e) {
-			throw new SegSocialException(e);
+			throw new SegSocialException(e.getMessage());
 		}
 	}
 }
