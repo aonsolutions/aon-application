@@ -276,6 +276,7 @@ public class AccountEntryInvoiceWriter implements Serializable {
 	
 	private Map<Account, Double> obtainBasesPerAccount(Invoice invoice, boolean save) throws ManagerBeanException {
 		Map<Account, Double> basesPerAccount = new HashMap<>();
+		double diffBase = invoice.getTaxableBase();
 		if (invoice.isInvestment()) {
 			if (!invoice.isSales()) {
 				fillPurchaseBasesPerAccountFromAmortization(invoice, basesPerAccount);	
@@ -283,10 +284,9 @@ public class AccountEntryInvoiceWriter implements Serializable {
 				fillSaleBasesPerAccountFromAmortization(invoice, basesPerAccount);
 			}
 		} else {
-			fillBasesPerAccountFromInvoiceDetail(invoice, basesPerAccount, save);
+			diffBase = fillBasesPerAccountFromInvoiceDetail(invoice, basesPerAccount, save);
 		}
 		if (basesPerAccount.size() > 1) {
-			double diffBase = invoice.getTaxableBase();
 			Iterator<Account> iter = basesPerAccount.keySet().iterator();
 			while (iter.hasNext()) {
 				Account account = iter.next();
@@ -302,13 +302,18 @@ public class AccountEntryInvoiceWriter implements Serializable {
 		return basesPerAccount;
 	}
 
-	private void fillBasesPerAccountFromInvoiceDetail(Invoice invoice, Map<Account, Double> basesPerAccount, boolean save) throws ManagerBeanException {
+	private double fillBasesPerAccountFromInvoiceDetail(Invoice invoice, Map<Account, Double> basesPerAccount, boolean save) throws ManagerBeanException {
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		List<ITransferObject> list = invoiceDetailBean.getList(criteria); 
+		List<ITransferObject> list = invoiceDetailBean.getList(criteria);
+		double retBase = 0.0;
+		boolean isTedi = false;
+		boolean hasPrepayment = false;
 		for (ITransferObject to : list) {
 			InvoiceDetail invoiceDetail = (InvoiceDetail) to;
+			isTedi = isTedi || invoiceDetail.getSource() == InvoiceSource.TEDI;
+			hasPrepayment = hasPrepayment || invoiceDetail.isPrepayment();
 			Account account = null;
 			if (invoiceDetail.getItem() != null) {
 				account = (invoice.isSales()) 
@@ -339,6 +344,7 @@ public class AccountEntryInvoiceWriter implements Serializable {
 					}
 				}
 			}
+			retBase = CommonUtil.round(retBase + invoiceDetail.getTaxableBase(), 4);
 			double base = invoiceDetail.getTaxableBase();
 			base += (basesPerAccount.containsKey(account)) ? basesPerAccount.get(account).doubleValue() : 0;
 			basesPerAccount.put(account, CommonUtil.round(base, 4));
@@ -346,6 +352,9 @@ public class AccountEntryInvoiceWriter implements Serializable {
 				insertInvoiceDetailAccount(invoiceDetail, account);
 			}
 		}
+		return (isTedi && hasPrepayment) 
+			?retBase
+			:invoice.getTaxableBase();
 	}
 	
 	private Account obtainAccountFromInvoiceDetailAccount(InvoiceDetail invoiceDetail) throws ManagerBeanException {
