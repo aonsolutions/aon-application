@@ -72,6 +72,10 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 	    }
 	}
 	
+	public void addWithoutCenterStyle(Widget widget) {
+	    super.add(widget);
+	}
+	
 	public AonToolbar getToolbar() {
 		return toolbar;
 	}
@@ -82,6 +86,10 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 	
 	public void addToolbarButton(Widget widget) {
 		getToolbar().add(widget);
+	}
+	
+	public void removeToolbar(Widget widget) {
+		remove(getToolbar());
 	}
 	
 	public void removeToolbarButton(Widget widget) {
