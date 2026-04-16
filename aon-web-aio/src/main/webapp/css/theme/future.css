@@ -2366,6 +2366,11 @@ aon-new-fixed-button .newFixedButton .plus {
   	background-color: white;
 }
 
+aon-home:has( #rootPanel > iframe ) aon-new-fixed-button .newFixedButton{
+	right: 13px;
+  	bottom: 15px;
+}
+
 .aonSwitch > span::before {
     content: "";
     float: right;
