@@ -38,7 +38,7 @@ public class AlterFsMod190Detail2026 implements Update {
 		ResultSet rs = null;
 		try {
 			stmt = connection.createStatement();
-			rs = stmt.executeQuery("select * from fs_model190_detail");
+			rs = stmt.executeQuery("select * from fs_model190_detail limit 1");
 			ResultSetMetaData rsmd = rs.getMetaData();
 			for (int i = 1; i <= rsmd.getColumnCount(); i++) {
 				String name = rsmd.getColumnName(i);
