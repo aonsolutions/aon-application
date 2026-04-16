@@ -7,10 +7,12 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.Timer;
 
 public class AonToolbar extends FlowPanel {
 
 	public static final int HEIGTH = 50;
+	public static final int DEFAULT_DELAY = 3000;
 	
 	private FlowPanel buttonContainer;
 	private FlowPanel messagePanel;
@@ -75,11 +77,22 @@ public class AonToolbar extends FlowPanel {
 	}
 	
 	public void showInfoMessage( String msg ) {
+		showInfoMessage(msg, 0);
+	}
+	public void showInfoMessage( String msg, int delayMillis ) {
 		hideMessages();
 		InlineLabel infoMsg = new InlineLabel( msg );
 		infoMsg.setStyleName(AON.CSS.aonToolbarMessage());
 		infoMsg.addStyleName(AON.CSS.aonToolbarInfoMessage());
 		messagePanel.add(infoMsg);
+		if (delayMillis > 0) {
+			new Timer() {
+			    @Override
+			    public void run() {
+			    	hideMessages();
+			    }
+			}.schedule(delayMillis);
+		}
 	}
 	
 	public void showErrorMessage( String msg ) {

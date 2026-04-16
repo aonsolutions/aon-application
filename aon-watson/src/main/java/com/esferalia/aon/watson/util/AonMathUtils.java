@@ -134,6 +134,9 @@ public class AonMathUtils {
 	public static boolean isLessThan(double value,double threshold) {
 		return round( value ) < threshold;
 	}
+	public static boolean isLessThanOrEqual(double value,double threshold) {
+		return round( value ) <= threshold;
+	}
 
 	/**
 	 * Devuelve verdadero si el valor es mayor a cero. 
@@ -184,6 +187,10 @@ public class AonMathUtils {
 		return round( value ) > threshold;
 	}
 
+	public static boolean isGreaterThanOrEqual(double value,double threshold) {
+		return round( value ) >= threshold;
+	}
+	
 	/**
 	 * Devuelve verdadero si el valor es diferente de cero. 
 	 * 

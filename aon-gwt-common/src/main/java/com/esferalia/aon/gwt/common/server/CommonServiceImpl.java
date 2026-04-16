@@ -78,6 +78,7 @@ import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
@@ -2068,4 +2069,9 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return AON.getCompanyFull(domainName, domain, user);
 	}
 
+	// *********************** [AMORTIZATION TYPE]
+	@Override
+	public List<AmortizationType> getAmortizationTypes(Occam occam, int domain) {
+		return ACCOUNTING.getAmortizationTypeList(occam, domain);
+	}
 }
