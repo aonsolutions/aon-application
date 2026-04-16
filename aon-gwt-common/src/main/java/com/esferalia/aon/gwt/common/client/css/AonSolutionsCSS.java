@@ -1009,6 +1009,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_flex_column")
 	String aonFlexColumn();
 	
+	@ClassName("aon_flex_column_2")
+	String aonFlexColumn2();
+	
 	@ClassName("aon_flex_wrap")
 	String aonFlexWrap();
 	
@@ -1662,6 +1665,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_check_circle")
 	String aonIconCheckCircle();
 	
+	@ClassName("aon_icon_cancel_circle")
+	String aonIconCancelCircle();
+
 	@ClassName("aon_icon_check_circle_green")
 	String aonIconCheckCircleGreen();
 	

@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.InvoiceFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.util.AonEnumUtils;
@@ -42,9 +43,11 @@ public class InvoiceApiDAO {
 		Integer page = INVOICE_PROPERTIES.getPage(filter);
 		if (page == null) page = 1;
 		Integer perPage = INVOICE_PROPERTIES.getPerPage(filter);
+
 		if (perPage == null) perPage = Integer.MAX_VALUE;
 		return ctx.getDslContext().select()
 			.from(INVOICE)
+			.leftOuterJoin(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.eq(INVOICE.ID))
 			.where(INVOICE_PROPERTIES.getConditions(filter))
 			.and(INVOICE.DOMAIN.eq(domainId))
 			.groupBy(INVOICE.ID)
@@ -53,7 +56,7 @@ public class InvoiceApiDAO {
 			.offset(perPage * (page - 1))
 			.fetch()
 			.stream()
-			.map(new InvoiceApiFiller() )
+			.map(new InvoiceFiller() )
 			.map(i -> i.addCommunicationInfo( InvoiceInfoDAO.getMap(ctx, icc, i).orElse(null) ))
 		;
 	}
@@ -115,61 +118,6 @@ public class InvoiceApiDAO {
 		.fetch().stream()
 		.map(r ->  r.getValue(INVOICE_FISCAL.EXP_DATE))
 		.findFirst().orElse(null);
-	}
-	
-	private static class InvoiceApiFiller extends Filler implements Function<Record,Invoice> {
-
-		@Override
-		public Invoice apply(Record r) {
-			return new Invoice()
-				.setId(getValue(r, INVOICE.ID))
-				.setDomain(r.getValue(INVOICE.DOMAIN))
-				.setType(AonEnumUtils.enumValue(InvoiceType.class,r.getValue(INVOICE.TYPE)))
-				.setSeries(r.getValue(INVOICE.SERIES))
-				.setNumber(r.getValue(INVOICE.NUMBER))
-				.setReferenceCode(r.getValue(INVOICE.REFERENCE_CODE))
-				.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
-				.setTaxDate(r.getValue(INVOICE.TAX_DATE))
-				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class, r.getValue(INVOICE.SECURITY_LEVEL)))
-			
-				.setRegistry(r.getValue(INVOICE.REGISTRY))
-				.setRegistryDocument(r.getValue(INVOICE.RDOCUMENT))
-				.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,r.getValue(INVOICE.RDOCUMENT_TYPE)))
-				.setRegistryDocumentCountry(Country.safeValueOf(r.getValue(INVOICE.RDOCUMENT_COUNTRY)))
-				.setRegistryName(r.getValue(INVOICE.RNAME))
-				
-				.setSigned(getBoolean(r, INVOICE.SIGNED))
-//				.setAddressProvinceCode(record.getValue(GEOZONE.CODE))
-//				.setAddressProvince(record.getValue(GEOZONE.NAME))
-//				.setAddressTown(record.getValue(RADDRESS.CITY))
-//				.setAddressZIP(record.getValue(RADDRESS.ZIP))
-				
-//				.setScope(new Scope().setId(record.getValue(SCOPE.ID)).setDescription(record.getValue(SCOPE.DESCRIPTION)))
-				.setActivity(new EnterpriseActivity().setId(r.getValue(INVOICE.ACTIVITY)))	
-				.setInvestAsset(r.getValue(INVOICE.INVEST_ASSET))
-				.setProject(r.getValue(INVOICE.PROJECT))
-				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class,r.getValue(INVOICE.RECTIFICATION_TYPE)))	
-				.setRectificationInvoice(r.getValue(INVOICE.RECTIFICATION_INVOICE))	
-				.setTransaction(AonEnumUtils.enumValue(InvoiceTransactionType.class, r.getValue(INVOICE.TRANSACTION)))
-				.setRecorded(r.getValue(INVOICE.STATUS) != null && r.getValue(INVOICE.STATUS) == 1 )	
-				.setSurcharge(r.getValue(INVOICE.SURCHARGE) == 1 )	
-				.setWithholding(r.getValue(INVOICE.WITHHOLDING) == 1 )	
-				.setWithholdingFarmer(r.getValue(INVOICE.WITHHOLDING_FARMER) == 1 )	
-				.setVatAccrualPayment(r.getValue(INVOICE.VAT_ACCRUAL_PAYMENT) == 1 )	
-				.setInvestment(r.getValue(INVOICE.INVESTMENT) == 1 )	
-				.setService(r.getValue(INVOICE.SERVICE) == 1 )	
-				.setAdvance(r.getValue(INVOICE.ADVANCE) == 1 )	
-				.setTaxableBase(r.getValue(INVOICE.TAXABLE_BASE))	
-				.setVatQuota(r.getValue(INVOICE.VAT_QUOTA))	
-				.setRetentionQuota(r.getValue(INVOICE.RETENTION_QUOTA))	
-				.setTotal(r.getValue(INVOICE.TOTAL))	
-				.setComments(r.getValue(INVOICE.COMMENTS))
-				.setCreationDate(r.getValue(INVOICE.CREATION_DATE))
-				.setCreationUser(r.getValue(INVOICE.CREATION_USER))
-				.setModificationDate(r.getValue(INVOICE.MODIFICATION_DATE))
-				.setModificationUser(r.getValue(INVOICE.MODIFICATION_USER))
-				;
-		}
 	}
 	
 }

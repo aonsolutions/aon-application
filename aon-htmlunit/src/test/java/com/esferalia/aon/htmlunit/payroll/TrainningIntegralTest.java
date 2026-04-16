@@ -485,6 +485,15 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("mei_ePercentLabel", "0,75 %");
 		uncheck("costsCheck-input");
 		
+		draft("FORMACIÓN APRENDIZAJE, ALTERNANCIA ( MES INCOMPLETO )");
+		calculate(Calendar.APRIL, 2026);
+		assertText("mei", "2,14");
+		assertText("meiPercentLabel", "0,15 %");
+		check("costsCheck-input");
+		assertText("mei_cost", "10,68");
+		assertText("mei_ePercentLabel", "0,75 %");
+		uncheck("costsCheck-input");
+		
 	}
 	// -------------------------------------------------------------------------
 

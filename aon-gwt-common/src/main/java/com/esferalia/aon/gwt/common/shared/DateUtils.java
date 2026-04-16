@@ -177,11 +177,9 @@ public class DateUtils {
 	}
 
 	public static int getDaysBetween(Date start, Date finish) {
-		Date a = copyDateOnly(start);
-		Date b = copyDateOnly(finish);
 		// Convert the dates to the same time
-		long aTime = a.getTime();
-		long bTime = b.getTime();
+		long aTime = Date.UTC(start.getYear(), start.getMonth(), start.getDate(), 0, 0, 0);
+		long bTime = Date.UTC(finish.getYear(), finish.getMonth(), finish.getDate(), 0, 0, 0);
 
 		return (int) ((bTime - aTime) / (24 * 60 * 60 * 1000));
 	}

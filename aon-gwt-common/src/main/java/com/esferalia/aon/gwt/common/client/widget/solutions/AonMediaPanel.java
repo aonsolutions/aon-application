@@ -82,18 +82,19 @@ public class AonMediaPanel extends HTMLPanel {
 	
 	public void show() {
 		// Message Panel
-		setStyleName(AON.CSS.aonFlexColumn());
+		setStyleName(AON.CSS.aonFlexColumn2());
 		getElement().getStyle().setProperty("padding", "1rem 0");
 		add(messagePanel);
 		
 		HTMLPanel container = new HTMLPanel(EMPTY_STRING);
-		container.setStyleName(AON.CSS.aonFlexColumn());
+		container.setStyleName(AON.CSS.aonFlexColumn2());
 		container.getElement().getStyle().setProperty("padding", "0 1rem");
 		container.getElement().getStyle().setProperty("min-width", "25rem");
 		
 		// First Row
 		HTMLPanel row = new HTMLPanel(EMPTY_STRING);
 		row.setStyleName(AON.CSS.aonItemFlex());
+		row.getElement().getStyle().setProperty("gap", "2rem");
 		
 		for(int i=0; i<MediaType.values().length; i++) type.addItem(MediaType.values()[i].getDescription(), MediaType.values()[i].name());
 		admin.getElement().getStyle().setProperty("max-width", "6rem");
@@ -105,6 +106,7 @@ public class AonMediaPanel extends HTMLPanel {
 		// Second Row
 		HTMLPanel row2 = new HTMLPanel(EMPTY_STRING);
 		row2.setStyleName(AON.CSS.aonItemFlex());
+		row2.getElement().getStyle().setProperty("gap", "2rem");
 		
 		commercial.getElement().getStyle().setProperty("max-width", "6rem");
 		
@@ -115,6 +117,7 @@ public class AonMediaPanel extends HTMLPanel {
 		// Third Row
 		HTMLPanel row3 = new HTMLPanel(EMPTY_STRING);
 		row3.setStyleName(AON.CSS.aonItemFlex());
+		row3.getElement().getStyle().setProperty("gap", "2rem");
 		
 		tecnical.getElement().getStyle().setProperty("max-width", "6rem");
 		
@@ -140,6 +143,7 @@ public class AonMediaPanel extends HTMLPanel {
 	private Widget createButtonsPanel() {
 		HTMLPanel buttonsPanel = new HTMLPanel(EMPTY_STRING);
 		buttonsPanel.setStyleName(AON.CSS.aonTextCenter());
+		buttonsPanel.getElement().getStyle().setProperty("margin-top", "1rem");
     	
     	Button okButton = new Button();
     	okButton.setStyleName(AON.CSS.aonOkButton());

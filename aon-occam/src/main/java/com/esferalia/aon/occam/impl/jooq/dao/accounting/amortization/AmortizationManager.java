@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,14 +41,10 @@ class AmortizationManager {
 	private int brokenPeriodLastDay;
 	private int brokenPeriodLastMonth;
 	
-	
-	public void deleteDetails(Amortization a) {
-		a.clearDetails();
-	}
-
-	public void generateDetails(AONContext ctx, Amortization a) {
+	void generateDetailsAndFill(AONContext ctx, Amortization a) {
 		ensureParams(ctx, a);
-		deletePendingDetails(ctx, a);
+		refreshDetails(ctx, a);
+		markPendingDetailsAsDeleted(ctx, a);
 		ensureFirstDay(ctx, a);
 		
 		Date amortizationFirstDay = a.getInitialDate();
@@ -115,7 +110,7 @@ class AmortizationManager {
 				detail.setFiscalAllocation(allocation);
 				detail.setPending(pending);
 				detail.setFiscalAccumulated(0.0);
-				AmortizationDAO.save(ctx, detail);	
+				a.addDetail(detail);
 			} else {
 				periodLast = detail.getToDate();
 				pending = AonMathUtils.round(pending - detail.getAllocation());
@@ -125,12 +120,23 @@ class AmortizationManager {
 		}
 
 	}
-
-	private void deletePendingDetails(AONContext ctx, Amortization a) {
-		ctx.getDslContext().delete(AMORTIZATION_DETAIL)
+	
+	private void refreshDetails(AONContext ctx, Amortization a) {
+		a.clearDetails();	
+		ctx.getDslContext()
+			.select()
+			.from(AMORTIZATION_DETAIL)
 			.where(AMORTIZATION_DETAIL.AMORTIZATION.eq(a.getId()))
-			  .and(AMORTIZATION_DETAIL.STATUS.eq(AmortizationDetailStatus.PENDING.value()))
-			.execute();
+			.fetch()
+			.stream()
+			.map(r -> new AmortizationDetailFiller().apply(r))
+			.forEach(d -> a.addDetail(d));
+	}
+	
+	private void markPendingDetailsAsDeleted(AONContext ctx, Amortization a) {
+		a.detailStream()
+			.filter(d -> d.isPending() )
+			.forEach(d -> d.setDeleted(true));
 	}
 
 	private boolean isPeriodComplete(Date first, Date last, AmortizationPeriod feePeriod) {
@@ -242,7 +248,7 @@ class AmortizationManager {
 			.findFirst()
 			.ifPresent(d -> {
 				d.setFromDate(a.getInitialDate());
-				AmortizationDAO.save( ctx, d);
+				a.addDetail(d);
 			})
 		;
 	}
@@ -372,7 +378,7 @@ class AmortizationManager {
 			});
 	}
 
-	public void sale(AONContext ctx, Amortization a) {
+	void sale(AONContext ctx, Amortization a) {
 		Date cancelDate = DateUtils.addDays(a.getDeadline(), -1);
 		ctx.getDslContext().select()
 		.from(AMORTIZATION_DETAIL)
@@ -391,9 +397,8 @@ class AmortizationManager {
 				double newAllocation = AonMathUtils.round( d.getAllocation() * newDays / days );
 				d.setToDate(cancelDate);
 				d.setAllocation(newAllocation);
-				AmortizationDAO.save(ctx, d);
 			} else {
-				AmortizationDAO.delete(ctx, d.getId());
+				 d.setDeleted(true);
 			}
 		});
 	}

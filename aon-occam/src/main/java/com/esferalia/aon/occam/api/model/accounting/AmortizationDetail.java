@@ -10,6 +10,7 @@ public class AmortizationDetail implements Serializable {
 	private static final long serialVersionUID = -2788114698849263524L;
 
 	private boolean selected;
+	private boolean deleted;
 	
 	private Integer id;
 	private Integer domain;
@@ -32,6 +33,17 @@ public class AmortizationDetail implements Serializable {
 	}
 	public AmortizationDetail setSelected(boolean selected) {
 		this.selected = selected;
+		return this;
+	}
+	
+	public boolean isDeleted() {
+		return deleted;
+	}
+	public boolean isNotDeleted() {
+		return !isDeleted();
+	}
+	public AmortizationDetail setDeleted(boolean deleted) {
+		this.deleted = deleted;
 		return this;
 	}
 	
@@ -106,6 +118,10 @@ public class AmortizationDetail implements Serializable {
 		this.status = status;
 		return this;
 	}
+	public boolean isPending() 		{ return getStatus() == AmortizationDetailStatus.PENDING;}
+	public boolean isBlocked() 		{ return getStatus() == AmortizationDetailStatus.BLOCKED;}
+	public boolean isScored() 		{ return getStatus() == AmortizationDetailStatus.SCORED;}
+	public boolean isNotScored() 	{ return !isScored();}
 
 	public double getFiscalAllocation() {
 		return fiscalAllocation;

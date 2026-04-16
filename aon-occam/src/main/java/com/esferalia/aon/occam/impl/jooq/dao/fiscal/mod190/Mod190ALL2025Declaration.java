@@ -59,7 +59,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class Mod190ALL2025Declaration extends Mod190Declaration {
 	
 	private static final String PREST_IT = "PREST_IT";
-
+	private static final String PPE = "PPE";
 
 	Mod190 insertDetailsFromSalary(AONContext ctx, final Mod190 mod190) {
 		Field<java.sql.Date> dateField =  mod190.mustUseChargeDate() ? SALARY.CHARGE_DATE : SALARY.ISSUE_DATE;
@@ -84,6 +84,7 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 				,SALARY_PAYMENT.PAYMENT_CONCEPT
 				,SALARY_PAYMENT.AMOUNT
 				,SALARY_PAYMENT.IRPF
+				,SALARY_PAYMENT.QUOTE
 				
 				,CONTRACT.ID
 				,CONTRACT.SS_REGIME
@@ -281,30 +282,37 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 					}
 					
 					private void visitAKey() {
-						double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
-						double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
-						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
-						double irpfQuota = ( AonMathUtils.isZero( irpfBase) || AonMathUtils.isZero( totalIrpfBase) )
-								? 0.0
-								: (irpfBase * totalIrpf / totalIrpfBase);
-						
-						Mod190Detail detail = getDetail(document,person,Mod1902025Key.A,null,accrualYear);
-						Integer salary = rec.getValue(SALARY.ID);
-						if (!salaries.contains(salary)) {
-							salaries.add(salary);
-							double ss = rec.getValue(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
-							detail.setDeducibleExpense(AonMathUtils.round(detail.getDeducibleExpense() + ss ));
-						}
-	
-						irpfBase = fixRoundBaseProblem();
-						
-						String prest = rec.getValue( SALARY_PAYMENT.PAYMENT_CONCEPT);
-						if (PREST_IT.equals(prest)) {
-							detail.setPerceptionIL(AonMathUtils.round(detail.getPerceptionIL() + irpfBase ));
-							detail.setRetentionIL(AonMathUtils.round(detail.getRetentionIL() + irpfQuota ));
+						String paymentConcept = rec.getValue(SALARY_PAYMENT.PAYMENT_CONCEPT);
+						if (PPE.equals(paymentConcept) && mod190.getYear() >= 2026) {
+							Mod190Detail detail = getDetail(document,person,Mod1902025Key.A,null,accrualYear);
+							double quote = AonNumberUtils.todouble(rec.getValue(SALARY_PAYMENT.QUOTE));
+							detail.setForecastPlanContributions(AonMathUtils.round(detail.getForecastPlanContributions() + quote));
 						} else {
-							detail.setPerception(AonMathUtils.round(detail.getPerception() + irpfBase ));
-							detail.setRetention(AonMathUtils.round(detail.getRetention() + irpfQuota ));
+							double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
+							double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
+							double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
+							double irpfQuota = ( AonMathUtils.isZero( irpfBase) || AonMathUtils.isZero( totalIrpfBase) )
+									? 0.0
+									: (irpfBase * totalIrpf / totalIrpfBase);
+							
+							Mod190Detail detail = getDetail(document,person,Mod1902025Key.A,null,accrualYear);
+							Integer salary = rec.getValue(SALARY.ID);
+							if (!salaries.contains(salary)) {
+								salaries.add(salary);
+								double ss = rec.getValue(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
+								detail.setDeducibleExpense(AonMathUtils.round(detail.getDeducibleExpense() + ss ));
+							}
+		
+							irpfBase = fixRoundBaseProblem();
+							
+//							String prest = rec.getValue(SALARY_PAYMENT.PAYMENT_CONCEPT);
+							if (PREST_IT.equals(paymentConcept)) {
+								detail.setPerceptionIL(AonMathUtils.round(detail.getPerceptionIL() + irpfBase ));
+								detail.setRetentionIL(AonMathUtils.round(detail.getRetentionIL() + irpfQuota ));
+							} else {
+								detail.setPerception(AonMathUtils.round(detail.getPerception() + irpfBase ));
+								detail.setRetention(AonMathUtils.round(detail.getRetention() + irpfQuota ));
+							}
 						}
 					}
 					

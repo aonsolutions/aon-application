@@ -1027,6 +1027,22 @@ public class Model190AEAT2025DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab6.setWidget(7, 8, disabilityAscendant65Ratio);
 		tab6.setWidget(7, 9, new Label());
+		
+		Model190SmallerLabel forecastPlanContributionsLabel = new Model190SmallerLabel("");
+		forecastPlanContributionsLabel.setTitle("Contribuciones empresariales a planes de pensiones, planes de previsi\u00F3n social "
+	    		+ "empresarial y mutualidades de previsi\u00F3n social, as\u00ED como aportaciones a estos sistemas de previsi\u00F3n social que deriven "
+	    		+ "de una decisi\u00F3n del trabajador, que reduzcan la base imponible del IRPF (excepto a seguros colectivos de dependencia)");
+		forecastPlanContributionsLabel.setText(AonStringUtils.abbreviate(forecastPlanContributionsLabel.getTitle(), 34));
+		forecastPlanContributionsLabel.addStyleName(AON.CSS.aonBold());
+		tab6.setWidget(8, 0, forecastPlanContributionsLabel);
+		
+		AonDoubleBox forecastPlanContributions = new AonDoubleBox();
+		forecastPlanContributions.setValue(detail.getForecastPlanContributions());
+		forecastPlanContributions.addValueChangeHandler(event -> {
+			detail.setForecastPlanContributions(forecastPlanContributions.getValue());
+			callback.onValueChanged(detail);			
+		});
+		tab6.setWidget(8, 1, forecastPlanContributions);
 
 		panel.add(additionalDataPanel);
 		enableOrDisableAdditionalDataPanel(key, subkey, additionalDataPanel);
