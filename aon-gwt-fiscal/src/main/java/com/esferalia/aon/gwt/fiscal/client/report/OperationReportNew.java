@@ -13,7 +13,6 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -27,9 +26,11 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -56,6 +57,7 @@ public class OperationReportNew implements EntryPoint {
 
 	private OperationReportModuleOptionsNew options;
 	
+	private DockLayoutPanel dockLayoutPanel;
 	private TabLayoutPanel tabLayout;
 	private SimpleLayoutPanel tab0Content;
 	private SimpleLayoutPanel tab1Content;
@@ -86,6 +88,11 @@ public class OperationReportNew implements EntryPoint {
 	
 	public void onModuleLoad( OperationReportModuleOptionsNew opts ) {
 		AON.ensureInjected();
+		
+		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
+		dockLayoutPanel.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
+		opts.getParentWidget().add(dockLayoutPanel);
+		
 		COMMON_SERVICE.getAonConfiguration(opts.getOccam(),new AsyncCallback<AonConfiguration>() {
 			@Override
 			public void onSuccess(AonConfiguration result) {
@@ -103,9 +110,10 @@ public class OperationReportNew implements EntryPoint {
 	
 	private void loadModule( OperationReportModuleOptionsNew opts ) {
 		this.options = opts;
-		AonLayoutPanel aonLayoutPanel = new AonLayoutPanel(Unit.PX);
-		aonLayoutPanel.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
-		aonLayoutPanel.addNorth(getFilterPanel(), 70);
+//		AonLayoutPanel aonLayoutPanel = new AonLayoutPanel(Unit.PX);
+//		aonLayoutPanel.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
+//		aonLayoutPanel.addNorth(getFilterPanel(), 70);
+		dockLayoutPanel.addNorth(getFilterPanel(), 110);
 		SimpleLayoutPanel content = new SimpleLayoutPanel();
 		content.setStyleName(AON.CSS.aonSelector());
 		tab0Content = new SimpleLayoutPanel();
@@ -122,13 +130,18 @@ public class OperationReportNew implements EntryPoint {
 			onSearch();
 		});
 		content.setWidget(tabLayout);
-		aonLayoutPanel.add(content);
+//		aonLayoutPanel.add(content);
+//		initialize();
+//		options.getParentWidget().add(aonLayoutPanel);
+		dockLayoutPanel.add(content);
 		initialize();
-		options.getParentWidget().add(aonLayoutPanel);
+//		options.getParentWidget().add(dockLayoutPanel);
+		
 	}
 	
 	private Widget getToolbarPanel() {
 		AonToolbar toolbarPanel  = new AonToolbar("LIBROS REGISTRO AEAT");
+		toolbarPanel.getElement().getStyle().setDisplay(Display.BLOCK);
 		
 		// Botón limpiar
 		final AonToolbarButton clean = new AonToolbarButton(AON.MSG.clean(),AON.CSS.aonIconClear());

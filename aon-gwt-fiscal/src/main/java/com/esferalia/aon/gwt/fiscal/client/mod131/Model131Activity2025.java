@@ -910,6 +910,12 @@ public class Model131Activity2025 extends DockLayoutPanel implements HasValueCha
 			double v3 = AonMathUtils.floor((double) callback.getActivity().getOwnerHours() / yh);
 			double v4 = AonMathUtils.floor((double) callback.getActivity().getSpouseHours() / yh);
 			double v5 = AonMathUtils.floor((double) callback.getActivity().getChildMen18Hours() / yh);
+			
+			// Contribuyente discapacitado en grado igual o superior al 33 por 100 se computa al 75 por 100
+			if (callback.getActivity().isDis()) {
+				v3 = AonMathUtils.floor((double) callback.getActivity().getOwnerHours() / yh * 0.75);
+			}
+			
 			// Cuando el cónyuge o los hijos menores tengan la condición de no asalariados se computarán
 			// al 50 por 100, siempre que el titular de la actividad se compute por entero y no haya más de una persona asalariada
 			int staffIndex = staffModuleIndex(callback);
