@@ -6,14 +6,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public enum AonError implements Serializable{
-	// Á --> \u00C1 á --> \u00E1
-	// É --> \u00C9 é --> \u00E9
-	// Í --> \u00CD í --> \u00ED
-	// Ó --> \u00D3 ó --> \u00F3
-	// Ú --> \u00DA ú --> \u00FA
-	// Ñ --> \u00D1 ñ --> \u00F1
-	// ª --> \u00AA º --> \u00BA
-	// ¿ --> \u00BF
+	// Ã --> \u00C1 Ã¡ --> \u00E1
+	// Ã‰ --> \u00C9 Ã© --> \u00E9
+	// Ã --> \u00CD Ã­ --> \u00ED
+	// Ã“ --> \u00D3 Ã³ --> \u00F3
+	// Ãš --> \u00DA Ãº --> \u00FA
+	// Ã‘ --> \u00D1 Ã± --> \u00F1
+	// Âª --> \u00AA Âº --> \u00BA
+	// Â¿ --> \u00BF
 	
 	
 	// -----------------------------------------------------------
@@ -38,6 +38,7 @@ public enum AonError implements Serializable{
 	,EMPTY_DATE_FROM("No se ha indicado una fecha 'desde'.")
 	,EMPTY_DATE_TO("No se ha indicado una fecha 'hasta'.")
 	,EMPTY_DOMAIN("El dominio es un dato obligatorio, no puede estar vac\u00EDo")
+	,EMPTY_DESCRIPTION("La descripci\u00F3n es un dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_DATE("La fecha es un dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_EXP_ACCOUNT("La cuenta de explotaci\u00F3n es dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_CONCEPT("El concepto es un dato dato obligatorio, no puede estar vac\u00EDo")
@@ -181,9 +182,13 @@ public enum AonError implements Serializable{
 	
 	
 	// --------------------------------------------- AMORTIZATION
+	,AMORTIZATION_EMPTY_PERCENTAGE("No se ha indicado un coeficiente v\u00E1lido")
 	,AMORTIZATION_EMPTY_FIXED_ASSET_ACCOUNT("No se ha indicado tipo de amortizaci\u00F3n ni cuenta de inmovilizado")
 	,AMORTIZATION_EMPTY_ACCUMULATED_ACCOUNT("No se ha indicado tipo de amortizaci\u00F3n ni cuenta de acumulado")
 	,AMORTIZATION_EMPTY_ALLOCATION_ACCOUNT("No se ha indicado tipo de amortizaci\u00F3n ni cuenta de dotaci\u00F3n")
+	,AMORTIZATION_DELETE_SCORED_DETAILS("Existen detalles de amortizaci\u00F3n contabilizados, no se puede borrar la ficha de amortizaci\u00F3n.")
+	,AMORTIZATION_DELETE_LINKED_INVOICES("Existen facturas vinculadas a esta ficha de amortizaci\u00F3n, no se puede borrar.")
+	,AMORTIZATION_DETAIL_NOT_FOUND("Detalle de amortizaci\u00F3n no encontrado.")
 	
 	// --------------------------------------------- AMORTIZATION TYPE
 	,AMORTIZATION_TYPE_NULL("El tipo de amortizaci\u00F3n es nulo.")
@@ -219,9 +224,9 @@ public enum AonError implements Serializable{
 	,INVOICE_EMPTY_REFERENCE_CODE("No se ha indicado un n\u00FAmero de factura.")
 	,INVOICE_EMPTY_TRANSACTION("No se ha indicado un tipo de transacci\u00F3n de factura (Nacional, Intracom., Extracom, ...")
 	,INVOICE_NOT_FOUND("Factura no encontrada.")
-	,FEE_NOT_FOUND_FOR_INVOICE_DETAIL("No se ha encontrado la cuota vinculada a la línea de factura. (ID cuota: {0})")
+	,FEE_NOT_FOUND_FOR_INVOICE_DETAIL("No se ha encontrado la cuota vinculada a la lï¿½nea de factura. (ID cuota: {0})")
 	,INVOICE_RECTIFIED_NOT_FOUND("Factura rectificada no encontrada.")
-	,INVOICE_RECTIFIED_ALREADY_RECTIFIED("La factura a rectificar ya ha sido rectificada por la factura {0} del día {1,date,dd/MM/yyyy}")
+	,INVOICE_RECTIFIED_ALREADY_RECTIFIED("La factura a rectificar ya ha sido rectificada por la factura {0} del dï¿½a {1,date,dd/MM/yyyy}")
 	,INVOICE_INVALID_RECTIFICATION_DATA("Los datos necesarios para rectificar la factura, no son correctos.")
 	,INVOICE_INVALID_RECTIFICATION_DATE("La fecha de la factura rectificativa es anterior a la de la rectificada.")
 	,INVOICE_INVALID_RECTIFICATION_TYPE("No se permite rectificar una factura con el tipo {0}.")

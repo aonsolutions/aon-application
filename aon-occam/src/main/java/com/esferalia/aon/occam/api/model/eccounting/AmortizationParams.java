@@ -32,7 +32,7 @@ public class AmortizationParams implements Serializable {
 	private SecurityLevel securityLevel;
 
 	private int offset;
-	private int limit;
+	private int limit = 50;
 
 	public Integer getFromId() {
 		return fromId;

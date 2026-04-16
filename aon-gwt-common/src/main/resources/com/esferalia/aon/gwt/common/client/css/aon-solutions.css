@@ -526,6 +526,8 @@
 .aon_icon_accounting_unrecord { background-image: iconAccountingUnrecord;}
 @url iconCheckCircle aonIconCheckCircle;
 .aon_icon_check_circle { background-image: iconCheckCircle;}
+@url iconCancelCircle aonIconCancelCircle;
+.aon_icon_cancel_circle { background-image: iconCancelCircle;}
 @url iconCheckCircleGreen aonIconCheckCircleGreen;
 .aon_icon_check_circle_green { background-image: iconCheckCircleGreen;}
 @url iconErrorExclamation aonIconErrorExclamation;
