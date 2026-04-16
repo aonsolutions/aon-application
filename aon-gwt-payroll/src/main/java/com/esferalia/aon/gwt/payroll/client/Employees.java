@@ -157,8 +157,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		void onWorkplaceContextMenu(Workplace workplace, ContextMenuEvent event);
 
 		void onEnterpriseContextMenu(Enterprise enterprise, ContextMenuEvent event);
-
-		void onEmployeeCalendarSelected(EmployeeCalendarDraftObjectData calendar);
 		
 		void onEmployeeNewCalendarSelected(EmployeeCalendarDraftObject calendar);
 		
@@ -595,8 +593,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			onCategoryDraftSelected((CategoryDraftObject) userObject);
 		} else if (userObject instanceof AgreementDraftObject) {
 			onAgreementDraftSelected((AgreementDraftObject) userObject);
-		} else if (userObject instanceof EmployeeCalendarDraftObjectData) {
-			onEmployeeCalendarDraftSelected((EmployeeCalendarDraftObjectData) userObject);
 		} else if (userObject instanceof EmployeeCalendarDraftObject) {
 			onEmployeeNewCalendarDraftSelected((EmployeeCalendarDraftObject) userObject);
 		} else if (userObject instanceof ContractBonusUI) {
@@ -1739,12 +1735,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private void onAgreementDraftSelected(AgreementDraftObject agreementDraftObject) {
 		for (Listener listener : listeners) {
 			listener.onAgreementDraftSelected(agreementDraftObject);
-		}
-	}
-
-	private void onEmployeeCalendarDraftSelected(EmployeeCalendarDraftObjectData employeeEventsDraftObject) {
-		for (Listener listener : listeners) {
-			listener.onEmployeeCalendarSelected(employeeEventsDraftObject);
 		}
 	}
 	

@@ -4,18 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
 
-public class AonAgreementsToolbar extends Composite {
+public class AonAgreementsToolbar {
 
 	public interface Listener {
 		
@@ -29,27 +21,6 @@ public class AonAgreementsToolbar extends Composite {
 		
 		void onSettingsButtonClick(ClickEvent event);
 	}
-	
-	private static AonOptionsToolbarUiBinder uiBinder = GWT.create(AonOptionsToolbarUiBinder.class);
-
-	interface AonOptionsToolbarUiBinder extends	UiBinder<Widget, AonAgreementsToolbar> {}
-	
-	
-	
-	@UiField
-	MyStyle style;
-
-	interface MyStyle extends CssResource {
-		String title();
-		String cmdBtn();
-		String redColor();
-	}
-	
-	@UiField
-	HTMLPanel headerSection;
-	
-	@UiField
-	HTMLPanel toolsSection;
 
 	private List<Listener> listeners;
 	
@@ -61,8 +32,10 @@ public class AonAgreementsToolbar extends Composite {
 	
 	private boolean agreementTreeShowed = true;
 	
-	public AonAgreementsToolbar() {
-		initWidget(uiBinder.createAndBindUi(this));
+	private AonCustomDockLayout parentDockLayout;
+	
+	public AonAgreementsToolbar(AonCustomDockLayout aonCustomDockLayout) {
+		this.parentDockLayout = aonCustomDockLayout;
 		createToolbar();
 		this.listeners = new ArrayList<Listener>();
 	}
@@ -108,12 +81,7 @@ public class AonAgreementsToolbar extends Composite {
 				
 			}
 		});
-		
-		headerSection.add(showMenuButton);
-		
-		Label title = new Label("Convenios");
-		title.addStyleName(style.title());
-		headerSection.add(title);
+		parentDockLayout.addToolbarButton(showMenuButton);
 		
 		importButton = new AonToolbarButton("Importar Convenio", AON.CSS.aonIconCloudImport() );
 		importButton.addClickHandler(new ClickHandler() {
@@ -123,7 +91,7 @@ public class AonAgreementsToolbar extends Composite {
 					listener.onImportButtonClick(event);
 			}
 		});
-		toolsSection.add(importButton);
+		parentDockLayout.addToolbarButton(importButton);
 		importButton.setVisible(false);
 		
 		settingsButton = new AonToolbarButton("Utilidades", AON.CSS.aonIconSettings() );
@@ -134,7 +102,7 @@ public class AonAgreementsToolbar extends Composite {
 					listener.onSettingsButtonClick(event);
 			}
 		});
-		toolsSection.add(settingsButton);
+		parentDockLayout.addToolbarButton(settingsButton);
 		
 		trashListButton = new AonButtonBadge("Papelera Convenios", AON.CSS.aonIconTrashList(), false);
 		trashListButton.addClickHandler(new ClickHandler() {
@@ -144,7 +112,7 @@ public class AonAgreementsToolbar extends Composite {
 					listener.onTrashListButtonClick(event);
 			}
 		});
-		toolsSection.add(trashListButton);
+		parentDockLayout.addToolbarButton(trashListButton);
 
 		importButton.ensureDebugId("importButton");
 		trashListButton.ensureDebugId("trashListButton");

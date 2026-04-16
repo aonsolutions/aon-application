@@ -221,9 +221,11 @@ input, select, textarea,
   background-color: #f1f5f9 !important;
 }
 
+/*
 .dataGridWidget {
 	margin: 1rem ;
 }
+*/
 
 .dataGridHoveredRow{
 	background:initial ;
@@ -735,16 +737,15 @@ div.aon_flex_block.aon_scroll_area {
 	position: initial !important;	
 }
 
-#rootPanel > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(3),
 #rootPanel .aon-center-panel {
 	margin: 1rem;
 	border-radius: .375rem;
 	background-color: #fff;
-	inset: 65px 0px 0px !important;
+	top: 65px !important;
 }
-	
-#rootPanel > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(3) > .aon_toolbar {
-	margin: 0;
+
+#rootPanel .aon-left-panel {
+	left: 350px !important;
 }
 
 .gwt-SplitLayoutPanel-VDragger {
