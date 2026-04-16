@@ -121,6 +121,13 @@ public class AonDisplayGrid extends FlowPanel {
 			addCell(style).add(widget);
 			return this;
 		}
+
+		public AonDisplayGridRow addEmptyCell() {
+			return addCell( new Label() );
+		}
+		public AonDisplayGridRow addEmptyCellIf( boolean condition) {
+			return addCellIf( condition, new Label() );
+		}
 	}
 	
 	public static class AonDisplayGridCell extends FlowPanel {

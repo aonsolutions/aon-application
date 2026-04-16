@@ -223,6 +223,11 @@ public class MainEntryPoint implements EntryPoint {
 				com.esferalia.aon.gwt.fiscal.client.report.OperationReportNew.run();
 			}
 		},
+		AmortizationModule {
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.accounting.amortization.AmortizationModule.run();
+			}
+		},
 		IRPFReport {
 			void run() {
 				com.esferalia.aon.gwt.fiscal.client.invoice.irpf.IRPFReport.run();

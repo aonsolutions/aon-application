@@ -1016,6 +1016,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconCheckCircle();
 	
+	@Source("icons/aon-icon-cancel-circle.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconCancelCircle();
+
 	@Source("icons/aon-icon-check-circle-green.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconCheckCircleGreen();

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,6 +38,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
@@ -693,9 +695,8 @@ public class AccountingImpl implements IAccounting {
 	// **************************************** [AMORTIZATION]
 	
 	@Override
-	public LinkedList<Amortization> getAmortizations(AONContext ctx, Integer domain) {
-		return AmortizationDAO.stream(ctx, domain)
-			.collect(Collectors.toCollection(LinkedList::new));
+	public Optional<Amortization> getAmortization(AONContext ctx, Integer domain, Integer id) {
+		return AmortizationDAO.get(ctx, domain, id);
 	}
 	@Override
 	public LinkedList<Amortization> getAmortizations(AONContext ctx, AmortizationParams params) {
@@ -707,4 +708,35 @@ public class AccountingImpl implements IAccounting {
 		return ctx.getDslContext().transactionResult(
 			configuration -> AmortizationDAO.save(ctx, am) );	
 	}
+	@Override
+	public void deleteAmortization(AONContext ctx, Amortization am) throws AonCoreException {
+		ctx.getDslContext().transaction(
+			configuration -> AmortizationDAO.delete(ctx, am) );	
+	}
+	@Override
+	public Amortization saveFiscalAllocation(AONContext ctx, AmortizationDetail detail) throws AonCoreException {
+		return ctx.getDslContext().transactionResult(
+			configuration -> AmortizationDAO.saveFiscalAllocation(ctx, detail) );	
+	}
+	@Override
+	public AmortizationDetail recordAmortizationAllocation(AONContext ctx, Amortization amortization, AmortizationDetail detail) throws AonCoreException {
+		return ctx.getDslContext().transactionResult(
+			configuration -> AmortizationDAO.recordAllocation(ctx, amortization, detail) );	
+	}
+	@Override
+	public AmortizationDetail unrecordAmortizationAllocation(AONContext ctx, AmortizationDetail detail) throws AonCoreException {
+		return ctx.getDslContext().transactionResult(
+			configuration -> AmortizationDAO.unrecordAllocation(ctx, detail) );	
+	}
+	@Override
+	public AmortizationDetail blockAmortizationDetail(AONContext ctx, AmortizationDetail detail) throws AonCoreException {
+		return ctx.getDslContext().transactionResult(
+			configuration -> AmortizationDAO.blockDetail(ctx, detail) );	
+	}
+	@Override
+	public AmortizationDetail unblockAmortizationDetail(AONContext ctx, AmortizationDetail detail) throws AonCoreException {
+		return ctx.getDslContext().transactionResult(
+			configuration -> AmortizationDAO.unblockDetail(ctx, detail) );	
+	}
+	
 }
