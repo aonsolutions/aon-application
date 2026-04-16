@@ -1362,3 +1362,14 @@ div.aon_custom_text_box_input:has( input){
 	max-width: max-content !important;
 }
 
+.aon_custom_dialog .popupContent > div[style*='width: 950px'] {
+	width: 1075px !important;
+}
+
+.aon_custom_dialog .popupContent > div[style*='width: 950px'] select[style*='width: 40px'] {
+	width: 50px !important;
+}
+
+.aon_custom_dialog .popupContent > div[style*='width: 950px'] select[style*='width: 70px'] {
+	width: 110px !important;
+}
