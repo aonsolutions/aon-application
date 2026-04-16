@@ -5,7 +5,9 @@ import {
 	signInvoice, getApiConfiguration, getAeatCertificates, downloadFacturae, getCustomerEmails,
 	getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, getRegistrySuggestedAccount,
 	getPaymethod, getRegistry,
-	getAmortizationTypes
+	getAmortizationTypes,
+	sendInvoiceRejectMail,
+	getUserEmail
 } from '../../services/service.js';
 import { Invoice, getDocumentNumber } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -2912,23 +2914,44 @@ export class AonInvoice extends AonElement {
 	rejectInvoice() {
 
 		let div = this.createDiv();
-
-		// let email = new AonEmail();
-		// email.id = 'rejectInvoiceEmail';
-		// email.title = MSG.EMAIL;
-		// div.appendChild(email);
-
-		let textArea = this.createElement('textarea');
-		textArea.id = 'commentTextArea';
-		textArea.maxLength = 256;
-		textArea.className = 'aonTextarea';
-		div.appendChild(textArea);
-
+		
 		let d = this.getApplication().getDialog();
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.REJECT);
 		d.setContent(div);
+		
+		let notify = new AonSwitch();
+		notify.id = 'rejectNotifySwitch';
+		notify.title = "Notificar por email";
+		div.appendChild(notify);
+
+		let email = new AonEmail();
+		email.id = 'rejectInvoiceEmail';
+		email.title = MSG.EMAIL;
+		email.style.display = 'none';
+		div.appendChild(email);
+		getUserEmail({userLogin: this.invoice.creation_user}).then(emailData => {
+			email.setValue(emailData.email);
+		}).catch(e => {
+			console.error("Error al obtener el email del usuario: " + e.message);
+		});
+
+		notify.addEventListener(EVENT.CHANGE, () => {
+			if(notify.isChecked()) {
+				email.style.display = 'block';
+			} else {
+				email.style.display = 'none';
+			}
+		});
+
+		let textArea = this.createElement('textarea');
+		textArea.id = 'commentTextArea';
+		textArea.maxLength = 256;
+		textArea.className = 'aonTextarea';
+		textArea.style.marginTop = '10px';
+		div.appendChild(textArea);
+
 		d.addAcceptAction(() => {
 			let dt = new Date()
 			let m = dt.getMonth() + 1;
@@ -2951,6 +2974,13 @@ export class AonInvoice extends AonElement {
 			this.build();
 			this.save();
 			// ENVIAR POR EMAIL SI SE HA INTRODUCIDO EMAIL
+			if (notify.isChecked()) {
+				sendInvoiceRejectMail({to: email.value}).then(() => {
+					this.showMessage("Email enviado correctamente");
+				}).catch(e => {
+					this.showError("Error al enviar el email: " + e.message);
+				});
+			}
 			this.updateCounter(getRejectFromOption(this.invoice), OPTION.RAWDOC_REJECT, 1);
 		});
 

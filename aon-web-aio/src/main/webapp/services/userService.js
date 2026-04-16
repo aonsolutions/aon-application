@@ -17,6 +17,8 @@ export const getUser = (data, sessionData) => get(`${API_URL}/user/info`, data, 
 
 export const getUserNotice = (data, sessionData) => get(`${API_URL}/user/notice`, data, sessionData);
 
+export const getUserEmail = (data, sessionData) => get(`${API_URL}/user/email`, data, sessionData);
+
 export const deleteUser = (data, sessionData) => remove(`${API_URL}/user`, data, sessionData);
 
 export const addUserScopes = (data, sessionData) => put(`${API_URL}/user/scope`, data, sessionData);

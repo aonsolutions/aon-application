@@ -835,10 +835,11 @@ public final class IJsonNames {
 	public static final String WEB = "web";
 	public static final String WITHHOLDING = "withholding";
 	public static final String WITHHOLDING_ACCOUNT = "withholdingAccount";
+	public static final String WITHHOLDING_BASE = "withholding_base"; // TODO : unify with "withholdingBase"
 	public static final String WITHHOLDING_FARMER = "withholdingFarmer";
-	public static final String WITHHOLDING_PERCENTAGE = "withholding_percentage";
-	public static final String WITHHOLDING_QUOTA = "withholding_quota";
-	public static final String WITHHOLDING_TYPE = "withholding_type";
+	public static final String WITHHOLDING_PERCENTAGE = "withholding_percentage"; // TODO : unify with "withholdingPercentage"
+	public static final String WITHHOLDING_QUOTA = "withholding_quota"; // TODO : unify with "withholdingQuota"
+	public static final String WITHHOLDING_TYPE = "withholding_type"; // TODO : unify with "withholdingType"
 	public static final String WORKFLOW = "workflow";
 	public static final String WORKGROUP = "workgroup";
 	public static final String WORKGROUPS = "workgroups";
