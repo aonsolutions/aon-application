@@ -744,6 +744,10 @@ div.aon_flex_block.aon_scroll_area {
 	top: 65px !important;
 }
 
+#rootPanel .aon-left-panel {
+	left: 350px !important;
+}
+
 .gwt-SplitLayoutPanel-VDragger {
 	cursor: row-resize;
 	background-color: #f1f5f9 !important;

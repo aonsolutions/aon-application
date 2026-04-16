@@ -4,17 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
 
-public class AonTrashAgreementsToolbar extends Composite {
+public class AonTrashAgreementsToolbar {
 
 	public interface Listener {
 		
@@ -25,29 +17,14 @@ public class AonTrashAgreementsToolbar extends Composite {
 		void onBackButtonClick(ClickEvent event);
 	}
 	
-	private static AonOptionsToolbarUiBinder uiBinder = GWT.create(AonOptionsToolbarUiBinder.class);
-
-	interface AonOptionsToolbarUiBinder extends	UiBinder<Widget, AonTrashAgreementsToolbar> {}
-	
-	@UiField
-	MyStyle style;
-
-	interface MyStyle extends CssResource {
-		String title();
-	}
-	
-	@UiField
-	HTMLPanel headerSection;
-	
-	@UiField
-	HTMLPanel toolsSection;
-
 	private List<Listener> listeners;
 	
 	private boolean agreementTreeShowed = true;
 	
-	public AonTrashAgreementsToolbar() {
-		initWidget(uiBinder.createAndBindUi(this));
+	private AonCustomDockLayout parentDockLayout;
+	
+	public AonTrashAgreementsToolbar(AonCustomDockLayout aonCustomDockLayout) {
+		this.parentDockLayout = aonCustomDockLayout;
 		createToolbar();
 		this.listeners = new ArrayList<>();
 	}
@@ -61,6 +38,7 @@ public class AonTrashAgreementsToolbar extends Composite {
 	}
 	
 	private void createToolbar() {
+		parentDockLayout.setToolbarTitle("Papelera Convenios");
 		
 		AonButton showMenuButton = new AonToolbarButton("Ocultar", AON.CSS.aonIconMenuCollapse() );
 		showMenuButton.addClickHandler(e -> {
@@ -80,19 +58,14 @@ public class AonTrashAgreementsToolbar extends Composite {
 			
 			agreementTreeShowed = !agreementTreeShowed;
 		});
-		
-		headerSection.add(showMenuButton);
-		
-		Label title = new Label("Papelera Convenios");
-		title.addStyleName(style.title());
-		headerSection.add(title);
+		parentDockLayout.addToolbarButton(showMenuButton);
 		
 		AonButton backButton = new AonToolbarButton(AON.MSG.backAction() + " a Convenios", AON.CSS.aonIconBack() );
 		backButton.addClickHandler(e -> {
 			for(Listener listener : listeners)
 				listener.onBackButtonClick(e);
 		});
-		toolsSection.add(backButton);
+		parentDockLayout.addToolbarButton(backButton);
 		
 		backButton.ensureDebugId("backButton");
 	}
