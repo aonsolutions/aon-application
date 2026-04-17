@@ -525,12 +525,12 @@ public class InvoiceAutoComplete {
 				if(ret != null) {
 					InvoiceTax it1 = new InvoiceTax()
 							.setDomain(inv.getDomain())
-							.setBase(b.getBase())
+							.setBase(ret.getBase())
 							.setPercentage(ret.getPercentage())
-							.setQuota(b.getBase() * ret.getPercentage() / 100)
+							.setQuota(ret.getBase() * ret.getPercentage() / 100)
 							.setTaxType(TaxType.RETENTION)
 							.setWithholding(true)
-							.setWithholdingType(b.getWithholdingType())
+							.setWithholdingType(ret.getWithholdingType())
 							.setAccount(inv.isSales()
 									? ctx.getConfiguration().accounting().getDefaultChargedRetAccount().getId()
 									: ctx.getConfiguration().accounting().getDefaultPaidRetAccount().getId());

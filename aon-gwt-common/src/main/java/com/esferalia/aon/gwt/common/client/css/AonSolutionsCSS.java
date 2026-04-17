@@ -1653,6 +1653,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_dialog_glass")
 	String aonDialogGlass();
 	
+	@ClassName("aon_dialog_zindex")
+	String aonDialogZIndex();
+	
 	@ClassName("aon_badge")
 	String aonBadge();
 	

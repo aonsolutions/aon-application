@@ -8,8 +8,8 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
@@ -17,47 +17,27 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.TextCell;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 
-public class SSPECDraft extends Composite {
-	
-	// -------------------------------------------------- UiBinder
-	
-	interface SSPECDraftUiBinder extends UiBinder<Widget, SSPECDraft> {}
-	
-	private static SSPECDraftUiBinder uiBinder = GWT.create(SSPECDraftUiBinder.class);
+public class SSPECDraft extends AonCustomDockLayout {
 	
 	// -------------------------------------------------- UiFields
 	
-	@UiField
-	DockLayoutPanel dockLayoutPanel;
-	
-	@UiField (provided = true)
-	AonToolbar toolbar;
-	
-	@UiField
-	HTMLPanel messagePanel;
-	
-	@UiField(provided = true)
-	DataGrid<SSPECData> ssPecDG;
+	private HTMLPanel container;
+	private HTMLPanel messagePanel;
+	private DataGrid<SSPECData> ssPecDG;
 	
 	// -------------------------------------------------- Variables
 
@@ -72,12 +52,26 @@ public class SSPECDraft extends Composite {
 	// -------------------------------------------------- Constructor
 
 	public SSPECDraft() {
+		super("Peculiaridades de cotizaci\u00f3n");
+		hideSearchWidget();
 		initializeToolbarPanel();
+		
+		container = new HTMLPanel("");
+		container.addStyleName(AON.CSS.aonFlexColumn2());
+		
+		messagePanel = new HTMLPanel("");
+		
+		container.add(messagePanel);
+		AonMessagePanel.hideMessage(messagePanel);
+		
 		provideSSPecDG();
-		initWidget(uiBinder.createAndBindUi(this));
-		this.getElement().getStyle().setHeight(100, Unit.PCT);
 		setScrollPanelHeight();
+		
+		add(container);
 	}
+	
+	@Override
+	protected void onClearFilter() {}
 	
 	// ----------------------------------------------- Auxiliar Methods (Constructor & DataGrid) 
 	
@@ -103,6 +97,8 @@ public class SSPECDraft extends Composite {
 		addSSPecColumns();
 	    
 	    new ListDataProvider<SSPECData>(Collections.emptyList()).addDataDisplay(ssPecDG);   
+	    
+	    container.add(ssPecDG);
 	}
 	
 	private void addSSPecColumns() {
@@ -322,8 +318,6 @@ public class SSPECDraft extends Composite {
 	
 	private void initializeToolbarPanel() {
 		
-		this.toolbar = new AonToolbar("Peculiaridades");
-		
 		AonToolbarButton addBtn = new AonToolbarButton("Nueva peculiaridad", AON.CSS.aonIconAdd());
 		addBtn.addClickHandler(e -> new EmployeePeculiaritiesDialog(ssPECObject.getContractId(), ssPECObject.getContractStartDate()) {
 
@@ -333,7 +327,7 @@ public class SSPECDraft extends Composite {
 			}
 			
 		});
-		toolbar.add(addBtn);
+		addToolbarButton(addBtn);
 		
 		AonToolbarButton syncBtn = new AonToolbarButton("Sincronizaci\u00f3n TGSS", AON.CSS.aonIconTgss());
 		syncBtn.addClickHandler(e -> {
@@ -361,22 +355,18 @@ public class SSPECDraft extends Composite {
 						loadSSPecs();
 					}, f -> showError("Error sincronizaci\u00f3n TGSS", f.getMessage()));
 		});
-		toolbar.add(syncBtn);
+		addToolbarButton(syncBtn);
 		
 		this.yearLB = new ListBox();
-		this.toolbar.add(this.yearLB);
+		addToolbarButton(this.yearLB);
 		
 		this.monthLB = new ListBox();
 		initializeMonthLB();
-		this.toolbar.add(this.monthLB);
+		addToolbarButton(this.monthLB);
 		
 	}
 	
 	// ------------------------------------------------- Aon Messages panel
-	
-	public void setToolbarTitle(String employeeName) {
-		toolbar.setTitle(employeeName);
-	}
 	
 	protected Panel getMessagePanel() {
 		return messagePanel;
