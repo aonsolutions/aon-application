@@ -61,6 +61,8 @@ export class AonInvoice extends AonElement {
 	FILE;
 	RECORD_INVOICE_DIALOG;
 
+	SIGN_CERTIFICATE;
+
 	FACTURAE;
 	FACTURAE_CERTIFICATE;
 	FACTURAE_LEGAL_LITERALS;
@@ -219,6 +221,8 @@ export class AonInvoice extends AonElement {
 		this.FACTURAE_CERTIFICATE = this.FACTURAE + CONSTANT.CERTIFICATE.initCap();
 		this.FACTURAE_LEGAL_LITERALS = this.FACTURAE + CONSTANT.LEGAL_LITERALS.initCap();
 		this.FACTURAE_PERIOD = this.FACTURAE + CONSTANT.PERIOD.initCap();
+
+		this.SIGN_CERTIFICATE = this.id + "Sign" + CONSTANT.CERTIFICATE.initCap();
 	}
 
 	initializeFunctions() {
@@ -3360,7 +3364,27 @@ export class AonInvoice extends AonElement {
 	}
 
 	signInvoice() {
-		signInvoice(this.invoice.id).then(r => { });
+		let d = this.getApplication().getDialog();
+		d.clear();
+		if (!this.isMobile()) d.width = '400px';
+		d.setTitle("Firmar Factura");
+		let div = this.createDiv();
+		let certSelect = createSelect(this.SIGN_CERTIFICATE, MSG.CERTIFICATE, div);
+		certSelect.setAlias('id', 'name');
+		getAeatCertificates().then(certs => certSelect.setOptions(certs));
+
+		d.setContent(div);
+		d.addAcceptAction(() => {
+			let data = {
+				id: this.invoice.id,
+				domainName: LS.getDomainName(),
+				domainId: LS.getDomainId()
+			};
+			data.domainLogin = LS.getDomainLogin();
+			data.cert = certSelect.value;
+			signInvoice(data).then(r => { });
+		});
+		d.open();
 	}
 
 	facturae() {
