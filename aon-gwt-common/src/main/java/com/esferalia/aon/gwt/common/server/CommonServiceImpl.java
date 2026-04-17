@@ -78,6 +78,7 @@ import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
@@ -1847,9 +1848,9 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			}
 		} catch (Exception e) {
 			if(AonStringUtils.equalsIgnoreCase(e.getMessage(), "java.io.IOException: keystore password was incorrect"))
-				throw new IllegalArgumentException("Contrase\u00F1a incorrecta");
+				throw new AonCoreException("Contrase\u00F1a incorrecta");
 			
-			throw new IllegalArgumentException(e.getMessage());
+			throw new AonCoreException(e.getMessage());
 		} 
 	}
 	
@@ -2007,7 +2008,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			return employeeSegSocial;
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new AonCoreException(e);
+			throw new AonCoreException(e.getMessage());
 		}
 	}
 	
@@ -2027,7 +2028,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			SistemaRED.deleteSecondaryUser(is, certificate.getPassword(), certificate.getType(), ipfType, ipf);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new AonCoreException(e);
+			throw new AonCoreException(e.getMessage());
 		}
 	}
 	
@@ -2049,7 +2050,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new AonCoreException(e);
+			throw new AonCoreException(e.getMessage());
 		}
 	}
 	
@@ -2061,5 +2062,16 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public CompanyFull getCompanyFull(String domainName, int domain, String user) throws AonCoreException {
 		return AON.getCompanyFull(domainName, domain, user);
 	}
+	
+	@Override
+	public CompanyFull saveCompanyFull(String domainName, int domain, String user, CompanyFull company) throws AonCoreException {
+		AON.saveCompany(new Domain().setName(domainName).setId(domain), new User().setLogin(user), company.ensureCompany());
+		return AON.getCompanyFull(domainName, domain, user);
+	}
 
+	// *********************** [AMORTIZATION TYPE]
+	@Override
+	public List<AmortizationType> getAmortizationTypes(Occam occam, int domain) {
+		return ACCOUNTING.getAmortizationTypeList(occam, domain);
+	}
 }

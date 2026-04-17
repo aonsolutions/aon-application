@@ -31,7 +31,7 @@ public class Model190AEATDetail2025 extends DockLayoutPanel implements IModel190
 				public void onValueChanged(Mod190Detail detail) {
 					if (!detail.isDirty()) {
 						detail.setDirty(true);
-						table.refresh();		
+						table.refresh();	
 					}
 				}
 				

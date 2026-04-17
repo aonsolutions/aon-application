@@ -797,12 +797,13 @@ aon-fiscal-menu .suiteMenuDiv2{
 #aonMessenger .aonContentBeta,
 #aonOfficePanel .aonContentBeta,
 #aonFiscal .aonContentBeta,
-#aonAccounting .aonContentBeta,
-#aonConfigurationNew .aonContentBeta{
+#aonAccounting .aonContentBeta{
 	border-radius: .375rem;
 	margin: 1rem 1rem 0rem 1rem;
 	background-color: var(--aonBackgroundColor);	
 }
+
+/*#aonConfigurationNew .aonContentBeta*/
 
 #aonFiscalBetaContent.aonContentBeta{
 	margin: 1rem 1rem 0rem 1rem;
@@ -818,10 +819,11 @@ aon-fiscal-menu .suiteMenuDiv2{
 #aonMessenger .aonContentBeta,
 #aonOfficePanel .aonContentBeta,
 #aonFiscal .aonContentBeta,
-#aonAccounting .aonContentBeta,
-#aonConfigurationNew .aonContentBeta {
+#aonAccounting .aonContentBeta{
 	padding: 1.25rem 1.25rem 0 1.25rem;
 }
+
+/*#aonConfigurationNew .aonContentBeta*/
 
 .closeSidenav {
 	margin: 0;

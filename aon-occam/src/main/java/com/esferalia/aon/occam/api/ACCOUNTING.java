@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,6 +37,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
@@ -864,9 +866,9 @@ public class ACCOUNTING {
 	// *******************************************************
 	// **************************************** [AMORTIZATION]
 	// *******************************************************
-	public static LinkedList<Amortization> getAmortizations(Occam occam, Integer domain) {
+	public static Optional<Amortization> getAmortization(Occam occam, Integer domain, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getAccounting().getAmortizations(ctx, domain);			
+			return getAccounting().getAmortization(ctx, domain, id);			
 		}
 	}
 
@@ -876,9 +878,45 @@ public class ACCOUNTING {
 		}
 	}
 
+	public static Amortization saveFiscalAllocation(Occam occam, AmortizationDetail detail) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getAccounting().saveFiscalAllocation(ctx, detail);
+		}
+	}
+
 	public static Amortization saveAmortization(Occam occam, Amortization am) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
 			return getAccounting().saveAmortization(ctx, am);
+		}
+	}
+	
+	public static void deleteAmortization(Occam occam, Amortization am) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			getAccounting().deleteAmortization(ctx, am);
+		}
+	}
+
+	public static AmortizationDetail recordAmortizationAllocation(Occam occam, Amortization am, AmortizationDetail detail) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getAccounting().recordAmortizationAllocation(ctx, am, detail);
+		}
+	}
+
+	public static AmortizationDetail unrecordAmortizationAllocation(Occam occam, AmortizationDetail detail) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getAccounting().unrecordAmortizationAllocation(ctx, detail);
+		}
+	}
+
+	public static AmortizationDetail blockAmortizationDetail(Occam occam, AmortizationDetail detail) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getAccounting().blockAmortizationDetail(ctx, detail);
+		}
+	}
+
+	public static AmortizationDetail unblockAmortizationDetail(Occam occam, AmortizationDetail detail) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getAccounting().unblockAmortizationDetail(ctx, detail);
 		}
 	}
 }

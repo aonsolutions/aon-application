@@ -121,9 +121,22 @@ export class AonConfiguration extends AonElement {
 		}
 
 		let companyOptions = [];
+		
+		if (this.getDur().isAdmin() && this.isBeta()) {
+			companyOptions.push({
+				id: "InformacionGeneralGWT",
+				name: MSG.GENERAL_INFORMATION + " (GWT)",
+				icon: MATERIAL_ICONS.BUSINESS,
+				fn: () => {
+					localStorage.setItem("registrySource", 'COMPANY');
+					GWT.iLoad(GWT.REGISTRY_ENTRY_MODULE, this.getApplication().CONTENT);
+				},
+			});
+		}
 
 		if (this.getDur().isAdmin() || (!this.getDur().isEmployee() && !this.isMobile())) {
 			companyOptions.push({
+				id: "InformacionGeneral",
 				name: MSG.GENERAL_INFORMATION,
 				icon: MATERIAL_ICONS.BUSINESS,
 				fn: () => this.buildGeneral(),
@@ -248,8 +261,16 @@ export class AonConfiguration extends AonElement {
 
 			aonConfiguration.addSidenavOptions(MSG.MENU.toUpperCase(), menuOptions);
 		}
+		
+		if (this.getDur().isAdmin() && this.isBeta()) {
+			let genernalInfo = this.getElement('aonConfigurationSidenavInformacionGeneralGWT');
+			genernalInfo && genernalInfo.click();
+		} else{
+			//let genernalInfo = this.getElement('aonConfigurationSidenavInformacionGeneral');
+			//genernalInfo && genernalInfo.click();
+			this.buildConfigurationMenu();
+		}
 
-		this.buildConfigurationMenu();
 	}
 
 	buildPersonal() {

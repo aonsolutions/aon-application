@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.InvoiceUserData;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Properties.UserProperties;
@@ -140,6 +141,10 @@ public class UserServlet extends AonApiHttpServlet {
 				break;
 			case "/info":
 				response(req, resp, getDomainUser(api));
+				break;
+				
+			case "/email":
+				response(req, resp, getUserEmail(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -1224,6 +1229,26 @@ public class UserServlet extends AonApiHttpServlet {
 					REGISTRY);
 
 		return attach1;
+	}
+	
+	private static JSONObject getUserEmail(AonApiData api) {
+		String login = JsonUtils.getString(api.getData(), "userLogin");
+		
+		Integer[] domains = api.getDomain().getParentId() != null
+				? new Integer[] {api.getDomain().getId(), api.getDomain().getParentId()}
+				: new Integer[] {api.getDomain().getId()};
+		
+		User user = AON.getUser(api.getDomain(), api.getUser().getLogin(), f -> 
+			f.getDomainProperty().in(domains).and(
+			f.getLoginProperty().eq(login)));	
+		if(user != null && user.getAuth() != null && AonStringUtils.isNotBlank(user.getAuth().getEmail())) {
+			return new JSONObject().put("email", user.getAuth().getEmail());			
+		} else if(user != null && user.getId() != null) {
+			MailAccount mailAccount = AON.getMailAccount(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+					f -> f.getUserIdProperty().eq(user.getId()).and(f.getDomainProperty().eq(user.getDomain().getId())));
+			return new JSONObject().put("email", mailAccount.getEmail());
+		}
+		return new JSONObject();
 	}
 	
 }

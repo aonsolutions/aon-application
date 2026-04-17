@@ -90,4 +90,11 @@ public class AonDateUtils {
 	public static Date fromLong(String asLong) {
 		return new Date( Long.valueOf(asLong) );
 	}
+
+	public static Integer getYear(Date fromDate) {
+		if (fromDate != null) {
+			return 1900 + fromDate.getYear();
+		}
+		return null;
+	}
 }

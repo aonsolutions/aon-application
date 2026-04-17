@@ -194,16 +194,19 @@ export const ENTERPRISES = 'Empresas';
 export const ENTRY = 'Entrada';
 export const ENVIRONMENT = 'Entorno';
 export const EQUIVALENCE_SURCHARGE = 'Recargo de Equivalencia';
+export const ERRORS = 'Errores';
 export const EXERCISE = "Ejercicio";
 export const EXEMPTION_CAUSE = "Causa de Exención";
 export const EXIT = 'Salida';
+export const EXPAND_HIRIND = 'Ampliar Plan';
+export const EXPEDITION_DATE = 'Fecha Expedición';
 export const EXPENSE = 'Gasto';
 export const EXPENSES = 'Gastos';
 export const EXPIRATIONS = 'Vencimientos';
 export const EXPIRED = 'Expirado';
 export const EXPIRED_SESSION = 'Sesión expirada';
-export const ERRORS = 'Errores';
-export const EXPAND_HIRIND = 'Ampliar Plan';
+
+
 
 // ----- F
 
@@ -368,6 +371,7 @@ export const OPEN = 'Abrir';
 export const OPEN_MENU = 'Abrir Menú';
 export const OPEN_REQUESTS = 'Solicitudes Abiertas';
 export const OPENED = 'Abierto';
+export const OPERATION_DATE = 'Fecha Operación';
 export const OPTIONAL = "Opcional"; 
 export const OPTIONS = 'Opciones';
 export const OR_ACCESS = 'O si prefieres, inicia sesión sin contraseña';
@@ -426,7 +430,8 @@ export const RECENTS = 'Recientes';
 export const RECENTLY_OPENED = "Abierto recientemente";
 export const RECORD = 'Contabilizar';
 export const RECORD_INVOICE = 'Contabilizar Factura';
-export const RECTIFIED = 'Rectificativa';
+export const RECTIFIED = 'Rectificada';
+export const RECTIFIER = 'Rectificativa';
 export const RECTIFY = 'Rectificar';
 export const RECTIFY_INVOICE =  'Rectificar Factura';
 export const REFERENCE = 'Referencia';

@@ -10,11 +10,11 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc.ContractConceptCalcType;
@@ -27,38 +27,25 @@ import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.TextCell;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 
-public class EmployeeContractPayments extends Composite {
-
-	// ----------------------------------------------- UiBinder 
-	
-	private static EmployeeContractPaymentsUiBinder uiBinder = GWT.create(EmployeeContractPaymentsUiBinder.class);
-
-	interface EmployeeContractPaymentsUiBinder extends UiBinder<Widget, EmployeeContractPayments> {}
+public class EmployeeContractPayments extends AonCustomDockLayout {
 	
 	// ----------------------------------------------- ContractConceptCalcTypeCell 
 	
@@ -148,23 +135,23 @@ public class EmployeeContractPayments extends Composite {
 		public AddContextMenu() {
 			
 			payment = addItem("A\u00f1adir pago", new AddPaymentCommand(), 
-					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
 			payment.ensureDebugId("payment");
 			
 			dedcution = addItem("A\u00f1adir deduci\u00f3n", new AddDeductionCommand(), 
-					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
 			dedcution.ensureDebugId("dedcution");
 			
 			embargo = addItem("A\u00f1adir embargo", new AddEmbargoCommand(), 
-					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
 			embargo.ensureDebugId("embargo");
 			
 			bonus = addItem("A\u00f1adir bonificaci\u00f3n", new AddBonusCommand(), 
-					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
 			bonus.ensureDebugId("bonus");
 			
 			cost = addItem("A\u00f1adir coste", new AddCostCommand(), 
-					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
 			cost.ensureDebugId("cost");
 			
 		}
@@ -173,24 +160,9 @@ public class EmployeeContractPayments extends Composite {
 	
 	// ----------------------------------------------- UiField 
 	
-	@UiField
-	MyStyle style;
-
-	interface MyStyle extends CssResource {
-		String cmdBtn();
-	}
-	
-	@UiField
-	DockLayoutPanel dockLayoutPanel;
-	
-	@UiField(provided = true)
-	AonToolbar toolbar;
-
-	@UiField
-	HTMLPanel messagePanel;
-	
-	@UiField(provided = true)
-	DataGrid<ContractConceptCalc> contractConceptCalcDG;
+	private HTMLPanel container;
+	private HTMLPanel messagePanel;
+	private DataGrid<ContractConceptCalc> contractConceptCalcDG;
 	
 	// ----------------------------------------------- Variables 
 	
@@ -209,16 +181,31 @@ public class EmployeeContractPayments extends Composite {
 	// ----------------------------------------------- Constructor 
 	
 	public EmployeeContractPayments() {
+		super("Conceptos de c\u00edlculo");
+		hideSearchWidget();
 		initializeToolbarPanel();
+		
+		container = new HTMLPanel("");
+		container.addStyleName(AON.CSS.aonFlexColumn2());
+		
+		messagePanel = new HTMLPanel("");
+		
+		container.add(messagePanel);
+		AonMessagePanel.hideMessage(messagePanel);
+		
 		provideContractConceptCalcDG();
-		initWidget(uiBinder.createAndBindUi(this));
-		this.getElement().getStyle().setHeight(100, Unit.PCT);
 		setScrollPanelHeight();
+		
 		this.addContextMenu = new AddContextMenu();
+		
+		add(container);
 	}
 	
-	public void setToolbarTitle(String title) {
-		toolbar.setTitle(title );
+	@Override
+	protected void onClearFilter() {}
+	
+	public void setTitle(String title) {
+		setToolbarTitle(title);
 	}
 
 	// ----------------------------------------------- Auxiliar Methods (Constructor & DataGrid) 
@@ -271,6 +258,8 @@ public class EmployeeContractPayments extends Composite {
 	    addContractConceptCalcColumns();
 	    
 	    new ListDataProvider<ContractConceptCalc>(Collections.emptyList()).addDataDisplay(contractConceptCalcDG);
+	    
+	    container.add(contractConceptCalcDG);
 	    
 	}
 	
@@ -778,8 +767,6 @@ public class EmployeeContractPayments extends Composite {
 	
 	private void initializeToolbarPanel() {
 		
-		this.toolbar = new AonToolbar("Conceptos Calculo");
-		
 		AonExpandButton addExpand = new AonExpandButton("A\u00f1adir pagos", AON.CSS.aonIconAddBlock()) {
 			
 			@Override
@@ -794,18 +781,18 @@ public class EmployeeContractPayments extends Composite {
 				onPaymentWizard();
 			}
 		};
-		toolbar.add(addExpand);
+		addToolbarButton(addExpand);
 		
 		this.paymentTypeLB = new ListBox();
 		initializePaymentTypeLB();
-		this.toolbar.add(this.paymentTypeLB);
+		addToolbarButton(this.paymentTypeLB);
 		
 		this.yearLB = new ListBox();
-		this.toolbar.add(this.yearLB);
+		addToolbarButton(this.yearLB);
 		
 		this.monthLB = new ListBox();
 		initializeMonthLB();
-		this.toolbar.add(this.monthLB);
+		addToolbarButton(this.monthLB);
 	}
 
 	// ----------------------------------------------- Toolbar.Methods
@@ -931,10 +918,6 @@ public class EmployeeContractPayments extends Composite {
 	}
 	
 	// -------------------------------------------------- ContrataEmployee.Methods
-	
-	public void hideToolbar(){
-		dockLayoutPanel.remove(toolbar);
-	}
 	
 	public void setVariableTypeLB(ListBox paymentTypeLB) {
 		this.paymentTypeLB = paymentTypeLB;

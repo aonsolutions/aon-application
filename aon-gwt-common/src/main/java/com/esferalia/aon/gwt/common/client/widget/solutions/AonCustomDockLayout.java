@@ -16,12 +16,17 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class AonCustomDockLayout extends DockLayoutPanel {
+	
+	private static final String CENTER_STYLE = "aon-center-panel";
+	private static final String LEFT_STYLE = "aon-left-panel";
 
 	// Toolbar
 	private AonToolbar toolbar;
 	
 	private SearchFilterComponent searchFilterComponent;
 	private AonToolbarSearchBox aonToolbarSearchBox;
+	
+	private com.google.gwt.dom.client.Element centerWrapper;
 	
 	protected AonCustomDockLayout(String title) {
 		super(Unit.PX);
@@ -57,6 +62,57 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 		addNorth(toolbar, AonToolbar.HEIGTH);
 	}
 	
+	@Override
+	public void add(Widget widget) {
+	    super.add(widget);
+
+	    // GWT envuelve el widget en un contenedor interno
+	    if (widget != null && widget.getElement() != null) {
+	        com.google.gwt.dom.client.Element parent = widget.getElement().getParentElement();
+	        if (parent != null) {
+	            parent.addClassName(CENTER_STYLE);
+	            centerWrapper = parent;
+	        }
+	    }
+	}
+	
+	public void addWithoutCenterStyle(Widget widget) {
+	    super.add(widget);
+	}
+	
+	@Override
+	public void addWest(Widget widget, double size) {
+		super.addWest(widget, size);
+		
+		// GWT envuelve el widget en un contenedor interno
+	    if (widget != null && widget.getElement() != null) {
+	        com.google.gwt.dom.client.Element parent = widget.getElement().getParentElement();
+	        if (parent != null) {
+	            parent.addClassName(CENTER_STYLE);
+	        }
+	        
+	        if(null != centerWrapper) {
+	        	centerWrapper.addClassName(LEFT_STYLE);
+	        }
+	    }
+	}
+	
+	@Override
+	public void setWidgetSize(Widget widget, double size) {
+		super.setWidgetSize(widget, size);
+		
+		 if(null != centerWrapper) {
+        	if(size > 0)
+        		centerWrapper.addClassName(LEFT_STYLE);
+        	else 
+        		centerWrapper.removeClassName(LEFT_STYLE);
+        }
+	}
+	
+	public void addWestWithoutCenterStyle(Widget widget, double size) {
+		super.addWest(widget, size);
+	}
+	
 	public AonToolbar getToolbar() {
 		return toolbar;
 	}
@@ -67,6 +123,10 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 	
 	public void addToolbarButton(Widget widget) {
 		getToolbar().add(widget);
+	}
+	
+	public void removeToolbar(Widget widget) {
+		remove(getToolbar());
 	}
 	
 	public void removeToolbarButton(Widget widget) {
@@ -171,6 +231,16 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 		addNorth(new Label(), 0);
 //		toolbar.getElement().getStyle().setDisplay(Display.NONE);
 	}
+	
+	private com.google.gwt.dom.client.Element getWrapper(Widget widget) {
+	    if (widget == null || widget.getElement() == null) return null;
+
+	    com.google.gwt.dom.client.Element parent = widget.getElement().getParentElement();
+	    if (parent == null) return null;
+
+	    return parent.getParentElement(); // wrapper real
+	}
+
 	
 	protected abstract void onClearFilter();
 

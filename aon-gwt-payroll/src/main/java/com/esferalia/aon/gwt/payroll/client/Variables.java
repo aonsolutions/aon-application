@@ -7,9 +7,9 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -17,26 +17,20 @@ import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.TextCell;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 
-public abstract class Variables extends Composite {
+public abstract class Variables extends AonCustomDockLayout {
 
 	public static interface Variable<T extends Enum<?>> {
 
@@ -87,13 +81,6 @@ public abstract class Variables extends Composite {
 		public void createVariable(T variable, Consumer<Void> success, Consumer<Throwable> failure);
 	}
 
-	// ----------------------------------------------- UiBinder
-
-	private static VariablesUiBinder uiBinder = GWT.create(VariablesUiBinder.class);
-
-	interface VariablesUiBinder extends UiBinder<Widget, Variables> {
-	}
-
 	// ----------------------------------------------- ContractConceptCalcTypeCell
 
 	class VariablesTypeCell extends AbstractCell<String> {
@@ -110,14 +97,7 @@ public abstract class Variables extends Composite {
 
 	// ----------------------------------------------- UiField
 
-	@UiField
-	DockLayoutPanel dockLayoutPanel;
-
-	@UiField(provided = true)
-	AonToolbar toolbar;
-
-	@UiField(provided = true)
-	DataGrid<Variable<?>> variablesDG;
+	private DataGrid<Variable<?>> variablesDG;
 
 	// ----------------------------------------------- Variables
 
@@ -133,15 +113,22 @@ public abstract class Variables extends Composite {
 	// ----------------------------------------------- Constructor
 
 	public Variables() {
+		super("Variables de c\u00edlculo");
+		hideSearchWidget();
 		initializeToolbarPanel();
+		
 		providevariablesDG();
-		initWidget(uiBinder.createAndBindUi(this));
-		this.getElement().getStyle().setHeight(100, Unit.PCT);
+		
 		setScrollPanelHeight();
+		
+		add(variablesDG);
 	}
 	
+	@Override
+	protected void onClearFilter() {}
+	
 	public void setTitle(String title) {
-		this.toolbar.setTitle(title);
+		setToolbarTitle(title);
 	}
 
 	// ----------------------------------------------- Auxiliar Methods (Constructor
@@ -464,24 +451,21 @@ public abstract class Variables extends Composite {
 	// ----------------------------------------------- Toolbar
 
 	private void initializeToolbarPanel() {
-
-		this.toolbar = new AonToolbar("Variables Contrato");
-
 		AonToolbarButton addVariable = new AonToolbarButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
 		addVariable.addClickHandler(e -> openVariableDialog(null));
-		toolbar.add(addVariable);
+		addToolbarButton(addVariable);
 
 		this.variableTypeLB = new ListBox();
 		initializeVariableTypeLB(this.variableTypeLB);
 		
-		this.toolbar.add(this.variableTypeLB);
+		addToolbarButton(this.variableTypeLB);
 
 		this.yearLB = new ListBox();
-		this.toolbar.add(this.yearLB);
+		addToolbarButton(this.yearLB);
 
 		this.monthLB = new ListBox();
 		initializeMonthLB();
-		this.toolbar.add(this.monthLB);
+		addToolbarButton(this.monthLB);
 
 	}
 
@@ -528,10 +512,6 @@ public abstract class Variables extends Composite {
 
 	// -------------------------------------------------- ContrataEmployee.Methods
 
-	public void hideToolbar() {
-		dockLayoutPanel.remove(toolbar);
-	}
-
 	public void setVariableTypeLB(ListBox variableTypeLB) {
 		this.variableTypeLB = variableTypeLB;
 	}
@@ -542,10 +522,6 @@ public abstract class Variables extends Composite {
 
 	public void setMonthLB(ListBox monthLB) {
 		this.monthLB = monthLB;
-	}
-
-	public void setToolbarTitle(String title) {
-		toolbar.setTitle(title);
 	}
 	
 	// ---------------------------------------------------------- Abstract.Methods

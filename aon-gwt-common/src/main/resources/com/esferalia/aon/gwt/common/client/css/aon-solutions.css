@@ -526,6 +526,8 @@
 .aon_icon_accounting_unrecord { background-image: iconAccountingUnrecord;}
 @url iconCheckCircle aonIconCheckCircle;
 .aon_icon_check_circle { background-image: iconCheckCircle;}
+@url iconCancelCircle aonIconCancelCircle;
+.aon_icon_cancel_circle { background-image: iconCancelCircle;}
 @url iconCheckCircleGreen aonIconCheckCircleGreen;
 .aon_icon_check_circle_green { background-image: iconCheckCircleGreen;}
 @url iconErrorExclamation aonIconErrorExclamation;
@@ -1145,7 +1147,8 @@
 	align-items: center;
 }
 
-.aon_flex_column {
+.aon_flex_column,
+.aon_flex_column_2 {
     display: flex;
     flex-direction: column;
     gap: .5rem;
@@ -2685,6 +2688,10 @@
 	background-color: #000;
 	opacity: 0.2;
 	filter: opacity(45%);
+}
+
+.aon_dialog_zindex{
+	z-index: 8;
 }
 
 .aon_badge{

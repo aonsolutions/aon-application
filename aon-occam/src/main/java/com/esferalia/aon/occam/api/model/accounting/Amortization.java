@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.type.AmortizationPeriod;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class Amortization implements Serializable {
 
@@ -146,6 +147,18 @@ public class Amortization implements Serializable {
 		return this;
 	}
 	
+    public int getYears() {
+    	return (AonMathUtils.isZero(getPercentage()))? 0 : (int) AonMathUtils.round( 100 / getPercentage(),0);	
+	}
+
+	public void setYears(int years) {
+		if (AonMathUtils.isNotZero(years)) {
+			setPercentage(AonMathUtils.round( 100.0 / years));
+		} else {
+			setPercentage(0);	
+		}
+	}
+
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}

@@ -103,7 +103,7 @@ public class Mod190CertificatePrint extends HttpServlet {
 					}
 				}
 				
-				cert.setForecastPlanContributions(0); // ESTE DATO NO ESTA EN EL MODELO 190
+				cert.setForecastPlanContributions(cert.getForecastPlanContributions() + detail.getForecastPlanContributions()); // SOLO PARA EL CERTIFICADO DE RETENCIONES
 				cert.setDependencyContributions(0);   // ESTE DATO NO ESTA EN EL MODELO 190
 				
 			} else {

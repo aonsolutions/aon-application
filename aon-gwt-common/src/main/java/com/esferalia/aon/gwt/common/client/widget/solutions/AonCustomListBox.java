@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -13,10 +14,11 @@ public class AonCustomListBox extends HTMLPanel implements Focusable {
 	
 	public AonCustomListBox(String title) {
 		super(EMPTY_STRING);
-		addStyleName(AON.CSS.aonFlexColumn());
+		addStyleName(AON.CSS.aonFlexColumn2());
 		addStyleName(AON.CSS.aonCustomTextBox());
-
-		createTitle(title);
+		if (AonStringUtils.isNotEmpty(title)) {
+			createTitle(title);
+		}
 		createInput();
 	}
 

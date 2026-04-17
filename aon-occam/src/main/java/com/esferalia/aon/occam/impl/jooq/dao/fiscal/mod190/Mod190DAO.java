@@ -248,7 +248,8 @@ public class Mod190DAO {
 								FS_MODEL190_DETAIL.WIDOWHOOD_PENSION,
 								FS_MODEL190_DETAIL.PERMANENT_DISABILITY_PENSION,
 								FS_MODEL190_DETAIL.NON_CONTRIBUTORY_PENSION,
-								FS_MODEL190_DETAIL.OTHER_NON_EXEMPT_PENSIONS
+								FS_MODEL190_DETAIL.OTHER_NON_EXEMPT_PENSIONS,
+								FS_MODEL190_DETAIL.FORECAST_PLAN_CONTRIBUTIONS
 								)
 						.values(null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
@@ -258,7 +259,7 @@ public class Mod190DAO {
 								null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
-								null, null, null, null, null, null));
+								null, null, null, null, null, null, null));
 		for (Mod190Detail detail : mod190.getDetails()) {
 			batch.bind(detail.getDomain()
 					, detail.getMod190()
@@ -330,6 +331,7 @@ public class Mod190DAO {
 					, AonEnumUtils.getByte(detail.isPermanentDisabilityPension())
 					, AonEnumUtils.getByte(detail.isNonContributoryPension())
 					, AonEnumUtils.getByte(detail.isOtherNonExemptPensions())
+					, detail.getForecastPlanContributions()
 					);
 		}
 		batch.execute();
@@ -426,6 +428,7 @@ public class Mod190DAO {
 				.set(FS_MODEL190_DETAIL.PERMANENT_DISABILITY_PENSION, AonEnumUtils.getByte(detail.isPermanentDisabilityPension()))
 				.set(FS_MODEL190_DETAIL.NON_CONTRIBUTORY_PENSION, AonEnumUtils.getByte(detail.isNonContributoryPension()))
 				.set(FS_MODEL190_DETAIL.OTHER_NON_EXEMPT_PENSIONS, AonEnumUtils.getByte(detail.isOtherNonExemptPensions()))
+				.set(FS_MODEL190_DETAIL.FORECAST_PLAN_CONTRIBUTIONS, detail.getForecastPlanContributions())
 				;
 	}
 
@@ -504,6 +507,7 @@ public class Mod190DAO {
 				.set(FS_MODEL190_DETAIL.PERMANENT_DISABILITY_PENSION, AonEnumUtils.getByte(detail.isPermanentDisabilityPension()))
 				.set(FS_MODEL190_DETAIL.NON_CONTRIBUTORY_PENSION, AonEnumUtils.getByte(detail.isNonContributoryPension()))
 				.set(FS_MODEL190_DETAIL.OTHER_NON_EXEMPT_PENSIONS, AonEnumUtils.getByte(detail.isOtherNonExemptPensions()))
+				.set(FS_MODEL190_DETAIL.FORECAST_PLAN_CONTRIBUTIONS, detail.getForecastPlanContributions())
 				.where(FS_MODEL190_DETAIL.ID.equal(detail.getId())).execute();
 	}
 
@@ -768,6 +772,7 @@ public class Mod190DAO {
 				.setPermanentDisabilityPension(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL190_DETAIL.PERMANENT_DISABILITY_PENSION)))
 				.setNonContributoryPension(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL190_DETAIL.NON_CONTRIBUTORY_PENSION)))
 				.setOtherNonExemptPensions(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL190_DETAIL.OTHER_NON_EXEMPT_PENSIONS)))
+				.setForecastPlanContributions(rec.getValue(FS_MODEL190_DETAIL.FORECAST_PLAN_CONTRIBUTIONS))
 				;
 		}
 	}

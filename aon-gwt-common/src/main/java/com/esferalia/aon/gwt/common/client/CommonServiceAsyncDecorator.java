@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
@@ -1572,5 +1573,17 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.getCompanyFull(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void saveCompanyFull(String domainName, int domain, String user, CompanyFull companyFull, AsyncCallback<CompanyFull> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveCompanyFull(domainName, domain, user, companyFull, new AsyncCallbackWrapper<>(callback));
+	}
 
+	// *********************** [AMORTIZATION TYPE]
+	@Override
+	public void getAmortizationTypes(Occam occam, int domain, AsyncCallback<List<AmortizationType>> callback) {
+		AON.start();
+		serviceAsync.getAmortizationTypes(occam, domain, new AsyncCallbackWrapper<>(callback));
+	}
 }

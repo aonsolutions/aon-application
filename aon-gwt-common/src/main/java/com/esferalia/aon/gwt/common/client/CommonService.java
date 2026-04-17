@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
@@ -529,5 +530,8 @@ public interface CommonService extends RemoteService {
 	// **************************************************
 	
 	CompanyFull getCompanyFull(String domainName, int domain, String user) throws AonCoreException;
-
+	CompanyFull saveCompanyFull(String domainName, int domain, String user, CompanyFull company) throws AonCoreException;
+	
+	// *********************** [AMORTIZATION TYPE]
+	List<AmortizationType> getAmortizationTypes(Occam occam, int domain) throws AonCoreException;
 }

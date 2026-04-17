@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -32,6 +33,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
@@ -190,7 +192,14 @@ public interface IAccounting {
 	public void deleteAccountingIncome(AONContext ctx, AccountEntry ae) throws AonCoreException;
 
 	// **************************************** [AMORTIZATION]
-	public LinkedList<Amortization> getAmortizations(AONContext ctx, Integer domain);
-	public LinkedList<Amortization> getAmortizations(AONContext ctx, AmortizationParams params);
-	public Amortization saveAmortization(AONContext ctx, Amortization am);
+	public Optional<Amortization> getAmortization(AONContext ctx, Integer domain, Integer id) throws AonCoreException;
+	public LinkedList<Amortization> getAmortizations(AONContext ctx, AmortizationParams params) throws AonCoreException;
+	public Amortization saveAmortization(AONContext ctx, Amortization am) throws AonCoreException;
+	public Amortization saveFiscalAllocation(AONContext ctx, AmortizationDetail detail) throws AonCoreException;
+	public void deleteAmortization(AONContext ctx, Amortization am) throws AonCoreException;
+	public AmortizationDetail recordAmortizationAllocation(AONContext ctx, Amortization am, AmortizationDetail detail) throws AonCoreException;
+	public AmortizationDetail unrecordAmortizationAllocation(AONContext ctx, AmortizationDetail detail) throws AonCoreException;
+	public AmortizationDetail blockAmortizationDetail(AONContext ctx, AmortizationDetail detail) throws AonCoreException;
+	public AmortizationDetail unblockAmortizationDetail(AONContext ctx, AmortizationDetail detail) throws AonCoreException;
+	
 }

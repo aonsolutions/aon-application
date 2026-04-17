@@ -149,9 +149,9 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
 
         westPanel.addStyleName(AON.CSS.aonFlexColumn());
         westPanel.getElement().getStyle().setProperty("margin", "0");
-        addWest(westPanel, 350);
+        addWestWithoutCenterStyle(westPanel, 350);
 
-        add(container);
+        addWithoutCenterStyle(container);
     }
     
     public void setWorkplace(Workplace workplace) {

@@ -1,15 +1,12 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
-import com.google.gwt.core.client.GWT;
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
@@ -21,30 +18,19 @@ import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import com.google.gwt.visualization.client.visualizations.corechart.Options;
 import com.google.gwt.visualization.client.visualizations.corechart.PieChart;
 
-public class Statistics extends ResizeComposite {
-	
-	// ----------------------------------------------- UiBinder
-
-	interface Binder extends UiBinder<Widget, Statistics> {}
-
-	private static final Binder binder = GWT.create(Binder.class);
+public class Statistics extends AonCustomDockLayout {
 	
 	// ----------------------------------------------- UiFields
 
-	@UiField
-	DockLayoutPanel dockLayoutPanel;
-	
-	@UiField
-	Grid gridColumnChart;
-	
-	@UiField
-	Grid gridLinePieChart;
+	private ScrollPanel scrollPanel;
+	private HTMLPanel container;
+	private Grid gridColumnChart;
+	private Grid gridLinePieChart;
 	
 	// ----------------------------------------------- Variables
 
 	private com.esferalia.aon.gwt.payroll.shared.Statistics statistics;
 	
-	private AonToolbar toolbar;
 	private ListBox dateListBox = new ListBox();
 	
 	private int selectedYear; //Año seleccionado
@@ -53,10 +39,27 @@ public class Statistics extends ResizeComposite {
 	// ----------------------------------------------- Constructo
 	
 	public Statistics() {
-		toolbar = getToolbarPanel();
-		initWidget(binder.createAndBindUi(this));
-		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		super("Estad\u00EDsiticas");
+		hideSearchWidget();
+		
+		getToolbarPanel();
+		
+		container = new HTMLPanel("");
+		container.addStyleName(AON.CSS.aonFlexColumn2());
+		
+		gridColumnChart = new Grid(1, 1);
+		gridLinePieChart = new Grid(1, 2);
+		
+		container.add(gridColumnChart);
+		container.add(gridLinePieChart);
+		
+		scrollPanel = new ScrollPanel(container);
+		
+		add(scrollPanel);
 	}
+	
+	@Override
+	protected void onClearFilter() {}
 	
 	// ----------------------------------------------- setStatics
 
@@ -345,10 +348,8 @@ public class Statistics extends ResizeComposite {
 		
 	// ----------------------------------------------- Toolbar
 	
-	private AonToolbar getToolbarPanel() {
-		AonToolbar toolbar = new AonToolbar("Estad\u00EDsiticas");
-		toolbar.add(dateListBox);
-		return toolbar;
+	private void getToolbarPanel() {
+		addToolbarButton(dateListBox);
 	}
 		
 } 
