@@ -43,6 +43,7 @@ import { isValid } from '../../services/documentUtils.js';
 import { AonChat } from '../../components/aon-chat.js';
 import { AonEmail } from '../../components/aon-email.js';
 import { AmortizationPeriod } from '../../models/amortization/AmortizationEnums.js';
+import { AonDateUtils } from '../utils/AonDateUtils.js';
 
 
 export class AonInvoice extends AonElement {
@@ -3300,7 +3301,7 @@ export class AonInvoice extends AonElement {
 			};
 			recInv.remarks.push(comment);
 			recInv.id = undefined;
-			recInv.date = new Date();
+			recInv.date = AonDateUtils.formatDate(new Date(), 'yyyy-MM-dd');
 			recInv.series = 'R' + new Date().getFullYear();
 			recInv.number = undefined;
 			recInv.reference = undefined;
@@ -3396,7 +3397,7 @@ export class AonInvoice extends AonElement {
 	duplicateInvoice() {
 		let dupInv = this.invoice;
 		dupInv.id = undefined;
-		dupInv.date = new Date();
+		dupInv.date = AonDateUtils.formatDate(new Date(), 'yyyy-MM-dd');
 		dupInv.number = undefined;
 		dupInv.reference = '';
 		dupInv.status = 'inbox';
@@ -3409,7 +3410,7 @@ export class AonInvoice extends AonElement {
 		if (dupInv.finances) {
 			dupInv.finances.forEach((item, i) => {
 				dupInv.finances[i].id = undefined;
-				dupInv.finances[i].due_date = new Date();
+				dupInv.finances[i].due_date = AonDateUtils.formatDate(new Date(), 'yyyy-MM-dd');
 			});
 		}
 
