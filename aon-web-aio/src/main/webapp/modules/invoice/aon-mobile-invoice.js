@@ -780,10 +780,8 @@ export class AonMobileInvoice extends AonInvoice {
 		table.addCell(vat);
 		if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
 			detail.percentage = undefined;
-			detail.vat = undefined;
 			vat.setDisabled(true);
 		}
-		detail.percentage = detail.percentage || detail.vat;
 		if(detail.percentage) vat.value = detail.percentage;
 
 		dialog.open();

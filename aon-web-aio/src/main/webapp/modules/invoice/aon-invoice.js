@@ -1980,7 +1980,6 @@ export class AonInvoice extends AonElement {
 
 	onChangeDetailVat(detail, value, i, dialog) {
 		detail.percentage = value;
-		detail.vat = value;
 		this.invoice.setDetail(detail, i);
 		this.onChangeDetail(detail, i, dialog);
 	}
@@ -2076,12 +2075,12 @@ export class AonInvoice extends AonElement {
 			td6.style.verticalAlign = "bottom";
 			if (this.invoice.isEmitida() && !this.invoice.isNacional()) {
 				detail.percentage = undefined;
-				detail.vat = undefined;
 				vat.setDisabled(true);
 			}
-			detail.percentage = detail.percentage || detail.vat;
-			if (!detail.percentage && (!detail.prepayment || detail.prepayment == 'false'))
+
+			if (detail.percentage === undefined && (!detail.prepayment || detail.prepayment == 'false')) {
 				detail.percentage = 21.0;
+			}
 			if (detail.percentage) vat.value = detail.percentage;
 		} else if (detail.percentage !== 0.0) {
 			detail.percentage = 0.0;
@@ -2184,11 +2183,9 @@ export class AonInvoice extends AonElement {
 			table.addCell(vat);
 			if (this.invoice.isEmitida() && !this.invoice.isNacional()) {
 				detail.percentage = undefined;
-				detail.vat = undefined;
 				vat.setDisabled(true);
 			}
-			detail.percentage = detail.percentage || detail.vat;
-			if (!detail.percentage) {
+			if (detail.percentage === undefined) {
 				detail.percentage = 21.0;
 			}
 			if (detail.percentage) vat.value = detail.percentage;
@@ -3326,7 +3323,6 @@ export class AonInvoice extends AonElement {
 					recInv.setDetail(item, i);
 				});
 			}
-
 			let aip = document.querySelector('aon-invoice-panel');
 			aip.aonInvoice(recInv.type, recInv);
 		});
