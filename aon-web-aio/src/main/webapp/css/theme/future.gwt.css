@@ -1381,7 +1381,7 @@ div.aon_custom_text_box_input:has( input){
 	width: 110px !important;
 }
 
-div[style*='top: 0px']:has(.aon-finding-title-toolbar) {
+div[style*='top: 0px']:has( > .aon-finding-title-toolbar) {
 	margin-left: 1rem;
 	margin-right: 1rem;
   	border-radius: .375rem;
@@ -1389,7 +1389,7 @@ div[style*='top: 0px']:has(.aon-finding-title-toolbar) {
 	top: 14px !important;
 }
 
-div[style*='top: 0px']:has(.aon-finding-title-toolbar) > div {
+div[style*='top: 0px']:has( > .aon-finding-title-toolbar) > div {
     border-bottom: none !important;
 }
 
