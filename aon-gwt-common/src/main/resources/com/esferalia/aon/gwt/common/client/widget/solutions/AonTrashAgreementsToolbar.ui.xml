@@ -1,0 +1,30 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style type="com.esferalia.aon.gwt.common.client.widget.solutions.AonTrashAgreementsToolbar.MyStyle">
+	
+		.headerSection{
+			display: flex;
+			align-items: center;
+			padding: 0 15px;
+		}
+		
+		.toolsSection{
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			padding: 0 15px;
+		}
+		
+		.title{
+			text-transform: uppercase;
+		}
+		
+	</ui:style>
+
+	<g:HTMLPanel debugId='buttonBarBeta' ui:field='toolbar'>
+		<g:HTMLPanel styleName="{style.headerSection}" ui:field="headerSection"></g:HTMLPanel>
+		<g:HTMLPanel styleName="{style.toolsSection}" ui:field="toolsSection"></g:HTMLPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 

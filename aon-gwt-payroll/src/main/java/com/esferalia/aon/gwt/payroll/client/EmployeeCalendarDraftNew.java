@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayType;
@@ -34,6 +34,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -641,8 +642,8 @@ public abstract class EmployeeCalendarDraftNew extends Composite implements Cont
 		String container();
 	}
 	
-	@UiField (provided = true)
-	AonCustomDockLayout dockLayoutPanel;
+	@UiField
+	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
 	VerticalPanel mainContainer;
@@ -732,6 +733,7 @@ public abstract class EmployeeCalendarDraftNew extends Composite implements Cont
 	private DefinitionMenu definitionMenu;
 	private UtilityMenu utilityMenu;
 	
+	private AonToolbar toolbar;
 	private AonToolbarButton undoAllButton;
 	private AonToolbarButton saveButton;
 	private ListBox yearLB;
@@ -739,16 +741,11 @@ public abstract class EmployeeCalendarDraftNew extends Composite implements Cont
 	// -------------------------------------------- Constructor
 	
 	public EmployeeCalendarDraftNew() {
-		dockLayoutPanel = new AonCustomDockLayout("Calendario") {
-			
-			@Override
-			protected void onClearFilter() {}
-		};
+		getToolbarPanel();
 		//Inicializamos la vista del calendario
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		getToolbarPanel();
-		
+		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		dockLayoutPanel.addStyleName(style.container());
 		
 		scrollInfo.setHeight((Window.getClientHeight() - 260) + "px");
@@ -761,7 +758,7 @@ public abstract class EmployeeCalendarDraftNew extends Composite implements Cont
 	}
 	
 	public void setToolbarTitle(String title) {
-		dockLayoutPanel.setToolbarTitle(title );
+		toolbar.setTitle(title );
 	}
 	
 	public void setContrataEmployeeCalendarHeight(){
@@ -1968,31 +1965,36 @@ public abstract class EmployeeCalendarDraftNew extends Composite implements Cont
 	
 	// -------------------------------------------- Toolbar
 	
-	private void getToolbarPanel() {
+	private AonToolbar getToolbarPanel() {
 		
-		saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		saveButton.addClickHandler(e -> onSave());
-		dockLayoutPanel.addToolbarButton(saveButton);
+		this.toolbar = new AonToolbar("Calendario");
 		
 		undoAllButton = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconUndoAll());
 		undoAllButton.addClickHandler(e -> onUndoAll());
-		dockLayoutPanel.addToolbarButton(undoAllButton);
+		toolbar.add(undoAllButton);
+		
+		saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		saveButton.addClickHandler(e -> onSave());
+		toolbar.add(saveButton);
 		
 		AonToolbarButton definitionButton = new AonToolbarButton( "Definicion", AON.CSS.aonIconEditCalendar() );
 		definitionButton.addClickHandler(e -> onDefinition(e));
-		dockLayoutPanel.addToolbarButton(definitionButton);
+		toolbar.add(definitionButton);
 		
 		AonToolbarButton utilityButton = new AonToolbarButton( "Utilidades", AON.CSS.aonIconSettings() );
 		utilityButton.addClickHandler(e -> onUtility(e));
-		dockLayoutPanel.addToolbarButton(utilityButton);
+		toolbar.add(utilityButton);
 		
 		Label yearL = new Label("Ejercicio :");
 		yearL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		yearL.getElement().getStyle().setMarginRight(5, Unit.PX);
-		dockLayoutPanel.addToolbarButton(yearL);
+		toolbar.add(yearL);
 		
 		this.yearLB = new ListBox();
-		dockLayoutPanel.addToolbarButton(this.yearLB);
+		toolbar.add(this.yearLB);
+		
+		return toolbar;
+
 	}
 
 	// ----------------------------------------------- Toolbar.Methods
@@ -2060,7 +2062,7 @@ public abstract class EmployeeCalendarDraftNew extends Composite implements Cont
 	// -------------------------------------------------- ContrataEmployee.Methods
 	
 	public void hideToolbar(){
-		dockLayoutPanel.removeToolbar(calendarGrid);
+		dockLayoutPanel.remove(toolbar);
 		mainContainer.getElement().getStyle().setMarginTop(0, Unit.PX);
 		daysTypePanel.getElement().getStyle().setMarginTop(0, Unit.PX);
 	}

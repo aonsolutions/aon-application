@@ -241,9 +241,8 @@ export class Invoice {
       });
    
       this.details.forEach((detail,i) => {
-        if(detail.percentage !== 0.0 || detail.vat !== 0.0){
+        if(detail.percentage !== 0.0){
           detail.percentage = 0.0;
-          detail.vat = 0.0;
           this.setDetail(detail, i);
         }
       });
@@ -631,7 +630,6 @@ export class Invoice {
       
       this.details.forEach((detail,i) => {
         detail.percentage = 0.0;
-        detail.vat = 0.0;
         this.setDetail(detail, i);
       });
     }
@@ -1029,6 +1027,7 @@ export class Invoice {
       let amount = round(Number(detail.quantity) * Number(detail.price));
 			amount = amount - amount * (detail.discount / 100);
       detail.amount = round(amount);
+      alert(detail.percentage);
       detail.percentage = detail.percentage || 0.0;
       if(!detail.prepayment) {
         detail.quota = round(detail.amount / 100 * detail.percentage);

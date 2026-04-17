@@ -4,10 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
-public class AonAgreementsToolbar {
+public class AonAgreementsToolbar extends Composite {
 
 	public interface Listener {
 		
@@ -21,6 +29,27 @@ public class AonAgreementsToolbar {
 		
 		void onSettingsButtonClick(ClickEvent event);
 	}
+	
+	private static AonOptionsToolbarUiBinder uiBinder = GWT.create(AonOptionsToolbarUiBinder.class);
+
+	interface AonOptionsToolbarUiBinder extends	UiBinder<Widget, AonAgreementsToolbar> {}
+	
+	
+	
+	@UiField
+	MyStyle style;
+
+	interface MyStyle extends CssResource {
+		String title();
+		String cmdBtn();
+		String redColor();
+	}
+	
+	@UiField
+	HTMLPanel headerSection;
+	
+	@UiField
+	HTMLPanel toolsSection;
 
 	private List<Listener> listeners;
 	
@@ -32,10 +61,8 @@ public class AonAgreementsToolbar {
 	
 	private boolean agreementTreeShowed = true;
 	
-	private AonCustomDockLayout parentDockLayout;
-	
-	public AonAgreementsToolbar(AonCustomDockLayout aonCustomDockLayout) {
-		this.parentDockLayout = aonCustomDockLayout;
+	public AonAgreementsToolbar() {
+		initWidget(uiBinder.createAndBindUi(this));
 		createToolbar();
 		this.listeners = new ArrayList<Listener>();
 	}
@@ -81,7 +108,12 @@ public class AonAgreementsToolbar {
 				
 			}
 		});
-		parentDockLayout.addToolbarButton(showMenuButton);
+		
+		headerSection.add(showMenuButton);
+		
+		Label title = new Label("Convenios");
+		title.addStyleName(style.title());
+		headerSection.add(title);
 		
 		importButton = new AonToolbarButton("Importar Convenio", AON.CSS.aonIconCloudImport() );
 		importButton.addClickHandler(new ClickHandler() {
@@ -91,7 +123,7 @@ public class AonAgreementsToolbar {
 					listener.onImportButtonClick(event);
 			}
 		});
-		parentDockLayout.addToolbarButton(importButton);
+		toolsSection.add(importButton);
 		importButton.setVisible(false);
 		
 		settingsButton = new AonToolbarButton("Utilidades", AON.CSS.aonIconSettings() );
@@ -102,7 +134,7 @@ public class AonAgreementsToolbar {
 					listener.onSettingsButtonClick(event);
 			}
 		});
-		parentDockLayout.addToolbarButton(settingsButton);
+		toolsSection.add(settingsButton);
 		
 		trashListButton = new AonButtonBadge("Papelera Convenios", AON.CSS.aonIconTrashList(), false);
 		trashListButton.addClickHandler(new ClickHandler() {
@@ -112,7 +144,7 @@ public class AonAgreementsToolbar {
 					listener.onTrashListButtonClick(event);
 			}
 		});
-		parentDockLayout.addToolbarButton(trashListButton);
+		toolsSection.add(trashListButton);
 
 		importButton.ensureDebugId("importButton");
 		trashListButton.ensureDebugId("trashListButton");

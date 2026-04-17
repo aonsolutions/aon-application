@@ -1,0 +1,233 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraft.MyStyle">
+
+		/* ESTILOS XML */
+
+		.tableStyle {
+			border-collapse: collapse;
+			cursor: pointer;
+			margin-left: 0.8em;
+			width: 99%;
+		}
+
+		.tableStyle tr {
+			text-align: center;
+			border-bottom: 1px solid #ddd;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
+		}
+		
+		.yearPanel{
+			display: flex;
+			justify-content: center;
+			margin: .5rem 0;
+			margin-top: 50px;
+		}
+		
+		.optionButtons {
+			cursor: pointer;
+			background-color: transparent;
+			font-size: 1rem;
+			color: #757575;
+			border: .01rem solid #757575;
+			border-radius: 10%;
+			margin: .7rem 0;
+		}
+		
+		.year {
+			font-size: 2.2rem;
+			color: #ff704d;
+			padding: 0 1rem;
+		}
+		
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+		}
+		
+		.noselect {
+			-webkit-touch-callout: none; /* iOS Safari */
+			-webkit-user-select: none; /* Safari */
+			-khtml-user-select: none; /* Konqueror HTML */
+			-moz-user-select: none; /* Firefox */
+			-ms-user-select: none; /* Internet Explorer/Edge */
+			user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+		}
+		
+		/* EMPLOYEE EVENTS DRAFT */
+
+		.firstHeadStyle {
+			font-weight: bold;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
+			padding: 3px;
+			min-width: 100px;
+			text-align: left !important;
+		}
+
+		.firstHeadStyleHide {
+			padding-bottom: 15px;
+			visibility: hidden;
+			font-weight: bold;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
+		}
+
+		.cabeceraStyle {
+			width: 5.5em;
+			font-weight: bold;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
+		}
+
+		.oddRowStyle {
+			background-color: #eee;
+		}
+
+		.ocultarFila{
+			display: none;
+		}
+
+		.calendarPosition{
+			margin-left: 150px;
+		}
+
+		.cellFormat{
+			width: 45px;
+			text-align: center;
+			border: none;
+			cursor: pointer;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
+		}
+
+		.cellOddFormat{
+			background-color: #eee;
+			width: 45px;
+			/*margin-left: 8px;*/
+			text-align: center;
+			border: none;
+			cursor: pointer;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
+		}
+
+		.isSelectedCell{
+			background-color: #166ef3 !important;
+			color: #ffffff !important;
+			border-radius: 9px !important;
+			width: 45px;
+			/* margin-left: 8px; */
+			text-align: center;
+			border: none;
+			cursor: pointer;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
+		}
+
+		.onChange {
+			border: none !important;
+    		text-align: center !important;
+			width: 45px;
+			background-color: rgba(255, 255, 0, 0.38);
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
+		}
+
+		.setBlockVariableStyle{
+			color: #aaa;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
+		}
+
+		.showVariablesStyle{
+			padding: 3px;
+		}	
+		
+		.bgcWhite{
+			background-color: white;
+		}	
+		
+		.aonCheck{
+			background-position: 0.1rem !important;
+		}
+		
+		.widthMenuItem{
+			display: inline-block;
+			min-width: 130px !important;
+		}
+		
+		.cmdBtn{
+			background-position: center left;
+			background-repeat: no-repeat;
+			padding-left: 25px !important;
+			background-size: contain;
+		}
+		
+		.container{
+			width: 100%;
+			min-width: 600px;
+			height: 100%;
+		}
+		
+		.mt50{
+			margin-top: 50px;
+		}
+		
+		.message{
+			height: 100px !important;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin-top: 20px;
+		}
+		
+		.loadingPanel{
+			display: flex;
+			align-items: center;
+			animation-name: spin;
+			animation-duration: 2500ms;
+			animation-iteration-count: infinite;
+			animation-timing-function: linear;
+		}
+		
+		@keyframes spin {
+		    from {
+		        transform:rotate(0deg);
+		    }
+		    to {
+		        transform:rotate(360deg);
+		    }
+		}
+		
+		button[disabled]{
+    		display: initial;
+    		visibility: initial;
+		}
+		
+	</ui:style>
+
+	<ui:import field="com.esferalia.aon.gwt.payroll.client.EventsDraft.*" />
+
+	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
+		<g:center>
+			<g:DeckPanel ui:field="deckPanel">
+			
+				<g:HTMLPanel ui:field="loadingPanel" styleName="{style.message}"></g:HTMLPanel>
+			
+				<g:HTMLPanel ui:field="mainPanel" styleName="{style.flexColumn} {style.container}  {style.mt50}">
+					<g:ScrollPanel ui:field="scrollPanel">
+						<g:FlexTable ui:field="eventsGrid" styleName="{style.tableStyle} {style.noselect}">
+							<!-- AQUI SE CONSTRUYE LA TABLA VACIA. -->
+						</g:FlexTable>
+					</g:ScrollPanel>
+			</g:HTMLPanel>
+			
+			</g:DeckPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+	
+</ui:UiBinder>

@@ -43,6 +43,7 @@ import { isValid } from '../../services/documentUtils.js';
 import { AonChat } from '../../components/aon-chat.js';
 import { AonEmail } from '../../components/aon-email.js';
 import { AmortizationPeriod } from '../../models/amortization/AmortizationEnums.js';
+import { AonDateUtils } from '../utils/AonDateUtils.js';
 
 
 export class AonInvoice extends AonElement {
@@ -59,6 +60,8 @@ export class AonInvoice extends AonElement {
 	DATA;
 	FILE;
 	RECORD_INVOICE_DIALOG;
+
+	SIGN_CERTIFICATE;
 
 	FACTURAE;
 	FACTURAE_CERTIFICATE;
@@ -218,6 +221,8 @@ export class AonInvoice extends AonElement {
 		this.FACTURAE_CERTIFICATE = this.FACTURAE + CONSTANT.CERTIFICATE.initCap();
 		this.FACTURAE_LEGAL_LITERALS = this.FACTURAE + CONSTANT.LEGAL_LITERALS.initCap();
 		this.FACTURAE_PERIOD = this.FACTURAE + CONSTANT.PERIOD.initCap();
+
+		this.SIGN_CERTIFICATE = this.id + "Sign" + CONSTANT.CERTIFICATE.initCap();
 	}
 
 	initializeFunctions() {
@@ -1980,7 +1985,6 @@ export class AonInvoice extends AonElement {
 
 	onChangeDetailVat(detail, value, i, dialog) {
 		detail.percentage = value;
-		detail.vat = value;
 		this.invoice.setDetail(detail, i);
 		this.onChangeDetail(detail, i, dialog);
 	}
@@ -2076,12 +2080,12 @@ export class AonInvoice extends AonElement {
 			td6.style.verticalAlign = "bottom";
 			if (this.invoice.isEmitida() && !this.invoice.isNacional()) {
 				detail.percentage = undefined;
-				detail.vat = undefined;
 				vat.setDisabled(true);
 			}
-			detail.percentage = detail.percentage || detail.vat;
-			if (!detail.percentage && (!detail.prepayment || detail.prepayment == 'false'))
+
+			if (detail.percentage === undefined && (!detail.prepayment || detail.prepayment == 'false')) {
 				detail.percentage = 21.0;
+			}
 			if (detail.percentage) vat.value = detail.percentage;
 		} else if (detail.percentage !== 0.0) {
 			detail.percentage = 0.0;
@@ -2184,11 +2188,9 @@ export class AonInvoice extends AonElement {
 			table.addCell(vat);
 			if (this.invoice.isEmitida() && !this.invoice.isNacional()) {
 				detail.percentage = undefined;
-				detail.vat = undefined;
 				vat.setDisabled(true);
 			}
-			detail.percentage = detail.percentage || detail.vat;
-			if (!detail.percentage) {
+			if (detail.percentage === undefined) {
 				detail.percentage = 21.0;
 			}
 			if (detail.percentage) vat.value = detail.percentage;
@@ -3303,7 +3305,7 @@ export class AonInvoice extends AonElement {
 			};
 			recInv.remarks.push(comment);
 			recInv.id = undefined;
-			recInv.date = new Date();
+			recInv.date = AonDateUtils.formatDate(new Date(), 'yyyy-MM-dd');
 			recInv.series = 'R' + new Date().getFullYear();
 			recInv.number = undefined;
 			recInv.reference = undefined;
@@ -3326,7 +3328,6 @@ export class AonInvoice extends AonElement {
 					recInv.setDetail(item, i);
 				});
 			}
-
 			let aip = document.querySelector('aon-invoice-panel');
 			aip.aonInvoice(recInv.type, recInv);
 		});
@@ -3363,7 +3364,27 @@ export class AonInvoice extends AonElement {
 	}
 
 	signInvoice() {
-		signInvoice(this.invoice.id).then(r => { });
+		let d = this.getApplication().getDialog();
+		d.clear();
+		if (!this.isMobile()) d.width = '400px';
+		d.setTitle("Firmar Factura");
+		let div = this.createDiv();
+		let certSelect = createSelect(this.SIGN_CERTIFICATE, MSG.CERTIFICATE, div);
+		certSelect.setAlias('id', 'name');
+		getAeatCertificates().then(certs => certSelect.setOptions(certs));
+
+		d.setContent(div);
+		d.addAcceptAction(() => {
+			let data = {
+				id: this.invoice.id,
+				domainName: LS.getDomainName(),
+				domainId: LS.getDomainId()
+			};
+			data.domainLogin = LS.getDomainLogin();
+			data.cert = certSelect.value;
+			signInvoice(data).then(r => { });
+		});
+		d.open();
 	}
 
 	facturae() {
@@ -3400,7 +3421,7 @@ export class AonInvoice extends AonElement {
 	duplicateInvoice() {
 		let dupInv = this.invoice;
 		dupInv.id = undefined;
-		dupInv.date = new Date();
+		dupInv.date = AonDateUtils.formatDate(new Date(), 'yyyy-MM-dd');
 		dupInv.number = undefined;
 		dupInv.reference = '';
 		dupInv.status = 'inbox';
@@ -3413,7 +3434,7 @@ export class AonInvoice extends AonElement {
 		if (dupInv.finances) {
 			dupInv.finances.forEach((item, i) => {
 				dupInv.finances[i].id = undefined;
-				dupInv.finances[i].due_date = new Date();
+				dupInv.finances[i].due_date = AonDateUtils.formatDate(new Date(), 'yyyy-MM-dd');
 			});
 		}
 

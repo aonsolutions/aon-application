@@ -48,7 +48,7 @@ export const recordInvoices = (data) => post(`${API_URL}/invoices/record`, data)
 export const getPaymethods = (data) => get(`${API_URL}/paymethods`, data);
 export const getPaymethod = (id) => get(`${API_URL}/paymethods/${id}`, {});
 
-export const signInvoice = (id) => put(`${API_URL}/invoice/sign`, {id});
+export const signInvoice = (data) => put(`${API_URL}/invoice/sign`, data);
 export const downloadFacturae = (data) => 
     openFileUrl(`${API_URL}/face?id=${data.id}&domainName=${data.domainName}&domainId=${data.domainId}&domainLogin=${data.domainLogin}&cert=${data.cert}&period=${data.period}&legalLiterals=${data.legalLiterals}`);
 export const getTbaiHistory = (invoice) => post(`${API_URL}/tbai/history`, {invoice});

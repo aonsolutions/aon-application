@@ -9,7 +9,6 @@ import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAgreementsToolbar;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
@@ -26,15 +25,19 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.storage.client.Storage;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.Widget;
 
 //------------------------------------------- EditionListener
 
@@ -53,6 +56,10 @@ interface EditionListener2 {
 public class MainAgreement extends MainEntryPoint implements Listener,
 	EditionListener2, Agreements.Toolbar, AonAgreementsToolbar.Listener {
 	
+	// ------------------------------------------- UndoManager Listener
+	
+	
+	
 	// ------------------------------------------- SettingsContextMenu
 	
 	class EmptyTrashCommand implements ScheduledCommand {
@@ -67,8 +74,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 				}
 			};
 			
-			dialog.setGlassStyleName(AON.CSS.aonDialogGlass());
-			dialog.addStyleName(AON.CSS.aonDialogZIndex());
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
 		}
 	}
 	
@@ -84,8 +91,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 				}
 			};
 			
-			dialog.setGlassStyleName(AON.CSS.aonDialogGlass());
-			dialog.addStyleName(AON.CSS.aonDialogZIndex());
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
 		}
 	}
 	
@@ -97,16 +104,22 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		public SettingsContextMenu() {
 			
 			emptyTrash = addItem("Ver papelera convenios", new EmptyTrashCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			emptyTrash.ensureDebugId("emptyTrash");
 			
 			unused = addItem("Ver convenios en desuso", new UnusedCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			unused.ensureDebugId("peculiarities");
 			
 		}
 		
 	}
+
+	// ------------------------------------------- UiBinder
+	
+	static interface Binder extends UiBinder<Widget, MainAgreement> {}
+
+	private static final Binder binder = GWT.create(Binder.class);
 	
 	// ------------------------------------------- ScheduledCommand
 	
@@ -145,8 +158,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		@Override
 		public void execute() {
 			AonDialog dialog = new AonDialog("Subir convenio", new HTML("\u00BFDesea subir el convenio seleccionado al dominio padre\u003F"));
-			dialog.setGlassStyleName(AON.CSS.aonDialogGlass());
-			dialog.addStyleName(AON.CSS.aonDialogZIndex());
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
 			dialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override
@@ -188,8 +201,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		@Override
 		public void execute() {
 			AonDialog dialog = new AonDialog("Descargar convenio", new HTML("\u00BFDesea descargar el convenio seleccionado al dominio en el que se encuentra\u003F La descarga incluye la actualizaci\u00f3n de los contratos (de este dominio) que estaban asociados al convenio antiguo."));
-			dialog.setGlassStyleName(AON.CSS.aonDialogGlass());
-			dialog.addStyleName(AON.CSS.aonDialogZIndex());
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
 			dialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override
@@ -243,30 +256,30 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		public AgreementContextMenu() {
 			
 			newItem = addItem("Nuevo", new NewAgreementCommand(), 
-					AON.CSS.aonIconAdd(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
+					AON.CSS.aonIconAdd(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			newItem.ensureDebugId("newItem");
 			addSeparator();
 			
 			copyItem = addItem("Copiar", new CopyAgreementCommand(), 
-					AON.CSS.aonIconCopy(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
+					AON.CSS.aonIconCopy(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			copyItem.ensureDebugId("copyItem");
 			
 			pasteItem = addItem("Pegar", new PasteAgreementCommand(), 
-					AON.CSS.aonIconPaste(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
+					AON.CSS.aonIconPaste(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			pasteItem.ensureDebugId("pasteItem");
 			
 			deleteItem = addItem("Eliminar", new DeleteAgreementCommand(), 
-					AON.CSS.aonIconDelete(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());			
+					AON.CSS.aonIconDelete(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());			
 			deleteItem.ensureDebugId("deleteItem");
 			
 			moveItem = addItem("Mover a..", new MoveAgreementCommand(), 
-					AON.CSS.aonIconMoveTo(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
+					AON.CSS.aonIconMoveTo(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			moveItem.ensureDebugId("moveItem");
 			moveItem.setTitle("Mover convenio al dominio padre");
 			moveItem.setVisible(false);
 			
 			moveDownItem = addItem("Descargar a..", new MoveDownAgreementCommand(), 
-					AON.CSS.aonIconMoveDown(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
+					AON.CSS.aonIconMoveDown(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			moveDownItem.ensureDebugId("moveItem");
 			moveDownItem.setTitle("Descargar convenio al dominio hijo (incluye contratos asociados)");
 			moveDownItem.setVisible(false);
@@ -307,17 +320,44 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	
 	// ------------------------------------------- UiFields
 	
-	private DeckPanel deckPanel;
-	private AonCustomDockLayout splitLayoutPanel;
-	private HTMLPanel container;
-	private HTMLPanel messagePanel;
-	private AgreementPreview agreementPreview;
-	private HTMLPanel agreementMessage;
-	
-	private AonAgreementsToolbar toolbar;
+	@UiField
+	MyStyle style;
 
-	private Agreements agreements;
-	private MainTrashAgreement mainTrashAgreement;
+	interface MyStyle extends CssResource {
+		String borderR();
+		String cmdBtn();
+		String dialogGlass();
+		String dialogZIndex();
+		String tabSelected();
+		String tabNotSelected();
+	}
+	
+	@UiField
+	DeckPanel deckPanel;
+	
+	@UiField
+	DockLayoutPanel splitLayoutPanel;
+	
+	@UiField
+	HTMLPanel messagePanel;
+	
+	@UiField
+	HTMLPanel agreementContainer;
+	
+	@UiField
+	AonAgreementsToolbar toolbar;
+
+	@UiField
+	Agreements agreements;
+	
+	@UiField (provided = true)
+	AgreementPreview agreementPreview;
+	
+	@UiField
+	HTMLPanel agreementMessage;
+	
+	@UiField(provided = true)
+	MainTrashAgreement mainTrashAgreement;
 	
 	// ------------------------------------------- Variables
 	
@@ -353,24 +393,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		GWT.<MainEntryPoint.CodeMirrorResources>create(MainEntryPoint.CodeMirrorResources.class).css().ensureInjected();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		
-		deckPanel = new DeckPanel();
-		
-		splitLayoutPanel = new AonCustomDockLayout("Convenios") {
-			@Override
-			protected void onClearFilter() {}
-		};
-		splitLayoutPanel.hideSearchWidget();
-		
-		toolbar = new AonAgreementsToolbar(splitLayoutPanel);
-		
-		container = new HTMLPanel("");
-		container.addStyleName(AON.CSS.aonFlexColumn2());
-		
-		messagePanel = new HTMLPanel("");
-		
-		container.add(messagePanel);
-		AonMessagePanel.hideMessage(messagePanel);
-		
 		mainTrashAgreement = new MainTrashAgreement() {
 			
 			@Override
@@ -403,28 +425,22 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 				}, error -> agreementPreview.showError("Error guardando", error.getMessage()));
 			}
 		};
-		container.add(agreementPreview);
 		
-		agreementMessage = new HTMLPanel("");
-		agreementMessage.addStyleName(AON.CSS.aonItemFlex());
-		agreementMessage.addStyleName(AON.CSS.aonDisplayFlexCenter());
-		
-		Label empty = new Label("SELECCIONE UN CONVENIO PARA SER VISUALIZADO");
-		empty.getElement().getStyle().setProperty("font-weight", "bold");
-		empty.getElement().getStyle().setProperty("margin-top", "1rem");
-		agreementMessage.add(empty);
-		
-		container.add(agreementMessage);
-		
-		agreements = new Agreements();
-		agreements.addStyleName("aon-MainAgreement-Agreements");
+		// Create the UI defined in Employee.ui.xml.
+		Widget ui = binder.createAndBindUi(this);
 		
 		// LocalStorage getItems
 		this.storage = Storage.getLocalStorageIfSupported();
 
 		// Add the outerpanel to the RootLayoutPanel, so that it will be displayed.
 		
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+		root.add(ui);
+		
 		deckPanel.setAnimationEnabled(true);
+		showAgreements();
+		
+		agreements.addStyleName(style.borderR());
 		
 		this.settingsContextMenu = new SettingsContextMenu();
 		this.editionsListener = new LinkedList<>();
@@ -497,16 +513,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		
 		mainTrashAgreement.hasTrashAgreements(hasTrashAgreements -> toolbar.setTrashAgreementWarn(hasTrashAgreements));
 		
-		splitLayoutPanel.add(container);
-		splitLayoutPanel.addWest(agreements, 335);
-		
-		deckPanel.add(splitLayoutPanel);
-		deckPanel.add(mainTrashAgreement);
-		
-		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		root.add(deckPanel);
-		
-		showAgreements();
 	}
 
 	private void showAgreements() {
@@ -682,8 +688,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 						@Override
 						public void onSuccess(String message) {
 							AonDialog dialog = new AonDialog("BORRADO", new HTML(message));
-							dialog.setGlassStyleName(AON.CSS.aonDialogGlass());
-							dialog.addStyleName(AON.CSS.aonDialogZIndex());
+							dialog.setGlassStyleName(style.dialogGlass());
+							dialog.addStyleName(style.dialogZIndex());
 							dialog.confirm(new AonAcceptDialogCallback() {
 								
 								@Override
@@ -721,8 +727,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		} else {
 			String message = "Este convenio ser\u00E1 eliminado de forma permanente.<br>\u00BFDesea eliminar el convenio de <b>" + agreement.getDescription() + "</b>?";
 			AonDialog dialog = new AonDialog("BORRADO", new HTML(message));
-			dialog.setGlassStyleName(AON.CSS.aonDialogGlass());
-			dialog.addStyleName(AON.CSS.aonDialogZIndex());
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
 			dialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override
@@ -762,13 +768,13 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	@Override
 	public void onCollapseMenuButtonClick() {
 		splitLayoutPanel.setWidgetSize(agreements, 0);
-		//splitLayoutPanel.animate(500);
+		splitLayoutPanel.animate(500);
 	}
 
 	@Override
 	public void onShowMenuButtonClick() {
-		splitLayoutPanel.setWidgetSize(agreements, 335);
-		//splitLayoutPanel.animate(500);
+		splitLayoutPanel.setWidgetSize(agreements, 350);
+		splitLayoutPanel.animate(500);
 	}
 	
 	// ------------------------------------------- Toolbar methods
@@ -792,7 +798,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	@Override
 	public void onCollapseMenuButtonClick(ClickEvent event) {
 		splitLayoutPanel.setWidgetSize(agreements, 0);
-		//splitLayoutPanel.animate(500);
+		splitLayoutPanel.animate(500);
 		Timer timer = new Timer() {
 			@Override
 			public void run() {
@@ -805,8 +811,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 	@Override
 	public void onShowMenuButtonClick(ClickEvent event) {
-		splitLayoutPanel.setWidgetSize(agreements, 335);
-		//splitLayoutPanel.animate(500);
+		splitLayoutPanel.setWidgetSize(agreements, 350);
+		splitLayoutPanel.animate(500);
 		Timer timer = new Timer() {
 			@Override
 			public void run() {
@@ -851,8 +857,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			
 		};
 		
-		serviAgreementDialog.setGlassStyleName(AON.CSS.aonDialogGlass());
-		serviAgreementDialog.addStyleName(AON.CSS.aonDialogZIndex());
+		serviAgreementDialog.setGlassStyleName(style.dialogGlass());
+		serviAgreementDialog.addStyleName(style.dialogZIndex());
 		serviAgreementDialog.setMessageVisible(!userRoles.isConvenios());
 	}
 
@@ -882,8 +888,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	        return;
 	    }
 		 
-		//int offset = 225;
-		int offset = 0;
+		int offset = 225;
 		settingsContextMenu.setPopupPosition(nativeEvent.getClientX() - offset, nativeEvent.getClientY());
 		settingsContextMenu.show();
 		
@@ -960,13 +965,13 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	// ------------------------------------ Main view
 	
 	private void showAgreementMessage() {
-		agreementPreview.getElement().getStyle().setDisplay(Display.NONE);
+		agreementContainer.getElement().getStyle().setDisplay(Display.NONE);
 		agreementMessage.getElement().getStyle().clearDisplay();
 	}
 	
 	private void showAgreementContainer() {
 		agreementMessage.getElement().getStyle().setDisplay(Display.NONE);
-		agreementPreview.getElement().getStyle().clearDisplay();
+		agreementContainer.getElement().getStyle().clearDisplay();
 	}
 	
 }

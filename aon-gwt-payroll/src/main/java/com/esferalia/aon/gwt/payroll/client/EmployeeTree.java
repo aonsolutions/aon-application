@@ -2648,6 +2648,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private ActivityDraft activityDraft;
 	private EmployeeEventsDraft employeeEventsDraft;
 	private EmployeeDraft employeeDraft;
+	private EmployeeCalendarDraft employeeCalendarDraft;
 	private EmployeeCalendarDraftNew employeeCalendarDraftNew;
 	private ContractBonusUI employeeSSBonus;
 	private SSPECDraft ssPECDraft;
@@ -3050,6 +3051,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		employeeDetail.setWidget(getWorkplacePanel());
 		getWorkplacePanel().selectWidget(getCalendarDraft());
 		getCalendarDraft().setCalendarDraftObject(null, calendarDraftObjectData);
+	}
+
+	@Override
+	public void onEmployeeCalendarSelected(EmployeeCalendarDraftObjectData calendar) {
+		employeeDetail.setWidget(getEmployeeCalendarDraft());
+		getEmployeeCalendarDraft().setEmployeeCalendarDraftObject(calendar);
 	}
 
 	@Override
@@ -3514,6 +3521,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 					showLoadingMessage("Obteniendo variables de c\u00E1lculo del trabajador ...");
 				}
 				
+				@Override
+				protected void initLoadingPanel() {
+					// NOOP
+				}
+				
 			};
 		return employeeEventsDraft;
 	}
@@ -3570,6 +3582,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		if (workplaceCalendarDraft == null)
 			workplaceCalendarDraft = new WorkplaceCalendar();
 		return workplaceCalendarDraft;
+	}
+
+	private EmployeeCalendarDraft getEmployeeCalendarDraft() {
+		if (employeeCalendarDraft == null)
+			employeeCalendarDraft = new EmployeeCalendarDraft();
+		return employeeCalendarDraft;
 	}
 
 	private EmployeeCalendarDraftNew getEmployeeCalendarDraftNew() {

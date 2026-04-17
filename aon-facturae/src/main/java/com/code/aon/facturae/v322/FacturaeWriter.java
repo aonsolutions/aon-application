@@ -275,7 +275,7 @@ public class FacturaeWriter {
 				registryParty.setAdministrativeCentres(new AdministrativeCentresType());			
 			}
 			AdministrativeCentreType centre = new AdministrativeCentreType();
-			centre.setCentreCode(address.getAlias());
+			centre.setCentreCode(Util.toTextMax10Type(address.getAlias()));
 			centre.setRoleTypeCode(FACeUtil.FACE_VENDEDOR_ROLE_TYPE_CODE);
 			CountryType country = getCountry(address.getCountry());
 			if ( CountryType.ESP.equals(country) ) {

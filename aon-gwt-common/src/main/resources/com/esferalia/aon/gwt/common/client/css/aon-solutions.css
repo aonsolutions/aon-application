@@ -2690,10 +2690,6 @@
 	filter: opacity(45%);
 }
 
-.aon_dialog_zindex{
-	z-index: 8;
-}
-
 .aon_badge{
 	padding: 0.5rem;
   	background-color: #ed3e3e;
