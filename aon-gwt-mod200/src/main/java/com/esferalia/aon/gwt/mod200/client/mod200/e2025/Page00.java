@@ -32,11 +32,13 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 
 public class Page00 extends PageAbs {
 	
 	private Map<Mod2002025Key, CheckBox> inputsCheckBox;
+	private Map<Mod2002025Key, Label> labelsCheckBox;
 	
 	private AonDocumentTextBox nif;
 	private AonTextBox companyName;
@@ -139,6 +141,9 @@ public class Page00 extends PageAbs {
         rectificationMotive1.setEnabled(isEditable() && rectification.getValue());
         rectificationMotive2.setEnabled(isEditable() && rectification.getValue());
         rectificationMotive3.setEnabled(isEditable() && rectification.getValue());
+        setOpacity(rectificationMotive1);
+        setOpacity(rectificationMotive2);
+        setOpacity(rectificationMotive3);
 		
 		// Determinados campos y los caracteres, se desabilitan si ya está inicializado el modelo
 		boolean enabled = !callback.getMod200Object().isInitialized();
@@ -149,7 +154,10 @@ public class Page00 extends PageAbs {
 		profitAndLossType.setEnabled(enabled);
 		for (CheckBox check : inputsCheckBox.values()) {
 			check.setEnabled(enabled);
-		}	
+		}
+		for (Label label : labelsCheckBox.values()) {
+			label.getElement().getStyle().setOpacity(enabled ? 1.0 : 0.7);
+		}
 		if (enabled)
 			for (Mod2002025Key[] block : CHARACTERS_KEYS)
 			  for (Mod2002025Key key : block) {
@@ -161,6 +169,7 @@ public class Page00 extends PageAbs {
 		// El caracter [00027] siempre está deshabilitado
 		if (inputsCheckBox.containsKey(Mod2002025Key.C0027)) {
 			inputsCheckBox.get(Mod2002025Key.C0027).setEnabled(false);
+			labelsCheckBox.get(Mod2002025Key.C0027).getElement().getStyle().setOpacity(0.7);
 		}
 		
     }
@@ -329,6 +338,9 @@ public class Page00 extends PageAbs {
 			rectificationMotive1.setEnabled(rectification.getValue());
 			rectificationMotive2.setEnabled(rectification.getValue());
 			rectificationMotive3.setEnabled(rectification.getValue());
+			setOpacity(rectificationMotive1);
+			setOpacity(rectificationMotive2);
+			setOpacity(rectificationMotive3);
 			if (!rectification.getValue()) {
 				callback.getMod200Object().getMod200().setBooleanValue(Mod2002025Key.R0001, false);
 				callback.getMod200Object().getMod200().setBooleanValue(Mod2002025Key.R0002, false);
@@ -436,6 +448,7 @@ public class Page00 extends PageAbs {
 		// CARACTERES DE LA DECLARACION
 		
 		inputsCheckBox = new HashMap<>();
+		labelsCheckBox = new HashMap<>();
 		
 		FlexTable charactersTable1 = new FlexTable();
 		FlexTable charactersTable2 = new FlexTable();
@@ -470,7 +483,8 @@ public class Page00 extends PageAbs {
 		table.setCellSpacing(0);
 		ColumnFormatter cf = table.getColumnFormatter();
 		cf.setStyleName(0, AON.AON_CSS.aonWidth40());
-		cf.setStyleName(1, AON.AON_CSS.aonWidthAuto());
+		cf.setStyleName(1, AON.AON_CSS.aonWidth20());
+		cf.setStyleName(2, AON.AON_CSS.aonWidthAuto());
 		
 		int row = 0;
 		
@@ -480,7 +494,9 @@ public class Page00 extends PageAbs {
 			   table.setWidget(row, 0, l);
 			}
 			
-			final CheckBox check = new CheckBox(key.getDescription() + (NOT_SUPPORTED_CHARACTERS.contains(key)?" (NO)":""));
+			final CheckBox check = new CheckBox();
+			Label label = new Label(key.getDescription() + (NOT_SUPPORTED_CHARACTERS.contains(key)?" (NO)":""));			
+			label.addStyleName(AON.CSS.aonFontSmaller());			
 			check.addClickHandler( event -> {
 				if (NOT_SUPPORTED_CHARACTERS.contains(key)) {
 					AonMessageDialog.error(AON.MSG.unsupportedCharacter(key.getDescription()));
@@ -493,8 +509,12 @@ public class Page00 extends PageAbs {
 			});
 			
 			inputsCheckBox.put(key, check);
+			labelsCheckBox.put(key, label);
 			check.setStyleName(AON.AON_CSS.aonFiscalCheckbox());
 			table.setWidget(row, 1, check);
+			
+			table.setWidget(row, 2, label);
+			
 			row++;
 		}
 	}
@@ -509,6 +529,7 @@ public class Page00 extends PageAbs {
 				CheckBox check = inputsCheckBox.get(incompatible);
 				if (check != null) {
 					check.setEnabled(!enabled);
+					labelsCheckBox.get(incompatible).getElement().getStyle().setOpacity(check.isEnabled() ? 1.0 : 0.7);
 					if (enabled) {
 						check.setValue(!enabled);
 						callback.getMod200Object().getMod200().setBooleanValue(incompatible, check.getValue());
@@ -527,6 +548,10 @@ public class Page00 extends PageAbs {
 				}
 			}
 		}
+	}
+	
+	private void setOpacity(CheckBox checkBox) {
+		checkBox.getElement().getStyle().setOpacity(checkBox.isEnabled() ? 1.0 : 0.5);
 	}
 	
 }

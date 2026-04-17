@@ -135,6 +135,7 @@ public class Page08 extends PageAbs {
 		tableContainer.setStyleName(AON.AON_CSS.aonBorderBottom());
 		tableContainer.addStyleName(AON.AON_CSS.aonMarginBottom());
 		tableContainer.addStyleName(AON.AON_CSS.aonFiscalScrollTableWrapper());		
+		tableContainer.addStyleName("salary-scroll"); // Forzar scroll horizontal visible
 		tableContainer.add(table);
 		
 		basePanel.add(tableContainer);

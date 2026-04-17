@@ -30,7 +30,7 @@ public class Page18 extends PageAbs {
 		
 		// Dotaciones por deterioro de créditos u otros activos ...
 		
-		FlexTable table = addTable(AON.MSG.damageAmount2(), 6, "150px");
+		FlexTable table = addTable(AON.MSG.damageAmount2(), 6, "150px", true);
 
 		int row = 0;
 		addHeaderCell(table, row, 1, AON.MSG.dot1());

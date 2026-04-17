@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2025.Mod2002025Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -76,17 +77,25 @@ public class Model2002025 extends DockLayoutPanel {
 		
 		super(Unit.PX);
 		
+		this.mod200Callback = mod200Callback;
+		this.options = mod200Callback.getOptions();
+		options.getParentWidget().add(this); 
+		this.mod200Object = new Mod2002025Object(options, mod200);
+		
+		AON.ensureInjected();
+		
 		popup = new PopupPanel(false, true);
 		popup.add(new AonSplash());
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		
-		this.mod200Callback = mod200Callback;
-		this.options = mod200Callback.getOptions();
-		
-		AON.ensureInjected();
-
-		mod200Object = new Mod2002025Object(options, mod200);
+//		this.mod200Callback = mod200Callback;
+//		this.options = mod200Callback.getOptions();
+//		options.getParentWidget().add(this); 
+//		
+//		AON.ensureInjected();
+//
+//		mod200Object = new Mod2002025Object(options, mod200);
 		
 		popup.center();
 		
@@ -96,7 +105,9 @@ public class Model2002025 extends DockLayoutPanel {
 		addNorth(modelHeader, AonFiscalModelHeader.HEIGTH);
 		addNorth(getToolbar(), AonToolbar.HEIGTH);
 		addNorth(getDeclarationToolbarPanel(), AonToolbar.HEIGTH); // Estado
+		pageContainer.addStyleName(AON.CSS.aonBorderTop()); 
 		addWest(getLinksPanel(), 300);
+		
 		add(pageContainer);		
 		
 		dumpP00();
@@ -339,56 +350,29 @@ public class Model2002025 extends DockLayoutPanel {
 		};		
 		
 		if (pages[i] == null) {
-//			if (i ==  0) pages[i] = new Page00(cbk);
-//			if (i ==  1) pages[i] = new Page01(cbk);
-//			if (i ==  2) pages[i] = new Page02(cbk); 
-//			if (i ==  3) pages[i] = new Page03(cbk); 
-//			if (i ==  4) pages[i] = new Page04(cbk); 
-//			if (i ==  5) pages[i] = new Page05(cbk); 
-//			if (i ==  6) pages[i] = new Page06(cbk); 
-//			if (i ==  7) pages[i] = new Page07(cbk); 
-//			if (i ==  8) pages[i] = new Page08(cbk); 
-//			if (i ==  9) pages[i] = new Page09(cbk); 
-//			if (i == 10) pages[i] = new Page10(cbk); 
-//			if (i == 11) pages[i] = new Page11(cbk); 
-//			if (i == 12) pages[i] = new Page12(cbk);
-//			if (i == 13) pages[i] = new Page13(cbk); 
-//			if (i == 14) pages[i] = new Page14(cbk);
-//			if (i == 15) pages[i] = new Page15(cbk); 
-//			if (i == 16) pages[i] = new Page16(cbk); 
-//			if (i == 17) pages[i] = new Page17(cbk);
-//			if (i == 18) pages[i] = new Page18(cbk); 
-//			if (i == 19) pages[i] = new Page19(cbk); 
-//			if (i == 20) pages[i] = new Page20(cbk); 
-//			if (i == 21) pages[i] = new Page21(cbk);
-//			if (i == 22) pages[i] = new PageAEAT(cbk);
-			
-			pages[i] = switch (i) {
-				case  0 -> new Page00(cbk);
-				case  1 -> new Page01(cbk);
-				case  2 -> new Page02(cbk);
-				case  3 -> new Page03(cbk);
-				case  4 -> new Page04(cbk);
-				case  5 -> new Page05(cbk);
-				case  6 -> new Page06(cbk);
-				case  7 -> new Page07(cbk);
-				case  8 -> new Page08(cbk);
-				case  9 -> new Page09(cbk);
-				case 10 -> new Page10(cbk);
-				case 11 -> new Page11(cbk);
-				case 12 -> new Page12(cbk);
-				case 13 -> new Page13(cbk);
-				case 14 -> new Page14(cbk);
-				case 15 -> new Page15(cbk);
-				case 16 -> new Page16(cbk);
-				case 17 -> new Page17(cbk);
-				case 18 -> new Page18(cbk);
-				case 19 -> new Page19(cbk);
-				case 20 -> new Page20(cbk);
-				case 21 -> new Page21(cbk);
-				case 22 -> new PageAEAT(cbk);
-				default -> null;
-			};
+			if (i ==  0) pages[i] = new Page00(cbk);
+			if (i ==  1) pages[i] = new Page01(cbk);
+			if (i ==  2) pages[i] = new Page02(cbk); 
+			if (i ==  3) pages[i] = new Page03(cbk); 
+			if (i ==  4) pages[i] = new Page04(cbk); 
+			if (i ==  5) pages[i] = new Page05(cbk); 
+			if (i ==  6) pages[i] = new Page06(cbk); 
+			if (i ==  7) pages[i] = new Page07(cbk); 
+			if (i ==  8) pages[i] = new Page08(cbk); 
+			if (i ==  9) pages[i] = new Page09(cbk); 
+			if (i == 10) pages[i] = new Page10(cbk); 
+			if (i == 11) pages[i] = new Page11(cbk); 
+			if (i == 12) pages[i] = new Page12(cbk);
+			if (i == 13) pages[i] = new Page13(cbk); 
+			if (i == 14) pages[i] = new Page14(cbk);
+			if (i == 15) pages[i] = new Page15(cbk); 
+			if (i == 16) pages[i] = new Page16(cbk); 
+			if (i == 17) pages[i] = new Page17(cbk);
+			if (i == 18) pages[i] = new Page18(cbk); 
+			if (i == 19) pages[i] = new Page19(cbk); 
+			if (i == 20) pages[i] = new Page20(cbk); 
+			if (i == 21) pages[i] = new Page21(cbk);
+			if (i == 22) pages[i] = new PageAEAT(cbk);
 		}
 		
 		return getPage(i);
@@ -397,6 +381,7 @@ public class Model2002025 extends DockLayoutPanel {
 	private Widget getToolbar() {
 		
 		AonToolbar toolbarPanel = new AonToolbar(AonStringUtils.join(mod200Object.getMod200().getDocument(), AonStringUtils.SPACE, mod200Object.getMod200().getFullName()));
+		toolbarPanel.getElement().getStyle().setDisplay(Display.BLOCK); 
 		
 		// Cancelar (botón para volver atrás)
 		
@@ -658,6 +643,7 @@ public class Model2002025 extends DockLayoutPanel {
 		
 		ScrollPanel scrollPanel = new ScrollPanel(); 
 		scrollPanel.setStyleName(AON.CSS.aonBorderRight());
+		scrollPanel.addStyleName(AON.CSS.aonBorderTop()); 
 		
 		FlowPanel linkContainer = new FlowPanel();
 		linkContainer.setStyleName(AON.CSS.aonPaddingLeft());
@@ -716,9 +702,12 @@ public class Model2002025 extends DockLayoutPanel {
 	}
 	
 	private AonToolbar getDeclarationToolbarPanel() {
+		
 		AonToolbar decToolbar = new AonToolbar();
+		decToolbar.getElement().getStyle().setDisplay(Display.BLOCK); 
+		decToolbar.getElement().getStyle().setMarginTop(5.0, Unit.PX);
 				
-		// Botón "Finalizar"
+		// Botón "Finalizar"		
 		
 		markAsFinishedButton = new AonToolbarButton(AON.MSG.finish(),AON.CSS.aonIconModelFinish());
 		markAsFinishedButton.setText(markAsFinishedButton.getTitle());
@@ -748,10 +737,11 @@ public class Model2002025 extends DockLayoutPanel {
 		});
 		decToolbar.add(markAsPendingButton);
 		
-		// Label "Estado"		
-		statusLabel = new Label();
+		// Label "Estado"
 		
+		statusLabel = new Label();		
 		decToolbar.setTitle(statusLabel);
+		
 		return decToolbar;
 	}
 	

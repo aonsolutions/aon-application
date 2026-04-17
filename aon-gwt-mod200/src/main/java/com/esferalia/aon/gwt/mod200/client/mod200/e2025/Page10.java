@@ -61,6 +61,7 @@ public class Page10 extends PageAbs {
 	private static final String FOOTER_547 = "(*) S\u00F3lo debe cumplimentarse esta fila si la entidad tiene bases imponibles negativas por otro per\u00EDodo impositivo iniciado tambi\u00E9n en 2025, pero inferior a 12 meses y previo al ejercicio declarado.";
 	private static final String FOOTER_561 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene cuotas negativas por otro per\u00EDodo impositivo iniciado tambi\u00E9n en 2025, pero inferior a 12 meses y previo al ejercicio declarado.";
 	private static final String FOOTER_1032 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene reservas pendientes de integrar en un per\u00EDodo impositivo anterior iniciado en 2025.";
+	private static final String FOOTER_1032_BIS = "(**) S\u00F3lo si es igual o superior al 2%";
 	private static final String FOOTER_1033 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene reducciones pendientes de integrar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2025.";
 	
 	public Page10( Model2002025PageCallback callback ) {
@@ -180,7 +181,7 @@ public class Page10 extends PageAbs {
     			if (key == Mod2002025Key.LQ1032 
 					&& callback.getMod200Object().getMod200().isNotChecked(Mod2002025Key.C0009) 
 					&& callback.getMod200Object().getMod200().isNotChecked(Mod2002025Key.C0010)) {
-					row = paintKeyBreakdownLink(table, row, Mod2002025Key.LQ1032, Mod2002025LQ1032Key.values(), HEADERS_3, FOOTER_1032);
+					row = paintKeyBreakdownLink(table, row, Mod2002025Key.LQ1032, Mod2002025LQ1032Key.values(), HEADERS_3, FOOTER_1032, FOOTER_1032_BIS);
 				}
     			if (key == Mod2002025Key.LQ547 && !callback.getMod200Object().getMod200().isCooperativa()) {
 					row = paintKeyBreakdownLink(table, row, Mod2002025Key.LQ547, Mod2002025LQ547Key.values(), HEADERS_4, FOOTER_547);    				

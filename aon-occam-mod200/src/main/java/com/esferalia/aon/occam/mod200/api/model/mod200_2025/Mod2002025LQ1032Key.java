@@ -22,8 +22,7 @@ public enum Mod2002025LQ1032Key implements Serializable, IMod200KeysProvider  {
 	,C05(new Mod2002025Key[]{Mod2002025Key.LQ1137,Mod2002025Key.LQ1032,Mod2002025Key.LQ1139},"Total")
 	
 	,C06(new Mod2002025Key[]{Mod2002025Key.LQ1140,null                ,null                },"Reserva de capitalizaci\u00F3n dotada en el ejercicio")
-	// FALTA - CASILLAS 3594 Y MILLON NUEVAS ESTE AÑO, NO SE SI LAS PONDRE AQUI JUNTO CON LA 1140 O APARTE LAS TRES (1140, 3594 Y MILLON) TENER EN CUENTA QUE MILLON ES UN CHECK
-	,C07(new Mod2002025Key[]{Mod2002025Key.LQ3594,null                ,null                },"Incremento porcentual de la plantilla media total (**)")
+	,C07(new Mod2002025Key[]{Mod2002025Key.LQ3594,null                ,null                },"Incremento porcentual de la plantilla media total (%) (**)")
 	,C08(new Mod2002025Key[]{Mod2002025Key.MILLON,null                ,null                },"Entidad cuyo importe neto de la cifra de negocios durante los 12 meses anteriores a la fecha en que se inicie el per\u00EDodo impositivo al que corresponda esta reducci\u00F3n es inferior a 1 mill\u00F3n de euros")
 	;
 	 

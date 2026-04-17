@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2025.Mod2002025Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusWidget;
@@ -317,6 +318,11 @@ public abstract class PageAbs extends ResizeComposite {
 							addHeaderCell(tableDetail, r, 0, "Informaci\u00F3n adicional para el c\u00E1lculo de l\u00EDmites de deducciones - Grupo mercantil");
 							addHeaderCell(tableDetail, r++, 1, "Importe");
 						}
+						// Casilla [1140] comienza bloque de información adicional, dentro del desglose de la [1032]
+						if (k == Mod2002025Key.LQ1140) {							
+							addHeaderCell(tableDetail, r, 0, "Informaci\u00F3n adicional");
+							addHeaderCell(tableDetail, r++, 1, "Importe");
+						}
 						Label desc = new Label(key.getDescription());			
 						tableDetail.setWidget(r, 0, desc);
 						desc.setStyleName(AON.AON_CSS.aonMarginLeft());
@@ -325,7 +331,11 @@ public abstract class PageAbs extends ResizeComposite {
 						tableDetail.getFlexCellFormatter().setStyleName(r, 0, AON.AON_CSS.aonFiscalBorderBottom());
 						paintDesc = false;
 					}
-					paintKeyField(tableDetail, k, r, col, 9, false);					
+					if (k == Mod2002025Key.MILLON) {
+						paintKeyCheck(tableDetail, k, r, col);
+					} else {
+						paintKeyField(tableDetail, k, r, col, 9, false);
+					}
 				}
 				++col;
 			}
@@ -350,6 +360,7 @@ public abstract class PageAbs extends ResizeComposite {
 		return ++row;
 	}
 	
+
 	protected void paintKeysProvider(IMod200KeysProvider[] keysProvider, final FlexTable tab, String... headers) {
 		paintKeysProvider(keysProvider, tab, 0, true, headers);
 	}
@@ -459,6 +470,7 @@ public abstract class PageAbs extends ResizeComposite {
 			FlowPanel tableContainer = new FlowPanel();
 			tableContainer.addStyleName(AON.AON_CSS.aonBorderBottom());
 			tableContainer.addStyleName(AON.AON_CSS.aonFiscalScrollTableWrapper());
+			tableContainer.addStyleName("salary-scroll"); // Forzar scroll horizontal visible
 			tableContainer.add(tab);			
 			basePanel.add(tableContainer);
 		} else {
@@ -571,6 +583,22 @@ public abstract class PageAbs extends ResizeComposite {
 		row.addCell(new Label(label), AON.CSS.aonWidth600());
 		row.addCell(widget);
 	}
+	
+	private void paintKeyCheck(FlexTable tableDetail, IMod200Key k, int r, int col) {
+		
+		CheckBox check = new CheckBox();
+		check.setValue(callback.getMod200Object().getMod200().isChecked(k));
+		check.setEnabled(isEditable(k));
+		check.addClickHandler(event -> {			
+			callback.getMod200Object().getMod200().setBooleanValue(k, check.getValue());
+			callback.markAsDirty();
+		});
+		otherInputs.add(check);
+		
+		tableDetail.setWidget(r, col, check);
+		
+	}
+
 	
 	
 }
