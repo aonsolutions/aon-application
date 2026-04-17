@@ -124,7 +124,6 @@ public class AonMainCertificatesPanel extends DeckPanel {
 		container.addStyleName(AON.CSS.aonFlexColumn2());
 
 		container.add(messagePanel);
-		AonMessagePanel.hideMessage(messagePanel);
 
 		initCertDataTable();
 

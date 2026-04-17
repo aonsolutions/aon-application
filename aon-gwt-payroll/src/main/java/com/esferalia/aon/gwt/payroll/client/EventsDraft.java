@@ -4,31 +4,46 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData.EmployeeEventsVariable;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.Widget;
 
-public class EventsDraft extends AonCustomDockLayout {
+public class EventsDraft extends ResizeComposite {
+
+	// ----------------------------------------------- UiBinder 
+	
+	interface Binder extends UiBinder<Widget, EventsDraft> {}
+	
+	private static final Binder binder = GWT.create(Binder.class);
 	
 	// ----------------------------------------------- EventTableCell 
 	
@@ -42,14 +57,10 @@ public class EventsDraft extends AonCustomDockLayout {
 			this.column = column;
 			this.row = row;
 			
-			this.getElement().getStyle().setProperty("text-align", "center");
-			this.getElement().getStyle().setProperty("width", "40px");
-			this.getElement().getStyle().setProperty("border", "none");
-			this.getElement().getStyle().setProperty("font-size", "11px");
-			this.getElement().getStyle().setProperty("background-color", "transparent");
-			
+			//ESTILOS
+			this.addStyleName(style.eventCell());
 			if (row % 2 != 0){
-				this.getElement().getStyle().setProperty("background-color", "#eee");
+				this.addStyleName(style.oddRowColor());
 			}
 		}
 		
@@ -66,7 +77,7 @@ public class EventsDraft extends AonCustomDockLayout {
 		}
 
 		public void setBlockVariableStyle() {
-			this.getElement().getStyle().setProperty("background-color", "#aaa");
+			this.addStyleName(style.setBlockCellStyle());
 		}
 			
 	}
@@ -78,13 +89,13 @@ public class EventsDraft extends AonCustomDockLayout {
 		@Override
 		public void execute() {
 			seeMenu.getCalendarVariablesMenuItem().addStyleName("aon-MenuItemCheckYes");
-			seeMenu.getCalendarVariablesMenuItem().addStyleName(AON.CSS.aonCheckBox());
+			seeMenu.getCalendarVariablesMenuItem().addStyleName(style.aonCheck());
 			
 			seeMenu.getEditableVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
-			seeMenu.getEditableVariablesMenuItem().removeStyleName(AON.CSS.aonCheckBox());
+			seeMenu.getEditableVariablesMenuItem().removeStyleName(style.aonCheck());
 			
 			seeMenu.getAllVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
-			seeMenu.getAllVariablesMenuItem().removeStyleName(AON.CSS.aonCheckBox());
+			seeMenu.getAllVariablesMenuItem().removeStyleName(style.aonCheck());
 			
 			variablesToShow = 2;
 			
@@ -97,13 +108,13 @@ public class EventsDraft extends AonCustomDockLayout {
 		@Override
 		public void execute() {
 			seeMenu.getEditableVariablesMenuItem().addStyleName("aon-MenuItemCheckYes");
-			seeMenu.getEditableVariablesMenuItem().addStyleName(AON.CSS.aonCheckBox());
+			seeMenu.getEditableVariablesMenuItem().addStyleName(style.aonCheck());
 			
 			seeMenu.getCalendarVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
-			seeMenu.getCalendarVariablesMenuItem().removeStyleName(AON.CSS.aonCheckBox());
+			seeMenu.getCalendarVariablesMenuItem().removeStyleName(style.aonCheck());
 			
 			seeMenu.getAllVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
-			seeMenu.getAllVariablesMenuItem().removeStyleName(AON.CSS.aonCheckBox());
+			seeMenu.getAllVariablesMenuItem().removeStyleName(style.aonCheck());
 			
 			variablesToShow = 1;
 			
@@ -116,13 +127,13 @@ public class EventsDraft extends AonCustomDockLayout {
 		@Override
 		public void execute() {
 			seeMenu.getAllVariablesMenuItem().addStyleName("aon-MenuItemCheckYes");
-			seeMenu.getAllVariablesMenuItem().addStyleName(AON.CSS.aonCheckBox());
+			seeMenu.getAllVariablesMenuItem().addStyleName(style.aonCheck());
 			
 			seeMenu.getEditableVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
-			seeMenu.getEditableVariablesMenuItem().removeStyleName(AON.CSS.aonCheckBox());
+			seeMenu.getEditableVariablesMenuItem().removeStyleName(style.aonCheck());
 			
 			seeMenu.getCalendarVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
-			seeMenu.getCalendarVariablesMenuItem().removeStyleName(AON.CSS.aonCheckBox());
+			seeMenu.getCalendarVariablesMenuItem().removeStyleName(style.aonCheck());
 			
 			variablesToShow = 0;
 			
@@ -138,13 +149,13 @@ public class EventsDraft extends AonCustomDockLayout {
 		
 		public SeeMenu() {
 			
-			calendarVariablesMenuItem = addItem("Consultar variables calendario", new CalendarVariablesCommand(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
+			calendarVariablesMenuItem = addItem("Consultar variables calendario", new CalendarVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmdBtn());
 			calendarVariablesMenuItem.ensureDebugId("calendarVariablesMenuItem");
 			
-			editableVariablesMenuItem = addItem("Editar variables convenio", new EditableVariablesCommand(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
+			editableVariablesMenuItem = addItem("Editar variables convenio", new EditableVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmdBtn());
 			editableVariablesMenuItem.ensureDebugId("editableVariablesMenuItem");
 			
-			allVariablesMenuItem = addItem("Todas las variables", new AllVariablesCommand(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
+			allVariablesMenuItem = addItem("Todas las variables", new AllVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmdBtn());
 			allVariablesMenuItem.ensureDebugId("allVariablesMenuItem");
 			
 		}
@@ -165,12 +176,36 @@ public class EventsDraft extends AonCustomDockLayout {
 	
 	// ----------------------------------------------- UiFields
 	
-	private HTMLPanel container;
-	private HTMLPanel yearContainer;
-	private Label dateLabel;
-	private AonToolbarButton previusDateButton;
-	private AonToolbarButton nextDateButton;
-	private FlexTable eventsTable;
+	@UiField
+	MyStyle style;
+
+	interface MyStyle extends CssResource {
+		String blankHeaderCell();
+		String headerCell();
+		String oddRowColor();
+		String eventCell();
+		String setBlockCellStyle();
+		String aonCheck();
+		String pointer();
+		String cmdBtn();
+		String flexVariables();
+		String widthMenuItem();
+	}
+	
+	@UiField
+	DockLayoutPanel dockLayoutPanel;
+
+	@UiField
+	Label dateLabel;
+	
+	@UiField
+	Button previusDateButton;
+	
+	@UiField
+	Button nextDateButton;
+	
+	@UiField
+	FlexTable eventsTable;
 
 	// ----------------------------------------------- Variables
 	
@@ -183,6 +218,7 @@ public class EventsDraft extends AonCustomDockLayout {
 	
 	private SeeMenu seeMenu;
 	
+	private AonToolbar toolbar;
 	private AonToolbarButton visibilityBtn;
 	private AonToolbarButton undoAllButton;
 	private AonToolbarButton saveButton;
@@ -195,43 +231,26 @@ public class EventsDraft extends AonCustomDockLayout {
 	// ----------------------------------------------- Constructor
 	
 	public EventsDraft() {
-		super("Variables de c\u00edlculo");
-		hideSearchWidget();
+		initWidget(binder.createAndBindUi(this));
 		
 		getToolbarPanel();
 		
-		container = new HTMLPanel("");
-		container.addStyleName(AON.CSS.aonFlexColumn2());
-		
-		yearContainer = new HTMLPanel("");
-		yearContainer.addStyleName(AON.CSS.aonItemFlex());
-		
-		previusDateButton = new AonToolbarButton("Anterior", AON.CSS.aonIconPrev());
-		previusDateButton.addClickHandler(e -> changeYear(-1));
-		
-		dateLabel = new Label();
-		
-		nextDateButton = new AonToolbarButton("Siguiente", AON.CSS.aonIconNext());
-		nextDateButton.addClickHandler(e -> changeYear(1));
-		
-		yearContainer.add(previusDateButton);
-		yearContainer.add(dateLabel);
-		yearContainer.add(nextDateButton);
-		
-		container.add(yearContainer);
-		
-		eventsTable = new FlexTable();
-		container.add(eventsTable);
-		
-		add(container);
+		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		
 		seeMenu = new SeeMenu();
 	}
 
-	@Override
-	protected void onClearFilter() {}
-	
 	// ----------------------------------------------- UiHandler
+	
+	@UiHandler("previusDateButton")
+	public void onPreviusDateClick(ClickEvent event) {
+		changeYear(-1);
+	}
+	
+	@UiHandler("nextDateButton")
+	public void onNextDateClick(ClickEvent event) {
+		changeYear(1);
+	}
 
 	private void changeYear(int changeDate) {
 		String selectItem = typeView.getSelectedItemText();
@@ -287,13 +306,13 @@ public class EventsDraft extends AonCustomDockLayout {
 		if(null == this.eventsDraftObject.getAgreementId()) {
 			this.variablesToShow = 2;
 			seeMenu.getCalendarVariablesMenuItem().addStyleName("aon-MenuItemCheckYes");
-			seeMenu.getCalendarVariablesMenuItem().addStyleName(AON.CSS.aonCheckBox());
+			seeMenu.getCalendarVariablesMenuItem().addStyleName(style.aonCheck());
 			seeMenu.getEditableVariablesMenuItem().setEnabled(false);
 			seeMenu.getEditableVariablesMenuItem().setTitle("Deshabilitado: no existe convenio asociado al CT");
 		}else {
 			this.variablesToShow = 1;
 			seeMenu.getEditableVariablesMenuItem().addStyleName("aon-MenuItemCheckYes");
-			seeMenu.getEditableVariablesMenuItem().addStyleName(AON.CSS.aonCheckBox());
+			seeMenu.getEditableVariablesMenuItem().addStyleName(style.aonCheck());
 		}
 	}
 	
@@ -355,7 +374,7 @@ public class EventsDraft extends AonCustomDockLayout {
 		int rows = this.getRowCount();
 		for(int row=0; row<rows; row++){
 			if(row % 2 != 0)
-				eventsTable.getRowFormatter().getElement(row).getStyle().setProperty("background-color", "#eee");
+				eventsTable.getRowFormatter().addStyleName(row, style.oddRowColor());
 		}
 		
 	}
@@ -364,13 +383,12 @@ public class EventsDraft extends AonCustomDockLayout {
 	
 	private void initializeFirstRow(ArrayList<String> headerList) {
 		Label blankLabel = new Label();
-		blankLabel.setWidth("100px");
+		blankLabel.addStyleName(style.blankHeaderCell());
 		eventsTable.setWidget(0, 0, blankLabel);
 		
 		for(int i=0; i<headerList.size(); i++){
 			eventsTable.setText(0, i+1, headerList.get(i));
-			eventsTable.getCellFormatter().getElement(0, i+1).getStyle().setProperty("font-weight", "bold");
-			eventsTable.getCellFormatter().getElement(0, i+1).getStyle().setProperty("font-size", "0.9em");
+			eventsTable.getCellFormatter().addStyleName(0, i+1, style.headerCell());
 		}	
 	}
 	
@@ -379,7 +397,7 @@ public class EventsDraft extends AonCustomDockLayout {
 		
 		//Rellenamos primera colunma con campos blancos
 		Label blankLabel = new Label();
-		blankLabel.setWidth("100px");
+		blankLabel.addStyleName(style.blankHeaderCell());
 		eventsTable.setWidget(1, 0, blankLabel);
 		
 		for(int column=0; column<columns; column++){
@@ -424,7 +442,7 @@ public class EventsDraft extends AonCustomDockLayout {
 				eventCell.setEnabled(false);
 				eventCell.setBlockVariableStyle();
 			} else {
-				eventCell.getElement().getStyle().setProperty("cursor", "pointer");
+				eventCell.addStyleName(style.pointer());
 			}
 			
 			eventsTable.setWidget(1, column+1, eventCell);
@@ -443,8 +461,7 @@ public class EventsDraft extends AonCustomDockLayout {
 			
 			//Rellenamos primera colunma con los nombres de los empleados
 			eventsTable.setText(row+1, 0, employeeList.get(row-1).getFullName());
-			eventsTable.getCellFormatter().getElement(row+1, 0).getStyle().setProperty("font-weight", "bold");
-			eventsTable.getCellFormatter().getElement(row+1, 0).getStyle().setProperty("font-size", "0.9em");
+			eventsTable.getCellFormatter().addStyleName(row+1, 0, style.headerCell());
 			
 			for(int column=0; column<columns; column++){				
 				//Rellenamos el resto de columnas con la informacion de cada empleado
@@ -491,7 +508,7 @@ public class EventsDraft extends AonCustomDockLayout {
 					eventCell.setEnabled(false);
 					eventCell.setBlockVariableStyle();
 				} else {
-					eventCell.getElement().getStyle().setProperty("cursor", "pointer");
+					eventCell.addStyleName(style.pointer());
 				}
 				
 				eventsTable.setWidget(row+1, column+1, eventCell);
@@ -505,7 +522,7 @@ public class EventsDraft extends AonCustomDockLayout {
 		
 		//Rellenamos primera colunma con campos blancos
 		Label blankLabel = new Label();
-		blankLabel.setWidth("100px");
+		blankLabel.addStyleName(style.blankHeaderCell());
 		eventsTable.setWidget(1, 0, blankLabel);
 		
 		for(int column=0; column<columns; column++){
@@ -549,7 +566,7 @@ public class EventsDraft extends AonCustomDockLayout {
 				eventCell.setEnabled(false);
 				eventCell.setBlockVariableStyle();
 			} else {
-				eventCell.getElement().getStyle().setProperty("cursor", "pointer");
+				eventCell.addStyleName(style.pointer());
 			}
 			
 			eventsTable.setWidget(1, column+1, eventCell);
@@ -565,8 +582,7 @@ public class EventsDraft extends AonCustomDockLayout {
 		for(int row=1; row<employeeList.size()+1; row++){
 			//Rellenamos primera colunma con los nombres de los empleados
 			eventsTable.setText(row+1, 0, employeeList.get(row-1).getFullName());
-			eventsTable.getCellFormatter().getElement(row+1, 0).getStyle().setProperty("font-weight", "bold");
-			eventsTable.getCellFormatter().getElement(row+1, 0).getStyle().setProperty("font-size", "0.9em");
+			eventsTable.getCellFormatter().addStyleName(row+1, 0, style.headerCell());
 			
 			for(int column=0; column<columns; column++){
 				
@@ -618,7 +634,7 @@ public class EventsDraft extends AonCustomDockLayout {
 					eventCell.setEnabled(false);
 					eventCell.setBlockVariableStyle();
 				} else {
-					eventCell.getElement().getStyle().setProperty("cursor", "pointer");
+					eventCell.addStyleName(style.pointer());
 				}
 				
 				eventsTable.setWidget(row+1, column+1, eventCell);
@@ -685,40 +701,43 @@ public class EventsDraft extends AonCustomDockLayout {
 	// ----------------------------------------------- Toolbar
 	
 	private void getToolbarPanel() {
+		
+		this.toolbar = new AonToolbar("Variables de c\u00e1lculo");
+		
 		undoAllButton = new AonToolbarButton( "Restaurar últimos valores guardados", AON.CSS.aonIconUndo() );
 		undoAllButton.addClickHandler(e -> onUndo());
-		addToolbarButton(undoAllButton);
+		toolbar.add(undoAllButton);
 		
 		saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
 		saveButton.addClickHandler(e -> onSave());
-		addToolbarButton(saveButton);
+		toolbar.add(saveButton);
 		
 		newValueButton = new AonToolbarButton( "Nuevo valor", AON.CSS.aonIconAdd() );
 		newValueButton.addClickHandler(e -> onNewValue());
-		addToolbarButton(newValueButton);
+		toolbar.add(newValueButton);
 		
 		visibilityBtn = new AonToolbarButton( "Visualizaci\u00F3n", AON.CSS.aonIconVisibility() );
 		visibilityBtn.addClickHandler(e -> onVisibility(e));
-		addToolbarButton(visibilityBtn);
+		toolbar.add(visibilityBtn);
 		
 		Label type = new Label("Tipo vista:");
 		type.getElement().getStyle().setMarginRight(5, Unit.PX);
 		type.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		addToolbarButton(type);
+		toolbar.add(type);
 		
-		addToolbarButton(typeView);
+		toolbar.add(typeView);
 		
 		Label variable = new Label("Tipo vista:");
 		variable.getElement().getStyle().setMarginRight(5, Unit.PX);
 		variable.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		addToolbarButton(variable);
+		toolbar.add(variable);
 		
-		varListViewPanel.addStyleName(AON.CSS.aonItemFlex());
+		varListViewPanel.addStyleName(style.flexVariables());
 		varListViewPanel.add(variable);
 		varListViewPanel.add(varListView);
 		hide(varListViewPanel);
 		
-		addToolbarButton(varListViewPanel);
+		toolbar.add(varListViewPanel);
 
 	}
 

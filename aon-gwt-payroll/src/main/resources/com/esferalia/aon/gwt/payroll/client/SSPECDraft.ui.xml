@@ -1,0 +1,31 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:c='urn:import:com.google.gwt.user.cellview.client'
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
+
+	<ui:style>
+		
+		.flexColumn {
+			display: flex;
+			flex-direction: column;
+			padding: 0 1.5em 0 1.5em;
+		}
+		
+	</ui:style>
+	
+	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
+		<g:north size="50">
+			<aon:AonToolbar ui:field="toolbar" />
+		</g:north>
+		<g:center>
+			<g:HTMLPanel styleName="{style.flexColumn}">
+				<g:HTMLPanel ui:field="messagePanel" />
+				<c:DataGrid ui:field="ssPecDG" />
+			</g:HTMLPanel>
+			
+		</g:center>
+	</g:DockLayoutPanel>
+	
+</ui:UiBinder> 
+
