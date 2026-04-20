@@ -807,6 +807,8 @@ public final class IJsonNames {
 	public static final String VAT = "vat";
 	public static final String VAT_ACCRUAL_PAYMENT = "vatAccrualPayment";
 	public static final String VAT_ACCRUAL_REGIME = "vatAccrualRegime";
+	public static final String VAT_DEDUCTIBLE_PERCENT = "vatDeductiblePercent";
+	public static final String VAT_DEDUCTIBLE_QUOTA = "vatDeductibleQuota";
 	public static final String VAT_DEDUCTION_TYPE = "vatDeductionType";
 	public static final String VAT_IMPORTATION = "vatImportation";
 	public static final String VAT_PARAMS = "vatParams";
