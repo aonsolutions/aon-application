@@ -24,7 +24,7 @@
     <jasperreportsMavenPluginArtifact>aon-maven-plugin</jasperreportsMavenPluginArtifact>
     <jasperreportsMavenPluginVersion>8.2-SNAPSHOT</jasperreportsMavenPluginVersion>
     <junitVersion>4.13.2</junitVersion>
-    <tomcat-version>11.0.1</tomcat-version>
+    <tomcat-version>11.0.21</tomcat-version>
   </properties>
   <modules>
     <!--  
