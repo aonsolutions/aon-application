@@ -62,7 +62,7 @@ public class Calendar implements Serializable {
 	}
 
 	public Double getAnualHours() {
-		return anualHours;
+		return null == anualHours ? 0.00 : anualHours;
 	}
 
 	public Calendar setAnualHours(Double anualHours) {
@@ -71,7 +71,7 @@ public class Calendar implements Serializable {
 	}
 
 	public Double getAnualPersonalDays() {
-		return anualPersonalDays;
+		return null == anualPersonalDays ? 0.00 : anualPersonalDays;
 	}
 
 	public Calendar setAnualPersonalDays(Double anualPersonalDays) {
@@ -80,7 +80,7 @@ public class Calendar implements Serializable {
 	}
 
 	public Double getAnnualHolidays() {
-		return anualHolidays;
+		return null == anualHolidays ? 0.00 : anualHolidays;
 	}
 
 	public Calendar setAnnualHolidays(Double anualHolidays) {
@@ -125,7 +125,7 @@ public class Calendar implements Serializable {
 	}
 
 	public Double getMondayHours() {
-		return mondayHours;
+		return null == mondayHours ? 0.00 : mondayHours;
 	}
 
 	public Calendar setMondayHours(Double mondayHours) {
@@ -143,7 +143,7 @@ public class Calendar implements Serializable {
 	}
 
 	public Double getTuesdayHours() {
-		return tuesdayHours;
+		return null == tuesdayHours ? 0.00 : tuesdayHours;
 	}
 
 	public Calendar setTuesdayHours(Double tuesdayHours) {
@@ -161,7 +161,7 @@ public class Calendar implements Serializable {
 	}
 
 	public Double getWednesdayHours() {
-		return wednesdayHours;
+		return null == wednesdayHours ? 0.00 : wednesdayHours;
 	}
 
 	public Calendar setWednesdayHours(Double wednesdayHours) {
@@ -179,7 +179,7 @@ public class Calendar implements Serializable {
 	}
 
 	public Double getThursdayHours() {
-		return thursdayHours;
+		return null == thursdayHours ? 0.00 : thursdayHours;
 	}
 
 	public Calendar setThursdayHours(Double thursdayHours) {
@@ -197,7 +197,7 @@ public class Calendar implements Serializable {
 	}
 
 	public Double getFridayHours() {
-		return fridayHours;
+		return null == fridayHours ? 0.00 : fridayHours;
 	}
 
 	public Calendar setFridayHours(Double fridayHours) {
@@ -215,7 +215,7 @@ public class Calendar implements Serializable {
 	}
 
 	public Double getSaturdayHours() {
-		return saturdayHours;
+		return null == saturdayHours ? 0.00 : saturdayHours;
 	}
 
 	public Calendar setSaturdayHours(Double saturdayHours) {
@@ -233,7 +233,7 @@ public class Calendar implements Serializable {
 	}
 
 	public Double getSundayHours() {
-		return sundayHours;
+		return null == sundayHours ? 0.00 : sundayHours;
 	}
 
 	public Calendar setSundayHours(Double sundayHours) {
