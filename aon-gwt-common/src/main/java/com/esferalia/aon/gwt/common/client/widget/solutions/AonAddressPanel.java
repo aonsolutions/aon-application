@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.Municipalities;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.StreetType;
@@ -48,6 +49,7 @@ public class AonAddressPanel extends HTMLPanel {
 	private AonAddressPanelCallback callback;
 	private RegistryAddress registryAddress;
 	private LinkedList<GeoZone> aviableGeozones;
+	private Municipalities municipalities = new Municipalities();
 	
 	// Address Info
 	
@@ -57,8 +59,12 @@ public class AonAddressPanel extends HTMLPanel {
 	private AonCustomTextBox addressTB = new AonCustomTextBox("Direcci\u00f3n");
 	private AonCustomTextBox number = new AonCustomTextBox("N\u00b0");
 	
+	private AonCustomTextBox address2TB = new AonCustomTextBox("Rest. Direcci\u00f3n");
+	private AonCustomTextBox address3TB = new AonCustomTextBox("Rest. Direcci\u00f3n 2");
+	
 	private AonCustomTextBox zip = new AonCustomTextBox("C.P.");
 	private AonCustomListBox province = new AonCustomListBox("Provincia");
+	private AonCustomListBox municipality = new AonCustomListBox("Municipion");
 	private AonCustomTextBox city = new AonCustomTextBox("Localidad");
 	
 	// Constructor
@@ -119,26 +125,58 @@ public class AonAddressPanel extends HTMLPanel {
 		HTMLPanel row2 = new HTMLPanel(EMPTY_STRING);
 		row2.setStyleName(AON.CSS.aonItemFlex());
 		row2.getElement().getStyle().setProperty("gap", "1rem");
+		
+		row2.add(address2TB);
+		row2.add(address3TB);
+		container.add(row2);
+		
+		// Second Row
+		HTMLPanel row3 = new HTMLPanel(EMPTY_STRING);
+		row3.setStyleName(AON.CSS.aonItemFlex());
+		row3.getElement().getStyle().setProperty("gap", "1rem");
 	
 		aviableGeozones.stream().filter(geozone -> geozone.getCode().length() == 2 && canBeCastToInt(geozone.getCode())).forEach(geozone -> province.addItem(capitalizeFirstLetterOfEachWord(geozone.getName()), geozone.getCode()));
 		zip.getTextBox().addValueChangeHandler(e -> {
-			if(AonStringUtils.isNotBlank(zip.getValue()) && zip.getValue().length() >= 2)
+			if(AonStringUtils.isNotBlank(zip.getValue()) && zip.getValue().length() >= 2) {
 				province.setValue(AonStringUtils.substring(zip.getValue(), 0, 2));
+				
+				municipality.clearItems();
+				municipalities.getMunicipalitiesByProvinceCode(province.getValue()).entrySet().forEach(entry -> municipality.addItem(entry.getValue(), entry.getKey()));
+				
+				if(AonStringUtils.isNotBlank( municipalities.getMunicipalityByZip(zip.getValue()) ))
+					municipality.setValue(zip.getValue());
+			}
 		});
 		zip.getElement().getStyle().setProperty("max-width", "6rem");
+		province.addChangeHandler(e -> {
+			municipality.clearItems();
+			municipalities.getMunicipalitiesByProvinceCode(province.getValue()).entrySet().forEach(entry -> municipality.addItem(entry.getValue(), entry.getKey()));
+			
+			if(AonStringUtils.isNotBlank( municipalities.getMunicipalityByZip(zip.getValue()) ))
+				municipality.setValue(zip.getValue());
+		});
 		
-		row2.add(zip);
-		row2.add(province);
-		row2.add(city);
-		container.add(row2);
+		row3.add(zip);
+		row3.add(province);
+		row3.add(municipality);
+		row3.add(city);
+		container.add(row3);
 		
 		if(registryAddress.getId() != null) {
 			type.setValue(registryAddress.getStreetType().getAeatCode());
 			addressTB.setValue(registryAddress.getAddress());
+			address2TB.setValue(registryAddress.getAddress2());
+			address3TB.setValue(registryAddress.getAddress3());
 			number.setValue(registryAddress.getNumber());
 			zip.setValue(registryAddress.getZip());
 			province.setValue(registryAddress.getGeozoneCode());
 			city.setValue(registryAddress.getCity());
+			
+			if(AonStringUtils.isNotBlank(registryAddress.getGeozoneCode())) {
+				municipality.clearItems();
+				municipalities.getMunicipalitiesByProvinceCode(registryAddress.getGeozoneCode()).entrySet().forEach(entry -> municipality.addItem(entry.getValue(), entry.getKey()));
+				municipality.setValue(registryAddress.getMunicipalityCode());
+			}
 		}
 		
 		// Buttons
@@ -163,12 +201,15 @@ public class AonAddressPanel extends HTMLPanel {
 				.setMain(false)
 				.setStreetType(StreetType.getForAeatCode(type.getValue(), AonLanguage.SPANISH))
 				.setAddress(addressTB.getValue())
+				.setAddress2(address2TB.getValue())
+				.setAddress3(address3TB.getValue())
 				.setNumber(number.getValue())
 				.setZip(zip.getValue())
-				.setCity(city.getValue())
 				.setGeozone(geozoneOpt.isPresent() ? geozoneOpt.get().getId() : null)
 				.setGeozoneCode(province.getValue())
 				.setGeozoneName(geozoneOpt.isPresent() ? geozoneOpt.get().getName() : null)
+				.setMunicipalityCode(municipality.getValue())
+				.setCity(city.getValue())
 				;
 			
 			commonService.saveRegistryAddress(domainName, domainId, user, registryAddress, new AsyncCallback<RegistryAddress>() {

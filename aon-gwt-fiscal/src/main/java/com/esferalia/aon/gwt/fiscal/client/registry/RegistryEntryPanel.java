@@ -52,6 +52,8 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 	private HTMLPanel container;
 
 	private HTMLPanel messagePanel = new HTMLPanel(AonStringUtils.EMPTY);
+	
+	private HTMLPanel rightInfoTable;
 
 	private TabLayoutPanel tablayoutPanel;
 
@@ -148,11 +150,11 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 		HTMLPanel leftInfoTable = createTable();
 		leftInfoTable.getElement().getStyle().setProperty("flex", "1");
 
-		AonCustomTextBox name = new AonCustomTextBox("Nombre");
-		name.addValueChangeHandler(e -> registry.setName(e.getValue()));
-		name.setValue(registry.getName());
-		leftInfoTable.add(createRow(name));
+		AonCustomTextBox alias = new AonCustomTextBox("Alias");
+		alias.addValueChangeHandler(e -> registry.setAlias(e.getValue()));
+		alias.setValue(registry.getAlias());
 
+		AonCustomListBox documentType = new AonCustomListBox("Tipo");;
 		if (!this.registrySource.equals(RegistrySource.ENVIROMENT)) {
 			AonCustomListBox documentNationality = new AonCustomListBox("Pais");
 			documentNationality.clearItems();
@@ -161,43 +163,45 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 			documentNationality.addChangeHandler(
 					e -> registry.setDocumentCountry(Country.safeValueOf(documentNationality.getValue())));
 			documentNationality.setValue(registry.getDocumentCountry().getIso2());
-			documentNationality.getElement().getStyle().setProperty("max-width", "5rem");
+			documentNationality.getElement().getStyle().setProperty("max-width", "3rem");
 
-			AonCustomListBox documentType = new AonCustomListBox("Tipo");
 			documentType.clearItems();
 			for (int i = 0; i < DocumentType.values().length; i++)
 				documentType.addItem(DocumentType.values()[i].getDescription(), DocumentType.values()[i].toString());
-			documentType
-					.addChangeHandler(e -> registry.setDocumentType(DocumentType.safeValueOf(documentType.getValue())));
 			documentType.setValue(registry.getDocumentType().toString());
-			documentType.getElement().getStyle().setProperty("max-width", "7rem");
+			documentType.getElement().getStyle().setProperty("max-width", "4rem");
 
 			AonCustomTextBox document = new AonCustomTextBox("Documento");
 			document.addValueChangeHandler(e -> registry.setDocument(e.getValue()));
 			document.setValue(registry.getDocument());
+			document.getElement().getStyle().setProperty("max-width", "7rem");
 
-			AonCustomListBox entity = new AonCustomListBox("Entidad");
-			entity.clearItems();
-			entity.addItem("P. F\u00edsicas", "0");
-			entity.addItem("P. Jur\u00eddicas", "1");
-			entity.setValue(registry.isLegalPerson() ? "1" : "0");
-			entity.addChangeHandler(
-					e -> registry.setLegalPerson(AonStringUtils.equalsIgnoreCase(entity.getValue(), "1")));
-
-			leftInfoTable.add(createRow(documentType, documentNationality, document, entity));
+			leftInfoTable.add(createRow(documentType, documentNationality, document, alias));
+		} else {
+			leftInfoTable.add(createRow(alias));
 		}
 
 		gridPanel.add(leftInfoTable);
 
-		HTMLPanel rightInfoTable = createTable();
+		rightInfoTable = createTable();
 		rightInfoTable.getElement().getStyle().setProperty("flex", "1");
 
-		AonCustomTextBox alias = new AonCustomTextBox("Alias");
-		alias.addValueChangeHandler(e -> registry.setAlias(e.getValue()));
-		alias.setValue(registry.getAlias());
-		rightInfoTable.add(createRow(alias));
+		AonCustomTextBox name = new AonCustomTextBox("Nombre");
+		name.addValueChangeHandler(e -> registry.setName(e.getValue()));
+		name.setValue(registry.getName());
+		rightInfoTable.add(createRow(name));
 
 		gridPanel.add(rightInfoTable);
+		
+		if (!this.registrySource.equals(RegistrySource.ENVIROMENT)) {
+			createNameByDocumentType();
+			
+			documentType.addChangeHandler(e -> {
+				registry.setDocumentType(DocumentType.safeValueOf(documentType.getValue()));
+				createNameByDocumentType();
+				registry.setLegalPerson(registry.getDocumentType().equals(DocumentType.CIF));
+			});
+		}
 
 		container.add(gridPanel);
 
@@ -239,6 +243,61 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 				name.setFocus(true);
 			}
 		});
+	}
+	
+	private void createNameByDocumentType() {
+		rightInfoTable.clear();
+
+		if(registry.getDocumentType().equals(DocumentType.CIF)) {
+			AonCustomTextBox name = new AonCustomTextBox("Nombre");
+			name.addValueChangeHandler(e -> registry.setName(e.getValue()));
+			name.setValue(registry.getName());
+			rightInfoTable.add(createRow(name));
+		} else {
+			AonCustomTextBox name = new AonCustomTextBox("Nombre");
+			name.setValue(registry.getPersonName());
+			
+			AonCustomTextBox firstSurname = new AonCustomTextBox("Apellido");
+			firstSurname.setValue(registry.getPersonFirstsurname());
+			
+			AonCustomTextBox secondSurname = new AonCustomTextBox("Apellido 2");
+			secondSurname.setValue(registry.getPersonSecondsurname());
+			
+			name.addValueChangeHandler(e -> {
+				registry.setPersonName(e.getValue());
+				ensureRegistryNameByPerson(name.getValue(), firstSurname.getValue(), secondSurname.getValue());
+			});
+			firstSurname.addValueChangeHandler(e -> {
+				registry.setPersonFirstsurname(e.getValue());
+				ensureRegistryNameByPerson(name.getValue(), firstSurname.getValue(), secondSurname.getValue());
+			});
+			secondSurname.addValueChangeHandler(e -> {
+				registry.setPersonSecondsurname(e.getValue());
+				ensureRegistryNameByPerson(name.getValue(), firstSurname.getValue(), secondSurname.getValue());
+			});
+			
+			rightInfoTable.add(createRow(name, firstSurname, secondSurname));
+		}
+	}
+	
+	private void ensureRegistryNameByPerson(String name, String firstSurname, String secondSurname) {
+		StringBuilder sb = new StringBuilder();
+
+	    if (!AonStringUtils.isBlank(firstSurname)) {
+	        sb.append(firstSurname.trim());
+	    }
+
+	    if (!AonStringUtils.isBlank(secondSurname)) {
+	        if (sb.length() > 0) sb.append(" ");
+	        sb.append(secondSurname.trim());
+	    }
+
+	    if (!AonStringUtils.isBlank(name)) {
+	        if (sb.length() > 0) sb.append(", ");
+	        sb.append(name.trim());
+	    }
+
+	    registry.setName(sb.toString());
 	}
 
 	private HTMLPanel createTable() {

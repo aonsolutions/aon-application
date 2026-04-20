@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVI
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -34,6 +35,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.Rmedia;
+import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
@@ -47,6 +49,7 @@ import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
 import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -101,7 +104,7 @@ public class CompanyDAO {
  		@Override public Property<Byte> getDomainActiveProperty() {return new FilterDAO.PropertyDAO<>(Domain.DOMAIN.ACTIVE);}
 	}
 	
-	public static class CompanyFiller implements Function<Record, Company> {
+	public static class CompanyFiller extends Filler  implements Function<Record, Company> {
 		
 		@Override
 		public Company apply(Record r) {
@@ -109,13 +112,21 @@ public class CompanyDAO {
 		}
 		
 		public static Company buildCompany(Record r, com.esferalia.aon.jooq.tables.Registry registry) {
-			return new Company()
+			Company company = new Company()
 					.copy(RegistryFiller.build(r, registry))
 					.setActive(AonEnumUtils.getBoolean(r.getValue(COMPANY.ACTIVE)))
 					.seteInvoice(AonEnumUtils.getBoolean(r.getValue(COMPANY.E_INVOICE)))
 					.setSurcharge(AonEnumUtils.getBoolean(r.getValue(COMPANY.SURCHARGE)))
 					.setVatAccrualPayment(AonEnumUtils.getBoolean(r.getValue(COMPANY.VAT_ACCRUAL_PAYMENT)))
 					.setWithholding(AonEnumUtils.getBoolean(r.getValue(COMPANY.WITHHOLDING)));
+			
+			if(checkField(r, PERSON.REGISTRY)) {
+				company.get().setPersonName(r.get(PERSON.NAME));
+				company.get().setPersonFirstsurname(r.get(PERSON.FIRST_SURNAME));
+				company.get().setPersonSecondsurname(r.get(PERSON.SECOND_SURNAME));
+			}
+			
+			return company;
 		}
 	}
 	
@@ -192,6 +203,7 @@ public class CompanyDAO {
 				.join(REGISTRY).on(REGISTRY.ID.eq(COMPANY.REGISTRY))
 				.join(DOMAIN).on(DOMAIN.ID.eq(COMPANY.DOMAIN))
 				.leftOuterJoin(SCOPE).on(DOMAIN.SCOPE.eq(SCOPE.ID))
+				.leftOuterJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
 				.where(COMPANY_PROPERTIES.getConditions(filter));
 	}
 	
@@ -225,6 +237,9 @@ public class CompanyDAO {
 		ctx.checkWrite();
 		boolean nullId = (company.getId() == null); 
 		company = RegistryDAO.save(ctx, company);
+		
+		checkPersonRegistry(ctx, company);
+		
 		if (nullId) {
 			CompanyValidation.validateInsert(ctx, company);
 			insert(ctx, company);
@@ -234,6 +249,38 @@ public class CompanyDAO {
 		return company;
 	}
 	
+	private static void checkPersonRegistry(AONContext ctx, Company company) {
+		Registry registry = company.get();
+		if(registry.getDocumentType().equals(DocumentType.CIF)) {
+			ctx.getDslContext().delete(PERSON)
+				.where(PERSON.REGISTRY.eq(registry.getId()))
+				.and(PERSON.DOMAIN.eq(registry.getDomain().getId()))
+				.execute();
+		} else {
+			PersonRecord personRecord = ctx.getDslContext().selectFrom(PERSON)
+				.where(PERSON.REGISTRY.eq(registry.getId())
+				.and(PERSON.DOMAIN.eq(registry.getDomain().getId())))
+				.fetchOne();
+			
+			if(null == personRecord)
+				ctx.getDslContext().insertInto(PERSON)
+					.set(PERSON.REGISTRY, registry.getId())
+					.set(PERSON.DOMAIN, registry.getDomain().getId())
+					.set(PERSON.NAME, registry.getPersonName())
+					.set(PERSON.FIRST_SURNAME, registry.getPersonFirstsurname())
+					.set(PERSON.SECOND_SURNAME, registry.getPersonSecondsurname())
+					.execute();
+			else
+				ctx.getDslContext().update(PERSON)
+					.set(PERSON.NAME, registry.getPersonName())
+					.set(PERSON.FIRST_SURNAME, registry.getPersonFirstsurname())
+					.set(PERSON.SECOND_SURNAME, registry.getPersonSecondsurname())
+					.where(PERSON.REGISTRY.eq(personRecord.getRegistry()))
+					.and(PERSON.DOMAIN.eq(personRecord.getDomain()))
+					.execute();
+		}
+	}
+
 	private static Company insert(AONContext ctx, Company company){
 		ctx.getDslContext().insertInto(COMPANY)
 			.set(COMPANY.REGISTRY,company.getId())

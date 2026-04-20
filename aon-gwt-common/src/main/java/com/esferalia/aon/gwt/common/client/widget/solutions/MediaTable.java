@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMediaPanel.AonMediaPanelCallback;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -238,7 +239,8 @@ public abstract class MediaTable extends ScrollPanel {
 		HTMLPanel row = tab.createRow();
 		row.addDomHandler(e -> onUpdateRMedia(registryMedia), ClickEvent.getType());
 		
-		Label mediaType = new Label(registryMedia.getMedia().getDescription());
+		AonTableButton mediaType = getMediaTypeIcon(registryMedia.getMedia());
+		//Label mediaType = new Label(registryMedia.getMedia().getDescription());
 		mediaType.setTitle(registryMedia.getMedia().getDescription());
 		tab.addInlineStyle(mediaType, COLS.TYP.getStyles());
 		tab.addRow(row, mediaType, COLS.TYP.getColWidth());
@@ -263,6 +265,23 @@ public abstract class MediaTable extends ScrollPanel {
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 	}
 	
+	private AonTableButton getMediaTypeIcon(MediaType media) {
+		switch (media) {
+			case FIXED_PHONE:
+				return new AonTableButton(media.getDescription(), AON.CSS.aonIconPhone());
+			case CELLULAR:
+				return new AonTableButton(media.getDescription(), AON.CSS.aonIconMobile());
+			case FAX:
+				return new AonTableButton(media.getDescription(), AON.CSS.aonIconFax());
+			case EMAIL:
+				return new AonTableButton(media.getDescription(), AON.CSS.aonIconEmail());
+			case WEB:
+				return new AonTableButton(media.getDescription(), AON.CSS.aonIconWeb());	
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + media);
+		}
+	}
+
 	private void getEnableDisableButton(Button button, boolean disabled) {
 		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE);
 		button.removeStyleName(AON.AON_NO_MARGIN);
