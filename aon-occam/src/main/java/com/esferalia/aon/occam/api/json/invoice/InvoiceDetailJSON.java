@@ -52,7 +52,9 @@ public class InvoiceDetailJSON {
 		if(json.opt(IJsonNames.PERCENTAGE) != null) {
 			double quota = JsonUtils.getdouble(json, IJsonNames.QUOTA);	
 			double surchargeQuota = JsonUtils.getdouble(json, IJsonNames.SURCHARGE_QUOTA);
-			double deductibleQuota = AonMathUtils.round(quota); // + surchargeQuota);
+			double deductibleQuota = JsonUtils.has(json, IJsonNames.VAT_DEDUCTIBLE_QUOTA)
+				? JsonUtils.getdouble(json, IJsonNames.VAT_DEDUCTIBLE_QUOTA)
+				: AonMathUtils.round(quota);
 			InvoiceTax tax = new InvoiceTax()
 					.setDomain(detail.getDomain())
 					.setTaxType(TaxType.VAT)
@@ -62,7 +64,9 @@ public class InvoiceDetailJSON {
 					.setSurcharge(JsonUtils.getdouble(json, IJsonNames.SURCHARGE))
 					.setSurchargeQuota(surchargeQuota)
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-					.setDeductiblePercent(100.0)
+					.setDeductiblePercent(JsonUtils.has(json, IJsonNames.VAT_DEDUCTIBLE_PERCENT) 
+							? JsonUtils.getdouble(json, IJsonNames.VAT_DEDUCTIBLE_PERCENT) 
+							: 100.0)
 					.setDeductibleQuota(deductibleQuota);
 			detail.getInvoiceTaxes().add(tax);
 		}

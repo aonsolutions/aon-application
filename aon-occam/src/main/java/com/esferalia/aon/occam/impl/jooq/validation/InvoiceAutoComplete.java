@@ -545,8 +545,8 @@ public class InvoiceAutoComplete {
 						.setSurcharge(b.getSurcharge())
 						.setSurchargeQuota(b.getSurchargeQuota())
 						.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-						.setDeductiblePercent(100.0)
-						.setDeductibleQuota(b.getQuota());
+						.setDeductiblePercent(inv.isSurcharge() ? 0.0 : 100.0)
+						.setDeductibleQuota(inv.isSurcharge() ? 0.0 : b.getQuota());
 				Account a = inv.isSales() 
 						? ctx.getConfiguration().accounting().getDefaultChargedVatAccount()
 						: ctx.getConfiguration().accounting().getDefaultPaidVatAccount();
@@ -612,9 +612,9 @@ public class InvoiceAutoComplete {
 						}
 					}
 					
-					if(ia != null && ia.getId() != null) {
+					if(ia != null && ia.getId() != null && !inv.isSurcharge()) {
 						detail.getInvoiceTaxes().get(i).setDeductiblePercent(ia.getVatPercent());
-						detail.getInvoiceTaxes().get(i).setDeductibleQuota(AonMathUtils.round(base * ia.getVatPercent() / 100));
+						detail.getInvoiceTaxes().get(i).setDeductibleQuota(AonMathUtils.round(it.getQuota() * ia.getVatPercent() / 100));
 					}
 				}
 				
@@ -629,7 +629,7 @@ public class InvoiceAutoComplete {
 					}
 					if(ia != null && ia.getId() != null) {
 						detail.getInvoiceTaxes().get(i).setDeductiblePercent(ia.getRetentionPercent()); 
-						detail.getInvoiceTaxes().get(i).setDeductibleQuota(AonMathUtils.round(base * ia.getRetentionPercent() / 100));
+						detail.getInvoiceTaxes().get(i).setDeductibleQuota(AonMathUtils.round(it.getQuota() * ia.getRetentionPercent() / 100));
 					}
 				}
 			}
