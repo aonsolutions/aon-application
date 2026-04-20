@@ -142,7 +142,7 @@
 		<dependency>
 			<groupId>org.jooq</groupId>
 			<artifactId>jooq</artifactId>
-			<version>3.16.6</version>
+			<version>3.20.8</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -235,7 +235,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.13</version>
+			<version>8.0.33</version>
 			<scope>test</scope>
 		</dependency>
 		 -->
