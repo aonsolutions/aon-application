@@ -197,6 +197,8 @@ public interface IAccounting {
 	public Amortization saveAmortization(AONContext ctx, Amortization am) throws AonCoreException;
 	public Amortization saveFiscalAllocation(AONContext ctx, AmortizationDetail detail) throws AonCoreException;
 	public void deleteAmortization(AONContext ctx, Amortization am) throws AonCoreException;
+	public Amortization calculateAmortization(AONContext ctx, Amortization am) throws AonCoreException;
+	public Amortization saleAmortization(AONContext ctx, Amortization am) throws AonCoreException;
 	public AmortizationDetail recordAmortizationAllocation(AONContext ctx, Amortization am, AmortizationDetail detail) throws AonCoreException;
 	public AmortizationDetail unrecordAmortizationAllocation(AONContext ctx, AmortizationDetail detail) throws AonCoreException;
 	public AmortizationDetail blockAmortizationDetail(AONContext ctx, AmortizationDetail detail) throws AonCoreException;

@@ -445,6 +445,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("\u00BFContinuar con el borrado?")
 	String confirmDeleteAction();
 
+	@DefaultMessage("\u00BFGuardar los datos?")
+	String confirmSaveAction();
+
 	@DefaultMessage("\u00BFDeshacer el borrado?")
 	String confirmRestoreAction();
 
@@ -4470,6 +4473,20 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Ajuste impuesto")
 	String taxAdjust();
+	
+	@DefaultMessage("Venta o Baja")
+	String saleAmortizaton();
+
+	@DefaultMessage("Fecha de Venta o Baja")
+	String saleDate();
+
+	@DefaultMessage("Importe de Venta o Baja")
+	String saleAmount();
+
+	@DefaultMessage("\u00BFDesea recalcular la ficha? Las cuotas bloqueadas "
+		+ "y/o contabilizadas permanecer\u00E1n iguales. Las cuotas pendientes "
+		+ "se eliminar\u00E1n y se calcular\u00E1n de nuevo. \u00BFContinuar?")
+	String confirmAmortizationCalculateAction();
 
 }
 

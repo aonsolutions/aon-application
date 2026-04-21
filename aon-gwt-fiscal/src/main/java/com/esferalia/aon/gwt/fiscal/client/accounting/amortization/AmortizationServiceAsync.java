@@ -15,6 +15,8 @@ public interface AmortizationServiceAsync {
 	void save(Occam occam, Amortization am, AsyncCallback<Amortization> callback);
 	void saveFiscalAllocation (Occam occam, AmortizationDetail detail, AsyncCallback<Amortization> callback);
 	void delete(Occam occam, Amortization am, AsyncCallback<Void> callback);
+	void sale(Occam occam, Amortization am, AsyncCallback<Amortization> callback);
+	void calculate(Occam occam, Amortization am, AsyncCallback<Amortization> callback);
 	
 	void recordAllocation(Occam occam, Amortization am, AmortizationDetail detail, AsyncCallback<AmortizationDetail> callback);
 	void unrecordAllocation(Occam occam, AmortizationDetail detail, AsyncCallback<AmortizationDetail> callback);

@@ -40,6 +40,16 @@ public class AmortizationServiceImpl extends AonStatelessRemoteServiceServlet im
 	}
 	
 	@Override
+	public Amortization sale(Occam occam, Amortization am) throws AonCoreException {
+		return ACCOUNTING.saleAmortization(occam, am);
+	}
+
+	@Override
+	public Amortization calculate(Occam occam, Amortization am) throws AonCoreException {
+		return ACCOUNTING.calculateAmortization(occam, am);
+	}
+	
+	@Override
 	public void delete(Occam occam, Amortization am) throws AonCoreException {
 		ACCOUNTING.deleteAmortization(occam, am);
 	}

@@ -92,12 +92,14 @@ public class AmortizationDAO {
 	        .leftOuterJoin(ALLOCATION_ACCOUNT).on(AMORTIZATION.ALLOCATION_ACCOUNT.eq(ALLOCATION_ACCOUNT.ID))
 	        .leftOuterJoin(AMORTIZATION_DETAIL).on(AMORTIZATION_DETAIL.AMORTIZATION.eq(AMORTIZATION.ID))
 			.where(AMORTIZATION.DOMAIN.eq(domain))
+			
 		;
 	}
 	
 	public static Optional<Amortization> get(AONContext ctx, Integer domain, Integer id) {
 		return selectFull(ctx, domain)
 			.and(AMORTIZATION.ID.eq(id))
+			.orderBy(AMORTIZATION.DESCRIPTION, AMORTIZATION_DETAIL.FROM_DATE)
 	        .collect(toAmortizationMap())
 	        .values()
 	        .stream()
@@ -108,6 +110,7 @@ public class AmortizationDAO {
 	public static Stream<Amortization> stream(AONContext ctx, AmortizationParams params) {
 	    return select(ctx, params.getDomain())
     		.and( getCondition(params) )
+    		.orderBy(AMORTIZATION.DESCRIPTION.desc())
     		.limit(params.getOffset() , params.getLimit())
 	        .fetch()
 	        .stream()
@@ -139,19 +142,29 @@ public class AmortizationDAO {
 	
 	// ------------------------------------------------------------ [WRITE] ---
 	public static Amortization save(AONContext ctx, Amortization a) {
-		AmortizationAutoComplete.complete(ctx, a);
-		AmortizationValidation.validate(ctx, a);
-		Amortization amo = (a.getId() == null)
-			?insert(ctx,a)
-			:update(ctx,a)
-		;
-		AmortizationManager am = new AmortizationManager();
-		am.generateDetailsAndFill(ctx, amo);
-		saveDetails(ctx, amo);
-		return get(ctx, amo.getDomain(), amo.getId())
-			.orElseThrow(() -> new AonCoreException("Error al grabar amortizaci\u00F3n"));
+		if (a.isDirty()) {
+			AmortizationAutoComplete.complete(ctx, a);
+			AmortizationValidation.validate(ctx, a);
+			Amortization amo = (a.getId() == null)
+				?insert(ctx,a)
+				:update(ctx,a)
+			;
+			return get(ctx, amo.getDomain(), amo.getId())
+				.orElseThrow(() -> new AonCoreException(AonError.INVALID_INSERT.getMessage()));
+		}
+		return a;
 	}
 	
+	public static Amortization calculate(AONContext ctx, Amortization a) {
+		AmortizationAutoComplete.complete(ctx, a);
+		AmortizationValidation.validate(ctx, a);
+		AmortizationManager am = new AmortizationManager();
+		am.generateDetailsAndFill(ctx, a);
+		Amortization amo = update(ctx,a);
+		return get(ctx, amo.getDomain(), amo.getId())
+			.orElseThrow(() -> new AonCoreException(AonError.INVALID_UPDATE.getMessage()));
+	}
+
 	private static Amortization insert(AONContext ctx, Amortization a) {
 		Integer id = ctx.getDslContext()
 			.insertInto(AMORTIZATION)
@@ -171,9 +184,13 @@ public class AmortizationDAO {
 			.set(AMORTIZATION.SECURITY_LEVEL, a.getSecurityLevel() != null ? (byte)a.getSecurityLevel().ordinal() : null)
 			.returning(AMORTIZATION.ID)
 			.fetchOne()
-			.getValue(AMORTIZATION.ID);
+			.getValue(AMORTIZATION.ID)
 		;
-		return a.setId(id);
+		a.setId(id);
+		AmortizationManager am = new AmortizationManager();
+		am.generateDetailsAndFill(ctx, a);
+		saveDetails(ctx, a);
+		return a;
 	}
 	
 	private static Amortization update(AONContext ctx, Amortization a) {
@@ -475,7 +492,7 @@ public class AmortizationDAO {
 			if (ivc.a.getDomain() == 0) 
 				throw new AonCoreException(AonError.EMPTY_ID.getMessage());
 		};
-		private static final Consumer<AmortizationContext> SCORED_DETAILS = ivc -> {
+		private static final Consumer<AmortizationContext> SCORED_DETAILS = ivc -> 
 			ivc.ctx.getDslContext()
 			.select(AMORTIZATION_DETAIL.ID)
 				.from(AMORTIZATION_DETAIL)
@@ -486,9 +503,10 @@ public class AmortizationDAO {
 				.findAny()
 				.ifPresent( r -> {
 					throw new AonCoreException(AonError.AMORTIZATION_DELETE_SCORED_DETAILS.getMessage());
-				});
-		};
-		private static final Consumer<AmortizationContext> LINKED_INVOICES = ivc -> {
+				})
+			;
+			
+		private static final Consumer<AmortizationContext> LINKED_INVOICES = ivc -> 
 			ivc.ctx.getDslContext()
 			.select(AMORTIZATION_INVOICE.ID)
 				.from(AMORTIZATION_INVOICE)
@@ -498,8 +516,8 @@ public class AmortizationDAO {
 				.findAny()
 				.ifPresent( r -> {
 					throw new AonCoreException(AonError.AMORTIZATION_DELETE_LINKED_INVOICES.getMessage());
-				});
-		};
+				})
+			;
 		
 		public static void validateDeletion(AONContext ctx, Amortization a) {
 			EMPTY_ID
@@ -507,7 +525,47 @@ public class AmortizationDAO {
 				.andThen(LINKED_INVOICES)
 			.accept(new AmortizationContext(ctx,a));
 		}
-	}
+
+		private static final Consumer<AmortizationContext> EMPTY_DEADLINE = ivc -> {
+			if (ivc.a.getDeadline() == null) 
+				throw new AonCoreException(AonError.EMPTY_DATA.format("Fecha de baja"));
+		};
+		
+		private static final Consumer<AmortizationContext> WRONG_DEADLINE = ivc -> {
+			if (DateUtils.isSameDay(ivc.a.getInitialDate(), ivc.a.getDeadline()) || ivc.a.getInitialDate().after(ivc.a.getDeadline())) 
+				throw new AonCoreException(AonError.AMORTIZATION_WRONG_DEADLINE.getMessage());
+		};
+		
+		private static final Consumer<AmortizationContext> WRONG_SALE_AMOUNT = ivc -> {
+			if (AonMathUtils.isLessThanZero( ivc.a.getSaleAmount()) ) 
+				throw new AonCoreException(AonError.AMORTIZATION_WRONG_SALE_AMOUNT.getMessage());
+		};
+
+		private static final Consumer<AmortizationContext> NOT_PENDING_ALLOCATIONS = ivc -> {
+			Date cancelDate = DateUtils.addDays(ivc.a.getDeadline(), -1);
+			ivc.ctx.getDslContext().select(AMORTIZATION_DETAIL.ID)
+				.from(AMORTIZATION_DETAIL)
+				.where(AMORTIZATION_DETAIL.AMORTIZATION.eq(ivc.a.getId()))
+				.and(AMORTIZATION_DETAIL.TO_DATE.gt( AonDateUtils.toSql(cancelDate)))
+				.and(AMORTIZATION_DETAIL.STATUS.notEqual(AmortizationDetailStatus.PENDING.value()))
+				.fetch()
+				.stream()
+				.findAny()
+				.ifPresent( r -> {
+					throw new AonCoreException(AonError.AMORTIZATION_NOT_PENDING_ALLOCATIONS.getMessage());
+				})
+			;
+		};
+		
+		public static void validateSale(AONContext ctx, Amortization a) {
+			EMPTY_ID
+			.andThen(EMPTY_DEADLINE)
+			.andThen(WRONG_DEADLINE)
+			.andThen(WRONG_SALE_AMOUNT)
+			.andThen(NOT_PENDING_ALLOCATIONS)
+			.accept(new AmortizationContext(ctx,a));
+		}
+}
 
 	// ----------------------------------------------------------- [BLOCK] ---
 	public static AmortizationDetail blockDetail(AONContext ctx, AmortizationDetail detail) {
@@ -518,7 +576,7 @@ public class AmortizationDAO {
 			throw new AonCoreException(AonError.EMPTY_DATA.format(AMORTIZATION_DETAIL_ID_LABEL));
 		}
 		detail.setStatus(AmortizationDetailStatus.BLOCKED);
-		int count = ctx.getDslContext()
+		ctx.getDslContext()
 			.update(AMORTIZATION_DETAIL)
 			.set(AMORTIZATION_DETAIL.STATUS, detail.getStatus().value())
 			.where(AMORTIZATION_DETAIL.ID.eq(detail.getId()))
@@ -533,7 +591,7 @@ public class AmortizationDAO {
 			throw new AonCoreException(AonError.EMPTY_DATA.format(AMORTIZATION_DETAIL_ID_LABEL));
 		}
 		detail.setStatus(AmortizationDetailStatus.PENDING);
-		int count = ctx.getDslContext()
+		ctx.getDslContext()
 			.update(AMORTIZATION_DETAIL)
 			.set(AMORTIZATION_DETAIL.STATUS, detail.getStatus().value())
 			.where(AMORTIZATION_DETAIL.ID.eq(detail.getId()))
@@ -632,4 +690,35 @@ public class AmortizationDAO {
 			.execute();
 	}
 
+	// ------------------------------------------------------ [SALE] ---
+	public static Amortization sale(AONContext ctx, Amortization a) {
+		AmortizationValidation.validateSale(ctx, a);
+		Date cancelDate = DateUtils.addDays(a.getDeadline(), -1);
+		Amortization am = get(ctx, a.getDomain(), a.getId())
+			.orElseThrow(() -> new AonCoreException(AonError.AMORTIZATION_NOT_FOUND.getMessage()));
+		
+		am.setDeadline(a.getDeadline());
+		am.setSaleAmount(a.getSaleAmount());
+		am.detailStream()
+			.filter( d -> d.getStatus() == AmortizationDetailStatus.PENDING )
+			.filter( d -> d.getToDate().after(cancelDate) )
+			.forEach( d -> {
+				Date from = d.getFromDate();
+				Date to =  d.getToDate();
+				if (from.equals(cancelDate) || from.before(cancelDate)) {
+						int days = (int) AonDateUtils.getDaysBetweenDates(from, to);
+						int newDays = (int) AonDateUtils.getDaysBetweenDates(from, cancelDate );
+						double newAllocation = AonMathUtils.round( d.getAllocation() * newDays / days );
+						d.setAllocation(newAllocation);
+						d.setToDate(cancelDate);
+				} else {		
+					d.setDeleted( true );
+				}
+			})
+		;
+		update(ctx, am);
+		saveDetails(ctx, am);
+		return get(ctx, am.getDomain(), am.getId())
+			.orElseThrow(() -> new AonCoreException("Error al grabar amortizaci\u00F3n"));
+	}
 }

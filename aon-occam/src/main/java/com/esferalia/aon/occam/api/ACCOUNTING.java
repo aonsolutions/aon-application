@@ -896,6 +896,18 @@ public class ACCOUNTING {
 		}
 	}
 
+	public static Amortization calculateAmortization(Occam occam, Amortization am) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getAccounting().calculateAmortization(ctx, am);
+		}
+	}
+
+	public static Amortization saleAmortization(Occam occam, Amortization am) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getAccounting().saleAmortization(ctx, am);
+		}
+	}
+
 	public static AmortizationDetail recordAmortizationAllocation(Occam occam, Amortization am, AmortizationDetail detail) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
 			return getAccounting().recordAmortizationAllocation(ctx, am, detail);

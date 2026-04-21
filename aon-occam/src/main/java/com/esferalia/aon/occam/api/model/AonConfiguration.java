@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class AonConfiguration implements Serializable {
@@ -189,7 +190,9 @@ public class AonConfiguration implements Serializable {
 		return null;
 	}
 	
-	
+	public boolean hasInvestAssets() {
+		return AonCollectionUtils.isNotEmpty(investAsset);
+	}
 	public LinkedList<InvestAsset> getInvestAssets() {
 		return investAsset;
 	}
