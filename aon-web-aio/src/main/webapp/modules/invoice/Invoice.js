@@ -1023,6 +1023,7 @@ export class Invoice {
       withholding_percentage: this.isWithholding() ? wh.percentage : undefined,
       withholding_base: 0.0,
       withholding_quota: 0.0, 
+      workplace: this.workplace
      };
      this.details.push(detail);
      this.calculateTaxFromDetail();
