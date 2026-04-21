@@ -1721,6 +1721,24 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_model_matrix_bullet_small_button")
 	String aonModelMatrixBulletSmallButton();
+	
+	@ClassName("aon_icon_fax")
+	String aonIconFax();
+	
+	@ClassName("aon_icon_location_on")
+	String aonIconLocationOn();
+
+	@ClassName("aon_icon_mobile")
+	String aonIconMobile();
+	
+	@ClassName("aon_icon_move_location")
+	String aonIconMoveLocation();
+	
+	@ClassName("aon_icon_phone")
+	String aonIconPhone();
+	
+	@ClassName("aon_icon_share")
+	String aonIconShare();
 
 }
 

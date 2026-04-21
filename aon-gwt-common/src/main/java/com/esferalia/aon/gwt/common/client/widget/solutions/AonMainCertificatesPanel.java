@@ -72,11 +72,11 @@ public class AonMainCertificatesPanel extends DeckPanel {
 	private List<SecondaryUserCertificate> secondaryUsers = new ArrayList<>();
 	
 	private static enum COLS {
+		TPE("Uso", "3rem",  "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		DES("Titular", "-moz-available", "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		BUD("Representaci\u00f3n", "10rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		DOC("F. Expiraci\u00f3n", "6rem", ""),
 		TYP(AON.MSG.alias(), "14rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		TPE("Uso", "6rem",  "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		TGS("TGSS", "3rem", ""), 
 		SEP("SEPE", "3rem", ""), 
 		AEA("AEAT", "3rem", ""),
@@ -238,6 +238,11 @@ public class AonMainCertificatesPanel extends DeckPanel {
 	}
 
 	private void createFormCells(AonCustomTable table, HTMLPanel row, Certificate certificate, boolean isEnterprise) {
+		AonTableButton use = certificate.getOwner().equals(CertificateOwner.ENTERPRISE)
+				? new AonTableButton("Compartido", AON.CSS.aonIconShare())
+				: new AonTableButton("Personal", AON.CSS.aonIconPerson());
+		table.addInlineStyle(use, COLS.TPE.getStyles());
+		
 		String certificateFor = "-";
 		if (!certificate.getCertificateInfo().isEmpty()) {
 			certificateFor = (AonStringUtils.isBlank(certificate.getCertificateInfo().getDocument()) ? ""
@@ -269,9 +274,6 @@ public class AonMainCertificatesPanel extends DeckPanel {
 		alias.setTitle(certificate.getDescription());
 		table.addInlineStyle(alias, COLS.TYP.getStyles());
 		
-		Label use = new Label(certificate.getOwner().equals(CertificateOwner.ENTERPRISE) ? "Compartido" : "Personal");
-		table.addInlineStyle(use, COLS.TPE.getStyles());
-
 		HTMLPanel securityPanel = new HTMLPanel("");
 		securityPanel.addStyleName(AON.CSS.aonItemFlex());
 		securityPanel.getElement().getStyle().setProperty("justify-content", "right");
@@ -387,11 +389,11 @@ public class AonMainCertificatesPanel extends DeckPanel {
 		buttonsPanel.add(deleteButton);
 		//buttonsPanel.add(downloadButton);
 		
+		table.addRow(row, use, COLS.TPE.getColWidth());
 		table.addRow(row, certificateForL, COLS.DES.getColWidth());
 		table.addRow(row, representationL, COLS.BUD.getColWidth());
 		table.addRow(row, expirationDateL, COLS.DOC.getColWidth());
 		table.addRow(row, alias, COLS.TYP.getColWidth());
-		table.addRow(row, use, COLS.TPE.getColWidth());
 		table.addRow(row, tgssCB, COLS.TGS.getColWidth());
 		table.addRow(row, sepeCB, COLS.SEP.getColWidth());
 		table.addRow(row, aeatCB, COLS.AEA.getColWidth());

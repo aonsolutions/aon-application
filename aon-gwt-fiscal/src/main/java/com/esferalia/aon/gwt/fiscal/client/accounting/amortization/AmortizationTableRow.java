@@ -43,8 +43,8 @@ class AmortizationTableRow extends AonDisplayGridRow {
 			: supplier.get();
 	}
 
-	static void fillHeader(AonDisplayGridHeaderRow headerRow) {
-		headerRow
+	static void fillHeader(AonDisplayGridHeaderRow aonDisplayTableHeaderRow) {
+		aonDisplayTableHeaderRow
 			.addCell(new Label(AON.MSG.from()),AON.CSS.aonWidth100(),AON.CSS.aonNowrap())
 			.addCell(new Label(AON.MSG.to()),AON.CSS.aonWidth100(),AON.CSS.aonNowrap())
 			.addCell(new Label(AON.MSG.description()),AON.CSS.aonWidth300())

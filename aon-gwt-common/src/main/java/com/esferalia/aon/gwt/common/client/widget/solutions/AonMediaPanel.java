@@ -100,7 +100,7 @@ public class AonMediaPanel extends HTMLPanel {
 		admin.getElement().getStyle().setProperty("max-width", "6rem");
 		
 		row.add(type);
-		row.add(admin);
+		row.add(value);
 		container.add(row);
 		
 		// Second Row
@@ -110,8 +110,7 @@ public class AonMediaPanel extends HTMLPanel {
 		
 		commercial.getElement().getStyle().setProperty("max-width", "6rem");
 		
-		row2.add(value);
-		row2.add(commercial);
+		row2.add(comment);
 		container.add(row2);
 		
 		// Third Row
@@ -121,7 +120,8 @@ public class AonMediaPanel extends HTMLPanel {
 		
 		tecnical.getElement().getStyle().setProperty("max-width", "6rem");
 		
-		row3.add(comment);
+		row3.add(admin);
+		row3.add(commercial);
 		row3.add(tecnical);
 		container.add(row3);
 		

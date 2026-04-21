@@ -49,6 +49,18 @@ public class AmortizationServiceAsyncDecorator implements AmortizationServiceAsy
 	}
 	
 	@Override
+	public void calculate(Occam occam, Amortization am, AsyncCallback<Amortization> callback) {
+		AON.start();
+		serviceAsync.calculate(occam, am, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void sale(Occam occam, Amortization am, AsyncCallback<Amortization> callback) {
+		AON.start();
+		serviceAsync.sale(occam, am, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
 	public void recordAllocation(Occam occam, Amortization am, AmortizationDetail detail, AsyncCallback<AmortizationDetail> callback) {
 		AON.start();
 		serviceAsync.recordAllocation(occam, am, detail, new AsyncCallbackWrapper<>(callback ));

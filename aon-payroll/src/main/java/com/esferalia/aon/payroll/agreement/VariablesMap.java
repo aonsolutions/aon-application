@@ -2493,6 +2493,19 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_PELIGROSIDAD_MEDIA_JORNADA_MENSUAL", "P_PELIG_MED_JORN_M");
 		variablesMap.put("SERVICIO_CON_PERNOCTA_ANUAL", "SERV_PERNOCTA_A");
 		
+		//Act. 18/04/26
+		variablesMap.put("AYUDA_ESCOLAR_FP_MENSUAL", "AYUDA_ESC_FP_M");
+		variablesMap.put("AYUDA_HIJOS_CON_MINUSVALIA_33_MENSUAL", "AYUDA_HIJOS_33_M");
+		variablesMap.put("COMPLEMENTO_PLUS_PENOSIDAD_MENSUAL", "C_PLUS_PENOS_M");
+		variablesMap.put("COMPLEMENTO_VERANO_ANUAL", "C_VERANO_A");
+		variablesMap.put("COMPLEMENTO_VERANO_DIARIO", "C_VERANO_D");
+		variablesMap.put("HORA_EXTRA_125_HORAS", "HEX_125_H");
+		variablesMap.put("PLUS_LINEAL_ANUAL", "P_LINEAL_A");
+		variablesMap.put("PLUS_TRABAJO_CAMARAS_ENTRE_0_Y_5_GRADOS_DIARIO", "P_CAM_0_5_D");
+		variablesMap.put("PRIMA_MENSUAL", "PRIMA_M");
+		variablesMap.put("PRODUCTIVIDAD_TURNO_NOCHE_DIARIO", "PROD_T_NOCHE_D");
+
+		
 	}
 	
 	public static void main(String[] args) {

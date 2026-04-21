@@ -182,6 +182,7 @@ public enum AonError implements Serializable{
 	
 	
 	// --------------------------------------------- AMORTIZATION
+	,AMORTIZATION_NOT_FOUND("Fiche de amortizaci\u00F3n no encontrada.")
 	,AMORTIZATION_EMPTY_PERCENTAGE("No se ha indicado un coeficiente v\u00E1lido")
 	,AMORTIZATION_EMPTY_FIXED_ASSET_ACCOUNT("No se ha indicado tipo de amortizaci\u00F3n ni cuenta de inmovilizado")
 	,AMORTIZATION_EMPTY_ACCUMULATED_ACCOUNT("No se ha indicado tipo de amortizaci\u00F3n ni cuenta de acumulado")
@@ -189,7 +190,10 @@ public enum AonError implements Serializable{
 	,AMORTIZATION_DELETE_SCORED_DETAILS("Existen detalles de amortizaci\u00F3n contabilizados, no se puede borrar la ficha de amortizaci\u00F3n.")
 	,AMORTIZATION_DELETE_LINKED_INVOICES("Existen facturas vinculadas a esta ficha de amortizaci\u00F3n, no se puede borrar.")
 	,AMORTIZATION_DETAIL_NOT_FOUND("Detalle de amortizaci\u00F3n no encontrado.")
-	
+	,AMORTIZATION_NOT_PENDING_ALLOCATIONS("Existe una cuota posterior a la fecha de cancelación, bloqueada o contabilizada.")
+	,AMORTIZATION_WRONG_DEADLINE("La fecha de baja debe ser posterior a la fecha de inicio")
+	,AMORTIZATION_WRONG_SALE_AMOUNT("El importe de baja no puede ser negativo.")
+
 	// --------------------------------------------- AMORTIZATION TYPE
 	,AMORTIZATION_TYPE_NULL("El tipo de amortizaci\u00F3n es nulo.")
 	,AMORTIZATION_TYPE_NULL_DESCRIPTION("La descripci\u00F3n del tipo de amortizacion es nula")

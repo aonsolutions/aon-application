@@ -6,8 +6,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAmortizationTypeBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonInvestAssetBox;
@@ -43,6 +43,12 @@ class AmortizationFormPanel extends DockLayoutPanel {
 		this.clear();
 		callback.paintSaveButton();
 		callback.paintDeleteButton();
+		if (callback.getAmortization().detailStream().anyMatch( d -> d.isPending() )) {
+			callback.paintCalculateButton();
+		}
+		if (callback.getAmortization().detailStream().anyMatch( d -> d.isPending() )) {
+			callback.paintSaleButton();
+		}
 		AmortizationFormPanelCallback cbk = new AmortizationFormPanelCallback() {
 			
 			@Override
@@ -61,7 +67,7 @@ class AmortizationFormPanel extends DockLayoutPanel {
 			}
 		};
 		
-		addNorth( getHeader(opts, callback), 350 );
+		addNorth( getHeader(opts, callback), 220 );
 		AmortizationDetailTable detailPanel = getDetails(opts, callback);
 		if (callback.getAmortization().getFeePeriod() == AmortizationPeriod.YEARLY) {
 			SimpleLayoutPanel detailWrapper = new SimpleLayoutPanel();
@@ -78,8 +84,7 @@ class AmortizationFormPanel extends DockLayoutPanel {
 	private Widget getHeader(AmortizationModuleOptions opts, AmortizationPanelCallback callback) {
 		FlowPanel header = new FlowPanel();
 
-		AonDisplayGrid grid = new AonDisplayGrid();
-		grid.addStyleName( AON.CSS.aonWidthAlmostAll());
+		AonDisplayTable grid = new AonDisplayTable();
 		grid.addStyleName( AON.CSS.aonBlockCenter());
 
 		AonIntegerBox idBox = new AonIntegerBox();
@@ -101,7 +106,7 @@ class AmortizationFormPanel extends DockLayoutPanel {
 		FlowPanel allocationAccountListBoxPanel = new FlowPanel();
 		AonAccountListBox allocationAccountListBox = null;
 		
-		AonInvestAssetBox investAssetBox = new AonInvestAssetBox(opts);
+		AonInvestAssetBox investAssetBox = new AonInvestAssetBox(opts,"");
 		AonTextBox commentsBox = new AonTextBox();
 
 		// ID Panel
@@ -129,7 +134,7 @@ class AmortizationFormPanel extends DockLayoutPanel {
 		descriptionBox.addValueChangeHandler(e -> callback.getAmortization().setDescription(e.getValue()));
 		
 		grid.addRow()
-			.addCell(idLabel, AON.CSS.aonWidth150())
+			.addCell(idLabel, AON.CSS.aonWidth200())
 			.addCell(idPanel, AON.CSS.aonWidth200())
 			.addCell(descriptionLabel, AON.CSS.aonWidth150())
 			.addCell(descriptionBox, AON.CSS.aonWidthAuto());
@@ -139,8 +144,8 @@ class AmortizationFormPanel extends DockLayoutPanel {
 		initialDateBox.setValue(callback.getAmortization().getInitialDate());
 		initialDateBox.addValueChangeHandler(e -> callback.getAmortization().setInitialDate(e.getValue()));
 		
-		AonDisplayGridRow row = grid.addRow()
-			.addCell(initialDateLabel)
+		AonDisplayTableRow row = grid.addRow()
+			.addCell(initialDateLabel, AON.CSS.aonNowrap())
 			.addCell(initialDateBox);
 		
 		if (isNew(callback.getAmortization())) {

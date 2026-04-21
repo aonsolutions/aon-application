@@ -104,6 +104,11 @@ class InvoiceJSONV1 {
 			.setRegistryAddress(raddress.getId())
 			.setAddress(raddress)
 			.setSigned(JsonUtils.getboolean(json, IJsonNames.SIGNED))
+			
+			.setTaxableBase(JsonUtils.getdouble(json, IJsonNames.TAXABLE_BASE))
+			.setVatQuota(JsonUtils.getdouble(json, IJsonNames.VAT_QUOTA))
+			.setRetentionQuota(JsonUtils.getdouble(json, IJsonNames.RETENTION_QUOTA))
+			
 			.setBreakdown(InvoiceBreakdownJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.TAXES)))
 			.setDetails(InvoiceDetailJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.DETAILS)))
 			.setFinances(FinanceJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.FINANCES)))

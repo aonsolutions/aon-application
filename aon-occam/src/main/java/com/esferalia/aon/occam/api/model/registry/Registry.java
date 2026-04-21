@@ -26,9 +26,14 @@ public class Registry implements Serializable{
 	
 	private String observation;
 	
+	private String personName;
+	private String personFirstsurname;
+	private String personSecondsurname;
+	
 	private boolean dirty;
 	private boolean selected;
 	private boolean global;
+	
 	/**
 	 * @deprecated Use RegistryFull to access registry data.
 	 */
@@ -165,7 +170,29 @@ public class Registry implements Serializable{
 		this.global = global;
 		return this;
 	}
-
+	
+	public String getPersonName() {
+		return personName;
+	}
+	public Registry setPersonName(String personName) {
+		this.personName = personName;
+		return this;
+	}
+	public String getPersonFirstsurname() {
+		return personFirstsurname;
+	}
+	public Registry setPersonFirstsurname(String personFirstsurname) {
+		this.personFirstsurname = personFirstsurname;
+		return this;
+	}
+	public String getPersonSecondsurname() {
+		return personSecondsurname;
+	}
+	public Registry setPersonSecondsurname(String personSecondsurname) {
+		this.personSecondsurname = personSecondsurname;
+		return this;
+	}
+	
 	/**
 	 * @deprecated Use RegistryFull to access registry data.
 	 */
@@ -213,7 +240,12 @@ public class Registry implements Serializable{
 			.setAlias(getAlias())
 			.setLegalPerson(isLegalPerson())
 			.setNationality(getNationality())
-			.setSecurityLevel(getSecurityLevel());
+			.setSecurityLevel(getSecurityLevel())
+			
+			.setPersonName(getPersonName())
+			.setPersonFirstsurname(getPersonFirstsurname())
+			.setPersonSecondsurname(getPersonSecondsurname())
+			;
 	}
 
 	public <T extends Registry> T copy(Registry registry, T child) {
@@ -228,6 +260,10 @@ public class Registry implements Serializable{
 			child.setLegalPerson(registry.isLegalPerson());
 			child.setNationality(registry.getNationality());
 			child.setSecurityLevel(registry.getSecurityLevel());
+			
+			child.setPersonName(registry.getPersonName());
+			child.setPersonFirstsurname(registry.getPersonFirstsurname());
+			child.setPersonSecondsurname(registry.getPersonSecondsurname());
 		}
 		return child;
 	}

@@ -78,7 +78,9 @@ class AonApiServletUtils {
 			.and(f.getLevelProperty().eq((byte) 5));
     	InvoiceType iType = InvoiceType.safeValueOf(type);
     	if(iType != null && InvoiceType.SALES.equals(iType)) {
-    		filter = filter.and(f.getCodeProperty().like("700%").or(f.getCodeProperty().like("705%"))); 
+    		filter = filter.and(f.getCodeProperty().like("700%")
+    				.or(f.getCodeProperty().like("705%")
+    				.or(f.getCodeProperty().like("75%")))); 
     	}
     	if(iType != null && InvoiceType.PURCHASE.equals(iType)) {
     		filter = filter.and(f.getCodeProperty().like("60%").or(f.getCodeProperty().like("62%"))); 

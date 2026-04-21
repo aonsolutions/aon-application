@@ -32,6 +32,10 @@ export class Invoice {
   insight;
   signed;
 
+  taxableBase;
+  vatQuota;
+  retenttionQuota;
+
   activity;
 
   service; // boolean | servicio
@@ -148,6 +152,10 @@ export class Invoice {
       this.messages = invoice.messages || [];
       this.insight = invoice.insight || {};
       this.communicationInfo = invoice.communicationInfo;
+      this.taxableBase = invoice.taxableBase;
+      this.vatQuota = invoice.vatQuota;
+      this.retentionQuota = invoice.retentionQuota;
+
       if(this.finances.length === 0) this.resetFinances();
     } else {
       this.domain = LS.getDomainId();
@@ -537,6 +545,9 @@ export class Invoice {
 
   setSurcharge(surcharge) {
     this.surcharge = surcharge;
+    this.details.forEach((detail, i) => {
+      this.details[i] = this.calculateDetail(detail);
+    });
     this.taxes.forEach((tax, i) => {
       this.taxes[i] = this.calculateTax(tax);
     });
@@ -868,19 +879,28 @@ export class Invoice {
 
   calculateTotalFromTax() {
     let total = 0.0;
-  
+    let taxableBase = 0.0;
+    let vatQuota = 0.0;
+    let retentionQuota = 0.0;
+
     this.taxes.filter(f => TaxType.IVA === f.tax).forEach(tax => {
       const value = this.isVatCalculate()
         ? round(Number(tax.base) + Number(tax.quota) + Number(tax.surcharge_quota))
         : round(Number(tax.base));
       total = total + value;
+      taxableBase = taxableBase + Number(tax.base);
+      vatQuota = vatQuota + Number(tax.quota) + Number(tax.surcharge_quota);
     });
 
     this.taxes.filter(f => TaxType.IRPF === f.tax).forEach(tax => {
       total = total - Number(tax.quota);
+      retentionQuota = retentionQuota + Number(tax.quota);
     });
     
     this.total = round(Number(total));
+    this.taxableBase = round(Number(taxableBase));
+    this.vatQuota = round(Number(vatQuota));
+    this.retentionQuota = round(Number(retentionQuota));
     this.calculateFinances();
   }
 
@@ -959,16 +979,20 @@ export class Invoice {
 
     if(this.isWithholding() && withholdingPercentage > 0) {
       let wBase = this.isWithholdingFarmer() ? base + quota : base;
-			let irpf = {
+      let wQuota = round(wBase * (withholdingPercentage/100));
+      let irpf = {
 				tax: TaxType.IRPF,
 				type: TaxType.IRPF,
         withholding_type: withholdingType,
 				percentage: withholdingPercentage,
 				base: wBase,
-				quota: round(wBase * (withholdingPercentage/100))
+				quota: wQuota
 		 	};
       this.taxes.push(irpf);
+      this.retentionQuota = wQuota;
     }
+    this.taxableBase = base;
+    this.vatQuota = quota;
   }
 
   getWitholdingTax() {
@@ -1027,13 +1051,18 @@ export class Invoice {
       let amount = round(Number(detail.quantity) * Number(detail.price));
 			amount = amount - amount * (detail.discount / 100);
       detail.amount = round(amount);
-      alert(detail.percentage);
       detail.percentage = detail.percentage || 0.0;
       if(!detail.prepayment) {
         detail.quota = round(detail.amount / 100 * detail.percentage);
         detail.surcharge = this.isSurcharge() ? getSurchargeByVat(detail.percentage) : 0.0;
         detail.surcharge_quota = round(detail.amount / 100 * detail.surcharge);
-        
+        if(this.isSurcharge()) {
+          detail.vatDeductiblePercent = 0.0;
+          detail.vatDeductibleQuota = 0.0;
+        } else {
+          detail.vatDeductiblePercent = detail.vatDeductiblePercent || 100.0;
+          detail.vatDeductibleQuota = round(detail.quota * detail.vatDeductiblePercent / 100);
+        }
         if(this.isWithholdingFarmer()) {
           detail.withholding = true;
           detail.withholding_type = "FARMER";
@@ -1053,6 +1082,7 @@ export class Invoice {
         detail.quota = 0.0;
         detail.surcharge = 0.0;
         detail.surcharge_quota = 0.0;
+        detail.vatDeductiblePercent = 0.0;
         detail.withholding = false;
         detail.withholding_type = undefined;
         detail.withholding_percentage = undefined;
@@ -1096,18 +1126,32 @@ export class Invoice {
   
   calculateTotalFromDetail() {
     let total = 0.0;
+    let taxableBase = 0.0;
+    let vatQuota = 0.0;
+    let retentionQuota = 0.0;
+
     this.details.forEach( detail => {
       const value = this.isVatCalculate()
         ? round(Number(detail.amount) + Number(detail.quota) + Number(detail.surcharge_quota))
         : round(Number(detail.amount));
       total = total + value;
+      if(!detail.prepayment || detail.prepayment === CONSTANT.FALSE) {
+        taxableBase = taxableBase + Number(detail.amount);
+        vatQuota = vatQuota + Number(detail.quota) + Number(detail.surcharge_quota);
+      }
     });  
 
     this.taxes.filter(f => TaxType.IRPF === f.tax).forEach(tax => {
       total = total - Number(tax.quota);
+      retentionQuota = retentionQuota + Number(tax.quota);
     });
 
     this.total = round(Number(total));
+
+    this.taxableBase = round(Number(taxableBase));
+    this.vatQuota = round(Number(vatQuota));
+    this.retentionQuota = round(Number(retentionQuota));
+
     this.calculateFinances();
   }
 
@@ -1167,7 +1211,7 @@ export class Invoice {
         };
         this.finances.push(finance);
       }
-    } 
+    }
   }
   
   addFinance() {
