@@ -276,7 +276,11 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 					nafs,
 					calcsCallback
 				);
+			} catch ( Exception e ) {
 				
+			}
+			
+			try {	
 				SistemaRED2AON.addCalcs(
 					userLogin, 
 					domainName, 
