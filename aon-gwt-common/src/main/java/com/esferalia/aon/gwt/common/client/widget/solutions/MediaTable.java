@@ -276,7 +276,7 @@ public abstract class MediaTable extends ScrollPanel {
 			case EMAIL:
 				return new AonTableButton(media.getDescription(), AON.CSS.aonIconEmail());
 			case WEB:
-				return new AonTableButton(media.getDescription(), AON.CSS.aonIconWeb());	
+				return new AonTableButton(media.getDescription(), AON.CSS.aonIconDatasetLinked());	
 			default:
 				throw new IllegalArgumentException("Unexpected value: " + media);
 		}

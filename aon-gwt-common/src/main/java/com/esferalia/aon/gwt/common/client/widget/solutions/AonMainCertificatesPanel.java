@@ -238,9 +238,11 @@ public class AonMainCertificatesPanel extends DeckPanel {
 	}
 
 	private void createFormCells(AonCustomTable table, HTMLPanel row, Certificate certificate, boolean isEnterprise) {
-		AonTableButton use = certificate.getOwner().equals(CertificateOwner.ENTERPRISE)
-				? new AonTableButton("Compartido", AON.CSS.aonIconShare())
-				: new AonTableButton("Personal", AON.CSS.aonIconPerson());
+		AonTableButton use = certificate.getOwner().equals(CertificateOwner.USER)
+				? new AonTableButton("Privado", AON.CSS.aonIconShieldLocked())
+				: certificate.getConfidential().equals(CertificateSecurity.PUBLIC)
+					? new AonTableButton("Compartido Usuarios Empresa", AON.CSS.aonIconAdminPanelSettings())
+					: new AonTableButton("Publico", AON.CSS.aonIconEncryptedOff());
 		table.addInlineStyle(use, COLS.TPE.getStyles());
 		
 		String certificateFor = "-";
