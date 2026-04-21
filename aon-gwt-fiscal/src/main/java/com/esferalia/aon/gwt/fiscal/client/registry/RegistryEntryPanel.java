@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMainCertificatesPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonVisualIdentity;
 import com.esferalia.aon.gwt.common.client.widget.solutions.MediaTable;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -58,12 +59,13 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 	private TabLayoutPanel tablayoutPanel;
 
 	// Other Info
+	private AonVisualIdentity aonVisualIdentity;
 	private AddressTable addressTable;
 	private MediaTable mediaTable;
 
 	private CompanyFull company;
 	private Registry registry;
-
+	
 	// ------------------------------------------------- Constructor
 
 	public RegistryEntryPanel(RegistryModuleOptions options, RegistrySource registrySource) {
@@ -150,7 +152,7 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 		HTMLPanel leftInfoTable = createTable();
 		leftInfoTable.getElement().getStyle().setProperty("flex", "1");
 
-		AonCustomTextBox alias = new AonCustomTextBox("Alias");
+		AonCustomTextBox alias = new AonCustomTextBox(AON.MSG.alias());
 		alias.addValueChangeHandler(e -> registry.setAlias(e.getValue()));
 		alias.setValue(registry.getAlias());
 
@@ -163,13 +165,13 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 			documentNationality.addChangeHandler(
 					e -> registry.setDocumentCountry(Country.safeValueOf(documentNationality.getValue())));
 			documentNationality.setValue(registry.getDocumentCountry().getIso2());
-			documentNationality.getElement().getStyle().setProperty("max-width", "3rem");
+			documentNationality.getElement().getStyle().setProperty("max-width", "4rem");
 
 			documentType.clearItems();
 			for (int i = 0; i < DocumentType.values().length; i++)
 				documentType.addItem(DocumentType.values()[i].getDescription(), DocumentType.values()[i].toString());
 			documentType.setValue(registry.getDocumentType().toString());
-			documentType.getElement().getStyle().setProperty("max-width", "4rem");
+			documentType.getElement().getStyle().setProperty("max-width", "5rem");
 
 			AonCustomTextBox document = new AonCustomTextBox("Documento");
 			document.addValueChangeHandler(e -> registry.setDocument(e.getValue()));
@@ -186,7 +188,7 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 		rightInfoTable = createTable();
 		rightInfoTable.getElement().getStyle().setProperty("flex", "1");
 
-		AonCustomTextBox name = new AonCustomTextBox("Nombre");
+		AonCustomTextBox name = new AonCustomTextBox(AON.MSG.enterpriseName());
 		name.addValueChangeHandler(e -> registry.setName(e.getValue()));
 		name.setValue(registry.getName());
 		rightInfoTable.add(createRow(name));
@@ -204,7 +206,7 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 		}
 
 		container.add(gridPanel);
-
+		
 		mediaTable = new MediaTable(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId()) {
 
 			@Override
@@ -214,7 +216,7 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 
 		};
 
-		tablayoutPanel.add(mediaTable, "Contacto");
+		tablayoutPanel.add(mediaTable, "Contactos");
 
 		addressTable = new AddressTable(options.getDomainName(), options.getDomain(), options.getUser(),
 				registry.getId()) {
@@ -232,6 +234,9 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 		};
 
 		tablayoutPanel.add(addressTable, "Direcciones");
+		
+		aonVisualIdentity = new AonVisualIdentity(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId(), this.registrySource);
+		tablayoutPanel.add(aonVisualIdentity, "Id. Visual");
 
 		tablayoutPanel.add(new AonMainCertificatesPanel(options.getDomainName(), options.getDomain(), options.getUser()),
 				"Certificados");

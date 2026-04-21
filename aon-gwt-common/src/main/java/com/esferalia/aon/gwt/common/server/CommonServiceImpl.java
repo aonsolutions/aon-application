@@ -2068,6 +2068,18 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		AON.saveCompany(new Domain().setName(domainName).setId(domain), new User().setLogin(user), company.ensureCompany());
 		return AON.getCompanyFull(domainName, domain, user);
 	}
+	
+	@Override
+	public Attach getCompanyLogo(String domainName, Integer domain, String user, Integer registry) throws AonCoreException {
+		Attach attach = AON.getAttach(domainName, domain, user, f -> f.getAttachModuleProperty().eq(registry).and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
+		return attach;
+	}
+	
+	@Override
+	public Attach getCompanySignature(String domainName, Integer domain, String user, Integer registry) throws AonCoreException {
+		Attach attach = AON.getAttach(domainName, domain, user, f -> f.getAttachModuleProperty().eq(registry).and(f.getTypeProperty().eq(RegistryAttachmentType.SIGNATURE.value())), AttachType.REGISTRY);
+		return attach;
+	}
 
 	// *********************** [AMORTIZATION TYPE]
 	@Override

@@ -50,7 +50,8 @@ public enum MimeType implements Serializable {
     JKS("application/x-java-keystore","jks"),
     SVG ("image/svg+xml", "svg"),
     WEBM("video/webm","webm"),
-    RAR("application/x-rar-compressed", "rar")
+    RAR("application/x-rar-compressed", "rar"),
+    WEBP("image/webp","webp"),
     ;
     
 	private String name;
@@ -137,7 +138,9 @@ public enum MimeType implements Serializable {
 			|| this == GIF
     		|| this == PNG 
     		|| this == BMP
-			|| this == TIFF;
+			|| this == TIFF
+			|| this == WEBP
+			|| this == SVG;
     }
 	
     public boolean isPDF(){

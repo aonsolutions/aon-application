@@ -142,7 +142,7 @@ public class Attach implements Serializable {
 	}
 
 	public Date getDate() {
-		return date;
+		return null == date ? new Date() : date;
 	}
 
 	public Attach setDate(Date date) {
