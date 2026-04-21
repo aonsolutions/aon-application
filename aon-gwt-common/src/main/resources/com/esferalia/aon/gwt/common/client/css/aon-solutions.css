@@ -566,6 +566,15 @@
 .aon_icon_phone { background-image: iconPhone;}
 @url iconShare aonIconShare;
 .aon_icon_share { background-image: iconShare;}
+@url iconDatasetLinked aonIconDatasetLinked;
+.aon_icon_dataset_linked { background-image: iconDatasetLinked;}
+@url iconShieldLocked aonIconShieldLocked;
+.aon_icon_shield_locked { background-image: iconShieldLocked;}
+@url iconAdminPanelSettings aonIconAdminPanelSettings;
+.aon_icon_admin_panel_settings { background-image: iconAdminPanelSettings;}
+@url iconEncryptedOff aonIconEncryptedOff;
+.aon_icon_encrypted_off { background-image: iconEncryptedOff;}
+
 
 /* BASICS */
 .aon_selector {

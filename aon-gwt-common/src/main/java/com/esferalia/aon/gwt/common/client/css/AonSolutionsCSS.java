@@ -1739,6 +1739,18 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_icon_share")
 	String aonIconShare();
+	
+	@ClassName("aon_icon_dataset_linked")
+	String aonIconDatasetLinked();
+	
+	@ClassName("aon_icon_shield_locked")
+	String aonIconShieldLocked();
+	
+	@ClassName("aon_icon_admin_panel_settings")
+	String aonIconAdminPanelSettings();
+	
+	@ClassName("aon_icon_encrypted_off")
+	String aonIconEncryptedOff();
 
 }
 

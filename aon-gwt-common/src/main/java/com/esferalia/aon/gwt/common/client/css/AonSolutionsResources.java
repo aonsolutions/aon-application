@@ -1095,6 +1095,22 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-share.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconShare();
+	
+	@Source("icons/aon-icon-dataset-linked.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconDatasetLinked();
+	
+	@Source("icons/aon-icon-shield-locked.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconShieldLocked();
+	
+	@Source("icons/aon-icon-admin-panel-settings.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconAdminPanelSettings();
+	
+	@Source("icons/aon-icon-encrypted-off.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconEncryptedOff();
 }
 
 
