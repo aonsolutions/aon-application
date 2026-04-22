@@ -24,7 +24,6 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2025.Mod2002025Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -381,7 +380,6 @@ public class Model2002025 extends DockLayoutPanel {
 	private Widget getToolbar() {
 		
 		AonToolbar toolbarPanel = new AonToolbar(AonStringUtils.join(mod200Object.getMod200().getDocument(), AonStringUtils.SPACE, mod200Object.getMod200().getFullName()));
-		toolbarPanel.getElement().getStyle().setDisplay(Display.BLOCK); 
 		
 		// Cancelar (botón para volver atrás)
 		
@@ -704,8 +702,7 @@ public class Model2002025 extends DockLayoutPanel {
 	private AonToolbar getDeclarationToolbarPanel() {
 		
 		AonToolbar decToolbar = new AonToolbar();
-		decToolbar.getElement().getStyle().setDisplay(Display.BLOCK); 
-		decToolbar.getElement().getStyle().setMarginTop(5.0, Unit.PX);
+		decToolbar.getElement().getStyle().setMarginTop(8.0, Unit.PX);
 				
 		// Botón "Finalizar"		
 		
