@@ -2154,10 +2154,6 @@ i[id$="aonDocumentalSheetToolbarHeaderToolSectionSendFileButtonIcon"]{
 	letter-spacing: 0;
 }
 
-.customerGeneralCard {
-	width: auto !important;
-}
-
 .aonInputBoxLabel > input {
 	border-radius: .375rem !important;
 	border: .0625rem solid #cbd5e1 ;
