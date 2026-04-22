@@ -744,13 +744,21 @@ div.aon_flex_block.aon_scroll_area {
 	border-radius: .375rem;
 	background-color: #fff;
 }
+
 #rootPanel .aon-center-panel {
 	margin: 1rem;
 	border-radius: .375rem;
 	background-color: #fff;
-	inset: 65px 0px 0px !important;
+	top: 65px !important;
+	right: 0px !important;
+	bottom: 0px !important;
+}
+
+#rootPanel .aon-center-panel:has( .calendar-header ) {
+	top: 0px !important;
 }
 	
+
 #rootPanel > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(3) > .aon_toolbar {
 	margin: 0;
 }
