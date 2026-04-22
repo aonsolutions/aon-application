@@ -445,6 +445,7 @@ public class Contrata {
 			handleSepeExceptions(htmlPage);
 
 			htmlPage = loginAndSelectEnterprise(cto.getCifEnterprise(), htmlPage);
+			handleSepeExceptions(htmlPage);
 
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/tipos_comunicacion_contratacion.jsp")
 					.click();
