@@ -1897,6 +1897,9 @@ export class AonInvoice extends AonElement {
 			detail.description = e.detail.name;
 			detail.item = e.detail.item;
 			detail.price = e.detail.item.price;
+			if(e.detail.item.product.vat && e.detail.item.product.vat.percentage && this.invoice.isVatEnabled()) {
+				detail.percentage = e.detail.item.product.vat.percentage;
+			}
 			this.invoice.setDetail(detail, i);
 			this.setFocus(this.DETAIL_DESCRIPTION + i);
 			this.reload();
@@ -2021,6 +2024,9 @@ export class AonInvoice extends AonElement {
 			detail.description = e.detail.name;
 			detail.item = e.detail.item;
 			detail.price = e.detail.item.price;
+			if(e.detail.item.product.vat && e.detail.item.product.vat.percentage && this.invoice.isVatEnabled()) {
+				detail.percentage = e.detail.item.product.vat.percentage;
+			}
 			detail.prepayment = ("PREPAYMENT" === e.detail.item.product.type);
 			this.invoice.setDetail(detail, i);
 			this.setFocus(this.DETAIL_DESCRIPTION + i);
@@ -2163,6 +2169,9 @@ export class AonInvoice extends AonElement {
 			detail.description = e.detail.name;
 			detail.item = e.detail.item;
 			detail.price = e.detail.item.price;
+			if(e.detail.item.product.vat && e.detail.item.product.vat.percentage && this.invoice.isVatEnabled()) {
+				detail.percentage = e.detail.item.product.vat.percentage;
+			}
 			this.invoice.setDetail(detail, i);
 			this.reload();
 			this.printDetailDialog(this.invoice.details[i], i);

@@ -16,6 +16,7 @@ import { AonMobileProductList } from './aon-mobile-product-list.js';
 import { AonProductList } from './aon-product-list.js';
 import * as OPTION from '../invoice/InvoiceOptions.js';
 import { createInput, createNumber, createSelect } from '../../components/CreateComponent.js';
+import { getVats, getWithholdings } from '../../services/taxService.js';
 
 export class AonProduct extends AonElement {
 
@@ -80,7 +81,6 @@ export class AonProduct extends AonElement {
 		this.ITEM_PRICE = this.id + 'ItemPrice';
 		this.ITEM_PVP = this.id + 'ItemPvp';
 
-
 		this.product = new Product(this.product);
 		this.item = new Item(this.item);
 		this.expense = this.expense || this.product.getType() === 'EXPENSE';
@@ -120,13 +120,13 @@ export class AonProduct extends AonElement {
 
 		table.addRow();
 
-		let codeInput = this.createInput(this.PRODUCT_CODE, MSG.CODE);
+		let codeInput = createInput(this.PRODUCT_CODE, MSG.CODE);
 		codeInput.value = this.product.getCode();
 		codeInput.addEventListener(EVENT.CHANGE, () => this.product.setCode(codeInput.value));
         let td1 = table.addCell(codeInput);
 		td1.style.width = '25%';
 
-		let nameInput = this.createInput(this.PRODUCT_NAME, MSG.NAME);
+		let nameInput = createInput(this.PRODUCT_NAME, MSG.NAME);
 		nameInput.value = this.product.getName();
 		nameInput.addEventListener(EVENT.CHANGE, () => this.product.setName(nameInput.value));
        	let td2 = table.addCell(nameInput);
@@ -142,11 +142,11 @@ export class AonProduct extends AonElement {
 				{name: MSG.SERVICE, value: 'SERVICE'},
 				{name: MSG.COMMERCIAL_PRODUCT, value: 'COMMERCIAL_PRODUCT'},
 				{name: MSG.SUPPLIED, value: 'PREPAYMENT'}];
-			let typeSelect = this.createSelect(this.PRODUCT_TYPE, MSG.TYPE);
+			let typeSelect = createSelect(this.PRODUCT_TYPE, MSG.TYPE);
     	    typeSelect.setOptions(types);
 			typeSelect.value = this.expense ? 'EXPENSE' : this.product.getType();
 			
-			typeSelect.addEventListener(EVENT.CHANGE, (e) => {
+			typeSelect.addEventListener(EVENT.SELECT, (e) => {
 				this.product.setType(typeSelect.getDetail().value);
 				if(typeSelect.getDetail().value === 'PREPAYMENT') {
 					let vat = this.getElement(this.PRODUCT_VAT);
@@ -169,9 +169,9 @@ export class AonProduct extends AonElement {
 		} else {
 			this.product.setType('EXPENSE');
 		}
-		let categorySelect = this.createSelect(this.PRODUCT_CATEGORY, MSG.CATEGORY);
+		let categorySelect = createSelect(this.PRODUCT_CATEGORY, MSG.CATEGORY);
 		categorySelect.setAlias('id', 'name');
-		categorySelect.addEventListener(EVENT.CHANGE, (e) =>  {
+		categorySelect.addEventListener(EVENT.SELECT, (e) =>  {
 			this.product.category = categorySelect.getDetail();
 		});
 
@@ -184,22 +184,28 @@ export class AonProduct extends AonElement {
 
 		table2.addRow();
 
-		let vatSelect = this.createSelect(this.PRODUCT_VAT, MSG.VAT);
-		vatSelect.default = true;
-		vatSelect.setOptions(TaxIVAPercentage)
-		vatSelect.value = this.product.vat;
-		vatSelect.addEventListener(EVENT.CHANGE, () => {
-			this.product.setVat(vatSelect.getDetail().value);
+		let vatSelect = createSelect(this.PRODUCT_VAT, MSG.VAT);
+		vatSelect.setAlias(CONSTANT.ID, CONSTANT.NAME);
+		getVats().then(vats => {
+			vatSelect.setOptions(vats);
+			vatSelect.setValueObject(this.product.vat);
+		});
+
+		vatSelect.addEventListener(EVENT.SELECT, () => {
+			this.product.setVat(vatSelect.getValueObject());
 			this.getElement(this.ITEM_PVP).value = this.getPvp();
 		});
         table2.addCell(vatSelect);
 
-		let retentionSelect = this.createSelect(this.PRODUCT_RETENTION, MSG.IRPF);
-		retentionSelect.default = true;
-		retentionSelect.setOptions(TaxRetentionPercentage);
-		retentionSelect.value = this.product.retention;
-		retentionSelect.addEventListener(EVENT.CHANGE, () => {
-			this.product.setRetention(retentionSelect.getDetail().value);
+		let retentionSelect = createSelect(this.PRODUCT_RETENTION, MSG.IRPF);
+		retentionSelect.setAlias(CONSTANT.ID, CONSTANT.NAME);
+		getWithholdings().then(withholdings => {
+			retentionSelect.setOptions(withholdings);
+			retentionSelect.setValueObject(this.product.retention);
+		});
+
+		retentionSelect.addEventListener(EVENT.SELECT, () => {
+			this.product.setRetention(retentionSelect.getValueObject());
 			this.getElement(this.ITEM_PVP).value = this.getPvp();
 		});
 		table2.addCell(retentionSelect);
@@ -218,21 +224,21 @@ export class AonProduct extends AonElement {
 
 		table.addRow();
 
-		let barcodeInput = this.createInput(this.ITEM_BARCODE, MSG.BARCODE);
+		let barcodeInput = createInput(this.ITEM_BARCODE, MSG.BARCODE);
 		barcodeInput.value = this.item.getBarcode();
 		barcodeInput.addEventListener(EVENT.CHANGE, () => this.item.setBarcode(barcodeInput.value));
 		table.addCell(barcodeInput, 4);
 
 		table.addRow();
 
-		let descriptionInput = this.createInput(this.ITEM_DESCRIPTION, MSG.DESCRIPTION);
+		let descriptionInput = createInput(this.ITEM_DESCRIPTION, MSG.DESCRIPTION);
 		descriptionInput.value = this.item.getDescription();
 		descriptionInput.addEventListener(EVENT.CHANGE, () => this.item.setDescription(descriptionInput.value));
        	table.addCell(descriptionInput, 4);
 
 	 	table.addRow();
 		
-		let purchasePrice = this.createNumber(this.ITEM_PURCHASE_PRICE, MSG.PURCHASE_PRICE);
+		let purchasePrice = createNumber(this.ITEM_PURCHASE_PRICE, MSG.PURCHASE_PRICE);
 		purchasePrice.value = this.item.getPurchasePrice();
 		purchasePrice.format = CONSTANT.TRUE;
 		purchasePrice.decimals = "2";
@@ -244,7 +250,7 @@ export class AonProduct extends AonElement {
 		});
 		table.addCell(purchasePrice, 1);
 
-		let profitPercent = this.createNumber(this.ITEM_PROFIT_PERCENT, '% ' + MSG.PROFIT);
+		let profitPercent = createNumber(this.ITEM_PROFIT_PERCENT, '% ' + MSG.PROFIT);
 		profitPercent.value = this.item.getProfitPercent();
 		profitPercent.format = CONSTANT.TRUE;
 		profitPercent.decimals = "2";
@@ -255,7 +261,7 @@ export class AonProduct extends AonElement {
 		});
 		table.addCell(profitPercent, 1);
 
-		let price = this.createNumber(this.ITEM_PRICE, MSG.PRICE);
+		let price = createNumber(this.ITEM_PRICE, MSG.PRICE);
 		price.value = this.item.getPrice();
 		price.format = CONSTANT.TRUE;
 		price.decimals = "2";
@@ -266,7 +272,7 @@ export class AonProduct extends AonElement {
 		});
 		table.addCell(price, 1);
 
-		let pvp = this.createNumber(this.ITEM_PVP, 'PVP');
+		let pvp = createNumber(this.ITEM_PVP, 'PVP');
 		pvp.value = this.getPvp();
 		pvp.readonly = true;
 		pvp.format = CONSTANT.TRUE;
@@ -305,10 +311,10 @@ export class AonProduct extends AonElement {
 
 	getPvp() {
         let pvp = this.item.price;
-		if(this.product.vat)
-			pvp = pvp + (this.item.price * this.product.vat / 100);
-		if(this.product.retention)
-			pvp = pvp - (this.item.price * this.product.retention / 100);  
+		if(this.product.vat && this.product.vat.percentage)
+			pvp = pvp + (this.item.price * this.product.vat.percentage / 100);
+		if(this.product.retention && this.product.retention.percentage)
+			pvp = pvp - (this.item.price * this.product.retention.percentage / 100);  
 		return pvp;
     }
 
@@ -329,18 +335,6 @@ export class AonProduct extends AonElement {
 		card.title = title;
 		card.style.width = '50%';
 		return card;
-	}
-
-	createSelect(id, title) {
-		return createSelect(id, title);
-	}
-
-	createInput(id, title) {
-		return createInput(id, title);
-	}
-
-	createNumber(id, title) {
-		return createNumber(id, title);
 	}
 }
 

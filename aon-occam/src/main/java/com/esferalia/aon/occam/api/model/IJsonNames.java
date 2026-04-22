@@ -438,8 +438,10 @@ public final class IJsonNames {
 	public static final String MODE = "mode";
 	public static final String MODEL = "model";
 	public static final String MODELS = "models";
-	public static final String MODIFICATION_DATE = "modification_date";
-	public static final String MODIFICATION_USER = "modification_user";
+	@Deprecated public static final String MODIFICATION_DATE = "modification_date";
+	@Deprecated  public static final String MODIFICATION_USER = "modification_user";
+	public static final String MODIFICATION_DATE2 = "modificationDate";
+	public static final String MODIFICATION_USER2 = "modificationUser";
 	public static final String MONTH = "month";
 	// ---------------------------------------------------------------------------------------------	[N] 
 	public static final String NAME = "name";
