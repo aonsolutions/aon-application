@@ -66,7 +66,7 @@ public class Cra {
 						.or(SALARY.TYPE.eq((byte)3)) // Atraso
 				)
 				.and(SALARY.SS_REGIME.notEqual((byte)3))
-				.and(SALARY.TOTAL_PAYMENT.gt(0.00))
+				//.and(SALARY.TOTAL_PAYMENT.gt(0.00))
 				.limit(1)
 				.fetchOne();
 			
