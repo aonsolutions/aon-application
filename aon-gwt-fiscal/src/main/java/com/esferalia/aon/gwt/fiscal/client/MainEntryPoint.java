@@ -78,6 +78,19 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String ELEMENT_TARGET = "elementTarget";
 		
 	//
+	//    =============================================================== DOMINA STAT
+	//
+	private enum DomainStatEntryPoint {
+		DomainInvoiceStat {
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.domainstat.DomainInvoiceStatModule.run();
+			}
+		},
+		;
+		abstract void run();
+	}
+	
+	//
 	//    ================================================================== CONSOLE
 	//
 	private enum ConsoleEntryPoint {
@@ -89,7 +102,7 @@ public class MainEntryPoint implements EntryPoint {
 		;
 		abstract void run();
 	}
-	
+
 	//
 	//    ================================================================== CONSOLE
 	//
@@ -378,6 +391,13 @@ public class MainEntryPoint implements EntryPoint {
 	}
 	
 	private void selection(String entryPoint,String elementTarget,AonConfiguration aonConfiguration) {
+		try {
+			DomainStatEntryPoint dsEntryPoint = DomainStatEntryPoint.valueOf(entryPoint);
+			dsEntryPoint.run();
+		} catch (IllegalArgumentException e) {
+			// De momento nada. Cuando todos los EntryPoint esten en el enumerado, gestionar error. 
+		}
+		
 		try {
 			ConsoleEntryPoint consoleEntryPoint = ConsoleEntryPoint.valueOf(entryPoint);
 			consoleEntryPoint.run();

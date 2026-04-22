@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
+import com.esferalia.aon.occam.api.json.JsonUtils;
+
 public final class IJsonNames {
 	
 	private IJsonNames() {
@@ -110,6 +112,7 @@ public final class IJsonNames {
 	public static final String BY_MONTH = "byMonth";
 	// ---------------------------------------------------------------------------------------------	[C] 
 	public static final String CALLBACK = "callback";
+	public static final String CAN_CEU_MEL = "canCeuMel";
 	public static final String CARRIER = "carrier";
 	public static final String CARRIER_PACKING = "carrierPacking";
 	public static final String CARRIER_REFERENCE = "carrierReference";
@@ -141,6 +144,8 @@ public final class IJsonNames {
 	public static final String COMMUNICATION_STATUS = "communicationStatus";
 	public static final String COMMUNICATION_TYPE = "communicationType";
 	public static final String COMPANY = "company";
+	public static final String COMPANY_DOCUMENT = "companyDocument";
+	public static final String COMPANY_NAME = "companyName";
 	public static final String COMPANY_ACTS_LIKE = "companyActsLike";
 	public static final String COMPLEMENTARY = "complementary";
 	public static final String COMPOSITION = "composition";
@@ -235,6 +240,7 @@ public final class IJsonNames {
 	public static final String DOMAIN_LINKED = "domainLinked";
 	public static final String DOMAIN_USER_ROLES = "domainUserRoles";
 	public static final String DOMAINS = "domains";
+	public static final String DRAFT = "draft";
 	public static final String DRIVE_ID = "driveId";
 	public static final String DRIVER = "driver";
 	public static final String DRIVER_DOCUMENT = "driverDocument";
@@ -282,6 +288,8 @@ public final class IJsonNames {
 	public static final String EXPIRED_DATE = "expiredDate";
 	public static final String EXPRESSION = "expression";
 	public static final String EXTERNAL_STORAGE = "externalStorage";
+	public static final String EXTRACOMMUNITY = "extracommunity";
+	
 	// ---------------------------------------------------------------------------------------------	[F] 
 	public static final String FARMER_REGIME = "farmerRegime";
 	public static final String FAX = "fax";
@@ -348,6 +356,7 @@ public final class IJsonNames {
 	public static final String INTERNET = "internet";
 	public static final String INTERVAL = "interval";
 	public static final String INTERVALS = "intervals";
+	public static final String INTRACOMMUNITY = "intracommunity";
 	public static final String INVENTORIABLE = "inventoriable";
 	public static final String INVENTORY = "inventory";
 	public static final String INVEST_ASSET = "investAsset";
@@ -369,6 +378,7 @@ public final class IJsonNames {
 	public static final String INVOICE_TYPES = "invoiceTypes";
 	public static final String INVOICE_TYPE_UNDEDUCTIBLE = "invoiceTypeUndeductible";
 	public static final String INVOICES = "invoices";
+	public static final String IN_PROCESS = "inProcess";
 	public static final String IRUS = "irus";
 	public static final String IRPF = "irpf";
 	public static final String IRPF_PARAMS = "irpfParams";
@@ -444,6 +454,7 @@ public final class IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[N] 
 	public static final String NAME = "name";
 	public static final String NAME_URL = "name_url";
+	public static final String NATIONAL = "national";
 	public static final String NATIONALITY = "nationality";
 	public static final String NATURE = "nature";
 	public static final String NEARBY_NUMBERS = "nearbyNumbers";
@@ -488,6 +499,7 @@ public final class IJsonNames {
 	public static final String ORDER_STATUS_INVOICED = "orderStatusInvoiced";
 	public static final String ORDER_STATUS_PENDING = "orderStatusPending";
 	public static final String ORDER_STATUS_SERVED = "orderStatusServed";
+	public static final String OTHER_ISP = "otherISP";
 	public static final String OUTPUT = "output";
 	public static final String OUTPUT_ACCOUNT = "outputAccount";
 	public static final String OWNER = "owner";
@@ -555,6 +567,7 @@ public final class IJsonNames {
 	public static final String PRODUCT_ID = "productId";
 	public static final String PRODUCT_TYPE = "productType";
 	public static final String PROFIT_PERCENT = "profitPercent";
+	public static final String PROFORMAS = "proformas";
 	public static final String PROGRESS = "progress";
 	public static final String PROJECT = "project";
 	public static final String PROJECT_TYPE = "projectType";
@@ -637,6 +650,7 @@ public final class IJsonNames {
 	public static final String RETENTION_PERCENT = "retentionPercent";
 	public static final String RETURNED = "returned";
 	public static final String REVERSE_ORDER = "reverseOrder";
+	public static final String REVIEW = "review";
 	public static final String RNAME = "rname";
 	public static final String ROLES = "roles";
 	public static final String ROOT_BAR = "/";
@@ -786,12 +800,19 @@ public final class IJsonNames {
 	public static final String TOTAL_WEIGHT = "totalWeight";
 	public static final String TRACKING_NUMBER = "trackingNumber";	
 	public static final String TRANSACTION = "transaction";
+	public static final String TRASH = "trash";
 	public static final String TRIAL = "trial";
 	public static final String TRIAL_VALUE = "trialValue";
 	public static final String TYPE = "type";
 	// ---------------------------------------------------------------------------------------------	[U] 
+	public static final String UNDECLARED_ISSUED = "undeclaredIssued";
+	public static final String UNDECLARED_RECEIVED = "undeclaredReceived";
+	public static final String UNDECLARED_SIMPLIFIED = "undeclaredSimplified";
 	public static final String UNDEDUCTIBLE = "undeductible";
 	public static final String UNPAID_BALANCE = "unpaidBalance";
+	public static final String UNRECORDED_ISSUED = "unrecordedIssued";
+	public static final String UNRECORDED_RECEIVED = "unrecordedReceived";
+	public static final String UNRECORDED_SIMPLIFIED = "unrecordedSimplified";
 	public static final String UPDATED = "updated";
 	public static final String URL = "url";
 	public static final String USER = "user";
@@ -855,5 +876,4 @@ public final class IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[Z] 
 	public static final String ZIP = "zip";
 	
-
 }

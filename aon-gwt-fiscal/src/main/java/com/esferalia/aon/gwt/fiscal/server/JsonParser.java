@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainInvoiceStatParams;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.IJsonNames;
@@ -874,4 +875,26 @@ public class JsonParser {
 		
 	}
 	
+	public static DomainInvoiceStatParams parseDomainInvoiceStatParams(String stringParams) throws ParseException, java.text.ParseException {
+		DomainInvoiceStatParams params = new DomainInvoiceStatParams();
+		org.json.JSONObject jsonParams = new org.json.JSONObject( stringParams );
+		Integer dom = JsonUtils.getInteger(jsonParams,IRequestParamsNames.DOMAIN);
+		if (dom == null) throw new IllegalArgumentException("NULL DOMAIN!");
+		return params
+			.setDomain(dom)
+			.setFromDate( JsonUtils.getDate(jsonParams, IRequestParamsNames.FROM_DATE))
+			.setToDate( JsonUtils.getDate(jsonParams, IRequestParamsNames.TO_DATE))
+			.setActive(JsonUtils.getBoolean(jsonParams, IRequestParamsNames.ACTIVE))
+			.setQuery(JsonUtils.getString(jsonParams, IRequestParamsNames.QUERY))
+			.setInvoices(JsonUtils.getBoolean(jsonParams, IRequestParamsNames.INVOICES))
+			.setAlcatraz(JsonUtils.getBoolean(jsonParams, IRequestParamsNames.ALCATRAZ))
+			.setRawdoc(JsonUtils.getBoolean(jsonParams, IRequestParamsNames.RAWDOC))
+			.setLimit(JsonUtils.getInt(jsonParams, IRequestParamsNames.LIMIT))
+			.setOffset(JsonUtils.getInt(jsonParams, IRequestParamsNames.OFFSET))
+		;
+	}
 }
+
+
+
+

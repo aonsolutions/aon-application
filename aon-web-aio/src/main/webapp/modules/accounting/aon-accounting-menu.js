@@ -157,6 +157,10 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				title: "Ficha de Amortización",
 				action: () => this.rootPanel(new JSF.AonJsfAmortization())
 			},{
+//				description: "[NUEVO] Ficha de Amortización",
+//				title: "[NUEVO] Ficha de Amortización",
+//				action: () => GWT.iLoad(GWT.AMORTIZATION)
+//			},{
 				description: "Tabla de tipos de Amortización",
 				title: "Tabla de tipos de Amortización",
 				action: () => GWT.iLoad(GWT.AMORTIZATION_TYPE)
@@ -267,10 +271,9 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				title: "Utilidades y chequeos contables",
 				action: () => GWT.iLoad(GWT.ACCOUNTING_UTILITIES, this.getApplication().CONTENT)
 			},{
-				description: "Utilidades y chequeos contables",
-				title: "Utilidades y chequeos contables",
-				action: () => alert("Utilidades y chequeos contables"),
-				filter : () => false
+				description: "Contadores de facturas",
+				title: "Contadores de facturas",
+				action: () => GWT.iLoad(GWT.DOMAIN_INVOICE_STAT, this.getApplication().CONTENT),
 			}],
 			filter: () => this.isDomainManagementAvailable()
 		},{

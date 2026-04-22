@@ -1,0 +1,200 @@
+package com.esferalia.aon.occam.impl.jooq.dao;
+
+import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
+import static com.esferalia.aon.jooq.tables.Company.COMPANY;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rawdoc.RAWDOC;
+
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
+import org.jooq.Condition;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.impl.DSL;
+
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainInvoiceStat;
+import com.esferalia.aon.occam.api.model.DomainInvoiceStatParams;
+import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.RawdocStatus;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+public class DomainInvoiceStatDAO {
+	
+	private DomainInvoiceStatDAO() {
+	}
+
+	public static Stream<DomainInvoiceStat> stream(AONContext ctx, DomainInvoiceStatParams params){
+		Domain domain = DomainDAO.getDomain(ctx, params.getDomain());
+		if ( domain == null ) {
+			return Stream.empty();
+		}
+		return ctx.getDslContext()
+			.select(DOMAIN.ID, DOMAIN.PARENT, DOMAIN.NAME, DOMAIN.DESCRIPTION, REGISTRY.DOCUMENT, REGISTRY.NAME)
+			.from(DOMAIN)
+			.innerJoin(COMPANY).on(COMPANY.DOMAIN.eq(DOMAIN.ID))
+			.innerJoin(REGISTRY).on(REGISTRY.ID.eq(COMPANY.REGISTRY))
+			.where(getCondition(domain,params))
+			.orderBy(REGISTRY.NAME)
+			.limit(params.getLimit())
+			.offset(params.getOffset())
+			.fetch()
+			.stream()
+			.map(new DomainInvoiceStatFiller())
+			.map( stat -> fillData( ctx, params, stat ) )
+		;
+	}
+
+	private static DomainInvoiceStat fillData(AONContext ctx, DomainInvoiceStatParams params, DomainInvoiceStat stat) {
+		Field<Integer> invCount = DSL.count( INVOICE.ID );
+		ctx.getDslContext().select( invCount, INVOICE.TYPE, INVOICE.TRANSACTION, INVOICE.WITHHOLDING, INVOICE.STATUS)
+			.from(INVOICE)
+			.where(INVOICE.DOMAIN.eq(stat.getId()))
+			.and( params.getFromDate()
+				.map(AonDateUtils::toSql)
+				.map(INVOICE.ISSUE_DATE::ge)
+				.orElse(DSL.noCondition()))
+			.and( params.getToDate()
+				.map(AonDateUtils::toSql)
+				.map(INVOICE.ISSUE_DATE::le)
+				.orElse(DSL.noCondition()))
+			.groupBy(INVOICE.TYPE, INVOICE.TRANSACTION, INVOICE.WITHHOLDING, INVOICE.STATUS)
+			.fetch()
+			.stream()
+			.forEach( r -> {
+				Integer c = r.get(invCount);
+				InvoiceTransactionType transaction = InvoiceTransactionType.safeValueOf( r.get(INVOICE.TRANSACTION) );
+				if (transaction == InvoiceTransactionType.NATIONAL) stat.addNational(c);
+				else if (transaction == InvoiceTransactionType.INTRACOMMUNITY) stat.addIntracommunity(c);
+				else if (transaction == InvoiceTransactionType.EXTRACOMMUNITY) stat.addExtracommunity(c);
+				else if (transaction == InvoiceTransactionType.CAN_CEU_MEL) stat.addCanCeuMel(c);
+				else if (transaction == InvoiceTransactionType.OTHER_ISP) stat.addOtherISP(c);
+				
+				InvoiceType type = InvoiceType.safeValueOf( r.get(INVOICE.TYPE) );
+				InvoiceStatus status = InvoiceStatus.safeValueOf( r.get(INVOICE.STATUS) );
+				if (status == InvoiceStatus.PENDING ) {
+					if (type.isSales()) stat.addUnrecordedIssued(c);
+					else if (type.isUndeductible()) stat.addUnrecordedSimplified(c);
+					else stat.addUnrecordedReceived(c);
+				}
+				
+				boolean withholding = AonEnumUtils.getBoolean( r.get(INVOICE.WITHHOLDING));
+				if (withholding) stat.addWithholding(c);
+			});
+		Field<Integer> rawCount = DSL.count( RAWDOC.ID );
+		ctx.getDslContext().select( rawCount, RAWDOC.STATUS )
+		 	.from(RAWDOC)
+			.where(RAWDOC.DOMAIN.eq(stat.getId()))
+			.groupBy(RAWDOC.STATUS)
+			.fetch()
+			.stream()
+			.forEach( r -> {
+				Integer c = r.get(rawCount);
+				RawdocStatus status = RawdocStatus.safeValueOf( r.get(RAWDOC.STATUS) );
+				if (status == RawdocStatus.INBOX) stat.addDraft(c);
+				else if (status == RawdocStatus.REJECTED) stat.addReview(c);
+				else if (status == RawdocStatus.DRAFT) stat.addTrash(c);
+				else stat.addInProcess(c);
+			});
+
+		ctx.getDslContext()
+			.select(invCount)
+			.from(INVOICE)
+			.where(INVOICE.DOMAIN.eq(stat.getId()))
+			.and(INVOICE.NUMBER.lt(0))
+			.and( params.getFromDate()
+				.map(AonDateUtils::toSql)
+				.map(INVOICE.ISSUE_DATE::ge)
+				.orElse(DSL.noCondition()))
+			.and( params.getToDate()
+				.map(AonDateUtils::toSql)
+				.map(INVOICE.ISSUE_DATE::le)
+				.orElse(DSL.noCondition()))
+			.fetch()
+			.stream()
+			.findFirst()
+			.ifPresent( r -> stat.addProformas( r.get(invCount) ) );
+		
+		ctx.getDslContext()
+			.select(invCount, INVOICE.TYPE)
+			.from(INVOICE)
+			.where(INVOICE.DOMAIN.eq(stat.getId()))
+			.and( params.getFromDate()
+				.map(AonDateUtils::toSql)
+				.map(INVOICE.ISSUE_DATE::ge)
+				.orElse(DSL.noCondition()))
+			.and( params.getToDate()
+				.map(AonDateUtils::toSql)
+				.map(INVOICE.ISSUE_DATE::le)
+				.orElse(DSL.noCondition()))
+			.andNotExists(
+			   ctx.getDslContext().selectOne()
+		          .from(ALCATRAZ)
+		          .where(ALCATRAZ.INVOICE.eq(INVOICE.ID))
+		          .and(ALCATRAZ.FS_MODEL.isNotNull()))
+		   .groupBy(INVOICE.TYPE, INVOICE.TRANSACTION, INVOICE.WITHHOLDING, INVOICE.STATUS)
+		   .fetch()
+		   .stream()
+		   .forEach( r -> {
+			   Integer c = r.get(invCount);
+			   InvoiceType type = InvoiceType.safeValueOf( r.get(INVOICE.TYPE) );
+			   if (type.isSales()) stat.addUndeclaredIssued(c);
+			   else if (type.isUndeductible()) stat.addUndeclaredSimplified(c);
+			   else stat.addUndeclaredReceived(c);
+		   })
+		;
+		return stat;
+	}
+	
+	private static Condition getCondition(Domain domain, DomainInvoiceStatParams params) {
+		Condition c = (domain.isParent())
+			? DOMAIN.PARENT.eq(domain.getId())
+			: DOMAIN.ID.eq(params.getDomain())
+		;
+	    return ACTIVE_CONDITION
+		   .andThen(cond -> QUERY_CONDITION.apply(cond, params))
+           .apply( c, params );
+	}
+	
+	private static final BiFunction<Condition, DomainInvoiceStatParams, Condition> ACTIVE_CONDITION = (c, params) -> 
+	    params.getActive()
+	    	.filter(a -> a != null)
+	        .map(a -> c.and(DOMAIN.ACTIVE.eq(AonEnumUtils.getByte(a))))
+	        .orElse(c);
+
+	private static final BiFunction<Condition, DomainInvoiceStatParams, Condition> QUERY_CONDITION = (c, params) -> 
+	    params.getQuery()
+	    	.filter(AonStringUtils::isNotBlank)
+	        .map(AonStringUtils::SQLlike)
+	        .map(q -> c.and(REGISTRY.DOCUMENT.like(q).or(REGISTRY.NAME.like(q))))
+	        .orElse(c);
+
+	private static class DomainInvoiceStatFiller extends Filler implements Function<Record,DomainInvoiceStat> {
+		
+		@Override
+		public DomainInvoiceStat apply(Record r) {
+			return build(r);
+		}
+		
+		public static DomainInvoiceStat build( Record r ) {
+			return new DomainInvoiceStat()
+				.setId(getValue(r, DOMAIN.ID))
+				.setParentId(getValue(r, DOMAIN.PARENT))
+				.setName(getValue(r, DOMAIN.NAME))
+				.setDescription(getValue(r, DOMAIN.DESCRIPTION))
+				.setCompanyDocument(getValue(r, REGISTRY.DOCUMENT))
+				.setCompanyName(getValue(r, REGISTRY.NAME))
+			;
+		}
+	}
+	
+}
