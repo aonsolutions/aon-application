@@ -18,6 +18,8 @@ public interface AmortizationService extends RemoteService {
 	Amortization save(Occam occam, Amortization am) throws AonCoreException;
 	Amortization saveFiscalAllocation (Occam occam, AmortizationDetail detail) throws AonCoreException;
 	void delete(Occam occam, Amortization am) throws AonCoreException;
+	Amortization sale(Occam occam, Amortization am) throws AonCoreException;
+	Amortization calculate(Occam occam, Amortization am) throws AonCoreException;
 	
 	AmortizationDetail recordAllocation(Occam occam, Amortization am, AmortizationDetail detail) throws AonCoreException;
 	AmortizationDetail unrecordAllocation(Occam occam, AmortizationDetail detail) throws AonCoreException;

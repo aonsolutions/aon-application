@@ -1580,6 +1580,18 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		serviceAsync.saveCompanyFull(domainName, domain, user, companyFull, new AsyncCallbackWrapper<>(callback));
 	}
 
+	@Override
+	public void getCompanyLogo(String domainName, Integer domain, String user, Integer registry, AsyncCallback<Attach> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCompanyLogo(domainName, domain, user, registry, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getCompanySignature(String domainName, Integer domain, String user, Integer registry, AsyncCallback<Attach> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCompanySignature(domainName, domain, user, registry, new AsyncCallbackWrapper<>(callback));
+	}
+
 	// *********************** [AMORTIZATION TYPE]
 	@Override
 	public void getAmortizationTypes(Occam occam, int domain, AsyncCallback<List<AmortizationType>> callback) {

@@ -46,6 +46,7 @@ public class AbstractTestCase {
 			webDriver = newChromeDriver();
 			// webDriver = newFirefoxDriver();
 		}
+		webDriver.manage().window().maximize();
 		return webDriver;
 	}
 

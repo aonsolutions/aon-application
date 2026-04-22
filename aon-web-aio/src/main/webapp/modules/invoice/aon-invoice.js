@@ -2259,12 +2259,14 @@ export class AonInvoice extends AonElement {
 
 		bienAfecto.addEventListener(EVENT.SELECT, () => {
 			detail.investAsset = bienAfecto.value;
+			let ia = bienAfecto.getValueObject();
+			detail.vatDeductiblePercent = ia ? ia.vatPercent : 100.0;
 			this.invoice.setDetail(detail, i);
 		});
 
 		table.addCell(bienAfecto, '2');
 		getInvestAssets({}).then(investAssets => {
-			bienAfecto.options = JSON.stringify(investAssets);
+			bienAfecto.setOptions(investAssets);
 			if (detail.investAsset)
 				bienAfecto.value = detail.investAsset;
 		});

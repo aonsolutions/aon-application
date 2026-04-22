@@ -266,7 +266,7 @@
 .aon_icon_work_add { background-image: iconWorkAdd;}
 @url iconComment aonIconComment;
 .aon_icon_comment { background-image: iconComment;}
-@url iconWork aonIconWork;
+@url iconWeb aonIconWeb;
 .aon_icon_web { background-image: iconWeb;}
 @url iconMoveRight aonIconMoveRight;
 .aon_icon_move_right { background-image: iconMoveRight;}
@@ -554,6 +554,27 @@
 .aon_icon_keyboard_arrow_right { background-image: iconKeyboardArrowRight;}
 @url iconKeyboardArrowLeft aonIconKeyboardArrowLeft;
 .aon_icon_keyboard_arrow_left { background-image: iconKeyboardArrowLeft;}
+@url iconFax aonIconFax;
+.aon_icon_fax { background-image: iconFax;}
+@url iconLocationOn aonIconLocationOn;
+.aon_icon_location_on { background-image: iconLocationOn;}
+@url iconMobile aonIconMobile;
+.aon_icon_mobile { background-image: iconMobile;}
+@url iconMoveLocation aonIconMoveLocation;
+.aon_icon_move_location { background-image: iconMoveLocation;}
+@url iconPhone aonIconPhone;
+.aon_icon_phone { background-image: iconPhone;}
+@url iconShare aonIconShare;
+.aon_icon_share { background-image: iconShare;}
+@url iconDatasetLinked aonIconDatasetLinked;
+.aon_icon_dataset_linked { background-image: iconDatasetLinked;}
+@url iconShieldLocked aonIconShieldLocked;
+.aon_icon_shield_locked { background-image: iconShieldLocked;}
+@url iconAdminPanelSettings aonIconAdminPanelSettings;
+.aon_icon_admin_panel_settings { background-image: iconAdminPanelSettings;}
+@url iconEncryptedOff aonIconEncryptedOff;
+.aon_icon_encrypted_off { background-image: iconEncryptedOff;}
+
 
 /* BASICS */
 .aon_selector {

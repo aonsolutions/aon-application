@@ -714,6 +714,16 @@ public class AccountingImpl implements IAccounting {
 			configuration -> AmortizationDAO.delete(ctx, am) );	
 	}
 	@Override
+	public Amortization calculateAmortization(AONContext ctx, Amortization am) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> AmortizationDAO.calculate(ctx, am) );	
+	}
+	@Override
+	public Amortization saleAmortization(AONContext ctx, Amortization am) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> AmortizationDAO.sale(ctx, am) );	
+	}
+	@Override
 	public Amortization saveFiscalAllocation(AONContext ctx, AmortizationDetail detail) throws AonCoreException {
 		return ctx.getDslContext().transactionResult(
 			configuration -> AmortizationDAO.saveFiscalAllocation(ctx, detail) );	

@@ -527,6 +527,8 @@ public interface CommonServiceAsync {
 	
 	void getCompanyFull(String domainName, int domain, String user, AsyncCallback<CompanyFull> asyncCallback) throws AonCoreException;
 	void saveCompanyFull(String domainName, int domain, String user, CompanyFull company, AsyncCallback<CompanyFull> asyncCallback) throws AonCoreException;
+	void getCompanyLogo(String domainName, Integer domain, String user, Integer registry, AsyncCallback<Attach> asyncCallback) throws AonCoreException;
+	void getCompanySignature(String domainName, Integer domain, String user, Integer registry, AsyncCallback<Attach> asyncCallback) throws AonCoreException;
 	
 	// *********************** [AMORTIZATION TYPE]
 	void getAmortizationTypes(Occam occam, int domain, AsyncCallback<List<AmortizationType>> asyncCallback);
