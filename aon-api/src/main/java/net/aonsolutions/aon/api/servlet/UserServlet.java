@@ -289,12 +289,17 @@ public class UserServlet extends AonApiHttpServlet {
 	private JSONObject removeUserScope(AonApiData api) {
 		Integer scopeId = JsonUtils.getInteger(api.getData(), IJsonNames.SCOPE);
 		Integer userId = JsonUtils.getInteger(api.getData(), IJsonNames.USER);
-		AON.deleteUserScope(api.getDomain().getName(), api.getDomain().getId(),
-				api.getUser().getLogin(), userId, scopeId);
+		boolean all = JsonUtils.getboolean(api.getData(), "all");
 
+		if(all && scopeId == null) {
+			AON.deleteUserScope(api.getDomain().getName(), api.getDomain().getId(),
+					api.getUser().getLogin(), f -> f.getUserIdProperty().eq(userId));
+		} else {
+			AON.deleteUserScope(api.getDomain().getName(), api.getDomain().getId(),
+				api.getUser().getLogin(), userId, scopeId);
+		}
 		return new JSONObject();
 	}
-	
 	
 	private JSONArray getUsers(AonApiData api) {
 		Integer page = JsonUtils.getInteger(api.getData(), IJsonNames.PAGE);
