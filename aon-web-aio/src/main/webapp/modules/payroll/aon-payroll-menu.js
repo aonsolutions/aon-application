@@ -198,11 +198,11 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		        title: "Variables Calculo Entorno",
 		        action: () => GWT.iLoad(GWT.DOMAIN_VARIABLES),
 		        filter: () => this.getDur().isConsole()
-			}/*,{
+			},{
 		        description: "Variables Calculo Trabajadores",
 		        title: "Variables Calculo Trabajadores",
-		        action: () => alert("description")
-		    }*/],
+		        action: () => GWT.iLoad(GWT.CONTRACT_VARIABLES, this.getApplication().CONTENT)
+		    }],
 			filter: () => this.isDomainManagementAvailable()
 		},{
 		    title: 'Utilidades',

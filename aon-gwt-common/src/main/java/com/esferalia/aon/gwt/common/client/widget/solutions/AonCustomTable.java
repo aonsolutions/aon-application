@@ -15,7 +15,11 @@ public class AonCustomTable extends HTMLPanel {
 	public AonCustomTable() {
 		super(EMPTY_STRING);
 		addStyleName(AON.CSS.aonFlexColumn());
+		getElement().getStyle().setProperty("margin", "0");
+		getElement().getStyle().setProperty("padding", "1rem");
 		getElement().getStyle().setProperty("gap", "0");
+		getElement().getStyle().setProperty("width", "100%");
+		getElement().getStyle().setProperty("min-width", "fit-content");
 	}
 	
 	public void setMaxHeight(String maxHeight) {
