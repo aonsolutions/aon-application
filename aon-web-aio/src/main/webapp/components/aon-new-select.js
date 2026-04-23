@@ -217,7 +217,7 @@ export class AonNewSelect extends AonNewInput {
 
   buildLi(option, ul, div){
     let input = this.getElement(this.INPUT);
-    
+
     let li = this.createElement(TAG.LI);
     li.className = 'aonInputListOptionsItem';
     li.innerHTML = option[this.nameAlias];
@@ -526,6 +526,12 @@ export class AonNewSelect extends AonNewInput {
     }
   }
   
+  setValueObject(object) {
+    if(object && object[this.valueAlias] !== undefined) {
+      this.setValue(object[this.valueAlias]);
+    }
+  }
+
   setValue(value){
     if(value && value!=0){
       let options = this.getOptions();
@@ -559,8 +565,8 @@ export class AonNewSelect extends AonNewInput {
     this.valueAlias = valueAlias;
   }
 
-  setNameAlias(valueAlias) {
-    this.valueAlias = valueAlias;
+  setNameAlias(nameAlias) {
+    this.nameAlias = nameAlias;
   }
 }
 if(!window.customElements.get(TAG.AON_NEW_SELECT)){

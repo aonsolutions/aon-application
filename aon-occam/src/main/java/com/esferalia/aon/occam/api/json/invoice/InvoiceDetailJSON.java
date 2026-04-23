@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.json.ItemJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
@@ -47,6 +48,9 @@ public class InvoiceDetailJSON {
 			.setPrepayment(json.optBoolean(IJsonNames.PREPAYMENT))
 			.setSource(InvoiceSource.TEDI)
 			.setInvoiceTaxes(new LinkedList<>())
+			.setWorkplace(JsonUtils.has(json, IJsonNames.WORKPLACE) 
+					? new Workplace().setId(JsonUtils.getInteger(json, IJsonNames.WORKPLACE))
+					: null)
 			.setInvestAsset(JsonUtils.getInteger(json, IJsonNames.INVEST_ASSET));
 		
 		if(json.opt(IJsonNames.PERCENTAGE) != null) {
@@ -106,8 +110,8 @@ public class InvoiceDetailJSON {
 				.put(IJsonNames.DISCOUNT, detail.getDiscount())
 				.put(IJsonNames.CATEGORY, detail.getAccountCode())
 				.put(IJsonNames.PREPAYMENT, detail.isPrepayment())
-				.put(IJsonNames.SOURCE, detail.getSource().name());
-		
+				.put(IJsonNames.SOURCE, detail.getSource().name())
+				.put(IJsonNames.WORKPLACE, detail.getWorkplace() != null ? detail.getWorkplace().getId() : null);
 		
 		detail.getInvoiceTaxes().stream().forEach(tax -> {
 			if(TaxType.VAT.equals(tax.getTaxType())) {

@@ -59,7 +59,6 @@ export class Product {
             this.domain = new Domain();
             this.name = '';
             this.code = '';
-            this.vat = 21;
         }
     }
 
