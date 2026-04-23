@@ -786,6 +786,12 @@ aon-fiscal-menu .suiteMenuDiv2{
   background-color: var(--aonBackgroundColor2) !important;
 }
 
+#aonConfiguration .aonContentBeta:has(#aonSuiteMenu) {
+	background-color: var(--aonBackgroundColor2) !important;
+	padding: 0rem !important;
+	margin: 0rem !important;
+}
+
 .aonSidenav,
 .aonToolbar,
 #aonParent .aonContentBeta,
@@ -793,6 +799,7 @@ aon-fiscal-menu .suiteMenuDiv2{
 #aonDocumental .aonContentBeta,
 #aonLaboral .aonContentBeta,
 #aonInvoice .aonContentBeta,
+#aonConfiguration .aonContentBeta,
 #aonWarehouse .aonContentBeta,
 #aonMessenger .aonContentBeta,
 #aonOfficePanel .aonContentBeta,
@@ -815,6 +822,7 @@ aon-fiscal-menu .suiteMenuDiv2{
 #aonDocumental .aonContentBeta,
 #aonLaboral .aonContentBeta,
 #aonInvoice .aonContentBeta,
+#aonConfiguration .aonContentBeta,
 #aonWarehouse .aonContentBeta,
 #aonMessenger .aonContentBeta,
 #aonOfficePanel .aonContentBeta,
@@ -1368,7 +1376,9 @@ ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover span {
 	font-size: 1.25rem;
 	line-height: 1.75rem;
 	gap: .5rem;
-	padding: .75rem 1.25rem;
+	padding-top: .75rem;
+  	padding-bottom: .75rem;
+	padding-left: 0.25rem;
 	letter-spacing: -0.005rem;
 	font-family: "Inter-semibold", sans-serif;
 }
