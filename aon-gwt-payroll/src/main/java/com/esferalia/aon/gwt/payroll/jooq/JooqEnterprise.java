@@ -291,7 +291,7 @@ public class JooqEnterprise {
 				.or(SALARY.CHARGE_DATE.between(findPeriod, findEndPeriod).and(SALARY.TYPE.eq((byte)3)))
 				
 			)
-			.and(SALARY.TOTAL_PAYMENT.gt(0.00))
+			//.and(SALARY.TOTAL_PAYMENT.gt(0.00))
 			.fetch();
 		
 		
