@@ -249,7 +249,7 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 				.setUser(UserUtils.getInstance().getLoggedUser().getLogin());
 		try(CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			List<File> list = new LinkedList<>();
-			getInvoiceIds().stream().forEach(id ->{
+			getInvoiceIds().stream().distinct().forEach(id ->{
 				try {
 					com.esferalia.aon.occam.api.model.finance.Invoice invoice = InvoiceDAO.getFullInvoice(ctx, id);
 					if(InvoiceType.SALES.equals(invoice.getType())) {
