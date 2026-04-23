@@ -63,6 +63,7 @@ public interface IRequestParamsNames {
 	String EXPENSES = "expenses";
 	String FARMER_REGIME = "farmerRegime";
 	String FILE_DATA = "fileData";
+	String FISCAL_MODEL = "fiscalModel";
 	String FINANCE_PARAMS = "financeParams";	
 	String FOOTER_TEXT = "footerText";
 	String FROM_DATE = "fromDate";
@@ -144,6 +145,7 @@ public interface IRequestParamsNames {
 	String RETURNED = "returned";
 	String SCHEMA = "schema";
 	String SCHEMAS_OFFSETS = "schemasOffsets";
+	String SCOPE = "scope";
 	String SECURITY_LEVEL = "securityLevel";
 	String SELECT = "select";
 	String SELECTED = "selected";

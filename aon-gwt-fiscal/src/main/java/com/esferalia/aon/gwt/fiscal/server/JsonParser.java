@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.console.ConsoleSchema;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsGroupedBy;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsOrderBy;
@@ -886,6 +887,8 @@ public class JsonParser {
 			.setToDate( JsonUtils.getDate(jsonParams, IRequestParamsNames.TO_DATE))
 			.setActive(JsonUtils.getBoolean(jsonParams, IRequestParamsNames.ACTIVE))
 			.setQuery(JsonUtils.getString(jsonParams, IRequestParamsNames.QUERY))
+			.setScope(JsonUtils.getInteger(jsonParams, IRequestParamsNames.SCOPE))
+			.setFiscalModelType( FiscalModelType.safeValueByName(JsonUtils.getString(jsonParams, IRequestParamsNames.FISCAL_MODEL)) )
 			.setInvoices(JsonUtils.getBoolean(jsonParams, IRequestParamsNames.INVOICES))
 			.setAlcatraz(JsonUtils.getBoolean(jsonParams, IRequestParamsNames.ALCATRAZ))
 			.setRawdoc(JsonUtils.getBoolean(jsonParams, IRequestParamsNames.RAWDOC))

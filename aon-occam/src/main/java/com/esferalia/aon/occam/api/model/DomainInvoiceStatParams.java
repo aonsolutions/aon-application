@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Optional;
 
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+
 public class DomainInvoiceStatParams implements Serializable {
 
 	private static final long serialVersionUID = 7660434240269902891L;
@@ -14,6 +16,8 @@ public class DomainInvoiceStatParams implements Serializable {
 	private Date toDate;
 	private Boolean active;
 	private String query;
+	private Integer scope;
+	private FiscalModelType fiscalModelType;
 	
 	private Boolean invoices;
 	private Boolean alcatraz;
@@ -59,6 +63,22 @@ public class DomainInvoiceStatParams implements Serializable {
 	}
 	public DomainInvoiceStatParams setQuery(String query) {
 		this.query = query;
+		return this;
+	}
+	
+	public Optional<Integer> getScope() {
+		return Optional.ofNullable(scope);
+	}
+	public DomainInvoiceStatParams setScope(Integer scope) {
+		this.scope = scope;
+		return this;
+	}
+	
+	public Optional<FiscalModelType> getFiscalModelType() {
+		return Optional.ofNullable(fiscalModelType);
+	}
+	public DomainInvoiceStatParams setFiscalModelType(FiscalModelType fiscalModelType) {
+		this.fiscalModelType = fiscalModelType;
 		return this;
 	}
 	

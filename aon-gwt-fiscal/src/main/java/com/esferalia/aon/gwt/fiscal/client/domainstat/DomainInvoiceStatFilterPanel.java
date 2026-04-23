@@ -12,6 +12,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.occam.api.model.DomainInvoiceStatParams;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -19,6 +21,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
 class DomainInvoiceStatFilterPanel extends SimpleLayoutPanel implements HasValueChangeHandlers<DomainInvoiceStatParams>{
@@ -29,6 +32,7 @@ class DomainInvoiceStatFilterPanel extends SimpleLayoutPanel implements HasValue
 	private PeriodListBox periodBox;
 	private AonDateBox fromDateBox;
 	private AonDateBox toDateBox;
+	private ListBox scopeBox;
 	private AonTextBox queryBox;
 	
 	DomainInvoiceStatFilterPanel( final DomainInvoiceStatModuleOptions opts ) {
@@ -36,6 +40,7 @@ class DomainInvoiceStatFilterPanel extends SimpleLayoutPanel implements HasValue
 		initPeriodBox(opts);
 		initFromDateBox(opts);
 		initToDateBox(opts);
+		initScopeBox(opts);
 		initQueryBox(opts);
 		initialize();
 		paint( opts);
@@ -73,6 +78,9 @@ class DomainInvoiceStatFilterPanel extends SimpleLayoutPanel implements HasValue
 			.addCell( periodBox , AON.CSS.aonWidth150())
 			.addCell( new Label(AON.MSG.date()), AON.CSS.aonBold() , AON.CSS.aonWidth80())
 			.addCell( datePanel , AON.CSS.aonWidth300())
+			.addCell( new Label(AON.MSG.scope()), AON.CSS.aonBold() , AON.CSS.aonWidth80())
+			.addCell( scopeBox, AON.CSS.aonWidth80())
+			.addCell( new Label(AON.MSG.filter()), AON.CSS.aonBold() , AON.CSS.aonWidth80())
 			.addCell( queryBox, AON.CSS.aonWidthAuto())
 			.addCell( refreshButton, AON.CSS.aonWidth40() )
 			.addCell( initializeButton, AON.CSS.aonWidth40() )
@@ -146,6 +154,16 @@ class DomainInvoiceStatFilterPanel extends SimpleLayoutPanel implements HasValue
 		toDateBox.addValueChangeHandler(event -> checkDatesAndFire(opts));
 	}
 	
+	private void initScopeBox(DomainInvoiceStatModuleOptions opts) {
+		scopeBox = new ListBox();
+		scopeBox.addStyleName(AON.CSS.aonMarginLeft());
+		scopeBox.addItem("-----", "");
+		scopeBox.setSelectedIndex(0);
+		AonCollectionUtils.stream( opts.getConfiguration().getAvailableScopes())
+			.forEach( s -> scopeBox.addItem(s.getDescription(), AonNumberUtils.toString( s.getId() ) ) );
+		scopeBox.addChangeHandler(event -> fire(opts));
+	}
+	
 	private void initQueryBox(DomainInvoiceStatModuleOptions opts) {
 		queryBox = new AonTextBox();
 		queryBox.addStyleName(AON.CSS.aonMarginLeft());
@@ -163,7 +181,12 @@ class DomainInvoiceStatFilterPanel extends SimpleLayoutPanel implements HasValue
 		int toYear = DateUtils.getYear( toDate );
 		if ( fromYear == toYear ) {
 			yearBox.setValue(fromYear,false);
+		} else {
+			yearBox.setValue(null,false);
 		}
+		periodBox.setSelectedIndex(0);
+		scopeBox.setSelectedIndex(0);
+		queryBox.setValue(null,false);
 	}
 
 	DomainInvoiceStatParams getParams(DomainInvoiceStatModuleOptions opts) {
@@ -176,6 +199,7 @@ class DomainInvoiceStatFilterPanel extends SimpleLayoutPanel implements HasValue
 		params.setFromDate(fromDateBox.getValue());
 		params.setToDate(toDateBox.getValue());
 		params.setQuery(queryBox.getValue());
+		params.setScope( AonNumberUtils.toInteger( scopeBox.getSelectedValue() ) );
 		params.setLimit(100);
 		params.setOffset(0);
 		return params;
