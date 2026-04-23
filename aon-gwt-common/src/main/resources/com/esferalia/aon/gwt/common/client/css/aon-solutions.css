@@ -1415,6 +1415,7 @@
 	font-size: 0.8rem;
 	color: #5f6368;
 	min-height: 1rem;
+	text-wrap: nowrap;
 }
 
 .aon_between_input, .aon_custom_text_box_input{

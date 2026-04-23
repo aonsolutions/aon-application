@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
@@ -51,9 +52,6 @@ public class AonVisualIdentity extends ScrollPanel {
 	private static final String COLOR_TEXT_SECONDARY = "#6b7280";
 	private static final String COLOR_BORDER = "#e5e7eb";
 	private static final String COLOR_BORDER_DRAG = "#0066cc";
-	private static final String COLOR_BG_CARD = "#ffffff";
-	private static final String COLOR_BG_PLACEHOLDER = "#f3f4f6";
-	private static final String COLOR_BG_DRAG = "#e8f0fb";
 	private static final String BORDER_RADIUS_BTN = "4px";
 
 	// -------------------------------------------------------------------------
@@ -153,10 +151,10 @@ public class AonVisualIdentity extends ScrollPanel {
 			}
 
 			// Overlay de borrado que aparece en hover sobre el preview
-			HTML deleteOverlay = buildDeleteOverlay();
+			HTMLPanel deleteOverlay = buildDeleteOverlay(attach, attachType, fetcher, contentPanel);
 			dropZone.add(deleteOverlay);
 			registerDeleteHover(dropZone.getElement(), deleteOverlay.getElement());
-			deleteOverlay.addClickHandler(e -> onDeleteAttach(attach, attachType, fetcher, contentPanel));
+//			deleteOverlay.addClickHandler(e -> onDeleteAttach(attach, attachType, fetcher, contentPanel));
 
 			contentPanel.add(dropZone);
 			contentPanel.add(buildNameLabel(attach.getDescription()));
@@ -172,8 +170,14 @@ public class AonVisualIdentity extends ScrollPanel {
 	}
 
 	// Overlay semitransparente con texto "Eliminar" que aparece en hover
-	private HTML buildDeleteOverlay() {
-		HTML overlay = new HTML("Eliminar");
+	private HTMLPanel buildDeleteOverlay(Attach attach, RegistryAttachmentType attachType, Consumer<Consumer<Attach>> fetcher, FlowPanel contentPanel) {
+		HTMLPanel overlay = new HTMLPanel("");
+		
+		AonTableButton delete = new AonTableButton("Eliminar", AON.CSS.aonIconDelete());
+		delete.getElement().getStyle().setProperty("margin", ".2rem");
+		delete.addClickHandler(e -> onDeleteAttach(attach, attachType, fetcher, contentPanel));
+		overlay.add(delete);
+		
 		Style s = overlay.getElement().getStyle();
 		s.setProperty("position", "absolute");
 		s.setProperty("top", "0");
@@ -181,9 +185,8 @@ public class AonVisualIdentity extends ScrollPanel {
 		s.setWidth(100, Unit.PCT);
 		s.setHeight(100, Unit.PCT);
 		s.setDisplay(Display.FLEX);
-		s.setProperty("alignItems", "center");
-		s.setProperty("justifyContent", "center");
-		s.setBackgroundColor("rgba(0,0,0,0.45)");
+		s.setProperty("alignItems", "flex-start");
+		s.setProperty("justifyContent", "flex-end");
 		s.setColor("#ffffff");
 		s.setFontSize(14, Unit.PX);
 		s.setProperty("fontWeight", "bold");
@@ -211,18 +214,16 @@ public class AonVisualIdentity extends ScrollPanel {
 	 */
 	private native void registerDropZone(com.google.gwt.dom.client.Element dropEl,
 			com.google.gwt.dom.client.Element inputEl, FileReadCallback callback, String borderDrag,
-			String borderNormal, String bgDrag, String bgNormal) /*-{
+			String borderNormal) /*-{
 		dropEl.addEventListener('dragover', function(e) {
 			e.preventDefault();
 			e.stopPropagation();
 			dropEl.style.borderColor = borderDrag;
-			dropEl.style.backgroundColor = bgDrag;
 		});
 		dropEl.addEventListener('dragleave', function(e) {
 			e.preventDefault();
 			e.stopPropagation();
 			dropEl.style.borderColor = borderNormal;
-			dropEl.style.backgroundColor = bgNormal;
 		});
 		dropEl.addEventListener('drop', function(e) {
 			e.preventDefault();
@@ -260,6 +261,10 @@ public class AonVisualIdentity extends ScrollPanel {
 		fileUpload.getElement().getStyle().setDisplay(Display.NONE);
 
 		Label fileNameLabel = new Label("Ning\u00fan archivo seleccionado");
+		if(null != existing && null != existing.getId())
+			fileNameLabel.getElement().getStyle().setDisplay(Display.NONE);
+		else
+			fileNameLabel.getElement().getStyle().clearDisplay();
 		styleFileNameLabel(fileNameLabel);
 
 		Button uploadBtn = new Button(existing != null && existing.getId() != null ? "Reemplazar" : "Subir");
@@ -286,6 +291,7 @@ public class AonVisualIdentity extends ScrollPanel {
 						w.getElement().getStyle().setDisplay(Display.NONE);
 				}
 			}
+			fileNameLabel.getElement().getStyle().clearDisplay();
 			uploadBtn.getElement().getStyle().clearDisplay();
 			storeFileData(uploadPanel.getElement(), base64, mimeType, fileName, fileSize);
 		};
@@ -293,13 +299,13 @@ public class AonVisualIdentity extends ScrollPanel {
 		// Clic en la dropZone abre el selector de fichero
 		registerDropZoneClick(dropZone.getElement(), fileUpload.getElement());
 
-		registerDropZone(dropZone.getElement(), fileUpload.getElement(), onFileRead, COLOR_BORDER_DRAG, COLOR_BORDER,
-				COLOR_BG_DRAG, COLOR_BG_PLACEHOLDER);
+		registerDropZone(dropZone.getElement(), fileUpload.getElement(), onFileRead, COLOR_BORDER_DRAG, COLOR_BORDER);
 
 		fileUpload.addChangeHandler(e -> {
 			InputElement input = fileUpload.getElement().cast();
 			if (input.getValue() == null || input.getValue().isEmpty()) {
 				fileNameLabel.setText("Ning\u00fan archivo seleccionado");
+				fileNameLabel.getElement().getStyle().setDisplay(Display.NONE);
 				uploadBtn.getElement().getStyle().setDisplay(Display.NONE);
 				return;
 			}
@@ -401,7 +407,7 @@ public class AonVisualIdentity extends ScrollPanel {
 		return new HTML("<div style=\"display:flex;flex-direction:column;align-items:center;"
 				+ "justify-content:center;height:100px;color:" + COLOR_TEXT_SECONDARY + ";\">"
 				+ "<div style=\"font-size:13px;font-weight:bold;padding:8px 12px;" + "border:2px solid " + COLOR_BORDER
-				+ ";border-radius:" + BORDER_RADIUS_BTN + ";" + "background:" + COLOR_BG_PLACEHOLDER + ";\">" + ext
+				+ ";border-radius:" + BORDER_RADIUS_BTN + ";\">" + ext
 				+ "</div>" + "</div>");
 	}
 
@@ -410,6 +416,7 @@ public class AonVisualIdentity extends ScrollPanel {
 		Style s = lbl.getElement().getStyle();
 		s.setColor(COLOR_TEXT_SECONDARY);
 		s.setFontSize(13, Unit.PX);
+		s.setProperty("padding", "1rem");
 		return lbl;
 	}
 
@@ -586,7 +593,6 @@ public class AonVisualIdentity extends ScrollPanel {
 		s.setProperty("justifyContent", "center");
 		s.setWidth(100, Unit.PCT);
 		s.setHeight(140, Unit.PX);
-		s.setBackgroundColor(COLOR_BG_PLACEHOLDER);
 		s.setBorderStyle(BorderStyle.DASHED);
 		s.setBorderWidth(2, Unit.PX);
 		s.setBorderColor(COLOR_BORDER);
@@ -598,12 +604,11 @@ public class AonVisualIdentity extends ScrollPanel {
 
 	private void styleDropZoneWithImage(FlowPanel zone) {
 		Style s = zone.getElement().getStyle();
-		s.setDisplay(Display.BLOCK);
+		s.setDisplay(Display.FLEX);
 		s.setWidth(100, Unit.PCT);
 		s.clearHeight();
-		s.setBackgroundColor(COLOR_BG_PLACEHOLDER);
-		s.setBorderStyle(BorderStyle.SOLID);
-		s.setBorderWidth(1, Unit.PX);
+		s.setBorderStyle(BorderStyle.DASHED);
+		s.setBorderWidth(2, Unit.PX);
 		s.setBorderColor(COLOR_BORDER);
 		s.setProperty("borderRadius", BORDER_RADIUS_BTN);
 		s.setProperty("transition", "border-color 0.15s ease, background-color 0.15s ease");
