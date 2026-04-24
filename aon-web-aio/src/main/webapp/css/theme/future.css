@@ -800,6 +800,7 @@ aon-fiscal-menu .suiteMenuDiv2{
 #aonLaboral .aonContentBeta,
 #aonInvoice .aonContentBeta,
 #aonConfiguration .aonContentBeta,
+#aonConfigurationNew .aonContentBeta,
 #aonWarehouse .aonContentBeta,
 #aonMessenger .aonContentBeta,
 #aonOfficePanel .aonContentBeta,
@@ -823,6 +824,7 @@ aon-fiscal-menu .suiteMenuDiv2{
 #aonLaboral .aonContentBeta,
 #aonInvoice .aonContentBeta,
 #aonConfiguration .aonContentBeta,
+#aonConfigurationNew .aonContentBeta,
 #aonWarehouse .aonContentBeta,
 #aonMessenger .aonContentBeta,
 #aonOfficePanel .aonContentBeta,
@@ -831,7 +833,7 @@ aon-fiscal-menu .suiteMenuDiv2{
 	padding: 1.25rem 1.25rem 0 1.25rem;
 }
 
-/*#aonConfigurationNew .aonContentBeta*/
+
 
 .closeSidenav {
 	margin: 0;
@@ -1723,6 +1725,8 @@ i[id$="ToolbarHeaderToolSectionRefreshButtonIcon"] {
 i[id$="ToolbarHeaderToolSectionAddInvoiceButtonIcon"],
 i[id$="ToolbarHeaderToolSectionaddButtonIcon"],
 i[id$="aonDocumentalToolbarHeaderToolSectionAddButtonIcon"],
+i[id$="aonConfigurationNewToolbarHeaderToolSectionAddButtonIcon"],
+i[id$="aonConfigurationToolbarHeaderToolSectionAddButtonIcon"],
 #createEnterpriseButtonIcon{
     mask-image: url('/icons/plus.svg') ;
 }
@@ -2686,34 +2690,22 @@ i[id$="aonHeaderSearchDivButtonIcon"],
   display: inline-block;
 }
 
-#aonConfigurationRegistryBankCardTable .aonIconButton {
-	top: 15px;
-}
-
 #aonConfigurationRegistryBankCardTable .aonInputBox .aonIconButton {
 	top: 0px;
-}
-
-#aonConfigurationRegistryMediaCardEmailTable .aonIconButton {
-	top: 15px;
 }
 
 #aonConfigurationRegistryMediaCardEmailTable .aonInputBox .aonIconButton {
 	top: 0px;
 }
 
-#aonConfigurationRegistryMediaCardPhoneTable .aonIconButton {
-	top: 15px;
-}
-
 #aonConfigurationRegistryMediaCardPhoneTable .aonInputBox .aonIconButton {
 	top: 0px;
 }
 
-#aonConfigurationRegistryMediaCardWebTable .aonIconButton {
-	top: 15px;
-}
-
 #aonConfigurationRegistryMediaCardWebTable .aonInputBox .aonIconButton {
 	top: 0px;
+}
+
+.aonRegistryMediaAddButton {
+	margin-top: 1.9rem;
 }
