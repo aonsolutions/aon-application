@@ -989,16 +989,6 @@ aon-fiscal-menu .suiteMenuDiv2{
 	display: none;	
 }
 
-.aonWelcomeLogo {
-	margin-top: 1rem; /*Warn*/
-	position: absolute;
-	max-width: 200px;
-	max-height: 6rem;
-	right: 0;
-	padding: .5rem 1rem;
-	margin-right: 3rem;
-}
-
 .aonParentDiv {
 	position: relative;
 }
