@@ -29,7 +29,7 @@ class DomainInvoiceStatTable extends ScrollPanel {
 	private static final Logger LOGGER = Logger.getLogger( DomainInvoiceStatTable.class.getName() );
 	private static final String SERVLET = "/aon_gwt_fiscal/roms/DomainInvoiceStatServlet";
 	private static final String[] WIDTHS = new String[] {
-		"150px","1fr",
+		"120px","1fr",
 		"60px","60px","60px","60px","60px","60px",
 		"60px","60px","60px",
 		"60px","60px","60px","60px",
@@ -83,56 +83,56 @@ class DomainInvoiceStatTable extends ScrollPanel {
 		Label unrec = new Label("Facturas sin contabilizar");
 		Label docs = new Label("Doc. Pendientes");
 		grid
-			.addCell( clas, 6, AON.CSS.aonDisplayGridHeaderCell())
-			.addCell( undec, 3, AON.CSS.aonDisplayGridHeaderCell(), AON.CSS.aonBackgroundLigthBlueImp())
-			.addCell( unrec, 4, AON.CSS.aonDisplayGridHeaderCell(), AON.CSS.aonBackgroundLigthYellowImp())
-			.addCell( docs, 4, AON.CSS.aonDisplayGridHeaderCell() , AON.CSS.aonBackgroundLigthGrayImp())
+			.addCell( clas, 6, AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonJustifyContentCenter())
+			.addCell( undec, 3, AON.CSS.aonDisplayGridHeaderCell(), AON.CSS.aonBackgroundLigthBlueImp(),AON.CSS.aonJustifyContentCenter())
+			.addCell( unrec, 4, AON.CSS.aonDisplayGridHeaderCell(), AON.CSS.aonBackgroundLigthYellowImp(),AON.CSS.aonJustifyContentCenter())
+			.addCell( docs, 4, AON.CSS.aonDisplayGridHeaderCell() , AON.CSS.aonBackgroundLigthGrayImp(),AON.CSS.aonJustifyContentCenter())
 		;
-		Label nacLabel = headerLabel("OP.I.", "Operaciones Interiores");
-		Label intLabel = headerLabel("INT", "Operaciones Intracomunitarias");
-		Label extLabel = headerLabel("EXT", "Operaciones Extracomunitarias");
-		Label ccmLabel = headerLabel("CCM", "Operaciones en Canarias, Ceuta y Melilla");
-		Label ispLabel = headerLabel("ISP", "Operaciones con ISP");
-		Label retLabel = headerLabel("RET", "Operaciones con Retenci\u00F3n");
+		Label nacLabel = headerLabel("Op.I.", "Operaciones Interiores");
+		Label intLabel = headerLabel("Intr", "Operaciones Intracomunitarias");
+		Label extLabel = headerLabel("Extr", "Operaciones Extracomunitarias");
+		Label ccmLabel = headerLabel("C.C.M.", "Operaciones en Canarias, Ceuta y Melilla");
+		Label ispLabel = headerLabel("I.S.P.", "Operaciones con ISP");
+		Label retLabel = headerLabel("IRPF", "Operaciones con Retenci\u00F3n");
 		
-		Label undeclaredIssuedLabel = headerLabel("ENV", "Facturas emitidas no declaradas");
-		Label undeclaredReceivedLabel = headerLabel("REC", "Facturas recibidas no declaradas");
-		Label undeclaredSimplifiedLabel = headerLabel("SIM", "Facturas simplificadas no declaradas");
+		Label undeclaredIssuedLabel = headerLabel("Emit", "Facturas emitidas no declaradas");
+		Label undeclaredReceivedLabel = headerLabel("Recib", "Facturas recibidas no declaradas");
+		Label undeclaredSimplifiedLabel = headerLabel("Simpl", "Facturas simplificadas no declaradas");
 		
-		Label proformaLabel = headerLabel("PRF", "Proformas");
-		Label unrecordedIssuedLabel = headerLabel("ENV", "Facturas emitidas no contabilizadas");
-		Label unrecordedReceivedLabel = headerLabel("REC", "Facturas recibidas no contabilizadas");
-		Label unrecordedSimplifiedLabel = headerLabel("SIM", "Facturas simplificadas no contabilizadas");
+		Label proformaLabel = headerLabel("Prof", "Proformas");
+		Label unrecordedIssuedLabel = headerLabel("Emit", "Facturas emitidas no contabilizadas");
+		Label unrecordedReceivedLabel = headerLabel("Recib", "Facturas recibidas no contabilizadas");
+		Label unrecordedSimplifiedLabel = headerLabel("Simpl", "Facturas simplificadas no contabilizadas");
 		
-		Label draftLabel = headerLabel("BORR", "Borrador");  
-		Label reviewLabel = headerLabel("REVI", "Revisi\u00F3n");
-		Label inProcessLabel = headerLabel("TRAM", "Tr\u00E1mite");
-		Label trashLabel = headerLabel("PAPE", "Papelera");
+		Label draftLabel = headerLabel("Prof", "Borrador");  
+		Label reviewLabel = headerLabel("Revi", "Revisi\u00F3n");
+		Label inProcessLabel = headerLabel("Tr\u00E1m", "Tr\u00E1mite");
+		Label trashLabel = headerLabel("Pap", "Papelera");
 		
 		grid
-			.addCell( new Label("Documento"), AON.CSS.aonTextLeft(), AON.CSS.aonDisplayGridHeaderCell())
-			.addCell( new Label("Nombre")	, AON.CSS.aonTextLeft(), AON.CSS.aonDisplayGridHeaderCell())
+			.addCell( new Label("Documento"), AON.CSS.aonDisplayGridHeaderCell())
+			.addCell( new Label("Nombre")	, AON.CSS.aonDisplayGridHeaderCell())
 			
-			.addCell( nacLabel , AON.CSS.aonDisplayGridHeaderCell())
-			.addCell( intLabel , AON.CSS.aonDisplayGridHeaderCell())
-			.addCell( extLabel , AON.CSS.aonDisplayGridHeaderCell())
-			.addCell( ccmLabel , AON.CSS.aonDisplayGridHeaderCell())
-			.addCell( ispLabel , AON.CSS.aonDisplayGridHeaderCell())
-			.addCell( retLabel , AON.CSS.aonDisplayGridHeaderCell())
+			.addCell( nacLabel , AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonJustifyContentCenter())
+			.addCell( intLabel , AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonJustifyContentCenter())
+			.addCell( extLabel , AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonJustifyContentCenter())
+			.addCell( ccmLabel , AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonJustifyContentCenter())
+			.addCell( ispLabel , AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonJustifyContentCenter())
+			.addCell( retLabel , AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonJustifyContentCenter())
 			
-			.addCell( undeclaredIssuedLabel 	, AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthBlueImp())
-			.addCell( undeclaredReceivedLabel 	, AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthBlueImp())
-			.addCell( undeclaredSimplifiedLabel , AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthBlueImp())
+			.addCell( undeclaredIssuedLabel 	, AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthBlueImp(),AON.CSS.aonJustifyContentCenter())
+			.addCell( undeclaredReceivedLabel 	, AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthBlueImp(),AON.CSS.aonJustifyContentCenter())
+			.addCell( undeclaredSimplifiedLabel , AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthBlueImp(),AON.CSS.aonJustifyContentCenter())
 			
-			.addCell( proformaLabel 			, AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthYellowImp())
-			.addCell( unrecordedIssuedLabel 	, AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthYellowImp())
-			.addCell( unrecordedReceivedLabel 	, AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthYellowImp())
-			.addCell( unrecordedSimplifiedLabel , AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthYellowImp())
+			.addCell( proformaLabel 			, AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthYellowImp(),AON.CSS.aonJustifyContentCenter())
+			.addCell( unrecordedIssuedLabel 	, AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthYellowImp(),AON.CSS.aonJustifyContentCenter())
+			.addCell( unrecordedReceivedLabel 	, AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthYellowImp(),AON.CSS.aonJustifyContentCenter())
+			.addCell( unrecordedSimplifiedLabel , AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthYellowImp(),AON.CSS.aonJustifyContentCenter())
 		
-			.addCell( draftLabel 				, AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthGrayImp())
-			.addCell( reviewLabel 				, AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthGrayImp())
-			.addCell( inProcessLabel 			, AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthGrayImp())
-			.addCell( trashLabel 				, AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthGrayImp())
+			.addCell( draftLabel 				, AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthGrayImp(),AON.CSS.aonJustifyContentCenter())
+			.addCell( reviewLabel 				, AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthGrayImp(),AON.CSS.aonJustifyContentCenter())
+			.addCell( inProcessLabel 			, AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthGrayImp(),AON.CSS.aonJustifyContentCenter())
+			.addCell( trashLabel 				, AON.CSS.aonDisplayGridHeaderCell(),AON.CSS.aonBackgroundLigthGrayImp(),AON.CSS.aonJustifyContentCenter())
 		;
 	}
 
@@ -223,47 +223,53 @@ class DomainInvoiceStatTable extends ScrollPanel {
 					JsDomainInvoiceStat stat = array.get(count);
 					String name = AonStringUtils.abbreviate(stat.getCompanyName(), 40);
 					Label nameLabel = new Label(name);
-					if ( AonStringUtils.length(name) > 40 ) {
+					if ( AonStringUtils.length(stat.getCompanyName()) > 40 ) {
 						nameLabel.setTitle(stat.getCompanyName());
 					}
-					AonIntegerLabel undeclaredIssuedLabel = new AonIntegerLabel(stat.getUndeclaredIssued());
-					AonIntegerLabel undeclaredReceivedLabel = new AonIntegerLabel(stat.getUndeclaredReceived());
-					AonIntegerLabel undeclaredSimplifiedLabel = new AonIntegerLabel(stat.getUndeclaredSimplified());
+					AonIntegerLabel undeclaredIssuedLabel = new AonIntegerLabel(stat.getUndeclaredIssued(), AonStringUtils.HYPHEN);
+					AonIntegerLabel undeclaredReceivedLabel = new AonIntegerLabel(stat.getUndeclaredReceived(), AonStringUtils.HYPHEN);
+					AonIntegerLabel undeclaredSimplifiedLabel = new AonIntegerLabel(stat.getUndeclaredSimplified(), AonStringUtils.HYPHEN);
 					
-					AonIntegerLabel proformaLabel = new AonIntegerLabel(stat.getProformas());
-					AonIntegerLabel unrecordedIssuedLabel = new AonIntegerLabel(stat.getUnrecordedIssued());
-					AonIntegerLabel unrecordedReceivedLabel = new AonIntegerLabel(stat.getUnrecordedReceived());
-					AonIntegerLabel unrecordedSimplifiedLabel = new AonIntegerLabel(stat.getUnrecordedSimplified());
+					AonIntegerLabel proformaLabel = new AonIntegerLabel(stat.getProformas(), AonStringUtils.HYPHEN);
+					AonIntegerLabel unrecordedIssuedLabel = new AonIntegerLabel(stat.getUnrecordedIssued(), AonStringUtils.HYPHEN);
+					AonIntegerLabel unrecordedReceivedLabel = new AonIntegerLabel(stat.getUnrecordedReceived(), AonStringUtils.HYPHEN);
+					AonIntegerLabel unrecordedSimplifiedLabel = new AonIntegerLabel(stat.getUnrecordedSimplified(), AonStringUtils.HYPHEN);
 					
-					AonIntegerLabel draftLabel = new AonIntegerLabel(stat.getDraft());
-					AonIntegerLabel reviewLabel = new AonIntegerLabel(stat.getReview());
-					AonIntegerLabel inProcessLabel = new AonIntegerLabel(stat.getInProcess());
-					AonIntegerLabel trashLabel = new AonIntegerLabel(stat.getTrash());
-					
+					AonIntegerLabel draftLabel = new AonIntegerLabel(stat.getDraft(), AonStringUtils.HYPHEN);
+					AonIntegerLabel reviewLabel = new AonIntegerLabel(stat.getReview(), AonStringUtils.HYPHEN);
+					AonIntegerLabel inProcessLabel = new AonIntegerLabel(stat.getInProcess(), AonStringUtils.HYPHEN);
+					AonIntegerLabel trashLabel = new AonIntegerLabel(stat.getTrash(), AonStringUtils.HYPHEN);
+					String colorStyle = AON.CSS.aonColorInherit();
+					if (stat.isExpired()) {
+						colorStyle = AON.CSS.aonColorOrange();
+					} else 
+					if (!stat.isActive()) {
+						colorStyle = AON.CSS.aonColorRed();
+					}
 					grid
-						.addCell( new Label(stat.getCompanyDocument()),AON.CSS.aonTextLeft())
-						.addCell( nameLabel,AON.CSS.aonTextLeft())
+						.addCell( new Label(stat.getCompanyDocument()), colorStyle)
+						.addCell( nameLabel, colorStyle)
 						
-						.addCell( new AonIntegerLabel(stat.getNational()) )
-						.addCell( new AonIntegerLabel(stat.getIntracommunity()) )
-						.addCell( new AonIntegerLabel(stat.getExtracommunity()) )
-						.addCell( new AonIntegerLabel(stat.getCanCeuMel()) )
-						.addCell( new AonIntegerLabel(stat.getOtherISP()) )
-						.addCell( new AonIntegerLabel(stat.getWithholding()) )
+						.addCell( new AonIntegerLabel(stat.getNational(), AonStringUtils.HYPHEN) ,AON.CSS.aonJustifyContentCenter())
+						.addCell( new AonIntegerLabel(stat.getIntracommunity(), AonStringUtils.HYPHEN) ,AON.CSS.aonJustifyContentCenter())
+						.addCell( new AonIntegerLabel(stat.getExtracommunity(), AonStringUtils.HYPHEN) ,AON.CSS.aonJustifyContentCenter())
+						.addCell( new AonIntegerLabel(stat.getCanCeuMel(), AonStringUtils.HYPHEN) ,AON.CSS.aonJustifyContentCenter())
+						.addCell( new AonIntegerLabel(stat.getOtherISP(), AonStringUtils.HYPHEN) ,AON.CSS.aonJustifyContentCenter())
+						.addCell( new AonIntegerLabel(stat.getWithholding(), AonStringUtils.HYPHEN) ,AON.CSS.aonJustifyContentCenter())
 						
-						.addCell( undeclaredIssuedLabel 	,AON.CSS.aonBackgroundLigthBlueImp())
-						.addCell( undeclaredReceivedLabel 	,AON.CSS.aonBackgroundLigthBlueImp())
-						.addCell( undeclaredSimplifiedLabel ,AON.CSS.aonBackgroundLigthBlueImp())
+						.addCell( undeclaredIssuedLabel 	,AON.CSS.aonBackgroundLigthBlueImp(),AON.CSS.aonJustifyContentCenter())
+						.addCell( undeclaredReceivedLabel 	,AON.CSS.aonBackgroundLigthBlueImp(),AON.CSS.aonJustifyContentCenter())
+						.addCell( undeclaredSimplifiedLabel ,AON.CSS.aonBackgroundLigthBlueImp(),AON.CSS.aonJustifyContentCenter())
 						
-						.addCell( proformaLabel 			,AON.CSS.aonBackgroundLigthYellowImp())
-						.addCell( unrecordedIssuedLabel 	,AON.CSS.aonBackgroundLigthYellowImp())
-						.addCell( unrecordedReceivedLabel 	,AON.CSS.aonBackgroundLigthYellowImp())
-						.addCell( unrecordedSimplifiedLabel ,AON.CSS.aonBackgroundLigthYellowImp())
+						.addCell( proformaLabel 			,AON.CSS.aonBackgroundLigthYellowImp(),AON.CSS.aonJustifyContentCenter())
+						.addCell( unrecordedIssuedLabel 	,AON.CSS.aonBackgroundLigthYellowImp(),AON.CSS.aonJustifyContentCenter())
+						.addCell( unrecordedReceivedLabel 	,AON.CSS.aonBackgroundLigthYellowImp(),AON.CSS.aonJustifyContentCenter())
+						.addCell( unrecordedSimplifiedLabel ,AON.CSS.aonBackgroundLigthYellowImp(),AON.CSS.aonJustifyContentCenter())
 						
-						.addCell( draftLabel 				,AON.CSS.aonBackgroundLigthGrayImp())
-						.addCell( reviewLabel 				,AON.CSS.aonBackgroundLigthGrayImp())
-						.addCell( inProcessLabel 			,AON.CSS.aonBackgroundLigthGrayImp())
-						.addCell( trashLabel 				,AON.CSS.aonBackgroundLigthGrayImp())
+						.addCell( draftLabel 				,AON.CSS.aonBackgroundLigthGrayImp(),AON.CSS.aonJustifyContentCenter())
+						.addCell( reviewLabel 				,AON.CSS.aonBackgroundLigthGrayImp(),AON.CSS.aonJustifyContentCenter())
+						.addCell( inProcessLabel 			,AON.CSS.aonBackgroundLigthGrayImp(),AON.CSS.aonJustifyContentCenter())
+						.addCell( trashLabel 				,AON.CSS.aonBackgroundLigthGrayImp(),AON.CSS.aonJustifyContentCenter())
 					;
 				}
 				offset.add( count);

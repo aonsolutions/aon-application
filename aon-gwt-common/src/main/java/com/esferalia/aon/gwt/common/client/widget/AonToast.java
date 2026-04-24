@@ -1,8 +1,6 @@
 package com.esferalia.aon.gwt.common.client.widget;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -20,13 +18,7 @@ public class AonToast extends FlowPanel {
 		headerPanel = new FlowPanel();
 		Button close = new Button();
 		close.setStyleName(AON.AON_CSS.aonWidgetClose());
-		close.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				hide();
-			}
-		});
+		close.addClickHandler(event -> hide());
 		headerPanel.setStyleName(AON.AON_CSS.aonToastHeader());
 		headerPanel.add(close);
 		contentPanel = new FlowPanel();
@@ -41,13 +33,7 @@ public class AonToast extends FlowPanel {
 	}
 	public void show(String caption,Widget content) {
 		Label header = new Label(caption);
-		header.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				hide();
-			}
-		});
+		header.addClickHandler(event -> hide());
 		headerPanel.add(header);
 		contentPanel.add(content);
 	}

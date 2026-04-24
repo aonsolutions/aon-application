@@ -985,6 +985,15 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_text_uppercase")
 	String aonTextUppercase();
 	
+	@ClassName("aon_justify_content_center")
+	String aonJustifyContentCenter();
+	
+	@ClassName("aon_justify_content_left")
+	String aonJustifyContentLeft();
+	
+	@ClassName("aon_justify_content_right")
+	String aonJustifyContentRight();
+	
 	@ClassName("aon_vertical_align_top")
 	String aonVerticalAlignTop();
 	
@@ -1198,6 +1207,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_color_red")
 	String aonColorRed();
 	
+	@ClassName("aon_color_inherit")
+	String aonColorInherit();
+
 	@ClassName("aon_no_border_toolbar")
 	String aonNoBorderToolbar();
 
@@ -1766,5 +1778,6 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_flex_grid_cell")
 	String aonFlexGridCell();
+
 }
 

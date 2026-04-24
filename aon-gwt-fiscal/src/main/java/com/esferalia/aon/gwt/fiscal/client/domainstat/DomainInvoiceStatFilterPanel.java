@@ -33,6 +33,7 @@ class DomainInvoiceStatFilterPanel extends SimpleLayoutPanel implements HasValue
 	private AonDateBox fromDateBox;
 	private AonDateBox toDateBox;
 	private ListBox scopeBox;
+	private ListBox activeBox;
 	private AonTextBox queryBox;
 	
 	DomainInvoiceStatFilterPanel( final DomainInvoiceStatModuleOptions opts ) {
@@ -41,6 +42,7 @@ class DomainInvoiceStatFilterPanel extends SimpleLayoutPanel implements HasValue
 		initFromDateBox(opts);
 		initToDateBox(opts);
 		initScopeBox(opts);
+		initActiveBox(opts);
 		initQueryBox(opts);
 		initialize();
 		paint( opts);
@@ -65,23 +67,25 @@ class DomainInvoiceStatFilterPanel extends SimpleLayoutPanel implements HasValue
 		
 		AonTableButton refreshButton = new AonTableButton(AON.MSG.refresh(), AON.CSS.aonIconRefresh());
 		refreshButton.addClickHandler(event -> fire(opts));
-		AonTableButton initializeButton = new AonTableButton(AON.MSG.clean(), AON.CSS.aonIconClean());
+		AonTableButton initializeButton = new AonTableButton(AON.MSG.clean(), AON.CSS.aonIconClear());
 		initializeButton.addClickHandler(event -> {
 			initialize();
 			fire(opts);
 		});
 		
 		mainTab.addRow()
-			.addCell( new Label(AON.MSG.fiscalYear()), AON.CSS.aonBold(), AON.CSS.aonWidth60() )
-			.addCell( yearBox , AON.CSS.aonWidth100())
-			.addCell( new Label(AON.MSG.period()), AON.CSS.aonBold(), AON.CSS.aonWidth60() )
-			.addCell( periodBox , AON.CSS.aonWidth150())
-			.addCell( new Label(AON.MSG.date()), AON.CSS.aonBold() , AON.CSS.aonWidth80())
-			.addCell( datePanel , AON.CSS.aonWidth300())
-			.addCell( new Label(AON.MSG.scope()), AON.CSS.aonBold() , AON.CSS.aonWidth80())
-			.addCell( scopeBox, AON.CSS.aonWidth80())
-			.addCell( new Label(AON.MSG.filter()), AON.CSS.aonBold() , AON.CSS.aonWidth80())
-			.addCell( queryBox, AON.CSS.aonWidthAuto())
+			.addCell( new Label(AON.MSG.fiscalYear()), AON.CSS.aonBold(), AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight(), AON.CSS.aonTextRight() )
+			.addCell( yearBox , AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight())
+			.addCell( new Label(AON.MSG.period()), AON.CSS.aonBold(), AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight(), AON.CSS.aonTextRight())
+			.addCell( periodBox , AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight())
+			.addCell( new Label(AON.MSG.date()), AON.CSS.aonBold() , AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight(), AON.CSS.aonTextRight())
+			.addCell( datePanel , AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight())
+			.addCell( new Label(AON.MSG.scope()), AON.CSS.aonBold() , AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight(), AON.CSS.aonTextRight())
+			.addCell( scopeBox, AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight())
+			.addCell( new Label(AON.MSG.show()), AON.CSS.aonBold() , AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight(), AON.CSS.aonTextRight())
+			.addCell( activeBox, AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight())
+			.addCell( new Label(AON.MSG.filter()), AON.CSS.aonBold() , AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight(), AON.CSS.aonTextRight())
+			.addCell( queryBox, AON.CSS.aonWidthAuto(), AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight())
 			.addCell( refreshButton, AON.CSS.aonWidth40() )
 			.addCell( initializeButton, AON.CSS.aonWidth40() )
 		;
@@ -164,6 +168,17 @@ class DomainInvoiceStatFilterPanel extends SimpleLayoutPanel implements HasValue
 		scopeBox.addChangeHandler(event -> fire(opts));
 	}
 	
+	private void initActiveBox(DomainInvoiceStatModuleOptions opts) {
+		activeBox = new ListBox();
+		activeBox.addStyleName(AON.CSS.aonMarginLeft());
+		activeBox.addItem("Todas");
+		activeBox.addItem("Activas");
+		activeBox.addItem("Inactivas");
+		activeBox.addItem("Expiradas");
+		activeBox.setSelectedIndex(0);
+		activeBox.addChangeHandler(event -> fire(opts));
+	}
+
 	private void initQueryBox(DomainInvoiceStatModuleOptions opts) {
 		queryBox = new AonTextBox();
 		queryBox.addStyleName(AON.CSS.aonMarginLeft());
@@ -186,13 +201,14 @@ class DomainInvoiceStatFilterPanel extends SimpleLayoutPanel implements HasValue
 		}
 		periodBox.setSelectedIndex(0);
 		scopeBox.setSelectedIndex(0);
+		activeBox.setSelectedIndex(0);
 		queryBox.setValue(null,false);
 	}
 
 	DomainInvoiceStatParams getParams(DomainInvoiceStatModuleOptions opts) {
 		DomainInvoiceStatParams params = new DomainInvoiceStatParams();
 		params.setDomain(opts.getDomain());
-		params.setActive(true);
+		params.setActive(activeBox.getSelectedIndex() );
 		params.setInvoices(true);
 		params.setAlcatraz(true);
 		params.setRawdoc(true);

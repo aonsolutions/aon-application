@@ -871,7 +871,15 @@
 .aon_text_uppercase {
 	text-transform: uppercase;
 }
-
+.aon_justify_content_center {
+	justify-content: center;
+}
+.aon_justify_content_left {
+	justify-content: flex-start;
+}
+.aon_justify_content_right {
+	justify-content: flex-end;
+}
 .aon_clickable {
 	cursor: pointer;
 }
@@ -966,6 +974,10 @@
 .aon_color_gray {
 	color: gray;
 }
+.aon_color_inherit {
+	color: inherit;
+}
+
 .aon_background_white {
 	background-color: white;
 }
@@ -3142,7 +3154,6 @@
 .aon_flex_grid_cell {
 	display: flex;
 	align-items: center;
-	justify-content: center;
 	user-select: none;
 	box-sizing: border-box;
 	padding: 1px 0.5em 1px 0.5em;
@@ -3150,4 +3161,3 @@
 	text-overflow: ellipsis;
 	background: white;
 }
-

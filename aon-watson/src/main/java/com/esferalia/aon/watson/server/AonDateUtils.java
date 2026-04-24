@@ -512,9 +512,9 @@ public class AonDateUtils {
 	}
 
 	/**
-	 * Devuelve el año actual.
+	 * Devuelve el aï¿½o actual.
 	 * 
-	 * @return El año actual.
+	 * @return El aï¿½o actual.
 	 */
 	public static int getCurrentYear() {
 		Calendar c = Calendar.getInstance();
@@ -575,11 +575,11 @@ public class AonDateUtils {
 	}
 
 	/**
-	 * Devuelve el dia del año de la fecha indicada.
+	 * Devuelve el dia del aï¿½o de la fecha indicada.
 	 * 
 	 * @param date
-	 *            La fecha de la que se desea saber el dia del año.
-	 * @return El dia del año.
+	 *            La fecha de la que se desea saber el dia del aï¿½o.
+	 * @return El dia del aï¿½o.
 	 */
 	public static int getDayOfYear(Date date) {
 		Calendar c = Calendar.getInstance();
@@ -1458,7 +1458,7 @@ public class AonDateUtils {
 	}
 	
     /**
-     * Verifica si value está entre start y end (inclusive).
+     * Verifica si value estï¿½ entre start y end (inclusive).
      * Si value, start o end son null -> false.
      */
     public static boolean isBetween(Date value, Date start, Date end) {
@@ -1467,9 +1467,9 @@ public class AonDateUtils {
     }
 
     /**
-     * Verifica si target está entre start y end (inclusive).
+     * Verifica si target estï¿½ entre start y end (inclusive).
      * Si target es null -> false.
-     * Si start o end son null -> se ignora ese límite.
+     * Si start o end son null -> se ignora ese lï¿½mite.
      */
     public static boolean isInRange(Date value, Date start, Date end) {
         if (value == null) return false;
