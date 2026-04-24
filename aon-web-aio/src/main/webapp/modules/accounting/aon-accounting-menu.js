@@ -239,6 +239,10 @@ export class AonAccountingMenu extends AonSuiteMenu {
 		},{
 			title: 'Registro Mercantil',
 			options: [{
+				description: "Plantillas e informes",
+				title: "Plantillas e informes",
+				action: () => this.rootPanel(new JSF.AonJsfReportTemplate())
+			}, {
 				description: "Emisión de libros contables (LEGALIA)",
 				title: "Emisión de libros contables (LEGALIA)",
 				action: () => this.rootPanel(new JSF.AonJsfAccountingBook())
