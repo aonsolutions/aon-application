@@ -1023,11 +1023,11 @@ h1 {
 .aonCompanyTitleDiv {
 	display: flex;
 	justify-content: space-between;
-	padding: 0px;
-	width: 500px;
 	align-items: center;
+	padding: 0px;
 	font-size: 16px;
 	font-weight: 500px;
+	width: 100%;
 }
 
 .aonCompanyList {
@@ -2591,16 +2591,16 @@ label.rating:hover {
 .aonWelcomeDiv {
 	width: 60%;
 	display: flex;
+	align-items: center;
+	justify-content: space-between;
 	margin: 0 auto;
 	flex-wrap: wrap;
-	padding-top: 72px;
-	padding-bottom: 60px;
+	padding-bottom: 2rem;
 }
 
 .aonWelcomeLogo {
-	right: 22%;
-	position: absolute;
-	max-width: 201px;
+	max-height: 4rem;
+  	max-width: 10rem;
 }
 
 .aonWelcomeMessage {

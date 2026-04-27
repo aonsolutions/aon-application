@@ -2,7 +2,6 @@ import {AonElement} from '../../components/AonElement.js';
 import {generateTokenJson, getSigUserListSpeed, getUserListSpeed, getUserRoles} from  '../../services/service.js';
 import {setUsers, setIndex, addUsers, getFilter, setFilter, getUsers} from './UserCache.js';
 
-import { AonUser } from './aon-user.js';
 import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { AonTable } from '../../components/aon-table.js';
 
@@ -38,6 +37,14 @@ export class AonUserList extends AonElement {
 		this.build();
  	}
 
+
+    disconnectedCallback() {
+		let application = this.getApplication();
+		if(application) {
+			application.removeToolbarOptions();
+		}
+    }
+
 	initialize() {
 		this.back = this.back || false;
 		this.more = true;
@@ -53,12 +60,10 @@ export class AonUserList extends AonElement {
 	}
 
 	build() {
+		this.buildApplicationToolbarOptions();
+
 		let table = this.createAonElement(new AonTable(), this.TABLE);
 		this.appendChild(table);
-
-		const btnSearch = this.getApplication().addSearchOption();
-		let searchFn = (event) => this.search(event.detail);
-		btnSearch.addEventListener(EVENT.SEARCH, searchFn);
 		
 		table.addColumn(MSG.NAME, CONSTANT.STRING, CONSTANT.NAME, '25%');
 		table.addColumn(MSG.SURNAME, CONSTANT.STRING, CONSTANT.SURNAME, '25%');
@@ -69,6 +74,17 @@ export class AonUserList extends AonElement {
 			if(this.more) this.loadMore()
 		});
 		this.init();
+	}
+
+	buildApplicationToolbarOptions() {
+		let application = this.getApplication();
+		if(application) {
+			application.addToolbarOption("UserAdd", "add", () => this.buildUser());
+
+			const btnSearch = application.addSearchOption(true);
+			let searchFn = (event) => this.search(event.detail);
+			btnSearch.addEventListener(EVENT.SEARCH, searchFn);
+		}
 	}
 
 	search(value) {
@@ -190,20 +206,24 @@ export class AonUserList extends AonElement {
 		setFilter(this.filter);
 		getUserRoles({user: user.id}, this.sessionData).then(roles => {
 			user.roles = roles;
-			let aonUser = new AonNewUser();
-			aonUser.sessionData = this.sessionData;
-			aonUser.parent = this.parent;
-			aonUser.id = 'aonUser-' + user.id;
-			aonUser.setShowApps(true);
-			aonUser.setShowToolbar(true);
-			aonUser.setUser(user);
-			aonUser.style.width = "100%";
-			if(this.parent) {
-				this.parent.innerHTML = '';
-				this.parent.appendChild(aonUser);
-			} else this.getApplication().setContent(aonUser);
+			this.buildUser(user);
 		});
 	
+	}
+
+	buildUser(user) {
+		let aonUser = new AonNewUser();
+		aonUser.sessionData = this.sessionData;
+		aonUser.parent = this.parent;
+		aonUser.id = 'aonUser-' + (user ? user.id : 'new');
+		aonUser.setShowApps(true);
+		aonUser.setShowToolbar(true);
+		aonUser.setUser(user);
+		aonUser.style.width = "100%";
+		if(this.parent) {
+			this.parent.innerHTML = '';
+			this.parent.appendChild(aonUser);
+		} else this.getApplication().setContent(aonUser);
 	}
 
 	setType(type) {

@@ -373,6 +373,11 @@ export class AonNewUser extends AonElement {
 		parent.innerHTML = '';
 		let card = createCard(this.SCOPE_CARD, MSG.SCOPES, parent);
 		card.addTitleButton(MSG.ADD_SCOPE, MATERIAL_ICONS.ADD, false, () => this.addUserScope(parent));
+		card.addTitleButton(MSG.ADD_ALL_SCOPES, "library_add", false, () => this.addAllUserScopes(parent));
+		card.addTitleButton(MSG.DELETE_ALL_SCOPES, MATERIAL_ICONS.DELETE_SWEEP, false, () => this.deleteAllUserScopes(parent));
+		
+
+
 		let div = this.createDiv();
 		card.setContent(div);
 	
@@ -384,6 +389,26 @@ export class AonNewUser extends AonElement {
       		fn: (scope) => this.deleteUserScope(parent,scope)
 		};
 		div.appendChild(scopeList);
+	}
+
+	addAllUserScopes(parent) {
+		let d = this.getApplication().getDialog();
+		d.clear();
+		d.setTitle(MSG.ADD_ALL_SCOPES);
+		d.width = '400px';
+		d.setContentHTML("¿Estás seguro de añadir todos los ámbitos al usuario?");
+		d.addAcceptAction(() => {
+			getCompanyScopes().then( scopes => {
+				addUserScopes({user: this.user.id, scopes: scopes
+					.filter(s => !(this.userDur.scopes || []).map(us => us.id).includes(s.id))
+					.map(s => s.id)}).then(() => {
+					this.showMessage("Ámbitos añadidos al usuario");
+					this.userDur.scopes = scopes;
+					this.buildScopeCard(parent);
+				}).catch(e => this.showError(e));
+			});
+		});
+		d.open();		
 	}
 
 	addUserScope(parent) {
@@ -429,6 +454,22 @@ export class AonNewUser extends AonElement {
 			deleteUserScope({user: this.user.id, scope: scope.id}).then(() => {
 				this.showMessage("Ámbito eliminado del usuario");
 				this.userDur.scopes = (this.userDur.scopes || []).filter(s => s.id != scope.id);
+				this.buildScopeCard(parent);
+			}).catch(e => this.showError(e));
+		});
+		d.open();
+	}
+
+	deleteAllUserScopes(parent) {
+	    let d = this.getApplication().getDialog();
+		d.clear();
+		d.setTitle(MSG.DELETE_SCOPE);
+		d.width = '400px';
+		d.setContentHTML("¿Estás seguro de eliminar todos los ámbitos del usuario?");
+		d.addAcceptAction(() => {
+			deleteUserScope({user: this.user.id, all: true}).then(() => {
+				this.showMessage("Todos los ámbitos eliminados del usuario");
+				this.userDur.scopes = [];
 				this.buildScopeCard(parent);
 			}).catch(e => this.showError(e));
 		});

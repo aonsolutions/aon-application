@@ -1563,6 +1563,14 @@ export class AonJsfPayMethodTypeDetail extends AonJsfApp {
 	}
 }
 
+export class AonJsfReportTemplate extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/reportTemplate.xhtml');
+	}
+}
+
 
 if (!window.customElements.get(TAG.AON_JSF_APP)) {
 	window.customElements.define(TAG.AON_JSF_APP, AonJsfApp);
@@ -2202,4 +2210,8 @@ if (!window.customElements.get(TAG.AON_JSF_EXPIRED_PASSWORD)) {
 
 if (!window.customElements.get(TAG.AON_JSF_PAY_METHOD_TYPE_DETAIL)) {
 	window.customElements.define(TAG.AON_JSF_PAY_METHOD_TYPE_DETAIL, AonJsfPayMethodTypeDetail);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_REPORT_TEMPLATE)) {
+	window.customElements.define(TAG.AON_JSF_REPORT_TEMPLATE, AonJsfReportTemplate);
 }

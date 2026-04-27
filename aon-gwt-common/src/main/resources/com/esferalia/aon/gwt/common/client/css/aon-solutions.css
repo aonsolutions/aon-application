@@ -871,7 +871,15 @@
 .aon_text_uppercase {
 	text-transform: uppercase;
 }
-
+.aon_justify_content_center {
+	justify-content: center;
+}
+.aon_justify_content_left {
+	justify-content: flex-start;
+}
+.aon_justify_content_right {
+	justify-content: flex-end;
+}
 .aon_clickable {
 	cursor: pointer;
 }
@@ -966,6 +974,10 @@
 .aon_color_gray {
 	color: gray;
 }
+.aon_color_inherit {
+	color: inherit;
+}
+
 .aon_background_white {
 	background-color: white;
 }
@@ -978,11 +990,20 @@
 .aon_background_ligth_yellow {
 	background-color: #FFF8C0;
 }
+.aon_background_ligth_yellow_imp {
+	background-color: #FFF8C0 !important;
+}
 .aon_background_ligthgray {
 	background-color: #EEE;
 }
+.aon_background_ligthgray_imp {
+	background-color: #EEE !important;
+}
 .aon_background_ligth_blue {
 	background-color: AliceBlue;
+}
+.aon_background_ligth_blue_imp {
+	background-color: AliceBlue !important;
 }
 .aon_background_highlighted_green {
 	background-color: #c1f9ba;
@@ -1406,6 +1427,7 @@
 	font-size: 0.8rem;
 	color: #5f6368;
 	min-height: 1rem;
+	text-wrap: nowrap;
 }
 
 .aon_between_input, .aon_custom_text_box_input{
@@ -3123,3 +3145,19 @@
 	padding-left: 5px;
 }
 
+.aon_flex_grid {
+	display: grid;
+	gap: 1px;
+  	background: #c4c4c4;
+  	padding: 1px; 
+}
+.aon_flex_grid_cell {
+	display: flex;
+	align-items: center;
+	user-select: none;
+	box-sizing: border-box;
+	padding: 1px 0.5em 1px 0.5em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	background: white;
+}

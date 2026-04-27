@@ -22,7 +22,8 @@ public interface IRequestParamsNames {
 	String ACTIVITY = "activity";
 	String ACTIVITY_DESCRIPTION = "activityDescription";
 	String AEAT_BOOK = "aeatBook";  // Libro Registro AEAT (OLD)
-	String AEAT_PARAMS = "aeatParams";  
+	String AEAT_PARAMS = "aeatParams";
+	String ALCATRAZ = "alcatraz";
 	String ALIAS = "document";
 	String AMOUNT = "amount";
 	String BALANCE_TYPE = "balanceType";
@@ -62,6 +63,7 @@ public interface IRequestParamsNames {
 	String EXPENSES = "expenses";
 	String FARMER_REGIME = "farmerRegime";
 	String FILE_DATA = "fileData";
+	String FISCAL_MODEL = "fiscalModel";
 	String FINANCE_PARAMS = "financeParams";	
 	String FOOTER_TEXT = "footerText";
 	String FROM_DATE = "fromDate";
@@ -79,6 +81,7 @@ public interface IRequestParamsNames {
 	String ID = "id";
 	String INACTIVE = "inactive";
 	String INVESTMENT = "investment";
+	String INVOICES = "invoices";
 	String INVOICE_TYPE_EXPENSES = "invoiceTypeExpenses";
 	String INVOICE_TYPE_PURCHASES = "invoiceTypePurchases";
 	String INVOICE_TYPE_SALES = "invoiceTypeSales";
@@ -132,6 +135,7 @@ public interface IRequestParamsNames {
 	String PREVIOUS_PERIODS = "previousPeriods";
 	String PRODUCT_ID = "productId";
 	String QUERY = "query";
+	String RAWDOC = "rawdoc";
 	String RECTIFICATION = "rectification";
 	String REFERENCE_CODE = "referenceCode";
 	String REMOTE_ACCESS_ENABLED = "remoteAccessEnabled";
@@ -141,6 +145,7 @@ public interface IRequestParamsNames {
 	String RETURNED = "returned";
 	String SCHEMA = "schema";
 	String SCHEMAS_OFFSETS = "schemasOffsets";
+	String SCOPE = "scope";
 	String SECURITY_LEVEL = "securityLevel";
 	String SELECT = "select";
 	String SELECTED = "selected";

@@ -226,16 +226,30 @@ public class JooqCRA {
 		Record1<java.sql.Date> craMinDateRecord = dslContext.select(DSL.min(DSL.date(CRA_BATCH.DATE)))
 				.from(CRA_BATCH)
 				.where(CRA_BATCH.DOMAIN.eq(domainId).or(CRA_BATCH.DOMAIN.in(domainChilds)))
+				.and(CRA_BATCH.DATE.isNotNull())
 				.fetchOne();
 		
-		Date craMinDate = craMinDateRecord.value1();
+		Record1<java.sql.Date> contractMinDateRecord = dslContext.select(DSL.min(DSL.date(CONTRACT.START_DATE)))
+				.from(CONTRACT)
+				.where(CONTRACT.DOMAIN.eq(domainId).or(CONTRACT.DOMAIN.in(domainChilds)))
+				.and(CONTRACT.START_DATE.isNotNull())
+				.fetchOne();
+		
+		Date craMinDate = null == craMinDateRecord.value1() ?  contractMinDateRecord.value1() : contractMinDateRecord.value1().before(craMinDateRecord.value1()) ? contractMinDateRecord.value1() : craMinDateRecord.value1();
 		
 		Record1<java.sql.Date> craMaxDateRecord = dslContext.select(DSL.max(DSL.date(CRA_BATCH.DATE)))
 				.from(CRA_BATCH)
 				.where(CRA_BATCH.DOMAIN.eq(domainId).or(CRA_BATCH.DOMAIN.in(domainChilds)))
+				.and(CRA_BATCH.DATE.isNotNull())
 				.fetchOne();
 		
-		Date craMaxDate = craMaxDateRecord.value1();
+		Record1<java.sql.Date> contractMaxDateRecord = dslContext.select(DSL.min(DSL.date(CONTRACT.END_DATE)))
+				.from(CONTRACT)
+				.where(CONTRACT.DOMAIN.eq(domainId).or(CONTRACT.DOMAIN.in(domainChilds)))
+				.and(CONTRACT.END_DATE.isNotNull())
+				.fetchOne();
+		
+		Date craMaxDate = null == craMaxDateRecord.value1() ?  contractMaxDateRecord.value1() : contractMaxDateRecord.value1().after(craMaxDateRecord.value1()) ? contractMaxDateRecord.value1() : craMaxDateRecord.value1();
 		
 		return new Period(craMinDate, craMaxDate);
 	}

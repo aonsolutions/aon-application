@@ -985,6 +985,15 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_text_uppercase")
 	String aonTextUppercase();
 	
+	@ClassName("aon_justify_content_center")
+	String aonJustifyContentCenter();
+	
+	@ClassName("aon_justify_content_left")
+	String aonJustifyContentLeft();
+	
+	@ClassName("aon_justify_content_right")
+	String aonJustifyContentRight();
+	
 	@ClassName("aon_vertical_align_top")
 	String aonVerticalAlignTop();
 	
@@ -1198,6 +1207,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_color_red")
 	String aonColorRed();
 	
+	@ClassName("aon_color_inherit")
+	String aonColorInherit();
+
 	@ClassName("aon_no_border_toolbar")
 	String aonNoBorderToolbar();
 
@@ -1228,12 +1240,21 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_background_ligth_yellow")
 	String aonBackgroundLigthYellow();
 	
+	@ClassName("aon_background_ligth_yellow_imp")
+	String aonBackgroundLigthYellowImp();
+
 	@ClassName("aon_background_ligthgray")
 	String aonBackgroundLigthGray();
 	
+	@ClassName("aon_background_ligthgray_imp")
+	String aonBackgroundLigthGrayImp();
+
 	@ClassName("aon_background_ligth_blue")
 	String aonBackgroundLigthBlue();
 	
+	@ClassName("aon_background_ligth_blue_imp")
+	String aonBackgroundLigthBlueImp();
+
 	@ClassName("aon_background_highlighted_green")
 	String aonBackgroundHighlightedGreen();
 
@@ -1751,6 +1772,12 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_icon_encrypted_off")
 	String aonIconEncryptedOff();
+
+	@ClassName("aon_flex_grid")
+	String aonFlexGrid();
+	
+	@ClassName("aon_flex_grid_cell")
+	String aonFlexGridCell();
 
 }
 

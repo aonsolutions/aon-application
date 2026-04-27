@@ -236,7 +236,7 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 		tablayoutPanel.add(addressTable, "Direcciones");
 		
 		aonVisualIdentity = new AonVisualIdentity(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId(), this.registrySource);
-		tablayoutPanel.add(aonVisualIdentity, "Id. Visual");
+		tablayoutPanel.add(aonVisualIdentity, this.registrySource.equals(RegistrySource.ENVIROMENT) ? "Logo" : "Logo / Firma");
 
 		tablayoutPanel.add(new AonMainCertificatesPanel(options.getDomainName(), options.getDomain(), options.getUser()),
 				"Certificados");

@@ -80,7 +80,6 @@ public class AonMainCertificatesPanel extends DeckPanel {
 		TGS("TGSS", "3rem", ""), 
 		SEP("SEPE", "3rem", ""), 
 		AEA("AEAT", "3rem", ""),
-		ACT(AonStringUtils.EMPTY, "3rem", ""),
 		BUT(AonStringUtils.EMPTY, "10rem", "");
 
 		String headerLabel;
@@ -124,6 +123,7 @@ public class AonMainCertificatesPanel extends DeckPanel {
 		container.addStyleName(AON.CSS.aonFlexColumn2());
 
 		container.add(messagePanel);
+		AonMessagePanel.hideMessage(messagePanel);
 
 		initCertDataTable();
 
@@ -275,20 +275,6 @@ public class AonMainCertificatesPanel extends DeckPanel {
 		Label alias = new Label(certificate.getDescription());
 		alias.setTitle(certificate.getDescription());
 		table.addInlineStyle(alias, COLS.TYP.getStyles());
-		
-		HTMLPanel securityPanel = new HTMLPanel("");
-		securityPanel.addStyleName(AON.CSS.aonItemFlex());
-		securityPanel.getElement().getStyle().setProperty("justify-content", "right");
-
-		String securityTitle = certificate.getConfidential() != null
-				&& certificate.getConfidential().equals(CertificateSecurity.PRIVATE)
-						? "Privado: S\u00f3lo visible para usuarios de la empresa"
-						: "P\u00fablico: Visible para todos los usuarios";
-		String securityIcon = certificate.getConfidential() != null
-				&& certificate.getConfidential().equals(CertificateSecurity.PRIVATE) ? AON.CSS.aonIconLock()
-						: AON.CSS.aonIconUnLock();
-		AonTableButton security = new AonTableButton(securityTitle, securityIcon);
-		securityPanel.add(security);
 
 		CheckBox tgssCB = new CheckBox();
 		tgssCB.getElement().getStyle().setProperty("width", "1rem");
@@ -399,8 +385,6 @@ public class AonMainCertificatesPanel extends DeckPanel {
 		table.addRow(row, tgssCB, COLS.TGS.getColWidth());
 		table.addRow(row, sepeCB, COLS.SEP.getColWidth());
 		table.addRow(row, aeatCB, COLS.AEA.getColWidth());
-
-		table.addRow(row, securityPanel, COLS.ACT.getColWidth());
 
 		table.addRow(row, buttonsPanel, COLS.BUT.getColWidth());
 

@@ -4488,5 +4488,7 @@ public interface CommonMessages extends Messages {
 		+ "se eliminar\u00E1n y se calcular\u00E1n de nuevo. \u00BFContinuar?")
 	String confirmAmortizationCalculateAction();
 
+	@DefaultMessage("Informaci\u00F3n facturas/Documentos pendientes")
+	String domainInvoiceStat();
 }
 

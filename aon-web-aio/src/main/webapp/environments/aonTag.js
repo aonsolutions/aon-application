@@ -472,6 +472,8 @@ export const AON_JSF_EXPIRED_PASSWORD = 'aon-jsf-expired-password' ;
 
 export const AON_JSF_PAY_METHOD_TYPE_DETAIL = 'aon-jsf-pay-method-type-detail' ;
 
+export const AON_JSF_REPORT_TEMPLATE = 'aon-jsf-report-template' ;
+
 export const SUPERSET = 'aon-superset' ;
 
 export const AON_CONSOLE_MENU = 'aon-console-menu';
