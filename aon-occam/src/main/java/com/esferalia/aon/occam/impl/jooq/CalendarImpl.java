@@ -20,6 +20,12 @@ public class CalendarImpl implements ICalendar {
 	}
 
 	@Override
+	public List<Calendar> getCalendars(CloseableAONContext ctx, Integer domainId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CalendarDAO.getStream(ctx, f -> f.getDomainProperty().eq(domainId), 1, Integer.MAX_VALUE).collect(Collectors.toList()));
+	}
+
+	@Override
 	public List<Holiday> getHolidays(CloseableAONContext ctx, Integer domainId) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> HolidayDAO.getStream(ctx, f -> f.getDomainProperty().eq(0).or(f.getDomainProperty().eq(domainId))).collect(Collectors.toList()));
