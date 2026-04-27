@@ -22,7 +22,8 @@ public interface IRequestParamsNames {
 	String ACTIVITY = "activity";
 	String ACTIVITY_DESCRIPTION = "activityDescription";
 	String AEAT_BOOK = "aeatBook";  // Libro Registro AEAT (OLD)
-	String AEAT_PARAMS = "aeatParams";  
+	String AEAT_PARAMS = "aeatParams";
+	String ALCATRAZ = "alcatraz";
 	String ALIAS = "document";
 	String AMOUNT = "amount";
 	String ANNULLED = "annulled";
@@ -71,6 +72,7 @@ public interface IRequestParamsNames {
 	String FARMER_REGIME = "farmerRegime";
 	String FEE_BILLING_PARAMS = "feeBillingParams";
 	String FILE_DATA = "fileData";
+	String FISCAL_MODEL = "fiscalModel";
 	String FINANCE_PARAMS = "financeParams";	
 	String FOOTER_TEXT = "footerText";
 	String FROM_DATE = "fromDate";
@@ -97,6 +99,7 @@ public interface IRequestParamsNames {
 	String INVOICE_PARAMS = "invoiceParams";
 	String INVOICE_SERIES = "invoiceSeries";
 	String INVOICE_SOURCE = "invoiceSource";
+	String INVOICES = "invoices";
 	String INVOICE_TYPE_EXPENSES = "invoiceTypeExpenses";
 	String INVOICE_TYPE_PURCHASES = "invoiceTypePurchases";
 	String INVOICE_TYPE_SALES = "invoiceTypeSales";
@@ -156,6 +159,7 @@ public interface IRequestParamsNames {
 	String PROFORMA = "proforma";
 	String QUERY = "query";
 	String RECORDED = "recorded";
+	String RAWDOC = "rawdoc";
 	String RECTIFICATION = "rectification";
 	String RECTIFICATION_TYPE = "rectificationType";
 	String REFERENCE_CODE = "referenceCode";
@@ -167,6 +171,7 @@ public interface IRequestParamsNames {
 	String SAVE_AS_PROFORMA = "saveAsProforma";
 	String SCHEMA = "schema";
 	String SCHEMAS_OFFSETS = "schemasOffsets";
+	String SCOPE = "scope";
 	String SECURITY_LEVEL = "securityLevel";
 	String SELECT = "select";
 	String SELECTED = "selected";

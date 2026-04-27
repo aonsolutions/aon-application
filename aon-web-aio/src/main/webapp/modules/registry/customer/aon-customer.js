@@ -27,16 +27,16 @@ import { generateTokenJson, getUser } from "../../../services/userService.js";
 import { AonNewDate } from "../../../components/aon-new-date.js";
 
 export class AonCustomer extends AonReg {
-	
+
 	saveBool;
 	ENTERPRISE_LINKED;
 	office;
 	clientFile;
 	aonCustomerList;
-	
+
 	sigCustomerDomainName;
 	sigCustomerDomainId;
-	
+
 	// Method to call GWT sync module
 	linkSigDomain;
 
@@ -54,24 +54,26 @@ export class AonCustomer extends AonReg {
 		this.ENTERPRISE_LINKED = "enterpriseLinked";
 		this.options = [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData() },
-			{ title: MSG.BANK_DATA, fn: () => {
-				this.showSaveButton();
-				//if(this.clientFile)
-				//	this.hideSaveButton();
-				this.buildBankData();
-			}},
+			{
+				title: MSG.BANK_DATA, fn: () => {
+					this.showSaveButton();
+					//if(this.clientFile)
+					//	this.hideSaveButton();
+					this.buildBankData();
+				}
+			},
 			//{ title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional() }
 		];
 
 		if (this.office) {
-			if(!this.clientFile){
+			if (!this.clientFile) {
 				this.options.push({ title: MSG.AGENTS, fn: () => this.buildSellerData() });
 			}
 			this.options.push({ title: "Expedientes", fn: () => this.buildExpedienteData() });
 			this.options.push({ title: MSG.CUSTOMER_FEE, fn: () => this.buildCustomerFee() });
 			this.options.push({ title: MSG.INVOICES, fn: () => this.buildInvoices() });
-			
-			if(this.registry.registryCompany) {
+
+			if (this.registry.registryCompany) {
 				this.options.push({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
 				this.options.push({ title: MSG.USERS, fn: () => this.buildUsersData() });
 			}
@@ -86,12 +88,12 @@ export class AonCustomer extends AonReg {
 
 		this.appendChild(toolbar);
 		toolbar.addButton2(ACTION.SAVE, () => this.save());
-		
-		if(!this.clientFile)
+
+		if (!this.clientFile)
 			toolbar.addButton2(ACTION.BACK, () => this.back());
-		
+
 		this.buildNotesToobar();
-		
+
 		if (this.registry.id && this.registry.getCreationUser) {
 			toolbar.addButtonTitle(ACTION.AUDIT, () => this.audit());
 		}
@@ -104,62 +106,62 @@ export class AonCustomer extends AonReg {
 		div.style.width = "100%";
 		div.style.flexWrap = "wrap";
 		div.style.height = 'calc(100vh - 15rem)';
-  		div.style.overflowY = 'auto';
-  		div.style.margin = '.5rem 0';
+		div.style.overflowY = 'auto';
+		div.style.margin = '.5rem 0';
 		this.appendChild(div);
 
 		this.buildGeneralData();
 
 	}
-	
-	buildNotesToobar(){
+
+	buildNotesToobar() {
 		if (this.registry.id && this.registry.getCreationUser) {
 			let toolbar = this.getElement(this.REGISTRY_TOOLBAR);
-			
+
 			toolbar.addButtonTitle(ACTION.NOTES, () => this.notes());
-			
-			getRegistryNotes({registry: this.registry.getId()})
+
+			getRegistryNotes({ registry: this.registry.getId() })
 				.then(notes => {
-					const existsNotes = notes.some(item => item.type === "MESSAGE" );
-					
-					if(existsNotes){
+					const existsNotes = notes.some(item => item.type === "MESSAGE");
+
+					if (existsNotes) {
 						let customerNotesButton;
-						
-						if(this.clientFile)
+
+						if (this.clientFile)
 							customerNotesButton = this.getElement('aonConfigurationCustomerToolbarHeaderTitleSectionNotesButtonIcon');
 						else
 							customerNotesButton = this.getElement('aonCustomerOfficeToolbarHeaderTitleSectionNotesButtonIcon');
-						
+
 						customerNotesButton.style.color = 'green';
 					}
-					
+
 					const existsObservation = notes.some(item => item.type === "OBSERVATION" && item.comments && item.comments.trim() !== "");
-					if(existsObservation) this.notes();
-					
+					if (existsObservation) this.notes();
+
 				});
 		}
 	}
 
 	buildGeneralData = () => {
 		this.showSaveButton();
-		
+
 		let parent = this.getElement(this.DIV);
 		parent.style.display = "flex";
 		this.clearElement(parent);
 
 		let generalCard = this.buildGeneralCard(parent);
 		generalCard.classList.add('customerGeneralCard');
-		
+
 		this.buildMediaCard(parent);
 		this.buildGeneralInformation(parent);
 		this.buildSellerCard(parent);
-		
+
 		this.buildFiscalGeneralData();
 	}
 
 	buildFiscalGeneralData() {
 		let generalDataTable = this.getElement(this.GENERAL_TABLE);
-		
+
 		generalDataTable.addRow();
 
 		let transaction = new AonSelect();
@@ -233,10 +235,10 @@ export class AonCustomer extends AonReg {
 
 	buildDataAdditional() {
 		this.showSaveButton();
-		
-		if(this.clientFile)
+
+		if (this.clientFile)
 			this.hideSaveButton();
-				
+
 		let parent = this.getElement(this.DIV);
 		parent.style.display = "flex";
 		this.clearElement(parent);
@@ -274,39 +276,39 @@ export class AonCustomer extends AonReg {
 
 		table.addRow();
 
-		if(!this.clientFile){
+		if (!this.clientFile) {
 			let divSegment = this.createElement(TAG.DIV);
 			table.addCell(divSegment);
 			this.buildSegments(divSegment);
 		}
 
-		if(this.clientFile){
+		if (this.clientFile) {
 			let company = LS.getCompany();
 			getRelationShipCompany({
-					url: company.domain,
-		            relatedRegistry: company.registry
-		        }).then(relationshipCompany => {
-					getScopes({
-						searchDomain: relationshipCompany.rrelationship.domain.id
-					}).then((scopes) => {
-						const registryScope = this.registry.getScope();
-						const scopeId = registryScope && registryScope.id ? registryScope.id : null;
-						
-						scope.setOptions(scopes.map((c) => ({ ...c, value: c.id })));
-			
-						if (scopeId) {
-							scope.value = scopeId;
-						}
-					});
-		        });
+				url: company.domain,
+				relatedRegistry: company.registry
+			}).then(relationshipCompany => {
+				getScopes({
+					searchDomain: relationshipCompany.rrelationship.domain.id
+				}).then((scopes) => {
+					const registryScope = this.registry.getScope();
+					const scopeId = registryScope && registryScope.id ? registryScope.id : null;
+
+					scope.setOptions(scopes.map((c) => ({ ...c, value: c.id })));
+
+					if (scopeId) {
+						scope.value = scopeId;
+					}
+				});
+			});
 		} else
 			getScopes().then((scopes) => {
 				const registryScope = this.registry.getScope();
 				const scopeId =
 					registryScope && registryScope.id ? registryScope.id : null;
-	
+
 				scope.setOptions(scopes.map((c) => ({ ...c, value: c.id })));
-	
+
 				if (scopeId) {
 					scope.value = scopeId;
 				}
@@ -364,63 +366,65 @@ export class AonCustomer extends AonReg {
 	}
 
 	buildEnterpriseLinked() {
-		const card = this.getElement(this.GENERAL_CARD);
+		if (this.office) {
+			const card = this.getElement(this.GENERAL_CARD);
 
-		let divOne = this.getElement(this.ENTERPRISE_LINKED);
+			let divOne = this.getElement(this.ENTERPRISE_LINKED);
 
-		if (!divOne) {
-			divOne = this.createElement(TAG.DIV);
-			divOne.id = this.ENTERPRISE_LINKED;
-			card.addSection2(divOne);
-		}
-		
-		if(this.isSig()){
-			getCustomerDomainAddInfo({
-				registry: this.registry.getId()
-			})
-			.then((resp) => {
-				this.buildSigEnterpriseLinkedView(resp);
-				
-				if(resp && resp.length > 0){
-					this.sigCustomerDomainName = resp[0].domainName;
-					this.sigCustomerDomainId = resp[0].domainId;
-					
-					if(!this.existTabOption(MSG.BOOKING))
-						this.addTabOption({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
-					
-					if(!this.existTabOption(MSG.USERS))
-						this.addTabOption({ title: MSG.USERS, fn: () => this.buildUsersData() });
-				}
-			})
-			/*
-			.catch((err) => {
-				this.showError(err);
-			})
-			*/
-			;	
-		} else {
-			getRelationShip({
-				registry: this.registry.getId(),
-				parentId: this.registry.getDomain().getParentId(),
-				document: this.registry.getDocument(),
-			})
-			.then((resp) => {
-				console.log("getRelationShip", resp);
-				this.buildEnterpriseLinkedView(resp);
-			})
-			/*
-			.catch((err) => {
-				this.showError(err);
-			})
-			*/
-			;	
+			if (!divOne) {
+				divOne = this.createElement(TAG.DIV);
+				divOne.id = this.ENTERPRISE_LINKED;
+				card.addSection2(divOne);
+			}
+
+			if (this.isSig()) {
+				getCustomerDomainAddInfo({
+					registry: this.registry.getId()
+				})
+					.then((resp) => {
+						this.buildSigEnterpriseLinkedView(resp);
+
+						if (resp && resp.length > 0) {
+							this.sigCustomerDomainName = resp[0].domainName;
+							this.sigCustomerDomainId = resp[0].domainId;
+
+							if (!this.existTabOption(MSG.BOOKING))
+								this.addTabOption({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
+
+							if (!this.existTabOption(MSG.USERS))
+								this.addTabOption({ title: MSG.USERS, fn: () => this.buildUsersData() });
+						}
+					})
+					/*
+					.catch((err) => {
+						this.showError(err);
+					})
+					*/
+					;
+			} else {
+				getRelationShip({
+					registry: this.registry.getId(),
+					parentId: this.registry.getDomain().getParentId(),
+					document: this.registry.getDocument(),
+				})
+					.then((resp) => {
+						console.log("getRelationShip", resp);
+						this.buildEnterpriseLinkedView(resp);
+					})
+					/*
+					.catch((err) => {
+						this.showError(err);
+					})
+					*/
+					;
+			}
 		}
 	}
 
 	buildEnterpriseLinkedView(resp) {
 		const entepriseLinked = this.getElement(this.ENTERPRISE_LINKED);
 		entepriseLinked.innerHTML = "";
-		
+
 		const { rrelationship, companies } = resp;
 
 		const link = rrelationship && rrelationship.id;
@@ -481,11 +485,11 @@ export class AonCustomer extends AonReg {
 			});
 		}
 	}
-	
+
 	buildSigEnterpriseLinkedView(resp) {
 		const entepriseLinked = this.getElement(this.ENTERPRISE_LINKED);
 		entepriseLinked.innerHTML = "";
-		
+
 		const link = resp && resp.length > 0;
 
 		const color = link ? CSS.variable(COLORS.ONLINE_GREEN) : COLORS.ORANGE;
@@ -522,62 +526,62 @@ export class AonCustomer extends AonReg {
 		iconArrowDown.innerText = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
 
 		main.appendChild(iconArrowDown);
-		
+
 		main.addEventListener(EVENT.CLICK, () => {
 			this.getSigOptionsLinked(iconArrowDown, resp);
 		});
 	}
-	
-	hideSaveButton(){
+
+	hideSaveButton() {
 		let saveBtn;
-		if(this.clientFile) 
+		if (this.clientFile)
 			saveBtn = this.getElement("aonConfigurationCustomerToolbarHeaderToolSectionSaveButton");
 		else
 			saveBtn = this.getElement("aonCustomerOfficeToolbarHeaderToolSectionSaveButton");
-		if(saveBtn) saveBtn.style.display = 'none';
+		if (saveBtn) saveBtn.style.display = 'none';
 	}
-	
-	showSaveButton(){
+
+	showSaveButton() {
 		let saveBtn;
-		if(this.clientFile) 
+		if (this.clientFile)
 			saveBtn = this.getElement("aonConfigurationCustomerToolbarHeaderToolSectionSaveButton");
 		else
 			saveBtn = this.getElement("aonCustomerOfficeToolbarHeaderToolSectionSaveButton");
-		if(saveBtn) saveBtn.style.display = 'block';
+		if (saveBtn) saveBtn.style.display = 'block';
 	}
 
 	//EXPEDIENTE
 	buildExpedienteData() {
 		this.hideSaveButton();
-		
+
 		let main = this.getElement(this.DIV);
 		main.style.display = "flex";
 		this.clearElement(main);
-		
+
 		main.style.height = 'calc(100vh - 15rem)';
-  		main.style.overflowY = 'auto';
-  		main.style.margin = '.5rem 0';
+		main.style.overflowY = 'auto';
+		main.style.margin = '.5rem 0';
 
 		localStorage.setItem("customer", this.registry.getId());
 
-		if(this.clientFile){
+		if (this.clientFile) {
 			let company = LS.getCompany();
-			
+
 			getRelationShipCompany({
 				url: company.domain,
-	            relatedRegistry: company.registry
-	        }).then(relationshipCompany => {
+				relatedRegistry: company.registry
+			}).then(relationshipCompany => {
 				localStorage.setItem("officeDomain", relationshipCompany.rrelationship.domain.id);
 				GWT.iLoad(GWT.PROJECT, this.DIV);
-	        });
-		} else 
+			});
+		} else
 			GWT.iLoad(GWT.PROJECT, this.DIV);
 	}
 
 	//ITEMS PRODUCTS
 	buildItemData() {
 		this.hideSaveButton();
-		
+
 		let main = this.getElement(this.DIV);
 		main.style.display = "flex";
 		this.clearElement(main);
@@ -601,12 +605,12 @@ export class AonCustomer extends AonReg {
 
 	buildOfficeBookingData() {
 		this.hideSaveButton();
-		
+
 		let main = this.getElement(this.DIV);
 		main.style.display = "block";
 		main.style.height = 'calc(100vh - 15rem)';
-  		main.style.overflowY = 'auto';
-  		main.style.margin = '.5rem 0';
+		main.style.overflowY = 'auto';
+		main.style.margin = '.5rem 0';
 		this.clearElement(main);
 
 		let booking = new AonBooking();
@@ -617,12 +621,12 @@ export class AonCustomer extends AonReg {
 
 	buildUsersData() {
 		this.hideSaveButton();
-		
+
 		let main = this.getElement(this.DIV);
 		main.style.display = "block";
 		main.style.height = 'calc(100vh - 15rem)';
-  		main.style.overflowY = 'auto';
-  		main.style.margin = '.5rem 0';
+		main.style.overflowY = 'auto';
+		main.style.margin = '.5rem 0';
 		this.clearElement(main);
 
 		let userList = new AonUserList();
@@ -638,13 +642,13 @@ export class AonCustomer extends AonReg {
 			domain_name: this.sigCustomerDomainName || (this.registry.registryCompany ? this.registry.registryCompany.domain.name : LS.getDomainName()),
 			domain_id: this.sigCustomerDomainId || (this.registry.registryCompany ? this.registry.registryCompany.domain.id : LS.getDomainId()),
 			domain_login: LS.getDomainLogin()
- 		};
+		};
 	}
 
 	//BOOKING PRODUCTS
 	buildBookingData() {
 		this.hideSaveButton();
-		
+
 		let main = this.getElement(this.DIV);
 		main.style.display = "flex";
 		this.clearElement(main);
@@ -668,12 +672,12 @@ export class AonCustomer extends AonReg {
 	//SELLERS
 	buildSellerData() {
 		this.hideSaveButton();
-		
+
 		let main = this.getElement(this.DIV);
 		main.style.display = "flex";
 		main.style.height = 'calc(100vh - 15rem)';
-  		main.style.overflowY = 'auto';
-  		main.style.margin = '.5rem 0';
+		main.style.overflowY = 'auto';
+		main.style.margin = '.5rem 0';
 		this.clearElement(main);
 
 		let registryId = this.registry.getId();
@@ -689,57 +693,57 @@ export class AonCustomer extends AonReg {
 
 	buildCustomerFee() {
 		this.hideSaveButton();
-		
+
 		let div = this.getElement(this.DIV);
 		div.style.display = "flex";
 		this.clearElement(div);
 
 		div.style.height = 'calc(100vh - 15rem)';
-  		div.style.overflowY = 'auto';
-  		div.style.margin = '.5rem 0';
+		div.style.overflowY = 'auto';
+		div.style.margin = '.5rem 0';
 
 		localStorage.setItem("customer", this.registry.getId());
 
-		if(this.clientFile){
+		if (this.clientFile) {
 			let company = LS.getCompany();
-			
+
 			getRelationShipCompany({
 				url: company.domain,
-	            relatedRegistry: company.registry
-	        }).then(relationshipCompany => {
+				relatedRegistry: company.registry
+			}).then(relationshipCompany => {
 				localStorage.setItem("officeDomain", relationshipCompany.rrelationship.domain.id);
 				GWT.iLoad(GWT.CUSTOMER_FEE, this.DIV);
-	        });
-		} else 
+			});
+		} else
 			GWT.iLoad(GWT.CUSTOMER_FEE, this.DIV);
 	}
-	
-	buildInvoices(){
+
+	buildInvoices() {
 		this.hideSaveButton();
-		
+
 		let div = this.getElement(this.DIV);
 		div.style.display = "flex";
 		this.clearElement(div);
 
 		div.style.height = 'calc(100vh - 15rem)';
-  		div.style.overflowY = 'auto';
-  		div.style.margin = '.5rem 0';
+		div.style.overflowY = 'auto';
+		div.style.margin = '.5rem 0';
 
 		localStorage.setItem("customer", this.registry.getId());
-		
-		if(this.clientFile){
+
+		if (this.clientFile) {
 			let company = LS.getCompany();
-			
+
 			getRelationShipCompany({
 				url: company.domain,
-	            relatedRegistry: company.registry
-	        }).then(relationshipCompany => {
+				relatedRegistry: company.registry
+			}).then(relationshipCompany => {
 				localStorage.setItem("officeDomain", relationshipCompany.rrelationship.domain.id);
 				GWT.iLoad(GWT.CUSTOMER_INVOICE, this.DIV);
-	        });
-		} else 
+			});
+		} else
 			GWT.iLoad(GWT.CUSTOMER_INVOICE, this.DIV);
-		
+
 	}
 
 	getOptionsLinked(element, rrelationship = undefined) {
@@ -758,7 +762,7 @@ export class AonCustomer extends AonReg {
 					},
 				}
 			);
-			
+
 			options.push(
 				{
 					name: "Desvincular",
@@ -792,7 +796,7 @@ export class AonCustomer extends AonReg {
 			);
 		}
 
-		if(options && options.length > 0){
+		if (options && options.length > 0) {
 			const top = element.getBoundingClientRect().top + 24;
 			const left = element.getBoundingClientRect().left + 3;
 			let d = this.getApplication().getOptionDialog();
@@ -800,7 +804,7 @@ export class AonCustomer extends AonReg {
 			d.open();
 		}
 	}
-	
+
 	getSigOptionsLinked(element, resp) {
 		let options = [];
 
@@ -811,28 +815,28 @@ export class AonCustomer extends AonReg {
 					value: "access",
 					icon: MATERIAL_ICONS.OPEN_IN_NEW,
 					fn: () => {
-						if(resp.length === 1)
+						if (resp.length === 1)
 							this.suplant(resp[0].domainName);
 						else
 							this.openSigSuplantCompany(resp);
 					},
 				}
 			);
-			
+
 			options.push(
 				{
 					name: "Desvincular",
 					value: "UNLINK",
 					icon: MATERIAL_ICONS.LINK_OFF,
 					fn: () => {
-						if(resp.length === 1)
+						if (resp.length === 1)
 							this.unlinkSigCompany(resp[0]);
 						else
 							this.openSigUnlinkCompany(resp);
 					},
 				}
 			);
-			
+
 		} else {
 			options.push(
 				{
@@ -877,7 +881,7 @@ export class AonCustomer extends AonReg {
 		}
 		*/
 
-		if(options && options.length > 0){
+		if (options && options.length > 0) {
 			const top = element.getBoundingClientRect().top + 24;
 			const left = element.getBoundingClientRect().left + 3;
 			let d = this.getApplication().getOptionDialog();
@@ -885,18 +889,18 @@ export class AonCustomer extends AonReg {
 			d.open();
 		}
 	}
-	
-	suplant(url){
+
+	suplant(url) {
 		getUser().then(user => {
 			//console.log("User");
 			//console.log(user);
-			
+
 			let d = this.getApplication().getDialog();
 			d.clear();
-			
-			if(!this.isMobile()) d.width = '400px';
+
+			if (!this.isMobile()) d.width = '400px';
 			d.setTitle("Suplantar Usuario");
-			
+
 			d.setContentHTML("Estás seguro de suplantar a " + user.login);
 			d.addAcceptAction(() => {
 				let data = {
@@ -907,84 +911,91 @@ export class AonCustomer extends AonReg {
 				generateTokenJson(data).then(token => {
 					open(`https://${url}/app?token=${token.session_id}`, '_blank');
 				}).catch(e => this.showError(e));
-			});			
-			d.open();		
+			});
+			d.open();
 		});
 	}
-	
-	async openCustomerInactiveBloqued() {
-		const dialog = this.getApplication().getDialog();
-		dialog.clear();
 
-		if (this.isMobile()) {
-			dialog.type = "fullscreen";
+	async openCustomerInactiveBloqued() {
+
+		if (this.office) {
+			const dialog = this.getApplication().getDialog();
+			dialog.clear();
+
+			if (this.isMobile()) {
+				dialog.type = "fullscreen";
+			} else {
+				dialog.width = "30%";
+			}
+
+			const title = this.registry.status === "BLOCKED" ? "Motivo bloqueo" : (this.registry.status === "INACTIVE" ? "Motivo inactividad" : "Motivo activo");
+
+			dialog.setTitle(title);
+
+			let div = document.createElement(TAG.DIV);
+			div.style.display = "flex";
+			div.style.flexDirection = "column";
+			div.style.marginTop = "10px";
+			dialog.setContent(div);
+
+			let selectTag = new AonSelect();
+			selectTag.id = "selectTag";
+			selectTag.title = "Motivo";
+			//selectTag.autocomplete = true;
+			div.appendChild(selectTag);
+
+			selectTag.loading(true);
+			getCustomerStatusTags()
+				.then((tags) => {
+					const options = tags.map((c) => ({ ...c, value: c.id }))
+					selectTag.setOptions(options);
+				})
+				.finally(() => {
+					selectTag.loading(false);
+				});
+
+			let datePicker = new AonNewDate();
+			datePicker.id = "aonDBloquedDatePicker";
+
+			const dateTitle = "F. Expiración Empresa";
+			datePicker.title = dateTitle;
+
+			if (this.registry.status !== "ACTIVE")
+				div.appendChild(datePicker);
+
+			dialog.addSendAction(async () => {
+				if (selectTag.value) {
+					dialog.close();
+					this.getApplication().startLoading();
+					await this.saveNote(selectTag.getDetail().name, datePicker ? datePicker.getDateValue() : undefined);
+					this.buildStatusRegistry();
+					this.save();
+					this.getApplication().stopLoading();
+				}
+			}, MSG.SAVE);
+
+			dialog.open();
 		} else {
-			dialog.width = "30%";
+			this.buildStatusRegistry();
+			this.save();
 		}
 
-		const title = this.registry.status === "BLOCKED" ? "Motivo bloqueo" : ( this.registry.status === "INACTIVE" ? "Motivo inactividad" : "Motivo activo");
-
-		dialog.setTitle(title);
-
-		let div = document.createElement(TAG.DIV);
-		div.style.display = "flex";
-		div.style.flexDirection = "column";
-		div.style.marginTop = "10px";
-		dialog.setContent(div);
-
-		let selectTag = new AonSelect();
-		selectTag.id = "selectTag";
-		selectTag.title = "Motivo";
-		//selectTag.autocomplete = true;
-		div.appendChild(selectTag);
-		
-		selectTag.loading(true);
-		getCustomerStatusTags()
-			.then((tags) => {
-				const options = tags.map((c) => ({ ...c, value: c.id }))
-				selectTag.setOptions(options);
-			})
-			.finally(() => {
-				selectTag.loading(false);
-			});
-		
-		let datePicker = new AonNewDate();
-	    datePicker.id = "aonDBloquedDatePicker";
-	    
-	    const dateTitle = "F. Expiración Empresa";
-	    datePicker.title = dateTitle;
-	    
-	    if(this.registry.status !== "ACTIVE")
-	    	div.appendChild(datePicker);
-
-		dialog.addSendAction(async () => {
-			if (selectTag.value) {
-				dialog.close();
-				this.getApplication().startLoading();
-				await this.saveNote(selectTag.getDetail().name, datePicker ? datePicker.getDateValue() : undefined );
-				this.buildStatusRegistry();
-				this.save();
-				this.getApplication().stopLoading();
-			}
-		}, MSG.SAVE);
-
-		dialog.open();
 	}
-	
+
 	async saveNote(tagName, date) {
 		const params = {
 			tagName: tagName,
 			customerId: this.registry.id,
 			status: this.registry.status,
-			date : date,
+			date: date,
 			isSig: this.isSig()
 		}
-		
-		if(params.isSig){
-			let headers = {domain_name: LS.getDomainName(), domain_id: LS.getDomainId()};
-	        //params.domain_name = LS.getDomainName();
-	        //params.domain_id = LS.getDomainId();
-	        await saveCustomerNotePro(params, headers);
+
+		if (params.isSig) {
+			let headers = { domain_name: LS.getDomainName(), domain_id: LS.getDomainId() };
+			//params.domain_name = LS.getDomainName();
+			//params.domain_id = LS.getDomainId();
+			await saveCustomerNotePro(params, headers);
 		} else
 			await saveCustomerNote(params);
 	}
@@ -1057,9 +1068,9 @@ export class AonCustomer extends AonReg {
 		const dialog = this.getApplication().getDialog();
 		dialog.clear();
 
-		if (this.isMobile())  dialog.type = "fullscreen";
+		if (this.isMobile()) dialog.type = "fullscreen";
 		else dialog.width = "30%";
-		
+
 		dialog.setTitle("Acceder empresa vinculada");
 
 		let div = document.createElement(TAG.DIV);
@@ -1087,14 +1098,14 @@ export class AonCustomer extends AonReg {
 
 		dialog.open();
 	}
-	
+
 	openSigUnlinkCompany(resp = []) {
 		const dialog = this.getApplication().getDialog();
 		dialog.clear();
 
-		if (this.isMobile())  dialog.type = "fullscreen";
+		if (this.isMobile()) dialog.type = "fullscreen";
 		else dialog.width = "30%";
-		
+
 		dialog.setTitle("Acceder empresa vinculada");
 
 		let div = document.createElement(TAG.DIV);
@@ -1116,31 +1127,31 @@ export class AonCustomer extends AonReg {
 		dialog.addSendAction(() => {
 			if (selectCompany.value) {
 				dialog.close();
-				this.unlinkSigCompany(JSON.parse(selectCompany.value) );
+				this.unlinkSigCompany(JSON.parse(selectCompany.value));
 			}
 		}, 'Desvincular');
 
 		dialog.open();
 	}
-	
-	async unlinkSigCompany(relation){
-		let headers = {domain_name: relation.domainName, domain_id: relation.domainId};
-		await removeAonCustomerDomain({...relation}, headers)
-		.then(() => {
-			this.showMessage();
-			this.buildEnterpriseLinked();
-		})
-		.catch((err) => this.showError(err));
-		
+
+	async unlinkSigCompany(relation) {
+		let headers = { domain_name: relation.domainName, domain_id: relation.domainId };
+		await removeAonCustomerDomain({ ...relation }, headers)
+			.then(() => {
+				this.showMessage();
+				this.buildEnterpriseLinked();
+			})
+			.catch((err) => this.showError(err));
+
 		await removeCustomerDomainAddInfo(relation)
-		.then(async () => {
-			this.showMessage();
-			this.buildEnterpriseLinked();
-		})
-		.catch((err) => this.showError(err))
-		.finally(() => {
-			this.getApplication().stopLoading();
-		});
+			.then(async () => {
+				this.showMessage();
+				this.buildEnterpriseLinked();
+			})
+			.catch((err) => this.showError(err))
+			.finally(() => {
+				this.getApplication().stopLoading();
+			});
 
 	}
 
@@ -1183,7 +1194,7 @@ export class AonCustomer extends AonReg {
 	}
 
 	back() {
-		if ( !this.aonCustomerList ) {
+		if (!this.aonCustomerList) {
 			this.aonCustomerList = new AonCustomerList();
 			this.aonCustomerList.id = this.getApplication().id + "CustomerList";
 		}
@@ -1195,16 +1206,16 @@ export class AonCustomer extends AonReg {
 			let medias = this.emails.concat(this.phones).concat(this.webs);
 			this.registry.setMedia(medias);
 			this.saveBool = false;
-			
+
 			saveCustomer(this.registry)
 				.then((registry) => {
 					this.registry.id = registry.id;
 					this.saveBool = true;
-					
+
 					let aonTab = this.getElement(this.TABS);
 					let selectedTab = aonTab.getSelectedTab();
 					selectedTab && selectedTab.click();
-					
+
 					this.showToast({
 						type: "success",
 						message: "Datos Guardados Correctamente",
@@ -1224,22 +1235,22 @@ export class AonCustomer extends AonReg {
 	setOffice(office) {
 		this.office = office;
 	}
-	
+
 	setClientFile(clientFile) {
 		this.clientFile = clientFile;
 	}
-	
-	notes(){
+
+	notes() {
 		let rightSidenav = this.getApplication().getRightSidenav();
 		this.clearElement(rightSidenav);
-		
+
 		let notesIcon;
-		
-		if(this.clientFile){
+
+		if (this.clientFile) {
 			notesIcon = this.getElement("aonConfigurationCustomerToolbarHeaderTitleSectionNotesButtonIcon");
-		} else 
+		} else
 			notesIcon = this.getElement("aonCustomerOfficeToolbarHeaderTitleSectionNotesButtonIcon");
-		
+
 		let div = this.createElement(TAG.DIV);
 		div.style = `
 			display: flex;
@@ -1248,10 +1259,10 @@ export class AonCustomer extends AonReg {
 			height: 100%;
 		`;
 		div.id = "customerNotesId";
-    
+
 		if (rightSidenav.style.flexBasis === "0px" || rightSidenav.style.flexBasis.length == 0) {
 			rightSidenav.appendChild(div);
-			
+
 			// Loader
 			let loaderSpan = this.createElement(TAG.SPAN);
 			loaderSpan.className = CONSTANT.SPIN;
@@ -1259,40 +1270,40 @@ export class AonCustomer extends AonReg {
 			loaderSpan.style.height = '100%';
 			loaderSpan.style.justifyContent = 'center';
 			loaderSpan.style.alignItems = 'center';
-			
+
 			let aib = new AonIconButton();
 			aib.id = 'spinLoader';
-			aib.icon  = 'sync';
+			aib.icon = 'sync';
 			aib.title = 'Cargando...';
 			loaderSpan.appendChild(aib);
-			
+
 			div.appendChild(loaderSpan);
-			
+
 			localStorage.setItem("customer", this.registry.getId());
-			
-			if(this.clientFile){
+
+			if (this.clientFile) {
 				let company = LS.getCompany();
-				
+
 				getRelationShipCompany({
 					url: company.domain,
-		            relatedRegistry: company.registry
-		        }).then(relationshipCompany => {
+					relatedRegistry: company.registry
+				}).then(relationshipCompany => {
 					localStorage.setItem("officeDomain", relationshipCompany.rrelationship.domain.id);
 					GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
-		        });
-				
-			
-			} else 
+				});
+
+
+			} else
 				GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
-				
+
 		}
-		
+
 		notesIcon.classList.toggle("material-icons-selected");
-		
-		this.getApplication().toogleRightSidenav();	
-		
+
+		this.getApplication().toogleRightSidenav();
+
 	}
-	
+
 	setCustomerList(aonCustomerList) {
 		this.aonCustomerList = aonCustomerList;
 	}

@@ -289,7 +289,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("El ejercicio contable se encuentra en estado \"{0}\". No se permite la modificaci\u00F3n/borrado del asiento.")
 	String periodStatusWarning(String periotStatus);
 
-	@DefaultMessage("No se permite la modificaci\u00F3n/borrado del asiento..")
+	@DefaultMessage("No se permite la modificaci\u00F3n/borrado del asiento.")
 	String entryNoUpdatable();
 
 	@DefaultMessage("Asiento autom\u00E1tico")
@@ -444,6 +444,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("\u00BFContinuar con el borrado?")
 	String confirmDeleteAction();
+
+	@DefaultMessage("\u00BFGuardar los datos?")
+	String confirmSaveAction();
 
 	@DefaultMessage("\u00BFDeshacer el borrado?")
 	String confirmRestoreAction();
@@ -649,6 +652,12 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Bloqueado")
 	String blocked();
+	
+	@DefaultMessage("Bloquear")
+	String blockAction();	
+
+	@DefaultMessage("Desbloquear")
+	String unblockAction();	
 
 	@DefaultMessage("Facturado")
 	String invoiced();
@@ -890,6 +899,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Estado Vto.")
 	String financeStatus();
 
+	@DefaultMessage("Sin contabilizar")
+	String unrecorded();
+	
 	@DefaultMessage("Contabilizado")
 	String recorded();
 
@@ -4433,9 +4445,62 @@ public interface CommonMessages extends Messages {
 	String entrepreneurship();
 
 	@DefaultMessage("Sin comunicaci\u00F3n de facturas")
-	String noCommunication();  
+	String noCommunication();
 
 	@DefaultMessage("Sin sistema facturaci\u00F3n")
 	String noSif();  
+
+	@DefaultMessage("Cuenta de inmovilizado")
+	String fixedAssetAccount();
+	
+	@DefaultMessage("Cuenta de acumulado")
+	String accumulatedAccount();
+	
+	@DefaultMessage("Cuenta de dotaci\u00F3n")
+	String allocationAccount();
+
+	@DefaultMessage("Fichas de amortizaci\u00F3n")
+	String amortizationModule();
+
+	@DefaultMessage("Fecha de inicio de utilizaci\u00F3n")
+	String assetInitialDate();
+	
+	@DefaultMessage("Coeficiente")
+	String coefficient();
+
+	@DefaultMessage("Resumen por a\u00F1os")
+	String yearSummary();
+
+	@DefaultMessage("Detalles de la amortizaci\u00F3n")
+	String amortizationDetails();
+
+	@DefaultMessage("Tipo de amortizaci\u00F3n")
+	String amortizationType();
+
+	@DefaultMessage("Dotaci\u00F3n")
+	String allocation();
+	
+	@DefaultMessage("Acumulado")
+	String accumulated();
+	
+	@DefaultMessage("Ajuste impuesto")
+	String taxAdjust();
+	
+	@DefaultMessage("Venta o Baja")
+	String saleAmortizaton();
+
+	@DefaultMessage("Fecha de Venta o Baja")
+	String saleDate();
+
+	@DefaultMessage("Importe de Venta o Baja")
+	String saleAmount();
+
+	@DefaultMessage("\u00BFDesea recalcular la ficha? Las cuotas bloqueadas "
+		+ "y/o contabilizadas permanecer\u00E1n iguales. Las cuotas pendientes "
+		+ "se eliminar\u00E1n y se calcular\u00E1n de nuevo. \u00BFContinuar?")
+	String confirmAmortizationCalculateAction();
+
+	@DefaultMessage("Informaci\u00F3n facturas/Documentos pendientes")
+	String domainInvoiceStat();
 }
 

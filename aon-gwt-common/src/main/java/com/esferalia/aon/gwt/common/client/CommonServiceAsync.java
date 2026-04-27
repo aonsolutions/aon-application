@@ -43,6 +43,7 @@ import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
@@ -526,5 +527,10 @@ public interface CommonServiceAsync {
 	
 	void getCompanyFull(String domainName, int domain, String user, AsyncCallback<CompanyFull> asyncCallback) throws AonCoreException;
 	void saveCompanyFull(String domainName, int domain, String user, CompanyFull company, AsyncCallback<CompanyFull> asyncCallback) throws AonCoreException;
+	void getCompanyLogo(String domainName, Integer domain, String user, Integer registry, AsyncCallback<Attach> asyncCallback) throws AonCoreException;
+	void getCompanySignature(String domainName, Integer domain, String user, Integer registry, AsyncCallback<Attach> asyncCallback) throws AonCoreException;
+	
+	// *********************** [AMORTIZATION TYPE]
+	void getAmortizationTypes(Occam occam, int domain, AsyncCallback<List<AmortizationType>> asyncCallback);
 	
 }

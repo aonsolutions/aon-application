@@ -16,6 +16,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class AonCustomDockLayout extends DockLayoutPanel {
+	
+	private static final String CENTER_STYLE = "aon-center-panel";
 
 	// Toolbar
 	private AonToolbar toolbar;
@@ -55,6 +57,19 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 		}
 		
 		addNorth(toolbar, AonToolbar.HEIGTH);
+	}
+	
+	@Override
+	public void add(Widget widget) {
+	    super.add(widget);
+
+	    // GWT envuelve el widget en un contenedor interno
+	    if (widget != null && widget.getElement() != null) {
+	        com.google.gwt.dom.client.Element parent = widget.getElement().getParentElement();
+	        if (parent != null) {
+	            parent.addClassName(CENTER_STYLE);
+	        }
+	    }
 	}
 	
 	public AonToolbar getToolbar() {

@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainInvoiceStatParams;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.RegistryParams;
@@ -21,6 +22,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONNull;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
@@ -407,4 +409,22 @@ public class JsonParams extends JSONObject {
 		return jsonArray;
 	}
 	
+	public static String convert(DomainInvoiceStatParams params) {
+		JSONObject json = new JSONObject();
+		json.put(IRequestParamsNames.DOMAIN ,new JSONNumber( params.getDomain()));
+		params.getFromDate().ifPresent( d -> json.put(IRequestParamsNames.FROM_DATE, new JSONString( FORMATTER.format(d))));
+		params.getToDate().ifPresent( d -> json.put(IRequestParamsNames.TO_DATE,new JSONString( FORMATTER.format(d))));
+		params.getActive().ifPresent( a -> json.put(IRequestParamsNames.ACTIVE, new JSONNumber( a )));
+		params.getQuery().ifPresent( q -> json.put(IRequestParamsNames.QUERY, new JSONString( q )));
+		params.getScope().ifPresent( s -> json.put(IRequestParamsNames.SCOPE, new JSONNumber( s )));
+		params.getFiscalModelType().ifPresent( f -> json.put(IRequestParamsNames.FISCAL_MODEL, new JSONString( f.name() )));
+		params.getInvoices().ifPresent( i -> json.put(IRequestParamsNames.INVOICES, JSONBoolean.getInstance(i)));
+		params.getAlcatraz().ifPresent( a -> json.put(IRequestParamsNames.ALCATRAZ, JSONBoolean.getInstance(a)));
+		params.getRawdoc().ifPresent( r -> json.put(IRequestParamsNames.RAWDOC, JSONBoolean.getInstance(r)));
+		json.put(IRequestParamsNames.LIMIT,new JSONNumber( params.getLimit()));
+		json.put(IRequestParamsNames.OFFSET,new JSONNumber( params.getOffset()));
+		return json.toString();
+	}
+	
+
 }

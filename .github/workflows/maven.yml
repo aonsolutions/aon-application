@@ -318,11 +318,11 @@ jobs:
         mvn -B -Daws.lambda=true -DskipTests=true -pl aon-in-invoice clean install
         mvn -B -Daws.lambda=true -DskipTests=true -pl aon-in-payroll clean install
 
-    - name: Publish WAR to GitHub Packages
-      if: github.ref == 'refs/heads/master'
-      run: mvn -B -pl aon-web-aio -Dgithub.actions=true deploy
-      env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #- name: Publish WAR to GitHub Packages
+    #  if: github.ref == 'refs/heads/master'
+    #  run: mvn -B -pl aon-web-aio -Dgithub.actions=true deploy
+    #  env:
+    #      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     # - name: Pull images from GitHub Container Registry
     #   if: github.ref == 'refs/heads/master'

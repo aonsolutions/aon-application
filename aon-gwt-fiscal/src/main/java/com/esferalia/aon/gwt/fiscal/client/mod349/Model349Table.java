@@ -3,11 +3,14 @@ package com.esferalia.aon.gwt.fiscal.client.mod349;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridCell;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridHeaderRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
@@ -78,7 +81,7 @@ public class Model349Table extends SimpleLayoutPanel implements HasSelectionHand
 			
 			@Override
 			public void onSuccess(LinkedList<Mod349> result) {
-				paint(result);
+				paint(cbk, result);
 				popup.hide();					
 			}
 
@@ -100,6 +103,7 @@ public class Model349Table extends SimpleLayoutPanel implements HasSelectionHand
 		, SST("S"					, 20 ,AON.CSS.aonTextCenter())
 		, DOC("Documento"			, 100,AON.CSS.aonTextLeft())
 		, AUTO(AON.MSG.name()		, 0  ,AON.CSS.aonTextLeft())
+		, DEL(" "					, 20 ,AON.CSS.aonTextCenter())
 		;
 
 		String headerLabel;
@@ -142,7 +146,7 @@ public class Model349Table extends SimpleLayoutPanel implements HasSelectionHand
 		return tab;
 	}
 	
-	private void paint(LinkedList<Mod349> result) {
+	private void paint(Model349Callback cbk, LinkedList<Mod349> result) {
 		for ( Mod349 mod349 : result) {
 			
 			InlineLabel admon = new InlineLabel();
@@ -176,10 +180,44 @@ public class Model349Table extends SimpleLayoutPanel implements HasSelectionHand
 			statusCell.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB(mod349.getStatus()) );
 			row.add( statusCell );
 			
+			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+			deleteButton.addClickHandler( e -> {
+				e.preventDefault();
+				e.stopPropagation();
+				AonConfirmDialog cd = new AonConfirmDialog();
+				cd.confirm(AON.MSG.confirmDeclarationDeleteAction(), new AonConfirmDialogCallback() {
+
+					@Override
+					public void onAccept() {
+
+						Model349.SERVICE.delete(cbk.getOptions().getOccam(), mod349, new AsyncCallback<Void>() {
+							
+							@Override
+							public void onSuccess(Void result) {
+								refresh(cbk);
+							}
+		
+							@Override
+							public void onFailure(Throwable caught) {
+								cbk.showError( AON.MSG.unableToDeleteDeclaration(caught.getMessage()) );
+							}
+						});
+					}
+
+					@Override
+					public void onCancel() {
+						deleteButton.setEnabled(true);
+					}
+					
+				});
+			});
+			
+			boolean canBeRemoved = (mod349.isPending() || mod349.isBlocked()) && mod349.getAdministration() != null && mod349.getAdministration().isCanarias();	
 			row.addCell( comp , AON.CSS.aonTextCenter())
 				.addCell( sust , AON.CSS.aonTextCenter())
 				.addCell( new InlineLabel(mod349.getDocument()))
 				.addCell( new InlineLabel(mod349.getFullName()))
+				.addCell( canBeRemoved ? deleteButton : new Label() )
 				;
 		}
 		

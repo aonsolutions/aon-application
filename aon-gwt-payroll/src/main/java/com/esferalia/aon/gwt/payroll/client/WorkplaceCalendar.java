@@ -166,7 +166,7 @@ public class WorkplaceCalendar extends AonCustomDockLayout {
         getDomain(d -> {
             getHolidays(h -> {
                 getCalendar(c -> {
-                	if(c.isEmpty()) calendar = new Calendar().setDomain(domain);
+                	if(c.isEmpty()) calendar = new Calendar().setDomain(domain).setDescription("Calendario " + workplace.getDescription());
                 	else calendar = c.get(0);
 
                     buildForm();

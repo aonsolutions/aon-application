@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.json.ItemJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
@@ -47,12 +48,17 @@ public class InvoiceDetailJSON {
 			.setPrepayment(json.optBoolean(IJsonNames.PREPAYMENT))
 			.setSource(InvoiceSource.TEDI)
 			.setInvoiceTaxes(new LinkedList<>())
+			.setWorkplace(JsonUtils.has(json, IJsonNames.WORKPLACE) 
+					? new Workplace().setId(JsonUtils.getInteger(json, IJsonNames.WORKPLACE))
+					: null)
 			.setInvestAsset(JsonUtils.getInteger(json, IJsonNames.INVEST_ASSET));
 		
 		if(json.opt(IJsonNames.PERCENTAGE) != null) {
 			double quota = JsonUtils.getdouble(json, IJsonNames.QUOTA);	
 			double surchargeQuota = JsonUtils.getdouble(json, IJsonNames.SURCHARGE_QUOTA);
-			double deductibleQuota = AonMathUtils.round(quota); // + surchargeQuota);
+			double deductibleQuota = JsonUtils.has(json, IJsonNames.VAT_DEDUCTIBLE_QUOTA)
+				? JsonUtils.getdouble(json, IJsonNames.VAT_DEDUCTIBLE_QUOTA)
+				: AonMathUtils.round(quota);
 			InvoiceTax tax = new InvoiceTax()
 					.setDomain(detail.getDomain())
 					.setTaxType(TaxType.VAT)
@@ -62,7 +68,9 @@ public class InvoiceDetailJSON {
 					.setSurcharge(JsonUtils.getdouble(json, IJsonNames.SURCHARGE))
 					.setSurchargeQuota(surchargeQuota)
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-					.setDeductiblePercent(100.0)
+					.setDeductiblePercent(JsonUtils.has(json, IJsonNames.VAT_DEDUCTIBLE_PERCENT) 
+							? JsonUtils.getdouble(json, IJsonNames.VAT_DEDUCTIBLE_PERCENT) 
+							: 100.0)
 					.setDeductibleQuota(deductibleQuota);
 			detail.getInvoiceTaxes().add(tax);
 		}
@@ -70,7 +78,9 @@ public class InvoiceDetailJSON {
 			InvoiceTax tax = new InvoiceTax()
 					.setDomain(detail.getDomain())
 					.setTaxType(TaxType.RETENTION)
-					.setBase(JsonUtils.getdouble(json, IJsonNames.AMOUNT))
+					.setBase(JsonUtils.has(json, IJsonNames.WITHHOLDING_BASE)
+						? JsonUtils.getdouble(json, IJsonNames.WITHHOLDING_BASE)
+						: JsonUtils.getdouble(json, IJsonNames.AMOUNT))
 					.setPercentage(JsonUtils.getdouble(json, IJsonNames.WITHHOLDING_PERCENTAGE))
 					.setQuota(JsonUtils.getdouble(json, IJsonNames.WITHHOLDING_QUOTA))
 					.setWithholding(true)
@@ -100,8 +110,8 @@ public class InvoiceDetailJSON {
 				.put(IJsonNames.DISCOUNT, detail.getDiscount())
 				.put(IJsonNames.CATEGORY, detail.getAccountCode())
 				.put(IJsonNames.PREPAYMENT, detail.isPrepayment())
-				.put(IJsonNames.SOURCE, detail.getSource().name());
-		
+				.put(IJsonNames.SOURCE, detail.getSource().name())
+				.put(IJsonNames.WORKPLACE, detail.getWorkplace() != null ? detail.getWorkplace().getId() : null);
 		
 		detail.getInvoiceTaxes().stream().forEach(tax -> {
 			if(TaxType.VAT.equals(tax.getTaxType())) {

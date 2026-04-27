@@ -17,6 +17,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -263,7 +264,10 @@ public class LoginTestCase extends AppBaseTestCase {
 			js.executeScript(
 			    "let d = document.getElementById('aonDesktopInvoiceConfigurationDialog'); if(d) d.close();"
 			);
-			wait.until(ExpectedConditions.elementToBeClickable(By.id("aonCompanyTabFilter-inactive"))).click();
+			
+			WebElement aonCompanyTabFilterInactive = wait.until(ExpectedConditions.elementToBeClickable(By.id("aonCompanyTabFilter-inactive")))/*.click()*/;
+			new Actions(webDriver).moveToElement(aonCompanyTabFilterInactive).click().build().perform();
+			
 			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#UlCompanies .aonLiSpan"))).click();
 
 			WebElement aonJsfAccountingGraphFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonJsfAccountingGraphFrame")));

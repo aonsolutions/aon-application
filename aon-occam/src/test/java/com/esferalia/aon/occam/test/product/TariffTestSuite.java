@@ -11,6 +11,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	TariffValidationSaveOverflowCode.class,
 	TariffValidationSaveOverflowName.class,
 	TariffCRUDETest.class,
+	PriceStrategyDAOTest.class,
 })
 public class TariffTestSuite {
 

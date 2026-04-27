@@ -71,6 +71,12 @@ public class AonDisplayTable extends FlowPanel {
 			addCell(style).add(widget);
 			return this;
 		}
+		public AonDisplayTableRow addEmptyCell() {
+			return addCell( new Label() );
+		}
+		public AonDisplayTableRow addEmptyCellIf( boolean condition) {
+			return addCellIf( condition, new Label() );
+		}
 	}
 	
 	public static class AonDisplayTableCell extends FlowPanel {

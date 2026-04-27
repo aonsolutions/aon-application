@@ -1024,6 +1024,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconCheckCircle();
 	
+	@Source("icons/aon-icon-cancel-circle.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconCancelCircle();
+
 	@Source("icons/aon-icon-check-circle-green.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconCheckCircleGreen();
@@ -1075,6 +1079,46 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-keyboard-arrow-left.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconKeyboardArrowLeft();
+	
+	@Source("icons/aon-icon-fax.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconFax();
+	
+	@Source("icons/aon-icon-location-on.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconLocationOn();
+	
+	@Source("icons/aon-icon-mobile.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconMobile();
+	
+	@Source("icons/aon-icon-move-location.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconMoveLocation();
+	
+	@Source("icons/aon-icon-phone.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconPhone();
+	
+	@Source("icons/aon-icon-share.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconShare();
+	
+	@Source("icons/aon-icon-dataset-linked.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconDatasetLinked();
+	
+	@Source("icons/aon-icon-shield-locked.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconShieldLocked();
+	
+	@Source("icons/aon-icon-admin-panel-settings.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconAdminPanelSettings();
+	
+	@Source("icons/aon-icon-encrypted-off.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconEncryptedOff();
 }
 
 

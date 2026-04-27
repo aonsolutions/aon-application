@@ -59,8 +59,6 @@ import com.esferalia.aon.occam.api.model.Properties.AccountEntryProperties;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.fiscal.AccountingBreakdown;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -72,7 +70,7 @@ import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TaxType;
-import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.accounting.amortization.AmortizationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountEntryValidation;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceValidation;
@@ -184,7 +182,7 @@ public class AccountEntryDAO {
 				.fetch()
 				.stream()
 				.map( new FullAccountEntryFiller() )
-				.peek( ae -> ae.setDetails(ctx.getDslContext()
+				.map( ae -> ae.setDetails(ctx.getDslContext()
 						.select(ACCOUNT_ENTRY_DETAIL.ID,ACCOUNT_ENTRY_DETAIL.DOMAIN,ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY
 								,ACCOUNT_ENTRY_DETAIL.LINE,ACCOUNT_ENTRY_DETAIL.ACCOUNT,ACCOUNT_ENTRY_DETAIL.CONCEPT
 								,ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,ACCOUNT_ENTRY_DETAIL.DEBIT,ACCOUNT_ENTRY_DETAIL.CREDIT
@@ -212,14 +210,11 @@ public class AccountEntryDAO {
 			, int offset, int limit, IDAOCallback callback) {
 		Condition[] conditions = ACCOUNT_ENTRY_PROPERTIES.getConditions(filter);
 		return fetchFlat(ctx, conditions, orderBy, offset, limit, callback)
-			.onClose(new Runnable() {
-					@Override
-					public void run() {
-						if (callback != null) {
-							callback.onFinish();
-						}
-					}
-				})
+			.onClose(() -> {
+				if (callback != null) {
+					callback.onFinish();
+				}
+			})
 ;
 	}
 	
@@ -236,12 +231,9 @@ public class AccountEntryDAO {
 					.limit(offset,limit)
 					.fetch()
 					.stream()
-					.onClose(new Runnable() {
-						@Override
-						public void run() {
-							if (callback != null) {
-								callback.onFinish();
-							}
+					.onClose(() -> {
+						if (callback != null) {
+							callback.onFinish();
 						}
 					})
 					.map (rec -> new FlatAccountEntryDetail().setEntryId(rec.getValue(ACCOUNT_ENTRY.ID)))
@@ -250,8 +242,7 @@ public class AccountEntryDAO {
 							, orderBy
 							, 0
 							, Integer.MAX_VALUE
-							, new IDAOCallback() { @Override public void onFinish() {} } )
-								)
+							, () -> {} ))
 				;
 	}
 	
@@ -295,33 +286,33 @@ public class AccountEntryDAO {
 				.limit(offset,limit)
 				.fetch()
  				.stream()
-				.map( record -> new FlatAccountEntryDetail( )
-						.setEntryId(record.getValue(ACCOUNT_ENTRY.ID))
-						.setEntryDomain(record.getValue(ACCOUNT_ENTRY.DOMAIN))
-						.setEntryPperiod(record.getValue(ACCOUNT_ENTRY.ACCOUNT_PERIOD))
-						.setEntryPeriodName(record.getValue(ACCOUNT_PERIOD.NAME))
-						.setEntryDate(record.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
-						.setEntryType(AccountEntryType.safeValueOf( record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)))
-						.setActivity(record.getValue(ACCOUNT_ENTRY.ACTIVITY))
-						.setActivityName(record.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
-						.setJournal(record.getValue(ACCOUNT_ENTRY.JOURNAL))
-						.setComments(record.getValue(ACCOUNT_ENTRY.COMMENTS))
-						.setEntrySecurityLevel(SecurityLevel.safeValueOf(record.getValue(ACCOUNT_ENTRY.SECURITY_LEVEL)))
-						.setEntryCreationUser(record.getValue(ACCOUNT_ENTRY.CREATION_USER))
-						.setEntryCreationDate(record.getValue(ACCOUNT_ENTRY.CREATION_DATE))
-						.setEntryModificationUser(record.getValue(ACCOUNT_ENTRY.MODIFICATION_USER))
-						.setEntryModificationDate(record.getValue(ACCOUNT_ENTRY.MODIFICATION_DATE))
-						.setDetailId(record.getValue(ACCOUNT_ENTRY_DETAIL.ID) )
-						.setAccount(record.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
-						.setAccountCode(record.getValue(DET_ACCOUNT.CODE))
-						.setAccountDescription(record.getValue(DET_ACCOUNT.DESCRIPTION))
-						.setConcept(record.getValue(ACCOUNT_ENTRY_DETAIL.CONCEPT))
-						.setDebit(record.getValue(ACCOUNT_ENTRY_DETAIL.DEBIT))
-						.setCredit(record.getValue(ACCOUNT_ENTRY_DETAIL.CREDIT))
-						.setBalancingAccount(record.getValue(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
-						.setBalancingAccountCode(record.getValue(BAL_ACCOUNT.CODE))
-						.setBalancingAccountDescription(record.getValue(BAL_ACCOUNT.DESCRIPTION))
-						.setDocumentNumber(record.getValue(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER))
+				.map( rec -> new FlatAccountEntryDetail( )
+						.setEntryId(rec.getValue(ACCOUNT_ENTRY.ID))
+						.setEntryDomain(rec.getValue(ACCOUNT_ENTRY.DOMAIN))
+						.setEntryPperiod(rec.getValue(ACCOUNT_ENTRY.ACCOUNT_PERIOD))
+						.setEntryPeriodName(rec.getValue(ACCOUNT_PERIOD.NAME))
+						.setEntryDate(rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
+						.setEntryType(AccountEntryType.safeValueOf( rec.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)))
+						.setActivity(rec.getValue(ACCOUNT_ENTRY.ACTIVITY))
+						.setActivityName(rec.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
+						.setJournal(rec.getValue(ACCOUNT_ENTRY.JOURNAL))
+						.setComments(rec.getValue(ACCOUNT_ENTRY.COMMENTS))
+						.setEntrySecurityLevel(SecurityLevel.safeValueOf(rec.getValue(ACCOUNT_ENTRY.SECURITY_LEVEL)))
+						.setEntryCreationUser(rec.getValue(ACCOUNT_ENTRY.CREATION_USER))
+						.setEntryCreationDate(rec.getValue(ACCOUNT_ENTRY.CREATION_DATE))
+						.setEntryModificationUser(rec.getValue(ACCOUNT_ENTRY.MODIFICATION_USER))
+						.setEntryModificationDate(rec.getValue(ACCOUNT_ENTRY.MODIFICATION_DATE))
+						.setDetailId(rec.getValue(ACCOUNT_ENTRY_DETAIL.ID) )
+						.setAccount(rec.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
+						.setAccountCode(rec.getValue(DET_ACCOUNT.CODE))
+						.setAccountDescription(rec.getValue(DET_ACCOUNT.DESCRIPTION))
+						.setConcept(rec.getValue(ACCOUNT_ENTRY_DETAIL.CONCEPT))
+						.setDebit(rec.getValue(ACCOUNT_ENTRY_DETAIL.DEBIT))
+						.setCredit(rec.getValue(ACCOUNT_ENTRY_DETAIL.CREDIT))
+						.setBalancingAccount(rec.getValue(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
+						.setBalancingAccountCode(rec.getValue(BAL_ACCOUNT.CODE))
+						.setBalancingAccountDescription(rec.getValue(BAL_ACCOUNT.DESCRIPTION))
+						.setDocumentNumber(rec.getValue(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER))
 					)
 			;
 	}
@@ -368,7 +359,7 @@ public class AccountEntryDAO {
 		ctx.checkWrite();
 		AccountEntryValidation.validateEntry(ctx, ae);
 		increaseJournal(ctx, ae);
-		AccountEntryRecord record = ctx.getDslContext()
+		AccountEntryRecord rec = ctx.getDslContext()
 			.insertInto(ACCOUNT_ENTRY)
 				.set(ACCOUNT_ENTRY.DOMAIN,ae.getDomain())
 				.set(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ae.getPeriod())
@@ -382,10 +373,10 @@ public class AccountEntryDAO {
 				.set(ACCOUNT_ENTRY.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 				.returning(ACCOUNT_ENTRY.ID)
 				.fetchOne();
-		ae.setId(record.getValue(ACCOUNT_ENTRY.ID));
+		ae.setId(rec.getValue(ACCOUNT_ENTRY.ID));
 		ctx.log().debug("INSERT ACCOUNT_ENTRY asiento: {0}",ae.getId());
 		batchInsert(ctx, ae);
-		return record.getValue(ACCOUNT_ENTRY.ID); 
+		return rec.getValue(ACCOUNT_ENTRY.ID); 
 	}
 
 	private static void batchInsert(AONContext ctx, AccountEntry ae) {
@@ -490,20 +481,19 @@ public class AccountEntryDAO {
 			}
 		}
 	}
-	public static LinkedHashMap<String, AccountBalance> fetchBalance(
-			AONContext ctx, AccMiningParameters params) {
+	public static LinkedHashMap<String, AccountBalance> fetchBalance(AONContext ctx, AccMiningParameters params) {
 		return fetchBalance(ctx, params, false);
 	}
 
-	public static LinkedHashMap<String, AccountBalance> fetchBalance(
-			AONContext ctx, AccMiningParameters params,boolean pyg) {
+	public static LinkedHashMap<String, AccountBalance> fetchBalance(AONContext ctx, AccMiningParameters params,boolean pyg) {
+		
 		java.sql.Date start = AonDateUtils.toSql(params.getStartDate()!= null? params.getStartDate() : AonDateUtils.getYearFirstDay(0));
 		java.sql.Date end = AonDateUtils.toSql(params.getEndDate()!= null? params.getEndDate() : AonDateUtils.getYearLastDay(9999));
 		
 		Field<String> accountField = DSL.substring(ACCOUNT.CODE, 1, params.getAccountLevel()); 
 		Field<BigDecimal> sumDebit = DSL.sum(ACCOUNT_ENTRY_DETAIL.DEBIT); 
 		Field<BigDecimal> sumCredit = DSL.sum(ACCOUNT_ENTRY_DETAIL.CREDIT); 
-		LinkedHashMap<String, AccountBalance> map = new LinkedHashMap<String, AccountBalance>();
+		LinkedHashMap<String, AccountBalance> map = new LinkedHashMap<>();
 		Condition pygCondition = pyg
 				?ACCOUNT_ENTRY.ENTRY_TYPE.ne(AccountEntryType.OPERATING.value())
 						.and(ACCOUNT.CODE.like("6%").or(ACCOUNT.CODE.like("7%")) )
@@ -511,7 +501,7 @@ public class AccountEntryDAO {
 		;
 		Condition domainCondition = ACCOUNT_ENTRY.DOMAIN.equal(params.getDomain());
 		if ( params.getDomains() != null && params.getDomains().length > 0) {
-			LinkedList<Integer> domains = new LinkedList<Integer>(); 
+			LinkedList<Integer> domains = new LinkedList<>(); 
 			for (int dom : params.getDomains()) {
 				domains.add(dom);
 			}
@@ -532,11 +522,11 @@ public class AccountEntryDAO {
 			.groupBy(ACCOUNT_ENTRY.ENTRY_TYPE, accountField)
 			.fetch()
 			.stream()
-			.forEach( record -> {
-				byte type = record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE);
-				String account = record.getValue(accountField);
-				double debit = record.getValue(sumDebit).doubleValue();
-				double credit = record.getValue(sumCredit).doubleValue();
+			.forEach( rec -> {
+				byte type = rec.getValue(ACCOUNT_ENTRY.ENTRY_TYPE);
+				String account = rec.getValue(accountField);
+				double debit = rec.getValue(sumDebit).doubleValue();
+				double credit = rec.getValue(sumCredit).doubleValue();
 				if(account.length() > 0) putAccountBalance(map,type,account.substring(0,1), debit,credit);
 				if(account.length() > 1) putAccountBalance(map,type,account.substring(0,2), debit,credit);
 				if(account.length() > 2) putAccountBalance(map,type,account.substring(0,3), debit,credit);
@@ -549,13 +539,13 @@ public class AccountEntryDAO {
 	private static synchronized void increaseJournal(AONContext ctx,AccountEntry accountEntry) {
 		// Se averigua el último numero de diario y se incrementa en uno.
 		AggregateFunction<Integer> maxFunc = DSL.max(ACCOUNT_ENTRY.JOURNAL);
-		Record1<Integer> record = ctx.getDslContext()
+		Record1<Integer> rec = ctx.getDslContext()
 				.select(maxFunc)
 				.from(ACCOUNT_ENTRY)
 				.where(ACCOUNT_ENTRY.DOMAIN.equal(accountEntry.getDomain()))
 				.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.equal(accountEntry.getPeriod()))
 				.fetchOne();
-		Integer lastJournal = record.getValue(maxFunc);
+		Integer lastJournal = rec.getValue(maxFunc);
 		if (lastJournal == null) {
 			lastJournal = 0;
 		}
@@ -565,7 +555,7 @@ public class AccountEntryDAO {
 	public static void delete(AONContext ctx, Integer id) {
 		ctx.checkWrite();
 		AccountEntry entry = getAccountEntry(ctx, id);
-		if (entry == null) throw new AonCoreException(AonError.ACCOUNT_ENTRY_NOT_FOUND.getMessage());;
+		if (entry == null) throw new AonCoreException(AonError.ACCOUNT_ENTRY_NOT_FOUND.getMessage());
 		AccountEntryValidation.validateRemove(ctx, entry);
 		beforeRemove(ctx,entry);
 		// Se borran las lineas
@@ -586,72 +576,29 @@ public class AccountEntryDAO {
 	private static void beforeRemove(final AONContext ctx,final AccountEntry entry) {
 		entry.getEntryType().visit(entry, new IAccountEntryTypeVisitor() {
 			
-			@Override
-			public void visitTax(AccountEntry entry) {
-				FiscalModelDAO.unrecord(ctx, entry.getId());
-			}
-			@Override
-			public void visitReturnedPayment(AccountEntry entry) {
-				removeFinance(entry);
+			private void throwAutomaticEntryDelete() {
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
 			}
 			
-			@Override
-			public void visitReturnedCollection(AccountEntry entry) {
-				removeFinance(entry);
-			}
+			@Override public void visitLeasingFee(AccountEntry entry) { throwAutomaticEntryDelete(); }
+			@Override public void visitLeasing(AccountEntry entry) {throwAutomaticEntryDelete();}
+			@Override public void visitInvestmentInvoice(AccountEntry entry) {throwAutomaticEntryDelete();}
 			
-			@Override
-			public void visitCollection(AccountEntry entry) {
-				removeFinance(entry);
-			}
-			
-			@Override
-			public void visitPayment(AccountEntry entry) {
-				removeFinance(entry);
-			}
-			@Override
-			public void visitFinance(AccountEntry entry) {
-				removeFinance(entry);
-			}
 
-			@Override
-			public void visitLeasingFee(AccountEntry entry) {
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
-			}
+			@Override public void visitTax(AccountEntry entry) { FiscalModelDAO.unrecord(ctx, entry.getId());}
+			@Override public void visitAmortization(AccountEntry entry) { AmortizationDAO.unrecord(ctx, entry.getId());}
+			@Override public void visitOtherIncomes(AccountEntry entry) { AccountingIncomeDAO.unrecord( ctx, entry.getDomain(), entry.getId() ); }
+			@Override public void visitOtherExpenses(AccountEntry entry) { AccountingExpenseDAO.unrecord( ctx, entry.getDomain(), entry.getId() ); }
 			
-			@Override
-			public void visitLeasing(AccountEntry entry) {
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
-			}
-			
-			@Override
-			public void visitInvestmentInvoice(AccountEntry entry) {
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
-			}
-			
-			
-			@Override
-			public void visitAmortization(AccountEntry entry) {
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
-			}
-			@Override
-			public void visitExpenseInvoice(AccountEntry entry) {
-				removeInvoice(entry);
-			}
-			@Override
-			public void visitSalesInvoice(AccountEntry entry) {
-				removeInvoice(entry);
-			}
-			@Override
-			public void visitPurchaseInvoice(AccountEntry entry) {
-				removeInvoice(entry);
-			}
-
 			private void removeFinance(AccountEntry entry) {
 				FinanceEntryDAO.deleteAccountEntryFinanceTrackings(ctx, entry.getId());
 			}
+			@Override public void visitReturnedPayment(AccountEntry entry) { removeFinance(entry);}
+			@Override public void visitReturnedCollection(AccountEntry entry) {removeFinance(entry);}
+			@Override public void visitCollection(AccountEntry entry) {removeFinance(entry);}
+			@Override public void visitPayment(AccountEntry entry) {removeFinance(entry);}
+			@Override public void visitFinance(AccountEntry entry) {removeFinance(entry);}
 
-			
 			private void removeInvoice(AccountEntry entry) {
 				Integer invoiceId = ctx.getDslContext()
 						.select( ACCOUNT_ENTRY_INVOICE.INVOICE )
@@ -678,14 +625,11 @@ public class AccountEntryDAO {
 				}
 			}
 			
-			@Override 
-			public void visitOtherIncomes(AccountEntry entry) {
-				AccountingIncomeDAO.unrecord( ctx, entry.getDomain(), entry.getId() );
-			}
-			@Override 
-			public void visitOtherExpenses(AccountEntry entry) {
-				AccountingExpenseDAO.unrecord( ctx, entry.getDomain(), entry.getId() );
-			}
+			@Override public void visitExpenseInvoice(AccountEntry entry) { removeInvoice(entry); }
+			@Override public void visitSalesInvoice(AccountEntry entry) { removeInvoice(entry); }
+			@Override public void visitPurchaseInvoice(AccountEntry entry) { removeInvoice(entry); }
+
+			
 			
 			@Override public void visitOpening(AccountEntry entry) { /* Nothing */ }
 			@Override public void visitClosing(AccountEntry entry) { /* Nothing */ }
@@ -824,22 +768,22 @@ public class AccountEntryDAO {
 
 	private static class AccountingBreakdownFiller  implements Function<Record,AccountingBreakdown> {
 		@Override
-		public AccountingBreakdown apply(Record record) {
+		public AccountingBreakdown apply(Record rec) {
 			return new AccountingBreakdown()
-			.setEntryId(record.getValue(ACCOUNT_ENTRY.ID))
-			.setJournal(record.getValue(ACCOUNT_ENTRY.JOURNAL))
-			.setIssueDate(record.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
-			.setActivity(record.getValue(ENTERPRISE_ACTIVITY.ID))
-			.setActivityDescription(record.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
-			.setEpigraph(record.getValue(IAE.EPIGRAPH))
-			.setEpigraphSection(record.getValue(IAE.SECTION))
-			.setRegime( IRPFRegime.safeValueOf(record.getValue(ENTERPRISE_ACTIVITY.RETENTION_REGIME)))
-			.setAccount(record.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
-			.setAccountCode(record.getValue(ACCOUNT.CODE))
-			.setAccountDescription(record.getValue(ACCOUNT.DESCRIPTION))
-			.setConcept(record.getValue(ACCOUNT_ENTRY_DETAIL.CONCEPT))
-			.setDebit(record.getValue(ACCOUNT_ENTRY_DETAIL.DEBIT))
-			.setCredit(record.getValue(ACCOUNT_ENTRY_DETAIL.CREDIT))
+			.setEntryId(rec.getValue(ACCOUNT_ENTRY.ID))
+			.setJournal(rec.getValue(ACCOUNT_ENTRY.JOURNAL))
+			.setIssueDate(rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
+			.setActivity(rec.getValue(ENTERPRISE_ACTIVITY.ID))
+			.setActivityDescription(rec.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
+			.setEpigraph(rec.getValue(IAE.EPIGRAPH))
+			.setEpigraphSection(rec.getValue(IAE.SECTION))
+			.setRegime( IRPFRegime.safeValueOf(rec.getValue(ENTERPRISE_ACTIVITY.RETENTION_REGIME)))
+			.setAccount(rec.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
+			.setAccountCode(rec.getValue(ACCOUNT.CODE))
+			.setAccountDescription(rec.getValue(ACCOUNT.DESCRIPTION))
+			.setConcept(rec.getValue(ACCOUNT_ENTRY_DETAIL.CONCEPT))
+			.setDebit(rec.getValue(ACCOUNT_ENTRY_DETAIL.DEBIT))
+			.setCredit(rec.getValue(ACCOUNT_ENTRY_DETAIL.CREDIT))
 			;
 		}
 
@@ -848,24 +792,24 @@ public class AccountEntryDAO {
 
 	private static class FullAccountEntryFiller  implements Function<Record,AccountEntry> {
 		@Override
-		public AccountEntry apply(Record record) {
+		public AccountEntry apply(Record rec) {
 			return new AccountEntry()
-				.setId( record.getValue(ACCOUNT_ENTRY.ID) )
-				.setPeriod( record.getValue(ACCOUNT_ENTRY.ACCOUNT_PERIOD))
-				.setPeriodName( record.getValue(ACCOUNT_PERIOD.NAME) )
-				.setPeriodStatus(AccountPeriodStatus.values()[record.getValue(ACCOUNT_PERIOD.STATUS)])
-				.setDomain( record.getValue(ACCOUNT_ENTRY.DOMAIN))
-				.setEntryDate( record.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
-				.setEntryType( AccountEntryType.values()[record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)])
-				.setActivity( record.getValue(ACCOUNT_ENTRY.ACTIVITY))
-				.setActivityDescription(record.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
-				.setJournal( record.getValue(ACCOUNT_ENTRY.JOURNAL))
-				.setSecurityLevel(SecurityLevel.values()[record.getValue(ACCOUNT_ENTRY.SECURITY_LEVEL)])
-				.setComments( record.getValue(ACCOUNT_ENTRY.COMMENTS))
-				.setCreationUser(record.getValue(ACCOUNT_ENTRY.CREATION_USER))
-				.setCreationDate(record.getValue(ACCOUNT_ENTRY.CREATION_DATE))
-				.setModificationUser(record.getValue(ACCOUNT_ENTRY.MODIFICATION_USER))
-				.setModificationDate(record.getValue(ACCOUNT_ENTRY.MODIFICATION_DATE))
+				.setId( rec.getValue(ACCOUNT_ENTRY.ID) )
+				.setPeriod( rec.getValue(ACCOUNT_ENTRY.ACCOUNT_PERIOD))
+				.setPeriodName( rec.getValue(ACCOUNT_PERIOD.NAME) )
+				.setPeriodStatus(AccountPeriodStatus.values()[rec.getValue(ACCOUNT_PERIOD.STATUS)])
+				.setDomain( rec.getValue(ACCOUNT_ENTRY.DOMAIN))
+				.setEntryDate( rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
+				.setEntryType( AccountEntryType.values()[rec.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)])
+				.setActivity( rec.getValue(ACCOUNT_ENTRY.ACTIVITY))
+				.setActivityDescription(rec.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
+				.setJournal( rec.getValue(ACCOUNT_ENTRY.JOURNAL))
+				.setSecurityLevel(SecurityLevel.values()[rec.getValue(ACCOUNT_ENTRY.SECURITY_LEVEL)])
+				.setComments( rec.getValue(ACCOUNT_ENTRY.COMMENTS))
+				.setCreationUser(rec.getValue(ACCOUNT_ENTRY.CREATION_USER))
+				.setCreationDate(rec.getValue(ACCOUNT_ENTRY.CREATION_DATE))
+				.setModificationUser(rec.getValue(ACCOUNT_ENTRY.MODIFICATION_USER))
+				.setModificationDate(rec.getValue(ACCOUNT_ENTRY.MODIFICATION_DATE))
 				.setDirty(false)
 				;
 		}
@@ -875,22 +819,22 @@ public class AccountEntryDAO {
 
 	private static class FullAccountEntryDetailFiller  implements Function<Record,AccountEntryDetail> {
 		@Override
-		public AccountEntryDetail apply(Record record) {
+		public AccountEntryDetail apply(Record rec) {
 			return new AccountEntryDetail()
-				.setId( record.getValue(ACCOUNT_ENTRY_DETAIL.ID) )
-				.setDomain( record.getValue(ACCOUNT_ENTRY_DETAIL.DOMAIN))
-				.setAccountEntry( record.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
-				.setAccountId(record.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
-				.setAccountCode(record.getValue(DET_ACCOUNT.CODE))
-				.setAccountDescription(record.getValue(DET_ACCOUNT.DESCRIPTION))
-				.setLine( record.getValue(ACCOUNT_ENTRY_DETAIL.LINE).intValue() )
-				.setConcept(record.getValue(ACCOUNT_ENTRY_DETAIL.CONCEPT))
-				.setDebit(record.getValue(ACCOUNT_ENTRY_DETAIL.DEBIT))
-				.setCredit(record.getValue(ACCOUNT_ENTRY_DETAIL.CREDIT))
-				.setBalancingAccountId(record.getValue(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
-				.setBalancingAccountCode(record.getValue(BAL_ACCOUNT.CODE))
-				.setBalancingAccountDescription(record.getValue(BAL_ACCOUNT.DESCRIPTION))
-				.setDocumentNumber(record.getValue(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER))
+				.setId( rec.getValue(ACCOUNT_ENTRY_DETAIL.ID) )
+				.setDomain( rec.getValue(ACCOUNT_ENTRY_DETAIL.DOMAIN))
+				.setAccountEntry( rec.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
+				.setAccountId(rec.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
+				.setAccountCode(rec.getValue(DET_ACCOUNT.CODE))
+				.setAccountDescription(rec.getValue(DET_ACCOUNT.DESCRIPTION))
+				.setLine( rec.getValue(ACCOUNT_ENTRY_DETAIL.LINE).intValue() )
+				.setConcept(rec.getValue(ACCOUNT_ENTRY_DETAIL.CONCEPT))
+				.setDebit(rec.getValue(ACCOUNT_ENTRY_DETAIL.DEBIT))
+				.setCredit(rec.getValue(ACCOUNT_ENTRY_DETAIL.CREDIT))
+				.setBalancingAccountId(rec.getValue(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
+				.setBalancingAccountCode(rec.getValue(BAL_ACCOUNT.CODE))
+				.setBalancingAccountDescription(rec.getValue(BAL_ACCOUNT.DESCRIPTION))
+				.setDocumentNumber(rec.getValue(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER))
 				.setDirty(false)
 				;
 		}
@@ -908,19 +852,19 @@ public class AccountEntryDAO {
 			return new Condition[] { filterDAO.getCondition() };
 		}
 
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.ID);}
-		@Override public Property<Integer> getJournalProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.JOURNAL);}
-		@Override public Property<Integer> getActivityProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.ACTIVITY);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.DOMAIN);}
-		@Override public Property<Integer> getAccountPeriodProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.ACCOUNT_PERIOD);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.ID);}
+		@Override public Property<Integer> getJournalProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.JOURNAL);}
+		@Override public Property<Integer> getActivityProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.ACTIVITY);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.DOMAIN);}
+		@Override public Property<Integer> getAccountPeriodProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.ACCOUNT_PERIOD);}
 		@Override public Property<Date> getEntryDateProperty() {return new FilterDAO.DatePropertyDAO(ACCOUNT_ENTRY.ENTRY_DATE);}
-		@Override public Property<Byte> getEntryTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(ACCOUNT_ENTRY.ENTRY_TYPE);}
-		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<Byte>(ACCOUNT_ENTRY.SECURITY_LEVEL);}
-		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY.COMMENTS);}
+		@Override public Property<Byte> getEntryTypeProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.ENTRY_TYPE);}
+		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.SECURITY_LEVEL);}
+		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.COMMENTS);}
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.TimestampPropertyDAO(ACCOUNT_ENTRY.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY.CREATION_USER);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.CREATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.TimestampPropertyDAO(ACCOUNT_ENTRY.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY.MODIFICATION_USER);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.MODIFICATION_USER);}
 	}
 
 	private static final AccountEntryDetailPropertiesDAO ACCOUNT_ENTRY_DETAIL_PROPERTIES = new AccountEntryDetailPropertiesDAO();
@@ -934,16 +878,16 @@ public class AccountEntryDAO {
 			return new Condition[] { filterDAO.getCondition() };
 		}
 
-		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY_DETAIL.ACCOUNT);}
-		@Override public Property<String> getAccountCodeProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT.CODE);}
-		@Override public Property<String> getAccountDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT.DESCRIPTION);}
-		@Override public Property<String> getConceptProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY_DETAIL.CONCEPT);}
-		@Override public Property<Double> getDebitProperty() {return new FilterDAO.PropertyDAO<Double>(ACCOUNT_ENTRY_DETAIL.DEBIT);}
-		@Override public Property<Double> getCreditProperty() {return new FilterDAO.PropertyDAO<Double>(ACCOUNT_ENTRY_DETAIL.CREDIT);}
-		@Override public Property<String> getDocumentNumber() {return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER);}
-		@Override public Property<Integer> getBalancingAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT);}
-		@Override public Property<String> getBalancingAccountCodeProperty() {return new FilterDAO.PropertyDAO<String>(BAL_ACCOUNT.CODE);}
-		@Override public Property<String> getBalancingAccountDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(BAL_ACCOUNT.DESCRIPTION);}
+		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.ACCOUNT);}
+		@Override public Property<String> getAccountCodeProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT.CODE);}
+		@Override public Property<String> getAccountDescriptionProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT.DESCRIPTION);}
+		@Override public Property<String> getConceptProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.CONCEPT);}
+		@Override public Property<Double> getDebitProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.DEBIT);}
+		@Override public Property<Double> getCreditProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.CREDIT);}
+		@Override public Property<String> getDocumentNumber() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER);}
+		@Override public Property<Integer> getBalancingAccountProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT);}
+		@Override public Property<String> getBalancingAccountCodeProperty() {return new FilterDAO.PropertyDAO<>(BAL_ACCOUNT.CODE);}
+		@Override public Property<String> getBalancingAccountDescriptionProperty() {return new FilterDAO.PropertyDAO<>(BAL_ACCOUNT.DESCRIPTION);}
 	}
 	
 	
@@ -999,8 +943,7 @@ public class AccountEntryDAO {
 							.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
 							.execute();
 					ctx.log().debug("UPDATE ACCOUNT_ENTRY  ({0}) asiento: [Security Level] {1}",i,ae.getId());
-					if (wrapper instanceof AccountingInvoice) {
-						AccountingInvoice ai = (AccountingInvoice) wrapper;
+					if (wrapper instanceof AccountingInvoice ai) {
 						Invoice inv = ai.getInvoice();
 						InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
 						ctx.getDslContext()
@@ -1030,8 +973,7 @@ public class AccountEntryDAO {
 							.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
 							.execute();
 					ctx.log().debug("UPDATE ACCOUNT_ENTRY  ({0}) asiento: [Activity] {1}",i,ae.getId());
-					if (wrapper instanceof AccountingInvoice) {
-						AccountingInvoice ai = (AccountingInvoice) wrapper;
+					if (wrapper instanceof AccountingInvoice ai) {
 						Invoice inv = ai.getInvoice();
 						InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
 						ctx.getDslContext()
@@ -1051,9 +993,8 @@ public class AccountEntryDAO {
 
 			@Override
 			public IAccountEntryWrapper visitInvestment(IAccountEntryWrapper wrapper) {
-				if (wrapper instanceof AccountingInvoice) {
+				if (wrapper instanceof AccountingInvoice ai) {
 					ctx.checkWrite();
-					AccountingInvoice ai = (AccountingInvoice) wrapper;
 					Invoice inv = ai.getInvoice();
 					InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
 					inv.setInvestment(!inv.isInvestment());
@@ -1071,9 +1012,8 @@ public class AccountEntryDAO {
 
 			@Override
 			public IAccountEntryWrapper visitTaxDate(IAccountEntryWrapper wrapper) {
-				if (wrapper instanceof AccountingInvoice) {
+				if (wrapper instanceof AccountingInvoice ai) {
 					ctx.checkWrite();
-					AccountingInvoice ai = (AccountingInvoice) wrapper;
 					Invoice inv = ai.getInvoice();
 					InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
 					ctx.getDslContext()
@@ -1090,9 +1030,8 @@ public class AccountEntryDAO {
 
 			@Override
 			public IAccountEntryWrapper visitService(IAccountEntryWrapper wrapper) {
-				if (wrapper instanceof AccountingInvoice) {
+				if (wrapper instanceof AccountingInvoice ai) {
 					ctx.checkWrite();
-					AccountingInvoice ai = (AccountingInvoice) wrapper;
 					Invoice inv = ai.getInvoice();
 					inv.setService(!inv.isService());
 					InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
@@ -1110,9 +1049,8 @@ public class AccountEntryDAO {
 
 			@Override
 			public IAccountEntryWrapper visitVatAccrualPayment(IAccountEntryWrapper wrapper) {
-				if (wrapper instanceof AccountingInvoice) {
+				if (wrapper instanceof AccountingInvoice ai) {
 					ctx.checkWrite();
-					AccountingInvoice ai = (AccountingInvoice) wrapper;
 					Invoice inv = ai.getInvoice();
 					inv.setVatAccrualPayment(!inv.isVatAccrualPayment());
 					InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
@@ -1130,24 +1068,20 @@ public class AccountEntryDAO {
 
 			@Override
 			public IAccountEntryWrapper visitWithholdingType(IAccountEntryWrapper wrapper) {
-				if (wrapper instanceof AccountingInvoice) {
+				if (wrapper instanceof AccountingInvoice ai) {
 					ctx.checkWrite();
-					AccountingInvoice ai = (AccountingInvoice) wrapper;
 					Invoice inv = InvoiceDAO.getFullInvoice(ctx, ai.getInvoice().getId());
-					for ( InvoiceDetail detail : inv.getDetails() ) {
-						for (InvoiceTax tax : detail.getInvoiceTaxes() ) {
-							if (tax.getTaxType() == TaxType.RETENTION) {
-								int i = ctx.getDslContext()
-									.update(INVOICE_TAX)
-									.set(INVOICE_TAX.WITHHOLDING_TYPE,tax.getWithholdingType() == null 
-										? WithholdingType.PROFESSIONAL.value() 
-										: ai.getWithholdingData().getWithholdingType().value())
-									.where(INVOICE_TAX.ID.equal( tax.getId()))
-									.execute();
-								ctx.log().debug("UPDATE INVOICE_TAX invoice: {0} count({1})",tax.getId(),i);
-							}
-						}
-					}
+					inv.detailStream()
+						.flatMap( d -> d.taxStream())
+						.filter( t -> t.getTaxType() == TaxType.RETENTION)
+						.forEach( t -> {
+							int i = ctx.getDslContext()
+								.update(INVOICE_TAX)
+								.set(INVOICE_TAX.WITHHOLDING_TYPE, ai.getWithholdingData().getWithholdingType().value())
+								.where(INVOICE_TAX.ID.equal( t.getId()))
+								.execute();
+							ctx.log().debug("UPDATE INVOICE_TAX invoice: {0} count({1})",t.getId(),i);
+						});
 					
 					return AccountingInvoiceDAO.getAccountingInvoiceFromInvoice(ctx, inv.getId());
 				}
@@ -1156,12 +1090,11 @@ public class AccountEntryDAO {
 
 			@Override
 			public IAccountEntryWrapper visitOperatingAccount(IAccountEntryWrapper wrapper) {
-				if (wrapper instanceof AccountingInvoice) {
-					AccountingInvoice ai = (AccountingInvoice) wrapper;
+				if (wrapper instanceof AccountingInvoice ai) {
 					Integer oldAccountId = null;
-					if (ai.getVats() != null && ai.getVats().size() > 0) {
+					if (AonCollectionUtils.isNotEmpty(ai.getVats())) {
 						oldAccountId = ai.getVats().get(0).getExpAccount()
-							.map(a -> a.getId())
+							.map(com.esferalia.aon.occam.api.model.Account::getId)
 							.orElse(null);
 					}
 					Integer newAccountId = null;
@@ -1324,7 +1257,7 @@ public class AccountEntryDAO {
 					&& !isAlcatrazGuest(ai.getInvoice())
 					&& AonCollectionUtils.isNotEmpty(ai.getVats())
 					&& AonCollectionUtils.stream(ai.getVats())
-				        .map(vat -> vat.getExpAccount().map(a -> a.getId()).orElse(null))
+				        .map(vat -> vat.getExpAccount().map(com.esferalia.aon.occam.api.model.Account::getId).orElse(null))
 				        .distinct()
 				        .count() == 1
 				; 
@@ -1361,5 +1294,4 @@ public class AccountEntryDAO {
 		return new LinkedList<>();
 	}
 
-	
 }

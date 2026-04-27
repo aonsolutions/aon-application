@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAddressPanel.AonAddressPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.Municipalities;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -53,12 +54,16 @@ public abstract class AddressTable extends ScrollPanel {
 	private String user;
 	private Integer registry;
 	
+	private Municipalities municipalities = new Municipalities();
+	
 	private static enum COLS {
-		  STR(""									, "3rem" 			, "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"	)
+		  TYP(""									, "3rem" 			, "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"	)
+		, STR(""									, "3rem" 			, "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"	)
 		, ADD(AON.MSG.address()						, "-moz-available"	, "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, NMB("N\u00b0"								, "3rem"			, "" )
 		, ZIP("C.P."								, "4rem"			, "" )
 		, PRO(AON.MSG.province()					, "7rem"			, "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"	)
+		, MUN("Municipio"							, "7rem"			, "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"	)
 		, CIT("Localidad"							, "6rem"			, "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, BUT(AonStringUtils.EMPTY					, "3rem"			,"")
 		;
@@ -240,6 +245,12 @@ public abstract class AddressTable extends ScrollPanel {
 		HTMLPanel row = tab.createRow();
 		row.addDomHandler(e -> onUpdateRegistryAddress(registryAddress), ClickEvent.getType());
 		
+		tab.addRow(
+				row, 
+				registryAddress.isMain() ? new AonTableButton("Principal", AON.CSS.aonIconLocationOn()) : new AonTableButton("Delegaci\u00f3n", AON.CSS.aonIconMoveLocation()),
+				COLS.TYP.getColWidth()
+		);
+		
 		tab.addRow(row, new Label(registryAddress.getStreetType().getAeatCode() + "."), COLS.STR.getColWidth());
 		
 		Label address = new Label(registryAddress.getAddress());
@@ -254,6 +265,11 @@ public abstract class AddressTable extends ScrollPanel {
 		geozone.setTitle(registryAddress.getGeozoneName());
 		tab.addInlineStyle(geozone, COLS.PRO.getStyles());
 		tab.addRow(row, geozone, COLS.PRO.getColWidth());
+		
+		Label municipality = new Label(municipalities.getMunicipalityByZip(registryAddress.getMunicipalityCode()));
+		municipality.setTitle(municipalities.getMunicipalityByZip(registryAddress.getMunicipalityCode()));
+		tab.addInlineStyle(municipality, COLS.MUN.getStyles());
+		tab.addRow(row, municipality, COLS.MUN.getColWidth());
 		
 		Label city = new Label(registryAddress.getCity());
 		city.setTitle(registryAddress.getCity());

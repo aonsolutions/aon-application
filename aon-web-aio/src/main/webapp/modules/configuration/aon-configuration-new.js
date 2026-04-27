@@ -128,7 +128,8 @@ export class AonConfigurationNew extends AonElement {
 				name: MSG.GENERAL_INFORMATION + " (GWT)",
 				icon: MATERIAL_ICONS.BUSINESS,
 				fn: () => {
-					localStorage.setItem("registrySource", 'COMPANY');
+					localStorage.setItem("registrySource", 'ENVIROMENT');
+					this.getApplication().removeToolbarOptions();
 					GWT.iLoad(GWT.REGISTRY_ENTRY_MODULE, this.getApplication().CONTENT);
 				},
 			});
@@ -180,6 +181,13 @@ export class AonConfigurationNew extends AonElement {
 				icon: MATERIAL_ICONS.PEOPLE,
 				fn: () => this.buildUser(),
 			});
+
+			securityOptions.push({
+				name: MSG.COMPANY_MANAGEMENT,
+				icon: MATERIAL_ICONS.BUSINESS,
+				fn: () => this.buildCompanyList(),
+			});
+
 
 			securityOptions.push({
 				name: MSG.GROUP_MANAGEMENT,
@@ -282,6 +290,7 @@ export class AonConfigurationNew extends AonElement {
 	}
 
 	buildGeneral() {
+		this.getApplication().removeToolbarOptions();
 		let data = {
 			additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD', 'RECORD_DATA']
 		};
@@ -297,24 +306,11 @@ export class AonConfigurationNew extends AonElement {
 	}
 
 	buildUser() {
-		let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
-		aonConfiguration.removeToolbarOptions();
-
-		if (this.isMobile()) {
-			aonConfiguration.addFloatOption(ACTION.ADD, () => this.buildCreateUser(false));
-		} else {
-			aonConfiguration.addToolbarOption("UserShare", "share", () =>
-				this.buildCreateUser(true)
-			);
-			aonConfiguration.addToolbarOption("UserAdd", "add", () =>
-				this.buildCreateUser(false)
-			);
-		}
-
+		this.getApplication().removeToolbarOptions();
 		let userList = this.isMobile()
 			? new AonMobileUserList()
 			: new AonUserList();
-		aonConfiguration.setContent(userList);
+		this.getApplication().setContent(userList);
 	}
 
 	buildServiceAccount() {
@@ -419,17 +415,6 @@ export class AonConfigurationNew extends AonElement {
 		];
 		aonCompany.setRegistry(reg);
 		this.getApplication().setContent(aonCompany);
-	}
-
-	buildCreateUser(share) {
-		let aonUser = new AonUser();
-		aonUser.id = 'aonUserCreate';
-		aonUser.setShowApps(true);
-		aonUser.setShowToolbar(true);
-		aonUser.style.width = "100%";
-		if (share) aonUser.setAttribute('share', share);
-
-		this.getApplication().setContent(aonUser);
 	}
 
 	buildStore() {

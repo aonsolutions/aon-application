@@ -6,7 +6,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum RegistrySource implements Serializable {
 	
-    COMPANY
+	ENVIROMENT,
+	COMPANY
     ;
 	
 	private RegistrySource() {}

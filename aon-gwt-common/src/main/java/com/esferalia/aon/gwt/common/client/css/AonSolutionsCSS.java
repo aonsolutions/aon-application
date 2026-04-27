@@ -991,6 +991,15 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_text_uppercase")
 	String aonTextUppercase();
 	
+	@ClassName("aon_justify_content_center")
+	String aonJustifyContentCenter();
+	
+	@ClassName("aon_justify_content_left")
+	String aonJustifyContentLeft();
+	
+	@ClassName("aon_justify_content_right")
+	String aonJustifyContentRight();
+	
 	@ClassName("aon_vertical_align_top")
 	String aonVerticalAlignTop();
 	
@@ -1204,6 +1213,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_color_red")
 	String aonColorRed();
 	
+	@ClassName("aon_color_inherit")
+	String aonColorInherit();
+
 	@ClassName("aon_no_border_toolbar")
 	String aonNoBorderToolbar();
 
@@ -1234,12 +1246,21 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_background_ligth_yellow")
 	String aonBackgroundLigthYellow();
 	
+	@ClassName("aon_background_ligth_yellow_imp")
+	String aonBackgroundLigthYellowImp();
+
 	@ClassName("aon_background_ligthgray")
 	String aonBackgroundLigthGray();
 	
+	@ClassName("aon_background_ligthgray_imp")
+	String aonBackgroundLigthGrayImp();
+
 	@ClassName("aon_background_ligth_blue")
 	String aonBackgroundLigthBlue();
 	
+	@ClassName("aon_background_ligth_blue_imp")
+	String aonBackgroundLigthBlueImp();
+
 	@ClassName("aon_background_highlighted_green")
 	String aonBackgroundHighlightedGreen();
 
@@ -1671,6 +1692,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_check_circle")
 	String aonIconCheckCircle();
 	
+	@ClassName("aon_icon_cancel_circle")
+	String aonIconCancelCircle();
+
 	@ClassName("aon_icon_check_circle_green")
 	String aonIconCheckCircleGreen();
 	
@@ -1724,6 +1748,42 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_model_matrix_bullet_small_button")
 	String aonModelMatrixBulletSmallButton();
+	
+	@ClassName("aon_icon_fax")
+	String aonIconFax();
+	
+	@ClassName("aon_icon_location_on")
+	String aonIconLocationOn();
+
+	@ClassName("aon_icon_mobile")
+	String aonIconMobile();
+	
+	@ClassName("aon_icon_move_location")
+	String aonIconMoveLocation();
+	
+	@ClassName("aon_icon_phone")
+	String aonIconPhone();
+	
+	@ClassName("aon_icon_share")
+	String aonIconShare();
+	
+	@ClassName("aon_icon_dataset_linked")
+	String aonIconDatasetLinked();
+	
+	@ClassName("aon_icon_shield_locked")
+	String aonIconShieldLocked();
+	
+	@ClassName("aon_icon_admin_panel_settings")
+	String aonIconAdminPanelSettings();
+	
+	@ClassName("aon_icon_encrypted_off")
+	String aonIconEncryptedOff();
+
+	@ClassName("aon_flex_grid")
+	String aonFlexGrid();
+	
+	@ClassName("aon_flex_grid_cell")
+	String aonFlexGridCell();
 
 }
 

@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.template.server.imports;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -56,7 +57,8 @@ public class DownloadInvoiceTemplateServlet extends HttpServlet {
 		Domain domain = AON.getDomain(domainName, domainId, login);
 		User user = AON.getUser(domainName, domainId, login);
 
-		List<Invoice> invoices = DBInvoice.getInvoices(domain, user, f -> invoiceFilter(f, domainId, json));
+		List<Invoice> invoices = DBInvoice.getInvoices(domain, user, f -> invoiceFilter(f, domainId, json))
+				.stream().sorted(Comparator.comparing(Invoice::getIssueDate).thenComparing(Invoice::getId)).toList();
 		ApplicationParameter param = AON.getApplicationParameter(domainName, domainId, login, AppParam.FS_DEFAULT_ADMINISTRATION);
 		Administration administration = Administration.safeValueOf(AonNumberUtils.toInteger(param.getValue()));
 		try {

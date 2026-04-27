@@ -34,8 +34,8 @@ export const acceptInvoice = (data) => put(`${API_URL}/invoice/accept`, data);
 export const rectifyInvoice = (data) => put(`${API_URL}/invoice/rectify`, data);
 
 export const sendInvoiceMail = (data) => post(`${API_URL}/send_mail/invoice`, data);
-
 export const sendInvoice2Mail = (data) => post(`${API_URL}/send_mail/invoice2`, data);
+export const sendInvoiceRejectMail = (data) => post(`${API_URL}/send_mail/invoiceReject`, data);
 
 export const downloadInvoices = (data) => openFileUrl(`${API_URL}/multiple_download/invoice?json=${data}`);
 export const downloadInvoiceExcel = (data) => openFileUrl(`${API_URL}/downloadInvoiceExcel?json=${data}`);
@@ -52,7 +52,7 @@ export const recordInvoices = (data) => post(`${API_URL}/invoices/record`, data)
 export const getPaymethods = (data) => get(`${API_URL}/paymethods`, data);
 export const getPaymethod = (id) => get(`${API_URL}/paymethods/${id}`, {});
 
-export const signInvoice = (id) => put(`${API_URL}/invoice/sign`, {id});
+export const signInvoice = (data) => put(`${API_URL}/invoice/sign`, data);
 export const downloadFacturae = (data) => 
     openFileUrl(`${API_URL}/face?id=${data.id}&domainName=${data.domainName}&domainId=${data.domainId}&domainLogin=${data.domainLogin}&cert=${data.cert}&period=${data.period}&legalLiterals=${data.legalLiterals}`);
 export const getTbaiHistory = (invoice) => post(`${API_URL}/tbai/history`, {invoice});

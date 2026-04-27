@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
@@ -234,8 +235,14 @@ public class InvoiceValidation {
 	 * Las facturas rectificadas no se pueden borrar.
 	 */
 	private static final Consumer<InvoiceValidationContext> RECTIFIED_INVOICE = ivc -> {
-		if (ivc.inv.isRectified()) 
+		if (ivc.inv.isRectified() && ivc.inv.getRectificationInvoice() != null) {
 			throw new AonCoreException(AonError.INVOICE_CANT_DELETE_RECTIFIED.getMessage());
+		} else if(ivc.inv.isRectified()) {
+			InvoiceDAO.getInvoiceStream(ivc.ctx, f -> f.getDomainProperty().eq(ivc.inv.getDomain())
+				.and(f.getRectificationInvoiceProperty().eq(ivc.inv.getId()))).findFirst().ifPresent( i -> {
+					throw new AonCoreException(AonError.INVOICE_CANT_DELETE_RECTIFIED.getMessage());
+				});
+		}
 	};
 
 	/**

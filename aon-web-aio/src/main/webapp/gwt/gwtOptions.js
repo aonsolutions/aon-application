@@ -90,6 +90,11 @@ export const OPERATION_REPORT = {
   entryPoint: 'OperationReport'
 };
 
+export const AMORTIZATION = {
+  module: GWT_FISCAL,
+  entryPoint: 'AmortizationModule'
+};
+
 export const AMORTIZATION_TYPE = {
   module: GWT_FISCAL,
   entryPoint: 'AmortizationType'
@@ -589,6 +594,11 @@ export const INVEST_ASSET = {
 export const ACCOUNTING_UTILITIES = {
   module: GWT_FISCAL,
   entryPoint: 'AccountingUtilities'
+};
+
+export const DOMAIN_INVOICE_STAT = {
+  module: GWT_FISCAL,
+  entryPoint: 'DomainInvoiceStat'
 };
 
 export const FINANCE_UTILITIES = {

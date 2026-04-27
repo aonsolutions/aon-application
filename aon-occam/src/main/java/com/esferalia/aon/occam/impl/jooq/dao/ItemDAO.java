@@ -6,7 +6,6 @@ import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
-import static com.esferalia.aon.jooq.tables.Tax.TAX;
 import static com.esferalia.aon.occam.impl.jooq.dao.ItemCompositionDAO.COMPOSITION_ALIAS;
 import static com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.RETENTION_ALIAS;
 import static com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.VAT_ALIAS;
@@ -148,7 +147,8 @@ public class ItemDAO {
 		return ctx.getDslContext().select()
 			.from(ITEM)
 			.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-			.leftOuterJoin(TAX).on(PRODUCT.VAT.eq(TAX.ID))
+			.leftOuterJoin(VAT_ALIAS).on(PRODUCT.VAT.eq(VAT_ALIAS.ID))
+			.leftOuterJoin(RETENTION_ALIAS).on(PRODUCT.RETENTION.eq(RETENTION_ALIAS.ID))
 			.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
 			.leftOuterJoin(ITEM_COMPOSITION).on(ITEM.ID.equal(ITEM_COMPOSITION.ITEM))
 			.leftOuterJoin(COMPOSITION_ALIAS).on(ITEM_COMPOSITION.COMPOSITION_ITEM.eq(COMPOSITION_ALIAS.ID))
@@ -200,7 +200,8 @@ public class ItemDAO {
 		.join(RITEM).on(RITEM.ITEM.eq(ITEM.ID))
 		.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 		.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
-		.leftOuterJoin(TAX).on(PRODUCT.VAT.eq(TAX.ID))
+		.leftOuterJoin(VAT_ALIAS).on(PRODUCT.VAT.eq(VAT_ALIAS.ID))
+		.leftOuterJoin(RETENTION_ALIAS).on(PRODUCT.RETENTION.eq(RETENTION_ALIAS.ID))
 		.where(ITEM_PROPERTIES.getConditions(filter))
 	    .fetch().stream().map(new ItemFiller());
 
@@ -237,7 +238,8 @@ public class ItemDAO {
 			.select()
 			.from(ITEM)
 			.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-			.leftOuterJoin(TAX).on(PRODUCT.VAT.eq(TAX.ID))
+			.leftOuterJoin(VAT_ALIAS).on(PRODUCT.VAT.eq(VAT_ALIAS.ID))
+			.leftOuterJoin(RETENTION_ALIAS).on(PRODUCT.RETENTION.eq(RETENTION_ALIAS.ID))
 			.where(ITEM_PROPERTIES.getConditions(filter));
 
 		if(page.isPresent() && perPage.isPresent()) {
