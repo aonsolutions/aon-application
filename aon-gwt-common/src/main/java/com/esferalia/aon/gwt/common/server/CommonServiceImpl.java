@@ -2104,6 +2104,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		AON.deleteWrokplace(domainName, domain, user, id);
 	}
 	
+	@Override
+	public Workplace saveWorkplace(String domainName, Integer domainId, String user, Workplace workplace) throws AonCoreException {
+		return AON.saveWorkplace(new Domain().setName(domainName).setId(domainId), user, workplace);
+	}
+	
 	// *********************** [AMORTIZATION TYPE]
 	@Override
 	public List<AmortizationType> getAmortizationTypes(Occam occam, int domain) {

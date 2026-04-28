@@ -1617,6 +1617,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.deleteWrokplace(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void saveWorkplace(String domainName, Integer domainId, String user, Workplace workplace, AsyncCallback<Workplace> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveWorkplace(domainName, domainId, user, workplace, new AsyncCallbackWrapper<>(callback));
+	}
 
 	// *********************** [AMORTIZATION TYPE]
 	@Override

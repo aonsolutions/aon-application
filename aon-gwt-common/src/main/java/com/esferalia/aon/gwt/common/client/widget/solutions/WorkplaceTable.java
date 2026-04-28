@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonWorkplacePanel.AonWorkplacePanelCallback;
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.calendar.Calendar;
@@ -67,12 +68,12 @@ public abstract class WorkplaceTable extends ScrollPanel {
 	private static enum COLS {
 		  STA(AON.MSG.status()					   	,"3rem", ""  )
 		, DES(AON.MSG.description()					,"-moz-available", "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" )
-		, ADD(AON.MSG.address()						,"6rem", "max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
-		, ECO("C. Econ\u00f3mico"					,"6rem", "max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
-		, SCO(AON.MSG.scope()						,"6rem", "max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
-		, CAL("Calendario"							,"6rem", "max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
-		, AGR("Convenio"							,"6rem", "max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
-		, ACT(AON.MSG.activity()					,"6rem", "max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
+		, ADD(AON.MSG.address()						,"8rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
+		, ECO("C. Econ\u00f3mico"					,"7rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
+		, SCO(AON.MSG.scope()						,"8rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
+		, CAL("Calendario"							,"6rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
+		, AGR("Convenio"							,"8rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
+		, ACT(AON.MSG.activity()					,"8rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
 		, BUT(AonStringUtils.EMPTY					,"3rem", ""  )
 		;
 
@@ -455,35 +456,34 @@ public abstract class WorkplaceTable extends ScrollPanel {
 	}
 	
 	private void onUpdateWorkplace(Workplace workplace) {
-//		final AonCustomDialog dialog = new AonCustomDialog();
-//		dialog.setCaption("Editar Centro Trabajo");
-//		
-//		final AonMediaPanel marketingCampaignPanel = new AonMediaPanel( domainName, domain, user, registryMedia, new AonMediaPanelCallback() {
-//			
-//			@Override
-//			public void onCancel() {
-//				dialog.hide();
-//			}
-//			
-//			@Override
-//			public void onAccept(RegistryMedia media) {
-//				dialog.hide();
-//				onSearch();
-//			}
-//		});
-//		
-//		dialog.add( marketingCampaignPanel );
-//		dialog.showLoaded();
+		final AonCustomDialog dialog = new AonCustomDialog();
+		dialog.setCaption("Editar Centro Trabajo");
+		
+		final AonWorkplacePanel marketingCampaignPanel = new AonWorkplacePanel( domainName, domain, user, workplace, agreements, activities, calendars, addresses, scopes, new AonWorkplacePanelCallback() {
+			
+			@Override
+			public void onCancel() {
+				dialog.hide();
+			}
+			
+			@Override
+			public void onAccept(Workplace workplace) {
+				dialog.hide();
+				onSearch();
+			}
+		});
+		
+		dialog.add( marketingCampaignPanel );
+		dialog.showLoaded();
 	}
 	
 
 
 	private void createWorkplace() {
-		/*
 		final AonCustomDialog dialog = new AonCustomDialog();
 		dialog.setCaption("Nuevo Centro Trabajo");
 
-		final AonMediaPanel marketingCampaignPanel = new AonMediaPanel(domainName, domain, user, registry, new AonMediaPanelCallback() {
+		final AonWorkplacePanel marketingCampaignPanel = new AonWorkplacePanel(domainName, domain, user, registry, agreements, activities, calendars, addresses, scopes, new AonWorkplacePanelCallback() {
 
 					@Override
 					public void onCancel() {
@@ -491,7 +491,7 @@ public abstract class WorkplaceTable extends ScrollPanel {
 					}
 
 					@Override
-					public void onAccept(RegistryMedia media) {
+					public void onAccept(Workplace workplace) {
 						dialog.hide();
 						onSearch();
 					}
@@ -499,7 +499,7 @@ public abstract class WorkplaceTable extends ScrollPanel {
 
 		dialog.add(marketingCampaignPanel);
 		dialog.showLoaded();
-		*/
+		
 	}
 
 	protected abstract void onShowErrorMessage(String errorMessage);
