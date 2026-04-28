@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.Month;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.GwtIncompatible;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
 
 public class Payment implements Serializable, HasId, HasDomain {
@@ -18,6 +19,8 @@ public class Payment implements Serializable, HasId, HasDomain {
 	private String irpfExpression;
 	private String quoteExpression;
 	private PaymentType type = PaymentType.CRA_0001;
+	
+	@GwtIncompatible
 	private Month	month;
 	
 	
@@ -49,10 +52,12 @@ public class Payment implements Serializable, HasId, HasDomain {
 		return this;
 	}
 	
+	@GwtIncompatible
 	public Month getMonth() {
 		return month;
 	}
 	
+	@GwtIncompatible
 	public Payment setMonth(Month month) {
 		this.month = month;
 		return this;

@@ -222,11 +222,11 @@ public class AonCertificateDialog extends AonCustomDialog {
 	}
 	
 	private void initView() {
-		container.addStyleName(AON.CSS.aonFlexColumn());
-		container.getElement().getStyle().setProperty("margin", "1rem 0");
+		container.addStyleName(AON.CSS.aonFlexColumn2());
+		container.getElement().getStyle().setProperty("margin", "1rem");
 		
 		// Init FilePanel
-		filePanel.addStyleName(AON.CSS.aonFlexColumn());
+		filePanel.addStyleName(AON.CSS.aonFlexColumn2());
 		
 		AonTableButton fileBtn = new AonTableButton("Importar certificado", AON.CSS.aonIconAttach());
 		fileBtn.addClickHandler(e -> fileUpload.click());
@@ -280,7 +280,7 @@ public class AonCertificateDialog extends AonCustomDialog {
 		typePanel.add(sepe);
 		typePanel.add(aeat);
 		
-		configPanel.addStyleName(AON.CSS.aonFlexColumn());
+		configPanel.addStyleName(AON.CSS.aonFlexColumn2());
 		configPanel.add(certificateInfoPanel);
 		configPanel.add(use);
 		configPanel.add(security);
@@ -305,7 +305,7 @@ public class AonCertificateDialog extends AonCustomDialog {
 	}
 	
 	private void initUpdateView(Certificate certificate) {
-		container.addStyleName(AON.CSS.aonFlexColumn());
+		container.addStyleName(AON.CSS.aonFlexColumn2());
 		container.getElement().getStyle().setProperty("margin", "1rem 0");
 		
 		// Init ConfigPanel
@@ -346,7 +346,7 @@ public class AonCertificateDialog extends AonCustomDialog {
 		typePanel.add(sepe);
 		typePanel.add(aeat);
 		
-		configPanel.addStyleName(AON.CSS.aonFlexColumn());
+		configPanel.addStyleName(AON.CSS.aonFlexColumn2());
 		updateCertificateInfoPanel(certificate);
 		configPanel.add(certificateInfoPanel);
 		configPanel.add(description);
@@ -583,7 +583,7 @@ public class AonCertificateDialog extends AonCustomDialog {
 	
 	private void updateCertificateInfoPanel(Certificate certificate) {
 		certificateInfoPanel.clear();
-		certificateInfoPanel.addStyleName(AON.CSS.aonFlexColumn());
+		certificateInfoPanel.addStyleName(AON.CSS.aonFlexColumn2());
 		
 		certificateInfo = certificate.getCertificateInfo();
 		
@@ -615,7 +615,7 @@ public class AonCertificateDialog extends AonCustomDialog {
 	
 	private void createCertificateInfoPanel() {
 		certificateInfoPanel.clear();
-		certificateInfoPanel.addStyleName(AON.CSS.aonFlexColumn());
+		certificateInfoPanel.addStyleName(AON.CSS.aonFlexColumn2());
 		
 		if(!AonStringUtils.isBlank(certificateInfo.getDocument())) {
 			AonCustomTextBox emit = new AonCustomTextBox("Emitido para");

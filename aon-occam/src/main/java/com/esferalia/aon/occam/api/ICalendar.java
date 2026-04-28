@@ -9,6 +9,8 @@ import com.esferalia.aon.occam.api.model.calendar.Holiday;
 public interface ICalendar {
 
 	List<Calendar> getCalendar(CloseableAONContext ctx, Integer domainId, Integer workplace);
+	
+	List<Calendar> getCalendars(CloseableAONContext ctx, Integer domainId);
 
 	List<Holiday> getHolidays(CloseableAONContext ctx, Integer domainId);
 

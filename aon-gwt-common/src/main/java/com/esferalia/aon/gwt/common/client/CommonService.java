@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.ActivityType;
+import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
@@ -47,6 +48,7 @@ import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.calendar.Calendar;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
@@ -117,6 +119,7 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -532,6 +535,10 @@ public interface CommonService extends RemoteService {
 	CompanyFull saveCompanyFull(String domainName, int domain, String user, CompanyFull company) throws AonCoreException;
 	Attach getCompanyLogo(String domainName, Integer domain, String user, Integer registry) throws AonCoreException;
 	Attach getCompanySignature(String domainName, Integer domain, String user, Integer registry) throws AonCoreException;
+	List<Calendar> getCalendars(String domainName, Integer domain, String user) throws AonCoreException;
+	List<Agreement> getAcgreements(String domainName, Integer domain, String user) throws AonCoreException;
+	List<Workplace> getWorkplaces(String domainName, Integer domain, String user, Integer registry) throws AonCoreException;
+	void deleteWrokplace(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
 	
 	// *********************** [AMORTIZATION TYPE]
 	List<AmortizationType> getAmortizationTypes(Occam occam, int domain) throws AonCoreException;
