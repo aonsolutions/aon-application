@@ -181,6 +181,12 @@ public class CommonImpl implements ICommon {
 	}
 	
 	@Override
+	public void deleteWorkplace(AONContext ctx, Integer workplaceId) {
+		ctx.getDslContext().transaction(
+			configuration -> WorkplaceDAO.delete(ctx, workplaceId));
+	}
+	
+	@Override
 	@Deprecated
 	public Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration -> 

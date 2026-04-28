@@ -102,6 +102,7 @@ public interface ICommon {
 	public Stream<Workplace> getWorkplaces(AONContext ctx, Integer domainId);
 	public Optional<Workplace> getWorkplace(AONContext ctx, Integer domainId, Integer workplaceId);	
 	public Workplace saveWorkplace(AONContext ctx, Workplace workplace);
+	public void deleteWorkplace(AONContext ctx, Integer workplaceId);
 
 	@Deprecated	public Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter);
 	@Deprecated	public LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter);
