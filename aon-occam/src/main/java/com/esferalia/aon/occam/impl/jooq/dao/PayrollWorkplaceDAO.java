@@ -94,6 +94,7 @@ public class PayrollWorkplaceDAO {
 		
 		public static PayrollWorkplace build(Record r) {
 			return new PayrollWorkplace()
+					.setId(r.getValue(PAYROLL_WORKPLACE.ID))
 					.setAgreement(r.getValue(PAYROLL_WORKPLACE.AGREEMENT))
 					.setCalendar(r.getValue(PAYROLL_WORKPLACE.CALENDAR))
 					.setDomain(r.getValue(PAYROLL_WORKPLACE.DOMAIN))
