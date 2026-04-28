@@ -40,6 +40,7 @@ import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.jooq.tables.records.CraBatchRecord;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class JooqCRA {
 	
@@ -249,7 +250,9 @@ public class JooqCRA {
 				.and(CONTRACT.END_DATE.isNotNull())
 				.fetchOne();
 		
-		Date craMaxDate = null == craMaxDateRecord.value1() ?  contractMaxDateRecord.value1() : contractMaxDateRecord.value1().after(craMaxDateRecord.value1()) ? contractMaxDateRecord.value1() : craMaxDateRecord.value1();
+		Date craMaxDate =  AonDateUtils.max(craMaxDateRecord.value1(), contractMaxDateRecord.value1());
+		
+		//Date craMaxDate = null == craMaxDateRecord.value1() ?  craMaxDateRecord.value1() : contractMaxDateRecord.value1().after(craMaxDateRecord.value1()) ? contractMaxDateRecord.value1() : craMaxDateRecord.value1();
 		
 		return new Period(craMinDate, craMaxDate);
 	}
