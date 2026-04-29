@@ -108,7 +108,7 @@ public class D2DepositInitialization {
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41200.toString(), "sap({774})"); // TODO 774; (NECA 7.ª 6)
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41300.toString(), "sap({778})-sdp({678})"); // TODO (678),778; (NECA 7.ª 9) (ABREVIADO)
 																					 // TODO (678),778;NECA 6.ª 6 (PYMES)
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41430.toString(), "sap({746})"); // TODO 746; (NECA 7.ª 4) (ABREVIADO)
+//		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41430.toString(), "sap({746})"); // TODO 746; (NECA 7.ª 4) (ABREVIADO)
 																					 // TODO 746;NECA 6.ª 4 (PYMES)
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41490.toString(), "ABREVIADO?sap({760,761,762,767,769})"
 																				+ ": sap({760,761,762,769})");
