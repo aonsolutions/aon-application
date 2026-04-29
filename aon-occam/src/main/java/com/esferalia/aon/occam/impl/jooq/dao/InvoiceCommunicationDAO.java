@@ -43,7 +43,6 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
-import com.esferalia.aon.occam.api.model.payroll.Enterprise;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataRequestType;
@@ -605,9 +604,13 @@ public class InvoiceCommunicationDAO {
 		if (params == null) throw new AonCoreException("No params");
 		if (params.getDomain() == null) throw new AonCoreException("No domain");
 		if (params.getCommunicationType() == null) throw new AonCoreException("No type");
+
+		Condition invoiceInfoCondition = INVOICE_INFO.INVOICE.eq(INVOICE.ID);
+		if(params.getCommunicationType() != null) 
+			invoiceInfoCondition = invoiceInfoCondition.and(INVOICE_INFO.TYPE.eq(params.getCommunicationType().value()));
 		return ctx.getDslContext().select()
 			.from(INVOICE)
-			.leftOuterJoin(INVOICE_INFO).on(INVOICE_INFO.INVOICE.eq(INVOICE.ID)) 
+			.leftOuterJoin(INVOICE_INFO).on(invoiceInfoCondition)
 			.where(getFilter(params))
 			.and(INVOICE.NUMBER.gt(0))
 			.orderBy(INVOICE.ISSUE_DATE.desc(), INVOICE.ID.desc())
@@ -621,7 +624,7 @@ public class InvoiceCommunicationDAO {
 	
 	private static Condition getFilter(InvoiceCommunicationParams params) {
 		Condition c = INVOICE.DOMAIN.eq(params.getDomain())
-			.and(INVOICE_INFO.TYPE.isNull().or(INVOICE_INFO.TYPE.eq(params.getCommunicationType().value())))
+//			.and(INVOICE_INFO.TYPE.isNull().or(INVOICE_INFO.TYPE.eq(params.getCommunicationType().value())))
 		;
 		
 		if (params.getFrom() != null) c = c.and(INVOICE.ISSUE_DATE.ge(AonDateUtils.toSql( params.getFrom())));

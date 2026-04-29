@@ -12,6 +12,8 @@ public class DomainInvoiceStat implements Serializable {
 	private String description;
 	private String companyDocument;
 	private String companyName;
+	private boolean active;
+	private boolean expired;
 	
 	private int national;
 	private int intracommunity;
@@ -80,6 +82,22 @@ public class DomainInvoiceStat implements Serializable {
 	}
 	public DomainInvoiceStat setCompanyName(String companyName) {
 		this.companyName = companyName;
+		return this;
+	}
+	
+	public boolean isActive() {
+		return active;
+	}
+	public DomainInvoiceStat setActive(boolean active) {
+		this.active = active;
+		return this;
+	}
+	
+	public boolean isExpired() {
+		return expired;
+	}
+	public DomainInvoiceStat setExpired(boolean expired) {
+		this.expired = expired;
 		return this;
 	}
 	

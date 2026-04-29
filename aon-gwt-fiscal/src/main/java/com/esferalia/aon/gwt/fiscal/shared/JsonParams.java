@@ -328,7 +328,7 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.DOMAIN ,new JSONNumber( params.getDomain()));
 		params.getFromDate().ifPresent( d -> json.put(IRequestParamsNames.FROM_DATE, new JSONString( FORMATTER.format(d))));
 		params.getToDate().ifPresent( d -> json.put(IRequestParamsNames.TO_DATE,new JSONString( FORMATTER.format(d))));
-		params.getActive().ifPresent( a -> json.put(IRequestParamsNames.ACTIVE, JSONBoolean.getInstance( a )));
+		params.getActive().ifPresent( a -> json.put(IRequestParamsNames.ACTIVE, new JSONNumber( a )));
 		params.getQuery().ifPresent( q -> json.put(IRequestParamsNames.QUERY, new JSONString( q )));
 		params.getScope().ifPresent( s -> json.put(IRequestParamsNames.SCOPE, new JSONNumber( s )));
 		params.getFiscalModelType().ifPresent( f -> json.put(IRequestParamsNames.FISCAL_MODEL, new JSONString( f.name() )));

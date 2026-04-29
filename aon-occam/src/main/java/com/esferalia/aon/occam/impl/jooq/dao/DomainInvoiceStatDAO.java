@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.Rawdoc.RAWDOC;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
+import java.util.Date;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -27,6 +28,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class DomainInvoiceStatDAO {
@@ -40,7 +42,8 @@ public class DomainInvoiceStatDAO {
 			return Stream.empty();
 		}
 		return ctx.getDslContext()
-			.select(DOMAIN.ID, DOMAIN.PARENT, DOMAIN.NAME, DOMAIN.DESCRIPTION, REGISTRY.DOCUMENT, REGISTRY.NAME)
+			.select(DOMAIN.ID, DOMAIN.PARENT, DOMAIN.NAME, DOMAIN.DESCRIPTION, DOMAIN.ACTIVE, DOMAIN.EXPIRATIONDATE
+				, REGISTRY.DOCUMENT, REGISTRY.NAME)
 			.from(DOMAIN)
 			.innerJoin(COMPANY).on(COMPANY.DOMAIN.eq(DOMAIN.ID))
 			.innerJoin(REGISTRY).on(REGISTRY.ID.eq(COMPANY.REGISTRY))
@@ -209,9 +212,25 @@ public class DomainInvoiceStatDAO {
 	private static final BiFunction<Condition, ConditionRecord, Condition> ACTIVE_CONDITION = (c, cr) -> 
 		cr.params.getActive()
 			.filter(a -> a != null)
-			.map(a -> c.and(DOMAIN.ACTIVE.eq(AonEnumUtils.getByte(a))))
-	       .orElse(c);
-
+			.filter(a -> AonNumberUtils.notEquals(a, 0))
+			.map(a -> {
+				if (AonNumberUtils.equals(a, 1)) {
+					return c.and(DOMAIN.ACTIVE.eq((byte)1))
+						.and( DOMAIN.EXPIRATIONDATE.isNull().or(DOMAIN.EXPIRATIONDATE.ge( AonDateUtils.toSql( AonDateUtils.today()))));
+				}
+				else if (AonNumberUtils.equals(a, 2)) {
+					return c.and(DOMAIN.ACTIVE.eq((byte)0));
+				}
+				else if (AonNumberUtils.equals(a, 3)) {
+					return c.and( DOMAIN.ACTIVE.eq((byte)1))
+						.and(DOMAIN.EXPIRATIONDATE.lt( AonDateUtils.toSql( AonDateUtils.today())));
+				} else {
+					return c;
+				}
+			})
+			.orElse(c);
+	
+	
 	private static final BiFunction<Condition, ConditionRecord, Condition> SCOPE_CONDITION = (c, cr) -> 
 		cr.params.getScope()
     		.filter(s -> s != null)
@@ -233,6 +252,8 @@ public class DomainInvoiceStatDAO {
 		}
 		
 		public static DomainInvoiceStat build( Record r ) {
+			Date expirationDate = getValue(r, DOMAIN.EXPIRATIONDATE);
+			boolean expired = expirationDate != null && expirationDate.before( AonDateUtils.today() );
 			return new DomainInvoiceStat()
 				.setId(getValue(r, DOMAIN.ID))
 				.setParentId(getValue(r, DOMAIN.PARENT))
@@ -240,6 +261,8 @@ public class DomainInvoiceStatDAO {
 				.setDescription(getValue(r, DOMAIN.DESCRIPTION))
 				.setCompanyDocument(getValue(r, REGISTRY.DOCUMENT))
 				.setCompanyName(getValue(r, REGISTRY.NAME))
+				.setActive(getBoolean(r, DOMAIN.ACTIVE))
+				.setExpired( expired )
 			;
 		}
 	}

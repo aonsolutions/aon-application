@@ -26,6 +26,12 @@ public class JsDomainInvoiceStat extends JavaScriptObject {
 	public final native String getCompanyName() /*-{
 		return this.companyName;
 	}-*/;
+	public final native boolean isActive() /*-{
+		return this.active;
+	}-*/;
+	public final native boolean isExpired() /*-{
+		return this.expired;
+	}-*/;
 	public final native int getNational() /*-{
 		return this.national;
 	}-*/;

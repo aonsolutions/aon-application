@@ -885,7 +885,7 @@ public class JsonParser {
 			.setDomain(dom)
 			.setFromDate( JsonUtils.getDate(jsonParams, IRequestParamsNames.FROM_DATE))
 			.setToDate( JsonUtils.getDate(jsonParams, IRequestParamsNames.TO_DATE))
-			.setActive(JsonUtils.getBoolean(jsonParams, IRequestParamsNames.ACTIVE))
+			.setActive(JsonUtils.getInteger(jsonParams, IRequestParamsNames.ACTIVE))
 			.setQuery(JsonUtils.getString(jsonParams, IRequestParamsNames.QUERY))
 			.setScope(JsonUtils.getInteger(jsonParams, IRequestParamsNames.SCOPE))
 			.setFiscalModelType( FiscalModelType.safeValueByName(JsonUtils.getString(jsonParams, IRequestParamsNames.FISCAL_MODEL)) )

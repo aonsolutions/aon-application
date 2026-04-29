@@ -14,7 +14,7 @@ public class DomainInvoiceStatParams implements Serializable {
 	
 	private Date fromDate;
 	private Date toDate;
-	private Boolean active;
+	private Integer active;
 	private String query;
 	private Integer scope;
 	private FiscalModelType fiscalModelType;
@@ -50,10 +50,10 @@ public class DomainInvoiceStatParams implements Serializable {
 		return this;
 	}
 	
-	public Optional<Boolean> getActive() {
+	public Optional<Integer> getActive() {
 		return Optional.ofNullable(active);
 	}
-	public DomainInvoiceStatParams setActive(Boolean active) {
+	public DomainInvoiceStatParams setActive(Integer active) {
 		this.active = active;
 		return this;
 	}

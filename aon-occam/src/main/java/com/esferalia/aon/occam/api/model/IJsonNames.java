@@ -284,6 +284,7 @@ public final class IJsonNames {
 	public static final String EXPENSES_RATIO = "expensesRatio";
 	public static final String EXPIRATION_DATE = "expirationDate";
 	public static final String EXPIRE = "expire";
+	public static final String EXPIRED = "expired";
 	public static final String EXPIRE_DATE = "expireDate";
 	public static final String EXPIRED_DATE = "expiredDate";
 	public static final String EXPRESSION = "expression";
