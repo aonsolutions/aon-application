@@ -15,6 +15,7 @@ import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Cnae;
 import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
@@ -24,6 +25,7 @@ import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.Properties.EnterpriseActivityProperties;
 import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
+import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO.IaeFiller;
 
@@ -88,7 +90,11 @@ public class ActivityDAO {
 					.setCnaeCode(getValue(r, CNAE2009.CODE))
 					.setCnaeDescription(getValue(r, CNAE2009.TITLE) )
 					.setVatRegime(VATRegime.safeValueOf(getValue(r, ENTERPRISE_ACTIVITY.VAT_REGIME)))
-					.setVatExemptionCause(VATExemptionCause.safeValueOf(getValue(r, ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE)));
+					.setVatExemptionCause(VATExemptionCause.safeValueOf(getValue(r, ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE)))
+					.setIrpfRegime(IRPFRegime.safeValueOf(getValue(r, ENTERPRISE_ACTIVITY.RETENTION_REGIME)))
+					.setSurcharge(getBoolean(r, ENTERPRISE_ACTIVITY.SURCHARGE))
+					;
+			
 			
 			activity.setDomain(getValue(r, ENTERPRISE_ACTIVITY.DOMAIN));
 			activity.setEnterprise(getValue(r, ENTERPRISE_ACTIVITY.ENTERPRISE));
@@ -176,9 +182,12 @@ public class ActivityDAO {
 			.set(ENTERPRISE_ACTIVITY.TYPE, (byte)0)
 			.set(ENTERPRISE_ACTIVITY.CNAE, null == cnae ? null : cnae.getId())
 			.set(ENTERPRISE_ACTIVITY.CNAE2009, null == cnae2009 ? null : cnae2009.getId())
+			.set(ENTERPRISE_ACTIVITY.IAE, null == activity.getIae() ? null : activity.getIae().getId())
+			.set(ENTERPRISE_ACTIVITY.RETENTION_REGIME, null == activity.getIrpfRegime() ? null : activity.getIrpfRegime().value())
 			.set(ENTERPRISE_ACTIVITY.START_DATE, parseToSqlDate(activity.getStartDate()))
 			.set(ENTERPRISE_ACTIVITY.END_DATE, parseToSqlDate(activity.getEndDate()))
 			.set(ENTERPRISE_ACTIVITY.PRINCIPAL, activity.isPrincipal() ? (byte)1 : (byte)0)
+			.set(ENTERPRISE_ACTIVITY.SURCHARGE, activity.isSurcharge() ? (byte)1 : (byte)0)
 			.set(ENTERPRISE_ACTIVITY.VAT_REGIME, activity.getVatRegime().value())
 			.set(ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE, activity.getVatExemptionCause() != null ? activity.getVatExemptionCause().value() : null)
 			.returning(ENTERPRISE_ACTIVITY.ID).fetchOne().getId();
@@ -202,9 +211,12 @@ public class ActivityDAO {
 			.set(ENTERPRISE_ACTIVITY.DESCRIPTION, activity.getDescription())
 			.set(ENTERPRISE_ACTIVITY.CNAE, null == cnae ? null : cnae.getId())
 			.set(ENTERPRISE_ACTIVITY.CNAE2009, null == cnae2009 ? null : cnae2009.getId())
+			.set(ENTERPRISE_ACTIVITY.IAE, null == activity.getIae() ? null : activity.getIae().getId())
+			.set(ENTERPRISE_ACTIVITY.RETENTION_REGIME, null == activity.getIrpfRegime() ? null : activity.getIrpfRegime().value())
 			.set(ENTERPRISE_ACTIVITY.START_DATE, parseToSqlDate(activity.getStartDate()))
 			.set(ENTERPRISE_ACTIVITY.END_DATE, parseToSqlDate(activity.getEndDate()))
 			.set(ENTERPRISE_ACTIVITY.PRINCIPAL, activity.isPrincipal() ? (byte)1 : (byte)0)
+			.set(ENTERPRISE_ACTIVITY.SURCHARGE, activity.isSurcharge() ? (byte)1 : (byte)0)
 			.set(ENTERPRISE_ACTIVITY.VAT_REGIME, activity.getVatRegime().value())
 			.set(ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE, activity.getVatExemptionCause() != null 
 				? activity.getVatExemptionCause().value() : null)
@@ -215,6 +227,14 @@ public class ActivityDAO {
 		EnterpriseCCCDAO.save(ctx, activity.getCccs());
 		
 		return activity;
+	}
+
+	public static void delete(CloseableAONContext ctx, Integer id) {
+		ctx.getDslContext().delete(ENTERPRISE_ACTIVITY)
+			.where(ENTERPRISE_ACTIVITY.ID.eq(id))
+			.execute();
+		
+		ctx.log().debug("DELETE ENTERPRISE ACTIVITY id: " + id);	
 	}
 	
 	private static Date parseToSqlDate(java.util.Date date){

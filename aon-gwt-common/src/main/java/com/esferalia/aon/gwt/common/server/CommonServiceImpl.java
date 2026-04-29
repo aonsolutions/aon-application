@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -55,6 +56,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
+import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.MarketingAction;
@@ -2107,6 +2109,31 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public Workplace saveWorkplace(String domainName, Integer domainId, String user, Workplace workplace) throws AonCoreException {
 		return AON.saveWorkplace(new Domain().setName(domainName).setId(domainId), user, workplace);
+	}
+
+	@Override
+	public List<Activity> getEnterpriseActivities(String domainName, Integer domain, String user, Integer registry) throws AonCoreException {
+		return AON.getEnterpriseActivities(domainName, domain, user, registry);
+	}
+	
+	@Override
+	public Activity saveEnterpriseActivity(String domainName, Integer domain, String user, Activity enterpriseActivity) throws AonCoreException {
+		return AON.saveEnterpriseActivity(domainName, domain, user, enterpriseActivity);
+	}
+	
+	@Override
+	public void deleteEnterpriseActivity(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		AON.deleteEnterpriseActivity(domainName, domain, user, id);
+	}
+	
+	@Override
+	public List<Cnae2009> getCnae2009List(String domainName, Integer domainId, String user) throws AonCoreException {
+		return AON.getCnae2009List(domainName, domainId, user);
+	}
+	
+	@Override
+	public List<Iae> getIaeList(String domainName, Integer domainId, String user) throws AonCoreException {
+		return AON.getIaeList(domainName, domainId, user);
 	}
 	
 	// *********************** [AMORTIZATION TYPE]

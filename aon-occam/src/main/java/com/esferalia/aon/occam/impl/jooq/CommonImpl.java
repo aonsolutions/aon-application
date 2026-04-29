@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -15,6 +16,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.Cno;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
@@ -42,6 +44,7 @@ import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Series;
@@ -54,15 +57,18 @@ import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.ApiConfiguration;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.tag.TagParams;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.impl.jooq.dao.ActivityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ActivitySummaryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.Cnae2009DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CnoDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
@@ -71,6 +77,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.DataRequestDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.IAEDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.MailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayrollWorkplaceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
@@ -662,6 +669,31 @@ public class CommonImpl implements ICommon {
 	@Override
 	public ApiConfiguration getApiConfiguration(AONContext ctx, Integer domainId) {
 		return ConfigurationDAO.getApiConfiguration(ctx, domainId);
+	}
+	
+	@Override
+	public List<Activity> getEnterpriseActivities(CloseableAONContext ctx, Integer registry) {
+		return ctx.getDslContext().transactionResult(configuration -> ActivityDAO.getList(ctx, f -> f.getEnterpriseProperty().eq(registry)));
+	}
+	
+	@Override
+	public Activity saveEnterpriseActivity(CloseableAONContext ctx, Activity enterpriseActivity) {
+		return ctx.getDslContext().transactionResult(configuration -> ActivityDAO.save(ctx, enterpriseActivity));
+	}
+	
+	@Override
+	public void deleteEnterpriseActivity(CloseableAONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(configuration -> ActivityDAO.delete(ctx, id));
+	}
+	
+	@Override
+	public List<Cnae2009> getCnae2009List(CloseableAONContext ctx, Integer domainId) {
+		return ctx.getDslContext().transactionResult(configuration -> Cnae2009DAO.getStream(ctx, f -> f.getIdProperty().ge(0)).collect(Collectors.toList()));
+	}
+	
+	@Override
+	public List<Iae> getIaeList(CloseableAONContext ctx, Integer domainId) {
+		return ctx.getDslContext().transactionResult(configuration -> IAEDAO.getStream(ctx, f -> f.getIdProperty().ge(0)).collect(Collectors.toList()));
 	}
 	
 }

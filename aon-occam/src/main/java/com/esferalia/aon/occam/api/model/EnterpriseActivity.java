@@ -11,8 +11,11 @@ public class EnterpriseActivity implements Serializable {
 	private static final long serialVersionUID = 1603402672575353203L;
 	
 	private Integer id;
+	private Integer domain;
+	private Integer enterprise;
 	private String description;
 	private boolean principal;
+	private boolean surcharge;
 	private Iae iae;
 	private Integer cnae;
 	private String cnaeCode;
@@ -27,6 +30,24 @@ public class EnterpriseActivity implements Serializable {
 
 	public EnterpriseActivity setId(Integer id) {
 		this.id = id;
+		return this;
+	}
+
+	public Integer getDomain() {
+		return domain;
+	}
+
+	public EnterpriseActivity setDomain(Integer domain) {
+		this.domain = domain;
+		return this;
+	}
+
+	public Integer getEnterprise() {
+		return enterprise;
+	}
+
+	public EnterpriseActivity setEnterprise(Integer enterprise) {
+		this.enterprise = enterprise;
 		return this;
 	}
 
@@ -45,6 +66,15 @@ public class EnterpriseActivity implements Serializable {
 	
 	public EnterpriseActivity setPrincipal(boolean principal) {
 		this.principal = principal;
+		return this;		
+	}
+	
+	public boolean isSurcharge() {
+		return surcharge;
+	}
+	
+	public EnterpriseActivity setSurcharge(boolean surcharge) {
+		this.surcharge = surcharge;
 		return this;		
 	}
 	
