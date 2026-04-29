@@ -3490,9 +3490,13 @@ export class AonInvoice extends AonElement {
 	}
 
 	trashPendingInvoice() {
+
+		let deleteText = `Tenga en cuenta que la anulación directa de una factura puede generar inconsistencias contables y fiscales. El proceso recomendado es emitir una factura rectificativa (nota de crédito), que permite corregir o dejar sin efecto la factura original de forma legal y trazable, manteniendo la integridad del registro contable.
+			
+			¿Desea continuar con la anulación directa de la factura?`;
 		this.getApplication().confirmDialog(
 			MSG.DELETE
-			, MSG.DELETE_CONFIRM + " la factura?"
+			, this.invoice.isEmitida() ? deleteText : MSG.DELETE_CONFIRM + " la factura?"
 			, () => {
 				let data = { id: this.getInvoice().id };
 				if (this.getInvoice().canBeAnnulled()) {
