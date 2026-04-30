@@ -230,6 +230,7 @@ public class Page12 extends PageAbs {
 		
 		final FlowPanel container = new FlowPanel();		
 		container.addStyleName(AON.CSS.aonPaddingBottom());
+		container.addStyleName(AON.CSS.aonWidthAlmostAll());
 		container.setVisible(false);
 		final String backgroundColor = "#E0FFFF";
 		

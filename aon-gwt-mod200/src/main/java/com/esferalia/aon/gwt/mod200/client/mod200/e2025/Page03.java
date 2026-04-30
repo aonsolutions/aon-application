@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.mod200.api.model.UteForeign;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2025.Mod2002025Constants;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2025.Mod2002025Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -86,7 +87,8 @@ public class Page03 extends PageAbs {
 			.addCell(new Label(AON.MSG.companyName()),AON.CSS.aonWidthAuto())
 			.addCell(new Label("%"),AON.CSS.aonWidth40())
 			.addCell(new Label(AON.MSG.nominalValue()),AON.CSS.aonWidth100())
-			.addCell(new Label(""),AON.CSS.aonWidth20());
+			.addCell(new Label(""),AON.CSS.aonWidth20())
+			.getElement().getStyle().setFontSize(13, Unit.PX);
 		
 		for (int i = 0; i < callback.getMod200Object().getMod200().getParticipationsOut().size(); i++) {
 			final int idx = i;
@@ -96,6 +98,7 @@ public class Page03 extends PageAbs {
 			Label nameLabel = new Label();
 			nameLabel.setText(callback.getMod200Object().getMod200().getParticipationsOut().get(idx).getName());
 			Label percentLabel = new Label();
+			percentLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 			percentLabel.setText(AON.FMT.format(callback.getMod200Object().getMod200().getParticipationsOut().get(idx).getPercent()));
 			Label nominalLabel = new Label();
 			nominalLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);

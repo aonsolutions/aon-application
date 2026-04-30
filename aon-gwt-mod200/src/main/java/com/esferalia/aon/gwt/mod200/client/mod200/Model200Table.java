@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -190,12 +191,14 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 			admon.setTitle( mod200.getAdministration().getDescription() );
 			admon.setStyleName(AON.CSS.aonIconLabel());
 			admon.addStyleName(FiscalModelUtils.getAdministrationIconStyle(mod200.getAdministration()) );
+			admon.getElement().getStyle().setPosition(Position.STATIC);
 			
 			// Complementaria 
 			InlineLabel comp = new InlineLabel();
 			comp.setTitle( AON.MSG.complementary());
 			comp.setStyleName(AON.CSS.aonIconLabel());
 			comp.addStyleName( mod200.isComplementary()?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck() );
+			comp.getElement().getStyle().setPosition(Position.STATIC);
 			
 			// Estado
 			AonDisplayGridCell statusCell = new AonDisplayGridCell();

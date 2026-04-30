@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.mod200.api.model.EcpnType;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2025.Mod2002025Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -161,6 +162,15 @@ public class Page00 extends PageAbs {
 		// El caracter [00027] siempre está deshabilitado
 		if (inputsCheckBox.containsKey(Mod2002025Key.C0027)) {
 			inputsCheckBox.get(Mod2002025Key.C0027).setEnabled(false);
+		}
+		
+		// No soportados siempre deshabilitados
+		for (Mod2002025Key key : NOT_SUPPORTED_CHARACTERS) {
+			if (inputsCheckBox.containsKey(key)) {
+				inputsCheckBox.get(key).setEnabled(false);
+				if (!callback.getMod200Object().isInitialized())
+					inputsCheckBox.get(key).setTitle(AON.MSG.unsupportedCharacter(key.getCode()));
+			}
 		}
 		
     }
@@ -462,6 +472,9 @@ public class Page00 extends PageAbs {
 		
 		basePanel.add(getTitle("CARACTERES DE LA DECLARACION"));
 		basePanel.add(tab4);
+		
+		if (!callback.getMod200Object().isInitialized())
+			paintFooterNote(basePanel, "(*) La declaraci\u00F3n para estos caracteres no se encuentra disponible.");
 				
 	}
 	
@@ -480,7 +493,7 @@ public class Page00 extends PageAbs {
 			   table.setWidget(row, 0, l);
 			}
 			
-			final CheckBox check = new CheckBox(key.getDescription() + (NOT_SUPPORTED_CHARACTERS.contains(key)?" (NO)":""));
+			final CheckBox check = new CheckBox(key.getDescription() + (NOT_SUPPORTED_CHARACTERS.contains(key) && (!callback.getMod200Object().isInitialized()) ? " (*)" : ""));
 			
 			check.addClickHandler( event -> {
 				if (NOT_SUPPORTED_CHARACTERS.contains(key)) {
@@ -494,10 +507,14 @@ public class Page00 extends PageAbs {
 			});
 			
 			inputsCheckBox.put(key, check);
-			check.setStyleName(AON.AON_CSS.aonFiscalCheckbox());
+			check.setStyleName(AON.CSS.aonCheckBox());
+			check.getElement().getStyle().setProperty("align-items", "center");
+			check.getElement().getFirstChildElement().getStyle().setMargin(0, Unit.PX);
+			check.getElement().getFirstChildElement().getStyle().setPaddingRight(24, Unit.PX);
 			table.setWidget(row, 1, check);
 			row++;
 		}
+		
 	}
 	
 	private void changeAvailability(Mod2002025Key key) {
@@ -508,7 +525,7 @@ public class Page00 extends PageAbs {
 		if (CHARACTER_INCOMPATIBILITY_MAP.get(key) != null) {
 			for (Mod2002025Key incompatible : CHARACTER_INCOMPATIBILITY_MAP.get(key)) {
 				CheckBox check = inputsCheckBox.get(incompatible);
-				if (check != null) {
+				if (check != null && !NOT_SUPPORTED_CHARACTERS.contains(incompatible)) {
 					check.setEnabled(!enabled);
 					if (enabled) {
 						check.setValue(!enabled);
@@ -522,12 +539,13 @@ public class Page00 extends PageAbs {
 		if (enabled && CHARACTER_ALSO_CHECK_MAP.get(key) != null) {
 			for (Mod2002025Key alsoCheck : CHARACTER_ALSO_CHECK_MAP.get(key)) {
 				CheckBox check = inputsCheckBox.get(alsoCheck);
-				if (check != null) {
+				if (check != null && !NOT_SUPPORTED_CHARACTERS.contains(alsoCheck)) {
 					check.setValue(true);
 					callback.getMod200Object().getMod200().setBooleanValue(alsoCheck, check.getValue());
 				}
 			}
 		}
+		
 	}
 	
 }

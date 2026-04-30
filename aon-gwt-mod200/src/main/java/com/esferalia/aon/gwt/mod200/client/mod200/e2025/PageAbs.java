@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2025.Mod2002025Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -142,7 +143,6 @@ public abstract class PageAbs extends ResizeComposite {
 		basePanel = new FlowPanel();		
 		basePanel.addStyleName(AON.CSS.aonPaddingBottom());
 		basePanel.getElement().getStyle().setProperty("max-width", "1200px");
-		
 		scroll.add(basePanel);
 		initWidget(scroll);		
 	}
@@ -222,6 +222,10 @@ public abstract class PageAbs extends ResizeComposite {
 		if (AonStringUtils.isNotBlank(code)) {
 			AonBoxLabel codeBoxLabel = new AonBoxLabel(code, BOX_LENGTH);
 			panel.add(codeBoxLabel);
+			if (!AonStringUtils.isNumeric(code)) {
+				codeBoxLabel.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
+				codeBoxLabel.setWidth("37px");
+			}
 		}
 
 		final AonDoubleBox text = new AonDoubleBox(visibleLength);
@@ -293,6 +297,7 @@ public abstract class PageAbs extends ResizeComposite {
 		
 		final FlowPanel container = new FlowPanel();		
 		container.addStyleName(AON.CSS.aonPaddingBottom());
+		container.addStyleName(AON.CSS.aonWidthAlmostAll());
 		container.setVisible(false);
 		final String backgroundColor = "#E0FFFF";
 		FlexTable tableDetail = getFlexTable(container, headers);
@@ -446,7 +451,7 @@ public abstract class PageAbs extends ResizeComposite {
 		return addTable("", numAmountCols);
 	}
 	protected FlexTable addTable(String title, int numAmountCols) {
-		return addTable(title, numAmountCols, "200px", false);			
+		return addTable(title, numAmountCols, "190px", false);
 	}
 	protected FlexTable addTable(String title, int numAmountCols, String columnWidth) {
 		return addTable(title, numAmountCols, columnWidth, false);			

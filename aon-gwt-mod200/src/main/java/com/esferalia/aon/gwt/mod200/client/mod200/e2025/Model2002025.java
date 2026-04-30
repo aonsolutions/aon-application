@@ -44,6 +44,7 @@ public class Model2002025 extends DockLayoutPanel {
 	}
 	
 	private PageAbs[] pages = new PageAbs[23];
+	private WestFocusPanel westFocusPanelP00 = null;
 	private WestFocusPanel westFocusPanelAEAT = null;
 	
 	protected Mod2002025Object mod200Object;
@@ -138,6 +139,7 @@ public class Model2002025 extends DockLayoutPanel {
 		ensurePage(0).dump();		
 		pageContainer.setWidget(getPage(0));
 		refreshButtonsVisibility();
+		westFocusPanelP00.setBackgroundStyle();
 	}
 	
 	private void refreshButtonsVisibility() {
@@ -174,18 +176,21 @@ public class Model2002025 extends DockLayoutPanel {
 	
 	private class WestFocusPanel extends FocusPanel {
 		
+		FlowPanel container;
+		
 		public WestFocusPanel(int pag, String label) {
-			super();
-			
+			super();			
 			setStyleName(AON.CSS.aonWidthAll());
-			FlowPanel container = new FlowPanel();
+			
+			container = new FlowPanel();
 			container.setWidth("95%");
 			container.setStyleName(AON.CSS.aonBlockCenter());
 			container.addStyleName(AON.CSS.aonClickableBlock());
 			container.addStyleName(AON.CSS.aonFlexBlock());
-			container.addStyleName(AON.CSS.aonBorder());
+			container.addStyleName(AON.CSS.aonBorder());			
 			container.getElement().getStyle().setMarginTop(5.0, Unit.PX);
-			container.getElement().getStyle().setProperty("min-height", "30px");
+			container.getElement().getStyle().setProperty("min-height", "30px");			
+			container.getElement().getStyle().setProperty("border-radius", "5px"); 
 			
 			InlineLabel cardLabel = new InlineLabel( label );
 			cardLabel.getElement().getStyle().setPaddingLeft(5.0, Unit.PX);
@@ -202,16 +207,27 @@ public class Model2002025 extends DockLayoutPanel {
 			});
 		}
 		
-		private void showPage(int page) {
-			FlowPanel parent = 	(FlowPanel) getParent();
+		public void setBackgroundStyle() {
+			// Quitar el fondo de los demás widgets del contenedor de la izquierda
+			FlowPanel parent = (FlowPanel) getParent();
 			for (int i = 0 ; i < parent.getWidgetCount(); i++) {
-				parent.getWidget(i).removeStyleName(AON.CSS.aonBackgroundLigthGray());
-			}			
+				if (parent.getWidget(i) instanceof FocusPanel) {
+					FocusPanel fp = (FocusPanel) parent.getWidget(i);
+					if (fp.getWidget() instanceof FlowPanel) {
+						fp.getWidget().removeStyleName(AON.CSS.aonBackgroundLigthGray());
+					}
+				}
+			}
+			// Poner el fondo al widget seleccionado
+			container.addStyleName(AON.CSS.aonBackgroundLigthGray());
+		}
+
+		private void showPage(int page) {
 			PageAbs pageAbs = ensurePage(page);			
 			if (pageAbs.isAvailable()) {
 				pageAbs.dump();
 				pageContainer.setWidget(pageAbs);
-				addStyleName(AON.CSS.aonBackgroundLigthGray());
+				setBackgroundStyle();
 			} else {
 				AonMessageDialog.warning(AON.MSG.pageNotAvailable());
 			}
@@ -647,7 +663,10 @@ public class Model2002025 extends DockLayoutPanel {
 		linkContainer.setStyleName(AON.CSS.aonPaddingLeft());
 		linkContainer.addStyleName(AON.CSS.aonPaddingBottom());
 		 
-		linkContainer.add(new WestFocusPanel( 1,AON.MSG.identification() + ", Estados de Cuentas, Caracteres de la Declaraci\u00F3n"));
+//		linkContainer.add(new WestFocusPanel( 1,AON.MSG.identification() + ", Estados de Cuentas, Caracteres de la Declaraci\u00F3n"));
+		westFocusPanelP00 = new WestFocusPanel( 1,AON.MSG.identification() + ", Estados de Cuentas, Caracteres de la Declaraci\u00F3n");
+		linkContainer.add(westFocusPanelP00);
+		
 		linkContainer.add(new WestFocusPanel( 2,"Cifra de Negocios, Personal Asalariado, Secretario, Grupo Fiscal o Mercantil"));
 		linkContainer.add(new WestFocusPanel( 3,"Representantes, Administradores, Titular Real"));
 		linkContainer.add(new WestFocusPanel( 4,"Participaciones, Entidades menores, Informaci\u00F3n detalle EP, Socios SICAV"));

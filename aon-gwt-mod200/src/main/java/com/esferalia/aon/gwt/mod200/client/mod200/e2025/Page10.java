@@ -199,6 +199,7 @@ public class Page10 extends PageAbs {
 		
 		FlowPanel panel  = (FlowPanel) tab.getWidget( boxRow , boxCell );
 		panel.addStyleName(AON.AON_CSS.aonNowrap());
+		
 		Button breakdown = new Button();
 		breakdown.setStyleName(AON.AON_CSS.aonIconModel());
 		breakdown.addStyleName(AON.AON_CSS.aonBorderNone());
@@ -209,6 +210,7 @@ public class Page10 extends PageAbs {
 		
 		final FlowPanel container = new FlowPanel();
 		container.addStyleName(AON.CSS.aonPaddingBottom());
+		container.addStyleName(AON.CSS.aonWidthAlmostAll());
 		container.setVisible(false);
 		final String backgroundColor = "#E0FFFF";
 		

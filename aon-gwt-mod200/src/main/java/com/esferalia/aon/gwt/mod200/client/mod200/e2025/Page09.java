@@ -67,12 +67,14 @@ public class Page09 extends PageAbs {
 		basePanel.add(getTitle(AON.MSG.liquidation1Label1()));
 		
 		FlexTable tab1 = addTable();
+		tab1.getColumnFormatter().setWidth(0, "auto");
+		tab1.getColumnFormatter().setWidth(1, "190px");
+		tab1.getColumnFormatter().setWidth(2, "190px");
+		tab1.getColumnFormatter().setWidth(3, "190px");
 		tab1.getFlexCellFormatter().setColSpan(row, 0, 3);
 		
 		paintKeyDescription(tab1, Mod2002025Key.LQ500, row, 0);
-		paintEmptyCell(tab1, row, 1);
-		paintEmptyCell(tab1, row, 2);
-		paintKeyField(tab1, Mod2002025Key.LQ500, row, 3, true);
+		paintKeyField(tab1, Mod2002025Key.LQ500, row, 1, true);
 		++row;
 		
 		paintEmptyCell(tab1, row, 0);
@@ -95,9 +97,7 @@ public class Page09 extends PageAbs {
 
 		tab1.getFlexCellFormatter().setColSpan(row, 0, 3);
 		paintKeyDescription(tab1, Mod2002025Key.LQ501, row, 0);
-		paintEmptyCell(tab1, row, 1);
-		paintEmptyCell(tab1, row, 2);
-		paintKeyField(tab1, Mod2002025Key.LQ501, row, 3, true);
+		paintKeyField(tab1, Mod2002025Key.LQ501, row, 1, true);
 		++row;
 		
 		if (callback.getMod200Object().getMod200().isChecked(Mod2002025Key.C0009) || callback.getMod200Object().getMod200().isChecked(Mod2002025Key.C0010) ) {
