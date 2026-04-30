@@ -535,6 +535,7 @@ public interface CommonServiceAsync {
 	void getAcgreements(String domainName, Integer domain, String user, AsyncCallback<List<Agreement>> asyncCallback) throws AonCoreException;
 	void getWorkplaces(String domainName, Integer domain, String user, Integer registry, AsyncCallback<List<Workplace>> asyncCallback) throws AonCoreException;
 	void deleteWrokplace(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void saveWorkplace(String domainName, Integer domainId, String user, Workplace workplace, AsyncCallback<Workplace> asyncCallback) throws AonCoreException;
 	
 	// *********************** [AMORTIZATION TYPE]
 	void getAmortizationTypes(Occam occam, int domain, AsyncCallback<List<AmortizationType>> asyncCallback);

@@ -73,9 +73,14 @@ public class WorkplaceDAO {
 	public static Workplace save(AONContext ctx, Workplace workplace) {
 		ctx.checkWrite();
 		WorkplaceAutoComplete.completeWorkplace(ctx, workplace);
-		return workplace.getId() != null 
+		Workplace savedWorkplace = workplace.getId() != null 
 			? update(ctx, workplace)
 			: insert(ctx, workplace);
+		
+		workplace.getPayrollWorkplace().setWorkplace(savedWorkplace.getId());
+		PayrollWorkplaceDAO.save(ctx, workplace.getPayrollWorkplace());
+		
+		return savedWorkplace;
 	}
 	
 	private static Workplace insert(AONContext ctx, Workplace workplace) {

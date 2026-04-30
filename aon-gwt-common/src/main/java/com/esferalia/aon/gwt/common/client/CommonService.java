@@ -119,7 +119,6 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -539,6 +538,7 @@ public interface CommonService extends RemoteService {
 	List<Agreement> getAcgreements(String domainName, Integer domain, String user) throws AonCoreException;
 	List<Workplace> getWorkplaces(String domainName, Integer domain, String user, Integer registry) throws AonCoreException;
 	void deleteWrokplace(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
+	Workplace saveWorkplace(String domainName, Integer domainId, String user, Workplace workplace) throws AonCoreException;
 	
 	// *********************** [AMORTIZATION TYPE]
 	List<AmortizationType> getAmortizationTypes(Occam occam, int domain) throws AonCoreException;
