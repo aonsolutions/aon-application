@@ -37,6 +37,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Options;
+import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
@@ -1066,6 +1067,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 				.setAddress(raddressId)
 				.setEconomicAgreement(getEconomicAgreement(geozoneCode))
 				.setScope(enterpriseScope.isEmpty() ? null : enterpriseScope.get().getId())
+				.setPayrollWorkplace(new PayrollWorkplace().setDomain(newDomain.getId()))
 				;
 
 		WorkplaceDAO.save(ctx, workplace);

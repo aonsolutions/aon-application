@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.MarketingAction.MarketingSellerDistribu
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
 import com.esferalia.aon.occam.api.model.MarketingActionTargetParams;
 import com.esferalia.aon.occam.api.model.Options;
+import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
@@ -866,6 +867,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				.setCustomer(customerId)
 				.setEconomicAgreement(getEconomicAgreement(geozoneCode))
 				.setScope(enterpriseScope)
+				.setPayrollWorkplace(new PayrollWorkplace().setDomain(newDomain.getId()))
 				;
 
 		WorkplaceDAO.save(ctx, workplace);
