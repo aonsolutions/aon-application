@@ -120,7 +120,7 @@ class AmortizationDetailTableRow extends AonDisplayGridRow {
 				unrecordLabel.addStyleName( AON.CSS.aonMarginLeft());
 				unrecordLabel.addStyleName( AON.CSS.aonIconCancelCircle());
 				entryLabel.addStyleName( AON.CSS.aonClickable());
-				unrecordLabel.setTitle( AON.MSG.viewAccountEntry() );
+				unrecordLabel.setTitle( AON.MSG.unrecord() );
 				unrecordLabel.addClickHandler( e -> {
 					AmortizationModule.SERVICE.unrecordAllocation( opts.getOccam(), d, new AsyncCallback<AmortizationDetail>() {
 						@Override
