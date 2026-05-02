@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.BonusFilter;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Cnae;
 import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.Cno;
 import com.esferalia.aon.occam.api.model.CommercialActivity;
@@ -9241,6 +9242,12 @@ public class AON {
 	public static List<Cnae2009> getCnae2009List(String domainName, Integer domainId, String userLogin) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
 			return getCommon().getCnae2009List(ctx, domainId);
+		}
+	}
+	
+	public static List<Cnae> getCnae2025List(String domainName, Integer domainId, String userLogin) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
+			return getCommon().getCnae2025List(ctx, domainId);
 		}
 	}
 

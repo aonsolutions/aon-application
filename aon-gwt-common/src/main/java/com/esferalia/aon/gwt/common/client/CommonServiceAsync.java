@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Cnae;
 import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
@@ -543,6 +544,7 @@ public interface CommonServiceAsync {
 	void saveEnterpriseActivity(String domainName, Integer domainId, String user, Activity enterpriseActivity, AsyncCallback<Activity> asyncCallback) throws AonCoreException;
 	void deleteEnterpriseActivity(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void getCnae2009List(String domainName, Integer domainId, String user, AsyncCallback<List<Cnae2009>> asyncCallback) throws AonCoreException;
+	void getCnae2025List(String domainName, Integer domainId, String user, AsyncCallback<List<Cnae>> asyncCallback) throws AonCoreException;
 	void getIaeList(String domainName, Integer domainId, String user, AsyncCallback<List<Iae>> asyncCallback) throws AonCoreException;
 	
 	

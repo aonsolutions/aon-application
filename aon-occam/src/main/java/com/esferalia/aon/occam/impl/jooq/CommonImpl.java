@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Cnae;
 import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.Cno;
 import com.esferalia.aon.occam.api.model.Company;
@@ -69,6 +70,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ActivitySummaryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Cnae2009DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CnaeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CnoDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
@@ -689,6 +691,11 @@ public class CommonImpl implements ICommon {
 	@Override
 	public List<Cnae2009> getCnae2009List(CloseableAONContext ctx, Integer domainId) {
 		return ctx.getDslContext().transactionResult(configuration -> Cnae2009DAO.getStream(ctx, f -> f.getIdProperty().ge(0)).collect(Collectors.toList()));
+	}
+	
+	@Override
+	public List<Cnae> getCnae2025List(CloseableAONContext ctx, Integer domainId) {
+		return ctx.getDslContext().transactionResult(configuration -> CnaeDAO.getStream(ctx, f -> f.getIdProperty().ge(0)).collect(Collectors.toList()));
 	}
 	
 	@Override

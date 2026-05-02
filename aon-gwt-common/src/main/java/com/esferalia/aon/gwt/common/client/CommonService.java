@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Cnae;
 import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
@@ -121,6 +122,7 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -546,6 +548,7 @@ public interface CommonService extends RemoteService {
 	Activity saveEnterpriseActivity(String domainName, Integer domainId, String user, Activity enterpriseActivity) throws AonCoreException;
 	void deleteEnterpriseActivity(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
 	List<Cnae2009> getCnae2009List(String domainName, Integer domainId, String user) throws AonCoreException;
+	List<Cnae> getCnae2025List(String domainName, Integer domainId, String user) throws AonCoreException;
 	List<Iae> getIaeList(String domainName, Integer domainId, String user) throws AonCoreException;
 	
 	// *********************** [AMORTIZATION TYPE]

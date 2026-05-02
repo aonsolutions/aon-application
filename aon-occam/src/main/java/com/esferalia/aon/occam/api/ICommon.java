@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Cnae;
 import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.Cno;
 import com.esferalia.aon.occam.api.model.Company;
@@ -242,6 +243,7 @@ public interface ICommon {
 	public Activity saveEnterpriseActivity(CloseableAONContext ctx, Activity enterpriseActivity);
 	public void deleteEnterpriseActivity(CloseableAONContext ctx, Integer id);
 	public List<Cnae2009> getCnae2009List(CloseableAONContext ctx, Integer domainId);
+	public List<Cnae> getCnae2025List(CloseableAONContext ctx, Integer domainId);
 	public List<Iae> getIaeList(CloseableAONContext ctx, Integer domainId);	
 	
 

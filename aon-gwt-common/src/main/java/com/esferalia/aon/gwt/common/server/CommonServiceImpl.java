@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Cnae;
 import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
@@ -2129,6 +2130,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public List<Cnae2009> getCnae2009List(String domainName, Integer domainId, String user) throws AonCoreException {
 		return AON.getCnae2009List(domainName, domainId, user);
+	}
+	
+	@Override
+	public List<Cnae> getCnae2025List(String domainName, Integer domainId, String user) throws AonCoreException {
+		return AON.getCnae2025List(domainName, domainId, user);
 	}
 	
 	@Override

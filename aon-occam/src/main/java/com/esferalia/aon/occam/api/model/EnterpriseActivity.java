@@ -20,6 +20,11 @@ public class EnterpriseActivity implements Serializable {
 	private Integer cnae;
 	private String cnaeCode;
 	private String cnaeDescription;
+	
+	private Integer cnae25;
+	private String cnae25Code;
+	private String cnae25Description;
+	
 	private VATRegime vatRegime; 
 	private VATExemptionCause vatExemptionCause;
 	private IRPFRegime irpfRegime;
@@ -123,6 +128,33 @@ public class EnterpriseActivity implements Serializable {
 	public EnterpriseActivity setCnaeDescription(String cnaeDescription) {
 		this.cnaeDescription = cnaeDescription;
 		return this;		
+	}
+
+	public Integer getCnae25() {
+		return cnae25;
+	}
+
+	public EnterpriseActivity setCnae25(Integer cnae25) {
+		this.cnae25 = cnae25;
+		return this;	
+	}
+
+	public String getCnae25Code() {
+		return cnae25Code;
+	}
+
+	public EnterpriseActivity setCnae25Code(String cnae25Code) {
+		this.cnae25Code = cnae25Code;
+		return this;	
+	}
+
+	public String getCnae25Description() {
+		return cnae25Description;
+	}
+
+	public EnterpriseActivity setCnae25Description(String cnae25Description) {
+		this.cnae25Description = cnae25Description;
+		return this;	
 	}
 
 	public VATRegime getVatRegime() {
