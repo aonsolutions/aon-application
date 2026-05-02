@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.payroll.shared;
+package com.esferalia.aon.occam.api.model;
 
 import java.util.HashMap;
 import java.util.Map;

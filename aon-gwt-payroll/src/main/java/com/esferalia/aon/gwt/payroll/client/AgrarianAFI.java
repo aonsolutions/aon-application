@@ -18,7 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
-import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
+import com.esferalia.aon.occam.api.model.ProvinceContract;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;

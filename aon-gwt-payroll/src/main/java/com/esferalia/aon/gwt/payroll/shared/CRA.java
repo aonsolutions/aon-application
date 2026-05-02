@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.esferalia.aon.occam.api.model.ProvinceContract;
 import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
