@@ -49,6 +49,9 @@ class AmortizationFormPanel extends DockLayoutPanel {
 		if (callback.getAmortization().detailStream().anyMatch( d -> d.isPending() )) {
 			callback.paintSaleButton();
 		}
+		if (callback.getAmortization().getId() != null) {
+			callback.paintExcelButton();
+		}
 		AmortizationFormPanelCallback cbk = new AmortizationFormPanelCallback() {
 			
 			@Override
@@ -107,8 +110,10 @@ class AmortizationFormPanel extends DockLayoutPanel {
 		AonAccountListBox allocationAccountListBox = null;
 		
 		AonInvestAssetBox investAssetBox = new AonInvestAssetBox(opts,"");
+		investAssetBox.removeStyleName(AON.CSS.aonCustomTextBox());
 		AonTextBox commentsBox = new AonTextBox();
-
+		commentsBox.setVisibleLength(80);
+		
 		// ID Panel
 		Label idLabel = new Label(AON.MSG.code());
 		
@@ -230,6 +235,25 @@ class AmortizationFormPanel extends DockLayoutPanel {
 			row.addCell(allocationAccountLabel)
 			.addCell(allocationAccountBox);
 		}
+		
+		// Deadline
+		AonDateBox deadlineBox = new AonDateBox();
+		deadlineBox.setValue(callback.getAmortization().getDeadline());
+		deadlineBox.setEnabled(false);
+		Label deadlineLabel = new Label(AON.MSG.saleDate());
+		
+		// Sale amount
+		AonDoubleBox saleAmountBox = new AonDoubleBox();
+		saleAmountBox.setValue(callback.getAmortization().getSaleAmount());
+		saleAmountBox.setEnabled(false);
+		Label saleAmountLabel = new Label(AON.MSG.saleAmount());
+
+		grid.addRow()
+			.addCell(deadlineLabel)
+			.addCell(deadlineBox)
+			.addCell(saleAmountLabel)
+			.addCell(saleAmountBox);
+
 		
 		// Bien afecto
 		Label investAsset = new Label(AON.MSG.investAsset());

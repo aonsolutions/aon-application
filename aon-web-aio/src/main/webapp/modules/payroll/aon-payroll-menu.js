@@ -154,6 +154,10 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		        description: "Facturas de Gastos",
 		        title: "Facturas de Gastos",
 				action: () => this.rootPanel(new JSF.AonJsfExpenseInvoice)
+			}, {
+				description: "Remesas de Pago (TEMPORAL)",
+				title: "Remesas de Pago (TEMPORAL)",
+				action: () => this.rootPanel(new JSF.AonJsfFBatchPaymentPayroll())
 		    }/*,{
 		        description: "Vencimientos de Nóminas",
 		        title: "Vencimientos de Nóminas",
