@@ -1,7 +1,9 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Cnae.CNAE;
 import static com.esferalia.aon.jooq.tables.Cnae2009.CNAE2009;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 
 import java.sql.Date;
@@ -15,6 +17,7 @@ import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Cnae;
 import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
@@ -24,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.Properties.EnterpriseActivityProperties;
 import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
+import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO.IaeFiller;
 
@@ -87,8 +91,15 @@ public class ActivityDAO {
 					.setCnae(getValue(r, ENTERPRISE_ACTIVITY.CNAE2009) )
 					.setCnaeCode(getValue(r, CNAE2009.CODE))
 					.setCnaeDescription(getValue(r, CNAE2009.TITLE) )
+					.setCnae25(getValue(r, ENTERPRISE_ACTIVITY.CNAE) )
+					.setCnae25Code(getValue(r, CNAE.CODE))
+					.setCnae25Description(getValue(r, CNAE.TITLE) )
 					.setVatRegime(VATRegime.safeValueOf(getValue(r, ENTERPRISE_ACTIVITY.VAT_REGIME)))
-					.setVatExemptionCause(VATExemptionCause.safeValueOf(getValue(r, ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE)));
+					.setVatExemptionCause(VATExemptionCause.safeValueOf(getValue(r, ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE)))
+					.setIrpfRegime(IRPFRegime.safeValueOf(getValue(r, ENTERPRISE_ACTIVITY.RETENTION_REGIME)))
+					.setSurcharge(getBoolean(r, ENTERPRISE_ACTIVITY.SURCHARGE))
+					;
+			
 			
 			activity.setDomain(getValue(r, ENTERPRISE_ACTIVITY.DOMAIN));
 			activity.setEnterprise(getValue(r, ENTERPRISE_ACTIVITY.ENTERPRISE));
@@ -109,6 +120,7 @@ public class ActivityDAO {
 				.select()
 				.from(ENTERPRISE_ACTIVITY)
 				.leftOuterJoin(CNAE2009).on(CNAE2009.ID.eq(ENTERPRISE_ACTIVITY.CNAE2009))
+				.leftOuterJoin(CNAE).on(CNAE.ID.eq(ENTERPRISE_ACTIVITY.CNAE))
 				.leftOuterJoin(IAE).on(IAE.ID.eq(ENTERPRISE_ACTIVITY.IAE))
 				.where(ENTERPRISE_ACTIVITY_PROPERTIES.getConditions(filter))
 				.fetch()
@@ -131,6 +143,7 @@ public class ActivityDAO {
 				.select()
 				.from(ENTERPRISE_ACTIVITY)
 				.leftOuterJoin(CNAE2009).on(CNAE2009.ID.eq(ENTERPRISE_ACTIVITY.CNAE2009))
+				.leftOuterJoin(CNAE).on(CNAE.ID.eq(ENTERPRISE_ACTIVITY.CNAE))
 				.leftOuterJoin(IAE).on(IAE.ID.eq(ENTERPRISE_ACTIVITY.IAE))
 				.where(ENTERPRISE_ACTIVITY_PROPERTIES.getConditions(filter))
 				.fetch()
@@ -162,8 +175,15 @@ public class ActivityDAO {
 		ctx.checkWrite();
 		printEnterpriseActivity(activity);
 		
-		Cnae2009 cnae2009 = Cnae2009DAO.get(ctx, f -> f.getIdProperty().eq(activity.getCnae()));
-		Cnae cnae = CnaeDAO.get(ctx, f -> f.getIdProperty().eq(activity.getCnae()));
+		Cnae2009 cnae2009 = null == activity.getCnae() 
+				? Cnae2009DAO.get(ctx, f -> f.getIdProperty().eq(activity.getCnae()))
+				: new Cnae2009(activity.getCnae(), activity.getCnaeCode(), activity.getCnaeDescription())		
+				;
+		
+		Cnae cnae25 = null == activity.getCnae25() 
+				? CnaeDAO.get(ctx, f -> f.getIdProperty().eq(activity.getCnae25()))
+				: new Cnae(activity.getCnae25(), activity.getCnae25Code(), activity.getCnae25Description())		
+				;
 		
 		Integer enterpriseId = activity.getEnterprise();
 		if(null == enterpriseId)
@@ -174,11 +194,14 @@ public class ActivityDAO {
 			.set(ENTERPRISE_ACTIVITY.ENTERPRISE, enterpriseId)
 			.set(ENTERPRISE_ACTIVITY.DESCRIPTION, activity.getDescription())
 			.set(ENTERPRISE_ACTIVITY.TYPE, (byte)0)
-			.set(ENTERPRISE_ACTIVITY.CNAE, null == cnae ? null : cnae.getId())
+			.set(ENTERPRISE_ACTIVITY.CNAE, null == cnae25 ? null : cnae25.getId())
 			.set(ENTERPRISE_ACTIVITY.CNAE2009, null == cnae2009 ? null : cnae2009.getId())
+			.set(ENTERPRISE_ACTIVITY.IAE, null == activity.getIae() ? null : activity.getIae().getId())
+			.set(ENTERPRISE_ACTIVITY.RETENTION_REGIME, null == activity.getIrpfRegime() ? null : activity.getIrpfRegime().value())
 			.set(ENTERPRISE_ACTIVITY.START_DATE, parseToSqlDate(activity.getStartDate()))
 			.set(ENTERPRISE_ACTIVITY.END_DATE, parseToSqlDate(activity.getEndDate()))
 			.set(ENTERPRISE_ACTIVITY.PRINCIPAL, activity.isPrincipal() ? (byte)1 : (byte)0)
+			.set(ENTERPRISE_ACTIVITY.SURCHARGE, activity.isSurcharge() ? (byte)1 : (byte)0)
 			.set(ENTERPRISE_ACTIVITY.VAT_REGIME, activity.getVatRegime().value())
 			.set(ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE, activity.getVatExemptionCause() != null ? activity.getVatExemptionCause().value() : null)
 			.returning(ENTERPRISE_ACTIVITY.ID).fetchOne().getId();
@@ -194,17 +217,27 @@ public class ActivityDAO {
 		ctx.checkWrite();
 		printEnterpriseActivity(activity);
 		
-		Cnae2009 cnae2009 = Cnae2009DAO.get(ctx, f -> f.getIdProperty().eq(activity.getCnae()));
-		Cnae cnae = CnaeDAO.get(ctx, f -> f.getIdProperty().eq(activity.getCnae()));
+		Cnae2009 cnae2009 = null == activity.getCnae() 
+				? Cnae2009DAO.get(ctx, f -> f.getIdProperty().eq(activity.getCnae()))
+				: new Cnae2009(activity.getCnae(), activity.getCnaeCode(), activity.getCnaeDescription())		
+				;
+		
+		Cnae cnae25 = null == activity.getCnae25() 
+				? CnaeDAO.get(ctx, f -> f.getIdProperty().eq(activity.getCnae25()))
+				: new Cnae(activity.getCnae25(), activity.getCnae25Code(), activity.getCnae25Description())		
+				;
 		
 		ctx.getDslContext()
 			.update(ENTERPRISE_ACTIVITY)
 			.set(ENTERPRISE_ACTIVITY.DESCRIPTION, activity.getDescription())
-			.set(ENTERPRISE_ACTIVITY.CNAE, null == cnae ? null : cnae.getId())
+			.set(ENTERPRISE_ACTIVITY.CNAE, null == cnae25 ? null : cnae25.getId())
 			.set(ENTERPRISE_ACTIVITY.CNAE2009, null == cnae2009 ? null : cnae2009.getId())
+			.set(ENTERPRISE_ACTIVITY.IAE, null == activity.getIae() ? null : activity.getIae().getId())
+			.set(ENTERPRISE_ACTIVITY.RETENTION_REGIME, null == activity.getIrpfRegime() ? null : activity.getIrpfRegime().value())
 			.set(ENTERPRISE_ACTIVITY.START_DATE, parseToSqlDate(activity.getStartDate()))
 			.set(ENTERPRISE_ACTIVITY.END_DATE, parseToSqlDate(activity.getEndDate()))
 			.set(ENTERPRISE_ACTIVITY.PRINCIPAL, activity.isPrincipal() ? (byte)1 : (byte)0)
+			.set(ENTERPRISE_ACTIVITY.SURCHARGE, activity.isSurcharge() ? (byte)1 : (byte)0)
 			.set(ENTERPRISE_ACTIVITY.VAT_REGIME, activity.getVatRegime().value())
 			.set(ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE, activity.getVatExemptionCause() != null 
 				? activity.getVatExemptionCause().value() : null)
@@ -215,6 +248,18 @@ public class ActivityDAO {
 		EnterpriseCCCDAO.save(ctx, activity.getCccs());
 		
 		return activity;
+	}
+
+	public static void delete(CloseableAONContext ctx, Integer id) {
+		ctx.getDslContext().delete(ENTERPRISE_CCC)
+			.where(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY.eq(id))
+			.execute();
+		
+		ctx.getDslContext().delete(ENTERPRISE_ACTIVITY)
+			.where(ENTERPRISE_ACTIVITY.ID.eq(id))
+			.execute();
+		
+		ctx.log().debug("DELETE ENTERPRISE ACTIVITY id: " + id);	
 	}
 	
 	private static Date parseToSqlDate(java.util.Date date){

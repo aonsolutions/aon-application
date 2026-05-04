@@ -57,15 +57,15 @@ public class AonWorkplacePanel extends HTMLPanel {
 	private HTMLPanel messagePanel = new HTMLPanel(EMPTY_STRING);
 	
 	private AonCustomTextBox description = new AonCustomTextBox("Descripci\u00f3n");
-	
 	private AonCustomListBox statusLB = new AonCustomListBox("Estado");
+	
 	private AonCustomListBox economicAgreementLB = new AonCustomListBox("C. Econ\u00f3mico");
-	private AonCustomListBox scopeLB = new AonCustomListBox("Ambito");
+	private AonCustomListBox enterpriseActivityLB = new AonCustomListBox("Actividad");
 	
 	private AonCustomListBox addressLB = new AonCustomListBox("Direcci\u00f3n");
-	private AonCustomListBox agreementLB = new AonCustomListBox("Convenio");
+	private AonCustomListBox scopeLB = new AonCustomListBox("Ambito");
 	
-	private AonCustomListBox enterpriseActivityLB = new AonCustomListBox("Actividad");
+	private AonCustomListBox agreementLB = new AonCustomListBox("Convenio");
 	private AonCustomListBox calendarLB = new AonCustomListBox("Calendario");
 	
 	private List<Agreement> agreements;
@@ -131,27 +131,29 @@ public class AonWorkplacePanel extends HTMLPanel {
 		HTMLPanel row = new HTMLPanel(EMPTY_STRING);
 		row.setStyleName(AON.CSS.aonItemFlex());
 		
+		statusLB.clearItems();
+		statusLB.addItem("Activo", "0");
+		statusLB.addItem("Inactivo", "1");
+		statusLB.setWidth("10rem");
+		
 		row.add(description);
+		row.add(statusLB);
 		container.add(row);
 		
 		// Row 2
 		HTMLPanel row2 = new HTMLPanel(EMPTY_STRING);
 		row2.setStyleName(AON.CSS.aonItemFlex());
 		
-		statusLB.clearItems();
-		statusLB.addItem("Activo", "0");
-		statusLB.addItem("Inactivo", "1");
-		
 		economicAgreementLB.clearItems();
 		for(int i=0; i < Administration.values().length; i++)
 			economicAgreementLB.addItem(Administration.values()[i].getDescription());
 		
-		scopeLB.clearItems();
-		this.scopes.forEach(s -> scopeLB.addItem(s.getDescription(), s.getId().toString()));
+		enterpriseActivityLB.clearItems();
+		enterpriseActivityLB.addItem("-", "");
+		this.activities.forEach(a -> enterpriseActivityLB.addItem(a.getDescription(), a.getId().toString()));
 		
-		row2.add(statusLB);
 		row2.add(economicAgreementLB);
-		row2.add(scopeLB);
+		row2.add(enterpriseActivityLB);
 		container.add(row2);
 		
 		// Third Row
@@ -161,28 +163,27 @@ public class AonWorkplacePanel extends HTMLPanel {
 		addressLB.clearItems();
 		this.addresses.forEach(a -> addressLB.addItem(a.getFullAddress(), a.getId().toString()));
 		
-		agreementLB.clearItems();
-		agreementLB.addItem("-", "");
-		this.agreements.forEach(a -> agreementLB.addItem(a.getDescription(), a.getId().toString()));
+		scopeLB.clearItems();
+		this.scopes.forEach(s -> scopeLB.addItem(s.getDescription(), s.getId().toString()));
 		
 		row3.add(addressLB);
-		row3.add(agreementLB);
+		row3.add(scopeLB);
 		container.add(row3);
 		
 		// Third Row
 		HTMLPanel row4 = new HTMLPanel(EMPTY_STRING);
 		row4.setStyleName(AON.CSS.aonItemFlex());
 		
-		enterpriseActivityLB.clearItems();
-		enterpriseActivityLB.addItem("-", "");
-		this.activities.forEach(a -> enterpriseActivityLB.addItem(a.getDescription(), a.getId().toString()));
-		
 		calendarLB.clearItems();
 		calendarLB.addItem("-", "");
 		this.calendars.forEach(c -> calendarLB.addItem(c.getDescription(), c.getId().toString()));
 		
-		row4.add(enterpriseActivityLB);
+		agreementLB.clearItems();
+		agreementLB.addItem("-", "");
+		this.agreements.forEach(a -> agreementLB.addItem(a.getDescription(), a.getId().toString()));
+		
 		row4.add(calendarLB);
+		row4.add(agreementLB);
 		container.add(row4);
 		
 		// Fill info

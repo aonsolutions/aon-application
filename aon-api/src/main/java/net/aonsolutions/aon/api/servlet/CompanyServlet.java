@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
@@ -195,7 +196,8 @@ public class CompanyServlet extends AonApiHttpServlet{
 					.setDescription("PRINCIPAL")
 					.setDomain(domain.getId())
 					.setEnterprise(c.getId())
-					.setAddress(raddress.getId());
+					.setAddress(raddress.getId())
+					.setPayrollWorkplace(new PayrollWorkplace().setDomain(domain.getId()));
 				
 				AON.saveWorkplace(domain, new User(), workplace);
 			}
