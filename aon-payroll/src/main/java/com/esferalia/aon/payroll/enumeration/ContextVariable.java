@@ -470,7 +470,9 @@ public enum ContextVariable implements IResourceable {
 	public static final String INFO = "INFO";
 	public static final String NOTE = "NOTA";
 	public static final String CAUTION = "ADVERTENCIA";
-
+	
+	public static final String MEDICAL_INSURANCE = "SEGURO_MEDICO";
+	
 	public static final String FLEXIBLE = "FLEXIBLE";
 	public static final String FLEXIBLE_FOOD = "FLEXIBLE_COMIDA";
 	public static final String FLEXIBLE_DAYCARE = "FLEXIBLE_GUARDERIA";
