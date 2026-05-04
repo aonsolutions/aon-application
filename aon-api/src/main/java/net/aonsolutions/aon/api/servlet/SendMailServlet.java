@@ -25,10 +25,12 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -104,6 +106,23 @@ public class SendMailServlet extends AonApiHttpServlet{
 			.put(IJsonNames.MESSAGE, m);
 		Utils.addCorsHeader(resp);
 		Utils.giveBack(req, resp, j, new JSONObject());
+	}
+	
+	public void sendEmailInvoiceReject(Occam occam, String to) {
+		AonApiData api = new AonApiData();
+		api.setDomain(new Domain().setName(occam.getDomainName()).setId(occam.getDomain()));
+		api.setUser(new User().setLogin(occam.getUser()));
+		CompanyFull cp = AON.getCompanyFull(api.getDomain().getName(), api.getDomain().getId(), "");
+
+		String subject = "Factura Rechazada";
+		String body = invoiceRejectContent(api, cp);
+
+		SESMessage msg = new SESMessage()
+				.setTo(to)
+				.setAlias(cp.getRegistry().getName())
+				.setSubject(subject)
+				.setBody(body);
+		SES.sendEmail(msg);		
 	}
 		
 	private String invoiceRejectContent(AonApiData api, CompanyFull company) {
