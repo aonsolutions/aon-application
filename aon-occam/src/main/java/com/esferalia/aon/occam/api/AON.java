@@ -27,6 +27,8 @@ import com.esferalia.aon.occam.api.model.BonusFilter;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Cnae;
+import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.Cno;
 import com.esferalia.aon.occam.api.model.CommercialActivity;
 import com.esferalia.aon.occam.api.model.CommercialActivityFilter;
@@ -57,6 +59,7 @@ import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.Filter.*;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
@@ -151,6 +154,7 @@ import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
@@ -9214,6 +9218,42 @@ public class AON {
 	public static void deleteWrokplace(String domainName, Integer domainId, String userLogin, Integer workplaceId) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
 			getCommon().deleteWorkplace(ctx, workplaceId);
+		}
+	}
+
+	public static List<Activity> getEnterpriseActivities(String domainName, Integer domainId, String userLogin, Integer registry) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
+			return getCommon().getEnterpriseActivities(ctx, registry);
+		}
+	}
+
+	public static Activity saveEnterpriseActivity(String domainName, Integer domainId, String userLogin, Activity enterpriseActivity) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
+			return getCommon().saveEnterpriseActivity(ctx, enterpriseActivity);
+		}
+	}
+
+	public static void deleteEnterpriseActivity(String domainName, Integer domainId, String userLogin, Integer id) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
+			getCommon().deleteEnterpriseActivity(ctx, id);
+		}
+	}
+
+	public static List<Cnae2009> getCnae2009List(String domainName, Integer domainId, String userLogin) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
+			return getCommon().getCnae2009List(ctx, domainId);
+		}
+	}
+	
+	public static List<Cnae> getCnae2025List(String domainName, Integer domainId, String userLogin) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
+			return getCommon().getCnae2025List(ctx, domainId);
+		}
+	}
+
+	public static List<Iae> getIaeList(String domainName, Integer domainId, String userLogin) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
+			return getCommon().getIaeList(ctx, domainId);
 		}
 	}
 }

@@ -16,7 +16,7 @@ public class AonCustomSuggestBox extends HTMLPanel {
 	
 	public AonCustomSuggestBox(String title) {
 		super(EMPTY_STRING);
-		addStyleName(AON.CSS.aonFlexColumn());
+		addStyleName(AON.CSS.aonFlexColumn2());
 		addStyleName(AON.CSS.aonCustomTextBox());
 
 		createTitle(title);
@@ -25,7 +25,7 @@ public class AonCustomSuggestBox extends HTMLPanel {
 	
 	public AonCustomSuggestBox(String title, AonCustomSuggestOracle customOracle) {
 		super(EMPTY_STRING);
-		addStyleName(AON.CSS.aonFlexColumn());
+		addStyleName(AON.CSS.aonFlexColumn2());
 		addStyleName(AON.CSS.aonCustomTextBox());
 
 		this.customOracle = customOracle;

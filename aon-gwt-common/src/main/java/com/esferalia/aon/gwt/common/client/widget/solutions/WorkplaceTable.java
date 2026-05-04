@@ -70,10 +70,10 @@ public abstract class WorkplaceTable extends ScrollPanel {
 		, DES(AON.MSG.description()					,"-moz-available", "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" )
 		, ADD(AON.MSG.address()						,"8rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
 		, ECO("C. Econ\u00f3mico"					,"7rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
-		, SCO(AON.MSG.scope()						,"8rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
+		, ACT(AON.MSG.activity()					,"8rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
 		, CAL("Calendario"							,"6rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
 		, AGR("Convenio"							,"8rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
-		, ACT(AON.MSG.activity()					,"8rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
+		, SCO(AON.MSG.scope()						,"8rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
 		, BUT(AonStringUtils.EMPTY					,"3rem", ""  )
 		;
 
@@ -290,17 +290,17 @@ public abstract class WorkplaceTable extends ScrollPanel {
 		tab.addInlineStyle(aconomicConcert, COLS.ECO.getStyles());
 		tab.addRow(row, aconomicConcert, COLS.ECO.getColWidth());
 		
-		Label scope = new Label();
-		if(null != workplace.getScope()) {
-			Optional<Scope> scopeOpt = this.scopes.stream().filter(s -> s.getId().equals(workplace.getScope())).findFirst();
-			if(scopeOpt.isPresent()) {
-				scope = new Label(scopeOpt.get().getDescription());
-				scope.setTitle(scopeOpt.get().getDescription());
+		Label activity = new Label();
+		if(null != workplace.getPayrollWorkplace() && null != workplace.getPayrollWorkplace().getEnterpriseActivity()) {
+			Optional<Activity> activityOpt = this.activities.stream().filter(a -> a.getId().equals(workplace.getPayrollWorkplace().getEnterpriseActivity())).findFirst();
+			if(activityOpt.isPresent()) {
+				activity = new Label(activityOpt.get().getDescription());
+				activity.setTitle(activityOpt.get().getDescription());
 			}
 		}
 		
-		tab.addInlineStyle(scope, COLS.SCO.getStyles());
-		tab.addRow(row, scope, COLS.SCO.getColWidth());
+		tab.addInlineStyle(activity, COLS.ACT.getStyles());
+		tab.addRow(row, activity, COLS.ACT.getColWidth());
 		
 		Label calendar = new Label();
 		if(null != workplace.getPayrollWorkplace() && null != workplace.getPayrollWorkplace().getCalendar()) {
@@ -326,17 +326,17 @@ public abstract class WorkplaceTable extends ScrollPanel {
 		tab.addInlineStyle(agreement, COLS.AGR.getStyles());
 		tab.addRow(row, agreement, COLS.AGR.getColWidth());
 		
-		Label activity = new Label();
-		if(null != workplace.getPayrollWorkplace() && null != workplace.getPayrollWorkplace().getEnterpriseActivity()) {
-			Optional<Activity> activityOpt = this.activities.stream().filter(a -> a.getId().equals(workplace.getPayrollWorkplace().getEnterpriseActivity())).findFirst();
-			if(activityOpt.isPresent()) {
-				activity = new Label(activityOpt.get().getDescription());
-				activity.setTitle(activityOpt.get().getDescription());
+		Label scope = new Label();
+		if(null != workplace.getScope()) {
+			Optional<Scope> scopeOpt = this.scopes.stream().filter(s -> s.getId().equals(workplace.getScope())).findFirst();
+			if(scopeOpt.isPresent()) {
+				scope = new Label(scopeOpt.get().getDescription());
+				scope.setTitle(scopeOpt.get().getDescription());
 			}
 		}
 		
-		tab.addInlineStyle(activity, COLS.ACT.getStyles());
-		tab.addRow(row, activity, COLS.ACT.getColWidth());
+		tab.addInlineStyle(scope, COLS.SCO.getStyles());
+		tab.addRow(row, scope, COLS.SCO.getColWidth());
 		
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 	}

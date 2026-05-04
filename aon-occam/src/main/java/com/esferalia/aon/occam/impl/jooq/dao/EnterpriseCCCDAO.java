@@ -140,15 +140,15 @@ public class EnterpriseCCCDAO {
 	private static Integer checkGeozone(AONContext ctx, EnterpriseCCC enterpriseCcc) {
 		if(null != enterpriseCcc.getGeozone()) return enterpriseCcc.getGeozone();
 		
-		Record1<Integer> geozone = ctx.getDslContext().select(GEOZONE.ID)
+		Result<Record1<Integer>> geozone = ctx.getDslContext().select(GEOZONE.ID)
 				.from(GEOZONE)
 				.where(GEOZONE.CODE.eq(enterpriseCcc.getGeozoneCode()))
 					.and(GEOZONE.DOMAIN.eq(enterpriseCcc.getDomain()))
-				.fetchOne();
+				.fetch();
 		
 		Integer geozoneId = null;
 		
-		if(geozone == null){
+		if(geozone == null || geozone.isEmpty()){
 			Result<Record1<String>> names = ctx.getDslContext().select(GEOZONE.NAME)
 				.from(GEOZONE)
 				.where(GEOZONE.CODE.eq(enterpriseCcc.getGeozoneCode()))
@@ -165,7 +165,7 @@ public class EnterpriseCCCDAO {
 				geozoneId = geozoneRecord.getId();
 			}
 		}else
-			geozoneId = geozone.value1();
+			geozoneId = geozone.get(0).value1();
 		
 		return geozoneId;
 	}
