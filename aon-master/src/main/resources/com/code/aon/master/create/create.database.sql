@@ -5024,7 +5024,7 @@ CREATE TABLE `invoice_tracking` (
   `status` tinyint DEFAULT '0' COMMENT 'Estado del Seguimiento de Factura',
   `type` tinyint DEFAULT '0' COMMENT 'Tipo de Factura (Compra o Venta)',
   `total` decimal(15,4) DEFAULT '0' COMMENT 'Total Factura',
-  `json` text CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Factura en formato JSON',
+  `json` mediumtext CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Factura en formato JSON',
   `creation_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',

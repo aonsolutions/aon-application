@@ -2982,7 +2982,7 @@ export class AonInvoice extends AonElement {
 				comment: textArea.value
 			};
 			this.invoice.remarks.push(comment);
-
+			this.invoice.lastStatus = this.invoice.status;
 			this.invoice.status = CONSTANT.REJECTED;
 			this.build();
 			this.save();
@@ -3476,6 +3476,7 @@ export class AonInvoice extends AonElement {
 
 	trashInvoice() {
 		this.updateCounter(this.getTrashFromOption(), OPTION.RAWDOC_TRASH, 1);
+		this.getInvoice().lastStatus = this.getInvoice().status;
 		this.getInvoice().status = CONSTANT.DRAFT;
 		this.save(MSG.MOVED_TO_TRASH);
 		this.reload();
@@ -3490,9 +3491,13 @@ export class AonInvoice extends AonElement {
 	}
 
 	trashPendingInvoice() {
+
+		let deleteText = `Tenga en cuenta que la anulación directa de una factura puede generar inconsistencias contables y fiscales. El proceso recomendado es emitir una factura rectificativa (nota de crédito), que permite corregir o dejar sin efecto la factura original de forma legal y trazable, manteniendo la integridad del registro contable.
+			
+			¿Desea continuar con la anulación directa de la factura?`;
 		this.getApplication().confirmDialog(
 			MSG.DELETE
-			, MSG.DELETE_CONFIRM + " la factura?"
+			, this.invoice.isEmitida() ? deleteText : MSG.DELETE_CONFIRM + " la factura?"
 			, () => {
 				let data = { id: this.getInvoice().id };
 				if (this.getInvoice().canBeAnnulled()) {
@@ -3542,7 +3547,7 @@ export class AonInvoice extends AonElement {
 
 	restoreInvoice() {
 		this.updateCounter(getRestoreFromOption(this.invoice), getRestoreToOption(this.invoice), 1);
-		this.getInvoice().status = CONSTANT.INBOX;
+		this.getInvoice().status = this.invoice.lastStatus || CONSTANT.INBOX;
 		this.getInvoice().number = '';
 		this.save(MSG.RESTORED_DATA);
 		this.reload();
@@ -3561,19 +3566,6 @@ export class AonInvoice extends AonElement {
 			});
 			d.open();
 		});
-	}
-
-	removeOcrInvoice() {
-		let d = this.getApplication().getDialog();
-		d.clear();
-		if (!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.DELETE_FOREVER);
-		d.setContentHTML(MSG.DELETE_CONFIRM);
-		d.addAcceptAction(() => {
-			this.updateCounter(OPTION.RAWDOC_TRASH, undefined, -1);
-			this.back();
-		});
-		d.open();
 	}
 
 	updateCounter(from, to, count) {
