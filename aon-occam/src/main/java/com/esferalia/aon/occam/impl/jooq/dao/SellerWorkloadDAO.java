@@ -191,137 +191,195 @@ public class SellerWorkloadDAO {
 	}
 
 	public static List<SellerWorkload> getList(CloseableAONContext ctx, SellerWorkloadParams params) {
-		List<SellerWorkload> sellers = new ArrayList<>();
+	    List<SellerWorkload> sellers = new ArrayList<>();
 
-		Date start = getStartDatePeriod(params.getPeriod());
-		Date end = getEndDatePeriod(params.getPeriod());
-		
-		if(params.getByProject()) {
-			Condition condition = paramsProjectToCondition(ctx, params);
-			
-			SelectHavingStep<?> select = ctx.getDslContext()
-					.select().from(PROJECT_HOLDER)
-					.join(PROJECT).on(PROJECT.ID.eq(PROJECT_HOLDER.PROJECT))
-					.join(TASK_HOLDER).on(PROJECT_HOLDER.TASK_HOLDER.eq(TASK_HOLDER.REGISTRY))
-					.join(TASK_HOLDER_ALIAS).on(PROJECT_HOLDER.TASK_HOLDER.eq(TASK_HOLDER_ALIAS.ID))
-					.leftOuterJoin(WORKGROUP).on(PROJECT_HOLDER.WORKGROUP.eq(WORKGROUP.ID))
-					.leftJoin(CUSTOMER_FEE)
-					.on(CUSTOMER_FEE.PROJECT.eq(PROJECT.ID)
-							.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(AonDateUtils.toSql(end)))
-							.and(CUSTOMER_FEE.FINAL_DATE.isNull()
-									.or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(start))))) // Condiciones de fechas
-					.leftJoin(CUSTOMER)
-					.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
-					.where(condition)
-					.and(PROJECT_HOLDER.START_DATE.le(new Timestamp(end.getTime())))
-					.and(PROJECT_HOLDER.END_DATE.isNull().or(PROJECT_HOLDER.END_DATE.le(new Timestamp(end.getTime()))))
-					.groupBy(PROJECT_HOLDER.TASK_HOLDER);
+	    Date start = getStartDatePeriod(params.getPeriod());
+	    Date end = getEndDatePeriod(params.getPeriod());
 
-			applyProjectOrdering(select, params);
-			applyHavingCustomers(select, params);
-			
-			sellers = select.limit(params.getOffset(), params.getLimit()).fetch().stream()
-					.map(r -> {
-						SellerWorkload sellerWorkload = new SellerWorkload();
-						sellerWorkload.setProjectHolder(ProjectHolderFiller.build(r));
-						return sellerWorkload;
-					}).collect(Collectors.toList());
+	    StatusFilter sf = getCustomerStatusCondition(params, end);
 
-			sellers.forEach(seller -> {
-				System.out.println(seller.getName());
-				getProjectCustomerAmount(ctx, seller, seller.getProjectHolder().getTaskHolder().getId(), params);
-				System.out.println(seller.getName() + " -- END");
-			});
-		} else {
-			Condition condition = paramsToCondition(ctx, params);
-			
-			SelectHavingStep<?> select = ctx.getDslContext()
-					.select(SELLER.REGISTRY, SELLER_ALIAS.NAME, SELLER_ALIAS.DOCUMENT, SCOPE.DESCRIPTION).from(SELLER)
-					.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY)).join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
-					.leftJoin(CUSTOMER_FEE)
-					.on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY)
-							.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(AonDateUtils.toSql(end)))
-							.and(CUSTOMER_FEE.FINAL_DATE.isNull()
-									.or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(start))))) // Condiciones de fechas
-					.leftJoin(CUSTOMER)
-					.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
-					.where(condition).groupBy(SELLER.REGISTRY); // Agrupamos por SELLER
+	    if (params.getByProject()) {
 
-			applyOrdering(select, params);
-			applyHavingCustomers(select, params);
-			
-			sellers = select.limit(params.getOffset(), params.getLimit()).fetch().stream()
-					.map(new SellerFiller()).collect(Collectors.toList());
+	        Condition condition = paramsProjectToCondition(ctx, params);
 
-			sellers.forEach(seller -> {
-				System.out.println(seller.getName());
-				getCustomerAmount(ctx, seller, seller.getId(), params);
-				System.out.println(seller.getName() + " -- END");
-			});
-		}
+	        // Construcción base del SELECT
+	        SelectJoinStep<?> base = ctx.getDslContext()
+	            .select()
+	            .from(PROJECT_HOLDER)
+	            .join(PROJECT).on(PROJECT.ID.eq(PROJECT_HOLDER.PROJECT))
+	            .join(TASK_HOLDER).on(PROJECT_HOLDER.TASK_HOLDER.eq(TASK_HOLDER.REGISTRY))
+	            .join(TASK_HOLDER_ALIAS).on(PROJECT_HOLDER.TASK_HOLDER.eq(TASK_HOLDER_ALIAS.ID))
+	            .leftOuterJoin(WORKGROUP).on(PROJECT_HOLDER.WORKGROUP.eq(WORKGROUP.ID))
+	            .leftJoin(CUSTOMER_FEE)
+	                .on(CUSTOMER_FEE.PROJECT.eq(PROJECT.ID)
+	                .and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(AonDateUtils.toSql(end)))
+	                .and(CUSTOMER_FEE.FINAL_DATE.isNull()
+	                    .or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(start)))))
+	            .leftJoin(CUSTOMER)
+	                .on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER));
 
-		return sellers;
+	        // Solo si aplica el caso especial (nota tipo 6)
+	        if (sf.lastNote != null) {
+	            base = base.leftOuterJoin(sf.lastNote)
+	                .on(sf.lnRegistry.eq(CUSTOMER.REGISTRY));
+	        }
+
+	        SelectHavingStep<?> select = ((SelectConditionStep<?>) base
+	            .where(condition)
+	            .and(sf.condition)
+	            .and(PROJECT_HOLDER.START_DATE.le(new Timestamp(end.getTime())))
+	            .and(PROJECT_HOLDER.END_DATE.isNull()
+	                .or(PROJECT_HOLDER.END_DATE.le(new Timestamp(end.getTime())))))
+	            .groupBy(PROJECT_HOLDER.TASK_HOLDER);
+
+	        applyProjectOrdering(select, params);
+	        applyHavingCustomers(select, params);
+
+	        sellers = select.limit(params.getOffset(), params.getLimit())
+	            .fetch()
+	            .stream()
+	            .map(r -> {
+	                SellerWorkload sellerWorkload = new SellerWorkload();
+	                sellerWorkload.setProjectHolder(ProjectHolderFiller.build(r));
+	                return sellerWorkload;
+	            })
+	            .collect(Collectors.toList());
+
+	        sellers.forEach(seller -> {
+	            System.out.println(seller.getName());
+	            getProjectCustomerAmount(ctx, seller, seller.getProjectHolder().getTaskHolder().getId(), params);
+	            System.out.println(seller.getName() + " -- END");
+	        });
+
+	    } else {
+
+	        Condition condition = paramsToCondition(ctx, params);
+
+	        SelectJoinStep<?> base = ctx.getDslContext()
+	            .select(SELLER.REGISTRY, SELLER_ALIAS.NAME, SELLER_ALIAS.DOCUMENT, SCOPE.DESCRIPTION)
+	            .from(SELLER)
+	            .join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
+	            .join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
+	            .leftJoin(CUSTOMER_FEE)
+	                .on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY)
+	                .and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(AonDateUtils.toSql(end)))
+	                .and(CUSTOMER_FEE.FINAL_DATE.isNull()
+	                    .or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(start)))))
+	            .leftJoin(CUSTOMER)
+	                .on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER));
+
+	        if (sf.lastNote != null) {
+	            base = base.leftOuterJoin(sf.lastNote)
+	                .on(sf.lnRegistry.eq(CUSTOMER.REGISTRY));
+	        }
+
+	        SelectHavingStep<?> select = ((SelectConditionStep<?>) base
+	            .where(condition)
+	            .and(sf.condition))
+	            .groupBy(SELLER.REGISTRY);
+
+	        applyOrdering(select, params);
+	        applyHavingCustomers(select, params);
+
+	        sellers = select.limit(params.getOffset(), params.getLimit())
+	            .fetch()
+	            .stream()
+	            .map(new SellerFiller())
+	            .collect(Collectors.toList());
+
+	        sellers.forEach(seller -> {
+	            System.out.println(seller.getName());
+	            getCustomerAmount(ctx, seller, seller.getId(), params);
+	            System.out.println(seller.getName() + " -- END");
+	        });
+	    }
+
+	    return sellers;
 	}
+
 
 	public static Integer getListCount(CloseableAONContext ctx, SellerWorkloadParams params) {
-		Date start = getStartDatePeriod(params.getPeriod());
-		Date end = getEndDatePeriod(params.getPeriod());
+	    Date start = getStartDatePeriod(params.getPeriod());
+	    Date end = getEndDatePeriod(params.getPeriod());
 
-		if(params.getByProject()) {
-			Condition condition = paramsProjectToCondition(ctx, params);
+	    StatusFilter sf = getCustomerStatusCondition(params, end);
 
-			SelectHavingStep<Record1<Integer>> select = ctx.getDslContext().selectDistinct(PROJECT_HOLDER.TASK_HOLDER)
-					.from(PROJECT_HOLDER)
-					.join(PROJECT).on(PROJECT.ID.eq(PROJECT_HOLDER.PROJECT))
-					.leftOuterJoin(WORKGROUP).on(PROJECT_HOLDER.WORKGROUP.eq(WORKGROUP.ID))
-					.leftOuterJoin(TASK_HOLDER).on(PROJECT_HOLDER.TASK_HOLDER.eq(TASK_HOLDER.REGISTRY))
-					.leftOuterJoin(TASK_HOLDER_ALIAS).on(PROJECT_HOLDER.TASK_HOLDER.eq(TASK_HOLDER_ALIAS.ID))
-					.leftJoin(CUSTOMER_FEE)
-					.on(CUSTOMER_FEE.PROJECT.eq(PROJECT.ID)
-							.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(AonDateUtils.toSql(end)))
-							.and(CUSTOMER_FEE.FINAL_DATE.isNull()
-									.or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(start))))) // Condiciones de
-																											// fechas
-					.leftJoin(CUSTOMER)
-					.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
-					.where(condition)
-					.and(PROJECT_HOLDER.START_DATE.ge(new Timestamp(start.getTime())))
-					.and(PROJECT_HOLDER.END_DATE.isNull().or(PROJECT_HOLDER.END_DATE.le(new Timestamp(end.getTime()))))
-					.groupBy(PROJECT_HOLDER.TASK_HOLDER);
+	    if (params.getByProject()) {
 
-			applyProjectOrdering(select, params);
-			applyHavingCustomers(select, params);
-			
-			Result<Record1<Integer>> sellerCount = select.fetch();
-			
-			return sellerCount.isEmpty() ? 0 : sellerCount.size();
-			
-		} else {
-			Condition condition = paramsToCondition(ctx, params);
+	        Condition condition = paramsProjectToCondition(ctx, params);
 
-			SelectHavingStep<Record1<Integer>> select = ctx.getDslContext().selectDistinct(SELLER.REGISTRY).from(SELLER)
-					.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY)).join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
-					.leftJoin(CUSTOMER_FEE)
-					.on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY)
-							.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(AonDateUtils.toSql(end)))
-							.and(CUSTOMER_FEE.FINAL_DATE.isNull()
-									.or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(start))))) // Condiciones de
-																											// fechas
-					.leftJoin(CUSTOMER)
-					.on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
-					.where(condition).groupBy(SELLER.REGISTRY); // Agrupamos por SELLER
-	
-			applyOrdering(select, params);
-			applyHavingCustomers(select, params);
-	
-			Result<Record1<Integer>> sellerCount = select.fetch();
-	
-			return sellerCount.isEmpty() ? 0 : sellerCount.size();
-		}
+	        SelectJoinStep<Record1<Integer>> base = ctx.getDslContext()
+	            .selectDistinct(PROJECT_HOLDER.TASK_HOLDER)
+	            .from(PROJECT_HOLDER)
+	            .join(PROJECT).on(PROJECT.ID.eq(PROJECT_HOLDER.PROJECT))
+	            .leftOuterJoin(WORKGROUP).on(PROJECT_HOLDER.WORKGROUP.eq(WORKGROUP.ID))
+	            .leftOuterJoin(TASK_HOLDER).on(PROJECT_HOLDER.TASK_HOLDER.eq(TASK_HOLDER.REGISTRY))
+	            .leftOuterJoin(TASK_HOLDER_ALIAS).on(PROJECT_HOLDER.TASK_HOLDER.eq(TASK_HOLDER_ALIAS.ID))
+	            .leftJoin(CUSTOMER_FEE)
+	                .on(CUSTOMER_FEE.PROJECT.eq(PROJECT.ID)
+	                .and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(AonDateUtils.toSql(end)))
+	                .and(CUSTOMER_FEE.FINAL_DATE.isNull()
+	                    .or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(start)))))
+	            .leftJoin(CUSTOMER)
+	                .on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER));
+
+	        if (sf.lastNote != null) {
+	            base = base.leftOuterJoin(sf.lastNote)
+	                .on(sf.lnRegistry.eq(CUSTOMER.REGISTRY));
+	        }
+
+	        SelectHavingStep<Record1<Integer>> select = base
+	            .where(condition)
+	            .and(sf.condition)
+	            .and(PROJECT_HOLDER.START_DATE.ge(new Timestamp(start.getTime())))
+	            .and(PROJECT_HOLDER.END_DATE.isNull()
+	                .or(PROJECT_HOLDER.END_DATE.le(new Timestamp(end.getTime()))))
+	            .groupBy(PROJECT_HOLDER.TASK_HOLDER);
+
+	        applyProjectOrdering(select, params);
+	        applyHavingCustomers(select, params);
+
+	        Result<Record1<Integer>> sellerCount = select.fetch();
+	        return sellerCount.isEmpty() ? 0 : sellerCount.size();
+
+	    } else {
+
+	        Condition condition = paramsToCondition(ctx, params);
+
+	        SelectJoinStep<Record1<Integer>> base = ctx.getDslContext()
+	            .selectDistinct(SELLER.REGISTRY)
+	            .from(SELLER)
+	            .join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
+	            .join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
+	            .leftJoin(CUSTOMER_FEE)
+	                .on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY)
+	                .and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(AonDateUtils.toSql(end)))
+	                .and(CUSTOMER_FEE.FINAL_DATE.isNull()
+	                    .or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(start)))))
+	            .leftJoin(CUSTOMER)
+	                .on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER));
+
+	        if (sf.lastNote != null) {
+	            base = base.leftOuterJoin(sf.lastNote)
+	                .on(sf.lnRegistry.eq(CUSTOMER.REGISTRY));
+	        }
+
+	        SelectHavingStep<Record1<Integer>> select = base
+	            .where(condition)
+	            .and(sf.condition)
+	            .groupBy(SELLER.REGISTRY);
+
+	        applyOrdering(select, params);
+	        applyHavingCustomers(select, params);
+
+	        Result<Record1<Integer>> sellerCount = select.fetch();
+	        return sellerCount.isEmpty() ? 0 : sellerCount.size();
+	    }
 	}
 
+
 	public static SellerWorkloadContent getSellersWorkloadContent(CloseableAONContext ctx, SellerWorkloadParams params) {
-		Condition condition = createFeeWorkloadCondition(ctx, params);
+		//Condition condition = createFeeWorkloadCondition(ctx, params);
 
 		Date start = getStartDatePeriod(params.getPeriod());
 		Date endIt = AonDateUtils.toSql( AonDateUtils.getMonthLastDay(start) );
