@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.amortization;
 
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
@@ -10,18 +9,27 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
+import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AmortizationPanel extends AonLayoutPanel {
 	private static final int FORM_IDX = 1;
+	private static final String AMORTIZATION_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/AmortizationReportExcelPrint";
+	
 	
 	static interface AmortizationPanelCallback {
 		Amortization getAmortization();
@@ -30,6 +38,7 @@ public class AmortizationPanel extends AonLayoutPanel {
 		AonToolbarButton paintDeleteButton( );
 		AonToolbarButton paintCalculateButton( );
 		AonToolbarButton paintSaleButton( );
+		AonToolbarButton paintExcelButton( );
 		
 	}
 	
@@ -45,6 +54,14 @@ public class AmortizationPanel extends AonLayoutPanel {
 	private AonToolbarButton deleteButton;
 	private AonToolbarButton calculateButton;
 	private AonToolbarButton saleButton;
+	private AonToolbarButton excelButton;
+	
+	private FormPanel diskForm = new FormPanel("_blank");
+	private Hidden amortizationIdHidden = new Hidden(IRequestParamsNames.ID);
+	private Hidden domainIdHidden = new Hidden(IRequestParamsNames.DOMAIN_ID);
+	private Hidden domainNameHidden= new Hidden(IRequestParamsNames.DOMAIN_NAME);
+	private Hidden userHidden = new Hidden(IRequestParamsNames.USER);
+	
 
 	public AmortizationPanel( AmortizationModuleOptions opts ) {
 		super(Unit.PX);
@@ -55,6 +72,15 @@ public class AmortizationPanel extends AonLayoutPanel {
 		
 		resetButton.addClickHandler(e -> reset(opts));
 		toolbar.add(resetButton);
+		
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		FlowPanel formFlowPanel = new FlowPanel();
+		diskForm.add(formFlowPanel);
+		formFlowPanel.add(domainIdHidden);
+		formFlowPanel.add(domainNameHidden);
+		formFlowPanel.add(userHidden);
+		formFlowPanel.add(amortizationIdHidden);
+		toolbar.add(diskForm);
 		
 		this.addNorth(toolbar, AonToolbar.HEIGTH);
 	
@@ -118,6 +144,8 @@ public class AmortizationPanel extends AonLayoutPanel {
 
 	private void sale(AmortizationModuleOptions opts , Amortization amortization) {
 		AonCustomPopup saleDialog = new AonCustomPopup( true );
+		saleDialog.setHeight("300px");
+		saleDialog.setWidth("500px");
 		saleDialog.addStyleName(AON.CSS.aonPaddingTop());
 		saleDialog.setCaption(AON.MSG.saleAmortizaton());
 		saleDialog.setAnimationEnabled(true);
@@ -127,6 +155,10 @@ public class AmortizationPanel extends AonLayoutPanel {
 		FlowPanel content = new FlowPanel();
 		content.setStyleName(AON.CSS.aonWidthAll());
 		saleDialog.add(content);
+		
+		FlowPanel errorContent = new FlowPanel();
+		errorContent.setStyleName(AON.CSS.aonPadding());
+		content.add(errorContent);
 		
 		AonDisplayTable saleTab = new AonDisplayTable();
 		saleTab.addStyleName(AON.CSS.aonMarginTop());
@@ -153,6 +185,26 @@ public class AmortizationPanel extends AonLayoutPanel {
 		acceptButton.setStyleName(AON.CSS.aonOkButton());
 		acceptButton.setText( AON.MSG.accept());
 		acceptButton.addClickHandler(event -> {
+			errorContent.clear();
+			if (amortization.getDeadline() == null  || amortization.getSaleAmount() == null) {
+				if (amortization.getDeadline() == null) {
+					Label errorMsg = new Label( AON.MSG.requiredField(AON.MSG.saleDate()));
+					errorMsg.setStyleName(AON.CSS.aonToolbarMessage());
+					errorMsg.addStyleName(AON.CSS.aonToolbarErrorMessage());
+					errorMsg.addStyleName(AON.CSS.aonWidthAll());
+					errorMsg.addStyleName(AON.CSS.aonMarginTop());
+					errorContent.add(errorMsg);
+				}
+				if (amortization.getSaleAmount() == null) {
+					Label errorMsg = new Label( AON.MSG.requiredField(AON.MSG.saleAmount()));
+					errorMsg.setStyleName(AON.CSS.aonToolbarMessage());
+					errorMsg.addStyleName(AON.CSS.aonToolbarErrorMessage());
+					errorMsg.addStyleName(AON.CSS.aonWidthAll());
+					errorMsg.addStyleName(AON.CSS.aonMarginTop());
+					errorContent.add(errorMsg);
+				}
+				return;
+			}
 			AmortizationModule.SERVICE.sale( opts.getOccam(), amortization, new AsyncCallback<Amortization>() {
 
 				@Override
@@ -224,6 +276,7 @@ public class AmortizationPanel extends AonLayoutPanel {
 		if (deleteButton != null) deleteButton.removeFromParent();
 		if (calculateButton != null) calculateButton.removeFromParent();
 		if (saleButton != null) saleButton.removeFromParent();
+		if (excelButton != null) excelButton.removeFromParent();
 		
 		AmortizationParams params = getParams(opts);
 		tablePanel.clear();
@@ -298,10 +351,26 @@ public class AmortizationPanel extends AonLayoutPanel {
 				return saleButton;
 			}
 			
+			@Override
+			public AonToolbarButton paintExcelButton() {
+				if (excelButton != null) excelButton.removeFromParent();
+				excelButton = new AonToolbarButton(AON.MSG.printExcel(), AON.CSS.aonIconExcel());
+				excelButton.addClickHandler(e -> excel( opts , amortization));
+				toolbar.add(excelButton);
+				return excelButton;
+			}
 		};
 		AmortizationFormPanel amortizationFormPanel = new AmortizationFormPanel(opts, callback);
 		formPanel.setWidget(amortizationFormPanel);
 		show(formPanel);
 	}
 	
+	private void excel(AmortizationModuleOptions opts , Amortization amortization) {
+		diskForm.setAction(GWT.getHostPageBaseURL() + AMORTIZATION_REPORT_EXCEL_PRINT);
+		domainIdHidden.setValue( AonNumberUtils.toString(opts.getDomain()));
+		domainNameHidden.setValue(opts.getDomainName());
+		userHidden.setValue(opts.getUser());
+		amortizationIdHidden.setValue(AonNumberUtils.toString(amortization.getId()));
+		diskForm.submit();
+	}
 }

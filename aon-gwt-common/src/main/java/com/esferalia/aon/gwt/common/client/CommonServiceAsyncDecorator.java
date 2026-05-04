@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.ActivityType;
+import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
@@ -47,6 +48,7 @@ import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryParams;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.calendar.Calendar;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
@@ -1590,6 +1592,36 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getCompanySignature(String domainName, Integer domain, String user, Integer registry, AsyncCallback<Attach> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getCompanySignature(domainName, domain, user, registry, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getCalendars(String domainName, Integer domain, String user, AsyncCallback<List<Calendar>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCalendars(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getAcgreements(String domainName, Integer domain, String user, AsyncCallback<List<Agreement>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getAcgreements(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getWorkplaces(String domainName, Integer domain, String user, Integer registry, AsyncCallback<List<Workplace>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getWorkplaces(domainName, domain, user, registry, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteWrokplace(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteWrokplace(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void saveWorkplace(String domainName, Integer domainId, String user, Workplace workplace, AsyncCallback<Workplace> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveWorkplace(domainName, domainId, user, workplace, new AsyncCallbackWrapper<>(callback));
 	}
 
 	// *********************** [AMORTIZATION TYPE]

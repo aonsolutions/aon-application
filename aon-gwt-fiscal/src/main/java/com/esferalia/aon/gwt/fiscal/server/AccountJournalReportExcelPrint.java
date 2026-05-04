@@ -97,7 +97,7 @@ public class AccountJournalReportExcelPrint extends HttpServlet {
 			header.setLeft("&B" + companyName);
 			header.setRight("&B&D");
 			Footer footer = sheet.getFooter();
-			footer.setLeft("&BCuenta de explotaci\u00F3n");
+			footer.setLeft("&BListado diario de movimientos");
 			footer.setRight("&BP\u00E1g: &P/&N");
 			
 			

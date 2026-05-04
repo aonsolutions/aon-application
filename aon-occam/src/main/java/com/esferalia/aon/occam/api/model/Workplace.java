@@ -18,6 +18,8 @@ public class Workplace implements Serializable {
 	private Integer enterprise;
 	private Integer scope;
 	
+	private PayrollWorkplace payrollWorkplace;
+	
 	public boolean isActive() {
 		return active;
 	}
@@ -81,4 +83,12 @@ public class Workplace implements Serializable {
 		this.scope = scope;
 		return this;
 	}
+	public PayrollWorkplace getPayrollWorkplace() {
+		return payrollWorkplace;
+	}
+	public Workplace setPayrollWorkplace(PayrollWorkplace payrollWorkplace) {
+		this.payrollWorkplace = payrollWorkplace;
+		return this;
+	}
+	
 }

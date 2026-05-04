@@ -9204,4 +9204,26 @@ public class AON {
 			getCalendar().setPayrollWorkplaceCalendar(ctx, domainId, workplaceId, calendarId);
 		}
 	}
+	
+	// ***************************************
+	// ********************** REGISTY ENTRY **
+	// ***************************************
+
+	public static List<com.esferalia.aon.occam.api.model.calendar.Calendar> getCalendars(String domainName, Integer domainId, String userLogin) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
+			return getCalendar().getCalendars(ctx, domainId);
+		}
+	}
+
+	public static List<Agreement> getAgreements(String domainName, Integer domainId, String userLogin) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
+			return getAgreement().getAgreements(ctx, domainId);
+		}
+	}
+
+	public static void deleteWrokplace(String domainName, Integer domainId, String userLogin, Integer workplaceId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
+			getCommon().deleteWorkplace(ctx, workplaceId);
+		}
+	}
 }

@@ -23,8 +23,9 @@ public class Agreement implements Serializable, HasId, HasDomain {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public Agreement setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 
 	@Override
@@ -32,16 +33,18 @@ public class Agreement implements Serializable, HasId, HasDomain {
 		return domain;
 	}
 
-	public void setDomain(Integer domain) {
+	public Agreement setDomain(Integer domain) {
 		this.domain = domain;
+		return this;
 	}
 
 	public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(String name) {
+	public Agreement setDescription(String name) {
 		this.description = name;
+		return this;
 	}
 	
 	public Collection<Payment> getPayments() {

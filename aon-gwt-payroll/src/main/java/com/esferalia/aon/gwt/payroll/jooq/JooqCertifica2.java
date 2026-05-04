@@ -466,6 +466,9 @@ public class JooqCertifica2 {
 		certifica2Info.setCno(cno);
 		certifica2Info.setSuspensionCode(suspensionReasonCode);
 		
+		if(AonStringUtils.equalsIgnoreCase(tc2, "300"))
+			startDate = null != contractRecord.get(CONTRACT.SENIORITY_DATE) ? contractRecord.get(CONTRACT.SENIORITY_DATE) : contractRecord.get(CONTRACT.START_DATE);
+		
 		if(null != ereRecords) {
 			// Get last ere date for ereEndDate
 			Date ereStartDate = ereRecords.get(0).get(CONTRACT_DATA.START_DATE);

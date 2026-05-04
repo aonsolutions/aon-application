@@ -23,9 +23,6 @@
 						<a4j:support event="onchange" reRender="itemTagPrint-report" ajaxSingle="#{true}" />
 					</aon:selectOneMenu>
 				</aon:if>
-			</ui:define>
-
-			<ui:define name="additionalToolbarContent">
 				<aon:htmlCommandLink id="itemTagPrint-report"
 					value="#{bundle.aon_report}" target="_blank"
 					rendered="#{!(empty itemTagPrint.checkedItems) and itemTagPrint.checkedItems>0}"
@@ -36,7 +33,6 @@
 					<f:param name="reportKey" value="#{itemTagPrint.reportKey}" />
 				</aon:htmlCommandLink>
 			</ui:define>
-
 		</ui:decorate>
 
 		<aon:div styleClass="aon-scroll-area">

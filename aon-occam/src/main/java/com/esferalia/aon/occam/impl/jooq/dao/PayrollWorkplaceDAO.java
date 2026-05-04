@@ -40,6 +40,11 @@ public class PayrollWorkplaceDAO {
 				.limit(1).fetchInto(PAYROLL_WORKPLACE).stream().map(new PayrollWorkplaceFiller()).findFirst().orElse(null);
 	}
 	
+	public static PayrollWorkplace get(AONContext ctx, PayrollWorkplaceFilter filter) {
+		return ctx.getDslContext().select().from(PAYROLL_WORKPLACE).where(PAYROLL_WORKPLACE_PROPERTIES.getConditions(filter))
+				.limit(1).fetchInto(PAYROLL_WORKPLACE).stream().map(new PayrollWorkplaceFiller()).findFirst().orElse(null);
+	}
+	
 	public static PayrollWorkplace save(AONContext ctx, PayrollWorkplace payrollWorkplace) {
 		return payrollWorkplace.getId() != null 
 			? update(ctx, payrollWorkplace)
@@ -71,6 +76,14 @@ public class PayrollWorkplaceDAO {
 		ctx.log().debug("UPDATE WORKPLACE id: " + payrollWorkplace.getId());	
 		return payrollWorkplace;
 	}
+
+	public static void delete(AONContext ctx, Integer workplaceId) {
+		ctx.getDslContext().delete(PAYROLL_WORKPLACE)
+			.where(PAYROLL_WORKPLACE.WORKPLACE.eq(workplaceId))
+			.execute();
+		
+		ctx.log().debug("DELETE PAYROLL WORKPLACE workplaceId: " + workplaceId);	
+	}
 	
 	public static class PayrollWorkplaceFiller implements Function<Record, PayrollWorkplace> {
 
@@ -81,6 +94,7 @@ public class PayrollWorkplaceDAO {
 		
 		public static PayrollWorkplace build(Record r) {
 			return new PayrollWorkplace()
+					.setId(r.getValue(PAYROLL_WORKPLACE.ID))
 					.setAgreement(r.getValue(PAYROLL_WORKPLACE.AGREEMENT))
 					.setCalendar(r.getValue(PAYROLL_WORKPLACE.CALENDAR))
 					.setDomain(r.getValue(PAYROLL_WORKPLACE.DOMAIN))

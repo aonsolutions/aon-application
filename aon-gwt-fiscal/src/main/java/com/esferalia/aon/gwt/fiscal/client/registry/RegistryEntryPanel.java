@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonVisualIdentity;
 import com.esferalia.aon.gwt.common.client.widget.solutions.MediaTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.WorkplaceTable;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -62,6 +63,7 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 	private AonVisualIdentity aonVisualIdentity;
 	private AddressTable addressTable;
 	private MediaTable mediaTable;
+	private WorkplaceTable workplaceTable;
 
 	private CompanyFull company;
 	private Registry registry;
@@ -227,7 +229,7 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 			}
 
 			@Override
-			protected LinkedList<GeoZone> getAviableGeozones() {
+			protected LinkedList<GeoZone> getAviableGeozones() { 
 				return options.getConfiguration().getGeozones();
 			}
 
@@ -240,6 +242,19 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 
 		tablayoutPanel.add(new AonMainCertificatesPanel(options.getDomainName(), options.getDomain(), options.getUser()),
 				"Certificados");
+		
+		if (!this.registrySource.equals(RegistrySource.ENVIROMENT)) {
+			workplaceTable = new WorkplaceTable(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId()) {
+
+				@Override
+				protected void onShowErrorMessage(String errorMessage) {
+					AonMessagePanel.showError(messagePanel, errorMessage);
+				}
+
+			};
+			
+			tablayoutPanel.add(workplaceTable, "C. Trabajo");
+		}
 
 		container.add(tablayoutPanel);
 

@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -45,13 +46,18 @@ public class WorkplaceDAO {
 	
 	public static Stream<Workplace> getWorkplaces(AONContext ctx, Integer domainId){
 		ctx.checkRead();
-		return ctx.getDslContext().select()
+		List<Workplace> workplaces = ctx.getDslContext().select()
 			.from(WORKPLACE)
 			.where(WORKPLACE.DOMAIN.eq(domainId))
 			.and(SecurityDAO.getUserScopesCondition(ctx, WORKPLACE.SCOPE))
 			.fetch()
 			.stream()
-			.map(new WorkplaceFiller());
+			.map(new WorkplaceFiller())
+			.collect(Collectors.toList());
+		
+		workplaces.forEach(w -> w.setPayrollWorkplace(PayrollWorkplaceDAO.get(ctx, f -> f.getWorkplaceProperty().eq(w.getId()) )));
+		
+		return workplaces.stream();
 	}
 	
 	public static Stream<Workplace> getWorkplacesNoScope(AONContext ctx, Integer domainId){
@@ -67,9 +73,14 @@ public class WorkplaceDAO {
 	public static Workplace save(AONContext ctx, Workplace workplace) {
 		ctx.checkWrite();
 		WorkplaceAutoComplete.completeWorkplace(ctx, workplace);
-		return workplace.getId() != null 
+		Workplace savedWorkplace = workplace.getId() != null 
 			? update(ctx, workplace)
 			: insert(ctx, workplace);
+		
+		workplace.getPayrollWorkplace().setWorkplace(savedWorkplace.getId());
+		PayrollWorkplaceDAO.save(ctx, workplace.getPayrollWorkplace());
+		
+		return savedWorkplace;
 	}
 	
 	private static Workplace insert(AONContext ctx, Workplace workplace) {
@@ -103,6 +114,18 @@ public class WorkplaceDAO {
 		.execute();
 		ctx.log().debug("UPDATE WORKPLACE id: " + workplace.getId());	
 		return workplace;
+	}
+	
+	public static void delete(AONContext ctx, Integer workplaceId) {
+		
+		PayrollWorkplaceDAO.delete(ctx, workplaceId);
+		
+		ctx.getDslContext().delete(WORKPLACE)
+			.where(WORKPLACE.ID.eq(workplaceId))
+			.execute();
+		
+		ctx.log().debug("DELETE WORKPLACE id: " + workplaceId);	
+		
 	}
 	
 	static class WorkplaceFiller extends Filler implements Function<Record, Workplace> {

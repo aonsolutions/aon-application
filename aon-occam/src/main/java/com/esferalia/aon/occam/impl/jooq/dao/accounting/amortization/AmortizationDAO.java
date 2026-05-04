@@ -47,10 +47,13 @@ import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO.InvestAssetFiller;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.mutable.MutableDouble;
 import com.esferalia.aon.watson.mutable.MutableInt;
+import com.esferalia.aon.watson.mutable.MutableObject;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AmortizationDAO {
@@ -103,6 +106,7 @@ public class AmortizationDAO {
 	        .collect(toAmortizationMap())
 	        .values()
 	        .stream()
+	        .map( am -> calculateDetails(am) )
 			.findFirst()
 		;
 	}
@@ -140,6 +144,44 @@ public class AmortizationDAO {
 	    );
 	}
 	
+	private static Amortization calculateDetails( Amortization am) {
+		MutableInt year = new MutableInt(-1);
+		MutableObject<AmortizationDetail> detail = new MutableObject<>(null);
+		MutableDouble accumulated = new MutableDouble(0.0);
+		MutableDouble pending = new MutableDouble(am.getAmount());
+		MutableDouble fiscalAccumulated = new MutableDouble(0.0);
+		MutableDouble fiscalPending = new MutableDouble(am.getAmount());
+		
+		am.detailStream()
+			.forEach( ad -> {
+				int detailYear= AonDateUtils.getYear( ad.getFromDate() );
+				if ( AonNumberUtils.notEquals( year.getValue() , detailYear )) {
+					year.setValue( detailYear );
+					AmortizationDetail det = new AmortizationDetail()
+						.setDomain( ad.getDomain())
+						.setAmortization( ad.getAmortization() )
+						.setFromDate(ad.getFromDate());
+					detail.setValue( det );
+				}
+				AmortizationDetail det = detail.getValue();
+				
+				accumulated.setValue( AonMathUtils.round(accumulated.getValue() + ad.getAllocation()));
+				pending.setValue( AonMathUtils.round(pending.getValue() - ad.getAllocation()));
+				fiscalAccumulated.setValue( AonMathUtils.round(fiscalAccumulated.getValue() + ad.getFiscalAllocation()));
+				fiscalPending.setValue( AonMathUtils.round(fiscalPending.getValue() - ad.getFiscalAllocation()));
+				
+				det.setToDate(ad.getToDate());
+				det.setCoefficient( AonMathUtils.round(det.getCoefficient() + ad.getCoefficient()));
+				det.setAllocation( AonMathUtils.round(det.getAllocation() + ad.getAllocation()));
+				det.setAccumulated( accumulated.getValue());
+				det.setPending(pending.getValue());
+				det.setFiscalAllocation( AonMathUtils.round(det.getFiscalAllocation() + ad.getFiscalAllocation()));
+				det.setFiscalAccumulated( fiscalAccumulated.getValue());
+				det.setFiscalPending(fiscalPending.getValue());
+		});
+		return am;
+	}
+
 	// ------------------------------------------------------------ [WRITE] ---
 	public static Amortization save(AONContext ctx, Amortization a) {
 		if (a.isDirty()) {
@@ -703,6 +745,7 @@ public class AmortizationDAO {
 			.filter( d -> d.getStatus() == AmortizationDetailStatus.PENDING )
 			.filter( d -> d.getToDate().after(cancelDate) )
 			.forEach( d -> {
+				System.out.println( "Procesando detalle " + d.getId() + " desde " + d.getFromDate() + " hasta " + d.getToDate() );
 				Date from = d.getFromDate();
 				Date to =  d.getToDate();
 				if (from.equals(cancelDate) || from.before(cancelDate)) {

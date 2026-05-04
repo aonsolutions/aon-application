@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.ActivityType;
+import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
@@ -85,6 +86,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.calendar.Calendar;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
@@ -2094,10 +2096,37 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		Attach attach = AON.getAttach(domainName, domain, user, f -> f.getAttachModuleProperty().eq(registry).and(f.getTypeProperty().eq(RegistryAttachmentType.SIGNATURE.value())), AttachType.REGISTRY);
 		return attach;
 	}
-
+	
+	@Override
+	public List<Calendar> getCalendars(String domainName, Integer domain, String user) throws AonCoreException {
+		return AON.getCalendars(domainName, domain, user);
+	}
+	
+	@Override
+	public List<Agreement> getAcgreements(String domainName, Integer domain, String user) throws AonCoreException {
+		List<Agreement> agreements = AON.getAgreements(domainName, domain, user);
+		return agreements;
+	}
+	
+	@Override
+	public List<Workplace> getWorkplaces(String domainName, Integer domain, String user, Integer registry) throws AonCoreException {
+		return AON.getWorkplaces(new Occam().setDomainName(domainName).setDomain(domain).setUser(user), domain).collect(Collectors.toList());
+	}
+	
+	@Override
+	public void deleteWrokplace(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		AON.deleteWrokplace(domainName, domain, user, id);
+	}
+	
+	@Override
+	public Workplace saveWorkplace(String domainName, Integer domainId, String user, Workplace workplace) throws AonCoreException {
+		return AON.saveWorkplace(new Domain().setName(domainName).setId(domainId), user, workplace);
+	}
+	
 	// *********************** [AMORTIZATION TYPE]
 	@Override
 	public List<AmortizationType> getAmortizationTypes(Occam occam, int domain) {
 		return ACCOUNTING.getAmortizationTypeList(occam, domain);
 	}
+	
 }

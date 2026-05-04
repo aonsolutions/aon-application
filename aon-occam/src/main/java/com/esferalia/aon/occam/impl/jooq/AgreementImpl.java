@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -13,12 +14,14 @@ import org.jooq.Field;
 import org.jooq.Identity;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.Record;
+import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IAgreement;
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.Payment;
@@ -177,6 +180,26 @@ public class AgreementImpl implements IAgreement {
 		Field<Integer> max = DSL.max(id.getField());
 		Integer next = ctx.getDslContext().select(max).from(id.getTable()).fetchOne(max);
 		return next == null ? 1 : next + 1;
+	}
+
+	@Override
+	public List<Agreement> getAgreements(CloseableAONContext ctx, Integer domainId) throws AonCoreException {
+		Result<AgreementRecord> agreementRecords = ctx.getDslContext().selectFrom(AGREEMENT)
+		 .where(AGREEMENT.DOMAIN.eq(domainId))
+		 .fetch();
+		
+		List<Agreement> agreements = new ArrayList<Agreement>();
+		
+		agreementRecords.forEach(a -> {
+			agreements.add(
+				new Agreement()
+					.setId(a.getId())
+					.setDomain(a.getDomain())
+					.setDescription(a.getDescription())
+			);
+		});
+		
+		return agreements;
 	}
 
 }
