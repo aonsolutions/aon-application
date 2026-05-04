@@ -1419,3 +1419,7 @@ div:has(.aon-panelGrid-search) + div[style*='inset: 148px'] {
 	inset: 182px 0px 0px 0px !important;
 }
 
+.aon_custom_dialog .aon_custom_table_header{
+	background-color: #e2e8f0;
+}
+

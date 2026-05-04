@@ -370,6 +370,14 @@ export class AonJsfFBatchPayment extends AonJsfApp {
 	}
 }
 
+export class AonJsfFBatchPaymentPayroll extends AonJsfApp {
+
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/fbatchPaymentPayroll.xhtml');
+	}
+}
+
 export class AonJsfPayMethod extends AonJsfApp {
 
 	constructor() {
@@ -1661,6 +1669,10 @@ if (!window.customElements.get(TAG.AON_JSF_FBATCH_CHARGE)) {
 
 if (!window.customElements.get(TAG.AON_JSF_FBATCH_PAYMENT)) {
 	window.customElements.define(TAG.AON_JSF_FBATCH_PAYMENT, AonJsfFBatchPayment);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_FBATCH_PAYMENT_PAYROLL)) {
+	window.customElements.define(TAG.AON_JSF_FBATCH_PAYMENT_PAYROLL, AonJsfFBatchPaymentPayroll);
 }
 
 if (!window.customElements.get(TAG.AON_JSF_SDD_MANDATE)) {

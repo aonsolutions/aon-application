@@ -14,6 +14,8 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Cnae;
+import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -21,6 +23,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.EmployeeSegSocial;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.MarketingAction;
@@ -1622,6 +1625,42 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void saveWorkplace(String domainName, Integer domainId, String user, Workplace workplace, AsyncCallback<Workplace> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.saveWorkplace(domainName, domainId, user, workplace, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getEnterpriseActivities(String domainName, Integer domainId, String user, Integer registry, AsyncCallback<List<Activity>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getEnterpriseActivities(domainName, domainId, user, registry, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveEnterpriseActivity(String domainName, Integer domainId, String user, Activity enterpriseActivity, AsyncCallback<Activity> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveEnterpriseActivity(domainName, domainId, user, enterpriseActivity, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteEnterpriseActivity(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteEnterpriseActivity(domainName, domainId, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getCnae2009List(String domainName, Integer domainId, String user, AsyncCallback<List<Cnae2009>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCnae2009List(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getCnae2025List(String domainName, Integer domainId, String user, AsyncCallback<List<Cnae>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCnae2025List(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getIaeList(String domainName, Integer domainId, String user, AsyncCallback<List<Iae>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getIaeList(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
 	}
 
 	// *********************** [AMORTIZATION TYPE]

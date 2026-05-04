@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.finance.InvoiceTrackingAlterTableJson;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2026;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.InsuranceInsert;
@@ -28,8 +29,6 @@ import net.aonsolutions.db.up2date.tgss.HomeBases2026Update;
 import net.aonsolutions.db.up2date.tgss.OrderPJC2972026Art28Update;
 import net.aonsolutions.db.up2date.tgss.SociosCoopBases2026Update;
 import net.aonsolutions.db.up2date.tgss.TrainingMEI2026Fix;
-import net.aonsolutions.db.up2date.tgss.TrainingPercentages2026Update;
-import net.aonsolutions.db.up2date.tgss.TrainningBases2026Update;
 import net.aonsolutions.db.up2date.timecontrol.CalendarFixNulls;
 
 public class Up2Date {
@@ -650,6 +649,8 @@ public class Up2Date {
 			
 			// RecordDataAlterTable.RECORD_DATA_ALTER_TABLE
 			// DeleteDomainAppApp7.DELETE_DOMAIN_APP_APP7
+
+			InvoiceTrackingAlterTableJson.INVOICE_TRACKING_ALTER_TABLE_JSON,
 	};
 
 	// ------------------------------------------------------------------------

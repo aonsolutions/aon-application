@@ -15,7 +15,7 @@ public class AonCustomDateBox extends HTMLPanel {
 	
 	public AonCustomDateBox(String title) {
 		super(EMPTY_STRING);
-		addStyleName(AON.CSS.aonFlexColumn());
+		addStyleName(AON.CSS.aonFlexColumn2());
 		addStyleName(AON.CSS.aonCustomTextBox());
 
 		createTitle(title);

@@ -32,7 +32,7 @@ public class WorkplaceDAO {
 	
 	public static Optional<Workplace> getWorkplace(AONContext ctx, Integer domainId, Integer worplaceId){
 		ctx.checkRead();
-		return ctx.getDslContext().select()
+		Optional<Workplace> workplace = ctx.getDslContext().select()
 			.from(WORKPLACE)
 			.where(WORKPLACE.DOMAIN.eq(domainId))
 			.and(WORKPLACE.ID.eq(worplaceId))
@@ -41,6 +41,11 @@ public class WorkplaceDAO {
 			.stream()
 			.map(new WorkplaceFiller())
 			.findFirst();
+		
+		if(workplace.isPresent())
+			workplace.get().setPayrollWorkplace(PayrollWorkplaceDAO.get(ctx, f -> f.getWorkplaceProperty().eq(workplace.get().getId()) ));
+		
+		return workplace;
 		
 	}
 	
@@ -62,12 +67,17 @@ public class WorkplaceDAO {
 	
 	public static Stream<Workplace> getWorkplacesNoScope(AONContext ctx, Integer domainId){
 		ctx.checkRead();
-		return ctx.getDslContext().select()
+		List<Workplace> workplaces = ctx.getDslContext().select()
 			.from(WORKPLACE)
 			.where(WORKPLACE.DOMAIN.eq(domainId))
 			.fetch()
 			.stream()
-			.map(new WorkplaceFiller());
+			.map(new WorkplaceFiller())
+			.collect(Collectors.toList());
+		
+		workplaces.forEach(w -> w.setPayrollWorkplace(PayrollWorkplaceDAO.get(ctx, f -> f.getWorkplaceProperty().eq(w.getId()) )));
+		
+		return workplaces.stream();
 	}
 	
 	public static Workplace save(AONContext ctx, Workplace workplace) {
@@ -77,8 +87,10 @@ public class WorkplaceDAO {
 			? update(ctx, workplace)
 			: insert(ctx, workplace);
 		
-		workplace.getPayrollWorkplace().setWorkplace(savedWorkplace.getId());
-		PayrollWorkplaceDAO.save(ctx, workplace.getPayrollWorkplace());
+		if(null != workplace.getPayrollWorkplace()) {
+			workplace.getPayrollWorkplace().setWorkplace(savedWorkplace.getId());
+			PayrollWorkplaceDAO.save(ctx, workplace.getPayrollWorkplace());
+		}
 		
 		return savedWorkplace;
 	}

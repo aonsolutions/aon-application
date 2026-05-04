@@ -13,6 +13,8 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Cnae;
+import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.Cno;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
@@ -40,6 +42,7 @@ import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Series;
@@ -52,6 +55,7 @@ import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.ApiConfiguration;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -233,7 +237,14 @@ public interface ICommon {
 	public List<ActivitySummaryObject> getActivitySummary(CloseableAONContext ctx, Integer domainId, Integer parentDomainId, Integer userId,  ActivitySummaryParams params);
 	
 	// API CONFIGURATION
-	public ApiConfiguration getApiConfiguration(AONContext ctx, Integer domainId);	
+	public ApiConfiguration getApiConfiguration(AONContext ctx, Integer domainId);
+	
+	public List<Activity> getEnterpriseActivities(CloseableAONContext ctx, Integer registry);
+	public Activity saveEnterpriseActivity(CloseableAONContext ctx, Activity enterpriseActivity);
+	public void deleteEnterpriseActivity(CloseableAONContext ctx, Integer id);
+	public List<Cnae2009> getCnae2009List(CloseableAONContext ctx, Integer domainId);
+	public List<Cnae> getCnae2025List(CloseableAONContext ctx, Integer domainId);
+	public List<Iae> getIaeList(CloseableAONContext ctx, Integer domainId);	
 	
 
 }

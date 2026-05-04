@@ -256,7 +256,7 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 		getProgressionState().start();
 		if(getInvoiceCommunicationConfiguration().isTbai()) {
 			try {
-				checkCertificate();
+				checkCertificate(getCertificate());
 			} catch (Exception e) {
 				getProgressionState().setProgressionErrorMessage(e.getMessage());
 				getProgressionState().setProgressionCurrentValue(IProgression.ERROR_VALUE);
@@ -301,14 +301,16 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 		
 	}
 	
-	private static Certificate checkCertificate() throws Exception {
+	private static Certificate checkCertificate(Integer certId) throws Exception {
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
 		Integer userId = UserUtils.getInstance().getLoggedUser().getId();
 		Certificate cert = new Certificate();
 		try {
-			cert =  AON.getCertificate(domainName, domainId, login, userId, CertificateType.AEAT.name());
+			if(certId != null) {
+				cert = AON.getCertificate(domainName, domainId, login, f -> f.getIdProperty().eq(certId));
+			} else cert =  AON.getCertificate(domainName, domainId, login, userId, CertificateType.AEAT.name());
 		} catch (Exception e) {
 			throw new Exception("Error al obtener el certificado.");
 		}
