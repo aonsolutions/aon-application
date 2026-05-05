@@ -52,7 +52,7 @@ public class Customize implements Update {
 	.setTitle("Asesoría Online para Autónomos y Pymes")
 	.setCompanyLogo("https://infoautonomos.aonsolutions.net/dist/logos/infoautonomos/logo.svg")
 	.setFavicon("https://infoautonomos.aonsolutions.net/dist/favicons/infoautonomos/favicon.svg")
-	.setLoginLogo("https://infoautonomos.aonsolutions.net/dist/lCustomize.class.getResource(\"gestoriamunoz-logo.png\"ogos/infoautonomos/logo-horizontal.svg")
+	.setLoginLogo("https://infoautonomos.aonsolutions.net/dist/logos/infoautonomos/logo-horizontal.svg")
 	.setHeaderLogo("https://infoautonomos.aonsolutions.net/dist/logos/infoautonomos/logo-horizontal.svg")
 	.setVariable("AON_CUSTOMIZE_BUTTON_BACKGROUND", "linear-gradient(to right, #0f172a, #0f172a, #0E1030, #41e0e0)")
 	;
