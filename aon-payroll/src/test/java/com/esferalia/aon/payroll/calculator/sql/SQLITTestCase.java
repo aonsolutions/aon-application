@@ -8466,7 +8466,72 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		assertEquals(1750.00 / monthDays * ( monthDays - 15) , salary.getTotalPayment(), DELTA);
 
 	}
-	// ------------------------------------------------------------------------
+	
+	
+	@Test
+	public void testInsuranceAtIT() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfMonth(getToday()),
+				Collections.singletonMap("DIAS_MES", "30.00"),
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+		PaymentConceptRecord medicalInsurence = addConcept(aonContext, "SEGURO_MEDICO", PaymentType.CRA_0013);
+		addPayment(aonContext, contract, contract.getStartDate(), null, medicalInsurence, "SEGURO MEDICO", "100.00", "10.00", "_P", PaymentType.CRA_0013);
+		
+		addPrestITs(aonContext, contract);
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		calculateAndSave(connection, ctx);
+		
+		Date startITDate = add(startDate, Calendar.MONTH, 1);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null);
+
+		startDate = startITDate;
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+ 
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getQuote()
+					+ " (" + payment.getExpression() + ")");
+		}
+		
+		double quote = salary.getSalaryPayments().stream().collect(Collectors.summingDouble(SalaryPayment::getQuote));
+		System.out.println("Total Quote: " + quote);
+		double amount = salary.getSalaryPayments().stream().collect(Collectors.summingDouble(SalaryPayment::getAmount));
+		System.out.println("Total Amount: " + amount);
+		double irpfBase = salary.getSalaryPayments().stream().collect(Collectors.summingDouble(SalaryPayment::getIrpf));
+		System.out.println("Total IRPF : " + irpfBase);
+		
+		
+		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
+		
+		assertEquals(1850.0, salary.getSalaryDatas().stream().filter(s -> s.getName().equals(ContextVariable.CGC_BASE.getName())).map(SalaryData::getExpression).mapToDouble(Double::valueOf).sum(), DELTA);
+		assertEquals(1850.0, salary.getCommonBase(), DELTA);
+		assertEquals(1850.0 / 30 * monthDays +100.00, salary.getTotalPayment(), DELTA);
+		assertEquals(1850.0 / 30 * monthDays +10.00, salary.getIrpfBase(), DELTA);
+		
+
+	}	// ------------------------------------------------------------------------
 	
 
 	protected static PaymentConceptRecord addPrestITs(AONContext aonContext, ContractRecord contract) {

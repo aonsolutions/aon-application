@@ -7,8 +7,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
+import com.esferalia.aon.occam.api.model.ProvinceContract;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -174,7 +174,6 @@ public class CCCDialog extends AonCustomDialog {
 		button.getElement().getStyle().setProperty("padding", "5px");
 		button.getElement().getStyle().setProperty("height", "auto");
 		button.getElement().getStyle().setProperty("font-size", "12px");
-//		button.getElement().getStyle().setProperty("font-family", "Arial Unicode MS, Arial, sans-serif");
 		button.getElement().getStyle().setProperty("text-transform", "inherit");
 		button.getElement().getStyle().setProperty("font-weight", "bold");
 		button.getElement().getStyle().setProperty("border", "1px solid #d0d0d0");

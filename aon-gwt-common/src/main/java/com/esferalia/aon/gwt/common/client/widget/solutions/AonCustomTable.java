@@ -14,7 +14,7 @@ public class AonCustomTable extends HTMLPanel {
 	
 	public AonCustomTable() {
 		super(EMPTY_STRING);
-		addStyleName(AON.CSS.aonFlexColumn());
+		addStyleName(AON.CSS.aonFlexColumn2());
 		getElement().getStyle().setProperty("margin", "0");
 		getElement().getStyle().setProperty("padding", "1rem");
 		getElement().getStyle().setProperty("gap", "0");

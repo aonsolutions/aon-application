@@ -599,7 +599,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
 				endITDate, null);
 
-		Date startDate = getFirstDayOfMonth(getToday());
+		Date startDate = getFirstDayOfMonth(startITDate);
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
@@ -643,7 +643,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
 				endITDate, null);
 
-		Date startDate = getFirstDayOfMonth(getToday());
+		Date startDate = getFirstDayOfMonth(startITDate);
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
@@ -654,9 +654,9 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		Salary salary = calculator.calculate(ctx);
 		
 		int monthDays = get(endDate, DAY_OF_MONTH);
+		assertEquals(2000.00, salary.getCommonBase(), DELTA, format("%s :", CGC_BASE));
 		assertEquals(2000.00
 				* (monthDays - itDays) / monthDays, salary.getTotalLiquid(), DELTA, format("%s :", TOTAL_LIQUID));
-		assertEquals(2000.00, salary.getCommonBase(), DELTA, format("%s :", CGC_BASE));
 
 	}
 

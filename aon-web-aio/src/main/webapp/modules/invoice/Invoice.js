@@ -63,6 +63,7 @@ export class Invoice {
   ocrStatus;
 
   communicationInfo;
+  lastStatus;
 
   constructor(invoice) {
     this.buildObject(invoice);
@@ -156,7 +157,7 @@ export class Invoice {
       this.taxableBase = invoice.taxableBase;
       this.vatQuota = invoice.vatQuota;
       this.retentionQuota = invoice.retentionQuota;
-
+      this.lastStatus = invoice.lastStatus;
       if(this.finances.length === 0) this.resetFinances();
     } else {
       this.domain = LS.getDomainId();

@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum IRPFRegime implements Serializable {
 
 	 NORMAL 	("Estimaci\u00F3n directa normal"		,"Est. Normal")
@@ -34,6 +36,14 @@ public enum IRPFRegime implements Serializable {
 		if (i == null) return null;
 		if (i < 0 || i.intValue() >= IRPFRegime.values().length) return null;
 		return IRPFRegime.values()[i];
+	}
+	public static IRPFRegime safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return NORMAL;
+		for (IRPFRegime rs : values()) {
+			if(i.equalsIgnoreCase(rs.name()))
+				return rs;
+		}
+		return NORMAL;
 	}
 
 }

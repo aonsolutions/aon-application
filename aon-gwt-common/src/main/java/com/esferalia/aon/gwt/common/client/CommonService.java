@@ -14,6 +14,8 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Cnae;
+import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -21,6 +23,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.EmployeeSegSocial;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.MarketingAction;
@@ -119,6 +122,7 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -539,6 +543,13 @@ public interface CommonService extends RemoteService {
 	List<Workplace> getWorkplaces(String domainName, Integer domain, String user, Integer registry) throws AonCoreException;
 	void deleteWrokplace(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
 	Workplace saveWorkplace(String domainName, Integer domainId, String user, Workplace workplace) throws AonCoreException;
+	
+	List<Activity> getEnterpriseActivities(String domainName, Integer domain, String user, Integer registry) throws AonCoreException;
+	Activity saveEnterpriseActivity(String domainName, Integer domainId, String user, Activity enterpriseActivity) throws AonCoreException;
+	void deleteEnterpriseActivity(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
+	List<Cnae2009> getCnae2009List(String domainName, Integer domainId, String user) throws AonCoreException;
+	List<Cnae> getCnae2025List(String domainName, Integer domainId, String user) throws AonCoreException;
+	List<Iae> getIaeList(String domainName, Integer domainId, String user) throws AonCoreException;
 	
 	// *********************** [AMORTIZATION TYPE]
 	List<AmortizationType> getAmortizationTypes(Occam occam, int domain) throws AonCoreException;
