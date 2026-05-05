@@ -444,9 +444,11 @@ public class RawdocDAO {
 		ctx.checkWrite();
 		return get(ctx, rawdocId)
 			.map(r -> { 
-				JSONObject json = new JSONObject(r.getJson());
-				json.put(IJsonNames.LAST_STATUS, r.getStatus().name());
-				r.setJson(json.toString());
+				if(r.getJson() != null) {
+					JSONObject json = new JSONObject(r.getJson());
+					json.put(IJsonNames.LAST_STATUS, r.getStatus().name());
+					r.setJson(json.toString());	
+				}
 				return r;
 			})
 			.map( r -> updateStatus(ctx,r,RawdocStatus.DRAFT, null))
@@ -457,9 +459,11 @@ public class RawdocDAO {
 		ctx.checkWrite();
 		return get(ctx, rawdocId)
 			.map(r -> { 
-				JSONObject json = new JSONObject(r.getJson());
-				json.put(IJsonNames.LAST_STATUS, r.getStatus().name());
-				r.setJson(json.toString());
+				if(r.getJson() != null) {
+					JSONObject json = new JSONObject(r.getJson());
+					json.put(IJsonNames.LAST_STATUS, r.getStatus().name());
+					r.setJson(json.toString());
+				}
 				return r;
 			})
 			.map( r -> updateStatus(ctx,r,RawdocStatus.REJECTED,reason))
