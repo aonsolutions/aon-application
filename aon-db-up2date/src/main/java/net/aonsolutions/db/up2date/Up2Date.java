@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.customize.Customize;
 import net.aonsolutions.db.up2date.finance.InvoiceTrackingAlterTableJson;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2026;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
@@ -619,6 +620,7 @@ public class Up2Date {
 			// AlterFsMod190Detail2026.ALTER_FS_MODEL_190_DETAIL_2026,
 			InsuranceInsert.INSURANCEINSERT,
 			AgriculturalBases2026Update.AGRICULTURALBASES2026UPDATE,
+			Customize.CUSTOMIZE_GESTORIAMUNOZ,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
