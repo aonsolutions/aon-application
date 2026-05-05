@@ -154,6 +154,15 @@ public class JooqAgreementIntegrityCalculator {
 						return null;
 					}
 
+					@Override
+					public ISQLContractSalaryCalculatorContext visitProcedural(SalaryType salaryType) {
+						try {
+							return new SQLContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, chargeDate, criteria);
+						} catch (ExpressionException | SQLException e) {
+							throw new RuntimeException(e);
+						}
+					}
+				
 				});
 				
 				Salaries salaries = new Salaries(connection, startDate, endDate, criteria);

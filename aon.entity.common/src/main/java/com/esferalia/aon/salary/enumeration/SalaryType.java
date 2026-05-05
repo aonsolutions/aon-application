@@ -8,58 +8,84 @@ import com.code.aon.common.enumeration.IResourceable;
 public enum SalaryType implements IResourceable {
 
 	
-	SALARY
+	SALARY 		// 0
 	{
 		@Override
 		public <E> E accept(SalaryTypeVisitor<E> visitor) {
 			return visitor.visitSalary(this);
 		}
 	},
-	EXTRA
+	EXTRA 		// 1
 	{
 		@Override
 		public <E> E accept(SalaryTypeVisitor<E> visitor) {
 			return visitor.visitExtra(this);
 		}
-	},
-	SETTLE
+	},	
+	SETTLE 		// 2
 	{
 		@Override
 		public <E> E accept(SalaryTypeVisitor<E> visitor) {
 			return visitor.visitSettle(this);
 		}
 	},
-	DELAY
+	DELAY 		// 3
 	{
 		@Override
 		public <E> E accept(SalaryTypeVisitor<E> visitor) {
 			return visitor.visitDelay(this);
 		}
 	},
+	PROCEDURAL	// 4 
+	{
+		@Override
+		public <E> E accept(SalaryTypeVisitor<E> visitor) {
+			return visitor.visitProcedural(this);
+		}
+	},
+	UNKNOWN_5,
+	UNKNOWN_6,
+	UNKNOWN_7,
+	UNKNOWN_8,
+	UNKNOWN_9,
 	
-	
-	L00 
+	L00 		// 10
 	{
 		@Override
 		public <E> E accept(SalaryTypeVisitor<E> visitor) {
 			return visitor.visitL00(this);
 		}
 	},
-	L03 
+	L02 		// 11
+	{
+		@Override
+		public <E> E accept(SalaryTypeVisitor<E> visitor) {
+			return visitor.visitL02(this);
+		}
+	},
+	L03 		// 12
 	{
 		@Override
 		public <E> E accept(SalaryTypeVisitor<E> visitor) {
 			return visitor.visitL03(this);
 		}
 	},
-	L13 
+	L13 		// 13
 	{
 		@Override
 		public <E> E accept(SalaryTypeVisitor<E> visitor) {
 			return visitor.visitL13(this);
 		}
 	},
-	M190 
+	UNKNOWN_14,
+	UNKNOWN_15,
+	UNKNOWN_16,
+	UNKNOWN_17,
+	UNKNOWN_18,
+	UNKNOWN_19,
+	
+	
+	M190		// 20 	
 	{
 		@Override
 		public <E> E accept(SalaryTypeVisitor<E> visitor) {
@@ -69,7 +95,10 @@ public enum SalaryType implements IResourceable {
 	;
 	
 	
-	public abstract <E> E accept(SalaryTypeVisitor<E>  visitor);
+	
+	public <E> E accept(SalaryTypeVisitor<E>  visitor) { 
+		throw new UnknownSalaryTypeException(this);
+	}
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_salary_type_";
@@ -88,4 +117,10 @@ public enum SalaryType implements IResourceable {
 		
     }
 	
+    public static String getName(Locale locale, String name) {
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
+		return bundle.getString(MSG_KEY_PREFIX + name);
+		
+    }
+    
 }

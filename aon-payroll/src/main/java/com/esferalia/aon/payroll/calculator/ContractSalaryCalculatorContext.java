@@ -428,6 +428,11 @@ public class ContractSalaryCalculatorContext extends
 			}
 			return sqlCtx;
 		}
+		
+		@Override
+		public ISQLContractSalaryCalculatorContext visitProcedural(SalaryType salaryType) {
+			return visitSalary(salaryType);
+		}
 
 	}
 

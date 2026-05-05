@@ -45,6 +45,7 @@ import com.code.aon.person.Person;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry;
+import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry.EnterpriseEntryType;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryBonusRecord;
@@ -1397,6 +1398,11 @@ public class JooqEnterpriseSalaryBuilder {
 				return SalaryType.DELAY.name();
 			}
 			
+			@Override
+			public String visitProcedural(SalaryType salaryType) {
+				return SalaryType.PROCEDURAL.name();
+			}
+			
 		});
 	}
 
@@ -1436,6 +1442,11 @@ public class JooqEnterpriseSalaryBuilder {
 
 			@Override
 			public EnterprisePayrollEntry.EnterpriseEntryType visitDelay(SalaryType salaryType) {
+				return EnterprisePayrollEntry.EnterpriseEntryType.AON_SYSTEM;
+			}
+			
+			@Override
+			public EnterpriseEntryType visitProcedural(SalaryType salaryType) {
 				return EnterprisePayrollEntry.EnterpriseEntryType.AON_SYSTEM;
 			}
 		});
