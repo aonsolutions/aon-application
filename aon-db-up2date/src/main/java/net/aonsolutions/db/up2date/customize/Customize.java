@@ -52,9 +52,8 @@ public class Customize implements Update {
 	.setTitle("Asesoría Online para Autónomos y Pymes")
 	.setCompanyLogo("https://infoautonomos.aonsolutions.net/dist/logos/infoautonomos/logo.svg")
 	.setFavicon("https://infoautonomos.aonsolutions.net/dist/favicons/infoautonomos/favicon.svg")
-	.setLoginLogo("https://infoautonomos.aonsolutions.net/dist/logos/infoautonomos/logo-horizontal.svg")
+	.setLoginLogo("https://infoautonomos.aonsolutions.net/dist/lCustomize.class.getResource(\"gestoriamunoz-logo.png\"ogos/infoautonomos/logo-horizontal.svg")
 	.setHeaderLogo("https://infoautonomos.aonsolutions.net/dist/logos/infoautonomos/logo-horizontal.svg")
-	
 	.setVariable("AON_CUSTOMIZE_BUTTON_BACKGROUND", "linear-gradient(to right, #0f172a, #0f172a, #0E1030, #41e0e0)")
 	;
 	
@@ -70,6 +69,20 @@ public class Customize implements Update {
 	.setHeaderLogo("https://ayudat.aonsolutions.net/dist/logos/ayudat/logo-horizontal.svg")
 	;
 	
+	public static final Customize CUSTOMIZE_GESTORIAMUNOZ = 
+	new Customize(DOMAIN.NAME.likeRegex("^gestoriamunoz\\.aonsolutions\\.(org|net)$"))
+	.setTheme("/css/theme/future.css")
+	.setSupportPhone("963 416 333")
+	.setSupportEmail("info@gestoriamunoz.com")
+	.setTitle("Gestoria Muñoz - Asesoria Fiscal en Valencia")
+	.setFavicon(Customize.class.getResource("gestoriamunoz/favicon.ico"))
+	.setLoginLogo(Customize.class.getResource("gestoriamunoz/header-logo.png"))
+	.setHeaderLogo(Customize.class.getResource("gestoriamunoz/header-logo.png"))
+	.setCompanyLogo(Customize.class.getResource("gestoriamunoz/company-logo.jpeg"))
+	.setVariable("AON_CUSTOMIZE_LOGIN_LOGO_WIDTH", "250px")
+	.setVariable("AON_CUSTOMIZE_LOGIN_LOGO_HEIGHT", "50px")
+	;
+
 	// CUSTOM_VIEW(getEmptyModules(), "Vista Personalizada"),								// 20
 	
 	private static final byte CUSTOM_VIEW_APP = 20;
@@ -167,8 +180,23 @@ public class Customize implements Update {
 		return this;
 	}
 
+	public Customize setFavicon(URL favicon) {
+		rAttachs.put("favicon.svg", favicon.toString());
+		return this;
+	}
+
+	public Customize setLoginLogo(URL loginLogo) {
+		rAttachs.put("aon-login-logo", loginLogo.toString());
+		return this;
+	}
+
 	public Customize setLoginLogo(String loginLogo) {
 		rAttachs.put("aon-login-logo", loginLogo);
+		return this;
+	}
+	
+	public Customize setHeaderLogo(URL headerLogo) {
+		rAttachs.put("aon-header-logo", headerLogo.toString());
 		return this;
 	}
 
@@ -197,6 +225,11 @@ public class Customize implements Update {
 		return this;
 	}
 	
+	public Customize setCompanyLogo(URL companyLogo) {
+		this.companyLogo = companyLogo.toString();
+		return this;
+	}
+
 	public Customize setCompanyLogo(String companyLogo) {
 		this.companyLogo = companyLogo;
 		return this;

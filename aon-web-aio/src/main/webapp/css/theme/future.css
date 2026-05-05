@@ -47,6 +47,10 @@
 	--aonPayroll: none;
 	
 	
+	--aonCustomizeLoginLogoWidth: 132px;
+	--aonCustomizeLoginLogoHeight: 32px;
+	--aonCustomizeHeaderLogoWidth: var(--aonCustomizeLoginLogoWidth);
+	--aonCustomizeHeaderLogoHeight: var(--aonCustomizeLoginLogoHeight);
 	--aonCustomizeButtonBackground: linear-gradient(to right, #0f172a, #0f172a, #0E1030, #586078);
 }
 
@@ -68,7 +72,9 @@ body {
 
 
 .aonNewLogo{
- 	background-image: url("../../assets/aon-white-logo.svg");  
+	background-image: url("../../assets/aon-white-logo.svg");
+	width: var(--aonCustomizeHeaderLogoWidth);
+	height: var(--aonCustomizeHeaderLogoHeight);
 }
 
 .aonHeader{
@@ -1162,6 +1168,8 @@ aon-fiscal-menu .suiteMenuDiv2{
 }
 
 .aonLoginLogo {
+	width: var(--aonCustomizeLoginLogoWidth);
+	height: var(--aonCustomizeLoginLogoHeight);
 	background-image: url("../../assets/aon-white-logo.svg");
 }
 
