@@ -498,13 +498,8 @@ public class AON {
 	}
 	
 	public static User getUser(String domainName, int domainId, String login) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getSecurity().getUser(ctx, login);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
@@ -3093,6 +3088,12 @@ public class AON {
 	// ****************************** GWT-OFFICE **
 	// ********************************************
 
+	public static User getUser(Occam occam, UserFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getSecurity().getUser(ctx, filter);
+		} 
+    }
+	
 	public static User getUser(Domain domain, User user, UserFilter filter) {
 	    return getUser(domain, user.getLogin(), filter);
     }
@@ -6379,15 +6380,15 @@ public class AON {
 		}
 	}
 
-	public static MailAccount getMailAccount(String domainName,
-			Integer domainId, String login, MailAccountFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+	public static MailAccount getMailAccount(Occam occam, MailAccountFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			return getSecurity().getMailAccount(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		}
+	}
+	
+	public static MailAccount getMailAccount(String domainName, Integer domainId, String login, MailAccountFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getSecurity().getMailAccount(ctx, filter);
 		}
 	}
 
