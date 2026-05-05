@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
@@ -747,6 +748,12 @@ public class AccountingImpl implements IAccounting {
 	public AmortizationDetail unblockAmortizationDetail(AONContext ctx, AmortizationDetail detail) throws AonCoreException {
 		return ctx.getDslContext().transactionResult(
 			configuration -> AmortizationDAO.unblockDetail(ctx, detail) );	
+	}
+	
+	@Override
+	public LinkedList<AmortizationInvoice> getAmortizationInvoices(AONContext ctx, Integer domain, Integer amortizationId) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> AmortizationDAO.getInvoices(ctx, domain, amortizationId) );	
 	}
 	
 }

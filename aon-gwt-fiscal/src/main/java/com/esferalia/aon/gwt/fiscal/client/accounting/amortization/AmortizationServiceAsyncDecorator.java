@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -84,5 +85,12 @@ public class AmortizationServiceAsyncDecorator implements AmortizationServiceAsy
 		serviceAsync.unblockDetail(occam, detail, new AsyncCallbackWrapper<>(callback));
 	}
 	
+
+	@Override
+	public void getInvoices(Occam occam, Integer domain, Integer amortizationId, AsyncCallback<LinkedList<AmortizationInvoice>> callback) {
+		AON.start();
+		serviceAsync.getInvoices(occam, domain, amortizationId, new AsyncCallbackWrapper<>(callback));
+	}
+				
 	
 }

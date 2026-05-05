@@ -4060,6 +4060,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Factura vinculada a un documento DUA.")
 	String DUALinked();
 
+	@DefaultMessage("Facturas vinculadas")
+	String linkedInvoices();
+	
 	@DefaultMessage("Factura creada desde \"gesti\u00F3n\"")
 	String managmentInvoice();
 	

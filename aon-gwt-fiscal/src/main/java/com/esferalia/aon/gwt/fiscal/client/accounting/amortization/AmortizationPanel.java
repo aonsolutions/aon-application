@@ -10,7 +10,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
-import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -39,7 +38,6 @@ public class AmortizationPanel extends AonLayoutPanel {
 		AonToolbarButton paintCalculateButton( );
 		AonToolbarButton paintSaleButton( );
 		AonToolbarButton paintExcelButton( );
-		
 	}
 	
 	private DeckLayoutPanel deckPanel = new DeckLayoutPanel();
@@ -227,9 +225,7 @@ public class AmortizationPanel extends AonLayoutPanel {
     	cancelButton.setStyleName(AON.CSS.aonCancelButton());
     	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
     	cancelButton.setText( AON.MSG.cancelAction());
-		cancelButton.addClickHandler(event -> {
-			saleDialog.hide();
-		});
+		cancelButton.addClickHandler(event -> saleDialog.hide() );
 		buttonsPanel.add(cancelButton);
 		
 		content.add(buttonsPanel);
