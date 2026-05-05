@@ -58,6 +58,7 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.tag.TagParams;
 import com.esferalia.aon.occam.api.model.type.AppParam;
@@ -244,7 +245,10 @@ public interface ICommon {
 	public void deleteEnterpriseActivity(CloseableAONContext ctx, Integer id);
 	public List<Cnae2009> getCnae2009List(CloseableAONContext ctx, Integer domainId);
 	public List<Cnae> getCnae2025List(CloseableAONContext ctx, Integer domainId);
-	public List<Iae> getIaeList(CloseableAONContext ctx, Integer domainId);	
+	public List<Iae> getIaeList(CloseableAONContext ctx, Integer domainId);
 	
+	public List<RDirStaff> getRDirStaffs(CloseableAONContext ctx, Integer domain, Integer registry);
+	public RDirStaff saveRDirStaff(CloseableAONContext ctx, RDirStaff rDirStaff);
+	public void deleteRDirStaff(CloseableAONContext ctx, Integer id);	
 
 }

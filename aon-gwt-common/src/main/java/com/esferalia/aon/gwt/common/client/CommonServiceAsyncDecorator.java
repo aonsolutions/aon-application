@@ -88,6 +88,7 @@ import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -1661,6 +1662,24 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getIaeList(String domainName, Integer domainId, String user, AsyncCallback<List<Iae>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getIaeList(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getRDirStaffs(String domainName, Integer domain, String user, Integer registry, AsyncCallback<List<RDirStaff>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getRDirStaffs(domainName, domain, user, registry, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveRDirStaff(String domainName, Integer domain, String user, RDirStaff rDirStaff, AsyncCallback<RDirStaff> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveRDirStaff(domainName, domain, user, rDirStaff, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteRDirStaff(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteRDirStaff(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
 	}
 
 	// *********************** [AMORTIZATION TYPE]
