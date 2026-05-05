@@ -63,19 +63,18 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 	private HTMLPanel messagePanel = new HTMLPanel(EMPTY_STRING);
 
 	private AonCustomTextBox description = new AonCustomTextBox("Descripci\u00f3n");
-	private AonCustomCheckBox principal = new AonCustomCheckBox("Principal");
-
-	private AonCustomSuggestBox cnae25SB = new AonCustomSuggestBox("Cnae2025");
-	private AonCustomSuggestBox cnaeSB = new AonCustomSuggestBox("Cnae2009");
-	
-	private AonCustomSuggestBox iaeSB = new AonCustomSuggestBox("Iae");
-	private AonCustomListBox ivaLB = new AonCustomListBox("Regimen IVA");
-	
-	private AonCustomCheckBox equivalence = new AonCustomCheckBox("R. Equivalencia");
-	private AonCustomListBox irpfLB = new AonCustomListBox("Irpf");
-
+	private AonCustomToogleButton principal = new AonCustomToogleButton("Principal");
 	private AonCustomDateBox startDate = new AonCustomDateBox("F. Inicio");
+	
+	private AonCustomListBox ivaLB = new AonCustomListBox("Regimen IVA");
+	private AonCustomListBox irpfLB = new AonCustomListBox("IRPF");
+	private AonCustomToogleButton equivalence = new AonCustomToogleButton("R. Equivalencia");
 	private AonCustomDateBox endDate = new AonCustomDateBox("F. Fin");
+
+	private AonCustomSuggestBox cnae25SB = new AonCustomSuggestBox("CNAE 2025");
+	private AonCustomSuggestBox cnaeSB = new AonCustomSuggestBox("CNAE 2009");
+	
+	private AonCustomSuggestBox iaeSB = new AonCustomSuggestBox("IAE");
 
 	private List<Cnae> cnae2025List;
 	private List<Cnae2009> cnae2009List;
@@ -132,31 +131,18 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		HTMLPanel row = new HTMLPanel(EMPTY_STRING);
 		row.setStyleName(AON.CSS.aonItemFlex());
 
-		principal.setWidth("8rem");
-		equivalence.setWidth("16rem");
+		principal.getElement().getStyle().setProperty("max-width", "8rem");
+		startDate.getElement().getStyle().setProperty("max-width", "8rem");
 
 		row.add(description);
+		row.add(startDate);
 		row.add(principal);
-		row.add(equivalence);
 		container.add(row);
 		
 		// Row 1
 		HTMLPanel row2 = new HTMLPanel(EMPTY_STRING);
 		row2.setStyleName(AON.CSS.aonItemFlex());
-
-		initializeCnae25();
-		initializeCnae();
-		initializeIae();
-
-		row2.add(cnae25SB);
-		row2.add(cnaeSB);
-		row2.add(iaeSB);
-		container.add(row2);
-
-		// Third Row
-		HTMLPanel row3 = new HTMLPanel(EMPTY_STRING);
-		row3.setStyleName(AON.CSS.aonItemFlex());
-
+		
 		ivaLB.clearItems();
 		for (int i = 0; i < VATRegime.values().length; i++)
 			ivaLB.addItem(VATRegime.values()[i].getDescription(), VATRegime.values()[i].name());
@@ -165,13 +151,36 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		for (int i = 0; i < IRPFRegime.values().length; i++)
 			irpfLB.addItem(IRPFRegime.values()[i].getDescription(), IRPFRegime.values()[i].name());
 
-		row3.add(ivaLB);
-		row3.add(irpfLB);
-		row3.add(startDate);
-		row3.add(endDate);
+		equivalence.getElement().getStyle().setProperty("max-width", "8rem");
+		endDate.getElement().getStyle().setProperty("max-width", "8rem");
+		
+		row2.add(ivaLB);
+		row2.add(irpfLB);
+		row2.add(endDate);
+		row2.add(equivalence);
+		container.add(row2);
+
+		// Third Row
+		HTMLPanel row3 = new HTMLPanel(EMPTY_STRING);
+		row3.setStyleName(AON.CSS.aonItemFlex());
+		
+		initializeCnae25();
+		initializeCnae();
+
+		row3.add(cnae25SB);
+		row3.add(cnaeSB);
 		container.add(row3);
 		
-		Label cccTitle = new Label("Cuentas de Cotizaci\u00f3n");
+		// Third Row
+		HTMLPanel row4 = new HTMLPanel(EMPTY_STRING);
+		row4.setStyleName(AON.CSS.aonItemFlex());
+		
+		initializeIae();
+
+		row4.add(iaeSB);
+		container.add(row4);
+		
+		Label cccTitle = new Label("Cuentas de Cotizaci\u00f3n" + (enterpriseActivity.getId() != null && !enterpriseActivity.getCccs().isEmpty() ? " (" + enterpriseActivity.getCccs().size() + ")" : ""));
 		cccTitle.getElement().getStyle().setProperty("font-size", "1rem");
 		cccTitle.getElement().getStyle().setProperty("font-weight", "700");
 		cccTitle.getElement().getStyle().setProperty("color", "#5f6368");

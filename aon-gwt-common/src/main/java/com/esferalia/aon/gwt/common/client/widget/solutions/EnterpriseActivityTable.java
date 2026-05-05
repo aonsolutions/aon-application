@@ -55,10 +55,10 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 
 	private static enum COLS {
 		PRI("Principal", "4rem", ""),
-		DES(AON.MSG.description(), "-moz-available",
-				"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		CNA("CNAE 2009", "27rem", "max-width: 27rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		CCC("CCCs", "3rem", ""), BUT(AonStringUtils.EMPTY, "3rem", "");
+		DES(AON.MSG.description(), "15rem",  "max-width: 15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		CNA("CNAE 2025", "-moz-available", "min-width: 25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		CCC("CCCs", "3rem", ""), 
+		BUT(AonStringUtils.EMPTY, "3rem", "");
 
 		String headerLabel;
 		String colWidth;

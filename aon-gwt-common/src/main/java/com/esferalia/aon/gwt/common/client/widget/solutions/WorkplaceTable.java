@@ -67,8 +67,8 @@ public abstract class WorkplaceTable extends ScrollPanel {
 	
 	private static enum COLS {
 		  STA(AON.MSG.status()					   	,"3rem", ""  )
-		, DES(AON.MSG.description()					,"-moz-available", "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" )
-		, ADD(AON.MSG.address()						,"8rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
+		, DES(AON.MSG.description()					,"8rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" )
+		, ADD(AON.MSG.address()						,"-moz-available", "min-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" )
 		, ECO("C. Econ\u00f3mico"					,"7rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
 		, ACT(AON.MSG.activity()					,"8rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
 		, CAL("Calendario"							,"6rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
