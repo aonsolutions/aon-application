@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao.accounting.amortization;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.Amortization.AMORTIZATION;
 import static com.esferalia.aon.jooq.tables.AmortizationDetail.AMORTIZATION_DETAIL;
 import static com.esferalia.aon.jooq.tables.AmortizationInvoice.AMORTIZATION_INVOICE;
@@ -15,6 +16,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
@@ -34,6 +36,7 @@ import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AmortizationDetailStatus;
@@ -45,6 +48,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO.InvestAssetFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableDouble;
@@ -763,5 +767,44 @@ public class AmortizationDAO {
 		saveDetails(ctx, am);
 		return get(ctx, am.getDomain(), am.getId())
 			.orElseThrow(() -> new AonCoreException("Error al grabar amortizaci\u00F3n"));
+	}
+
+	public static LinkedList<AmortizationInvoice> getInvoices(AONContext ctx, Integer domain, Integer amortizationId) {
+		if (domain == null) throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
+		if (amortizationId == null) throw new AonCoreException(AonError.EMPTY_ID.getMessage());
+		System.out.println( "amortizationId  = " + amortizationId );
+		Amortization am = get(ctx, domain, amortizationId)
+			.orElseThrow(() -> new AonCoreException(AonError.AMORTIZATION_NOT_FOUND.getMessage()));
+		return ctx.getDslContext()
+	        .select()
+	        .from(AMORTIZATION_INVOICE)
+			.where(AMORTIZATION_INVOICE.AMORTIZATION.eq(amortizationId))
+			.fetch()
+			.stream()
+			.map( r -> new AmortizationInvoice()
+				.setId( r.getValue(AMORTIZATION_INVOICE.ID) )
+				.setDomain( domain )
+				.setAmortization( am )
+				.setInvoice( InvoiceDAO.getFullInvoice(ctx, r.getValue(AMORTIZATION_INVOICE.INVOICE)) ))
+			.map( ami -> fillAccountEntryId(ctx, ami) )
+			.collect(Collectors.toCollection(LinkedList::new))
+		;
+		
+	}
+
+	private static AmortizationInvoice fillAccountEntryId(AONContext ctx, AmortizationInvoice ami) {
+		if (ami != null && ami.getInvoice() != null) {
+			ctx.getDslContext()
+				.select(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY)
+				.from(ACCOUNT_ENTRY_INVOICE)
+				.where(ACCOUNT_ENTRY_INVOICE.INVOICE.eq(ami.getInvoice().getId()))
+				.fetch()
+				.stream()
+				.map( r -> r.getValue(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY) )
+				.findFirst()
+				.ifPresent( id -> ami.setAccountEntryId(id))
+			;
+		}
+		return ami;
 	}
 }
