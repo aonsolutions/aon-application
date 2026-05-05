@@ -88,6 +88,7 @@ import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -122,7 +123,6 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -550,6 +550,10 @@ public interface CommonService extends RemoteService {
 	List<Cnae2009> getCnae2009List(String domainName, Integer domainId, String user) throws AonCoreException;
 	List<Cnae> getCnae2025List(String domainName, Integer domainId, String user) throws AonCoreException;
 	List<Iae> getIaeList(String domainName, Integer domainId, String user) throws AonCoreException;
+	
+	List<RDirStaff> getRDirStaffs(String domainName, Integer domain, String user, Integer registry) throws AonCoreException;
+	RDirStaff saveRDirStaff(String domainName, Integer domainId, String user, RDirStaff rDirStaff) throws AonCoreException;
+	void deleteRDirStaff(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
 	
 	// *********************** [AMORTIZATION TYPE]
 	List<AmortizationType> getAmortizationTypes(Occam occam, int domain) throws AonCoreException;

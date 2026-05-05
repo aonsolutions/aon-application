@@ -89,6 +89,7 @@ import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -546,6 +547,10 @@ public interface CommonServiceAsync {
 	void getCnae2009List(String domainName, Integer domainId, String user, AsyncCallback<List<Cnae2009>> asyncCallback) throws AonCoreException;
 	void getCnae2025List(String domainName, Integer domainId, String user, AsyncCallback<List<Cnae>> asyncCallback) throws AonCoreException;
 	void getIaeList(String domainName, Integer domainId, String user, AsyncCallback<List<Iae>> asyncCallback) throws AonCoreException;
+	
+	void getRDirStaffs(String domainName, Integer domain, String user, Integer registry, AsyncCallback<List<RDirStaff>> asyncCallback) throws AonCoreException;
+	void saveRDirStaff(String domainName, Integer domainId, String user, RDirStaff rDirStaff, AsyncCallback<RDirStaff> asyncCallback) throws AonCoreException;
+	void deleteRDirStaff(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
 	
 	// *********************** [AMORTIZATION TYPE]
