@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonVisualIdentity;
 import com.esferalia.aon.gwt.common.client.widget.solutions.EnterpriseActivityTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.MediaTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.RDirStaffTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.RecordDataTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.WorkplaceTable;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -67,7 +68,8 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 	private MediaTable mediaTable;
 	private WorkplaceTable workplaceTable;
 	private EnterpriseActivityTable enterpriseActivityTable;
-	private RDirStaffTable rDirStaffTableT;
+	private RDirStaffTable rDirStaffTable;
+	private RecordDataTable recordDataTable;
 	
 	private CompanyFull company;
 	private Registry registry;
@@ -270,7 +272,7 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 			
 			tablayoutPanel.add(enterpriseActivityTable, "Actividades");
 			
-			rDirStaffTableT = new RDirStaffTable(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId()) {
+			rDirStaffTable = new RDirStaffTable(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId()) {
 
 				@Override
 				protected void onShowErrorMessage(String errorMessage) {
@@ -279,7 +281,18 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 
 			};
 			
-			tablayoutPanel.add(rDirStaffTableT, "Representates");
+			tablayoutPanel.add(rDirStaffTable, "Representates");
+			
+			recordDataTable = new RecordDataTable(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId()) {
+
+				@Override
+				protected void onShowErrorMessage(String errorMessage) {
+					AonMessagePanel.showError(messagePanel, errorMessage);
+				}
+
+			};
+			
+			tablayoutPanel.add(recordDataTable, "D. Registrales");
 		}
 
 		container.add(tablayoutPanel);

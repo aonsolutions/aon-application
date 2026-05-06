@@ -9275,4 +9275,22 @@ public class AON {
 			getCommon().deleteRDirStaff(ctx, id);
 		}
 	}
+
+	public static List<RecordData> getRecordDatas(String domainName, Integer domain, String user, Integer registry, boolean witdhData) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getCommon().getRecordDatas(ctx, domain, registry, witdhData);
+		}
+	}
+
+	public static RecordData saveRecordData(String domainName, Integer domain, String user, RecordData recordData) throws AonCoreException {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getCommon().saveRecordData(ctx, domain, recordData);
+		}
+	}
+
+	public static void deleteRecordData(String domainName, Integer domain, String user, Integer id, boolean deleteData) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			getCommon().deleteRecordData(ctx, domain, id, deleteData);
+		}
+	}
 }

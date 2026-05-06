@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.api.model.registry;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+
 public class RecordData implements Serializable{
 	
 	private static final long serialVersionUID = 9114564405091033572L;
@@ -24,6 +26,8 @@ public class RecordData implements Serializable{
 	private RecordDataType type;
 	private String irus;
 	private CommercialRegistryCode commercialRegistryCode;
+	
+	private Attach fullAttach;
 	
 	public Integer getId() {
 		return id;
@@ -144,5 +148,13 @@ public class RecordData implements Serializable{
 		this.commercialRegistryCode = commercialRegistryCode;
 		return this;
 	}
+	public Attach getFullAttach() {
+		return fullAttach;
+	}
+	public RecordData setFullAttach(Attach fullAttach) {
+		this.fullAttach = fullAttach;
+		return this;
+	}
+	
 }
 
