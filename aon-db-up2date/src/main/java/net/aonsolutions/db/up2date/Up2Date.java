@@ -24,6 +24,7 @@ import net.aonsolutions.db.up2date.finance.InvoiceTrackingAlterTableJson;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2026;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.InsuranceInsert;
+import net.aonsolutions.db.up2date.payroll.MaxEmbargable4DailyFix;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBases2026Update;
 import net.aonsolutions.db.up2date.tgss.FellowsBases2026Update;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2026Update;
@@ -618,9 +619,11 @@ public class Up2Date {
 			// OrderPJC2972026Art28Update.ORDERPJC2972026ART28UPDATE,
 			// TrainingMEI2026Fix.TRAININGMEI2026FIX,
 			// AlterFsMod190Detail2026.ALTER_FS_MODEL_190_DETAIL_2026,
-			InsuranceInsert.INSURANCEINSERT,
-			AgriculturalBases2026Update.AGRICULTURALBASES2026UPDATE,
-			Customize.CUSTOMIZE_GESTORIAMUNOZ,
+			// InsuranceInsert.INSURANCEINSERT,
+			// AgriculturalBases2026Update.AGRICULTURALBASES2026UPDATE,
+			// Customize.CUSTOMIZE_GESTORIAMUNOZ,
+			MaxEmbargable4DailyFix.MAXEMBARGABLE4DAILYFIX,
+			
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 

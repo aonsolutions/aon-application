@@ -3362,6 +3362,15 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		Assert.assertEquals((totalEmbargable - smi) * 0.30 , totalEmbargado, 0.05);
 		
 		
+		draft("MAX EMBARGABLE, IT");
+		calculate(Calendar.JANUARY,2026);
+		totalLiquid = getValue("totalLiquidLabel");
+		totalPayment = getValue("totalPaymentLabel");
+		totalDeduction = getText("totalDeductionLabel");
+		calculate(Calendar.MAY,2026);
+		assertValue("totalPaymentLabel", totalPayment);
+		assertText("totalDeductionLabel", totalDeduction);
+		assertValue("totalLiquidLabel", totalLiquid);
 	}
 
 	@Test
