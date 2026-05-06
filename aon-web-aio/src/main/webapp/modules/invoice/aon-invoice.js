@@ -3554,24 +3554,6 @@ export class AonInvoice extends AonElement {
 			¿Desea continuar con la anulación directa de la factura?`;
 		this.getApplication().confirmDialog(
 			MSG.DELETE
-<<<<<<< HEAD
-			, MSG.DELETE_CONFIRM + " la factura?"
-			, () => this.deleteInvoice());
-	}
-
-	deleteInvoice(d) {
-		let data = d || { id: this.getInvoice().id };
-		this.getApplication().startLoader();
-		deleteInvoice(data).then(() => {
-			this.getApplication().stopLoader();
-			this.updateCounter(getTrashPendingFromOption(this.invoice), OPTION.RAWDOC_TRASH, 1);
-			this.showMessage(MSG.DELETED_DATA);
-			this.back();
-		}).catch(e => {
-			this.getApplication().stopLoader();
-			this.showError(e);
-		});
-=======
 			, this.invoice.isEmitida() ? deleteText : MSG.DELETE_CONFIRM + " la factura?"
 			, () => {
 				let data = { id: this.getInvoice().id };
@@ -3618,7 +3600,6 @@ export class AonInvoice extends AonElement {
 					});
 				}
 			});
->>>>>>> master
 	}
 
 	restoreInvoice() {
