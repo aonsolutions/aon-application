@@ -2,7 +2,9 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
@@ -11,6 +13,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.registry.CommercialRegistryCode;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RecordDataType;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class RecordDataDAO {
@@ -41,6 +44,18 @@ public class RecordDataDAO {
 				.and(RECORD_DATA.DOMAIN.eq(ctx.getDomainId()))
 				.fetch().stream()
 				.map(new RecordDataFiller());
+	}
+	
+	public static Stream<RecordData> getStream(AONContext ctx, Integer registryId, boolean withData) {
+		 List<RecordData> recordDatas = getStream(ctx, registryId).collect(Collectors.toList());
+		 
+		 if(withData)
+			 recordDatas.forEach(recordData -> {
+				 if(null != recordData.getAttach())
+					 recordData.setFullAttach(AttachmentDAO.getRegistryAttach(ctx, f -> f.getIdProperty().eq(recordData.getAttach()), withData));
+			 });
+		 
+		 return recordDatas.stream();
 	}
 
 	public static RecordData get(AONContext ctx, Integer id) {
@@ -78,7 +93,7 @@ public class RecordDataDAO {
 					.limit(1)
 					.fetchOne() != null;
 			if (exists) {
-				throw new IllegalStateException("Ya existe otro registro con el tipo Constituci\u00F3n.");
+				throw new AonCoreException("Ya existe otro registro con el tipo Constituci\u00F3n.");
 			}			
 		}
 	}	
@@ -133,6 +148,21 @@ public class RecordDataDAO {
 
 	public static void delete(AONContext ctx, Integer id) {
 		ctx.checkWrite();
+		ctx.getDslContext()
+				.delete(RECORD_DATA)
+				.where(RECORD_DATA.ID.eq(id))
+				.execute();
+		ctx.log().debug("DELETE RECORD_DATA id: " + id);
+	}
+	
+	public static void delete(AONContext ctx, Integer id, boolean deleteData) {
+		ctx.checkWrite();
+		
+		RecordData recordData = get(ctx, id);
+		
+		if(deleteData && null != recordData.getAttach())
+			AttachmentDAO.deleteRegistryAttach(ctx, f -> f.getIdProperty().eq(recordData.getAttach()));
+		
 		ctx.getDslContext()
 				.delete(RECORD_DATA)
 				.where(RECORD_DATA.ID.eq(id))

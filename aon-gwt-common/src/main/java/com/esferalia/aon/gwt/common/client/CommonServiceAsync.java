@@ -90,6 +90,7 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
+import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -552,6 +553,9 @@ public interface CommonServiceAsync {
 	void saveRDirStaff(String domainName, Integer domainId, String user, RDirStaff rDirStaff, AsyncCallback<RDirStaff> asyncCallback) throws AonCoreException;
 	void deleteRDirStaff(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
+	void getRecordDatas(String domainName, Integer domain, String user, Integer registry, boolean witdhData, AsyncCallback<List<RecordData>> asyncCallback) throws AonCoreException;
+	void deleteRecordData(String domainName, Integer domain, String user, Integer id, boolean deleteData, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void saveRecordData(String domainName, Integer domainId, String user, RecordData recordData, AsyncCallback<RecordData> asyncCallback) throws AonCoreException;
 	
 	// *********************** [AMORTIZATION TYPE]
 	void getAmortizationTypes(Occam occam, int domain, AsyncCallback<List<AmortizationType>> asyncCallback);
