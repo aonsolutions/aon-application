@@ -54,9 +54,9 @@ public class AonRDirStaffPanel extends HTMLPanel {
 	private AonCustomToogleButton socio = new AonCustomToogleButton("Socio");
 	private AonCustomToogleButton admin = new AonCustomToogleButton("Admin.");
 	
-	private AonCustomNumberBox accionesPer = new AonCustomNumberBox("% Acciones");
+	private AonCustomNumberBox accionesPer = new AonCustomNumberBox("% Acciones", 2);
 	private AonCustomIntegerBox acciones = new AonCustomIntegerBox("N. Acciones");
-	private AonCustomNumberBox nominal = new AonCustomNumberBox("V. Nominal");
+	private AonCustomNumberBox nominal = new AonCustomNumberBox("V. Nominal", 2);
 	private AonCustomDateBox caducidad = new AonCustomDateBox("Caducidad Cargo");
 	
 	// Constructor
