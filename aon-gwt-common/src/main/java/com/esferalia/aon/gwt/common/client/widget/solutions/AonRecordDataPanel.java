@@ -6,8 +6,10 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.occam.api.model.registry.CommercialRegistryCode;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RecordDataType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -63,6 +65,9 @@ public class AonRecordDataPanel extends HTMLPanel {
 	
 	private AonCustomTextBox sheet = new AonCustomTextBox("Hoja");
 	private AonCustomTextBox inscription = new AonCustomTextBox("Inscripci\u00f3n");
+	
+	private AonCustomListBox commercialRegistryCode = new AonCustomListBox("C\u00f3digo Registro Mercantil");
+	private AonCustomTextBox irus = new AonCustomTextBox("IRUS");
 	
 	private AonCustomTextBox file = new AonCustomTextBox("Adjunto");
 	
@@ -154,10 +159,24 @@ public class AonRecordDataPanel extends HTMLPanel {
 		HTMLPanel row5 = new HTMLPanel(EMPTY_STRING);
 		row5.setStyleName(AON.CSS.aonItemFlex());
 		
-		file.setEnable(false);
+		commercialRegistryCode.clearItems();
+		commercialRegistryCode.addItem("-", "");
+		for(int i=0; i < CommercialRegistryCode.values().length; i++)
+			commercialRegistryCode.addItem(CommercialRegistryCode.values()[i].getDescription(), CommercialRegistryCode.values()[i].ordinal() + "");
 		
-		row5.add(file);
+		row5.add(commercialRegistryCode);
+		row5.add(irus);
 		container.add(row5);
+		
+		if(recordData.getId() != null) {
+			HTMLPanel row6 = new HTMLPanel(EMPTY_STRING);
+			row6.setStyleName(AON.CSS.aonItemFlex());
+			
+			file.setEnable(false);
+			
+			row6.add(file);
+			container.add(row6);
+		}
 		
 		// Fill info
 		if(recordData.getId() != null) {
@@ -175,6 +194,9 @@ public class AonRecordDataPanel extends HTMLPanel {
 			
 			sheet.setValue(recordData.getPage());
 			inscription.setValue(recordData.getRegistration());
+			
+			commercialRegistryCode.setValue(null == recordData.getCommercialRegistryCode() ? "" : recordData.getCommercialRegistryCode().ordinal() + "");
+			irus.setValue(recordData.getIrus());
 			
 			if(null != recordData.getAttach())
 				file.setValue(recordData.getFullAttach().getDescription());
@@ -208,6 +230,8 @@ public class AonRecordDataPanel extends HTMLPanel {
 				.setPage(page.getValue())
 				.setSheet(sheet.getValue())
 				.setRegistration(inscription.getValue())
+				.setCommercialRegistryCode(AonStringUtils.isBlank(commercialRegistryCode.getValue()) ? null : CommercialRegistryCode.safeValueOf(Integer.parseInt(commercialRegistryCode.getValue())))
+				.setIrus(irus.getValue())
 				;
     		
 			commonService.saveRecordData(domainName, domainId, user, recordData, new AsyncCallback<RecordData>() {
@@ -230,7 +254,7 @@ public class AonRecordDataPanel extends HTMLPanel {
     	final Button cancelButton = new Button();
     	cancelButton.setStyleName(AON.CSS.aonCancelButton());
     	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
-    	cancelButton.setText( AON.MSG.cancelAction());
+    	cancelButton.setText( AON.MSG.close());
     	cancelButton.addClickHandler(e -> {
     		cancelButton.setEnabled(false);
 			callback.onCancel();
