@@ -727,13 +727,30 @@ public class CommonImpl implements ICommon {
 	public List<RecordData> getRecordDatas(CloseableAONContext ctx, Integer domain, Integer registry, boolean witdhData) {
 		return ctx.getDslContext().transactionResult(configuration -> RecordDataDAO.getStream(ctx, registry, witdhData).collect(Collectors.toList()));
 	}
+
+	@Override
+	public RecordData getFullRecordData(CloseableAONContext ctx, Integer domain, Integer recordDataId) {
+		return ctx.getDslContext().transactionResult(configuration -> RecordDataDAO.getFullRecordData(ctx, recordDataId));
+	}
+	
 	@Override
 	public RecordData saveRecordData(CloseableAONContext ctx, Integer domain, RecordData recordData) throws AonCoreException {
 		return ctx.getDslContext().transactionResult(configuration -> RecordDataDAO.save(ctx, recordData));
 	}
+	
 	@Override
 	public void deleteRecordData(CloseableAONContext ctx, Integer domain, Integer id, boolean deleteData) {
 		ctx.getDslContext().transaction(configuration -> RecordDataDAO.delete(ctx, id, deleteData));
+	}
+	
+	@Override
+	public void updateRecordDataAttach(CloseableAONContext ctx, Integer domain, Integer recordDataId, Integer attachId) {
+		ctx.getDslContext().transaction(configuration -> RecordDataDAO.updateRecordDataAttach(ctx, recordDataId, attachId));
+	}
+	
+	@Override
+	public void deleteRecordDataAttach(CloseableAONContext ctx, Integer domain, Integer recordDataId) {
+		ctx.getDslContext().transaction(configuration -> RecordDataDAO.deleteRecordDataAttach(ctx, recordDataId));
 	}
 	
 }
