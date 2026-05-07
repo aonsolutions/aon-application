@@ -14,6 +14,8 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 		HasId<Integer>, HasDomain<Integer>, Serializable {
 
+	private static final Double EMPTY_AMOUNT = .000123456789;
+
 	T type;
 	Integer id;
 	Short month;
@@ -207,6 +209,19 @@ public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 			return false;
 		Item item = (Item) obj;
 		return ((id == item.id) || ((id != null) && id.equals(item.id)));
+	}
+	
+	public void empytDbAmount() {
+		setDbAmount(EMPTY_AMOUNT);
+	}
+	
+	
+	public static boolean isEmptyAmount(Double amount) {
+		return EMPTY_AMOUNT.equals(amount);
+	}	
+	
+	public static boolean isNotEmptyAmount(Double amount) {
+		return !isEmptyAmount(amount);
 	}
 
 }
