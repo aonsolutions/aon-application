@@ -4,11 +4,15 @@ import static com.code.aon.ui.registry.controller.IRegistryConstants.DOCUMENT_MA
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.faces.controller.AttachmentController;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Occam;
 
 public class RegistryAttachController extends AttachmentController {
 	
@@ -50,7 +54,18 @@ public class RegistryAttachController extends AttachmentController {
 	
 	public Integer getRegistryId() {
 		Registry registry = (Registry) getMasterController().getTo();
+		if(registry == null) {
+			Occam occam = getOccam();
+			return AON.getCompany(occam, f -> f.getDomainProperty().eq(occam.getDomain())).getId();
+		}
 		return registry.getId();
+	}
+	
+	private Occam getOccam() {
+		return new Occam()
+				.setDomain(DomainManager.getCurrentDomain())
+				.setDomainName(AonUtil.getDomainName())
+				.setUser(UserUtils.getInstance().getLoggedUser().getLogin());
 	}
 	
 }
