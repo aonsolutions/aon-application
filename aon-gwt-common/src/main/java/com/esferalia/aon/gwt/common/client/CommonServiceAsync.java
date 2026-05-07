@@ -554,8 +554,10 @@ public interface CommonServiceAsync {
 	void deleteRDirStaff(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
 	void getRecordDatas(String domainName, Integer domain, String user, Integer registry, boolean witdhData, AsyncCallback<List<RecordData>> asyncCallback) throws AonCoreException;
+	void getRecordData(String domainName, Integer domain, String user, Integer recordDataId, AsyncCallback<RecordData> asyncCallback) throws AonCoreException;
 	void deleteRecordData(String domainName, Integer domain, String user, Integer id, boolean deleteData, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void saveRecordData(String domainName, Integer domainId, String user, RecordData recordData, AsyncCallback<RecordData> asyncCallback) throws AonCoreException;
+	void deleteRecordDataAttach(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
 	// *********************** [AMORTIZATION TYPE]
 	void getAmortizationTypes(Occam occam, int domain, AsyncCallback<List<AmortizationType>> asyncCallback);

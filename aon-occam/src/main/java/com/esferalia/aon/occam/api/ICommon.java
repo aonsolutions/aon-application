@@ -254,7 +254,10 @@ public interface ICommon {
 	public void deleteRDirStaff(CloseableAONContext ctx, Integer id);
 	
 	public List<RecordData> getRecordDatas(CloseableAONContext ctx, Integer domain, Integer registry,boolean witdhData);
+	public RecordData getFullRecordData(CloseableAONContext ctx, Integer domain, Integer recordDataId);	
 	public RecordData saveRecordData(CloseableAONContext ctx, Integer domain, RecordData recordData) throws AonCoreException;
-	public void deleteRecordData(CloseableAONContext ctx, Integer domain, Integer id, boolean deleteData);	
+	public void deleteRecordData(CloseableAONContext ctx, Integer domain, Integer id, boolean deleteData);
+	public void updateRecordDataAttach(CloseableAONContext ctx, Integer domain, Integer recordDataId, Integer attachId);
+	public void deleteRecordDataAttach(CloseableAONContext ctx, Integer domain, Integer recordDataId);
 
 }
