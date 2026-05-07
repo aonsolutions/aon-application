@@ -1675,7 +1675,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		if(itDialogObject!=null) {    //---ENTERPRISE DATA
 			String completeCcc =  itDialogObject.getContractInfo().getCompleteCCC();
 			
-			if(null != completeCcc && null == it.getEndDate()) {
+			if(null != completeCcc /*&& null == it.getEndDate()*/) {
 				Optional<ITPart> bjOptional = this.itDialogObject.getITBaja(it);
 				bjOptional.ifPresent(part-> buildBtnPart(part).ifPresent(btn-> itBaja.add(btn) ));
 			}

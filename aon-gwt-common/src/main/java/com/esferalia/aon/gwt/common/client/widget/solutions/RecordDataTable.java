@@ -9,8 +9,8 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonEnterpriseActivityPanel.AonEnterpriseActivityPanelCallback;
-import com.esferalia.aon.occam.api.model.payroll.Activity;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonRecordDataPanel.AonRecordDataPanelCallback;
+import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -19,7 +19,13 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.json.client.JSONNumber;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.logging.client.ConsoleLogHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -29,11 +35,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-public abstract class EnterpriseActivityTable extends ScrollPanel {
+public abstract class RecordDataTable extends ScrollPanel {
 
 	private static CommonServiceAsync COMMON_SERVICE;
 
-	private static final Logger LOGGER = Logger.getLogger(EnterpriseActivityTable.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(RecordDataTable.class.getName());
 	static {
 		LOGGER.addHandler(new ConsoleLogHandler());
 	}
@@ -53,12 +59,16 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 	private String user;
 	private Integer registry;
 
+	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	private static final String SESSION_API = "AONd95770f269e711eb94390242ac130002";
+
 	private static enum COLS {
-		PRI("Principal", "4rem", ""),
-		DES(AON.MSG.description(), "15rem",  "max-width: 15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		CNA("CNAE 2025", "-moz-available", "min-width: 25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		CCC("CCCs", "3rem", ""), 
-		BUT(AonStringUtils.EMPTY, "3rem", "");
+		CAD("F. Creaci\u00f3n", "8rem",
+				"max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		NAM("Nombre", "-moz-available", "min-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		NOT("Notario", "-moz-available", "min-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		PRO("N. Protocolo", "6rem", "max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		BUT(AonStringUtils.EMPTY, "4rem", "");
 
 		String headerLabel;
 		String colWidth;
@@ -83,7 +93,7 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 		}
 	}
 
-	public EnterpriseActivityTable(String domainName, int domain, String user, Integer registry) {
+	public RecordDataTable(String domainName, int domain, String user, Integer registry) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 
@@ -118,6 +128,7 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 		});
 
 		onSearch();
+
 	}
 
 	public boolean isSearchEnabled() {
@@ -167,9 +178,9 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 				FlowPanel buttonContainer = new FlowPanel();
 				buttonContainer.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 
-				AonTableButton button = new AonTableButton("Nueva Actividad", AON.CSS.aonIconAdd());
+				AonTableButton button = new AonTableButton("Nuevo Dato Registral", AON.CSS.aonIconAdd());
 				button.addStyleName(AON.CSS.aonCustomRowButtom());
-				button.addClickHandler(e -> createEnterpriseActivity());
+				button.addClickHandler(e -> createRecordData());
 				buttonContainer.add(button);
 
 				tab.addHeader(buttonContainer, col.getColWidth(), col.getStyles());
@@ -183,18 +194,18 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 		if (!isMoreData())
 			return;
 
-		getList(enterpriseActivities -> {
+		getList(recordDatas -> {
 			boolean something = false;
 
-			for (Activity enterpriseActivity : enterpriseActivities) {
+			for (RecordData recordData : recordDatas) {
 				something = true;
-				paintRow(enterpriseActivity);
+				paintRow(recordData);
 			}
 
-			if (enterpriseActivities.size() < limit) {
+			if (recordDatas.size() < limit) {
 				disableMoreData();
 			} else {
-				offset.setValue(offset.intValue() + enterpriseActivities.size() - 1);
+				offset.setValue(offset.intValue() + recordDatas.size() - 1);
 				enableMoreData();
 			}
 
@@ -211,12 +222,51 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 		});
 	}
 
-	private void paintRow(Activity enterpriseActivity) {
+	private void paintRow(RecordData recordData) {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+		buttonContainer.addStyleName(AON.CSS.aonItemFlex());
+		buttonContainer.getElement().getStyle().setProperty("justify-content", "end");
+
+		if (null != recordData.getAttach() && null != recordData.getFullAttach().getData()) {
+			AonTableButton preview = new AonTableButton("Previsualizar", AON.CSS.aonIconPdf());
+			preview.addStyleName(AON.CSS.aonCustomRowButtom());
+			preview.addClickHandler(e -> {
+				e.stopPropagation();
+
+				final AonCustomDialog dialog = new AonCustomDialog();
+				dialog.setCaption("Previsualizador");
+				dialog.showCloseButton(true);
+
+				final AonAttachPreviewPanel aonAttachPreviewPanel = new AonAttachPreviewPanel(
+						recordData.getFullAttach());
+
+				dialog.add(aonAttachPreviewPanel);
+				dialog.showLoaded();
+			});
+			buttonContainer.add(preview);
+		} else if (null != recordData.getAttach() && null != recordData.getFullAttach().getDriveId()) {
+			AonTableButton download = new AonTableButton("Descargar", AON.CSS.aonIconDownload());
+			download.addStyleName(AON.CSS.aonCustomRowButtom());
+			download.addClickHandler(e -> {
+				e.stopPropagation();
+
+				JSONObject json = new JSONObject();
+				json.put("domainId", new JSONNumber(domain));
+				json.put("domainName", new JSONString(domainName));
+				json.put("domainLogin", new JSONString(user));
+				json.put("rattach", new JSONNumber(recordData.getAttach()));
+				json.put("type", new JSONString("registry"));
+
+				String jsonBase64 = base64Encode(json.toString());
+				
+				downloadFile(jsonBase64, SESSION_API);
+			});
+			buttonContainer.add(download);
+		}
 
 		AonTableButton button;
-		button = new AonTableButton("Borrar Centro Trabajo", AON.CSS.aonIconDelete());
+		button = new AonTableButton("Borrar Dato Registral", AON.CSS.aonIconDelete());
 		button.addStyleName(AON.CSS.aonCustomRowButtom());
 		button.addClickHandler(new ClickHandler() {
 
@@ -224,8 +274,8 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 			public void onClick(ClickEvent event) {
 				event.stopPropagation();
 				button.setEnabled(false);
-				AonDialog dialog = new AonDialog("Eliminaci\u00f3n Media",
-						new HTML("Se va a proceder a eliminar la actividad <b>" + enterpriseActivity.getDescription()
+				AonDialog dialog = new AonDialog("Eliminaci\u00f3n Dato Regisral",
+						new HTML("Se va a proceder a eliminar el dato registral <b>" + recordData.getDescription()
 								+ "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
 
 				dialog.confirm(new AonAcceptDialogCallback() {
@@ -237,7 +287,7 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 
 					@Override
 					public void onAccept() {
-						delete(enterpriseActivity);
+						delete(recordData);
 					}
 				});
 			}
@@ -245,38 +295,47 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 		buttonContainer.add(button);
 
 		HTMLPanel row = tab.createRow();
-		row.addDomHandler(e -> onUpdateEnterpriseActivity(enterpriseActivity), ClickEvent.getType());
+		row.addDomHandler(e -> onUpdateRecordData(recordData), ClickEvent.getType());
 
-		AonTableButton principal = enterpriseActivity.isPrincipal()
-				? new AonTableButton("Pricipal", AON.CSS.aonIconCheckCircle())
-				: new AonTableButton("Secundaria", AON.CSS.aonIconBlock());
-		principal.setTitle(enterpriseActivity.isPrincipal() ? "Pricipal" : "Secundaria");
-		tab.addInlineStyle(principal, COLS.PRI.getStyles());
-		tab.addRow(row, principal, COLS.PRI.getColWidth());
+		Label date = new Label(
+				null != recordData.getCreationDate() ? formatDate.format(recordData.getCreationDate()) : "");
+		date.setTitle(null != recordData.getCreationDate() ? formatDate.format(recordData.getCreationDate()) : "");
+		tab.addInlineStyle(date, COLS.CAD.getStyles());
+		tab.addRow(row, date, COLS.CAD.getColWidth());
 
-		Label description = new Label(enterpriseActivity.getDescription());
-		description.setTitle(enterpriseActivity.getDescription());
-		tab.addInlineStyle(description, COLS.DES.getStyles());
-		tab.addRow(row, description, COLS.DES.getColWidth());
+		Label description = new Label(recordData.getDescription());
+		description.setTitle(recordData.getDescription());
+		tab.addInlineStyle(description, COLS.NAM.getStyles());
+		tab.addRow(row, description, COLS.NAM.getColWidth());
 
-		Label cnae = new Label(enterpriseActivity.getCnaeDescription());
-		cnae.setTitle(enterpriseActivity.getCnaeDescription());
-		tab.addInlineStyle(cnae, COLS.CNA.getStyles());
-		tab.addRow(row, cnae, COLS.CNA.getColWidth());
+		Label notario = new Label(recordData.getNotary());
+		notario.setTitle(recordData.getNotary());
+		tab.addInlineStyle(notario, COLS.NOT.getStyles());
+		tab.addRow(row, notario, COLS.NOT.getColWidth());
 
-		Label cccs = new Label(enterpriseActivity.getCccs().isEmpty() ? "0" : enterpriseActivity.getCccs().size() + "");
-		tab.addInlineStyle(cccs, COLS.CCC.getStyles());
-		tab.addRow(row, cccs, COLS.CCC.getColWidth());
+		Label protocol = new Label(recordData.getNumber());
+		protocol.setTitle(recordData.getNumber());
+		tab.addInlineStyle(protocol, COLS.PRO.getStyles());
+		tab.addRow(row, protocol, COLS.PRO.getColWidth());
 
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 	}
+	
+	public static void downloadFile(String jsonParam, String sessionId) {
+		String url = "/ms/api/download?json=" + URL.encodeQueryString(jsonParam);
+		Window.open(url, "_blank", "");
+	}
 
-	private void getList(Consumer<List<Activity>> success) {
-		COMMON_SERVICE.getEnterpriseActivities(domainName, domain, user, registry, new AsyncCallback<List<Activity>>() {
+	private static native String base64Encode(String text) /*-{
+	    return btoa(text);
+	}-*/;
+
+	private void getList(Consumer<List<RecordData>> success) {
+		COMMON_SERVICE.getRecordDatas(domainName, domain, user, registry, true, new AsyncCallback<List<RecordData>>() {
 
 			@Override
-			public void onSuccess(List<Activity> enterpriseActivities) {
-				success.accept(enterpriseActivities);
+			public void onSuccess(List<RecordData> recordDatas) {
+				success.accept(recordDatas);
 			}
 
 			@Override
@@ -286,28 +345,27 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 		});
 	}
 
-	private void delete(Activity enterpriseActivity) {
-		COMMON_SERVICE.deleteEnterpriseActivity(domainName, domain, user, enterpriseActivity.getId(),
-				new AsyncCallback<Void>() {
+	private void delete(RecordData recordData) {
+		COMMON_SERVICE.deleteRecordData(domainName, domain, user, recordData.getId(), true, new AsyncCallback<Void>() {
 
-					@Override
-					public void onSuccess(Void result) {
-						onSearch();
-					}
+			@Override
+			public void onSuccess(Void result) {
+				onSearch();
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						onShowErrorMessage("Error borrado: " + caught.getMessage());
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				onShowErrorMessage("Error borrado: " + caught.getMessage());
+			}
+		});
 	}
 
-	private void onUpdateEnterpriseActivity(Activity enterpriseActivity) {
+	private void onUpdateRecordData(RecordData recordData) {
 		final AonCustomDialog dialog = new AonCustomDialog();
-		dialog.setCaption("Editar Actividad");
+		dialog.setCaption("Editar Dato Registral");
 
-		final AonEnterpriseActivityPanel marketingCampaignPanel = new AonEnterpriseActivityPanel(domainName, domain,
-				user, enterpriseActivity, new AonEnterpriseActivityPanelCallback() {
+		final AonRecordDataPanel aonRecordDataPanel = new AonRecordDataPanel(domainName, domain, user, recordData,
+				new AonRecordDataPanelCallback() {
 
 					@Override
 					public void onCancel() {
@@ -315,46 +373,38 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 					}
 
 					@Override
-					public void onAccept(Activity enterpriseActivity) {
+					public void onAccept(RecordData recordData) {
 						dialog.hide();
 						onSearch();
 					}
-
-					@Override
-					public void onLoadedEnd() {
-						dialog.showLoaded();
-					}
 				});
 
-		dialog.add(marketingCampaignPanel);
-	}
-
-	private void createEnterpriseActivity() {
-		final AonCustomDialog dialog = new AonCustomDialog();
-		dialog.setCaption("Nueva Actividad");
-
-		final AonEnterpriseActivityPanel marketingCampaignPanel = new AonEnterpriseActivityPanel(domainName, domain,
-				user, registry, new AonEnterpriseActivityPanelCallback() {
-
-					@Override
-					public void onCancel() {
-						dialog.hide();
-					}
-
-					@Override
-					public void onAccept(Activity enterpriseActivity) {
-						dialog.hide();
-						onSearch();
-					}
-
-					@Override
-					public void onLoadedEnd() {
-						dialog.showLoaded();
-					}
-				});
-
-		dialog.add(marketingCampaignPanel);
+		dialog.add(aonRecordDataPanel);
 		dialog.showLoaded();
+	}
+
+	private void createRecordData() {
+		final AonCustomDialog dialog = new AonCustomDialog();
+		dialog.setCaption("Nuevo Dato Registral");
+
+		final AonRecordDataPanel aonRecordDataPanel = new AonRecordDataPanel(domainName, domain, user, registry,
+				new AonRecordDataPanelCallback() {
+
+					@Override
+					public void onCancel() {
+						dialog.hide();
+					}
+
+					@Override
+					public void onAccept(RecordData recordData) {
+						dialog.hide();
+						onSearch();
+					}
+				});
+
+		dialog.add(aonRecordDataPanel);
+		dialog.showLoaded();
+
 	}
 
 	protected abstract void onShowErrorMessage(String errorMessage);

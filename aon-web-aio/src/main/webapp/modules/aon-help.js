@@ -99,9 +99,9 @@ export class AonHelp extends AonElement {
 				cardDiv.className = "aonCard rightPanelcardDiv";
 												
 				let divGeneral = this.createDiv();
-				divGeneral.appendChild(this.buildSupportData(name, MSG.COMPANY, MATERIAL_ICONS.BUSINESS));
-				divGeneral.appendChild(this.buildSupportData(phone, MSG.PHONE, MATERIAL_ICONS.PHONE));
-				divGeneral.appendChild(this.buildSupportData(email, "Correo electrónico", MATERIAL_ICONS.MAIL));
+				divGeneral.appendChild(this.buildSupportData(name, MSG.COMPANY, MATERIAL_ICONS.BUSINESS, CSS.AON_SUPPORT_NAME));
+				divGeneral.appendChild(this.buildSupportData(phone, MSG.PHONE, MATERIAL_ICONS.PHONE, CSS.AON_SUPPORT_TELEPHONE));
+				divGeneral.appendChild(this.buildSupportData(email, "Correo electrónico", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_USERS_EMAIL));
 				rightPanelAboutContactCard.setContent(divGeneral);
 				
 				

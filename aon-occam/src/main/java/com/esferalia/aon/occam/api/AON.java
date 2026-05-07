@@ -9257,4 +9257,40 @@ public class AON {
 			return getCommon().getIaeList(ctx, domainId);
 		}
 	}
+
+	public static List<RDirStaff> getRDirStaffs(String domainName, Integer domain, String user, Integer registry) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getCommon().getRDirStaffs(ctx, domain, registry);
+		}
+	}
+
+	public static RDirStaff saveRDirStaff(String domainName, Integer domain, String user, RDirStaff rDirStaff) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getCommon().saveRDirStaff(ctx, rDirStaff);
+		}
+	}
+
+	public static void deleteRDirStaff(String domainName, Integer domain, String user, Integer id) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			getCommon().deleteRDirStaff(ctx, id);
+		}
+	}
+
+	public static List<RecordData> getRecordDatas(String domainName, Integer domain, String user, Integer registry, boolean witdhData) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getCommon().getRecordDatas(ctx, domain, registry, witdhData);
+		}
+	}
+
+	public static RecordData saveRecordData(String domainName, Integer domain, String user, RecordData recordData) throws AonCoreException {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getCommon().saveRecordData(ctx, domain, recordData);
+		}
+	}
+
+	public static void deleteRecordData(String domainName, Integer domain, String user, Integer id, boolean deleteData) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			getCommon().deleteRecordData(ctx, domain, id, deleteData);
+		}
+	}
 }

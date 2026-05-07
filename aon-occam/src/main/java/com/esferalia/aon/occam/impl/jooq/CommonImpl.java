@@ -61,6 +61,8 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.registry.RDirStaff;
+import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.tag.TagParams;
 import com.esferalia.aon.occam.api.model.type.AppParam;
@@ -83,11 +85,14 @@ import com.esferalia.aon.occam.impl.jooq.dao.IAEDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.MailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayrollWorkplaceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RDirStaffDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RecordDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SeriesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TagDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaxDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 public class CommonImpl implements ICommon {
 
@@ -701,6 +706,34 @@ public class CommonImpl implements ICommon {
 	@Override
 	public List<Iae> getIaeList(CloseableAONContext ctx, Integer domainId) {
 		return ctx.getDslContext().transactionResult(configuration -> IAEDAO.getStream(ctx, f -> f.getIdProperty().ge(0)).collect(Collectors.toList()));
+	}
+	
+	@Override
+	public List<RDirStaff> getRDirStaffs(CloseableAONContext ctx, Integer domain, Integer registry) {
+		return ctx.getDslContext().transactionResult(configuration -> RDirStaffDAO.getStream(ctx, f -> f.getDomainProperty().eq(domain).and(f.getRegistryProperty().eq(registry))).collect(Collectors.toList()));
+	}
+	
+	@Override
+	public RDirStaff saveRDirStaff(CloseableAONContext ctx, RDirStaff rDirStaff) {
+		return ctx.getDslContext().transactionResult(configuration -> RDirStaffDAO.save(ctx, rDirStaff));
+	}
+	
+	@Override
+	public void deleteRDirStaff(CloseableAONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(configuration -> RDirStaffDAO.delete(ctx, id));
+	}
+	
+	@Override
+	public List<RecordData> getRecordDatas(CloseableAONContext ctx, Integer domain, Integer registry, boolean witdhData) {
+		return ctx.getDslContext().transactionResult(configuration -> RecordDataDAO.getStream(ctx, registry, witdhData).collect(Collectors.toList()));
+	}
+	@Override
+	public RecordData saveRecordData(CloseableAONContext ctx, Integer domain, RecordData recordData) throws AonCoreException {
+		return ctx.getDslContext().transactionResult(configuration -> RecordDataDAO.save(ctx, recordData));
+	}
+	@Override
+	public void deleteRecordData(CloseableAONContext ctx, Integer domain, Integer id, boolean deleteData) {
+		ctx.getDslContext().transaction(configuration -> RecordDataDAO.delete(ctx, id, deleteData));
 	}
 	
 }
