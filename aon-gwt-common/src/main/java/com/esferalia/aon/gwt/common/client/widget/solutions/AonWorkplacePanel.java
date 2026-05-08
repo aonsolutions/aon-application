@@ -57,7 +57,7 @@ public class AonWorkplacePanel extends HTMLPanel {
 	private HTMLPanel messagePanel = new HTMLPanel(EMPTY_STRING);
 	
 	private AonCustomTextBox description = new AonCustomTextBox("Descripci\u00f3n");
-	private AonCustomListBox statusLB = new AonCustomListBox("Estado");
+	private AonCustomToogleButton statusLB = new AonCustomToogleButton("Estado");
 	
 	private AonCustomListBox economicAgreementLB = new AonCustomListBox("C. Econ\u00f3mico");
 	private AonCustomListBox enterpriseActivityLB = new AonCustomListBox("Actividad");
@@ -131,11 +131,6 @@ public class AonWorkplacePanel extends HTMLPanel {
 		HTMLPanel row = new HTMLPanel(EMPTY_STRING);
 		row.setStyleName(AON.CSS.aonItemFlex());
 		
-		statusLB.clearItems();
-		statusLB.addItem("Activo", "0");
-		statusLB.addItem("Inactivo", "1");
-		statusLB.setWidth("10rem");
-		
 		row.add(description);
 		row.add(statusLB);
 		container.add(row);
@@ -189,7 +184,7 @@ public class AonWorkplacePanel extends HTMLPanel {
 		// Fill info
 		if(workplace.getId() != null) {
 			description.setValue(workplace.getDescription());
-			statusLB.setValue(workplace.isActive() ? "0" : "1");
+			statusLB.setValue(workplace.isActive());
 			economicAgreementLB.setValue(workplace.getEconomicAgreement().getDescription());
 			scopeLB.setValue(workplace.getScope().toString());
 			addressLB.setValue(workplace.getAddress().toString());
@@ -217,7 +212,7 @@ public class AonWorkplacePanel extends HTMLPanel {
 			
     		workplace
 				.setDescription(description.getValue())
-				.setActive(AonStringUtils.equalsIgnoreCase(statusLB.getValue(), "0"))
+				.setActive(statusLB.getValue())
 				.setEconomicAgreement(Administration.safeValueOf(economicAgreementLB.getValue()))
 				.setScope(Integer.parseInt(scopeLB.getValue()))
 				.setAddress(Integer.parseInt(addressLB.getValue()))
