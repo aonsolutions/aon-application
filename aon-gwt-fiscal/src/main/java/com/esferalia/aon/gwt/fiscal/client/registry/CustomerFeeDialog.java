@@ -36,6 +36,7 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -401,7 +402,8 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			item = productSuggestions.get(productSuggestBox.getValue());
 			
 			productSuggestBox.setEnabled(false);
-			productTextBox.setValue(item.getProduct().getName());
+			if(AonStringUtils.isBlank(productTextBox.getValue()))
+				productTextBox.setValue(item.getProduct().getName());
 			productTextBox.setVisible(true);
 			
 			if(null != fee)
@@ -422,7 +424,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		AonToolbarSmallButton resetBtn = new AonToolbarSmallButton("Borrar producto", AON.CSS.aonIconClear());
 		resetBtn.addClickHandler(e -> {
-			productTextBox.setValue("");
+			productTextBox.setValue(fee.getDescription());
 			productTextBox.setVisible(false);
 			productSuggestBox.setEnabled(true);
 			productSuggestBox.setValue("");
@@ -444,6 +446,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		productTextBox = new AutoResizeTextArea();
 		productTextBox.getElement().getStyle().setProperty("margin-left", "6rem");
 		productTextBox.addValueChangeHandler(e ->{
+			/*
 			if(null != item) {
 				item.getProduct().setName(productTextBox.getValue());
 				item.getProduct().setModify(true);
@@ -452,6 +455,8 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 				fee.getItem().getProduct().setName(productTextBox.getValue());
 				fee.getItem().getProduct().setModify(true);
 			}
+			*/
+			fee.setDescription(productTextBox.getValue());
 		});
 		
 		if(null != fee) productSuggestBox.setValue(fee.getItem().getProduct().getName() + " ( " + fee.getItem().getProduct().getCode() + " )");
@@ -459,7 +464,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		if(null != fee || this.isSameProduct || null != this.item) {
 			productSuggestBox.setEnabled(false);
-			productTextBox.setValue(null != fee ? fee.getItem().getProduct().getName() : this.item.getProduct().getName());
+			productTextBox.setValue(null != fee ? fee.getDescription() : "");
 			productTextBox.setVisible(true);
 		}
 		
