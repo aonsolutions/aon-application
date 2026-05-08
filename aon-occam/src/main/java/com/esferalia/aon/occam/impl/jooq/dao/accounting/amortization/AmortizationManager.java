@@ -222,51 +222,71 @@ class AmortizationManager {
 	}
 
 	private AmortizationDetail insertable(AONContext ctx, Amortization a, Date first) {
-		return ctx.getDslContext()
-			.select()
-			.from(AMORTIZATION_DETAIL)
-			.where(AMORTIZATION_DETAIL.AMORTIZATION.eq(a.getId()))
-			.and(AMORTIZATION_DETAIL.FROM_DATE.eq(AonDateUtils.toSql(first)))
-			.orderBy(AMORTIZATION_DETAIL.FROM_DATE.asc())
-			.fetch()
-			.stream()
-			.map(r -> new AmortizationDetailFiller().apply(r))
+		return a.detailStream()
+			.filter(d -> d.isNotDeleted())
+			.filter(d -> DateUtils.isSameDay(d.getFromDate(), first))
 			.findFirst()
-			.orElse(null);
+			.orElse( null );
+//		return ctx.getDslContext()
+//			.select()
+//			.from(AMORTIZATION_DETAIL)
+//			.where(AMORTIZATION_DETAIL.AMORTIZATION.eq(a.getId()))
+//			.and(AMORTIZATION_DETAIL.FROM_DATE.eq(AonDateUtils.toSql(first)))
+//			.orderBy(AMORTIZATION_DETAIL.FROM_DATE.asc())
+//			.fetch()
+//			.stream()
+//			.map(r -> new AmortizationDetailFiller().apply(r))
+//			.findFirst()
+//			.orElse(null);
 	}
 
 	private void ensureFirstDay(AONContext ctx, Amortization a) {
-		ctx.getDslContext()
-			.select()
-			.from(AMORTIZATION_DETAIL)
-			.where(AMORTIZATION_DETAIL.AMORTIZATION.eq(a.getId()))
-			.orderBy(AMORTIZATION_DETAIL.FROM_DATE.asc())
-			.fetch()
-			.stream()
-			.map(r -> new AmortizationDetailFiller().apply(r))
-			.filter(d -> !DateUtils.isSameDay(d.getFromDate(), a.getInitialDate()))
+		a.detailStream()
+			.filter(d -> d.isNotDeleted())
+			.filter(d -> DateUtils.isSameDay(d.getFromDate(), a.getInitialDate()))
 			.findFirst()
 			.ifPresent(d -> {
 				d.setFromDate(a.getInitialDate());
-				a.addDetail(d);
-			})
-		;
+			});
+//		ctx.getDslContext()
+//			.select()
+//			.from(AMORTIZATION_DETAIL)
+//			.where(AMORTIZATION_DETAIL.AMORTIZATION.eq(a.getId()))
+//			.orderBy(AMORTIZATION_DETAIL.FROM_DATE.asc())
+//			.fetch()
+//			.stream()
+//			.map(r -> new AmortizationDetailFiller().apply(r))
+//			.filter(d -> !DateUtils.isSameDay(d.getFromDate(), a.getInitialDate()))
+//			.findFirst()
+//			.ifPresent(d -> {
+//				d.setFromDate(a.getInitialDate());
+//				a.addDetail(d);
+//			})
+//		;
 	}
 
 	private Date ensurePeriodLast(AONContext ctx, Amortization a, Date last) {
-		return ctx.getDslContext()
-			.select()
-			.from(AMORTIZATION_DETAIL)
-			.where(AMORTIZATION_DETAIL.AMORTIZATION.eq(a.getId()))
-			.and(AMORTIZATION_DETAIL.FROM_DATE.lessOrEqual(AonDateUtils.toSql(last)))
-			.and(AMORTIZATION_DETAIL.TO_DATE.greaterOrEqual(AonDateUtils.toSql(last)))
-			.orderBy(AMORTIZATION_DETAIL.FROM_DATE)
-			.fetch()
-			.stream()
-			.map(r -> new AmortizationDetailFiller().apply(r))
-			.map( d -> DateUtils.addDays(d.getFromDate(), -1) )
+		return a.detailStream()
+			.filter(d -> d.isNotDeleted())
+			.filter(d -> AonDateUtils.isNotAfter(d.getFromDate(), last))
+			.filter(d -> AonDateUtils.isNotBefore(d.getToDate(), last))
 			.findFirst()
-			.orElse(last);
+			.map( d -> DateUtils.addDays(d.getFromDate(), -1) )
+			.orElse(last)
+		;
+//		return ctx.getDslContext()
+//			.select()
+//			.from(AMORTIZATION_DETAIL)
+//			.where(AMORTIZATION_DETAIL.AMORTIZATION.eq(a.getId()))
+//			.and(AMORTIZATION_DETAIL.FROM_DATE.lessOrEqual(AonDateUtils.toSql(last)))
+//			.and(AMORTIZATION_DETAIL.TO_DATE.greaterOrEqual(AonDateUtils.toSql(last)))
+//			.orderBy(AMORTIZATION_DETAIL.FROM_DATE)
+//			.fetch()
+//			.stream()
+//			.map(r -> new AmortizationDetailFiller().apply(r))
+//			.map( d -> DateUtils.addDays(d.getFromDate(), -1) )
+//			.findFirst()
+//			.orElse(last);
 	}
 
 	private void ensureParams(AONContext ctx, Amortization a) {
