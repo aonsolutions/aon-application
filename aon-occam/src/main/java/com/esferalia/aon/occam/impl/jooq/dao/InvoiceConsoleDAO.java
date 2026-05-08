@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.AmortizationInvoice.AMORTIZATION_INVOICE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
@@ -20,6 +21,7 @@ import org.jooq.Record15;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.Table;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -164,11 +166,6 @@ public class InvoiceConsoleDAO {
 					.orderBy(getOrderBy(params))
 					.limit(params.getOffset() , params.getLimit())
 		;
-		
-//		System.out.println("--- SQL InvoiceConsoleDAO.getInvoiceHeaders ----");
-//		System.out.println( select .getSQL() );
-//		System.out.println("-----------------------------------------------");
-		
 		return select
 			.fetch()
 			.stream()
@@ -408,6 +405,28 @@ public class InvoiceConsoleDAO {
 			}
 			return cond;
 		}
+		
+		@Override
+		protected Condition buildAmortizationBindedCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			if (params.getAmortizationBinded() != null) {
+				if ( params.getAmortizationBinded().booleanValue() ) {
+					cond = cond.and( INVOICE.ID.in( 
+						ctx.getDslContext()
+							.select(AMORTIZATION_INVOICE.INVOICE)
+								.from(AMORTIZATION_INVOICE)
+								.where( AMORTIZATION_INVOICE.DOMAIN.eq( params.getDomain() ))
+						));
+				} else {
+					cond = cond.and( INVOICE.ID.notIn( 
+						ctx.getDslContext()
+							.select(AMORTIZATION_INVOICE.INVOICE)
+								.from(AMORTIZATION_INVOICE)
+								.where( AMORTIZATION_INVOICE.DOMAIN.eq( params.getDomain() ))
+						));
+				}
+			}
+			return cond;
+		}
 
 		@Override
 		protected Condition buildTransactionTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
@@ -464,6 +483,7 @@ public class InvoiceConsoleDAO {
 		@Override protected Condition buildServiceCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
 		@Override protected Condition buildRecordedCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
 		@Override protected Condition buildProformaCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+		@Override protected Condition buildAmortizationBindedCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
 		@Override protected Condition buildTransactionTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
 		@Override protected Condition buildCommunicationTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
 		@Override protected Condition buildSourceCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }		
@@ -524,6 +544,7 @@ public class InvoiceConsoleDAO {
 			condition = buildServiceCondition(ctx, condition, params);
 			condition = buildRecordedCondition(ctx, condition, params);
 			condition = buildProformaCondition(ctx, condition, params);
+			condition = buildAmortizationBindedCondition(ctx, condition, params);
 			condition = buildOutputCondition(ctx, condition, params);
 			condition = buildTransactionTypeCondition(ctx, condition, params);
 			condition = buildCommunicationTypeCondition(ctx, condition, params);
@@ -610,6 +631,7 @@ public class InvoiceConsoleDAO {
 		protected abstract Condition buildServiceCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
 		protected abstract Condition buildRecordedCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
 		protected abstract Condition buildProformaCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		protected abstract Condition buildAmortizationBindedCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
 		protected abstract Condition buildOutputCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
 		protected abstract Condition buildTransactionTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
 		protected abstract Condition buildCommunicationTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);

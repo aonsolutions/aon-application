@@ -302,7 +302,7 @@ public class FiscalMenuDAO {
 			
 			.map( rec -> {
 					Administration administration = AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE));
-					FiscalModelType model = fromAppParamName(rec.getValue(APP_PARAM.NAME));
+					FiscalModelType model = fromAppParamName(rec.getValue(APP_PARAM.NAME), administration);
 					// Si administración por defecto es CANARIAS, los modelos de IRPF y Sociedades, se hacen en AEAT
 					if ((administration == Administration.CANARIAS) &&  
 					    (model == FiscalModelType.M111 || 
@@ -336,10 +336,12 @@ public class FiscalMenuDAO {
 			;
 	}
 
-	private static FiscalModelType fromAppParamName( String name ) {
+	private static FiscalModelType fromAppParamName( String name, Administration administration ) {
 		String model = AonStringUtils.substringAfter(name,PARAM_PREFIX);
 		FiscalModelType fmt = FiscalModelType.valueOf(model);
-		if (fmt == FiscalModelType.M303_RG || fmt == FiscalModelType.M303_RS) {
+		if (administration == Administration.CANARIAS && fmt == FiscalModelType.M303_RS) {
+			return FiscalModelType.M421;
+		} else if (fmt == FiscalModelType.M303_RG || fmt == FiscalModelType.M303_RS) {
 			return FiscalModelType.M303;
 		}
 		return fmt;

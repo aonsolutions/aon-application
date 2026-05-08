@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
@@ -930,5 +931,23 @@ public class ACCOUNTING {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
 			return getAccounting().unblockAmortizationDetail(ctx, detail);
 		}
+	}
+
+	public static LinkedList<AmortizationInvoice> getAmortizationInvoices(Occam occam, Integer domain, Integer amortizationId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getAccounting().getAmortizationInvoices(ctx, domain, amortizationId);
+		}
+	}
+
+	public static void linkAmortizationInvoices(Occam occam, Integer domain, Integer amortizationId, Integer[] invoiceIds) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			getAccounting().linkAmortizationInvoices(ctx, domain, amortizationId, invoiceIds);
+		 }
+	}
+
+	public static void linkAmortizationInvoices(Occam occam, Integer domain, Integer amortizationId, Integer invoiceId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			getAccounting().unlinkAmortizationInvoice(ctx, domain, amortizationId, invoiceId);
+		 }
 	}
 }

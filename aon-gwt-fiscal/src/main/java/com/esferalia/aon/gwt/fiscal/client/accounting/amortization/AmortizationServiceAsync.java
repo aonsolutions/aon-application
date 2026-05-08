@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -23,5 +24,8 @@ public interface AmortizationServiceAsync {
 	
 	void blockDetail(Occam occam, AmortizationDetail detail, AsyncCallback<AmortizationDetail> callback);
 	void unblockDetail(Occam occam, AmortizationDetail detail, AsyncCallback<AmortizationDetail> callback);
-			
+
+	void getInvoices(Occam occam, Integer domain, Integer amortizationId, AsyncCallback<LinkedList<AmortizationInvoice>> callback);
+	void linkInvoices(Occam occam, Integer domain, Integer amortizationId, Integer[] invoiceIds, AsyncCallback<Void> asyncCallback);
+	void unlinkInvoice(Occam occam, Integer domain, Integer amortizationId, Integer invoiceId, AsyncCallback<Void> asyncCallback);
 }

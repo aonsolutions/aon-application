@@ -432,6 +432,7 @@ public class RawdocDAO {
 				.set(RAWDOC.LOG, getLogArray(ctx, rawdoc, status, reason ) )
 				.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
 				.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+				.set(RAWDOC.JSON, rawdoc.getJson())
 				.where(RAWDOC.ID.equal(rawdoc.getId()))
 				.execute();
 		ctx.log().info("UPDATE RAWDOC ({0}) id: {1} ({2} filas)",status.name(),rawdoc.getId(),count);
@@ -442,6 +443,14 @@ public class RawdocDAO {
 	public static Rawdoc toDraft(AONContext ctx, Integer rawdocId) {
 		ctx.checkWrite();
 		return get(ctx, rawdocId)
+			.map(r -> { 
+				if(r.getJson() != null) {
+					JSONObject json = new JSONObject(r.getJson());
+					json.put(IJsonNames.LAST_STATUS, r.getStatus().name());
+					r.setJson(json.toString());	
+				}
+				return r;
+			})
 			.map( r -> updateStatus(ctx,r,RawdocStatus.DRAFT, null))
 			.orElseThrow(() -> new AonCoreException( AonError.INVALID_UPDATE.getMessage()));
 	}
@@ -449,7 +458,16 @@ public class RawdocDAO {
 	public static Rawdoc toRejected(AONContext ctx, Integer rawdocId, String reason) {
 		ctx.checkWrite();
 		return get(ctx, rawdocId)
+			.map(r -> { 
+				if(r.getJson() != null) {
+					JSONObject json = new JSONObject(r.getJson());
+					json.put(IJsonNames.LAST_STATUS, r.getStatus().name());
+					r.setJson(json.toString());
+				}
+				return r;
+			})
 			.map( r -> updateStatus(ctx,r,RawdocStatus.REJECTED,reason))
+
 			.orElseThrow(() -> new AonCoreException( AonError.INVALID_UPDATE.getMessage()));
 	}
 

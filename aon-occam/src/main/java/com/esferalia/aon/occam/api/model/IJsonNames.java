@@ -423,6 +423,7 @@ public final class IJsonNames {
 	public static final String LAST_ACCESS = "lastAccess";
 	public static final String LAST_ACCESS_DATE = "lastAccessDate";
 	public static final String LAST_ACCESS_USER = "lastAccessUser";
+	public static final String LAST_STATUS = "lastStatus";
 	public static final String LAST_UPDATE = "lastUpdate";
 	public static final String LEDGER_ACCOUNT = "ledgerAccount";
 	public static final String LEDGER_DEBIT_BALANCE = "ledgerDebitBalance";

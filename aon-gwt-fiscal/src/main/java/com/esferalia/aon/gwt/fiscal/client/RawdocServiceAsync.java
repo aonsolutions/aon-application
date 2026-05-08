@@ -17,12 +17,15 @@ public interface RawdocServiceAsync {
 	void saveToAccounting(Occam occam, LinkedHashSet<Integer> rawdocIds, AsyncCallback<LinkedList<String>> callback);
 	
 	void toDraft(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback);
-	void toRejected(Occam occam, Integer rawdocId, String reason, AsyncCallback<Rawdoc> callback);
+	void toRejected(Occam occam, Integer rawdocId, String reason, String email, AsyncCallback<Rawdoc> callback);
 	void toInbox(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback);
 
 	void getS3Url(Rawdoc rawdoc, AsyncCallback<String> callback);
 	
 	void parse(Occam occam, Integer id, AsyncCallback<TediResult> asyncCallback);
+	
+	// --------------------------------------------------------------- USER EMAIL
+	void getUserEmail(Occam occam, String userLogin, AsyncCallback<String> callback);
 	
 	// --------------------------------------------------------------- PENDING 
 //	void getAccountingInvoice(String domainName, int domain, String user, String invoice,AsyncCallback<AccountingInvoice> callback);

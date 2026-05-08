@@ -203,8 +203,8 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 			reject = new AonTableButton(AON.MSG.reject(), AON.CSS.aonIconReject());
 			reject.getElement().getStyle().setMarginRight(5, Unit.PX);
 			reject.addClickHandler(event -> {
-				RawdocRejectPanel rrp = new RawdocRejectPanel(opt,rawdoc, reason -> 
-					RawdocModule.RAWDOC_SERVICE.toRejected(opt.getOccam(), rawdoc.getId(), reason 
+				RawdocRejectPanel rrp = new RawdocRejectPanel(opt,rawdoc, (reason, email) -> 
+					RawdocModule.RAWDOC_SERVICE.toRejected(opt.getOccam(), rawdoc.getId(), reason, email
 						, new AsyncCallback<Rawdoc>() {
 							@Override
 							public void onSuccess(Rawdoc result) {

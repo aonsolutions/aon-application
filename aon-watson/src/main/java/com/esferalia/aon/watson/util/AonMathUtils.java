@@ -87,11 +87,11 @@ public class AonMathUtils {
 	}
 	
 	/**
-	 * Devuelve el valor absoluto redondeado a 2 dígitos.
+	 * Devuelve el valor absoluto redondeado a 2 dï¿½gitos.
 	 * 
 	 * @param value
 	 *            el valor a truncar
-	 * @return double el valor absoluto redondeado a 2 dígitos.
+	 * @return double el valor absoluto redondeado a 2 dï¿½gitos.
 	 */
 	public static double absRounded(double value) {
 		return round( Math.abs(value) );
@@ -109,6 +109,9 @@ public class AonMathUtils {
 	}
 	public static boolean isNullOrZero(Integer value) {
 		return value == null || value == 0;
+	}
+	public static boolean isNullOrZero(Double value) {
+		return value == null || isZero(value);
 	}
 
 	/**

@@ -500,13 +500,8 @@ public class AON {
 	}
 	
 	public static User getUser(String domainName, int domainId, String login) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getSecurity().getUser(ctx, login);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
@@ -3095,6 +3090,12 @@ public class AON {
 	// ****************************** GWT-OFFICE **
 	// ********************************************
 
+	public static User getUser(Occam occam, UserFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getSecurity().getUser(ctx, filter);
+		} 
+    }
+	
 	public static User getUser(Domain domain, User user, UserFilter filter) {
 	    return getUser(domain, user.getLogin(), filter);
     }
@@ -6381,15 +6382,15 @@ public class AON {
 		}
 	}
 
-	public static MailAccount getMailAccount(String domainName,
-			Integer domainId, String login, MailAccountFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+	public static MailAccount getMailAccount(Occam occam, MailAccountFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			return getSecurity().getMailAccount(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		}
+	}
+	
+	public static MailAccount getMailAccount(String domainName, Integer domainId, String login, MailAccountFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getSecurity().getMailAccount(ctx, filter);
 		}
 	}
 
@@ -9264,6 +9265,60 @@ public class AON {
 	public static List<Iae> getIaeList(String domainName, Integer domainId, String userLogin) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
 			return getCommon().getIaeList(ctx, domainId);
+		}
+	}
+
+	public static List<RDirStaff> getRDirStaffs(String domainName, Integer domain, String user, Integer registry) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getCommon().getRDirStaffs(ctx, domain, registry);
+		}
+	}
+
+	public static RDirStaff saveRDirStaff(String domainName, Integer domain, String user, RDirStaff rDirStaff) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getCommon().saveRDirStaff(ctx, rDirStaff);
+		}
+	}
+
+	public static void deleteRDirStaff(String domainName, Integer domain, String user, Integer id) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			getCommon().deleteRDirStaff(ctx, id);
+		}
+	}
+
+	public static List<RecordData> getRecordDatas(String domainName, Integer domain, String user, Integer registry, boolean witdhData) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getCommon().getRecordDatas(ctx, domain, registry, witdhData);
+		}
+	}
+	
+	public static RecordData getFullRecordData(String domainName, Integer domain, String user, Integer recordDataId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getCommon().getFullRecordData(ctx, domain, recordDataId);
+		}
+	}
+
+	public static RecordData saveRecordData(String domainName, Integer domain, String user, RecordData recordData) throws AonCoreException {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getCommon().saveRecordData(ctx, domain, recordData);
+		}
+	}
+
+	public static void deleteRecordData(String domainName, Integer domain, String user, Integer id, boolean deleteData) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			getCommon().deleteRecordData(ctx, domain, id, deleteData);
+		}
+	}
+
+	public static void updateRecordDataAttach(String domainName, Integer domain, String user, Integer recordDataId, Integer attachId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			getCommon().updateRecordDataAttach(ctx, domain, recordDataId, attachId);
+		}
+	}
+
+	public static void deleteRecordDataAttach(String domainName, Integer domain, String user, Integer recordDataId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			getCommon().deleteRecordDataAttach(ctx, domain, recordDataId);
 		}
 	}
 }

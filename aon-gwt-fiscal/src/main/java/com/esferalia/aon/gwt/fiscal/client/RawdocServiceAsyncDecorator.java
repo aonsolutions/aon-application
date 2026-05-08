@@ -44,9 +44,9 @@ public class RawdocServiceAsyncDecorator implements RawdocServiceAsync {
 	}
 
 	@Override
-	public void toRejected(Occam occam, Integer rawdocId, String reason, AsyncCallback<Rawdoc> callback) {
+	public void toRejected(Occam occam, Integer rawdocId, String reason, String email, AsyncCallback<Rawdoc> callback) {
 		AON.start();
-		fsa.toRejected(occam, rawdocId, reason, new AsyncCallbackWrapper<Rawdoc>(callback));
+		fsa.toRejected(occam, rawdocId, reason, email, new AsyncCallbackWrapper<Rawdoc>(callback));
 	}
 
 	@Override
@@ -65,6 +65,14 @@ public class RawdocServiceAsyncDecorator implements RawdocServiceAsync {
 	public void getS3Url(Rawdoc rawdoc, AsyncCallback<String> callback) {
 		AON.start();
 		fsa.getS3Url(rawdoc, new AsyncCallbackWrapper<String>(callback));
+	}
+	
+	// --------------------------------------------------------------- USER EMAIL
+	
+	@Override
+	public void getUserEmail(Occam occam, String userLogin, AsyncCallback<String> callback) {
+		AON.start();
+		fsa.getUserEmail(occam, userLogin, new AsyncCallbackWrapper<String>(callback));
 	}
 	
 	// --------------------------------------------------------------- PENDING 

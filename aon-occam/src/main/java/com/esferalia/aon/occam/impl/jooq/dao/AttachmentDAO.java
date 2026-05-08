@@ -241,6 +241,10 @@ public class AttachmentDAO {
 		return getDataAttachStream(ctx, filter, withData).findFirst().orElse(new Attach());
 	}
 	
+	public static Attach getRegistryAttach(AONContext ctx, AttachFilter filter, Boolean withData){	
+		return getRegistryAttachStream(ctx, filter, withData).findFirst().orElse(new Attach());
+	}
+	
 	public static Stream<Attach> getDataAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
 		SelectJoinStep<Record> select = ctx.getDslContext().select(dataAttachWD).from(DATA_ATTACH);
 		if(withData) select = ctx.getDslContext().select().from(DATA_ATTACH);

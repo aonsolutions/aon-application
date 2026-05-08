@@ -69,6 +69,7 @@ public class InvoiceConsoleParams implements Serializable {
 	private Boolean service;
 	private Boolean recorded;
 	private Boolean proforma;
+	private Boolean amortizationBinded;
 	private InvoiceSource source;
 
 	private SecurityLevel securityLevel;
@@ -295,6 +296,14 @@ public class InvoiceConsoleParams implements Serializable {
 		return this;
 	}
 
+	public Boolean getAmortizationBinded() {
+		return amortizationBinded;
+	}
+	public InvoiceConsoleParams setAmortizationBinded(Boolean amortizationBinded) {
+		this.amortizationBinded = amortizationBinded;
+		return this;
+	}
+	
 	public InvoiceSource getSource() {
 		return source;
 	}

@@ -88,6 +88,8 @@ import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.RDirStaff;
+import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -550,6 +552,16 @@ public interface CommonService extends RemoteService {
 	List<Cnae2009> getCnae2009List(String domainName, Integer domainId, String user) throws AonCoreException;
 	List<Cnae> getCnae2025List(String domainName, Integer domainId, String user) throws AonCoreException;
 	List<Iae> getIaeList(String domainName, Integer domainId, String user) throws AonCoreException;
+	
+	List<RDirStaff> getRDirStaffs(String domainName, Integer domain, String user, Integer registry) throws AonCoreException;
+	RDirStaff saveRDirStaff(String domainName, Integer domainId, String user, RDirStaff rDirStaff) throws AonCoreException;
+	void deleteRDirStaff(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
+	
+	List<RecordData> getRecordDatas(String domainName, Integer domain, String user, Integer registry, boolean witdhData) throws AonCoreException;
+	RecordData getRecordData(String domainName, Integer domain, String user, Integer recordDataId) throws AonCoreException;
+	void deleteRecordData(String domainName, Integer domain, String user, Integer id, boolean deleteData) throws AonCoreException;
+	RecordData saveRecordData(String domainName, Integer domainId, String user, RecordData recordData) throws AonCoreException;
+	void deleteRecordDataAttach(String domainName, Integer domainId, String user, Integer id) throws AonCoreException;
 	
 	// *********************** [AMORTIZATION TYPE]
 	List<AmortizationType> getAmortizationTypes(Occam occam, int domain) throws AonCoreException;
