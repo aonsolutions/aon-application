@@ -4060,9 +4060,21 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Factura vinculada a un documento DUA.")
 	String DUALinked();
 
+	@DefaultMessage("Vincular facturas")
+	String linkInvoice();
+
+	@DefaultMessage("Desvincular facturas")
+	String unlinkInvoice();
+
+	@DefaultMessage("\u00BFContinuar con la vinculaci\u00F3n de facturas?")
+	String confirmLinkInvoice();
+
 	@DefaultMessage("Facturas vinculadas")
 	String linkedInvoices();
 	
+	@DefaultMessage("A\u00F1adir factura")
+	String addInvoice();
+
 	@DefaultMessage("Factura creada desde \"gesti\u00F3n\"")
 	String managmentInvoice();
 	
@@ -4477,6 +4489,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Ajuste impuesto")
 	String taxAdjust();
 	
+	@DefaultMessage("Datos de la ficha")
+	String amortizationData();
+
 	@DefaultMessage("Venta o Baja")
 	String saleAmortizaton();
 

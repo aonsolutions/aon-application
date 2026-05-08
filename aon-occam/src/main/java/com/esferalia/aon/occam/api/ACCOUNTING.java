@@ -938,4 +938,16 @@ public class ACCOUNTING {
 			return getAccounting().getAmortizationInvoices(ctx, domain, amortizationId);
 		}
 	}
+
+	public static void linkAmortizationInvoices(Occam occam, Integer domain, Integer amortizationId, Integer[] invoiceIds) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			getAccounting().linkAmortizationInvoices(ctx, domain, amortizationId, invoiceIds);
+		 }
+	}
+
+	public static void linkAmortizationInvoices(Occam occam, Integer domain, Integer amortizationId, Integer invoiceId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			getAccounting().unlinkAmortizationInvoice(ctx, domain, amortizationId, invoiceId);
+		 }
+	}
 }
