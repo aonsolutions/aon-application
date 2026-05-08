@@ -21,6 +21,7 @@ import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -247,9 +248,8 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 		HTMLPanel row = tab.createRow();
 		row.addDomHandler(e -> onUpdateEnterpriseActivity(enterpriseActivity), ClickEvent.getType());
 
-		AonTableButton principal = enterpriseActivity.isPrincipal()
-				? new AonTableButton("Pricipal", AON.CSS.aonIconCheckCircle())
-				: new AonTableButton("Secundaria", AON.CSS.aonIconBlock());
+		Button principal = new Button();
+		getEnableDisableButton(principal, enterpriseActivity.isPrincipal());
 		principal.setTitle(enterpriseActivity.isPrincipal() ? "Pricipal" : "Secundaria");
 		tab.addInlineStyle(principal, COLS.PRI.getStyles());
 		tab.addRow(row, principal, COLS.PRI.getColWidth());
@@ -269,6 +269,16 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 		tab.addRow(row, cccs, COLS.CCC.getColWidth());
 
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
+	}
+
+	private void getEnableDisableButton(Button button, boolean disabled) {
+		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE);
+		button.removeStyleName(AON.AON_NO_MARGIN);
+		button.removeStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
+		
+		button.setStyleName(!disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
+		button.setStyleName(AON.AON_NO_MARGIN, true);
+		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 	}
 
 	private void getList(Consumer<List<Activity>> success) {
