@@ -9281,6 +9281,12 @@ public class AON {
 			return getCommon().getRecordDatas(ctx, domain, registry, witdhData);
 		}
 	}
+	
+	public static RecordData getFullRecordData(String domainName, Integer domain, String user, Integer recordDataId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getCommon().getFullRecordData(ctx, domain, recordDataId);
+		}
+	}
 
 	public static RecordData saveRecordData(String domainName, Integer domain, String user, RecordData recordData) throws AonCoreException {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
@@ -9291,6 +9297,18 @@ public class AON {
 	public static void deleteRecordData(String domainName, Integer domain, String user, Integer id, boolean deleteData) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
 			getCommon().deleteRecordData(ctx, domain, id, deleteData);
+		}
+	}
+
+	public static void updateRecordDataAttach(String domainName, Integer domain, String user, Integer recordDataId, Integer attachId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			getCommon().updateRecordDataAttach(ctx, domain, recordDataId, attachId);
+		}
+	}
+
+	public static void deleteRecordDataAttach(String domainName, Integer domain, String user, Integer recordDataId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			getCommon().deleteRecordDataAttach(ctx, domain, recordDataId);
 		}
 	}
 }

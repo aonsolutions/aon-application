@@ -19,7 +19,7 @@ class AmortizationDetailTable extends ScrollPanel {
 		grid.addStyleName( AON.CSS.aonBlockCenter() );
 		grid.addHeaderRow()
 			.addCell( new Label(AON.MSG.from()), AON.CSS.aonWidth120())
-			.addCell( new Label(AON.MSG.to()), AON.CSS.aonWidth120())
+			.addCell( new Label(AON.MSG.until()), AON.CSS.aonWidth120())
 			.addCell( new Label(AON.MSG.percent()), AON.CSS.aonWidth80())
 			.addCell( new Label(AON.MSG.allocation()) , AON.CSS.aonWidth150())
 			.addCell( new Label(AON.MSG.accumulated()), AON.CSS.aonWidth150())

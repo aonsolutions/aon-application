@@ -26,4 +26,6 @@ public interface AmortizationServiceAsync {
 	void unblockDetail(Occam occam, AmortizationDetail detail, AsyncCallback<AmortizationDetail> callback);
 
 	void getInvoices(Occam occam, Integer domain, Integer amortizationId, AsyncCallback<LinkedList<AmortizationInvoice>> callback);
+	void linkInvoices(Occam occam, Integer domain, Integer amortizationId, Integer[] invoiceIds, AsyncCallback<Void> asyncCallback);
+	void unlinkInvoice(Occam occam, Integer domain, Integer amortizationId, Integer invoiceId, AsyncCallback<Void> asyncCallback);
 }

@@ -231,4 +231,15 @@ public class Amortization implements Serializable {
 	private boolean areDetailsDirty() {
 		return detailStream().anyMatch(d -> d.isDirty());
 	}
+	
+	public boolean isNotDisposed() {
+		// Si el importe de venta es nulo o cero y la fecha de amortización es nula
+		// se considera que el activo no se ha vendido o dado de baja.
+		return AonMathUtils.isNullOrZero( this.getSaleAmount())
+			&& this.getDeadline() == null
+		;
+	}
+	public boolean isDisposed() {
+		return !isNotDisposed();
+	}
 }

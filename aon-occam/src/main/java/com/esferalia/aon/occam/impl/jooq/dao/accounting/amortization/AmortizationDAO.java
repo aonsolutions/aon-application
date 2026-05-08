@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AmortizationDetailStatus;
 import com.esferalia.aon.occam.api.model.type.AmortizationPeriod;
@@ -53,11 +54,9 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableDouble;
 import com.esferalia.aon.watson.mutable.MutableInt;
-import com.esferalia.aon.watson.mutable.MutableObject;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AmortizationDAO {
@@ -110,15 +109,15 @@ public class AmortizationDAO {
 	        .collect(toAmortizationMap())
 	        .values()
 	        .stream()
-	        .map( am -> calculateDetails(am) )
 			.findFirst()
+			.map( am -> calculateDetails(am) )
 		;
 	}
 	
 	public static Stream<Amortization> stream(AONContext ctx, AmortizationParams params) {
 	    return select(ctx, params.getDomain())
     		.and( getCondition(params) )
-    		.orderBy(AMORTIZATION.DESCRIPTION.desc())
+    		.orderBy(AMORTIZATION.DESCRIPTION)
     		.limit(params.getOffset() , params.getLimit())
 	        .fetch()
 	        .stream()
@@ -149,8 +148,6 @@ public class AmortizationDAO {
 	}
 	
 	private static Amortization calculateDetails( Amortization am) {
-		MutableInt year = new MutableInt(-1);
-		MutableObject<AmortizationDetail> detail = new MutableObject<>(null);
 		MutableDouble accumulated = new MutableDouble(0.0);
 		MutableDouble pending = new MutableDouble(am.getAmount());
 		MutableDouble fiscalAccumulated = new MutableDouble(0.0);
@@ -158,30 +155,14 @@ public class AmortizationDAO {
 		
 		am.detailStream()
 			.forEach( ad -> {
-				int detailYear= AonDateUtils.getYear( ad.getFromDate() );
-				if ( AonNumberUtils.notEquals( year.getValue() , detailYear )) {
-					year.setValue( detailYear );
-					AmortizationDetail det = new AmortizationDetail()
-						.setDomain( ad.getDomain())
-						.setAmortization( ad.getAmortization() )
-						.setFromDate(ad.getFromDate());
-					detail.setValue( det );
-				}
-				AmortizationDetail det = detail.getValue();
-				
 				accumulated.setValue( AonMathUtils.round(accumulated.getValue() + ad.getAllocation()));
 				pending.setValue( AonMathUtils.round(pending.getValue() - ad.getAllocation()));
 				fiscalAccumulated.setValue( AonMathUtils.round(fiscalAccumulated.getValue() + ad.getFiscalAllocation()));
 				fiscalPending.setValue( AonMathUtils.round(fiscalPending.getValue() - ad.getFiscalAllocation()));
-				
-				det.setToDate(ad.getToDate());
-				det.setCoefficient( AonMathUtils.round(det.getCoefficient() + ad.getCoefficient()));
-				det.setAllocation( AonMathUtils.round(det.getAllocation() + ad.getAllocation()));
-				det.setAccumulated( accumulated.getValue());
-				det.setPending(pending.getValue());
-				det.setFiscalAllocation( AonMathUtils.round(det.getFiscalAllocation() + ad.getFiscalAllocation()));
-				det.setFiscalAccumulated( fiscalAccumulated.getValue());
-				det.setFiscalPending(fiscalPending.getValue());
+				ad.setAccumulated( accumulated.getValue());
+				ad.setPending(pending.getValue());
+				ad.setFiscalAccumulated( fiscalAccumulated.getValue());
+				ad.setFiscalPending(fiscalPending.getValue());
 		});
 		return am;
 	}
@@ -207,6 +188,7 @@ public class AmortizationDAO {
 		AmortizationManager am = new AmortizationManager();
 		am.generateDetailsAndFill(ctx, a);
 		Amortization amo = update(ctx,a);
+		saveDetails(ctx, amo);
 		return get(ctx, amo.getDomain(), amo.getId())
 			.orElseThrow(() -> new AonCoreException(AonError.INVALID_UPDATE.getMessage()));
 	}
@@ -572,10 +554,10 @@ public class AmortizationDAO {
 			.accept(new AmortizationContext(ctx,a));
 		}
 
-		private static final Consumer<AmortizationContext> EMPTY_DEADLINE = ivc -> {
-			if (ivc.a.getDeadline() == null) 
-				throw new AonCoreException(AonError.EMPTY_DATA.format("Fecha de baja"));
-		};
+//		private static final Consumer<AmortizationContext> EMPTY_DEADLINE = ivc -> {
+//			if (ivc.a.getDeadline() == null) 
+//				throw new AonCoreException(AonError.EMPTY_DATA.format("Fecha de baja"));
+//		};
 		
 		private static final Consumer<AmortizationContext> WRONG_DEADLINE = ivc -> {
 			if (DateUtils.isSameDay(ivc.a.getInitialDate(), ivc.a.getDeadline()) || ivc.a.getInitialDate().after(ivc.a.getDeadline())) 
@@ -605,7 +587,7 @@ public class AmortizationDAO {
 		
 		public static void validateSale(AONContext ctx, Amortization a) {
 			EMPTY_ID
-			.andThen(EMPTY_DEADLINE)
+//			.andThen(EMPTY_DEADLINE)
 			.andThen(WRONG_DEADLINE)
 			.andThen(WRONG_SALE_AMOUNT)
 			.andThen(NOT_PENDING_ALLOCATIONS)
@@ -749,7 +731,6 @@ public class AmortizationDAO {
 			.filter( d -> d.getStatus() == AmortizationDetailStatus.PENDING )
 			.filter( d -> d.getToDate().after(cancelDate) )
 			.forEach( d -> {
-				System.out.println( "Procesando detalle " + d.getId() + " desde " + d.getFromDate() + " hasta " + d.getToDate() );
 				Date from = d.getFromDate();
 				Date to =  d.getToDate();
 				if (from.equals(cancelDate) || from.before(cancelDate)) {
@@ -772,7 +753,6 @@ public class AmortizationDAO {
 	public static LinkedList<AmortizationInvoice> getInvoices(AONContext ctx, Integer domain, Integer amortizationId) {
 		if (domain == null) throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
 		if (amortizationId == null) throw new AonCoreException(AonError.EMPTY_ID.getMessage());
-		System.out.println( "amortizationId  = " + amortizationId );
 		Amortization am = get(ctx, domain, amortizationId)
 			.orElseThrow(() -> new AonCoreException(AonError.AMORTIZATION_NOT_FOUND.getMessage()));
 		return ctx.getDslContext()
@@ -807,4 +787,64 @@ public class AmortizationDAO {
 		}
 		return ami;
 	}
+
+	public static void linkInvoices(AONContext ctx, Integer domain, Integer amortizationId, Integer[]invoiceIds ) { 
+		if (invoiceIds == null || invoiceIds.length == 0) throw new AonCoreException(AonError.EMPTY_DATA.format("Facturas"));
+		AonCollectionUtils.stream( invoiceIds )
+			.forEach( id -> linkInvoice(ctx, domain, amortizationId, id) )
+		;
+	}
+
+	private static void linkInvoice(AONContext ctx, Integer domain, Integer amortizationId, Integer invoiceId) {
+		if (domain == null) throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
+		if (amortizationId == null) throw new AonCoreException(AonError.EMPTY_DATA.format("Amortizaci\u00F3n"));
+		if (invoiceId == null ) throw new AonCoreException(AonError.EMPTY_DATA.format("Factura"));
+		Amortization amortization = get(ctx, domain, amortizationId)
+			.orElseThrow(() -> new AonCoreException(AonError.AMORTIZATION_NOT_FOUND.getMessage()));
+		Invoice invoice = InvoiceDAO.getInvoice(ctx, invoiceId);
+		if (invoice == null) throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
+		
+		if (invoice.isSales()) linkOutputInvoice(ctx, amortization, invoice);
+		else linkInputInvoice(ctx, amortization, invoice);
+	}
+
+	private static void linkInputInvoice(AONContext ctx, Amortization amortization, Invoice invoice) {
+		insertAmortizationInvoice(ctx, amortization.getDomain(), amortization.getId(), invoice.getId());
+	}
+
+	private static void linkOutputInvoice(AONContext ctx, Amortization amortization, Invoice invoice) {
+		if (amortization.isNotDisposed()) {
+			Invoice inv = InvoiceDAO.getFullInvoice(ctx, invoice.getId());
+			Double saleAmount = AonMathUtils.round(
+				inv.detailStream()
+					.filter(d -> !d.isPrepayment())
+					.filter(d -> AonMathUtils.isNotZero(d.getTaxableBase()))
+					.mapToDouble(d -> d.getTaxableBase())
+					.sum()
+			);
+			amortization.setSaleAmount(saleAmount);
+			amortization.setDeadline(inv.getIssueDate());
+			sale(ctx, amortization);
+		}
+		insertAmortizationInvoice(ctx, amortization.getDomain(), amortization.getId(), invoice.getId());
+	}
+	
+	public static void unlinkInvoice(AONContext ctx, Integer domain, Integer amortizationId, Integer invoiceId) {
+		ctx.getDslContext()
+			.deleteFrom(AMORTIZATION_INVOICE)
+			.where(AMORTIZATION_INVOICE.DOMAIN.eq(domain))
+			.and(AMORTIZATION_INVOICE.AMORTIZATION.eq(amortizationId))
+			.and(AMORTIZATION_INVOICE.INVOICE.eq(invoiceId))
+			.execute();
+	}
+
+	private static void insertAmortizationInvoice(AONContext ctx, Integer domain, Integer amortizationId, Integer invoiceId) {
+		ctx.getDslContext()
+			.insertInto(AMORTIZATION_INVOICE)
+			.set(AMORTIZATION_INVOICE.DOMAIN, domain)
+			.set(AMORTIZATION_INVOICE.AMORTIZATION, amortizationId)
+			.set(AMORTIZATION_INVOICE.INVOICE, invoiceId)
+			.execute();
+	}
+
 }

@@ -1690,6 +1690,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
+	public void getRecordData(String domainName, Integer domain, String user, Integer recordDataId, AsyncCallback<RecordData> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getRecordData(domainName, domain, user, recordDataId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
 	public void deleteRecordData(String domainName, Integer domain, String user, Integer id, boolean deleteData, AsyncCallback<Void> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.deleteRecordData(domainName, domain, user, id, deleteData, new AsyncCallbackWrapper<>(callback));
@@ -1699,6 +1705,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void saveRecordData(String domainName, Integer domain, String user, RecordData recordData, AsyncCallback<RecordData> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.saveRecordData(domainName, domain, user, recordData, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteRecordDataAttach(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteRecordDataAttach(domainName, domainId, user, id, new AsyncCallbackWrapper<>(callback));
 	}
 
 	// *********************** [AMORTIZATION TYPE]
