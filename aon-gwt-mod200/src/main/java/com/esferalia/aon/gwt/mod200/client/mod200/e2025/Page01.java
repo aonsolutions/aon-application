@@ -68,6 +68,8 @@ public class Page01 extends PageAbs {
 		
 		basePanel.add(getTitle("Personal asalariado"));
 		
+		paintLabel(basePanel, "Consigne la cifra media del ejercicio", false);
+		
 		AonDisplayTable tab31 = new AonDisplayTable();
 		tab31.addStyleName(AON.CSS.aonWidthAlmostAll());
 		tab31.addStyleName(AON.CSS.aonBlockCenter());
@@ -182,7 +184,7 @@ public class Page01 extends PageAbs {
 			}
 		}
 		
-		// FALTA - REVISAR CON DOC PADIS QUE SE SIGUE HABILITANDO SOLO PARA ESOS CARACTERES
+		// FALTA - REVISAR CON DOC PADIS QUE SE SIGUE HABILITANDO SOLO PARA ESOS CARACTERES (EL MODELO PONE SOLO CARACTERES 81 O 82)
 		// GRUPO MERCANTIL (solo habilitados si caracteres 81, 82 o 39 marcados)
 		
 		AonDocumentTextBox ultimateDocument = new AonDocumentTextBox();           
@@ -265,6 +267,10 @@ public class Page01 extends PageAbs {
 			tab4.addRow()				
 		    	.addCell(new Label("NIF en el pa\u00EDs de residencia (TIN)"), AON.CSS.aonWidth200())
 		    	.addCell(ultimateResidenceDocument);
+			
+			paintFooterNote(basePanel, "Para entidades que hayan marcado las claves 00081 o 00082 de caracteres de la declaraci\u00F3n, a los efectos de los arts. 13 y 14 del Real Decreto 634/2015, de 10 de julio, por el que " +
+										"se aprueba el Reglamento del Impuesto sobre Sociedades, y el art. 6 de la Ley 7/2024, de 20 de diciembre, por la que se establece un Impuesto Complementario para garantizar un nivel " +
+										"m\u00EDnimo global de imposici\u00F3n para los grupos multinacionales y los grupos nacionales de gran magnitud.");
 		}
 		
 	}

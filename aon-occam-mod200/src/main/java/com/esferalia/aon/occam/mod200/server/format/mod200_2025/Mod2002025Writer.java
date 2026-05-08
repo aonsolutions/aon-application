@@ -86,7 +86,11 @@ public class Mod2002025Writer {
 		if (isComplementary) {
 			line.append(AonFiscalFileUtils.zeros(DS));
 		} else {
-			line.append(AonFiscalFileUtils.signedZero(mod200.getDoubleValue(key), DS, DD));
+			if (key == Mod2002025Key.MILLON)
+				// Caso especial de esta casilla, que es un check y está en un desglose
+				line.append(AonFiscalFileUtils.unsigned(mod200.getDoubleValue(key), 1, 0)); 
+			else
+				line.append(AonFiscalFileUtils.signedZero(mod200.getDoubleValue(key), DS, DD));
 		}
 	}
 
@@ -817,8 +821,8 @@ public class Mod2002025Writer {
 		, PAG02B("T20002B00", new IPropertyFiller[] { 
 				(line, mod200, label) -> {
 					boolean isComplementary = false; // Indicador de pagina complementaria
-					int c = 0;  // Contador para Entidades menores
-					int d = 0;  // Contador para Información de detalle de EP
+					int c = 0;  // C. Contador para Entidades menores
+					int d = 0;  // D. Contador para Información de detalle de EP
 					int s1 = 0; // E. Socios de SICAV en régimen especial de disolución y liquidación (DT 41ª LIS) - NIF de la sociedad/es disuelta/s
 					int s2 = 0; // E. Socios de SICAV en régimen especial de disolución y liquidación (DT 41ª LIS) - NIF de la/las IIC donde reinvierte
 					int t = 0;  // F. Identificación del titular real de la entidad 
@@ -832,7 +836,7 @@ public class Mod2002025Writer {
 						}
 						
 						for (int i = 1; i <= 18; i++) {
-							addUteForeign(line, mod200, d++);  // D. Agrup. interés económico y UTES - Información detalle de EP o UTE
+							addUteForeign(line, mod200, d++);  // D. Información detalle de EP
 						}
 						
 						for (int i = 1; i <= 5; i++) {
@@ -1760,7 +1764,7 @@ public class Mod2002025Writer {
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
 			})
-		
+		 
 		, PAG17("T20017000", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ") 
@@ -1884,25 +1888,6 @@ public class Mod2002025Writer {
 		, PAG20D("T20020D00", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label)
 				,(line, mod200, label) -> line.append(" ")			
-//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID650)
-//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID651)
-//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID652)
-//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID653)
-//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID654)
-//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID1270)
-//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID1271)
-//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID1522)
-//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID655)
-//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID656)
-//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID658)
-//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID091)
-//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID092)
-//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID660)
-//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID662)
-//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID664)
-//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID665)
-//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.ID666)
-				
 				,(line, mod200, label) -> addBreakdownFromConstants(line, mod200, Mod2002025Constants.INCOME_DISTRIBUTION_KEYS_1) // Aplicación de resultados: Base de reparto
 				,(line, mod200, label) -> addBreakdownFromConstants(line, mod200, Mod2002025Constants.INCOME_DISTRIBUTION_KEYS_2) // Aplicación de resultados: Aplicación
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025LM1494Key.values())
@@ -1911,7 +1896,6 @@ public class Mod2002025Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.RV2810)  // Reversión por deterioro de valores representativos - Dotaciones integradas en esta liquidación DT 16ª.1 y 2 LIS [02810]
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.RV990 )  // Reversión por deterioro de valores representativos - Dotaciones integradas en esta liquidación DT 16ª.3 LIS [00990]
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.RV991 )  // Reversión por deterioro de valores representativos - Dotaciones pendientes de integración en períodos futuros [00991]
-
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label)
 			})

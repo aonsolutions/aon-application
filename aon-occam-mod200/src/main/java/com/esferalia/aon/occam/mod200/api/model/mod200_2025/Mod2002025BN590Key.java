@@ -15,7 +15,7 @@ public enum Mod2002025BN590Key implements Serializable, IMod200KeysProvider {
 	// ª --> \u00AA º --> \u00BA
 	// ¿ --> \u00BF
 	
-	  C01(new Mod2002025Key[]{Mod2002025Key.BN854 ,Mod2002025Key.BN855 ,null},"2010: Activos fijos (Ley 20/1991)")
+	  C01(new Mod2002025Key[]{Mod2002025Key.BN854 ,Mod2002025Key.BN855 ,null                },"2010: Activos fijos (Ley 20/1991)")
 	 ,C02(new Mod2002025Key[]{Mod2002025Key.BN857 ,Mod2002025Key.BN858 ,Mod2002025Key.BN859 },"2011: Activos fijos (Ley 20/1991)")
 	 ,C03(new Mod2002025Key[]{Mod2002025Key.BN860 ,Mod2002025Key.BN861 ,Mod2002025Key.BN862 },"2012: Activos fijos (Ley 20/1991)")
 	 ,C04(new Mod2002025Key[]{Mod2002025Key.BN863 ,Mod2002025Key.BN864 ,Mod2002025Key.BN865 },"2013: Activos fijos (Ley 20/1991)")
