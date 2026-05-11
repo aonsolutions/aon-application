@@ -618,6 +618,9 @@ public class JooqIT {
 	    });	 
 	    
 	    System.out.println("itEmployees size : " + itEmployees.size());
+	    itEmployees.forEach(ie -> {
+	    	ie.getIts().forEach(it -> System.out.println("IT : " + it.getStartDate() + " - " + it.getEndDate()));
+	    });
 	    return itEmployees;
 	}
 
