@@ -65,6 +65,7 @@ import com.esferalia.aon.occam.mod200.impl.jooq.dao.d2_deposit.Mod2002016toD2;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.d2_deposit.Mod2002017toD2;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.d2_deposit.Mod2002018toD2;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -1246,17 +1247,26 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 
 	@Override
 	public void upload(AonData aonData, String data, String type, Integer year) {
+		
 		String domainName = aonData.getDomain().getName();
 		Integer domainId = aonData.getDomain().getId();
 		byte[] fileData = java.util.Base64.getDecoder().decode(data);
 		String login = aonData.getUser().getLogin();
-		Esquema schema = Utils.readXml(fileData);	
+		Esquema schema = Utils.readXml(fileData);
+		
+		// Controlar si se ha leido bien el esquema, si no se ha leído bien o el ejercicio no es correcto, lanzar una excepción, que se capture en el cliente y se muestre un mensaje de error al usuario
+		if (schema.getCabecera() == null || schema.getCabecera().getEjercicio() == null || !schema.getCabecera().getEjercicio().equals(BigInteger.valueOf(year))) {
+			throw new AonCoreException("El fichero no es correcto.");
+		}
+		
+		// Si todo ha ido bien, se graba el esquema en la base de datos
     	try {
 			byte[] b = Utils.writeXml(schema);
 			DBConsults.insertDeposit(domainName, b, domainId, year, login);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
+    	
 	}
 
 	@Override
