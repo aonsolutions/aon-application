@@ -1713,6 +1713,30 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		serviceAsync.deleteRecordDataAttach(domainName, domainId, user, id, new AsyncCallbackWrapper<>(callback));
 	}
 
+	@Override
+	public void getRregistryBanks(String domainName, Integer domain, String user, Integer registry, AsyncCallback<List<RegistryBank>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getRregistryBanks(domainName, domain, user, registry, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveRregistryBank(String domainName, Integer domain, String user, RegistryBank registryBank, AsyncCallback<RegistryBank> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveRregistryBank(domainName, domain, user, registryBank, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteRregistryBank(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteRregistryBank(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getAccountsForBank(String domainName, Integer domain, String user, AsyncCallback<List<Account>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getAccountsForBank(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
 	// *********************** [AMORTIZATION TYPE]
 	@Override
 	public void getAmortizationTypes(Occam occam, int domain, AsyncCallback<List<AmortizationType>> callback) {

@@ -128,6 +128,13 @@ public class AonCustomIntegerBox extends HTMLPanel {
 			numberBox.setValue((Integer)null);
 		} else numberBox.setValue(value);
 	}
+	
+	public void setValueShort(Short value) {
+		if(null == value) {
+			nearCB.setValue(false);
+			numberBox.setValue((Integer)null);
+		} else numberBox.setValue(value.intValue());
+	}
 
 	public Integer getValue() {
 		return numberBox.getValue();

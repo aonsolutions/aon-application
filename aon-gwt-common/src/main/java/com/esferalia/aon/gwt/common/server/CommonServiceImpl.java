@@ -2184,6 +2184,26 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		AON.deleteRecordDataAttach(domainName, domain, user, id);
 	}
 	
+	@Override
+	public List<RegistryBank> getRregistryBanks(String domainName, Integer domain, String user, Integer registry) throws AonCoreException {
+		return AON.getRegistryBanks(new Domain().setName(domainName).setId(domain), new User().setLogin(user), registry);
+	}
+	
+	@Override
+	public RegistryBank saveRregistryBank(String domainName, Integer domain, String user, RegistryBank registryBank) throws AonCoreException {
+		return AON.saveRegistryBank(new Domain().setName(domainName).setId(domain), user, registryBank);
+	}
+	
+	@Override
+	public void deleteRregistryBank(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		AON.deleteRegistryBank(new Domain().setName(domainName).setId(domain), user, id);
+	}
+
+	@Override
+	public List<Account> getAccountsForBank(String domainName, Integer domain, String user) throws AonCoreException {
+		return AON.getAccountsForBank(domainName, domain, user);
+	}
+	
 	// *********************** [AMORTIZATION TYPE]
 	@Override
 	public List<AmortizationType> getAmortizationTypes(Occam occam, int domain) {

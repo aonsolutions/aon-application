@@ -563,6 +563,11 @@ public interface CommonService extends RemoteService {
 	RecordData saveRecordData(String domainName, Integer domainId, String user, RecordData recordData) throws AonCoreException;
 	void deleteRecordDataAttach(String domainName, Integer domainId, String user, Integer id) throws AonCoreException;
 	
+	List<RegistryBank> getRregistryBanks(String domainName, Integer domain, String user, Integer registry) throws AonCoreException;
+	RegistryBank saveRregistryBank(String domainName, Integer domain, String user, RegistryBank registryBank) throws AonCoreException;
+	void deleteRregistryBank(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
+	List<Account> getAccountsForBank(String domainName, Integer domain, String user) throws AonCoreException;
+	
 	// *********************** [AMORTIZATION TYPE]
 	List<AmortizationType> getAmortizationTypes(Occam occam, int domain) throws AonCoreException;
 }
