@@ -33,8 +33,8 @@ public class TaxJSON {
 	public static Tax fromJSON(JSONObject json) {
 		if(json == null || json.isEmpty()) return null;
 		return new Tax()
-			.setId(json.optInt(IJsonNames.ID))
-			.setDomain(json.optInt(IJsonNames.DOMAIN))
+			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
+			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
 			.setName(JsonUtils.getString(json, IJsonNames.NAME))
 			.setType(TaxType.safeValueOf(JsonUtils.getString(json, IJsonNames.TYPE)))
 			.setPercentage(JsonUtils.getdouble(json, IJsonNames.PERCENTAGE))
