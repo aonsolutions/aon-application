@@ -29,6 +29,7 @@ import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -67,8 +68,8 @@ public abstract class WorkplaceTable extends ScrollPanel {
 	
 	private static enum COLS {
 		  STA(AON.MSG.status()					   	,"3rem", ""  )
-		, DES(AON.MSG.description()					,"-moz-available", "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" )
-		, ADD(AON.MSG.address()						,"8rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
+		, DES(AON.MSG.description()					,"8rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" )
+		, ADD(AON.MSG.address()						,"-moz-available", "min-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" )
 		, ECO("C. Econ\u00f3mico"					,"7rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
 		, ACT(AON.MSG.activity()					,"8rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
 		, CAL("Calendario"							,"6rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"  )
@@ -263,7 +264,8 @@ public abstract class WorkplaceTable extends ScrollPanel {
 		HTMLPanel row = tab.createRow();
 		row.addDomHandler(e -> onUpdateWorkplace(workplace), ClickEvent.getType());
 		
-		AonTableButton status = workplace.isActive() ? new AonTableButton("Activo", AON.CSS.aonIconCheckCircle()) : new AonTableButton("Inactivo", AON.CSS.aonIconBlock());
+		Button status = new Button();
+		getEnableDisableButton(status, workplace.isActive());
 		status.setTitle(workplace.isActive() ? "Activo" : "Inactivo");
 		tab.addInlineStyle(status, COLS.STA.getStyles());
 		tab.addRow(row, status, COLS.STA.getColWidth());
@@ -339,6 +341,16 @@ public abstract class WorkplaceTable extends ScrollPanel {
 		tab.addRow(row, scope, COLS.SCO.getColWidth());
 		
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
+	}
+
+	private void getEnableDisableButton(Button button, boolean disabled) {
+		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE);
+		button.removeStyleName(AON.AON_NO_MARGIN);
+		button.removeStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
+		
+		button.setStyleName(!disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
+		button.setStyleName(AON.AON_NO_MARGIN, true);
+		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 	}
 	
 	private void getList(Consumer<List<Workplace>> success) {

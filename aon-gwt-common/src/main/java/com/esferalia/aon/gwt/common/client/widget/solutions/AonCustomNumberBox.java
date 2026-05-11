@@ -24,7 +24,7 @@ public class AonCustomNumberBox extends HTMLPanel {
 	
 	public AonCustomNumberBox(String title) {
 		super(EMPTY_STRING);
-		addStyleName(AON.CSS.aonFlexColumn());
+		addStyleName(AON.CSS.aonFlexColumn2());
 		addStyleName(AON.CSS.aonCustomTextBoxNoBorder());
 
 		createTitle(title);
@@ -33,7 +33,7 @@ public class AonCustomNumberBox extends HTMLPanel {
 	
 	public AonCustomNumberBox(String title, Integer precision) {
 		super(EMPTY_STRING);
-		addStyleName(AON.CSS.aonFlexColumn());
+		addStyleName(AON.CSS.aonFlexColumn2());
 		addStyleName(AON.CSS.aonCustomTextBoxNoBorder());
 
 		createTitle(title);

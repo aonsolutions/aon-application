@@ -4060,6 +4060,21 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Factura vinculada a un documento DUA.")
 	String DUALinked();
 
+	@DefaultMessage("Vincular facturas")
+	String linkInvoice();
+
+	@DefaultMessage("Desvincular facturas")
+	String unlinkInvoice();
+
+	@DefaultMessage("\u00BFContinuar con la vinculaci\u00F3n de facturas?")
+	String confirmLinkInvoice();
+
+	@DefaultMessage("Facturas vinculadas")
+	String linkedInvoices();
+	
+	@DefaultMessage("A\u00F1adir factura")
+	String addInvoice();
+
 	@DefaultMessage("Factura creada desde \"gesti\u00F3n\"")
 	String managmentInvoice();
 	
@@ -4474,6 +4489,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Ajuste impuesto")
 	String taxAdjust();
 	
+	@DefaultMessage("Datos de la ficha")
+	String amortizationData();
+
 	@DefaultMessage("Venta o Baja")
 	String saleAmortizaton();
 
@@ -4483,9 +4501,8 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Importe de Venta o Baja")
 	String saleAmount();
 
-	@DefaultMessage("\u00BFDesea recalcular la ficha? Las cuotas bloqueadas "
-		+ "y/o contabilizadas permanecer\u00E1n iguales. Las cuotas pendientes "
-		+ "se eliminar\u00E1n y se calcular\u00E1n de nuevo. \u00BFContinuar?")
+	@DefaultMessage("Las cuotas bloqueadas y/o contabilizadas permanecer\u00E1n iguales. "
+		+ "Las cuotas pendientes se calcular\u00E1n de nuevo. \u00BFContinuar?")
 	String confirmAmortizationCalculateAction();
 
 	@DefaultMessage("Informaci\u00F3n facturas/Documentos pendientes")

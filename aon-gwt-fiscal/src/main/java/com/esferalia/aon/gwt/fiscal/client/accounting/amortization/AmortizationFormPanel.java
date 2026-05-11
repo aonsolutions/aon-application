@@ -5,6 +5,7 @@ import com.esferalia.aon.gwt.common.client.widget.AmortizationPeriodBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAmortizationTypeBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCloseTab;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableRow;
@@ -13,7 +14,11 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonInvestAssetBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTabLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountingReportModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.amortization.AmortizationPanel.AmortizationPanelCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.panel.StatementPanel;
+import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.type.AmortizationPeriod;
@@ -22,6 +27,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -31,6 +37,9 @@ class AmortizationFormPanel extends DockLayoutPanel {
 		Amortization getAmortization();
 		void onChange(Amortization am);
 		void onError(String message);
+		void onAllocationAccountStatement();
+		void onAccumulatedAccountStatement();
+		void onFixedAssetAccountStatement();
 	}
 	
 	AmortizationFormPanel(AmortizationModuleOptions opts, AmortizationPanelCallback callback ) {
@@ -52,6 +61,8 @@ class AmortizationFormPanel extends DockLayoutPanel {
 		if (callback.getAmortization().getId() != null) {
 			callback.paintExcelButton();
 		}
+
+		AonTabLayoutPanel tabPanel = new AonTabLayoutPanel(26, Unit.PX);
 		AmortizationFormPanelCallback cbk = new AmortizationFormPanelCallback() {
 			
 			@Override
@@ -68,32 +79,117 @@ class AmortizationFormPanel extends DockLayoutPanel {
 			public void onError(String message) {
 				callback.showError(message);
 			}
+
+			@Override
+			public void onFixedAssetAccountStatement() {
+				addStatementTab( callback.getAmortization().getFixedAssetAccount() );
+			}
+
+			@Override
+			public void onAccumulatedAccountStatement() {
+				addStatementTab( callback.getAmortization().getAccumulatedAccount() );
+			}
+
+			@Override
+			public void onAllocationAccountStatement() {
+				addStatementTab( callback.getAmortization().getAllocationAccount() );
+			}
+			
+			private void addStatementTab(Account account) {
+				SimpleLayoutPanel statementPanel = new SimpleLayoutPanel();
+				AccountingReportParams stmParams = new AccountingReportParams()
+					.setDomain( opts.getDomain() )
+					.setAccount( account.clone() )
+				;
+				StatementPanel statement = new StatementPanel(
+					new AccountingReportModuleOptions()
+						.setDomainName(opts.getDomainName())
+						.setDomain(opts.getDomain())
+						.setUser(opts.getUser())
+					, stmParams, true);
+				String tabLabel = "Extr: " + account.getFullName();
+				AonCloseTab closeTab = new AonCloseTab(tabLabel, true);
+				closeTab.addCloseHandler(event -> tabPanel.remove(statementPanel));
+				tabPanel.add(statementPanel,closeTab, tabLabel);
+				statementPanel.add(statement);
+				tabPanel.selectTab(tabPanel.getWidgetCount() - 1);
+			}
+			
 		};
 		
-		addNorth( getHeader(opts, callback), 220 );
-		AmortizationDetailTable detailPanel = getDetails(opts, callback);
-		if (callback.getAmortization().getFeePeriod() == AmortizationPeriod.YEARLY) {
-			SimpleLayoutPanel detailWrapper = new SimpleLayoutPanel();
-			detailWrapper.setWidget(detailPanel);
-			add( detailWrapper );
-		} else {
-			AonTabLayoutPanel tabPanel = new AonTabLayoutPanel(26, Unit.PX);
-			tabPanel.add( getSummary(opts, cbk), AON.MSG.yearSummary() );
+		addNorth( getHeader(opts, cbk), 60 );
+		
+		tabPanel.add( getData(opts, cbk), AON.MSG.amortizationData());
+		
+		if ( callback.getAmortization().getId() != null ) {
+			if (callback.getAmortization().getFeePeriod() != AmortizationPeriod.YEARLY) {
+				tabPanel.add( getSummary(opts, cbk), AON.MSG.yearSummary() );
+			}
+			
+			AmortizationDetailTable detailPanel = getDetails(opts, callback);
 			tabPanel.add( detailPanel, AON.MSG.amortizationDetails());
-			add( tabPanel );
+			
+			AmortizationInvoicePanel invoicesPanel = new AmortizationInvoicePanel(opts, callback);
+			tabPanel.add( invoicesPanel, AON.MSG.linkedInvoices());
 		}
+		
+		tabPanel.addSelectionHandler( e -> callback.setSelectedTab( e.getSelectedItem() ) );
+		
+		if (callback.getSelectedTab() != null && callback.getSelectedTab() < tabPanel.getWidgetCount()) {
+			tabPanel.selectTab(callback.getSelectedTab());
+		}
+		add( tabPanel );
 	}
 
-	private Widget getHeader(AmortizationModuleOptions opts, AmortizationPanelCallback callback) {
+	private Widget getHeader(AmortizationModuleOptions opts, AmortizationFormPanelCallback cbk) {
+		FlowPanel header = new FlowPanel();
+		header.setStyleName( AON.CSS.aonTextCenter() );
+		
+		FlowPanel grid = new FlowPanel();
+		grid.setStyleName( AON.CSS.aonInlineBlock() );
+		grid.addStyleName( AON.CSS.aonBlockCenter());
+
+		InlineLabel idLabel = new InlineLabel(AON.MSG.code());
+		grid.add(idLabel);
+		
+		
+		AonIntegerBox idBox = new AonIntegerBox();
+		idBox.addStyleName( AON.CSS.aonMarginLeft() );
+		idBox.setVisibleLength(4);
+		idBox.setValue(cbk.getAmortization().getId());
+		idBox.setEnabled(false);
+		grid.add(idBox);
+		
+		CheckBox confidentialBox = new CheckBox(AON.MSG.confidential());
+		confidentialBox.setStyleName( AON.CSS.aonInlineBlock() );
+		confidentialBox.addStyleName( AON.CSS.aonMarginLeft() );
+		confidentialBox.getElement().getStyle().setDisplay( Display.INLINE_BLOCK );
+		confidentialBox.setValue(cbk.getAmortization().isConfidential());
+		grid.add(confidentialBox);
+		
+		// Description
+		InlineLabel descriptionLabel = new InlineLabel(AON.MSG.description());
+		descriptionLabel.setStyleName(AON.CSS.aonMarginLeft());
+		grid.add(descriptionLabel);
+		
+		AonTextBox descriptionBox = new AonTextBox();
+		descriptionBox.addStyleName(AON.CSS.aonMarginLeft());
+		descriptionBox.setVisibleLength(80);
+		descriptionBox.setMaxLength(64);
+		descriptionBox.setValue(cbk.getAmortization().getDescription());
+		descriptionBox.addValueChangeHandler(e -> cbk.getAmortization().setDescription(e.getValue()));
+		grid.add(descriptionBox);
+		
+		header.add(grid);
+		return header;
+	}
+	
+	private Widget getData(AmortizationModuleOptions opts, AmortizationFormPanelCallback cbk) {
 		FlowPanel header = new FlowPanel();
 
 		AonDisplayTable grid = new AonDisplayTable();
 		grid.addStyleName( AON.CSS.aonBlockCenter());
 
-		AonIntegerBox idBox = new AonIntegerBox();
-		CheckBox confidentialBox = new CheckBox(AON.MSG.confidential());
-		AonTextBox descriptionBox = new AonTextBox();
-		
 		AonDateBox initialDateBox = new AonDateBox();
 		AonAccountBox fixedAccountBox = new AonAccountBox(opts.getOccam());
 		FlowPanel fixedAccountListBoxPanel = new FlowPanel();
@@ -114,55 +210,26 @@ class AmortizationFormPanel extends DockLayoutPanel {
 		AonTextBox commentsBox = new AonTextBox();
 		commentsBox.setVisibleLength(80);
 		
-		// ID Panel
-		Label idLabel = new Label(AON.MSG.code());
-		
-		idBox.setVisibleLength(4);
-		idBox.setValue(callback.getAmortization().getId());
-		idBox.setEnabled(false);
-		
-		
-		confidentialBox.getElement().getStyle().setDisplay( Display.INLINE_BLOCK );
-		confidentialBox.setValue(callback.getAmortization().isConfidential());
-		
-		FlowPanel idPanel = new FlowPanel();
-		idPanel.setStyleName(AON.CSS.aonNowrap());
-		idPanel.add(idLabel);
-		idPanel.add(idBox);
-		idPanel.add(confidentialBox);
-		
-		// Description
-		Label descriptionLabel = new Label(AON.MSG.description());
-		descriptionBox.setVisibleLength(80);
-		descriptionBox.setMaxLength(64);
-		descriptionBox.setValue(callback.getAmortization().getDescription());
-		descriptionBox.addValueChangeHandler(e -> callback.getAmortization().setDescription(e.getValue()));
-		
-		grid.addRow()
-			.addCell(idLabel, AON.CSS.aonWidth200())
-			.addCell(idPanel, AON.CSS.aonWidth200())
-			.addCell(descriptionLabel, AON.CSS.aonWidth150())
-			.addCell(descriptionBox, AON.CSS.aonWidthAuto());
-		
 		// Initial Date
 		Label initialDateLabel = new Label(AON.MSG.assetInitialDate());
-		initialDateBox.setValue(callback.getAmortization().getInitialDate());
-		initialDateBox.addValueChangeHandler(e -> callback.getAmortization().setInitialDate(e.getValue()));
+		initialDateBox.setValue(cbk.getAmortization().getInitialDate());
+		initialDateBox.addValueChangeHandler(e -> cbk.getAmortization().setInitialDate(e.getValue()));
 		
 		AonDisplayTableRow row = grid.addRow()
 			.addCell(initialDateLabel, AON.CSS.aonNowrap())
 			.addCell(initialDateBox);
 		
-		if (isNew(callback.getAmortization())) {
+		if (isNew(cbk.getAmortization())) {
 			// Amortization type
 			Label amortizationTypeLabel = new Label(AON.MSG.amortizationType());
 			
 			AonAmortizationTypeBox amortizationTypeBox = new AonAmortizationTypeBox( opts , null);
-			amortizationTypeBox.setAmortizationType( callback.getAmortization().getAmortizationType());
+			amortizationTypeBox.removeStyleName(AON.CSS.aonCustomTextBox());
+			amortizationTypeBox.setAmortizationType( cbk.getAmortization().getAmortizationType());
 			amortizationTypeBox.addSelectionHandler(e -> {
 				AmortizationType type = e.getSelectedItem();
-				callback.getAmortization().setAmortizationType(type);
-				callback.getAmortization().setPercentage(type.getPercentage());
+				cbk.getAmortization().setAmortizationType(type);
+				cbk.getAmortization().setPercentage(type.getPercentage());
 				coefficientBox.setValue(type.getPercentage());
 				
 				initializeAccountListBox(opts, fixedAccountListBoxPanel, fixedAccountListBox, type.getFixedAssetAccount());
@@ -180,46 +247,58 @@ class AmortizationFormPanel extends DockLayoutPanel {
 		// Amount
 		Label amountLabel = new Label(AON.MSG.amount());
 		AonDoubleBox amountBox = new AonDoubleBox();
-		amountBox.addValueChangeHandler(e -> callback.getAmortization().setAmount(e.getValue()));
-		amountBox.setValue(callback.getAmortization().getAmount());
+		amountBox.addValueChangeHandler(e -> cbk.getAmortization().setAmount(e.getValue()));
+		amountBox.setValue(cbk.getAmortization().getAmount());
 		
 		row = grid.addRow()
 			.addCell(amountLabel)
 			.addCell(amountBox);
 		
 		Label fixedAccountLabel = new Label(AON.MSG.fixedAssetAccount());
-		if (isNew(callback.getAmortization())) {
+		if (isNew(cbk.getAmortization())) {
 			row.addCell(fixedAccountLabel)
 				.addCell(fixedAccountListBoxPanel);
 		} else {
 			// FixedAccount
-			fixedAccountBox.setAccount(callback.getAmortization().getFixedAssetAccount());
+			fixedAccountBox.setAccount(cbk.getAmortization().getFixedAssetAccount());
+			fixedAccountLabel.addStyleName(AON.CSS.aonClickableLabel());
+			fixedAccountLabel.addStyleName(AON.CSS.aonLabelWithIcon());
+			fixedAccountLabel.addStyleName(AON.CSS.aonIconLink());
+			fixedAccountLabel.addStyleName(AON.CSS.aonNowrap());
+			fixedAccountLabel.setTitle(AON.MSG.accountStatetement());
+			fixedAccountLabel.addClickHandler(e -> cbk.onFixedAssetAccountStatement());
 			row.addCell(fixedAccountLabel)
 				.addCell(fixedAccountBox);
 		}
 		
 		// Period
 		Label periodLabel = new Label(AON.MSG.periodicity());
-		periodBox.setValue(callback.getAmortization().getFeePeriod());
-		periodBox.addChangeHandler(e -> callback.getAmortization().setFeePeriod(periodBox.getValue()));
+		periodBox.setValue(cbk.getAmortization().getFeePeriod());
+		periodBox.addChangeHandler(e -> cbk.getAmortization().setFeePeriod(periodBox.getValue()));
 		
 		row = grid.addRow()
 			.addCell(periodLabel)
 			.addCell(periodBox);
 		// AccumulatedAccount
 		Label accumulatedAccountLabel = new Label(AON.MSG.accumulatedAccount());
-		if (isNew(callback.getAmortization())) {
+		if (isNew(cbk.getAmortization())) {
 			row.addCell(accumulatedAccountLabel)
 				.addCell(accumulatedAccountListBoxPanel);
 		} else {
-			accumulatedAccountBox.setAccount(callback.getAmortization().getAccumulatedAccount());
+			accumulatedAccountBox.setAccount(cbk.getAmortization().getAccumulatedAccount());
+			accumulatedAccountLabel.addStyleName(AON.CSS.aonClickableLabel());
+			accumulatedAccountLabel.addStyleName(AON.CSS.aonLabelWithIcon());
+			accumulatedAccountLabel.addStyleName(AON.CSS.aonIconLink());
+			accumulatedAccountLabel.addStyleName(AON.CSS.aonNowrap());
+			accumulatedAccountLabel.setTitle(AON.MSG.accountStatetement());
+			accumulatedAccountLabel.addClickHandler(e -> cbk.onAccumulatedAccountStatement());
 			row.addCell(accumulatedAccountLabel)
 				.addCell(accumulatedAccountBox);
 		}
 		
 		// Coeficiente
 		Label coefficientLabel = new Label(AON.MSG.coefficient());
-		coefficientBox.setValue(callback.getAmortization().getPercentage());
+		coefficientBox.setValue(cbk.getAmortization().getPercentage());
 		coefficientBox.setEnabled(false);
 		
 		row = grid.addRow()
@@ -227,24 +306,30 @@ class AmortizationFormPanel extends DockLayoutPanel {
 			.addCell(coefficientBox);
 		// Allocation Account
 		Label allocationAccountLabel = new Label(AON.MSG.allocationAccount());
-		if (isNew(callback.getAmortization())) {
+		if (isNew(cbk.getAmortization())) {
 			row.addCell(allocationAccountLabel)
 			.addCell(allocationAccountListBoxPanel);
 		} else {
-			allocationAccountBox.setAccount(callback.getAmortization().getAllocationAccount());
+			allocationAccountBox.setAccount(cbk.getAmortization().getAllocationAccount());
+			allocationAccountLabel.addStyleName(AON.CSS.aonClickableLabel());
+			allocationAccountLabel.addStyleName(AON.CSS.aonLabelWithIcon());
+			allocationAccountLabel.addStyleName(AON.CSS.aonIconLink());
+			allocationAccountLabel.addStyleName(AON.CSS.aonNowrap());
+			allocationAccountLabel.setTitle(AON.MSG.accountStatetement());
+			allocationAccountLabel.addClickHandler(e -> cbk.onAllocationAccountStatement());
 			row.addCell(allocationAccountLabel)
-			.addCell(allocationAccountBox);
+				.addCell(allocationAccountBox);
 		}
 		
 		// Deadline
 		AonDateBox deadlineBox = new AonDateBox();
-		deadlineBox.setValue(callback.getAmortization().getDeadline());
+		deadlineBox.setValue(cbk.getAmortization().getDeadline());
 		deadlineBox.setEnabled(false);
 		Label deadlineLabel = new Label(AON.MSG.saleDate());
 		
 		// Sale amount
 		AonDoubleBox saleAmountBox = new AonDoubleBox();
-		saleAmountBox.setValue(callback.getAmortization().getSaleAmount());
+		saleAmountBox.setValue(cbk.getAmortization().getSaleAmount());
 		saleAmountBox.setEnabled(false);
 		Label saleAmountLabel = new Label(AON.MSG.saleAmount());
 
@@ -258,14 +343,14 @@ class AmortizationFormPanel extends DockLayoutPanel {
 		// Bien afecto
 		Label investAsset = new Label(AON.MSG.investAsset());
 		investAssetBox.addStyleName(AON.CSS.aonWidth170());
-		investAssetBox.setInvestAsset(callback.getAmortization().getInvestAsset());
-		investAssetBox.addSelectionHandler(e -> callback.getAmortization().setInvestAsset(e.getSelectedItem()));
+		investAssetBox.setInvestAsset(cbk.getAmortization().getInvestAsset());
+		investAssetBox.addSelectionHandler(e -> cbk.getAmortization().setInvestAsset(e.getSelectedItem()));
 		
 		// Comments
 		Label commentsLabel = new Label(AON.MSG.comments());
 		commentsBox.setMaxLength(255);
-		commentsBox.setValue(callback.getAmortization().getComments());
-		commentsBox.addValueChangeHandler(e -> callback.getAmortization().setComments(e.getValue()));
+		commentsBox.setValue(cbk.getAmortization().getComments());
+		commentsBox.addValueChangeHandler(e -> cbk.getAmortization().setComments(e.getValue()));
 		
 		grid.addRow()
 			.addCell(investAsset)
@@ -277,10 +362,11 @@ class AmortizationFormPanel extends DockLayoutPanel {
 		header.add(grid);
 		return header;
 	}
-	
+
 	private void initializeAccountListBox(AmortizationModuleOptions opts, FlowPanel container, AonAccountListBox accountListBox, String prefix) {
 		container.clear();
 		accountListBox = new AonAccountListBox(opts, prefix, null);
+		accountListBox.removeStyleName(AON.CSS.aonCustomTextBox());
 		container.add(accountListBox);
 	}
 

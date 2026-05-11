@@ -130,6 +130,8 @@ import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.RDirStaff;
+import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -2140,6 +2142,46 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public List<Iae> getIaeList(String domainName, Integer domainId, String user) throws AonCoreException {
 		return AON.getIaeList(domainName, domainId, user);
+	}
+	
+	@Override
+	public List<RDirStaff> getRDirStaffs(String domainName, Integer domain, String user, Integer registry) throws AonCoreException {
+		return AON.getRDirStaffs(domainName, domain, user, registry);
+	}
+	
+	@Override
+	public RDirStaff saveRDirStaff(String domainName, Integer domain, String user, RDirStaff rDirStaff) throws AonCoreException {
+		return AON.saveRDirStaff(domainName, domain, user, rDirStaff);
+	}
+	
+	@Override
+	public void deleteRDirStaff(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		AON.deleteRDirStaff(domainName, domain, user, id);
+	}
+
+	@Override
+	public List<RecordData> getRecordDatas(String domainName, Integer domain, String user, Integer registry, boolean witdhData) throws AonCoreException {
+		return AON.getRecordDatas(domainName, domain, user, registry, witdhData);
+	}
+
+	@Override
+	public RecordData getRecordData(String domainName, Integer domain, String user, Integer recordDataId) throws AonCoreException {
+		return AON.getFullRecordData(domainName, domain, user, recordDataId);
+	}
+	
+	@Override
+	public void deleteRecordData(String domainName, Integer domain, String user, Integer id, boolean deleteData) throws AonCoreException {
+		AON.deleteRecordData(domainName, domain, user, id, deleteData);
+	}
+	
+	@Override
+	public RecordData saveRecordData(String domainName, Integer domain, String user, RecordData recordData) throws AonCoreException {
+		return AON.saveRecordData(domainName, domain, user, recordData);
+	}
+	
+	@Override
+	public void deleteRecordDataAttach(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		AON.deleteRecordDataAttach(domainName, domain, user, id);
 	}
 	
 	// *********************** [AMORTIZATION TYPE]

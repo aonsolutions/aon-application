@@ -15,7 +15,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 
-class InvoiceConsoleSelectionHandler extends FlowPanel implements HasValueChangeHandlers<Integer>{
+public class InvoiceConsoleSelectionHandler extends FlowPanel implements HasValueChangeHandlers<Integer>{
 	
 	private static final Logger LOGGER = Logger.getLogger(InvoiceConsoleSelectionHandler.class.getName());
 	
@@ -23,7 +23,7 @@ class InvoiceConsoleSelectionHandler extends FlowPanel implements HasValueChange
 	
 	private final InlineLabel selectedLabel = new InlineLabel();
 	
-	InvoiceConsoleSelectionHandler() {
+	public InvoiceConsoleSelectionHandler() {
 		this.add(selectedLabel);
 		refresh();
 	}
@@ -37,7 +37,7 @@ class InvoiceConsoleSelectionHandler extends FlowPanel implements HasValueChange
 	}
 	
 	int selectedCount() {
-		return AonCollectionUtils .size( selectedInvoices );
+		return AonCollectionUtils.size( selectedInvoices );
 	}
 
 	@Override
@@ -45,7 +45,7 @@ class InvoiceConsoleSelectionHandler extends FlowPanel implements HasValueChange
 		return super.addHandler(handler, ValueChangeEvent.getType());
 	}
 
-	void select(Invoice invoice) {
+	public void select(Invoice invoice) {
 		LOGGER.info("Marking as selected invoice: " + invoice);
 		if (invoice != null) {
 			selectedInvoices.put(invoice.getId(), invoice);
@@ -54,7 +54,7 @@ class InvoiceConsoleSelectionHandler extends FlowPanel implements HasValueChange
 		}
 	}
 
-	void unselect(Invoice invoice) {
+	public void unselect(Invoice invoice) {
 		LOGGER.info("Marking as unselected invoice: " + invoice );
 		if (invoice != null) {
 			selectedInvoices.remove(invoice.getId());
@@ -67,5 +67,11 @@ class InvoiceConsoleSelectionHandler extends FlowPanel implements HasValueChange
 		return AonCollectionUtils.valuesStream( selectedInvoices );
 	}
 
+	public boolean isEmpty() {
+		return AonCollectionUtils.isEmpty( selectedInvoices );
+	}
+	public boolean isNotEmpty() {
+		return !isEmpty();
+	}
 
 }

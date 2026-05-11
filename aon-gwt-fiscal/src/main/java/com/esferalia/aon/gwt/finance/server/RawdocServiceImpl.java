@@ -12,10 +12,13 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocParams;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.impl.jooq.RawdocImpl;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
@@ -27,6 +30,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
+import net.aonsolutions.aon.api.servlet.SendMailServlet;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediException;
@@ -66,7 +70,12 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 
 	@Override
-	public Rawdoc toRejected(Occam occam, Integer rawdocId, String reason) throws AonCoreException {
+	public Rawdoc toRejected(Occam occam, Integer rawdocId, String reason, String email) throws AonCoreException {
+		// SEND EMAIL 
+		if(email != null && AonStringUtils.isNotBlank(email.trim())) {
+			SendMailServlet sms = new SendMailServlet();
+			sms.sendEmailInvoiceReject(occam, email);
+		}	
 		return AON.rawdocToRejected(occam,rawdocId,reason);
 	}
 
@@ -157,6 +166,27 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		}
 		System.out.println( "getRawdocDataAttachURL...: " + url);
 		return url;
+	}
+	
+	@Override
+	public String getUserEmail(Occam occam, String userLogin) {
+		Domain domain = AON.getDomain(occam, occam.getDomain());
+		Integer[] domains = domain.getParentId() != null
+				? new Integer[] {domain.getId(), domain.getParentId()}
+				: new Integer[] {domain.getId()};
+		
+		User user = AON.getUser(occam, f -> 
+			f.getDomainProperty().in(domains).and(
+			f.getLoginProperty().eq(userLogin)));	
+		if(user != null && user.getAuth() != null && AonStringUtils.isNotBlank(user.getAuth().getEmail())) {
+			return user.getAuth().getEmail();			
+		} else if(user != null && user.getId() != null) {
+			MailAccount mailAccount = AON.getMailAccount(occam,
+				f -> f.getUserIdProperty().eq(user.getId())
+				.and(f.getDomainProperty().eq(user.getDomain().getId())));
+			return mailAccount.getEmail();
+		}
+		return "";
 	}
 	
 	//	************************************************* OLD

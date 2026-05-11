@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -26,4 +27,9 @@ public interface AmortizationService extends RemoteService {
 	
 	AmortizationDetail blockDetail(Occam occam, AmortizationDetail detail) throws AonCoreException;
 	AmortizationDetail unblockDetail(Occam occam, AmortizationDetail detail) throws AonCoreException;
+	
+	LinkedList<AmortizationInvoice> getInvoices(Occam occam, Integer domain, Integer amortizationId) throws AonCoreException;
+	void linkInvoices(Occam occam, Integer domain, Integer amortizationId, Integer[] invoiceIds) throws AonCoreException;
+	void unlinkInvoice(Occam occam, Integer domain, Integer amortizationId, Integer invoiceId) throws AonCoreException;
+	
 }

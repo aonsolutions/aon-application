@@ -2,15 +2,20 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.registry.CommercialRegistryCode;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RecordDataType;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class RecordDataDAO {
@@ -41,6 +46,27 @@ public class RecordDataDAO {
 				.and(RECORD_DATA.DOMAIN.eq(ctx.getDomainId()))
 				.fetch().stream()
 				.map(new RecordDataFiller());
+	}
+	
+	public static Stream<RecordData> getStream(AONContext ctx, Integer registryId, boolean withData) {
+		 List<RecordData> recordDatas = getStream(ctx, registryId).collect(Collectors.toList());
+		 
+		 if(withData)
+			 recordDatas.forEach(recordData -> {
+				 if(null != recordData.getAttach())
+					 recordData.setFullAttach(AttachmentDAO.getRegistryAttach(ctx, f -> f.getIdProperty().eq(recordData.getAttach()), withData));
+			 });
+		 
+		 return recordDatas.stream();
+	}
+	
+	public static RecordData getFullRecordData(AONContext ctx, Integer recordDataId) {
+		RecordData recordData = get(ctx, recordDataId);
+		 
+		if(null != recordData.getAttach())
+			 recordData.setFullAttach(AttachmentDAO.getRegistryAttach(ctx, f -> f.getIdProperty().eq(recordData.getAttach()), true));
+		 
+		return recordData;
 	}
 
 	public static RecordData get(AONContext ctx, Integer id) {
@@ -78,7 +104,7 @@ public class RecordDataDAO {
 					.limit(1)
 					.fetchOne() != null;
 			if (exists) {
-				throw new IllegalStateException("Ya existe otro registro con el tipo Constituci\u00F3n.");
+				throw new AonCoreException("Ya existe otro registro con el tipo Constituci\u00F3n.");
 			}			
 		}
 	}	
@@ -130,9 +156,50 @@ public class RecordDataDAO {
 		ctx.log().debug("UPDATE RECORD_DATA id: " + recordData.getId());
 		return recordData;
 	}
+	
+	public static void updateRecordDataAttach(CloseableAONContext ctx, Integer recordDataId, Integer attachId) {
+		ctx.getDslContext()
+			.update(RECORD_DATA)
+			.set(RECORD_DATA.ATTACH, attachId)
+			.where(RECORD_DATA.ID.eq(recordDataId))
+			.execute();
+		
+		ctx.log().debug("UPDATE RECORD_DATA ATTACH: " + recordDataId);
+	}
+
+	public static void deleteRecordDataAttach(CloseableAONContext ctx, Integer recordDataId) {
+		RecordData recordData = get(ctx, recordDataId);
+		
+		ctx.getDslContext()
+			.update(RECORD_DATA)
+			.set(RECORD_DATA.ATTACH, DSL.castNull(RECORD_DATA.ATTACH))
+			.where(RECORD_DATA.ID.eq(recordDataId))
+			.execute();
+		
+		if(null != recordData && null != recordData.getAttach()) {
+			AttachmentDAO.deleteRegistryAttach(ctx, f -> f.getIdProperty().eq(recordData.getAttach()));
+		}
+	
+		ctx.log().debug("DELETE RECORD_DATA ATTACH: " + recordDataId);	
+	}
 
 	public static void delete(AONContext ctx, Integer id) {
 		ctx.checkWrite();
+		ctx.getDslContext()
+				.delete(RECORD_DATA)
+				.where(RECORD_DATA.ID.eq(id))
+				.execute();
+		ctx.log().debug("DELETE RECORD_DATA id: " + id);
+	}
+	
+	public static void delete(AONContext ctx, Integer id, boolean deleteData) {
+		ctx.checkWrite();
+		
+		RecordData recordData = get(ctx, id);
+		
+		if(deleteData && null != recordData.getAttach())
+			AttachmentDAO.deleteRegistryAttach(ctx, f -> f.getIdProperty().eq(recordData.getAttach()));
+		
 		ctx.getDslContext()
 				.delete(RECORD_DATA)
 				.where(RECORD_DATA.ID.eq(id))

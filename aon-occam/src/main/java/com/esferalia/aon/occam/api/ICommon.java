@@ -58,10 +58,13 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.registry.RDirStaff;
+import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.tag.TagParams;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 public interface ICommon {
 
@@ -244,7 +247,17 @@ public interface ICommon {
 	public void deleteEnterpriseActivity(CloseableAONContext ctx, Integer id);
 	public List<Cnae2009> getCnae2009List(CloseableAONContext ctx, Integer domainId);
 	public List<Cnae> getCnae2025List(CloseableAONContext ctx, Integer domainId);
-	public List<Iae> getIaeList(CloseableAONContext ctx, Integer domainId);	
+	public List<Iae> getIaeList(CloseableAONContext ctx, Integer domainId);
 	
+	public List<RDirStaff> getRDirStaffs(CloseableAONContext ctx, Integer domain, Integer registry);
+	public RDirStaff saveRDirStaff(CloseableAONContext ctx, RDirStaff rDirStaff);
+	public void deleteRDirStaff(CloseableAONContext ctx, Integer id);
+	
+	public List<RecordData> getRecordDatas(CloseableAONContext ctx, Integer domain, Integer registry,boolean witdhData);
+	public RecordData getFullRecordData(CloseableAONContext ctx, Integer domain, Integer recordDataId);	
+	public RecordData saveRecordData(CloseableAONContext ctx, Integer domain, RecordData recordData) throws AonCoreException;
+	public void deleteRecordData(CloseableAONContext ctx, Integer domain, Integer id, boolean deleteData);
+	public void updateRecordDataAttach(CloseableAONContext ctx, Integer domain, Integer recordDataId, Integer attachId);
+	public void deleteRecordDataAttach(CloseableAONContext ctx, Integer domain, Integer recordDataId);
 
 }

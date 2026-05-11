@@ -3,6 +3,7 @@ package net.aonsolutions.aon.gwt.ccaa.client;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMenu;
 import com.esferalia.aon.gwt.common.shared.AonMenuItem;
@@ -31,6 +32,7 @@ public class DepositWest extends ScrollPanel{
 		super();
 		this.parent = parent;
 		this.textMode = false;
+		addStyleName(AON.CSS.aonMarginTop());
 		init();	
 	}
 	

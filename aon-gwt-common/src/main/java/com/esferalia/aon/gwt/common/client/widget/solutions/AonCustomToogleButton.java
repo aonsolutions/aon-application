@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 public class AonCustomToogleButton extends HTMLPanel {
 
 	private static final String EMPTY_STRING = "";
+	private HTMLPanel toogleButtonPanel;
 	private Button toogleButton;
 	
 	public AonCustomToogleButton(String title) {
@@ -26,10 +27,15 @@ public class AonCustomToogleButton extends HTMLPanel {
 	}
 
 	private void createToogleButton() {
+		toogleButtonPanel = new HTMLPanel("");
+		toogleButtonPanel.getElement().getStyle().setProperty("padding-left", ".5rem");
+		
 		toogleButton = new Button();
 		setValue(false);
 		toogleButton.addClickHandler(e -> setValue(!getValue()));
-		add(toogleButton);
+		toogleButtonPanel.add(toogleButton);
+		
+		add(toogleButtonPanel);
 	}
 	
 	public void setValue(boolean value) {

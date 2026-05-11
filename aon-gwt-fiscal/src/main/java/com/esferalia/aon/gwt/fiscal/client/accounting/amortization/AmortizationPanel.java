@@ -10,7 +10,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
-import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -39,7 +38,9 @@ public class AmortizationPanel extends AonLayoutPanel {
 		AonToolbarButton paintCalculateButton( );
 		AonToolbarButton paintSaleButton( );
 		AonToolbarButton paintExcelButton( );
-		
+		void refresh();
+		Integer getSelectedTab();
+		void setSelectedTab( Integer index);
 	}
 	
 	private DeckLayoutPanel deckPanel = new DeckLayoutPanel();
@@ -62,6 +63,7 @@ public class AmortizationPanel extends AonLayoutPanel {
 	private Hidden domainNameHidden= new Hidden(IRequestParamsNames.DOMAIN_NAME);
 	private Hidden userHidden = new Hidden(IRequestParamsNames.USER);
 	
+	private Integer selectedTab;
 
 	public AmortizationPanel( AmortizationModuleOptions opts ) {
 		super(Unit.PX);
@@ -227,9 +229,7 @@ public class AmortizationPanel extends AonLayoutPanel {
     	cancelButton.setStyleName(AON.CSS.aonCancelButton());
     	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
     	cancelButton.setText( AON.MSG.cancelAction());
-		cancelButton.addClickHandler(event -> {
-			saleDialog.hide();
-		});
+		cancelButton.addClickHandler(event -> saleDialog.hide() );
 		buttonsPanel.add(cancelButton);
 		
 		content.add(buttonsPanel);
@@ -281,7 +281,10 @@ public class AmortizationPanel extends AonLayoutPanel {
 		AmortizationParams params = getParams(opts);
 		tablePanel.clear();
 		AmortizationTable amortizationTable = new AmortizationTable(opts, params);
-		amortizationTable.addSelectionHandler(e -> searchAndShowForm(opts, e.getSelectedItem()));
+		amortizationTable.addSelectionHandler(e -> {
+			selectedTab = null;
+			searchAndShowForm(opts, e.getSelectedItem());
+		});
 		tablePanel.setWidget(amortizationTable);
 		show(tablePanel);
 	}
@@ -305,6 +308,17 @@ public class AmortizationPanel extends AonLayoutPanel {
 	private void showForm(AmortizationModuleOptions opts, Amortization amortization) {
 		formPanel.clear();
 		AmortizationPanelCallback callback = new AmortizationPanelCallback() {
+			 
+			@Override
+			public Integer getSelectedTab() {
+				return selectedTab;
+			}
+			
+			@Override
+			public void setSelectedTab(Integer index) {
+				selectedTab = index;
+			}
+			
 			@Override
 			public void showError(String message) {
 				toolbar.showErrorMessage(message);
@@ -359,6 +373,12 @@ public class AmortizationPanel extends AonLayoutPanel {
 				toolbar.add(excelButton);
 				return excelButton;
 			}
+			
+			@Override
+			public void refresh() {
+				searchAndShowForm(opts, amortization);
+			}
+			
 		};
 		AmortizationFormPanel amortizationFormPanel = new AmortizationFormPanel(opts, callback);
 		formPanel.setWidget(amortizationFormPanel);
