@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.occam.api.model.registry.CommercialRegistryCode;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RecordDataType;
@@ -28,6 +29,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FileUpload;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -176,14 +178,14 @@ public class AonRecordDataPanel extends HTMLPanel {
             HTMLPanel row6 = new HTMLPanel(EMPTY_STRING);
             row6.setStyleName(AON.CSS.aonItemFlex());
 
-            fileInput.setValue(recordData.getAttach() != null ? "Archivo adjunto" : "Sin archivo");
+            fileInput.setValue(recordData.getAttach() != null ? recordData.getFullAttach().getDescription() : "Sin archivo");
 
             HorizontalPanel buttonsPanel = new HorizontalPanel();
             buttonsPanel.setSpacing(8);
 
-            AonTableButton preview = new AonTableButton("Ver archivo", AON.CSS.aonIconPdf());
-            AonTableButton upload = new AonTableButton("Subir archivo", AON.CSS.aonIconUploadFile());
-            AonTableButton delete = new AonTableButton("Eliminar archivo", AON.CSS.aonIconDeleteFile());
+            AonTableButton preview = new AonTableButton("Ver archivo", null != recordData.getAttach() && null != recordData.getFullAttach().getData() ? AON.CSS.aonIconPdf() : AON.CSS.aonIconDownload());
+            AonTableButton upload = new AonTableButton("Subir archivo", AON.CSS.aonIconUpload());
+            AonTableButton delete = new AonTableButton("Eliminar archivo", AON.CSS.aonIconDelete());
 
             preview.setVisible(recordData.getAttach() != null);
             delete.setVisible(recordData.getAttach() != null);
@@ -250,23 +252,38 @@ public class AonRecordDataPanel extends HTMLPanel {
 
 
         delete.addClickHandler(e -> {
-            if (recordData.getId() == null || recordData.getAttach() == null)
-                return;
+        	AonDialog dialog = new AonDialog("Eliminaci\u00f3n Archivo Adjunto",
+					new HTML("Se va a proceder a eliminar el archivo adjunto <b>" + recordData.getFullAttach().getDescription()
+							+ "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
 
-            commonService.deleteRecordDataAttach(domainName, domainId, user, recordData.getId(),
-                new AsyncCallback<Void>() {
+			dialog.confirm(new AonAcceptDialogCallback() {
 
-                    @Override
-                    public void onSuccess(Void result) {
-                        getRecordData(rd -> show());
-                    }
+				@Override
+				public void onCancel() {}
 
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Window.alert("Error eliminando archivo: " + caught.getMessage());
-                    }
-                }
-            );
+				@Override
+				public void onAccept() {
+					if (recordData.getId() == null || recordData.getAttach() == null)
+		                return;
+
+		            commonService.deleteRecordDataAttach(domainName, domainId, user, recordData.getId(),
+		                new AsyncCallback<Void>() {
+
+		                    @Override
+		                    public void onSuccess(Void result) {
+		                        getRecordData(rd -> show());
+		                    }
+
+		                    @Override
+		                    public void onFailure(Throwable caught) {
+		                        Window.alert("Error eliminando archivo: " + caught.getMessage());
+		                    }
+		                }
+		            );
+				}
+			});
+        	
+            
         });
 
         preview.addClickHandler(e -> {

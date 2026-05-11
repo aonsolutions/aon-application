@@ -1,5 +1,13 @@
 package com.esferalia.aon.gwt.fiscal.client.registry;
 
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDomain;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDomainName;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentUser;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getOfficeDomain;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getRootPanel;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.removeCustomer;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.removeOfficeDomain;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -34,7 +42,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonProgressBarDialog
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
-
+import com.esferalia.aon.gwt.fiscal.client.EntryPointUtils;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.ImportError;
@@ -51,6 +59,7 @@ import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -79,11 +88,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-
-import com.esferalia.aon.gwt.fiscal.client.EntryPointUtils;
-
-import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
-import com.google.gwt.core.client.EntryPoint;
 
 public class CustomerFee  implements EntryPoint {
 	
@@ -149,20 +153,20 @@ public class CustomerFee  implements EntryPoint {
 	private int lastScrollPos = 0;
 
 	private static enum COLS {
-		  CHK(AonStringUtils.EMPTY					,"2rem"				,"") 
-		, CUS("Cliente"								,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, STS("Estado"								,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, LIN("#"									,"2rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, CON("Concepto"							,"12rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, QUA("Cant."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, PRI("Precio"								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, DIS("Dto."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, IMP("Importe"								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, STA("F. Desde"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, BIL("F. Factur."							,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, END("F. Hasta"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, PER("Periodo"								,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, BUT(AonStringUtils.EMPTY					,"2.3rem" 			,"")
+		  CHK(AonStringUtils.EMPTY					,"2rem"				,"max-width: 2rem; ") 
+		, CUS("Cliente"								,"12rem"  			,"max-width: 12rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, STS("Estado"								,"5rem" 			,"max-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, LIN("#"									,"2rem" 			,"max-width: 2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, CON("Concepto"							,"12rem" 			,"max-width: 12rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, QUA("Cant."								,"3rem" 			,"max-width: 3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, PRI("Precio"								,"4rem" 			,"max-width: 4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, DIS("Dto."								,"3rem" 			,"max-width: 3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, IMP("Importe"								,"4rem" 			,"max-width: 4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, STA("F. Desde"							,"5rem" 			,"max-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, BIL("F. Factur."							,"6rem" 			,"max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, END("F. Hasta"							,"5rem" 			,"max-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, PER("Periodo"								,"6rem" 			,"max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, BUT(AonStringUtils.EMPTY					,"2.3rem" 			,"max-width: 2.3rem; ")
 		;
 
 		String headerLabel;
@@ -186,20 +190,20 @@ public class CustomerFee  implements EntryPoint {
 	}
 	
 	private static enum CUSTOMER_COLS {
-		  CHK(AonStringUtils.EMPTY					,"2rem"				,"") 
-		, LIN("#"									,"2rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, CON("Concepto"							,"-moz-available" 	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, QUA("Cant."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, PRI("Precio"								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, DIS("Dto."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, IMP("Importe"								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, STA("F. Desde"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, BIL("F. Factur."							,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, END("F. Hasta"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, PER("Periodo"								,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, PRO("Expediente"							,"7rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, SEL("Agente"								,"7rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, BUT(AonStringUtils.EMPTY					,"2.3rem" 			,"")
+		  CHK(AonStringUtils.EMPTY					,"2rem"				,"max-width: 2rem; ") 
+		, LIN("#"									,"2rem" 			,"max-width: 2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, CON("Concepto"							,"12rem" 			,"max-width: 12rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, QUA("Cant."								,"3rem" 			,"max-width: 3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, PRI("Precio"								,"4rem" 			,"max-width: 4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, DIS("Dto."								,"3rem" 			,"max-width: 3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, IMP("Importe"								,"4rem" 			,"max-width: 4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, STA("F. Desde"							,"5rem" 			,"max-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, BIL("F. Factur."							,"6rem" 			,"max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, END("F. Hasta"							,"5rem" 			,"max-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, PER("Periodo"								,"6rem" 			,"max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, PRO("Expediente"							,"7rem" 			,"max-width: 7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, SEL("Agente"								,"7rem" 			,"max-width: 7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, BUT(AonStringUtils.EMPTY					,"2.3rem" 			,"max-width: 3rem; ")
 		;
 
 		String headerLabel;
@@ -557,7 +561,7 @@ public class CustomerFee  implements EntryPoint {
 			public void onSuccess(Map<Integer, Integer> minMaxYear) {
 				Optional<Entry<Integer, Integer>> firstEntry = minMaxYear.entrySet().stream().findFirst();
 				
-				AonCustomListBox lb = new AonCustomListBox("");
+				AonCustomListBox lb = new AonCustomListBox("A\u00f1o");
 				lb.addItem("-", "");
 				
 				if(firstEntry.isPresent()) {
