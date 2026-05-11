@@ -176,7 +176,7 @@
 											
 											<tr> 
 												<td>
-													<g:Label text="¿La actividad de prestaciñon de servicios a terceros, articulo 21 o) de la Ley 1'/2010, de 28 de abril, es la única y exclusiva que se presta?" styleName="{aonResources.css.aonInnerLabel}" />
+													<g:Label text="¿La actividad de prestación de servicios a terceros, articulo 21 o) de la Ley 1'/2010, de 28 de abril, es la única y exclusiva que se presta?" styleName="{aonResources.css.aonInnerLabel}" />
 												</td>
 												<td> 
 													<g:CheckBox ui:field="SRP831006B" />
@@ -186,7 +186,7 @@
 										
 										<div class="{aonResources.css.aonGroup}">
 											<div class="{aonResources.css.aonGroupTitle}">
-												<g:InlineLabel text="Volúmen facturado por dichos servicios" />
+												<g:InlineLabel text="Volumen facturado por dichos servicios" />
 											</div>
 											<div class="{aonResources.css.aonGroupBody}">
 												<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">

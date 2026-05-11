@@ -206,13 +206,15 @@ public class UserUtils implements Serializable {
 	public List<Scope> getCurrentUserScopes( boolean forceHeredity ) {
 		List<Scope> scopes = null;
 		try {
-			if ( isAdminUser() || DomainManager.isParentDomainUserInChildDomain() ) {
+			if ( isAdminUser() ) {
+				scopes = getScopes(getDomains(true));
+			} else if (DomainManager.isParentDomainUserInChildDomain()) {
 				scopes = getScopes(new Integer[]{DomainManager.getCurrentDomain()});
-				if ( forceHeredity) {
+				if ( isAddParentScope(forceHeredity) ) {
 					scopes.addAll(getUserScopes(new Integer[]{loggedUser.getDomain()}));	
 				}
 			} else {
-				scopes = getUserScopes(new Integer[]{DomainManager.getCurrentDomain()});
+				scopes = getUserScopes(getDomains(forceHeredity));
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error scopes related with the user" + getLoggedUser().getLogin(), e);
@@ -223,13 +225,17 @@ public class UserUtils implements Serializable {
 	private List<Integer> getUserScopeIds( boolean forceHeredity ) {
 		List<Integer> scopes = null;
 		try {		
-			if ( isAdminUser() || DomainManager.isParentDomainUserInChildDomain() ) {
+			if ( isAdminUser() ) {
+				scopes = getScopeIds(getDomains(true));
+			} else if (DomainManager.isParentDomainUserInChildDomain()) {
+				this.addScopeExpression = isAddParentScope(false);			
 				scopes = getScopeIds(new Integer[]{DomainManager.getCurrentDomain()});
-				if ( forceHeredity) {
+				if ( this.addScopeExpression ) {
 					scopes.addAll(getUserScopeIds(new Integer[]{loggedUser.getDomain()}));	
 				}
-			} else {
-				scopes = getUserScopeIds(new Integer[]{DomainManager.getCurrentDomain()});
+			} else {	
+				this.addScopeExpression = true;
+				scopes = getUserScopeIds(getDomains(forceHeredity));
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error scopes related with the user" + loggedUser.getLogin(), e);

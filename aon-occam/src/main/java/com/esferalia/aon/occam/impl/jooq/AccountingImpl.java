@@ -755,5 +755,16 @@ public class AccountingImpl implements IAccounting {
 		return ctx.getDslContext().transactionResult(
 			configuration -> AmortizationDAO.getInvoices(ctx, domain, amortizationId) );	
 	}
-	
+
+	@Override
+	public void linkAmortizationInvoices(AONContext ctx, Integer domain,  Integer  amortizationId, Integer[] invoiceUds){
+		ctx.getDslContext().transaction(
+			configuration -> AmortizationDAO.linkInvoices(ctx, domain, amortizationId, invoiceUds) );	
+	}
+
+	@Override
+	public void unlinkAmortizationInvoice(AONContext ctx, Integer domain,  Integer  amortizationId, Integer invoiceId){
+		ctx.getDslContext().transaction(
+			configuration -> AmortizationDAO.unlinkInvoice(ctx, domain, amortizationId, invoiceId) );	
+	}
 }

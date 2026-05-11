@@ -29,4 +29,7 @@ public interface AmortizationService extends RemoteService {
 	AmortizationDetail unblockDetail(Occam occam, AmortizationDetail detail) throws AonCoreException;
 	
 	LinkedList<AmortizationInvoice> getInvoices(Occam occam, Integer domain, Integer amortizationId) throws AonCoreException;
+	void linkInvoices(Occam occam, Integer domain, Integer amortizationId, Integer[] invoiceIds) throws AonCoreException;
+	void unlinkInvoice(Occam occam, Integer domain, Integer amortizationId, Integer invoiceId) throws AonCoreException;
+	
 }

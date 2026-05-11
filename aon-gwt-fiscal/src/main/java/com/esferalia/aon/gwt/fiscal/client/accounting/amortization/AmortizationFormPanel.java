@@ -27,6 +27,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -116,31 +117,79 @@ class AmortizationFormPanel extends DockLayoutPanel {
 			
 		};
 		
-		addNorth( getHeader(opts, cbk), 220 );
+		addNorth( getHeader(opts, cbk), 60 );
 		
-		if (callback.getAmortization().getFeePeriod() != AmortizationPeriod.YEARLY) {
-			tabPanel.add( getSummary(opts, cbk), AON.MSG.yearSummary() );
+		tabPanel.add( getData(opts, cbk), AON.MSG.amortizationData());
+		
+		if ( callback.getAmortization().getId() != null ) {
+			if (callback.getAmortization().getFeePeriod() != AmortizationPeriod.YEARLY) {
+				tabPanel.add( getSummary(opts, cbk), AON.MSG.yearSummary() );
+			}
+			
+			AmortizationDetailTable detailPanel = getDetails(opts, callback);
+			tabPanel.add( detailPanel, AON.MSG.amortizationDetails());
+			
+			AmortizationInvoicePanel invoicesPanel = new AmortizationInvoicePanel(opts, callback);
+			tabPanel.add( invoicesPanel, AON.MSG.linkedInvoices());
 		}
 		
-		AmortizationDetailTable detailPanel = getDetails(opts, callback);
-		tabPanel.add( detailPanel, AON.MSG.amortizationDetails());
+		tabPanel.addSelectionHandler( e -> callback.setSelectedTab( e.getSelectedItem() ) );
 		
-		AmortizationInvoicesPanel invoicesPanel = new AmortizationInvoicesPanel(opts, callback);
-		tabPanel.add( invoicesPanel, AON.MSG.linkedInvoices());
-		
+		if (callback.getSelectedTab() != null && callback.getSelectedTab() < tabPanel.getWidgetCount()) {
+			tabPanel.selectTab(callback.getSelectedTab());
+		}
 		add( tabPanel );
 	}
 
 	private Widget getHeader(AmortizationModuleOptions opts, AmortizationFormPanelCallback cbk) {
 		FlowPanel header = new FlowPanel();
+		header.setStyleName( AON.CSS.aonTextCenter() );
+		
+		FlowPanel grid = new FlowPanel();
+		grid.setStyleName( AON.CSS.aonInlineBlock() );
+		grid.addStyleName( AON.CSS.aonBlockCenter());
+
+		InlineLabel idLabel = new InlineLabel(AON.MSG.code());
+		grid.add(idLabel);
+		
+		
+		AonIntegerBox idBox = new AonIntegerBox();
+		idBox.addStyleName( AON.CSS.aonMarginLeft() );
+		idBox.setVisibleLength(4);
+		idBox.setValue(cbk.getAmortization().getId());
+		idBox.setEnabled(false);
+		grid.add(idBox);
+		
+		CheckBox confidentialBox = new CheckBox(AON.MSG.confidential());
+		confidentialBox.setStyleName( AON.CSS.aonInlineBlock() );
+		confidentialBox.addStyleName( AON.CSS.aonMarginLeft() );
+		confidentialBox.getElement().getStyle().setDisplay( Display.INLINE_BLOCK );
+		confidentialBox.setValue(cbk.getAmortization().isConfidential());
+		grid.add(confidentialBox);
+		
+		// Description
+		InlineLabel descriptionLabel = new InlineLabel(AON.MSG.description());
+		descriptionLabel.setStyleName(AON.CSS.aonMarginLeft());
+		grid.add(descriptionLabel);
+		
+		AonTextBox descriptionBox = new AonTextBox();
+		descriptionBox.addStyleName(AON.CSS.aonMarginLeft());
+		descriptionBox.setVisibleLength(80);
+		descriptionBox.setMaxLength(64);
+		descriptionBox.setValue(cbk.getAmortization().getDescription());
+		descriptionBox.addValueChangeHandler(e -> cbk.getAmortization().setDescription(e.getValue()));
+		grid.add(descriptionBox);
+		
+		header.add(grid);
+		return header;
+	}
+	
+	private Widget getData(AmortizationModuleOptions opts, AmortizationFormPanelCallback cbk) {
+		FlowPanel header = new FlowPanel();
 
 		AonDisplayTable grid = new AonDisplayTable();
 		grid.addStyleName( AON.CSS.aonBlockCenter());
 
-		AonIntegerBox idBox = new AonIntegerBox();
-		CheckBox confidentialBox = new CheckBox(AON.MSG.confidential());
-		AonTextBox descriptionBox = new AonTextBox();
-		
 		AonDateBox initialDateBox = new AonDateBox();
 		AonAccountBox fixedAccountBox = new AonAccountBox(opts.getOccam());
 		FlowPanel fixedAccountListBoxPanel = new FlowPanel();
@@ -161,36 +210,6 @@ class AmortizationFormPanel extends DockLayoutPanel {
 		AonTextBox commentsBox = new AonTextBox();
 		commentsBox.setVisibleLength(80);
 		
-		// ID Panel
-		Label idLabel = new Label(AON.MSG.code());
-		
-		idBox.setVisibleLength(4);
-		idBox.setValue(cbk.getAmortization().getId());
-		idBox.setEnabled(false);
-		
-		
-		confidentialBox.getElement().getStyle().setDisplay( Display.INLINE_BLOCK );
-		confidentialBox.setValue(cbk.getAmortization().isConfidential());
-		
-		FlowPanel idPanel = new FlowPanel();
-		idPanel.setStyleName(AON.CSS.aonNowrap());
-		idPanel.add(idLabel);
-		idPanel.add(idBox);
-		idPanel.add(confidentialBox);
-		
-		// Description
-		Label descriptionLabel = new Label(AON.MSG.description());
-		descriptionBox.setVisibleLength(80);
-		descriptionBox.setMaxLength(64);
-		descriptionBox.setValue(cbk.getAmortization().getDescription());
-		descriptionBox.addValueChangeHandler(e -> cbk.getAmortization().setDescription(e.getValue()));
-		
-		grid.addRow()
-			.addCell(idLabel, AON.CSS.aonWidth200())
-			.addCell(idPanel, AON.CSS.aonWidth200())
-			.addCell(descriptionLabel, AON.CSS.aonWidth150())
-			.addCell(descriptionBox, AON.CSS.aonWidthAuto());
-		
 		// Initial Date
 		Label initialDateLabel = new Label(AON.MSG.assetInitialDate());
 		initialDateBox.setValue(cbk.getAmortization().getInitialDate());
@@ -205,6 +224,7 @@ class AmortizationFormPanel extends DockLayoutPanel {
 			Label amortizationTypeLabel = new Label(AON.MSG.amortizationType());
 			
 			AonAmortizationTypeBox amortizationTypeBox = new AonAmortizationTypeBox( opts , null);
+			amortizationTypeBox.removeStyleName(AON.CSS.aonCustomTextBox());
 			amortizationTypeBox.setAmortizationType( cbk.getAmortization().getAmortizationType());
 			amortizationTypeBox.addSelectionHandler(e -> {
 				AmortizationType type = e.getSelectedItem();
@@ -342,10 +362,11 @@ class AmortizationFormPanel extends DockLayoutPanel {
 		header.add(grid);
 		return header;
 	}
-	
+
 	private void initializeAccountListBox(AmortizationModuleOptions opts, FlowPanel container, AonAccountListBox accountListBox, String prefix) {
 		container.clear();
 		accountListBox = new AonAccountListBox(opts, prefix, null);
+		accountListBox.removeStyleName(AON.CSS.aonCustomTextBox());
 		container.add(accountListBox);
 	}
 

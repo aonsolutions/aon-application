@@ -44,7 +44,7 @@ class AmortizationInvoiceTable extends ScrollPanel implements HasInvoiceCheckedH
 			@Override
 			public void onSuccess(LinkedList<AmortizationInvoice> amis) {
 				AonCollectionUtils.stream(amis)
-					.map( ami -> new AmortizationInvoiceTableRow(opts, ami) )
+					.map( ami -> new AmortizationInvoiceTableRow(opts, callback, ami) )
 					.forEach(row -> grid.add( row ));
 			}
 			

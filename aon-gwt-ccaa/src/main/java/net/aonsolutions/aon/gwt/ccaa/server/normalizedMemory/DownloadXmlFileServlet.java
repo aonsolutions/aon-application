@@ -74,13 +74,9 @@ public class DownloadXmlFileServlet extends HttpServlet {
 			HttpServletResponse p_response) throws ServletException,
 			IOException {
 		
-//		p_response.addHeader("Content-Disposition",
-//				"inline; filename=\"DEPOSITO.zip\"");
-//		p_response.setContentType(MimeType.ZIP.getName());
-
 		String domain_id = p_request.getParameter("domain_id");
 		Integer domainId = Integer.parseInt(domain_id);
-		String domain = AonServletUtils.getRequestDomainName(p_request);
+		String domain = p_request.getParameter("domain_name");
 		
 		String yearStr = p_request.getParameter("year");
 		Integer year = Integer.parseInt(yearStr);
