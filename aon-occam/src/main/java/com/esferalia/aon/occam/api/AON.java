@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.Agreement;
@@ -254,6 +255,7 @@ import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
+import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.AgreementImpl;
 import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
 import com.esferalia.aon.occam.impl.jooq.CalendarImpl;
@@ -410,6 +412,10 @@ public class AON {
 
 	private static IURLShortener getURLShortener() {
 		return new URLShortenerImpl();
+	}
+	
+	private static IAccounting getAccounting() {
+		return new AccountingImpl();
 	}
 
 	// ********************************************
@@ -9309,6 +9315,12 @@ public class AON {
 	public static void deleteRecordDataAttach(String domainName, Integer domain, String user, Integer recordDataId) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
 			getCommon().deleteRecordDataAttach(ctx, domain, recordDataId);
+		}
+	}
+
+	public static List<Account> getAccountsForBank(String domainName, Integer domain, String user) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getAccounting().getAccounts(ctx, f -> f.getDomainProperty().eq(domain).and(f.getLevelProperty().eq((byte)5)).and(f.getCodeProperty().like("572%").or(f.getCodeProperty().like("5201%")))).collect(Collectors.toList());
 		}
 	}
 }
