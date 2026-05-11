@@ -45,6 +45,8 @@ import com.code.aon.ql.ast.IdentExpression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
+import com.esferalia.aon.occam.api.model.type.SalaryType.TypeVisitor;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
@@ -63,8 +65,6 @@ import com.esferalia.aon.salary.CompositeSalaryBuilder;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -96,7 +96,7 @@ public class JooqAgreementIntegrityCalculator {
 				
 				SalaryRecord salaryRecord = dslContext.selectFrom(SALARY)
 					.where(SALARY.CONTRACT.eq(agreementContract.get(CONTRACT.ID)))
-					.and(SALARY.TYPE.eq((byte) 0))
+					.and(SALARY.TYPE.eq(SalaryType.SALARY.value()))
 					.orderBy(SALARY.ISSUE_DATE.desc())
 					.limit(1)
 					.fetchOne();
@@ -114,7 +114,7 @@ public class JooqAgreementIntegrityCalculator {
 
 				SalaryType salaryType = null == salaryRecord.getType() ? SalaryType.SALARY : SalaryType.values()[salaryRecord.getType()];
 				ISQLContractSalaryCalculatorContext ctx =  
-				salaryType.accept(new SalaryTypeVisitor<ISQLContractSalaryCalculatorContext>() {
+				salaryType.accept(new TypeVisitor<ISQLContractSalaryCalculatorContext>() {
 
 					@Override
 					public ISQLContractSalaryCalculatorContext visitSalary(SalaryType salaryType) {
@@ -128,7 +128,6 @@ public class JooqAgreementIntegrityCalculator {
 					@Override
 					public ISQLContractSalaryCalculatorContext visitExtra(SalaryType salaryType) {
 						try {
-//							int extra = getExtra(req);
 							int extra = 0;
 							Calendar issueCalendar = Calendar.getInstance();
 							issueCalendar.setTime(issueDate);
@@ -161,6 +160,11 @@ public class JooqAgreementIntegrityCalculator {
 						} catch (ExpressionException | SQLException e) {
 							throw new RuntimeException(e);
 						}
+					}
+					
+					@Override
+					public ISQLContractSalaryCalculatorContext visitM190(SalaryType salaryType) {
+						return null;
 					}
 				
 				});

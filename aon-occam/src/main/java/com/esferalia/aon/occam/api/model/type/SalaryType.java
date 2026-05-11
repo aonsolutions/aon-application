@@ -30,18 +30,18 @@ public enum SalaryType implements Serializable {
 			return visitor.visitDelay(this);
 		}
 	},
-	PROCEDURAL	// 4 
+	UNKNOWN_4,
+	UNKNOWN_5,
+	UNKNOWN_6,
+	UNKNOWN_7,
+	UNKNOWN_8,
+	PROCEDURAL	// 9 
 	{
 		@Override
 		public <E> E accept(TypeVisitor<E> visitor) {
 			return visitor.visitProcedural(this);
 		}
 	},
-	UNKNOWN_5,
-	UNKNOWN_6,
-	UNKNOWN_7,
-	UNKNOWN_8,
-	UNKNOWN_9,
 
 	L00 
 	{

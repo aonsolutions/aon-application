@@ -1,5 +1,6 @@
 package net.aonsolutions.db.up2date.payroll;
 
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 
@@ -11,7 +12,7 @@ import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.SalaryPayment;
+import com.esferalia.aon.jooq.tables.Domain;
 
 import net.aonsolutions.db.up2date.Update;
 
@@ -44,12 +45,16 @@ public class SalaryTypeUpdate implements Update {
 	//	18	--		=	UNKNOWN_18,
 	//	19	--		=	UNKNOWN_19,
 	
-	//	20	--		=	M190		 	
+	//	20	--		=	M190	
+	
+	private String domainName;
 
-	public static final SalaryTypeUpdate SALARY_TYPE_UPDATE = new SalaryTypeUpdate();
+	public static final SalaryTypeUpdate DELIA_MANUELA_REGEP = 
+			new SalaryTypeUpdate("x9259781g-financialhealth.aonsolutions.org");
 
-	private SalaryTypeUpdate() {
+	private SalaryTypeUpdate(String domainName) {
 		super();
+		this.domainName = domainName;
 	}
 	
 	@Override
@@ -64,32 +69,60 @@ public class SalaryTypeUpdate implements Update {
 		dslContext
 		.select(SALARY)
 		.from(SALARY)
-		.where(SALARY.TYPE.in((byte)10, (byte)12, (byte)13, (byte)20))
+		.join(DOMAIN).on(SALARY.DOMAIN.eq(DOMAIN.ID))
+		.where(DOMAIN.NAME.eq(domainName))
+		.and(SALARY.TYPE.in((byte)10, (byte)12, (byte)13, (byte)20))
 		) >= 1;		
 		
 		if ( upgraded )
 			return;
 		
 		dslContext.transaction( config -> {
+			int updated =
 			config.dsl()
 			.update(SALARY)
 			.set(SALARY.TYPE, 
 			DSL.case_()
+			.when(SALARY.TYPE.eq((byte)0), (byte)0)  //	0	SALARY	=  	SALARY
+			.when(SALARY.TYPE.eq((byte)1), (byte)1)  // 1	EXTRA	=	EXTRA
+			.when(SALARY.TYPE.eq((byte)2), (byte)2)  // 2 	SETTLE	=	SETTLE
+			.when(SALARY.TYPE.eq((byte)3), (byte)3)  // 3	DELAY	=	DELAY
+
 			.when(SALARY.TYPE.eq((byte)4), (byte)10) // 10 	--	=	L00		( 4  L00 = 	UNKNOWN_4) 
 			.when(SALARY.TYPE.eq((byte)5), (byte)12) // 12 	--	=	L03 	( 5  L03 = 	UNKNOWN_5)
 			.when(SALARY.TYPE.eq((byte)6), (byte)13) // 13 	--	=	L13 	( 6  L13 = 	UNKNOWN_6)
 			
 			.when(SALARY.TYPE.eq((byte)7), (byte)20) // 20  --	=	M190 	( 7  M190 = UNKNOWN_7)
 			)
+			.from(DOMAIN)
+			.where(SALARY.DOMAIN.eq(DOMAIN.ID))
+			.and(DOMAIN.NAME.eq(domainName))
 			.execute();
+			
+			System.out.println("Updated " + updated + " salaries with new type for domain " + domainName);
 
+			updated =
 			config.dsl()
 			.update(SALARY)
-			.set(SALARY.TYPE, (byte) 9 )				//  9	--		=	PROCEDURAL
-			.from(SALARY_PAYMENT)
-			.where(SALARY_PAYMENT.SALARY.eq(SALARY.ID))
-			.and(SALARY_PAYMENT.TYPE.eq((byte) 7)) 		// CRA0007 Salarios de Tramitación
+			.set(SALARY.TYPE, (byte) 9 )			//  9	--		=	PROCEDURAL
+			.where(SALARY.ID.in(
+				DSL.select(DSL.field("salary_id", Integer.class))
+				.from(
+					DSL.select(SALARY.ID.as("salary_id"))
+					.from(DOMAIN)
+					.join(SALARY).on(SALARY.DOMAIN.eq(DOMAIN.ID))
+					.join(SALARY_PAYMENT)
+					.on(SALARY.ID.eq(SALARY_PAYMENT.SALARY))
+					.where(DOMAIN.NAME.eq(domainName))
+					.groupBy(SALARY.ID)
+					.having(DSL.min(SALARY_PAYMENT.TYPE).eq(DSL.max(SALARY_PAYMENT.TYPE)))
+					.and(DSL.min(SALARY_PAYMENT.TYPE).eq((byte)7)).asTable("procedural_salary")) // CRA0007 Salarios de Tramitación
+				)	 	
+			)
 			.execute();
+			
+			System.out.println("Updated " + updated + " salaries with new type PROCEDURAL for domain " + domainName);
+			
 		}
 		);
 

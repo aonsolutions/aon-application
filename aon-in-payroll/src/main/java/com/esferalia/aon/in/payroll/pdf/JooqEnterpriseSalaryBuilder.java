@@ -802,7 +802,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.innerJoin(WORKPLACE).onKey()
 		.innerJoin(ENTERPRISE).onKey()
 		.where(condition)
-		.and(SALARY.TYPE.lt((byte)7))
+		.and(SALARY.TYPE.lt((byte)SalaryType.M190.ordinal()))
 		.orderBy(SALARY.EMPLOYEE_NAME, SALARY.ISSUE_DATE, SALARY.TYPE)
 		.fetchStream()
 		.forEach(r -> {
