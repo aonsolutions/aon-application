@@ -157,10 +157,11 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				title: "Ficha de Amortización",
 				action: () => this.rootPanel(new JSF.AonJsfAmortization())
 			},{
-//				description: "[NUEVO] Ficha de Amortización",
-//				title: "[NUEVO] Ficha de Amortización",
-//				action: () => GWT.iLoad(GWT.AMORTIZATION)
-//			},{
+				description: "[NUEVO] Ficha de Amortización",
+				disabled: !this.isBeta(),
+				title: "[NUEVO] Ficha de Amortización",
+				action: () => GWT.iLoad(GWT.AMORTIZATION)
+			},{
 				description: "Tabla de tipos de Amortización",
 				title: "Tabla de tipos de Amortización",
 				action: () => GWT.iLoad(GWT.AMORTIZATION_TYPE)

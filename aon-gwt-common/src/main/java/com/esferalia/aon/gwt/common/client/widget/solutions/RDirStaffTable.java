@@ -22,6 +22,7 @@ import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -256,22 +257,26 @@ public abstract class RDirStaffTable extends ScrollPanel {
 		tab.addInlineStyle(name, COLS.NAM.getStyles());
 		tab.addRow(row, name, COLS.NAM.getColWidth());
 		
-		AonTableButton legal = rDirStaff.getRepresentative() ? new AonTableButton("Activo", AON.CSS.aonIconCheckCircle()) : new AonTableButton("Inactivo", AON.CSS.aonIconBlock());
+		Button legal = new Button();
+		getEnableDisableButton(legal, rDirStaff.getRepresentative());
 		legal.setTitle(rDirStaff.getRepresentative() ? "Activo" : "Inactivo");
 		tab.addInlineStyle(legal, COLS.RPL.getStyles());
 		tab.addRow(row, legal, COLS.RPL.getColWidth());
 		
-		AonTableButton laboral = rDirStaff.getRepresentativeLabor() ? new AonTableButton("Activo", AON.CSS.aonIconCheckCircle()) : new AonTableButton("Inactivo", AON.CSS.aonIconBlock());
+		Button laboral = new Button();
+		getEnableDisableButton(laboral, rDirStaff.getRepresentativeLabor());
 		laboral.setTitle(rDirStaff.getRepresentativeLabor() ? "Activo" : "Inactivo");
 		tab.addInlineStyle(laboral, COLS.RPP.getStyles());
 		tab.addRow(row, laboral, COLS.RPP.getColWidth());
 		
-		AonTableButton socio = rDirStaff.getShareHolder() ? new AonTableButton("Activo", AON.CSS.aonIconCheckCircle()) : new AonTableButton("Inactivo", AON.CSS.aonIconBlock());
+		Button socio = new Button();
+		getEnableDisableButton(socio, rDirStaff.getShareHolder());
 		socio.setTitle(rDirStaff.getShareHolder() ? "Activo" : "Inactivo");
 		tab.addInlineStyle(socio, COLS.SOC.getStyles());
 		tab.addRow(row, socio, COLS.SOC.getColWidth());
 		
-		AonTableButton admin = rDirStaff.getDirector() ? new AonTableButton("Activo", AON.CSS.aonIconCheckCircle()) : new AonTableButton("Inactivo", AON.CSS.aonIconBlock());
+		Button admin = new Button();
+		getEnableDisableButton(admin, rDirStaff.getDirector());
 		admin.setTitle(rDirStaff.getDirector() ? "Activo" : "Inactivo");
 		tab.addInlineStyle(admin, COLS.ADM.getStyles());
 		tab.addRow(row, admin, COLS.ADM.getColWidth());
@@ -308,6 +313,16 @@ public abstract class RDirStaffTable extends ScrollPanel {
         // Format the result
         return integerPart + "." + (decimalPart < 10 ? "0" : "") + decimalPart;
     }
+
+	private void getEnableDisableButton(Button button, boolean disabled) {
+		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE);
+		button.removeStyleName(AON.AON_NO_MARGIN);
+		button.removeStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
+		
+		button.setStyleName(!disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
+		button.setStyleName(AON.AON_NO_MARGIN, true);
+		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+	}
 	
 	private void getList(Consumer<List<RDirStaff>> success) {
 		COMMON_SERVICE.getRDirStaffs(domainName, domain, user, registry, new AsyncCallback<List<RDirStaff>>() {

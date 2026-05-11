@@ -4513,9 +4513,8 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Importe de Venta o Baja")
 	String saleAmount();
 
-	@DefaultMessage("\u00BFDesea recalcular la ficha? Las cuotas bloqueadas "
-		+ "y/o contabilizadas permanecer\u00E1n iguales. Las cuotas pendientes "
-		+ "se eliminar\u00E1n y se calcular\u00E1n de nuevo. \u00BFContinuar?")
+	@DefaultMessage("Las cuotas bloqueadas y/o contabilizadas permanecer\u00E1n iguales. "
+		+ "Las cuotas pendientes se calcular\u00E1n de nuevo. \u00BFContinuar?")
 	String confirmAmortizationCalculateAction();
 
 	@DefaultMessage("Informaci\u00F3n facturas/Documentos pendientes")
