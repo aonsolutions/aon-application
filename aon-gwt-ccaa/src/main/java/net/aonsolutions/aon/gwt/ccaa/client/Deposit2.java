@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.Upload;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -106,6 +107,7 @@ public class Deposit2 extends DockLayoutPanel {
 	
 	public Deposit2(AonData aonData) {
 		super(Unit.PX);
+		addStyleName("aon-Model-Detail");
 		setAonData(aonData);
 		init();
 		inma.getCompany(getAonData(), new AsyncCallback<Company>() {
@@ -137,11 +139,11 @@ public class Deposit2 extends DockLayoutPanel {
 	
 	private void startApplication() {
 		addNorth(header(), DepositHeader.HEIGTH);
-		addNorth(toolbar(), AonToolbar.HEIGTH);
+		addNorth(toolbar(), AonToolbar.HEIGTH-5);
 		addWest(menu(), DepositWest.WIDTH);
 		add(content());
-		
 	}
+	
 	private Widget menu() {
 		return new DepositWest(thiz);
 	}
@@ -230,6 +232,7 @@ public class Deposit2 extends DockLayoutPanel {
 	
 	private void deposit() {
 		setPage(new ScrollPanel());
+		getPage().addStyleName(AON.CSS.aonMarginTop());
 		inma.getSchema(getAonData(), getCompany(), getYear(), false, new AsyncCallback<Map<String, String>>() {
 			@Override
 			public void onSuccess(Map<String, String> result) {
@@ -551,7 +554,8 @@ public class Deposit2 extends DockLayoutPanel {
 					public void onSuccess(String[] result) {
 						String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_deposit/"
 				            	+ "?domain_id=" + Integer.toString(getAonData().getDomain().getId())
-				            	+ "&year="+ year;
+				            	+ "&domain_name=" + DepositEntryPoint.getCurrentDomainName()
+				            	+ "&year=" + year;
 						Window.open( fileDownloadURL, "_blank",null);
 					}
 				});
@@ -630,6 +634,8 @@ public class Deposit2 extends DockLayoutPanel {
 		};
 	}
 	
+	
+	// IMPORTAR ARCHIVO D2 - TIENE QUE SER UN ARCHIVO XML DEL PROGRAMA DEL DEPOSITO DIGITAL, ES DECIR UN ARCHIVO DEPOSITO.XML
 	private ClickHandler importClickHandler() {
 		return new ClickHandler() {
 			
@@ -664,7 +670,7 @@ public class Deposit2 extends DockLayoutPanel {
 							
 							@Override
 							public void onFailure(Throwable caught) {
-							
+								AonMessageDialog.error("Error al importar el archivo. Compruebe que el formato del archivo sea correcto y que corresponde al ejercicio seleccionado.");
 							}
 						});
 					}

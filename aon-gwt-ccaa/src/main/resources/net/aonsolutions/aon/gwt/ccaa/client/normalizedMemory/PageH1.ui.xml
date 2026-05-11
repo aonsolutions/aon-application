@@ -23,6 +23,12 @@
 								</div>
 								<div class="{aonResources.css.aonGroupBody}">
 									<table class="{aonResources.css.aonWidthAll}">
+											<colgroup>
+										    	<col style="width: 600px"/>
+										    	<col style="width: 400px;"/>
+										    	<col/>
+										  	</colgroup>
+									
 										<tr>
 											<td>
 												<g:Label text="{msg.nif}" styleName="{aonResources.css.aonInnerLabel}" />
@@ -35,7 +41,7 @@
 												<g:Label text="Otras" styleName="{aonResources.css.aonInnerLabel}" />
 												<g:TextBox ui:field="IDA01013" styleName="aon-inputText" />
 											</td>
-
+											<td/>
 										</tr>
 										<tr>
 											<td>
@@ -44,17 +50,18 @@
 													<g:TextBox ui:field="IDA01008" styleName="{aonResources.css.aonInputText}"/>
 												</g:HorizontalPanel>
 											</td>
+											<td/>
+											<td/>
 										</tr>
 										<tr>
-											<td>
+											<td colspan="2">
 												<g:HorizontalPanel ui:field="LEIPanel">
 													<g:Label text="LEI" styleName="{aonResources.css.aonInnerLabel}" />
 													<g:TextBox ui:field="IDA01009" styleName="{aonResources.css.aonInputText}"/>
+													<g:Label ui:field="LEILabel" styleName="{aonResources.css.aonMarginLeft}" text="Solo para las empresas que dispongan de código LEI (Legal Entity Identifier)"/>
 												</g:HorizontalPanel>
 											</td>
-											<td>
-												<g:Label ui:field="LEILabel" text="Solo para las empresas que dispongan de código LEI (Legal Entity Identifier)"/>
-											</td>
+											<td/>
 										</tr>
 										<tr>
 											<td>
@@ -67,11 +74,11 @@
 												<g:TextBox ui:field="IDA01022"
 													styleName="{aonResources.css.aonInputText}" />
 											</td>
-
+											<td/>
 										</tr>
-									</table>
+									<!--  </table>
 									
-									<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
+									table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}"> -->
 										<tr>
 											<td>
 												<g:Label text="Municipio" styleName="{aonResources.css.aonInnerLabel}" />
@@ -83,6 +90,7 @@
 												<g:ListBox ui:field="IDA01025"
 													styleName="{aonResources.css.aonInputText}" />
 											</td>
+											<td/>
 										</tr>
 										<tr>
 											<td>
@@ -95,20 +103,26 @@
 												<g:TextBox ui:field="IDA01031"
 													styleName="{aonResources.css.aonInputText}" />
 											</td>
+											<td/>
 										</tr>
 										<tr>
 											<td>
-												<g:Label text="Dirección de e-mail de contacto de la empresa"
-													styleName="{aonResources.css.aonInnerLabel}" />
+												<g:Label text="Dirección de e-mail de contacto de la empresa" styleName="{aonResources.css.aonInnerLabel}" />
+												<g:TextBox ui:field="IDA01037" styleName="{aonResources.css.aonInputText}" />
 											</td>
 											<td>
-												<g:TextBox ui:field="IDA01037"
-													styleName="{aonResources.css.aonInputText}" />
 											</td>
+											<td/>
 										</tr>
 									</table>
 									<g:HTMLPanel ui:field="societyPanel">
 										<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
+											<colgroup>
+										    	<col style="width: 250px"/>
+										    	<col style="width: 200px;"/>
+										    	<col style="width: 200px;"/>
+										    	<col/>
+										  	</colgroup>
 											<tr>
 												<td>
 													<g:Label text="Pertenencia a un grupo de sociedades"
@@ -120,6 +134,7 @@
 												<td>
 													<g:Label text="NIF" styleName="{aonResources.css.aonInnerLabel}" />
 												</td>
+												<td/>
 											</tr>
 											<tr>
 												<td>
@@ -134,6 +149,7 @@
 													<g:TextBox ui:field="IDA01040"
 														styleName="{aonResources.css.aonInputText}" />
 												</td>
+												<td/>
 											</tr>
 											<tr>
 												<td>
@@ -148,6 +164,7 @@
 													<g:TextBox ui:field="IDA01060"
 														styleName="{aonResources.css.aonInputText}" />
 												</td>
+												<td/>
 											</tr>
 										</table>
 									</g:HTMLPanel>
@@ -225,38 +242,48 @@
 												<g:InlineLabel text="Organo de Administración" />
 											</div>
 											<div class="{aonResources.css.aonGroupBody}">
-												<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
+												<table style="margin-top: 5px;" class="{aonResources.css.aonWidthAll}">
+												<colgroup>
+										    		<col style="width: 350px"/>
+										    		<col style="width: 150px;"/>
+										    		<col style="width: 150px;"/>
+										    		<col/>
+										  		</colgroup>
+												
 													<tr>
 														<td>
 														</td>
-														<td colspan="2">
+														<td>
 															<g:Label ui:field="current5" styleName="{aonResources.css.aonInnerLabel}" />
 														</td>
-														<td colspan="2">
+														<td>
 															<g:Label ui:field="ant5" styleName="{aonResources.css.aonInnerLabel}" />
 														</td>
+														<td/>
 													</tr>
 													<tr>
 														<td>
 															<g:Label text="Número de mujeres en el organo de administración" styleName="{aonResources.css.aonInnerLabel}" />
 														</td>
-														<td colspan="2">
+														<td>
 															<aon:DoubleBox ui:field="IDA04212"  />
 														</td>
-														<td colspan="2">
+														<td>
 															<aon:DoubleBox ui:field="IDA042129"  />
 														</td>
+														<td/>
 													</tr>
 													<tr>
 														<td>
 															<g:Label text="Número total de miembros del órgano de administración" styleName="{aonResources.css.aonInnerLabel}" />
 														</td>
-														<td colspan="2">
+														<td>
 															<aon:DoubleBox ui:field="IDA04213"  />
 														</td>
-														<td colspan="2">
+														<td>
 															<aon:DoubleBox ui:field="IDA042139"  />
 														</td>
+														<td/>
 													</tr>
 												</table>
 											</div>
