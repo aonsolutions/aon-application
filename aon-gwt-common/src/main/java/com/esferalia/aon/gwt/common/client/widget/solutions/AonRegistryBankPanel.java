@@ -92,6 +92,14 @@ public class AonRegistryBankPanel extends HTMLPanel {
 		
 		this.accounts = accounts;
 		
+		if(null != this.registryBank.getId() && null != this.registryBank.getAccount() && null != this.registryBank.getAccount().getId()) {
+			this.accounts.stream().map(acc -> {
+				if(acc.getId().equals(this.registryBank.getAccount().getId()) && !acc.isActive())
+					acc.setActive(true);
+				return acc;
+			});
+		}
+		
 		show();
 	}
 	
@@ -109,16 +117,6 @@ public class AonRegistryBankPanel extends HTMLPanel {
 		// Row 1
 		HTMLPanel row = new HTMLPanel(EMPTY_STRING);
 		row.setStyleName(AON.CSS.aonItemFlex());
-		
-		activo.getElement().getStyle().setProperty("max-width", "5rem");
-		
-		row.add(alias);
-		row.add(activo);
-		container.add(row);
-		
-		// Third Row
-		HTMLPanel row3 = new HTMLPanel(EMPTY_STRING);
-		row3.setStyleName(AON.CSS.aonItemFlex());
 		
 		iban.addValueChangeHandler(e -> {
 			String accountStr = this.iban.getValue();
@@ -139,8 +137,12 @@ public class AonRegistryBankPanel extends HTMLPanel {
 			
 		});
 		
-		row3.add(iban);
-		container.add(row3);
+		activo.getElement().getStyle().setProperty("max-width", "5rem");
+		
+		row.add(iban);
+		row.add(alias);
+		row.add(activo);
+		container.add(row);
 		
 		// Row 2
 		HTMLPanel row2 = new HTMLPanel(EMPTY_STRING);
@@ -155,8 +157,11 @@ public class AonRegistryBankPanel extends HTMLPanel {
 		
 		accountLB.clearItems();
 		accountLB.addItem("-", "");
-		accounts.forEach(acc -> accountLB.addItem(acc.getFullName(), acc.getId().toString()));
+		this.accounts.stream().filter(acc -> acc.isActive()).forEach(acc -> accountLB.addItem(acc.getFullName(), acc.getId().toString()));
 		
+		suffix.getElement().getStyle().setProperty("max-width", "6rem");
+		
+		row4.add(bic);
 		row4.add(suffix);
 		row4.add(accountLB);
 		container.add(row4);
@@ -168,7 +173,7 @@ public class AonRegistryBankPanel extends HTMLPanel {
 			iban.setValue(registryBank.getBankAccount().toString());
 			bic.setValue(registryBank.getBic());
 			suffix.setValue(registryBank.getSuffix());
-			accountLB.setValue(null == registryBank.getAccount() ? "" : registryBank.getAccount().getId().toString());
+			accountLB.setValue(null == registryBank.getAccount() || null == registryBank.getAccount().getId() ? "" : registryBank.getAccount().getId().toString());
 		}
 		
 		// Buttons
