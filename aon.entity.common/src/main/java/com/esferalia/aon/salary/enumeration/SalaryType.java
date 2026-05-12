@@ -36,19 +36,18 @@ public enum SalaryType implements IResourceable {
 			return visitor.visitDelay(this);
 		}
 	},
-	PROCEDURAL	// 4 
+	UNKNOWN_4,
+	UNKNOWN_5,
+	UNKNOWN_6,
+	UNKNOWN_7,
+	UNKNOWN_8,
+	PROCEDURAL	// 9 
 	{
 		@Override
 		public <E> E accept(SalaryTypeVisitor<E> visitor) {
 			return visitor.visitProcedural(this);
 		}
-	},
-	UNKNOWN_5,
-	UNKNOWN_6,
-	UNKNOWN_7,
-	UNKNOWN_8,
-	UNKNOWN_9,
-	
+	},	
 	L00 		// 10
 	{
 		@Override

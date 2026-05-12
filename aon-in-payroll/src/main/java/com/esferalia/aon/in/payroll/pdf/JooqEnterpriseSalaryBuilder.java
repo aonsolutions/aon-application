@@ -61,6 +61,7 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class JooqEnterpriseSalaryBuilder {
@@ -71,6 +72,7 @@ public class JooqEnterpriseSalaryBuilder {
 	
 	public static Byte [] LIQUIDATIONS = { 
 			(byte) com.esferalia.aon.occam.api.model.type.SalaryType.L00.ordinal(),
+			(byte) com.esferalia.aon.occam.api.model.type.SalaryType.L02.ordinal(),
 			(byte) com.esferalia.aon.occam.api.model.type.SalaryType.L13.ordinal(),
 			(byte) com.esferalia.aon.occam.api.model.type.SalaryType.L03.ordinal()
 		};
@@ -100,12 +102,15 @@ public class JooqEnterpriseSalaryBuilder {
 		else
 			condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
 		
+		
+		
+		
 		condition = condition.and(
 				(
-						SALARY.TYPE.ne(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.TYPE.notIn(AonEnumUtils.getByte(SalaryType.DELAY), AonEnumUtils.getByte(SalaryType.PROCEDURAL)).and(
 						SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
 				).or(
-						SALARY.TYPE.eq(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.TYPE.in(AonEnumUtils.getByte(SalaryType.DELAY), AonEnumUtils.getByte(SalaryType.PROCEDURAL)).and(
 						SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
 				)
 		);
@@ -126,10 +131,10 @@ public class JooqEnterpriseSalaryBuilder {
 		
 		condition = condition.and(
 				(
-						SALARY.TYPE.ne(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.TYPE.notIn(AonEnumUtils.getByte(SalaryType.DELAY), AonEnumUtils.getByte(SalaryType.PROCEDURAL)).and(
 						SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
 				).or(
-						SALARY.TYPE.eq(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.TYPE.in(AonEnumUtils.getByte(SalaryType.DELAY), AonEnumUtils.getByte(SalaryType.PROCEDURAL)).and(
 						SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
 				)
 		);
