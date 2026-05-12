@@ -51,7 +51,7 @@ public class CompositeBonus extends Bonus {
 	public Double getDbAmount() {
 		Double totalDbAmount = null;
 		for (Bonus child : childs)
-			if (child.dbAmount != null)
+			if (child.dbAmount != null && Item.isNotEmptyAmount(child.dbAmount))
 				totalDbAmount = totalDbAmount == null ? child.dbAmount
 						: totalDbAmount + child.dbAmount;
 		return totalDbAmount != null ? totalDbAmount : super.getDbAmount();

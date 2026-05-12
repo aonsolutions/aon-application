@@ -7821,6 +7821,8 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	public static String format(Double amount) {
+		if (Item.isEmptyAmount(amount)) 
+			return "";
 		return NumberUtils.isNotValid(amount) ? AON.CURRENCY_FORMAT.format(AON.round(0.00)) : AON.CURRENCY_FORMAT.format(AON.round(amount));
 	}
 
