@@ -13,7 +13,7 @@ public class AonAttachPreviewPanel extends AonCustomDialog {
     	showCloseButton(true);
 
         setStyleName(AON.CSS.aonFlexColumn2());
-        getElement().getStyle().setProperty("z-index", "50");
+        getElement().getStyle().setProperty("z-index", "75");
         getElement().getStyle().setProperty("padding", "1rem");
         getElement().getStyle().setProperty("background-color", "white");
         getElement().getStyle().setProperty("border-radius", "10px");

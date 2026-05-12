@@ -217,6 +217,24 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 
 		container.add(gridPanel);
 		
+		if (!this.registrySource.equals(RegistrySource.ENVIROMENT)) {
+			registryPaymethodBanksTable = new RegistryPaymethodBanksTable(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId()) {
+	
+				@Override
+				protected void onShowErrorMessage(String errorMessage) {
+					AonMessagePanel.showError(messagePanel, errorMessage);
+				}
+
+				@Override
+				protected void onShowSuccess(String successMessage) {
+					AonMessagePanel.showSuccess(messagePanel, successMessage);
+				}
+	
+			};
+			
+			tablayoutPanel.add(registryPaymethodBanksTable, "D. Bancarios");
+		}
+		
 		mediaTable = new MediaTable(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId()) {
 
 			@Override
@@ -244,30 +262,6 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 		};
 
 		tablayoutPanel.add(addressTable, "Direcciones");
-		
-		aonVisualIdentity = new AonVisualIdentity(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId(), this.registrySource);
-		tablayoutPanel.add(aonVisualIdentity, this.registrySource.equals(RegistrySource.ENVIROMENT) ? "Logo" : "Logo / Firma");
-		
-		if (!this.registrySource.equals(RegistrySource.ENVIROMENT)) {
-			registryPaymethodBanksTable = new RegistryPaymethodBanksTable(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId()) {
-	
-				@Override
-				protected void onShowErrorMessage(String errorMessage) {
-					AonMessagePanel.showError(messagePanel, errorMessage);
-				}
-
-				@Override
-				protected void onShowSuccess(String successMessage) {
-					AonMessagePanel.showSuccess(messagePanel, successMessage);
-				}
-	
-			};
-			
-			tablayoutPanel.add(registryPaymethodBanksTable, "D. Bancarios");
-		}
-
-		tablayoutPanel.add(new AonMainCertificatesPanel(options.getDomainName(), options.getDomain(), options.getUser()),
-				"Certificados");
 		
 		if (!this.registrySource.equals(RegistrySource.ENVIROMENT)) {
 			workplaceTable = new WorkplaceTable(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId()) {
@@ -314,6 +308,11 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 			
 			tablayoutPanel.add(recordDataTable, "D. Registrales");
 		}
+		
+		tablayoutPanel.add(new AonMainCertificatesPanel(options.getDomainName(), options.getDomain(), options.getUser()), "Certificados");
+		
+		aonVisualIdentity = new AonVisualIdentity(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId(), this.registrySource);
+		tablayoutPanel.add(aonVisualIdentity, this.registrySource.equals(RegistrySource.ENVIROMENT) ? "Logo" : "Logo / Firma");
 
 		container.add(tablayoutPanel);
 
