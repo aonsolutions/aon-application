@@ -92,5 +92,15 @@ public class AmortizationServiceAsyncDecorator implements AmortizationServiceAsy
 		serviceAsync.getInvoices(occam, domain, amortizationId, new AsyncCallbackWrapper<>(callback));
 	}
 				
+	@Override
+	public void linkInvoices(Occam occam, Integer domain, Integer amortizationId, Integer[] invoiceUds, AsyncCallback<Void> asyncCallback) {
+		AON.start();
+		serviceAsync.linkInvoices(occam, domain, amortizationId, invoiceUds, new AsyncCallbackWrapper<>(asyncCallback));
+	}
 	
+	@Override
+	public void unlinkInvoice(Occam occam, Integer domain, Integer amortizationId, Integer invoiceId, AsyncCallback<Void> asyncCallback) {
+		AON.start();
+		serviceAsync.unlinkInvoice(occam, domain, amortizationId, invoiceId, new AsyncCallbackWrapper<>(asyncCallback));
+	}
 }

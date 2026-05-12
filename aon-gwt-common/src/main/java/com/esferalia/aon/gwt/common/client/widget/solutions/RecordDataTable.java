@@ -60,11 +60,11 @@ public abstract class RecordDataTable extends ScrollPanel {
 	private Integer registry;
 
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	private static final String ATTACH_RECORDDATA_URL = "/ms/api/attach/recordData";
 	private static final String SESSION_API = "AONd95770f269e711eb94390242ac130002";
 
 	private static enum COLS {
-		CAD("F. Creaci\u00f3n", "8rem",
-				"max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		CAD("F. Creaci\u00f3n", "8rem", "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		NAM("Nombre", "-moz-available", "min-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		NOT("Notario", "-moz-available", "min-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		PRO("N. Protocolo", "6rem", "max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
@@ -228,21 +228,17 @@ public abstract class RecordDataTable extends ScrollPanel {
 		buttonContainer.addStyleName(AON.CSS.aonItemFlex());
 		buttonContainer.getElement().getStyle().setProperty("justify-content", "end");
 
+		
+
 		if (null != recordData.getAttach() && null != recordData.getFullAttach().getData()) {
 			AonTableButton preview = new AonTableButton("Previsualizar", AON.CSS.aonIconPdf());
 			preview.addStyleName(AON.CSS.aonCustomRowButtom());
 			preview.addClickHandler(e -> {
 				e.stopPropagation();
 
-				final AonCustomDialog dialog = new AonCustomDialog();
-				dialog.setCaption("Previsualizador");
-				dialog.showCloseButton(true);
-
-				final AonAttachPreviewPanel aonAttachPreviewPanel = new AonAttachPreviewPanel(
-						recordData.getFullAttach());
-
-				dialog.add(aonAttachPreviewPanel);
-				dialog.showLoaded();
+				AonAttachPreviewPanel popup = new AonAttachPreviewPanel(recordData.getFullAttach());
+				popup.center();
+				popup.show();
 			});
 			buttonContainer.add(preview);
 		} else if (null != recordData.getAttach() && null != recordData.getFullAttach().getDriveId()) {
@@ -259,7 +255,7 @@ public abstract class RecordDataTable extends ScrollPanel {
 				json.put("type", new JSONString("registry"));
 
 				String jsonBase64 = base64Encode(json.toString());
-				
+
 				downloadFile(jsonBase64, SESSION_API);
 			});
 			buttonContainer.add(download);
@@ -320,7 +316,7 @@ public abstract class RecordDataTable extends ScrollPanel {
 
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 	}
-	
+
 	public static void downloadFile(String jsonParam, String sessionId) {
 		String url = "/ms/api/download?json=" + URL.encodeQueryString(jsonParam);
 		Window.open(url, "_blank", "");

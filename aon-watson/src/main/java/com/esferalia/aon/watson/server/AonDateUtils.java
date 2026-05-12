@@ -1441,11 +1441,17 @@ public class AonDateUtils {
 		if (second == null) return false;
 		return first.after(second);
 	}
+	public static boolean isNotAfter(Date first, Date second) {
+		return !isAfter(first, second);
+	}
 	
 	public static boolean isBefore(Date first, Date second) {
 		if (first == null) return false;
 		if (second == null) return false;
 		return first.before(second);
+	}
+	public static boolean isNotBefore(Date first, Date second) {
+		return !isBefore(first, second);
 	}
 
 	public static Date today() {

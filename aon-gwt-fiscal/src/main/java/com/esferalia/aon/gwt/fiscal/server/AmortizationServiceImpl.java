@@ -79,5 +79,14 @@ public class AmortizationServiceImpl extends AonStatelessRemoteServiceServlet im
 	public LinkedList<AmortizationInvoice> getInvoices(Occam occam, Integer domain, Integer amortizationId) throws AonCoreException {
 		return ACCOUNTING.getAmortizationInvoices(occam, domain, amortizationId);
 	}
+
+	@Override
+	public void linkInvoices(Occam occam, Integer domain, Integer amortizationId, Integer[] invoiceIds) throws AonCoreException {
+		ACCOUNTING.linkAmortizationInvoices(occam, domain, amortizationId, invoiceIds);
+	}
 	
+	@Override
+	public void unlinkInvoice(Occam occam, Integer domain, Integer amortizationId, Integer invoiceId) throws AonCoreException {
+		ACCOUNTING.linkAmortizationInvoices(occam, domain, amortizationId, invoiceId);
+	}
 }
