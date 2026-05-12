@@ -14,7 +14,7 @@ public interface SalaryTypeVisitor<E> {
 
 	default E visitL00(SalaryType salaryType) {return visitSalary(salaryType);};
 
-	default E visitL02(SalaryType salaryType) {return visitSalary(salaryType);};
+	default E visitL02(SalaryType salaryType) {return visitProcedural(salaryType);};
 
 	default E visitL03(SalaryType salaryType) {return visitDelay(salaryType); };
 

@@ -126,7 +126,8 @@ public enum SalaryType implements Serializable {
 		SALARY.value(),
 		EXTRA.value(),
 		SETTLE.value(),
-		DELAY.value()
+		DELAY.value(),
+		PROCEDURAL.value()
 	);
 
 	public static final Collection<Byte> IRPF_SALARIES = Arrays.asList(
@@ -134,6 +135,7 @@ public enum SalaryType implements Serializable {
 		EXTRA.value(),
 		SETTLE.value(),
 		DELAY.value(),
+		PROCEDURAL.value(),
 		M190.value()
 	);
 }

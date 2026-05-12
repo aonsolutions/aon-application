@@ -459,7 +459,7 @@ public class JooqEnterpriseSalaryBuilder {
 			
 			Map<Integer, Map<String, Map<String, List<ContractData>>>> contractDatas = getContractDataByWorkplace(aonContext, startDate, endDate, enterpriseId, workplaceId);
 			
-			Map<String, Map<String, EnterprisePayrollEntry>> map =
+			Map<String, Map<String, EnterprisePayrollEntry>> liquidations =
 					getEnterprisePayrolls(ctx, condition.and(SALARY.TYPE.in(LIQUIDATIONS)));
 			
 			Map<String, Map<String, EnterprisePayrollEntry>> payrolls = 
@@ -509,7 +509,7 @@ public class JooqEnterpriseSalaryBuilder {
 				subheader = subheader.concat(enterpriseName);
 			}
 			
-			EnterprisePayroll enterprisePayroll = new EnterprisePayroll(logo, startDate, null, subheader, payrolls, map);
+			EnterprisePayroll enterprisePayroll = new EnterprisePayroll(logo, startDate, null, subheader, payrolls, liquidations);
 			PdfMaker.printEnterprisePayroll(enterprisePayroll, outputStream, Optional.of(new Locale("es")), startDate, endDate, false);
 		} catch (CanNotCreatePdfException e) {			
 		} catch (IOException e) {}
@@ -1417,6 +1417,11 @@ public class JooqEnterpriseSalaryBuilder {
 			
 			@Override
 			public EnterprisePayrollEntry.EnterpriseEntryType visitL00(SalaryType salaryType) {
+				return EnterprisePayrollEntry.EnterpriseEntryType.SEG_SOCIAL;
+			}
+
+			@Override
+			public EnterprisePayrollEntry.EnterpriseEntryType visitL02(SalaryType salaryType) {
 				return EnterprisePayrollEntry.EnterpriseEntryType.SEG_SOCIAL;
 			}
 

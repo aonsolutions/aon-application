@@ -624,7 +624,7 @@ public class Up2Date {
 			// AgriculturalBases2026Update.AGRICULTURALBASES2026UPDATE,
 			// Customize.CUSTOMIZE_GESTORIAMUNOZ,
 			// MaxEmbargable4DailyFix.MAXEMBARGABLE4DAILYFIX,
-			SalaryTypeUpdate.DELIA_MANUELA_REGEP,
+			SalaryTypeUpdate.FINANCIALHEALTH,
 			
 			
 			// ----------------------------------------------------------------

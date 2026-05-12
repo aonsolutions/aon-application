@@ -49,8 +49,8 @@ public class SalaryTypeUpdate implements Update {
 	
 	private String domainName;
 
-	public static final SalaryTypeUpdate DELIA_MANUELA_REGEP = 
-			new SalaryTypeUpdate("x9259781g-financialhealth.aonsolutions.org");
+	public static final SalaryTypeUpdate FINANCIALHEALTH = 
+			new SalaryTypeUpdate("%financialhealth.aonsolutions.org");
 
 	private SalaryTypeUpdate(String domainName) {
 		super();
@@ -70,7 +70,7 @@ public class SalaryTypeUpdate implements Update {
 		.select(SALARY)
 		.from(SALARY)
 		.join(DOMAIN).on(SALARY.DOMAIN.eq(DOMAIN.ID))
-		.where(DOMAIN.NAME.eq(domainName))
+		.where(DOMAIN.NAME.like(domainName))
 		.and(SALARY.TYPE.in((byte)10, (byte)12, (byte)13, (byte)20))
 		) >= 1;		
 		
@@ -96,7 +96,7 @@ public class SalaryTypeUpdate implements Update {
 			)
 			.from(DOMAIN)
 			.where(SALARY.DOMAIN.eq(DOMAIN.ID))
-			.and(DOMAIN.NAME.eq(domainName))
+			.and(DOMAIN.NAME.like(domainName))
 			.execute();
 			
 			System.out.println("Updated " + updated + " salaries with new type for domain " + domainName);
@@ -113,7 +113,7 @@ public class SalaryTypeUpdate implements Update {
 					.join(SALARY).on(SALARY.DOMAIN.eq(DOMAIN.ID))
 					.join(SALARY_PAYMENT)
 					.on(SALARY.ID.eq(SALARY_PAYMENT.SALARY))
-					.where(DOMAIN.NAME.eq(domainName))
+					.where(DOMAIN.NAME.like(domainName))
 					.groupBy(SALARY.ID)
 					.having(DSL.min(SALARY_PAYMENT.TYPE).eq(DSL.max(SALARY_PAYMENT.TYPE)))
 					.and(DSL.min(SALARY_PAYMENT.TYPE).eq((byte)7)).asTable("procedural_salary")) // CRA0007 Salarios de Tramitación
