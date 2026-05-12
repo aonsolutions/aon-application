@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.EnterpriseActivityTa
 import com.esferalia.aon.gwt.common.client.widget.solutions.MediaTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.RDirStaffTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.RecordDataTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.RegistryPaymethodBanksTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.WorkplaceTable;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -70,6 +71,7 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 	private EnterpriseActivityTable enterpriseActivityTable;
 	private RDirStaffTable rDirStaffTable;
 	private RecordDataTable recordDataTable;
+	private RegistryPaymethodBanksTable registryPaymethodBanksTable;
 	
 	private CompanyFull company;
 	private Registry registry;
@@ -245,6 +247,24 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 		
 		aonVisualIdentity = new AonVisualIdentity(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId(), this.registrySource);
 		tablayoutPanel.add(aonVisualIdentity, this.registrySource.equals(RegistrySource.ENVIROMENT) ? "Logo" : "Logo / Firma");
+		
+		if (!this.registrySource.equals(RegistrySource.ENVIROMENT)) {
+			registryPaymethodBanksTable = new RegistryPaymethodBanksTable(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId()) {
+	
+				@Override
+				protected void onShowErrorMessage(String errorMessage) {
+					AonMessagePanel.showError(messagePanel, errorMessage);
+				}
+
+				@Override
+				protected void onShowSuccess(String successMessage) {
+					AonMessagePanel.showSuccess(messagePanel, successMessage);
+				}
+	
+			};
+			
+			tablayoutPanel.add(registryPaymethodBanksTable, "D. Bancarios");
+		}
 
 		tablayoutPanel.add(new AonMainCertificatesPanel(options.getDomainName(), options.getDomain(), options.getUser()),
 				"Certificados");

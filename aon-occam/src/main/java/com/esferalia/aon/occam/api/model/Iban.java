@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.payroll.shared;
+package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -66,3 +66,4 @@ public class Iban implements Serializable{
 //}
 
 }
+

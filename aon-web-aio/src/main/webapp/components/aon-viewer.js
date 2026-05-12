@@ -358,7 +358,7 @@ export class AonViewer extends AonElement {
 			//	,withCredentials: true
 			// ))});
 			const url = new URL(this.file, window.location.href);
-			const loadingTask = pdfjsLib.getDocument( url.toString() );
+			const loadingTask = pdfjsLib.getDocument({ url: url.toString() });
 			
 			loadingTask.promise.then( (pdf) =>  {
 				this.PDF = pdf;

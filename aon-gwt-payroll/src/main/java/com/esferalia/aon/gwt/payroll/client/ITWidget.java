@@ -1032,17 +1032,18 @@ public class ITWidget extends AonCustomDockLayout {
 			int contractLeaveId = it.getId();
 
 			// Skip previous IT
-			if (start.before(leaveStart))
+			if (start.before(leaveStart)) {
 				data.addRow(itEmployee.getEmployeeInfo().getFullName(), ACTIVE, start, leaveStart, contractId,
 						contractId);
-
+			}
+			
 			data.addRow(itEmployee.getEmployeeInfo().getFullName(), getTypeDescription(type), leaveStart, leaveEnd,
 					contractId, contractLeaveId);
 
 			start = leaveEnd;
 
 		}
-
+		
 		if (!DateUtils.equals(start, end))
 			data.addRow(itEmployee.getEmployeeInfo().getFullName(), ACTIVE, start, end, contractId, contractId);
 	}
@@ -1173,7 +1174,7 @@ public class ITWidget extends AonCustomDockLayout {
 		public void addRow(String pName, String pStatus, Date pRowStartDate, Date pRowEndDate, int pContractId,
 				int contractLeaveId) {
 
-			if (DateUtils.isAfterOrEquals(pRowStartDate, pRowEndDate))
+			if (DateUtils.isAfter(pRowStartDate, pRowEndDate))
 				return;
 
 			data.addRow();
