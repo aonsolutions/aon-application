@@ -73,7 +73,7 @@ public class RawdocDAOTest extends AbstractOccamTest {
 		RawdocStatus sRejected = RawdocStatus.safeValueOf( jsonRejected.getString(IJsonNames.STATUS) );
 		assertEquals( RawdocStatus.REJECTED, sRejected );
 		
-		Rawdoc draft =  RawdocDAO.toDraft(ctx, rawdoc.getId());
+		Rawdoc draft =  RawdocDAO.toTrash(ctx, rawdoc.getId());
 		assertNotNull( draft );
 		assertTrue( AonStringUtils.isNotBlank( draft.getLog()) );
 		JSONArray jsonDraftLog = new JSONArray( draft.getLog() );
@@ -84,7 +84,7 @@ public class RawdocDAOTest extends AbstractOccamTest {
 		String rDraft = jsonDraft.optString(IJsonNames.REASON);
 		assertTrue( AonStringUtils.isBlank( rDraft) );
 		RawdocStatus sDraft = RawdocStatus.safeValueOf( jsonDraft.getString(IJsonNames.STATUS) );
-		assertEquals( RawdocStatus.DRAFT, sDraft );
+		assertEquals( RawdocStatus.TRASH, sDraft );
 		
 		Rawdoc inbox =  RawdocDAO.toInbox(ctx, rawdoc.getId());
 		assertNotNull( inbox );

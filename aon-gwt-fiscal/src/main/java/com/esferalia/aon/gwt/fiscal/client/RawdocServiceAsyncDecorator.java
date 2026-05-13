@@ -38,9 +38,9 @@ public class RawdocServiceAsyncDecorator implements RawdocServiceAsync {
 	}
 	
 	@Override
-	public void toDraft(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback) {
+	public void toTrash(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback) {
 		AON.start();
-		fsa.toDraft(occam, rawdocId, new AsyncCallbackWrapper<Rawdoc>(callback));
+		fsa.toTrash(occam, rawdocId, new AsyncCallbackWrapper<Rawdoc>(callback));
 	}
 
 	@Override

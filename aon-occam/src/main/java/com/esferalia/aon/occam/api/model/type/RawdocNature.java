@@ -9,7 +9,7 @@ public enum RawdocNature implements Serializable {
 	 INVOICE("Factura") {
 		@Override public <T> T visit(RawdocNatureVisitor<T> visitor) {return visitor.visitInvoice(); }
 	}
-	 ,OTHER_INCOMES("Otros ingresos") {
+	,OTHER_INCOMES("Otros ingresos") {
 		@Override public <T> T visit(RawdocNatureVisitor<T> visitor) {return visitor.visitOtherIncomes(); }
 	}
 	 /*

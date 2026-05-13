@@ -328,7 +328,7 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     id: CONSTANT.RAWDOC_TRASH.initCap(),
     name: MSG.TRASH,
     icon: MATERIAL_ICONS.DELETE,
-    fn: () => invoiceList( { status: CONSTANT.DRAFT })
+    fn: () => invoiceList( { status: CONSTANT.TRASH })
   }
 
   export const INVOICE_PENDINGS = {
@@ -907,7 +907,7 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     id: 'Future' + CONSTANT.RAWDOC_TRASH.initCap(),
     name: MSG.TRASH,
     icon: MATERIAL_ICONS.DELETE,
-    fn: () => invoiceList( { status: CONSTANT.DRAFT })
+    fn: () => invoiceList( { status: CONSTANT.TRASH })
   }
 
   export const FUTURE_MAIN_DOCUMENTS = {

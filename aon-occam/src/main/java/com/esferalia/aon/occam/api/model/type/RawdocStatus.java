@@ -8,7 +8,7 @@ public enum RawdocStatus implements Serializable {
 	
 	 INBOX("Inbox", "inbox")
 	,REJECTED("Rechazado", "refused")
-	,DRAFT("Papelera", "trash")
+	,TRASH("Papelera", "trash")
 	,PROCESSING("Procesando", "processing")
 	,PROCESSED("Procesado", "processed")
 	;

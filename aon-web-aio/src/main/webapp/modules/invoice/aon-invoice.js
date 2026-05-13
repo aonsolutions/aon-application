@@ -372,7 +372,9 @@ export class AonInvoice extends AonElement {
 			let generalCard = this.getElement(this.GENERAL_CARD);
 			let tax = this.getElement(this.TAX);
 
-			if (window.innerWidth && window.innerWidth > 1100 && !this.fileOpened) {
+			let rightPanelOpen = this.fileOpened || this.invoice.isRejected() || (this.invoice.remarks && this.invoice.remarks.filter(r => r.status == "Rechazado").length > 0);
+
+			if (window.innerWidth && window.innerWidth > 1100 && !rightPanelOpen) {
 				if (general) general.style.display = 'flex';
 				if (generalCard) generalCard.style.width = '50%';
 				if (tax) tax.style.width = '50%';
@@ -458,7 +460,7 @@ export class AonInvoice extends AonElement {
 		invoiceToolbar.addButton2(ACTION.PREVIOUS, () => this.previousInvoice());
 		invoiceToolbar.addSeparator();
 
-		if (!this.getInvoice().isDraft() && !this.getInvoice().isRejected()) {
+		if (!this.getInvoice().isTrash() && !this.getInvoice().isRejected()) {
 			invoiceToolbar.addButton('Options', 'more_vert', (e) => {
 				e.preventDefault();
 				let rect = e.target.getBoundingClientRect();
@@ -574,7 +576,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	showDeleteForever() {
-		return this.getInvoice().isDraft();
+		return this.getInvoice().isTrash();
 	}
 
 	showRejected() {
@@ -582,7 +584,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	showRestore() {
-		return this.getInvoice().isRejected() || this.getInvoice().isDraft();
+		return this.getInvoice().isRejected() || this.getInvoice().isTrash();
 	}
 	showSave() {
 		return this.getInvoice().isInbox() || this.getInvoice().isProcessed();
@@ -660,7 +662,9 @@ export class AonInvoice extends AonElement {
 		this.buildInvoiceContent();
 		this.buildFileContent();
 
-		if (this.fileOpened) {
+		if(this.invoice.isRejected() || (this.invoice.remarks && this.invoice.remarks.filter(r => r.status == "Rechazado").length > 0)) {
+			this.showLog();
+		} else if (this.fileOpened) {
 			this.showFile(false);
 		}
 	}
@@ -771,7 +775,7 @@ export class AonInvoice extends AonElement {
 			}
 			strs.split('\n').forEach(str => {
 				let span = this.createElement(TAG.SPAN);
-				span.innerHTML = str;
+				span.textContent = str;
 				div.appendChild(span);
 				div.appendChild(this.createElement('br'));
 			});
@@ -798,7 +802,7 @@ export class AonInvoice extends AonElement {
 		let getMessageHTML = (err) => {
 			let span = this.createElement(TAG.SPAN)
 			span.style.fontSize = "12px";
-			span.innerHTML = getText(err);
+			span.textContent = getText(err);
 			return span.outerHTML;
 
 		};
@@ -949,7 +953,7 @@ export class AonInvoice extends AonElement {
 			let iconSpan = this.createElement(TAG.SPAN);
 			iconSpan.className = CSS.MATERIAL_ICONS;
 			iconSpan.className += " " + CSS.AON_INPUT_MSG_ERROR;
-			iconSpan.innerHTML = MATERIAL_ICONS.WARNING;
+			iconSpan.textContent = MATERIAL_ICONS.WARNING;
 			iconSpan.style.color = className === CSS.AON_INVOICE_ERROR ? "#e83151" : "#e3a733";
 			errorDiv.appendChild(iconSpan);
 
@@ -958,7 +962,7 @@ export class AonInvoice extends AonElement {
 			errorDiv.appendChild(spaceSpan);
 
 			let descriptionSpan = this.createElement(TAG.SPAN);
-			descriptionSpan.innerHTML = description;
+			descriptionSpan.textContent = description;
 			errorDiv.appendChild(descriptionSpan);
 
 			return errorDiv;
@@ -968,9 +972,9 @@ export class AonInvoice extends AonElement {
 			let viewDiv = this.createElement(TAG.DIV);
 
 			let viewButtonSpan = this.createElement(TAG.SPAN);
-			viewButtonSpan.innerHTML = viewMessage;
+			viewButtonSpan.textContent = viewMessage;
 			let hideButtonSpan = this.createElement(TAG.SPAN);
-			hideButtonSpan.innerHTML = hideMessage;
+			hideButtonSpan.textContent = hideMessage;
 
 			let errorsDiv = this.createElement(TAG.DIV);
 			let errorsUl = this.createElement(TAG.UL);
@@ -978,7 +982,7 @@ export class AonInvoice extends AonElement {
 				let errorLi = this.createElement(TAG.LI);
 				let errorDiv = this.createElement(TAG.DIV);
 				let errorSpan = this.createElement(TAG.SPAN);
-				errorSpan.innerHTML = error.message;
+				errorSpan.textContent = error.message;
 				errorDiv.appendChild(errorSpan);
 				errorLi.appendChild(errorDiv);
 				errorsUl.appendChild(errorLi);
@@ -1069,18 +1073,18 @@ export class AonInvoice extends AonElement {
 			let expandSpan = this.createElement(TAG.SPAN);
 			expandSpan.style.cursor = "pointer";
 			expandSpan.className = CSS.MATERIAL_ICONS;
-			expandSpan.innerHTML = MATERIAL_ICONS.ARROW_DROP_DOWN;
+			expandSpan.textContent = MATERIAL_ICONS.ARROW_DROP_DOWN;
 			expandSpan.onclick = function () { };
 			let collapseSpan = this.createElement(TAG.SPAN);
 			collapseSpan.style.cursor = "pointer";
 			collapseSpan.className = CSS.MATERIAL_ICONS;
-			collapseSpan.innerHTML = MATERIAL_ICONS.ARROW_DROP_UP;
+			collapseSpan.textContent = MATERIAL_ICONS.ARROW_DROP_UP;
 
 			let iconSpan = this.createElement(TAG.SPAN);
 			iconSpan.className = CSS.MATERIAL_ICONS;
-			iconSpan.innerHTML = MATERIAL_ICONS.WARNING;
+			iconSpan.textContent = MATERIAL_ICONS.WARNING;
 			let messageSpan = this.createElement(TAG.SPAN);
-			messageSpan.innerHTML = errors + " " + (errors > 1 ? MSG.ERRORS.toLowerCase() : MSG.ERRORS.substring(0, MSG.ERRORS.length - 2).toLowerCase());
+			messageSpan.textContent = errors + " " + (errors > 1 ? MSG.ERRORS.toLowerCase() : MSG.ERRORS.substring(0, MSG.ERRORS.length - 2).toLowerCase());
 			messageSpan.style.paddingLeft = "8px";
 
 			let titleCard1 = errorsCard.getCardTitle1();
@@ -2677,6 +2681,7 @@ export class AonInvoice extends AonElement {
 			let chat =  new AonChat();
 			chat.readonly = !this.invoice.isRawdoc();
 			if(this.invoice.remarksDescription) chat.description = this.invoice.remarksDescription;
+			
 			chat.workflows = this.getInvoice().remarks.map(r => {
 				let remark = {}; 
 				remark.action = r.action;
@@ -2925,7 +2930,6 @@ export class AonInvoice extends AonElement {
 	}
 
 	rejectInvoice() {
-
 		let div = this.createDiv();
 		
 		let d = this.getApplication().getDialog();
@@ -2965,7 +2969,7 @@ export class AonInvoice extends AonElement {
 		textArea.style.marginTop = '10px';
 		div.appendChild(textArea);
 
-		d.addAcceptAction(() => {
+		let acceptButton = d.addAcceptAction(() => {
 			let dt = new Date()
 			let m = dt.getMonth() + 1;
 			let month = m < 10 ? '0' + m : m;
@@ -2996,11 +3000,15 @@ export class AonInvoice extends AonElement {
 			}
 			this.updateCounter(getRejectFromOption(this.invoice), OPTION.RAWDOC_REJECT, 1);
 		});
+		acceptButton.disabled = true;
 
 		let ta = this.getElement('commentTextArea');
 		ta.style.outline = 'none';
 		ta.style.width = '100%';
 		ta.style.height = '100px';
+		ta.addEventListener(EVENT.KEYUP, () => {
+			acceptButton.disabled = ta.value.trim().length === 0;
+		});
 		d.open();
 	}
 
@@ -3477,7 +3485,7 @@ export class AonInvoice extends AonElement {
 	trashInvoice() {
 		this.updateCounter(this.getTrashFromOption(), OPTION.RAWDOC_TRASH, 1);
 		this.getInvoice().lastStatus = this.getInvoice().status;
-		this.getInvoice().status = CONSTANT.DRAFT;
+		this.getInvoice().status = CONSTANT.TRASH;
 		this.save(MSG.MOVED_TO_TRASH);
 		this.reload();
 	}
@@ -3546,14 +3554,97 @@ export class AonInvoice extends AonElement {
 	}
 
 	restoreInvoice() {
-		this.updateCounter(getRestoreFromOption(this.invoice), getRestoreToOption(this.invoice), 1);
-		this.getInvoice().status = this.invoice.lastStatus || CONSTANT.INBOX;
-		this.getInvoice().number = '';
-		this.save(MSG.RESTORED_DATA);
-		this.reload();
+		let div = this.createDiv();
+		
+		let d = this.getApplication().getDialog();
+		d.clear();
+		if (!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.RESTORE);
+		d.setContent(div);
+		
+		let notify = new AonSwitch();
+		notify.id = 'restoreNotifySwitch';
+		notify.title = "Notificar por email";
+		div.appendChild(notify);
+
+		let email = new AonEmail();
+		email.id = 'restoreInvoiceEmail';
+		email.title = MSG.EMAIL;
+		email.style.display = 'none';
+		div.appendChild(email);
+
+		let username;
+		this.invoice.remarks.filter(f => f.status == 'Rechazado').forEach(r => username = r.user);
+		if(username) {
+			getUserEmail({userLogin: username}).then(emailData => {
+				email.setValue(emailData.email);
+			}).catch(e => {
+				console.error("Error al obtener el email del usuario: " + e.message);
+			});
+		}
+		notify.addEventListener(EVENT.CHANGE, () => {
+			if(notify.isChecked()) {
+				email.style.display = 'block';
+			} else {
+				email.style.display = 'none';
+			}
+		});
+
+		let textArea = this.createElement('textarea');
+		textArea.id = 'commentTextArea';
+		textArea.maxLength = 256;
+		textArea.className = 'aonTextarea';
+		textArea.style.marginTop = '10px';
+		div.appendChild(textArea);
+
+		let acceptButton = d.addAcceptAction(() => {
+			let dt = new Date()
+			let m = dt.getMonth() + 1;
+			let month = m < 10 ? '0' + m : m;
+			let dateStr = dt.getDay() + '/' + month + '/' + dt.getYear() + ' ' + dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
+			let comment = {
+				date: dateStr,
+				user: LS.getDomainLogin(),
+				status: 'Restaurado',
+				action: {
+					title: 'Restaurada',
+					icon: MATERIAL_ICONS._360,
+					color: 'green'
+				},
+				comment: textArea.value
+			};
+			this.invoice.remarks.push(comment);
+			
+			this.updateCounter(getRestoreFromOption(this.invoice), getRestoreToOption(this.invoice), 1);
+			this.getInvoice().status = this.invoice.lastStatus || CONSTANT.INBOX;
+			this.getInvoice().number = '';
+			this.save(MSG.RESTORED_DATA);
+			this.reload();
+
+			// ENVIAR POR EMAIL SI SE HA INTRODUCIDO EMAIL
+			if (notify.isChecked()) {
+				sendInvoiceRestoreMail({to: email.value}).then(() => {
+					this.showMessage("Email enviado correctamente");
+				}).catch(e => {
+					this.showError("Error al enviar el email: " + e.message);
+				});
+			}
+		});
+		acceptButton.disabled = true;
+
+		let ta = this.getElement('commentTextArea');
+		ta.style.outline = 'none';
+		ta.style.width = '100%';
+		ta.style.height = '100px';
+		ta.addEventListener(EVENT.KEYUP, () => {
+			acceptButton.disabled = ta.value.trim().length === 0;
+		});
+		d.open();
 	}
 
 	removeInvoice() {
+
+
 		deleteRawdocInvoices([this.getInvoice().id]).then(() => {
 			let d = this.getApplication().getDialog();
 			d.clear();

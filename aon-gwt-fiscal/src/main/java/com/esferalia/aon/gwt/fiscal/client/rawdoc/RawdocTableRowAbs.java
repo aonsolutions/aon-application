@@ -134,7 +134,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 
 	private AonTableButton getDeleteForeverButton(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
 		AonTableButton deleteForever = null;
-		if (rawdoc.isDraft()) {
+		if (rawdoc.isTrash()) {
 			deleteForever = new AonTableButton(AON.MSG.deleteForeverAction(),AON.CSS.aonIconDeleteForever());
 			deleteForever.getElement().getStyle().setMarginRight(5, Unit.PX);
 			deleteForever.addClickHandler(event -> {
@@ -164,7 +164,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 
 	private AonTableButton getRestoreButton(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
 		AonTableButton restore = null;
-		if (rawdoc.isDraft() || rawdoc.isRejected()) {
+		if (rawdoc.isTrash() || rawdoc.isRejected()) {
 			restore = new AonTableButton(AON.MSG.restoreAction(),
 					rawdoc.getStatus() == RawdocStatus.REJECTED
 						?AON.CSS.aonIconRestoreRejected()
@@ -236,7 +236,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 			delete.addClickHandler(event -> {
 				AonConfirmDialog cd = new AonConfirmDialog();
 				cd.confirm(AON.MSG.confirmDraftAction(), () -> 
-					RawdocModule.RAWDOC_SERVICE.toDraft(opt.getOccam(), rawdoc.getId()
+					RawdocModule.RAWDOC_SERVICE.toTrash(opt.getOccam(), rawdoc.getId()
 						, new AsyncCallback<Rawdoc>() {
 							
 							@Override

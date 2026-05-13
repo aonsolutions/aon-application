@@ -77,9 +77,9 @@ public class RawdocImpl implements IRawdoc {
 	}
 	
 	@Override
-	public Rawdoc toDraft(AONContext ctx, Integer rawdocId) {
-		return ctx.getDslContext().transactionResult(configuration -> 
-			RawdocDAO.toDraft(ctx, rawdocId));
+	public Rawdoc toTrash(AONContext ctx, Integer rawdocId) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			RawdocDAO.toTrash(ctx, rawdocId));
 	}
 
 	@Override

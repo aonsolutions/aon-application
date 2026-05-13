@@ -397,7 +397,7 @@ export class Invoice {
   }
 
   isRawdoc() {
-    return this.isInbox() || this.isRejected() || this.isDraft()
+    return this.isInbox() || this.isRejected() || this.isTrash()
       || this.isProcessed() || this.isProcessing();
   }
 
@@ -426,11 +426,11 @@ export class Invoice {
   }
 
   isRejected() {
-    return this.status.toLowerCase() === CONSTANT.REFUSED || this.status.toLowerCase()  === CONSTANT.REJECTED;
+    return this.status.toLowerCase()  === CONSTANT.REJECTED;
   }
 
-  isDraft() {
-    return this.status.toLowerCase() === CONSTANT.TRASH || this.status.toLowerCase() === CONSTANT.DRAFT;
+  isTrash() {
+    return this.status.toLowerCase() === CONSTANT.TRASH;
   }
 
   isPending() {
