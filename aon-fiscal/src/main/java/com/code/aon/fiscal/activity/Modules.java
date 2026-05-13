@@ -94,7 +94,6 @@ public class Modules implements Serializable {
 			+ " ORDER BY IVAMOD.ORDENMOD";
 
 	private Connection getConnection() throws ClassNotFoundException, SQLException {
-		Class.forName(org.apache.derby.jdbc.EmbeddedDriver.class.getName());
 		Connection conn = DriverManager.getConnection(AEAT_DATABASE_URL);
 		return conn;
 	}
@@ -324,7 +323,7 @@ public class Modules implements Serializable {
 				//17	Procesos de transf. para obtencion de otros productos
 				return 0.19625;
 			}
-			throw new IllegalArgumentException("Actividad agrícola no soportada");
+			throw new IllegalArgumentException("Actividad agrï¿½cola no soportada");
 		}
 		throw new IllegalArgumentException("Ejercicio no soportado");
 	}

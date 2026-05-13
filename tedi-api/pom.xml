@@ -50,14 +50,14 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20250517</version>
+			<version>20251224</version>
 			<scope>compile</scope>
 		</dependency>
 		<!-- Test dependecies -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter</artifactId>
-			<version>5.13.3</version>
+			<version>6.1.0-RC1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

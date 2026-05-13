@@ -97,19 +97,19 @@
     <dependency>
       <groupId>com.itextpdf</groupId>
       <artifactId>itextpdf</artifactId>
-      <version>5.5.13.4</version>
+      <version>5.5.13.5</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
 		<groupId>org.apache.poi</groupId>
 		<artifactId>poi</artifactId>
-		<version>5.4.1</version>
+		<version>5.5.1</version>
 	</dependency>
 		
 	<dependency>
 		<groupId>org.apache.poi</groupId>
 		<artifactId>poi-ooxml</artifactId>
-		<version>5.4.1</version>
+		<version>5.5.1</version>
 	</dependency>
   </dependencies>
 </project>

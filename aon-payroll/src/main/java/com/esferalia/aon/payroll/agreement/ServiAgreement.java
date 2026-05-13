@@ -82,7 +82,7 @@ public class ServiAgreement {
 			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 
 			DefaultCredentialsProvider creds = new DefaultCredentialsProvider();
-			creds.addCredentials(user,password);
+			creds.addCredentials(user, password.toCharArray());
 			webClient.setCredentialsProvider(creds);
 
 			return webClient;

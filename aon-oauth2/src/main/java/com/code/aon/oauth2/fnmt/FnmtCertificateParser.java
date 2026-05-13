@@ -14,11 +14,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.DERIA5String;
-import org.bouncycastle.asn1.DERObject;
-import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DERSequence;
@@ -45,21 +46,21 @@ public class FnmtCertificateParser {
 		for (String oid : oids) {
 			byte [] value = x509Certificate.getExtensionValue(oid);
 			ASN1OctetString  asn1OctetString = (ASN1OctetString ) getObject(value);
-			DERObject derObject = getObject(asn1OctetString.getOctets());
-			readProperties(oid, derObject, properties);
+			ASN1Primitive asn1Primitive = getObject(asn1OctetString.getOctets());
+			readProperties(oid, asn1Primitive, properties);
 		}
 
 		return properties;
 	}
 	
-	private static Map<String, String> readProperties (String oid, DERObject extension, Map<String, String> properties ) {
+	private static Map<String, String> readProperties (String oid, ASN1Primitive extension, Map<String, String> properties ) {
 		if (extension instanceof DERSequence) {
 			DERSequence secuence = (DERSequence) extension;
 			Enumeration<?> enumObjetos = secuence.getObjects();
 			while (enumObjetos.hasMoreElements()) {
-				DERObject object = (DERObject) enumObjetos.nextElement();
-				if ( object instanceof DERObjectIdentifier ) {
-					oid = ((DERObjectIdentifier) object).getId(); 
+				ASN1Primitive object = ((ASN1Encodable) enumObjetos.nextElement()).toASN1Primitive();
+				if ( object instanceof ASN1ObjectIdentifier ) {
+					oid = ((ASN1ObjectIdentifier) object).getId();
 				} else {
 					readProperties(oid, object, properties);
 				}
@@ -68,7 +69,7 @@ public class FnmtCertificateParser {
 			DERSet set = (DERSet) extension ;
 			Enumeration<?> enumObjetos = set.getObjects();
 			while (enumObjetos.hasMoreElements()) {
-				DERObject object = ( DERObject) enumObjetos.nextElement();
+				ASN1Primitive object = ((ASN1Encodable) enumObjetos.nextElement()).toASN1Primitive();
 				readProperties(oid, object, properties);
 			}
 		} else if ( extension instanceof DERIA5String ) {
@@ -82,7 +83,7 @@ public class FnmtCertificateParser {
 			properties.put(oid, printableString.getString());
 		} else if ( extension instanceof DERTaggedObject ) {
 			DERTaggedObject taggedObject = (DERTaggedObject) extension ;
-			readProperties(oid, taggedObject.getObject(), properties);
+			readProperties(oid, taggedObject.getBaseObject().toASN1Primitive(), properties);
 		} else if ( extension instanceof DEROctetString ) {
 			DEROctetString octetString = (DEROctetString) extension ;
 			try {
@@ -95,7 +96,7 @@ public class FnmtCertificateParser {
 		return properties;
 	}
 
-	private static DERObject getObject(byte [] buf) throws IOException {
+	private static ASN1Primitive getObject(byte [] buf) throws IOException {
 		try (ASN1InputStream in = new ASN1InputStream(new ByteArrayInputStream(buf))){
 			return in.readObject();
 		} 

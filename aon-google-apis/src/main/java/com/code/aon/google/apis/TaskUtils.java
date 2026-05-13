@@ -27,7 +27,7 @@ import com.google.api.services.tasks.model.Tasks;
 public class TaskUtils {
 	
 	/**
-	 * @class Search, utilidades para la búsqueda y ordenacion de listas 
+	 * @class Search, utilidades para la bï¿½squeda y ordenacion de listas 
 	 * de tasklist y task.
 	 * @author aibanez
 	 */
@@ -55,7 +55,7 @@ public class TaskUtils {
 		}
 		
 		public static Integer searchTask(com.esferalia.aon.occam.api.model.OldTask taskBD, Tasks tasks, int n){
-			// COMPARA LA DESCRIPCIÓN DE LA TAREA DE LA BD CON EL TITULO DE LA TAREA DE GOOGLE
+			// COMPARA LA DESCRIPCIï¿½N DE LA TAREA DE LA BD CON EL TITULO DE LA TAREA DE GOOGLE
 			int centro;
 			int inf = 0;
 			int sup = n - 1;
@@ -185,7 +185,7 @@ public class TaskUtils {
 		
 		taskList.setTitle(project.getName());
 		DateTime date = new DateTime(new Date(), TimeZone.getTimeZone("UTC"));
-		taskList.setUpdated(date);
+		taskList.setUpdated(date.toStringRfc3339());
 		
 		return taskList;
 	}
@@ -236,10 +236,10 @@ public class TaskUtils {
 		
 		DateTime date = new DateTime(task.getDueDate(), TimeZone.getTimeZone("UTC"));// es posible que sea necesario el convertDate de CalendarUtils
 		DateTime updated = new DateTime(new Date(), TimeZone.getTimeZone("UTC"));
-		task2.setDue(date);
+		task2.setDue(date.toStringRfc3339());
 		task2.setNotes(task.getComments());
 		task2.setTitle(task.getDescription());
-		task2.setUpdated(updated);
+		task2.setUpdated(updated.toStringRfc3339());
 		
 		return task2;
 	}
