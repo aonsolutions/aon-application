@@ -215,6 +215,10 @@ export class Invoice {
     // });
   }
 
+  clone() {
+    return new Invoice(JSON.parse(JSON.stringify(this)));
+  }
+
   getType() {
     return this.type;
   }
@@ -1030,7 +1034,7 @@ export class Invoice {
      this.calculateTaxFromDetail();
      if(this.isCcm()) this.calculateWithholdingFromDetail();
      this.calculateTotalFromDetail();
-      return this;
+     return detail;
   }
 
   deleteDetail(detail, i) {

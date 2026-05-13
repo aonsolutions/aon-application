@@ -180,7 +180,7 @@ public class FillRawdoc {
 
 	private static RawdocStatus randomStatus() {
 		int i = FAKER.random().nextInt(0,100);
-		if (i > 98) return RawdocStatus.DRAFT;
+		if (i > 98) return RawdocStatus.TRASH;
 		if (i > 90) return RawdocStatus.REJECTED;
 		return RawdocStatus.INBOX;
 	}
