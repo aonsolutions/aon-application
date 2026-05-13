@@ -120,6 +120,12 @@ public enum InvoiceErrorKey implements Serializable {
 			visitor.visitRegistry(t);
 		}
 	},
+	REGISTRY_STATUS("Titular de la factura") {
+		@Override
+		public <T> void visit(InvoiceErrorKeyVisitor<T> visitor, T t) {
+			visitor.visitRegistryStatus(t);
+		}
+	},
 	AMBIGUOUS_REGISTRY("Titular de la factura") {
 		@Override
 		public <T> void visit(InvoiceErrorKeyVisitor<T> visitor, T t) {

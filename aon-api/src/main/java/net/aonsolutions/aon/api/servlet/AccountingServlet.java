@@ -15,19 +15,17 @@ import com.esferalia.aon.occam.api.json.AccountTrialBalanceReportJSON;
 import com.esferalia.aon.occam.api.json.AccountingExpenseJSON;
 import com.esferalia.aon.occam.api.json.AccountingIncomeJSON;
 import com.esferalia.aon.occam.api.json.AccountingReportParamsJSON;
+import com.esferalia.aon.occam.api.json.DomainInvoiceStatParamsJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
-import com.esferalia.aon.occam.api.model.AccountProperties;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
-import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.DomainInvoiceStatParams;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountingIncomeDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -46,6 +44,7 @@ public class AccountingServlet extends AonApiHttpServlet{
 	public static final String PERIODS = "/periods";
 	public static final String EXPENSES = "/expenses";
 	public static final String INCOMES = "/incomes";
+	public static final String INVOICES_COUNTERS = "/invoicesCounters";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -59,6 +58,7 @@ public class AccountingServlet extends AonApiHttpServlet{
 				.addRoute(PERIODS, AccountingServlet::getPeriods)
 				.addRoute(EXPENSES, AccountingServlet::getExpenses)
 				.addRoute(INCOMES, AccountingServlet::getIncomes)
+				.addRoute(INVOICES_COUNTERS, AccountingServlet::getInvoicesCounters)
 				.apply();
 			
 			response(req, resp, object);
@@ -206,5 +206,15 @@ public class AccountingServlet extends AonApiHttpServlet{
 		return new JSONObject();
 	}
 	
+	private static JSONObject getInvoicesCounters(AonApiData api) {
+//		JSONObject jsonParams = api.getData();
+//		DomainInvoiceStatParamsJSON.from( jsonParams )
+//			.ifPresent( params -> {
+//				ACCOUNTING.deleteAccountingIncome(api.getOccam(), income );
+//				
+//			LOGGER.info("getInvoicesCounters: " + json.toString());
+//		});
+		return new JSONObject();
+	}
 }
 
