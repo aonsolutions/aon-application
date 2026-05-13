@@ -296,6 +296,8 @@ public class AonRecordDataPanel extends HTMLPanel {
 
             // Si está en Drive descargar vía iframe
             if (recordData.getFullAttach().getDriveId() != null) {
+            	
+            	AonMessagePanel.showLoading(messagePanel, "Cargando archivo...");
 
                 JSONObject json = new JSONObject();
                 json.put("domain_id", new JSONNumber(domainId));
@@ -318,6 +320,8 @@ public class AonRecordDataPanel extends HTMLPanel {
                     temp.setData(bytes);
 
                     showPreview(temp);
+                    
+                    AonMessagePanel.hideMessage(messagePanel);
                 });
 
             } else {

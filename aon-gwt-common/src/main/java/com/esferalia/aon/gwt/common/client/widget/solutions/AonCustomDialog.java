@@ -417,18 +417,20 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
     private class WindowResizeHandler {
 
         public WindowResizeHandler() {
-            init(0, -2, 10, 3, Cursor.NW_RESIZE, new NWWindowResizeHandler());
-            init(10, -2, 80, 3, Cursor.N_RESIZE, new NWindowResizeHandler());
-            init(90, -2, 10, 3, Cursor.NE_RESIZE, new NEWindowResizeHandler());
-            init(0, 99, 10, 3, Cursor.SW_RESIZE, new SWWindowResizeHandler());
-            init(10, 99, 80, 3, Cursor.S_RESIZE, new SWindowResizeHandler());
-            init(90, 99, 10, 3, Cursor.SE_RESIZE, new SEWindowResizeHandler());
-            init(-2, 0, 3, 10, Cursor.NW_RESIZE, new NWWindowResizeHandler());
+
             init(-2, 10, 3, 80, Cursor.W_RESIZE, new WWindowResizeHandler());
-            init(-2, 90, 3, 10, Cursor.SW_RESIZE, new SWWindowResizeHandler());
-            init(99, 0, 3, 10, Cursor.NE_RESIZE, new NEWindowResizeHandler());
             init(99, 10, 3, 80, Cursor.E_RESIZE, new EWindowResizeHandler());
-            init(99, 90, 3, 10, Cursor.SE_RESIZE, new SEWindowResizeHandler());
+            
+//            init(0, -2, 10, 3, Cursor.NW_RESIZE, new NWWindowResizeHandler());
+//            init(10, -2, 80, 3, Cursor.N_RESIZE, new NWindowResizeHandler());
+//            init(90, -2, 10, 3, Cursor.NE_RESIZE, new NEWindowResizeHandler());
+//            init(0, 99, 10, 3, Cursor.SW_RESIZE, new SWWindowResizeHandler());
+//            init(10, 99, 80, 3, Cursor.S_RESIZE, new SWindowResizeHandler());
+//            init(90, 99, 10, 3, Cursor.SE_RESIZE, new SEWindowResizeHandler());
+//            init(-2, 0, 3, 10, Cursor.NW_RESIZE, new NWWindowResizeHandler());
+//            init(-2, 90, 3, 10, Cursor.SW_RESIZE, new SWWindowResizeHandler());
+//            init(99, 0, 3, 10, Cursor.NE_RESIZE, new NEWindowResizeHandler());
+//            init(99, 90, 3, 10, Cursor.SE_RESIZE, new SEWindowResizeHandler());
         }
 
         private void init(int left, int top, int width, int height, Cursor cursor, MouseDragHandler dragHandler) {
