@@ -25,6 +25,8 @@
     <jasperreportsMavenPluginVersion>8.2-SNAPSHOT</jasperreportsMavenPluginVersion>
     <junitVersion>4.13.2</junitVersion>
     <tomcat-version>11.0.1</tomcat-version>
+    <jackson.version>2.21.3</jackson.version>
+    <jackson.annotations.version>2.21</jackson.annotations.version>
   </properties>
   <modules>
     <!--  
@@ -226,6 +228,31 @@
 	<module>aon-hibernate-test</module>
 	-->
   </modules>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>${jackson.annotations.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.dataformat</groupId>
+        <artifactId>jackson-dataformat-csv</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <scm>
     <connection>scm:git:https://github.com/aonsolutions/aon-application.git</connection>
     <url>https://github.com/aonsolutions/aon-application</url>
