@@ -289,7 +289,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 				JSONValue v = json.get(IJsonNames.STATUS);
 				String val = (v == null) ? "" : v.isString().stringValue();
 				RawdocStatus rs = RawdocStatus.safeValueOf( val );
-				if (rs == RawdocStatus.REJECTED || rs == RawdocStatus.DRAFT) {
+				if (rs == RawdocStatus.REJECTED || rs == RawdocStatus.TRASH) {
 					return true;
 				}
 				if (AonStringUtils.equalsIgnoreCase(RawdocStatus.REJECTED.name(), val)) {
