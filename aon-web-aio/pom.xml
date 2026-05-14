@@ -588,7 +588,6 @@
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-servlet-api</artifactId>
-      <version>${tomcat-version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -606,7 +605,6 @@
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
-      <version>99.0-does-not-exist</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -622,7 +620,6 @@
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
-      <version>20040616</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -634,7 +631,6 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>2.1.0-alpha1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -983,7 +979,6 @@
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
-      <version>1.22.0</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>

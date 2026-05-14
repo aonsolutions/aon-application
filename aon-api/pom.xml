@@ -121,7 +121,6 @@
 	    <dependency>
      		<groupId>org.apache.tomcat</groupId>
      		<artifactId>tomcat-servlet-api</artifactId>
-      		<version>${tomcat-version}</version>
       		<scope>provided</scope>
     	</dependency>
 
@@ -181,7 +180,6 @@
 		<dependency>
     			<groupId>commons-logging</groupId>
 	    		<artifactId>commons-logging</artifactId>
-    			<version>99.0-does-not-exist</version>
 			<scope>test</scope>
 		</dependency>
 
