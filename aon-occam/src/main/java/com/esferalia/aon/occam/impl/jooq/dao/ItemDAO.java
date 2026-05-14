@@ -29,10 +29,13 @@ import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectOnConditionStep;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.RitemRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
@@ -48,6 +51,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemCompositionDAO.ItemCompositionFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RItemPropertiesDAO;
@@ -554,5 +558,18 @@ public class ItemDAO {
 				.setModificationUser(getValue(r, alias.MODIFICATION_USER))
 				.setModificationDate(getValue(r, alias.MODIFICATION_DATE));
 		}
+	}
+	
+	// *************************************************
+	// ********** TEST PURPOSE METHODS *****************
+	// *************************************************
+	public static Item getRandom(AONContext ctx, ItemFilter filter) {
+		return select(ctx,filter)
+			.orderBy( DSL.rand() )
+			.fetch()
+			.stream()
+			.map(new ItemFiller())
+			.findFirst()
+			.orElse(null);
 	}
 }

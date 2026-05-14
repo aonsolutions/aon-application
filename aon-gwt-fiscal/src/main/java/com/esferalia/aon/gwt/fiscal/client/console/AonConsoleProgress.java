@@ -34,7 +34,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-class AonConsoleProgress extends DockLayoutPanel {
+public class AonConsoleProgress extends DockLayoutPanel implements IConsoleLogger {
 	
 	private static final int MAX_MESSAGES_PER_GRID = 500;
 	private static final String PX600 = "600px";
@@ -50,8 +50,11 @@ class AonConsoleProgress extends DockLayoutPanel {
 	
 	private final EnumMap<ConsoleDomainMessageType,AonDisplayGrid> grids = new EnumMap<>(ConsoleDomainMessageType.class);
 	
+	public AonConsoleProgress() {
+		this(false);
+	}
 	
-	AonConsoleProgress(boolean advancedMode) {
+	public AonConsoleProgress(boolean advancedMode) {
 		super(Unit.PX);
 		this.advancedMode = advancedMode;
 		
@@ -104,7 +107,8 @@ class AonConsoleProgress extends DockLayoutPanel {
 		main.setProgress(percent,msg);
 	}
 
-	void log(JsConsoleMessage message) {
+	@Override
+	public void log(JsConsoleMessage message) {
 		if (message == null) return;
 		
 		message.getType().visit( new ConsoleMessageVisitor(message));
@@ -192,9 +196,10 @@ class AonConsoleProgress extends DockLayoutPanel {
 		@Override
 		public void visitConsoleMessage() {
 			if (message.getConsoleDomainMessage() != null) {
-				JsConsoleDomainMessage domainMessage = message.getConsoleDomainMessage();
+				JsConsoleDomainMessage jsDomainMessage = message.getConsoleDomainMessage();
+				ConsoleDomainMessage domainMessage = jsDomainMessage.getConsoleDomainMessage();
 				ConsoleDomainMessageType type = domainMessage.getType(); 
-				type.visit( new MessageTypeVisitor(domainMessage, type));
+				type.visit(domainMessage, new MessageTypeVisitor(type));
 			}
 		}
 
@@ -255,7 +260,7 @@ class AonConsoleProgress extends DockLayoutPanel {
 		}
 
 		@Override
-		public AonDisplayGrid visitIntegrity() {
+		public AonDisplayGrid visitIntegrity(ConsoleDomainMessage cdm) {
 			grid.addHeaderRow()
 				.addCell(new Label("Tipo"),AON.CSS.aonWidth80())
 				.addCell(new Label(""),AON.CSS.aonWidth20())
@@ -270,7 +275,7 @@ class AonConsoleProgress extends DockLayoutPanel {
 		}
 
 		@Override
-		public AonDisplayGrid visitScopeIntegrity() {
+		public AonDisplayGrid visitScopeIntegrity(ConsoleDomainMessage cdm) {
 			grid.addHeaderRow()
 				.addCell(new Label("Tipo"),AON.CSS.aonWidth80())
 				.addCell(new Label(""),AON.CSS.aonWidth20())
@@ -282,30 +287,22 @@ class AonConsoleProgress extends DockLayoutPanel {
 			return grid;
 		}
 
-		@Override
-		public AonDisplayGrid visitProduct() {
-			return grid;
-		}
-
-		@Override
-		public AonDisplayGrid visitAgreement() {
-			return grid;
-		}
+		@Override public AonDisplayGrid visitProduct(ConsoleDomainMessage cdm) { return grid; }
+		@Override public AonDisplayGrid visitAgreement(ConsoleDomainMessage cdm) { return grid; }
+		@Override public AonDisplayGrid visitInvoiceProcessOutput(ConsoleDomainMessage cdm) { return grid; }
 	}
 	
 	private final class MessageTypeVisitor implements ConsoleDomainMessageTypeVisitor<Void> {
-		private final JsConsoleDomainMessage domainMessage;
 		private final ConsoleDomainMessageType type;
 
-		private MessageTypeVisitor(JsConsoleDomainMessage domainMessage, ConsoleDomainMessageType type) {
-			this.domainMessage = domainMessage;
+		private MessageTypeVisitor(ConsoleDomainMessageType type) {
 			this.type = type;
 		}
 
 		@Override
-		public Void visitIntegrity() {
-			if (getGrid( type ).getWidgetCount() < MAX_MESSAGES_PER_GRID) {
-				getGrid( type ).setVisible(true);
+		public Void visitIntegrity(ConsoleDomainMessage domainMessage) {
+			if (getGrid(domainMessage, type ).getWidgetCount() < MAX_MESSAGES_PER_GRID) {
+				getGrid(domainMessage, type ).setVisible(true);
 				FlowPanel buttons = new FlowPanel();
 				
 				if (AonConsoleProgress.this.advancedMode) {
@@ -341,7 +338,7 @@ class AonConsoleProgress extends DockLayoutPanel {
 					fkPanel.add( fkChange );
 				}
 				
-				getGrid( type ).addRow()
+				getGrid(domainMessage, type ).addRow()
 					.addCell(new Label("Integridad"))
 					.addCell(buttons)
 					.addCell(new Label(domainMessage.getTable()))
@@ -352,15 +349,15 @@ class AonConsoleProgress extends DockLayoutPanel {
 					.addCell(new Label(""+domainMessage.getWrongDomainId()))
 					.addCell(new Label(domainMessage.getMessage()))
 				;
-				checkMaximun( getGrid( type ) );
+				checkMaximun( getGrid(domainMessage, type ) );
 			}
 			return null;
 		}
 
 		@Override
-		public Void visitScopeIntegrity() {
-			if (getGrid( type ).getWidgetCount() < MAX_MESSAGES_PER_GRID) {
-				getGrid( type ).setVisible(true);
+		public Void visitScopeIntegrity(ConsoleDomainMessage domainMessage) {
+			if (getGrid(domainMessage, type ).getWidgetCount() < MAX_MESSAGES_PER_GRID) {
+				getGrid(domainMessage, type ).setVisible(true);
 				
 				FlowPanel fixPanel = new FlowPanel();
 				fixPanel.setStyleName(AON.CSS.aonNowrap());
@@ -372,7 +369,7 @@ class AonConsoleProgress extends DockLayoutPanel {
 				}
 
 				FlowPanel buttons = new FlowPanel();
-				getGrid( type ).addRow()
+				getGrid(domainMessage, type ).addRow()
 					.addCell(new Label("Scope"))
 					.addCell(buttons)
 					.addCell(new Label(domainMessage.getTable()))
@@ -381,28 +378,32 @@ class AonConsoleProgress extends DockLayoutPanel {
 					.addCell(fixPanel)
 					.addCell(new Label(domainMessage.getMessage()))
 				;
-				checkMaximun( getGrid( type ) );
+				checkMaximun( getGrid(domainMessage, type ) );
 			}
 			return null;
 		}
 
-		private void showScopes(JsConsoleDomainMessage message) {
+		private void showScopes(ConsoleDomainMessage message) {
 			ScopeSelectorPanel popup = new ScopeSelectorPanel( message );
 			popup.center();
 			popup.show();
 		}
 
 		@Override
-		public Void visitProduct() {
-			return visitCommon();
+		public Void visitProduct(ConsoleDomainMessage domainMessage) {
+			return visitCommon(domainMessage);
 		}
 
 		@Override
-		public Void visitAgreement() {
-			return visitCommon();
+		public Void visitAgreement(ConsoleDomainMessage domainMessage) {
+			return visitCommon(domainMessage);
 		}
-
-		private Void visitCommon() {
+		@Override
+		public Void visitInvoiceProcessOutput(ConsoleDomainMessage domainMessage) {
+			return visitCommon(domainMessage);
+		}
+		
+		private Void visitCommon(ConsoleDomainMessage domainMessage) {
 			Label messageLabel = new Label(domainMessage.getMessage());
 			messageLabel.setStyleName(AON.CSS.aonColorRed());
 			messageLabel.addStyleName(AON.CSS.aonBold());
@@ -410,16 +411,15 @@ class AonConsoleProgress extends DockLayoutPanel {
 			return null;
 		}
 
-		private void showPkRow(JsConsoleDomainMessage domainMessage) {
+		private void showPkRow(ConsoleDomainMessage domainMessage) {
 			showRow( getConsoleTableRow(domainMessage) );
 		}
 
-		private void showFkRow(JsConsoleDomainMessage domainMessage) {
-			ConsoleDomainMessage cm = getConsoleDomainMessage(domainMessage);
+		private void showFkRow(ConsoleDomainMessage domainMessage) {
 			ConsoleTableRow row = new ConsoleTableRow()
-				.setSchema(cm.getSchema())
-				.setTable(cm.getFkTable())
-				.setId(cm.getFkId());
+				.setSchema(domainMessage.getSchema())
+				.setTable(domainMessage.getFkTable())
+				.setId(domainMessage.getFkId());
 			showRow(row);
 		}
 
@@ -448,7 +448,7 @@ class AonConsoleProgress extends DockLayoutPanel {
 			
 		}
 
-		private ConsoleTableRow getConsoleTableRow(JsConsoleDomainMessage domainMessage) {
+		private ConsoleTableRow getConsoleTableRow(ConsoleDomainMessage domainMessage) {
 			Integer domainId = domainMessage.getDomainId() == null? null :  AonNumberUtils.toInteger("" + domainMessage.getDomainId());
 			Integer pkId =  domainMessage.getPkId() == null? null : AonNumberUtils.toInteger("" + domainMessage.getPkId());
 			return new ConsoleTableRow()
@@ -456,26 +456,6 @@ class AonConsoleProgress extends DockLayoutPanel {
 				.setTable(domainMessage.getTable())
 				.setId(pkId)
 				.setDomain(domainId);
-		}
-
-		private ConsoleDomainMessage getConsoleDomainMessage(JsConsoleDomainMessage domainMessage) {
-			Integer domainId = domainMessage.getDomainId() == null? null :  AonNumberUtils.toInteger("" + domainMessage.getDomainId());
-			Integer pkId =  domainMessage.getPkId() == null? null : AonNumberUtils.toInteger("" + domainMessage.getPkId());
-			Integer fkId =  domainMessage.getFkId() == null? null : AonNumberUtils.toInteger("" + domainMessage.getFkId());
-			Integer wrongDomainId =  domainMessage.getWrongDomainId() == null? null : AonNumberUtils.toInteger("" + domainMessage.getWrongDomainId());
-			return new ConsoleDomainMessage()
-				.setSchema(domainMessage.getSchema())
-				.setType(domainMessage.getType())
-				.setDomainId(domainId)
-				.setTable(domainMessage.getTable())
-				.setPkId(pkId)
-				.setPkCode(domainMessage.getPkCode())
-				.setFkTable(domainMessage.getFkTable())
-				.setFkColumn(domainMessage.getFkColumn())
-				.setFkId(fkId)
-				.setWrongDomainId(wrongDomainId)
-				.setMessage(domainMessage.getMessage())
-			;
 		}
 		
 		private void checkMaximun(AonDisplayGrid grid) {
@@ -487,13 +467,13 @@ class AonConsoleProgress extends DockLayoutPanel {
 			}
 		}
 		
-		private AonDisplayGrid getGrid( ConsoleDomainMessageType type ) {
+		private AonDisplayGrid getGrid(ConsoleDomainMessage cdm, ConsoleDomainMessageType type ) {
 			return grids.computeIfAbsent( type, k -> {
 				AonDisplayGrid grid = new AonDisplayGrid();
 				grid.addStyleName(AON.CSS.aonMarginTop());
 				grid.setVisible(false);
 				bottomContainer.add(grid);
-				type.visit( new GridProvider(grid));
+				type.visit(cdm,  new GridProvider(grid));
 				return grid;
 			});
 		}
@@ -527,7 +507,7 @@ class AonConsoleProgress extends DockLayoutPanel {
 	private final class ScopeSelectorPanel extends AonCustomPopup {
 		private boolean accepted;
 		
-		public ScopeSelectorPanel(JsConsoleDomainMessage message) {
+		public ScopeSelectorPanel(ConsoleDomainMessage message) {
 			setWidth(PX600);
 			setHeight(PX600);
 			DockLayoutPanel root = new DockLayoutPanel( Unit.PX );

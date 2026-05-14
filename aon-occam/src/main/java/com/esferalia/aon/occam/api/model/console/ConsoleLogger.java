@@ -9,4 +9,5 @@ public interface ConsoleLogger {
 	void message(String id,String msg);
 	void progress(String id,int count, int progress, String msg);
 	void progress(String id,int count, int progress);
+	void mainProgress(String id, int count, int progress);
 }

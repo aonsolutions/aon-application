@@ -1,11 +1,13 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Optional;
 
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.google.gwt.user.client.ui.HasWidgets;
 
 public class AonModuleOptions<T extends AonModuleOptions<T>> implements Serializable {
@@ -68,6 +70,35 @@ public class AonModuleOptions<T extends AonModuleOptions<T>> implements Serializ
 		return optConfiguration().flatMap( c -> c.optCommunicationConfig());
 	}
 
+	public Optional<InvoiceCommunicationConfiguration> optCommunicationConfig() {
+		return optConfiguration()
+			.map( c-> c.getCommunicationConfig() );
+	}
+	public boolean isCertificateNeededForCommunication() {
+		return isCertificateNeededForCommunication(InvoiceType.SALES);
+	}
+	public boolean isCertificateNeededForCommunication(InvoiceType type) {
+		return optCommunicationConfig()
+			.map( icc -> icc.isCertificateNeeded(type) )
+			.orElse(false)
+		;
+	}
+	public boolean hasCommunication(Date atDate) {
+		return optConfiguration()
+			.map( c-> c.getCommunicationConfig() )
+			.map( icc -> icc.hasCommunication( atDate) )
+			.orElse(false)
+		;
+	}
+	
+	public boolean hasCommunication() {
+		return optConfiguration()
+			.map( c-> c.getCommunicationConfig() )
+			.map( icc -> icc.hasCommunication() )
+			.orElse(false)
+		;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public T setConfiguration(AonConfiguration configuration) {
 		this.configuration = configuration;

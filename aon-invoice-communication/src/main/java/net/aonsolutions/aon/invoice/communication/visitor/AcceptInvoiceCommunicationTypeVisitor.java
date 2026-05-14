@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -14,17 +14,14 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType.InvoiceCommunicationTypeVisitor;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
-import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.aon.sii.SIIManager;
@@ -32,7 +29,6 @@ import net.aonsolutions.aon.tbai.InvoiceCommunication;
 import net.aonsolutions.aon.tbai.LroeMain;
 import net.aonsolutions.aon.tbai.TBAI;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
-import net.aonsolutions.aon.verifactu.VERIFACTU;
 
 public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInvoiceTypeVisitor implements InvoiceCommunicationTypeVisitor {
 		
@@ -121,15 +117,16 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 
 	@Override
 	public void visitVERIFACTU() {
-		try (CloseableAONContext ctx = AONContext.getAONContext(getOccam())) {
-			InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx,ctx.getDomainId());
-			config.setCertificate(getConfiguration().getCertificate());
-			InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext( getDomain(), getUser(), null, getInvoices() );
-			cc.setConfig(config);
-			Company company = CompanyDAO.getByDomain(ctx, getOccam().getDomain());
-			cc.setCompany(company);
-			ctx.getDslContext().transaction(configuration -> VERIFACTU.accept(ctx, cc));
-		}
+		throw new AonCoreException("Use InvoiceCommunicator class for VERIFACTU support");
+//		try (CloseableAONContext ctx = AONContext.getAONContext(getOccam())) {
+//			InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx,ctx.getDomainId());
+//			config.setCertificate(getConfiguration().getCertificate());
+//			InvoiceCommunicatorContext cc = new InvoiceCommunicatorContext( getDomain(), getUser(), null, getInvoices() );
+//			cc.setConfig(config);
+//			Company company = CompanyDAO.getByDomain(ctx, getOccam().getDomain());
+//			cc.setCompany(company);
+//			ctx.getDslContext().transaction(configuration -> VERIFACTU.accept(ctx, cc));
+//		}
 	}
 
 	@Override

@@ -55,6 +55,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.Expedient;
 import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.Filter.*;
@@ -291,6 +292,7 @@ import com.esferalia.aon.occam.server.registry.RegistryUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.http.AonURIBuilder;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 import net.aonsolutions.core.pool.AonConnectionException;
 import net.aonsolutions.core.pool.AonDataSource;
@@ -8187,11 +8189,11 @@ public class AON {
 		}
 	}
 	
-	public static InvoiceCommunicationConfiguration saveInvoiceCommunicationConfiguration(Occam occam, int domainId, InvoiceCommunicationConfiguration config) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getFinance().saveInvoiceCommunicationConfiguration(ctx, domainId, config);
-		}
-	}
+//	public static InvoiceCommunicationConfiguration saveInvoiceCommunicationConfiguration(Occam occam, int domainId, InvoiceCommunicationConfiguration config) {
+//		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+//			return getFinance().saveInvoiceCommunicationConfiguration(ctx, domainId, config);
+//		}
+//	}
 	
 	// SII 
 	public static void prepareNewSii(Occam occam) {
@@ -8529,44 +8531,43 @@ public class AON {
 	}
 	
 	// ---------------- Enterprise Data
-
-	public static EnterpriseData getEnterpriseData(Domain domain, User user, EnterpriseDataFilter filter) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getEnterprise().getEnterpriseData(ctx, filter);
+	public static Optional<EnterpriseData> getEnterpriseData(Occam occam, Integer domainId, EnterpriseDataNames name) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getEnterprise().getEnterpriseData(ctx, domainId, name);
 		}
 	}
 	
-	public static EnterpriseData saveEnterpriseData(Domain domain, User user, EnterpriseData enterpriseData) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+	public static EnterpriseData saveEnterpriseData(Occam occam, EnterpriseData enterpriseData) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getEnterprise().saveEnterpriseData(ctx, enterpriseData);
 		}
 	}
 	
-	public static LinkedList<EnterpriseData> getEnterpriseDataList(String domainName, Integer domainId, String login, EnterpriseDataFilter filter) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getEnterprise().getEnterpriseDataList(ctx, filter);
+	public static LinkedList<EnterpriseData> getEnterpriseDataList(Occam occam, Integer domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getEnterprise().getEnterpriseDataList(ctx, domainId);
 		}
 	}
 	
-	public static void insertEnterpriseData(String domainName, Integer domainId, String login, List<EnterpriseData> enterpriseData) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			getEnterprise().insertEnterpriseData(ctx, enterpriseData);
-		}
-	}
-
-
-	public static void updateEnterpriseData(String domainName, Integer domainId, String login, EnterpriseData enterpriseData) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			getEnterprise().updateEnterpriseData(ctx, enterpriseData);
-		}
-	}
-
-
-	public static void deleteEnterpriseData(String domainName, Integer domainId, String login, Integer id) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			getEnterprise().deleteEnterpriseData(ctx, id);
-		}
-	}
+//	public static void insertEnterpriseData(String domainName, Integer domainId, String login, List<EnterpriseData> enterpriseData) {
+//		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+//			getEnterprise().insertEnterpriseData(ctx, enterpriseData);
+//		}
+//	}
+//
+//
+//	public static void updateEnterpriseData(String domainName, Integer domainId, String login, EnterpriseData enterpriseData) {
+//		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+//			getEnterprise().updateEnterpriseData(ctx, enterpriseData);
+//		}
+//	}
+//
+//
+//	public static void deleteEnterpriseData(String domainName, Integer domainId, String login, Integer id) {
+//		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+//			getEnterprise().deleteEnterpriseData(ctx, id);
+//		}
+//	}
 
 	public static List<Cno> getCno(String domainName, Integer domainId, String login) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
@@ -9157,12 +9158,21 @@ public class AON {
 		}
 	}
 	
+	// ********************************************
+	// ***************************** INVOICE FEE **
+	// ********************************************
+	public static Optional<Pair<Integer, Integer>> getFeeYearRange(Occam occam, Integer domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getFinance().getFeeYearRange(ctx, domainId);
+		}
+	}
+	
 	public static void fixInvoice(Occam occam, int domain) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			getFinance().fixInvoice(ctx, domain);
 		}
 	}
-	
+
 	// ***************************************
 	// ***************************** SERIES **
 	// ***************************************

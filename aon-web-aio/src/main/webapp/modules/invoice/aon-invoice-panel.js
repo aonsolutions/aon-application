@@ -55,7 +55,7 @@ import { AonIncomeList } from "./aon-income-list.js";
 import { AonExpenseList } from "./aon-expense-list.js";
 import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
 import { AonDialog } from "../../components/aon-dialog.js";
-import { InvoiceCommunicationConfiguration } from "../../models/InvoiceCommunicationConfiguration.js";
+import { InvoiceCommunicationConfig } from "../../models/InvoiceCommunicationConfig.js";
 import { isValid } from "../../services/documentUtils.js";
 import { AonIncome } from "./aon-income.js";
 import { Income } from "./Income.js";
@@ -180,10 +180,14 @@ export class AonInvoicePanel extends AonElement {
 			this.getApplication().showMessageError("El usuario no tiene ámbitos asignados. Por favor, contacte con el administrador del dominio.");
 			return false;
 		}
-		if(!this.config || !this.config.company || !this.config.company.document || !this.config.communication){
+		if(!this.config || !this.config.company || !this.config.company.document){
 			this.getApplication().showMessageError("La configuración de facturación no está completa. Por favor, revise la configuración.");
 			return false;
 		} 
+		if(!this.config.communication) {
+			this.getApplication().showMessageError("La configuración de comunicaciones de facturas no está definida.");
+			return false;
+		}
 		if(!isValid(this.config.company.document)) {
 			this.getApplication().showMessageError("La configuración de facturación no está completa. El NIF/CIF de la empresa no es válido.");
 			return false;
@@ -197,7 +201,7 @@ export class AonInvoicePanel extends AonElement {
 
 	async getInvoiceConfiguration() {
 		this.config = await getInvoiceConfiguration();
-		this.icc = new InvoiceCommunicationConfiguration(this.config.communication);
+		this.icc = new InvoiceCommunicationConfig(this.config.communication);
 	}
 	buildEmptyToolbarOptions() {
 		this.clearToolbar();

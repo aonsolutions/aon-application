@@ -5,9 +5,6 @@ import java.util.LinkedHashSet;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.fiscal.client.AccountingReportService;
-import com.esferalia.aon.gwt.fiscal.client.AccountingReportServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.AccountingReportServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountingReportModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.TrialBalancePanelReport;
@@ -17,7 +14,6 @@ import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -32,8 +28,6 @@ public class AccountPreviewPanel extends DockLayoutPanel implements HasSelection
 	  
 	private static final String SESSION_LOG_BACKGROUND_COLOR = "lightyellow";
 	
-	static AccountingReportServiceAsync SERVICE;
-	
 	private SessionLog entryPanel;
 	 
 	public AccountPreviewPanel(AccountEntryModuleOptions moduleOptions, final IAccountEntryWrapper ... entries) {
@@ -45,65 +39,60 @@ public class AccountPreviewPanel extends DockLayoutPanel implements HasSelection
 		northLabel.getElement().getStyle().setBackgroundColor(SESSION_LOG_BACKGROUND_COLOR);
 		addNorth(northLabel, 15);
 		
-		AccountingReportServiceAsync serviceRaw = GWT.create(AccountingReportService.class);
-		SERVICE = new AccountingReportServiceAsyncDecorator(serviceRaw);
 		entryPanel = new SessionLog();
 		entryPanel.getElement().getStyle().setBackgroundColor(SESSION_LOG_BACKGROUND_COLOR);
 		add(entryPanel);
+		
 		if (moduleOptions.isTrialBalanceFromPreviewEnabled()) {
 			entryPanel.setTitle(msg);
-			entryPanel.addSelectionHandler( new SelectionHandler<IAccountEntryWrapper>() {
+			entryPanel.addSelectionHandler( event -> {
 				
-				@Override
-				public void onSelection(SelectionEvent<IAccountEntryWrapper> event) {
-					
-					LinkedHashSet<String> accounts = new LinkedHashSet<String>();
-					AccountingReportParams params = null;
-					IAccountEntryWrapper entryWrapper = event.getSelectedItem();
-					AccountEntry entry = entryWrapper.getAccountEntry();
-					for ( AccountEntryDetail detail : entry.getDetails()) {
-						if (AonStringUtils.isNotBlank(detail.getAccountCode())) {
-							accounts.add(detail.getAccountCode());
-						}
-						if (AonStringUtils.isNotBlank(detail.getBalancingAccountCode())) {
-							accounts.add(detail.getBalancingAccountCode());
-						}
+				LinkedHashSet<String> accounts = new LinkedHashSet<String>();
+				AccountingReportParams params = null;
+				IAccountEntryWrapper entryWrapper = event.getSelectedItem();
+				AccountEntry entry = entryWrapper.getAccountEntry();
+				for ( AccountEntryDetail detail : entry.getDetails()) {
+					if (AonStringUtils.isNotBlank(detail.getAccountCode())) {
+						accounts.add(detail.getAccountCode());
 					}
-					if (params == null) {
-						params = new AccountingReportParams ()
-							.setDomain(moduleOptions.getDomain())
-							.setPeriod(entry.getPeriod())
-							.setFromDate(DateUtils.getFirstDayOfYear(entry.getEntryDate()))
-							.setToDate(entry.getEntryDate())
-							.setLevel(9)
-							.setNoActivityAccountVisible(true);
+					if (AonStringUtils.isNotBlank(detail.getBalancingAccountCode())) {
+						accounts.add(detail.getBalancingAccountCode());
 					}
-					if (accounts.size() > 0) {
-						String accountsParam = ""; 
-						for (String code : accounts) {
-							if ( !"".equals(accountsParam)) {
-								accountsParam = accountsParam + "|";
-							}
-							accountsParam = accountsParam + code;
+				}
+				if (params == null) {
+					params = new AccountingReportParams ()
+						.setDomain(moduleOptions.getDomain())
+						.setPeriod(entry.getPeriod())
+						.setFromDate(DateUtils.getFirstDayOfYear(entry.getEntryDate()))
+						.setToDate(entry.getEntryDate())
+						.setLevel(9)
+						.setNoActivityAccountVisible(true);
+				}
+				if (accounts.size() > 0) {
+					String accountsParam = ""; 
+					for (String code : accounts) {
+						if ( !"".equals(accountsParam)) {
+							accountsParam = accountsParam + "|";
 						}
-						params.setAccount(new Account().setCode(accountsParam));
-						AonCustomPopup entryDialog = new AonCustomPopup();
-						entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
-						entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
-						entryDialog.setAnimationEnabled(true);
-						entryDialog.setGlassEnabled(true);
-						entryDialog.setModal(true);
-						entryDialog.setCaption(AON.MSG.trialBalabce());
-						AccountingReportModuleOptions options = new AccountingReportModuleOptions();
-						options.setParentWidget(entryDialog);
-						options.setDomainName(moduleOptions.getDomainName());
-						options.setDomain(moduleOptions.getDomain());
-						options.setUser(moduleOptions.getUser());
-						TrialBalancePanelReport trialPanel = new TrialBalancePanelReport(options, params );
-						entryDialog.add(trialPanel);
-						entryDialog.center();
-						entryDialog.show();
+						accountsParam = accountsParam + code;
 					}
+					params.setAccount(new Account().setCode(accountsParam));
+					AonCustomPopup entryDialog = new AonCustomPopup();
+					entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
+					entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
+					entryDialog.setAnimationEnabled(true);
+					entryDialog.setGlassEnabled(true);
+					entryDialog.setModal(true);
+					entryDialog.setCaption(AON.MSG.trialBalabce());
+					AccountingReportModuleOptions options = new AccountingReportModuleOptions();
+					options.setParentWidget(entryDialog);
+					options.setDomainName(moduleOptions.getDomainName());
+					options.setDomain(moduleOptions.getDomain());
+					options.setUser(moduleOptions.getUser());
+					TrialBalancePanelReport trialPanel = new TrialBalancePanelReport(options, params );
+					entryDialog.add(trialPanel);
+					entryDialog.center();
+					entryDialog.show();
 				}
 			});
 		}

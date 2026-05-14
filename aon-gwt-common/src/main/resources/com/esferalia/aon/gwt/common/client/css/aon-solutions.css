@@ -412,6 +412,8 @@
 .aon_icon_aeat { background-image: iconAeat;}
 @url iconAeatBw aonIconAeatBw;
 .aon_icon_aeat_bw { background-image: iconAeatBw;}
+@url iconAeatLightGreen aonIconAeatLightGreen;
+.aon_icon_aeat_light_green { background-image: iconAeatLightGreen;}
 @url iconAeatGreen aonIconAeatGreen;
 .aon_icon_aeat_green { background-image: iconAeatGreen;}
 @url iconAeatOrange aonIconAeatOrange;
@@ -422,6 +424,8 @@
 .aon_icon_aeat_red { background-image: iconAeatRed;}
 @url iconAeatBlue aonIconAeatBlue;
 .aon_icon_aeat_blue { background-image: iconAeatBlue;}
+@url iconNoSif aonIconNoSif;
+.aon_icon_no_sif { background-image: iconNoSif;}
 @url iconSif aonIconSif;
 .aon_icon_sif { background-image: iconSif;}
 @url iconSifGreen aonIconSifGreen;

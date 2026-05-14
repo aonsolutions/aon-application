@@ -62,6 +62,7 @@ export const BANK_ACCOUNT = 'bankAccount';
 export const BASE = 'base';
 export const BIC = 'bic';
 export const BLANK = 'blank';
+export const BLUE = 'blue';
 export const BOOKING_PANEL = 'bookingPanel'
 export const BOOLEAN = 'boolean';
 export const BOX = 'box';
@@ -69,6 +70,7 @@ export const BUTTON = 'button';
 
 // ----- C
 export const CAMPAIGN = 'campaign';
+export const CANCEL_INVOICE = 'cancelInvoice';
 export const CARD = 'card';
 export const CARRIER = 'carrier';
 export const CATEGORY = 'category';
@@ -159,11 +161,14 @@ export const FILTER = 'filter';
 export const FINANCES = 'finances';
 export const FISCAL = 'fiscal';
 export const FOOTER = 'footer';
+export const FULLSCREEN = 'fullscreen';
 
 // ----- G
 
 export const GET_INVOICE = 'getInvoice';
 export const GET_INVOICES = 'getInvoices';
+export const GRAY = 'gray';
+export const GREEN = 'green';
 
 // ----- H
 
@@ -196,6 +201,7 @@ export const INVOICE_OBJECT = 'invoiceObject';
 export const INVOICE_RECEIVED = 'invoiceReceived';
 export const INVOICE_TICKET = 'invoiceTicket';
 export const INVOICES = 'invoices';
+export const ISSUE = 'issue';
 export const ITEM = 'item';
 
 // ----- J
@@ -225,6 +231,7 @@ export const MATERIAL_OUTLINED = 'material_outlined';
 export const MATERIAL_ICONS_OUTLINED = 'material-icons-outlined';
 export const MAX = 'max';
 export const MAXLENGTH = 'maxlength';
+export const MENU = 'menu';
 export const MESSENGER = 'messenger';
 export const MIN = 'min';
 export const MOVABLE_CAPITAL = 'movableCapital';
@@ -265,6 +272,7 @@ export const OPEN = 'open';
 export const OPENED = 'opened';
 export const OPTION = 'option';
 export const OPTIONS = 'options';
+export const ORANGE = 'orange';
 export const OTHER = 'other';
 export const OTHER_EXPENSES = 'otherExpenses';
 export const OTHER_INCOMES = 'otherIncomes';
@@ -330,6 +338,7 @@ export const RECTIFY_INVOICE = 'rectifyInvoice';
 export const RECTIFY_SERIES = 'rectifySeries';
 export const RECTIFY_DATE = 'rectifyDate';
 export const RECTIFY_CAUSE = 'rectifyCause';
+export const RED = "red";
 export const REFERENCE = 'reference';
 export const REFRESH = 'refresh';
 export const REFUSED = 'refused';
@@ -454,6 +463,7 @@ export const WORKPLACES_CALENDAR = 'workplacesCalendar';
 // ----- X
 
 // ----- Y
+export const YELLOW = 'yellow';
 
 // ----- Z
 

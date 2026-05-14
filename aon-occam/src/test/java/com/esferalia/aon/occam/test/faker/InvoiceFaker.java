@@ -362,6 +362,9 @@ public class InvoiceFaker {
 		public boolean isSales() {
 			return getType() == InvoiceType.SALES;
 		}
+		public boolean isPurchase() {
+			return getType() == InvoiceType.PURCHASE;
+		}
 		
 	}
 
@@ -727,6 +730,14 @@ public class InvoiceFaker {
 		return type.get(params);
 	}
 	
+	public static Invoice getRandomPurchase(InvoiceFakerParams params) {
+		List<InvoiceFakerTypes> list = Arrays.stream(InvoiceFakerTypes.values())
+			.filter(t -> t.isPurchase() )
+			.collect(Collectors.toCollection(LinkedList::new));
+		InvoiceFakerTypes type = list.get(faker.random().nextInt(list.size()-1));
+		return type.get(params);
+	}
+
 	public static Invoice getRandomNotSales(InvoiceFakerParams params) {
 		List<InvoiceFakerTypes> list = Arrays.stream(InvoiceFakerTypes.values())
 			.filter(t -> !t.isSales() )
@@ -743,6 +754,9 @@ public class InvoiceFaker {
 	public static Invoice getSalesNational(AONContext ctx) {
 		InvoiceFakerParams params = new InvoiceFakerParams(ctx);
 		return InvoiceFakerTypes.SALES_NATIONAL.get(params);
+	}
+	public static Invoice getSalesRetention(InvoiceFakerParams params) {
+		return InvoiceFakerTypes.SALES_RETENTION.get(params);
 	}
 	public static Invoice getSalesCanCeuService(AONContext ctx) {
 		return getSalesCanCeuService(new InvoiceFakerParams(ctx));
@@ -761,7 +775,9 @@ public class InvoiceFaker {
 		return InvoiceFakerTypes.EXPENSES_NATIONAL.get(params);
 	}
 	public static Invoice getPurchaseNational(AONContext ctx) {
-		InvoiceFakerParams params = new InvoiceFakerParams(ctx);
+		return getPurchaseNational(new InvoiceFakerParams(ctx));
+	}
+	public static Invoice getPurchaseNational(InvoiceFakerParams params) {
 		return InvoiceFakerTypes.PURCHASE_NATIONAL.get(params);
 	}
 	public static Invoice getPurchaseExtracommunity(AONContext ctx) {

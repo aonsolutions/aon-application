@@ -267,57 +267,58 @@ public class InvoiceConsoleTextPanel extends ScrollPanel {
 	}
 
 	private InvoiceConsoleTextPanel vatBreakdown(Invoice invoice, StringBuilder out) {
-		if (AonCollectionUtils.isNotEmpty( invoice.getVats() )) {
+		invoice.getTaxBreakdown().ifPresent( tb -> {
 			StringBuilder buf = new StringBuilder();
 			buf.append(AonStringUtils.spaces(40));
 			buf.append(TOP_LEFT_CORNER);
 			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
 			buf.append(TOP_RIGHT_CORNER);
 			println(out,buf.toString());
-			
-			invoice.getVats().forEach(tax -> vatInvoiceBreakdown(tax, out));
-			
+			tb.vatStream()
+				.forEach( tax -> vatInvoiceBreakdown(tax, out) );
 			buf = new StringBuilder();
 			buf.append(AonStringUtils.spaces(40));
 			buf.append(LOWER_LEFT_CORNER);
 			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
 			buf.append(LOWER_RIGHT_CORNER);
 			println(out,buf.toString());
-		}
+		});
 		return this;
 	}
 
 	private InvoiceConsoleTextPanel withholding(Invoice invoice, StringBuilder out) {
-		Optional<InvoiceWithholding> iw = invoice.getWithholding();
-		if (iw.isPresent()) {
-			StringBuilder buf = new StringBuilder();
-			buf.append(AonStringUtils.spaces(40));
-			buf.append(TOP_LEFT_CORNER);
-			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
-			buf.append(TOP_RIGHT_CORNER);
-			println(out,buf.toString());
+		invoice.getTaxBreakdown()
+			.flatMap( tb -> tb.getInvoiceWithholding())
+			.ifPresent( iw -> {
+				StringBuilder buf = new StringBuilder();
+				buf.append(AonStringUtils.spaces(40));
+				buf.append(TOP_LEFT_CORNER);
+				buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
+				buf.append(TOP_RIGHT_CORNER);
+				println(out,buf.toString());
 
-			buf = new StringBuilder();
-			buf.append(AonStringUtils.spaces(40));
-			buf.append(VERTICAL_BAR);
-			buf.append(AonStringUtils.spaces(1));
-			buf.append(AonStringUtils.rightPad(TaxType.RETENTION.getName2(), 5));
-			buf.append(AonStringUtils.leftPad(AON.FMT_BASE.format(iw.get().getBase()), 16));
-			buf.append(AonStringUtils.leftPad(AON.FMT.format(iw.get().getPercentage()), 12));
-			buf.append(AonStringUtils.PERCENT);
-			buf.append(AonStringUtils.leftPad(AON.FMT.format(iw.get().getQuota()), 17));
-			buf.append(AonStringUtils.repeat(" ", 10));
-			buf.append(AonStringUtils.leftPad(" ", getLineSize() - buf.length()));
-			buf.append(VERTICAL_BAR);
-			println(out,buf.toString());
+				buf = new StringBuilder();
+				buf.append(AonStringUtils.spaces(40));
+				buf.append(VERTICAL_BAR);
+				buf.append(AonStringUtils.spaces(1));
+				buf.append(AonStringUtils.rightPad(TaxType.RETENTION.getName2(), 5));
+				buf.append(AonStringUtils.leftPad(AON.FMT_BASE.format(iw.getBase()), 16));
+				buf.append(AonStringUtils.leftPad(AON.FMT.format(iw.getPercentage()), 12));
+				buf.append(AonStringUtils.PERCENT);
+				buf.append(AonStringUtils.leftPad(AON.FMT.format(iw.getQuota()), 17));
+				buf.append(AonStringUtils.repeat(" ", 10));
+				buf.append(AonStringUtils.leftPad(" ", getLineSize() - buf.length()));
+				buf.append(VERTICAL_BAR);
+				println(out,buf.toString());
 
-			buf = new StringBuilder();
-			buf.append(AonStringUtils.spaces(40));
-			buf.append(LOWER_LEFT_CORNER);
-			buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
-			buf.append(LOWER_RIGHT_CORNER);
-			println(out,buf.toString());
-		}
+				buf = new StringBuilder();
+				buf.append(AonStringUtils.spaces(40));
+				buf.append(LOWER_LEFT_CORNER);
+				buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, getLineSize() - buf.length()));
+				buf.append(LOWER_RIGHT_CORNER);
+				println(out,buf.toString());
+				
+			});
 		return this;
 	}
 

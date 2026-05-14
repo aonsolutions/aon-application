@@ -41,7 +41,7 @@ public class PdfMaker {
 	public static void printInvoice(OutputStream out, CompanyFull company, InvoiceCommunicationConfiguration icc, Invoice invoice, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) {
 		try {
 			InvoiceTemplateContext context = new InvoiceTemplateContext(company, AonCollectionUtils.toList(invoice), config, qrUrl, logo, tbaiId);
-			context.setAdministration(icc.getAdministration());
+			context.setAdministration(icc.getAdministration().orElse(null));
 			InvoiceTemplate template = new InvoiceTemplate(context);
 			template.print(context, out);
 		} catch (CanNotCreatePdfException e) {
@@ -52,7 +52,7 @@ public class PdfMaker {
 	public static void printInvoice(OutputStream out, CompanyFull company, InvoiceCommunicationConfiguration icc, List<Invoice> invoices, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) {
 		try {
 			InvoiceTemplateContext context = new InvoiceTemplateContext(company, invoices, config, qrUrl, logo, tbaiId);
-			context.setAdministration(icc.getAdministration());
+			context.setAdministration(icc.getAdministration().orElse(null));
 			InvoiceTemplate template = new InvoiceTemplate(context);
 			template.print(context, out);
 		} catch (CanNotCreatePdfException e) {

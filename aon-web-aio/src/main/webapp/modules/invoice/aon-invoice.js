@@ -31,7 +31,7 @@ import { addCounter, transferCounter } from './InvoiceCounter.js';
 import { createDate, createEmail, createInput, createNumber, createSelect, createSuggestion, createTextarea } from '../../components/CreateComponent.js';
 import { getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrashPendingFromOption } from './InvoiceUtils.js';
 import { BankAccount } from '../registry/bank/BankAccount.js';
-import { InvoiceCommunicationConfiguration } from '../../models/InvoiceCommunicationConfiguration.js';
+import { getCommunicationStatusColor, getCommunicationStatusLabel, getCommunicationTypeLabel, InvoiceCommunicationConfig } from '../../models/InvoiceCommunicationConfig.js';
 import { AonInvoiceCommunication } from './aon-invoice-communication.js';
 
 import * as GWT from '../../gwt/gwt.js';
@@ -97,7 +97,7 @@ export class AonInvoice extends AonElement {
 
 	async connectedCallback() {
 		this.configuration = await getApiConfiguration();
-		this.icc = new InvoiceCommunicationConfiguration(this.configuration.communication);
+		this.icc = new InvoiceCommunicationConfig(this.configuration.communication);
 
 		this.initialize();
 		this.initializeFunctions();
@@ -321,13 +321,6 @@ export class AonInvoice extends AonElement {
 				this.showMessageError("La configuración de facturación no está completa. Por favor, revise la configuración.");
 				return false;
 			}
-
-			if (!this.icc.getAdministration().isUnknown() && (this.icc.hasCommunication() || this.icc.willBeCommunication() || this.icc.isNoSif())) {
-				return true;
-			} else {
-				this.showMessageError("La configuración de facturación no está completa. Es obligatorio selecionar una administración para la comunicación electrónica de facturas.");
-				return false;
-			}
 		}
 		return true;
 	}
@@ -539,7 +532,10 @@ export class AonInvoice extends AonElement {
 		}
 
 		if (this.showRejected()) invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
-		if (this.showDelete()) invoiceToolbar.addButton2(ACTION.DELETE, () => this.getInvoice().isPending() ? this.trashPendingInvoice() : this.trashInvoice());
+		
+		if (this.showDelete()) invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
+		if (this.showAnnulled()) invoiceToolbar.addButton2(ACTION.CANCEL_INVOICE, () => this.cancelInvoice());
+
 		if (this.showDeleteForever()) invoiceToolbar.addButton2(ACTION.DELETE_FOREVER, () => this.removeInvoice());
 		if (this.showRestore()) invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 		if (this.showAccept()) invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
@@ -570,7 +566,11 @@ export class AonInvoice extends AonElement {
 
 	showDelete() {
 		return !this.getInvoice().isFeeSource()
-			&& (this.getInvoice().isRejected() || this.getInvoice().isInbox() || this.getInvoice().isPending());
+			&& !this.getInvoice().isCommunicated()
+			&& (this.getInvoice().isRejected() || this.getInvoice().isInbox());
+	}
+	showAnnulled() {
+		return !this.getInvoice().isRawdoc() && this.getInvoice().isPending();
 	}
 
 	showDeleteForever() {
@@ -589,16 +589,18 @@ export class AonInvoice extends AonElement {
 	}
 
 	buildCommunicationToolbar(invoiceToolbar) {
-		if (this.icc.isVerifactuTest()) {
-			let vaction = {
-				id: 'Communication_verifactu_test',
-				name: "VERIFACTUENTORNOTEST",
-				title: "VERIFACTU ENTORNO TEST",
-				icon: MATERIAL_ICONS.WARNING
-			};
-			let vtb = invoiceToolbar.addButtonTitle(vaction, () => window.alert("VERIFACTU ENTORNO TEST"));
-			vtb.getButton().style.color = "red";
-		}
+		this.icc.data
+            .filter(ed => ed.test  )
+			.forEach(ed => {
+				let vaction = {
+					id: `CommunicationTest${ed.name}`,
+					name: `ENTORNOTEST${ed.name}`,
+					title: `${ed.name} ENTORNO TEST`,
+					icon: MATERIAL_ICONS.WARNING
+				};
+				let vtb = invoiceToolbar.addButtonTitle(vaction, () => window.alert(`${ed.name} ENTORNO TEST`));
+				vtb.getButton().style.color = "red";
+			});
 
 		if (this.hasCommunicationInfo()) {
 			let ci = this.getInvoice().communicationInfo;
@@ -607,39 +609,24 @@ export class AonInvoice extends AonElement {
 				let key = keys[i];
 				let communicationStatus = ci[key].communicationStatus;
 				let checkURL = ci[key].checkUrl;
-				let fn = (checkURL)
-					? () => open(checkURL)
-					: undefined;
+				let title = getCommunicationTypeLabel(key) + " " + getCommunicationStatusLabel(key, communicationStatus);
+				let fn = undefined;
+				if (checkURL) {
+					title = ` Comprobar (${title})`;
+					fn = () => open(checkURL);
+				}
 				let action = {
 					id: 'Communication_' + key,
-					name: key + " " + this.getCommunicationStatusLabel(communicationStatus),
-					title: key + " " + this.getCommunicationStatusLabel(communicationStatus),
+					name: title,
+					title: title,
 					icon: MATERIAL_ICONS.QR_CODE_2
 				};
 				let aib = invoiceToolbar.addButtonTitle(action, fn);
 				if (aib && communicationStatus) {
-					aib.getButton().style.color = this.getCommunicationStatusColor(communicationStatus);
+					aib.getButton().style.color = getCommunicationStatusColor(key, communicationStatus);
 				}
 			}
 		}
-	}
-
-	getCommunicationStatusLabel(status) {
-		if ("PENDING" === status) return "Pendiente";
-		else if ("ACCEPTED" === status) return "Aceptada";
-		else if ("ACCEPTED_WITH_ERRORS" === status) return "Aceptada con errores";
-		else if ("EXTERNALLY_COMMUNICATED" === status) return "Com. Externamente";
-		else if ("WRONG" === status) return "Incorrecta";
-		else return "Sin Estado";
-	}
-
-	getCommunicationStatusColor(status) {
-		if ("PENDING" === status) return "orange";
-		else if ("ACCEPTED" === status) return "green";
-		else if ("ACCEPTED_WITH_ERRORS" === status) return "yellow";
-		else if ("EXTERNALLY_COMMUNICATED" === status) return "blue";
-		else if ("WRONG" === status) return "red"
-		else return "gray";
 	}
 
 	buildContent() {
@@ -667,7 +654,7 @@ export class AonInvoice extends AonElement {
 
 	hasCommunicationInfo() {
 		return this.getInvoice()
-			&& this.icc.hasCommunicationByType(this.getInvoice().type)
+			//&& this.icc.hasCommunication(this.getInvoice().isEmitida(), this.getInvoice().date ) 
 			&& this.getInvoice().communicationInfo
 			&& Object.keys(this.getInvoice().communicationInfo).length > 0;
 	}
@@ -2816,59 +2803,59 @@ export class AonInvoice extends AonElement {
 		if (!ok) return;
 
 		if (!this.isInvofoxInvoice() && this.getInvoice().isEmitida()) this.getInvoice().setReference(undefined);
-		if (this.invoice.isEmitida() && this.icc.hasCommunication() && !this.icc.isSif() && !this.icc.isNoVerifactu()) {
+		let atDate = new Date();
+		if (this.invoice.isEmitida() && this.icc.needCertificate(true, atDate)) {
 			let d = this.getApplication().getDialog();
 			d.clear();
 			if (!this.isMobile()) d.width = '400px';
 			d.setTitle(MSG.ACCEPT);
 
-			if (this.icc.isTbai() || this.icc.isLroe() || this.icc.isVerifactu() || this.icc.isSii()) {
-				let certSelect = createSelect("cert", "Certificado");
-				getAeatCertificates().then(certs => {
-					certSelect.setOptions(certs.map(s => {
-						return {
-							value: s.id,
-							name: s.name
+			let certSelect = createSelect("cert", "Certificado");
+			getAeatCertificates().then(certs => {
+				certSelect.setOptions(certs.map(s => {
+					return {
+						value: s.id,
+						name: s.name
+					}
+				}));
+			});
+			d.setContent(certSelect);
+			d.addAcceptAction(() => {
+				this.getApplication().startLoader();
+				this.accept = false;
+				let data = this.getInvoice();
+				data.cert = certSelect.value;
+				data.messages = undefined;
+				acceptInvoice(data).then(r => {
+					this.updateCounter(this.getAcceptFromOption(), this.getAcceptToOption(), 1);
+					this.invoice = new Invoice(r);
+					this.getApplication().stopLoader();
+					this.reload();
+				}).catch(e => {
+					this.accept = true;
+					this.getApplication().stopLoader();
+					// this.showError(e)
+					if (typeof e === "string") {
+						try {
+							e = JSON.parse(e);
+						} catch (err) {
+							console.error("No es un JSON válido:", err);
+							return;
 						}
-					}));
-				});
-				d.setContent(certSelect);
-				d.addAcceptAction(() => {
-					this.getApplication().startLoader();
-					this.accept = false;
-					let data = this.getInvoice();
-					data.cert = certSelect.value;
-					data.messages = undefined;
-					acceptInvoice(data).then(r => {
-						this.updateCounter(this.getAcceptFromOption(), this.getAcceptToOption(), 1);
-						this.invoice = new Invoice(r);
-						this.getApplication().stopLoader();
-						this.reload();
-					}).catch(e => {
-						this.accept = true;
-						this.getApplication().stopLoader();
-						// this.showError(e)
-						if (typeof e === "string") {
-							try {
-								e = JSON.parse(e);
-							} catch (err) {
-								console.error("No es un JSON válido:", err);
-								return;
-							}
-						}
-						if (e && e.messages) {
-							if (this.invoice.messages) {
-								this.invoice.messages.push(...e.messages);
-							} else {
-								this.invoice.messages = e.messages;
-							}
-							this.reload();
+					}
+					if (e && e.messages) {
+						if (this.invoice.messages) {
+							this.invoice.messages.push(...e.messages);
 						} else {
-							this.showError(e);
+							this.invoice.messages = e.messages;
 						}
-					});
+						this.reload();
+					} else {
+						this.showError(e);
+					}
 				});
-			}
+			});
+			
 			d.open();
 		} else if (this.accept) {
 			this.getApplication().startLoader();
@@ -3488,6 +3475,76 @@ export class AonInvoice extends AonElement {
 		else if (this.getInvoice().isEmitida()) return OPTION.PROFORMA_INVOICES;
 		else if (this.getInvoice().isTicket()) return OPTION.RAWDOC_INBOX_TICKET_NEW;
 		else return OPTION.RAWDOC_INBOX_RECEIVED_NEW;
+	}
+
+	cancelInvoice() {
+		let dialog = this.getApplication().getDialog();
+		dialog.clear();
+		if (!this.isMobile()) dialog.width = '400px';
+		dialog.setTitle("Anular factura");
+
+		let content = this.createDiv();
+		dialog.setContent(content);
+
+		let atDate = new Date();	// TODO Invoice.ExpDate!!
+
+		let aviso = this.createDiv();
+		aviso.style.marginTop = '10px';
+		aviso.style.width = '90%';
+		aviso.style.marginLeft = 'auto';
+		aviso.style.marginRight = 'auto';
+		aviso.style.border = 'solid gray 1px';
+		aviso.style.padding = '10px';
+		aviso.style.fontWeight = 'bold';
+		aviso.style.backgroundColor = 'LightPink';
+		aviso.style.textAlign = 'center';
+		
+		let wrnMsg1  = this.createSpan();
+		wrnMsg1.innerText = "Al anular no se podrá reutilizar el número de factura.";
+		aviso.appendChild(wrnMsg1);
+		let wrnMsg2  = this.createSpan();
+		wrnMsg2.innerText = "El número de la factura anulada se mantiene en el registro.";
+		aviso.appendChild(wrnMsg2);
+		let wrnMsg3  = this.createSpan();
+		wrnMsg3.innerText = "(Este número no se recicla ni desaparece)";
+		aviso.appendChild(wrnMsg3);
+
+		content.appendChild(aviso);
+
+		if (this.icc.needCertificate(true, atDate)) {
+			let certDiv  = this.createDiv();
+			certDiv.style.marginTop = '10px';
+			let data = { id: this.getInvoice().id };
+			let certSelect = createSelect("cert", "Certificado");
+			getAeatCertificates().then(certs => {
+				certSelect.setOptions(certs.map(s => {
+					return {
+						value: s.id,
+						name: s.name
+					}
+				}));
+			});
+			certSelect.addEventListener(EVENT.SELECT, () => {
+				dialog.getButtonAccept().disabled = !certSelect.value;
+			});
+
+			certDiv.appendChild(certSelect);
+			content.appendChild(certDiv);
+			dialog.addAcceptAction(() => {
+				this.getApplication().startLoader();
+				let data = this.getInvoice();
+				data.cert = certSelect.value;
+				this.deleteInvoice( data );
+			});
+			dialog.getButtonAccept().disabled = true;
+		} else {
+			dialog.addAcceptAction(() => {
+				this.getApplication().startLoader();
+				let data = this.getInvoice();
+				this.deleteInvoice( data );
+			});
+		}
+		dialog.open();
 	}
 
 	trashPendingInvoice() {

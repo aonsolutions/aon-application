@@ -59,6 +59,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
@@ -72,6 +73,7 @@ import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.ExemptType;
 import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.MaritalStatus;
@@ -81,6 +83,7 @@ import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.ICCDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceJSONUtils;
@@ -110,13 +113,15 @@ import net.aonsolutions.aon.in.pdf.maker.PdfMaker;
 import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
 import net.aonsolutions.aon.sign.PdfSigner;
 import net.aonsolutions.aon.sii.SIIManager;
-import net.aonsolutions.aon.tbai.CRC8;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
 
 @WebServlet(name = "AonInvoiceServlet", urlPatterns = {"/ms/api/invoice/*"})
 public class InvoiceServlet extends AonApiHttpServlet{
 		
+	private static final String EDIT = "edit";
+	private static final String DISABLE = "disable";
+	private static final String ENABLE = "enable";
 	private static final long serialVersionUID = 7805502763869318228L;
 	private static final Logger LOGGER  = Logger.getLogger(InvoiceServlet.class.getName());
 	
@@ -143,6 +148,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				break;
 			case "/configuration":
 				response(req, resp, getConfiguration(api));
+				break;
+			case "/communication_configuration":
+				response(req, resp, getInvoiceCommunicationConfiguration(api));
 				break;
 			case "/api_configuration":
 				response(req, resp, getApiConfiguration(api));
@@ -182,6 +190,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			case "/fix":
 				response(req, resp, fix(api));
 				break;
+			case "/updateICC":
+				response(req, resp, updateICC(api));
+				break;			
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -343,7 +354,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			// [START]
 			// Cuando se grabe en invoice_info la información de los envios de ARABA y GIPUZKOA, el siguiente código debe borrarse.
 			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx,domainId);
-			if (!icc.isBizkaia() && icc.isTbai()) {
+			if (icc.isTbai()) {
 				Map<InvoiceCommunicationType, InvoiceCommunicationHistoryMapValue> history = InvoiceCommunicator.history(ctx, icc, invoice );
 				AonCollectionUtils.stream(history)
 				.filter(e -> !invoice.hasInvoiceInfo(e.getKey()))
@@ -830,9 +841,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	
 	private JSONObject saveInvoiceCommunicationConfiguration(AonApiData api, JSONObject json) {
 		return InvoiceCommunicationConfigurationJSON.from(json)
-			.map(icc -> AON.saveInvoiceCommunicationConfiguration(api.getOccam(), api.getDomain().getId(), icc))
+//			.map(icc -> AON.saveInvoiceCommunicationConfiguration(api.getOccam(), api.getDomain().getId(), icc))
 			.flatMap(InvoiceCommunicationConfigurationJSON::to)
-			.orElse(null);
+			.orElse(null)
+			;
 	}
 
 	private static RawdocStatus getRawdocStatus(String status) {
@@ -848,23 +860,23 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		checkRegistry(invoice);
 	}
 	
-	private static void checkTbaiId(Company company, Invoice invoice, String tbaiId) throws Exception {
-		if(AonStringUtils.isBlank(tbaiId)) throw new Exception("El Identificador TicketBai está vacío.");
-		if(tbaiId.length() != 39) throw new Exception("El Tamaño del Identificador TicketBai no es correcto.");
-		String[] arr = tbaiId.split("-");
-		if(arr.length != 5) throw new Exception("El Formato del Identificador TicketBai no es correcto."); 
-		
-		if(!arr[0].equalsIgnoreCase("TBAI")) throw new Exception("El Identificador TicketBai no es correcto.");
-		if(!arr[1].equalsIgnoreCase(company.getDocument())) throw new Exception("El Emisor del Identificador TicketBai no coincide con el Documento del Emisor.");		
-		
-		Integer l = tbaiId.length() - 3;
-		String t = tbaiId.substring(0, l);
-		String c = tbaiId.substring(l);
-		String crc = CRC8.calculate(t);
-		if(!crc.equals(c)) {
-			throw new Exception("El Identificador TicketBai no es correcto.");
-		}
-	}
+//	private static void checkTbaiId(Company company, Invoice invoice, String tbaiId) throws Exception {
+//		if(AonStringUtils.isBlank(tbaiId)) throw new Exception("El Identificador TicketBai está vacío.");
+//		if(tbaiId.length() != 39) throw new Exception("El Tamaño del Identificador TicketBai no es correcto.");
+//		String[] arr = tbaiId.split("-");
+//		if(arr.length != 5) throw new Exception("El Formato del Identificador TicketBai no es correcto."); 
+//		
+//		if(!arr[0].equalsIgnoreCase("TBAI")) throw new Exception("El Identificador TicketBai no es correcto.");
+//		if(!arr[1].equalsIgnoreCase(company.getDocument())) throw new Exception("El Emisor del Identificador TicketBai no coincide con el Documento del Emisor.");		
+//		
+//		Integer l = tbaiId.length() - 3;
+//		String t = tbaiId.substring(0, l);
+//		String c = tbaiId.substring(l);
+//		String crc = CRC8.calculate(t);
+//		if(!crc.equals(c)) {
+//			throw new Exception("El Identificador TicketBai no es correcto.");
+//		}
+//	}
 	
 	private static  void checkInvoice(Invoice invoice) throws Exception {
 		if(invoice.isRectifier() && AonStringUtils.isBlank(invoice.getSeries())) {
@@ -982,5 +994,84 @@ public class InvoiceServlet extends AonApiHttpServlet{
 //			;
 		}
 	}
+
+	// ------------------------------------------------------------------
+	// ---------------------------- [INVOICE COMMUNICATION CONFIGURATION] 
+	// ------------------------------------------------------------------
 	
+	private record ICCContext(Integer domain, String action, Administration administration, CommunicationData toChange) {}
+	private ICCContext getContext(AonApiData api) {
+		JSONObject data = api.getData();
+		Integer domain = api.getDomain().getId();
+		String action = JsonUtils.getString(data, IJsonNames.ACTION);
+		Administration administration = Administration.safeValueOf(JsonUtils.getString(data, IJsonNames.ADMINISTRATION));
+		String name = JsonUtils.getString(data, IJsonNames.NAME);
+		CommunicationData toChange = new CommunicationData()
+			.setId(JsonUtils.getInteger(data, IJsonNames.ID))
+			.setDomain(api.getDomain().getId())
+			.setAdministration(administration)
+			.setName(name)
+			.setStartDate(JsonUtils.getDate(data, IJsonNames.START_DATE))
+			.setEndDate(JsonUtils.getDate(data, IJsonNames.END_DATE))
+			.setExemptType(ExemptType.safeValueOf(JsonUtils.getString(data, IJsonNames.EXEMPT_TYPE)).orElse(null))
+		;
+		return new ICCContext(domain, action, administration, toChange);
+	}
+
+	private JSONObject updateICC(AonApiData api) {
+		ICCContext iccc = getContext(api);
+		if (iccc.toChange != null) {
+			if 		(AonStringUtils.equals(ENABLE,iccc.action)) return enableICC(api, iccc);
+			else if (AonStringUtils.equals(DISABLE,iccc.action)) return disableICC(api, iccc);
+			else if (AonStringUtils.equals(EDIT,iccc.action)) return editICC(api, iccc);
+		}
+		throw new AonApiException("Acci\u00F3n incorrecta para la modificaci\u00F3n de la configuraci\u00F3n: " + iccc.action);
+	}
+	
+	private JSONObject enableICC(AonApiData api, ICCContext iccc) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(api.getOccam())) {
+			switch (iccc.toChange.getDataName()) {
+				case ICC_SII:			ICCDAO.enableSii(ctx, iccc.domain, iccc.toChange); break;
+				case ICC_TBAI:			ICCDAO.enableTbai(ctx, iccc.domain, iccc.toChange); break;
+				case ICC_LROE:			ICCDAO.enableLroe(ctx, iccc.domain, iccc.toChange); break;
+				case ICC_VERIFACTU:		ICCDAO.enableVerifactu(ctx, iccc.domain, iccc.toChange); break;
+				case ICC_NO_VERIFACTU:	ICCDAO.enableNoVerifactu(ctx, iccc.domain, iccc.toChange); break;
+				case ICC_NO_SIF:		ICCDAO.enableNoSif(ctx, iccc.domain, iccc.toChange); break;
+				case ICC_SIF:			ICCDAO.enableSif(ctx, iccc.domain, iccc.toChange); break;
+				default:				throw new AonApiException("Valor incorrecto para el tipo de comunica\00F3n: " + iccc.toChange.getDataName());
+			}
+		}
+		return getInvoiceCommunicationConfiguration(api);
+	}
+	
+	private JSONObject disableICC(AonApiData api, ICCContext iccc) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(api.getOccam())) {
+			switch (iccc.toChange.getDataName()) {
+				case ICC_SII:			ICCDAO.disableSii(ctx, iccc.domain, iccc.toChange); break;
+				case ICC_TBAI:			ICCDAO.disableTbai(ctx, iccc.domain, iccc.toChange); break;
+				case ICC_LROE:			ICCDAO.disableLroe(ctx, iccc.domain, iccc.toChange); break;
+				case ICC_VERIFACTU:		ICCDAO.disableVerifactu(ctx, iccc.domain, iccc.toChange); break;
+				case ICC_NO_VERIFACTU:	ICCDAO.disableNoVerifactu(ctx, iccc.domain, iccc.toChange); break;
+				case ICC_SIF:			ICCDAO.disableSif(ctx, iccc.domain, iccc.toChange); break;
+				default:				throw new AonApiException("Valor incorrecto para el tipo de comunica\00F3n: " + iccc.toChange.getDataName());
+			}
+		}
+		return getInvoiceCommunicationConfiguration(api);
+	}
+	
+	private JSONObject editICC(AonApiData api, ICCContext iccc) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(api.getOccam())) {
+			switch (iccc.toChange.getDataName()) {
+				case ICC_SII:			ICCDAO.editSii(ctx, iccc.domain, iccc.administration, iccc.toChange); break;
+				case ICC_TBAI:			ICCDAO.editTbai(ctx, iccc.domain, iccc.administration, iccc.toChange); break;
+				case ICC_LROE:			ICCDAO.editLroe(ctx, iccc.domain, iccc.administration, iccc.toChange); break;
+				case ICC_VERIFACTU:		ICCDAO.editVerifactu(ctx, iccc.domain, iccc.administration, iccc.toChange); break;
+				case ICC_NO_VERIFACTU:	ICCDAO.editNoVerifactu(ctx, iccc.domain, iccc.administration, iccc.toChange); break;
+				case ICC_SIF:			ICCDAO.editSif(ctx, iccc.domain, iccc.administration, iccc.toChange); break;
+				default:				throw new AonApiException("Valor incorrecto para el tipo de comunica\00F3n: " + iccc.toChange.getDataName());
+			}
+		}
+		return getInvoiceCommunicationConfiguration(api);
+	}
+
 }

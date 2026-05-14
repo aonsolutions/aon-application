@@ -14,6 +14,14 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.concurrent.ThreadLocalRandom;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -25,8 +33,16 @@ import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductKind;
+import com.esferalia.aon.occam.api.model.product.ProductStatus;
+import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -35,12 +51,15 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.SSRegimeType;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
@@ -51,10 +70,14 @@ import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DefaultsDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.IAEDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TaxDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 class TestDomainProvider {
@@ -252,13 +275,13 @@ class TestDomainProvider {
 		ctx.log().info("Perfil de usuario en la aplicación insertada correctamente");
 
 		ctx.getDslContext().insertInto(WORKPLACE)
-		.set(WORKPLACE.DOMAIN, newDomainId)
-		.set(WORKPLACE.DESCRIPTION, "DEFAULT")
-		.set(WORKPLACE.ADDRESS, address.getId())
-		.set(WORKPLACE.ENTERPRISE, companyFull.getRegistry().getId())
-		.set(WORKPLACE.SCOPE, newScopeId)
-		.set(WORKPLACE.ECONOMICAGREEMENT, Administration.COMMON_TERRITORY.value())
-		.execute();
+			.set(WORKPLACE.DOMAIN, newDomainId)
+			.set(WORKPLACE.DESCRIPTION, "DEFAULT")
+			.set(WORKPLACE.ADDRESS, address.getId())
+			.set(WORKPLACE.ENTERPRISE, companyFull.getRegistry().getId())
+			.set(WORKPLACE.SCOPE, newScopeId)
+			.set(WORKPLACE.ECONOMICAGREEMENT, Administration.COMMON_TERRITORY.value())
+			.execute();
 		ctx.log().info("Workplace insertada correctamente");
 		
 		return domain;
@@ -343,7 +366,10 @@ class TestDomainProvider {
 		
 		TestDomainDefaults.insertAccounts(context, domain);
 		TestDomainDefaults.insertTaxes( context, domain );		
+		insertProducts( context, domain );
 		insertCustomers( context, domain );
+		loadCustomers( context, domain );
+		insertCustomerFees( context, domain );
 		env.initializeDomain(context);
 	}
 
@@ -352,6 +378,43 @@ class TestDomainProvider {
 		return g == null ? null : g.getId();
 	}
 	
+	private static void insertProducts(AONContext ctx, Domain domain) {
+		Tax tax = TaxDAO.stream(ctx, domain.getId())
+			.filter( t -> AonNumberUtils.equals(21, t.getPercentage()))
+			.findFirst()
+			.orElse(null);
+		AonCollectionUtils.stream( 20).forEach( i -> insertProduct(ctx, domain, tax, i + 1));
+		AonCollectionUtils.stream( 20).forEach( i -> insertPrepayment(ctx, domain, tax, i + 1));
+	}
+	
+	private static void insertProduct(AONContext ctx, Domain domain, Tax tax, int i) {
+		insertProduct(ctx, domain, tax, i, String.format("PRO_%03d", i), ProductType.COMMERCIAL_PRODUCT);
+	}
+	private static void insertPrepayment(AONContext ctx, Domain domain, Tax tax, int i) {
+		insertProduct(ctx, domain, tax, i, String.format("SUP_%03d", i), ProductType.PREPAYMENT);
+	}
+	
+	private static void insertProduct(AONContext ctx, Domain domain, Tax tax, int i, String code, ProductType type) {
+		Product product = new Product()
+			.setDomain(domain)
+			.setName("PRODUCTO DE PRUEBAS " + code)
+			.setCode(code)
+			.setStatus(ProductStatus.ACTIVE)
+			.setType(type)
+			.setKind(ProductKind.SALE_PURCHASE)
+			.setVat(tax)
+		;
+		Item item = new Item();
+		item
+			.setDomain(domain)
+			.setProduct(product)
+			.setDescription("PRODUCTO DE PRUEBAS " + code)
+			.setStatus(ProductStatus.ACTIVE)
+			.setPrice(100.0 + i)
+		;
+		ItemDAO.save(ctx, item);
+	}
+
 	private static void insertCustomers(AONContext ctx, Domain domain) {
 		CustomerFull cB98351984 = new CustomerFull();
 		cB98351984
@@ -511,4 +574,113 @@ class TestDomainProvider {
 		CustomerDAO.save(ctx, cX1485566L);
 	}
 
+	private static void insertCustomerFees(AONContext context, Domain domain) {
+		Integer workplaceId = context.getDslContext()
+			.select(WORKPLACE.ID)
+			.from(WORKPLACE)
+			.where(WORKPLACE.DOMAIN.eq(domain.getId()))
+			.limit(1)
+			.fetchOneInto(Integer.class);
+		HashSet<String> nifs = new HashSet<>();
+		AonCollectionUtils.stream(ThreadLocalRandom.current().nextInt(50, 250))
+			.mapToObj( i -> CustomerDAO.getRandom(context, f -> f.getDomainProperty().eq(domain.getId())) )
+			.filter( customer -> {
+				String doc = customer.getDocument();
+				if ( nifs.contains( doc ) ) {
+					return false;
+				} else {
+					nifs.add( doc );
+					return true;
+				}
+			})
+			.forEach( customer -> {
+				AonCollectionUtils.stream(ThreadLocalRandom.current().nextInt(1, 6))
+					.forEach( i -> {
+						Fee fee = new Fee().setCustomer( customer ).setDomain( domain );
+						Date start = AonDateUtils.getMonthFirstDay(AonDateUtils.today());
+						Item item = ItemDAO.getRandom( context, f -> 
+							f.getDomainProperty().eq(domain.getId())
+								.and( f.getProductTypeProperty().eq( ProductType.COMMERCIAL_PRODUCT.value()) )
+						);
+						if (item != null) {
+							fee.setItem( new OldItem().setId( item.getId() ) )
+								.setDescription( "CUOTA " + item.getDescription() )
+								.setQuantity( 1.0 )
+								.setPrice( item.getPrice() )
+								.setStartDate( start )
+								.setBillingDate( start )
+								.setPeriod( BillingPeriod.MONTHLY )
+								.setSecurityLevel( SecurityLevel.OFFICIAL )
+								.setWorkplace( new Workplace().setId( workplaceId ) );
+							FeeDAO.save(context, fee);
+						}
+					});
+			});
+	}
+	
+	private static void loadCustomers(AONContext ctx, Domain domain) {
+		try {
+			ctx.log().info("Cargando resto de clientes");
+			InputStream input = TestDomainProvider.class.getResourceAsStream("customers.csv");
+			InputStreamReader isr = new InputStreamReader(input, StandardCharsets.ISO_8859_1);
+			LineNumberReader reader = new LineNumberReader(isr);
+			while (reader.ready()) {
+				String line = reader.readLine();
+				String[] parts = AonStringUtils.splitPreserveAllTokens(line,'|');
+				String doc = parts[0];
+				String[] docParts = AonStringUtils.splitPreserveAllTokens(doc,'/');
+				String documentType = docParts[0];
+				DocumentType dt = DocumentType.safeValueOf(documentType);
+				String documentCountry = docParts[1];
+				Country dc = Country.safeValueOf(documentCountry);
+				String document = docParts[2];
+				if ("B95767604".equals(document)) {
+					System.out.println( document );
+				}
+				String name = parts[1];
+				String nationality = parts[2];
+				Country nat = Country.safeValueOf(nationality);
+				
+				
+				
+				String address = parts[3];
+				String streetType = AonStringUtils.substring(address, 0,2);
+				String adr = AonStringUtils.substring(address, 2);
+				StreetType st = StreetType.safeValueOf(streetType);
+				String city = parts[4];
+				String zip = parts[5];
+				String geozone = parts[6];
+				Integer geozoneId = getGeozoneId(ctx,geozone);
+				
+				CustomerFull cf = new CustomerFull();
+				cf.setRegistry(
+					new Customer().copy(
+						new Registry()
+							.setDomain(domain)
+							.setDocument(document)
+							.setDocumentType(dt)
+							.setDocumentCountry(dc)
+							.setNationality(nat)
+							.setName(name)))
+					.addAddress(
+						new RegistryAddress()
+							.setMain(true)
+							.setStreetType(st)
+							.setAddress(adr)
+							.setZip(zip)
+							.setCity(city)
+							.setGeozone(getGeozoneId(ctx, geozone)));
+				CustomerDAO.save(ctx, cf);
+			}
+			ctx.log().info("Fin carga de clientes");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+		
 }
+
+
+
+
+

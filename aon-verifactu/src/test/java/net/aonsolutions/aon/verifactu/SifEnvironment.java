@@ -1,6 +1,5 @@
 package net.aonsolutions.aon.verifactu;
 
-import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -11,11 +10,13 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.payroll.Enterprise;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.impl.jooq.dao.EnterpriseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ICCDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -55,26 +56,25 @@ final class SifEnvironment extends VerifactuEnvironmentAbs {
 	}
 
 	public void initializeDomain(AONContext ctx) {
-		Date today = new Date();
-		Date yesterday = AonDateUtils.addDays(today, -1);
-		
 		Enterprise enterprise = EnterpriseDAO.get( ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
-		ctx.getDslContext().insertInto(ENTERPRISE_DATA)
-			.set(ENTERPRISE_DATA.DOMAIN, ctx.getDomainId())
-			.set(ENTERPRISE_DATA.ENTERPRISE, enterprise.getId() )
-			.set(ENTERPRISE_DATA.NAME, EnterpriseDataNames.ICC_SIF.name() )
-			.set(ENTERPRISE_DATA.EXPRESSION, "test" )
-			.set(ENTERPRISE_DATA.START_DATE,  AonDateUtils.toSql(yesterday))
-			.execute();
-		ctx.log().info("Enterprise Data: ICC_SIF set to TRUE / TEST");
-		
-		ctx.getDslContext().insertInto(ENTERPRISE_DATA)
-			.set(ENTERPRISE_DATA.DOMAIN, ctx.getDomainId())
-			.set(ENTERPRISE_DATA.ENTERPRISE, enterprise.getId() )
-			.set(ENTERPRISE_DATA.NAME, EnterpriseDataNames.ICC_ADMINISTRATION.name() )
-			.set(ENTERPRISE_DATA.EXPRESSION, Administration.NAVARRA.name() )
-			.set(ENTERPRISE_DATA.START_DATE,  AonDateUtils.toSql(yesterday))
-			.execute();
-		ctx.log().info("Enterprise Data: ICC_ADMINISTRATION set to COMMON_TERRITORY");
+		CommunicationData cd = new CommunicationData()
+			.setDomain(ctx.getDomainId())
+			.setEnterprise(enterprise.getId())
+			.setDataName(EnterpriseDataNames.ICC_SIF)
+			.setStartDate(AonDateUtils.yesterday())
+			.setTest(true)
+			.setAdministration(Administration.NAVARRA)
+		;
+		ICCDAO.enableSif(ctx, ctx.getDomainId(), cd);
+		ctx.log().info("SIF ENABLED! ( NAVARRA / TEST)");
+	}
+
+	@Override
+	public CommunicationData getEnablerData( InvoiceCommunicationConfiguration config ) {
+		return getEnablerData(config, new Date());
+	}
+	@Override
+	public CommunicationData getEnablerData(InvoiceCommunicationConfiguration config, Date atDate) {
+		return config.getSifData( atDate ).orElse(null);
 	}
 }

@@ -784,6 +784,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconAeatBw();
 
+	@Source("icons/aon-icon-aeat-light-green.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconAeatLightGreen();
+
 	@Source("icons/aon-icon-aeat-green.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconAeatGreen();
@@ -803,6 +807,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-aeat-blue.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconAeatBlue();
+
+	@Source("icons/aon-icon-no-sif.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconNoSif();
 
 	@Source("icons/aon-icon-sif.svg")
 	@MimeType("image/svg+xml")

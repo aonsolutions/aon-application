@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
@@ -63,11 +64,11 @@ class VerifactuValidationAltaTest extends AbstractVerifactuTest {
 		invoice.setReferenceCode(VerifactuTestsUtils.referenceCode(invoice));
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
 		InvoiceCommunicatorContext icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
-		VerifactuContext vc = new VerifactuContext(icc);
+		VerifactuContext vc = new VerifactuContext(icc, getEnvironment().getEnablerData(icc.getConfig()));
 		if (completeIcc != null) {
 			completeIcc.complete(icc);
 		}
-		RegFactuSistemaFacturacion fras = Invoice2Verifactu.build(vc);
+		RegFactuSistemaFacturacion fras = Invoice2Verifactu.build(getEnvironment().getCtx(), InvoiceCommunicationType.VERIFACTU,vc, EMPTY_VERIFACTU_PHASE_LISTENER);
 		RegistroFacturaType fraType = fras.getRegistroFactura().get(0);
 		RegistroFacturacionAltaType alta = fraType.getRegistroAlta();
 		DetalleType firstDet = alta.getDesglose().getDetalleDesglose().get(0);

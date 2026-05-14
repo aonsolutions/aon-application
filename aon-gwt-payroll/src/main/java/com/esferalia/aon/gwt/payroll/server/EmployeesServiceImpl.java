@@ -203,6 +203,7 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Settle;
@@ -7639,7 +7640,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 	
 	private String getEnterpriseAgreement(Domain domain, User user) {
-		LinkedList<EnterpriseData> enterpriseDataList = AON.getEnterpriseDataList(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
+		Occam occam = new Occam()
+			.setDomainName(domain.getName())
+			.setDomain(domain.getId())
+			.setUser(user.getLogin());
+		LinkedList<EnterpriseData> enterpriseDataList = AON.getEnterpriseDataList(occam, domain.getId());
+//		LinkedList<EnterpriseData> enterpriseDataList = AON.getEnterpriseDataList(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
 		Optional<EnterpriseData> enterpriseAgreementOpt = enterpriseDataList.stream().filter(data -> AonStringUtils.equalsIgnoreCase(data.getName(), "agreement")).findFirst();
 		
 		if(enterpriseAgreementOpt.isEmpty()) return "60888888888888";

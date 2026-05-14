@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Person;
+import com.esferalia.aon.occam.api.model.console.ConsoleLogger;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -21,10 +22,22 @@ public class InvoiceCommunicatorContext {
 	private Person person;
 	private DataResponse dataResponse;
 	private boolean preserveRawdocOnDeletion;
+	private boolean failOnWrongValidation = true;
 	private InvoiceCommunicationQuery communicationQuery;
+	private ConsoleLogger logger;
 	
-//	private boolean error;
-//	private String errorMessage;
+	private static final ConsoleLogger VOID_CONSOLE_LOOGER = new ConsoleLogger() {
+
+		@Override public void title(String id, String msg) {/* Nothing */}
+		@Override public void subtitle(String id, String msg) {/* Nothing */}
+		@Override public void ok(String id, String msg) {/* Nothing */}
+		@Override public void error(String id, String msg) {/* Nothing */}
+		@Override public void warning(String id, String msg) {/* Nothing */}
+		@Override public void message(String id, String msg) {/* Nothing */}
+		@Override public void progress(String id, int count, int progress, String msg) {/* Nothing */}
+		@Override public void progress(String id, int count, int progress) {/* Nothing */}
+		@Override public void mainProgress(String id, int count, int progress) {/* Nothing */}
+	};
 
 	public InvoiceCommunicatorContext(Domain domain,User user, Integer certificateId, List<Invoice> invoices) {
 		this.domain = domain;
@@ -44,7 +57,6 @@ public class InvoiceCommunicatorContext {
 	public Integer getCertificateId() {
 		return certificateId;
 	}
-	
 	public Stream<Invoice> invoiceStream() {
 		return AonCollectionUtils.stream(invoices);
 	}
@@ -105,20 +117,20 @@ public class InvoiceCommunicatorContext {
 		return this;
 	}
 
-//	public boolean isError() {
-//		return error;
-//	}
-//	public InvoiceCommunicatorContext setError(boolean error) {
-//		this.error = error;
-//		return this;
-//	}
-//
-//	public String getErrorMessage() {
-//		return errorMessage;
-//	}
-//	public InvoiceCommunicatorContext setErrorMessage(String errorMessage) {
-//		this.errorMessage = errorMessage;
-//		return this;
-//	}
+	public boolean isFailOnWrongValidation() {
+		return failOnWrongValidation;
+	}
+	public InvoiceCommunicatorContext setFailOnWrongValidation(boolean failOnWrongValidation) {
+		this.failOnWrongValidation = failOnWrongValidation;
+		return this;
+	}
+
+	public ConsoleLogger getLogger() {
+		return logger==null?VOID_CONSOLE_LOOGER:logger;
+	}
+	public InvoiceCommunicatorContext setLogger(ConsoleLogger logger) {
+		this.logger = logger;
+		return this;
+	}
 	
 }

@@ -15,6 +15,7 @@ import { AonReg } from "../registry/aon-reg.js";
 import * as GWT from '../../gwt/gwt.js';
 import { Registry } from "../../models/registry/Registry.js";
 import { AonInvoiceConfiguration } from "../invoice/aon-invoice-configuration.js";
+import { AonInvoiceCommunicationConfig } from "../invoice/aon-invoice-communication-config.js";
 import { AonConfigurationMenu } from './aon-configuration-menu.js';
 import { AonMessengerConfig } from "../messenger/aon-messenger-config.js";
 import { AonBooking } from '../marketplace/aon-booking.js';
@@ -208,6 +209,11 @@ export class AonConfiguration extends AonElement {
 					icon: MATERIAL_ICONS.MONITORING,
 					fn: () => this.buildInvoiceConfiguration(),
 				});
+				appOptions.push({
+					name: MSG.COMMUNICATIONS,
+					icon: MATERIAL_ICONS.COMMUNICATION,
+					fn: () => this.buildInvoiceCommunication(),
+				});
 			}
 
 			if (!this.getDur().isEmployee()) {
@@ -360,6 +366,10 @@ export class AonConfiguration extends AonElement {
 
 	buildInvoiceConfiguration() {
 		this.getApplication().setContent(new AonInvoiceConfiguration());
+	}
+
+	buildInvoiceCommunication() {
+		this.getApplication().setContent(new AonInvoiceCommunicationConfig());
 	}
 
 	buildMessengerConfiguration() {

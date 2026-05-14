@@ -11,6 +11,10 @@ export const saveInvoiceConfiguration = (data) =>  post(`${API_URL}/invoice/conf
 export const getPrintInvoiceConfiguration = (data) =>  get(`${API_URL}/invoice/print_configuration`, data);
 export const savePrintInvoiceConfiguration = (data) =>  post(`${API_URL}/invoice/print_configuration`, data);
 
+// INVOICE COMMUNICATION
+export const getInvoiceCommunicationConfig  = (data) =>  get(`${API_URL}/invoice/communication_configuration`, data);
+export const updateICC = (data) =>  post(`${API_URL}/invoice/updateICC`, data);
+
 // INVOICE
 export const getSalesSeries = (data) => get(`${API_URL}/invoice/series`, data)
 

@@ -2,12 +2,16 @@ import { AonBasicTable } from "../../components/aon-basic-table.js";
 import { AonIconButton } from "../../components/aon-icon-button.js";
 import { AonElement } from "../../components/AonElement.js";
 import { createCard, createSelect } from "../../components/CreateComponent.js";
-import { AON_ICONS, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
+import { AON_ICONS, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
+import { ADMINISTRATIONS } from "../../models/Administration.js";
+import { getCommunicationStatusColor, getCommunicationStatusLabel, getCommunicationTypeLabel, INVOICE_COMMUNICATION_TYPES, InvoiceCommunicationConfig, isCommunicationStatusOk } from "../../models/InvoiceCommunicationConfig.js";
 import { getAeatCertificates } from "../../services/documentalService.js";
-import { communicateInvoice, getCommunicationHistory } from "../../services/invoiceService.js";
+import { communicateInvoice, getCommunicationHistory, getInvoiceCommunicationConfig } from "../../services/invoiceService.js";
 
 export class AonInvoiceCommunication extends AonElement {
 
+    /** @type {InvoiceCommunicationConfig} */ 
+    icc;
     invoice; // Invoice id.
     CARD;
     TABLE;
@@ -23,15 +27,27 @@ export class AonInvoiceCommunication extends AonElement {
         this.CARD = this.id + "Card";
         this.TABLE = this.CARD + "Table";
         this.COMMUNICATION_TABLE = this.CARD + "CommunicationTable";
+        this.initializeConfiguration();
     }
 
     build() {
         let communicationDiv = this.createElement(TAG.DIV);
         communicationDiv.id = this.COMMUNICATION;
         communicationDiv.className = CSS.AON_BLOCK;
+        communicationDiv.style.width = "90%";
+        communicationDiv.style.marginLeft = "auto";
+        communicationDiv.style.marginRight = "auto";
         this.appendChild(communicationDiv);
         this.buildCommunicationCard(communicationDiv);
-
+    }
+    
+    async initializeConfiguration() {
+        this.icc = await getInvoiceCommunicationConfig();
+        if (this.icc) {
+            this.icc = this.icc instanceof InvoiceCommunicationConfig
+                ? this.icc
+                : new InvoiceCommunicationConfig(this.icc);
+        }
     }
 
     buildCommunicationCard(parent) {
@@ -59,54 +75,74 @@ export class AonInvoiceCommunication extends AonElement {
                     let key = keys[i];
 
                     let info = hist[key].communicationInfo;
-                    let ok = this.isCommunicationStatusOk(info.communicationType, info.communicationStatus);
+                    let ok = isCommunicationStatusOk(info.communicationType, info.communicationStatus);
 
                     table.addRow();
 
+                    // Administration or type
                     let typeButton = this.getCommunicationTypeIcon(info.communicationType);
                     typeButton.id = key + i + "button";
-                    if (info.checkUrl) {
-                        typeButton.title = "Comprobar";
-                        typeButton.addEventListener(EVENT.CLICK, () => open(info.checkUrl));
-                    } else {
-                        typeButton.style.cursor = "none";
-                    }
                     table.addCell(typeButton);
 
+                    // Type
                     let span1 = this.createElement(TAG.SPAN);
-                    span1.innerHTML = key;
+                    span1.innerHTML = getCommunicationTypeLabel(info.communicationType);
                     table.addCell(span1);
-
-                    let icon = this.createElement(TAG.I);
-                    icon.className = "material-icons";
-                    icon.title = this.getCommunicationStatusLabel(info.communicationType, info.communicationStatus);
-                    icon.style.color = this.getCommunicationStatusColor(info.communicationType, info.communicationStatus);
-                    icon.innerHTML = ok ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
-                    table.addCell(icon);
-
+                    
+                    // Status
+                    let statusSpan = this.createElement(TAG.SPAN);
+                    statusSpan.style.whiteSpace = "nowrap";
+                    statusSpan.style.display = "flex";
+                    statusSpan.style.alignItems = "center";
+                    let icon = this.getCommunicationStatusIcon(info.communicationType, info.communicationStatus);
+                    icon.style.marginRight = "5px";
+                    icon.style.width = "30px";
+                    statusSpan.appendChild(icon);
                     let span2 = this.createElement(TAG.SPAN);
-                    span2.innerHTML = this.getCommunicationStatusLabel(info.communicationType, info.communicationStatus);
-                    span2.style.color = this.getCommunicationStatusColor(info.communicationType, info.communicationStatus);
-                    table.addCell(span2);
+                    span2.innerHTML = getCommunicationStatusLabel(info.communicationType, info.communicationStatus);
+                    span2.style.color = getCommunicationStatusColor(info.communicationType, info.communicationStatus);
+                    statusSpan.appendChild(span2);
 
+                    table.addCell(statusSpan);
+
+                    // Audit
                     let infoDate = info.modification_date ?
-                        info.modification_date : info.creation_date;
-                    let span3 = this.createElement(TAG.SPAN);
-                    span3.innerHTML = infoDate ? this.formatDate(infoDate) : "";
-                    table.addCell(span3);
-
+                    info.modification_date : info.creation_date;
                     let infoUser = info.modification_user ?
                         info.modification_user : info.creation_user;
-                    let span4 = this.createElement(TAG.SPAN);
-                    span4.innerHTML = infoUser ? infoUser : "";
-                    table.addCell(span4);
+                    let infoText = (infoDate || infoUser) ? "Comunicada" : "";
+                    if (infoUser) infoText += (infoUser ? " por " + infoUser : "");
+                    if (infoDate) infoText += (infoText ? " el " + this.formatDate(infoDate) : "");
+                    let span3 = this.createElement(TAG.SPAN);
+                    span3.innerHTML = infoText;
+                    table.addCell(span3);
 
-                    if(!ok ) {
+                    // Check URL
+                    if (info.checkUrl) {
+                        let icon = this.createElement(TAG.I);
+                        icon.className = "material-icons";                        
+                        icon.innerHTML = MATERIAL_ICONS.QR_CODE_2;
+                        icon.id = key + i + "qrButton";
+                        icon.title = "Comprobar";
+                        icon.style.color = CONSTANT.GREEN;
+                        icon.style.cursor = "pointer";
+                        icon.addEventListener(EVENT.CLICK, () => open(info.checkUrl));
+                        table.addCell(icon);
+                    } else {
+                        let dummySpan = this.createElement(TAG.SPAN);
+                        table.addCell(dummySpan);
+                    }
+
+                    // Communicate button
+                    if (!ok ) {
                         let communicateButton = new AonIconButton();
                         communicateButton.icon = MATERIAL_ICONS.SEND;
                         communicateButton.title = "Comunicar";
                         communicateButton.addEventListener(EVENT.CLICK, () => this.communicateInvoice(info.communicationType));
                         table.addCell(communicateButton);
+                    } else {
+                        let dummySpan = this.createElement(TAG.SPAN);
+                        table.addCell(dummySpan);
                     }
 
                     let commHist = hist[key].communicationHistory;
@@ -121,7 +157,7 @@ export class AonInvoiceCommunication extends AonElement {
                         if (!histTable) {
                             histTable = new AonBasicTable();
                             histTable.id = this.COMMUNICATION_TABLE + "_" + key;
-                            table.addCell(histTable, "5");
+                            table.addCell(histTable, "6");
                         }
                         histTable.removeRows();
 
@@ -139,47 +175,52 @@ export class AonInvoiceCommunication extends AonElement {
     printCommunicationHistory(table, commHist, i) {
         table.addRow();
 
+        // Operation
         let span1 = this.createElement(TAG.SPAN);
         span1.innerHTML = commHist.operation;
         table.addCell(span1);
 
-        let icon = this.createElement(TAG.I);
-        icon.className = "material-icons";
-        icon.title = this.getCommunicationStatusLabel(commHist.type, commHist.status);
-        icon.style.color = this.getCommunicationStatusColor(commHist.type, commHist.status);
-        icon.innerHTML = commHist.ok ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
+        // Operation
+        let icon = this.getCommunicationStatusIcon(commHist.type, commHist.status);
         table.addCell(icon);
 
+        // Audit
+        let infoDate = commHist.date;
+        let infoUser = commHist.creation_user;
+        let infoText = (infoDate || infoUser) ? "Comunicada" : "";
+        if (infoUser) infoText += (infoUser ? " por " + infoUser : "");
+        if (infoDate) infoText += (infoText ? " el " + this.formatDate(infoDate) : "");
         let span2 = this.createElement(TAG.SPAN);
-        span2.innerHTML = commHist.date ? this.formatDate(commHist.date) : "";
+        span2.innerHTML = infoText;
         table.addCell(span2);
 
-        let span3 = this.createElement(TAG.SPAN);
-        span3.innerHTML = commHist.creation_user ? commHist.creation_user : "";
-        table.addCell(span3);
-
+        // Request download
         let requestDownload = new AonIconButton();
         requestDownload.title = "Descargar petición";
-        requestDownload.icon = MATERIAL_ICONS.FILE_DOWNLOAD;
+        requestDownload.icon = MATERIAL_ICONS.FILE_UPLOAD;
         requestDownload.addEventListener(EVENT.CLICK, () => {
             open(commHist.requestUrl, '_blank');
         });
-        table.addCell(requestDownload);
+        let td0 = table.addCell(requestDownload);
+        td0.style.width = "40px";
 
+        // Response download
         let responseDownload = new AonIconButton();
         responseDownload.icon = MATERIAL_ICONS.FILE_DOWNLOAD;
         responseDownload.title = "Descargar respuesta";
         responseDownload.addEventListener(EVENT.CLICK, () => {
             open(commHist.responseUrl, '_blank');
         });
-        table.addCell(responseDownload);
+        let td1 = table.addCell(responseDownload);
+        td1.style.width = "40px";
 
         if (commHist.responseMessages && commHist.responseMessages.length > 0) {
             let showErrors = new AonIconButton();
             showErrors.icon = MATERIAL_ICONS.CHAT_ERROR;
             showErrors.title = "Mostrar errores";
             showErrors.style.color = "red";
-            table.addCell(showErrors);
+            let td2 = table.addCell(showErrors);
+            td2.style.width = "40px";
 
             let historyRowNumber = table.addRow();
             let historyTr = table.getRow(historyRowNumber);
@@ -200,7 +241,7 @@ export class AonInvoiceCommunication extends AonElement {
                 li.appendChild(errSpan);
                 ul.appendChild(li);
             }
-            table.addCell(ul, "7");
+            table.addCell(ul, "6");
         } else {
             let dummySpan = this.createElement(TAG.SPAN);
             table.addCell(dummySpan);
@@ -222,25 +263,25 @@ export class AonInvoiceCommunication extends AonElement {
 
     getCommunicationTypeIcon(type) {
         let typeIconButton = new AonIconButton();
-        if ("SII" === type || "TBAI" === type) {
-            let administration = this.configuration ? this.configuration.administration : '';
-            if ("ALAVA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_ARABA;
-            else if ("BIZKAIA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_BIZKAIA;
-            else if ("GIPUZKOA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_GIPUZKOA;
-            else if ("NAVARRA" === administration) typeIconButton.aonIcon = AON_ICONS.AON_NAVARRA;
-            else if ("COMMON_TERRITORY" === administration) typeIconButton.aonIcon = AON_ICONS.AON_AEAT;
-            else if ("CANARIAS" === administration) typeIconButton.aonIcon = AON_ICONS.AON_CANARY;
-        } else if ("LROE" === type) {
+        let atDate = this.invoice ? this.invoice.date : new Date();
+        if (INVOICE_COMMUNICATION_TYPES.SII === type || INVOICE_COMMUNICATION_TYPES.TBAI === type) {
+            if (this.icc.isAlava(atDate)) typeIconButton.aonIcon = AON_ICONS.AON_ARABA;
+            else if (this.icc.isBizkaia(atDate)) typeIconButton.aonIcon = AON_ICONS.AON_BIZKAIA;
+            else if (this.icc.isGipuzkoa(atDate)) typeIconButton.aonIcon = AON_ICONS.AON_GIPUZKOA;
+            else if (this.icc.isNavarra(atDate)) typeIconButton.aonIcon = AON_ICONS.AON_NAVARRA;
+            else if (this.icc.isCommonTerritory(atDate)) typeIconButton.aonIcon = AON_ICONS.AON_AEAT;
+            else if (this.icc.isCanarias(atDate)) typeIconButton.aonIcon = AON_ICONS.AON_CANARY;
+        } else if (INVOICE_COMMUNICATION_TYPES.LROE === type) {
             typeIconButton.aonIcon = AON_ICONS.AON_BIZKAIA;
-        } else if ("SERES" === type) {
+        } else if (INVOICE_COMMUNICATION_TYPES.SERES === type) {
             typeIconButton.aonIcon = AON_ICONS.SERES;
-        } else if ("EMAIL" === type) {
+        } else if (INVOICE_COMMUNICATION_TYPES.EMAIL === type) {
             typeIconButton.icon = MATERIAL_ICONS.MAIL;
-        } else if ("CLOSING" === type) {
+        } else if (INVOICE_COMMUNICATION_TYPES.CLOSING === type) {
             typeIconButton.icon = MATERIAL_ICONS.LOCK;
-        } else if ("VERIFACTU" === type || "NO_VERIFACTU" === type) {
+        } else if (INVOICE_COMMUNICATION_TYPES.VERIFACTU === type || INVOICE_COMMUNICATION_TYPES.NO_VERIFACTU === type) {
             typeIconButton.aonIcon = AON_ICONS.AON_AEAT;
-        } else if ("SIF" === type) {
+        } else if (INVOICE_COMMUNICATION_TYPES.SIF === type) {
             typeIconButton.icon = MATERIAL_ICONS.SIF;
         }
         if (!typeIconButton.icon) {
@@ -249,39 +290,22 @@ export class AonInvoiceCommunication extends AonElement {
         return typeIconButton;
     }
 
-    getCommunicationStatusLabel(type, status) {
-        if ("PENDING" === status && type === "NO_VERIFACTU") return "Aceptada";
-        else if("PENDING" === status) return "Pendiente";
-        else if ("ACCEPTED" === status) return "Aceptada";
-        else if ("ACCEPTED_WITH_ERRORS" === status) return "Aceptada con errores";
-        else if ("EXTERNALLY_COMMUNICATED" === status) return "Com. Externamente";
-        else if ("WRONG" === status) return "Incorrecta";
-        else return "Sin Estado";
-    }
-
-    getCommunicationStatusColor(type, status) {
-        if ("PENDING" === status && type === "NO_VERIFACTU") return "green";
-        else if ("PENDING" === status) return "orange";
-        else if ("ACCEPTED" === status) return "green";
-        else if ("ACCEPTED_WITH_ERRORS" === status) return "yellow";
-        else if ("EXTERNALLY_COMMUNICATED" === status) return "blue";
-        else if ("WRONG" === status) return "red"
-        else return "gray";
-    }
-
-
-    isCommunicationStatusOk(type, status) {
-        if ("PENDING" === status && type === "NO_VERIFACTU") return true;
-        else if ("PENDING" === status) return false;
-        else if ("ACCEPTED" === status) return true;
-        else if ("ACCEPTED_WITH_ERRORS" === status) return true;
-        else if ("EXTERNALLY_COMMUNICATED" === status) return true;
-        else if ("WRONG" === status) return false;
-        else return false;
+    getCommunicationStatusIcon(type, status) {
+        let icon = this.createElement(TAG.I);
+        icon.className = "material-icons";
+        icon.title = getCommunicationStatusLabel(type, status);
+        icon.style.color = getCommunicationStatusColor(type, status);
+        icon.innerHTML = isCommunicationStatusOk(type, status) 
+            ? MATERIAL_ICONS.CHECK_CIRCLE 
+            : MATERIAL_ICONS.ERROR;
+        return icon;
     }
 
     communicateInvoice(type) {
-		if("LROE" === type || "VERIFACTU" === type || "TBAI" === type || "SII" === type) {	
+		if (INVOICE_COMMUNICATION_TYPES.LROE === type 
+         || INVOICE_COMMUNICATION_TYPES.VERIFACTU === type 
+         || INVOICE_COMMUNICATION_TYPES.TBAI === type 
+         || INVOICE_COMMUNICATION_TYPES.SII === type) {	
 			this.certificateDialog((certificate) => this.communicatingInvoice(type, certificate));
 		} else  this.communicatingInvoice(type);
 	}

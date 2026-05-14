@@ -1,16 +1,21 @@
 package net.aonsolutions.aon.verifactu;
 
+import java.text.MessageFormat;
 import java.util.GregorianCalendar;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationPhaseListener;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.tike.cont.ws.suministroinformacion.CabeceraType;
@@ -23,6 +28,7 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 
 class Invoice2Verifactu {
 	
+	private static final String VFM = "VFM";
 	static final String VERSION  = "1.0";
 	static final String SERVICE_DESCRIPTION = "Prestacion de servicios";
 	static final String NO_SERVICE_DESCRIPTION = "Venta de mercaderias";
@@ -31,42 +37,50 @@ class Invoice2Verifactu {
 	
 	}
 	
-	static RegFactuSistemaFacturacion build(VerifactuContext vc) throws InvoiceCommunicationException {
+	static RegFactuSistemaFacturacion build(AONContext ctx, InvoiceCommunicationType type, VerifactuContext vc, InvoiceCommunicationPhaseListener phase) throws InvoiceCommunicationException {
 		try {
 			RegFactuSistemaFacturacion regFactu = new RegFactuSistemaFacturacion();
 			regFactu.setCabecera(getCabecera(vc));
 			VerifactuValidation.validateHeader(regFactu);
+			boolean phaseEnabled = phase != null && !vc.isAnnulment();
+			AtomicInteger progress = new AtomicInteger(0);
+			int count = vc.invoiceCount();
 			vc.invoiceStream()
 				.forEach(invoice -> {
 					try {
-						RegistroFacturaType factura = getFactura(vc, invoice);
+						if (phaseEnabled) {
+							phase.beforeInvoice(ctx, vc.getInvoiceCommunicatorContext(), invoice);
+						}
 						
+						RegistroFacturaType factura = getFactura(vc, invoice);
 						VerifactuValidation.validate(regFactu, factura, invoice);
 						
-						regFactu.getRegistroFactura().add(factura);
-						vc.setBlockchain( newBlockchain( factura) );
+						if (invoice.hasERRMessages()) {
+							if (phaseEnabled) {
+								phase.afterWrongInvoice(ctx, vc.getInvoiceCommunicatorContext(), invoice);
+							}
+						} else {
+							if (phaseEnabled) {
+								phase.afterRightInvoice(ctx, vc.getInvoiceCommunicatorContext(), invoice);
+							}
+							;
+							vc.getLogger().progress(VFM
+								, count
+								, progress.incrementAndGet() 
+								,MessageFormat.format("Agregando factura a lote de {0}: {1}",
+									type.getDescription(),
+									FinanceUtil.getDocumentNumber(invoice) ));
+							regFactu.getRegistroFactura().add(factura);
+							vc.setBlockchain( newBlockchain( factura) );
+						}
 					} catch (InvoiceCommunicationException e) {
 						e.printStackTrace();
 						throw new AonCoreException( e );
 					}
 			});
-			
-			if (vc.invoiceStream()
-				.filter( Invoice::hasMessages )
-				.anyMatch( i -> i.getMoreSeriousLevel().filter( e -> e == InvoiceErrorLevel.ERR).isPresent() )) {
-				
-				// TRACE _-- borrar
-				vc.invoiceStream()
-					.filter( Invoice::hasMessages )
-					.flatMap( Invoice::messageStream )
-					.forEach( m -> System.out.println( m.getLevel() + " " + m.getCode() + " - " + m.getMessage() ));
-				// ----------------
-				
-				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0024);
-				
-			};
-
-			
+			if (phaseEnabled) {
+				phase.afterAll(ctx, vc.getInvoiceCommunicatorContext());
+			}
 			return regFactu;
 		} catch (AonCoreException e) {
 			if (e.getCause() instanceof InvoiceCommunicationException ice) {

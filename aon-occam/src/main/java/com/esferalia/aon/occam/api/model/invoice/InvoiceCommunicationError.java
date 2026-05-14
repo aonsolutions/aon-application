@@ -33,7 +33,7 @@ public enum InvoiceCommunicationError {
 	AON_0021("0021", "Error al obtener el certificado."),
 	AON_0022("0022", "El certificado o la contrase\u00F1a no son correctos."),
 	AON_0023("0023", "El certificado no existe."),
-	AON_0024("0024", "Se han producido errores en la validaci\u00F3n VERIFACTU."),
+	AON_0024("0024", "Se han producido errores en la validaci\u00F3n."),
 	AON_0025("0025", "Se han producido errores durante la validaci\u00F3n del certificado."),
 	AON_0026("0026", "La fecha de inicio de validez del certificado es posterior a la fecha de hoy"),
 	AON_0027("0027", "La fecha de validez del certificado ha caducado."),
@@ -44,6 +44,7 @@ public enum InvoiceCommunicationError {
 	AON_0032("0032", "El tipo de comunicaci\u00F3n SIG no est\u00E1 implementado."),
 	AON_0033("0033", "El tipo de comunicaci\u00F3n FACTURAE no est\u00E1 implementado."),
 	AON_0034("0034", "Se ha producido un error al firmar el XML del registro ed facturaci\u00F3n."),
+	AON_0035("0035", "No se ha encontrado el certificado para firmar las facturas."),
 
 	// InvoiceCommunicationType 	
 	AON_NO_SERES		("0100", "El tipo de comunicaci\u00F3n SERES no est\u00E1 implementado."),
@@ -56,6 +57,30 @@ public enum InvoiceCommunicationError {
 	AON_NO_NO_VERIFACTU	("0107", "El tipo de comunicaci\u00F3n NO_VERIFACTU no est\u00E1 implementado."),
 	AON_NO_SIF			("0108", "El tipo de comunicaci\u00F3n SIF no est\u00E1 implementado."),
 	AON_NO_FACTURAE		("0109", "El tipo de comunicaci\u00F3n FACTURAE no est\u00E1 implementado."),
+
+	// Invoice Communication Configuration errors
+	ICC_5000("5000", "Informaci\u00F3n incompleta al habilitar comunicaci\u00F3n"),
+	ICC_5001("5001", "No se ha indicado el tipo de comunicaci\u00F3n"),
+	ICC_5002("5002", "No se ha indicado la administraci\u00F3n"),
+	ICC_5003("5003", "No se ha fecha de inicio de comunicaci\u00F3n"),
+	ICC_5004("5004", "La fecha de inicio de comunicaci\u00F3n no puede ser posterior a la fecha de fin"),
+	
+	ICC_5020("5020", "LROE/TicketBai solo se puede habilitar en BIZKAIA"),
+	ICC_5021("5021", "TicketBai solo se puede habilitar en ARABA/\u00C1LAVA o GIPUZKOA"),
+	ICC_5022("5022", "VERIFACTU solo se puede habilitar en TERRITORIO COM\u00DAN o CANARIAS"),
+	ICC_5023("5023", "NO VERIFACTU solo se puede habilitar en TERRITORIO COM\u00DAN o CANARIAS"),
+	ICC_5024("5024", "S.I.I, solo se puede habilitar en TERRITORIO COM\u00DAN, CANARIAS, NAVARRA, ARABA/\u00C1LAVA o GIPUZKOA"),
+	ICC_5025("5025", "S.I.F, solo se puede habilitar en NAVARRA"),
+	
+	ICC_5100("5100", "No se puede activar SII y {0} a la vez"),
+
+	ICC_6000("6000", "Verifactu se debe activar el uno de enero del año siguiente"),
+	ICC_6001("6001", "No Verifactu se debe activar el uno de enero del año siguiente"),
+	ICC_6002("6002", "Si tributa en TERRITORIO COM\u00DAN o CANARIAS y emite facturas, debe activar VERIFACTU, NO VERIFATU o SII"),
+	ICC_6003("6003", "No se puede desactivar la opci\u00F3n. Existen facturas de {0} posteriores a la fecha {1,date,dd/MM/yyyy} registradas en el sistema."),
+//	ICC_6004("6004", "No se puede desactivar la opci\u00F3n {0}. A fecha {1,date,dd/MM/yyyy} no está activada."),
+//	ICC_6005("6005", "Si tributa en BIZKAIA y emite facturas, debe activar LROE / TicketBAI"),
+//	ICC_6006("6006", "Si tributa en ALAVA o GIPUZKOA y emite facturas, debe activar TicketBAI"),
 
 	// TODO REFACTOR
 	AON_9000("9000", "Error interno."),

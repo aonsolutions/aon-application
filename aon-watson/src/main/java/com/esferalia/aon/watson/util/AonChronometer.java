@@ -59,19 +59,24 @@ public final class AonChronometer {
 	public double getHours() {
 		return (end - begin) / 3600000.0;
 	}
+	
+	public String format() {
+	    long totalSeconds = getMilliseconds() / 1000;
+	    long hours = totalSeconds / 3600;
+	    long minutes = (totalSeconds % 3600) / 60;
+	    long seconds = totalSeconds % 60;
+	    return twoDigits(hours) + ":" + twoDigits(minutes) + ":" + twoDigits(seconds);
+	}	
 
+	private static String twoDigits(long n) {
+	    return n < 10 ? "0" + n : String.valueOf(n);
+	}
+	
 	public static void main(String[] arg) {
 		AonChronometer ch = new AonChronometer();
 		ch.start();
-		for (int i = 1; i < 10000000; i++) {
-		}
-		ch.stop();
+		ch.end = ch.begin + 36610000;
 		System.out.println(ch.getTime());
-
-		ch.start();
-		for (int i = 10000000; i > 0; i--) {
-		}
-		ch.stop();
-		System.out.println(ch.getTime());
+		System.out.println(ch.format());
 	}
 }

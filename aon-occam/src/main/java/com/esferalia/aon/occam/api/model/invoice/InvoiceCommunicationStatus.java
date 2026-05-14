@@ -79,4 +79,10 @@ public enum InvoiceCommunicationStatus implements Serializable{
 		void visitExternallyCommunicated();
 	}
 	
+	public static boolean isPending(InvoiceCommunicationType type, InvoiceCommunicationStatus status) {
+		if (type == null) return true;
+		if (status == null && type == InvoiceCommunicationType.NO_VERIFACTU) return true;
+		return (type != InvoiceCommunicationType.NO_VERIFACTU && status == PENDING);
+	}
+	
 }

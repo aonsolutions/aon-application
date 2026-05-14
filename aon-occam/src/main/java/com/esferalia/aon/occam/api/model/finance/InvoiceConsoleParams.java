@@ -42,6 +42,8 @@ public class InvoiceConsoleParams implements Serializable {
 	
 	private static final long serialVersionUID = 2683060057390169937L;
 	
+	private Integer id;
+	private Integer[] ids;
 	private Integer fromId;
 	private Integer toId;
 	private Integer domain;
@@ -80,7 +82,30 @@ public class InvoiceConsoleParams implements Serializable {
 
 	private int offset;
 	private int limit;
+	
+	private Integer certId; 
 
+	// FOR DAO ONLY. Not serializable to/from JSON. 
+	private boolean communicationExcluded;
+	private boolean attachExcluded;
+	// --------------------------------------------
+
+	public Integer getId() {
+		return id;
+	}
+	public InvoiceConsoleParams setId(Integer id) {
+		this.id = id;
+		return this;
+	}
+	
+	public Integer[] getIds() {
+		return ids;
+	}
+	public InvoiceConsoleParams setIds(Integer[] ids) {
+		this.ids = ids;
+		return this;
+	}
+	
 	public Integer getFromId() {
 		return fromId;
 	}
@@ -349,4 +374,40 @@ public class InvoiceConsoleParams implements Serializable {
 		return getAnnulled() == null || getAnnulled().booleanValue();
 	}
 	
+	public Integer getCertId() {
+		return certId;
+	}
+	public InvoiceConsoleParams setCertId(Integer certId) {
+		this.certId = certId;
+		return this;
+	}
+	
+	
+	// FOR DAO ONLY. Not serializable to/from JSON.
+	public boolean isCommunicationExcluded() {
+		return communicationExcluded;
+	}
+	public InvoiceConsoleParams setCommunicationExcluded(boolean communicationExcluded) {
+		this.communicationExcluded = communicationExcluded;
+		return this;
+	}
+	
+	public boolean isAttachExcluded() {
+		return attachExcluded;
+	}
+	public InvoiceConsoleParams setAttachExcluded( boolean attachExcluded) {
+		this.attachExcluded = attachExcluded;
+		return this;
+	}
+	// --------------------------------------------
+	
+	public static InvoiceConsoleParams createForInvoice(Invoice invoice) {
+		return new InvoiceConsoleParams()
+			.setDomain( invoice.getDomain() )
+			.setId( invoice.getId() )
+			.setOffset(0)
+			.setLimit(1)
+		;
+		
+	}
 }

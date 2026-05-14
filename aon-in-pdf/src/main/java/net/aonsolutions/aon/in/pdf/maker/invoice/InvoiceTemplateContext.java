@@ -49,10 +49,12 @@ public class InvoiceTemplateContext {
 	public Administration getAdministration() {
 		return administration;
 	}
-	
 	public InvoiceTemplateContext setAdministration(Administration administration) {
 		this.administration = administration;
 		return this;
+	}
+	public boolean isCanarias() {
+		return getAdministration() != null && getAdministration().isCanarias();
 	}
 	
 	public CompanyFull getCompany() {

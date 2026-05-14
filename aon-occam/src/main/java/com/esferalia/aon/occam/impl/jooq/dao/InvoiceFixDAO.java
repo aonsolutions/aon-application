@@ -28,7 +28,7 @@ public class InvoiceFixDAO {
 			invoice.refreshTaxBreakdown();
 			invoice.getTaxBreakdown().ifPresent( tb -> {
 				invoice.setTaxableBase(tb.getVatBase());
-				invoice.setVatQuota(tb.getVatQuota() + tb.getSurchargeQuota());
+				invoice.setVatQuota(tb.getVatQuota(invoice) + tb.getSurchargeQuota(invoice));
 				invoice.setRetentionQuota(tb.getRetentionQuota());
 				
 				ctx.getDslContext().update(INVOICE)

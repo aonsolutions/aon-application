@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -395,33 +396,31 @@ public class RawdocServlet extends AonApiHttpServlet {
 	}
 	
 	public static JSONObject addCount(AonApiData api) {
-		Integer count = 1;
-		
 		java.sql.Date startDate = AonDateUtils.toSql(AonDateUtils.getMonthFirstDay(new Date()));
 		java.sql.Date endDate = AonDateUtils.toSql(AonDateUtils.getMonthLastDay(new Date()));
 		
-		EnterpriseData ea = AON.getEnterpriseData(api.getDomain(), api.getUser(), f -> 
-			f.getDomainProperty().eq(api.getDomain().getId())
-			.and(f.getNameProperty().eq("INVOFOX"))
-			.and(f.getStartDateProperty().eq(startDate))
-			.and(f.getEndDateProperty().eq(endDate)));
-		
-		if(ea == null || ea.getId() == null) {
-			Company cp = AON.getCompany(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
-			
-			ea = new EnterpriseData()
-					.setDomain(api.getDomain().getId())
-					.setName("INVOFOX")
-					.setEnterprise(cp.getId())
-					.setExpression(count.toString())
-					.setStartDate(startDate)
-					.setEndDate(endDate);
-		} else {
-			count = count + AonNumberUtils.toInteger(ea.getExpression());
-			ea.setExpression(count.toString());
-		}
-		
-		AON.saveEnterpriseData(api.getDomain(), api.getUser(), ea);
+		AON.getEnterpriseData(api.getOccam(), api.getDomain().getId(), EnterpriseDataNames.INVOFOX)
+			.filter( ea -> AonDateUtils.isSameDay( ea.getStartDate(), startDate))
+			.filter( ea -> AonDateUtils.isSameDay( ea.getEndDate(), endDate))
+			.ifPresentOrElse(
+				ea -> {
+					Integer count = AonNumberUtils.toInteger(ea.getExpression()) + 1;
+					ea.setExpression(count.toString());
+					AON.saveEnterpriseData(api.getOccam(), ea);
+				}
+				,() -> {
+					Integer count = 1;
+					Company cp = AON.getCompany(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
+					EnterpriseData ea = new EnterpriseData()
+						.setDomain(api.getDomain().getId())
+						.setName(EnterpriseDataNames.INVOFOX.name())
+						.setEnterprise(cp.getId())
+						.setExpression(count.toString())
+						.setStartDate(startDate)
+						.setEndDate(endDate);
+					AON.saveEnterpriseData(api.getOccam(), ea);
+			}
+		);
 		return new JSONObject();
 	}
 }

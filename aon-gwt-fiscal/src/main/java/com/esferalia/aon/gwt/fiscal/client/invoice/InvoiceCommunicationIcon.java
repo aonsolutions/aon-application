@@ -21,16 +21,20 @@ class InvoiceCommunicationIcon extends InlineLabel {
 			setStyleName(AON.CSS.aonLabelWithIcon());
 			addStyleName(AON.CSS.aonIconLock());
 		} else {
-			boolean emptyAdministration = (options.getConfiguration() == null 
-					|| options.getConfiguration().getCommunicationConfig()==null
-					|| options.getConfiguration().getCommunicationConfig().getAdministration()==null
-					);
-			Administration admon = emptyAdministration 
-				? Administration.UNKNOWN
-				: options.getConfiguration().getCommunicationConfig().getAdministration(invoice.getExpDate()) 
+			Administration admon = options.getCommunicationConfiguration()
+				.flatMap( icc -> icc.getData(type, invoice.getExpDate()) )
+				.flatMap( cd -> cd.getAdministration() )
+				.orElse( Administration.UNKNOWN )
 			;
 			initIcon(admon, type, status);
 		}
+	}
+	
+	public InvoiceCommunicationIcon(InvoiceModuleOptions options, Invoice invoice ) {
+		super();
+		setTitle(AON.MSG.noSif());
+		setStyleName(AON.CSS.aonLabelWithIcon());
+		addStyleName(AON.CSS.aonIconBlock());
 	}
 	
 	private void initIcon(Administration admon, InvoiceCommunicationType type, InvoiceCommunicationStatus status) {
@@ -52,7 +56,10 @@ class InvoiceCommunicationIcon extends InlineLabel {
 
 	private String  getStatusDescription(InvoiceCommunicationType type, InvoiceCommunicationStatus status) {
 		if (type == InvoiceCommunicationType.NO_VERIFACTU && status == InvoiceCommunicationStatus.PENDING) {
-			return "Emitida/No comunicada";
+			return "Archivada";
+		}
+		if (type == InvoiceCommunicationType.SIF && status == InvoiceCommunicationStatus.ACCEPTED) {
+			return "Archivada";
 		}
 		return status == null ? InvoiceCommunicationStatus.PENDING.getDescription() : status.getDescription();
 	}
@@ -83,7 +90,7 @@ class InvoiceCommunicationIcon extends InlineLabel {
 						addStyleName(AON.CSS.aonIconAeatYellow());
 					} else {
 						status.accept(new InvoiceCommunicationStatusVisitor() {
-							@Override public void visitPending() {addStyleName( AON.CSS.aonIconAeatOrange());}
+							@Override public void visitPending() {addStyleName( AON.CSS.aonIconAeatLightGreen());}
 							@Override public void visitAccepted() {addStyleName( AON.CSS.aonIconAeatGreen());}
 							@Override public void visitAcceptedWithErrors() {addStyleName( AON.CSS.aonIconAeatGreen());}
 							@Override public void visitWrong() {addStyleName( AON.CSS.aonIconAeatRed());}

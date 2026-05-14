@@ -56,7 +56,7 @@ class InvoiceCommunicationCertTest extends AbstractVerifactuTest {
 		DataAccessException e = assertThrows(DataAccessException.class, () -> InvoiceCommunicator.acceptInvoice(cc));
 		InvoiceCommunicationException ice = e.getCause(InvoiceCommunicationException.class);
 		assertNotNull(ice);
-		assertThat(InvoiceCommunicationError.AON_0023).isIn(ice.getMessages());
+		assertThat(InvoiceCommunicationError.AON_0021).isIn(ice.getMessages());
 	}
 
 }

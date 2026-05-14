@@ -8,7 +8,6 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAdministrationVisitor;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -468,17 +467,9 @@ enum ClaveRegimen {
 	
 	private DetalleType getBasic( VerifactuContext vc, InvoiceBreakdown ib ) {
 		DetalleType detalle = new DetalleType();
-		TipoImpuesto tipoImpuesto = vc.getConfig().getAdministration().visit( 
-			new IAdministrationVisitor<TipoImpuesto>() {
-				@Override public TipoImpuesto visitAlava() 				{ return TipoImpuesto.IVA; }
-				@Override public TipoImpuesto visitBizkaia() 			{ return TipoImpuesto.IVA; }
-				@Override public TipoImpuesto visitGipuzkoa() 			{ return TipoImpuesto.IVA; }
-				@Override public TipoImpuesto visitNavarra() 			{ return TipoImpuesto.IVA; }
-				@Override public TipoImpuesto visitCommonTerritory() 	{ return TipoImpuesto.IVA; }
-				@Override public TipoImpuesto visitUnknown() 			{ return TipoImpuesto.IVA; }
-				@Override public TipoImpuesto visitCanarias() 			{ return TipoImpuesto.IGIC; }
-			}
-		);
+		TipoImpuesto tipoImpuesto = vc.getEnablerData().isCanarias()
+			?TipoImpuesto.IGIC
+			:TipoImpuesto.IVA;
 		detalle.setImpuesto(tipoImpuesto.getValue());
 		detalle.setClaveRegimen( this.getValue() );
 		detalle.setBaseImponibleOimporteNoSujeto(VerifactuUtils.toString(ib.getBase()));

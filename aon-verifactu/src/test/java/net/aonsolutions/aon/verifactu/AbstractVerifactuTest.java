@@ -6,8 +6,10 @@ import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Properties;
 import java.util.TimeZone;
@@ -21,6 +23,13 @@ import org.junit.platform.commons.logging.LoggerFactory;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationPhaseListener;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.mysql.cj.jdbc.Driver;
@@ -42,11 +51,13 @@ public abstract class AbstractVerifactuTest {
 	protected static final Environment VERIFACTU_CANARIAS_ENV = new VerifactuCanariasEnvironment();
 	protected static final Environment NO_VERIFACTU_ENV = new NoVerifactuEnvironment();
 	protected static final Environment SIF_ENV = new SifEnvironment();
-	
+	protected static final Environment NO_SIF_ENV = new NoSifEnvironment();
 	protected static final Environment TBAI_ALAVA_ENV = new TBAIAlavaEnvironment();
+	protected static final Environment TBAI_SII_ALAVA_ENV = new TBAISIIAlavaEnvironment();
 	protected static final Environment TBAI_GIPUZKOA_ENV = new TBAIGipuzkoaEnvironment();
+	protected static final Environment TBAI_SII_GIPUZKOA_ENV = new TBAISIIGipuzkoaEnvironment();
 	protected static final Environment LROE_ENV = new LROEEnvironment();
-	
+	protected static final Environment ICC_CONFIG_ENV = new ICCConfigurationEnvironment();
 	
 	private static final Environment[] ENVIRONMENTS = new Environment[] {
 		VERIFACTU_ENV,
@@ -55,8 +66,72 @@ public abstract class AbstractVerifactuTest {
 		SIF_ENV,
 		TBAI_ALAVA_ENV,
 		TBAI_GIPUZKOA_ENV,
-		LROE_ENV
+		LROE_ENV,
+		NO_SIF_ENV,
+		TBAI_SII_ALAVA_ENV,
+		TBAI_SII_GIPUZKOA_ENV,
+		ICC_CONFIG_ENV
 	}; 
+	
+	protected static InvoiceCommunicationPhaseListener PHASE_LISTENER = new InvoiceCommunicationPhaseListener() {
+		@Override
+		public void beforeAll(AONContext ctx, InvoiceCommunicatorContext icc) throws InvoiceCommunicationException {
+			// Nothing
+		}
+		@Override
+		public void beforeInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) {
+			// Nothing
+		}
+		@Override
+		public void afterRightInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) {
+			// Nothing
+		}
+		
+		@Override
+		public void afterWrongInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) throws InvoiceCommunicationException{
+			// Nothing
+		}
+		
+		@Override
+		public void afterAll(AONContext ctx, InvoiceCommunicatorContext icc) throws InvoiceCommunicationException {
+			if (icc.isFailOnWrongValidation() 
+			 && icc.invoiceStream().filter( Invoice::hasMessages ).anyMatch( Invoice::hasERRMessages )) {
+				// TRACE _-- borrar
+				icc.invoiceStream()
+					.filter( Invoice::hasMessages )
+					.flatMap( Invoice::messageStream )
+					.forEach( m -> System.out.println( m.getLevel() + " " + m.getCode() + " - " + m.getMessage() ));
+				// ----------------
+				throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0024);
+			}
+		}
+	};
+	
+	protected static final InvoiceCommunicationPhaseListener EMPTY_VERIFACTU_PHASE_LISTENER = new InvoiceCommunicationPhaseListener() {
+		
+		@Override public void beforeInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) {/* nothing */}
+		@Override public void beforeAll(AONContext ctx, InvoiceCommunicatorContext icc) throws InvoiceCommunicationException {/* nothing */}
+		@Override public void afterRightInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) {/* nothing */}
+		@Override public void afterAll(AONContext ctx, InvoiceCommunicatorContext icc) throws InvoiceCommunicationException {/* nothing */}
+		
+		@Override
+		public void afterWrongInvoice(AONContext ctx, InvoiceCommunicatorContext icc, Invoice invoice) throws InvoiceCommunicationException {
+			// TRACE _-- borrar
+			String s = "MSG Inv: [{0}]: {1} - {2} {3} - {4}";
+			invoice.messageStream()
+				.forEach( m -> 
+					System.out.println( MessageFormat.format( s,
+						invoice.getId(),
+						invoice.getDocumentNumber(),
+						m.getLevel(),
+						m.getCode(),
+						m.getMessage()
+					 ))
+				);
+			// ----------------
+		}
+		
+	};
 	
 	private Date testDate; 
 	
@@ -66,7 +141,7 @@ public abstract class AbstractVerifactuTest {
 		for (Environment env : ENVIRONMENTS) {
 			synchronized (env) {
 				if ( env.getDomainId() == null) {
-					AONContext context = new AONContext(connect());
+					AONContext context = new AONContext(connect( env));
 					Domain domain = TestDomainProvider.getOrCreateDomain(context, env );
 					env.setDomainId( domain.getId() );
 				}
@@ -114,7 +189,7 @@ public abstract class AbstractVerifactuTest {
 	}
 
 	
-	private static Connection connect() throws ClassNotFoundException, SQLException  {
+	private static Connection connect(Environment env) throws ClassNotFoundException, SQLException  {
 		Class.forName(Driver.class.getName());
 
 		String dbHost = getDbHost();
@@ -138,14 +213,21 @@ public abstract class AbstractVerifactuTest {
 		while (rs.next()) {
 			if (rs.getString(1).startsWith(dbName)) {
 				String schemaName = rs.getString(1); 
-				connection.createStatement().execute("use `" + schemaName +"`");
-				String infoText = "USING  [" + schemaName+ "] schema";
-				System.out.println("\033[1;34m");
-				System.out.println(AonStringUtils.spaces(10) + "\u250C" + AonStringUtils.repeat('\u2500', 50) + "\u2510");
-				System.out.println(AonStringUtils.spaces(10) + "\u2502" + AonStringUtils.center(infoText, 50) + "\u2502");
-				System.out.println(AonStringUtils.spaces(10) + "\u2514" + AonStringUtils.repeat('\u2500', 50) + "\u2518");
-				System.out.println("\033[0m");
-				return connection;
+				System.out.println("\t .... checking [" + schemaName+ "] schema.");
+				connection.createStatement().execute("use " + schemaName);
+				boolean exists = false;
+				String sql = "SELECT 1 FROM domain WHERE name = ? LIMIT 1";
+				try (PreparedStatement ps = connection.prepareStatement(sql)) {
+				    ps.setString(1, env.getDomainName());
+				    try (ResultSet rs0 = ps.executeQuery()) {
+				        exists = rs0.next();
+				    }
+				}
+				if (exists) {
+					System.out.println("\t .... domain [" + env.getDomainName() + "] found!!");
+					System.out.println("USING [" + schemaName+ "] SCHEMA FOR TESTS.");
+					return connection;
+				}
 			}
 		}
 		return connection;
@@ -156,5 +238,22 @@ public abstract class AbstractVerifactuTest {
 	}
 	
 	protected abstract Environment getEnvironment();
+	
+	protected AONContext getCtx() {
+		return getEnvironment().getCtx();
+	}
+	protected Integer getDomainId() {
+		return getEnvironment().getDomainId();
+	}
+	protected String getUser() {
+		return getEnvironment().getUser();
+	}
+	
+	protected CommunicationData getCD(Administration admon) {
+		return new CommunicationData()
+			.setDomain( getDomainId() )
+			.setAdministration( admon )
+		;
+	}	
 	
 }

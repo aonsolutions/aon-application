@@ -215,6 +215,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private AonFile invoiceAttachFile;
 	private RegistryAddressFilter addressesFilter;
 	private InvoiceCommunicationConfiguration icc;
+	private Date expeditionDate;
 	
 	private Boolean hasInvoiceDoc;
 	private InvoiceDoc invoiceDoc;
@@ -2163,7 +2164,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
         return number <= 1;
 	}
 	
-	Boolean uniqueNumberOfSeries;
+	private Boolean uniqueNumberOfSeries;
 	public boolean isUniqueNumberOfSeries() {
 	    if(uniqueNumberOfSeries == null) {
 	        Integer domainId = DomainManager.getCurrentDomain();
@@ -2179,30 +2180,6 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	    
 	public boolean isTbaiInvoice() {
 		return (isTbai() || isLroe() ) && !AonStringUtils.isBlank(getTbaiUrl());
-	}
-	
-	public boolean isCommunicableInvoice() {
-		return getInvoice().getNumber() > 0
-			&& ( (isVerifactu() && !AonStringUtils.isBlank(getVerifactuUrl() ))
-				|| isNoVerifactu() 
-				|| isSif())
-		;
-	}
-
-	public boolean isVerifactuInvoice() {
-		return isVerifactu() && getInvoice().getNumber() > 0 && getInvoice().isSales(); // && !AonStringUtils.isBlank(getVerifactuUrl());
-	}
-	
-	public boolean isNoVerifactuInvoice() {
-		return isNoVerifactu() && getInvoice().getNumber() > 0 && getInvoice().isSales(); // && !AonStringUtils.isBlank(getVerifactuUrl());
-	}
-	
-	public boolean isSifInvoice() {
-		return isSif() && getInvoice().getNumber() > 0 && getInvoice().isSales(); // && !AonStringUtils.isBlank(getVerifactuUrl());
-	}
-	
-	public boolean isSiiInvoice() {
-		return isSii() && getInvoice().getNumber() > 0 && getInvoice().isSales(); // && !AonStringUtils.isBlank(getVerifactuUrl());
 	}
 	
 	String tbaiUrl;
@@ -2232,12 +2209,6 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		this.tbaiUrl = tbaiUrl;
 	}
 	
-	public boolean isIssueable() {
-		return !isNevv()
-			&& (isVerifactu() || isNoVerifactu() ||  isSif() ||  isSii())
-			&& (!isVerifactuInvoice() || !isNoVerifactuInvoice() || !isSifInvoice() || !isSiiInvoice())
-			&& (getInvoice().getNumber() <= 0 || isUniqueNumberOfSeries());
-	}
 	public String getVerifactuUrl() {
 		Invoice invoice = (Invoice) this.getTo();
 		if(invoice == null || invoice.getId() == null) verifactuUrl = null;
@@ -2270,45 +2241,6 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		this.verifactuUrl = verifactuUrl;
 	}
 
-	public boolean hasCommunication() { return getInvoiceCommunicationConfiguration().hasCommunication(); }
-	
-	public boolean isLroe() 		{return getInvoiceCommunicationConfiguration().isLroe();}
-	public boolean isTbai() 		{return getInvoiceCommunicationConfiguration().isTbai();}
-	public boolean isVerifactu() 	{return getInvoiceCommunicationConfiguration().isVerifactu();}
-	public boolean isNoVerifactu() 	{return getInvoiceCommunicationConfiguration().isNoVerifactu();}
-	public boolean isSif() 			{return getInvoiceCommunicationConfiguration().isSif();}
-	public boolean isSii() 			{return getInvoiceCommunicationConfiguration().isSii();}
-
-	public boolean isLroe(Date date) 		{return getInvoiceCommunicationConfiguration().isLroe(date);}
-	public boolean isTbai(Date date) 		{return getInvoiceCommunicationConfiguration().isTbai(date);}
-	public boolean isVerifactu(Date date) 	{return getInvoiceCommunicationConfiguration().isVerifactu(date);}
-	public boolean isNoVerifactu(Date date) {return getInvoiceCommunicationConfiguration().isNoVerifactu(date);}
-	public boolean isSif(Date date) 		{return getInvoiceCommunicationConfiguration().isSif(date);}
-	public boolean isSii(Date date) 		{return getInvoiceCommunicationConfiguration().isSii(date);}
-
-	
-	public boolean isAraba() 	{return getInvoiceCommunicationConfiguration().isAraba();}
-	public boolean isBizkaia() 	{return getInvoiceCommunicationConfiguration().isBizkaia();}
-	public boolean isGipuzkoa() {return getInvoiceCommunicationConfiguration().isGipuzkoa();}
-	
-	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration() {
-		if(icc == null) {
-			String domainName = AonUtil.getDomainName();
-			Integer domainId = DomainManager.getCurrentDomain();
-			String login = UserUtils.getInstance().getLoggedUser().getLogin();
-			Occam occam = new Occam()
-				.setDomainName(domainName)
-				.setDomain(domainId)
-				.setUser(login);
-			icc = AON.getInvoiceCommunicationConfiguration(occam);
-		}
-		return icc;
-	}
-	
-	public void setInvoiceCommunicationConfiguration(InvoiceCommunicationConfiguration icc) {
-		this.icc = icc;
-	}
-	
 	public LROEInformation getLroeInfo() {
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
@@ -2358,7 +2290,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		Integer domainId = DomainManager.getCurrentDomain();
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
 		Date date = AON_SOLUTIONS.getInvoiceExpDate(domainName, domainId, login, getInvoice().getId());
-		if(date == null && isTbaiInvoice()) date = getInvoice().getDate();
+		if(date == null && isTbaiInvoice()) date = getInvoice().getIssueDate();
 		if(date == null) return "Pendiente de emisión";
 		else return AonDateUtils.format(date, "dd/MM/yyyy");
 	}
@@ -2406,4 +2338,98 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		}
 		return rectificationInvoices;
 	}
+	
+	// **************************************************************************************
+	// ********************************************************* [COMMUNICATION NEW] ********
+	// **************************************************************************************
+	private Occam getInvoiceOccam() {
+		int domainId = (getInvoice() == null || getInvoice().getDomain() == 0) 
+			? DomainManager.getCurrentDomain() 
+			: getInvoice().getDomain(); 
+		return new Occam()
+			.setDomainName(AonUtil.getDomainName())
+			.setDomain( domainId )
+			.setUser(UserUtils.getInstance().getLoggedUser().getLogin());
+	}
+	
+	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration() {
+		if (this.icc == null) {
+			this.icc = AON.getInvoiceCommunicationConfiguration(getInvoiceOccam());
+		}
+		return this.icc;
+	}
+	public void setInvoiceCommunicationConfiguration(InvoiceCommunicationConfiguration icc) {
+		this.icc = icc;
+	}
+
+	public Date getExpeditionDate() {
+		if  (this.expeditionDate == null) {
+			this.expeditionDate = AON_SOLUTIONS.getInvoiceExpDate(getInvoiceOccam(), getInvoice().getId());
+			if (this.expeditionDate == null) {
+				if (getInvoice() != null && getInvoice().isProforma()) {
+					this.expeditionDate = new Date();	
+				} else {
+					// No seguro de esto, pero para evitar problemas con facturas antiguas ç
+					// sin fecha de expedición, se pone la fecha de emisión
+					this.expeditionDate = getInvoice().getIssueDate();
+				}
+			}
+		}
+		return this.expeditionDate;
+	}
+	public void setExpeditionDate(Date expDate) {
+		this.expeditionDate = expDate;
+	}
+	
+	public boolean hasCommunication() 	{return getInvoiceCommunicationConfiguration().hasCommunication( getExpeditionDate() ); }
+	public boolean isLroe() 			{return getInvoiceCommunicationConfiguration().isLroe(getExpeditionDate());}
+	public boolean isTbai() 			{return getInvoiceCommunicationConfiguration().isTbai(getExpeditionDate());}
+	public boolean isVerifactu() 		{return getInvoiceCommunicationConfiguration().isVerifactu(getExpeditionDate());}
+	public boolean isNoVerifactu() 		{return getInvoiceCommunicationConfiguration().isNoVerifactu(getExpeditionDate());}
+	public boolean isSif() 				{return getInvoiceCommunicationConfiguration().isSif(getExpeditionDate());}
+	public boolean isSii() 				{return getInvoiceCommunicationConfiguration().isSii(getExpeditionDate());}
+
+	public boolean isLroe(Date date) 		{return getInvoiceCommunicationConfiguration().isLroe(date);}
+	public boolean isTbai(Date date) 		{return getInvoiceCommunicationConfiguration().isTbai(date);}
+	public boolean isVerifactu(Date date) 	{return getInvoiceCommunicationConfiguration().isVerifactu(date);}
+	public boolean isNoVerifactu(Date date) {return getInvoiceCommunicationConfiguration().isNoVerifactu(date);}
+	public boolean isSif(Date date) 		{return getInvoiceCommunicationConfiguration().isSif(date);}
+	public boolean isSii(Date date) 		{return getInvoiceCommunicationConfiguration().isSii(date);}
+
+	public boolean isAraba() 	{return getInvoiceCommunicationConfiguration().isAraba(getExpeditionDate());}
+	public boolean isBizkaia() 	{return getInvoiceCommunicationConfiguration().isBizkaia(getExpeditionDate());}
+	public boolean isGipuzkoa() {return getInvoiceCommunicationConfiguration().isGipuzkoa(getExpeditionDate());}
+	
+	@Deprecated	public boolean isVerifactuInvoice() 	{ return isVerifactu() && getInvoice().getNumber() > 0 && getInvoice().isSales();}
+	@Deprecated	public boolean isNoVerifactuInvoice() 	{ return isNoVerifactu() && getInvoice().getNumber() > 0 && getInvoice().isSales();}
+	@Deprecated	public boolean isSifInvoice() 			{ return isSif() && getInvoice().getNumber() > 0 && getInvoice().isSales();}
+	@Deprecated	public boolean isSiiInvoice() 			{ return isSii() && getInvoice().getNumber() > 0 && getInvoice().isSales();}
+	@Deprecated	
+	public boolean isCommunicableInvoice() {
+		return getInvoice().getNumber() > 0
+			&& ( (isVerifactu() && !AonStringUtils.isBlank(getVerifactuUrl() ))
+				|| isNoVerifactu() 
+				|| isSif())
+		;
+	}
+	
+	public boolean isCommunicatorForInvoiceAvailable() {
+		return (isVerifactu() || isNoVerifactu() || isSif() ||  isSii());
+	}
+	public boolean isInvoiceIssueable() {
+		return isCommunicatorForInvoiceAvailable()
+	 		&& !isNevv()
+			&& getInvoice().isSales()
+			&& getInvoice().isProforma()
+		;
+	}
+	public boolean isInvoiceAnnullable() {
+		return getInvoice().isRecorded()
+			&& !getInvoice().isProforma()
+			&& ( (isVerifactu() && !AonStringUtils.isBlank(getVerifactuUrl() ))
+				|| isNoVerifactu() 
+				|| isSif())
+		;
+	}
+
 }

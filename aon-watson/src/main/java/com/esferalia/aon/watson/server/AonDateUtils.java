@@ -4,8 +4,10 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -1463,6 +1465,13 @@ public class AonDateUtils {
 		);
 	}
 	
+	public static Date yesterday() {
+		return Date.from(LocalDate.now().minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+	}
+	public static Date tomorrow() {
+		return Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+	}
+
     /**
      * Verifica si value est� entre start y end (inclusive).
      * Si value, start o end son null -> false.
@@ -1488,4 +1497,36 @@ public class AonDateUtils {
 		return issueDate != null && issueDate.after( today() );
 	}
         
+	public static Date previousDay(Date endDate) {
+	    if (endDate == null) return null;
+	    Date date = new java.util.Date(endDate.getTime());
+	    Instant instant = date.toInstant();
+	    ZoneId zone = ZoneId.systemDefault();
+	    LocalDate localDate = instant.atZone(zone).toLocalDate().minusDays(1);
+	    return Date.from(localDate.atStartOfDay(zone).toInstant());
+	}
+	
+	public static Date nextDay(Date endDate) {
+	    if (endDate == null) return null;
+	    Date date = new java.util.Date(endDate.getTime());
+	    Instant instant = date.toInstant();
+	    ZoneId zone = ZoneId.systemDefault();
+	    LocalDate localDate = instant.atZone(zone).toLocalDate().plusDays(1);
+	    return Date.from(localDate.atStartOfDay(zone).toInstant());
+	}
+
+	public static Date setTimeToZero(Date date) {
+		return truncate(date, Calendar.DAY_OF_MONTH);		
+	}
+
+	public static Date setTimeToEndOfDay(Date date) {
+		return Date.from(
+		    date.toInstant()
+		        .atZone(ZoneId.systemDefault())
+		        .toLocalDate()
+		        .atTime(LocalTime.MAX)
+		        .atZone(ZoneId.systemDefault())
+		        .toInstant()
+			);
+	}
 }

@@ -52,11 +52,15 @@
 		</navigation-case>
 	</navigation-rule>
 	
-	<!-- =================== RAWDOC ========================== -->
+	<!-- =================== INVOICE ========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_invoice_console</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/invoice/invoiceConsole.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_invoice_fee</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/invoice/invoiceFee.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

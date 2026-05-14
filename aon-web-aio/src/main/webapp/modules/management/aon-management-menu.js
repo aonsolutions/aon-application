@@ -1,11 +1,10 @@
-import { MSG, TAG } from '../../environments/environments.js'; 
-import { AonSuiteMenu } from '../aon-suite-menu.js';
+import { MSG, TAG } from '../../environments/environments.js';
 import * as GWT from '../../gwt/gwt.js';
+import { InvoiceCommunicationConfig } from '../../models/InvoiceCommunicationConfig.js';
+import { getInvoiceCommunicationConfig } from '../../services/invoiceService.js';
 import * as JSF from '../aon-jsf-app.js';
+import { AonSuiteMenu } from '../aon-suite-menu.js';
 import { PAYMETHODS } from '../MenuOptions.js';
-import { InvoiceCommunicationConfiguration } from '../../models/InvoiceCommunicationConfiguration.js';
-import { getInvoiceConfiguration } from '../../services/invoiceService.js';
-import { isPersonaFisica, isValid } from '../../services/documentUtils.js';
 
 export class AonManagementMenu extends AonSuiteMenu {
 
@@ -26,36 +25,8 @@ export class AonManagementMenu extends AonSuiteMenu {
     }
 
     async initInvoiceConfiguration() {
-        this.c = await getInvoiceConfiguration();
-        this.icc = new InvoiceCommunicationConfiguration(this.c.communication);
-
-    }
-
-    checkConfiguration() {		
-        if(!this.c || !this.c.company || !this.c.company.document || !this.c.communication){
-            // this.getApplication().showMessageError("La configuración de facturación no está completa. Por favor, revise la configuración.");
-            return false;
-        } 
-        if(!isValid(this.c.company.document)) {
-            // this.getApplication().showMessageError("La configuración de facturación no está completa. El NIF/CIF de la empresa no es válido.");
-            return false;
-        }
-        if(isPersonaFisica(this.c.company.document) && !(this.c.company.person || this.c.person)) {
-            // this.getApplication().showMessageError("La configuración de facturación no está completa. Es obligatorio rellenar todos los datos de la persona física.");
-            return false;
-        }
-
-        if(!this.icc.hasCommunication() && !this.icc.isNoSif()) {
-            // this.getApplication().showMessageError("La configuración de facturación no está completa. Por favor, revise la configuración.");
-            return false;
-        }
-
-        if(!this.icc.getAdministration().isUnknown() && (this.icc.hasCommunication() || this.icc.willBeCommunication() || this.icc.isNoSif())) {
-            return true;
-        } else {
-            // this.showMessageError("La configuración de facturación no está completa. Es obligatorio selecionar una administración para la comunicación electrónica de facturas.");
-            return false;
-        }
+        let config  = await getInvoiceCommunicationConfig();
+        this.icc = new InvoiceCommunicationConfig(config);
     }
 
     async managementInitialize() {
@@ -90,7 +61,6 @@ export class AonManagementMenu extends AonSuiteMenu {
 
     async initOptions() {
 		await this.initInvoiceConfiguration();
-        let checkConfiguration = this.checkConfiguration();
         this.options = [{
             title: 'Ventas',
             options: [{
@@ -100,12 +70,12 @@ export class AonManagementMenu extends AonSuiteMenu {
             }, {
                 description: "Facturas de Venta",
                 title: "Facturas de Venta",
-                disabled: this.icc?.isNoSif() || !checkConfiguration,
+                disabled: !this.icc.hasCommunication(),
                 action: () => this.rootPanel(new JSF.AonJsfSaleInvoice())
             }, {
                 description: "Impresión / eMail de Facturas",
                 title: "Impresión / eMail de Facturas",
-                disabled: this.icc?.isNoSif() || !checkConfiguration,
+                disabled: !this.icc.hasCommunication(),
                 action: () => this.rootPanel(new JSF.AonJsfInvoicePrint())
             }, {
                 description: "Pedidos de Venta",
@@ -114,7 +84,7 @@ export class AonManagementMenu extends AonSuiteMenu {
             }, {
                 description: "Facturación masiva de Albaranes",
                 title: "Facturación masiva de Albaranes",
-                disabled: this.icc?.isNoSif() || !checkConfiguration,
+                disabled: !this.icc.hasCommunication(),
                 action: () => this.rootPanel(new JSF.AonJsfInvoiceDelivery())
             }]
         }, {

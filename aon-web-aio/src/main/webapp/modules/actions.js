@@ -140,6 +140,13 @@ export const DELETE = {
     icon: MATERIAL_ICONS.DELETE
 };
 
+export const CANCEL_INVOICE = {
+    id: CONSTANT.CANCEL_INVOICE.initCap(),
+    name: MSG.CANCEL_INVOICE,
+    title: MSG.CANCEL_INVOICE,
+    icon: MATERIAL_ICONS.REMOVE_DONE
+};
+
 export const DELETE_FILE = {
     id: CONSTANT.DELETE_FILE.initCap(),
     name: MSG.DELETE_FILE,

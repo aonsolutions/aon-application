@@ -683,7 +683,8 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	private static S3Document createBidoqDocument(AonApiData api, JSONObject json, String category) {
 		Integer registry = api.getUser().getRegistry().getId(); 
 		if(api.getUser().getRegistry().getId() == null) {
-			registry = AON.getEnterpriseData(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId())).getEnterprise();
+			registry = AON.getCompany(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()))
+				.getId();
 		}
 		String name = json.getString("nombreAlmacenado");
 		String [] split = name.split("\\.");

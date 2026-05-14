@@ -20,9 +20,11 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
+import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationPhaseListener;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
@@ -53,6 +55,8 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 
 public class VERIFACTU {
 
+	private static final String VF = "VF";
+	
 	private VERIFACTU() {
 		
 	}
@@ -60,8 +64,8 @@ public class VERIFACTU {
 	// **************************************************************
 	// ************************************************ [QUERY] *****
 	// **************************************************************
-	public static VerifactuContext query(InvoiceCommunicatorContext invoiceCommunicatorContext) throws InvoiceCommunicationException {
-		VerifactuContext vc = new VerifactuContext( invoiceCommunicatorContext )
+	public static VerifactuContext query(InvoiceCommunicatorContext invoiceCommunicatorContext, CommunicationData enablerData) throws InvoiceCommunicationException {
+		VerifactuContext vc = new VerifactuContext( invoiceCommunicatorContext, enablerData)
 			.setOperation(InvoiceCommunicationOperation.CONSULTATION);
 		return query(vc);
 	}
@@ -84,24 +88,30 @@ public class VERIFACTU {
 	// ************************************************ [ACCEPT] ****
 	// **************************************************************
 	
-	public static VerifactuContext accept(AONContext ctx, InvoiceCommunicatorContext invoiceCommunicatorContext) throws InvoiceCommunicationException {
-		VerifactuContext vc = new VerifactuContext( invoiceCommunicatorContext )
+	public static VerifactuContext accept(AONContext ctx, InvoiceCommunicatorContext invoiceCommunicatorContext, CommunicationData enablerData, InvoiceCommunicationPhaseListener phase) throws InvoiceCommunicationException {
+		VerifactuContext vc = new VerifactuContext( invoiceCommunicatorContext, enablerData )
 			.setBlockchain( getBlockchain(ctx) )
 			.setOperation(InvoiceCommunicationOperation.REGISTER)
 		;
-		return accept(ctx, vc);
+		return accept(ctx, vc, phase);
 	}
 	
-	private static VerifactuContext accept(AONContext ctx, VerifactuContext vc) throws InvoiceCommunicationException {
+	private static VerifactuContext accept(AONContext ctx, VerifactuContext vc, InvoiceCommunicationPhaseListener phase) throws InvoiceCommunicationException {
+		vc.getLogger().subtitle(VF, "Comunicaci\u00F3n VERIFACTU de " + vc.invoiceCount() + " factura(s).");		
 		check(vc);
-		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(vc);
+		vc.getLogger().message(VF, "Construyendo mensaje para VERIFACTU");
+		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(ctx, InvoiceCommunicationType.VERIFACTU, vc, phase );
 		vc.setRequest( request );
 		Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
 		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));
+		vc.getLogger().message(VF, "Enviando mensaje a VERIFACTU");
 		SOAPMessage requestMessage = VerifactuXMLUtils.soapMarshal(document);
 		VerifactuResponse dataResponse = VerifactuXMLUtils.post(vc.getConfig().getCertificate(), VerifactuUri.getUrlEmision(vc.isVerifactuTest()),requestMessage);
+		vc.getLogger().message(VF, "Procesando respuesta de VERIFACTU");
 		vc.setResponse( dataResponse );
-		return saveAccept( ctx, vc );
+		saveAccept( ctx, vc );
+		vc.getLogger().message(VF, "Almacenando respuesta de VERIFACTU");
+		return vc; 
 	}
 	
 
@@ -125,8 +135,8 @@ public class VERIFACTU {
 	// **************************************************************
 	// ************************************************ [CANCEL] ****
 	// **************************************************************
-	public static VerifactuContext cancel(AONContext ctx, InvoiceCommunicatorContext invoiceCommunicatorContext) throws InvoiceCommunicationException {
-		VerifactuContext vc = new VerifactuContext( invoiceCommunicatorContext )
+	public static VerifactuContext cancel(AONContext ctx, InvoiceCommunicatorContext invoiceCommunicatorContext, CommunicationData enablerData) throws InvoiceCommunicationException {
+		VerifactuContext vc = new VerifactuContext( invoiceCommunicatorContext, enablerData)
 			.setBlockchain( getBlockchain(ctx) )
 			.setOperation(InvoiceCommunicationOperation.ANNULMENT);
 		return cancel(ctx, vc);
@@ -134,7 +144,7 @@ public class VERIFACTU {
 	
 	private static VerifactuContext cancel(AONContext ctx, VerifactuContext vc) throws InvoiceCommunicationException {
 		check(vc);
-		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(vc);
+		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(ctx, InvoiceCommunicationType.VERIFACTU, vc, null);
 		vc.setRequest( request );
 		Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
 		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));

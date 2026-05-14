@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -62,12 +63,12 @@ class VerifactuVentaIntracomunitariaServiciosTest extends AbstractVerifactuTest 
 	void ventaNoActTest() throws InvoiceCommunicationException {
 		List<Invoice> invoices = AonCollectionUtils.toList( getTestInvoice() );
 		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
-		VerifactuContext vc = new VerifactuContext(icc);
+		VerifactuContext vc = new VerifactuContext(icc, getEnvironment().getEnablerData(icc.getConfig()));
 		assertInvoice( vc );
 		
 		List<Invoice> invoicesWR = AonCollectionUtils.toList( getTestInvoiceWithoutRigth() );
 		InvoiceCommunicatorContext  iccWR = getEnvironment().getInvoiceCommunicatorContext(invoicesWR);
-		VerifactuContext vcWR = new VerifactuContext(iccWR);
+		VerifactuContext vcWR = new VerifactuContext(iccWR, getEnvironment().getEnablerData(icc.getConfig()));
 		assertInvoice( vcWR );
 	}
 		
@@ -78,7 +79,7 @@ class VerifactuVentaIntracomunitariaServiciosTest extends AbstractVerifactuTest 
 		invoice.setActivity(InvoiceTypes.getActivityGeneral(getEnvironment().getCtx(), getEnvironment().getDomainId()));
 		invoices.add( invoice );
 		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
-		VerifactuContext vc = new VerifactuContext(icc);
+		VerifactuContext vc = new VerifactuContext(icc, getEnvironment().getEnablerData(icc.getConfig()));
 		assertInvoice( vc );
 		
 		List<Invoice> invoicesWR = new LinkedList<>();
@@ -86,7 +87,7 @@ class VerifactuVentaIntracomunitariaServiciosTest extends AbstractVerifactuTest 
 		invoiceWR.setActivity(InvoiceTypes.getActivityGeneral(getEnvironment().getCtx(), getEnvironment().getDomainId()));
 		invoicesWR.add( invoiceWR );
 		InvoiceCommunicatorContext iccWR = getEnvironment().getInvoiceCommunicatorContext(invoicesWR);
-		VerifactuContext vcWr = new VerifactuContext(iccWR);
+		VerifactuContext vcWr = new VerifactuContext(iccWR, getEnvironment().getEnablerData(icc.getConfig()));
 		assertInvoice( vcWr );
 	}
 
@@ -95,18 +96,18 @@ class VerifactuVentaIntracomunitariaServiciosTest extends AbstractVerifactuTest 
 		Invoice facesInvoice = VerifactuTestsUtils.toFacesInvoice( getTestInvoice() );
 		List<Invoice> invoices = AonCollectionUtils.toList( facesInvoice );
 		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContext(invoices);
-		VerifactuContext vc = new VerifactuContext(icc);
+		VerifactuContext vc = new VerifactuContext(icc, getEnvironment().getEnablerData(icc.getConfig()));
 		assertInvoice( vc );
 		
 		Invoice facesInvoiceWR = VerifactuTestsUtils.toFacesInvoice( getTestInvoiceWithoutRigth() );
 		List<Invoice> invoicesWR = AonCollectionUtils.toList( facesInvoiceWR );
 		InvoiceCommunicatorContext  iccWR = getEnvironment().getInvoiceCommunicatorContext(invoicesWR);
-		VerifactuContext vcWR = new VerifactuContext(iccWR);
+		VerifactuContext vcWR = new VerifactuContext(iccWR, getEnvironment().getEnablerData(icc.getConfig()));
 		assertInvoice( vcWR );
 	}
 
 	private void assertInvoice( VerifactuContext vc ) throws InvoiceCommunicationException {
-		RegFactuSistemaFacturacion rfsf = Invoice2Verifactu.build(vc);
+		RegFactuSistemaFacturacion rfsf = Invoice2Verifactu.build(getEnvironment().getCtx(), InvoiceCommunicationType.VERIFACTU,vc, EMPTY_VERIFACTU_PHASE_LISTENER);
 		assertNotNull( rfsf );
 		
 		// ------------------------ CabeceraType asserts

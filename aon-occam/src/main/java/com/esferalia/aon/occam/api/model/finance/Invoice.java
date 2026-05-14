@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,6 +23,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
@@ -367,6 +367,9 @@ public class Invoice implements Serializable, HasAudit {
 	public boolean isSurcharge() {
 		return surcharge;
 	}
+	public boolean isNotSurcharge() {
+		return !isSurcharge();
+	}
 	public Invoice setSurcharge(boolean surcharge) {
 		this.surcharge = surcharge;
 		return this;
@@ -455,6 +458,9 @@ public class Invoice implements Serializable, HasAudit {
 		double prepayment = includePrepayments ?  0.0
 			: detailStream().filter(f -> f.isPrepayment()).map(InvoiceDetail::getAmount).mapToDouble(d -> Double.valueOf(d)).sum();
 		return AonMathUtils.round(total + getTaxBreakdown().map(b -> b.getRetentionQuota()).orElse(0.0) - prepayment, 2);	
+	}
+	public double getTaxableBaseSum() {
+		return AonMathUtils.round( detailStream().mapToDouble( t -> t.getTaxableBase()  ).sum() , 4); 
 	}
 	public double getTotal() {
 		return total;
@@ -563,6 +569,9 @@ public class Invoice implements Serializable, HasAudit {
 	public Stream<InvoiceDetail> detailStream() {
 		return AonCollectionUtils.stream(this.details);
 	}
+	public int detailsSize() {
+		return (int) detailStream().count();
+	}
 	public boolean hasDetails() {
 		return AonCollectionUtils.isNotEmpty(this.details); 
 	}
@@ -573,6 +582,15 @@ public class Invoice implements Serializable, HasAudit {
 	private List<InvoiceDetail> ensureDetails() {
 		if (this.details == null) this.details = new LinkedList<>();
 		return this.details;
+	}
+	public boolean hasPrepayments() {
+		return detailStream().filter(d -> d.isPrepayment()).count() > 0; 
+	}
+	// ---------------------------------------------------- [TAXES]
+	public Stream<InvoiceTax> invoiceTaxVatStream() {
+		return detailStream()
+			.flatMap( d -> d.taxStream())
+			.filter( it -> it.isVatType() );
 	}
 	
 	// ---------------------------------------------------- [FINANCES]
@@ -634,6 +652,12 @@ public class Invoice implements Serializable, HasAudit {
     	AonCollectionUtils.stream(messages )
 			.forEach( m -> ensureMessages().add(m) );
 	    return this;
+	}
+	
+	public boolean hasERRMessages() {
+		return getMoreSeriousLevel()
+			.filter( e -> e == InvoiceErrorLevel.ERR)
+			.isPresent(); 
 	}
 	
 	public Optional<InvoiceErrorLevel> getMoreSeriousLevel() {
@@ -698,18 +722,12 @@ public class Invoice implements Serializable, HasAudit {
 	public boolean isIsp() {
 		return getTransaction() == InvoiceTransactionType.OTHER_ISP;
 	}
-	public boolean isSales() {
-		return getType() == InvoiceType.SALES;
-	}
-	public boolean isPurchase() {
-		return getType() == InvoiceType.PURCHASE;
-	}
-	public boolean isExpenses() {
-		return getType() == InvoiceType.EXPENSES;
-	}
-	public boolean isUndeductible() {
-		return getType() == InvoiceType.UNDEDUCTIBLE;
-	}
+	
+	public boolean isSales() 		{return getType() == InvoiceType.SALES;}
+	public boolean isNotSales()		{return !isSales();}
+	public boolean isPurchase() 	{return getType() == InvoiceType.PURCHASE;}
+	public boolean isExpenses() 	{return getType() == InvoiceType.EXPENSES;}
+	public boolean isUndeductible() {return getType() == InvoiceType.UNDEDUCTIBLE;}
 	
 	public boolean mustApplyISP() {
 		return (isPurchase() && isIntracommunity())					// Compra intracomunitaria
@@ -734,6 +752,9 @@ public class Invoice implements Serializable, HasAudit {
 			|| isVatUnionExternal() 				//  Regimen Exterior Uniï¿½n UOSS
 			)
 		;
+	}
+	public boolean isVatEnabled() {
+		return isOutputVatEnabled() != isInputVatEnabled();
 	}
 	public boolean isVatImportationAvailable() {
 		return (isExtracommunity() || isCanCeuMel()) 
@@ -892,11 +913,9 @@ public class Invoice implements Serializable, HasAudit {
 		ensureTaxBreakdown().add(ib);
 		return this;
 	}
-	public List<InvoiceBreakdown> getVats() {
-		return this.getTaxBreakdown().map(itb -> itb.getVats() ).orElse(Collections.emptyList());
-	}
-	public Optional<InvoiceWithholding> getWithholding() {
-		return this.getTaxBreakdown().flatMap( itb -> itb.getInvoiceWithholding() );
+	public Optional<InvoiceWithholding> getInvoiceWithholding() {
+		return this.getTaxBreakdown()
+			.flatMap( itb -> itb.getInvoiceWithholding() );
 	}
 	
 	public String flat() {	
@@ -945,6 +964,15 @@ public class Invoice implements Serializable, HasAudit {
 		this.fileUrl = fileUrl;
 		return this;
 	}
+
+	public Optional<InvoiceSource> getUniqueSource() {
+		return this.detailStream()
+			.map( id -> id.getSource() )
+			.distinct()
+			.limit(2)
+			.reduce((a, b) -> null) // Si hay más de uno, devuelve null. Factura con más de un source.
+		;
+	}
 	
 	// **********************************************************************************
 	// ***************************************************** [ DEPRECATED METHODS ] *****
@@ -987,7 +1015,7 @@ public class Invoice implements Serializable, HasAudit {
 
 	/**
 	 * @deprecated This method will be removed 
-	 * use getTaxBreakdown(), getVats() or getWithHolding()
+	 * use getTaxBreakdown() streams
 	 */
 	@Deprecated
 	public List<InvoiceBreakdown> getBreakdown() {

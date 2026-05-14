@@ -591,6 +591,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_aeat_green")
 	String aonIconAeatGreen();
 
+	@ClassName("aon_icon_aeat_light_green")
+	String aonIconAeatLightGreen();
+
 	@ClassName("aon_icon_aeat_orange")
 	String aonIconAeatOrange();
 
@@ -602,6 +605,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_icon_aeat_blue")
 	String aonIconAeatBlue();
+
+	@ClassName("aon_icon_no_sif")
+	String aonIconNoSif();
 
 	@ClassName("aon_icon_sif")
 	String aonIconSif();

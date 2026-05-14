@@ -68,7 +68,7 @@ class Invoice2VerifactuAlta {
 
 		alta.setCupon(CuponType.N);
 
-		alta.setCuotaTotal( VerifactuUtils.toString( invoice.getTaxBreakdown().map(b -> (b.getVatQuota() + b.getSurchargeQuota()) ).orElse(0.0)));
+		alta.setCuotaTotal( VerifactuUtils.toString( invoice.getTaxBreakdown().map(b -> (b.getVatQuota(invoice) + b.getSurchargeQuota(invoice)) ).orElse(0.0)));
 		
 		alta.setImporteTotal(VerifactuUtils.toString(invoice.getGrossTotal(false)));
 		

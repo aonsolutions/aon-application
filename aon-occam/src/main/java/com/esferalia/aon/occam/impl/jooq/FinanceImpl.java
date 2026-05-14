@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.IFinance;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.BookingCheck;
@@ -55,6 +56,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfigurati
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceConsoleAnalysis;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -83,6 +85,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDocDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceFixDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceRecorderDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceRegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoicingGroupDAO;
@@ -98,6 +101,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceClosingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
+import com.esferalia.aon.watson.util.Pair;
 
 public class FinanceImpl implements IFinance {
 
@@ -720,11 +724,11 @@ public class FinanceImpl implements IFinance {
 				configuration -> InvoiceCommunicationDAO.get(ctx, domainId));
 	}
 
-	@Override
-	public InvoiceCommunicationConfiguration saveInvoiceCommunicationConfiguration(AONContext ctx, int domainId, InvoiceCommunicationConfiguration config) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceCommunicationDAO.save(ctx, domainId, config));
-	}
+//	@Override
+//	public InvoiceCommunicationConfiguration saveInvoiceCommunicationConfiguration(AONContext ctx, int domainId, InvoiceCommunicationConfiguration config) {
+//		return ctx.getDslContext().transactionResult(
+//				configuration -> InvoiceCommunicationDAO.save(ctx, domainId, config));
+//	}
 
 	@Override
 	public void prepareNewSii(AONContext ctx) {
@@ -930,9 +934,16 @@ public class FinanceImpl implements IFinance {
 	// ------------------------------------- INVOICE CONSOLE
 	@Override
 	public List<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params) {
-		return ctx.getDslContext().transactionResult(
-			configuration -> InvoiceConsoleDAO.getInvoiceHeaders(ctx, params)
-		);
+		return InvoiceConsoleDAO.getInvoiceHeaders(ctx, params);
+	}
+	@Override
+	public InvoiceConsoleAnalysis analyze(AONContext ctx, InvoiceConsoleParams params) {
+		return InvoiceConsoleDAO.analyze(ctx, params);
+	}
+	@Override
+	public AccountEntry record(AONContext ctx, Invoice inv) {
+		if (inv.getId() == null) throw new IllegalArgumentException("Invoice is required for simulation");
+		return InvoiceRecorderDAO.simulate(ctx, inv.getId());
 	}
 	
 	// ------------------------------------- INVOICE DOC
@@ -969,8 +980,13 @@ public class FinanceImpl implements IFinance {
 		return ItemDAO.getStreamSuggestion(ctx, domainId, query);
 	}
 	
-	// ------------------------------------- SERIES 
+	// ------------------------------------- INVOICE FEE
+	@Override
+	public Optional<Pair<Integer, Integer>> getFeeYearRange(AONContext ctx, Integer domainId) {
+		return FeeDAO.getFeeYearRange(ctx, domainId);
+	}
 
+	// ------------------------------------- SERIES 
 	@Override
 	public Stream<Series> getSeriesSuggestion(AONContext ctx, Integer domainId, String query) {
 		return SeriesDAO.getStreamSuggestion(ctx, domainId, query);

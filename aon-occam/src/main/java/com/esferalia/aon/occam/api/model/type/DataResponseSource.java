@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
@@ -75,7 +76,9 @@ public enum DataResponseSource implements Serializable{
 			return null;
 		return DataResponseSource.values()[i];
 	}
-	
+	public static Optional<DataResponseSource> optOf(InvoiceCommunicationType ict) {
+		return Optional.ofNullable(safeValueOf(ict));
+	}
 	public static DataResponseSource safeValueOf(InvoiceCommunicationType ict) {
 		if ( ict == null) return null;
 		MutableObject<DataResponseSource> ret = new MutableObject<>();

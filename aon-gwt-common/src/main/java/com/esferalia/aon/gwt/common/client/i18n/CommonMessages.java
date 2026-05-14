@@ -502,6 +502,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Cargando...")
 	String loading();
 	
+	@DefaultMessage("Analizando...")
+	String analyzing();
+	
 	@DefaultMessage("Busqueda Avanzada")
 	String advancedSearch();
 	
@@ -2683,6 +2686,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Cuota R.E.")
 	String surchargeQuota();
 
+	@DefaultMessage("Cuota + R.E.")
+	String totalVat();
+
 	@DefaultMessage("Aplicar retenci\u00F3n")
 	String withholding();
 	
@@ -3865,6 +3871,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Contabilizar pago")
 	String recordPayment();
 	
+	@DefaultMessage("Contabilizando")
+	String recording();
+
 	@DefaultMessage("Contabilizar")
 	String record();
 
@@ -4452,6 +4461,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Sin comunicaci\u00F3n de facturas")
 	String noCommunication();
+
+	@DefaultMessage("Sin sistema facturaci\u00F3n")
+	String noSif();  
 
 	@DefaultMessage("Cuenta de inmovilizado")
 	String fixedAssetAccount();

@@ -40,6 +40,7 @@ public enum AonError implements Serializable{
 	,EMPTY_DOMAIN("El dominio es un dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_DESCRIPTION("La descripci\u00F3n es un dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_DATE("La fecha es un dato obligatorio, no puede estar vac\u00EDo")
+	,EMPTY_START_DATE("La fecha de inicio es un dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_EXP_ACCOUNT("La cuenta de explotaci\u00F3n es dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_CONCEPT("El concepto es un dato dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_AMOUNT("El importe es un dato dato obligatorio, no puede estar vac\u00EDo")

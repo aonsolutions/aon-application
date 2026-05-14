@@ -971,10 +971,10 @@ public class SaleInvoiceController extends InvoiceController {
 					tbai.createAnulacionTBAI(company, invoice, config);
 					// NUEVO ANULAR
 					// TBAI.getInstance().cancel(config, company, invoice);
-
 					AON.deleteInvoice(domainName, invoice.getDomain(), login, invoice.getId());
 				} catch (Exception e) {
-					if(config.isTbaiTest()) {
+					boolean test = config.getTbaiData().map(tbaiData -> tbaiData.isTest()).orElse(false);
+					if(test) {
 						AON.deleteInvoice(domainName, invoice.getDomain(), login, invoice.getId());
 					} else {
 						e.printStackTrace();
@@ -1127,7 +1127,9 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	public String getAdmonIcon() {
 		if (getInvoiceCommunicationConfiguration() != null) {
-			Administration admon = getInvoiceCommunicationConfiguration().getAdministration();		
+			Administration admon = getInvoiceCommunicationConfiguration()
+				.getAdministration()
+				.orElse(Administration.UNKNOWN);
 			return admon.visit(new IAdministrationVisitor<String>() {
 				@Override public String visitAlava() 			{ return "aon-icon-araba-bw"; }
 				@Override public String visitBizkaia() 			{ return "aon-icon-bizkaia-bw"; }
@@ -1191,6 +1193,12 @@ public class SaleInvoiceController extends InvoiceController {
 			@Override public void visitExternallyCommunicated() {ret.setValue("aon-icon-point-blue"); }
 		});
 		return ret.getValue();
+	}
+	
+	public boolean isIssueable() {
+		return !isNevv()
+			&& (isVerifactu( ) || isNoVerifactu() ||  isSif() ||  isSii())
+			&& (getInvoice().getNumber() <= 0 || isUniqueNumberOfSeries());
 	}
 	
 	public boolean isCommunicationAvailable() {

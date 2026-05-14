@@ -37,13 +37,12 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
-import net.aonsolutions.aon.invoice.communication.visitor.AcceptInvoiceCommunicationTypeVisitor;
 import net.aonsolutions.aon.sii.SIIManager;
 import net.aonsolutions.aon.tbai.TbaiMain;
 
@@ -155,7 +154,7 @@ public class FeeInvoicingProcess implements ILongProcess {
 	}
 	private void communication(String sessionName, Collection<Invoice> invoiceList) throws InvoiceCommunicationException, Exception {
 		InvoiceCommunicationConfiguration config = controller.getInvoiceCommunicationConfiguration();
-		if (!config.isNoVerifactu() && !config.isSif()) {
+		if (config.isCertificateNeeded()) {
 			config.setCertificate(controller.getCert());
 		}
 
@@ -171,26 +170,28 @@ public class FeeInvoicingProcess implements ILongProcess {
 			// Y USAR EL ELSE PARA TICKET BAI. 
 			AonCollectionUtils.stream(invoiceList).forEach(inv -> ticketbai(config, company, inv));
 		} else if(config.hasCommunication()) {
-			for (Invoice inv : invoiceList) {
-				com.esferalia.aon.occam.api.model.finance.Invoice invoice 
-					= AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), user.getLogin(), inv.getId());
-				InvoiceCommunicatorContext communicator = new InvoiceCommunicatorContext(domain, usr, controller.getCertificate(), AonCollectionUtils.toList(invoice))
-					.setConfig(config)
-					.setCompany(company);
-				try {
-					InvoiceCommunicator.issueInvoice(communicator);
-					
-					// Devolver el número a Hibernate para poder contabilizar si todo fue bien
-					com.esferalia.aon.occam.api.model.finance.Invoice afterInvoice 
-						= AON.getInvoice(domainName, inv.getDomain(), user.getLogin(), inv.getId());
-					inv.setNumber(afterInvoice.getNumber());
-					inv.setReferenceCode(afterInvoice.getReferenceCode());
-					inv = (Invoice) HibernateUtil.getSession(sessionName).merge(inv);
-				} catch (Exception e) {
-					e.printStackTrace();
-					// AonUtil.addErrorMessage("Error during invoice communication invoice " + invoice.getReferenceCode() + ": " + e.getMessage());
-				}
-			}
+			LinkedList<com.esferalia.aon.occam.api.model.finance.Invoice> occamInvoices = AonCollectionUtils.stream(invoiceList)
+				.map(i -> AON_SOLUTIONS.getInvoice(domainName, i.getDomain(), user.getLogin(), i.getId()) )
+				.collect(Collectors.toCollection( LinkedList::new ))
+			;
+			InvoiceCommunicatorContext communicator = new InvoiceCommunicatorContext(domain, usr, controller.getCertificate(), occamInvoices)
+				.setConfig(config)
+				.setCompany(company)
+				.setFailOnWrongValidation( AonCollectionUtils.size(occamInvoices) == 1 )
+			;
+			InvoiceCommunicator.issueInvoice(communicator);
+
+			// Devolver el número a Hibernate para poder contabilizar si todo fue bien
+			AonCollectionUtils.stream(invoiceList)
+				.map(i -> new Pair<Invoice, com.esferalia.aon.occam.api.model.finance.Invoice> (i, AON.getInvoice(domainName, i.getDomain(), user.getLogin(), i.getId())))
+				.forEach( pair -> {
+					Invoice hibernateInvoice = pair.getLeft();
+					com.esferalia.aon.occam.api.model.finance.Invoice afterInvoice = pair.getRight();
+					hibernateInvoice.setNumber(afterInvoice.getNumber());
+					hibernateInvoice.setReferenceCode(afterInvoice.getReferenceCode());
+					hibernateInvoice = (Invoice) HibernateUtil.getSession(sessionName).merge(hibernateInvoice);
+				});
+				
 		}
 	}
 	

@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
 public class AccountEntry implements Serializable, HasAudit {
@@ -197,6 +199,22 @@ public class AccountEntry implements Serializable, HasAudit {
 			}
 		}
 		return aed;
+	}
+	
+	public double getDebitSum() {
+		return AonCollectionUtils.stream( getDetails() )
+			.filter( det -> !det.isDeleted() )
+			.mapToDouble( det -> det.getDebit() )
+			.sum();
+	}
+	public double getCreditSum() {
+		return AonCollectionUtils.stream( getDetails() )
+			.filter( det -> !det.isDeleted() )
+			.mapToDouble( det -> det.getCredit() )
+			.sum();
+	}
+	public boolean isSettled() {
+		return AonNumberUtils.equals( getDebitSum(), getCreditSum() );
 	}
 
 	// ---------------------------------------------------------- DIRTY

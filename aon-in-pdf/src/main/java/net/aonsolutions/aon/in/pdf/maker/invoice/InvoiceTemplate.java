@@ -1775,7 +1775,7 @@ public class InvoiceTemplate {
 				drawTextRight(ctx.getContents(), new PDRectangle(x, y, 79, 15), percent, ctx.getTheme().getTextColor(), FONT, 7, 5, -12, i + TAX_PERCENTAGE);
 				x += 80;
 				
-				String taxName = TaxType.VAT.equals(tax.getTaxType()) && ctx.getAdministration().isCanarias()
+				String taxName = TaxType.VAT.equals(tax.getTaxType()) && ctx.isCanarias()
 						? "IGIC" : tax.getTaxType().getName();
 				drawTextCenter(ctx.getContents(), new PDRectangle(x, y, 59, 15), taxName, ctx.getTheme().getTextColor(), FONT, 7, -12, i + TAX_TYPE);
 				x += 60;

@@ -152,6 +152,23 @@ public class AonCollectionUtils {
 		return map.size();
 	}
 
+	public static <T> List<List<T>> split(List<T> list, int n) {
+	    List<List<T>> result = new LinkedList<>();
+	    for (int i = 0; i < list.size(); i += n) {
+	        result.add(list.subList(i, Math.min(i + n, list.size())));
+	    }
+	    return result;
+	}
+
+	public static <T> boolean in(T[] array, T t) {
+		if (array == null) return false;
+		return AonCollectionUtils.stream(array)
+			.anyMatch(e -> AonObjectUtils.equals( e, t) );
+	}
+	public static <T> boolean notIn(T[] array, T t) {
+		return !in(array, t);
+	}
+	
 	public static void clear(Collection<?> collection) {
 		if (collection != null) collection.clear();
 	}

@@ -26,7 +26,7 @@ class VerifactuQueryTest extends AbstractVerifactuTest {
 	@Test
 	void queryNullFilterTest() throws InvoiceCommunicationException {
 		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate( null );
-		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> VERIFACTU.query(icc));
+		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> VERIFACTU.query(icc, getEnvironment().getEnablerData(icc.getConfig())));
 		assertNotNull(e);
 		assertNotNull(e.getMessages());
 		assertThat(InvoiceCommunicationError.AON_0028).isIn(e.getMessages());
@@ -37,7 +37,7 @@ class VerifactuQueryTest extends AbstractVerifactuTest {
 		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate(null);
 		InvoiceCommunicationQuery icq = new InvoiceCommunicationQuery();
 		icc.setCommunicationQuery(icq);
-		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> VERIFACTU.query(icc));
+		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> VERIFACTU.query(icc, getEnvironment().getEnablerData(icc.getConfig())));
 		assertNotNull(e);
 		assertNotNull(e.getMessages());
 		assertThat(InvoiceCommunicationError.AON_0029).isIn(e.getMessages());
@@ -49,7 +49,7 @@ class VerifactuQueryTest extends AbstractVerifactuTest {
 		InvoiceCommunicationQuery icq = new InvoiceCommunicationQuery();
 		icq.setYear(2025);
 		icc.setCommunicationQuery(icq);
-		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> VERIFACTU.query(icc));
+		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class, () -> VERIFACTU.query(icc, getEnvironment().getEnablerData(icc.getConfig())));
 		assertNotNull(e);
 		assertNotNull(e.getMessages());
 		assertThat(InvoiceCommunicationError.AON_0030).isIn(e.getMessages());
@@ -64,7 +64,7 @@ class VerifactuQueryTest extends AbstractVerifactuTest {
 		Date today = new Date();
 		icq.setDate(today);
 		icc.setCommunicationQuery(icq);
-		VerifactuContext vc = VERIFACTU.query(icc);
+		VerifactuContext vc = VERIFACTU.query(icc, getEnvironment().getEnablerData(icc.getConfig()));
 		assertNotNull(vc);
 		assertNotNull(vc.getResponse());
 		assertNull(vc.getResponse().getResponse());

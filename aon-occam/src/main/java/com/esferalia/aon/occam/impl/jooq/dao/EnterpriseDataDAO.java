@@ -2,188 +2,295 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
 
-import java.sql.Date;
-import java.util.LinkedList;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
-import org.jooq.Select;
-import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
-import com.esferalia.aon.occam.api.model.Filter.EnterpriseDataFilter;
-import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.api.model.Properties.EnterpriseDataProperties;
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
+import com.esferalia.aon.occam.api.model.payroll.Enterprise;
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class EnterpriseDataDAO {
 
 	private EnterpriseDataDAO() {
-		throw new IllegalStateException("Utility Class");
 	}
-	
-	private static final EnterpriseDataPropertiesDAO ENTERPRISE_DATA_PROPERTIES = new EnterpriseDataPropertiesDAO();
-	protected static class EnterpriseDataPropertiesDAO implements EnterpriseDataProperties {
-		protected Select<Record> build(SelectJoinStep<Record> select, EnterpriseDataFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			return filterDAO.build(select);
-		}
-		
-		protected Condition[] getConditions(EnterpriseDataFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) return new Condition[0];
-			return new Condition[] { filterDAO.getCondition() };
-		}
 
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE_DATA.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE_DATA.DOMAIN);}
-		@Override public Property<Integer> getEnterpriseProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE_DATA.ENTERPRISE);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE_DATA.NAME);}
-		@Override public Property<String> getExpressionProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE_DATA.EXPRESSION);}
-		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE_DATA.START_DATE);}
-		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE_DATA.END_DATE);}
-	}
-	
-	public static SelectConditionStep<Record> select(AONContext ctx, EnterpriseDataFilter filter){	
+	// ---------------------------------------------------------------
+	// -------------------------------------------------------- [READ]
+	// ---------------------------------------------------------------
+	private static SelectJoinStep<Record> select(AONContext ctx){	
 		return ctx.getDslContext()
-				.select()
-				.from(ENTERPRISE_DATA)
-				.where(ENTERPRISE_DATA_PROPERTIES.getConditions(filter));
+			.select()
+			.from(ENTERPRISE_DATA)
+		;
+	}
+	public static Stream<EnterpriseData> streamByDomain(AONContext ctx, Integer domainId){	
+		if (domainId == null ) return Stream.empty();
+		return select(ctx)
+			.where(ENTERPRISE_DATA.DOMAIN.eq(domainId))
+			.fetch()
+			.stream()
+			.map( r -> new EnterpriseDataFiller<>().apply(r, EnterpriseData::new) );
+	}
+	public static Stream<EnterpriseData> streamByEnterprise(AONContext ctx, Integer enterpriseId){
+		if (enterpriseId == null ) return Stream.empty();
+		return select(ctx)
+			.where(ENTERPRISE_DATA.ENTERPRISE.eq(enterpriseId))
+			.fetch()
+			.stream()
+			.map( r -> new EnterpriseDataFiller<>().apply(r, EnterpriseData::new) );
 	}
 	
-	public static Stream<EnterpriseData> getStream(AONContext ctx, EnterpriseDataFilter filter){	
-		return select(ctx, filter).fetch().stream().map(new EnterpriseDataFiller());
+	public static Optional<EnterpriseData> get(AONContext ctx, Integer domainId, Integer id){
+		if (domainId == null || id == null) return Optional.empty();
+		return select(ctx)
+			.where(ENTERPRISE_DATA.DOMAIN.eq(domainId))
+			.and( ENTERPRISE_DATA.ID.eq( id ))
+			.fetch()
+			.stream()
+			.map( r -> new EnterpriseDataFiller<>().apply(r, EnterpriseData::new) )
+			.findFirst();
 	}
 	
-	public static Stream<EnterpriseData> getStream(AONContext ctx, EnterpriseDataFilter filter, Integer page, Integer perPage){	
-		return select(ctx, filter)
-			.limit(perPage)
-			.offset(perPage * (page -1))
-			.fetch().stream().map(new EnterpriseDataFiller());
+	public static Optional<EnterpriseData> get(AONContext ctx, Integer domainId, EnterpriseDataNames name){
+		if (domainId == null || name == null) return Optional.empty();
+		return select(ctx)
+			.where(ENTERPRISE_DATA.DOMAIN.eq(domainId))
+			.and( ENTERPRISE_DATA.NAME.eq( name.name()))
+			.fetch()
+			.stream()
+			.map( r -> new EnterpriseDataFiller<>().apply(r, EnterpriseData::new) )
+			.findFirst();
 	}
 	
-	public static LinkedList<EnterpriseData> getList(AONContext ctx, EnterpriseDataFilter filter){	
-		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static LinkedList<EnterpriseData> getList(AONContext ctx, EnterpriseDataFilter filter, Integer page, Integer perPage){	
-		return getStream(ctx, filter, page, perPage).collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static EnterpriseData get(AONContext ctx, EnterpriseDataFilter filter) {
-		ctx.checkRead();
-		return select(ctx, filter).limit(1)
-			.stream().map(new EnterpriseDataFiller())
-			.findFirst().orElse(new EnterpriseData());
+	// ---------------------------------------------------------------
+	// ------------------------------------------------------- [WRITE]
+	// ---------------------------------------------------------------
+	public static void save(AONContext ctx, List<EnterpriseData> datas){
+		AonCollectionUtils.stream( datas )
+			.forEach( data -> save(ctx, data) );
 	}
 	
 	public static EnterpriseData save(AONContext ctx, EnterpriseData enterpriseData){
-		if(enterpriseData.getId() != null && enterpriseData.isRemoved()) {
+		if (enterpriseData.getId() != null && enterpriseData.isDeleted()) {
 			delete(ctx, enterpriseData.getId());
 			return enterpriseData;
-		} else return enterpriseData.getId() == null 
-			? insert(ctx, enterpriseData)
-			: update(ctx, enterpriseData);		
-	}
-	
-	public static void save(AONContext ctx, List<EnterpriseData> enterpriseData){
-		for(EnterpriseData ctData: enterpriseData) {
-			if(ctData.getId() != null && ctData.isRemoved())
-				delete(ctx, ctData.getId());
-
-			if (ctData.getId() == null) insert(ctx, ctData);
-			else update(ctx, ctData);
-		}	
-	}
-	
-	public static EnterpriseData insert(AONContext ctx, EnterpriseData ctData) {
-		ctx.checkWrite();
-		LinkedList<EnterpriseData> list = new LinkedList<>();
-		EnterpriseData exists = exists(ctx, ctData);
-		if(ctData!=null && exists.getId()==null) {
-			Integer id = ctx.getDslContext().insertInto(ENTERPRISE_DATA)
-			.set(ENTERPRISE_DATA.DOMAIN, ctData.getDomain())
-			.set(ENTERPRISE_DATA.ENTERPRISE, ctData.getEnterprise())
-			.set(ENTERPRISE_DATA.NAME, ctData.getName())
-			.set(ENTERPRISE_DATA.EXPRESSION, ctData.getExpression())
-			.set(ENTERPRISE_DATA.START_DATE, converDateSql(ctData.getStartDate()))
-			.set(ENTERPRISE_DATA.END_DATE, ctData.getEndDate()!=null ? converDateSql(ctData.getEndDate()) : null)
-			.returning(ENTERPRISE_DATA.ID).fetchOne().getId();
-			ctData.setId(id);
-			list.add(ctData);
-			ctx.log().debug("INSERT ENTERPRISE_DATA id: " + id);		
 		} else {
-			ctData.setId(exists.getId());
-			ctx.log().debug("YA EXISTEN ESTOS DATOS ENTERPRISE_DATA id: " + exists.getId());	
+			EnterprseDataAutoComplete.complete(ctx, ctx.getDomainId(), enterpriseData);
+			return enterpriseData.getId() == null 
+				? insert(ctx, enterpriseData)
+				: update(ctx, enterpriseData);		
 		}
-		
-		return ctData;
 	}
 	
-	public static EnterpriseData update(AONContext ctx, EnterpriseData enterpriseData) {
+	public static EnterpriseData updateEndDate(AONContext ctx, EnterpriseData cc, Date endDate) {
+		return save(ctx, setEndDate(cc, endDate));
+	}
+	
+	public static <T extends EnterpriseData> T setEndDate(T cc, Date endDate) {
+		Date startDate = cc.getStartDate();
+		cc.setEndDate( endDate );
+		cc.setDeleted( !AonDateUtils.isAfter( endDate, startDate) );		
+		System.out.println( "Closing data " + cc.getDataName() + " with end date " + endDate + " (start date: " + startDate + ", deleted: " + cc.isDeleted() + ")" );
+		return cc;
+	}
+	
+	
+	private static EnterpriseData insert(AONContext ctx, EnterpriseData enterpriseData) {
 		ctx.checkWrite();
-		ctx.getDslContext()
-			.update(ENTERPRISE_DATA)
+		EnterprseDataValidation.insert(ctx, enterpriseData);
+		Integer id = ctx.getDslContext().insertInto(ENTERPRISE_DATA)
+				.set(ENTERPRISE_DATA.DOMAIN, enterpriseData.getDomain())
+				.set(ENTERPRISE_DATA.ENTERPRISE, enterpriseData.getEnterprise())
+				.set(ENTERPRISE_DATA.NAME, enterpriseData.getName())
+				.set(ENTERPRISE_DATA.EXPRESSION, enterpriseData.getExpression())
+				.set(ENTERPRISE_DATA.START_DATE, AonDateUtils.toSql( enterpriseData.getStartDate()))
+				.set(ENTERPRISE_DATA.END_DATE, AonDateUtils.toSql( enterpriseData.getEndDate()))
+				.set(ENTERPRISE_DATA.CREATION_USER, ctx.getUser()) 
+				.set(ENTERPRISE_DATA.CREATION_DATE, new Timestamp( System.currentTimeMillis()))
+				.set(ENTERPRISE_DATA.MODIFICATION_USER, ctx.getUser()) 
+				.set(ENTERPRISE_DATA.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.returning(ENTERPRISE_DATA.ID)
+			.fetchOne()
+			.getId();
+		enterpriseData.setId(id).setDirty(false);
+		ctx.log().debug("INSERT ENTERPRISE_DATA id: " + id);		
+		return enterpriseData;
+	}
+	
+	private static EnterpriseData update(AONContext ctx, EnterpriseData enterpriseData) {
+		ctx.checkWrite();
+		if (enterpriseData.isNotDirty()) return enterpriseData;
+		EnterprseDataValidation.update(ctx, enterpriseData);
+		ctx.getDslContext().update(ENTERPRISE_DATA)
 			.set(ENTERPRISE_DATA.DOMAIN, enterpriseData.getDomain())
 			.set(ENTERPRISE_DATA.ENTERPRISE, enterpriseData.getEnterprise())
 			.set(ENTERPRISE_DATA.NAME, enterpriseData.getName())
 			.set(ENTERPRISE_DATA.EXPRESSION, enterpriseData.getExpression())
-			.set(ENTERPRISE_DATA.START_DATE, converDateSql(enterpriseData.getStartDate()) )
-			.set(ENTERPRISE_DATA.END_DATE, converDateSql(enterpriseData.getEndDate()) )
-			.where(ENTERPRISE_DATA.ID.eq(enterpriseData.getId()))
-			.execute();		
+			.set(ENTERPRISE_DATA.START_DATE, AonDateUtils.toSql( enterpriseData.getStartDate()) )
+			.set(ENTERPRISE_DATA.END_DATE, AonDateUtils.toSql( enterpriseData.getEndDate()) )
+			.set(ENTERPRISE_DATA.MODIFICATION_USER,ctx.getUser())
+			.set(ENTERPRISE_DATA.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+		.where(ENTERPRISE_DATA.ID.eq(enterpriseData.getId()))
+		.execute();		
 		ctx.log().debug("UPDATE ENTERPRISE_DATA id: " + enterpriseData.getId());		
-		return enterpriseData;
+		return enterpriseData.setDirty(false);
 	}
-
+	
 	public static void delete(AONContext ctx, Integer id){
-		delete(ctx, f -> f.getIdProperty().eq(id));
+		ctx.getDslContext()
+			.delete(ENTERPRISE_DATA)
+			.where(ENTERPRISE_DATA.ID.eq(id))
+			.execute();
 		ctx.log().debug("DELETE ENTERPRISE_DATA id:" + id);
 	}
 	
-	private static void delete(AONContext ctx, EnterpriseDataFilter filter) {
-		ctx.getDslContext()
-			.delete(ENTERPRISE_DATA)
-			.where(ENTERPRISE_DATA_PROPERTIES.getConditions(filter))
-			.execute();
-	}
-	
-	private static EnterpriseData exists(AONContext ctx, EnterpriseData ctData) {
-		return get(ctx, f->
-			f.getNameProperty().eq(ctData.getName())
-			.and(f.getEnterpriseProperty().eq(ctData.getEnterprise()))
-			.and(f.getDomainProperty().eq(ctData.getDomain()))
-			.and(f.getStartDateProperty().eq( converDateSql(ctData.getStartDate()) ))
-			.and( ctData.getExpression()!=null ? f.getExpressionProperty().eq(ctData.getExpression()) : f.getExpressionProperty().isNull())
-			.and( ctData.getEndDate()!=null ? f.getEndDateProperty().eq(converDateSql(ctData.getEndDate())) : f.getEndDateProperty().isNull() )
-		);
-	}
-	
-	
-	public static class EnterpriseDataFiller extends Filler implements Function<Record, EnterpriseData> {
+	// ---------------------------------------------------------------
+	// ------------------------------------------------------ [FILLER]
+	// ---------------------------------------------------------------
+	static class EnterpriseDataFiller<T extends EnterpriseData> extends Filler implements BiFunction<Record, Supplier<T>, T> {
 
 		@Override
-		public EnterpriseData apply(Record r) {
-			return new EnterpriseData()
-				.setId(r.getValue(ENTERPRISE_DATA.ID))
-				.setDomain(r.getValue(ENTERPRISE_DATA.DOMAIN))
-				.setName(r.getValue(ENTERPRISE_DATA.NAME))
-				.setEnterprise(r.getValue(ENTERPRISE_DATA.ENTERPRISE))
-				.setExpression(r.getValue(ENTERPRISE_DATA.EXPRESSION))
-				.setStartDate(r.getValue(ENTERPRISE_DATA.START_DATE))
-				.setEndDate(r.getValue(ENTERPRISE_DATA.END_DATE))
-				.setIsRemoved(false)
-				;
+		public T apply(Record r, Supplier<T> supplier) {
+			T t = supplier.get();
+			t.setId(getValue(r,ENTERPRISE_DATA.ID));
+			t.setDomain(getValue(r,ENTERPRISE_DATA.DOMAIN));
+			t.setName(getValue(r,ENTERPRISE_DATA.NAME));
+			t.setEnterprise(getValue(r,ENTERPRISE_DATA.ENTERPRISE));
+			t.setExpression(getValue(r,ENTERPRISE_DATA.EXPRESSION));
+			t.setStartDate(getValue(r,ENTERPRISE_DATA.START_DATE));
+			t.setEndDate(getValue(r,ENTERPRISE_DATA.END_DATE));
+			t.setCreationDate(r.getValue(ENTERPRISE_DATA.CREATION_DATE));
+			t.setCreationUser(r.getValue(ENTERPRISE_DATA.CREATION_USER));
+			t.setModificationDate(r.getValue(ENTERPRISE_DATA.MODIFICATION_DATE));
+			t.setModificationUser(r.getValue(ENTERPRISE_DATA.MODIFICATION_USER));
+			t.setDeleted(false);
+			t.setDirty(false);
+			return t;
+		}
+	}
+
+	
+	private static class EnterprseDataAutoComplete {
+
+		private EnterprseDataAutoComplete() {
+			
+		}
+		
+		private static void complete(AONContext ctx, Integer domainId, EnterpriseData data) {
+			if (data != null && data.getEnterprise() == null) {
+				Company company = CompanyDAO.getByDomain(ctx, domainId);
+				if (company != null) {
+					Enterprise enterprise = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(domainId).and(f.getIdProperty().eq(company.getId())));
+					if (enterprise != null) {
+						data.setEnterprise( enterprise.getId() );
+						if (data.getDomain() == null) {
+							data.setDomain(enterprise.getDomain());
+						}
+					}
+				}
+			}
 		}
 	}
 	
-	private static Date converDateSql(java.util.Date date) {
-	    return date != null ? new Date(date.getTime()) : null;
-	}
+	private static class EnterprseDataValidation {
+		private static final BiConsumer<AONContext,EnterpriseData> EMPTY_DOMAIN = (ctx, d) -> {
+			if (d.getDomain() == null) 
+				throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
+		};
 
+		private static final BiConsumer<AONContext,EnterpriseData> EMPTY_ENTERPRISE = (ctx, d) -> {
+			if (d.getEnterprise() == null) 
+				throw new AonCoreException(AonError.EMPTY_ENTERPRISE.getMessage());
+		};
+
+		private static final BiConsumer<AONContext,EnterpriseData> EMPTY_NAME = (ctx, d) -> {
+			if (AonStringUtils.isBlank(d.getName())) 
+				throw new AonCoreException(AonError.EMPTY_NAME.getMessage());
+		};
+
+
+		private static final BiConsumer<AONContext,EnterpriseData> EMPTY_START_DATE = (ctx, d) -> {
+			if (!d.allowsNullStartDate() && d.getStartDate() == null)
+				throw new AonCoreException(AonError.EMPTY_START_DATE.getMessage());
+		};
+
+		private static final BiConsumer<AONContext,EnterpriseData> WRONG_RANGE = (ctx,d) -> {
+			if (AonDateUtils.isAfter( d.getStartDate(), d.getEndDate()))
+				throw new AonCoreException(AonError.ACCOUNT_PERIOD_WRONG_RANGE.getMessage());
+		};
+		
+		private static final BiConsumer<AONContext, EnterpriseData> OVERLAP = (AONContext ctx, EnterpriseData d) -> {
+			if (d.allowsOverlap()) return;
+		    java.sql.Date sqlStart = AonDateUtils.toSql( d.getStartDate());
+		    java.sql.Date sqlEnd = AonDateUtils.toSql( d.getEndDate());
+		    
+		    Condition overlap =
+            DSL.and(
+                // existing.start <= new.end OR new.end IS NULL
+                (sqlEnd == null)
+                    ? DSL.trueCondition()
+                    : ENTERPRISE_DATA.START_DATE.le(sqlEnd),
+
+                // new.start <= existing.end OR existing.end IS NULL
+                (sqlStart == null)
+                    ? DSL.trueCondition()
+                    : ENTERPRISE_DATA.END_DATE.ge(sqlStart).or(ENTERPRISE_DATA.END_DATE.isNull())
+            );
+		    
+		    Condition notSelf  = (d.getId() == null) ? DSL.noCondition() : ENTERPRISE_DATA.ID.ne(d.getId());
+		    Integer existingId = ctx.getDslContext()
+	    		.select(ENTERPRISE_DATA.ID)
+	    		.from(ENTERPRISE_DATA)
+	    		.where(ENTERPRISE_DATA.DOMAIN.eq(d.getDomain()))
+	    		.and(ENTERPRISE_DATA.NAME.eq(d.getName()))
+		        .and(notSelf)
+		        .and(overlap)
+		        .limit(1)
+		        .fetch()
+		        .stream() 
+		        .map( r -> r.getValue(ENTERPRISE_DATA.ID))
+		        .findFirst()
+		        .orElse(null);
+		    if (existingId != null) {
+		    	throw new AonCoreException(AonError.ACCOUNT_PERIOD_END_OVERLAP.format(d.getName()));
+		    }
+		};		
+		
+		private static void common(AONContext ctx, EnterpriseData enterpriseData) {
+			EMPTY_DOMAIN
+				.andThen( EMPTY_ENTERPRISE)
+				.andThen( EMPTY_NAME)
+				.andThen( EMPTY_START_DATE)
+				.andThen( WRONG_RANGE ) 
+				.andThen( OVERLAP )
+				.accept(ctx, enterpriseData);
+		}
+
+		public static void insert(AONContext ctx, EnterpriseData enterpriseData) {
+			common(ctx, enterpriseData);
+		}
+		public static void update(AONContext ctx, EnterpriseData enterpriseData) {
+			common(ctx, enterpriseData);
+		}
+		
+	}
+	
 }

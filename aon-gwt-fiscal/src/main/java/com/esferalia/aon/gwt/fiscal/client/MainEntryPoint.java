@@ -104,7 +104,7 @@ public class MainEntryPoint implements EntryPoint {
 	}
 
 	//
-	//    ================================================================== CONSOLE
+	//    ============================================================= INVOICES
 	//
 	private enum FinanceEntryPoint {
 		InvoiceConsoleModule {
@@ -112,6 +112,11 @@ public class MainEntryPoint implements EntryPoint {
 				com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceConsoleModule.run();
 			}
 		},
+		InvoiceFeeModule {
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.invoice.fee.InvoiceFeeModule.run();
+			}
+		}
 		;
 		abstract void run();
 	}

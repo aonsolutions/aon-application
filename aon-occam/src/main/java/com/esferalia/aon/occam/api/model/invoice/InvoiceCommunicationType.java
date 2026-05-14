@@ -1,32 +1,54 @@
 package com.esferalia.aon.occam.api.model.invoice;
 
 import java.io.Serializable;
+import java.util.Optional;
 
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public enum InvoiceCommunicationType implements Serializable {
  
-	SII ("S.I.I.","Suministro Inmediato de Informaci\u00F3n")
-	{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSII();}},
-	TBAI ("Ticket BAI","Ticket BAI")
-		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitTBAI();}},
-	LROE ("L.R.O.E.","Libro Registro de Operaciones Econ\u00F3micas") 
-		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitLROE();}},
-	SERES ("SERES","Plataforma de Intercambio Electr\u00F3nico de Documentos") 
-		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSERES();}},
-	EMAIL ("Env\u00EDo Mail","Env\u00EDo por correo electr\u00F3nico") 
-		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitEMAIL();}},
-	CLOSING ("Cierre","Cierre de facturaci\u00F3n") 
-		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitCLOSING();}},
-	VERIFACTU ("Verifactu","Plataforma Verifactu") 
-		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitVERIFACTU();}},
-	NO_VERIFACTU ("No Verifactu","Plataforma No Verifactu")
-		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitNO_VERIFACTU();}},
-	SIF ("S.I.F.","Sistema de Informatico de facturaci\u00F3n")
-		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSIF();}},
-	FACTURAE ("FacturaE","Factura Electr\u00F3nica") 
-		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitFACTURAE();}}
+	SII ("S.I.I.","Suministro Inmediato de Informaci\u00F3n"){ 
+		@Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSII();}
+		@Override public <T> T accept(InvoiceCommunicationTypeAccepter<T> accepter) { return accepter.visitSII();}
+	},
+	TBAI ("Ticket BAI","Ticket BAI") { 
+		@Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitTBAI();}
+		@Override public <T> T accept(InvoiceCommunicationTypeAccepter<T> accepter) { return accepter.visitTBAI();}
+	},
+	LROE ("L.R.O.E.","Libro Registro de Operaciones Econ\u00F3micas") {  
+		 @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitLROE();}
+		 @Override public <T> T accept(InvoiceCommunicationTypeAccepter<T> accepter) { return accepter.visitLROE();}
+	},
+	SERES ("SERES","Plataforma de Intercambio Electr\u00F3nico de Documentos") { 
+		 @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSERES();}
+		 @Override public <T> T accept(InvoiceCommunicationTypeAccepter<T> accepter) { return accepter.visitSERES();}
+	},
+	EMAIL ("Env\u00EDo Mail","Env\u00EDo por correo electr\u00F3nico") {
+		 @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitEMAIL();}
+		 @Override public <T> T accept(InvoiceCommunicationTypeAccepter<T> accepter) { return accepter.visitEMAIL();}
+	},
+	CLOSING ("Cierre","Cierre de facturaci\u00F3n") {
+		 @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitCLOSING();}
+		 @Override public <T> T accept(InvoiceCommunicationTypeAccepter<T> accepter) { return accepter.visitCLOSING();}
+	},
+	VERIFACTU ("Verifactu","Plataforma Verifactu") {
+		 @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitVERIFACTU();}
+		 @Override public <T> T accept(InvoiceCommunicationTypeAccepter<T> accepter) { return accepter.visitVERIFACTU();}
+	},
+	NO_VERIFACTU ("No Verifactu","Plataforma No Verifactu") {
+		 @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitNO_VERIFACTU();}
+		 @Override public <T> T accept(InvoiceCommunicationTypeAccepter<T> accepter) { return accepter.visitNO_VERIFACTU();}
+	},
+	SIF ("S.I.F.","Sistema de Informatico de facturaci\u00F3n") {
+		 @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSIF();}
+		 @Override public <T> T accept(InvoiceCommunicationTypeAccepter<T> accepter) { return accepter.visitSIF();}
+	},
+	FACTURAE ("FacturaE","Factura Electr\u00F3nica") {
+		 @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitFACTURAE();}
+		 @Override public <T> T accept(InvoiceCommunicationTypeAccepter<T> accepter) { return accepter.visitFACTURAE();}
+	}
 	;
 	
 	private final String abbr;
@@ -108,7 +130,21 @@ public enum InvoiceCommunicationType implements Serializable {
 		return EMAIL.equals(this);
 	}
 	
+	public static Optional<InvoiceCommunicationType> get(EnterpriseDataNames name) {
+		switch (name) {
+			case ICC_TBAI: return Optional.of(InvoiceCommunicationType.TBAI);
+			case ICC_LROE: return Optional.of(InvoiceCommunicationType.LROE);
+			case ICC_SII: return Optional.of(InvoiceCommunicationType.SII);
+			case ICC_VERIFACTU: return Optional.of(InvoiceCommunicationType.VERIFACTU);
+			case ICC_NO_VERIFACTU: return Optional.of(InvoiceCommunicationType.NO_VERIFACTU);
+			case ICC_SIF: return Optional.of(InvoiceCommunicationType.SIF);
+			default: return Optional.empty();
+		}
+	}
+
+	
 	public abstract void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception;
+	public abstract <T> T accept(InvoiceCommunicationTypeAccepter<T> visitor) ;
 	
 	public static interface InvoiceCommunicationTypeVisitor {
 		void visitSII() throws InvoiceCommunicationException;
@@ -152,6 +188,19 @@ public enum InvoiceCommunicationType implements Serializable {
 		default void throwSIF() throws InvoiceCommunicationException {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_NO_SIF);
 		}
+	}
+	
+	public static interface InvoiceCommunicationTypeAccepter<T> {
+		T visitSII();
+		T visitTBAI();
+		T visitLROE();
+		T visitSERES();
+		T visitEMAIL();
+		T visitCLOSING();
+		T visitVERIFACTU();
+		T visitNO_VERIFACTU();
+		T visitSIF();
+		T visitFACTURAE();
 	}
 	
 }

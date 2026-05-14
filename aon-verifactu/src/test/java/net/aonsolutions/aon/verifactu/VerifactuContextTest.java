@@ -9,9 +9,10 @@ class VerifactuContextTest {
 		
 		VerifactuContext vc1 = VerifactuMocker.mock( VerifactuContext.class );
 		
-		VerifactuContext vc2 = new VerifactuContext( vc1.getInvoiceCommunicatorContext());
+		VerifactuContext vc2 = new VerifactuContext( vc1.getInvoiceCommunicatorContext(), vc1.getEnablerData());
 		
 		VerifactuAsserts.assertClassEquals( vc1.getInvoiceCommunicatorContext(), vc2.getInvoiceCommunicatorContext());
+		VerifactuAsserts.assertClassEquals( vc1.getEnablerData(), vc2.getEnablerData());
 		
 		vc2.setActivities(vc1.getActivities());
 		vc2.setBlockchain(vc1.getBlockchain());

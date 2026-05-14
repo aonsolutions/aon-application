@@ -148,7 +148,7 @@ public class AuthDAO {
 			.set(AUTH.PHONE, auth.getPhone())
 			.where(AUTH.ID.eq(auth.getAuth()))
 			.execute();
-		return auth;
+		return getAuth(ctx, auth.getEmail());
 	}
 	
 	public static Auth updateAuthPassword(AONContext ctx, Auth auth) {

@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.payroll.Enterprise;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -192,23 +193,19 @@ public class EnterpriseDraftObject {
 	}
 	
 	public String getPaySheetModel() {
-		Optional<EnterpriseData> paySheetModel = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_REPORT_salary_PAY")).findFirst();
-		return paySheetModel.isPresent() ? paySheetModel.get().getExpression() : null;
+		return getPayData(EnterpriseDataNames.PAY_REPORT_salary_PAY);
 	}
 	
 	public String getPaysheetSend() {
-		Optional<EnterpriseData> paysheetSend = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_salarySendingMethod_PAY")).findFirst();
-		return paysheetSend.isPresent() ? paysheetSend.get().getExpression() : null;
+		return getPayData(EnterpriseDataNames.PAY_salarySendingMethod_PAY);
 	}
 	
 	public String getPaysheetSendEmail() {
-		Optional<EnterpriseData> paysheetSendEmail = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_salarySending_email_PAY")).findFirst();
-		return paysheetSendEmail.isPresent() ? paysheetSendEmail.get().getExpression() : null;
+		return getPayData(EnterpriseDataNames.PAY_salarySending_email_PAY);
 	}
 	
 	public String getAgreement() {
-		Optional<EnterpriseData> agreement = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("agreement")).findFirst();
-		return agreement.isPresent() ? agreement.get().getExpression() : null;
+		return getPayData(EnterpriseDataNames.agreement);
 	}
 	
 	public String getAgreementDescription() {
@@ -225,13 +222,20 @@ public class EnterpriseDraftObject {
 	}
 	
 	public String getPayAuthorizationKey() {
-		Optional<EnterpriseData> payAuthorizationKey = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_authorization_key_PAY")).findFirst();
-		return payAuthorizationKey.isPresent() ? payAuthorizationKey.get().getExpression() : null;
+		return getPayData(EnterpriseDataNames.PAY_authorization_key_PAY);
 	}
 	
 	public String getPaySsMutual() {
-		Optional<EnterpriseData> paySsMutual = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_ss_pension_plan_mutual_PAY")).findFirst();
-		return paySsMutual.isPresent() ? paySsMutual.get().getExpression() : null;
+		return getPayData(EnterpriseDataNames.PAY_ss_pension_plan_mutual_PAY);
+	}
+	
+	private String getPayData(EnterpriseDataNames name) { 
+		return this.enterprise
+			.getDatas()
+			.stream()
+			.filter(f -> f.getDataName() == name)
+			.findFirst().map( ed -> ed.getExpression() )
+			.orElse(null); 
 	}
 	
 	// ----------------------------------------------  SETTERS  -------------------------------------------------
@@ -351,100 +355,61 @@ public class EnterpriseDraftObject {
 		enterprise.setScope(scope);
 	}
 	
+	private void setPayData(String payModel, EnterpriseDataNames name) {
+		this.enterprise.getDatas()
+			.stream()
+			.filter(f -> f.getDataName() == name)
+			.findFirst()
+			.ifPresentOrElse(
+				payRM -> {
+					payRM.setExpression(payModel);
+					payRM.setDeleted(AonStringUtils.isBlank(payModel));
+				}
+				, () -> this.enterprise.getDatas()
+					.add(new EnterpriseData()
+						.setDomain(enterprise.getDomain())
+						.setEnterprise(enterprise.getId())
+						.setName(name.name())
+						.setExpression(payModel)
+					) 
+			);
+
+	}
+	
 	public void setPaySheetModel(String paySheetModel) {
-		Optional<EnterpriseData> paySheetModelRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_REPORT_salary_PAY")).findFirst();
-		if(paySheetModelRM.isPresent()) {
-			paySheetModelRM.get().setExpression(paySheetModel);
-			paySheetModelRM.get().setIsRemoved(AonStringUtils.isBlank(paySheetModel));
-		} else
-			this.enterprise.getDatas().add(new EnterpriseData()
-				.setDomain(enterprise.getDomain())
-				.setEnterprise(enterprise.getId())
-				.setName("PAY_REPORT_salary_PAY")
-				.setExpression(paySheetModel));
+		setPayData(paySheetModel, EnterpriseDataNames.PAY_REPORT_salary_PAY);	
 	}
 	
 	public void setCostModel(String costModel) {
-		Optional<EnterpriseData> costModelRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_REPORT_enterpriseSalary_PAY")).findFirst();
-		if(costModelRM.isPresent()) {
-			costModelRM.get().setExpression(costModel);
-			costModelRM.get().setIsRemoved(AonStringUtils.isBlank(costModel));
-		} else
-			this.enterprise.getDatas().add(new EnterpriseData()
-				.setDomain(enterprise.getDomain())
-				.setEnterprise(enterprise.getId())
-				.setName("PAY_REPORT_enterpriseSalary_PAY")
-				.setExpression(costModel));
+		setPayData(costModel, EnterpriseDataNames.PAY_REPORT_enterpriseSalary_PAY);	
 	}
 	
 	public void setPaySheetSendType(String paySheetModelTypeSend) {
-		Optional<EnterpriseData> paySheetModelTypeSendRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_salarySendingMethod_PAY")).findFirst();
-		if(paySheetModelTypeSendRM.isPresent()) {
-			paySheetModelTypeSendRM.get().setExpression(paySheetModelTypeSend);
-			paySheetModelTypeSendRM.get().setIsRemoved(AonStringUtils.isBlank(paySheetModelTypeSend));
-		} else
-			this.enterprise.getDatas().add(new EnterpriseData()
-				.setDomain(enterprise.getDomain())
-				.setEnterprise(enterprise.getId())
-				.setName("PAY_salarySendingMethod_PAY")
-				.setExpression(paySheetModelTypeSend));
-		
-		if(!AonStringUtils.equals(paySheetModelTypeSend, "EMAIL")) {
-			Optional<EnterpriseData> email = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_salarySending_email_PAY")).findFirst();
-			email.ifPresent(emailIt -> emailIt.setIsRemoved(true));
+		setPayData(paySheetModelTypeSend, EnterpriseDataNames.PAY_salarySendingMethod_PAY);	
+		if (AonStringUtils.notEquals(paySheetModelTypeSend, "EMAIL")) {
+			this.enterprise.getDatas()
+				.stream()
+				.filter(f -> f.getDataName() == EnterpriseDataNames.PAY_salarySending_email_PAY)
+				.findFirst()
+				.ifPresent(emailIt -> emailIt.setDeleted(true));
 		}
+		
 	}
 	
 	public void setPaySheetSendEmail(String email) {
-		Optional<EnterpriseData> emailRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_salarySending_email_PAY")).findFirst();
-		if(emailRM.isPresent()) {
-			emailRM.get().setExpression(email);
-			emailRM.get().setIsRemoved(AonStringUtils.isBlank(email));
-		} else
-			this.enterprise.getDatas().add(new EnterpriseData()
-				.setDomain(enterprise.getDomain())
-				.setEnterprise(enterprise.getId())
-				.setName("PAY_salarySending_email_PAY")
-				.setExpression(email));
+		setPayData(email, EnterpriseDataNames.PAY_salarySending_email_PAY);
 	}
 	
 	public void setAgreement(String agreementId) {
-		Optional<EnterpriseData> agreementRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("agreement")).findFirst();
-		if(agreementRM.isPresent()) {
-			agreementRM.get().setExpression(agreementId);
-			agreementRM.get().setIsRemoved(AonStringUtils.isBlank(agreementId));
-		} else
-			this.enterprise.getDatas().add(new EnterpriseData()
-				.setDomain(enterprise.getDomain())
-				.setEnterprise(enterprise.getId())
-				.setName("agreement")
-				.setExpression(agreementId));
+		setPayData(agreementId, EnterpriseDataNames.agreement);
 	}
 	
 	public void setPaySsMutual(String paySsMutual) {
-		Optional<EnterpriseData> paySsMutualRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_ss_pension_plan_mutual_PAY")).findFirst();
-		if(paySsMutualRM.isPresent()) {
-			paySsMutualRM.get().setExpression(paySsMutual);
-			paySsMutualRM.get().setIsRemoved(AonStringUtils.isBlank(paySsMutual));
-		} else
-			this.enterprise.getDatas().add(new EnterpriseData()
-				.setDomain(enterprise.getDomain())
-				.setEnterprise(enterprise.getId())
-				.setName("PAY_ss_pension_plan_mutual_PAY")
-				.setExpression(paySsMutual));
+		setPayData(paySsMutual, EnterpriseDataNames.PAY_ss_pension_plan_mutual_PAY);
 	}
 	
 	public void setPayAuthorizationKey(String payAuthorizationKey) {
-		Optional<EnterpriseData> payAuthorizationKeyRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_authorization_key_PAY")).findFirst();
-		if(payAuthorizationKeyRM.isPresent()) {
-			payAuthorizationKeyRM.get().setExpression(payAuthorizationKey);
-			payAuthorizationKeyRM.get().setIsRemoved(AonStringUtils.isBlank(payAuthorizationKey));
-		} else
-			this.enterprise.getDatas().add(new EnterpriseData()
-				.setDomain(enterprise.getDomain())
-				.setEnterprise(enterprise.getId())
-				.setName("PAY_authorization_key_PAY")
-				.setExpression(payAuthorizationKey));
+		setPayData(payAuthorizationKey, EnterpriseDataNames.PAY_authorization_key_PAY);
 	}
 		
 }

@@ -21,6 +21,12 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
+/**
+ * @deprecated This class is deprecated and will be removed in future versions. 
+ * @use com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceViewer instead.
+ * 	
+ */
+@Deprecated
 public class AonInvoiceViewer extends SimpleLayoutPanel {
 
 	private FlowPanel container;

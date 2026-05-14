@@ -13,6 +13,7 @@ import * as OPTION from './InvoiceOptions.js';
 import * as LS from '../../services/localStorageService.js';
 import { addCounter, transferCounter } from './InvoiceCounter.js';
 import { getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrashPendingFromOption } from './InvoiceUtils.js';
+import { getCommunicationStatusColor, getCommunicationStatusLabel, getCommunicationTypeLabel } from '../../models/InvoiceCommunicationConfig.js';
 
 export class AonInvoiceList extends AonElement {
 
@@ -282,8 +283,8 @@ export class AonInvoiceList extends AonElement {
 					let communicationType = ci[key].communicationType;
 					let icon = {
 						icon: MATERIAL_ICONS.QR_CODE_2,
-						title: key + " " + this.getCommunicationStatusLabel(communicationType, communicationStatus),
-						color: this.getCommunicationStatusColor(communicationType, communicationStatus)
+						title: getCommunicationTypeLabel(key) + " " + getCommunicationStatusLabel(communicationType, communicationStatus),
+						color: getCommunicationStatusColor(communicationType, communicationStatus)
 					};
 					icons.push(icon);
 				}
@@ -298,24 +299,6 @@ export class AonInvoiceList extends AonElement {
 		return (invoice
 			&& invoice.communicationInfo 
 			&& Object.keys(invoice.communicationInfo).length > 0);
-	}
-
-	getCommunicationStatusLabel(type, status) {
-		if("PENDING" === status && "NO_VERIFACTU" !== type) return "Pendiente";
-		else if("ACCEPTED" === status || ("PENDING" === status && "NO_VERIFACTU" === type)) return "Aceptada";
-		else if("ACCEPTED_WITH_ERRORS" === status) return "Aceptada con errores";
-		else if("EXTERNALLY_COMMUNICATED" === status) return "Com. Externamente";
-		else if("WRONG" === status) return "Incorrecta";
-		else return "Sin Estado";
-	}
-
-	getCommunicationStatusColor(type, status) {
-		if("PENDING" === status && "NO_VERIFACTU" !== type) return "orange";
-		else if("ACCEPTED" === status || ("PENDING" === status && "NO_VERIFACTU" === type)) return "green";
-		else if("ACCEPTED_WITH_ERRORS" === status) return "yellow";
-		else if("EXTERNALLY_COMMUNICATED" === status) return "blue";
-		else if("WRONG" === status) return "red"
-		else return "gray";
 	}
 
 	getInvoiceTypeIcon(invoice) {
@@ -427,7 +410,8 @@ export class AonInvoiceList extends AonElement {
 	}
 
 	communicateInvoices() {
-		if(this.icc.isTbai() || this.icc.isLroe() || this.icc.isVerifactu() || this.icc.isSii()) {	
+		let atDate = new Date();
+		if(this.icc.isTbai(atDate) || this.icc.isLroe(atDate) || this.icc.isVerifactu(atDate) || this.icc.isSii(atDate)) {	
 			this.certificateDialog((certificate) => this.communicatingInvoices(certificate));
 		} else  this.communicatingInvoices();
 	}
@@ -493,7 +477,7 @@ export class AonInvoiceList extends AonElement {
 		});
 	}
 
-	  setIcc(icc) {this.icc = icc; }
+	setIcc(icc) {this.icc = icc; }
 
 	deleteForeverInvoices() {
 		let aonInvoice = this.getElement('aonInvoice');

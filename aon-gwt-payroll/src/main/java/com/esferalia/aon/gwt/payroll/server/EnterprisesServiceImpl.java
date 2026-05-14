@@ -183,7 +183,9 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
+import com.esferalia.aon.occam.api.model.EnterpriseDataNames;
 import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.calendar.Holiday;
@@ -3239,8 +3241,17 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Optional<ApplicationParameter> authParam = AON.getApplicationParameterStream(domainName, domainId, userLogin, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY"))).findFirst();
 			String authKey = null;
 			if(authParam.isEmpty() || AonStringUtils.isBlank(authParam.get().getValue())) {
-				EnterpriseData enterpriseData = AON.getEnterpriseData(new Domain().setName(domainName).setId(domainId), new User().setLogin(userLogin), f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY")));
-				if(null != enterpriseData && null != enterpriseData.getId()) authKey = enterpriseData.getExpression();
+				Occam occam = new Occam()
+					.setDomainName(domainName)
+					.setDomain(domainId)
+					.setUser(userLogin);
+				authKey = AON.getEnterpriseData(occam, domainId, EnterpriseDataNames.PAY_authorization_key_PAY )
+					.map(EnterpriseData::getExpression)
+					.orElse(null)
+				; 
+//				EnterpriseData enterpriseData = AON.getEnterpriseData(new Domain().setName(domainName).setId(domainId), new User().setLogin(userLogin), f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY")));
+//				if(null != enterpriseData && null != enterpriseData.getId()) 
+//					authKey = enterpriseData.getExpression();
 			} else 
 				authKey = authParam.get().getValue();
 			
@@ -3279,8 +3290,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Optional<ApplicationParameter> authParam = AON.getApplicationParameterStream(domainName, domainId, userLogin, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY"))).findFirst();
 			String authKey = null;
 			if(authParam.isEmpty() || AonStringUtils.isBlank(authParam.get().getValue())) {
-				EnterpriseData enterpriseData = AON.getEnterpriseData(new Domain().setName(domainName).setId(domainId), new User().setLogin(userLogin), f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY")));
-				if(null != enterpriseData && null != enterpriseData.getId()) authKey = enterpriseData.getExpression();
+				Occam occam = new Occam()
+						.setDomainName(domainName)
+						.setDomain(domainId)
+						.setUser(userLogin);
+				authKey = AON.getEnterpriseData(occam, domainId, EnterpriseDataNames.PAY_authorization_key_PAY )
+					.map(EnterpriseData::getExpression)
+					.orElse(null)
+				; 
+//				EnterpriseData enterpriseData = AON.getEnterpriseData(new Domain().setName(domainName).setId(domainId), new User().setLogin(userLogin), f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("PAY_authorization_key_PAY")));
+//				if(null != enterpriseData && null != enterpriseData.getId()) authKey = enterpriseData.getExpression();
 			} else 
 				authKey = authParam.get().getValue();
 			

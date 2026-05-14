@@ -560,6 +560,11 @@ public class AON_SOLUTIONS {
 		} 
 	}
 	
+	public static Date getInvoiceExpDate(Occam occam, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getApi().getInvoiceExpDate(ctx, id);
+		} 
+	}
 	public static Date getInvoiceExpDate(String domainName, Integer domainId, String login, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getApi().getInvoiceExpDate(ctx, id);

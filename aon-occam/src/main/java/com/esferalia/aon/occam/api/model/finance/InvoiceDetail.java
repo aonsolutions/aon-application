@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.DiscountExpression;
@@ -149,6 +150,9 @@ public class InvoiceDetail implements Serializable {
 		return this;
 	}
 	
+	public Optional<Item> optItem() {
+		return Optional.ofNullable( item );
+	}
 	public Item getItem() {
 		return item;
 	}
@@ -243,6 +247,9 @@ public class InvoiceDetail implements Serializable {
 	}
 	public boolean isPrepayment() {
 		return prepayment;
+	}
+	public boolean isNotPrepayment() {
+		return !isPrepayment();
 	}
 	public InvoiceDetail setPrepayment(boolean prepayment) {
 		this.prepayment = prepayment;

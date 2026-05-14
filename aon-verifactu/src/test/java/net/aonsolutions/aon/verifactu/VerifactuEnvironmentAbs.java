@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateOwner;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
@@ -51,9 +52,7 @@ abstract class VerifactuEnvironmentAbs implements Environment {
 	public void setDomainId(Integer id) {
 		this.domainId = id;
 	}
-	
 
-	
 	@Override
 	public InvoiceCommunicatorContext getInvoiceCommunicatorContext(List<Invoice> invoices) {
 		return new InvoiceCommunicatorContext(domain(),user(), null, invoices)
@@ -75,7 +74,9 @@ abstract class VerifactuEnvironmentAbs implements Environment {
 			}
 			assertNotNull(getCommunicationConfiguration(),"communicationConfiguration NULL" );
 			assertTrue(getCommunicationConfiguration().isVerifactu() ,"communicationConfiguration VERIFACTU NO ACTIVO");
-			assertTrue(getCommunicationConfiguration().isVerifactuTest(),"communicationConfiguration NO ENTORNO TEST" );
+			assertTrue(getCommunicationConfiguration().getVerifactuData().isPresent());
+			CommunicationData vd = getCommunicationConfiguration().getVerifactuData().get();
+			assertTrue(vd.isTest(),"communicationConfiguration NO ENTORNO TEST" );
 			return getCommunicationConfiguration();
 		}
 	}

@@ -8,7 +8,9 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.console.ConsoleLogger;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.CommunicationData;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationQuery;
@@ -22,6 +24,7 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 
 public class VerifactuContext  {
 	private final InvoiceCommunicatorContext invoiceCommunicatorContext;
+	private final CommunicationData enablerData;
 	private List<EnterpriseActivity> activities;
 	private VerifactuBlockchain blockchain;
 	private InvoiceCommunicationOperation operation;
@@ -30,13 +33,18 @@ public class VerifactuContext  {
 	private VerifactuResponse response;
 	private ConsultaFactuSistemaFacturacionType queryRequest;
 	
-	public VerifactuContext(InvoiceCommunicatorContext invoiceCommunicatorContext) {
+	public VerifactuContext(InvoiceCommunicatorContext invoiceCommunicatorContext, CommunicationData enablerData) {
 		this.invoiceCommunicatorContext = invoiceCommunicatorContext;
+		this.enablerData = enablerData;
 	}
 	
 	public InvoiceCommunicatorContext getInvoiceCommunicatorContext() {
 		return invoiceCommunicatorContext;
 	}
+	public CommunicationData getEnablerData() {
+		return enablerData;
+	}
+	
 	public Integer getDomainId() {
 		return getDomain() == null ? null : getDomain().getId();
 	}
@@ -51,15 +59,6 @@ public class VerifactuContext  {
 	}
 	public InvoiceCommunicationConfiguration getConfig() {
 		return getInvoiceCommunicatorContext().getConfig();
-	}
-	public boolean isCommonTerritory() {
-		return getInvoiceCommunicatorContext().getConfig().isAEAT();
-	}
-	public boolean isCanarias() {
-		return getInvoiceCommunicatorContext().getConfig().isCanarias();
-	}
-	public boolean isVerifactuAdmon() {
-		return isCommonTerritory() || isCanarias();
 	}
 	
 	public InvoiceCommunicationQuery getInvoiceCommunicationQuery() {
@@ -86,8 +85,14 @@ public class VerifactuContext  {
 		return getInvoiceCommunicatorContext().invoiceCount();
 	}
 	public boolean isVerifactuTest() {
-		return getInvoiceCommunicatorContext().getConfig().isVerifactuTest();
-
+		return getInvoiceCommunicatorContext()
+			.getConfig()
+			.getVerifactuData()
+			.map(vd -> vd.isTest())
+			.orElse(false);
+	}
+	public ConsoleLogger getLogger() {
+		return getInvoiceCommunicatorContext().getLogger();
 	}
 	public List<EnterpriseActivity> getActivities() {
 		return activities;
@@ -166,4 +171,11 @@ public class VerifactuContext  {
 		return this;
 	}
 	
+	public boolean isAEAT() 			{ return getEnablerData().isAEAT(); }
+	public boolean isCanarias() 		{ return getEnablerData().isCanarias(); }
+	public boolean isBizkaia() 			{ return getEnablerData().isBizkaia(); }
+	public boolean isGipuzkoa() 		{ return getEnablerData().isGipuzkoa(); }
+	public boolean isAraba() 			{ return getEnablerData().isAraba(); }
+	public boolean isNavarra() 			{ return getEnablerData().isNavarra(); }
+	public boolean isVerifactuAdmon() 	{ return isAEAT() || isCanarias(); }
 }

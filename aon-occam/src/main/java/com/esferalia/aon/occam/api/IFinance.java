@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.BookingCheck;
@@ -50,6 +51,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfigurati
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceConsoleAnalysis;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -61,6 +63,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.watson.util.Pair;
 
 public interface IFinance {
 	
@@ -247,7 +250,7 @@ public interface IFinance {
 	
 	public Stream<Invoice> getCommunicationInvoices(AONContext ctx, InvoiceCommunicationParams params);
 	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(AONContext ctx, int invoice);
-	public InvoiceCommunicationConfiguration saveInvoiceCommunicationConfiguration(AONContext ctx, int domainId , InvoiceCommunicationConfiguration config);
+//	public InvoiceCommunicationConfiguration saveInvoiceCommunicationConfiguration(AONContext ctx, int domainId , InvoiceCommunicationConfiguration config);
 	public void prepareNewSii(AONContext ctx);
 	public void prepareNewSii(AONContext ctx, Integer year);
 	
@@ -322,12 +325,19 @@ public interface IFinance {
 	// 	************** INVOICE CONSOLE ****************
 	// 	***********************************************
 	List<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params);
+	InvoiceConsoleAnalysis analyze(AONContext ctx, InvoiceConsoleParams params);
+	AccountEntry record(AONContext ctx, Invoice inv);
 	
 	// 	****************************************
 	// 	************************ INVOICE DOC ***
 	// 	****************************************
 	Optional<InvoiceDoc> getInvoiceDoc(AONContext ctx, int domain, Integer invoiceId);	
 	void saveInvoiceDoc(AONContext ctx, InvoiceDoc invoiceDoc);
+	
+	// ********************************************
+	// ***************************** INVOICE FEE **
+	// ********************************************
+	Optional<Pair<Integer, Integer>> getFeeYearRange(AONContext ctx, Integer domainId);
 	
 	// ********************************************
 	// ********************************** SERIES **

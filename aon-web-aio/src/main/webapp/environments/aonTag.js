@@ -206,7 +206,9 @@ export const AON_INVEST_LIST = 'aon-invest-list';
 export const AON_INVOICE = 'aon-invoice';
 export const AON_MOBILE_INVOICE = 'aon-mobile-invoice';
 export const AON_INVOICE_CONFIGURATION = 'aon-invoice-configuration';
+export const AON_INVOICE_CONFIG = 'aon-invoice-config';
 export const AON_INVOICE_COMMUNICATION_CONFIGURATION = 'aon-invoice-communication-configuration';
+export const AON_INVOICE_COMMUNICATION_CONFIG = 'aon-invoice-communication-config';
 export const AON_INVOICE_COMMUNICATION = 'aon-invoice-communication';
 export const AON_INVOICE_PRINT = 'aon-invoice-print';
 

@@ -18,6 +18,7 @@ import org.w3c.dom.Document;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -223,8 +224,8 @@ class VerifactuCommunicationTest extends AbstractVerifactuTest {
 	private VerifactuContext doCommunicate(Invoice invoice) throws InvoiceCommunicationException {
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
 		InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate(invoices);
-		VerifactuContext vc = new VerifactuContext(icc);
-		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(vc);
+		VerifactuContext vc = new VerifactuContext(icc, getEnvironment().getEnablerData(icc.getConfig()));
+		RegFactuSistemaFacturacion request = Invoice2Verifactu.build(getEnvironment().getCtx(), InvoiceCommunicationType.VERIFACTU,vc, EMPTY_VERIFACTU_PHASE_LISTENER);
 		vc.setRequest( request );
 		Document document = VerifactuXMLUtils.toDocument(request, RegFactuSistemaFacturacion.class);
 		vc.setRequestBytes(VerifactuXMLUtils.toBytes(document));
