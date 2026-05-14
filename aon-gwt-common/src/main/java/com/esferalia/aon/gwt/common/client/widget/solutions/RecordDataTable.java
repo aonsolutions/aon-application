@@ -256,6 +256,8 @@ public abstract class RecordDataTable extends ScrollPanel {
 			    e.stopPropagation();
 			    e.getNativeEvent().stopPropagation();
 			    e.getNativeEvent().preventDefault();
+			    
+			    onShowLoadingMessage("Cargando archivo...");
 
 			    JSONObject json = new JSONObject();
 			    json.put("domain_id", new JSONNumber(domain));
@@ -280,6 +282,8 @@ public abstract class RecordDataTable extends ScrollPanel {
 			        AonAttachPreviewPanel popup = new AonAttachPreviewPanel(temp);
 			        popup.center();
 			        popup.show();
+			        
+			        onHideMessage();
 			    });
 			});
 		    buttonContainer.add(preview);
@@ -459,5 +463,7 @@ public abstract class RecordDataTable extends ScrollPanel {
 	}
 
 	protected abstract void onShowErrorMessage(String errorMessage);
+	protected abstract void onShowLoadingMessage(String loadingMessage);
+	protected abstract void onHideMessage();
 
 }

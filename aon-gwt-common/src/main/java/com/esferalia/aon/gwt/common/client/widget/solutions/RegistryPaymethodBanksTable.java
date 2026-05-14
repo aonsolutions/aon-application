@@ -91,8 +91,8 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 		BAN("Banco", "-moz-available", "min-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		IBA("IBAN", "-moz-available", "min-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		SWI("SWIFT", "10rem", "max-width: 10rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		SUF("Sufijo", "6rem", "max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		CUE("Cuenta Contable", "10rem", "max-width: 10rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		SUF("Sufijo", "4rem", "max-width: 4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		CUE("Cuenta Contable", "12rem", "max-width: 12rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		BUT(AonStringUtils.EMPTY, "4rem", "");
 
 		String headerLabel;
@@ -225,8 +225,8 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 		rBanks.forEach(b -> banks.addItem("(" + b.getAlias() + ") " + b.getBankAccount().toString(), b.getId().toString()));
 		
 		pays.setTitle("Numero de vencimiento por factura");
-		firstPay.setTitle("Plazo en dias del primer pago");
-		betweenDays.setTitle("Plazo en dias del resto de pagos");
+		firstPay.setTitle("Plazo en dias al primer pago");
+		betweenDays.setTitle("Plazo en dias entre el resto de pagos");
 		payDayss.setTitle("Dias fijos de pago separados por espacios");
 		
 		pays.hideNearBy();
@@ -316,7 +316,8 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 				FlowPanel buttonContainer = new FlowPanel();
 				buttonContainer.getElement().getStyle().setTextAlign(TextAlign.LEFT);
 
-				CheckBox showActive = new CheckBox("");
+				CheckBox showActive = new CheckBox("Act.");
+				showActive.setTitle("Solo activos");
 				showActive.addStyleName(AON.CSS.aonCustomRowButtom());
 				showActive.setValue(showActiveBanks);
 				showActive.addValueChangeHandler(e -> {
@@ -428,8 +429,8 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 		tab.addInlineStyle(suffix, COLS.SUF.getStyles());
 		tab.addRow(row, suffix, COLS.SUF.getColWidth());
 		
-		Label account = new Label(null == registryBank.getAccount() ? "" : registryBank.getAccount().getCode());
-		account.setTitle(null == registryBank.getAccount() ? "" : registryBank.getAccount().getCode());
+		Label account = new Label(null == registryBank.getAccount() ? "" : registryBank.getAccount().getFullName());
+		account.setTitle(null == registryBank.getAccount() ? "" : registryBank.getAccount().getFullName());
 		tab.addInlineStyle(account, COLS.CUE.getStyles());
 		tab.addRow(row, account, COLS.CUE.getColWidth());
 
