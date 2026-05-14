@@ -19,8 +19,7 @@
 		<dependency>
     		<groupId>org.json</groupId>
     		<artifactId>json</artifactId>
-    		<version>20251224</version>
-		</dependency>
+    				</dependency>
 		<dependency>
 	    	<groupId>com.auth0</groupId>
 		    <artifactId>java-jwt</artifactId>

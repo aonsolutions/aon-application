@@ -37,6 +37,7 @@
     <commons-lang3.version>3.20.0</commons-lang3.version>
     <jooq.version>3.21.4</jooq.version>
     <mysql-connector.version>8.0.33</mysql-connector.version>
+    <org.json.version>20251224</org.json.version>
   </properties>
   <modules>
     <!--  
@@ -316,6 +317,11 @@
         <groupId>mysql</groupId>
         <artifactId>mysql-connector-java</artifactId>
         <version>${mysql-connector.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>${org.json.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

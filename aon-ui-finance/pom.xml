@@ -239,8 +239,7 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20251224</version>
-		</dependency>
+					</dependency>
 		<dependency>
 			<groupId>jakarta.faces</groupId>
 			<artifactId>jsf-api</artifactId>
