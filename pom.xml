@@ -28,6 +28,7 @@
     <jackson.version>2.21.3</jackson.version>
     <jackson.annotations.version>2.21</jackson.annotations.version>
     <slf4j.version>2.0.11</slf4j.version>
+    <guava.version>33.4.8-jre</guava.version>
   </properties>
   <modules>
     <!--  
@@ -237,6 +238,11 @@
         <version>${slf4j.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
       </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
