@@ -16,6 +16,7 @@ public interface InvoiceErrorKeyVisitor<T> {
 	void visitIrpfQuota(T t);
 	void visitScope(T t);
 	void visitRegistry(T t);
+	void visitRegistryStatus(T t);
 	void visitAmbiguousRegistry(T t);
 	void visitRdocument(T t);
 	void visitRdocumentCountry(T t);

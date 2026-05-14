@@ -622,7 +622,7 @@ public class Up2Date {
 			// InsuranceInsert.INSURANCEINSERT,
 			// AgriculturalBases2026Update.AGRICULTURALBASES2026UPDATE,
 			// Customize.CUSTOMIZE_GESTORIAMUNOZ,
-			MaxEmbargable4DailyFix.MAXEMBARGABLE4DAILYFIX,
+			// MaxEmbargable4DailyFix.MAXEMBARGABLE4DAILYFIX,
 			
 			
 			// ----------------------------------------------------------------

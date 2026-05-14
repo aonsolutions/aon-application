@@ -115,6 +115,7 @@ public class SalaryDraftBuilder
 		GenericContractSalaryCalculator.IListener,
 		IContractSalaryCalculatorContext.IListener {
 
+
 	private Runnable sed ;
 
 	private Variables variables;
@@ -310,21 +311,25 @@ public class SalaryDraftBuilder
 		for (Payment payment : draftPayments) {
 			List<IPayment> dbCounterParts = getDbItemCounterParts(dbPayments,
 					payment);
-			if (dbCounterParts.size() == 0)
+			if (dbCounterParts.isEmpty())
 				continue;
-			double amount = 0.00;
-			for ( IPayment dbPayment: dbCounterParts )
-				amount += dbPayment.getAmount();
+			
+			dbCounterParts = dbCounterParts.stream().filter( dbPayment -> AonUtils.equals(dbPayment.getAmount(), payment.getAmount()) )
+					.findFirst().map( List::of ).orElse(dbCounterParts);
+			double amount = dbCounterParts.stream().collect(Collectors.summingDouble(IPayment::getAmount));
 
 			payment.setDbAmount(amount);
 			// Remove it from the list to avoid processing later.
 			dbPayments.removeAll(dbCounterParts);
+
+			cleanChildsDb(payment);
+
 		}
 
 		for (Payment draftPayment : salaryDraft.getDraftPayments()) {
 			List<IPayment> dbCounterParts = getDbItemCounterParts(dbPayments,
 					draftPayment);
-			if (dbCounterParts.size() == 0)
+			if (dbCounterParts.isEmpty())
 				continue;
 			// Found almost one counterpart. Gets first of them.
 			IPayment dbPayment = dbCounterParts.get(0);
@@ -369,11 +374,15 @@ public class SalaryDraftBuilder
 					dbDeductions, deduction);
 			if (dbCounterParts.size() == 0)
 				continue;
-			double amount = 0.00;
-			for ( IDeduction dbDeduction: dbCounterParts )
-				amount += dbDeduction.getAmount();
+
+			dbCounterParts = dbCounterParts.stream().filter( dbPayment -> AonUtils.equals(dbPayment.getAmount(), deduction.getAmount()) )
+					.findFirst().map( List::of ).orElse(dbCounterParts);
+			double amount = dbCounterParts.stream().collect(Collectors.summingDouble(IDeduction::getAmount));
+			
 			deduction.setDbAmount(amount);
 			dbDeductions.removeAll(dbCounterParts);
+
+			cleanChildsDb(deduction);
 		}
 
 		for (IDeduction dbDeduction : dbDeductions) {
@@ -399,6 +408,8 @@ public class SalaryDraftBuilder
 
 			cost.setDbAmount(amount);
 			dbCosts.removeAll(dbCounterParts);
+
+			cleanChildsDb(cost);
 		}
 		
 		for (IDeduction dbCost : dbCosts) {
@@ -418,9 +429,11 @@ public class SalaryDraftBuilder
 					dbEmbargos, embargo);
 			if (dbCounterParts.size() == 0)
 				continue;
-			double amount = 0.00;
-			for ( IDeduction dbEmbargo: dbCounterParts )
-				amount += dbEmbargo.getAmount();
+			
+			dbCounterParts = dbCounterParts.stream().filter( dbPayment -> AonUtils.equals(dbPayment.getAmount(), embargo.getAmount()) )
+					.findFirst().map( List::of ).orElse(dbCounterParts);
+			double amount = dbCounterParts.stream().collect(Collectors.summingDouble(IDeduction::getAmount));
+			
 			embargo.setDbAmount(amount);
 			dbEmbargos.removeAll(dbCounterParts);
 		}
@@ -455,6 +468,12 @@ public class SalaryDraftBuilder
 		}
 		
 		salaryDraft.setEqualsDbIrpfAmounts(SalaryUtils.equalsIrpfAmounts(SalaryDraftUtils.asSalary(salaryDraft), dbSalary));
+	}
+
+	private void cleanChildsDb(Item item) {
+		// No childs at database level, so set childs dbAmount to NaN to avoid showing them in the UI.
+		if ( item instanceof ICompositeItem<?> compositeItem)
+			compositeItem.getChilds().forEach(Item::empytDbAmount);
 	}
 
 	public void setSsSalary(com.esferalia.aon.payroll.Salary ssSalary) throws SalaryException {

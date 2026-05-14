@@ -184,7 +184,7 @@ public class RawdocModule  implements EntryPoint {
 				
 				@Override
 				public void onFailure(Throwable caught) {
-					dockLayoutPanel.add(new Label(AON.MSG.noActiveAccountPeriod() + "[Interno: " + caught.getMessage()+ "]"));
+					dockLayoutPanel.add(new Label("[Error: " + caught.getMessage()+ "]"));
 				}
 			});
 		} else {
