@@ -16,7 +16,7 @@ public class AonCustomTextArea extends HTMLPanel implements RequiresResize  {
 	
     public AonCustomTextArea(String title) {
         super(EMPTY_STRING);
-        addStyleName(AON.CSS.aonFlexColumn());
+        addStyleName(AON.CSS.aonFlexColumn2());
         addStyleName(AON.CSS.aonCustomTextArea());
 
         createTitle(title);
