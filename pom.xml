@@ -35,6 +35,7 @@
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-collections4.version>4.5.0</commons-collections4.version>
     <commons-lang3.version>3.20.0</commons-lang3.version>
+    <jooq.version>3.21.4</jooq.version>
   </properties>
   <modules>
     <!--  
@@ -304,6 +305,11 @@
         <groupId>com.fasterxml.jackson.dataformat</groupId>
         <artifactId>jackson-dataformat-csv</artifactId>
         <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jooq</groupId>
+        <artifactId>jooq</artifactId>
+        <version>${jooq.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
