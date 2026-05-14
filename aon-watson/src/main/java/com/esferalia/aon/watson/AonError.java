@@ -242,8 +242,8 @@ public enum AonError implements Serializable{
 	,INVOICE_CANT_DELETE_VERIFACTU("No es posible borrar la factura porque est\u00E1 enviada a Verifactu. Dar de baja la factura en Verifactu.")
 	,INVOICE_CANT_DELETE_MODEL("Imposible borrar o modificar, la factura ha sido declarada en modelos fiscales: {0}")
 	,INVOICE_EXP_DATE_BEFORE_DATE("La fecha de operaci\u00F3on es posterior a la fecha de expedici\u00F3on")
-	,INVOICE_EXP_DATE_PAST_MONTH_LIMIT("La fecha de operaci\u00F3on es anterior al pasado mes")
-	,INVOICE_EXP_DATE_CURRENT_MONTH_LIMIT("La fecha de operaci\u00F3on es anterior al mes en curso")
+	,INVOICE_EXP_DATE_PAST_MONTH_LIMIT("La fecha de operaci\u00F3n es anterior al pasado mes")
+	,INVOICE_EXP_DATE_CURRENT_MONTH_LIMIT("La fecha de operaci\u00F3n es anterior al mes en curso")
 	,TRACKING_CANT_DELETE_MODEL("Imposible borrar o modificar, el vto. ha sido declarada en modelos fiscales: {0}")
 	
 	// --------------------------------------------- RECORDER

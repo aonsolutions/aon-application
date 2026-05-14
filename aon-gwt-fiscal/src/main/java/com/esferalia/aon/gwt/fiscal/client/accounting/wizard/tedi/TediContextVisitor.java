@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistryBox;
@@ -19,9 +20,10 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
-import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKeyVisitor;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -48,7 +50,7 @@ import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediInvoiceType;
 import es.translogia.tedi.ewok.TediRegistry;
 
-public class TediContextVisitor implements InvoiceErrorKeyVisitor<ICallback> {
+class TediContextVisitor implements InvoiceErrorKeyVisitor<ICallback> {
 
 	private static final Logger LOGGER = Logger.getLogger(TediContextVisitor.class.getName());
 	static {
@@ -186,6 +188,31 @@ public class TediContextVisitor implements InvoiceErrorKeyVisitor<ICallback> {
 		}
 	}
 	
+	@Override 
+	public void visitRegistryStatus(ICallback callback) {
+		showContinueButtonDialog("\u00BFContinuar a pesar del bloqueo?",new ITediCallback<Boolean>() {
+			@Override
+			public ICallback getCallback() {
+				return callback;
+			}
+			@Override
+			public void onAccept(Boolean result) {
+				if (result != null && Boolean.TRUE.equals(result)) {
+					callback.getResult().getInvoice()
+						.messageStream()
+						.filter( m -> m.getContext().getKey() == InvoiceErrorKey.REGISTRY_STATUS)
+						.forEach( m -> m.setLevel( InvoiceErrorLevel.WRN ) );
+				}
+				callback.onAccept(callback.getResult());
+			}
+			
+			@Override
+			public void onCancel() {
+				callback.onCancel();
+			}
+		});
+	}
+	
 	@Override
 	public void visitRegistry(ICallback callback) {
 		if ( callback.getResult().getInvoice().getIssueDate() != null) {
@@ -262,10 +289,11 @@ public class TediContextVisitor implements InvoiceErrorKeyVisitor<ICallback> {
 
 	@Override
 	public void visitFinanceAccountBank(ICallback callback) {
-		LinkedHashSet<String> banks = new LinkedHashSet<>();
-		for ( Finance finance : callback.getResult().getAccountingInvoice().getInvoice().getFinances()) {
-			banks.add(finance.getBankAccount().toString());
-		}
+		LinkedHashSet<String> banks = callback.getResult().getAccountingInvoice().getInvoice().financeStream()
+			.map( f -> f.getBankAccount() )
+			.filter( b -> b != null )
+			.map( b -> b.toString() )
+			.collect( Collectors.toCollection( LinkedHashSet::new) );
 		if (AonCollectionUtils.isNotEmpty( banks )) {
 			showBankAccountDialog(AON.MSG.bankAccount(), banks.iterator().next() , new ITediCallback<String>() {
 				
@@ -276,10 +304,8 @@ public class TediContextVisitor implements InvoiceErrorKeyVisitor<ICallback> {
 				
 				@Override
 				public void onAccept(String t) {
-					for ( Finance finance : callback.getResult().getAccountingInvoice().getInvoice().getFinances()) {
-						BankAccount bankAccount = new BankAccount( t ); 
-						finance.setBankAccount(bankAccount);
-					}
+					callback.getResult().getAccountingInvoice().getInvoice().financeStream()
+						.forEach( f -> f.setBankAccount( new BankAccount(t) ) );
 					callback.onAccept(callback.getResult());
 				}
 				
@@ -334,6 +360,21 @@ public class TediContextVisitor implements InvoiceErrorKeyVisitor<ICallback> {
 	// ---------------------------------------------------------------- [PRIVATE]
 	//--------------------------------------------------------------------------- 
 	
+	private void showContinueButtonDialog(String label, ITediCallback<Boolean> callback) {
+		FlowPanel buttonsPanel = new FlowPanel();
+		buttonsPanel.setStyleName(AON.CSS.aonMarginLeft());
+		
+    	final Button okButton = new Button();
+    	okButton.setStyleName(AON.CSS.aonOkButton());
+    	okButton.setText( AON.MSG.continueAction());
+    	okButton.addClickHandler(event -> callback.onAccept( true ));
+    	buttonsPanel.add(okButton);
+		
+		BasicDialog dialog = new BasicDialog();
+		dialog.setContent(label, buttonsPanel);
+		container.add(dialog);
+	}
+
 	private void showDateDialog(String label, Date date, ITediCallback<Date> callback) {
 		final AonDateBox dateBox = new AonDateBox();
 		dateBox.setValue(date);
@@ -497,16 +538,7 @@ public class TediContextVisitor implements InvoiceErrorKeyVisitor<ICallback> {
 
 		public BasicDialog() {
 			super();
-			setStyleName(AON.CSS.aonPadding());
 			addStyleName(AON.CSS.aonWidthAlmostAll());
-			addStyleName(AON.CSS.aonBorder());
-			
-			container.addStyleName(AON.CSS.aonBlockCenter());
-			container.addStyleName(AON.CSS.aonWidthAlmostAll());
-			
-			FlowPanel buttons = new FlowPanel();
-			buttons.setStyleName(AON.CSS.aonTextCenter());
-			buttons.addStyleName(AON.CSS.aonMarginTop());
 			add(container);
 		}
 

@@ -12,8 +12,8 @@ export const setIncome = (data) => post(`${API_URL}/accounting/incomes`, data);
 export const deleteIncome = (data) => remove(`${API_URL}/accounting/incomes`, data);
 export const deleteExpense = (data) => remove(`${API_URL}/accounting/expenses`, data);
 export const setExpense = (data) => post(`${API_URL}/accounting/expenses`, data);
-
 export const getAmortizationTypes = (data) => get(`${API_URL}/amortizationtype`, data);
+export const getInvoicesCounters = (data) => get(`${API_URL}/accounting/invoicesCounters`, data);
 
 export const PERIOD_FILTER = [
   {

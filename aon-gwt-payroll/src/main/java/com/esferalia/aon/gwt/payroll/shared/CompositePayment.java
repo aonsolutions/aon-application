@@ -11,7 +11,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class CompositePayment extends Payment {
+public class CompositePayment extends Payment implements ICompositeItem<Payment>  {
 
 	private static final String UNSET_DATE = new String(); 
 	private static final String UNSET_STRING = new String(); 
@@ -38,6 +38,7 @@ public class CompositePayment extends Payment {
 		//System.out.println(child.getDescription() + " / " + child.getType());
 	}
 
+	@Override
 	public Collection<Payment> getChilds() {
 		Collections.sort(childs, (p1,p2) -> p1.getStartDate().compareTo(p2.getStartDate()));
 		return childs;
@@ -60,7 +61,7 @@ public class CompositePayment extends Payment {
 	public Double getDbAmount() {		
 		Double totalDbAmount = null;
 		for (Payment child : childs)
-			if (child.dbAmount != null)
+			if (child.dbAmount != null && Item.isNotEmptyAmount(child.dbAmount))
 				totalDbAmount = totalDbAmount == null ? child.dbAmount
 						: totalDbAmount + child.dbAmount;
 		return totalDbAmount != null ? totalDbAmount : super.getDbAmount();

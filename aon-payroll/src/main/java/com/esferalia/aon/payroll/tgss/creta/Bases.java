@@ -86,6 +86,7 @@ import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
@@ -2571,14 +2572,28 @@ public class Bases {
 		// @formatter:off
 		AON.getSalaryData(
 				ctx,
-				props -> props.getCCCProperty().eq(ccc)
-						.and(props.getEndDateProperty().ge(startDate))
-						.and(props.getStartDateProperty().le(endDate))
-						.and(props.getIsSalaryProperty().eq(AonStringUtils.containsIgnoreCase("L00,L02,L91", tipo)))
-						.and(props.getIsSettlementProperty().eq(AonStringUtils.equalsIgnoreCase("L13", tipo)))
-						.and(props.getIsDelayProperty().eq(AonStringUtils.containsIgnoreCase("L90", tipo))
-								.or(props.getIsDelayProperty().eq(AonStringUtils.containsIgnoreCase("L03", tipo)).and(props.getChargeDateProperty().between(startCtrlDate, endCtrlDate))))
-						)
+				props -> {
+							Filter filter =
+							props.getCCCProperty().eq(ccc)
+							.and(props.getEndDateProperty().ge(startDate))
+							.and(props.getStartDateProperty().le(endDate));
+							if ( AonStringUtils.containsIgnoreCase("L00", tipo) )
+								filter = filter.and(props.getIsSalaryProperty().eq(true));
+							else if ( AonStringUtils.containsIgnoreCase("L02", tipo) )
+								filter = filter.and(props.getIsSalaryProperty().eq(true));
+							else if ( AonStringUtils.containsIgnoreCase("L91", tipo) )
+								filter = filter.and(props.getIsSalaryProperty().eq(true));
+							else if ( AonStringUtils.equalsIgnoreCase("L13", tipo) )
+								filter = filter.and(props.getIsSettlementProperty().eq(true));
+							else if ( AonStringUtils.containsIgnoreCase("L90", tipo) )
+								filter = filter.and(props.getIsDelayProperty().eq(true));
+							else if ( AonStringUtils.containsIgnoreCase("L03", tipo) )
+								filter = filter.and(props.getIsDelayProperty().eq(true).and(props.getChargeDateProperty().between(startCtrlDate, endCtrlDate)));
+
+							return filter;
+						
+						})
+						
 						.forEach(
 				salary -> trabajador(liquidacionMesBuilder, salary,
 						trabajadores, cbs));

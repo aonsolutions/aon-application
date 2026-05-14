@@ -385,9 +385,9 @@ public class TediValidator {
 					empty = false;
 				}
 			}
-			if (empty) {
-				ctx.add( InvoiceErrorMessages.C013.wrn(InvoiceErrorKey.ACCOUNT_ENTRY) );
-			}
+//			if (empty) {
+//				ctx.add( InvoiceErrorMessages.C013.wrn(InvoiceErrorKey.ACCOUNT_ENTRY) );
+//			}
 			if (!AonMathUtils.isZero( AonMathUtils.round(sumD - sumC))) {
 				ctx.add( InvoiceErrorMessages.C012.wrn(InvoiceErrorKey.ACCOUNT_ENTRY) );
 			}

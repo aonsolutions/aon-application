@@ -21,13 +21,14 @@ import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingAnalyticalReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.DomainInvoiceStat;
+import com.esferalia.aon.occam.api.model.DomainInvoiceStatParams;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.Filter.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.FlatAccountEntryDetail;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
-import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
@@ -208,5 +209,8 @@ public interface IAccounting {
 	public LinkedList<AmortizationInvoice> getAmortizationInvoices(AONContext ctx, Integer domain, Integer amortizationId);
 	public void linkAmortizationInvoices(AONContext ctx, Integer domain, Integer amotizationId, Integer[] invoiceIds);
 	public void unlinkAmortizationInvoice(AONContext ctx, Integer domain, Integer amortizationId, Integer invoiceId);
+	
+	// ********************************** [INVOICES CONUNTERS]
+	public Stream<DomainInvoiceStat> getDomainInvoiceStats(AONContext ctx, DomainInvoiceStatParams params);
 	
 }
