@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.json.AccountTrialBalanceReportJSON;
 import com.esferalia.aon.occam.api.json.AccountingExpenseJSON;
 import com.esferalia.aon.occam.api.json.AccountingIncomeJSON;
 import com.esferalia.aon.occam.api.json.AccountingReportParamsJSON;
+import com.esferalia.aon.occam.api.json.DomainInvoiceStatJSON;
 import com.esferalia.aon.occam.api.json.DomainInvoiceStatParamsJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
@@ -27,6 +28,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -207,14 +209,27 @@ public class AccountingServlet extends AonApiHttpServlet{
 	}
 	
 	private static JSONObject getInvoicesCounters(AonApiData api) {
-//		JSONObject jsonParams = api.getData();
-//		DomainInvoiceStatParamsJSON.from( jsonParams )
-//			.ifPresent( params -> {
-//				ACCOUNTING.deleteAccountingIncome(api.getOccam(), income );
-//				
-//			LOGGER.info("getInvoicesCounters: " + json.toString());
-//		});
-		return new JSONObject();
+		JSONObject jsonParams = api.getData();
+		if (jsonParams == null) jsonParams = new JSONObject();
+		if (!jsonParams.has(IJsonNames.DOMAIN)) {
+			jsonParams.put(IJsonNames.DOMAIN, api.getDomain().getId());
+		}
+		if (!jsonParams.has(IJsonNames.LIMIT)) {
+			jsonParams.put(IJsonNames.LIMIT, Integer.MAX_VALUE);
+		}
+		if (!jsonParams.has(IJsonNames.OFFSET)) {
+			jsonParams.put(IJsonNames.OFFSET, 0);
+		}
+		LOGGER.info("getInvoicesCounters: " + jsonParams.toString());
+		DomainInvoiceStatParams params = DomainInvoiceStatParamsJSON.from( jsonParams )
+			.orElseThrow( () -> new AonCoreException("Los parámetros de la consulta son obligatorios."));
+		
+		return AonCollectionUtils.stream( ACCOUNTING.getDomainInvoiceStats(api.getOccam(), params ) ) 
+			.map( DomainInvoiceStatJSON::toJSON ) 
+			.flatMap(Optional::stream) 
+			.findFirst()
+			.orElse( new JSONObject())
+		;
 	}
 }
 

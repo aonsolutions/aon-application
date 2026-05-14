@@ -29,9 +29,9 @@ public class DomainInvoiceStatParamsJSON {
 				.setQuery(JsonUtils.getString(json, IJsonNames.QUERY))
 				.setScope(JsonUtils.getInteger(json, IJsonNames.SCOPE))
 				.setFiscalModelType( FiscalModelType.safeValueByName( JsonUtils.getString(json, IJsonNames.FISCAL_MODEL_TYPE)))
-				.setInvoices(JsonUtils.getboolean(json, IJsonNames.INVOICES))
-				.setAlcatraz(JsonUtils.getboolean(json, IJsonNames.ALCATRAZ))
-				.setRawdoc(JsonUtils.getboolean(json, IJsonNames.RAWDOC))
+				.setInvoices(JsonUtils.getBoolean(json, IJsonNames.INVOICES))
+				.setAlcatraz(JsonUtils.getBoolean(json, IJsonNames.ALCATRAZ))
+				.setRawdoc(JsonUtils.getBoolean(json, IJsonNames.RAWDOC))
 				.setLimit(JsonUtils.getInteger(json, IJsonNames.LIMIT))
 				.setOffset(JsonUtils.getInteger(json, IJsonNames.OFFSET))
 		);
