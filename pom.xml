@@ -27,6 +27,7 @@
     <tomcat-version>11.0.1</tomcat-version>
     <jackson.version>2.21.3</jackson.version>
     <jackson.annotations.version>2.21</jackson.annotations.version>
+    <slf4j.version>2.0.11</slf4j.version>
   </properties>
   <modules>
     <!--  
@@ -230,6 +231,13 @@
   </modules>
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-bom</artifactId>
+        <version>${slf4j.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-core</artifactId>
