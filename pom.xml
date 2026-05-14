@@ -36,6 +36,7 @@
     <commons-collections4.version>4.5.0</commons-collections4.version>
     <commons-lang3.version>3.20.0</commons-lang3.version>
     <jooq.version>3.21.4</jooq.version>
+    <mysql-connector.version>8.0.33</mysql-connector.version>
   </properties>
   <modules>
     <!--  
@@ -310,6 +311,11 @@
         <groupId>org.jooq</groupId>
         <artifactId>jooq</artifactId>
         <version>${jooq.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>${mysql-connector.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
