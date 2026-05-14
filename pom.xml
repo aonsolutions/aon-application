@@ -38,6 +38,7 @@
     <jooq.version>3.21.4</jooq.version>
     <mysql-connector.version>8.0.33</mysql-connector.version>
     <org.json.version>20251224</org.json.version>
+    <commons-cli.version>1.11.0</commons-cli.version>
   </properties>
   <modules>
     <!--  
@@ -322,6 +323,11 @@
         <groupId>org.json</groupId>
         <artifactId>json</artifactId>
         <version>${org.json.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-cli</groupId>
+        <artifactId>commons-cli</artifactId>
+        <version>${commons-cli.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
