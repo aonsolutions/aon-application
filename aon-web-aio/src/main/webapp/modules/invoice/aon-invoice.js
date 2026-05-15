@@ -30,7 +30,7 @@ import { INVOICE } from '../../services/app.js';
 import { AonRegistrySuggestion } from '../registry/aon-registry-suggestion.js';
 import { addCounter, transferCounter } from './InvoiceCounter.js';
 import { createDate, createEmail, createInput, createNumber, createSelect, createSuggestion, createTextarea } from '../../components/CreateComponent.js';
-import { getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrashPendingFromOption } from './InvoiceUtils.js';
+import { getFutureRejectFromOption, getFutureRestoreFromOption, getFutureRestoreToOption, getFutureTrashPendingFromOption, getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrashPendingFromOption } from './InvoiceUtils.js';
 import { BankAccount } from '../registry/bank/BankAccount.js';
 import { InvoiceCommunicationConfiguration } from '../../models/InvoiceCommunicationConfiguration.js';
 import { AonInvoiceCommunication } from './aon-invoice-communication.js';
@@ -1167,7 +1167,6 @@ export class AonInvoice extends AonElement {
 
 	onChangeInvoiceTotal(value) {
 		this.invoice.setTotal(value);
-		// this.setFocus(this.TOTAL);
 		this.reload();
 	}
 
@@ -1321,9 +1320,8 @@ export class AonInvoice extends AonElement {
 		let numberSpan = this.createTableSpan("30%", "2px");
 		div.appendChild(numberSpan);
 
-		let number = createNumber(this.NUMBER, MSG.NUMBER);
-		if (this.invoice.number && this.invoice.number > -1)
-			number.value = this.invoice.number;
+		let number = createInput(this.NUMBER, MSG.NUMBER);
+		number.value = "PROFORMA";
 		number.readonly = CONSTANT.READONLY;
 		number.disabled = CONSTANT.TRUE;
 		numberSpan.appendChild(number);
@@ -1456,16 +1454,7 @@ export class AonInvoice extends AonElement {
 	onChangeSerie(value) {
 		this.invoice.setSeries(value);
 		if (this.invoice.isInbox()) {
-			let enabled = this.invoice.isInbox() && this.series && this.series.filter(f => f.description == this.invoice.series).length === 0;
-			this.getElement(this.NUMBER).setReadonly(!enabled);
-			this.getElement(this.NUMBER).setDisabled(!enabled);
-			if (!enabled) {
-				this.invoice.number = '';
-				this.getElement(this.NUMBER).value = '';
-			} else if (this.invoice.number == '') {
-				this.invoice.number = '1';
-				this.getElement(this.NUMBER).value = '1';
-			}
+			this.invoice.number = undefined;
 		}
 	}
 
@@ -1870,6 +1859,7 @@ export class AonInvoice extends AonElement {
 				let detailIndex = this.invoice.details.length;
 				let detail = this.invoice.addDetail();		
 				this.printDetail(table, detail, detailIndex);
+				this.getElement(this.DETAIL_DESCRIPTION + detailIndex).focus();
 				this.onChangeDetail(detail, detailIndex);
 				if (this.fileOpened) {
 					const i = this.invoice.details.length - 1;
@@ -1987,44 +1977,9 @@ export class AonInvoice extends AonElement {
 			table.addRow(); // ----- ROW 3
 		}
 
-		// ----- CATEGORY
-		if (this.getDur().hasAccounting() || this.getDur().hasParentAccounting()) {
-			let category = createSelect(this.DETAIL_CATEGORY + i, MSG.CATEGORY);
-			category.autocomplete = true;
-			category.readonly = this.invoice.isReadonly();
-			category.addEventListener(EVENT.SELECT, () => {
-				detail.category = category.value;
-				this.invoice.setDetail(detail, i);
-			});
-			table.addCell(category, '2');
-			getInvoiceAccounts({ type: this.invoice.getInvoiceType() }).then(accounts => {
-				let accs = accounts.map(acc => { return { name: acc.description, value: acc.code }; });
-				category.options = JSON.stringify(accs);
-				category.value = detail.category || this.invoice.getCategory();
-			});
-		}
-
-		// ----- BIEN AFECTO
-		if(!this.invoice.isEmitida()) {
-			let bienAfecto = createSelect('aonInvoiceDetailBienAfecto', 'Bien Afecto');
-			bienAfecto.autocomplete = true;
-			bienAfecto.setAlias('id', 'description');
-			bienAfecto.readonly = this.invoice.isReadonly();
-
-			bienAfecto.addEventListener(EVENT.SELECT, () => {
-				detail.investAsset = bienAfecto.value;
-				let ia = bienAfecto.getValueObject();
-				detail.vatDeductiblePercent = ia ? ia.vatPercent : 100.0;
-				this.invoice.setDetail(detail, i);
-			});
-
-			table.addCell(bienAfecto, '2');
-			getInvestAssets({}).then(investAssets => {
-				bienAfecto.setOptions(investAssets);
-				if (detail.investAsset)
-					bienAfecto.value = detail.investAsset;
-			});
-		}
+		this.printDetailCategory(table, detail, i);
+		this.printDetailInvestAsset(table, detail, i);
+		
 		dialog.open();
 	}
 
@@ -2155,7 +2110,8 @@ export class AonInvoice extends AonElement {
 		}	
 	}
 
-	printDetailPrepayment(table, detail, i, dialog) {
+	printDetailPrepayment(table, detail, i) { 
+		// only use in detail dialog
 		let prepayment = new AonSwitch();
 		prepayment.id = this.DETAIL_PREPAYMENT + 'Dialog' + i;
 		prepayment.className = CSS.AON_SWITCH_TOP;
@@ -2198,6 +2154,68 @@ export class AonInvoice extends AonElement {
 			});
 			table.addCell(detailDelete);
 		}		
+	}
+
+	printDetailCategory(table, detail, i) {
+		// only use in detail dialog
+		if (this.getDur().hasAccounting() || this.getDur().hasParentAccounting()) {
+			let category = createSelect(this.DETAIL_CATEGORY + i, MSG.CATEGORY);
+			category.autocomplete = true;
+			category.readonly = this.invoice.isReadonly();
+			category.addEventListener(EVENT.SELECT, () => {
+				detail.category = category.value;
+				this.invoice.setDetail(detail, i);
+			});
+			table.addCell(category, '2');
+			getInvoiceAccounts({ type: this.invoice.getInvoiceType() }).then(accounts => {
+				let accs = accounts.map(acc => { return { name: acc.description, value: acc.code }; });
+				category.options = JSON.stringify(accs);
+				category.value = detail.category || this.invoice.getCategory();
+			});
+		}
+	}
+
+	printDetailCategory(table, detail, i) {
+		// only use in detail dialog
+		if (this.getDur().hasAccounting() || this.getDur().hasParentAccounting()) {
+			let category = createSelect(this.DETAIL_CATEGORY + i, MSG.CATEGORY);
+			category.autocomplete = true;
+			category.readonly = this.invoice.isReadonly();
+			category.addEventListener(EVENT.SELECT, () => {
+				detail.category = category.value;
+				this.invoice.setDetail(detail, i);
+			});
+			table.addCell(category, '2');
+			getInvoiceAccounts({ type: this.invoice.getInvoiceType() }).then(accounts => {
+				let accs = accounts.map(acc => { return { name: acc.description, value: acc.code }; });
+				category.options = JSON.stringify(accs);
+				category.value = detail.category || this.invoice.getCategory();
+			});
+		}
+	}
+
+	printDetailInvestAsset(table, detail, i) {
+		// only use in detail dialog
+		if(!this.invoice.isEmitida()) {
+			let bienAfecto = createSelect('aonInvoiceDetailBienAfecto', 'Bien Afecto');
+			bienAfecto.autocomplete = true;
+			bienAfecto.setAlias('id', 'description');
+			bienAfecto.readonly = this.invoice.isReadonly();
+
+			bienAfecto.addEventListener(EVENT.SELECT, () => {
+				detail.investAsset = bienAfecto.value;
+				let ia = bienAfecto.getValueObject();
+				detail.vatDeductiblePercent = ia ? ia.vatPercent : 100.0;
+				this.invoice.setDetail(detail, i);
+			});
+
+			table.addCell(bienAfecto, '2');
+			getInvestAssets({}).then(investAssets => {
+				bienAfecto.setOptions(investAssets);
+				if (detail.investAsset)
+					bienAfecto.value = detail.investAsset;
+			});
+		}
 	}
 
 	// ╔════════════════════════════════════════════════════════════╗
@@ -2510,8 +2528,10 @@ export class AonInvoice extends AonElement {
 		if (!ok) return;
 		msg = msg || MSG.SAVED_DATA;
 		insertInvoice(this.getInvoice()).then(r => {
-			if (!this.getInvoice().id)
+			if (!this.getInvoice().id) {	
 				this.updateCounter(this.getNewFrom(), undefined, 1);
+				this.updateCounter(this.getFutureNewFrom(), undefined, 1);
+			}
 			this.getInvoice().id = r.id;
 			this.showMessage(msg);
 		}).catch(e => this.showError(e));
@@ -2521,6 +2541,12 @@ export class AonInvoice extends AonElement {
 		if (this.getInvoice().isEmitida()) return OPTION.PROFORMA_INVOICES;
 		else if (this.getInvoice().isTicket()) return OPTION.RAWDOC_INBOX_TICKET_NEW;
 		else return OPTION.RAWDOC_INBOX_RECEIVED_NEW;
+	}
+
+	getFutureNewFrom() {
+		if (this.getInvoice().isEmitida()) return OPTION.FUTURE_PROFORMA_INVOICES;
+		else if (this.getInvoice().isTicket()) return OPTION.FUTURE_RAWDOC_INBOX_TICKET_NEW;
+		else return OPTION.FUTURE_RAWDOC_INBOX_RECEIVED_NEW;
 	}
 
 	back() {
@@ -2751,6 +2777,7 @@ export class AonInvoice extends AonElement {
 					data.messages = undefined;
 					acceptInvoice(data).then(r => {
 						this.updateCounter(this.getAcceptFromOption(), this.getAcceptToOption(), 1);
+						this.updateCounter(this.getFutureAcceptFromOption(), this.getFutureAcceptToOption(), 1);
 						this.invoice = new Invoice(r);
 						this.getApplication().stopLoader();
 						this.reload();
@@ -2788,6 +2815,7 @@ export class AonInvoice extends AonElement {
 			acceptInvoice(data)
 				.then(r => {
 					this.updateCounter(this.getAcceptFromOption(), this.getAcceptToOption(), 1);
+					this.updateCounter(this.getFutureAcceptFromOption(), this.getFutureAcceptToOption(), 1);
 					this.invoice = new Invoice(r);
 					this.getApplication().stopLoader();
 					this.reload();
@@ -2807,12 +2835,28 @@ export class AonInvoice extends AonElement {
 		} else return OPTION.RAWDOC_INBOX_RECEIVED;
 	}
 
+	getFutureAcceptFromOption() {
+		if (this.getInvoice().isEmitida()) {
+			return OPTION.FUTURE_PROFORMA_INVOICES;
+		} else if (this.getInvoice().isTicket()) {
+			return OPTION.FUTURE_RAWDOC_INBOX_TICKET_NEW;
+		} else return OPTION.FUTURE_RAWDOC_INBOX_RECEIVED_NEW;
+	}
+
 	getAcceptToOption() {
 		if (this.getInvoice().isEmitida()) {
 			return OPTION.INVOICE_ISSUED_BETA;
 		} else if (this.getInvoice().isTicket()) {
 			return OPTION.INVOICE_TICKET;
 		} else return OPTION.INVOICE_RECEIVED_BETA;
+	}
+
+	getFutureAcceptToOption() {
+		if (this.getInvoice().isEmitida()) {
+			return OPTION.FUTURE_INVOICE_ISSUED_BETA;
+		} else if (this.getInvoice().isTicket()) {
+			return OPTION.FUTURE_INVOICE_TICKET;
+		} else return OPTION.FUTURE_INVOICE_RECEIVED_BETA;
 	}
 
 	recordInvoice() {
@@ -2904,6 +2948,7 @@ export class AonInvoice extends AonElement {
 				});
 			}
 			this.updateCounter(getRejectFromOption(this.invoice), OPTION.RAWDOC_REJECT, 1);
+			this.updateCounter(getFutureRejectFromOption(this.invoice), OPTION.FUTURE_RAWDOC_REJECT, 1);
 		});
 		acceptButton.disabled = true;
 
@@ -3390,6 +3435,8 @@ export class AonInvoice extends AonElement {
 
 	trashInvoice() {
 		this.updateCounter(this.getTrashFromOption(), OPTION.RAWDOC_TRASH, 1);
+		this.updateCounter(this.getFutureTrashFromOption(), OPTION.FUTURE_RAWDOC_TRASH, 1);
+		
 		this.getInvoice().lastStatus = this.getInvoice().status;
 		this.getInvoice().status = CONSTANT.TRASH;
 		this.save(MSG.MOVED_TO_TRASH);
@@ -3402,6 +3449,14 @@ export class AonInvoice extends AonElement {
 		else if (this.getInvoice().isEmitida()) return OPTION.PROFORMA_INVOICES;
 		else if (this.getInvoice().isTicket()) return OPTION.RAWDOC_INBOX_TICKET_NEW;
 		else return OPTION.RAWDOC_INBOX_RECEIVED_NEW;
+	}
+
+	getFutureTrashFromOption() {
+		if (this.getInvoice().isRejected() || (this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION)))
+			return OPTION.FUTURE_RAWDOC_REJECT;
+		else if (this.getInvoice().isEmitida()) return OPTION.FUTURE_PROFORMA_INVOICES;
+		else if (this.getInvoice().isTicket()) return OPTION.FUTURE_RAWDOC_INBOX_TICKET_NEW;
+		else return OPTION.FUTURE_RAWDOC_INBOX_RECEIVED_NEW;
 	}
 
 	trashPendingInvoice() {
@@ -3436,6 +3491,7 @@ export class AonInvoice extends AonElement {
 						deleteInvoice(data).then(() => {
 							this.getApplication().stopLoader();
 							this.updateCounter(getTrashPendingFromOption(this.invoice), OPTION.RAWDOC_TRASH, 1);
+							this.updateCounter(getFutureTrashPendingFromOption(this.invoice), OPTION.FUTURE_RAWDOC_TRASH, 1);
 							this.showMessage(MSG.DELETED_DATA);
 							this.back();
 						}).catch(e => {
@@ -3449,6 +3505,7 @@ export class AonInvoice extends AonElement {
 					deleteInvoice(data).then(() => {
 						this.getApplication().stopLoader();
 						this.updateCounter(getTrashPendingFromOption(this.invoice), OPTION.RAWDOC_TRASH, 1);
+						this.updateCounter(getFutureTrashPendingFromOption(this.invoice), OPTION.FUTURE_RAWDOC_TRASH, 1);
 						this.showMessage(MSG.DELETED_DATA);
 						this.back();
 					}).catch(e => {
@@ -3522,6 +3579,7 @@ export class AonInvoice extends AonElement {
 			this.invoice.remarks.push(comment);
 			
 			this.updateCounter(getRestoreFromOption(this.invoice), getRestoreToOption(this.invoice), 1);
+			this.updateCounter(getFutureRestoreFromOption(this.invoice), getFutureRestoreToOption(this.invoice), 1);
 			this.getInvoice().status = this.invoice.lastStatus || CONSTANT.INBOX;
 			this.getInvoice().number = '';
 			this.save(MSG.RESTORED_DATA);
@@ -3536,7 +3594,7 @@ export class AonInvoice extends AonElement {
 				});
 			}
 		});
-		acceptButton.disabled = true;
+		acceptButton.disabled = this.invoice.isRejected();
 
 		let ta = this.getElement('commentTextArea');
 		ta.style.outline = 'none';
@@ -3557,6 +3615,7 @@ export class AonInvoice extends AonElement {
 		d.addAcceptAction(() => {
 			deleteRawdocInvoices([this.getInvoice().id]).then(() => {
 				this.updateCounter(OPTION.RAWDOC_TRASH, undefined, -1);
+				this.updateCounter(OPTION.FUTURE_RAWDOC_TRASH, undefined, -1);
 				this.back()
 			});
 		});

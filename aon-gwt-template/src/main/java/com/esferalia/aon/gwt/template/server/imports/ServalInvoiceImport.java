@@ -773,6 +773,7 @@ public class ServalInvoiceImport extends ImportUtils{
 	
 			validate(iic, record);
 			Invoice invoice = buildInvoice(aonCtx, domain, user, iic);
+			
 			RegistryAddress address = buildAddress(aonCtx, domain, iic);
 			buildRegistry(domain, user, invoice, iic, address);			
 
@@ -831,6 +832,11 @@ public class ServalInvoiceImport extends ImportUtils{
 						.setTaxableBase(taxableBase)
 //						.setPrepayment("5600".equals(aux.getAccount().substring(0, 4)) || "5660".equals(aux.getAccount().substring(0, 4)))
 						.setSource(InvoiceSource.DIRECT_INVOICE);
+				
+				if(aonCtx.getWorkplaces() == null || aonCtx.getWorkplaces().isEmpty()) {
+					throw new Exception("No existe ningún centro de trabajo.");
+				} else detail.setWorkplace(aonCtx.getWorkplaces().get(0));
+				
 				
 				InvoiceTax vat = new InvoiceTax()
 						.setDomain(detail.getDomain())

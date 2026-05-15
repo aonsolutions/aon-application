@@ -437,6 +437,10 @@ export class AonNewTextarea extends AonElement {
             this.closeOptions();
         }
     }
+
+    focus() {
+		this.getElement(this.TEXTAREA).focus();
+	}
 }
 if(!window.customElements.get(TAG.AON_NEW_TEXTAREA)){
     window.customElements.define(TAG.AON_NEW_TEXTAREA, AonNewTextarea);
