@@ -184,7 +184,7 @@ public class RawdocModule  implements EntryPoint {
 				
 				@Override
 				public void onFailure(Throwable caught) {
-					dockLayoutPanel.add(new Label(AON.MSG.noActiveAccountPeriod() + "[Interno: " + caught.getMessage()+ "]"));
+					dockLayoutPanel.add(new Label("[Error: " + caught.getMessage()+ "]"));
 				}
 			});
 		} else {
@@ -291,7 +291,7 @@ public class RawdocModule  implements EntryPoint {
 		toolbar.add(rejectedButton);
 
 		AonToolbarButton draftButton = new AonToolbarButton( AON.MSG.draftDocs(), AON.CSS.aonIconDraft() );
-		draftButton.addClickHandler(event -> search( opt , RawdocStatus.DRAFT));
+		draftButton.addClickHandler(event -> search( opt , RawdocStatus.TRASH));
 		toolbar.add(draftButton);
 
 		AonToolbarButton recordButton = new AonToolbarButton( AON.MSG.record(), AON.CSS.aonIconAddTask() );

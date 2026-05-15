@@ -1,3 +1,4 @@
+import { CONSTANT } from "../../environments/environments.js";
 import { downscaleImage } from "../../services/compressImg.js";
 import { insertInvoice } from "../../services/invoiceService.js";
 import { getReader } from "../../services/utils.js";
@@ -158,7 +159,9 @@ export const getTrashPendingFromOption = (invoice) => {
 
 export const getRejectFromOption = (invoice) => {
     invoice = new Invoice(invoice);
-    if(invoice.isEmitida()) {
+    if(invoice.lastStatus === CONSTANT.PROCESSED || invoice.lastStatus === CONSTANT.PROCESSING) {
+        return OPTION.RAWDOC_PROCESSING;
+    } else if(invoice.isEmitida()) {
         return OPTION.PROFORMA_INVOICES;
     } else if(invoice.isTicket()) {
         return OPTION.RAWDOC_INBOX_TICKET_NEW;
@@ -174,7 +177,9 @@ export const getRestoreFromOption = (invoice) => {
     
 export const getRestoreToOption = (invoice) => {
     invoice = new Invoice(invoice);
-    if(invoice.isEmitida()) {
+    if(invoice.lastStatus === CONSTANT.PROCESSED || invoice.lastStatus === CONSTANT.PROCESSING) {
+        return OPTION.RAWDOC_PROCESSING;
+    } else if(invoice.isEmitida()) {
         return OPTION.PROFORMA_INVOICES;
     } else if(invoice.isTicket()) {
         return OPTION.RAWDOC_INBOX_TICKET_NEW;

@@ -7,8 +7,11 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomerPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomerPanel.AonCustomerPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel.AonRegistryFullPanelCallback;
@@ -16,6 +19,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonSimpleDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSupplierFullPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.occam.api.model.RegistryParams;
+import com.esferalia.aon.occam.api.model.registry.CreditorFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -76,6 +81,7 @@ public abstract class SupplierModulePanel extends AonCustomDockLayout {
 				if (status.getSelectedOptions().isEmpty()) {
 					Set<String> selectedOptions = new LinkedHashSet<String>();
 					selectedOptions.add("Activo");
+					selectedOptions.add("Bloqueado");
 					status.setSelectedOptions(selectedOptions);
 				}
 
@@ -85,6 +91,7 @@ public abstract class SupplierModulePanel extends AonCustomDockLayout {
 
 		Set<String> selectedOptions = new LinkedHashSet<String>();
 		selectedOptions.add("Activo");
+		selectedOptions.add("Bloqueado");
 		status.setSelectedOptions(selectedOptions);
 
 		addFilterWidget(status);
@@ -163,6 +170,42 @@ public abstract class SupplierModulePanel extends AonCustomDockLayout {
 		});
 		
 		addToolbarButton(newButton);
+		
+		if(options.getDomainName().contains("aonsolutions.org")) {
+			AonToolbarButton newButton2 = new AonToolbarButton( "Nuevo Proveedor", AON.CSS.aonIconMoreVertical());
+			newButton2.addClickHandler(e -> {
+				SupplierFull newSupplier = SupplierFull.initialize(options.getDomain());
+				
+				AonCustomDialog dialog = new AonCustomDialog();
+				dialog.setCaption("Nuevo Proveedor");
+	
+				AonCustomerPanel aonRecordDataPanel = new AonCustomerPanel(options.getDomainName(), options.getDomain(), options.getUser(), newSupplier,
+						options.getConfiguration().getAvailableScopes(), options.getConfiguration().getGeozones(),
+						new AonCustomerPanelCallback() {
+	
+							@Override
+							public void onCancel() {
+								dialog.hide();
+							}
+	
+							@Override public void onAccept(CustomerFull customerFull) {}
+	
+							@Override public void onAccept(CreditorFull creditorFull) {}
+	
+							@Override public void onAccept(SupplierFull SupplierFull) {
+								dialog.hide();
+								
+								supplierPanel.resetSearchOffset();
+								onSearch( options );
+							}
+						});
+	
+				dialog.add(aonRecordDataPanel);
+				dialog.showLoaded();
+			});
+			
+			addToolbarButton(newButton2);
+		}
 	}
 	
 	private void selectSupplier(RegistryModuleOptions opt, SupplierFull supplier,  AonRegistryFullPanelCallback<SupplierFull> panelCallback) {

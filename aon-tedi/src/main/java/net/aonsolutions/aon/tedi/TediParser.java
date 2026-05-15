@@ -2,18 +2,14 @@ package net.aonsolutions.aon.tedi;
 
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
-import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import org.jooq.Field;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
@@ -561,7 +557,7 @@ public class TediParser {
 								.orElse("Sin comentarios")
 							;
 						result.getAccountingInvoice().add( 
-							InvoiceErrorMessages.C021.err(InvoiceErrorKey.REGISTRY, comments) );
+							InvoiceErrorMessages.C021.err(InvoiceErrorKey.REGISTRY_STATUS, comments) );
 					}
 				}
 			});

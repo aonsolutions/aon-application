@@ -26,6 +26,8 @@ import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingAnalyticalReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.DomainInvoiceStat;
+import com.esferalia.aon.occam.api.model.DomainInvoiceStatParams;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.Filter.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
@@ -75,6 +77,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountingUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AmortizationTypeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AnalyticalAccountingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DomainInvoiceStatDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
@@ -766,5 +769,10 @@ public class AccountingImpl implements IAccounting {
 	public void unlinkAmortizationInvoice(AONContext ctx, Integer domain,  Integer  amortizationId, Integer invoiceId){
 		ctx.getDslContext().transaction(
 			configuration -> AmortizationDAO.unlinkInvoice(ctx, domain, amortizationId, invoiceId) );	
+	}
+
+	// ********************************** [INVOICES CONUNTERS]
+	public Stream<DomainInvoiceStat> getDomainInvoiceStats(AONContext ctx, DomainInvoiceStatParams params) {
+		return DomainInvoiceStatDAO.stream(ctx, params);
 	}
 }

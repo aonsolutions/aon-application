@@ -16,7 +16,7 @@ public interface RawdocServiceAsync {
 	void delete(Occam occam, Integer rawdocId, AsyncCallback<Void> callback);
 	void saveToAccounting(Occam occam, LinkedHashSet<Integer> rawdocIds, AsyncCallback<LinkedList<String>> callback);
 	
-	void toDraft(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback);
+	void toTrash(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback);
 	void toRejected(Occam occam, Integer rawdocId, String reason, String email, AsyncCallback<Rawdoc> callback);
 	void toInbox(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback);
 

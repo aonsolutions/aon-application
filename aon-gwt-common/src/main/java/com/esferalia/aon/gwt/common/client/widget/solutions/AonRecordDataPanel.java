@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.registry.CommercialRegistryCode;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RecordDataType;
@@ -15,6 +16,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.InputElement;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -183,7 +185,7 @@ public class AonRecordDataPanel extends HTMLPanel {
             HorizontalPanel buttonsPanel = new HorizontalPanel();
             buttonsPanel.setSpacing(8);
 
-            AonTableButton preview = new AonTableButton("Ver archivo", null != recordData.getAttach() && null != recordData.getFullAttach().getData() ? AON.CSS.aonIconPdf() : AON.CSS.aonIconDownload());
+            AonTableButton preview = new AonTableButton("Ver archivo", null != recordData.getAttach() && null != recordData.getFullAttach().getData() ? AON.CSS.aonIconPdf() : AON.CSS.aonIconPdf());
             AonTableButton upload = new AonTableButton("Subir archivo", AON.CSS.aonIconUpload());
             AonTableButton delete = new AonTableButton("Eliminar archivo", AON.CSS.aonIconDelete());
 
@@ -287,27 +289,62 @@ public class AonRecordDataPanel extends HTMLPanel {
         });
 
         preview.addClickHandler(e -> {
+            stopEvent(e);
+
             if (recordData.getAttach() == null)
                 return;
-            
-            if(recordData.getFullAttach().getDriveId() != null) {
-            	JSONObject json = new JSONObject();
-    			json.put("domainId", new JSONNumber(domainId));
-    			json.put("domainName", new JSONString(domainName));
-    			json.put("domainLogin", new JSONString(user));
-    			json.put("rattach", new JSONNumber(recordData.getAttach()));
-    			json.put("type", new JSONString("registry"));
 
-    			String jsonBase64 = base64Encode(json.toString());
-    			
-    			downloadFile(jsonBase64, SESSION_API);
+            // Si está en Drive descargar vía iframe
+            if (recordData.getFullAttach().getDriveId() != null) {
+            	
+            	AonMessagePanel.showLoading(messagePanel, "Cargando archivo...");
+
+                JSONObject json = new JSONObject();
+                json.put("domain_id", new JSONNumber(domainId));
+                json.put("domain_name", new JSONString(domainName));
+                json.put("domain_login", new JSONString(user));
+                json.put("id", new JSONNumber(recordData.getAttach()));
+                json.put("attach_type", new JSONString("registry"));
+
+                String base64 = base64Encode(json.toString());
+                String url = "/ms/api/file/" + base64;
+
+                fetchBinaryXHR(url, base64Data -> {
+
+                    byte[] bytes = base64ToBytes(base64Data);
+
+                    Attach temp = new Attach();
+                    temp.setId(recordData.getAttach());
+                    temp.setDescription(recordData.getFullAttach().getDescription());
+                    temp.setMimeType(recordData.getFullAttach().getMimeType());
+                    temp.setData(bytes);
+
+                    showPreview(temp);
+                    
+                    AonMessagePanel.hideMessage(messagePanel);
+                });
+
             } else {
-            	 AonAttachPreviewPanel popup = new AonAttachPreviewPanel(recordData.getFullAttach());
-                 popup.center();
-                 popup.show();
+                // Si ya está en BD abrir directamente
+                showPreview(recordData.getFullAttach());
             }
         });
+
     }
+    
+    private void stopEvent(ClickEvent e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.getNativeEvent().stopPropagation();
+        e.getNativeEvent().preventDefault();
+    }
+    
+    private void showPreview(Attach attach) {
+        AonAttachPreviewPanel popup = new AonAttachPreviewPanel(attach);
+        popup.center();
+        popup.show();
+    }
+
 	
 	public static void downloadFile(String jsonParam, String sessionId) {
 		String url = "/ms/api/download?json=" + URL.encodeQueryString(jsonParam);
@@ -316,6 +353,36 @@ public class AonRecordDataPanel extends HTMLPanel {
 
 	private static native String base64Encode(String text) /*-{
 	    return btoa(text);
+	}-*/;
+	
+	private native void fetchBinaryXHR(String url, Consumer<String> callback) /*-{
+	    var xhr = new XMLHttpRequest();
+	    xhr.open("GET", url, true);
+	    xhr.responseType = "arraybuffer";
+	
+	    xhr.onload = function() {
+	        if (xhr.status >= 200 && xhr.status < 300) {
+	            var bytes = new Uint8Array(xhr.response);
+	            var binary = "";
+	            for (var i = 0; i < bytes.byteLength; i++) {
+	                binary += String.fromCharCode(bytes[i]);
+	            }
+	            var base64 = btoa(binary);
+	            callback.@java.util.function.Consumer::accept(Ljava/lang/Object;)(base64);
+	        }
+	    };
+	
+	    xhr.send();
+	}-*/;
+	
+	private native byte[] base64ToBytes(String base64) /*-{
+	    var raw = atob(base64);
+	    var len = raw.length;
+	    var bytes = @com.google.gwt.core.client.JsArrayInteger::createArray()();
+	    for (var i = 0; i < len; i++) {
+	        bytes.push(raw.charCodeAt(i));
+	    }
+	    return bytes;
 	}-*/;
 
     private void uploadRecordDataFile(FileUpload fileUpload, RecordData recordData, Runnable onSuccess) {

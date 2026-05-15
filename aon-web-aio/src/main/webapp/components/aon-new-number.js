@@ -150,6 +150,7 @@ export class AonNewNumber extends AonNewInput {
             if (value !== lastValue) {
 				this.dispatchEvent(new Event(EVENT.CHANGE_NUMBER));
 			}
+			lastValue = value;
 
 			this.dispatchEvent(new Event(EVENT.BLUR));
 		});
@@ -164,8 +165,6 @@ export class AonNewNumber extends AonNewInput {
 				input.value = input.value.replace('-', '');
 				this.value = input.value.replace('-', '');
 			}
-
-			// this.dispatchEvent(new Event(EVENT.CHANGE_NUMBER));
 		});
 	}
 

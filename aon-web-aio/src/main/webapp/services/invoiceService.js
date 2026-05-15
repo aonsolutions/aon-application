@@ -32,6 +32,7 @@ export const rectifyInvoice = (data) => put(`${API_URL}/invoice/rectify`, data);
 export const sendInvoiceMail = (data) => post(`${API_URL}/send_mail/invoice`, data);
 export const sendInvoice2Mail = (data) => post(`${API_URL}/send_mail/invoice2`, data);
 export const sendInvoiceRejectMail = (data) => post(`${API_URL}/send_mail/invoiceReject`, data);
+export const sendInvoiceRestoreMail = (data) => post(`${API_URL}/send_mail/invoiceRestore`, data);
 
 export const downloadInvoices = (data) => openFileUrl(`${API_URL}/multiple_download/invoice?json=${data}`);
 export const downloadInvoiceExcel = (data) => openFileUrl(`${API_URL}/downloadInvoiceExcel?json=${data}`);

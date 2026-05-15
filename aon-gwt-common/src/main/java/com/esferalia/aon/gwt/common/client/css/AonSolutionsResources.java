@@ -560,6 +560,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconHistory();
 
+	@Source("icons/aon-icon-history-red.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconHistoryRed();
+
 	@Source("icons/aon-icon-undo.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconUndo();

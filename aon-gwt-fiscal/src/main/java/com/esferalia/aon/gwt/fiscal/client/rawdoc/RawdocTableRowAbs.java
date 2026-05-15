@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule.RawdocCallback;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
@@ -17,6 +18,8 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -134,7 +137,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 
 	private AonTableButton getDeleteForeverButton(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
 		AonTableButton deleteForever = null;
-		if (rawdoc.isDraft()) {
+		if (rawdoc.isTrash()) {
 			deleteForever = new AonTableButton(AON.MSG.deleteForeverAction(),AON.CSS.aonIconDeleteForever());
 			deleteForever.getElement().getStyle().setMarginRight(5, Unit.PX);
 			deleteForever.addClickHandler(event -> {
@@ -164,7 +167,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 
 	private AonTableButton getRestoreButton(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
 		AonTableButton restore = null;
-		if (rawdoc.isDraft() || rawdoc.isRejected()) {
+		if (rawdoc.isTrash() || rawdoc.isRejected()) {
 			restore = new AonTableButton(AON.MSG.restoreAction(),
 					rawdoc.getStatus() == RawdocStatus.REJECTED
 						?AON.CSS.aonIconRestoreRejected()
@@ -236,7 +239,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 			delete.addClickHandler(event -> {
 				AonConfirmDialog cd = new AonConfirmDialog();
 				cd.confirm(AON.MSG.confirmDraftAction(), () -> 
-					RawdocModule.RAWDOC_SERVICE.toDraft(opt.getOccam(), rawdoc.getId()
+					RawdocModule.RAWDOC_SERVICE.toTrash(opt.getOccam(), rawdoc.getId()
 						, new AsyncCallback<Rawdoc>() {
 							
 							@Override
@@ -261,6 +264,11 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 		AonTableButton logButton = null;
 		if (hasLog(rawdoc.getLog())) {
 			logButton = new AonTableButton(AON.MSG.tracking(), AON.CSS.aonIconHistory());
+			if (hasRejectedAction(rawdoc.getLog())) {
+				logButton.removeStyleName(AON.CSS.aonIconHistory());
+				logButton.addStyleName(AON.CSS.aonIconHistoryRed());
+				logButton.addStyleName(AON.CSS.aonBlink());
+			}
 			logButton.addClickHandler(event -> cbk.showExtraInfo( new RawdocLogPanel( rawdoc.getLog())));
 		}
 		return logButton;
@@ -271,6 +279,25 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 			&& JsonUtils.safeEval(log) != null
 			&& (new JSONArray(JsonUtils.safeEval(log)).size() > 0)
 			;
+	}
+	private boolean hasRejectedAction(String log) {
+		JSONArray data = new JSONArray(JsonUtils.safeEval(log));
+		for (int i = 0; i < data.size(); i++) {
+			JSONValue l = data.get(i);
+			JSONObject json = l.isObject();
+			if (json != null) {
+				JSONValue v = json.get(IJsonNames.STATUS);
+				String val = (v == null) ? "" : v.isString().stringValue();
+				RawdocStatus rs = RawdocStatus.safeValueOf( val );
+				if (rs == RawdocStatus.REJECTED || rs == RawdocStatus.TRASH) {
+					return true;
+				}
+				if (AonStringUtils.equalsIgnoreCase(RawdocStatus.REJECTED.name(), val)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	private Widget ensureButton(Widget button) {

@@ -1,7 +1,5 @@
 package com.esferalia.aon.occam.api.model;
 
-import com.esferalia.aon.occam.api.json.JsonUtils;
-
 public final class IJsonNames {
 	
 	private IJsonNames() {
@@ -45,6 +43,7 @@ public final class IJsonNames {
 	public static final String ADMINISTRATIVE = "administrative";
 	public static final String ADVANCE = "advance";
 	public static final String AEAT_RECTIFICATION = "aeatRectification";
+	public static final String ALCATRAZ = "alcatraz";
 	public static final String ALIAS = "alias";
 	public static final String ALLOW_CONCURRENT = "allowConcurrent";
 	public static final String AMORTIZATION = "amortization";
@@ -303,6 +302,7 @@ public final class IJsonNames {
 	public static final String FINANCES = "finances";
 	public static final String FIRST_NAME = "firstName";
 	public static final String FIRST_SURNAME = "firstSurname";
+	public static final String FISCAL_MODEL_TYPE = "fiscalModelType";
 	public static final String FIX_TYPE = "fixType";
 	public static final String FK_COLUMN = "fkColumn";
 	public static final String FK_ID = "fkId";
@@ -595,6 +595,7 @@ public final class IJsonNames {
 
 	// ---------------------------------------------------------------------------------------------	[Q] 
 	public static final String QUANTITY = "quantity";
+	public static final String QUERY = "query";
 	public static final String QUESTION = "question";
 	public static final String QUESTION_ALIAS = "questionAlias";
 	public static final String QUOTA = "quota";

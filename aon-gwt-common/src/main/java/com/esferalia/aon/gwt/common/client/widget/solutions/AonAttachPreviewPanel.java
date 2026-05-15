@@ -10,11 +10,10 @@ public class AonAttachPreviewPanel extends AonCustomDialog {
 
     public AonAttachPreviewPanel(Attach attach) {
     	super();
-    	showCloseButton(true);
 
         setStyleName(AON.CSS.aonFlexColumn2());
-        getElement().getStyle().setProperty("z-index", "50");
-        getElement().getStyle().setProperty("padding", "1rem");
+        getElement().getStyle().setProperty("z-index", "75");
+        getElement().getStyle().setProperty("padding", ".5rem");
         getElement().getStyle().setProperty("background-color", "white");
         getElement().getStyle().setProperty("border-radius", "10px");
         
@@ -22,12 +21,12 @@ public class AonAttachPreviewPanel extends AonCustomDialog {
 
         VerticalPanel panel = new VerticalPanel();
         panel.setWidth("85vw");
-        panel.setHeight("90vh");
+        panel.setHeight("95vh");
 
         // Crear iframe
         Frame iframe = new Frame();
         iframe.setWidth("100%");
-        iframe.setHeight("90vh");
+        iframe.setHeight("95vh");
         iframe.getElement().getStyle().setProperty("border-radius", "10px");
 
         try {

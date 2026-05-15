@@ -1,8 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.invoice;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonFlexGrid;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasAllKeyHandlers;
@@ -34,32 +35,29 @@ public class InvoiceMassagesList extends ScrollPanel implements HasClickHandlers
 		addStyleName(AON.CSS.aonPaddingTop());
 		FlowPanel container = new FlowPanel();
 		setWidget(container);
-		AonDisplayTable table = new AonDisplayTable();
-		table.setStyleName(AON.CSS.aonMarginTop());
-		table.addStyleName(AON.CSS.aonBlockCenter());
-		table.addStyleName(AON.CSS.aonWidthFitContent());
-		container.add(table);
+		String[] widths = {"80px", "1fr"};
+		AonFlexGrid grid = new AonFlexGrid(widths,AON.CSS.aonMarginTopSep(),AON.CSS.aonMarginLeft());
+		container.add(grid);
 		
-		invoice.messageStream().forEach(error -> {
+		invoice.messageStream().forEach(err -> {
+			InvoiceErrorLevel level = err.getLevel();
+			String msg = err.getMessage();
 			
-			InlineLabel colorLabel = new InlineLabel("");
-			colorLabel.setStyleName(AON.CSS.aonPaddingLeft());
-			colorLabel.addStyleName(AON.CSS.aonPaddingRight());
-			colorLabel.getElement().getStyle().setBackgroundColor(getBackgroundColor(error.getLevel()));
-
-			InlineLabel errLabel = new InlineLabel(error.getLevel().getLabel());
-			errLabel.setStyleName(AON.CSS.aonPaddingLeft());
-			errLabel.addStyleName(AON.CSS.aonPaddingRight());
+			if (err.getContext() != null && err.getContext().getKey() == InvoiceErrorKey.REGISTRY_STATUS ) {
+				level = InvoiceErrorLevel.WRN;
+			}
+			
+			InlineLabel errLabel = new InlineLabel(level.getLabel());
+			errLabel.getElement().getStyle().setColor(getColor(level));
 			errLabel.addStyleName(AON.CSS.aonBold());
+			errLabel.addStyleName(AON.CSS.aonTextCenter());
 
-			SafeHtml safeHtml = SafeHtmlUtils.fromTrustedString(error.getMessage());
+			SafeHtml safeHtml = SafeHtmlUtils.fromTrustedString(msg);
 			HTML msgLabel = new HTML(safeHtml);
 			msgLabel.setStyleName(AON.CSS.aonMarginLeft());
 			
-			table.addRow()
-				.addCell(colorLabel, AON.CSS.aonWidth30())
-				.addCell(errLabel,  AON.CSS.aonWidth60())
-				.addCell(msgLabel,  AON.CSS.aonWidth400())
+			grid.addCell(errLabel)
+				.addCell(msgLabel)
 			;
 		});
 		if (showClose) {
@@ -79,7 +77,7 @@ public class InvoiceMassagesList extends ScrollPanel implements HasClickHandlers
 		}
 	}
 
-	private String getBackgroundColor(InvoiceErrorLevel curLevel) {
+	public static String getColor(InvoiceErrorLevel curLevel) {
 		String color = null;
 		if (curLevel == null) {
 			color = "#c1f9ba";

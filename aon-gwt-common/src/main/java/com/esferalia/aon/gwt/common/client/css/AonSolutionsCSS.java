@@ -192,6 +192,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_history")
 	String aonIconHistory();
 	
+	@ClassName("aon_icon_history_red")
+	String aonIconHistoryRed();
+
 	@ClassName("aon_icon_undo")
 	String aonIconUndo();
 	

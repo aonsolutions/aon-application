@@ -131,6 +131,8 @@
 .aon_icon_data { background-image: iconData;}
 @url iconHistory aonIconHistory;
 .aon_icon_history { background-image: iconHistory;}
+@url iconHistoryRed aonIconHistoryRed;
+.aon_icon_history_red { background-image: iconHistoryRed;}
 @url iconUndo aonIconUndo;
 .aon_icon_undo { background-image: iconUndo;}
 @url iconUndoAll aonIconUndoAll;

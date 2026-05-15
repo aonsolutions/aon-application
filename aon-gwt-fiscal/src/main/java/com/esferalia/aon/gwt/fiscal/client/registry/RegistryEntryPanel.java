@@ -59,6 +59,14 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 
 	private HTMLPanel messagePanel = new HTMLPanel(AonStringUtils.EMPTY);
 	
+	private AonCustomTextBox alias = new AonCustomTextBox(AON.MSG.alias());
+	private AonCustomListBox documentNationality = new AonCustomListBox("Pais");
+	private AonCustomListBox documentType = new AonCustomListBox("Tipo");
+	private AonCustomTextBox document = new AonCustomTextBox("Documento");
+	private AonCustomTextBox name = new AonCustomTextBox(AON.MSG.enterpriseName());
+	private AonCustomTextBox firstSurname = new AonCustomTextBox("Apellido");
+	private AonCustomTextBox secondSurname = new AonCustomTextBox("Apellido 2");
+	
 	private HTMLPanel rightInfoTable;
 
 	private TabLayoutPanel tablayoutPanel;
@@ -75,6 +83,8 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 	
 	private CompanyFull company;
 	private Registry registry;
+	
+	private boolean editEnable = false;
 	
 	// ------------------------------------------------- Constructor
 
@@ -131,6 +141,19 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 			}
 		});
 		addToolbarButton(saveButton);
+		
+		AonToolbarButton editButton = new AonToolbarButton("Editar datos", AON.CSS.aonIconEdit());
+		editButton.addClickHandler(e -> {
+			editEnable = !editEnable;
+
+			documentNationality.setEnabled(editEnable);
+			documentType.setEnabled(editEnable);
+			document.setEnable(editEnable);
+			name.setEnable(editEnable);
+			firstSurname.setEnable(editEnable);
+			secondSurname.setEnable(editEnable);
+		});
+		addToolbarButton(editButton);
 	}
 
 	// ------------------------------------------------- DataBase
@@ -162,13 +185,10 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 		HTMLPanel leftInfoTable = createTable();
 		leftInfoTable.getElement().getStyle().setProperty("flex", "1");
 
-		AonCustomTextBox alias = new AonCustomTextBox(AON.MSG.alias());
 		alias.addValueChangeHandler(e -> registry.setAlias(e.getValue()));
 		alias.setValue(registry.getAlias());
 
-		AonCustomListBox documentType = new AonCustomListBox("Tipo");;
 		if (!this.registrySource.equals(RegistrySource.ENVIROMENT)) {
-			AonCustomListBox documentNationality = new AonCustomListBox("Pais");
 			documentNationality.clearItems();
 			for (int i = 0; i < Country.values().length; i++)
 				documentNationality.addItem(Country.values()[i].getIso2(), Country.values()[i].getIso2());
@@ -176,19 +196,21 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 					e -> registry.setDocumentCountry(Country.safeValueOf(documentNationality.getValue())));
 			documentNationality.setValue(registry.getDocumentCountry().getIso2());
 			documentNationality.getElement().getStyle().setProperty("max-width", "4rem");
+			documentNationality.setEnabled(editEnable);
 
 			documentType.clearItems();
 			for (int i = 0; i < DocumentType.values().length; i++)
 				documentType.addItem(DocumentType.values()[i].getDescription(), DocumentType.values()[i].toString());
 			documentType.setValue(registry.getDocumentType().toString());
 			documentType.getElement().getStyle().setProperty("max-width", "5rem");
+			documentType.setEnabled(editEnable);
 
-			AonCustomTextBox document = new AonCustomTextBox("Documento");
 			document.addValueChangeHandler(e -> registry.setDocument(e.getValue()));
 			document.setValue(registry.getDocument());
+			document.setEnable(editEnable);
 			document.getElement().getStyle().setProperty("max-width", "7rem");
 
-			leftInfoTable.add(createRow(documentType, documentNationality, document, alias));
+			leftInfoTable.add(createRow(alias, documentType, documentNationality, document));
 		} else {
 			leftInfoTable.add(createRow(alias));
 		}
@@ -198,9 +220,9 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 		rightInfoTable = createTable();
 		rightInfoTable.getElement().getStyle().setProperty("flex", "1");
 
-		AonCustomTextBox name = new AonCustomTextBox(AON.MSG.enterpriseName());
 		name.addValueChangeHandler(e -> registry.setName(e.getValue()));
 		name.setValue(registry.getName());
+		name.setEnable(editEnable);
 		rightInfoTable.add(createRow(name));
 
 		gridPanel.add(rightInfoTable);
@@ -216,6 +238,24 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 		}
 
 		container.add(gridPanel);
+		
+		if (!this.registrySource.equals(RegistrySource.ENVIROMENT)) {
+			registryPaymethodBanksTable = new RegistryPaymethodBanksTable(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId()) {
+	
+				@Override
+				protected void onShowErrorMessage(String errorMessage) {
+					AonMessagePanel.showError(messagePanel, errorMessage);
+				}
+
+				@Override
+				protected void onShowSuccess(String successMessage) {
+					AonMessagePanel.showSuccess(messagePanel, successMessage);
+				}
+	
+			};
+			
+			tablayoutPanel.add(registryPaymethodBanksTable, "D. Bancarios");
+		}
 		
 		mediaTable = new MediaTable(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId()) {
 
@@ -244,30 +284,6 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 		};
 
 		tablayoutPanel.add(addressTable, "Direcciones");
-		
-		aonVisualIdentity = new AonVisualIdentity(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId(), this.registrySource);
-		tablayoutPanel.add(aonVisualIdentity, this.registrySource.equals(RegistrySource.ENVIROMENT) ? "Logo" : "Logo / Firma");
-		
-		if (!this.registrySource.equals(RegistrySource.ENVIROMENT)) {
-			registryPaymethodBanksTable = new RegistryPaymethodBanksTable(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId()) {
-	
-				@Override
-				protected void onShowErrorMessage(String errorMessage) {
-					AonMessagePanel.showError(messagePanel, errorMessage);
-				}
-
-				@Override
-				protected void onShowSuccess(String successMessage) {
-					AonMessagePanel.showSuccess(messagePanel, successMessage);
-				}
-	
-			};
-			
-			tablayoutPanel.add(registryPaymethodBanksTable, "D. Bancarios");
-		}
-
-		tablayoutPanel.add(new AonMainCertificatesPanel(options.getDomainName(), options.getDomain(), options.getUser()),
-				"Certificados");
 		
 		if (!this.registrySource.equals(RegistrySource.ENVIROMENT)) {
 			workplaceTable = new WorkplaceTable(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId()) {
@@ -310,10 +326,25 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 					AonMessagePanel.showError(messagePanel, errorMessage);
 				}
 
+				@Override
+				protected void onShowLoadingMessage(String loadingMessage) {
+					AonMessagePanel.showLoading(messagePanel, loadingMessage);
+				}
+
+				@Override
+				protected void onHideMessage() {
+					AonMessagePanel.hideMessage(messagePanel);
+				}
+
 			};
 			
 			tablayoutPanel.add(recordDataTable, "D. Registrales");
 		}
+		
+		tablayoutPanel.add(new AonMainCertificatesPanel(options.getDomainName(), options.getDomain(), options.getUser()), "Certificados");
+		
+		aonVisualIdentity = new AonVisualIdentity(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId(), this.registrySource);
+		tablayoutPanel.add(aonVisualIdentity, this.registrySource.equals(RegistrySource.ENVIROMENT) ? "Logo" : "Logo / Firma");
 
 		container.add(tablayoutPanel);
 
@@ -328,18 +359,18 @@ public class RegistryEntryPanel extends AonCustomDockLayout {
 		rightInfoTable.clear();
 
 		if(registry.getDocumentType().equals(DocumentType.CIF)) {
-			AonCustomTextBox name = new AonCustomTextBox("Nombre");
 			name.addValueChangeHandler(e -> registry.setName(e.getValue()));
 			name.setValue(registry.getName());
+			name.setEnable(editEnable);
 			rightInfoTable.add(createRow(name));
 		} else {
-			AonCustomTextBox name = new AonCustomTextBox("Nombre");
+			name.setEnable(editEnable);
 			name.setValue(registry.getPersonName());
 			
-			AonCustomTextBox firstSurname = new AonCustomTextBox("Apellido");
+			firstSurname.setEnable(editEnable);
 			firstSurname.setValue(registry.getPersonFirstsurname());
-			
-			AonCustomTextBox secondSurname = new AonCustomTextBox("Apellido 2");
+
+			secondSurname.setEnable(editEnable);
 			secondSurname.setValue(registry.getPersonSecondsurname());
 			
 			name.addValueChangeHandler(e -> {

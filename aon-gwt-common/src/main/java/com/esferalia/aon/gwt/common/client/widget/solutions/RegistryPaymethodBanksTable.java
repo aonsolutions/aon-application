@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -29,6 +30,7 @@ import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -56,10 +58,10 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 	private HTMLPanel registryPaymethodPanel;
 	private AonCustomListBox paymethod = new AonCustomListBox("Forma de pago");
 	private AonCustomListBox banks = new AonCustomListBox("Cuenta Bancaria");
-	private AonCustomIntegerBox pays = new AonCustomIntegerBox("N. Pagos");
-	private AonCustomIntegerBox firstPay = new AonCustomIntegerBox("Dias 1 Pago");
-	private AonCustomIntegerBox betweenDays = new AonCustomIntegerBox("Dias entre pagos");
-	private AonCustomTextBox payDayss = new AonCustomTextBox("Dias Pago");
+	private AonCustomIntegerBox pays = new AonCustomIntegerBox("Pagos");
+	private AonCustomIntegerBox firstPay = new AonCustomIntegerBox("1er Pago");
+	private AonCustomIntegerBox betweenDays = new AonCustomIntegerBox("Resto");
+	private AonCustomTextBox payDayss = new AonCustomTextBox("Dias");
 	
 
 	private SimplePanel container;
@@ -77,6 +79,8 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 	private List<Account> accounts;
 	
 	private RegistryPayMethod rPayMethod;
+	
+	private boolean showActiveBanks = true;
 
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private static final String ATTACH_RECORDDATA_URL = "/ms/api/attach/recordData";
@@ -87,8 +91,8 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 		BAN("Banco", "-moz-available", "min-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		IBA("IBAN", "-moz-available", "min-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		SWI("SWIFT", "10rem", "max-width: 10rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		SUF("Sufijo", "6rem", "max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		CUE("Cuenta Contable", "10rem", "max-width: 10rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		SUF("Sufijo", "4rem", "max-width: 4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		CUE("Cuenta Contable", "12rem", "max-width: 12rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
 		BUT(AonStringUtils.EMPTY, "4rem", "");
 
 		String headerLabel;
@@ -220,14 +224,21 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 		banks.addItem("-" , "");
 		rBanks.forEach(b -> banks.addItem("(" + b.getAlias() + ") " + b.getBankAccount().toString(), b.getId().toString()));
 		
+		pays.setTitle("Numero de vencimiento por factura");
+		firstPay.setTitle("Plazo en dias al primer pago");
+		betweenDays.setTitle("Plazo en dias entre el resto de pagos");
+		payDayss.setTitle("Dias fijos de pago separados por espacios");
+		
 		pays.hideNearBy();
 		firstPay.hideNearBy();
 		betweenDays.hideNearBy();
 		
-		pays.getElement().getStyle().setProperty("max-width", "5rem");
-		firstPay.getElement().getStyle().setProperty("max-width", "5rem");
-		betweenDays.getElement().getStyle().setProperty("max-width", "7rem");
-		payDayss.getElement().getStyle().setProperty("max-width", "5rem");
+		pays.getElement().getStyle().setProperty("max-width", "4rem");
+		firstPay.getElement().getStyle().setProperty("max-width", "4rem");
+		betweenDays.getElement().getStyle().setProperty("max-width", "4rem");
+		payDayss.getElement().getStyle().setProperty("max-width", "4rem");
+		
+		payDayss.getTextBox().getElement().setPropertyString("placeholder", "");
 		
 		AonTableButton saveRpaymethod = new AonTableButton("Guardar Metodo de Pago", AON.CSS.aonIconSave());
 		saveRpaymethod.setEnabled(false);
@@ -299,6 +310,22 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 				button.addStyleName(AON.CSS.aonCustomRowButtom());
 				button.addClickHandler(e -> createonRegistryBank());
 				buttonContainer.add(button);
+
+				tab.addHeader(buttonContainer, col.getColWidth(), col.getStyles());
+			} else if (col.equals(COLS.STA)) {
+				FlowPanel buttonContainer = new FlowPanel();
+				buttonContainer.getElement().getStyle().setTextAlign(TextAlign.LEFT);
+
+				CheckBox showActive = new CheckBox("Act.");
+				showActive.setTitle("Solo activos");
+				showActive.addStyleName(AON.CSS.aonCustomRowButtom());
+				showActive.setValue(showActiveBanks);
+				showActive.getElement().getStyle().setProperty("flex-direction", "row-reverse");
+				showActive.addValueChangeHandler(e -> {
+					showActiveBanks = !showActiveBanks;
+					onSearch();
+				});
+				buttonContainer.add(showActive);
 
 				tab.addHeader(buttonContainer, col.getColWidth(), col.getStyles());
 			} else
@@ -380,6 +407,7 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 		Button status = new Button();
 		getEnableDisableButton(status, registryBank.isActive());
 		status.setTitle(registryBank.isActive() ? "Activo" : "Inactivo");
+		status.getElement().getStyle().setProperty("background-position-x", "center");
 		tab.addInlineStyle(status, COLS.STA.getStyles());
 		tab.addRow(row, status, COLS.STA.getColWidth());
 
@@ -403,8 +431,8 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 		tab.addInlineStyle(suffix, COLS.SUF.getStyles());
 		tab.addRow(row, suffix, COLS.SUF.getColWidth());
 		
-		Label account = new Label(null == registryBank.getAccount() ? "" : registryBank.getAccount().getCode());
-		account.setTitle(null == registryBank.getAccount() ? "" : registryBank.getAccount().getCode());
+		Label account = new Label(null == registryBank.getAccount() ? "" : registryBank.getAccount().getFullName());
+		account.setTitle(null == registryBank.getAccount() ? "" : registryBank.getAccount().getFullName());
 		tab.addInlineStyle(account, COLS.CUE.getStyles());
 		tab.addRow(row, account, COLS.CUE.getColWidth());
 
@@ -435,7 +463,8 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 
 			@Override
 			public void onSuccess(List<RegistryBank> registryBanks) {
-				success.accept(registryBanks);
+				List<RegistryBank> parseRegistryBanks = registryBanks.stream().filter(b -> (showActiveBanks && b.isActive()) || !showActiveBanks).collect(Collectors.toList());
+				success.accept(parseRegistryBanks);
 			}
 
 			@Override
