@@ -404,13 +404,12 @@ export class AonInvoiceList extends AonElement {
 		if(this.getFilter().status === 'inbox') {
 			toolbar.addSeparator();
 			aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
-			aonInvoice.addToolbarOption2(ACTION.REJECT_INVOICE, () => this.rejectInvoices());
 			aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
-		} else if(this.getFilter().status === CONSTANT.REFUSED || this.getFilter().status === CONSTANT.REJECTED){
+		} else if(this.getFilter().status === CONSTANT.REJECTED){
 			toolbar.addSeparator();
 			aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
-			aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
-		} else if(this.getFilter().status ===  CONSTANT.TRASH || this.getFilter().status === CONSTANT.DRAFT){
+			// aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
+		} else if(this.getFilter().status === CONSTANT.TRASH){
 			toolbar.addSeparator();
 			aonInvoice.addToolbarOption2(ACTION.DELETE_FOREVER, () => this.deleteForeverInvoices());
 			aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
@@ -483,7 +482,7 @@ export class AonInvoiceList extends AonElement {
 		let aonInvoiceTable = this.getTable();
 		aonInvoiceTable.selected.forEach((invoice, i) => {
 			this.updateCounter(getTrashPendingFromOption(invoice), OPTION.RAWDOC_TRASH, 1);
-			invoice.status = CONSTANT.DRAFT;
+			invoice.status = CONSTANT.TRASH;
 			insertInvoice(invoice).then(() => {
 				cont = cont + 1;
 				if(cont === aonInvoiceTable.selected.length) {
@@ -529,21 +528,6 @@ export class AonInvoiceList extends AonElement {
 			});
 		}
   	}
-	
-	rejectInvoices() {
-		let cont = 0;
-		let aonInvoiceTable = this.getTable();
-		aonInvoiceTable.selected.forEach((invoice, i) => {
-			this.updateCounter(getRejectFromOption(invoice), OPTION.RAWDOC_REJECT, 1);
-			invoice.status = CONSTANT.REJECTED;
-			insertInvoice(invoice).then(() => {
-				cont = cont + 1;
-				if(cont === aonInvoiceTable.selected.length) {
-					this.init();
-				}
-			});
-		});
-	}
 
 	downloadInvoices() {
 		let data = this.getFilter();
@@ -694,12 +678,6 @@ export class AonInvoiceList extends AonElement {
 		let download = ACTION.DOWNLOAD_INVOICE;
 	    download.fn = () => this.downloadInvoices();
 
-	   	// let record = ACTION.RECORD_INVOICE;
-    	// record.fn = () => this.getApplication().development(MSG.RECORD_INVOICE);
-
-    	let reject = ACTION.REJECT_INVOICE;
-    	reject.fn = () => this.rejectInvoices();
-
     	let restore = ACTION.RESTORE_INVOICE;
     	restore.fn = () => this.restoreInvoices();
 
@@ -723,21 +701,20 @@ export class AonInvoiceList extends AonElement {
 
 	  	let actions = [];
 	  	if(inv.isRejected()) {
-	  		actions = [restore, deleteInvoice];
-	  	} else if(inv.isDraft()) {
+	  		actions = [deleteInvoice];
+	  	} else if(inv.isTrash()) {
 	  		actions = [restore, deleteForever];
 	  	}  else if(inv.isInbox() && number === 1){
 			if(this.getDur().isInvoiceManager()){
-	    		// actions = [download, addComment, deleteInvoice, reject, record, rectify, duplicate];
 				actions = [download, addComment, deleteInvoice, reject, rectify, duplicate];
 	  		} else {
 	    	  actions = [download, addComment, deleteInvoice, rectify, duplicate];
 	    	}
 		} else if(inv.isInbox() && number > 1){
 			if(this.getDur().isInvoiceManager()){
-	    		actions = [download, deleteInvoice, reject]; //, record];
+	    		actions = [download, deleteInvoice, reject];
 	  		} else {
-	    	  actions = [download, deleteInvoice];
+	 			actions = [download, deleteInvoice];
 	    	}
 		} else {
 			actions = [send, download];

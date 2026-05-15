@@ -440,7 +440,7 @@ public class RawdocDAO {
 			.orElseThrow(() -> new AonCoreException( AonError.INVALID_UPDATE.getMessage()));
 	}
 	
-	public static Rawdoc toDraft(AONContext ctx, Integer rawdocId) {
+	public static Rawdoc toTrash(AONContext ctx, Integer rawdocId) {
 		ctx.checkWrite();
 		return get(ctx, rawdocId)
 			.map(r -> { 
@@ -451,7 +451,7 @@ public class RawdocDAO {
 				}
 				return r;
 			})
-			.map( r -> updateStatus(ctx,r,RawdocStatus.DRAFT, null))
+			.map( r -> updateStatus(ctx,r,RawdocStatus.TRASH, null))
 			.orElseThrow(() -> new AonCoreException( AonError.INVALID_UPDATE.getMessage()));
 	}
 

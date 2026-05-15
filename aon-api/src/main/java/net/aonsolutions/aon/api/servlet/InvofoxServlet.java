@@ -308,7 +308,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 //				|| OCRSeverity.rejected.equals(ocrSeverity.get()))) {
 //			return RawdocStatus.REJECTED;
 //		} else if(ocrSeverity.isPresent() && OCRSeverity.discarded.equals(ocrSeverity.get())) {
-//			return RawdocStatus.DRAFT;
+//			return RawdocStatus.TRASH;
 //		}
 //		return RawdocStatus.INBOX;
 		// TODO VA A PENDIENTE PARA QUE EL USUARIO (SIN OCR) NO SEPA QUE PASE EL OCR. REVISAR EN EL FUTURO.

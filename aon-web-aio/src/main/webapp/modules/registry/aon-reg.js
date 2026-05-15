@@ -627,7 +627,7 @@ export class AonReg extends AonElement {
 
 			let addAddress = new AonIconButton();
 			addAddress.id = this.ADDRESS_ADD + i;
-			addAddress.className = 'aonRegistryMediaAddButton';
+			addAddress.className = CSS.AON_ICON_BUTTON_TOP;
 			addAddress.title = MSG.ADD;
 			addAddress.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
 			addAddress.visible = !this.oneAddress && this.registry.addresses.length === i+1;
@@ -704,7 +704,7 @@ export class AonReg extends AonElement {
 
 			let addBank = new AonIconButton();
 			addBank.id = this.BANK_ADD + i;
-			addBank.className = 'aonRegistryMediaAddButton';
+			addBank.className = CSS.AON_ICON_BUTTON_TOP;
 			addBank.title = MSG.ADD;
 			addBank.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
 			addBank.visible = this.registry.banks.length === i+1;
@@ -772,7 +772,7 @@ export class AonReg extends AonElement {
 
 			let addEmail = new AonIconButton();
 			addEmail.id = this.EMAIL_ADD + i;
-			addEmail.className = 'aonRegistryMediaAddButton';
+			addEmail.className = CSS.AON_ICON_BUTTON_TOP;
 			addEmail.title = MSG.ADD;
 			addEmail.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
 			addEmail.visible = this.emails.length === i+1;
@@ -849,7 +849,7 @@ export class AonReg extends AonElement {
 			let addPhone = new AonIconButton();
 			addPhone.id = this.PHONE_ADD + i;
 			addPhone.title = MSG.ADD;
-			addPhone.className = 'aonRegistryMediaAddButton';
+			addPhone.className = CSS.AON_ICON_BUTTON_TOP;
 			addPhone.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
 			addPhone.visible = this.phones.length === i+1;
 			addPhone.addEventListener(EVENT.CLICK, () => {
@@ -1034,7 +1034,7 @@ export class AonReg extends AonElement {
 	
 			let addWeb = new AonIconButton();
 			addWeb.id = this.WEB_ADD + i;
-			addWeb.className = 'aonRegistryMediaAddButton';
+			addWeb.className = CSS.AON_ICON_BUTTON_TOP;
 			addWeb.title = MSG.ADD;
 			addWeb.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
 			addWeb.visible = this.webs.length === i+1;

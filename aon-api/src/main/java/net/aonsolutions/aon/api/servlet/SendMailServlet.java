@@ -82,6 +82,11 @@ public class SendMailServlet extends AonApiHttpServlet{
 				body = invoiceRejectContent(api, cp);
 			}
 			
+			if("invoiceRestore".equalsIgnoreCase(pathInfo[1])) {
+				subject = "Factura Restaurada";
+				body = invoiceRestoreContent(api, cp);
+			}
+			
 			if("document".equalsIgnoreCase(pathInfo[1])) {
 				subject = "Documentos";
 				body = documentContent(api, api.getData().optJSONArray("documents"));				
@@ -148,6 +153,36 @@ public class SendMailServlet extends AonApiHttpServlet{
 		VelocityContext context = new VelocityContext();
 		context.put("company", cm);		
 		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/invoiceReject.vm");
+		
+		StringWriter writer = new StringWriter();
+		template.merge(context, writer);
+
+		return writer.toString();
+	}
+	
+	private String invoiceRestoreContent(AonApiData api, CompanyFull company) {
+		VelocityEngine engine = new VelocityEngine();
+		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+		engine.init();
+		
+		CompanyMail cm = new CompanyMail();
+		cm.setLogo("https://aon.solutions/assets/aon-logo.png");
+		
+		Integer domainId = api.getUser().getDomain().getId();
+		Company cp = AON.getCompany(api.getOccam(), f -> f.getDomainProperty().eq(domainId));
+		if(cp != null && cp.getId() != null) {
+			Attach attach = AON.getAttach(api.getDomain().getName(), domainId, api.getUser().getLogin(),
+					f -> f.getAttachModuleProperty().eq(cp.getId())
+					.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
+			cm.setLogo(!attach.isEmpty()
+					? "https://" + company.getRegistry().getDomain().getName() + "/aonDocuments/company.logo"	
+					: "https://aon.solutions/assets/aon-logo.png");			
+		} else cm.setLogo("https://aon.solutions/assets/aon-logo.png");
+		
+		VelocityContext context = new VelocityContext();
+		context.put("company", cm);		
+		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/invoiceRestore.vm");
 		
 		StringWriter writer = new StringWriter();
 		template.merge(context, writer);

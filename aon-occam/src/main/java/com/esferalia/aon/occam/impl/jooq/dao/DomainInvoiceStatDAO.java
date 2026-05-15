@@ -145,7 +145,7 @@ public class DomainInvoiceStatDAO {
 				RawdocStatus status = RawdocStatus.safeValueOf( r.get(RAWDOC.STATUS) );
 				if (status == RawdocStatus.INBOX) stat.addDraft(c);
 				else if (status == RawdocStatus.REJECTED) stat.addReview(c);
-				else if (status == RawdocStatus.DRAFT) stat.addTrash(c);
+				else if (status == RawdocStatus.TRASH) stat.addTrash(c);
 				else stat.addInProcess(c);
 			});
 	}
