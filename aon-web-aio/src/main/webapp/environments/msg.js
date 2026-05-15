@@ -374,6 +374,7 @@ export const HTTP_REQUEST_HEADER = 'HTTP Request Header';
 
 export const IN_DEVELOPMENT = MSG.IN_DEVELOPMENT;
 export const IN_PREPARATION = "En Preparación";
+export const PREPAYMENT = "Suplido"; // TODO
 export const IN_PROGRESS = "En Progreso"; // TODO
 export const IN_TRASH = "En Papelera"; // TODO
 export const INACTIVE = MSG.INACTIVE;

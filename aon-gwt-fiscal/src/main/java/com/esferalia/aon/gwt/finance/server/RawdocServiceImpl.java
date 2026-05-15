@@ -65,8 +65,8 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		AON.rawdocDelete(occam,rawdocId);
 	}
 	@Override
-	public Rawdoc toDraft(Occam occam, Integer rawdocId) throws AonCoreException {
-		return AON.rawdocToDraft(occam,rawdocId);
+	public Rawdoc toTrash(Occam occam, Integer rawdocId) throws AonCoreException {
+		return AON.rawdocToTrash(occam,rawdocId);
 	}
 
 	@Override

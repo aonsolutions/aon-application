@@ -66,6 +66,7 @@ export const BOOKING_PANEL = 'bookingPanel'
 export const BOOLEAN = 'boolean';
 export const BOX = 'box';
 export const BUTTON = 'button';
+export const BUTTONS = 'buttons';
 
 // ----- C
 export const CAMPAIGN = 'campaign';
@@ -332,7 +333,6 @@ export const RECTIFY_DATE = 'rectifyDate';
 export const RECTIFY_CAUSE = 'rectifyCause';
 export const REFERENCE = 'reference';
 export const REFRESH = 'refresh';
-export const REFUSED = 'refused';
 export const REGIME = 'regime';
 export const REGIME_NAME = 'regimeName';
 export const REGISTRY = 'registry';

@@ -25,7 +25,7 @@ public class RawdocUtils {
 			Byte[] statuses = new Byte[] {
 				 RawdocStatus.INBOX.value()
 				,RawdocStatus.REJECTED.value()
-				,RawdocStatus.DRAFT.value()
+				,RawdocStatus.TRASH.value()
 				,RawdocStatus.PROCESSED.value()
 			};
 			prop = prop.and(p.getStatusProperty().in( statuses ));	

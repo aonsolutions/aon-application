@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.api.model.RawdocUserData;
 
 public interface IRawdoc {
 	
-	Rawdoc toDraft(AONContext ctx, Integer rawdocId);
+	Rawdoc toTrash(AONContext ctx, Integer rawdocId);
 	Rawdoc toRejected(AONContext ctx, Integer rawdocId, String reason);
 	Rawdoc toInbox(AONContext ctx, Integer rawdocId);
 	

@@ -320,6 +320,7 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 				showActive.setTitle("Solo activos");
 				showActive.addStyleName(AON.CSS.aonCustomRowButtom());
 				showActive.setValue(showActiveBanks);
+				showActive.getElement().getStyle().setProperty("flex-direction", "row-reverse");
 				showActive.addValueChangeHandler(e -> {
 					showActiveBanks = !showActiveBanks;
 					onSearch();
@@ -406,6 +407,7 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 		Button status = new Button();
 		getEnableDisableButton(status, registryBank.isActive());
 		status.setTitle(registryBank.isActive() ? "Activo" : "Inactivo");
+		status.getElement().getStyle().setProperty("background-position-x", "center");
 		tab.addInlineStyle(status, COLS.STA.getStyles());
 		tab.addRow(row, status, COLS.STA.getColWidth());
 

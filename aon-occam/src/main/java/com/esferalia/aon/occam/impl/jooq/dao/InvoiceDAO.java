@@ -1110,7 +1110,7 @@ public class InvoiceDAO {
 				.setJson(InvoiceJSON.toJSON(invoice).toString())
 				.setMimeType(invoice.getDoc().map(d -> d.getMimeType()).orElse(null))
 				.setNature(RawdocNature.INVOICE)
-				.setStatus(RawdocStatus.DRAFT)
+				.setStatus(RawdocStatus.TRASH)
 				.setType(invoice.isPurchase() ? RawdocType.INPUT : RawdocType.OUTPUT);
 			;
 			RawdocDAO.save(ctx, rawdoc);
