@@ -10,6 +10,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class AonCustomTextBox extends HTMLPanel {
 
 	private static final String EMPTY_STRING = "";
+	
+	private HTMLPanel titleLabel;
 	private HTMLPanel textBoxPanel = new HTMLPanel(EMPTY_STRING);
 	private TextBox textBox;
 	
@@ -23,9 +25,13 @@ public class AonCustomTextBox extends HTMLPanel {
 	}
 
 	private void createTitle(String title) {
-		HTMLPanel titleLabel = new HTMLPanel(AonStringUtils.isNotBlank(title) ? title : EMPTY_STRING);
+		titleLabel = new HTMLPanel(AonStringUtils.isNotBlank(title) ? title : EMPTY_STRING);
 		titleLabel.addStyleName(AON.CSS.aonCustomTextBoxTitle());
 		add(titleLabel);
+	}
+	
+	public void setVisibleTitle(String title) {
+		if(null != titleLabel) titleLabel.getElement().setInnerHTML(title);
 	}
 
 	private void createInput(String title) {

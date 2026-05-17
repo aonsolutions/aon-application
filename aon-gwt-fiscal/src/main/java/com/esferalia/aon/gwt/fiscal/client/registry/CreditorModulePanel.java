@@ -11,8 +11,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCreditorFullPanel
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomerPanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomerPanel.AonCustomerPanelCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryPanel.AonCustomerPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel.AonRegistryFullPanelCallback;
@@ -177,8 +177,8 @@ public abstract class CreditorModulePanel extends AonCustomDockLayout {
 				AonCustomDialog dialog = new AonCustomDialog();
 				dialog.setCaption("Nuevo Acreedor");
 	
-				AonCustomerPanel aonRecordDataPanel = new AonCustomerPanel(options.getDomainName(), options.getDomain(), options.getUser(), newCreditor,
-						options.getConfiguration().getAvailableScopes(), options.getConfiguration().getGeozones(),
+				AonRegistryPanel aonRecordDataPanel = new AonRegistryPanel(options.getDomainName(), options.getDomain(), options.getUser(), newCreditor,
+						options.getConfiguration().getAvailableScopes(), options.getConfiguration().getGeozones(), options.getConfiguration().getPayMethods(),
 						new AonCustomerPanelCallback() {
 	
 							@Override
