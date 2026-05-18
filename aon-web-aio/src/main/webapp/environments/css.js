@@ -497,3 +497,6 @@ export const AON_CONFIG_TOP_NAV = 'aonConfigTopNav';
 export const AON_CONFIG_SIDE_NAV = 'aonConfigSideNav';
 
 
+// aon-chat.css
+
+export const AON_CHAT = 'aonChat';

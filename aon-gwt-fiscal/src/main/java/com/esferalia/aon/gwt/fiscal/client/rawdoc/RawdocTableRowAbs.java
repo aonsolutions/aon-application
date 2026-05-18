@@ -178,14 +178,15 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 				cd.confirm((rawdoc.getStatus() == RawdocStatus.REJECTED
 					?AON.MSG.confirmRestoreRejected()
 					:AON.MSG.confirmRestoreAction()), () -> 
-						RawdocModule.RAWDOC_SERVICE.toInbox(opt.getOccam(), rawdoc.getId()
+						RawdocModule.RAWDOC_SERVICE.restore(opt.getOccam(), rawdoc.getId()
 							, new AsyncCallback<Rawdoc>() {
 								
 									@Override
 									public void onSuccess(Rawdoc result) {
-										Label label = new Label( "INBOX" );
-										label.setStyleName( AON.CSS.aonColorRed() );
+										Label label = new Label( "RESTAURADO" );
+										label.setStyleName( AON.CSS.aonColorGreen() );
 										refreshRow(opt, cbk, result, label, false);
+										cbk.clearRightPanel();
 									}
 									
 									@Override
@@ -214,6 +215,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 								Label label = new Label( "RECHAZADA" );
 								label.setStyleName( AON.CSS.aonColorRed() );
 								refreshRow(opt, cbk, result, label, false);
+								cbk.clearRightPanel();
 							}
 						
 							@Override
@@ -247,6 +249,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 								Label label = new Label( "PAPELERA" );
 								label.setStyleName( AON.CSS.aonColorRed() );
 								refreshRow(opt, cbk, result, label, false);
+								cbk.clearRightPanel();
 							}
 							
 							@Override
@@ -269,11 +272,28 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 				logButton.addStyleName(AON.CSS.aonIconHistoryRed());
 				logButton.addStyleName(AON.CSS.aonBlink());
 			}
-			logButton.addClickHandler(event -> cbk.showExtraInfo( new RawdocLogPanel( rawdoc.getLog())));
+			logButton.addClickHandler(event -> showChat(opt, cbk, rawdoc)); //cbk.showExtraInfo( new RawdocLogPanel( rawdoc.getLog())));
 		}
 		return logButton;
 	}
 
+	private void showChat(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
+		cbk.showChat(rawdoc.getLog(), (user, comment, date) -> {
+			// SAVE RAWDOCLOG COMMENT
+			RawdocModule.RAWDOC_SERVICE.addLogComment(opt.getOccam(), rawdoc.getId(), comment, new AsyncCallback<Rawdoc>() {
+				@Override
+				public void onSuccess(Rawdoc result) {
+					
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					cbk.showError(caught.getMessage());
+				}
+			});				
+		});
+	}
+	
 	private boolean hasLog(String log) {
 		return AonStringUtils.isNotBlank(log)
 			&& JsonUtils.safeEval(log) != null

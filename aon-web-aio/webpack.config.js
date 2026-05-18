@@ -7,6 +7,7 @@ module.exports = {
       app:'./src/main/webapp/index.js',
   	  aio:'./src/main/webapp/aio.js',
       paturpat:'./src/main/webapp/paturpat.js',
+      gwt:'./src/main/webapp/gwt.js',
     },
     output: {
         filename: '[name].min.js',
