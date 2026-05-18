@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -305,6 +306,24 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 			json.put("activity", activityJSON);
 		}
 		json.put("bidoq", s3UploadEventObject.isBidoq());
+		
+		JSONObject remarksJSON = new JSONObject();
+		
+		remarksJSON.put("user", s3UploadEventObject.getUser());
+		remarksJSON.put("status", "Subido");
+		remarksJSON.put("date", AonDateUtils.format(new Date(), "dd/MM/yyyy hh:mm:ss"));
+		
+		JSONObject remarksActionJSON = new JSONObject();
+		remarksActionJSON.put("title", "Subido"); // si es por email "Enviado"
+		remarksActionJSON.put("icon", "upload"); // si es por email "mail"
+		remarksJSON.put("color", "gray");
+		remarksJSON.put("action", remarksActionJSON);
+		
+		JSONArray remarksArray = new JSONArray();
+		remarksArray.put(remarksJSON);
+
+		json.put("remarks", remarksArray);
+		
 		JSONObject resp = AonInvofox.createRawdoc(s3UploadEventObject.getDomain(), s3UploadEventObject.getUser(), json);
 		return JsonUtils.getInteger(resp, IJsonNames.ID);
 	}
