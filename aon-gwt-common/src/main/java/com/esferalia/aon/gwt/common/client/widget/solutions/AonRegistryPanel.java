@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -10,31 +11,36 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
+import com.esferalia.aon.occam.api.model.BankSwift;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Municipalities;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
+import com.esferalia.aon.occam.api.model.finance.BankAccount;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AonCustomerPanel extends HTMLPanel {
+public class AonRegistryPanel extends HTMLPanel {
 	
 	// Callback
 	
@@ -82,59 +88,55 @@ public class AonCustomerPanel extends HTMLPanel {
 	
 	private LinkedList<Scope> scopes;
 	private LinkedList<GeoZone> geozones;
+	private LinkedList<PayMethod> paymethods;
+	private LinkedList<RegistryBank> comapnyBanks = new LinkedList<RegistryBank>();
 	private Municipalities municipalities = new Municipalities();
 	
 	// Wrokplace Info
 	
 	private HTMLPanel messagePanel = new HTMLPanel(EMPTY_STRING);
 	
-	private AonCustomTextBox alias = new AonCustomTextBox(AON.MSG.alias());
-	private AonCustomListBox documentNationality = new AonCustomListBox("Pais");
-	private AonCustomListBox documentType = new AonCustomListBox("Tipo");
-	private AonCustomTextBox document = new AonCustomTextBox("Documento");
+	private AonCustomListBox documentNationality = new AonCustomListBox("Pa\u00eds");
+	private AonCustomListBox documentType = new AonCustomListBox("Tipo Doc.");
+	private AonCustomTextBox document = new AonCustomTextBox("N\u00ba Documento");
 	private AonCustomTextBox name = new AonCustomTextBox(AON.MSG.enterpriseName());
 	private AonCustomTextBox firstSurname = new AonCustomTextBox("Apellido");
 	private AonCustomTextBox secondSurname = new AonCustomTextBox("Apellido 2");
 	
-	private AonCustomListBox statusLB = new AonCustomListBox("Estado");
-	private AonCustomListBox scopeLB = new AonCustomListBox("Ambito");
-	private AonCustomListBox transactionLB = new AonCustomListBox("T. Transacci\u00f3n");
+	private AonCustomTextBox alias = new AonCustomTextBox(AON.MSG.alias());
+	private AonCustomListBox scopeLB = new AonCustomListBox("\u00c1mbito");
+	private AonCustomListBox transactionLB = new AonCustomListBox("Tipo Transacci\u00f3n");
 	
 	private AonCustomTextArea observation = new AonCustomTextArea("Observaciones");
 	
-	private AonCustomListBox type = new AonCustomListBox("Tipo");
+	private AonCustomListBox type = new AonCustomListBox("Tipo V\u00eda");
 	private AonCustomTextBox addressTB = new AonCustomTextBox("Direcci\u00f3n");
 	private AonCustomTextBox number = new AonCustomTextBox("N\u00b0");
 	
 	private AonCustomTextBox address2TB = new AonCustomTextBox("Rest. Direcci\u00f3n");
 	private AonCustomTextBox address3TB = new AonCustomTextBox("Rest. Direcci\u00f3n 2");
 	
-	private AonCustomTextBox zip = new AonCustomTextBox("C.P.");
+	private AonCustomTextBox zip = new AonCustomTextBox("C. Postal");
 	private AonCustomListBox province = new AonCustomListBox("Provincia");
-	private AonCustomListBox municipality = new AonCustomListBox("Municipion");
+	private AonCustomListBox municipality = new AonCustomListBox("Municipio");
 	private AonCustomTextBox city = new AonCustomTextBox("Localidad");
 	
-	private AonCustomTextBox phoneValue = new AonCustomTextBox("Telefono");
-	private AonCustomTextBox phoneComment = new AonCustomTextBox("Comentarios");
-	private AonCustomToogleButton phoneAdmin = new AonCustomToogleButton("Administrativo");
-	private AonCustomToogleButton phoneCommercial = new AonCustomToogleButton("Comercial");
-	private AonCustomToogleButton phoneTecnical = new AonCustomToogleButton("Tecnico");
-	
-	private AonCustomTextBox mobileValue = new AonCustomTextBox("M\u00f3vil");
-	private AonCustomTextBox mobileComment = new AonCustomTextBox("Comentarios");
-	private AonCustomToogleButton mobileAdmin = new AonCustomToogleButton("Administrativo");
-	private AonCustomToogleButton mobileCommercial = new AonCustomToogleButton("Comercial");
-	private AonCustomToogleButton mobileTecnical = new AonCustomToogleButton("Tecnico");
-	
+	private AonCustomTextBox phoneValue = new AonCustomTextBox("T\u00e9lefono");
+	private AonCustomTextBox phoneComment = new AonCustomTextBox("Comentarios Tlf.");
 	private AonCustomTextBox emailValue = new AonCustomTextBox("Email");
-	private AonCustomTextBox emailComment = new AonCustomTextBox("Comentarios");
-	private AonCustomToogleButton emailAdmin = new AonCustomToogleButton("Administrativo");
-	private AonCustomToogleButton emailCommercial = new AonCustomToogleButton("Comercial");
-	private AonCustomToogleButton emailTecnical = new AonCustomToogleButton("Tecnico");
+	private AonCustomTextBox emailComment = new AonCustomTextBox("Comentarios Email");
+	
+	private AonCustomListBox paymethod = new AonCustomListBox("Forma de pago");
+	private AonCustomListBox banks = new AonCustomListBox("Cuenta Bancaria");
+	private AonCustomTextBox iban = new AonCustomTextBox("IBAN");
+	private AonCustomIntegerBox pays = new AonCustomIntegerBox("Pagos");
+	private AonCustomIntegerBox firstPay = new AonCustomIntegerBox("1er Pago");
+	private AonCustomIntegerBox betweenDays = new AonCustomIntegerBox("Resto");
+	private AonCustomTextBox payDayss = new AonCustomTextBox("Dias");
 	
 	// Constructor
 	
-	public AonCustomerPanel(String domainName, Integer domain, String user, CustomerFull customerFull, LinkedList<Scope> scopes, LinkedList<GeoZone> geozones, AonCustomerPanelCallback callback) {
+	public AonRegistryPanel(String domainName, Integer domain, String user, CustomerFull customerFull, LinkedList<Scope> scopes, LinkedList<GeoZone> geozones, LinkedList<PayMethod> paymethods, AonCustomerPanelCallback callback) {
 		super(EMPTY_STRING);
 		
 		initializeCommonService();
@@ -147,13 +149,14 @@ public class AonCustomerPanel extends HTMLPanel {
 		this.customerFull = customerFull;
 		this.scopes = scopes;
 		this.geozones = geozones;
+		this.paymethods = paymethods;
 
 		this.callback = callback;
 		
 		show();
 	}
 	
-	public AonCustomerPanel(String domainName, Integer domain, String user, CreditorFull creditorFull, LinkedList<Scope> scopes, LinkedList<GeoZone> geozones, AonCustomerPanelCallback callback) {
+	public AonRegistryPanel(String domainName, Integer domain, String user, CreditorFull creditorFull, LinkedList<Scope> scopes, LinkedList<GeoZone> geozones, LinkedList<PayMethod> paymethods, AonCustomerPanelCallback callback) {
 		super(EMPTY_STRING);
 		
 		initializeCommonService();
@@ -166,13 +169,14 @@ public class AonCustomerPanel extends HTMLPanel {
 		this.creditorFull = creditorFull;
 		this.scopes = scopes;
 		this.geozones = geozones;
+		this.paymethods = paymethods;
 
 		this.callback = callback;
 		
 		show();
 	}
 	
-	public AonCustomerPanel(String domainName, Integer domain, String user, SupplierFull supplierFull, LinkedList<Scope> scopes, LinkedList<GeoZone> geozones, AonCustomerPanelCallback callback) {
+	public AonRegistryPanel(String domainName, Integer domain, String user, SupplierFull supplierFull, LinkedList<Scope> scopes, LinkedList<GeoZone> geozones,  LinkedList<PayMethod> paymethods, AonCustomerPanelCallback callback) {
 		super(EMPTY_STRING);
 		
 		initializeCommonService();
@@ -185,6 +189,7 @@ public class AonCustomerPanel extends HTMLPanel {
 		this.supplierFull = supplierFull;
 		this.scopes = scopes;
 		this.geozones = geozones;
+		this.paymethods = paymethods;
 
 		this.callback = callback;
 		
@@ -195,6 +200,7 @@ public class AonCustomerPanel extends HTMLPanel {
 		// Message Panel
 		setStyleName(AON.CSS.aonFlexColumn2());
 		getElement().getStyle().setProperty("padding", "1rem 0");
+		getElement().getStyle().setProperty("width", "60re");
 		add(messagePanel);
 		
 		HTMLPanel container = new HTMLPanel(EMPTY_STRING);
@@ -228,20 +234,9 @@ public class AonCustomerPanel extends HTMLPanel {
 		row.add(secondSurname);
 		container.add(row);
 		
-		// Row 2
-		HTMLPanel row2 = new HTMLPanel(EMPTY_STRING);
-		row2.setStyleName(AON.CSS.aonItemFlex());
-		
-		row2.add(alias);
-		container.add(row2);
-		
 		// Row 3
 		HTMLPanel row3 = new HTMLPanel(EMPTY_STRING);
 		row3.setStyleName(AON.CSS.aonItemFlex());
-		
-		statusLB.clearItems();
-		for(int i=0; i < RegistryStatus.values().length; i++)
-			statusLB.addItem(RegistryStatus.values()[i].getDescription(), RegistryStatus.values()[i].name());
 		
 		scopeLB.clearItems();
 		this.scopes.forEach(s -> scopeLB.addItem(s.getDescription(), s.getId().toString()));
@@ -250,7 +245,7 @@ public class AonCustomerPanel extends HTMLPanel {
 		for(int i=0; i < InvoiceTransactionType.values().length; i++)
 			transactionLB.addItem(InvoiceTransactionType.values()[i].getDescription(), InvoiceTransactionType.values()[i].name());
 			
-		row3.add(statusLB);
+		row3.add(alias);
 		row3.add(scopeLB);
 		row3.add(transactionLB);
 		container.add(row3);
@@ -322,30 +317,50 @@ public class AonCustomerPanel extends HTMLPanel {
 		
 		row8.add(phoneValue);
 		row8.add(phoneComment);
-		row8.add(phoneAdmin);
-		row8.add(phoneCommercial);
-		row8.add(phoneTecnical);
+		row8.add(emailValue);
+		row8.add(emailComment);
 		container.add(row8);
 		
 		HTMLPanel row9 = new HTMLPanel(EMPTY_STRING);
 		row9.setStyleName(AON.CSS.aonItemFlex());
 		
-		row9.add(mobileValue);
-		row9.add(mobileComment);
-		row9.add(mobileAdmin);
-		row9.add(mobileCommercial);
-		row9.add(mobileTecnical);
+		paymethod.clearItems();
+		paymethod.addItem("-" , "");
+		this.paymethods.forEach(pm -> paymethod.addItem(pm.getName(), pm.getId().toString()));
+		paymethod.getElement().getStyle().setProperty("max-width", "12rem");
+		
+		paymethod.addChangeHandler(e -> checkPayMethodBankType() );
+		
+		banks.clearItems();
+		banks.addItem("-" , "");
+		
+		pays.setTitle("Numero de vencimiento por factura");
+		firstPay.setTitle("Plazo en dias al primer pago");
+		betweenDays.setTitle("Plazo en dias entre el resto de pagos");
+		payDayss.setTitle("Dias fijos de pago separados por espacios");
+		
+		pays.hideNearBy();
+		firstPay.hideNearBy();
+		betweenDays.hideNearBy();
+		
+		pays.getElement().getStyle().setProperty("max-width", "4rem");
+		firstPay.getElement().getStyle().setProperty("max-width", "4rem");
+		betweenDays.getElement().getStyle().setProperty("max-width", "4rem");
+		payDayss.getElement().getStyle().setProperty("max-width", "4rem");
+		
+		payDayss.getTextBox().getElement().setPropertyString("placeholder", "");
+		
+		iban.getElement().getStyle().setDisplay(Display.NONE);
+		banks.getElement().getStyle().clearDisplay();
+		
+		row9.add(paymethod);
+		row9.add(banks);
+		row9.add(iban);
+		row9.add(pays);
+		row9.add(firstPay);
+		row9.add(betweenDays);
+		row9.add(payDayss);
 		container.add(row9);
-		
-		HTMLPanel row10 = new HTMLPanel(EMPTY_STRING);
-		row10.setStyleName(AON.CSS.aonItemFlex());
-		
-		row10.add(emailValue);
-		row10.add(emailComment);
-		row10.add(emailAdmin);
-		row10.add(emailCommercial);
-		row10.add(emailTecnical);
-		container.add(row10);
 		
 		// Check name by document
 		checkNameByDocumentType();
@@ -355,13 +370,38 @@ public class AonCustomerPanel extends HTMLPanel {
 		add(container);	
 	}
 	
+	private void checkPayMethodBankType() {
+		if(AonStringUtils.isBlank(paymethod.getValue())) return;
+		
+		PayMethod paymethodObj = this.paymethods.stream().filter(pm -> pm.getId().equals(Integer.parseInt(paymethod.getValue()))).findFirst().orElse(null);
+		if(null != paymethodObj) {
+			if(paymethodObj.getType().equals(PayMethodType.BANK_TRANSFER)) {
+				// Bancos de la empresa
+				getCompanyBanks(end -> {
+					banks.clearItems();
+					comapnyBanks.forEach(b -> banks.addItem(b.getFullName(), b.getId().toString()));
+			
+					iban.getElement().getStyle().setDisplay(Display.NONE);
+					banks.getElement().getStyle().clearDisplay();
+				});
+			} else if(paymethodObj.getType().equals(PayMethodType.NEGOTIABLE_DOCUMENT)) {
+				// Nuevo banco del cliente
+				banks.getElement().getStyle().setDisplay(Display.NONE);
+				iban.getElement().getStyle().clearDisplay();
+			} 
+		}
+		
+	}
+
 	private void checkNameByDocumentType() {
 		if(DocumentType.safeValueOf(documentType.getValue()).equals(DocumentType.CIF)) {
 			firstSurname.getElement().getStyle().setDisplay(Display.NONE);
 			secondSurname.getElement().getStyle().setDisplay(Display.NONE);
+			name.setVisibleTitle(AON.MSG.enterpriseName());
 		} else {
 			firstSurname.getElement().getStyle().clearDisplay();
 			secondSurname.getElement().getStyle().clearDisplay();
+			name.setVisibleTitle("Nombre");
 		}
 	}
 	
@@ -435,9 +475,9 @@ public class AonCustomerPanel extends HTMLPanel {
 					? name.getValue()
 					: ensureRegistryNameByPerson(name.getValue(), firstSurname.getValue(), secondSurname.getValue())
 		);
-		customerFull.getRegistry().setAlias(alias.getValue());
 		
-		customerFull.getRegistry().setStatus(RegistryStatus.safeValueOf(statusLB.getValue()));
+		customerFull.getRegistry().setAlias(alias.getValue());
+		customerFull.getRegistry().setStatus(RegistryStatus.ACTIVE);
 		customerFull.getRegistry().setScope(new Scope().setId(Integer.parseInt(scopeLB.getValue())));
 		customerFull.getRegistry().setTransaction(InvoiceTransactionType.safeValueOf(transactionLB.getValue()));
 		
@@ -472,27 +512,12 @@ public class AonCustomerPanel extends HTMLPanel {
 					.setMedia(MediaType.FIXED_PHONE)
 					.setValue(phoneValue.getValue())
 					.setComment(phoneComment.getValue())
-					.setAdministrative(phoneAdmin.getValue())
-					.setCommercial(phoneCommercial.getValue())
-					.setTechnical(phoneTecnical.getValue())
+					.setAdministrative(true)
+					.setCommercial(true)
+					.setTechnical(true)
 					;
 	
 			customerFull.addMedia(phoneMedia);
-		}
-		
-		if(AonStringUtils.isNotBlank(mobileValue.getValue())) {
-			RegistryMedia mobileMedia = new RegistryMedia()
-					.setDomain(customerFull.getDomain())
-					.setRegistry(customerFull.getId())
-					.setMedia(MediaType.CELLULAR)
-					.setValue(mobileValue.getValue())
-					.setComment(mobileComment.getValue())
-					.setAdministrative(mobileAdmin.getValue())
-					.setCommercial(mobileCommercial.getValue())
-					.setTechnical(mobileTecnical.getValue())
-					;
-	
-			customerFull.addMedia(mobileMedia);
 		}
 		
 		if(AonStringUtils.isNotBlank(emailValue.getValue())) {
@@ -502,19 +527,73 @@ public class AonCustomerPanel extends HTMLPanel {
 					.setMedia(MediaType.EMAIL)
 					.setValue(emailValue.getValue())
 					.setComment(emailComment.getValue())
-					.setAdministrative(emailAdmin.getValue())
-					.setCommercial(emailCommercial.getValue())
-					.setTechnical(emailTecnical.getValue())
+					.setAdministrative(true)
+					.setCommercial(true)
+					.setTechnical(true)
 					;
 			
 			customerFull.addMedia(emailMedia);
+		}
+		
+		if(!AonStringUtils.isBlank(iban.getValue())) {
+			String accountStr = iban.getValue();
+			accountStr = accountStr.replaceAll("\\W+", "");
+			accountStr = accountStr.toUpperCase();
+			iban.setValue(accountStr);
+		
+			String bankAlias = getBankAlias(accountStr);
+			String bankSwift = getBankSwift(accountStr);
+			
+			RegistryBank registryBank = new RegistryBank()
+				.setDomain(customerFull.getDomain())
+				.setRegistry(customerFull.getId())
+				.setAlias(bankAlias)
+				.setActive(true)
+				.setBankAccount(AonStringUtils.isBlank(accountStr) ? null : new BankAccount(accountStr))
+				.setBic(bankSwift)
+				;
+			
+			customerFull.addBank(registryBank);
 		}
 		
 		registryService.save(domainName, domainId, user, customerFull, new AsyncCallback<CustomerFull>() {
 			
 			@Override
 			public void onSuccess(CustomerFull result) {
-				callback.onAccept(result);
+				if(AonStringUtils.isNotBlank(paymethod.getValue())) {
+					
+					RegistryBank selectedBank = null;
+					if(!AonStringUtils.isBlank(iban.getValue())) {
+						selectedBank = result.getBanks().isEmpty() ? null : result.getBanks().get(0);
+					} else if(!AonStringUtils.isBlank(banks.getValue()) ) {
+						selectedBank = comapnyBanks.stream().filter(b -> b.getId().equals(Integer.parseInt(banks.getValue()))).findFirst().orElse(null);
+					}
+					
+					RegistryPayMethod rPayMethod = new RegistryPayMethod()
+							.setDomain(result.getDomain())
+							.setRegistry(result.getId())
+							.setPayMethod(AonStringUtils.isBlank(paymethod.getValue()) ? null : paymethods.stream().filter(pm -> pm.getId().equals(Integer.parseInt(paymethod.getValue()))).findFirst().orElse(null))
+							.setRbank(selectedBank)
+							.setNumberOfPymnts(pays.getValue().shortValue())
+							.setDaysToFirstPymnt(firstPay.getValue().shortValue())
+							.setDaysBetwenPymnts(betweenDays.getValue().shortValue())
+							.setPymntDays(payDayss.getValue())
+							;
+							
+					commonService.saveRegistryPayMethod(domainName, domainId, user, rPayMethod, new AsyncCallback<RegistryPayMethod>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessagePanel.showError(messagePanel, caught.getMessage());
+						}
+
+						@Override
+						public void onSuccess(RegistryPayMethod registryPayMethod) {
+							callback.onAccept(result);
+						}
+					});
+				} else
+					callback.onAccept(result);
 			}
 			
 			@Override
@@ -536,9 +615,9 @@ public class AonCustomerPanel extends HTMLPanel {
 					? name.getValue()
 					: ensureRegistryNameByPerson(name.getValue(), firstSurname.getValue(), secondSurname.getValue())
 		);
-		creditorFull.getRegistry().setAlias(alias.getValue());
 		
-		creditorFull.getRegistry().setStatus(RegistryStatus.safeValueOf(statusLB.getValue()));
+		creditorFull.getRegistry().setAlias(alias.getValue());
+		creditorFull.getRegistry().setStatus(RegistryStatus.ACTIVE);
 		creditorFull.getRegistry().setScope(new Scope().setId(Integer.parseInt(scopeLB.getValue())));
 		creditorFull.getRegistry().setTransaction(InvoiceTransactionType.safeValueOf(transactionLB.getValue()));
 		
@@ -573,27 +652,12 @@ public class AonCustomerPanel extends HTMLPanel {
 					.setMedia(MediaType.FIXED_PHONE)
 					.setValue(phoneValue.getValue())
 					.setComment(phoneComment.getValue())
-					.setAdministrative(phoneAdmin.getValue())
-					.setCommercial(phoneCommercial.getValue())
-					.setTechnical(phoneTecnical.getValue())
+					.setAdministrative(true)
+					.setCommercial(true)
+					.setTechnical(true)
 					;
 	
 			creditorFull.addMedia(phoneMedia);
-		}
-		
-		if(AonStringUtils.isNotBlank(mobileValue.getValue())) {
-			RegistryMedia mobileMedia = new RegistryMedia()
-					.setDomain(creditorFull.getDomain())
-					.setRegistry(creditorFull.getId())
-					.setMedia(MediaType.CELLULAR)
-					.setValue(mobileValue.getValue())
-					.setComment(mobileComment.getValue())
-					.setAdministrative(mobileAdmin.getValue())
-					.setCommercial(mobileCommercial.getValue())
-					.setTechnical(mobileTecnical.getValue())
-					;
-	
-			creditorFull.addMedia(mobileMedia);
 		}
 		
 		if(AonStringUtils.isNotBlank(emailValue.getValue())) {
@@ -603,19 +667,73 @@ public class AonCustomerPanel extends HTMLPanel {
 					.setMedia(MediaType.EMAIL)
 					.setValue(emailValue.getValue())
 					.setComment(emailComment.getValue())
-					.setAdministrative(emailAdmin.getValue())
-					.setCommercial(emailCommercial.getValue())
-					.setTechnical(emailTecnical.getValue())
+					.setAdministrative(true)
+					.setCommercial(true)
+					.setTechnical(true)
 					;
 			
 			creditorFull.addMedia(emailMedia);
+		}
+		
+		if(!AonStringUtils.isBlank(iban.getValue())) {
+			String accountStr = this.iban.getValue();
+			accountStr = accountStr.replaceAll("\\W+", "");
+			accountStr = accountStr.toUpperCase();
+			iban.setValue(accountStr);
+		
+			String bankAlias = getBankAlias(accountStr);
+			String bankSwift = getBankSwift(accountStr);
+			
+			RegistryBank registryBank = new RegistryBank()
+				.setDomain(creditorFull.getDomain())
+				.setRegistry(creditorFull.getId())
+				.setAlias(bankAlias)
+				.setActive(true)
+				.setBankAccount(AonStringUtils.isBlank(accountStr) ? null : new BankAccount(accountStr))
+				.setBic(bankSwift)
+				;
+			
+			customerFull.addBank(registryBank);
 		}
 		
 		registryService.save(domainName, domainId, user, creditorFull, new AsyncCallback<CreditorFull>() {
 			
 			@Override
 			public void onSuccess(CreditorFull result) {
-				callback.onAccept(result);
+				if(AonStringUtils.isNotBlank(paymethod.getValue())) {
+					
+					RegistryBank selectedBank = null;
+					if(!AonStringUtils.isBlank(iban.getValue())) {
+						selectedBank = result.getBanks().isEmpty() ? null : result.getBanks().get(0);
+					} else if(!AonStringUtils.isBlank(banks.getValue()) ) {
+						selectedBank = comapnyBanks.stream().filter(b -> b.getId().equals(Integer.parseInt(banks.getValue()))).findFirst().orElse(null);
+					}
+					
+					RegistryPayMethod rPayMethod = new RegistryPayMethod()
+							.setDomain(result.getDomain())
+							.setRegistry(result.getId())
+							.setPayMethod(AonStringUtils.isBlank(paymethod.getValue()) ? null : paymethods.stream().filter(pm -> pm.getId().equals(Integer.parseInt(paymethod.getValue()))).findFirst().orElse(null))
+							.setRbank(selectedBank)
+							.setNumberOfPymnts(pays.getValue().shortValue())
+							.setDaysToFirstPymnt(firstPay.getValue().shortValue())
+							.setDaysBetwenPymnts(betweenDays.getValue().shortValue())
+							.setPymntDays(payDayss.getValue())
+							;
+							
+					commonService.saveRegistryPayMethod(domainName, domainId, user, rPayMethod, new AsyncCallback<RegistryPayMethod>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessagePanel.showError(messagePanel, caught.getMessage());
+						}
+
+						@Override
+						public void onSuccess(RegistryPayMethod registryPayMethod) {
+							callback.onAccept(result);
+						}
+					});
+				} else
+					callback.onAccept(result);
 			}
 			
 			@Override
@@ -628,8 +746,6 @@ public class AonCustomerPanel extends HTMLPanel {
 	}
 
 	private void saveSupplierFull(Button okButton) {
-		Window.alert("Save Supplier");
-		
 		supplierFull.getRegistry().setDocumentType(DocumentType.safeValueOf(documentType.getValue()));
 		supplierFull.getRegistry().setLegalPerson(supplierFull.getRegistry().getDocumentType().equals(DocumentType.CIF));
 		supplierFull.getRegistry().setDocumentCountry(Country.safeValueOf(documentNationality.getValue()));
@@ -639,17 +755,15 @@ public class AonCustomerPanel extends HTMLPanel {
 					? name.getValue()
 					: ensureRegistryNameByPerson(name.getValue(), firstSurname.getValue(), secondSurname.getValue())
 		);
-		supplierFull.getRegistry().setAlias(alias.getValue());
 		
-		supplierFull.getRegistry().setStatus(RegistryStatus.safeValueOf(statusLB.getValue()));
+		supplierFull.getRegistry().setAlias(alias.getValue());
+		supplierFull.getRegistry().setStatus(RegistryStatus.ACTIVE);
 		supplierFull.getRegistry().setScope(new Scope().setId(Integer.parseInt(scopeLB.getValue())));
 		supplierFull.getRegistry().setTransaction(InvoiceTransactionType.safeValueOf(transactionLB.getValue()));
 		
-		Window.alert("Save Supplier 2");
 		if(AonStringUtils.isNotBlank(observation.getValue()))
 			supplierFull.getRegistry().setObservation(observation.getValue());
 	
-		Window.alert("Save Supplier 3");
 		if(AonStringUtils.isNotBlank(addressTB.getValue())) {
 			Optional<GeoZone> geozoneOpt = geozones.stream().filter(geozone -> geozone.getCode().length() == 2 && canBeCastToInt(geozone.getCode()) && province.getValue() == geozone.getCode()).findFirst();
 			
@@ -671,7 +785,6 @@ public class AonCustomerPanel extends HTMLPanel {
 			supplierFull.addAddress(registryAddress);
 		}
 		
-		Window.alert("Save Supplier 4");
 		if(AonStringUtils.isNotBlank(phoneValue.getValue())) {
 			RegistryMedia phoneMedia = new RegistryMedia()
 					.setDomain(supplierFull.getDomain())
@@ -679,31 +792,14 @@ public class AonCustomerPanel extends HTMLPanel {
 					.setMedia(MediaType.FIXED_PHONE)
 					.setValue(phoneValue.getValue())
 					.setComment(phoneComment.getValue())
-					.setAdministrative(phoneAdmin.getValue())
-					.setCommercial(phoneCommercial.getValue())
-					.setTechnical(phoneTecnical.getValue())
+					.setAdministrative(true)
+					.setCommercial(true)
+					.setTechnical(true)
 					;
 	
 			supplierFull.addMedia(phoneMedia);
 		}
 		
-		Window.alert("Save Supplier 5");
-		if(AonStringUtils.isNotBlank(mobileValue.getValue())) {
-			RegistryMedia mobileMedia = new RegistryMedia()
-					.setDomain(supplierFull.getDomain())
-					.setRegistry(supplierFull.getId())
-					.setMedia(MediaType.CELLULAR)
-					.setValue(mobileValue.getValue())
-					.setComment(mobileComment.getValue())
-					.setAdministrative(mobileAdmin.getValue())
-					.setCommercial(mobileCommercial.getValue())
-					.setTechnical(mobileTecnical.getValue())
-					;
-	
-			supplierFull.addMedia(mobileMedia);
-		}
-		
-		Window.alert("Save Supplier 6");
 		if(AonStringUtils.isNotBlank(emailValue.getValue())) {
 			RegistryMedia emailMedia = new RegistryMedia()
 					.setDomain(supplierFull.getDomain())
@@ -711,20 +807,73 @@ public class AonCustomerPanel extends HTMLPanel {
 					.setMedia(MediaType.EMAIL)
 					.setValue(emailValue.getValue())
 					.setComment(emailComment.getValue())
-					.setAdministrative(emailAdmin.getValue())
-					.setCommercial(emailCommercial.getValue())
-					.setTechnical(emailTecnical.getValue())
+					.setAdministrative(true)
+					.setCommercial(true)
+					.setTechnical(true)
 					;
 			
 			supplierFull.addMedia(emailMedia);
 		}
 		
-		Window.alert("Save Supplier End");
+		if(!AonStringUtils.isBlank(iban.getValue())) {
+			String accountStr = this.iban.getValue();
+			accountStr = accountStr.replaceAll("\\W+", "");
+			accountStr = accountStr.toUpperCase();
+			iban.setValue(accountStr);
+		
+			String bankAlias = getBankAlias(accountStr);
+			String bankSwift = getBankSwift(accountStr);
+			
+			RegistryBank registryBank = new RegistryBank()
+				.setDomain(supplierFull.getDomain())
+				.setRegistry(supplierFull.getId())
+				.setAlias(bankAlias)
+				.setActive(true)
+				.setBankAccount(AonStringUtils.isBlank(accountStr) ? null : new BankAccount(accountStr))
+				.setBic(bankSwift)
+				;
+			
+			supplierFull.addBank(registryBank);
+		}
+		
 		registryService.save(domainName, domainId, user, supplierFull, new AsyncCallback<SupplierFull>() {
 			
 			@Override
 			public void onSuccess(SupplierFull result) {
-				callback.onAccept(result);
+				if(AonStringUtils.isNotBlank(paymethod.getValue())) {
+					
+					RegistryBank selectedBank = null;
+					if(!AonStringUtils.isBlank(iban.getValue())) {
+						selectedBank = result.getBanks().isEmpty() ? null : result.getBanks().get(0);
+					} else if(!AonStringUtils.isBlank(banks.getValue()) ) {
+						selectedBank = comapnyBanks.stream().filter(b -> b.getId().equals(Integer.parseInt(banks.getValue()))).findFirst().orElse(null);
+					}
+					
+					RegistryPayMethod rPayMethod = new RegistryPayMethod()
+							.setDomain(result.getDomain())
+							.setRegistry(result.getId())
+							.setPayMethod(AonStringUtils.isBlank(paymethod.getValue()) ? null : paymethods.stream().filter(pm -> pm.getId().equals(Integer.parseInt(paymethod.getValue()))).findFirst().orElse(null))
+							.setRbank(selectedBank)
+							.setNumberOfPymnts(pays.getValue().shortValue())
+							.setDaysToFirstPymnt(firstPay.getValue().shortValue())
+							.setDaysBetwenPymnts(betweenDays.getValue().shortValue())
+							.setPymntDays(payDayss.getValue())
+							;
+							
+					commonService.saveRegistryPayMethod(domainName, domainId, user, rPayMethod, new AsyncCallback<RegistryPayMethod>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessagePanel.showError(messagePanel, caught.getMessage());
+						}
+
+						@Override
+						public void onSuccess(RegistryPayMethod registryPayMethod) {
+							callback.onAccept(result);
+						}
+					});
+				} else
+					callback.onAccept(result);
 			}
 			
 			@Override
@@ -734,6 +883,22 @@ public class AonCustomerPanel extends HTMLPanel {
 			}
 			
 		});
+	}
+
+	private String getBankSwift(String account) {
+		if (AonStringUtils.isNotBlank(account)) {
+			BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
+			return null == bankSwiftEntry ? null : bankSwiftEntry.getSwift();
+		}
+		return null;
+	}
+
+	private String getBankAlias(String account) {
+		if (AonStringUtils.isNotBlank(account)) {
+			BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
+			return null == bankSwiftEntry ? null : bankSwiftEntry.getBankName();
+		}
+		return null;
 	}
 
 	private String ensureRegistryNameByPerson(String name, String firstSurname, String secondSurname) {
@@ -754,6 +919,24 @@ public class AonCustomerPanel extends HTMLPanel {
 	    }
 
 	    return sb.toString();
+	}
+	
+	private void getCompanyBanks(Consumer<LinkedList<RegistryBank>> end) {
+		if(comapnyBanks.isEmpty()) {
+			commonService.getCompanyBanks(domainName, domainId, user, new AsyncCallback<LinkedList<RegistryBank>>() {
+	
+				@Override
+				public void onFailure(Throwable caught) {
+					AonMessagePanel.showError(messagePanel, "Error bancos: " + caught.getMessage());
+				}
+	
+				@Override
+				public void onSuccess(LinkedList<RegistryBank> rBanksDB) {
+					comapnyBanks = rBanksDB;
+					end.accept(rBanksDB);
+				}
+			});
+		} else end.accept(comapnyBanks);
 	}
 
 }
