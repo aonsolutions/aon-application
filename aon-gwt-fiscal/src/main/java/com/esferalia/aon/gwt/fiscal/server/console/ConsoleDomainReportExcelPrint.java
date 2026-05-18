@@ -9,8 +9,8 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.PageMargin;
 import org.apache.poi.ss.usermodel.PrintSetup;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -68,9 +68,9 @@ public class ConsoleDomainReportExcelPrint extends HttpServlet {
 		protected void headerRow() {
 			PrintSetup printSetup = sheet.getPrintSetup();
 			printSetup.setLandscape(true);
-			sheet.setMargin(Sheet.LeftMargin, 0.3);
-			sheet.setMargin(Sheet.RightMargin, 0.3);
-			sheet.setMargin(Sheet.TopMargin, 0.3);
+			sheet.setMargin(PageMargin.LEFT, 0.3);
+			sheet.setMargin(PageMargin.RIGHT, 0.3);
+			sheet.setMargin(PageMargin.TOP, 0.3);
 			Footer footer = sheet.getFooter();
 			footer.setLeft("Dominios");
 			footer.setRight("P\u00E1g: &P/&N");
@@ -108,18 +108,14 @@ public class ConsoleDomainReportExcelPrint extends HttpServlet {
 			row = sheet.createRow(rowCount++);
 			cellCount = 0;
 	
+			CellUtil.createCell(row, cellCount, "BD", headerStyle);
+			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
+			sheet.setColumnWidth(cellCount++, 20 * 256);
+
 			CellUtil.createCell(row, cellCount, "ID", headerStyle);
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
-			sheet.setColumnWidth(cellCount++, 4 * 256);
-	
-			CellUtil.createCell(row, cellCount, "PARENT", headerStyle);
-			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
-			sheet.setColumnWidth(cellCount++, 4 * 256);
-	
-			CellUtil.createCell(row, cellCount, "TIPO", headerStyle);
-			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 8 * 256);
-
+			
 			CellUtil.createCell(row, cellCount, "NOMBRE", headerStyle);
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 50 * 256);
@@ -127,11 +123,20 @@ public class ConsoleDomainReportExcelPrint extends HttpServlet {
 			CellUtil.createCell(row, cellCount, "DESCRIPCION", headerStyle);
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 50 * 256);
+	
+			CellUtil.createCell(row, cellCount, "TIPO", headerStyle);
+			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
+			sheet.setColumnWidth(cellCount++, 12 * 256);
+
 			
 			CellUtil.createCell(row, cellCount, "ACTIVO", headerStyle);
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 3 * 256);
-	
+			
+			CellUtil.createCell(row, cellCount, "EXPIRA", headerStyle);
+			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
+			sheet.setColumnWidth(cellCount++, 10 * 256);
+
 			CellUtil.createCell(row, cellCount, "HEREN.", headerStyle);
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 3 * 256);
@@ -139,14 +144,26 @@ public class ConsoleDomainReportExcelPrint extends HttpServlet {
 			CellUtil.createCell(row, cellCount, "CREA", headerStyle);
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 3 * 256);
-			
+
 			CellUtil.createCell(row, cellCount, "ACCESO", headerStyle);
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 10 * 256);
 
-			CellUtil.createCell(row, cellCount, "EXPIRA", headerStyle);
+			CellUtil.createCell(row, cellCount, "PARENT", headerStyle);
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
-			sheet.setColumnWidth(cellCount++, 10 * 256);
+			sheet.setColumnWidth(cellCount++, 8 * 256);
+			
+			CellUtil.createCell(row, cellCount, "DOMINIO PARENT", headerStyle);
+			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
+			sheet.setColumnWidth(cellCount++, 50 * 256);
+			
+			CellUtil.createCell(row, cellCount, "PAGADOR", headerStyle);
+			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
+			sheet.setColumnWidth(cellCount++, 8 * 256);
+			
+			CellUtil.createCell(row, cellCount, "DOMINIO PAGADOR", headerStyle);
+			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
+			sheet.setColumnWidth(cellCount++, 50 * 256);
 
 		}
 	
@@ -154,17 +171,26 @@ public class ConsoleDomainReportExcelPrint extends HttpServlet {
 		public void accept(ConsoleDomain domain) {
 			row = sheet.createRow(rowCount++);
 			cellCount = 0;
-	
+			Integer payerId = domain.getPayerDomain() == null ? null : domain.getPayerDomain().getId();
+			String payerDescription = domain.getPayerDomain() == null 
+				? "" 
+				: (domain.getPayerDomain().getName() + " (" + domain.getPayerDomain().getDescription() + ")");
+			addCell(domain.getSchema());
 			addCell(domain.getId());
-			addCell(domain.getParentId());
-			addCell(domain.getDomainType() == null? "" : domain.getDomainType().getName());
 			addCell(domain.getName());
 			addCell(domain.getDescription());
+			addCell(domain.getDomainType() == null? "" : domain.getDomainType().getName());
 			addCell(domain.isActive());
+			addCell(domain.getExpirationDate());
 			addCell(domain.isEnableHeredity());
 			addCell(domain.isDomainManagement());
 			addCell(domain.getLastAccessDate());
-			addCell(domain.getExpirationDate());
+			addCell(domain.getParentId());
+			addCell(domain.getParent() == null 
+				? ""
+				: (domain.getParent().getName() + " (" + domain.getParent().getDescription() + ")") );
+			addCell(payerId);
+			addCell(payerDescription);
 			try {
 				if (rowCount % 100 == 0)
 					sheet.flushRows();
