@@ -10,9 +10,11 @@ import com.esferalia.aon.occam.api.model.RawdocUserData;
 
 public interface IRawdoc {
 	
+	Rawdoc addLogComment(AONContext ctx, Integer rawdocId, String comment);
 	Rawdoc toTrash(AONContext ctx, Integer rawdocId);
 	Rawdoc toRejected(AONContext ctx, Integer rawdocId, String reason);
 	Rawdoc toInbox(AONContext ctx, Integer rawdocId);
+	Rawdoc restore(AONContext ctx, Integer rawdocId);
 	
 	public Stream<Rawdoc> getRawdocStream(AONContext ctx, RawdocFilter filter, int offset, int limit);
 	public Stream<Rawdoc> getRawdocFullStream(AONContext ctx, RawdocFilter filter, int offset, int limit);

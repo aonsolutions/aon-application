@@ -174,12 +174,23 @@
 						
 					}	
 					
-					customize?.(idocument);				
+					customize?.(idocument);
 
 					let rootPanel = idocument.createElement(TAG.DIV);
 					rootPanel.id = 'rootPanel';
 					idocument.body.appendChild(rootPanel);
-					
+
+					let gwtComponentsCss = idocument.createElement('link');
+					gwtComponentsCss.rel = 'stylesheet';
+					gwtComponentsCss.type = 'text/css';
+					gwtComponentsCss.href = '/dist/gwt.min.css';
+					idocument.head.appendChild(gwtComponentsCss);
+
+					let gwtComponentsScript = idocument.createElement(TAG.SRIPT);
+					gwtComponentsScript.type = 'text/javascript';
+					gwtComponentsScript.src = '/dist/gwt.min.js';
+					idocument.head.appendChild(gwtComponentsScript);
+
 					let script = idocument.createElement(TAG.SRIPT);
 					script.type = "text/javascript";
 					script.defer = "true";

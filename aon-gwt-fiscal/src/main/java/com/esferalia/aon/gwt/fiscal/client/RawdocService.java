@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocParams;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -19,9 +20,11 @@ public interface RawdocService extends RemoteService {
 	void delete(Occam occam, Integer rawdocId);
 	LinkedList<String> saveToAccounting(Occam occam, LinkedHashSet<Integer> rawdocIds) throws AonCoreException;
 	
+	Rawdoc addLogComment(Occam occam, Integer rawdocId, String comment) throws AonCoreException;
 	Rawdoc toTrash(Occam occam, Integer rawdocId) throws AonCoreException;
 	Rawdoc toRejected(Occam occam, Integer rawdocId, String reason, String email) throws AonCoreException;
 	Rawdoc toInbox(Occam occam, Integer rawdocId) throws AonCoreException;
+	Rawdoc restore(Occam occam, Integer rawdocId) throws AonCoreException;
 
 	String getS3Url(Rawdoc rawdoc);
 	

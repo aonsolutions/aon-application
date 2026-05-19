@@ -37,6 +37,13 @@ public class RawdocServiceAsyncDecorator implements RawdocServiceAsync {
 		fsa.saveToAccounting(occam, rawdocIds, new AsyncCallbackWrapper<LinkedList<String>>(callback));
 	}
 	
+	
+	@Override
+	public void addLogComment(Occam occam, Integer rawdocId, String comment, AsyncCallback<Rawdoc> callback) {
+		AON.start();
+		fsa.addLogComment(occam, rawdocId, comment, new AsyncCallbackWrapper<Rawdoc>(callback));
+	}
+	
 	@Override
 	public void toTrash(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback) {
 		AON.start();
@@ -53,6 +60,12 @@ public class RawdocServiceAsyncDecorator implements RawdocServiceAsync {
 	public void toInbox(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback) {
 		AON.start();
 		fsa.toInbox(occam, rawdocId, new AsyncCallbackWrapper<Rawdoc>(callback));
+	}
+	
+	@Override
+	public void restore(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback) {
+		AON.start();
+		fsa.restore(occam, rawdocId, new AsyncCallbackWrapper<Rawdoc>(callback));
 	}
 
 	@Override
