@@ -1,8 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.Date;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ISeres;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.seres.SeresInfo;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
@@ -42,9 +45,9 @@ public class SeresImpl implements ISeres {
     }
 	
 	@Override
-    public double getUnitPrice(AONContext ctx, Integer customer, Integer item) {
+    public double getUnitPrice(AONContext ctx, Integer customer, Date date, Item item) {
         return ctx.getDslContext().transactionResult(configuration -> 
-            PriceStrategyDAO.getUnitPrice(ctx, customer, item));
+            PriceStrategyDAO.getUnitPrice(ctx, customer, date, item));
     }
 
 }
