@@ -204,6 +204,7 @@ export class AonNewTextarea extends AonElement {
         if(e.key || e.keyCode) {
           if (e.keyCode == '38' || e.key == 'ArrowUp') {
             // up arrow
+            e.stopPropagation();
             let li = this.getElement(this.OPTIONS_LI + this.selected);
             if(li) li.style.backgroundColor = 'transparent';
             if(this.selected > -1){
@@ -217,6 +218,7 @@ export class AonNewTextarea extends AonElement {
          }
          else if (e.keyCode == '40' || e.key == 'ArrowDown') {
            // down arrow
+           e.stopPropagation();
            let li = this.getElement(this.OPTIONS_LI + this.selected);
            if(li) li.style.backgroundColor = 'transparent';
             if(this.selected < this.options.length) {
@@ -230,8 +232,9 @@ export class AonNewTextarea extends AonElement {
          } else if (e.keyCode == '13' || e.key == 'Enter') {
            // enter
             if(this.selected > -1 && this.selected < this.options.length) {
+                e.stopPropagation();
                 this.value = this.options[this.selected].name;
-               textarea.innerHTML = this.options[this.selected].name;
+                textarea.value = this.options[this.selected].name;
                 this.dispatchEvent(new CustomEvent(EVENT.SELECT, { detail: this.options[this.selected] }));
                 this.closeOptions();
             }  
@@ -389,8 +392,8 @@ export class AonNewTextarea extends AonElement {
                 li.addEventListener('click', (e) => {
                     opt.classList.remove('is-visible');
                     this.value = options[i].name;
-                    textarea.innerHTML = this.value;
-                    this.dispatchEvent(new CustomEvent('select', { detail: options[i] }));
+                    textarea.value = this.value;
+                    this.dispatchEvent(new CustomEvent(EVENT.SELECT, { detail: options[i] }));
                 });
                 ul.appendChild(li);
             }
@@ -398,38 +401,7 @@ export class AonNewTextarea extends AonElement {
             document.addEventListener(EVENT.CLICK, (event) => this.clickOutOption(event));
         } else this.closeOptions();
     }
- 
-    buildOptions(options) {
-        let opt = this.getElement(this.OPTIONS);
-        let textarea = this.getElement(this.TEXTAREA);
- 
-        this.clearElement(opt);
-        this.options = options;
-        this.selected = -1;
-        if(options && options.length > 0) {
-            opt.classList.add('is-visible');
-            let ul = this.createElement(TAG.UL);
-            ul.id = this.OPTIONS_UL;
-            ul.classList.add(CSS.AON_UL);
-            ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
-            ul.setAttribute('for', this.getAttribute('id') + 'Icon');
-            for (let i = 0; i < options.length; i++) {
-                let li = this.createElement('li');
-                li.id = this.OPTIONS_LI + i;
-                li.className = 'aonInputListOptionsItem'
-                li.innerHTML = options[i].name;
-                li.addEventListener('click', (e) => {
-                    opt.classList.remove('is-visible');
-                    this.value = options[i].name;
-                    textarea.innerHTML = this.value;
-                    this.dispatchEvent(new CustomEvent('select', { detail: options[i] }));
-                });
-                ul.appendChild(li);
-            }
-            opt.appendChild(ul);
-            document.addEventListener(EVENT.CLICK, (event) => this.clickOutOption(event));
-        } else this.closeOptions();
-    }
+
     clickOutOption(event) {
         let opt = this.getElement(this.OPTIONS);
         let isClickInside =  opt.contains(event.target);
