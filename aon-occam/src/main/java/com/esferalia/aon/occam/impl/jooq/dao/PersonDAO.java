@@ -37,6 +37,8 @@ public class PersonDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
+		
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(PERSON.REGISTRY);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(PERSON.DOMAIN);}
 		@Override public Property<Date> getBirthDateProperty() {return new FilterDAO.PropertyDAO<>(PERSON.BIRTH_DATE);}
 		@Override public Property<Byte> getGenderProperty() {return new FilterDAO.PropertyDAO<>(PERSON.GENDER);}

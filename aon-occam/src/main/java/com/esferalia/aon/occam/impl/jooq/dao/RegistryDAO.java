@@ -307,6 +307,9 @@ public class RegistryDAO {
 	public static void delete(AONContext ctx, Integer id) {
 		ctx.checkWrite();
 		RegistryValidation.validateDeletion(ctx, id);
+		
+		PersonDAO.delete(ctx, id);
+		
 		int count = ctx.getDslContext().delete(REGISTRY)
 			.where(REGISTRY.ID.eq(id))
 			.execute();

@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -198,6 +199,7 @@ public class PriceStrategyDAOTest extends AbstractOccamTest {
 		ctx.getDslContext().delete(RITEM).where(RITEM.REGISTRY.eq(customerId)).execute();
 		ctx.getDslContext().delete(CUSTOMER).where(CUSTOMER.REGISTRY.eq(customerId)).execute();
 		ctx.getDslContext().delete(TARGET).where(TARGET.REGISTRY.eq(customerId)).execute();
+		ctx.getDslContext().delete(PERSON).where(PERSON.REGISTRY.eq(customerId)).execute();
 		ctx.getDslContext().delete(REGISTRY).where(REGISTRY.ID.eq(customerId)).execute();
 	}
 }
