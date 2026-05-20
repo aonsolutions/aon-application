@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.watson.mutable.MutableInt;
@@ -145,6 +146,10 @@ public abstract class CustomerPanel extends ScrollPanel {
 		tab.createHeader();
 		for ( COLS col : COLS.values()) 
 			tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
+		
+		if(params.getDomainName().contains("aonsolutions.org")) {
+			tab.addHeader(new Label(""), "3rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;");
+		}
 	}
 	
 	private void searchData() {
@@ -204,6 +209,16 @@ public abstract class CustomerPanel extends ScrollPanel {
 		tab.addInlineStyle(status, COLS.ACT.getStyles());
 		tab.addRow(row, status, COLS.ACT.getColWidth());
 		
+		if(params.getDomainName().contains("aonsolutions.org")) {
+			AonTableButton showCustomer = new AonTableButton("Ver nuevo", AON.CSS.aonIconInfo());
+			showCustomer.addClickHandler(e -> {
+				e.stopPropagation();
+				onCustomerOpenNew(customer);
+			});
+			tab.addInlineStyle(showCustomer,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;");
+			tab.addRow(row, showCustomer, "3rem");
+		}
+		
 		rowCustomers.put(customer.getId(), customer);
 	}
 	
@@ -234,6 +249,7 @@ public abstract class CustomerPanel extends ScrollPanel {
 	}
 
 	protected abstract void onCustomerOpen(Customer customer);
+	protected abstract void onCustomerOpenNew(Customer customer);
 	protected abstract void onShowErrorMessage(String message);
 	
 }

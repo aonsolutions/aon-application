@@ -178,6 +178,7 @@ public abstract class SupplierModulePanel extends AonCustomDockLayout {
 				
 				AonCustomDialog dialog = new AonCustomDialog();
 				dialog.setCaption("Nuevo Proveedor");
+				dialog.setResizable(false);
 	
 				AonRegistryPanel aonRecordDataPanel = new AonRegistryPanel(options.getDomainName(), options.getDomain(), options.getUser(), newSupplier,
 						options.getConfiguration().getAvailableScopes(), options.getConfiguration().getGeozones(), options.getConfiguration().getPayMethods(),
