@@ -840,6 +840,7 @@ public class ConsoleDomainPanel extends AonLayoutPanel {
 		Widget w = mainTabLayout.getWidget( UTILITIES );
 		if (w == null) {
 			AonCloseTab closeTab = new AonCloseTab(UTILITIES, true);
+			closeTab.addCloseHandler(event -> mainTabLayout.remove(panel));
 			mainTabLayout.add( panel, closeTab, UTILITIES);
 		} 
 		mainTabLayout.selectTab(UTILITIES);

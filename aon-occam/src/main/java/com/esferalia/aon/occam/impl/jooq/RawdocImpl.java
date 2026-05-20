@@ -75,11 +75,18 @@ public class RawdocImpl implements IRawdoc {
 			RawdocDAO.delete(ctx, domain, rawdocId);
 		} );			
 	}
+		
+	@Override
+	public Rawdoc addLogComment(AONContext ctx, Integer rawdocId, String comment) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			RawdocDAO.addLogComment(ctx, rawdocId, comment));
+	}
+	
 	
 	@Override
-	public Rawdoc toDraft(AONContext ctx, Integer rawdocId) {
-		return ctx.getDslContext().transactionResult(configuration -> 
-			RawdocDAO.toDraft(ctx, rawdocId));
+	public Rawdoc toTrash(AONContext ctx, Integer rawdocId) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			RawdocDAO.toTrash(ctx, rawdocId));
 	}
 
 	@Override
@@ -93,6 +100,13 @@ public class RawdocImpl implements IRawdoc {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			RawdocDAO.toInbox(ctx, rawdocId));
 	}
+	
+	@Override
+	public Rawdoc restore(AONContext ctx, Integer rawdocId) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			RawdocDAO.restore(ctx, rawdocId));
+	}
+	
 	@Override
 	public boolean rawdocHasData(AONContext ctx, Integer rawdocId) {
 		return ctx.getDslContext().transactionResult(configuration -> 

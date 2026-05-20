@@ -21,6 +21,7 @@ export const AON_MENU = 'aonMenu';
 export const ROOT_PANEL = 'rootPanel';
 export const ROOT_MOBILE_PANEL = 'rootMobilePanel';
 export const AON_ICON_BUTTON = 'aonIconButton';
+export const AON_ICON_BUTTON_TOP = 'aonIconButtonTop'; // future.css
 export const AON_HEADER_LOGO_SPAN = 'aonHeaderLogoSpan';
 export const AON_LOGO = 'aonLogo';
 export const AON_PARENT_LOGO = 'aonParentLogo';
@@ -191,6 +192,7 @@ export const AON_TOAST_SHOW = 'aonToastShow';
 // aon-switch.css
 
 export const AON_SWITCH = 'aonSwitch';
+export const AON_SWITCH_TOP = 'aonSwitchTop'; // future.css
 
 // aon-slider.css
 
@@ -495,3 +497,6 @@ export const AON_CONFIG_TOP_NAV = 'aonConfigTopNav';
 export const AON_CONFIG_SIDE_NAV = 'aonConfigSideNav';
 
 
+// aon-chat.css
+
+export const AON_CHAT = 'aonChat';

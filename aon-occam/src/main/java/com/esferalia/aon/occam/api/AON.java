@@ -7931,13 +7931,25 @@ public class AON {
 			getRawdoc().rawdocDelete(ctx, filter);
 		}
 	}
-
-	public static Rawdoc rawdocToDraft(Occam occam, Integer rawdocId) {
-		return rawdocToDraft(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdocId);
+	
+	public static Rawdoc rawdocAddLogComment(Occam occam, Integer rawdocId, String comment) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getRawdoc().addLogComment(ctx, rawdocId, comment);
+		}
 	}
-	public static Rawdoc rawdocToDraft(String domainName, int domain, String user, Integer rawdocId) {
+	
+	public static Rawdoc rawdocRestore(Occam occam, Integer rawdocId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getRawdoc().restore(ctx, rawdocId);
+		}
+	}
+
+	public static Rawdoc rawdocToTrash(Occam occam, Integer rawdocId) {
+		return rawdocToTrash(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdocId);
+	}
+	public static Rawdoc rawdocToTrash(String domainName, int domain, String user, Integer rawdocId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
-			return getRawdoc().toDraft(ctx, rawdocId);
+			return getRawdoc().toTrash(ctx, rawdocId);
 		}
 	}
 

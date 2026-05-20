@@ -24,6 +24,7 @@ public final class IJsonNames {
 	public static final String ACCOUNT_PARAMS = "accountParams";
 	public static final String ACCOUNT_REPORT_PARAMS = "accountReportParams";
 	public static final String ACCRUAL_REGIME = "accrualRegime";
+	public static final String ACTION = "action";
 	public static final String ACTIVE = "active";
 	public static final String ACTIVE_CHILD_COUNT = "activeChildCount";
 	public static final String ACTIVITY = "activity";
@@ -334,6 +335,7 @@ public final class IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[I] 
 	public static final String IAE = "iae";
 	public static final String IBAN = "iban";
+	public static final String ICON = "icon";
 	public static final String ID = "id";
 	public static final String IN_KIND = "inKind";
 	public static final String IN_PERIOD_BEFORE_CREDIT = "inPeriodBeforeCredit";

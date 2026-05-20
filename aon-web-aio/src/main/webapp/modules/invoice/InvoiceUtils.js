@@ -1,3 +1,4 @@
+import { CONSTANT } from "../../environments/environments.js";
 import { downscaleImage } from "../../services/compressImg.js";
 import { insertInvoice } from "../../services/invoiceService.js";
 import { getReader } from "../../services/utils.js";
@@ -156,13 +157,35 @@ export const getTrashPendingFromOption = (invoice) => {
     } else return OPTION.INVOICE_RECEIVED_BETA;
 }
 
-export const getRejectFromOption = (invoice) => {
+export const getFutureTrashPendingFromOption = (invoice) => {
     invoice = new Invoice(invoice);
     if(invoice.isEmitida()) {
+        return OPTION.FUTURE_INVOICE_ISSUED_BETA;
+    } else if (invoice.isTicket()) {
+        return OPTION.FUTURE_INVOICE_TICKET;
+    } else return OPTION.FUTURE_INVOICE_RECEIVED_BETA;
+}
+
+export const getRejectFromOption = (invoice) => {
+    invoice = new Invoice(invoice);
+    if(invoice.lastStatus === CONSTANT.PROCESSED || invoice.lastStatus === CONSTANT.PROCESSING) {
+        return OPTION.RAWDOC_PROCESSING;
+    } else if(invoice.isEmitida()) {
         return OPTION.PROFORMA_INVOICES;
     } else if(invoice.isTicket()) {
         return OPTION.RAWDOC_INBOX_TICKET_NEW;
     } else return OPTION.RAWDOC_INBOX_RECEIVED_NEW;
+}
+
+export const getFutureRejectFromOption = (invoice) => {
+    invoice = new Invoice(invoice);
+    if(invoice.lastStatus === CONSTANT.PROCESSED || invoice.lastStatus === CONSTANT.PROCESSING) {
+        return OPTION.FUTURE_RAWDOC_PROCESSING;
+    } else if(invoice.isEmitida()) {
+        return OPTION.FUTURE_PROFORMA_INVOICES;
+    } else if(invoice.isTicket()) {
+        return OPTION.FUTURE_RAWDOC_INBOX_TICKET_NEW;
+    } else return OPTION.FUTURE_RAWDOC_INBOX_RECEIVED_NEW;
 }
 
 export const getRestoreFromOption = (invoice) => {
@@ -171,12 +194,32 @@ export const getRestoreFromOption = (invoice) => {
         return OPTION.RAWDOC_REJECT;
     } else return OPTION.RAWDOC_TRASH;
 }
+
+export const getFutureRestoreFromOption = (invoice) => {
+    invoice = new Invoice(invoice);
+    if(invoice.isRejected()) {
+        return OPTION.FUTURE_RAWDOC_REJECT;
+    } else return OPTION.FUTURE_RAWDOC_TRASH;
+}
     
 export const getRestoreToOption = (invoice) => {
     invoice = new Invoice(invoice);
-    if(invoice.isEmitida()) {
+    if(invoice.lastStatus === CONSTANT.PROCESSED || invoice.lastStatus === CONSTANT.PROCESSING) {
+        return OPTION.RAWDOC_PROCESSING;
+    } else if(invoice.isEmitida()) {
         return OPTION.PROFORMA_INVOICES;
     } else if(invoice.isTicket()) {
         return OPTION.RAWDOC_INBOX_TICKET_NEW;
     } else return OPTION.RAWDOC_INBOX_RECEIVED_NEW;
+}
+
+export const getFutureRestoreToOption = (invoice) => {
+    invoice = new Invoice(invoice);
+    if(invoice.lastStatus === CONSTANT.PROCESSED || invoice.lastStatus === CONSTANT.PROCESSING) {
+        return OPTION.FUTURE_RAWDOC_PROCESSING;
+    } else if(invoice.isEmitida()) {
+        return OPTION.FUTURE_PROFORMA_INVOICES;
+    } else if(invoice.isTicket()) {
+        return OPTION.FUTURE_RAWDOC_INBOX_TICKET_NEW;
+    } else return OPTION.FUTURE_RAWDOC_INBOX_RECEIVED_NEW;
 }

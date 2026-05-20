@@ -322,7 +322,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			.setJson(InvoiceJSON.toJSON(invoice).toString())
 			.setMimeType(attach.getMimeType())
 			.setNature(RawdocNature.INVOICE)
-			.setStatus(RawdocStatus.DRAFT)
+			.setStatus(RawdocStatus.TRASH)
 			.setType(invoice.isPurchase() ? RawdocType.INPUT : RawdocType.OUTPUT);
 		AON.deleteInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceId);
 		AON.rawdocSave(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rawdoc);

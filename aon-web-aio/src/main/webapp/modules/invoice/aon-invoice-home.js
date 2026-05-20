@@ -540,7 +540,7 @@ export class AonInvoiceHome extends AonElement {
 		trashDiv.overflow = 'hidden';		
 		otherCounterRow.appendChild(trashDiv);
 
-		trashDiv.addEventListener(EVENT.CLICK, () => this.aonInvoiceList({status: CONSTANT.DRAFT}));
+		trashDiv.addEventListener(EVENT.CLICK, () => this.aonInvoiceList({status: CONSTANT.TRASH}));
 
 		let trashNumber = this.createDiv();
 		trashNumber.id = 'trashNumber';

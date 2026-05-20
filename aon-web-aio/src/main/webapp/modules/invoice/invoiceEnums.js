@@ -23,7 +23,7 @@ export const Transactions = [
 export const InvoiceStatus = {
   INBOX: 'inbox',
   REJECTED: 'rejected',
-  DRAFT: 'draft',
+  TRASH: 'trash',
   PENDING: 'pending',
   SCORED: 'scored'
 }

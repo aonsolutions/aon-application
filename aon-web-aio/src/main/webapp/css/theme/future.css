@@ -1470,10 +1470,6 @@ ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover span {
 	top: 15px;
 }
 
-#aonInvoiceWithholdingLabel {
-	top: 15px;
-}
-
 /* #aonInvoiceSheetDataGeneral {
 	display: block !important;
 } */
@@ -2704,6 +2700,14 @@ i[id$="aonHeaderSearchDivButtonIcon"],
 	top: 0px;
 }
 
-.aonRegistryMediaAddButton {
+.aonIconButtonTop {
 	margin-top: 1.9rem;
+	display: block;
+}
+
+.aonSwitchTop {
+	top: 15px;
+	display: block;
+	position: relative;
+	left: 15px;
 }

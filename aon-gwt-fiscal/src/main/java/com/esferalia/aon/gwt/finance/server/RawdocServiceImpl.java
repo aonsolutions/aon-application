@@ -64,9 +64,15 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public void delete(Occam occam, Integer rawdocId) {
 		AON.rawdocDelete(occam,rawdocId);
 	}
+
 	@Override
-	public Rawdoc toDraft(Occam occam, Integer rawdocId) throws AonCoreException {
-		return AON.rawdocToDraft(occam,rawdocId);
+	public Rawdoc addLogComment(Occam occam, Integer rawdocId, String comment) throws AonCoreException {
+		return AON.rawdocAddLogComment(occam, rawdocId, comment);
+	}			
+	
+	@Override
+	public Rawdoc toTrash(Occam occam, Integer rawdocId) throws AonCoreException {
+		return AON.rawdocToTrash(occam,rawdocId);
 	}
 
 	@Override
@@ -82,6 +88,11 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public Rawdoc toInbox(Occam occam, Integer rawdocId) throws AonCoreException {
 		return AON.rawdocToInbox(occam,rawdocId);
+	}
+	
+	@Override
+	public Rawdoc restore(Occam occam, Integer rawdocId) throws AonCoreException {
+		return AON.rawdocRestore(occam, rawdocId);
 	}
 	
 	@Override

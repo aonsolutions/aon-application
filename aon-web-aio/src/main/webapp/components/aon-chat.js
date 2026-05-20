@@ -4,6 +4,8 @@ import { setAttributes } from "../services/utilsComponents";
 import { AonTextArea } from "./aon-textarea";
 import { AonElement } from "./AonElement";
 
+import "../css/aon-chat.css";
+
 import * as LS from "../services/localStorageService";
 
 export class AonChat extends AonElement {
@@ -70,8 +72,7 @@ export class AonChat extends AonElement {
     let chat = this.createDiv()
     chat.id = 'chat';
     chat.classList.add("continueLined");
-    chat.classList.add(CSS.FLEX_COLUMN);
-    chat.classList.add(CSS.FLEX_ALIGN_CENTER);
+    chat.classList.add(CSS.AON_CHAT);
     chat.classList.add(CSS.MATERIAL_SCROLL);
     chat.style.position = "relative";
     chat.style.width = "100%";

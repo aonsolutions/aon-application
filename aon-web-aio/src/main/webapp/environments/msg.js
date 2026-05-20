@@ -374,6 +374,7 @@ export const HTTP_REQUEST_HEADER = 'HTTP Request Header';
 
 export const IN_DEVELOPMENT = MSG.IN_DEVELOPMENT;
 export const IN_PREPARATION = "En Preparación";
+export const PREPAYMENT = "Suplido"; // TODO
 export const IN_PROGRESS = "En Progreso"; // TODO
 export const IN_TRASH = "En Papelera"; // TODO
 export const INACTIVE = MSG.INACTIVE;
@@ -430,7 +431,7 @@ export const INVOICE_RECTIFICATION_INVOICE_DESCRIPTION = 'Identificador de la fa
 export const INVOICE_COMMENTS_DESCRIPTION = 'Comentarios de la factura';
 export const INVOICE_REMARKS_DESCRIPTION = 'Observaciones de la factura';
 export const INVOICE_ACTIVITY_DESCRIPTION = 'Actividad de la factura.';
-export const INVOICE_STATUS_DESCRIPTION = 'Estado de la factura inbox | rejected | draft | pending | scored';
+export const INVOICE_STATUS_DESCRIPTION = 'Estado de la factura inbox | rejected | trash | pending | scored';
 export const INVOICE_TAXES_DESCRIPTION = 'Resumen de los impuestos de la factura';
 export const INVOICE_DETAILS_DESCRIPTION = 'Detalles de la factura';
 export const INVOICE_FINANCES_DESCRIPTION = 'Vencimientos de la factura.';
