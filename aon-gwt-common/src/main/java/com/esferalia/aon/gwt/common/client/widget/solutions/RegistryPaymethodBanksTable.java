@@ -13,9 +13,12 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryBankPanel.AonRegistryBankPanelCallback;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.BankSwift;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
+import com.esferalia.aon.occam.api.model.registry.RegistrySource;
+import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -74,8 +77,11 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 	private String user;
 	private Integer registry;
 	
+	private RegistrySource registrySource;
+	
 	private LinkedList<PayMethod> payMethods;
 	private LinkedList<RegistryBank> rBanks;
+	private List<RegistryBank> registryBanks;
 	private List<Account> accounts;
 	
 	private RegistryPayMethod rPayMethod;
@@ -118,7 +124,7 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 		}
 	}
 
-	public RegistryPaymethodBanksTable(String domainName, int domain, String user, Integer registry) {
+	public RegistryPaymethodBanksTable(String domainName, int domain, String user, Integer registry, RegistrySource registrySource) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 
@@ -132,7 +138,7 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 		
 		registryPaymethodPanel = new HTMLPanel("");
 		registryPaymethodPanel.addStyleName(AON.CSS.aonItemFlex());
-		registryPaymethodPanel.getElement().getStyle().setProperty("padding", "1rem 1rem 0");
+		registryPaymethodPanel.getElement().getStyle().setProperty("padding", "1rem 0");
 		content.add(registryPaymethodPanel);
 
 		container = new SimplePanel();
@@ -205,6 +211,7 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 		
 		tab = new AonCustomTable();
 		tab.setMaxHeight("160x");
+		tab.getElement().getStyle().setProperty("padding", "0");
 		scrollPanel = new ScrollPanel(tab);
 
 		paintHeader();
@@ -268,7 +275,10 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 			
 		});
 		
-		paymethod.addChangeHandler(e -> saveRpaymethod.setEnabled(true));
+		paymethod.addChangeHandler(e -> {
+			saveRpaymethod.setEnabled(true);
+			checkPayMethodBankType();
+		});
 		banks.addChangeHandler(e -> saveRpaymethod.setEnabled(true));
 		pays.addValueChangeHandler(e ->  saveRpaymethod.setEnabled(true));
 		firstPay.addValueChangeHandler(e ->  saveRpaymethod.setEnabled(true));
@@ -285,7 +295,6 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 		
 		if(null != rPayMethod.getId()) {
 			paymethod.setValue(null == rPayMethod.getPayMethod().getId() ? "" : rPayMethod.getPayMethod().getId().toString());
-			banks.setValue(null == rPayMethod.getRbank().getId() ? "" : rPayMethod.getRbank().getId().toString());
 			pays.setValueShort(rPayMethod.getNumberOfPymnts());
 			firstPay.setValueShort(rPayMethod.getDaysToFirstPymnt());
 			betweenDays.setValueShort(rPayMethod.getDaysBetwenPymnts());
@@ -296,7 +305,59 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 					.setRegistry(registry)
 					;
 		}
+		
+		checkPayMethodBankType();
 			
+		if(null != rPayMethod.getId()) {
+			banks.setValue(null == rPayMethod.getRbank().getId() ? "" : rPayMethod.getRbank().getId().toString());
+		} 
+	}
+
+	private String getBankSwift(String account) {
+		if (AonStringUtils.isNotBlank(account)) {
+			BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
+			return null == bankSwiftEntry ? null : bankSwiftEntry.getSwift();
+		}
+		return null;
+	}
+
+	private String getBankAlias(String account) {
+		if (AonStringUtils.isNotBlank(account)) {
+			BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
+			return null == bankSwiftEntry ? null : bankSwiftEntry.getBankName();
+		}
+		return null;
+	}
+	
+	private void checkPayMethodBankType() {
+		if(AonStringUtils.isBlank(paymethod.getValue())) return;
+		
+		PayMethod paymethodObj = payMethods.stream().filter(pm -> pm.getId().equals(Integer.parseInt(paymethod.getValue()))).findFirst().orElse(null);
+		if(null != paymethodObj) {
+			if(this.registrySource == RegistrySource.CUSTOMER) {
+				if(paymethodObj.getType().equals(PayMethodType.BANK_TRANSFER)) {
+					// Bancos de la empresa
+					banks.clearItems();
+					rBanks.forEach(b -> banks.addItem(b.getFullName(), b.getId().toString()));
+				} else if(paymethodObj.getType().equals(PayMethodType.NEGOTIABLE_DOCUMENT)) {
+					// Bancos del registry
+					banks.clearItems();
+					registryBanks.forEach(b -> banks.addItem(b.getFullName(), b.getId().toString()));
+				} 
+			} else {
+				if(paymethodObj.getType().equals(PayMethodType.BANK_TRANSFER)) {
+					// Bancos del registry
+					banks.clearItems();
+					registryBanks.forEach(b -> banks.addItem(b.getFullName(), b.getId().toString()));
+					
+				} else if(paymethodObj.getType().equals(PayMethodType.NEGOTIABLE_DOCUMENT)) {
+					// Bancos de la empresa
+					banks.clearItems();
+					rBanks.forEach(b -> banks.addItem(b.getFullName(), b.getId().toString()));
+				} 
+			}
+		}
+		
 	}
 
 	private void paintHeader() {
@@ -513,7 +574,7 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 
 					@Override
 					public void onSuccess(LinkedList<RegistryBank> rBanksDB) {
-						rBanks = rBanksDB;
+						rBanks = rBanksDB.stream().filter(b -> b.isActive()).collect(Collectors.toCollection(LinkedList::new));
 						
 						COMMON_SERVICE.getAccountsForBank(domainName, domain, user, new AsyncCallback<List<Account>>() {
 
@@ -538,7 +599,20 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 										if(!registryPayMethodsDB.isEmpty())
 											rPayMethod = registryPayMethodsDB.get(0);
 										
-										end.accept(null);
+										COMMON_SERVICE.getRregistryBanks(domainName, domain, user, registry, new AsyncCallback<List<RegistryBank>>() {
+
+											@Override
+											public void onFailure(Throwable caught) {
+												onShowErrorMessage("Error bancos: " + caught.getMessage());
+											}
+
+											@Override
+											public void onSuccess(List<RegistryBank> rBanksDB) {
+												registryBanks = rBanksDB.stream().filter(b -> b.isActive()).collect(Collectors.toCollection(LinkedList::new));
+												
+												end.accept(null);
+											}
+										});
 									}
 								});
 							}

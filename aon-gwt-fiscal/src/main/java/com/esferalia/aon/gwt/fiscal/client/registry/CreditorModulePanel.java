@@ -176,6 +176,7 @@ public abstract class CreditorModulePanel extends AonCustomDockLayout {
 				
 				AonCustomDialog dialog = new AonCustomDialog();
 				dialog.setCaption("Nuevo Acreedor");
+				dialog.setResizable(false);
 	
 				AonRegistryPanel aonRecordDataPanel = new AonRegistryPanel(options.getDomainName(), options.getDomain(), options.getUser(), newCreditor,
 						options.getConfiguration().getAvailableScopes(), options.getConfiguration().getGeozones(), options.getConfiguration().getPayMethods(),

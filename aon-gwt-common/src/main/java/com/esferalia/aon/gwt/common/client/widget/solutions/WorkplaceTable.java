@@ -172,6 +172,7 @@ public abstract class WorkplaceTable extends ScrollPanel {
 		container.clear();
 		tab = new AonCustomTable();
 		tab.setMaxHeight("160x");
+		tab.getElement().getStyle().setProperty("padding", "1rem 0");
 		scrollPanel = new ScrollPanel(tab);
 		
 		paintHeader();

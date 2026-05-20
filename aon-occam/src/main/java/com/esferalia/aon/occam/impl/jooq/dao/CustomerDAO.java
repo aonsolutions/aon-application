@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.CustomerFee.CUSTOMER_FEE;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -36,6 +37,7 @@ import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -109,7 +111,7 @@ public class CustomerDAO {
 		}
 		
 		public static Customer buildCustomer(Record r, com.esferalia.aon.jooq.tables.Registry registry) {
-			return new Customer()
+			Customer customer = new Customer()
 					.copy(RegistryFiller.build(r, registry))
 					.setAccount(getValue(r, CUSTOMER.ACCOUNT))
 					.setCreationDate(getValue(r, CUSTOMER.CREATION_DATE))
@@ -128,6 +130,16 @@ public class CustomerDAO {
 					.setWithholding(getBoolean(r, CUSTOMER.WITHHOLDING))
 					.setStatus(RegistryStatus.safeValueOf(getValue(r, CUSTOMER.STATUS)))
 					.setRelationship(getValue(r, RRELATIONSHIP.ID)!=null || (checkField(r, hasDomain) && r.get(hasDomain)) );
+			
+			if(checkField(r, PERSON.REGISTRY)) {
+				Registry customerReg = customer.get();
+				customerReg.setPersonName(r.get(PERSON.NAME));
+				customerReg.setPersonFirstsurname(r.get(PERSON.FIRST_SURNAME));
+				customerReg.setPersonSecondsurname(r.get(PERSON.SECOND_SURNAME));
+				customer.copy(customerReg);
+			}
+			
+			return customer;
 		}
 	}
 	
@@ -142,12 +154,14 @@ public class CustomerDAO {
 		return ctx.getDslContext()
 	            .selectDistinct(CUSTOMER.fields())
 	            .select(REGISTRY.fields())
+	            .select(PERSON.fields())
 	            .select(DOMAIN.fields())
 	            .select(RRELATIONSHIP.ID)
 	            .select(hasDomain)
 	        .from(CUSTOMER)
 	        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
 	        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
+	        .leftOuterJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
 	        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
 	        .leftOuterJoin(RRELATIONSHIP).on(RRELATIONSHIP.REGISTRY.eq(REGISTRY.ID).and(RRELATIONSHIP.RELATIONSHIP.eq(-1)));
 		
