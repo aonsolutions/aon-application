@@ -69,7 +69,9 @@ public class RegistryEntryModule implements EntryPoint {
 	private void moduleLoad() {
 		AON.ensureInjected();
 		
-		registryEntryPanel = new RegistryEntryPanel(options, registrySource);
+		registryEntryPanel = new RegistryEntryPanel(options, registrySource) {
+			@Override protected void onBack() {}
+		};
 		
 		options.getParentWidget().add(registryEntryPanel);
 	}

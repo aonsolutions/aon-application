@@ -39,7 +39,6 @@ import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -111,8 +110,12 @@ public class AonRegistryPanel extends HTMLPanel {
 	private AonCustomTextBox secondSurname = new AonCustomTextBox("Apellido 2");
 	
 	private AonCustomTextBox alias = new AonCustomTextBox(AON.MSG.alias());
-	private AonCustomListBox scopeLB = new AonCustomListBox("\u00c1mbito");
+	//private AonCustomListBox scopeLB = new AonCustomListBox("\u00c1mbito");
 	private AonCustomListBox transactionLB = new AonCustomListBox("Tipo Transacci\u00f3n");
+	
+	private AonCustomToogleButton irpf = new AonCustomToogleButton("I.R.P.F.");
+	private AonCustomToogleButton re = new AonCustomToogleButton("R.E.");
+	private AonCustomToogleButton criterio = new AonCustomToogleButton("Criterio Caja");
 	
 	private AonCustomTextArea observation = new AonCustomTextArea("Observaciones");
 	
@@ -252,16 +255,28 @@ public class AonRegistryPanel extends HTMLPanel {
 		HTMLPanel row3 = new HTMLPanel(EMPTY_STRING);
 		row3.setStyleName(AON.CSS.aonItemFlex());
 		
-		scopeLB.clearItems();
-		this.scopes.forEach(s -> scopeLB.addItem(s.getDescription(), s.getId().toString()));
+//		scopeLB.clearItems();
+//		this.scopes.forEach(s -> scopeLB.addItem(s.getDescription(), s.getId().toString()));
 		
 		transactionLB.clearItems();
 		for(int i=0; i < InvoiceTransactionType.values().length; i++)
 			transactionLB.addItem(InvoiceTransactionType.values()[i].getDescription(), InvoiceTransactionType.values()[i].name());
-			
+		
+		transactionLB.getElement().getStyle().setProperty("max-width", "12rem");
+		irpf.getElement().getStyle().setProperty("max-width", "5rem");
+		re.getElement().getStyle().setProperty("max-width", "5rem");
+		criterio.getElement().getStyle().setProperty("max-width", "5rem");
+		
 		row3.add(alias);
-		row3.add(scopeLB);
+//		row3.add(scopeLB);
 		row3.add(transactionLB);
+		row3.add(irpf);
+		
+		if(this.registrySource.equals(RegistrySource.CUSTOMER))
+			row3.add(re);
+		else if(this.registrySource.equals(RegistrySource.SUPPLIER) || this.registrySource.equals(RegistrySource.CREDITOR))
+			row3.add(criterio);
+		
 		container.add(row3);
 		
 		// Row 4
@@ -586,10 +601,20 @@ public class AonRegistryPanel extends HTMLPanel {
 					: ensureRegistryNameByPerson(name.getValue(), firstSurname.getValue(), secondSurname.getValue())
 		);
 		
+		if(!customerFull.getRegistry().getDocumentType().equals(DocumentType.CIF)) {
+			customerFull.getRegistry().setPersonFirstsurname(firstSurname.getValue());
+			customerFull.getRegistry().setPersonSecondsurname(secondSurname.getValue());
+		}
+		
 		customerFull.getRegistry().setAlias(alias.getValue());
 		customerFull.getRegistry().setStatus(RegistryStatus.ACTIVE);
-		customerFull.getRegistry().setScope(new Scope().setId(Integer.parseInt(scopeLB.getValue())));
+		
+		Scope scope = this.scopes.stream().findFirst().orElse(null);
+		customerFull.getRegistry().setScope(scope);
+		
 		customerFull.getRegistry().setTransaction(InvoiceTransactionType.safeValueOf(transactionLB.getValue()));
+		customerFull.getRegistry().setWithholding(irpf.getValue());
+		customerFull.getRegistry().setSurcharge(re.getValue());
 		
 		if(AonStringUtils.isNotBlank(observation.getValue()))
 			customerFull.getRegistry().setObservation(observation.getValue());
@@ -723,10 +748,20 @@ public class AonRegistryPanel extends HTMLPanel {
 					: ensureRegistryNameByPerson(name.getValue(), firstSurname.getValue(), secondSurname.getValue())
 		);
 		
+		if(!creditorFull.getRegistry().getDocumentType().equals(DocumentType.CIF)) {
+			creditorFull.getRegistry().setPersonFirstsurname(firstSurname.getValue());
+			creditorFull.getRegistry().setPersonSecondsurname(secondSurname.getValue());
+		}
+		
 		creditorFull.getRegistry().setAlias(alias.getValue());
 		creditorFull.getRegistry().setStatus(RegistryStatus.ACTIVE);
-		creditorFull.getRegistry().setScope(new Scope().setId(Integer.parseInt(scopeLB.getValue())));
+		
+		Scope scope = this.scopes.stream().findFirst().orElse(null);
+		creditorFull.getRegistry().setScope(scope);
+		
 		creditorFull.getRegistry().setTransaction(InvoiceTransactionType.safeValueOf(transactionLB.getValue()));
+		creditorFull.getRegistry().setWithholding(irpf.getValue());
+		creditorFull.getRegistry().setVatAccrualPayment(criterio.getValue());
 		
 		if(AonStringUtils.isNotBlank(observation.getValue()))
 			creditorFull.getRegistry().setObservation(observation.getValue());
@@ -860,10 +895,20 @@ public class AonRegistryPanel extends HTMLPanel {
 					: ensureRegistryNameByPerson(name.getValue(), firstSurname.getValue(), secondSurname.getValue())
 		);
 		
+		if(!supplierFull.getRegistry().getDocumentType().equals(DocumentType.CIF)) {
+			supplierFull.getRegistry().setPersonFirstsurname(firstSurname.getValue());
+			supplierFull.getRegistry().setPersonSecondsurname(secondSurname.getValue());
+		}
+		
 		supplierFull.getRegistry().setAlias(alias.getValue());
 		supplierFull.getRegistry().setStatus(RegistryStatus.ACTIVE);
-		supplierFull.getRegistry().setScope(new Scope().setId(Integer.parseInt(scopeLB.getValue())));
+
+		Scope scope = this.scopes.stream().findFirst().orElse(null);
+		supplierFull.getRegistry().setScope(scope);
+		
 		supplierFull.getRegistry().setTransaction(InvoiceTransactionType.safeValueOf(transactionLB.getValue()));
+		supplierFull.getRegistry().setWithholding(irpf.getValue());
+		supplierFull.getRegistry().setVatAccrualPayment(criterio.getValue());
 		
 		if(AonStringUtils.isNotBlank(observation.getValue()))
 			supplierFull.getRegistry().setObservation(observation.getValue());
@@ -919,9 +964,7 @@ public class AonRegistryPanel extends HTMLPanel {
 			supplierFull.addMedia(emailMedia);
 		}
 		
-		Window.alert("iban.getValue() : " + iban.getValue());
 		if(!AonStringUtils.isBlank(iban.getValue())) {
-			Window.alert("Add bank to supplier");
 			RegistryBank registryBank = new RegistryBank()
 				.setDomain(supplierFull.getDomain())
 				.setRegistry(supplierFull.getId())
@@ -932,10 +975,6 @@ public class AonRegistryPanel extends HTMLPanel {
 				;
 			
 			supplierFull.addBank(registryBank);
-			
-			Window.alert("Added bank");
-			
-			Window.alert("Banks size : " + supplierFull.getBanks().size());
 		}
 		
 		AonMessagePanel.showLoading(messagePanel, "Guardando informaci\u00f3n...");

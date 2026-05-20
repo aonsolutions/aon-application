@@ -154,6 +154,7 @@ public class AonMainCertificatesPanel extends DeckPanel {
 	private void initCertDataTable() {
 		tab = new AonCustomTable();
 		tab.setMaxHeight((Window.getClientHeight() - Window.getClientHeight() / 3) + "px");
+		tab.getElement().getStyle().setProperty("padding", "1rem 0");
 		ScrollPanel scrollPanel = new ScrollPanel(tab);
 
 		paintHeader();
