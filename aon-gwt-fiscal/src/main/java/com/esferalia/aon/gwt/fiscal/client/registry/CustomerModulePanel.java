@@ -300,6 +300,8 @@ public abstract class CustomerModulePanel extends DeckPanel {
 					@Override
 					protected void onBack() {
 						CustomerModulePanel.this.showWidget(0);
+						customerPanel.resetSearchOffset();
+						onSearch( options );
 					}
 					
 				};

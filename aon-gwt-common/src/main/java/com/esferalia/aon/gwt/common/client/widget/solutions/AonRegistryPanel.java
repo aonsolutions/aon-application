@@ -116,6 +116,7 @@ public class AonRegistryPanel extends HTMLPanel {
 	private AonCustomToogleButton irpf = new AonCustomToogleButton("I.R.P.F.");
 	private AonCustomToogleButton re = new AonCustomToogleButton("R.E.");
 	private AonCustomToogleButton criterio = new AonCustomToogleButton("Criterio Caja");
+	private AonCustomToogleButton accountCreation = new AonCustomToogleButton("Crear P.G.C.");
 	
 	private AonCustomTextArea observation = new AonCustomTextArea("Observaciones");
 	
@@ -276,6 +277,8 @@ public class AonRegistryPanel extends HTMLPanel {
 			row3.add(re);
 		else if(this.registrySource.equals(RegistrySource.SUPPLIER) || this.registrySource.equals(RegistrySource.CREDITOR))
 			row3.add(criterio);
+		
+		row3.add(accountCreation);
 		
 		container.add(row3);
 		
