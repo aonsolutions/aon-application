@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.cnae.OneCnaeTableToRuleThemAll;
 import net.aonsolutions.db.up2date.customize.Customize;
 import net.aonsolutions.db.up2date.finance.InvoiceTrackingAlterTableJson;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2026;
@@ -623,7 +624,7 @@ public class Up2Date {
 			// AgriculturalBases2026Update.AGRICULTURALBASES2026UPDATE,
 			// Customize.CUSTOMIZE_GESTORIAMUNOZ,
 			// MaxEmbargable4DailyFix.MAXEMBARGABLE4DAILYFIX,
-			
+			OneCnaeTableToRuleThemAll.ONECNAETABLETORULETHEMALL,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
