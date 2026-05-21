@@ -64,6 +64,8 @@ export class Invoice {
   communicationInfo;
   lastStatus;
 
+  source; // Origen de rawdoc.
+
   constructor(invoice) {
     this.buildObject(invoice);
   }
@@ -157,11 +159,11 @@ export class Invoice {
       this.vatQuota = invoice.vatQuota;
       this.retentionQuota = invoice.retentionQuota;
       this.lastStatus = invoice.lastStatus;
+      this.source = invoice.source;
       if(this.finances.length === 0) this.resetFinances();
     } else {
       this.domain = LS.getDomainId();
       this.type = 'ticket';
-      this.series = new Date().getFullYear();
       this.number = '';
       this.reference = '';
       this.date = now();

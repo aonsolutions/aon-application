@@ -1303,7 +1303,10 @@ export class AonInvoice extends AonElement {
 
 		let serieSpan = this.createTableSpan("20%", "2px");
 		div.appendChild(serieSpan);
-		let seriesOptions = this.configuration.series.filter(f => this.invoice.isRectifier() ? f.rectification : f.invoice);
+		let seriesOptions = this.configuration.series.filter(f => this.invoice.isRectifier() ? f.rectification : f.invoice);¡
+		if(!this.invoice.isRectifier() && (!this.invoice.series || this.invoice.series == '') && this.configuration.defaultSeries) {
+			this.invoice.series = this.configuration.defaultSeries;
+		}
 		if (!seriesOptions.map(o => o.code).includes(this.invoice.series)) {
 			this.invoice.setSeries(seriesOptions.length > 0 ? seriesOptions[0].code : undefined);
 		}
@@ -2551,8 +2554,6 @@ export class AonInvoice extends AonElement {
 
 	back() {
 		let parent = this.getApplication().getParent();
-		if (this.isMobile())
-			parent.buildToolbarOptions();
 		if (this.invoice.status == 'processed') {
 			parent.aonInvoiceProcessing();
 		} else parent.aonInvoiceList(parent.filter, parent.invofoxFilter);
