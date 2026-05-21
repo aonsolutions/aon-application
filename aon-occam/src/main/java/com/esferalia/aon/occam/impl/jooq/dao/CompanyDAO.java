@@ -35,7 +35,6 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.Rmedia;
-import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
@@ -121,9 +120,11 @@ public class CompanyDAO {
 					.setWithholding(AonEnumUtils.getBoolean(r.getValue(COMPANY.WITHHOLDING)));
 			
 			if(checkField(r, PERSON.REGISTRY)) {
-				company.get().setPersonName(r.get(PERSON.NAME));
-				company.get().setPersonFirstsurname(r.get(PERSON.FIRST_SURNAME));
-				company.get().setPersonSecondsurname(r.get(PERSON.SECOND_SURNAME));
+				Registry companyReg = company.get();
+				companyReg.setPersonName(r.get(PERSON.NAME));
+				companyReg.setPersonFirstsurname(r.get(PERSON.FIRST_SURNAME));
+				companyReg.setPersonSecondsurname(r.get(PERSON.SECOND_SURNAME));
+				company.copy(companyReg);
 			}
 			
 			return company;
@@ -238,8 +239,6 @@ public class CompanyDAO {
 		boolean nullId = (company.getId() == null); 
 		company = RegistryDAO.save(ctx, company);
 		
-		checkPersonRegistry(ctx, company);
-		
 		if (nullId) {
 			CompanyValidation.validateInsert(ctx, company);
 			insert(ctx, company);
@@ -247,38 +246,6 @@ public class CompanyDAO {
 			update(ctx, company);			
 		}
 		return company;
-	}
-	
-	private static void checkPersonRegistry(AONContext ctx, Company company) {
-		Registry registry = company.get();
-		if(registry.getDocumentType().equals(DocumentType.CIF)) {
-			ctx.getDslContext().delete(PERSON)
-				.where(PERSON.REGISTRY.eq(registry.getId()))
-				.and(PERSON.DOMAIN.eq(registry.getDomain().getId()))
-				.execute();
-		} else {
-			PersonRecord personRecord = ctx.getDslContext().selectFrom(PERSON)
-				.where(PERSON.REGISTRY.eq(registry.getId())
-				.and(PERSON.DOMAIN.eq(registry.getDomain().getId())))
-				.fetchOne();
-			
-			if(null == personRecord)
-				ctx.getDslContext().insertInto(PERSON)
-					.set(PERSON.REGISTRY, registry.getId())
-					.set(PERSON.DOMAIN, registry.getDomain().getId())
-					.set(PERSON.NAME, registry.getPersonName())
-					.set(PERSON.FIRST_SURNAME, registry.getPersonFirstsurname())
-					.set(PERSON.SECOND_SURNAME, registry.getPersonSecondsurname())
-					.execute();
-			else
-				ctx.getDslContext().update(PERSON)
-					.set(PERSON.NAME, registry.getPersonName())
-					.set(PERSON.FIRST_SURNAME, registry.getPersonFirstsurname())
-					.set(PERSON.SECOND_SURNAME, registry.getPersonSecondsurname())
-					.where(PERSON.REGISTRY.eq(personRecord.getRegistry()))
-					.and(PERSON.DOMAIN.eq(personRecord.getDomain()))
-					.execute();
-		}
 	}
 
 	private static Company insert(AONContext ctx, Company company){

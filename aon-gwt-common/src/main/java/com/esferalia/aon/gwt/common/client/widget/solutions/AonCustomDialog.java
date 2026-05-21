@@ -31,6 +31,8 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
     private AonToolbarButton closeDialog;
     private FlowPanel flowPanel;
     private List<AonCustomDialogListener> listeners;
+    
+    private boolean resizable = true;
 
     public AonCustomDialog() {
         setStyleName(AON.CSS.aonCustomDialog());
@@ -86,6 +88,36 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
 
     public void removeCloseHandler(AonCustomDialogListener listener) {
         listeners.remove(listener);
+    }
+    
+    public void setResizable(boolean enabled) {
+        this.resizable = enabled;
+
+        if (!enabled) {
+            // Eliminar los DIVs de resize
+            removeResizeHandles();
+        } else {
+            // Volver a crearlos si quieres permitir redimensionar otra vez
+            createResizeHandles();
+        }
+    }
+    
+    private void removeResizeHandles() {
+        Element dialogElement = getElement();
+
+        // Elimina todos los hijos que tengan cursor de resize
+        for (int i = dialogElement.getChildCount() - 1; i >= 0; i--) {
+            Element child = dialogElement.getChild(i).cast();
+            String cursor = child.getStyle().getCursor();
+
+            if (cursor != null && cursor.contains("resize")) {
+                dialogElement.removeChild(child);
+            }
+        }
+    }
+
+    private void createResizeHandles() {
+        new WindowResizeHandler(); // reconstruye los DIVs invisibles
     }
 
     @Override
@@ -403,6 +435,13 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
         public void handleDrag(int absX, int absY) {
             AonCustomDialog.this.incrementPixelSize(absX, 0);
         }
+        
+        @Override
+        public void onMouseMove(MouseMoveEvent event) {
+            if (!resizable) return; // Bloquea el resize
+            super.onMouseMove(event);
+        }
+
     }
 
     private class WWindowResizeHandler extends MouseDragHandler {
@@ -412,6 +451,13 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
             AonCustomDialog.this.handleMove(absX, 0);
             AonCustomDialog.this.incrementPixelSize((-1) * absX, 0);
         }
+        
+        @Override
+        public void onMouseMove(MouseMoveEvent event) {
+            if (!resizable) return; // Bloquea el resize
+            super.onMouseMove(event);
+        }
+
     }
 
     private class WindowResizeHandler {

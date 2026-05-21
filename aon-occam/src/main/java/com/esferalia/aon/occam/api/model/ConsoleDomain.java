@@ -1,7 +1,5 @@
 package com.esferalia.aon.occam.api.model;
 
-import com.esferalia.aon.occam.api.model.console.ConsoleSchema;
-
 public class ConsoleDomain extends Domain {
 
 	private static final long serialVersionUID = 1093889839212920172L;
@@ -9,6 +7,7 @@ public class ConsoleDomain extends Domain {
 	private Integer childCount;
 	private Integer activeChildCount;
 	private boolean remoteAccessEnabled;
+	private Domain payerDomain;
 	
 	public String getSchema() {
 		return schema;
@@ -41,4 +40,13 @@ public class ConsoleDomain extends Domain {
 		this.remoteAccessEnabled = remoteAccessEnabled;
 		return this;
 	}
+	
+	public Domain getPayerDomain() {
+		return payerDomain;
+	}
+	public ConsoleDomain setPayerDomain(Domain payerDomain) {
+		this.payerDomain = payerDomain;
+		return this;
+	}
+	
 }

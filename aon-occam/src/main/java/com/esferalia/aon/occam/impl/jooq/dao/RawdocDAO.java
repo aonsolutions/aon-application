@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.records.RawdocRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
@@ -440,6 +441,46 @@ public class RawdocDAO {
 			.orElseThrow(() -> new AonCoreException( AonError.INVALID_UPDATE.getMessage()));
 	}
 	
+	private static Rawdoc updateStatus( AONContext ctx, Rawdoc rawdoc, RawdocStatus status) {
+		int count = ctx.getDslContext()
+			.update(RAWDOC)
+				.set(RAWDOC.STATUS,status.value())
+				.set(RAWDOC.LOG, rawdoc.getLog())
+				.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
+				.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+				.set(RAWDOC.JSON, rawdoc.getJson())
+				.where(RAWDOC.ID.equal(rawdoc.getId()))
+				.execute();
+		ctx.log().info("UPDATE RAWDOC ({0}) id: {1} ({2} filas)",status.name(),rawdoc.getId(),count);
+		return get(ctx, rawdoc.getId())
+			.orElseThrow(() -> new AonCoreException( AonError.INVALID_UPDATE.getMessage()));
+	}
+	
+	public static Rawdoc addLogComment(AONContext ctx, Integer rawdocId, String comment) {
+		ctx.checkWrite();		
+		return get(ctx, rawdocId)
+			.map(r -> {
+				JSONArray jsonLog = new JSONArray( r.getLog()==null?"[]":r.getLog());
+				HashMap<String,String> map = new HashMap<>();
+				map.put(IJsonNames.DATE,new SimpleDateFormat(LOG_DATE_FORMAT_PATTERN).format(new Date()));
+				map.put(IJsonNames.USER,ctx.getUser());
+				map.put(IJsonNames.COMMENT,comment);
+				JSONObject json = new JSONObject(map);
+				jsonLog.put(json);
+				
+				r.setLog(jsonLog.toString());
+				ctx.getDslContext()
+					.update(RAWDOC)
+					.set(RAWDOC.LOG, r.getLog())
+					.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
+					.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+					.where(RAWDOC.ID.equal(r.getId()))
+					.execute();
+				return r;
+			})
+			.orElseThrow(() -> new AonCoreException( AonError.INVALID_UPDATE.getMessage()));
+	}
+	
 	public static Rawdoc toTrash(AONContext ctx, Integer rawdocId) {
 		ctx.checkWrite();
 		return get(ctx, rawdocId)
@@ -478,17 +519,67 @@ public class RawdocDAO {
 			.orElseThrow(() -> new AonCoreException( AonError.INVALID_UPDATE.getMessage()));
 	}
 	
+	public static Rawdoc restore(AONContext ctx, Integer rawdocId) {
+		ctx.checkWrite();
+		return get(ctx, rawdocId)
+			.map( r -> {	
+				RawdocStatus lastStatus = RawdocStatus.INBOX;
+				if(r.getJson() != null) {
+					JSONObject json = new JSONObject(r.getJson());
+					if(JsonUtils.has(json, IJsonNames.LAST_STATUS)) {
+						lastStatus = RawdocStatus.safeValueOf(json.getString(IJsonNames.LAST_STATUS));
+					}
+				}
+				
+				JSONArray jsonLog = new JSONArray( r.getLog()==null?"[]":r.getLog());
+				
+				JSONObject map = new JSONObject();
+				map.put(IJsonNames.DATE,new SimpleDateFormat(LOG_DATE_FORMAT_PATTERN).format(new Date()));
+				map.put(IJsonNames.USER,ctx.getUser() );
+				
+				JSONObject action = new JSONObject();			
+				action.put(IJsonNames.TITLE, "Restaurada");
+				action.put(IJsonNames.ICON, "360");
+				action.put(IJsonNames.COLOR, "green");
+
+				map.put(IJsonNames.ACTION, action);
+				
+				jsonLog.put(map);
+				r.setLog(jsonLog.toString());
+				
+				return updateStatus(ctx, r, lastStatus);
+			})
+			.orElseThrow(() -> new AonCoreException( AonError.INVALID_UPDATE.getMessage()));
+	}
+	
 	private static String getLogArray(AONContext ctx, Rawdoc r, RawdocStatus status, String reason) {
 		JSONArray jsonLog = new JSONArray( r.getLog()==null?"[]":r.getLog());
-		HashMap<String,String> map = new HashMap<>();
+//		HashMap<String,String> map = new HashMap<>();
+		JSONObject map = new JSONObject();
 		map.put(IJsonNames.DATE,new SimpleDateFormat(LOG_DATE_FORMAT_PATTERN).format(new Date()));
 		map.put(IJsonNames.USER,ctx.getUser() );
 		map.put(IJsonNames.STATUS,status.getDescription() );
 		if (reason != null) {
-			map.put(IJsonNames.REASON,reason );
+			map.put(IJsonNames.REASON,reason);
+			map.put(IJsonNames.COMMENT,reason);
 		}
-		JSONObject json = new JSONObject(map);
-		jsonLog.put(json);
+
+		if(RawdocStatus.REJECTED.equals(status)) {
+			JSONObject action = new JSONObject();			
+			action.put(IJsonNames.TITLE, status.getDescription());
+			action.put(IJsonNames.ICON, "report");
+			action.put(IJsonNames.COLOR, "red");
+			map.put(IJsonNames.ACTION, action);			
+		} else if(RawdocStatus.TRASH.equals(status)) {
+			JSONObject action = new JSONObject();			
+			action.put(IJsonNames.TITLE, status.getDescription());
+			action.put(IJsonNames.ICON, "delete");
+			action.put(IJsonNames.COLOR, "gray");
+			map.put(IJsonNames.ACTION, action);			
+		}
+
+//		JSONObject json = new JSONObject(map);
+		jsonLog.put(map);
 		return jsonLog.toString();
 	}
 	
