@@ -1303,7 +1303,7 @@ export class AonInvoice extends AonElement {
 
 		let serieSpan = this.createTableSpan("20%", "2px");
 		div.appendChild(serieSpan);
-		let seriesOptions = this.configuration.series.filter(f => this.invoice.isRectifier() ? f.rectification : f.invoice);¡
+		let seriesOptions = this.configuration.series.filter(f => this.invoice.isRectifier() ? f.rectification : f.invoice);
 		if(!this.invoice.isRectifier() && (!this.invoice.series || this.invoice.series == '') && this.configuration.defaultSeries) {
 			this.invoice.series = this.configuration.defaultSeries;
 		}
