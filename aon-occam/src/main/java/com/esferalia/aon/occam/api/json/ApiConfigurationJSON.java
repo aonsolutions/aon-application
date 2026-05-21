@@ -52,6 +52,7 @@ public class ApiConfigurationJSON {
 			.put(IJsonNames.ADMINISTRATION, Administration.name( conf.getAdministration()).orElse(Administration.UNKNOWN.name()))
 			.put(IJsonNames.DEFAULT_RETENTION_TAX, conf.getDefaultRetention())
 			.put(IJsonNames.DEFAULT_VAT_TAX, conf.getDefaultVat())
+			.put(IJsonNames.DEFAULT_SERIES, conf.getDefaultSeries())
 			.put(IJsonNames.TAXES, TaxJSON.toJSON(conf.getTaxes()))
 			.put(IJsonNames.SERIES, SeriesJSON.to(conf.getSeries()))
 			.put(IJsonNames.WORKPLACES, WorkplaceJSON.toJSON(conf.getWorkplaces()))
