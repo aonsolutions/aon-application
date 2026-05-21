@@ -16,10 +16,12 @@ public interface RawdocServiceAsync {
 	void delete(Occam occam, Integer rawdocId, AsyncCallback<Void> callback);
 	void saveToAccounting(Occam occam, LinkedHashSet<Integer> rawdocIds, AsyncCallback<LinkedList<String>> callback);
 	
+	void addLogComment(Occam occam, Integer rawdocId, String comment, AsyncCallback<Rawdoc> callback);
 	void toTrash(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback);
 	void toRejected(Occam occam, Integer rawdocId, String reason, String email, AsyncCallback<Rawdoc> callback);
 	void toInbox(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback);
-
+	void restore(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback);
+	
 	void getS3Url(Rawdoc rawdoc, AsyncCallback<String> callback);
 	
 	void parse(Occam occam, Integer id, AsyncCallback<TediResult> asyncCallback);

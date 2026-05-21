@@ -1,8 +1,10 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -13,6 +15,7 @@ import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.BankSwift;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.Iban;
 import com.esferalia.aon.occam.api.model.Municipalities;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
@@ -23,6 +26,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
+import com.esferalia.aon.occam.api.model.registry.RegistrySource;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -81,6 +85,8 @@ public class AonRegistryPanel extends HTMLPanel {
 	private Integer domainId;
 	private String user;
 	
+	private RegistrySource registrySource;
+	
 	private AonCustomerPanelCallback callback;
 	private CustomerFull customerFull;
 	private CreditorFull creditorFull;
@@ -104,8 +110,12 @@ public class AonRegistryPanel extends HTMLPanel {
 	private AonCustomTextBox secondSurname = new AonCustomTextBox("Apellido 2");
 	
 	private AonCustomTextBox alias = new AonCustomTextBox(AON.MSG.alias());
-	private AonCustomListBox scopeLB = new AonCustomListBox("\u00c1mbito");
+	//private AonCustomListBox scopeLB = new AonCustomListBox("\u00c1mbito");
 	private AonCustomListBox transactionLB = new AonCustomListBox("Tipo Transacci\u00f3n");
+	
+	private AonCustomToogleButton irpf = new AonCustomToogleButton("I.R.P.F.");
+	private AonCustomToogleButton re = new AonCustomToogleButton("R.E.");
+	private AonCustomToogleButton criterio = new AonCustomToogleButton("Criterio Caja");
 	
 	private AonCustomTextArea observation = new AonCustomTextArea("Observaciones");
 	
@@ -129,10 +139,9 @@ public class AonRegistryPanel extends HTMLPanel {
 	private AonCustomListBox paymethod = new AonCustomListBox("Forma de pago");
 	private AonCustomListBox banks = new AonCustomListBox("Cuenta Bancaria");
 	private AonCustomTextBox iban = new AonCustomTextBox("IBAN");
-	private AonCustomIntegerBox pays = new AonCustomIntegerBox("Pagos");
-	private AonCustomIntegerBox firstPay = new AonCustomIntegerBox("1er Pago");
-	private AonCustomIntegerBox betweenDays = new AonCustomIntegerBox("Resto");
-	private AonCustomTextBox payDayss = new AonCustomTextBox("Dias");
+	private AonCustomTextBox bic = new AonCustomTextBox("BIC");
+	private AonCustomTextBox bankAlias = new AonCustomTextBox("Alias");
+	
 	
 	// Constructor
 	
@@ -145,6 +154,8 @@ public class AonRegistryPanel extends HTMLPanel {
 		this.domainName = domainName;
 		this.domainId = domain;
 		this.user = user;
+		
+		this.registrySource = RegistrySource.CUSTOMER;
 		
 		this.customerFull = customerFull;
 		this.scopes = scopes;
@@ -166,6 +177,8 @@ public class AonRegistryPanel extends HTMLPanel {
 		this.domainId = domain;
 		this.user = user;
 		
+		this.registrySource = RegistrySource.CREDITOR;
+		
 		this.creditorFull = creditorFull;
 		this.scopes = scopes;
 		this.geozones = geozones;
@@ -186,6 +199,8 @@ public class AonRegistryPanel extends HTMLPanel {
 		this.domainId = domain;
 		this.user = user;
 		
+		this.registrySource = RegistrySource.SUPPLIER;
+		
 		this.supplierFull = supplierFull;
 		this.scopes = scopes;
 		this.geozones = geozones;
@@ -200,7 +215,7 @@ public class AonRegistryPanel extends HTMLPanel {
 		// Message Panel
 		setStyleName(AON.CSS.aonFlexColumn2());
 		getElement().getStyle().setProperty("padding", "1rem 0");
-		getElement().getStyle().setProperty("width", "60re");
+		getElement().getStyle().setProperty("width", "850px");
 		add(messagePanel);
 		
 		HTMLPanel container = new HTMLPanel(EMPTY_STRING);
@@ -214,11 +229,13 @@ public class AonRegistryPanel extends HTMLPanel {
 		
 		documentType.clearItems();
 		for (int i = 0; i < DocumentType.values().length; i++)
-			documentType.addItem(DocumentType.values()[i].getDescription(), DocumentType.values()[i].toString());
+			documentType.addItem(DocumentType.values()[i].getDescription(), DocumentType.values()[i].name());
+		documentType.setValue(DocumentType.CIF.name());
 		
 		documentNationality.clearItems();
 		for (int i = 0; i < Country.values().length; i++)
 			documentNationality.addItem(Country.values()[i].getIso2(), Country.values()[i].getIso2());
+		documentNationality.setValue(Country.ES.getIso2());
 		
 		documentType.getElement().getStyle().setProperty("max-width", "5rem");
 		documentNationality.getElement().getStyle().setProperty("max-width", "4rem");
@@ -238,16 +255,28 @@ public class AonRegistryPanel extends HTMLPanel {
 		HTMLPanel row3 = new HTMLPanel(EMPTY_STRING);
 		row3.setStyleName(AON.CSS.aonItemFlex());
 		
-		scopeLB.clearItems();
-		this.scopes.forEach(s -> scopeLB.addItem(s.getDescription(), s.getId().toString()));
+//		scopeLB.clearItems();
+//		this.scopes.forEach(s -> scopeLB.addItem(s.getDescription(), s.getId().toString()));
 		
 		transactionLB.clearItems();
 		for(int i=0; i < InvoiceTransactionType.values().length; i++)
 			transactionLB.addItem(InvoiceTransactionType.values()[i].getDescription(), InvoiceTransactionType.values()[i].name());
-			
+		
+		transactionLB.getElement().getStyle().setProperty("max-width", "12rem");
+		irpf.getElement().getStyle().setProperty("max-width", "5rem");
+		re.getElement().getStyle().setProperty("max-width", "5rem");
+		criterio.getElement().getStyle().setProperty("max-width", "5rem");
+		
 		row3.add(alias);
-		row3.add(scopeLB);
+//		row3.add(scopeLB);
 		row3.add(transactionLB);
+		row3.add(irpf);
+		
+		if(this.registrySource.equals(RegistrySource.CUSTOMER))
+			row3.add(re);
+		else if(this.registrySource.equals(RegistrySource.SUPPLIER) || this.registrySource.equals(RegistrySource.CREDITOR))
+			row3.add(criterio);
+		
 		container.add(row3);
 		
 		// Row 4
@@ -285,7 +314,7 @@ public class AonRegistryPanel extends HTMLPanel {
 		HTMLPanel row7 = new HTMLPanel(EMPTY_STRING);
 		row7.setStyleName(AON.CSS.aonItemFlex());
 	
-		geozones.stream().filter(geozone -> geozone.getCode().length() == 2 && canBeCastToInt(geozone.getCode())).forEach(geozone -> province.addItem(capitalizeFirstLetterOfEachWord(geozone.getName()), geozone.getCode()));
+		initializeGeozones();
 		zip.getTextBox().addValueChangeHandler(e -> {
 			if(AonStringUtils.isNotBlank(zip.getValue()) && zip.getValue().length() >= 2) {
 				province.setValue(AonStringUtils.substring(zip.getValue(), 0, 2));
@@ -326,6 +355,12 @@ public class AonRegistryPanel extends HTMLPanel {
 		
 		paymethod.clearItems();
 		paymethod.addItem("-" , "");
+		this.paymethods.sort(
+			    Comparator
+			        .comparing((PayMethod pm) -> pm.getType() == PayMethodType.NEGOTIABLE_DOCUMENT ? 0 : 1)
+			        .thenComparing(pm -> pm.getType().name())
+			);
+
 		this.paymethods.forEach(pm -> paymethod.addItem(pm.getName(), pm.getId().toString()));
 		paymethod.getElement().getStyle().setProperty("max-width", "12rem");
 		
@@ -334,63 +369,153 @@ public class AonRegistryPanel extends HTMLPanel {
 		banks.clearItems();
 		banks.addItem("-" , "");
 		
-		pays.setTitle("Numero de vencimiento por factura");
-		firstPay.setTitle("Plazo en dias al primer pago");
-		betweenDays.setTitle("Plazo en dias entre el resto de pagos");
-		payDayss.setTitle("Dias fijos de pago separados por espacios");
+		iban.addValueChangeHandler(e -> {
+			String accountStr = this.iban.getValue();
+			accountStr = accountStr.replaceAll("\\W+", "");
+			accountStr = accountStr.toUpperCase();
+			iban.setValue(accountStr);
+
+			if (accountStr.length() > 0 && !Iban.validateIBAN(accountStr))
+				AonMessagePanel.showError(messagePanel, "IBAN no valido");
 		
-		pays.hideNearBy();
-		firstPay.hideNearBy();
-		betweenDays.hideNearBy();
-		
-		pays.getElement().getStyle().setProperty("max-width", "4rem");
-		firstPay.getElement().getStyle().setProperty("max-width", "4rem");
-		betweenDays.getElement().getStyle().setProperty("max-width", "4rem");
-		payDayss.getElement().getStyle().setProperty("max-width", "4rem");
-		
-		payDayss.getTextBox().getElement().setPropertyString("placeholder", "");
+			String bankAliasValue = getBankAlias(accountStr);
+			if(AonStringUtils.isNotBlank(bankAliasValue))
+				bankAlias.setValue(bankAliasValue);
+			
+			String bankSwift = getBankSwift(accountStr);
+			if(AonStringUtils.isNotBlank(bankSwift))
+				bic.setValue(bankSwift);
+		});
 		
 		iban.getElement().getStyle().setDisplay(Display.NONE);
+		bic.getElement().getStyle().setDisplay(Display.NONE);
+		bankAlias.getElement().getStyle().setDisplay(Display.NONE);
 		banks.getElement().getStyle().clearDisplay();
+		
+		bic.getElement().getStyle().setProperty("max-width", "9rem");
 		
 		row9.add(paymethod);
 		row9.add(banks);
 		row9.add(iban);
-		row9.add(pays);
-		row9.add(firstPay);
-		row9.add(betweenDays);
-		row9.add(payDayss);
+		row9.add(bic);
+		row9.add(bankAlias);
 		container.add(row9);
 		
 		// Check name by document
 		checkNameByDocumentType();
 		
+		// Remove placeholders
+		removePlaceHolders();
+		
 		// Buttons
 		container.add(createButtonsPanel());
 		add(container);	
 	}
-	
+
+	private void initializeGeozones() {
+		province.addItem("-", "");
+		province.addItem("Pais", "");
+
+		province.getElement()
+		        .getElementsByTagName("option")
+		        .getItem(province.getListBox().getItemCount() - 1)
+		        .setAttribute("disabled", "disabled");
+
+		boolean provinceAdded = false;
+
+		for (GeoZone geozone : geozones) {
+
+		    if (geozone.getCode().length() == 2 && canBeCastToInt(geozone.getCode())) {
+
+		        if (!provinceAdded && "01".equals(geozone.getCode())) {
+
+		            province.addItem("Provincia", "");
+
+		            province.getElement()
+		                    .getElementsByTagName("option")
+		                    .getItem(province.getListBox().getItemCount() - 1)
+		                    .setAttribute("disabled", "disabled");
+
+		            provinceAdded = true;
+		        }
+
+		        province.addItem(
+		            capitalizeFirstLetterOfEachWord(geozone.getName()),
+		            geozone.getCode()
+		        );
+		    }
+		}
+	}
+
 	private void checkPayMethodBankType() {
 		if(AonStringUtils.isBlank(paymethod.getValue())) return;
 		
 		PayMethod paymethodObj = this.paymethods.stream().filter(pm -> pm.getId().equals(Integer.parseInt(paymethod.getValue()))).findFirst().orElse(null);
 		if(null != paymethodObj) {
-			if(paymethodObj.getType().equals(PayMethodType.BANK_TRANSFER)) {
-				// Bancos de la empresa
-				getCompanyBanks(end -> {
-					banks.clearItems();
-					comapnyBanks.forEach(b -> banks.addItem(b.getFullName(), b.getId().toString()));
-			
-					iban.getElement().getStyle().setDisplay(Display.NONE);
-					banks.getElement().getStyle().clearDisplay();
-				});
-			} else if(paymethodObj.getType().equals(PayMethodType.NEGOTIABLE_DOCUMENT)) {
-				// Nuevo banco del cliente
-				banks.getElement().getStyle().setDisplay(Display.NONE);
-				iban.getElement().getStyle().clearDisplay();
-			} 
+			if(this.registrySource == RegistrySource.CUSTOMER) {
+				if(paymethodObj.getType().equals(PayMethodType.BANK_TRANSFER)) {
+					// Bancos de la empresa
+					getCompanyBanks(end -> {
+						banks.clearItems();
+						comapnyBanks.forEach(b -> banks.addItem(b.getFullName(), b.getId().toString()));
+				
+						iban.getElement().getStyle().setDisplay(Display.NONE);
+						bic.getElement().getStyle().setDisplay(Display.NONE);
+						bankAlias.getElement().getStyle().setDisplay(Display.NONE);
+						banks.getElement().getStyle().clearDisplay();
+					});
+				} else if(paymethodObj.getType().equals(PayMethodType.NEGOTIABLE_DOCUMENT)) {
+					// Nuevo banco del cliente
+					banks.getElement().getStyle().setDisplay(Display.NONE);
+					iban.getElement().getStyle().clearDisplay();
+					bic.getElement().getStyle().clearDisplay();
+					bankAlias.getElement().getStyle().clearDisplay();
+				} 
+			} else {
+				if(paymethodObj.getType().equals(PayMethodType.BANK_TRANSFER)) {
+					// Nuevo banco del cliente
+					banks.getElement().getStyle().setDisplay(Display.NONE);
+					iban.getElement().getStyle().clearDisplay();
+					bic.getElement().getStyle().clearDisplay();
+					bankAlias.getElement().getStyle().clearDisplay();
+					
+				} else if(paymethodObj.getType().equals(PayMethodType.NEGOTIABLE_DOCUMENT)) {
+					// Bancos de la empresa
+					getCompanyBanks(end -> {
+						banks.clearItems();
+						comapnyBanks.forEach(b -> banks.addItem(b.getFullName(), b.getId().toString()));
+				
+						iban.getElement().getStyle().setDisplay(Display.NONE);
+						bic.getElement().getStyle().setDisplay(Display.NONE);
+						bankAlias.getElement().getStyle().setDisplay(Display.NONE);
+						banks.getElement().getStyle().clearDisplay();
+					});
+				} 
+			}
 		}
 		
+	}
+	
+	private void removePlaceHolders() {
+		document.getTextBox().getElement().setPropertyString("placeholder", "");
+		name.getTextBox().getElement().setPropertyString("placeholder", "");
+		firstSurname.getTextBox().getElement().setPropertyString("placeholder", "");
+		secondSurname.getTextBox().getElement().setPropertyString("placeholder", "");
+		alias.getTextBox().getElement().setPropertyString("placeholder", "");
+		observation.getTextBox().getElement().setPropertyString("placeholder", "");
+		addressTB.getTextBox().getElement().setPropertyString("placeholder", "");
+		number.getTextBox().getElement().setPropertyString("placeholder", "");
+		address2TB.getTextBox().getElement().setPropertyString("placeholder", "");
+		address3TB.getTextBox().getElement().setPropertyString("placeholder", "");
+		zip.getTextBox().getElement().setPropertyString("placeholder", "");
+		city.getTextBox().getElement().setPropertyString("placeholder", "");
+		phoneValue.getTextBox().getElement().setPropertyString("placeholder", "");
+		phoneComment.getTextBox().getElement().setPropertyString("placeholder", "");
+		emailValue.getTextBox().getElement().setPropertyString("placeholder", "");
+		emailComment.getTextBox().getElement().setPropertyString("placeholder", "");
+		iban.getTextBox().getElement().setPropertyString("placeholder", "");
+		bic.getTextBox().getElement().setPropertyString("placeholder", "");
+		bankAlias.getTextBox().getElement().setPropertyString("placeholder", "");
 	}
 
 	private void checkNameByDocumentType() {
@@ -445,9 +570,9 @@ public class AonRegistryPanel extends HTMLPanel {
     	okButton.addClickHandler(e -> {
     		okButton.setEnabled(false);
     		
-    		if(null != customerFull) saveCustomerFull(okButton);
-    		else if(null != creditorFull) saveCreditorFull(okButton);
-    		else if(null != supplierFull) saveSupplierFull(okButton);
+    		if(this.registrySource == RegistrySource.CUSTOMER) saveCustomerFull(okButton);
+    		else if(this.registrySource == RegistrySource.CREDITOR) saveCreditorFull(okButton);
+    		else if(this.registrySource == RegistrySource.SUPPLIER) saveSupplierFull(okButton);
     		
     	});
     	buttonsPanel.add(okButton);
@@ -476,10 +601,20 @@ public class AonRegistryPanel extends HTMLPanel {
 					: ensureRegistryNameByPerson(name.getValue(), firstSurname.getValue(), secondSurname.getValue())
 		);
 		
+		if(!customerFull.getRegistry().getDocumentType().equals(DocumentType.CIF)) {
+			customerFull.getRegistry().setPersonFirstsurname(firstSurname.getValue());
+			customerFull.getRegistry().setPersonSecondsurname(secondSurname.getValue());
+		}
+		
 		customerFull.getRegistry().setAlias(alias.getValue());
 		customerFull.getRegistry().setStatus(RegistryStatus.ACTIVE);
-		customerFull.getRegistry().setScope(new Scope().setId(Integer.parseInt(scopeLB.getValue())));
+		
+		Scope scope = this.scopes.stream().findFirst().orElse(null);
+		customerFull.getRegistry().setScope(scope);
+		
 		customerFull.getRegistry().setTransaction(InvoiceTransactionType.safeValueOf(transactionLB.getValue()));
+		customerFull.getRegistry().setWithholding(irpf.getValue());
+		customerFull.getRegistry().setSurcharge(re.getValue());
 		
 		if(AonStringUtils.isNotBlank(observation.getValue()))
 			customerFull.getRegistry().setObservation(observation.getValue());
@@ -536,25 +671,19 @@ public class AonRegistryPanel extends HTMLPanel {
 		}
 		
 		if(!AonStringUtils.isBlank(iban.getValue())) {
-			String accountStr = iban.getValue();
-			accountStr = accountStr.replaceAll("\\W+", "");
-			accountStr = accountStr.toUpperCase();
-			iban.setValue(accountStr);
-		
-			String bankAlias = getBankAlias(accountStr);
-			String bankSwift = getBankSwift(accountStr);
-			
 			RegistryBank registryBank = new RegistryBank()
 				.setDomain(customerFull.getDomain())
 				.setRegistry(customerFull.getId())
-				.setAlias(bankAlias)
+				.setAlias(bankAlias.getValue())
 				.setActive(true)
-				.setBankAccount(AonStringUtils.isBlank(accountStr) ? null : new BankAccount(accountStr))
-				.setBic(bankSwift)
+				.setBankAccount(AonStringUtils.isBlank(iban.getValue()) ? null : new BankAccount(iban.getValue()))
+				.setBic(bic.getValue())
 				;
 			
 			customerFull.addBank(registryBank);
 		}
+		
+		AonMessagePanel.showLoading(messagePanel, "Guardando informaci\u00f3n...");
 		
 		registryService.save(domainName, domainId, user, customerFull, new AsyncCallback<CustomerFull>() {
 			
@@ -574,17 +703,20 @@ public class AonRegistryPanel extends HTMLPanel {
 							.setRegistry(result.getId())
 							.setPayMethod(AonStringUtils.isBlank(paymethod.getValue()) ? null : paymethods.stream().filter(pm -> pm.getId().equals(Integer.parseInt(paymethod.getValue()))).findFirst().orElse(null))
 							.setRbank(selectedBank)
-							.setNumberOfPymnts(pays.getValue().shortValue())
-							.setDaysToFirstPymnt(firstPay.getValue().shortValue())
-							.setDaysBetwenPymnts(betweenDays.getValue().shortValue())
-							.setPymntDays(payDayss.getValue())
+							.setNumberOfPymnts((short)1)
+							.setDaysToFirstPymnt((short)0)
+							.setDaysBetwenPymnts((short)0)
+							.setPymntDays("")
 							;
 							
+					AonMessagePanel.showLoading(messagePanel, "Guardando forma de pago...");
+					
 					commonService.saveRegistryPayMethod(domainName, domainId, user, rPayMethod, new AsyncCallback<RegistryPayMethod>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							AonMessagePanel.showError(messagePanel, caught.getMessage());
+							AonMessagePanel.showError(messagePanel, "Error forma de pago : " + caught.getMessage());
+							okButton.setEnabled(true);
 						}
 
 						@Override
@@ -598,7 +730,7 @@ public class AonRegistryPanel extends HTMLPanel {
 			
 			@Override
 			public void onFailure(Throwable error) {
-				AonMessagePanel.showError(messagePanel, error.getMessage());
+				AonMessagePanel.showError(messagePanel, "Error cliente : " + error.getMessage());
 				okButton.setEnabled(true);
 			}
 			
@@ -616,10 +748,20 @@ public class AonRegistryPanel extends HTMLPanel {
 					: ensureRegistryNameByPerson(name.getValue(), firstSurname.getValue(), secondSurname.getValue())
 		);
 		
+		if(!creditorFull.getRegistry().getDocumentType().equals(DocumentType.CIF)) {
+			creditorFull.getRegistry().setPersonFirstsurname(firstSurname.getValue());
+			creditorFull.getRegistry().setPersonSecondsurname(secondSurname.getValue());
+		}
+		
 		creditorFull.getRegistry().setAlias(alias.getValue());
 		creditorFull.getRegistry().setStatus(RegistryStatus.ACTIVE);
-		creditorFull.getRegistry().setScope(new Scope().setId(Integer.parseInt(scopeLB.getValue())));
+		
+		Scope scope = this.scopes.stream().findFirst().orElse(null);
+		creditorFull.getRegistry().setScope(scope);
+		
 		creditorFull.getRegistry().setTransaction(InvoiceTransactionType.safeValueOf(transactionLB.getValue()));
+		creditorFull.getRegistry().setWithholding(irpf.getValue());
+		creditorFull.getRegistry().setVatAccrualPayment(criterio.getValue());
 		
 		if(AonStringUtils.isNotBlank(observation.getValue()))
 			creditorFull.getRegistry().setObservation(observation.getValue());
@@ -676,25 +818,19 @@ public class AonRegistryPanel extends HTMLPanel {
 		}
 		
 		if(!AonStringUtils.isBlank(iban.getValue())) {
-			String accountStr = this.iban.getValue();
-			accountStr = accountStr.replaceAll("\\W+", "");
-			accountStr = accountStr.toUpperCase();
-			iban.setValue(accountStr);
-		
-			String bankAlias = getBankAlias(accountStr);
-			String bankSwift = getBankSwift(accountStr);
-			
 			RegistryBank registryBank = new RegistryBank()
 				.setDomain(creditorFull.getDomain())
 				.setRegistry(creditorFull.getId())
-				.setAlias(bankAlias)
+				.setAlias(bankAlias.getValue())
 				.setActive(true)
-				.setBankAccount(AonStringUtils.isBlank(accountStr) ? null : new BankAccount(accountStr))
-				.setBic(bankSwift)
+				.setBankAccount(AonStringUtils.isBlank(iban.getValue()) ? null : new BankAccount(iban.getValue()))
+				.setBic(bic.getValue())
 				;
 			
-			customerFull.addBank(registryBank);
+			creditorFull.addBank(registryBank);
 		}
+		
+		AonMessagePanel.showLoading(messagePanel, "Guardando informaci\u00f3n...");
 		
 		registryService.save(domainName, domainId, user, creditorFull, new AsyncCallback<CreditorFull>() {
 			
@@ -714,17 +850,20 @@ public class AonRegistryPanel extends HTMLPanel {
 							.setRegistry(result.getId())
 							.setPayMethod(AonStringUtils.isBlank(paymethod.getValue()) ? null : paymethods.stream().filter(pm -> pm.getId().equals(Integer.parseInt(paymethod.getValue()))).findFirst().orElse(null))
 							.setRbank(selectedBank)
-							.setNumberOfPymnts(pays.getValue().shortValue())
-							.setDaysToFirstPymnt(firstPay.getValue().shortValue())
-							.setDaysBetwenPymnts(betweenDays.getValue().shortValue())
-							.setPymntDays(payDayss.getValue())
+							.setNumberOfPymnts((short)1)
+							.setDaysToFirstPymnt((short)0)
+							.setDaysBetwenPymnts((short)0)
+							.setPymntDays("")
 							;
 							
+					AonMessagePanel.showLoading(messagePanel, "Guardando forma de pago...");
+					
 					commonService.saveRegistryPayMethod(domainName, domainId, user, rPayMethod, new AsyncCallback<RegistryPayMethod>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							AonMessagePanel.showError(messagePanel, caught.getMessage());
+							AonMessagePanel.showError(messagePanel, "Error forma de pago : " + caught.getMessage());
+							okButton.setEnabled(true);
 						}
 
 						@Override
@@ -738,7 +877,7 @@ public class AonRegistryPanel extends HTMLPanel {
 			
 			@Override
 			public void onFailure(Throwable error) {
-				AonMessagePanel.showError(messagePanel, error.getMessage());
+				AonMessagePanel.showError(messagePanel, "Error acreedor : " + error.getMessage());
 				okButton.setEnabled(true);
 			}
 			
@@ -756,10 +895,20 @@ public class AonRegistryPanel extends HTMLPanel {
 					: ensureRegistryNameByPerson(name.getValue(), firstSurname.getValue(), secondSurname.getValue())
 		);
 		
+		if(!supplierFull.getRegistry().getDocumentType().equals(DocumentType.CIF)) {
+			supplierFull.getRegistry().setPersonFirstsurname(firstSurname.getValue());
+			supplierFull.getRegistry().setPersonSecondsurname(secondSurname.getValue());
+		}
+		
 		supplierFull.getRegistry().setAlias(alias.getValue());
 		supplierFull.getRegistry().setStatus(RegistryStatus.ACTIVE);
-		supplierFull.getRegistry().setScope(new Scope().setId(Integer.parseInt(scopeLB.getValue())));
+
+		Scope scope = this.scopes.stream().findFirst().orElse(null);
+		supplierFull.getRegistry().setScope(scope);
+		
 		supplierFull.getRegistry().setTransaction(InvoiceTransactionType.safeValueOf(transactionLB.getValue()));
+		supplierFull.getRegistry().setWithholding(irpf.getValue());
+		supplierFull.getRegistry().setVatAccrualPayment(criterio.getValue());
 		
 		if(AonStringUtils.isNotBlank(observation.getValue()))
 			supplierFull.getRegistry().setObservation(observation.getValue());
@@ -816,25 +965,19 @@ public class AonRegistryPanel extends HTMLPanel {
 		}
 		
 		if(!AonStringUtils.isBlank(iban.getValue())) {
-			String accountStr = this.iban.getValue();
-			accountStr = accountStr.replaceAll("\\W+", "");
-			accountStr = accountStr.toUpperCase();
-			iban.setValue(accountStr);
-		
-			String bankAlias = getBankAlias(accountStr);
-			String bankSwift = getBankSwift(accountStr);
-			
 			RegistryBank registryBank = new RegistryBank()
 				.setDomain(supplierFull.getDomain())
 				.setRegistry(supplierFull.getId())
-				.setAlias(bankAlias)
+				.setAlias(bankAlias.getValue())
 				.setActive(true)
-				.setBankAccount(AonStringUtils.isBlank(accountStr) ? null : new BankAccount(accountStr))
-				.setBic(bankSwift)
+				.setBankAccount(AonStringUtils.isBlank(iban.getValue()) ? null : new BankAccount(iban.getValue()))
+				.setBic(bic.getValue())
 				;
 			
 			supplierFull.addBank(registryBank);
 		}
+		
+		AonMessagePanel.showLoading(messagePanel, "Guardando informaci\u00f3n...");
 		
 		registryService.save(domainName, domainId, user, supplierFull, new AsyncCallback<SupplierFull>() {
 			
@@ -854,17 +997,20 @@ public class AonRegistryPanel extends HTMLPanel {
 							.setRegistry(result.getId())
 							.setPayMethod(AonStringUtils.isBlank(paymethod.getValue()) ? null : paymethods.stream().filter(pm -> pm.getId().equals(Integer.parseInt(paymethod.getValue()))).findFirst().orElse(null))
 							.setRbank(selectedBank)
-							.setNumberOfPymnts(pays.getValue().shortValue())
-							.setDaysToFirstPymnt(firstPay.getValue().shortValue())
-							.setDaysBetwenPymnts(betweenDays.getValue().shortValue())
-							.setPymntDays(payDayss.getValue())
+							.setNumberOfPymnts((short)1)
+							.setDaysToFirstPymnt((short)0)
+							.setDaysBetwenPymnts((short)0)
+							.setPymntDays("")
 							;
 							
+					AonMessagePanel.showLoading(messagePanel, "Guardando forma de pago...");
+					
 					commonService.saveRegistryPayMethod(domainName, domainId, user, rPayMethod, new AsyncCallback<RegistryPayMethod>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							AonMessagePanel.showError(messagePanel, caught.getMessage());
+							AonMessagePanel.showError(messagePanel, "Error forma de pago : " + caught.getMessage());
+							okButton.setEnabled(true);
 						}
 
 						@Override
@@ -878,7 +1024,7 @@ public class AonRegistryPanel extends HTMLPanel {
 			
 			@Override
 			public void onFailure(Throwable error) {
-				AonMessagePanel.showError(messagePanel, error.getMessage());
+				AonMessagePanel.showError(messagePanel, "Error proveedor : " + error.getMessage());
 				okButton.setEnabled(true);
 			}
 			
@@ -932,7 +1078,7 @@ public class AonRegistryPanel extends HTMLPanel {
 	
 				@Override
 				public void onSuccess(LinkedList<RegistryBank> rBanksDB) {
-					comapnyBanks = rBanksDB;
+					comapnyBanks = rBanksDB.stream().filter(b -> b.isActive()).collect(Collectors.toCollection(LinkedList::new));
 					end.accept(rBanksDB);
 				}
 			});

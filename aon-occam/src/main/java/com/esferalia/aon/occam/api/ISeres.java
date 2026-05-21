@@ -1,6 +1,9 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.Date;
+
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.seres.SeresInfo;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
@@ -14,6 +17,6 @@ public interface ISeres {
 	public EdiCodes getEdiCodes(AONContext ctx, Delivery delivery);
 	public EdiCodes getEdiCodes(AONContext ctx, Invoice invoice);
 	
-	public double getUnitPrice(AONContext ctx, Integer customer, Integer item);
+	public double getUnitPrice(AONContext ctx, Integer customer, Date date, Item item);
 
 }

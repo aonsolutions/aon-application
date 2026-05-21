@@ -2,6 +2,7 @@ package com.code.aon.aio.servlet;
 
 import static com.code.aon.aio.servlet.LoginServlet.LOGIN_SERVLET_FAIL_ATTRIBUTE;
 import static com.code.aon.aio.servlet.LoginServlet.getRealRequest;
+import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 
 import java.io.IOException;
@@ -21,11 +22,11 @@ import org.apache.catalina.Session;
 import org.apache.catalina.connector.Request;
 
 import com.code.aon.aio.controller.AppController;
-import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.LocaleElement;
 import com.code.aon.ui.common.controller.ConfigurationController;
+import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
@@ -36,7 +37,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import es.gob.afirma.core.misc.http.HttpError;
 import jakarta.el.ELContext;
 import jakarta.el.ExpressionFactory;
-import jakarta.faces.view.facelets.Facelet;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -77,6 +77,7 @@ public class JsfAppServlet extends HttpServlet {
 			initConfigurationController(req);
 			initLoggedUser(req);
 			initElExpression(req);
+			initCompanyController(req);
 
 			FacesContext facesContext = FacesContext.getCurrentInstance();
 			ExternalContext externalContext = facesContext.getExternalContext();
@@ -116,6 +117,10 @@ public class JsfAppServlet extends HttpServlet {
 		appController.setReadOnly(Boolean.parseBoolean(req.getParameter(READ_ONLY)));
 	}
 	
+	private void initCompanyController(HttpServletRequest req) {
+    	CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+    	controller.obtainCompany();
+	}
 	
 	private void initLoggedUser(HttpServletRequest req){
 		//This is the way to init logged user, AON way :-(  
