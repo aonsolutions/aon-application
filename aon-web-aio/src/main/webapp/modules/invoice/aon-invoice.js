@@ -548,7 +548,7 @@ export class AonInvoice extends AonElement {
 					changeType.fn = () => this.changeType();
 					moreActions.push(changeType);
 				}
-				if (!this.getInvoice().isRawdoc() && this.getInvoice().isEmitida()) {
+				if (!this.getInvoice().isProforma() && this.getInvoice().isEmitida()) {
 					let sign = ACTION.SIGN_INVOICE;
 					sign.permission = true;
 					sign.backgrounColor = INVOICE.color;

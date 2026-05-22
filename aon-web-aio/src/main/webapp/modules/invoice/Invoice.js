@@ -407,6 +407,10 @@ export class Invoice {
       || this.isProcessed() || this.isProcessing();
   }
 
+  isProforma() {
+    return this.isRawdoc() || this.number < 0;
+  }
+
   isOcrStatus(...publicStates) {
   	return publicStates.some( publicState =>  this.status.toLowerCase() === CONSTANT.OCR + publicState.toLowerCase() ); 
   }
