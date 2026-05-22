@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.EnterpriseActivityTa
 import com.esferalia.aon.gwt.common.client.widget.solutions.MediaTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.RDirStaffTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.RecordDataTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.RegistryGeneralDataPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.RegistryPaymethodBanksTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.WorkplaceTable;
 import com.esferalia.aon.gwt.common.shared.Dni;
@@ -92,7 +93,7 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 	
 	private AonCustomListBox statusLB = new AonCustomListBox("Estado");
 	private AonCustomTextBox mainPhone = new AonCustomTextBox("Telefono");
-	private AonCustomTextBox mainEmail = new AonCustomTextBox("Eamil");
+	private AonCustomTextBox mainEmail = new AonCustomTextBox("Email");
 	private AonCustomTextBox mainAddress = new AonCustomTextBox("Direcci\u00f3n");
 	
 	private HTMLPanel rightInfoTable;
@@ -108,6 +109,8 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 	private RDirStaffTable rDirStaffTable;
 	private RecordDataTable recordDataTable;
 	private RegistryPaymethodBanksTable registryPaymethodBanksTable;
+	private RegistryGeneralDataPanel registryGeneralDataPanel;
+	//private AonRegistryNotes aonRegistryNotes;
 	
 	private CompanyFull company;
 	private Registry registry;
@@ -166,7 +169,9 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 		container.addStyleName(AON.CSS.aonFlexColumn2());
 		container.getElement().getStyle().setProperty("padding", "1rem");
 		add(container);
-
+		
+		//aonRegistryNotes = new AonRegistryNotes(options.getDomainName(), options.getDomain(), options.getUser(), registryId, NoteType.CUSTOMER_STATUS.name());
+		
 		getRegistryBySource();
 	}
 
@@ -333,10 +338,23 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 			HTMLPanel leftInfoTable2 = createTable();
 			leftInfoTable2.getElement().getStyle().setProperty("flex", "1");
 			
+			RegistryAddress mainAddresslValue = customerFull.getMainAddress();
+			mainAddress.setEnable(false);
+			if(null != mainAddresslValue)
+				mainAddress.setValue(mainAddresslValue.getFullAddress());
+
+			leftInfoTable2.add(createRow(mainAddress));
+
+			gridPanel2.add(leftInfoTable2);
+
+			HTMLPanel rightInfoTable2 = createTable();
+			rightInfoTable2.getElement().getStyle().setProperty("flex", "1");
+			
 			statusLB.clearItems();
 			for(int i=0; i< RegistryStatus.values().length; i++) {
 				statusLB.addItem(RegistryStatus.values()[i].getDescription(), RegistryStatus.values()[i].name());
 			}
+			statusLB.addChangeHandler(e -> customerFull.getRegistry().setStatus(RegistryStatus.safeValueOf(statusLB.getValue())));
 			
 			RegistryMedia mainPhonValue = customerFull.getMedias().stream().filter(m -> m.getMedia().equals(MediaType.FIXED_PHONE)).findFirst().orElse(null);
 			mainPhone.setEnable(false);
@@ -348,25 +366,31 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 			if(null != mainEmailValue)
 				mainEmail.setValue(mainEmailValue.getValue());
 			
-			leftInfoTable2.add(createRow(statusLB, mainPhone, mainEmail));
-
-			gridPanel2.add(leftInfoTable2);
-
-			HTMLPanel rightInfoTable2 = createTable();
-			rightInfoTable2.getElement().getStyle().setProperty("flex", "1");
-			
-			RegistryAddress mainAddresslValue = customerFull.getMainAddress();
-			mainAddress.setEnable(false);
-			if(null != mainEmailValue)
-				mainAddress.setValue(mainAddresslValue.getFullAddress());
-
-			rightInfoTable2.add(createRow(mainAddress));
+			rightInfoTable2.add(createRow(mainPhone, mainEmail, statusLB));
 
 			gridPanel2.add(rightInfoTable2);
 			
 			gridPanel.getElement().getStyle().setProperty("margin", "0 1rem");
 			
 			container.add(gridPanel2);
+		}
+		
+		if (!this.registrySource.equals(RegistrySource.ENVIROMENT) && !this.registrySource.equals(RegistrySource.COMPANY)) {
+			registryGeneralDataPanel = new RegistryGeneralDataPanel(options.getDomainName(), options.getDomain(), options.getUser(), options.getConfiguration().getAvailableScopes(), customerFull, this.registrySource) {
+				
+				@Override
+				protected void onShowErrorMessage(String errorMessage) {
+					AonMessagePanel.showError(messagePanel, errorMessage);
+				}
+
+				@Override
+				protected void onShowSuccess(String successMessage) {
+					AonMessagePanel.showSuccess(messagePanel, successMessage);
+				}
+	
+			};
+			
+			tablayoutPanel.add(registryGeneralDataPanel, "D. Generales");
 		}
 		
 		if (!this.registrySource.equals(RegistrySource.ENVIROMENT)) {
@@ -640,6 +664,10 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 		AonMessagePanel.showLoading(messagePanel, "Guardando cliente");
 		
 		customerFull.getRegistry().copy(registry);
+		
+		if(!this.registrySource.equals(RegistrySource.ENVIROMENT) && !this.registrySource.equals(RegistrySource.COMPANY) && null != registryGeneralDataPanel) {
+			registryGeneralDataPanel.onSave(customerFull);
+		}
 		
 		registryService.save(options.getDomainName(), options.getDomain(), options.getUser(), customerFull, new AsyncCallback<CustomerFull>() {
 			

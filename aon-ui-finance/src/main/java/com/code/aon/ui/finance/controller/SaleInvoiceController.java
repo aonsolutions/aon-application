@@ -74,6 +74,7 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -97,6 +98,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorException;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.mutable.MutableObject;
@@ -141,7 +143,6 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	private boolean lroe;
 	private boolean anular;
-	
 	
 	public SaleInvoiceController() {
 		setInvoiceAddressControllerName(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
@@ -1301,6 +1302,17 @@ public class SaleInvoiceController extends InvoiceController {
 			Domain domain = getDomain();
 			User user = getUser();
 			AON.saveFacturaeCodeAsignacion(domain, user, getInvoice().getId(), getInvoice().getRegistry().getId(), codeAsignacion);
+		}
+	}
+	
+	
+	@Override
+	public void initSeries() {
+		super.initSeries();
+		ApplicationParameter ap = AON.getApplicationParameter(getOccam(), AppParam.ACC_DEFAULT_INVOICE_SERIES);
+		String series = ap != null && ap.getValue() != null ? ap.getValue() :"";
+		if(AonStringUtils.isNotBlank(series)) {
+			getInvoice().setSeries(series);
 		}
 	}
 }
