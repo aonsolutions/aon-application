@@ -1422,8 +1422,24 @@ CREATE TABLE `cnae` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `code` varchar(5) CHARACTER SET latin1 COLLATE latin1_spanish_ci NOT NULL COMMENT 'Codigo del CNAE',
   `title` varchar(255) CHARACTER SET latin1 COLLATE latin1_spanish_ci NOT NULL COMMENT 'Titulo del CNAE',
+  `cnae2009_code` varchar(5) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'CNAE-2009 Codigo',
+  `cnae2009_title` varchar(255) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'CNAE-2009 Titulo',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CNAE';
+
+#
+# Table structure for table `cnae2025_rate`
+#
+
+CREATE TABLE `cnae2025_rate` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `code` varchar(5) NOT NULL COMMENT 'Codigo CNAE 2025',
+  `start_date` date NOT NULL DEFAULT '2026-01-01' COMMENT 'Fecha de inicio ',
+  `end_date` date DEFAULT NULL COMMENT 'Fecha de finalizacion',
+  `it_amount` double DEFAULT '0' COMMENT 'Importe por Incapacidad Temporal (I.T.)',
+  `ims_amount` double DEFAULT '0' COMMENT 'Importe por Incapacidad Permanente, Muerte y Supervivencia (I.M.S.)',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tarifas de primas para I.T e I.M.S (RDL 3/2026)';
 
 #
 # Table structure for table `cnae2009`

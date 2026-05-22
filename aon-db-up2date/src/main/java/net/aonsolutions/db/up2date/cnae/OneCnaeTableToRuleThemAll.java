@@ -211,6 +211,12 @@ public class OneCnaeTableToRuleThemAll implements Update {
 				});
 				
 				
+				config.dsl()
+				.delete(CNAE)
+				.where(CNAE2009_CODE.isNull())
+				.execute();
+				
+				
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 				
