@@ -1,7 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.registry;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -40,11 +42,13 @@ import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -93,8 +97,11 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 	
 	private AonCustomListBox statusLB = new AonCustomListBox("Estado");
 	private AonCustomTextBox mainPhone = new AonCustomTextBox("Telefono");
+	private AonCustomListBox phoneLB = new AonCustomListBox("Telefonos");
 	private AonCustomTextBox mainEmail = new AonCustomTextBox("Email");
+	private AonCustomListBox emailLB = new AonCustomListBox("Emails");
 	private AonCustomTextBox mainAddress = new AonCustomTextBox("Direcci\u00f3n");
+	private AonCustomListBox addressLB = new AonCustomListBox("Direcciones");
 	
 	private HTMLPanel rightInfoTable;
 
@@ -338,12 +345,9 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 			HTMLPanel leftInfoTable2 = createTable();
 			leftInfoTable2.getElement().getStyle().setProperty("flex", "1");
 			
-			RegistryAddress mainAddresslValue = customerFull.getMainAddress();
-			mainAddress.setEnable(false);
-			if(null != mainAddresslValue)
-				mainAddress.setValue(mainAddresslValue.getFullAddress());
+			getAddresses();
 
-			leftInfoTable2.add(createRow(mainAddress));
+			leftInfoTable2.add(createRow(mainAddress, addressLB));
 
 			gridPanel2.add(leftInfoTable2);
 
@@ -355,18 +359,15 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 				statusLB.addItem(RegistryStatus.values()[i].getDescription(), RegistryStatus.values()[i].name());
 			}
 			statusLB.addChangeHandler(e -> customerFull.getRegistry().setStatus(RegistryStatus.safeValueOf(statusLB.getValue())));
+			statusLB.setValue(customerFull.getRegistry().getStatus().name());
+			setStatusColor(statusLB.getListBox(), customerFull.getRegistry().getStatus());
+			statusLB.getElement().getStyle().setProperty("max-width", "7rem");
 			
-			RegistryMedia mainPhonValue = customerFull.getMedias().stream().filter(m -> m.getMedia().equals(MediaType.FIXED_PHONE)).findFirst().orElse(null);
-			mainPhone.setEnable(false);
-			if(null != mainPhonValue)
-				mainPhone.setValue(mainPhonValue.getValue());
+			getPhones();
 			
-			RegistryMedia mainEmailValue = customerFull.getMedias().stream().filter(m -> m.getMedia().equals(MediaType.EMAIL)).findFirst().orElse(null);
-			mainEmail.setEnable(false);
-			if(null != mainEmailValue)
-				mainEmail.setValue(mainEmailValue.getValue());
+			getEmails();
 			
-			rightInfoTable2.add(createRow(mainPhone, mainEmail, statusLB));
+			rightInfoTable2.add(createRow(mainPhone, phoneLB, mainEmail, emailLB, statusLB));
 
 			gridPanel2.add(rightInfoTable2);
 			
@@ -510,7 +511,63 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 			}
 		});
 	}
+
+	private void getAddresses() {
+		if(customerFull.getAddresses().size() > 1) {
+			addressLB = new AonCustomListBox("Direcciones (" + customerFull.getAddresses().size() + ")");
+			customerFull.getAddresses().forEach(a -> addressLB.addItem(a.getFullAddress() + " " + a.getFullAddress2()));
+			
+			addressLB.getElement().getStyle().clearDisplay();
+			mainAddress.getElement().getStyle().setDisplay(Display.NONE);
+		} else {
+			RegistryAddress mainAddresslValue = customerFull.getMainAddress();
+			mainAddress.setEnable(false);
+			if(null != mainAddresslValue)
+				mainAddress.setValue(mainAddresslValue.getFullAddress());
+			
+			mainAddress.getElement().getStyle().clearDisplay();
+			addressLB.getElement().getStyle().setDisplay(Display.NONE);
+		}
+	}
+
+	private void getPhones() {
+		List<RegistryMedia> medias = customerFull.getMedias().stream().filter(m -> m.getMedia().equals(MediaType.CELLULAR) || m.getMedia().equals(MediaType.FIXED_PHONE)).collect(Collectors.toList());
+		if(medias.size() > 1) {
+			phoneLB = new AonCustomListBox("Telefonos (" + medias.size() + ")");
+			medias.forEach(a -> phoneLB.addItem(a.getValue() + ( AonStringUtils.isBlank( a.getComment()) ? "" : "( " + a.getComment() + " )") ));
+			
+			phoneLB.getElement().getStyle().clearDisplay();
+			mainPhone.getElement().getStyle().setDisplay(Display.NONE);
+		} else {
+			RegistryMedia mainPhonValue = customerFull.getMedias().stream().filter(m -> m.getMedia().equals(MediaType.FIXED_PHONE)).findFirst().orElse(null);
+			mainPhone.setEnable(false);
+			if(null != mainPhonValue)
+				mainPhone.setValue(mainPhonValue.getValue());
+			
+			mainPhone.getElement().getStyle().clearDisplay();
+			phoneLB.getElement().getStyle().setDisplay(Display.NONE);
+		}
+	}
 	
+	private void getEmails() {
+		List<RegistryMedia> medias = customerFull.getMedias().stream().filter(m -> m.getMedia().equals(MediaType.EMAIL)).collect(Collectors.toList());
+		if(medias.size() > 1) {
+			emailLB = new AonCustomListBox("Emails (" + medias.size() + ")");
+			medias.forEach(a -> emailLB.addItem(a.getValue() + ( AonStringUtils.isBlank( a.getComment()) ? "" : "( " + a.getComment() + " )") ));
+			
+			emailLB.getElement().getStyle().clearDisplay();
+			mainEmail.getElement().getStyle().setDisplay(Display.NONE);
+		} else {
+			RegistryMedia mainEmailValue = customerFull.getMedias().stream().filter(m -> m.getMedia().equals(MediaType.EMAIL)).findFirst().orElse(null);
+			mainEmail.setEnable(false);
+			if(null != mainEmailValue)
+				mainEmail.setValue(mainEmailValue.getValue());
+			
+			mainEmail.getElement().getStyle().clearDisplay();
+			emailLB.getElement().getStyle().setDisplay(Display.NONE);
+		}
+	}
+
 	private void createNameByDocumentType() {
 		rightInfoTable.clear();
 
@@ -545,6 +602,20 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 			});
 			
 			rightInfoTable.add(createRow(name, firstSurname, secondSurname));
+		}
+	}
+	
+	private void setStatusColor(ListBox lb, RegistryStatus status) {
+		switch (status) {
+			case INACTIVE: 
+				lb.getElement().getStyle().setProperty("border-color", "orange");
+				break;
+			case BLOCKED: 
+				lb.getElement().getStyle().setProperty("border-color", "red");
+				break;
+			default:
+				break;
+			
 		}
 	}
 

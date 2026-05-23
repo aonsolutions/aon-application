@@ -132,6 +132,7 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 		this.domain = domain;
 		this.user = user;
 		this.registry = registry;
+		this.registrySource = registrySource;
 		
 		content = new HTMLPanel("");
 		content.addStyleName(AON.CSS.aonFlexColumn2());
@@ -332,27 +333,31 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 	private void checkPayMethodBankType() {
 		if(AonStringUtils.isBlank(paymethod.getValue())) return;
 		
-		PayMethod paymethodObj = payMethods.stream().filter(pm -> pm.getId().equals(Integer.parseInt(paymethod.getValue()))).findFirst().orElse(null);
+		PayMethod paymethodObj = payMethods.stream().filter(p -> p.getId().equals(Integer.parseInt(paymethod.getValue()))).findFirst().orElse(null);
 		if(null != paymethodObj) {
 			if(this.registrySource == RegistrySource.CUSTOMER) {
 				if(paymethodObj.getType().equals(PayMethodType.BANK_TRANSFER)) {
 					// Bancos de la empresa
 					banks.clearItems();
+					banks.addItem("-", "");
 					rBanks.forEach(b -> banks.addItem(b.getFullName(), b.getId().toString()));
 				} else if(paymethodObj.getType().equals(PayMethodType.NEGOTIABLE_DOCUMENT)) {
 					// Bancos del registry
 					banks.clearItems();
+					banks.addItem("-", "");
 					registryBanks.forEach(b -> banks.addItem(b.getFullName(), b.getId().toString()));
 				} 
 			} else {
 				if(paymethodObj.getType().equals(PayMethodType.BANK_TRANSFER)) {
 					// Bancos del registry
 					banks.clearItems();
+					banks.addItem("-", "");
 					registryBanks.forEach(b -> banks.addItem(b.getFullName(), b.getId().toString()));
 					
 				} else if(paymethodObj.getType().equals(PayMethodType.NEGOTIABLE_DOCUMENT)) {
 					// Bancos de la empresa
 					banks.clearItems();
+					banks.addItem("-", "");
 					rBanks.forEach(b -> banks.addItem(b.getFullName(), b.getId().toString()));
 				} 
 			}
@@ -596,8 +601,9 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 
 									@Override
 									public void onSuccess(List<RegistryPayMethod> registryPayMethodsDB) {
-										if(!registryPayMethodsDB.isEmpty())
-											rPayMethod = registryPayMethodsDB.get(0);
+										if(!registryPayMethodsDB.isEmpty()) {
+											rPayMethod = registryPayMethodsDB.get(0);	
+										}
 										
 										COMMON_SERVICE.getRregistryBanks(domainName, domain, user, registry, new AsyncCallback<List<RegistryBank>>() {
 
@@ -608,7 +614,7 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 
 											@Override
 											public void onSuccess(List<RegistryBank> rBanksDB) {
-												registryBanks = rBanksDB.stream().filter(b -> b.isActive()).collect(Collectors.toCollection(LinkedList::new));
+												registryBanks = rBanksDB.stream().filter(b -> (showActiveBanks && b.isActive()) || !showActiveBanks).collect(Collectors.toList());
 												
 												end.accept(null);
 											}
