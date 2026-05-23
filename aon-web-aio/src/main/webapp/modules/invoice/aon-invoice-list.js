@@ -404,7 +404,6 @@ export class AonInvoiceList extends AonElement {
 		if(this.getFilter().status === 'inbox') {
 			toolbar.addSeparator();
 			aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.toTrash());
-			aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
 		} else if(this.getFilter().status === CONSTANT.REJECTED){
 			toolbar.addSeparator();
 			aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.toTrash());
@@ -718,25 +717,26 @@ export class AonInvoiceList extends AonElement {
 	  		actions = [restore, deleteForever];
 	  	}  else if(inv.isInbox() && number === 1){
 			if(this.getDur().isInvoiceManager()){
-				actions = [download, addComment, toTrash, reject, rectify, duplicate];
+				actions = [addComment, toTrash, reject, rectify, duplicate];
 	  		} else {
-	    	  actions = [download, addComment, toTrash, rectify, duplicate];
+	    	  actions = [addComment, toTrash, rectify, duplicate];
 	    	}
 		} else if(inv.isInbox() && number > 1){
 			if(this.getDur().isInvoiceManager()){
-	    		actions = [download, toTrash, reject];
+	    		actions = [toTrash, reject];
 	  		} else {
-	 			actions = [download, toTrash];
+	 			actions = [toTrash];
 	    	}
-		} else {
+		} else if(!inv.isRawdoc()){
 			actions = [send, download];
 		}
 	  	if(!inv.file && !inv.isEmitida() && number === 1){
 	  		actions.push(addFile);
 	  	}
-
-	  	d.setMenuOptions(actions, top, left);
-	  	d.open();
+		if(actions.length > 0) {
+		  	d.setMenuOptions(actions, top, left);
+		  	d.open();
+		}
 	}
 
 	getFilter() {

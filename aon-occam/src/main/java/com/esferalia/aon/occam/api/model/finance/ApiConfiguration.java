@@ -18,6 +18,7 @@ public class ApiConfiguration implements Serializable {
 	private Administration administration;
 	private Integer defaultVat;
 	private Integer defaultRetention;
+	private String defaultSeries;
 	private List<Tax> taxes;
 	private List<Series> series;
 	private List<Workplace> workplaces;
@@ -54,6 +55,15 @@ public class ApiConfiguration implements Serializable {
 	}
 	public ApiConfiguration setDefaultRetention(Integer defaultRetention) {
 		this.defaultRetention = defaultRetention;
+		return this;
+	}
+	
+	public String getDefaultSeries() {
+		return defaultSeries;
+	}
+	
+	public ApiConfiguration setDefaultSeries(String defaultSeries) {
+		this.defaultSeries = defaultSeries;
 		return this;
 	}
 	

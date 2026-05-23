@@ -196,6 +196,7 @@ public final class IJsonNames {
 	public static final String DEDUCTIBLE_QUOTA_EDITED = "deductibleQuotaEdited";
 	public static final String DEFAULT_CERTIFICATE = "defaultCertificate";
 	public static final String DEFAULT_RETENTION_TAX = "defaultRetentionTax";
+	public static final String DEFAULT_SERIES = "defaultSeries";
 	public static final String DEFAULT_VAT_TAX = "defaultVatTax";
 	public static final String DEFINED_USERS = "definedUsers";
 	public static final String DELETE = "delete";
