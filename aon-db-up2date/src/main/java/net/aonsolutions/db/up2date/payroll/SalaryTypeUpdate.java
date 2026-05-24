@@ -49,6 +49,8 @@ public class SalaryTypeUpdate implements Update {
 	
 	private String domainName;
 
+	public static final SalaryTypeUpdate ALL = 
+			new SalaryTypeUpdate("%");
 	public static final SalaryTypeUpdate FINANCIALHEALTH = 
 			new SalaryTypeUpdate("%financialhealth.aonsolutions.org");
 
