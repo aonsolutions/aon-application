@@ -35,6 +35,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.Trio;
 import com.esferalia.aon.payroll.enumeration.CCCType;
@@ -288,7 +289,7 @@ public class JooqEnterprise {
 			.and(
 				((SALARY.START_DATE.ge(findPeriod).and(SALARY.END_DATE.le(findEndPeriod)))
 				.or(SALARY.END_DATE.between(findPeriod, findEndPeriod)))
-				.or(SALARY.CHARGE_DATE.between(findPeriod, findEndPeriod).and(SALARY.TYPE.eq((byte)3)))
+				.or(SALARY.CHARGE_DATE.between(findPeriod, findEndPeriod).and(SALARY.TYPE.eq(SalaryType.DELAY.value() )))
 				
 			)
 			//.and(SALARY.TOTAL_PAYMENT.gt(0.00))

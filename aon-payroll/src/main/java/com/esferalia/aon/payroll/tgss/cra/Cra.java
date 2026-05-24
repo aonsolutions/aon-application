@@ -26,6 +26,7 @@ import org.jooq.tools.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Cra {
@@ -138,7 +139,7 @@ public class Cra {
 					.and(SALARY.END_DATE.le(endDateSQL))
 					.and(SALARY.CCC.eq(entry.getValue()))
 					.and(CONTRACT.ENTERPRISE_CCC.eq(entry.getKey()))
-					.and(SALARY.TYPE.eq((byte)0))
+					.and(SALARY.TYPE.eq((byte)SalaryType.SALARY.ordinal()))
 					.and(SALARY.SS_REGIME.notEqual((byte)3).and(CONTRACT.SS_REGIME.notEqual((byte)3)))
 					.and(SALARY.TOTAL_PAYMENT.gt(0.00))
 					.and(SALARY.DOMAIN.in(domainChilds))

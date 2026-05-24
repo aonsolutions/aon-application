@@ -308,7 +308,19 @@ public class EnterprisePayrollExcelTestCase {
 				String employee = pokemon.name();
 				EnterprisePayroll enterprisePayroll = new EnterprisePayroll();
 				enterprisePayroll.workplace = workplace;
-				enterprisePayroll.salaryType = typeOf(((Double)number.randomDouble(0, 0, SalaryType.L13.ordinal())).byteValue() , SalaryType.class);
+				SalaryType [] salaryTypes = {
+					SalaryType.SALARY,	
+					SalaryType.EXTRA,	
+					SalaryType.SETTLE,	
+					SalaryType.DELAY,	
+					SalaryType.PROCEDURAL,	
+
+					SalaryType.L00,
+					SalaryType.L02,
+					SalaryType.L03,
+					SalaryType.L13,
+				};
+				enterprisePayroll.salaryType = salaryTypes[(int)number.randomDouble(0, 0, salaryTypes.length - 1)];
 				if (number.numberBetween(1, 100) <= 20) {
 					enterprisePayroll.salaryType = null;
 				}

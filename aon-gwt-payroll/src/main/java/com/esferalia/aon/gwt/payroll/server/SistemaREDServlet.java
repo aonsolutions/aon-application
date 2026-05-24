@@ -300,6 +300,26 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			} catch ( Exception e ) {
 			}
 			
+			try {	
+				SistemaRED2AON.addCalcs(
+					userLogin, 
+					domainName, 
+					domainId, 
+					certificate.getData(), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					ccc.getRegime(), 
+					ccc.getCode(), 
+					startDate, 
+					LiquidationType.L02_COMPLEMENTARIA_POR_SALARIOS_TRAM_NORMAL,
+					nafs,
+					calcsCallback
+					);
+
+				
+			} catch ( Exception e ) {
+				e.printStackTrace();
+			}
 		}
 		
 		resp.getWriter().print("]");

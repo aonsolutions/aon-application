@@ -97,7 +97,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	private static final String EXTRAS_SQL = "SELECT "
 			+ " SUM( " + SalaryPaymentColumns.AMOUNT + ")"
 			+ " FROM " + SQLConstants.SALARY_PAYMENT
-			+ " WHERE " + SQLConstants.SALARY + "." + SalaryColumns.TYPE + " = 0 "
+			+ " WHERE " + SQLConstants.SALARY + "." + SalaryColumns.TYPE + " = " + SalaryType.SALARY.ordinal() 
 			+ " AND " + SalaryPaymentColumns.SALARY + " = " + SQLConstants.SALARY + "." + SalaryColumns.ID
 			+ " AND " + SalaryPaymentColumns.QUOTE + " > 0.00 "  
 			+ " AND " + SalaryPaymentColumns.AMOUNT + " > " + SalaryPaymentColumns.QUOTE 
@@ -107,7 +107,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	private static final String BONUS_SQL = "SELECT "
 			+ " SUM( " + SalaryPaymentColumns.QUOTE + ")"
 			+ " FROM " + SQLConstants.SALARY_PAYMENT
-			+ " WHERE " + SQLConstants.SALARY + "." + SalaryColumns.TYPE + " = 0 "
+			+ " WHERE " + SQLConstants.SALARY + "." + SalaryColumns.TYPE + " = " + SalaryType.SALARY.ordinal()
 			+ " AND " + SalaryPaymentColumns.SALARY + " = " + SQLConstants.SALARY + "." + SalaryColumns.ID
 			+ " AND (" + SalaryPaymentColumns.AMOUNT + " = 0.00 OR " + SalaryPaymentColumns.AMOUNT + " > " + SalaryPaymentColumns.QUOTE + ")" 
 			+ " AND " + SalaryPaymentColumns.TYPE + " IN (" + PaymentType.CRA_0005.ordinal() + ")"
@@ -115,7 +115,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	private static final String MONTH_DAYS_SQL = "SELECT "
 			+ " " + SalaryDataColumns.EXPRESSION  
 			+ " FROM " + SQLConstants.SALARY_DATA
-			+ " WHERE " + SQLConstants.SALARY + "." + SalaryColumns.TYPE + " = 0 "
+			+ " WHERE " + SQLConstants.SALARY + "." + SalaryColumns.TYPE + " = " + SalaryType.SALARY.ordinal()
 			+ " AND " + SalaryDataColumns.SALARY + " = " + SQLConstants.SALARY + "." + SalaryColumns.ID
 			+ " AND " + SalaryDataColumns.NAME + " = '" + ContextVariable.MONTH_DAYS.getName() + "' "
 			+ " LIMIT 1"
@@ -129,8 +129,13 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			+ " FROM  " + SQLConstants.SALARY 
 			+ " WHERE " + SalaryColumns.CONTRACT + " = ? " 
 			+ "AND ("
-			+ "( " + SalaryColumns.CHARGE_DATE + " BETWEEN   ? AND  ?  " + " AND " + SalaryColumns.TYPE + " IN (0,1,2,7) )"
-			+ " OR ( " + SalaryColumns.CHARGE_DATE + " BETWEEN   ? AND  ?  " + " AND " + SalaryColumns.TYPE + " IN (3) )"
+			+ "( " + SalaryColumns.CHARGE_DATE + " BETWEEN   ? AND  ?  " + " AND " + SalaryColumns.TYPE + " IN (" 
+				+ SalaryType.SALARY.ordinal() 
+				+ "," + SalaryType.EXTRA.ordinal() 
+				+ "," + SalaryType.SETTLE.ordinal() 
+				+ "," + SalaryType.M190.ordinal() + ") )"
+			+ " OR ( " + SalaryColumns.CHARGE_DATE + " BETWEEN   ? AND  ?  " + " AND " + SalaryColumns.TYPE + " IN (" 
+				+ SalaryType.DELAY.ordinal() + ") )"
 			+ ")"
 			+ " ORDER BY " + SalaryColumns.END_DATE 
 			+ " ASC" + ", " + SalaryColumns.TYPE + " ASC";

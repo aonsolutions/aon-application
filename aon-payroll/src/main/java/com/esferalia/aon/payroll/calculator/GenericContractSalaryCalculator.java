@@ -2433,6 +2433,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				return null;
 			}
 			
+			@Override
+			public Void visitProcedural(SalaryType salaryType) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
 		});
 		
 	}

@@ -57,6 +57,7 @@ import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.jooq.tables.records.ContractInfoRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.model.ContractParams;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -251,7 +252,7 @@ public class JooqContrataContract {
 			// HAS PAYROLL
 			Result<Record> salaryRecords = dslContext.select().from(SALARY)
 					.where(SALARY.CONTRACT.eq(contractId))
-						.and(SALARY.TYPE.eq((byte)0))
+						.and(SALARY.TYPE.eq(SalaryType.SALARY.value()))
 						.orderBy(SALARY.END_DATE.desc())
 						.fetch();
 			
@@ -1493,7 +1494,7 @@ public class JooqContrataContract {
 		
 		Result<Record> settlementRecords = dslContext.select().from(SALARY)
 				.where(SALARY.CONTRACT.eq(contractId))
-				.and(SALARY.TYPE.eq((byte)2))
+				.and(SALARY.TYPE.eq(SalaryType.SETTLE.value()))
 				.orderBy(SALARY.ID.desc())
 				.fetch();
 		
