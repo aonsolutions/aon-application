@@ -111,15 +111,15 @@ export class AonDialog extends AonElement {
 		const content = this.getContent();
 		const title = this.getElement(this.TITLE);
 		const description = this.getElement(this.DESCRIPTION);
-		if(title) title.innerHTML = '';
-		if(content) content.innerHTML = '';
-		if(description) description.innerHTML = '';
+		if(title) title.textContent = '';
+		if(content) content.textContent = '';
+		if(description) description.textContent = '';
 		// const action = this.getElement(this.ACTION)
-		// if(action) action.innerHTML = '';
+		// if(action) action.textContent = '';
 	}
 
 	buildBlank() {
-		this.innerHTML = "";
+		this.textContent = "";
 
 		this.buildMenu();
 
@@ -146,7 +146,7 @@ export class AonDialog extends AonElement {
 	}
 
 	build() {
-		this.innerHTML = "";
+		this.textContent = "";
 		let dialog = this.createElement(TAG.DIV);
 		dialog.id = this.DIALOG;
 		dialog.className = "aonDialog";
@@ -160,7 +160,7 @@ export class AonDialog extends AonElement {
 		let closeDesktop = this.createElement(TAG.LABEL);
 		closeDesktop.id = this.BUTTON_CLOSE;
 		closeDesktop.title = MSG.CLOSE;
-		closeDesktop.innerHTML = "×";
+		closeDesktop.textContent = "×";
 		closeDesktop.onclick = () => this.close();
 		closeDesktop.style = `
 			color: grey;
@@ -217,7 +217,7 @@ export class AonDialog extends AonElement {
 	}
 
 	buildFullScreen() {
-		this.innerHTML = "";
+		this.textContent = "";
 		let dialog = this.createElement(TAG.DIV);
 		dialog.id = this.DIALOG;
 		dialog.className = "aonDialog";
@@ -350,7 +350,7 @@ export class AonDialog extends AonElement {
 
 	setContent(widget, top, left, width) {
 		let content = this.getContent();
-		content.innerHTML = '';
+		content.textContent = '';
 		content.appendChild(widget);
 		if(top && left) {
 			let dialog = this.getElement(this.DIALOG);
@@ -372,7 +372,7 @@ export class AonDialog extends AonElement {
 		let content = this.getContent()
 		content.style.top = top || '90px';
 		content.style.left = left > (dialog.offsetWidth / 2) ? left - 180 : left;
-		content.innerHTML = '';
+		content.textContent = '';
 		let ul = document.createElement(TAG.UL);
 		ul.className = CSS.AON_UL;
 		content.appendChild(ul);
@@ -394,13 +394,13 @@ export class AonDialog extends AonElement {
 				let ic = document.createElement(TAG.I);
 				ic.className = 'material-icons';
 				ic.style.verticalAlign = 'middle';
-				ic.innerHTML = item.icon;
+				ic.textContent = item.icon;
 				li.appendChild(ic);
 			}
 
 			let span = document.createElement(TAG.SPAN);
 			span.style.marginLeft = '5px';
-			span.innerHTML = item.name;
+			span.textContent = item.name;
 			li.appendChild(span);
 			li.addEventListener(EVENT.CLICK, () => {
 				this.close();
@@ -410,11 +410,11 @@ export class AonDialog extends AonElement {
 	}
 
 	setTitle(title) {
-		if(title) this.getElement(this.TITLE).innerHTML = title;
+		if(title) this.getElement(this.TITLE).textContent = title;
 	}
 
 	setDescription(description) {
-		if(description) this.getElement(this.DESCRIPTION).innerHTML = description;
+		if(description) this.getElement(this.DESCRIPTION).textContent = description;
 	}
 
 		getButtonLeft(){
@@ -452,7 +452,7 @@ export class AonDialog extends AonElement {
 			btn.id = id;
 			btn.className = 'aonButton';
 			btn.style.marginRight = "10px";
-			btn.innerHTML = title;
+			btn.textContent = title;
 			this.getElement(this.ACTION).appendChild(btn);
 			btn.addEventListener(EVENT.CLICK, fn);
 		}
@@ -470,7 +470,7 @@ export class AonDialog extends AonElement {
 			btn.id = btnId;
 			btn.className = 'aonButton';
 			btn.style.marginRight = "10px";
-			btn.innerHTML = data.title;
+			btn.textContent = data.title;
 			this.getElement(this.ACTION).appendChild(btn);
 			btn.addEventListener(EVENT.CLICK, fn);
 		}
@@ -494,7 +494,7 @@ export class AonDialog extends AonElement {
 			btn.className = 'aonButton';
 			btn.style.backgroundColor="grey";
 			btn.style.marginRight = "10px";
-			btn.innerHTML = MSG.CANCEL;
+			btn.textContent = MSG.CANCEL;
 			this.getElement(this.ACTION).appendChild(btn);
 		}
 
@@ -517,6 +517,7 @@ export class AonDialog extends AonElement {
 				fn(ev);
 			});
 		}
+		return accept;
 	}
 	
 	createButtonAccept(title=undefined, icon=undefined){
@@ -534,7 +535,7 @@ export class AonDialog extends AonElement {
 			btn = this.createElement(TAG.BUTTON);
 			btn.id = this.ACCEPT;
 			btn.className = 'aonButton';
-			btn.innerHTML = title || MSG.ACCEPT;
+			btn.textContent = title || MSG.ACCEPT;
 			btn.title = title || MSG.ACCEPT;
 			btn.style.marginLeft= "auto";
 			let divAction = this.getElement(this.ACTION);

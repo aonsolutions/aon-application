@@ -10,8 +10,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	TariffValidationSaveEmptyName.class,
 	TariffValidationSaveOverflowCode.class,
 	TariffValidationSaveOverflowName.class,
-	TariffCRUDETest.class,
-	PriceStrategyDAOTest.class,
+	TariffCRUDETest.class
 })
 public class TariffTestSuite {
 

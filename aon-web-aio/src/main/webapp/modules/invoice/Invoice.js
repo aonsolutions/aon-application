@@ -64,6 +64,8 @@ export class Invoice {
   communicationInfo;
   lastStatus;
 
+  source; // Origen de rawdoc.
+
   constructor(invoice) {
     this.buildObject(invoice);
   }
@@ -157,11 +159,11 @@ export class Invoice {
       this.vatQuota = invoice.vatQuota;
       this.retentionQuota = invoice.retentionQuota;
       this.lastStatus = invoice.lastStatus;
+      this.source = invoice.source;
       if(this.finances.length === 0) this.resetFinances();
     } else {
       this.domain = LS.getDomainId();
       this.type = 'ticket';
-      this.series = new Date().getFullYear();
       this.number = '';
       this.reference = '';
       this.date = now();
@@ -213,6 +215,10 @@ export class Invoice {
     //   this.surcharge = this.surcharge || company.surcharge;
     //   this.vatAccrualPayment = this.vatAccrualPayment || company.vatAccrualPayment;
     // });
+  }
+
+  clone() {
+    return new Invoice(JSON.parse(JSON.stringify(this)));
   }
 
   getType() {
@@ -397,7 +403,7 @@ export class Invoice {
   }
 
   isRawdoc() {
-    return this.isInbox() || this.isRejected() || this.isDraft()
+    return this.isInbox() || this.isRejected() || this.isTrash()
       || this.isProcessed() || this.isProcessing();
   }
 
@@ -426,11 +432,11 @@ export class Invoice {
   }
 
   isRejected() {
-    return this.status.toLowerCase() === CONSTANT.REFUSED || this.status.toLowerCase()  === CONSTANT.REJECTED;
+    return this.status.toLowerCase()  === CONSTANT.REJECTED;
   }
 
-  isDraft() {
-    return this.status.toLowerCase() === CONSTANT.TRASH || this.status.toLowerCase() === CONSTANT.DRAFT;
+  isTrash() {
+    return this.status.toLowerCase() === CONSTANT.TRASH;
   }
 
   isPending() {
@@ -1030,7 +1036,7 @@ export class Invoice {
      this.calculateTaxFromDetail();
      if(this.isCcm()) this.calculateWithholdingFromDetail();
      this.calculateTotalFromDetail();
-      return this;
+     return detail;
   }
 
   deleteDetail(detail, i) {

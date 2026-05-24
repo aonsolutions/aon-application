@@ -12,8 +12,10 @@ import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.RegistryParams;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -145,6 +147,10 @@ public abstract class CustomerPanel extends ScrollPanel {
 		tab.createHeader();
 		for ( COLS col : COLS.values()) 
 			tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
+		
+		if(params.getDomainName().contains("aonsolutions.org")) {
+			tab.addHeader(new Label(""), "3rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;");
+		}
 	}
 	
 	private void searchData() {
@@ -201,10 +207,35 @@ public abstract class CustomerPanel extends ScrollPanel {
 		String statusValue = customer.getStatus().getDescription();
 		Label status = new Label(statusValue);
 		status.setTitle(statusValue);
+		setStatusColor(status, customer.getStatus());
 		tab.addInlineStyle(status, COLS.ACT.getStyles());
 		tab.addRow(row, status, COLS.ACT.getColWidth());
 		
+		if(params.getDomainName().contains("aonsolutions.org")) {
+			AonTableButton showCustomer = new AonTableButton("Ver nuevo", AON.CSS.aonIconInfo());
+			showCustomer.addClickHandler(e -> {
+				e.stopPropagation();
+				onCustomerOpenNew(customer);
+			});
+			tab.addInlineStyle(showCustomer,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;");
+			tab.addRow(row, showCustomer, "3rem");
+		}
+		
 		rowCustomers.put(customer.getId(), customer);
+	}
+	
+	private void setStatusColor(Label label, RegistryStatus status) {
+		switch (status) {
+			case INACTIVE: 
+				label.getElement().getStyle().setProperty("color", "orange");
+				break;
+			case BLOCKED: 
+				label.getElement().getStyle().setProperty("color", "red");
+				break;
+			default:
+				break;
+			
+		}
 	}
 	
 	private void getList(Consumer<List<Customer>> success) {
@@ -234,6 +265,7 @@ public abstract class CustomerPanel extends ScrollPanel {
 	}
 
 	protected abstract void onCustomerOpen(Customer customer);
+	protected abstract void onCustomerOpenNew(Customer customer);
 	protected abstract void onShowErrorMessage(String message);
 	
 }

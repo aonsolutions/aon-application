@@ -2578,6 +2578,11 @@ public class EnterprisePayrollExcel {
 			public Boolean visitM190(SalaryType type) {
 				return ss != null && ss.equals(SalaryType.M190);
 			}
+			
+			@Override
+			public Boolean visitProcedural(SalaryType type) {
+				return ss != null && ss.equals(SalaryType.L02);
+			}
 		};
 		
 		return original.accept(visitor);
@@ -3446,6 +3451,11 @@ public class EnterprisePayrollExcel {
 				}
 
 				@Override
+				public String visitProcedural(SalaryType type) {
+					return "TRAMITACIÓN";
+				}
+
+				@Override
 				public String visitL00(SalaryType type) {
 					return "L00";
 				}
@@ -3492,11 +3502,16 @@ public class EnterprisePayrollExcel {
 					@Override
 					public String visitSettle(SalaryType type) {
 						return "FINIQUITO";
-					}
+				}
 
 					@Override
 					public String visitDelay(SalaryType type) {
 						return "ATRASOS";
+					}
+
+					@Override
+					public String visitProcedural(SalaryType type) {
+						return "TRAMITACION";
 					}
 
 					@Override

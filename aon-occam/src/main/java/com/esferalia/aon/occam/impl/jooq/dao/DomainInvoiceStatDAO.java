@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -144,7 +145,7 @@ public class DomainInvoiceStatDAO {
 				RawdocStatus status = RawdocStatus.safeValueOf( r.get(RAWDOC.STATUS) );
 				if (status == RawdocStatus.INBOX) stat.addDraft(c);
 				else if (status == RawdocStatus.REJECTED) stat.addReview(c);
-				else if (status == RawdocStatus.DRAFT) stat.addTrash(c);
+				else if (status == RawdocStatus.TRASH) stat.addTrash(c);
 				else stat.addInProcess(c);
 			});
 	}
@@ -232,10 +233,13 @@ public class DomainInvoiceStatDAO {
 	
 	
 	private static final BiFunction<Condition, ConditionRecord, Condition> SCOPE_CONDITION = (c, cr) -> 
-		cr.params.getScope()
-    		.filter(s -> s != null)
-    		.map(s -> c.and(DOMAIN.SCOPE.eq(s)))
-			.orElse(c.and(SecurityDAO.getUserScopesCondition(cr.ctx, DOMAIN.SCOPE)));
+		(!cr.domain.isParent()) 
+			? c
+			:cr.params.getScope()
+				.filter(s -> s != null)
+				.map(s -> c.and(DOMAIN.SCOPE.eq(s)))
+				.orElse(c.and(SecurityDAO.getUserScopesCondition(cr.ctx, DOMAIN.SCOPE)));
+	
 	
 	private static final BiFunction<Condition, ConditionRecord, Condition> QUERY_CONDITION = (c, cr) -> 
 		cr.params.getQuery()

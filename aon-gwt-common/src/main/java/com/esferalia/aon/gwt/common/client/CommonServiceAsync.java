@@ -99,6 +99,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
+import com.esferalia.aon.occam.api.model.registry.RegistrySource;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkloadContent;
@@ -558,6 +559,12 @@ public interface CommonServiceAsync {
 	void deleteRecordData(String domainName, Integer domain, String user, Integer id, boolean deleteData, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void saveRecordData(String domainName, Integer domainId, String user, RecordData recordData, AsyncCallback<RecordData> asyncCallback) throws AonCoreException;
 	void deleteRecordDataAttach(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	
+	void getRregistryBanks(String domainName, Integer domain, String user, Integer registry, AsyncCallback<List<RegistryBank>> asyncCallback) throws AonCoreException;
+	void saveRregistryBank(String domainName, Integer domain, String user, RegistryBank registryBank, AsyncCallback<RegistryBank> asyncCallback) throws AonCoreException;
+	void deleteRregistryBank(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void getAccountsForBank(String domainName, Integer domain, String user, AsyncCallback<List<Account>> asyncCallback) throws AonCoreException;
+	void getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource,AsyncCallback<List<Account>> asyncCallback);
 	
 	// *********************** [AMORTIZATION TYPE]
 	void getAmortizationTypes(Occam occam, int domain, AsyncCallback<List<AmortizationType>> asyncCallback);

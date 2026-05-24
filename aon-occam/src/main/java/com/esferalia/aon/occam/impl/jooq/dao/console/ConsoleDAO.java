@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao.console;
 
 import static com.esferalia.aon.jooq.AonMaster.AON_MASTER;
-import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.watson.j2html.TagCreator.div;
@@ -70,6 +69,16 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ConsoleDAO {
 
+	protected static final com.esferalia.aon.jooq.tables.Domain PARENT 
+		= com.esferalia.aon.jooq.tables.Domain.DOMAIN.as("parent");
+	protected static final com.esferalia.aon.jooq.tables.Domain PAYER 
+		= com.esferalia.aon.jooq.tables.Domain.DOMAIN.as("payer");
+	protected static final com.esferalia.aon.jooq.tables.AppParam SUPPORT_APP_PARAM  
+		= com.esferalia.aon.jooq.tables.AppParam.APP_PARAM.as("supportAppParam");
+	protected static final com.esferalia.aon.jooq.tables.AppParam PAYER_APP_PARAM  
+		= com.esferalia.aon.jooq.tables.AppParam.APP_PARAM.as("payerAppParam");
+	
+
 	private static final String QUOTES_REGEX = "\"(.*?)\"";
 
 	private static final Logger LOGGER = Logger.getLogger( ConsoleDAO.class.getName());
@@ -131,10 +140,15 @@ public class ConsoleDAO {
 			
 			SelectOnConditionStep<Record> sentence = ctx.getDslContext().select()
 				.from(DOMAIN)
+				.leftOuterJoin(PARENT).on(DOMAIN.PARENT.eq(PARENT.ID))
 				.leftOuterJoin(userCount).on(DOMAIN.ID.eq(USER_COUNT_DOMAIN))
 				.leftOuterJoin(childCount).on(DOMAIN.ID.eq(childCountParent))
-				.leftOuterJoin(APP_PARAM).on(DOMAIN.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.AON_SUPPORT_ENABLED.toString())))
-			;			
+				.leftOuterJoin(SUPPORT_APP_PARAM).on(DOMAIN.ID.eq(SUPPORT_APP_PARAM.DOMAIN).and(SUPPORT_APP_PARAM.NAME.eq(AppParam.AON_SUPPORT_ENABLED.toString())))
+				.leftOuterJoin(PAYER_APP_PARAM).on(DOMAIN.ID.eq(PAYER_APP_PARAM.DOMAIN).and(PAYER_APP_PARAM.NAME.eq(AppParam.AON_DOMAIN_PAYER.toString())))
+				.leftOuterJoin(PAYER).on(PAYER_APP_PARAM.VALUE.cast(Integer.class).eq(PAYER.ID))
+			;	
+			
+			
 			if ( AonStringUtils.isNotEmpty( params.getSelect() )  ) {
 				String subTableName = "ConsoleSubTable";
 				Field<Integer> subTableDomain = DSL.field( DSL.name( subTableName, DOMAIN_LABEL ), Integer.class );
@@ -161,12 +175,23 @@ public class ConsoleDAO {
 				.map( rec -> {
 					ConsoleDomain consoleDomain = new ConsoleDomain();
 					DomainFiller.fillDomain(rec, consoleDomain,  DOMAIN);
+					Domain consoleDomainParent = new Domain(); 
+					DomainFiller.fillDomain(rec, consoleDomainParent,  PARENT);
+					if (consoleDomainParent != null && consoleDomainParent.getId() != null) {
+						consoleDomain.setParent(consoleDomainParent);
+					} 
 					BigDecimal activeCount = rec.getValue(childActiveCount);
 					Number userCo = rec.getValue(USER_COUNT);
 					Integer definedUsers = userCo==null?null: userCo.intValue();
+					Integer domainPayerId = rec.getValue(PAYER_APP_PARAM.ID);
+					Domain payerDomain = new Domain(); 
+					DomainFiller.fillDomain(rec, payerDomain,  PAYER);
+					if (payerDomain != null && payerDomain.getId() != null) {
+						consoleDomain.setPayerDomain(payerDomain);
+					} 
 					consoleDomain
 						.setSchema( cs.getSchema() )
-						.setRemoteAccessEnabled( rec.getValue(APP_PARAM.ID) != null)
+						.setRemoteAccessEnabled( rec.getValue(SUPPORT_APP_PARAM.ID) != null)
 						.setChildCount( AonNumberUtils.zeroIfNull(rec.getValue(childCountField)) )
 						.setActiveChildCount( activeCount==null?0:activeCount.intValue()  )
 						.setDefinedUsers( AonNumberUtils.zeroIfNull(definedUsers) )
@@ -179,6 +204,7 @@ public class ConsoleDAO {
 			LOGGER.severe( msg );
 			return Stream.empty();
 		} catch (Exception e) {
+			e.printStackTrace();
 			String msg = "Schema " + cs.getSchema() + " [Exception: "+ e.getMessage() +"]";
 			LOGGER.severe( msg );
 			return Stream.empty();
@@ -327,18 +353,18 @@ public class ConsoleDAO {
 	public static boolean switchRemoteAccess(AONContext ctx, Integer domainId) {
 		if (isRemoteAccessEnabled(ctx, domainId)) {
 			int count = ctx.getDslContext()
-				.delete(APP_PARAM)
-				.where(APP_PARAM.DOMAIN.eq(domainId))
-				.and(APP_PARAM.NAME .eq(AppParam.AON_SUPPORT_ENABLED.toString()))
+				.delete(SUPPORT_APP_PARAM)
+				.where(SUPPORT_APP_PARAM.DOMAIN.eq(domainId))
+				.and(SUPPORT_APP_PARAM.NAME .eq(AppParam.AON_SUPPORT_ENABLED.toString()))
 				.execute();
 			ctx.log().info("Remote Access Change: OFF " + domainId + "(" + count + " rows)");
 			return false;
 		} else {
 			int count = ctx.getDslContext()
-				.insertInto(APP_PARAM)
-				.set(APP_PARAM.DOMAIN, domainId)
-				.set(APP_PARAM.NAME, AppParam.AON_SUPPORT_ENABLED.toString())
-				.set(APP_PARAM.VALUE, String.valueOf(new Date().getTime()))
+				.insertInto(SUPPORT_APP_PARAM)
+				.set(SUPPORT_APP_PARAM.DOMAIN, domainId)
+				.set(SUPPORT_APP_PARAM.NAME, AppParam.AON_SUPPORT_ENABLED.toString())
+				.set(SUPPORT_APP_PARAM.VALUE, String.valueOf(new Date().getTime()))
 				.execute();
 			ctx.log().info("Remote Access Change: ON " + domainId + "(" + count + " rows)");
 			return true;
@@ -350,10 +376,10 @@ public class ConsoleDAO {
 		boolean wasEnabled = isRemoteAccessEnabled(ctx, domainId);
 		if (!wasEnabled) {
 			int count = ctx.getDslContext()
-				.insertInto(APP_PARAM)
-				.set(APP_PARAM.DOMAIN, domainId)
-				.set(APP_PARAM.NAME, AppParam.AON_SUPPORT_ENABLED.toString())
-				.set(APP_PARAM.VALUE, String.valueOf(new Date().getTime()))
+				.insertInto(SUPPORT_APP_PARAM)
+				.set(SUPPORT_APP_PARAM.DOMAIN, domainId)
+				.set(SUPPORT_APP_PARAM.NAME, AppParam.AON_SUPPORT_ENABLED.toString())
+				.set(SUPPORT_APP_PARAM.VALUE, String.valueOf(new Date().getTime()))
 				.execute();
 			ctx.log().info("Remote Access Change: ON " + domainId + "(" + count + " rows)");
 		}

@@ -51,6 +51,7 @@ import com.esferalia.aon.jooq.tables.records.ContractLeaveDetailRecord;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
 import com.esferalia.aon.jooq.tables.records.LeaveBatchRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.client.util.Objects;
 
@@ -618,6 +619,9 @@ public class JooqIT {
 	    });	 
 	    
 	    System.out.println("itEmployees size : " + itEmployees.size());
+	    itEmployees.forEach(ie -> {
+	    	ie.getIts().forEach(it -> System.out.println("IT : " + it.getStartDate() + " - " + it.getEndDate()));
+	    });
 	    return itEmployees;
 	}
 
@@ -688,7 +692,7 @@ public class JooqIT {
 		// HAS PAYROLL
 		Result<Record> salaryRecords = dslContext.select().from(SALARY)
 				.where(SALARY.CONTRACT.eq(contractId))
-					.and(SALARY.TYPE.eq((byte)0))
+					.and(SALARY.TYPE.eq((byte)SalaryType.SALARY.ordinal()))
 					.orderBy(SALARY.END_DATE.desc())
 					.fetch();
 		

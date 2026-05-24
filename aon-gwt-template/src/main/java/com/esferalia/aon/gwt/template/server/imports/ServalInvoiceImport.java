@@ -26,6 +26,8 @@ import com.esferalia.aon.gwt.template.shared.InvoiceImportClass.InvoiceOpType;
 import com.esferalia.aon.gwt.template.shared.InvoiceImportClass.InvoiceSubClaveRetencion;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -61,6 +63,9 @@ import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -768,6 +773,7 @@ public class ServalInvoiceImport extends ImportUtils{
 	
 			validate(iic, record);
 			Invoice invoice = buildInvoice(aonCtx, domain, user, iic);
+			
 			RegistryAddress address = buildAddress(aonCtx, domain, iic);
 			buildRegistry(domain, user, invoice, iic, address);			
 
@@ -826,6 +832,11 @@ public class ServalInvoiceImport extends ImportUtils{
 						.setTaxableBase(taxableBase)
 //						.setPrepayment("5600".equals(aux.getAccount().substring(0, 4)) || "5660".equals(aux.getAccount().substring(0, 4)))
 						.setSource(InvoiceSource.DIRECT_INVOICE);
+				
+				if(aonCtx.getWorkplaces() == null || aonCtx.getWorkplaces().isEmpty()) {
+					throw new Exception("No existe ningún centro de trabajo.");
+				} else detail.setWorkplace(aonCtx.getWorkplaces().get(0));
+				
 				
 				InvoiceTax vat = new InvoiceTax()
 						.setDomain(detail.getDomain())
@@ -929,8 +940,15 @@ public class ServalInvoiceImport extends ImportUtils{
 					}
 				} 
 			}
-
-			AON.acceptInvoice(occam, invoice, null);
+		
+			try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+				ctx.getDslContext().transaction(configuration -> {
+					fillExternalSalesSeriesNumber(ctx, invoice);
+					InvoiceDAO.insert(ctx, invoice);
+					FinanceDAO.insertFinances(ctx, invoice.getFinances());
+					AccountingInvoiceDAO.saveCommunicationData(ctx, aonCtx, invoice);					
+				});
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			error.setError(false);
@@ -938,6 +956,29 @@ public class ServalInvoiceImport extends ImportUtils{
 		}
 		error.setLine(i);
 		return error;
+	}
+	
+	public static void fillExternalSalesSeriesNumber(AONContext ctx, Invoice invoice) {
+		if (invoice.isSales()) { 
+			if (AonStringUtils.isBlank(invoice.getReferenceCode())) {
+				String referenceCode = AonStringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
+				if (!AonStringUtils.isBlank(invoice.getSeries())) {
+					referenceCode = invoice.getSeries() + "/" + referenceCode;
+				}
+				invoice.setReferenceCode(referenceCode);
+			}
+			int y = invoice.getIssueDate() != null
+				?AonDateUtils.getYear( invoice.getIssueDate() )
+				:AonDateUtils.getCurrentYear();
+			y = y - 2000;
+			String prefix = invoice.isRectifier()?"REX":"EX";
+			String year = AonNumberUtils.toString(y);
+			invoice.setSeries( prefix + year );
+			int number = ctx != null
+				?InvoiceDAO.getNextNumber(ctx, new Byte[]{invoice.getType().value()}, invoice.getSeries())
+				:0;
+			invoice.setNumber( number);
+		}
 	}
 	
 	

@@ -344,7 +344,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	buildToolbarSearchOption(acceptedInvoices) {
-		const btnSearch = this.getApplication().addSearchOption(true);
+		const btnSearch = this.getApplication().addSearchOption(!this.isMobile());
 		let searchFn = (event) => this.search(event.detail);
 		btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
 		if (acceptedInvoices) {
@@ -485,9 +485,9 @@ export class AonInvoicePanel extends AonElement {
 			this.updateCounterSpan(OPTION.FUTURE_RAWDOC_REJECT);
 
 			// PAPELERA
-			if (r && r.rawdoc && r.rawdoc.draft && r.rawdoc.draft.count && r.rawdoc.draft.count > 0) {
-				addCounter(OPTION.RAWDOC_TRASH, r.rawdoc.draft.count);
-				addCounter(OPTION.FUTURE_RAWDOC_TRASH, r.rawdoc.draft.count);
+			if (r && r.rawdoc && r.rawdoc.trash && r.rawdoc.trash.count && r.rawdoc.trash.count > 0) {
+				addCounter(OPTION.RAWDOC_TRASH, r.rawdoc.trash.count);
+				addCounter(OPTION.FUTURE_RAWDOC_TRASH, r.rawdoc.trash.count);
 			}
 			this.updateCounterSpan(OPTION.RAWDOC_TRASH);
 			this.updateCounterSpan(OPTION.FUTURE_RAWDOC_TRASH);

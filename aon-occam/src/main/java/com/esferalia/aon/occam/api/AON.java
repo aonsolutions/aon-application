@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api;
 
+import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.Agreement;
@@ -201,6 +204,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.registry.RegistrySegment;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
+import com.esferalia.aon.occam.api.model.registry.RegistrySource;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
@@ -254,6 +258,7 @@ import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
+import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.AgreementImpl;
 import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
 import com.esferalia.aon.occam.impl.jooq.CalendarImpl;
@@ -410,6 +415,10 @@ public class AON {
 
 	private static IURLShortener getURLShortener() {
 		return new URLShortenerImpl();
+	}
+	
+	private static IAccounting getAccounting() {
+		return new AccountingImpl();
 	}
 
 	// ********************************************
@@ -7925,13 +7934,25 @@ public class AON {
 			getRawdoc().rawdocDelete(ctx, filter);
 		}
 	}
-
-	public static Rawdoc rawdocToDraft(Occam occam, Integer rawdocId) {
-		return rawdocToDraft(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdocId);
+	
+	public static Rawdoc rawdocAddLogComment(Occam occam, Integer rawdocId, String comment) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getRawdoc().addLogComment(ctx, rawdocId, comment);
+		}
 	}
-	public static Rawdoc rawdocToDraft(String domainName, int domain, String user, Integer rawdocId) {
+	
+	public static Rawdoc rawdocRestore(Occam occam, Integer rawdocId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getRawdoc().restore(ctx, rawdocId);
+		}
+	}
+
+	public static Rawdoc rawdocToTrash(Occam occam, Integer rawdocId) {
+		return rawdocToTrash(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdocId);
+	}
+	public static Rawdoc rawdocToTrash(String domainName, int domain, String user, Integer rawdocId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
-			return getRawdoc().toDraft(ctx, rawdocId);
+			return getRawdoc().toTrash(ctx, rawdocId);
 		}
 	}
 
@@ -9309,6 +9330,45 @@ public class AON {
 	public static void deleteRecordDataAttach(String domainName, Integer domain, String user, Integer recordDataId) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
 			getCommon().deleteRecordDataAttach(ctx, domain, recordDataId);
+		}
+	}
+
+	public static List<Account> getAccountsForBank(String domainName, Integer domain, String user) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getAccounting().getAccounts(ctx, f -> f.getDomainProperty().eq(domain).and(f.getLevelProperty().eq((byte)5)).and(f.getCodeProperty().like("572%").or(f.getCodeProperty().like("5201%")))).collect(Collectors.toList());
+		}
+	}
+	
+	public static List<Account> getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource source) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			switch (source) {
+				case CUSTOMER:
+					return getAccounting().getAccounts(ctx, 
+							f -> f.getDomainProperty().eq(domain)
+								.and(f.getLevelProperty().eq((byte)5))
+								.and(f.getCodeProperty().like("4300%"))
+							).collect(Collectors.toList());
+				case CREDITOR:
+					return getAccounting().getAccounts(ctx, 
+							f -> f.getDomainProperty().eq(domain)
+								.and(f.getLevelProperty().eq((byte)5))
+								.and(f.getCodeProperty().like("4100%"))
+							).collect(Collectors.toList());
+				case SUPPLIER:
+					return getAccounting().getAccounts(ctx, 
+							f -> f.getDomainProperty().eq(domain)
+								.and(f.getLevelProperty().eq((byte)5))
+								.and(f.getCodeProperty().like("4000%"))
+							).collect(Collectors.toList());
+				default:
+					throw new IllegalArgumentException("Unexpected value: " + source);
+			}
+		}
+	}
+
+	public static Account createRegistryAccount(String domainName, Integer domain, String user, String registryName, String registryAlias, RegistrySource registrySource) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getCommon().createRegistryAccount(ctx, domain, registryName, registryAlias, registrySource);
 		}
 	}
 }

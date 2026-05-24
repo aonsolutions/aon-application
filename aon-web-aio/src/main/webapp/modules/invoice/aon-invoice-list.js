@@ -12,7 +12,7 @@ import * as ACTION from '../actions.js';
 import * as OPTION from './InvoiceOptions.js';
 import * as LS from '../../services/localStorageService.js';
 import { addCounter, transferCounter } from './InvoiceCounter.js';
-import { getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrashPendingFromOption } from './InvoiceUtils.js';
+import { getFutureRestoreFromOption, getFutureRestoreToOption, getFutureTrashPendingFromOption, getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrashPendingFromOption } from './InvoiceUtils.js';
 
 export class AonInvoiceList extends AonElement {
 
@@ -403,14 +403,12 @@ export class AonInvoiceList extends AonElement {
 
 		if(this.getFilter().status === 'inbox') {
 			toolbar.addSeparator();
-			aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
-			aonInvoice.addToolbarOption2(ACTION.REJECT_INVOICE, () => this.rejectInvoices());
-			aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
-		} else if(this.getFilter().status === CONSTANT.REFUSED || this.getFilter().status === CONSTANT.REJECTED){
+			aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.toTrash());
+		} else if(this.getFilter().status === CONSTANT.REJECTED){
 			toolbar.addSeparator();
-			aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
-			aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
-		} else if(this.getFilter().status ===  CONSTANT.TRASH || this.getFilter().status === CONSTANT.DRAFT){
+			aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.toTrash());
+
+		} else if(this.getFilter().status === CONSTANT.TRASH){
 			toolbar.addSeparator();
 			aonInvoice.addToolbarOption2(ACTION.DELETE_FOREVER, () => this.deleteForeverInvoices());
 			aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
@@ -422,7 +420,7 @@ export class AonInvoiceList extends AonElement {
 				aonInvoice.addToolbarOption2(ACTION.COMMUNICATE_INVOICE, () => this.communicateInvoices());
 		} else if(this.isProcessing()) {
 			toolbar.addSeparator();
-			aonInvoice.addToolbarOption2(ACTION.DELETE_FOREVER, () => this.deleteForeverInvoices());
+			aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.toTrash());
 		}
 	}
 
@@ -478,22 +476,34 @@ export class AonInvoiceList extends AonElement {
 		});
 	}
 
-	deleteInvoices() {
-		let cont = 0;
-		let aonInvoiceTable = this.getTable();
-		aonInvoiceTable.selected.forEach((invoice, i) => {
-			this.updateCounter(getTrashPendingFromOption(invoice), OPTION.RAWDOC_TRASH, 1);
-			invoice.status = CONSTANT.DRAFT;
-			insertInvoice(invoice).then(() => {
-				cont = cont + 1;
-				if(cont === aonInvoiceTable.selected.length) {
-					this.init();
-				}
+	toTrash() {
+		let aonInvoice = this.getElement('aonInvoice');
+		let d = document.getElementById(aonInvoice.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.DELETE_FOREVER);
+		d.setContentHTML('Estás seguro de enviar las facturas seleccionadas a la papelera?');
+		d.addAcceptAction(() => {
+			let cont = 0;
+			let aonInvoiceTable = this.getTable();
+			aonInvoiceTable.selected.forEach((invoice, i) => {
+				this.updateCounter(getTrashPendingFromOption(invoice), OPTION.RAWDOC_TRASH, 1);
+				this.updateCounter(getFutureTrashPendingFromOption(invoice), OPTION.FUTURE_RAWDOC_TRASH, 1);
+				invoice.status = CONSTANT.TRASH;
+				insertInvoice(invoice).then(() => {
+					cont = cont + 1;
+					if(cont === aonInvoiceTable.selected.length) {
+						this.init();
+					}
+				});
 			});
 		});
+		d.open();
 	}
 
-	  setIcc(icc) {this.icc = icc; }
+	setIcc(icc) {
+		this.icc = icc; 
+	}
 
 	deleteForeverInvoices() {
 		let aonInvoice = this.getElement('aonInvoice');
@@ -504,6 +514,7 @@ export class AonInvoiceList extends AonElement {
 		d.setContentHTML('Estás seguro de eliminar las facturas seleccionadas');
 		d.addAcceptAction(() => {
 			this.updateCounter(OPTION.RAWDOC_TRASH, undefined, -1 * this.getTable().selected.length);
+			this.updateCounter(OPTION.FUTURE_RAWDOC_TRASH, undefined, -1 * this.getTable().selected.length);
 			deleteRawdocInvoices(this.getTable().selected.map(r => r.id)).then(() => this.init())
 		});
 		d.open();
@@ -529,21 +540,6 @@ export class AonInvoiceList extends AonElement {
 			});
 		}
   	}
-	
-	rejectInvoices() {
-		let cont = 0;
-		let aonInvoiceTable = this.getTable();
-		aonInvoiceTable.selected.forEach((invoice, i) => {
-			this.updateCounter(getRejectFromOption(invoice), OPTION.RAWDOC_REJECT, 1);
-			invoice.status = CONSTANT.REJECTED;
-			insertInvoice(invoice).then(() => {
-				cont = cont + 1;
-				if(cont === aonInvoiceTable.selected.length) {
-					this.init();
-				}
-			});
-		});
-	}
 
 	downloadInvoices() {
 		let data = this.getFilter();
@@ -597,6 +593,7 @@ export class AonInvoiceList extends AonElement {
 		let aonInvoiceTable = this.getTable();
 		aonInvoiceTable.selected.forEach((invoice, i) => {
 			this.updateCounter(getRestoreFromOption(invoice), getRestoreToOption(invoice), 1);
+			this.updateCounter(getFutureRestoreFromOption(invoice), getFutureRestoreToOption(invoice), 1);
 			invoice.status = CONSTANT.INBOX;
 			insertInvoice(invoice).then(() => {
 				cont = cont + 1;
@@ -618,7 +615,6 @@ export class AonInvoiceList extends AonElement {
 		}
 	}
 	
-
 	removeInvoiceActions() {
 		let aonInvoice = this.getElement('aonInvoice');
 		let toolbar = this.getElement(aonInvoice.TOOLBAR);
@@ -630,7 +626,6 @@ export class AonInvoiceList extends AonElement {
 		aonInvoice.removeToolbarOption(ACTION.DOWNLOAD_INVOICE);
 		aonInvoice.removeToolbarOption(ACTION.SEND_INVOICE);
 		aonInvoice.removeToolbarOption(ACTION.COMMUNICATE_INVOICE);
-		// aonInvoice.removeToolbarOption(ACTION.REPROCESS);
 	}
 
 	getTable(){
@@ -694,20 +689,14 @@ export class AonInvoiceList extends AonElement {
 		let download = ACTION.DOWNLOAD_INVOICE;
 	    download.fn = () => this.downloadInvoices();
 
-	   	// let record = ACTION.RECORD_INVOICE;
-    	// record.fn = () => this.getApplication().development(MSG.RECORD_INVOICE);
-
-    	let reject = ACTION.REJECT_INVOICE;
-    	reject.fn = () => this.rejectInvoices();
-
     	let restore = ACTION.RESTORE_INVOICE;
     	restore.fn = () => this.restoreInvoices();
 
     	let addComment = ACTION.COMMENT;
    		addComment.fn = () =>  this.getApplication().development(MSG.ADD_COMMENT);
 
-  		let deleteInvoice = ACTION.DELETE_TO_TRASH;
-	  	deleteInvoice.fn = () => this.deleteInvoices();
+  		let toTrash = ACTION.DELETE_TO_TRASH;
+	  	toTrash.fn = () => this.toTrash();
 
 	  	let deleteForever = ACTION.DELETE_FOREVER;
 	  	deleteForever.fn = () => this.deleteForeverInvoices();
@@ -723,31 +712,31 @@ export class AonInvoiceList extends AonElement {
 
 	  	let actions = [];
 	  	if(inv.isRejected()) {
-	  		actions = [restore, deleteInvoice];
-	  	} else if(inv.isDraft()) {
+	  		actions = [toTrash];
+	  	} else if(inv.isTrash()) {
 	  		actions = [restore, deleteForever];
 	  	}  else if(inv.isInbox() && number === 1){
 			if(this.getDur().isInvoiceManager()){
-	    		// actions = [download, addComment, deleteInvoice, reject, record, rectify, duplicate];
-				actions = [download, addComment, deleteInvoice, reject, rectify, duplicate];
+				actions = [addComment, toTrash, reject, rectify, duplicate];
 	  		} else {
-	    	  actions = [download, addComment, deleteInvoice, rectify, duplicate];
+	    	  actions = [addComment, toTrash, rectify, duplicate];
 	    	}
 		} else if(inv.isInbox() && number > 1){
 			if(this.getDur().isInvoiceManager()){
-	    		actions = [download, deleteInvoice, reject]; //, record];
+	    		actions = [toTrash, reject];
 	  		} else {
-	    	  actions = [download, deleteInvoice];
+	 			actions = [toTrash];
 	    	}
-		} else {
+		} else if(!inv.isRawdoc()){
 			actions = [send, download];
 		}
 	  	if(!inv.file && !inv.isEmitida() && number === 1){
 	  		actions.push(addFile);
 	  	}
-
-	  	d.setMenuOptions(actions, top, left);
-	  	d.open();
+		if(actions.length > 0) {
+		  	d.setMenuOptions(actions, top, left);
+		  	d.open();
+		}
 	}
 
 	getFilter() {

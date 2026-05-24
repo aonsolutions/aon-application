@@ -95,6 +95,11 @@ public class SalaryDraftUtils {
 					public SalaryType visitDelay(Type type) {
 						return SalaryType.DELAY;
 					}
+					
+					@Override
+					public SalaryType visitProcedural(Type type) {
+						return SalaryType.PROCEDURAL;
+					}
 				});
 			}
 			

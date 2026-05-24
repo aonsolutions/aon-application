@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRecordDataPanel.AonRecordDataPanelCallback;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -164,6 +165,7 @@ public abstract class RecordDataTable extends ScrollPanel {
 		container.clear();
 		tab = new AonCustomTable();
 		tab.setMaxHeight("160x");
+		tab.getElement().getStyle().setProperty("padding", "1rem 0");
 		scrollPanel = new ScrollPanel(tab);
 
 		paintHeader();
@@ -228,37 +230,64 @@ public abstract class RecordDataTable extends ScrollPanel {
 		buttonContainer.addStyleName(AON.CSS.aonItemFlex());
 		buttonContainer.getElement().getStyle().setProperty("justify-content", "end");
 
-		
-
 		if (null != recordData.getAttach() && null != recordData.getFullAttach().getData()) {
 			AonTableButton preview = new AonTableButton("Previsualizar", AON.CSS.aonIconPdf());
 			preview.addStyleName(AON.CSS.aonCustomRowButtom());
 			preview.addClickHandler(e -> {
-				e.stopPropagation();
+				// Evitar que el click suba a la fila
+			    e.preventDefault();
+			    e.stopPropagation();
+			    e.getNativeEvent().stopPropagation();
+			    e.getNativeEvent().preventDefault();
+
 
 				AonAttachPreviewPanel popup = new AonAttachPreviewPanel(recordData.getFullAttach());
 				popup.center();
 				popup.show();
 			});
 			buttonContainer.add(preview);
-		} else if (null != recordData.getAttach() && null != recordData.getFullAttach().getDriveId()) {
-			AonTableButton download = new AonTableButton("Descargar", AON.CSS.aonIconDownload());
-			download.addStyleName(AON.CSS.aonCustomRowButtom());
-			download.addClickHandler(e -> {
-				e.stopPropagation();
+		} else if (recordData.getAttach() != null && recordData.getFullAttach().getDriveId() != null) {
 
-				JSONObject json = new JSONObject();
-				json.put("domainId", new JSONNumber(domain));
-				json.put("domainName", new JSONString(domainName));
-				json.put("domainLogin", new JSONString(user));
-				json.put("rattach", new JSONNumber(recordData.getAttach()));
-				json.put("type", new JSONString("registry"));
+			AonTableButton preview = new AonTableButton("Previsualizar", AON.CSS.aonIconPdf());
+			preview.addStyleName(AON.CSS.aonCustomRowButtom());
 
-				String jsonBase64 = base64Encode(json.toString());
+			preview.addClickHandler(e -> {
+				// Evitar que el click suba a la fila
+			    e.preventDefault();
+			    e.stopPropagation();
+			    e.getNativeEvent().stopPropagation();
+			    e.getNativeEvent().preventDefault();
+			    
+			    onShowLoadingMessage("Cargando archivo...");
 
-				downloadFile(jsonBase64, SESSION_API);
+			    JSONObject json = new JSONObject();
+			    json.put("domain_id", new JSONNumber(domain));
+			    json.put("domain_name", new JSONString(domainName));
+			    json.put("domain_login", new JSONString(user));
+			    json.put("id", new JSONNumber(recordData.getAttach()));
+			    json.put("attach_type", new JSONString("registry"));
+
+			    String base64 = base64Encode(json.toString());
+			    String url = "/ms/api/file/" + base64;
+
+			    fetchBinaryXHR(url, base64Data -> {
+
+			        byte[] bytes = base64ToBytes(base64Data);
+
+			        Attach temp = new Attach();
+			        temp.setId(recordData.getAttach());
+			        temp.setDescription(recordData.getFullAttach().getDescription());
+			        temp.setMimeType(recordData.getFullAttach().getMimeType());
+			        temp.setData(bytes);
+
+			        AonAttachPreviewPanel popup = new AonAttachPreviewPanel(temp);
+			        popup.center();
+			        popup.show();
+			        
+			        onHideMessage();
+			    });
 			});
-			buttonContainer.add(download);
+		    buttonContainer.add(preview);
 		}
 
 		AonTableButton button;
@@ -325,6 +354,37 @@ public abstract class RecordDataTable extends ScrollPanel {
 	private static native String base64Encode(String text) /*-{
 	    return btoa(text);
 	}-*/;
+	
+	private native void fetchBinaryXHR(String url, Consumer<String> callback) /*-{
+	    var xhr = new XMLHttpRequest();
+	    xhr.open("GET", url, true);
+	    xhr.responseType = "arraybuffer";
+	
+	    xhr.onload = function() {
+	        if (xhr.status >= 200 && xhr.status < 300) {
+	            var bytes = new Uint8Array(xhr.response);
+	            var binary = "";
+	            for (var i = 0; i < bytes.byteLength; i++) {
+	                binary += String.fromCharCode(bytes[i]);
+	            }
+	            var base64 = btoa(binary);
+	            callback.@java.util.function.Consumer::accept(Ljava/lang/Object;)(base64);
+	        }
+	    };
+	
+	    xhr.send();
+	}-*/;
+	
+	private native byte[] base64ToBytes(String base64) /*-{
+	    var raw = atob(base64);
+	    var len = raw.length;
+	    var bytes = @com.google.gwt.core.client.JsArrayInteger::createArray()();
+	    for (var i = 0; i < len; i++) {
+	        bytes.push(raw.charCodeAt(i));
+	    }
+	    return bytes;
+	}-*/;
+
 
 	private void getList(Consumer<List<RecordData>> success) {
 		COMMON_SERVICE.getRecordDatas(domainName, domain, user, registry, true, new AsyncCallback<List<RecordData>>() {
@@ -404,5 +464,7 @@ public abstract class RecordDataTable extends ScrollPanel {
 	}
 
 	protected abstract void onShowErrorMessage(String errorMessage);
+	protected abstract void onShowLoadingMessage(String loadingMessage);
+	protected abstract void onHideMessage();
 
 }

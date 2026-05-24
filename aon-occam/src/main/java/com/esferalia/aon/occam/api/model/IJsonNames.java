@@ -1,7 +1,5 @@
 package com.esferalia.aon.occam.api.model;
 
-import com.esferalia.aon.occam.api.json.JsonUtils;
-
 public final class IJsonNames {
 	
 	private IJsonNames() {
@@ -26,6 +24,7 @@ public final class IJsonNames {
 	public static final String ACCOUNT_PARAMS = "accountParams";
 	public static final String ACCOUNT_REPORT_PARAMS = "accountReportParams";
 	public static final String ACCRUAL_REGIME = "accrualRegime";
+	public static final String ACTION = "action";
 	public static final String ACTIVE = "active";
 	public static final String ACTIVE_CHILD_COUNT = "activeChildCount";
 	public static final String ACTIVITY = "activity";
@@ -45,6 +44,7 @@ public final class IJsonNames {
 	public static final String ADMINISTRATIVE = "administrative";
 	public static final String ADVANCE = "advance";
 	public static final String AEAT_RECTIFICATION = "aeatRectification";
+	public static final String ALCATRAZ = "alcatraz";
 	public static final String ALIAS = "alias";
 	public static final String ALLOW_CONCURRENT = "allowConcurrent";
 	public static final String AMORTIZATION = "amortization";
@@ -196,6 +196,7 @@ public final class IJsonNames {
 	public static final String DEDUCTIBLE_QUOTA_EDITED = "deductibleQuotaEdited";
 	public static final String DEFAULT_CERTIFICATE = "defaultCertificate";
 	public static final String DEFAULT_RETENTION_TAX = "defaultRetentionTax";
+	public static final String DEFAULT_SERIES = "defaultSeries";
 	public static final String DEFAULT_VAT_TAX = "defaultVatTax";
 	public static final String DEFINED_USERS = "definedUsers";
 	public static final String DELETE = "delete";
@@ -303,6 +304,7 @@ public final class IJsonNames {
 	public static final String FINANCES = "finances";
 	public static final String FIRST_NAME = "firstName";
 	public static final String FIRST_SURNAME = "firstSurname";
+	public static final String FISCAL_MODEL_TYPE = "fiscalModelType";
 	public static final String FIX_TYPE = "fixType";
 	public static final String FK_COLUMN = "fkColumn";
 	public static final String FK_ID = "fkId";
@@ -334,6 +336,7 @@ public final class IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[I] 
 	public static final String IAE = "iae";
 	public static final String IBAN = "iban";
+	public static final String ICON = "icon";
 	public static final String ID = "id";
 	public static final String IN_KIND = "inKind";
 	public static final String IN_PERIOD_BEFORE_CREDIT = "inPeriodBeforeCredit";
@@ -595,6 +598,7 @@ public final class IJsonNames {
 
 	// ---------------------------------------------------------------------------------------------	[Q] 
 	public static final String QUANTITY = "quantity";
+	public static final String QUERY = "query";
 	public static final String QUESTION = "question";
 	public static final String QUESTION_ALIAS = "questionAlias";
 	public static final String QUOTA = "quota";

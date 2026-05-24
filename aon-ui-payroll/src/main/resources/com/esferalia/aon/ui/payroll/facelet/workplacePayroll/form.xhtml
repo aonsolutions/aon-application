@@ -64,10 +64,7 @@
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{enterprisePayroll.activities}" />
 			</aon:selectOneMenu>
-		</aon:if>
-	
+		</aon:if>	
 	</aon:panelGrid>
-		
-		<aon:outputText value="#{payrollWorkPlace.to.workPlace == null ? 'NULL' : 'NOT NULL' }" />
 
 </ui:composition>

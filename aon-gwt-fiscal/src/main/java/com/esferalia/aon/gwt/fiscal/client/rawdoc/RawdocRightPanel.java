@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.rawdoc;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonChat;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonChat.CommentHandler;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonScalableImage;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -13,15 +15,16 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 import net.aonsolutions.gwt.pdfjs.client.FullViewer.ViewerDefaultScale;
 
-class RawdocAttachPanel extends SimpleLayoutPanel {
-	interface RawdocAttachPanelCallback {
-		void closeAttach();
-		boolean openAttach();
+class RawdocRightPanel extends SimpleLayoutPanel {
+
+	interface RawdocRightPanelCallback {
+		void close();
+		boolean open();
 	}
 	
 	private FlowPanel attachPanelTableCell2;
 	
-	public void showViewer(MimeType mimeType, String url,RawdocAttachPanelCallback cbk) {
+	public void showViewer(MimeType mimeType, String url,RawdocRightPanelCallback cbk) {
 		FlowPanel attachPanelTable = new FlowPanel();
 		attachPanelTable.setStyleName(AON.CSS.aonDisplayTable());
 		attachPanelTable.addStyleName(AON.CSS.aonWidthAll());
@@ -50,9 +53,9 @@ class RawdocAttachPanel extends SimpleLayoutPanel {
 		AonTableButton attachOpenButton = new AonTableButton("Ver documento adjunto",AON.CSS.aonIconLeft());
 		buttons.add(attachOpenButton);
 		
-		attachCloseButton.addClickHandler( event -> cbk.closeAttach());
+		attachCloseButton.addClickHandler( event -> cbk.close());
 		
-		attachOpenButton.addClickHandler( event -> cbk.openAttach());
+		attachOpenButton.addClickHandler( event -> cbk.open());
 
 		attachPanelTableCell2= new FlowPanel();
 		attachPanelTableCell2.setStyleName(AON.CSS.aonDisplayTableCell());
@@ -62,7 +65,7 @@ class RawdocAttachPanel extends SimpleLayoutPanel {
 		this.setWidget(attachPanelTable);		
 
 		
-		cbk.openAttach();
+		cbk.open();
 		
 		if ( mimeType != null && mimeType.isPDF()) {
 			FullViewer viewer = new FullViewer(url, ViewerDefaultScale.PAGE_WIDTH);
@@ -82,5 +85,20 @@ class RawdocAttachPanel extends SimpleLayoutPanel {
 			attachPanelTableCell2.add(labelPanel);
 		}
 	}
+	
+	public void showChat(String workflowsJson, CommentHandler commentHandler, RawdocRightPanelCallback cbk) {
+		AonChat chat = new AonChat();
+		chat.setWorkflowsJson(workflowsJson);
+		chat.onComment(commentHandler);
+		setWidget(chat);		
+		cbk.open();
+	}
+	
+	public void clear(RawdocRightPanelCallback cbk) {
+		this.clear();
+		cbk.close();
+	}
+
+	
 
 }

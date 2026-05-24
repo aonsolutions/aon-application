@@ -64,6 +64,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.AgreementLevelCategoryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ContractExtendedDataFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ContractFiller;
@@ -171,7 +172,7 @@ public class ContractDAO {
 				.select(DSL.select(DSL.sum(SALARY.CGC_BASE).cast(Double.class))
 						.from(SALARY)
 						.where(SALARY.CONTRACT.eq(CONTRACT.ID))
-						.and(SALARY.TYPE.eq((byte) 0))
+						.and(SALARY.TYPE.eq(SalaryType.SALARY.value()))
 						.groupBy(SALARY.END_DATE)
 						.orderBy(SALARY.END_DATE.desc())
 						.limit(1).asField().as(SALARY_CGC_BASE)

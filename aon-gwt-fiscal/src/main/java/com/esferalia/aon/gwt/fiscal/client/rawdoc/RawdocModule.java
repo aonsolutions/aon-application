@@ -1,5 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.rawdoc;
 
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDomain;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDomainName;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentUser;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getRootPanel;
+
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.logging.Logger;
@@ -9,20 +14,19 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonChat.CommentHandler;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-
 import com.esferalia.aon.gwt.fiscal.client.RawdocService;
 import com.esferalia.aon.gwt.fiscal.client.RawdocServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.RawdocServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocAttachPanel.RawdocAttachPanelCallback;
+import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocRightPanel.RawdocRightPanelCallback;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocParams;
@@ -31,6 +35,7 @@ import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.Style.Unit;
@@ -45,11 +50,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
-import com.google.gwt.core.client.EntryPoint;
 
 public class RawdocModule  implements EntryPoint {
 	private static final Logger LOGGER = Logger.getLogger(RawdocModule.class.getName());
@@ -72,17 +73,10 @@ public class RawdocModule  implements EntryPoint {
 	 
 	private SplitLayoutPanel splitLayoutPanel;
 	private SimpleLayoutPanel centerLayoutPanel;
-	
-	private AonMinimizePanel footPanel;
-	private TabLayoutPanel tabLayout;
-	private ScrollPanel extraInfoContainer;
-	
-	private RawdocAttachPanel attachPanel;
+
+	private RawdocRightPanel rightPanel;
 	
 	private AonToolbar toolbar;
-	
-	private boolean minimizedByUser;
-	private int extraInfoTabIndex;
 
 	private LinkedHashSet<Integer> selectedItems = new LinkedHashSet<>();
 	private InlineLabel selectedCount;
@@ -92,39 +86,44 @@ public class RawdocModule  implements EntryPoint {
 
 	class RawdocCallback {
 	
+		private RawdocRightPanelCallback rightPanelCallback = new RawdocRightPanelCallback() {
+			@Override
+			public void close() {
+				splitLayoutPanel.setWidgetSize(rightPanel, 0);
+			}
+			
+			@Override
+			public boolean open() {
+				double from = splitLayoutPanel.getWidgetSize(rightPanel) == null? 0 : splitLayoutPanel.getWidgetSize(rightPanel);
+				int to = Window.getClientWidth() / 2;
+				if (from < to) {
+					splitLayoutPanel.setWidgetSize(rightPanel, to);
+					return true;
+				}
+				return false;
+			}
+		};
+		
 		void showError(String msg) {
 			if (AonStringUtils.isBlank(msg)) {
 				msg = "Se ha producido un error no codificado.";
 			}
 			toolbar.showErrorMessage(msg);
 		}
-
-		void showExtraInfo(Widget widget) {
-			openFootPanelIfNeeded(5);
-			tabLayout.selectTab(extraInfoTabIndex);
-			extraInfoContainer.setWidget(widget);
-			extraInfoContainer.scrollToTop();
-		}
 		
 		public void showViewer( MimeType mimeType, String url ) {
-			attachPanel.showViewer( mimeType, url
-				, new RawdocAttachPanelCallback() {
-					public boolean openAttach() {
-						double from = splitLayoutPanel.getWidgetSize(attachPanel) == null? 0 : splitLayoutPanel.getWidgetSize(attachPanel);
-						int to = Window.getClientWidth() - 900;
-						if (from < to) {
-							splitLayoutPanel.setWidgetSize(attachPanel, to);
-							return true;
-						}
-						return false;
-					}
-					
-					public void closeAttach() {
-						splitLayoutPanel.setWidgetSize(attachPanel, 20);
-					}
-				} 
-			);
+			rightPanel.showViewer( mimeType, url, rightPanelCallback);
 		}
+		
+		public void showChat(String workflowJson, CommentHandler commentHandler) {
+			rightPanel.showChat(workflowJson, commentHandler, rightPanelCallback);
+		}
+
+		public void clearRightPanel() {
+			rightPanel.clear(rightPanelCallback);
+		}
+
+		
 		public InlineLabel getSelectedCount() {
 			return selectedCount;
 		}
@@ -184,7 +183,7 @@ public class RawdocModule  implements EntryPoint {
 				
 				@Override
 				public void onFailure(Throwable caught) {
-					dockLayoutPanel.add(new Label(AON.MSG.noActiveAccountPeriod() + "[Interno: " + caught.getMessage()+ "]"));
+					dockLayoutPanel.add(new Label("[Error: " + caught.getMessage()+ "]"));
 				}
 			});
 		} else {
@@ -254,11 +253,9 @@ public class RawdocModule  implements EntryPoint {
 		splitLayoutPanel = new SplitLayoutPanel();
 		dockLayoutPanel.add(splitLayoutPanel);
 		
-		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
-		
-		attachPanel = new RawdocAttachPanel( );
-		splitLayoutPanel.addEast(attachPanel,0);
-		
+		rightPanel = new RawdocRightPanel( );
+		splitLayoutPanel.addEast(rightPanel, 0);
+
 		centerLayoutPanel = new SimpleLayoutPanel();
 		splitLayoutPanel.add(centerLayoutPanel);
 		search(opt);
@@ -291,7 +288,7 @@ public class RawdocModule  implements EntryPoint {
 		toolbar.add(rejectedButton);
 
 		AonToolbarButton draftButton = new AonToolbarButton( AON.MSG.draftDocs(), AON.CSS.aonIconDraft() );
-		draftButton.addClickHandler(event -> search( opt , RawdocStatus.DRAFT));
+		draftButton.addClickHandler(event -> search( opt , RawdocStatus.TRASH));
 		toolbar.add(draftButton);
 
 		AonToolbarButton recordButton = new AonToolbarButton( AON.MSG.record(), AON.CSS.aonIconAddTask() );
@@ -403,35 +400,8 @@ public class RawdocModule  implements EntryPoint {
 		}
 	}
 
-	private AonMinimizePanel getMinimizePanel() {
-		footPanel = new AonMinimizePanel();
-		footPanel.addMinimizeHandler(event -> {
-			minimizedByUser = true;
-			closeFootPanel();
-		});
-		footPanel.addMaximizeHandler(event -> openFootPanel(5));
-		footPanel.setStyleName(AON.CSS.aonSelector());
-		tabLayout = new TabLayoutPanel(26, Unit.PX);
-		tabLayout.setWidth("100%");
-		
-		footPanel.add(tabLayout);
-		int tabIndex = 0;
-		
-		extraInfoContainer = new ScrollPanel();
-		tabLayout.add(extraInfoContainer, AON.MSG.additionalData());
-		extraInfoTabIndex = tabIndex;
-
-		tabLayout.setAnimationDuration(300);
-		tabLayout.addSelectionHandler(event -> {
-			minimizedByUser = false;
-			openFootPanelIfNeeded();
-		});
-		return footPanel; 
-	}
-
 	private void search(RawdocModuleOptions opt, RawdocStatus status) {
-		clearFootInfo();
-		splitLayoutPanel.setWidgetSize(attachPanel, 20);
+		splitLayoutPanel.setWidgetSize(rightPanel, 20);
 		opt.setParams(
 			new RawdocParams()
 				.setDomain(opt.getDomain())
@@ -446,34 +416,7 @@ public class RawdocModule  implements EntryPoint {
 		RawdocTable table = new RawdocTable(opt, new RawdocCallback());
 		centerLayoutPanel.setWidget( table );
 	}
-
-	private void clearFootInfo( ) {
-		closeFootPanel();
-		clearExtraInfo();
-		attachPanel.clear();
-	}
 	
-	private void clearExtraInfo( ) {
-		extraInfoContainer.setWidget(new Label());
-	}
-	
-	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 30);
-		splitLayoutPanel.animate(500);
-	}
-	private void openFootPanelIfNeeded() {
-		openFootPanelIfNeeded(5);
-	}
-	
-	private void openFootPanelIfNeeded( int effectiveHeigth) {
-		if (!minimizedByUser && splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
-			openFootPanel(effectiveHeigth);
-		}
-	}
-	private void openFootPanel(int effectiveHeigth) {
-		splitLayoutPanel.setWidgetSize(footPanel, ((double) Window.getClientHeight()) / effectiveHeigth);
-		splitLayoutPanel.animate(500);
-	}
 
 	// ------------------------------- [LAUNCHER]		
 	public static void run() {

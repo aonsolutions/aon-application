@@ -1070,7 +1070,7 @@ export class AonMobileInvoice extends AonInvoice {
 			let actions = [];
 			if(this.invoice.isRejected()) {
 				actions = [restore, deleteInvoice];
-			} else if(this.invoice.isDraft()) {
+			} else if(this.invoice.isTrash()) {
 				actions = [restore, deleteForever];
 			}  else if(this.invoice.isInbox()){
 				if(this.getDur().isAdmin() || this.getDur().isInvoiceManager()){

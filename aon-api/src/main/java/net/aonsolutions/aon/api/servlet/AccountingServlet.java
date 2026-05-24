@@ -15,20 +15,20 @@ import com.esferalia.aon.occam.api.json.AccountTrialBalanceReportJSON;
 import com.esferalia.aon.occam.api.json.AccountingExpenseJSON;
 import com.esferalia.aon.occam.api.json.AccountingIncomeJSON;
 import com.esferalia.aon.occam.api.json.AccountingReportParamsJSON;
+import com.esferalia.aon.occam.api.json.DomainInvoiceStatJSON;
+import com.esferalia.aon.occam.api.json.DomainInvoiceStatParamsJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
-import com.esferalia.aon.occam.api.model.AccountProperties;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
-import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.DomainInvoiceStatParams;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountingIncomeDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,6 +46,7 @@ public class AccountingServlet extends AonApiHttpServlet{
 	public static final String PERIODS = "/periods";
 	public static final String EXPENSES = "/expenses";
 	public static final String INCOMES = "/incomes";
+	public static final String INVOICES_COUNTERS = "/invoicesCounters";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -59,6 +60,7 @@ public class AccountingServlet extends AonApiHttpServlet{
 				.addRoute(PERIODS, AccountingServlet::getPeriods)
 				.addRoute(EXPENSES, AccountingServlet::getExpenses)
 				.addRoute(INCOMES, AccountingServlet::getIncomes)
+				.addRoute(INVOICES_COUNTERS, AccountingServlet::getInvoicesCounters)
 				.apply();
 			
 			response(req, resp, object);
@@ -206,5 +208,28 @@ public class AccountingServlet extends AonApiHttpServlet{
 		return new JSONObject();
 	}
 	
+	private static JSONObject getInvoicesCounters(AonApiData api) {
+		JSONObject jsonParams = api.getData();
+		if (jsonParams == null) jsonParams = new JSONObject();
+		if (!jsonParams.has(IJsonNames.DOMAIN)) {
+			jsonParams.put(IJsonNames.DOMAIN, api.getDomain().getId());
+		}
+		if (!jsonParams.has(IJsonNames.LIMIT)) {
+			jsonParams.put(IJsonNames.LIMIT, Integer.MAX_VALUE);
+		}
+		if (!jsonParams.has(IJsonNames.OFFSET)) {
+			jsonParams.put(IJsonNames.OFFSET, 0);
+		}
+		LOGGER.info("getInvoicesCounters: " + jsonParams.toString());
+		DomainInvoiceStatParams params = DomainInvoiceStatParamsJSON.from( jsonParams )
+			.orElseThrow( () -> new AonCoreException("Los parámetros de la consulta son obligatorios."));
+		
+		return AonCollectionUtils.stream( ACCOUNTING.getDomainInvoiceStats(api.getOccam(), params ) ) 
+			.map( DomainInvoiceStatJSON::toJSON ) 
+			.flatMap(Optional::stream) 
+			.findFirst()
+			.orElse( new JSONObject())
+		;
+	}
 }
 

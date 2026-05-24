@@ -56,6 +56,7 @@ public abstract class MediaTable extends ScrollPanel {
 	private static enum COLS {
 		  TYP(AON.MSG.type()						,"4rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" )
 		, VAL("Valor"								,"-moz-available", "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" )
+		, CMM("Comentarios"							,"20rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" )
 		, ADM("Admin."								,"4rem", ""  )
 		, COM("Comercial"							,"5rem", ""  )
 		, TEC("Tecnico"								,"4rem", ""  )
@@ -147,6 +148,7 @@ public abstract class MediaTable extends ScrollPanel {
 		container.clear();
 		tab = new AonCustomTable();
 		tab.setMaxHeight("160x");
+		tab.getElement().getStyle().setProperty("padding", "1rem 0");
 		scrollPanel = new ScrollPanel(tab);
 		
 		paintHeader();
@@ -249,6 +251,11 @@ public abstract class MediaTable extends ScrollPanel {
 		value.setTitle(registryMedia.getValue());
 		tab.addInlineStyle(value, COLS.VAL.getStyles());
 		tab.addRow(row, value, COLS.VAL.getColWidth());
+		
+		Label comments = new Label(registryMedia.getComment());
+		comments.setTitle(registryMedia.getComment());
+		tab.addInlineStyle(comments, COLS.CMM.getStyles());
+		tab.addRow(row, comments, COLS.CMM.getColWidth());
 		
 		Button administrative = new Button();
 		getEnableDisableButton(administrative, registryMedia.isAdministrative());

@@ -1,20 +1,28 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonFlexGrid;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceMassagesList;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.occam.api.model.tedi.ICallback;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class TediProblems extends ScrollPanel {
@@ -32,38 +40,62 @@ public class TediProblems extends ScrollPanel {
 
 	public TediProblems( ITediProblemsCallback callback) {
 		setStyleName(AON.CSS.aonScrollArea());
-		FlowPanel mainPanel = new FlowPanel();
+		String[] widths = {"80px", "1fr"};
+		AonFlexGrid mainPanel = new AonFlexGrid(widths,AON.CSS.aonMarginTopSep(),AON.CSS.aonMarginLeft());
 		setWidget(mainPanel);
 		if (callback.getResult().getAccountingInvoice().hasMessages()) {
-			mainPanel.setStyleName(AON.CSS.aonMarginTopSep());
-			mainPanel.addStyleName(AON.CSS.aonMarginLeft());
-			mainPanel.addStyleName(AON.CSS.aonFixedFont());
 			callback.getResult().getAccountingInvoice().messageStream()
-				.forEach( error -> {
-					FlowPanel flowPanel = new FlowPanel();
-					InlineLabel colorLabel = new InlineLabel("");
-					colorLabel.setStyleName(AON.CSS.aonPaddingLeft());
-					colorLabel.addStyleName(AON.CSS.aonPaddingRight());
-					colorLabel.getElement().getStyle().setBackgroundColor(getBackgroundColor(error.getLevel()));
-					flowPanel.add(colorLabel);
+				.forEach( err -> {
+					InvoiceErrorLevel level = err.getLevel();
+					String msg = err.getMessage();
+					boolean blocked = false;
+					if (err.getContext() != null && err.getContext().getKey() == InvoiceErrorKey.REGISTRY_STATUS ) {
+						blocked = true;
+						level = InvoiceErrorLevel.WRN;
+					}
+
+
+				    InlineLabel errLabel = new InlineLabel(level.getLabel());
+					errLabel.getElement().getStyle().setColor(InvoiceMassagesList.getColor(level));
+					mainPanel.addCell(errLabel  
+						, AON.CSS.aonBold()
+						, AON.CSS.aonAlignItemsCenter()
+						, AON.CSS.aonJustifyContentCenter() );
+					
+				    FlowPanel container = new FlowPanel();
+				    container.setStyleName(AON.CSS.aonPaddingLeft());
+
+				    if (blocked) {
+						String prefix = msg;
+						String suffix = "";
+						int start = AonStringUtils.indexOf(msg, '(');
+					    int end = AonStringUtils.lastIndexOf(msg, ')');
+					    if (start != -1 && end != -1 && end > start) {
+					    	prefix = AonStringUtils.substring(msg, 0, start);
+					    	suffix = AonStringUtils.substring(msg, start + 1, end);
+					    }
+					    
+					    SafeHtml safeHtml = SafeHtmlUtils.fromTrustedString(prefix);
+						HTML prefixLabel = new HTML(safeHtml);
+						container.add(prefixLabel);
+						
+						Label suffixLabel = new Label(suffix);
+						suffixLabel.setStyleName(AON.CSS.aonMarginTop());
+						suffixLabel.addStyleName(AON.CSS.aonBold());
+						container.add(suffixLabel);
+						
+					} else {
+						SafeHtml safeHtml = SafeHtmlUtils.fromTrustedString(msg);
+						HTML msgLabel = new HTML(safeHtml);
+						msgLabel.setStyleName(AON.CSS.aonPaddingLeft());
+						container.add(msgLabel);
+					}
+				    mainPanel.addCell(container);
 	
-					InlineLabel errLabel = new InlineLabel(error.getLevel().getLabel());
-					errLabel.setStyleName(AON.CSS.aonPaddingLeft());
-					errLabel.addStyleName(AON.CSS.aonPaddingRight());
-					errLabel.addStyleName(AON.CSS.aonBold());
-					flowPanel.add(errLabel);
 	
-					InlineLabel msgLabel = new InlineLabel(error.getMessage());
-					msgLabel.setStyleName(AON.CSS.aonMarginLeft());
-					flowPanel.add(msgLabel);
-	
-					if (error.canBeFixed()) {
-						FlowPanel container = new FlowPanel();
-						container.setStyleName(AON.CSS.aonMarginTop());
-						container.addStyleName(AON.CSS.aonMarginBottom());
-						flowPanel.add(container);
+					if (err.canBeFixed()) {
 						TediContextVisitor tediContextVisitor = new TediContextVisitor(callback.getModuleOptions(), container);
-						error.getContext().getKey().visit(tediContextVisitor, new ICallback() {
+						err.getContext().getKey().visit(tediContextVisitor, new ICallback() {
 	
 							@Override
 							public TediResult getResult() {
@@ -104,24 +136,9 @@ public class TediProblems extends ScrollPanel {
 							}
 						});
 					}
-					mainPanel.add(flowPanel);
 				}
 			);
 		}
-	}
-
-	private String getBackgroundColor(InvoiceErrorLevel curLevel) {
-		String color = null;
-		if (curLevel == null) {
-			color = "#c1f9ba";
-		} else if (curLevel == InvoiceErrorLevel.INF) {
-			color = "RoyalBlue";
-		} else if (curLevel == InvoiceErrorLevel.WRN) {
-			color = "#ffa54f"; 
-		} else if (curLevel == InvoiceErrorLevel.ERR) {
-			color = "red";
-		}
-		return color;
 	}
 
 }

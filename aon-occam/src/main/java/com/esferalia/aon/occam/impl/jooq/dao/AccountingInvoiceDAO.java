@@ -856,7 +856,7 @@ public class AccountingInvoiceDAO {
 		}
 	}
 
-	private static void saveCommunicationData(AONContext ctx, AonConfiguration config, Invoice invoice) {
+	public static void saveCommunicationData(AONContext ctx, AonConfiguration config, Invoice invoice) {
 		try {
 			InvoiceCommunicationConfiguration icc = config.getCommunicationConfig();
 			if (icc.hasCommunication( invoice.getType() )) {

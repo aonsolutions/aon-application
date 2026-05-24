@@ -583,7 +583,6 @@ public class AonVisualIdentity extends ScrollPanel {
 		s.setDisplay(Display.FLEX);
 		s.setProperty("flexWrap", "wrap");
 		s.setProperty("gap", "24px");
-		s.setPadding(16, Unit.PX);
 	}
 
 	private void styleDropZoneEmpty(FlowPanel zone) {

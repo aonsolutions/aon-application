@@ -4776,6 +4776,11 @@ public class SalaryDraft extends ResizeComposite
 				return new NewPaymentHandler();
 			}
 
+			@Override
+			public NewPaymentHandler visitProcedural(Type type) {
+				return visitSalary(type);
+			}
+
 		});
 	}
 	
@@ -6033,6 +6038,11 @@ public class SalaryDraft extends ResizeComposite
 			public Void visitSettle(Type type) {
 				printSettle();
 				return null;
+			}
+			
+			@Override
+			public Void visitProcedural(Type type) {
+				return visitSalary(type);
 			}
 
 		});

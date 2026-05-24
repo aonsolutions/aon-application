@@ -757,6 +757,11 @@ public abstract class QuoteCalculator {
 				public Object visitDelay(SalaryType salaryType) {
 					return null;
 				}
+				
+				@Override
+				public Object visitProcedural(SalaryType salaryType) {
+					return null;
+				}
 
 			});
 
@@ -1083,6 +1088,11 @@ public abstract class QuoteCalculator {
 					public QuoteCalculator visitDelay(SalaryType salaryType) {
 						return null;
 					}
+					
+					@Override
+					public QuoteCalculator visitProcedural(SalaryType salaryType) {
+						return null;
+					}
 
 				});
 
@@ -1136,14 +1146,17 @@ public abstract class QuoteCalculator {
 					public QuoteCalculator visitSettle(SalaryType salaryType) {
 						return new GeneralQuote(expressionContext, startDate,
 								endDate);
-						//return new UnlimitedQuote(expressionContext, startDate,
-						//		endDate);
 					}
 
 					@Override
 					public QuoteCalculator visitDelay(SalaryType salaryType) {
 						return new UnlimitedQuote(expressionContext, startDate,
 								endDate);
+					}
+					
+					@Override
+					public QuoteCalculator visitProcedural(SalaryType salaryType) {
+						return null;
 					}
 
 				});

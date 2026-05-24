@@ -453,6 +453,11 @@ public class PayrollServletUtils extends AonServletUtils {
 			public String visitDelay(SalaryType salaryType) {
 				return visitSalary(salaryType);
 			}
+			
+			@Override
+			public String visitProcedural(SalaryType salaryType) {
+				return visitSalary(salaryType);
+			}
 
 		});
 	}

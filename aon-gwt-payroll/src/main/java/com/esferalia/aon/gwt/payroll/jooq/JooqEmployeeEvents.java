@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.Quartet;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -351,7 +352,7 @@ public class JooqEmployeeEvents {
 			
 			if(!varNotToUpdate.contains(quartet.getName()))
 				if(AonStringUtils.equalsIgnoreCase(quartet.getName(), "DIAS_VACACIONES_NO_DISFRUTADOS")) {
-					Integer settleId = dslContext.select(SALARY.ID).from(SALARY).where(SALARY.CONTRACT.eq(contract)).and(SALARY.TYPE.eq((byte)2)).fetchOne(SALARY.ID);
+					Integer settleId = dslContext.select(SALARY.ID).from(SALARY).where(SALARY.CONTRACT.eq(contract)).and(SALARY.TYPE.eq(SalaryType.SETTLE.value())).fetchOne(SALARY.ID);
 					Record holidyasRecord = dslContext.select().from(SALARY_DATA).where(SALARY_DATA.NAME.eq("DIAS_VACACIONES_NO_DISFRUTADOS")).and(SALARY_DATA.SALARY.eq(settleId)).fetchOne();
 					
 					if(null == quartet.getExpression() || AonStringUtils.equalsIgnoreCase(quartet.getExpression(), "0.0"))

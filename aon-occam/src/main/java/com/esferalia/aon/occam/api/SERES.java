@@ -1,9 +1,12 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.Date;
+
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.seres.SeresInfo;
@@ -90,9 +93,9 @@ public class SERES {
         }
     }
 
-	public static Double getUnitPrice(Occam occam, Integer customer, Integer item) {
+	public static Double getUnitPrice(Occam occam, Integer customer, Date date, Item item) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getSeres().getUnitPrice(ctx, customer, item);
+			return getSeres().getUnitPrice(ctx, customer, date, item);
 		}
 	}
 

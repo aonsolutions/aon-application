@@ -140,6 +140,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
+import com.esferalia.aon.occam.api.model.registry.RegistrySource;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkloadContent;
@@ -2182,6 +2183,31 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public void deleteRecordDataAttach(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
 		AON.deleteRecordDataAttach(domainName, domain, user, id);
+	}
+	
+	@Override
+	public List<RegistryBank> getRregistryBanks(String domainName, Integer domain, String user, Integer registry) throws AonCoreException {
+		return AON.getRegistryBanks(new Domain().setName(domainName).setId(domain), new User().setLogin(user), registry);
+	}
+	
+	@Override
+	public RegistryBank saveRregistryBank(String domainName, Integer domain, String user, RegistryBank registryBank) throws AonCoreException {
+		return AON.saveRegistryBank(new Domain().setName(domainName).setId(domain), user, registryBank);
+	}
+	
+	@Override
+	public void deleteRregistryBank(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		AON.deleteRegistryBank(new Domain().setName(domainName).setId(domain), user, id);
+	}
+
+	@Override
+	public List<Account> getAccountsForBank(String domainName, Integer domain, String user) throws AonCoreException {
+		return AON.getAccountsForBank(domainName, domain, user);
+	}
+	
+	@Override
+	public List<Account> getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource source) throws AonCoreException {
+		return AON.getAccountsForRegistry(domainName, domain, user, source);
 	}
 	
 	// *********************** [AMORTIZATION TYPE]

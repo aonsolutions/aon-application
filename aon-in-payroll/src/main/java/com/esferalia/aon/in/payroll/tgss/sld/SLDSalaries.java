@@ -110,6 +110,37 @@ public class SLDSalaries {
 		return getPeriodSalary(type, ccc, naf, periodCalcs);
 	}
 
+	public static Collection<Salary> getSalaries(String type, String ccc, String naf, Map<Period, Map<String, Calc>> calcs, Period period) {
+		
+		Map<Period, Map<String, Calc>> periodCalcs = 
+		calcs.entrySet().stream()
+		.filter(e -> e.getKey() != null )
+		.filter(e -> contains(period, e.getKey()))
+		.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+		
+		if ( periodCalcs.isEmpty() && "L13".equals(type)) {
+			periodCalcs = 
+			calcs.entrySet().stream()
+			.filter(e -> e.getKey() != null )
+			.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+		} else if ( periodCalcs.isEmpty() ) {
+			periodCalcs = 
+			calcs.entrySet().stream()
+			.filter(e -> e.getKey() != null )
+			.filter(e -> intersects(period, e.getKey()))
+			.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+		} 
+		
+		if ("L02".equals(type) ) {
+			return periodCalcs.entrySet().stream()
+			.map( entry -> getPeriodSalary(type, ccc, naf, Collections.singletonMap(entry.getKey(), entry.getValue()))).toList();
+		} else {
+			Salary salary =  getPeriodSalary(type, ccc, naf, periodCalcs);
+			return Collections.singleton(salary);
+		}
+		
+	}
+
 	private static Salary getPeriodSalary(String type, String ccc, String naf, Map<Period, Map<String, Calc>> periodCalcs) {
 		
 		Salary salary = new Salary();

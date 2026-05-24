@@ -350,6 +350,7 @@ public class ConfigurationDAO {
 					.orElse(Administration.UNKNOWN) )
 			.setDefaultRetention(AppParamDAO.getInteger(ctx, domainId, AppParam.ACC_DEFAULT_RETENTION_PERCENT) .orElse(null))
 			.setDefaultVat(AppParamDAO.getInteger(ctx, domainId, AppParam.ACC_DEFAULT_VAT_PERCENT).orElse(null))
+			.setDefaultSeries(AppParamDAO.fetchValue(ctx, AppParam.ACC_DEFAULT_INVOICE_SERIES))
 			.setTaxes( TaxDAO.stream(ctx, domainId).collect(Collectors.toCollection(LinkedList::new)) )
 			.setSeries( SeriesDAO.stream(ctx, domainId).collect(Collectors.toCollection(LinkedList::new)) )
 			.setWorkplaces( WorkplaceDAO.getWorkplaces(ctx, domainId).collect(Collectors.toCollection(LinkedList::new)))

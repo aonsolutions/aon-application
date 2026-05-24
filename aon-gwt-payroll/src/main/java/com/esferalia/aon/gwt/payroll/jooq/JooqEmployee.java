@@ -71,6 +71,7 @@ import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.payroll.sepe.contrata.Contrata;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATOS;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -1113,7 +1114,7 @@ public class JooqEmployee {
 		
 		Result<Record> settlementRecords = dslContext.select().from(SALARY)
 				.where(SALARY.CONTRACT.eq(contract))
-				.and(SALARY.TYPE.eq((byte)2))
+				.and(SALARY.TYPE.eq(SalaryType.SETTLE.value()))
 				.orderBy(SALARY.ID.desc())
 				.fetch();
 		

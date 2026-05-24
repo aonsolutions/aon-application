@@ -44,7 +44,8 @@ public class RegistryFull<R extends Registry> implements Serializable {
 	}
 		
 	private List<RegistryBank> ensureBanks() {
-		return this.banks == null ? new LinkedList<>() : banks; 
+		if (this.banks == null) this.banks = new LinkedList<>(); 
+		return this.banks;
 	}
 		
 	public RegistryFull<R> addBank(RegistryBank bank) {

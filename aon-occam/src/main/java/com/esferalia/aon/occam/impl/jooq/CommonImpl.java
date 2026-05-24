@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.ICommon;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
@@ -64,9 +65,11 @@ import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistrySource;
 import com.esferalia.aon.occam.api.model.tag.TagParams;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ActivityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ActivitySummaryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
@@ -751,6 +754,10 @@ public class CommonImpl implements ICommon {
 	@Override
 	public void deleteRecordDataAttach(CloseableAONContext ctx, Integer domain, Integer recordDataId) {
 		ctx.getDslContext().transaction(configuration -> RecordDataDAO.deleteRecordDataAttach(ctx, recordDataId));
+	}
+	@Override
+	public Account createRegistryAccount(CloseableAONContext ctx, Integer domain, String registryName, String registryAlias, RegistrySource registrySource) {
+		return ctx.getDslContext().transactionResult(configuration -> AccountDAO.createRegistryAccount(ctx, domain, registryName, registryAlias, registrySource));
 	}
 	
 }

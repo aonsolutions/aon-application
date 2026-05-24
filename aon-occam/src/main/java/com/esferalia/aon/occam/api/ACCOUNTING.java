@@ -24,6 +24,8 @@ import com.esferalia.aon.occam.api.model.AccountingAnalyticalReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainInvoiceStat;
+import com.esferalia.aon.occam.api.model.DomainInvoiceStatParams;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.Filter.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
@@ -949,5 +951,15 @@ public class ACCOUNTING {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
 			getAccounting().unlinkAmortizationInvoice(ctx, domain, amortizationId, invoiceId);
 		 }
+	}
+
+	// *******************************************************
+	// ********************************** [INVOICES CONUNTERS]
+	// *******************************************************
+	public static LinkedList<DomainInvoiceStat> getDomainInvoiceStats(Occam occam, DomainInvoiceStatParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getAccounting().getDomainInvoiceStats(ctx, params)
+				.collect(Collectors.toCollection(LinkedList::new));
+		}
 	}
 }
