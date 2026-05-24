@@ -720,7 +720,7 @@ public class Up2Date {
 			for (String database : databases) {
 
 				System.out.println(String.format("Updating database  `%s`", database));
-697488
+
 				statement.execute(String.format("USE `%s`", database));
 
 				upgrade(connection);
