@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api;
 
+import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -202,6 +204,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.registry.RegistrySegment;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
+import com.esferalia.aon.occam.api.model.registry.RegistrySource;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
@@ -9333,6 +9336,39 @@ public class AON {
 	public static List<Account> getAccountsForBank(String domainName, Integer domain, String user) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
 			return getAccounting().getAccounts(ctx, f -> f.getDomainProperty().eq(domain).and(f.getLevelProperty().eq((byte)5)).and(f.getCodeProperty().like("572%").or(f.getCodeProperty().like("5201%")))).collect(Collectors.toList());
+		}
+	}
+	
+	public static List<Account> getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource source) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			switch (source) {
+				case CUSTOMER:
+					return getAccounting().getAccounts(ctx, 
+							f -> f.getDomainProperty().eq(domain)
+								.and(f.getLevelProperty().eq((byte)5))
+								.and(f.getCodeProperty().like("4300%"))
+							).collect(Collectors.toList());
+				case CREDITOR:
+					return getAccounting().getAccounts(ctx, 
+							f -> f.getDomainProperty().eq(domain)
+								.and(f.getLevelProperty().eq((byte)5))
+								.and(f.getCodeProperty().like("4100%"))
+							).collect(Collectors.toList());
+				case SUPPLIER:
+					return getAccounting().getAccounts(ctx, 
+							f -> f.getDomainProperty().eq(domain)
+								.and(f.getLevelProperty().eq((byte)5))
+								.and(f.getCodeProperty().like("4000%"))
+							).collect(Collectors.toList());
+				default:
+					throw new IllegalArgumentException("Unexpected value: " + source);
+			}
+		}
+	}
+
+	public static Account createRegistryAccount(String domainName, Integer domain, String user, String registryName, String registryAlias, RegistrySource registrySource) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getCommon().createRegistryAccount(ctx, domain, registryName, registryAlias, registrySource);
 		}
 	}
 }

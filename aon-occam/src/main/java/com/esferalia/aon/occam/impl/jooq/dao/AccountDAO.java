@@ -20,12 +20,14 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.jooq.tables.records.AccountRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AccountProperties;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.registry.RegistrySource;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountValidation;
@@ -523,6 +525,61 @@ public class AccountDAO {
 				.setActive(true);
 			account = save(ctx, account);
 		return account;
+	}
+	
+
+	public static Account createRegistryAccount(CloseableAONContext ctx, Integer domain, String registryName, String registryAlias, RegistrySource registrySource) {
+		Account newAccount = new Account()
+				.setDomain(domain)
+				.setDescription(registryName)
+				.setAlias(registryAlias)
+				.setEntryEnabled(true)
+				.setLevel((byte)5)
+				.setActive(true)
+				;
+		
+		Integer nextAccount = null;
+		AccountRecord accountRecord = null;
+		
+		switch (registrySource) {
+			case CUSTOMER:
+				accountRecord = ctx.getDslContext().selectFrom(ACCOUNT)
+					.where(ACCOUNT.DOMAIN.eq(domain))
+					.and(ACCOUNT.CODE.like("4300%"))
+					.and(ACCOUNT.LEVEL.eq((byte)5))
+					.orderBy(ACCOUNT.ID.desc())
+					.limit(1)
+					.fetchOne();
+				nextAccount = Integer.parseInt(accountRecord.getCode());
+				break;
+			case CREDITOR:
+				accountRecord = ctx.getDslContext().selectFrom(ACCOUNT)
+					.where(ACCOUNT.DOMAIN.eq(domain))
+					.and(ACCOUNT.CODE.like("4100%"))
+					.and(ACCOUNT.LEVEL.eq((byte)5))
+					.orderBy(ACCOUNT.ID.desc())
+					.limit(1)
+					.fetchOne();
+				nextAccount = Integer.parseInt(accountRecord.getCode());
+				break;
+			case SUPPLIER:
+				accountRecord = ctx.getDslContext().selectFrom(ACCOUNT)
+					.where(ACCOUNT.DOMAIN.eq(domain))
+					.and(ACCOUNT.CODE.like("4000%"))
+					.and(ACCOUNT.LEVEL.eq((byte)5))
+					.orderBy(ACCOUNT.ID.desc())
+					.limit(1)
+					.fetchOne();
+				nextAccount = Integer.parseInt(accountRecord.getCode());
+				break;
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + registrySource);
+		}
+		
+		nextAccount++;
+		newAccount.setCode(nextAccount.toString());
+		
+		return insert(ctx, newAccount);
 	}
 
 	// *************************************************

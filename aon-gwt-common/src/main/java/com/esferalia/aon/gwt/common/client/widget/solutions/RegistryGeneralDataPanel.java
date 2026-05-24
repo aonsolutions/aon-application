@@ -152,7 +152,7 @@ public abstract class RegistryGeneralDataPanel extends ScrollPanel {
 	}
 	
 	private void getContext(Consumer<Void> end) {
-		COMMON_SERVICE.getAccountsForBank(domainName, domain, user, new AsyncCallback<List<Account>>() {
+		COMMON_SERVICE.getAccountsForRegistry(domainName, domain, user, registrySource, new AsyncCallback<List<Account>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
