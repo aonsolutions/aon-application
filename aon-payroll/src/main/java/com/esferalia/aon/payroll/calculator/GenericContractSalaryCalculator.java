@@ -10,6 +10,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENT
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_RAW;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_RAW;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_16_20;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_1_3;
@@ -947,7 +948,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				fixBaseMin(ctx.getSalaryType(), expressionContext, start, end, quoteCalculator, taxCalculator, issueDate, leavePeriods,
 					offPeriods, rawDirectPayBase, directPayBase, DIRECT_BASE);
 			}
-			if (AonNumberUtils.compare(rawMaternityBase, maternityBase, 3) < 0) {
+			if (AonNumberUtils.compare(rawUnpaidBase, unpaidBase, 3) < 0) {
 				fixBaseMin(ctx.getSalaryType(), expressionContext, start, end, quoteCalculator, taxCalculator, issueDate, leavePeriods,
 					offPeriods, rawUnpaidBase, unpaidBase, UNPAID_BASE);
 			}
@@ -1012,7 +1013,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			addVars(expressionContext, CGP_BASE_ENTERPRISE, ERE_BASES);
 			addVars(expressionContext, CGP_BASE_ENTERPRISE, FREE_BASES);
 			addVars(expressionContext, CGP_BASE_ENTERPRISE, CGP_BASE);
+			
+			expressionContext.getPeriods(UNPAID_BASE)
+			.forEach(p -> copyResults(expressionContext, CGP_BASE_MIN, CGP_BASE_ENTERPRISE, p.getStart(), p.getEnd()));
 
+			
+			
 			salaryBuilder.setCgpBase(cgpBase);
 
 			Double nonStructuralBase = quoteCalculator.getNonStructuralBase();
@@ -2156,7 +2162,25 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			expressionContext.putVariable(surName, var);
 		}
 	}
+	protected static void copyResults(ExpressionContext expressionContext, ContextVariable src, ContextVariable dest, Date start, Date end) {
+		copyResults(expressionContext, src.getName(), dest.getName(), start, end);
+	}
 
+	protected static void copyResults(ExpressionContext expressionContext, String src, String dest, Date start, Date end) {
+		if (StringUtils.isBlank(dest))
+			return;
+		if (StringUtils.isBlank(src))
+			return;
+		if (StringUtils.equals(src, dest))
+			return;
+		try {
+			for (ITimedVariable<Object> results : expressionContext.eval(src, start, end, Object.class)) {
+				expressionContext.putVariable(dest, results);
+			}
+		} catch (ExpressionException e) {
+			e.printStackTrace();
+		}
+	}
 
 	// ---------------------------------------------------------------- Private
 	
