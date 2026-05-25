@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -201,10 +202,25 @@ public abstract class CreditorPanel extends ScrollPanel {
 		String statusValue = creditor.getStatus().getDescription();
 		Label status = new Label(statusValue);
 		status.setTitle(statusValue);
+		setStatusColor(status, creditor.getStatus());
 		tab.addInlineStyle(status, COLS.ACT.getStyles());
 		tab.addRow(row, status, COLS.ACT.getColWidth());
 		
 		rowCreditors.put(creditor.getId(), creditor);
+	}
+	
+	private void setStatusColor(Label label, RegistryStatus status) {
+		switch (status) {
+			case INACTIVE: 
+				label.getElement().getStyle().setProperty("color", "red");
+				break;
+			case BLOCKED: 
+				label.getElement().getStyle().setProperty("color", "orange");
+				break;
+			default:
+				break;
+			
+		}
 	}
 	
 	private void getList(Consumer<List<Creditor>> success) {

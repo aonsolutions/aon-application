@@ -10,8 +10,10 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.RegistrySource;
+import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -33,7 +35,7 @@ public abstract class RegistryGeneralDataPanel extends ScrollPanel {
 	
 	private HTMLPanel content;
 	
-	private AonCustomListBox scopeLB = new AonCustomListBox("Ambito");
+	private AonCustomListBox scopeLB = new AonCustomListBox("\u00c1mbito");
 	private AonCustomTextArea observation = new AonCustomTextArea("Observaciones");
 	private AonCustomListBox accountLB = new AonCustomListBox("Cuenta Contable"); 
 	private AonCustomListBox transactionLB = new AonCustomListBox("Tipo Transacci\u00f3n");
@@ -46,6 +48,8 @@ public abstract class RegistryGeneralDataPanel extends ScrollPanel {
 	private String user;
 	
 	private CustomerFull customerFull;
+	private CreditorFull creditorFull;
+	private SupplierFull supplierFull;
 	
 	private RegistrySource registrySource;
 	
@@ -70,8 +74,46 @@ public abstract class RegistryGeneralDataPanel extends ScrollPanel {
 			createRPaymethodPanel();
 			setWidget(content);
 		});
-		
+	}
+	
+	public RegistryGeneralDataPanel(String domainName, int domain, String user, LinkedList<Scope> scopes, CreditorFull creditorFull, RegistrySource registrySource) {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 
+		this.domainName = domainName;
+		this.domain = domain;
+		this.user = user;
+		this.creditorFull = creditorFull;
+		this.scopes = scopes;
+		this.registrySource = registrySource;
+		
+		content = new HTMLPanel("");
+		content.addStyleName(AON.CSS.aonFlexColumn2());
+		
+		getContext(end -> {
+			createRPaymethodPanel();
+			setWidget(content);
+		});
+	}
+	
+	public RegistryGeneralDataPanel(String domainName, int domain, String user, LinkedList<Scope> scopes, SupplierFull supplierFull, RegistrySource registrySource) {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
+
+		this.domainName = domainName;
+		this.domain = domain;
+		this.user = user;
+		this.supplierFull = supplierFull;
+		this.scopes = scopes;
+		this.registrySource = registrySource;
+		
+		content = new HTMLPanel("");
+		content.addStyleName(AON.CSS.aonFlexColumn2());
+		
+		getContext(end -> {
+			createRPaymethodPanel();
+			setWidget(content);
+		});
 	}
 
 	private void createRPaymethodPanel() {
@@ -109,7 +151,7 @@ public abstract class RegistryGeneralDataPanel extends ScrollPanel {
 			leftInfoTable.add(createRow(transactionLB, irpf, re));
 			
 		else if(this.registrySource.equals(RegistrySource.SUPPLIER) || this.registrySource.equals(RegistrySource.CREDITOR))
-			leftInfoTable.add(createRow(criterio));
+			leftInfoTable.add(createRow(transactionLB, irpf, criterio));
 		
 		rightInfoTable.add(createRow(observation));
 		
@@ -118,7 +160,7 @@ public abstract class RegistryGeneralDataPanel extends ScrollPanel {
 		
 		content.add(gridPanel);
 		
-		if(null != customerFull.getId()) {
+		if(null != customerFull && null != customerFull.getId()) {
 			scopeLB.setValue(customerFull.getRegistry().getScope().getId().toString());
 			accountLB.setValue(null == customerFull.getAccount() ? "" : customerFull.getAccount().getId().toString());
 		
@@ -127,10 +169,30 @@ public abstract class RegistryGeneralDataPanel extends ScrollPanel {
 			
 			if(this.registrySource.equals(RegistrySource.CUSTOMER))
 				re.setValue(customerFull.getRegistry().isSurcharge());
-//			else if(this.registrySource.equals(RegistrySource.SUPPLIER) || this.registrySource.equals(RegistrySource.CREDITOR))
-//				criterio.setValue(customerFull.getRegistry());
 			
 			observation.setValue(customerFull.getRegistry().getObservation());
+		} else if(null != creditorFull && null != creditorFull.getId()) {
+			scopeLB.setValue(creditorFull.getRegistry().getScope().getId().toString());
+			accountLB.setValue(null == creditorFull.getAccount() ? "" : creditorFull.getAccount().getId().toString());
+		
+			transactionLB.setValue(creditorFull.getRegistry().getTransaction().name());
+			irpf.setValue(creditorFull.getRegistry().isWithholding());
+			
+			if(this.registrySource.equals(RegistrySource.CREDITOR))
+				criterio.setValue(creditorFull.getRegistry().isVatAccrualPayment());
+			
+			observation.setValue(creditorFull.getRegistry().getObservation());
+		} else if(null != supplierFull && null != supplierFull.getId()) {
+			scopeLB.setValue(supplierFull.getRegistry().getScope().getId().toString());
+			accountLB.setValue(null == supplierFull.getAccount() ? "" : supplierFull.getAccount().getId().toString());
+		
+			transactionLB.setValue(supplierFull.getRegistry().getTransaction().name());
+			irpf.setValue(supplierFull.getRegistry().isWithholding());
+			
+			if(this.registrySource.equals(RegistrySource.SUPPLIER))
+				re.setValue(supplierFull.getRegistry().isVatAccrualPayment());
+			
+			observation.setValue(supplierFull.getRegistry().getObservation());
 		}
 		
 	}
@@ -174,6 +236,24 @@ public abstract class RegistryGeneralDataPanel extends ScrollPanel {
 		customerSave.getRegistry().setWithholding(irpf.getValue());
 		if(this.registrySource.equals(RegistrySource.CUSTOMER))
 			customerSave.getRegistry().setSurcharge(re.getValue());
+	}
+	
+	public void onSave(CreditorFull creditorSave) {
+		creditorSave.getRegistry().setScope(new Scope().setId(Integer.parseInt(scopeLB.getValue())));
+		creditorSave.setAccount(AonStringUtils.isBlank(accountLB.getValue()) ? null : new Account().setId(Integer.parseInt(accountLB.getValue())));
+		creditorSave.getRegistry().setTransaction(InvoiceTransactionType.valueOf(transactionLB.getValue()));
+		creditorSave.getRegistry().setWithholding(irpf.getValue());
+		if(this.registrySource.equals(RegistrySource.CREDITOR))
+			creditorSave.getRegistry().setVatAccrualPayment(criterio.getValue());
+	}
+	
+	public void onSave(SupplierFull supplierFull) {
+		supplierFull.getRegistry().setScope(new Scope().setId(Integer.parseInt(scopeLB.getValue())));
+		supplierFull.setAccount(AonStringUtils.isBlank(accountLB.getValue()) ? null : new Account().setId(Integer.parseInt(accountLB.getValue())));
+		supplierFull.getRegistry().setTransaction(InvoiceTransactionType.valueOf(transactionLB.getValue()));
+		supplierFull.getRegistry().setWithholding(irpf.getValue());
+		if(this.registrySource.equals(RegistrySource.SUPPLIER))
+			supplierFull.getRegistry().setVatAccrualPayment(criterio.getValue());
 	}
 
 	protected abstract void onShowErrorMessage(String errorMessage);
