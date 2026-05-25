@@ -68,7 +68,7 @@ public class OneCnaeTableToRuleThemAll implements Update {
 		}
 
 		dslContext.transaction( config -> {
-			try ( CSVReader csvReader  = new CSVReader(new InputStreamReader(OneCnaeTableToRuleThemAll.class.getResourceAsStream("cnae09_cnae25.csv")))) {
+			try ( CSVReader csvReader  = new CSVReader(new InputStreamReader(OneCnaeTableToRuleThemAll.class.getResourceAsStream("cnae09_cnae25.csv"), "ISO-8859-1"))) {
 				String[] line = csvReader.readNext();
 				
 				Map<String, String> cnae2009TitleMap = new HashMap<>();
