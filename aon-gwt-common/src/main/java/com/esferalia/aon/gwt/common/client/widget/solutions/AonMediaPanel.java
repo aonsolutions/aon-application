@@ -52,7 +52,7 @@ public class AonMediaPanel extends HTMLPanel {
 	private AonCustomTextBox comment = new AonCustomTextBox("Comentarios");
 	private AonCustomToogleButton admin = new AonCustomToogleButton("Administrativo");
 	private AonCustomToogleButton commercial = new AonCustomToogleButton("Comercial");
-	private AonCustomToogleButton tecnical = new AonCustomToogleButton("Tecnico");
+	private AonCustomToogleButton tecnical = new AonCustomToogleButton("T\u00e9cnico");
 	
 	// Constructor
 	

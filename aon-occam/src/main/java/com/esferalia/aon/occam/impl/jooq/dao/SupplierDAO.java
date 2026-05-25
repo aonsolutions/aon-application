@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
@@ -73,7 +74,7 @@ public class SupplierDAO {
 	}
 
 	
-	public static class SupplierFiller implements Function<Record, Supplier> {
+	public static class SupplierFiller extends Filler implements Function<Record, Supplier> {
 
 		@Override
 		public Supplier apply(Record r) {
@@ -82,7 +83,7 @@ public class SupplierDAO {
 		
 		public static Supplier buildSupplier(Record r, com.esferalia.aon.jooq.tables.Registry registry) {
 			if(registry == null) registry = REGISTRY;
-			return new Supplier()
+			Supplier supplier = new Supplier()
 					.copy( new Registry() 
 						.setId(r.getValue(registry.ID))
 						.setDomain(new Domain().setId(r.getValue(SUPPLIER.DOMAIN)))
@@ -108,6 +109,16 @@ public class SupplierDAO {
 					.setModificationDate(r.getValue(SUPPLIER.MODIFICATION_DATE))
 					.setModificationUser(r.getValue(SUPPLIER.MODIFICATION_USER))
 					;
+			
+			if(checkField(r, PERSON.REGISTRY)) {
+				Registry supplierReg = supplier.get();
+				supplierReg.setPersonName(r.get(PERSON.NAME));
+				supplierReg.setPersonFirstsurname(r.get(PERSON.FIRST_SURNAME));
+				supplierReg.setPersonSecondsurname(r.get(PERSON.SECOND_SURNAME));
+				supplier.copy(supplierReg);
+			}
+			
+			return supplier;
 		}
 	}
 	
@@ -116,6 +127,7 @@ public class SupplierDAO {
 				.from(SUPPLIER)
 				.join(REGISTRY).on(REGISTRY.ID.eq(SUPPLIER.REGISTRY))
 				.join(DOMAIN).on(SUPPLIER.DOMAIN.eq(DOMAIN.ID))
+				.leftOuterJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
 				.where(SUPPLIER_PROPERTIES.getConditions(filter));
 		
 	}

@@ -9,6 +9,8 @@ public class Cnae implements Serializable{
 	private Integer id;
 	private String code;
 	private String title;
+	private String code09;
+	private String title09;
 	
 	public Cnae() {
 	}
@@ -42,6 +44,24 @@ public class Cnae implements Serializable{
 	
 	public Cnae setTitle(String title) {
 		this.title = title;
+		return this;
+	}
+	
+	public String getCode09() {
+		return code09;
+	}
+	
+	public Cnae setCode09(String code09) {
+		this.code09 = code09;
+		return this;
+	}
+	
+	public String getTitle09() {
+		return title09;
+	}
+	
+	public Cnae setTitle09(String title09) {
+		this.title09 = title09;
 		return this;
 	}
 	

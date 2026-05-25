@@ -64,7 +64,7 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 	private AonCustomIntegerBox pays = new AonCustomIntegerBox("Pagos");
 	private AonCustomIntegerBox firstPay = new AonCustomIntegerBox("1er Pago");
 	private AonCustomIntegerBox betweenDays = new AonCustomIntegerBox("Resto");
-	private AonCustomTextBox payDayss = new AonCustomTextBox("Dias");
+	private AonCustomTextBox payDayss = new AonCustomTextBox("D\u00edas");
 	
 
 	private SimplePanel container;

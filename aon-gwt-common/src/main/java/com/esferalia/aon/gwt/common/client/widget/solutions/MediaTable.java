@@ -59,7 +59,7 @@ public abstract class MediaTable extends ScrollPanel {
 		, CMM("Comentarios"							,"20rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" )
 		, ADM("Admin."								,"4rem", ""  )
 		, COM("Comercial"							,"5rem", ""  )
-		, TEC("Tecnico"								,"4rem", ""  )
+		, TEC("T\u00e9cnico"						,"4rem", ""  )
 		, BUT(AonStringUtils.EMPTY					,"3rem", ""  )
 		;
 

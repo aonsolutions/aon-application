@@ -1,23 +1,22 @@
 package com.esferalia.aon.gwt.fiscal.client.registry;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.RegistryService;
-import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
-import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomerFullPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryPanel.AonCustomerPanelCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel.AonRegistryFullPanelCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonSimpleDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
@@ -26,7 +25,6 @@ import com.esferalia.aon.occam.api.model.registry.RegistrySource;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -38,7 +36,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 
 public abstract class CustomerModulePanel extends DeckPanel {
 	
-	private static RegistryServiceAsync REGISTRY_SERVICE;
+	private static CommonServiceAsync COMMON_SERVICE;
 	
 	private AonCustomDockLayout aonCustomDockLayout;
 	
@@ -54,11 +52,13 @@ public abstract class CustomerModulePanel extends DeckPanel {
 	
 	private RegistryModuleOptions options;
 	
+	private List<Account> accounts;
+	
 	public CustomerModulePanel(RegistryModuleOptions options) {
 		super();
 		
-		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
-		REGISTRY_SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		this.options = options;
 		
@@ -132,167 +132,58 @@ public abstract class CustomerModulePanel extends DeckPanel {
 		
 		add(aonCustomDockLayout);
 		showWidget(0);
-		onSearch( options );
+		
+		getContext(end -> onSearch( options ));
+		
 	}
 
 	private void addButtonsToolbar() {
 		AonToolbarButton newButton = new AonToolbarButton( "Nuevo Cliente", AON.CSS.aonIconAdd());
 		newButton.addClickHandler(e -> {
 			CustomerFull newCustomer = CustomerFull.initialize(options.getDomain());
-			selectCustomer(options, newCustomer, new AonRegistryFullPanelCallback<CustomerFull>() {
-				@Override
-				public void onError(Throwable caught) {
-					AonMessagePanel.showError(messagePanel, caught.getMessage());
-				}
-					
-				@Override
-				public void onAccept(CustomerFull rf) {
-					customerPanel.resetSearchOffset();
-					onSearch( options );
-				}
+			
+			AonCustomDialog dialog = new AonCustomDialog();
+			dialog.setCaption("Nuevo Cliente");
+			dialog.setResizable(false);
 
-				@Override
-				public void onCancel() {
-					// Empty method
-				}
+			AonRegistryPanel aonRecordDataPanel = new AonRegistryPanel(options.getDomainName(), options.getDomain(), options.getUser(), newCustomer,
+					options.getConfiguration().getAvailableScopes(), options.getConfiguration().getGeozones(), options.getConfiguration().getPayMethods(),
+					new AonCustomerPanelCallback() {
 
-				@Override
-				public void onDocumenthanged(CustomerFull registryFull) {
-					// Empty method
-				}
+						@Override
+						public void onCancel() {
+							dialog.hide();
+						}
 
-				@Override
-				public void setFocus(boolean b) {
-					// Empty method	
-				}
-			});
+						@Override
+						public void onAccept(CustomerFull customerFull) {
+							dialog.hide();
+							
+							aonCustomDockLayout.getSearchTextBox().setValue(customerFull.getRegistry().getDocument());
+							
+							customerPanel.resetSearchOffset();
+							onSearch( options );
+						}
+
+						@Override public void onAccept(CreditorFull creditorFull) {}
+
+						@Override public void onAccept(SupplierFull SupplierFull) {}
+					});
+
+			dialog.add(aonRecordDataPanel);
+			dialog.showLoaded();
 		});
 		
 		aonCustomDockLayout.addToolbarButton(newButton);
-		
-		if(options.getDomainName().contains("aonsolutions.org")) {
-			AonToolbarButton newButton2 = new AonToolbarButton( "Nuevo Cliente", AON.CSS.aonIconMoreVertical());
-			newButton2.addClickHandler(e -> {
-				CustomerFull newCustomer = CustomerFull.initialize(options.getDomain());
-				
-				AonCustomDialog dialog = new AonCustomDialog();
-				dialog.setCaption("Nuevo Cliente");
-				dialog.setResizable(false);
-
-				AonRegistryPanel aonRecordDataPanel = new AonRegistryPanel(options.getDomainName(), options.getDomain(), options.getUser(), newCustomer,
-						options.getConfiguration().getAvailableScopes(), options.getConfiguration().getGeozones(), options.getConfiguration().getPayMethods(),
-						new AonCustomerPanelCallback() {
-
-							@Override
-							public void onCancel() {
-								dialog.hide();
-							}
-
-							@Override
-							public void onAccept(CustomerFull customerFull) {
-								dialog.hide();
-								
-								aonCustomDockLayout.getSearchTextBox().setValue(customerFull.getRegistry().getDocument());
-								
-								customerPanel.resetSearchOffset();
-								onSearch( options );
-							}
-
-							@Override public void onAccept(CreditorFull creditorFull) {}
-
-							@Override public void onAccept(SupplierFull SupplierFull) {}
-						});
-
-				dialog.add(aonRecordDataPanel);
-				dialog.showLoaded();
-			});
-			
-			aonCustomDockLayout.addToolbarButton(newButton2);
-		}
-	}
-	
-	private void selectCustomer(RegistryModuleOptions opt, CustomerFull customer, AonRegistryFullPanelCallback<CustomerFull> panelCallback) {
-		final AonSimpleDialog dialog = new AonSimpleDialog();
-		dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
-		dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
-		dialog.setCaption(AON.MSG.customer());
-		
-		AonCustomerFullPanel aonCustomerFullPanel = new AonCustomerFullPanel(opt, customer, new AonRegistryFullPanelCallback<CustomerFull>() {
-			@Override
-			public void setFocus(boolean b) {
-				if (panelCallback != null) panelCallback.setFocus(b);
-			}
-			
-			@Override
-			public void onError(Throwable caught) {
-				if (panelCallback != null) panelCallback.onError(caught);
-			}
-			
-			@Override
-			public void onCancel() {
-				dialog.hide();
-				if (panelCallback != null) panelCallback.onCancel();
-			}
-			
-			@Override
-			public void onAccept(CustomerFull rf) {
-				dialog.hide();
-				if (panelCallback != null) panelCallback.onAccept(rf);
-				customerPanel.resetSearchOffset();
-				onSearch( options );
-			}
-			@Override
-			public void onDocumenthanged(CustomerFull registryFull) {
-				if (panelCallback != null) panelCallback.onDocumenthanged(registryFull);
-			}	
-		});
-		
-		dialog.add( aonCustomerFullPanel );
-		dialog.center();
-		dialog.show();
-		
-		Scheduler.get().scheduleDeferred(() -> aonCustomerFullPanel.setFocus(true));				
 	}
 
 	public void onSearch( RegistryModuleOptions options ) {
 		RegistryParams params = getWidgetParams( options );
 		centerPanel.clear();
-		customerPanel = new CustomerPanel(params, centerPanel) {
+		customerPanel = new CustomerPanel(params, centerPanel, accounts) {
 
 			@Override
 			protected void onCustomerOpen(Customer customer) {
-				// Open dialog customer
-				selectCustomer(options, customer, new AonRegistryFullPanelCallback<CustomerFull>() {
-					@Override
-					public void onError(Throwable caught) {
-						AonMessagePanel.showError(messagePanel, caught.getMessage());
-					}
-						
-					@Override
-					public void onAccept(CustomerFull rf) {
-						// Add new customer to table
-					}
-
-					@Override
-					public void onCancel() {
-						// Empty method
-					}
-
-					@Override
-					public void onDocumenthanged(CustomerFull registryFull) {
-						// Empty method
-					}
-
-					@Override
-					public void setFocus(boolean b) {
-						// Empty method	
-					}
-				});
-							
-			}
-			
-			@Override
-			protected void onCustomerOpenNew(Customer customer) {
 				if(getWidgetCount() > 1) CustomerModulePanel.this.remove(1);
 				
 				registryEntryPanel = new RegistryEntryPanel(options, RegistrySource.CUSTOMER, customer.getId()) {
@@ -309,8 +200,9 @@ public abstract class CustomerModulePanel extends DeckPanel {
 				
 				CustomerModulePanel.this.add(registryEntryPanel);
 				CustomerModulePanel.this.showWidget(1);
+							
 			}
-
+			
 			@Override
 			protected void onShowErrorMessage(String errorMessage) {
 				AonMessagePanel.showError(messagePanel, errorMessage);
@@ -319,21 +211,6 @@ public abstract class CustomerModulePanel extends DeckPanel {
 		};
 		
 		centerPanel.setWidget(customerPanel);
-	}
-	
-	private void selectCustomer(RegistryModuleOptions opt, Customer customer, AonRegistryFullPanelCallback<CustomerFull> panelCallback) {
-		
-		REGISTRY_SERVICE.getCustomerFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), customer.getId(), new AsyncCallback<CustomerFull>() {	
-			@Override
-			public void onSuccess(CustomerFull result) {
-				selectCustomer(opt, result, panelCallback);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				AonMessagePanel.showError(messagePanel, caught.getMessage());	
-			}
-		});					
 	}
 
 	public RegistryParams getWidgetParams( RegistryModuleOptions options) {
@@ -353,6 +230,22 @@ public abstract class CustomerModulePanel extends DeckPanel {
 	
 	public RegistryParams getSellerListParams() {
 		return getWidgetParams(options);
+	}
+	
+	private void getContext(Consumer<Void> end) {
+		COMMON_SERVICE.getAccountsForRegistry(options.getDomainName(), options.getDomain(), options.getUser(), RegistrySource.CUSTOMER, new AsyncCallback<List<Account>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, "Error cuentas contables: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(List<Account> accountsDB) {
+				accounts = accountsDB;
+				end.accept(null);
+			}
+		});
 	}
 	
 	protected abstract void onCustomerCreate(CustomerFull customerFull);

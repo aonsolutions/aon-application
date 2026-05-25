@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -74,7 +75,7 @@ public class CreditorDAO {
 	}
 
 	
-	protected static class CreditorFiller implements Function<Record, Creditor> {
+	protected static class CreditorFiller extends Filler implements Function<Record, Creditor> {
 
 		@Override
 		public Creditor apply(Record r) {
@@ -83,7 +84,7 @@ public class CreditorDAO {
 		
 		public static Creditor buildCreditor(Record r, com.esferalia.aon.jooq.tables.Registry registry) {
 			if(registry == null) registry = REGISTRY;
-			return new Creditor()
+			Creditor creditor = new Creditor()
 					.copy( new Registry() 
 						.setId(r.getValue(registry.ID))
 						.setDomain(new Domain().setId(r.getValue(CREDITOR.DOMAIN)))
@@ -106,6 +107,16 @@ public class CreditorDAO {
 					.setModificationDate(r.getValue(CREDITOR.MODIFICATION_DATE))
 					.setModificationUser(r.getValue(CREDITOR.MODIFICATION_USER))
 					;
+			
+			if(checkField(r, PERSON.REGISTRY)) {
+				Registry creditorReg = creditor.get();
+				creditorReg.setPersonName(r.get(PERSON.NAME));
+				creditorReg.setPersonFirstsurname(r.get(PERSON.FIRST_SURNAME));
+				creditorReg.setPersonSecondsurname(r.get(PERSON.SECOND_SURNAME));
+				creditor.copy(creditorReg);
+			}
+			
+			return creditor;
 		}
 	}
 	
@@ -114,6 +125,7 @@ public class CreditorDAO {
 				.from(CREDITOR)
 				.join(REGISTRY).on(REGISTRY.ID.eq(CREDITOR.REGISTRY))
 				.join(DOMAIN).on(CREDITOR.DOMAIN.eq(DOMAIN.ID))
+				.leftOuterJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
 				.where(CREDITOR_PROPERTIES.getConditions(filter));
 		
 	}
