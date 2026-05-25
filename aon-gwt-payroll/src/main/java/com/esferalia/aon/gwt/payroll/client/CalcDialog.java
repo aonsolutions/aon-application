@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import static com.esferalia.aon.gwt.payroll.client.AgreementDraft.parseExtraDate;
 import static com.esferalia.aon.gwt.payroll.client.AgreementDraft.parseExtraEndDate;
 import static com.esferalia.aon.gwt.payroll.client.AgreementDraft.parseExtraIssueDate;
 import static com.esferalia.aon.gwt.payroll.client.AgreementDraft.parseExtraStartDate;
@@ -64,6 +63,11 @@ public class CalcDialog<T extends HasId<?>> extends SelectDialog<T> {
 
 		@Override
 		public T visitDelay(Type type) {
+			throw new RuntimeException("Not implemented");
+		}
+		
+		@Override
+		public T visitProcedural(Type type) {
 			throw new RuntimeException("Not implemented");
 		}
 
@@ -308,7 +312,12 @@ public class CalcDialog<T extends HasId<?>> extends SelectDialog<T> {
 				monthTR.getStyle().setDisplay(Display.TABLE_ROW);
 				return null;
 			}
-
+			
+			@Override
+			public Void visitProcedural(Type type) {
+				return visitSalary(type);
+			}
+			
 		});
 
 	}

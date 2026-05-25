@@ -64,7 +64,7 @@ public class AonAddressPanel extends HTMLPanel {
 	
 	private AonCustomTextBox zip = new AonCustomTextBox("C.P.");
 	private AonCustomListBox province = new AonCustomListBox("Provincia");
-	private AonCustomListBox municipality = new AonCustomListBox("Municipion");
+	private AonCustomListBox municipality = new AonCustomListBox("Municipio");
 	private AonCustomTextBox city = new AonCustomTextBox("Localidad");
 	
 	// Constructor
@@ -141,6 +141,7 @@ public class AonAddressPanel extends HTMLPanel {
 				province.setValue(AonStringUtils.substring(zip.getValue(), 0, 2));
 				
 				municipality.clearItems();
+				municipality.addItem("-", "");
 				municipalities.getMunicipalitiesByProvinceCode(province.getValue()).entrySet().forEach(entry -> municipality.addItem(entry.getValue(), entry.getKey()));
 				
 				if(AonStringUtils.isNotBlank( municipalities.getMunicipalityByZip(zip.getValue()) ))
@@ -150,6 +151,7 @@ public class AonAddressPanel extends HTMLPanel {
 		zip.getElement().getStyle().setProperty("max-width", "6rem");
 		province.addChangeHandler(e -> {
 			municipality.clearItems();
+			municipality.addItem("-", "");
 			municipalities.getMunicipalitiesByProvinceCode(province.getValue()).entrySet().forEach(entry -> municipality.addItem(entry.getValue(), entry.getKey()));
 			
 			if(AonStringUtils.isNotBlank( municipalities.getMunicipalityByZip(zip.getValue()) ))
@@ -174,6 +176,7 @@ public class AonAddressPanel extends HTMLPanel {
 			
 			if(AonStringUtils.isNotBlank(registryAddress.getGeozoneCode())) {
 				municipality.clearItems();
+				municipality.addItem("-", "");
 				municipalities.getMunicipalitiesByProvinceCode(registryAddress.getGeozoneCode()).entrySet().forEach(entry -> municipality.addItem(entry.getValue(), entry.getKey()));
 				municipality.setValue(registryAddress.getMunicipalityCode());
 			}

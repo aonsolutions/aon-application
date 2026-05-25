@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -21,6 +22,7 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistrySource;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
@@ -105,5 +107,7 @@ public interface RegistryServiceAsync {
 	// **************************************************
 	void getActiveSupportAgents(String domainName, int domain, String user, AsyncCallback<HashMap<Seller, RegistryMedia>> asyncCallback);
 	void getCustomerWithoutAgent(String domainName, int domain, String user, AsyncCallback<List<Customer>> asyncCallback);
+	
+	void createRegistryAccount(String domainName, Integer domainId, String user, String registryName, String registryAlias, RegistrySource registrySource, AsyncCallback<Account> asyncCallback);
 	
 }

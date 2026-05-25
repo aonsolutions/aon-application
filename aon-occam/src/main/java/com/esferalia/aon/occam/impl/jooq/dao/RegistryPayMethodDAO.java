@@ -175,7 +175,7 @@ public class RegistryPayMethodDAO {
                 .findFirst().orElse(new RegistryPayMethod());
     }
 	public static Stream<RegistryPayMethod> getStream(AONContext ctx, RegistryPayMethodFilter filter) {
-		return select(ctx,filter)
+		return selectFull(ctx,filter)
 			.fetch()
 			.stream()
 			.map(new RegistryPayMethodFiller());

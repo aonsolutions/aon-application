@@ -593,6 +593,11 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 			public Integer visitDelay(Type type) {
 				return cost.getDelaysCount();
 			}
+			
+			@Override
+			public Integer visitProcedural(Type type) {
+				return cost.getProceduralCount();
+			}
 
 		});
 	}	

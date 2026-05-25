@@ -363,7 +363,11 @@ public class Salary extends ResizeComposite {
 			public Void visitDelay(Type type) {
 				return null;
 			}
-
+			
+			@Override
+			public Void visitProcedural(Type type) {
+				return null;
+			}
 		});
 	}
 

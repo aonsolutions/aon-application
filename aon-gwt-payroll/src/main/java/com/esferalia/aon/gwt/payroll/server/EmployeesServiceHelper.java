@@ -2282,6 +2282,19 @@ public class EmployeesServiceHelper {
 							throw new ExpressionExceptionWrapper(e);
 						}
 					}
+					
+					@Override
+					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitProcedural(
+							SalaryType salaryType) {
+						try {
+							return getSalaryCalculatorContextImpl(conn, draft,
+											listener);
+						} catch (SQLException e) {
+							throw new IllegalArgumentException(e);
+						} catch (ExpressionException e) {
+							throw new ExpressionExceptionWrapper(e);
+						}
+					}
 	
 				});
 	}

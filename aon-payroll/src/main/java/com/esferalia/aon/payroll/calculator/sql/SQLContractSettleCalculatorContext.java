@@ -456,7 +456,7 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 		
 		Result<Record> salary = dslContext.select().from(SALARY)
 				.where(SALARY.CONTRACT.eq(getId()))
-				.and(SALARY.TYPE.eq((byte)0))
+				.and(SALARY.TYPE.eq((byte)SalaryType.SALARY.ordinal()))
 				.and(SALARY.START_DATE.le(new java.sql.Date(this.issueEndDate.getTime())))
 				.and(SALARY.END_DATE.ge(new java.sql.Date(this.issueEndDate.getTime())))
 				.fetch();
