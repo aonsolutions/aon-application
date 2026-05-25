@@ -122,25 +122,16 @@ export class AonConfigurationNew extends AonElement {
 
 		let companyOptions = [];
 		
-		if (this.getDur().isAdmin() && this.isBeta()) {
+		if (this.getDur().isAdmin() || (!this.getDur().isEmployee() && !this.isMobile())) {
 			companyOptions.push({
-				id: "InformacionGeneralGWT",
-				name: MSG.GENERAL_INFORMATION + " (GWT)",
+				id: "InformacionGeneral",
+				name: MSG.GENERAL_INFORMATION,
 				icon: MATERIAL_ICONS.BUSINESS,
 				fn: () => {
 					localStorage.setItem("registrySource", 'ENVIROMENT');
 					this.getApplication().removeToolbarOptions();
 					GWT.iLoad(GWT.REGISTRY_ENTRY_MODULE, this.getApplication().CONTENT);
 				},
-			});
-		}
-
-		if (this.getDur().isAdmin() || (!this.getDur().isEmployee() && !this.isMobile())) {
-			companyOptions.push({
-				id: "InformacionGeneral",
-				name: MSG.GENERAL_INFORMATION,
-				icon: MATERIAL_ICONS.BUSINESS,
-				fn: () => this.buildGeneral(),
 			});
 		}
 
@@ -259,13 +250,8 @@ export class AonConfigurationNew extends AonElement {
 		}
 		
 		
-		if (this.getDur().isAdmin() && this.isBeta()) {
-			let genernalInfo = this.getElement('aonConfigurationNewSidenavInformacionGeneralGWT');
-			genernalInfo && genernalInfo.click();
-		} else{
-			let genernalInfo = this.getElement('aonConfigurationNewSidenavInformacionGeneral');
-			genernalInfo && genernalInfo.click();
-		}
+		let genernalInfo = this.getElement('aonConfigurationNewSidenavInformacionGeneral');
+		genernalInfo && genernalInfo.click();
 	}
 
 	buildPersonal() {
