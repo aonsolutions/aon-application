@@ -26,7 +26,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -165,6 +164,9 @@ public abstract class MediaTable extends ScrollPanel {
 				
 				AonTableButton button = new AonTableButton("Nuevo contacto", AON.CSS.aonIconAdd());
 				button.addStyleName(AON.CSS.aonCustomRowButtom());
+				button.getElement().getStyle().setProperty("border", "2px solid #434548");
+				button.getElement().getStyle().setProperty("padding", "10px");
+				button.getElement().getStyle().setProperty("border-radius", "50%");
 				button.addClickHandler(e -> createMedia());
 				buttonContainer.add(button);
 				
@@ -194,11 +196,15 @@ public abstract class MediaTable extends ScrollPanel {
 			}
 			
 			if (!something) {
-				FlowPanel line = new FlowPanel();
-				InlineLabel label = new InlineLabel(AON.MSG.noData());
-				line.add(label);
-				container.clear();
-				container.add(line);
+				HTMLPanel row = tab.createRow();
+				
+				Label blank = new Label("");
+				tab.addInlineStyle(blank, COLS.TYP.getStyles());
+				tab.addRow(row, blank, COLS.TYP.getColWidth());
+				
+				Label empty = new Label("No exiten datos");
+				tab.addInlineStyle(empty, COLS.VAL.getStyles());
+				tab.addRow(row, empty, COLS.VAL.getColWidth());
 				disableMoreData();
 			}
 			enableSearch();

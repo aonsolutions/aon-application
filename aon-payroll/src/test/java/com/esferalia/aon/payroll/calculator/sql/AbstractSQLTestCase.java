@@ -1009,9 +1009,13 @@ public abstract class AbstractSQLTestCase {
 
 		return contract;
 	}
-
 	public static final EnterpriseActivityRecord newEnterpriseActivity(AONContext aonContext, int domainId, int scopeId,
 			SSRegimeType ssRegimeType) {
+		return newEnterpriseActivity(aonContext, domainId, scopeId, ssRegimeType, null);
+	}
+
+	public static final EnterpriseActivityRecord newEnterpriseActivity(AONContext aonContext, int domainId, int scopeId,
+			SSRegimeType ssRegimeType, String cnae2025) {
 
 		RegistryRecord enterprise = aonContext.getDslContext().insertInto(REGISTRY).set(REGISTRY.DOMAIN, domainId)
 				.set(REGISTRY.NAME, "").set(REGISTRY.ALIAS, "").set(REGISTRY.DOCUMENT, "")
@@ -1022,9 +1026,13 @@ public abstract class AbstractSQLTestCase {
 		aonContext.getDslContext().insertInto(ENTERPRISE).set(ENTERPRISE.DOMAIN, domainId)
 				.set(ENTERPRISE.REGISTRY, enterprise.getId()).set(ENTERPRISE.SCOPE, scopeId).execute();
 
-		EnterpriseActivityRecord enterpriseActivity = aonContext.getDslContext().insertInto(ENTERPRISE_ACTIVITY)
-				.set(ENTERPRISE_ACTIVITY.DOMAIN, domainId).set(ENTERPRISE_ACTIVITY.ENTERPRISE, enterprise.getId())
-				.set(ENTERPRISE_ACTIVITY.DESCRIPTION, "").set(ENTERPRISE_ACTIVITY.TYPE, (byte) ssRegimeType.ordinal())
+		EnterpriseActivityRecord enterpriseActivity = 
+				aonContext.getDslContext().insertInto(ENTERPRISE_ACTIVITY)
+				.set(ENTERPRISE_ACTIVITY.DOMAIN, domainId)
+				.set(ENTERPRISE_ACTIVITY.ENTERPRISE, enterprise.getId())
+				.set(ENTERPRISE_ACTIVITY.DESCRIPTION, "")
+				.set(ENTERPRISE_ACTIVITY.TYPE, (byte) ssRegimeType.ordinal())
+				.set(ENTERPRISE_ACTIVITY.CNAE, cnae2025 != null ? Integer.parseInt(cnae2025) : null )
 				.returning().fetchOne();
 
 		return enterpriseActivity;
