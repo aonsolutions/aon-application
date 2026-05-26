@@ -37,7 +37,7 @@ public class AonCustomTextBox extends HTMLPanel {
 	private void createInput(String title) {
 		textBoxPanel.addStyleName(AON.CSS.aonItemFlex());
 		textBoxPanel.addStyleName(AON.CSS.aonFlexBetween());
-		textBoxPanel.getElement().getStyle().setProperty("align-items", "flex-start");
+		textBoxPanel.getElement().getStyle().setProperty("align-items", "center");
 		
 		textBox = new TextBox();
 		textBox.setStyleName(AON.CSS.aonCustomTextBoxInput());

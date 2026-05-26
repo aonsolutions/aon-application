@@ -12,7 +12,7 @@ import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
@@ -50,11 +50,14 @@ public abstract class CustomerPanel extends ScrollPanel {
 	
 	private SimplePanel parentPanel;
 	
+	private List<Account> accounts;
+	
 	private static enum COLS {
-		  DOC(AON.MSG.document()					,"6rem"				,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		  DOC(AON.MSG.document()					,"6rem"				,"max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, DES(AON.MSG.name()						,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, BUD(AON.MSG.alias()						,"15rem"			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, ACT("Estado"								,"6rem"				,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, BUD(AON.MSG.alias()						,"15rem"			,"max-width: 15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, ACC("Cuenta Contable"						,"13rem"			,"max-width: 13rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, ACT("Estado"								,"6rem"				,"max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		;
 
 		String headerLabel;
@@ -77,12 +80,12 @@ public abstract class CustomerPanel extends ScrollPanel {
 		}
 	}
 
-	public CustomerPanel(RegistryParams params, SimplePanel centerPanel) {
+	public CustomerPanel(RegistryParams params, SimplePanel centerPanel, List<Account> accounts) {
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
 		REGISTRY_SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
 		
 		this.parentPanel = centerPanel;
-		
+		this.accounts = accounts;
 		this.params = params;
 		this.rowCustomers.clear();
 
@@ -147,10 +150,6 @@ public abstract class CustomerPanel extends ScrollPanel {
 		tab.createHeader();
 		for ( COLS col : COLS.values()) 
 			tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
-		
-		if(params.getDomainName().contains("aonsolutions.org")) {
-			tab.addHeader(new Label(""), "3rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;");
-		}
 	}
 	
 	private void searchData() {
@@ -204,6 +203,11 @@ public abstract class CustomerPanel extends ScrollPanel {
 		tab.addInlineStyle(alias, COLS.BUD.getStyles());
 		tab.addRow(row, alias, COLS.BUD.getColWidth());
 		
+		Label account = new Label(getAccount(customer.getAccount()));
+		account.setTitle(getAccount(customer.getAccount()));
+		tab.addInlineStyle(account, COLS.ACC.getStyles());
+		tab.addRow(row, account, COLS.ACC.getColWidth());
+		
 		String statusValue = customer.getStatus().getDescription();
 		Label status = new Label(statusValue);
 		status.setTitle(statusValue);
@@ -211,26 +215,26 @@ public abstract class CustomerPanel extends ScrollPanel {
 		tab.addInlineStyle(status, COLS.ACT.getStyles());
 		tab.addRow(row, status, COLS.ACT.getColWidth());
 		
-		if(params.getDomainName().contains("aonsolutions.org")) {
-			AonTableButton showCustomer = new AonTableButton("Ver nuevo", AON.CSS.aonIconInfo());
-			showCustomer.addClickHandler(e -> {
-				e.stopPropagation();
-				onCustomerOpenNew(customer);
-			});
-			tab.addInlineStyle(showCustomer,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;");
-			tab.addRow(row, showCustomer, "3rem");
-		}
-		
 		rowCustomers.put(customer.getId(), customer);
+	}
+	
+	private String getAccount(Integer account) {
+		if(null == account) return "";
+		
+		for(Account acc : accounts)
+			if(acc.getId().equals(account))
+				return acc.getFullName();
+		
+		 return "";
 	}
 	
 	private void setStatusColor(Label label, RegistryStatus status) {
 		switch (status) {
 			case INACTIVE: 
-				label.getElement().getStyle().setProperty("color", "orange");
+				label.getElement().getStyle().setProperty("color", "red");
 				break;
 			case BLOCKED: 
-				label.getElement().getStyle().setProperty("color", "red");
+				label.getElement().getStyle().setProperty("color", "orange");
 				break;
 			default:
 				break;
@@ -265,7 +269,6 @@ public abstract class CustomerPanel extends ScrollPanel {
 	}
 
 	protected abstract void onCustomerOpen(Customer customer);
-	protected abstract void onCustomerOpenNew(Customer customer);
 	protected abstract void onShowErrorMessage(String message);
 	
 }
