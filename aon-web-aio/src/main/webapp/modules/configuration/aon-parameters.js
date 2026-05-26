@@ -204,7 +204,7 @@ export class AonParameters extends AonElement {
 			});
 			
 			principalTableOptions.push({
-				name: "Carga de datos desde ficheros Excel",
+				name: "Carga de datos Excel",
 				fn: () => GWT.iLoad(GWT.IMPORT, this.getApplication().CONTENT),
 			});
 			
@@ -218,7 +218,7 @@ export class AonParameters extends AonElement {
 			});
 			
 			auxiliaryManagementTableOptions.push({
-				name: "Asignación contable por tipo de forma de pago",
+				name: "Asig. contable forma de pago",
 				fn: () => this.getApplication().setContent(new JSF.AonJsfPayMethodTypeDetail()),
 			});
 			
@@ -286,22 +286,37 @@ export class AonParameters extends AonElement {
 			});
 			
 			utilitiesOptions.push({
-				name:"Gestión Plantillas para carga de datos",
+				name:"Plantillas Carga de Datos",
 				fn: () => GWT.iLoad(GWT.TEMPLATE, this.getApplication().CONTENT),
 			});
 			
 			utilitiesOptions.push({
-				name: "Carga de datos desde ficheros CSV",
+				name: "Carga de Datos CSV",
 				fn: () => this.getApplication().setContent(new JSF.AonJsfLoader()),
 			});
 			
 			utilitiesOptions.push({
-				name:"Descarga de datos en formato Excel",
+				name:"Descarga de datos Excel",
 				fn: () => GWT.iLoad(GWT.INVOICE_REPORT, this.getApplication().CONTENT),
 			});
 
 			aonConfiguration.addSidenavOptions("UTILIDADES", utilitiesOptions);
 		}
+		
+		let empresa = this.getElement("aonSidenavTitleEMPRESA");
+		empresa && empresa.click();
+		
+		let tPricipal = this.getElement("aonSidenavTitleT. PRINCIPALES");
+		tPricipal && tPricipal.click();
+		
+		let tAuxiliar = this.getElement("aonSidenavTitleT. AUXILIARES");
+		tAuxiliar && tAuxiliar.click();
+		
+		let productos = this.getElement("aonSidenavTitlePRODUCTOS");
+		productos && productos.click();
+		
+		let utilities = this.getElement("aonSidenavTitleUTILIDADES");
+		utilities && utilities.click();
 
 		if (localStorage.getItem("aon_domain_id")) {
 			let appOptions = [];
