@@ -67,6 +67,7 @@ import { AonCommercial } from './commercial/aon-commercial.js';
 import { AonManagement } from './management/aon-management.js';
 import { AonConfigurationEnviroment } from './configuration/aon-configuration-enviroment.js';
 import { AonMarketing } from './marketing/aon-marketing.js';
+import { AonParameters } from './configuration/aon-parameters.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -264,7 +265,7 @@ export class AonNewMenu extends AonElement {
 					this.rootPanel(this.getDur().isDomainManagementAvailable() ? new AonParent() : new AonDesktop());
 					break;
 				case CONFIGURATION_MENU.app:
-					this.rootPanel(this.getDur().isDomainManagementAvailable() ? new AonConfigurationEnviroment() : new AonConfiguration());
+					this.rootPanel(this.getDur().isDomainManagementAvailable() ? new AonConfigurationEnviroment() : new AonParameters());
 					break;
 				case ACCOUNTING_MENU.app:
 				case FISCAL_MENU.app:

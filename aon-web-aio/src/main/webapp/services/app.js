@@ -1950,9 +1950,9 @@ export const MARKETING_MENU = {
 export const CONFIGURATION_MENU = {
 	app: "configurationMenu",
 	symbol: "construction",
-	title: MSG.CONFIGURATION,
-	description: MSG.CONFIGURATION,
-	subtitle: "Configuration",
+	title: "Parámetros",
+	description: "Parámetros",
+	subtitle: "Parámetros",
 	color: "var(--aonTopMenuAvailable)",
 	style: "aonTopNavConfigurationButton",
 	apps: [],
