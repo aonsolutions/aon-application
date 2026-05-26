@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfo.AlcatrazTerritory;
 import com.esferalia.aon.jooq.tables.records.AlcatrazRecord;
 import com.esferalia.aon.jooq.tables.records.FsModelRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -420,7 +421,7 @@ public class JooqEmployeeIrpf {
 				
 				SalaryRecord salaryRecord = dslContext.insertInto(SALARY)
 					.set(SALARY.DOMAIN, domainId)
-					.set(SALARY.TYPE, (byte)7)
+					.set(SALARY.TYPE, SalaryType.M190.value())
 					.set(SALARY.CONTRACT, contractId)
 					.set(SALARY.START_DATE, parseDateToSQL(startDate))
 					.set(SALARY.END_DATE, parseDateToSQL(endDate))

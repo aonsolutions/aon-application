@@ -78,6 +78,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import net.aonsolutions.core.pool.AonConnectionException;
 import net.aonsolutions.core.pool.AonDataSource;
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
+import net.aonsolutions.core.tgss.creta.jaxb.respuesta.FechaHoraRecaudacion;
 import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion;
 import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Periodo;
 import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta;
@@ -427,11 +428,13 @@ public class SistemaRED2AON {
 
 		java.sql.Date endDate = AonDateUtils.getLastDayOfMonth(toSqlDate(liquidacion.getPeriodoHasta()));
 		java.sql.Date startDate = AonDateUtils.getFirstDayOfMonth(toSqlDate(liquidacion.getPeriodoDesde()));
-		java.sql.Date ctrlDate = toSqlDate(liquidacion.getFechaControl());
+		java.sql.Date ctrlDate = getLiquidacionSqlDate(liquidacion);
 
 		String ccc = liquidacion.getCcc().getProvincia() + liquidacion.getCcc().getNumero();
 
 		String numLiquidation = liquidacion.getNumeroLiquidacion();
+		
+		liquidacion.getLiquidacionMes().stream().map( l -> l.getMesLiquidativo());
 
 		String authorized = getAuthorized(login, domainId, domainName, ccc);
 
@@ -455,39 +458,45 @@ public class SistemaRED2AON {
 					public void accept(String liquidation, String naf,
 							java.util.Map<Period, java.util.Map<String, Calc>> calcs) {
 						employees.get(naf).forEach(employee -> {
+							 
 							try {
 								Period period = new Period(employee.getStartDate(), employee.getEndDate().orElse(null));
 
-								Salary salary = SLDSalaries.getSalary(liquidation, ccc, naf, calcs, period);
-								salary.setIssueDate(ctrlDate);
-								salary.setEmployeeDocument(employee.getDni());
-
-								Date l13startDate = null;
-								if (salary.getSalaryType() == SalaryType.L13) {
-									l13startDate = salary.getStartDate();
-									salary.setStartDate(employee.getStartDate());
-									salary.setIssueDate(min(salary.getEndDate(), endDate));
-								}
-
-								employee.getName().ifPresent(salary::setEmployeeName);
-
-								try {
-									callback.accept(salary);
-								} catch (Exception e) {
-									java.sql.Date settleEndDate = addDays(l13startDate, -1);
-									Map<String, List<Employee>> oldEmployees = getEmployees(login, domainId, domainName,
-											ccc, settleEndDate, settleEndDate, p -> p.getNafProperty().eq(naf));
-									oldEmployees.get(naf).forEach(oldEmployee -> {
-										salary.setStartDate(oldEmployee.getStartDate());
+								Collection<Salary> salaries = SLDSalaries.getSalaries(liquidation, ccc, naf, calcs, period);
+								
+								for( Salary salary : salaries ) {
+									salary.setIssueDate(ctrlDate);
+									salary.setEmployeeDocument(employee.getDni());
+	
+									Date l13startDate = null;
+									if (salary.getSalaryType() == SalaryType.L13) {
+										l13startDate = salary.getStartDate();
+										salary.setStartDate(employee.getStartDate());
 										salary.setIssueDate(min(salary.getEndDate(), endDate));
+									}
+	
+									employee.getName().ifPresent(salary::setEmployeeName);
+	
+									try {
 										callback.accept(salary);
-									});
+									} catch (Exception e) {
+										java.sql.Date settleEndDate = addDays(l13startDate, -1);
+										Map<String, List<Employee>> oldEmployees = getEmployees(login, domainId, domainName,
+												ccc, settleEndDate, settleEndDate, p -> p.getNafProperty().eq(naf));
+										oldEmployees.get(naf).forEach(oldEmployee -> {
+											salary.setStartDate(oldEmployee.getStartDate());
+											salary.setIssueDate(min(salary.getEndDate(), endDate));
+											callback.accept(salary);
+										});
+									}
 								}
 
 							} catch (Exception e) {
 								e.printStackTrace();
 								System.err.println(e.getMessage());
 							}
+							
+							
 						});
 					}
 
@@ -500,6 +509,7 @@ public class SistemaRED2AON {
 		callback.end();
 
 	}
+
 
 	private static java.sql.Date addDays(java.util.Date date, int days) {
 		return new java.sql.Date(AonDateUtils.addDays(date, -1).getTime());
@@ -557,13 +567,13 @@ public class SistemaRED2AON {
 								.like(("%" + ccc.substring(2) + "%" + liquidationType.getValue() + "%").getBytes())),
 				AttachType.REGISTRY, true);
 
-		Stream<Liquidacion> l03 = respuestas
+		Stream<Liquidacion> l0X = respuestas
 				// .peek(attach -> System.out.println(new String(attach.getData())))
 				.map(attach -> unmarshall(Respuesta.class, attach.getData())).filter(Optional::isPresent)
 				.map(Optional::get).map(Respuesta::getLiquidacion).flatMap(List::stream)
-				.filter(liquidacion -> toDate(liquidacion.getFechaControl()).compareTo(startDate) >= 0);
+				.filter(liquidacion -> getLiquidacionDate(liquidacion).compareTo(startDate) >= 0 );
 
-		return l03.toList();
+		return l0X.toList();
 	}
 
 	private static <T> Optional<T> unmarshall(Class<T> clazz, byte[] data) {
@@ -589,8 +599,39 @@ public class SistemaRED2AON {
 		return calendar.getTime();
 	}
 
+	private static Date toDate(FechaHoraRecaudacion fechaHoraRecaudacion) {
+		Calendar calendar = Calendar.getInstance();
+
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.YEAR, Integer.parseInt(fechaHoraRecaudacion.getFechaRecaudacion().getAnho()));
+		calendar.set(Calendar.MONTH, Integer.parseInt(fechaHoraRecaudacion.getFechaRecaudacion().getMes()) - 1);
+
+		return calendar.getTime();
+	}
+
+	private static Date getLiquidacionDate(Liquidacion liquidacion) {
+		if ( liquidacion.getFechaControl() != null )  
+			return toDate(liquidacion.getFechaControl());
+		else 
+			return AonDateUtils.add(AonDateUtils.getFirstDayOfMonth(toDate(liquidacion.getFechaHoraRecaudacion())), Calendar.DAY_OF_MONTH, -1);
+	}
+	
+	private static java.sql.Date getLiquidacionSqlDate(Liquidacion liquidacion) {
+		Date date = getLiquidacionDate(liquidacion);
+		return new java.sql.Date(date.getTime());
+	}
+
 	private static java.sql.Date toSqlDate(Periodo periodo) {
 		return new java.sql.Date(toDate(periodo).getTime());
+	}
+
+	private static java.sql.Date toSqlDate(FechaHoraRecaudacion fechaHoraRecaudacion) {
+		return new java.sql.Date(toDate(fechaHoraRecaudacion).getTime());
 	}
 
 	private static Map<String, List<Employee>> getEmployees(String login, Integer domainId, String domainName,

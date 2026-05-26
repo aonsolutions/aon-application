@@ -260,7 +260,7 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 		tab.addInlineStyle(description, COLS.DES.getStyles());
 		tab.addRow(row, description, COLS.DES.getColWidth());
 
-		Label cnae = new Label(enterpriseActivity.getCnaeDescription());
+		Label cnae = new Label(enterpriseActivity.getCnae25Code() + " - " + enterpriseActivity.getCnae25Description());
 		cnae.setTitle(enterpriseActivity.getCnaeDescription());
 		tab.addInlineStyle(cnae, COLS.CNA.getStyles());
 		tab.addRow(row, cnae, COLS.CNA.getColWidth());

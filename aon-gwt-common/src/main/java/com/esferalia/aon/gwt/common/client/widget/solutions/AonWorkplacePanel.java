@@ -63,7 +63,7 @@ public class AonWorkplacePanel extends HTMLPanel {
 	private AonCustomListBox enterpriseActivityLB = new AonCustomListBox("Actividad");
 	
 	private AonCustomListBox addressLB = new AonCustomListBox("Direcci\u00f3n");
-	private AonCustomListBox scopeLB = new AonCustomListBox("Ambito");
+	private AonCustomListBox scopeLB = new AonCustomListBox(AON.MSG.scope());
 	
 	private AonCustomListBox agreementLB = new AonCustomListBox("Convenio");
 	private AonCustomListBox calendarLB = new AonCustomListBox("Calendario");

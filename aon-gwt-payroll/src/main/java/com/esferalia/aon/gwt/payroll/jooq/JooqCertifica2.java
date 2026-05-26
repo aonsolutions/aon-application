@@ -54,6 +54,7 @@ import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.payroll.sepe.certifica.CertificaFill;
 import com.esferalia.aon.payroll.tgss.cra.StringUtils;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.COTIZACIONREATYPE;
@@ -702,7 +703,7 @@ public class JooqCertifica2 {
 		Result<Record> salariesRecords = dslContext.select().from(SALARY)
 				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(certifica2Info.getSSNumber()))
 				.and(SALARY.CCC.eq(certifica2Info.getCcc()))
-				.and(SALARY.TYPE.eq((byte) 0))
+				.and(SALARY.TYPE.eq(SalaryType.SALARY.value()))
 				.and(SALARY.END_DATE.ge(filterDate))
 				.and(SALARY.END_DATE.le(parseDateToSQL(certifica2Info.getEndDate())))
 				.and(SALARY.CONTRACT.eq(contractId))
@@ -794,7 +795,7 @@ public class JooqCertifica2 {
 
 	private static Double checkCGCDelaySalary(DSLContext dslContext, Date salaryStartDate, Integer contractId) {
 		Result<SalaryRecord> delaySalaries = dslContext.selectFrom(SALARY)
-			.where(SALARY.TYPE.eq((byte)3))
+			.where(SALARY.TYPE.eq(SalaryType.DELAY.value()))
 			.and(SALARY.CONTRACT.eq(contractId))
 			.and(SALARY.START_DATE.le(salaryStartDate))
 			.and(SALARY.END_DATE.ge(salaryStartDate))
@@ -818,7 +819,7 @@ public class JooqCertifica2 {
 
 	private static Double checkCGPDelaySalary(DSLContext dslContext, Date salaryStartDate, Integer contractId) {
 		Result<SalaryRecord> delaySalaries = dslContext.selectFrom(SALARY)
-			.where(SALARY.TYPE.eq((byte)3))
+			.where(SALARY.TYPE.eq(SalaryType.DELAY.value()))
 			.and(SALARY.CONTRACT.eq(contractId))
 			.and(SALARY.START_DATE.le(salaryStartDate))
 			.and(SALARY.END_DATE.ge(salaryStartDate))
@@ -867,7 +868,7 @@ public class JooqCertifica2 {
 
 		// Check Settle for unEnjoy Holidays
 		Result<Record> settlementRecords = dslContext.select().from(SALARY).where(SALARY.CONTRACT.eq(contractId))
-				.and(SALARY.TYPE.eq((byte) 2)).orderBy(SALARY.END_DATE.desc()).fetch();
+				.and(SALARY.TYPE.eq(SalaryType.SETTLE.value())).orderBy(SALARY.END_DATE.desc()).fetch();
 
 		Certifica2Period settlementCertifica2Info = null;
 
@@ -969,7 +970,7 @@ public class JooqCertifica2 {
 	private static String getsuspensionReasonCodeDB(DSLContext dslContext, Integer contractId) {
 		// Settlement Record
 		Result<Record> settlementRecords = dslContext.select().from(SALARY).where(SALARY.CONTRACT.eq(contractId))
-				.and(SALARY.TYPE.eq((byte) 2)).orderBy(SALARY.ID.desc()).fetch();
+				.and(SALARY.TYPE.eq(SalaryType.SETTLE.value())).orderBy(SALARY.ID.desc()).fetch();
 
 		Integer settlementId = settlementRecords.get(0).get(SALARY.ID);
 

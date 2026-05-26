@@ -796,10 +796,11 @@ public class JooqPayrollSalaries {
 			);
 		
 		List<Byte> salaryTypes = new ArrayList<Byte>();
-		if(params.isSalary()) salaryTypes.add((byte)0);
-		if(params.isExtra()) salaryTypes.add((byte)1);
-		if(params.isSettle()) salaryTypes.add((byte)2);
-		if(params.isDelay()) salaryTypes.add((byte)3);
+		if(params.isSalary()) salaryTypes.add((byte)Salary.Type.SALARY.ordinal());
+		if(params.isExtra()) salaryTypes.add((byte)Salary.Type.EXTRA.ordinal());
+		if(params.isSettle()) salaryTypes.add((byte)Salary.Type.SETTLE.ordinal());
+		if(params.isDelay()) salaryTypes.add((byte)Salary.Type.DELAY.ordinal());
+		if(params.isProcedural()) salaryTypes.add((byte)Salary.Type.PROCEDURAL.ordinal());
 		
 		condition = condition.and(
 				SALARY.TYPE.lt((byte)Salary.Type.L00.ordinal())

@@ -98,6 +98,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
+import com.esferalia.aon.occam.api.model.registry.RegistrySource;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkloadContent;
@@ -1735,6 +1736,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getAccountsForBank(String domainName, Integer domain, String user, AsyncCallback<List<Account>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getAccountsForBank(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource, AsyncCallback<List<Account>> callback) {
+		AON.start();
+		serviceAsync.getAccountsForRegistry(domainName, domain, user, registrySource, new AsyncCallbackWrapper<>(callback));
 	}
 
 	// *********************** [AMORTIZATION TYPE]

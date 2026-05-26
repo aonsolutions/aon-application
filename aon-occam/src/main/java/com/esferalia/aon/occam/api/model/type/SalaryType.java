@@ -30,12 +30,31 @@ public enum SalaryType implements Serializable {
 			return visitor.visitDelay(this);
 		}
 	},
+	UNKNOWN_4,
+	UNKNOWN_5,
+	UNKNOWN_6,
+	UNKNOWN_7,
+	UNKNOWN_8,
+	PROCEDURAL	// 9 
+	{
+		@Override
+		public <E> E accept(TypeVisitor<E> visitor) {
+			return visitor.visitProcedural(this);
+		}
+	},
 
 	L00 
 	{
 		@Override
 		public <E> E accept(TypeVisitor<E> visitor) {
 			return visitor.visitL00(this);
+		}
+	},
+	L02
+	{
+		@Override
+		public <E> E accept(TypeVisitor<E> visitor) {
+			return visitor.visitL02(this);
 		}
 	},
 	L03 
@@ -52,6 +71,13 @@ public enum SalaryType implements Serializable {
 			return visitor.visitL13(this);
 		}
 	},
+	UNKNOWN_14,
+	UNKNOWN_15,
+	UNKNOWN_16,
+	UNKNOWN_17,
+	UNKNOWN_18,
+	UNKNOWN_19,
+
 	M190 
 	{
 		@Override
@@ -72,8 +98,12 @@ public enum SalaryType implements Serializable {
 	
 		E visitDelay(SalaryType type);
 	
+		E visitProcedural(SalaryType type);
+
 		default E visitL00(SalaryType type) { return visitSalary(type); };
 	
+		default E visitL02(SalaryType type) { return visitSalary(type); };
+
 		default E visitL03(SalaryType type) { return visitDelay(type); };
 	
 		default E visitL13(SalaryType type) { return visitSettle(type); };
@@ -83,18 +113,21 @@ public enum SalaryType implements Serializable {
 
 	
 
-	public abstract <E> E accept( TypeVisitor<E> visitor); 
 	
 	public byte value() {
 		return (byte) ordinal();
 	}
 	
+	public <E> E accept( TypeVisitor<E> visitor) {
+		throw new UnknownSalaryTypeException(this);
+	}
 
 	public static final Collection<Byte> SALARIES = Arrays.asList(
 		SALARY.value(),
 		EXTRA.value(),
 		SETTLE.value(),
-		DELAY.value()
+		DELAY.value(),
+		PROCEDURAL.value()
 	);
 
 	public static final Collection<Byte> IRPF_SALARIES = Arrays.asList(
@@ -102,6 +135,7 @@ public enum SalaryType implements Serializable {
 		EXTRA.value(),
 		SETTLE.value(),
 		DELAY.value(),
+		PROCEDURAL.value(),
 		M190.value()
 	);
 }

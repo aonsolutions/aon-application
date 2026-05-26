@@ -18,6 +18,7 @@ public class SalaryParams implements Serializable {
 	private boolean extra;
 	private boolean settle;
 	private boolean delay;
+	private boolean procedural;
 	
 	private int limit;
 	private int offset;
@@ -110,6 +111,15 @@ public class SalaryParams implements Serializable {
 		return this;
 	}
 
+	public boolean isProcedural() {
+		return procedural;
+	}
+
+	public SalaryParams setProcedural(boolean procedural) {
+		this.procedural = procedural;
+		return this;
+	}
+	
 	public int getLimit() {
 		return limit;
 	}

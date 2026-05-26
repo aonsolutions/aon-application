@@ -14,6 +14,7 @@ public class Cost implements Serializable {
 	private int delaysCount;
 	private int settlesCount;
 	private int salariesCount;
+	private int proceduralCount;
 
 	public int getMonth() {
 		return month;
@@ -78,5 +79,13 @@ public class Cost implements Serializable {
 	public void setSalariesCount(int salariesCount) {
 		this.salariesCount = salariesCount;
 	}
+	
+	public int getProceduralCount() {
+		return proceduralCount;
+	}
+	
+	public void setProceduralCount(int proceduralCount) {
+		this.proceduralCount = proceduralCount;
+	} 
 
 }
