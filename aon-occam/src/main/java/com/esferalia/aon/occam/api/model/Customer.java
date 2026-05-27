@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.registry.CustomerFiscalStatus;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -17,6 +18,7 @@ public class Customer extends Registry implements Serializable, HasAudit, IScopa
 	private boolean withholding;
 	private InvoiceTransactionType transaction;
 	private RegistryStatus status;
+	private CustomerFiscalStatus fiscalStatus;
 	private Scope scope;
 	private boolean eInvoice;
 	private Integer invoicingGroup;
@@ -89,6 +91,27 @@ public class Customer extends Registry implements Serializable, HasAudit, IScopa
 	}
 	public Customer setStatus(RegistryStatus status) {
 		this.status = status;
+		return this;
+	}
+	
+	public CustomerFiscalStatus getFiscalStatus() {
+		return fiscalStatus;
+	}
+	
+	public boolean isRegistered() {
+		return fiscalStatus != null && fiscalStatus != CustomerFiscalStatus.REGISTERED;
+	}
+	
+	public boolean isNotRegistered() {
+		return fiscalStatus != null && fiscalStatus != CustomerFiscalStatus.NOT_REGISTERED;
+	}
+	
+	public boolean isNotIdentified() {
+		return fiscalStatus != null && fiscalStatus != CustomerFiscalStatus.NOT_IDENTIFIED;
+	}
+	
+	public Customer setFiscalStatus(CustomerFiscalStatus fiscalStatus) {
+		this.fiscalStatus = fiscalStatus;
 		return this;
 	}
 	
