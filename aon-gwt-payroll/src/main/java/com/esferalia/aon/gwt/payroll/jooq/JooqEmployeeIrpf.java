@@ -29,7 +29,9 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfo.AlcatrazTerritory;
 import com.esferalia.aon.jooq.tables.records.AlcatrazRecord;
 import com.esferalia.aon.jooq.tables.records.FsModelRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
+import com.esferalia.aon.occam.api.model.type.PaymentType;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -88,11 +90,11 @@ public class JooqEmployeeIrpf {
 			
 			// SalaryTypes
 			List<Byte> salaryTypes = new ArrayList<Byte>();
-			salaryTypes.add((byte)0); // Nomina
-			salaryTypes.add((byte)1); // Extra
-			salaryTypes.add((byte)2); // Finiquito
-			salaryTypes.add((byte)3); // Atraso
-			salaryTypes.add((byte)7); // M190 manual
+			salaryTypes.add(SalaryType.SALARY.value()); // Nomina
+			salaryTypes.add(SalaryType.EXTRA.value()); 	// Extra
+			salaryTypes.add(SalaryType.SETTLE.value()); // Finiquito
+			salaryTypes.add(SalaryType.DELAY.value()); 	// Atraso
+			salaryTypes.add(SalaryType.M190.value()); 	// M190 manual
 			
 			// Salary Records
 			Result<Record> salaryRecords = dslContext.select().from(SALARY)
@@ -231,7 +233,7 @@ public class JooqEmployeeIrpf {
 		if(AonStringUtils.equalsIgnoreCase(salaryType, "Manual")) {
 			List<Double> quotes = dslContext.selectFrom(SALARY_PAYMENT)
 					.where(SALARY_PAYMENT.SALARY.eq(salaryId))
-					.and(SALARY_PAYMENT.TYPE.eq((byte)1))
+					.and(SALARY_PAYMENT.TYPE.eq(AonEnumUtils.getByte(PaymentType.CRA_0001)))
 					.fetch(SALARY_PAYMENT.QUOTE);
 				
 				if(!quotes.isEmpty()) return quotes.get(0);
@@ -242,7 +244,7 @@ public class JooqEmployeeIrpf {
 	private static Double getInkindQuote(DSLContext dslContext, Integer salaryId, String salaryType, Double inkindBase, Double irpfPercent) {
 		List<Double> quotes = dslContext.selectFrom(SALARY_PAYMENT)
 				.where(SALARY_PAYMENT.SALARY.eq(salaryId))
-				.and(SALARY_PAYMENT.TYPE.eq((byte)13))
+				.and(SALARY_PAYMENT.TYPE.eq(AonEnumUtils.getByte(PaymentType.CRA_0013)))
 				.fetch(SALARY_PAYMENT.QUOTE);
 			
 		if(!quotes.isEmpty())
@@ -353,22 +355,23 @@ public class JooqEmployeeIrpf {
 	}
 
 	private static String getSalaryType(Byte type) {
-		switch (type) {
-		case (byte) 0:
+		SalaryType salaryType = AonEnumUtils.enumValue(SalaryType.class, type);
+		switch (salaryType) {
+		case SALARY:
 			return "N\u00F3mina";
-		case (byte) 1:
-			return "Extra"; //"Extra";
-		case (byte) 2:
+		case EXTRA:
+			return "Extra"; 	//"Extra";
+		case SETTLE:		
 			return "Finiquito"; //"Finiquito";
-		case (byte) 3:
-			return "Atraso"; //"Atraso";
-		case (byte) 4:
+		case DELAY:
+			return "Atraso"; 	//"Atraso";
+		case L00:
 			return "L00";
-		case (byte) 5:
+		case L03:
 			return "L03";
-		case (byte) 6:
+		case L13:
 			return "L13";
-		case (byte) 7: // M190
+		case M190: 				// M190
 			return "Manual";
 		default:
 			return "N/D";
@@ -390,7 +393,7 @@ public class JooqEmployeeIrpf {
 	}
 
 	private static void setEmployeeIrpf(DSLContext dslContext, Integer domainId, Integer contractId, String fullName, String document, String ssNumber, List<EmployeeIrpf> employeeIrpfs) throws IllegalArgumentException {
-		// Salary L131 equals salary type DB (byte) 7
+		// Salary L131 equals salary type DB (byte) M190
 		for(EmployeeIrpf employeeIrpf : employeeIrpfs) {
 			if(!employeeIrpf.isNew() && !employeeIrpf.isDelete())
 				continue;
@@ -454,7 +457,7 @@ public class JooqEmployeeIrpf {
 				dslContext.insertInto(SALARY_PAYMENT)
 					.set(SALARY_PAYMENT.DOMAIN, domainId)
 					.set(SALARY_PAYMENT.SALARY, newSalaryId)
-					.set(SALARY_PAYMENT.TYPE, (byte)1)
+					.set(SALARY_PAYMENT.TYPE, AonEnumUtils.getByte(PaymentType.CRA_0001)) 
 					.set(SALARY_PAYMENT.DESCRIPTION, "RETRIBUCI\u00d3N NO INCLUIDA OTROS APARTADOS (M190)")
 					.set(SALARY_PAYMENT.AMOUNT, employeeIrpf.getMoneyBase())
 					.set(SALARY_PAYMENT.IRPF, employeeIrpf.getMoneyBase())
@@ -464,7 +467,7 @@ public class JooqEmployeeIrpf {
 				dslContext.insertInto(SALARY_PAYMENT)
 					.set(SALARY_PAYMENT.DOMAIN, domainId)
 					.set(SALARY_PAYMENT.SALARY, newSalaryId)
-					.set(SALARY_PAYMENT.TYPE, (byte)13)
+					.set(SALARY_PAYMENT.TYPE, AonEnumUtils.getByte(PaymentType.CRA_0013))
 					.set(SALARY_PAYMENT.DESCRIPTION, "RETRIBUCI\u00d3N EN ESPECIE (M190)")
 					.set(SALARY_PAYMENT.AMOUNT, employeeIrpf.getInkindBase())
 					.set(SALARY_PAYMENT.IRPF, employeeIrpf.getInkindBase())
