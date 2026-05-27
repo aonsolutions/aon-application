@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -204,16 +203,9 @@ public class AonApiHttpServlet extends HttpServlet{
 			message = className;
 		}
 		
-		// Capturar stacktrace como String
-	    StringWriter sw = new StringWriter();
-	    PrintWriter pw = new PrintWriter(sw);
-	    e.printStackTrace(pw);
-	    String stacktrace = sw.toString();
-		
 		json.put(IConstants.MESSAGE, message);
 		json.put(IConstants.TYPE, IConstants.ERROR);
 		json.put(IConstants.CLASS_NAME, className);
-		json.put("stacktrace", stacktrace);
 		
 		addCorsHeader(resp);
 		giveBack(req, resp, json, new JSONObject());
