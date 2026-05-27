@@ -399,6 +399,10 @@ input, select, textarea,
 	height: 40px !important;
 }
 
+.gwt-Selector .gwt-TabLayoutPanel div:has(> .gwt-TabLayoutPanelContentContainer){
+	top: 40px !important;
+}
+
 .gwt-Selector .aon-AgreementSalaryTabs > div > div {
 	border: none !important;
 }
@@ -731,7 +735,7 @@ input, select, textarea,
 .gwt-TabLayoutPanelContentContainer{
 	border-radius: .375rem ;
 	background-color: #fff ;
-	margin: 1rem 0.5rem 1rem 0.5rem ;
+	margin: 0.5rem ;
 }
 
 /*Fix Matenimiento de Apuntes */ 

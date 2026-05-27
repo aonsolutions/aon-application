@@ -15,7 +15,9 @@ import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AddressTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextArea;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomToogleButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMainCertificatesPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -24,10 +26,10 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.EnterpriseActivityTa
 import com.esferalia.aon.gwt.common.client.widget.solutions.MediaTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.RDirStaffTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.RecordDataTable;
-import com.esferalia.aon.gwt.common.client.widget.solutions.RegistryGeneralDataPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.RegistryPaymethodBanksTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.WorkplaceTable;
 import com.esferalia.aon.gwt.common.shared.Dni;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
@@ -37,8 +39,10 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistrySource;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -89,24 +93,38 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 
 	private HTMLPanel messagePanel = new HTMLPanel(AonStringUtils.EMPTY);
 	
-	private AonCustomTextBox alias = new AonCustomTextBox(AON.MSG.alias());
-	private AonCustomListBox documentNationality = new AonCustomListBox("Pa\u00eds");
+	private AonCustomListBox statusLB = new AonCustomListBox("Estado");
 	private AonCustomListBox documentType = new AonCustomListBox("Tipo");
+	private AonCustomListBox documentNationality = new AonCustomListBox("Pa\u00eds");
 	private AonCustomTextBox document = new AonCustomTextBox("Documento");
+	private AonCustomTextBox alias = new AonCustomTextBox(AON.MSG.alias());
+	
 	private AonCustomTextBox name = new AonCustomTextBox(AON.MSG.enterpriseName());
 	private AonCustomTextBox firstSurname = new AonCustomTextBox("Apellido");
 	private AonCustomTextBox secondSurname = new AonCustomTextBox("Apellido 2");
 	
-	private AonCustomListBox statusLB = new AonCustomListBox("Estado");
+	private AonCustomTextBox mainAddress = new AonCustomTextBox("Direcci\u00f3n");
+	private AonCustomListBox addressLB = new AonCustomListBox("Direcciones");
+	
 	private AonCustomTextBox mainPhone = new AonCustomTextBox("Tel\u00e9fono");
 	private AonCustomListBox phoneLB = new AonCustomListBox("Tel\u00e9fonos");
 	private AonCustomTextBox mainEmail = new AonCustomTextBox("Email");
 	private AonCustomListBox emailLB = new AonCustomListBox("Emails");
-	private AonCustomTextBox mainAddress = new AonCustomTextBox("Direcci\u00f3n");
-	private AonCustomListBox addressLB = new AonCustomListBox("Direcciones");
+	
+	private AonCustomListBox scopeLB = new AonCustomListBox("\u00c1mbito");
+	private AonCustomListBox accountLB = new AonCustomListBox("Cuenta Contable"); 
+	
+	private AonCustomTextArea observation = new AonCustomTextArea("Observaciones");
+	
+	private AonCustomListBox transactionLB = new AonCustomListBox("Tipo Transacci\u00f3n");
+	private AonCustomToogleButton irpf = new AonCustomToogleButton("I.R.P.F.");
+	private AonCustomToogleButton re = new AonCustomToogleButton("R.E.");
+	private AonCustomToogleButton criterio = new AonCustomToogleButton("Criterio Caja");
+	
 	
 	private HTMLPanel rightInfoTable;
-
+	private HTMLPanel leftInfoTable;
+	
 	private TabLayoutPanel tablayoutPanel;
 
 	// Other Info
@@ -118,8 +136,6 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 	private RDirStaffTable rDirStaffTable;
 	private RecordDataTable recordDataTable;
 	private RegistryPaymethodBanksTable registryPaymethodBanksTable;
-	private RegistryGeneralDataPanel registryGeneralDataPanel;
-	//private AonRegistryNotes aonRegistryNotes;
 	
 	private CompanyFull company;
 	private Registry registry;
@@ -130,6 +146,8 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 	private SupplierFull supplierFull;
 	
 	private boolean editEnable = false;
+	
+	private List<Account> accounts;
 	
 	// ------------------------------------------------- Constructor
 
@@ -180,8 +198,6 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 		container.addStyleName(AON.CSS.aonFlexColumn2());
 		container.getElement().getStyle().setProperty("padding", "1rem");
 		add(container);
-		
-		//aonRegistryNotes = new AonRegistryNotes(options.getDomainName(), options.getDomain(), options.getUser(), registryId, NoteType.CUSTOMER_STATUS.name());
 		
 		getRegistryBySource();
 	}
@@ -266,15 +282,21 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 			break;
 		}
 		case CUSTOMER: {
-			getCustomerFull(custmerFull -> initCompanyRegistry() );
+			getContext(end -> {
+				getCustomerFull(custmerFull -> initCompanyRegistry() );
+			});
 			break;
 		}
 		case SUPPLIER: {
-			getSupplierFull(supplierFull -> initCompanyRegistry() );
+			getContext(end -> {
+				getSupplierFull(custmerFull -> initCompanyRegistry() );
+			});
 			break;
 		}
 		case CREDITOR: {
-			getCreditorFull(creditorFull -> initCompanyRegistry() );
+			getContext(end -> {
+				getCreditorFull(custmerFull -> initCompanyRegistry() );
+			});
 			break;
 		}
 		default:
@@ -294,13 +316,30 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 		gridPanel.getElement().getStyle().setProperty("align-items", "flex-start");
 		gridPanel.getElement().getStyle().setProperty("gap", "2rem");
 
-		HTMLPanel leftInfoTable = createTable();
+		leftInfoTable = createTable();
 		leftInfoTable.getElement().getStyle().setProperty("flex", "1");
+		
+		if(!this.registrySource.equals(RegistrySource.ENVIROMENT) && !this.registrySource.equals(RegistrySource.COMPANY)) {
+			statusLB.clearItems();
+			for(int i=0; i< RegistryStatus.values().length; i++) {
+				statusLB.addItem(RegistryStatus.values()[i].getDescription(), RegistryStatus.values()[i].name());
+			}
+			statusLB.getElement().getStyle().setProperty("max-width", "7rem");
+			
+			getStatus();
+		}
 
 		alias.addValueChangeHandler(e -> registry.setAlias(e.getValue()));
 		alias.setValue(registry.getAlias());
 
 		if (!this.registrySource.equals(RegistrySource.ENVIROMENT)) {
+			documentType.clearItems();
+			for (int i = 0; i < DocumentType.values().length; i++)
+				documentType.addItem(DocumentType.values()[i].getDescription(), DocumentType.values()[i].toString());
+			documentType.setValue(registry.getDocumentType().toString());
+			documentType.getElement().getStyle().setProperty("max-width", "5rem");
+			documentType.setEnabled(editEnable);
+
 			documentNationality.clearItems();
 			for (int i = 0; i < Country.values().length; i++)
 				documentNationality.addItem(Country.values()[i].getIso2(), Country.values()[i].getIso2());
@@ -309,13 +348,6 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 			documentNationality.setValue(registry.getDocumentCountry().getIso2());
 			documentNationality.getElement().getStyle().setProperty("max-width", "4rem");
 			documentNationality.setEnabled(editEnable);
-
-			documentType.clearItems();
-			for (int i = 0; i < DocumentType.values().length; i++)
-				documentType.addItem(DocumentType.values()[i].getDescription(), DocumentType.values()[i].toString());
-			documentType.setValue(registry.getDocumentType().toString());
-			documentType.getElement().getStyle().setProperty("max-width", "5rem");
-			documentType.setEnabled(editEnable);
 
 			document.addValueChangeHandler(e -> {
 				registry.setDocument(e.getValue());
@@ -328,22 +360,37 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 			document.setEnable(editEnable);
 			document.getElement().getStyle().setProperty("max-width", "7rem");
 
-			leftInfoTable.add(createRow(alias, documentType, documentNationality, document));
+			if(!this.registrySource.equals(RegistrySource.ENVIROMENT) && !this.registrySource.equals(RegistrySource.COMPANY))
+				leftInfoTable.add(createRow(statusLB, documentType, documentNationality, document, alias));
+			else 
+				leftInfoTable.add(createRow(documentType, documentNationality, document, alias));
 		} else {
 			leftInfoTable.add(createRow(alias));
 		}
 
-		gridPanel.add(leftInfoTable);
+		
 
 		rightInfoTable = createTable();
 		rightInfoTable.getElement().getStyle().setProperty("flex", "1");
-
+		
 		name.addValueChangeHandler(e -> registry.setName(e.getValue()));
 		name.setValue(registry.getName());
 		name.setEnable(editEnable);
-		rightInfoTable.add(createRow(name));
-
-		gridPanel.add(rightInfoTable);
+		
+		if(!this.registrySource.equals(RegistrySource.ENVIROMENT) && !this.registrySource.equals(RegistrySource.COMPANY)) {
+			
+			getAddresses();
+			getPhones();
+			getEmails();
+			
+			leftInfoTable.add(createRow(name));
+			
+			rightInfoTable.add(createRow(mainAddress, addressLB));
+			rightInfoTable.add(createRow(mainPhone, phoneLB, mainEmail, emailLB));
+			
+		} else {
+			rightInfoTable.add(createRow(name, firstSurname, secondSurname));
+		}
 		
 		if (!this.registrySource.equals(RegistrySource.ENVIROMENT)) {
 			createNameByDocumentType();
@@ -355,52 +402,72 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 			});
 		}
 
+		gridPanel.add(leftInfoTable);
+		gridPanel.add(rightInfoTable);
+		
 		container.add(gridPanel);
 		
-		if(!this.registrySource.equals(RegistrySource.ENVIROMENT) && !this.registrySource.equals(RegistrySource.COMPANY)) {
-			HTMLPanel gridPanel2 = new HTMLPanel(AonStringUtils.EMPTY);
-			gridPanel2.setStyleName(AON.CSS.aonItemFlex());
-			gridPanel2.getElement().getStyle().setProperty("margin", "0 1rem .5rem");
-			gridPanel2.getElement().getStyle().setProperty("align-items", "flex-start");
-			gridPanel2.getElement().getStyle().setProperty("gap", "2rem");
-			
-			HTMLPanel leftInfoTable2 = createTable();
-			leftInfoTable2.getElement().getStyle().setProperty("flex", "1");
-			
-			getAddresses();
-
-			leftInfoTable2.add(createRow(mainAddress, addressLB));
-
-			gridPanel2.add(leftInfoTable2);
-
-			HTMLPanel rightInfoTable2 = createTable();
-			rightInfoTable2.getElement().getStyle().setProperty("flex", "1");
-			
-			statusLB.clearItems();
-			for(int i=0; i< RegistryStatus.values().length; i++) {
-				statusLB.addItem(RegistryStatus.values()[i].getDescription(), RegistryStatus.values()[i].name());
-			}
-			statusLB.getElement().getStyle().setProperty("max-width", "7rem");
-			
-			getStatus();
-			
-			getPhones();
-			
-			getEmails();
-			
-			rightInfoTable2.add(createRow(mainPhone, phoneLB, mainEmail, emailLB, statusLB));
-
-			gridPanel2.add(rightInfoTable2);
-			
-			gridPanel.getElement().getStyle().setProperty("margin", "0 1rem");
-			
-			container.add(gridPanel2);
-		}
-		
 		if (!this.registrySource.equals(RegistrySource.ENVIROMENT) && !this.registrySource.equals(RegistrySource.COMPANY)) {
-			createRegistryGeneralDataPanel();
+			scopeLB.clearItems();
+			scopeLB.getElement().getStyle().setProperty("max-width", "10rem");
+			options.getConfiguration().getAvailableScopes().forEach(s -> scopeLB.addItem(s.getDescription(), s.getId().toString()));
 			
-			tablayoutPanel.add(registryGeneralDataPanel, "D. Generales");
+			accountLB.clearItems();
+			accountLB.addItem("-", "");
+			accounts.forEach(a -> accountLB.addItem(a.getFullName(), a.getId().toString()));
+			
+			leftInfoTable.add(createRow(scopeLB, accountLB));
+			
+			transactionLB.clearItems();
+			for(int i=0; i < InvoiceTransactionType.values().length; i++)
+				transactionLB.addItem(InvoiceTransactionType.values()[i].getDescription(), InvoiceTransactionType.values()[i].name());
+			
+			irpf.getElement().getStyle().setProperty("max-width", "5rem");
+			re.getElement().getStyle().setProperty("max-width", "5rem");
+			criterio.getElement().getStyle().setProperty("max-width", "5rem");
+			
+			if(this.registrySource.equals(RegistrySource.CUSTOMER))
+				leftInfoTable.add(createRow(transactionLB, irpf, re));
+				
+			else if(this.registrySource.equals(RegistrySource.SUPPLIER) || this.registrySource.equals(RegistrySource.CREDITOR))
+				leftInfoTable.add(createRow(transactionLB, irpf, criterio));
+			
+			rightInfoTable.add(createRow(observation));
+			
+			if(null != customerFull && null != customerFull.getId()) {
+				scopeLB.setValue(customerFull.getRegistry().getScope().getId().toString());
+				accountLB.setValue(null == customerFull.getAccount() ? "" : customerFull.getAccount().getId().toString());
+			
+				transactionLB.setValue(customerFull.getRegistry().getTransaction().name());
+				irpf.setValue(customerFull.getRegistry().isWithholding());
+				
+				if(this.registrySource.equals(RegistrySource.CUSTOMER))
+					re.setValue(customerFull.getRegistry().isSurcharge());
+				
+				observation.setValue(customerFull.getRegistry().getObservation());
+			} else if(null != creditorFull && null != creditorFull.getId()) {
+				scopeLB.setValue(creditorFull.getRegistry().getScope().getId().toString());
+				accountLB.setValue(null == creditorFull.getAccount() ? "" : creditorFull.getAccount().getId().toString());
+			
+				transactionLB.setValue(creditorFull.getRegistry().getTransaction().name());
+				irpf.setValue(creditorFull.getRegistry().isWithholding());
+				
+				if(this.registrySource.equals(RegistrySource.CREDITOR))
+					criterio.setValue(creditorFull.getRegistry().isVatAccrualPayment());
+				
+				observation.setValue(creditorFull.getRegistry().getObservation());
+			} else if(null != supplierFull && null != supplierFull.getId()) {
+				scopeLB.setValue(supplierFull.getRegistry().getScope().getId().toString());
+				accountLB.setValue(null == supplierFull.getAccount() ? "" : supplierFull.getAccount().getId().toString());
+			
+				transactionLB.setValue(supplierFull.getRegistry().getTransaction().name());
+				irpf.setValue(supplierFull.getRegistry().isWithholding());
+				
+				if(this.registrySource.equals(RegistrySource.SUPPLIER))
+					re.setValue(supplierFull.getRegistry().isVatAccrualPayment());
+				
+				observation.setValue(supplierFull.getRegistry().getObservation());
+			}
 		}
 		
 		if (!this.registrySource.equals(RegistrySource.ENVIROMENT)) {
@@ -481,7 +548,7 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 
 			};
 			
-			tablayoutPanel.add(rDirStaffTable, "Representates");
+			tablayoutPanel.add(rDirStaffTable, "Representantes");
 			
 			recordDataTable = new RecordDataTable(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId()) {
 
@@ -521,58 +588,6 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 		});
 	}
 
-	private void createRegistryGeneralDataPanel() {
-		switch (registrySource) {
-			case CUSTOMER: 
-				registryGeneralDataPanel = new RegistryGeneralDataPanel(options.getDomainName(), options.getDomain(), options.getUser(), options.getConfiguration().getAvailableScopes(), customerFull, this.registrySource) {
-					
-					@Override
-					protected void onShowErrorMessage(String errorMessage) {
-						AonMessagePanel.showError(messagePanel, errorMessage);
-					}
-
-					@Override
-					protected void onShowSuccess(String successMessage) {
-						AonMessagePanel.showSuccess(messagePanel, successMessage);
-					}
-
-				};
-				break;
-			case CREDITOR:  
-				registryGeneralDataPanel = new RegistryGeneralDataPanel(options.getDomainName(), options.getDomain(), options.getUser(), options.getConfiguration().getAvailableScopes(), creditorFull, this.registrySource) {
-					
-					@Override
-					protected void onShowErrorMessage(String errorMessage) {
-						AonMessagePanel.showError(messagePanel, errorMessage);
-					}
-
-					@Override
-					protected void onShowSuccess(String successMessage) {
-						AonMessagePanel.showSuccess(messagePanel, successMessage);
-					}
-
-				};
-				break;
-			case SUPPLIER:
-				registryGeneralDataPanel = new RegistryGeneralDataPanel(options.getDomainName(), options.getDomain(), options.getUser(), options.getConfiguration().getAvailableScopes(), supplierFull, this.registrySource) {
-					
-					@Override
-					protected void onShowErrorMessage(String errorMessage) {
-						AonMessagePanel.showError(messagePanel, errorMessage);
-					}
-
-					@Override
-					protected void onShowSuccess(String successMessage) {
-						AonMessagePanel.showSuccess(messagePanel, successMessage);
-					}
-
-				};
-				break;
-			default:
-				throw new IllegalArgumentException("Unexpected value: " + registrySource);
-		}
-	}
-
 	private void getStatus() {
 		switch (registrySource) {
 			case CUSTOMER: 
@@ -606,7 +621,7 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 					mainAddress.getElement().getStyle().setDisplay(Display.NONE);
 				} else {
 					RegistryAddress mainAddresslValue = customerFull.getMainAddress();
-					mainAddress.setEnable(false);
+					disableInput(mainAddress);
 					if(null != mainAddresslValue)
 						mainAddress.setValue(mainAddresslValue.getFullAddress());
 					
@@ -623,7 +638,7 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 					mainAddress.getElement().getStyle().setDisplay(Display.NONE);
 				} else {
 					RegistryAddress mainAddresslValue = creditorFull.getMainAddress();
-					mainAddress.setEnable(false);
+					disableInput(mainAddress);
 					if(null != mainAddresslValue)
 						mainAddress.setValue(mainAddresslValue.getFullAddress());
 					
@@ -640,7 +655,7 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 					mainAddress.getElement().getStyle().setDisplay(Display.NONE);
 				} else {
 					RegistryAddress mainAddresslValue = supplierFull.getMainAddress();
-					mainAddress.setEnable(false);
+					disableInput(mainAddress);
 					if(null != mainAddresslValue)
 						mainAddress.setValue(mainAddresslValue.getFullAddress());
 					
@@ -666,7 +681,7 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 					mainPhone.getElement().getStyle().setDisplay(Display.NONE);
 				} else {
 					RegistryMedia mainPhonValue = customerFull.getMedias().stream().filter(m -> m.getMedia().equals(MediaType.FIXED_PHONE)).findFirst().orElse(null);
-					mainPhone.setEnable(false);
+					disableInput(mainPhone);
 					if(null != mainPhonValue)
 						mainPhone.setValue(mainPhonValue.getValue());
 					
@@ -684,7 +699,7 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 					mainPhone.getElement().getStyle().setDisplay(Display.NONE);
 				} else {
 					RegistryMedia mainPhonValue = creditorFull.getMedias().stream().filter(m -> m.getMedia().equals(MediaType.FIXED_PHONE)).findFirst().orElse(null);
-					mainPhone.setEnable(false);
+					disableInput(mainPhone);
 					if(null != mainPhonValue)
 						mainPhone.setValue(mainPhonValue.getValue());
 					
@@ -702,7 +717,7 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 					mainPhone.getElement().getStyle().setDisplay(Display.NONE);
 				} else {
 					RegistryMedia mainPhonValue = supplierFull.getMedias().stream().filter(m -> m.getMedia().equals(MediaType.FIXED_PHONE)).findFirst().orElse(null);
-					mainPhone.setEnable(false);
+					disableInput(mainPhone);
 					if(null != mainPhonValue)
 						mainPhone.setValue(mainPhonValue.getValue());
 					
@@ -728,7 +743,7 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 					mainEmail.getElement().getStyle().setDisplay(Display.NONE);
 				} else {
 					RegistryMedia mainEmailValue = customerFull.getMedias().stream().filter(m -> m.getMedia().equals(MediaType.EMAIL)).findFirst().orElse(null);
-					mainEmail.setEnable(false);
+					disableInput(mainEmail);
 					if(null != mainEmailValue)
 						mainEmail.setValue(mainEmailValue.getValue());
 					
@@ -746,7 +761,7 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 					mainEmail.getElement().getStyle().setDisplay(Display.NONE);
 				} else {
 					RegistryMedia mainEmailValue = creditorFull.getMedias().stream().filter(m -> m.getMedia().equals(MediaType.EMAIL)).findFirst().orElse(null);
-					mainEmail.setEnable(false);
+					disableInput(mainEmail);
 					if(null != mainEmailValue)
 						mainEmail.setValue(mainEmailValue.getValue());
 					
@@ -764,7 +779,7 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 					mainEmail.getElement().getStyle().setDisplay(Display.NONE);
 				} else {
 					RegistryMedia mainEmailValue = supplierFull.getMedias().stream().filter(m -> m.getMedia().equals(MediaType.EMAIL)).findFirst().orElse(null);
-					mainEmail.setEnable(false);
+					disableInput(mainEmail);
 					if(null != mainEmailValue)
 						mainEmail.setValue(mainEmailValue.getValue());
 					
@@ -778,14 +793,14 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 	}
 
 	private void createNameByDocumentType() {
-		rightInfoTable.clear();
-
 		if(registry.getDocumentType().equals(DocumentType.CIF)) {
 			name.addValueChangeHandler(e -> registry.setName(e.getValue()));
 			name.setValue(registry.getName());
 			name.setEnable(editEnable);
 			name.setVisibleTitle(AON.MSG.enterpriseName());
-			rightInfoTable.add(createRow(name));
+			
+			firstSurname.getElement().getStyle().setDisplay(Display.NONE);
+			secondSurname.getElement().getStyle().setDisplay(Display.NONE);
 		} else {
 			name.setEnable(editEnable);
 			name.setValue(AonStringUtils.isBlank(registry.getPersonName()) ? registry.getName() : registry.getPersonName());
@@ -810,7 +825,8 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 				ensureRegistryNameByPerson(name.getValue(), firstSurname.getValue(), secondSurname.getValue());
 			});
 			
-			rightInfoTable.add(createRow(name, firstSurname, secondSurname));
+			firstSurname.getElement().getStyle().clearDisplay();
+			secondSurname.getElement().getStyle().clearDisplay();
 		}
 	}
 	
@@ -829,6 +845,11 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 			
 		}
 		
+	}
+	
+	private void disableInput(AonCustomTextBox textBox) {
+		textBox.setEnable(false);
+		textBox.getTextBox().getElement().getStyle().setProperty("background-color", "#f9f7f7");
 	}
 
 	public boolean checkDocumentValidation(String document) {
@@ -948,8 +969,13 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 		
 		customerFull.getRegistry().copy(registry);
 		
-		if(!this.registrySource.equals(RegistrySource.ENVIROMENT) && !this.registrySource.equals(RegistrySource.COMPANY) && null != registryGeneralDataPanel) {
-			registryGeneralDataPanel.onSave(customerFull);
+		if(!this.registrySource.equals(RegistrySource.ENVIROMENT) && !this.registrySource.equals(RegistrySource.COMPANY)) {
+			customerFull.getRegistry().setScope(new Scope().setId(Integer.parseInt(scopeLB.getValue())));
+			customerFull.setAccount(AonStringUtils.isBlank(accountLB.getValue()) ? null : new Account().setId(Integer.parseInt(accountLB.getValue())));
+			customerFull.getRegistry().setTransaction(InvoiceTransactionType.valueOf(transactionLB.getValue()));
+			customerFull.getRegistry().setWithholding(irpf.getValue());
+			if(this.registrySource.equals(RegistrySource.CUSTOMER))
+				customerFull.getRegistry().setSurcharge(re.getValue());
 		}
 		
 		registryService.save(options.getDomainName(), options.getDomain(), options.getUser(), customerFull, new AsyncCallback<CustomerFull>() {
@@ -994,8 +1020,13 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 		
 		creditorFull.getRegistry().copy(registry);
 		
-		if(!this.registrySource.equals(RegistrySource.ENVIROMENT) && !this.registrySource.equals(RegistrySource.COMPANY) && null != registryGeneralDataPanel) {
-			registryGeneralDataPanel.onSave(creditorFull);
+		if(!this.registrySource.equals(RegistrySource.ENVIROMENT) && !this.registrySource.equals(RegistrySource.COMPANY)) {
+			creditorFull.getRegistry().setScope(new Scope().setId(Integer.parseInt(scopeLB.getValue())));
+			creditorFull.setAccount(AonStringUtils.isBlank(accountLB.getValue()) ? null : new Account().setId(Integer.parseInt(accountLB.getValue())));
+			creditorFull.getRegistry().setTransaction(InvoiceTransactionType.valueOf(transactionLB.getValue()));
+			creditorFull.getRegistry().setWithholding(irpf.getValue());
+			if(this.registrySource.equals(RegistrySource.CREDITOR))
+				creditorFull.getRegistry().setVatAccrualPayment(criterio.getValue());
 		}
 		
 		registryService.save(options.getDomainName(), options.getDomain(), options.getUser(), creditorFull, new AsyncCallback<CreditorFull>() {
@@ -1040,8 +1071,13 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 		
 		supplierFull.getRegistry().copy(registry);
 		
-		if(!this.registrySource.equals(RegistrySource.ENVIROMENT) && !this.registrySource.equals(RegistrySource.COMPANY) && null != registryGeneralDataPanel) {
-			registryGeneralDataPanel.onSave(supplierFull);
+		if(!this.registrySource.equals(RegistrySource.ENVIROMENT) && !this.registrySource.equals(RegistrySource.COMPANY)) {
+			supplierFull.getRegistry().setScope(new Scope().setId(Integer.parseInt(scopeLB.getValue())));
+			supplierFull.setAccount(AonStringUtils.isBlank(accountLB.getValue()) ? null : new Account().setId(Integer.parseInt(accountLB.getValue())));
+			supplierFull.getRegistry().setTransaction(InvoiceTransactionType.valueOf(transactionLB.getValue()));
+			supplierFull.getRegistry().setWithholding(irpf.getValue());
+			if(this.registrySource.equals(RegistrySource.SUPPLIER))
+				supplierFull.getRegistry().setVatAccrualPayment(criterio.getValue());
 		}
 		
 		registryService.save(options.getDomainName(), options.getDomain(), options.getUser(), supplierFull, new AsyncCallback<SupplierFull>() {
@@ -1060,7 +1096,23 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 		});
 
 	}
+	
+	private void getContext(Consumer<Void> end) {
+		commonService.getAccountsForRegistry(options.getDomainName(), options.getDomain(), options.getUser(), registrySource, new AsyncCallback<List<Account>>() {
 
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, "Error cuentas contables: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(List<Account> accountsDB) {
+				accounts = accountsDB;
+				end.accept(null);
+			}
+		});
+	}
+	
 	protected abstract void onBack();
 
 }

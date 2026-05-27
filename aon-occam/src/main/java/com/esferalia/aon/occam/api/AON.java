@@ -9197,9 +9197,9 @@ public class AON {
 		}
 	}
 
-	public static List<Holiday> getHolidays(String domainName, Integer domainId, String userLogin) {
+	public static List<Holiday> getHolidays(String domainName, Integer domainId, String userLogin, Integer parentDomain) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
-			return getCalendar().getHolidays(ctx, domainId);
+			return getCalendar().getHolidays(ctx, domainId, parentDomain);
 		}
 	}
 

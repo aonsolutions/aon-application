@@ -41,7 +41,7 @@ public class AonCustomTextBox extends HTMLPanel {
 		
 		textBox = new TextBox();
 		textBox.setStyleName(AON.CSS.aonCustomTextBoxInput());
-		textBox.getElement().setPropertyString("placeholder", "Introduce el valor");
+//		textBox.getElement().setPropertyString("placeholder", "Introduce el valor");
 //		textBox.getElement().setPropertyString("placeholder", AonStringUtils.isBlank(title) ? "Escriba aqui" : title);
 		
 		textBoxPanel.add(textBox);
