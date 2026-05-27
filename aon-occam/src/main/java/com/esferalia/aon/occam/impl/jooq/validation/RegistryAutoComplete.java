@@ -42,6 +42,9 @@ public class RegistryAutoComplete {
 				} 
 			}
 		}
+		
+		if(reg.getDocumentType() == null) 
+			reg.setDocumentType(DocumentType.OTHER);
 	};
 
 	public static BiConsumer<AONContext,Registry> COMPLETE_NATIONALITY = (ctx,reg) -> {

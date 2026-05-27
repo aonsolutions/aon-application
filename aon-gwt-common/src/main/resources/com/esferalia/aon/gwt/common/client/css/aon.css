@@ -1222,6 +1222,13 @@ input[type="checkbox"]:focus + label {
 	background-color: #d90000;
 }
 
+.aon-circle-orange{
+	width: 1rem;
+	height: 1rem;
+	border-radius: 50%;
+	background-color: orange;
+}
+
 .aon-value-changed {
 	color: #897820;
 	font-weight: bold;

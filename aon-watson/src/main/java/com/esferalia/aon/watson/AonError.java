@@ -69,9 +69,14 @@ public enum AonError implements Serializable{
 	// --------------------- REGISTRY --------------------------
 	// -----------------------------------------------------------
 	,REGISTRY_EMPTY_DOCUMENT("El documento del titular est\u00E1 vac\u00EDo.")
+	,REGISTRY_NOT_VALID_DOCUMENT("El documento del titular no es v\u00E1lido.")
+	,REGISTRY_EMPTY_DOCUMENT_TYPE("El tipo de documento del titular est\u00E1 vac\u00EDo.")
+	,REGISTRY_EMPTY_DOCUMENT_COUNTRY("El pa\u00EDs de documento del titular est\u00E1 vac\u00EDo.")
 	,REGISTRY_INVALID_DOCUMENT("Formato inv\u00E1lido en el dato documento del titular.")
 	,REGISTRY_OVERFLOW_DOCUMENT("El documento no puede tener m\u00E1s de 16 caracteres.")
 	,REGISTRY_EMPTY_NAME("El nombre/raz\u00F3n social del titular est\u00E1 vac\u00EDo.")
+	
+	,REGISTRY_INVALID_SCOPE("El \u00E1mbito del titular no es v\u00E1lido para el dominio.") 
 	
 	// -----------------------------------------------------------
 	// --------------------- COMPANY ----------------------------

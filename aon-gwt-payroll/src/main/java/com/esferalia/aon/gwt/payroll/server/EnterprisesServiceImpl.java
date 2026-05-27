@@ -5246,7 +5246,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public List<Holiday> getHolidays(String domainName, String userLogin) throws IllegalArgumentException {
 		Domain domain = AON_SOLUTIONS.getDomain(domainName);
-		return AON.getHolidays(domain.getName(), domain.getId(), userLogin);
+		return AON.getHolidays(domain.getName(), domain.getId(), userLogin, domain.getParentId());
 	}
 
 	@Override
