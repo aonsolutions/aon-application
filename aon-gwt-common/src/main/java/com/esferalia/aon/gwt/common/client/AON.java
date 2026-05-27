@@ -150,6 +150,7 @@ public class AON {
 	public static final String AON_CMD_BUTTON = "aon-cmdButton";
 	public static final String AON_CIRCLE_GREEN = "aon-circle-green";
 	public static final String AON_CIRCLE_RED = "aon-circle-red";
+	public static final String AON_CIRCLE_ORANGE = "aon-circle-orange";
 	public static final String AON_ICON_TIME = "aon-icon-time";
 	public static final String AON_ICON_REFRESH = "aon-icon-refresh";
 	public static final String AON_ICON_EXCEL = "aon-icon-excel";
