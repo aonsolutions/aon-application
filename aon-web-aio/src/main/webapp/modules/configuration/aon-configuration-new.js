@@ -173,23 +173,18 @@ export class AonConfigurationNew extends AonElement {
 				fn: () => this.buildUser(),
 			});
 
+			/*
 			securityOptions.push({
 				name: MSG.COMPANY_MANAGEMENT,
 				icon: MATERIAL_ICONS.BUSINESS,
 				fn: () => this.buildCompanyList(),
 			});
-
+			*/
 
 			securityOptions.push({
 				name: MSG.GROUP_MANAGEMENT,
 				icon: MATERIAL_ICONS.GROUPS,
 				fn: () => this.buildGroups(),
-			});
-
-			securityOptions.push({
-				name: MSG.SCOPES,
-				icon: MATERIAL_ICONS.BUSINESS,
-				fn: () => GWT.iLoad(GWT.SCOPE_MODULE, this.getApplication().CONTENT),
 			});
 
 			if (this.getDur().isApiService()) {
@@ -199,6 +194,12 @@ export class AonConfigurationNew extends AonElement {
 					fn: () => this.buildServiceAccount(),
 				});
 			}
+
+			securityOptions.push({
+				name: MSG.SCOPES,
+				icon: MATERIAL_ICONS.BUSINESS,
+				fn: () => GWT.iLoad(GWT.SCOPE_MODULE, this.getApplication().CONTENT),
+			});
 
 		}
 

@@ -133,33 +133,6 @@ export class AonConfiguration extends AonElement {
 		}
 
 		if (this.getDur().isAdmin()) {
-			companyOptions.push({
-				name: MSG.USER_MANAGEMENT,
-				icon: MATERIAL_ICONS.PEOPLE,
-				fn: () => this.buildUser(),
-			});
-			if (this.company && this.company.domain && !this.company.domain.parentId) {
-				companyOptions.push({
-					name: MSG.COMPANY_MANAGEMENT,
-					icon: MATERIAL_ICONS.BUSINESS,
-					fn: () => this.buildCompanyList(),
-				});
-			}
-
-			companyOptions.push({
-				name: MSG.GROUP_MANAGEMENT,
-				icon: MATERIAL_ICONS.GROUPS,
-				fn: () => this.buildGroups(),
-			});
-
-			if (this.getDur().isApiService()) {
-				companyOptions.push({
-					name: MSG.SERVICE_ACCOUNTS,
-					icon: MATERIAL_ICONS.API,
-					fn: () => this.buildServiceAccount(),
-				});
-			}
-
 			if (!this.isMobile() && ( (!this.getDur().isTrial() && !this.getDur().hasBeenTrial()) || this.getDur().isParentUser()) ) {
 				companyOptions.push({
 					name: MSG.HIRING,
@@ -189,6 +162,49 @@ export class AonConfiguration extends AonElement {
 		} else aonConfiguration.addSidenavOptions(this.getDur().isConsultancy() ? MSG.ENVIRONMENT.toUpperCase() : MSG.COMPANY.toUpperCase(), companyOptions);
 		
 		
+		// Security
+
+		let securityOptions = [];
+		
+		if (this.getDur().isAdmin()) {
+			securityOptions.push({
+				name: MSG.USER_MANAGEMENT,
+				icon: MATERIAL_ICONS.PEOPLE,
+				fn: () => this.buildUser(),
+			});
+
+			/*
+			securityOptions.push({
+				name: MSG.COMPANY_MANAGEMENT,
+				icon: MATERIAL_ICONS.BUSINESS,
+				fn: () => this.buildCompanyList(),
+			});
+			*/
+
+			securityOptions.push({
+				name: MSG.GROUP_MANAGEMENT,
+				icon: MATERIAL_ICONS.GROUPS,
+				fn: () => this.buildGroups(),
+			});
+			
+			if (this.getDur().isApiService()) {
+				securityOptions.push({
+					name: MSG.SERVICE_ACCOUNTS,
+					icon: MATERIAL_ICONS.API,
+					fn: () => this.buildServiceAccount(),
+				});
+			}
+
+			securityOptions.push({
+				name: MSG.SCOPES,
+				icon: MATERIAL_ICONS.BUSINESS,
+				fn: () => GWT.iLoad(GWT.SCOPE_MODULE, this.getApplication().CONTENT),
+			});
+		}
+		
+		aonConfiguration.addSidenavOptions(MSG.SECURITY.toUpperCase(), securityOptions);
+		
+		
 		if (localStorage.getItem("aon_domain_id")) {
 			let mailOptions = [];
 			
@@ -209,6 +225,16 @@ export class AonConfiguration extends AonElement {
 			
 			aonConfiguration.addSidenavOptions("CORREO", mailOptions);
 		}
+		
+		let classicViewOptions = [];
+
+		classicViewOptions.push({
+			name: MSG.GLOBAL_CONFIGURATION,
+			icon: MATERIAL_ICONS.SETTINGS,
+			fn: () => this.getApplication().setContent(new JSF.AonJsfGlobalConfig()),
+		});
+
+		aonConfiguration.addSidenavOptions(MSG.CLASSIC_VIEW.toUpperCase(), classicViewOptions);
 
 		// Ocultar Panel Opciones en configuracion. Mostrar solo en parametros
 		/*
