@@ -1290,6 +1290,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	private Collection<ISystemPayment> systemPayments;
 
 	private SQLCnae2009 cnae2009;
+	private SQLCnae2025 cnae2025;
 	private LRUCache<Integer, ICalendar> calendars;
 	private SQLCalendarFactory calendarFactory;
 	private LRUCache<AgreementKey, Collection<ISystemPayment>> agreementPayments;
@@ -1398,6 +1399,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		this.sqlContractEmbargo = new SQLContractEmbargo();
 
 		this.cnae2009 = new SQLCnae2009(connection, this.startDate, this.getEnd());
+		this.cnae2025 = new SQLCnae2025(connection, this.startDate, this.getEnd());
 
 		calendarFactory = new SQLCalendarFactory(connection, this.startDate, this.getEnd());
 		this.calendars = new LRUCache<Integer, ICalendar>(CACHE_SIZE, calendarFactory);
@@ -1841,12 +1843,18 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return getInt(SQLConstants.CONTRACT, ContractColumns.ID);
 	}
 
-	public Integer getCnae2009() {
-		Object cna2009 = getObject(SQLConstants.ENTERPRISE_ACTIVITY, EnterpriseActivityColumns.CNAE2009);
-		return cna2009 != null ? (Integer) cna2009 : null;
+	public String getCnae2025() {
+		Object cnae2025 = getObject(SQLConstants.ENTERPRISE_ACTIVITY, EnterpriseActivityColumns.CNAE);
+		return cnae2025 != null ? AonStringUtils.leftPad(cnae2025.toString(), 4, '0') : null;
 	}
+
+	public Integer getCnae2009() {
+		Object cnae2009 = getObject(SQLConstants.ENTERPRISE_ACTIVITY, EnterpriseActivityColumns.CNAE2009);
+		return cnae2009 != null ? (Integer) cnae2009 : null;
+	}
+	
 	public boolean next() throws SQLException, ExpressionException {
-		return next((ctx) -> {
+		return next(ctx -> {
 		});
 	}
 
@@ -4465,13 +4473,27 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	private Double getItRate() {
-		Integer cnae2009 = getCnae2009();
-		return cnae2009 != null ? this.cnae2009.getItRate(cnae2009) : 0.00;
+		Double itRate = null ;
+		String cnae2025Code = getCnae2025();
+		if ( cnae2025Code != null )
+			itRate = this.cnae2025.getItRate(cnae2025Code);
+		if ( itRate != null )
+			return itRate;
+		
+		Integer cnae2009Id = getCnae2009();
+		return cnae2009Id != null ? this.cnae2009.getItRate(cnae2009Id) : 0.00;
 	}
 
 	private Double getImsRate() {
-		Integer cnae2009 = getCnae2009();
-		return cnae2009 != null ? this.cnae2009.getImsRate(cnae2009) : 0.00;
+		Double imsRate = null ;
+		String cnae2025Code = getCnae2025();
+		if ( cnae2025Code != null )
+			imsRate = this.cnae2025.getImsRate(cnae2025Code);
+		if ( imsRate != null )
+			return imsRate;
+
+		Integer cnae2009Id = getCnae2009();
+		return cnae2009Id != null ? this.cnae2009.getImsRate(cnae2009Id) : 0.00;
 	}
 
 	private double getDoubleVariable(String name) {

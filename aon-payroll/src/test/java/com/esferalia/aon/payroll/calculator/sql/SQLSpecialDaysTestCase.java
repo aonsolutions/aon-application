@@ -36,10 +36,13 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
+import com.esferalia.aon.jooq.tables.PaymentConcept;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -707,7 +710,83 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 	}
 
-	// --------------------------------------------------------------------------------------------------------------------------
+	@Test
+	public void testInactivityDaysBaseCgp() throws ExpressionException, SQLException,
+			SalaryException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		
+		addSystemData(
+				aonContext, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				null, 
+				new HashMap<String,String>(){
+					{
+						put("BASE_CGP_MIN", "1424.40 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)");
+						put("BASE_CGC_MIN", "[\"03\":1435.20 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)][GRUPO_COTIZACION]");
+					}
+				});
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+					{
+						put("DIAS_MES", "30");
+						put("GRUPO_COTIZACION","'03'");
+					}
+				}
+				, new String[] { 
+						"3000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {}, 
+				null);
+		
+		
+		// Add InactivityDays Period -> 01 - 01
+		java.sql.Date inactivityDay = addMonths(AonDateUtils.getFirstDayOfYear(getToday()), 3);
+		
+		
+		addInactivityContractData(aonContext, contract, inactivityDay, inactivityDay, ContextVariable.NOT_PAID_PERMISSION);
+		
+		PaymentConceptRecord  unpaid = addConcept(aonContext, "UNPAID");
+		addPayment(aonContext, contract, unpaid, "PERMISO NO RETRIBUIDO", "((CAUSA_INACTIVIDAD == PERMISO_NO_RETRIBUIDO) ? DIAS_INACTIVIDAD * 0.00 : __HIDE_)", "_P", "BASE_CGC_MIN", PaymentType.CRA_0001);
+		
+		// Calculate Salary for all month with inactivities
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, 
+				getFirstDayOfMonth(inactivityDay), 
+				getLastDayOfMonth(inactivityDay), 
+				getLastDayOfMonth(inactivityDay),
+				contract);
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator(new SalaryBuilder());
+		
+		Salary salary = calculator.calculate(ctx);
+		
+		for ( SalaryPayment p : salary.getSalaryPayments() )
+			System.out.println(p.getExpression() + " :" + p.getQuote());
+		
+		SalaryData baseCgp = salary.getSalaryDatas().stream().filter( data -> data.getName().equals("BASE_CGP_E"))
+		.peek( data -> System.out.println(data.getName() + " = " + data.getExpression() + " [" + data.getStartDate() + ".." + data.getEndDate() + "]"))
+		.filter( data -> data.getStartDate().equals(inactivityDay) && data.getEndDate().equals(inactivityDay))
+		.findAny().orElseThrow();
+		
+		
+		assertEquals(1424.40 / 30, Double.valueOf(baseCgp.getExpression()), DELTA);
+		
+		SalaryData baseCgc = salary.getSalaryDatas().stream().filter( data -> data.getName().equals("BASE_CGC_E"))
+		.peek( data -> System.out.println(data.getName() + " = " + data.getExpression() + " [" + data.getStartDate() + ".." + data.getEndDate() + "]"))
+		.filter( data -> data.getStartDate().equals(inactivityDay) && data.getEndDate().equals(inactivityDay))
+		.findAny().orElseThrow();
+
+		assertEquals(1435.20 / 30, Double.valueOf(baseCgc.getExpression()), DELTA);
+	}
+
+
 	// --------------------------------------------------------------------------------------------------------------------------
 
 	private void addInactivityContractData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate) {

@@ -40,6 +40,7 @@ import org.jooq.Result;
 
 import com.esferalia.aon.jooq.tables.records.RattachRecord;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -86,7 +87,7 @@ public class SettleSalariesDAO {
 				.where(SALARY.DOMAIN.eq(ctx.getDomainId()))
 				.and(SALARY.CHARGE_DATE.between(parseToSQLDate(startDate), parseToSQLDate(endDate)))
 //				.and(SALARY.CHARGE_DATE.eq(parseToSQLDate(date)))
-				.and(SALARY.TYPE.lt((byte)4)) // Nomina, Extra, Finiquito, Atraso
+				.and(SALARY.TYPE.lt((byte)SalaryType.L00.ordinal())) // Nomina, Extra, Finiquito, Atraso
 //				.and(SALARY.TOTAL_LIQUID.ne(0.00))
 				.orderBy(SALARY.START_DATE, SALARY.CHARGE_DATE)
 				.fetch();

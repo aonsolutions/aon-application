@@ -246,6 +246,16 @@ public class Main {
 						throw new RuntimeException(e);
 					} 
 				}
+				
+				@Override
+				public SQLContractSalaryCalculatorContext visitProcedural(SalaryType type) {
+					try {
+						return new SQLContractSalaryCalculatorContext(
+								connection, startDate, endDate, issueDate, criteria);
+					} catch (SQLException  | ExpressionException e) {
+						throw new RuntimeException(e);
+					} 
+				}
 
 				@Override
 				public SQLContractSalaryCalculatorContext visitM190(SalaryType type) {

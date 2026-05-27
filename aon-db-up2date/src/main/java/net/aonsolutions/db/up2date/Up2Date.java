@@ -19,12 +19,15 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.cnae.InsertTarifaPrimasDF_1_3_RDL_3_2026;
+import net.aonsolutions.db.up2date.cnae.OneCnaeTableToRuleThemAll;
 import net.aonsolutions.db.up2date.customize.Customize;
 import net.aonsolutions.db.up2date.finance.InvoiceTrackingAlterTableJson;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2026;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.InsuranceInsert;
 import net.aonsolutions.db.up2date.payroll.MaxEmbargable4DailyFix;
+//import net.aonsolutions.db.up2date.payroll.SalaryTypeUpdate;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBases2026Update;
 import net.aonsolutions.db.up2date.tgss.FellowsBases2026Update;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2026Update;
@@ -323,7 +326,7 @@ public class Up2Date {
 			// MEIPECUpdateUndo.MEIPECUPDATEUNDO,
 			// MEITrainingRemoveUndo.MEITRAININGREMOVEUNDO,
 			// Embargar4Many.BIEMBARGAR4MANY,
-			// FinanceTrackingAmountFix.FINANCE_TRACKING_AMOUNT_FIX,
+			// FinanceTrackingAmountFix.FINANCE_TRACKING_AMOUNT_FIX,Muc-Off Bio Drivetrain Cleaner: Un desengrasante líquido altamente eficiente que disuelve grasa pesada y ceras en segundos. Su fórmula líquida vertible es perfecta para el limpiador Park Tool y es 100% biodegradable.
 			// OcupationITIMSFix.OCUPATIONITIMSFIX,
 			// Embargar4Many.BIEMBARGAR4MANY,
 			// BasesMin2023Update.BASESMIN2023UPDATE,
@@ -623,6 +626,9 @@ public class Up2Date {
 			// AgriculturalBases2026Update.AGRICULTURALBASES2026UPDATE,
 			// Customize.CUSTOMIZE_GESTORIAMUNOZ,
 			// MaxEmbargable4DailyFix.MAXEMBARGABLE4DAILYFIX,
+			// OneCnaeTableToRuleThemAll.ONECNAETABLETORULETHEMALL,
+			// InsertTarifaPrimasDF_1_3_RDL_3_2026.INSERTTARIFAPRIMASDF_1_3_RDL_3_2026,
+			//SalaryTypeUpdate.ALL,
 			
 			
 			// ----------------------------------------------------------------

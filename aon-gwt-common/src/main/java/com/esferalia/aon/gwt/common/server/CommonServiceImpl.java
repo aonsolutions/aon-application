@@ -140,6 +140,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
+import com.esferalia.aon.occam.api.model.registry.RegistrySource;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkloadContent;
@@ -2202,6 +2203,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public List<Account> getAccountsForBank(String domainName, Integer domain, String user) throws AonCoreException {
 		return AON.getAccountsForBank(domainName, domain, user);
+	}
+	
+	@Override
+	public List<Account> getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource source) throws AonCoreException {
+		return AON.getAccountsForRegistry(domainName, domain, user, source);
 	}
 	
 	// *********************** [AMORTIZATION TYPE]

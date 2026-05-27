@@ -45,6 +45,7 @@ import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqEmployeeAFI {
@@ -521,7 +522,7 @@ public class JooqEmployeeAFI {
 			.where(SALARY_DATA.NAME.eq("CAUSA_INDEMNIZACION"))
 			.and(SALARY_DATA.SALARY.in(
 					dslContext.select(SALARY.ID).from(SALARY)
-						.where(SALARY.TYPE.eq((byte)2))
+						.where(SALARY.TYPE.eq(SalaryType.SETTLE.value()))
 						.and(SALARY.CONTRACT.eq(contractId))
 						.fetch(SALARY.ID))
 			).fetch();
@@ -530,7 +531,7 @@ public class JooqEmployeeAFI {
 				.where(SALARY_DATA.NAME.eq("DIAS_VACACIONES_NO_DISFRUTADOS"))
 				.and(SALARY_DATA.SALARY.in(
 						dslContext.select(SALARY.ID).from(SALARY)
-							.where(SALARY.TYPE.eq((byte)2))
+							.where(SALARY.TYPE.eq(SalaryType.SETTLE.value()))
 							.and(SALARY.CONTRACT.eq(contractId))
 							.fetch(SALARY.ID))
 				).orderBy(SALARY_DATA.START_DATE.desc())

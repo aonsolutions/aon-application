@@ -16,10 +16,13 @@ public class CostParams implements Serializable {
 	private boolean salary;
 	private boolean extra;
 	private boolean settle;
+	private boolean procedural;
 	private boolean delay;
 	private boolean l00;
+	private boolean l02;
 	private boolean l03;
 	private boolean l13;
+	
 	
 	private boolean groupByWorkplace = false;
 	
@@ -98,6 +101,15 @@ public class CostParams implements Serializable {
 		this.delay = delay;
 		return this;
 	}
+	
+	public boolean isProcedural() {
+		return procedural;
+	}
+	
+	public CostParams setProcedural(boolean procedural) {
+		this.procedural = procedural;
+		return this;
+	}
 
 	public boolean isL00() {
 		return l00;
@@ -107,7 +119,16 @@ public class CostParams implements Serializable {
 		this.l00 = l00;
 		return this;
 	}
+	
+	public boolean isL02() {
+		return l02;
+	}
 
+	public CostParams setL02(boolean l02) {
+		this.l02 = l02;
+		return this;
+	}
+	
 	public boolean isL03() {
 		return l03;
 	}

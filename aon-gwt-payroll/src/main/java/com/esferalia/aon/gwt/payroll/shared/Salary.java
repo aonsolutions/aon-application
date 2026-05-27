@@ -21,6 +21,8 @@ public class  Salary implements Serializable{
 		E visitSettle(Type type);
 
 		E visitDelay(Type type);
+		
+		E visitProcedural(Type type);
 
 		default E visitL00(Type type) { return visitSalary(type); };
 
@@ -29,8 +31,18 @@ public class  Salary implements Serializable{
 		default E visitL13(Type type) { return visitSettle(type); };
 		
 		default E visitM190(Type type) { return visitSalary(type); };
-}
+	}
 	
+	public static class UnknownSalaryTypeException extends RuntimeException {
+		
+		private Type type;
+		
+		public UnknownSalaryTypeException(Type type) {
+			this.type = type;
+		}
+
+	}
+
 	public static enum Type implements HasDescription{
 		SALARY {
 			@Override
@@ -56,6 +68,18 @@ public class  Salary implements Serializable{
 				return visitor.visitDelay(this);
 			}
 		},
+		UNKNOWN_4,
+		UNKNOWN_5,
+		UNKNOWN_6,
+		UNKNOWN_7,
+		UNKNOWN_8,
+		PROCEDURAL	// 9 
+		{
+			@Override
+			public <E> E accept(TypeVisitor<E> visitor) {
+				return visitor.visitProcedural(this);
+			}
+		},
 
 		L00 
 		{
@@ -78,6 +102,12 @@ public class  Salary implements Serializable{
 				return visitor.visitL13(this);
 			}
 		},
+		UNKNOWN_14,
+		UNKNOWN_15,
+		UNKNOWN_16,
+		UNKNOWN_17,
+		UNKNOWN_18,
+		UNKNOWN_19,
 		M190 
 		{
 			@Override
@@ -97,7 +127,9 @@ public class  Salary implements Serializable{
 			return DESCRIPTIONS.get(this);
 		}
 		
-		public abstract <E> E accept(TypeVisitor<E>  visitor);
+		public <E> E accept(TypeVisitor<E>  visitor) {
+			throw new UnknownSalaryTypeException(this);
+		}
 
 
 		static Map<Type, String> VARIABLES = 

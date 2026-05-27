@@ -41,6 +41,8 @@ public class CnaeDAO {
 				.setId(rec.getValue(CNAE.ID))
 				.setCode(rec.getValue(CNAE.CODE))
 				.setTitle(rec.getValue(CNAE.TITLE))
+				.setCode09(rec.getValue(CNAE.CNAE2009_CODE))
+				.setTitle09(rec.getValue(CNAE.CNAE2009_TITLE))
 				;
 		}
 	}

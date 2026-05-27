@@ -27,7 +27,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -58,13 +57,11 @@ public abstract class AddressTable extends ScrollPanel {
 	
 	private static enum COLS {
 		  TYP(""									, "3rem" 			, "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"	)
-		, STR(""									, "3rem" 			, "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"	)
 		, ADD(AON.MSG.address()						, "-moz-available"	, "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, NMB("N\u00b0"								, "3rem"			, "" )
 		, ZIP("C.P."								, "4rem"			, "" )
 		, PRO(AON.MSG.province()					, "7rem"			, "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"	)
 		, MUN("Municipio"							, "7rem"			, "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"	)
-		, CIT("Localidad"							, "6rem"			, "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, CIT("Localidad"							, "9rem"			, "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, BUT(AonStringUtils.EMPTY					, "3rem"			,"")
 		;
 
@@ -170,6 +167,9 @@ public abstract class AddressTable extends ScrollPanel {
 				
 				AonTableButton button = new AonTableButton("Nueva direcci\u00f3n", AON.CSS.aonIconAdd());
 				button.addStyleName(AON.CSS.aonCustomRowButtom());
+				button.getElement().getStyle().setProperty("border", "2px solid #434548");
+				button.getElement().getStyle().setProperty("padding", "10px");
+				button.getElement().getStyle().setProperty("border-radius", "50%");
 				button.addClickHandler(e -> createAddres());
 				buttonContainer.add(button);
 				
@@ -199,11 +199,15 @@ public abstract class AddressTable extends ScrollPanel {
 			}
 			
 			if (!something) {
-				FlowPanel line = new FlowPanel();
-				InlineLabel label = new InlineLabel(AON.MSG.noData());
-				line.add(label);
-				container.clear();
-				container.add(line);
+				HTMLPanel row = tab.createRow();
+				
+				Label blank = new Label("");
+				tab.addInlineStyle(blank, COLS.TYP.getStyles());
+				tab.addRow(row, blank, COLS.TYP.getColWidth());
+				
+				Label empty = new Label("No exiten datos");
+				tab.addInlineStyle(empty, COLS.ADD.getStyles());
+				tab.addRow(row, empty, COLS.ADD.getColWidth());
 				disableMoreData();
 			}
 			enableSearch();
@@ -252,14 +256,11 @@ public abstract class AddressTable extends ScrollPanel {
 				COLS.TYP.getColWidth()
 		);
 		
-		tab.addRow(row, new Label(registryAddress.getStreetType().getAeatCode() + "."), COLS.STR.getColWidth());
-		
-		Label address = new Label(registryAddress.getAddress());
-		address.setTitle(registryAddress.getAddress());
+		Label address = new Label(registryAddress.getFullAddress());
+		address.setTitle(registryAddress.getFullAddress());
 		tab.addInlineStyle(address, COLS.ADD.getStyles());
 		tab.addRow(row, address, COLS.ADD.getColWidth());
 		
-		tab.addRow(row, new Label(registryAddress.getNumber()), COLS.NMB.getColWidth());
 		tab.addRow(row, new Label(registryAddress.getZip()), COLS.ZIP.getColWidth());
 		
 		Label geozone = new Label(registryAddress.getGeozoneName());

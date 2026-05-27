@@ -26,7 +26,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -56,9 +55,10 @@ public abstract class MediaTable extends ScrollPanel {
 	private static enum COLS {
 		  TYP(AON.MSG.type()						,"4rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" )
 		, VAL("Valor"								,"-moz-available", "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" )
+		, CMM("Comentarios"							,"20rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" )
 		, ADM("Admin."								,"4rem", ""  )
 		, COM("Comercial"							,"5rem", ""  )
-		, TEC("Tecnico"								,"4rem", ""  )
+		, TEC("T\u00e9cnico"						,"4rem", ""  )
 		, BUT(AonStringUtils.EMPTY					,"3rem", ""  )
 		;
 
@@ -164,6 +164,9 @@ public abstract class MediaTable extends ScrollPanel {
 				
 				AonTableButton button = new AonTableButton("Nuevo contacto", AON.CSS.aonIconAdd());
 				button.addStyleName(AON.CSS.aonCustomRowButtom());
+				button.getElement().getStyle().setProperty("border", "2px solid #434548");
+				button.getElement().getStyle().setProperty("padding", "10px");
+				button.getElement().getStyle().setProperty("border-radius", "50%");
 				button.addClickHandler(e -> createMedia());
 				buttonContainer.add(button);
 				
@@ -193,11 +196,15 @@ public abstract class MediaTable extends ScrollPanel {
 			}
 			
 			if (!something) {
-				FlowPanel line = new FlowPanel();
-				InlineLabel label = new InlineLabel(AON.MSG.noData());
-				line.add(label);
-				container.clear();
-				container.add(line);
+				HTMLPanel row = tab.createRow();
+				
+				Label blank = new Label("");
+				tab.addInlineStyle(blank, COLS.TYP.getStyles());
+				tab.addRow(row, blank, COLS.TYP.getColWidth());
+				
+				Label empty = new Label("No exiten datos");
+				tab.addInlineStyle(empty, COLS.VAL.getStyles());
+				tab.addRow(row, empty, COLS.VAL.getColWidth());
 				disableMoreData();
 			}
 			enableSearch();
@@ -250,6 +257,11 @@ public abstract class MediaTable extends ScrollPanel {
 		value.setTitle(registryMedia.getValue());
 		tab.addInlineStyle(value, COLS.VAL.getStyles());
 		tab.addRow(row, value, COLS.VAL.getColWidth());
+		
+		Label comments = new Label(registryMedia.getComment());
+		comments.setTitle(registryMedia.getComment());
+		tab.addInlineStyle(comments, COLS.CMM.getStyles());
+		tab.addRow(row, comments, COLS.CMM.getColWidth());
 		
 		Button administrative = new Button();
 		getEnableDisableButton(administrative, registryMedia.isAdministrative());

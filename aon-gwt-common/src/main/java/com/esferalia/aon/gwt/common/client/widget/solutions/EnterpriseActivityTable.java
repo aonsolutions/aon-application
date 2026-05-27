@@ -25,7 +25,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -171,6 +170,9 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 
 				AonTableButton button = new AonTableButton("Nueva Actividad", AON.CSS.aonIconAdd());
 				button.addStyleName(AON.CSS.aonCustomRowButtom());
+				button.getElement().getStyle().setProperty("border", "2px solid #434548");
+				button.getElement().getStyle().setProperty("padding", "10px");
+				button.getElement().getStyle().setProperty("border-radius", "50%");
 				button.addClickHandler(e -> createEnterpriseActivity());
 				buttonContainer.add(button);
 
@@ -201,11 +203,15 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 			}
 
 			if (!something) {
-				FlowPanel line = new FlowPanel();
-				InlineLabel label = new InlineLabel(AON.MSG.noData());
-				line.add(label);
-				container.clear();
-				container.add(line);
+				HTMLPanel row = tab.createRow();
+				
+				Label blank = new Label("");
+				tab.addInlineStyle(blank, COLS.PRI.getStyles());
+				tab.addRow(row, blank, COLS.PRI.getColWidth());
+				
+				Label empty = new Label("No exiten datos");
+				tab.addInlineStyle(empty, COLS.DES.getStyles());
+				tab.addRow(row, empty, COLS.DES.getColWidth());
 				disableMoreData();
 			}
 			enableSearch();
@@ -260,7 +266,7 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 		tab.addInlineStyle(description, COLS.DES.getStyles());
 		tab.addRow(row, description, COLS.DES.getColWidth());
 
-		Label cnae = new Label(enterpriseActivity.getCnaeDescription());
+		Label cnae = new Label(enterpriseActivity.getCnae25Code() + " - " + enterpriseActivity.getCnae25Description());
 		cnae.setTitle(enterpriseActivity.getCnaeDescription());
 		tab.addInlineStyle(cnae, COLS.CNA.getStyles());
 		tab.addRow(row, cnae, COLS.CNA.getColWidth());

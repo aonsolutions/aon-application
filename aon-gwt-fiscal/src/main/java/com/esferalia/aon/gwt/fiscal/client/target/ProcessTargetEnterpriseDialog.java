@@ -105,7 +105,7 @@ public abstract class ProcessTargetEnterpriseDialog extends AonCustomDialog {
 
 	private void initView() {
 		body.clear();
-		body.addStyleName(AON.CSS.aonFlexColumn());
+		body.addStyleName(AON.CSS.aonFlexColumn2());
 		body.getElement().getStyle().setProperty("width", "100%");
 		body.getElement().getStyle().setProperty("height", "100%");
 		body.getElement().getStyle().setProperty("overflow", "auto");
@@ -114,7 +114,7 @@ public abstract class ProcessTargetEnterpriseDialog extends AonCustomDialog {
 		body.add(messagePanel);
 
 		container.clear();
-		container.addStyleName(AON.CSS.aonFlexColumn());
+		container.addStyleName(AON.CSS.aonFlexColumn2());
 		container.getElement().getStyle().setProperty("padding", "1rem 1rem 0 1rem");
 
 		body.add(container);
@@ -135,7 +135,7 @@ public abstract class ProcessTargetEnterpriseDialog extends AonCustomDialog {
 
 		targetContainer.clear();
 		targetContainer.addStyleName(AON.CSS.aonItemFlex());
-		targetContainer.addStyleName(AON.CSS.aonFlexColumn());
+		targetContainer.addStyleName(AON.CSS.aonFlexColumn2());
 		targetContainer.setWidth("100%");
 		targetContainer.getElement().getStyle().setProperty("max-height", "27.5rem");
 

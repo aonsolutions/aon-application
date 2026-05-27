@@ -185,6 +185,11 @@ public class SalarySelect extends Composite {
 				syncSalarySelectDates();
 				return null;
 			}
+			
+			@Override
+			public Void visitProcedural(Type type) {
+				return visitSalary(type);
+			}
 
 		});
 		hasChanged = false;
@@ -224,6 +229,12 @@ public class SalarySelect extends Composite {
 		    Date month = monthListBox.getSelectedMonth();
 		    return DateUtils.getLastDayOfMonth(month);
 		}
+		
+		@Override
+		public Date visitProcedural(Type type) {
+			return visitSalary(type);
+		}
+		
 	    });
 	}
 	
@@ -366,7 +377,12 @@ public class SalarySelect extends Composite {
 		    return isDifferentMonth(draftStartDate, fromMonthListBox.getSelectedMonth())
 			    || !isDifferentMonth(draftEndDate, monthListBox.getSelectedMonth());
 		}
-
+		
+		@Override
+		public Boolean visitProcedural(Type type) {
+		    return visitSalary(type);
+		}
+		
 	    });
 	}
 
@@ -462,6 +478,11 @@ public class SalarySelect extends Composite {
 				SalarySelect.this.salaryPreview.setEndDate(endDate);
 				SalarySelect.this.salaryPreview.setIssueDate(endDate);
 				return null;
+			}
+			
+			@Override
+			public Void visitProcedural(Type type) {
+				return visitSalary(type);
 			}
 
 		});
@@ -679,6 +700,11 @@ public class SalarySelect extends Composite {
 
 				return null;
 
+			}
+			
+			@Override
+			public Void visitProcedural(Type type) {
+				return visitSalary(type);
 			}
 
 		});
@@ -905,6 +931,11 @@ public class SalarySelect extends Composite {
 		@Override
 		public Date visitSettle(Type type) {
 		    return SalarySelect.this.salaryPreview.getEndDate();
+		}
+		
+		@Override
+		public Date visitProcedural(Type type) {
+			return visitSalary(type);
 		}
 	    });
 	}

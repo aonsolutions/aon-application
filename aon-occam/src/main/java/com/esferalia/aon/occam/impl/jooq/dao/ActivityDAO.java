@@ -94,6 +94,8 @@ public class ActivityDAO {
 					.setCnae25(getValue(r, ENTERPRISE_ACTIVITY.CNAE) )
 					.setCnae25Code(getValue(r, CNAE.CODE))
 					.setCnae25Description(getValue(r, CNAE.TITLE) )
+					.setCnae2509Code(getValue(r, CNAE.CNAE2009_CODE))
+					.setCnae2509Description(getValue(r, CNAE.CNAE2009_TITLE) )
 					.setVatRegime(VATRegime.safeValueOf(getValue(r, ENTERPRISE_ACTIVITY.VAT_REGIME)))
 					.setVatExemptionCause(VATExemptionCause.safeValueOf(getValue(r, ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE)))
 					.setIrpfRegime(IRPFRegime.safeValueOf(getValue(r, ENTERPRISE_ACTIVITY.RETENTION_REGIME)))

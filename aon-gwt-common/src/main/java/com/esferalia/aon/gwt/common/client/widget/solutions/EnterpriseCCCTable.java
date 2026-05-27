@@ -97,6 +97,9 @@ public abstract class EnterpriseCCCTable extends ScrollPanel {
 
 				AonTableButton button = new AonTableButton("Nuevo CCC", AON.CSS.aonIconAdd());
 				button.addStyleName(AON.CSS.aonCustomRowButtom());
+				button.getElement().getStyle().setProperty("border", "2px solid #434548");
+				button.getElement().getStyle().setProperty("padding", "10px");
+				button.getElement().getStyle().setProperty("border-radius", "50%");
 				button.addClickHandler(e -> createEnterpriseCCC());
 				buttonContainer.add(button);
 

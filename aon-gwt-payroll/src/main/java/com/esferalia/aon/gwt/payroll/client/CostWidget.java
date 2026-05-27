@@ -332,7 +332,9 @@ public class CostWidget extends AonCustomDockLayout {
 		salaryOptions.add("Extra");
 		salaryOptions.add("Finiquito");
 		salaryOptions.add("Atrasos");
+		salaryOptions.add("Tramitaci\u00f3n");
 		salaryOptions.add("L00");
+		salaryOptions.add("L02");
 		salaryOptions.add("L03");
 		salaryOptions.add("L13");
 		salaryType.setOptions(salaryOptions);
@@ -342,6 +344,7 @@ public class CostWidget extends AonCustomDockLayout {
             	onSearch();
             }
         });
+		// Select all salary types by default
 		salaryType.setSelectedOptions(salaryOptions);
 		addFilterWidget(salaryType);
 		
@@ -458,7 +461,9 @@ public class CostWidget extends AonCustomDockLayout {
 				.setExtra(salaryType.getSelectedOptions().contains("Extra"))
 				.setSettle(salaryType.getSelectedOptions().contains("Finiquito"))
 				.setDelay(salaryType.getSelectedOptions().contains("Atrasos"))
+				.setProcedural(salaryType.getSelectedOptions().contains("Tramitaci\u00f3n"))
 				.setL00(salaryType.getSelectedOptions().contains("L00"))
+				.setL02(salaryType.getSelectedOptions().contains("L02"))
 				.setL03(salaryType.getSelectedOptions().contains("L03"))
 				.setL13(salaryType.getSelectedOptions().contains("L13"))
 				.setGroupByWorkplace(Boolean.valueOf(detail.getValue()))

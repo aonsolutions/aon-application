@@ -45,6 +45,7 @@ import com.code.aon.person.Person;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry;
+import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry.EnterpriseEntryType;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryBonusRecord;
@@ -60,6 +61,7 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class JooqEnterpriseSalaryBuilder {
@@ -70,6 +72,7 @@ public class JooqEnterpriseSalaryBuilder {
 	
 	public static Byte [] LIQUIDATIONS = { 
 			(byte) com.esferalia.aon.occam.api.model.type.SalaryType.L00.ordinal(),
+			(byte) com.esferalia.aon.occam.api.model.type.SalaryType.L02.ordinal(),
 			(byte) com.esferalia.aon.occam.api.model.type.SalaryType.L13.ordinal(),
 			(byte) com.esferalia.aon.occam.api.model.type.SalaryType.L03.ordinal()
 		};
@@ -99,12 +102,15 @@ public class JooqEnterpriseSalaryBuilder {
 		else
 			condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
 		
+		
+		
+		
 		condition = condition.and(
 				(
-						SALARY.TYPE.ne(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.TYPE.notIn(AonEnumUtils.getByte(SalaryType.DELAY), AonEnumUtils.getByte(SalaryType.PROCEDURAL)).and(
 						SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
 				).or(
-						SALARY.TYPE.eq(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.TYPE.in(AonEnumUtils.getByte(SalaryType.DELAY), AonEnumUtils.getByte(SalaryType.PROCEDURAL)).and(
 						SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
 				)
 		);
@@ -125,10 +131,10 @@ public class JooqEnterpriseSalaryBuilder {
 		
 		condition = condition.and(
 				(
-						SALARY.TYPE.ne(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.TYPE.notIn(AonEnumUtils.getByte(SalaryType.DELAY), AonEnumUtils.getByte(SalaryType.PROCEDURAL)).and(
 						SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
 				).or(
-						SALARY.TYPE.eq(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.TYPE.in(AonEnumUtils.getByte(SalaryType.DELAY), AonEnumUtils.getByte(SalaryType.PROCEDURAL)).and(
 						SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
 				)
 		);
@@ -453,7 +459,7 @@ public class JooqEnterpriseSalaryBuilder {
 			
 			Map<Integer, Map<String, Map<String, List<ContractData>>>> contractDatas = getContractDataByWorkplace(aonContext, startDate, endDate, enterpriseId, workplaceId);
 			
-			Map<String, Map<String, EnterprisePayrollEntry>> map =
+			Map<String, Map<String, EnterprisePayrollEntry>> liquidations =
 					getEnterprisePayrolls(ctx, condition.and(SALARY.TYPE.in(LIQUIDATIONS)));
 			
 			Map<String, Map<String, EnterprisePayrollEntry>> payrolls = 
@@ -503,7 +509,7 @@ public class JooqEnterpriseSalaryBuilder {
 				subheader = subheader.concat(enterpriseName);
 			}
 			
-			EnterprisePayroll enterprisePayroll = new EnterprisePayroll(logo, startDate, null, subheader, payrolls, map);
+			EnterprisePayroll enterprisePayroll = new EnterprisePayroll(logo, startDate, null, subheader, payrolls, liquidations);
 			PdfMaker.printEnterprisePayroll(enterprisePayroll, outputStream, Optional.of(new Locale("es")), startDate, endDate, false);
 		} catch (CanNotCreatePdfException e) {			
 		} catch (IOException e) {}
@@ -801,7 +807,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.innerJoin(WORKPLACE).onKey()
 		.innerJoin(ENTERPRISE).onKey()
 		.where(condition)
-		.and(SALARY.TYPE.lt((byte)7))
+		.and(SALARY.TYPE.lt((byte)SalaryType.M190.ordinal()))
 		.orderBy(SALARY.EMPLOYEE_NAME, SALARY.ISSUE_DATE, SALARY.TYPE)
 		.fetchStream()
 		.forEach(r -> {
@@ -1397,6 +1403,11 @@ public class JooqEnterpriseSalaryBuilder {
 				return SalaryType.DELAY.name();
 			}
 			
+			@Override
+			public String visitProcedural(SalaryType salaryType) {
+				return SalaryType.PROCEDURAL.name();
+			}
+			
 		});
 	}
 
@@ -1406,6 +1417,11 @@ public class JooqEnterpriseSalaryBuilder {
 			
 			@Override
 			public EnterprisePayrollEntry.EnterpriseEntryType visitL00(SalaryType salaryType) {
+				return EnterprisePayrollEntry.EnterpriseEntryType.SEG_SOCIAL;
+			}
+
+			@Override
+			public EnterprisePayrollEntry.EnterpriseEntryType visitL02(SalaryType salaryType) {
 				return EnterprisePayrollEntry.EnterpriseEntryType.SEG_SOCIAL;
 			}
 
@@ -1436,6 +1452,11 @@ public class JooqEnterpriseSalaryBuilder {
 
 			@Override
 			public EnterprisePayrollEntry.EnterpriseEntryType visitDelay(SalaryType salaryType) {
+				return EnterprisePayrollEntry.EnterpriseEntryType.AON_SYSTEM;
+			}
+			
+			@Override
+			public EnterpriseEntryType visitProcedural(SalaryType salaryType) {
 				return EnterprisePayrollEntry.EnterpriseEntryType.AON_SYSTEM;
 			}
 		});

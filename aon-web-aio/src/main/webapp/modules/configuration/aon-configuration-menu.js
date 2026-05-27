@@ -199,13 +199,17 @@ export class AonConfigurationMenu extends AonSuiteMenu {
 				filter: () => this.isNotDomainManagementAvailable()
 			}],
 			filter: () => this.isNotDomainManagementAvailable()
-		}, {
+		}, 
+		/*
+		{
 			title: 'Configuración',
-			options: [{
+			options: [
+			{
 				description: "Configuración Global",
 				title: "Configuración Global",
 				action: () => this.rootPanel(new JSF.AonJsfGlobalConfig())
-			}, {
+			},
+			{
 				description: "Cuentas de Correo",
 				title: "Cuentas de Correo",
 				action: () => this.rootPanel(new JSF.AonJsfMailAccount())
@@ -219,7 +223,9 @@ export class AonConfigurationMenu extends AonSuiteMenu {
 				action: () => this.rootPanel(new JSF.AonJsfMailContact())
 			}],
 			filter: () => this.isNotDomainManagementAvailable()
-		}];
+		}
+		*/
+		];
 	}
 
 }

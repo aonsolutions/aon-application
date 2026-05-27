@@ -5121,6 +5121,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			if(params.isExtra()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.EXTRA);
 			if(params.isSettle()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.SETTLE);
 			if(params.isDelay()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY);
+			if(params.isProcedural()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.PROCEDURAL);
 			
 			ByteArrayOutputStream oos = new ByteArrayOutputStream();
 
@@ -5130,6 +5131,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				if(params.isL00()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.L00);
 				if(params.isL03()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.L03);
 				if(params.isL13()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.L13);
+				if(params.isL02()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.L02);
 				JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(oos, domain, "", params.getStart(), params.getEnd(), params.getEnterprise(), params.getWorkplace(), salaryTypes.toArray(new com.esferalia.aon.occam.api.model.type.SalaryType[0]));
 			}
 			
