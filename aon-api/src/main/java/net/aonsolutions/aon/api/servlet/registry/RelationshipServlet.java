@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserToolbar;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
@@ -576,6 +577,7 @@ public class RelationshipServlet extends AonApiHttpServlet {
 		Registry newRegistry = RegistryDAO.save(ctx, 
 				new Registry()
 				.setDocument(auth.getDocument())
+				.setDocumentType(DocumentType.identify(auth.getDocument()))
 				.setName(
 						AonStringUtils.isBlank(auth.getName())
 						? newUser.getName()
