@@ -317,7 +317,7 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 	}
 	
 	private Cnae2009 getCnae(Cnae cnae25) {
-		if(null == cnae25) return null;
+		if(null == cnae25 || cnae25.getCode09() == null) return null;
 		
 		String cnae09Code = cnae25.getCode09();
 
