@@ -93,12 +93,10 @@ public class ScopeServlet extends AonApiHttpServlet {
 		if(!api.getDomain().isParent() && api.getDomain().isEnableHeredity()) {
 			if(api.getUser().getDomain().getId().equals(api.getDomain().getId())) {
 				return ScopeJSON.toJSON(AON.getUserScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), 
-						f -> f.getDomainProperty().eq(api.getDomain().getId()).or(f.getDomainProperty().eq(api.getDomain().getParentId()))));
+						f -> f.getDomainProperty().eq(api.getDomain().getId())));
 			} else {
 				JSONArray array = new JSONArray();
 				AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()))
-					.forEach(s -> array.put(ScopeJSON.toJSON(s)));
-				AON.getUserScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), f -> f.getDomainProperty().eq(api.getDomain().getParentId()))
 					.forEach(s -> array.put(ScopeJSON.toJSON(s)));
 				return array;
 			}

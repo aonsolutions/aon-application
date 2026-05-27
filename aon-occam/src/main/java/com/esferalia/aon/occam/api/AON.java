@@ -1,7 +1,5 @@
 package com.esferalia.aon.occam.api;
 
-import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
-
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
