@@ -170,6 +170,9 @@ public class AonMainCertificatesPanel extends DeckPanel {
 				
 				AonTableButton button = new AonTableButton("Nuevo Certificado", AON.CSS.aonIconAdd());
 				button.addStyleName(AON.CSS.aonCustomRowButtom());
+				button.getElement().getStyle().setProperty("border", "2px solid #434548");
+				button.getElement().getStyle().setProperty("padding", "10px");
+				button.getElement().getStyle().setProperty("border-radius", "50%");
 				button.addClickHandler(e -> createCertificate());
 				buttonContainer.add(button);
 				
@@ -219,18 +222,19 @@ public class AonMainCertificatesPanel extends DeckPanel {
 
 	private void createCertDataTableRows() {
 		if (certificateList.isEmpty()) {
-			paintNoDataRow(tab);
+			paintNoDataRow();
 		} else
 			for (Certificate certificate : certificateList)
 				paintRow(tab, certificate, false);
 
 	}
 
-	private void paintNoDataRow(AonCustomTable table) {
-		HTMLPanel row = table.createRow();
+	private void paintNoDataRow() {
+		HTMLPanel row = tab.createRow();
+		
 		Label noData = new Label("No existen certificados");
 		noData.getElement().getStyle().setTextAlign(TextAlign.CENTER);
-		table.addRow(row, noData, "100%");
+		tab.addRow(row, noData, "100%");
 	}
 
 	private void paintRow(AonCustomTable table, Certificate certificate, boolean isEnterprise) {
