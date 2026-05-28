@@ -453,7 +453,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setNumeroVariablePromocional_PV_(null);
 		seh1l.setCodigoDUN_14_ADU_(base.getBarcode());
 		seh1l.setCodigoACU_ACU_(null);
-		seh1l.setNumeroDeLote_NB_(detail.getItem().getSerialNumber());
+		if(!SeresUtils.isECI(delivery.getCustomer().getDocument())) 		
+			seh1l.setNumeroDeLote_NB_(detail.getItem().getSerialNumber());
 		seh1l.setNumeroDeArticuloDelComprador_IN_(productCustomerCode);
 		seh1l.setSeh1b(createSEH1BRecord(detail.getItem()));
 		
@@ -482,7 +483,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setCalificadorCantidadAdicional(null);
 		seh1l.setCantidadAdicional(null);
 		seh1l.setUnidadDeMedidaCantidadAdicional(null);
-		seh1l.setNumeroDeSerieDelArticulo_SN_(detail.getItem().getSerialNumber());
+		if(!SeresUtils.isECI(delivery.getCustomer().getDocument()))
+			seh1l.setNumeroDeSerieDelArticulo_SN_(detail.getItem().getSerialNumber());
 		seh1l.setNumeroArticuloFabricante_MF_(null);
 		seh1l.setNumeroDeLineaReferencia1(null);
 		seh1l.setNumeroDeLineaReferencia2(null);
@@ -552,7 +554,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setNumeroVariablePromocional_PV_(null);
 		seh1l.setCodigoDUN_14_ADU_(base.getBarcode());
 		seh1l.setCodigoACU_ACU_(null);
-		seh1l.setNumeroDeLote_NB_(item.getSerialNumber());
+		if(!SeresUtils.isECI(delivery.getCustomer().getDocument()))
+			seh1l.setNumeroDeLote_NB_(item.getSerialNumber());
 		seh1l.setNumeroDeArticuloDelComprador_IN_(productCustomerCode);
 		// ANTES SOLO ESTABA PARA EROSKI AHORA PARA TODOS. 
 		seh1l.setSeh1b(createSEH1BRecord(item));
@@ -593,7 +596,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setCalificadorCantidadAdicional(null);
 		seh1l.setCantidadAdicional(null);
 		seh1l.setUnidadDeMedidaCantidadAdicional(null);
-		seh1l.setNumeroDeSerieDelArticulo_SN_(item.getSerialNumber());
+		if(!SeresUtils.isECI(delivery.getCustomer().getDocument()))
+			seh1l.setNumeroDeSerieDelArticulo_SN_(item.getSerialNumber());
 		seh1l.setNumeroArticuloFabricante_MF_(null);
 		seh1l.setNumeroDeLineaReferencia1(null);
 		seh1l.setNumeroDeLineaReferencia2(null);
