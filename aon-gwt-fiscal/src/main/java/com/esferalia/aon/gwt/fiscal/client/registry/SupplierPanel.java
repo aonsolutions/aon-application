@@ -49,6 +49,8 @@ public abstract class SupplierPanel extends ScrollPanel {
 	
 	private SimplePanel parentPanel;
 	
+	private List<Supplier> suppliers = new LinkedList<Supplier>();
+	
 	private static enum COLS {
 		  DOC(AON.MSG.document()					,"6rem"				,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, DES(AON.MSG.name()						,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -234,6 +236,7 @@ public abstract class SupplierPanel extends ScrollPanel {
 				new AsyncCallback<LinkedList<Supplier>>() {
 					@Override
 					public void onSuccess(LinkedList<Supplier> result) {
+						suppliers.addAll(result);
 						success.accept(result);
 					}
 							
@@ -247,6 +250,10 @@ public abstract class SupplierPanel extends ScrollPanel {
 	public void resetSearchOffset() {
 		offset.setValue(0);
 		rowSuppliers.clear();
+	}
+	
+	public List<Supplier> getSuppliers(){
+		return this.suppliers;
 	}
 
 	protected abstract void onSupplierOpen(Supplier supplier);

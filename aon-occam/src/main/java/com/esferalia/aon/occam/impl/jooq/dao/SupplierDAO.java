@@ -24,6 +24,9 @@ import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
@@ -269,6 +272,45 @@ public class SupplierDAO {
 		RegistryNoteDAO.saveRegistryObservation(ctx, supplierFull.getDomain(), supplierFull.getRegistry().getId(), observation);
 		RegistryDAO.saveChilds(ctx, supplierFull);
 		return getFull(ctx, supplierFull.getId());
+	}
+
+	public static void deleteFull(AONContext ctx, Integer id) {
+		
+		SupplierFull fullSupplier = getFull(ctx, id);
+		
+		if (fullSupplier.getRegistry() != null && fullSupplier.getRegistry().getAccount() != null) {
+			AccountDAO.delete(ctx, fullSupplier.getAccount());
+		}
+		
+		// Registry Bank
+		if (fullSupplier.hasBanks()) {
+			for (RegistryBank bank : fullSupplier.getBanks()) {
+				RegistryBankDAO.delete(ctx, bank.getId());
+			}
+		}
+		
+		RegistryPayMethodDAO.delete(ctx, f -> f.getDomainProperty().eq(fullSupplier.getDomain()).and(f.getRegistryProperty().eq(fullSupplier.getId())));
+		
+		// RegistryAddress ??
+		if (fullSupplier.hasAddresses()) {
+			for (RegistryAddress address : fullSupplier.getAddresses()) {
+				RegistryAddressDAO.delete(ctx, address.getId());
+			}
+		}
+		
+		// Registry Medias
+		if (fullSupplier.hasMedias()) {
+			for (RegistryMedia media : fullSupplier.getMedias()) {
+				RegistryMediaDAO.delete(ctx, media.getId());
+			}
+		}
+		
+		RegistryNoteDAO.delete(ctx, f -> f.getDomainProperty().eq(fullSupplier.getDomain()).and(f.getRegistryProperty().eq(fullSupplier.getId())));
+		
+		// Registry 
+		RegistryDAO.delete(ctx, fullSupplier.getRegistry().getId());
+		
+		delete(ctx, id);
 	}
 
 	// *************************************************

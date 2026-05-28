@@ -27,6 +27,7 @@ public class Customer extends Registry implements Serializable, HasAudit, IScopa
 	private boolean deliveryValuated;
 	private boolean isRelationship;
 	private Integer account;
+	private Account fullAccount;
 	
 	private boolean isBillable;
 	
@@ -193,6 +194,15 @@ public class Customer extends Registry implements Serializable, HasAudit, IScopa
 	@Override
 	public Customer setAccount(Integer account) {
 		this.account = account;
+		return this;
+	}
+	
+	public Account getFullAccount() {
+		return fullAccount;
+	}
+	
+	public Customer setFullAccount(Account fullAccount) {
+		this.fullAccount = fullAccount;
 		return this;
 	}
 	

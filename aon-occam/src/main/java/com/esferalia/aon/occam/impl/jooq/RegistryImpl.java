@@ -833,6 +833,12 @@ public class RegistryImpl implements IRegistry{
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> CustomerDAO.getFull(ctx, id));
 	}
+	
+	@Override
+	public void deleteCustomerFull(CloseableAONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(
+				configuration -> CustomerDAO.deleteFull(ctx, id));
+	}
 
 	@Override
 	public CustomerFull save(AONContext ctx, CustomerFull customerFull) {
@@ -867,6 +873,12 @@ public class RegistryImpl implements IRegistry{
 	}
 
 	@Override
+	public void deleteCreditorFull(AONContext ctx, Integer id) {
+		 ctx.getDslContext().transaction(
+				configuration -> CreditorDAO.deleteFull(ctx, id));
+	}
+
+	@Override
 	public CreditorFull save(AONContext ctx, CreditorFull creditorFull) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> CreditorDAO.save(ctx, creditorFull));
@@ -884,6 +896,12 @@ public class RegistryImpl implements IRegistry{
 	public SupplierFull getSupplierFull(AONContext ctx, Integer id) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> SupplierDAO.getFull(ctx, id));
+	}
+
+	@Override
+	public void deleteSupplierFull(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(
+				configuration -> SupplierDAO.deleteFull(ctx, id));
 	}
 
 	@Override

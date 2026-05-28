@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
@@ -21,7 +20,6 @@ import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -368,6 +366,7 @@ public class RegistryDAO {
 				RegistryMediaDAO.delete(ctx, media.getId());
 			}
 		}
+		
 		// Registry 
 		delete(ctx, registryFull.getId()); 
 		

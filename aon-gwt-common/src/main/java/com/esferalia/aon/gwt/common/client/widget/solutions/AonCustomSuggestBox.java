@@ -125,6 +125,10 @@ public class AonCustomSuggestBox extends HTMLPanel {
 		getElement().getStyle().setProperty("min-width", minWidth);
 	}
 	
+	public AonCustomSuggestOracle getOracle() {
+	    return customOracle;
+	}
+	
 	@Override
 	protected void onEnsureDebugId(String baseID) {
 		super.onEnsureDebugId(baseID);
