@@ -10,6 +10,7 @@ export const ACCOUNT = 'Cuenta';
 export const ACCOUNTED = 'Contabilizada'; 
 export const ACCOUNTEDS = 'Contabilizadas';
 export const ACCOUNTING = 'Contabilidade';
+export const ACCOUNTING_SUMMARY = 'Resumo Contabilidade';
 export const ACTIVATE = 'Activar';
 export const ACTIVE = 'Activo';
 export const ACTIVES = 'Activas';
@@ -98,6 +99,8 @@ export const BUSINESS_NAME = 'Nome da Empresa';
 
 // ----- C
 
+export const CAMPAIGN = 'Campaña';
+export const CAMPAIGNS = 'Campañas';
 export const CANCEL = 'Cancelar';
 export const CARRIER = 'Axencia de Transporte';
 export const CARRIERS = 'Axencias de Transporte';
@@ -167,6 +170,7 @@ export const CREATE = 'Crear';
 export const CREATE_INVOICE = 'Crear Factura';
 export const CREATE_QUERY = 'Crear consulta';
 export const CREATED_BY = 'Creado por';
+export const CREATION_DATE = 'Data de Creación';
 export const CREDITOR = 'Acredor';
 export const CREDITORS = 'Acredores';
 export const CUSTOM_VIEW = 'Vista Personalizada';
@@ -488,6 +492,7 @@ export const NEWS = 'Noticias';
 export const NEXT = 'Seguinte';
 export const NIF = 'NIF';
 export const NO_DATA = 'Non hai datos';
+export const NO_INFORMATION = 'Non hai información';
 export const NO_LINK_CLIENT = 'Cliente desvinculado';
 export const NO_PERIOD = 'Sen Período';
 export const NO_STOCK_AVAILABLE = 'Sen stock dispoñible';
