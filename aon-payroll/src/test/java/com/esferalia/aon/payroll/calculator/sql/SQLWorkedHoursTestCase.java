@@ -1219,6 +1219,68 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 		
 	}
 
+	@Test
+	public void testPartialTimeWorkHoursWithAnnualAgreementHours()
+			throws ExpressionException, SQLException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfMonth(getToday()), 
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+								random(PARTIAL_TIME).getValue()));
+						put(ContextVariable.AGREEMENT_HOURS.getName(), format("%d", 1750));
+						put(MONDAY_HOURS.getName(), format("%d", 4));
+						put(TUESDAY_HOURS.getName(), format("%d", 4));
+						put(WEDNESDAY_HOURS.getName(), format("%d", 4));
+						put(THURSDAY_HOURS.getName(), format("%d", 4));
+						put(FRIDAY_HOURS.getName(), format("%d", 4));
+						put(SATURDAY_HOURS.getName(), format("%d", 0));
+						put(SUNDAY_HOURS.getName(), format("%d", 0));
+					}
+				});
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+
+		new Period(startDate, endDate).daysStream()
+		.filter(d -> d.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY )
+		.findFirst().ifPresent( d -> {
+			Date friday = new java.sql.Date( d.getTimeInMillis());
+			addData(aonContext, contract, startDate, friday, ContextVariable.QUOTE_GROUP, "\"05\"");
+			
+			Date saturday = add(friday, Calendar.DAY_OF_MONTH, 1);
+			Date sunday = add(friday, Calendar.DAY_OF_MONTH, 2);
+			addData(aonContext, contract, saturday, sunday, ContextVariable.QUOTE_GROUP, "\"03\"");
+
+			Date monday = add(friday, Calendar.DAY_OF_MONTH, 3);
+			addData(aonContext, contract, monday, null, ContextVariable.QUOTE_GROUP, "\"05\"");
+			
+		});
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, issueDate, contract);
+
+		List<ITimedResult<Object>> workedHours = ctx.getExpressionContext()
+				.eval(WORKED_HOURS.getName(), startDate, endDate);
+
+		double hours = 0.00;
+		for (ITimedResult<Object> workedHour : workedHours)
+			hours += ((Number) workedHour.getValue(workedHour.getPeriod()))
+					.doubleValue();
+
+		double expectedHours =  4 * 
+		new Period(startDate, endDate).daysStream()
+		.filter(d -> d.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY )
+		.filter(d -> d.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY ).count();
+
+		assertEquals( expectedHours + 8 /*¿?*/, (int) hours, WORKED_HOURS.getName());
+	}
+
 	// ------------------------------------------------------------------------
 
 	protected static <T> T random(T arr[]) {

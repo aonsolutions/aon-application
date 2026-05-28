@@ -461,6 +461,12 @@ export const AON_JSF_SERIES = 'aon-jsf-series' ;
 export const AON_JSF_RELATIONSHIP = 'aon-jsf-relationship' ;
 export const AON_JSF_BANK_CONCEPT = 'aon-jsf-bank-concept' ;
 export const AON_JSF_LOADER = 'aon-jsf-loader' ;
+export const AON_JSF_USER = 'aon-jsf-user' ;
+export const AON_JSF_PROFILE = 'aon-jsf-profile' ;
+export const AON_JSF_SCOPE = 'aon-jsf-scope' ;
+export const AON_JSF_AUDIT = 'aon-jsf-audit' ;
+export const AON_JSF_PRINT = 'aon-jsf-print' ;
+export const AON_JSF_EMAIL = 'aon-jsf-email' ;
 
 export const AON_ENTERPRISE_MENU = 'aon-enterprise-menu';
 export const AON_JSF_NEW_DOMAIN = 'aon-jsf-new-domain' ;

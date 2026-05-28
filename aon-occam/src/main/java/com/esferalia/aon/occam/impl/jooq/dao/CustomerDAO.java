@@ -28,6 +28,7 @@ import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -38,6 +39,9 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -194,13 +198,20 @@ public class CustomerDAO {
 	}
 	
 	public static Stream<Customer> getStream(AONContext ctx, CustomerFilter filter, int offset, int limit){
-		return select(ctx,filter)
+		 Stream<Customer> customers = select(ctx,filter)
 				.orderBy(REGISTRY.NAME)
 				.offset(offset)
 				.limit(limit)				
 				.fetch()
 				.stream()
 				.map(new CustomerFiller());
+		 
+		 return customers.map(c -> {
+			 if(null != c.getAccount())
+				 c.setFullAccount(AccountDAO.get(ctx, c.getAccount()));
+			 
+			 return c;
+		 }).collect(Collectors.toList()).stream();
 	}
 	
 	public static Stream<Customer> getSigStream(AONContext ctx, CustomerFilter filter, int offset, int limit){
@@ -536,6 +547,46 @@ public class CustomerDAO {
 		RegistryDAO.saveChilds(ctx, customerFull);
 		return getFull(ctx, customerFull.getId());
 	}
+
+	public static void deleteFull(CloseableAONContext ctx, Integer id) {
+		
+		CustomerFull fullCustomer = getFull(ctx, id);
+		
+		if (fullCustomer.getRegistry() != null && fullCustomer.getRegistry().getAccount() != null) {
+			AccountDAO.delete(ctx, fullCustomer.getAccount());
+		}
+		
+		// Registry Bank
+		if (fullCustomer.hasBanks()) {
+			for (RegistryBank bank : fullCustomer.getBanks()) {
+				RegistryBankDAO.delete(ctx, bank.getId());
+			}
+		}
+		
+		RegistryPayMethodDAO.delete(ctx, f -> f.getDomainProperty().eq(fullCustomer.getDomain()).and(f.getRegistryProperty().eq(fullCustomer.getId())));
+		
+		// RegistryAddress ??
+		if (fullCustomer.hasAddresses()) {
+			for (RegistryAddress address : fullCustomer.getAddresses()) {
+				RegistryAddressDAO.delete(ctx, address.getId());
+			}
+		}
+		
+		// Registry Medias
+		if (fullCustomer.hasMedias()) {
+			for (RegistryMedia media : fullCustomer.getMedias()) {
+				RegistryMediaDAO.delete(ctx, media.getId());
+			}
+		}
+		
+		RegistryNoteDAO.delete(ctx, f -> f.getDomainProperty().eq(fullCustomer.getDomain()).and(f.getRegistryProperty().eq(fullCustomer.getId())));
+		
+		// Registry 
+		RegistryDAO.delete(ctx, fullCustomer.getRegistry().getId());
+		
+		delete(ctx, id);
+	}
+	
 	// *************************************************
 	// ********** TEST PURPOSE METHODS *****************
 	// *************************************************
@@ -548,7 +599,5 @@ public class CustomerDAO {
 			.findFirst()
 			.orElse(null);
 	}
-
-	
 
 }

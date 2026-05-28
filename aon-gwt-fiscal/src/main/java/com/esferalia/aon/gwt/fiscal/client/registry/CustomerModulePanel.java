@@ -3,12 +3,8 @@ package com.esferalia.aon.gwt.fiscal.client.registry;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.CommonService;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
@@ -16,7 +12,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryPanel.AonCustomerPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
@@ -24,10 +19,9 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.RegistrySource;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -36,7 +30,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 
 public abstract class CustomerModulePanel extends DeckPanel {
 	
-	private static CommonServiceAsync COMMON_SERVICE;
 	
 	private AonCustomDockLayout aonCustomDockLayout;
 	
@@ -52,13 +45,9 @@ public abstract class CustomerModulePanel extends DeckPanel {
 	
 	private RegistryModuleOptions options;
 	
-	private List<Account> accounts;
 	
 	public CustomerModulePanel(RegistryModuleOptions options) {
 		super();
-		
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		this.options = options;
 		
@@ -133,7 +122,7 @@ public abstract class CustomerModulePanel extends DeckPanel {
 		add(aonCustomDockLayout);
 		showWidget(0);
 		
-		getContext(end -> onSearch( options ));
+		onSearch( options );
 		
 	}
 
@@ -180,7 +169,7 @@ public abstract class CustomerModulePanel extends DeckPanel {
 	public void onSearch( RegistryModuleOptions options ) {
 		RegistryParams params = getWidgetParams( options );
 		centerPanel.clear();
-		customerPanel = new CustomerPanel(params, centerPanel, accounts) {
+		customerPanel = new CustomerPanel(params, centerPanel) {
 
 			@Override
 			protected void onCustomerOpen(Customer customer) {
@@ -193,6 +182,61 @@ public abstract class CustomerModulePanel extends DeckPanel {
 						CustomerModulePanel.this.showWidget(0);
 						customerPanel.resetSearchOffset();
 						onSearch( options );
+					}
+
+					@Override
+					protected void onPrev(Integer registryId) {
+						List<Customer> customers = customerPanel.getCustomers();
+
+					    // Buscar índice del actual
+					    int index = -1;
+					    for (int i = 0; i < customers.size(); i++) {
+					        if (customers.get(i).getId().equals(registryId)) {
+					            index = i;
+					            break;
+					        }
+					    }
+
+					    if (index == -1) {
+					        Window.alert("No se encontró el creditor con id " + registryId);
+					        return;
+					    }
+
+					    Customer prev = (index > 0) ? customers.get(index - 1) : null;
+					    					    // Ejemplo de uso
+					    if (prev != null) {
+					    	registryEntryPanel.loadNewRegistry(prev.getId());
+					    } else {
+					        Window.alert("No hay anterior");
+					    }
+					
+					}
+
+					@Override
+					protected void onNext(Integer registryId) {
+						List<Customer> customers = customerPanel.getCustomers();
+
+					    // Buscar índice del actual
+					    int index = -1;
+					    for (int i = 0; i < customers.size(); i++) {
+					        if (customers.get(i).getId().equals(registryId)) {
+					            index = i;
+					            break;
+					        }
+					    }
+
+					    if (index == -1) {
+					        Window.alert("No se encontró el creditor con id " + registryId);
+					        return;
+					    }
+
+					    Customer next = (index < customers.size() - 1) ? customers.get(index + 1) : null;
+
+					    if (next != null) {
+					    	registryEntryPanel.loadNewRegistry(next.getId());
+					    } else {
+					        Window.alert("No hay siguiente");
+					    }
 					}
 					
 				};
@@ -230,22 +274,6 @@ public abstract class CustomerModulePanel extends DeckPanel {
 	
 	public RegistryParams getSellerListParams() {
 		return getWidgetParams(options);
-	}
-	
-	private void getContext(Consumer<Void> end) {
-		COMMON_SERVICE.getAccountsForRegistry(options.getDomainName(), options.getDomain(), options.getUser(), RegistrySource.CUSTOMER, new AsyncCallback<List<Account>>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				AonMessagePanel.showError(messagePanel, "Error cuentas contables: " + caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(List<Account> accountsDB) {
-				accounts = accountsDB;
-				end.accept(null);
-			}
-		});
 	}
 	
 	protected abstract void onCustomerCreate(CustomerFull customerFull);

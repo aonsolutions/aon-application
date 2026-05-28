@@ -2206,8 +2206,8 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
-	public List<Account> getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource source) throws AonCoreException {
-		return AON.getAccountsForRegistry(domainName, domain, user, source);
+	public List<Account> getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource source, String pattern) throws AonCoreException {
+		return AON.getAccountsForRegistry(domainName, domain, user, source, pattern);
 	}
 	
 	// *********************** [AMORTIZATION TYPE]
