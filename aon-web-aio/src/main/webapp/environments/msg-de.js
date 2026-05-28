@@ -678,6 +678,7 @@ export const SEND_FILE = 'Send File';
 export const SEND_FILES = 'Send Files';
 export const SEND_INVOICE = 'Send Invoice';
 export const SEND_INVOICES = 'Send Invoices';
+export const SENDER = 'Absender';
 export const SENT = 'Gesendet';
 export const SEPA_FILES = 'SEPA Files';
 export const SERIE = 'Serie';
@@ -825,8 +826,6 @@ export const WRITE_A_DESCRIPTION = "Schreiben Sie eine Beschreibung";
 export const WRITE_A_NOTE =  "Schreiben Sie eine Notiz";
 export const WRONG_CODE = 'Falscher Code';
 export const BLACK_AND_WHITE = 'Schwarz-Weiß';
-export const WEEK_SCHEDULE = "Montag bis Donnerstag von 8:00 bis 15:00 Uhr";
-export const WEEK_FRIDAY_SCHEDULE = "Freitag von 8:00 bis 14:00 Uhr";
 
 // ----- X
 

@@ -607,7 +607,6 @@ export const QUERY = 'Requête';
 export const QUESTION = 'Question';
 export const QUESTIONS = 'Questions';
 export const QUICK_ACCESS = "Accès rapides";
-export const QUARTERLY_VIEW = 'Vue trimestrielle';
 export const QUOTA = 'Quota';
 export const QUOTE_GROUP = 'Groupe de cotisation';
 
@@ -683,6 +682,8 @@ export const SENT = 'Envoyées';
 export const SEPA_FILES = 'Fichiers SEPA';
 export const SERIE = 'érie';
 export const SERVICE = 'Service';
+export const SERVICE_ACCOUNT = 'Compte de service';
+export const SERVICE_ACCOUNTS = 'Comptes de service';
 export const SERVICES = 'Services';
 export const SETTING =  'Configuration';
 export const SHARED = 'Partagées';
@@ -692,6 +693,7 @@ export const SIDE_MENU = 'Menu latéral toujours visible';
 export const SIGN_IN = 'Se connecter';
 export const SIGN_IN_WITHOUT_PASSWORD = 'Pas de mot de passe';
 export const SIGN_IN_WITH_CERTIFICATE = 'Se connecter avec certificat';
+export const SIGNING = 'Badgeage';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIMPLIFIED_INVOICE = 'Facture Simplifiée';
@@ -750,6 +752,7 @@ export const TITLE = 'Titre';
 export const TITULAR_DATA = 'Données du Titulaire';
 export const TO = 'À';
 export const TO_REVIEW = 'À réviser';
+export const TO_SHOW = 'Afficher';
 export const TO_TRASH = 'Envoyer à la Corbeille';
 export const TODAY = 'Aujourd\'hui';
 export const TOMORROW = 'Demain';
@@ -823,8 +826,6 @@ export const WRITE_A_DESCRIPTION = "Écrivez une description";
 export const WRITE_A_NOTE =  "Écrivez une note";
 export const WRONG_CODE = 'Code incorrect';
 export const BLACK_AND_WHITE = 'Noir et Blanc';
-export const WEEK_SCHEDULE = "Du lundi au jeudi de 8:00 à 15:00";
-export const WEEK_FRIDAY_SCHEDULE = "Vendredi de 8:00 à 14:00";
 
 // ----- X
 

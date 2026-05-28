@@ -675,6 +675,7 @@ export const SEND_FILE = 'Send File';
 export const SEND_FILES = 'Send Files';
 export const SEND_INVOICE = 'Send Invoice';
 export const SEND_INVOICES = 'Send Invoices';
+export const SENDER = 'Sender';
 export const SENT = 'Sent';
 export const SEPA_FILES = 'SEPA Files';
 export const SERIE = 'Serie';

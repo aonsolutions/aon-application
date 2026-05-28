@@ -678,6 +678,7 @@ export const SEND_FILE = 'Enviar Fitxer';
 export const SEND_FILES = 'Enviar Fitxers';
 export const SEND_INVOICE = 'Enviar Factura';
 export const SEND_INVOICES = 'Enviar Factures';
+export const SENDER = 'Remitent';
 export const SENT = 'Enviades';
 export const SEPA_FILES = 'Fitxers SEPA';
 export const SERIE = 'Sèrie';

@@ -678,6 +678,7 @@ export const SEND_FILE = 'Fitxategia Bidali';
 export const SEND_FILES = 'Fitxategiak Bidali';
 export const SEND_INVOICE = 'Faktura Bidali';
 export const SEND_INVOICES =  'Fakturak Bidali';
+export const SENDER = 'Bidaltzailea';
 export const SENT = 'Bidalitakoak';
 export const SEPA_FILES = 'SEPA Fitxategiak';
 export const SERIE = 'Serie';

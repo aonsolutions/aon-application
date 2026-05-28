@@ -678,6 +678,7 @@ export const SEND_FILE = 'Enviar Fichero';
 export const SEND_FILES = 'Enviar Ficheros';
 export const SEND_INVOICE = 'Enviar Factura';
 export const SEND_INVOICES = 'Enviar Facturas';
+export const SENDER = 'Remitente';
 export const SENT = 'Enviadas';
 export const SEPA_FILES = 'Ficheros SEPA';
 export const SERIE = 'Serie';
