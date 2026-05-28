@@ -327,7 +327,7 @@ public class Up2Date {
 			// MEIPECUpdateUndo.MEIPECUPDATEUNDO,
 			// MEITrainingRemoveUndo.MEITRAININGREMOVEUNDO,
 			// Embargar4Many.BIEMBARGAR4MANY,
-			// FinanceTrackingAmountFix.FINANCE_TRACKING_AMOUNT_FIX,Muc-Off Bio Drivetrain Cleaner: Un desengrasante l�quido altamente eficiente que disuelve grasa pesada y ceras en segundos. Su f�rmula l�quida vertible es perfecta para el limpiador Park Tool y es 100% biodegradable.
+			// FinanceTrackingAmountFix.FINANCE_TRACKING_AMOUNT_FIX,
 			// OcupationITIMSFix.OCUPATIONITIMSFIX,
 			// Embargar4Many.BIEMBARGAR4MANY,
 			// BasesMin2023Update.BASESMIN2023UPDATE,
