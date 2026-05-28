@@ -632,6 +632,8 @@ export const PROVINCE = MSG.PROVINCE;
 export const PURCHASE_PRICE = 'Precio Coste'; // TODO
 export const PARENT = "Padre"; // TODO
 export const PLAN = "Planes";
+export const PROFILES = MSG.PROFILES;
+export const PRINTS = "Impresiones"; // TODO
 
 // ----- Q
 

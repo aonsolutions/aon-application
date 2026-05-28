@@ -400,7 +400,7 @@ export const PRODUCTS = 'Produtos';
 export const PROVINCE = 'Provincia';
 export const PROFORMA_INVOICES = "Borrador/Proforma";
 export const PROGRAMMED = "Programado";
-
+export const PROFILES = "Perfís";
 // ----- Q
 
 export const QUICK_ACCESS = "Acceso rápido";

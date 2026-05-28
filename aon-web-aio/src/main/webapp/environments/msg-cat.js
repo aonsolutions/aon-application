@@ -401,7 +401,7 @@ export const PRODUCTS = 'Productes';
 export const PROVINCE = 'Provincia';
 export const PROFORMA_INVOICES = "Esborrany/Proforma";
 export const PROGRAMMED = "Programat";
-
+export const PROFILES = "Perfils";
 // ----- Q
 
 export const QUICK_ACCESS = "Accés ràpid";

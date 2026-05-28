@@ -404,7 +404,7 @@ export const PRODUCTS = 'Products';
 export const PROVINCE = 'Province';
 export const PROFORMA_INVOICES = "Draft/Proforma";
 export const PROGRAMMED = "Programmed";
-
+export const PROFILES = "Profiles";
 // ----- Q
 
 export const QUICK_ACCESS = "Quick access";

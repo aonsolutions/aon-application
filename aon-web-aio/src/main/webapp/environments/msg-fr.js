@@ -404,7 +404,7 @@ export const PRODUCTS = 'Productos';
 export const PROVINCE = 'Provincia';
 export const PROFORMA_INVOICES = "Brouillon/Pro forma";
 export const PROGRAMMED = "Programmé";
-
+export const PROFILES = "Profils";
 // ----- Q
 
 export const QUICK_ACCESS = "Accès rapides";

@@ -401,7 +401,7 @@ export const PRODUCTS = 'Produktuak';
 export const PROVINCE = 'Probintzia';
 export const PROFORMA_INVOICES = "Zirriborroa/Proforma";
 export const PROGRAMMED = "Programatua";
-
+export const PROFILES = "Profilak";
 // ----- Q
 
 export const QUICK_ACCESS = "Sarbide azkarra";
