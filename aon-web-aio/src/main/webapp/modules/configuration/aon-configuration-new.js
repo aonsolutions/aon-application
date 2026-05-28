@@ -207,11 +207,43 @@ export class AonConfigurationNew extends AonElement {
 
 		let classicViewOptions = [];
 
-		classicViewOptions.push({
-			name: MSG.GLOBAL_CONFIGURATION,
-			icon: MATERIAL_ICONS.SETTINGS,
-			fn: () => this.getApplication().setContent(new JSF.AonJsfGlobalConfig()),
-		});
+		if ( this.isBeta() ) {
+			classicViewOptions.push({
+				name: MSG.GLOBAL_CONFIGURATION,
+				icon: MATERIAL_ICONS.SETTINGS,
+				fn: () => this.getApplication().setContent(new JSF.AonJsfGlobalConfig()),
+			});
+		}
+		
+		if (this.getDur().isAdmin()) {
+			classicViewOptions.push(			{
+				name: MSG.EMAIL,
+				icon: MATERIAL_ICONS.MAIL,
+				fn: () => this.getApplication().setContent(new JSF.AonJsfEmail()),
+			},			
+			{
+				name: MSG.PRINTS,
+				icon: MATERIAL_ICONS.PRINT,
+				fn: () => this.getApplication().setContent(new JSF.AonJsfPrint()),
+		    },			
+			{
+				name: MSG.AUDIT,
+				icon: MATERIAL_ICONS.SECURITY,
+				fn: () => this.getApplication().setContent(new JSF.AonJsfAudit()),
+			},{
+				name: MSG.USERS,
+				icon: MATERIAL_ICONS.PEOPLE,
+				fn: () => this.getApplication().setContent(new JSF.AonJsfUser()),
+			}, {
+				name: MSG.PROFILES,
+				icon: MATERIAL_ICONS.GROUPS,
+				fn: () => this.getApplication().setContent(new JSF.AonJsfProfile()),
+			},{
+				name: MSG.SCOPES,
+				icon: MATERIAL_ICONS.BUSINESS,
+				fn: () => this.getApplication().setContent(new JSF.AonJsfScope()),
+			});
+		}
 
 		aonConfiguration.addSidenavOptions(MSG.CLASSIC_VIEW.toUpperCase(), classicViewOptions);
 

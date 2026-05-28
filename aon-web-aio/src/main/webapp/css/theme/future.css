@@ -2711,3 +2711,10 @@ i[id$="aonHeaderSearchDivButtonIcon"],
 	position: relative;
 	left: 15px;
 }
+
+#aonConfigurationContent.aonContentBeta:has( iframe ) ,
+#aonConfigurationNewContent.aonContentBeta:has( iframe ) {
+	margin: 0px;
+	padding: 0px;
+	background-color: var(--aonBackgroundColor2);
+}
