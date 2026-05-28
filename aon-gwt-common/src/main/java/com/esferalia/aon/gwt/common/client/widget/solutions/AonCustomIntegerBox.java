@@ -45,7 +45,7 @@ public class AonCustomIntegerBox extends HTMLPanel {
 		
 		numberBox = new IntegerBox();
 		numberBox.setStyleName(AON.CSS.aonCustomTextBoxInput());
-		numberBox.getElement().setPropertyString("placeholder", "Introduce un valor");
+		//numberBox.getElement().setPropertyString("placeholder", "Introduce un valor");
 		
 		nearCB = new CheckBox();
 		nearCB.setTitle("Busqueda entre valores");
