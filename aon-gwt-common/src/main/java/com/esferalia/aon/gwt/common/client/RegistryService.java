@@ -28,7 +28,6 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -42,6 +41,7 @@ public interface RegistryService extends RemoteService {
 	CustomerFull getCustomerFull(String domainName,int domain, String user, Integer id) throws AonCoreException;
 	CustomerFull save(String domainName,int domain, String user, CustomerFull customerFull) throws AonCoreException;
 	Domain getDomainLinked(String domainName,int domain, String user, Integer customerId) throws AonCoreException;
+	void deleteCustomerFull(String domainName, int domain, String user, Integer id) throws AonCoreException;
 	
 	// **************************************************
 	// *************************************** [CREDITOR]
@@ -49,6 +49,7 @@ public interface RegistryService extends RemoteService {
 	LinkedList<Creditor> getCreditors(String domainName, int domain, String user, RegistryParams params, int ofs, int limit);
 	CreditorFull getCreditorFull(String domainName,int domain, String user, Integer id) throws AonCoreException;
 	CreditorFull save(String domainName,int domain, String user, CreditorFull creditorFull) throws AonCoreException;
+	void deleteCreditorFull(String domainName, int domain, String user, Integer id);
 
 	// **************************************************
 	// *************************************** [SUPPLIER]
@@ -56,6 +57,7 @@ public interface RegistryService extends RemoteService {
 	LinkedList<Supplier> getSuppliers(String domainName, int domain, String user, RegistryParams params, int ofs, int limit);
 	SupplierFull getSupplierFull(String domainName,int domain, String user, Integer id) throws AonCoreException;
 	SupplierFull save(String domainName,int domain, String user, SupplierFull supplierFull) throws AonCoreException;
+	void deleteSupplierFull(String domainName, int domain, String user, Integer id);
 	
 	// **************************************************
 	// *************************************** [CUSTOMER]

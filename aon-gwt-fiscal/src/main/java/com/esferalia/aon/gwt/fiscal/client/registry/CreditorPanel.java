@@ -49,6 +49,8 @@ public abstract class CreditorPanel extends ScrollPanel {
 	
 	private SimplePanel parentPanel;
 	
+	private List<Creditor> creditors = new LinkedList<Creditor>();
+	
 	private static enum COLS {
 		  DOC(AON.MSG.document()					,"6rem"				,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, DES(AON.MSG.name()						,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -234,6 +236,7 @@ public abstract class CreditorPanel extends ScrollPanel {
 				new AsyncCallback<LinkedList<Creditor>>() {
 					@Override
 					public void onSuccess(LinkedList<Creditor> result) {
+						creditors.addAll(result);
 						success.accept(result);
 					}
 							
@@ -247,6 +250,10 @@ public abstract class CreditorPanel extends ScrollPanel {
 	public void resetSearchOffset() {
 		offset.setValue(0);
 		rowCreditors.clear();
+	}
+	
+	public List<Creditor> getCreditors(){
+		return this.creditors;
 	}
 
 	protected abstract void onCreditorOpen(Creditor creditor);

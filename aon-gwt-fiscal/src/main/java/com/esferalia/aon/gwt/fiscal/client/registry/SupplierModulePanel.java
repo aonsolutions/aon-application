@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.registry;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -20,6 +21,7 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -176,6 +178,61 @@ public abstract class SupplierModulePanel extends DeckPanel {
 						SupplierModulePanel.this.showWidget(0);
 						supplierPanel.resetSearchOffset();
 						onSearch( options );
+					}
+
+					@Override
+					protected void onPrev(Integer registryId) {
+						List<Supplier> suppliers = supplierPanel.getSuppliers();
+
+					    // Buscar índice del actual
+					    int index = -1;
+					    for (int i = 0; i < suppliers.size(); i++) {
+					        if (suppliers.get(i).getId().equals(registryId)) {
+					            index = i;
+					            break;
+					        }
+					    }
+
+					    if (index == -1) {
+					        Window.alert("No se encontró el creditor con id " + registryId);
+					        return;
+					    }
+
+					    Supplier prev = (index > 0) ? suppliers.get(index - 1) : null;
+					    					    // Ejemplo de uso
+					    if (prev != null) {
+					    	registryEntryPanel.loadNewRegistry(prev.getId());
+					    } else {
+					        Window.alert("No hay anterior");
+					    }
+					
+					}
+
+					@Override
+					protected void onNext(Integer registryId) {
+						List<Supplier> suppliers = supplierPanel.getSuppliers();
+
+					    // Buscar índice del actual
+					    int index = -1;
+					    for (int i = 0; i < suppliers.size(); i++) {
+					        if (suppliers.get(i).getId().equals(registryId)) {
+					            index = i;
+					            break;
+					        }
+					    }
+
+					    if (index == -1) {
+					        Window.alert("No se encontró el creditor con id " + registryId);
+					        return;
+					    }
+
+					    Supplier next = (index < suppliers.size() - 1) ? suppliers.get(index + 1) : null;
+
+					    if (next != null) {
+					    	registryEntryPanel.loadNewRegistry(next.getId());
+					    } else {
+					        Window.alert("No hay siguiente");
+					    }
 					}
 					
 				};

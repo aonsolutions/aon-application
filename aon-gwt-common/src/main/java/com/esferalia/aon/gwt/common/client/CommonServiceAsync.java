@@ -564,7 +564,7 @@ public interface CommonServiceAsync {
 	void saveRregistryBank(String domainName, Integer domain, String user, RegistryBank registryBank, AsyncCallback<RegistryBank> asyncCallback) throws AonCoreException;
 	void deleteRregistryBank(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void getAccountsForBank(String domainName, Integer domain, String user, AsyncCallback<List<Account>> asyncCallback) throws AonCoreException;
-	void getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource,AsyncCallback<List<Account>> asyncCallback);
+	void getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource, String pattern, AsyncCallback<List<Account>> asyncCallback);
 	
 	// *********************** [AMORTIZATION TYPE]
 	void getAmortizationTypes(Occam occam, int domain, AsyncCallback<List<AmortizationType>> asyncCallback);

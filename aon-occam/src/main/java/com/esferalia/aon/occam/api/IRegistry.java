@@ -265,6 +265,7 @@ public interface IRegistry {
 	public CustomerFull save(AONContext ctx, CustomerFull customerFull);
 	public Domain getDomainLinked(AONContext ctx, Integer customerId);
 	public List<Domain> getDomainOfficeLinked(AONContext ctx, String document);
+	public void deleteCustomerFull(CloseableAONContext ctx, Integer id);
 	
 	public List<Customer> getCustomerWithoutFee(AONContext ctx);
 	public List<Customer> getCustomerWithoutFee(AONContext ctx, CustomerParams customerParams);
@@ -275,12 +276,14 @@ public interface IRegistry {
 	public Stream<Creditor> getCreditors(AONContext ctx, CreditorFilter filter, int ofs, int limit);
 	public CreditorFull getCreditorFull(AONContext ctx, Integer id);
 	public CreditorFull save(AONContext ctx, CreditorFull creditorFull);
+	public void deleteCreditorFull(AONContext ctx, Integer id);
 
 	// **************************************************
 	// *************************************** [SUPPLIER]
 	// **************************************************
 	public Stream<Supplier> getSuppliers(AONContext ctx, SupplierFilter filter, int ofs, int limit);
 	public SupplierFull getSupplierFull(AONContext ctx, Integer id);
+	public void deleteSupplierFull(AONContext ctx, Integer id);
 	public SupplierFull save(AONContext ctx, SupplierFull supplierFull);
 
 	// **************************************************
