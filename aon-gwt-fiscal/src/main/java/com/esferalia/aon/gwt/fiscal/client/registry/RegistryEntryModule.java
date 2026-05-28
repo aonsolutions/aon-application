@@ -71,6 +71,10 @@ public class RegistryEntryModule implements EntryPoint {
 		
 		registryEntryPanel = new RegistryEntryPanel(options, registrySource) {
 			@Override protected void onBack() {}
+
+			@Override protected void onPrev(Integer registryId) {}
+
+			@Override protected void onNext(Integer registryId) {}
 		};
 		
 		options.getParentWidget().add(registryEntryPanel);

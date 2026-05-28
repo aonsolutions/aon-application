@@ -12,7 +12,6 @@ import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
-import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
@@ -50,7 +49,7 @@ public abstract class CustomerPanel extends ScrollPanel {
 	
 	private SimplePanel parentPanel;
 	
-	private List<Account> accounts;
+	private List<Customer> customers = new LinkedList<Customer>();
 	
 	private static enum COLS {
 		  DOC(AON.MSG.document()					,"6rem"				,"max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -80,12 +79,11 @@ public abstract class CustomerPanel extends ScrollPanel {
 		}
 	}
 
-	public CustomerPanel(RegistryParams params, SimplePanel centerPanel, List<Account> accounts) {
+	public CustomerPanel(RegistryParams params, SimplePanel centerPanel) {
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
 		REGISTRY_SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
 		
 		this.parentPanel = centerPanel;
-		this.accounts = accounts;
 		this.params = params;
 		this.rowCustomers.clear();
 
@@ -203,8 +201,8 @@ public abstract class CustomerPanel extends ScrollPanel {
 		tab.addInlineStyle(alias, COLS.BUD.getStyles());
 		tab.addRow(row, alias, COLS.BUD.getColWidth());
 		
-		Label account = new Label(getAccount(customer.getAccount()));
-		account.setTitle(getAccount(customer.getAccount()));
+		Label account = new Label(null != customer.getFullAccount() ? customer.getFullAccount().getFullName() : "");
+		account.setTitle(null != customer.getFullAccount() ? customer.getFullAccount().getFullName() : "");
 		tab.addInlineStyle(account, COLS.ACC.getStyles());
 		tab.addRow(row, account, COLS.ACC.getColWidth());
 		
@@ -216,16 +214,6 @@ public abstract class CustomerPanel extends ScrollPanel {
 		tab.addRow(row, status, COLS.ACT.getColWidth());
 		
 		rowCustomers.put(customer.getId(), customer);
-	}
-	
-	private String getAccount(Integer account) {
-		if(null == account) return "";
-		
-		for(Account acc : accounts)
-			if(acc.getId().equals(account))
-				return acc.getFullName();
-		
-		 return "";
 	}
 	
 	private void setStatusColor(Label label, RegistryStatus status) {
@@ -253,6 +241,7 @@ public abstract class CustomerPanel extends ScrollPanel {
 				new AsyncCallback<LinkedList<Customer>>() {
 					@Override
 					public void onSuccess(LinkedList<Customer> result) {
+						customers.addAll(result);
 						success.accept(result);
 					}
 							
@@ -266,6 +255,10 @@ public abstract class CustomerPanel extends ScrollPanel {
 	public void resetSearchOffset() {
 		offset.setValue(0);
 		rowCustomers.clear();
+	}
+	
+	public List<Customer> getCustomers(){
+		return this.customers;
 	}
 
 	protected abstract void onCustomerOpen(Customer customer);

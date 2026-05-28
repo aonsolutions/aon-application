@@ -62,6 +62,13 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		AON.start();
 		serviceAsync.getDomainLinked(domainName, domain, user, customerId, new AsyncCallbackWrapper<Domain>(callback));
 	}
+	
+	@Override
+	public void deleteCustomerFull(String domainName, int domain, String user, Integer id, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.deleteCustomerFull(domainName, domain, user, id, new AsyncCallbackWrapper<Void>(callback));
+	}
+	
 	// **************************************************
 	// *************************************** [CREDITOR]
 	// **************************************************
@@ -83,6 +90,12 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		serviceAsync.save(domainName, domain, user, creditorFull, new AsyncCallbackWrapper<CreditorFull>(callback));
 	}
 
+	@Override
+	public void deleteCreditorFull(String domainName, int domain, String user, Integer id, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.deleteCreditorFull(domainName, domain, user, id, new AsyncCallbackWrapper<Void>(callback));
+	}
+
 	// **************************************************
 	// *************************************** [SUPPLIER]
 	// **************************************************
@@ -101,6 +114,12 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 	public void save(String domainName, int domain, String user, SupplierFull supplierFull, AsyncCallback<SupplierFull> callback) {
 		AON.start();
 		serviceAsync.save(domainName, domain, user, supplierFull, new AsyncCallbackWrapper<SupplierFull>(callback));
+	}
+
+	@Override
+	public void deleteSupplierFull(String domainName, int domain, String user, Integer id, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.deleteSupplierFull(domainName, domain, user, id, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 	// **************************************************
