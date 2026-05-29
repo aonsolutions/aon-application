@@ -220,12 +220,14 @@ export class AonConfigurationNew extends AonElement {
 				name: MSG.EMAIL,
 				icon: MATERIAL_ICONS.MAIL,
 				fn: () => this.getApplication().setContent(new JSF.AonJsfEmail()),
-			},			
+			},
+			/*		
 			{
 				name: MSG.PRINTS,
 				icon: MATERIAL_ICONS.PRINT,
 				fn: () => this.getApplication().setContent(new JSF.AonJsfPrint()),
-		    },			
+		    },
+		    */			
 			{
 				name: MSG.AUDIT,
 				icon: MATERIAL_ICONS.SECURITY,
