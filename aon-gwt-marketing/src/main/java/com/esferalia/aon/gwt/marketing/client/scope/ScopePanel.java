@@ -56,7 +56,7 @@ public abstract class ScopePanel extends ScrollPanel {
 		
 		  DOM(AonStringUtils.EMPTY					,"4rem"				,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, DES(AON.MSG.description()					,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, BUT(AonStringUtils.EMPTY					,"3rem"				,"")
+		//, BUT(AonStringUtils.EMPTY					,"3rem"				,"")
 		;
 
 		String headerLabel;
@@ -229,7 +229,7 @@ public abstract class ScopePanel extends ScrollPanel {
 			userDomain = new AonTableButton("Entorno Padre", AON.CSS.aonIconEnterprise());
 			userDomain.addStyleName(AON.CSS.aonCustomRowButtom());
 		} else {
-			userDomain = new AonTableButton("Entorno Local", AON.CSS.aonIconHome());
+			userDomain = new AonTableButton("Entorno Local", AON.CSS.aonIconShieldLocked());
 			userDomain.addStyleName(AON.CSS.aonCustomRowButtom());
 		}
 		
@@ -240,7 +240,7 @@ public abstract class ScopePanel extends ScrollPanel {
 		tab.addInlineStyle(name, COLS.DES.getStyles());
 		tab.addRow(row, name, COLS.DES.getColWidth());
 		
-		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
+		//tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 		
 		rowScopes.put(scope.getId(), scope);
 	}

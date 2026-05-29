@@ -2216,4 +2216,13 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return ACCOUNTING.getAmortizationTypeList(occam, domain);
 	}
 	
+	@Override
+	public void reassignScope(String domainName, Integer domainId, String user, int originScope, int finalScope, boolean deleteOrigin) throws AonCoreException {
+		if(deleteOrigin) {
+			AON.reassignAndDeleteScope(new Occam().setDomainName(domainName).setDomain(domainId).setUser(user), domainId, originScope, finalScope);
+		} else {
+			AON.reassignScope(new Occam().setDomainName(domainName).setDomain(domainId).setUser(user), domainId, originScope, finalScope);
+		}
+	}
+	
 }
