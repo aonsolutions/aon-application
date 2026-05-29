@@ -140,8 +140,8 @@ public abstract class ScopePanel extends ScrollPanel {
 
 	private void search() {
 		tab = new AonCustomTable();
+		tab.getElement().getStyle().setProperty("padding", "0");
 		setWidget(tab);
-		getElement().getStyle().setProperty("margin", "0 1rem");
 		
 		paintHeader();
 		searchData();
