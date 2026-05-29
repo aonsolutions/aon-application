@@ -1611,10 +1611,10 @@ public class SecurityDAO {
 	public static List<Scope> getScopeList(CloseableAONContext ctx, ScopeParams params) {
 		Condition condition = paramsToCondition(ctx, params);
 		
-		Domain domain = DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(params.getDomain()));
 		List<Integer> searchDomains = new ArrayList<Integer>();
 		searchDomains.add(params.getDomain());
-		if(null != domain.getParentId()) searchDomains.add(domain.getParentId());
+		
+		//if(null != domain.getParentId()) searchDomains.add(domain.getParentId());
 		
 		SelectConditionStep<Record> select =  ctx.getDslContext()
 				.select()
@@ -1642,10 +1642,8 @@ public class SecurityDAO {
 	public static Integer getScopesCount(CloseableAONContext ctx, ScopeParams params) {
 		Condition condition = paramsToCondition(ctx, params);
 		
-		Domain domain = DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(params.getDomain()));
 		List<Integer> searchDomains = new ArrayList<Integer>();
 		searchDomains.add(params.getDomain());
-		if(null != domain.getParentId()) searchDomains.add(domain.getParentId());
 		
 		SelectConditionStep<Record1<Integer>> select =  ctx.getDslContext().selectCount()
 				.from(SCOPE)

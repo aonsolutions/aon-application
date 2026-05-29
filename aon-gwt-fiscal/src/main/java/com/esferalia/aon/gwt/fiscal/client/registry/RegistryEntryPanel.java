@@ -56,7 +56,7 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -153,6 +153,8 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 	private boolean editEnable = false;
 	
 	private HashSet<Account> accounts = new HashSet<Account>();
+	private Timer accountsTimer;
+	private boolean accountsLoading = false;
 	
 	// ------------------------------------------------- Constructor
 
@@ -422,7 +424,7 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 			getPhones();
 			getEmails();
 			
-			leftInfoTable.add(createRow(name));
+			leftInfoTable.add(createRow(name, firstSurname, secondSurname));
 			
 			rightInfoTable.add(createRow(mainAddress, addressLB));
 			rightInfoTable.add(createRow(mainPhone, phoneLB, mainEmail, emailLB));
@@ -439,7 +441,7 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 				createNameByDocumentType();
 				registry.setLegalPerson(registry.getDocumentType().equals(DocumentType.CIF));
 			});
-		}
+		} else createNameByDocumentType();
 
 		gridPanel.add(leftInfoTable);
 		gridPanel.add(rightInfoTable);
@@ -456,22 +458,28 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 //			accounts.forEach(a -> accountLB.addItem(a.getFullName(), a.getId().toString()));
 			
 			accountSB.getSuggestBox().getValueBox().addKeyUpHandler(event -> {
-				if(accountSB.getSuggestBox().getValue().length() <= 3) return;
-				
-				getAccountsForRegistry(accountsDB -> {
 
-					List<String> suggestValues = new ArrayList<String>();
-					
-			        // Añade resultados
-			        for (Account acc : accountsDB) {
-			        	suggestValues.add(acc.getCode() + " - " + acc.getDescription());
+			    String text = accountSB.getValue();
+
+			    if (text.length() <= 3) {
+			        return;
+			    }
+
+			    // Cancelar timer previo
+			    if (accountsTimer != null) {
+			    	accountsTimer.cancel();
+			    }
+
+			    // Crear nuevo timer
+			    accountsTimer = new Timer() {
+			        @Override
+			        public void run() {
+			            launchAccountSearch(text);
 			        }
+			    };
 
-			        accountSB.getOracle().setData(suggestValues);
-			        
-			        // Refresca la lista de sugerencias
-			        accountSB.showSuggestionList();
-			    });
+			    // Esperar 300 ms antes de ejecutar
+			    accountsTimer.schedule(300);
 			});
 
 			
@@ -646,6 +654,31 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 			}
 		});
 	}
+	
+	private void launchAccountSearch(String filter) {
+
+	    if (accountsLoading) {
+	        return; // evita llamadas simultáneas
+	    }
+
+	    accountsLoading = true;
+
+	    getAccountsForRegistry(accountsDB -> {
+
+	    	accountsLoading = false;
+
+	        List<String> suggestValues = new ArrayList<>();
+
+	        for (Account acc : accountsDB) {
+	            suggestValues.add(acc.getCode() + " - " + acc.getDescription());
+	        }
+
+	        accountSB.getOracle().setData(suggestValues);
+
+	        accountSB.showSuggestionList();
+	    });
+	}
+
 
 	private void getStatus() {
 		switch (registrySource) {
@@ -1230,11 +1263,13 @@ public abstract class RegistryEntryPanel extends AonCustomDockLayout {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				accountsLoading = false;
 				AonMessagePanel.showError(messagePanel, "Error cuentas contables: " + caught.getMessage());
 			}
 
 			@Override
 			public void onSuccess(List<Account> accountsDB) {
+				accountsLoading = false;
 				accounts.addAll(accountsDB);
 				end.accept(accountsDB);
 			}

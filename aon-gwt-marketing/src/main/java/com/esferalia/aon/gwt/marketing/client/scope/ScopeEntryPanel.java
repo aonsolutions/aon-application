@@ -93,7 +93,7 @@ public abstract class ScopeEntryPanel extends AonCustomDockLayout {
 		scrollPanel = new ScrollPanel();
 		
 		container = new HTMLPanel("");
-		container.addStyleName(AON.CSS.aonFlexColumn());
+		container.addStyleName(AON.CSS.aonFlexColumn2());
 		
 		container.add(messagePanel);
 		
@@ -253,7 +253,7 @@ public abstract class ScopeEntryPanel extends AonCustomDockLayout {
 	
 	private void paintView() {
 		gridContainer.clear();
-		gridContainer.addStyleName(AON.CSS.aonFlexColumn());
+		gridContainer.addStyleName(AON.CSS.aonFlexColumn2());
 		gridContainer.getElement().getStyle().setProperty("padding", "0 1rem");
 		
 		AonCustomCard infoCard = new AonCustomCard("Informaci\u00f3n General");
@@ -362,7 +362,7 @@ public abstract class ScopeEntryPanel extends AonCustomDockLayout {
 	
 	private HTMLPanel createTable() {
 		HTMLPanel table = new HTMLPanel("");
-		table.setStyleName(AON.CSS.aonFlexColumn());
+		table.setStyleName(AON.CSS.aonFlexColumn2());
 		return table;
 	}
 

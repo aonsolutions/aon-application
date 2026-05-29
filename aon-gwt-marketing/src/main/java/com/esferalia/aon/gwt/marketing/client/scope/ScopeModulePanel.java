@@ -46,7 +46,7 @@ public abstract class ScopeModulePanel extends AonCustomDockLayout {
 	}
 	
 	public ScopeModulePanel(ScopeModuleOptions options) {
-		super("Operarios");
+		super("\u00c1mbitos");
 		
 		initializeCommonService();
 		
@@ -77,7 +77,7 @@ public abstract class ScopeModulePanel extends AonCustomDockLayout {
 		addSortWidget(asc);
 		
 		container = new HTMLPanel("");
-		container.addStyleName(AON.CSS.aonFlexColumn());
+		container.addStyleName(AON.CSS.aonFlexColumn2());
 		
 		container.add(messagePanel);
 	

@@ -205,6 +205,7 @@ export class AonConfiguration extends AonElement {
 		aonConfiguration.addSidenavOptions(MSG.SECURITY.toUpperCase(), securityOptions);
 		
 		
+		/*
 		if (localStorage.getItem("aon_domain_id")) {
 			let mailOptions = [];
 			
@@ -225,6 +226,7 @@ export class AonConfiguration extends AonElement {
 			
 			aonConfiguration.addSidenavOptions("CORREO", mailOptions);
 		}
+		*/
 		
 		let classicViewOptions = [];
 
@@ -267,6 +269,9 @@ export class AonConfiguration extends AonElement {
 		}
 
 		aonConfiguration.addSidenavOptions(MSG.CLASSIC_VIEW.toUpperCase(), classicViewOptions);
+		
+		let classicView = this.getElement("aonSidenavTitleVistaClasica");
+		classicView && classicView.click();
 
 		// Ocultar Panel Opciones en configuracion. Mostrar solo en parametros
 		/*
