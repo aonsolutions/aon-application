@@ -1,4 +1,4 @@
-import { TAG } from '../../environments/environments.js'; 
+import { MSG, TAG } from '../../environments/environments.js';
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from '../../gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
@@ -27,14 +27,14 @@ export class AonMarketingMenu extends AonSuiteMenu {
         this.AON_HEADER = 'aonHeader';
         this.ROOT_PANEL = 'rootPanel';
         this.RIGHT_PANEL = 'rightPanel';
-        this.last = "Últimas acciones";
-        this.new = "Nueva Acción";
+        this.last = MSG.LAST_ACTIONS;
+        this.new = MSG.NEW_ACTION;
         this.cardData={
-            title: "Actividad",
-            info:["Campañas activas", "Acciones activas", "Lead sin asignar"]
+            title: MSG.ACTIVITY,
+            info:[MSG.ACTIVE_CAMPAIGNS, MSG.ACTIVE_ACTIONS, MSG.UNASSIGNED_LEAD]
         };
         this.selectOptions= [{
-            title: "Campaña",
+            title: MSG.CAMPAIGN,
             action: () => alert("description")
         },{
             title: "Acción",
@@ -45,7 +45,7 @@ export class AonMarketingMenu extends AonSuiteMenu {
 
     initOptions() {
         this.options = [{
-            title: 'Contenidos',
+            title: MSG.CONTENTS,
             options: [{
                 description: "Mensajes",
                 title: "Mensajes",
@@ -60,7 +60,7 @@ export class AonMarketingMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfNewsletter())
             }]
         }, {
-            title: 'Comunicaciones',
+            title: MSG.COMMUNICATIONS,
             options: [{
                 description: "Campañas",
                 title: "Campañas",
@@ -72,7 +72,7 @@ export class AonMarketingMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfCommunicationCenter())
             }]
         }, {
-            title: 'Cuestionarios',
+            title: MSG.SURVEYS,
             options: [{
                 description: "Preguntas",
                 title: "Preguntas",
@@ -87,7 +87,7 @@ export class AonMarketingMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfSurveyResponse())
             }]
         }, {
-            title: 'Plantillas',
+            title: MSG.TEMPLATES,
             options: [{
                 description: "Cabeceras y Pies de Plantilla",
                 title: "Cabeceras y Pies de Plantilla",

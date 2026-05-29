@@ -63,11 +63,11 @@ export class AonManagementMenu extends AonSuiteMenu {
         this.AON_HEADER = 'aonHeader';
         this.ROOT_PANEL = 'rootPanel';
         this.RIGHT_PANEL = 'rightPanel';
-        this.last = "Últimos clientes";
-        this.new = "Nuevo Cliente";
+        this.last = MSG.LAST_CUSTOMERS;
+        this.new = MSG.NEW_CUSTOMER_ACTION;
         this.cardData={
-            title: "Actividad",
-            info:["Pedidos ptes.", "Cuotas abiertas", "Fras. sin contabilizar"]
+            title: MSG.ACTIVITY,
+            info:[MSG.ORDERS_PENDING, MSG.OPEN_FEES, MSG.INVOICES_UNACCOUNTED_ABBR]
         };
         this.selectOptions= [{
             title: "Factura de venta",
@@ -76,13 +76,13 @@ export class AonManagementMenu extends AonSuiteMenu {
             title: "Factura de gastos",
             action: () => this.rootPanel(new JSF.AonJsfExpenseInvoice())
         },{
-            title: "Factura de compras", 
+            title: "Factura de compras",
             action: () => this.rootPanel(new JSF.AonJsfPurchaseInvoice())
         },{
-            title: "Gasto no deducible en IVA", 
+            title: "Gasto no deducible en IVA",
             action: () => this.rootPanel(new JSF.AonJsfUndeductibleInvoice())
         },{
-            title: "Cliente", 
+            title: MSG.CUSTOMER,
             action: () => this.rootPanel(new JSF.AonJsfCustomer())
         }];
         await this.initOptions();
@@ -92,7 +92,7 @@ export class AonManagementMenu extends AonSuiteMenu {
 		await this.initInvoiceConfiguration();
         let checkConfiguration = this.checkConfiguration();
         this.options = [{
-            title: 'Ventas',
+            title: MSG.SALES,
             options: [{
                 description: MSG.CUSTOMERS,
                 title: MSG.CUSTOMERS,
@@ -118,7 +118,7 @@ export class AonManagementMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfInvoiceDelivery())
             }]
         }, {
-            title: 'Compras',
+            title: MSG.PURCHASES,
             options: [{
                 description: MSG.SUPPLIERS,
                 title: MSG.SUPPLIERS,
@@ -133,7 +133,7 @@ export class AonManagementMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfPurchase())
             }]
         }, {
-            title: 'Gastos',
+            title: MSG.EXPENSES,
             options: [{
                 description: MSG.CREDITORS,
                 title: MSG.CREDITORS,
@@ -148,7 +148,7 @@ export class AonManagementMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfUndeductibleInvoice())
             }]
         }, {
-            title: 'Tesorería',
+            title: MSG.TREASURY,
             options: [{
                 description: "Gestión de Cobros",
                 title: "Gestión de Cobros",
@@ -168,7 +168,7 @@ export class AonManagementMenu extends AonSuiteMenu {
                 action: () => GWT.iLoad(GWT.INVOICE_STAT)
             }]
         }, {
-            title: 'Impuestos',
+            title: MSG.TAXES,
             options: [{
                 description: "Panel de control de IVA",
                 title: "Panel de control de IVA",
@@ -188,7 +188,7 @@ export class AonManagementMenu extends AonSuiteMenu {
                 action: () => GWT.iLoad(GWT.MODEL_347)
             }]
         }, {
-            title: 'Maestros',
+            title: MSG.MASTERS,
             options: [{
                 description: MSG.PRODUCTS,
                 title: MSG.PRODUCTS,

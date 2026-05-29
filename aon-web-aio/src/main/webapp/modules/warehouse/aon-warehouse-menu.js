@@ -26,20 +26,20 @@ export class AonWarehouseMenu extends AonSuiteMenu {
         this.AON_HEADER = 'aonHeader';
         this.ROOT_PANEL = 'rootPanel';
         this.RIGHT_PANEL = 'rightPanel';
-        this.last = "Últimas elaboraciones";
-        this.new = "Nuevo Albarán de venta";
+        this.last = MSG.LAST_ELABORATIONS;
+        this.new = MSG.NEW_DELIVERY_NOTE;
         this.cardData={
-            title: "Actividad",
-            info:["Expediones abiertas", "Elaboraciones abiertas"]
+            title: MSG.ACTIVITY,
+            info:[MSG.EXPEDITIONS_OPEN, MSG.OPEN_ELABORATIONS]
         };
         this.selectOptions= [{
-            title: "Elaboración",
+            title: MSG.ELABORATION,
             action: () => alert("description")
         },{
-            title: "Albarán de compra",
+            title: MSG.PURCHASE_DELIVERY,
             action: () => alert("description")
         },{
-            title: "Albarán de venta", 
+            title: MSG.SALE_DELIVERY,
             action: () => alert("description")
         }];
         this.initOptions();
@@ -47,7 +47,7 @@ export class AonWarehouseMenu extends AonSuiteMenu {
 
     initOptions() {
         this.options = [{
-            title: 'Movimientos',
+            title: MSG.MOVEMENTS,
             options: [{
                 description: "Entradas (Albaranes de Compra)",
                 title: "Entradas (Albaranes de Compra)",
@@ -66,7 +66,7 @@ export class AonWarehouseMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfOrderServer)
             }]
         }, {
-            title: 'Informes',
+            title: MSG.REPORTS,
             options: [{
                 description: "Listado por almacén.",
                 title: "Listado por almacén.",
@@ -93,7 +93,7 @@ export class AonWarehouseMenu extends AonSuiteMenu {
                 action: () => GWT.iLoad(GWT.MOVEMENT_LIST)
             }]
         }, {
-            title: 'Control de Existencias',
+            title: MSG.STOCK_CONTROL,
             options: [{
                 description: "Cierre de inventario",
                 title: "Cierre de inventario",
@@ -112,7 +112,7 @@ export class AonWarehouseMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfOrderProposal)
             }]
         }, {
-            title: 'Elaboraciones',
+            title: MSG.ELABORATIONS,
             options: [{
                 description: "Orden de elaboración",
                 title: "Orden de elaboración",
@@ -127,7 +127,7 @@ export class AonWarehouseMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfCorporateIdentityLabel)
             }]
         }, {
-            title: 'Almacenes',
+            title: MSG.WAREHOUSES,
             options: [{
                 description: "Definicion de Almacenes",
                 title: "Definicion de Almacenes",

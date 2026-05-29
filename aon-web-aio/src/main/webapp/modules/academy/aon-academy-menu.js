@@ -26,8 +26,8 @@ export class AonAcademyMenu extends AonSuiteMenu {
 		this.AON_HEADER = 'aonHeader';
 		this.ROOT_PANEL = 'rootPanel';
 		this.RIGHT_PANEL = 'rightPanel';
-		this.last = "Últimos alumnos";
-		this.new = "Nuevo Apunte"
+		this.last = MSG.LAST_STUDENTS;
+		this.new = MSG.NEW_ENTRY;
 		this.uploadButton = true
 		this.selectOptions= [{
             title: "Alumno",
@@ -36,11 +36,11 @@ export class AonAcademyMenu extends AonSuiteMenu {
             title: "Ficha de amortización",
             action: () => alert("description")
         },{
-            title: "Apunte", 
+            title: MSG.ENTRY,
             action: () => alert("description")
         }];
 		this.options = [{
-			title: 'Gestión Académica',
+			title: MSG.ACADEMIC_MANAGEMENT,
 			options: [ {
 				description:"Alumnos",
 				title:"Alumnos",
@@ -63,7 +63,7 @@ export class AonAcademyMenu extends AonSuiteMenu {
 				action: () => alert("Prestamos")
 			}]
 		},{
-			title: 'Utilidades',
+			title: MSG.UTILITIES,
 			options: [{
 				description: "Reclasificar Clientes/Alumnos",
 				title: "Reclasificar Clientes/Alumnos",
@@ -86,7 +86,7 @@ export class AonAcademyMenu extends AonSuiteMenu {
 				action: () => alert("Asignar Cuotas a Grupos")
 			}]
 		},{
-			title: 'Auxiliares',
+			title: MSG.AUXILIARIES,
 			options: [{
 				description: "Tipos de relaciones entre entidades",
 				title: "Tipos de relaciones entre entidades",

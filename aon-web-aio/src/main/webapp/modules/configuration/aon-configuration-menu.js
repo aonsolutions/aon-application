@@ -31,11 +31,11 @@ export class AonConfigurationMenu extends AonSuiteMenu {
 		this.AON_HEADER = 'aonHeader';
 		this.ROOT_PANEL = 'rootPanel';
 		this.RIGHT_PANEL = 'rightPanel';
-		this.last = "Últimas acciones";
-		this.new = "Nueva Acción";
+		this.last = MSG.LAST_ACTIONS;
+		this.new = MSG.NEW_ACTION;
 		this.cardData = {
-			title: "Actividad",
-			info: ["Pedidos ptes.", "Cuotas abiertas", "Fras. sin contabilizar"]
+			title: MSG.ACTIVITY,
+			info: [MSG.ORDERS_PENDING, MSG.OPEN_FEES, MSG.INVOICES_UNACCOUNTED_ABBR]
 		};
 		this.selectOptions = [];
 		this.initOptions();
@@ -55,7 +55,7 @@ export class AonConfigurationMenu extends AonSuiteMenu {
 				}]
 		}, {*/
 
-			title: 'Tablas Principales',
+			title: MSG.MAIN_TABLES,
 			options: [{
 				description: "Clientes",
 				title: "Clientes",
@@ -108,7 +108,7 @@ export class AonConfigurationMenu extends AonSuiteMenu {
 			}
 			]
 		}, {
-			title: 'Tablas Auxiliares de Gestión',
+			title: MSG.AUX_MANAGEMENT_TABLES,
 			options: [
 				{
 					description: MSG.PAYMETHODS,
@@ -147,7 +147,7 @@ export class AonConfigurationMenu extends AonSuiteMenu {
 					//filter: () => this.isDomainManagementAvailable()
 				}]
 		}, {
-			title: 'Tablas Auxiliares de Productos',
+			title: MSG.AUX_PRODUCT_TABLES,
 			options: [{
 				description: "Etiquetas de Productos",
 				title: "Etiquetas de Productos",
@@ -177,7 +177,7 @@ export class AonConfigurationMenu extends AonSuiteMenu {
 			}],
 			filter: () => this.isNotDomainManagementAvailable()
 		}, {
-			title: 'Utilidades Carga de Datos',
+			title: MSG.DATA_LOAD_UTILITIES,
 			options: [{
 				description: "Carga de datos desde ficheros Excel",
 				title: "Carga de datos desde ficheros Excel",

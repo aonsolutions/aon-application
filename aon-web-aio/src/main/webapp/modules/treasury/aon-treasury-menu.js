@@ -1,4 +1,4 @@
-import { TAG } from '../../environments/environments.js'; 
+import { MSG, TAG } from '../../environments/environments.js';
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from '../../gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
@@ -26,11 +26,11 @@ export class AonTreasuryMenu extends AonSuiteMenu {
         this.AON_HEADER = 'aonHeader';
         this.ROOT_PANEL = 'rootPanel';
         this.RIGHT_PANEL = 'rightPanel';
-        this.last = "Últimos vencidos";
-        this.new = "Nuevo vencimiento";
+        this.last = MSG.LAST_EXPIRATIONS;
+        this.new = MSG.NEW_EXPIRATION;
         this.cardData={
-            title: "Actividad",
-            info:["Pagos vencidos", "Cobros vencidos"]
+            title: MSG.ACTIVITY,
+            info:[MSG.EXPIRED_PAYMENTS, MSG.EXPIRED_CHARGES]
         };
         this.selectOptions= [{
             title: "Remesa de cobro",
@@ -39,10 +39,10 @@ export class AonTreasuryMenu extends AonSuiteMenu {
             title: "Remesa de pago",
             action: () => this.rootPanel(new JSF.AonJsfFBatchPayment())
         },{
-            title: "Vencimiento", 
+            title: MSG.EXPIRATIONS,
             action: () => alert("description")
         },{
-            title: "Forma de pago", 
+            title: MSG.PAYMETHOD,
             action: () => this.rootPanel(new JSF.AonJsfPayMethod())
         }];
         this.initOptions();
@@ -50,7 +50,7 @@ export class AonTreasuryMenu extends AonSuiteMenu {
 
     initOptions() {
         this.options = [{
-            title: 'Cobros',
+            title: MSG.CHARGES,
             options: [{
                 description: "Gestión de Cobros",
                 title: "Gestión de Cobros",
@@ -65,7 +65,7 @@ export class AonTreasuryMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfSddMandate())
             }]
         }, {
-            title: 'Pagos',
+            title: MSG.PAYMENTS,
             options: [{
                 description: "Gestión de Pagos",
                 title: "Gestión de Pagos",
@@ -84,7 +84,7 @@ export class AonTreasuryMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfFPaymentPrint())
             }]
         }, {
-            title: 'Previsión',
+            title: MSG.FORECAST,
             options: [{
                 description: "Gestión de Previsiones",
                 title: "Gestión de Previsiones",
@@ -100,7 +100,7 @@ export class AonTreasuryMenu extends AonSuiteMenu {
                 }*/
             ]
         }, {
-            title: 'Movimientos Bancarios',
+            title: MSG.BANK_MOVEMENTS,
             options: [{
                 description: "Conciliador Bancario",
                 title: "Conciliador Bancario",
@@ -116,7 +116,7 @@ export class AonTreasuryMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfPrepayment())
             }]
         }, {
-            title: 'Cuotas',
+            title: MSG.FEES,
             options: [{
                 description: "Listado de Pre-facturación",
                 title: "Listado de Pre-facturación",
@@ -144,7 +144,7 @@ export class AonTreasuryMenu extends AonSuiteMenu {
             }
             ]
         }, {
-            title: 'Utilidades',
+            title: MSG.UTILITIES,
             options: [{
                 description: "Recargos en Facturas",
                 title: "Recargos en Facturas",

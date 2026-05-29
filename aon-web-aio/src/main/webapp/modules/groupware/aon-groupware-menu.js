@@ -1,4 +1,4 @@
-import { TAG } from '../../environments/environments.js'; 
+import { MSG, TAG } from '../../environments/environments.js';
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as JSF from '../aon-jsf-app.js';
 
@@ -25,34 +25,34 @@ export class AonGroupwareMenu extends AonSuiteMenu {
         this.AON_HEADER = 'aonHeader';
         this.ROOT_PANEL = 'rootPanel';
         this.RIGHT_PANEL = 'rightPanel';
-        this.last = "Últimos expedientes";
-        this.new = "Nuevo Parte de trabajo";
+        this.last = MSG.LAST_EXPEDIENTS;
+        this.new = MSG.NEW_WORK_ORDER;
         this.cardData={
-            title: "Actividad",
-            info:["Expedientes abiertos", "Solicitudes ptes."]
+            title: MSG.ACTIVITY,
+            info:[MSG.OPEN_EXPEDIENTS, MSG.REQUESTS_PENDING]
         };
         this.selectOptions= [{
-            title: "Parte de trabajo",
+            title: MSG.WORK_ORDER,
             action: () => alert("description")
         },{
-            title: "Operario",
+            title: MSG.OPERATOR,
             action: () => alert("description")
         },{
-            title: "Proceso", 
+            title: MSG.PROCESS,
             action: () => alert("description")
         },{
-            title: "Expediente", 
-			action: () => this.rootPanel(new JSF.AonJsfProject)
+            title: MSG.GROUPWARE,
+            action: () => this.rootPanel(new JSF.AonJsfProject)
         }];
         this.initOptions();
     }
 
     initOptions() {
         this.options = [{
-            title: 'Expedientes',
+            title: MSG.EXPEDIENTS,
             options: [{
-                description: "Expedientes",
-                title: "Expedientes",
+                description: MSG.EXPEDIENTS,
+                title: MSG.EXPEDIENTS,
                 action: () => this.rootPanel(new JSF.AonJsfProject)
             }, {
                 description: "Tipo de Expediente",
@@ -64,10 +64,10 @@ export class AonGroupwareMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfActivityType)
             }]
         }, {
-            title: 'Procesos',
+            title: MSG.PROCESSES,
             options: [{
-                description: "Procesos",
-                title: "Procesos",
+                description: MSG.PROCESSES,
+                title: MSG.PROCESSES,
                 action: () => this.rootPanel(new JSF.AonJsfProcess)
             }, {
                 description: "Tipos de Transiciones",
@@ -79,10 +79,10 @@ export class AonGroupwareMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfProcessWizard)
             }]
         }, {
-            title: 'Tareas',
+            title: MSG.TASKS,
             options: [{
-                description: "Bandeja de tareas",
-                title: "Bandeja de tareas",
+                description: MSG.TASK_TRAY,
+                title: MSG.TASK_TRAY,
                 action: () => this.rootPanel(new JSF.AonJsfTask)
             }, {
                 description: "Diagrama de Gantt",
@@ -90,7 +90,7 @@ export class AonGroupwareMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfGantt)
             }]
         }, {
-            title: 'Campañas (Procesos Masivos)',
+            title: MSG.CAMPAIGNS,
             options: [{
                 description: "Monitor de campañas",
                 title: "Monitor de campañas",
@@ -101,14 +101,14 @@ export class AonGroupwareMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfCampaignType)
             }]
         }, {
-            title: 'Partes de Trabajo',
+            title: MSG.WORK_ORDERS,
             options: [{
-                description: "Partes de Trabajo",
-                title: "Partes de Trabajo",
+                description: MSG.WORK_ORDERS,
+                title: MSG.WORK_ORDERS,
                 action: () => this.rootPanel(new JSF.AonJsfDailyTracking)
             }, {
-                description: "Informes",
-                title: "Informes",
+                description: MSG.REPORTS,
+                title: MSG.REPORTS,
                 action: () => this.rootPanel(new JSF.AonJsfDailyTrackingReport)
             }, {
                 description: "Tipos de Trabajos",
@@ -116,10 +116,10 @@ export class AonGroupwareMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfJobType)
             }]
         }, {
-            title: 'Operarios',
+            title: MSG.OPERATORS,
             options: [{
-                description: "Operarios",
-                title: "Operarios",
+                description: MSG.OPERATORS,
+                title: MSG.OPERATORS,
                 action: () => this.rootPanel(new JSF.AonJsfTaskHolder)
             }, {
                 description: "Grupos de usuarios",

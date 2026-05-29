@@ -27,8 +27,8 @@ export class AonGarageMenu extends AonSuiteMenu {
 		this.AON_HEADER = 'aonHeader';
 		this.ROOT_PANEL = 'rootPanel';
 		this.RIGHT_PANEL = 'rightPanel';
-		this.last = "Últimos apuntes";
-		this.new = "Nuevo Apunte"
+		this.last = MSG.LAST_ENTRIES;
+		this.new = MSG.NEW_ENTRY;
         this.uploadButton = true
 		this.selectOptions= [{
             title: "Cuenta contable",
@@ -37,7 +37,7 @@ export class AonGarageMenu extends AonSuiteMenu {
             title: "Ficha de amortización",
             action: () => alert("description")
         },{
-            title: "Apunte", 
+            title: MSG.ENTRY,
             action: () => alert("description")
         }];
 		this.initOptions();
@@ -46,7 +46,7 @@ export class AonGarageMenu extends AonSuiteMenu {
 
     initOptions() {
         this.options = [{
-            title: 'Órdenes de reparación',
+            title: MSG.REPAIR_ORDERS,
             options: [{
                 description: "Órdenes de Reparación",
                 title: "Órdenes de Reparación",
@@ -62,7 +62,7 @@ export class AonGarageMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfTaskHolder())
             }]
         }, {
-            title: 'Presupuestos',
+            title: MSG.BUDGETS,
             options: [{
                 description: MSG.OFFERS,
                 title: MSG.OFFERS,
@@ -81,22 +81,22 @@ export class AonGarageMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfCommercialTerm())
             }]
         }, {
-            title: 'General',
+            title: MSG.GENERAL_DATA,
             options: [{
-                description: "Marcas",
-                title: "Marcas",
+                description: MSG.MAKES,
+                title: MSG.MAKES,
                 action: () => this.rootPanel(new JSF.AonJsfMake())
             }, {
-                description: "Modelos",
-                title: "Modelos",
+                description: MSG.MODEL,
+                title: MSG.MODEL,
                 action: () => this.rootPanel(new JSF.AonJsfModel())
             }, {
-                description: "Vehículos",
-                title: "Vehículos",
+                description: MSG.VEHICLES,
+                title: MSG.VEHICLES,
                 action: () => this.rootPanel(new JSF.AonJsfTasItem())
             }]
         }, {
-            title: 'Informes',
+            title: MSG.REPORTS,
             options: [{
                 description: "Vehículos y Titulares",
                 title: "Vehículos y Titulares",

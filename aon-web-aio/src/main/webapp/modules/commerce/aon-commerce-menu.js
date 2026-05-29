@@ -27,8 +27,8 @@ export class AonCommerceMenu extends AonSuiteMenu {
 		this.AON_HEADER = 'aonHeader';
 		this.ROOT_PANEL = 'rootPanel';
 		this.RIGHT_PANEL = 'rightPanel';
-		this.last = "Últimos apuntes";
-		this.new = "Nuevo Apunte"
+		this.last = MSG.LAST_ENTRIES;
+		this.new = MSG.NEW_ENTRY;
         this.uploadButton = true
 		this.selectOptions= [{
             title: "Cuenta contable",
@@ -37,7 +37,7 @@ export class AonCommerceMenu extends AonSuiteMenu {
             title: "Ficha de amortización",
             action: () => alert("description")
         },{
-            title: "Apunte", 
+            title: MSG.ENTRY,
             action: () => alert("description")
         }];
 		
@@ -69,7 +69,7 @@ export class AonCommerceMenu extends AonSuiteMenu {
 				action: () => this.rootPanel(new JSF.AonJsfProduct )
 			}]
 		},{
-			title: 'Auxiliares',
+			title: MSG.AUXILIARIES,
 			options: [{
 				description: "Etiquetas de Productos",
 				title: "Etiquetas de Productos",

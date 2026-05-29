@@ -1,4 +1,5 @@
 import { AonElement } from "../../../../components/AonElement.js";
+import { MSG } from '../../../../environments/environments.js';
 
 export class AonCalendarMenu extends AonElement {
 
@@ -47,7 +48,7 @@ export class AonCalendarMenu extends AonElement {
               <line x1="16" y1="13" x2="8" y2="13"></line>
               <line x1="16" y1="17" x2="8" y2="17"></line>
             </svg>
-            <span>Solicitud</span>
+            <span>${MSG.REQUEST}</span>
             <!-- Flecha que rota cuando el acordeón se abre -->
             <svg class="incidencia-arrow" width="16" height="16" viewBox="0 0 24 24"
                  fill="none" stroke="currentColor" stroke-width="2"
@@ -68,7 +69,7 @@ export class AonCalendarMenu extends AonElement {
               <line x1="16" y1="13" x2="8" y2="13"></line>
               <line x1="16" y1="17" x2="8" y2="17"></line>
             </svg>
-              <span>Modificación Fichaje</span>
+              <span>${MSG.SIGNING_MODIFICATION}</span>
             </button>
             <button class="calendar-menu-option incidencia-child" data-action="vacaciones">
               <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24"
@@ -79,7 +80,7 @@ export class AonCalendarMenu extends AonElement {
               <line x1="16" y1="13" x2="8" y2="13"></line>
               <line x1="16" y1="17" x2="8" y2="17"></line>
             </svg>
-              <span>Solicitud Vacaciones</span>
+              <span>${MSG.VACATION_REQUEST}</span>
             </button>
           </div>
 
@@ -95,7 +96,7 @@ export class AonCalendarMenu extends AonElement {
               <rect x="7"  y="12" width="3" height="3"></rect>
               <rect x="14" y="12" width="3" height="3"></rect>
             </svg>
-            <span>Resumen Anual</span>
+            <span>${MSG.ANNUAL_SUMMARY}</span>
           </button>
 
           <!-- Agenda -->
@@ -108,7 +109,7 @@ export class AonCalendarMenu extends AonElement {
               <line x1="8"  y1="2" x2="8"  y2="6"></line>
               <line x1="3"  y1="10" x2="21" y2="10"></line>
             </svg>
-            <span>Agenda</span>
+            <span>${MSG.AGENDA}</span>
           </button>
 
           <!-- Hoy: solo visible cuando estamos en la agenda -->
@@ -119,7 +120,7 @@ export class AonCalendarMenu extends AonElement {
               <circle cx="12" cy="12" r="10"></circle>
               <polyline points="12 6 12 12 16 14"></polyline>
             </svg>
-            <span>Hoy</span>
+            <span>${MSG.TODAY}</span>
           </button>
 
           <!-- Mes Actual: solo visible cuando estamos en el resumen anual -->
@@ -133,7 +134,7 @@ export class AonCalendarMenu extends AonElement {
               <line x1="3"  y1="10" x2="21" y2="10"></line>
               <circle cx="12" cy="15" r="2" fill="currentColor"></circle>
             </svg>
-            <span>Mes Actual</span>
+            <span>${MSG.CURRENT_MONTH}</span>
           </button>
 
         </div>

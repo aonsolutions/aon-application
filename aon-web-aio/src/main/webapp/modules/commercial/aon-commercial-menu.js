@@ -1,4 +1,4 @@
-import { TAG } from '../../environments/environments.js'; 
+import { MSG, TAG } from '../../environments/environments.js';
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from '../../gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
@@ -26,24 +26,24 @@ export class AonCommercialMenu extends AonSuiteMenu {
         this.AON_HEADER = 'aonHeader';
         this.ROOT_PANEL = 'rootPanel';
         this.RIGHT_PANEL = 'rightPanel';
-        this.last = "Últimos potenciales";
-        this.new = "Nuevo Presupuesto";
+        this.last = MSG.LAST_POTENTIALS;
+        this.new = MSG.NEW_BUDGET;
         this.cardData={
-            title: "Actividad",
-            info:["Presupuestos ptes.", "Operaciones abiertas", "Citas expiradas"]
+            title: MSG.ACTIVITY,
+            info:[MSG.BUDGETS_PENDING, MSG.OPEN_OPERATIONS, MSG.EXPIRED_APPOINTMENTS]
         };
         this.selectOptions= [{
-            title: "Cliente potencial",
+            title: MSG.TARGET,
             action: () => this.rootPanel(new JSF.AonJsfTarget())
         },{
             title: "Operación comercial",
             action: () => this.rootPanel(new JSF.AonJsfProjectCommercial())
         },{
-            title: "Presupuesto", 
+            title: MSG.BUDGET,
             action: () => this.rootPanel(new JSF.AonJsfOffer())
         }];
         this.options = [{
-            title: 'Actividad Comercial',
+            title: MSG.COMMERCIAL_ACTIVITY,
             options: [ {
                 description: "Operación Comercial",
                 title: "Operación Comercial",
@@ -58,7 +58,7 @@ export class AonCommercialMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfCommercialActivity())
             }]
         },{
-            title: 'Presupuestos',
+            title: MSG.BUDGETS,
             options: [{
                 description: "Presupuesto de Ventas",
                 title: "Presupuesto de Ventas",
@@ -73,7 +73,7 @@ export class AonCommercialMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfCommercialTerm())
             }]
         },{
-            title: 'Maestros',
+            title: MSG.MASTERS,
             options: [{
                 description: "Agentes Comerciales",
                 title: "Agentes Comerciales",
@@ -89,7 +89,7 @@ export class AonCommercialMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfTargetDeduplication())
             }]
         },{
-            title: 'Cuadro de Mando',
+            title: MSG.DASHBOARD,
             options: [{
                 description: "CM de Agentes Comerciales",
                 title: "CM de Agentes Comerciales",
@@ -108,7 +108,7 @@ export class AonCommercialMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfCommercialStatCategory())
             }]
         },{
-            title: 'Informes',
+            title: MSG.REPORTS,
             options: [{
                 description: "Presupuestos por Categoria y Producto",
                 title: "Presupuestos por Categoria y Producto",
@@ -131,7 +131,7 @@ export class AonCommercialMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfCommercialProductStat())
             }]
         },{
-            title: 'Comisiones',
+            title: MSG.COMMISSIONS,
             options: [{
                 description: "Comisiones",
                 title: "Comisiones",

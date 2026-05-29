@@ -1299,11 +1299,11 @@ export class AonNewMenu extends AonElement {
 
 			let otherOptions = [
 				{
-					name: 'Nuevo ingreso',
+					name: MSG.NEW_INCOME_ENTRY,
 					icon: 'add_card',
 					fn: () => this.newIncome()
 				}, {
-					name: "Nuevo gasto",
+					name: MSG.NEW_EXPENSE_ENTRY,
 					icon: MATERIAL_ICONS.ACCOUNT_BALANCE_WALLET,
 					fn: () => this.newExpense()
 				}
@@ -1319,7 +1319,7 @@ export class AonNewMenu extends AonElement {
 			newMenuOptions.push({
 				fn: () => { },
 				icon: MATERIAL_ICONS.ACCOUNT_BALANCE_WALLET,
-				name: 'Otros gastos/ingresos',
+				name: MSG.OTHER_INCOME_EXPENSES,
 				options: otherOptions
 			});
 		}
@@ -1335,7 +1335,7 @@ export class AonNewMenu extends AonElement {
 					input.click();
 				},
 				icon: MATERIAL_ICONS.CLOUD_UPLOAD,
-				name: LS.isFutureTheme() ? 'Subir a mi nube' : MSG.UPLOAD_DOCUMENT,
+				name: LS.isFutureTheme() ? MSG.UPLOAD_TO_CLOUD : MSG.UPLOAD_DOCUMENT,
 			});
 		}
 		if (this.getDur().isMessenger()) {
