@@ -755,24 +755,36 @@ public class SecurityDAO {
 	public static Stream<Scope> getScopeStream(AONContext ctx, ScopeFilter filter){
 		return ctx.getDslContext().select().from(SCOPE)
 				.where(SCOPE_PROPERTIES.getConditions(filter))
-//				.and(SCOPE.DOMAIN.in(getInheritanceDomainIds(ctx)))
 				.fetch().stream().map(new ScopeFiller());
 	}
 	
 	public static Stream<Scope> getUserScopeStream(AONContext ctx,  Integer userId, ScopeFilter filter){
-		if(filter != null)
-			return ctx.getDslContext().select().from(SCOPE)
-				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(SCOPE.ID))
-				.where(SCOPE_PROPERTIES.getConditions(filter))
-				.and(USER_SCOPE.USER_ID.eq(userId))
-				.and(SCOPE.DOMAIN.in(getInheritanceDomainIds(ctx)))
-				.fetch().stream().map(new ScopeFiller());
+		User user = getUser(ctx, userId);
+		if(user == null) {
+			throw new IllegalAccessError("Usuario no encontrado.");
+		}
+		if(user.getDomain().getId() == ctx.getDomainId()) {
+			// Es un usuario del dominio, por lo que hay que consultar los scopes del dominio
+			if(filter != null)
+				return ctx.getDslContext().select().from(SCOPE)
+					.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(SCOPE.ID))
+					.where(SCOPE_PROPERTIES.getConditions(filter))
+					.and(USER_SCOPE.USER_ID.eq(userId))
+					.and(SCOPE.DOMAIN.eq(ctx.getDomainId()))
+					.fetch().stream().map(new ScopeFiller());
 
-		return ctx.getDslContext().select().from(SCOPE)
-				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(SCOPE.ID))
-				.where(USER_SCOPE.USER_ID.eq(userId))
-				.and(SCOPE.DOMAIN.in(getInheritanceDomainIds(ctx)))
-				.fetch().stream().map(new ScopeFiller());
+			return ctx.getDslContext().select().from(SCOPE)
+					.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(SCOPE.ID))
+					.where(USER_SCOPE.USER_ID.eq(userId))
+					.and(SCOPE.DOMAIN.eq(ctx.getDomainId()))
+					.fetch().stream().map(new ScopeFiller());
+		} else {
+			Domain domain = DomainDAO.getDomain(ctx, ctx.getDomainId());
+			if(user.getDomain().getId() == domain.getParentId()) {
+				return getScopeStream(ctx, filter);
+			}
+		}
+		return Stream.empty();		
 	}
 	
 	/**
