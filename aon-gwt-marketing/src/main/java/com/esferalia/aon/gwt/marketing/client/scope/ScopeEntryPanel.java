@@ -296,27 +296,29 @@ public abstract class ScopeEntryPanel extends AonCustomDockLayout {
 		userScopeCard.add(userScopeTable);
 		gridPanel.add( userScopeCard );
 		
-		AonToolbarButton newEntepriseButton = new AonToolbarButton( "Nueva Empresa", AON.CSS.aonIconAdd());
-		newEntepriseButton.addClickHandler(e -> showDomainScopeDialog());
-		
-		AonCustomCard domainScopeCard = new AonCustomCard("Empresas (Dominios)", newEntepriseButton);
-		
-		domainScopeTable = new DomainScopeTable(options.getDomainName(), options.getDomain(), options.getUser(), this.scope) {
-
-			@Override
-			protected void onDelete() {
-				setScope(scope, position);
-			}
-
-			@Override
-			protected void onDomainScopeAdd() {
-				setScope(scope, position);
-			}
+		if(this.options.getConfiguration().getDomain().isConsultancy()) {
+			AonToolbarButton newEntepriseButton = new AonToolbarButton( "Nueva Empresa", AON.CSS.aonIconAdd());
+			newEntepriseButton.addClickHandler(e -> showDomainScopeDialog());
 			
-		};
-		
-		domainScopeCard.add(domainScopeTable);
-		gridPanel.add( domainScopeCard );
+			AonCustomCard domainScopeCard = new AonCustomCard("Empresas (Dominios)", newEntepriseButton);
+			
+			domainScopeTable = new DomainScopeTable(options.getDomainName(), options.getDomain(), options.getUser(), this.scope) {
+
+				@Override
+				protected void onDelete() {
+					setScope(scope, position);
+				}
+
+				@Override
+				protected void onDomainScopeAdd() {
+					setScope(scope, position);
+				}
+				
+			};
+			
+			domainScopeCard.add(domainScopeTable);
+			gridPanel.add( domainScopeCard );
+		}
 		
 		gridContainer.add(gridPanel);
 		

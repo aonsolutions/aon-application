@@ -1750,4 +1750,10 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.getAmortizationTypes(occam, domain, new AsyncCallbackWrapper<>(callback));
 	}
+
+	@Override
+	public void reassignScope(String domainName, Integer domainId, String user, int originScope, int finalScope, boolean deleteOrigin, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.reassignScope(domainName, domainId, user, originScope, finalScope, deleteOrigin, new AsyncCallbackWrapper<>(callback));
+	}
 }

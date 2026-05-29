@@ -37,7 +37,10 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.jooq.Record;
 import org.jooq.Result;
+import org.jooq.Table;
+import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.Raddress;
 import com.esferalia.aon.jooq.tables.records.RattachRecord;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
@@ -214,13 +217,47 @@ public class SettleSalariesDAO {
 		
 		// Check if has vencimientos
 		
-		Result<Record> fbatchDetails = ctx.getDslContext().select().from(FBATCH_DETAIL)
-			.join(FINANCE).on(FINANCE.ID.eq(FBATCH_DETAIL.FINANCE))
-			.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.eq(FINANCE.REGISTRY).and(RADDRESS.TYPE.eq((byte)1)))
-			.leftOuterJoin(GEOZONE).on(GEOZONE.ID.eq(RADDRESS.GEOZONE))
-			.where(FBATCH_DETAIL.FBATCH.eq(fbatchId))
-//			.groupBy(FBATCH_DETAIL.ID, RADDRESS.REGISTRY)
-			.fetch();
+//		Result<Record> fbatchDetails = ctx.getDslContext().select().from(FBATCH_DETAIL)
+//			.join(FINANCE).on(FINANCE.ID.eq(FBATCH_DETAIL.FINANCE))
+//			.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.eq(FINANCE.REGISTRY).and(RADDRESS.TYPE.eq((byte)0)))
+//			.leftOuterJoin(GEOZONE).on(GEOZONE.ID.eq(RADDRESS.GEOZONE))
+//			.where(FBATCH_DETAIL.FBATCH.eq(fbatchId))
+//			.fetch();
+		 
+		Raddress address = RADDRESS.as("r");
+		Raddress address2 = RADDRESS.as("r2");
+
+		// Subconsulta: para cada registry, el "primer" address (por ID)
+		Table<?> addrMin = ctx.getDslContext()
+		    .select(
+		    		address.REGISTRY.as("registry"),
+		        DSL.min(address.ID).as("min_id")
+		    )
+		    .from(address)
+		    .where(address.TYPE.eq((byte) 0))
+		    .groupBy(address.REGISTRY)
+		    .asTable("addr_min");
+
+		Result<Record> fbatchDetails =
+		    ctx.getDslContext()
+		        .select()
+		        .from(FBATCH_DETAIL)
+		        .join(FINANCE).on(FINANCE.ID.eq(FBATCH_DETAIL.FINANCE))
+		        // Une FINANCE con la subconsulta por registry
+		        .leftJoin(addrMin).on(
+		            addrMin.field("registry", address.REGISTRY.getType())
+		                   .eq(FINANCE.REGISTRY)
+		        )
+		        // Une con RADDRESS usando el ID mínimo
+		        .leftJoin(address2).on(
+		        		address2.REGISTRY.eq(addrMin.field("registry", address.REGISTRY.getType()))
+		                .and(address2.ID.eq(addrMin.field("min_id", address.ID.getType())))
+		        )
+		        .leftJoin(GEOZONE).on(GEOZONE.ID.eq(address2.GEOZONE))
+		        .where(FBATCH_DETAIL.FBATCH.eq(fbatchId))
+		        .fetch();
+
+
 		
 		if(null == fbatchDetails || fbatchDetails.isEmpty()) throw new AonCoreException("No existen vencimientos en la remesa sobre los que generar el fichero Sepa");
 		
