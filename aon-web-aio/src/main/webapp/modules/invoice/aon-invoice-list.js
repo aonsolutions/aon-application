@@ -434,7 +434,7 @@ export class AonInvoiceList extends AonElement {
 		let dialog = this.getApplication().getDialog();
 		dialog.clear();
 		if(!this.isMobile()) dialog.width = '400px';
-		dialog.setTitle("Comunicar facturas seleccionadas");
+		dialog.setTitle(MSG.COMMUNICATE_SELECTED_INVOICES);
 
 		let certSelect = createSelect("cert", MSG.CERTIFICATE);
 		certSelect.setAlias("id", "name");	
@@ -451,7 +451,7 @@ export class AonInvoiceList extends AonElement {
 		let dialog = this.getApplication().getDialog();
 		dialog.clear();
 		if(!this.isMobile()) dialog.width = '400px';
-		dialog.setTitle("Comunicando facturas seleccionadas");
+		dialog.setTitle(MSG.COMMUNICATING_SELECTED_INVOICES);
 		dialog.setContent(div);
 		dialog.open();
 

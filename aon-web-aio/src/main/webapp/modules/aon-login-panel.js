@@ -244,7 +244,7 @@ export class AonLoginPanel extends AonElement {
 		} else {
 			dialog.width = '400px';
 		}
-		dialog.setTitle("Cambiar Contraseña");
+		dialog.setTitle(MSG.CHANGE_PASSWORD);
 
 		let div = document.createElement("div");
 

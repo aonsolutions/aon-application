@@ -638,7 +638,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 	printDetailDialog(detail, i) {
 		let dialog = this.getApplication().getDialog();
-		dialog.setTitle("DETALLE");
+		dialog.setTitle(MSG.DETAIL);
 		dialog.addAcceptAction(() => {
 			
 		});
@@ -882,7 +882,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 	printFinanceDialog(finance, i) {
 		let dialog = this.getApplication().getDialog();
-		dialog.setTitle("VENCIMIENTO");
+		dialog.setTitle(MSG.EXPIRATION);
 		dialog.addAcceptAction(() => {
 			
 		});

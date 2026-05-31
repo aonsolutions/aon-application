@@ -105,7 +105,7 @@ export class AonMobileInventory extends AonElement {
     let d = this.getDialog();
     d.clear();
     if(!this.isMobile()) d.width = '400px';
-    d.setTitle("Añadir al Inventario");
+    d.setTitle(MSG.ADD_TO_INVENTORY);
     d.setContent(div);
     d.addAcceptAction(() => {
         d.remove();

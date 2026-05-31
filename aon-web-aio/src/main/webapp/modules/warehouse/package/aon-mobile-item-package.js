@@ -367,7 +367,7 @@ export class AonMobileItemPackage extends AonElement {
 		let d = document.getElementById(aonWarehouse.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle("Ajustar Cantidad");
+		d.setTitle(MSG.ADJUST_QUANTITY);
 		d.setContent(quantityBox);
 		d.addAcceptAction(() => {
 			composition.quantity = quantityBox.getQuantity();
@@ -414,7 +414,7 @@ export class AonMobileItemPackage extends AonElement {
 		let d = document.getElementById(aonWarehouse.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle("Añadir Contenido");
+		d.setTitle(MSG.ADD_CONTENT);
 		d.setContent(div);
 		d.addAcceptAction(() => {	
 			let item = itemSelect.getValueObject();

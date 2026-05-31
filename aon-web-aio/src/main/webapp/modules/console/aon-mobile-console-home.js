@@ -1,5 +1,5 @@
 import { AonElement } from '../../components/AonElement.js';
-import { CONSTANT, CSS, EVENT, TAG } from "../../environments/environments";
+import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../environments/environments";
 import * as LS from '../../services/localStorageService.js';
 
 export class AonMobileConsoleHome extends AonElement {
@@ -39,7 +39,7 @@ export class AonMobileConsoleHome extends AonElement {
             let d = this.getApplication().getDialog();
             d.clear();
             if(!this.isMobile()) d.width = '400px';
-            d.setTitle("Instalar Nueva Versión");
+            d.setTitle(MSG.INSTALL_NEW_VERSION);
             d.setContentHTML(`Estás seguro de instalar una nueva versión.`);
             d.addAcceptAction(() => {
                 alert("En desarrollo");
@@ -51,7 +51,7 @@ export class AonMobileConsoleHome extends AonElement {
             let d = this.getApplication().getDialog();
             d.clear();
             if(!this.isMobile()) d.width = '400px';
-            d.setTitle("Instalar Nueva Versión");
+            d.setTitle(MSG.INSTALL_NEW_VERSION);
             d.setContentHTML(`Estás seguro de restaurar a la versión anterior.`);
             d.addAcceptAction(() => {
                 alert("En desarrollo");

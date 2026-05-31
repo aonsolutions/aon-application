@@ -290,7 +290,7 @@ export class AonInvoiceCommunication extends AonElement {
         let dialog = this.getApplication().getDialog();
         dialog.clear();
         if(!this.isMobile()) dialog.width = '400px';
-        dialog.setTitle("Comunicar factura");
+        dialog.setTitle(MSG.COMMUNICATE_INVOICE);
     
         let certSelect = createSelect("cert", MSG.CERTIFICATE);
         certSelect.setAlias("id", "name");	
@@ -307,7 +307,7 @@ export class AonInvoiceCommunication extends AonElement {
         let dialog = this.getApplication().getDialog();
         dialog.clear();
         if(!this.isMobile()) dialog.width = '400px';
-        dialog.setTitle("Comunicando factura");
+        dialog.setTitle(MSG.COMMUNICATING_INVOICE);
         dialog.setContent(div);
         dialog.open();
    

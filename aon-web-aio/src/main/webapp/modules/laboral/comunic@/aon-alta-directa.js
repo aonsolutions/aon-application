@@ -736,7 +736,7 @@ export class AonAltaDirecta extends AonElement {
             dialog.width = '40%';
         }
   
-        dialog.setTitle("Datos de Baja");
+        dialog.setTitle(MSG.DISCHARGE_DATA);
     
         dialog.setContent(createBajaDialogContent());
         dialog.open();

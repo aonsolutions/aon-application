@@ -1,4 +1,4 @@
-import { TAG } from "../../environments/environments.js";
+import { MSG, TAG } from "../../environments/environments.js";
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 
 
@@ -12,7 +12,7 @@ export class AonCertification extends AonSuiteMenu {
         this.buildDur().then(() => {
 			this.certificationInitialize()
             this.build();
-            this.setTitle("Certificaciones");
+            this.setTitle(MSG.CERTIFICATIONS);
         })
     }
 	

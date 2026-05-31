@@ -107,8 +107,8 @@ export const CHANGE_TYPE = {
 
 export const SIGN_INVOICE = {
     id: 'SignInvoice',
-    name: 'Firmar Factura' ,
-    title: 'Firmar Factura' ,
+    name: MSG.SIGN_INVOICE,
+    title: MSG.SIGN_INVOICE,
     icon: 'draw'
 };
 
@@ -197,8 +197,8 @@ export const DOWNLOAD_FILE = {
 
 export const ACCOUNT_BALANCE = {
     id: CONSTANT.BANK.initCap(),
-    name: "Domiciliación",
-    title: "Domiciliación",
+    name: MSG.DOMICILIATION,
+    title: MSG.DOMICILIATION,
     icon: MATERIAL_ICONS.ACCOUNT_BALANCE
   }
 
@@ -451,8 +451,8 @@ export const UPLOAD_FILE = {
 
 export const SUBTRACT = {
     id: 'Subtract',
-    name: 'Restar',
-    title: 'Restar',
+    name: MSG.SUBTRACT,
+    title: MSG.SUBTRACT,
     icon: MATERIAL_ICONS.REMOVE
 }
 
@@ -465,8 +465,8 @@ export const BIDOQ_IMPORT = {
 
 export const ADD_INMOBILIZED = {
     id: "AddInmobilized",
-    name: "Añadir Inmovilizado",
-    title: "Añadir Inmovilizado",
+    name: MSG.ADD_INVEST_ASSET,
+    title: MSG.ADD_INVEST_ASSET,
     icon: "book_6",
 };
 

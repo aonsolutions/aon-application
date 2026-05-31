@@ -874,7 +874,7 @@ const openDialogBranch = (task)=> {
   }
 
   dialog.clear();
-  dialog.setTitle("Crear rama");
+  dialog.setTitle(MSG.CREATE_BRANCH);
 
   const div = document.createElement(TAG.DIV);
   dialog.setContent(div);
