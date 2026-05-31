@@ -240,11 +240,15 @@ export class AonConfigurationNew extends AonElement {
 				name: MSG.PROFILES,
 				icon: MATERIAL_ICONS.GROUPS,
 				fn: () => this.getApplication().setContent(new JSF.AonJsfProfile()),
-			},{
+			},
+			/*
+			{
 				name: MSG.SCOPES,
 				icon: MATERIAL_ICONS.BUSINESS,
 				fn: () => this.getApplication().setContent(new JSF.AonJsfScope()),
-			});
+			}
+			*/
+			);
 		}
 
 		aonConfiguration.addSidenavOptions(MSG.CLASSIC_VIEW.toUpperCase(), classicViewOptions);

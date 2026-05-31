@@ -571,4 +571,6 @@ public interface CommonService extends RemoteService {
 	
 	// *********************** [AMORTIZATION TYPE]
 	List<AmortizationType> getAmortizationTypes(Occam occam, int domain) throws AonCoreException;
+	
+	void reassignScope(String domainName, Integer domainId, String user, int originScope, int finalScope, boolean deleteOrigin) throws AonCoreException;
 }

@@ -569,4 +569,6 @@ public interface CommonServiceAsync {
 	// *********************** [AMORTIZATION TYPE]
 	void getAmortizationTypes(Occam occam, int domain, AsyncCallback<List<AmortizationType>> asyncCallback);
 	
+	void reassignScope(String domainName, Integer domainId, String user, int originScope, int finalScope, boolean deleteOrigin, AsyncCallback<Void> asyncCallback);
+	
 }

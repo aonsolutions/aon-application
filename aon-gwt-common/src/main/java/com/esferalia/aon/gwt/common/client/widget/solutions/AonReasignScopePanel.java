@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
@@ -15,10 +17,10 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AonScopePanel extends AonCustomDialog {
+public class AonReasignScopePanel extends AonCustomDialog {
 	
-	public static interface AonScopePanelCallback {
-		void onAccept(Scope scope);
+	public static interface AonReasignScopePanelCallback {
+		void onAccept();
 		void onCancel();
 	}
 
@@ -35,17 +37,23 @@ public class AonScopePanel extends AonCustomDialog {
 	private HTMLPanel content = new HTMLPanel("");
 	private HTMLPanel messagePanel = new HTMLPanel("");
 	
-	private AonCustomTextBox descriptionTextBox = new AonCustomTextBox("Descripci\u00f3n");
+	private AonCustomListBox originScope = new AonCustomListBox("Sustituir \u00c1mbito");
+	private AonCustomListBox finalScope = new AonCustomListBox("Por \u00c1mbito");
+	private AonCustomToogleButton deleteOriginScope = new AonCustomToogleButton("Borrar \u00c1mbito sustituido");
+	
+	private LinkedList<Scope> scopeList;
 	
 	private String domainName;
 	private Integer domainId;
 	private String user;
 	
-	public AonScopePanel(String domainName, int domain, String user, AonScopePanelCallback callback) {
+	public AonReasignScopePanel(String domainName, int domain, String user, LinkedList<Scope> scopeList, AonReasignScopePanelCallback callback) {
 		initializeCommonService();
 		this.domainName = domainName;
 		this.domainId = domain;
 		this.user = user;
+		
+		this.scopeList = scopeList;
 		
 		this.getElement().getStyle().setProperty("min-width", "35rem");
 		
@@ -55,7 +63,7 @@ public class AonScopePanel extends AonCustomDialog {
 		
 	}
 	
-	public void show(Scope scope, AonScopePanelCallback callback) {
+	public void show(Scope scope, AonReasignScopePanelCallback callback) {
 		content.setStyleName(AON.CSS.aonFlexColumn2());
 		content.getElement().getStyle().setProperty("padding", "1rem 0");
 		
@@ -65,7 +73,15 @@ public class AonScopePanel extends AonCustomDialog {
 		
 		content.add(messagePanel);
 		
-		container.add(createRowPanel(descriptionTextBox, null));
+		originScope.clearItems();
+		originScope.addItem("-", "");
+		this.scopeList.forEach(s -> originScope.addItem(s.getDescription(), s.getId().toString()));
+		
+		finalScope.clearItems();
+		finalScope.addItem("-", "");
+		this.scopeList.forEach(s -> finalScope.addItem(s.getDescription(), s.getId().toString()));
+		
+		container.add(createRowPanel(originScope, finalScope, deleteOriginScope));
 		
 		content.add(container);
 		
@@ -78,20 +94,16 @@ public class AonScopePanel extends AonCustomDialog {
     	okButton.addClickHandler(e -> {
     		okButton.setEnabled(false);
     		
-    		if(AonStringUtils.isBlank(descriptionTextBox.getValue())) {
-    			okButton.setEnabled(true);
-    			AonMessagePanel.showWarning(messagePanel, "El campo descripci\u00f3n es obligatorio");
+    		if(AonStringUtils.isBlank(originScope.getValue()) || AonStringUtils.isBlank(finalScope.getValue())) {
+    			AonMessagePanel.showError(messagePanel, "Se debe seleccionar el origen y el destino del \u00c1mbito");
+				okButton.setEnabled(true);
     		} else {
-    			
-    			scope.setDomain(domainId);
-    			scope.setDescription(descriptionTextBox.getValue());
-    			
-    			commonService.saveScope(domainName, domainId, user, scope, new AsyncCallback<Scope>() {
+        		commonService.reassignScope(domainName, domainId, user, Integer.parseInt(originScope.getValue()), Integer.parseInt(finalScope.getValue()), deleteOriginScope.getValue(), new AsyncCallback<Void>() {
 
     				@Override
-    				public void onSuccess(Scope scopeDB) {
+    				public void onSuccess(Void end) {
     					hide();
-    					callback.onAccept(scopeDB);
+    					callback.onAccept();
     				}
     				@Override
     				public void onFailure(Throwable caught) {
@@ -99,7 +111,6 @@ public class AonScopePanel extends AonCustomDialog {
     					okButton.setEnabled(true);
     				}
     			});
-    			
     		}
     		
     	});
@@ -130,13 +141,12 @@ public class AonScopePanel extends AonCustomDialog {
 		
 	}
 	
-	private HTMLPanel createRowPanel(Widget w1, Widget w2) {
+	private HTMLPanel createRowPanel(Widget ...ws) {
 		HTMLPanel row = new HTMLPanel("");
 		row.addStyleName(AON.CSS.aonItemFlex());
 		
-		row.add(w1);
-		
-		if(null != w2) row.add(w2);
+		for(int i=0; i < ws.length; i++)
+			row.add(ws[i]);
 		
 		return row;
 	}
