@@ -421,8 +421,8 @@ public class UserServlet extends AonApiHttpServlet {
 				user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
 					f.getDomainProperty().eq(api.getDomain().getParentId())
 					.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
-			
 		}
+		
 		JSONObject json = new JSONObject();
 		json.put("id", user.getId());
 		json.put("name", user.getName());
@@ -433,7 +433,7 @@ public class UserServlet extends AonApiHttpServlet {
 		json.put("registry", RegistryJSON.toJSON(user.getRegistry()));
 		
 		JSONArray scopes = new JSONArray();
-		AON.getUserScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), userId, null)
+		AON.getUserScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), user.getId(), null)
 		.forEach(us ->{
 			JSONObject scope = new JSONObject();
 			scope.put("id", us.getId());
