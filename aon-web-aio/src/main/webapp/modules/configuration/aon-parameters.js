@@ -236,19 +236,16 @@ export class AonParameters extends AonElement {
 			aonConfiguration.addSidenavOptions("UTILIDADES", utilitiesOptions);
 		}
 		
-		let empresa = this.getElement("aonSidenavTitleEMPRESA");
-		empresa && empresa.click();
-		
-		let tPricipal = this.getElement("aonSidenavTitleT. PRINCIPALES");
+		let tPricipal = this.getElement("aonSidenavTitleTPrincipales");
 		tPricipal && tPricipal.click();
 		
-		let tAuxiliar = this.getElement("aonSidenavTitleT. AUXILIARES");
+		let tAuxiliar = this.getElement("aonSidenavTitleTAuxiliares");
 		tAuxiliar && tAuxiliar.click();
 		
-		let productos = this.getElement("aonSidenavTitlePRODUCTOS");
+		let productos = this.getElement("aonSidenavTitleProductos");
 		productos && productos.click();
 		
-		let utilities = this.getElement("aonSidenavTitleUTILIDADES");
+		let utilities = this.getElement("aonSidenavTitleUtilidades");
 		utilities && utilities.click();
 
 		if (localStorage.getItem("aon_domain_id")) {

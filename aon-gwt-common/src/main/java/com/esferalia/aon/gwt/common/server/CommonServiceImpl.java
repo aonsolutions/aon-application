@@ -2206,14 +2206,23 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
-	public List<Account> getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource source) throws AonCoreException {
-		return AON.getAccountsForRegistry(domainName, domain, user, source);
+	public List<Account> getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource source, String pattern) throws AonCoreException {
+		return AON.getAccountsForRegistry(domainName, domain, user, source, pattern);
 	}
 	
 	// *********************** [AMORTIZATION TYPE]
 	@Override
 	public List<AmortizationType> getAmortizationTypes(Occam occam, int domain) {
 		return ACCOUNTING.getAmortizationTypeList(occam, domain);
+	}
+	
+	@Override
+	public void reassignScope(String domainName, Integer domainId, String user, int originScope, int finalScope, boolean deleteOrigin) throws AonCoreException {
+		if(deleteOrigin) {
+			AON.reassignAndDeleteScope(new Occam().setDomainName(domainName).setDomain(domainId).setUser(user), domainId, originScope, finalScope);
+		} else {
+			AON.reassignScope(new Occam().setDomainName(domainName).setDomain(domainId).setUser(user), domainId, originScope, finalScope);
+		}
 	}
 	
 }

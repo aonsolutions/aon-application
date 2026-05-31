@@ -72,6 +72,11 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public Domain getDomainLinked(String domainName, int domain, String user, Integer customerId) throws AonCoreException {
 		return AON.getDomainLinked(domainName, domain,user, customerId);
 	}
+	
+	@Override
+	public void deleteCustomerFull(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		AON.deleteCustomerFull(domainName, domain,user, id);
+	}
 
 	// **************************************************
 	// *************************************** [CREDITOR]
@@ -88,6 +93,11 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	@Override
 	public CreditorFull save(String domainName, int domain, String user, CreditorFull creditorFull) throws AonCoreException {
 		return AON.save(domainName, domain,user, creditorFull);
+	}
+	
+	@Override
+	public void deleteCreditorFull(String domainName, int domain, String user, Integer id) {
+		AON.deleteCreditorFull(domainName, domain,user, id);
 	}
 
 	// **************************************************
@@ -106,6 +116,11 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	@Override
 	public SupplierFull save(String domainName, int domain, String user, SupplierFull supplierFull) throws AonCoreException {
 		return AON.save(domainName, domain,user, supplierFull);
+	}
+	
+	@Override
+	public void deleteSupplierFull(String domainName, int domain, String user, Integer id) {
+		AON.deleteSupplierFull(domainName, domain,user, id);
 	}
 	
 	// **************************************************
