@@ -1,7 +1,6 @@
 import * as CONSTANT from "../../environments/constants.js";
 import * as MSG from "../../environments/msg.js";
 import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
-import { IRPF } from "../../environments/msg-en.js";
 
 export const BillingPeriods = [
   {value: 'NO_PERIOD', name: MSG.NO_PERIOD},
