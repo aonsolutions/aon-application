@@ -95,6 +95,15 @@ export const AUDIT = 'Ikuskaritza';
 export const AUTOBOOKING = 'Auto-Kontratazioa';
 export const AVAILABLE = 'Eskuragai';
 export const AVERAGE = 'Batezbestekoa';
+export const ACCOUNTING_ACCOUNT = 'Kontu kontablea';
+export const ACCOUNTING_PAYMENT_TYPE = 'Ordainketa-metodoaren arabeko kontabilitate-esleipena';
+export const ACTION = 'Ekintza';
+export const ACTIVITY_TYPE = 'Jarduera Mota';
+export const ADVANCES_MANAGEMENT = 'Suplitudeen Kudeaketa';
+export const AGENTS_COMMERCIAL = 'Merkataritza-agenteak';
+export const ASSIGN_FEES_CUSTOMERS = 'Kuotak Bezeroei esleitu';
+export const ASSIGN_FEES_GROUPS = 'Kuotak Taldeei esleitu';
+export const ASSIGN_SKILLS_GROUPS = 'Trebetasunak Taldeei esleitu';
 
 // ----- B
 
@@ -127,6 +136,11 @@ export const BOX_CRITERION = 'Kutxa-Irizpidea';
 export const BUDGET = 'Aurrekontua';
 export const BUDGETS_PENDING = 'Presupuestos ptes.';
 export const BUDGETS = 'Aurrekontuak';
+export const BANK_CONCEPTS = 'Banku-kontzeptuak';
+export const BATCH_CASH_RECEIPTS = 'Kutxa Kobruen Bateraketa';
+export const BILLING_GROUPS = 'Fakturazio-taldeak';
+export const BRANDS = 'Markak';
+export const BULK_DELIVERY_INVOICING = 'Albaranen fakturazio masibua';
 export const BUSINESS_NAME = 'Izen Sozial';
 
 // ----- C
@@ -231,6 +245,28 @@ export const CUSTOMER_SEARCH = 'Bezero bilaketa';
 export const CUSTOMER_SEARCH_DOMAIN_NOT_FOUND = "Domeinu honekin erlazionaturiko bezerorik ez da aurkitu"
 export const CUSTOMER_SEARCH_NOT_FOUND = "Bilaketa honekin erlazionaturiko bezerorik ez da aurkitu"
 export const CUSTOMERS = 'Bezeroak';
+export const CASH_AUDIT = 'Kutxa Ikuskapen';
+export const CASH_DEFINITION = 'Kutxaren Definizioa';
+export const CASH_OPENING = 'Kutxaren Irekiera';
+export const CASH_SHIFTS = 'Kutxaren Txandak';
+export const CATALOGUES = 'Katalogoak';
+export const CAMPAIGN_MONITOR = 'Kanpaina Monitorea';
+export const CAMPAIGN_TYPES = 'Kanpaina Motak';
+export const CHARGES_MANAGEMENT = 'Kobruen Kudeaketa';
+export const CHARGES_PAYMENTS_PORTFOLIO = 'Kobru eta Ordainketen Zorroa';
+export const COMMERCIAL_ACTIVITY_TYPES = 'Merkataritza-jarduera Motak';
+export const COMMERCIAL_CALENDAR = 'Merkataritza Agenda';
+export const COMMERCIAL_OPERATION = 'Merkataritza Eragiketa';
+export const COMMERCIAL_TERMS = 'Merkataritza-baldintzak';
+export const COMMISSION_BANDS = 'Komisio-tarten definizioa';
+export const COMMISSION_CALCULATION = 'Komisioaren Kalkulua';
+export const COMMISSION_CONTROL = 'Kalkulatutako Komisioen Kontrola';
+export const COMMISSION_TYPES = 'Komisio Motak';
+export const COMMUNICATION_CENTER = 'Komunikazio Zentroa';
+export const COMPANY_DOWNLOAD = 'Enpresaren Deskarga';
+export const COST_PROFILES = 'Kostu-profilak';
+export const COUNTRY_PROVINCE = 'Herrialdea/Probintzia';
+export const CSV_DATA_LOAD = 'CSV fitxategietatik datuak kargatu';
 export const CUSTOMIZE_INVOICE = 'Faktura pertsonalizatu';
 
 // ----- D
@@ -292,6 +328,13 @@ export const DRAFTS = 'Zirriborroak';
 export const DROP_FILE = 'Utzi fitxategia hemen';
 export const DUPLICATE = 'Bikoiztu';
 export const DUPLICATE_INVOICE = 'Faktura Bikoiztu';
+export const DASHBOARD_CATEGORIES = 'Kategorien CM';
+export const DASHBOARD_PRODUCTS = 'Produktuen CM';
+export const DASHBOARD_PROSPECTS = 'Bezero Potentzialen CM';
+export const DASHBOARD_SALES_AGENTS = 'Merkataritza Agenteon CM';
+export const DATA_LOAD_TEMPLATE_MGT = 'Datuak kargatzeko txantiloien kudeaketa';
+export const DEDUPLICATION_PROSPECTS = 'Bezero Potentzialak Bikoiztu kendu';
+export const DUPLICATE_GROUPS = 'Taldeak Bikoiztu';
 export const DURATION = 'Iraupena';
 
 // ----- E
@@ -310,6 +353,7 @@ export const EDIT_TAG = 'Etiketa Aldatu';
 export const EDIT_WAREHOUSE = 'Biltegia Aldatu';
 export const EDIT_WORKGROUP = 'Lan taldea editatu';
 export const ELABORATION = 'Elaborazioa';
+export const ELABORATION_ORDER = 'Elaborazio Agindua';
 export const ELABORATIONS = 'Elaborazioak';
 export const EMAIL = 'Email';
 export const EMAIL_ADD = 'Posta elektroniko helbidea esleitu';
@@ -345,6 +389,13 @@ export const EXPENSES = 'Gastuak';
 export const EXPIRATIONS = 'Epemugak';
 export const EXPIRED = 'Iraungita';
 export const EXPIRED_SESSION = 'Saioa iraungi da';
+export const EMAIL_SENDING_CUSTOMIZATION = 'Email Bidalketaren Pertsonalizazioa';
+export const EMAIL_TEMPLATES = 'Email Txantiloiak';
+export const ENTITY_RELATIONSHIP_TYPES = 'Entitateen arteko harreman motak';
+export const EXCEL_DATA_DOWNLOAD = 'Excel formatuan datuak deskargatu';
+export const EXCEL_DATA_LOAD = 'Exceleko fitxategietatik datuak kargatu';
+export const EXPENSE_INVOICE = 'Gastu-faktura';
+export const EXPEDIENT_TYPE = 'Espediente Mota';
 export const EXPORTED = 'Esportatuak';
 
 
@@ -381,11 +432,19 @@ export const FOOTER = 'Oina';
 export const FORMALITIES = 'Izapideak';
 export const FROM = 'Noiztik';
 export const FRENCH = 'Frantsesa';
+export const FEE_INVOICING = 'Kuoten Fakturaketa';
+export const FEE_INVOICING_PANEL = 'Kuoten Fakturaketa Panela';
+export const FEES_LIST = 'Kuoten Zerrenda';
+export const FINANCIAL_DATA_CHECK = 'Finantza Datuen Egiaztapena';
+export const FORECAST_LIST = 'Aurreikuspen Zerrenda';
+export const FORECAST_MANAGEMENT = 'Aurreikuspenen Kudeaketa';
+export const FORMAT_SIZE_TAGS = 'Formatu/Neurrien Etiketek';
 export const FUTURE = 'Laster...';
 
 // ----- G
 
 export const GALICIAN = 'Galiziera';
+export const GANTT_CHART = 'Gantt Diagrama';
 export const GARAGE = 'Garajea';
 export const GENERAL_DATA = 'Datu Orokorrak';
 export const GENERAL_INFORMATION = 'Informazio Generala';
@@ -398,6 +457,9 @@ export const GROUP_MANAGEMENT = 'Taldeen Kudeaketa';
 export const GROUP = 'Taldea';
 export const GROUPWARE = 'Txosten';
 export const GROUPED = 'Taldekatuak';
+export const GLOBAL_STATISTICS = 'Estatistika Globalak';
+export const GRADES_QUERY = 'Notak Kontsulta';
+export const GROUP_CLOSURE = 'Taldeen Itxiera';
 export const GROUPS = 'Taldeak';
 
 // ----- H
@@ -497,6 +559,19 @@ export const IS_NOT_VALID_EMAIL = 'ez da baliozko posta elektronikoa';
 export const ISSUE = 'Gaia';
 export const ISSUED = 'Igorritakoa';
 export const ISSUED_INVOICES = 'Igorritako Fakturak';
+export const IGIC_ANNUAL_SUMMARY = 'IGIC Declaración resumen anual';
+export const IGIC_SELF_ASSESSMENT = 'IGIC Autoliquidación';
+export const IGIC_SIMPLIFIED_REGIME = 'IGIC Régimen Simplificado';
+export const IMAGES = 'Irudiak';
+export const INCOMING_PURCHASE_NOTES = 'Entradas (Albaranes de Compra)';
+export const INVENTORY_CLOSURE = 'Inbentario Itxiera';
+export const INVOICE_CONSOLE = 'Fakturazioaren Kontsola';
+export const INVOICE_EXPIRATION_CHECK = 'Fakturen / Epemugeen Egiaztapena';
+export const INVOICE_PRINT_EMAIL = 'Fakturak Inprimatu / eMail';
+export const INVOICE_SIGNATURE = 'Faktura Sinadura';
+export const INVOICE_SURCHARGES = 'Fakturako Errekargua';
+export const IT_SICK_LEAVES = 'Bajas IT';
+export const IVA_SELF_ASSESSMENT = 'BEZ Autoliquidazioa';
 export const ISSUEDS = 'Igorritakoak';
 
 // ----- J
@@ -540,6 +615,8 @@ export const LOADING = 'Kargatzen';
 export const LOCATION = 'Kokapena';
 export const LOCATIONS = 'Kokapenak';
 export const LOGIN = 'Saioa hasi';
+export const LEVELS = 'Mailak';
+export const LOANS = 'Maileguak';
 export const LOGIN_SUBTITLE = 'Sartu zure kredentzialak';
 
 
@@ -605,6 +682,9 @@ export const MY_DATA = 'Nire Datuak';
 export const MY_MANAGER = 'Nire Gestorea';
 export const MY_USER = 'Nire Erabiltzailea';
 export const MAGIC_LINK = 'Sarbide-esteka posta elektronikoz bidaltzen';
+export const MANAGEMENT_INVENTORY = 'Inbentarien Kudeaketa';
+export const MESSAGES = 'Mezuak';
+export const MOVEMENTS_LIST = 'Mugimendu Zerrenda';
 
 // ----- N
 
@@ -656,6 +736,9 @@ export const NOTES = 'Oharrak';
 export const NOTE = 'Oharra';
 export const NUMBER = 'Zenbakia';
 export const NUMBER_OF_USERS = 'Erabiltzaile kopurua';
+export const NEWSLETTERS = 'Buletinen';
+export const NON_DEDUCTIBLE_EXPENSE = 'BEZean kengarria ez den gastua';
+export const NON_DEDUCTIBLE_EXPENSES = 'BEZean kengarriak ez diren gastuak';
 export const NUMBER_OF_PALLETS = "Palet kopurua";
 
 // ----- O
@@ -675,7 +758,9 @@ export const OPEN_FEES = 'Cuotas abiertas';
 export const OPEN_REQUESTS = 'Irekita Dauden Eskaerak';
 export const OPERATORS = 'Operarios';
 export const OPERATOR = 'Operario';
+export const ORDER_PROPOSAL = 'Eskaeren Proposamena';
 export const ORDERS_PENDING = 'Pedidos ptes.';
+export const OUTGOING_SALES_NOTES = 'Irteerak (Salmenta Albaranak)';
 export const OTHER_INCOME_EXPENSES = 'Otros gastos/ingresos';
 export const OPENED = 'Irekita';
 export const OPERATION_DATE = 'Operazio Data';
@@ -686,6 +771,7 @@ export const OTHER_EXPENSES = 'Beste Gastuak';
 export const OTHER_INCOMES = 'Beste Sarrerak';
 export const OTHER_SERVICES = 'Beste Zerbitzuak';
 export const OTHERS = 'Beste batzuk';
+export const OBSERVATIONS = 'Oharrak';
 export const ONE = 'Bat';
 
 
@@ -694,6 +780,7 @@ export const ONE = 'Bat';
 export const PACKAGE = 'Ontzia';
 export const PACKAGES = 'Ontziak';
 export const PACKAGING = 'Ontziratzea';
+export const PACKING_LIST = 'Packing List';
 export const PARENT = 'Gurasoa';
 export const PARENT_APPS = "Aitaren aplikazioak";
 export const PAUSE = 'Pausa';
@@ -765,9 +852,24 @@ export const PROJECT = 'Proiektua';
 export const PROJECTS = 'Proiektuak';
 export const PROFILES = "Profilak";
 export const PROTOCOL = 'Protokoloa';
+export const PAYMENT_BATCH_NEW = 'Ordainketa Bateraketa (Berria)';
+export const PAYMENT_BATCH_RECEIPT = 'Kobru Bateraketa';
+export const PAYMENT_BATCH_SINGLE = 'Ordainketa Bateraketa';
+export const PAYMENT_BATCHES_RECEIPT = 'Kobru Bateak';
+export const PAYMENTS_MANAGEMENT = 'Ordainketen Kudeaketa';
+export const POS = 'TPV';
+export const POS_SALES = 'TPV Salmentak';
+export const PRE_INVOICING_LIST = 'Aurre-fakturaketa Zerrenda';
+export const PROCESS_LAUNCHER = 'Prozesuen Abiaraztailea';
+export const PRODUCT_TAG_PRINT = 'Produktuen etiketak inprimatzea';
+export const PRODUCT_TAGS = 'Produktuen Etiketek';
+export const PROMISSORY_NOTE_PRINTING = 'Pagareen Inprimaketa';
+export const PURCHASE_INVOICE_SINGLE = 'Erosketa-faktura';
 export const PURCHASE_PRICE = 'Kostu Prezioa';
 // ----- Q
 
+export const QUALIFICATIONS = 'Kalifikazioak';
+export const QUALITY_SKILLS = 'Kalitate Gaitasunak';
 export const QUERY = 'Kontsulta';
 export const QUANTITY = 'Kantitatea';
 export const QUARTERLY_VIEW = 'Hiruhileko ikuspegia';
@@ -777,6 +879,11 @@ export const QUICK_ACCESS = "Sarbide azkarra";
 export const QUICK_ACCESS_TITLE = 'Acceso Rápido';
 export const QUOTA = 'Kuota';
 export const QUOTE_GROUP = 'Kotizazio taldea';
+export const QUOTES_BY_AGENT = 'Agente Komertzialaren arabera Eskaintzak';
+export const QUOTES_BY_CATEGORY_PRODUCT = 'Kategoria eta Produktuaren arabera Eskaintzak';
+export const QUOTES_BY_PRODUCT = 'Produktuaren arabera Eskaintzak';
+export const QUOTES_BY_PROSPECT = 'Bezero Potentzialaren arabera Eskaintzak';
+export const QUOTES_BY_ZONE = 'Zonaren arabera Eskaintzak';
 
 // ----- R
 
@@ -831,6 +938,9 @@ export const RESTORE_INVOICES = 'Fakturak Berreskuratu';
 export const RESULTS = "Emaitzak";
 export const RESUME_COSTS = 'Kostuen Laburpena';
 export const RETENTION_PANEL = 'PFEZ Panela';
+export const RECEIVABLES_MANAGEMENT = 'Kobruen Kudeaketa';
+export const RECLASSIFY_CUSTOMERS = 'Bezeroak/Ikasleak Birsailkatu';
+export const REPAIR_ORDERS_EXCEL = 'Konponketa Aginduak (Excel)';
 export const REVIEW = 'Berrikusi';
 
 // ----- S
@@ -862,8 +972,19 @@ export const SEND_FILES = 'Fitxategiak Bidali';
 export const SEND_INVOICE = 'Faktura Bidali';
 export const SEND_INVOICES =  'Fakturak Bidali';
 export const SENT = 'Bidalitakoak';
+export const SALE_INVOICE = 'Salmenta-faktura';
+export const SALE_INVOICES = 'Salmenta-fakturak';
+export const SALE_ORDERS = 'Salmenta-eskaerak';
+export const SALES_INVOICE_SINGLE = 'Salmenta-faktura';
+export const SALES_INVOICES = 'Salmenta-fakturak';
+export const SALES_ORDERS = 'Salmenta-eskaerak';
+export const SALES_QUOTE = 'Salmenta Aurrekontua';
+export const SEGMENTATION = 'Segmentazioa';
+export const SEPA_DIRECT_DEBIT_ORDER = 'SEPA zuzeneko zordunketa agindu';
 export const SEPA_FILES = 'SEPA Fitxategiak';
 export const SERIE = 'Serie';
+export const SERIES = 'Serieak';
+export const SERVE_ORDERS = 'Eskaerak Bete';
 export const SERVICE = 'Zerbitzu';
 export const SERVICE_ACCOUNT = 'Zerbitzu Kontua';
 export const SERVICE_ACCOUNTS = 'Zerbitzu Kontuak';
@@ -871,6 +992,7 @@ export const SERVICES = 'Zerbitzuak';
 export const SETTING = 'Konfigurazioa';
 export const SHARED = 'Partekatuak';
 export const SHEET = 'Orria';
+export const SHIPPING_LABELS = 'Bidalketaren Etiketak';
 export const SHOW_FILE = 'Fitxategia Erakutsi';
 export const SIDE_MENU = 'Alboko menua beti ikusgai';
 export const SIGN_IN = 'Saioa Hasi';
@@ -897,13 +1019,17 @@ export const STREET_TYPE = 'Bide mota';
 export const SUITE_MENU = "Suite menua";
 export const SUMMARIZED = 'Laburbildua';
 export const SUPPLIED = 'Ordezkatuak';
+export const SUPPLY_BY_CONSUMPTION = 'Hornidura Kontsumoen Arabera';
 export const SUPPLIER = 'Hornitzaile';
 export const SUPPLIERS = 'Hornitzaileak';
 export const SUPPORT = 'Euskarri';
 export const SUPPORTING_DOCUMENTS = 'Egiaztagiriak';
 export const SURCHARGE = 'Errekargua';
 export const SURNAME = 'Abizenak';
+export const STUDENT = 'Ikaslea';
+export const STUDENTS = 'Ikasleak';
 export const SURVEY = 'Galdeketa';
+export const SURVEY_RESPONSES = 'Galdetegien Erantzunak';
 export const SURVEYS = 'Galdetak';
 export const SYSTEM_MESSAGES = 'Sistemaren Mezuak';
 
@@ -957,6 +1083,11 @@ export const TYPE_HERE = 'Idatzi hemen';
 export const TYPE_INCIDENT = 'Gertaera mota';
 export const TYPE_JOB = 'Lan mota';
 export const TYPE_REQUEST = 'Eskaera mota';
+export const TARIFFS = 'Tarifak';
+export const TEACHERS = 'Irakasleak';
+export const TEMPLATE_HEADERS_FOOTERS = 'Txantiloi Goiburuak eta Oinak';
+export const TRANSITION_TYPES = 'Trantsizio Motak';
+export const TREASURY_UTILITIES = 'Diruzaintza Utilitateak';
 export const TYPES = 'Motak';
 
 // ----- U
@@ -982,6 +1113,9 @@ export const USER_DATA = 'Erabiltzailearen Datuak';
 export const USER_MANAGEMENT = 'Erabiltzaileen Kudeaketa';
 export const USERS = 'Erabiltzaileak';
 export const UTILITIES_INVOICES_EXPIRATIONS = 'Utilidades facturas/vencimientos';
+export const UNDEDUCTIBLE_VAT_EXPENSE = 'BEZean kengarria ez den gastua';
+export const UNDEDUCTIBLE_VAT_EXPENSES = 'BEZean kengarriak ez diren gastuak';
+export const USER_GROUPS = 'Erabiltzaile taldeak';
 export const UTILITIES = 'Utilitateak';
 
 // ----- V
@@ -999,6 +1133,9 @@ export const VIEW = 'Ikusi';
 export const VIEW_FIELDS = 'Eremuak ikusi';
 export const VIEW_PAYROLL = 'Nomina ikusi';
 export const VIEW_PAYROLLS = 'Nominak ikusi';
+export const VALUED_ITEM_LIST = 'Artikuluen zerrenda baloratua';
+export const VALUED_WAREHOUSE_LIST = 'Biltegien zerrenda baloratua';
+export const VEHICLES_AND_OWNERS = 'Ibilgailuak eta Titularrak';
 export const VOLUME = 'Tomoa';
 
 // ----- W
@@ -1021,6 +1158,12 @@ export const WRITE_YOUR_TITLE = "Idatzi hemen zure izenburua";
 export const WRITE_A_COMMENT =  "Idatzi iruzkin bat";
 export const WRITE_A_DESCRIPTION = "Idatzi deskribapen bat";
 export const WRITE_A_NOTE =  "Idatzi ohar bat";
+export const WAREHOUSE_DEFINITION = 'Biltegi Definizioa';
+export const WAREHOUSE_ITEM_LIST = 'Artikuluen zerrenda';
+export const WAREHOUSE_LIST = 'Biltegiaren zerrenda';
+export const WAREHOUSE_TRANSFERS = 'Biltegien arteko transferentziak';
+export const WORK_TYPES = 'Lan motak';
+export const WORKLOAD_PANEL = 'Lan Karga Panela';
 export const WRONG_CODE = 'Kode Okerra';
 export const BLACK_AND_WHITE = 'Zuri-Beltza';
 

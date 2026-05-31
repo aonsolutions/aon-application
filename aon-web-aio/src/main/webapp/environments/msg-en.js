@@ -95,6 +95,16 @@ export const AUDIT = 'Audit';
 export const AUTOBOOKING = 'Auto-Booking';
 export const AVAILABLE = 'Available';
 export const AVERAGE = 'Average';
+export const ACADEMIC_YEAR = 'Academic Year';
+export const ACCOUNTING_ACCOUNT = 'Accounting Account';
+export const ACCOUNTING_PAYMENT_TYPE = 'Accounting Assignment by Payment Method Type';
+export const ACTION = 'Action';
+export const ACTIVITY_TYPE = 'Activity Type';
+export const ADVANCES_MANAGEMENT = 'Advances Management';
+export const AGENTS_COMMERCIAL = 'Sales Agents';
+export const ASSIGN_FEES_CUSTOMERS = 'Assign Fees to Customers';
+export const ASSIGN_FEES_GROUPS = 'Assign Fees to Groups';
+export const ASSIGN_SKILLS_GROUPS = 'Assign Skills to Groups';
 
 // ----- B
 
@@ -128,6 +138,13 @@ export const BUDGET = 'Budget';
 export const BUDGETS = 'Budgets';
 export const BUDGETS_PENDING = 'Pending quotes';
 export const BUSINESS_NAME = 'Business Name';
+export const BANK_CONCEPTS = 'Bank Concepts';
+export const BATCH_CASH_RECEIPTS = 'Batch Cash Receipts';
+export const BILLING_CONSOLE = 'Billing Console';
+export const BILLING_GROUPS = 'Billing Groups';
+export const BOLETINS = 'Newsletters';
+export const BRANDS = 'Brands';
+export const BULK_DELIVERY_INVOICING = 'Bulk Delivery Invoicing';
 
 // ----- C
 
@@ -232,6 +249,31 @@ export const CUSTOMER_SEARCH_DOMAIN_NOT_FOUND = "Customers related with this dom
 export const CUSTOMER_SEARCH_NOT_FOUND = "Customers related with this search were not found";
 export const CUSTOMERS = 'Customers';
 export const CUSTOMIZE_INVOICE = 'Customize Invoice';
+export const CAMPAIGN_MONITOR = 'Campaign Monitor';
+export const CAMPAIGN_TYPES = 'Campaign Types';
+export const CASH_AUDIT = 'Cash Audit';
+export const CASH_DEFINITION = 'Cash Definition';
+export const CASH_OPENING = 'Cash Opening';
+export const CASH_SHIFTS = 'Cash Shifts';
+export const CATALOGUES = 'Catalogues';
+export const CERTIFICA_NOTIFICATIONS = 'Certific@ Notifications';
+export const COMMERCIAL_ACTIVITY_TYPES = 'Commercial Activity Types';
+export const COMMERCIAL_CALENDAR = 'Commercial Calendar';
+export const COMMERCIAL_OPERATION = 'Commercial Operation';
+export const COMMERCIAL_TERMS = 'Commercial Terms';
+export const COMMISSION_BANDS = 'Commission Bands Definition';
+export const COMMISSION_CALCULATION = 'Commission Calculation';
+export const COMMISSION_CONTROL = 'Commission Control';
+export const COMMISSION_TYPES = 'Commission Types';
+export const CHARGES_MANAGEMENT = 'Charges Management';
+export const CHARGES_PAYMENTS_PORTFOLIO = 'Charges and Payments Portfolio';
+export const COMMUNICATION_CENTER = 'Communication Center';
+export const COMPANY_DOWNLOAD = 'Company Download';
+export const CONTRATA_NOTIFICATIONS = 'Contrat@ Notifications';
+export const CORPORATION_TAX = 'Corporation Tax';
+export const CORPORATION_TAX_PAYMENT = 'Corporation Tax. Instalment Payment';
+export const COST_PROFILES = 'Cost Profiles';
+export const COUNTRY_PROVINCE = 'Country/Province';
 
 // ----- D
 
@@ -293,6 +335,20 @@ export const DROP_FILE = 'Drop the file';
 export const DUPLICATE = 'Duplicate';
 export const DUPLICATE_INVOICE = 'Duplicate Invoice';
 export const DURATION = 'Duration';
+export const DASHBOARD_CATEGORIES = 'Categories Dashboard';
+export const DASHBOARD_PRODUCTS = 'Products Dashboard';
+export const DASHBOARD_PROSPECTS = 'Prospects Dashboard';
+export const DASHBOARD_SALES_AGENTS = 'Sales Agents Dashboard';
+export const CSV_DATA_LOAD = 'Load Data from CSV Files';
+export const DATA_DOWNLOAD_EXCEL = 'Download Data in Excel Format';
+export const DATA_LOAD_TEMPLATE_MGT = 'Data Load Template Management';
+export const DATA_UPLOAD_CSV = 'Upload Data from CSV Files';
+export const DATA_UPLOAD_EXCEL = 'Upload Data from Excel Files';
+export const DATA_UPLOAD_TEMPLATES = 'Data Upload Templates Management';
+export const DEDUPLICATION_PROSPECTS = 'Prospect Deduplication';
+export const DUPLICATE_GROUPS = 'Duplicate Groups';
+export const EXCEL_DATA_DOWNLOAD = 'Download Data in Excel Format';
+export const EXCEL_DATA_LOAD = 'Load Data from Excel Files';
 
 // ----- E
 
@@ -310,6 +366,7 @@ export const EDIT_TAG = 'Edit Tag';
 export const EDIT_WAREHOUSE = 'Edit Warehouse';
 export const EDIT_WORKGROUP = 'Edit workgroup';
 export const ELABORATION = 'Elaboration';
+export const ELABORATION_ORDER = 'Elaboration Order';
 export const ELABORATIONS = 'Elaborations';
 export const EMAIL = 'Email';
 export const EMAIL_ADD = 'Assign email address';
@@ -346,6 +403,13 @@ export const EXPIRATIONS = 'Expirations';
 export const EXPIRED = 'Expired';
 export const EXPIRED_SESSION = 'Session expired';
 export const EXPORTED = 'Exported';
+export const EMAIL_ACCOUNTS = 'Email Accounts';
+export const EMAIL_SENDING_CUSTOMIZATION = 'Email Sending Customization';
+export const EMAIL_SIGNATURES = 'Email Signatures';
+export const EMAIL_TEMPLATES = 'Email Templates';
+export const ENTITY_RELATIONSHIP_TYPES = 'Entity Relationship Types';
+export const EXPENSE_INVOICE = 'Expense Invoice';
+export const EXPEDIENT_TYPE = 'File Type';
 
 
 
@@ -382,6 +446,15 @@ export const FORMALITIES = 'Formalities';
 export const FROM = 'From';
 export const FRENCH = 'French';
 export const FUTURE = 'Coming soon...';
+export const FEE_INVOICING = 'Fee Invoicing';
+export const FEE_INVOICING_PANEL = 'Fee Invoicing Panel';
+export const FEES_LIST = 'Fees List';
+export const FEES_PROJECTION = 'Fees Projection';
+export const FINANCIAL_DATA_CHECK = 'Financial Data Check';
+export const FORECAST_LIST = 'Forecast List';
+export const FORECAST_MANAGEMENT = 'Forecast Management';
+export const FORMAT_LABELS = 'Format/Size Labels';
+export const FORMAT_SIZE_TAGS = 'Format/Size Tags';
 
 // ----- G
 
@@ -399,6 +472,11 @@ export const GROUP = 'Group';
 export const GROUPED = 'Grouped';
 export const GROUPWARE = 'Groupware';
 export const GROUPS = 'Groups';
+export const GANTT_CHART = 'Gantt Chart';
+export const GLOBAL_STATISTICS = 'Global Statistics';
+export const GRADES = 'Grades';
+export const GRADES_QUERY = 'Grades Query';
+export const GROUP_CLOSURE = 'Group Closure';
 
 // ----- H
 
@@ -498,6 +576,19 @@ export const ISSUE = 'Subject';
 export const ISSUED = 'Issued';
 export const ISSUED_INVOICES = 'Issued Invoices';
 export const ISSUEDS = 'Issued';
+export const IGIC_ANNUAL_SUMMARY = 'IGIC Annual Summary Declaration';
+export const IGIC_SELF_ASSESSMENT = 'IGIC Self-Assessment';
+export const IGIC_SIMPLIFIED_REGIME = 'IGIC Simplified Regime';
+export const IMAGES = 'Images';
+export const INCOMING_PURCHASE_NOTES = 'Incoming (Purchase Delivery Notes)';
+export const INVENTORY_CLOSURE = 'Inventory Closure';
+export const INVOICE_CONSOLE = 'Invoicing Console';
+export const INVOICE_EXPIRATION_CHECK = 'Invoice/Expiration Check';
+export const INVOICE_PRINT_EMAIL = 'Print / Email Invoices';
+export const INVOICE_SIGNATURE = 'Invoice Signature';
+export const INVOICE_SURCHARGES = 'Invoice Surcharges';
+export const IT_SICK_LEAVES = 'IT Sick Leaves';
+export const IVA_SELF_ASSESSMENT = 'VAT Self-Assessment';
 
 // ----- J
 
@@ -541,6 +632,9 @@ export const LOCATION = 'Location';
 export const LOCATIONS = 'Locations';
 export const LOGIN = 'Login';
 export const LOGIN_SUBTITLE = 'Enter your credentials';
+export const LEVELS = 'Levels';
+export const LOANS = 'Loans';
+export const MESSAGES = 'Messages';
 
 // ----- M
 
@@ -604,6 +698,8 @@ export const MY_MANAGER = 'My Manager';
 export const MY_USER = 'My User';
 export const MAGIC_LINK = 'Sending access link by email';
 export const MY_CLOUD = 'My Cloud';
+export const MANAGEMENT_INVENTORY = 'Inventory Management';
+export const MOVEMENTS_LIST = 'Movements List';
 
 // ----- N
 
@@ -656,10 +752,14 @@ export const NOTE = 'Note';
 export const NUMBER = 'Number';
 export const NUMBER_OF_USERS = 'Number of users';
 export const NUMBER_OF_PALLETS = "Number of pallets";
+export const NEWSLETTERS = 'Newsletters';
+export const NON_DEDUCTIBLE_EXPENSE = 'Non-deductible VAT Expense';
+export const NON_DEDUCTIBLE_EXPENSES = 'Non-deductible VAT Expenses';
 
 // ----- O
 export const OCR = 'OCR';
 export const OBSERVATION = 'Observation';
+export const OBSERVATIONS = 'Observations';
 export const OPERATING_ENTRIES = 'Operating, Closing and Opening Entries';
 export const OFFERS = 'Quotes';
 export const OFFICE = 'Office';
@@ -693,6 +793,7 @@ export const ONE = 'One';
 export const PACKAGE = 'Package';
 export const PACKAGES = 'Packages';
 export const PACKAGING = 'Packaging';
+export const PACKING_LIST = 'Packing List';
 export const PARENT = 'Parent';
 export const PARENT_APPS = "Parent apps";
 export const PAUSE = 'Pause';
@@ -765,13 +866,42 @@ export const PROJECTS = 'Projects';
 export const PROFILES = "Profiles";
 export const PROTOCOL = 'Protocol';
 export const PURCHASE_PRICE = 'Cost Price';
+export const ORDER_PROPOSAL = 'Order Proposal';
+export const OUTGOING_SALES_NOTES = 'Outgoing (Sales Delivery Notes)';
+export const PAYMENTS_MANAGEMENT = 'Payments Management';
+export const PAYMENT_BATCH_NEW = 'Payment Batches (New)';
+export const PAYMENT_BATCH_RECEIPT = 'Receipt Batch';
+export const PAYMENT_BATCH_SINGLE = 'Payment Batch';
+export const PAYMENT_BATCHES_RECEIPT = 'Receipt Batches';
+export const PERSONS = 'Persons';
+export const POS = 'POS';
+export const POS_OPTIONS = 'POS Options';
+export const POS_SALES = 'POS Sales';
+export const PRE_INVOICE_LIST = 'Pre-invoicing List';
+export const PRE_INVOICING_LIST = 'Pre-invoicing List';
+export const PRINT_PRODUCT_LABELS = 'Print Product Labels';
+export const PROCESS_LAUNCHER = 'Process Launcher';
+export const PRODUCT_LABELS = 'Product Labels';
+export const PRODUCT_TAG_PRINT = 'Product Tag Print';
+export const PRODUCT_TAGS = 'Product Tags';
+export const PROMISSORY_NOTE_PRINTING = 'Promissory Note Printing';
+export const PURCHASE_INVOICE_SINGLE = 'Purchase Invoice';
+export const PURCHASE_INVOICES = 'Purchase Invoices';
+export const PURCHASE_ORDERS = 'Purchase Orders';
 // ----- Q
 
+export const QUALIFICATIONS = 'Qualifications';
+export const QUALITY_SKILLS = 'Quality Skills';
 export const QUERY = 'Query';
 export const QUESTION = 'Question';
 export const QUESTIONS = 'Questions';
 export const QUICK_ACCESS = "Quick access";
 export const QUICK_ACCESS_TITLE = 'Quick Access';
+export const QUOTES_BY_AGENT = 'Quotes by Sales Agent';
+export const QUOTES_BY_CATEGORY_PRODUCT = 'Quotes by Category and Product';
+export const QUOTES_BY_PRODUCT = 'Quotes by Product';
+export const QUOTES_BY_PROSPECT = 'Quotes by Prospect';
+export const QUOTES_BY_ZONE = 'Quotes by Zone';
 export const QUARTERLY_VIEW = 'Quarterly view';
 export const QUANTITY = 'Quantity';
 export const QUOTA = 'Quota';
@@ -831,6 +961,9 @@ export const RESULTS = "Results";
 export const RESUME_COSTS = 'Cost Summary';
 export const RETENTION_PANEL = 'IRPF Panel';
 export const REVIEW = 'Review';
+export const RECEIVABLES_MANAGEMENT = 'Receivables Management';
+export const RECLASSIFY_CUSTOMERS = 'Reclassify Customers/Students';
+export const REPAIR_ORDERS_EXCEL = 'Repair Orders (Excel)';
 
 // ----- S
 
@@ -905,6 +1038,27 @@ export const SURVEYS = 'Surveys';
 export const SYSTEM_MESSAGES = 'System Messages';
 export const SELECT_LANGUAGE = "Language selection";
 export const SELECT_COMPANY_TYPE = "Select company type";
+export const SALE_INVOICE = 'Sale Invoice';
+export const SALE_INVOICES = 'Sale Invoices';
+export const SALE_ORDERS = 'Sale Orders';
+export const SALES_INVOICE_SINGLE = 'Sales Invoice';
+export const SALES_INVOICES = 'Sales Invoices';
+export const SALES_ORDERS = 'Sales Orders';
+export const SALES_QUOTE = 'Sales Quote';
+export const SEPA_DIRECT_DEBIT_ORDER = 'SEPA Direct Debit Mandate Order';
+export const SEGMENTATION = 'Segmentation';
+export const SEPE = 'SEPE';
+export const SERIES = 'Series';
+export const SERVE_ORDERS = 'Serve Orders';
+export const SHIPPING_LABELS = 'Shipping Labels';
+export const SII_DECLARATION = 'SII - Immediate Information Supply';
+export const SII_DESCRIPTION = 'Immediate Information Supply';
+export const SKILLS = 'Skills';
+export const STUDENT = 'Student';
+export const STUDENTS = 'Students';
+export const SUBJECTS = 'Subjects';
+export const SURVEY_RESPONSES = 'Survey Responses';
+export const SUPPLY_BY_CONSUMPTION = 'Supply by Consumption';
 
 // ----- T
 
@@ -957,6 +1111,13 @@ export const TYPE_INCIDENT = 'Incident type';
 export const TYPE_JOB = 'Job type';
 export const TYPE_REQUEST = 'Request type';
 export const TYPES = 'Types';
+export const TARIFFS = 'Tariffs';
+export const TEACHERS = 'Teachers';
+export const TEMPLATE_HEADERS_FOOTERS = 'Template Headers and Footers';
+export const UNDEDUCTIBLE_VAT_EXPENSE = 'Undeductible VAT Expense';
+export const UNDEDUCTIBLE_VAT_EXPENSES = 'Undeductible VAT Expenses';
+export const TRANSITION_TYPES = 'Transition Types';
+export const TREASURY_UTILITIES = 'Treasury Utilities';
 
 // ----- U
 
@@ -982,6 +1143,7 @@ export const USERS = 'Users';
 export const UTILITIES_INVOICES_EXPIRATIONS = 'Utilidades facturas/vencimientos';
 export const UTILITIES = 'Utilities';
 export const UPPER_MENU = "Header menu";
+export const USER_GROUPS = 'User Groups';
 
 // ----- V
 
@@ -999,6 +1161,9 @@ export const VIEW_FIELDS = 'View fields';
 export const VIEW_PAYROLL = "View payroll";
 export const VIEW_PAYROLLS = "View payrolls";
 export const VOLUME = 'Volume';
+export const VALUED_ITEM_LIST = 'Valued Item List';
+export const VALUED_WAREHOUSE_LIST = 'Valued Warehouse List';
+export const VEHICLES_AND_OWNERS = 'Vehicles and Owners';
 
 // ----- W
 
@@ -1023,6 +1188,12 @@ export const WRITE_A_NOTE =  "Write a note";
 export const WEEK_SCHEDULE = "Monday to Thursday from 8:00 a.m. to 3:00 p.m.";
 export const WEEK_FRIDAY_SCHEDULE = "Friday from 8:00 a.m. to 2:00 p.m.";
 export const WRONG_CODE = 'Wrong Code';
+export const WAREHOUSE_DEFINITION = 'Warehouse Definition';
+export const WAREHOUSE_ITEM_LIST = 'Item List';
+export const WAREHOUSE_LIST = 'Warehouse List';
+export const WAREHOUSE_TRANSFERS = 'Warehouse Transfers';
+export const WORK_TYPES = 'Work Types';
+export const WORKLOAD_PANEL = 'Workload Panel';
 
 // ----- X
 

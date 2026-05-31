@@ -39,10 +39,10 @@ export class AonAccountingMenu extends AonSuiteMenu {
             info:[MSG.DOCS_PENDING, MSG.DOCS_REJECTED, MSG.INVOICES_UNACCOUNTED_ABBR]
         };
 		this.selectOptions= [{
-            title: "Cuenta contable",
+            title: MSG.ACCOUNTING_ACCOUNT,
             action: () => alert("description")
         },{
-            title: "Ficha de amortización",
+            title: MSG.AMORTIZATION_SHEET,
             action: () => alert("description")
         },{
             title: MSG.ENTRY,

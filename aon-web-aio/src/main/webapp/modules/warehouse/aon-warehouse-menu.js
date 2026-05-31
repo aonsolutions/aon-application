@@ -49,98 +49,98 @@ export class AonWarehouseMenu extends AonSuiteMenu {
         this.options = [{
             title: MSG.MOVEMENTS,
             options: [{
-                description: "Entradas (Albaranes de Compra)",
-                title: "Entradas (Albaranes de Compra)",
+                description: MSG.INCOMING_PURCHASE_NOTES,
+                title: MSG.INCOMING_PURCHASE_NOTES,
                 action: () => this.rootPanel(new JSF.AonJsfIncome)
             }, {
-                description: "Salidas (Albaranes de Venta)",
-                title: "Salidas (Albaranes de Venta)",
+                description: MSG.OUTGOING_SALES_NOTES,
+                title: MSG.OUTGOING_SALES_NOTES,
                 action: () => this.rootPanel(new JSF.AonJsfDelivery)
             }, {
-                description: "Traspasos entre almacenes",
-                title: "Traspasos entre almacenes",
+                description: MSG.WAREHOUSE_TRANSFERS,
+                title: MSG.WAREHOUSE_TRANSFERS,
                 action: () => this.rootPanel(new JSF.AonJsfWarehouseTransfer)
             }, {
-                description: "Servir pedidos",
-                title: "Servir pedidos",
+                description: MSG.SERVE_ORDERS,
+                title: MSG.SERVE_ORDERS,
                 action: () => this.rootPanel(new JSF.AonJsfOrderServer)
             }]
         }, {
             title: MSG.REPORTS,
             options: [{
-                description: "Listado por almacén.",
-                title: "Listado por almacén.",
+                description: MSG.WAREHOUSE_LIST,
+                title: MSG.WAREHOUSE_LIST,
                 action: () => this.rootPanel(new JSF.AonJsfStockReportWarehouse)
             }, {
-                description: "Listado por articulo.",
-                title: "Listado por articulo.",
+                description: MSG.WAREHOUSE_ITEM_LIST,
+                title: MSG.WAREHOUSE_ITEM_LIST,
                 action: () => this.rootPanel(new JSF.AonJsfStockReportItem)
             }, {
-                description: "Listado valorado por almacén.",
-                title: "Listado valorado por almacén.",
+                description: MSG.VALUED_WAREHOUSE_LIST,
+                title: MSG.VALUED_WAREHOUSE_LIST,
                 action: () => this.rootPanel(new JSF.AonJsfStockReportWarehouseValued)
             }, {
-                description: "Listado valorado por articulo.",
-                title: "Listado valorado por articulo.",
+                description: MSG.VALUED_ITEM_LIST,
+                title: MSG.VALUED_ITEM_LIST,
                 action: () => this.rootPanel(new JSF.AonJsfStockReportItemValued)
             }, {
-                description: "Aprovisionamiento según consumo",
-                title: "Aprovisionamiento según consumo",
+                description: MSG.SUPPLY_BY_CONSUMPTION,
+                title: MSG.SUPPLY_BY_CONSUMPTION,
                 action: () => GWT.iLoad(GWT.STOCK_FORECAST)
             }, {
-                description: "Listado de movimientos",
-                title: "Listado de movimientos",
+                description: MSG.MOVEMENTS_LIST,
+                title: MSG.MOVEMENTS_LIST,
                 action: () => GWT.iLoad(GWT.MOVEMENT_LIST)
             }]
         }, {
             title: MSG.STOCK_CONTROL,
             options: [{
-                description: "Cierre de inventario",
-                title: "Cierre de inventario",
+                description: MSG.INVENTORY_CLOSURE,
+                title: MSG.INVENTORY_CLOSURE,
                 action: () => this.rootPanel(new JSF.AonJsfInventoryClose)
             }, {
-                description: "Gestión de Inventarios",
-                title: "Gestión de Inventarios",
+                description: MSG.MANAGEMENT_INVENTORY,
+                title: MSG.MANAGEMENT_INVENTORY,
                 action: () => this.rootPanel(new JSF.AonJsfInventory)
             }, {
-                description: "Control de Existencias",
-                title: "Control de Existencias",
+                description: MSG.STOCK_CONTROL,
+                title: MSG.STOCK_CONTROL,
                 action: () => this.rootPanel(new JSF.AonJsfStock)
             }, {
-                description: "Propuesta de pedidos",
-                title: "Propuesta de pedidos",
+                description: MSG.ORDER_PROPOSAL,
+                title: MSG.ORDER_PROPOSAL,
                 action: () => this.rootPanel(new JSF.AonJsfOrderProposal)
             }]
         }, {
             title: MSG.ELABORATIONS,
             options: [{
-                description: "Orden de elaboración",
-                title: "Orden de elaboración",
+                description: MSG.ELABORATION_ORDER,
+                title: MSG.ELABORATION_ORDER,
                 action: () => GWT.iLoad(GWT.ELABORATION)
             }, {
-                description: "Packing List",
-                title: "Packing List",
+                description: MSG.PACKING_LIST,
+                title: MSG.PACKING_LIST,
                 action: () => GWT.iLoad(GWT.PACKING_LIST)
             }, {
-                description: "Etiquetas Envio",
-                title: "Etiquetas Envio",
+                description: MSG.SHIPPING_LABELS,
+                title: MSG.SHIPPING_LABELS,
                 action: () => this.rootPanel(new JSF.AonJsfCorporateIdentityLabel)
             }]
         }, {
             title: MSG.WAREHOUSES,
             options: [{
-                description: "Definicion de Almacenes",
-                title: "Definicion de Almacenes",
+                description: MSG.WAREHOUSE_DEFINITION,
+                title: MSG.WAREHOUSE_DEFINITION,
                 action: () => this.rootPanel(new JSF.AonJsfWarehouse)
             }, {
-                description: "Agencias de transporte",
-                title: "Agencias de transporte",
+                description: MSG.CARRIERS,
+                title: MSG.CARRIERS,
                 action: () => this.rootPanel(new JSF.AonJsfCarrier)
             }, {
-                description: "Impresión de etiquetas de productos",
-                title: "Impresión de etiquetas de productos",
+                description: MSG.PRODUCT_TAG_PRINT,
+                title: MSG.PRODUCT_TAG_PRINT,
                 action: () => this.rootPanel(new JSF.AonJsfItemTagPrint)
-                
+
             }]
         }];
     }

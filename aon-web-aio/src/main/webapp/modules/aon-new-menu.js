@@ -1245,7 +1245,7 @@ export class AonNewMenu extends AonElement {
 								if (activities.length > 1) {
 									activities.push({
 										id: "all",
-										description: "TODAS"
+										description: MSG.ALL2
 									});
 									let activity = createSelect(this.ACTIVITY, MSG.ACTIVITY);
 									activity.setAlias("id", "description");

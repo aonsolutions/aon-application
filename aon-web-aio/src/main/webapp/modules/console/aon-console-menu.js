@@ -42,19 +42,19 @@ export class AonConsoleMenu extends AonSuiteMenu {
         this.options = [, {
             title: MSG.UTILITIES,
             options: [{
-                description: "Configuración Global",
-                title: "Configuración Global",
+                description: MSG.GLOBAL_CONFIGURATION,
+                title: MSG.GLOBAL_CONFIGURATION,
                 action: () => this.rootPanel(new JSF.AonJsfGlobalConfig())
             }, {
-				description: "Consola Administración",
-                title: "Consola Administración",
+				description: MSG.CONSOLE_ADMIN,
+                title: MSG.CONSOLE_ADMIN,
                 action: () => GWT.iLoad(GWT.CONSOLE)
             }]
         }, {
             title: MSG.COMPANY_DATA_SECTION,
             options: [{
-                description: "Descarga de Empresas",
-                title: "Descarga de Empresas",
+                description: MSG.COMPANY_DOWNLOAD,
+                title: MSG.COMPANY_DOWNLOAD,
                 action: () => window.open("https://www.aonsolutions.es/solicitud-copia-de-seguridad-datos-empresa/", "_blank")
             }]
         }];

@@ -33,10 +33,10 @@ export class AonTreasuryMenu extends AonSuiteMenu {
             info:[MSG.EXPIRED_PAYMENTS, MSG.EXPIRED_CHARGES]
         };
         this.selectOptions= [{
-            title: "Remesa de cobro",
+            title: MSG.PAYMENT_BATCH_RECEIPT,
             action: () => this.rootPanel(new JSF.AonJsfFBatchCharge())
         },{
-            title: "Remesa de pago",
+            title: MSG.PAYMENT_BATCH_SINGLE,
             action: () => this.rootPanel(new JSF.AonJsfFBatchPayment())
         },{
             title: MSG.EXPIRATIONS,
@@ -52,46 +52,46 @@ export class AonTreasuryMenu extends AonSuiteMenu {
         this.options = [{
             title: MSG.CHARGES,
             options: [{
-                description: "Gestión de Cobros",
-                title: "Gestión de Cobros",
+                description: MSG.CHARGES_MANAGEMENT,
+                title: MSG.CHARGES_MANAGEMENT,
                 action: () => this.rootPanel(new JSF.AonJsfFinanceCharge())
             }, {
-                description: "Remesas de Cobro",
-                title: "Remesas de Cobro",
+                description: MSG.PAYMENT_BATCHES_RECEIPT,
+                title: MSG.PAYMENT_BATCHES_RECEIPT,
                 action: () => this.rootPanel(new JSF.AonJsfFBatchCharge())
             }, {
-                description: "Orden de domiciliación de adeudo directo SEPA",
-                title: "Orden de domiciliación de adeudo directo SEPA",
+                description: MSG.SEPA_DIRECT_DEBIT_ORDER,
+                title: MSG.SEPA_DIRECT_DEBIT_ORDER,
                 action: () => this.rootPanel(new JSF.AonJsfSddMandate())
             }]
         }, {
             title: MSG.PAYMENTS,
             options: [{
-                description: "Gestión de Pagos",
-                title: "Gestión de Pagos",
+                description: MSG.PAYMENTS_MANAGEMENT,
+                title: MSG.PAYMENTS_MANAGEMENT,
                 action: () => this.rootPanel(new JSF.AonJsfFinancePayment())
             }, {
-                description: "Remesas de Pago",
-                title: "Remesas de Pago",
+                description: MSG.PAYMENT_BATCH_SINGLE,
+                title: MSG.PAYMENT_BATCH_SINGLE,
                 action: () => this.rootPanel(new JSF.AonJsfFBatchPayment())
             }, {
-                description: "Remesas de Pago (Nuevo)",
-                title: "Remesas de Pago",
+                description: MSG.PAYMENT_BATCH_NEW,
+                title: MSG.PAYMENT_BATCH_NEW,
                 action: () => GWT.iLoad(GWT.FBATCH_PAYMENT_TREASURY)
             }, {
-                description: "Impresión de Pagarés",
-                title: "Impresión de Pagarés",
+                description: MSG.PROMISSORY_NOTE_PRINTING,
+                title: MSG.PROMISSORY_NOTE_PRINTING,
                 action: () => this.rootPanel(new JSF.AonJsfFPaymentPrint())
             }]
         }, {
             title: MSG.FORECAST,
             options: [{
-                description: "Gestión de Previsiones",
-                title: "Gestión de Previsiones",
+                description: MSG.FORECAST_MANAGEMENT,
+                title: MSG.FORECAST_MANAGEMENT,
                 action: () => this.rootPanel(new JSF.AonJsfCashFlowForecast())
             }, {
-                description: "Listado de Previsión",
-                title: "Listado de Previsión",
+                description: MSG.FORECAST_LIST,
+                title: MSG.FORECAST_LIST,
                 action: () => this.rootPanel(new JSF.AonJsfCashFlowForecastReport())
             } /*,{
                     description: "Proyección de Cuotas",
@@ -102,72 +102,72 @@ export class AonTreasuryMenu extends AonSuiteMenu {
         }, {
             title: MSG.BANK_MOVEMENTS,
             options: [{
-                description: "Conciliador Bancario",
-                title: "Conciliador Bancario",
+                description: MSG.BANK_CONCILIATOR,
+                title: MSG.BANK_CONCILIATOR,
                 action: () => this.rootPanel(new JSF.AonJsfBankStatement())
             }, {
-                description: "Agregador Bancario",
-                title: "Agregador Bancario",
+                description: MSG.BANK_AGGREGATOR,
+                title: MSG.BANK_AGGREGATOR,
                 action: () => GWT.iLoad(GWT.NORDIGEN),
 				filter: () => this.getDur().isBank()
             }, {
-                description: "Gestión de Suplidos",
-                title: "Gestión de Suplidos",
+                description: MSG.ADVANCES_MANAGEMENT,
+                title: MSG.ADVANCES_MANAGEMENT,
                 action: () => this.rootPanel(new JSF.AonJsfPrepayment())
             }]
         }, {
             title: MSG.FEES,
             options: [{
-                description: "Listado de Pre-facturación",
-                title: "Listado de Pre-facturación",
+                description: MSG.PRE_INVOICING_LIST,
+                title: MSG.PRE_INVOICING_LIST,
                 action: () => this.rootPanel(new JSF.AonJsfFeePreInvoicing())
             }, {
-                description: "Facturación de Cuotas",
-                title: "Facturación de Cuotas",
+                description: MSG.FEE_INVOICING,
+                title: MSG.FEE_INVOICING,
                 action: () => this.rootPanel(new JSF.AonJsfFeeInvoicing())
             }, {
-                description: "Asignar Cuotas a Clientes",
-                title: "Asignar Cuotas a Clientes",
+                description: MSG.ASSIGN_FEES_CUSTOMERS,
+                title: MSG.ASSIGN_FEES_CUSTOMERS,
                 action: () => this.rootPanel(new JSF.AonJsfFeeAssigment)
             }, {
-                description: "Listado de Cuotas",
-                title: "Listado de Cuotas",
+                description: MSG.FEES_LIST,
+                title: MSG.FEES_LIST,
                 action: () => this.rootPanel(new JSF.AonJsfFeePrint())
             }, {
-                description: "Panel Facturación de Cuotas",
-                title: "Panel Facturación de Cuotas",
+                description: MSG.FEE_INVOICING_PANEL,
+                title: MSG.FEE_INVOICING_PANEL,
                 action: () => GWT.iLoad(GWT.CUSTOMER_FEE)
             }, {
-                description: "Panel Carga Trabajo",
-                title: "Panel Carga Trabajo",
+                description: MSG.WORKLOAD_PANEL,
+                title: MSG.WORKLOAD_PANEL,
                 action: () => GWT.iLoad(GWT.SELLER_WORKLOAD_MODULE)
             }
             ]
         }, {
             title: MSG.UTILITIES,
             options: [{
-                description: "Recargos en Facturas",
-                title: "Recargos en Facturas",
+                description: MSG.INVOICE_SURCHARGES,
+                title: MSG.INVOICE_SURCHARGES,
                 action: () => this.rootPanel(new JSF.AonJsfIncreaseItem())
             }, {
-                description: "Grupos de Facturación",
-                title: "Grupos de Facturación",
+                description: MSG.BILLING_GROUPS,
+                title: MSG.BILLING_GROUPS,
                 action: () => this.rootPanel(new JSF.AonJsfInvoicingGroup())
             }, {
-                description: "Firma de Facturas",
-                title: "Firma de Facturas",
+                description: MSG.INVOICE_SIGNATURE,
+                title: MSG.INVOICE_SIGNATURE,
                 action: () => this.rootPanel(new JSF.AonJsfInvoiceSigner())
             }, {
-                description: "Utilidades Tesoreria",
-                title: "Utilidades Tesoreria",
+                description: MSG.TREASURY_UTILITIES,
+                title: MSG.TREASURY_UTILITIES,
                 action: () => GWT.iLoad(GWT.FINANCE_UTILITIES)
             }, {
-                description: "Chequeo de Datos Financieros",
-                title: "Chequeo de Datos Financieros",
+                description: MSG.FINANCIAL_DATA_CHECK,
+                title: MSG.FINANCIAL_DATA_CHECK,
                 action: () => this.rootPanel(new JSF.AonJsfFinancePrint())
             }, {
-                description: "Chequeo de Facturas / Vencimientos",
-                title: "Chequeo de Facturas / Vencimientos",
+                description: MSG.INVOICE_EXPIRATION_CHECK,
+                title: MSG.INVOICE_EXPIRATION_CHECK,
                 action: () => this.rootPanel(new JSF.AonJsfFinanceChequing())
             }]
         }];

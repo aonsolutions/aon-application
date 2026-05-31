@@ -55,12 +55,12 @@ export class AonGroupwareMenu extends AonSuiteMenu {
                 title: MSG.EXPEDIENTS,
                 action: () => this.rootPanel(new JSF.AonJsfProject)
             }, {
-                description: "Tipo de Expediente",
-                title: "Tipo de Expediente",
+                description: MSG.EXPEDIENT_TYPE,
+                title: MSG.EXPEDIENT_TYPE,
                 action: () => this.rootPanel(new JSF.AonJsfProjectType)
             }, {
-                description: "Tipo de Actividad",
-                title: "Tipo de Actividad",
+                description: MSG.ACTIVITY_TYPE,
+                title: MSG.ACTIVITY_TYPE,
                 action: () => this.rootPanel(new JSF.AonJsfActivityType)
             }]
         }, {
@@ -70,12 +70,12 @@ export class AonGroupwareMenu extends AonSuiteMenu {
                 title: MSG.PROCESSES,
                 action: () => this.rootPanel(new JSF.AonJsfProcess)
             }, {
-                description: "Tipos de Transiciones",
-                title: "Tipos de Transiciones",
+                description: MSG.TRANSITION_TYPES,
+                title: MSG.TRANSITION_TYPES,
                 action: () => this.rootPanel(new JSF.AonJsfProcessTransactionType)
             }, {
-                description: "Lanzador de procesos",
-                title: "Lanzador de procesos",
+                description: MSG.PROCESS_LAUNCHER,
+                title: MSG.PROCESS_LAUNCHER,
                 action: () => this.rootPanel(new JSF.AonJsfProcessWizard)
             }]
         }, {
@@ -85,19 +85,19 @@ export class AonGroupwareMenu extends AonSuiteMenu {
                 title: MSG.TASK_TRAY,
                 action: () => this.rootPanel(new JSF.AonJsfTask)
             }, {
-                description: "Diagrama de Gantt",
-                title: "Diagrama de Gantt",
+                description: MSG.GANTT_CHART,
+                title: MSG.GANTT_CHART,
                 action: () => this.rootPanel(new JSF.AonJsfGantt)
             }]
         }, {
             title: MSG.CAMPAIGNS,
             options: [{
-                description: "Monitor de campañas",
-                title: "Monitor de campañas",
+                description: MSG.CAMPAIGN_MONITOR,
+                title: MSG.CAMPAIGN_MONITOR,
                 action: () => this.rootPanel(new JSF.AonJsfCampaign)
             }, {
-                description: "Tipos de campañas",
-                title: "Tipos de campañas",
+                description: MSG.CAMPAIGN_TYPES,
+                title: MSG.CAMPAIGN_TYPES,
                 action: () => this.rootPanel(new JSF.AonJsfCampaignType)
             }]
         }, {
@@ -111,8 +111,8 @@ export class AonGroupwareMenu extends AonSuiteMenu {
                 title: MSG.REPORTS,
                 action: () => this.rootPanel(new JSF.AonJsfDailyTrackingReport)
             }, {
-                description: "Tipos de Trabajos",
-                title: "Tipos de Trabajos",
+                description: MSG.WORK_TYPES,
+                title: MSG.WORK_TYPES,
                 action: () => this.rootPanel(new JSF.AonJsfJobType)
             }]
         }, {
@@ -122,12 +122,12 @@ export class AonGroupwareMenu extends AonSuiteMenu {
                 title: MSG.OPERATORS,
                 action: () => this.rootPanel(new JSF.AonJsfTaskHolder)
             }, {
-                description: "Grupos de usuarios",
-                title: "Grupos de usuarios",
+                description: MSG.USER_GROUPS,
+                title: MSG.USER_GROUPS,
                 action: () => this.rootPanel(new JSF.AonJsfWorkgroup)
             }, {
-                description: "Perfiles de coste",
-                title: "Perfiles de coste",
+                description: MSG.COST_PROFILES,
+                title: MSG.COST_PROFILES,
                 action: () => this.rootPanel(new JSF.AonJsfCostProfile)
             }]
         }];

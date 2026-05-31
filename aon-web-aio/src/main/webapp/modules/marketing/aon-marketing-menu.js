@@ -37,7 +37,7 @@ export class AonMarketingMenu extends AonSuiteMenu {
             title: MSG.CAMPAIGN,
             action: () => alert("description")
         },{
-            title: "Acción",
+            title: MSG.ACTION,
             action: () => alert("description")
         }];
         this.initOptions();
@@ -47,62 +47,62 @@ export class AonMarketingMenu extends AonSuiteMenu {
         this.options = [{
             title: MSG.CONTENTS,
             options: [{
-                description: "Mensajes",
-                title: "Mensajes",
+                description: MSG.MESSAGES,
+                title: MSG.MESSAGES,
                 action: () => this.rootPanel(new JSF.AonJsfMessages)
             }, {
-                description: "Noticias",
-                title: "Noticias",
+                description: MSG.NEWS,
+                title: MSG.NEWS,
                 action: () => this.rootPanel(new JSF.AonJsfNews())
             }, {
-                description: "Boletines",
-                title: "Boletines",
+                description: MSG.NEWSLETTERS,
+                title: MSG.NEWSLETTERS,
                 action: () => this.rootPanel(new JSF.AonJsfNewsletter())
             }]
         }, {
             title: MSG.COMMUNICATIONS,
             options: [{
-                description: "Campañas",
-                title: "Campañas",
+                description: MSG.CAMPAIGNS,
+                title: MSG.CAMPAIGNS,
                 action: () => GWT.iLoad(GWT.MARKETING_CAMPAIGN)
                 //action: () => this.rootPanel(new JSF.AonJsfMarketingCampaign())
             }, {
-                description: "Communication Center",
-                title: "Communication Center",
+                description: MSG.COMMUNICATION_CENTER,
+                title: MSG.COMMUNICATION_CENTER,
                 action: () => this.rootPanel(new JSF.AonJsfCommunicationCenter())
             }]
         }, {
             title: MSG.SURVEYS,
             options: [{
-                description: "Preguntas",
-                title: "Preguntas",
+                description: MSG.QUESTIONS,
+                title: MSG.QUESTIONS,
                 action: () => GWT.iLoad(GWT.QUESTION)
             }, {
-                description: "Cuestionarios",
-                title: "Cuestionarios",
+                description: MSG.SURVEYS,
+                title: MSG.SURVEYS,
                 action: () => this.rootPanel(new JSF.AonJsfSurvey())
             }, {
-                description: "Respuestas de Cuestionarios",
-                title: "Respuestas de Cuestionarios",
+                description: MSG.SURVEY_RESPONSES,
+                title: MSG.SURVEY_RESPONSES,
                 action: () => this.rootPanel(new JSF.AonJsfSurveyResponse())
             }]
         }, {
             title: MSG.TEMPLATES,
             options: [{
-                description: "Cabeceras y Pies de Plantilla",
-                title: "Cabeceras y Pies de Plantilla",
+                description: MSG.TEMPLATE_HEADERS_FOOTERS,
+                title: MSG.TEMPLATE_HEADERS_FOOTERS,
                 action: () => this.rootPanel(new JSF.AonJsfHtmlTemplate())
             }, {
-                description: "Plantillas de Correos",
-                title: "Plantillas de Correos",
+                description: MSG.EMAIL_TEMPLATES,
+                title: MSG.EMAIL_TEMPLATES,
                 action: () => this.rootPanel(new JSF.AonJsfMarketingTemplate())
             }, {
-                description: "Imagenes",
-                title: "Imagenes",
+                description: MSG.IMAGES,
+                title: MSG.IMAGES,
                 action: () => this.rootPanel(new JSF.AonJsfCompanyImages())
             }, {
-                description: "Personalización de Envio Email",
-                title: "Personalización de Envio Email",
+                description: MSG.EMAIL_SENDING_CUSTOMIZATION,
+                title: MSG.EMAIL_SENDING_CUSTOMIZATION,
                 action: () => this.rootPanel(new JSF.AonJsfMailProcess())
             }]
         }];

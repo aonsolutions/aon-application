@@ -95,6 +95,16 @@ export const AUDIT = 'Auditoria';
 export const AUTOBOOKING = 'Auto-Contractació';
 export const AVAILABLE = 'Disponible';
 export const AVERAGE = 'Mitjana';
+export const ACADEMIC_YEAR = 'Any Acadèmic';
+export const ACCOUNTING_ACCOUNT = 'Compte Comptable';
+export const ACCOUNTING_PAYMENT_TYPE = 'Assignació comptable per tipus de forma de pagament';
+export const ACTION = 'Acció';
+export const ACTIVITY_TYPE = 'Tipus d\'Activitat';
+export const ADVANCES_MANAGEMENT = 'Gestió de Suplerts';
+export const AGENTS_COMMERCIAL = 'Agents Comercials';
+export const ASSIGN_FEES_CUSTOMERS = 'Assignar Quotes a Clients';
+export const ASSIGN_FEES_GROUPS = 'Assignar Quotes a Grups';
+export const ASSIGN_SKILLS_GROUPS = 'Assignar Habilitats a Grups';
 
 // ----- B
 
@@ -128,6 +138,13 @@ export const BUDGET = 'Pressupost';
 export const BUDGETS_PENDING = 'Pressupostos pend.';
 export const BUDGETS = 'Pressupostos';
 export const BUSINESS_NAME = 'Raó Social';
+export const BANK_CONCEPTS = 'Conceptes Bancaris';
+export const BATCH_CASH_RECEIPTS = 'Remesar Cobraments de Caixes';
+export const BILLING_CONSOLE = 'Consola de Facturació';
+export const BILLING_GROUPS = 'Grups de Facturació';
+export const BOLETINS = 'Butlletins';
+export const BRANDS = 'Marques';
+export const BULK_DELIVERY_INVOICING = 'Facturació Massiva d\'Albarans';
 
 // ----- C
 
@@ -232,6 +249,31 @@ export const CUSTOMER_SEARCH_DOMAIN_NOT_FOUND = "No s'han trobat clients relacio
 export const CUSTOMER_SEARCH_NOT_FOUND = "No s'han trobat clients relacionats amb aquesta cerca";
 export const CUSTOMERS = 'Clients';
 export const CUSTOMIZE_INVOICE = 'Personalitzar Factura';
+export const CAMPAIGN_MONITOR = 'Monitor de Campanyes';
+export const CAMPAIGN_TYPES = 'Tipus de Campanyes';
+export const CASH_AUDIT = 'Arqueig de Caixa';
+export const CASH_DEFINITION = 'Definició de Caixa';
+export const CASH_OPENING = 'Obertura de Caixa';
+export const CASH_SHIFTS = 'Torns de Caixa';
+export const CATALOGUES = 'Catàlegs';
+export const CERTIFICA_NOTIFICATIONS = 'Notificacions Certific@';
+export const COMMERCIAL_ACTIVITY_TYPES = 'Tipus d\'Activitats Comercials';
+export const COMMERCIAL_CALENDAR = 'Agenda Comercial';
+export const COMMERCIAL_OPERATION = 'Operació Comercial';
+export const COMMERCIAL_TERMS = 'Condicions Comercials';
+export const COMMISSION_BANDS = 'Definició de Trams de Comissions';
+export const COMMISSION_CALCULATION = 'Càlcul de Comissions';
+export const COMMISSION_CONTROL = 'Control de Comissions Calculades';
+export const COMMISSION_TYPES = 'Tipus de Comissió';
+export const CHARGES_MANAGEMENT = 'Gestió de Cobraments';
+export const CHARGES_PAYMENTS_PORTFOLIO = 'Cartera de cobraments i pagaments';
+export const COMMUNICATION_CENTER = 'Centre de Comunicació';
+export const COMPANY_DOWNLOAD = 'Descàrrega d\'Empreses';
+export const CONTRATA_NOTIFICATIONS = 'Notificacions Contrat@';
+export const CORPORATION_TAX = 'Impost sobre Societats';
+export const CORPORATION_TAX_PAYMENT = 'Impost Societats. Pagament Fraccionat';
+export const COST_PROFILES = 'Perfils de Cost';
+export const COUNTRY_PROVINCE = 'País/Província';
 
 // ----- D
 
@@ -293,6 +335,20 @@ export const DROP_FILE = 'Deixa anar el fitxer';
 export const DUPLICATE = 'Duplicar';
 export const DUPLICATE_INVOICE = 'Duplicar Factura';
 export const DURATION = 'Durada';
+export const DASHBOARD_CATEGORIES = 'CM de Categories';
+export const DASHBOARD_PRODUCTS = 'CM de Productes';
+export const DASHBOARD_PROSPECTS = 'CM de Clients Potencials';
+export const DASHBOARD_SALES_AGENTS = 'CM d\'Agents Comercials';
+export const CSV_DATA_LOAD = 'Càrrega de dades des de fitxers CSV';
+export const DATA_DOWNLOAD_EXCEL = 'Descàrrega de dades en format Excel';
+export const DATA_LOAD_TEMPLATE_MGT = 'Gestió de Plantilles per càrrega de dades';
+export const DATA_UPLOAD_CSV = 'Càrrega de dades des de fitxers CSV';
+export const DATA_UPLOAD_EXCEL = 'Càrrega de dades des de fitxers Excel';
+export const DATA_UPLOAD_TEMPLATES = 'Gestió Plantilles per a càrrega de dades';
+export const DEDUPLICATION_PROSPECTS = 'Deduplicació de Clients Potencials';
+export const DUPLICATE_GROUPS = 'Duplicar Grups';
+export const EXCEL_DATA_DOWNLOAD = 'Descàrrega de dades en format Excel';
+export const EXCEL_DATA_LOAD = 'Càrrega de dades des de fitxers Excel';
 
 // ----- E
 
@@ -310,6 +366,7 @@ export const EDIT_TAG = 'Editar Etiqueta';
 export const EDIT_WAREHOUSE = 'Editar Magatzem';
 export const EDIT_WORKGROUP = 'Editar grup de treball';
 export const ELABORATION = 'Elaboració';
+export const ELABORATION_ORDER = 'Ordre d\'elaboració';
 export const ELABORATIONS = 'Elaboracions';
 export const EMAIL = 'Email';
 export const EMAIL_ADD = 'Assignar adreça de correu electrònic';
@@ -346,6 +403,13 @@ export const EXPIRATIONS = 'Venciments';
 export const EXPIRED = 'Caducat';
 export const EXPIRED_SESSION = 'Sessió expirada';
 export const EXPORTED = 'Exportades';
+export const EMAIL_ACCOUNTS = 'Comptes de Correu';
+export const EMAIL_SENDING_CUSTOMIZATION = 'Personalització Enviament Email';
+export const EMAIL_SIGNATURES = 'Signatures de Correu';
+export const EMAIL_TEMPLATES = 'Plantilles de Correu';
+export const ENTITY_RELATIONSHIP_TYPES = 'Tipus de relacions entre entitats';
+export const EXPENSE_INVOICE = 'Factura de Despeses';
+export const EXPEDIENT_TYPE = 'Tipus d\'Expedient';
 
 
 
@@ -382,6 +446,15 @@ export const FORMALITIES = 'Tràmits';
 export const FROM = 'Des';
 export const FRENCH = 'Francès';
 export const FUTURE = 'Molt aviat...';
+export const FEE_INVOICING = 'Facturació de Quotes';
+export const FEE_INVOICING_PANEL = 'Tauler Facturació de Quotes';
+export const FEES_LIST = 'Llistat de Quotes';
+export const FEES_PROJECTION = 'Projecció de Quotes';
+export const FINANCIAL_DATA_CHECK = 'Comprovació de Dades Financeres';
+export const FORECAST_LIST = 'Llistat de Previsió';
+export const FORECAST_MANAGEMENT = 'Gestió de Previsions';
+export const FORMAT_LABELS = 'Etiquetes de Formats/Mides';
+export const FORMAT_SIZE_TAGS = 'Etiquetes de Formats/Mides';
 
 // ----- G
 
@@ -399,6 +472,11 @@ export const GROUP = 'Grup';
 export const GROUPWARE = 'Expedients';
 export const GROUPED = 'Agrupades';
 export const GROUPS = 'Grups';
+export const GANTT_CHART = 'Diagrama de Gantt';
+export const GLOBAL_STATISTICS = 'Estadístiques Globals';
+export const GRADES = 'Qualificacions';
+export const GRADES_QUERY = 'Consulta Notes';
+export const GROUP_CLOSURE = 'Tancament de Grups';
 
 // ----- H
 
@@ -498,6 +576,19 @@ export const ISSUE = 'Assumpte';
 export const ISSUED = 'Emesa';
 export const ISSUED_INVOICES = 'Factures Emeses';
 export const ISSUEDS = 'Emeses';
+export const IGIC_ANNUAL_SUMMARY = 'IGIC Declaració resum anual';
+export const IGIC_SELF_ASSESSMENT = 'IGIC Autoliquidació';
+export const IGIC_SIMPLIFIED_REGIME = 'IGIC Règim Simplificat';
+export const IMAGES = 'Imatges';
+export const INCOMING_PURCHASE_NOTES = 'Entrades (Albarans de Compra)';
+export const INVENTORY_CLOSURE = 'Tancament d\'Inventari';
+export const INVOICE_CONSOLE = 'Consola de facturació';
+export const INVOICE_EXPIRATION_CHECK = 'Comprovació de Factures / Venciments';
+export const INVOICE_PRINT_EMAIL = 'Impressió / eMail de Factures';
+export const INVOICE_SIGNATURE = 'Signatura de Factures';
+export const INVOICE_SURCHARGES = 'Recàrrecs en Factures';
+export const IT_SICK_LEAVES = 'Baixes IT';
+export const IVA_SELF_ASSESSMENT = 'IVA Autoliquidació';
 
 // ----- J
 
@@ -541,6 +632,9 @@ export const LOCATION = 'Ubicació';
 export const LOCATIONS = 'Ubicacions';
 export const LOGIN = 'Inici de sessió';
 export const LOGIN_SUBTITLE = 'Introduïu les vostres credencials';
+export const LEVELS = 'Nivells';
+export const LOANS = 'Préstecs';
+export const MESSAGES = 'Missatges';
 
 // ----- M
 
@@ -604,6 +698,8 @@ export const MY_DATA = 'Les Meves Dades';
 export const MY_MANAGER = 'El meu Gestor';
 export const MY_USER = 'Mi Usuari';
 export const MAGIC_LINK = 'Enviament d´enllaç d´accés per email';
+export const MANAGEMENT_INVENTORY = 'Gestió d\'Inventaris';
+export const MOVEMENTS_LIST = 'Llistat de moviments';
 
 // ----- N
 
@@ -656,11 +752,15 @@ export const NOTE = 'Nota';
 export const NUMBER = 'Nombre';
 export const NUMBER_OF_USERS = "Nombre d'usuaris";
 export const NUMBER_OF_PALLETS = "Nombre de palets";
+export const NEWSLETTERS = 'Butlletins';
+export const NON_DEDUCTIBLE_EXPENSE = 'Despesa no deduïble en IVA';
+export const NON_DEDUCTIBLE_EXPENSES = 'Despeses no deduïbles en IVA';
 
 
 // ----- O
 
 export const OBSERVATION = 'Observació';
+export const OBSERVATIONS = 'Observacions';
 export const OCR = 'OCR';
 export const OFFERS = 'Pressupostos';
 export const OPERATING_ENTRIES = "Assentaments d'explotació, tancament i obertura";
@@ -694,6 +794,7 @@ export const OTHERS = 'Altres';
 export const PACKAGE = 'Envàs';
 export const PACKAGES = 'Envasos';
 export const PACKAGING = 'Embalatge';
+export const PACKING_LIST = 'Packing List';
 export const PARENT = 'Pare';
 export const PARENT_APPS = "Aplicacions del pare";
 export const PAUSE = 'Pausa';
@@ -766,13 +867,42 @@ export const PROJECTS = 'Projectes';
 export const PROFILES = "Perfils";
 export const PROTOCOL = 'Protocol';
 export const PURCHASE_PRICE = 'Preu de Cost';
+export const ORDER_PROPOSAL = 'Proposta de comandes';
+export const OUTGOING_SALES_NOTES = 'Sortides (Albarans de Venda)';
+export const PAYMENTS_MANAGEMENT = 'Gestió de Pagaments';
+export const PAYMENT_BATCH_NEW = 'Remeses de Pagament (Nou)';
+export const PAYMENT_BATCH_RECEIPT = 'Remesa de Cobrament';
+export const PAYMENT_BATCH_SINGLE = 'Remesa de Pagament';
+export const PAYMENT_BATCHES_RECEIPT = 'Remeses de Cobrament';
+export const PERSONS = 'Persones';
+export const POS = 'TPV';
+export const POS_OPTIONS = 'Opcions de TPV';
+export const POS_SALES = 'Vendes TPV';
+export const PRE_INVOICE_LIST = 'Llistat de Pre-facturació';
+export const PRE_INVOICING_LIST = 'Llistat de Pre-facturació';
+export const PRINT_PRODUCT_LABELS = 'Impressió d\'etiquetes de productes';
+export const PROCESS_LAUNCHER = 'Llançador de processos';
+export const PRODUCT_LABELS = 'Etiquetes de Productes';
+export const PRODUCT_TAG_PRINT = 'Impressió d\'etiquetes de productes';
+export const PRODUCT_TAGS = 'Etiquetes de Productes';
+export const PROMISSORY_NOTE_PRINTING = 'Impressió de Pagarés';
+export const PURCHASE_INVOICE_SINGLE = 'Factura de Compres';
+export const PURCHASE_INVOICES = 'Factures de Compra';
+export const PURCHASE_ORDERS = 'Comandes de Compra';
 // ----- Q
 
+export const QUALIFICATIONS = 'Qualificacions';
+export const QUALITY_SKILLS = 'Aptituds de Qualitat';
 export const QUERY = 'Consulta';
 export const QUANTITY = 'Quantitat';
 export const QUARTERLY_VIEW = 'Vista trimestral';
 export const QUESTION = 'Pregunta';
 export const QUESTIONS = 'Preguntes';
+export const QUOTES_BY_AGENT = 'Pressupostos per Agent Comercial';
+export const QUOTES_BY_CATEGORY_PRODUCT = 'Pressupostos per Categoria i Producte';
+export const QUOTES_BY_PRODUCT = 'Pressupostos per Producte';
+export const QUOTES_BY_PROSPECT = 'Pressupostos per Client Potencial';
+export const QUOTES_BY_ZONE = 'Pressupostos per Zona';
 export const QUICK_ACCESS = "Accés ràpid";
 export const QUICK_ACCESS_TITLE = 'Accés Ràpid';
 export const QUOTA = 'Quota';
@@ -832,6 +962,9 @@ export const RESULTS = "Resultats";
 export const RESUME_COSTS = 'Resum Costos';
 export const RETENTION_PANEL = 'Panell d\'IRPF';
 export const REVIEW = "Revisar";
+export const RECEIVABLES_MANAGEMENT = 'Gestió de Cobraments';
+export const RECLASSIFY_CUSTOMERS = 'Reclassificar Clients/Alumnes';
+export const REPAIR_ORDERS_EXCEL = 'Ordres de Reparació (Excel)';
 
 // ----- S
 
@@ -856,6 +989,27 @@ export const SECURITY = 'Seguretat';
 export const SEE_ALL = 'Veure Totes';
 export const SELECT_LANGUAGE = "Selecció d'idioma";
 export const SELECT_COMPANY_TYPE = "Seleccionar tipus d'empresa";
+export const SALE_INVOICE = 'Factura de venda';
+export const SALE_INVOICES = 'Factures de venda';
+export const SALE_ORDERS = 'Comandes de venda';
+export const SALES_INVOICE_SINGLE = 'Factura de Venda';
+export const SALES_INVOICES = 'Factures de Venda';
+export const SALES_ORDERS = 'Comandes de Venda';
+export const SALES_QUOTE = 'Pressupost de Vendes';
+export const SEPA_DIRECT_DEBIT_ORDER = 'Ordre de domiciliació de dèbit directe SEPA';
+export const SEGMENTATION = 'Segmentació';
+export const SEPE = 'SEPE';
+export const SERIES = 'Sèries';
+export const SERVE_ORDERS = 'Servir comandes';
+export const SHIPPING_LABELS = 'Etiquetes d\'Enviament';
+export const SII_DECLARATION = 'SII - Subministrament Immediat d\'Informació';
+export const SII_DESCRIPTION = 'Subministrament Immediat d\'Informació';
+export const SKILLS = 'Habilitats';
+export const STUDENT = 'Alumne';
+export const STUDENTS = 'Alumnes';
+export const SUBJECTS = 'Matèries';
+export const SURVEY_RESPONSES = 'Respostes de Qüestionaris';
+export const SUPPLY_BY_CONSUMPTION = 'Aprovisionament segons consum';
 export const SEND = 'Enviar';
 export const SEND_FILE = 'Enviar Fitxer';
 export const SEND_FILES = 'Enviar Fitxers';
@@ -958,6 +1112,13 @@ export const TRASH = 'Paperera';
 export const TREASURY = 'Tresoreria';
 export const TYPE = 'Tipus';
 export const TYPES = 'Tipues';
+export const TARIFFS = 'Tarifes';
+export const TEACHERS = 'Professors';
+export const TEMPLATE_HEADERS_FOOTERS = 'Capçaleres i Peus de Plantilla';
+export const UNDEDUCTIBLE_VAT_EXPENSE = 'Despesa no Deduïble en IVA';
+export const UNDEDUCTIBLE_VAT_EXPENSES = 'Despeses no Deduïbles en IVA';
+export const TRANSITION_TYPES = 'Tipus de Transicions';
+export const TREASURY_UTILITIES = 'Utilitats Tresoreria';
 
 // ----- U
 
@@ -984,6 +1145,7 @@ export const USER_MANAGEMENT = `Gestió d'Usuaris`;
 export const USERS = 'Usuaris';
 export const UTILITIES_INVOICES_EXPIRATIONS = 'Utilidades facturas/vencimientos';
 export const UTILITIES = 'Utilitats';
+export const USER_GROUPS = 'Grups d\'usuaris';
 
 // ----- V
 
@@ -1001,11 +1163,15 @@ export const VIEW_FIELDS = 'Veure camps';
 export const VIEW_PAYROLL = 'Veure nòmina';
 export const VIEW_PAYROLLS = 'Veure nòmines';
 export const VOLUME = 'Tom';
+export const VALUED_ITEM_LIST = 'Llistat valorat per article';
+export const VALUED_WAREHOUSE_LIST = 'Llistat valorat per magatzem';
+export const VEHICLES_AND_OWNERS = 'Vehicles i Titulars';
 
 // ----- W
 
 export const WAREHOUSE = 'Magatzem';
 export const WAREHOUSES = 'Magatzems';
+export const WAREHOUSE_ITEM_LIST = 'Llistat per article';
 export const WORKER_CALC_VARIABLES = 'Variables Càlcul Treballadors';
 export const WORK_ORDER = 'Part de treball';
 export const WORK_ORDERS = 'Parts de Treball';

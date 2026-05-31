@@ -31,10 +31,10 @@ export class AonGarageMenu extends AonSuiteMenu {
 		this.new = MSG.NEW_ENTRY;
         this.uploadButton = true
 		this.selectOptions= [{
-            title: "Cuenta contable",
+            title: MSG.ACCOUNTING_ACCOUNT,
             action: () => alert("description")
         },{
-            title: "Ficha de amortización",
+            title: MSG.AMORTIZATION_SHEET,
             action: () => alert("description")
         },{
             title: MSG.ENTRY,
@@ -48,17 +48,17 @@ export class AonGarageMenu extends AonSuiteMenu {
         this.options = [{
             title: MSG.REPAIR_ORDERS,
             options: [{
-                description: "Órdenes de Reparación",
-                title: "Órdenes de Reparación",
+                description: MSG.REPAIR_ORDERS,
+                title: MSG.REPAIR_ORDERS,
                 action: () => this.rootPanel(new JSF.AonJsfProjectTas())
             },
             {
-                description: "Órdenes de Reparación (Excel)",
-                title: "Órdenes de Reparación (Excel)",
+                description: MSG.REPAIR_ORDERS_EXCEL,
+                title: MSG.REPAIR_ORDERS_EXCEL,
                 action: () => GWT.iLoad(GWT.PROJECT_TAS_MODULE)
             }, {
-                description: "Operarios",
-                title: "Operarios",
+                description: MSG.OPERATORS,
+                title: MSG.OPERATORS,
                 action: () => this.rootPanel(new JSF.AonJsfTaskHolder())
             }]
         }, {
@@ -72,12 +72,12 @@ export class AonGarageMenu extends AonSuiteMenu {
                 title: MSG.TARGETS,
                 action: () => this.rootPanel(new JSF.AonJsfTarget())
             }, {
-                description: "Agentes Comerciales",
-                title: "Agentes Comerciales",
+                description: MSG.AGENTS_COMMERCIAL,
+                title: MSG.AGENTS_COMMERCIAL,
                 action: () => this.rootPanel(new JSF.AonJsfSeller())
             }, {
-                description: "Condiciones Comerciales",
-                title: "Condiciones Comerciales",
+                description: MSG.COMMERCIAL_TERMS,
+                title: MSG.COMMERCIAL_TERMS,
                 action: () => this.rootPanel(new JSF.AonJsfCommercialTerm())
             }]
         }, {
@@ -98,8 +98,8 @@ export class AonGarageMenu extends AonSuiteMenu {
         }, {
             title: MSG.REPORTS,
             options: [{
-                description: "Vehículos y Titulares",
-                title: "Vehículos y Titulares",
+                description: MSG.VEHICLES_AND_OWNERS,
+                title: MSG.VEHICLES_AND_OWNERS,
                 action: () => this.rootPanel(new JSF.AonJsfTasStat())
             }]
         }];
