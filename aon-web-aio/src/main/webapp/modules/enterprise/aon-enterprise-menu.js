@@ -1,4 +1,4 @@
-import { MSG, CSS, EVENT, TAG } from '../../environments/environments.js'; 
+import { MSG, CSS, EVENT, TAG } from '../../environments/environments.js';
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as JSF from '../aon-jsf-app.js';
 
@@ -26,8 +26,8 @@ export class AonEnterpriseMenu extends AonSuiteMenu {
 		this.AON_HEADER = 'aonHeader';
 		this.ROOT_PANEL = 'rootPanel';
 		this.RIGHT_PANEL = 'rightPanel';
-		this.last = "Borrado de Empresas";
-		this.new = "Creación de Empresas"
+		this.last = MSG.DELETE_COMPANIES;
+		this.new = MSG.CREATE_COMPANIES;
 		this.selectOptions= [];
 		this.initOptions();
 	}
@@ -35,14 +35,14 @@ export class AonEnterpriseMenu extends AonSuiteMenu {
 
     initOptions() {
         this.options = [{
-            title: 'Empresas',
+            title: MSG.COMPANIES,
             options: [{
-                description: "Creación de Empresas",
-                title: "Creación de Empresas",
+                description: MSG.CREATE_COMPANIES,
+                title: MSG.CREATE_COMPANIES,
                 action: () => this.rootPanel(new JSF.AonJsfNewDomain)
             }, {
-                description: "Borrado de Empresas",
-                title: "Borrado de Empresas",
+                description: MSG.DELETE_COMPANIES,
+                title: MSG.DELETE_COMPANIES,
                 action: () => this.rootPanel(new JSF.AonJsfRemoveDomain)
             }]
         }];

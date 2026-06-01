@@ -34,17 +34,17 @@ export class AonPayrollMenu extends AonSuiteMenu {
         this.AON_HEADER = 'aonHeader';
         this.ROOT_PANEL = 'rootPanel';
         this.RIGHT_PANEL = 'rightPanel';
-        this.last = "Últimos contratos";
-        this.new = "Nuevo Contrato";
+        this.last = MSG.LAST_CONTRACTS;
+        this.new = MSG.NEW_CONTRACT;
         this.cardData={
-            title: "Actividad",
-            info:["Nóminas ptes.", "Finiquitos ptes.", "Liquidaciones ptes."]
+            title: MSG.ACTIVITY,
+            info:[MSG.PAYSHEETS_PENDING, MSG.SETTLEMENTS_PENDING, MSG.LIQUIDATIONS_PENDING]
         };
         this.selectOptions= [{
-            title: "Parte IT",
+            title: MSG.IT_PART,
             action: () => alert("description")
         },{
-            title: "Contrato",
+            title: MSG.CONTRACT_PAYROLL,
             action: () => alert("description")
         }];
 		
@@ -53,39 +53,46 @@ export class AonPayrollMenu extends AonSuiteMenu {
 	
 	initOptions(){
 		this.options = [{
-		    title: 'Nóminas',
+		    title: MSG.PAYSHEETS,
 		    options: [ {
-		        description: "Integral de Nominas",
-		        title: "Integral de Nominas",
+				id: "gwt-employees",
+		        description: MSG.PAYROLL_INTEGRAL,
+		        title: MSG.PAYROLL_INTEGRAL,
 		        action: () => GWT.iLoad(GWT.EMPLOYEES)
 		    },{
-		        description: "Contratos",
-		        title: "Contratos",
+				id: "gwt-main-contrata",
+		        description: MSG.CONTRACTS,
+		        title: MSG.CONTRACTS,
 		        action: () => GWT.iLoad(GWT.MAIN_CONTRATA)
 		    },{
-		        description: "Partes IT",
-		        title: "Partes IT",
+				id: "gwt-main-it",
+		        description: MSG.IT_PARTS,
+		        title: MSG.IT_PARTS,
 		        action: () => GWT.iLoad(GWT.MAIN_IT)
 		    },{
-		        description: "Convenios",
-		        title: "Convenios",
+				id: "gwt-convenios",
+		        description: MSG.AGREEMENTS,
+		        title: MSG.AGREEMENTS,
 		        action: () => GWT.iLoad(GWT.CONVENIOS)
 		    },{
-		        description: "Calculo de Nóminas",
-		        title: "Calculo de Nóminas",
+				id: "gwt-main-calculator",
+		        description: MSG.PAYROLL_CALCULATION,
+		        title: MSG.PAYROLL_CALCULATION,
 		        action: () => GWT.iLoad(GWT.MAIN_CALCULATOR)
 		    }],
-			filter: () => this.isNotDomainManagementAvailable()		
+			filter: () => this.isNotDomainManagementAvailable()
 		},{
-		    title: 'Seguridad Social',
+		    title: MSG.SOCIAL_SECURITY,
 		    options: [{
-		        description: "Cret@ - Sistema de Liquidación Directa",
-		        title: "Cret@ - Sistema de Liquidación Directa",
+				id:"gwt-main-creta",
+		        description: MSG.CRETA_SYSTEM,
+		        title: MSG.CRETA_SYSTEM,
 		        action: () => GWT.iLoad(GWT.MAIN_CRETA, this.getApplication().CONTENT),
 		        //action: () => GWT.iLoad(GWT.MAIN_CRETA)
 		    },{
-		        description: "CRA - Conceptos Retributivos Abonados",
-		        title: "CRA - Conceptos Retributivos Abonados",
+				id :"gwt-main-cra",
+		        description: MSG.CRA,
+		        title: MSG.CRA,
 		        action: () => GWT.iLoad(GWT.MAIN_CRA, this.getApplication().CONTENT),
 		    },
 		    /*
@@ -96,67 +103,79 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		    },
 		    */
 		    {
-		        description: "AFI - Régimen Especial Agrario Jornadas",
-		        title: "AFI - Régimen Especial Agrario Jornadas",
+				id: "gwt-main-afi",
+		        description: MSG.AFI_AGRICULTURAL,
+		        title: MSG.AFI_AGRICULTURAL,
 		        action: () => GWT.iLoad(GWT.MAIN_AFI, this.getApplication().CONTENT),
 		    },{
-		        description: "AFI - Reduc. contribuciones planes de pensiones",
-		        title: "AFI - Reduc. contribuciones planes de pensiones",
+				id: "gwt-pension-plan-afi",
+		        description: MSG.AFI_PENSION_REDUCTION,
+		        title: MSG.AFI_PENSION_REDUCTION,
 		        action: () => GWT.iLoad(GWT.PENSION_PLAN_AFI, this.getApplication().CONTENT),
 		    }]
 		},{
-		    title: 'Procesos',
+		    title: MSG.PROCESSES,
 		    options: [{
-		        description: "Calculo de Nóminas",
-		        title: "Calculo de Nóminas",
+				id: "gwt-main-calculator",
+		        description: MSG.PAYROLL_CALCULATION,
+		        title: MSG.PAYROLL_CALCULATION,
 		        action: () => GWT.iLoad(GWT.MAIN_CALCULATOR, this.getApplication().CONTENT),
 				filter: () => this.isDomainManagementAvailable()
 			},{
-		        description: "Impresión / eMail de Nóminas",
-		        title: "Impresión / eMail de Nóminas",
+				id: "gwt-main-salary-print",
+		        description: MSG.PAYSHEETS_PRINT_EMAIL,
+		        title: MSG.PAYSHEETS_PRINT_EMAIL,
 		        action: () => GWT.iLoad(GWT.MAIN_SALARY_PRINT, this.getApplication().CONTENT),
 		    },{
-		        description: "Listado de costes",
-		        title: "Listado de costes",
+				id: "gwt-main-cost",
+		        description: MSG.COST_LIST,
+		        title: MSG.COST_LIST,
 		        action: () => GWT.iLoad(GWT.MAIN_COST),
 				filter: () => this.isNotDomainManagementAvailable()
 		    },{
-		        description: "Resumen de actividad",
-		        title: "Resumen de actividad",
+				id: "gwt-activity-summary",
+		        description: MSG.ACTIVITY_SUMMARY,
+		        title: MSG.ACTIVITY_SUMMARY,
 		        action: () => GWT.iLoad(GWT.ACTIVITY_SUMMARY, this.getApplication().CONTENT),
 		    },{
-		        description: "Informe de personal asalariado",
-		        title: "Informe de personal asalariado",
+				id: "gwt-contract-media",
+		        description: MSG.SALARY_STAFF_REPORT,
+		        title: MSG.SALARY_STAFF_REPORT,
 		        action: () => GWT.iLoad(GWT.CONTRACT_MEDIA),
 				filter: () => this.isNotDomainManagementAvailable()
 		    },{
-		        description: "Cambio masivo contratos",
-		        title: "Cambio masivo contratos",
+				id: "gwt-massive-contracts",
+		        description: MSG.BULK_CONTRACT_CHANGE,
+		        title: MSG.BULK_CONTRACT_CHANGE,
 		        action: () => GWT.iLoad(GWT.MASSIVE_CONTRACTS),
 				filter: () => this.isNotDomainManagementAvailable()
 		    },{
-		        description: "FIE - Importación masiva de I.T",
-		        title: "FIE - Importación masiva de I.T",
+				id: "gwt-massive-fie",
+		        description: MSG.FIE_BULK_IMPORT,
+		        title: MSG.FIE_BULK_IMPORT,
 		        action: () => GWT.iLoad(GWT.MASSIVE_FIE, this.getApplication().CONTENT),
 				filter: () => this.isDomainManagementAvailable()
 			}]
 		},{
-		    title: 'Gestión',
+		    title: MSG.MANAGEMENT,
 		    options: [{
-		        description: "Remesa Transferencia de Nóminas",
-		        title: "Remesa Transferencia de Nóminas",
+				id: "gwt-batch-payroll",
+		        description: MSG.PAYROLL_BATCH_TRANSFER,
+		        title: MSG.PAYROLL_BATCH_TRANSFER,
 		        action: () => GWT.iLoad(GWT.BATCH_PAYROLL)
 		    },{
-		        description: "Vencimientos de Nóminas",
-		        title: "Vencimientos de Nóminas",
+				id: "gwt-finance-payroll",
+		        description: MSG.PAYSHEETS_EXPIRATIONS,
+		        title: MSG.PAYSHEETS_EXPIRATIONS,
 		        action: () => GWT.iLoad(GWT.FINANCE_PAYROLL)
 		    },{
-		        description: "Facturas de Gastos",
-		        title: "Facturas de Gastos",
+				id: "gwt-expense-invoice",
+		        description: MSG.EXPENSE_INVOICES,
+		        title: MSG.EXPENSE_INVOICES,
 				action: () => this.rootPanel(new JSF.AonJsfExpenseInvoice)
 			}, {
-				description: "Remesas de Pago (TEMPORAL)",
-				title: "Remesas de Pago (TEMPORAL)",
+				description: MSG.PAYMENT_BATCH_TEMP,
+				title: MSG.PAYMENT_BATCH_TEMP,
 				action: () => this.rootPanel(new JSF.AonJsfFBatchPaymentPayroll())
 		    }/*,{
 		        description: "Vencimientos de Nóminas",
@@ -167,7 +186,7 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		        title: "Remesa Transferencia de Nóminas",
 		        action: () => alert("description")
 		    }*/],
-			filter: () => this.isNotDomainManagementAvailable()		
+			filter: () => this.isNotDomainManagementAvailable()
 		},/*{
 		    title: 'SEPE',
 		    options: [{
@@ -180,39 +199,39 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		        action: () => alert("description")
 		    }]
 		},*/{
-		    title: 'Auxiliares',
+		    title: MSG.AUXILIARIES,
 		    options: [{
-		        description: "Convenios",
-		        title: "Convenios",
+		        description: MSG.AGREEMENTS,
+		        title: MSG.AGREEMENTS,
 		        action: () => GWT.iLoad(GWT.CONVENIOS, this.getApplication().CONTENT),
 			},{
-		        description: "Modelos de contrato",
-		        title: "Modelos de contrato",
+		        description: MSG.CONTRACT_MODELS,
+		        title: MSG.CONTRACT_MODELS,
 		        action: () => this.getApplication().setContent(new JSF.AonJsfContractOption)
 		    },{
-		        description: "Centros acreditados de formación",
-		        title: "Centros acreditados de formación",
+		        description: MSG.TRAINING_CENTERS_ACCREDITED,
+		        title: MSG.TRAINING_CENTERS_ACCREDITED,
 		        action: () => this.getApplication().setContent(new JSF.AonJsfTrainningCenter)
 		    },{
-		        description: "Festivos",
-		        title: "Festivos",
+		        description: MSG.HOLIDAYS,
+		        title: MSG.HOLIDAYS,
 		        action: () => this.getApplication().setContent(new JSF.AonJsfHolidays)
 		    },{
-		        description: "Variables Calculo Entorno",
-		        title: "Variables Calculo Entorno",
+		        description: MSG.ENVIRONMENT_CALC_VARIABLES,
+		        title: MSG.ENVIRONMENT_CALC_VARIABLES,
 		        action: () => GWT.iLoad(GWT.DOMAIN_VARIABLES),
 		        filter: () => this.getDur().isConsole()
 			},{
-		        description: "Variables Calculo Trabajadores",
-		        title: "Variables Calculo Trabajadores",
+		        description: MSG.WORKER_CALC_VARIABLES,
+		        title: MSG.WORKER_CALC_VARIABLES,
 		        action: () => GWT.iLoad(GWT.CONTRACT_VARIABLES, this.getApplication().CONTENT)
 		    }],
 			filter: () => this.isDomainManagementAvailable()
 		},{
-		    title: 'Utilidades',
+		    title: MSG.UTILITIES,
 		    options: [{
-		        description: "Gestión de Certificados",
-		        title: "Gestión de Certificados",
+		        description: MSG.CERTIFICATE_MANAGEMENT,
+		        title: MSG.CERTIFICATE_MANAGEMENT,
 		        action: () => GWT.iLoad(GWT.MAIN_DIGITAL_CERTIFICATES)
 		    },
 		    /*{
@@ -221,38 +240,38 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		        action: () => GWT.iLoad(GWT.PAYROLL_TRASH)
 		    },*/
 		    {
-		        description: "CCC",
-		        title: "CCC",
+		        description: MSG.CCC,
+		        title: MSG.CCC,
 		        action: () => GWT.iLoad(GWT.MAIN_CCC)
 		    },{
-		        description: "Comunic@",
-		        title: "Comunic@",
+		        description: MSG.COMUNICA,
+		        title: MSG.COMUNICA,
 		        action: () => this.rootPanel(new AonComunica()),
 				filter: () => this.isNotDomainManagementAvailable()
 		    },
 		    {
-		        description: "Festivos",
-		        title: "Festivos",
+		        description: MSG.HOLIDAYS,
+		        title: MSG.HOLIDAYS,
 		        action: () => this.rootPanel(new JSF.AonJsfHolidays),
 		        filter: () => this.isNotDomainManagementAvailable()
 		    }],
 		    filter: () => !this.isDomainManagementAvailable()
 		},{
-		    title: 'Modelos Tributarios',
+		    title: MSG.TAX_MODELS,
 		    options: [{
-		        description: "Modelo 145",
-		        title: "Modelo 145",
+		        description: MSG.MODEL_145,
+		        title: MSG.MODEL_145,
 				action: () => this.rootPanel(new JSF.AonJsfIrpfData)
 		    },{
-		        description: "Modelo 111",
-		        title: "Modelo 111",
+		        description: MSG.MODEL_111,
+		        title: MSG.MODEL_111,
 		        action: () => GWT.iLoad(GWT.MODEL_111)
 		    },{
-		        description: "Modelo 190",
-		        title: "Modelo 190",
+		        description: MSG.MODEL_190,
+		        title: MSG.MODEL_190,
 		        action: () => GWT.iLoad(GWT.MODEL_190)
 		    }],
-			filter: () => this.isNotDomainManagementAvailable()		
+			filter: () => this.isNotDomainManagementAvailable()
 		},/*{
 		    title: 'Antiguas Opciones (Obsoletas)',
 		    options: [{

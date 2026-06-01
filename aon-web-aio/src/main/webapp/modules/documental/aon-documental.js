@@ -422,7 +422,7 @@ export class AonDocumental extends AonElement {
 		let doc = document.getElementById(this.getApplication().DIALOG);
 		doc.clear();
 		if (!this.isMobile()) doc.width = '400px';
-		doc.setTitle("¿Qué quiere crear?");
+		doc.setTitle(MSG.WHAT_DO_YOU_WANT_TO_CREATE);
 	
 		// Radios
 		let radioCategory = document.createElement('input');

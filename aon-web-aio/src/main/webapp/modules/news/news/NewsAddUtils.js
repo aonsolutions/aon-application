@@ -323,7 +323,7 @@ const openCategoryDialog = (category) => {
         dialog.width = '40%';
     
     dialog.clear();
-    dialog.setTitle("Canal");
+    dialog.setTitle(MSG.CHANNEL);
         
     const aonCategoryAdd = new AonCategoryAdd();
     if(category && category.id){
