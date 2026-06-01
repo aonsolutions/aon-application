@@ -76,6 +76,7 @@ public class VatContext implements Serializable {
 	private boolean vatUnion;               // Ventanilla Unica (OSS) - Régimen de la Unión (Ventas)
 	private boolean vatUnionExternal;       // Ventanilla Unica (OSS) - Régimen Exterior a la Unión (Ventas)
 	private WithholdingType withholdingType; // Tipo de retención (se usa en la generación de algunos modelos de Canarias)
+	private String vatAccount;			     // Cuenta contable de IVA (se utiliza en la generación de asientos contables desde los modelos de IVA)
 	
 	// GETTERS Y SETTERS ------------------------------------------------------------------------------------------
 	
@@ -650,6 +651,13 @@ public class VatContext implements Serializable {
 	}
 	public VatContext setWithholdingType(WithholdingType withholdingType) {
 		this.withholdingType = withholdingType;
+		return this;
+	}
+	public String getVatAccount() {
+		return vatAccount;
+	}
+	public VatContext setVatAccount(String vatAccount) {
+		this.vatAccount = vatAccount;
 		return this;
 	}
 	

@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.accounting;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Objects;
 
 import org.mvel2.MVEL;
@@ -19,9 +20,9 @@ import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303Declaration;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
-public abstract class AccSctiptMVELContext<T> extends HashMap<String, Object> {
+public abstract class AccScriptMVELContext<T> extends HashMap<String, Object> {
 
-	private static final long serialVersionUID = 2589312117223760204L;
+	private static final long serialVersionUID = 2370848570713579149L;
 	
 	public static final String MODEL_KEY = "modelo";
 	public static final String MODEL_DECLARATION_KEY = "declaracion";
@@ -119,14 +120,20 @@ public abstract class AccSctiptMVELContext<T> extends HashMap<String, Object> {
 	}
 
 	public AccountEntry fillDetails(AONContext ctx, T t, AccountEntryDetailExpressionScript<T> script) {
-		if (isEmpty()) fillContext();
-		if (this.accountEntry == null) this.accountEntry = fillAccountEntry( t );
+		
+		if (isEmpty()) 
+			fillContext();
+		
+		if (this.accountEntry == null) 
+			this.accountEntry = fillAccountEntry( t );
 		
 		if (this.accountEntry == null)
 			throw new IllegalStateException("No se ha rellenado una cabecera de apunte");
-		script
-			.getDetails()
-			.stream()
+		
+		LinkedList<AccountEntryDetailExpression> det = new LinkedList<>();
+		det.addAll(fillFromInvoices(t, script)); // AÑADIR LOS DETALLES QUE SE OBTIENEN DE LAS FACTURAS UNIDAS AL MODELO (CASILLAS QUE PUEDEN IR ASOCIADAS A VARIAS CUENTAS CONTABLES)
+		det.addAll(script.getDetails()); // AÑADIR LOS DETALLES DEFINIDOS EN EL SCRIPT (CASILLAS QUE SOLO VAN ASOCIADAS A UNA CUENTA CONTABLE)
+		det.stream()
 			.map( ScriptContext::new )
 			.map( sc -> sc.setAccount( AccountDAO.get(ctx, sc.getAede().getAccount())) )
 			.map( sc -> sc.setBalancingAccount( AccountDAO.get(ctx, sc.getAede().getBalancingAccount())) )
@@ -134,12 +141,13 @@ public abstract class AccSctiptMVELContext<T> extends HashMap<String, Object> {
 			.map( this::fillAmount )
 			.filter( sc -> sc.hasAmount() )
 			.forEach(sc -> addDetail(this.accountEntry, sc.getAed()));
-			;
+			
 		return this.accountEntry;
+		
 	}
-	
+
 	private AccountEntry addDetail(AccountEntry ae, AccountEntryDetail aed) {
-		AccountEntryDetail added =  ae.getDetails()
+		AccountEntryDetail added = ae.getDetails()
 			.stream()
 			.filter(Objects::nonNull)
 			.filter(det -> AonNumberUtils.equals(det.getAccountId(), aed.getAccountId()))
@@ -157,7 +165,7 @@ public abstract class AccSctiptMVELContext<T> extends HashMap<String, Object> {
 	
 	public abstract AccountEntry fillAccountEntry(T t);
 	public abstract void fillContext();
-	
+	public abstract LinkedList<AccountEntryDetailExpression> fillFromInvoices(T t, AccountEntryDetailExpressionScript<T> script);
 
 	// ******************************************
 	// **********************  EXPRESSION METHODS
@@ -194,6 +202,7 @@ public abstract class AccSctiptMVELContext<T> extends HashMap<String, Object> {
 	public boolean aIngresar() {
 		return FiscalModelDeclarationType.isToDeposit(model().getDeclarationResultType());
 	}
+	
 		// *******************************************
 		// **********************  FISCALES MODELO 303
 		// *******************************************
@@ -208,8 +217,8 @@ public abstract class AccSctiptMVELContext<T> extends HashMap<String, Object> {
 		throw new IllegalArgumentException(MessageFormat.format("La variable {0} no es una declaración válida.", MODEL_DECLARATION_KEY));	
 	}
 	
-	public double prorrataIVA() {
-		return 0.0;
-	}
+//	public double prorrataIVA() {
+//		return 0.0;
+//	}
+	
 }
-

@@ -2,8 +2,12 @@ package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -16,11 +20,13 @@ import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
-import com.esferalia.aon.occam.api.model.accounting.AccSctiptMVELContext;
+import com.esferalia.aon.occam.api.model.accounting.AccScriptMVELContext;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailExpressionScript;
+import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailExpressionScript.AccountEntryDetailExpression;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -47,6 +53,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
+import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -438,13 +445,12 @@ public class Mod303DAO extends FiscalModelDAO {
 		}
 		Optional<AccountEntryDetailExpressionScript<Mod303>> script = Mod303DefaultAccountEntryScript.getScript(mod);
 		if (!script.isPresent()) {
-			throw new IllegalArgumentException(MessageFormat.format(
-				"No se ha encontrado un script válido para el modelo {0} de {1}"
-				,mod.getModelFullName(),mod.getAdministration().getDescription()));
+			throw new AonCoreException(MessageFormat.format("No se ha encontrado un script válido para el modelo {0} de {1}", mod.getModelFullName(),mod.getAdministration().getDescription()));
 		}
-		AccSctiptMVELContext<Mod303> mvel = getAccSctiptMVELContext( ctx, mod );
+		AccScriptMVELContext<Mod303> mvel = getAccSctiptMVELContext( ctx, mod );
 		Optional<AccountEntry> optAe = Optional.ofNullable(mvel.fillDetails(ctx, mod, script.get()));
 		if (optAe.isPresent() && !optAe.get().getDetails().isEmpty() ) {
+			print(optAe.get()); // FALTA - PRUEBA IMPRIMIR EL ASIENTO EN LA CONSOLA
 			Integer entryId = AccountEntryDAO.save(ctx, optAe.get());
 			FiscalModelDAO.doRecord(ctx, mod.getId(), entryId);
 			mod = get(ctx, mod.getId());
@@ -452,9 +458,10 @@ public class Mod303DAO extends FiscalModelDAO {
 		return mod;
 	}
 	
-	private static AccSctiptMVELContext<Mod303> getAccSctiptMVELContext(AONContext ctx, Mod303 mod) {
-		return new AccSctiptMVELContext<Mod303>() {
+	private static AccScriptMVELContext<Mod303> getAccSctiptMVELContext(AONContext ctx, Mod303 mod) {
+		return new AccScriptMVELContext<Mod303>() {
 			private static final long serialVersionUID = -858390524319034071L;
+			
 			@Override
 			public void fillContext() {
 				put(MODEL_KEY,mod);
@@ -471,21 +478,231 @@ public class Mod303DAO extends FiscalModelDAO {
 					}
 				}
 			}
+			
 			@Override
 			public AccountEntry fillAccountEntry(Mod303 mod) {
-				Date entryDate = new Date();
+				Date entryDate = FiscalUtils.getPeriodEnd(mod); // Fecha del asiento es el último día del periodo al que corresponde el modelo
 				AccountPeriod period = AccountPeriodDAO.getActivePeriod(ctx,entryDate);
 				if (period == null) {
 					throw new AonCoreException( MessageFormat.format("No se ha encontrado un ejercicio activo para la fecha {0,date,dd/MM/yyyy}",entryDate) );
 				}
-				
 				return new AccountEntry()
 					.setDomain(mod.getDomain())
 					.setPeriod(period.getId())
 					.setEntryDate( entryDate )
 					.setEntryType(AccountEntryType.TAX);
 			}
+			
+			@Override
+			public LinkedList<AccountEntryDetailExpression> fillFromInvoices(Mod303 mod, AccountEntryDetailExpressionScript<Mod303> script) {
+				Mod303Key accruedVatModelKey = (Mod303Key) script.getAccruedKey();
+				Mod303Key deductibleVatModelKey = (Mod303Key) script.getDeductibleKey();
+				String conceptExpression = AccountEntryDetailExpressionScript.MODEL_FULL_NAME_EXPRESSION;
+				// Leer facturas unidas al modelo para el IVA devengado y para el IVA deducible
+				LinkedList<AccountEntryDetailExpression> det = new LinkedList<>();
+				det.addAll(getInvoices(ctx, conceptExpression, mod, declaracion(), accruedVatModelKey, true));   // IVA devengado
+				det.addAll(getInvoices(ctx, conceptExpression, mod, declaracion(), deductibleVatModelKey, false)); // IVA deducible
+				return det;
+			}
+			
 		};
+		
 	}
+	
+	private static LinkedList<AccountEntryDetailExpression> getInvoices(AONContext ctx, String conceptExpression, Mod303 mod, Mod303Declaration dec, Mod303Key mod303Key, boolean accruedVat) {
+
+		// Cuentas por defecto IVA repercutido y soportado y ajuste negativo de IVA, según parámetros contables
+		String defaultChargedVatAccount = ctx.getConfig().accounting().getDefaultChargedVatAccount() == null ? "477000000" : ctx.getConfig().accounting().getDefaultChargedVatAccount().getCode();
+		String defaultPaidVatAccount = ctx.getConfig().accounting().getDefaultPaidVatAccount() == null ? "472000000" : ctx.getConfig().accounting().getDefaultPaidVatAccount().getCode();
+		String defaultVatNegativeAdjustAccount = ctx.getConfig().accounting().getVatNegativeAdjustAccount() == null ? "634100000" : ctx.getConfig().accounting().getVatNegativeAdjustAccount().getCode();
+		String defaultVatPositiveAdjustAccount = "639100000"; // FALTA - NO EXISTE COMO PARAMETRO CONTABLE
+				
+		// Cuenta de IVA por defecto, según si estamos leyendo el total devengado o total deducible
+		String defaultVatAccount = accruedVat ? defaultChargedVatAccount : defaultPaidVatAccount;
+		
+		boolean creditNature = !accruedVat;
+		
+		LinkedList<AccountEntryDetailExpression> details = new LinkedList<>();
+		LinkedList<AccountEntryDetailExpression> detailsPro = new LinkedList<>();
+		
+		if (mod.hasInvoicesBound()) {
+			IMod303KeyDAO mod303KeyDao = dec.getKey(mod303Key); 
+			String expression = mod303KeyDao == null ? "" : mod303KeyDao.getExpression();
+			String[] expressionKeys = expression.split("\\+");
+			
+			VATDAO.getModelVatBreakdown(ctx, mod)
+				.filter( vc -> !declaredInPreviousModels(ctx, vc.getInvoice(), mod) ) // La factura no debe estar declarada en ninguno de los modelos 303 anteriores, si el modelo se ha hecho por diferencias
+				.filter( vc -> {
+					// Comprobar que es una de las claves que se deben leer para esta casilla
+					boolean matches = false;
+					for (IMod303KeyDAO key : dec.getKeys()) {
+						if ( !Stream.of(expressionKeys).anyMatch(k -> k.trim().equals(key.getKey().toString())) ) {
+							continue;
+						}
+						if (key.hasAccepter() && key.acceptValue(mod, vc)) {
+							matches = true;
+							break;
+						}		
+					}
+					return matches;
+				})		
+				.peek( vc -> {
+					// Las que no tienen cuenta contable, se asigna la cuenta de IVA por defecto
+					if (vc.getVatAccount() == null) {
+						vc.setVatAccount(defaultVatAccount);
+					}
+					// Las compras intracomunitarias e ISP que van en el deducible, van a la cuenta de IVA SOPORTADO por defecto, porque actualmente no se graba la contrapartida repercutida de IVA en INVOICE_TAX_ACCOUNT
+					if (accruedVat && !vc.isSales() && (vc.isIntracommunity() || vc.isOtherISP())) {
+						vc.setVatAccount(defaultVatAccount);
+					}	
+				})
+				.sorted(Comparator.comparing(vc -> vc.getVatAccount()))
+				.forEach( vc -> {
+					double amount = AonMathUtils.round(vc.getDeductibleQuota() + vc.getSurchargeQuota());
+					details.add(new AccountEntryDetailExpression(creditNature)
+							.setAccount(vc.getVatAccount())
+							.setConceptExpression(conceptExpression)
+							.setExpression(String.valueOf(amount)));
+					// Apunte del ajuste negativo de IVA, si el modelo lleva prorrata y se aplica a la factura
+					if (!accruedVat && mod.hasProrate() && (!mod.isSpecialProrate() || (mod.isSpecialProrate() && vc.getActivity() == null))) {
+						double difference = vc.getDeductibleQuota() - AonMathUtils.round(vc.getDeductibleQuota() * mod.getProratePercent() / 100);
+						detailsPro.add(new AccountEntryDetailExpression(!creditNature)
+								.setAccount(defaultVatNegativeAdjustAccount) 
+								.setConceptExpression(conceptExpression)
+								.setExpression(String.valueOf(difference)));
+					}
+				});
+			
+		}
+		
+		// Comprobar si es necesario hacer un ajuste por que no coincida la suma de las cuotas de IVA + REQ de las facturas, 
+		// con el importe total de la casilla, teniendo en cuenta que si hay prorrata, el ajuste de prorrata no debe afectar a este ajuste
+		double totalKey = mod.getAmount(mod303Key);
+		double totalVat = details.stream()
+			.mapToDouble(d -> AonMathUtils.round(AonNumberUtils.todouble(d.getExpression())))
+			.sum();
+		double totalProrrateAdjustment = detailsPro.stream()
+			.mapToDouble(d -> AonMathUtils.round(AonNumberUtils.todouble(d.getExpression())))
+			.sum();
+		
+		totalVat = totalVat - totalProrrateAdjustment; 
+		
+		if (!AonMathUtils.equals(totalKey, totalVat)) {
+			double difference = AonMathUtils.round(totalKey - totalVat);
+			details.add(new AccountEntryDetailExpression(creditNature)
+					.setAccount(defaultVatAccount) 
+					.setConceptExpression(conceptExpression)
+					.setExpression(String.valueOf(difference)));
+		}
+		
+		// Añadir los apuntes de ajuste por prorrata al final
+		details.addAll(detailsPro);
+		
+		// FALTA - CASILLA REGULARIZACION DEL IVA EN MODELOS CON PRORRATA, APUNTE DEL AJUSTE POSITIVO O NEGATIVO
+		// POR AHORA SOLO A LA CUENTA DE IVA POR DEFECTO, SI ES POSITIVA 472 A 6391, SI ES NEGATIVA 6341 A 472
+		// YA VEREMOS SI ES NECESARIO TRATAR ESTA CASILLA COMO LA DEL TOTAL DEVENGADO O DEDUCIBLE, ES DECIR QUE 
+		// LAS CUENTAS DE IVA SALGAN DE TODAS LAS FACTURAS DEL EJERCICIO A LAS QUE SE HA APLICADO PRORRATA
+		if (!accruedVat) {
+			if (dec.getRegularizationKey() != null) {
+				double regularizationAmount = mod.getAmount(dec.getRegularizationKey());
+				if (regularizationAmount != 0.0) {
+					details.add(new AccountEntryDetailExpression(false)
+							.setAccount(defaultVatAccount) 
+							.setConceptExpression(conceptExpression)
+							.setExpression(String.valueOf(regularizationAmount)));
+					details.add(new AccountEntryDetailExpression(true)
+							.setAccount(regularizationAmount > 0.0 ? defaultVatPositiveAdjustAccount : defaultVatNegativeAdjustAccount) 
+							.setConceptExpression(conceptExpression)
+							.setExpression(String.valueOf(regularizationAmount)));
+				}
+			}
+		}
+		// ------------------------------------------------------------------------
+		
+		return details;
+		
+	}
+	
+	// Comprueba si la factura ha sido declarada en algún modelo 303 anterior del mismo ejercicio, solo si el modelo se ha hecho por diferencias
+	private static boolean declaredInPreviousModels(AONContext ctx, Integer invoice, Mod303 mod) {
+		if (mod.isDiffCalculationEnabled()) {
+			return AlcatrazDAO.isInvoiceDeclared(ctx, invoice)
+				.stream()
+				.filter(fm -> fm.getModel() == FiscalModelType.M303) 
+				.filter(fm -> fm.getYear() == mod.getYear())
+				.filter(fm -> fm.getPeriod().value() < mod.getPeriod().value())
+				.findFirst()
+				.isPresent();
+		}
+		return false;
+	}
+	
+// FALTA - ESTOS SON SOLO PARA IMPRIMIR EL ASIENTO EN LA CONSOLA ------------------------------------------------------------------
+	
+	public static AccountEntry print( AccountEntry entry ) {
+		int lineSize = 126;
+		System.out.println(AonStringUtils.repeat(AonStringUtils.HYPHEN, lineSize));
+		System.out.println( toString(entry)); 
+		System.out.println(AonStringUtils.repeat(AonStringUtils.DOT , lineSize));
+		double sumD = 0.0;
+		double sumC = 0.0;
+		for (AccountEntryDetail aed : entry.getDetails()) {
+			System.out.println( toString(aed));
+			sumD = AonMathUtils.sum(sumD, aed.getDebit());	
+			sumC = AonMathUtils.sum(sumC, aed.getCredit());
+		}
+		System.out.println(AonStringUtils.leftPad(AonStringUtils.repeat(AonStringUtils.DOT, lineSize / 4 ),lineSize));
+		System.out.println(toString(sumD,sumC));
+		System.out.println(AonStringUtils.repeat(AonStringUtils.HYPHEN, lineSize));
+		System.out.println();
+		return entry; 
+	}
+	
+	public static String toString(AccountEntry entry) {
+		int lineSize = 126;
+		StringBuilder buf = new StringBuilder();
+		buf.append(AonStringUtils.repeat(AonStringUtils.SPACE, 30));
+		buf.append(AonStringUtils.repeat(AonStringUtils.SPACE, 8));
+		buf.append("Fecha");
+		buf.append(AonStringUtils.COLON);
+		buf.append(AonStringUtils.SPACE);
+		buf.append(new SimpleDateFormat("dd/MM/yyyy").format(entry.getEntryDate()));
+		buf.append(AonStringUtils.SPACE);
+		buf.append("Diario");
+		buf.append(AonStringUtils.COLON);
+		buf.append(AonStringUtils.SPACE);
+		buf.append(AonStringUtils.rightPad(entry.getJournal()==null?"????":""+entry.getJournal(),10));
+		buf.append(AonStringUtils.leftPad(entry.getEntryType().getDescription(), lineSize - buf.length()));
+		return buf.toString();
+	}
+	
+	public static String toString(double deb, double cre) {
+		return toString(null,null,null,deb,cre,null,null);
+	}
+	
+	public static String toString(AccountEntryDetail detail) {
+		return toString(detail.getAccountCode()
+			,detail.getAccountDescription()
+			,detail.getConcept()
+			,detail.getDebit()		
+			,detail.getCredit()
+			,detail.getBalancingAccountCode()
+			,detail.getDocumentNumber());
+	}
+	
+	public static String toString(String ac,String ad,String c,double deb,double cre,String bc,String dn) {
+		NumberFormat FMT = DecimalFormat.getInstance();
+		StringBuffer buf = new StringBuffer();
+		buf.append(AonStringUtils.rightPad(AonStringUtils.defaultString(ac),10));
+		buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate(AonStringUtils.defaultString(ad), 40), 41));
+		buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate( AonStringUtils.defaultString(c), 40), 41));
+		buf.append(AonStringUtils.leftPad(FMT.format(deb),17));		
+		buf.append(AonStringUtils.leftPad(FMT.format(cre),17));
+		buf.append(AonStringUtils.center(AonStringUtils.defaultString(bc),11));
+		buf.append(AonStringUtils.rightPad(AonStringUtils.defaultString(dn), 20));
+		return buf.toString();
+	}
+	
+// -------------------------------------------------------------------------------------------------------------------
 	
 }

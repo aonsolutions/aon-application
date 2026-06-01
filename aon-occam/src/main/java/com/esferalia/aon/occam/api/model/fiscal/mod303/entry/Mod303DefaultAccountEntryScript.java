@@ -14,11 +14,12 @@ public class Mod303DefaultAccountEntryScript {
 	
 	private static final LinkedList<AccountEntryDetailExpressionScript<Mod303>> SCRIPTS = new LinkedList<>();
 	static {
-		SCRIPTS.add(new Mod3032022AEATAccountEntryScript());
-		SCRIPTS.add(new Mod3032022BIZKAIAAccountEntryScript());
-		SCRIPTS.add(new Mod3032022GIPUZKOAAccountEntryScript());
-		SCRIPTS.add(new Mod3032022ARABAAccountEntryScript());
-		SCRIPTS.add(new Mod3032022NAVARRAAccountEntryScript());
+		SCRIPTS.add(new Mod3032026AEATAccountEntryScript());
+		SCRIPTS.add(new Mod3032026BIZKAIAAccountEntryScript());
+		SCRIPTS.add(new Mod3032026GIPUZKOAAccountEntryScript());
+		SCRIPTS.add(new Mod3032026ARABAAccountEntryScript());
+		SCRIPTS.add(new Mod3032026NAVARRAAccountEntryScript());
+		SCRIPTS.add(new Mod3032026CANARIASAccountEntryScript());
 	}
 	
 	public static boolean accept(Mod303 mod) {

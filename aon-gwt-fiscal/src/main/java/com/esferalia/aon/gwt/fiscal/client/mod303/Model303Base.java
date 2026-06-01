@@ -121,7 +121,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	
 	protected final AonToolbarButton recordButton = new AonToolbarButton(AON.MSG.record(),AON.CSS.aonIconAccountingRecord());
 	protected final AonToolbarButton unrecordButton = new AonToolbarButton(AON.MSG.unrecord(),AON.CSS.aonIconAccountingUnrecord());
-	protected final AonToolbarButton viewEntryButton = new AonToolbarButton(AON.MSG.editAccountEntry(),AON.CSS.aonIconAccounting());
+	protected final AonToolbarButton viewEntryButton = new AonToolbarButton(AON.MSG.viewAccountEntry(),AON.CSS.aonIconAccounting());
 	
 	private FlowPanel paymentContainer;
 	
@@ -232,18 +232,16 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		auditButton.addClickHandler( event -> audit());
 		toolbarPanel.add(auditButton);
 		
-		
 		recordButton.addClickHandler( event -> doRecord());
 		recordButton.addStyleName(AON.CSS.aonMarginLeft());
-//		toolbarPanel.add(recordButton);
-		
+		toolbarPanel.add(recordButton); 
 
 		unrecordButton.addClickHandler( event -> unRecord());
 		unrecordButton.addStyleName(AON.CSS.aonMarginLeft());
-//		toolbarPanel.add(unrecordButton);
+		toolbarPanel.add(unrecordButton); 
 
-		viewEntryButton.addClickHandler( event -> editEntry());
-//		toolbarPanel.add(viewEntryButton);
+		viewEntryButton.addClickHandler( event -> viewEntry());
+		toolbarPanel.add(viewEntryButton); 
 		
 		toolbarPanel.add(diskForm);
 
@@ -331,30 +329,12 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		newButton.setVisible(!getModel().isNew() && !getCallback().getOptions().isBackButtonVisible() && !getCallback().getOptions().hasExternalCallback());
 		cancelButton.setVisible(true);
 		saveButton.setVisible(canBeSaved);
-		recordButton.setVisible( 
-			  (getModel().isFinished() || getModel().isSent()) 
-			&& !getModel().isRecorded()
-			&& !getModel().hasProrate());
-		unrecordButton.setVisible( (getModel().isFinished() || getModel().isSent()) 
-			&& getModel().isRecorded());
-		viewEntryButton.setVisible( (getModel().isFinished() || getModel().isSent()) 
-			&& getModel().isRecorded() 
-			&& viewEntryButton.isEnabled() );
+		recordButton.setVisible( getModel().getYear() >= 2026 && (getModel().isFinished() || getModel().isSent()) && !getModel().isRecorded());
+		unrecordButton.setVisible( getModel().isRecorded());
+		viewEntryButton.setVisible( getModel().isRecorded() && viewEntryButton.isEnabled() );
 		
 		deleteButton.setVisible(!getModel().isNew() && canBeSaved);
 		printButton.setVisible(!getModel().isNew());
-//		markAsPendingButton.setVisible(!getModel().isNew() && !getModel().isRecorded() &&
-//				(getModel().getStatus() == FiscalStatus.FINISHED 
-//				|| getModel().getStatus() == FiscalStatus.BATCHED
-//				|| getModel().getStatus() == FiscalStatus.SENT
-//				|| getModel().getStatus() == FiscalStatus.CUSTOMER_CHECK
-//				|| getModel().getStatus() == FiscalStatus.BLOCKED));
-//		markAsFinishedButton.setVisible(!getModel().isNew() &&
-//				(getModel().getStatus() == FiscalStatus.PENDING
-//				|| getModel().getStatus() == FiscalStatus.CUSTOMER_CHECK
-//				|| getModel().getStatus() == FiscalStatus.MISSING));
-//		markAsSentButton.setVisible(!getModel().isNew() &&
-//				(getModel().getStatus() == FiscalStatus.FINISHED));
 		markAsPendingButton.setVisible(!getModel().isNew() && !getModel().isRecorded() && FiscalModelUtils.canChangeStatus(getModel(), FiscalStatus.PENDING));
 		markAsFinishedButton.setVisible(!getModel().isNew() && FiscalModelUtils.canChangeStatus(getModel(), FiscalStatus.FINISHED));
 		markAsSentButton.setVisible(!getModel().isNew() && FiscalModelUtils.canChangeStatus(getModel(), FiscalStatus.SENT));
@@ -1189,14 +1169,14 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	private void viewEntry() {
 		final Widget entryContainer = getCallback().getTabWidget( AON.MSG.accountEntry() );
-		if ( entryContainer instanceof HasWidgets) {
+		if (entryContainer instanceof HasWidgets) {
 			HasWidgets tab = (HasWidgets) entryContainer;
 			tab.clear();
 			SessionLog entryLog = new SessionLog(new AccountEntryModuleOptions()
-				.setDomainName( getCallback().getOptions().getDomainName() )
-				.setUser( getCallback().getOptions().getUser() )
-				.setDomain( getCallback().getOptions().getDomain())
-				.setAccountEntryId( getModel() .getAccountEntry())
+				.setDomainName(getCallback().getOptions().getDomainName() )
+				.setUser(getCallback().getOptions().getUser() )
+				.setDomain(getCallback().getOptions().getDomain())
+				.setAccountEntryId(getModel().getAccountEntry())
 				.setTrialBalanceFromPreviewEnabled(false)
 				.setExternalCallback( new ModuleCallback() {
 					private static final long serialVersionUID = -1649058327545857212L;
@@ -1206,7 +1186,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 						viewEntryButton.setEnabled(true);
 						getCallback().showError(caught.getMessage());
 					}
-				}),getModel().getAccountEntry());
+				}), getModel().getAccountEntry());
 			entryLog.addSelectionHandler(wrp -> editEntry());
 			tab.add(entryLog);
 		} else {
@@ -1266,12 +1246,14 @@ public abstract class Model303Base extends DockLayoutPanel  {
 					public void onSuccess(Mod303 result) {
 						setDirty(false);
 						selectAndPopulate(result);
+						getCallback().removeTabWidget(AON.MSG.accountEntry()); 
 						unrecordButton.setEnabled(true);
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
 						getCallback().showError(AON.MSG.unableToUnrecordDeclaration(caught.getMessage()));
+						getCallback().removeTabWidget(AON.MSG.accountEntry()); 
 						unrecordButton.setEnabled(true);
 					}
 				});

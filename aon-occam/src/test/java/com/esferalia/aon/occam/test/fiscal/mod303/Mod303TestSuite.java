@@ -61,9 +61,9 @@ import com.esferalia.aon.occam.test.fiscal.invoice.InsertRandomInvoicesTest;
 	Mod303MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
 	Mod303SentTest.class,					// Presentado
 
-	//  PENDIENTE!!	
-	//	Mod303RecordTest.class,					// Contabilizar
-	//	Mod303UnrecordTest.class,				// Descontabilizar
+	Mod303RecordTest.class,					// Contabilizar
+	Mod303UnrecordTest.class,				// Descontabilizar
+	
 })
 
 public class Mod303TestSuite {

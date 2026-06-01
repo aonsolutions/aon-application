@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao.vat;
 
+import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
@@ -11,6 +12,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDua.INVOICE_DUA;
 import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
+import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -73,6 +75,13 @@ public class VATDAO  {
 	
 	private static final InvoiceTax retInvoiceTax = INVOICE_TAX.as("retInvoiceTax"); // Para el tipo de retención IRPF
 	
+	private static Field<String> vatAccountCodeField = DSL.field(DSL.select(ACCOUNT.CODE)
+				.from(INVOICE_TAX_ACCOUNT)
+				.join(ACCOUNT).on(ACCOUNT.ID.equal(INVOICE_TAX_ACCOUNT.ACCOUNT))
+				.where(INVOICE_TAX_ACCOUNT.INVOICE_TAX.eq(INVOICE_TAX.ID))
+				.orderBy(INVOICE_TAX_ACCOUNT.ID.desc())
+				.limit(1));
+	
 	private static final Field<?>[] INVOICE_FIELDS = new Field[]{
 	 	 INVOICE.ID					,INVOICE.SERIES				,INVOICE.NUMBER		
 	 	,INVOICE.REFERENCE_CODE		,INVOICE.RDOCUMENT			,INVOICE.RDOCUMENT_TYPE		
@@ -92,7 +101,7 @@ public class VATDAO  {
 		,INVOICE_TAX.QUOTA				,INVOICE_TAX.SURCHARGE			
 		,INVOICE_TAX.SURCHARGE_QUOTA	,INVOICE_TAX.DEDUCTIBLE_PERCENT
 		,INVOICE_TAX.DEDUCTIBLE_QUOTA	,INVOICE_TAX.VAT_DEDUCTION_TYPE
-		,retInvoiceTax.WITHHOLDING_TYPE };
+		,retInvoiceTax.WITHHOLDING_TYPE ,vatAccountCodeField};
 	
 	private static final Field<?>[] INVOICE_DUA_FIELDS = new Field[]{
 		INVOICE_FISCAL.VAT_UNION, INVOICE_FISCAL.VAT_UNION_EXTERNAL, INVOICE_FISCAL.VAT_IMPORTATION, INVOICE_DUA.ID};
@@ -667,11 +676,6 @@ public class VATDAO  {
 				  || ((invoiceType == InvoiceType.PURCHASE || invoiceType == InvoiceType.EXPENSES) && invoiceTransactionType == InvoiceTransactionType.EXTRACOMMUNITY && isService)				
 				? rec.getValue(INVOICE_TAX.BASE) : (rec.getValue(INVOICE_TAX.BASE) + getQuota(rec) + getSurchargeQuota(rec)) )
 				
-//				.setAmount347(
-//					InvoiceTransactionType.safeValueOf(rec.getValue(INVOICE.TRANSACTION)) != InvoiceTransactionType.OTHER_ISP 
-//						? (rec.getValue(INVOICE_TAX.BASE) + getQuota(rec) + getSurchargeQuota(rec)) 
-//						: rec.getValue(INVOICE_TAX.BASE))
-				
 				.setHasRetention( hasRetention(
 						rec.getValue(INVOICE.WITHHOLDING),
 						rec.getValue(INVOICE_DETAIL.SOURCE),
@@ -679,7 +683,9 @@ public class VATDAO  {
 				.setRegistry(rec.getValue(INVOICE.REGISTRY))
 				
 				.setWithholdingType(WithholdingType.safeValueOf(rec.getValue(retInvoiceTax.WITHHOLDING_TYPE)))
-			;
+				
+				.setVatAccount(rec.getValue(vatAccountCodeField)) 
+				;
 		}
 		
 		private boolean hasRetention(Byte withholding, Byte source, Double retentionQuota) {

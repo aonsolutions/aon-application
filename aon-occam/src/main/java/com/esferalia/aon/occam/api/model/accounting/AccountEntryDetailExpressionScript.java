@@ -3,13 +3,15 @@ package com.esferalia.aon.occam.api.model.accounting;
 import java.io.Serializable;
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
+
 public abstract class AccountEntryDetailExpressionScript<T> implements Serializable {
 	
 	private static final long serialVersionUID = -1280419601669765944L;
 	
 	protected static final boolean DEBIT = true; 
 	protected static final boolean CREDIT= false;
-	protected static final String MODEL_FULL_NAME_EXPRESSION = "nombreModelo()";
+	public static final String MODEL_FULL_NAME_EXPRESSION = "nombreModelo()";
 	
 	public static class AccountEntryDetailExpression implements Serializable {
 		
@@ -65,6 +67,8 @@ public abstract class AccountEntryDetailExpressionScript<T> implements Serializa
 
 	public abstract LinkedList<AccountEntryDetailExpression> getDetails();
 	public abstract boolean accept(T accepter);
+	public abstract IFiscalModelKey getAccruedKey(); 
+	public abstract IFiscalModelKey getDeductibleKey(); 
 
 }
 

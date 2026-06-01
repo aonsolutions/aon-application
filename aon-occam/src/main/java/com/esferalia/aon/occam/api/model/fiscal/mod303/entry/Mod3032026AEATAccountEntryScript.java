@@ -3,26 +3,27 @@ package com.esferalia.aon.occam.api.model.fiscal.mod303.entry;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailExpressionScript;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.type.Mod303Key;
 
-public class Mod3032022AEATAccountEntryScript extends AccountEntryDetailExpressionScript<Mod303> {
-	private static final String MODEL_FULL_NAME_EXPRESSION = "nombreModelo()";
-
-	private static final long serialVersionUID = 2085902232416480013L;
+public class Mod3032026AEATAccountEntryScript extends AccountEntryDetailExpressionScript<Mod303> {
+	
+	private static final long serialVersionUID = 7319799743437058493L;
 	
 	private static final LinkedList<AccountEntryDetailExpression> details = new LinkedList<>();
 	static {
-		
+
 		// Total cuota devengada
-		details.add(new AccountEntryDetailExpression( false )
-				.setAccount("477000000")
-				.setConceptExpression(MODEL_FULL_NAME_EXPRESSION)
-				.setExpression("C27")); 			// DEBIT
+//		details.add(new AccountEntryDetailExpression( false )
+//				.setAccount("477000000")
+//				.setConceptExpression(MODEL_FULL_NAME_EXPRESSION)
+//				.setExpression("C27")); 			// DEBIT
 		// Total cuota deducible
-		details.add(new AccountEntryDetailExpression( true )
-				.setAccount("472000000")
-				.setConceptExpression(MODEL_FULL_NAME_EXPRESSION)
-				.setExpression("C45"));  		// CREDIT
+//		details.add(new AccountEntryDetailExpression( true )
+//				.setAccount("472000000")
+//				.setConceptExpression(MODEL_FULL_NAME_EXPRESSION)
+//				.setExpression("C45"));  		// CREDIT
 		// Cuotas a compensar de periodos anteriores aplicadas en este periodo
 		details.add(new AccountEntryDetailExpression( true )
 				.setAccount("470000000")
@@ -60,12 +61,22 @@ public class Mod3032022AEATAccountEntryScript extends AccountEntryDetailExpressi
 
 	@Override
 	public boolean accept(Mod303 mod) {
-		return mod.isAEAT() && mod.getYear() >= 2022;
+		return mod.isAEAT() && mod.getYear() >= 2026;
 	}
 
 	@Override
 	public LinkedList<AccountEntryDetailExpression> getDetails() {
 		return details;
+	}
+	
+	@Override
+	public IFiscalModelKey getAccruedKey() {
+		return Mod303Key.CT_C27;
+	}
+
+	@Override
+	public IFiscalModelKey getDeductibleKey() {
+		return Mod303Key.CT_C45;
 	}
 
 }
