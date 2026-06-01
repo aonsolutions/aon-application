@@ -2667,7 +2667,7 @@ i[id$="aonHeaderSearchDivButtonIcon"],
 }
 
 
-#aonMenuListAppTitle-documental {
+/* #aonMenuListAppTitle-documental {
 	color: transparent;
 }
 
@@ -2677,7 +2677,8 @@ i[id$="aonHeaderSearchDivButtonIcon"],
 	display: inline-block;
 	color: rgb(66, 66, 66);
 }
-
+ */
+ 
 .material-icons {
   font-variation-settings: "FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;
   font-size: 24px;

@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.BankSwift;
 import com.esferalia.aon.occam.api.model.Iban;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.RegistrySource;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -49,6 +50,7 @@ public class AonRegistryBankPanel extends HTMLPanel {
 	private AonRegistryBankPanelCallback callback;
 	private RegistryBank registryBank;
 	private List<Account> accounts;
+	private RegistrySource registrySource;
 	
 	// Wrokplace Info
 	
@@ -63,25 +65,25 @@ public class AonRegistryBankPanel extends HTMLPanel {
 	
 	// Constructor
 	
-	public AonRegistryBankPanel(String domainName, Integer domain, String user, Integer registry, List<Account> accounts, AonRegistryBankPanelCallback callback) {
+	public AonRegistryBankPanel(String domainName, Integer domain, String user, Integer registry, List<Account> accounts, RegistrySource registrySource, AonRegistryBankPanelCallback callback) {
 		super(EMPTY_STRING);
 		
 		this.registryBank = new RegistryBank()
 				.setDomain(domain)
 				.setRegistry(registry);
 		
-		aonRegistryBankPanel(domainName, domain, user, accounts, callback);
+		aonRegistryBankPanel(domainName, domain, user, accounts, registrySource, callback);
 	}
 	
-	public AonRegistryBankPanel(String domainName, Integer domain, String user, RegistryBank registryBank, List<Account> accounts, AonRegistryBankPanelCallback callback) {
+	public AonRegistryBankPanel(String domainName, Integer domain, String user, RegistryBank registryBank, List<Account> accounts, RegistrySource registrySource, AonRegistryBankPanelCallback callback) {
 		super(EMPTY_STRING);
 		
 		this.registryBank = registryBank;
 		
-		aonRegistryBankPanel(domainName, domain, user, accounts, callback);
+		aonRegistryBankPanel(domainName, domain, user, accounts, registrySource, callback);
 	}
 	
-	private void aonRegistryBankPanel(String domainName, Integer domain, String user, List<Account> accounts, AonRegistryBankPanelCallback callback) {
+	private void aonRegistryBankPanel(String domainName, Integer domain, String user, List<Account> accounts, RegistrySource registrySource, AonRegistryBankPanelCallback callback) {
 		initializeCommonService();
 		
 		this.domainName = domainName;
@@ -91,6 +93,7 @@ public class AonRegistryBankPanel extends HTMLPanel {
 		this.callback = callback;
 		
 		this.accounts = accounts;
+		this.registrySource = registrySource;
 		
 		if(null != this.registryBank.getId() && null != this.registryBank.getAccount() && null != this.registryBank.getAccount().getId()) {
 			this.accounts.stream().map(acc -> {
@@ -162,7 +165,10 @@ public class AonRegistryBankPanel extends HTMLPanel {
 		suffix.getElement().getStyle().setProperty("max-width", "6rem");
 		
 		row4.add(bic);
-		row4.add(suffix);
+		
+		if(this.registrySource.equals(RegistrySource.COMPANY))
+			row4.add(suffix);
+		
 		row4.add(accountLB);
 		container.add(row4);
 		
@@ -172,7 +178,10 @@ public class AonRegistryBankPanel extends HTMLPanel {
 			activo.setValue(registryBank.isActive());
 			iban.setValue(registryBank.getBankAccount().toString());
 			bic.setValue(registryBank.getBic());
-			suffix.setValue(registryBank.getSuffix());
+			
+			if(this.registrySource.equals(RegistrySource.COMPANY))
+				suffix.setValue(registryBank.getSuffix());
+			
 			accountLB.setValue(null == registryBank.getAccount() || null == registryBank.getAccount().getId() ? "" : registryBank.getAccount().getId().toString());
 		}
 		

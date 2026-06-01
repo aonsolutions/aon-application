@@ -57,8 +57,8 @@ export class AonInvoiceList extends AonElement {
 			aonInvoiceTable.selectable = 'true';
 			this.appendChild(aonInvoiceTable);
 			if (this.getFilter().status === 'accounting' && this.getFilter().type === 'sales') {
-				aonInvoiceTable.addColumn(MSG.OPERATION_DATE, 'date', 'dateTable', '120px');
-				aonInvoiceTable.addColumn(MSG.EXPEDITION_DATE, 'date', 'expDate', '120px');
+				aonInvoiceTable.addColumn(MSG.OPERATION_DATE_MIN, 'date', 'dateTable', '120px');
+				aonInvoiceTable.addColumn(MSG.EXPEDITION_DATE_MIN, 'date', 'expDate', '120px');
 			} else {
 				aonInvoiceTable.addColumn(MSG.DATE, 'date', 'dateTable', '120px');
 			}
@@ -434,7 +434,7 @@ export class AonInvoiceList extends AonElement {
 		let dialog = this.getApplication().getDialog();
 		dialog.clear();
 		if(!this.isMobile()) dialog.width = '400px';
-		dialog.setTitle("Comunicar facturas seleccionadas");
+		dialog.setTitle(MSG.COMMUNICATE_SELECTED_INVOICES);
 
 		let certSelect = createSelect("cert", MSG.CERTIFICATE);
 		certSelect.setAlias("id", "name");	
@@ -451,7 +451,7 @@ export class AonInvoiceList extends AonElement {
 		let dialog = this.getApplication().getDialog();
 		dialog.clear();
 		if(!this.isMobile()) dialog.width = '400px';
-		dialog.setTitle("Comunicando facturas seleccionadas");
+		dialog.setTitle(MSG.COMMUNICATING_SELECTED_INVOICES);
 		dialog.setContent(div);
 		dialog.open();
 

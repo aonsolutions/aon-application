@@ -849,7 +849,7 @@ export class AonInvoicePanel extends AonElement {
 		let d = aonApplication.getDialog();
 		d.clear();
 		if (!this.isMobile()) d.width = "400px";
-		d.setTitle("Importar");
+		d.setTitle(MSG.IMPORT);
 		d.setContent(div);
 		d.addAcceptAction(async () => {
 			aonApplication.startLoading();
@@ -911,7 +911,7 @@ export class AonInvoicePanel extends AonElement {
 		let d = this.getApplication().getDialog();
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
-		d.setTitle("Cierre de Facturas Recibidas");
+		d.setTitle(MSG.CLOSE_RECEIVED_INVOICES);
 		d.setContent(closing);
 		d.addAcceptAction(() => {
 			let data = {
@@ -927,7 +927,7 @@ export class AonInvoicePanel extends AonElement {
 		let d = this.getApplication().getDialog();
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
-		d.setTitle("Cierre de Facturas Recibidas");
+		d.setTitle(MSG.CLOSE_RECEIVED_INVOICES);
 		d.setContentHTML(`¿Está seguro que quiere cerrar el periodo entre la fecha ${this.getStartDate(data)} e ${this.getEndDate(data)}?`);
 		d.addAcceptAction(() => {
 			this.closingInvoiceConfirm2(data);
@@ -939,7 +939,7 @@ export class AonInvoicePanel extends AonElement {
 		let d = this.getApplication().getDialog();
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
-		d.setTitle("Cierre de Facturas Recibidas");
+		d.setTitle(MSG.CLOSE_RECEIVED_INVOICES);
 		d.setContentHTML(`Va a cerrar el periodo comprendido entre la fecha  ${this.getStartDate(data)} e ${this.getEndDate(data)}, ¿Está seguro?`);
 		d.addAcceptAction(() => {
 			saveInvoiceClosing(data)

@@ -72,5 +72,14 @@ public class Iae implements Serializable{
 	public boolean isEmpty() {
 		return getId() == null && getSection() == null && getEpigraph() == null;
 	}
+	
+	@Override
+	public String toString() {
+		if(getSection() == null && getEpigraph() == null)
+			return "";
+		
+		String str = getSection() + " - " + getEpigraph().replace(".", "") + " " + getTitle();
+		return str;		
+	}
 
 }

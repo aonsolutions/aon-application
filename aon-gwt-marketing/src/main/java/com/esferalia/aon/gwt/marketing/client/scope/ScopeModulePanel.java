@@ -9,6 +9,8 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonReasignScopePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonReasignScopePanel.AonReasignScopePanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonScopePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonScopePanel.AonScopePanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -46,14 +48,13 @@ public abstract class ScopeModulePanel extends AonCustomDockLayout {
 	}
 	
 	public ScopeModulePanel(ScopeModuleOptions options) {
-		super("Operarios");
+		super("\u00c1mbitos");
 		
 		initializeCommonService();
 		
 		this.options = options;
 		
 		addButtonsToolbar();
-		
 		
 		setSearchPlaceholder("Busqueda por descripci\u00f3n...");
 		
@@ -77,7 +78,7 @@ public abstract class ScopeModulePanel extends AonCustomDockLayout {
 		addSortWidget(asc);
 		
 		container = new HTMLPanel("");
-		container.addStyleName(AON.CSS.aonFlexColumn());
+		container.addStyleName(AON.CSS.aonFlexColumn2());
 		
 		container.add(messagePanel);
 	
@@ -103,6 +104,11 @@ public abstract class ScopeModulePanel extends AonCustomDockLayout {
 		newButton.addClickHandler(e -> showScopeDialog());
 		
 		addToolbarButton(newButton);
+		
+		AonToolbarButton reassign = new AonToolbarButton( "Reasignar \u00c1mbitos", AON.CSS.aonIconMoveGroup());
+		reassign.addClickHandler(e -> showReassignScopeDialog());
+		
+		addToolbarButton(reassign);
 	}
 
 	private void showScopeDialog() {
@@ -116,6 +122,19 @@ public abstract class ScopeModulePanel extends AonCustomDockLayout {
 					onScopeCreate(scopeDB);
 				}
 		});
+	}
+	
+	private void showReassignScopeDialog() {
+		new AonReasignScopePanel( options.getDomainName(), options.getDomain(), options.getUser(), options.getConfiguration().getAvailableScopes(), new AonReasignScopePanelCallback() {
+			
+			@Override
+			public void onCancel() {}
+			
+			@Override
+			public void onAccept() {
+				onSearch();
+			}
+	});
 	}
 
 	public void onSearch() {

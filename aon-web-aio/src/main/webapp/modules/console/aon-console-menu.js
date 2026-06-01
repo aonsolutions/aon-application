@@ -1,4 +1,4 @@
-import { MSG, CSS, EVENT, TAG } from '../../environments/environments.js'; 
+import { MSG, CSS, EVENT, TAG } from '../../environments/environments.js';
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from '../../gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
@@ -28,11 +28,11 @@ export class AonConsoleMenu extends AonSuiteMenu {
         this.AON_HEADER = 'aonHeader';
         this.ROOT_PANEL = 'rootPanel';
         this.RIGHT_PANEL = 'rightPanel';
-        this.last = "Últimas acciones";
-        this.new = "Nueva Acción";
+        this.last = MSG.LAST_ACTIONS;
+        this.new = MSG.NEW_ACTION;
         this.cardData={
-			title: "Consola Administración",
-			info:["Consola Administración"]
+			title: MSG.CONSOLE_ADMIN,
+			info:[MSG.CONSOLE_ADMIN]
 		};
         this.selectOptions= [];
         this.initOptions();
@@ -40,21 +40,21 @@ export class AonConsoleMenu extends AonSuiteMenu {
 
     initOptions() {
         this.options = [, {
-            title: 'Utilidades',
+            title: MSG.UTILITIES,
             options: [{
-                description: "Configuración Global",
-                title: "Configuración Global",
+                description: MSG.GLOBAL_CONFIGURATION,
+                title: MSG.GLOBAL_CONFIGURATION,
                 action: () => this.rootPanel(new JSF.AonJsfGlobalConfig())
             }, {
-				description: "Consola Administración",
-                title: "Consola Administración",
+				description: MSG.CONSOLE_ADMIN,
+                title: MSG.CONSOLE_ADMIN,
                 action: () => GWT.iLoad(GWT.CONSOLE)
             }]
         }, {
-            title: 'Datos de Empresa',
+            title: MSG.COMPANY_DATA_SECTION,
             options: [{
-                description: "Descarga de Empresas",
-                title: "Descarga de Empresas",
+                description: MSG.COMPANY_DOWNLOAD,
+                title: MSG.COMPANY_DOWNLOAD,
                 action: () => window.open("https://www.aonsolutions.es/solicitud-copia-de-seguridad-datos-empresa/", "_blank")
             }]
         }];

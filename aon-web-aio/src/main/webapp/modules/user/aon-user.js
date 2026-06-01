@@ -523,7 +523,7 @@ export class AonUser extends AonElement {
         } else {
             d.width = '400px';
         }
-		d.setTitle("Cambiar Contraseña");
+		d.setTitle(MSG.CHANGE_PASSWORD);
 
 		let div = document.createElement("div");
 

@@ -76,7 +76,7 @@ export class AonSuiteMenu extends AonElement {
         let dropdownButton = new AonButton();
         dropdownButton.id = this.DROPDOWN_BUTTON;
         dropdownButton.icon = "keyboard_arrow_down";
-        dropdownButton.title = "Ver opciones";
+        dropdownButton.title = MSG.SEE_OPTIONS;
         dropdownButton.color = "transparent";
         dropdownButton.classList.add("aonSuiteMenuDropdownButton");
         divNewButton.appendChild(dropdownButton);
@@ -121,7 +121,7 @@ export class AonSuiteMenu extends AonElement {
             let uploadButton = new AonButton();
             uploadButton.id = this.UPLOAD_BUTTON;
             uploadButton.icon = "publish";
-            uploadButton.title = "Cargar archivo";
+            uploadButton.title = MSG.LOAD_FILE;
             uploadButton.color = "transparent";
             uploadButton.classList.add("aonSuiteMenuUploadButton");
             sideMenu.appendChild(uploadButton);
@@ -213,7 +213,7 @@ export class AonSuiteMenu extends AonElement {
         let div = this.createDiv();
         div.classList.add("suiteMenuCardDataDiv");
 
-        let span = this.createDiv();
+        let span = this.createDiv(value.id);
         span.className = CSS.AON_CARD_TEXT;
         span.innerHTML = value.description;
         span.classList.add("suiteMenuCardDataSpan");

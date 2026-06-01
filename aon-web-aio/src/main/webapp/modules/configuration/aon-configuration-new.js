@@ -207,7 +207,7 @@ export class AonConfigurationNew extends AonElement {
 
 		let classicViewOptions = [];
 
-		if ( this.isBeta() ) {
+		if ( this.isBeta() || this.isAyudaTorInfoautonomos()) {
 			classicViewOptions.push({
 				name: MSG.GLOBAL_CONFIGURATION,
 				icon: MATERIAL_ICONS.SETTINGS,
@@ -220,12 +220,14 @@ export class AonConfigurationNew extends AonElement {
 				name: MSG.EMAIL,
 				icon: MATERIAL_ICONS.MAIL,
 				fn: () => this.getApplication().setContent(new JSF.AonJsfEmail()),
-			},			
+			},
+			/*		
 			{
 				name: MSG.PRINTS,
 				icon: MATERIAL_ICONS.PRINT,
 				fn: () => this.getApplication().setContent(new JSF.AonJsfPrint()),
-		    },			
+		    },
+		    */			
 			{
 				name: MSG.AUDIT,
 				icon: MATERIAL_ICONS.SECURITY,
@@ -238,11 +240,15 @@ export class AonConfigurationNew extends AonElement {
 				name: MSG.PROFILES,
 				icon: MATERIAL_ICONS.GROUPS,
 				fn: () => this.getApplication().setContent(new JSF.AonJsfProfile()),
-			},{
+			},
+			/*
+			{
 				name: MSG.SCOPES,
 				icon: MATERIAL_ICONS.BUSINESS,
 				fn: () => this.getApplication().setContent(new JSF.AonJsfScope()),
-			});
+			}
+			*/
+			);
 		}
 
 		aonConfiguration.addSidenavOptions(MSG.CLASSIC_VIEW.toUpperCase(), classicViewOptions);
