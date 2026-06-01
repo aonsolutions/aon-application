@@ -230,7 +230,7 @@ export class AonConfiguration extends AonElement {
 		
 		let classicViewOptions = [];
 
-		if ( this.isBeta() ) {
+		if ( this.isBeta() || this.isAyudaTorInfoautonomos()	) {
 			classicViewOptions.push({
 				name: MSG.GLOBAL_CONFIGURATION,
 				icon: MATERIAL_ICONS.SETTINGS,
