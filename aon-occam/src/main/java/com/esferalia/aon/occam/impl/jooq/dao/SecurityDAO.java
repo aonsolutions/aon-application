@@ -781,7 +781,7 @@ public class SecurityDAO {
 		} else {
 			Domain domain = DomainDAO.getDomain(ctx, ctx.getDomainId());
 			if(user.getDomain().getId() == domain.getParentId()) {
-				return getScopeStream(ctx, filter);
+				return getScopeStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
 			}
 		}
 		return Stream.empty();		
