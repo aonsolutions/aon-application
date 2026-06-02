@@ -5731,6 +5731,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		}
 
+		for ( Period nonWorked :Period.sub(contract, intersects) ) {
+			ctx.setVariable(HOURLY_BASE, false, nonWorked.getStart(), nonWorked.getEnd());
+		}
+		
 		// TGSS Periods ...
 
 		List<Period> ssPeriods = getPeriods(MONTH_DAYS);
