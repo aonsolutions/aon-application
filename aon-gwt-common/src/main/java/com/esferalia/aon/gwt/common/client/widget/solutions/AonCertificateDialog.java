@@ -78,6 +78,7 @@ public class AonCertificateDialog extends AonCustomDialog {
 	// Buttons Panel
 	private HTMLPanel buttonsPanel = new HTMLPanel("");
 	private Button acceptBtnDialog;
+	private Button verifyBtnDialog;
 	
 	// Variables
 	
@@ -249,7 +250,7 @@ public class AonCertificateDialog extends AonCustomDialog {
 		password.addButton(visibilityBtn);
 		password.getTextBox().addValueChangeHandler(e -> {
 			passwordHidden.setValue(e.getValue());
-			checkCertificate();
+			//checkCertificate();
 		});
 		
 		filePanel.add(certificate);
@@ -394,8 +395,13 @@ public class AonCertificateDialog extends AonCustomDialog {
 				String jsonStr = e.getResults().split(">")[1].split("<")[0];
 				JSONValue json = JSONParser.parseStrict(jsonStr);
 				parseJSON(json.isObject());
+				
+				if(AonStringUtils.equalsIgnoreCase(form.getAction(), GWT.getModuleBaseURL() + "certificate/check/") )
+					accept();
+				
 			} catch (NullPointerException | IllegalArgumentException err){
 				acceptBtnDialog.setVisible(true);
+				verifyBtnDialog.setVisible(false);
 				// showError("Formato", "Error formateando la informaci\u00f3n");
 			}
 		});
@@ -530,6 +536,7 @@ public class AonCertificateDialog extends AonCustomDialog {
 			createCertificateInfoPanel();
 			showSuccess("Validaci\u00f3n", "Certificado validado correctamente");
 			acceptBtnDialog.setVisible(true);
+			verifyBtnDialog.setVisible(false);
 		} else {
 			if(AonStringUtils.containsIgnoreCase(type.toString(), "create")) {
 				hide();
@@ -687,11 +694,18 @@ public class AonCertificateDialog extends AonCustomDialog {
 		
 		acceptBtnDialog = new Button();
 		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
-		acceptBtnDialog.setText("Continuar");
+		acceptBtnDialog.setText("Grabar");
 		acceptBtnDialog.setVisible(false);
 		acceptBtnDialog.addClickHandler(e -> accept());
 		
 		buttonsPanel.add(acceptBtnDialog);
+		
+		verifyBtnDialog = new Button();
+		verifyBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
+		verifyBtnDialog.setText("Verificar");
+		verifyBtnDialog.addClickHandler(e -> checkCertificate());
+		
+		buttonsPanel.add(verifyBtnDialog);
 		
 		Button closeBtnDialog = new Button();
 		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());

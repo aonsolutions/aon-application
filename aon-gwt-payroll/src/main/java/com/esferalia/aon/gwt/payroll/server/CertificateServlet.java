@@ -9,13 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
-
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
@@ -28,13 +21,19 @@ import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet; 
 
 @MultipartConfig
 @SuppressWarnings("serial")
-@WebServlet(name = "CERTIFICATE", urlPatterns = { "/aon_gwt_payroll/certificate/*" })
+@WebServlet(name = "CERTIFICATE", urlPatterns = { "/aon_gwt_fiscal/certificate/*", "/aon_gwt_payroll/certificate/*" })
 public class CertificateServlet extends AonApiHttpServlet {
 	
 	private static final Logger LOGGER  = Logger.getLogger(CertificateServlet.class.getName());
