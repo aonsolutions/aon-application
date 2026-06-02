@@ -622,6 +622,9 @@ public interface AonCSS extends CssResource {
 	
 	@ClassName("aon-circle-red")
 	String aonCircleRed();
+	
+	@ClassName("aon-circle-orange")
+	String aonCircleOrange();
 
 	@ClassName("aon-page-header")
 	String aonPageHeader();

@@ -69,7 +69,7 @@ export class AonCustomer extends AonReg {
 			if (!this.clientFile) {
 				this.options.push({ title: MSG.AGENTS, fn: () => this.buildSellerData() });
 			}
-			this.options.push({ title: "Expedientes", fn: () => this.buildExpedienteData() });
+			this.options.push({ title: MSG.EXPEDIENTS, fn: () => this.buildExpedienteData() });
 			this.options.push({ title: MSG.CUSTOMER_FEE, fn: () => this.buildCustomerFee() });
 			this.options.push({ title: MSG.INVOICES, fn: () => this.buildInvoices() });
 
@@ -899,7 +899,7 @@ export class AonCustomer extends AonReg {
 			d.clear();
 
 			if (!this.isMobile()) d.width = '400px';
-			d.setTitle("Suplantar Usuario");
+			d.setTitle(MSG.IMPERSONATE_USER);
 
 			d.setContentHTML("Estás seguro de suplantar a " + user.login);
 			d.addAcceptAction(() => {
@@ -1071,7 +1071,7 @@ export class AonCustomer extends AonReg {
 		if (this.isMobile()) dialog.type = "fullscreen";
 		else dialog.width = "30%";
 
-		dialog.setTitle("Acceder empresa vinculada");
+		dialog.setTitle(MSG.ACCESS_LINKED_COMPANY);
 
 		let div = document.createElement(TAG.DIV);
 		div.style.display = "flex";
@@ -1106,7 +1106,7 @@ export class AonCustomer extends AonReg {
 		if (this.isMobile()) dialog.type = "fullscreen";
 		else dialog.width = "30%";
 
-		dialog.setTitle("Acceder empresa vinculada");
+		dialog.setTitle(MSG.ACCESS_LINKED_COMPANY);
 
 		let div = document.createElement(TAG.DIV);
 		div.style.display = "flex";

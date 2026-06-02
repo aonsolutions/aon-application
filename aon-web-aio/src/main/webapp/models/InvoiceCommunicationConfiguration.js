@@ -1,5 +1,4 @@
 import { CONSTANT } from "../environments/environments";
-import { CONTACT } from "../environments/msg-en";
 import { isPersonaFisica } from "../services/documentUtils";
 import { Administration } from "./Administration";
 import { EnterpriseData, EnterpriseDataNames } from "./EnterpriseData";

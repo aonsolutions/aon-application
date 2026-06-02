@@ -52,7 +52,7 @@ public class AonCustomTextArea extends HTMLPanel implements RequiresResize  {
 		textArea = new TextArea();
 		textArea.setVisibleLines(6);
 		textArea.setStyleName(AON.CSS.aonCustomTextAreaInput());
-		textArea.getElement().setPropertyString("placeholder", "Introduce un valor");
+		//textArea.getElement().setPropertyString("placeholder", "Introduce un valor");
 
 		textArea.getElement().getStyle().setProperty("flex", "1");
 		textArea.getElement().getStyle().setProperty("width", "100%");

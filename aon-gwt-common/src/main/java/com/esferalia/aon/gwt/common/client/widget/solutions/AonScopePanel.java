@@ -56,11 +56,11 @@ public class AonScopePanel extends AonCustomDialog {
 	}
 	
 	public void show(Scope scope, AonScopePanelCallback callback) {
-		content.setStyleName(AON.CSS.aonFlexColumn());
+		content.setStyleName(AON.CSS.aonFlexColumn2());
 		content.getElement().getStyle().setProperty("padding", "1rem 0");
 		
 		HTMLPanel container = new HTMLPanel("");
-		container.setStyleName(AON.CSS.aonFlexColumn());
+		container.setStyleName(AON.CSS.aonFlexColumn2());
 		container.getElement().getStyle().setProperty("padding", "1rem");
 		
 		content.add(messagePanel);

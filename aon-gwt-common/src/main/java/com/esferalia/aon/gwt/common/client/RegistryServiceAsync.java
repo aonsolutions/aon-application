@@ -38,21 +38,24 @@ public interface RegistryServiceAsync {
 	void getCustomerFull(String domainName, int domain, String user, Integer id, AsyncCallback<CustomerFull> callback);
 	void save(String domainName, int domain, String user, CustomerFull customerFull, AsyncCallback<CustomerFull> callback);
 	void getDomainLinked(String domainName, int domain, String user, Integer customerId, AsyncCallback<Domain> callback);
-
+	void deleteCustomerFull(String domainName, int domain, String user, Integer id, AsyncCallback<Void> asyncCallback);
+	
 	// **************************************************
 	// *************************************** [CREDITOR]
 	// **************************************************
 	void getCreditors(String domainName, int domain, String user, RegistryParams params, int ofs, int limit, AsyncCallback<LinkedList<Creditor>> asyncCallback);
 	void getCreditorFull(String domainName, int domain, String user, Integer id, AsyncCallback<CreditorFull> callback);
 	void save(String domainName, int domain, String user, CreditorFull creditorFull, AsyncCallback<CreditorFull> callback);
-
+	void deleteCreditorFull(String domainName, int domain, String user, Integer id, AsyncCallback<Void> asyncCallback);
+	
 	// **************************************************
 	// *************************************** [SUPPLIER]
 	// **************************************************
 	void getSuppliers(String domainName, int domain, String user, RegistryParams params, int ofs, int limit, AsyncCallback<LinkedList<Supplier>> asyncCallback);
 	void getSupplierFull(String domainName, int domain, String user, Integer id, AsyncCallback<SupplierFull> callback);
 	void save(String domainName, int domain, String user, SupplierFull supplierFull, AsyncCallback<SupplierFull> callback);
-	
+	void deleteSupplierFull(String domainName, int domain, String user, Integer id, AsyncCallback<Void> asyncCallback);
+
 	// **************************************************
 	// *********************************** [CUSTOMER FEE]
 	// **************************************************

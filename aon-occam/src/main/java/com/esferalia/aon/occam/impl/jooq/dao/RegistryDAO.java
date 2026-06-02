@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
@@ -21,7 +20,6 @@ import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -227,42 +225,8 @@ public class RegistryDAO {
 			registry = (registry.getId() == null)?insert(ctx, registry):update(ctx, registry);
 		} else {
 			ctx.log().debug("NOT SAVED REGISTRY (not dirty) id: {0}",registry.getId());
-		}
-		
-		checkPersonRegistry(ctx, registry);
-		
+		}				
 		return registry;
-	}
-	
-	private static void checkPersonRegistry(AONContext ctx, Registry registry) {
-		if(registry.getDocumentType().equals(DocumentType.CIF)) {
-			ctx.getDslContext().delete(PERSON)
-				.where(PERSON.REGISTRY.eq(registry.getId()))
-				.and(PERSON.DOMAIN.eq(registry.getDomain().getId()))
-				.execute();
-		} else {
-			PersonRecord personRecord = ctx.getDslContext().selectFrom(PERSON)
-				.where(PERSON.REGISTRY.eq(registry.getId())
-				.and(PERSON.DOMAIN.eq(registry.getDomain().getId())))
-				.fetchOne();
-			
-			if(null == personRecord)
-				ctx.getDslContext().insertInto(PERSON)
-					.set(PERSON.REGISTRY, registry.getId())
-					.set(PERSON.DOMAIN, registry.getDomain().getId())
-					.set(PERSON.NAME, registry.getPersonName())
-					.set(PERSON.FIRST_SURNAME, registry.getPersonFirstsurname())
-					.set(PERSON.SECOND_SURNAME, registry.getPersonSecondsurname())
-					.execute();
-			else
-				ctx.getDslContext().update(PERSON)
-					.set(PERSON.NAME, registry.getPersonName())
-					.set(PERSON.FIRST_SURNAME, registry.getPersonFirstsurname())
-					.set(PERSON.SECOND_SURNAME, registry.getPersonSecondsurname())
-					.where(PERSON.REGISTRY.eq(personRecord.getRegistry()))
-					.and(PERSON.DOMAIN.eq(personRecord.getDomain()))
-					.execute();
-		}
 	}
 	
 	private static <R extends Registry> R insert(AONContext ctx, R registry) {
@@ -402,6 +366,7 @@ public class RegistryDAO {
 				RegistryMediaDAO.delete(ctx, media.getId());
 			}
 		}
+		
 		// Registry 
 		delete(ctx, registryFull.getId()); 
 		

@@ -1579,6 +1579,53 @@ export class AonJsfReportTemplate extends AonJsfApp {
 	}
 }
 
+export class AonJsfUser extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/user.xhtml');
+	}
+}
+
+export class AonJsfProfile extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/profile.xhtml');
+	}
+}
+
+export class AonJsfScope extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/scope.xhtml');
+	}
+}
+
+export class AonJsfAudit extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/audit.xhtml');
+	}
+}
+
+export class AonJsfPrint extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/print.xhtml');
+	}
+}
+
+export class AonJsfEmail extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/email.xhtml');
+	}
+}
 
 if (!window.customElements.get(TAG.AON_JSF_APP)) {
 	window.customElements.define(TAG.AON_JSF_APP, AonJsfApp);
@@ -2227,3 +2274,29 @@ if (!window.customElements.get(TAG.AON_JSF_PAY_METHOD_TYPE_DETAIL)) {
 if (!window.customElements.get(TAG.AON_JSF_REPORT_TEMPLATE)) {
 	window.customElements.define(TAG.AON_JSF_REPORT_TEMPLATE, AonJsfReportTemplate);
 }
+
+if (!window.customElements.get(TAG.AON_JSF_USER)) {
+	window.customElements.define(TAG.AON_JSF_USER, AonJsfUser);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_PROFILE)) {
+	window.customElements.define(TAG.AON_JSF_PROFILE, AonJsfProfile);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_SCOPE)) {
+	window.customElements.define(TAG.AON_JSF_SCOPE, AonJsfScope);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_AUDIT)) {
+	window.customElements.define(TAG.AON_JSF_AUDIT, AonJsfAudit);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_PRINT)) {
+	window.customElements.define(TAG.AON_JSF_PRINT, AonJsfPrint);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_EMAIL)) {
+	window.customElements.define(TAG.AON_JSF_EMAIL, AonJsfEmail);
+}
+
+

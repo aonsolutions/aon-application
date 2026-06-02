@@ -151,7 +151,7 @@ export class AonNotificationMobile extends AonElement {
           this.createCard({
             id: 0,
             status:1,
-            title: "Sin notificaciones",
+            title: MSG.NO_NOTIFICATIONS,
             body: "No existen notificaciones pendientes."
           });
       } else {

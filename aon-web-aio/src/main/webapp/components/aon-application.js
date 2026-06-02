@@ -891,7 +891,7 @@ export class AonApplication extends AonElement {
     let tmp = undefined;
     if (options && options.length > 0) {
       let data = {
-        id: title,
+        id: this.normalizeString(title),
         name: title,
       };
       tmp = this.addSidenavOptionsTitle(data, newButton);
@@ -904,7 +904,7 @@ export class AonApplication extends AonElement {
     let tmp = undefined;
     if (options && options.length > 0) {
       let data = {
-        id: title,
+        id: this.normalizeString(title),
         name: title,
       };
       tmp = this.addSidenavOptionsTitle(data, newButton, true);
@@ -912,6 +912,19 @@ export class AonApplication extends AonElement {
     }
     return tmp;
   }
+  
+  normalizeString(str) {
+	  if (!str) return "";
+	
+	  return str
+	    .normalize("NFD")                     // separa letras y tildes
+	    .replace(/[\u0300-\u036f]/g, "")      // elimina tildes
+	    .replace(/[^a-zA-Z0-9 ]/g, "")        // elimina caracteres especiales
+	    .split(" ")                           // separa por espacios
+	    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()) // PascalCase
+	    .join("");
+	}
+
   
   addSidenavOptions3(data, newButton) {
     this.SIDENAV = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;

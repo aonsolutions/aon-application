@@ -12,7 +12,7 @@ public interface ICalendar {
 	
 	List<Calendar> getCalendars(CloseableAONContext ctx, Integer domainId);
 
-	List<Holiday> getHolidays(CloseableAONContext ctx, Integer domainId);
+	List<Holiday> getHolidays(CloseableAONContext ctx, Integer domainId, Integer parentDomain);
 
 	void deleteHolidayDetail(CloseableAONContext ctx, Integer id);
 

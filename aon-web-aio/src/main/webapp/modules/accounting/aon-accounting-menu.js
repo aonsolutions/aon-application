@@ -32,20 +32,20 @@ export class AonAccountingMenu extends AonSuiteMenu {
 		this.AON_HEADER = 'aonHeader';
 		this.ROOT_PANEL = 'rootPanel';
 		this.RIGHT_PANEL = 'rightPanel';
-		this.last = "Últimos apuntes";
-		this.new = "Nuevo Apunte"
+		this.last = MSG.LAST_ENTRIES;
+		this.new = MSG.NEW_ENTRY;
 		this.cardData={
-            title: "Documentos",
-            info:["Pendientes", "Rechazados", "Fras. sin contabilizar"]
+            title: MSG.DOCUMENTS,
+            info:[MSG.DOCS_PENDING, MSG.DOCS_REJECTED, MSG.INVOICES_UNACCOUNTED_ABBR]
         };
 		this.selectOptions= [{
-            title: "Cuenta contable",
+            title: MSG.ACCOUNTING_ACCOUNT,
             action: () => alert("description")
         },{
-            title: "Ficha de amortización",
+            title: MSG.AMORTIZATION_SHEET,
             action: () => alert("description")
         },{
-            title: "Apunte", 
+            title: MSG.ENTRY,
             action: () => alert("description")
         }];
 		
@@ -54,22 +54,22 @@ export class AonAccountingMenu extends AonSuiteMenu {
 	
 	initOptions() {
 		this.options = [{
-			title: 'Apuntes contables',
+			title: MSG.ACCOUNTING_ENTRIES,
 			options: [ {
-				description:"Mantenimiento de Apuntes",
-				title:"Mantenimiento de Apuntes",
+				description:MSG.ENTRY_MAINTENANCE,
+				title:MSG.ENTRY_MAINTENANCE,
 				action: () => GWT.iLoad(GWT.ACCOUNT_ENTRY),
 			},{
-				description: "Apuntes de Amortizaciones",
-				title: "Apuntes de Amortizaciones",
+				description: MSG.AMORTIZATION_ENTRIES,
+				title: MSG.AMORTIZATION_ENTRIES,
 				action: () => this.rootPanel(new JSF.AonJsfPeriodAmortization()),
 			},{
-				description: "Asientos de explotación, cierre y apertura",
-				title: "Asientos de explotación, cierre y apertura",
+				description: MSG.OPERATING_ENTRIES,
+				title: MSG.OPERATING_ENTRIES,
 				action: () => this.rootPanel(new JSF.AonJsfEndPeriodEntries()),
 			},{
-				description: "Contabilización de Facturas y Documentos Pendientes",
-				title: "Contabilización de Facturas",
+				description: MSG.PENDING_INVOICE_ACCOUNTING,
+				title: MSG.PENDING_INVOICE_ACCOUNTING,
 				action: () => this.rootPanel(new AonInvoiceRecord()),
 			},
 			// {
@@ -78,8 +78,8 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			// 	action: () => this.rootPanel(new JSF.AonJsfInvoiceRecorder),
 			// },
 			{
-				description: "Contabilización de Cobros y Pagos realizados",
-				title: "Contabilización de Cobros y Pagos realizados",
+				description: MSG.RECEIPTS_PAYMENTS_ACCOUNTING,
+				title: MSG.RECEIPTS_PAYMENTS_ACCOUNTING,
 				action: () => this.rootPanel(new JSF.AonJsfFinanceTrackingEntry()),
 			}
 			// ,{
@@ -90,30 +90,30 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			],
 			filter: () => this.isNotDomainManagementAvailable()
 		},{
-			title: 'Listados Contables',
+			title: MSG.ACCOUNTING_LISTINGS,
 			options: [{
-				description: "Extracto de cuenta",
-				title: "Extracto de cuenta",
+				description: MSG.ACCOUNT_STATEMENT,
+				title: MSG.ACCOUNT_STATEMENT,
 				action: () => GWT.iLoad(GWT.STATEMENT_REPORT)
 			},{
-				description: "Cuenta de Explotación (P y G)",
-				title: "Cuenta de Explotación (P y G)",
+				description: MSG.INCOME_STATEMENT,
+				title: MSG.INCOME_STATEMENT,
 				action: () => GWT.iLoad(GWT.ACCOUNT_OPERATION_STATEMENT)
 			},{
-				description: "Balance de Sumas y Saldos",
-				title: "Balance de Sumas y Saldos",
+				description: MSG.TRIAL_BALANCE,
+				title: MSG.TRIAL_BALANCE,
 				action: () => GWT.iLoad(GWT.ACCOUNT_TRIAL_BALANCE_REPORT)
 			},{
-				description: "Listado Diario de Movimientos",
-				title: "Listado Diario de Movimientos",
+				description: MSG.DAILY_JOURNAL,
+				title: MSG.DAILY_JOURNAL,
 				action: () => GWT.iLoad(GWT.JOURNAL_REPORT)
 			},{
-				description: "Listado Mayor de Cuentas",
-				title: "Listado Mayor de Cuentas",
+				description: MSG.LEDGER_REPORT,
+				title: MSG.LEDGER_REPORT,
 				action: () => GWT.iLoad(GWT.LEDGER_REPORT)
 			},{
-				description: "Balances oficiales",
-				title: "Balances oficiales",
+				description: MSG.OFFICIAL_BALANCES,
+				title: MSG.OFFICIAL_BALANCES,
 				action: () => GWT.iLoad(GWT.ACCOUNT_BALANCE_REPORT),
 				filter: false, // remove 
 			}/*,{
@@ -123,18 +123,18 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			}*/],
 			filter: () => this.isNotDomainManagementAvailable()
 		},{
-			title: 'Tablas Auxiliares',
+			title: MSG.AUX_TABLES,
 			options: [{
-				description: "Plan General Contable",
-				title: "Plan General Contable",
+				description: MSG.CHART_OF_ACCOUNTS,
+				title: MSG.CHART_OF_ACCOUNTS,
 				action: () => GWT.iLoad(GWT.ACCOUNT_MODULE)
 			},{
-				description: "Conceptos Automáticos",
-				title: "Conceptos Automáticos",
+				description: MSG.AUTOMATIC_CONCEPTS,
+				title: MSG.AUTOMATIC_CONCEPTS,
 				action: () => this.rootPanel(new JSF.AonJsfAutConcept())
 			},{
-				description: "Ejercicios Contables",
-				title: "Ejercicios Contables",
+				description: MSG.ACCOUNTING_PERIODS,
+				title: MSG.ACCOUNTING_PERIODS,
 				action: () => GWT.iLoad(GWT.ACCOUNTING_PERIOD)
 			},{
 				description: MSG.CUSTOMER,
@@ -151,55 +151,55 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			}],
 			filter: () => this.isNotDomainManagementAvailable()
 		},{
-			title: 'Inmovilizado',
+			title: MSG.FIXED_ASSETS,
 			options: [{
-				description: "Ficha de Amortización",
-				title: "Ficha de Amortización",
+				description: MSG.AMORTIZATION_SHEET,
+				title: MSG.AMORTIZATION_SHEET,
 				action: () => this.rootPanel(new JSF.AonJsfAmortization())
 			},{
-				description: "[NUEVO] Ficha de Amortización",
+				description: MSG.NEW_AMORTIZATION_SHEET,
 				disabled: !this.isBeta(),
-				title: "[NUEVO] Ficha de Amortización",
+				title: MSG.NEW_AMORTIZATION_SHEET,
 				action: () => GWT.iLoad(GWT.AMORTIZATION)
 			},{
-				description: "Tabla de tipos de Amortización",
-				title: "Tabla de tipos de Amortización",
+				description: MSG.AMORTIZATION_TYPE_TABLE,
+				title: MSG.AMORTIZATION_TYPE_TABLE,
 				action: () => GWT.iLoad(GWT.AMORTIZATION_TYPE)
 			},{
-				description: "Bienes Afectos o de Inversión",
-				title: "Bienes Afectos o de Inversión",
+				description: MSG.INVEST_ASSETS_SHEET,
+				title: MSG.INVEST_ASSETS_SHEET,
 				action: () => GWT.iLoad(GWT.INVEST_ASSET)
 			}],
 			filter: () => this.isNotDomainManagementAvailable()
 		},{
-			title: 'Listados de Hacienda',
+			title: MSG.TAX_REPORTS,
 			options: [{
-				description: "Panel de control de IVA",
-				title: "Panel de control de IVA",
+				description: MSG.IVA_PANEL_CONTROL,
+				title: MSG.IVA_PANEL_CONTROL,
 				action: () => GWT.iLoad(GWT.VAT_REPORT)
 			},{
-				description: "Panel de Control de IRPF",
-				title: "Panel de Control de IRPF",
+				description: MSG.IRPF_PANEL_CONTROL,
+				title: MSG.IRPF_PANEL_CONTROL,
 				action: () => GWT.iLoad(GWT.IRPF_REPORT)
 			},{
-				description: "Libros Registro AEAT",
-				title: "Libros Registro AEAT",
+				description: MSG.AEAT_BOOKS,
+				title: MSG.AEAT_BOOKS,
 				action: () => GWT.iLoad(GWT.ACCOUNT_OPERATION_REPORT)
 			},{
-				description: "Listado de Excel de Impuestos aplicados en Facturas",
-				title: "Listado de Excel de Impuestos aplicados en Facturas",
+				description: MSG.TAX_INVOICE_EXCEL_REPORT,
+				title: MSG.TAX_INVOICE_EXCEL_REPORT,
 				action: () => this.rootPanel(new JSF.AonJsfInvoiceReport())
 			}],
 			filter: () => this.isNotDomainManagementAvailable()
 		},{
-			title: 'Utilidades',
+			title: MSG.UTILITIES,
 			options: [{
-				description: "Centros de Costo",
-				title: "Centros de Costo",
+				description: MSG.COST_CENTER,
+				title: MSG.COST_CENTER,
 				action: () => GWT.iLoad(GWT.COST_CENTER)
 			},{
-				description: "Utilidades y chequeos contables",
-				title: "Utilidades y chequeos contables",
+				description: MSG.ACCOUNTING_UTILITIES,
+				title: MSG.ACCOUNTING_UTILITIES,
 				action: () => GWT.iLoad(GWT.ACCOUNTING_UTILITIES)
 			},/*{
 				description: "Cambio de Cuenta",
@@ -211,81 +211,81 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				action: () => alert("Regenerar número en Facturas de IVA Soportado")
 			},*/
 			{
-				description: "Chequeo de Integridad de Facturas",
-				title: "Chequeo de Integridad de Facturas",
+				description: MSG.INVOICE_INTEGRITY_CHECK,
+				title: MSG.INVOICE_INTEGRITY_CHECK,
 				action: () => this.rootPanel(new JSF.AonJsfInvoiceIntegrity())
 			},{
-				description: "Utilidades facturas/vencimientos",
-				title: "Utilidades facturas/vencimientos",
+				description: MSG.UTILITIES_INVOICES_EXPIRATIONS,
+				title: MSG.UTILITIES_INVOICES_EXPIRATIONS,
 				action: () => GWT.iLoad(GWT.FINANCE_UTILITIES)
 			}],
 			filter: () => this.isNotDomainManagementAvailable()
 		},{
-			title: 'Movimientos Bancarios',
+			title: MSG.BANK_MOVEMENTS,
 			options: [{
-				description: "Conciliador Bancario",
-				title: "Conciliador Bancario",
+				description: MSG.BANK_CONCILIATOR,
+				title: MSG.BANK_CONCILIATOR,
 				action: () => this.rootPanel(new JSF.AonJsfBankStatement())
 			},{
-				description: "Agregador Bancario",
-				title: "Agregador Bancario",
+				description: MSG.BANK_AGGREGATOR,
+				title: MSG.BANK_AGGREGATOR,
 				action: () => GWT.iLoad(GWT.NORDIGEN),
 				filter: () => this.hasBank()
 			},{
-				description: "Cartera de cobros y pagos",
-				title: "Cartera de cobros y pagos",
+				description: MSG.BANK_PORTFOLIO,
+				title: MSG.BANK_PORTFOLIO,
 				action: () => GWT.iLoad(GWT.FINANCE)
 			}, PAYMETHODS],
 			filter: () => this.isNotDomainManagementAvailable()
 		},{
-			title: 'Registro Mercantil',
+			title: MSG.COMMERCIAL_REGISTRY,
 			options: [{
-				description: "Plantillas e informes",
-				title: "Plantillas e informes",
+				description: MSG.TEMPLATES_AND_REPORTS,
+				title: MSG.TEMPLATES_AND_REPORTS,
 				action: () => this.rootPanel(new JSF.AonJsfReportTemplate())
 			}, {
-				description: "Emisión de libros contables (LEGALIA)",
-				title: "Emisión de libros contables (LEGALIA)",
+				description: MSG.ACCOUNTING_BOOKS_EMISSION,
+				title: MSG.ACCOUNTING_BOOKS_EMISSION,
 				action: () => this.rootPanel(new JSF.AonJsfAccountingBook())
 			},{
-				description: "Depósito de cuentas (D2)",
-				title: "Depósito de cuentas (D2)",
+				description: MSG.ACCOUNT_DEPOSIT_D2,
+				title: MSG.ACCOUNT_DEPOSIT_D2,
 				action: () => GWT.iLoad(GWT.DEPOSIT)
 			}],
 			filter: () => this.isNotDomainManagementAvailable()
 		},{
-			title: 'Contabilidad',
+			title: MSG.ACCOUNTING,
 			options: [{
-				description: "Plan General Contable",
-				title: "Plan General Contable",
+				description: MSG.CHART_OF_ACCOUNTS,
+				title: MSG.CHART_OF_ACCOUNTS,
 				action: () => this.getApplication().setContent(new JSF.AonJsfAccount())
 			},{
-				description: "Conceptos Automáticos",
-				title: "Conceptos Automáticos",
+				description: MSG.AUTOMATIC_CONCEPTS,
+				title: MSG.AUTOMATIC_CONCEPTS,
 				action: () => this.getApplication().setContent(new JSF.AonJsfAutConcept())
 			},{
-				description: "Definición de Balances",
-				title: "Definición de Balances",
+				description: MSG.BALANCE_DEFINITION,
+				title: MSG.BALANCE_DEFINITION,
 				action: () => this.getApplication().setContent(new JSF.AonJsfBalance())
 			},{
-				description: "Tabla de Tipos de Amortización",
-				title: "Tabla de Tipos de Amortización",
+				description: MSG.AMORTIZATION_TYPE_TABLE,
+				title: MSG.AMORTIZATION_TYPE_TABLE,
 				action: () => this.getApplication().setContent(new JSF.AonJsfAmortizationType())
 			},{
-				description: "Utilidades y chequeos contables",
-				title: "Utilidades y chequeos contables",
+				description: MSG.ACCOUNTING_UTILITIES,
+				title: MSG.ACCOUNTING_UTILITIES,
 				action: () => GWT.iLoad(GWT.ACCOUNTING_UTILITIES, this.getApplication().CONTENT)
 			},{
-				description: "Contadores de facturas",
-				title: "Contadores de facturas",
+				description: MSG.INVOICE_COUNTERS,
+				title: MSG.INVOICE_COUNTERS,
 				action: () => GWT.iLoad(GWT.DOMAIN_INVOICE_STAT, this.getApplication().CONTENT),
 			}],
 			filter: () => this.isDomainManagementAvailable()
 		},{
-			title: 'Registro Mercantil',
+			title: MSG.COMMERCIAL_REGISTRY,
 			options: [{
-				description: "Depósito de cuentas (D2)",
-				title: "Depósito de cuentas (D2)",
+				description: MSG.ACCOUNT_DEPOSIT_D2,
+				title: MSG.ACCOUNT_DEPOSIT_D2,
 				action: () => GWT.iLoad(GWT.DEPOSIT_TEXT_MODE, this.getApplication().CONTENT)
 				//action: () => GWT.iLoad(GWT.DEPOSIT_TEXT_MODE)
 			}

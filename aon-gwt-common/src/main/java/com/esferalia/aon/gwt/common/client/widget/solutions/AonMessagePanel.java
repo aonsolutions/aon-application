@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.Future;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.animation.client.Animation;

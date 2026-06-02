@@ -35,6 +35,7 @@ import net.aonsolutions.db.up2date.tgss.HomeBases2026Update;
 import net.aonsolutions.db.up2date.tgss.OrderPJC2972026Art28Update;
 import net.aonsolutions.db.up2date.tgss.SociosCoopBases2026Update;
 import net.aonsolutions.db.up2date.tgss.TrainingMEI2026Fix;
+import net.aonsolutions.db.up2date.registry.AddColumnCustomerFiscalStatus;
 import net.aonsolutions.db.up2date.timecontrol.CalendarFixNulls;
 
 public class Up2Date {
@@ -326,7 +327,7 @@ public class Up2Date {
 			// MEIPECUpdateUndo.MEIPECUPDATEUNDO,
 			// MEITrainingRemoveUndo.MEITRAININGREMOVEUNDO,
 			// Embargar4Many.BIEMBARGAR4MANY,
-			// FinanceTrackingAmountFix.FINANCE_TRACKING_AMOUNT_FIX,Muc-Off Bio Drivetrain Cleaner: Un desengrasante líquido altamente eficiente que disuelve grasa pesada y ceras en segundos. Su fórmula líquida vertible es perfecta para el limpiador Park Tool y es 100% biodegradable.
+			// FinanceTrackingAmountFix.FINANCE_TRACKING_AMOUNT_FIX,
 			// OcupationITIMSFix.OCUPATIONITIMSFIX,
 			// Embargar4Many.BIEMBARGAR4MANY,
 			// BasesMin2023Update.BASESMIN2023UPDATE,
@@ -628,6 +629,8 @@ public class Up2Date {
 			// MaxEmbargable4DailyFix.MAXEMBARGABLE4DAILYFIX,
 			// OneCnaeTableToRuleThemAll.ONECNAETABLETORULETHEMALL,
 			// InsertTarifaPrimasDF_1_3_RDL_3_2026.INSERTTARIFAPRIMASDF_1_3_RDL_3_2026,
+			AddColumnCustomerFiscalStatus.ADD_COLUMN_CUSTOMER_FISCAL_STATUS,
+
 			//SalaryTypeUpdate.ALL,
 			
 			
@@ -663,7 +666,7 @@ public class Up2Date {
 			// RecordDataAlterTable.RECORD_DATA_ALTER_TABLE
 			// DeleteDomainAppApp7.DELETE_DOMAIN_APP_APP7
 
-			InvoiceTrackingAlterTableJson.INVOICE_TRACKING_ALTER_TABLE_JSON,
+			// InvoiceTrackingAlterTableJson.INVOICE_TRACKING_ALTER_TABLE_JSON,
 	};
 
 	// ------------------------------------------------------------------------

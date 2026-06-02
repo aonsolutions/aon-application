@@ -1,8 +1,10 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
+import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -19,9 +21,11 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -52,13 +56,23 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 	private Integer domain;
 	private String user;
 	private Integer registry;
+	
+	private boolean showActiveActivities = true;
+	
+	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 
 	private static enum COLS {
-		PRI("Principal", "4rem", ""),
-		DES(AON.MSG.description(), "15rem",  "max-width: 15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		CNA("CNAE 2025", "-moz-available", "min-width: 25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		CCC("CCCs", "3rem", ""), 
-		BUT(AonStringUtils.EMPTY, "3rem", "");
+		STA("Activo", 				"5rem", 			"max-width: 4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		PRI("Principal", 			"5rem", 			"max-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		DES(AON.MSG.description(), 	"-moz-available",  	"min-width: 10rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		STD("F. Inicio", 			"7rem",  			"max-width: 7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		IVA("I.V.A.", 				"7rem",  			"max-width: 7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		IRP("I.R.P.F.", 			"7rem",  			"max-width: 7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		REE("R. Equivalencia",		"8rem",  			"max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		CNA("CNAE 2025", 			"6rem", 			"max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		IAE("IAE",		 			"5rem", 			"max-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		CCC("CCCs", 				"3rem", 			""), 
+		BUT(AonStringUtils.EMPTY, 	"3rem", 			"");
 
 		String headerLabel;
 		String colWidth;
@@ -177,6 +191,22 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 				buttonContainer.add(button);
 
 				tab.addHeader(buttonContainer, col.getColWidth(), col.getStyles());
+			}  else if (col.equals(COLS.STA)) {
+				FlowPanel buttonContainer = new FlowPanel();
+				buttonContainer.getElement().getStyle().setTextAlign(TextAlign.LEFT);
+
+				CheckBox showActive = new CheckBox("Act.");
+				showActive.setTitle("Solo activos");
+				showActive.addStyleName(AON.CSS.aonCustomRowButtom());
+				showActive.setValue(showActiveActivities);
+				showActive.getElement().getStyle().setProperty("flex-direction", "row-reverse");
+				showActive.addValueChangeHandler(e -> {
+					showActiveActivities = !showActiveActivities;
+					onSearch();
+				});
+				buttonContainer.add(showActive);
+
+				tab.addHeader(buttonContainer, col.getColWidth(), col.getStyles());
 			} else
 				tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
 
@@ -255,6 +285,13 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 		HTMLPanel row = tab.createRow();
 		row.addDomHandler(e -> onUpdateEnterpriseActivity(enterpriseActivity), ClickEvent.getType());
 
+		Button status = new Button();
+		getEnableDisableButton(status, enterpriseActivity.getEndDate() == null || enterpriseActivity.getEndDate().after(new Date()));
+		status.setTitle(enterpriseActivity.getEndDate() == null || enterpriseActivity.getEndDate().after(new Date()) ? "Activo" : "Inactivo");
+		status.getElement().getStyle().setProperty("background-position-x", "center");
+		tab.addInlineStyle(status, COLS.STA.getStyles());
+		tab.addRow(row, status, COLS.STA.getColWidth());
+		
 		Button principal = new Button();
 		getEnableDisableButton(principal, enterpriseActivity.isPrincipal());
 		principal.setTitle(enterpriseActivity.isPrincipal() ? "Pricipal" : "Secundaria");
@@ -265,11 +302,36 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 		description.setTitle(enterpriseActivity.getDescription());
 		tab.addInlineStyle(description, COLS.DES.getStyles());
 		tab.addRow(row, description, COLS.DES.getColWidth());
-
-		Label cnae = new Label(enterpriseActivity.getCnae25Code() + " - " + enterpriseActivity.getCnae25Description());
-		cnae.setTitle(enterpriseActivity.getCnaeDescription());
+		
+		Label startDate = new Label(enterpriseActivity.getStartDate() == null ? "" : formatDate.format(enterpriseActivity.getStartDate()));
+		startDate.setTitle(enterpriseActivity.getStartDate() == null ? "" : formatDate.format(enterpriseActivity.getStartDate()));
+		tab.addInlineStyle(startDate, COLS.STD.getStyles());
+		tab.addRow(row, startDate, COLS.STD.getColWidth());
+		
+		Label iva = new Label(null == enterpriseActivity.getVatRegime() ? "" : enterpriseActivity.getVatRegime().getDescription());
+		iva.setTitle(null == enterpriseActivity.getVatRegime() ? "" : enterpriseActivity.getVatRegime().getDescription());
+		tab.addInlineStyle(iva, COLS.IVA.getStyles());
+		tab.addRow(row, iva, COLS.IVA.getColWidth());
+		
+		Label irpf = new Label(null == enterpriseActivity.getIrpfRegime() ? "" : enterpriseActivity.getIrpfRegime().getDescription());
+		irpf.setTitle(null == enterpriseActivity.getIrpfRegime() ? "" : enterpriseActivity.getIrpfRegime().getDescription());
+		tab.addInlineStyle(irpf, COLS.IRP.getStyles());
+		tab.addRow(row, irpf, COLS.IRP.getColWidth());
+		
+		Button re = new Button();
+		getEnableDisableButton(re, enterpriseActivity.isSurcharge());
+		tab.addInlineStyle(re, COLS.REE.getStyles());
+		tab.addRow(row, re, COLS.REE.getColWidth());
+		
+		Label cnae = new Label(enterpriseActivity.getCnae25Code());
+		cnae.setTitle(enterpriseActivity.getCnae25Description());
 		tab.addInlineStyle(cnae, COLS.CNA.getStyles());
 		tab.addRow(row, cnae, COLS.CNA.getColWidth());
+		
+		Label iae = new Label(null == enterpriseActivity.getIae() ? "" : enterpriseActivity.getIae().getSection() + " - " + enterpriseActivity.getIae().getEpigraph());
+		iae.setTitle(null == enterpriseActivity.getIae() ? "" : enterpriseActivity.getIae().getTitle());
+		tab.addInlineStyle(iae, COLS.IAE.getStyles());
+		tab.addRow(row, iae, COLS.IAE.getColWidth());
 
 		Label cccs = new Label(enterpriseActivity.getCccs().isEmpty() ? "0" : enterpriseActivity.getCccs().size() + "");
 		tab.addInlineStyle(cccs, COLS.CCC.getStyles());
@@ -293,7 +355,8 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 
 			@Override
 			public void onSuccess(List<Activity> enterpriseActivities) {
-				success.accept(enterpriseActivities);
+				List<Activity> parseEnterpriseActivities = enterpriseActivities.stream().filter(ac -> (showActiveActivities && (ac.getEndDate() == null || ac.getEndDate().after(new Date()))) || !showActiveActivities).collect(Collectors.toList());
+				success.accept(parseEnterpriseActivities);
 			}
 
 			@Override

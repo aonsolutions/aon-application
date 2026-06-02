@@ -32,8 +32,8 @@ import * as GWT from '../../gwt/gwt.js';
   
   export const AGENDA = {
     id: 'timecontrol-agenda',
-    name: 'Agenda',
-    title: 'Agenda',
+    name: MSG.AGENDA,
+    title: MSG.AGENDA,
     icon: MATERIAL_ICONS.CALENDAR_VIEW_DAY,
     fn: () => showView(SIGNIN_VIEWS.AON_TIMECONTROL_AGENDA)
   };
@@ -48,16 +48,16 @@ import * as GWT from '../../gwt/gwt.js';
 
   export const TASK_HOLDER = {
     id: CONSTANT.TASK_HOLDER,
-    name: "Operarios",
-    title: "Operarios",
+    name: MSG.OPERATORS,
+    title: MSG.OPERATORS,
     icon: MATERIAL_ICONS.PEOPLE,
     fn: () => taskHolder()
   };
-  
+
   export const WORKPLACES_CALENDAR = {
     id: CONSTANT.WORKPLACES_CALENDAR,
-    name: "Calendario",
-    title: "Calendario",
+    name: MSG.CALENDAR,
+    title: MSG.CALENDAR,
     icon: MATERIAL_ICONS.CALENDAR_TODAY,
     fn: () => workplacesCalendar()
   };

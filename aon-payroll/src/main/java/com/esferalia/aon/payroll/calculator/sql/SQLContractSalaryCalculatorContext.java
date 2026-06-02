@@ -5124,8 +5124,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 							if ((getVariable(FULL_TIME, p, Boolean.class) != Boolean.TRUE)
 									|| definedWeekHours /* !isFullTime() */) {
 
-								double agreementWeekHours = getCurrentBindings().get(AGREEMENT_HOURS,
-										obj -> ((Number) obj).doubleValue(), DEFAULT_AGRREEMENT_HOURS);
+								double agreementWeekHours = getAgreementWeekHours(getCurrentBindings());
 
 								double weekHours = getCurrentBindings().get(WEEK_HOURS,
 										obj -> ((Number) obj).doubleValue(), DEFAULT_AGRREEMENT_HOURS);
@@ -5551,20 +5550,20 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					if (workedHours != 0)
 						return workedHours;
 
-					Number agreementHours = ctx.getVariable(AGREEMENT_HOURS, p.getStart(), p.getEnd(), Number.class);
-					if (agreementHours == null || agreementHours.doubleValue() == 0.00)
+					double agreementWeekHours = getAgreementWeekHours(ctx, p.getStart(), p.getEnd());
+					if (agreementWeekHours == 0.00)
 						return 0.00;
 
 					double actualDays = ctx.getVariables(ACTUAL_DAYS, p.getStart(), p.getEnd()).stream()
 							.collect(Collectors.summingDouble(v -> ((Number) v.getValue(v.getPeriod())).doubleValue()));
 					if (actualDays > 0.00)
-						return agreementHours.doubleValue() / 5.00 * actualDays;
+						return agreementWeekHours / 5.00 * actualDays;
 
 					Number workedDays = ctx.getVariable(WORKED_DAYS, p.getStart(), p.getEnd(), Number.class);
 					if (workedDays == null || workedDays.doubleValue() == 0.00)
 						return 0.00;
 
-					return agreementHours.doubleValue() * workedDays.doubleValue() / 5.00;
+					return agreementWeekHours * workedDays.doubleValue() / 5.00;
 				}
 
 			};
@@ -6352,11 +6351,22 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return calendar.getDayType(day);
 	}
 
-	private double getWorkDayHours(ExpressionContext ctx, Date start, Date end) {
-		double weekWorkDays = getWeekDaysOf(DayType.WORKING_DAY);
+	private double getAgreementWeekHours(PeriodMap bindings) {
+		double agreementWeekHours = getCurrentBindings().get(AGREEMENT_HOURS,
+				obj -> ((Number) obj).doubleValue(), DEFAULT_AGRREEMENT_HOURS);
+		return agreementWeekHours > 24 * 7 ? DEFAULT_AGRREEMENT_HOURS : agreementWeekHours;
+	}
+
+	private double getAgreementWeekHours(ExpressionContext ctx, Date start, Date end) {
 		Number agreementWeekHours = ctx.containsVariable(AGREEMENT_HOURS, start, end)
 				? ctx.getVariable(AGREEMENT_HOURS, start, end, Number.class)
 				: DEFAULT_AGRREEMENT_HOURS;
+		return agreementWeekHours.doubleValue() > 24 * 7 ? DEFAULT_AGRREEMENT_HOURS : agreementWeekHours.doubleValue();
+	}
+
+	private double getWorkDayHours(ExpressionContext ctx, Date start, Date end) {
+		double weekWorkDays = getWeekDaysOf(DayType.WORKING_DAY);
+		Number agreementWeekHours = getAgreementWeekHours(ctx, start, end);
 		return agreementWeekHours.doubleValue() / weekWorkDays;
 	}
 
@@ -6444,19 +6454,22 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	private List<Period> getPeriods(ExpressionContext ctx, String varName) {
 		Period contract = new Period(contractStartDate, contractEndDate);
+		try {
+			List<ITimedResult<Object>>  results = getExpressionContext().eval(varName, contractStartDate, contractEndDate);
+			if (results == null || results.isEmpty())
+				return Collections.singletonList(contract);
 
-		List<ITimedVariable<Object>> vars = ctx.getVariables(varName);
+			List<Period> periods = joinEquals(results);
+			List<Period> holes = Period.sub(contract, periods);
 
-		if (vars == null || vars.isEmpty())
+			periods.addAll(holes);
+			Collections.sort(periods);
+
+			return periods;
+		} catch (ExpressionException e) {
 			return Collections.singletonList(contract);
+		}
 
-		List<Period> periods = joinEquals(vars);
-		List<Period> holes = Period.sub(contract, periods);
-
-		periods.addAll(holes);
-		Collections.sort(periods);
-
-		return periods;
 	}
 
 	private List<Period> getPeriods(ExpressionContext ctx, Predicate<ITimedResult<?>> filter, String... varNames) {
@@ -6471,16 +6484,17 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return periods;
 	}
 
-	private List<Period> joinEquals(List<ITimedVariable<Object>> vars) {
+	private List<Period> joinEquals(List<ITimedResult<Object>> results) {
 
-		ArrayList<TimedObject<Object>> join = new ArrayList<TimedObject<Object>>();
-		ITimedVariable<Object> var = vars.get(0);
-		join.add(new TimedObject<Object>(var.getValue(var.getPeriod()), var.getPeriod().getStart(),
-				var.getPeriod().getEnd()));
-		for (int i = 1; i < vars.size(); i++) {
+		ArrayList<TimedObject<Object>> join = new ArrayList<>();
+		ITimedResult<Object> result = results.get(0);
+		
+		join.add(new TimedObject<>(result.getValue(result.getPeriod()), result.getPeriod().getStart(),
+				result.getPeriod().getEnd()));
+		for (int i = 1; i < results.size(); i++) {
 			TimedObject<Object> last = join.get(join.size() - 1);
 
-			ITimedVariable<Object> next = vars.get(i);
+			ITimedVariable<Object> next = results.get(i);
 			Date lastEnd = last.getPeriod().getEnd();
 			Date nextStart = next.getPeriod().getStart();
 			Object lastValue = last.getValue(last.getPeriod());
@@ -6490,12 +6504,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 			if (Period.compare(afterEnd, nextStart) == 0 && AonUtils.equals(lastValue, nextValue)) {
 				join.set(join.size() - 1,
-						new TimedObject<Object>(nextValue, last.getPeriod().getStart(), next.getPeriod().getEnd()));
+						new TimedObject<>(nextValue, last.getPeriod().getStart(), next.getPeriod().getEnd()));
 			} else {
-				join.add(new TimedObject<Object>(nextValue, nextStart, next.getPeriod().getEnd()));
+				join.add(new TimedObject<>(nextValue, nextStart, next.getPeriod().getEnd()));
 			}
 		}
-		List<Period> periods = new ArrayList<Period>();
+		List<Period> periods = new ArrayList<>();
 		for (TimedObject<Object> obj : join)
 			periods.add(obj.getPeriod());
 		return periods;

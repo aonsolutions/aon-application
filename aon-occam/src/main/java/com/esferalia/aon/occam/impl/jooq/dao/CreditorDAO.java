@@ -3,8 +3,8 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -28,6 +28,9 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -281,6 +284,46 @@ public class CreditorDAO {
 		creditorFull = getFull(ctx, creditorFull.getId());
 		return creditorFull;
 	}
+
+	public static void deleteFull(AONContext ctx, Integer id) {
+		
+		CreditorFull fullCreditor = getFull(ctx, id);
+		
+		if (fullCreditor.getRegistry() != null && fullCreditor.getRegistry().getAccount() != null) {
+			AccountDAO.delete(ctx, fullCreditor.getAccount());
+		}
+		
+		// Registry Bank
+		if (fullCreditor.hasBanks()) {
+			for (RegistryBank bank : fullCreditor.getBanks()) {
+				RegistryBankDAO.delete(ctx, bank.getId());
+			}
+		}
+		
+		RegistryPayMethodDAO.delete(ctx, f -> f.getDomainProperty().eq(fullCreditor.getDomain()).and(f.getRegistryProperty().eq(fullCreditor.getId())));
+		
+		// RegistryAddress ??
+		if (fullCreditor.hasAddresses()) {
+			for (RegistryAddress address : fullCreditor.getAddresses()) {
+				RegistryAddressDAO.delete(ctx, address.getId());
+			}
+		}
+		
+		// Registry Medias
+		if (fullCreditor.hasMedias()) {
+			for (RegistryMedia media : fullCreditor.getMedias()) {
+				RegistryMediaDAO.delete(ctx, media.getId());
+			}
+		}
+		
+		RegistryNoteDAO.delete(ctx, f -> f.getDomainProperty().eq(fullCreditor.getDomain()).and(f.getRegistryProperty().eq(fullCreditor.getId())));
+		
+		// Registry 
+		RegistryDAO.delete(ctx, fullCreditor.getRegistry().getId());
+		
+		delete(ctx, id);
+	}
+	
 	// *************************************************
 	// ********** TEST PURPOSE METHODS *****************
 	// *************************************************

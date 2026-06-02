@@ -4,17 +4,21 @@ import java.util.function.BiConsumer;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.registry.CustomerFiscalStatus;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public class CustomerAutoComplete {
+	
 	private CustomerAutoComplete() {
 		
 	}
+	
 	public static final BiConsumer<AONContext,Customer> COMPLETE_TRANSACTION = (ctx,customer) -> {
 		if (customer.getTransaction() == null) {
 			ctx.log().debug("\t saving customer: autocomplete transaction: {0}",InvoiceTransactionType.NATIONAL);
@@ -28,31 +32,33 @@ public class CustomerAutoComplete {
 			customer.setStatus(RegistryStatus.ACTIVE);
 		}
 	};
+	
+	public static final BiConsumer<AONContext,Customer> COMPLETE_FISCAL_STATUS = (ctx,customer) -> {
+		if (customer.getFiscalStatus() == null) {
+			ctx.log().debug("\t saving customer: autocomplete status: {0}", CustomerFiscalStatus.REGISTERED);
+			customer.setFiscalStatus(CustomerFiscalStatus.REGISTERED);
+		}
+	};
 
 	public static final BiConsumer<AONContext, Customer> COMPLETE_SCOPE = (ctx, customer) -> {
-		if(customer.getScope().isEmpty()) {
+		if(customer.getScope() == null || customer.getScope().isEmpty() || 
+				(customer.getScope() != null && customer.getScope().getDomain() != null 
+				&& !customer.getScope().getDomain().equals(customer.getDomain().getId()))) {
 			User user = SecurityDAO.getUser(ctx);	
-			Scope scope = SecurityDAO.getUserScopeStream(ctx, user.getId(), f -> f.getDescriptionProperty().eq("GENERAL")).findFirst().orElse(new Scope());
+			Scope scope = SecurityDAO.getUserScopeStream(ctx, user.getId(), null).findFirst().orElse(new Scope());
 			if(scope.isEmpty()) {
-				Integer[] scopes = null;
-				try {
-				    scopes = SecurityDAO.getUserScopes(ctx, user.getId());
-				} catch (Exception e) { 
-				    e.printStackTrace();
+				scope = SecurityDAO.getScopeStream(ctx, f -> f.getDomainProperty().eq(customer.getDomain().getId())).findFirst().orElse(new Scope());
+				if(scope.isEmpty()) {
+					scope = SecurityDAO.insertScope(ctx, new Scope()
+						.setDescription("EMPRESA")
+						.setDomain(customer.getDomain().getId()));
+					if(user.getDomain().getId().equals(customer.getDomain().getId()))
+						SecurityDAO.insertUserScope(ctx, new UserScope()
+							.setDomain(customer.getDomain().getId())
+							.setScope(scope.getId())
+							.setUserId(user.getId()));
 				}
-				if(scopes != null && scopes.length > 0) {
-				    Integer sc = scopes[0];
-					scope = SecurityDAO.getScopeStream(ctx, f -> f.getIdProperty().eq(sc)).findFirst().orElse(new Scope());
-				} else {
-					scope = SecurityDAO.getScopeStream(ctx,  f ->
-						f.getDomainProperty().eq(customer.getDomain().getId())).findFirst().orElse(new Scope());
-					if(scope.isEmpty()) {
-						scope = SecurityDAO.insertScope(ctx, new Scope()
-							.setDescription("GENERAL")
-							.setDomain(customer.getDomain().getId()));
-					}
-				}
-			} 
+			}
 			customer.setScope(scope);
 		}
 	};
@@ -60,9 +66,9 @@ public class CustomerAutoComplete {
 	public static void autoComplete(AONContext ctx, Customer customer) throws AonCoreException {
 		COMPLETE_TRANSACTION
 		.andThen(COMPLETE_STATUS)
+		.andThen(COMPLETE_FISCAL_STATUS)
 		.andThen(COMPLETE_SCOPE)
 		.accept(ctx, customer);
-
 	}
 
 }

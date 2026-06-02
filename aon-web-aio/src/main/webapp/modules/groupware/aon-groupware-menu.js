@@ -1,4 +1,4 @@
-import { TAG } from '../../environments/environments.js'; 
+import { MSG, TAG } from '../../environments/environments.js';
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as JSF from '../aon-jsf-app.js';
 
@@ -25,109 +25,109 @@ export class AonGroupwareMenu extends AonSuiteMenu {
         this.AON_HEADER = 'aonHeader';
         this.ROOT_PANEL = 'rootPanel';
         this.RIGHT_PANEL = 'rightPanel';
-        this.last = "Últimos expedientes";
-        this.new = "Nuevo Parte de trabajo";
+        this.last = MSG.LAST_EXPEDIENTS;
+        this.new = MSG.NEW_WORK_ORDER;
         this.cardData={
-            title: "Actividad",
-            info:["Expedientes abiertos", "Solicitudes ptes."]
+            title: MSG.ACTIVITY,
+            info:[MSG.OPEN_EXPEDIENTS, MSG.REQUESTS_PENDING]
         };
         this.selectOptions= [{
-            title: "Parte de trabajo",
+            title: MSG.WORK_ORDER,
             action: () => alert("description")
         },{
-            title: "Operario",
+            title: MSG.OPERATOR,
             action: () => alert("description")
         },{
-            title: "Proceso", 
+            title: MSG.PROCESS,
             action: () => alert("description")
         },{
-            title: "Expediente", 
-			action: () => this.rootPanel(new JSF.AonJsfProject)
+            title: MSG.GROUPWARE,
+            action: () => this.rootPanel(new JSF.AonJsfProject)
         }];
         this.initOptions();
     }
 
     initOptions() {
         this.options = [{
-            title: 'Expedientes',
+            title: MSG.EXPEDIENTS,
             options: [{
-                description: "Expedientes",
-                title: "Expedientes",
+                description: MSG.EXPEDIENTS,
+                title: MSG.EXPEDIENTS,
                 action: () => this.rootPanel(new JSF.AonJsfProject)
             }, {
-                description: "Tipo de Expediente",
-                title: "Tipo de Expediente",
+                description: MSG.EXPEDIENT_TYPE,
+                title: MSG.EXPEDIENT_TYPE,
                 action: () => this.rootPanel(new JSF.AonJsfProjectType)
             }, {
-                description: "Tipo de Actividad",
-                title: "Tipo de Actividad",
+                description: MSG.ACTIVITY_TYPE,
+                title: MSG.ACTIVITY_TYPE,
                 action: () => this.rootPanel(new JSF.AonJsfActivityType)
             }]
         }, {
-            title: 'Procesos',
+            title: MSG.PROCESSES,
             options: [{
-                description: "Procesos",
-                title: "Procesos",
+                description: MSG.PROCESSES,
+                title: MSG.PROCESSES,
                 action: () => this.rootPanel(new JSF.AonJsfProcess)
             }, {
-                description: "Tipos de Transiciones",
-                title: "Tipos de Transiciones",
+                description: MSG.TRANSITION_TYPES,
+                title: MSG.TRANSITION_TYPES,
                 action: () => this.rootPanel(new JSF.AonJsfProcessTransactionType)
             }, {
-                description: "Lanzador de procesos",
-                title: "Lanzador de procesos",
+                description: MSG.PROCESS_LAUNCHER,
+                title: MSG.PROCESS_LAUNCHER,
                 action: () => this.rootPanel(new JSF.AonJsfProcessWizard)
             }]
         }, {
-            title: 'Tareas',
+            title: MSG.TASKS,
             options: [{
-                description: "Bandeja de tareas",
-                title: "Bandeja de tareas",
+                description: MSG.TASK_TRAY,
+                title: MSG.TASK_TRAY,
                 action: () => this.rootPanel(new JSF.AonJsfTask)
             }, {
-                description: "Diagrama de Gantt",
-                title: "Diagrama de Gantt",
+                description: MSG.GANTT_CHART,
+                title: MSG.GANTT_CHART,
                 action: () => this.rootPanel(new JSF.AonJsfGantt)
             }]
         }, {
-            title: 'Campañas (Procesos Masivos)',
+            title: MSG.CAMPAIGNS,
             options: [{
-                description: "Monitor de campañas",
-                title: "Monitor de campañas",
+                description: MSG.CAMPAIGN_MONITOR,
+                title: MSG.CAMPAIGN_MONITOR,
                 action: () => this.rootPanel(new JSF.AonJsfCampaign)
             }, {
-                description: "Tipos de campañas",
-                title: "Tipos de campañas",
+                description: MSG.CAMPAIGN_TYPES,
+                title: MSG.CAMPAIGN_TYPES,
                 action: () => this.rootPanel(new JSF.AonJsfCampaignType)
             }]
         }, {
-            title: 'Partes de Trabajo',
+            title: MSG.WORK_ORDERS,
             options: [{
-                description: "Partes de Trabajo",
-                title: "Partes de Trabajo",
+                description: MSG.WORK_ORDERS,
+                title: MSG.WORK_ORDERS,
                 action: () => this.rootPanel(new JSF.AonJsfDailyTracking)
             }, {
-                description: "Informes",
-                title: "Informes",
+                description: MSG.REPORTS,
+                title: MSG.REPORTS,
                 action: () => this.rootPanel(new JSF.AonJsfDailyTrackingReport)
             }, {
-                description: "Tipos de Trabajos",
-                title: "Tipos de Trabajos",
+                description: MSG.WORK_TYPES,
+                title: MSG.WORK_TYPES,
                 action: () => this.rootPanel(new JSF.AonJsfJobType)
             }]
         }, {
-            title: 'Operarios',
+            title: MSG.OPERATORS,
             options: [{
-                description: "Operarios",
-                title: "Operarios",
+                description: MSG.OPERATORS,
+                title: MSG.OPERATORS,
                 action: () => this.rootPanel(new JSF.AonJsfTaskHolder)
             }, {
-                description: "Grupos de usuarios",
-                title: "Grupos de usuarios",
+                description: MSG.USER_GROUPS,
+                title: MSG.USER_GROUPS,
                 action: () => this.rootPanel(new JSF.AonJsfWorkgroup)
             }, {
-                description: "Perfiles de coste",
-                title: "Perfiles de coste",
+                description: MSG.COST_PROFILES,
+                title: MSG.COST_PROFILES,
                 action: () => this.rootPanel(new JSF.AonJsfCostProfile)
             }]
         }];

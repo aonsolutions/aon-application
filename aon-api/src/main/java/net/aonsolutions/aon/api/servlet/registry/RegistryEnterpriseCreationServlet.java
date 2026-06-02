@@ -70,6 +70,7 @@ import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.RegistrySellerStatus;
@@ -1426,9 +1427,11 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		String alias = AonStringUtils.isBlank(auth.getName()) ? newUser.getName()
 				: auth.getName().length() > 32 ? auth.getName().substring(0, 31) : auth.getName();
 
-		Registry newRegistry = RegistryDAO.save(ctx, new Registry().setDocument(auth.getDocument())
-				.setName(AonStringUtils.isBlank(auth.getName()) ? newUser.getName()
-						: auth.getName() + (AonStringUtils.isBlank(auth.getSurname()) ? "" : (" " + auth.getSurname())))
+		Registry newRegistry = RegistryDAO.save(ctx, 
+				new Registry()
+				.setDocument(auth.getDocument())
+				.setDocumentType(DocumentType.identify(auth.getDocument()))
+				.setName(AonStringUtils.isBlank(auth.getName()) ? newUser.getName() : auth.getName() + (AonStringUtils.isBlank(auth.getSurname()) ? "" : (" " + auth.getSurname())))
 				.setAlias(alias).setDomain(newDomain));
 
 		newUser.setRegistry(newRegistry);

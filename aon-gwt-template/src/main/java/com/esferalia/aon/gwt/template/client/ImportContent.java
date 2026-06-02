@@ -80,7 +80,8 @@ public class ImportContent extends Composite {
 	private void init() {
 		if(getAonData().getDomain().getName().contains("serval")
 				|| getAonData().getDomain().getName().contains("ayudat")
-				|| getAonData().getDomain().getName().contains("aonsolutions.org")) {
+				|| getAonData().getDomain().getName().contains("aonsolutions.org")
+				|| getAonData().getDomain().getName().contains("toledoasesores")) {
 			typeList.addItem("Facturas Contabilidad", ImportType.INVOICE.name());
 			typeList.addItem("Facturas Gesti\u00f3n", ImportType.SERVAL_INVOICE.name());
 		} else typeList.addItem("Facturas", ImportType.INVOICE.name());

@@ -27,68 +27,68 @@ export class AonCommerceMenu extends AonSuiteMenu {
 		this.AON_HEADER = 'aonHeader';
 		this.ROOT_PANEL = 'rootPanel';
 		this.RIGHT_PANEL = 'rightPanel';
-		this.last = "Últimos apuntes";
-		this.new = "Nuevo Apunte"
+		this.last = MSG.LAST_ENTRIES;
+		this.new = MSG.NEW_ENTRY;
         this.uploadButton = true
 		this.selectOptions= [{
-            title: "Cuenta contable",
+            title: MSG.ACCOUNTING_ACCOUNT,
             action: () => alert("description")
         },{
-            title: "Ficha de amortización",
+            title: MSG.AMORTIZATION_SHEET,
             action: () => alert("description")
         },{
-            title: "Apunte", 
+            title: MSG.ENTRY,
             action: () => alert("description")
         }];
-		
+
 		this.initOptions();
 	}
-	
+
 	initOptions() {
 		this.options = [{
-			title: 'TPV',
+			title: MSG.POS,
 			options: [ {
-				description:"Apertura de Caja",
-				title:"Apertura de Caja",
+				description: MSG.CASH_OPENING,
+				title: MSG.CASH_OPENING,
 				action: () => this.rootPanel(new JSF.AonJsfPosOpening )
 			},{
-				description: "Arqueo de Caja",
-				title: "Arqueo de Caja",
+				description: MSG.CASH_AUDIT,
+				title: MSG.CASH_AUDIT,
 				action: () => this.rootPanel(new JSF.AonJsfPosClosing )
 			},{
-				description: "Ventas TPV",
-				title: "Ventas TPV",
+				description: MSG.POS_SALES,
+				title: MSG.POS_SALES,
 				action: () => this.rootPanel(new JSF.AonJsfPosInvoice )
 			},{
-				description: "Remesar Cobros de Cajas",
-				title: "Remesar Cobros de Cajas",
+				description: MSG.BATCH_CASH_RECEIPTS,
+				title: MSG.BATCH_CASH_RECEIPTS,
 				action: () => this.rootPanel(new JSF.AonJsfPosFinance )
 			},{
-				description: "Productos",
-				title: "Productos",
+				description: MSG.PRODUCTS,
+				title: MSG.PRODUCTS,
 				action: () => this.rootPanel(new JSF.AonJsfProduct )
 			}]
 		},{
-			title: 'Auxiliares',
+			title: MSG.AUXILIARIES,
 			options: [{
-				description: "Etiquetas de Productos",
-				title: "Etiquetas de Productos",
+				description: MSG.PRODUCT_TAGS,
+				title: MSG.PRODUCT_TAGS,
 				action: () => this.rootPanel(new JSF.AonJsfProductTag )
 			},{
-				description: "Categorías",
-				title: "Categorías",
+				description: MSG.CATEGORIES,
+				title: MSG.CATEGORIES,
 				action: () => this.rootPanel(new JSF.AonJsfProductCategory )
 			},{
-				description: "Definición de Caja",
-				title: "Definición de Caja",
+				description: MSG.CASH_DEFINITION,
+				title: MSG.CASH_DEFINITION,
 				action: () => this.rootPanel(new JSF.AonJsfPos )
 			},{
-				description: "Turnos de Caja",
-				title: "Turnos de Caja",
+				description: MSG.CASH_SHIFTS,
+				title: MSG.CASH_SHIFTS,
 				action: () => this.rootPanel(new JSF.AonJsfPosShift )
 			},{
-				description: "Impresión de etiquetas de productos",
-				title: "Impresión de etiquetas de productos",
+				description: MSG.PRODUCT_TAG_PRINT,
+				title: MSG.PRODUCT_TAG_PRINT,
 				action: () => this.rootPanel(new JSF.AonJsfItemTagPrint )
 			}]
 		}];

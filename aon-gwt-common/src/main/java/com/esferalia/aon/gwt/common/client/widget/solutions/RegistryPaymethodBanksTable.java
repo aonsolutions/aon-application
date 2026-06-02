@@ -367,6 +367,9 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 	private void paintHeader() {
 		tab.createHeader();
 		for (COLS col : COLS.values()) {
+			if(!this.registrySource.equals(RegistrySource.COMPANY) && col.equals(COLS.SUF))
+				continue;
+			
 			if (col.equals(COLS.BUT)) {
 				FlowPanel buttonContainer = new FlowPanel();
 				buttonContainer.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
@@ -498,10 +501,12 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 		tab.addInlineStyle(swift, COLS.SWI.getStyles());
 		tab.addRow(row, swift, COLS.SWI.getColWidth());
 		
-		Label suffix = new Label(registryBank.getSuffix());
-		suffix.setTitle(registryBank.getSuffix());
-		tab.addInlineStyle(suffix, COLS.SUF.getStyles());
-		tab.addRow(row, suffix, COLS.SUF.getColWidth());
+		if(this.registrySource.equals(RegistrySource.COMPANY)) {
+			Label suffix = new Label(registryBank.getSuffix());
+			suffix.setTitle(registryBank.getSuffix());
+			tab.addInlineStyle(suffix, COLS.SUF.getStyles());
+			tab.addRow(row, suffix, COLS.SUF.getColWidth());
+		}
 		
 		Label account = new Label(null == registryBank.getAccount() ? "" : registryBank.getAccount().getFullName());
 		account.setTitle(null == registryBank.getAccount() ? "" : registryBank.getAccount().getFullName());
@@ -639,7 +644,7 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 		final AonCustomDialog dialog = new AonCustomDialog();
 		dialog.setCaption("Editar Cuenta Bancaria");
 
-		final AonRegistryBankPanel aonRegistryBankPanel = new AonRegistryBankPanel(domainName, domain, user, registryBank, accounts,
+		final AonRegistryBankPanel aonRegistryBankPanel = new AonRegistryBankPanel(domainName, domain, user, registryBank, accounts, this.registrySource,
 				new AonRegistryBankPanelCallback() {
 
 					@Override
@@ -665,7 +670,7 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 		final AonCustomDialog dialog = new AonCustomDialog();
 		dialog.setCaption("Nueva Cuenta Bancaria");
 
-		final AonRegistryBankPanel aonRegistryBankPanel = new AonRegistryBankPanel(domainName, domain, user, registry, accounts,
+		final AonRegistryBankPanel aonRegistryBankPanel = new AonRegistryBankPanel(domainName, domain, user, registry, accounts, this.registrySource,
 				new AonRegistryBankPanelCallback() {
 
 					@Override

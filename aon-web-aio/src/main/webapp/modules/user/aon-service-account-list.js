@@ -76,7 +76,7 @@ export class AonServiceAccountList extends AonElement {
 		let d = this.getApplication().getDialog();
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle("Generar Token");
+		d.setTitle(MSG.GENERATE_TOKEN);
 
 		let select = this.createAonElement(new AonSelect(), "generateTokenTime", "Expira en");
 		select.setOptions([{

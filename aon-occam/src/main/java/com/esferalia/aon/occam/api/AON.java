@@ -1,7 +1,5 @@
 package com.esferalia.aon.occam.api;
 
-import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
-
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -8026,6 +8024,17 @@ public class AON {
 		}
 	}	
 	
+	public static void deleteCustomerFull(String domainName, int domain, String user, Integer id) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			getRegistry().deleteCustomerFull(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static List<Domain> getDomainOfficeLinked(Domain domain, String login) {
 		Company company = getCompanyForDomain(domain.getName(), domain.getId(), login);
 		return getDomainOfficeLinked(company);
@@ -8080,6 +8089,17 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static void deleteCreditorFull(String domainName, int domain, String user, Integer id){
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			getRegistry().deleteCreditorFull(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	// **************************************************
 	// *************************************** [SUPPLIER]
@@ -8110,6 +8130,16 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getRegistry().save(ctx, supplierFull);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	public static void deleteSupplierFull(String domainName, int domain, String user, Integer id){
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			getRegistry().deleteSupplierFull(ctx, id);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -9197,9 +9227,9 @@ public class AON {
 		}
 	}
 
-	public static List<Holiday> getHolidays(String domainName, Integer domainId, String userLogin) {
+	public static List<Holiday> getHolidays(String domainName, Integer domainId, String userLogin, Integer parentDomain) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, userLogin)){
-			return getCalendar().getHolidays(ctx, domainId);
+			return getCalendar().getHolidays(ctx, domainId, parentDomain);
 		}
 	}
 
@@ -9339,27 +9369,31 @@ public class AON {
 		}
 	}
 	
-	public static List<Account> getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource source) {
+	public static List<Account> getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource source, String pattern) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			List<Account> accounts = new ArrayList<Account>();
 			switch (source) {
 				case CUSTOMER:
-					return getAccounting().getAccounts(ctx, 
+					accounts = getAccounting().getAccounts(ctx, 
 							f -> f.getDomainProperty().eq(domain)
 								.and(f.getLevelProperty().eq((byte)5))
-								.and(f.getCodeProperty().like("4300%"))
+								.and(f.getCodeProperty().like("4300%").and(f.getDescriptionProperty().like("%" + pattern + "%")))
 							).collect(Collectors.toList());
+					return accounts;
 				case CREDITOR:
-					return getAccounting().getAccounts(ctx, 
+					accounts = getAccounting().getAccounts(ctx, 
 							f -> f.getDomainProperty().eq(domain)
 								.and(f.getLevelProperty().eq((byte)5))
-								.and(f.getCodeProperty().like("4100%"))
+								.and(f.getCodeProperty().like("4100%").and(f.getDescriptionProperty().like("%" + pattern + "%")))
 							).collect(Collectors.toList());
+					return accounts;
 				case SUPPLIER:
-					return getAccounting().getAccounts(ctx, 
+					accounts = getAccounting().getAccounts(ctx, 
 							f -> f.getDomainProperty().eq(domain)
 								.and(f.getLevelProperty().eq((byte)5))
-								.and(f.getCodeProperty().like("4000%"))
+								.and(f.getCodeProperty().like("4000%").and(f.getDescriptionProperty().like("%" + pattern + "%")))
 							).collect(Collectors.toList());
+					return accounts;
 				default:
 					throw new IllegalArgumentException("Unexpected value: " + source);
 			}

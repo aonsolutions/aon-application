@@ -548,7 +548,7 @@ export class AonInvoice extends AonElement {
 					changeType.fn = () => this.changeType();
 					moreActions.push(changeType);
 				}
-				if (!this.getInvoice().isRawdoc() && this.getInvoice().isEmitida()) {
+				if (!this.getInvoice().isProforma() && this.getInvoice().isEmitida()) {
 					let sign = ACTION.SIGN_INVOICE;
 					sign.permission = true;
 					sign.backgrounColor = INVOICE.color;
@@ -1952,7 +1952,7 @@ export class AonInvoice extends AonElement {
 
 	printDetailDialog(detail, i) {
 		let dialog = this.getApplication().getDialog();
-		dialog.setTitle("DETALLE");
+		dialog.setTitle(MSG.DETAIL);
 		dialog.addAcceptAction(() => {});
 
 		let div = this.createElement(TAG.DIV);
@@ -2281,7 +2281,7 @@ export class AonInvoice extends AonElement {
 
 	printFinanceDialog(finance, i) {
 		let dialog = this.getApplication().getDialog();
-		dialog.setTitle("VENCIMIENTO");
+		dialog.setTitle(MSG.EXPIRATION);
 		dialog.addAcceptAction(() => {
 			let date = this.getElement(this.FINANCE_DUE_DATE + i);
 			if (date) date.setDate(finance.due_date);
@@ -3062,7 +3062,7 @@ export class AonInvoice extends AonElement {
 
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
-		d.setTitle("Añadir Inmovilizado");
+		d.setTitle(MSG.ADD_INVEST_ASSET);
 		d.setContent(div);
 		d.addAcceptAction(() => {
 			if(this.invoice.isRawdoc()) {
@@ -3090,7 +3090,7 @@ export class AonInvoice extends AonElement {
 
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
-		d.setTitle("Seleccione la factura rectificada");
+		d.setTitle(MSG.SELECT_RECTIFIED_INVOICE);
 		d.setContent(div);
 
 		if(this.invoice.isEmitida()) {
@@ -3338,7 +3338,7 @@ export class AonInvoice extends AonElement {
 		let d = this.getApplication().getDialog();
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
-		d.setTitle("Firmar Factura");
+		d.setTitle(MSG.SIGN_INVOICE);
 		let div = this.createDiv();
 		let certSelect = createSelect(this.SIGN_CERTIFICATE, MSG.CERTIFICATE, div);
 		certSelect.setAlias('id', 'name');
@@ -3474,7 +3474,7 @@ export class AonInvoice extends AonElement {
 					let d = this.getApplication().getDialog();
 					d.clear();
 					if (!this.isMobile()) d.width = '400px';
-					d.setTitle("Anular");
+					d.setTitle(MSG.VOID);
 					let certSelect = createSelect("cert", "Certificado");
 					getAeatCertificates().then(certs => {
 						certSelect.setOptions(certs.map(s => {

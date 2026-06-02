@@ -1739,9 +1739,9 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
-	public void getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource, AsyncCallback<List<Account>> callback) {
+	public void getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource, String pattern, AsyncCallback<List<Account>> callback) {
 		AON.start();
-		serviceAsync.getAccountsForRegistry(domainName, domain, user, registrySource, new AsyncCallbackWrapper<>(callback));
+		serviceAsync.getAccountsForRegistry(domainName, domain, user, registrySource, pattern, new AsyncCallbackWrapper<>(callback));
 	}
 
 	// *********************** [AMORTIZATION TYPE]
@@ -1749,5 +1749,11 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getAmortizationTypes(Occam occam, int domain, AsyncCallback<List<AmortizationType>> callback) {
 		AON.start();
 		serviceAsync.getAmortizationTypes(occam, domain, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void reassignScope(String domainName, Integer domainId, String user, int originScope, int finalScope, boolean deleteOrigin, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.reassignScope(domainName, domainId, user, originScope, finalScope, deleteOrigin, new AsyncCallbackWrapper<>(callback));
 	}
 }
