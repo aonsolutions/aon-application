@@ -10,6 +10,9 @@ on:
   pull_request_review:
     types: [submitted]
 
+env:
+  CLAUDE_CODE_MAX_OUTPUT_TOKENS: 128000
+
 jobs:
   claude:
     if: |
