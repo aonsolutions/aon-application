@@ -287,7 +287,9 @@ export class AonConfigurationNew extends AonElement {
 			}
 
 		}
-		
+
+		let classicView = this.getElement("aonSidenavTitleVistaClasica");
+		classicView && classicView.click();
 		
 		let genernalInfo = this.getElement('aonConfigurationNewSidenavInformacionGeneral');
 		genernalInfo && genernalInfo.click();
