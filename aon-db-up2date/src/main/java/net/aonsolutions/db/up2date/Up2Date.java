@@ -36,6 +36,7 @@ import net.aonsolutions.db.up2date.tgss.OrderPJC2972026Art28Update;
 import net.aonsolutions.db.up2date.tgss.SociosCoopBases2026Update;
 import net.aonsolutions.db.up2date.tgss.TrainingMEI2026Fix;
 import net.aonsolutions.db.up2date.registry.AddColumnCustomerFiscalStatus;
+import net.aonsolutions.db.up2date.scope.InsertDefaultScope;
 import net.aonsolutions.db.up2date.timecontrol.CalendarFixNulls;
 
 public class Up2Date {
@@ -629,8 +630,7 @@ public class Up2Date {
 			// MaxEmbargable4DailyFix.MAXEMBARGABLE4DAILYFIX,
 			// OneCnaeTableToRuleThemAll.ONECNAETABLETORULETHEMALL,
 			// InsertTarifaPrimasDF_1_3_RDL_3_2026.INSERTTARIFAPRIMASDF_1_3_RDL_3_2026,
-			AddColumnCustomerFiscalStatus.ADD_COLUMN_CUSTOMER_FISCAL_STATUS,
-
+			//AddColumnCustomerFiscalStatus.ADD_COLUMN_CUSTOMER_FISCAL_STATUS,
 			//SalaryTypeUpdate.ALL,
 			
 			
@@ -638,6 +638,7 @@ public class Up2Date {
 			// Warning. Don't delete or comment following instructions 
 			// MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
 			CalendarFixNulls.CALENDAR_FIX_NULLS,
+			InsertDefaultScope.INSERT_DEAFULT_SCOPE,
 			DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS,
 			// RdocTag.RDOC_TAG,
 			// UpdateCategoryTree.UPDATE_CATEGORY_TREE,
