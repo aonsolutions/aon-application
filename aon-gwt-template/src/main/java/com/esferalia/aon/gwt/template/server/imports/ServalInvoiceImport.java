@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
@@ -1190,25 +1191,21 @@ public class ServalInvoiceImport extends ImportUtils{
 	}
 
 	private static Scope getScope(Domain domain, User user) {
-		Scope scope = new Scope();
-		if(domain.getScope() == null) {
-			scope = AON.getUserScopeStream(domain.getName(), domain.getId(), user.getLogin(), user.getId(), 
-					f -> f.getDescriptionProperty().eq("GENERAL")).findFirst().orElse(new Scope());
+		Scope scope = AON.getUserScopeStream(domain.getName(), domain.getId(), user.getLogin(), user.getId(), null).findFirst().orElse(new Scope());
+		if(scope.isEmpty()) {
+			scope = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(), f ->
+				f.getDomainProperty().eq(domain.getId())).findFirst().orElse(new Scope());
 			if(scope.isEmpty()) {
-				Integer[] scopes = AON.getUserScopes(domain.getName(), domain.getId(), user.getLogin(), user.getId());
-				if(scopes != null && scopes.length > 0)
-					scope = AON.getScope(domain.getName(), domain.getId(), user.getLogin(), scopes[0]);
-				else {
-					scope = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(),  f ->
-						f.getDomainProperty().eq(domain.getId())).findFirst().orElse(new Scope());
-					if(scope.isEmpty()) {
-						scope = AON.insertScope(domain.getName(), domain.getId(), user.getLogin(), new Scope()
-							.setDescription("GENERAL")
-							.setDomain(domain.getId()));
-					}
-				}
+				scope = AON.insertScope(domain.getName(), domain.getId(), user.getLogin(), new Scope()
+					.setDescription("EMPRESA")
+					.setDomain(domain.getId()));
+				if(user.getDomain().getId().equals(domain.getId()))
+					AON.insertUserScope(domain.getName(), domain.getId(), user.getLogin(), new UserScope()
+						.setDomain(domain.getId())
+						.setScope(scope.getId())
+						.setUserId(user.getId()));
 			}
-		} else scope = AON.getScope(domain.getName(), domain.getId(), user.getLogin(), domain.getScope());
+		}		
 		return scope;
 	}
 	
