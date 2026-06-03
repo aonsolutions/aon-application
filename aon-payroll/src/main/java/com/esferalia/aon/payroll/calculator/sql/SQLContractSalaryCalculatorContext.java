@@ -81,9 +81,7 @@ import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.google.sql.SQLConstants.DomainColumns;
-import com.esferalia.aon.jooq.tables.SalaryData;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
-import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -93,7 +91,7 @@ import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.AbstractContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.calculator.CompositeCollection;
+import com.esferalia.aon.payroll.calculator.CompositeBonus;
 import com.esferalia.aon.payroll.calculator.CompositeCosts;
 import com.esferalia.aon.payroll.calculator.CompositeDeductions;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
@@ -1780,7 +1778,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			bonusStmt.setInt(1, id);
 			ResultSet rs = bonusStmt.executeQuery();
 			this.sqlContractBonus.setResultSet(rs);
-			return new CompositeCollection<IContractBonus>(contextBonus, sqlContractBonus);
+			return new CompositeBonus(contextBonus, sqlContractBonus);
 		} catch (SQLException e) {
 			throw new AonException(e);
 		}
@@ -2110,7 +2108,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	public void addBonus(Date startDate, Date endDate, String description, String expression) {
-		addBonus(null, startDate, endDate, description, expression);
+		addBonus(SQLContractBonus.getPecAndQuota(expression), startDate, endDate, description, expression);
 	}
 
 	public void addBonus(String name, Date startDate, Date endDate, String description, String expression) {

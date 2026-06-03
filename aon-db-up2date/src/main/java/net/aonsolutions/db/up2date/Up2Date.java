@@ -24,6 +24,7 @@ import net.aonsolutions.db.up2date.cnae.OneCnaeTableToRuleThemAll;
 import net.aonsolutions.db.up2date.customize.Customize;
 import net.aonsolutions.db.up2date.finance.InvoiceTrackingAlterTableJson;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2026;
+import net.aonsolutions.db.up2date.payroll.BonificEntrenadoresYMonitoresFix;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.InsuranceInsert;
 import net.aonsolutions.db.up2date.payroll.MaxEmbargable4DailyFix;
@@ -632,6 +633,7 @@ public class Up2Date {
 			// InsertTarifaPrimasDF_1_3_RDL_3_2026.INSERTTARIFAPRIMASDF_1_3_RDL_3_2026,
 			//AddColumnCustomerFiscalStatus.ADD_COLUMN_CUSTOMER_FISCAL_STATUS,
 			//SalaryTypeUpdate.ALL,
+			BonificEntrenadoresYMonitoresFix.BONIFICENTRENADORESYMONITORESFIX,
 			
 			
 			// ----------------------------------------------------------------
