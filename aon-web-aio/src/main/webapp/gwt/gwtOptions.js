@@ -695,9 +695,9 @@ export const PRODUCT_CATALOGUE_MODULE = {
   entryPoint: 'ProductCatalogueModule'
 };
 
-export const REGISTRY_ENTRY_MODULE = {
+export const REGISTRY_COMPANY_ENTRY_MODULE = {
   module: GWT_FISCAL,
-  entryPoint: 'RegistryEntryModule'
+  entryPoint: 'RegistryCompanyEntryModule'
 };
 
 export const SYNC_SIG_CUSTOMER_DOMAIN = {

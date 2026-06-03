@@ -15,6 +15,8 @@
  */
 package com.esferalia.aon.gwt.common.client.richtexttoolbar;
 
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -26,12 +28,15 @@ import com.google.gwt.i18n.client.Constants;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RichTextArea;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -240,6 +245,8 @@ public class RichTextToolbar extends Composite {
         // This will catch any cases where the user moves the cursur using the
         // keyboard, or uses one of the browser's built-in keyboard shortcuts.
         updateStatus();
+      } else if (sender == insertHtml) {
+    	    showHtmlInsertDialog();
       }
     }
 
@@ -252,6 +259,47 @@ public class RichTextToolbar extends Composite {
         updateStatus();
       }
     }
+    
+    private void showHtmlInsertDialog() {
+    	AonCustomDialog dialog = new AonCustomDialog();
+    	dialog.setCaption("Insertar HTML");
+        dialog.getElement().getStyle().setProperty("z-index", "75");
+    	
+        HTMLPanel content = new HTMLPanel("");
+        content.addStyleName(AON.CSS.aonFlexColumn());
+        
+        TextArea htmlArea = new TextArea();
+        htmlArea.setSize("400px", "200px");
+        htmlArea.setValue(richText.getHTML());
+        content.add(htmlArea);
+        
+        HTMLPanel buttonsPanel = new HTMLPanel("");
+		buttonsPanel.setStyleName(AON.CSS.aonTextCenter());
+		buttonsPanel.getElement().getStyle().setProperty("margin-top", "1rem");
+    	
+    	Button okButton = new Button();
+    	okButton.setStyleName(AON.CSS.aonOkButton());
+    	okButton.setText( AON.MSG.accept());
+    	okButton.addClickHandler(e -> {
+    		richText.setHTML(htmlArea.getText());
+            dialog.hide();
+    	});
+    	buttonsPanel.add(okButton);
+    	
+    	final Button cancelButton = new Button();
+    	cancelButton.setStyleName(AON.CSS.aonCancelButton());
+    	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
+    	cancelButton.setText( AON.MSG.cancelAction());
+    	cancelButton.addClickHandler(e -> dialog.hide());
+    	buttonsPanel.add(cancelButton);
+    	content.add(buttonsPanel);
+
+        dialog.add(content);
+        
+        dialog.center();
+        dialog.show();
+    }
+
   }
 
   private static final RichTextArea.FontSize[] fontSizesConstants = new RichTextArea.FontSize[] {
@@ -289,6 +337,7 @@ public class RichTextToolbar extends Composite {
   private PushButton createLink;
   private PushButton removeLink;
   private PushButton removeFormat;
+  private PushButton insertHtml;
 
   private ListBox backColors;
   private ListBox foreColors;
@@ -330,6 +379,12 @@ public class RichTextToolbar extends Composite {
           strings.justifyCenter()));
       topPanel.add(justifyRight = createPushButton(images.justifyRight(),
           strings.justifyRight()));
+      insertHtml = new PushButton("HTML");
+      insertHtml.getElement().getStyle().setProperty("padding", "3px");
+      insertHtml.getElement().getStyle().setProperty("font-size", "10px");
+      insertHtml.getElement().getStyle().setProperty("font-weight", "bold");
+      insertHtml.addClickHandler(handler);
+      topPanel.add(insertHtml);
     }
 
     if (extended != null) {
@@ -349,6 +404,12 @@ public class RichTextToolbar extends Composite {
           strings.removeLink()));
       topPanel.add(removeFormat = createPushButton(images.removeFormat(),
           strings.removeFormat()));
+      insertHtml = new PushButton("HTML");
+      insertHtml.getElement().getStyle().setProperty("padding", "3px");
+      insertHtml.getElement().getStyle().setProperty("font-size", "10px");
+      insertHtml.getElement().getStyle().setProperty("font-weight", "bold");
+      insertHtml.addClickHandler(handler);
+      topPanel.add(insertHtml);
     }
 
     if (basic != null) {
