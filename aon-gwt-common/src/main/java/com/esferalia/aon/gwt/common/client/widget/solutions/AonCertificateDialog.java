@@ -425,7 +425,7 @@ public class AonCertificateDialog extends AonCustomDialog {
             	extensionHidden.setValue(fileExt);
             	fileNameHidden.setValue(filename);
             	certificate.getTextBox().setValue(filename);
-            	checkCertificate();
+            	//checkCertificate();
             }
 		});
 		
