@@ -84,6 +84,7 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
@@ -125,7 +126,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			;
 	
 	private static final String NEXT_PAYMENT_SQL = "SELECT "
-			+ " *"   
+			+ " *, " + ExpressionScope.CONTRACT.ordinal() + " AS " + SQLContractPayment.SCOPE_ALIAS 
 			+ " FROM " + SQLConstants.CONTRACT_PAYMENT
 			+ " LEFT JOIN " + SQLConstants.PAYMENT_CONCEPT 
 			+ " ON ( " +  SQLConstants.CONTRACT_PAYMENT + "." + ContractPaymentColumns.PAYMENT_CONCEPT + " = " + SQLConstants.PAYMENT_CONCEPT + "." + ContractPaymentColumns.ID + " ) "
