@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SecondaryUserCertificate;
 import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
+import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
@@ -1743,6 +1744,25 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.getAccountsForRegistry(domainName, domain, user, registrySource, pattern, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void getSignatures(String domainName, Integer domain, String user, AsyncCallback<LinkedList<Signature>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getSignatures(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteSignature(String domainName, Integer domain, String user, Integer id,	AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteSignature(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveSignature(String domainName, Integer domain, String user, Signature signature, AsyncCallback<Signature> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveSignature(domainName, domain, user, signature, new AsyncCallbackWrapper<>(callback));
+	}
+	
 
 	// *********************** [AMORTIZATION TYPE]
 	@Override

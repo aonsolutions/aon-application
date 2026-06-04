@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.Filter.PayrollWorkplaceFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
+import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
@@ -47,6 +48,7 @@ import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Series;
+import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
@@ -263,5 +265,11 @@ public interface ICommon {
 	public void deleteRecordDataAttach(CloseableAONContext ctx, Integer domain, Integer recordDataId);
 	
 	public Account createRegistryAccount(CloseableAONContext ctx, Integer domain, String registryName, String registryAlias, RegistrySource registrySource);
+	
+	public LinkedList<Signature> getSignatures(CloseableAONContext ctx, SignatureFilter filter);
+	public void deleteSignature(CloseableAONContext ctx, Integer id);
+	public Signature saveSignature(CloseableAONContext ctx, Signature signature);
+	public Signature getSignature(CloseableAONContext ctx, SignatureFilter filter);
+	public Signature getSignature(CloseableAONContext ctx, Integer signatureId);
 
 }

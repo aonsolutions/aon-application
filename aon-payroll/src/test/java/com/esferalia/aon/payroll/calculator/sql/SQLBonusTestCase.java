@@ -1610,6 +1610,136 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 	}
 
 
+	@Test
+	public void testOverrideBonusI() throws ExpressionException, SQLException,
+			SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemCosts(aonContext);
+		
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), "CGC_E",
+				DeductionType.COMMON_CONTINGENCY, "40");
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), "CGC_P",
+				DeductionType.COMMON_CONTINGENCY, "10");
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), "NESTR",
+				DeductionType.COMMON_CONTINGENCY, "0");
+		
+		ContractRecord contract = newContract(
+				aonContext, 
+				getFirstDayOfYear(getToday()), 
+				new HashMap<String,String>(){
+				{
+					put(ContextVariable.TC2.getName(), "'100'");
+					put(ContextVariable.MONTH_DAYS.getName(), "30.00");
+				}
+				},
+				new String[] { 
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00*DIAS_TRABAJADOS/DIAS_MES",
+						"TRACE('DIAS_MES=%f\r\n',DIAS_MES);0.00",
+						"TRACE('DIAS_TRABAJADOS=%f\r\n',DIAS_TRABAJADOS);0.00",
+						"TRACE('DIAS_COTIZADOS=%f\r\n',DIAS_COTIZADOS);0.00",
+						"SELF.addBonus('pec:13,quota:03','BONIFIC.ENTRENADORES/MONITORES. LEY 7/2024','CGC_E'); HIDE()",
+						}, 
+				new String[] {
+						"TRACE('BASE_CGC = %f\r\n', BASE_CGC );BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						},
+				null
+			);
+		
+		addBonus(aonContext, contract, contract.getStartDate(), null, 
+				"/*epoch:1780485963971,pec:13,quota:03*//*read-only*/_D=(( CGC_E ) * 100.00 / 100.00);_D == 0.00 ? REMOVE() : _D /**/",	
+				"BON.F.EMPLEO PORCENT (100,00%)");
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Salary salary =
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(
+		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		assertEquals(1, salary.getSalaryBonus().size());
+		
+		//salary.getSalaryCosts().forEach( cost -> System.out.println(cost.getName() +" = " + cost.getAmount() ));
+
+		for (SalaryBonus bonus : salary.getSalaryBonus()) {
+			System.out.println(bonus.getDescription() +" = " + bonus.getAmount() );
+			assertEquals(40.00, bonus.getAmount(), DELTA);
+		}
+
+	}
+
+	@Test
+	public void testOverrideBonusII() throws ExpressionException, SQLException,
+			SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemCosts(aonContext);
+		
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), "CGC_E",
+				DeductionType.COMMON_CONTINGENCY, "40");
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), "CGC_P",
+				DeductionType.COMMON_CONTINGENCY, "10");
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), "NESTR",
+				DeductionType.COMMON_CONTINGENCY, "0");
+		
+		ContractRecord contract = newContract(
+				aonContext, 
+				getFirstDayOfYear(getToday()), 
+				new HashMap<String,String>(){
+				{
+					put(ContextVariable.TC2.getName(), "'100'");
+					put(ContextVariable.MONTH_DAYS.getName(), "30.00");
+				}
+				},
+				new String[] { 
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00*DIAS_TRABAJADOS/DIAS_MES",
+						"TRACE('DIAS_MES=%f\r\n',DIAS_MES);0.00",
+						"TRACE('DIAS_TRABAJADOS=%f\r\n',DIAS_TRABAJADOS);0.00",
+						"TRACE('DIAS_COTIZADOS=%f\r\n',DIAS_COTIZADOS);0.00",
+						"SELF.addBonus('BONIFIC.ENTRENADORES/MONITORES. LEY 7/2024','/*pec:13,quota:03*/CGC_E'); HIDE()",
+						}, 
+				new String[] {
+						"TRACE('BASE_CGC = %f\r\n', BASE_CGC );BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						},
+				null
+			);
+		
+		addBonus(aonContext, contract, contract.getStartDate(), null, 
+				"/*epoch:1780485963971,pec:13,quota:03*//*read-only*/_D=(( CGC_E ) * 100.00 / 100.00);_D == 0.00 ? REMOVE() : _D /**/",	
+				"BON.F.EMPLEO PORCENT (100,00%)");
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Salary salary =
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(
+		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		assertEquals(1, salary.getSalaryBonus().size());
+		
+		//salary.getSalaryCosts().forEach( cost -> System.out.println(cost.getName() +" = " + cost.getAmount() ));
+
+		for (SalaryBonus bonus : salary.getSalaryBonus()) {
+			System.out.println(bonus.getDescription() +" = " + bonus.getAmount() );
+			assertEquals(40.00, bonus.getAmount(), DELTA);
+		}
+
+	}
+
 	// ------------------------------------------------------------------------
 
 	protected final ContractBonusRecord addBonus(AONContext aonContext,

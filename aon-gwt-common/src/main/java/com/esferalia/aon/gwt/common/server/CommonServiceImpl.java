@@ -78,6 +78,7 @@ import com.esferalia.aon.occam.api.model.Relationship;
 import com.esferalia.aon.occam.api.model.SecondaryUserCertificate;
 import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
+import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
@@ -2209,6 +2210,20 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public List<Account> getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource source, String pattern) throws AonCoreException {
 		return AON.getAccountsForRegistry(domainName, domain, user, source, pattern);
 	}
+	
+	@Override
+	public LinkedList<Signature> getSignatures(String domainName, Integer domain, String user) throws AonCoreException {
+		return AON.getSignatures(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getUserIdProperty().isNull()));
+	}
+	@Override
+	public void deleteSignature(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		AON.deleteSignature(domainName, domain, user, id);
+	}
+	@Override
+	public Signature saveSignature(String domainName, Integer domain, String user, Signature signature) throws AonCoreException {
+		return AON.saveSignature(domainName, domain, user, signature);
+	}
+	
 	
 	// *********************** [AMORTIZATION TYPE]
 	@Override

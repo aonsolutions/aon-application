@@ -16,7 +16,7 @@ public class AonCustomRichText extends HTMLPanel  {
 	
     public AonCustomRichText(String title) {
         super(EMPTY_STRING);
-        addStyleName(AON.CSS.aonFlexColumn());
+        addStyleName(AON.CSS.aonFlexColumn2());
         addStyleName(AON.CSS.aonCustomRichText());
 
         createTitle(title);
@@ -31,7 +31,7 @@ public class AonCustomRichText extends HTMLPanel  {
 	}
 
 	private void createInput() {
-		textBoxPanel.addStyleName(AON.CSS.aonFlexColumn());
+		textBoxPanel.addStyleName(AON.CSS.aonFlexColumn2());
 		textBoxPanel.setWidth("100%");
 		textBoxPanel.getElement().getStyle().setProperty("border", "1px solid #eee");
 		textBoxPanel.getElement().getStyle().setProperty("border-radius", "10px");
