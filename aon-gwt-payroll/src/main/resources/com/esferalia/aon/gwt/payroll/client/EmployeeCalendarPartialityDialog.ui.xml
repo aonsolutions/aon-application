@@ -1,14 +1,16 @@
-<ui:UiBinder 
+<ui:UiBinder
     xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 
     <ui:style>
 
 		.form {
 			padding: 10px;
 		}
-		
+
 		.datesPanel{
 			display: flex;
 			flex-direction: column;
@@ -16,41 +18,41 @@
 			border: 1px solid #e1e1e1;
 			margin-bottom: 10px;
 		}
-		
+
 		.rowPanel{
 			display: flex;
 			justify-content: space-between;
 			margin: 3px 0;
 		}
-		
+
 		.buttonsPanel{
 			display: flex;
 			justify-content: flex-end;
 			gap: .5rem;
 		}
-		
+
 		.labelStyle{
 			width: 130px;
 			display: flex;
 			align-items: center;
 		}
-		
+
 		.dateBox{
 			width: 150px !important;
 			text-align: center;
 			border: solid #808080 1px;
 		}
-		
+
 		.percentLabel{
 			display: flex;
 			align-items: center;
 			margin-right: 5px;
 		}
-		
+
 		.percentTBx{
 			width: 80px;
 		}
-		
+
 		.percent{
 			text-align: center;
 			font-weight: bold;
@@ -58,59 +60,59 @@
 			align-items: center;
 			margin-left: 5px;
 		}
-		
+
 		.errorPanel{
 			font-weight: bold;
 			color: red;
 			padding: 0 5px;
 		}
-		
+
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form}">
-	
+
 		<g:HTMLPanel styleName="aon-width-all aon-height-all">
-		
+
 			<g:HTMLPanel styleName="{style.datesPanel}">
-			
+
 				<g:HTMLPanel styleName="{style.rowPanel}">
-					<g:Label>Fecha de inicio:</g:Label>
+					<g:Label>{msgs.startDateColon}</g:Label>
 					<a:DateBoxEx ui:field="startDateDB" styleName="{style.dateBox}"></a:DateBoxEx>
 				</g:HTMLPanel>
-				
+
 				<g:HTMLPanel styleName="{style.rowPanel}">
-					<g:Label>Fecha de fin:</g:Label>
+					<g:Label>{msgs.endDateColon}</g:Label>
 					<a:DateBoxEx ui:field="endDateDB" styleName="{style.dateBox}"></a:DateBoxEx>
 				</g:HTMLPanel>
-				
+
 			</g:HTMLPanel>
-			
+
 			<g:HTMLPanel styleName="{style.datesPanel}">
 				<g:HTMLPanel styleName="{style.rowPanel}">
-					<g:Label styleName="{style.percentLabel}">Porcentaje de reducción sobre las horas totales:</g:Label>
+					<g:Label styleName="{style.percentLabel}">{msgs.percentReduction}</g:Label>
 					<g:TextBox ui:field="percentBox" styleName="{style.percentTBx}"></g:TextBox>
 					<g:Label styleName="{style.percent}" >%</g:Label>
 				</g:HTMLPanel>
-				
+
 				<g:HTMLPanel ui:field="reasonPanel" styleName="{style.rowPanel}">
-					<g:Label styleName="{style.percentLabel}">Causa:</g:Label>
+					<g:Label styleName="{style.percentLabel}">{msgs.causeColon}</g:Label>
 					<g:ListBox ui:field="reasonBox"></g:ListBox>
 					<g:Label styleName="{style.percent}" >%</g:Label>
 				</g:HTMLPanel>
-				
+
 				<g:HTMLPanel  ui:field="errorMessage" styleName="{style.errorPanel}">
-					<g:Label>El valor introducido no tiene formato de número.</g:Label>
-					<g:Label>Decimales separados por '.'</g:Label>
+					<g:Label>{msgs.errorFormatMsg}</g:Label>
+					<g:Label>{msgs.decimalsInfo}</g:Label>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
-			
+
 			<g:HTMLPanel styleName="{style.buttonsPanel}">
-				<g:Button ui:field="cancelButton">Cancelar</g:Button>
-	    		<g:Button ui:field="acceptButton">OK</g:Button>
+				<g:Button ui:field="cancelButton">{msgs.cancel}</g:Button>
+    			<g:Button ui:field="acceptButton">{msgs.ok}</g:Button>
 			</g:HTMLPanel>
-		
+
 		</g:HTMLPanel>
-			
+
 	</g:HTMLPanel>
 
 </ui:UiBinder>

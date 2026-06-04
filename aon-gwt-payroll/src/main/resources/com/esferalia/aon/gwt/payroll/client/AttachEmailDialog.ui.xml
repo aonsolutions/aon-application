@@ -2,6 +2,8 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client' >
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
 	<ui:Style type="com.esferalia.aon.gwt.payroll.client.AttachEmailDialog.MyStyle">
 		
 		.widthAll{
@@ -54,23 +56,23 @@
 
 	<g:HTMLPanel styleName="{style.flexColumn}">
 		<g:HTMLPanel styleName="{style.flex}">
-			<g:Label styleName="{style.label}" text="De:" />
+			<g:Label styleName="{style.label}" text="{msgs.emailFrom}" />
 			<g:ListBox ui:field="mailAccountsListBox" styleName="aon-selectOneMenu {style.widthAll}" />
 		</g:HTMLPanel>
 		<g:HTMLPanel styleName="{style.flex}">
-			<g:Label styleName="{style.label}" text="Para:" />
+			<g:Label styleName="{style.label}" text="{msgs.emailTo}" />
 			<g:TextBox ui:field="sendTo" styleName='aon-inputText {style.widthAll}' />
 		</g:HTMLPanel>
 		<g:HTMLPanel styleName="{style.flex}">
-			<g:Label styleName="{style.label}" text="CC:" />
+			<g:Label styleName="{style.label}" text="{msgs.cc}" />
 			<g:TextBox ui:field="ccTo" styleName='aon-inputText {style.widthAll}' />
 		</g:HTMLPanel>
 		<g:HTMLPanel styleName="{style.flex}">
-			<g:Label styleName="{style.label}" text="CCO:" />
+			<g:Label styleName="{style.label}" text="{msgs.bcc}" />
 			<g:TextBox ui:field="bccTo" styleName='aon-inputText {style.widthAll}' />
 		</g:HTMLPanel>
 		<g:HTMLPanel styleName="{style.flex}">
-			<g:Label styleName="{style.label}" text="Asunto:" />
+			<g:Label styleName="{style.label}" text="{msgs.subject}" />
 			<g:TextBox ui:field="subject" styleName='aon-inputText {style.widthAll}' />
 		</g:HTMLPanel>
 		<g:HTMLPanel ui:field="textAreaPanel" />

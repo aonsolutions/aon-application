@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 
 	<ui:Style>
 	.form {
@@ -53,7 +54,7 @@
 		<g:Grid width="100%" ui:field="mainGrid">
 			<g:row>
 				<g:customCell styleName="{style.label}">
-					<g:Label>Concepto</g:Label>
+					<g:Label>{msgs.concept}</g:Label>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
 					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
@@ -70,7 +71,7 @@
 			</g:row>
 			<g:row>
 				<g:customCell styleName="{style.label}">
-					<g:Label>Tipo</g:Label>
+					<g:Label>{msgs.type}</g:Label>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
 					<g:HorizontalPanel styleName="aon-width">
@@ -87,7 +88,7 @@
 			</g:row>
 			<g:row>
 				<g:customCell styleName="{style.label}">
-					<g:Label>Descripci&oacute;n
+					<g:Label>{msgs.description}
 					</g:Label>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
@@ -104,7 +105,7 @@
 			</g:row>
 			<g:row>
 				<g:customCell styleName="{style.label}">
-					<g:Label>Importe</g:Label>
+					<g:Label>{msgs.amount}</g:Label>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
 					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"

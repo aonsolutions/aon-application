@@ -1,14 +1,16 @@
-<ui:UiBinder 
+<ui:UiBinder
     xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
     <ui:style>
-	
+
 		.form {
 			padding: 10px;
 		}
-		
+
 		.datesPanel{
 			display: flex;
 			flex-direction: column;
@@ -16,17 +18,17 @@
 			border: 1px solid #e1e1e1;
 			margin-bottom: 10px;
 		}
-		
+
 		.dateBox{
 			text-align: center;
 		}
-		
+
 		.rowPanel{
 			display: flex;
 			justify-content: space-between;
 			margin: 3px 0;
 		}
-		
+
 		.hoursPanel{
 			display: flex;
 			flex-direction: column;
@@ -34,25 +36,25 @@
 			padding: 5px;
 			margin: 10px 0;
 		}
-		
+
 		.buttonsPanel{
 			display: flex;
 			justify-content: flex-end;
 			gap: .5rem;
 		}
-		
+
 		.labelStyle{
 			width: 60px;
 			display: flex;
 			align-items: center;
 		}
-		
+
 		.borderBx{
 			border: solid #808080 1px;
 			text-align: center;
 			width: 50px;
 		}
-		
+
 		.infoPanel{
 			color: blue;
 			padding: 0px 5px 8px 5px;
@@ -63,39 +65,39 @@
 	<g:HTMLPanel styleName="{style.form}">
 
 		<g:HTMLPanel styleName="aon-width-all aon-height-all">
-		
+
 			<g:HTMLPanel styleName="{style.datesPanel}">
-			
+
 				<g:HTMLPanel styleName="{style.rowPanel}">
-					<g:Label>Fecha de inicio:</g:Label>
+					<g:Label>{msgs.startDateColon}</g:Label>
 					<a:DateBoxEx ui:field="startDateDB" styleName="{style.dateBox}"></a:DateBoxEx>
 				</g:HTMLPanel>
-				
+
 				<g:HTMLPanel styleName="{style.rowPanel}">
-					<g:Label>Fecha de fin:</g:Label>
+					<g:Label>{msgs.endDateColon}</g:Label>
 					<a:DateBoxEx ui:field="endDateDB" styleName="{style.dateBox}"></a:DateBoxEx>
 				</g:HTMLPanel>
-				
+
 			</g:HTMLPanel>
-		
+
 			<g:HTMLPanel styleName="{style.hoursPanel}">
 				<g:HTMLPanel ui:field="extraHourBlock" styleName="{style.rowPanel}">
-					<g:Label styleName="{style.labelStyle}">Horas:</g:Label>
+					<g:Label styleName="{style.labelStyle}">{msgs.hours}</g:Label>
 					<g:TextBox ui:field="extraHourOpt" styleName="{style.borderBx}"/>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
-			
+
 			<g:HTMLPanel  styleName="{style.infoPanel}">
-				<g:Label ui:field="errorMessage">Días en blanco equivale a no horas extras.</g:Label>
+				<g:Label ui:field="errorMessage">{msgs.blankDaysNoExtraHours}</g:Label>
 			</g:HTMLPanel>
-			
+
 			<g:HTMLPanel styleName="{style.buttonsPanel}">
-				<g:Button ui:field="cancelButton">Cancelar</g:Button>
-			    <g:Button ui:field="acceptButton">OK</g:Button>
+				<g:Button ui:field="cancelButton">{msgs.cancel}</g:Button>
+			    <g:Button ui:field="acceptButton">{msgs.ok}</g:Button>
 			</g:HTMLPanel>
-				
+
 		</g:HTMLPanel>
-		
+
 	</g:HTMLPanel>
 
 </ui:UiBinder>

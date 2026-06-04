@@ -4,74 +4,75 @@
 	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client"
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainMassiveFie.MyStyle">
-	
+
 		.container { margin: 0 1rem; }
-		
+
 		.dockLayoutPanel {
 			margin: 1rem;
 			border-radius: 1rem;
 			background-color: #ffffff !important;
 		}
-		
+
 		.emptyMessage{
 			text-align: center;
 			text-transform: uppercase;
 			font-weight: bold;
 			padding-top: .5rem;
 		}
-		
+
 		.filterPanel{
 			display: flex;
 			justify-content: space-between;
 			margin: auto 15px;
 		}
-		
+
 		.flex{
 			display: flex;
 			align-items: center;
 		}
-	
+
 		.flexColumn {
 			display: flex;
 			flex-direction: column;
 			gap: .5rem;
 		}
-		
+
 		.gridTitle{
 			text-transform: uppercase;
 			font-weight: bold;
 		}
-		
+
 		.headerFixed {
 			position: sticky;
   			top: 0;
   			height: 1.5rem;
 			background-color: #eee;
 		}
-		
+
 		.headerFSize{
 			font-size: .8em;
 			text-align: left;
 			padding-left: 0.5rem;
 		}
-		
+
 		.heigthAll { height: 100%; }
-		
+
 		.heigthAuto { height: auto !important; }
-		
+
 		.modify { background-color: lightyellow !important; }
-		
+
 		.oddRow { background-color: #f8f7f7; }
-		
+
 		.pl05{ padding-left: 0.5rem; }
-		
+
 		.widthAll { width: 100%; }
-		
+
 		@external dockLayoutPanel;
-		
+
 	</ui:style>
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
@@ -81,21 +82,20 @@
 		<g:center>
 			<g:HTMLPanel styleName="{style.flexColumn}">
 				<g:HTMLPanel ui:field="messagePanel" />
-				
+
 				<g:HTMLPanel styleName="{style.flexColumn} {style.container}">
 					<g:Grid ui:field="fieDataTableHeader" styleName="{style.widthAll}" />
 		    		<g:ScrollPanel ui:field="scrollPanel">
 		    			<g:DeckPanel styleName="{style.widthAll} {style.heigthAll}" ui:field="deckPanel">
 		    				<g:Grid ui:field="fieDataTable" styleName="{style.heigthAuto}"/>
-		    				<g:Label text="Importe un fichero FIE para analizarlo" styleName="{style.emptyMessage}" />
+		    				<g:Label text="{msgs.importFieMsg}" styleName="{style.emptyMessage}" />
 		    			</g:DeckPanel>
 		    		</g:ScrollPanel>
 				</g:HTMLPanel>
-			
+
 			</g:HTMLPanel>
-			
+
 		</g:center>
 	</g:DockLayoutPanel>
-	
-</ui:UiBinder> 
 
+</ui:UiBinder>

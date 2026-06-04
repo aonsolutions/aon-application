@@ -1,6 +1,7 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'>
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 
 	<ui:style>
 		.newButton {
@@ -10,7 +11,7 @@
 
 
 	<ui:with type="com.esferalia.aon.gwt.payroll.client.MetaData.Resources" field="res"/>
-	
+
 	<g:DockLayoutPanel unit='PX'>
 		<g:north size='26'>
 			<g:FlowPanel styleName="gwt-MenuBar-horizontal" ui:field="buttonBar">
@@ -26,10 +27,10 @@
 		<g:center>
 			<g:ScrollPanel ui:field="scrollPanel">
 				<g:Tree ui:field="tree">
-					<g:TreeItem HTML="{res.concept} CONCEPTOS">
-						<g:TreeItem HTML="{res.payment} DEVENGOS" ui:field="paymentConceptsTreeItem"/>
-						<g:TreeItem HTML="{res.deduction} DEDUCCIONES" ui:field="deductionConceptsTreeItem" />
-						<g:TreeItem HTML="{res.segsocial} BONIFICACIONES" ui:field="bonusConceptsTreeItem" />
+					<g:TreeItem HTML="{res.concept} {msgs.conceptsTitle}">
+						<g:TreeItem HTML="{res.payment} {msgs.accrualTitle}" ui:field="paymentConceptsTreeItem"/>
+						<g:TreeItem HTML="{res.deduction} {msgs.deductionTitle}" ui:field="deductionConceptsTreeItem" />
+						<g:TreeItem HTML="{res.segsocial} {msgs.bonusTitle}" ui:field="bonusConceptsTreeItem" />
 					</g:TreeItem>
 				</g:Tree>
 			</g:ScrollPanel>

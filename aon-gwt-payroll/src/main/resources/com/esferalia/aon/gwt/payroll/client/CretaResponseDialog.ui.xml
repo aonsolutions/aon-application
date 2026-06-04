@@ -1,15 +1,17 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
 	<ui:Style>
-	
+
 	.form {
 		padding: 10px;
 	}
-	
+
 	.label {
 		margin-top: 10x;
 		font-weight: bold;
@@ -20,7 +22,7 @@
 	.nowrap {
 		white-space: nowrap;
 	}
-	
+
 	.labeltop {
 		margin-top: 10x;
 		font-weight: bold;
@@ -29,41 +31,41 @@
 		white-space: nowrap;
 		background-color: #F2F2F2;
 	}
-	
+
 	.field {
-		padding: 1px 0.5em;		
+		padding: 1px 0.5em;
 	}
-	
+
 	.buttons {
 		padding-top: 10px;
 		text-align: right;
 	}
-	
+
 	.info {
-		
+
 	}
-	
+
 	.warn {
-		
+
 	}
-	
+
 	.error {
-		
+
 	}
-	
+
 	.messages {
 		padding-left: 0.5em;
 		padding-bottom: 10px;
 	}
-	
+
 	.form textarea {
 		resize: none;
 	}
-	
+
 	.monthListBox-item {
 		padding-left: 16px;
 	}
-	
+
 	</ui:Style>
 
 	<ui:import field="com.google.gwt.user.client.ui.FormPanel.*" />
@@ -76,7 +78,7 @@
 			<table class="aon-width-all {style.form} ">
 				<tr>
 					<td class="{style.label}">
-						<g:Label text="Aceptar Bases Anteriores" />
+						<g:Label text="{msgs.acceptPreviousBases}" />
 					</td>
 					<td class="{style.field}" >
 						<g:CheckBox  name="{ACEPTAR_BASES_ANTERIORES.name}" ui:field="basesCheck" checked="false"/>
@@ -84,13 +86,13 @@
 				</tr>
 				<tr>
 					<td class="{style.label}">
-						<g:Label text="Mensajes Recibidos (SILTRA)" />
+						<g:Label text="{msgs.receivedMessagesSiltra}" />
 					</td>
 					<td class="{style.field}">
 						<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
-							<g:Button ui:field="fileButton" enabled="true" >Seleccionar</g:Button>
-							<g:InlineLabel styleName="{style.nowrap}" >&nbsp;&nbsp;</g:InlineLabel> 
-							<g:InlineLabel styleName="{style.nowrap}"  ui:field="fileLabel" text="Trabajadores y Tramos" />
+							<g:Button ui:field="fileButton" enabled="true" >{msgs.select}</g:Button>
+							<g:InlineLabel styleName="{style.nowrap}" >&nbsp;&nbsp;</g:InlineLabel>
+							<g:InlineLabel styleName="{style.nowrap}"  ui:field="fileLabel" text="{msgs.workersAndRanges}" />
 						</g:HorizontalPanel>
 					</td>
 				</tr>
@@ -111,14 +113,14 @@
 					<td class="{style.field}" colspan="2">&nbsp;</td>
 				</tr>
 			</table>
-	
+
 			<div class="{style.buttons} {style.form} ">
-				<g:Button ui:field="cancelButton">Cancelar</g:Button>
-				<g:Button ui:field="acceptButton" enabled="false" >Aceptar</g:Button>
+				<g:Button ui:field="cancelButton">{msgs.cancel}</g:Button>
+				<g:Button ui:field="acceptButton" enabled="false" >{msgs.accept}</g:Button>
 			</div>
-	
+
 			<g:FileUpload visible="false"  name="{TRABAJADORES_TRAMOS.name}" ui:field="fileUpload" />
-	
+
 	</g:HTMLPanel>
 	</g:FormPanel>
 

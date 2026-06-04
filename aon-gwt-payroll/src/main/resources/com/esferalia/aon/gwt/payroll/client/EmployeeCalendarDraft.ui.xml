@@ -3,17 +3,19 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
 	<ui:with field='res'
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
 	<ui:style
 		type="com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraft.MyStyle">
-		
+
 		.blockStyle{
 			background-color: transparent;
 			color: #aaa;
 		}
-		
+
 		.upperMenuStyle{
 			padding-left: 15px;
     		padding-bottom: 3px;
@@ -68,7 +70,7 @@
 		.holidayColor{
 			background-color: green;
 		}
-		
+
 		.partialityColor{
 			background-color: #9c85ee;
 		}
@@ -84,7 +86,7 @@
 		.inactivityColor{
 			background-color: #71b1e8;
 		}
-	
+
 		.dropColor{
 			background-color: #733969;
 		}
@@ -98,13 +100,13 @@
 			margin-left: 0.8em;
 			width: 100%;
 		}
-		
+
 		.tableStyle td {
 			text-align: center;
 			border-bottom: 1px solid #ddd;
 			font-family: Arial, Helvetica, sans-serif;
 		}
-		
+
 		.cabeceraStyle {
 			font-weight: bold;
 			padding-right: 0.65em;
@@ -113,7 +115,7 @@
 			padding-bottom: 0.5em;
 			margin: 6px;
 		}
-		
+
 		.doubleBoxStyle {
 			width: 10px;
 			text-align: center;
@@ -121,7 +123,7 @@
 			background-color: #eee;
 			font: 12px/1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
 		}
-		
+
 		.doubleBoxDisableStyle {
 			border: none;
 			width: 10px;
@@ -130,7 +132,7 @@
 			background-color: #eee;
 			font: 12px/1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
 		}
-		
+
 		.doubleBoxDisableStyle2 {
 			border: none;
 			width: 10px;
@@ -139,7 +141,7 @@
 			background-color: white;
 			font: 12px/1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
 		}
-		
+
 		.doubleBoxLargeStyle {
 			width: 100% !important;
 			font: 11px/1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif !important;
@@ -157,35 +159,35 @@
 			padding: 3px;
 			color: #ffffff;
 		}
-		
+
 		.holidayStyle {
 			background-color: #52ab3c;
 			border-radius: 20%;
 			padding: 3px;
 			color: #ffffff;
 		}
-		
+
 		.partialityStyle {
 			background-color: #9c85ee;
 			border-radius: 20%;
 			padding: 3px;
 			color: #ffffff;
 		}
-		
+
 		.ereStyle {
 			background-color: #b91257;
 			border-radius: 20%;
 			padding: 3px;
 			color: #ffffff;
 		}
-		
+
 		.ereFzaStyle {
 			background-color: rgba(185, 18, 87, 0.7);
 			border-radius: 20%;
 			padding: 3px;
 			color: #ffffff;
 		}
-		
+
 		.ereFzaExonStyle {
 			background-color: rgba(185, 18, 87, 0.4);
 			border-radius: 20%;
@@ -206,39 +208,39 @@
 			padding: 3px;
 			color: #ffffff;
 		}
-		
+
 		.strikeStyle {
 			background-color: #a09c13;
 			border-radius: 20%;
 			padding: 3px;
 			color: #ffffff;
 		}
-		
+
 		.sundayStyle{
 			background-color: rgb(68, 90, 105);
 			padding: 3px;
 			color: #ffffff;
 		}
-		
+
 		.dropStyle {
 			background-color: #733969;
 			border-radius: 20%;
 			padding: 3px;
 			color: #ffffff;
-			
+
 		}
-		
+
 		.itStyle {
 			background-color: rgba(255, 0, 0, 0.72);
 			border-radius: 20%;
 			color: #ffffff;
 			margin-top: 0px;
 		}
-		
+
 		.cellStyle {
 			padding: 3px;
 		}
-		
+
 		.year {
 			font-size: 30px;
 			color: #FF704D;
@@ -246,35 +248,35 @@
 			padding-right: 8px;
 			padding-top: 2px;
 		}
-		
+
 		.optionButtons {
 			width: 30px;
 			height: 25px;
 			cursor: pointer;
 			border: none;
 		}
-		
+
 		.optionButtonsLeft {
 			margin-top: 8px;
 			margin-left: 18px;
 		}
-		
+
 		.optionButtonsRight {
 			margin-top: 8px;
 		}
-		
+
 		.mesesImparesStyle {
 			background-color: #eee;
 		}
-		
+
 		.ocultarHorasStyle {
 			display: none;
 		}
-		
+
 		.fondoBlanco {
 			background-color: white;
 		}
-		
+
 		.noselect {
 			-webkit-touch-callout: none; /* iOS Safari */
 			-webkit-user-select: none; /* Safari */
@@ -284,31 +286,31 @@
 			user-select: none; /* Non-prefixed version, currently
 				                                  supported by Chrome and Opera */
 		}
-		
+
 		.onChange {
 			background-color: rgba(255, 255, 0, 0.38);
 		}
-		
+
 		@external gwt-Selector;
 		@external gwt-SuggestBoxPopup;
 		.gwt-SuggestBoxPopup {
 			z-index: 105;
 		}
-		
+
 		.gwt-Selector .gwt-SuggestBoxPopup {
 			z-index: 105;
 			height: inherit;
 		}
-		
+
 		.setOutOfContractStyle {
 			color: #aaa;
 		}
-		
+
 		hr {
 			margin-top: 10px;
 			margin-bottom: 10px;
 		}
-		
+
 		.scrollStyle {
 			position: absolute !important;
 			left: 5px;
@@ -317,7 +319,7 @@
 			bottom: 0;
 			width: 100%;
 		}
-		
+
 		.pointer{
 			cursor:pointer;
 		}
@@ -325,7 +327,7 @@
 		.hide{
 			display : none;
 		}
-		
+
 		.hourPanelStyle{
 			border-radius: 8%;
 			/*border-color: gray;*/
@@ -335,13 +337,13 @@
 			border-style: solid;
 			background-color: #e3e3e3;
 		}
-		
+
 		.hourStyle{
 			font-weight: bold;
 			height: 20px;
 			padding-left: 20px !important;
 		}
-		
+
 		.clearPanelStyle{
 			border-radius: 8%;
 			/*border-color: gray;*/
@@ -351,14 +353,14 @@
 			border-color: #e3e3e3;
 			background-color: #e3e3e3;
 		}
-		
+
 		.clearStyle{
 			font-weight: bold;
 			height: 20px;
 			padding-left: 25px !important;
 			border: none;
 		}
-		
+
 		.leyendPanelStyle{
 			border-radius: 8%;
 			/*border-color: gray;*/
@@ -368,7 +370,7 @@
 			border-color: #e3e3e3;
 			background-color: #e3e3e3;
 		}
-		
+
 		.leyendStyle{
 			font-weight: bold;
 			height: 20px;
@@ -376,7 +378,7 @@
 			border: none;
 		}
 
-		@external holidayStyle;	
+		@external holidayStyle;
 
 		</ui:style>
 
@@ -384,31 +386,31 @@
 		<g:north size="55">
 			<g:FlowPanel>
 				<g:MenuBar>
-					<g:MenuItem text="Archivo" ui:field="archivoMenuItem">
+					<g:MenuItem text="{msgs.fileMenu}" ui:field="archivoMenuItem">
 						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="nonWorkingDayMenuItem" text="Añadir día(s) no laborables" />
-							<g:MenuItem ui:field="holidayDayMenuItem" text="Añadir día(s) vacaciones" />
-							<g:MenuItem ui:field="inactivityDayMenuItem" text="Añadir día(s) inactividad" />
-							<g:MenuItem ui:field="dropDayMenuItem" text="Añadir día(s) ausencia" />		
+							<g:MenuItem ui:field="nonWorkingDayMenuItem" text="{msgs.addNonWorkingDays}" />
+							<g:MenuItem ui:field="holidayDayMenuItem" text="{msgs.addHolidays}" />
+							<g:MenuItem ui:field="inactivityDayMenuItem" text="{msgs.addInactivity}" />
+							<g:MenuItem ui:field="dropDayMenuItem" text="{msgs.addAbsence}" />
 							<g:MenuItem styleName="gwt-MenuItemSeparator">
 								<div class="menuSeparatorInner"></div>
 							</g:MenuItem>
-							<g:MenuItem ui:field="eraseEventMenuItem" text="Borrar evento(s)" />
+							<g:MenuItem ui:field="eraseEventMenuItem" text="{msgs.eraseEvents}" />
 						</g:MenuBar>
 					</g:MenuItem>
-					<g:MenuItem text="Seleccionar">
+					<g:MenuItem text="{msgs.select}">
 						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="selectAllDaysMenuItem" text="Seleccionar todo" />
-							<g:MenuItem ui:field="selectUntillMenuItem" text="Seleccionar hasta" />
-							<g:MenuItem ui:field="selectAllSaturdaysMenuItem" text="Seleccionar sábados" />
-							<g:MenuItem ui:field="selectAllSundaysMenuItem" text="Seleccionar domingos" />
+							<g:MenuItem ui:field="selectAllDaysMenuItem" text="{msgs.selectAll}" />
+							<g:MenuItem ui:field="selectUntillMenuItem" text="{msgs.selectUntil}" />
+							<g:MenuItem ui:field="selectAllSaturdaysMenuItem" text="{msgs.selectSaturdays}" />
+							<g:MenuItem ui:field="selectAllSundaysMenuItem" text="{msgs.selectSundays}" />
 						</g:MenuBar>
 					</g:MenuItem>
-					<g:MenuItem ui:field="hourMenuItem" text="Horas">
+					<g:MenuItem ui:field="hourMenuItem" text="{msgs.hours}">
 					</g:MenuItem>
-					<g:MenuItem text="Ver" ui:field="viewMenuItem">
+					<g:MenuItem text="{msgs.view}" ui:field="viewMenuItem">
 						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="showHourMenuItem" text="Ocultar horas" />
+							<g:MenuItem ui:field="showHourMenuItem" text="{msgs.hideHours}" />
 						</g:MenuBar>
 					</g:MenuItem>
 				</g:MenuBar>
@@ -417,7 +419,7 @@
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal">
-								<g:Label styleName="aon-outputText">Edici&oacute;n</g:Label>
+								<g:Label styleName="aon-outputText">{msgs.edition}</g:Label>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-subtitle">
@@ -438,22 +440,22 @@
 						</g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 							<g:Button ui:field='resetButton'
-								styleName='aon-finding-toolbar-item aon-icon-cancel' text="RESETEAR" />
+								styleName='aon-finding-toolbar-item aon-icon-cancel' text="{msgs.reset}" />
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 							<g:Button ui:field='saveButton'
-								styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR"
+								styleName='aon-finding-toolbar-item aon-icon-accept' text="{msgs.saveAction}"
 								enabled="false" />
 						</g:HTMLPanel>
-						
+
 					</g:HorizontalPanel>
 				</g:FlowPanel>
 
 			</g:FlowPanel>
 		</g:north>
 		<g:center>
-			<g:HTMLPanel>  
-			    
+			<g:HTMLPanel>
+
 				<g:HorizontalPanel>
 					<g:Button
 						styleName="{style.optionButtons} {style.optionButtonsLeft} aon-icon-previous"
@@ -465,31 +467,31 @@
 				</g:HorizontalPanel>
 
 				<g:HorizontalPanel styleName="{style.upperMenuStyle}">
-					<g:Label styleName="{style.paddingLabels}">Dias seleccionables:</g:Label>
+					<g:Label styleName="{style.paddingLabels}">{msgs.selectableDays}</g:Label>
 					<g:HorizontalPanel>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.noWorkingColor} {style.cursorPointer}" ui:field="nonWorkingDayButton">No Laborables</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.inactivityColor} {style.cursorPointer}" ui:field="inactivityDayButton">Inactividad</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.dropColor} {style.cursorPointer}" ui:field="dropDayButton">Ausencia</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.holidayColor} {style.cursorPointer}" ui:field="holidayDayButton">Vacaciones</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.partialityColor} {style.cursorPointer}" ui:field="partialityDayButton">Parcialidad</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.peonadasColor} {style.cursorPointer} {style.hide}" ui:field="peonadasDayButton">Peonadas</g:Button>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.noWorkingColor} {style.cursorPointer}" ui:field="nonWorkingDayButton">{msgs.nonWorking}</g:Button>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.inactivityColor} {style.cursorPointer}" ui:field="inactivityDayButton">{msgs.inactivity}</g:Button>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.dropColor} {style.cursorPointer}" ui:field="dropDayButton">{msgs.absence}</g:Button>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.holidayColor} {style.cursorPointer}" ui:field="holidayDayButton">{msgs.vacations}</g:Button>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.partialityColor} {style.cursorPointer}" ui:field="partialityDayButton">{msgs.partiality}</g:Button>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.peonadasColor} {style.cursorPointer} {style.hide}" ui:field="peonadasDayButton">{msgs.peonadas}</g:Button>
 						<g:HorizontalPanel ui:field="hourButtonPanel" styleName="{style.hourPanelStyle}">
-							<g:Button styleName="{style.hourStyle} {style.cursorPointer} aon-icon-time" ui:field="hourButton">Horas</g:Button>
+							<g:Button styleName="{style.hourStyle} {style.cursorPointer} aon-icon-time" ui:field="hourButton">{msgs.hours}</g:Button>
 						</g:HorizontalPanel>
 						<g:HorizontalPanel ui:field="extraHoursButtonPanel" styleName="{style.hourPanelStyle}">
-							<g:Button styleName="{style.hourStyle} {style.cursorPointer} aon-icon-time" ui:field="extraHoursButton">H. Extras</g:Button>
+							<g:Button styleName="{style.hourStyle} {style.cursorPointer} aon-icon-time" ui:field="extraHoursButton">{msgs.extraHours}</g:Button>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
 					<g:HorizontalPanel styleName="{style.upperRightMenuStyle}" ui:field="upperRightMenu">
 						<g:HorizontalPanel ui:field="eraseEventButtonPanel" styleName="{style.clearPanelStyle}">
-							<g:Button styleName="{style.clearStyle} {style.cursorPointer} aon-icon-close2" ui:field="eraseEventButton">Limpiar</g:Button>
+							<g:Button styleName="{style.clearStyle} {style.cursorPointer} aon-icon-close2" ui:field="eraseEventButton">{msgs.clear}</g:Button>
 						</g:HorizontalPanel>
 						<g:HorizontalPanel ui:field="leyendButtonPanel" styleName="{style.leyendPanelStyle}">
-							<g:Button styleName="{style.leyendStyle} {style.cursorPointer} aon-icon-help" ui:field="leyendButton">Leyenda</g:Button>
+							<g:Button styleName="{style.leyendStyle} {style.cursorPointer} aon-icon-help" ui:field="leyendButton">{msgs.legend}</g:Button>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
 				</g:HorizontalPanel>
-				
+
 				<g:ScrollPanel ui:field="scrollInfo" styleName="{style.scrollStyle}">
 					<g:Grid ui:field="calendarGrid" width="99%"
 						styleName="{style.tableStyle} {style.noselect}">
@@ -609,12 +611,12 @@
 								<g:Label>M</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label ui:field="totalHours">Horas Mensuales</g:Label>
+								<g:Label ui:field="totalHours">{msgs.monthlyHours}</g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
 							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
-								<g:Label>Enero</g:Label>
+								<g:Label>{msgs.enero}</g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
@@ -624,7 +626,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
-								<g:Label>Febrero</g:Label>
+								<g:Label>{msgs.febrero}</g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -634,7 +636,7 @@
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
 							<g:customCell styleName="{style.cabeceraStyle}  {style.pointer}">
-								<g:Label>Marzo</g:Label>
+								<g:Label>{msgs.marzo}</g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
@@ -644,7 +646,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
-								<g:Label>Abril</g:Label>
+								<g:Label>{msgs.abril}</g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -654,7 +656,7 @@
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
 							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
-								<g:Label>Mayo</g:Label>
+								<g:Label>{msgs.mayo}</g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
@@ -664,7 +666,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
-								<g:Label>Junio</g:Label>
+								<g:Label>{msgs.junio}</g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -674,7 +676,7 @@
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
 							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
-								<g:Label>Julio</g:Label>
+								<g:Label>{msgs.julio}</g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
@@ -684,7 +686,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
-								<g:Label>Agosto</g:Label>
+								<g:Label>{msgs.agosto}</g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -694,7 +696,7 @@
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
 							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
-								<g:Label>Septiembre</g:Label>
+								<g:Label>{msgs.septiembre}</g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
@@ -704,7 +706,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
-								<g:Label>Octubre</g:Label>
+								<g:Label>{msgs.octubre}</g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -714,7 +716,7 @@
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
 							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
-								<g:Label>Noviembre</g:Label>
+								<g:Label>{msgs.noviembre}</g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
@@ -724,7 +726,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
-								<g:Label>Diciembre</g:Label>
+								<g:Label>{msgs.diciembre}</g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -737,5 +739,4 @@
 			</g:HTMLPanel>
 		</g:center>
 	</g:DockLayoutPanel>
-</ui:UiBinder> 
-
+</ui:UiBinder>

@@ -1,13 +1,14 @@
-<ui:UiBinder 
+<ui:UiBinder
     xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
+    <ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
     <ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
-    
+
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeAFIDialog.MyStyle">
-	
+
 		@external .gwt-ToggleButton-down;
 		@external .gwt-ToggleButton-up;
 		@external .gwt-ToggleButton-down-hovering;
@@ -20,22 +21,22 @@
 			gap: 1rem;
 			max-width: 500px;
 		}
-		
+
 		.tabSelected{
 			border: 1px solid #e2e2e2;
 			border-bottom: none;
 			cursor: pointer;
 		}
-		
+
 		.tabUnSelected{
 			background-color: #eee;
 			cursor: pointer;
 		}
-		
+
 		.tabIconSelected{
 			background-color: white !important;
 		}
-		
+
 		.gwt-ToggleButton-down{
 			border: none !important;
 			color: black !important;
@@ -70,9 +71,9 @@
 			border-top: 1px solid #ababab !important;
 			border-left: 1px solid #ababab !important;
 			border-right: 1px solid #ababab !important;
-	
+
 		}
-		
+
 		.deleteButtonUp{
 			border: none !important;
     		width: 18px !important;
@@ -90,7 +91,7 @@
     		background: white !important;
 			padding-top: 2px !important;
 		}
-		
+
 
 		.label {
 			margin-top:10x;
@@ -140,33 +141,33 @@
 			padding-left: 10px;
    			padding-top: 2px;
 		}
-		
+
 		.width100{
 			width: 100%;
 		}
-		
+
 		.width99{
 			width: 99%;
 		}
-		
+
 		.dateStyle{
 			width: 140px !important;
 			text-align: center !important;
 			border: #808080 1px solid !important;
 		}
-		
+
 		.bold{
 			font-weight: bold;
 		}
-		
+
 		.marginLft5{
 			margin-left: 5px;
 		}
-		
+
 		.paddingText{
 			padding: 5px 10px 0px 0px;
 		}
-		
+
 		.alignRight{
 			margin-left: auto;
 		}
@@ -174,13 +175,13 @@
 		.hidden{
 			display: none;
 		}
-		
+
 		.tabsPanel{
 			margin-left: 10px;
 			display: flex;
 			gap: 5px;
 		}
-		
+
 		.tabSelectedStyle{
 			background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQMAAAAZCAYAAAA160uCAAAAkklEQVR42u3USXKCABQFwH//A8YxxBEJFJQRI+5eFrlGL/oKXavVRwBqvVkHQAbAfwbbzTYAtdvtAlD7/WcAqmmaANTh8BWAOh2PAajT+RyAulwvAai2bQNQt1sXgPruugBU3/cBqGEYAlDjOAagpmkKQN3v9wDUz+MRgJrnOQD1+3wGoF6vVwBqWZYA1PJ+B+APWHe3SG7bckEAAAAASUVORK5CYII=") -0px -0px no-repeat;
 			width: auto;
@@ -189,7 +190,7 @@
 			border-radius: 4%;
 			cursor: pointer;
 		}
-		
+
 		.tabStyle{
 			border: 1px solid #c5c5c5;
 			border-radius: 4%;
@@ -198,45 +199,45 @@
 			padding-bottom: 0px;
 			cursor: pointer;
 		}
-		
+
 		.pb-15{
 			padding-bottom: 15px;
 		}
-		
-		
+
+
 		.buttonsPanel{
 			display: flex;
 			justify-content: flex-end;
 			margin-top: 20px;
 		}
-		
+
 		.flexToggle{
 			display: flex;
 			align-items: center;
 			gap: 5px;
 		}
-		
+
 		.mt10{
 			margin-top: 10px;
 		}
-		
+
 		.flexColumn{
 			display: flex;
 			flex-direction: column;
 			gap: 5px;
 		}
-		
+
 		.flex{
 			display: flex;
 			gap: 5px;
 		}
-		
+
 		.datePickerPanel{
 			border: none !important;
     		box-shadow: none !important;
     		z-index: 70;
 		}
-		
+
 		.moreButton{
 			border: 1px solid #e2e2e2 !important;
 			color: black !important;
@@ -247,18 +248,18 @@
 			min-width: 25px;
 			max-width: 25px;
 		}
-		
+
 		.input {
 			display: flex;
 			flex-direction: column;
 			gap: .2rem;
 		}
-		
+
 		.title {
 			font-weight: bold;
 			font-size: .9rem;
 		}
-		
+
 		.sendBtn{
 			background-attachment: scroll;
 			background-clip: border-box;
@@ -275,12 +276,12 @@
 			text-transform: uppercase;
 			width: auto;
 		}
-		
+
 		.flex {
 			display: flex;
 			gap: 0.1rem;
 		}
-		
+
 		.width98{
 			width: 98%;
 		}
@@ -288,25 +289,25 @@
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form}">
-	
+
 		<g:HTMLPanel styleName="{style.input}">
-			<g:Label text="Tipo de movimiento" styleName="{style.title}" />
+			<g:Label text="{msgs.movementType}" styleName="{style.title}" />
 			<g:ListBox ui:field="afiTypeLB" />
 		</g:HTMLPanel>
-	
+
 		<g:DeckPanel ui:field="deckPanel">
-		
+
 			<g:HTMLPanel styleName="{style.input}">
-				<g:Label text="Código de baja" styleName="{style.title}" />
+				<g:Label text="{msgs.settleReasonCode}" styleName="{style.title}" />
 				<g:ListBox ui:field="settleReasonLB" styleName="{style.width100}" />
 				<g:HTMLPanel styleName="{style.input}" ui:field="settleHolidayData">
-					<g:Label text="Fecha fin vacaciones" styleName="{style.title}" />
+					<g:Label text="{msgs.holidaysEndDate}" styleName="{style.title}" />
 					<a:DateBoxEx ui:field="holidaysEndDB" styleName="{style.width100}" />
-					<g:Label text="Tipo vacaciones" styleName="{style.title}" ui:field="holidaysTypeTitle" />
+					<g:Label text="{msgs.holidaysType}" styleName="{style.title}" ui:field="holidaysTypeTitle" />
 					<g:ListBox ui:field="holidaysTypeLB" styleName="{style.width100}" />
 				</g:HTMLPanel>
 			</g:HTMLPanel>
-			
+
 			<g:HTMLPanel styleName="{style.flexColumn}">
 				<g:HTMLPanel ui:field="tabsPanel" styleName="{style.tabsPanel}" />
 				<g:Label styleName="{style.bold}">Tipo contrato</g:Label>
@@ -320,14 +321,14 @@
 				<g:Label styleName="{style.bold}">CNO</g:Label>
 				<g:SuggestBox ui:field="cno" styleName="{style.width100}" />
 			</g:HTMLPanel>
-		
+
 		</g:DeckPanel>
-	    
+
 	   	<g:HTMLPanel ui:field="afiFilePanel" styleName="{style.flexToggle}  {style.mt10}">
 	   		<g:Button ui:field="generationAFITB" />
-    		<g:Label styleName="{style.bold}">Generar fichero AFI</g:Label>	
+    		<g:Label styleName="{style.bold}">{msgs.generateAfiFile}</g:Label>
     	</g:HTMLPanel>
-		
+
 		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
 
 	</g:HTMLPanel>

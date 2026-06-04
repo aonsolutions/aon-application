@@ -2,11 +2,13 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
 	<ui:style>
 	.form {
 		padding: 10px;
 	}
-	
+
 	.label {
 		margin-top: 10x;
 		font-weight: bold;
@@ -14,7 +16,7 @@
 		white-space: nowrap;
 		background-color: #F2F2F2;
 	}
-	
+
 	.labeltop {
 		margin-top: 10x;
 		font-weight: bold;
@@ -23,32 +25,32 @@
 		white-space: nowrap;
 		background-color: #F2F2F2;
 	}
-	
+
 	.field {
 		padding: 1px 0.5em;
 	}
-	
+
 	.buttons {
 		padding-top: 10px;
 		text-align: right;
 	}
-	
+
 	.errorLabel {
 		text-align: center;
 	}
-	
+
 	.info {
-		
+
 	}
-	
+
 	.warn {
-		
+
 	}
-	
+
 	.error {
-		
+
 	}
-	
+
 	.messages {
 		padding-left: 0.5em;
 		padding-bottom: 10px;
@@ -61,7 +63,7 @@
 			<g:row>
 				<g:customCell>
 					<g:Label styleName="aon-icon-employee aon-icon-commandButton"
-						title="Selecciona la persona sobre la que desee copiar el contrato" />
+						title="{msgs.selectPersonCopy}" />
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
 					<g:SuggestBox ui:field="suggest" styleName="aon-inputText"
@@ -74,7 +76,7 @@
 		<g:Grid width="100%">
 			<g:row>
 				<g:customCell styleName="{style.label}">
-					<g:Label text="Inicio de contrato" />
+					<g:Label text="{msgs.contractStart}" />
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
 					<datepicker:DateBox width="50%" ui:field="startDate" />
@@ -82,7 +84,7 @@
 			</g:row>
 			<g:row>
 				<g:customCell styleName="{style.label}">
-					<g:Label text="Fin de contrato" />
+					<g:Label text="{msgs.contractEnd}" />
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
 					<datepicker:DateBox width="50%" ui:field="endDate" />
@@ -90,23 +92,23 @@
 			</g:row>
 			<g:row>
 				<g:customCell>
-					<g:InlineLabel styleName="aon-icon-warn aon-icon-commandButton" 
+					<g:InlineLabel styleName="aon-icon-warn aon-icon-commandButton"
 					ui:field="warnLabel" visible="false"
-					title="Compruebe los datos introducidos."></g:InlineLabel>
+					title="{msgs.checkData}"></g:InlineLabel>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
 					<g:CheckBox ui:field="especifico"
-						text="Añadir datos específicos de contrato" />
+						text="{msgs.addSpecificContractData}" />
 				</g:customCell>
 			</g:row>
 		</g:Grid>
 
 		<div class="{style.buttons}">
-			<g:Button ui:field="cancelButton">Cancelar</g:Button>
-			<g:Button ui:field="acceptButton">Aceptar</g:Button>
+			<g:Button ui:field="cancelButton">{msgs.cancel}</g:Button>
+			<g:Button ui:field="acceptButton">{msgs.accept}</g:Button>
 		</div>
 
 	</g:HTMLPanel>
 
 
-</ui:UiBinder> 
+</ui:UiBinder>

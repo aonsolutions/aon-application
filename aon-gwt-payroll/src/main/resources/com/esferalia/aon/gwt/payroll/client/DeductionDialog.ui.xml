@@ -3,12 +3,14 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client' >
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
 	<ui:Style  >
-	
+
 	</ui:Style>
 
 
-	<g:HTMLPanel styleName="aon-width-all aon-height-all"> 
+	<g:HTMLPanel styleName="aon-width-all aon-height-all">
 
 		<table class="aon-width-all aon-height-all" >
 			<tr>
@@ -19,8 +21,8 @@
 
 			<tr>
 				<td colspan="2" align="right">
-					<g:Button ui:field="cancelButton">Cancelar</g:Button>
-					<g:Button ui:field="acceptButton">Aceptar</g:Button>
+					<g:Button ui:field="cancelButton">{msgs.cancel}</g:Button>
+					<g:Button ui:field="acceptButton">{msgs.accept}</g:Button>
 				</td>
 			</tr>
 		</table>

@@ -1,24 +1,25 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:payroll='urn:import:com.esferalia.aon.gwt.payroll.client'
 	xmlns:common='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
-	
+
 	<ui:style>
-	
+
 	.stackHeader {
 	  padding: .7em .5em .7em .6em;
-	  
+
 	}
 
 	@sprite .enterprisesIcon {
 	     gwt-image: 'enterprisesgroup';
 	     float: left;
 	   }
-	 
-	 
-	 
+
+
+
 	</ui:style>
 
 	<ui:image field='enterprisesgroup' src='enterprisesgroup.png' />
@@ -33,7 +34,7 @@
 					<g:header size='3'>
 						<div class='{style.stackHeader}'>
 							<div class='aon_icon_menu_collapse' />
-							EMPRESAS
+							{msgs.empresas}
 						</div>
 					</g:header>
 					<payroll:Enterprises ui:field='enterprises' />

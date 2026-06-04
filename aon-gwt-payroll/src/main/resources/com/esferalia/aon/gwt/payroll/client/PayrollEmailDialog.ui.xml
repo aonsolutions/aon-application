@@ -2,91 +2,93 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client' >
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
 	<ui:Style>
-		
+
 		.widthAll{
 			width: 100%;
 		}
-		
+
 		.heightAll{
 			height: 100%;
 		}
-		
+
 		.container{
 			min-width: 600px;
 			margin-top: 10px;
 		}
-		
+
 		.flexColumn{
 			padding: 10px 20px;
 			display: flex;
 			flex-direction: column;
 		}
-		
+
 		.flex{
 			display: flex;
 			align-items: center;
 			margin: 5px 0;
 		}
-		
+
 		.label{
 			min-width: 40px;
 			font-weight: bold;
 		}
-		
+
 		.message{
 			font-weight: bold;
 			max-width: 650px;
 		}
-		
+
 		.bold{
 			font-weight: bold;
 			width: 100%;
 		}
-		
+
 		.buttonsPanel{
 			display: flex;
 			justify-content: flex-end;
 			margin: 0px 20px 10px 20px;
 		}
-		
+
 		.italic {
 			font-style: italic;
 		}
-		
+
 	</ui:Style>
 
 
-	<g:VerticalPanel styleName="{style.widthAll} {style.heightAll} {style.container}"> 
+	<g:VerticalPanel styleName="{style.widthAll} {style.heightAll} {style.container}">
 		<g:HTMLPanel styleName="{style.flexColumn}">
 			<g:HTMLPanel styleName="{style.flex}">
-				<g:Label styleName="{style.label}">De:</g:Label>
+				<g:Label styleName="{style.label}">{msgs.emailFrom}</g:Label>
 				<g:ListBox ui:field="mailAccountsListBox" styleName="aon-selectOneMenu {style.widthAll}"></g:ListBox>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.flex}">
-				<g:Label styleName="{style.label}">Para:</g:Label>
+				<g:Label styleName="{style.label}">{msgs.emailTo}</g:Label>
 				<g:TextBox ui:field="sendTo" styleName='aon-inputText {style.widthAll}'></g:TextBox>
-				<g:Label ui:field="sendToMessage" styleName="{style.bold}">Cuenta definida en el perfil del empleado</g:Label>
-				<g:Label ui:field="sendToEnterpriseManagmentMessage" styleName="{style.bold}">Cuenta definida en el perfil de cada empresa</g:Label>
+				<g:Label ui:field="sendToMessage" styleName="{style.bold}">{msgs.employeeProfileAccount}</g:Label>
+				<g:Label ui:field="sendToEnterpriseManagmentMessage" styleName="{style.bold}">{msgs.enterpriseProfileAccount}</g:Label>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.flex}">
-				<g:Label styleName="{style.label}">CC:</g:Label>
+				<g:Label styleName="{style.label}">{msgs.cc}</g:Label>
 				<g:TextBox ui:field="cc" styleName='aon-inputText {style.widthAll}'></g:TextBox>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.flex}">
-				<g:Label styleName="{style.label}">CCO:</g:Label>
+				<g:Label styleName="{style.label}">{msgs.bcc}</g:Label>
 				<g:TextBox ui:field="cco" styleName='aon-inputText {style.widthAll}'></g:TextBox>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.flex}">
-				<g:Label styleName="{style.label}">Proteger PDF</g:Label>
+				<g:Label styleName="{style.label}">{msgs.protectPdf}</g:Label>
 				<g:CheckBox ui:field="passwordCheck" />
-				<g:Label styleName="{style.italic}">Proteger PDF con el NIF del receptor</g:Label>
+				<g:Label styleName="{style.italic}">{msgs.protectPdfNif}</g:Label>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.flex}">
 				<g:HTMLPanel ui:field="textAreaPanel"></g:HTMLPanel>
 			</g:HTMLPanel>
 			<g:HTMLPanel ui:field="messageVariablesPanel" styleName="{style.flex}">
-				<g:Label styleName="{style.message}">* Los valores NOMBRE_EMPLEADO, PERIODOS_NOMINA y INFORMACION_EMPRESA serán sustituidos por la información correspondiente en cada caso.</g:Label>
+				<g:Label styleName="{style.message}">{msgs.variablesSubstitutionMsg}</g:Label>
 			</g:HTMLPanel>
 		</g:HTMLPanel>
 		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>

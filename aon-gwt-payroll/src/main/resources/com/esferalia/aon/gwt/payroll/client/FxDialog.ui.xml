@@ -2,6 +2,7 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client'
 	xmlns:code='urn:import:com.esferalia.aon.gwt.codemirror.client.ui'>
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 
 
 	<ui:Style type='com.esferalia.aon.gwt.payroll.client.FxDialog.Style'>
@@ -89,7 +90,7 @@
 					<g:Grid styleName="aon-width-a11 aon-height-all">
 						<g:row>
 							<g:customCell>
-								<g:Label>Categor&iacute;a</g:Label>
+								<g:Label>{msgs.category}</g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -104,7 +105,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell>
-								<g:Label>Funci&oacute;n</g:Label>
+								<g:Label>{msgs.function}</g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="aon-width-a11 aon-height-all">
@@ -184,7 +185,7 @@
 										</g:InlineLabel>
 									</g:cell>
 									<g:cell width='25%' horizontalAlignment='ALIGN_RIGHT'>
-										<g:InlineLabel>Resultado
+										<g:InlineLabel>{msgs.result}
 										</g:InlineLabel>
 									</g:cell>
 									<g:cell width='50%' horizontalAlignment='ALIGN_RIGHT'>
@@ -213,10 +214,10 @@
 							<g:InlineLabel>&nbsp;</g:InlineLabel>
 						</g:cell>
 						<g:cell horizontalAlignment='ALIGN_RIGHT'>
-							<g:Button ui:field="cancelButton" debugId="fxCancelButton" >Cancelar</g:Button>
+							<g:Button ui:field="cancelButton" debugId="fxCancelButton" >{msgs.cancel}</g:Button>
 						</g:cell>
 						<g:cell horizontalAlignment='ALIGN_RIGHT'>
-							<g:Button ui:field="acceptButton" debugId="fxAcceptButton">Aceptar</g:Button>
+							<g:Button ui:field="acceptButton" debugId="fxAcceptButton">{msgs.accept}</g:Button>
 						</g:cell>
 					</g:HorizontalPanel>
 				</g:customCell>

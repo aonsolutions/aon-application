@@ -6,6 +6,7 @@
 	xmlns:w='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources'/>
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.AgreementLevelTab.MyStyle">
@@ -136,7 +137,7 @@
 			<g:Grid ui:field="levelGrid" styleName="{style.borderCollapse}" />
 		</g:ScrollPanel>
 		<g:HTMLPanel ui:field="agreementLevelMessage" styleName="{style.flexCenter}">
-			<g:Label text="DEBE CREAR UN NIVEL PARA VISUALIZAR LA TABLA (+)" styleName="{style.message}" />
+			<g:Label text="{msgs.mustCreateLevelMsg}" styleName="{style.message}" />
 		</g:HTMLPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

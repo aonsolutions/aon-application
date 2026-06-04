@@ -1,14 +1,16 @@
-<ui:UiBinder 
+<ui:UiBinder
     xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
 	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
     <ui:with field='res'
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
-    
-    
+
+
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeePeculiaritiesDialog.MyStyle">
 
 		@external .gwt-ToggleButton-down;
@@ -19,26 +21,26 @@
 		.form {
 			padding: 10px;
 		}
-		
+
 		.marginTab{
 			margin-right: 5px;
 		}
-		
+
 		.tabSelected{
 			border: 1px solid #e2e2e2;
 			border-bottom: none;
 		}
-		
+
 		.tabIconSelected{
 			background-color: white !important;
 		}
-		
+
 		.marginBottom{
 			margin-bottom: 15px;
 			margin-left: 10px;
 			width: 100%;
 		}
-		
+
 		.gwt-ToggleButton-down{
 			border: none !important;
 			color: black !important;
@@ -73,9 +75,9 @@
 			border-top: 1px solid #ababab !important;
 			border-left: 1px solid #ababab !important;
 			border-right: 1px solid #ababab !important;
-	
+
 		}
-		
+
 		.deleteButtonUp{
 			border: none !important;
     		width: 18px !important;
@@ -93,22 +95,22 @@
     		background: white !important;
 			padding-top: 2px !important;
 		}
-		
+
 		.peculiarities{
 			font-size: 12px;
 			margin-top: 2px;
 		}
-		
+
 		.dateBox{
 			font-size: 12px;
 			text-align: center !important;
 			width: 86% !important;
 		}
-		
+
 		.tabsPanel{
 			margin-left: 10px;
 		}
-		
+
 		.tabSelectedStyle{
 			background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQMAAAAZCAYAAAA160uCAAAAkklEQVR42u3USXKCABQFwH//A8YxxBEJFJQRI+5eFrlGL/oKXavVRwBqvVkHQAbAfwbbzTYAtdvtAlD7/WcAqmmaANTh8BWAOh2PAajT+RyAulwvAai2bQNQt1sXgPruugBU3/cBqGEYAlDjOAagpmkKQN3v9wDUz+MRgJrnOQD1+3wGoF6vVwBqWZYA1PJ+B+APWHe3SG7bckEAAAAASUVORK5CYII=") -0px -0px no-repeat;
 			width: auto;
@@ -117,7 +119,7 @@
 			border-radius: 4%;
 			cursor: pointer;
 		}
-		
+
 		.tabStyle{
 			border: 1px solid #c5c5c5;
 			border-radius: 4%;
@@ -126,31 +128,31 @@
 			padding-bottom: 0px;
 			cursor: pointer;
 		}
-		
+
 		.bold{
 			font-weight: bold;
 		}
-		
+
 		.centerText{
 			text-align: center;
 		}
-		
+
 		.tabPanel{
 			height: 500px;
 			width: 800px;
 		}
-		
+
 		.textBoxWidth{
 			width: 50px;
 			padding: 2px;
 			font-size: 1em;
 			border: 1px solid #ccc;
 		}
-		
+
 		.paddingStyle{
 			padding: 3px;
 		}
-		
+
 		.buttons {
 			padding-top: 20px;
 			text-align: right;
@@ -159,30 +161,30 @@
 		.hidden{
 			display: none;
 		}
-		
+
 		.paddingTables{
 			padding: 10px;
 		}
-		
+
 		.w-600{
 			width: 600px;
 		}
-		
+
 		.trlPanel{
 			margin-bottom: 15px;
 			margin-left: 10px;
 			width: 100%;
 			display: flex;
 			align-items: center;
-			column-gap: 10px;	
+			column-gap: 10px;
 		}
-		
+
 		.buttonsPanel{
 			display: flex;
 			justify-content: flex-end;
 			margin-top: 10px;
 		}
-		
+
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form}">
@@ -192,24 +194,24 @@
 	            <tr>
 	            	<td>
 	            		<g:HorizontalPanel styleName="{style.marginBottom}">
-		                	<g:Label styleName="{style.bold} {style.paddingStyle}">Tipo peculiaridad:</g:Label>
+		                	<g:Label styleName="{style.bold} {style.paddingStyle}">{msgs.peculiarityType}</g:Label>
 		                	<g:ListBox ui:field="peculiarities" styleName="{style.peculiarities}"></g:ListBox>
-		                </g:HorizontalPanel>  
-	                    
+		                </g:HorizontalPanel>
+
 	                </td>
 	                <td>
 		                <g:HorizontalPanel styleName="{style.marginBottom}">
-		                	<g:Label styleName="{style.bold} {style.paddingStyle}">Fecha inicio peculiaridad:</g:Label>
+		                	<g:Label styleName="{style.bold} {style.paddingStyle}">{msgs.peculiarityStartDate}</g:Label>
 		                	<a:DateBoxEx ui:field="startDatePeculiarity" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBox}'></a:DateBoxEx>
-		                </g:HorizontalPanel>  
+		                </g:HorizontalPanel>
 	                </td>
 	            </tr>
 	            <tr>
 	            	<td colspan="2">
 	            		<g:HTMLPanel styleName="{style.trlPanel}">
-	            			<g:Label styleName="{style.bold} {style.paddingStyle}">Tipo relación laboral (TRL):</g:Label>
+	            			<g:Label styleName="{style.bold} {style.paddingStyle}">{msgs.trl}</g:Label>
 	            			<g:SuggestBox ui:field="trl" styleName="{style.peculiarities} {style.w-600}"></g:SuggestBox>
-	                	</g:HTMLPanel>  
+	                	</g:HTMLPanel>
 	                </td>
 	            </tr>
 	            <tr>
@@ -225,20 +227,20 @@
 					    			<tbody>
 					    				<tr style="background-color: #dbdbdb;">
 					    					<td style="width: 250px;">
-					    						<g:Label styleName="{style.centerText} {style.bold}">TRABAJADOR</g:Label>
+					    						<g:Label styleName="{style.centerText} {style.bold}">{msgs.workerHeader}</g:Label>
 					    					</td>
 					    					<td>
-					    						<g:Label styleName="{style.centerText} {style.bold}">FECHA</g:Label>
+					    						<g:Label styleName="{style.centerText} {style.bold}">{msgs.dateHeader}</g:Label>
 					    					</td>
 					    					<td>
-					    						<g:Label styleName="{style.centerText} {style.bold}">VALOR</g:Label>
+					    						<g:Label styleName="{style.centerText} {style.bold}">{msgs.valueHeader}</g:Label>
 					    					</td>
 					    				</tr>
 					    				<tr>
 					    					<td>
 					    						<g:HorizontalPanel>
 					    							<g:CheckBox ui:field="cgcCheck"></g:CheckBox>
-					    							<g:Label styleName="{style.paddingStyle}">Contigencias comunes</g:Label>
+					    							<g:Label styleName="{style.paddingStyle}">{msgs.cgc}</g:Label>
 					    						</g:HorizontalPanel>
 					    					</td>
 					    					<td>
@@ -255,7 +257,7 @@
 					    					<td>
 					    						<g:HorizontalPanel>
 					    							<g:CheckBox ui:field="desmplCheck"></g:CheckBox>
-					    							<g:Label styleName="{style.paddingStyle}">Desempleo</g:Label>
+					    							<g:Label styleName="{style.paddingStyle}">{msgs.unemployment}</g:Label>
 					    						</g:HorizontalPanel>
 					    					</td>
 					    					<td>
@@ -272,7 +274,7 @@
 					    					<td>
 					    						<g:HorizontalPanel>
 					    							<g:CheckBox ui:field="fpCheck"></g:CheckBox>
-					    							<g:Label styleName="{style.paddingStyle}">Formación profesional</g:Label>
+					    							<g:Label styleName="{style.paddingStyle}">{msgs.training}</g:Label>
 					    						</g:HorizontalPanel>
 					    					</td>
 					    					<td>
@@ -293,20 +295,20 @@
 					    			<tbody>
 					    				<tr style="background-color: #dbdbdb;">
 					    					<td style="width: 250px;">
-					    						<g:Label styleName="{style.centerText} {style.bold}">EMPRESA</g:Label>
+					    						<g:Label styleName="{style.centerText} {style.bold}">{msgs.companyHeader}</g:Label>
 					    					</td>
 					    					<td>
-					    						<g:Label styleName="{style.centerText} {style.bold}">FECHA</g:Label>
+					    						<g:Label styleName="{style.centerText} {style.bold}">{msgs.dateHeader}</g:Label>
 					    					</td>
 					    					<td>
-					    						<g:Label styleName="{style.centerText} {style.bold}">VALOR</g:Label>
+					    						<g:Label styleName="{style.centerText} {style.bold}">{msgs.valueHeader}</g:Label>
 					    					</td>
 					    				</tr>
 					    				<tr>
 					    					<td>
 					    						<g:HorizontalPanel>
 					    							<g:CheckBox ui:field="cgcECheck"></g:CheckBox>
-					    							<g:Label styleName="{style.paddingStyle}">Contigencias comunes</g:Label>
+					    							<g:Label styleName="{style.paddingStyle}">{msgs.cgc}</g:Label>
 					    						</g:HorizontalPanel>
 					    					</td>
 					    					<td>
@@ -357,7 +359,7 @@
 					    					<td>
 					    						<g:HorizontalPanel>
 					    							<g:CheckBox ui:field="fogasaCheck"></g:CheckBox>
-					    							<g:Label styleName="{style.paddingStyle}">FOGASA</g:Label>
+					    							<g:Label styleName="{style.paddingStyle}">{msgs.fogasa}</g:Label>
 					    						</g:HorizontalPanel>
 					    					</td>
 					    					<td>
@@ -374,7 +376,7 @@
 					    					<td>
 					    						<g:HorizontalPanel>
 					    							<g:CheckBox ui:field="fpECheck"></g:CheckBox>
-					    							<g:Label styleName="{style.paddingStyle}">Formación profesional</g:Label>
+					    							<g:Label styleName="{style.paddingStyle}">{msgs.training}</g:Label>
 					    						</g:HorizontalPanel>
 					    					</td>
 					    					<td>
@@ -391,7 +393,7 @@
 					    					<td>
 					    						<g:HorizontalPanel>
 					    							<g:CheckBox ui:field="desmplECheck"></g:CheckBox>
-					    							<g:Label styleName="{style.paddingStyle}">Desempleo</g:Label>
+					    							<g:Label styleName="{style.paddingStyle}">{msgs.unemployment}</g:Label>
 					    						</g:HorizontalPanel>
 					    					</td>
 					    					<td>
@@ -412,7 +414,7 @@
 	            </tr>
 	        </tbody>
 	    </table>
-	    
+
 	    <g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
 
 	</g:HTMLPanel>

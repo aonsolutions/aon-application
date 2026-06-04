@@ -1,6 +1,8 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'>
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
 	<ui:style>
 		.editor {
 		}
@@ -11,7 +13,7 @@
 			margin-right: auto;
 			margin-bottom: 15px;
 		}
-		
+
 	</ui:style>
 	<g:DockLayoutPanel unit="PX" >
 		<g:north size="72"  >
@@ -21,7 +23,7 @@
 				<g:MenuBar >
 					<g:MenuItem text="Archivo">
 						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="downloadMenuItem"  text="Descargar" />
+							<g:MenuItem ui:field="downloadMenuItem"  text="{msgs.download}" />
 							<!--  g:MenuItem text="Descargar como..." >
 								<g:MenuBar vertical="true" >
 									<g:MenuItem text="PDF" />
@@ -29,34 +31,34 @@
 							</g:MenuItem-->
 							<!--  g:MenuItem text="Enviar por correo electrónico al trabajador" /-->
 							<!--   g:MenuItem text="Enviar por correo electrónico como archivo adjunto..." /-->
-							<g:MenuItem styleName="gwt-MenuItemSeparator"><div class="menuSeparatorInner"></div></g:MenuItem> 
-							<g:MenuItem ui:field="printMenuItem" text="Imprimir..." />
+							<g:MenuItem styleName="gwt-MenuItemSeparator"><div class="menuSeparatorInner"></div></g:MenuItem>
+							<g:MenuItem ui:field="printMenuItem" text="{msgs.printDots}" />
 						</g:MenuBar>
 					</g:MenuItem>
-					<g:MenuItem text="Ver">
+					<g:MenuItem text="{msgs.view}">
 						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="reduceMenuItem" text="Reducir" />
-							<g:MenuItem ui:field="enlargeMenuItem" text="Ampliar" />
+							<g:MenuItem ui:field="reduceMenuItem" text="{msgs.reduce}" />
+							<g:MenuItem ui:field="enlargeMenuItem" text="{msgs.enlarge}" />
 						</g:MenuBar>
 					</g:MenuItem>
 				</g:MenuBar>
-				
+
 				<g:FlowPanel styleName="aon-finding-title-toolbar" >
 					<g:HorizontalPanel >
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal" >
-								<g:Label styleName="aon-outputText">Nóminas</g:Label>
+								<g:Label styleName="aon-outputText">{msgs.payrolls}</g:Label>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-subtitle">
 							<g:HTMLPanel styleName="aon-finding-aubtitle-internal" >
-								<g:Label styleName="aon-outputText" text=" "/> 
+								<g:Label styleName="aon-outputText" text=" "/>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
-								<g:Button ui:field='excelButton' styleName='aon-finding-toolbar-item aon-icon-excel' text="Excel" /> 
-								<g:Button ui:field='printButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" /> 
+								<g:Button ui:field='excelButton' styleName='aon-finding-toolbar-item aon-icon-excel' text="{msgs.excel}" />
+								<g:Button ui:field='printButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="{msgs.print}" />
 								<g:HTMLPanel styleName="aon-spin-control" >
 									<g:HTMLPanel styleName="aon-spin-control-element" >
 										<g:Button ui:field='firstButton'  stylePrimaryName='aon-dataScroller-button aon-dataScroller-button-first'  />
@@ -75,7 +77,7 @@
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
-				</g:FlowPanel>				
+				</g:FlowPanel>
 
 			</g:FlowPanel>
 

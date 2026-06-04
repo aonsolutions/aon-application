@@ -1,7 +1,9 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client"
 >
+
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 
 	<ui:style>
 		.editor {
@@ -14,7 +16,7 @@
 			margin-left: auto;
 			margin-right: auto;
 			margin-bottom: 15px;
-		}			
+		}
 	</ui:style>
 	<g:DockLayoutPanel unit="PX" >
 		<g:north size="72"  >
@@ -22,13 +24,13 @@
 			<g:FlowPanel >
 
 				<g:MenuBar >
-					<g:MenuItem text="Archivo">
+					<g:MenuItem text="{msgs.fileMenu}">
 						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="saveMenuItem"  text="Guardar" />
+							<g:MenuItem ui:field="saveMenuItem"  text="{msgs.save}" />
 						</g:MenuBar>
 					</g:MenuItem>
 				</g:MenuBar>
-				
+
 				<g:FlowPanel styleName="aon-finding-title-toolbar" >
 					<g:HorizontalPanel >
 						<g:HTMLPanel styleName="aon-finding-title">
@@ -38,31 +40,31 @@
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-subtitle">
 							<g:HTMLPanel styleName="aon-finding-aubtitle-internal" >
-								<g:Label styleName="aon-outputText" text=" "/> 
+								<g:Label styleName="aon-outputText" text=" "/>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HorizontalPanel ui:field="toolBarPanel" styleName="aon-finding-toolbar" >
-<!-- 							
+<!--
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:ListBox debugId='zoomListBox' ui:field="zoomListBox" />
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button debugId='downloadButton' ui:field='downloadButton'
-									styleName='aon-finding-toolbar-item aon-icon-mail-save' text="Descargar" />	
+									styleName='aon-finding-toolbar-item aon-icon-mail-save' text="Descargar" />
 							</g:HTMLPanel>
  -->
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" ui:field="customToolBarPanel">
 							</g:HTMLPanel>
-							
+
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
-				</g:FlowPanel>				
+				</g:FlowPanel>
 
 			</g:FlowPanel>
 
 		</g:north>
 		<g:center>
-			<p:FullViewer styleName="reset" ui:field='pdfViewer' /> 
+			<p:FullViewer styleName="reset" ui:field='pdfViewer' />
 		</g:center>
 	</g:DockLayoutPanel>
 

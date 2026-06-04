@@ -5,6 +5,8 @@
 	xmlns:c='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:d='urn:import:com.google.gwt.user.cellview.client' >
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
 	<ui:Style type="com.esferalia.aon.gwt.payroll.client.ServiAgreementDialog.MyStyle">
 		
 		.column{
@@ -88,12 +90,12 @@
 
 	<g:HTMLPanel styleName="{style.column}">
 		<g:HTMLPanel styleName="{style.flex}">
-			<g:Label styleName="{style.title}">Convenio</g:Label>
+			<g:Label styleName="{style.title}">{msgs.agreement}</g:Label>
 			<g:SuggestBox ui:field="serviAgreementsSB" styleName="{style.w400}" />
 		</g:HTMLPanel>
 		<g:HTMLPanel ui:field="datesPanel" styleName="{style.datesPanel}" visible="false" />
 		<g:HTMLPanel ui:field="messagePanel" styleName="{style.flex}">
-			<g:Label styleName="{style.message}">AonSolutions: Importación de convenios INACTIVA.</g:Label>
+			<g:Label styleName="{style.message}">{msgs.agreementImportInactive}</g:Label>
 		</g:HTMLPanel>
 		<g:HTMLPanel ui:field="mainButtonsPanel" styleName="{style.mainButtonsPanel}">
 			<g:HTMLPanel ui:field="loadingPanel" styleName="{style.flex}" />

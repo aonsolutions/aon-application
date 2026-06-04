@@ -1,7 +1,9 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
+
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 
 	<ui:Style>
 		.form {
@@ -67,7 +69,7 @@
 			</tr>
 			<tr>
 				<td class="{style.label}" >
-					<g:Label text="Selecciona : " ui:field="selectLabel" />
+					<g:Label text="{msgs.selectColon}" ui:field="selectLabel" />
 				</td>
 			</tr>
 			<tr>
@@ -82,8 +84,8 @@
 		</table>
 
 		<div class="{style.buttons} {style.form} ">
-			<g:Button ui:field="cancelButton">Cancelar</g:Button>
-			<g:Button ui:field="acceptButton" enabled="false">Aceptar</g:Button>
+			<g:Button ui:field="cancelButton">{msgs.cancel}</g:Button>
+			<g:Button ui:field="acceptButton" enabled="false">{msgs.accept}</g:Button>
 		</div>
 
 	</g:HTMLPanel>

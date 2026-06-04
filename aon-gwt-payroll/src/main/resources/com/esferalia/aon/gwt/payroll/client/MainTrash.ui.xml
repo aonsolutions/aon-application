@@ -2,27 +2,27 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client'
 	xmlns:common='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
-
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 
 	<ui:style>
 	.button-align {
 		float: right;
 	}
-	
+
 	.legend-icon {
 		margin-top: 3px;
 	}
-	
+
 	.stackHeader {
 		padding: .7em .5em .7em .6em;
 	}
-	
+
 	@sprite .agreementIcon {
 		gwt-image: 'agreementgroup';
 		float: left;
 		padding-left: 5px;
 	}
-	
+
 	@sprite .employeesIcon {
 		gwt-image: 'employeesgroup';
 		float: left;
@@ -41,7 +41,7 @@
 					<g:header size='3'>
 						<div class='{style.stackHeader}'>
 							<div class='{style.agreementIcon}' />
-							CONVENIOS
+							{msgs.convenios}
 						</div>
 					</g:header>
 					<g:DockLayoutPanel>
@@ -51,12 +51,12 @@
 								<g:HTMLPanel styleName="{style.legend-icon}">
 									<g:Button ui:field='deleteAgreementButton'
 										styleName='aon-editDataTable-button aon-icon-deletetrash {style.button-align}'
-										title="Eliminar definitivamente el convenio seleccionado"
+										title="{msgs.deleteAgreementMsg}"
 										enabled="false" />
 
 									<g:Button ui:field='restoreAgreementButton'
 										styleName='aon-editDataTable-button aon-icon-cancel {style.button-align}'
-										title="Restaurar convenio" enabled="false" />
+										title="{msgs.restoreAgreement}" enabled="false" />
 
 								</g:HTMLPanel>
 							</g:FlowPanel>
@@ -72,7 +72,7 @@
 					<g:header size='3'>
 						<div class='{style.stackHeader}'>
 							<div class='{style.employeesIcon}' />
-							CONTRATOS
+							{msgs.contratos}
 						</div>
 					</g:header>
 					<g:DockLayoutPanel>
@@ -81,15 +81,15 @@
 								<g:HTMLPanel styleName="{style.legend-icon}">
 									<g:Button ui:field='deleteEmployeeButton'
 										styleName='aon-editDataTable-button aon-icon-deletetrash {style.button-align}'
-										title="Eliminar definitivamente el empleado seleccionado"/>
+										title="{msgs.deleteEmployeeMsg}"/>
 
 									<g:Button ui:field='restoreEmployeeButton'
 										styleName='aon-editDataTable-button aon-icon-cancel {style.button-align}'
-										title="Restaurar empleado"/>
+										title="{msgs.restoreEmployee}"/>
 
 									<g:Button ui:field='clearEmployeeButton'
 										styleName='aon-editDataTable-button aon-icon-cleartrash {style.button-align}'
-										title="Vaciar papelera de empleados" />
+										title="{msgs.clearEmployeeTrash}" />
 								</g:HTMLPanel>
 							</g:FlowPanel>
 						</g:north>
@@ -102,7 +102,7 @@
 		</g:west>
 		<g:center>
 			<g:SimpleLayoutPanel styleName="aon-MainTrash-Detail" >
-				<common:DetailPanel ui:field="detailPanel" /> 
+				<common:DetailPanel ui:field="detailPanel" />
 			</g:SimpleLayoutPanel>
 		</g:center>
 
