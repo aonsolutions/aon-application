@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
@@ -571,6 +572,11 @@ public interface CommonServiceAsync {
 	void getSignatures(String domainName, Integer domain, String user, AsyncCallback<LinkedList<Signature>> asyncCallback) throws AonCoreException;
 	void deleteSignature(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void saveSignature(String domainName, Integer domainId, String user, Signature signature, AsyncCallback<Signature> asyncCallback) throws AonCoreException;
+
+	void getMailAccounts(String domainName, Integer domain, String user, AsyncCallback<LinkedList<MailAccount>> asyncCallback) throws AonCoreException;
+	void deleteMailAccount(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void saveMailAccount(String domainName, Integer domainId, String user, MailAccount mailAccount, AsyncCallback<MailAccount> asyncCallback) throws AonCoreException;
+	void checkMailAccounts(String domainName, Integer domain, String user, AsyncCallback<HashMap<Integer, Boolean>> asyncCallback) throws AonCoreException;
 	
 	// *********************** [AMORTIZATION TYPE]
 	void getAmortizationTypes(Occam occam, int domain, AsyncCallback<List<AmortizationType>> asyncCallback);

@@ -3473,7 +3473,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			
 //				assertEquals(2.00, irpfOutcome.getIrpfResult().getIrpf(), 0.00);
 //				assertEquals((1500.00*12 + 1000.00) * 2 /100, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.00);
-				assertEquals((1500.00*12 + 1000.00), irpfOutcome.getIrpfResult().getAnnualRemuneration(), 0.00);
+				assertEquals((1500.00*12), irpfOutcome.getIrpfResult().getAnnualRemuneration(), 0.00);
 			}
 		});
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);

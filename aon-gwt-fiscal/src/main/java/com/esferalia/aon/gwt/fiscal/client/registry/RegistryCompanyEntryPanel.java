@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonVisualIdentity;
 import com.esferalia.aon.gwt.common.client.widget.solutions.EnterpriseActivityTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.MailAccountTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.MediaTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.RDirStaffTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.RecordDataTable;
@@ -101,6 +102,7 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 	private RecordDataTable recordDataTable;
 	private RegistryPaymethodBanksTable registryPaymethodBanksTable;
 	private SignatureTable signatureTable;
+	private MailAccountTable mailAccountTable;
 	
 	private CompanyFull company;
 	private Registry registry;
@@ -357,6 +359,16 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		tablayoutPanel.add(aonVisualIdentity, this.registrySource.equals(RegistrySource.ENVIROMENT) ? "Logo" : "Logo / Firma");
 		
 		if(AonStringUtils.containsIgnoreCase(options.getDomainName(), "aonsolutions.org")) {
+			mailAccountTable = new MailAccountTable(options.getDomainName(), options.getDomain(), options.getUser()) {
+				
+				@Override
+				protected void onShowErrorMessage(String errorMessage) {
+					AonMessagePanel.showError(messagePanel, errorMessage);
+				}
+				
+			};
+			tablayoutPanel.add(mailAccountTable, "Email");
+			
 			signatureTable = new SignatureTable(options.getDomainName(), options.getDomain(), options.getUser()) {
 				
 				@Override

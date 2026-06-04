@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
@@ -573,6 +574,11 @@ public interface CommonService extends RemoteService {
 	LinkedList<Signature> getSignatures(String domainName, Integer domain, String user) throws AonCoreException;
 	void deleteSignature(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
 	Signature saveSignature(String domainName, Integer domainId, String user, Signature signature) throws AonCoreException;
+	
+	LinkedList<MailAccount> getMailAccounts(String domainName, Integer domain, String user) throws AonCoreException;
+	void deleteMailAccount(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
+	MailAccount saveMailAccount(String domainName, Integer domainId, String user, MailAccount mailAccount) throws AonCoreException;
+	HashMap<Integer, Boolean> checkMailAccounts(String domainName, Integer domain, String user) throws AonCoreException;
 	
 	// *********************** [AMORTIZATION TYPE]
 	List<AmortizationType> getAmortizationTypes(Occam occam, int domain) throws AonCoreException;
