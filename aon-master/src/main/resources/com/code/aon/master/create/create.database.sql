@@ -7918,7 +7918,7 @@ CREATE TABLE `salary_bonus` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int NOT NULL COMMENT 'Identificador del Dominio',
   `salary` int NOT NULL COMMENT 'Recibo del pago de salarios',
-  `bonus_concept` varchar(5) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo del concepto',
+  `bonus_concept` varchar(25) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo del concepto',
   `amount` decimal(15,3) DEFAULT '0.000' COMMENT 'Importe',
   `description` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
   PRIMARY KEY (`id`),

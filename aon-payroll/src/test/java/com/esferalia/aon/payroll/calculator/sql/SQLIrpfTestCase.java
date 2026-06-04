@@ -16,7 +16,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C100;
-import static com.esferalia.aon.payroll.enumeration.ContractCode.C300;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C401;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C501;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
@@ -24,10 +23,11 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.DAY_OF_MONTH;
-import static java.util.Calendar.DAY_OF_YEAR;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -72,9 +72,8 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
+import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.CCCType;
@@ -88,19 +87,16 @@ import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.salary.ISalary;
-import com.esferalia.aon.salary.ISalaryBuilderListener;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.CheckException;
+import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ITimedVariable;
-import com.esferalia.aon.salary.expression.CheckException;
-import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLIrpfTestCase extends AbstractSQLTestCase {
 
@@ -2095,6 +2091,104 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 
 
 	@Test
+	@Disabled("This test is disabled because it is not working. It needs to be fixed.")
+	public void testAllYearConstantVIII() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date contractStartDate = getToday();
+		
+		ContractRecord contract = newContract(aonContext, 
+				contractStartDate, 
+				null, 
+				Collections.singletonMap("INICIO_IRPF", String.format("FECHA(%1$tY,%1$tm,%1$td)", contractStartDate)),
+				new String [] {
+						"2500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+				}, 
+				new String [] {
+						"PORCENTAJE_IRPF / 100.00 * BASE_IRPF"
+				}, 
+				null);
+		
+		List<Double[]> irpfResults = new ArrayList<Double[]>(12);
+
+		Date startDate = contractStartDate;
+		for ( int i = 0; i < 12 ; i++ ) {
+			Date endDate = getLastDayOfMonth(startDate);
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			ctx.setListener( new Listener() {
+				@Override
+				public void onIrpf(IrpfOutcome irpfOutcome) {
+					super.onIrpf(irpfOutcome);
+					Double irpfResult [] = new Double[4]; 
+					irpfResult[0] = irpfOutcome.getIrpfResult().getIrpf();
+					irpfResult[1] = irpfOutcome.getIrpfResult().getBaseIrpf();
+					irpfResult[2] = irpfOutcome.getIrpfResult().getAnnualIrpf();
+					irpfResult[3] = irpfOutcome.getIrpfResult().getAnnualRemuneration();
+					irpfResults.add(irpfResult);
+					
+					System.out.printf("%tB\r\n", endDate );
+					
+					System.out.println("Irpf:" + irpfOutcome.getIrpfResult().getIrpf());
+					System.out.println("BaseIrpf:" + irpfOutcome.getIrpfResult().getBaseIrpf());
+					System.out.println("AnnualIrpf:" + irpfOutcome.getIrpfResult().getAnnualIrpf());
+					System.out.println("AnnualRemuneration:" + irpfOutcome.getIrpfResult().getAnnualRemuneration());
+					
+					int yearDays = AonDateUtils.get(AonDateUtils.getLastDayOfYear(contractStartDate), Calendar.DAY_OF_YEAR);
+					int dayOfYear = AonDateUtils.get(contractStartDate, Calendar.DAY_OF_YEAR);
+					
+					
+					
+					assertEquals(3000.00 * 12  / yearDays * ( yearDays - dayOfYear ), irpfOutcome.getIrpfResult().getAnnualRemuneration());
+
+//					System.out.println("DeducciblesExpenses:" + irpfOutcome.getIrpfResult().getDeducciblesExpenses());
+//					System.out.println("Irregular18_2Reduction:" + irpfOutcome.getIrpfResult().getIrregular18_2Reduction());
+//					System.out.println("Irregular18_3Reduction:" + irpfOutcome.getIrpfResult().getIrregular18_3Reduction());
+
+					if ( irpfOutcome.getIrpfRegularization() != null ) {
+						System.out.println("PaidIrpf:" + irpfOutcome.getIrpfRegularization().getPaidIrpf());
+						System.out.println("PaidRemuenration:" + irpfOutcome.getIrpfRegularization().getPaidRemuneration());
+					}
+				}
+			});
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection) {
+//				@Override
+//				public void setTotalPayment(Double totalPayment) {
+//					System.out.println("TOTAL PAYMENT: " + totalPayment);
+//					super.setTotalPayment(totalPayment);
+//				}
+			};
+			
+			;
+			new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = getFirstDayOfMonth(add(startDate, Calendar.MONTH, 1)); 
+			
+		}
+		
+		assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[1]).distinct().count());
+		assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[3]).distinct().count());
+		assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[0]).distinct().count() <= 2);
+		//TODO: assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[2]).distinct().count() <=2 );
+		
+		Double irpfs [] = 
+		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()))
+		.peek(salary -> System.out.println( salary.getTotalPayment() +", "+ salary.getIrpfBase() + ", " + salary.getTotalIrpf()))
+		.map(salary-> salary.getTotalIrpf())
+		.toArray( Double[]::new)
+		;
+		
+		for ( int i =1; i< 12; i++ ) {
+			assertIrpf((Double) irpfs[i], 3000.00, irpfResults.get(i)[0], 0.009 ); 
+					
+		}
+		
+	}
+
+	@Test
 	public void testAllYearNoPaymentsI() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -3321,6 +3415,71 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		}
 		
 		
+	}
+
+	@Test
+	public void testTemporaryV() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		
+		
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()), 
+				null, 
+				new HashMap<String, String>(){
+					{
+						put(TC2.getName(), String.format("\"%s\"", C501.getValue())); // 501 - DURACION DETERMINADA, TIEMPO PARCIAL, OBRA O SERVICIO DETERMINADO
+					}
+				}, 
+				new String [] {
+						"250.00",
+						"250.00",
+				}, 
+				new String [] {
+						"PORCENTAJE_IRPF / 100.00 * BASE_IRPF"
+				}, 
+				null);
+		
+		List<Double[]> irpfResults = new ArrayList<Double[]>(12);
+		// Be care that the first day of the month has value 1.
+		Date startDate = getFirstDayOfYear(getToday());
+		
+		PaymentConceptRecord plusConcept = addConcept(aonContext, "PLUS", PaymentType.CRA_0001);
+		addPayment(aonContext, contract, startDate, getLastDayOfMonth(startDate), plusConcept, "1000.00");
+		addPayment(aonContext, contract, add(startDate, Calendar.MONTH,1), null, plusConcept, "1000.00");
+		
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = super.getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ctx.setListener( new Listener() {
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				super.onIrpf(irpfOutcome);
+				Double irpfResult [] = new Double[4]; 
+				irpfResult[0] = irpfOutcome.getIrpfResult().getIrpf();
+				irpfResult[1] = irpfOutcome.getIrpfResult().getBaseIrpf();
+				irpfResult[2] = irpfOutcome.getIrpfResult().getAnnualIrpf();
+				irpfResult[3] = irpfOutcome.getIrpfResult().getAnnualRemuneration();
+				irpfResults.add(irpfResult);
+				
+				
+				System.out.println("Irpf:" + irpfOutcome.getIrpfResult().getIrpf());
+				System.out.println("BaseIrpf:" + irpfOutcome.getIrpfResult().getBaseIrpf());
+				System.out.println("AnnualIrpf:" + irpfOutcome.getIrpfResult().getAnnualIrpf());
+				System.out.println("AnnualRemuneration:" + irpfOutcome.getIrpfResult().getAnnualRemuneration());
+			
+//				assertEquals(2.00, irpfOutcome.getIrpfResult().getIrpf(), 0.00);
+//				assertEquals((1500.00*12 + 1000.00) * 2 /100, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.00);
+				assertEquals((1500.00*12 + 1000.00), irpfOutcome.getIrpfResult().getAnnualRemuneration(), 0.00);
+			}
+		});
+		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+		new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+		startDate = add(startDate, Calendar.MONTH, 1); 
 	}
 
 	@Test
