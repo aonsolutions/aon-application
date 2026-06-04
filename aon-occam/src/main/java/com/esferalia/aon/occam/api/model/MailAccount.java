@@ -33,6 +33,8 @@ public class MailAccount implements Serializable{
 	private MailAccountType type;
 	private Integer userId;
 	
+	private boolean isSESVerified;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -216,6 +218,23 @@ public class MailAccount implements Serializable{
 	}
 	
 	public boolean isIncludeBcc() {
-		return getReplytoMail() != null;
+		return null != getOutgoingSecurity() && getOutgoingSecurity() == (byte) 1;
+		//return getReplytoMail() != null;
 	}
+	
+	public MailAccount setIncludeBcc(boolean includeBcc) {
+		setOutgoingSecurity(includeBcc ? (byte)1 : (byte)0);
+		return this;
+	}
+	
+	public boolean isSESVerified() {
+		return isSESVerified;
+	}
+	
+	public MailAccount setSESVerified(boolean isSESVerified) {
+		this.isSESVerified = isSESVerified;
+		return this;
+	}
+	
+	
 }
