@@ -60,6 +60,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
@@ -175,6 +176,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import net.aonsolutions.aon.in.pdf.maker.PdfMaker;
+import solutions.aon.aws.ses.SES;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.SecondaryUser;
@@ -2222,6 +2224,35 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public Signature saveSignature(String domainName, Integer domain, String user, Signature signature) throws AonCoreException {
 		return AON.saveSignature(domainName, domain, user, signature);
+	}
+	
+	@Override
+	public LinkedList<MailAccount> getMailAccounts(String domainName, Integer domain, String user) throws AonCoreException {
+		return AON.getMailAccounts(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getUserIdProperty().isNull()));
+	}
+	
+	@Override
+	public void deleteMailAccount(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		AON.deleteMailAccount(domainName, domain, user, id);
+	}
+	
+	@Override
+	public MailAccount saveMailAccount(String domainName, Integer domain, String user, MailAccount mailAccount) throws AonCoreException {
+		return AON.saveMailAccount(domainName, domain, user, mailAccount);
+	}
+	
+	@Override
+	public HashMap<Integer, Boolean> checkMailAccounts(String domainName, Integer domain, String user) throws AonCoreException {
+		LinkedList<MailAccount> mailAccounts = AON.getMailAccounts(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getUserIdProperty().isNull()));
+		HashMap<Integer, Boolean> result = new HashMap<Integer, Boolean>();
+		mailAccounts.forEach(m -> {
+			String status = SES.verificationStatus(m.getEmail());
+			boolean isVerified = SES.isVerifiedForSendingStatus(m.getEmail());
+			System.out.println(m.getId() + " : " + m.getName() + " ( " + isVerified + ") - " + status);
+			
+			result.put(m.getId(), isVerified);
+		});
+		return result;
 	}
 	
 	

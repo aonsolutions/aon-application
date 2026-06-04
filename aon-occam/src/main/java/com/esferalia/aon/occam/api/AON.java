@@ -1352,6 +1352,40 @@ public class AON {
 			return getCommon().saveSignature(ctx, signature);
 		}
 	}
+	
+	// ********************************************
+	// *************************** MAIL ACCOUNTS **
+	// ********************************************
+
+	public static LinkedList<MailAccount> getMailAccounts(String domainName, Integer domain, String login, MailAccountFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, login)){
+			return getCommon().getMailAccounts(ctx, filter);
+		}
+	}
+
+	public static void deleteMailAccount(String domainName, Integer domain, String login, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, login)){
+			getCommon().deleteMailAccount(ctx, id);
+		}
+	}
+
+	public static MailAccount saveMailAccount(String domainName, Integer domain, String login, MailAccount mailAccount) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, login)){
+			return getCommon().saveMailAccount(ctx, mailAccount);
+		}
+	}
+	
+	public static MailAccount getMailAccount(String domainName, Integer domainId, String login, Integer signatureId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getMailAccount(ctx, signatureId);
+		}
+	}
+	
+	public static MailAccount getMailAccount(String domainName, Integer domainId, String login, MailAccountFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getMailAccount(ctx, filter);
+		}
+	}
 
 	// ********************************************
 	// ********************************* PRODUCT **
@@ -6389,12 +6423,6 @@ public class AON {
 
 	public static MailAccount getMailAccount(Occam occam, MailAccountFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
-			return getSecurity().getMailAccount(ctx, filter);
-		}
-	}
-	
-	public static MailAccount getMailAccount(String domainName, Integer domainId, String login, MailAccountFilter filter) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getSecurity().getMailAccount(ctx, filter);
 		}
 	}

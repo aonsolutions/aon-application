@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.GeoZoneFilter;
+import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayrollWorkplaceFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
@@ -45,6 +46,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Iae;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Series;
@@ -271,5 +273,11 @@ public interface ICommon {
 	public Signature saveSignature(CloseableAONContext ctx, Signature signature);
 	public Signature getSignature(CloseableAONContext ctx, SignatureFilter filter);
 	public Signature getSignature(CloseableAONContext ctx, Integer signatureId);
+	
+	public LinkedList<MailAccount> getMailAccounts(CloseableAONContext ctx, MailAccountFilter filter);
+	public void deleteMailAccount(CloseableAONContext ctx, Integer id);
+	public MailAccount saveMailAccount(CloseableAONContext ctx, MailAccount mailAccount);
+	public MailAccount getMailAccount(CloseableAONContext ctx, Integer signatureId);
+	public MailAccount getMailAccount(CloseableAONContext ctx, MailAccountFilter filter);
 
 }

@@ -37,6 +37,7 @@ import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.GeoZoneFilter;
+import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayrollWorkplaceFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
@@ -48,6 +49,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Iae;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Series;
@@ -87,6 +89,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.IAEDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.MailAccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.MailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayrollWorkplaceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
@@ -779,13 +782,42 @@ public class CommonImpl implements ICommon {
 	public Signature saveSignature(CloseableAONContext ctx, Signature signature) {
 		return ctx.getDslContext().transactionResult(configuration -> SignatureDAO.save(ctx, signature));
 	}
+	
 	@Override
 	public Signature getSignature(CloseableAONContext ctx, SignatureFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration -> SignatureDAO.get(ctx, filter));
 	}
+	
 	@Override
 	public Signature getSignature(CloseableAONContext ctx, Integer signatureId) {
 		return ctx.getDslContext().transactionResult(configuration -> SignatureDAO.get(ctx, signatureId));
+	}
+	
+	// -------------------- MAIL ACCOUNTS
+	
+	@Override
+	public LinkedList<MailAccount> getMailAccounts(CloseableAONContext ctx, MailAccountFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> MailAccountDAO.getList(ctx, filter));
+	}
+	
+	@Override
+	public void deleteMailAccount(CloseableAONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(configuration -> MailAccountDAO.delete(ctx, id));
+	}
+	
+	@Override
+	public MailAccount saveMailAccount(CloseableAONContext ctx, MailAccount mailAccount) {
+		return ctx.getDslContext().transactionResult(configuration -> MailAccountDAO.save(ctx, mailAccount));
+	}
+	
+	@Override
+	public MailAccount getMailAccount(CloseableAONContext ctx, Integer signatureId) {
+		return ctx.getDslContext().transactionResult(configuration -> MailAccountDAO.get(ctx, signatureId));
+	}
+	
+	@Override
+	public MailAccount getMailAccount(CloseableAONContext ctx, MailAccountFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> MailAccountDAO.get(ctx, filter));
 	}
 	
 }
