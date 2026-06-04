@@ -57,7 +57,10 @@ import com.esferalia.aon.payroll.calculator.jooq.JooqCommon;
 import com.esferalia.aon.payroll.calculator.sql.FilterCollection;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
+import com.esferalia.aon.payroll.calculator.sql.SQLCollection;
+import com.esferalia.aon.payroll.calculator.sql.SQLCollections;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLExtraSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -65,6 +68,7 @@ import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfDataAscendantsColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfDataDescendientsColumns;
@@ -80,9 +84,9 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
-import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.payment.IPayment;
@@ -121,6 +125,15 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			+ " LIMIT 1"
 			;
 	
+	private static final String NEXT_PAYMENT_SQL = "SELECT "
+			+ " *, " + ExpressionScope.CONTRACT.ordinal() + " AS " + SQLContractPayment.SCOPE_ALIAS 
+			+ " FROM " + SQLConstants.CONTRACT_PAYMENT
+			+ " LEFT JOIN " + SQLConstants.PAYMENT_CONCEPT 
+			+ " ON ( " +  SQLConstants.CONTRACT_PAYMENT + "." + ContractPaymentColumns.PAYMENT_CONCEPT + " = " + SQLConstants.PAYMENT_CONCEPT + "." + ContractPaymentColumns.ID + " ) "
+			+ " WHERE " + SQLConstants.CONTRACT_PAYMENT + "." + ContractPaymentColumns.CONTRACT+ " = ? "
+			+ " AND " + SQLConstants.CONTRACT_PAYMENT + "." + ContractPaymentColumns.START_DATE + " >= ?"
+			;
+
 	private static final String SALARY_SQL = "SELECT"
 			+ "  "+ SQLConstants.SALARY + ".*" 
 			+ ", (" + EXTRAS_SQL + ") AS EXTRAS " 
@@ -187,6 +200,12 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		Double monthlyBase = 0.00 ;
 		Double monthlyAmount = 0.00 ;
 		
+		SQLIrpfCalculatorContext sqlIrpfCalculatorContext;
+		
+		public IrpfSalaryBuilder(SQLIrpfCalculatorContext sqlIrpfCalculatorContext) {
+			this.sqlIrpfCalculatorContext = sqlIrpfCalculatorContext;
+		}
+		
 		@Override
 		public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
 				Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
@@ -232,17 +251,18 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		}
 		
 		
-		private static boolean isExtra(IPayment payment) {
+		private boolean isExtra(IPayment payment) {
 			return ( PaymentType.CRA_0004 == payment.getType() );  
 		}
 
-		private static boolean isMonthly(IPayment payment) {
+		private  boolean isMonthly(IPayment payment) {
 			if ( !(payment instanceof IContractPayment) )
 				return false;
 			IContractPayment contractPayment = (IContractPayment) payment;
 			
 			return contractPayment.getEndDate() != null
-			&& AonDateUtils.getMonth(contractPayment.getStartDate()) == AonDateUtils.getMonth(contractPayment.getEndDate());
+			&& AonDateUtils.getMonth(contractPayment.getStartDate()) == AonDateUtils.getMonth(contractPayment.getEndDate())
+			&& sqlIrpfCalculatorContext.nextContractPayment(contractPayment).isEmpty();
 		}
 
 		private static boolean isBonus(IPayment payment) {
@@ -805,6 +825,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	private PreparedStatement ascendantsStmt;
 	private PreparedStatement descendantsStmt;
 
+	private PreparedStatement nextContractPaymentStmt;
+
 	private Connection connection;
 	
 	private Collection<Date> issuedExtras;
@@ -851,6 +873,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 		descendantsStmt = conn.prepareStatement(DESCENDATS_SQL,
 				ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+		
+		nextContractPaymentStmt = conn.prepareStatement(NEXT_PAYMENT_SQL);
 	}
 	
 	// --------------------------------------- SQLIIrpfCalculatorContext methods
@@ -1476,6 +1500,28 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	}
 	
+	private Optional<IContractPayment> nextContractPayment(IContractPayment contractPayment) {
+		ResultSet rs = null;
+		try  {
+			Date nextStartDate = AonDateUtils.addMonths(AonDateUtils.getMonthFirstDay(contractPayment.getEndDate()), 1);
+			nextContractPaymentStmt.setInt(1, ctx.getId());	
+			nextContractPaymentStmt.setDate(2, new java.sql.Date(nextStartDate.getTime()));
+			rs = nextContractPaymentStmt.executeQuery();
+			Collection<IContractPayment> nextContractPayments = SQLCollections.contractPaymentsCollection(rs);
+			return nextContractPayments.stream().filter(p -> AonStringUtils.equals(p.getName(), contractPayment.getName())
+					|| AonStringUtils.equals(p.getDescription(), contractPayment.getDescription())).findFirst();
+		} catch (SQLException e) {
+			return Optional.empty();
+		} finally {
+			try {
+				if ( rs != null )
+					rs.close();
+			} catch (SQLException e) {
+				// do nothing
+			}
+		}
+	}
+	
 	private int getMonths() {
 	    int month = irpfStart.get(Calendar.MONTH);
 	    return Calendar.UNDECIMBER - month;
@@ -1499,7 +1545,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			}
 		};
 
-		calculator.setSalaryBuilder(new IrpfSalaryBuilder());
+		calculator.setSalaryBuilder(new IrpfSalaryBuilder(this));
 		
 		Collection<SQLExtraSalaryCalculatorContext> extraContexts = IrpfContractSalaryCalculatorContext
 				.getExtraContexts(ctx);
@@ -1532,7 +1578,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				return TaxCalculator.getTaxCalculator(ctx);
 			}
 		};
-		IrpfSalaryBuilder builder = new IrpfSalaryBuilder();
+		IrpfSalaryBuilder builder = new IrpfSalaryBuilder(this);
 		calculator.setSalaryBuilder(builder);
 
 

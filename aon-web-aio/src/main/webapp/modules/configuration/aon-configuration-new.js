@@ -130,7 +130,7 @@ export class AonConfigurationNew extends AonElement {
 				fn: () => {
 					localStorage.setItem("registrySource", 'ENVIROMENT');
 					this.getApplication().removeToolbarOptions();
-					GWT.iLoad(GWT.REGISTRY_ENTRY_MODULE, this.getApplication().CONTENT);
+					GWT.iLoad(GWT.REGISTRY_COMPANY_ENTRY_MODULE, this.getApplication().CONTENT);
 				},
 			});
 		}
@@ -287,7 +287,9 @@ export class AonConfigurationNew extends AonElement {
 			}
 
 		}
-		
+
+		let classicView = this.getElement("aonSidenavTitleVistaClasica");
+		classicView && classicView.click();
 		
 		let genernalInfo = this.getElement('aonConfigurationNewSidenavInformacionGeneral');
 		genernalInfo && genernalInfo.click();

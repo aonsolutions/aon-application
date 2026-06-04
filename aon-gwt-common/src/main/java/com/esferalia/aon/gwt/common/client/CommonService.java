@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SecondaryUserCertificate;
 import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
+import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
@@ -567,7 +568,11 @@ public interface CommonService extends RemoteService {
 	RegistryBank saveRregistryBank(String domainName, Integer domain, String user, RegistryBank registryBank) throws AonCoreException;
 	void deleteRregistryBank(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
 	List<Account> getAccountsForBank(String domainName, Integer domain, String user) throws AonCoreException;
-	List<Account> getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource, String pattern);
+	List<Account> getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource, String pattern) throws AonCoreException;
+	
+	LinkedList<Signature> getSignatures(String domainName, Integer domain, String user) throws AonCoreException;
+	void deleteSignature(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
+	Signature saveSignature(String domainName, Integer domainId, String user, Signature signature) throws AonCoreException;
 	
 	// *********************** [AMORTIZATION TYPE]
 	List<AmortizationType> getAmortizationTypes(Occam occam, int domain) throws AonCoreException;

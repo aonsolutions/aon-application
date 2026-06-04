@@ -396,8 +396,10 @@ public class AonCertificateDialog extends AonCustomDialog {
 				JSONValue json = JSONParser.parseStrict(jsonStr);
 				parseJSON(json.isObject());
 				
-				if(AonStringUtils.equalsIgnoreCase(form.getAction(), GWT.getModuleBaseURL() + "certificate/check/") )
+				JSONValue type = json.isObject().get("type");
+				if(AonStringUtils.equalsIgnoreCase(form.getAction(), GWT.getModuleBaseURL() + "certificate/check/") &&  (null == type || (null != type && !AonStringUtils.equalsIgnoreCase(type.toString().replaceAll("(^\")|(\"$)", ""), "error")) ) ) {
 					accept();
+				}
 				
 			} catch (NullPointerException | IllegalArgumentException err){
 				acceptBtnDialog.setVisible(true);
@@ -423,7 +425,7 @@ public class AonCertificateDialog extends AonCustomDialog {
             	extensionHidden.setValue(fileExt);
             	fileNameHidden.setValue(filename);
             	certificate.getTextBox().setValue(filename);
-            	checkCertificate();
+            	//checkCertificate();
             }
 		});
 		

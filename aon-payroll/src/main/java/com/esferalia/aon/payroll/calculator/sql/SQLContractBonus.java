@@ -2,6 +2,8 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import java.sql.ResultSet;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.code.aon.AonVersion;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
@@ -10,6 +12,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.BonusConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractBonusColumns;
 import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SQLContractBonus extends SQLCollection<IContractBonus> implements IContractBonus{
 	
@@ -36,7 +39,7 @@ public class SQLContractBonus extends SQLCollection<IContractBonus> implements I
 	@Override
 	public String getName() {
 		Integer concept = getInt(ContractBonusColumns.BONUS_CONCEPT);
-		return concept == null ? null : concept.toString();
+		return concept == null ? getPecAndQuota(getExpression()) : concept.toString();
 	}
 
 	@Override
@@ -83,6 +86,13 @@ public class SQLContractBonus extends SQLCollection<IContractBonus> implements I
 	public BonusType getType() {
 		Integer ordinal = getInt(BonusConceptColumns.TYPE);
 		return ordinal != null ? BonusType.values()[ordinal] : null ;
+	}
+	
+	public static String getPecAndQuota(String string) {
+		if ( AonStringUtils.isBlank(string) )
+			return null;
+		Matcher matcher = Pattern.compile("pec:\\d+,quota:\\d+").matcher(string);
+		return matcher.find() ? matcher.group() : null;
 	}
 	
 	

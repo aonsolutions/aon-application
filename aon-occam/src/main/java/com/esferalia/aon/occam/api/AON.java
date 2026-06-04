@@ -1317,39 +1317,39 @@ public class AON {
 	
 	// --------------------- SIGNATURE
 
-	public static Signature getSignature(String domainName, Integer domainId,
-			String login, Integer signatureId) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getSecurity().getSignature(ctx, signatureId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static Signature getSignature(String domainName, Integer domainId, String login, Integer signatureId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getSignature(ctx, signatureId);
 		}
 	}
 	
-	public static Signature getSignature(String domainName, Integer domainId,
-			String login, SignatureFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getSecurity().getSignature(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static Signature getSignature(String domainName, Integer domainId, String login, SignatureFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getSignature(ctx, filter);
 		}
 	}
 	
-	public static LinkedList<Signature> getSignatureList(String domainName, Integer domainId,
-			String login, SignatureFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getSecurity().getSignatureList(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static LinkedList<Signature> getSignatureList(String domainName, Integer domainId, String login, SignatureFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getSignatures(ctx, filter);
+		}
+	}
+	
+	public static LinkedList<Signature> getSignatures(String domainName, Integer domain, String login, SignatureFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, login)){
+			return getCommon().getSignatures(ctx, filter);
+		}
+	}
+
+	public static void deleteSignature(String domainName, Integer domain, String login, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, login)){
+			getCommon().deleteSignature(ctx, id);
+		}
+	}
+
+	public static Signature saveSignature(String domainName, Integer domain, String login, Signature signature) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, login)){
+			return getCommon().saveSignature(ctx, signature);
 		}
 	}
 
