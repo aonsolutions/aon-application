@@ -1416,4 +1416,61 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 	}
 	
 
+	@Test
+	public void testBaseHorariaInactividad() throws SQLException, AonException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		ContractRecord contract = newContract(
+				aonContext
+				,firstDayOfMonth
+				, new HashMap<String, String>(){
+					{
+						put("TC2", "\"100\"");
+						put("BASE_HORARIA", "true");
+						put("GRUPO_COTIZACION", "\"10\"");
+					}
+				}
+				, new String[] {
+					"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+				}
+				, new String[] {
+						
+				}
+				,null
+				);
+		Date lastDayOfMonth = getLastDayOfMonth(getToday());
+		
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
+		.getExpressionContext().eval("BASE_HORARIA", firstDayOfMonth, lastDayOfMonth).forEach( r -> assertTrue((Boolean)r.getValue()));
+		
+		Date offDay1= add(firstDayOfMonth, Calendar.DAY_OF_MONTH, 10);
+		addData(aonContext, contract, offDay1, offDay1, ContextVariable.OFF_DAYS, "1");
+		
+		Date offDay2= add(firstDayOfMonth, Calendar.DAY_OF_MONTH, 15);
+		addData(aonContext, contract, offDay2, offDay2, ContextVariable.OFF_DAYS, "1");
+
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
+		.getExpressionContext().eval("BASE_HORARIA", offDay1, offDay1).forEach( r -> assertFalse((Boolean)r.getValue()));
+
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
+		.getExpressionContext().eval("BASE_HORARIA", firstDayOfMonth, add(offDay1, Calendar.DAY_OF_MONTH, -1)).forEach( r -> assertTrue((Boolean)r.getValue()));
+		
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
+		.getExpressionContext().eval("BASE_HORARIA", add(offDay1, Calendar.DAY_OF_MONTH, 1), add(offDay2, Calendar.DAY_OF_MONTH, -1)).forEach( r -> assertTrue((Boolean)r.getValue()));
+
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
+		.getExpressionContext().eval("BASE_HORARIA", offDay2, offDay2).forEach( r -> assertFalse((Boolean)r.getValue()));
+		
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
+		.getExpressionContext().eval("BASE_HORARIA", add(offDay2, Calendar.DAY_OF_MONTH, 1), lastDayOfMonth).forEach( r -> assertTrue((Boolean)r.getValue()));
+		
+		List<ITimedResult<Object>> baseHorarias = getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
+		.getExpressionContext().eval("BASE_HORARIA", firstDayOfMonth, lastDayOfMonth);
+		
+		assertEquals(3, baseHorarias.stream().filter( r -> Boolean.TRUE.equals(r.getValue())).count());
+		assertEquals(2, baseHorarias.stream().filter( r -> Boolean.FALSE.equals(r.getValue())).count());
+	}
 }

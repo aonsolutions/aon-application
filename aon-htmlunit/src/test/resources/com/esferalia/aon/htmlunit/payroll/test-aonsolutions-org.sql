@@ -2375,8 +2375,8 @@ CREATE TABLE `cnae` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `code` varchar(5) CHARACTER SET latin1 COLLATE latin1_spanish_ci NOT NULL COMMENT 'Codigo del CNAE',
   `title` varchar(255) CHARACTER SET latin1 COLLATE latin1_spanish_ci NOT NULL COMMENT 'Titulo del CNAE',
-  `cnae2009_code` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'CNAE-2009 Código',
-  `cnae2009_title` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'CNAE-2009 Título',
+  `cnae2009_code` varchar(5) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'CNAE-2009 Código',
+  `cnae2009_title` varchar(255) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'CNAE-2009 Título',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9901 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CNAE';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -4021,6 +4021,7 @@ CREATE TABLE `customer` (
   `withholding` tinyint(1) DEFAULT '0' COMMENT 'Indica si el Cliente aplica retencion de impuestos',
   `transaction` tinyint DEFAULT '0' COMMENT 'Tipo de transacciones del Cliente',
   `status` tinyint DEFAULT NULL COMMENT 'Estado del Cliente',
+  `fiscal_status` tinyint DEFAULT '0' COMMENT 'Estado Fiscal: 0=REGISTERED, 1=NOT_REGISTERED, 2=NOT_IDENTIFIED',
   `scope` int NOT NULL COMMENT 'Identificador del Ambito',
   `e_invoice` tinyint(1) DEFAULT '0' COMMENT 'Indica si el Cliente desea recibir Facturas electronicas',
   `invoicing_group` int DEFAULT NULL COMMENT 'Identificador de Grupo de Facturacion',
@@ -7839,7 +7840,7 @@ CREATE TABLE `invoice_tracking` (
   `status` tinyint DEFAULT '0' COMMENT 'Estado del Seguimiento de Factura',
   `type` tinyint DEFAULT '0' COMMENT 'Tipo de Factura (Compra o Venta)',
   `total` decimal(15,4) DEFAULT '0.0000' COMMENT 'Total Factura',
-  `json` mediumtext COLLATE latin1_spanish_ci,
+  `json` mediumtext CHARACTER SET latin1 COLLATE latin1_spanish_ci,
   `creation_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -15125,4 +15126,4 @@ USE `test-aonsolutions-org`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-25 21:24:59
+-- Dump completed on 2026-06-02 10:13:09
