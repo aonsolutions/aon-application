@@ -2246,9 +2246,9 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		LinkedList<MailAccount> mailAccounts = AON.getMailAccounts(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getUserIdProperty().isNull()));
 		HashMap<Integer, Boolean> result = new HashMap<Integer, Boolean>();
 		mailAccounts.forEach(m -> {
-			String status = SES.verificationStatus(m.getEmail());
+			//String status = SES.verificationStatus(m.getEmail());
 			boolean isVerified = SES.isVerifiedForSendingStatus(m.getEmail());
-			System.out.println(m.getId() + " : " + m.getName() + " ( " + isVerified + ") - " + status);
+			//System.out.println(m.getId() + " : " + m.getName() + " ( " + isVerified + ") - " + status);
 			
 			result.put(m.getId(), isVerified);
 		});

@@ -507,11 +507,13 @@ export class AonDesktop extends AonElement {
 		}
 		
 		// Check sidenav opened by LS.getHideSidenav
-		let aonHome = this.getElement('aonHome');
+		if(LS.isFutureTheme()){
+			let aonHome = this.getElement('aonHome');
 		
-		let hideSidenav = LS.getHideSidenav();
-		if(hideSidenav === 'on')
-			aonHome.collapseSidenavMenu();
+			let hideSidenav = LS.getHideSidenav();
+			if(hideSidenav === 'on')
+				aonHome.collapseSidenavMenu();	
+		}
 	}
 
 	uploadDocumentsDesktop(input, files) {

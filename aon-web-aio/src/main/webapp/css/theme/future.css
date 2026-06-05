@@ -2739,3 +2739,8 @@ i[id$="aonHeaderSearchDivButtonIcon"],
 	padding: 0px;
 	background-color: var(--aonBackgroundColor2);
 }
+
+.aonSidenavAddButton{
+	border-radius: 50%;
+	background-color: #0f172a;
+}
