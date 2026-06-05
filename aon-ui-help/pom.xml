@@ -37,7 +37,6 @@
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-servlet-api</artifactId>
-      <version>${tomcat-version}</version>
       <scope>provided</scope>
     </dependency>
    <dependency>
@@ -57,7 +56,7 @@
     <dependency>
       <groupId>org.apache.pdfbox</groupId>
       <artifactId>pdfbox</artifactId>
-      <version>3.0.5</version>
+      <version>3.0.7</version>
       <scope>compile</scope>
     </dependency>
     <!--
@@ -83,7 +82,7 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.13.3</version>
+      <version>6.1.0-RC1</version>
       <scope>test</scope>
     </dependency>
 	

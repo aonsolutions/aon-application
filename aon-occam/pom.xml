@@ -144,8 +144,7 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20250517</version>
-			<scope>compile</scope>
+						<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>es.translogia</groupId>
@@ -169,7 +168,6 @@
 		<dependency>
 			<groupId>org.jooq</groupId>
 			<artifactId>jooq</artifactId>
-			<version>3.20.8</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -183,7 +181,7 @@
 		<dependency>
 	    	<groupId>com.auth0</groupId>
 		    <artifactId>java-jwt</artifactId>
-		    <version>4.5.0</version>
+		    <version>4.5.2</version>
 		    <scope>compile</scope>
 		</dependency>
 
@@ -243,7 +241,7 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>5.4.1</version>
+			<version>5.5.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -261,15 +259,14 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.33</version>
-			<scope>test</scope>
+						<scope>test</scope>
 		</dependency>
 
 		<!-- En local tengo Mariadb (Euke) --> 
 		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>
-			<version>3.5.6</version>
+			<version>3.5.8</version>
 			<scope>test</scope>
 		</dependency>
 		

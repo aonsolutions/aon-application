@@ -56,7 +56,6 @@
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-servlet-api</artifactId>
-      <version>${tomcat-version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -68,7 +67,6 @@
     <dependency>
    		<groupId>org.json</groupId>
    		<artifactId>json</artifactId>
-   		<version>20250517</version>
-	</dependency>
+   			</dependency>
   </dependencies>
 </project>
