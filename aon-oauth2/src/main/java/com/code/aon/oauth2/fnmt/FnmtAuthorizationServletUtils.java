@@ -4,14 +4,14 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 
 public class FnmtAuthorizationServletUtils {
 
 	private static final String X_FORWARDED_PROTO  = "X-Forwarded-Proto";
 	
 	/** Global instance of the JSON factory. */
-	private static final JsonFactory JSON_FACTORY = new JacksonFactory();
+	private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
 
 	public static JsonFactory getJsonFactory() {
