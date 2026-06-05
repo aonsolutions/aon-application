@@ -3270,11 +3270,15 @@ background-image: url("../favicon.png");
 
 .helpversionCardText {
 	display: flex;
-	padding: .5rem 1rem;
+	padding: .5rem;
 	width: 100%;
-	gap: .5rem;
 	align-items: center;
-	margin-top: -16px;
+	justify-content: center;
+}
+
+#aonManifest{
+	color: #727c96;
+	font-size: 11px;
 }
 
 .configCardText {
@@ -3318,9 +3322,7 @@ background-image: url("../favicon.png");
 }
 
 .rightPanelLangCard {
-	width: 90%;
-	height: fit-content;
-	margin-left: 10px;
+	width: 100%;
 }
 
 .rightPanelEditButton {
@@ -3338,9 +3340,7 @@ background-image: url("../favicon.png");
 }
 
 .rightPanelAboutContactCard {
-	width: 90%;
-	height: fit-content;
-	margin-left: 10px;
+	width: 100%;
 }
 
 .rightPanelCardDiv {
@@ -3349,11 +3349,10 @@ background-image: url("../favicon.png");
 	background-color: var(--aonCardColor);
 }
 
-.rightPanelAboutScheduleCard {
-	width: 90%;
-	height: fit-content;
-	margin-left: 10px;
-	margin-bottom: 70px;
+.rightPanelAboutScheduleCard,
+#rightPanelLangCard,
+#aonConfigHelpLangCard {
+	width: 100%;
 }
 
 .configPanelSuiteDiv {
