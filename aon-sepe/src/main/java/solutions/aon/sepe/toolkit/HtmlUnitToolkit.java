@@ -76,7 +76,7 @@ public class HtmlUnitToolkit {
 			webClient.getOptions().setDownloadImages(false);
 			webClient.setJavaScriptTimeout(15000);
 			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-			webClient.getOptions().setSSLClientCertificate(certificateInputStream, certificatePassword,
+			webClient.getOptions().setSSLClientCertificateKeyStore(certificateInputStream, certificatePassword,
 					certificateType);
 
 			return webClient;
@@ -129,7 +129,7 @@ public class HtmlUnitToolkit {
 	        }
 	        tempCert.toFile().deleteOnExit();
 
-	        webClient.getOptions().setSSLClientCertificate(
+	        webClient.getOptions().setSSLClientCertificateKeyStore(
 	            tempCert.toUri().toURL(),
 	            certificatePassword,
 	            certificateType
@@ -147,7 +147,7 @@ public class HtmlUnitToolkit {
 	    Certificate[] chain = keyStore.getCertificateChain(alias);
 	    boolean needs = chain == null || chain.length <= 1;
 	    System.out.println("Chain length: " + (chain == null ? 0 : chain.length) + " -> " 
-	        + (needs ? "completar cadena vía AIA" : "cadena completa, no es necesario completar"));
+	        + (needs ? "completar cadena vï¿½a AIA" : "cadena completa, no es necesario completar"));
 	    return needs;
 	}
 	
@@ -180,7 +180,7 @@ public class HtmlUnitToolkit {
 	    String issuerCN = userCert.getIssuerX500Principal().getName();
 	    System.out.println("Issuer detectado: " + issuerCN);
 
-	    // Mapa de emisores conocidos con sus cadenas de intermedios (orden: intermedio -> raíz)
+	    // Mapa de emisores conocidos con sus cadenas de intermedios (orden: intermedio -> raï¿½z)
 	    if (issuerCN.contains("UANATACA CA1 2021")) {
 	        return downloadCertChain(
 	            "https://web.uanataca.com/common/project/pdf/autoridad-certificacion/07_subordinada-ca1-2021.cer",
@@ -188,10 +188,10 @@ public class HtmlUnitToolkit {
 	        );
 	    }
 
-	    // Añadir aquí otros emisores conocidos si aparecen en el futuro:
+	    // Aï¿½adir aquï¿½ otros emisores conocidos si aparecen en el futuro:
 	    // if (issuerCN.contains("OTRO EMISOR")) { return downloadCertChain(...); }
 
-	    System.out.println("Emisor no reconocido, no se añaden intermedios.");
+	    System.out.println("Emisor no reconocido, no se aï¿½aden intermedios.");
 	    return Collections.emptyList();
 	}
 
@@ -233,7 +233,7 @@ public class HtmlUnitToolkit {
 			webClient.getOptions().setDownloadImages(false);
 			webClient.setJavaScriptTimeout(15000);
 			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-			webClient.getOptions().setSSLClientCertificate(certificateInputStream, certificatePassword,
+			webClient.getOptions().setSSLClientCertificateKeyStore(certificateInputStream, certificatePassword,
 					certificateType);
 
 			return webClient;
@@ -249,7 +249,7 @@ public class HtmlUnitToolkit {
 			webClient.getOptions().setCssEnabled(false);
 			webClient.getOptions().setDownloadImages(false);
 			webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-			webClient.getOptions().setSSLClientCertificate(certificateInputStream, certificatePassword,
+			webClient.getOptions().setSSLClientCertificateKeyStore(certificateInputStream, certificatePassword,
 					certificateType);
 			webClient.setJavaScriptTimeout(10000);
 			webClient.setAjaxController(new NicelyResynchronizingAjaxController());

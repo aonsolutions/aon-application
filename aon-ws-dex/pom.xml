@@ -153,7 +153,6 @@
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
-      <version>99.0-does-not-exist</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -165,13 +164,11 @@
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
-      <version>20040616</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.8.0-beta2</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
