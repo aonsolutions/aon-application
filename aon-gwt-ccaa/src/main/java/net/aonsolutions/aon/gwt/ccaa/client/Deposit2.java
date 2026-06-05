@@ -442,6 +442,7 @@ public class Deposit2 extends DockLayoutPanel {
 	                	+ "?schemaId=" + String.valueOf(1)
 	                	+ "&domainId=" + Integer.toString(getAonData().getDomain().getId())
 	                	+ "&domainName=" + getAonData().getDomain().getName()
+	                	+ "&user=" + getAonData().getUser().getLogin()
 	                	+ "&cif=" + getCompany().getDocument()
 						+ "&razonSocial=" + getCompany().getName()
 						+ "&year=" + String.valueOf(year)

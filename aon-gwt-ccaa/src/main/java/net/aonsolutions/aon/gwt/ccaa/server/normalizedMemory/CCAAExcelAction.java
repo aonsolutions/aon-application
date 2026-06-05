@@ -843,9 +843,11 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		idacell("Actividad principal", 0, 1);
 		idacell(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA02009.getCode()), 2, 7);
 		
-		row = sheet.createRow(rowCount++);cellCount=0;
-		idacell("C\u00f3digo CNAE09", 0, 1);
-		idacell(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA02001.getCode()), 2, 7);
+		if (d2Deposit.getYear() <= 2024) {
+			row = sheet.createRow(rowCount++);cellCount=0;
+			idacell("C\u00f3digo CNAE09", 0, 1);
+			idacell(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA02001.getCode()), 2, 7);
+		}
 		
 		if (d2Deposit.getYear() >= 2024) {
 			row = sheet.createRow(rowCount++);cellCount=0;

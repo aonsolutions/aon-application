@@ -30,14 +30,17 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Municipalities;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.ID2DepositKey;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
+import com.esferalia.aon.occam.api.model.type.CNAE2025;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Cabecera;
@@ -276,8 +279,8 @@ public class Utils {
 		return b;
 	}
 	
-	public static byte[] CreateXml(Map<D2DepositHeaderKey, Double> ctx, Map<ID2DepositKey, String> ctxText, Map<D2DepositKey, Double> ctxMem, Map<D2DepositKey, String> ctxFreeText, Enterprise enterprise, String name, String type , String domain, Integer year, String cnae, RecordData recordData, boolean hasPreviousDeposit) {
-		Esquema  schema = createXml(enterprise, name, type, domain, year, cnae, recordData, hasPreviousDeposit);
+	public static byte[] CreateXml(Map<D2DepositHeaderKey, Double> ctx, Map<ID2DepositKey, String> ctxText, Map<D2DepositKey, Double> ctxMem, Map<D2DepositKey, String> ctxFreeText, Enterprise enterprise, String name, String type , String domain, Integer year, String cnae25, RecordData recordData, boolean hasPreviousDeposit, String cnae09) {
+		Esquema schema = createXml(enterprise, name, type, domain, year, cnae25, recordData, hasPreviousDeposit, cnae09);
 		
 		for (D2DepositHeaderKey key : ctx.keySet()) {
 			Clave clave = new Clave();
@@ -327,6 +330,14 @@ public class Utils {
 			schema.getClaves().getClave().add(clave);
 		}
 		
+		// Registro Mercantil: Si está vacio porque no se ha copiado del ejercicio anterior, entonces se copia de los datos registrales de la Empresa
+		if (schema.getClaves().getClave().stream().noneMatch(c -> c.getCodigo().equals( new BigInteger(D2DepositFooterKey.PR8081001.getCode())))
+				&& recordData != null && recordData.getCommercialRegistryCode() != null ) {
+			// Hay que grabar el valor sin el cero de delante, es decir como si fuera un numero entero
+			String value = String.valueOf(Integer.parseInt(recordData.getCommercialRegistryCode().getCode()));
+			schema.getClaves().getClave().add(getNewClave(D2DepositFooterKey.PR8081001, value));
+		}
+				
 		byte[] b = null;
 		try {
 			b = writeXml(schema);
@@ -353,6 +364,10 @@ public class Utils {
 		clave.setCodigo(BigInteger.valueOf(codigo));
 		clave.setValor(valor);
 		return clave;
+	}
+	
+	private static Clave getNewClave(ID2DepositKey key, String value) {
+		return getNewClave(Long.parseLong(key.getCode()), value);
 	}
 
 	public static Esquema changeType(Esquema schema, String type) {
@@ -421,7 +436,7 @@ public class Utils {
 		return schema;
 	}
 	
-	public static Esquema createXml(Enterprise enterprise, String name, String type , String domain, Integer year, String cnae, RecordData recordData, boolean hasPreviousDeposit) {
+	public static Esquema createXml(Enterprise enterprise, String name, String type , String domain, Integer year, String cnae25, RecordData recordData, boolean hasPreviousDeposit, String cnae09) {
 		Esquema schema = new Esquema();
 		Cabecera header = new Cabecera();
 		Claves keys = new Claves();
@@ -473,7 +488,6 @@ public class Utils {
 			keys.getClave().add(c1012);
 		}
 		
-		
 		Clave c1020 = new Clave();
 		c1020.setCodigo(BigInteger.valueOf(1020));
 		c1020.setValor(enterprise.getName());
@@ -484,10 +498,17 @@ public class Utils {
 		c1022.setValor(enterprise.getAddress()+ " " + enterprise.getAddress2()+ " " + enterprise.getAddress3());
 		keys.getClave().add(c1022);
 		
-		Clave c1023 = new Clave();
-		c1023.setCodigo(BigInteger.valueOf(1023));
-		c1023.setValor(enterprise.getCity() != null ? enterprise.getCity() : "");
-		keys.getClave().add(c1023);
+		// Municipio: Se coge el nombre del municipio a partir del código de municipio de la dirección de la empresa, si está vacio se coge la localidad
+		Municipalities municipalities = new Municipalities();
+		String townName = municipalities.getMunicipalityByZip(enterprise.getTown());
+		if (AonStringUtils.isBlank(townName)) {
+			townName = enterprise.getCity();
+		}		
+//		Clave c1023 = new Clave();
+//		c1023.setCodigo(BigInteger.valueOf(1023));
+//		c1023.setValor(enterprise.getCity() != null ? enterprise.getCity() : "");
+//		keys.getClave().add(c1023);
+		keys.getClave().add(getNewClave(D2DepositHeaderKey.IDA01023, AonStringUtils.trimToEmpty(townName)));
 		
 		Clave c1024 = new Clave();
 		c1024.setCodigo(BigInteger.valueOf(1024));
@@ -512,20 +533,45 @@ public class Utils {
 		keys.getClave().add(c1037);
 
 		// CNAE
-		CNAE2009 cnae2009 = CNAE2009.valueOfCode(cnae);
-		if (cnae2009 != null) {
-			Clave c2001 = new Clave();
-			c2001.setCodigo(BigInteger.valueOf(2001));
-			c2001.setValor(cnae2009.getCodeWithoutPoint());
-			keys.getClave().add(c2001);
-			
-			Clave c2009 = new Clave();
-			c2009.setCodigo(BigInteger.valueOf(2009));
-			c2009.setValor(cnae2009.getDescription());
-			keys.getClave().add(c2009);
+		CNAE2025 cnae2025 = CNAE2025.valueOfCode(cnae25);
+		if (year >= 2025) {
+			if (cnae2025 != null) {
+				Clave c2014 = new Clave();
+				c2014.setCodigo(BigInteger.valueOf(2014));
+				c2014.setValor(cnae2025.getCodeWithoutPoint());
+				keys.getClave().add(c2014);
+				
+				Clave c2009 = new Clave();
+				c2009.setCodigo(BigInteger.valueOf(2009));
+				c2009.setValor(cnae2025.getDescription());
+				keys.getClave().add(c2009);
+			}
+		} else {
+			CNAE2009 cnae2009 = CNAE2009.valueOfCode(cnae09);
+			if (cnae2009 != null) {
+				Clave c2001 = new Clave();
+				c2001.setCodigo(BigInteger.valueOf(2001));
+				c2001.setValor(cnae2009.getCodeWithoutPoint());
+				keys.getClave().add(c2001);
+			}
+			// Si el ejercicio es 2024 se graba tambien el CNAE2025
+			if (year == 2024) {
+				if (cnae2025 != null) {
+					Clave c2014 = new Clave();
+					c2014.setCodigo(BigInteger.valueOf(2014));
+					c2014.setValor(cnae2025.getCodeWithoutPoint());
+					keys.getClave().add(c2014);
+				}
+			}
+			// Descripción de la actividad: Si el ejercicio es 2024 se graba la del CNAE2025, si no la del CNAE2009
+			if (year == 2024 && cnae2025 != null) {
+				keys.getClave().add(getNewClave(D2DepositHeaderKey.IDA02009, cnae2025.getDescription()));
+			} else if (cnae2009 != null) {
+				keys.getClave().add(getNewClave(D2DepositHeaderKey.IDA02009, cnae2009.getDescription()));
+			}
 		}
 		
-		// Datos Registrales (Tomo, Folio, Nº Hoja)
+		// Datos Registrales (Tomo, Folio, Nº Hoja, IRUS)
 		if (recordData != null) {
 			Clave c8081002 = new Clave();
 			c8081002.setCodigo(BigInteger.valueOf(8081002));
@@ -541,6 +587,10 @@ public class Utils {
 			c8081004.setCodigo(BigInteger.valueOf(8081004));
 			c8081004.setValor(recordData.getSheet());
 			keys.getClave().add(c8081004);
+			
+			if (year >= 2024) {
+				keys.getClave().add(getNewClave(D2DepositHeaderKey.IDA01008, recordData.getIrus())); // IRUS
+			}
 		}
 		
 		// Fecha Inicio Actual
@@ -710,6 +760,7 @@ public class Utils {
 		return schema;
 	}
 	
+
 	private static final IAccMiningKeyAccept ACCEPTER = new IAccMiningKeyAccept() {
 		
 		@Override

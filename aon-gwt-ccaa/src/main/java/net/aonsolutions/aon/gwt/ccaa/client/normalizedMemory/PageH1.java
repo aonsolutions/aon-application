@@ -1,3 +1,4 @@
+// HOJA IDENTIFICATIVA DE LA SOCIEDAD
 package net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory;
 
 
@@ -8,7 +9,6 @@ import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2025Panel;
-import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.CNAE2025;
@@ -62,9 +62,10 @@ public class PageH1 extends PageAbs {
 	@UiField TextBox IDA01040; // groupMainEnterpriseDocument;
 	@UiField TextBox IDA01061; // groupLastEnterpriseName;
 	@UiField TextBox IDA01060; // groupLastEnterpriseDocument;
-	@UiField InlineLabel IDA02009; // enterpriseMainActivity; 
-	@UiField TextBox IDA02001; // Codigo CNAE 2009;
-	@UiField TextBox IDA02014; // Código CNAE 2025;
+	@UiField InlineLabel IDA02009; // enterpriseMainActivity;
+	@UiField Label CNAE2009Label;
+	@UiField TextBox IDA02001; // Codigo CNAE 2009 (SOLO HASTA 2024)
+	@UiField TextBox IDA02014; // Código CNAE 2025 (EJERCICIO 2024 JUNTO CON CNAE2009 Y A PARTIR DE 2025 EXCLUSIVAMENTE)
 	@UiField Label CNAE2025Label;
 	
 	@UiField DoubleBox IDA04211; // women percentage (solo ejercicio 2022)
@@ -200,15 +201,23 @@ public class PageH1 extends PageAbs {
 	}
 	
 	private void listBoxItemAdd(ListBox lb) {
-		for(Integer i = 0; i< D2DepositConstants.PROVINCES.length; i++){
-			Provinces p = D2DepositConstants.PROVINCES[i];
+//		for(Integer i = 0; i< D2DepositConstants.PROVINCES.length; i++){
+//			Provinces p = D2DepositConstants.PROVINCES[i];
+//			lb.addItem(p.getName());
+//		}
+		for (Provinces p : Provinces.values()) {
 			lb.addItem(p.getName());
 		}
 	}
 	
 	@UiHandler("showCnae")
 	void onSelectCnae(ClickEvent event) {
-		cnaePanel.onShow();
+		// A partir del ejercicio 2025, solo aparece el CNAE2025
+		if (getYear() >= 2025) {
+			cnaePanel2025.onShow();
+		} else {
+			cnaePanel.onShow();
+		}
 	}
 	
 	private void init() {
@@ -221,11 +230,11 @@ public class PageH1 extends PageAbs {
 				getMap().put("2001", selected.getCodeWithoutPoint());
 				getMap().put("2009", selected.getDescription());
 				IDA02001.setEnabled(false);
-				// A partir del ejercicio 2024: Cumplimentar casilla 2014 con el CNAE2025 correspondiente, 
+				// En el ejercicio 2024: Cumplimentar casilla 2014 con el CNAE2025 correspondiente, 
 				// si tiene mas de uno, se sacará una lista para seleccionarlo
-				if (getYear() >= 2024) {
+				if (getYear() == 2024) {
 					cnaePanel2025.onShowCnae2009ToCnae2025(selected.getCode());
-				} else {
+				} else if (getYear() < 2024) {
 					onEdit("2009", selected.getDescription());
 				}
 			}
@@ -239,9 +248,7 @@ public class PageH1 extends PageAbs {
 		cnaePanel2025.addSelectionHandler( event -> {
 			CNAE2025 selected = event.getSelectedItem();
 			IDA02014.setText(selected.getCodeWithoutPoint());
-			// Como hace el programa del Depósito Dígital (D2), la descripción que se pone en la 
-			// casilla 2009, será la que tenga la del CNAE2025
-			IDA02009.setText(selected.getDescription());
+			IDA02009.setText(selected.getDescription()); // La descripción siempre es la del CNAE2025, aunque el modelo del 2024 tiene las dos casillas (CNAE2009 y CNAE2025), así es como lo hace el programa D2.
 			getMap().put("2014",selected.getCodeWithoutPoint());
 			getMap().put("2009", selected.getDescription());
 			IDA02014.setEnabled(false);
@@ -290,10 +297,18 @@ public class PageH1 extends PageAbs {
 		keyExe("1041", IDA01041, "text", true);
 		keyExe("1040", IDA01040, "text", true);
 		keyExe("1061", IDA01061, "text", true);
-		keyExe("1060", IDA01060, "text", true);
+		keyExe("1060", IDA01060, "text", true);		
 		keyExe("2009", IDA02009, "label", true);
-		IDA02001.setEnabled(false);
-		keyExe("2001", IDA02001, "text", false);
+		
+		if(getYear() >= 2025) {
+			CNAE2009Label.setVisible(false);
+			IDA02001.setVisible(false);			
+		} else {
+			CNAE2009Label.setVisible(true);
+			IDA02001.setVisible(true);
+			IDA02001.setEnabled(false);
+			keyExe("2001", IDA02001, "text", false);
+		}
 
 		if (getYear() >= 2024) {
 			CNAE2025Label.setVisible(true);
@@ -529,10 +544,14 @@ public class PageH1 extends PageAbs {
 				
 				String value = getMap().get(key2);
 				String value2 ="";
-				for (Integer i = 0 ; i< D2DepositConstants.PROVINCES.length; i++){
-		
-					if(D2DepositConstants.PROVINCES[i].getId().equals(value)){
-						value2 = D2DepositConstants.PROVINCES[i].getName();
+//				for (Integer i = 0 ; i< D2DepositConstants.PROVINCES.length; i++){
+//					if(D2DepositConstants.PROVINCES[i].getId().equals(value)){
+//						value2 = D2DepositConstants.PROVINCES[i].getName();
+//					}
+//				}
+				for (Provinces p : Provinces.values()) {
+					if (p.getId().equals(value)) {
+						value2 = p.getName();
 					}
 				}
 				for (Integer i = 0; i< lb.getItemCount(); i++) {
@@ -549,9 +568,14 @@ public class PageH1 extends PageAbs {
 				@Override
 				public void onChange(ChangeEvent event) {
 					String value ="";
-					for(Integer i = 0; i< D2DepositConstants.PROVINCES.length;i++){
-						Provinces p = D2DepositConstants.PROVINCES[i];
-						if(lb.getSelectedItemText().equals(p.getName())){
+//					for(Integer i = 0; i< D2DepositConstants.PROVINCES.length;i++){
+//						Provinces p = D2DepositConstants.PROVINCES[i];
+//						if(lb.getSelectedItemText().equals(p.getName())){
+//							value = p.getId(); 
+//						}
+//					}
+					for (Provinces p : Provinces.values()) {
+						if (lb.getSelectedItemText().equals(p.getName())) {
 							value = p.getId(); 
 						}
 					}

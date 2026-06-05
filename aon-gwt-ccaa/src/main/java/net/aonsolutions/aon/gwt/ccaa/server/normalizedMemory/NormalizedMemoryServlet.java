@@ -6,7 +6,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -28,6 +27,7 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -40,8 +40,8 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositPreviousToCu
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.DepositType;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.ID2DepositKey;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
+import com.esferalia.aon.occam.api.model.registry.RecordDataType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
-import com.esferalia.aon.occam.api.model.type.CNAE2009ToCNAE2025;
 import com.esferalia.aon.occam.api.model.type.CNAE2025;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2Compute;
@@ -154,7 +154,7 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 	private Map<String, String> getSchema(AonData aonData, Attach attach, Integer year){
 		System.out.println("NormalizedMemoryServlet: getSchema (2) - year: " +  year);
 		Map<String, String> map = new HashMap<String, String>();
-		if(year>=2017) {
+		if (year >= 2017) {
 			map.put(D2DepositFooterKey.PR8080827.getCode(), "1");
 		}
 		try {
@@ -185,18 +185,19 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 					map.put(claves.get(i).getCodigo().toString(), claves.get(i).getValor());
 			}
 			
-			// CNAE2025 A PARTIR DE LAS CUENTAS ANUALES DE 2024, CUMPLIMENTARLO SI ESTA VACIO, SOLO SI EQUIVALENTE ES UNICO
+			// CNAE2025 EN LAS CUENTAS ANUALES DE 2024, CUMPLIMENTARLO SI ESTA VACIO, SOLO SI EQUIVALENTE ES UNICO
+			// AHORA YA NO SE HACE PUES SE TRAE EL CNAE2025 DE LA ACTIVIDAD PUES YA EXISTE ESE DATO
 			CNAE2025 cnae2025 = null;
-			if (year >= 2024 && AonStringUtils.isBlank(map.get(D2DepositHeaderKey.IDA02014.getCode())) && AonStringUtils.isNotBlank(map.get(D2DepositHeaderKey.IDA02001.getCode()))) {
-				String cnae2009 = map.get(D2DepositHeaderKey.IDA02001.getCode());
-				cnae2025 = getCnae2025fromCnae2009(cnae2009);
-				if (cnae2025 != null) {
-					// Codigo CNAE2025
-					map.put(D2DepositHeaderKey.IDA02014.getCode(), cnae2025.getCodeWithoutPoint());
-					// Descripción la del CNAE 2025 (como hace el D2)
-					map.put(D2DepositHeaderKey.IDA02009.getCode(), cnae2025.getDescription()); 
-				}
-			}
+//			if (year == 2024 && AonStringUtils.isBlank(map.get(D2DepositHeaderKey.IDA02014.getCode())) && AonStringUtils.isNotBlank(map.get(D2DepositHeaderKey.IDA02001.getCode()))) {
+//				String cnae2009 = map.get(D2DepositHeaderKey.IDA02001.getCode());
+//				cnae2025 = getCnae2025fromCnae2009(cnae2009);
+//				if (cnae2025 != null) {
+//					// Codigo CNAE2025
+//					map.put(D2DepositHeaderKey.IDA02014.getCode(), cnae2025.getCodeWithoutPoint());
+//					// Descripción la del CNAE 2025 (como hace el D2)
+//					map.put(D2DepositHeaderKey.IDA02009.getCode(), cnae2025.getDescription()); 
+//				}
+//			}
 			
 			// SI EL AÑO NO COINCIDE CON EL QUE CONTIENE EL ESQUEMA, GRABO EL ESQUEMA EN LA BD ?? POR QUE NO VA A COINCIDIR EL AÑO ?? TAL VEZ PROBLEMAS AL GUARDAR LOS DATOS O ALGO ASI ??
 			if(year != null && year != -1  && !schema.getCabecera().getEjercicio().equals(BigInteger.valueOf(year))) {
@@ -207,7 +208,6 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 			// GRABAR CLAVES 8080852 O 8080805 PAGINA PR MEMORIA PYME O ABREVIADA, SEGUN TIPO CUESTIONARIO Y CNAE2025 SI ES NECESARIO
 			if(schema.getCabecera().getTipoCuestionario().equalsIgnoreCase("pymes")) {
 				String a = map.get(D2DepositFooterKey.PR8080852.getCode());
-				//updateSchemaMemory(aonData, "1".equals(a), D2DepositFooterKey.PR8080852.getCode(), year);
 				updateSchemaMemoryNew(aonData, "1".equals(a), D2DepositFooterKey.PR8080852.getCode(), year, cnae2025);
 			} else {
 				String a = map.get(D2DepositFooterKey.PR8080805.getCode());
@@ -877,19 +877,28 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 		System.out.println("NormalizedMemoryServlet: createD2Deposit"); 
 		Enterprise enterprise = AON.getEnterprise(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), companyId);
 		
-		// CNAE de la actividad principal, solo si es de longitud 4
-		String cnae = null;
+		// A PARTIR DEL 2025 HAY QUE TRAER EL CNAE2025
+		// CNAE de la actividad principal
+		String cnae25 = null;
+		String cnae09 = null;
 		AonConfiguration configuration = AON.getConfiguration(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin());
 		if (configuration.getMainActivity() != null) {
-			String c = configuration.getMainActivity().getCnaeCode();
-			if (c != null && c.length() == 4) {
-				cnae = c.substring(0, 2) + "." + c.substring(2);
+			// CNAE2025
+			String c = configuration.getMainActivity().getCnae25Code();
+			if (c != null) {
+				cnae25 = c.substring(0, 2) + "." + c.substring(2);
+			}
+			// CNAE2009
+			c = configuration.getMainActivity().getCnaeCode() == null ? configuration.getMainActivity().getCnae2509Code() : configuration.getMainActivity().getCnaeCode();
+			if (c != null) {
+				cnae09 = c.substring(0, 2) + "." + c.substring(2);
 			}
 		}
 
-		// Datos registrales (Tomo, Folio, Nº Hoja). Si hay varios, se coge el último según la fecha de registro
-		RecordData recordData = AON.getRecordDataStream(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getRegistryProperty().eq(companyId))
-				.sorted(Comparator.comparing(RecordData::getRecordDate,Comparator.nullsFirst(Comparator.naturalOrder())).reversed())
+		// Datos registrales (Tomo, Folio, Nº Hoja, IRUS). Se coge el de tipo constitución.
+		Occam occam = new Occam().setDomainName(aonData.getDomain().getName()).setDomain(aonData.getDomain().getId()).setUser(aonData.getUser().getLogin());
+		RecordData recordData = AON.getRecordDataStream(occam, companyId)
+				.filter(r -> r.getType() != null && r.getType() == RecordDataType.INCORPORATION)
 				.findFirst().orElse(null);
 		
 		Map<D2DepositKey,String> mapFreeText = new HashMap<D2DepositKey, String>();
@@ -912,7 +921,7 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 				D2PrevioustoD2Current.fillIde(ctxText, mapPreviousIde);
 				Map<ID2DepositKey, String> mapPreviousItr = getMapPreviousItr(previousSchema); // Titular Real
 				ctxText.putAll(mapPreviousItr);
-				Map<ID2DepositKey, String> mapPreviousPre = getMapPreviousPre(previousSchema); // Presentante que hace la solicitud
+				Map<ID2DepositKey, String> mapPreviousPre = getMapPreviousPre(previousSchema); // Presentante que hace la solicitud y Registro Mercantil
 				ctxText.putAll(mapPreviousPre);
 			}
 		}
@@ -921,7 +930,7 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 		putPayrollData(aonData.getDomain(), aonData.getUser().getLogin(), year, hasPreviousDeposit, ctx, ctxMem);
 		
 		// CREAR EL DEPOSITO (XML) CON TODOS LOS DATOS
-		byte[] b = Utils.CreateXml(ctx, ctxText, ctxMem, mapFreeText, enterprise, name, type, aonData.getDomain().getName(), year, cnae, recordData, hasPreviousDeposit);
+		byte[] b = Utils.CreateXml(ctx, ctxText, ctxMem, mapFreeText, enterprise, name, type, aonData.getDomain().getName(), year, cnae25, recordData, hasPreviousDeposit, cnae09);
 		
 		Integer id = DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, aonData.getUser().getLogin());
 		Attach attach = AON.getAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getIdProperty().eq(id), AttachType.REGISTRY);
@@ -1284,27 +1293,27 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 
 	// Equivalencia del codigo CNAE2009 con el codigo CNAE2025, si es única
 	// cnae2009 puede venir con punto o sin punto
-	private static CNAE2025 getCnae2025fromCnae2009(String cnae2009) {
-		
-		if (AonStringUtils.isNotBlank(cnae2009)) {
-			if (AonStringUtils.containsNone(cnae2009, ".")) {
-				cnae2009 = AonStringUtils.left(cnae2009, 2) + "." + AonStringUtils.right(cnae2009, 2);
-			}
-			
-			CNAE2009ToCNAE2025 conv = CNAE2009ToCNAE2025.valueOfCode(cnae2009);
-			if (conv != null) {
-				String[] cnaes2025 = conv.getCode2025();
-				if (cnaes2025.length == 1) {
-					CNAE2025 cnae2025 = CNAE2025.valueOfCode(cnaes2025[0]);
-					if (cnae2025 != null) {
-						return cnae2025; 
-					}
-				}					
-			} 
-		}
-		return null;
-
-	}
+//	private static CNAE2025 getCnae2025fromCnae2009(String cnae2009) {
+//		
+//		if (AonStringUtils.isNotBlank(cnae2009)) {
+//			if (AonStringUtils.containsNone(cnae2009, ".")) {
+//				cnae2009 = AonStringUtils.left(cnae2009, 2) + "." + AonStringUtils.right(cnae2009, 2);
+//			}
+//			
+//			CNAE2009ToCNAE2025 conv = CNAE2009ToCNAE2025.valueOfCode(cnae2009);
+//			if (conv != null) {
+//				String[] cnaes2025 = conv.getCode2025();
+//				if (cnaes2025.length == 1) {
+//					CNAE2025 cnae2025 = CNAE2025.valueOfCode(cnaes2025[0]);
+//					if (cnae2025 != null) {
+//						return cnae2025; 
+//					}
+//				}					
+//			} 
+//		}
+//		return null;
+//
+//	}
 	
 	
 }
