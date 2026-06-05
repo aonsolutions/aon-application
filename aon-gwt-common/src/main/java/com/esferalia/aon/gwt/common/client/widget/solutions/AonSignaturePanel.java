@@ -85,7 +85,7 @@ public class AonSignaturePanel extends HTMLPanel {
 		HTMLPanel container = new HTMLPanel(EMPTY_STRING);
 		container.setStyleName(AON.CSS.aonFlexColumn2());
 		container.getElement().getStyle().setProperty("padding", "0 1rem");
-		container.getElement().getStyle().setProperty("min-width", "25rem");
+		container.getElement().getStyle().setProperty("min-width", "55rem");
 		
 		// First Row
 		HTMLPanel row = new HTMLPanel(EMPTY_STRING);
@@ -96,6 +96,9 @@ public class AonSignaturePanel extends HTMLPanel {
 		// Second Row
 		HTMLPanel row2 = new HTMLPanel(EMPTY_STRING);
 		row2.setStyleName(AON.CSS.aonItemFlex());
+		
+		signatureRT.setMinHeight("18rem");
+		
 		row2.add(signatureRT);
 		container.add(row2);
 		
