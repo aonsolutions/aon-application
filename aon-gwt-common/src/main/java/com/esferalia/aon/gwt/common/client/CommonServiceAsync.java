@@ -577,6 +577,7 @@ public interface CommonServiceAsync {
 	void deleteMailAccount(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void saveMailAccount(String domainName, Integer domainId, String user, MailAccount mailAccount, AsyncCallback<MailAccount> asyncCallback) throws AonCoreException;
 	void checkMailAccounts(String domainName, Integer domain, String user, AsyncCallback<HashMap<Integer, Boolean>> asyncCallback) throws AonCoreException;
+	void getVerifiedHostEmails(String domainName, Integer domainId, String user, AsyncCallback<HashMap<String, Boolean>> asyncCallback) throws AonCoreException;
 	
 	// *********************** [AMORTIZATION TYPE]
 	void getAmortizationTypes(Occam occam, int domain, AsyncCallback<List<AmortizationType>> asyncCallback);

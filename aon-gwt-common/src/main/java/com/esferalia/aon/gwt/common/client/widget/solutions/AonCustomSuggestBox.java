@@ -43,7 +43,6 @@ public class AonCustomSuggestBox extends HTMLPanel {
 	private void createInput() {
 		suggestBoxPanel.addStyleName(AON.CSS.aonItemFlex());
 		suggestBoxPanel.addStyleName(AON.CSS.aonFlexBetween());
-		suggestBoxPanel.getElement().getStyle().setProperty("align-items", "flex-start");
 		
 		if(null == customOracle) suggestBox = new SuggestBox();
 		else suggestBox = new SuggestBox(customOracle);
@@ -95,6 +94,11 @@ public class AonCustomSuggestBox extends HTMLPanel {
 	
 	public void addButton(AonTableButton button) {
 		suggestBoxPanel.add(button);
+	}
+	
+	public void removeButton() {
+		if(suggestBoxPanel.getWidgetCount() > 1)
+			suggestBoxPanel.remove(suggestBoxPanel.getWidgetCount() - 1);
 	}
 
 	public void setMaxLength(int maxLength) {

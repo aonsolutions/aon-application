@@ -2254,7 +2254,23 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		});
 		return result;
 	}
-	
+
+	@Override
+	public HashMap<String, Boolean> getVerifiedHostEmails(String domainName, Integer domainId, String user) throws AonCoreException {
+		HashMap<String, Boolean> result = new HashMap<String, Boolean>();
+		
+		Domain domain = AON.getDomain(domainName, domainId, user);
+		
+		boolean isVerifiedDomain = SES.isVerifiedForSendingStatus("aon.awsses@" + domain.getName());
+		result.put(domain.getName(), isVerifiedDomain);
+		
+		if(null != domain.getParent()) {
+			boolean isVerifiedParentDomain = SES.isVerifiedForSendingStatus("aon.awsses@" + domain.getParent().getName());
+			result.put(domain.getParent().getName(), isVerifiedParentDomain);
+		}
+		
+		return result;
+	}
 	
 	// *********************** [AMORTIZATION TYPE]
 	@Override
