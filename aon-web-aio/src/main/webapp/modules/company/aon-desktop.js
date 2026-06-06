@@ -505,6 +505,15 @@ export class AonDesktop extends AonElement {
 			this.createAppList(contentData, company);
 			content.appendChild(contentData);
 		}
+		
+		// Check sidenav opened by LS.getHideSidenav
+		if(LS.isFutureTheme()){
+			let aonHome = this.getElement('aonHome');
+		
+			let hideSidenav = LS.getHideSidenav();
+			if(hideSidenav === 'on')
+				aonHome.collapseSidenavMenu();	
+		}
 	}
 
 	uploadDocumentsDesktop(input, files) {

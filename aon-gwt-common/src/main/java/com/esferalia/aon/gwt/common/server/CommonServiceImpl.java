@@ -2246,15 +2246,31 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		LinkedList<MailAccount> mailAccounts = AON.getMailAccounts(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getUserIdProperty().isNull()));
 		HashMap<Integer, Boolean> result = new HashMap<Integer, Boolean>();
 		mailAccounts.forEach(m -> {
-			String status = SES.verificationStatus(m.getEmail());
+			//String status = SES.verificationStatus(m.getEmail());
 			boolean isVerified = SES.isVerifiedForSendingStatus(m.getEmail());
-			System.out.println(m.getId() + " : " + m.getName() + " ( " + isVerified + ") - " + status);
+			//System.out.println(m.getId() + " : " + m.getName() + " ( " + isVerified + ") - " + status);
 			
 			result.put(m.getId(), isVerified);
 		});
 		return result;
 	}
-	
+
+	@Override
+	public HashMap<String, Boolean> getVerifiedHostEmails(String domainName, Integer domainId, String user) throws AonCoreException {
+		HashMap<String, Boolean> result = new HashMap<String, Boolean>();
+		
+		Domain domain = AON.getDomain(domainName, domainId, user);
+		
+		boolean isVerifiedDomain = SES.isVerifiedForSendingStatus("aon.awsses@" + domain.getName());
+		result.put(domain.getName(), isVerifiedDomain);
+		
+		if(null != domain.getParent()) {
+			boolean isVerifiedParentDomain = SES.isVerifiedForSendingStatus("aon.awsses@" + domain.getParent().getName());
+			result.put(domain.getParent().getName(), isVerifiedParentDomain);
+		}
+		
+		return result;
+	}
 	
 	// *********************** [AMORTIZATION TYPE]
 	@Override
