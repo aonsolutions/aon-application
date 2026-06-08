@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -61,6 +62,8 @@ public class AonRegistryBankPanel extends HTMLPanel {
 	private AonCustomTextBox iban = new AonCustomTextBox("IBAN");
 	private AonCustomTextBox bic = new AonCustomTextBox("BIC");
 	private AonCustomTextBox suffix = new AonCustomTextBox("Sufijo");
+	private AonCustomToogleButton pgcToggle = new AonCustomToogleButton("Crear PGC"); 
+	private AonCustomListBox pgcCodesLB = new AonCustomListBox("Cuenta Contable");
 	private AonCustomListBox accountLB = new AonCustomListBox("Cuenta Contable");
 	
 	// Constructor
@@ -96,6 +99,10 @@ public class AonRegistryBankPanel extends HTMLPanel {
 		this.registrySource = registrySource;
 		
 		if(null != this.registryBank.getId() && null != this.registryBank.getAccount() && null != this.registryBank.getAccount().getId()) {
+			Optional<Account> ownAccount = this.accounts.stream().filter(acc -> acc.getId().equals(this.registryBank.getAccount().getId())).findAny();
+			if(ownAccount.isEmpty())
+				this.accounts.add(this.registryBank.getAccount());
+			
 			this.accounts.stream().map(acc -> {
 				if(acc.getId().equals(this.registryBank.getAccount().getId()) && !acc.isActive())
 					acc.setActive(true);
@@ -148,15 +155,6 @@ public class AonRegistryBankPanel extends HTMLPanel {
 		row.add(activo);
 		container.add(row);
 		
-		// Row 2
-		HTMLPanel row2 = new HTMLPanel(EMPTY_STRING);
-		row2.setStyleName(AON.CSS.aonItemFlex());
-		
-		bic.getTextBox().setMaxLength(11);
-		
-		row2.add(bic);
-		container.add(row2);
-		
 		// Row 4
 		HTMLPanel row4 = new HTMLPanel(EMPTY_STRING);
 		row4.setStyleName(AON.CSS.aonItemFlex());
@@ -168,11 +166,36 @@ public class AonRegistryBankPanel extends HTMLPanel {
 		suffix.getElement().getStyle().setProperty("max-width", "6rem");
 		suffix.getTextBox().setMaxLength(3);
 		
+		pgcToggle.getElement().getStyle().setProperty("max-width", "5rem");
+		
+		pgcCodesLB.clearItems();
+		pgcCodesLB.addItem("5201");
+		pgcCodesLB.addItem("5720");
+		
+		if(registryBank.getId() != null) {
+			pgcToggle.setValue(false);
+			pgcToggle.setVisible(false);
+			pgcCodesLB.setVisible(false);
+			accountLB.setVisible(true);
+		} else {
+			pgcToggle.setValue(true);
+			pgcToggle.setVisible(true);
+			pgcCodesLB.setVisible(true);
+			accountLB.setVisible(false);
+			
+			pgcToggle.addValueChangeHandler(e -> {
+				pgcCodesLB.setVisible(pgcToggle.getValue());
+				accountLB.setVisible(!pgcToggle.getValue());
+			});
+		}
+		
 		row4.add(bic);
 		
 		if(this.registrySource.equals(RegistrySource.COMPANY))
 			row4.add(suffix);
 		
+		row4.add(pgcToggle);
+		row4.add(pgcCodesLB);
 		row4.add(accountLB);
 		container.add(row4);
 		
@@ -242,26 +265,61 @@ public class AonRegistryBankPanel extends HTMLPanel {
 				.setSuffix(suffix.getValue())
 				;
     		
-    		registryBank.setAccount( AonStringUtils.isBlank(accountLB.getValue()) 
-    				? null 
-    				: accounts.stream().filter(acc -> acc.getId().equals(Integer.parseInt(accountLB.getValue()))).findFirst().orElse(null)
-    		);
+    		if(!pgcToggle.getValue())
+	    		registryBank.setAccount( AonStringUtils.isBlank(accountLB.getValue()) 
+	    				? null 
+	    				: accounts.stream().filter(acc -> acc.getId().equals(Integer.parseInt(accountLB.getValue()))).findFirst().orElse(null)
+	    		);
     		
-    		
-			commonService.saveRregistryBank(domainName, domainId, user, registryBank, new AsyncCallback<RegistryBank>() {
-				
-				@Override
-				public void onSuccess(RegistryBank result) {
-					callback.onAccept(result);
-				}
-				
-				@Override
-				public void onFailure(Throwable error) {
-					AonMessagePanel.showError(messagePanel, error.getMessage());
-					okButton.setEnabled(true);
-				}
-				
-			});
+    		if(pgcToggle.getValue()) {
+    			
+    			commonService.createAccountsForBank(domainName, domainId, user, alias.getValue(), pgcCodesLB.getValue(), new AsyncCallback<Account>() {
+					
+					@Override
+					public void onSuccess(Account newAccount) {
+						registryBank.setAccount(newAccount);
+
+		    			commonService.saveRregistryBank(domainName, domainId, user, registryBank, new AsyncCallback<RegistryBank>() {
+		    				
+		    				@Override
+		    				public void onSuccess(RegistryBank result) {
+		    					callback.onAccept(result);
+		    				}
+		    				
+		    				@Override
+		    				public void onFailure(Throwable error) {
+		    					AonMessagePanel.showError(messagePanel, error.getMessage());
+		    					okButton.setEnabled(true);
+		    				}
+		    				
+		    			});
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						AonMessagePanel.showError(messagePanel, "Error Cuenta Contable : " + caught.getMessage());
+    					okButton.setEnabled(true);
+					}
+				});
+    			
+    		} else {
+        		
+    			commonService.saveRregistryBank(domainName, domainId, user, registryBank, new AsyncCallback<RegistryBank>() {
+    				
+    				@Override
+    				public void onSuccess(RegistryBank result) {
+    					callback.onAccept(result);
+    				}
+    				
+    				@Override
+    				public void onFailure(Throwable error) {
+    					AonMessagePanel.showError(messagePanel, error.getMessage());
+    					okButton.setEnabled(true);
+    				}
+    				
+    			});
+    			
+    		}
     	});
     	buttonsPanel.add(okButton);
     	

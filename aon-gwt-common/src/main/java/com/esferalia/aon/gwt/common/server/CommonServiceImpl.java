@@ -2211,6 +2211,16 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
+	public List<Account> getAviablesAccountsForBank(String domainName, Integer domain, String user) throws AonCoreException {
+		return AON.getAviablesAccountsForBank(domainName, domain, user);
+	}
+	
+	@Override
+	public Account createAccountsForBank(String domainName, Integer domain, String user, String alias, String suffixCode) throws AonCoreException {
+		return AON.createAccountsForBank(domainName, domain, user, alias, suffixCode);
+	}
+	
+	@Override
 	public List<Account> getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource source, String pattern) throws AonCoreException {
 		return AON.getAccountsForRegistry(domainName, domain, user, source, pattern);
 	}

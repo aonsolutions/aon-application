@@ -592,7 +592,7 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 					public void onSuccess(LinkedList<RegistryBank> rBanksDB) {
 						rBanks = rBanksDB.stream().filter(b -> b.isActive()).collect(Collectors.toCollection(LinkedList::new));
 						
-						COMMON_SERVICE.getAccountsForBank(domainName, domain, user, new AsyncCallback<List<Account>>() {
+						COMMON_SERVICE.getAviablesAccountsForBank(domainName, domain, user, new AsyncCallback<List<Account>>() {
 
 							@Override
 							public void onFailure(Throwable caught) {
