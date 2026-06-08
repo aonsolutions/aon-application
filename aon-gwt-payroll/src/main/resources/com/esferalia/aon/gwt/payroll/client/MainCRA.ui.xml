@@ -150,7 +150,7 @@
 									<g:Label styleName="aon-panelGrid-search-info-internal" text="{msgs.filtrarListado}"/>
 								</g:HTMLPanel>
 								<g:DisclosurePanel ui:field="collapsePanel" styleName="{style.widthAll}">
-									<g:header><g:Label text="{msgs.opcionesBusqueda}"/></g:header>
+									<g:header>{msgs.opcionesBusqueda}</g:header>
 									<g:HTMLPanel>
 										<table ui:field="filterTable" class="aon-panelGrid">
 											<tr>

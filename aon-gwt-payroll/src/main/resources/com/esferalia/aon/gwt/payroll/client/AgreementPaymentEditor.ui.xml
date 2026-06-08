@@ -143,7 +143,7 @@
 			</g:HTMLPanel>
 			
 			<g:DisclosurePanel ui:field="advancePanel">
-			   <g:header><g:Label text="{msgs.advanced}"/></g:header>
+			   <g:header>{msgs.advanced}</g:header>
 			   <g:HTMLPanel styleName="{style.flexColumn}">
 					<g:HTMLPanel styleName="{style.element}">
 						<g:Label styleName="{style.title}" text="{msgs.salaryReceiptType}"/>
