@@ -127,7 +127,7 @@ export class AonConfig extends AonElement {
             });
         }
 
-        if (LS.isFutureTheme() && this.dur.domain.domainType === 'OFFICE') {
+        if (LS.isFutureTheme() && this.dur.domain.parentId) {
             let fixedButtonDiv = this.createDiv();
             fixedButtonDiv.className = CSS.AON_CONFIG_APPS;
             fixedButtonDiv.style.width = '100%';
@@ -182,6 +182,12 @@ export class AonConfig extends AonElement {
                 LS.setHideSidenav(LS.getHideSidenav() === 'on' ? 'off' : 'on');
 
 				let aonHome = this.getElement('aonHome');
+				
+				let menuAnchor = this.getElement("aonMenuAnchor");
+				
+				if(LS.getHideSidenav() === 'on' && menuAnchor.classList.contains('close'))
+					return;
+				
 				aonHome.collapseSidenavMenu();
             });
         }

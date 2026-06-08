@@ -228,6 +228,12 @@ public class AonRegistryBankPanel extends HTMLPanel {
 			accountStr = accountStr.replaceAll("\\W+", "");
 			accountStr = accountStr.toUpperCase();
 			
+			if (!Iban.validateIBAN(accountStr)){
+				AonMessagePanel.showError(messagePanel, "IBAN no valido");
+				okButton.setEnabled(true);
+				return;
+			}
+			
     		registryBank
 				.setAlias(alias.getValue())
 				.setActive(activo.getValue())
