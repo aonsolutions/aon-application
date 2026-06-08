@@ -1741,6 +1741,18 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
+	public void getAviablesAccountsForBank(String domainName, Integer domain, String user, AsyncCallback<List<Account>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getAviablesAccountsForBank(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void createAccountsForBank(String domainName, Integer domain, String user, String alias, String suffixCode, AsyncCallback<Account> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.createAccountsForBank(domainName, domain, user, alias, suffixCode, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
 	public void getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource, String pattern, AsyncCallback<List<Account>> callback) {
 		AON.start();
 		serviceAsync.getAccountsForRegistry(domainName, domain, user, registrySource, pattern, new AsyncCallbackWrapper<>(callback));

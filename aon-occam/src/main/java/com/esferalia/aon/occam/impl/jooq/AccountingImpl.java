@@ -112,6 +112,14 @@ public class AccountingImpl implements IAccounting {
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter) {
 		return AccountDAO.getAccounts(ctx, filter);
 	}
+	@Override
+	public Stream<Account> getAviablesAccountsForBank(AONContext ctx, AccountFilter filter) {
+		return AccountDAO.getAviablesAccountsForBank(ctx, filter);
+	}
+	@Override
+	public Account createAccountsForBank(CloseableAONContext ctx, Integer domain, String alias, String suffixCode) {
+		return AccountDAO.createBankAccount(ctx, domain, alias, suffixCode);
+	}
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter, int offset, int limit) {
 		return AccountDAO.getAccounts(ctx, filter, offset, limit);
 	}
