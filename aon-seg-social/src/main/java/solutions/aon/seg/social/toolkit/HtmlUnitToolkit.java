@@ -106,9 +106,9 @@ public class HtmlUnitToolkit {
 			webClient.getOptions().setDownloadImages(false);
 			webClient.setJavaScriptTimeout(10000);
 			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-			webClient.getOptions().setSSLClientCertificate(certificateInputStream, certificatePassword,
+			webClient.getOptions().setSSLClientCertificateKeyStore(certificateInputStream, certificatePassword,
 					certificateType);
-			
+
 
 			return webClient;
 		} catch (RuntimeException e) {
@@ -123,7 +123,7 @@ public class HtmlUnitToolkit {
 			webClient.getOptions().setCssEnabled(false);
 			webClient.getOptions().setDownloadImages(false);
 			webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-			webClient.getOptions().setSSLClientCertificate(certificateInputStream, certificatePassword,
+			webClient.getOptions().setSSLClientCertificateKeyStore(certificateInputStream, certificatePassword,
 					certificateType);
 			webClient.setJavaScriptTimeout(10000);
 			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
@@ -143,7 +143,7 @@ public class HtmlUnitToolkit {
 			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 
 			DefaultCredentialsProvider creds = new DefaultCredentialsProvider();
-			creds.addCredentials(user, password);
+			creds.addCredentials(user, password.toCharArray());
 			webClient.setCredentialsProvider(creds);
 
 			return webClient;
@@ -162,7 +162,7 @@ public class HtmlUnitToolkit {
 			webClient.getOptions().setDownloadImages(false);
 			webClient.setJavaScriptTimeout(10000);
 			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-			webClient.getOptions().setSSLClientCertificate(certificateInputStream, certificatePassword,
+			webClient.getOptions().setSSLClientCertificateKeyStore(certificateInputStream, certificatePassword,
 					certificateType);
 
 			return webClient;
@@ -473,14 +473,14 @@ public class HtmlUnitToolkit {
 	public static void isSiteDown (Page page) throws SegSocialException {
 		if (page.isHtmlPage()) {
 			HtmlPage htmlPage= (HtmlPage) page;
-			Pattern pattern = Pattern.compile("\\s*PÁGINA\\s*NO\\s*DISPONIBLE\\s*", Pattern.CASE_INSENSITIVE);
+			Pattern pattern = Pattern.compile("\\s*Pï¿½GINA\\s*NO\\s*DISPONIBLE\\s*", Pattern.CASE_INSENSITIVE);
 			Matcher matcher = pattern.matcher(htmlPage.asXml());
 			if (matcher.find()) {
-				throw new OutOfServiceException("Página no disponible");
+				throw new OutOfServiceException("Pï¿½gina no disponible");
 			}
 			pattern = Pattern.compile("\\s*NO\\s*SE\\s*PUEDE\\s*ATENDER\\s*EN\\s*ESTE\\s*MOMENTO\\s*", Pattern.CASE_INSENSITIVE);
 			if (matcher.find()) {
-				throw new OutOfServiceException("Página no disponible");
+				throw new OutOfServiceException("Pï¿½gina no disponible");
 			}
 		}
 	}
@@ -615,7 +615,7 @@ public class HtmlUnitToolkit {
 	    final HtmlPage page = new HtmlPage(webResponse, webWindow);
 	    webWindow.setEnclosedPage(page);
 
-	    htmlParser.parse(webResponse, page, false, false);
+	    htmlParser.parse(webClient, webResponse, page, false, false);
 	    return page;
 	}	
 	

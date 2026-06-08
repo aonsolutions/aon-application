@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
+import static com.esferalia.aon.jooq.tables.Cnae.CNAE;
 import static com.esferalia.aon.jooq.tables.Cnae2009.CNAE2009;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
@@ -153,6 +154,11 @@ public class CompanyDAO {
 				.setCnae(getValue(r, ENTERPRISE_ACTIVITY.CNAE2009) )
 				.setCnaeCode(getValue(r, CNAE2009.CODE))
 				.setCnaeDescription(getValue(r, CNAE2009.TITLE) )
+				.setCnae25(getValue(r, ENTERPRISE_ACTIVITY.CNAE) )
+				.setCnae25Code(getValue(r, CNAE.CODE))
+				.setCnae25Description(getValue(r, CNAE.TITLE) )
+				.setCnae2509Code(getValue(r, CNAE.CNAE2009_CODE))
+				.setCnae2509Description(getValue(r, CNAE.CNAE2009_TITLE) )
 				.setVatRegime(AonEnumUtils.enumValue(VATRegime.class, r.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME)))
 				.setVatExemptionCause(VATExemptionCause.safeValueOf(getValue(r, ENTERPRISE_ACTIVITY.VAT_EXEMPTION_CAUSE)))
 				.setIrpfRegime(AonEnumUtils.enumValue(IRPFRegime.class, r.getValue(ENTERPRISE_ACTIVITY.RETENTION_REGIME)));
@@ -495,7 +501,8 @@ public class CompanyDAO {
 		return ctx.getDslContext()
 				.select()
 				.from(ENTERPRISE_ACTIVITY)
-				.leftOuterJoin(CNAE2009).on(CNAE2009.ID.eq(ENTERPRISE_ACTIVITY.CNAE2009))
+				.leftOuterJoin(CNAE2009).on(CNAE2009.ID.eq(ENTERPRISE_ACTIVITY.CNAE2009))				
+				.leftOuterJoin(CNAE).on(CNAE.ID.eq(ENTERPRISE_ACTIVITY.CNAE))
 				.leftOuterJoin(IAE).on(IAE.ID.eq(ENTERPRISE_ACTIVITY.IAE))
 				.where(ENTERPRISE_ACTIVITY.DOMAIN.equal(domain)
 					.and(atDate == null
@@ -523,6 +530,7 @@ public class CompanyDAO {
 				.select()
 				.from(ENTERPRISE_ACTIVITY)
 				.leftOuterJoin(CNAE2009).on(CNAE2009.ID.eq(ENTERPRISE_ACTIVITY.CNAE2009))
+				.leftOuterJoin(CNAE).on(CNAE.ID.eq(ENTERPRISE_ACTIVITY.CNAE))
 				.leftOuterJoin(IAE).on(IAE.ID.eq(ENTERPRISE_ACTIVITY.IAE))
 				.where(ENTERPRISE_ACTIVITY.DOMAIN.equal(ctx.getDomainId()))
 				.and(ENTERPRISE_ACTIVITY.ID.equal(id))
