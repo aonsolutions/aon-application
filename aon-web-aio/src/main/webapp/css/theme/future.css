@@ -1849,10 +1849,6 @@ aon-right-panel {
   font-family: "Inter-medium";
 }
 
-.rightPanel aon-card{
-	width: 100%;
-}
-
 .rightPanel aon-card .aonCard{
 	margin: 0px;
 	padding: 0px;;
@@ -1860,7 +1856,6 @@ aon-right-panel {
 }
 
 .rightPanel .divLogout,
-.rightPanel .helpCardText,
 .rightPanel .configCardText{
 	border: none;
 	background-color: #0f172a;
@@ -1874,16 +1869,29 @@ aon-right-panel {
 	width: 100%;
 }
 
+.rightPanel .helpCardText{
+	width: 100%;
+	display: flex;
+	justify-content: flex-start;
+	cursor: pointer;
+}
+
 .helpCardText {
 	display: flex;
   	justify-content: center;
 }
 
-#aonHelpAboutContactCardTitle {
-	margin-bottom: .5rem;
+#aonHelpAboutContactCardTitle,
+#aonHelpScheduleContactCardTitle {
+	margin-bottom: 0;
 }
 
-#contentIndexHelp,
+#aonHelpAboutContactCardCard > .aonCardTitle div,
+#aonHelpScheduleContactCardCard > .aonCardTitle div {
+	padding-left: 1rem;
+}
+
+#notificationsHelp,
 #aonRightPanelEditButton,
 #aonRightPanelNotificationButton{
 	display: none !important;
@@ -1894,9 +1902,13 @@ aon-right-panel {
 }
 
 .rightPanel .divLogout *,
-.rightPanel .helpCardText *,
 .rightPanel .configCardText *{
 	color: #fff;	
+	font-size: 1rem;
+}
+
+.rightPanel .helpCardText *{
+	color: #0f172a;	
 	font-size: 1rem;
 }
 
@@ -1920,7 +1932,7 @@ aon-right-panel {
 
 .helpCardText:hover,
 .configCardText:hover {
-  background-color: #64748b !important;
+  background-color: #bdc6d3 !important;
 }
 
 .aonUserPasswordLink {
@@ -1952,10 +1964,9 @@ aon-right-panel {
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: .5rem;
 }
 
-.rightPanel .helpCardText .material-icons,
 #aonConfig > span > i,
 #aonRightPanelCloseButton > button > i,
 #openNotificationButton > button > i,
@@ -1968,6 +1979,15 @@ aon-right-panel {
 	background-color: white;
 }
 
+.rightPanel .helpCardText .material-icons{
+	width: 23px;
+	height: 23px;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	background-color: #0f172a;
+}
+
 #helpContent > span.helpCardText:hover
 #aonConfig .configCardText:hover {
 	background-color: #64748b !important;
@@ -1976,6 +1996,10 @@ aon-right-panel {
 #aonConfig .configCardText {
 	display: flex;
 	justify-content: center;
+}
+
+#helpContent > span.helpCardText:nth-of-type(1) > i {
+	mask-image: url('/icons/graduation-cap.svg') ;
 }
 
 #helpContent > span.helpCardText:nth-of-type(2) > i {
@@ -2064,10 +2088,6 @@ i[id$="aonDocumentalSheetToolbarHeaderToolSectionSendFileButtonIcon"]{
 .rightPanel .toolbarSidenavPanel #aonRightPanelConfigButton,
 .rightPanel .toolbarSidenavPanel #aonRightPanelHelpButton {
 	display: none !important;
-}
-
-.rightPanel .helpversionCardText {
-	display: none;
 }
 
 .rightPanel i[class~="configPanelLanguageI"] {
@@ -2718,4 +2738,9 @@ i[id$="aonHeaderSearchDivButtonIcon"],
 	margin: 0px;
 	padding: 0px;
 	background-color: var(--aonBackgroundColor2);
+}
+
+.aonSidenavAddButton{
+	border-radius: 50%;
+	background-color: #0f172a;
 }

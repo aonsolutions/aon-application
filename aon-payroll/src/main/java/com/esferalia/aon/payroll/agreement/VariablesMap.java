@@ -2518,6 +2518,17 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_CONVENIO_TIEMPO_PARCIAL_MENSUAL", "P_CONV_TPAR_M");
 		variablesMap.put("RECOLECCION_AJO_BLANCO_HORAS", "REC_AJO_BLAN_H");
 		variablesMap.put("RECOLECCION_AJO_MORADO_HORAS", "REC_AJO_MOR_H");
+		
+		//Act. 06/06/26
+		variablesMap.put("HORA_NOCTURNA_ENTRE_11_Y_20_HORAS_AL_MES_HORAS", "H_NOCT_11_20_H");
+		variablesMap.put("HORA_NOCTURNA_ENTRE_21_Y_30_HORAS_AL_MES_HORAS", "H_NOCT_21_30_H");
+		variablesMap.put("HORA_NOCTURNA_ENTRE_31_Y_40_HORAS_AL_MES_HORAS", "H_NOCT_31_40_H");
+		variablesMap.put("HORA_NOCTURNA_ENTRE_41_Y_50_HORAS_AL_MES_HORAS", "H_NOCT_41_50_H");
+		variablesMap.put("HORA_NOCTURNA_ENTRE_51_Y_60_HORAS_AL_MES_HORAS", "H_NOCT_51_60_H");
+		variablesMap.put("HORA_NOCTURNA_ENTRE_61_Y_70_HORAS_AL_MES_HORAS", "H_NOCT_61_70_H");
+		variablesMap.put("HORA_NOCTURNA_ENTRE_71_Y_80_HORAS_AL_MES_HORAS", "H_NOCT_71_80_H");
+		variablesMap.put("HORA_NOCTURNA_MAS_DE_80_HORAS_AL_MES_HORAS", "H_NOCT_80MAS_H");
+		
 	}
 	
 	public static void main(String[] args) {

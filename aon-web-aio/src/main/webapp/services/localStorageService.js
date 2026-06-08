@@ -239,7 +239,7 @@ export const setRightPanel = (panel) => {
 }
 
 export const getHideSidenav = () => {
-    return get(HIDE_SIDENAV) || 'on';
+    return get(HIDE_SIDENAV) || 'off';
 }
 
 export const setHideSidenav = (value) => {

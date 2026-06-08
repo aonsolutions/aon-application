@@ -141,6 +141,7 @@ public class AonRegistryBankPanel extends HTMLPanel {
 		});
 		
 		activo.getElement().getStyle().setProperty("max-width", "5rem");
+		activo.setValue(true);
 		
 		row.add(iban);
 		row.add(alias);
@@ -150,6 +151,8 @@ public class AonRegistryBankPanel extends HTMLPanel {
 		// Row 2
 		HTMLPanel row2 = new HTMLPanel(EMPTY_STRING);
 		row2.setStyleName(AON.CSS.aonItemFlex());
+		
+		bic.getTextBox().setMaxLength(11);
 		
 		row2.add(bic);
 		container.add(row2);
@@ -163,6 +166,7 @@ public class AonRegistryBankPanel extends HTMLPanel {
 		this.accounts.stream().filter(acc -> acc.isActive()).forEach(acc -> accountLB.addItem(acc.getFullName(), acc.getId().toString()));
 		
 		suffix.getElement().getStyle().setProperty("max-width", "6rem");
+		suffix.getTextBox().setMaxLength(3);
 		
 		row4.add(bic);
 		

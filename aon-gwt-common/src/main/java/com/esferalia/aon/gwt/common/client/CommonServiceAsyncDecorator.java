@@ -1801,4 +1801,10 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.checkMailAccounts(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
 	}
+
+	@Override
+	public void getVerifiedHostEmails(String domainName, Integer domain, String user, AsyncCallback<HashMap<String, Boolean>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getVerifiedHostEmails(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
 }

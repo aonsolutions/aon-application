@@ -58,7 +58,7 @@ public abstract class MailAccountTable extends ScrollPanel {
 	private HashMap<Integer, MailAccount> mailAccounts = new HashMap<Integer, MailAccount>();
 	
 	private static enum COLS {
-		  NAM(AON.MSG.name()						, "-moz-available"	, "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		  NAM(AON.MSG.description()					, "-moz-available"	, "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, SHA("Mostrar como"						, "13rem"			, "max-width: 13rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, EMA("Email"								, "13rem"			, "max-width: 13rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, SIG("Firma"								, "8rem"			, "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")

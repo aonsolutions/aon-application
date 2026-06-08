@@ -127,7 +127,7 @@ export class AonConfig extends AonElement {
             });
         }
 
-        if (LS.isFutureTheme()) {
+        if (LS.isFutureTheme() && this.dur.domain.domainType === 'OFFICE') {
             let fixedButtonDiv = this.createDiv();
             fixedButtonDiv.className = CSS.AON_CONFIG_APPS;
             fixedButtonDiv.style.width = '100%';
@@ -159,6 +159,30 @@ export class AonConfig extends AonElement {
                     aonMenuAppHover.classList.remove('hidden');
                 }
 
+            });
+            
+            let hideSidenavButtonDiv = this.createDiv();
+            hideSidenavButtonDiv.className = CSS.AON_CONFIG_APPS;
+            hideSidenavButtonDiv.style.width = '100%';
+            hideSidenavButtonDiv.style.paddingTop = '0';
+
+            let hideSidenavButtonTitle = this.createSpan();
+            hideSidenavButtonTitle.className = `${CSS.AON_CONFIG_APPS}Title`;
+            hideSidenavButtonTitle.innerHTML = "Ocultar menú lateral";
+            hideSidenavButtonDiv.appendChild(hideSidenavButtonTitle);
+
+            let hideSidenavButtonSwitch = new AonSwitch();
+            hideSidenavButtonSwitch.id = 'hideSidenavButtonSwitch';
+            hideSidenavButtonSwitch.checked = LS.getHideSidenav() === 'on';
+            hideSidenavButtonDiv.appendChild(hideSidenavButtonSwitch);
+
+            this.appendChild(hideSidenavButtonDiv);
+
+            hideSidenavButtonSwitch.addEventListener(EVENT.CHANGE, () => {
+                LS.setHideSidenav(LS.getHideSidenav() === 'on' ? 'off' : 'on');
+
+				let aonHome = this.getElement('aonHome');
+				aonHome.collapseSidenavMenu();
             });
         }
 
