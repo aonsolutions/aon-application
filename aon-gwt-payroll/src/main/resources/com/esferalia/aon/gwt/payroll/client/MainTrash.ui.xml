@@ -41,7 +41,7 @@
 					<g:header size='3'>
 						<div class='{style.stackHeader}'>
 							<div class='{style.agreementIcon}' />
-							{msgs.convenios}
+							<ui:text from="{msgs.convenios}"/>
 						</div>
 					</g:header>
 					<g:DockLayoutPanel>
@@ -72,7 +72,7 @@
 					<g:header size='3'>
 						<div class='{style.stackHeader}'>
 							<div class='{style.employeesIcon}' />
-							{msgs.contratos}
+							<ui:text from="{msgs.contratos}"/>
 						</div>
 					</g:header>
 					<g:DockLayoutPanel>

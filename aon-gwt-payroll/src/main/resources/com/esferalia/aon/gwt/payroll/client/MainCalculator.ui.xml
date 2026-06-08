@@ -28,7 +28,7 @@
 
 				<g:HTMLPanel styleName="aon-panelGrid-search">
 					<div class="aon-panelGrid-search-info ">
-						<span class="aon-panelGrid-search-info-internal">{msgs.calcParams}</span>
+						<span class="aon-panelGrid-search-info-internal"><ui:text from="{msgs.calcParams}"/></span>
 						<a style="font-size:1em;font-weight:bold;float:right;" onclick=""
 							href="#">
 							<span class="aon-outputText">[?]</span>
@@ -158,7 +158,7 @@
 				<g:TabLayoutPanel barHeight="26" barUnit="PX" >
 					<g:tab>
 						<g:header>
-							<span class="aon-icon-time aon-icon-commandButton">{msgs.results}</span>
+							<span class="aon-icon-time aon-icon-commandButton"><ui:text from="{msgs.results}"/></span>
 						</g:header>
 						<aon:ResultsPanel debugId="resultsPanel" ui:field="resultsPanel" />
 					</g:tab>

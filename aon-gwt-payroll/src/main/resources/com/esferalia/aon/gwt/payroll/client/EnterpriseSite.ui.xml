@@ -37,7 +37,7 @@
 					<g:header size='3'>									
 						<div class='{style.stackHeader}'>
 							<div class='{style.employeesIcon}' />
-							{msgs.employeesLabel}
+							<ui:text from="{msgs.employeesLabel}"/>
 						</div>
 					</g:header>
 					<employee:Employees ui:field='employees' />

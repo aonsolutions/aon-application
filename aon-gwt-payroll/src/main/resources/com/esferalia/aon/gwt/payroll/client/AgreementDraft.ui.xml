@@ -490,12 +490,12 @@
 									
 									<span>&nbsp;</span>
 									<span>&nbsp;</span>
-									<span class="aon-outputText aon-black aon-bold">{msgs.partialityCoefSpace}</span>
+									<span class="aon-outputText aon-black aon-bold"><ui:text from="{msgs.partialityCoefSpace}"/></span>
 									<g:TextBox debugId='partialTextBox' ui:field='partialTextBox' text="1.00" textAlignment="right" maxLength="5" visibleLength="6"/>
 									
 									<span>&nbsp;</span>
 									<span>&nbsp;</span>
-									<span class="aon-outputText aon-black aon-bold">{msgs.quotationGroup}</span>
+									<span class="aon-outputText aon-black aon-bold"><ui:text from="{msgs.quotationGroup}"/></span>
 									<g:ListBox debugId='groupListBox' ui:field='groupListBox' >
 										<g:item value='01'>1</g:item>
 										<g:item value='02'>2</g:item>

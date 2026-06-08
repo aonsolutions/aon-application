@@ -34,7 +34,7 @@
 					<g:header size='3'>
 						<div class='{style.stackHeader}'>
 							<div class='aon_icon_menu_collapse' />
-							{msgs.empresas}
+							<ui:text from="{msgs.empresas}"/>
 						</div>
 					</g:header>
 					<payroll:Enterprises ui:field='enterprises' />
