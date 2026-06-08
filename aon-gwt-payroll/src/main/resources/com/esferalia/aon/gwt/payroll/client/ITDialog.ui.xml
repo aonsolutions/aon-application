@@ -132,65 +132,65 @@
 				<g:VerticalPanel styleName="{style.paddingContainer}">
 					<g:HTMLPanel ui:field="enterpriseData" styleName="{style.flex} {style.ml18}"></g:HTMLPanel>
 					<g:VerticalPanel ui:field="itDataTable" styleName="{style.styleBorder}">
-						<g:Label width="105px" styleName='aon-group-title {style.tittle}'>{msgs.partIT}</g:Label>
+						<g:Label width="105px" styleName='aon-group-title {style.tittle}' text="{msgs.partIT}"/>
 						<g:HTMLPanel ui:field="itData" styleName="{style.flexColumn}">
 							<g:HTMLPanel styleName="{style.flex}">
-								<g:Label styleName='{style.subTitle}'>{msgs.workerColon}</g:Label>
+								<g:Label styleName='{style.subTitle}' text="{msgs.workerColon}"/>
 								<g:HTMLPanel ui:field="employeePanel"></g:HTMLPanel>
-								<g:Label styleName='{style.subTitle}'>{msgs.documentColon}</g:Label>
+								<g:Label styleName='{style.subTitle}' text="{msgs.documentColon}"/>
 								<g:HTMLPanel ui:field="employeePanelDoc"></g:HTMLPanel>
-								<g:Label styleName='{style.subTitle}'>{msgs.nafColon}</g:Label>
+								<g:Label styleName='{style.subTitle}' text="{msgs.nafColon}"/>
 								<g:HTMLPanel ui:field="employeePanelNaf"></g:HTMLPanel>
 							</g:HTMLPanel>
 							<g:HTMLPanel ui:field="itBaja" styleName="{style.flex}">
-								<g:Label styleName='{style.requiredColor} {style.columnS}'>{msgs.dischargeDate}</g:Label>
+								<g:Label styleName='{style.requiredColor} {style.columnS}' text="{msgs.dischargeDate}"/>
 								<c:DateBoxEx ui:field="itStartDate" styleName='aon-inputText {style.textCenter}'></c:DateBoxEx>
-								<g:Label styleName='{style.requiredColor} {style.columnL}'>{msgs.dischargeReason}</g:Label>
+								<g:Label styleName='{style.requiredColor} {style.columnL}' text="{msgs.dischargeReason}"/>
 								<g:ListBox ui:field="causeLowPart" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</g:HTMLPanel>
 							<g:HTMLPanel ui:field="itAlta" styleName="{style.flex}">
-								<g:Label styleName='{style.columnS}'>{msgs.hireDate}</g:Label>
+								<g:Label styleName='{style.columnS}' text="{msgs.hireDate}"/>
 								<c:DateBoxEx ui:field="itEndDate" styleName='aon-inputText {style.textCenter}'></c:DateBoxEx>
-								<g:Label styleName='{style.columnL}'>{msgs.hireReason}</g:Label>
+								<g:Label styleName='{style.columnL}' text="{msgs.hireReason}"/>
 								<g:ListBox ui:field="causeHighPart" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 					</g:VerticalPanel>
 
 					<g:VerticalPanel ui:field="informationDataTable" styleName="{style.styleBorder}">
-						<g:Label width="105px" styleName='aon-group-title {style.tittle}'>{msgs.partInfo}</g:Label>
+						<g:Label width="105px" styleName='aon-group-title {style.tittle}' text="{msgs.partInfo}"/>
 						<g:HTMLPanel ui:field="itInfo" styleName="{style.flexColumn}">
 							<g:HTMLPanel styleName="{style.flex}">
-								<g:Label styleName='{style.columnS}'>{msgs.fInicio}</g:Label>
+								<g:Label styleName='{style.columnS}' text="{msgs.fInicio}"/>
 								<g:Label ui:field="realStartDate"></g:Label>
-								<g:Label styleName='{style.columnS}'>{msgs.relapse}</g:Label>
+								<g:Label styleName='{style.columnS}' text="{msgs.relapse}"/>
 								<g:ListBox ui:field="raggedList" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-								<g:Label ui:field="baseRDBxNL" styleName='{style.columnXL}'>{msgs.regulatoryBase}</g:Label>
+								<g:Label ui:field="baseRDBxNL" styleName='{style.columnXL}' text="{msgs.regulatoryBase}"/>
 								<c:DoubleBox ui:field="baseRDBxN" styleName='aon-inputText {style.maxWidth}'></c:DoubleBox>
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="{style.flex}">
-								<g:Label styleName='{style.columnS}'>{msgs.collegiateNumber}</g:Label>
+								<g:Label styleName='{style.columnS}' text="{msgs.collegiateNumber}"/>
 								<g:HTMLPanel styleName="{style.flex} {style.maxWidth}">
 									<g:TextBox ui:field="collegiateNumberITPart" styleName='aon-inputText {style.maxWidth}'></g:TextBox>
 									<g:Label ui:field="collegiateNumberError"></g:Label>
 								</g:HTMLPanel>
-								<g:Label styleName='{style.columnL}'>{msgs.observations}</g:Label>
+								<g:Label styleName='{style.columnL}' text="{msgs.observations}"/>
 								<g:TextBox ui:field="observationTB" styleName='aon-inputText {style.maxWidth}'></g:TextBox>
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="{style.flex}">
-								<g:Label styleName='{style.columnS}'>{msgs.cias}</g:Label>
+								<g:Label styleName='{style.columnS}' text="{msgs.cias}"/>
 								<g:HTMLPanel styleName="{style.flex} {style.maxWidth}">
 									<g:TextBox ui:field="ciasITPart" styleName='aon-inputText {style.maxWidth}'></g:TextBox>
 									<g:Label ui:field="ciasError"></g:Label>
 								</g:HTMLPanel>
-								<g:Label styleName='{style.columnL}'>{msgs.directPaymentStart}</g:Label>
+								<g:Label styleName='{style.columnL}' text="{msgs.directPaymentStart}"/>
 								<c:DateBoxEx ui:field="directPayDate" styleName='aon-inputText {style.textCenter}'></c:DateBoxEx>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 					</g:VerticalPanel>
 
 					<g:VerticalPanel ui:field="confirmationsDataTable" styleName="{style.styleBorder}">
-						<g:Label width="105px" styleName='aon-group-title {style.tittle}'>{msgs.confirmationParts}</g:Label>
+						<g:Label width="105px" styleName='aon-group-title {style.tittle}' text="{msgs.confirmationParts}"/>
 						<g:HTMLPanel ui:field="confirmationParts" styleName="{style.flexColumn}">
 							<g:Grid ui:field="confirmationPartDataTableHeader"></g:Grid>
 							<g:ScrollPanel ui:field="scrollPanel" styleName="{style.scrollStyle}">
@@ -203,18 +203,18 @@
 					</g:VerticalPanel>
 
 					<g:VerticalPanel ui:field="maternityDataTable" styleName="{style.styleBorder}">
-						<g:Label width="105px" styleName='aon-group-title {style.tittle}'>{msgs.maternity}</g:Label>
+						<g:Label width="105px" styleName='aon-group-title {style.tittle}' text="{msgs.maternity}"/>
 						<g:HTMLPanel ui:field="maternity" styleName="{style.flexColumn}">
 							<g:HTMLPanel styleName="{style.flex}">
-								<g:Label styleName='{style.columnXL}'>{msgs.applicantType}</g:Label>
+								<g:Label styleName='{style.columnXL}' text="{msgs.applicantType}"/>
 								<g:ListBox ui:field="applicantTypeList" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-								<g:Label styleName='{style.columnL}'>{msgs.reason}</g:Label>
+								<g:Label styleName='{style.columnL}' text="{msgs.reason}"/>
 								<g:ListBox ui:field="applicantReasonList" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="{style.flex}">
-								<g:Label styleName='{style.columnXL}'>{msgs.regulatoryBase}</g:Label>
+								<g:Label styleName='{style.columnXL}' text="{msgs.regulatoryBase}"/>
 								<c:DoubleBox ui:field="baseRDBx" styleName='aon-inputText {style.maxWidth}'></c:DoubleBox>
-								<g:Label styleName='{style.columnL}'>{msgs.cPartiality}</g:Label>
+								<g:Label styleName='{style.columnL}' text="{msgs.cPartiality}"/>
 								<c:DoubleBox ui:field="partialityCoefDBx" styleName='aon-inputText {style.maxWidth}'></c:DoubleBox>
 							</g:HTMLPanel>
 						</g:HTMLPanel>

@@ -54,7 +54,7 @@
 		<g:Grid width="100%" ui:field="mainGrid">
 			<g:row>
 				<g:customCell styleName="{style.label}">
-					<g:Label>{msgs.concept}</g:Label>
+					<g:Label text="{msgs.concept}"/>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
 					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
@@ -71,7 +71,7 @@
 			</g:row>
 			<g:row>
 				<g:customCell styleName="{style.label}">
-					<g:Label>{msgs.type}</g:Label>
+					<g:Label text="{msgs.type}"/>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
 					<g:HorizontalPanel styleName="aon-width">
@@ -88,8 +88,7 @@
 			</g:row>
 			<g:row>
 				<g:customCell styleName="{style.label}">
-					<g:Label>{msgs.description}
-					</g:Label>
+					<g:Label text="{msgs.description}"/>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
 					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
@@ -105,7 +104,7 @@
 			</g:row>
 			<g:row>
 				<g:customCell styleName="{style.label}">
-					<g:Label>{msgs.amount}</g:Label>
+					<g:Label text="{msgs.amount}"/>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
 					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"

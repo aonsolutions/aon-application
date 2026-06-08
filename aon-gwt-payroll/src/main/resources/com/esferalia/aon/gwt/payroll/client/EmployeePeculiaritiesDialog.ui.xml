@@ -194,14 +194,14 @@
 	            <tr>
 	            	<td>
 	            		<g:HorizontalPanel styleName="{style.marginBottom}">
-		                	<g:Label styleName="{style.bold} {style.paddingStyle}">{msgs.peculiarityType}</g:Label>
+		                	<g:Label styleName="{style.bold} {style.paddingStyle}" text="{msgs.peculiarityType}"/>
 		                	<g:ListBox ui:field="peculiarities" styleName="{style.peculiarities}"></g:ListBox>
 		                </g:HorizontalPanel>
 
 	                </td>
 	                <td>
 		                <g:HorizontalPanel styleName="{style.marginBottom}">
-		                	<g:Label styleName="{style.bold} {style.paddingStyle}">{msgs.peculiarityStartDate}</g:Label>
+		                	<g:Label styleName="{style.bold} {style.paddingStyle}" text="{msgs.peculiarityStartDate}"/>
 		                	<a:DateBoxEx ui:field="startDatePeculiarity" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBox}'></a:DateBoxEx>
 		                </g:HorizontalPanel>
 	                </td>
@@ -209,7 +209,7 @@
 	            <tr>
 	            	<td colspan="2">
 	            		<g:HTMLPanel styleName="{style.trlPanel}">
-	            			<g:Label styleName="{style.bold} {style.paddingStyle}">{msgs.trl}</g:Label>
+	            			<g:Label styleName="{style.bold} {style.paddingStyle}" text="{msgs.trl}"/>
 	            			<g:SuggestBox ui:field="trl" styleName="{style.peculiarities} {style.w-600}"></g:SuggestBox>
 	                	</g:HTMLPanel>
 	                </td>
@@ -227,20 +227,20 @@
 					    			<tbody>
 					    				<tr style="background-color: #dbdbdb;">
 					    					<td style="width: 250px;">
-					    						<g:Label styleName="{style.centerText} {style.bold}">{msgs.workerHeader}</g:Label>
+					    						<g:Label styleName="{style.centerText} {style.bold}" text="{msgs.workerHeader}"/>
 					    					</td>
 					    					<td>
-					    						<g:Label styleName="{style.centerText} {style.bold}">{msgs.dateHeader}</g:Label>
+					    						<g:Label styleName="{style.centerText} {style.bold}" text="{msgs.dateHeader}"/>
 					    					</td>
 					    					<td>
-					    						<g:Label styleName="{style.centerText} {style.bold}">{msgs.valueHeader}</g:Label>
+					    						<g:Label styleName="{style.centerText} {style.bold}" text="{msgs.valueHeader}"/>
 					    					</td>
 					    				</tr>
 					    				<tr>
 					    					<td>
 					    						<g:HorizontalPanel>
 					    							<g:CheckBox ui:field="cgcCheck"></g:CheckBox>
-					    							<g:Label styleName="{style.paddingStyle}">{msgs.cgc}</g:Label>
+					    							<g:Label styleName="{style.paddingStyle}" text="{msgs.cgc}"/>
 					    						</g:HorizontalPanel>
 					    					</td>
 					    					<td>
@@ -257,7 +257,7 @@
 					    					<td>
 					    						<g:HorizontalPanel>
 					    							<g:CheckBox ui:field="desmplCheck"></g:CheckBox>
-					    							<g:Label styleName="{style.paddingStyle}">{msgs.unemployment}</g:Label>
+					    							<g:Label styleName="{style.paddingStyle}" text="{msgs.unemployment}"/>
 					    						</g:HorizontalPanel>
 					    					</td>
 					    					<td>
@@ -274,7 +274,7 @@
 					    					<td>
 					    						<g:HorizontalPanel>
 					    							<g:CheckBox ui:field="fpCheck"></g:CheckBox>
-					    							<g:Label styleName="{style.paddingStyle}">{msgs.training}</g:Label>
+					    							<g:Label styleName="{style.paddingStyle}" text="{msgs.training}"/>
 					    						</g:HorizontalPanel>
 					    					</td>
 					    					<td>
@@ -295,20 +295,20 @@
 					    			<tbody>
 					    				<tr style="background-color: #dbdbdb;">
 					    					<td style="width: 250px;">
-					    						<g:Label styleName="{style.centerText} {style.bold}">{msgs.companyHeader}</g:Label>
+					    						<g:Label styleName="{style.centerText} {style.bold}" text="{msgs.companyHeader}"/>
 					    					</td>
 					    					<td>
-					    						<g:Label styleName="{style.centerText} {style.bold}">{msgs.dateHeader}</g:Label>
+					    						<g:Label styleName="{style.centerText} {style.bold}" text="{msgs.dateHeader}"/>
 					    					</td>
 					    					<td>
-					    						<g:Label styleName="{style.centerText} {style.bold}">{msgs.valueHeader}</g:Label>
+					    						<g:Label styleName="{style.centerText} {style.bold}" text="{msgs.valueHeader}"/>
 					    					</td>
 					    				</tr>
 					    				<tr>
 					    					<td>
 					    						<g:HorizontalPanel>
 					    							<g:CheckBox ui:field="cgcECheck"></g:CheckBox>
-					    							<g:Label styleName="{style.paddingStyle}">{msgs.cgc}</g:Label>
+					    							<g:Label styleName="{style.paddingStyle}" text="{msgs.cgc}"/>
 					    						</g:HorizontalPanel>
 					    					</td>
 					    					<td>
@@ -359,7 +359,7 @@
 					    					<td>
 					    						<g:HorizontalPanel>
 					    							<g:CheckBox ui:field="fogasaCheck"></g:CheckBox>
-					    							<g:Label styleName="{style.paddingStyle}">{msgs.fogasa}</g:Label>
+					    							<g:Label styleName="{style.paddingStyle}" text="{msgs.fogasa}"/>
 					    						</g:HorizontalPanel>
 					    					</td>
 					    					<td>
@@ -376,7 +376,7 @@
 					    					<td>
 					    						<g:HorizontalPanel>
 					    							<g:CheckBox ui:field="fpECheck"></g:CheckBox>
-					    							<g:Label styleName="{style.paddingStyle}">{msgs.training}</g:Label>
+					    							<g:Label styleName="{style.paddingStyle}" text="{msgs.training}"/>
 					    						</g:HorizontalPanel>
 					    					</td>
 					    					<td>
@@ -393,7 +393,7 @@
 					    					<td>
 					    						<g:HorizontalPanel>
 					    							<g:CheckBox ui:field="desmplECheck"></g:CheckBox>
-					    							<g:Label styleName="{style.paddingStyle}">{msgs.unemployment}</g:Label>
+					    							<g:Label styleName="{style.paddingStyle}" text="{msgs.unemployment}"/>
 					    						</g:HorizontalPanel>
 					    					</td>
 					    					<td>

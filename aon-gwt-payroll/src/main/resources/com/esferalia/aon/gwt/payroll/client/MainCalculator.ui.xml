@@ -38,7 +38,7 @@
 					<table class="aon-panelGrid aon-width-all" style="height:90%">
 						<tr>
 							<td class="aon-panelGrid-odd">
-								<g:Label styleName="aon-outputLabel">{msgs.type}</g:Label>
+								<g:Label styleName="aon-outputLabel" text="{msgs.type}"/>
 							</td>
 							<td class="aon-panelGrid-even aon-width-half-plus">
 								<g:ListBox>
@@ -48,7 +48,7 @@
 						</tr>
 						<tr>
 							<td class="aon-panelGrid-odd">
-								<g:Label styleName="aon-outputLabel">{msgs.month}</g:Label>
+								<g:Label styleName="aon-outputLabel" text="{msgs.month}"/>
 							</td>
 							<td class="aon-panelGrid-even">
 								<aon:MonthListBox
@@ -61,7 +61,7 @@
 						</tr>
 						<tr>
 							<td class="aon-panelGrid-odd">
-								<g:Label styleName="aon-outputLabel">{msgs.payment}</g:Label>
+								<g:Label styleName="aon-outputLabel" text="{msgs.payment}"/>
 							</td>
 							<td class="aon-panelGrid-even">
 								<aon:DateListBox
@@ -74,7 +74,7 @@
 						</tr>
 						<tr>
 							<td class="aon-panelGrid-odd">
-								<g:Label styleName="aon-outputLabel">{msgs.compareWith}</g:Label>
+								<g:Label styleName="aon-outputLabel" text="{msgs.compareWith}"/>
 							</td>
 							<td class="aon-panelGrid-even ">
 								<g:ListBox styleName="aon-selectOneMenu"
@@ -94,9 +94,7 @@
 										checked="false"
 										debugId="saveCheckBox"
 										ui:field="saveCheckBox"
-										>
-										{msgs.save}
-										</g:CheckBox>
+										text="{msgs.save}"/>
 									</div>
 									<div>
 										<g:RadioButton
@@ -135,7 +133,7 @@
 								<span class="aon-outputText"></span>
 							</td>
 							<td class="aon-panelGrid-even">
-								<g:Button debugId="calcButton" ui:field="calcButton" enabled="false">{msgs.calculate}</g:Button>
+								<g:Button debugId="calcButton" ui:field="calcButton" enabled="false" text="{msgs.calculate}"/>
 							</td>
 						</tr>
 						<tr>

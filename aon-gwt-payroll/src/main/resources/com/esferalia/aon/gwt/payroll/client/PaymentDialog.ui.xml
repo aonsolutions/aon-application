@@ -21,8 +21,8 @@
 
 			<tr ui:field="buttonsRow">
 				<td colspan="2" align="right">
-					<g:Button ui:field="cancelButton" debugId="paymetDialogCancelButton">{msgs.cancel}</g:Button>
-					<g:Button ui:field="acceptButton" debugId="paymetDialogAcceptButton" >{msgs.accept}</g:Button>
+					<g:Button ui:field="cancelButton" debugId="paymetDialogCancelButton" text="{msgs.cancel}"/>
+					<g:Button ui:field="acceptButton" debugId="paymetDialogAcceptButton" text="{msgs.accept}"/>
 				</td>
 			</tr>
 		</table>

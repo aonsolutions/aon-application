@@ -160,39 +160,39 @@
 
 							<g:TabLayoutPanel ui:field="tabLayOutPanel" barUnit='EM' barHeight='3'>
 								<g:tab>
-							    	<g:header size='7'>{msgs.affiliationData}</g:header>
+							    	<g:customHeader><g:InlineLabel text="{msgs.affiliationData}"/></g:customHeader>
 							    	<g:HTMLPanel ui:field="employeePanelNew" />
 							  	</g:tab>
 							  	<g:tab>
-							    	<g:header size='7'>{msgs.sepeData}</g:header>
+							    	<g:customHeader><g:InlineLabel text="{msgs.sepeData}"/></g:customHeader>
 							    	<g:ScrollPanel ui:field="specificDataPanelNew" styleName="{style.widthAll} {style.heightAll}" />
 							  	</g:tab>
 							  	<g:tab>
-							  		<g:header size='7'>{msgs.contractData}</g:header>
+							  		<g:customHeader><g:InlineLabel text="{msgs.contractData}"/></g:customHeader>
 							    	<g:ScrollPanel ui:field="otherDataPanelNew" styleName="{style.widthAll} {style.heightAll}" />
 							  	</g:tab>
 							  	<g:tab>
-							  		<g:header size='7'>{msgs.clauses}</g:header>
+							  		<g:customHeader><g:InlineLabel text="{msgs.clauses}"/></g:customHeader>
 							    	<g:HTMLPanel ui:field="clausesPanelNew" />
 							  	</g:tab>
 							  	<g:tab>
-							  		<g:header size='7'>{msgs.documents}</g:header>
+							  		<g:customHeader><g:InlineLabel text="{msgs.documents}"/></g:customHeader>
 							    	<g:HTMLPanel ui:field="documentsPanelNew" />
 							  	</g:tab>
 							  	<g:tab>
-							  		<g:header size='7'>{msgs.payrolls}</g:header>
+							  		<g:customHeader><g:InlineLabel text="{msgs.payrolls}"/></g:customHeader>
 							  		<g:SimpleLayoutPanel ui:field="salaryWidgetPanel" styleName="{style.widthAll} {style.heightAll}" />
 							  	</g:tab>
 							  	<g:tab>
-							  		<g:header size='7'>{msgs.calendar}</g:header>
+							  		<g:customHeader><g:InlineLabel text="{msgs.calendar}"/></g:customHeader>
 							    	<a:EmployeeCalendarDraftNew ui:field="employeeCalendar" />
 							  	</g:tab>
 							  	<g:tab>
-							  		<g:header size='7'>{msgs.irpf}</g:header>
+							  		<g:customHeader><g:InlineLabel text="{msgs.irpf}"/></g:customHeader>
 							    	<a:EmployeeContractIrpf ui:field="employeeContractIrpf" />
 							  	</g:tab>
 							  	<g:tab>
-							  		<g:header size='7'>{msgs.mod145}</g:header>
+							  		<g:customHeader><g:InlineLabel text="{msgs.mod145}"/></g:customHeader>
 							    	<a:Mod145Widget ui:field="mod145" />
 							  	</g:tab>
 							 </g:TabLayoutPanel>

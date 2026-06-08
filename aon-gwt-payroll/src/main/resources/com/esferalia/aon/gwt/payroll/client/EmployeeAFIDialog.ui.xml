@@ -310,15 +310,15 @@
 
 			<g:HTMLPanel styleName="{style.flexColumn}">
 				<g:HTMLPanel ui:field="tabsPanel" styleName="{style.tabsPanel}" />
-				<g:Label styleName="{style.bold}">{msgs.contractType}</g:Label>
+				<g:Label styleName="{style.bold}" text="{msgs.contractType}"/>
 				<g:ListBox ui:field="tc2" styleName="{style.width100}" />
-				<g:Label styleName="{style.bold}">{msgs.quoteGroup}</g:Label>
+				<g:Label styleName="{style.bold}" text="{msgs.quoteGroup}"/>
 				<g:ListBox ui:field="quoteGroup" styleName="{style.width100}" />
-				<g:Label styleName="{style.bold}">{msgs.occupation}</g:Label>
+				<g:Label styleName="{style.bold}" text="{msgs.occupation}"/>
 				<g:ListBox ui:field="ocupation" styleName="{style.width100}" />
-				<g:Label ui:field="partialityCoefL" styleName="{style.bold}">{msgs.partialityCoefficient}</g:Label>
+				<g:Label ui:field="partialityCoefL" styleName="{style.bold}" text="{msgs.partialityCoefficient}"/>
 				<a:DoubleBox ui:field="partialityCoef" styleName="{style.width99}" />
-				<g:Label styleName="{style.bold}">{msgs.cno}</g:Label>
+				<g:Label styleName="{style.bold}" text="{msgs.cno}"/>
 				<g:SuggestBox ui:field="cno" styleName="{style.width100}" />
 			</g:HTMLPanel>
 
@@ -326,7 +326,7 @@
 
 	   	<g:HTMLPanel ui:field="afiFilePanel" styleName="{style.flexToggle}  {style.mt10}">
 	   		<g:Button ui:field="generationAFITB" />
-    		<g:Label styleName="{style.bold}">{msgs.generateAfiFile}</g:Label>
+    		<g:Label styleName="{style.bold}" text="{msgs.generateAfiFile}"/>
     	</g:HTMLPanel>
 
 		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>

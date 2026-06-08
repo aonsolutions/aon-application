@@ -132,7 +132,7 @@
 					
 					<g:HTMLPanel styleName="{style.flex}">	
 						<g:HTMLPanel ui:field="paymentTypePanel" styleName="{style.element}">
-							<g:Label styleName="{style.title}">{msgs.accrualType}</g:Label>
+							<g:Label styleName="{style.title}" text="{msgs.accrualType}"/>
 							<g:ListBox ui:field="paymentType" styleName="aon-selectOneMenu {style.w180} {style.listBoxStyle}" />
 						</g:HTMLPanel>
 						<g:HTMLPanel ui:field="extraPanel" styleName="{style.element} {style.maxWidth}">
@@ -143,7 +143,7 @@
 					
 					<g:HTMLPanel ui:field="normalFieldsPanel" styleName="{style.flex} {style.flexWrap}">
 						<g:HTMLPanel ui:field="periodicityPanel" styleName="{style.element}">
-							<g:Label styleName="{style.title}">{msgs.accrualFrequency}</g:Label>
+							<g:Label styleName="{style.title}" text="{msgs.accrualFrequency}"/>
 							<g:ListBox ui:field="periodicityType" styleName="aon-selectOneMenu {style.w180} {style.listBoxStyle}" />
 						</g:HTMLPanel>
 						<!-- g:HTMLPanel ui:field="extraPayDatePanel" styleName="{style.element}">
@@ -155,11 +155,11 @@
 							<g:ListBox ui:field="extraPayCalc" styleName="aon-selectOneMenu" />
 						</g:HTMLPanel  -->
 						<g:HTMLPanel ui:field="extraPayTypePanel" styleName="{style.element}">
-							<g:Label styleName="{style.title}">{msgs.amountType}</g:Label>
+							<g:Label styleName="{style.title}" text="{msgs.amountType}"/>
 							<g:ListBox ui:field="extraPayType" styleName="aon-selectOneMenu {style.listBoxStyle}" />
 						</g:HTMLPanel>
 						<g:HTMLPanel ui:field="partialityPanel" styleName="{style.element}">
-							<g:Label styleName="{style.title}">{msgs.applyPartiality}</g:Label>
+							<g:Label styleName="{style.title}" text="{msgs.applyPartiality}"/>
 							<g:Button ui:field="partialityButton" />
 						</g:HTMLPanel>	
 					</g:HTMLPanel>
@@ -167,24 +167,24 @@
 					<g:HTMLPanel ui:field="extraFieldsPanel"  styleName="{style.flex} {style.flexBetween}">
 						<g:HTMLPanel styleName="{style.flex}">
 							<g:HTMLPanel styleName="{style.element}">
-								<g:Label styleName="{style.title}">{msgs.paymentDate}</g:Label>
+								<g:Label styleName="{style.title}" text="{msgs.paymentDate}"/>
 								<g:TextBox ui:field="extraIssueDate" styleName="{style.issueBox} {style.inputHeight}"/>
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="{style.element}">
-								<g:Label styleName="{style.title}">{msgs.contributory}</g:Label>
+								<g:Label styleName="{style.title}" text="{msgs.contributory}"/>
 								<g:ListBox ui:field="extraType" styleName="{style.inputHeight} {style.listBoxStyle}"/>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="{style.flex}">
 							<g:HTMLPanel styleName="{style.element}">
-								<g:Label styleName="{style.title}">{msgs.quotationStartDate}</g:Label>
+								<g:Label styleName="{style.title}" text="{msgs.quotationStartDate}"/>
 								<g:HTMLPanel styleName="{style.flex}">
 									<g:ListBox ui:field="extraStartDateMonth" styleName="{style.inputHeight} {style.listBoxStyle}"/>
 									<g:ListBox ui:field="extraStartDateYear" styleName="{style.listBox} {style.inputHeight} {style.listBoxStyle}"/>
 								</g:HTMLPanel>
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="{style.element}">
-								<g:Label styleName="{style.title}">{msgs.quotationEndDate}</g:Label>
+								<g:Label styleName="{style.title}" text="{msgs.quotationEndDate}"/>
 								<g:HTMLPanel styleName="{style.flex}">
 									<g:ListBox ui:field="extraEndDateMonth" styleName="{style.inputHeight} {style.listBoxStyle}"/>
 									<g:ListBox ui:field="extraEndDateYear" styleName="{style.listBox} {style.inputHeight} {style.listBoxStyle}"/>
@@ -192,7 +192,7 @@
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="{style.element}">
-							<g:Label styleName="{style.title}">{msgs.amountType}</g:Label>
+							<g:Label styleName="{style.title}" text="{msgs.amountType}"/>
 							<g:ListBox ui:field="extraPayType2" styleName="aon-selectOneMenu {style.listBoxStyle}" />
 						</g:HTMLPanel>
 					</g:HTMLPanel>
@@ -212,7 +212,7 @@
 				<aon:GtzdoWizard ui:field="gtzdoWizard"/>
 				
 				<g:HTMLPanel ui:field="paymentsDataGridPanel" styleName="{style.flexColumn}">
-					<g:Label styleName="{style.title}">{msgs.selectConcepts}</g:Label>
+					<g:Label styleName="{style.title}" text="{msgs.selectConcepts}"/>
 					<cell:DataGrid debugId="paymentsDataGrid" ui:field="paymentsDataGrid" title="Conceptos" />
 				</g:HTMLPanel>
 				
@@ -220,35 +220,35 @@
 			
 			<g:HTMLPanel styleName="{style.flexColumn}">
 				<g:HTMLPanel ui:field="paymentConceptPanel" styleName="{style.element}">
-					<g:Label styleName="{style.title}">{msgs.concept}</g:Label>
+					<g:Label styleName="{style.title}" text="{msgs.concept}"/>
 					<g:TextBox ui:field="paymentConcept" maxLength="25" styleName="{style.uppercase}" />
 				</g:HTMLPanel>
 				<g:HTMLPanel ui:field="paymentCRATypePanel" styleName="{style.element}">
-					<g:Label styleName="{style.title}">{msgs.craType}</g:Label>
+					<g:Label styleName="{style.title}" text="{msgs.craType}"/>
 					<g:HTMLPanel ui:field="paymentCRAPanel" />
 				</g:HTMLPanel>
 				<g:HTMLPanel ui:field="paymentDescriptionPanel" styleName="{style.flex}">
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.position}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.position}"/>
 						<g:IntegerBox ui:field="paymentDescriptionPos" styleName="{style.paymentPos} {style.tbHeight}" title="Orden numérico en el que apareceran los conceptos en el convenio" />	
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element} {style.maxWidth}">
-						<g:Label styleName="{style.title}">{msgs.description}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.description}"/>
 						<g:TextBox ui:field="paymentDescription"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element} {style.w180}">
-						<g:Label styleName="{style.title}">{msgs.salaryReceiptType}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.salaryReceiptType}"/>
 						<g:ListBox ui:field="salaryTypeLB" styleName="{style.listBoxStyle}"/>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 				
 				<g:HTMLPanel ui:field="paymentExpressionPanel" styleName="{style.element}">
-					<g:Label ui:field="paymentExpressionTitle" styleName="{style.title}">{msgs.expression}</g:Label>
+					<g:Label ui:field="paymentExpressionTitle" styleName="{style.title}" text="{msgs.expression}"/>
 					<g:TextBox ui:field="paymentExpression" enabled="false"/>
 				</g:HTMLPanel>
 				
 				<g:HTMLPanel ui:field="taxedPanel" styleName="{style.element}">
-					<g:Label ui:field="taxedTitle" styleName="{style.title}">{msgs.taxable}</g:Label>
+					<g:Label ui:field="taxedTitle" styleName="{style.title}" text="{msgs.taxable}"/>
 					<g:HTMLPanel styleName="{style.flex}">
 						<g:ListBox ui:field="taxedTypeLB" styleName="{style.listBoxStyle}"/>
 						<g:TextBox ui:field="taxedExpression" styleName="{style.maxWidth}"/>
@@ -256,7 +256,7 @@
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 				<g:HTMLPanel ui:field="quotePanel" styleName="{style.element}">
-					<g:Label ui:field="quoteTitle" styleName="{style.title}">{msgs.contributory}</g:Label>
+					<g:Label ui:field="quoteTitle" styleName="{style.title}" text="{msgs.contributory}"/>
 					<g:HTMLPanel styleName="{style.flex}">
 						<g:ListBox ui:field="quoteTypeLB" styleName="{style.listBoxStyle}"/>
 						<g:TextBox ui:field="quoteExpression" styleName="{style.maxWidth}"/>
@@ -265,15 +265,15 @@
 				</g:HTMLPanel>
 				<g:HTMLPanel  styleName="{style.between}">
 					<g:HTMLPanel ui:field="monthPanel" styleName="{style.element} {style.maxWidth}">
-						<g:Label ui:field="monthTitle" styleName="{style.title}">{msgs.monthPayment}</g:Label>
+						<g:Label ui:field="monthTitle" styleName="{style.title}" text="{msgs.monthPayment}"/>
 						<g:ListBox ui:field="monthLB" styleName="{style.listBoxStyle}"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel ui:field="monthStartPanel" styleName="{style.element} {style.maxWidth}">
-						<g:Label styleName="{style.title}">{msgs.startMonth}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.startMonth}"/>
 						<g:ListBox ui:field="monthStartLB" styleName="{style.listBoxStyle}"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel ui:field="monthEndPanel" styleName="{style.element} {style.maxWidth}">
-						<g:Label styleName="{style.title}">{msgs.endMonth}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.endMonth}"/>
 						<g:ListBox ui:field="monthEndLB" styleName="{style.listBoxStyle}"/>
 					</g:HTMLPanel>
 				</g:HTMLPanel>

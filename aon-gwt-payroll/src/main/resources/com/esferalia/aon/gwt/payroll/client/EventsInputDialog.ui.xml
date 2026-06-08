@@ -80,12 +80,12 @@
 			<g:HTMLPanel styleName="{style.datesPanel}">
 			
 				<g:HTMLPanel styleName="{style.rowPanel}">
-					<g:Label>{msgs.startDateColon}</g:Label>
+					<g:Label text="{msgs.startDateColon}"/>
 					<a:DateBoxEx ui:field="startDate" styleName="{style.dateBox}"></a:DateBoxEx>
 				</g:HTMLPanel>
 				
 				<g:HTMLPanel styleName="{style.rowPanel}">
-					<g:Label>{msgs.endDateColon}</g:Label>
+					<g:Label text="{msgs.endDateColon}"/>
 					<a:DateBoxEx ui:field="endDate" styleName="{style.dateBox}"></a:DateBoxEx>
 				</g:HTMLPanel>
 				
@@ -93,14 +93,14 @@
 			
 			<g:HTMLPanel styleName="{style.datesPanel}">
 				<g:HTMLPanel styleName="{style.rowPanel}">
-					<g:Label styleName="{style.labelStyle}">{msgs.employeeColon}</g:Label>
+					<g:Label styleName="{style.labelStyle}" text="{msgs.employeeColon}"/>
 					<g:ListBox ui:field="employeeList"></g:ListBox>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 			
 			<g:HTMLPanel styleName="{style.datesPanel}">
 				<g:HTMLPanel styleName="{style.rowPanel}">
-					<g:Label styleName="{style.labelStyle}">{msgs.variableColon}</g:Label>
+					<g:Label styleName="{style.labelStyle}" text="{msgs.variableColon}"/>
 					<g:ListBox ui:field="variablesList"></g:ListBox>
 				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{style.rowPanel}">
@@ -110,13 +110,13 @@
 			</g:HTMLPanel>
 			
 			<g:HTMLPanel  ui:field="errorMessage" styleName="{style.errorPanel}">
-				<g:Label>{msgs.errorFormatMsg}</g:Label>
-				<g:Label>{msgs.decimalsInfo}</g:Label>
+				<g:Label text="{msgs.errorFormatMsg}"/>
+				<g:Label text="{msgs.decimalsInfo}"/>
 			</g:HTMLPanel>
 	
 			<g:HTMLPanel styleName="{style.buttonsPanel}">
-				<g:Button ui:field="cancelButton">{msgs.cancel}</g:Button>
-			    <g:Button ui:field="acceptButton">{msgs.ok}</g:Button>
+				<g:Button ui:field="cancelButton" text="{msgs.cancel}"/>
+			    <g:Button ui:field="acceptButton" text="{msgs.ok}"/>
 			</g:HTMLPanel>
 		
 		</g:HTMLPanel>

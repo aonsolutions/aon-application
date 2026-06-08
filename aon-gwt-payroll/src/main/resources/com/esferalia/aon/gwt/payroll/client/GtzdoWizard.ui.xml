@@ -65,19 +65,19 @@
    	<g:HTMLPanel styleName="{style.pagePanel}"> 
         <g:HTMLPanel ui:field="gtzdoFieldsPanel" styleName="{style.flexPanel} {style.flexWrap}">
         	<g:HTMLPanel ui:field="paymentTypePanel" styleName="{style.flexColumn}">
-				<g:Label styleName="{style.title}">{msgs.accrualType}</g:Label>
+				<g:Label styleName="{style.title}" text="{msgs.accrualType}"/>
 				<g:ListBox ui:field="paymentType" styleName="aon-selectOneMenu" />
 			</g:HTMLPanel>
 			<g:HTMLPanel ui:field="gtzdoTypePanel" styleName="{style.flexColumn}">
-				<g:Label styleName="{style.title}">{msgs.tipoIT}</g:Label>
+				<g:Label styleName="{style.title}" text="{msgs.tipoIT}"/>
 				<g:ListBox ui:field="gtzdoType" styleName="aon-selectOneMenu" />
 			</g:HTMLPanel>
 			<g:HTMLPanel ui:field="gtzdoPeriodicityPanel" styleName="{style.flexColumn}">
-				<g:Label styleName="{style.title}">{msgs.frequency}</g:Label>
+				<g:Label styleName="{style.title}" text="{msgs.frequency}"/>
 				<g:ListBox ui:field="gtzdoPeriodicityType" styleName="aon-selectOneMenu" />
 			</g:HTMLPanel>
 			<g:HTMLPanel ui:field="gtzdoAboutPanel" styleName="{style.flexColumn}">
-				<g:Label styleName="{style.title}">{msgs.sobre}</g:Label>
+				<g:Label styleName="{style.title}" text="{msgs.sobre}"/>
 				<g:ListBox ui:field="gtzdoAboutType" styleName="aon-selectOneMenu" />
 			</g:HTMLPanel>
 		</g:HTMLPanel>

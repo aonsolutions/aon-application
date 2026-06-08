@@ -321,22 +321,22 @@
 
 				<g:HTMLPanel ui:field="daysTypePanel" styleName="{style.daysTypePanel}">
 					<g:HTMLPanel>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.workingColor}" ui:field="workingDayButton">{msgs.workingDays}</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.paidLeaveColor}" ui:field="paidLeaveDayButton">{msgs.paidLeave}</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.noWorkingColor}" ui:field="nonWorkingDayButton">{msgs.nonWorking}</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.effectiveColor}" ui:field="effectiveDayButton">{msgs.effective}</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.inactivityColor}" ui:field="inactivityDayButton">{msgs.inactivity}</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.dropColor}" ui:field="dropDayButton">{msgs.absence}</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.holidayColor}" ui:field="holidayDayButton">{msgs.vacations}</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.leaveColor}" ui:field="leaveDayButton">{msgs.sickLeave}</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.partialityColor}" ui:field="partialityDayButton">{msgs.partiality}</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.peonadasColor}" ui:field="peonadasDayButton">{msgs.peonadas}</g:Button>
-						<g:Button styleName="{style.aonButtonStyle} {style.aon-toolbar-button} aon_icon_schedule" ui:field="hourButton">{msgs.hours}</g:Button>
-						<g:Button styleName="{style.aonButtonStyle} {style.aon-toolbar-button} aon_icon_schedule" ui:field="extraHoursButton">{msgs.extraHours}</g:Button>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.workingColor}" ui:field="workingDayButton" text="{msgs.workingDays}"/>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.paidLeaveColor}" ui:field="paidLeaveDayButton" text="{msgs.paidLeave}"/>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.noWorkingColor}" ui:field="nonWorkingDayButton" text="{msgs.nonWorking}"/>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.effectiveColor}" ui:field="effectiveDayButton" text="{msgs.effective}"/>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.inactivityColor}" ui:field="inactivityDayButton" text="{msgs.inactivity}"/>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.dropColor}" ui:field="dropDayButton" text="{msgs.absence}"/>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.holidayColor}" ui:field="holidayDayButton" text="{msgs.vacations}"/>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.leaveColor}" ui:field="leaveDayButton" text="{msgs.sickLeave}"/>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.partialityColor}" ui:field="partialityDayButton" text="{msgs.partiality}"/>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.peonadasColor}" ui:field="peonadasDayButton" text="{msgs.peonadas}"/>
+						<g:Button styleName="{style.aonButtonStyle} {style.aon-toolbar-button} aon_icon_schedule" ui:field="hourButton" text="{msgs.hours}"/>
+						<g:Button styleName="{style.aonButtonStyle} {style.aon-toolbar-button} aon_icon_schedule" ui:field="extraHoursButton" text="{msgs.extraHours}"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel>
-						<g:Button styleName="{style.aonButtonStyle} {style.eraseEventStyle} {style.aon-toolbar-button} aon_icon_close" ui:field="eraseEventButton">{msgs.clear}</g:Button>
-						<g:Button styleName="{style.aonButtonStyle} {style.aon-toolbar-button} aon_icon_help" ui:field="leyendButton">{msgs.legend}</g:Button>
+						<g:Button styleName="{style.aonButtonStyle} {style.eraseEventStyle} {style.aon-toolbar-button} aon_icon_close" ui:field="eraseEventButton" text="{msgs.clear}"/>
+						<g:Button styleName="{style.aonButtonStyle} {style.aon-toolbar-button} aon_icon_help" ui:field="leyendButton" text="{msgs.legend}"/>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 
@@ -347,115 +347,115 @@
 								<g:Label>&nbsp;</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.mondayAbbr}</g:Label>
+								<g:Label text="{msgs.mondayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.tuesdayAbbr}</g:Label>
+								<g:Label text="{msgs.tuesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.wednesdayAbbr}</g:Label>
+								<g:Label text="{msgs.wednesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.thursdayAbbr}</g:Label>
+								<g:Label text="{msgs.thursdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.fridayAbbr}</g:Label>
+								<g:Label text="{msgs.fridayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.saturdayAbbr}</g:Label>
+								<g:Label text="{msgs.saturdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.sundayAbbr}</g:Label>
+								<g:Label text="{msgs.sundayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.mondayAbbr}</g:Label>
+								<g:Label text="{msgs.mondayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.tuesdayAbbr}</g:Label>
+								<g:Label text="{msgs.tuesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.wednesdayAbbr}</g:Label>
+								<g:Label text="{msgs.wednesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.thursdayAbbr}</g:Label>
+								<g:Label text="{msgs.thursdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.fridayAbbr}</g:Label>
+								<g:Label text="{msgs.fridayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.saturdayAbbr}</g:Label>
+								<g:Label text="{msgs.saturdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.sundayAbbr}</g:Label>
+								<g:Label text="{msgs.sundayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.mondayAbbr}</g:Label>
+								<g:Label text="{msgs.mondayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.tuesdayAbbr}</g:Label>
+								<g:Label text="{msgs.tuesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.wednesdayAbbr}</g:Label>
+								<g:Label text="{msgs.wednesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.thursdayAbbr}</g:Label>
+								<g:Label text="{msgs.thursdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.fridayAbbr}</g:Label>
+								<g:Label text="{msgs.fridayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.saturdayAbbr}</g:Label>
+								<g:Label text="{msgs.saturdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.sundayAbbr}</g:Label>
+								<g:Label text="{msgs.sundayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.mondayAbbr}</g:Label>
+								<g:Label text="{msgs.mondayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.tuesdayAbbr}</g:Label>
+								<g:Label text="{msgs.tuesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.wednesdayAbbr}</g:Label>
+								<g:Label text="{msgs.wednesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.thursdayAbbr}</g:Label>
+								<g:Label text="{msgs.thursdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.fridayAbbr}</g:Label>
+								<g:Label text="{msgs.fridayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.saturdayAbbr}</g:Label>
+								<g:Label text="{msgs.saturdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.sundayAbbr}</g:Label>
+								<g:Label text="{msgs.sundayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.mondayAbbr}</g:Label>
+								<g:Label text="{msgs.mondayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.tuesdayAbbr}</g:Label>
+								<g:Label text="{msgs.tuesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.wednesdayAbbr}</g:Label>
+								<g:Label text="{msgs.wednesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.thursdayAbbr}</g:Label>
+								<g:Label text="{msgs.thursdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.fridayAbbr}</g:Label>
+								<g:Label text="{msgs.fridayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.saturdayAbbr}</g:Label>
+								<g:Label text="{msgs.saturdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.sundayAbbr}</g:Label>
+								<g:Label text="{msgs.sundayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.mondayAbbr}</g:Label>
+								<g:Label text="{msgs.mondayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>{msgs.tuesdayAbbr}</g:Label>
+								<g:Label text="{msgs.tuesdayAbbr}"/>
 							</g:customCell>
 							<!-- g:customCell styleName="{style.cabeceraStyle}">
 								<g:Label ui:field="totalHours">Horas Mensuales</g:Label>
@@ -463,7 +463,7 @@
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>{msgs.enero}</g:Label>
+								<g:Label text="{msgs.enero}"/>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
@@ -478,7 +478,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>{msgs.febrero}</g:Label>
+								<g:Label text="{msgs.febrero}"/>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -493,7 +493,7 @@
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
 							<g:customCell styleName="{style.cabeceraStyle}  {style.cursorPointer}">
-								<g:Label>{msgs.marzo}</g:Label>
+								<g:Label text="{msgs.marzo}"/>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
@@ -508,7 +508,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>{msgs.abril}</g:Label>
+								<g:Label text="{msgs.abril}"/>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -523,7 +523,7 @@
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>{msgs.mayo}</g:Label>
+								<g:Label text="{msgs.mayo}"/>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
@@ -538,7 +538,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>{msgs.junio}</g:Label>
+								<g:Label text="{msgs.junio}"/>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -553,7 +553,7 @@
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>{msgs.julio}</g:Label>
+								<g:Label text="{msgs.julio}"/>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
@@ -568,7 +568,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>{msgs.agosto}</g:Label>
+								<g:Label text="{msgs.agosto}"/>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -583,7 +583,7 @@
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>{msgs.septiembre}</g:Label>
+								<g:Label text="{msgs.septiembre}"/>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
@@ -598,7 +598,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>{msgs.octubre}</g:Label>
+								<g:Label text="{msgs.octubre}"/>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -613,7 +613,7 @@
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>{msgs.noviembre}</g:Label>
+								<g:Label text="{msgs.noviembre}"/>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
@@ -628,7 +628,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>{msgs.diciembre}</g:Label>
+								<g:Label text="{msgs.diciembre}"/>
 							</g:customCell>
 						</g:row>
 						<g:row>

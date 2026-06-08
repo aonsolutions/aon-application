@@ -86,7 +86,7 @@
 
 	<g:HTMLPanel styleName="{style.widthAll} {style.flexCenter}" ui:field="centerContainer" debugId="agreementHTMLPanel">
    		<g:VerticalPanel styleName="{style.styleBorder}">
-    	<g:Label styleName='{style.tittle}'>{msgs.agreement}</g:Label>
+    	<g:Label styleName='{style.tittle}' text="{msgs.agreement}"/>
 	    	<g:HTMLPanel styleName="{style.widthAll}">
 	    		<g:VerticalPanel styleName="{style.container}">
 	    			<g:Grid ui:field="agreementDataTableHeader" styleName="{style.gridStyle}"></g:Grid>

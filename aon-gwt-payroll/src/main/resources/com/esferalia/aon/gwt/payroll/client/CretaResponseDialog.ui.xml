@@ -90,7 +90,7 @@
 					</td>
 					<td class="{style.field}">
 						<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
-							<g:Button ui:field="fileButton" enabled="true" >{msgs.select}</g:Button>
+							<g:Button ui:field="fileButton" enabled="true" text="{msgs.select}"/>
 							<g:InlineLabel styleName="{style.nowrap}" >&nbsp;&nbsp;</g:InlineLabel>
 							<g:InlineLabel styleName="{style.nowrap}"  ui:field="fileLabel" text="{msgs.workersAndRanges}" />
 						</g:HorizontalPanel>
@@ -115,8 +115,8 @@
 			</table>
 
 			<div class="{style.buttons} {style.form} ">
-				<g:Button ui:field="cancelButton">{msgs.cancel}</g:Button>
-				<g:Button ui:field="acceptButton" enabled="false" >{msgs.accept}</g:Button>
+				<g:Button ui:field="cancelButton" text="{msgs.cancel}"/>
+				<g:Button ui:field="acceptButton" enabled="false" text="{msgs.accept}"/>
 			</div>
 
 			<g:FileUpload visible="false"  name="{TRABAJADORES_TRAMOS.name}" ui:field="fileUpload" />

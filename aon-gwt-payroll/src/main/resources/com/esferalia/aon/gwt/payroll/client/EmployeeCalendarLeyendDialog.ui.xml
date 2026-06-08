@@ -85,7 +85,7 @@
 					<g:Label styleName="{style.colorButton} {style.noWorkingColor}"/>
 				</td>
 				<td>
-					<g:Label>{msgs.nonWorking}</g:Label>
+					<g:Label text="{msgs.nonWorking}"/>
 				</td>
 				<td>
 					<g:Label ui:field="nonWorkingDays"/>
@@ -96,7 +96,7 @@
 					<g:Label styleName="{style.colorButton} {style.effectiveColor}"/>
 				</td>
 				<td>
-					<g:Label>{msgs.effective}</g:Label>
+					<g:Label text="{msgs.effective}"/>
 				</td>
 				<td>
 					<g:Label ui:field="effectiveDays"/>
@@ -107,7 +107,7 @@
 					<g:Label styleName="{style.colorButton} {style.inactivityColor}"/>
 				</td>
 				<td>
-					<g:Label>{msgs.inactivity}</g:Label>
+					<g:Label text="{msgs.inactivity}"/>
 				</td>
 				<td>
 					<g:Label ui:field="inactivityDays"/>
@@ -118,7 +118,7 @@
 					<g:Label styleName="{style.colorButton} {style.strikeColor}"/>
 				</td>
 				<td>
-					<g:Label>{msgs.strike}</g:Label>
+					<g:Label text="{msgs.strike}"/>
 				</td>
 				<td>
 					<g:Label ui:field="strikeDays"/>
@@ -129,7 +129,7 @@
 					<g:Label styleName="{style.colorButton} {style.ereColor}"/>
 				</td>
 				<td>
-					<g:Label>{msgs.ere}</g:Label>
+					<g:Label text="{msgs.ere}"/>
 				</td>
 				<td>
 					<g:Label ui:field="ereDays"/>
@@ -140,7 +140,7 @@
 					<g:Label styleName="{style.colorButton} {style.ereFzaColor}"/>
 				</td>
 				<td>
-					<g:Label>{msgs.ereFza}</g:Label>
+					<g:Label text="{msgs.ereFza}"/>
 				</td>
 				<td>
 					<g:Label ui:field="ereFZADays"/>
@@ -151,7 +151,7 @@
 					<g:Label styleName="{style.colorButton} {style.ereFzaExonColor}"/>
 				</td>
 				<td>
-					<g:Label>{msgs.ereFzaExon}</g:Label>
+					<g:Label text="{msgs.ereFzaExon}"/>
 				</td>
 				<td>
 					<g:Label ui:field="ereFZAExonDays"/>
@@ -162,7 +162,7 @@
 					<g:Label styleName="{style.colorButton} {style.dropColor}"/>
 				</td>
 				<td>
-					<g:Label>{msgs.absence}</g:Label>
+					<g:Label text="{msgs.absence}"/>
 				</td>
 				<td>
 					<g:Label ui:field="dropDays"/>
@@ -173,7 +173,7 @@
 					<g:Label styleName="{style.colorButton} {style.holidayColor}"/>
 				</td>
 				<td>
-					<g:Label>{msgs.vacations}</g:Label>
+					<g:Label text="{msgs.vacations}"/>
 				</td>
 				<td>
 					<g:Label ui:field="holidayDays"/>
@@ -184,7 +184,7 @@
 					<g:Label styleName="{style.colorButton} {style.sundayColor}"/>
 				</td>
 				<td>
-					<g:Label>{msgs.festiveDays}</g:Label>
+					<g:Label text="{msgs.festiveDays}"/>
 				</td>
 				<td>
 					<g:Label ui:field="festiveDays"/>
@@ -195,7 +195,7 @@
 					<g:Label styleName="{style.colorButton} {style.itColor}"/>
 				</td>
 				<td>
-					<g:Label>{msgs.sickLeave}</g:Label>
+					<g:Label text="{msgs.sickLeave}"/>
 				</td>
 				<td>
 					<g:Label ui:field="leaveDays"/>
@@ -206,7 +206,7 @@
 					<g:Label styleName="{style.colorButton} {style.partialityColor}"/>
 				</td>
 				<td>
-					<g:Label>{msgs.partiality}</g:Label>
+					<g:Label text="{msgs.partiality}"/>
 				</td>
 				<td>
 					<g:Label ui:field="partialityDays"/>
@@ -217,7 +217,7 @@
 					<g:Label styleName="{style.colorButton} {style.peonadasColor}"/>
 				</td>
 				<td>
-					<g:Label>{msgs.peonadas}</g:Label>
+					<g:Label text="{msgs.peonadas}"/>
 				</td>
 				<td>
 					<g:Label ui:field="peonadasDays"/>
@@ -228,7 +228,7 @@
 					<g:Label styleName="{style.paidLeaveColor} {style.colorButton}"/>
 				</td>
 				<td>
-					<g:Label>{msgs.paidLeave}</g:Label>
+					<g:Label text="{msgs.paidLeave}"/>
 				</td>
 				<td>
 					<g:Label ui:field="paidLeaveDays"/>

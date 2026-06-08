@@ -57,7 +57,7 @@
 	<g:HTMLPanel styleName="{style.form}">
 
 		<div class="{style.messages}" >
-			<g:Label styleName="{style.info}">{msgs.introduceDates}</g:Label>
+			<g:Label styleName="{style.info}" text="{msgs.introduceDates}"/>
 		</div>
 
 		<g:Grid width="100%" >
@@ -78,8 +78,8 @@
 		</g:Grid>
 
 		<div class="{style.buttons}">
-			<g:Button ui:field="cancelButton" >{msgs.cancel}</g:Button>
-			<g:Button ui:field="acceptButton" enabled="false">{msgs.accept}</g:Button>
+			<g:Button ui:field="cancelButton" text="{msgs.cancel}"/>
+			<g:Button ui:field="acceptButton" enabled="false" text="{msgs.accept}"/>
 		</div>
 
 	</g:HTMLPanel>

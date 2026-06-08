@@ -92,12 +92,12 @@
 			<g:HTMLPanel  ui:field="errorMessage" styleName="{style.errorPanel}">
 				<g:DeckPanel ui:field="errorDeckPanel">
 					<g:HTMLPanel>
-						<g:Label>{msgs.dateInterferenceError}</g:Label>
+						<g:Label text="{msgs.dateInterferenceError}"/>
 						<g:Label ui:field="contractErrorDateL" />
 					</g:HTMLPanel>
 					<g:HTMLPanel>
-						<g:Label>{msgs.errorFormatMsg}</g:Label>
-						<g:Label>{msgs.decimalsInfo}</g:Label>
+						<g:Label text="{msgs.errorFormatMsg}"/>
+						<g:Label text="{msgs.decimalsInfo}"/>
 					</g:HTMLPanel>
 				</g:DeckPanel>
 			</g:HTMLPanel>

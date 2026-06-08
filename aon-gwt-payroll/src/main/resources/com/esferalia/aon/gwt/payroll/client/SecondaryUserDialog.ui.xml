@@ -90,7 +90,7 @@
 			        <tbody>
 			            <tr>
 			            	<td>
-			                    <g:Label>{msgs.searchByDni}</g:Label>
+			                    <g:Label text="{msgs.searchByDni}"/>
 			                </td>
 			                <td>
 			                    <g:Button ui:field="dniBtn"></g:Button>

@@ -139,7 +139,7 @@
 				<td class="{style.field} " colspan="2">
 					<div class="aon-group">
 						<div class="aon-group-title" >
-							<g:CheckBox ui:field="saveCheckBox" checked="false">{msgs.save}</g:CheckBox>
+							<g:CheckBox ui:field="saveCheckBox" checked="false" text="{msgs.save}"/>
 						</div>
 						<div>
 							<g:RadioButton name="saveRadioButton" ui:field="keepRadioButton"
@@ -162,8 +162,8 @@
 		</table>
 
 		<div class="{style.buttons} {style.form} ">
-			<g:Button ui:field="cancelButton">{msgs.cancel}</g:Button>
-			<g:Button ui:field="acceptButton" enabled="false" >{msgs.accept}</g:Button>
+			<g:Button ui:field="cancelButton" text="{msgs.cancel}"/>
+			<g:Button ui:field="acceptButton" enabled="false" text="{msgs.accept}"/>
 		</div>
 
 	</g:HTMLPanel>

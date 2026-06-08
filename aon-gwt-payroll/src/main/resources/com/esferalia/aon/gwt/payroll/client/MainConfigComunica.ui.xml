@@ -32,19 +32,19 @@
 			<g:HTMLPanel styleName="{style.mt50} {aonResources.css.aonSelector}">
 				<g:TabLayoutPanel ui:field="tabLayOutPanel" barUnit='EM' barHeight='3'>
 					<g:tab>
-				    	<g:header size='7'>{msgs.workplace}</g:header>
+				    	<g:customHeader><g:InlineLabel text="{msgs.workplace}"/></g:customHeader>
 			    		<g:HTMLPanel styleName="{style.mt10}">
 			    			<aon:WorkplaceComunica ui:field="workplaceComunicaWidget"/>
 			    		</g:HTMLPanel>
 				  	</g:tab>
 				  	<g:tab>
-				    	<g:header size='7'>{msgs.actividadCcc}</g:header>
+				    	<g:customHeader><g:InlineLabel text="{msgs.actividadCcc}"/></g:customHeader>
 			    		<g:HTMLPanel styleName="{style.mt10}">
 			    			<aon:CCC ui:field="cccWidget"/>
 			    		</g:HTMLPanel>
 				  	</g:tab>
 				  	<g:tab>
-				    	<g:header size='7'>{msgs.agreement}</g:header>
+				    	<g:customHeader><g:InlineLabel text="{msgs.agreement}"/></g:customHeader>
 			    		<g:HTMLPanel styleName="{style.mt10}">
 			    			<aon:AgreementComunica ui:field="agreementComunicaWidget"/>
 			    		</g:HTMLPanel>

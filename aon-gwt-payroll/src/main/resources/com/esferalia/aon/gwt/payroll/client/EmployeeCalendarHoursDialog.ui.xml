@@ -69,12 +69,12 @@
 			<g:HTMLPanel styleName="{style.datesPanel}">
 
 				<g:HTMLPanel styleName="{style.rowPanel}">
-					<g:Label>{msgs.startDateColon}</g:Label>
+					<g:Label text="{msgs.startDateColon}"/>
 					<a:DateBoxEx ui:field="startDateDB" styleName="{style.dateBox}"></a:DateBoxEx>
 				</g:HTMLPanel>
 
 				<g:HTMLPanel styleName="{style.rowPanel}">
-					<g:Label>{msgs.endDateColon}</g:Label>
+					<g:Label text="{msgs.endDateColon}"/>
 					<a:DateBoxEx ui:field="endDateDB" styleName="{style.dateBox}"></a:DateBoxEx>
 				</g:HTMLPanel>
 
@@ -82,49 +82,49 @@
 
 			<g:HTMLPanel styleName="{style.hoursPanel}">
 				<g:HTMLPanel ui:field="mondayBlock" styleName="{style.rowPanel}">
-					<g:Label styleName="{style.labelStyle}">{msgs.mondayColon}</g:Label>
+					<g:Label styleName="{style.labelStyle}" text="{msgs.mondayColon}"/>
 					<g:TextBox ui:field="mondayHoursOpt" styleName="{style.borderBx}"/>
 				</g:HTMLPanel>
 
 				<g:HTMLPanel ui:field="tuesdayBlock" styleName="{style.rowPanel}">
-					<g:Label styleName="{style.labelStyle}">{msgs.tuesdayColon}</g:Label>
+					<g:Label styleName="{style.labelStyle}" text="{msgs.tuesdayColon}"/>
 					<g:TextBox ui:field="tuesdayHoursOpt" styleName="{style.borderBx}"/>
 				</g:HTMLPanel>
 
 				<g:HTMLPanel ui:field="wednesdayBlock" styleName="{style.rowPanel}">
-					<g:Label styleName="{style.labelStyle}">{msgs.wednesdayColon}</g:Label>
+					<g:Label styleName="{style.labelStyle}" text="{msgs.wednesdayColon}"/>
 					<g:TextBox ui:field="wednesdayHoursOpt" styleName="{style.borderBx}"/>
 				</g:HTMLPanel>
 
 				<g:HTMLPanel ui:field="thursdayBlock" styleName="{style.rowPanel}">
-					<g:Label styleName="{style.labelStyle}">{msgs.thursdayColon}</g:Label>
+					<g:Label styleName="{style.labelStyle}" text="{msgs.thursdayColon}"/>
 					<g:TextBox ui:field="thursdayHoursOpt" styleName="{style.borderBx}"/>
 				</g:HTMLPanel>
 
 				<g:HTMLPanel ui:field="fridayBlock" styleName="{style.rowPanel}">
-					<g:Label styleName="{style.labelStyle}">{msgs.fridayColon}</g:Label>
+					<g:Label styleName="{style.labelStyle}" text="{msgs.fridayColon}"/>
 					<g:TextBox ui:field="fridayHoursOpt" styleName="{style.borderBx}"/>
 				</g:HTMLPanel>
 
 				<g:HTMLPanel ui:field="saturdayBlock" styleName="{style.rowPanel}">
-					<g:Label styleName="{style.labelStyle}">{msgs.saturdayColon}</g:Label>
+					<g:Label styleName="{style.labelStyle}" text="{msgs.saturdayColon}"/>
 					<g:TextBox ui:field="saturdayHoursOpt" styleName="{style.borderBx}"/>
 				</g:HTMLPanel>
 
 				<g:HTMLPanel ui:field="sundayBlock" styleName="{style.rowPanel}">
-					<g:Label styleName="{style.labelStyle}">{msgs.sundayColon}</g:Label>
+					<g:Label styleName="{style.labelStyle}" text="{msgs.sundayColon}"/>
 					<g:TextBox ui:field="sundayHoursOpt" styleName="{style.borderBx}"/>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 
 			<g:HTMLPanel  ui:field="errorMessage" styleName="{style.infoPanel}">
-				<g:Label>{msgs.blankDaysInfo}</g:Label>
-				<g:Label>{msgs.zeroDaysInfo}</g:Label>
+				<g:Label text="{msgs.blankDaysInfo}"/>
+				<g:Label text="{msgs.zeroDaysInfo}"/>
 			</g:HTMLPanel>
 
 			<g:HTMLPanel styleName="{style.buttonsPanel}">
-				<g:Button ui:field="cancelButton">{msgs.cancel}</g:Button>
-			    <g:Button ui:field="acceptButton">{msgs.ok}</g:Button>
+				<g:Button ui:field="cancelButton" text="{msgs.cancel}"/>
+			    <g:Button ui:field="acceptButton" text="{msgs.ok}"/>
 			</g:HTMLPanel>
 
 		</g:HTMLPanel>

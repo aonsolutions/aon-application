@@ -32,7 +32,7 @@
 			<table class="aon-width-all aon-height-all" style="padding: 5px;">
 				<tr>
 					<td>
-						<g:Label>{msgs.endDateFin}</g:Label>
+						<g:Label text="{msgs.endDateFin}"/>
 					</td>
 					<td>
 						<a:DateBoxEx ui:field="endDateBox" styleName="{style.dateBox}"></a:DateBoxEx>
@@ -40,8 +40,8 @@
 				</tr>
 				<tr>
 					<td colspan="2" align="right" style="padding-top: 15px;">
-						<g:Button ui:field="cancelButton">{msgs.close}</g:Button>
-			    		<g:Button ui:field="acceptButton">{msgs.ok}</g:Button>
+						<g:Button ui:field="cancelButton" text="{msgs.close}"/>
+			    		<g:Button ui:field="acceptButton" text="{msgs.ok}"/>
 					</td>
 				</tr>
 			</table>

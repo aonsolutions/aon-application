@@ -123,15 +123,15 @@
 
 						<g:HTMLPanel styleName="aon-panelGrid-search">
 							<g:HTMLPanel styleName="aon-panelGrid-search-info">
-								<g:Label styleName="aon-panelGrid-search-info-internal">{msgs.afiCreationData}</g:Label>
+								<g:Label styleName="aon-panelGrid-search-info-internal" text="{msgs.afiCreationData}"/>
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="{style.flex}">
-								<g:Label styleName="aon-outputLabel {style.subTitleSearch}">{msgs.enterprise}</g:Label>
+								<g:Label styleName="aon-outputLabel {style.subTitleSearch}" text="{msgs.enterprise}"/>
 								<g:Label ui:field="enterprise"></g:Label>
 								<g:ListBox ui:field="enterpriseList"></g:ListBox>
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="{style.flex} {style.mt10}">
-								<g:Label styleName="aon-outputLabel {style.subTitleSearch}">{msgs.ccc}</g:Label>
+								<g:Label styleName="aon-outputLabel {style.subTitleSearch}" text="{msgs.ccc}"/>
 								<g:ListBox ui:field="cccsLB"></g:ListBox>
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="{style.flex} {style.mt10}">
@@ -139,7 +139,7 @@
 								<g:Label ui:field="allCCCsLabel" styleName="{style.m5}"> {msgs.allCccs}</g:Label>
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="{style.flex} {style.mt10}">
-								<g:Label styleName="aon-outputLabel {style.subTitleSearch}">{msgs.liquidationPeriod}</g:Label>
+								<g:Label styleName="aon-outputLabel {style.subTitleSearch}" text="{msgs.liquidationPeriod}"/>
 								<g:ListBox ui:field="monthList" styleName="aon-selectOneMenu"></g:ListBox>
 								<g:ListBox ui:field="yearList" styleName="aon-selectOneMenu {style.ml10}"></g:ListBox>
 							</g:HTMLPanel>

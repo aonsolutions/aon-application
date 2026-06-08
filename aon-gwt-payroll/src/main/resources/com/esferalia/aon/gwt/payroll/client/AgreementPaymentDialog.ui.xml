@@ -45,84 +45,84 @@
 			<g:HTMLPanel ui:field="salaryBasePanel" styleName="{style.flexColumn}">
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="salaryBaseAnualCB"/>
-		    		<g:Label>{msgs.salaryBaseAnnual}</g:Label>
+		    		<g:Label text="{msgs.salaryBaseAnnual}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="salaryBaseMensualCB"/>
-		    		<g:Label>{msgs.salaryBaseMonthly}</g:Label>
+		    		<g:Label text="{msgs.salaryBaseMonthly}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="salaryBaseDailyCB"/>
-		    		<g:Label>{msgs.salaryBaseDaily}</g:Label>
+		    		<g:Label text="{msgs.salaryBaseDaily}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="salaryBaseHoursCB"/>
-		    		<g:Label>{msgs.salaryBaseHours}</g:Label>
+		    		<g:Label text="{msgs.salaryBaseHours}"/>
 		    	</g:HTMLPanel>
 		    </g:HTMLPanel>
 		    
 		    <g:HTMLPanel ui:field="salaryPlusesPanel" styleName="{style.flexColumn}">
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="salaryPlusMensualCB"/>
-		    		<g:Label>{msgs.salarialBonusMonthly}</g:Label>
+		    		<g:Label text="{msgs.salarialBonusMonthly}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="salaryPlusDailyCB"/>
-		    		<g:Label>{msgs.salarialBonusDaily}</g:Label>
+		    		<g:Label text="{msgs.salarialBonusDaily}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="salaryPlusWorkDailyCB"/>
-		    		<g:Label>{msgs.salarialBonusDailyWorkable}</g:Label>
+		    		<g:Label text="{msgs.salarialBonusDailyWorkable}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="salaryBasePermanentCB"/>
-		    		<g:Label>{msgs.salarialBonusFixed}</g:Label>
+		    		<g:Label text="{msgs.salarialBonusFixed}"/>
 		    	</g:HTMLPanel>
 		    </g:HTMLPanel>
 		    
 		    <g:HTMLPanel ui:field="extraSalaryPlusesPanel" styleName="{style.flexColumn}">
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="extraSalaryPlusMensualCB"/>
-		    		<g:Label>{msgs.extraSalarialBonusMonthly}</g:Label>
+		    		<g:Label text="{msgs.extraSalarialBonusMonthly}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="extraSalaryPlusDailyCB"/>
-		    		<g:Label>{msgs.extraSalarialBonusDaily}</g:Label>
+		    		<g:Label text="{msgs.extraSalarialBonusDaily}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="extraSalaryPlusWorkDailyCB"/>
-		    		<g:Label>{msgs.extraSalarialBonusDailyWorkable}</g:Label>
+		    		<g:Label text="{msgs.extraSalarialBonusDailyWorkable}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="extraSalaryBasePermanentCB"/>
-		    		<g:Label>{msgs.extraSalarialBonusFixed}</g:Label>
+		    		<g:Label text="{msgs.extraSalarialBonusFixed}"/>
 		    	</g:HTMLPanel>
 		    </g:HTMLPanel>
 		    
 		    <g:HTMLPanel ui:field="salaryComplementsPanel" styleName="{style.flexColumn}">
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="spiceComplementCB"/>
-		    		<g:Label>{msgs.remunrationInKind}</g:Label>
+		    		<g:Label text="{msgs.remunrationInKind}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="antiquityComplementCB"/>
-		    		<g:Label>{msgs.seniorityPersonalComplement}</g:Label>
+		    		<g:Label text="{msgs.seniorityPersonalComplement}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="overnightComplementCB"/>
-		    		<g:Label>{msgs.overnightExpensesDaily}</g:Label>
+		    		<g:Label text="{msgs.overnightExpensesDaily}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="maintenanceComplementCB"/>
-		    		<g:Label>{msgs.maintenanceExpensesDaily}</g:Label>
+		    		<g:Label text="{msgs.maintenanceExpensesDaily}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="maintenanceForeingComplementCB"/>
-		    		<g:Label>{msgs.maintenanceExpensesForeignDaily}</g:Label>
+		    		<g:Label text="{msgs.maintenanceExpensesForeignDaily}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="locomotionComplementCB"/>
-		    		<g:Label>{msgs.locomotionExpensesWithoutProof}</g:Label>
+		    		<g:Label text="{msgs.locomotionExpensesWithoutProof}"/>
 		    	</g:HTMLPanel>
 		    </g:HTMLPanel>
 		    
@@ -130,21 +130,21 @@
 		    	<g:HTMLPanel styleName="{style.flexBetween}">
 		    		<g:HTMLPanel styleName="{style.flex}">
 		    			<g:CheckBox ui:field="salaryExtraCB" />
-			    		<g:Label>{msgs.extraPaySummerChristmas}</g:Label>
+			    		<g:Label text="{msgs.extraPaySummerChristmas}"/>
 			    	</g:HTMLPanel>
 			    	<g:HTMLPanel styleName="{style.flex}">
 			    		<g:Button ui:field="apportionExtraB" />
-			    		<g:Label>{msgs.apportionment}</g:Label>
+			    		<g:Label text="{msgs.apportionment}"/>
 			    	</g:HTMLPanel>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flexBetween}">
 		    		<g:HTMLPanel styleName="{style.flex}">
 			    		<g:CheckBox ui:field="salaryBenefitsCB" />
-			    		<g:Label>{msgs.extraPayBenefits}</g:Label>
+			    		<g:Label text="{msgs.extraPayBenefits}"/>
 		    		</g:HTMLPanel>
 		    		<g:HTMLPanel styleName="{style.flex}">
 			    		<g:Button ui:field="apportionBenefitsB" />
-			    		<g:Label>{msgs.apportionment}</g:Label>
+			    		<g:Label text="{msgs.apportionment}"/>
 			    	</g:HTMLPanel>
 		    	</g:HTMLPanel>
 		    </g:HTMLPanel>

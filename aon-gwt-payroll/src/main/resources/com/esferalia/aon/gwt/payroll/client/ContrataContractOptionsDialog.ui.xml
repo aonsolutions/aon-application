@@ -42,8 +42,8 @@
 		<g:HTMLPanel styleName="aon-width-all aon-height-all">
 
 			<g:HTMLPanel styleName="{style.optionsPanel}">
-				<g:Button ui:field="dischargeButton" styleName="{style.button}">{msgs.discharge}</g:Button>
-				<g:Button ui:field="movementButton" styleName="{style.button}">{msgs.modifications}</g:Button>
+				<g:Button ui:field="dischargeButton" styleName="{style.button}" text="{msgs.discharge}"/>
+				<g:Button ui:field="movementButton" styleName="{style.button}" text="{msgs.modifications}"/>
 			</g:HTMLPanel>
 
 		</g:HTMLPanel>

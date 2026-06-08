@@ -162,7 +162,7 @@
 
 	   		<g:HTMLPanel styleName="{style.widthAll}" debugId="employeeTablePanel">
 		   		<g:HTMLPanel styleName="{style.aonEmployeeCard}">
-		    		<g:Label styleName='{style.aonEmployeeCardTitle}'>{msgs.contractData}</g:Label>
+		    		<g:Label styleName='{style.aonEmployeeCardTitle}' text="{msgs.contractData}"/>
 			    	<g:HTMLPanel styleName="{style.widthAll} {style.flexColumn}" ui:field="contractDataTable">
 
 			    		<!-- LINEA 0 -->
@@ -312,7 +312,7 @@
 
 		<g:HTMLPanel styleName="{style.widthAll}" debugId="employeeTablePanel" ui:field="employeeTablePanel">
 	   		<g:HTMLPanel styleName="{style.aonEmployeeCard}">
-	    		<g:Label styleName='{style.aonEmployeeCardTitle}'>{msgs.personalData}</g:Label>
+	    		<g:Label styleName='{style.aonEmployeeCardTitle}' text="{msgs.personalData}"/>
 		    	<g:HTMLPanel styleName="{style.widthAll} {style.flexColumn}">
 		    		<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="{msgs.birthDate}" />

@@ -235,7 +235,7 @@
 	        <g:HTMLPanel> 
             		<g:HTMLPanel ui:field='listPECsPanel'>
             		    <g:VerticalPanel styleName="{style.styleBorder}">
-             		    <g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>{msgs.peculiaritiesOfQuotation}</g:Label>
+             		    <g:Label width="105px" styleName='aon-group-title {style.headerStyle}' text="{msgs.peculiaritiesOfQuotation}"/>
              			<g:ScrollPanel>
              				<g:Grid ui:field="listPECsTable" width="95%" styleName="{style.noselect}">
              				    <g:row>

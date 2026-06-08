@@ -40,16 +40,16 @@
 		<g:Label ui:field="fullNameL" styleName="{style.fullName}"/>
 
 		<g:HTMLPanel styleName="{style.flex}">
-			<g:Label styleName="{style.bold}">{msgs.regimenColon}</g:Label>
+			<g:Label styleName="{style.bold}" text="{msgs.regimenColon}"/>
 			<g:Label ui:field="regime"/>
-			<g:Label styleName="{style.bold}">{msgs.cccColon}</g:Label>
+			<g:Label styleName="{style.bold}" text="{msgs.cccColon}"/>
 			<g:Label ui:field="ccc"/>
 		</g:HTMLPanel>
 		
 		<g:HTMLPanel styleName="{style.flex}">
-			<g:Label styleName="{style.bold}">{msgs.docColon}</g:Label>
+			<g:Label styleName="{style.bold}" text="{msgs.docColon}"/>
 			<g:Label ui:field="documentL"/>
-			<g:Label styleName="{style.bold}">{msgs.nafColon}</g:Label>
+			<g:Label styleName="{style.bold}" text="{msgs.nafColon}"/>
 			<g:Label ui:field="nafL"/>
 		</g:HTMLPanel>
 		
@@ -62,16 +62,16 @@
 		<g:Label ui:field="comunicateStatusL"/>
 		
 		<g:HTMLPanel styleName="{style.flex}">
-			<g:Label styleName="{style.bold}">{msgs.bajaColon}</g:Label>
+			<g:Label styleName="{style.bold}" text="{msgs.bajaColon}"/>
 			<g:Label ui:field="lowDateL"/>
-			<g:Label styleName="{style.bold}">{msgs.motivoColon}</g:Label>
+			<g:Label styleName="{style.bold}" text="{msgs.motivoColon}"/>
 			<g:Label ui:field="lowTypeL"/>
 		</g:HTMLPanel>
 
 		<g:HTMLPanel styleName="{style.flex}">
-			<g:Label styleName="{style.bold}">{msgs.altaColon}</g:Label>
+			<g:Label styleName="{style.bold}" text="{msgs.altaColon}"/>
 			<g:Label ui:field="highDateL"/>
-			<g:Label styleName="{style.bold}">{msgs.motivoColon}</g:Label>
+			<g:Label styleName="{style.bold}" text="{msgs.motivoColon}"/>
 			<g:Label ui:field="highTypeL"/>
 		</g:HTMLPanel>
 

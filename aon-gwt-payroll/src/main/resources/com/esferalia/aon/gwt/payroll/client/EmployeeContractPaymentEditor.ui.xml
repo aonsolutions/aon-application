@@ -82,34 +82,34 @@
 
 				<g:HTMLPanel ui:field="paymentTable" styleName="{style.flexColumn}">
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.type}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.type}"/>
 						<g:HTMLPanel ui:field="paymentTypePanel" styleName="{style.widthAll}"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.concept}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.concept}"/>
 						<g:SuggestBox ui:field="paymentConceptSB"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.description}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.description}"/>
 						<g:TextBox ui:field="paymentDescriptionTB"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.expression}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.expression}"/>
 						<g:TextArea ui:field="paymentExpressionTB"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.salaryReceiptType}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.salaryReceiptType}"/>
 						<g:ListBox ui:field="paymentSalaryTypeLB"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.taxable}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.taxable}"/>
 						<g:HTMLPanel styleName="{style.flex}">
 							<g:ListBox ui:field="paymentTaxedTypeLB"/>
 							<g:TextBox ui:field="paymentTaxedExpression" styleName="{style.widthAll}"/>
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.contributory}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.contributory}"/>
 						<g:HTMLPanel styleName="{style.flex}">
 							<g:ListBox ui:field="paymentQuoteTypeLB"/>
 							<g:TextBox ui:field="paymentQuoteExpression" styleName="{style.widthAll}"/>
@@ -117,15 +117,15 @@
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 						<g:HTMLPanel styleName="{style.element} {style.widthAll}" ui:field="paymentMonthPanel">
-							<g:Label styleName="{style.title}">{msgs.paymentMonth}</g:Label>
+							<g:Label styleName="{style.title}" text="{msgs.paymentMonth}"/>
 							<g:ListBox ui:field="paymentMonthLB"/>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-							<g:Label styleName="{style.title}">{msgs.startDate}</g:Label>
+							<g:Label styleName="{style.title}" text="{msgs.startDate}"/>
 							<c:DateBoxEx ui:field="paymentStartDateBx" styleName="{style.date}"/>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-							<g:Label styleName="{style.title}">{msgs.endDate}</g:Label>
+							<g:Label styleName="{style.title}" text="{msgs.endDate}"/>
 							<c:DateBoxEx ui:field="paymentEndDateBx" styleName="{style.date}"/>
 						</g:HTMLPanel>
 					</g:HTMLPanel>
@@ -135,28 +135,28 @@
 
 				<g:HTMLPanel ui:field="deductionTable" styleName="{style.flexColumn}">
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.type}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.type}"/>
 						<g:ListBox ui:field="deductionTypeLB" styleName="{style.widthAll}"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.concept}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.concept}"/>
 						<g:SuggestBox ui:field="deductionConceptSB"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.description}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.description}"/>
 						<g:TextBox ui:field="deductionDescriptionTB"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.expression}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.expression}"/>
 						<g:TextArea ui:field="deductionExpressionTB"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-							<g:Label styleName="{style.title}">{msgs.startDate}</g:Label>
+							<g:Label styleName="{style.title}" text="{msgs.startDate}"/>
 							<c:DateBoxEx ui:field="deductionStartDateBx" styleName="{style.date}"/>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-							<g:Label styleName="{style.title}">{msgs.endDate}</g:Label>
+							<g:Label styleName="{style.title}" text="{msgs.endDate}"/>
 							<c:DateBoxEx ui:field="deductionEndDateBx" styleName="{style.date}"/>
 						</g:HTMLPanel>
 					</g:HTMLPanel>
@@ -166,28 +166,28 @@
 
 				<g:HTMLPanel ui:field="costTable" styleName="{style.flexColumn}">
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.type}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.type}"/>
 						<g:ListBox ui:field="costTypeLB" styleName="{style.widthAll}"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.code}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.code}"/>
 						<g:SuggestBox ui:field="costCodeSB"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.description}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.description}"/>
 						<g:TextBox ui:field="costDescriptionTB"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.expression}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.expression}"/>
 						<g:TextArea ui:field="costExpressionTB"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-							<g:Label styleName="{style.title}">{msgs.startDate}</g:Label>
+							<g:Label styleName="{style.title}" text="{msgs.startDate}"/>
 							<c:DateBoxEx ui:field="costStartDateBx" styleName="{style.date}"/>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-							<g:Label styleName="{style.title}">{msgs.endDate}</g:Label>
+							<g:Label styleName="{style.title}" text="{msgs.endDate}"/>
 							<c:DateBoxEx ui:field="costEndDateBx" styleName="{style.date}"/>
 						</g:HTMLPanel>
 					</g:HTMLPanel>
@@ -197,24 +197,24 @@
 
 				<g:HTMLPanel ui:field="bonusTable" styleName="{style.flexColumn}">
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.type}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.type}"/>
 						<g:HTMLPanel ui:field="bonusTypePanel" styleName="{style.widthAll}"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.description}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.description}"/>
 						<g:SuggestBox ui:field="bonusDescriptionSB"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.expression}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.expression}"/>
 						<g:TextArea ui:field="bonusExpressionTB"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-							<g:Label styleName="{style.title}">{msgs.startDate}</g:Label>
+							<g:Label styleName="{style.title}" text="{msgs.startDate}"/>
 							<c:DateBoxEx ui:field="bonusStartDateBx" styleName="{style.date}"/>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-							<g:Label styleName="{style.title}">{msgs.endDate}</g:Label>
+							<g:Label styleName="{style.title}" text="{msgs.endDate}"/>
 							<c:DateBoxEx ui:field="bonusEndDateBx" styleName="{style.date}"/>
 						</g:HTMLPanel>
 					</g:HTMLPanel>
@@ -224,24 +224,24 @@
 
 				<g:HTMLPanel ui:field="embargoTable" styleName="{style.flexColumn}">
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.description}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.description}"/>
 						<g:TextBox ui:field="embargoDescriptionTB"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.expression}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.expression}"/>
 						<g:TextArea ui:field="embargoExpressionTB"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element}">
-						<g:Label styleName="{style.title}">{msgs.amount}</g:Label>
+						<g:Label styleName="{style.title}" text="{msgs.amount}"/>
 						<c:DoubleBox ui:field="embargoAmountDB" styleName="{style.widthAll}" />
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-							<g:Label styleName="{style.title}">{msgs.startDate}</g:Label>
+							<g:Label styleName="{style.title}" text="{msgs.startDate}"/>
 							<c:DateBoxEx ui:field="embargoStartDateBx" styleName="{style.date}"/>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-							<g:Label styleName="{style.title}">{msgs.endDate}</g:Label>
+							<g:Label styleName="{style.title}" text="{msgs.endDate}"/>
 							<c:DateBoxEx ui:field="embargoEndDateBx" styleName="{style.date}"/>
 						</g:HTMLPanel>
 					</g:HTMLPanel>

@@ -76,12 +76,12 @@
 			<g:HTMLPanel styleName="{style.datesPanel}">
 
 				<g:HTMLPanel styleName="{style.rowPanel}">
-					<g:Label>{msgs.startDateColon}</g:Label>
+					<g:Label text="{msgs.startDateColon}"/>
 					<a:DateBoxEx ui:field="startDateDB" styleName="{style.dateBox}"></a:DateBoxEx>
 				</g:HTMLPanel>
 
 				<g:HTMLPanel styleName="{style.rowPanel}">
-					<g:Label>{msgs.endDateColon}</g:Label>
+					<g:Label text="{msgs.endDateColon}"/>
 					<a:DateBoxEx ui:field="endDateDB" styleName="{style.dateBox}"></a:DateBoxEx>
 				</g:HTMLPanel>
 
@@ -89,26 +89,26 @@
 
 			<g:HTMLPanel styleName="{style.datesPanel}">
 				<g:HTMLPanel styleName="{style.rowPanel}">
-					<g:Label styleName="{style.percentLabel}">{msgs.percentReduction}</g:Label>
+					<g:Label styleName="{style.percentLabel}" text="{msgs.percentReduction}"/>
 					<g:TextBox ui:field="percentBox" styleName="{style.percentTBx}"></g:TextBox>
 					<g:Label styleName="{style.percent}" >%</g:Label>
 				</g:HTMLPanel>
 
 				<g:HTMLPanel ui:field="reasonPanel" styleName="{style.rowPanel}">
-					<g:Label styleName="{style.percentLabel}">{msgs.causeColon}</g:Label>
+					<g:Label styleName="{style.percentLabel}" text="{msgs.causeColon}"/>
 					<g:ListBox ui:field="reasonBox"></g:ListBox>
 					<g:Label styleName="{style.percent}" >%</g:Label>
 				</g:HTMLPanel>
 
 				<g:HTMLPanel  ui:field="errorMessage" styleName="{style.errorPanel}">
-					<g:Label>{msgs.errorFormatMsg}</g:Label>
-					<g:Label>{msgs.decimalsInfo}</g:Label>
+					<g:Label text="{msgs.errorFormatMsg}"/>
+					<g:Label text="{msgs.decimalsInfo}"/>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 
 			<g:HTMLPanel styleName="{style.buttonsPanel}">
-				<g:Button ui:field="cancelButton">{msgs.cancel}</g:Button>
-    			<g:Button ui:field="acceptButton">{msgs.ok}</g:Button>
+				<g:Button ui:field="cancelButton" text="{msgs.cancel}"/>
+    			<g:Button ui:field="acceptButton" text="{msgs.ok}"/>
 			</g:HTMLPanel>
 
 		</g:HTMLPanel>

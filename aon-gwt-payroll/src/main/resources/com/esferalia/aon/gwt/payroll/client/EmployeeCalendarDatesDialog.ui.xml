@@ -63,8 +63,8 @@
 			</g:HTMLPanel>
 
 			<g:HTMLPanel styleName="{style.buttonsPanel}">
-				<g:Button ui:field="cancelButton">{msgs.cancel}</g:Button>
-			    <g:Button ui:field="acceptButton">{msgs.ok}</g:Button>
+				<g:Button ui:field="cancelButton" text="{msgs.cancel}"/>
+			    <g:Button ui:field="acceptButton" text="{msgs.ok}"/>
 			</g:HTMLPanel>
 
 		</g:HTMLPanel>

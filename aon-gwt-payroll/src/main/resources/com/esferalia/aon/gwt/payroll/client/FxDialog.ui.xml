@@ -90,7 +90,7 @@
 					<g:Grid styleName="aon-width-a11 aon-height-all">
 						<g:row>
 							<g:customCell>
-								<g:Label>{msgs.category}</g:Label>
+								<g:Label text="{msgs.category}"/>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -105,7 +105,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell>
-								<g:Label>{msgs.function}</g:Label>
+								<g:Label text="{msgs.function}"/>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="aon-width-a11 aon-height-all">
@@ -185,8 +185,7 @@
 										</g:InlineLabel>
 									</g:cell>
 									<g:cell width='25%' horizontalAlignment='ALIGN_RIGHT'>
-										<g:InlineLabel>{msgs.result}
-										</g:InlineLabel>
+										<g:InlineLabel text="{msgs.result}"/>
 									</g:cell>
 									<g:cell width='50%' horizontalAlignment='ALIGN_RIGHT'>
 										<g:HTML ui:field="resultLabel" stylePrimaryName="gwt-TextBox">&nbsp; </g:HTML>
@@ -214,10 +213,10 @@
 							<g:InlineLabel>&nbsp;</g:InlineLabel>
 						</g:cell>
 						<g:cell horizontalAlignment='ALIGN_RIGHT'>
-							<g:Button ui:field="cancelButton" debugId="fxCancelButton" >{msgs.cancel}</g:Button>
+							<g:Button ui:field="cancelButton" debugId="fxCancelButton" text="{msgs.cancel}"/>
 						</g:cell>
 						<g:cell horizontalAlignment='ALIGN_RIGHT'>
-							<g:Button ui:field="acceptButton" debugId="fxAcceptButton">{msgs.accept}</g:Button>
+							<g:Button ui:field="acceptButton" debugId="fxAcceptButton" text="{msgs.accept}"/>
 						</g:cell>
 					</g:HorizontalPanel>
 				</g:customCell>

@@ -74,7 +74,7 @@
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal">
-								<g:Label styleName="aon-outputText" ui:field="titleLabel">{msgs.partesIT}</g:Label>
+								<g:Label styleName="aon-outputText" ui:field="titleLabel" text="{msgs.partesIT}"/>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-subtitle">
@@ -87,7 +87,7 @@
 								<g:ListBox ui:field='dateListBox' styleName='' />
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								<g:InlineLabel styleName="aon-finding-toolbar-item aon-finding-toolbar-item-no-border" >{msgs.filterColon}</g:InlineLabel>
+								<g:InlineLabel styleName="aon-finding-toolbar-item aon-finding-toolbar-item-no-border" text="{msgs.filterColon}"/>
 							    <g:SuggestBox ui:field='nameEmployee' styleName="aon-inputText" width="300px"  />													
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
@@ -134,31 +134,31 @@
 
 						<g:HTML  styleName="{style.legend-icon} {style.active}"
 						    title="{msgs.activeEmployeePeriod}"/>
-						<g:InlineLabel styleName="{style.legend-caption}" >{msgs.active}</g:InlineLabel>		
+						<g:InlineLabel styleName="{style.legend-caption}" text="{msgs.active}"/>		
 
 						<g:HTML  styleName="{style.legend-icon} {style.common}"
 						    title="{msgs.commonDiseaseNonLaboral}"/>
-						<g:InlineLabel styleName="{style.legend-caption}" >{msgs.commonDisease}</g:InlineLabel>		
+						<g:InlineLabel styleName="{style.legend-caption}" text="{msgs.commonDisease}"/>		
 
 						<g:HTML  styleName="{style.legend-icon} {style.professional}"
 						    title="{msgs.professionalDiseaseLaboral}"/>
-						<g:InlineLabel styleName="{style.legend-caption}" >{msgs.professionalDisease}</g:InlineLabel>		
+						<g:InlineLabel styleName="{style.legend-caption}" text="{msgs.professionalDisease}"/>		
 
 						<g:HTML  styleName="{style.legend-icon} {style.maternity}"
 						    title="{msgs.maternityLactancy}"/>
-						<g:InlineLabel styleName="{style.legend-caption}" >{msgs.maternity}</g:InlineLabel>		
+						<g:InlineLabel styleName="{style.legend-caption}" text="{msgs.maternity}"/>		
 
 						<g:HTML  styleName="{style.legend-icon} {style.paternity}"
 						    title="{msgs.paternityLeave}"/>
-						<g:InlineLabel styleName="{style.legend-caption}" >{msgs.paternity}</g:InlineLabel>		
+						<g:InlineLabel styleName="{style.legend-caption}" text="{msgs.paternity}"/>		
 
 						<g:HTML  styleName="{style.legend-icon} {style.common}"
 						    title="{msgs.commonDiseaseCarencia}"/>
-						<g:InlineLabel styleName="{style.legend-caption}" >{msgs.commonDiseaseCarencia}</g:InlineLabel>		
+						<g:InlineLabel styleName="{style.legend-caption}" text="{msgs.commonDiseaseCarencia}"/>		
 					
 						<g:HTML  styleName="{style.legend-icon} {style.commonProfessional}"
 						    title="{msgs.commonDiseaseCovid}"/>
-						<g:InlineLabel styleName="{style.legend-caption}" >{msgs.commonDiseaseCovid}</g:InlineLabel>		
+						<g:InlineLabel styleName="{style.legend-caption}" text="{msgs.commonDiseaseCovid}"/>		
 
 					</g:HorizontalPanel>				
 					

@@ -402,8 +402,7 @@
 							<g:Grid width="100%">
 								<g:row>
 									<g:customCell styleName="{style.label}">
-										<g:Label>{msgs.description}
-										</g:Label>
+										<g:Label text="{msgs.description}"/>
 									</g:customCell>
 									<g:customCell styleName="{style.field}">
 										<g:TextBox width="100%" debugId='descriptionTextBox' ui:field='descriptionTextBox' maxLength="{DESCRIPTION_MAX_LENGTH}"/>
@@ -411,8 +410,7 @@
 								</g:row>
 								<g:row>
 									<g:customCell styleName="{style.label}">
-										<g:Label>{msgs.ssCode}
-										</g:Label>
+										<g:Label text="{msgs.ssCode}"/>
 									</g:customCell>
 									<g:customCell styleName="{style.field}">
 										<g:HTMLPanel styleName="{style.flex}">
@@ -448,7 +446,7 @@
 							<g:HTML styleName="{style.vertical-space}" />
 							<g:DeckPanel ui:field="deckPanelExtras">
 								<g:HTMLPanel ui:field="periodTypePanel" styleName="{style.flex}">
-									<g:Label styleName="{style.payPeriodLabel}">{msgs.extraPayments}</g:Label>
+									<g:Label styleName="{style.payPeriodLabel}" text="{msgs.extraPayments}"/>
 									<g:DeckPanel ui:field="deckPanelPayPeriod">
 										<g:ListBox ui:field="payPeriod"></g:ListBox>
 										<g:Label ui:field="payPeriodLabel"></g:Label>
@@ -472,7 +470,7 @@
 						<g:HorizontalPanel>
 							<g:HTMLPanel styleName="aon-finding-title">
 								<g:HTMLPanel styleName="aon-finding-title-internal">
-									<g:Label styleName="aon-outputText">{msgs.agreement}</g:Label>
+									<g:Label styleName="aon-outputText" text="{msgs.agreement}"/>
 								</g:HTMLPanel>
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="aon-finding-subtitle">

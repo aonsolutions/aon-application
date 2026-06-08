@@ -27,12 +27,12 @@
 	
 	<g:Grid styleName="{style.collapse} aon-SalarySelect">
 		<g:row>
-			<g:customCell styleName="{style.padding-right} aon-SalarySelect-Label" ><g:Label ui:field="typeLabel" >{msgs.salaryReceipt}</g:Label></g:customCell>
-			<g:customCell styleName="{style.padding-right} aon-SalarySelect-Label" ><g:Label ui:field="fromMonthLabel" visible="false" >{msgs.startMonthHeader}</g:Label></g:customCell>
-			<g:customCell styleName="{style.padding-right} aon-SalarySelect-Label" ><g:Label ui:field="fromDateLabel" visible="false" >{msgs.startDateHeader}</g:Label></g:customCell>
-			<g:customCell styleName="{style.padding-right} aon-SalarySelect-Label" ><g:Label ui:field="monthLabel" >{msgs.calculationMonth}</g:Label></g:customCell>
-			<g:customCell styleName="{style.padding-right} aon-SalarySelect-Label" ><g:Label ui:field="dateLabel" visible="false" >{msgs.calculationDate}</g:Label></g:customCell>
-			<g:customCell styleName="{style.padding-right} aon-SalarySelect-Label" ><g:Label ui:field="payDateLabel" >{msgs.paymentDateHeader}</g:Label></g:customCell>
+			<g:customCell styleName="{style.padding-right} aon-SalarySelect-Label" ><g:Label ui:field="typeLabel" text="{msgs.salaryReceipt}"/></g:customCell>
+			<g:customCell styleName="{style.padding-right} aon-SalarySelect-Label" ><g:Label ui:field="fromMonthLabel" visible="false" text="{msgs.startMonthHeader}"/></g:customCell>
+			<g:customCell styleName="{style.padding-right} aon-SalarySelect-Label" ><g:Label ui:field="fromDateLabel" visible="false" text="{msgs.startDateHeader}"/></g:customCell>
+			<g:customCell styleName="{style.padding-right} aon-SalarySelect-Label" ><g:Label ui:field="monthLabel" text="{msgs.calculationMonth}"/></g:customCell>
+			<g:customCell styleName="{style.padding-right} aon-SalarySelect-Label" ><g:Label ui:field="dateLabel" visible="false" text="{msgs.calculationDate}"/></g:customCell>
+			<g:customCell styleName="{style.padding-right} aon-SalarySelect-Label" ><g:Label ui:field="payDateLabel" text="{msgs.paymentDateHeader}"/></g:customCell>
 		</g:row>
 		<g:row>
 			<g:customCell styleName="{style.padding-right}" ><g:ListBox debugId="typeListBox" ui:field="typeListBox"/></g:customCell>

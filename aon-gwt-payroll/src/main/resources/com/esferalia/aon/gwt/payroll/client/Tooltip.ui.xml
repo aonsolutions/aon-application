@@ -57,7 +57,7 @@
 		<table>
 			<tr>
 				<td>
-					<g:Label styleName="aon-bold" ui:field="baja">{msgs.bajaColon}</g:Label>
+					<g:Label styleName="aon-bold" ui:field="baja" text="{msgs.bajaColon}"/>
 				</td>
 				<td>
 					<g:InlineLabel ui:field="startDateLabel"></g:InlineLabel>
@@ -67,7 +67,7 @@
 					<g:Label ui:field="startDate"></g:Label>
 				</td>
 				<td>
-					<g:InlineLabel ui:field="causeStartLabel">{msgs.reason}</g:InlineLabel>
+					<g:InlineLabel ui:field="causeStartLabel" text="{msgs.reason}"/>
 				</td>
 				<td>
 					<g:ListBox width="10em" ui:field='typeLeaveListBox' />
@@ -76,7 +76,7 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label styleName="aon-bold" ui:field="alta">{msgs.altaColon}</g:Label>
+					<g:Label styleName="aon-bold" ui:field="alta" text="{msgs.altaColon}"/>
 				</td>
 				<td>
 					<g:InlineLabel ui:field="endDateLabel"></g:InlineLabel>
@@ -87,7 +87,7 @@
 					
 				</td>
 				<td>
-					<g:InlineLabel ui:field="causeEndLabel">{msgs.reason}</g:InlineLabel>
+					<g:InlineLabel ui:field="causeEndLabel" text="{msgs.reason}"/>
 				</td>
 				<td>
 					<g:ListBox width="10em" ui:field='typeDischargeListBox' />
@@ -98,7 +98,7 @@
 				<td colspan="6" align="right">
 				    <br></br>
 					<div styleName="{style.buttons}">
-						<g:Button ui:field="acceptButton">{msgs.accept}</g:Button>
+						<g:Button ui:field="acceptButton" text="{msgs.accept}"/>
 					</div>
 				</td>
 			</tr>

@@ -115,23 +115,23 @@
 						
 							<g:HTMLPanel styleName="aon-panelGrid-search">
 								<g:HTMLPanel styleName="aon-panelGrid-search-info">
-									<g:Label styleName="aon-panelGrid-search-info-internal">{msgs.liquidacion}</g:Label>
+									<g:Label styleName="aon-panelGrid-search-info-internal" text="{msgs.liquidacion}"/>
 								</g:HTMLPanel>
 								<g:HorizontalPanel styleName="{style.ml20}">
-									<g:Label styleName="aon-outputLabel {style.pt4} {style.mr16}">{msgs.period}</g:Label>
+									<g:Label styleName="aon-outputLabel {style.pt4} {style.mr16}" text="{msgs.period}"/>
 									<g:ListBox ui:field="month" styleName="{style.mr10}"></g:ListBox>
 									<g:ListBox ui:field="year" styleName="{style.mr10}"></g:ListBox>
 									<g:CheckBox ui:field="allCCCsCB"></g:CheckBox>
-									<g:Label styleName="{style.pt2}">{msgs.all}</g:Label>
+									<g:Label styleName="{style.pt2}" text="{msgs.all}"/>
 									<g:CheckBox ui:field="emitCCCsCB"></g:CheckBox>
-									<g:Label styleName="{style.pt2}">{msgs.emitidos}</g:Label>
+									<g:Label styleName="{style.pt2}" text="{msgs.emitidos}"/>
 									<g:CheckBox ui:field="peddingCCCsCB"></g:CheckBox>
-									<g:Label styleName="{style.pt2}">{msgs.pendientes}</g:Label>
+									<g:Label styleName="{style.pt2}" text="{msgs.pendientes}"/>
 								</g:HorizontalPanel>
 								<g:HorizontalPanel ui:field="enterprisePanel" styleName="{style.ml20} {style.mt10}">
-									<g:Label styleName="aon-outputLabel {style.pt4}">{msgs.enterprise}</g:Label>
+									<g:Label styleName="aon-outputLabel {style.pt4}" text="{msgs.enterprise}"/>
 									<g:SuggestBox styleName="aon-selectOneMenu {style.ml9} {style.w300}" ui:field="enterpriseSB"></g:SuggestBox>
-									<g:Label styleName="aon-outputLabel {style.pt4} {style.ml4}">{msgs.selcs}</g:Label>
+									<g:Label styleName="aon-outputLabel {style.pt4} {style.ml4}" text="{msgs.selcs}"/>
 									<g:Label ui:field="enterprisesSelected" styleName="aon-outputLabel {style.pt4} {style.ml4}"></g:Label>
 								</g:HorizontalPanel>
 							</g:HTMLPanel>
@@ -147,15 +147,15 @@
 						<g:VerticalPanel styleName="{style.tableStylePanel} {style.p10}">
 							<g:HTMLPanel styleName="aon-panelGrid-search">
 								<g:HTMLPanel styleName="aon-panelGrid-search-info">
-									<g:Label styleName="aon-panelGrid-search-info-internal">{msgs.filtrarListado}</g:Label>
+									<g:Label styleName="aon-panelGrid-search-info-internal" text="{msgs.filtrarListado}"/>
 								</g:HTMLPanel>
 								<g:DisclosurePanel ui:field="collapsePanel" styleName="{style.widthAll}">
-									<g:header>{msgs.opcionesBusqueda}</g:header>
+									<g:header><g:Label text="{msgs.opcionesBusqueda}"/></g:header>
 									<g:HTMLPanel>
 										<table ui:field="filterTable" class="aon-panelGrid">
 											<tr>
 												<td class="aon-panelGrid-odd">
-													<g:Label styleName="aon-outputLabel  {style.subTitleSearch}">{msgs.tipoCCC}</g:Label>
+													<g:Label styleName="aon-outputLabel  {style.subTitleSearch}" text="{msgs.tipoCCC}"/>
 												</td>
 												<td class="aon-panelGrid-even" colspan="2">
 													<g:ListBox styleName="aon-selectOneMenu {style.ml9}" ui:field="typeList"></g:ListBox>
@@ -163,7 +163,7 @@
 											</tr>
 											<tr>
 												<td class="aon-panelGrid-odd">
-													<g:Label styleName="aon-outputLabel  {style.subTitleSearch}">{msgs.province}</g:Label>
+													<g:Label styleName="aon-outputLabel  {style.subTitleSearch}" text="{msgs.province}"/>
 												</td>
 												<td class="aon-panelGrid-even" colspan="2">
 													<g:ListBox styleName="aon-selectOneMenu {style.ml9}" ui:field="geozoneList"></g:ListBox>
@@ -171,7 +171,7 @@
 											</tr>
 											<tr>
 												<td class="aon-panelGrid-odd">
-													<g:Label styleName="aon-outputLabel {style.subTitleSearch}">{msgs.liquidationPeriod}</g:Label>
+													<g:Label styleName="aon-outputLabel {style.subTitleSearch}" text="{msgs.liquidationPeriod}"/>
 												</td>
 												<td class="aon-panelGrid-even" colspan="2">
 													<table>
@@ -192,7 +192,7 @@
 							</g:HTMLPanel>
 							
 							<g:HTMLPanel styleName="aon-panelGrid-search-info {style.mb0}">
-								<g:Label styleName="aon-panelGrid-search-info-internal">{msgs.historialCRA}</g:Label>
+								<g:Label styleName="aon-panelGrid-search-info-internal" text="{msgs.historialCRA}"/>
 							</g:HTMLPanel>
 							<g:HTMLPanel ui:field="crasPanel" styleName="{style.mt15}">
 						 		<c:DataGrid ui:field="crasDataGrid"></c:DataGrid>

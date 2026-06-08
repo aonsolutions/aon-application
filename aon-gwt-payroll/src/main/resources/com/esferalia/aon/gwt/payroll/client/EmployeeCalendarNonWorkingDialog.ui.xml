@@ -44,43 +44,43 @@
 			<g:HTMLPanel styleName="{style.hoursPanel}">
 				<g:HTMLPanel styleName="{style.rowPanel}">
 					<g:CheckBox ui:field="mondayCB"></g:CheckBox>
-					<g:Label styleName="{style.labelStyle}">{msgs.mondayColon}</g:Label>
+					<g:Label styleName="{style.labelStyle}" text="{msgs.mondayColon}"/>
 				</g:HTMLPanel>
 
 				<g:HTMLPanel styleName="{style.rowPanel}">
 					<g:CheckBox ui:field="tuesdayCB"></g:CheckBox>
-					<g:Label styleName="{style.labelStyle}">{msgs.tuesdayColon}</g:Label>
+					<g:Label styleName="{style.labelStyle}" text="{msgs.tuesdayColon}"/>
 				</g:HTMLPanel>
 
 				<g:HTMLPanel styleName="{style.rowPanel}">
 					<g:CheckBox ui:field="wednesdayCB"></g:CheckBox>
-					<g:Label styleName="{style.labelStyle}">{msgs.wednesdayColon}</g:Label>
+					<g:Label styleName="{style.labelStyle}" text="{msgs.wednesdayColon}"/>
 				</g:HTMLPanel>
 
 				<g:HTMLPanel styleName="{style.rowPanel}">
 					<g:CheckBox ui:field="thursdayCB"></g:CheckBox>
-					<g:Label styleName="{style.labelStyle}">{msgs.thursdayColon}</g:Label>
+					<g:Label styleName="{style.labelStyle}" text="{msgs.thursdayColon}"/>
 				</g:HTMLPanel>
 
 				<g:HTMLPanel styleName="{style.rowPanel}">
 					<g:CheckBox ui:field="fridayCB"></g:CheckBox>
-					<g:Label styleName="{style.labelStyle}">{msgs.fridayColon}</g:Label>
+					<g:Label styleName="{style.labelStyle}" text="{msgs.fridayColon}"/>
 				</g:HTMLPanel>
 
 				<g:HTMLPanel styleName="{style.rowPanel}">
 					<g:CheckBox ui:field="saturdayCB"></g:CheckBox>
-					<g:Label styleName="{style.labelStyle}">{msgs.saturdayColon}</g:Label>
+					<g:Label styleName="{style.labelStyle}" text="{msgs.saturdayColon}"/>
 				</g:HTMLPanel>
 
 				<g:HTMLPanel styleName="{style.rowPanel}">
 					<g:CheckBox ui:field="sundayCB"></g:CheckBox>
-					<g:Label styleName="{style.labelStyle}">{msgs.sundayColon}</g:Label>
+					<g:Label styleName="{style.labelStyle}" text="{msgs.sundayColon}"/>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 
 			<g:HTMLPanel styleName="{style.buttonsPanel}">
-				<g:Button ui:field="cancelButton">{msgs.cancel}</g:Button>
-			    <g:Button ui:field="acceptButton">{msgs.ok}</g:Button>
+				<g:Button ui:field="cancelButton" text="{msgs.cancel}"/>
+			    <g:Button ui:field="acceptButton" text="{msgs.ok}"/>
 			</g:HTMLPanel>
 
 		</g:HTMLPanel>

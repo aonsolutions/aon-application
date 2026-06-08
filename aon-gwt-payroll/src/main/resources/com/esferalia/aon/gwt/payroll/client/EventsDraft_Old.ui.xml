@@ -42,7 +42,7 @@
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal">
-								<g:Label styleName="aon-outputText">{msgs.incidencias}</g:Label>
+								<g:Label styleName="aon-outputText" text="{msgs.incidencias}"/>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-subtitle">
@@ -60,7 +60,7 @@
 								<g:Button ui:field='redoButton'
 									styleName="aon-finding-toolbar-item aon-icon-redo"
 									enabled="false" />
-								<g:InlineLabel styleName="aon-finding-toolbar-item aon-finding-toolbar-item-no-border">{msgs.copyColon}</g:InlineLabel>
+								<g:InlineLabel styleName="aon-finding-toolbar-item aon-finding-toolbar-item-no-border" text="{msgs.copyColon}"/>
 								<g:ListBox ui:field="copyDateRangeListBox" />
 							</g:HTMLPanel>
 						</g:HorizontalPanel>

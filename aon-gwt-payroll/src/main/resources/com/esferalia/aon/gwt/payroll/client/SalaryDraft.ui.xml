@@ -463,13 +463,13 @@
 												<g:row>
 													<g:customCell styleName="{style.span-cell-cell}">
 														<g:HTMLPanel>
-															<g:Label styleName="{style.cell-label}">{msgs.cccHeader}</g:Label>
+															<g:Label styleName="{style.cell-label}" text="{msgs.cccHeader}"/>
 															<g:Label ui:field="enterpriseCCCLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
 														</g:HTMLPanel>
 													</g:customCell>
 													<g:customCell styleName="{style.span-cell-cell}">
 														<g:HTMLPanel >
-															<g:Label styleName="{style.cell-label}">{msgs.group}</g:Label>
+															<g:Label styleName="{style.cell-label}" text="{msgs.group}"/>
 															<g:HTMLPanel tag="div" styleName="{style.cell-value}">
 																<e:ValueInlineHTML changeDisplayStyleName="{style.value-changed}" debugId="employeeGroupLabel" ui:field="employeeGroupLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
 																<g:InlineHTML debugId="dbEmployeeGroupLabel" ui:field="dbEmployeeGroupLabel" visible="false"></g:InlineHTML>														
@@ -478,7 +478,7 @@
 													</g:customCell>
 													<g:customCell styleName="{style.span-cell-cell}">
 														<g:HTMLPanel>
-															<g:Label styleName="{style.cell-label}">{msgs.contract}</g:Label>
+															<g:Label styleName="{style.cell-label}" text="{msgs.contract}"/>
 															<g:HTMLPanel tag="div" styleName="{style.cell-value}">
 																<e:ValueInlineHTML changeDisplayStyleName="{style.value-changed}" debugId="employeeContractLabel" ui:field="employeeContractLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
 																<g:InlineHTML debugId="dbEmployeeContractLabel" ui:field="dbEmployeeContractLabel" visible="false"></g:InlineHTML>														
@@ -487,7 +487,7 @@
 													</g:customCell>
 													<g:customCell styleName="{style.span-cell-cell}">
 														<g:HTMLPanel>
-															<g:Label styleName="{style.cell-label}">{msgs.occupation}</g:Label>
+															<g:Label styleName="{style.cell-label}" text="{msgs.occupation}"/>
 															<g:HTMLPanel tag="div" styleName="{style.cell-value}">
 																<e:ValueInlineHTML changeDisplayStyleName="{style.value-changed}" debugId="employeeOcupationLabel" ui:field="employeeOcupationLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
 																<g:InlineHTML debugId="dbEmployeeOcupationLabel" ui:field="dbEmployeeOcupationLabel" visible="false"></g:InlineHTML>														
@@ -502,21 +502,21 @@
 												<g:row>
 													<g:customCell styleName="{style.span-cell-cell}">
 														<g:HTMLPanel>
-															<g:Label styleName="{style.cell-label}">{msgs.professionalCategory}</g:Label>
+															<g:Label styleName="{style.cell-label}" text="{msgs.professionalCategory}"/>
 															<g:Label ui:field="employeeAgreementCategoryLabel"
 																styleName="{style.cell-value}">&nbsp; </g:Label>
 														</g:HTMLPanel>
 													</g:customCell>
 													<g:customCell styleName="{style.span-cell-cell}">
 														<g:HTMLPanel>
-															<g:Label styleName="{style.cell-label}">{msgs.affiliationNumber}</g:Label>
+															<g:Label styleName="{style.cell-label}" text="{msgs.affiliationNumber}"/>
 															<g:Label ui:field="employeeSSLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
 															<g:Label debugId="employeeNameLabel" ui:field="employeeNameLabel" styleName="aon-text-center" visible="false" />
 														</g:HTMLPanel>
 													</g:customCell>
 													<g:customCell styleName="{style.span-cell-cell-last}">
 														<g:HTMLPanel>
-															<g:Label styleName="{style.cell-label}">{msgs.documentNumber}</g:Label>
+															<g:Label styleName="{style.cell-label}" text="{msgs.documentNumber}"/>
 															<g:Label ui:field="employeeDocumentLabel"
 																styleName="{style.cell-value}">&nbsp; </g:Label>
 														</g:HTMLPanel>
@@ -537,13 +537,13 @@
 													</g:customCell>
 													<g:customCell styleName="{style.span-cell-cell}">
 														<g:HTMLPanel>
-															<g:Label styleName="{style.cell-label}">{msgs.liquidationPeriodHeader}</g:Label>
+															<g:Label styleName="{style.cell-label}" text="{msgs.liquidationPeriodHeader}"/>
 															<g:Label debugId="periodLabel" ui:field="periodLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
 														</g:HTMLPanel>
 													</g:customCell>
 													<g:customCell styleName="{style.span-cell-cell-last}">
 														<g:HTMLPanel>
-															<g:Label styleName="{style.cell-label}">{msgs.days}</g:Label>
+															<g:Label styleName="{style.cell-label}" text="{msgs.days}"/>
 															<g:Label ui:field="daysLabel" debugId="daysLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
 														</g:HTMLPanel>
 													</g:customCell>
@@ -556,7 +556,7 @@
 												<g:row>
 													<g:customCell styleName="{style.span-cell-cell}">
 														<g:HTMLPanel>
-															<g:Label styleName="{style.cell-label}">{msgs.seniority}</g:Label>
+															<g:Label styleName="{style.cell-label}" text="{msgs.seniority}"/>
 															<g:Label ui:field="employeeSeniorityLabel"
 																styleName="{style.cell-value}">&nbsp; </g:Label>
 														</g:HTMLPanel>
@@ -564,9 +564,9 @@
 													<g:customCell styleName="{style.span-cell-cell-last}">
 														<g:HorizontalPanel styleName="{style.table-label}" ui:field="employeeHoursFactorDaysPanel">
 															<g:HTMLPanel>
-																<g:Label ui:field="employeeWorkedHoursTitle" styleName="{style.cell-label}" visible="false">{msgs.workedHours}</g:Label>
-																<g:Label ui:field="employeeWorkedDaysTitle" styleName="{style.cell-label}" visible="false">{msgs.workedDays}</g:Label>
-																<g:Label ui:field="employeePartialFactorTitle" styleName="{style.cell-label}" visible="false">{msgs.partialityCoefficientHeader}</g:Label>
+																<g:Label ui:field="employeeWorkedHoursTitle" styleName="{style.cell-label}" visible="false" text="{msgs.workedHours}"/>
+																<g:Label ui:field="employeeWorkedDaysTitle" styleName="{style.cell-label}" visible="false" text="{msgs.workedDays}"/>
+																<g:Label ui:field="employeePartialFactorTitle" styleName="{style.cell-label}" visible="false" text="{msgs.partialityCoefficientHeader}"/>
 																<g:HTMLPanel tag="div" styleName="{style.cell-value}">
 																	<e:ValueInlineHTML changeDisplayStyleName="{style.value-changed}" debugId="employeeWorkedHoursLabel" ui:field="employeeWorkedHoursLabel" htmlNull="&nbsp;" visible="false" >&nbsp; </e:ValueInlineHTML>
 																	<g:InlineHTML debugId="dbEmployeeWorkedHoursLabel" ui:field="dbEmployeeWorkedHoursLabel" visible="false"></g:InlineHTML>														
@@ -613,7 +613,7 @@
 										<g:row styleName="aon-dataTable-row-odd">
 											<g:customCell>
 												<g:HTMLPanel>
-													<g:Label styleName="{style.cell-label}">{msgs.totalRemuneration}</g:Label>
+													<g:Label styleName="{style.cell-label}" text="{msgs.totalRemuneration}"/>
 													<g:HTMLPanel tag="div" styleName="aon-text-center">
 														<e:ValueInlineHTML
 															changeDisplayStyleName="{style.value-changed}" debugId="remunerationLabel" ui:field="remunerationLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
@@ -624,7 +624,7 @@
 											</g:customCell>
 											<g:customCell>
 												<g:HTMLPanel>
-													<g:Label styleName="{style.cell-label}">{msgs.prorrataSalaries}</g:Label>
+													<g:Label styleName="{style.cell-label}" text="{msgs.prorrataSalaries}"/>
 													<g:HTMLPanel tag="div" styleName="aon-text-center">
 														<e:ValueInlineHTML
 															changeDisplayStyleName="{style.value-changed}" debugId="prorationBaseLabel" ui:field="prorationBaseLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
@@ -635,7 +635,7 @@
 											</g:customCell>
 											<g:customCell>
 												<g:HTMLPanel>
-													<g:Label styleName="{style.cell-label}">{msgs.totalQuotationBase}</g:Label>
+													<g:Label styleName="{style.cell-label}" text="{msgs.totalQuotationBase}"/>
 													<g:HTMLPanel tag="div" styleName="aon-text-center">
 														<e:ValueExpressionBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center {style.textbox-readonly}" visibleLength="9"
 															changeDisplayStyleName="{style.value-changed}" debugId="cgcBaseLabel" ui:field="cgcBaseLabel" enabled="false" >&nbsp; </e:ValueExpressionBox>
@@ -650,7 +650,7 @@
 										<g:row styleName="aon-dataTable-row-even">
 											<g:customCell>
 												<g:HTMLPanel>
-													<g:Label styleName="{style.cell-label}">{msgs.irpfBase}</g:Label>
+													<g:Label styleName="{style.cell-label}" text="{msgs.irpfBase}"/>
 													<g:HTMLPanel tag="div" styleName="aon-text-center">
 														<e:ValueInlineHTML
 															changeDisplayStyleName="{style.value-changed}" debugId="irpfBaseLabel" ui:field="irpfBaseLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
@@ -661,7 +661,7 @@
 											</g:customCell>
 											<g:customCell>
 												<g:HTMLPanel>
-													<g:Label styleName="{style.cell-label}">{msgs.overtimeBase}</g:Label>
+													<g:Label styleName="{style.cell-label}" text="{msgs.overtimeBase}"/>
 													<g:HTMLPanel tag="div" styleName="aon-text-center">
 														<e:ValueInlineHTML
 															changeDisplayStyleName="{style.value-changed}" debugId="hExtraBaseLabel" ui:field="hExtraBaseLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
@@ -674,7 +674,7 @@
 											</g:customCell>
 											<g:customCell>
 												<g:HTMLPanel>
-													<g:Label styleName="{style.cell-label}">{msgs.workAccidentBase}</g:Label>
+													<g:Label styleName="{style.cell-label}" text="{msgs.workAccidentBase}"/>
 													<g:HTMLPanel tag="div" styleName="aon-text-center">
 														<e:ValueExpressionBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center {style.textbox-readonly}" visibleLength="9"
 															changeDisplayStyleName="{style.value-changed}" debugId="cgpBaseLabel" ui:field="cgpBaseLabel" enabled="false" >&nbsp; </e:ValueExpressionBox>
@@ -695,7 +695,7 @@
 											</g:customCell>
 											<g:customCell >
 												<g:HTMLPanel>
-													<g:Label styleName="{style.cell-label}">{msgs.unauthorizedOvertimeBase}</g:Label>
+													<g:Label styleName="{style.cell-label}" text="{msgs.unauthorizedOvertimeBase}"/>
 													<g:HTMLPanel tag="div" styleName="aon-text-center">
 														<e:ValueInlineHTML
 															changeDisplayStyleName="{style.value-changed}" ui:field="nonHExtraBaseLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
@@ -721,7 +721,7 @@
 										<g:row styleName="aon-dataTable-row-odd">
 											<g:customCell>
 												<g:HTMLPanel>
-													<g:Label styleName="{style.cell-label}">{msgs.totalEarnings}</g:Label>
+													<g:Label styleName="{style.cell-label}" text="{msgs.totalEarnings}"/>
 													<g:HTMLPanel tag="div" styleName="aon-text-center">
 														<e:ExpressionValueBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
 																changeDisplayStyleName="{style.value-changed}" debugId="totalPaymentLabel" ui:field="totalPaymentLabel">&nbsp; </e:ExpressionValueBox>												
@@ -732,7 +732,7 @@
 											</g:customCell>
 											<g:customCell>
 												<g:HTMLPanel>
-													<g:Label styleName="{style.cell-label}">{msgs.totalDeductions}</g:Label>
+													<g:Label styleName="{style.cell-label}" text="{msgs.totalDeductions}"/>
 													<g:HTMLPanel tag="div" styleName="aon-text-center">
 														<e:ValueInlineHTML
 															changeDisplayStyleName="{style.value-changed}" ui:field="totalDeductionLabel" debugId="totalDeductionLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
@@ -743,7 +743,7 @@
 											</g:customCell>
 											<g:customCell>
 												<g:HTMLPanel>
-													<g:Label styleName="{style.cell-label}">{msgs.netToReceive}</g:Label>
+													<g:Label styleName="{style.cell-label}" text="{msgs.netToReceive}"/>
 													<g:HTMLPanel tag="div" styleName="aon-text-center">
 														<e:ExpressionValueBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
 															changeDisplayStyleName="{style.value-changed}" debugId="totalLiquidLabel" ui:field="totalLiquidLabel">&nbsp; </e:ExpressionValueBox>
@@ -756,7 +756,7 @@
 										<g:row styleName="aon-dataTable-row-odd">
 											<g:customCell>
 												<g:HTMLPanel>
-													<g:Label styleName="{style.cell-label}">{msgs.total}</g:Label>
+													<g:Label styleName="{style.cell-label}" text="{msgs.total}"/>
 													<g:HTMLPanel tag="div" styleName="aon-text-center">
 														<e:ValueInlineHTML 
 															changeDisplayStyleName="{style.value-changed}" debugId="totalLabel" ui:field="totalLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>												
@@ -767,7 +767,7 @@
 											</g:customCell>
 											<g:customCell>
 												<g:HTMLPanel>
-													<g:Label styleName="{style.cell-label}">{msgs.totalCompany}</g:Label>
+													<g:Label styleName="{style.cell-label}" text="{msgs.totalCompany}"/>
 													<g:HTMLPanel tag="div" styleName="aon-text-center">
 														<e:ValueInlineHTML
 															changeDisplayStyleName="{style.value-changed}" ui:field="totalEnterpriseLabel" debugId="totalEnterpriseLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>

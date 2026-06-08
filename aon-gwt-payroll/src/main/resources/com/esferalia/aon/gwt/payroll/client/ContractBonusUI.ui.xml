@@ -69,7 +69,7 @@
 			<g:HTMLPanel styleName="{style.flexColumn}">
 				<g:HTMLPanel ui:field="messagePanel" styleName="{style.widthAll}" />
 				<g:VerticalPanel ui:field="contractBonusTable" styleName="{style.styleBorder}">
-			    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>{msgs.bonuses}</g:Label>
+			    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}' text="{msgs.bonuses}"/>
 			    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
 			    		<g:VerticalPanel>
 			    			<g:Grid ui:field="contractBonusDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
@@ -78,7 +78,7 @@
 			    			</g:HTMLPanel>
 				    		<g:ScrollPanel ui:field="contractBonusScrollPanel" styleName="{style.scrollStyle}">
 				    			<g:DeckPanel ui:field="deckPanel">
-				    				<g:Label styleName="{style.noBonusLB}">{msgs.noBonuses}</g:Label>
+				    				<g:Label styleName="{style.noBonusLB}" text="{msgs.noBonuses}"/>
 				    				<g:Grid ui:field="contractBonusDataTable"></g:Grid>
 				    			</g:DeckPanel>
 				    		</g:ScrollPanel>

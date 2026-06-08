@@ -117,12 +117,12 @@
 			<g:HTMLPanel ui:field="north" styleName="aon-width-all aon-height-all"></g:HTMLPanel>
 			<g:DeckPanel ui:field="mainDeckPanel">
 			    <g:VerticalPanel ui:field="newJourneyTable" styleName="{style.widthAuto} {style.borderTable} {style.margingLeft} {style.marginBottom}">
-					<g:Label width="105px" styleName="aon-group-title {style.headerStyle}">{msgs.newAction}</g:Label>
+					<g:Label width="105px" styleName="aon-group-title {style.headerStyle}" text="{msgs.newAction}"/>
 			    	<g:Grid styleName="{style.margin}">
 			    		<g:row class="rich-table-subheader aon-dataTable-header">
 				    		<g:customCell>
 					    		<g:HorizontalPanel>
-					    			<g:Label styleName="{style.bold}">{msgs.fromHeader}</g:Label>
+					    			<g:Label styleName="{style.bold}" text="{msgs.fromHeader}"/>
 					    			<a:DateBoxEx ui:field="startDatePeriod" styleName="rich-calendar-input aon-selectInputDate-inputClass {style.dateWidth}"></a:DateBoxEx>
 					    		</g:HorizontalPanel>
 				    		</g:customCell>
@@ -130,19 +130,19 @@
 			    		<g:row>
 			    			<g:customCell>
 					    		<g:HorizontalPanel>
-					    			<g:Label styleName="{style.bold}">{msgs.mondayAbbr}</g:Label>
+					    			<g:Label styleName="{style.bold}" text="{msgs.mondayAbbr}"/>
 					    			<g:TextBox styleName="aon-inputText {style.widthTB}" ui:field="newMonday"></g:TextBox>
-					    			<g:Label styleName="{style.bold}">{msgs.tuesdayAbbr}</g:Label>
+					    			<g:Label styleName="{style.bold}" text="{msgs.tuesdayAbbr}"/>
 					    			<g:TextBox styleName="aon-inputText {style.widthTB}" ui:field="newTuesday"></g:TextBox>
-					    			<g:Label styleName="{style.bold}">{msgs.wednesdayAbbr}</g:Label>
+					    			<g:Label styleName="{style.bold}" text="{msgs.wednesdayAbbr}"/>
 					    			<g:TextBox styleName="aon-inputText {style.widthTB}" ui:field="newWednesday"></g:TextBox>
-					    			<g:Label styleName="{style.bold}">{msgs.thursdayAbbr}</g:Label>
+					    			<g:Label styleName="{style.bold}" text="{msgs.thursdayAbbr}"/>
 					    			<g:TextBox styleName="aon-inputText {style.widthTB}" ui:field="newThursday"></g:TextBox>
-					    			<g:Label styleName="{style.bold}">{msgs.fridayAbbr}</g:Label>
+					    			<g:Label styleName="{style.bold}" text="{msgs.fridayAbbr}"/>
 					    			<g:TextBox styleName="aon-inputText {style.widthTB}" ui:field="newFriday"></g:TextBox>
-					    			<g:Label styleName="{style.bold}">{msgs.saturdayAbbr}</g:Label>
+					    			<g:Label styleName="{style.bold}" text="{msgs.saturdayAbbr}"/>
 					    			<g:TextBox styleName="aon-inputText {style.widthTB}" ui:field="newSaturday"></g:TextBox>
-					    			<g:Label styleName="{style.bold}">{msgs.sundayAbbr}</g:Label>
+					    			<g:Label styleName="{style.bold}" text="{msgs.sundayAbbr}"/>
 					    			<g:TextBox styleName="aon-inputText {style.widthTB}" ui:field="newSunday"></g:TextBox>
 									<g:Button styleName="aon-editDataTable-button aon-icon-accept {style.margingLeft}" ui:field="acceptJourney"></g:Button>
 					    		</g:HorizontalPanel>
@@ -152,7 +152,7 @@
 			    </g:VerticalPanel>
 			    <g:HTMLPanel>
 		       	   <g:VerticalPanel ui:field="contractJourneyTable" styleName="{style.styleBorder}">
-				    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>{msgs.journeys}</g:Label>
+				    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}' text="{msgs.journeys}"/>
 				    	<g:HTMLPanel>
 				    		<g:VerticalPanel>
 				    			<g:Grid ui:field="contractJourneyDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
@@ -161,7 +161,7 @@
 				    			</g:HTMLPanel>
 					    		<g:ScrollPanel ui:field="contractJourneyScrollPanel" styleName="{style.scrollStyle}">
 					    			<g:DeckPanel ui:field="deckPanel">
-					    				<g:Label styleName="{style.noBonusLB}">{msgs.noJourneys}</g:Label>
+					    				<g:Label styleName="{style.noBonusLB}" text="{msgs.noJourneys}"/>
 					    				<g:Grid ui:field="contractJourneyDataTable"></g:Grid>
 					    			</g:DeckPanel>
 					    		</g:ScrollPanel>
