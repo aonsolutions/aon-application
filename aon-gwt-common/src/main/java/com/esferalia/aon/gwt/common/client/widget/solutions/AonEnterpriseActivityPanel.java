@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -72,7 +73,6 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 	private AonCustomDateBox endDate = new AonCustomDateBox("F. Fin");
 
 	private AonCustomSuggestBox cnae25SB = new AonCustomSuggestBox("CNAE 2025");
-	//private AonCustomSuggestBox cnaeSB = new AonCustomSuggestBox("CNAE 2009");
 	private AonCustomTextBox cnae = new AonCustomTextBox("CNAE 2009");
 	
 	private AonCustomSuggestBox iaeSB = new AonCustomSuggestBox("IAE");
@@ -212,12 +212,15 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 			description.setValue(enterpriseActivity.getDescription());
 			principal.setValue(enterpriseActivity.isPrincipal());
 			cnae25SB.setValue(null == enterpriseActivity.getCnae25() ? "" : enterpriseActivity.getCnae25Code() + " - " +  enterpriseActivity.getCnae25Description());
-			//cnaeSB.setValue(null == enterpriseActivity.getCnae() ? "" : enterpriseActivity.getCnaeCode() + " - " +  enterpriseActivity.getCnaeDescription());
 			
-			cnae.setValue(AonStringUtils.isBlank(enterpriseActivity.getCnae2509Code()) ? "" : enterpriseActivity.getCnae2509Code() + " - " +  enterpriseActivity.getCnae2509Description());
-			if(null != enterpriseActivity.getCnae()) {
-				cnae.addButton(new AonTableButton(enterpriseActivity.getCnaeCode() + " - " +  enterpriseActivity.getCnaeDescription(), AON.CSS.aonIconInfo()));
+			if(null != enterpriseActivity.getCnae2509Code()) {
+				cnae25SB.addButton(new AonTableButton(AonStringUtils.isBlank(enterpriseActivity.getCnae2509Code()) ? "" : "CNAE 2009: " + enterpriseActivity.getCnae2509Code() + " - " +  enterpriseActivity.getCnae2509Description(), AON.CSS.aonIconInfo()));
 			}
+			
+			cnae.setValue(AonStringUtils.isBlank(enterpriseActivity.getCnaeCode()) ? "" : enterpriseActivity.getCnaeCode() + " - " +  enterpriseActivity.getCnaeDescription());
+			
+			if(AonStringUtils.equalsIgnoreCase(enterpriseActivity.getCnae2509Code(), enterpriseActivity.getCnaeCode()))
+				cnae.getElement().getStyle().setDisplay(Display.NONE);
 			
 			iaeSB.setValue(null == enterpriseActivity.getIae() ? "" : enterpriseActivity.getIae().getFullEpigraph()  + " - " + enterpriseActivity.getIae().getTitle());
 			ivaLB.setValue(enterpriseActivity.getVatRegime().name());
@@ -250,29 +253,16 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 			} else if (e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE)
 				cnae25SB.hideSuggestionList();
 		});
-	}
-
-	/*
-	private void initializeCnae() {
-		List<String> cnaeDescriptions = new ArrayList<>();
-		cnae2009List.forEach(c -> cnaeDescriptions.add(c.getCode() + " - " + c.getTitle()));
-		cnaeDescriptions.sort((o1, o2) -> o1.compareTo(o2));
-
-		MultiWordSuggestOracle orclCnaes = (MultiWordSuggestOracle) cnaeSB.getSuggestBox().getSuggestOracle();
-		orclCnaes.addAll(cnaeDescriptions);
-		orclCnaes.setDefaultSuggestionsFromText(cnaeDescriptions);
-		cnaeSB.setAutoSelectEnabled(true);
-		cnaeSB.setPlaceHolder("CNAE... (Ctrl + espacio para ver sugerencias)");
-
-		cnaeSB.getSuggestBox().getValueBox().addKeyUpHandler(e -> {
-			if (e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-				cnaeSB.setValue(AonStringUtils.EMPTY);
-				cnaeSB.showSuggestionList();
-			} else if (e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE)
-				cnaeSB.hideSuggestionList();
+		
+		cnae25SB.getSuggestBox().addSelectionHandler(e -> {
+			Cnae cnae25 = getCnae25();
+			if(null != cnae25)
+				cnae.setValue(cnae25.getCode09() + " - " +  cnae25.getTitle09());
+			
+			cnae25SB.removeButton();
+			cnae25SB.addButton(new AonTableButton("CNAE 2009: " + cnae25.getCode09() + " - " +  cnae25.getTitle09(), AON.CSS.aonIconInfo()));
 		});
 	}
-	*/
 
 	private void initializeIae() {
 		List<String> iaeDescriptions = new ArrayList<>();
