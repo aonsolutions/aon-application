@@ -110,7 +110,7 @@ public class MailAccountDAO {
 	
 	private static MailAccount insert(AONContext ctx, MailAccount mailAccount) {
 		Integer newId = ctx.getDslContext()
-				.insertInto(TAG)
+				.insertInto(MAIL_ACCOUNT)
 				.set(MAIL_ACCOUNT.DOMAIN, ctx.getDomainId())
 				.set(MAIL_ACCOUNT.NAME, mailAccount.getName())
 				.set(MAIL_ACCOUNT.EMAIL, mailAccount.getEmail())

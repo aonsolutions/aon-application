@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -166,6 +167,7 @@ import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -2258,18 +2260,86 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public HashMap<String, Boolean> getVerifiedHostEmails(String domainName, Integer domainId, String user) throws AonCoreException {
 		HashMap<String, Boolean> result = new HashMap<String, Boolean>();
+		HashSet<String> hosts = new HashSet<String>();
 		
 		Domain domain = AON.getDomain(domainName, domainId, user);
 		
-		boolean isVerifiedDomain = SES.isVerifiedForSendingStatus("aon.awsses@" + domain.getName());
-		result.put(domain.getName(), isVerifiedDomain);
+		Company domainCompany = AON.getCompany(domainName, domainId, user, f -> f.getDomainProperty().eq(domain.getId()));
+		RegistryMedia domainCompanyWeb = AON.getRegistryMedia(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRegistryProperty().eq(domainCompany.getId()).and(f.getMediaProperty().eq(MediaType.WEB.value())));
+		RegistryMedia domainCompanyEmail = AON.getRegistryMedia(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRegistryProperty().eq(domainCompany.getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
 		
-		if(null != domain.getParent()) {
-			boolean isVerifiedParentDomain = SES.isVerifiedForSendingStatus("aon.awsses@" + domain.getParent().getName());
-			result.put(domain.getParent().getName(), isVerifiedParentDomain);
+		if(AonStringUtils.isNotBlank(domainCompanyWeb.getValue())) {
+			String host = extractHost(domainCompanyWeb.getValue());
+			hosts.add(host);
 		}
 		
+		if(AonStringUtils.isNotBlank(domainCompanyEmail.getValue())) {
+			String host = extractDomainFromEmail(domainCompanyEmail.getValue());
+			hosts.add(host);
+		}
+		
+		if(null != domain.getParentId()) {
+			Company parentDomainCompany = AON.getCompany(domainName, domainId, user, f -> f.getDomainProperty().eq(domain.getParentId()));
+			RegistryMedia parentDomainCompanyWeb = AON.getRegistryMedia(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRegistryProperty().eq(parentDomainCompany.getId()).and(f.getMediaProperty().eq(MediaType.WEB.value())));
+			RegistryMedia parentDomainCompanyEmail = AON.getRegistryMedia(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRegistryProperty().eq(parentDomainCompany.getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
+			
+			if(AonStringUtils.isNotBlank(parentDomainCompanyWeb.getValue())) {
+				String host = extractHost(parentDomainCompanyWeb.getValue());
+				hosts.add(host);
+			}
+			
+			if(AonStringUtils.isNotBlank(parentDomainCompanyEmail.getValue())) {
+				String host = extractDomainFromEmail(parentDomainCompanyEmail.getValue());
+				hosts.add(host);
+			}
+		}
+		
+		hosts.forEach(h -> {
+			boolean isVerifiedDomain = SES.isVerifiedForSendingStatus("aon.awsses@" + h);
+			result.put(h, isVerifiedDomain);
+		});
+		
 		return result;
+	}
+	
+	private static String extractHost(String web) {
+		if (AonStringUtils.isBlank(web)) return null;
+
+	    String w = web.trim().toLowerCase();
+
+	    // Quitar protocolo si existe
+	    if (w.startsWith("http://")) {
+	        w = w.substring(7);
+	    } else if (w.startsWith("https://")) {
+	        w = w.substring(8);
+	    }
+
+	    // Quitar path si existe
+	    int slash = w.indexOf('/');
+	    if (slash != -1) {
+	        w = w.substring(0, slash);
+	    }
+
+	    // Quitar "www."
+	    if (w.startsWith("www.")) {
+	        w = w.substring(4);
+	    }
+
+	    return w;
+	}
+
+	
+	private static String extractDomainFromEmail(String email) {
+	    if (AonStringUtils.isBlank(email)) {
+	        return null;
+	    }
+
+	    int at = email.indexOf('@');
+	    if (at == -1 || at == email.length() - 1) {
+	        return null;
+	    }
+
+	    return email.substring(at + 1).toLowerCase();
 	}
 	
 	// *********************** [AMORTIZATION TYPE]

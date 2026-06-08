@@ -115,7 +115,7 @@ public class MailAccount implements Serializable{
 		return this;
 	}
 	public Byte getIncomingSecurity() {
-		return incomingSecurity;
+		return null == incomingSecurity ? (byte)0 : incomingSecurity;
 	}
 	public MailAccount setIncomingSecurity(Byte incomingSecurity) {
 		this.incomingSecurity = incomingSecurity;
