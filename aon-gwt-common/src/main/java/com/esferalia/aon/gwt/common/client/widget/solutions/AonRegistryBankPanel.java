@@ -205,7 +205,10 @@ public class AonRegistryBankPanel extends HTMLPanel {
 	private String getBankAlias(String account) {
 		if (AonStringUtils.isNotBlank(account)) {
 			BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
-			return null == bankSwiftEntry ? null : bankSwiftEntry.getBankName();
+			return null == bankSwiftEntry 
+				? null
+				: AonStringUtils.left(bankSwiftEntry.getBankName(), 25)
+			;
 		}
 		return null;
 	}
