@@ -21,7 +21,7 @@
 			<g:FlowPanel >
 
 				<g:MenuBar >
-					<g:MenuItem text="Archivo">
+					<g:MenuItem text="{msgs.fileMenu}">
 						<g:MenuBar vertical="true">
 							<g:MenuItem ui:field="downloadMenuItem"  text="{msgs.download}" />
 							<!--  g:MenuItem text="Descargar como..." >

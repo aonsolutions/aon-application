@@ -347,115 +347,115 @@
 								<g:Label>&nbsp;</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>L</g:Label>
+								<g:Label>{msgs.mondayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>M</g:Label>
+								<g:Label>{msgs.tuesdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>X</g:Label>
+								<g:Label>{msgs.wednesdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>J</g:Label>
+								<g:Label>{msgs.thursdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>V</g:Label>
+								<g:Label>{msgs.fridayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>S</g:Label>
+								<g:Label>{msgs.saturdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>D</g:Label>
+								<g:Label>{msgs.sundayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>L</g:Label>
+								<g:Label>{msgs.mondayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>M</g:Label>
+								<g:Label>{msgs.tuesdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>X</g:Label>
+								<g:Label>{msgs.wednesdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>J</g:Label>
+								<g:Label>{msgs.thursdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>V</g:Label>
+								<g:Label>{msgs.fridayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>S</g:Label>
+								<g:Label>{msgs.saturdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>D</g:Label>
+								<g:Label>{msgs.sundayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>L</g:Label>
+								<g:Label>{msgs.mondayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>M</g:Label>
+								<g:Label>{msgs.tuesdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>X</g:Label>
+								<g:Label>{msgs.wednesdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>J</g:Label>
+								<g:Label>{msgs.thursdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>V</g:Label>
+								<g:Label>{msgs.fridayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>S</g:Label>
+								<g:Label>{msgs.saturdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>D</g:Label>
+								<g:Label>{msgs.sundayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>L</g:Label>
+								<g:Label>{msgs.mondayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>M</g:Label>
+								<g:Label>{msgs.tuesdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>X</g:Label>
+								<g:Label>{msgs.wednesdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>J</g:Label>
+								<g:Label>{msgs.thursdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>V</g:Label>
+								<g:Label>{msgs.fridayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>S</g:Label>
+								<g:Label>{msgs.saturdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>D</g:Label>
+								<g:Label>{msgs.sundayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>L</g:Label>
+								<g:Label>{msgs.mondayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>M</g:Label>
+								<g:Label>{msgs.tuesdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>X</g:Label>
+								<g:Label>{msgs.wednesdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>J</g:Label>
+								<g:Label>{msgs.thursdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>V</g:Label>
+								<g:Label>{msgs.fridayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>S</g:Label>
+								<g:Label>{msgs.saturdayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>D</g:Label>
+								<g:Label>{msgs.sundayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>L</g:Label>
+								<g:Label>{msgs.mondayAbbr}</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>M</g:Label>
+								<g:Label>{msgs.tuesdayAbbr}</g:Label>
 							</g:customCell>
 							<!-- g:customCell styleName="{style.cabeceraStyle}">
 								<g:Label ui:field="totalHours">Horas Mensuales</g:Label>

@@ -40,7 +40,7 @@
 				</tr>
 				<tr>
 					<td colspan="2" align="right" style="padding-top: 15px;">
-						<g:Button ui:field="cancelButton">Cerrar</g:Button>
+						<g:Button ui:field="cancelButton">{msgs.close}</g:Button>
 			    		<g:Button ui:field="acceptButton">{msgs.ok}</g:Button>
 					</td>
 				</tr>

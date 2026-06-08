@@ -124,7 +124,7 @@
 								<g:ListBox ui:field="enterpriseList"></g:ListBox>						
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="{style.flex} {style.mt10}">
-								<g:Label styleName="aon-outputLabel {style.subTitleSearch}">CCC</g:Label>
+								<g:Label styleName="aon-outputLabel {style.subTitleSearch}">{msgs.ccc}</g:Label>
 								<g:ListBox ui:field="cccs"></g:ListBox>
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="{style.flex} {style.mt10}">

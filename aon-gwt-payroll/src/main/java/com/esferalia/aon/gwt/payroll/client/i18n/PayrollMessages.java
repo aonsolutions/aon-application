@@ -1548,6 +1548,9 @@ public interface PayrollMessages extends Messages {
 
 	// ----------------------------------------------------------------- MainCRA
 
+	@DefaultMessage("CCC")
+	String ccc();
+
 	@DefaultMessage("Tipo CCC")
 	String cccType();
 

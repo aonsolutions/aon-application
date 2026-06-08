@@ -236,9 +236,9 @@
 						<!-- LINEA 8 -->
 			    		<g:HTMLPanel styleName="{style.flex}">
 			    			<g:Label  styleName='{style.aonEmployeeCardLabel}' text="{msgs.contractPeriod}" />
-			    			<g:Label styleName='{style.aonEmployeeCardRequired} {style.mw}' text="Fecha inicio" />
+			    			<g:Label styleName='{style.aonEmployeeCardRequired} {style.mw}' text="{msgs.startDate}" />
 			    			<a:DateBoxEx ui:field="startDate" debugId="start_date" styleName='aon-inputText {style.alignTextCenter} {style.widthAll} {style.heightTB}' />
-			    			<g:Label styleName='{style.mw}' text="Fecha fin" />
+			    			<g:Label styleName='{style.mw}' text="{msgs.endDate}" />
 			    			<a:DateBoxEx ui:field="endDate" debugId="end_date" styleName='aon-inputText {style.alignTextCenter} {style.widthAll} {style.heightTB}' />
 			    			<g:Label styleName='{style.mw}' text="{msgs.seniorityDate}" />
 			    			<a:DateBoxEx ui:field="seniorityDate" debugId="seniority_date" styleName='aon-inputText {style.alignTextCenter} {style.widthAll} {style.heightTB}' />
@@ -248,7 +248,7 @@
 		    				<g:Label  styleName='{style.aonEmployeeCardLabel} {style.agreementTitle}' text="{msgs.categoryLevel}" />
 		    				<g:HTMLPanel styleName="{style.flexColumn} {style.widthAll}">
 		    					<g:HTMLPanel styleName="{style.flex}">
-		    						<g:Label styleName='{style.mw}' text="Convenio" />
+		    						<g:Label styleName='{style.mw}' text="{msgs.agreement}" />
 		    						<g:SuggestBox ui:field="agreement" debugId="agreement" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
 		    					</g:HTMLPanel>
 		    					<g:HTMLPanel styleName="{style.flex}">
@@ -354,7 +354,7 @@
 		    			<g:ListBox ui:field="payMethod" debugId="payMethod" styleName='' />
 		    			<g:Label styleName='{style.mw}' text="{msgs.iban}" />
 		    			<g:SuggestBox ui:field="account" debugId="account" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
-		    			<g:Label styleName='{style.mw}' text="BIC" />
+		    			<g:Label styleName='{style.mw}' text="{msgs.bic}" />
 		    			<g:TextBox ui:field="bic" debugId="bic" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
 					</g:HTMLPanel>
 		    	</g:HTMLPanel>
