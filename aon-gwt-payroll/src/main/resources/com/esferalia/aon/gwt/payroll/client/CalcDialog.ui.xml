@@ -143,11 +143,11 @@
 						</div>
 						<div>
 							<g:RadioButton name="saveRadioButton" ui:field="keepRadioButton"
-								checked="true" enabled="false">{msgs.keepCalculatedPayrolls}</g:RadioButton>
+								checked="true" enabled="false" text="{msgs.keepCalculatedPayrolls}"/>
 						</div>
 						<div>
 							<g:RadioButton name="saveRadioButton" ui:field="overwriteRadioButton"
-								enabled="false">{msgs.deleteCalculatedPayrolls}</g:RadioButton>
+								enabled="false" text="{msgs.deleteCalculatedPayrolls}"/>
 						</div>
 						<!-- div>
 							<g:RadioButton name="saveRadioButton" ui:field="duplicateRadioButton"

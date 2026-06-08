@@ -103,7 +103,7 @@
 											name="saveRadioButton"
 											debugId="keepRadioButton"
 											ui:field="keepRadioButton"
-											>{msgs.keepCalculatedPayrolls}</g:RadioButton>
+											text="{msgs.keepCalculatedPayrolls}"/>
 									</div>
 									<div>
 										<g:RadioButton
@@ -111,7 +111,7 @@
 											name="saveRadioButton"
 											debugId="overwriteRadioButton"
 											ui:field="overwriteRadioButton"
-											>{msgs.deleteCalculatedPayrolls}</g:RadioButton>
+											text="{msgs.deleteCalculatedPayrolls}"/>
 									</div>
 									<!-- div>
 										<g:RadioButton name="saveRadioButton" ui:field="duplicateRadioButton"
