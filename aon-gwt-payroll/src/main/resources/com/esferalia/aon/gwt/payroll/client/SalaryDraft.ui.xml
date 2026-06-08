@@ -531,7 +531,7 @@
 												<g:row>
 													<g:customCell styleName="{style.span-cell-cell}">
 														<g:HTMLPanel>
-															<g:HTML ui:field="salarySelectLabel" styleName="{style.cell-label}" visible="false" html="{msgs.salaryReceipt}&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;{msgs.calculationDate}"/>
+															<g:HTML ui:field="salarySelectLabel" styleName="{style.cell-label}" visible="false">{msgs.salaryReceipt}&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;{msgs.calculationDate}</g:HTML>
 															<e:SalarySelect ui:field="salarySelect"/>
 														</g:HTMLPanel>
 													</g:customCell>
