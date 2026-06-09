@@ -271,6 +271,7 @@ public class SalaryWidget extends AonCustomDockLayout {
 				salaryOptions.add("Extra");
 				salaryOptions.add("Finiquito");
 				salaryOptions.add("Atrasos");
+				salaryOptions.add("Sal. Tramitaci\u00f3n");
 				salaryType.setOptions(salaryOptions);
 				salaryType.addBlurHandler(new BlurHandler() {
 		            @Override
@@ -375,6 +376,7 @@ public class SalaryWidget extends AonCustomDockLayout {
 		salaryOptions.add("Extra");
 		salaryOptions.add("Finiquito");
 		salaryOptions.add("Atrasos");
+		salaryOptions.add("Sal. Tramitaci\u00f3n");
 		salaryType.setSelectedOptions(salaryOptions);
 		
 		//onSearch();
@@ -590,6 +592,7 @@ public class SalaryWidget extends AonCustomDockLayout {
 				.setExtra(salaryType.getSelectedOptions().contains("Extra"))
 				.setSettle(salaryType.getSelectedOptions().contains("Finiquito"))
 				.setDelay(salaryType.getSelectedOptions().contains("Atrasos"))
+				.setProcedural(salaryType.getSelectedOptions().contains("Sal. Tramitaci\u00f3n"))
 				.setOrderBy(sort.getValue())
 				.setAsc(Boolean.parseBoolean(asc.getValue()))
 				
