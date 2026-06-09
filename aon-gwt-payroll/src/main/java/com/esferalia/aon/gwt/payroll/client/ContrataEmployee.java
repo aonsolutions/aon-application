@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.client.PayrollAON;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractSalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -257,13 +258,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 
 		private void exportExtensionContract(Consumer<String> consumer, Consumer<Throwable> failure) {
-			showLoading("Generando borrador de contrato");
+			showLoading(PayrollAON.MSGS.generatingContractDraft());
 			contrataEmployeeObject.getContractOtherInfo(s -> {
 				contrataEmployeeObject.getContractSpecificData(su -> {
 					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 					contrataEmployeeObject.saveContractExtensionExport(
-							a -> consumer
-									.accept("El borrador de la pr\u00f3rroga de contrato se ha generado correctamente"),
+							a -> consumer.accept(PayrollAON.MSGS.contractExtensionDraftSuccess()),
 							e -> failure.accept(e));
 				}, f -> failure.accept(f));
 			}, f -> failure.accept(f));
@@ -271,50 +271,49 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		private void exportRelocationContract(Map<String, String> contractRelocationInfo, Consumer<String> consumer,
 				Consumer<Throwable> failure) {
-			showLoading("Generando borrador propuesta recolocaci\u00f3n");
+			showLoading(PayrollAON.MSGS.generatingRelocationDraft());
 			contrataEmployeeObject.saveContractRelocationExport(contractRelocationInfo,
-					a -> consumer.accept(
-							"El borrador de la propuesta recolocaci\u00f3n del contrato se ha generado correctamente"),
+					a -> consumer.accept(PayrollAON.MSGS.contractRelocationDraftSuccess()),
 					e -> failure.accept(e));
 		}
 
 		private void exportContract(Consumer<String> consumer, Consumer<Throwable> failure, boolean isTransform) {
-			showLoading("Generando borrador de contrato");
+			showLoading(PayrollAON.MSGS.generatingContractDraft());
 			contrataEmployeeObject.getContractOtherInfo(s -> {
 				if (AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
 					contrataEmployeeObject.getContractSpecificData(su -> {
 						contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 						contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 						contrataEmployeeObject.saveContractExport(isTransform,
-								a -> consumer.accept("El borrador de contrato se ha generado correctamente"),
+								a -> consumer.accept(PayrollAON.MSGS.contractDraftSuccess()),
 								e -> failure.accept(e));
 					}, f -> failure.accept(f));
 				else {
 					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 					contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 					contrataEmployeeObject.saveContractExport(isTransform,
-							a -> consumer.accept("El borrador de contrato se ha generado correctamente"),
+							a -> consumer.accept(PayrollAON.MSGS.contractDraftSuccess()),
 							e -> failure.accept(e));
 				}
 			}, f -> failure.accept(f));
 		}
 
 		private void exportBasicCopy(Consumer<String> consumer, Consumer<Throwable> failure) {
-			showLoading("Generando borrador de la copia basica");
+			showLoading(PayrollAON.MSGS.generatingBasicCopyDraft());
 			contrataEmployeeObject.getContractOtherInfo(s -> {
 				if (AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
 					contrataEmployeeObject.getContractSpecificData(su -> {
 						contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 						contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 						contrataEmployeeObject.saveBasicCopyExport(
-								a -> consumer.accept("El borrador de contrato se ha generado correctamente"),
+								a -> consumer.accept(PayrollAON.MSGS.contractDraftSuccess()),
 								e -> failure.accept(e));
 					}, f -> failure.accept(f));
 				else {
 					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 					contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 					contrataEmployeeObject.saveBasicCopyExport(
-							a -> consumer.accept("El borrador de contrato se ha generado correctamente"),
+							a -> consumer.accept(PayrollAON.MSGS.contractDraftSuccess()),
 							e -> failure.accept(e));
 				}
 			}, f -> failure.accept(f));

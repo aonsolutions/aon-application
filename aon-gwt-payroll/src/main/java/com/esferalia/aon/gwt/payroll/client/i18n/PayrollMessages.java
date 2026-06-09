@@ -1655,4 +1655,24 @@ public interface PayrollMessages extends Messages {
 	@DefaultMessage("Prorrat.")
 	String proratedShort();
 
+	// ----------------------------------------------------------------- ContractAttachUIImpl
+
+	@DefaultMessage("Generando borrador de contrato")
+	String generatingContractDraft();
+
+	@DefaultMessage("El borrador de contrato se ha generado correctamente")
+	String contractDraftSuccess();
+
+	@DefaultMessage("El borrador de la prórroga de contrato se ha generado correctamente")
+	String contractExtensionDraftSuccess();
+
+	@DefaultMessage("Generando borrador propuesta recolocación")
+	String generatingRelocationDraft();
+
+	@DefaultMessage("El borrador de la propuesta recolocación del contrato se ha generado correctamente")
+	String contractRelocationDraftSuccess();
+
+	@DefaultMessage("Generando borrador de la copia basica")
+	String generatingBasicCopyDraft();
+
 }
