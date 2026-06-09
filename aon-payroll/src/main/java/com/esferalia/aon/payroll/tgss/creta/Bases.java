@@ -2580,7 +2580,7 @@ public class Bases {
 							if ( AonStringUtils.containsIgnoreCase("L00", tipo) )
 								filter = filter.and(props.getIsSalaryProperty().eq(true));
 							else if ( AonStringUtils.containsIgnoreCase("L02", tipo) )
-								filter = filter.and(props.getIsSalaryProperty().eq(true));
+								filter = filter.and(props.getIsProceduralProperty().eq(true));
 							else if ( AonStringUtils.containsIgnoreCase("L91", tipo) )
 								filter = filter.and(props.getIsSalaryProperty().eq(true));
 							else if ( AonStringUtils.equalsIgnoreCase("L13", tipo) )

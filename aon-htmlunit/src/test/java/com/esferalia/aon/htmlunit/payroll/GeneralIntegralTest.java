@@ -3438,6 +3438,24 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	}
 
 	@Test
+	public void TestAusencia() throws Exception {
+		
+		if (!isDisplayed("ausencia,_no_justificada-content"))
+			open("ausencia");
+
+
+		wait4Id("ausencia,_no_justificada-content");
+
+		draft("AUSENCIA, NO JUSTIFICADA");
+		calculate(Calendar.JULY,2026);
+		assertValue("cgpBaseLabel", 1424.40 / 30.00 * 31.00);
+		assertValue("totalLiquidLabel", 0.00);
+		double totalEnterpriseLabel = getText("totalEnterpriseLabel");
+		assertTrue(totalEnterpriseLabel > 0.00);
+		
+	}
+
+	@Test
 	public void TestInactividad() throws Exception {
 		
 		if (!isDisplayed("permiso,_no_retribuido-content"))

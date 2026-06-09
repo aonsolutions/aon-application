@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.shared.HasDescription;
+import com.esferalia.aon.occam.api.model.type.SalaryType.TypeVisitor;
 
 public class  Salary implements Serializable{
 	
@@ -25,6 +26,8 @@ public class  Salary implements Serializable{
 		E visitProcedural(Type type);
 
 		default E visitL00(Type type) { return visitSalary(type); };
+
+		default E visitL02(Type type) { return visitDelay(type); };
 
 		default E visitL03(Type type) { return visitDelay(type); };
 
@@ -88,6 +91,13 @@ public class  Salary implements Serializable{
 				return visitor.visitL00(this);
 			}
 		},
+		L02
+		{
+			@Override
+			public <E> E accept(TypeVisitor<E> visitor) {
+				return visitor.visitL02(this);
+			}
+		},
 		L03 
 		{
 			@Override
@@ -139,9 +149,11 @@ public class  Salary implements Serializable{
 				put(EXTRA,"EXTRA");
 				put(SETTLE,"FINIQUITO");
 				put(DELAY,"ATRASOS");
+				put(PROCEDURAL,"TRAMITACION");
 				put(L00,"L00");
-				put(L13,"L13");
+				put(L02,"L02");
 				put(L03,"L03");
+				put(L13,"L13");
 				//put(SLD_RESULTS,null);
 
 			}
@@ -154,13 +166,15 @@ public class  Salary implements Serializable{
 				put(EXTRA,"Extra");
 				put(SETTLE,"Finiquito");
 				put(DELAY,"Atrasos");
+				put(PROCEDURAL,"Sal. Tramitaci\u00f3n");
 				put(L00,"Liquidaci\u00f3n ordinaria L00");
-				put(L13,"Liquidaci\u00f3n complementaria L13");
+				put(L02,"Liquidaci\u00f3n complementaria L02");
 				put(L03,"Liquidaci\u00f3n complementaria L03");
+				put(L13,"Liquidaci\u00f3n complementaria L13");
 			}
 		};
 		
-		public static Type SALARIES [] = {SALARY, EXTRA, DELAY, SETTLE};
+		public static Type SALARIES [] = {SALARY, EXTRA, DELAY, SETTLE, PROCEDURAL};
 		
 		public static Byte [] LIQUIDATIONS = { (byte) L00.ordinal(), (byte) L13.ordinal(), (byte) L03.ordinal() }; 
 		
