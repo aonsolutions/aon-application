@@ -1653,6 +1653,6 @@ public interface PayrollMessages extends Messages {
 	String issue();
 
 	@DefaultMessage("Prorrat.")
-	String prorated();
+	String proratedShort();
 
 }

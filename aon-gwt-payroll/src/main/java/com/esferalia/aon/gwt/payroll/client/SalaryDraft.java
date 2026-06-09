@@ -5362,7 +5362,7 @@ public class SalaryDraft extends ResizeComposite
 		ListBox issueDateListBox = new ListBox();
 		issueDateListBox.ensureDebugId("issueDate-listbox-" + row);
 		
-		issueDateListBox.addItem(PayrollAON.MSGS.prorated(), "-1");
+		issueDateListBox.addItem(PayrollAON.MSGS.proratedShort(), "-1");
 
 		for (int month = 0; month < 12; month++) {
 			date.setMonth(month);
