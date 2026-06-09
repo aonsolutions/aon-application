@@ -242,14 +242,17 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 					
 					private void visitInsurance() {
 						double amount = rec.getValue(SALARY_PAYMENT.AMOUNT);
-						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
+//						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
+						double irpfBase = AonMathUtils.round(rec.getValue(SALARY_PAYMENT.IRPF));
 						
 						// Parte exenta va a la L
 						double expense = AonMathUtils.round(amount - irpfBase);  
-						if ( AonMathUtils.isGreatherThanZero(expense )) {
+//						if ( AonMathUtils.isGreatherThanZero(expense )) {
+						if (AonMathUtils.isGreatherThan(expense,0.01)) {
 							Mod190Detail detail = getDetail(document,person,Mod1902025Key.L,"24",accrualYear);
 							detail.setInKindPerception(AonMathUtils.round(detail.getInKindPerception() + expense ));
-						} else {
+						} 
+//						else {
 							// Parte no exenta va a la A a la parte en especie
 							double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
 							double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
@@ -264,7 +267,7 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 							detail.setInKindDeposit(AonMathUtils.round(detail.getInKindDeposit() + irpfQuota ));
 							if(detail.getInKindDepositIL() - enterpriseIrpfQuota > 1)
 								detail.setInKindOutputDeposit(enterpriseIrpfQuota);
-						}
+//						}
 					}
 					
 					private void visitSupport() {
