@@ -253,15 +253,15 @@ public class SalaryDraft extends ResizeComposite
 		}
 	};
 
-	@SuppressWarnings("serial")
-	private static Map<Scope, String> SCOPE_DESCRIPTIONS = new HashMap<Scope, String>() {
-		{
-			put(Scope.AGREEMENT, "Convenio");
-			put(Scope.APPLICATION, "Sistema");
-			put(Scope.SYSTEM, "Sistema");
-			put(Scope.CONTRACT, "Contrato");
+	private static String getScopeDescription(Scope scope) {
+		switch (scope) {
+			case AGREEMENT: return PayrollAON.MSGS.agreement();
+			case APPLICATION: return PayrollAON.MSGS.sistema();
+			case SYSTEM: return PayrollAON.MSGS.sistema();
+			case CONTRACT: return PayrollAON.MSGS.contractLabel();
+			default: return scope.name();
 		}
-	};
+	}
 
 
 	private static Deduction.Type SYSTEM_DEDUCTION[] = { 
@@ -883,9 +883,9 @@ public class SalaryDraft extends ResizeComposite
 
 			//textListBox.addItem(variable.getValue().toString(), variable.getValue().toString());
 
-			textListBox.addItem("COTIZACI\u00D3N MENSUAL", "30");
+			textListBox.addItem(PayrollAON.MSGS.cotizacionMensual(), "30");
 
-			textListBox.addItem("COTIZACI\u00D3N DIARIA", "DIAS_NATURALES_MES");
+			textListBox.addItem(PayrollAON.MSGS.cotizacionDiaria(), "DIAS_NATURALES_MES");
 
 			//if (variable.getExpression() != null) {
 			//	String expression = variable.getExpression();
@@ -1174,8 +1174,8 @@ public class SalaryDraft extends ResizeComposite
 				}
 			};
 			// textListBox.setC
-			textListBox.addItem("SI", String.valueOf(true));
-			textListBox.addItem("NO", String.valueOf(false));
+			textListBox.addItem(PayrollAON.MSGS.yes(), String.valueOf(true));
+			textListBox.addItem(PayrollAON.MSGS.no(), String.valueOf(false));
 
 			textListBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
 
@@ -1217,8 +1217,8 @@ public class SalaryDraft extends ResizeComposite
 				}
 				
 			};
-			textListBox.addItem("NO", "UNDEFINED('"+variable.getName()+"')");
-			textListBox.addItem("SI", value);
+			textListBox.addItem(PayrollAON.MSGS.no(), "UNDEFINED('"+variable.getName()+"')");
+			textListBox.addItem(PayrollAON.MSGS.yes(), value);
 
 			textListBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
 
@@ -1304,7 +1304,7 @@ public class SalaryDraft extends ResizeComposite
 
 				@Override
 				public void onDoubleClick(DoubleClickEvent event) {
-					InputDialog inputDialog = new InputDialog("Renombrar...", "Nuevo Nombre") {
+					InputDialog inputDialog = new InputDialog(PayrollAON.MSGS.rename(), PayrollAON.MSGS.newName()) {
 						@Override
 						public void onAccept() {
 							String newName = getInputValue();
@@ -3084,11 +3084,11 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 	private void createCollapContextPanel() {
-		Label title = new Label("Variables de calculo");
+		Label title = new Label(PayrollAON.MSGS.calculationVariables());
 		title.addStyleName("aon-finding-toolbar-item");
 		title.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
-		
-		collapseContextBtn = new AonToolbarSmallButton("Ocultar", AON.CSS.aonIconFormatIndentIncrease());
+
+		collapseContextBtn = new AonToolbarSmallButton(PayrollAON.MSGS.hide(), AON.CSS.aonIconFormatIndentIncrease());
 		collapseContextBtn.addClickHandler(e -> {
 			if(contextMenuShowed) 
 				hideContextAtLeft();
@@ -3215,7 +3215,7 @@ public class SalaryDraft extends ResizeComposite
 			public void run() {
 				ContextMenu contextMenu = new ContextMenu();
 				salaryDraftObject.getFiscalModels()
-				.forEach( fiscalModel -> contextMenu.addItem("Modelo " + fiscalModel.getModelFullName(), newMenuBar(fiscalModel)));
+				.forEach( fiscalModel -> contextMenu.addItem(PayrollAON.MSGS.fiscalModelLabel(fiscalModel.getModelFullName()), newMenuBar(fiscalModel)));
 				contextMenu.showRelativeTo(fiscalModelsButton);
 			}
 		};
@@ -3456,19 +3456,19 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	protected void showEmitting() {
-		showLoading("Emitiendo la " + AonStringUtils.lowerCase(getSalaryDraftObject().getType().getDescription())
-				+ ".Espere por favor.");
+		showLoading(PayrollAON.MSGS.emittingMessage(
+				AonStringUtils.lowerCase(getSalaryDraftObject().getType().getDescription())));
 	}
-	
+
 	protected Promise showSuccessEmitted() {
 		String type = AonStringUtils.lowerCase(getSalaryDraftObject().getType().getDescription());
-		return showSuccess("La " + type + "se ha emitido correctamente.");
+		return showSuccess(PayrollAON.MSGS.emittedSuccessMessage(type));
 	}
-	
+
 	protected void showErrorEmitting(Throwable t) {
 		String message = AonStringUtils.substringAfterLast(t.getLocalizedMessage(), ":");
 		String type = AonStringUtils.lowerCase(getSalaryDraftObject().getType().getDescription());
-		showError("Se ha producido un error al emitir la " + type + " '" + message + "'. Disculpe las molestias.");
+		showError(PayrollAON.MSGS.emittingErrorMessage(type, message));
 	}
 
 	private void setFiscalModelIcon(Widget widget) {
@@ -3497,16 +3497,16 @@ public class SalaryDraft extends ResizeComposite
 		if ( status == null ) {
 			status = FiscalStatus.MISSING;
 		}
-		menuBar.addItem(template.fiscalModelItem("Estado", SafeStylesUtils.forFontWeight(FontWeight.BOLD), status.getName()), () -> {} );
-		
+		menuBar.addItem(template.fiscalModelItem(PayrollAON.MSGS.status(), SafeStylesUtils.forFontWeight(FontWeight.BOLD), status.getName()), () -> {} );
+
 		String document = fiscalModel.getDocument();
 		if ( document == null ) {
 			document = "";
 		}
-		menuBar.addItem(template.fiscalModelItem("Documento", SafeStylesUtils.forFontWeight(FontWeight.BOLD), document), () -> {} );
+		menuBar.addItem(template.fiscalModelItem(PayrollAON.MSGS.document(), SafeStylesUtils.forFontWeight(FontWeight.BOLD), document), () -> {} );
 
-		Double result = AonNumberUtils.todouble(fiscalModel.getDeclarationResult()); 
-		menuBar.addItem(template.fiscalModelItem("Resultado", SafeStylesUtils.forFontWeight(FontWeight.BOLD), format(result)), () -> {} );
+		Double result = AonNumberUtils.todouble(fiscalModel.getDeclarationResult());
+		menuBar.addItem(template.fiscalModelItem(PayrollAON.MSGS.result(), SafeStylesUtils.forFontWeight(FontWeight.BOLD), format(result)), () -> {} );
 
 		return menuBar;
 	}
@@ -3833,9 +3833,9 @@ public class SalaryDraft extends ResizeComposite
 		getValuesOf("A\u00D1OS_ANTIGUEDAD").distinct().map(AonNumberUtils::todouble).filter( d -> d > 0)
 		.sorted().map( d -> Integer.toString(d.intValue()) ).collect(Collectors.joining(","));
 		if ( AonStringUtils.equals("1", seniorityYears) ) {
-			employeeSeniorityLabel.setText(employeeSeniorityLabel.getText() + "  ( " + seniorityYears + " A\u00D1O )");
+			employeeSeniorityLabel.setText(employeeSeniorityLabel.getText() + "  ( " + seniorityYears + " " + PayrollAON.MSGS.yearSingular() + " )");
 		}else if ( AonStringUtils.isNotBlank(seniorityYears) ) {
-			employeeSeniorityLabel.setText(employeeSeniorityLabel.getText() + "  ( " + seniorityYears + " A\u00D1OS )");
+			employeeSeniorityLabel.setText(employeeSeniorityLabel.getText() + "  ( " + seniorityYears + " " + PayrollAON.MSGS.yearPlural() + " )");
 		}
 			
 		//salaryDraftObject.getContext().forEach( v -> info(v.getName() + " = " + v.getValue()));
@@ -4374,23 +4374,23 @@ public class SalaryDraft extends ResizeComposite
 			
 			@Override
 			public void onSyncStart(SalaryDraftObject object) {
-				showLoading("Sincronizando c\u00E1lculos");
+				showLoading(PayrollAON.MSGS.syncingCalculations());
 			}
-			
+
 			@Override
 			public void onSyncProgress(SalaryDraftObject object) {
 				//showLoading("");
 			}
-			
+
 			@Override
 			public void onSyncFinish(SalaryDraftObject object) {
 				SalaryDraft.this.calculate();
-				showSuccess("Sincronizaci\u00F3 de c\u00E1lculos completada");
+				showSuccess(PayrollAON.MSGS.syncCalculationsComplete());
 			}
-			
+
 			@Override
 			public void onSyncFailure(Throwable throwable) {
-				showError("No se han podido sincronizar los c\u00E1lculos . " + throwable.getMessage());
+				showError(PayrollAON.MSGS.syncCalculationsError(throwable.getMessage()));
 			}
 		});
 	}
@@ -4444,11 +4444,11 @@ public class SalaryDraft extends ResizeComposite
 
 	private void initPaymentsTable() {
 
-		paymentsTable.setText(0, 0, "CUANTIA");
+		paymentsTable.setText(0, 0, PayrollAON.MSGS.amountTitle());
 		paymentsTable.getFlexCellFormatter().setColSpan(0, 0, 2);
-		paymentsTable.setText(0, 1, "CONCEPTO");
-		paymentsTable.setText(0, 2, "DEVENGOS");
-		paymentsTable.setText(0, 3, "DEDUCCIONES");
+		paymentsTable.setText(0, 1, PayrollAON.MSGS.conceptTitle());
+		paymentsTable.setText(0, 2, PayrollAON.MSGS.accrualTitle());
+		paymentsTable.setText(0, 3, PayrollAON.MSGS.deductionTitle());
 		paymentsTable.getFlexCellFormatter().setColSpan(0, 3, 2);
 
 		paymentsTable.getRowFormatter().addStyleName(0, AON.AON_DATA_TABLE_ROW_ODD);
@@ -5348,7 +5348,7 @@ public class SalaryDraft extends ResizeComposite
 		descriptionBox.getElement().getParentElement().getStyle().setWidth(100, Unit.PCT);
 
 		//Issue label and value
-		Label issueDateLabel = new Label("COBRO");
+		Label issueDateLabel = new Label(PayrollAON.MSGS.issue());
 		issueDateLabel.addStyleName(style.issueLabel());
 
 		descriptionHPanel.add(issueDateLabel);
@@ -5362,7 +5362,7 @@ public class SalaryDraft extends ResizeComposite
 		ListBox issueDateListBox = new ListBox();
 		issueDateListBox.ensureDebugId("issueDate-listbox-" + row);
 		
-		issueDateListBox.addItem("Prorrat.", "-1");
+		issueDateListBox.addItem(PayrollAON.MSGS.prorated(), "-1");
 
 		for (int month = 0; month < 12; month++) {
 			date.setMonth(month);
@@ -5595,7 +5595,7 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 	private void hideContextAtLeft() {
-	    collapseContextBtn.setTitle("Mostrar");
+	    collapseContextBtn.setTitle(PayrollAON.MSGS.show());
 	    collapseContextBtn.removeStyleName(AON.CSS.aonIconFormatIndentIncrease());
 	    collapseContextBtn.addStyleName(AON.CSS.aonIconFormatIndentDecrease());
 	    drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 0);
@@ -5603,7 +5603,7 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 	private void showContextAtLeft() {
-	    collapseContextBtn.setTitle("Ocultar");
+	    collapseContextBtn.setTitle(PayrollAON.MSGS.hide());
 	    collapseContextBtn.removeStyleName(AON.CSS.aonIconFormatIndentDecrease());
 	    collapseContextBtn.addStyleName(AON.CSS.aonIconFormatIndentIncrease());
 	    drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 275);
@@ -5883,7 +5883,8 @@ public class SalaryDraft extends ResizeComposite
 		expandPanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
 		boolean collapse = (SalaryDraft.this.scope.compareTo(expandScope) <= 0);
 		final Label expandLabel = new Label(
-				(collapse ? "Ocultar" : "Mostrar") + " variables del " + SCOPE_DESCRIPTIONS.get(expandScope));
+				collapse ? PayrollAON.MSGS.hideVariablesOf(getScopeDescription(expandScope))
+						 : PayrollAON.MSGS.showVariablesOf(getScopeDescription(expandScope)));
 		expandPanel.add(expandLabel);
 		final Button expandButton = new Button();
 		expandButton.setTabIndex(Short.MAX_VALUE);
@@ -5918,7 +5919,7 @@ public class SalaryDraft extends ResizeComposite
 				dumpContext(contextCopy, expandScope, false, null);
 				expandButton.removeStyleName(AON.AON_ICON_EXPANDALL);
 				expandButton.setStyleName(AON.AON_ICON_COLLAPSEALL, true);
-				expandLabel.setText("Ocultar variables del " + SCOPE_DESCRIPTIONS.get(expandScope));
+				expandLabel.setText(PayrollAON.MSGS.hideVariablesOf(getScopeDescription(expandScope)));
 				SalaryDraft.this.scope = expandScope;
 			}
 
@@ -5932,7 +5933,7 @@ public class SalaryDraft extends ResizeComposite
 
 				expandButton.removeStyleName(AON.AON_ICON_COLLAPSEALL);
 				expandButton.setStyleName(AON.AON_ICON_EXPANDALL, true);
-				expandLabel.setText("Mostrar variables del " + SCOPE_DESCRIPTIONS.get(expandScope));
+				expandLabel.setText(PayrollAON.MSGS.showVariablesOf(getScopeDescription(expandScope)));
 				SalaryDraft.this.scope = SCOPE_STEPS.get(SCOPE_STEPS.indexOf(expandScope) - 1);
 
 			}

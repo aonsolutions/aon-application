@@ -1554,4 +1554,105 @@ public interface PayrollMessages extends Messages {
 	@DefaultMessage("Tipo CCC")
 	String cccType();
 
+	// ----------------------------------------------------------------- SalaryDraft — scope descriptions
+
+	@DefaultMessage("Sistema")
+	String sistema();
+
+	@DefaultMessage("Contrato")
+	String contractLabel();
+
+	// ----------------------------------------------------------------- SalaryDraft — listbox items
+
+	@DefaultMessage("COTIZACIÓN MENSUAL")
+	String cotizacionMensual();
+
+	@DefaultMessage("COTIZACIÓN DIARIA")
+	String cotizacionDiaria();
+
+	@DefaultMessage("SI")
+	String yes();
+
+	@DefaultMessage("NO")
+	String no();
+
+	// ----------------------------------------------------------------- SalaryDraft — rename dialog
+
+	@DefaultMessage("Renombrar...")
+	String rename();
+
+	@DefaultMessage("Nuevo Nombre")
+	String newName();
+
+	// ----------------------------------------------------------------- SalaryDraft — context panel
+
+	@DefaultMessage("Variables de calculo")
+	String calculationVariables();
+
+	@DefaultMessage("Ocultar")
+	String hide();
+
+	@DefaultMessage("Mostrar")
+	String show();
+
+	@DefaultMessage("Ocultar variables del {0}")
+	String hideVariablesOf(String scope);
+
+	@DefaultMessage("Mostrar variables del {0}")
+	String showVariablesOf(String scope);
+
+	// ----------------------------------------------------------------- SalaryDraft — emit messages
+
+	@DefaultMessage("Emitiendo la {0}. Espere por favor.")
+	String emittingMessage(String type);
+
+	@DefaultMessage("La {0} se ha emitido correctamente.")
+	String emittedSuccessMessage(String type);
+
+	@DefaultMessage("Se ha producido un error al emitir la {0} ''{1}''. Disculpe las molestias.")
+	String emittingErrorMessage(String type, String message);
+
+	// ----------------------------------------------------------------- SalaryDraft — fiscal model menu
+
+	@DefaultMessage("Modelo {0}")
+	String fiscalModelLabel(String modelName);
+
+	@DefaultMessage("Estado")
+	String status();
+
+	// ----------------------------------------------------------------- SalaryDraft — seniority
+
+	@DefaultMessage("AÑO")
+	String yearSingular();
+
+	@DefaultMessage("AÑOS")
+	String yearPlural();
+
+	// ----------------------------------------------------------------- SalaryDraft — sync calcs
+
+	@DefaultMessage("Sincronizando cálculos")
+	String syncingCalculations();
+
+	@DefaultMessage("Sincronización de cálculos completada")
+	String syncCalculationsComplete();
+
+	@DefaultMessage("No se han podido sincronizar los cálculos. {0}")
+	String syncCalculationsError(String message);
+
+	// ----------------------------------------------------------------- SalaryDraft — payments table headers
+
+	@DefaultMessage("CUANTÍA")
+	String amountTitle();
+
+	@DefaultMessage("CONCEPTO")
+	String conceptTitle();
+
+	// ----------------------------------------------------------------- SalaryDraft — issue date
+
+	@DefaultMessage("COBRO")
+	String issue();
+
+	@DefaultMessage("Prorrat.")
+	String prorated();
+
 }
