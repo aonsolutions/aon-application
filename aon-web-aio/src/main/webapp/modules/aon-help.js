@@ -85,7 +85,7 @@ export class AonHelp extends AonElement {
 			helpVersionSpan.className = CSS.AON_CARD_TEXT;
 			helpVersionSpan.classList.add("aonHelpSpan2")
 			getManifest().then((manifest) => {
-				let version =  "Actualizado " + this.parseVersionDate(manifest.build_date);
+				let version =  "Actualizado el " + this.parseVersionDate(manifest.build_date);
 				helpVersionSpan.innerHTML = `<div id="aonManifest">${version}</div>`;
 			});;
 			helpVersionDiv.appendChild(helpVersionSpan);
@@ -124,7 +124,7 @@ export class AonHelp extends AonElement {
 				helpVersionSpan.className = CSS.AON_CARD_TEXT;
 				helpVersionSpan.classList.add("aonHelpSpan2")
 				getManifest().then((manifest) => {
-					let version =  "Actualizado " + this.parseVersionDate(manifest.build_date);
+					let version =  "Actualizado el " + this.parseVersionDate(manifest.build_date);
 					helpVersionSpan.innerHTML = `<div id="aonManifest">${version}</div>`;
 				});;
 				helpVersionDiv.appendChild(helpVersionSpan);
@@ -185,7 +185,7 @@ export class AonHelp extends AonElement {
 		let helpContentIndexSpan = this.createDiv();
 		helpContentIndexSpan.className = CSS.AON_CARD_TEXT;
         helpContentIndexSpan.classList.add("aonHelpSpan2");
-		helpContentIndexSpan.innerHTML = MSG.CONTENT_INDEX;
+		helpContentIndexSpan.innerHTML = MSG.MANUALS;
 		helpContentIndexDiv.appendChild(helpContentIndexSpan);
 		helpContent.appendChild(helpContentIndexDiv);
 		

@@ -127,7 +127,6 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -570,6 +569,8 @@ public interface CommonService extends RemoteService {
 	RegistryBank saveRregistryBank(String domainName, Integer domain, String user, RegistryBank registryBank) throws AonCoreException;
 	void deleteRregistryBank(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
 	List<Account> getAccountsForBank(String domainName, Integer domain, String user) throws AonCoreException;
+	List<Account> getAviablesAccountsForBank(String domainName, Integer domain, String user) throws AonCoreException;
+	Account createAccountsForBank(String domainName, Integer domain, String user, String alias, String suffixCode) throws AonCoreException;
 	List<Account> getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource, String pattern) throws AonCoreException;
 	
 	LinkedList<Signature> getSignatures(String domainName, Integer domain, String user) throws AonCoreException;

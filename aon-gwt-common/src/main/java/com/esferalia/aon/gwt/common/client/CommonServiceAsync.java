@@ -566,6 +566,8 @@ public interface CommonServiceAsync {
 	void saveRregistryBank(String domainName, Integer domain, String user, RegistryBank registryBank, AsyncCallback<RegistryBank> asyncCallback) throws AonCoreException;
 	void deleteRregistryBank(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void getAccountsForBank(String domainName, Integer domain, String user, AsyncCallback<List<Account>> asyncCallback) throws AonCoreException;
+	void getAviablesAccountsForBank(String domainName, Integer domain, String user, AsyncCallback<List<Account>> asyncCallback) throws AonCoreException;
+	void createAccountsForBank(String domainName, Integer domain, String user, String alias, String suffixCode, AsyncCallback<Account> asyncCallback) throws AonCoreException;
 	void getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource, String pattern, AsyncCallback<List<Account>> asyncCallback) throws AonCoreException;
 	
 	void reassignScope(String domainName, Integer domainId, String user, int originScope, int finalScope, boolean deleteOrigin, AsyncCallback<Void> asyncCallback) throws AonCoreException;
