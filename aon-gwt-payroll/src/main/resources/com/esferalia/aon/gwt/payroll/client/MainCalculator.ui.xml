@@ -41,9 +41,7 @@
 								<g:Label styleName="aon-outputLabel" text="{msgs.type}"/>
 							</td>
 							<td class="aon-panelGrid-even aon-width-half-plus">
-								<g:ListBox>
-									<g:item>{msgs.nomina}</g:item>
-								</g:ListBox>
+								<g:Label styleName="aon-outputLabel" text="{msgs.nomina}"/>
 							</td>
 						</tr>
 						<tr>

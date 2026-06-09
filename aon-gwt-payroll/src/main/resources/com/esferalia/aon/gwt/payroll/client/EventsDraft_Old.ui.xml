@@ -107,9 +107,7 @@
 							</g:Label>
 						</g:cell>
 
-						<g:ListBox ui:field="eventListBox">
-							<g:item>{msgs.incidencia}</g:item>
-						</g:ListBox>
+						<g:ListBox ui:field="eventListBox" />
 	
 						<g:cell>
 							<g:Label>&nbsp;

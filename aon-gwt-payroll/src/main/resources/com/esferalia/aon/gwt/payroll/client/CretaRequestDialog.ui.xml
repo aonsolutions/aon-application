@@ -133,14 +133,7 @@
 					<g:Label text="{msgs.liquidationType}" />
 				</td>
 				<td class="{style.field}">
-					<g:ListBox styleName="aon-selectOneMenu" ui:field="typeListBox" >
-						<g:item value="L00">{msgs.liquidationL00}</g:item>
-						<g:item value="L02">{msgs.liquidationL02}</g:item>
-						<g:item value="L03">{msgs.liquidationL03}</g:item>
-						<g:item value="L13">{msgs.liquidationL13}</g:item>
-						<g:item value="L90">{msgs.liquidationL90}</g:item>
-						<g:item value="L91">{msgs.liquidationL91}</g:item>
-					</g:ListBox>
+					<g:ListBox styleName="aon-selectOneMenu" ui:field="typeListBox" />
 				</td>
 			</tr>
 			<tr ui:field="i54TR"   >
@@ -148,13 +141,7 @@
 					<g:Label text="{msgs.causeIndicatorI54}" />
 				</td>
 				<td class="{style.field}">
-					<g:ListBox styleName="aon-selectOneMenu" ui:field="i54ListBox" >
-						<g:item value="1">{msgs.causeI541}</g:item>
-						<g:item value="2">{msgs.causeI542}</g:item>
-						<g:item value="3">{msgs.causeI543}</g:item>
-						<g:item value="4">{msgs.causeI544}</g:item>
-						<g:item value="5">{msgs.causeI545}</g:item>
-					</g:ListBox>
+					<g:ListBox styleName="aon-selectOneMenu" ui:field="i54ListBox" />
 				</td>
 			</tr>
 			<tr ui:field="previousBasesTR"  >

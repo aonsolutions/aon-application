@@ -129,6 +129,17 @@ public class CretaDBADialog extends SelectDialog<CCC> {
 
 		setWidget(binder.createAndBindUi(this));
 
+		movementTypeListBox.addItem(PayrollAON.MSGS.liquidationTypeC(), "C");
+		movementTypeListBox.addItem(PayrollAON.MSGS.liquidationTypeS(), "S");
+		movementTypeListBox.addItem(PayrollAON.MSGS.liquidationTypeA(), "A");
+
+		actionTypeListBox.addItem(PayrollAON.MSGS.actionType1(), "1");
+		actionTypeListBox.addItem(PayrollAON.MSGS.actionType2(), "2");
+
+		documentTypeListBox.addItem(PayrollAON.MSGS.documentTypeNif(), "1");
+		documentTypeListBox.addItem(PayrollAON.MSGS.documentTypeNie(), "6");
+		documentTypeListBox.addItem(PayrollAON.MSGS.documentTypeCif(), "9");
+
 		// Full CCC.
 		Column<CCC, String> fullNameColumn = new Column<CCC, String>(
 				new TextCell()) {

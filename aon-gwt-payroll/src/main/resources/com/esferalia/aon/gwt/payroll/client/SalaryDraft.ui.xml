@@ -426,10 +426,7 @@
 										styleName='aon-finding-toolbar-item {style.aon-toolbar-button} {style.toolBar-checkBox} '
 										text="{msgs.siltra}" checked="false" />
 
-									<g:ListBox debugId="settlePreviewListBox" ui:field="settlePreviewListBox" visible="false" >
-										<g:item value="{JASPER}">{msgs.standard}</g:item>
-										<g:item value="{LETTER}">{msgs.letter}</g:item>
-									</g:ListBox>
+									<g:ListBox debugId="settlePreviewListBox" ui:field="settlePreviewListBox" visible="false" />
 	
 								</g:HTMLPanel>
 							</g:HorizontalPanel>

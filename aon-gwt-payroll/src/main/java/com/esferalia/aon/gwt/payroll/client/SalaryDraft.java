@@ -3056,6 +3056,8 @@ public class SalaryDraft extends ResizeComposite
 	
 	public SalaryDraft() {
 		initWidget(binder.createAndBindUi(this));
+		settlePreviewListBox.addItem(PayrollAON.MSGS.standard(), JASPER);
+		settlePreviewListBox.addItem(PayrollAON.MSGS.letter(), LETTER);
 		createCollapContextPanel();
 		initPaymentsTable();
 		initPrintPreview();

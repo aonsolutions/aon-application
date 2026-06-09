@@ -160,12 +160,7 @@
 						<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
 							styleName="aon-width-all" debugId="taxEditPanel" ui:field="taxEditPanel">
 							<g:DeckPanel ui:field="taxTypeDeckPanel">
-								<g:ListBox debugId="taxListBox" ui:field="taxListBox" styleName="gwt-ListBox aon-width-all" >
-									<g:item value="{ALL}">{msgs.grossAmount}</g:item>
-									<g:item value="{NONE}">{msgs.exempt}</g:item>
-									<g:item value="{CUSTOM}">{msgs.customized}</g:item>
-									<g:item value="{IRPF_CTA_ESP}">{msgs.accountIncome}</g:item>
-								</g:ListBox>
+								<g:ListBox debugId="taxListBox" ui:field="taxListBox" styleName="gwt-ListBox aon-width-all" />
 								<g:Label ui:field="taxLabel"></g:Label>
 							</g:DeckPanel>
 							<g:Label>&nbsp;</g:Label>
@@ -198,12 +193,7 @@
 						<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
 							styleName="aon-width-all" debugId="quoteEditPanel" ui:field="quoteEditPanel">
 							<g:DeckPanel ui:field="quoteTypeDeckPanel">
-								<g:ListBox debugId="quoteListBox" ui:field="quoteListBox" styleName="gwt-ListBox aon-width-all">
-									<g:item value="{ALL}">{msgs.grossAmount}</g:item>
-									<g:item value="{NONE}">{msgs.exempt}</g:item>
-									<g:item value="{PRORATED}">{msgs.prorated}</g:item>
-									<g:item value="{CUSTOM}">{msgs.customized}</g:item>
-								</g:ListBox>
+								<g:ListBox debugId="quoteListBox" ui:field="quoteListBox" styleName="gwt-ListBox aon-width-all" />
 								<g:Label ui:field="quoteLabel"></g:Label>
 							</g:DeckPanel>
 							<g:Label>&nbsp;</g:Label>

@@ -91,11 +91,7 @@
 				</td>
 				<td class="{style.field}">
 					<g:ListBox styleName="aon-selectOneMenu"
-						ui:field="movementTypeListBox" >
-						<g:item value="C" >{msgs.liquidationTypeC}</g:item>
-						<g:item value="S" >{msgs.liquidationTypeS}</g:item>
-						<g:item value="A" >{msgs.liquidationTypeA}</g:item>
-					</g:ListBox>
+						ui:field="movementTypeListBox" />
 				</td>
 			</tr>
 
@@ -105,10 +101,7 @@
 				</td>
 				<td class="{style.field}">
 					<g:ListBox styleName="aon-selectOneMenu"
-						ui:field="actionTypeListBox" >
-						<g:item value="1" >{msgs.actionType1}</g:item>
-						<g:item value="2" >{msgs.actionType2}</g:item>
-					</g:ListBox>
+						ui:field="actionTypeListBox" />
 				</td>
 			</tr>
 
@@ -148,11 +141,7 @@
 				</td>
 				<td class="{style.field}">
 					<g:ListBox styleName="aon-selectOneMenu"
-						ui:field="documentTypeListBox" >
-						<g:item value="1" >{msgs.documentTypeNif}</g:item>
-						<g:item value="6" >{msgs.documentTypeNie}</g:item>
-						<g:item value="9" >{msgs.documentTypeCif}</g:item>
-					</g:ListBox>
+						ui:field="documentTypeListBox" />
 				</td>
 			</tr>
 

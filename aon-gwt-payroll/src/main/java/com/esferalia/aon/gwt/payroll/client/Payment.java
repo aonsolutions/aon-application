@@ -773,7 +773,17 @@ public class Payment extends ResizeComposite {
 		quoteFullPanelIndex = quoteDeckPanel.getWidgetIndex(quoteFullPanel);
 		quoteEditPanelIndex = quoteDeckPanel.getWidgetIndex(quoteEditPanel);
 		quoteNonePanelIndex = quoteDeckPanel.getWidgetIndex(quoteNonePanel);
-		
+
+		taxListBox.addItem(PayrollAON.MSGS.grossAmount(), ALL);
+		taxListBox.addItem(PayrollAON.MSGS.exempt(), NONE);
+		taxListBox.addItem(PayrollAON.MSGS.customized(), CUSTOM);
+		taxListBox.addItem(PayrollAON.MSGS.accountIncome(), IRPF_CTA_ESP);
+
+		quoteListBox.addItem(PayrollAON.MSGS.grossAmount(), ALL);
+		quoteListBox.addItem(PayrollAON.MSGS.exempt(), NONE);
+		quoteListBox.addItem(PayrollAON.MSGS.prorated(), PRORATED);
+		quoteListBox.addItem(PayrollAON.MSGS.customized(), CUSTOM);
+
 		taxDeckPanel.showWidget(taxEditPanelIndex);
 		quoteDeckPanel.showWidget(quoteEditPanelIndex);
 	}

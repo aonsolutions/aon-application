@@ -246,7 +246,20 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 		setCaption("Sistema de Liquidaci\u00F3n Directa (Proyecto Cret@)");
 		
 		setWidget(binder.createAndBindUi(this));
-		
+
+		typeListBox.addItem(PayrollAON.MSGS.liquidationL00(), "L00");
+		typeListBox.addItem(PayrollAON.MSGS.liquidationL02(), "L02");
+		typeListBox.addItem(PayrollAON.MSGS.liquidationL03(), "L03");
+		typeListBox.addItem(PayrollAON.MSGS.liquidationL13(), "L13");
+		typeListBox.addItem(PayrollAON.MSGS.liquidationL90(), "L90");
+		typeListBox.addItem(PayrollAON.MSGS.liquidationL91(), "L91");
+
+		i54ListBox.addItem(PayrollAON.MSGS.causeI541(), "1");
+		i54ListBox.addItem(PayrollAON.MSGS.causeI542(), "2");
+		i54ListBox.addItem(PayrollAON.MSGS.causeI543(), "3");
+		i54ListBox.addItem(PayrollAON.MSGS.causeI544(), "4");
+		i54ListBox.addItem(PayrollAON.MSGS.causeI545(), "5");
+
 		setVisibleI54(false);
 
 		setVisibleWithIDC(false);
