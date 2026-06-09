@@ -601,6 +601,7 @@ public abstract class RegistryPaymethodBanksTable extends ScrollPanel {
 
 							@Override
 							public void onSuccess(List<Account> accountsDB) {
+								accountsDB.sort((a, b) -> b.getCode().compareTo(a.getCode()));
 								accounts = accountsDB;
 								
 								COMMON_SERVICE.getRegistryPayMethods(domainName, domain, user, registry, new AsyncCallback<List<RegistryPayMethod>>() {
