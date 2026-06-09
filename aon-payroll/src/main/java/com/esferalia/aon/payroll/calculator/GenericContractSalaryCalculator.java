@@ -1837,6 +1837,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					&& contractPaymentType != PaymentType.CRA_0055 
 					&& !AonStringUtils.equals(ContextVariable.GUARENTEED, name)
 					&& !AonStringUtils.equals(ContextVariable.PREST_IT, name)
+					&& !AonStringUtils.equals(ContextVariable.MATERNITY.getName(), name)
 					&& !AonStringUtils.equals(ContextVariable.MEDICAL_INSURANCE, name)
 					&& !ContextVariable.FLEXIBLES.contains(name)
 					&& Period.intersects(results.stream().filter(r -> r.getValue() != null /*&& r.getValue() > 0.00*/)
