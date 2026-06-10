@@ -237,6 +237,7 @@ import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
@@ -8598,6 +8599,12 @@ public class AON {
 	public static void updateDomainCustomer(String domainName, Integer domainId, String login, Integer customer) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			getRegistry().updateDomainCustomer(ctx, domainId, customer);
+		}
+	}
+	
+	public static Domain saveDomainStatus(String domainName, int domain, String user, RegistryStatus newStatus, Date newExpDate) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().saveDomainStatus(ctx, domain, newStatus, newExpDate);
 		}
 	}
 	
