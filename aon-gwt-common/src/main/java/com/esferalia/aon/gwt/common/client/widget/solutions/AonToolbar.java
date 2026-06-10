@@ -151,6 +151,10 @@ public class AonToolbar extends FlowPanel {
 		titlePanel.add(widget);
 	}
 	
+	public void addTitleButton(Widget widget) {
+		titlePanel.insert(widget, 0);
+	}
+	
 	@Override
 	public int getWidgetIndex(Widget child) {
 		return buttonContainer.getWidgetIndex(child);

@@ -124,6 +124,7 @@ import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -1818,5 +1819,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getVerifiedHostEmails(String domainName, Integer domain, String user, AsyncCallback<HashMap<String, Boolean>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getVerifiedHostEmails(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	// *********************** [DOMAIN STATUS]
+	@Override
+	public void saveDomainStatus(String domainName, int domain, String user, RegistryStatus newStatus, Date newExpDate, AsyncCallback<Domain> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveDomainStatus(domainName, domain, user, newStatus, newExpDate, new AsyncCallbackWrapper<>(callback));
 	}
 }

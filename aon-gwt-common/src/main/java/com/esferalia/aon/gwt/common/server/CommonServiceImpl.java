@@ -169,6 +169,7 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
@@ -2365,6 +2366,12 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		} else {
 			AON.reassignScope(new Occam().setDomainName(domainName).setDomain(domainId).setUser(user), domainId, originScope, finalScope);
 		}
+	}
+	
+	// *********************** [DOMAIN STATUS]
+	@Override
+	public Domain saveDomainStatus(String domainName, int domain, String user, RegistryStatus newStatus, Date newExpDate) throws AonCoreException {
+		return AON.saveDomainStatus(domainName, domain, user, newStatus, newExpDate);
 	}
 	
 }

@@ -28,7 +28,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -281,22 +281,16 @@ public class AonMainCertificatesPanel extends DeckPanel {
 		alias.setTitle(certificate.getDescription());
 		table.addInlineStyle(alias, COLS.TYP.getStyles());
 
-		CheckBox tgssCB = new CheckBox();
-		tgssCB.getElement().getStyle().setProperty("width", "1rem");
-		tgssCB.getElement().getStyle().setProperty("height", "1rem");
-		tgssCB.setValue(hasTGSSCertificate(certificate));
+		Button tgssCB = new Button();
+		getEnableDisableButton(tgssCB, hasTGSSCertificate(certificate));
 		tgssCB.setEnabled(false);
 
-		CheckBox sepeCB = new CheckBox();
-		sepeCB.getElement().getStyle().setProperty("width", "1rem");
-		sepeCB.getElement().getStyle().setProperty("height", "1rem");
-		sepeCB.setValue(hasSEPECertificate(certificate));
+		Button sepeCB = new Button();
+		getEnableDisableButton(sepeCB, hasSEPECertificate(certificate));
 		sepeCB.setEnabled(false);
-
-		CheckBox aeatCB = new CheckBox();
-		aeatCB.getElement().getStyle().setProperty("width", "1rem");
-		aeatCB.getElement().getStyle().setProperty("height", "1rem");
-		aeatCB.setValue(hasAEATCertificate(certificate));
+		
+		Button aeatCB = new Button();
+		getEnableDisableButton(aeatCB, hasAEATCertificate(certificate));
 		aeatCB.setEnabled(false);
 
 		// Buttons Panel
@@ -409,6 +403,16 @@ public class AonMainCertificatesPanel extends DeckPanel {
 		} else {
 			row.addDomHandler(e -> onCertificaUpdate(certificate), ClickEvent.getType());
 		}
+	}
+	
+	private void getEnableDisableButton(Button button, boolean disabled) {
+		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE);
+		button.removeStyleName(AON.AON_NO_MARGIN);
+		button.removeStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
+		
+		button.setStyleName(!disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
+		button.setStyleName(AON.AON_NO_MARGIN, true);
+		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 	}
 
 	private void onCertificaUpdate(Certificate certificate) {
