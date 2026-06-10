@@ -506,30 +506,30 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		public TGSSContextMenu() {
 
-			afi = addMenuItem("Cambios AFI", new AFICommand(), AON.CSS.aonIconTgss(), "afi");
-			peculiarities = addMenuItem("Peculiaridades de cotizaci\u00F3n", new PeculiaritiesCommand(),
+			afi = addMenuItem(PayrollAON.MSGS.afiChanges(), new AFICommand(), AON.CSS.aonIconTgss(), "afi");
+			peculiarities = addMenuItem(PayrollAON.MSGS.peculiaritiesOfQuotation(), new PeculiaritiesCommand(),
 					AON.CSS.aonIconTgss(), "peculiarities");
 
 			addSeparator();
 
-			ta = addMenuItem("Duplicados de Documentos TA", new TACommand(), AON.CSS.aonIconPdf(), "ta");
-			taEnd = addMenuItem("Duplicados de Documentos TA (Baja)", new TAEndCommand(), AON.CSS.aonIconPdf(),
+			ta = addMenuItem(PayrollAON.MSGS.duplicateDocumentsTA(), new TACommand(), AON.CSS.aonIconPdf(), "ta");
+			taEnd = addMenuItem(PayrollAON.MSGS.duplicateDocumentsTAEnd(), new TAEndCommand(), AON.CSS.aonIconPdf(),
 					"taEnd");
 
-			idc = addMenuItem("IDC-Trab Cuenta Ajena", new IDCCommand(), AON.CSS.aonIconPdf(), "idc");
+			idc = addMenuItem(PayrollAON.MSGS.idcTrabCuentaAjena(), new IDCCommand(), AON.CSS.aonIconPdf(), "idc");
 			;
-			idcPlNss = addMenuItem("IDC/Periodo Liquidaci\u00F3n-NSS", new IDCPlNssCommand(), AON.CSS.aonIconPdf(),
+			idcPlNss = addMenuItem(PayrollAON.MSGS.idcPeriodoLiquidacionNss(), new IDCPlNssCommand(), AON.CSS.aonIconPdf(),
 					"idcPlNss");
 
-			laboralLife = addItem("Vida Laboral", new LaboralLifeCommand(), AON.CSS.aonIconPdf(),
+			laboralLife = addItem(PayrollAON.MSGS.laboralLife(), new LaboralLifeCommand(), AON.CSS.aonIconPdf(),
 					AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			laboralLife.ensureDebugId("laboralLife");
 
 			separatorComunicate = addSeparator();
 
-			altaConsolidadaDelete = addMenuItem("Eliminar alta consolidada", new AltaConsolidadaDeleteCommand(),
+			altaConsolidadaDelete = addMenuItem(PayrollAON.MSGS.deleteAltaConsolidada(), new AltaConsolidadaDeleteCommand(),
 					AON.CSS.aonIconSend(), "altaConsolidadaDelete");
-			comunicateAFI = addMenuItem("Notificaci\u00f3n AFI (TGSS)", new ComunicateAFICommand(),
+			comunicateAFI = addMenuItem(PayrollAON.MSGS.notificacionAFITgss(), new ComunicateAFICommand(),
 					AON.CSS.aonIconSend(), "comunicateAFI");
 
 		}

@@ -1675,4 +1675,30 @@ public interface PayrollMessages extends Messages {
 	@DefaultMessage("Generando borrador de la copia basica")
 	String generatingBasicCopyDraft();
 
+	// ----------------------------------------------------------------- TGSSContextMenu
+
+	@DefaultMessage("Cambios AFI")
+	String afiChanges();
+
+	@DefaultMessage("Duplicados de Documentos TA")
+	String duplicateDocumentsTA();
+
+	@DefaultMessage("Duplicados de Documentos TA (Baja)")
+	String duplicateDocumentsTAEnd();
+
+	@DefaultMessage("IDC-Trab Cuenta Ajena")
+	String idcTrabCuentaAjena();
+
+	@DefaultMessage("IDC/Periodo Liquidación-NSS")
+	String idcPeriodoLiquidacionNss();
+
+	@DefaultMessage("Vida Laboral")
+	String laboralLife();
+
+	@DefaultMessage("Eliminar alta consolidada")
+	String deleteAltaConsolidada();
+
+	@DefaultMessage("Notificación AFI (TGSS)")
+	String notificacionAFITgss();
+
 }
