@@ -1037,17 +1037,17 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		private MenuItem modificationPDF;
 
 		public AttachContextMenu() {
-			exportContract = addMenuItem("Borrador Contrato", new ExportContractCommand(), AON.CSS.aonIconPdf(),
+			exportContract = addMenuItem(PayrollAON.MSGS.borradorContrato(), new ExportContractCommand(), AON.CSS.aonIconPdf(),
 					"exportContract");
-			exportContract = addMenuItem("Borrador Copia Basica", new ExportBasicCopyCommand(), AON.CSS.aonIconPdf(),
+			exportContract = addMenuItem(PayrollAON.MSGS.borradorCopiaBasica(), new ExportBasicCopyCommand(), AON.CSS.aonIconPdf(),
 					"exportBasicCopy");
-			exportTransformContract = addMenuItem("Borrador Contrato (Transformac\u00f3n)",
+			exportTransformContract = addMenuItem(PayrollAON.MSGS.borradorContratoTransformacion(),
 					new ExportTransformContractCommand(), AON.CSS.aonIconPdf(), "exportTransformContract");
-			exportExtensionContract = addMenuItem("Borrador Contrato (Pr\u00f3rroga)",
+			exportExtensionContract = addMenuItem(PayrollAON.MSGS.borradorContratoProrroqa(),
 					new ExportExtensionContractCommand(), AON.CSS.aonIconPdf(), "exportExtensionContract");
-			exportRelocationContract = addMenuItem("Borrador Propuesta Recolocaci\u00f3n",
+			exportRelocationContract = addMenuItem(PayrollAON.MSGS.borradorPropuestaRecolocacion(),
 					new ExportRelocationContractCommand(), AON.CSS.aonIconPdf(), "exportRelocationContract");
-			modificationPDF = addMenuItem("Notificaci\u00f3n Laboral", new ModificationPDFCommand(),
+			modificationPDF = addMenuItem(PayrollAON.MSGS.notificacionLaboral(), new ModificationPDFCommand(),
 					AON.CSS.aonIconPdf(), "modificationPDF");
 		}
 

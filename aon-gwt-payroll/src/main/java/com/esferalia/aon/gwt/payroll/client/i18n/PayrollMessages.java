@@ -1701,4 +1701,24 @@ public interface PayrollMessages extends Messages {
 	@DefaultMessage("Notificación AFI (TGSS)")
 	String notificacionAFITgss();
 
+	// ----------------------------------------------------------------- AttachContextMenu
+
+	@DefaultMessage("Borrador Contrato")
+	String borradorContrato();
+
+	@DefaultMessage("Borrador Copia Basica")
+	String borradorCopiaBasica();
+
+	@DefaultMessage("Borrador Contrato (Transformación)")
+	String borradorContratoTransformacion();
+
+	@DefaultMessage("Borrador Contrato (Prórroga)")
+	String borradorContratoProrroqa();
+
+	@DefaultMessage("Borrador Propuesta Recolocación")
+	String borradorPropuestaRecolocacion();
+
+	@DefaultMessage("Notificación Laboral")
+	String notificacionLaboral();
+
 }
