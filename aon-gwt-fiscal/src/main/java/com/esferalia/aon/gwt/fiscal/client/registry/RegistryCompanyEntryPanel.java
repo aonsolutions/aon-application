@@ -164,7 +164,7 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		});
 		addToolbarButton(saveButton);
 		
-		if(this.registrySource == RegistrySource.COMPANY) {
+		if(this.registrySource == RegistrySource.COMPANY && isParentUser()) {
 			
 			RegistryStatus statusValue;
 			if(null != options.getConfiguration().getDomain().getExpirationDate()) statusValue = RegistryStatus.BLOCKED;
@@ -177,7 +177,7 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 //			    Date exp = status.getExpirationDate();
 //			    Window.alert("newStatus : " + newStatus + ", exp : " + exp);
 //			});
-			addToolbarButton(status);
+			getToolbar().addTitleButton(status);
 			
 		}
 	}
