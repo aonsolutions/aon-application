@@ -10072,6 +10072,120 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		}
 		
 	}
+	
+	
+	@Test
+	public void testIdenticalExtrasI() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", CRA_0004);
+		
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				new Extra() {
+					{
+						this.expression = "P";
+						this.month = Month.JUNE;
+						this.start = "01/01";
+						this.end = "30/06";
+						this.issue = "15/06";
+						this.concept = pagaExtra.getId();
+						this.description = "PAGA VERANO";
+						
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "P";
+						this.month = Month.DECEMBER;
+						this.start = "01/07";
+						this.end = "31/12";
+						this.issue = "15/12";
+						this.concept = pagaExtra.getId();
+						this.description = "PAGA NAVIDAD";
+					}
+				}, 
+				});
+
+		PaymentConceptRecord concept = addConcept(aonContext, "P");
+		
+		ContractRecord contract = newContract(aonContext,
+				add(getToday(), Calendar.YEAR, -5) 
+				,new HashMap<String, String>() {
+				} 
+				,new String[] {} 
+				,new String[] {} 
+				,category);
+		//@formatter:off
+		
+		addPayment(aonContext, contract, concept, String.format("1000 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		Date startDate = getFirstDayOfYear(getToday());
+		for ( int i = 0 ; i < 6; i++ ) {
+			Date endDate = getLastDayOfMonth(startDate);
+			ISQLContractSalaryCalculatorContext ctx = 
+			getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+			JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+			new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder).calculate(ctx);
+			jooqSalaryBuilder.execute();
+			System.out.println("----" + startDate + ".." + endDate + "----");
+			startDate = add(startDate, MONTH, 1);
+		}
+		
+		
+
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(MONTH, Calendar.JUNE);
+		calendar.set(DAY_OF_MONTH, 15);
+		Date issueDate = new Date(calendar.getTimeInMillis());
+		int year = calendar.get(Calendar.YEAR);
+
+		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
+		for (AgreementPaymentRecord payment : getAgreementPayments(aonContext, agreement.getId())) {
+			if ( payment.getPaymentConcept().equals(pagaExtra.getId()) ) {
+				payment.setDescription("PAGA EXTRAORDINARIA");
+				payment.update();
+			}
+		}
+
+		
+		AgreementExtraRecord julyExtra = getExtra(aonContext, agreement.getId(), "15/06");
+
+		
+		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, issueDate);
+		SmartContractSalaryCalculator<Salary> contractSalaryCalculator = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder());
+		contractSalaryCalculator.setListener(new Listener() {
+		});
+		Salary extra = contractSalaryCalculator.calculate(extraCtx);
+		
+		System.out.println("---- EXTRA JUNE ----");
+		extra.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() + ": " + p.getAmount() + ", " + p.getQuote()  ));
+		assertEquals(1000.00, extra.getTotalPayment(), 0.05, String.format("%s",TOTAL_PAYMENT));
+		
+		
+//		agreement = getAgreement(aonContext, category.getAgreementLevel());
+//		AgreementExtraRecord decemberExtra = getExtra(aonContext, agreement.getId(), "15/12");
+//		extraCtx = getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, issueDate);
+//		contractSalaryCalculator = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder());
+//		contractSalaryCalculator.setListener(new Listener() {
+//		});
+//		
+//		System.out.println("---- EXTRA DECEMBER ----");
+//		extra = contractSalaryCalculator.calculate(extraCtx);
+//		extra.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() + ": " + p.getAmount() + ", " + p.getQuote()  ));
+//
+//		assertEquals(1000.00, extra.getTotalPayment(), 0.05, String.format("%s",TOTAL_PAYMENT));
+	}
+	
 
 
 }
