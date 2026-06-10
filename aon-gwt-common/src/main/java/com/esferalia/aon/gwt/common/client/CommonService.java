@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
@@ -568,11 +569,19 @@ public interface CommonService extends RemoteService {
 	RegistryBank saveRregistryBank(String domainName, Integer domain, String user, RegistryBank registryBank) throws AonCoreException;
 	void deleteRregistryBank(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
 	List<Account> getAccountsForBank(String domainName, Integer domain, String user) throws AonCoreException;
+	List<Account> getAviablesAccountsForBank(String domainName, Integer domain, String user) throws AonCoreException;
+	Account createAccountsForBank(String domainName, Integer domain, String user, String alias, String suffixCode) throws AonCoreException;
 	List<Account> getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource, String pattern) throws AonCoreException;
 	
 	LinkedList<Signature> getSignatures(String domainName, Integer domain, String user) throws AonCoreException;
 	void deleteSignature(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
 	Signature saveSignature(String domainName, Integer domainId, String user, Signature signature) throws AonCoreException;
+	
+	LinkedList<MailAccount> getMailAccounts(String domainName, Integer domain, String user) throws AonCoreException;
+	void deleteMailAccount(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
+	MailAccount saveMailAccount(String domainName, Integer domainId, String user, MailAccount mailAccount) throws AonCoreException;
+	HashMap<Integer, Boolean> checkMailAccounts(String domainName, Integer domain, String user) throws AonCoreException;
+	HashMap<String, Boolean> getVerifiedHostEmails(String domainName, Integer domainId, String user) throws AonCoreException;
 	
 	// *********************** [AMORTIZATION TYPE]
 	List<AmortizationType> getAmortizationTypes(Occam occam, int domain) throws AonCoreException;

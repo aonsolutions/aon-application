@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -9,9 +10,10 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog.AonCustomDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonSignaturePanel.AonSignaturePanelCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMailAccountPanel.AonMailAccountPanelCallback;
+import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.MailAccountType;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -29,11 +31,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-public abstract class SignatureTable extends ScrollPanel {
+public abstract class MailAccountTable extends ScrollPanel {
 
 	private static CommonServiceAsync COMMON_SERVICE;
 	
-	private static final Logger LOGGER = Logger.getLogger(SignatureTable.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(MailAccountTable.class.getName());
 	static { LOGGER.addHandler( new ConsoleLogHandler() ); }
 	
 	private final int limit = 100;
@@ -50,9 +52,19 @@ public abstract class SignatureTable extends ScrollPanel {
 	private Integer domain;
 	private String user;
 	
+	private LinkedList<Signature> signatures;
+	
+	private HashMap<Integer, AonTableButton> veficationStatus = new HashMap<Integer, AonTableButton>();
+	private HashMap<Integer, MailAccount> mailAccounts = new HashMap<Integer, MailAccount>();
+	
 	private static enum COLS {
-		  NAM(AON.MSG.name()						, "-moz-available"	, "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, BUT(AonStringUtils.EMPTY					, "3rem"			,"")
+		  NAM(AON.MSG.description()					, "-moz-available"	, "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, SHA("Mostrar como"						, "13rem"			, "max-width: 13rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, EMA("Email"								, "13rem"			, "max-width: 13rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, SIG("Firma"								, "8rem"			, "max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, TYP("Tipo"								, "5rem"			, "max-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, STA("Estado"								, "5rem"			, "")
+		, BUT(AonStringUtils.EMPTY					, "3rem"			, "")
 		;
 
 		String headerLabel;
@@ -75,7 +87,7 @@ public abstract class SignatureTable extends ScrollPanel {
 		}
 	}
 	
-	public SignatureTable(String domainName, int domain, String user) {
+	public MailAccountTable(String domainName, int domain, String user) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
@@ -108,7 +120,7 @@ public abstract class SignatureTable extends ScrollPanel {
 			}
 		});
 		
-		onSearch();
+		getSignatures(end -> onSearch());
 	}
 
 	public boolean isSearchEnabled() {
@@ -159,7 +171,7 @@ public abstract class SignatureTable extends ScrollPanel {
 				button.getElement().getStyle().setProperty("border", "2px solid #434548");
 				button.getElement().getStyle().setProperty("padding", "10px");
 				button.getElement().getStyle().setProperty("border-radius", "50%");
-				button.addClickHandler(e -> createSignature());
+				button.addClickHandler(e -> createMailAccount());
 				buttonContainer.add(button);
 				
 				tab.addHeader(buttonContainer, col.getColWidth(), col.getStyles());
@@ -172,18 +184,18 @@ public abstract class SignatureTable extends ScrollPanel {
 	private void searchData() {
 		if (!isMoreData()) return;
 		
-		getList(signatures -> {
+		getList(mailAccountList -> {
 			boolean something = false;
 			
-			for(Signature signature : signatures) {
+			for(MailAccount mailAccount : mailAccountList) {
 				something = true;
-				paintRow(signature);
+				paintRow(mailAccount);
 			}
 			
-			if (signatures.size() < limit) {
+			if (mailAccountList.size() < limit) {
 				disableMoreData();
 			} else {
-				offset.setValue(offset.intValue() + signatures.size() - 1);
+				offset.setValue(offset.intValue() + mailAccountList.size() - 1);
 				enableMoreData();
 			}
 			
@@ -197,21 +209,41 @@ public abstract class SignatureTable extends ScrollPanel {
 			}
 			enableSearch();
 			
+			checkMailAccounts(checkMailAccounts -> {
+				checkMailAccounts.entrySet().forEach(e -> {
+					AonTableButton status = veficationStatus.get(e.getKey());
+					if(null != status) {
+						status.removeStyleName(AON.CSS.aonSpin());
+						status.removeStyleName(AON.CSS.aonIconRefresh());
+						
+						if(e.getValue()) {
+							status.addStyleName(AON.CSS.aonIconCheckCircle());
+							status.setTitle("Verificado");
+						} else {
+							status.addStyleName(AON.CSS.aonIconCancelCircle());
+							status.setTitle("No Verificado");
+						}
+					}
+					
+					mailAccounts.get(e.getKey()).setSESVerified(e.getValue());
+						
+				});
+			});
 		});
 	}
 	
-	private void paintRow(Signature signature) {
+	private void paintRow(MailAccount mailAccount) {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 		
 		AonTableButton button;
-		button = new AonTableButton("Borrar firma", AON.CSS.aonIconDelete());
+		button = new AonTableButton("Borrar email", AON.CSS.aonIconDelete());
 		button.addStyleName(AON.CSS.aonCustomRowButtom());
 		button.addClickHandler(e -> {
 			e.stopPropagation();
 			button.setEnabled(false);
 			AonDialog dialog = new AonDialog("Eliminaci\u00f3n Firma",
-					new HTML("Se va a proceder a eliminar la firma <b>" + signature.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+					new HTML("Se va a proceder a eliminar el email <b>" + mailAccount.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
 			
 			dialog.confirm(new AonAcceptDialogCallback() {
 
@@ -222,40 +254,101 @@ public abstract class SignatureTable extends ScrollPanel {
 
 				@Override
 				public void onAccept() {
-					delete(signature);
+					delete(mailAccount);
 				}
 			});
 		});
 		buttonContainer.add(button);
 		
 		HTMLPanel row = tab.createRow();
-		row.addDomHandler(e -> onUpdateSignature(signature), ClickEvent.getType());
+		row.addDomHandler(e -> onUpdateMailAccount(mailAccounts.get(mailAccount.getId())), ClickEvent.getType());
 		
-		Label name = new Label(signature.getName());
-		name.setTitle(signature.getName());
+		Label name = new Label(mailAccount.getName());
+		name.setTitle(mailAccount.getName());
 		tab.addInlineStyle(name, COLS.NAM.getStyles());
 		tab.addRow(row, name, COLS.NAM.getColWidth());
+
+		Label showAs = new Label(mailAccount.getDisplayName());
+		showAs.setTitle(mailAccount.getDisplayName());
+		tab.addInlineStyle(showAs, COLS.SHA.getStyles());
+		tab.addRow(row, showAs, COLS.SHA.getColWidth());
+		
+		Label email = new Label(mailAccount.getEmail());
+		email.setTitle(mailAccount.getEmail());
+		tab.addInlineStyle(email, COLS.EMA.getStyles());
+		tab.addRow(row, email, COLS.EMA.getColWidth());
+		
+		Signature mailAccountSignature = signatures.stream().filter(s -> s.getId().equals(mailAccount.getSignatureId())).findFirst().orElse(null);
+		
+		Label signature = new Label(null == mailAccountSignature ? "" : mailAccountSignature.getName());
+		signature.setTitle(null == mailAccountSignature ? "" : mailAccountSignature.getName());
+		tab.addInlineStyle(signature, COLS.SIG.getStyles());
+		tab.addRow(row, signature, COLS.SIG.getColWidth());
+		
+		Label type = new Label(mailAccount.getType() == MailAccountType.USER ? "Usuario" : "Empresa");
+		type.setTitle(mailAccount.getName());
+		tab.addInlineStyle(type, COLS.TYP.getStyles());
+		tab.addRow(row, type, COLS.TYP.getColWidth());
+		
+		AonTableButton status = new AonTableButton("Verificando", AON.CSS.aonIconRefresh());
+		status.addStyleName(AON.CSS.aonSpin());
+		tab.addInlineStyle(status, COLS.STA.getStyles());
+		tab.addRow(row, status, COLS.STA.getColWidth());
 		
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
+		
+		veficationStatus.put(mailAccount.getId(), status);
 	}
 
-	private void getList(Consumer<List<Signature>> success) {
-		COMMON_SERVICE.getSignatures(domainName, domain, user, new AsyncCallback<LinkedList<Signature>>() {
+	private void getList(Consumer<List<MailAccount>> success) {
+		COMMON_SERVICE.getMailAccounts(domainName, domain, user, new AsyncCallback<LinkedList<MailAccount>>() {
 			
 			@Override
-			public void onSuccess(LinkedList<Signature> signatures) {
-				success.accept(signatures);
+			public void onSuccess(LinkedList<MailAccount> mailAccountsDB) {
+				mailAccountsDB.forEach(m -> mailAccounts.put(m.getId(), m));
+				success.accept(mailAccountsDB);
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				// Error
+				onShowErrorMessage("Error emails: " + caught.getMessage());
 			}
 		});
 	}
 	
-	private void delete(Signature signature) {
-		COMMON_SERVICE.deleteSignature(domainName, domain, user, signature.getId(), new AsyncCallback<Void>() {
+	private void checkMailAccounts(Consumer<HashMap<Integer, Boolean>> success) {
+		COMMON_SERVICE.checkMailAccounts(domainName, domain, user, new AsyncCallback<HashMap<Integer, Boolean>>() {
+			
+			@Override
+			public void onSuccess(HashMap<Integer, Boolean> checkMailAccounts) {
+				success.accept(checkMailAccounts);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				onShowErrorMessage("Error check mails: " + caught.getMessage());
+			}
+		});
+	}
+
+	private void getSignatures(Consumer<List<Signature>> success) {
+		COMMON_SERVICE.getSignatures(domainName, domain, user, new AsyncCallback<LinkedList<Signature>>() {
+			
+			@Override
+			public void onSuccess(LinkedList<Signature> signaturesDB) {
+				signatures = signaturesDB;
+				success.accept(signaturesDB);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				onShowErrorMessage("Error firmas: " + caught.getMessage());
+			}
+		});
+	}
+	
+	private void delete(MailAccount mailAccount) {
+		COMMON_SERVICE.deleteMailAccount(domainName, domain, user, mailAccount.getId(), new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {
@@ -269,11 +362,11 @@ public abstract class SignatureTable extends ScrollPanel {
 		});
 	}
 	
-	private void onUpdateSignature(Signature signature) {
+	private void onUpdateMailAccount(MailAccount mailAccount) {
 		final AonCustomDialog dialog = new AonCustomDialog();
-		dialog.setCaption( "Editar Firma" );
+		dialog.setCaption( "Editar Email" );
 		
-		final AonSignaturePanel aonSignaturePanel = new AonSignaturePanel( domainName, domain, user, signature, new AonSignaturePanelCallback() {
+		final AonMailAccountPanel aonSignaturePanel = new AonMailAccountPanel( domainName, domain, user, signatures, mailAccount, new AonMailAccountPanelCallback() {
 			
 			@Override
 			public void onCancel() {
@@ -281,7 +374,7 @@ public abstract class SignatureTable extends ScrollPanel {
 			}
 			
 			@Override
-			public void onAccept(Signature signature) {
+			public void onAccept(MailAccount mailAccount) {
 				dialog.hide();
 				onSearch();
 			}
@@ -291,11 +384,11 @@ public abstract class SignatureTable extends ScrollPanel {
 		dialog.showLoaded();
 	}
 
-	private void createSignature() {
+	private void createMailAccount() {
 		final AonCustomDialog dialog = new AonCustomDialog();
-		dialog.setCaption("Nueva Firma");
+		dialog.setCaption("Nuevo Email");
 
-		final AonSignaturePanel aonSignaturePanel = new AonSignaturePanel(domainName, domain, user, new AonSignaturePanelCallback() {
+		final AonMailAccountPanel aonSignaturePanel = new AonMailAccountPanel(domainName, domain, user, signatures, new AonMailAccountPanelCallback() {
 
 					@Override
 					public void onCancel() {
@@ -303,16 +396,14 @@ public abstract class SignatureTable extends ScrollPanel {
 					}
 
 					@Override
-					public void onAccept(Signature signature) {
+					public void onAccept(MailAccount mailAccount) {
 						dialog.hide();
 						onSearch();
 					}
 				});
 		
 		dialog.add(aonSignaturePanel);
-		dialog.showLoadedCB(new AonCustomDialogCallback() {
-			@Override public void onEnd() { aonSignaturePanel.name.setFocus(true); }
-		});
+		dialog.showLoaded();
 		
 	}
 

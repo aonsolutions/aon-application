@@ -30,6 +30,7 @@ import net.aonsolutions.db.up2date.payroll.InsuranceInsert;
 import net.aonsolutions.db.up2date.payroll.MaxEmbargable4DailyFix;
 //import net.aonsolutions.db.up2date.payroll.SalaryTypeUpdate;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBases2026Update;
+import net.aonsolutions.db.up2date.tgss.DropNoJustifiedFix;
 import net.aonsolutions.db.up2date.tgss.FellowsBases2026Update;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2026Update;
 import net.aonsolutions.db.up2date.tgss.HomeBases2026Update;
@@ -634,6 +635,7 @@ public class Up2Date {
 			//AddColumnCustomerFiscalStatus.ADD_COLUMN_CUSTOMER_FISCAL_STATUS,
 			//SalaryTypeUpdate.ALL,
 			BonificEntrenadoresYMonitoresFix.BONIFICENTRENADORESYMONITORESFIX,
+			DropNoJustifiedFix.DROPNOJUSTIFIEDFIX,
 			
 			
 			// ----------------------------------------------------------------

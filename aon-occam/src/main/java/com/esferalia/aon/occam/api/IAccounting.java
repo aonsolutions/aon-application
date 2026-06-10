@@ -53,6 +53,7 @@ import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
+import com.esferalia.aon.occam.api.model.registry.RegistrySource;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -66,6 +67,7 @@ public interface IAccounting {
 	public Account getAccount(AONContext ctx,Integer accountId);		
 	public Account getAccount(AONContext ctx,String code);
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter);
+	public Stream<Account> getAviablesAccountsForBank(AONContext ctx,AccountFilter filter);
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter, int offset, int limit);
 	public Account save(AONContext ctx, Account account);
 	public Account delete(AONContext ctx, Account account);
@@ -73,6 +75,9 @@ public interface IAccounting {
 	public Stream<Account> getAccounts(AONContext ctx, AccountParams params);
 	public List<Account> getAccountsList(AONContext ctx, AccountParams params);
 	public List<Account> getSuggestedAccounts(AONContext ctx, Integer registry, InvoiceType type);
+	
+	public Account createAccountsForBank(CloseableAONContext ctx, Integer domain, String alias,  String suffixCode);
+	
 	
 	// **************************************************
 	// ********************************* [ACCOUNT PERIOD]

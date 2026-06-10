@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonVisualIdentity;
 import com.esferalia.aon.gwt.common.client.widget.solutions.EnterpriseActivityTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.MailAccountTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.MediaTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.RDirStaffTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.RecordDataTable;
@@ -101,11 +102,10 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 	private RecordDataTable recordDataTable;
 	private RegistryPaymethodBanksTable registryPaymethodBanksTable;
 	private SignatureTable signatureTable;
+	private MailAccountTable mailAccountTable;
 	
 	private CompanyFull company;
 	private Registry registry;
-	
-	private boolean editEnable = false;
 	
 	// ------------------------------------------------- Constructor
 
@@ -119,7 +119,7 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		initializeRegistryService();
 
 		hideSearchWidget();
-
+		
 		createToolbar();
 
 		tablayoutPanel = new TabLayoutPanel(25.00, Unit.PX);
@@ -133,6 +133,10 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		getRegistryBySource();
 	}
 
+	private boolean isParentUser() {
+		return null != options.getConfiguration().getDomain().getParentId() && options.getConfiguration().getDomain().getParentId() == options.getConfiguration().getUser().getDomain().getId();
+	}
+	
 	private static String getToolbarTitle(RegistrySource registrySource) {
 		switch (registrySource) {
 			case ENVIROMENT:
@@ -153,19 +157,6 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 			saveCompanyFull(saved -> {});
 		});
 		addToolbarButton(saveButton);
-		
-		AonToolbarButton editButton = new AonToolbarButton("Editar datos", AON.CSS.aonIconEdit());
-		editButton.addClickHandler(e -> {
-			editEnable = !editEnable;
-
-			documentNationality.setEnabled(editEnable);
-			documentType.setEnabled(editEnable);
-			document.setEnable(editEnable);
-			name.setEnable(editEnable);
-			firstSurname.setEnable(editEnable);
-			secondSurname.setEnable(editEnable);
-		});
-		addToolbarButton(editButton);
 	}
 	
 	// ------------------------------------------------- DataBase
@@ -198,7 +189,7 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 				documentType.addItem(DocumentType.values()[i].getDescription(), DocumentType.values()[i].toString());
 			documentType.setValue(registry.getDocumentType().toString());
 			documentType.getElement().getStyle().setProperty("max-width", "5rem");
-			documentType.setEnabled(editEnable);
+			documentType.setEnabled(isParentUser());
 
 			documentNationality.clearItems();
 			for (int i = 0; i < Country.values().length; i++)
@@ -207,7 +198,7 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 					e -> registry.setDocumentCountry(Country.safeValueOf(documentNationality.getValue())));
 			documentNationality.setValue(registry.getDocumentCountry().getIso2());
 			documentNationality.getElement().getStyle().setProperty("max-width", "4rem");
-			documentNationality.setEnabled(editEnable);
+			documentNationality.setEnabled(isParentUser());
 
 			document.addValueChangeHandler(e -> {
 				registry.setDocument(e.getValue());
@@ -217,7 +208,7 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 					AonMessagePanel.hideMessage(messagePanel);
 			});
 			document.setValue(registry.getDocument());
-			document.setEnable(editEnable);
+			document.setEnable(isParentUser());
 			document.getElement().getStyle().setProperty("max-width", "7rem");
 
 			leftInfoTable.add(createRow(documentType, documentNationality, document, alias));
@@ -231,7 +222,7 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		
 		name.addValueChangeHandler(e -> registry.setName(e.getValue()));
 		name.setValue(registry.getName());
-		name.setEnable(editEnable);
+		name.setEnable(isParentUser());
 		
 		rightInfoTable.add(createRow(name, firstSurname, secondSurname));
 		
@@ -357,6 +348,16 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		tablayoutPanel.add(aonVisualIdentity, this.registrySource.equals(RegistrySource.ENVIROMENT) ? "Logo" : "Logo / Firma");
 		
 		if(AonStringUtils.containsIgnoreCase(options.getDomainName(), "aonsolutions.org")) {
+			mailAccountTable = new MailAccountTable(options.getDomainName(), options.getDomain(), options.getUser()) {
+				
+				@Override
+				protected void onShowErrorMessage(String errorMessage) {
+					AonMessagePanel.showError(messagePanel, errorMessage);
+				}
+				
+			};
+			tablayoutPanel.add(mailAccountTable, "Email");
+			
 			signatureTable = new SignatureTable(options.getDomainName(), options.getDomain(), options.getUser()) {
 				
 				@Override
@@ -380,20 +381,20 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		if(registry.getDocumentType().equals(DocumentType.CIF)) {
 			name.addValueChangeHandler(e -> registry.setName(e.getValue()));
 			name.setValue(registry.getName());
-			name.setEnable(editEnable);
+			name.setEnable(isParentUser());
 			name.setVisibleTitle(AON.MSG.enterpriseName());
 			
 			firstSurname.getElement().getStyle().setDisplay(Display.NONE);
 			secondSurname.getElement().getStyle().setDisplay(Display.NONE);
 		} else {
-			name.setEnable(editEnable);
+			name.setEnable(isParentUser());
 			name.setValue(AonStringUtils.isBlank(registry.getPersonName()) ? registry.getName() : registry.getPersonName());
 			name.setVisibleTitle("Nombre");
 			
-			firstSurname.setEnable(editEnable);
+			firstSurname.setEnable(isParentUser());
 			firstSurname.setValue(registry.getPersonFirstsurname());
 
-			secondSurname.setEnable(editEnable);
+			secondSurname.setEnable(isParentUser());
 			secondSurname.setValue(registry.getPersonSecondsurname());
 			
 			name.addValueChangeHandler(e -> {

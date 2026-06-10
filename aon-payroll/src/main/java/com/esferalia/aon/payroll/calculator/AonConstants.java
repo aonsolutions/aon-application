@@ -7,6 +7,7 @@ import java.util.List;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.DismissalType;
+import com.esferalia.aon.payroll.enumeration.DropType;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.OffType;
 import com.esferalia.aon.payroll.enumeration.certificados.TLDCAUSS;
@@ -49,6 +50,9 @@ public class AonConstants {
 	public static OffType NOT_PAID_PERMISSION = OffType.NOT_PAID_PERMISSION;
 	@Variable(ContextVariable.SUSPEND_JOB_AND_SALARY)
 	public static OffType SUSPEND_JOB_AND_SALARY = OffType.SUSPEND_JOB_AND_SALARY;
+
+	@Variable(ContextVariable.DROP_NOT_JUSTIFIED)
+	public static DropType DROP_NOT_JUSTIFIED = DropType.DROP_NOT_JUSTIFIED;
 
 	@Variable(ContextVariable.JANUARY)
 	public static Integer JANUARY = 1;

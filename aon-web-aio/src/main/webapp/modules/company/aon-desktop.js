@@ -1052,6 +1052,21 @@ export class AonDesktop extends AonElement {
 					}
 				);
 			}
+		
+			// Check sidenav opened by LS.getHideSidenav
+			if(LS.isFutureTheme()){
+				let aonHome = this.getElement('aonHome');
+			
+				let hideSidenav = LS.getHideSidenav();
+				
+				let menuAnchor = this.getElement("aonMenuAnchor");
+				
+				if(LS.getHideSidenav() === 'on' && menuAnchor.classList.contains('close'))
+					return;
+				
+				if(hideSidenav === 'on')
+					aonHome.collapseSidenavMenu();	
+			}
 		});
 	}
 

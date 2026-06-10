@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,6 +61,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
@@ -165,6 +167,7 @@ import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -175,6 +178,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import net.aonsolutions.aon.in.pdf.maker.PdfMaker;
+import solutions.aon.aws.ses.SES;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.SecondaryUser;
@@ -2207,6 +2211,16 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
+	public List<Account> getAviablesAccountsForBank(String domainName, Integer domain, String user) throws AonCoreException {
+		return AON.getAviablesAccountsForBank(domainName, domain, user);
+	}
+	
+	@Override
+	public Account createAccountsForBank(String domainName, Integer domain, String user, String alias, String suffixCode) throws AonCoreException {
+		return AON.createAccountsForBank(domainName, domain, user, alias, suffixCode);
+	}
+	
+	@Override
 	public List<Account> getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource source, String pattern) throws AonCoreException {
 		return AON.getAccountsForRegistry(domainName, domain, user, source, pattern);
 	}
@@ -2224,6 +2238,119 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return AON.saveSignature(domainName, domain, user, signature);
 	}
 	
+	@Override
+	public LinkedList<MailAccount> getMailAccounts(String domainName, Integer domain, String user) throws AonCoreException {
+		return AON.getMailAccounts(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getUserIdProperty().isNull()));
+	}
+	
+	@Override
+	public void deleteMailAccount(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		AON.deleteMailAccount(domainName, domain, user, id);
+	}
+	
+	@Override
+	public MailAccount saveMailAccount(String domainName, Integer domain, String user, MailAccount mailAccount) throws AonCoreException {
+		return AON.saveMailAccount(domainName, domain, user, mailAccount);
+	}
+	
+	@Override
+	public HashMap<Integer, Boolean> checkMailAccounts(String domainName, Integer domain, String user) throws AonCoreException {
+		LinkedList<MailAccount> mailAccounts = AON.getMailAccounts(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getUserIdProperty().isNull()));
+		HashMap<Integer, Boolean> result = new HashMap<Integer, Boolean>();
+		mailAccounts.forEach(m -> {
+			//String status = SES.verificationStatus(m.getEmail());
+			boolean isVerified = SES.isVerifiedForSendingStatus(m.getEmail());
+			//System.out.println(m.getId() + " : " + m.getName() + " ( " + isVerified + ") - " + status);
+			
+			result.put(m.getId(), isVerified);
+		});
+		return result;
+	}
+
+	@Override
+	public HashMap<String, Boolean> getVerifiedHostEmails(String domainName, Integer domainId, String user) throws AonCoreException {
+		HashMap<String, Boolean> result = new HashMap<String, Boolean>();
+		HashSet<String> hosts = new HashSet<String>();
+		
+		Domain domain = AON.getDomain(domainName, domainId, user);
+		
+		Company domainCompany = AON.getCompany(domainName, domainId, user, f -> f.getDomainProperty().eq(domain.getId()));
+		RegistryMedia domainCompanyWeb = AON.getRegistryMedia(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRegistryProperty().eq(domainCompany.getId()).and(f.getMediaProperty().eq(MediaType.WEB.value())));
+		RegistryMedia domainCompanyEmail = AON.getRegistryMedia(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRegistryProperty().eq(domainCompany.getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
+		
+		if(AonStringUtils.isNotBlank(domainCompanyWeb.getValue())) {
+			String host = extractHost(domainCompanyWeb.getValue());
+			hosts.add(host);
+		}
+		
+		if(AonStringUtils.isNotBlank(domainCompanyEmail.getValue())) {
+			String host = extractDomainFromEmail(domainCompanyEmail.getValue());
+			hosts.add(host);
+		}
+		
+		if(null != domain.getParentId()) {
+			Company parentDomainCompany = AON.getCompany(domainName, domainId, user, f -> f.getDomainProperty().eq(domain.getParentId()));
+			RegistryMedia parentDomainCompanyWeb = AON.getRegistryMedia(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRegistryProperty().eq(parentDomainCompany.getId()).and(f.getMediaProperty().eq(MediaType.WEB.value())));
+			RegistryMedia parentDomainCompanyEmail = AON.getRegistryMedia(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRegistryProperty().eq(parentDomainCompany.getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
+			
+			if(AonStringUtils.isNotBlank(parentDomainCompanyWeb.getValue())) {
+				String host = extractHost(parentDomainCompanyWeb.getValue());
+				hosts.add(host);
+			}
+			
+			if(AonStringUtils.isNotBlank(parentDomainCompanyEmail.getValue())) {
+				String host = extractDomainFromEmail(parentDomainCompanyEmail.getValue());
+				hosts.add(host);
+			}
+		}
+		
+		hosts.forEach(h -> {
+			boolean isVerifiedDomain = SES.isVerifiedForSendingStatus("aon.awsses@" + h);
+			result.put(h, isVerifiedDomain);
+		});
+		
+		return result;
+	}
+	
+	private static String extractHost(String web) {
+		if (AonStringUtils.isBlank(web)) return null;
+
+	    String w = web.trim().toLowerCase();
+
+	    // Quitar protocolo si existe
+	    if (w.startsWith("http://")) {
+	        w = w.substring(7);
+	    } else if (w.startsWith("https://")) {
+	        w = w.substring(8);
+	    }
+
+	    // Quitar path si existe
+	    int slash = w.indexOf('/');
+	    if (slash != -1) {
+	        w = w.substring(0, slash);
+	    }
+
+	    // Quitar "www."
+	    if (w.startsWith("www.")) {
+	        w = w.substring(4);
+	    }
+
+	    return w;
+	}
+
+	
+	private static String extractDomainFromEmail(String email) {
+	    if (AonStringUtils.isBlank(email)) {
+	        return null;
+	    }
+
+	    int at = email.indexOf('@');
+	    if (at == -1 || at == email.length() - 1) {
+	        return null;
+	    }
+
+	    return email.substring(at + 1).toLowerCase();
+	}
 	
 	// *********************** [AMORTIZATION TYPE]
 	@Override

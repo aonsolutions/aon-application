@@ -369,6 +369,8 @@
 									styleName='aon-finding-toolbar-item aon_icon_emit {style.aon-toolbar-button}' text="{msgs.issueSettle}" visible="false"/>
 								<g:Button debugId='delayButton' ui:field='delayButton'
 									styleName='aon-finding-toolbar-item aon_icon_emit {style.aon-toolbar-button}' text="{msgs.issueDelays}" visible="false"/>
+								<g:Button debugId='proceduralButton' ui:field='proceduralButton'
+									styleName='aon-finding-toolbar-item aon_icon_emit {style.aon-toolbar-button}' text="EMITIR SAL. TRAMITACI&Oacute;N" visible="false" />
 								<g:Button debugId='fiscalModelsButton' ui:field='fiscalModelsButton'
 									styleName='aon-finding-toolbar-item aon-icon-aeat' text="{msgs.fiscalModels}" visible="false"/>
 								<g:Button debugId='printPreviewButton' ui:field='printPreviewButton'

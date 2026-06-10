@@ -71,11 +71,11 @@ export const closeSession = () => {
     let leftMenu = localStorage.getItem(LEFT_MENU);
 	let language = localStorage.getItem(AON_LANGUAGE);    
     let portalChecked = localStorage.getItem(PORTAL_CHECKED);
+    let hideSideNav = localStorage.getItem(HIDE_SIDENAV);
     
 	removeCookie(APP);
     localStorage.clear();
 	
-
 	if (theme)
     	localStorage.setItem(THEME,theme);
     
@@ -90,6 +90,9 @@ export const closeSession = () => {
     
 	if (portalChecked)
         localStorage.setItem(PORTAL_CHECKED, portalChecked);
+        
+    if (hideSideNav)
+        localStorage.setItem(HIDE_SIDENAV, hideSideNav);
 }
 
 export const getLanguage = () => get(AON_LANGUAGE) || 'es';
@@ -239,7 +242,7 @@ export const setRightPanel = (panel) => {
 }
 
 export const getHideSidenav = () => {
-    return get(HIDE_SIDENAV) || 'on';
+    return get(HIDE_SIDENAV) || 'off';
 }
 
 export const setHideSidenav = (value) => {

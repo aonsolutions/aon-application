@@ -338,7 +338,7 @@ public class AgreementUpdate implements Update {
 		;
 		
 		while ( agreements.hasNext() ) {
-			Record4<Integer, Integer, Date,Date> record = agreements.fetchOne();
+			Record4<Integer, Integer, Date,Date> record = agreements.fetchNext();
 			
 			Date endDate = record.get(SALARY.END_DATE);
 			Date startDate = record.get(SALARY.START_DATE);
@@ -422,7 +422,7 @@ public class AgreementUpdate implements Update {
 		;
 		
 		while ( agreements.hasNext() ) {
-			Record1<Integer> record = agreements.fetchOne();
+			Record1<Integer> record = agreements.fetchNext();
 			
 			Integer agreement = record.get(AGREEMENT.ID);
 			

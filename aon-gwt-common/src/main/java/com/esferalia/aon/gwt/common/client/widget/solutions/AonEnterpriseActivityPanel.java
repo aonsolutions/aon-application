@@ -16,12 +16,12 @@ import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AonEnterpriseActivityPanel extends HTMLPanel {
@@ -72,8 +72,7 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 	private AonCustomDateBox endDate = new AonCustomDateBox("F. Fin");
 
 	private AonCustomSuggestBox cnae25SB = new AonCustomSuggestBox("CNAE 2025");
-	//private AonCustomSuggestBox cnaeSB = new AonCustomSuggestBox("CNAE 2009");
-	private AonCustomTextBox cnae = new AonCustomTextBox("CNAE 2009");
+	private AonCustomTextBox cnae = new AonCustomTextBox("CNAE 2009 (Registro Anterior)");
 	
 	private AonCustomSuggestBox iaeSB = new AonCustomSuggestBox("IAE");
 
@@ -212,14 +211,17 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 			description.setValue(enterpriseActivity.getDescription());
 			principal.setValue(enterpriseActivity.isPrincipal());
 			cnae25SB.setValue(null == enterpriseActivity.getCnae25() ? "" : enterpriseActivity.getCnae25Code() + " - " +  enterpriseActivity.getCnae25Description());
-			//cnaeSB.setValue(null == enterpriseActivity.getCnae() ? "" : enterpriseActivity.getCnaeCode() + " - " +  enterpriseActivity.getCnaeDescription());
 			
-			cnae.setValue(AonStringUtils.isBlank(enterpriseActivity.getCnae2509Code()) ? "" : enterpriseActivity.getCnae2509Code() + " - " +  enterpriseActivity.getCnae2509Description());
-			if(null != enterpriseActivity.getCnae()) {
-				cnae.addButton(new AonTableButton(enterpriseActivity.getCnaeCode() + " - " +  enterpriseActivity.getCnaeDescription(), AON.CSS.aonIconInfo()));
+			if(null != enterpriseActivity.getCnae2509Code()) {
+				cnae25SB.addButton(new AonTableButton(AonStringUtils.isBlank(enterpriseActivity.getCnae2509Code()) ? "" : "CNAE 2009: " + enterpriseActivity.getCnae2509Code() + " - " +  enterpriseActivity.getCnae2509Description(), AON.CSS.aonIconInfo()));
 			}
 			
-			iaeSB.setValue(null == enterpriseActivity.getIae() ? "" : enterpriseActivity.getIae().getFullEpigraph()  + " - " + enterpriseActivity.getIae().getTitle());
+			cnae.setValue(AonStringUtils.isBlank(enterpriseActivity.getCnaeCode()) ? "" : enterpriseActivity.getCnaeCode() + " - " +  enterpriseActivity.getCnaeDescription());
+			
+			if(AonStringUtils.equalsIgnoreCase(enterpriseActivity.getCnae2509Code(), enterpriseActivity.getCnaeCode()))
+				cnae.getElement().getStyle().setDisplay(Display.NONE);
+			
+			iaeSB.setValue(null == enterpriseActivity.getIae() ? "" :  enterpriseActivity.getIae().getSection() + " - " +  enterpriseActivity.getIae().getEpigraph() + " : " +  enterpriseActivity.getIae().getTitle());
 			ivaLB.setValue(enterpriseActivity.getVatRegime().name());
 			equivalence.setValue(enterpriseActivity.isSurcharge());
 			irpfLB.setValue(enterpriseActivity.getIrpfRegime().name());
@@ -237,9 +239,11 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		cnae2025List.forEach(c -> cnaeDescriptions.add(c.getCode() + " - " + c.getTitle()));
 		cnaeDescriptions.sort((o1, o2) -> o1.compareTo(o2));
 
-		MultiWordSuggestOracle orclCnaes = (MultiWordSuggestOracle) cnae25SB.getSuggestBox().getSuggestOracle();
-		orclCnaes.addAll(cnaeDescriptions);
-		orclCnaes.setDefaultSuggestionsFromText(cnaeDescriptions);
+		AonCustomSuggestOracle oracleCnae25 = new AonCustomSuggestOracle();
+		oracleCnae25.setData(cnaeDescriptions);
+
+		cnae25SB = new AonCustomSuggestBox("CNAE 2025", oracleCnae25);
+		
 		cnae25SB.setAutoSelectEnabled(true);
 		cnae25SB.setPlaceHolder("CNAE... (Ctrl + espacio para ver sugerencias)");
 
@@ -250,38 +254,27 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 			} else if (e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE)
 				cnae25SB.hideSuggestionList();
 		});
-	}
-
-	/*
-	private void initializeCnae() {
-		List<String> cnaeDescriptions = new ArrayList<>();
-		cnae2009List.forEach(c -> cnaeDescriptions.add(c.getCode() + " - " + c.getTitle()));
-		cnaeDescriptions.sort((o1, o2) -> o1.compareTo(o2));
-
-		MultiWordSuggestOracle orclCnaes = (MultiWordSuggestOracle) cnaeSB.getSuggestBox().getSuggestOracle();
-		orclCnaes.addAll(cnaeDescriptions);
-		orclCnaes.setDefaultSuggestionsFromText(cnaeDescriptions);
-		cnaeSB.setAutoSelectEnabled(true);
-		cnaeSB.setPlaceHolder("CNAE... (Ctrl + espacio para ver sugerencias)");
-
-		cnaeSB.getSuggestBox().getValueBox().addKeyUpHandler(e -> {
-			if (e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-				cnaeSB.setValue(AonStringUtils.EMPTY);
-				cnaeSB.showSuggestionList();
-			} else if (e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE)
-				cnaeSB.hideSuggestionList();
+		
+		cnae25SB.getSuggestBox().addSelectionHandler(e -> {
+			Cnae cnae25 = getCnae25();
+			if(null != cnae25)
+				cnae.setValue(cnae25.getCode09() + " - " +  cnae25.getTitle09());
+			
+			cnae25SB.removeButton();
+			cnae25SB.addButton(new AonTableButton("CNAE 2009: " + cnae25.getCode09() + " - " +  cnae25.getTitle09(), AON.CSS.aonIconInfo()));
 		});
 	}
-	*/
 
 	private void initializeIae() {
 		List<String> iaeDescriptions = new ArrayList<>();
-		iaeList.forEach(i -> iaeDescriptions.add(i.getFullEpigraph() + " - " + i.getTitle()));
+		iaeList.forEach(i -> iaeDescriptions.add(i.getSection() + " - " + i.getEpigraph() + " : " + i.getTitle()));
 		iaeDescriptions.sort((o1, o2) -> o1.compareTo(o2));
 
-		MultiWordSuggestOracle orclCnaes = (MultiWordSuggestOracle) iaeSB.getSuggestBox().getSuggestOracle();
-		orclCnaes.addAll(iaeDescriptions);
-		orclCnaes.setDefaultSuggestionsFromText(iaeDescriptions);
+		AonCustomSuggestOracle oracleIae = new AonCustomSuggestOracle();
+		oracleIae.setData(iaeDescriptions);
+
+		iaeSB = new AonCustomSuggestBox("IAE", oracleIae);
+		
 		iaeSB.setAutoSelectEnabled(true);
 		iaeSB.setPlaceHolder("IAE... (Ctrl + espacio para ver sugerencias)");
 
@@ -298,7 +291,7 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		String iaeSBValue = iaeSB.getValue();
 
 		for (Iae i : iaeList) {
-			if (AonStringUtils.equals(i.getFullEpigraph() + " - " + i.getTitle(), iaeSBValue))
+			if (AonStringUtils.equalsIgnoreCase(i.getSection() + " - " + i.getEpigraph() + " : " + i.getTitle(), iaeSBValue))
 				return i;
 		}
 
@@ -309,7 +302,7 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		String cnaeSBValue = cnae25SB.getValue();
 
 		for (Cnae c : cnae2025List) {
-			if (AonStringUtils.equals(c.getCode() + " - " + c.getTitle(), cnaeSBValue))
+			if (AonStringUtils.equalsIgnoreCase(c.getCode() + " - " + c.getTitle(), cnaeSBValue))
 				return c;
 		}
 
@@ -322,7 +315,7 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		String cnae09Code = cnae25.getCode09();
 
 		for (Cnae2009 c : cnae2009List) {
-			if (AonStringUtils.equals(c.getCode(), cnae09Code))
+			if (AonStringUtils.equalsIgnoreCase(c.getCode(), cnae09Code))
 				return c;
 		}
 
