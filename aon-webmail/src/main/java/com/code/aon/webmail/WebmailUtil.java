@@ -1,20 +1,19 @@
 package com.code.aon.webmail;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-import jakarta.mail.BodyPart;
-import jakarta.mail.MessagingException;
-import jakarta.mail.Part;
-import jakarta.mail.internet.MimeBodyPart;
-import jakarta.mail.internet.MimeUtility;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.common.util.AonFile;
+
+import jakarta.activation.DataHandler;
+import jakarta.activation.FileDataSource;
+import jakarta.mail.BodyPart;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Part;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeUtility;
 
 public class WebmailUtil {
 
