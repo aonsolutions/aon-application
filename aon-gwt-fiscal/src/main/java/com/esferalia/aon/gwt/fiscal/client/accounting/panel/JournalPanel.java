@@ -261,6 +261,7 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 			int count = 0;
 			if (!JsonUtils.safeToEval(text)) {
 				addMessage( "ERROR de evaluación" );
+				return;
 			}
 			JavaScriptObject unk = JsonUtils.safeEval(text);
 			JsArray<JsFlatAccountEntry> array = unk.cast();
@@ -287,12 +288,18 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 					AccountEntryDetail detail = newAccountEntryDetail(flatEntry);
 					entryPanel.addDetail( detail );
 				}
+				if (array.length() < LIMIT && entryPanel != null) {
+					entryPanel.addFooter();
+					entryPanel = null;
+					addMessage( AON.MSG.noMoreData() );
+				} else {
+					enableMoreData();
+				}
 				if (detailProperties) {
 					offset.setValue(ofs + accountEntries);
 				} else {
 					offset.setValue(ofs + count);
 				}
-				enableMoreData();
 			}
 		}
 
@@ -370,16 +377,18 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 					@Override
 					public void onChange(IAccountEntryWrapper changed) {
 						entrycontainer.removeStyleName( AON.CSS.aonBackgroundLigthYellow());
-						entrycontainer.remove(ep );
-						AccountEntryPanel ep = getAccountEntryPanel(entrycontainer, changed.getAccountEntry() );
+						int index = entrycontainer.getWidgetIndex( ep );
+						entrycontainer.remove( ep );
+						AccountEntryPanel newEp = getAccountEntryPanel(entrycontainer, changed.getAccountEntry() );
 						AonCollectionUtils.stream(changed.getAccountEntry().getDetails())
-							.forEach( ep::addDetail );
-						ep.addFooter();
-						ep.addStyleName(AON.CSS.aonValueChanged());
+							.forEach( newEp::addDetail );
+						newEp.addFooter();
+						newEp.addStyleName(AON.CSS.aonValueChanged());
+						entrycontainer.insert( newEp , index);
 						new Timer() {
 							@Override
 							public void run() {
-								ep.removeStyleName(AON.CSS.aonValueChanged());
+								newEp.removeStyleName(AON.CSS.aonValueChanged());
 							}
 						}.schedule(3000);
 					}
