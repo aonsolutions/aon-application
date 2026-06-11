@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -86,6 +87,7 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.target.TargetParams;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.CarrierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
@@ -989,6 +991,12 @@ public class RegistryImpl implements IRegistry{
 	public Domain updateDomainStatus(AONContext ctx, Domain domain) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> DomainLinkedDAO.updateDomainStatus(ctx, domain));
+	}
+	
+	@Override
+	public Domain saveDomainStatus(CloseableAONContext ctx, int domain, RegistryStatus newStatus, Date newExpDate) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> DomainLinkedDAO.saveDomainStatus(ctx, domain, newStatus, newExpDate));
 	}
 	
 	@Override

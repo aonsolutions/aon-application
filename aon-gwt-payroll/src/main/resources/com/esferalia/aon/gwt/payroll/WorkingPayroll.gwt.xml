@@ -6,7 +6,7 @@
 
 	<inherits name='com.esferalia.aon.gwt.payroll.Payroll' />
 
-	<set-property name="locale" value="es_ES"/> 
+	<set-property name="locale" value="es"/> 
 
 	<set-property name="user.agent" value="gecko1_8" />	
 	<extend-property name="user.agent" values="safari" />

@@ -10,10 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.jooq.impl.DSL;
+
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
@@ -103,6 +107,16 @@ public class DomainLinkedDAO {
 			.execute();
 		
 		return domain;
+	}
+
+	public static Domain saveDomainStatus(CloseableAONContext ctx, int domain, RegistryStatus newStatus, Date newExpDate) {
+		ctx.getDslContext().update(DOMAIN)
+			.set(DOMAIN.EXPIRATIONDATE, null == newExpDate ? null : AonDateUtils.toSql(newExpDate))
+			.set(DOMAIN.ACTIVE, newStatus == RegistryStatus.ACTIVE || newStatus == RegistryStatus.BLOCKED ? (byte)1 : (byte)0)
+			.where(DOMAIN.ID.eq(domain))
+			.execute();
+		
+		return DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(domain));
 	}
 	
 	public static void updateDomainCustomer(AONContext ctx, Integer domainId, Integer customer) {

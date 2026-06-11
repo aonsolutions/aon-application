@@ -194,13 +194,9 @@ public class AonRegistryBankPanel extends HTMLPanel {
 			if(AonStringUtils.isBlank(accountLB.getValue())) {
 				pgcToggle.setValue(false);
 				pgcToggle.setEnable(true);
-				pgcCodesLB.setVisible(true);
-				accountLB.setVisible(false);
 			} else {
 				pgcToggle.setValue(false);
 				pgcToggle.setEnable(false);
-				pgcCodesLB.setVisible(false);
-				accountLB.setVisible(true);
 			}
 		});
 		

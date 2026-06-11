@@ -174,6 +174,12 @@
 						
 					}	
 					
+					//<meta name="gwt:property" content="locale=XX_xx">
+					let meta = idocument.createElement('meta');
+					meta.name = 'gwt:property';
+					meta.content = `locale=${LS.getLanguage()}`;
+					idocument.head.appendChild(meta);
+
 					customize?.(idocument);
 
 					let rootPanel = idocument.createElement(TAG.DIV);
@@ -201,7 +207,7 @@
 						    if (document.createElement && document.getElementsByTagName) {
 						      var script = document.createElement('script');
 						      script.type = 'text/javascript';
-						      script.src = '${module}/${module}.nocache.js?entryPoint=${entrypoint}&id=${getRamdomId()}&${queryString}';
+						      script.src = '${module}/${module}.nocache.js?entryPoint=${entrypoint}&id=${getRamdomId()}&locale=${LS.getLanguage()}&${queryString}';
 							  script.defer = true;
 							  document.head.appendChild(script);
 							  triggerModuleStart();

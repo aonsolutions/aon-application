@@ -121,7 +121,7 @@ COPY aon-web-aio/src/main/scripts/default.pool-properties $AON_AIO_CONF
 COPY aon-web-aio/src/main/scripts/pro-aonsolutions-net.pool-properties $AON_AIO_CONF
 
 RUN xmlstarlet ed --inplace \
-	--insert /Server/Service/Connector --type attr -n maxPartCount -v 100 \
+	--insert /Server/Service/Connector --type attr -n maxPartCount -v 256 \
 	--insert /Server/Service/Connector --type attr -n maxParameterCount -v 1000 \
 	--insert /Server/Service/Connector --type attr -n maxPartHeaderSize -v 1024 \
 	$TOMCAT_CONFDIR/server.xml

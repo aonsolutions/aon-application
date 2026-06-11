@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --mode production",
-    "build-dev": "webpack --devtool eval-source-map --mode development",
+    "build-prod": "webpack --mode production",
+    "build": "webpack --devtool eval-source-map --mode development",
     "watch": "webpack --watch --progress --mode development",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
