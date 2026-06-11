@@ -1,10 +1,15 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -36,38 +41,53 @@ public class AonScopePanel extends AonCustomDialog {
 	private HTMLPanel messagePanel = new HTMLPanel("");
 	
 	private AonCustomTextBox descriptionTextBox = new AonCustomTextBox("Descripci\u00f3n");
+	private AonCustomToogleButton assignAllUsers = new AonCustomToogleButton("Asig. todos usuarios");
+	private AonCustomMultiSelectBox domainUsersSelect = new AonCustomMultiSelectBox("Usuarios");
+	
+	private AonScopePanelCallback callback;
 	
 	private String domainName;
 	private Integer domainId;
 	private String user;
 	
-	public AonScopePanel(String domainName, int domain, String user, AonScopePanelCallback callback) {
+	private ArrayList<User> domainUsers = new ArrayList<User>();
+	
+	public AonScopePanel(String domainName, int domain, String user, ArrayList<User> domainUsers, AonScopePanelCallback callback) {
 		initializeCommonService();
 		this.domainName = domainName;
 		this.domainId = domain;
 		this.user = user;
 		
+		this.callback = callback;
+		
+		this.domainUsers = domainUsers;
+		
 		this.getElement().getStyle().setProperty("min-width", "35rem");
 		
 		setCaption("Nuevo \u00c1mbito");
 		
-		show(new Scope(), callback);
+		show(new Scope());
 		
 	}
 	
-	public void show(Scope scope, AonScopePanelCallback callback) {
+	public void show(Scope scope) {
 		content.setStyleName(AON.CSS.aonFlexColumn2());
-		content.getElement().getStyle().setProperty("padding", "1rem 0");
-		
-		HTMLPanel container = new HTMLPanel("");
-		container.setStyleName(AON.CSS.aonFlexColumn2());
-		container.getElement().getStyle().setProperty("padding", "1rem");
+		content.getElement().getStyle().setProperty("padding", "1rem");
 		
 		content.add(messagePanel);
 		
-		container.add(createRowPanel(descriptionTextBox, null));
+		assignAllUsers.getElement().getStyle().setProperty("max-width", "10rem");
 		
-		content.add(container);
+		assignAllUsers.addValueChangeHandler(e -> {
+			domainUsersSelect.setVisible(!e.getValue());
+		});
+		
+		Set<String> usersOptions = new LinkedHashSet<String>();
+		this.domainUsers.forEach(u -> usersOptions.add(u.getName()));
+		domainUsersSelect.setOptions(usersOptions);
+		
+		content.add(createRowPanel(descriptionTextBox, assignAllUsers));
+		content.add(createRowPanel(domainUsersSelect));
 		
 		FlowPanel buttons = new FlowPanel();
     	buttons.setStyleName(AON.CSS.aonTextCenter());
@@ -86,14 +106,23 @@ public class AonScopePanel extends AonCustomDialog {
     			scope.setDomain(domainId);
     			scope.setDescription(descriptionTextBox.getValue());
     			
-    			commonService.saveScope(domainName, domainId, user, scope, new AsyncCallback<Scope>() {
+    			ArrayList<User> selectedUsers = new ArrayList<User>();
+    			if(!assignAllUsers.getValue()) {
+    				domainUsersSelect.getSelectedOptions().forEach(selectedOpt -> {
+    					User user = domainUsers.stream().filter(u -> AonStringUtils.equals(u.getName(), selectedOpt)).findFirst().orElse(null);
+    					if(null != user) selectedUsers.add(user);
+    				});
+    			}
+    			
+    			commonService.saveScopeAndAssign(domainName, domainId, user, scope, assignAllUsers.getValue(), selectedUsers, new AsyncCallback<Scope>() {
 
     				@Override
-    				public void onSuccess(Scope scopeDB) {
+    				public void onSuccess(Scope newScope) {
     					hide();
-    					callback.onAccept(scopeDB);
+    					callback.onAccept(newScope);
     				}
-    				@Override
+    				
+					@Override
     				public void onFailure(Throwable caught) {
     					AonMessagePanel.showError(messagePanel, caught.getMessage());
     					okButton.setEnabled(true);
@@ -130,15 +159,13 @@ public class AonScopePanel extends AonCustomDialog {
 		
 	}
 	
-	private HTMLPanel createRowPanel(Widget w1, Widget w2) {
+	private HTMLPanel createRowPanel(Widget ...widgets) {
 		HTMLPanel row = new HTMLPanel("");
 		row.addStyleName(AON.CSS.aonItemFlex());
 		
-		row.add(w1);
-		
-		if(null != w2) row.add(w2);
+		for(int i=0; i < widgets.length; i++)
+			row.add(widgets[i]);
 		
 		return row;
 	}
-
 }

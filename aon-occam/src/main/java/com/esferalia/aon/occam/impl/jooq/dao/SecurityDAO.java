@@ -87,6 +87,7 @@ import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailAccountType;
 import com.esferalia.aon.occam.api.model.Module;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
@@ -816,6 +817,32 @@ public class SecurityDAO {
 		return scope;
 	}
 	
+	public static Scope saveScopeAndAssign(AONContext ctx, Scope scope, boolean assignAllUsers, ArrayList<User> selectedUsers){
+		Scope newScope = saveScope(ctx, scope);
+		
+		if(assignAllUsers) {
+			Stream<User> domainUsers = UserDAO.getStream(ctx, f -> f.getDomainProperty().eq(newScope.getDomain()).and(f.getActiveProperty().eq((byte)1)), new Options());
+			domainUsers.forEach(u -> {
+				UserScope userScope = new UserScope()
+						.setDomain(newScope.getDomain())
+						.setScope(newScope.getId())
+						.setUserId(u.getId());
+				
+				insertUserScope(ctx, userScope);
+			});
+		} else {
+			selectedUsers.forEach(u -> {
+				UserScope userScope = new UserScope()
+						.setDomain(newScope.getDomain())
+						.setScope(newScope.getId())
+						.setUserId(u.getId());
+				
+				insertUserScope(ctx, userScope);
+			});
+		}
+		
+		return newScope;
+	}
 	
 	public static Integer deleteScope(AONContext ctx, Integer scopeId){
 		ctx.getDslContext().delete(SCOPE).where(SCOPE.ID.eq(scopeId)).execute();

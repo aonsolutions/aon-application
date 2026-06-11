@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.marketing.client.scope;
 
+import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -12,6 +13,7 @@ import com.esferalia.aon.gwt.marketing.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
@@ -32,6 +34,8 @@ public class ScopeModule extends MainEntryPoint {
 	private DeckLayoutPanel deckLayoutPanel;
 	private ScopeModulePanel scopeModulePanel;
 	private ScopeEntryPanel scopeEntryPanel;
+	
+	private ArrayList<User> domainUsers = new ArrayList<User>();
 
 	@Override
 	public void onModuleLoad() {
@@ -51,8 +55,21 @@ public class ScopeModule extends MainEntryPoint {
 
 					@Override
 					public void onSuccess(AonConfiguration config) {
-						options.setConfiguration(config);
-						moduleLoad();
+						COMMON_SERVICE.getUsers(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(),new AsyncCallback<ArrayList<User>>() {
+
+							@Override
+							public void onFailure(Throwable arg0) {
+								options.setConfiguration(config);
+								moduleLoad();
+							}
+
+							@Override
+							public void onSuccess(ArrayList<User> domainUsersDB) {
+								domainUsers = domainUsersDB;
+								options.setConfiguration(config);
+								moduleLoad();
+							}}
+						);
 					}
 
 					@Override
@@ -68,7 +85,7 @@ public class ScopeModule extends MainEntryPoint {
 
 		deckLayoutPanel = new DeckLayoutPanel();
 
-		scopeModulePanel = new ScopeModulePanel(options) {
+		scopeModulePanel = new ScopeModulePanel(options, domainUsers) {
 
 			@Override
 			protected void onScopeSelect(Scope scope) {

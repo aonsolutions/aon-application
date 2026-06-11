@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -82,6 +83,7 @@ public interface ISecurity {
 	public Stream<Scope> getUserScopeStream(AONContext ctx, Integer userId, ScopeFilter filter);
 	public Scope insertScope(AONContext ctx, Scope scope);
 	public Scope saveScope(AONContext ctx, Scope scope);
+	public Scope saveScopeAndAssign(AONContext ctx, Scope scope, boolean assignAllUsers, ArrayList<User> selectedUsers);
 	public Integer deleteScope(AONContext ctx, Integer scopeId);
 	public boolean canScopeBeDeleted(AONContext ctx, Integer domainId, Integer scopeId);
 	public void reassignScope(AONContext ctx, Integer domainId, Integer fromScopeId, Integer toScopeId);
