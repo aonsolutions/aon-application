@@ -32,5 +32,7 @@ public interface SalaryProperties{
 
 	Property<Boolean> getIsSettlementProperty();
 	
+	Property<Boolean> getIsProceduralProperty();
+	
 	Property<Byte> getTypeProperty();
 }

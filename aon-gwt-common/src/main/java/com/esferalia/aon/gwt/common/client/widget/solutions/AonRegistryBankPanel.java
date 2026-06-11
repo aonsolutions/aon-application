@@ -117,6 +117,7 @@ public class AonRegistryBankPanel extends HTMLPanel {
 		// Message Panel
 		setStyleName(AON.CSS.aonFlexColumn2());
 		getElement().getStyle().setProperty("padding", "1rem 0");
+		getElement().getStyle().setProperty("min-width", "52rem");
 		add(messagePanel);
 		
 		HTMLPanel container = new HTMLPanel(EMPTY_STRING);
@@ -169,25 +170,35 @@ public class AonRegistryBankPanel extends HTMLPanel {
 		pgcToggle.getElement().getStyle().setProperty("max-width", "5rem");
 		
 		pgcCodesLB.clearItems();
-		pgcCodesLB.addItem("5201");
 		pgcCodesLB.addItem("5720");
+		pgcCodesLB.addItem("5201");
 		
-		if(registryBank.getId() != null) {
+		if(registryBank.getId() != null && null != registryBank.getAccount()) {
 			pgcToggle.setValue(false);
-			pgcToggle.setVisible(false);
+			pgcToggle.setEnable(false);
 			pgcCodesLB.setVisible(false);
 			accountLB.setVisible(true);
 		} else {
 			pgcToggle.setValue(true);
-			pgcToggle.setVisible(true);
+			pgcToggle.setEnable(true);
 			pgcCodesLB.setVisible(true);
 			accountLB.setVisible(false);
-			
-			pgcToggle.addValueChangeHandler(e -> {
-				pgcCodesLB.setVisible(pgcToggle.getValue());
-				accountLB.setVisible(!pgcToggle.getValue());
-			});
 		}
+		
+		pgcToggle.addValueChangeHandler(e -> {
+			pgcCodesLB.setVisible(pgcToggle.getValue());
+			accountLB.setVisible(!pgcToggle.getValue());
+		});
+		
+		accountLB.addChangeHandler(e -> {
+			if(AonStringUtils.isBlank(accountLB.getValue())) {
+				pgcToggle.setValue(false);
+				pgcToggle.setEnable(true);
+			} else {
+				pgcToggle.setValue(false);
+				pgcToggle.setEnable(false);
+			}
+		});
 		
 		row4.add(bic);
 		

@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.marketing.client.scope;
 
+import java.util.ArrayList;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -16,6 +17,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonScopePanel.AonSco
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -35,6 +37,7 @@ public abstract class ScopeModulePanel extends AonCustomDockLayout {
 	private AonCustomListBox asc = new AonCustomListBox("Orden");
 	
 	private ScopeModuleOptions options;
+	private ArrayList<User> domainUsers;
 	
 	private ScopePanel scopePanel;
 	
@@ -47,12 +50,13 @@ public abstract class ScopeModulePanel extends AonCustomDockLayout {
 		}
 	}
 	
-	public ScopeModulePanel(ScopeModuleOptions options) {
+	public ScopeModulePanel(ScopeModuleOptions options, ArrayList<User> domainUsers) {
 		super("\u00c1mbitos");
 		
 		initializeCommonService();
 		
 		this.options = options;
+		this.domainUsers = domainUsers;
 		
 		addButtonsToolbar();
 		
@@ -112,7 +116,7 @@ public abstract class ScopeModulePanel extends AonCustomDockLayout {
 	}
 
 	private void showScopeDialog() {
-		new AonScopePanel( options.getDomainName(), options.getDomain(), options.getUser(), new AonScopePanelCallback() {
+		new AonScopePanel( options.getDomainName(), options.getDomain(), options.getUser(), domainUsers, new AonScopePanelCallback() {
 				
 				@Override
 				public void onCancel() {}

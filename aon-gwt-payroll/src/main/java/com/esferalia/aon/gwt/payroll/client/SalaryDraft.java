@@ -1676,7 +1676,7 @@ public class SalaryDraft extends ResizeComposite
 			
 			paymentDialog.setReadOnly(!isEditable());
 			
-			paymentDialog.setEnabledTypeListBox(!isSettle());
+			paymentDialog.setEnabledTypeListBox(!isSettle() && !isProcedural());
 
 			paymentDialog.center();
 			paymentDialog.show(this);
@@ -2337,43 +2337,61 @@ public class SalaryDraft extends ResizeComposite
 
 	}
 
-		class NewCRA000PaymentHandler extends NewPaymentHandler {
+	class NewCRAPaymentHandler extends NewPaymentHandler {
+			
+		private Payment.Type type;
+		
+		public NewCRAPaymentHandler(Payment.Type type) {
+			this.type = type;
+		}
 		
 		@Override
 		protected void addDrafItem(Payment payment, String expression) {
 			Payment draftPayment = new Payment();
+			draftPayment.setType(type);	
 			draftPayment.setScope(Scope.SALARY);
 			draftPayment.setExpression(expression);
 			draftPayment.setIrpfExpression("_P");
-			draftPayment.setType(Payment.Type.CRA_0000);
 			draftPayment.setDescriptionTemplate(descriptionBox.getText());
 			draftPayment.setEndDate(salaryDraftObject.getEndDate());
 			draftPayment.setStartDate(salaryDraftObject.getStartDate());
 			draftPayment.setSalaryType(salaryDraftObject.getType());
-
+	
 			salaryDraftObject.addDraftPayment(draftPayment);
 		}
-
+	
 		@Override
 		protected void showSuggestions(SuggestBox suggestBox, Collection<? extends Suggestion> suggestions,
 				boolean isDisplayStringHTML, boolean isAutoSelectEnabled, SuggestionCallback callback) {
+			
+			List<Suggestion> mySuggestions =
+			suggestions.stream()
+			.filter(this::filter)
+			.collect(Collectors.toList());
+			
+			super.showSuggestions(suggestBox, mySuggestions, isDisplayStringHTML, isAutoSelectEnabled, callback);
 		}
 	
 		@Override
 		protected void onEdit() {
 			PaymentDialog paymentDialog = new PaymentDialog();
+			paymentDialog.setType(type);
 			//paymentDialog.setReadOnly(true);
 			paymentDialog.setTypeListVisible();
 			paymentDialog.setEnabledTypeListBox(false);
-			paymentDialog.setType(Payment.Type.CRA_0000);
 			paymentDialog.setNumberFormat(AON.CURRENCY_FORMAT);
 			paymentDialog.setContextProvider(salaryDraftObject);
-
+	
 			paymentDialog.center();
 			paymentDialog.show(this);
-
-		}
 	
+		}
+		
+		
+		private boolean filter(Suggestion suggestion) {
+			Payment payment = itemsConceptsMap.get(suggestion.getReplacementString());
+			return payment != null && payment.getType() == type;
+		}
 	}
 
 	class NewPaymentHandler extends NewItemHandler<Payment> implements PaymentDialog.Callback {
@@ -2942,6 +2960,8 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	Button delayButton;
 	@UiField
+	Button proceduralButton;
+	@UiField
 	Button fiscalModelsButton;
 
 	@UiField
@@ -3138,6 +3158,7 @@ public class SalaryDraft extends ResizeComposite
 		extraButton.setVisible(isSafeEmit() && isExtra());
 		settleButton.setVisible(isSafeEmit() && isSettle());
 		salaryButton.setVisible(isSafeEmit() && isSalary());
+		proceduralButton.setVisible(isSafeEmit() && isProcedural());
 		
 		
 
@@ -3186,6 +3207,7 @@ public class SalaryDraft extends ResizeComposite
 		extraButton.setVisible(isSafeEmit() && isExtra());
 		settleButton.setVisible(isSafeEmit() && isSettle());
 		salaryButton.setVisible(isSafeEmit() && isSalary());
+		proceduralButton.setVisible(isSafeEmit() && isProcedural());
 		
 		showTimeRulePanel();
 		showDbTimeRulePanel();
@@ -3576,6 +3598,7 @@ public class SalaryDraft extends ResizeComposite
 		extraButton.setVisible(isSafeEmit() && isExtra());
 		settleButton.setVisible(isSafeEmit() && isSettle());
 		salaryButton.setVisible(isSafeEmit() && isSalary());
+		proceduralButton.setVisible(isSafeEmit() && isProcedural());
 
 		acceptButton.setEnabled(hasDrafts() && !isAutomatic() );
 	}
@@ -3643,7 +3666,7 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	private boolean isAutomatic() {
-		return salaryDraftObject == null ? false : Arrays.asList(Type.EXTRA, Type.DELAY, Type.SETTLE).contains(salaryDraftObject.getType());
+		return salaryDraftObject == null ? false : Arrays.asList(Type.EXTRA, Type.DELAY, Type.SETTLE, Type.PROCEDURAL).contains(salaryDraftObject.getType());
 	}
 
 
@@ -4358,6 +4381,32 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 
+	@UiHandler("proceduralButton")
+	void onProceduralButtonClick(ClickEvent event) {
+		showEmitting();
+		proceduralButton.setEnabled(false);
+		salaryDraftObject.emitSalary(new CalculateCallback() {
+			
+			@Override
+			public void onCalculateSucces(SalaryDraftObject salaryDraftObject) {
+				proceduralButton.setEnabled(true);
+				SalaryDraft.this.showSuccessEmitted();
+			}
+			
+			@Override
+			public void onCalculateFailure(Throwable throwable) {
+				proceduralButton.setEnabled(true);
+				SalaryDraft.this.showErrorEmitting(throwable);
+			}
+			
+			@Override
+			public Calculate getCalculate() {
+				return null;
+			}
+		});
+	}
+	
+
 	@UiHandler("tgssCheck")
 	void onTgssCheckChanged(ValueChangeEvent<Boolean> event) {
 		showTimeRulePanel();
@@ -4763,12 +4812,12 @@ public class SalaryDraft extends ResizeComposite
 
 			@Override
 			public NewPaymentHandler visitExtra(Type type) {
-				return new NewCRA000PaymentHandler();
+				return new NewCRAPaymentHandler(Payment.Type.CRA_0000);
 			}
 
 			@Override
 			public NewPaymentHandler visitSettle(Type type) {
-				return new NewCRA000PaymentHandler();
+				return new NewCRAPaymentHandler(Payment.Type.CRA_0000);
 			}
 
 			@Override
@@ -4778,7 +4827,7 @@ public class SalaryDraft extends ResizeComposite
 
 			@Override
 			public NewPaymentHandler visitProcedural(Type type) {
-				return visitSalary(type);
+				return new NewCRAPaymentHandler(Payment.Type.CRA_0007);
 			}
 
 		});
@@ -6970,6 +7019,10 @@ public class SalaryDraft extends ResizeComposite
 
 	private boolean isSalary(){
 		return salaryDraftObject != null && salaryDraftObject.getType() == Salary.Type.SALARY;
+	}
+
+	private boolean isProcedural(){
+		return salaryDraftObject != null && salaryDraftObject.getType() == Salary.Type.PROCEDURAL;
 	}
 
 	private boolean hasDbSalary(){

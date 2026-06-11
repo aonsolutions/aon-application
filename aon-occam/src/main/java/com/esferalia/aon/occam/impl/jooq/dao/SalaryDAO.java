@@ -1186,6 +1186,12 @@ public class SalaryDAO {
 			return new FilterDAO.PropertyValueDAO<Byte>(SALARY.TYPE,
 					SalaryType.SETTLE.value());
 		}
+		
+		@Override
+		public Property<Boolean> getIsProceduralProperty() {
+			return new FilterDAO.PropertyValueDAO<Byte>(SALARY.TYPE,
+					SalaryType.PROCEDURAL.value());
+		}
 
 		@Override
 		public Property<Boolean> getIsL00Property() {

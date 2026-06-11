@@ -272,7 +272,10 @@ public class SaleInvoiceController extends InvoiceController {
 
 	public boolean isSeriesValid() throws ManagerBeanException {
 		String seriesCode = getInvoice().getSeries();
-		return (StringUtils.isEmpty(seriesCode)) ? true : seriesCode.equals(SeriesUtil.ensureInvoiceSeries(seriesCode));
+		return isSeriesValid(seriesCode);
+	}
+	private boolean isSeriesValid(String series) throws ManagerBeanException {
+		return (StringUtils.isEmpty(series)) ? true : series.equals(SeriesUtil.ensureInvoiceSeries(series));
 	}
 
 	public boolean isProforma() {
@@ -1309,10 +1312,14 @@ public class SaleInvoiceController extends InvoiceController {
 	@Override
 	public void initSeries() {
 		super.initSeries();
-		ApplicationParameter ap = AON.getApplicationParameter(getOccam(), AppParam.ACC_DEFAULT_INVOICE_SERIES);
-		String series = ap != null && ap.getValue() != null ? ap.getValue() :"";
-		if(AonStringUtils.isNotBlank(series)) {
-			getInvoice().setSeries(series);
+		try {
+			ApplicationParameter ap = AON.getApplicationParameter(getOccam(), AppParam.ACC_DEFAULT_INVOICE_SERIES);
+			String series = ap != null && ap.getValue() != null ? ap.getValue() :"";
+			if (AonStringUtils.isNotBlank(series) && isSeriesValid(series) ) {
+				getInvoice().setSeries(series);
+			}
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
 		}
 	}
 }

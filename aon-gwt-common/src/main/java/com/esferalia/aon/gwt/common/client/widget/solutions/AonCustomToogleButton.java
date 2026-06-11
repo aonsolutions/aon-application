@@ -33,6 +33,7 @@ public class AonCustomToogleButton extends HTMLPanel implements HasValue<Boolean
     private void createToogleButton() {
         toogleButtonPanel = new HTMLPanel("");
         toogleButtonPanel.getElement().getStyle().setProperty("padding-left", ".5rem");
+        toogleButtonPanel.getElement().getStyle().setProperty("display", "flex");
 
         toogleButton = new Button();
         setValue(false, false); // inicializar sin disparar evento
@@ -78,5 +79,9 @@ public class AonCustomToogleButton extends HTMLPanel implements HasValue<Boolean
         button.setStyleName(AON.AON_NO_MARGIN, true);
         button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
     }
+
+	public void setEnable(boolean enable) {
+		toogleButton.setEnabled(enable);
+	}
 }
 

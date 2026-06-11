@@ -169,6 +169,7 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
@@ -1448,6 +1449,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
+	public Scope saveScopeAndAssign(String domainName, int domain, String user, Scope scope, boolean assignAllUsers, ArrayList<User> selectedUsers) throws AonCoreException {
+		return AON.saveScopeAndAssign(domainName, domain, user, scope, assignAllUsers, selectedUsers);
+	}
+	
+	@Override
 	public void deleteScope(String domainName, int domain, String user, Integer scopeId) throws AonCoreException {
 		AON.deleteScope(domainName, domain, user, scopeId);
 	}
@@ -1497,6 +1503,12 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		
 		
 		return AON.getDomainList(domainName, domainId, user, f -> f.getParentProperty().in(domainParentIds));
+	}
+	
+
+	@Override
+	public ArrayList<User> getUsers(String domainName, int domainId, String user) throws AonCoreException {
+		return AON.getUserStream(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId).and(f.getActiveProperty().eq((byte)1))).collect(Collectors.toCollection(ArrayList::new));
 	}
 	
 	// **************************************************
@@ -2365,6 +2377,12 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		} else {
 			AON.reassignScope(new Occam().setDomainName(domainName).setDomain(domainId).setUser(user), domainId, originScope, finalScope);
 		}
+	}
+	
+	// *********************** [DOMAIN STATUS]
+	@Override
+	public Domain saveDomainStatus(String domainName, int domain, String user, RegistryStatus newStatus, Date newExpDate) throws AonCoreException {
+		return AON.saveDomainStatus(domainName, domain, user, newStatus, newExpDate);
 	}
 	
 }

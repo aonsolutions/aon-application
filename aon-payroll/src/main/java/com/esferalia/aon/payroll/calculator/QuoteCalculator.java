@@ -1156,7 +1156,8 @@ public abstract class QuoteCalculator {
 					
 					@Override
 					public QuoteCalculator visitProcedural(SalaryType salaryType) {
-						return null;
+						return new GeneralQuote(expressionContext, startDate,
+								endDate);
 					}
 
 				});

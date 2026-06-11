@@ -294,6 +294,7 @@ public class TrabajadoresTramos {
 				.and(props.getIsDelayProperty().eq(AonStringUtils.containsIgnoreCase("L03,L90", tipo)))
 				.and(props.getIsSettlementProperty().eq(AonStringUtils.equalsIgnoreCase("L13", tipo)))
 				.and(props.getIsSalaryProperty().eq(AonStringUtils.containsIgnoreCase("L00,L91", tipo)))
+				.and(props.getIsProceduralProperty().eq(AonStringUtils.containsIgnoreCase("L02", tipo)))
 				);
 		
 		for ( int i = 0; salaryData != null  ; i++) {
