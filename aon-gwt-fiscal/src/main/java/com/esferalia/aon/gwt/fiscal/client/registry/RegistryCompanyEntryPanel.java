@@ -140,7 +140,7 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 	}
 
 	private boolean isParentUser() {
-		return null != options.getConfiguration().getDomain().getParentId() && options.getConfiguration().getDomain().getParentId() == options.getConfiguration().getUser().getDomain().getId();
+		return null != options.getConfiguration().getDomain().getParentId() && null != options.getConfiguration().getUser().getDomain().getId() && options.getConfiguration().getDomain().getParentId().equals(options.getConfiguration().getUser().getDomain().getId());
 	}
 	
 	private static String getToolbarTitle(RegistrySource registrySource) {
@@ -188,7 +188,8 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		getCompanyFull(companyFull -> initCompanyRegistry() );
 	}
 
-	private void initCompanyRegistry() {container.clear();
+	private void initCompanyRegistry() {
+		container.clear();
 		tablayoutPanel.clear();
 
 		container.add(messagePanel);

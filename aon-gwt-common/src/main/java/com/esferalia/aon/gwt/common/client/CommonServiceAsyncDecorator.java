@@ -1311,6 +1311,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
+	public void saveScopeAndAssign(String domainName, int domain, String user, Scope scope, boolean assignAllUsers, ArrayList<User> selectedUsers, AsyncCallback<Scope> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveScopeAndAssign(domainName, domain, user, scope, assignAllUsers, selectedUsers, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
 	public void deleteScope(String domainName, int domain, String user, Integer scopeId, AsyncCallback<Void> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.deleteScope(domainName, domain, user, scopeId, new AsyncCallbackWrapper<>(callback));
@@ -1356,6 +1362,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getDomains(String domainName, Integer domainId, String user, AsyncCallback<List<Domain>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getDomains(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getUsers(String domainName, int domainId, String user, AsyncCallback<ArrayList<User>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getUsers(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	// **************************************************

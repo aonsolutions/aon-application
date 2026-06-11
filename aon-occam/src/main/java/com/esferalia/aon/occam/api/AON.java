@@ -666,6 +666,12 @@ public class AON {
 		}
 	}
 	
+	public static Scope saveScopeAndAssign(String domainName, Integer domainId, String login, Scope scope, boolean assignAllUsers, ArrayList<User> selectedUsers) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getSecurity().saveScopeAndAssign(ctx, scope, assignAllUsers, selectedUsers);
+		}
+	}
+	
 	public static boolean canScopeBeDeleted(Occam occam, Integer domainId, Integer scopeId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			return getSecurity().canScopeBeDeleted(ctx, domainId, scopeId);
