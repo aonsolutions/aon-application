@@ -123,8 +123,16 @@ public class AonMailAccountPanel extends HTMLPanel {
 		protocol.getListBox().getElement().getElementsByTagName("option").getItem(1).setAttribute("disabled", "disabled");
 		protocol.getListBox().getElement().getElementsByTagName("option").getItem(2).setAttribute("disabled", "disabled");
 		
+		protocol.addChangeHandler(e -> {
+			if(mailAccount.getId() != null && !AonStringUtils.equalsIgnoreCase(mailAccount.getProtocol(), "aon") && AonStringUtils.equalsIgnoreCase(protocol.getValue(), "aon")) {
+				replayTo.setValue(AonStringUtils.isBlank(replayTo.getValue()) ? mailAccount.getEmail() : replayTo.getValue() + ", " + mailAccount.getEmail());
+				bccInclude.setValue(true);
+			}
+		});
+		
 		row.add(name);
 		row.add(type);
+		row.add(protocol);
 		container.add(row);
 		
 		// Second Row
