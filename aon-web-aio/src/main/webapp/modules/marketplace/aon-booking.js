@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import Apps, {ConsultancyBookingApps, BookingApps, ClassicApps, ConsoleServices, Services, Packs, ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT,
 	 PROFESSIONAL_MANAGEMENT, GARAGE, ACADEMY, HOTEL, OFFICE, COMMERCE, KIT_DIGITAL_ERP, KIT_DIGITAL_CRM, KIT_DIGITAL_FACE} from  '../../services/app.js';
-import {getBookingDomainUserRoles, getDomainUserRoles, getScopes, getSigBookingDomainUserRoles, getSigParentScopes, setDomainApp, setSigDomainApp} from  '../../services/service.js';
+import {getBookingDomainUserRoles, getDomainUserRoles, getSigBookingDomainUserRoles, getSigParentScopes, setDomainApp, setSigDomainApp} from  '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import {App, ToolbarType} from '../../models/enums.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';

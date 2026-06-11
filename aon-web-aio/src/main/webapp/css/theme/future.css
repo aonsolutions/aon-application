@@ -1373,13 +1373,10 @@ ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover span {
 }
 
 .aonCardTitleSection *:not(.material-icons) {
-	font-size: 1.25rem;
-	line-height: 1.75rem;
-	gap: .5rem;
-	padding-top: .75rem;
-  	padding-bottom: .75rem;
+	font-size: 1rem;
+	padding-top: 0;
+  	padding-bottom: 0.75rem;
 	padding-left: 0.25rem;
-	letter-spacing: -0.005rem;
 	font-family: "Inter-semibold", sans-serif;
 }
 
@@ -1754,10 +1751,10 @@ i[id$="aonOfficePanelToolbarHeaderToolSectionSearchAdvancedButtonIcon"] {
 }
 
 .aonTable thead th {
-	height: 63.63px; /*3.75rem;*/
+	height: 3.25rem;
 	font-family: "Inter-bold", sans-serif;
-	font-size: .875rem;
-	color: #1e293b;
+	font-size: .8125rem;
+	color: #5f6368;
 	border-radius: .375rem;
 	vertical-align: middle;
 }
@@ -1770,16 +1767,15 @@ i[id$="aonOfficePanelToolbarHeaderToolSectionSearchAdvancedButtonIcon"] {
 
 .aonTable tbody tr {
 	font-family: "Inter-regular", sans-serif;
-	font-size: .875rem;
-	color: #1e293b;
+	font-size: .8125rem;
+	color: #5f6368;
 	border-radius: .375rem;
 	border: .0625rem solid #e2e8f0 !important;
-	margin-top: 17px !important; /* 1rem;*/
 }
 
 .aonTable tbody tr td {
 	color: #64748b;
-	height: 63.63px; /*3.625rem;*/
+	height: 3rem;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -2185,14 +2181,16 @@ i[id$="aonDocumentalSheetToolbarHeaderToolSectionSendFileButtonIcon"]{
 .aonInputBoxLabel > input {
 	border-radius: .375rem !important;
 	border: .0625rem solid #cbd5e1 ;
-	height: 2.5rem;
+	height: 2.15rem;
+	font-size: .8125rem;
 }
 
 .aonTextareaBoxLabel > textarea {
 	border-radius: .375rem !important;
 	border: .0625rem solid #cbd5e1 ;
-	height: 2.5rem;
-	min-height: 2.5rem;
+	height: 2.15rem;
+	min-height: 2.15rem;
+	font-size: .8125rem;
 }
 
 /* ========================== Office Styles  ========================== */

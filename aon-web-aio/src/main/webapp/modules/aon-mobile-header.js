@@ -65,7 +65,7 @@ export class AonMobileHeader extends AonElement {
 		div.className = CSS.AON_MOBILE_HEADER;
 		
 		if(!this.isParent()) {
-			div.style.backgroundColor = '#002469';
+			div.style.backgroundColor = '#0f172a';
 		}
 			
 		this.appendChild(div);
@@ -137,12 +137,12 @@ export class AonMobileHeader extends AonElement {
 		onlyOne = onlyOne || LS.isOnlyOne();
 		let ionicData = { action: "statusBar", statusBar: true};
 		if(UA.isAndroidApp()) {
-			changeStatusBarColor(ionicData, "#002469", true);
+			changeStatusBarColor(ionicData, "#0f172a", true);
 		} else mobileAction(ionicData);
 
 		this.parent = false;
 		let div = this.getElement(this.WEB);
-		div.style.backgroundColor = '#002469';
+		div.style.backgroundColor = '#0f172a';
 
 		this.getElement(this.LOGO).style.display = 'none';
 
