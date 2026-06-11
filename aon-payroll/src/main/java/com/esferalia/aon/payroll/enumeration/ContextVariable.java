@@ -85,6 +85,8 @@ public enum ContextVariable implements IResourceable {
 	NOT_PAID_PERMISSION("PERMISO_NO_RETRIBUIDO", VariableType.DOUBLE, false),
 	SUSPEND_JOB_AND_SALARY("SUSPENSION_EMPLEO_SUELDO", VariableType.DOUBLE, false),
 	
+	DROP_CAUSE("CAUSA_AUSENCIA", VariableType.DOUBLE, false),
+	DROP_NOT_JUSTIFIED("AUSENCIA_NO_JUSTIFICADA", VariableType.DOUBLE, false),
 
 	// ADVANCE_NOTICE_DATE("FECHA_PREAVISO", VariableType.DATE, false),
 	// ADVANCE_NOTICE_DAYS("DIAS_PREAVISO", VariableType.INTEGER, false),

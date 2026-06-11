@@ -124,6 +124,7 @@ import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -469,6 +470,7 @@ public interface CommonService extends RemoteService {
 	
 	Scope getScope(String domainName, int domain, String user, Integer scopeId) throws AonCoreException;
 	Scope saveScope(String domainName, int domain, String user, Scope scope) throws AonCoreException;
+	Scope saveScopeAndAssign(String domainName, int domain, String user, Scope scope, boolean assignAllUsers, ArrayList<User> selectedUsers) throws AonCoreException;
 	void deleteScope(String domainName, int domain, String user, Integer scopeId) throws AonCoreException;
 	
 	List<UserScopeFull> getUserScopeList(String domainName, Integer domain, String user, Integer scopeId) throws AonCoreException;
@@ -480,6 +482,8 @@ public interface CommonService extends RemoteService {
 	void deleteDomainScope(String domainName, Integer domainId, String user, Domain domain) throws AonCoreException;
 	
 	List<Domain> getDomains(String domainName, Integer domainId, String user) throws AonCoreException;
+	
+	ArrayList<User> getUsers(String currentDomainName, int currentDomain, String currentUser) throws AonCoreException;
 
 	// **************************************************
 	// ******************************************** [TAG]
@@ -570,6 +574,8 @@ public interface CommonService extends RemoteService {
 	RegistryBank saveRregistryBank(String domainName, Integer domain, String user, RegistryBank registryBank) throws AonCoreException;
 	void deleteRregistryBank(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
 	List<Account> getAccountsForBank(String domainName, Integer domain, String user) throws AonCoreException;
+	List<Account> getAviablesAccountsForBank(String domainName, Integer domain, String user) throws AonCoreException;
+	Account createAccountsForBank(String domainName, Integer domain, String user, String alias, String suffixCode) throws AonCoreException;
 	List<Account> getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource, String pattern) throws AonCoreException;
 	
 	LinkedList<Signature> getSignatures(String domainName, Integer domain, String user) throws AonCoreException;
@@ -584,6 +590,10 @@ public interface CommonService extends RemoteService {
 	
 	// *********************** [AMORTIZATION TYPE]
 	List<AmortizationType> getAmortizationTypes(Occam occam, int domain) throws AonCoreException;
+	
+	// *********************** [DOMAIN STATUS]
+	Domain saveDomainStatus(String domainName, int domain, String user, RegistryStatus newStatus, Date newExpDate) throws AonCoreException;
+		
 	
 	void reassignScope(String domainName, Integer domainId, String user, int originScope, int finalScope, boolean deleteOrigin) throws AonCoreException;
 }

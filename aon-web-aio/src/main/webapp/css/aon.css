@@ -3279,6 +3279,7 @@ background-image: url("../favicon.png");
 #aonManifest{
 	color: #727c96;
 	font-size: 11px;
+	font-style: italic;
 }
 
 .configCardText {

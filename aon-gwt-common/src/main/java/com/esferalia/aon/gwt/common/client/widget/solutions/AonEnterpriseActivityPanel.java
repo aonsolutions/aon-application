@@ -22,7 +22,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AonEnterpriseActivityPanel extends HTMLPanel {
@@ -73,7 +72,7 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 	private AonCustomDateBox endDate = new AonCustomDateBox("F. Fin");
 
 	private AonCustomSuggestBox cnae25SB = new AonCustomSuggestBox("CNAE 2025");
-	private AonCustomTextBox cnae = new AonCustomTextBox("CNAE 2009");
+	private AonCustomTextBox cnae = new AonCustomTextBox("CNAE 2009 (Registro Anterior)");
 	
 	private AonCustomSuggestBox iaeSB = new AonCustomSuggestBox("IAE");
 
@@ -222,7 +221,7 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 			if(AonStringUtils.equalsIgnoreCase(enterpriseActivity.getCnae2509Code(), enterpriseActivity.getCnaeCode()))
 				cnae.getElement().getStyle().setDisplay(Display.NONE);
 			
-			iaeSB.setValue(null == enterpriseActivity.getIae() ? "" : enterpriseActivity.getIae().getFullEpigraph()  + " - " + enterpriseActivity.getIae().getTitle());
+			iaeSB.setValue(null == enterpriseActivity.getIae() ? "" :  enterpriseActivity.getIae().getSection() + " - " +  enterpriseActivity.getIae().getEpigraph() + " : " +  enterpriseActivity.getIae().getTitle());
 			ivaLB.setValue(enterpriseActivity.getVatRegime().name());
 			equivalence.setValue(enterpriseActivity.isSurcharge());
 			irpfLB.setValue(enterpriseActivity.getIrpfRegime().name());
@@ -240,9 +239,11 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		cnae2025List.forEach(c -> cnaeDescriptions.add(c.getCode() + " - " + c.getTitle()));
 		cnaeDescriptions.sort((o1, o2) -> o1.compareTo(o2));
 
-		MultiWordSuggestOracle orclCnaes = (MultiWordSuggestOracle) cnae25SB.getSuggestBox().getSuggestOracle();
-		orclCnaes.addAll(cnaeDescriptions);
-		orclCnaes.setDefaultSuggestionsFromText(cnaeDescriptions);
+		AonCustomSuggestOracle oracleCnae25 = new AonCustomSuggestOracle();
+		oracleCnae25.setData(cnaeDescriptions);
+
+		cnae25SB = new AonCustomSuggestBox("CNAE 2025", oracleCnae25);
+		
 		cnae25SB.setAutoSelectEnabled(true);
 		cnae25SB.setPlaceHolder("CNAE... (Ctrl + espacio para ver sugerencias)");
 
@@ -266,12 +267,14 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 
 	private void initializeIae() {
 		List<String> iaeDescriptions = new ArrayList<>();
-		iaeList.forEach(i -> iaeDescriptions.add(i.getFullEpigraph() + " - " + i.getTitle()));
+		iaeList.forEach(i -> iaeDescriptions.add(i.getSection() + " - " + i.getEpigraph() + " : " + i.getTitle()));
 		iaeDescriptions.sort((o1, o2) -> o1.compareTo(o2));
 
-		MultiWordSuggestOracle orclCnaes = (MultiWordSuggestOracle) iaeSB.getSuggestBox().getSuggestOracle();
-		orclCnaes.addAll(iaeDescriptions);
-		orclCnaes.setDefaultSuggestionsFromText(iaeDescriptions);
+		AonCustomSuggestOracle oracleIae = new AonCustomSuggestOracle();
+		oracleIae.setData(iaeDescriptions);
+
+		iaeSB = new AonCustomSuggestBox("IAE", oracleIae);
+		
 		iaeSB.setAutoSelectEnabled(true);
 		iaeSB.setPlaceHolder("IAE... (Ctrl + espacio para ver sugerencias)");
 
@@ -288,7 +291,7 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		String iaeSBValue = iaeSB.getValue();
 
 		for (Iae i : iaeList) {
-			if (AonStringUtils.equals(i.getFullEpigraph() + " - " + i.getTitle(), iaeSBValue))
+			if (AonStringUtils.equalsIgnoreCase(i.getSection() + " - " + i.getEpigraph() + " : " + i.getTitle(), iaeSBValue))
 				return i;
 		}
 
@@ -299,7 +302,7 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		String cnaeSBValue = cnae25SB.getValue();
 
 		for (Cnae c : cnae2025List) {
-			if (AonStringUtils.equals(c.getCode() + " - " + c.getTitle(), cnaeSBValue))
+			if (AonStringUtils.equalsIgnoreCase(c.getCode() + " - " + c.getTitle(), cnaeSBValue))
 				return c;
 		}
 
@@ -312,7 +315,7 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		String cnae09Code = cnae25.getCode09();
 
 		for (Cnae2009 c : cnae2009List) {
-			if (AonStringUtils.equals(c.getCode(), cnae09Code))
+			if (AonStringUtils.equalsIgnoreCase(c.getCode(), cnae09Code))
 				return c;
 		}
 

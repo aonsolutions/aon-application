@@ -39,11 +39,26 @@
 						ESTO ES ASI PARA PODER CAMBIAR DE BANCO EN EL FORM EN CUALQUIER MOMENTO Y TE MANTENGA LOS CRITERIOS DE BUSQUEDA  -->
 					<aon:outputLabel for="BankStatement_registryBank_id"
 						value="#{bundle.aon_bank}" />
-					<aon:selectOneMenu id="BankStatement_registryBank_id"
-						value="#{controller.registryBank}"
-						valueChangeListener="#{controller.addIdEqualExpression}">
-						<f:selectItems value="#{companyCollections.allCompanyBanks}" />
-					</aon:selectOneMenu>
+					<aon:div id="BankStatement_registryBank_id_div">
+						<aon:selectOneMenu id="BankStatement_registryBank_id"
+							value="#{controller.registryBank}"
+							valueChangeListener="#{controller.addIdEqualExpression}">
+							<aon:if test="#{controller.showInactiveBanks}">
+								<f:selectItems value="#{companyCollections.allCompanyBanks}" />
+							</aon:if>
+							<aon:if test="#{!controller.showInactiveBanks}">
+								<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
+							</aon:if>
+						</aon:selectOneMenu>
+						<aon:selectBooleanCheckbox id="BankStatement_showInactiveBanks"
+                            value="#{controller.showInactiveBanks}"
+                            valueChangeListener="#{controller.onShowInactiveBanksChange}"
+                            immediate="true"
+                            reRender="BankStatement_registryBank_id_div"
+                            styleClass="aon-margin-left" />
+						<aon:outputText styleClass="aon-italic aon-margin-left"
+							value="Mostrar bancos inactivos"/>
+					</aon:div>
 
 					<aon:outputLabel 
 						value="#{bundle.aon_date}" />

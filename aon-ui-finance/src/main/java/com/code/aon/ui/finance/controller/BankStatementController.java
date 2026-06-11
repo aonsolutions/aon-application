@@ -12,9 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStream;
-import java.security.MessageDigest;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -25,15 +23,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -101,6 +94,8 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 public class BankStatementController extends BasicController implements IFinanceConstants {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
@@ -108,6 +103,7 @@ public class BankStatementController extends BasicController implements IFinance
 	private static final Logger LOGGER = LoggerFactory.getLogger(BankStatementController.class.getName());
 	
 	private RegistryBank registryBank;
+	private boolean showInactiveBanks;	
 	private Date operationDate;
 	private BankConcept bankConcept;
 	private Account account;
@@ -164,6 +160,12 @@ public class BankStatementController extends BasicController implements IFinance
 		this.registryBank = registryBank;
 	}
 
+	public boolean isShowInactiveBanks() {
+		return showInactiveBanks;
+	}
+	public void setShowInactiveBanks(boolean showInactiveBanks) {
+		this.showInactiveBanks = showInactiveBanks;
+	}
 	public Date getOperationDate() {
 		return (operationDate == null) ? new Date() : operationDate;
 	}
@@ -445,6 +447,7 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	public void onBreakdownSelected(ActionEvent event) throws ManagerBeanException {
+		@SuppressWarnings("unchecked")
 		Iterator<ITransferObject> iterator = ((List<ITransferObject>)getModel().getWrappedData()).iterator();
 		while (iterator.hasNext()) {
 			BankStatement statement = (BankStatement)iterator.next();
@@ -574,7 +577,7 @@ public class BankStatementController extends BasicController implements IFinance
 
 	public void onFullReset(ActionEvent event) {
 		try {
-			getCriteria().addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_ID), new Integer(0));
+			getCriteria().addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_ID), Integer.valueOf(0));
 			onReset(event);
 		} catch (ManagerBeanException e) {
 			addMessage(e.getMessage());
@@ -630,7 +633,7 @@ public class BankStatementController extends BasicController implements IFinance
 		setAonFile(null);
 
 		try {
-			getCriteria().addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_ID), new Integer(0));
+			getCriteria().addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_ID), Integer.valueOf(0));
 			setTo(null);
 		} catch (ManagerBeanException e) {
 			addMessage(e.getMessage());
@@ -1308,8 +1311,8 @@ public class BankStatementController extends BasicController implements IFinance
 	public void onAddLinkShow(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		BankStatement to = (BankStatement)getModel().getRowData();
 		boolean payment = (to.getCommonConcept() != StatementConcept.RETURNED) ? to.isPayment() : !to.isPayment();
-		Double fromAmount = new Double(CommonUtil.round(to.getAmount() * 0.9));
-		Double toAmount = new Double(CommonUtil.round(to.getAmount() * 1.1));
+		Double fromAmount = Double.valueOf(CommonUtil.round(to.getAmount() * 0.9));
+		Double toAmount = Double.valueOf(CommonUtil.round(to.getAmount() * 1.1));
 		Date fromDate = DateUtils.addDays(to.getOperationDate(), -7);
 		Date toDate = DateUtils.addDays(to.getOperationDate(), 7);
 
@@ -1665,7 +1668,7 @@ public class BankStatementController extends BasicController implements IFinance
 							if (accountMap.containsKey(concept.getAccount())) {
 								amount = CommonUtil.round(amount + accountMap.get(concept.getAccount()));
 							}
-							accountMap.put(concept.getAccount(), new Double(amount));
+							accountMap.put(concept.getAccount(), Double.valueOf(amount));
 						} else {
 							getErrors().put(statement.getId(), "El Concepto " + concept.getName() + " no tiene Cuenta Contable asociada.");
 						}
@@ -1675,7 +1678,7 @@ public class BankStatementController extends BasicController implements IFinance
 						if (accountMap.containsKey(account)) {
 							amount = CommonUtil.round(amount + accountMap.get(account));
 						}
-						accountMap.put(account, new Double(amount));
+						accountMap.put(account, Double.valueOf(amount));
 					}
 
 					if (statementLink.getLinkedBankStatementLink() != null) {
@@ -1954,7 +1957,17 @@ public class BankStatementController extends BasicController implements IFinance
 	/**
 	 * CHECK LIST CONTROL 
 	 */
-
+	public void onShowInactiveBanksChange(ValueChangeEvent event) throws ManagerBeanException  {
+		if (getRegistryBank() != null ) {
+			System.out.println("NOT showInactiveBanksChange: " + !isShowInactiveBanks());
+			System.out.println("Registry Bank inactive: " + !getRegistryBank().isActive());
+			if (!isShowInactiveBanks() && !getRegistryBank().isActive()) {
+				System.out.println("Registry Bank set to null");
+				setRegistryBank(null);
+			}
+		}
+	}
+	
 	public void bankStatementRowSelected(ValueChangeEvent event) throws ManagerBeanException  {
 		if (event.getNewValue() != null) {
 			selectBankStatementRow(((Boolean)event.getNewValue()).booleanValue());

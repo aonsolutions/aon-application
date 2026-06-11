@@ -29,7 +29,7 @@ public class AonCustomMultiSelectBox extends HTMLPanel {
 	
 	public AonCustomMultiSelectBox(String title) {
 		super(EMPTY_STRING);
-		addStyleName(AON.CSS.aonFlexColumn());
+		addStyleName(AON.CSS.aonFlexColumn2());
 		addStyleName(AON.CSS.aonCustomTextBox());
 
 		createTitle(title);
@@ -87,7 +87,7 @@ public class AonCustomMultiSelectBox extends HTMLPanel {
         
     	// Filter
         HTMLPanel filterMenu = new HTMLPanel("");
-  		filterMenu.addStyleName(AON.CSS.aonFlexColumn());
+  		filterMenu.addStyleName(AON.CSS.aonFlexColumn2());
         
         options.forEach(option -> {
         	HTMLPanel checkBoxPanel = new HTMLPanel(EMPTY_STRING);

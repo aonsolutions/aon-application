@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -51,16 +53,18 @@ public class AonMailAccountPanel extends HTMLPanel {
 	
 	private HTMLPanel messagePanel = new HTMLPanel(EMPTY_STRING);
 	
-	private AonCustomTextBox name = new AonCustomTextBox("Nombre");
-	private AonCustomTextBox email = new AonCustomTextBox("Email");
-	private AonCustomTextBox showAs = new AonCustomTextBox("Mostrar Como");
-	
-	private AonCustomCheckBox bccInclude = new AonCustomCheckBox("Incluir BCC");
-	private AonCustomTextBox replayTo = new AonCustomTextBox("Email Respuesta");
-
-	private AonCustomTextBox verified = new AonCustomTextBox("Estado");
+	private AonCustomTextBox name = new AonCustomTextBox(AON.MSG.description() + " / " + AON.MSG.aliasAbbr());
 	private AonCustomListBox type = new AonCustomListBox("Tipo");
+	private AonCustomListBox protocol = new AonCustomListBox("Protocolo");
+	
+	private AonCustomTextBox email = new AonCustomTextBox("Email Env\u00edo");
+	private AonCustomListBox host = new AonCustomListBox(" ");
+	
+	private AonCustomTextBox showAs = new AonCustomTextBox("Mostrar Como");
 	private AonCustomListBox signature = new AonCustomListBox("Firma");
+	
+	private AonCustomTextBox replayTo = new AonCustomTextBox("Email(s) Respuesta");
+	private AonCustomToogleButton bccInclude = new AonCustomToogleButton("Incluir BCC");
 	
 	private LinkedList<Signature> signatures;
 	
@@ -95,6 +99,7 @@ public class AonMailAccountPanel extends HTMLPanel {
 		// Message Panel
 		setStyleName(AON.CSS.aonFlexColumn2());
 		getElement().getStyle().setProperty("padding", "1rem 0");
+		getElement().getStyle().setProperty("min-width", "43rem");
 		add(messagePanel);
 		
 		HTMLPanel container = new HTMLPanel(EMPTY_STRING);
@@ -105,66 +110,138 @@ public class AonMailAccountPanel extends HTMLPanel {
 		// First Row
 		HTMLPanel row = new HTMLPanel(EMPTY_STRING);
 		row.setStyleName(AON.CSS.aonItemFlex());
+		
+		type.clearItems();
+		type.addItem("Usuario", MailAccountType.USER.name());
+		type.addItem("Sistema", MailAccountType.SYSTEM.name());
+		
+		protocol.clearItems();
+		protocol.addItem("AWS SES", "aon");
+		protocol.addItem("IMAP", "imap");
+		protocol.addItem("SMTP", "smtp");
+		
+		protocol.getListBox().getElement().getElementsByTagName("option").getItem(1).setAttribute("disabled", "disabled");
+		protocol.getListBox().getElement().getElementsByTagName("option").getItem(2).setAttribute("disabled", "disabled");
+		
+		protocol.addChangeHandler(e -> {
+			if(mailAccount.getId() != null && !AonStringUtils.equalsIgnoreCase(mailAccount.getProtocol(), "aon") && AonStringUtils.equalsIgnoreCase(protocol.getValue(), "aon")) {
+				replayTo.setValue(AonStringUtils.isBlank(replayTo.getValue()) ? mailAccount.getEmail() : replayTo.getValue() + ", " + mailAccount.getEmail());
+				bccInclude.setValue(true);
+			}
+		});
+		
 		row.add(name);
-		row.add(email);
-		row.add(showAs);
+		row.add(type);
+		row.add(protocol);
 		container.add(row);
 		
 		// Second Row
 		HTMLPanel row2 = new HTMLPanel(EMPTY_STRING);
 		row2.setStyleName(AON.CSS.aonItemFlex());
 		
-		bccInclude.getElement().getStyle().setProperty("max-width", "5rem");
+		email.setValue("no-reply");
+		host.clearItems();
 		
-		replayTo.setEnable(false);
-		
-		bccInclude.addValueChangeHandler(e -> {
-			replayTo.setEnable(e.getValue());
-		});
-		
-		row2.add(bccInclude);
-		row2.add(replayTo);
+		row2.add(email);
+		row2.add(host);
 		container.add(row2);
 		
 		// Third Row
-		type.clearItems();
-		type.addItem("Usuario", MailAccountType.USER.name());
-		type.addItem("Sistema", MailAccountType.SYSTEM.name());
+		HTMLPanel row3 = new HTMLPanel(EMPTY_STRING);
+		row3.setStyleName(AON.CSS.aonItemFlex());
 		
 		signature.clearItems();
 		signature.addItem("-", "");
 		this.signatures.forEach(s -> signature.addItem(s.getName(), s.getId().toString()));
-		
-		HTMLPanel row3 = new HTMLPanel(EMPTY_STRING);
-		row3.setStyleName(AON.CSS.aonItemFlex());
-		
-		verified.setEnable(false);
-		
-		row3.add(verified);
-		row3.add(type);
+
+		row3.add(showAs);
 		row3.add(signature);
 		container.add(row3);
+		
+		// Fourth Row
+		HTMLPanel row4 = new HTMLPanel(EMPTY_STRING);
+		row4.setStyleName(AON.CSS.aonItemFlex());
+
+		bccInclude.getElement().getStyle().setProperty("max-width", "5rem");
+		bccInclude.setEnable(false);
+
+		replayTo.getTextBox().getElement().setPropertyString("placeholder", "Lista de correos v\u00e1lidos separados por coma");
+		replayTo.addValueChangeHandler(e -> {
+			checkReplayToEmails();
+		});
+		
+		row4.add(replayTo);
+		row4.add(bccInclude);
+		container.add(row4);
 		
 		// Fill info
 		if(mailAccount.getId() != null) {
 			name.setValue(mailAccount.getName());
-			email.setValue(mailAccount.getEmail());
+			type.setValue(mailAccount.getType().name());
+			protocol.setValue(mailAccount.getProtocol());
+			
+			email.setValue(getEmailWithoutHost(mailAccount.getEmail()));
+			
 			showAs.setValue(mailAccount.getDisplayName());
+			signature.setValue(mailAccount.getSignatureId() == null ? "" : mailAccount.getSignatureId().toString());
 			
 			bccInclude.setValue(mailAccount.isIncludeBcc());
-			replayTo.setEnable(mailAccount.isIncludeBcc());
 			replayTo.setValue(mailAccount.getReplytoMail());
 			
-			verified.setValue(mailAccount.isSESVerified() ? "Verificado" : "No verificado");
-			type.setValue(mailAccount.getType().name());
-			signature.setValue(mailAccount.getSignatureId() == null ? "" : mailAccount.getSignatureId().toString());
+			checkReplayToEmails();
 		}
 		
 		// Buttons
 		container.add(createButtonsPanel());
 		add(container);	
+		
+		getVerifiedHostEmails(hostEmails -> {
+			hostEmails.entrySet().forEach(h -> {
+				if(h.getValue()) host.addItem("@" + h.getKey());
+			});
+			
+			host.addItem("@aon.solutions");
+			
+			if(mailAccount.getId() != null)
+				host.setValue(getEmailHost(mailAccount.getEmail()));
+		});
 	}
 	
+	private void checkReplayToEmails() {
+	    String emails = replayTo.getValue();
+
+	    if (AonStringUtils.isBlank(emails)) {
+	        bccInclude.setEnable(false);
+	        return;
+	    }
+
+	    // Separar por coma
+	    String[] parts = emails.split(",");
+
+	    boolean allValid = true;
+
+	    for (String part : parts) {
+	        String email = part.trim();
+
+	        if (email.isEmpty() || !isValidEmail(email)) {
+	            allValid = false;
+	            break;
+	        }
+	    }
+
+	    bccInclude.setEnable(allValid);
+	}
+
+	private String getEmailHost(String email) {
+		if(AonStringUtils.isBlank(email)) return "@aon.solutions";
+		return AonStringUtils.containsIgnoreCase(email, "@") ? '@' + AonStringUtils.split(email, '@')[1] : null;
+	}
+	
+	private String getEmailWithoutHost(String email) {
+		if(AonStringUtils.isBlank(email)) return null;
+		return AonStringUtils.containsIgnoreCase(email, "@") ? AonStringUtils.split(email, '@')[0] : null;
+	}
+
 	private Widget createButtonsPanel() {
 		HTMLPanel buttonsPanel = new HTMLPanel(EMPTY_STRING);
 		buttonsPanel.setStyleName(AON.CSS.aonTextCenter());
@@ -175,16 +252,22 @@ public class AonMailAccountPanel extends HTMLPanel {
     	okButton.setText( AON.MSG.accept());
     	okButton.addClickHandler(e -> {
     		okButton.setEnabled(false);
+    		
+    		if(!isValidEmail(email.getValue() + host.getValue())) {
+    			okButton.setEnabled(true);
+    			AonMessagePanel.showError(messagePanel, "Email incorrecto");
+    			return;
+    		}
 			
     		mailAccount
 				.setName(name.getValue())
-				.setEmail(email.getValue())
+				.setEmail(email.getValue() + host.getValue())
 				.setDisplayName(showAs.getValue())
 				.setIncludeBcc(bccInclude.getValue())
 				.setReplytoMail(replayTo.getValue())
 				.setType(MailAccountType.safeValueOf(type.getValue()))
 				.setSignatureId(AonStringUtils.isBlank(signature.getValue()) ? null : Integer.parseInt(signature.getValue()))
-				.setProtocol("aon")
+				.setProtocol(protocol.getValue())
 				;
 			
 			commonService.saveMailAccount(domainName, domainId, user, mailAccount, new AsyncCallback<MailAccount>() {
@@ -197,6 +280,7 @@ public class AonMailAccountPanel extends HTMLPanel {
 				@Override
 				public void onFailure(Throwable error) {
 					AonMessagePanel.showError(messagePanel, error.getMessage());
+					okButton.setEnabled(true);
 				}
 				
 			});
@@ -214,6 +298,50 @@ public class AonMailAccountPanel extends HTMLPanel {
     	buttonsPanel.add(cancelButton);
     	
     	return buttonsPanel;
+	}
+	
+	public static boolean isValidEmail(String email) {
+	    if (email == null) return false;
+
+	    email = email.trim();
+
+	    int at = email.indexOf('@');
+	    int lastAt = email.lastIndexOf('@');
+
+	    // Debe haber exactamente un '@'
+	    if (at <= 0 || at != lastAt) return false;
+
+	    String local = email.substring(0, at);
+	    String domain = email.substring(at + 1);
+
+	    // Local part no puede estar vacía
+	    if (local.isEmpty()) return false;
+
+	    // Dominio debe tener al menos un punto
+	    int dot = domain.lastIndexOf('.');
+	    if (dot <= 0 || dot == domain.length() - 1) return false;
+
+	    // Caracteres prohibidos
+	    if (email.contains(" ") || email.contains("..")) return false;
+
+	    return true;
+	}
+
+	
+	private void getVerifiedHostEmails(Consumer<HashMap<String, Boolean>> success) {
+		commonService.getVerifiedHostEmails(domainName, domainId, user, new AsyncCallback<HashMap<String, Boolean>>() {
+			
+			@Override
+			public void onSuccess(HashMap<String, Boolean> result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable error) {
+				AonMessagePanel.showError(messagePanel, error.getMessage());
+			}
+			
+		});
 	}
 
 }

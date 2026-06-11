@@ -1,6 +1,6 @@
 package com.code.aon.webmail;
 
-import javax.activation.FileDataSource;
+import jakarta.activation.FileDataSource;
 
 import com.code.aon.common.util.AonFile;
 

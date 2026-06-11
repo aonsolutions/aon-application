@@ -237,6 +237,7 @@ import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
@@ -662,6 +663,12 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	public static Scope saveScopeAndAssign(String domainName, Integer domainId, String login, Scope scope, boolean assignAllUsers, ArrayList<User> selectedUsers) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getSecurity().saveScopeAndAssign(ctx, scope, assignAllUsers, selectedUsers);
 		}
 	}
 	
@@ -8601,6 +8608,12 @@ public class AON {
 		}
 	}
 	
+	public static Domain saveDomainStatus(String domainName, int domain, String user, RegistryStatus newStatus, Date newExpDate) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().saveDomainStatus(ctx, domain, newStatus, newExpDate);
+		}
+	}
+	
 	// ---------------- Enterprise Data
 
 	public static EnterpriseData getEnterpriseData(Domain domain, User user, EnterpriseDataFilter filter) {
@@ -9393,7 +9406,27 @@ public class AON {
 
 	public static List<Account> getAccountsForBank(String domainName, Integer domain, String user) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
-			return getAccounting().getAccounts(ctx, f -> f.getDomainProperty().eq(domain).and(f.getLevelProperty().eq((byte)5)).and(f.getCodeProperty().like("572%").or(f.getCodeProperty().like("5201%")))).collect(Collectors.toList());
+			return getAccounting().getAccounts(ctx, 
+					f -> f.getDomainProperty().eq(domain)
+							.and(f.getLevelProperty().eq((byte)5))
+							.and(f.getCodeProperty().like("5720%").or(f.getCodeProperty().like("5201%")))
+					).collect(Collectors.toList());
+		}
+	}
+
+	public static List<Account> getAviablesAccountsForBank(String domainName, Integer domain, String user) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getAccounting().getAviablesAccountsForBank(ctx, 
+					f -> f.getDomainProperty().eq(domain)
+							.and(f.getLevelProperty().eq((byte)5))
+							.and(f.getCodeProperty().like("5720%").or(f.getCodeProperty().like("5201%")))
+					).collect(Collectors.toList());
+		}
+	}
+
+	public static Account createAccountsForBank(String domainName, Integer domain, String user, String alias, String suffixCode) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getAccounting().createAccountsForBank(ctx, domain, alias, suffixCode);
 		}
 	}
 	

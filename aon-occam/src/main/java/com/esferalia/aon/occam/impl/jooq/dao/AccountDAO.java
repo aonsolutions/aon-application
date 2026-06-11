@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
+import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -136,6 +137,19 @@ public class AccountDAO {
 		ctx.checkRead();
 		return getAccountStream(ctx, filter)
 			.map(new FullAccountFiller());			
+	}
+	public static Stream<Account> getAviablesAccountsForBank(AONContext ctx, AccountFilter filter) {
+		ctx.checkRead();
+		return ctx.getDslContext()
+				.select()
+				.from(ACCOUNT)
+				.leftJoin(RBANK).on(RBANK.ACCOUNT.eq(ACCOUNT.ID))
+				.where(ACCOUNT_PROPERTIES.getConditions(filter))
+				.and(ACCOUNT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+				.and(RBANK.ACCOUNT.isNull())
+				.fetch()
+				.stream()
+				.map(new FullAccountFiller());		
 	}
 	public static Stream<Account> getAccounts(AONContext ctx, AccountFilter filter, int offset, int limit) {
 		ctx.checkRead();
@@ -575,6 +589,34 @@ public class AccountDAO {
 			default:
 				throw new IllegalArgumentException("Unexpected value: " + registrySource);
 		}
+		
+		nextAccount++;
+		newAccount.setCode(nextAccount.toString());
+		
+		return insert(ctx, newAccount);
+	}
+	
+	public static Account createBankAccount(CloseableAONContext ctx, Integer domain, String alias, String suffixCode) {
+		Account newAccount = new Account()
+				.setDomain(domain)
+				.setDescription(alias)
+				.setAlias(alias)
+				.setEntryEnabled(true)
+				.setLevel((byte)5)
+				.setActive(true)
+				;
+		
+		Integer nextAccount = null;
+		AccountRecord accountRecord = null;
+		
+		accountRecord = ctx.getDslContext().selectFrom(ACCOUNT)
+				.where(ACCOUNT.DOMAIN.eq(domain))
+				.and(ACCOUNT.CODE.like(suffixCode + "%"))
+				.and(ACCOUNT.LEVEL.eq((byte)5))
+				.orderBy(ACCOUNT.ID.desc())
+				.limit(1)
+				.fetchOne();
+			nextAccount = Integer.parseInt(accountRecord.getCode());
 		
 		nextAccount++;
 		newAccount.setCode(nextAccount.toString());

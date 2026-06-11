@@ -1674,11 +1674,69 @@ public class EmployeesServiceHelper {
 		return cs;
 	}
 
+	private static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getProceduralCalculatorContextImpl(
+			final Connection conn, final SalaryDraft draft,
+			IContractSalaryCalculatorContext.IListener listener)
+					throws ExpressionException, SQLException {
+		SQLContractSalaryCalculatorContext ctx = getSalaryCalculatorContextImpl(conn, draft, SalaryType.PROCEDURAL);
+		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
+				draft, ctx) {
+			
+			@Override
+			public SalaryType getSalaryType() {
+				return SalaryType.PROCEDURAL;
+			}
+			
+			@Override
+			public Collection<IContractEmbargo> getContractEmbargos()
+					throws AonException {
+				return Collections.emptyList();
+			}
+
+			@Override
+			public Collection<IContractBonus> getContractBonus() throws AonException {
+				return Collections.emptyList();
+			}
+			
+			@Override
+			public Collection<IContractPayment> getContractPayments() throws AonException {
+				return super.getContractPayments();
+			}
+			
+			
+		};
+
+		draftCtx.setListener(listener);
+		draftCtx.next();
+
+		return draftCtx;
+	}
+			
+
 	private static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSalaryCalculatorContextImpl(
 			final Connection conn, final SalaryDraft draft,
 			IContractSalaryCalculatorContext.IListener listener)
 					throws ExpressionException, SQLException {
 
+		SQLContractSalaryCalculatorContext ctx = getSalaryCalculatorContextImpl(conn, draft);
+
+		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
+				draft, ctx);
+
+		draftCtx.setListener(listener);
+		draftCtx.next();
+
+		return draftCtx;
+	}
+
+
+	private static SQLContractSalaryCalculatorContext getSalaryCalculatorContextImpl(final Connection conn, final SalaryDraft draft)
+			throws SQLException, ExpressionException {
+		return getSalaryCalculatorContextImpl(conn, draft, SalaryType.SALARY, SalaryType.EXTRA);
+	}
+
+	private static SQLContractSalaryCalculatorContext getSalaryCalculatorContextImpl(final Connection conn, final SalaryDraft draft, SalaryType ... salaryTypes)
+			throws SQLException, ExpressionException {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),
 				draft.getEmployee().getId());
@@ -1688,9 +1746,9 @@ public class EmployeesServiceHelper {
 
 			public SalaryCalculatorContextImpl(Connection connection,
 					Date startDate, Date endDate, Date issueDate, Date chargeDate,
-					Criteria criteria)
+					Criteria criteria, SalaryType ... salaryTypes)
 							throws SQLException, ExpressionException {
-				super(connection, startDate, endDate, issueDate, chargeDate, criteria);
+				super(connection, startDate, endDate, issueDate, chargeDate, criteria, getPaymentsCriteria(salaryTypes));
 			}
 
 			public Object __br(Date date) throws ExpressionException, SQLException, SalaryException {
@@ -2055,15 +2113,9 @@ public class EmployeesServiceHelper {
 				draft.getEndDate(), 
 				draft.getIssueDate(), 
 				draft.getChargeDate(),
-				criteria);
-
-		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
-				draft, ctx);
-
-		draftCtx.setListener(listener);
-		draftCtx.next();
-
-		return draftCtx;
+				criteria, 
+				salaryTypes);
+		return ctx;
 	}
 
 	private static String tableCol(String table, String col) {
@@ -2287,7 +2339,7 @@ public class EmployeesServiceHelper {
 					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitProcedural(
 							SalaryType salaryType) {
 						try {
-							return getSalaryCalculatorContextImpl(conn, draft,
+							return getProceduralCalculatorContextImpl(conn, draft,
 											listener);
 						} catch (SQLException e) {
 							throw new IllegalArgumentException(e);

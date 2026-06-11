@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.registry;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Consumer;
 
@@ -18,6 +19,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMainCertificatesP
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonVisualIdentity;
+import com.esferalia.aon.gwt.common.client.widget.solutions.CompanyDomainStatusSelect;
 import com.esferalia.aon.gwt.common.client.widget.solutions.EnterpriseActivityTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.MailAccountTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.MediaTable;
@@ -27,12 +29,14 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.RegistryPaymethodBan
 import com.esferalia.aon.gwt.common.client.widget.solutions.SignatureTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.WorkplaceTable;
 import com.esferalia.aon.gwt.common.shared.Dni;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistrySource;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -78,6 +82,8 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 
 	private HTMLPanel messagePanel = new HTMLPanel(AonStringUtils.EMPTY);
 	
+	private CompanyDomainStatusSelect status;
+	
 	private AonCustomListBox documentType = new AonCustomListBox("Tipo");
 	private AonCustomListBox documentNationality = new AonCustomListBox("Pa\u00eds");
 	private AonCustomTextBox document = new AonCustomTextBox("Documento");
@@ -107,8 +113,6 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 	private CompanyFull company;
 	private Registry registry;
 	
-	private boolean editEnable = false;
-	
 	// ------------------------------------------------- Constructor
 
 	public RegistryCompanyEntryPanel(RegistryModuleOptions options, RegistrySource registrySource) {
@@ -121,7 +125,7 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		initializeRegistryService();
 
 		hideSearchWidget();
-
+		
 		createToolbar();
 
 		tablayoutPanel = new TabLayoutPanel(25.00, Unit.PX);
@@ -135,6 +139,10 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		getRegistryBySource();
 	}
 
+	private boolean isParentUser() {
+		return null != options.getConfiguration().getDomain().getParentId() && null != options.getConfiguration().getUser().getDomain().getId() && options.getConfiguration().getDomain().getParentId().equals(options.getConfiguration().getUser().getDomain().getId());
+	}
+	
 	private static String getToolbarTitle(RegistrySource registrySource) {
 		switch (registrySource) {
 			case ENVIROMENT:
@@ -156,18 +164,22 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		});
 		addToolbarButton(saveButton);
 		
-		AonToolbarButton editButton = new AonToolbarButton("Editar datos", AON.CSS.aonIconEdit());
-		editButton.addClickHandler(e -> {
-			editEnable = !editEnable;
-
-			documentNationality.setEnabled(editEnable);
-			documentType.setEnabled(editEnable);
-			document.setEnable(editEnable);
-			name.setEnable(editEnable);
-			firstSurname.setEnable(editEnable);
-			secondSurname.setEnable(editEnable);
-		});
-		addToolbarButton(editButton);
+		if(this.registrySource == RegistrySource.COMPANY && isParentUser()) {
+			
+			RegistryStatus statusValue;
+			if(null != options.getConfiguration().getDomain().getExpirationDate()) statusValue = RegistryStatus.BLOCKED;
+			else 
+				statusValue = options.getConfiguration().getDomain().isActive() ? RegistryStatus.ACTIVE : RegistryStatus.INACTIVE;
+		
+			status = new CompanyDomainStatusSelect(statusValue, options.getConfiguration().getDomain().getExpirationDate());
+//			status.addChangeHandler(e -> {
+//				RegistryStatus newStatus = status.getValue();
+//			    Date exp = status.getExpirationDate();
+//			    Window.alert("newStatus : " + newStatus + ", exp : " + exp);
+//			});
+			getToolbar().addTitleButton(status);
+			
+		}
 	}
 	
 	// ------------------------------------------------- DataBase
@@ -200,7 +212,7 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 				documentType.addItem(DocumentType.values()[i].getDescription(), DocumentType.values()[i].toString());
 			documentType.setValue(registry.getDocumentType().toString());
 			documentType.getElement().getStyle().setProperty("max-width", "5rem");
-			documentType.setEnabled(editEnable);
+			documentType.setEnabled(isParentUser());
 
 			documentNationality.clearItems();
 			for (int i = 0; i < Country.values().length; i++)
@@ -209,7 +221,7 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 					e -> registry.setDocumentCountry(Country.safeValueOf(documentNationality.getValue())));
 			documentNationality.setValue(registry.getDocumentCountry().getIso2());
 			documentNationality.getElement().getStyle().setProperty("max-width", "4rem");
-			documentNationality.setEnabled(editEnable);
+			documentNationality.setEnabled(isParentUser());
 
 			document.addValueChangeHandler(e -> {
 				registry.setDocument(e.getValue());
@@ -219,7 +231,7 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 					AonMessagePanel.hideMessage(messagePanel);
 			});
 			document.setValue(registry.getDocument());
-			document.setEnable(editEnable);
+			document.setEnable(isParentUser());
 			document.getElement().getStyle().setProperty("max-width", "7rem");
 
 			leftInfoTable.add(createRow(documentType, documentNationality, document, alias));
@@ -233,7 +245,7 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		
 		name.addValueChangeHandler(e -> registry.setName(e.getValue()));
 		name.setValue(registry.getName());
-		name.setEnable(editEnable);
+		name.setEnable(isParentUser());
 		
 		rightInfoTable.add(createRow(name, firstSurname, secondSurname));
 		
@@ -392,20 +404,20 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		if(registry.getDocumentType().equals(DocumentType.CIF)) {
 			name.addValueChangeHandler(e -> registry.setName(e.getValue()));
 			name.setValue(registry.getName());
-			name.setEnable(editEnable);
+			name.setEnable(isParentUser());
 			name.setVisibleTitle(AON.MSG.enterpriseName());
 			
 			firstSurname.getElement().getStyle().setDisplay(Display.NONE);
 			secondSurname.getElement().getStyle().setDisplay(Display.NONE);
 		} else {
-			name.setEnable(editEnable);
+			name.setEnable(isParentUser());
 			name.setValue(AonStringUtils.isBlank(registry.getPersonName()) ? registry.getName() : registry.getPersonName());
 			name.setVisibleTitle("Nombre");
 			
-			firstSurname.setEnable(editEnable);
+			firstSurname.setEnable(isParentUser());
 			firstSurname.setValue(registry.getPersonFirstsurname());
 
-			secondSurname.setEnable(editEnable);
+			secondSurname.setEnable(isParentUser());
 			secondSurname.setValue(registry.getPersonSecondsurname());
 			
 			name.addValueChangeHandler(e -> {
@@ -499,7 +511,48 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		AonMessagePanel.showLoading(messagePanel, "Guardando empresa");
 
 		company.getRegistry().copy(registry);
+		
+		if(this.registrySource == RegistrySource.COMPANY) {
+			
+			RegistryStatus originalStatus;
+			if(null != options.getConfiguration().getDomain().getExpirationDate()) originalStatus = RegistryStatus.BLOCKED;
+			else 
+				originalStatus = options.getConfiguration().getDomain().isActive() ? RegistryStatus.ACTIVE : RegistryStatus.INACTIVE;
+			
+			RegistryStatus newStatus = status.getValue();
+		    Date newExpDate = status.getExpirationDate();
+		    
+		    if(originalStatus != newStatus) {
+		    	AonMessagePanel.showLoading(messagePanel, "Guardando estado del dominio");
+		    	
+		    	commonService.saveDomainStatus(options.getDomainName(), options.getDomain(), options.getUser(), newStatus, newExpDate,
+						new AsyncCallback<Domain>() {
 
+							@Override
+							public void onSuccess(Domain savedDomain) {
+								options.getConfiguration().setDomain(savedDomain);
+								saveCompany(success);
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								AonMessagePanel.showError(messagePanel, "Dominio error guardando estado : " + caught.getMessage());
+							}
+
+						});
+		    	
+		    } else 
+		    	saveCompany(success);
+			
+		} else
+			saveCompany(success);
+	}
+	
+	private void saveCompany(Consumer<CompanyFull> success) {
+		AonMessagePanel.showLoading(messagePanel, "Guardando empresa");
+
+		company.getRegistry().copy(registry);
+		
 		commonService.saveCompanyFull(options.getDomainName(), options.getDomain(), options.getUser(), company,
 				new AsyncCallback<CompanyFull>() {
 
@@ -515,6 +568,7 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 					}
 
 				});
+			
 	}
 
 }

@@ -465,15 +465,22 @@ public class NewDomainController implements Serializable {
 			dam.setModule(Module.AON_FINANCE);
 			BeanManager.getManagerBean(DomainApplicationModule.class).insert(dam);
 		}
+		IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
+		Scope scope = new Scope();
+		scope.setDomain(domain.getId());
+		scope.setDescription("EMPRESA");
+		scopeBean.insert(scope);
+		
 		User user = UserUtils.getInstance().getLoggedUser();
 		Occam occam = new Occam()
-				.setDomain(domain.getId())
-				.setDomainName(domain.getName())
-				.setUser(user.getLogin());
-		if(getParentDomain() == null && getType() == DomainType.CONSULTANCY)
+			.setDomain(domain.getId())
+			.setDomainName(domain.getName())
+			.setUser(user.getLogin());
+		if (getParentDomain() == null && getType() == DomainType.CONSULTANCY) {
 			try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 				addDefaultCategories(ctx.getDslContext(), domain.getId());
 			}
+		}
 		return domain;		
 	}
 	

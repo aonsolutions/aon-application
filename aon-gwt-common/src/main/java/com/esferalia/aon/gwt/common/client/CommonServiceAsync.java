@@ -125,6 +125,7 @@ import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -465,6 +466,7 @@ public interface CommonServiceAsync {
 	
 	void getScope(String domainName, int domain, String user, Integer scopeId, AsyncCallback<Scope> asyncCallback) throws AonCoreException;
 	void saveScope(String domainName, int domain, String user, Scope scope, AsyncCallback<Scope> asyncCallback) throws AonCoreException;
+	void saveScopeAndAssign(String domainName, int domain, String user, Scope scope, boolean assignAllUsers, ArrayList<User> selectedUsers, AsyncCallback<Scope> asyncCallback) throws AonCoreException;
 	void deleteScope(String domainName, int domain, String user, Integer scopeId, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
 	void getUserScopeList(String domainName, Integer domain, String user, Integer scopeId, AsyncCallback<List<UserScopeFull>> asyncCallback) throws AonCoreException;
@@ -477,6 +479,8 @@ public interface CommonServiceAsync {
 	
 	void getDomains(String domainName, Integer domainId, String user, AsyncCallback<List<Domain>> asyncCallback) throws AonCoreException;
 
+	void getUsers(String currentDomainName, int currentDomain, String currentUser, AsyncCallback<ArrayList<User>> asyncCallback) throws AonCoreException;
+	
 	// **************************************************
 	// ******************************************** [TAG]
 	// **************************************************
@@ -566,6 +570,8 @@ public interface CommonServiceAsync {
 	void saveRregistryBank(String domainName, Integer domain, String user, RegistryBank registryBank, AsyncCallback<RegistryBank> asyncCallback) throws AonCoreException;
 	void deleteRregistryBank(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void getAccountsForBank(String domainName, Integer domain, String user, AsyncCallback<List<Account>> asyncCallback) throws AonCoreException;
+	void getAviablesAccountsForBank(String domainName, Integer domain, String user, AsyncCallback<List<Account>> asyncCallback) throws AonCoreException;
+	void createAccountsForBank(String domainName, Integer domain, String user, String alias, String suffixCode, AsyncCallback<Account> asyncCallback) throws AonCoreException;
 	void getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource, String pattern, AsyncCallback<List<Account>> asyncCallback) throws AonCoreException;
 	
 	void reassignScope(String domainName, Integer domainId, String user, int originScope, int finalScope, boolean deleteOrigin, AsyncCallback<Void> asyncCallback) throws AonCoreException;
@@ -581,5 +587,8 @@ public interface CommonServiceAsync {
 	
 	// *********************** [AMORTIZATION TYPE]
 	void getAmortizationTypes(Occam occam, int domain, AsyncCallback<List<AmortizationType>> asyncCallback);
+	
+	// *********************** [DOMAIN STATUS]
+	void saveDomainStatus(String domainName, int domain, String user, RegistryStatus newStatus, Date newExpDate, AsyncCallback<Domain> asyncCallback) throws AonCoreException;
 	
 }

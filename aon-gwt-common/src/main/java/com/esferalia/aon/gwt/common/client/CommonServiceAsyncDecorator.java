@@ -124,6 +124,7 @@ import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -1310,6 +1311,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
+	public void saveScopeAndAssign(String domainName, int domain, String user, Scope scope, boolean assignAllUsers, ArrayList<User> selectedUsers, AsyncCallback<Scope> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveScopeAndAssign(domainName, domain, user, scope, assignAllUsers, selectedUsers, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
 	public void deleteScope(String domainName, int domain, String user, Integer scopeId, AsyncCallback<Void> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.deleteScope(domainName, domain, user, scopeId, new AsyncCallbackWrapper<>(callback));
@@ -1355,6 +1362,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getDomains(String domainName, Integer domainId, String user, AsyncCallback<List<Domain>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getDomains(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getUsers(String domainName, int domainId, String user, AsyncCallback<ArrayList<User>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getUsers(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	// **************************************************
@@ -1741,6 +1754,18 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
+	public void getAviablesAccountsForBank(String domainName, Integer domain, String user, AsyncCallback<List<Account>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getAviablesAccountsForBank(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void createAccountsForBank(String domainName, Integer domain, String user, String alias, String suffixCode, AsyncCallback<Account> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.createAccountsForBank(domainName, domain, user, alias, suffixCode, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
 	public void getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource, String pattern, AsyncCallback<List<Account>> callback) {
 		AON.start();
 		serviceAsync.getAccountsForRegistry(domainName, domain, user, registrySource, pattern, new AsyncCallbackWrapper<>(callback));
@@ -1806,5 +1831,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getVerifiedHostEmails(String domainName, Integer domain, String user, AsyncCallback<HashMap<String, Boolean>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getVerifiedHostEmails(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	// *********************** [DOMAIN STATUS]
+	@Override
+	public void saveDomainStatus(String domainName, int domain, String user, RegistryStatus newStatus, Date newExpDate, AsyncCallback<Domain> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveDomainStatus(domainName, domain, user, newStatus, newExpDate, new AsyncCallbackWrapper<>(callback));
 	}
 }
