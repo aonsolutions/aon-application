@@ -146,7 +146,7 @@ export class AonUser extends AonElement {
 	}
 
 	buildMobileContent() {
-		let content = this.createDiv(this.CONTENT, CSS.AON_MOBILE_SUB_CONTENT);
+		let content = this.createDiv(this.CONTENT);
 		this.appendChild(content);
 	}
 
@@ -157,7 +157,7 @@ export class AonUser extends AonElement {
 		this.innerHTML = this.isMobile() 
 			? `
 				<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${MSG.USER}"> </aon-toolbar>
-				<div class="aonMobileSubContent">
+				<div>
 					<aon-card id="aonConfigurationUserCard"  title="${MSG.USER + login}"></aon-card>
 					<aon-card id="aonConfigurationUserSecurityCard" title="${MSG.PERMISSIONS}"></aon-card>
 				</div>

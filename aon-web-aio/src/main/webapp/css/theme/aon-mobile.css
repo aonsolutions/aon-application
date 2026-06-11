@@ -20,13 +20,14 @@
 }
 
 .aonToolbar {
-  background-color: white;
+  background-color: transparent;
 }
 
 /***************/
 
 .aonListGroupItem{
     border-bottom: none;
+    background-color: transparent;
 }
 
 #aonMobileAppSelection{

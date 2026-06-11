@@ -178,7 +178,7 @@ export class AonMobileMenu extends AonElement {
       icon: MATERIAL_ICONS.ADD,
       name: 'Add',
       color: 'white',
-      background: '#002469',
+      background: '#0f172a',
       fn: () => {
         this.add();
       }

@@ -112,7 +112,7 @@ export class AonLocationAdd extends AonElement {
 		let div = this.createElement(TAG.DIV);
 		div.id = this.id + "Div";
 
-		const className = this.isMobile() ? CSS.AON_MOBILE_SUB_CONTENT : CSS.AON_SUB_CONTENT;
+		const className = this.isMobile() ? "" : CSS.AON_SUB_CONTENT;
 		div.className = className;
 		form.appendChild(div);
 
