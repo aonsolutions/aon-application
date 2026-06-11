@@ -12,7 +12,8 @@ public enum Administration implements IResourceable {
 	GIPUZKOA,
 	NAVARRA,
 	COMMON_TERRITORY,
-	CANARIAS
+	CANARIAS,
+	UNKNOWN
 	;
 	
     /** Message key prefix. */
