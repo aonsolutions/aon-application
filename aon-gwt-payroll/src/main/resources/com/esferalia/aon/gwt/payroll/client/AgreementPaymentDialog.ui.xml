@@ -1,9 +1,10 @@
-<ui:UiBinder 
+<ui:UiBinder
     xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
-    
-    
+
+    <ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.AgreementPaymentDialog.MyStyle">
 	
 		.form {
@@ -44,84 +45,84 @@
 			<g:HTMLPanel ui:field="salaryBasePanel" styleName="{style.flexColumn}">
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="salaryBaseAnualCB"/>
-		    		<g:Label>[01] SALARIO BASE ANUAL</g:Label>
+		    		<g:Label text="{msgs.salaryBaseAnnual}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="salaryBaseMensualCB"/>
-		    		<g:Label>[02] SALARIO BASE MENSUAL</g:Label>
+		    		<g:Label text="{msgs.salaryBaseMonthly}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="salaryBaseDailyCB"/>
-		    		<g:Label>[03] SALARIO BASE DIARIO</g:Label>
+		    		<g:Label text="{msgs.salaryBaseDaily}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="salaryBaseHoursCB"/>
-		    		<g:Label>[04] SALARIO BASE HORAS</g:Label>
+		    		<g:Label text="{msgs.salaryBaseHours}"/>
 		    	</g:HTMLPanel>
 		    </g:HTMLPanel>
 		    
 		    <g:HTMLPanel ui:field="salaryPlusesPanel" styleName="{style.flexColumn}">
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="salaryPlusMensualCB"/>
-		    		<g:Label>[10] PLUS SALARIAL MENSUAL</g:Label>
+		    		<g:Label text="{msgs.salarialBonusMonthly}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="salaryPlusDailyCB"/>
-		    		<g:Label>[11] PLUS SALARIAL DIARIO</g:Label>
+		    		<g:Label text="{msgs.salarialBonusDaily}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="salaryPlusWorkDailyCB"/>
-		    		<g:Label>[12] PLUS SALARIAL DIARIO LABORABLES</g:Label>
+		    		<g:Label text="{msgs.salarialBonusDailyWorkable}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="salaryBasePermanentCB"/>
-		    		<g:Label>[13] PLUS SALARIAL FIJO</g:Label>
+		    		<g:Label text="{msgs.salarialBonusFixed}"/>
 		    	</g:HTMLPanel>
 		    </g:HTMLPanel>
 		    
 		    <g:HTMLPanel ui:field="extraSalaryPlusesPanel" styleName="{style.flexColumn}">
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="extraSalaryPlusMensualCB"/>
-		    		<g:Label>[20] PLUS EXTRA SALARIAL MENSUAL</g:Label>
+		    		<g:Label text="{msgs.extraSalarialBonusMonthly}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="extraSalaryPlusDailyCB"/>
-		    		<g:Label>[21] PLUS EXTRA SALARIAL DIARIO</g:Label>
+		    		<g:Label text="{msgs.extraSalarialBonusDaily}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="extraSalaryPlusWorkDailyCB"/>
-		    		<g:Label>[22] PLUS EXTRA SALARIAL DIARIO LABORABLES</g:Label>
+		    		<g:Label text="{msgs.extraSalarialBonusDailyWorkable}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="extraSalaryBasePermanentCB"/>
-		    		<g:Label>[23] PLUS EXTRA SALARIAL FIJO</g:Label>
+		    		<g:Label text="{msgs.extraSalarialBonusFixed}"/>
 		    	</g:HTMLPanel>
 		    </g:HTMLPanel>
 		    
 		    <g:HTMLPanel ui:field="salaryComplementsPanel" styleName="{style.flexColumn}">
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="spiceComplementCB"/>
-		    		<g:Label>[30] RETRIBUCION EN ESPECIE</g:Label>
+		    		<g:Label text="{msgs.remunrationInKind}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="antiquityComplementCB"/>
-		    		<g:Label>[40] COMPLEMENTO PERSONAL DE ANTIGÜEDAD</g:Label>
+		    		<g:Label text="{msgs.seniorityPersonalComplement}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="overnightComplementCB"/>
-		    		<g:Label>[43] GASTOS PERNOCTA DIARIO</g:Label>
+		    		<g:Label text="{msgs.overnightExpensesDaily}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="maintenanceComplementCB"/>
-		    		<g:Label>[45] GASTOS MANUTENCION DIARIO</g:Label>
+		    		<g:Label text="{msgs.maintenanceExpensesDaily}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="maintenanceForeingComplementCB"/>
-		    		<g:Label>[46] GASTOS MANUTENCION EXTRANJERO DIARIO</g:Label>
+		    		<g:Label text="{msgs.maintenanceExpensesForeignDaily}"/>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="locomotionComplementCB"/>
-		    		<g:Label>[50] GASTOS LOCOMOCIÓN SIN JUSTIFICANTE</g:Label>
+		    		<g:Label text="{msgs.locomotionExpensesWithoutProof}"/>
 		    	</g:HTMLPanel>
 		    </g:HTMLPanel>
 		    
@@ -129,21 +130,21 @@
 		    	<g:HTMLPanel styleName="{style.flexBetween}">
 		    		<g:HTMLPanel styleName="{style.flex}">
 		    			<g:CheckBox ui:field="salaryExtraCB" />
-			    		<g:Label>[90-91] PAGA EXTRA VERANO NAVIDAD</g:Label>
+			    		<g:Label text="{msgs.extraPaySummerChristmas}"/>
 			    	</g:HTMLPanel>
 			    	<g:HTMLPanel styleName="{style.flex}">
 			    		<g:Button ui:field="apportionExtraB" />
-			    		<g:Label>PRORRATEO</g:Label>
+			    		<g:Label text="{msgs.apportionment}"/>
 			    	</g:HTMLPanel>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flexBetween}">
 		    		<g:HTMLPanel styleName="{style.flex}">
 			    		<g:CheckBox ui:field="salaryBenefitsCB" />
-			    		<g:Label>[92] PAGA EXTRA BENEFICIOS</g:Label>
+			    		<g:Label text="{msgs.extraPayBenefits}"/>
 		    		</g:HTMLPanel>
 		    		<g:HTMLPanel styleName="{style.flex}">
 			    		<g:Button ui:field="apportionBenefitsB" />
-			    		<g:Label>PRORRATEO</g:Label>
+			    		<g:Label text="{msgs.apportionment}"/>
 			    	</g:HTMLPanel>
 		    	</g:HTMLPanel>
 		    </g:HTMLPanel>

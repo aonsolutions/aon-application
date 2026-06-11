@@ -2,6 +2,8 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
 	<ui:Style type="com.esferalia.aon.gwt.payroll.client.AgrarianAFI.MyStyle">
 			
 		.bold{
@@ -114,23 +116,23 @@
 					
 						<g:HTMLPanel styleName="aon-panelGrid-search {style.panelGridSearch}">
 							<g:HTMLPanel styleName="aon-panelGrid-search-info">
-								<g:Label styleName="aon-panelGrid-search-info-internal">DATOS JORNADA AGRARIA</g:Label>
+								<g:Label styleName="aon-panelGrid-search-info-internal" text="{msgs.agrarianDayDataTitle}"/>
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="{style.flex}">
-								<g:Label styleName="aon-outputLabel {style.subTitleSearch}">Empresa</g:Label>
+								<g:Label styleName="aon-outputLabel {style.subTitleSearch}" text="{msgs.enterprise}"/>
 								<g:Label ui:field="enterprise"></g:Label>
 								<g:ListBox ui:field="enterpriseList"></g:ListBox>						
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="{style.flex} {style.mt10}">
-								<g:Label styleName="aon-outputLabel {style.subTitleSearch}">CCC</g:Label>
+								<g:Label styleName="aon-outputLabel {style.subTitleSearch}" text="{msgs.ccc}"/>
 								<g:ListBox ui:field="cccs"></g:ListBox>
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="{style.flex} {style.mt10}">
 								<g:CheckBox ui:field="allCCCs" styleName="{style.ml115}"></g:CheckBox>
-								<g:Label ui:field="allCCCsLabel" styleName="{style.m5}"> Todos los CCCs</g:Label>
+								<g:Label ui:field="allCCCsLabel" styleName="{style.m5}" text="{msgs.allCccs}"/>
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="{style.flex} {style.mt10}">
-								<g:Label styleName="aon-outputLabel {style.subTitleSearch}">P. Liquidación</g:Label>
+								<g:Label styleName="aon-outputLabel {style.subTitleSearch}" text="{msgs.liquidationPeriod}"/>
 								<g:ListBox ui:field="monthList" styleName="aon-selectOneMenu"></g:ListBox>
 								<g:ListBox ui:field="yearList" styleName="aon-selectOneMenu {style.ml10}"></g:ListBox>					
 							</g:HTMLPanel>

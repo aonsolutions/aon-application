@@ -1,14 +1,16 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
+
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 
 	<ui:Style>
 	.form {
 		padding: 10px;
 	}
-	
+
 	.label {
 		margin-top: 10x;
 		font-weight: bold;
@@ -16,7 +18,7 @@
 		white-space: nowrap;
 		background-color: #F2F2F2;
 	}
-	
+
 	.labeltop {
 		margin-top: 10x;
 		font-weight: bold;
@@ -25,27 +27,27 @@
 		white-space: nowrap;
 		background-color: #F2F2F2;
 	}
-	
+
 	.field {
 		padding: 1px 0.5em;
 	}
-	
+
 	.buttons {
 		padding-top: 10px;
 		text-align: right;
 	}
-	
+
 	.info {
-		
+
 	}
-	
+
 	.warn {
-		
+
 	}
-	
+
 	.error {
 	}
-	
+
 	.messages {
 		padding-left: 20px;
 	}
@@ -53,15 +55,15 @@
 	.nodisplay {
 		display: none;
 	}
-	
+
 	.form textarea {
 		resize: none;
 	}
-	
+
 	.monthListBox-item {
 		padding-left: 16px;
 	}
-	
+
 	.options-scroll-panel>div {
 		height: 99%;
 	}
@@ -79,7 +81,7 @@
 			</tr>
 			<tr>
 				<td class="{style.label}">
-					<g:Label text="Autorizado" />
+					<g:Label text="{msgs.authorized}" />
 				</td>
 				<td class="{style.field}">
 					<g:LongBox  styleName="gwt-TextBox" ui:field="authLongBox"/>
@@ -87,7 +89,7 @@
 			</tr>
 			<tr ui:field="monthTR" >
 				<td class="{style.label}">
-					<g:Label text="Mes" />
+					<g:Label text="{msgs.month}" />
 				</td>
 				<td class="{style.field}">
 					<aon:MonthListBox styleName="aon-selectOneMenu"
@@ -97,7 +99,7 @@
 			</tr>
 			<tr ui:field="fromMonthTR" >
 				<td class="{style.label}">
-					<g:Label text="Desde" />
+					<g:Label text="{msgs.from}" />
 				</td>
 				<td class="{style.field}">
 					<aon:MonthListBox styleName="aon-selectOneMenu"
@@ -107,7 +109,7 @@
 			</tr>
 			<tr ui:field="toMonthTR" >
 				<td class="{style.label}">
-					<g:Label text="Hasta" />
+					<g:Label text="{msgs.until}" />
 				</td>
 				<td class="{style.field}">
 					<aon:MonthListBox styleName="aon-selectOneMenu"
@@ -117,47 +119,34 @@
 			</tr>
 			<tr ui:field="ctrlMonthTR" >
 				<td class="{style.label}">
-					<g:Label text="Control" />
+					<g:Label text="{msgs.control}" />
 				</td>
 				<td class="{style.field}">
 					<aon:MonthListBox styleName="aon-selectOneMenu"
 						ui:field="ctrlMonthListBox" monthStyles="{style.monthListBox-item}"
 						highLightStyles="aon-bold aon-black aon-icon-accept {style.monthListBox-item}"/>
-					<g:InlineLabel text="Fecha de abono de los salarios para liquidaciones L03 y C03." />
+					<g:InlineLabel text="{msgs.salaryPaymentDateMsg}" />
 				</td>
 			</tr>
 			<tr>
 				<td class="{style.label}">
-					<g:Label text="Tipo de Liquidaci&oacute;n" />
+					<g:Label text="{msgs.liquidationType}" />
 				</td>
 				<td class="{style.field}">
-					<g:ListBox styleName="aon-selectOneMenu" ui:field="typeListBox" >
-						<g:item value="L00">L00 Liquidaci&oacute;n normal en per&iacute;odo reglamentario de ingreso</g:item>	
-						<g:item value="L02">L02 Liquidaciones complementarias por salarios de tramitaci&oacute;n</g:item>	
-						<g:item value="L03">L03 Liquidaciones por incremento de salarios con car&aacute;cter retroactivo</g:item>	
-						<g:item value="L13">L13 Liquidaciones complementarias por vacaciones retribuidas y no disfrutadas</g:item>	
-						<g:item value="L90">L90 Liquidaciones complementarias por incremento de bases</g:item>	
-						<g:item value="L91">L91 Liquidaciones complementarias por nuevos tramos y/o trabajadores</g:item>	
-					</g:ListBox>
+					<g:ListBox styleName="aon-selectOneMenu" ui:field="typeListBox" />
 				</td>
 			</tr>
 			<tr ui:field="i54TR"   >
 				<td class="{style.label}">
-					<g:Label text="Causa, indicador I 54" />
+					<g:Label text="{msgs.causeIndicatorI54}" />
 				</td>
 				<td class="{style.field}">
-					<g:ListBox styleName="aon-selectOneMenu" ui:field="i54ListBox" >
-						<g:item value="1">1- Atrasos de convenio</g:item>	
-						<g:item value="2">2- Normativa (disposici&oacute;n legal)</g:item>	
-						<g:item value="3">3- Acta de conciliaci&oacute;n</g:item>	
-						<g:item value="4">4- Sentencia judicial</g:item>	
-						<g:item value="5">5- Cualquier otro t&iacute;tulo leg&iacute;timo</g:item>	
-					</g:ListBox>
+					<g:ListBox styleName="aon-selectOneMenu" ui:field="i54ListBox" />
 				</td>
 			</tr>
 			<tr ui:field="previousBasesTR"  >
 				<td class="{style.label}">
-					<g:Label text="Aceptar Bases Anteriores" />
+					<g:Label text="{msgs.acceptPreviousBases}" />
 				</td>
 				<td class="{style.field}" >
 					<g:CheckBox  name="{ACEPTAR_BASES_ANTERIORES.name}" ui:field="previousBasesCheckBox" checked="false"/>
@@ -165,7 +154,7 @@
 			</tr>
 			<tr ui:field="calcsDetailedTR"  >
 				<td class="{style.label}">
-					<g:Label text="Calculos Desglosados" />
+					<g:Label text="{msgs.detailedCalculations}" />
 				</td>
 				<td class="{style.field}" >
 					<g:CheckBox  name="{CALCULOS_DESGLOSADOS.name}" ui:field="calcsDetailedCheckBox" checked="false"/>
@@ -173,7 +162,7 @@
 			</tr>
 			<tr ui:field="reftificationMarkTR"  >
 				<td class="{style.label}">
-					<g:Label text="Indicador Reftificaci&oacute;n" />
+					<g:Label text="{msgs.rectificationIndicator}" />
 				</td>
 				<td class="{style.field}" >
 					<g:CheckBox  name="{INDICADOR_RECTIFICACION.name}" ui:field="reftificationMarkCheckBox" checked="false"/>
@@ -181,7 +170,7 @@
 			</tr>
 			<tr ui:field="solicitudRecepcionRNTTR"  >
 				<td class="{style.label}">
-					<g:Label text="Solicitud Recepci&oacute;n RNT" />
+					<g:Label text="{msgs.requestRntReception}" />
 				</td>
 				<td class="{style.field}" >
 					<g:CheckBox  name="{SOLICITUD_RECEPCION_RNT.name}" ui:field="solicitudRecepcionRNTCheckBox" checked="false"/>
@@ -189,7 +178,7 @@
 			</tr>
 			<tr ui:field="aceptarBasesAnterioresTR"  class="{style.nodisplay}" >
 				<td class="{style.label}">
-					<g:Label text="Aceptar Bases Anteriores" />
+					<g:Label text="{msgs.acceptPreviousBases}" />
 				</td>
 				<td class="{style.field}" >
 					<g:CheckBox  name="{ACEPTAR_BASES_ANTERIORES.name}" ui:field="aceptarBasesAnterioresCheckBox" checked="false"/>
@@ -197,7 +186,7 @@
 			</tr>
 			<tr ui:field="withIDCTR"  >
 				<td class="{style.label}">
-					<g:Label text="Consultar TGSS IDC" />
+					<g:Label text="{msgs.consultTgssIdc}" />
 				</td>
 				<td class="{style.field}" >
 					<g:CheckBox  name="{WITH_IDC.name}" ui:field="withIDCCheckBox" checked="false"/>
@@ -205,10 +194,10 @@
 			</tr>
 			<tr ui:field="outOfDateTR" >
 				<td class="{style.label}">
-					<g:Label text="Reftificaci&oacute;n Fuera de Plazo" />
+					<g:Label text="{msgs.rectificationOutOfDeadline}" />
 				</td>
 				<td class="{style.field}">
-					<g:InlineLabel text="N&uacute;mero Liquidaci&oacute;n" />
+					<g:InlineLabel text="{msgs.liquidationNumber}" />
 					<g:LongBox  styleName="gwt-TextBox" ui:field="outOfDateLiquidationLongBox"/>
 				</td>
 			</tr>
@@ -217,7 +206,7 @@
 			</tr>
 			<tr>
 				<td class="{style.label}" colspan="2">
-					<g:Label text="Selecciona los C&oacute;digo de Cuenta de Cotizaci&oacute;n : " ui:field="selectLabel" />
+					<g:Label text="{msgs.selectCccCode}" ui:field="selectLabel" />
 				</td>
 			</tr>
 			<tr>
@@ -249,8 +238,8 @@
 		</table>
 
 		<div class="{style.buttons} {style.form} ">
-			<g:Button ui:field="cancelButton">Cancelar</g:Button>
-			<g:Button ui:field="acceptButton" enabled="false" >Aceptar</g:Button>
+			<g:Button ui:field="cancelButton" text="{msgs.cancel}"/>
+			<g:Button ui:field="acceptButton" enabled="false" text="{msgs.accept}"/>
 			<g:Anchor ui:field="downloadAnchor" visible="false" />
 		</div>
 

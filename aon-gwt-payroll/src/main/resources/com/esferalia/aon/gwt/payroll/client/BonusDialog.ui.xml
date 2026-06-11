@@ -3,6 +3,8 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client' >
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
 	<ui:Style  >
 	
 	</ui:Style>
@@ -19,8 +21,8 @@
 
 			<tr>
 				<td colspan="2" align="right">
-					<g:Button ui:field="cancelButton">Cancelar</g:Button>
-					<g:Button ui:field="acceptButton">Aceptar</g:Button>
+					<g:Button ui:field="cancelButton" text="{msgs.cancel}"/>
+					<g:Button ui:field="acceptButton" text="{msgs.accept}"/>
 				</td>
 			</tr>
 		</table>

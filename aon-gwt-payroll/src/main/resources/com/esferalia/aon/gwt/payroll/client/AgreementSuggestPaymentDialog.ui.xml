@@ -1,10 +1,11 @@
-<ui:UiBinder 
+<ui:UiBinder
     xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:p='urn:import:com.esferalia.aon.gwt.payroll.client'>
-    
-    
+
+    <ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.AgreementSuggestPaymentDialog.MyStyle">
 	
 		.button {
@@ -76,30 +77,30 @@
 		<g:HTMLPanel ui:field="messagePanel" />
 		
 		<g:HTMLPanel styleName="{style.element}">
-			<g:Label styleName="{style.title}">Concepto</g:Label>
-			<g:Label text="Seleccione un devengo sugerido para importarlo. O use el modo manual." />
+			<g:Label styleName="{style.title}" text="{msgs.concept}"/>
+			<g:Label text="{msgs.selectSuggestedAccrual}" />
 			<g:HTMLPanel ui:field="suggestPanel" styleName="{style.center}" />
 		</g:HTMLPanel>
 		
 		<g:HTMLPanel styleName="{style.element}">
-			<g:Label styleName="{style.title}">Código</g:Label>
+			<g:Label styleName="{style.title}" text="{msgs.code}"/>
 			<g:TextBox ui:field="paymentCodeTB" styleName="{style.inputHeight}"/>
 		</g:HTMLPanel>
 		
 		<g:HTMLPanel styleName="{style.element}">
-			<g:Label styleName="{style.title}">Tipo</g:Label>
+			<g:Label styleName="{style.title}" text="{msgs.type}"/>
 			<g:HTMLPanel ui:field="paymentTypePanel" styleName="{style.widthAll}"/>
 		</g:HTMLPanel>
 		<g:HTMLPanel styleName="{style.element}">
-			<g:Label styleName="{style.title}">Descripción</g:Label>
+			<g:Label styleName="{style.title}" text="{msgs.description}"/>
 			<g:TextBox ui:field="paymentDescriptionTB" styleName="{style.inputHeight}"/>
 		</g:HTMLPanel>
 		<g:HTMLPanel styleName="{style.element}">
-			<g:Label styleName="{style.title}">Expresión</g:Label>
+			<g:Label styleName="{style.title}" text="{msgs.expression}"/>
 			<p:ExpressionCodeArea visibleLines="3" ui:field="paymentExpressionTB"/>
 		</g:HTMLPanel>
 		<g:HTMLPanel styleName="{style.element}">
-			<g:Label styleName="{style.title}">Tipo Nómina/Recibo</g:Label>
+			<g:Label styleName="{style.title}" text="{msgs.salaryReceiptType}"/>
 			<g:ListBox ui:field="paymentSalaryTypeLB"/>
 		</g:HTMLPanel>
 

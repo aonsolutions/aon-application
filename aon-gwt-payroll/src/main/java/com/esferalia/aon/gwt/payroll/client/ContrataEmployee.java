@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.client.PayrollAON;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractSalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -257,13 +258,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 
 		private void exportExtensionContract(Consumer<String> consumer, Consumer<Throwable> failure) {
-			showLoading("Generando borrador de contrato");
+			showLoading(PayrollAON.MSGS.generatingContractDraft());
 			contrataEmployeeObject.getContractOtherInfo(s -> {
 				contrataEmployeeObject.getContractSpecificData(su -> {
 					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 					contrataEmployeeObject.saveContractExtensionExport(
-							a -> consumer
-									.accept("El borrador de la pr\u00f3rroga de contrato se ha generado correctamente"),
+							a -> consumer.accept(PayrollAON.MSGS.contractExtensionDraftSuccess()),
 							e -> failure.accept(e));
 				}, f -> failure.accept(f));
 			}, f -> failure.accept(f));
@@ -271,50 +271,49 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		private void exportRelocationContract(Map<String, String> contractRelocationInfo, Consumer<String> consumer,
 				Consumer<Throwable> failure) {
-			showLoading("Generando borrador propuesta recolocaci\u00f3n");
+			showLoading(PayrollAON.MSGS.generatingRelocationDraft());
 			contrataEmployeeObject.saveContractRelocationExport(contractRelocationInfo,
-					a -> consumer.accept(
-							"El borrador de la propuesta recolocaci\u00f3n del contrato se ha generado correctamente"),
+					a -> consumer.accept(PayrollAON.MSGS.contractRelocationDraftSuccess()),
 					e -> failure.accept(e));
 		}
 
 		private void exportContract(Consumer<String> consumer, Consumer<Throwable> failure, boolean isTransform) {
-			showLoading("Generando borrador de contrato");
+			showLoading(PayrollAON.MSGS.generatingContractDraft());
 			contrataEmployeeObject.getContractOtherInfo(s -> {
 				if (AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
 					contrataEmployeeObject.getContractSpecificData(su -> {
 						contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 						contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 						contrataEmployeeObject.saveContractExport(isTransform,
-								a -> consumer.accept("El borrador de contrato se ha generado correctamente"),
+								a -> consumer.accept(PayrollAON.MSGS.contractDraftSuccess()),
 								e -> failure.accept(e));
 					}, f -> failure.accept(f));
 				else {
 					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 					contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 					contrataEmployeeObject.saveContractExport(isTransform,
-							a -> consumer.accept("El borrador de contrato se ha generado correctamente"),
+							a -> consumer.accept(PayrollAON.MSGS.contractDraftSuccess()),
 							e -> failure.accept(e));
 				}
 			}, f -> failure.accept(f));
 		}
 
 		private void exportBasicCopy(Consumer<String> consumer, Consumer<Throwable> failure) {
-			showLoading("Generando borrador de la copia basica");
+			showLoading(PayrollAON.MSGS.generatingBasicCopyDraft());
 			contrataEmployeeObject.getContractOtherInfo(s -> {
 				if (AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
 					contrataEmployeeObject.getContractSpecificData(su -> {
 						contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 						contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 						contrataEmployeeObject.saveBasicCopyExport(
-								a -> consumer.accept("El borrador de contrato se ha generado correctamente"),
+								a -> consumer.accept(PayrollAON.MSGS.contractDraftSuccess()),
 								e -> failure.accept(e));
 					}, f -> failure.accept(f));
 				else {
 					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 					contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 					contrataEmployeeObject.saveBasicCopyExport(
-							a -> consumer.accept("El borrador de contrato se ha generado correctamente"),
+							a -> consumer.accept(PayrollAON.MSGS.contractDraftSuccess()),
 							e -> failure.accept(e));
 				}
 			}, f -> failure.accept(f));
@@ -507,30 +506,30 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		public TGSSContextMenu() {
 
-			afi = addMenuItem("Cambios AFI", new AFICommand(), AON.CSS.aonIconTgss(), "afi");
-			peculiarities = addMenuItem("Peculiaridades de cotizaci\u00F3n", new PeculiaritiesCommand(),
+			afi = addMenuItem(PayrollAON.MSGS.afiChanges(), new AFICommand(), AON.CSS.aonIconTgss(), "afi");
+			peculiarities = addMenuItem(PayrollAON.MSGS.peculiaritiesOfQuotation(), new PeculiaritiesCommand(),
 					AON.CSS.aonIconTgss(), "peculiarities");
 
 			addSeparator();
 
-			ta = addMenuItem("Duplicados de Documentos TA", new TACommand(), AON.CSS.aonIconPdf(), "ta");
-			taEnd = addMenuItem("Duplicados de Documentos TA (Baja)", new TAEndCommand(), AON.CSS.aonIconPdf(),
+			ta = addMenuItem(PayrollAON.MSGS.duplicateDocumentsTA(), new TACommand(), AON.CSS.aonIconPdf(), "ta");
+			taEnd = addMenuItem(PayrollAON.MSGS.duplicateDocumentsTAEnd(), new TAEndCommand(), AON.CSS.aonIconPdf(),
 					"taEnd");
 
-			idc = addMenuItem("IDC-Trab Cuenta Ajena", new IDCCommand(), AON.CSS.aonIconPdf(), "idc");
+			idc = addMenuItem(PayrollAON.MSGS.idcTrabCuentaAjena(), new IDCCommand(), AON.CSS.aonIconPdf(), "idc");
 			;
-			idcPlNss = addMenuItem("IDC/Periodo Liquidaci\u00F3n-NSS", new IDCPlNssCommand(), AON.CSS.aonIconPdf(),
+			idcPlNss = addMenuItem(PayrollAON.MSGS.idcPeriodoLiquidacionNss(), new IDCPlNssCommand(), AON.CSS.aonIconPdf(),
 					"idcPlNss");
 
-			laboralLife = addItem("Vida Laboral", new LaboralLifeCommand(), AON.CSS.aonIconPdf(),
+			laboralLife = addItem(PayrollAON.MSGS.laboralLife(), new LaboralLifeCommand(), AON.CSS.aonIconPdf(),
 					AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			laboralLife.ensureDebugId("laboralLife");
 
 			separatorComunicate = addSeparator();
 
-			altaConsolidadaDelete = addMenuItem("Eliminar alta consolidada", new AltaConsolidadaDeleteCommand(),
+			altaConsolidadaDelete = addMenuItem(PayrollAON.MSGS.deleteAltaConsolidada(), new AltaConsolidadaDeleteCommand(),
 					AON.CSS.aonIconSend(), "altaConsolidadaDelete");
-			comunicateAFI = addMenuItem("Notificaci\u00f3n AFI (TGSS)", new ComunicateAFICommand(),
+			comunicateAFI = addMenuItem(PayrollAON.MSGS.notificacionAFITgss(), new ComunicateAFICommand(),
 					AON.CSS.aonIconSend(), "comunicateAFI");
 
 		}
@@ -1038,17 +1037,17 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		private MenuItem modificationPDF;
 
 		public AttachContextMenu() {
-			exportContract = addMenuItem("Borrador Contrato", new ExportContractCommand(), AON.CSS.aonIconPdf(),
+			exportContract = addMenuItem(PayrollAON.MSGS.borradorContrato(), new ExportContractCommand(), AON.CSS.aonIconPdf(),
 					"exportContract");
-			exportContract = addMenuItem("Borrador Copia Basica", new ExportBasicCopyCommand(), AON.CSS.aonIconPdf(),
+			exportContract = addMenuItem(PayrollAON.MSGS.borradorCopiaBasica(), new ExportBasicCopyCommand(), AON.CSS.aonIconPdf(),
 					"exportBasicCopy");
-			exportTransformContract = addMenuItem("Borrador Contrato (Transformac\u00f3n)",
+			exportTransformContract = addMenuItem(PayrollAON.MSGS.borradorContratoTransformacion(),
 					new ExportTransformContractCommand(), AON.CSS.aonIconPdf(), "exportTransformContract");
-			exportExtensionContract = addMenuItem("Borrador Contrato (Pr\u00f3rroga)",
+			exportExtensionContract = addMenuItem(PayrollAON.MSGS.borradorContratoProrroqa(),
 					new ExportExtensionContractCommand(), AON.CSS.aonIconPdf(), "exportExtensionContract");
-			exportRelocationContract = addMenuItem("Borrador Propuesta Recolocaci\u00f3n",
+			exportRelocationContract = addMenuItem(PayrollAON.MSGS.borradorPropuestaRecolocacion(),
 					new ExportRelocationContractCommand(), AON.CSS.aonIconPdf(), "exportRelocationContract");
-			modificationPDF = addMenuItem("Notificaci\u00f3n Laboral", new ModificationPDFCommand(),
+			modificationPDF = addMenuItem(PayrollAON.MSGS.notificacionLaboral(), new ModificationPDFCommand(),
 					AON.CSS.aonIconPdf(), "modificationPDF");
 		}
 

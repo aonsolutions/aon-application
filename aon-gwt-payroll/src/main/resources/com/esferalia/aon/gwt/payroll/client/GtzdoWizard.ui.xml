@@ -4,6 +4,7 @@
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.GtzdoWizard.MyStyle">
 
@@ -64,19 +65,19 @@
    	<g:HTMLPanel styleName="{style.pagePanel}"> 
         <g:HTMLPanel ui:field="gtzdoFieldsPanel" styleName="{style.flexPanel} {style.flexWrap}">
         	<g:HTMLPanel ui:field="paymentTypePanel" styleName="{style.flexColumn}">
-				<g:Label styleName="{style.title}">Tipo de devengo</g:Label>
+				<g:Label styleName="{style.title}" text="{msgs.accrualType}"/>
 				<g:ListBox ui:field="paymentType" styleName="aon-selectOneMenu" />
 			</g:HTMLPanel>
 			<g:HTMLPanel ui:field="gtzdoTypePanel" styleName="{style.flexColumn}">
-				<g:Label styleName="{style.title}">Tipo IT</g:Label>
+				<g:Label styleName="{style.title}" text="{msgs.tipoIT}"/>
 				<g:ListBox ui:field="gtzdoType" styleName="aon-selectOneMenu" />
 			</g:HTMLPanel>
 			<g:HTMLPanel ui:field="gtzdoPeriodicityPanel" styleName="{style.flexColumn}">
-				<g:Label styleName="{style.title}">Periocidad</g:Label>
+				<g:Label styleName="{style.title}" text="{msgs.frequency}"/>
 				<g:ListBox ui:field="gtzdoPeriodicityType" styleName="aon-selectOneMenu" />
 			</g:HTMLPanel>
 			<g:HTMLPanel ui:field="gtzdoAboutPanel" styleName="{style.flexColumn}">
-				<g:Label styleName="{style.title}">Sobre</g:Label>
+				<g:Label styleName="{style.title}" text="{msgs.sobre}"/>
 				<g:ListBox ui:field="gtzdoAboutType" styleName="aon-selectOneMenu" />
 			</g:HTMLPanel>
 		</g:HTMLPanel>

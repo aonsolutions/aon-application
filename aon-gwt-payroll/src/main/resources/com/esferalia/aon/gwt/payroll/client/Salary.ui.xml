@@ -1,8 +1,10 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
-	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client" 
+	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client"
 	xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'
 	>
+
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 
 
 	<ui:style>
@@ -23,9 +25,9 @@
 			<g:FlowPanel>
 
 				<g:MenuBar >
-					<g:MenuItem text="Archivo">
+					<g:MenuItem text="{msgs.fileMenu}">
 						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="downloadMenuItem"  text="Descargar" />
+							<g:MenuItem ui:field="downloadMenuItem"  text="{msgs.download}" />
 							<!--  g:MenuItem text="Descargar como..." >
 								<g:MenuBar vertical="true" >
 									<g:MenuItem text="PDF" />
@@ -33,15 +35,15 @@
 							</g:MenuItem-->
 							<!--  g:MenuItem text="Enviar por correo electrónico al trabajador" /-->
 							<!--   g:MenuItem text="Enviar por correo electrónico como archivo adjunto..." /-->
-							<g:MenuItem styleName="gwt-MenuItemSeparator"><div class="menuSeparatorInner"></div></g:MenuItem> 
-							<g:MenuItem ui:field="printMenuItem" text="Imprimir..." />
-							<g:MenuItem ui:field="publishMenuItem" text="Publicar..." />
+							<g:MenuItem styleName="gwt-MenuItemSeparator"><div class="menuSeparatorInner"></div></g:MenuItem>
+							<g:MenuItem ui:field="printMenuItem" text="{msgs.printDots}" />
+							<g:MenuItem ui:field="publishMenuItem" text="{msgs.publishDots}" />
 						</g:MenuBar>
 					</g:MenuItem>
-					<g:MenuItem text="Ver">
+					<g:MenuItem text="{msgs.view}">
 						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="reduceMenuItem" text="Reducir" />
-							<g:MenuItem ui:field="enlargeMenuItem" text="Ampliar" />
+							<g:MenuItem ui:field="reduceMenuItem" text="{msgs.reduce}" />
+							<g:MenuItem ui:field="enlargeMenuItem" text="{msgs.enlarge}" />
 						</g:MenuBar>
 					</g:MenuItem>
 				</g:MenuBar>
@@ -50,7 +52,7 @@
 					<g:HorizontalPanel >
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal" >
-								<g:Label styleName="aon-outputText">Nominas</g:Label>
+								<g:Label styleName="aon-outputText" text="{msgs.payrolls}"/>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-subtitle">
@@ -61,10 +63,10 @@
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 								<g:Button ui:field='deleteButton'
-									styleName='aon-finding-toolbar-item aon-icon-delete' text="Borrar"/>
+									styleName='aon-finding-toolbar-item aon-icon-delete' text="{msgs.delete}"/>
 								<!--  g:Button ui:field='printButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" /-->
-								<g:Button ui:field='publishButton' styleName='aon-finding-toolbar-item aon-icon-google-drive' text="Publicar" />
-								<g:Button ui:field='bidoqPublishButton' styleName='aon-finding-toolbar-item aon-icon-bidoq' text=" Publicar" />
+								<g:Button ui:field='publishButton' styleName='aon-finding-toolbar-item aon-icon-google-drive' text="{msgs.publish}" />
+								<g:Button ui:field='bidoqPublishButton' styleName='aon-finding-toolbar-item aon-icon-bidoq' text=" {msgs.publish}" />
 								<g:ListBox ui:field='salaryTypeListBox' styleName=''  />
 								<g:ListBox ui:field='dateListBox' styleName=''  />
 								<g:ListBox ui:field='reportTypeListBox' styleName='' visible="false" />

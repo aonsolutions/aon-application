@@ -2,22 +2,24 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client'>
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
 	<ui:Style>
 	.editor {
-		
+
 	}
-	
+
 	.vertical-space {
 		height: 20px;
 	}
-	
+
 	.document {
 		margin-top: 5px;
 		margin-left: auto;
 		margin-right: auto;
 		margin-bottom: 15px;
 	}
-	
+
 	</ui:Style>
 
 
@@ -31,7 +33,7 @@
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal">
-								<g:Label styleName="aon-outputText">Deducciones</g:Label>
+								<g:Label styleName="aon-outputText" text="{msgs.deductions}"/>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-subtitle">
@@ -42,11 +44,11 @@
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button ui:field='acceptButton'
-									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR" />
+									styleName='aon-finding-toolbar-item aon-icon-accept' text="{msgs.saveAction}" />
 								<g:Button ui:field='deleteButton'
-									styleName='aon-finding-toolbar-item aon-icon-delete' text="BORRAR" />
-								<!-- <g:Button ui:field="undoButton" styleName='aon-finding-toolbar-item 
-									{style.undoButton}' enabled="false" /> <g:Button ui:field='redoButton' styleName="aon-finding-toolbar-item 
+									styleName='aon-finding-toolbar-item aon-icon-delete' text="{msgs.deleteAction}" />
+								<!-- <g:Button ui:field="undoButton" styleName='aon-finding-toolbar-item
+									{style.undoButton}' enabled="false" /> <g:Button ui:field='redoButton' styleName="aon-finding-toolbar-item
 									{style.redoButton}" enabled="false" /> -->
 							</g:HTMLPanel>
 						</g:HorizontalPanel>

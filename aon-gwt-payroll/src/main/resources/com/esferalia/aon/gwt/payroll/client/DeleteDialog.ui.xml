@@ -1,13 +1,14 @@
-<ui:UiBinder 
+<ui:UiBinder
     xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
 	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
 
+    <ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
     <ui:with field='res'
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
-    
-    
+
+
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.DeleteDialog.MyStyle">
 
 		.messageStyle{
@@ -38,15 +39,15 @@
 	<g:HTMLPanel styleName="{style.form}">
 
 		<g:VerticalPanel>
-		    <g:HorizontalPanel styleName="{style.paddingBlocks}"> 
+		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
 		    	<g:Label ui:field="messageLabel" styleName="{style.messageStyle}"></g:Label>
 		    </g:HorizontalPanel>
 		   	<g:HorizontalPanel styleName="{style.paddingBlocks}">
-		    	<g:Button styleName="{style.closeButton}" ui:field="cancelButton">Cancelar</g:Button>
-		    	<g:Button styleName="{style.closeButton}" ui:field="acceptButton">Aceptar</g:Button>
+		    	<g:Button styleName="{style.closeButton}" ui:field="cancelButton" text="{msgs.cancel}"/>
+		    	<g:Button styleName="{style.closeButton}" ui:field="acceptButton" text="{msgs.accept}"/>
 		    </g:HorizontalPanel>
 		</g:VerticalPanel>
-			
+
 	</g:HTMLPanel>
 
 </ui:UiBinder>

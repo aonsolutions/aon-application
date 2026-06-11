@@ -1,12 +1,14 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
 	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
-	
+
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
 	<ui:Style>
 
 		.form {
-			padding: 10px; 		
+			padding: 10px;
 		}
 
 		.label {
@@ -21,7 +23,7 @@
 			margin-top:10x;
 			font-weight: bold;
 			padding: 1px 0.5em;
-			vertical-align: top;			
+			vertical-align: top;
 			white-space: nowrap;
 			background-color: #F2F2F2;
 		}
@@ -29,7 +31,7 @@
 		.field {
 			padding: 1px 0.5em;
 		}
-		
+
 		.info {
 		}
 
@@ -41,11 +43,11 @@
 
 		.messages {
 			padding-left: 0.5em;
-			padding-bottom: 10px; 		
+			padding-bottom: 10px;
 		}
 
 		.buttons {
-			padding-top: 10px; 		
+			padding-top: 10px;
 			text-align: right;
 		}
 
@@ -53,17 +55,17 @@
 
 	</ui:Style>
 	<g:HTMLPanel styleName="{style.form}">
-		
+
 		<div class="{style.messages}" >
-			<g:Label styleName="{style.info}">Introduzca las fechas:</g:Label>
+			<g:Label styleName="{style.info}" text="{msgs.introduceDates}"/>
 		</div>
 
 		<g:Grid width="100%" >
 			<g:row>
-				<g:customCell styleName="{style.label}" ><g:Label text="Fecha" /></g:customCell>
-				<g:customCell styleName="{style.label}" ><g:Label text="Desde" /></g:customCell>
+				<g:customCell styleName="{style.label}" ><g:Label text="{msgs.date}" /></g:customCell>
+				<g:customCell styleName="{style.label}" ><g:Label text="{msgs.from}" /></g:customCell>
 				<g:customCell styleName="{style.field}" ><datepicker:DateBox ui:field="startDateBox"/></g:customCell>
-				<g:customCell styleName="{style.label}" ><g:Label text="Hasta" /></g:customCell>
+				<g:customCell styleName="{style.label}" ><g:Label text="{msgs.until}" /></g:customCell>
 				<g:customCell styleName="{style.field}" ><datepicker:DateBox ui:field="endDateBox"/></g:customCell>
 			</g:row>
 			<g:row>
@@ -74,12 +76,12 @@
 				<g:customCell ><g:Label ui:field="endDatePatternLabel"  /></g:customCell>
 			</g:row>
 		</g:Grid>
-		
+
 		<div class="{style.buttons}">
-			<g:Button ui:field="cancelButton" >Cancelar</g:Button>
-			<g:Button ui:field="acceptButton" enabled="false">Aceptar</g:Button>
+			<g:Button ui:field="cancelButton" text="{msgs.cancel}"/>
+			<g:Button ui:field="acceptButton" enabled="false" text="{msgs.accept}"/>
 		</div>
-	
+
 	</g:HTMLPanel>
 
 

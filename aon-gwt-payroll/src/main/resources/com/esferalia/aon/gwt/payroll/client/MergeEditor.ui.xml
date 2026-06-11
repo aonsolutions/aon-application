@@ -1,7 +1,9 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:codemirror='urn:import:com.esferalia.aon.gwt.codemirror.client.ui'
 >
+
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 
 	<ui:style>
 		.editor {
@@ -9,7 +11,7 @@
 			height:100% !important;
 		}
 
-			
+
 	</ui:style>
 	<g:DockLayoutPanel unit="PX" >
 		<g:north size="72"  >
@@ -17,35 +19,35 @@
 			<g:FlowPanel >
 
 				<g:MenuBar >
-					<g:MenuItem text="Archivo">
+					<g:MenuItem text="{msgs.fileMenu}">
 						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="saveMenuItem"  text="Guardar" />
+							<g:MenuItem ui:field="saveMenuItem"  text="{msgs.save}" />
 						</g:MenuBar>
 					</g:MenuItem>
 				</g:MenuBar>
-				
+
 				<g:FlowPanel styleName="aon-finding-title-toolbar" >
 					<g:HorizontalPanel >
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal" >
-								<g:Label styleName="aon-outputText" ui:field="titleLabel">Editor</g:Label>
+								<g:Label styleName="aon-outputText" ui:field="titleLabel" text="{msgs.editor}"/>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-subtitle">
 							<g:HTMLPanel styleName="aon-finding-aubtitle-internal" >
-								<g:Label styleName="aon-outputText" text=" "/> 
+								<g:Label styleName="aon-outputText" text=" "/>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HorizontalPanel ui:field="toolBarPanel" styleName="aon-finding-toolbar" >
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
-								<g:Button ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-save' text="Guardar" /> 
+								<g:Button ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-save' text="{msgs.save}" />
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
-								<g:Button ui:field='copyButton' styleName='aon-finding-toolbar-item aon-icon-transfer' text="Copiar" /> 
+								<g:Button ui:field='copyButton' styleName='aon-finding-toolbar-item aon-icon-transfer' text="{msgs.copy}" />
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
-				</g:FlowPanel>				
+				</g:FlowPanel>
 
 			</g:FlowPanel>
 

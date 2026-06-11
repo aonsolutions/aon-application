@@ -1,8 +1,10 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
 	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
+
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 
 	<ui:style type='com.esferalia.aon.gwt.payroll.client.Tooltip.Style'>
 
@@ -55,7 +57,7 @@
 		<table>
 			<tr>
 				<td>
-					<g:Label styleName="aon-bold" ui:field="baja">Baja:</g:Label>
+					<g:Label styleName="aon-bold" ui:field="baja" text="{msgs.bajaColon}"/>
 				</td>
 				<td>
 					<g:InlineLabel ui:field="startDateLabel"></g:InlineLabel>
@@ -65,7 +67,7 @@
 					<g:Label ui:field="startDate"></g:Label>
 				</td>
 				<td>
-					<g:InlineLabel ui:field="causeStartLabel">Motivo</g:InlineLabel>
+					<g:InlineLabel ui:field="causeStartLabel" text="{msgs.reason}"/>
 				</td>
 				<td>
 					<g:ListBox width="10em" ui:field='typeLeaveListBox' />
@@ -74,7 +76,7 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label styleName="aon-bold" ui:field="alta">Alta:</g:Label>
+					<g:Label styleName="aon-bold" ui:field="alta" text="{msgs.altaColon}"/>
 				</td>
 				<td>
 					<g:InlineLabel ui:field="endDateLabel"></g:InlineLabel>
@@ -85,7 +87,7 @@
 					
 				</td>
 				<td>
-					<g:InlineLabel ui:field="causeEndLabel">Motivo</g:InlineLabel>
+					<g:InlineLabel ui:field="causeEndLabel" text="{msgs.reason}"/>
 				</td>
 				<td>
 					<g:ListBox width="10em" ui:field='typeDischargeListBox' />
@@ -96,7 +98,7 @@
 				<td colspan="6" align="right">
 				    <br></br>
 					<div styleName="{style.buttons}">
-						<g:Button ui:field="acceptButton">Aceptar</g:Button>
+						<g:Button ui:field="acceptButton" text="{msgs.accept}"/>
 					</div>
 				</td>
 			</tr>

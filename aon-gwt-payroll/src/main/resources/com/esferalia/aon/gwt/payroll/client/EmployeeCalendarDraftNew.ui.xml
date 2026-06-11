@@ -3,39 +3,41 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftNew.MyStyle">
-	
+
 		/* ------------------- Menu Bar ------------------- */
 		.menuBar{
 			cursor: pointer;
 			display: grid;
 			border-right: #808080 1px solid;
 		}
-		
+
 		.findingTitleCalendar{
 			width: 90px !important;
 		}
-		
+
 		.findingTitleEdition{
 			width: 65px !important;
 		}
-		
+
 		.bold{
 			text-transform: uppercase;
 			font-size: 0.8em;
 			font-weight: bold;
 			padding: 4px;
 		}
-	
+
 		/* ------------------- Year Panel ------------------- */
 		.aonCheck{
 			background-position: .2rem .2rem !important;
 		}
-	
+
 		/* ------------------- Days Type Panel ------------------- */
-		
+
 		.daysTypePanel{
 			margin: 1rem;
 			display: flex;
@@ -44,7 +46,7 @@
 			padding: .3rem 0;
 			flex-wrap: wrap;
 		}
-		
+
 		.typeButtonUpperMenuStyle{
     		border-radius: 8%;
 			border: none;
@@ -53,7 +55,7 @@
 			padding: .3rem .4rem;
 			cursor: pointer;
 		}
-		
+
 		.aonButtonStyle{
 			background-color: #e1e1e1;
 			border: none;
@@ -64,15 +66,15 @@
 			margin-right: .3rem;
 			cursor: pointer;
 		}
-		
+
 		.aonButtonStyleWithOutIcon {
 			padding: 0 .5rem 0 .5rem;
 		}
-		
+
 		.eraseEventStyle{
 			padding: 0 0.5rem 0 1.8rem;
 		}
-		
+
 		.aon-toolbar-button {
 		    height: 24px;
 		    padding-left: 25px;
@@ -81,22 +83,22 @@
 		    background-color: #f6f6f6;
 		    background-size: 20px;
 		}
-		
+
 		/* ------------------- Color Days Type Panel ------------------- */
-		
+
 		.workingColor {
 			background-color: #f6f6f6;
 			color: black;
 		}
-		
+
 		.noWorkingColor{
 			background-color: salmon;
 		}
-		
+
 		.inactivityColor{
 			background-color: #71b1e8;
 		}
-		
+
 		.dropColor{
 			background-color: #733969;
 		}
@@ -104,11 +106,11 @@
 		.holidayColor{
 			background-color: green;
 		}
-		
+
 		.leaveColor{
 			background-color: red;
 		}
-		
+
 		.partialityColor{
 			background-color: #9c85ee;
 		}
@@ -116,24 +118,24 @@
 		.peonadasColor{
 			background-color: #d692f9;
 		}
-		
+
 		.effectiveColor{
 			background-color: #77e1d2;
 		}
-		
+
 		/* ------------------- Calendar Panel ------------------- */
-		
+
 		.tableStyle {
 			border-collapse: collapse;
 			margin-left: 0.8em;
-			width: 97%;	
+			width: 97%;
 		}
-		
+
 		.tableStyle td {
 			text-align: center;
 			border-bottom: 1px solid #ddd;
 		}
-		
+
 		.noselect {
 			-webkit-touch-callout: none; /* iOS Safari */
 			-webkit-user-select: none; /* Safari */
@@ -142,35 +144,35 @@
 			-ms-user-select: none; /* Internet Explorer/Edge */
 			user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 		}
-		
+
 		.cabeceraStyle {
 			font-weight: bold;
 			background-color: transparent;
 			padding: .2rem;
 		}
-		
+
 		.mesesImparesStyle {
 			background-color: #eee;
 		}
-		
+
 		.labelStyle{
 			width: 20px;
 			height: 20px;
 		}
-		
+
 		/* ------------------- Selected Days ------------------- */
-		
+
 		.isSelectedStyle {
 			background-color: #166ef3 !important;
 			color: #ffffff !important;
 			border-radius: 0px !important;
 			padding: .3rem .2rem !important;
 		}
-		
+
 		.onChange {
 			background-color: rgba(255, 255, 0, 0.38);
 		}
-		
+
 		.dayTypeButton{
 			border-radius: 20%;
 			color: #ffffff;
@@ -179,35 +181,35 @@
 		.nonWorkingStyle{
 			background-color: salmon !important;
 		}
-		
+
 		.inactivityStyle {
 			background-color: #71b1e8;
 		}
-		
+
 		.holidayStyle {
 			background-color: #52ab3c !important;
 		}
-		
+
 		.partialityStyle {
 			background-color: #9c85ee;
 		}
-		
+
 		.dropStyle {
-			background-color: #733969;	
+			background-color: #733969;
 		}
-		
+
 		.strikeStyle {
 			background-color: #a09c13;
 		}
-		
+
 		.ereStyle {
 			background-color: #b91257;
 		}
-		
+
 		.ereFzaStyle {
 			background-color: rgba(185, 18, 87, 0.7);
 		}
-		
+
 		.ereFzaExonStyle {
 			background-color: rgba(185, 18, 87, 0.4);
 		}
@@ -215,16 +217,16 @@
 		.peonadasStyle {
 			background-color: #d692f9;
 		}
-		
+
 		.itStyle {
 			background-color: rgba(255, 0, 0, 0.72);
 		}
-		
+
 		.freeDayStyle{
 			background-color: #445a69;
 		}
-		
-		.paidLeaveColor{ 
+
+		.paidLeaveColor{
 			color: black;
 			border: 1.5px solid #80bc70;
 			background-color: #f6f6f6;
@@ -237,13 +239,13 @@
 			background-color: #f6f6f6;
 			border-radius: 3px;
 		}
-		
+
 		.effectiveStyle{
 			background-color: #77e1d2;
 		}
-		
+
 		/* ------------------- Hour Days ------------------- */
-		
+
 		.hourStyle{
 			padding: .2rem;
 			border: none;
@@ -253,20 +255,20 @@
 			height: 20px;
 			margin: 0 auto;
 		}
-		
+
 		/* ------------------- Utilities ------------------- */
-		
+
 		.selectedStyle{
 			background-color: #166ef3 !important;
 			color: #ffffff !important;
 			border-radius: 0px !important;
 			padding: 3px !important;
 		}
-		
+
 		.onChange{
 			background-color: rgba(255, 255, 0, 0.38);
 		}
-		
+
 		.cursorPointer{
 			cursor: pointer;
 			display: flex;
@@ -274,39 +276,39 @@
 			justify-content: center;
 			margin: 0 auto;
 		}
-		
+
 		.outOfContractStyle {
 			color: #aaa;
 			cursor: auto;
 		}
-		
+
 		.hide{
 			display : none;
 		}
-		
+
 		.flex{
 			display: flex;
 			align-items: center;
 		}
-		
+
 		.cmdBtn{
 			background-position: center left;
 			background-repeat: no-repeat;
 			padding-left: 25px !important;
 			background-size: contain;
-		}	
-		
+		}
+
 		.flexColumn{
 			display: flex;
 			flex-direction: column;
 		}
-		
+
 		.container{
 			width: 100%;
 			min-width: 600px;
 			height: 100%;
 		}
-		
+
 		.mt50{
 			margin-top: 50px;
 		}
@@ -316,28 +318,28 @@
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:center>
 			<g:VerticalPanel ui:field="mainContainer" styleName="{style.container} {style.mt50}">
-			    
+
 				<g:HTMLPanel ui:field="daysTypePanel" styleName="{style.daysTypePanel}">
 					<g:HTMLPanel>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.workingColor}" ui:field="workingDayButton">Laborables</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.paidLeaveColor}" ui:field="paidLeaveDayButton">Perm. Retribuido</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.noWorkingColor}" ui:field="nonWorkingDayButton">No Laborables</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.effectiveColor}" ui:field="effectiveDayButton">Efectivos</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.inactivityColor}" ui:field="inactivityDayButton">Inactividad</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.dropColor}" ui:field="dropDayButton">Ausencia</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.holidayColor}" ui:field="holidayDayButton">Vacaciones</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.leaveColor}" ui:field="leaveDayButton">Baja IT</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.partialityColor}" ui:field="partialityDayButton">Parcialidad</g:Button>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.peonadasColor}" ui:field="peonadasDayButton">Peonadas</g:Button>
-						<g:Button styleName="{style.aonButtonStyle} {style.aon-toolbar-button} aon_icon_schedule" ui:field="hourButton">Horas</g:Button>
-						<g:Button styleName="{style.aonButtonStyle} {style.aon-toolbar-button} aon_icon_schedule" ui:field="extraHoursButton">H. Extras</g:Button>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.workingColor}" ui:field="workingDayButton" text="{msgs.workingDays}"/>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.paidLeaveColor}" ui:field="paidLeaveDayButton" text="{msgs.paidLeave}"/>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.noWorkingColor}" ui:field="nonWorkingDayButton" text="{msgs.nonWorking}"/>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.effectiveColor}" ui:field="effectiveDayButton" text="{msgs.effective}"/>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.inactivityColor}" ui:field="inactivityDayButton" text="{msgs.inactivity}"/>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.dropColor}" ui:field="dropDayButton" text="{msgs.absence}"/>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.holidayColor}" ui:field="holidayDayButton" text="{msgs.vacations}"/>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.leaveColor}" ui:field="leaveDayButton" text="{msgs.sickLeave}"/>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.partialityColor}" ui:field="partialityDayButton" text="{msgs.partiality}"/>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.peonadasColor}" ui:field="peonadasDayButton" text="{msgs.peonadas}"/>
+						<g:Button styleName="{style.aonButtonStyle} {style.aon-toolbar-button} aon_icon_schedule" ui:field="hourButton" text="{msgs.hours}"/>
+						<g:Button styleName="{style.aonButtonStyle} {style.aon-toolbar-button} aon_icon_schedule" ui:field="extraHoursButton" text="{msgs.extraHours}"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel>
-						<g:Button styleName="{style.aonButtonStyle} {style.eraseEventStyle} {style.aon-toolbar-button} aon_icon_close" ui:field="eraseEventButton">Limpiar</g:Button>
-						<g:Button styleName="{style.aonButtonStyle} {style.aon-toolbar-button} aon_icon_help" ui:field="leyendButton">Leyenda</g:Button>
+						<g:Button styleName="{style.aonButtonStyle} {style.eraseEventStyle} {style.aon-toolbar-button} aon_icon_close" ui:field="eraseEventButton" text="{msgs.clear}"/>
+						<g:Button styleName="{style.aonButtonStyle} {style.aon-toolbar-button} aon_icon_help" ui:field="leyendButton" text="{msgs.legend}"/>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
-				
+
 				<g:ScrollPanel ui:field="scrollInfo">
 					<g:Grid ui:field="calendarGrid" styleName="{style.tableStyle} {style.noselect}">
 						<g:row>
@@ -345,115 +347,115 @@
 								<g:Label>&nbsp;</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>L</g:Label>
+								<g:Label text="{msgs.mondayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>M</g:Label>
+								<g:Label text="{msgs.tuesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>X</g:Label>
+								<g:Label text="{msgs.wednesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>J</g:Label>
+								<g:Label text="{msgs.thursdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>V</g:Label>
+								<g:Label text="{msgs.fridayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>S</g:Label>
+								<g:Label text="{msgs.saturdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>D</g:Label>
+								<g:Label text="{msgs.sundayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>L</g:Label>
+								<g:Label text="{msgs.mondayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>M</g:Label>
+								<g:Label text="{msgs.tuesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>X</g:Label>
+								<g:Label text="{msgs.wednesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>J</g:Label>
+								<g:Label text="{msgs.thursdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>V</g:Label>
+								<g:Label text="{msgs.fridayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>S</g:Label>
+								<g:Label text="{msgs.saturdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>D</g:Label>
+								<g:Label text="{msgs.sundayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>L</g:Label>
+								<g:Label text="{msgs.mondayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>M</g:Label>
+								<g:Label text="{msgs.tuesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>X</g:Label>
+								<g:Label text="{msgs.wednesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>J</g:Label>
+								<g:Label text="{msgs.thursdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>V</g:Label>
+								<g:Label text="{msgs.fridayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>S</g:Label>
+								<g:Label text="{msgs.saturdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>D</g:Label>
+								<g:Label text="{msgs.sundayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>L</g:Label>
+								<g:Label text="{msgs.mondayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>M</g:Label>
+								<g:Label text="{msgs.tuesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>X</g:Label>
+								<g:Label text="{msgs.wednesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>J</g:Label>
+								<g:Label text="{msgs.thursdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>V</g:Label>
+								<g:Label text="{msgs.fridayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>S</g:Label>
+								<g:Label text="{msgs.saturdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>D</g:Label>
+								<g:Label text="{msgs.sundayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>L</g:Label>
+								<g:Label text="{msgs.mondayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>M</g:Label>
+								<g:Label text="{msgs.tuesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>X</g:Label>
+								<g:Label text="{msgs.wednesdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>J</g:Label>
+								<g:Label text="{msgs.thursdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>V</g:Label>
+								<g:Label text="{msgs.fridayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>S</g:Label>
+								<g:Label text="{msgs.saturdayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>D</g:Label>
+								<g:Label text="{msgs.sundayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>L</g:Label>
+								<g:Label text="{msgs.mondayAbbr}"/>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>M</g:Label>
+								<g:Label text="{msgs.tuesdayAbbr}"/>
 							</g:customCell>
 							<!-- g:customCell styleName="{style.cabeceraStyle}">
 								<g:Label ui:field="totalHours">Horas Mensuales</g:Label>
@@ -461,7 +463,7 @@
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>Enero</g:Label>
+								<g:Label text="{msgs.enero}"/>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
@@ -476,7 +478,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>Febrero</g:Label>
+								<g:Label text="{msgs.febrero}"/>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -491,7 +493,7 @@
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
 							<g:customCell styleName="{style.cabeceraStyle}  {style.cursorPointer}">
-								<g:Label>Marzo</g:Label>
+								<g:Label text="{msgs.marzo}"/>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
@@ -506,7 +508,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>Abril</g:Label>
+								<g:Label text="{msgs.abril}"/>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -521,7 +523,7 @@
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>Mayo</g:Label>
+								<g:Label text="{msgs.mayo}"/>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
@@ -536,7 +538,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>Junio</g:Label>
+								<g:Label text="{msgs.junio}"/>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -551,7 +553,7 @@
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>Julio</g:Label>
+								<g:Label text="{msgs.julio}"/>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
@@ -566,7 +568,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>Agosto</g:Label>
+								<g:Label text="{msgs.agosto}"/>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -581,7 +583,7 @@
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>Septiembre</g:Label>
+								<g:Label text="{msgs.septiembre}"/>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
@@ -596,7 +598,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>Octubre</g:Label>
+								<g:Label text="{msgs.octubre}"/>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -611,7 +613,7 @@
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>Noviembre</g:Label>
+								<g:Label text="{msgs.noviembre}"/>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
@@ -626,7 +628,7 @@
 						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
-								<g:Label>Diciembre</g:Label>
+								<g:Label text="{msgs.diciembre}"/>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -644,5 +646,4 @@
 			</g:VerticalPanel>
 		</g:center>
 	</g:DockLayoutPanel>
-</ui:UiBinder> 
-
+</ui:UiBinder>

@@ -1,17 +1,19 @@
-<ui:UiBinder 
+<ui:UiBinder
     xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 
     <ui:style>
 
 		.noWorkingColor{
 			background-color: salmon;
 		}
-		
+
 		.holidayColor{
 			background-color: #52ab3c;
 		}
-		
+
 		.effectiveColor{
 			background-color: #77e1d2;
 		}
@@ -19,11 +21,11 @@
 		.inactivityColor{
 			background-color: #71b1e8;
 		}
-		
+
 		.dropColor{
 			background-color: #733969;
 		}
-		
+
 		.strikeColor{
 			background-color: #a09c13;
     	}
@@ -31,15 +33,15 @@
 		.ereColor{
 			background-color: #b91257;
 		}
-		
+
 		.ereFzaColor{
 			background-color: rgba(185, 18, 87, 0.7);
 		}
-		
+
 		.ereFzaExonColor{
 			background-color: rgba(185, 18, 87, 0.4);
 		}
-		
+
 		.peonadasColor{
 			background-color: #d692f9;
 		}
@@ -51,11 +53,11 @@
 		.itColor{
 			background-color: rgba(255, 0, 0, 0.72);
 		}
-		
+
 		.partialityColor{
 			background-color: #9c85ee;
 		}
-		
+
 		.paidLeaveColor{
 			color: black;
 			border: 1.5px solid #80bc70 !important;
@@ -72,18 +74,18 @@
 			height: 10px;
 			width: 10px;
 		}
-		
+
 	</ui:style>
 
 	<g:HTMLPanel styleName="aon-width-all aon-height-all">
-	
+
 		<table class="aon-width-all aon-height-all" style="padding: 5px;">
 			<tr>
 				<td>
 					<g:Label styleName="{style.colorButton} {style.noWorkingColor}"/>
 				</td>
 				<td>
-					<g:Label>No Laborables</g:Label>
+					<g:Label text="{msgs.nonWorking}"/>
 				</td>
 				<td>
 					<g:Label ui:field="nonWorkingDays"/>
@@ -94,7 +96,7 @@
 					<g:Label styleName="{style.colorButton} {style.effectiveColor}"/>
 				</td>
 				<td>
-					<g:Label>Efectivos</g:Label>
+					<g:Label text="{msgs.effective}"/>
 				</td>
 				<td>
 					<g:Label ui:field="effectiveDays"/>
@@ -105,7 +107,7 @@
 					<g:Label styleName="{style.colorButton} {style.inactivityColor}"/>
 				</td>
 				<td>
-					<g:Label>Inactividad</g:Label>
+					<g:Label text="{msgs.inactivity}"/>
 				</td>
 				<td>
 					<g:Label ui:field="inactivityDays"/>
@@ -116,7 +118,7 @@
 					<g:Label styleName="{style.colorButton} {style.strikeColor}"/>
 				</td>
 				<td>
-					<g:Label>Huelga</g:Label>
+					<g:Label text="{msgs.strike}"/>
 				</td>
 				<td>
 					<g:Label ui:field="strikeDays"/>
@@ -127,7 +129,7 @@
 					<g:Label styleName="{style.colorButton} {style.ereColor}"/>
 				</td>
 				<td>
-					<g:Label>ERE</g:Label>
+					<g:Label text="{msgs.ere}"/>
 				</td>
 				<td>
 					<g:Label ui:field="ereDays"/>
@@ -138,7 +140,7 @@
 					<g:Label styleName="{style.colorButton} {style.ereFzaColor}"/>
 				</td>
 				<td>
-					<g:Label>ERE Fuerza Mayor</g:Label>
+					<g:Label text="{msgs.ereFza}"/>
 				</td>
 				<td>
 					<g:Label ui:field="ereFZADays"/>
@@ -149,7 +151,7 @@
 					<g:Label styleName="{style.colorButton} {style.ereFzaExonColor}"/>
 				</td>
 				<td>
-					<g:Label>ERE Fuerza Mayor (Exoneración de cuotas)</g:Label>
+					<g:Label text="{msgs.ereFzaExon}"/>
 				</td>
 				<td>
 					<g:Label ui:field="ereFZAExonDays"/>
@@ -160,7 +162,7 @@
 					<g:Label styleName="{style.colorButton} {style.dropColor}"/>
 				</td>
 				<td>
-					<g:Label>Ausencia</g:Label>
+					<g:Label text="{msgs.absence}"/>
 				</td>
 				<td>
 					<g:Label ui:field="dropDays"/>
@@ -171,7 +173,7 @@
 					<g:Label styleName="{style.colorButton} {style.holidayColor}"/>
 				</td>
 				<td>
-					<g:Label>Vacaciones</g:Label>
+					<g:Label text="{msgs.vacations}"/>
 				</td>
 				<td>
 					<g:Label ui:field="holidayDays"/>
@@ -182,7 +184,7 @@
 					<g:Label styleName="{style.colorButton} {style.sundayColor}"/>
 				</td>
 				<td>
-					<g:Label>Festivos</g:Label>
+					<g:Label text="{msgs.festiveDays}"/>
 				</td>
 				<td>
 					<g:Label ui:field="festiveDays"/>
@@ -193,7 +195,7 @@
 					<g:Label styleName="{style.colorButton} {style.itColor}"/>
 				</td>
 				<td>
-					<g:Label>Baja IT</g:Label>
+					<g:Label text="{msgs.sickLeave}"/>
 				</td>
 				<td>
 					<g:Label ui:field="leaveDays"/>
@@ -204,7 +206,7 @@
 					<g:Label styleName="{style.colorButton} {style.partialityColor}"/>
 				</td>
 				<td>
-					<g:Label>Parcialidad</g:Label>
+					<g:Label text="{msgs.partiality}"/>
 				</td>
 				<td>
 					<g:Label ui:field="partialityDays"/>
@@ -215,7 +217,7 @@
 					<g:Label styleName="{style.colorButton} {style.peonadasColor}"/>
 				</td>
 				<td>
-					<g:Label>Peonadas</g:Label>
+					<g:Label text="{msgs.peonadas}"/>
 				</td>
 				<td>
 					<g:Label ui:field="peonadasDays"/>
@@ -226,14 +228,14 @@
 					<g:Label styleName="{style.paidLeaveColor} {style.colorButton}"/>
 				</td>
 				<td>
-					<g:Label>Perm. Retribuido</g:Label>
+					<g:Label text="{msgs.paidLeave}"/>
 				</td>
 				<td>
 					<g:Label ui:field="paidLeaveDays"/>
 				</td>
 			</tr>
 		</table>
-			
+
 	</g:HTMLPanel>
 
 </ui:UiBinder>

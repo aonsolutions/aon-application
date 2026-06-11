@@ -3,27 +3,28 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client'>
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources" />
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainConfigComunica.MyStyle">
-		
+
 		.container{
 			margin: 0 10px;
 		}
-		
+
 		.widthAll{
 			width: 100%;
 		}
-		
+
 		.mt10{
 			margin-top: 10px;
 		}
-		
+
 		.mt50{
 			margin-top: 50px;
 			padding: 0px 1.5em;
 		}
-		
+
 	</ui:style>
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
@@ -31,19 +32,19 @@
 			<g:HTMLPanel styleName="{style.mt50} {aonResources.css.aonSelector}">
 				<g:TabLayoutPanel ui:field="tabLayOutPanel" barUnit='EM' barHeight='3'>
 					<g:tab>
-				    	<g:header size='7'>Centro de trabajo</g:header>
+				    	<g:customHeader><g:InlineLabel text="{msgs.workplace}"/></g:customHeader>
 			    		<g:HTMLPanel styleName="{style.mt10}">
 			    			<aon:WorkplaceComunica ui:field="workplaceComunicaWidget"/>
 			    		</g:HTMLPanel>
 				  	</g:tab>
 				  	<g:tab>
-				    	<g:header size='7'>Actividad / CCC</g:header>
+				    	<g:customHeader><g:InlineLabel text="{msgs.actividadCcc}"/></g:customHeader>
 			    		<g:HTMLPanel styleName="{style.mt10}">
 			    			<aon:CCC ui:field="cccWidget"/>
 			    		</g:HTMLPanel>
 				  	</g:tab>
 				  	<g:tab>
-				    	<g:header size='7'>Convenio</g:header>
+				    	<g:customHeader><g:InlineLabel text="{msgs.agreement}"/></g:customHeader>
 			    		<g:HTMLPanel styleName="{style.mt10}">
 			    			<aon:AgreementComunica ui:field="agreementComunicaWidget"/>
 			    		</g:HTMLPanel>
@@ -52,6 +53,5 @@
 			</g:HTMLPanel>
 		</g:center>
 	</g:DockLayoutPanel>
-	
-</ui:UiBinder> 
 
+</ui:UiBinder>

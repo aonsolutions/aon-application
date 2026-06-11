@@ -1,12 +1,13 @@
-<ui:UiBinder 
+<ui:UiBinder
     xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:c='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
-    
-    
+
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.CertificateDialog.MyStyle">
-	
+
 		.form {
 			display: flex;
 			flex-direction: column;
@@ -14,118 +15,118 @@
 			gap: 10px;
 			padding-top: .5rem;
 		}
-		
+
 		.padding {
 			padding: 10px;
 			padding-top: 0px;
 		}
-		
+
 		.flexColumn{
 			display: flex;
 			flex-direction: column;
 			gap: 10px;
 		}
-		
+
 		.input{
 			display: flex;
 			flex-direction: column;
 			gap: 5px;
 		}
-		
+
 		.title{
 			font-size: 11px;
 			font-weight: bold;
 		}
-		
+
 		.flex{
 			display: flex;
 			align-items: center;
 			gap: 10px;
 		}
-		
+
 		.flexBetween{
 			display: flex;
 			justify-content: space-between;
 			width: 100%;
 		}
-		
+
 		.buttonsPanel{
 			display: flex;
 			justify-content: flex-end;
 			gap: 10px;
 			margin-top: 10px;
 		}
-		
+
 		.widthAll{
 			width: 100%;
 		}
-		
+
 		.checkBox input {
 			width: 1rem;
 			height: 1rem;
 		}
-		
+
 		.noGap {
 			gap: 0;
 		}
-		
+
 		.security {
 			width: 1.2rem;
 			height: 1.2rem;
 			background-size: cover;
 		}
-		
+
 		.pl1{
 			padding-left: 1rem;
 		}
-		
+
 	</ui:style>
 
 	<g:HTMLPanel ui:field="mainPanel" styleName="{style.form}">
-	
+
 		<g:HTMLPanel ui:field="messagePanel" />
-	
+
 		<g:HTMLPanel ui:field="formPanel" styleName="{style.flexColumn} {style.padding}">
-		
+
 			<g:DeckPanel ui:field="deckPanel">
-				
+
 				<g:HTMLPanel styleName="{style.flexColumn}">
 					<g:HTMLPanel styleName="{style.input}">
-						<g:Label text="Certificado adjunto" styleName="{style.title}" />
+						<g:Label text="{msgs.attachedCertificate}" styleName="{style.title}" />
 						<g:HTMLPanel ui:field="filePanel" styleName="{style.flex}">
 							<g:TextBox ui:field="fileNameTB" styleName="{style.widthAll}" />
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.input}">
-						<g:Label text="Contraseña certificado" styleName="{style.title}" />
+						<g:Label text="{msgs.certificatePassword}" styleName="{style.title}" />
 						<g:HTMLPanel styleName="{style.flex}">
 							<g:PasswordTextBox ui:field="passwordTB" styleName="{style.widthAll}" />
 							<c:AonToolbarSmallButton ui:field="visibilityBtn" />
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
-				
+
 				<g:HTMLPanel styleName="{style.flexColumn}">
 					<g:HTMLPanel ui:field="certificateInfoPanel" styleName="{style.widthAll}" />
 					<g:HTMLPanel styleName="{style.input}">
-						<g:Label text="Uso del certificado" styleName="{style.title}" />
-						<g:RadioButton name="ownerCert" text="Uso personal de mi usuario" ui:field="userRB" />
-						<g:RadioButton name="ownerCert" text="Uso compartido" ui:field="enterpriseRB" />
+						<g:Label text="{msgs.certificateUsage}" styleName="{style.title}" />
+						<g:RadioButton name="ownerCert" text="{msgs.personalUse}" ui:field="userRB" />
+						<g:RadioButton name="ownerCert" text="{msgs.sharedUse}" ui:field="enterpriseRB" />
 						<g:RadioButton name="securityCert" ui:field="publicRB" styleName="{style.pl1}" ><b>Publico:</b> Todos los usuarios</g:RadioButton>
 						<g:RadioButton name="securityCert" ui:field="privateRB" styleName="{style.pl1}" ><b>Privado:</b> Solo usuarios de la empresa</g:RadioButton>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.input}">
-						<g:Label text="Tipo certificado" styleName="{style.title}" />
-						<g:CheckBox ui:field="tgssCB" text="TGSS" styleName="{style.checkBox}" />
-						<g:CheckBox ui:field="sepeCB" text="SEPE" styleName="{style.checkBox}" />
-						<g:CheckBox ui:field="aeatCB" text="AEAT" styleName="{style.checkBox}" />
+						<g:Label text="{msgs.certificateType}" styleName="{style.title}" />
+						<g:CheckBox ui:field="tgssCB" text="{msgs.tgss}" styleName="{style.checkBox}" />
+						<g:CheckBox ui:field="sepeCB" text="{msgs.sepe}" styleName="{style.checkBox}" />
+						<g:CheckBox ui:field="aeatCB" text="{msgs.aeat}" styleName="{style.checkBox}" />
 					</g:HTMLPanel>
 				</g:HTMLPanel>
-			    
+
 			</g:DeckPanel>
-		    
+
 		   	<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}" />
-		   	
+
 		</g:HTMLPanel>
 
 	</g:HTMLPanel>

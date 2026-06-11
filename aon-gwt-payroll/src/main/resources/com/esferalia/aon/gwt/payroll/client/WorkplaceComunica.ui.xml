@@ -3,6 +3,7 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:e='urn:import:com.esferalia.aon.gwt.payroll.client'>
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.WorkplaceComunica.MyStyle">
@@ -85,7 +86,7 @@
 
 	<g:HTMLPanel styleName="{style.widthAll} {style.flexCenter}" ui:field="centerContainer" debugId="workplaceHTMLPanel">
    		<g:VerticalPanel styleName="{style.styleBorder}">
-    	<g:Label styleName='{style.tittle}'>Centro de trabajo</g:Label>
+    	<g:Label styleName='{style.tittle}' text="{msgs.workplace}"/>
 	    	<g:HTMLPanel styleName="{style.widthAll}">
 	    		<g:VerticalPanel styleName="{style.container}">
 	    			<g:Grid ui:field="workplaceDataTableHeader" styleName="{style.gridStyle}"></g:Grid>

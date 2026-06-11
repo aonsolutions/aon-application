@@ -5,6 +5,7 @@
 	xmlns:commonsolutions='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources" />
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainAgreement.MyStyle">
 	
@@ -129,7 +130,7 @@
 					</g:HTMLPanel>
 					<!-- AGREEMENT SELECT LABEL -->
 					<g:HTMLPanel ui:field="agreementMessage" styleName="{style.flexCenter} aon-MainAgreement-Select" >
-						<g:Label text="SELECCIONE UN CONVENIO PARA SER VISUALIZADO" styleName="{style.message}" />
+						<g:Label text="{msgs.selectAgreementMsg}" styleName="{style.message}" />
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</g:center>

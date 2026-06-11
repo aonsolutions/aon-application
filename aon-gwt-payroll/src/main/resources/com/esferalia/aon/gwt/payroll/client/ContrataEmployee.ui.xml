@@ -6,7 +6,8 @@
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client'
 	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client" >
-	
+
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
 	<ui:Style type="com.esferalia.aon.gwt.payroll.client.ContrataEmployee.MyStyle">
@@ -14,27 +15,27 @@
 			display: flex;
 			justify-content: center;
 		}
-		
+
 		.pl20{
 			padding-left: 20px;
 		}
-		
+
 		.p5{
 			padding: 5px;
 		}
-		
+
 		.widthAll{
 			width: 100%;
 		}
-		
+
 		.heightAll{
 			height: 100%;
 		}
-		
+
 		.mt10{
 			margin-top: 10px;
 		}
-		
+
 		.titlePanel{
 			padding: 5px 0 5px 15px;
 			font-size: 13px;
@@ -42,64 +43,64 @@
 			width: 100%;
 			display:flex;
 		}
-		
+
 		.bold{
 			font-weight: bold;
 		}
-		
+
 		.title{
 			font-size: 12px;
 			margin-left: 5px;
     		padding-top: 2px;
 		}
-		
+
 		/* ------------------- Menu Bar ------------------- */
 		.menuBar{
 			cursor: pointer;
 			display: grid;
 		}
-		
+
 		.flex{
 			display: flex;
 			align-items: center;
 		}
-		
+
 		.p5{
 			padding: 5px !important;
 		}
-		
+
 		.h17{
 			height: 17px;
 		}
-		
+
 		.nbr{
 			border-right: none !important;
 		}
-		
+
 		.mt50{
 			margin-top: 50px !important;
 		}
-		
+
 		.flex{
 			display: flex;
 			gap: 5px;
 		}
-		
+
 		.cmdBtn{
 			background-position: center left;
 			background-repeat: no-repeat;
 			padding-left: 25px !important;
 			background-size: contain;
 		}
-		
+
 		.flex1{
 			display: flex;
 		}
-		
+
 		.flexGrow{
 			flex-grow: 1;
 		}
-		
+
 		.loadingPanel{
 			display: flex;
 			align-items: center;
@@ -108,7 +109,7 @@
 			animation-iteration-count: infinite;
 			animation-timing-function: linear;
 		}
-		
+
 		@keyframes spin {
 		    from {
 		        transform:rotate(0deg);
@@ -117,7 +118,7 @@
 		        transform:rotate(360deg);
 		    }
 		}
-		
+
 		.message{
 			display: flex;
 			justify-content: center;
@@ -126,20 +127,20 @@
 			gap: 5px;
 			align-items: center;
 		}
-		
+
 		.toolbar {
 			display: flex;
 			flex-direction: column;
 			gap: 5px;
 		}
-		
+
 		.flexColumn{
 			display: flex;
 			justify-content: center;
 			align-items: center;
 			flex-direction: column;
 		}
-		
+
 	</ui:Style>
 
 	<g:SimpleLayoutPanel>
@@ -148,63 +149,63 @@
 				<aon:AonToolbar ui:field="toolbar" />
 			</g:north>
 			<g:center>
-				
+
 				<g:FlowPanel styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
-				
+
 					<g:HTMLPanel ui:field="messageContainer" styleName="{style.widthAll}" />
-					
+
 					<g:DeckPanel ui:field="mainDeckPanel" styleName="{style.widthAll} {style.heightAll}">
-					
+
 						<g:HTMLPanel styleName="{aonResources.css.aonSelector}">
-							
+
 							<g:TabLayoutPanel ui:field="tabLayOutPanel" barUnit='EM' barHeight='3'>
 								<g:tab>
-							    	<g:header size='7'>Datos Afiliación</g:header>
+							    	<g:customHeader><g:InlineLabel text="{msgs.affiliationData}"/></g:customHeader>
 							    	<g:HTMLPanel ui:field="employeePanelNew" />
 							  	</g:tab>
 							  	<g:tab>
-							    	<g:header size='7'>Datos SEPE</g:header>
+							    	<g:customHeader><g:InlineLabel text="{msgs.sepeData}"/></g:customHeader>
 							    	<g:ScrollPanel ui:field="specificDataPanelNew" styleName="{style.widthAll} {style.heightAll}" />
 							  	</g:tab>
 							  	<g:tab>
-							  		<g:header size='7'>Datos Contrato</g:header>
+							  		<g:customHeader><g:InlineLabel text="{msgs.contractData}"/></g:customHeader>
 							    	<g:ScrollPanel ui:field="otherDataPanelNew" styleName="{style.widthAll} {style.heightAll}" />
 							  	</g:tab>
 							  	<g:tab>
-							  		<g:header size='7'>Clausulas</g:header>
+							  		<g:customHeader><g:InlineLabel text="{msgs.clauses}"/></g:customHeader>
 							    	<g:HTMLPanel ui:field="clausesPanelNew" />
 							  	</g:tab>
 							  	<g:tab>
-							  		<g:header size='7'>Documentos</g:header>
+							  		<g:customHeader><g:InlineLabel text="{msgs.documents}"/></g:customHeader>
 							    	<g:HTMLPanel ui:field="documentsPanelNew" />
 							  	</g:tab>
 							  	<g:tab>
-							  		<g:header size='7'>Nóminas</g:header>
+							  		<g:customHeader><g:InlineLabel text="{msgs.payrolls}"/></g:customHeader>
 							  		<g:SimpleLayoutPanel ui:field="salaryWidgetPanel" styleName="{style.widthAll} {style.heightAll}" />
 							  	</g:tab>
 							  	<g:tab>
-							  		<g:header size='7'>Calendario</g:header>
+							  		<g:customHeader><g:InlineLabel text="{msgs.calendar}"/></g:customHeader>
 							    	<a:EmployeeCalendarDraftNew ui:field="employeeCalendar" />
 							  	</g:tab>
 							  	<g:tab>
-							  		<g:header size='7'>IRPF</g:header>
+							  		<g:customHeader><g:InlineLabel text="{msgs.irpf}"/></g:customHeader>
 							    	<a:EmployeeContractIrpf ui:field="employeeContractIrpf" />
 							  	</g:tab>
 							  	<g:tab>
-							  		<g:header size='7'>Mod 145</g:header>
+							  		<g:customHeader><g:InlineLabel text="{msgs.mod145}"/></g:customHeader>
 							    	<a:Mod145Widget ui:field="mod145" />
 							  	</g:tab>
 							 </g:TabLayoutPanel>
 						</g:HTMLPanel>
-							
+
 						<p:FullViewer styleName="reset {style.heightAll}" ui:field='pdfViewer' />
-						
+
 					</g:DeckPanel>
-						
+
 				</g:FlowPanel>
-			
+
 			</g:center>
 		</g:DockLayoutPanel>
 	</g:SimpleLayoutPanel>
-	
+
 </ui:UiBinder>

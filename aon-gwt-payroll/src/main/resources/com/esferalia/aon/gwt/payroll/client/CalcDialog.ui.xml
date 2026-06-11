@@ -1,9 +1,11 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:cell="urn:import:com.google.gwt.user.cellview.client"
 	xmlns:payroll='urn:import:com.esferalia.aon.gwt.payroll.client'>
+
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 
 	<ui:Style>
 	.form {
@@ -76,7 +78,7 @@
 		<table class="aon-width-all {style.form} ">
 			<tr>
 				<td class="{style.label}">
-						<g:Label text="Tipo" />
+						<g:Label text="{msgs.type}" />
 				</td>
 				<td class="{style.field}">
 						<g:ListBox ui:field="typeListBox"/>
@@ -84,7 +86,7 @@
 			</tr>
 			<tr ui:field="monthTR">
 				<td class="{style.label}">
-					<g:Label text="Mes" />
+					<g:Label text="{msgs.month}" />
 				</td>
 				<td class="{style.field}">
 					<aon:MonthListBox
@@ -97,7 +99,7 @@
 			</tr>
 			<tr>
 				<td class="{style.label}">
-					<g:Label text="Pago" />
+					<g:Label text="{msgs.payment}" />
 				</td>
 				<td class="{style.field}">
 					<aon:DateListBox
@@ -110,7 +112,7 @@
 			</tr>
 			<tr ui:field="extraTR"  >
 				<td class="{style.label}">
-					<g:Label text="Extra" />
+					<g:Label text="{msgs.extra}" />
 				</td>
 				<td class="{style.field}">
 					<payroll:ActualExtraListBox ui:field="extraListBox"/>
@@ -121,7 +123,7 @@
 			</tr>
 			<tr>
 				<td class="{style.label}" colspan="2">
-					<g:Label text="Selecciona los empleados: " ui:field="selectLabel" />
+					<g:Label text="{msgs.selectEmployees}" ui:field="selectLabel" />
 				</td>
 			</tr>
 			<tr>
@@ -137,15 +139,15 @@
 				<td class="{style.field} " colspan="2">
 					<div class="aon-group">
 						<div class="aon-group-title" >
-							<g:CheckBox ui:field="saveCheckBox" checked="false">Guardar</g:CheckBox>
+							<g:CheckBox ui:field="saveCheckBox" checked="false" text="{msgs.save}"/>
 						</div>
 						<div>
 							<g:RadioButton name="saveRadioButton" ui:field="keepRadioButton"
-								checked="true" enabled="false">Conservar n&oacute;minas calculadas</g:RadioButton>
+								checked="true" enabled="false" text="{msgs.keepCalculatedPayrolls}"/>
 						</div>
 						<div>
 							<g:RadioButton name="saveRadioButton" ui:field="overwriteRadioButton"
-								enabled="false">Eliminar n&oacute;minas calculadas</g:RadioButton>
+								enabled="false" text="{msgs.deleteCalculatedPayrolls}"/>
 						</div>
 						<!-- div>
 							<g:RadioButton name="saveRadioButton" ui:field="duplicateRadioButton"
@@ -160,8 +162,8 @@
 		</table>
 
 		<div class="{style.buttons} {style.form} ">
-			<g:Button ui:field="cancelButton">Cancelar</g:Button>
-			<g:Button ui:field="acceptButton" enabled="false" >Aceptar</g:Button>
+			<g:Button ui:field="cancelButton" text="{msgs.cancel}"/>
+			<g:Button ui:field="acceptButton" enabled="false" text="{msgs.accept}"/>
 		</div>
 
 	</g:HTMLPanel>

@@ -5,6 +5,7 @@
 	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'>
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 	
 	<ui:style>
 		.dateListBox-item, 
@@ -27,7 +28,7 @@
 
 				<g:HTMLPanel styleName="aon-panelGrid-search">
 					<div class="aon-panelGrid-search-info ">
-						<span class="aon-panelGrid-search-info-internal">Introduzca los parámetros de cálculo:</span>
+						<span class="aon-panelGrid-search-info-internal"><ui:text from="{msgs.calcParams}"/></span>
 						<a style="font-size:1em;font-weight:bold;float:right;" onclick=""
 							href="#">
 							<span class="aon-outputText">[?]</span>
@@ -37,17 +38,15 @@
 					<table class="aon-panelGrid aon-width-all" style="height:90%">
 						<tr>
 							<td class="aon-panelGrid-odd">
-								<g:Label styleName="aon-outputLabel">Tipo</g:Label>
+								<g:Label styleName="aon-outputLabel" text="{msgs.type}"/>
 							</td>
 							<td class="aon-panelGrid-even aon-width-half-plus">
-								<g:ListBox>
-									<g:item>N&oacute;mina</g:item>
-								</g:ListBox>
+								<g:Label styleName="aon-outputLabel" text="{msgs.nomina}"/>
 							</td>
 						</tr>
 						<tr>
 							<td class="aon-panelGrid-odd">
-								<g:Label styleName="aon-outputLabel">Mes</g:Label>
+								<g:Label styleName="aon-outputLabel" text="{msgs.month}"/>
 							</td>
 							<td class="aon-panelGrid-even">
 								<aon:MonthListBox
@@ -60,7 +59,7 @@
 						</tr>
 						<tr>
 							<td class="aon-panelGrid-odd">
-								<g:Label styleName="aon-outputLabel">Pago</g:Label>
+								<g:Label styleName="aon-outputLabel" text="{msgs.payment}"/>
 							</td>
 							<td class="aon-panelGrid-even">
 								<aon:DateListBox
@@ -73,7 +72,7 @@
 						</tr>
 						<tr>
 							<td class="aon-panelGrid-odd">
-								<g:Label styleName="aon-outputLabel">Comparar con</g:Label>
+								<g:Label styleName="aon-outputLabel" text="{msgs.compareWith}"/>
 							</td>
 							<td class="aon-panelGrid-even ">
 								<g:ListBox styleName="aon-selectOneMenu"
@@ -89,30 +88,28 @@
 							<td class="aon-panelGrid-even" >
 								<div class="aon-group aon-width-half">
 									<div class="aon-group-title" style="background-color: transparent;">
-										<g:CheckBox 
+										<g:CheckBox
 										checked="false"
-										debugId="saveCheckBox"  
-										ui:field="saveCheckBox" 
-										>
-										Guardar
-										</g:CheckBox>
-									</div>
-									<div>
-										<g:RadioButton 
-											checked="true" 
-											enabled="false"
-											name="saveRadioButton" 
-											debugId="keepRadioButton" 
-											ui:field="keepRadioButton"
-											>Conservar n&oacute;minas calculadas</g:RadioButton>
+										debugId="saveCheckBox"
+										ui:field="saveCheckBox"
+										text="{msgs.save}"/>
 									</div>
 									<div>
 										<g:RadioButton
-											enabled="false" 
-											name="saveRadioButton" 
-											debugId="overwriteRadioButton" 
+											checked="true"
+											enabled="false"
+											name="saveRadioButton"
+											debugId="keepRadioButton"
+											ui:field="keepRadioButton"
+											text="{msgs.keepCalculatedPayrolls}"/>
+									</div>
+									<div>
+										<g:RadioButton
+											enabled="false"
+											name="saveRadioButton"
+											debugId="overwriteRadioButton"
 											ui:field="overwriteRadioButton"
-											>Eliminar n&oacute;minas calculadas</g:RadioButton>
+											text="{msgs.deleteCalculatedPayrolls}"/>
 									</div>
 									<!-- div>
 										<g:RadioButton name="saveRadioButton" ui:field="duplicateRadioButton"
@@ -134,7 +131,7 @@
 								<span class="aon-outputText"></span>
 							</td>
 							<td class="aon-panelGrid-even">
-								<g:Button debugId="calcButton" ui:field="calcButton" enabled="false">Calcular</g:Button>
+								<g:Button debugId="calcButton" ui:field="calcButton" enabled="false" text="{msgs.calculate}"/>
 							</td>
 						</tr>
 						<tr>
@@ -159,7 +156,7 @@
 				<g:TabLayoutPanel barHeight="26" barUnit="PX" >
 					<g:tab>
 						<g:header>
-							<span class="aon-icon-time aon-icon-commandButton">Resultados</span>
+							<span class="aon-icon-time aon-icon-commandButton"><ui:text from="{msgs.results}"/></span>
 						</g:header>
 						<aon:ResultsPanel debugId="resultsPanel" ui:field="resultsPanel" />
 					</g:tab>

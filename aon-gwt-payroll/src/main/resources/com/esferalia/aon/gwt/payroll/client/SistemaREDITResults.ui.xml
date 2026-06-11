@@ -2,6 +2,8 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
 	<ui:Style>
 	.button-bar {
 		border: none !important;
@@ -39,10 +41,10 @@
 				<g:Button styleName="gwt-MenuItem {style.gwt-MenuItemCustom}" ui:field="collapseAllButton" >
 					<span class="material-icons-outlined">expand_more</span>
 				</g:Button>-->
-				<g:Button styleName="gwt-MenuItem {style.gwt-MenuItemCustom}" ui:field="clearButton" title="Limpiar">
+				<g:Button styleName="gwt-MenuItem {style.gwt-MenuItemCustom}" ui:field="clearButton" title="{msgs.clear}">
 					<span class="material-icons-outlined">clear_all</span>
 				</g:Button>
-				<g:Button styleName="gwt-MenuItem {style.gwt-MenuItemCustom}" ui:field="runButton"  title="Actualizar">
+				<g:Button styleName="gwt-MenuItem {style.gwt-MenuItemCustom}" ui:field="runButton"  title="{msgs.refresh}">
 					<span class="material-icons-outlined">sync</span>
 				</g:Button>
 			</g:FlowPanel>

@@ -6,6 +6,7 @@
 	xmlns:w='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources'/>
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.AgreementSalaryTableTab.MyStyle">
@@ -203,7 +204,7 @@
 			<g:Grid ui:field="salaryGrid" styleName="{style.borderCollapse}" />
 		</g:ScrollPanel>
 		<g:HTMLPanel ui:field="agreementSalaryTableMessage" styleName="{style.flexCenter}">
-			<g:Label text="DEBE CREAR UN TRAMO PARA VISUALIZAR LA TABLA SALARIAL (+)" styleName="{style.message}" />
+			<g:Label text="{msgs.mustCreateSalaryRangeMsg}" styleName="{style.message}" />
 		</g:HTMLPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

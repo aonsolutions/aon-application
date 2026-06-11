@@ -3,12 +3,14 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client' >
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
+
 	<ui:Style  >
-	
+
 	</ui:Style>
 
 
-	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel"> 
+	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
 
 		<table class="aon-width-all aon-height-all" >
 			<tr>
@@ -19,8 +21,8 @@
 
 			<tr ui:field="buttonsRow">
 				<td colspan="2" align="right">
-					<g:Button ui:field="cancelButton" debugId="paymetDialogCancelButton">Cancelar</g:Button>
-					<g:Button ui:field="acceptButton" debugId="paymetDialogAcceptButton" >Aceptar</g:Button>
+					<g:Button ui:field="cancelButton" debugId="paymetDialogCancelButton" text="{msgs.cancel}"/>
+					<g:Button ui:field="acceptButton" debugId="paymetDialogAcceptButton" text="{msgs.accept}"/>
 				</td>
 			</tr>
 		</table>

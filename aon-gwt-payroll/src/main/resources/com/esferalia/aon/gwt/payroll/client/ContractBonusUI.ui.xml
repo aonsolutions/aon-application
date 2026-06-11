@@ -4,6 +4,7 @@
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:c='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.ContractBonusUI.MyStyle">
@@ -13,7 +14,7 @@
 			font-size: 12px;
 			margin-left: 10px;
 		}
-		
+
 		.headerLabelStyle{
 			font-weight: bold;
 		}
@@ -21,45 +22,45 @@
 		.maxWidthTB{
 			width: 97%;
 		}
-		
+
 		.widthAll{
 			width: 100%;
 		}
-		
+
 		.maxWidthLB{
 			width: 100%;
 		}
-		
+
 		.styleBorder{
-			border-style: solid; 
-			width: 975px; 
-			border-width: 1px; 
+			border-style: solid;
+			width: 975px;
+			border-width: 1px;
 			margin: 20px 10px;
 		}
-		
+
 		.gridStyle{
 			margin-left: 10px;
 		}
-		
+
 		.scrollStyle {
 			margin-left: 10px;
 			margin-bottom: 10px;
 		}
-		
+
 		.noBonusLB{
 			width: 100%;
 			text-align: center;
 		}
-		
+
 		.flexColumn{
 			width: 100%;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 		}
-		
+
 	</ui:style>
-	
+
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:north size="50">
 			<c:AonToolbar ui:field="toolbar" />
@@ -67,8 +68,8 @@
 		<g:center>
 			<g:HTMLPanel styleName="{style.flexColumn}">
 				<g:HTMLPanel ui:field="messagePanel" styleName="{style.widthAll}" />
-				<g:VerticalPanel ui:field="contractBonusTable" styleName="{style.styleBorder}"> 
-			    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Bonificaciones</g:Label>
+				<g:VerticalPanel ui:field="contractBonusTable" styleName="{style.styleBorder}">
+			    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}' text="{msgs.bonuses}"/>
 			    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
 			    		<g:VerticalPanel>
 			    			<g:Grid ui:field="contractBonusDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
@@ -77,7 +78,7 @@
 			    			</g:HTMLPanel>
 				    		<g:ScrollPanel ui:field="contractBonusScrollPanel" styleName="{style.scrollStyle}">
 				    			<g:DeckPanel ui:field="deckPanel">
-				    				<g:Label styleName="{style.noBonusLB}">NO EXISTEN BONIFICACIONES</g:Label>
+				    				<g:Label styleName="{style.noBonusLB}" text="{msgs.noBonuses}"/>
 				    				<g:Grid ui:field="contractBonusDataTable"></g:Grid>
 				    			</g:DeckPanel>
 				    		</g:ScrollPanel>
@@ -87,6 +88,6 @@
 			</g:HTMLPanel>
 		</g:center>
 	</g:DockLayoutPanel>
-	
-</ui:UiBinder> 
+
+</ui:UiBinder>
 

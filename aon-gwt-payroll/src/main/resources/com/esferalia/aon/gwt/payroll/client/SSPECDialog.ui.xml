@@ -3,6 +3,7 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 	<ui:with field='res'
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
@@ -234,7 +235,7 @@
 	        <g:HTMLPanel> 
             		<g:HTMLPanel ui:field='listPECsPanel'>
             		    <g:VerticalPanel styleName="{style.styleBorder}">
-             		    <g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Peculiaridades de Cotizaci&oacute;n</g:Label>
+             		    <g:Label width="105px" styleName='aon-group-title {style.headerStyle}' text="{msgs.peculiaritiesOfQuotation}"/>
              			<g:ScrollPanel>
              				<g:Grid ui:field="listPECsTable" width="95%" styleName="{style.noselect}">
              				    <g:row>

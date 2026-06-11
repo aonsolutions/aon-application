@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:with field='msgs' type='com.esferalia.aon.gwt.payroll.client.i18n.PayrollMessages'/>
 
 	<ui:style>
 
@@ -39,16 +40,16 @@
 		<g:Label ui:field="fullNameL" styleName="{style.fullName}"/>
 
 		<g:HTMLPanel styleName="{style.flex}">
-			<g:Label styleName="{style.bold}">Regimen:</g:Label>
+			<g:Label styleName="{style.bold}" text="{msgs.regimenColon}"/>
 			<g:Label ui:field="regime"/>
-			<g:Label styleName="{style.bold}">CCC:</g:Label>
+			<g:Label styleName="{style.bold}" text="{msgs.cccColon}"/>
 			<g:Label ui:field="ccc"/>
 		</g:HTMLPanel>
 		
 		<g:HTMLPanel styleName="{style.flex}">
-			<g:Label styleName="{style.bold}">Doc:</g:Label>
+			<g:Label styleName="{style.bold}" text="{msgs.docColon}"/>
 			<g:Label ui:field="documentL"/>
-			<g:Label styleName="{style.bold}">NAF:</g:Label>
+			<g:Label styleName="{style.bold}" text="{msgs.nafColon}"/>
 			<g:Label ui:field="nafL"/>
 		</g:HTMLPanel>
 		
@@ -61,16 +62,16 @@
 		<g:Label ui:field="comunicateStatusL"/>
 		
 		<g:HTMLPanel styleName="{style.flex}">
-			<g:Label styleName="{style.bold}">Baja:</g:Label>
+			<g:Label styleName="{style.bold}" text="{msgs.bajaColon}"/>
 			<g:Label ui:field="lowDateL"/>
-			<g:Label styleName="{style.bold}">Motivo:</g:Label>
+			<g:Label styleName="{style.bold}" text="{msgs.motivoColon}"/>
 			<g:Label ui:field="lowTypeL"/>
 		</g:HTMLPanel>
-		
+
 		<g:HTMLPanel styleName="{style.flex}">
-			<g:Label styleName="{style.bold}">Alta:</g:Label>
+			<g:Label styleName="{style.bold}" text="{msgs.altaColon}"/>
 			<g:Label ui:field="highDateL"/>
-			<g:Label styleName="{style.bold}">Motivo:</g:Label>
+			<g:Label styleName="{style.bold}" text="{msgs.motivoColon}"/>
 			<g:Label ui:field="highTypeL"/>
 		</g:HTMLPanel>
 
