@@ -1,0 +1,571 @@
+:root {
+
+	/* Dark palette — Tailwind slate reversed */
+	--aonBackgroundColor: #1e293b;
+	--aonBackgroundColor2: #0f172a;
+	--colorNeutralBackground2: #1e293b;
+	--aonHeaderBackgroundColor: #020617;
+
+	--aonTopAppTextColor: #f1f5f9;
+
+	--aonSideNavRowHoverColor: #1e293b;
+
+	--aonCustomizeButtonBackground: linear-gradient(to right, #1d4ed8, #1d4ed8, #1e293b, #475569);
+
+}
+
+body {
+	--isFutureDarkTheme: true;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+	-webkit-box-shadow: 0 0 0px 1000px #1e293b inset !important;
+	box-shadow: 0 0 0px 1000px #1e293b inset !important;
+	-webkit-text-fill-color: #f1f5f9 !important;
+}
+
+/* ========================== Global text  ========================== */
+
+.aonBody {
+	color: #f1f5f9;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	color: #f1f5f9;
+}
+
+/* ========================== Menu / Sidenav ========================== */
+
+.aonMenuSideNav {
+	background-color: #0f172a;
+}
+
+.aonNewMenuSideNavUl {
+	background-color: #0f172a;
+}
+
+.aonMenuTopnav {
+	background-color: var(--aonBackgroundColor);
+	border-color: #334155;
+}
+
+#aonMenuAnchor {
+	background-color: #1e293b;
+}
+
+#aonMenuAnchor.close {
+	background-color: #1e293b;
+}
+
+.aonMenuAnchorDivSpan {
+	color: #f1f5f9;
+}
+
+#aonMenu #aonMenuSidenav .aonMenuSidenavLiSeleted,
+#aonMenu #aonMenuSidenav .aonNewMenuSideNavLi:hover {
+	background-color: #1e293b;
+}
+
+#aonMenu #aonMenuSidenav {
+	background-color: #0f172a;
+}
+
+.aonNewMenuAppSpan {
+	color: #f1f5f9;
+}
+
+/* ========================== Suite Menu ========================== */
+
+.suiteMenuContent {
+	background-color: #0f172a;
+}
+
+.suiteMenuContent aon-card {
+	background-color: #1e293b;
+}
+
+.suiteMenuContent .aonCardText {
+	color: #94a3b8;
+}
+
+.suiteMenuCardDataDiv:hover {
+	background-color: #334155;
+}
+
+.suiteMenuContent .aonSidenavTitle {
+	color: #f1f5f9;
+}
+
+/* ========================== Sidenav ========================== */
+
+.aonSidenav *,
+.aonToolbarTitle {
+	color: #f1f5f9;
+}
+
+.aonSidenav .aonAppMenuSidenavList:hover,
+.aonSidenav .aonAppMenuSidenavListSelected {
+	background-color: #1e293b;
+}
+
+.aonSidenav .aonSidenavTitle span {
+	color: #94a3b8;
+}
+
+.aonSidenav .aonSidenavTitleArrow {
+	filter: invert(1);
+}
+
+.aonSubMenuOptions .chevronDowm {
+	filter: invert(1);
+}
+
+.aonSubMenuOptions .chevronRight {
+	filter: invert(1);
+}
+
+/* ========================== Top Menu ========================== */
+
+.aonSecondaryToolbarTitle {
+	color: #f1f5f9;
+}
+
+/* ========================== Company List ========================== */
+
+#UlCompanies li {
+	border: .0625rem solid #334155;
+	color: #94a3b8;
+}
+
+#UlCompanies li:hover {
+	background-color: #475569;
+	color: #f1f5f9;
+}
+
+#UlCompanies li:hover * {
+	color: #f1f5f9;
+}
+
+#UlCompanies li:hover .aonLiSpan .material-icons {
+	background-color: #fff;
+}
+
+#UlCompanies li .aonLiSpan > span:not(.aonLiSpanSubtitle) {
+	color: #f1f5f9;
+}
+
+#UlCompanies .aonLiSpan .material-icons {
+	background-color: #94a3b8;
+}
+
+#UlCompanies > li > span:nth-of-type(3) {
+	background-color: #94a3b8;
+}
+
+#aonCompanySpanTitle {
+	color: #f1f5f9;
+}
+
+/* ========================== Tabs ========================== */
+
+.aonTab {
+	background-color: #0f172a;
+}
+
+#aonCompanyTabFilter {
+	background-color: #0f172a;
+}
+
+.aonTab .aonTabItemText:hover {
+	background-color: #1e293b;
+}
+
+.aonTab .aonTabItemTextSelected {
+	background-color: #1e293b;
+}
+
+.aonTabItemText {
+	color: #f1f5f9;
+}
+
+.aonTabItemTextSelected {
+	color: #f1f5f9;
+}
+
+/* ========================== Login ========================== */
+
+.aonLoginSubTitle {
+	color: #94a3b8;
+}
+
+.aonLoginForm {
+	background-color: #1e293b;
+	border: .0625rem solid #334155;
+	box-shadow: 0 .25rem .375rem 0 rgba(0, 0, 0, 0.4);
+}
+
+.aonLoginFormContent {
+	background-color: #1e293b;
+}
+
+#aonLoginUserInput,
+#aonLoginPasswordInput {
+	color: #f1f5f9;
+	background-color: #0f172a;
+	border: .0625rem solid #475569;
+}
+
+#aonLoginUserInput::placeholder,
+#aonLoginPasswordInput::placeholder {
+	color: #475569;
+}
+
+#aonLoginUserTitle,
+#aonLoginPasswordTitle {
+	color: #94a3b8;
+}
+
+.aonInputBoxLabelSpanError {
+	color: #f1f5f9;
+}
+
+.aonDividerSpan {
+	color: #94a3b8;
+	background: #1e293b;
+}
+
+.aonInputMsgError {
+	color: #f87171;
+}
+
+/* ========================== Card ========================== */
+
+.aonCard {
+	background-color: #1e293b;
+}
+
+.aonCardTitle {
+	border-bottom: .1rem solid #334155;
+}
+
+.aonCardTitleSection *:not(.material-icons) {
+	color: #f1f5f9;
+}
+
+/* ========================== Input ========================== */
+
+.aonInputBoxLabel > input {
+	border: .0625rem solid #475569;
+	background-color: #0f172a;
+	color: #f1f5f9;
+}
+
+.aonInputBoxLabel > span {
+	color: #94a3b8;
+	background: #1e293b;
+}
+
+.aonTextareaBoxLabel > textarea {
+	border: .0625rem solid #475569 !important;
+	background-color: #0f172a;
+	color: #f1f5f9;
+}
+
+.aonInputGroup input {
+	border: .0625rem solid #475569;
+	background-color: #0f172a;
+	color: #f1f5f9;
+}
+
+.aonInputLabel {
+	color: #94a3b8;
+}
+
+aon-input[readonly="true"] input,
+aon-input[disabled="true"] input,
+aon-input[disabled="disabled"] input,
+aon-new-input[readonly="true"] input,
+aon-new-input[disabled="true"] input,
+aon-new-input[disabled="disabled"] input,
+aon-new-number[readonly="true"] input,
+aon-new-number[disabled="true"] input,
+aon-new-number[disabled="disabled"] input,
+aon-new-suggestion[readonly="true"] input,
+aon-new-suggestion[disabled="true"] input,
+aon-new-suggestion[disabled="disabled"] input,
+aon-email[readonly="true"] input,
+aon-email[disabled="true"] input,
+aon-email[disabled="disabled"] input,
+aon-new-date[readonly="true"] input,
+aon-new-date[disabled="true"] input,
+aon-new-date[disabled="disabled"] input,
+aon-new-select[readonly="true"] input,
+aon-new-select[disabled="true"] input,
+aon-new-select[disabled="disabled"] input,
+aon-new-textarea[readonly="true"] input,
+aon-new-textarea[disabled="true"] input,
+aon-new-textarea[disabled="disabled"] input,
+aon-iban[readonly="true"] input,
+aon-iban[disabled="true"] input,
+aon-iban[disabled="disabled"] input,
+aon-quantity[readonly="true"] input,
+aon-quantity[disabled="true"] input,
+aon-quantity[disabled="disabled"] input,
+aon-autosize-textarea[readonly="true"] input,
+aon-autosize-textarea[disabled="true"] input,
+aon-autosize-textarea[disabled="disabled"] input,
+textarea[readonly="true"] input,
+textarea[disabled="true"] input,
+textarea[disabled="disabled"] input {
+	background-color: #0f172a;
+	color: #475569;
+}
+
+aon-search > span {
+	border: .0625rem solid #475569 !important;
+	background-color: #0f172a;
+	color: #f1f5f9;
+}
+
+/* ========================== Office Search ========================== */
+
+#aonOfficePanelToolbarHeaderToolSectionSearchSpan {
+	border: .0625rem solid #475569 !important;
+	background-color: #0f172a;
+}
+
+/* ========================== Table ========================== */
+
+.aonTable thead {
+	background-color: #1e293b;
+}
+
+.aonTable thead th {
+	color: #f1f5f9;
+}
+
+.aonTable tbody tr {
+	color: #f1f5f9;
+	border: .0625rem solid #334155 !important;
+	background-color: #0f172a;
+}
+
+.aonTable tbody tr td {
+	color: #94a3b8;
+}
+
+.aonTable tbody tr:hover,
+.aonTableTrChecked {
+	background-color: #1e293b;
+}
+
+/* ========================== Right Panel ========================== */
+
+aon-right-panel {
+	background: #0f172a;
+}
+
+.rightPanel {
+	background-color: #0f172a;
+}
+
+.rightPanel div[id$="CardContent"] > div > div:hover,
+.rightPanel div[id$="CardContent"] > div > div.selected {
+	background-color: #1e293b;
+}
+
+.rightPanel div[id$="CardContent"] *:not(.material-icons) {
+	color: #94a3b8;
+}
+
+.rightPanel div[id$="CardContent"] .material-icons {
+	background-color: #94a3b8;
+}
+
+.rightPanel span:not(.material-icons) {
+	color: #f1f5f9;
+}
+
+.rightPanel .helpCardText * {
+	color: #94a3b8;
+}
+
+.rightPanel .helpCardText .material-icons {
+	background-color: #94a3b8;
+}
+
+.helpCardText:hover,
+.configCardText:hover {
+	background-color: #334155 !important;
+}
+
+#loginContent > div:first-child {
+	background-color: #1e293b;
+}
+
+#loginContent > div:first-of-type {
+	background-color: #1e293b;
+}
+
+.userPanelDivUserInfo .userPanelNameInfoDiv {
+	color: #f1f5f9;
+}
+
+/* ========================== Search dialog ========================== */
+
+#aonHeaderSearchDialogMenu span {
+	color: #94a3b8;
+}
+
+#aonHeaderSearchDialogMenu span[header],
+#aonHeaderSearchDialogMenu b[decorate] {
+	color: #f1f5f9;
+}
+
+#aonHeaderSearchDialogMenu i.material-icons {
+	background-color: #94a3b8;
+}
+
+#aonHeaderSearchDialogMenu i.material-icons:has(+span>span[header]) {
+	background-color: #f1f5f9;
+}
+
+/* ========================== Dialog content ========================== */
+
+.aonDialogContent > div:first-of-type {
+	border-bottom: 1px solid #334155;
+	color: #f1f5f9;
+}
+
+.aonDialogContent > label {
+	background-color: #94a3b8;
+}
+
+/* ========================== Upload ========================== */
+
+#aonInvoiceHomeUploadInvoice .aonUpload,
+#accountingUploadInvoice .aonUpload {
+	background: var(--aonCustomizeButtonBackground);
+}
+
+/* ========================== Checkbox ========================== */
+
+.aonCheckbox > span::before {
+	border-color: #475569;
+}
+
+.aonCheckbox > input:checked,
+.aonCheckbox > input:indeterminate {
+	border-color: #f1f5f9;
+	background-color: #f1f5f9;
+}
+
+.aonCheckbox > input:checked + span::before,
+.aonCheckbox > input:indeterminate + span::before {
+	border-color: #f1f5f9;
+	background-color: #f1f5f9;
+}
+
+.aonCheckbox > input:checked + span::after,
+.aonCheckbox > input:indeterminate + span::after {
+	border-color: #0f172a;
+}
+
+/* ========================== Switch ========================== */
+
+.aonSwitch > span::before {
+	background-color: #334155;
+}
+
+.aonSwitch > input:checked + span::before {
+	background-color: #334155;
+}
+
+.aonSwitch > input:checked + span::after {
+	background-color: #3b82f6;
+}
+
+/* ========================== App Content ========================== */
+
+.aonSidenav,
+.aonToolbar,
+#aonParent .aonContentBeta,
+#aonSignin .aonContentBeta,
+#aonDocumental .aonContentBeta,
+#aonLaboral .aonContentBeta,
+#aonInvoice .aonContentBeta,
+#aonConfiguration .aonContentBeta,
+#aonConfigurationNew .aonContentBeta,
+#aonWarehouse .aonContentBeta,
+#aonMessenger .aonContentBeta,
+#aonOfficePanel .aonContentBeta,
+#aonFiscal .aonContentBeta,
+#aonAccounting .aonContentBeta {
+	background-color: #1e293b;
+}
+
+.aonContentBeta {
+	background-color: #0f172a;
+}
+
+.aonRightSidenav {
+	background-color: #0f172a;
+}
+
+#aonConfiguration .aonContentBeta:has(#aonSuiteMenu) {
+	background-color: #0f172a !important;
+}
+
+.aonContentBeta:has(#aonInvoiceHome) {
+	background-color: #0f172a !important;
+}
+
+#aonConfigurationContent.aonContentBeta:has(iframe),
+#aonConfigurationNewContent.aonContentBeta:has(iframe) {
+	background-color: #0f172a;
+}
+
+/* ========================== App Menu hover ========================== */
+
+.menu-option:hover i,
+.menu-children > div:hover i,
+.menu-option.open i {
+	background-color: #f1f5f9;
+}
+
+/* ========================== Dashboard button ========================== */
+
+.aonDashboardButton {
+	border: 0;
+	background-color: #1e293b;
+}
+
+.aonDashboardButton span {
+	color: #f1f5f9;
+}
+
+/* ========================== Tooltip ========================== */
+
+.tooltip {
+	background: #1e293b;
+	color: #f1f5f9;
+	border: 1px solid #334155;
+}
+
+/* ========================== Profile avatar ========================== */
+
+.profile-avatar-letters {
+	background-color: #334155;
+	color: #f1f5f9;
+}
+
+
+/**
+Important. Keep this rule at the end of file
+**/
+.aonTheme {
+	--aon-theme: 'DARK';
+}

@@ -490,6 +490,7 @@ export const FORMALITIES = MSG.FORMALITIES;
 export const FROM = MSG.FROM;
 export const FRENCH = MSG.FRENCH;
 export const FUTURE = MSG.FUTURE;
+export const FUTURE_DARK = MSG.FUTURE_DARK;
 export const FEE_INVOICING = MSG.FEE_INVOICING;
 export const FEE_INVOICING_PANEL = MSG.FEE_INVOICING_PANEL;
 export const FEES_LIST = MSG.FEES_LIST;

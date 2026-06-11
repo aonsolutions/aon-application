@@ -476,6 +476,7 @@ export const FORMALITIES = 'Formalités';
 export const FROM = 'Depuis';
 export const FRENCH = 'Français';
 export const FUTURE = 'À venir...';
+export const FUTURE_DARK = 'Future Sombre';
 export const FEE_INVOICING = 'Facturation de Cotisations';
 export const FEE_INVOICING_PANEL = 'Panneau Facturation Cotisations';
 export const FEES_LIST = 'Liste des Cotisations';

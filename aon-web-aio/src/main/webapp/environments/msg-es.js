@@ -464,6 +464,7 @@ export const FORMALITIES = 'Trámites';
 export const FROM = 'Desde';
 export const FRENCH = 'Francés';
 export const FUTURE = 'Muy pronto...';
+export const FUTURE_DARK = 'Oscuro Future';
 export const FEE_INVOICING = 'Facturación de Cuotas';
 export const FEE_INVOICING_PANEL = 'Panel Facturación de Cuotas';
 export const FEES_LIST = 'Listado de Cuotas';

@@ -465,6 +465,7 @@ export const FORMALITIES = 'Formalities';
 export const FROM = 'From';
 export const FRENCH = 'French';
 export const FUTURE = 'Coming soon...';
+export const FUTURE_DARK = 'Dark Future';
 export const FEE_INVOICING = 'Fee Invoicing';
 export const FEE_INVOICING_PANEL = 'Fee Invoicing Panel';
 export const FEES_LIST = 'Fees List';
