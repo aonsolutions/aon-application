@@ -458,6 +458,7 @@ export const FORECAST_LIST = 'Listado de Previsión';
 export const FORECAST_MANAGEMENT = 'Xestión de Previsións';
 export const FORMAT_SIZE_TAGS = 'Etiquetas de Formatos/Medidas';
 export const FUTURE = 'Próximamente...';
+export const FUTURE_DARK = 'Futuro Escuro';
 
 // ----- G
 

@@ -1,0 +1,494 @@
+@import url('/css/theme/future.css');
+
+/* ===== Future Dark Theme ===== */
+/* Dark palette: slate-950/900/800/700 backgrounds, slate-100 text */
+
+:root {
+	--aonBackgroundColor: #1e293b;        /* slate-800: card/panel backgrounds */
+	--aonBackgroundColor2: #0f172a;       /* slate-900: page background */
+	--colorNeutralBackground2: #1e293b;
+	--aonHeaderBackgroundColor: #020617;  /* slate-950: top header bar */
+
+	/* CRITICAL: makes all mask-image icons visible against dark backgrounds */
+	--aonTopAppTextColor: #f1f5f9;        /* slate-100 (was black) */
+}
+
+body {
+	--isFutureDarkTheme: true;
+}
+
+/* ===== General body / page ===== */
+
+.aonBody {
+	background-color: var(--aonBackgroundColor2) !important;
+	color: #f1f5f9;
+}
+
+.rootPanel {
+	border-color: var(--aonBackgroundColor2);
+	background-color: var(--aonBackgroundColor2) !important;
+}
+
+/* ===== Side menu ===== */
+
+.aonMenuSideNav {
+	background-color: #1e293b !important;
+}
+
+.aonNewMenuSideNavUl {
+	background-color: var(--aonBackgroundColor) !important;
+}
+
+#aonMenu #aonMenuSidenav {
+	background-color: var(--aonBackgroundColor2) !important;
+}
+
+#aonMenu #aonMenuSidenav .aonMenuSidenavLiSeleted,
+#aonMenu #aonMenuSidenav .aonNewMenuSideNavLi:hover {
+	background-color: #334155;
+}
+
+/* ===== Menu anchor / collapse button ===== */
+
+#aonMenuAnchor {
+	background-color: #1e293b !important;
+}
+
+#aonMenuAnchor.close {
+	background-color: #1e293b !important;
+}
+
+.aonMenuAnchorDivSpan {
+	color: #f1f5f9;
+}
+
+/* ===== Top nav ===== */
+
+.aonMenuTopnav {
+	background-color: var(--aonBackgroundColor) !important;
+	border-color: var(--aonBackgroundColor) !important;
+}
+
+/* ===== Sidenav / app sidenav ===== */
+
+.aonSidenav,
+.aonToolbar,
+#aonParent .aonContentBeta,
+#aonSignin .aonContentBeta,
+#aonDocumental .aonContentBeta,
+#aonLaboral .aonContentBeta,
+#aonInvoice .aonContentBeta,
+#aonConfiguration .aonContentBeta,
+#aonConfigurationNew .aonContentBeta,
+#aonWarehouse .aonContentBeta,
+#aonMessenger .aonContentBeta,
+#aonOfficePanel .aonContentBeta,
+#aonFiscal .aonContentBeta,
+#aonAccounting .aonContentBeta {
+	background-color: var(--aonBackgroundColor) !important;
+}
+
+.aonContentBeta {
+	background-color: var(--aonBackgroundColor2) !important;
+}
+
+.aonRightSidenav {
+	background-color: var(--aonBackgroundColor2) !important;
+}
+
+.aonSidenav *,
+.aonToolbarTitle {
+	color: #f1f5f9 !important;
+}
+
+.aonSidenav .aonAppMenuSidenavList:hover,
+.aonSidenav .aonAppMenuSidenavListSelected {
+	background-color: #334155 !important;
+}
+
+.aonSidenav .aonSidenavTitle span {
+	color: #94a3b8 !important;
+}
+
+/* ===== Suite menu ===== */
+
+.suiteMenuContent {
+	background-color: var(--aonBackgroundColor2) !important;
+}
+
+.suiteMenuContent aon-card {
+	background-color: var(--aonBackgroundColor) !important;
+}
+
+.suiteMenuContent .aonCardText {
+	color: #94a3b8 !important;
+}
+
+.suiteMenuCardDataDiv:hover {
+	background-color: #334155 !important;
+}
+
+/* ===== Card styles ===== */
+
+.aonCardTitle {
+	border-bottom-color: #334155 !important;
+}
+
+.aonCardTitleSection *:not(.material-icons) {
+	color: #f1f5f9;
+}
+
+/* ===== Company list ===== */
+
+#aonCompanySpanTitle {
+	color: #f1f5f9 !important;
+}
+
+#UlCompanies li {
+	border-color: #334155 !important;
+	color: #94a3b8 !important;
+	background-color: var(--aonBackgroundColor) !important;
+}
+
+#UlCompanies li:hover {
+	background-color: #334155 !important;
+	color: #f1f5f9 !important;
+}
+
+#UlCompanies li:hover * {
+	color: #f1f5f9 !important;
+}
+
+/* Company list icons — override hardcoded #64748b */
+#UlCompanies .aonLiSpan .material-icons {
+	background-color: #94a3b8 !important;
+}
+
+#UlCompanies li:hover .aonLiSpan .material-icons {
+	background-color: #f1f5f9 !important;
+}
+
+#UlCompanies > li > span:nth-of-type(3) {
+	background-color: #94a3b8 !important;
+}
+
+#UlCompanies > li:hover > span:nth-of-type(3) {
+	background-color: #f1f5f9 !important;
+}
+
+/* ===== Tables ===== */
+
+.aonTable thead {
+	background-color: #1e293b !important;
+}
+
+.aonTable thead th {
+	color: #f1f5f9 !important;
+}
+
+.aonTable tbody tr {
+	color: #f1f5f9 !important;
+	border-color: #334155 !important;
+	background-color: var(--aonBackgroundColor) !important;
+}
+
+.aonTable tbody tr td {
+	color: #94a3b8 !important;
+}
+
+.aonTable tbody tr:hover,
+.aonTableTrChecked {
+	background-color: #334155 !important;
+}
+
+/* ===== Inputs ===== */
+
+.aonInputBoxLabel > input,
+.aonTextareaBoxLabel > textarea {
+	border-color: #475569 !important;
+	background-color: #1e293b !important;
+	color: #f1f5f9 !important;
+}
+
+.aonInputGroup input {
+	border-color: #475569 !important;
+	background-color: #1e293b !important;
+	color: #f1f5f9 !important;
+}
+
+aon-search > span {
+	border-color: #475569 !important;
+	background-color: #1e293b !important;
+}
+
+/* Disabled/readonly inputs */
+aon-input[readonly="true"] input,
+aon-input[disabled="true"] input,
+aon-input[disabled="disabled"] input,
+aon-new-input[readonly="true"] input,
+aon-new-input[disabled="true"] input,
+aon-new-input[disabled="disabled"] input,
+aon-new-number[readonly="true"] input,
+aon-new-number[disabled="true"] input,
+aon-new-number[disabled="disabled"] input,
+aon-new-suggestion[readonly="true"] input,
+aon-new-suggestion[disabled="true"] input,
+aon-new-suggestion[disabled="disabled"] input,
+aon-email[readonly="true"] input,
+aon-email[disabled="true"] input,
+aon-email[disabled="disabled"] input,
+aon-new-date[readonly="true"] input,
+aon-new-date[disabled="true"] input,
+aon-new-date[disabled="disabled"] input,
+aon-new-select[readonly="true"] input,
+aon-new-select[disabled="true"] input,
+aon-new-select[disabled="disabled"] input,
+aon-iban[readonly="true"] input,
+aon-iban[disabled="true"] input,
+aon-iban[disabled="disabled"] input,
+aon-quantity[readonly="true"] input,
+aon-quantity[disabled="true"] input,
+aon-quantity[disabled="disabled"] input {
+	background-color: #334155 !important;
+	color: #94a3b8 !important;
+}
+
+/* ===== Login ===== */
+
+.aonLoginForm {
+	background-color: #1e293b !important;
+	border-color: #334155 !important;
+}
+
+#aonLoginUserInput,
+#aonLoginPasswordInput {
+	color: #f1f5f9 !important;
+	background-color: #0f172a !important;
+	border-color: #475569 !important;
+}
+
+#aonLoginUserInput::placeholder,
+#aonLoginPasswordInput::placeholder {
+	color: #64748b;
+}
+
+.aonDividerSpan {
+	color: #f1f5f9 !important;
+	background-color: #1e293b !important;
+}
+
+.aonInputBoxLabelSpanError {
+	color: #f1f5f9 !important;
+}
+
+/* ===== Invoice home action icons — override hardcoded #1e293b ===== */
+
+#aonInvoiceHomeNewIssuedInvoiceButtonIcon,
+#aonInvoiceHomeNewReceivedInvoiceButtonIcon,
+#aonInvoiceHomeNewTicketInvoiceButtonIcon {
+	background-color: #f1f5f9 !important;
+}
+
+/* ===== Right panel ===== */
+
+aon-right-panel {
+	background: #1e293b !important;
+}
+
+.rightPanel {
+	background-color: var(--aonBackgroundColor2) !important;
+}
+
+.rightPanel .toolbarSidenavPanel {
+	background: #334155 !important;
+}
+
+.rightPanel .toolbarSidenavPanel * {
+	color: #f1f5f9 !important;
+}
+
+/* Right panel card content — override hardcoded #64748b icons */
+.rightPanel div[id$="CardContent"] *:not(.material-icons) {
+	color: #94a3b8 !important;
+}
+
+.rightPanel div[id$="CardContent"] .material-icons {
+	background-color: #94a3b8 !important;
+}
+
+.rightPanel div[id$="CardContent"] > div > div:hover,
+.rightPanel div[id$="CardContent"] > div > div.selected {
+	background-color: #334155 !important;
+}
+
+/* Help card icons — override hardcoded #0f172a */
+.rightPanel .helpCardText .material-icons {
+	background-color: #f1f5f9 !important;
+}
+
+.rightPanel .helpCardText * {
+	color: #f1f5f9 !important;
+}
+
+.helpCardText:hover,
+.configCardText:hover {
+	background-color: #334155 !important;
+}
+
+/* Config panel language icons — override hardcoded #64748b */
+.rightPanel i[class~="configPanelLanguageI"] {
+	background-color: #94a3b8 !important;
+}
+
+/* User panel */
+#loginContent > div:first-child,
+#loginContent > div:first-of-type {
+	background-color: #1e293b !important;
+}
+
+/* ===== Tabs ===== */
+
+.aonTab {
+	background-color: var(--aonBackgroundColor2) !important;
+}
+
+#aonCompanyTabFilter {
+	background-color: var(--aonBackgroundColor2) !important;
+}
+
+.aonTab .aonTabItemText:hover {
+	background-color: var(--aonBackgroundColor) !important;
+}
+
+.aonTab .aonTabItemTextSelected {
+	background-color: var(--aonBackgroundColor) !important;
+}
+
+/* ===== Secondary toolbar ===== */
+
+.aonSecondaryToolbarTitle {
+	color: #f1f5f9;
+}
+
+/* ===== Checkboxes ===== */
+
+.aonCheckbox > span::before {
+	border-color: #94a3b8 !important;
+}
+
+.aonCheckbox > input:checked,
+.aonCheckbox > input:indeterminate {
+	border-color: #f1f5f9 !important;
+	background-color: #f1f5f9 !important;
+}
+
+.aonCheckbox > input:checked + span::before,
+.aonCheckbox > input:indeterminate + span::before {
+	border-color: #f1f5f9 !important;
+	background-color: #f1f5f9 !important;
+}
+
+.aonCheckbox > input:checked + span::after,
+.aonCheckbox > input:indeterminate + span::after {
+	border-color: #0f172a !important;
+}
+
+/* ===== Switch ===== */
+
+.aonSwitch > span::before {
+	background-color: #475569 !important;
+}
+
+.aonSwitch > input:checked + span::before {
+	background-color: #475569 !important;
+}
+
+/* ===== Search dialog ===== */
+
+#aonHeaderSearchDialogMenu span {
+	color: #94a3b8 !important;
+}
+
+#aonHeaderSearchDialogMenu span[header],
+#aonHeaderSearchDialogMenu b[decorate] {
+	color: #f1f5f9 !important;
+}
+
+#aonHeaderSearchDialogMenu i.material-icons {
+	background-color: #94a3b8 !important;
+}
+
+#aonHeaderSearchDialogMenu i.material-icons:has(+span>span[header]) {
+	background-color: #f1f5f9 !important;
+}
+
+/* ===== Help dialog menu ===== */
+
+ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi span {
+	color: #94a3b8 !important;
+}
+
+ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover {
+	background-color: #334155 !important;
+}
+
+ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover span {
+	color: #f1f5f9 !important;
+}
+
+/* ===== Dialog content ===== */
+
+.aonDialogContent > div:first-of-type {
+	border-bottom-color: #334155 !important;
+	color: #f1f5f9 !important;
+}
+
+.aonDialogContent > label {
+	background-color: #94a3b8 !important;
+}
+
+/* ===== Excel icon (dark background context) ===== */
+
+aon-icon[icon='excel'] {
+	background-color: #f1f5f9 !important;
+}
+
+button:has(aon-icon[icon='aon_excel']) {
+	background-color: #334155 !important;
+}
+
+/* ===== Menu hover icons ===== */
+
+.menu-option:hover i,
+.menu-children > div:hover i,
+.menu-option.open i {
+	background-color: #f1f5f9 !important;
+}
+
+/* ===== Profile avatar ===== */
+
+.profile-avatar-letters {
+	background-color: #334155 !important;
+	color: #f1f5f9 !important;
+}
+
+/* ===== Office panel search ===== */
+
+#aonOfficePanelToolbarHeaderToolSectionSearchSpan {
+	border-color: #475569 !important;
+	background-color: #1e293b !important;
+}
+
+/* ===== Config / GWT iframe content area ===== */
+
+#aonConfigurationContent.aonContentBeta:has(iframe),
+#aonConfigurationNewContent.aonContentBeta:has(iframe) {
+	background-color: var(--aonBackgroundColor2) !important;
+}
+
+/**
+Important. Keep this rule at the end of file
+**/
+.aonTheme {
+	--aon-theme: 'FUTURE_DARK';
+}

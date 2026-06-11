@@ -465,6 +465,7 @@ export const FORMALITIES = 'Tràmits';
 export const FROM = 'Des';
 export const FRENCH = 'Francès';
 export const FUTURE = 'Molt aviat...';
+export const FUTURE_DARK = 'Futur Fosc';
 export const FEE_INVOICING = 'Facturació de Quotes';
 export const FEE_INVOICING_PANEL = 'Tauler Facturació de Quotes';
 export const FEES_LIST = 'Llistat de Quotes';

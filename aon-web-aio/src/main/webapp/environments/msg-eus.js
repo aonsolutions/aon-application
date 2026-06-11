@@ -459,6 +459,7 @@ export const FORECAST_LIST = 'Aurreikuspen Zerrenda';
 export const FORECAST_MANAGEMENT = 'Aurreikuspenen Kudeaketa';
 export const FORMAT_SIZE_TAGS = 'Formatu/Neurrien Etiketek';
 export const FUTURE = 'Laster...';
+export const FUTURE_DARK = 'Etorkizun Iluna';
 
 // ----- G
 
