@@ -85,7 +85,8 @@ public class Mod2002025Import2024 {
 			 (mod200old,mod200new) -> mod200new.setPeriodStart(addOneYear(mod200old.getPeriodStart()))  // Periodo Impositivo - Inicio					
 			,(mod200old,mod200new) -> mod200new.setPeriodEnd(addOneYear(mod200old.getPeriodEnd()))      // Periodo Impositivo - Fin
 			,(mod200old,mod200new) -> mod200new.setPeriodType(mod200old.getPeriodType())                // Identificación - Tipo de ejercicio
-			,(mod200old,mod200new) -> mod200new.setCnae(mod200old.getCnae()) // FALTA - CONVERSION AL CNAE2025 			 			  	// Identificación - C.N.A.E. Actividad principal
+			// NO COPIAR EL CNAE DEL 2024 PORQUE EN EL 2024 ERA EL CNAE2009 Y EN EL 2025 ES EL CNAE2025, ASI QUE SOLO SE COPIARA DE LA ACTIVIDAD PRINCIPAL
+//			,(mod200old,mod200new) -> mod200new.setCnae(mod200old.getCnae()) 							// Identificación - C.N.A.E. Actividad principal
 			,(mod200old,mod200new) -> mod200new.setDocument(mod200old.getDocument()) 					// Identificación - NIF 
 			,(mod200old,mod200new) -> mod200new.setName(mod200old.getName())          					// Identificación - Apellidos y nombre o Razón Social
 			,(mod200old,mod200new) -> mod200new.setEnterprisePhone1(mod200old.getEnterprisePhone1())    // Identificación - Teléfono 1

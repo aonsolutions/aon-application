@@ -120,7 +120,7 @@ public class Page19 extends PageAbs {
 			
 			paintFooterNote(basePanel, FOOTER);
 			
-			// Relación de Partícipes
+			// C) Relación de Partícipes
 			panelPar1 = new FlowPanel();
 			paintPar1Panel();
 			addTable("C) Relaci\u00F3n de Part\u00EDcipes").setWidget(0, 0, panelPar1);
@@ -361,6 +361,7 @@ public class Page19 extends PageAbs {
 		
 	}
 	
+	// Partícipes de agrupaciones de interés económico y UTES
 	private void paintPar2Panel() {
 		
 		panelPar2.clear();
@@ -372,9 +373,9 @@ public class Page19 extends PageAbs {
 		grid.addHeaderRow()
 			.addCell(new Label(AON.MSG.document()),AON.CSS.aonWidth120())
 			.addCell(new Label("Nombre o raz\u00F3n social"),AON.CSS.aonWidthAuto())
-			.addCell(new Label("Provincia/Pais"),AON.CSS.aonWidth120())
-			.addCell(new Label("Valoracion Comienzo"),AON.CSS.aonWidth150())
-			.addCell(new Label("Valoracion Final"),AON.CSS.aonWidth150())
+			.addCell(new Label(AON.MSG.country()),AON.CSS.aonWidth120())
+			.addCell(new Label("Valoraci\u00F3n Comienzo"),AON.CSS.aonWidth150())
+			.addCell(new Label("Valoraci\u00F3n Final"),AON.CSS.aonWidth150())
 			.addCell(new Label("Ingresos financieros"),AON.CSS.aonWidth150())
 			.addCell(new Label(""),AON.CSS.aonWidth20());
 		

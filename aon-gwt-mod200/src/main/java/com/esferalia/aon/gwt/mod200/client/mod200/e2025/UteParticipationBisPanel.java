@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2025;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.ProvinceCountryListBox;
+import com.esferalia.aon.gwt.common.client.widget.CountryListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
@@ -10,7 +10,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.mod200.api.model.UteParticipationBis;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2025.Mod2002025Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -32,7 +31,7 @@ public class UteParticipationBisPanel extends AonCustomDialog {
 	
 	private AonDocumentTextBox document; 		// NIF (o equivalente al NIF del país de residencia, si no tiene NIF en España)
 	private AonTextBox name; 					// Nombre o razón social
-	private ProvinceCountryListBox province;	// Código país // FALTA - COMPROBAR CON DOC PADIS QUE AHORA SOLO SE PIDE EL PAIS EN 2024 ERA PROVINCIA/PAIS
+	private CountryListBox country;				// Código país 
 	private ListBox entityType; 				// Tipo de entidad: 0 - No consta, 1 - Agrupación de interés económico española, 2 - Agrupación europea de interés económico, 3 - Unión temporal de empresas, 4 - Colaboraciones en el extranjero análogas a las uniones temporales
 	private ListBox imputationCriteria;			// Criterio de imputación art. 46.2 LIS: 0 - No consta, 1 - En la fecha de finalización del periodo impositivo de la entidad, 2 - En el siguiente periodo impositivo
 	private AonDoubleBox c01279;  				// Datos relativos a la participación: Valoración de la participación al comienzo del período impositivo                                                                                                       
@@ -89,16 +88,7 @@ public class UteParticipationBisPanel extends AonCustomDialog {
 		// Asignar valores
 		this.document.setValue(up.getDocument());
 		this.name.setValue(up.getName());
-		this.province.setSelectedIndex(0);
-		int idx = up.getProvince();
-		if (idx > 0 && idx < Province.values().length) {
-			this.province.setSelectedIndex(idx);
-		} else {
-			Country c = Country.safeValueOf(up.getCountry());
-			if (c != null) {
-				this.province.setSelectedIndex(c.ordinal() + Province.values().length);
-			}
-		}
+		this.country.setValue(Country.safeValueOf(up.getCountry()));
 		this.entityType.setSelectedIndex(up.getEntityType());
 		this.imputationCriteria.setSelectedIndex(up.getImputationCriteria());
 		this.c01279.setValue(up.getC01279());   
@@ -125,7 +115,7 @@ public class UteParticipationBisPanel extends AonCustomDialog {
 		// Habilitar/Deshabilitar 
 		this.document.setEnabled(isEnabled);
 		this.name.setEnabled(isEnabled);
-		this.province.setEnabled(isEnabled);
+		this.country.setEnabled(isEnabled);
 		this.entityType.setEnabled(isEnabled);
 		this.imputationCriteria.setEnabled(isEnabled);
 		this.c01279.setEnabled(isEnabled);   
@@ -164,7 +154,7 @@ public class UteParticipationBisPanel extends AonCustomDialog {
 				
 				@Override
 				public void onCancel() { 
-					/* DO NOTHING */ 
+					// DO NOTHING  
 				}
 				
 				@Override
@@ -184,12 +174,7 @@ public class UteParticipationBisPanel extends AonCustomDialog {
 		UteParticipationBis up = new UteParticipationBis();
 		up.setDocument(this.document.getValue());
 		up.setName(this.name.getValue());
-		if (this.province.getSelectedIndex() < Province.values().length) {
-			up.setProvince(this.province.getSelectedIndex());
-		} else {
-			Country c = Country.values()[this.province.getSelectedIndex() - Province.values().length];
-			up.setCountry(c.getIso2());
-		}
+		up.setCountry(country.getValue() == null ? null : country.getValue().getIso2());
 		up.setEntityType(this.entityType.getSelectedIndex());
 		up.setImputationCriteria(this.imputationCriteria.getSelectedIndex());
 		up.setC01279(this.c01279.getValue());   
@@ -239,8 +224,9 @@ public class UteParticipationBisPanel extends AonCustomDialog {
 		name.setMaxLength(40);
 		name.addValueChangeHandler(event -> setModified(true));
 		
-		province = new ProvinceCountryListBox();
-		province.addChangeHandler(event -> setModified(true));
+		country = new CountryListBox();
+		country.setWidth("auto");
+		country.addChangeHandler(event -> setModified(true));
 		
 		entityType = new ListBox();		
 		entityType.addItem("0 - No consta");
@@ -258,7 +244,7 @@ public class UteParticipationBisPanel extends AonCustomDialog {
 		
 		addRow(tab1, "NIF (o equivalente al NIF del pa\u00EDs de residencia, si no tiene NIF en Espa\u00F1a)", document, AON.CSS.aonWidth440());
 		addRow(tab1, "Nombre o raz\u00F3n social", name, AON.CSS.aonWidth440());
-		addRow(tab1, AON.MSG.province() + "/" + AON.MSG.country(), province, AON.CSS.aonWidth440());		
+		addRow(tab1, AON.MSG.country(), country, AON.CSS.aonWidth440());		
 		addRow(tab1, "Tipo de entidad", entityType, AON.CSS.aonWidth440());
 		addRow(tab1, "Criterio de imputaci\u00F3n art. 46.2 LIS", imputationCriteria, AON.CSS.aonWidth440());
 		
@@ -271,12 +257,6 @@ public class UteParticipationBisPanel extends AonCustomDialog {
 		tab2.addStyleName(AON.CSS.aonBlockCenter());
 		rootPanel.add(tab2);
 		
-//		c01279 = new AonDoubleBox();
-//		c01279.addValueChangeHandler(event -> doubleValueChanged(c01279));
-//		c01455 = new AonDoubleBox();
-//		c01455.addValueChangeHandler(event -> doubleValueChanged(c01455));
-//		c01456 = new AonDoubleBox();
-//		c01456.addValueChangeHandler(event -> doubleValueChanged(c01456));
 		c01279 = addAonDoubleBox();
 		c01455 = addAonDoubleBox();
 		c01456 = addAonDoubleBox();
@@ -294,40 +274,6 @@ public class UteParticipationBisPanel extends AonCustomDialog {
 		tab3.addStyleName(AON.CSS.aonBlockCenter());
 		rootPanel.add(tab3);
 		
-//		c01458 = new AonDoubleBox();
-//		c01458.addValueChangeHandler(event -> doubleValueChanged(c01458));
-//		c01459 = new AonDoubleBox();
-//		c01459.addValueChangeHandler(event -> doubleValueChanged(c01459));
-//		c01460 = new AonDoubleBox();
-//		c01460.addValueChangeHandler(event -> doubleValueChanged(c01460));
-//		c01461 = new AonDoubleBox();
-//		c01461.addValueChangeHandler(event -> doubleValueChanged(c01461));
-//		c01467 = new AonDoubleBox();
-//		c01467.addValueChangeHandler(event -> doubleValueChanged(c01467));
-//		c01468 = new AonDoubleBox();
-//		c01468.addValueChangeHandler(event -> doubleValueChanged(c01468));
-//		c01523 = new AonDoubleBox();
-//		c01523.addValueChangeHandler(event -> doubleValueChanged(c01523));
-//		c01601 = new AonDoubleBox();
-//		c01601.addValueChangeHandler(event -> doubleValueChanged(c01601));
-//		c01638 = new AonDoubleBox();
-//		c01638.addValueChangeHandler(event -> doubleValueChanged(c01638));
-//		c01639 = new AonDoubleBox();
-//		c01639.addValueChangeHandler(event -> doubleValueChanged(c01639));
-//		c01640 = new AonDoubleBox();
-//		c01640.addValueChangeHandler(event -> doubleValueChanged(c01640));
-//		c01743 = new AonDoubleBox();
-//		c01743.addValueChangeHandler(event -> doubleValueChanged(c01743));
-//		c01909 = new AonDoubleBox();
-//		c01909.addValueChangeHandler(event -> doubleValueChanged(c01909));
-//		c01910 = new AonDoubleBox();
-//		c01910.addValueChangeHandler(event -> doubleValueChanged(c01910));
-//		c01911 = new AonDoubleBox();
-//		c01911.addValueChangeHandler(event -> doubleValueChanged(c01911));
-//		c01912 = new AonDoubleBox();
-//		c01912.addValueChangeHandler(event -> doubleValueChanged(c01912));
-//		c01934 = new AonDoubleBox();
-//		c01934.addValueChangeHandler(event -> doubleValueChanged(c01934));
 		c01458 = addAonDoubleBox();
 		c01459 = addAonDoubleBox();
 		c01460 = addAonDoubleBox();

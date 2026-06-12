@@ -1,4 +1,4 @@
-// CIFRA DE NEGOCIOS, PERSONAL ASALARIADO, SECRETARIO, GRUPO FISCAL O MERCANTIL
+// CIFRA DE NEGOCIOS, PERSONAL ASALARIADO, SECRETARIO, GRUPO FISCAL, GRUPO MERCANTIL
 package com.esferalia.aon.gwt.mod200.client.mod200.e2025;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -184,8 +184,7 @@ public class Page01 extends PageAbs {
 			}
 		}
 		
-		// FALTA - REVISAR CON DOC PADIS QUE SE SIGUE HABILITANDO SOLO PARA ESOS CARACTERES (EL MODELO PONE SOLO CARACTERES 81 O 82)
-		// GRUPO MERCANTIL (solo habilitados si caracteres 81, 82 o 39 marcados)
+		// GRUPO MERCANTIL (solo habilitados si caracteres 81 o 82)
 		
 		AonDocumentTextBox ultimateDocument = new AonDocumentTextBox();           
 		AonTextBox ultimateName = new AonTextBox();
@@ -193,7 +192,7 @@ public class Page01 extends PageAbs {
 		CountryListBox ultimateResidenceCountry = new CountryListBox();
 		AonDocumentTextBox ultimateResidenceDocument = new AonDocumentTextBox(false);
 		
-		if (isCheckedOr(Mod2002025Key.C0081,Mod2002025Key.C0082,Mod2002025Key.C0039)) {
+		if (isCheckedOr(Mod2002025Key.C0081,Mod2002025Key.C0082)) {
 		
 			basePanel.add(getTitle("Grupo mercantil"));
 			

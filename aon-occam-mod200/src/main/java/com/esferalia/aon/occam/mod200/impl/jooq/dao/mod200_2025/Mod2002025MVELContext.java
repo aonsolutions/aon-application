@@ -89,6 +89,7 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 	private static final int LIM_1 = 300000;
 	private static final int LIM_2 = 1000000;
 	private static final int LIM_3 = 25000;
+	private static final int LIM_4 = 50000;
 	
 	private Mod2002025 mod200;
 	
@@ -491,8 +492,15 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		return d;
 	}
 
-	public Boolean isChecked(Mod2002025Key key) {		
-		return (Boolean) get(key.toString());
+//	public Boolean isChecked(Mod2002025Key key) {		
+//		return (Boolean) get(key.toString());
+//	}
+	public boolean isChecked(Mod2002025Key... keys) {
+		for (Mod2002025Key k : keys) {
+			 if ((boolean) get(k.toString())) 
+				 return true;
+		}
+		return false;
 	}
 	public Boolean isCooperativa() {
 		return isChecked(C0017) || isChecked(C0018) || isChecked(C0019); 
@@ -566,6 +574,12 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		return 365;
 	}
 	
+	// FALTA - ESTO ES LO QUE HABIA HASTA AHORA, CREAR UN METODO NUEVO TENIENDO EN CUENTA LAS NUEVAS REGLAS (PAGINAS 163 Y SIGUIENTES, 420 Y SIGUIENTES, 439 Y SIGUIENTES, DEL DOCUEMNTO PADIS)
+	// LO PRINCIPAL ES QUE AHORA LA CASILLA 6 TIENE UN GRAVAMEN MAS REDUCIDO Y ADEMAS LA CASILLA 88 PROVOCA APLICAR DOS TIPOS DE GRAVAMEN SEGUN SI LA BASE SUPERA O NO LOS 50000 EUROS
+	// ADEMAS AHORA EN EL FICHERO EN LA CASILLA 558 HAY QUE PONER ESOS DOS POSIBLES TIPOS POR EJEMPLO 21/22%, SE PONDRIA 2122, USANDO LA PARTE ENTERA PARA UN TIPO Y LA DECIMAL PARA EL OTRO
+	// POR LO TANTO HABRA QUE VER DONDE SE USA AHORA LA CASILLA 558, SI SE ESTA USANDO EN CALCULOS E IGUAL HAY QUE CREAR OTRA CASILLA AUNQUE SEA INTERNA PARA ESE SEGUNDO TIPO Y DEJAR LA CASILLA 558 
+	// CON EL PRIMER TIPO Y ESA OTRA CASILLA CON EL SEGUNDO TIPO, Y LUEGO A LA HORA DE HACER EL FICHERO PONER LAS DOS CASILLAS JUNTAS
+	// 
 	// Tipo de Gravamen (Casilla 558)
 	public double computeLQ558() throws AonCoreException {
 		
@@ -597,7 +611,7 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		if ( isChecked(C0046) ) return 25.0;
 		if ( isChecked(C0021) ) return 25.0;
 
-		if ( isChecked(C0001) ) return 10.0;
+		if ( isChecked(C0001) ) return 10.0;		
 		if ( isChecked(C0002) ) return 25.0;
 		if ( isChecked(C0003) ) return 1.0;
 		if ( isChecked(C0004) ) return 1.0;
@@ -631,6 +645,75 @@ public class Mod2002025MVELContext implements Map<String, Object> {
  
 		return 25.0;
 	}
+	// ESTE SERIA EL METODO NUEVO, CON LAS CONSIDERACIONES QUE HAY QUE TENER EN CUENTA, ADEMAS DE LA TABLA DE TIPOS DE GRAVAMEN PUBLICADA EN EL DOCUMENTO PADIS
+	public double computeLQ558New() throws AonCoreException {
+		
+//		CONSIDERACIONES SOBRE EL CUADRO DE TIPOS DE GRAVAMEN PARA 2025:
+//		1ª. El tipo de gravamen aplicable al carácter 00021 ó 00046 prevalece sobre el resto, excepto sobre el 00063, 00066, 00071, 00024, 00083, 00088, 00015 y 00006. Además, el tipo de gravamen del carácter 00021 prevalece sobre los demás (salvo sobre el carácter 00034), de modo que si está combinado con cualquier otro carácter que le sea compatible, se aplicará el correspondiente al 00021.
+//		2ª. Los tipos de gravamen vinculados a los caracteres 00001, 00002, 00003, 00004, 00005, (00008 + 00084), 00024 y 00058 prevalecen sobre los correspondientes a aquellos con los que sean compatibles, excepto (salvo el carácter 00024) sobre el tipo del carácter 00021 y 00046 tal como se ha indicado en el punto anterior y con las excepciones del carácter 00006 que se recogen posteriormente. En caso de concurrencia del carácter 00058 con el 00001, 00015, 00017, 00018, 00006, 00063, 00071, 00079, 00083 o 00088 prevalecerán éstos sobre aquél. En caso de concurrencia del carácter 00005 con el 00063 prevalecerá éste sobre aquél. En caso de concurrencia del carácter 00024 con el 00001, 00002, 00003, 00004, (00008 + 00084), y 00071 prevalecerá el carácter 00024.		
+//		3ª. El carácter 00006 está vinculado al tipo del 24%, salvo que esté combinado con 00001, 00003, 00004, (00008 + 00084), 00015, 00017, 00018, 00024, 00063, 00071, 00079, 00083 o 00088 en cuyo caso, prevalece el tipo de gravamen de éstos. Además, si el carácter 00006 está combinado con el 00034 el tipo de gravamen será el 30. Si el carácter 00034 está combinado con el 00063, 00071, prevalece el tipo de gravamen de éstos.
+//		4ª. Siempre que se marque la clave 00030, 00047, 00009, 00010 ó 00049 de caracteres, aunque esté combinada con otros caracteres, el tipo de gravamen quedará abierto (en blanco), sin validación, para su cumplimentación por el contribuyente.
+//		5ª. La clave 00038 irá vinculada al tipo de gravamen del 25% salvo que estén combinadas con las claves 00001, 00015, 00017, 00018, 00024, 00036, 00058 00063, 00071, 00079, 00083 o 00088, en cuyo caso prevalecerá el tipo de gravamen que tengan estas claves.
+//		6ª. Cuando se hubiera marcado la clave 00002, SOCIEDADES WEB cumplimentará automáticamente el tipo del 25%, excepto si está combinada con 00024. Y si se combina con la 00071 o con la 00083 cumplimentará automáticamente el tipo del 15%. Si se combina con la 00088 cumplimentará automáticamente el tipo del 21/22%. Si se combina con la 00006 sin marcar 00071, 00083 o 00088 cumplimentará automáticamente el tipo del 24%.
+//		7ª. Se dará prioridad al tipo de gravamen más favorable al contribuyente en los supuestos de concurrencia de caracteres para los que no se haya establecido otra especificación.
+//		8ª. El tipo de gravamen aplicable al carácter 00066 (Entidad patrimonial) prevalece sobre el resto, de modo que si está combinado con cualquier otro carácter que le sea compatible y el tipo de gravamen que le corresponda sea superior al de entidad patrimonial se aplicará el correspondiente al 00066. En caso de que el carácter 00066 se combine con otros caracteres a los que sea de aplicación un tipo de gravamen más favorable, se aplicará el correspondiente al carácter más favorable, excepto .
+//		9ª. Si se combina el carácter 00008 con el 00084 se cumplimentará automáticamente el tipo de gravamen del 1% (salvo excepciones anteriores). No obstante, se permitirá modificar el tipo de gravamen al 25%, al 24% si marca el carácter 00006 o al 21/22% si marca el carácter 00088.
+//		10ª. Si se combinan los caracteres 00017 o 00018 con los caracteres 00006, 00083, 00088 o 00071 se aplicarán los siguientes tipos de gravamen:
+//			00006: Resultados cooperativos 20% Resultados extracooperativos: 24%
+//			00083: Resultados cooperativos 12% Resultados extracooperativos: 15%
+//			00088: Resultados cooperativos 18/19% Resultados extracooperativos: 21/22%
+//			00071: Resultados cooperativos 12% Resultados extracooperativos: 15%
+//			En la casilla 00558 se consignará el tipo de gravamen previsto para los resultados cooperativos.
+//			En caso de combinaciones de varios de estos caracteres prevalecen los tipos mas favorables
+//		10ª. Si se combinan los caracteres 00017 o 00018 con el carácter 00024 (Cajas rurales o cooperativas de crédito) y además se combinan con los caracteres 00006, 00083, 00088 o 00071 se aplicarán los siguientes tipos de gravamen:
+//			00006: Resultados cooperativos 24% Resultados extracooperativos: 30%
+//			00083: Resultados cooperativos 15% Resultados extracooperativos: 30%
+//			00088: Resultados cooperativos 21/22% Resultados extracooperativos: 30%
+//			00071: Resultados cooperativos 15% Resultados extracooperativos: 30%
+//			En la casilla 00558 se consignará el tipo de gravamen previsto para los resultados cooperativos.
+//			En caso de combinaciones de varios de estos caracteres prevalecen los tipos mas favorables
+		
+		// Regla 4: Casilla abierta
+		if (isChecked(C0030, C0047, C0009, C0010, C0049)) {
+			return roundKey(LQ558);
+		}
+		
+		// Regla 10: Cooperativas protegidas 
+		if (isChecked(C0017, C0018)) {
+			// Si se combinan los caracteres 00017 o 00018 con los caracteres 00006, 00083, 00088 o 00071
+			if (isChecked(C0006, C0083, C0088, C0071)) {
+				 if (isChecked(C0083,C0071)) 
+					 return isChecked(C0024) ? 15.0 : 12.0;
+				 if (isChecked(C0088)) 
+					 return isChecked(C0024) ? 21.0 : 18.0;
+				 if (isChecked(C0006)) 
+					 return isChecked(C0024) ? 24.0 : 20.0;
+			}
+			// Tipo general para cooperativas protegidas
+			return 20.0; 
+		}
+		
+		// Regla 1: Casillas 21 o 46
+		if (isChecked(C0021, C0046)) {
+			// prevalece sobre el resto excepto sobre el 00063, 00066, 00071, 00024, 00083, 00088, 00015 y 00006
+			if (isChecked(C0063, C0066, C0071, C0024, C0083, C0088, C0015, C0006)) {
+				// El tipo de gravamen del carácter 00021 prevalece sobre los demás (salvo sobre el carácter 00034), de modo que si está combinado con cualquier otro carácter que le sea compatible, se aplicará el correspondiente al 00021.
+				if (isChecked(C0021) && !isChecked(C0034)) return 25.0;
+				if (isChecked(C0046) && !isChecked(C0034)) return 25.0;
+				// En caso de concurrencia del carácter 00046 con el 00034 se aplicará el tipo de gravamen del carácter 00034.
+				if (isChecked(C0034)) return 30.0;				
+			} else {
+				return 25.0;				
+			}
+		}
+		
+		// ...
+
+	
+		// Tipo de gravamen general para el resto de casos
+		return 25.0;
+		
+	}
 	
 	private double getLimit(int limit) {
 		return AonMathUtils.round( (double) limit * getDaysOfPeriod() / 365);
@@ -650,15 +733,69 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		double lq558 = roundKey(LQ558);
 		double lq1330 = roundKey(Mod2002025Key.LQ1330);
 		
-		if (lq1330 <= 0) return 0;
+		if (lq1330 <= 0) 
+			return 0;
 		
 		if (isChecked(C0063)) {
 			if (lq1330<=getLimit(LIM_1)){
-				return round( lq1330*15/100);			
+				return round(lq1330 * 15 / 100);			
 			} else {
-				return (getLimit(LIM_1)*15/100) + (lq1330 - getLimit(LIM_1))*20/100;				
+				return (getLimit(LIM_1) * 15 / 100) + (lq1330 - getLimit(LIM_1)) * 20 / 100;				
 			}
 		}
+		
+		// Entidad ZEC (clave 00015 o 00079 marcada)
+		if (isChecked(C0015) || isChecked(C0079)) {
+			double lq559 = roundKey(LQ559);
+
+//			Si marca la clave 00088 combinada con la 00006 se aplicarán los cálculos previstos para la clave 00088.			
+//			Si marca la clave 00088:
+//			Si (01330 - 00559) <= 50.000 entonces:
+//			00562 = (00559) x 00558/100 + (01330 - 00559) x 21% 
+//			Si (01330 - 00559) > 50.000 entonces:
+//			00562 = (00559) x 00558/100 + 50.000 x 21% + (01330 - 00559 - 50.000) x	22%
+			if (isChecked(C0088)) {
+				 if (round(lq1330 - lq559) <= getLimit(LIM_4)) {
+					 return round(((lq559) * lq558 / 100) + (lq1330 - lq559) * 21 / 100);	
+				 } else {
+					 return round(((lq559) * lq558 / 100) + (getLimit(LIM_4) * 21 / 100) + (lq1330 - lq559 - getLimit(LIM_4)) * 22 / 100);						 
+				 }
+			}
+			
+//			Si marca la clave 00006:
+//			00562 = (00559) x 00558/100 + (01330 - 00559) x 24% 
+			if (isChecked(C0006)) {
+				return round(((lq559) * lq558 / 100) + (lq1330 - lq559) * 24 / 100);	
+			}
+			
+//			Si marca la clave 00071:
+//			00562 = (00559) x 00558 / 100 + (01330 - 00559) x 15%
+			if (isChecked(C0071)) {
+				return round(((lq559) * lq558 / 100) + (lq1330 - lq559) * 15 / 100);	
+			}
+			
+//			Si marca la clave 00083:
+//			00562 = (00559) x 00558 / 100 + (01330 - 00559) x 15%		
+			if (isChecked(C0083)) {
+				return round(((lq559) * lq558 / 100) + (lq1330 - lq559) * 15 / 100);	
+			}
+			
+			// Caso general para el resto de casos de entidades ZEC
+//			00562 = (00559) x 00558 / 100 + (01330 - 00559) x 25%			
+			return round(((lq559) * lq558 / 100) + (lq1330 - lq559) * 25 / 100);
+		}
+		
+//		Para los supuestos de tipo de gravamen reducido para entidades con INCN inferior a 1 M de euros (carácter 00088 marcado) el cálculo de la cuota íntegra será:
+//			A) Si 01330 <= 50.000 => 00562 = 01330 x 21%
+//			B) Si 01330 > 50.000 => 00562 = 50.000 x 21% + (01330 - 50.000) x 22%
+		if (isChecked(C0088)) {
+			if (lq1330 <= getLimit(LIM_4)) {
+				return round(lq1330 * 21 / 100);
+			} else {
+				return round((getLimit(LIM_4) * 21 / 100) + ((lq1330 - getLimit(LIM_4)) * 22 / 100));
+			}
+		}
+		
 		if (isChecked(C0071)) {
 			return round(lq1330 * lq558 / 100);
 		}
@@ -684,18 +821,18 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			return round(lq1330 * lq558 / 100);
 		}
 		
-		if (isChecked(C0015) || isChecked(C0079)) {
-			double lq559 = roundKey(LQ559);
-			double lq521 = roundKey(LQ521);
-			if (isChecked(C0057)) {
-				if (round(lq1330 - lq559 - lq521) > 0) {
-					return round(((lq559) * lq558 / 100) + (lq1330 - lq559 - lq521) * 25 / 100);	
-				} else {
-					return round((lq559 * lq558 / 100));
-				}
-			}
-			return round(((lq559) * lq558 / 100) + (lq1330 - lq559) * 25 / 100);
-		}
+//		if (isChecked(C0015) || isChecked(C0079)) {
+//			double lq559 = roundKey(LQ559);
+//			double lq521 = roundKey(LQ521);
+//			if (isChecked(C0057)) {
+//				if (round(lq1330 - lq559 - lq521) > 0) {
+//					return round(((lq559) * lq558 / 100) + (lq1330 - lq559 - lq521) * 25 / 100);	
+//				} else {
+//					return round((lq559 * lq558 / 100));
+//				}
+//			}
+//			return round(((lq559) * lq558 / 100) + (lq1330 - lq559) * 25 / 100);
+//		}
 		
 		if (isChecked(C0030) || isChecked(C0047)) {
 			return getValue(LQ562);
@@ -703,8 +840,22 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 	
 		if (isChecked(C0012) || isChecked(C0064)) {
 			double lq520 = roundKey(LQ520);
-			if (lq520>0) return round(lq520 * lq558 /100);
-			return 0;
+			
+//			Si marca la casilla 00012 ó 00064 de caracteres (SOCIMI) combinada con la casilla 00088 el cálculo de la cuota íntegra (salvo que prevalezca otra clave a la que corresponda un tipo de gravamen inferior) sería:
+//				A) Si [00520] <= 50.000 => 00562 = [00520] x 21% + ([00521] x 0%)
+//				B) Si [00520] > 50.000 => 00562 = 50.000 x 21% + ([00520] - 50.000) x 22% + ([00521] x 0%)
+			if (isChecked(C0088)) {
+				if (lq520 <= getLimit(LIM_4)) {
+					return round(lq520 * 21 / 100);
+				} else {
+					return round((getLimit(LIM_4) * 21 / 100) + ((lq520 - getLimit(LIM_4)) * 22 / 100));
+				}
+			} else {
+				if (lq520 > 0) 
+					return round(lq520 * lq558 /100);
+				else
+					return 0;
+			}
 		}
 		
 		// Cálculo de la cuota integra con caracter general
@@ -781,46 +932,149 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		}
 	}
 	
+	// FALTA - REVISAR CON DOC PADIS
+	// Cuota íntegra previa (Casilla 560) 
 	public double computeLQ560() throws AonCoreException {
 		double lq521 = roundKey(LQ521);
 		double lq552 = roundKey(LQ552);
 		double lq553 = roundKey(LQ553);
 		double lq554 = roundKey(LQ554);
 		double lq558 = roundKey(LQ558);
+		
 		if (isChecked(C0017) || isChecked(C0018)) {
-			if (isChecked(C0057)) {
-				return round((lq553 * lq558 / 100) + ((lq554-lq521) * 25 / 100) + (lq521 * 0));		
+			
+//			Cuando se haya marcado la clave 00017 ó 00018 junto con la clave 00057 (Régimen fiscal salida SOCIMI):
+//			Si clave 00558 = 20
+//			Clave 00560 = clave 00553 x clave 00558/100 + clave 00554 - 00521 x 25% + 00521 x 0 %
+//			En caso de que 00521 tenga un valor negativo se tendrá en cuenta el valor cero en los cálculos.
+			if (isChecked(C0057) && lq558 == 20) {
+				double lq521Adj = lq521 < 0 ? 0 : lq521;
+				return round((lq553 * lq558 / 100) + ((lq554 - lq521Adj) * 25 / 100));
 			}
+			
+//			Cuando prevalezca el carácter 00083:
+//			[00560] = [00552] x 15% (clave 00558)			
 			if (isChecked(C0083)) {
-				return round(lq552*15/100);
+				return round(lq552 * 15 / 100);
 			}
-			if (isChecked(C0088)) {
-				return round((lq553 * lq558 / 100) + (lq554 * 23 / 100));
-			}
-			if (lq558 == 20 || lq558 == 25) {
+			
+			if (lq558 == 20 && !isChecked(C0006)) {
 				return round((lq553 * lq558 / 100) + (lq554 * 25 / 100));
 			}
-		} else if (isChecked(C0019) ) {
-			if (isChecked(C0088)) {
-				return round(lq552*23/100);
+			
+			if (lq558 == 20 && isChecked(C0006)) {
+				return round((lq553 * lq558 / 100) + (lq554 * 24 / 100));
 			}
-			if (isChecked(C0071) || isChecked(C0083)) {
-				return round(lq552*15/100);
-			}
-			if (isChecked(C0030) || isChecked(C0047)) {
-				return roundKey(LQ560);
-			}
-			if (isChecked(C0063)) {
-				if (lq552<=getLimit(LIM_1)){
-					return round( lq552*15/100);			
+			
+//			Clave 00558 = 18/19%
+//			Clave 00560 = cuota resultados cooperativos (CRC) + cuota resultados extracooperativos (CRE)			
+			if (lq558 == 18 || lq558 == 19) {
+//				A) Cálculo de la cuota por resultados cooperativos
+//					Si la clave 00553 es <= 50.000 (en términos absolutos) => CRC = 00553 x 18%
+//					Si la clave 00553 es > 50.000 (en términos absolutos) => CRC = 50.000 x 18% + (00553 - 50.000) x 19 %
+				double crc = 0.0;
+				if (Math.abs(round(lq553)) <= getLimit(LIM_4)) {
+					crc = round(lq553 * 18 / 100);	
 				} else {
-					return (getLimit(LIM_1)*15/100) + (lq552 - getLimit(LIM_1))*20/100;				
+					crc = round((getLimit(LIM_4) * 18 / 100) + ((lq553 - getLimit(LIM_4)) * 19 / 100));						 
+				}
+//				B) Cálculo de la cuota por resultados extracooperativos
+//					Si la clave 00554 es <= 50.000 (en términos absolutos) => CRE = 00553 x 21%
+//					Si la clave 00554 es > 50.000 (en términos absolutos) => CRE = 50.000 x 21% + (00554 - 50.000) x 22 %
+				double cre = 0.0;
+				if (Math.abs(round(lq554)) <= getLimit(LIM_4)) {
+					cre = round(lq554 * 21 / 100);	
+				} else {
+					cre = round((getLimit(LIM_4) * 21 / 100) + ((lq554 - getLimit(LIM_4)) * 22 / 100));						 
+				}
+				return crc + cre;
+			}
+			
+//			Clave 00558 = 12%
+//			Clave 00560 = clave 00553 x clave 00558/100 + clave 00554 x 15%
+			if (lq558 == 12) {
+				return round((lq553 * lq558 / 100) + (lq554 * 15 / 100));
+			}
+			
+//			Clave 00558 = 25%
+//			Clave 00560 = clave 00553 x clave 00558/100 + clave 00554 x 30%
+			if (lq558 == 25) {
+				return round((lq553 * lq558 / 100) + (lq554 * 30 / 100));
+			}
+			
+//			Clave 00558 = 24%
+//			Clave 00560 = clave 00553 x clave 00558/100 + clave 00554 x 30%
+			if (lq558 == 24) {
+				return round((lq553 * lq558 / 100) + (lq554 * 30 / 100));
+			}
+			
+//			Clave 00558 = 21/22% // FALTA - REVISAR CON DOC PADIS
+//			Clave 00560 = cuota resultados .cooperativos (CRC) + cuota resultados extracooperativos (CRE)
+			if (lq558 == 21 || lq558 == 22) {
+//				A) Cálculo de la cuota por resultados cooperativos
+//					Si la clave 00553 es <= 50.000 (en términos absolutos) => CRC = 00553 x 21%
+//					Si la clave 00553 es > 50.000 (en términos absolutos) => CRC = 50.000 x 21% + (00553 - 50.000) x 22 %
+				double crc = 0.0;
+				if (Math.abs(round(lq553)) <= getLimit(LIM_4)) {
+					crc = round(lq553 * 21 / 100);	
+				} else {
+					crc = round((getLimit(LIM_4) * 21 / 100) + ((lq553 - getLimit(LIM_4)) * 22 / 100));						 
+				}
+//				B) Cálculo de la cuota por resultados extracooperativos
+//					CRE = 00554 x 30%
+				double cre = round(lq554 * 30 / 100);
+				return crc + cre;
+			}
+			
+//			Clave 00558 = 15%
+//			Clave 00560 = clave 00553 x clave 00558/100 + clave 00554 x 30%
+			if (lq558 == 15) {
+				return round((lq553 * lq558 / 100) + (lq554 * 30 / 100));
+			}
+			
+		} else if (isChecked(C0019) ) {
+			
+			if (isChecked(C0088)) { 
+//				A) Si 00552 <= 50.000 (en términos absolutos) => 00560 = 00552 x 21%
+//				B) Si 00552 > 50.000 (en términos absolutos) => 00560 = 50.000 x 21% + (00552 - 50.000) x 22%
+				if (Math.abs(lq552) <= getLimit(LIM_4)) {
+					return round(lq552 * 21 / 100);	
+				} else {
+					return round((getLimit(LIM_4) * 21 / 100) + ((lq552 - getLimit(LIM_4)) * 22 / 100));						 
 				}
 			}
-			if (isChecked(C0057)) {
-				return round( ((lq552 - lq521) * lq558 / 100) + (lq521 *0));
+			
+			if (isChecked(C0071) || isChecked(C0083)) { 
+				return round(lq552 * 15 / 100); 
+			}
+			
+			if (isChecked(C0030) || isChecked(C0047)) { 
+				return roundKey(LQ560); 
+			}
+			
+			if (isChecked(C0063)) { 
+				if (Math.abs(lq552) <= getLimit(LIM_1)){
+					return round(lq552 * 15 / 100);			
+				} else {
+					return (getLimit(LIM_1) * 15 / 100) + (lq552 - getLimit(LIM_1)) * 20 / 100;				
+				}
+			}
+			
+			if (isChecked(C0057)) { 
+				double lq521Adj = lq521 < 0 ? 0 : lq521;
+				return round( ((lq552 - lq521Adj) * lq558 / 100) + (lq521 * 0));  //
 			}						
-			return round( (lq552 * lq558 / 100) );
+						
+//			Cuando se haya marcado la clave 00006 (y no estén marcadas las claves 00071, 00083 o 00088:
+//			[00560] = [00552] x [00558]
+//			Clave [00558] = 24%
+			if (isChecked(C0006) && !isChecked(C0071) && !isChecked(C0083) && !isChecked(C0088)) {
+				return round(lq552 * 24 / 100); 
+			}
+		
+			// Caso general
+			return round(lq552 * lq558 / 100); 
+			
 		}
 		return 0.0;
 	}
@@ -1306,7 +1560,6 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		
 	}
 	
-	// FALTA - REVISAR CON DOC PADIS
 	// Cálculo del importe de la columna 2 del desglose de la casilla [1033]
 	// La clave 01033 (aumentos) sólo podrá tener contenido cuando la base imponible (clave 00552) sea negativa 
 	// (excepto en los supuestos de extinción de entidad (clave 00072) y de último período permitido para la adición) 
@@ -1317,15 +1570,15 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		double lq552 = getValue(Mod2002025Key.LQ552);
 		double lq2411 = getValue(Mod2002025Key.LQ2411);
 		
-		if (lq552>=0 && !isChecked(C0072)) {
+		if (lq552 >= 0 && !isChecked(C0072)) {
 			// Base imponible [552] positiva o cero, [col2] = 0 
 			return 0.0;
 		} else {
 			// Base imponible [552] negativa, [col2] = [col1] - [col3] con el limite de la [552]
-			double col2 = col1-col3;
+			double col2 = col1 - col3;
 			double total = suma + col2;			
-			if (total > (Math.abs(lq552)+lq2411)) {
-				col2 = col2 - (total - (Math.abs(lq552)+lq2411));
+			if (total > (Math.abs(lq552) + lq2411)) {
+				col2 = col2 - (total - (Math.abs(lq552) + lq2411));
 			}
 			return col2;		
 		}		
@@ -1382,6 +1635,7 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 	//	- Cumplimentación de la casilla "autoliquidación rectificativa"
 	//	- Casilla 01578 con contenido
 	//	- Casilla 00621 con resultado menor que cero.
+	//  - La declaración que se rectifica no tiene marcados los caracteres 0009 o 00010
 	// Si 01586 <= 0 y 01578 <= - 00621 entonces 00866 = 01578
 	// Si 01586 <= 0 y 01578 > - 00621 entonces 00866 = 01578 - 01586 - 01584 = - 00621
 	// Si 01586 > 0 entonces 00866 = 01578 - 01586 - 01584 = - 00621	
@@ -1447,6 +1701,16 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 
 			if (isChecked(C0071))
 				m1 = (c01330-c00778+c00813) * 0.10;
+			
+			// Entidades con INCN período anterior inferior a 1 millón euros (carácter 00088)
+//			A) Si (01330 - 00778 + 00813) <= 50.000 => M1 = (01330 - 00778 + 00813) x 13%
+//			B) Si (01330 - 00778 + 00813) > 50.000 => M1 = 50.000 x 13% + ((01330 - 00778 + 00813) - 50.000) x 14%
+			if (isChecked(C0088)) {
+				if ((c01330-c00778+c00813) <= getLimit(LIM_4))
+					m1 = (c01330-c00778+c00813) * 0.13;
+				else
+					m1 = (getLimit(LIM_4) * 0.13) + ((c01330-c00778+c00813) - getLimit(LIM_4)) * 0.14;
+			}
 
 			if (isChecked(C0024) || isChecked(C0034))
 				m1 = (c01330-c00778+c00813) * 0.18;			
@@ -1502,7 +1766,6 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		return result;
 	}
 	
-	// FALTA - REVISAR CON DOC PADIS
 	// TRAMO 1 DE DEDUCCIONES Y BONIFICACIONES
 	private static final Mod2002025Key[] TRAMO_1 = new Mod2002025Key[] {
 			Mod2002025Key.BN567,
@@ -1519,6 +1782,7 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			Mod2002025Key.BN1296,
 			Mod2002025Key.BN2313,
 			Mod2002025Key.BN298,
+			Mod2002025Key.BN3533,
 			Mod2002025Key.BN575,
 			Mod2002025Key.BN577,
 			Mod2002025Key.BN165,
@@ -1552,18 +1816,19 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			Mod2002025Key.BN205,
 			Mod2002025Key.BN1836,
 			Mod2002025Key.BN438,
-			Mod2002025Key.BN128,
 			Mod2002025Key.BN2204,
 			Mod2002025Key.BN1318,
 			Mod2002025Key.BN2327,
 			Mod2002025Key.BN260,
 			Mod2002025Key.BN212,
+			Mod2002025Key.BN3414,
+			Mod2002025Key.BN128,
 			Mod2002025Key.BN493,
 			Mod2002025Key.BN1472,
-			Mod2002025Key.BN258
+			Mod2002025Key.BN258,
+			Mod2002025Key.BN3419
 	};
 	
-	// FALTA - REVISAR CON DOC PADIS
 	// TRAMO 2 DEDUCCIONES
 	private static final Mod2002025Key[] TRAMO_2 = new Mod2002025Key[] {			
 			Mod2002025Key.BN583,
@@ -1602,31 +1867,35 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			Mod2002025Key.BN2225,
 			Mod2002025Key.BN2092,
 			Mod2002025Key.BN1776,
-			Mod2002025Key.BN750,
 			Mod2002025Key.BN2357,
 			Mod2002025Key.BN2360,
 			Mod2002025Key.BN2095,
 			Mod2002025Key.BN1839,
-			Mod2002025Key.BN753,
+			Mod2002025Key.BN750,
 			Mod2002025Key.BN229,
 			Mod2002025Key.BN235,
 			Mod2002025Key.BN2098,
 			Mod2002025Key.BN2207,
-			Mod2002025Key.BN756,
+			Mod2002025Key.BN753,
 			Mod2002025Key.BN781,
 			Mod2002025Key.BN787,
 			Mod2002025Key.BN2146,
 			Mod2002025Key.BN2330,
-			Mod2002025Key.BN759,
+			Mod2002025Key.BN756,
 			Mod2002025Key.BN1875,
 			Mod2002025Key.BN1895,
 			Mod2002025Key.BN1849,
 			Mod2002025Key.BN252,
-			Mod2002025Key.BN762,
+			Mod2002025Key.BN759,
 			Mod2002025Key.BN468,
 			Mod2002025Key.BN542,
 			Mod2002025Key.BN406,
 			Mod2002025Key.BN697,
+			Mod2002025Key.BN762,
+			Mod2002025Key.BN3440,
+			Mod2002025Key.BN3443,
+			Mod2002025Key.BN3437,
+			Mod2002025Key.BN3437, // FALTA - ESTA REPETIDA ES LA 1522 ??
 			Mod2002025Key.BN745,
 			Mod2002025Key.BN783,
 			Mod2002025Key.BN2450,
@@ -1682,10 +1951,39 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			Mod2002025Key.BN2058,
 //			Mod2002025Key.BN2285,
 			Mod2002025Key.BN089,
+			Mod2002025Key.BN3449,
+			Mod2002025Key.BN3452,
+			Mod2002025Key.BN3455,
+			Mod2002025Key.BN3458,
+			Mod2002025Key.BN3461,
+			Mod2002025Key.BN3464,
+			Mod2002025Key.BN3467,
+			Mod2002025Key.BN3470,
+			Mod2002025Key.BN3473,
+			Mod2002025Key.BN3476,
+			Mod2002025Key.BN3479,
+			Mod2002025Key.BN3482,
+			Mod2002025Key.BN3485,
+//			Mod2002025Key.BN3488, // FALTA - ESTA ESTÁ EN LETRA ROJA EN EL DOC PADIS Y NO ESTA EN EL DISEÑO DEL REGISTRO
+			Mod2002025Key.BN3491,
+			Mod2002025Key.BN3494,
+			Mod2002025Key.BN3497,
+			Mod2002025Key.BN3500,
+			Mod2002025Key.BN3503,
+			Mod2002025Key.BN3506,
+			Mod2002025Key.BN3509,
+			Mod2002025Key.BN3512,
+			Mod2002025Key.BN3515,
+			Mod2002025Key.BN3518,
+			Mod2002025Key.BN3521,
+			Mod2002025Key.BN3524,
+			Mod2002025Key.BN3527,
+			Mod2002025Key.BN3530,
 			Mod2002025Key.BN1684,
 			Mod2002025Key.BN829,
-			Mod2002025Key.BN1522,
 			Mod2002025Key.BN291,
+			Mod2002025Key.BN3422,
+//			Mod2002025Key.BN1522,
 //			Mod2002025Key.BN998,
 //			Mod2002025Key.BN931,
 			Mod2002025Key.BN247,
@@ -1732,6 +2030,14 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			Mod2002025Key.BN422,
 			Mod2002025Key.BN430,
 			Mod2002025Key.BN439,
+			Mod2002025Key.BN3544,
+			Mod2002025Key.BN3547,
+			Mod2002025Key.BN3556,
+			Mod2002025Key.BN3559,
+			Mod2002025Key.BN3550,
+			Mod2002025Key.BN3553,
+			Mod2002025Key.BN3562,
+			Mod2002025Key.BN3565,
 			Mod2002025Key.BN1437,
 			Mod2002025Key.BN1440,
 			Mod2002025Key.BN1444,
@@ -1743,6 +2049,7 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			Mod2002025Key.BN1379,
 			Mod2002025Key.BN2703,
 			Mod2002025Key.BN904,
+			Mod2002025Key.BN3569,
 			Mod2002025Key.BN1446,
 			Mod2002025Key.BN1449,
 			Mod2002025Key.BN1453,
@@ -1753,10 +2060,10 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			Mod2002025Key.BN2478,
 			Mod2002025Key.BN1383,
 			Mod2002025Key.BN2707,
-			Mod2002025Key.BN2070
+			Mod2002025Key.BN2070,
+			Mod2002025Key.BN3573
 	};
 
-	// FALTA - REVISAR CON DOC PADIS
 	// TRAMO 3 DE DEDUCCIONES 
 	private static final Mod2002025Key[] TRAMO_3 = new Mod2002025Key[] {			
 			Mod2002025Key.BN2082,
@@ -1768,6 +2075,7 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			Mod2002025Key.BN1926,
 			Mod2002025Key.BN1898,
 			Mod2002025Key.BN880,
+			Mod2002025Key.BN3446,
 			Mod2002025Key.BN1929,
 			Mod2002025Key.BN2191,
 //			Mod2002025Key.BN940,
@@ -1821,7 +2129,11 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			Mod2002025Key.BN263,
 			Mod2002025Key.BN269,
 			Mod2002025Key.BN273,
-			Mod2002025Key.BN295
+			Mod2002025Key.BN295,
+			Mod2002025Key.BN3425,
+			Mod2002025Key.BN3428,
+			Mod2002025Key.BN3431,
+			Mod2002025Key.BN3434
 	};
 	
 	// TRAMO 4 DEDUCCIONES
@@ -1848,6 +2160,8 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			Mod2002025Key.BN2466,
 			Mod2002025Key.BN316,
 			Mod2002025Key.BN350,
+			Mod2002025Key.BN3536,
+			Mod2002025Key.BN3540,
 			Mod2002025Key.BN574,
 			Mod2002025Key.BN977,
 			Mod2002025Key.BN824,
@@ -1871,9 +2185,9 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			Mod2002025Key.BN2757,
 			Mod2002025Key.BN2762,
 			Mod2002025Key.BN2704,
-			Mod2002025Key.BN2278
+			Mod2002025Key.BN2278,
+			Mod2002025Key.BN3577,
+			Mod2002025Key.BN3581
 	};
-	
-	
 			
 }

@@ -515,11 +515,11 @@ public class Mod2002025Writer {
 			int pos = 1;
 			for (IMod200Key key : kp.getKeys()) {
 				if (key != null) {
-					// Casillas BN103x van con formato 7,2
+					// Casillas BN103x van con formato 7,4
 					if (key == Mod2002025Key.BN103A || key == Mod2002025Key.BN103B || key == Mod2002025Key.BN103C || key == Mod2002025Key.BN103D)
-						addUnSignedKey(l, m, key, 7, 4); // Según los errores que da el fichero, se está esperando 4 decimales
-					// Elemento 2 de cada fila es un porcentaje (formato 4,2) // EXCEPTO CASILLAS 586 Y 254 QUE TAMBIEN VAN A 17,2 	
-					else if (pos == 2 && key != Mod2002025Key.BN586 && key != Mod2002025Key.BN254) 
+						addUnSignedKey(l, m, key, 7, 4); 
+					// Elemento 2 de cada fila es un porcentaje (formato 4,2) 	
+					else if (pos == 2) 
 						addUnSignedKey(l, m, key, 4, 2);
 					// Resto importe normal
 					else addSignedKey(l, m, key);
@@ -1560,7 +1560,7 @@ public class Mod2002025Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.LQ1509)				
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.LQ1576)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.LQ1577)
-				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002025Key.LQ558, 4, 2)
+				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002025Key.LQ558, 4, 2) // FALTA - TIPO DE GRAVAMEN HAY QUE PONER LOS DOS POSIBLES TIPOS DE GRAVAMEN
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.LQ560)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.LQ210)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.LQ480)
@@ -1865,7 +1865,7 @@ public class Mod2002025Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.DC2309)	
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.DC2310)	
 				
-				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025LQ1032Key.values()) // FALTA - AQUI ESTA LA CASILLA MILLON QUE ES UN CHECK A VER COMO SE PONE AL FINAL
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025LQ1032Key.values()) 
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025LQ1033_1Key.values())
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025LQ1033_2Key.values())
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
@@ -1961,12 +1961,15 @@ public class Mod2002025Writer {
 		, PAG22("T20022000", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label)
 				,(line, mod200, label) -> line.append(" ")
-				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025RIC_1Key.values()) // Régimen especial de la reserva para inversiones en Canarias - RIC
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.RC927)		  // Importe de la dotación RIC con cargo a beneficios de 2025		
-				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025RIC_2Key.values()) // Régimen especial de la reserva para inversiones en Canarias - Inversiones anticipadas
-				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025LQ554Key.values()) // Régimen de cooperativas - Determinación de la base imponible
-				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025LQ561Key.values()) // Régimen de cooperativas - Detalle de compensación de cuotas
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025RIC_1Key.values()) 	// Régimen especial de la reserva para inversiones en Canarias - RIC
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.RC927)		  	// Importe de la dotación RIC con cargo a beneficios de 2025		
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025RIC_2Key.values(), Mod2002025Key.RC3629, null) 	// Régimen especial de la reserva para inversiones en Canarias - Inversiones anticipadas (LAS PRIMERAS CASILLAS DE ESTE DESGLOSE, VAN AL FINAL DE ESTA PAGINA)
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025LQ554Key.values()) 	// Régimen de cooperativas - Determinación de la base imponible
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002025LQ561Key.values()) 	// Régimen de cooperativas - Detalle de compensación de cuotas
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.RC3647)  		// Rég. especial reserva inversiones Canarias - Inversiones anticipadas 2022 - Pendiente de dotar RIC a principio de período [03647]        
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.RC3648)  		// Rég. especial reserva inversiones Canarias - Inversiones anticipadas 2023 - Pendiente de dotar RIC a principio de período [03648]      
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.RC3649)  		// Rég. especial reserva inversiones Canarias - Inversiones anticipadas 2023 - Pendiente de dotar RIC al final del período [03649]        
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(149)) 				// Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label)
 			})
 		

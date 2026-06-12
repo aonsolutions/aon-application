@@ -957,6 +957,16 @@ public class Mod2002025DAO  {
 	
 	public static Mod2002025 initializeNewMod200(AONContext ctx, Mod2002025 mod200) {
 		
+		// En este ejercicio se trae el CNAE de la actividad principal, porque a partir de 
+		// ahora se usa el CNAE2025 y hasta ahora se usaba el CNAE2009, por eso no se copia del ejercicio anterior
+		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);
+		if (conf.getMainActivity() != null) {
+			String cnae = conf.getMainActivity().getCnae25Code();
+			if (cnae != null && cnae.length()==4) {
+				mod200.setCnae(cnae.substring(0, 2) + "." + cnae.substring(2));
+			}
+		}			
+		
 		Mod2002024 old = Mod2002024DAO.getLastModel2024(ctx);
 		if (old != null && old.getId() != null) { 
 			ctx.log().info("------ [START] INITIALIZE NEW MOD 200 FROM MOD 200 2024");
@@ -973,7 +983,7 @@ public class Mod2002025DAO  {
 			mod200.setEcpnType( EcpnType.NO_CONSTA );
 			mod200.setPygType(BalanceType.ABREVIADO );
 			
-			AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);
+//			AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);
 			mod200.setEnterprise(conf.getCompany().getId());
 			mod200.setDocument(conf.getCompany().getDocument());
 			mod200.setName(conf.getCompany().getName());
@@ -981,21 +991,10 @@ public class Mod2002025DAO  {
 			mod200.setEnterprisePhone2(conf.fiscal().getContactCellular());
 			mod200.setAdministration(Administration.COMMON_TERRITORY);
 			mod200.setInitializedFromLastYear(false);
-			
-			// FALTA - LA ACTIVIDAD PRINCIPAL TIENE EL CNAE2009 Y EN EL MODELO 200 AHORA SE PIDE EL CNAE2025
-			//         SI NO SE AÑADE EL CAMPO EN LA CONFIGURACION, HABRA QUE HACER UNA CONVERSION
-			// CNAE - Se coge de la actividad principal (solo si está indicado a 4 dígitos)			
-			AonConfiguration configuration = ConfigurationDAO.getConfiguration(ctx);			
-			if (configuration.getMainActivity() != null) {
-				String cnae = configuration.getMainActivity().getCnaeCode();
-				if (cnae != null && cnae.length()==4) {
-					mod200.setCnae(cnae.substring(0, 2) + "." + cnae.substring(2));
-				}
-			}			
-			
 		}
 		ctx.log().info("------ [END OK] INITIALIZE NEW MOD 200");
 		return mod200;
+		
 	}
 
 	public static Mod2002025 initializeMod200(AONContext ctx, Mod2002025 mod200) {
