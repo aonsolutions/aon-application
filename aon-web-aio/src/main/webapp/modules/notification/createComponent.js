@@ -78,7 +78,7 @@ const createSpanFloat = () => createSpan({
   styles:{
     position: "fixed",
     right: "6%",
-    bottom: "70px"
+    bottom: "80px"
   }
 });
 

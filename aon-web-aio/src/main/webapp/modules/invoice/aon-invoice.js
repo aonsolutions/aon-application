@@ -1469,6 +1469,7 @@ export class AonInvoice extends AonElement {
 		parent.appendChild(card);
 
 		let dialog = this.getElement(this.DIALOG_BLANK);
+		dialog.setWidth('250px');
 		card.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {
 			let div = this.createElement(TAG.DIV);
 			div.style.margin = '15px';

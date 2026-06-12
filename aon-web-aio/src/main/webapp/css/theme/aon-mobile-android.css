@@ -13,15 +13,11 @@
 }
 
 .aonToolbar {
-  background-color: white;
+  background-color: transparent;
 }
 
 #divCompanyLogoForm {
     display:none;
-}
-
-.aonMobileSubContent{
-    overflow-y: visible !important;
 }
 
 .aonCardUploadToast {

@@ -341,7 +341,6 @@ const createSecondDiv = (task, mainView) => {
 
     const secondDiv = document.createElement(TAG.DIV);
     secondDiv.id = MESSENGER_IDS.SECOND_DIV;
-    secondDiv.className = CSS.AON_MOBILE_SUB_CONTENT;
     secondDiv.style.width = "100%";
     div.appendChild(secondDiv);
     return secondDiv;

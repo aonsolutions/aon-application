@@ -411,8 +411,8 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		
 		Date contractStartDate = getContractStartate();
 		
-		Collection<Integer> calculatedExtras = new ArrayList<Integer>();
-		Collection<IContractPayment> extrasPayments = new ArrayList<IContractPayment>(extras.size());
+		ArrayList<Integer> calculatedExtras = new ArrayList<Integer>();
+		ArrayList<IContractPayment> extrasPayments = new ArrayList<IContractPayment>(extras.size());
 
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(SQLConstants.CONTRACT + "." + ContractColumns.ID, getId());
@@ -567,6 +567,8 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 				extraStartDate  = getStartDate(extra, ++year);
 			}
 		}
+		
+		Collections.sort(extrasPayments, (p1, p2) -> AonStringUtils.compare(p1.getDescription(), p2.getDescription()));
 		
 		return extrasPayments;
 		

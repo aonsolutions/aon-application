@@ -40,8 +40,7 @@
   width: 100%;
   border-top: 1px solid #ddd;
   overflow-y: auto;
-  background-color: #fafafa;
-  padding-bottom: 80px;
+  padding-bottom: 100px;
 }
 
 .aonMobileSidenav {
@@ -83,7 +82,6 @@
   display: block;
   transition: 0.5s;
   overflow-y: auto;
-  padding-bottom: 80px;
 }
 
 .aonMobileMenu {
@@ -91,7 +89,7 @@
     height: 60px;
     border: 1px solid #ddd;
     border-radius: 40px;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(0, 0, 0, 0.4);
     display: flex;
     justify-content: space-evenly;
     align-items: center;
@@ -102,14 +100,10 @@
     transition: height 0.3s ease, left 0.3s ease, right 0.3s ease;
 }
 
-#aonMobileMenuAddButtonIcon {
-    color: white;
-    font-weight: bold;
-}
-
 #aonMobileMenuHomeButtonIcon,
+#aonMobileMenuAddButtonIcon,
 #aonMobileMenuUserButtonIcon {
-    color: #0f172a;
+    color: white;
     font-weight: bold;
 }
 
@@ -125,16 +119,6 @@
   align-items: center;
   gap: 1rem;
 } */
-
-.aonUl {
-  padding: 0px !important;
-}
-
-.aonLi {
-  margin: 5px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-}
 
 /* remove color active */
 .aonMobileMenu button{
@@ -162,22 +146,4 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-/* Invoice Future Sidenav options */
-
-#aonInvoiceMobileSidenavContentFutureIncomes {
-	display: none;
-}
-
-#aonInvoiceMobileSidenavContentFutureExpenses {
-	display: none;
-}
-
-#aonInvoiceMobileSidenavContentFutureDocument {
-	display: none;
-}
-
-#aonInvoiceMobileSidenavContentFutureManagement {
-	display: none;
 }
