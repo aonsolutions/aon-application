@@ -94,7 +94,6 @@ export class AonEventDetailList extends AonElement {
 		aonTable.id = this.TABLE_ID;
 
 		let div = this.createElement(TAG.DIV);
-		if (this.isMobile()) div.className = CSS.AON_MOBILE_SUB_CONTENT;
 		div.appendChild(aonTable);
 		this.appendChild(div);
 	}

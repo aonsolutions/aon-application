@@ -143,6 +143,27 @@ export class AonApplication extends AonElement {
       content.style.bottom = '69px';
     }
 
+    if(this.isMobile()) {
+      let lastScroll = content.scrollTop;
+
+    	content.addEventListener('scroll', () => {
+ 			  const currentScroll = content.scrollTop;
+			  let aonMobileMenuSidenav = this.getElement("aonMobileMenuSidenav");
+  			if (aonMobileMenuSidenav && currentScroll > lastScroll) {
+				  aonMobileMenuSidenav.style.left = "40px";
+				  aonMobileMenuSidenav.style.right = "40px";
+				  aonMobileMenuSidenav.style.height = "50px";
+    		} else if (aonMobileMenuSidenav && currentScroll < lastScroll) {
+				  aonMobileMenuSidenav.style.left = "20px";
+				  aonMobileMenuSidenav.style.right = "20px";
+				  aonMobileMenuSidenav.style.height = "60px";
+				}
+
+  			lastScroll = currentScroll;
+		});
+
+    }
+
     let rightSidenav = this.createDiv(this.SIDENAV_RIGHT, this.getRightSidenavClassName());
     div.appendChild(rightSidenav);
 
@@ -1193,7 +1214,7 @@ export class AonApplication extends AonElement {
       span.id = this.id + "FloatSpan";
       span.style.position = "fixed";
       span.style.right = "20px";
-      span.style.bottom = this.isSab() ? "80px" : "70px";
+      span.style.bottom = "80px";
       
       aonIconButton = new AonIconButton();
       aonIconButton.icon = action.icon;
