@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.seres.SeresInfo;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.impl.jooq.SeresImpl;
+import com.esferalia.aon.occam.impl.jooq.dao.PriceStrategyDAO.PriceStrategy;
 
 public class SERES {
 
@@ -93,6 +94,12 @@ public class SERES {
         }
     }
 
+	public static PriceStrategy calculatePriceStrategy(Occam occam, Integer customer, Date date, Item item) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getSeres().calculatePriceStrategy(ctx, customer, date, item);
+		}
+	}
+    
 	public static Double getUnitPrice(Occam occam, Integer customer, Date date, Item item) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getSeres().getUnitPrice(ctx, customer, date, item);

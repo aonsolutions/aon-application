@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.registry;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.DiscountExpression;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.type.Priority;
 
@@ -23,7 +24,7 @@ public class RegistryItem implements Serializable {
 	private Integer customerFee;
 	private Seller seller;
 	private Double price;
-	private String discountExpr;
+	private DiscountExpression discountExpr;
 	private Priority priority;
 	private Integer workplace;
 	private RegistryItemStatus status;
@@ -127,12 +128,28 @@ public class RegistryItem implements Serializable {
 		return this;
 	}
 
-	public String getDiscountExpr() {
+	public DiscountExpression getDiscountExpression() {
+		if(discountExpr == null)
+			discountExpr = new DiscountExpression("0.0");
 		return discountExpr;
 	}
-
-	public RegistryItem setDiscountExpr(String discountExpr) {
-		this.discountExpr = discountExpr;
+	
+	public RegistryItem setDiscountExpression(String discountExpression) {
+		this.discountExpr = new DiscountExpression(discountExpression);
+		return this;
+	}
+	
+	public RegistryItem setDiscountExpression(DiscountExpression discountExpression) {
+		this.discountExpr = discountExpression;
+		return this;
+	}
+	
+	public double getDiscount() {
+		return getDiscountExpression().getPercentage();
+	}
+	
+	public RegistryItem setDiscount(double discount) {
+		setDiscountExpression(new DiscountExpression(discount));
 		return this;
 	}
 
