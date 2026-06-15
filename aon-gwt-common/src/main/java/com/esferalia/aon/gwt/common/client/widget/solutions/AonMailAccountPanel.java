@@ -111,6 +111,9 @@ public class AonMailAccountPanel extends HTMLPanel {
 		HTMLPanel row = new HTMLPanel(EMPTY_STRING);
 		row.setStyleName(AON.CSS.aonItemFlex());
 		
+		type.getElement().getStyle().setProperty("max-width", "8rem");
+		protocol.getElement().getStyle().setProperty("max-width", "7rem");
+		
 		type.clearItems();
 		type.addItem("Usuario", MailAccountType.USER.name());
 		type.addItem("Sistema", MailAccountType.SYSTEM.name());
@@ -142,6 +145,8 @@ public class AonMailAccountPanel extends HTMLPanel {
 		email.setValue("no-reply");
 		host.clearItems();
 		
+		host.getElement().getStyle().setProperty("max-width", "15.5rem");
+		
 		row2.add(email);
 		row2.add(host);
 		container.add(row2);
@@ -149,6 +154,8 @@ public class AonMailAccountPanel extends HTMLPanel {
 		// Third Row
 		HTMLPanel row3 = new HTMLPanel(EMPTY_STRING);
 		row3.setStyleName(AON.CSS.aonItemFlex());
+		
+		signature.getElement().getStyle().setProperty("max-width", "15.5rem");
 		
 		signature.clearItems();
 		signature.addItem("-", "");
