@@ -24,6 +24,7 @@ import net.aonsolutions.db.up2date.cnae.OneCnaeTableToRuleThemAll;
 import net.aonsolutions.db.up2date.customize.Customize;
 import net.aonsolutions.db.up2date.finance.InvoiceTrackingAlterTableJson;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2026;
+import net.aonsolutions.db.up2date.mailAccount.UpdateMailAccountProtocolReplayTo;
 import net.aonsolutions.db.up2date.payroll.BonificEntrenadoresYMonitoresFix;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.InsuranceInsert;
@@ -672,6 +673,8 @@ public class Up2Date {
 			// DeleteDomainAppApp7.DELETE_DOMAIN_APP_APP7
 
 			// InvoiceTrackingAlterTableJson.INVOICE_TRACKING_ALTER_TABLE_JSON,
+			
+			UpdateMailAccountProtocolReplayTo.UPDATEMAILACCOUNTPROTOCOLREPLAYTO
 	};
 
 	// ------------------------------------------------------------------------
