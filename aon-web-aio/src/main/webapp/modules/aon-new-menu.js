@@ -1203,7 +1203,7 @@ export class AonNewMenu extends AonElement {
 		return element && element.id == this.AON_MENU_TOPNAV;
 	}
 
-	showNewDialogMenu(el, isFixedButton = false) {
+	async showNewDialogMenu(el, isFixedButton = false) {
 
 		let newMenuOptions = [];
 		if (this.getDur().isInvoice()) {
@@ -1224,12 +1224,16 @@ export class AonNewMenu extends AonElement {
 			];
 
 			if (this.getDur().isOcr() || this.getDur().isInvofox()) {
+				
+				// Comprobamos el límite ANTES, fuera del gesto del click,
+	            // para que el fn pueda ser 100% síncrono (requisito de Safari).
+	            let exceedTrail = await this.exceedTrailInvoinces();
+				
 				optionsMenu.push({
 					name: MSG.UPLOAD_INVOICE,
 					icon: MATERIAL_ICONS.CLOUD_UPLOAD,
-					fn: async () => {
+					fn: () => {
 						// Check trial limit
-						let exceedTrail = await this.exceedTrailInvoinces();
 						if (exceedTrail) return;
 
 						let input = this.createElement(TAG.INPUT);
@@ -1292,7 +1296,9 @@ export class AonNewMenu extends AonElement {
 								}
 							});
 						});
+							
 						input.click();
+						
 					}
 				});
 			}
