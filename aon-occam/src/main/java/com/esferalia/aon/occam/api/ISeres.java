@@ -19,6 +19,5 @@ public interface ISeres {
 	public EdiCodes getEdiCodes(AONContext ctx, Invoice invoice);
 	
 	public PriceStrategy calculatePriceStrategy(AONContext ctx, Integer customer, Date date, Item item);
-	public double getUnitPrice(AONContext ctx, Integer customer, Date date, Item item);
 
 }

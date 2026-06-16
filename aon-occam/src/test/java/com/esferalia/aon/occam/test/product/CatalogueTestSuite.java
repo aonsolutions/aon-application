@@ -12,6 +12,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	CatalogueCRUDETest.class,
 	CatalogueItemCRUDETest.class,
 	CatalogueCategoryCRUDETest.class,
+	PriceStrategyDAOTest.class,
 })
 public class CatalogueTestSuite {
 

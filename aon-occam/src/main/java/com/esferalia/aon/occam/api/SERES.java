@@ -99,11 +99,5 @@ public class SERES {
 			return getSeres().calculatePriceStrategy(ctx, customer, date, item);
 		}
 	}
-    
-	public static Double getUnitPrice(Occam occam, Integer customer, Date date, Item item) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getSeres().getUnitPrice(ctx, customer, date, item);
-		}
-	}
 
 }

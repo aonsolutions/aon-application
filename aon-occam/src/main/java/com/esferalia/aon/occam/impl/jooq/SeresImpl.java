@@ -51,10 +51,4 @@ public class SeresImpl implements ISeres {
             PriceStrategyDAO.calculatePriceStrategy(ctx, customer, date, item));
     }
 	
-	@Override
-    public double getUnitPrice(AONContext ctx, Integer customer, Date date, Item item) {
-        return ctx.getDslContext().transactionResult(configuration -> 
-            PriceStrategyDAO.getUnitPrice(ctx, customer, date, item));
-    }
-
 }
