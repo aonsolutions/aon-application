@@ -44,7 +44,7 @@ import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModuleNew;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerFee;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModuleNew;
 import com.esferalia.aon.gwt.fiscal.client.registry.DomainBookingResumeModule;
-import com.esferalia.aon.gwt.fiscal.client.registry.RegistryEntryModule;
+import com.esferalia.aon.gwt.fiscal.client.registry.RegistryCompanyEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.SupplierModuleNew;
 import com.esferalia.aon.gwt.fiscal.client.sales.SalesModule;
 import com.esferalia.aon.gwt.fiscal.client.sii.Sii;
@@ -357,7 +357,7 @@ public class MainEntryPoint implements EntryPoint {
 	//
 	//    ================================================================== REGISTRY ENTRY
 	//
-	private static final String REGISTRY_ENTRY_MODULE_ENTRY_POINT = "RegistryEntryModule";
+	private static final String REGISTRY_COMPANY_ENTRY_MODULE_ENTRY_POINT = "RegistryCompanyEntryModule";
 	
 	
 	
@@ -1138,8 +1138,8 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
-		} else if( entryPoint.equalsIgnoreCase(REGISTRY_ENTRY_MODULE_ENTRY_POINT) ) {
-			GWT.runAsync(RegistryEntryModule.class, new RunAsyncCallback() {
+		} else if( entryPoint.equalsIgnoreCase(REGISTRY_COMPANY_ENTRY_MODULE_ENTRY_POINT) ) {
+			GWT.runAsync(RegistryCompanyEntryModule.class, new RunAsyncCallback() {
 
 				@Override
 				public void onFailure(Throwable reason) {
@@ -1148,7 +1148,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					RegistryEntryModule registryEntryModule = new RegistryEntryModule();
+					RegistryCompanyEntryModule registryEntryModule = new RegistryCompanyEntryModule();
 					registryEntryModule.onModuleLoad();
 				}
 				

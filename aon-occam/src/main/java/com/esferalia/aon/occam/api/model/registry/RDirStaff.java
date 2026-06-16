@@ -130,7 +130,7 @@ public class RDirStaff implements Serializable {
 	}
 
 	public Integer getShareNumber() {
-		return shareNumber;
+		return null == shareNumber ? 0 : shareNumber;
 	}
 	public RDirStaff setShareNumber(Integer shareNumber) {
 		this.setDirty( isDirty() || AonUtils.notEquals(this.shareNumber, shareNumber) );

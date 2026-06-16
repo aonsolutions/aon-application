@@ -646,7 +646,7 @@ public class JooqCertifica2 {
 				.orderBy(CONTRACT_INFO.START_DATE.desc())
 				.fetch(CONTRACT_INFO.EXPRESSION);
 
-		if (!staffDocuments.isEmpty())
+		if (AonStringUtils.isBlank(representativeDocument))
 			representativeDocument = staffDocuments.get(0);
 		
 		// Get from contract

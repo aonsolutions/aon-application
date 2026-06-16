@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -48,5 +49,7 @@ public interface FinanceService extends RemoteService {
 	void deleteFBatches(String domainName, int domain, String user, LinkedList<Integer> fBatchIds) throws AonCoreException;
 	FBatch createUpdateFBatch(String domainName, int domain, String user, FBatch fBatch) throws AonCoreException;
 	void deleteSepaFile(String domainName, int domain, String user, Integer rattachId) throws AonCoreException;
-	
+	FBatch recordFBatch(Occam occam, Integer fbatchId, Date paymentDate) throws AonCoreException;
+	FBatch unrecordFBatch(Occam occam, Integer fbatchId) throws AonCoreException;
+	AccountEntry getFBatchAccountEntry(Occam occam, Integer id) throws AonCoreException;
 }

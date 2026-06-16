@@ -78,22 +78,24 @@ export class AonInvoiceHome extends AonElement {
 		dashboard.style.margin = '10px 10px 0px 10px';
         this.appendChild(dashboard);
 
-		if (!this.getDur().isTrial() || this.getDur().hasBeenTrial())
+		if ( !this.getDur().isTrial() || this.getDur().hasBeenTrial())
         	this.buildUploadPanel(dashboard);
 
-		this.buildFastPanel(dashboard);
+		if(!this.isMobile()) this.buildFastPanel(dashboard);
 		this.buildCardPanel(dashboard);
     }
 
     buildUploadPanel(dashboard) {
-        let upload = this.createDiv(this.UPLOAD_PANEL, CSS.AON_UPLOAD_PANEL);
-        dashboard.appendChild(upload);
+		if(!this.isMobile()) {
+			let upload = this.createDiv(this.UPLOAD_PANEL, CSS.AON_UPLOAD_PANEL);
+        	dashboard.appendChild(upload);
 
-        let uploadInv = new AonNewUpload();
-        uploadInv.id = this.UPLOAD_INVOICE;
-        uploadInv.setMessage("Arrastra o selecciona para subir facturas");
-        uploadInv.setType("Invoice");
-        upload.appendChild(uploadInv);
+        	let uploadInv = new AonNewUpload();
+        	uploadInv.id = this.UPLOAD_INVOICE;
+        	uploadInv.setMessage("Arrastra o selecciona para subir facturas");
+    	    uploadInv.setType("Invoice");
+	        upload.appendChild(uploadInv);
+		}
     }
 
 	uploadInvoiceHome(input, files) {

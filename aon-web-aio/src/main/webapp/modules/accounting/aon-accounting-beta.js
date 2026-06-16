@@ -52,6 +52,13 @@ export class AonAccountingBeta extends AonElement {
 
 		if (localStorage.getItem("aon_domain_id")) {
 			let utilitiesOptions = [];
+
+			utilitiesOptions.push({
+				id: "observations",
+				icon: "speaker_notes",
+				name: "Observaciones",
+				fn: () => this.getApplication().buildObservations('ACCOUNTING'),
+			});
 			
 			if(!this.getDur().isDomainManagementAvailable())
 				utilitiesOptions.push({
@@ -60,13 +67,6 @@ export class AonAccountingBeta extends AonElement {
 					name: "Parametros",
 					fn: () => this.getApplication().setContent(new JSF.AonJsfAccountingParams()),
 				});
-
-			utilitiesOptions.push({
-				id: "observations",
-				icon: "speaker_notes",
-				name: "Observaciones",
-				fn: () => this.getApplication().buildObservations('ACCOUNTING'),
-			});
 			
 			if(this.getDur().isDomainManagementAvailable())
 				utilitiesOptions.push({
@@ -76,7 +76,7 @@ export class AonAccountingBeta extends AonElement {
 					fn: () =>  GWT.iLoad(GWT.ACCOUNTING_UTILITIES, this.getApplication().CONTENT),
 				});
 
-			aonAccountingBeta.addSidenavOptions(MSG.UTILITIES.toUpperCase(), utilitiesOptions);
+			aonAccountingBeta.addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), utilitiesOptions);
 			
 			if(this.getDur().isDomainManagementAvailable()){
 				let parametersOptions = [];
@@ -109,8 +109,49 @@ export class AonAccountingBeta extends AonElement {
 					fn: () =>  GWT.iLoad(GWT.DEPOSIT, this.getApplication().CONTENT), 
 				});
 				
-				aonAccountingBeta.addSidenavOptions("Parámetros".toUpperCase(), parametersOptions);
+				aonAccountingBeta.addSidenavOptions(MSG.PARAMETERS.toUpperCase(), parametersOptions);
+			} else {
+				let parametersOptions = [];
+				
+				parametersOptions.push({
+					id: "ejerciciosContables",
+					name: MSG.ACCOUNTING_PERIODS,
+					fn: () =>  GWT.iLoad(GWT.ACCOUNTING_PERIOD, this.getApplication().CONTENT), 
+				});
+				
+				parametersOptions.push({
+					id: "conceptosAutomaticos",
+					name: MSG.AUTOMATIC_CONCEPTS,
+					fn: () =>  this.getApplication().setContent(new JSF.AonJsfAutConcept()),
+				});
+				
+				parametersOptions.push({
+					id: "bankConcept",
+					name: MSG.BANK_CONCEPTS,
+					fn: () =>  this.getApplication().setContent(new JSF.AonJsfBankConcept()),
+				});
+				
+				parametersOptions.push({
+					id: "payMethodTypeDetail",
+					name: MSG.PAYMETHOD_ACCOUNTS,
+					fn: () =>  this.getApplication().setContent(new JSF.AonJsfPayMethodTypeDetail()),
+				});
+				
+				
+				aonAccountingBeta.addSidenavOptions(MSG.PARAMETERS.toUpperCase(), parametersOptions);
 			}
+		}
+		
+		if(!this.getDur().isDomainManagementAvailable()){
+			let utilitiesOptions = [];
+
+			utilitiesOptions.push({
+				id: "invoiceConsole",
+				name: MSG.INVOICE_CONSOLE,
+				fn: () => GWT.iLoad(GWT.INVOICE_CONSOLE, this.getApplication().CONTENT),
+			});
+
+			aonAccountingBeta.addSidenavOptions(MSG.UTILITIES.toUpperCase(), utilitiesOptions);
 		}
 
 		if (localStorage.getItem("aon_domain_id")) {
@@ -129,8 +170,8 @@ export class AonAccountingBeta extends AonElement {
 		if ( localStorage.getItem("aon_domain_id") && !this.getDur().isConsultancy() && (this.getDur().isInvoice() && (this.getDur().isOcr() || this.getDur().isInvofox())) ) {
 	       let utilitiesOptions = {
 				id: "uploadInvoice",
-				title: MSG.UTILITIES.toUpperCase(),
-				name: MSG.UTILITIES.toUpperCase(),
+				title: MSG.INVOICES.toUpperCase(),
+				name: MSG.INVOICES.toUpperCase(),
 			}
 
 			let uploadInv = new AonNewUpload();

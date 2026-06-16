@@ -359,6 +359,7 @@ public enum AonError implements Serializable{
 	,REGISTRY_BANK_NULL_DOMAIN("El dominio no puede ser nulo")
 	,REGISTRY_BANK_NULL_REGISTRY("El registro no puede ser nulo")
 	,REGISTRY_BANK_INVALID_BIC_SIZE("El tama\u00F1o del bic es inv\u00E1lido")
+	,REGISTRY_BANK_INVALID_ALIAS_SIZE("El tama\u00F1o del alias es inv\u00E1lido")
 	,REGISTRY_BANK_INVALID_SUFFIX_SIZE("El tama\u00F1o del sufijo es inv\u00E1lido")
 	,REGISTRY_BANK_INVALID_REQUISITION_SIZE("El tama\u00F1o de la requisici\u00F3n es inv\u00E1lido")
 	,REGISTRY_BANK_INVALID_SEPA_MANDATE_REF_SIZE("El tama\u00F1o de la referencia de la orden de domicilizaci\u00F3n de adeudo directo SEPA es inv\u00E1lido")

@@ -116,8 +116,9 @@ export class AonMobilePackaging extends AonElement {
 		let saveButton2 = new AonButton();
 		saveButton2.id = this.PACKAGING_SAVE;
 		saveButton2.title = 'Generar Etiqueta';
-		saveButton2.style.padding = '15px';	
-		saveButton2.style.position = 'absolute';
+		saveButton2.style.padding = '10px';	
+		saveButton2.style.display = 'block';
+		saveButton2.style.width = '250px';
 		saveButton2.addEventListener(EVENT.CLICK, () => this.save(div, saveButton, printButton, downloadButton));
 
 		div.appendChild(saveButton2);
@@ -126,7 +127,7 @@ export class AonMobilePackaging extends AonElement {
 		printButton2.id = this.PACKAGING_PRINT;
 		printButton2.title = 'Imprimir Etiqueta';
 		printButton2.style.padding = '15px';	
-		printButton2.style.position = 'absolute';
+		printButton2.style.width = '250px';
 		printButton2.style.display = 'none';
 		printButton2.addEventListener(EVENT.CLICK, () => this.print());
 

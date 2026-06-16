@@ -77,6 +77,19 @@ export class AonHelp extends AonElement {
 			divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_SCHEDULE,MSG.WEEK_SCHEDULE, MATERIAL_ICONS.SCHEDULE, CSS.AON_WEEK_SCHEDULE));
 			divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_FRIDAY_SCHEDULE, MSG.WEEK_SCHEDULE,MATERIAL_ICONS.SCHEDULE, CSS.AON_WEEK_FRIDAY_SCHEDULE));
 			rightPanelAboutScheduleCard.setContent(divGeneral2);
+			
+			let helpVersionDiv = this.createSpan();
+			helpVersionDiv.className = "helpversionCardText";
+	
+			let helpVersionSpan = this.createDiv();
+			helpVersionSpan.className = CSS.AON_CARD_TEXT;
+			helpVersionSpan.classList.add("aonHelpSpan2")
+			getManifest().then((manifest) => {
+				let version =  "Actualizado el " + this.parseVersionDate(manifest.build_date);
+				helpVersionSpan.innerHTML = `<div id="aonManifest">${version}</div>`;
+			});;
+			helpVersionDiv.appendChild(helpVersionSpan);
+			helpContent.appendChild(helpVersionDiv);
 
 		}else if(this.dur.getParentDomain() != null){
 			let parentDomain = this.dur.getParentDomain();
@@ -104,9 +117,41 @@ export class AonHelp extends AonElement {
 				divGeneral.appendChild(this.buildSupportData(email, "Correo electrónico", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_USERS_EMAIL));
 				rightPanelAboutContactCard.setContent(divGeneral);
 				
-				
+				let helpVersionDiv = this.createSpan();
+				helpVersionDiv.className = "helpversionCardText";
+		
+				let helpVersionSpan = this.createDiv();
+				helpVersionSpan.className = CSS.AON_CARD_TEXT;
+				helpVersionSpan.classList.add("aonHelpSpan2")
+				getManifest().then((manifest) => {
+					let version =  "Actualizado el " + this.parseVersionDate(manifest.build_date);
+					helpVersionSpan.innerHTML = `<div id="aonManifest">${version}</div>`;
+				});;
+				helpVersionDiv.appendChild(helpVersionSpan);
+				helpContent.appendChild(helpVersionDiv);
 			});
 		}
+	}
+	
+	parseVersionDate(manifestDate){
+		// Convertir a formato ISO (YYYY-MM-DDTHH:mm:ss)
+		const [fecha, hora] = manifestDate.split(" ");
+		const [dia, mes, anio] = fecha.split("/");
+		const iso = `${anio}-${mes}-${dia}T${hora}`;
+		
+		const date = new Date(iso);
+		
+		// Formateadores
+		const diaSemana = new Intl.DateTimeFormat("es-ES", { weekday: "long" }).format(date);
+		const diaNum = date.getDate();
+		const mesNombre = new Intl.DateTimeFormat("es-ES", { month: "long" }).format(date);
+		const año = date.getFullYear();
+		const horaMin = date.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+		
+		// Construcción final
+		const resultado = `${diaSemana.charAt(0).toUpperCase() + diaSemana.slice(1)}, ${diaNum} de ${mesNombre.charAt(0).toUpperCase() + mesNombre.slice(1)} ${año} a las ${horaMin}`;
+		
+		return resultado;
 	}
 
 	buildForAll() {
@@ -140,7 +185,7 @@ export class AonHelp extends AonElement {
 		let helpContentIndexSpan = this.createDiv();
 		helpContentIndexSpan.className = CSS.AON_CARD_TEXT;
         helpContentIndexSpan.classList.add("aonHelpSpan2");
-		helpContentIndexSpan.innerHTML = MSG.CONTENT_INDEX;
+		helpContentIndexSpan.innerHTML = MSG.MANUALS;
 		helpContentIndexDiv.appendChild(helpContentIndexSpan);
 		helpContent.appendChild(helpContentIndexDiv);
 		
@@ -150,6 +195,7 @@ export class AonHelp extends AonElement {
 		});
 
 		let helpNotificationDiv = this.createSpan();
+		helpNotificationDiv.id = "notificationsHelp";
 		helpNotificationDiv.className = "helpCardText";
 
 		let helpNotificationI = this.createElement(TAG.I);
@@ -190,25 +236,6 @@ export class AonHelp extends AonElement {
 			this.rootPanel(new AonCertification());
 			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
 		});
-		
-		let helpVersionDiv = this.createSpan();
-		helpVersionDiv.className = "helpversionCardText";
-
-		let helpVersionI = this.createElement(TAG.I);
-		helpVersionI.className = CSS.MATERIAL_ICONS;
-		helpVersionI.classList.add("aonHelpI");
-		helpVersionI.innerHTML= "info";
-		helpVersionDiv.appendChild(helpVersionI);
-
-		let helpVersionSpan = this.createDiv();
-		helpVersionSpan.className = CSS.AON_CARD_TEXT;
-		helpVersionSpan.classList.add("aonHelpSpan2")
-		getManifest().then((manifest) => {
-			let version = MSG.VERSION + ": " + manifest.build_date;
-			helpVersionSpan.innerHTML = `<div id="aonManifest">${version}</div>`;
-		});;
-		helpVersionDiv.appendChild(helpVersionSpan);
-		helpContent.appendChild(helpVersionDiv);
 
 		getSupport().then(r => {
 			rightPanelSwitchSupportButton.checked = r.value;

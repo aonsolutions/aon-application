@@ -73,6 +73,26 @@ export class AonHome extends AonElement {
 		let rootPanel = this.createElement(TAG.DIV);
 		rootPanel.id = this.ROOT_PANEL;
 		rootPanel.className = CSS.AON_MOBILE_ROOT_PANEL;
+		
+		let lastScroll = rootPanel.scrollTop;
+
+		rootPanel.addEventListener('scroll', () => {
+ 			const currentScroll = rootPanel.scrollTop;
+			let aonMobileMenuSidenav = this.getElement("aonMobileMenuSidenav");
+  			if (aonMobileMenuSidenav && currentScroll > lastScroll) {
+				aonMobileMenuSidenav.style.left = "40px";
+				aonMobileMenuSidenav.style.right = "40px";
+				aonMobileMenuSidenav.style.height = "50px";
+    			console.log('scroll hacia abajo');
+  			} else if (aonMobileMenuSidenav && currentScroll < lastScroll) {
+				aonMobileMenuSidenav.style.left = "20px";
+				aonMobileMenuSidenav.style.right = "20px";
+				aonMobileMenuSidenav.style.height = "60px";
+				console.log('scroll hacia arriba');
+  			}
+
+  			lastScroll = currentScroll;
+		});
 		this.appendChild(rootPanel);
 
 		let aonMobileMenu = new AonMobileMenu();

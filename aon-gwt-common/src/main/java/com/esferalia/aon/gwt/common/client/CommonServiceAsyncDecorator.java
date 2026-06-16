@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
@@ -42,6 +43,7 @@ import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SecondaryUserCertificate;
 import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
+import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
@@ -122,6 +124,7 @@ import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -1308,6 +1311,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
+	public void saveScopeAndAssign(String domainName, int domain, String user, Scope scope, boolean assignAllUsers, ArrayList<User> selectedUsers, AsyncCallback<Scope> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveScopeAndAssign(domainName, domain, user, scope, assignAllUsers, selectedUsers, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
 	public void deleteScope(String domainName, int domain, String user, Integer scopeId, AsyncCallback<Void> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.deleteScope(domainName, domain, user, scopeId, new AsyncCallbackWrapper<>(callback));
@@ -1353,6 +1362,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getDomains(String domainName, Integer domainId, String user, AsyncCallback<List<Domain>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getDomains(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getUsers(String domainName, int domainId, String user, AsyncCallback<ArrayList<User>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getUsers(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	// **************************************************
@@ -1739,10 +1754,59 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
+	public void getAviablesAccountsForBank(String domainName, Integer domain, String user, AsyncCallback<List<Account>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getAviablesAccountsForBank(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void createAccountsForBank(String domainName, Integer domain, String user, String alias, String suffixCode, AsyncCallback<Account> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.createAccountsForBank(domainName, domain, user, alias, suffixCode, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
 	public void getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource, String pattern, AsyncCallback<List<Account>> callback) {
 		AON.start();
 		serviceAsync.getAccountsForRegistry(domainName, domain, user, registrySource, pattern, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void getSignatures(String domainName, Integer domain, String user, AsyncCallback<LinkedList<Signature>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getSignatures(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteSignature(String domainName, Integer domain, String user, Integer id,	AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteSignature(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveSignature(String domainName, Integer domain, String user, Signature signature, AsyncCallback<Signature> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveSignature(domainName, domain, user, signature, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getMailAccounts(String domainName, Integer domain, String user, AsyncCallback<LinkedList<MailAccount>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getMailAccounts(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteMailAccount(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteMailAccount(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveMailAccount(String domainName, Integer domain, String user, MailAccount mailAccount, AsyncCallback<MailAccount> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveMailAccount(domainName, domain, user, mailAccount, new AsyncCallbackWrapper<>(callback));
+	}
+	
 
 	// *********************** [AMORTIZATION TYPE]
 	@Override
@@ -1755,5 +1819,24 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void reassignScope(String domainName, Integer domainId, String user, int originScope, int finalScope, boolean deleteOrigin, AsyncCallback<Void> callback) {
 		AON.start();
 		serviceAsync.reassignScope(domainName, domainId, user, originScope, finalScope, deleteOrigin, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void checkMailAccounts(String domainName, Integer domain, String user, AsyncCallback<HashMap<Integer, Boolean>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.checkMailAccounts(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getVerifiedHostEmails(String domainName, Integer domain, String user, AsyncCallback<HashMap<String, Boolean>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getVerifiedHostEmails(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	// *********************** [DOMAIN STATUS]
+	@Override
+	public void saveDomainStatus(String domainName, int domain, String user, RegistryStatus newStatus, Date newExpDate, AsyncCallback<Domain> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveDomainStatus(domainName, domain, user, newStatus, newExpDate, new AsyncCallbackWrapper<>(callback));
 	}
 }

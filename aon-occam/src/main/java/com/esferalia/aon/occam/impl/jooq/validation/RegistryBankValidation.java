@@ -65,6 +65,12 @@ public class RegistryBankValidation {
 		}
 	};
 	
+	private static final BiConsumer<AONContext, RegistryBank> INVALID_SIZE_ALIAS = (ctx, registryBank) -> {
+		if (registryBank != null && registryBank.getAlias() != null  && registryBank.getAlias().length() > RBANK.ALIAS.getDataType().length()) {
+			throw new AonCoreException(AonError.REGISTRY_BANK_INVALID_ALIAS_SIZE.getMessage());
+		}
+	};
+	
 	/**
 	 * Throws an exception if the size of the registryBank's suffix is invalid
 	 */
@@ -98,6 +104,7 @@ public class RegistryBankValidation {
 		.andThen(NULL_REGISTRY)
 		.andThen(INVALID_BANK_ACCOUNT)
 		.andThen(INVALID_SIZE_BIC)
+		.andThen(INVALID_SIZE_ALIAS)
 		.andThen(INVALID_SIZE_SUFFIX)
 		.andThen(INVALID_SIZE_REQUISITION)
 		.andThen(INVALID_SIZE_SEPA_MANDATE_REF)

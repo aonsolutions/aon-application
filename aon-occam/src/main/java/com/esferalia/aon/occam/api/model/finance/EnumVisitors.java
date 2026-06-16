@@ -72,13 +72,6 @@ public class EnumVisitors {
 		void visitSettled();
 	}
 	
-	public static interface IFBatchStatusVisitor {
-		void visitUnknown();
-		void visitPending();
-		void visitGenerated();
-		void visitAccounted();
-	}
-	
 	public static interface IRegistryStatusVisitor {
 		void visitActive();
 		void visitInactive();

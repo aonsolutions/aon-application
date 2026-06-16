@@ -56,7 +56,7 @@ export class AonAuth extends AonElement {
     buildContent() {
 		let div = this.createElement(TAG.DIV);
 		div.className = this.isMobile() 
-            ? CSS.AON_MOBILE_SUB_CONTENT 
+            ? "" 
             : CSS.AON_SUB_CONTENT;
 		div.style.display = 'flex';
 		div.style.width	= '100%';

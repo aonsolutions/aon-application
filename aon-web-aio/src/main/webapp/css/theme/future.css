@@ -1373,13 +1373,10 @@ ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover span {
 }
 
 .aonCardTitleSection *:not(.material-icons) {
-	font-size: 1.25rem;
-	line-height: 1.75rem;
-	gap: .5rem;
-	padding-top: .75rem;
-  	padding-bottom: .75rem;
+	font-size: 1rem;
+	padding-top: 0;
+  	padding-bottom: 0.75rem;
 	padding-left: 0.25rem;
-	letter-spacing: -0.005rem;
 	font-family: "Inter-semibold", sans-serif;
 }
 
@@ -1754,10 +1751,10 @@ i[id$="aonOfficePanelToolbarHeaderToolSectionSearchAdvancedButtonIcon"] {
 }
 
 .aonTable thead th {
-	height: 63.63px; /*3.75rem;*/
+	height: 3.25rem;
 	font-family: "Inter-bold", sans-serif;
-	font-size: .875rem;
-	color: #1e293b;
+	font-size: .8125rem;
+	color: #5f6368;
 	border-radius: .375rem;
 	vertical-align: middle;
 }
@@ -1770,16 +1767,15 @@ i[id$="aonOfficePanelToolbarHeaderToolSectionSearchAdvancedButtonIcon"] {
 
 .aonTable tbody tr {
 	font-family: "Inter-regular", sans-serif;
-	font-size: .875rem;
-	color: #1e293b;
+	font-size: .8125rem;
+	color: #5f6368;
 	border-radius: .375rem;
 	border: .0625rem solid #e2e8f0 !important;
-	margin-top: 17px !important; /* 1rem;*/
 }
 
 .aonTable tbody tr td {
 	color: #64748b;
-	height: 63.63px; /*3.625rem;*/
+	height: 3rem;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -1849,10 +1845,6 @@ aon-right-panel {
   font-family: "Inter-medium";
 }
 
-.rightPanel aon-card{
-	width: 100%;
-}
-
 .rightPanel aon-card .aonCard{
 	margin: 0px;
 	padding: 0px;;
@@ -1860,7 +1852,6 @@ aon-right-panel {
 }
 
 .rightPanel .divLogout,
-.rightPanel .helpCardText,
 .rightPanel .configCardText{
 	border: none;
 	background-color: #0f172a;
@@ -1874,16 +1865,29 @@ aon-right-panel {
 	width: 100%;
 }
 
+.rightPanel .helpCardText{
+	width: 100%;
+	display: flex;
+	justify-content: flex-start;
+	cursor: pointer;
+}
+
 .helpCardText {
 	display: flex;
   	justify-content: center;
 }
 
-#aonHelpAboutContactCardTitle {
-	margin-bottom: .5rem;
+#aonHelpAboutContactCardTitle,
+#aonHelpScheduleContactCardTitle {
+	margin-bottom: 0;
 }
 
-#contentIndexHelp,
+#aonHelpAboutContactCardCard > .aonCardTitle div,
+#aonHelpScheduleContactCardCard > .aonCardTitle div {
+	padding-left: 1rem;
+}
+
+#notificationsHelp,
 #aonRightPanelEditButton,
 #aonRightPanelNotificationButton{
 	display: none !important;
@@ -1894,9 +1898,13 @@ aon-right-panel {
 }
 
 .rightPanel .divLogout *,
-.rightPanel .helpCardText *,
 .rightPanel .configCardText *{
 	color: #fff;	
+	font-size: 1rem;
+}
+
+.rightPanel .helpCardText *{
+	color: #0f172a;	
 	font-size: 1rem;
 }
 
@@ -1920,7 +1928,7 @@ aon-right-panel {
 
 .helpCardText:hover,
 .configCardText:hover {
-  background-color: #64748b !important;
+  background-color: #bdc6d3 !important;
 }
 
 .aonUserPasswordLink {
@@ -1952,10 +1960,9 @@ aon-right-panel {
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: .5rem;
 }
 
-.rightPanel .helpCardText .material-icons,
 #aonConfig > span > i,
 #aonRightPanelCloseButton > button > i,
 #openNotificationButton > button > i,
@@ -1968,6 +1975,15 @@ aon-right-panel {
 	background-color: white;
 }
 
+.rightPanel .helpCardText .material-icons{
+	width: 23px;
+	height: 23px;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	background-color: #0f172a;
+}
+
 #helpContent > span.helpCardText:hover
 #aonConfig .configCardText:hover {
 	background-color: #64748b !important;
@@ -1976,6 +1992,10 @@ aon-right-panel {
 #aonConfig .configCardText {
 	display: flex;
 	justify-content: center;
+}
+
+#helpContent > span.helpCardText:nth-of-type(1) > i {
+	mask-image: url('/icons/graduation-cap.svg') ;
 }
 
 #helpContent > span.helpCardText:nth-of-type(2) > i {
@@ -2064,10 +2084,6 @@ i[id$="aonDocumentalSheetToolbarHeaderToolSectionSendFileButtonIcon"]{
 .rightPanel .toolbarSidenavPanel #aonRightPanelConfigButton,
 .rightPanel .toolbarSidenavPanel #aonRightPanelHelpButton {
 	display: none !important;
-}
-
-.rightPanel .helpversionCardText {
-	display: none;
 }
 
 .rightPanel i[class~="configPanelLanguageI"] {
@@ -2165,14 +2181,16 @@ i[id$="aonDocumentalSheetToolbarHeaderToolSectionSendFileButtonIcon"]{
 .aonInputBoxLabel > input {
 	border-radius: .375rem !important;
 	border: .0625rem solid #cbd5e1 ;
-	height: 2.5rem;
+	height: 2.15rem;
+	font-size: .8125rem;
 }
 
 .aonTextareaBoxLabel > textarea {
 	border-radius: .375rem !important;
 	border: .0625rem solid #cbd5e1 ;
-	height: 2.5rem;
-	min-height: 2.5rem;
+	height: 2.15rem;
+	min-height: 2.15rem;
+	font-size: .8125rem;
 }
 
 /* ========================== Office Styles  ========================== */
@@ -2718,4 +2736,9 @@ i[id$="aonHeaderSearchDivButtonIcon"],
 	margin: 0px;
 	padding: 0px;
 	background-color: var(--aonBackgroundColor2);
+}
+
+.aonSidenavAddButton{
+	border-radius: 50%;
+	background-color: #0f172a;
 }

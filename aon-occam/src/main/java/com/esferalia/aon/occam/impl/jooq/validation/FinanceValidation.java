@@ -152,17 +152,17 @@ public class FinanceValidation {
 	/**
 	 * Para borrar el asiento, este no puede venir de remesa
 	 */
-	private static final BiConsumer<FinanceEntry,AONContext> CHECK_IF_ACCOUNT_ENTRY_IS_FROM_FBATCH = (entry,ctx) -> {
-		if (ctx.getDslContext()
-			.select(ACCOUNT_ENTRY_FBATCH.FBATCH)
-			.from(ACCOUNT_ENTRY_FBATCH)
-			.where(ACCOUNT_ENTRY_FBATCH.ACCOUNT_ENTRY.eq(entry.getAccountEntry().getId()))
-			.fetch()
-			.stream()
-			.findAny()
-			.isPresent())
-			throw new AonCoreException(AonError.FINANCE_ENTRY_FROM_FBATCH.getMessage());
-	};
+//	private static final BiConsumer<FinanceEntry,AONContext> CHECK_IF_ACCOUNT_ENTRY_IS_FROM_FBATCH = (entry,ctx) -> {
+//		if (ctx.getDslContext()
+//			.select(ACCOUNT_ENTRY_FBATCH.FBATCH)
+//			.from(ACCOUNT_ENTRY_FBATCH)
+//			.where(ACCOUNT_ENTRY_FBATCH.ACCOUNT_ENTRY.eq(entry.getAccountEntry().getId()))
+//			.fetch()
+//			.stream()
+//			.findAny()
+//			.isPresent())
+//			throw new AonCoreException(AonError.FINANCE_ENTRY_FROM_FBATCH.getMessage());
+//	};
 	
 	/**
 	 * Para borrar, no puede haber movimientos posteriores
@@ -175,8 +175,8 @@ public class FinanceValidation {
 	};
 
 	public static void validateDelete(AONContext ctx, FinanceEntry entry) {
-		CHECK_IF_ACCOUNT_ENTRY_IS_FROM_FBATCH
-			.andThen(CHECK_IF_TRACKINGS_ARE_LAST_TRACKING)
+		CHECK_IF_TRACKINGS_ARE_LAST_TRACKING
+//			.andThen(CHECK_IF_ACCOUNT_ENTRY_IS_FROM_FBATCH)
 			.accept(entry, ctx);
 	}
 

@@ -18,6 +18,7 @@ import { getRegistryNotes } from "../services/registryService.js";
 import * as ACTION from "../modules/actions.js";
 import * as GWT from '../gwt/gwt.js';
 import { getCompany } from "../services/companyService.js";
+import { AonTooltip } from "./aon-tooltip.js";
 
 export class AonApplication extends AonElement {
   
@@ -140,6 +141,27 @@ export class AonApplication extends AonElement {
         : CSS.AON_CONTENT_BETA;
     if(this.isMobile() && this.isSab()){
       content.style.bottom = '69px';
+    }
+
+    if(this.isMobile()) {
+      let lastScroll = content.scrollTop;
+
+    	content.addEventListener('scroll', () => {
+ 			  const currentScroll = content.scrollTop;
+			  let aonMobileMenuSidenav = this.getElement("aonMobileMenuSidenav");
+  			if (aonMobileMenuSidenav && currentScroll > lastScroll) {
+				  aonMobileMenuSidenav.style.left = "40px";
+				  aonMobileMenuSidenav.style.right = "40px";
+				  aonMobileMenuSidenav.style.height = "50px";
+    		} else if (aonMobileMenuSidenav && currentScroll < lastScroll) {
+				  aonMobileMenuSidenav.style.left = "20px";
+				  aonMobileMenuSidenav.style.right = "20px";
+				  aonMobileMenuSidenav.style.height = "60px";
+				}
+
+  			lastScroll = currentScroll;
+		});
+
     }
 
     let rightSidenav = this.createDiv(this.SIDENAV_RIGHT, this.getRightSidenavClassName());
@@ -834,22 +856,39 @@ export class AonApplication extends AonElement {
           let rightPX = 5 + (30 * i);
           button.style.right = rightPX + "px";
           button.style.position = "absolute";
+          
           let aonIconButton = new AonIconButton();
           aonIconButton.noHover = true;
           aonIconButton.icon = item.icon;
           aonIconButton.id = li.id + item.id;
+          
           button.appendChild(aonIconButton);
           actionDiv.appendChild(button);
+          
+          if(item.icon === 'add')
+          	button.classList.add('aonSidenavAddButton');
+          
           let b = aonIconButton.getButton();
           b.style.height = "30px";
           b.style.minWidth = "30px";
           b.style.width = "30px";
+   
           let ic = aonIconButton.getIcon();
           ic.style.fontSize = "1.3rem";
+          
+          if(item.icon === 'add')
+          	ic.style.color = 'white';
+          
           aonIconButton.addEventListener(EVENT.CLICK, (ev)=>{
             ev.stopPropagation();
             item.action(ev)
           });
+          
+          new AonTooltip(
+				aonIconButton,
+				'Crear ' + option.name,
+				{ position: 'right' }
+		  );
         });
       }
 
@@ -1175,7 +1214,7 @@ export class AonApplication extends AonElement {
       span.id = this.id + "FloatSpan";
       span.style.position = "fixed";
       span.style.right = "20px";
-      span.style.bottom = this.isSab() ? "80px" : "70px";
+      span.style.bottom = "80px";
       
       aonIconButton = new AonIconButton();
       aonIconButton.icon = action.icon;
