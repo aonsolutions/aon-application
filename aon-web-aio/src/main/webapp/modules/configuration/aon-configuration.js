@@ -245,6 +245,11 @@ export class AonConfiguration extends AonElement {
 				fn: () => this.getApplication().setContent(new JSF.AonJsfEmail()),
 			},			
 			{
+				name: MSG.CONTACTS,
+				icon: MATERIAL_ICONS.CONTACTS,
+				fn: () => this.getApplication().setContent(new JSF.AonJsfContact()),
+			},			
+			{
 				name: MSG.PRINTS,
 				icon: MATERIAL_ICONS.PRINT,
 				fn: () => this.getApplication().setContent(new JSF.AonJsfPrint()),

@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.FBatchStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class FBatch implements Serializable, HasAudit {
 	
@@ -106,10 +107,13 @@ public class FBatch implements Serializable, HasAudit {
 		return FBatchStatus.GENERATED == getStatus();
 	}
 	
-	public boolean isAccounted() {
-		return FBatchStatus.ACCOUNTED == getStatus();
+	public boolean isRecorded() {
+		return FBatchStatus.RECORDED == getStatus();
 	}
-
+	public boolean isNotRecorded() {
+		return !isRecorded();
+	}
+	
 	public RegistryBank getRbank() {
 		return rbank;
 	}
@@ -128,10 +132,12 @@ public class FBatch implements Serializable, HasAudit {
 		return this;
 	}
 
+	public boolean isPayment() {
+		return AonNumberUtils.equals(getPayment(),1);
+	}
 	public Byte getPayment() {
 		return payment;
 	}
-
 	public FBatch setPayment(Byte payment) {
 		this.payment = payment;
 		return this;

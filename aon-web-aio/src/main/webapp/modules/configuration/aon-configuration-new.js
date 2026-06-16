@@ -236,11 +236,15 @@ export class AonConfigurationNew extends AonElement {
 				name: MSG.USERS,
 				icon: MATERIAL_ICONS.PEOPLE,
 				fn: () => this.getApplication().setContent(new JSF.AonJsfUser()),
-			}, {
+			},{
 				name: MSG.PROFILES,
 				icon: MATERIAL_ICONS.GROUPS,
 				fn: () => this.getApplication().setContent(new JSF.AonJsfProfile()),
-			},
+			},{
+				name: MSG.CONTACTS,
+				icon: MATERIAL_ICONS.CONTACTS,
+				fn: () => this.getApplication().setContent(new JSF.AonJsfContact()),
+		    }
 			/*
 			{
 				name: MSG.SCOPES,

@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.Agreement;
@@ -8842,6 +8843,24 @@ public class AON {
 		}
 	}
 	
+	public static FBatch recordFBatch(Occam occam, Integer fBatchId, Date paymentDate) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getFinance().recordFBatch(ctx, fBatchId, paymentDate);
+		}
+	}
+
+	public static FBatch unrecordFBatch(Occam occam, Integer fBatchId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getFinance().unrecordFBatch(ctx, fBatchId);
+		}
+	}
+	
+	public static AccountEntry getFBatchAccountEntry(Occam occam, Integer fBatchId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getFinance().getFBatchAccountEntry(ctx, fBatchId);
+		}
+	}
+
 	// ---------------- Marketing Campaign
 	
 	public static List<MarketingCampaign> getMarketingCampaignlist(MarketingCompaignParams params) {
