@@ -2300,6 +2300,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			hosts.add(host);
 		}
 		
+		/*
 		if(null != domain.getParentId()) {
 			Company parentDomainCompany = AON.getCompany(domainName, domainId, user, f -> f.getDomainProperty().eq(domain.getParentId()));
 			RegistryMedia parentDomainCompanyWeb = AON.getRegistryMedia(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRegistryProperty().eq(parentDomainCompany.getId()).and(f.getMediaProperty().eq(MediaType.WEB.value())));
@@ -2315,6 +2316,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 				hosts.add(host);
 			}
 		}
+		*/
 		
 		hosts.forEach(h -> {
 			boolean isVerifiedDomain = SES.isVerifiedForSendingStatus("aon.awsses@" + h);
