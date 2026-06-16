@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -142,5 +143,19 @@ public class FinanceServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	public void deleteSepaFile(String domainName, int domain, String user, Integer rattachId) throws AonCoreException {
 		AON.deleteAttach(domainName, domain, user, f -> f.getIdProperty().eq(rattachId), AttachType.REGISTRY);
 	}
+
+	@Override
+	public FBatch recordFBatch(Occam occam, Integer fbatchId, Date paymentDate) throws AonCoreException {
+		return AON.recordFBatch(occam, fbatchId, paymentDate);	
+	}
+
+	@Override
+	public FBatch unrecordFBatch(Occam occam, Integer fbatchId) throws AonCoreException {
+		return AON.unrecordFBatch(occam, fbatchId);	
+	}
 	
+	@Override
+	public AccountEntry getFBatchAccountEntry(Occam occam, Integer id) throws AonCoreException {
+		return AON.getFBatchAccountEntry(occam, id);
+	}
 }

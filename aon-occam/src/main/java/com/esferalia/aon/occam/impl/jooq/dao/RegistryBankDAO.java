@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -23,7 +24,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.RegistryBankAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.RegistryBankValidation;
-import java.util.List;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 public class RegistryBankDAO {
 
@@ -294,6 +295,18 @@ public class RegistryBankDAO {
 		return count;
 	}
 	
+	public static Account getRbankAccount(AONContext ctx, Integer rbankId) {
+		return ctx.getDslContext().select(ACCOUNT.fields())
+			.from ( RBANK )
+			.join( ACCOUNT ).on(RBANK.ACCOUNT.eq(ACCOUNT.ID))
+			.where(RBANK.REGISTRY.eq(rbankId))
+			.fetch()
+			.stream()
+			.map(new FullAccountFiller () )
+			.findFirst()
+			.orElse(null);
+	}
+
 	public static void updateAccount(AONContext ctx, Integer rbankId, Integer account) {
 		ctx.checkWrite();
 		ctx.getDslContext().update(RBANK)
@@ -303,6 +316,24 @@ public class RegistryBankDAO {
 		ctx.log().debug("ACCOUNT {0} LINKED TO RBANK {1}",account,rbankId);
 	}
 	
+	public static Account ensureAccount(AONContext ctx, Integer rbankId) {
+		Account account = getRbankAccount(ctx, rbankId);
+		if (account == null) {
+			RegistryBank rbank = get(ctx, rbankId);
+			if (rbank == null || rbank.getId()==null) {
+				throw new AonCoreException("Banco no encontrado");
+			}
+			account = new Account()
+				.setDomain( rbank.getDomain() )
+				.setCode( AccountDAO.getNextAccountCode(ctx,"5720" ) )
+				.setDescription( rbank.getFullName() )
+				.setAlias( rbank.getAlias() )
+				.setActive( true );
+			account = AccountDAO.save( ctx, account);
+		}
+		return account;
+	}
+
 	// *************************************************
 	// ********** TEST PURPOSE METHODS *****************
 	// *************************************************

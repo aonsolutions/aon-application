@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AccountEntryFbatch.ACCOUNT_ENTRY_FBATCH;
 import static com.esferalia.aon.jooq.tables.AccountEntryFinanceTracking.ACCOUNT_ENTRY_FINANCE_TRACKING;
+import static com.esferalia.aon.jooq.tables.Fbatch.FBATCH;
 import static com.esferalia.aon.jooq.tables.FbatchDetail.FBATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
@@ -11,6 +12,7 @@ import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -19,15 +21,21 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
+import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceRecorder;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.PayMethodTypeDetail;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.FBatchStatus;
+import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO.FinanceOrder;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO.FullFinanceFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO.FullFinanceTrackingFiller;
@@ -36,6 +44,7 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FinanceEntryDAO {
@@ -45,8 +54,9 @@ public class FinanceEntryDAO {
 	}
 
 	public static Stream<Finance> accountFetch(final AONContext ctx, FinanceFilter filter, int offset, int numberOfRows, FinanceOrder orderBy) {
+		AonConfiguration config = ConfigurationDAO.getConfiguration(ctx);
 		return FinanceDAO.fetch(ctx, filter, offset, numberOfRows,orderBy)
-			.map(finance -> fillAcccount(ctx,finance));
+			.map(finance -> fillAcccount(ctx,config, finance));
 //			.map(finance -> fillCustomerAcccount(ctx,finance))
 //			.map(finance -> fillSupplierAcccount(ctx,finance))
 //			.filter(finance -> 
@@ -88,6 +98,7 @@ public class FinanceEntryDAO {
 						entry.setExpenses( AonMathUtils.round(detail.getDebit() - detail.getCredit() ));
 				}
 			});
+		AonConfiguration config = ConfigurationDAO.getConfiguration(ctx);
 		if (entry.isFromFinanceBatch()) {
 			ctx.getDslContext()
 			.select(FINANCE.fields())
@@ -105,99 +116,98 @@ public class FinanceEntryDAO {
 				.fetch()
 				.stream()
 			.map( new FullFinanceFiller() )
-			.map(finance -> fillAcccount(ctx,finance))
+			.map(finance -> fillAcccount(ctx,config, finance))
 //			.peek(finance -> fillCustomerAcccount(ctx,finance))
 //			.peek(finance -> fillSupplierAcccount(ctx,finance))
 //			.peek(finance -> fillCreditorAcccount(ctx,finance))
-			.forEach( finance -> entry.getTrackings().put(finance.getId(), new FinanceTracking().setFinance(finance)));
+			.map(finance -> new FinanceTracking().setFinance(finance)) 
+			.forEach( ft -> entry.getTrackings().put(ft.getFinance().getId(), ft))
+			;
 		} else {
-			ctx.getDslContext()
-				.select(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY)
-				.select(FINANCE_TRACKING.fields())
-				.select(FINANCE.fields())
-				.select(REGISTRY.fields())
-				.select(PAY_METHOD.fields())
-				.select(SCOPE.fields())
-				.select(INVOICE.fields())
-					.from(ACCOUNT_ENTRY_FINANCE_TRACKING)
-					.join(FINANCE_TRACKING).on(FINANCE_TRACKING.ID.equal(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING))
-					.join(FINANCE).on(FINANCE.ID.equal(FINANCE_TRACKING.FINANCE))
-					.join(REGISTRY).on(FINANCE.REGISTRY.equal(REGISTRY.ID))
-					.join(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
-					.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
-					.leftOuterJoin(INVOICE).on(FINANCE.INVOICE.equal(INVOICE.ID))
-					.where(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY.eq(accountEntryId))
-					.fetch()
-					.stream()
-				.map( new FullFinanceTrackingFiller() )
-				.map(ft -> ft.setLastTracking(FinanceTrackingDAO.isLastTracking(ctx, ft)))
-				.map(ft -> fillAcccount(ctx,ft))
-//				.peek(ft -> fillCustomerAcccount(ctx,ft.getFinance()))
-//				.peek(ft -> fillSupplierAcccount(ctx,ft.getFinance()))
-//				.peek(ft -> fillCreditorAcccount(ctx,ft.getFinance()))
-				.forEach( ft -> entry.getTrackings().put(ft.getFinance().getId(), ft));
+			 getAccountEntryTrackings(ctx, config, accountEntryId)
+	          	.forEach(ft -> entry.getTrackings().put(ft.getFinance().getId(), ft));
+//			ctx.getDslContext()
+//				.select(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY)
+//				.select(FINANCE_TRACKING.fields())
+//				.select(FINANCE.fields())
+//				.select(REGISTRY.fields())
+//				.select(PAY_METHOD.fields())
+//				.select(SCOPE.fields())
+//				.select(INVOICE.fields())
+//					.from(ACCOUNT_ENTRY_FINANCE_TRACKING)
+//					.join(FINANCE_TRACKING).on(FINANCE_TRACKING.ID.equal(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING))
+//					.join(FINANCE).on(FINANCE.ID.equal(FINANCE_TRACKING.FINANCE))
+//					.join(REGISTRY).on(FINANCE.REGISTRY.equal(REGISTRY.ID))
+//					.join(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
+//					.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
+//					.leftOuterJoin(INVOICE).on(FINANCE.INVOICE.equal(INVOICE.ID))
+//					.where(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY.eq(accountEntryId))
+//					.fetch()
+//					.stream()
+//				.map( new FullFinanceTrackingFiller() )
+//				.map(ft -> ft.setLastTracking(FinanceTrackingDAO.isLastTracking(ctx, ft)))
+//				.map(ft -> fillAcccount(ctx, config, ft))
+////				.peek(ft -> fillCustomerAcccount(ctx,ft.getFinance()))
+////				.peek(ft -> fillSupplierAcccount(ctx,ft.getFinance()))
+////				.peek(ft -> fillCreditorAcccount(ctx,ft.getFinance()))
+//				.forEach( ft -> entry.getTrackings().put(ft.getFinance().getId(), ft));
 		}
 		return entry;
 	}
-	private static FinanceTracking fillAcccount(AONContext ctx,FinanceTracking ft) {
-		fillAcccount(ctx, ft.getFinance());
+
+	private static Stream<FinanceTracking> getAccountEntryTrackings(AONContext ctx, AonConfiguration config, Integer accountEntryId) {
+		return ctx.getDslContext()
+			.select(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY)
+			.select(FINANCE_TRACKING.fields())
+			.select(FINANCE.fields())
+			.select(REGISTRY.fields())
+			.select(PAY_METHOD.fields())
+			.select(SCOPE.fields())
+			.select(INVOICE.fields())
+				.from(ACCOUNT_ENTRY_FINANCE_TRACKING)
+				.join(FINANCE_TRACKING).on(FINANCE_TRACKING.ID.equal(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING))
+				.join(FINANCE).on(FINANCE.ID.equal(FINANCE_TRACKING.FINANCE))
+				.join(REGISTRY).on(FINANCE.REGISTRY.equal(REGISTRY.ID))
+				.join(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
+				.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
+				.leftOuterJoin(INVOICE).on(FINANCE.INVOICE.equal(INVOICE.ID))
+				.where(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY.eq(accountEntryId))
+			.fetch()
+			.stream()
+			.map(new FullFinanceTrackingFiller())
+			.map(ft -> ft.setLastTracking(FinanceTrackingDAO.isLastTracking(ctx, ft)))
+			.map(ft -> fillAcccount(ctx, config, ft));
+	}
+	
+	private static FinanceTracking fillAcccount(AONContext ctx, AonConfiguration config, FinanceTracking ft) {
+		fillAcccount(ctx, config, ft.getFinance());
 		return ft;
 	}
-	private static Finance fillAcccount(AONContext ctx,Finance finance) {
+	private static Finance fillAcccount(AONContext ctx, AonConfiguration config, Finance finance) {
 		if (finance.hasRegistry()) {
 			Account account = null;
-			if (finance.isFromSalesInvoice()) {
+			if (finance.isPayment() && finance.isPayroll()) {
+	              account = config.accounting().getDefaultPendingSalary();
+	              if (account == null) {
+	            	  account = config.accounting().getDefaultPrepayment();    
+	              }
+	          } else if (finance.isFromSalesInvoice()) {
 				account = CustomerDAO.getCustomerAccount(ctx,finance.getRegistry().getId());	
 			} else if (finance.isFromPurchaseInvoice()) {
 				account = SupplierDAO.getSupplierAccount(ctx,finance.getRegistry().getId());	
 			} else if (finance.isFromExpensesInvoice() || finance.isFromUndeductibleInvoice()) {
 				account = CreditorDAO.getCreditorAccount(ctx,finance.getRegistry().getId());	
 			}
-			if (account == null ) {
-				if (!finance.isPayment()) {
-					account = CustomerDAO.getCustomerAccount(ctx,finance.getRegistry().getId());	
-				} else {
-					// Se asume acreedor para los pagos.
-					// Los proveedores deberian tener factura.
-					account = CreditorDAO.getCreditorAccount(ctx,finance.getRegistry().getId());
-				}
+			if (account == null && !finance.isPayroll()) {
+				account = (!finance.isPayment() )
+					? CustomerDAO.getCustomerAccount(ctx,finance.getRegistry().getId())
+					: CreditorDAO.getCreditorAccount(ctx,finance.getRegistry().getId());	// Se asume acreedor para los pagos. Los proveedores deberian tener factura.
 			}
 			fillRegistryAccountData(finance,account);
 		}
 		return finance;
 	}
 
-//	private static Finance fillCustomerAcccount(AONContext ctx,Finance finance) {
-//		if (finance.getRegistry() != null	 
-//			&& (finance.isFromSalesInvoice()					// Es factura de Venta 
-//			|| (!finance.hasInvoice() && !finance.isPayment())) // Cobro sin factura
-//			) {
-//			Account account = CustomerDAO.getCustomerAccount(ctx,finance.getRegistry().getId());
-//			fillRegistryAccountData(finance,account);
-//		}
-//		return finance;
-//	}
-//	private static Finance fillSupplierAcccount(AONContext ctx,Finance finance) {
-//		if (finance.getRegistry() != null 
-//			&& (finance.isFromPurchaseInvoice()					// Es factura de Compra 
-//			|| (!finance.hasInvoice() && finance.isPayment()))  // Pago sin factura
-//			) {
-//			Account account = SupplierDAO.getSupplierAccount(ctx,finance.getRegistry().getId());
-//			fillRegistryAccountData(finance,account);
-//		}
-//		return finance;
-//	}
-//	private static Finance fillCreditorAcccount(AONContext ctx,Finance finance) {
-//		if (finance.getRegistry() != null && 
-//			(finance.isFromExpensesInvoice()					// Es factura de Gastos 
-//			|| finance.isFromUndeductibleInvoice() 				// Es factura de Gastos No Ded.
-//			|| (!finance.hasInvoice() && finance.isPayment()))  // Pago sin factura 
-//			) {
-//			Account account = CreditorDAO.getCreditorAccount(ctx,finance.getRegistry().getId());
-//			fillRegistryAccountData(finance,account);
-//		}
-//		return finance;
-//	}
 	
 	private static void fillRegistryAccountData(Finance finance, Account account) {
 		if (account == null) {
@@ -408,15 +418,132 @@ public class FinanceEntryDAO {
 	
 	public static void deleteAccountEntryFinanceTrackings(AONContext ctx, Integer accountEntryId) {
 		ctx.checkWrite();
-		FinanceEntry entry = getFinanceEntry(ctx, accountEntryId);
+
+		Optional<Integer> optFbatch = ctx.getDslContext()
+			.select(ACCOUNT_ENTRY_FBATCH.FBATCH)
+			.from(ACCOUNT_ENTRY_FBATCH)
+			.where(ACCOUNT_ENTRY_FBATCH.ACCOUNT_ENTRY.eq(accountEntryId))
+			.fetch()
+			.stream()
+			.map(rec -> rec.getValue(ACCOUNT_ENTRY_FBATCH.FBATCH)).findFirst();
+
+		// Trackings REALES del asiento (id, lastTracking y accountEntry), NO los
+		// virtuales de remesa.
+		AonConfiguration config = ConfigurationDAO.getConfiguration(ctx);
+		FinanceEntry entry = new FinanceEntry();
+		getAccountEntryTrackings(ctx, config, accountEntryId)
+				.forEach(ft -> entry.getTrackings().put(ft.getFinance().getId(), ft));
+
 		FinanceValidation.validateDelete(ctx, entry);
 		for (FinanceTracking ft : entry.getTrackings().values()) {
 			if (ft.getAccountEntry() != null) {
 				FinanceTrackingDAO.delete(ctx, ft);
 			}
 		}
+
+		optFbatch.ifPresent(fbatchId -> {
+			FBatch fBatch = FBatchDAO.get(ctx, fbatchId);
+			// Se borran los enlaces con la remesa.
+			ctx.getDslContext().delete(ACCOUNT_ENTRY_FBATCH)
+				.where(ACCOUNT_ENTRY_FBATCH.FBATCH.eq(fbatchId))
+				.and(ACCOUNT_ENTRY_FBATCH.DOMAIN.eq(fBatch.getDomain()))
+				.execute();
+
+			// Se devuelve la remesa a su estado anterior a la contabilización:
+			// - PENDING si es una remesa manual (sin fichero de remesa generado).
+			// - GENERATED si ya se había generado el fichero.
+			FBatchStatus status = AonNumberUtils.equals(fBatch.getType(), 0) 
+				? FBatchStatus.PENDING
+				: FBatchStatus.GENERATED;
+			ctx.getDslContext().update(FBATCH)
+				.set(FBATCH.STATUS, status.value())
+				.where(FBATCH.ID.eq(fbatchId))
+				.execute();
+
+			// Se revierten los detalles de la remesa de PAID a BATCHED.
+			ctx.getDslContext().update(FBATCH_DETAIL)
+				.set(FBATCH_DETAIL.STATUS, FinanceStatus.BATCHED.value())
+				.where(FBATCH_DETAIL.DOMAIN.eq(fBatch.getDomain()))
+				.and(FBATCH_DETAIL.FBATCH.eq(fbatchId))
+				.execute();
+		});
 	}
 
+	public static void recordFBatch(AONContext ctx, FBatch fbatch, Date paymentDate) {
+		try {
+			AonConfiguration config = ConfigurationDAO.getConfiguration(ctx);
+			Date date = (paymentDate!=null) ? paymentDate : fbatch.getIssueDate();
+			AccountPeriod period = AccountPeriodDAO.getPeriod(ctx, date);
+			if (period == null) throw new AonCoreException( AonError.WRONG_PERIOD.format( date ) );
+			AccountEntry ae = new AccountEntry();
+			ae.setDomain(fbatch.getDomain());
+			ae.setPeriod(period.getId());
+			ae.setPeriodName(period.getName());
+			ae.setPeriodStatus(period.getStatus());
+			ae.setEntryType((fbatch.isPayment()) ? AccountEntryType.PAYMENT : AccountEntryType.COLLECTION);
+			ae.setEntryDate( date );
+			ae.setConfidential(fbatch.isConfidential());
+	
+			FinanceEntry fe = new FinanceEntry();
+			fe.setAccountEntry(ae);
+			fe.setBankAccount(obtainPaymentAccount(ctx, fbatch.getRbank(), null));
+			fe.setManualConcept(fbatch.getDescription());
+			
+			AonCollectionUtils.stream(fbatch.getBatchDetails())
+				.map(det -> det.getFinance())
+				.map(fin -> fillAcccount(ctx,config, fin))
+				.forEach(fe::add);
+			save(ctx, fe);
+			// Se borran todos los enlaces anteriores.
+			ctx.getDslContext()
+				.delete(ACCOUNT_ENTRY_FBATCH)
+				.where(ACCOUNT_ENTRY_FBATCH.DOMAIN.eq(fbatch.getDomain()))
+				.and(ACCOUNT_ENTRY_FBATCH.FBATCH.eq(fbatch.getId()))
+				.execute();
+			// Se añade el nuevo enlace.
+			ctx.getDslContext()
+				.insertInto(ACCOUNT_ENTRY_FBATCH)
+				.set(ACCOUNT_ENTRY_FBATCH.DOMAIN, fe.getAccountEntry().getDomain())
+				.set(ACCOUNT_ENTRY_FBATCH.ACCOUNT_ENTRY, fe.getAccountEntry().getId())
+				.set(ACCOUNT_ENTRY_FBATCH.FBATCH, fbatch.getId())
+				.execute();
+			// Se actualiza el estado de la remesa.
+			ctx.getDslContext()
+				.update(FBATCH)
+				.set(FBATCH.STATUS, FBatchStatus.RECORDED.value() )
+				.where(FBATCH.DOMAIN.eq(fbatch.getDomain()))
+				.and(FBATCH.ID.eq(fbatch.getId()))
+				.execute();
+			// Se actualiza el estado de los detalles de la remesa.
+			ctx.getDslContext()
+				.update(FBATCH_DETAIL)
+				.set(FBATCH_DETAIL.STATUS, FinanceStatus.PAID.value() ) 
+				.where(FBATCH_DETAIL.DOMAIN.eq(fbatch.getDomain()))
+				.and(FBATCH_DETAIL.FBATCH.eq(fbatch.getId()))
+				.execute();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
+	}
+	
+	private static Account obtainPaymentAccount(AONContext ctx, RegistryBank rbank, PayMethodTypeDetail payMethodTypeDetail) {
+		Account account = null;
+		if (rbank != null) {
+			account = RegistryBankDAO.ensureAccount(ctx, rbank.getId());
+		} else if (payMethodTypeDetail != null) {
+			account = payMethodTypeDetail.getAccount();
+		}
+		if (account == null) {
+			AonConfiguration config = ConfigurationDAO.getConfiguration(ctx);
+			account = config.accounting().getDefaultCashAccount();
+		}
+		if (account == null) {
+			throw new AonCoreException("No se ha podido determinar la cuenta de pago. Debe indicar un banco o un medio de pago con cuenta asociada.");
+		}
+		return account;
+	}
+	
 }
 
 

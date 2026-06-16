@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.BookingCheck;
@@ -302,6 +303,10 @@ public interface IFinance {
 	FBatch getFBatch(CloseableAONContext ctx, Integer fbatchId);
 	void deleteFBatches(CloseableAONContext ctx, LinkedList<Integer> fBatchIds);
 	FBatch createUpdateFBatch(CloseableAONContext ctx, FBatch fBatch);
+	FBatch recordFBatch(AONContext ctx, Integer fBatchId, Date paymentDate);
+	FBatch unrecordFBatch(AONContext ctx, Integer fBatchId);
+	AccountEntry getFBatchAccountEntry(AONContext ctx, Integer fBatchId);
+
 	
 	// 	***********************************************
 	// 	*********** COBROS Y PAGOS CARD ***************
