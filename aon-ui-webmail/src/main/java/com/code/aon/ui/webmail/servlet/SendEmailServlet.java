@@ -2,6 +2,7 @@ package com.code.aon.ui.webmail.servlet;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Base64;
 
 import org.json.JSONException;
@@ -20,10 +21,12 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.mail.Address;
 import jakarta.mail.Message.RecipientType;
 import jakarta.mail.MessagingException;
+import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.ServletException;
@@ -157,14 +160,31 @@ public class SendEmailServlet extends HttpServlet{
 		try {
 			AonMessage sentMessage = mc.compoundMessage(server);
 
-			if(ma.isProtocolAon()) {
-	    		String from = ma.getDisplayName() + "<no-reply@aon.solutions>";
+			if(ma.isProtocolAon() || ma.isProtocolCustom()) {
+	    		String from = ma.getDisplayName() + ( 
+	    				ma.isProtocolAon() 
+	    					? "<app@aon.solutions>" 
+	    					: AonStringUtils.isBlank(ma.getEmail()) ? "<app@aon.solutions>" : ma.getEmail()
+	    		);
 	    		MimeMessage message = (MimeMessage) sentMessage.getMessage();
 	            message.setFrom(new InternetAddress(from));
-	            Address replyTo = new InternetAddress(ma.getEmail());
-	            if(ma.isIncludeBcc()) message.addRecipient(RecipientType.BCC, replyTo);
-	            Address[] addresses = {replyTo};
+	           
+	            ArrayList<String> replyToEmails = parseEmails(ma.getReplytoMail());
+	            ArrayList<Address> replyToAddresses = new ArrayList<Address>();
+	            replyToEmails.forEach(rtm -> {
+	            	 try {
+						Address replyTo = new InternetAddress(rtm);
+						replyToAddresses.add(replyTo);
+					} catch (AddressException e) {
+						e.printStackTrace();
+					}
+	            });
+	            
+	            Address[] addresses = replyToAddresses.toArray(new Address[0]);;
+	            
+	            if(ma.isIncludeBcc()) message.addRecipients(RecipientType.BCC, addresses);
 	            message.setReplyTo(addresses);
+	            
 	            SES.sendEmail(domain.getName(), message);
 	    	} else {
 	    		server.sendMessage(sentMessage);
@@ -178,6 +198,20 @@ public class SendEmailServlet extends HttpServlet{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public ArrayList<String> parseEmails(String value) {
+		ArrayList<String> emails = new ArrayList<>();
+	    if (value == null || value.trim().isEmpty()) {
+	        return emails; // lista vacía
+	    }
+	    for (String part : value.split(",")) {
+	        String email = part.trim();
+	        if (!email.isEmpty()) {
+	            emails.add(email);
+	        }
+	    }
+	    return emails;
 	}
 	
 	public MailAccount getMailAccount(Domain domain, String login, Integer mailAccountId) {
