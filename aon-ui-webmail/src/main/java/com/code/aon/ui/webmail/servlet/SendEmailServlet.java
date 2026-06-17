@@ -164,7 +164,7 @@ public class SendEmailServlet extends HttpServlet{
 	    		String from = ma.getDisplayName() + ( 
 	    				ma.isProtocolAon() 
 	    					? "<app@aon.solutions>" 
-	    					: AonStringUtils.isBlank(ma.getEmail()) ? "<app@aon.solutions>" : ma.getEmail()
+	    					: AonStringUtils.isBlank(ma.getEmail()) ? "<app@aon.solutions>" : "<" + ma.getEmail() + ">"
 	    		);
 	    		MimeMessage message = (MimeMessage) sentMessage.getMessage();
 	            message.setFrom(new InternetAddress(from));
