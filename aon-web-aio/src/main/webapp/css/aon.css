@@ -883,6 +883,11 @@ h1 {
 /*
  ------------------ Menu Collapse Button
 */
+
+#aonMenuAnchor.close #aonMenuAnchorDivIcon {
+	transform: rotate(-180deg);
+}
+
 #aonMenuAnchor {
 	position: absolute;
 	left: 20px;
