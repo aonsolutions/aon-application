@@ -19,27 +19,11 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.cnae.InsertTarifaPrimasDF_1_3_RDL_3_2026;
-import net.aonsolutions.db.up2date.cnae.OneCnaeTableToRuleThemAll;
-import net.aonsolutions.db.up2date.customize.Customize;
-import net.aonsolutions.db.up2date.finance.InvoiceTrackingAlterTableJson;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2026;
-import net.aonsolutions.db.up2date.mailAccount.UpdateMailAccountProtocolReplayTo;
+import net.aonsolutions.db.up2date.mailAccount.UpdateMailAccountType;
 import net.aonsolutions.db.up2date.payroll.BonificEntrenadoresYMonitoresFix;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.InsuranceInsert;
-import net.aonsolutions.db.up2date.payroll.MaxEmbargable4DailyFix;
-//import net.aonsolutions.db.up2date.payroll.SalaryTypeUpdate;
-import net.aonsolutions.db.up2date.tgss.AgriculturalBases2026Update;
-import net.aonsolutions.db.up2date.tgss.DropNoJustifiedFix;
-import net.aonsolutions.db.up2date.tgss.FellowsBases2026Update;
-import net.aonsolutions.db.up2date.tgss.FellowsPercentages2026Update;
-import net.aonsolutions.db.up2date.tgss.HomeBases2026Update;
-import net.aonsolutions.db.up2date.tgss.OrderPJC2972026Art28Update;
-import net.aonsolutions.db.up2date.tgss.SociosCoopBases2026Update;
-import net.aonsolutions.db.up2date.tgss.TrainingMEI2026Fix;
-import net.aonsolutions.db.up2date.registry.AddColumnCustomerFiscalStatus;
 import net.aonsolutions.db.up2date.scope.InsertDefaultScope;
+import net.aonsolutions.db.up2date.tgss.DropNoJustifiedFix;
 import net.aonsolutions.db.up2date.timecontrol.CalendarFixNulls;
 
 public class Up2Date {
@@ -674,7 +658,8 @@ public class Up2Date {
 
 			// InvoiceTrackingAlterTableJson.INVOICE_TRACKING_ALTER_TABLE_JSON,
 			
-			UpdateMailAccountProtocolReplayTo.UPDATEMAILACCOUNTPROTOCOLREPLAYTO
+			// UpdateMailAccountProtocolReplayTo.UPDATEMAILACCOUNTPROTOCOLREPLAYTO,
+			UpdateMailAccountType.UPDATEMAILACCOUNTTYPE
 	};
 
 	// ------------------------------------------------------------------------
