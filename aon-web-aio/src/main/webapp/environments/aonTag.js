@@ -464,6 +464,7 @@ export const AON_JSF_LOADER = 'aon-jsf-loader' ;
 export const AON_JSF_USER = 'aon-jsf-user' ;
 export const AON_JSF_PROFILE = 'aon-jsf-profile' ;
 export const AON_JSF_SCOPE = 'aon-jsf-scope' ;
+export const AON_JSF_CONTACT = 'aon-jsf-contact' ;
 export const AON_JSF_AUDIT = 'aon-jsf-audit' ;
 export const AON_JSF_PRINT = 'aon-jsf-print' ;
 export const AON_JSF_EMAIL = 'aon-jsf-email' ;

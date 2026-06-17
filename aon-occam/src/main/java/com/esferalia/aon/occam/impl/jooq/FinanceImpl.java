@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.IFinance;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.BookingCheck;
@@ -903,6 +904,23 @@ public class FinanceImpl implements IFinance {
 				configuration -> FBatchDAO.save(ctx, fBatch));	
 	}
 
+	@Override
+	public FBatch recordFBatch(AONContext ctx, Integer fBatchId, Date paymentDate) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> FBatchDAO.record(ctx, fBatchId, paymentDate));	
+	}
+
+	@Override
+	public FBatch unrecordFBatch(AONContext ctx, Integer fBatchId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> FBatchDAO.unrecord(ctx, fBatchId));	
+	}
+	
+	@Override
+	public AccountEntry getFBatchAccountEntry(AONContext ctx, Integer fbatchId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> FBatchDAO.getAccountEntry(ctx, fbatchId));	
+	}
 
 	// ---------- COBROS Y PAGOS CARD
 	
