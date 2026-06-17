@@ -86,18 +86,21 @@ public class SortOrderMap extends AbstractMap<String,Ordering> implements Serial
 		if ( criteria.hasOrders() ) {
 			index = criteria.getOrderByList().indexOf(alias);
 		}
-		if ( index != -1 ) {
-			Order order = criteria.getOrderByList().getOrders().get(index);
-			if (! order.isAscending()) {
+		if ( value == Ordering.UNSORTED ) {
+			if ( index != -1 ) {
 				criteria.getOrderByList().remove(index);
-			} else {
-				Order newOrder = new Order(order.getExpression(), false );
-				criteria.getOrderByList().getOrders().set(index, newOrder);
 			}
 		} else {
-			if ( value != Ordering.UNSORTED ) {
-				criteria.addOrder(alias, Ordering.ASCENDING == value);
-			}							
+			boolean ascending = ( value == Ordering.ASCENDING );
+			if ( index != -1 ) {
+				Order order = criteria.getOrderByList().getOrders().get(index);
+				if ( order.isAscending() != ascending ) {
+					Order newOrder = new Order(order.getExpression(), ascending );
+					criteria.getOrderByList().getOrders().set(index, newOrder);
+				}
+			} else {
+				criteria.addOrder(alias, ascending);
+			}
 		}
 	}
 	
