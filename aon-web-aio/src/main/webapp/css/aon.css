@@ -69,6 +69,7 @@
 	--aonAccountingBackground: rgba(0, 36, 105, .2);
 	--aonHeaderBackgroundColor: var(--aonWhite);
 	--aonHeaderBackgroundAvailable: var(--aonBlue);
+	--aonMenuBackgroundColor: var(--aonWhite);
 	--aonRightPanelColor: rgb(250, 249, 248);
 	--aonGrayHeaderButtonsColor: var(--aonDarkGray);
 	--aonHeaderButtonsColor: var(--aonWhite);
@@ -624,11 +625,6 @@ h1 {
 	padding: 0 1rem;
 }
 
-.aonHeaderButton {
-	position: absolute;
-	top: 10px;
-}
-
 .aonImgAvatar {
 	vertical-align: middle;
 	width: 50px;
@@ -873,7 +869,7 @@ h1 {
 	width: 4.4rem;
 	left: 0px;
 	font-size: 10px;
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 	top: 48px;
 	position: fixed;
 	height: calc(100vh - 49px);
@@ -887,6 +883,11 @@ h1 {
 /*
  ------------------ Menu Collapse Button
 */
+
+#aonMenuAnchor.close #aonMenuAnchorDivIcon {
+	transform: rotate(-180deg);
+}
+
 #aonMenuAnchor {
 	position: absolute;
 	left: 20px;
@@ -995,7 +996,7 @@ h1 {
 	overflow-x: hidden;
 	font-size: 10px;
 	border-right: none;
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 #aonTopMenuDiv .aonMenuApp #documental #aonMenuListAppImgTop-documental{
@@ -2875,15 +2876,15 @@ background-image: url("../favicon.png");
 /*
 */
 .aonHeaderStart, .aonMenuLeftopStart {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderHome, .aonMenuLeftopHome {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderApps, .aonMenuLeftopApps {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 #aonMenuList-apps.aonMenuSidenavLiSeleted {
@@ -2902,11 +2903,11 @@ background-image: url("../favicon.png");
 }
 
 .aonHeaderApplications, .aonMenuLeftopApplications {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderNote, .aonMenuLeftopNote {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 #aonMenuList-note.aonMenuSidenavLiSeleted {
@@ -2915,7 +2916,7 @@ background-image: url("../favicon.png");
 }
 
 .aonHeaderFiscal, .aonMenuLeftopFiscal {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 #aonMenuList-fiscal.aonMenuSidenavLiSeleted {
@@ -2924,7 +2925,7 @@ background-image: url("../favicon.png");
 }
 
 .aonHeaderPayroll, .aonMenuLeftopPayroll {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 #aonMenuList-payroll.aonMenuSidenavLiSeleted {
@@ -2933,7 +2934,7 @@ background-image: url("../favicon.png");
 }
 
 .aonHeaderInvoice, .aonMenuLeftopInvoice {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 #aonMenuList-invoice.aonMenuSidenavLiSeleted {
@@ -2942,7 +2943,7 @@ background-image: url("../favicon.png");
 }
 
 .aonHeaderComunica, .aonMenuLeftopComunica {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 #aonMenuList-comunica.aonMenuSidenavLiSeleted {
@@ -2951,7 +2952,7 @@ background-image: url("../favicon.png");
 }
 
 .aonHeaderDocumental, .onMenuLeftopDocumental {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 #aonMenuList-documental.aonMenuSidenavLiSeleted {
@@ -2960,7 +2961,7 @@ background-image: url("../favicon.png");
 }
 
 .aonHeaderAccounting, .aonMenuLeftopAccounting {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 #aonMenuList-accounting.aonMenuSidenavLiSeleted {
@@ -2969,7 +2970,7 @@ background-image: url("../favicon.png");
 }
 
 .aonHeaderTimecontrol, .aonMenuLeftopTimecontrol {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 #aonMenuList-timecontrol.aonMenuSidenavLiSeleted {
@@ -2978,7 +2979,7 @@ background-image: url("../favicon.png");
 }
 
 .aonHeaderMessenger, .aonMenuLeftopMessenger {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 #aonMenuList-messenger.aonMenuSidenavLiSeleted {
@@ -2987,7 +2988,7 @@ background-image: url("../favicon.png");
 }
 
 .aonHeaderWarehouse, .aonMenuLeftopWarehoues {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 #aonMenuList-warehouse.aonMenuSidenavLiSeleted {
@@ -2996,83 +2997,83 @@ background-image: url("../favicon.png");
 }
 
 .aonHeaderOffice, .aonMenuLeftopOffice {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderGarage, .aonMenuLeftopGarage {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderAcademy, .aonMenuLeftopAcademy {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderComerce, .aonMenuLeftopComerce {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderConsole, .aonMenuLeftopConsole {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderNotification, .aonMenuLeftopNotification {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderComercialMenu, .aonMenuLeftopComercialMenu {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderManagementMenu, .aonMenuLeftopManagementMenu {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderTreasuryMenu, .aonMenuLeftopTreasuryMenu {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderWarehouseMenu, .aonMenuLeftopWarehouseMenu {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderGroupwareMenu, .aonMenuLeftopGroupwareMenu {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderAccountingMenu, .aonMenuLeftopAccountingMenu {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderFiscalMenu, .aonMenuLeftopFiscalMenu {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderPayrollMenu, .aonMenuLeftopPayrollMenu {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderMarketingMenu, .aonMenuLeftopMarketingMenu {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderNotification, .aonMenuLeftopNotification {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderConfigurationMenu, .aonMenuLeftTopConfigurationMenu {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderEnterpriseMenu, .aonMenuLeftopEnterpriseMenu {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderConsoleMenu, .aonMenuLeftTopConsoleMenu {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderNewConfigurationMenu {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeaderNote .material-icons, .aonHeaderFiscal .material-icons,

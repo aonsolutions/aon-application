@@ -512,7 +512,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 							
 							if(detail.getPrice()==null && customerRItem!=null){
 								detail.setPrice(customerRItem.getPrice());
-								detail.setDiscountExpression(customerRItem.getDiscountExpr());
+								detail.setDiscountExpression(customerRItem.getDiscountExpression().getDiscountExpr());
 							}
 							if(detail.getPrice()==null){
 								detail.setPrice(item.getPrice());

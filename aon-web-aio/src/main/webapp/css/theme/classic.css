@@ -1,7 +1,10 @@
 :root {
 	--favicon: ../assets/favicon.ico;
 	
-	--aonHeaderBackgroundColor: var(--aonWhiteGray);
+	--aonHeaderBackgroundColor: var(--aonBlue);
+
+	--aonHeaderButtonColor: var(--aonWhite);
+	--aonMenuBackgroundColor: var(--aonWhiteGray);
 }
 
 .aonLogo,

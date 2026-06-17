@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.ItemComposition.ITEM_COMPOSITION;
+import static com.esferalia.aon.jooq.tables.CatalogueItem.CATALOGUE_ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.ProductBooking.PRODUCT_BOOKING;
@@ -526,6 +527,10 @@ public class ProductDAO {
 		ProductDeleteValidation.validate(ctx, id);
 		
 		ctx.checkWrite();
+		
+		ctx.getDslContext()
+			.delete(CATALOGUE_ITEM)
+			.where(CATALOGUE_ITEM.PRODUCT.eq(id));
 		
 		ctx.getDslContext()
 			.delete(ITEM_COMPOSITION)

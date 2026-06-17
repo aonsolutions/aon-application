@@ -63,6 +63,14 @@ export class AonIconButton extends AonElement {
     this.setAttribute("outlined", outlined);
   }
 
+  get aonSymbol() {
+    return this.getAttribute("aonSymbol");
+  }
+
+  set aonSymbol(aonSymbol) {
+    this.setAttribute("aonSymbol", aonSymbol);
+  }
+
   get noHover() {
     return this.getAttribute("noHover");
   }
@@ -179,7 +187,8 @@ export class AonIconButton extends AonElement {
       this.style.display = "none";
     }
     if (this.hasAttribute("icon")) {
-      this.getIcon().className = this.getAttribute("outlined") ? "material-icons-outlined"   : "material-icons";
+      this.getIcon().className = this.hasAttribute("aonSymbol") ? "aon-symbols-outlined"
+        : this.getAttribute("outlined") ? "material-icons-outlined" : "material-icons";
       this.getIcon().innerHTML = this.getAttribute("icon");
       this.getButton().appendChild(this.getIcon());
     } else if (this.hasAttribute("image")) {
