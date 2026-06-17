@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
-import static com.esferalia.aon.jooq.tables.Tag.TAG;
 
 import java.util.LinkedList;
 import java.util.function.Function;
