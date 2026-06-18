@@ -303,11 +303,13 @@ public class EdiSalesImporterHandler implements Serializable {
 							
 							Item occamItem = new Item()
 									.setProduct(new Product().setId(rItem.getItem().getProduct().getId()))
-									.setId(rItem.getItem().getId());
+									.setId(rItem.getItem().getId())
+									.setPrice(rItem.getItem().getPrice());
+							
 							Occam occam = new Occam().setDomain(sales.getDomain()).setDomainName(AonUtil.getDomainName()).setUser(AonUtil.getRemoteUser());
 							
 
-							PriceStrategy priceStrategy = SERES.calculatePriceStrategy(occam, line, sales.getIssueDate(), occamItem);
+							PriceStrategy priceStrategy = SERES.calculatePriceStrategy(occam, rItem.getRegistry().getId(), sales.getIssueDate(), occamItem);
 							
 							SalesDetail detail = new SalesDetail();
 							detail.setSales(sales);

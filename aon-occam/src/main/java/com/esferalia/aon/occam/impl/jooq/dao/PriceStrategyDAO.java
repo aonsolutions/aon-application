@@ -51,6 +51,8 @@ public class PriceStrategyDAO {
 	
 	
 	public static PriceStrategy calculatePriceStrategy(AONContext ctx, Integer customer, Date date, Item item) {
+		item = ItemDAO.get(ctx, item.getId());
+		
 		RegistryItem ritem = ctx.getDslContext()
 				.select()
 				.from(RITEM)
