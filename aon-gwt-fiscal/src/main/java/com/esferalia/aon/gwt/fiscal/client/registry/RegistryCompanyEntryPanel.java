@@ -40,16 +40,44 @@ import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
+	
+	// ------------------------------------------------- ScrollableTabLayoutPanel
+	
+	public class ScrollableTabLayoutPanel extends TabLayoutPanel {
+
+	    public ScrollableTabLayoutPanel(double barHeight, Unit unit) {
+	        super(barHeight, unit);
+
+	        Scheduler.get().scheduleDeferred(() -> {
+	            Element root = getElement(); // siempre existe
+
+	            DOM.sinkEvents(root, Event.ONMOUSEWHEEL);
+
+	            DOM.setEventListener(root, event -> {
+	                if (event.getTypeInt() == Event.ONMOUSEWHEEL) {
+	                    int delta = event.getMouseWheelVelocityY();
+
+	                    root.setScrollLeft(root.getScrollLeft() + delta * 2);
+
+	                    event.preventDefault();
+	                }
+	            });
+	        });
+	    }
+	}
 
 	// ------------------------------------------------- CommonServiceAsync
 
@@ -96,8 +124,9 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 	private HTMLPanel rightInfoTable;
 	private HTMLPanel leftInfoTable;
 	
-	private TabLayoutPanel tablayoutPanel;
-
+//	private TabLayoutPanel tablayoutPanel;
+	private ScrollableTabLayoutPanel tablayoutPanel;
+	
 	// Other Info
 	private AonVisualIdentity aonVisualIdentity;
 	private AddressTable addressTable;
@@ -128,7 +157,7 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		
 		createToolbar();
 
-		tablayoutPanel = new TabLayoutPanel(25.00, Unit.PX);
+		tablayoutPanel = new ScrollableTabLayoutPanel(25.00, Unit.PX);
 		tablayoutPanel.setHeight("100%");
 
 		container = new HTMLPanel(AonStringUtils.EMPTY);

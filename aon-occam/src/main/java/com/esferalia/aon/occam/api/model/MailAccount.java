@@ -73,7 +73,7 @@ public class MailAccount implements Serializable{
 	}
 	
 	public Byte getDefaultAccount() {
-		return defaultAccount;
+		return null == defaultAccount ? (byte)0 : defaultAccount;
 	}
 	public MailAccount setDefaultAccount(Byte defaultAccount) {
 		this.defaultAccount = defaultAccount;
@@ -108,7 +108,7 @@ public class MailAccount implements Serializable{
 		return this;
 	}
 	public Integer getIncomingPort() {
-		return incomingPort;
+		return null == incomingPort ? 0 : incomingPort;
 	}
 	public MailAccount setIncomingPort(Integer incomingPort) {
 		this.incomingPort = incomingPort;
@@ -136,7 +136,7 @@ public class MailAccount implements Serializable{
 		return this;
 	}
 	public Integer getOutgoingPort() {
-		return outgoingPort;
+		return null == outgoingPort ? 25 : outgoingPort;
 	}
 	public MailAccount setOutgoingPort(Integer outgoingPort) {
 		this.outgoingPort = outgoingPort;
