@@ -30,6 +30,9 @@ import net.aonsolutions.db.up2date.tgss.CgcEMinInsert;
 import net.aonsolutions.db.up2date.tgss.DropNoJustifiedFix;
 import net.aonsolutions.db.up2date.timecontrol.CalendarFixNulls;
 
+
+import net.aonsolutions.db.up2date.mailAccount.UpdateMailAccountType;
+
 public class Up2Date {
 
 	private static Update[] UPDATES = {
