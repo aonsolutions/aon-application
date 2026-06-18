@@ -19,10 +19,14 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.ContractCostExpressionText;
+import net.aonsolutions.db.up2date.payroll.ContractCostSeaExpressionFix;
 import net.aonsolutions.db.up2date.payroll.BonificEntrenadoresYMonitoresFix;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.PPEITUpdateIII;
 import net.aonsolutions.db.up2date.scope.InsertDefaultScope;
+import net.aonsolutions.db.up2date.tgss.AgriculturalBaseCgcJornadasTotalesFix;
+import net.aonsolutions.db.up2date.tgss.CgcEMinInsert;
 import net.aonsolutions.db.up2date.tgss.DropNoJustifiedFix;
 import net.aonsolutions.db.up2date.timecontrol.CalendarFixNulls;
 
@@ -621,11 +625,14 @@ public class Up2Date {
 			//SalaryTypeUpdate.ALL,
 			// BonificEntrenadoresYMonitoresFix.BONIFICENTRENADORESYMONITORESFIX,
 			// DropNoJustifiedFix.DROPNOJUSTIFIEDFIX,
-			PPEITUpdateIII.PPE_IT_UPDATEIII,
-			
-			
+			CgcEMinInsert.CGCEMININSERT,
+			ContractCostExpressionText.CONTRACT_COST_EXPRESSION_TEXT,
+			ContractCostSeaExpressionFix.CONTRACT_COST_SEA_EXPRESSION_FIX,
+			AgriculturalBaseCgcJornadasTotalesFix.AGRICULTURALBASECGCJORNADASTOTALESFIX,
+
+
 			// ----------------------------------------------------------------
-			// Warning. Don't delete or comment following instructions 
+			// Warning. Don't delete or comment following instructions
 			// MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
 			CalendarFixNulls.CALENDAR_FIX_NULLS,
 			InsertDefaultScope.INSERT_DEAFULT_SCOPE,
