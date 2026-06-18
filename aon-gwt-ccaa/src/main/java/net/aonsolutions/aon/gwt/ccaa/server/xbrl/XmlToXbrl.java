@@ -513,11 +513,14 @@ public class XmlToXbrl {
             addElementoIde(ele3, "dgi-est-gen:LegalNameValue", D_ACTUAL, "1061");
         }
 
+        // A PARTIR DE 2025 SOLO CNAE2025
         // Actividad 
         ele = addElemento(doc.getDocumentElement(), "pgc07mc-apdo0:ActividadTupla");
         addElementoIde(ele, "dgi-eco-bas:ActivityDescription", D_ACTUAL, "2009");  // Actividad: Descripción
-        ele2 = addElemento(ele, "dgi-eco-bas:ActivityCodeCNAE2009");
-        addElementoIde(ele2, "dgi-cnae-09:Xcode_ACC.CNAE09." + buscar("2001"), D_ACTUAL, "2001"); // Actividad: CNAE 2009
+        if (schemaXml.getCabecera().getEjercicio().intValue() == 2024) {
+        	ele2 = addElemento(ele, "dgi-eco-bas:ActivityCodeCNAE2009");
+        	addElementoIde(ele2, "dgi-cnae-09:Xcode_ACC.CNAE09." + buscar("2001"), D_ACTUAL, "2001"); // Actividad: CNAE 2009
+        }
         ele2 = addElemento(ele, "dgi-eco-bas:ActivityCodeCNAE2025");
         addElementoIde(ele2, "dgi-cnae-25:Xcode_ACC.CNAE25." + buscar("2014"), D_ACTUAL, "2014"); // Actividad: CNAE 2025
         

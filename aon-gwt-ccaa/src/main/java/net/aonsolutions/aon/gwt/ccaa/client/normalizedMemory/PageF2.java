@@ -1,10 +1,10 @@
+// INSTANCIA DE PRESENTACION
 package net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory;
 
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Cities;
-import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
@@ -357,16 +357,26 @@ public class PageF2 extends PageAbs {
 				String value = getMap().get(key2);
 				String value2 = "";
 				if(key2.equals("8081206")){
-					for(Integer i = 0;i< D2DepositConstants.PROVINCES.length; i++){
-						if(D2DepositConstants.PROVINCES[i].getId().equals(value)){
-							value2 = D2DepositConstants.PROVINCES[i].getName();
+//					for(Integer i = 0;i< D2DepositConstants.PROVINCES.length; i++){
+//						if(D2DepositConstants.PROVINCES[i].getId().equals(value)){
+//							value2 = D2DepositConstants.PROVINCES[i].getName();
+//						}
+//					}
+					for (Provinces p : Provinces.values()) {
+						if (p.getId().equals(value)) {
+							value2 = p.getName();
 						}
 					}
 				}
 				if(key2.equals("8081001")){
-					for(Integer i = 0;i< D2DepositConstants.CITIES.length; i++){
-						if(D2DepositConstants.CITIES[i].getId().equals(value)){
-							value2 = D2DepositConstants.CITIES[i].getName();
+//					for(Integer i = 0;i< D2DepositConstants.CITIES.length; i++){
+//						if(D2DepositConstants.CITIES[i].getId().equals(value)){
+//							value2 = D2DepositConstants.CITIES[i].getName();
+//						}
+//					}
+					for (Cities c : Cities.values()) {
+						if (c.getId().equals(value)) {
+							value2 = c.getName();
 						}
 					}
 				}
@@ -387,16 +397,26 @@ public class PageF2 extends PageAbs {
 				public void onChange(ChangeEvent event) {
 					String value ="";
 					if(key2.equals("8081206")){
-						for(Integer i = 0;i< D2DepositConstants.PROVINCES.length; i++){
-							if(D2DepositConstants.PROVINCES[i].getName().equals(lb.getSelectedItemText())){
-								value = D2DepositConstants.PROVINCES[i].getId(); 
+//						for(Integer i = 0;i< D2DepositConstants.PROVINCES.length; i++){
+//							if(D2DepositConstants.PROVINCES[i].getName().equals(lb.getSelectedItemText())){
+//								value = D2DepositConstants.PROVINCES[i].getId(); 
+//							}
+//						}
+						for (Provinces p : Provinces.values()) {
+							if (p.getName().equals(lb.getSelectedItemText())) {
+								value = p.getId();
 							}
 						}
 					}
 					if(key2.equals("8081001")){
-						for(Integer i = 0;i< D2DepositConstants.CITIES.length; i++){
-							if(D2DepositConstants.CITIES[i].getName().equals(lb.getSelectedItemText())){
-								value = D2DepositConstants.CITIES[i].getId(); 
+//						for(Integer i = 0;i< D2DepositConstants.CITIES.length; i++){
+//							if(D2DepositConstants.CITIES[i].getName().equals(lb.getSelectedItemText())){
+//								value = D2DepositConstants.CITIES[i].getId(); 
+//							}
+//						}
+						for (Cities c : Cities.values()) {
+							if (c.getName().equals(lb.getSelectedItemText())) {
+								value = c.getId();
 							}
 						}
 					}
@@ -424,19 +444,26 @@ public class PageF2 extends PageAbs {
 			});
 		}
 	}
+	
 	private void listBoxItemAdd(ListBox lb) {
-		for(Integer i = 0; i< D2DepositConstants.PROVINCES.length; i++){
-			Provinces p = D2DepositConstants.PROVINCES[i];
-			lb.addItem(p.getName());
-		}
-	}
-	private void listBoxItemAddCities(ListBox lb) {
-		for(Integer i = 0; i< D2DepositConstants.CITIES.length; i++){
-			Cities p = D2DepositConstants.CITIES[i];
+//		for(Integer i = 0; i< D2DepositConstants.PROVINCES.length; i++){
+//			Provinces p = D2DepositConstants.PROVINCES[i];
+//			lb.addItem(p.getName());
+//		}
+		for (Provinces p : Provinces.values()) {
 			lb.addItem(p.getName());
 		}
 	}
 	
+	private void listBoxItemAddCities(ListBox lb) {
+//		for(Integer i = 0; i< D2DepositConstants.CITIES.length; i++){
+//			Cities p = D2DepositConstants.CITIES[i];
+//			lb.addItem(p.getName());
+//		}
+		for (Cities c : Cities.values()) {
+			lb.addItem(c.getName());
+		}
+	}
 	
 	protected void onEdit(String key, String value) {
 		onEdit(key, value, false);
