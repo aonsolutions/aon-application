@@ -63,6 +63,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.impl.jooq.dao.PriceStrategyDAO.PriceStrategy;
 
 public class EdiSalesImporterHandler implements Serializable {
 	
@@ -302,11 +303,13 @@ public class EdiSalesImporterHandler implements Serializable {
 							
 							Item occamItem = new Item()
 									.setProduct(new Product().setId(rItem.getItem().getProduct().getId()))
-									.setId(rItem.getItem().getId());
-							Occam occam = new Occam().setDomain(sales.getDomain()).setDomainName(AonUtil.getDomainName()).setUser(AonUtil.getRemoteUser());
-							Double price = SERES.getUnitPrice(occam, rItem.getRegistry().getId(), sales.getIssueDate(), occamItem);
+									.setId(rItem.getItem().getId())
+									.setPrice(rItem.getItem().getPrice());
 							
-							DiscountExpression discount = rItem.getDiscountExpression();
+							Occam occam = new Occam().setDomain(sales.getDomain()).setDomainName(AonUtil.getDomainName()).setUser(AonUtil.getRemoteUser());
+							
+
+							PriceStrategy priceStrategy = SERES.calculatePriceStrategy(occam, rItem.getRegistry().getId(), sales.getIssueDate(), occamItem);
 							
 							SalesDetail detail = new SalesDetail();
 							detail.setSales(sales);
@@ -314,8 +317,8 @@ public class EdiSalesImporterHandler implements Serializable {
 							detail.setLine(line);
 							detail.setDescription(description);
 							detail.setQuantity(quantity);
-							detail.setPrice(price);
-							detail.setDiscountExpression(discount);
+							detail.setPrice(priceStrategy.getPrice());
+							detail.setDiscountExpression(new DiscountExpression(priceStrategy.getDiscountExpression().getDiscountExpr()));
 							detail.setTaxes(0.0);
 							detail.setStatus(SalesDetailStatus.PENDING);
 							detail.setOfferDetail(null);

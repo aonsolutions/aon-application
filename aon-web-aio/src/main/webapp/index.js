@@ -11,6 +11,7 @@ import { favicon, title, loadLink } from './css/aon-customView.js';
 
 import './css/noto-sans.css';
 import './css/material-symbols-outlined.css';
+import './css/aon-symbols-outlined.css';
 
 import './css/aon-css-utils.css';
 import './css/aon-css-utils.css';

@@ -665,6 +665,9 @@ public class Up2Date {
 			// DeleteDomainAppApp7.DELETE_DOMAIN_APP_APP7
 
 			// InvoiceTrackingAlterTableJson.INVOICE_TRACKING_ALTER_TABLE_JSON,
+			
+			// UpdateMailAccountProtocolReplayTo.UPDATEMAILACCOUNTPROTOCOLREPLAYTO,
+			UpdateMailAccountType.UPDATEMAILACCOUNTTYPE
 	};
 
 	// ------------------------------------------------------------------------

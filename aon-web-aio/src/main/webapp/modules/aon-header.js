@@ -8,7 +8,7 @@ import '../components/aon-search-box.js';
 import './configuration/aon-configuration.js';
 import './company/aon-desktop.js';
 import './notification/aon-notification-icon.js';
-import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
+import { AON_SYMBOLS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import { AonComponentsDoc } from './dev/aon-components-doc.js';
 import * as LS from '../services/localStorageService.js';
@@ -186,7 +186,9 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderHomeButton = new AonIconButton();
 		aonHeaderHomeButton.id = this.AON_HEADER_HOME_BUTTON;
-		aonHeaderHomeButton.icon = "home";
+		aonHeaderHomeButton.icon = AON_SYMBOLS.HOME;
+		aonHeaderHomeButton.aonSymbol = true;
+		aonHeaderHomeButton.color = "var(--aonHeaderButtonColor)";
 		aonHeaderHome.appendChild(aonHeaderHomeButton);
 
 		aonHeaderButtons.appendChild(aonHeaderHome);
@@ -198,7 +200,9 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderHomeCompanyListButton = new AonIconButton();
 		aonHeaderHomeCompanyListButton.id = this.AON_HEADER_COMPANY_LIST_BUTTON;
-		aonHeaderHomeCompanyListButton.icon = "business";
+		aonHeaderHomeCompanyListButton.icon = AON_SYMBOLS.BUILDING;
+		aonHeaderHomeCompanyListButton.aonSymbol = true;
+		aonHeaderHomeCompanyListButton.color = "var(--aonHeaderButtonColor)";
 		aonHeaderCompanyList.appendChild(aonHeaderHomeCompanyListButton);
 
 		aonHeaderButtons.appendChild(aonHeaderCompanyList);
@@ -208,7 +212,9 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderSearchButton = new AonIconButton();
 		aonHeaderSearchButton.id = this.AON_HEADER_SEARCH_BUTTON;
-		aonHeaderSearchButton.icon = "search";
+		aonHeaderSearchButton.icon = AON_SYMBOLS.SEARCH;
+		aonHeaderSearchButton.aonSymbol = true;
+		aonHeaderSearchButton.color = "var(--aonHeaderButtonColor)";
 		aonHeaderSearchDiv.appendChild(aonHeaderSearchButton);
 
 		aonHeaderButtons.appendChild(aonHeaderSearchDiv);
@@ -219,7 +225,9 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderHelpButton = new AonIconButton();
 		aonHeaderHelpButton.id = this.AON_HEADER_HELP_BUTTON;
-		aonHeaderHelpButton.icon = "help_outline";
+		aonHeaderHelpButton.icon = AON_SYMBOLS.HELP_CIRCLE;
+		aonHeaderHelpButton.aonSymbol = true;
+		aonHeaderHelpButton.color = "var(--aonHeaderButtonColor)";
 		aonHeaderHelp.appendChild(aonHeaderHelpButton);
 
 		aonHeaderButtons.appendChild(aonHeaderHelp);
@@ -231,7 +239,9 @@ export class AonHeader extends AonElement {
 
 			let aonHeaderConfigButton = new AonIconButton();
 			aonHeaderConfigButton.id = this.AON_HEADER_CONFIG_BUTTON;
-			aonHeaderConfigButton.icon = "settings"
+			aonHeaderConfigButton.icon = AON_SYMBOLS.SETTINGS;
+			aonHeaderConfigButton.aonSymbol = true;
+			aonHeaderConfigButton.color = "var(--aonHeaderButtonColor)";
 			aonHeaderConfig.appendChild(aonHeaderConfigButton);
 
 			aonHeaderButtons.appendChild(aonHeaderConfig);
@@ -244,7 +254,9 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderNotificationButton = new AonIconButton();
 		aonHeaderNotificationButton.id = 'aonHeaderNotificationButton';
-		aonHeaderNotificationButton.icon = "notifications";
+		aonHeaderNotificationButton.icon = AON_SYMBOLS.BELL;
+		aonHeaderNotificationButton.aonSymbol = true;
+		aonHeaderNotificationButton.color = "var(--aonHeaderButtonColor)";
 		aonHeaderNotiication.appendChild(aonHeaderNotificationButton);
 		this.getData().then(n => {
 			if (n.length > 0) {
@@ -268,7 +280,9 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderUserButton = new AonIconButton();
 		aonHeaderUserButton.id = this.AON_HEADER_USER_BUTTON;
-		aonHeaderUserButton.icon = "account_circle";
+		aonHeaderUserButton.icon = AON_SYMBOLS.USER;
+		aonHeaderUserButton.aonSymbol = true;
+		aonHeaderUserButton.color = "var(--aonHeaderButtonColor)";
 		aonHeaderUser.appendChild(aonHeaderUserButton);
 
 		aonHeaderButtons.appendChild(aonHeaderUser);
@@ -425,7 +439,6 @@ export class AonHeader extends AonElement {
 
 		}
 
-
 		let aonHeaderCompanyListButton = this.getElement(this.BASE_ID + 'CompanyListButton');
 
 		aonHeaderCompanyListButton.addEventListener('click', () => {
@@ -502,25 +515,6 @@ export class AonHeader extends AonElement {
 				}
 			});
 		}
-
-
-		let header1 = this.getElement("aonHeaderCompanyName")
-		header1.style.color = "var--(aonGrayHeaderButtonsColor)";
-
-		let header2 = this.getElement("aonHeaderCompanyListButtonIconButton")
-		header2.style.color = "var--(aonGrayHeaderButtonsColor)";
-
-		let header3 = this.getElement("aonHeaderHelpButtonIconButton")
-		header3.style.color = "var--(aonGrayHeaderButtonsColor)";
-
-		let header4 = this.getElement("aonHeaderConfigButtonIconButton")
-		header4.style.color = "var--(aonGrayHeaderButtonsColor)";
-
-		let header5 = this.getElement("aonHeaderNotificationButtonIconButton")
-		header5.style.color = "var--(aonGrayHeaderButtonsColor)";
-
-		let header6 = this.getElement("aonHeaderUserButtonIconButton")
-		header6.style.color = "var--(aonGrayHeaderButtonsColor)";
 
 		let aonHeaderSearchDialogMenu = new AonDialogSearch();
 		aonHeaderSearchDialogMenu.id = this.AON_HEADER_SEARCH_DIALOG_MENU;
@@ -780,7 +774,7 @@ export class AonHeader extends AonElement {
 		} else {
 			imgs.forEach((img) => img.style.removeProperty('filter'));
 			texts.forEach((text) => text.style.removeProperty('color'));
-			buttons.forEach((button) => button.getButton().style.removeProperty('color'));
+			buttons.forEach((button) => button.setColor('var(--aonHeaderButtonColor)'));
 		}
 	}
 

@@ -11,6 +11,8 @@
 	--aonHeaderBackgroundAvailable:var(--etlRed);
 
 	--aonHeaderBackgroundColor : var(--etlRed);
+	--aonHeaderButtonColor : var(--aonWhite);
+	--aonMenuBackgroundColor : var(--etlRed);
 
 	--favicon : "https://etl.es/wp-content/uploads/2020/07/cropped-cropped-cropped-0-1-32x32.png";
 }

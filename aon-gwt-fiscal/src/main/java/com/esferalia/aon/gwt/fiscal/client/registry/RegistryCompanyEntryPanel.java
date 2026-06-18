@@ -370,26 +370,24 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		aonVisualIdentity = new AonVisualIdentity(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId(), this.registrySource);
 		tablayoutPanel.add(aonVisualIdentity, this.registrySource.equals(RegistrySource.ENVIROMENT) ? "Logo" : "Logo / Firma");
 		
-		if(AonStringUtils.containsIgnoreCase(options.getDomainName(), "aonsolutions.org")) {
-			mailAccountTable = new MailAccountTable(options.getDomainName(), options.getDomain(), options.getUser()) {
-				
-				@Override
-				protected void onShowErrorMessage(String errorMessage) {
-					AonMessagePanel.showError(messagePanel, errorMessage);
-				}
-				
-			};
-			tablayoutPanel.add(mailAccountTable, "Email");
+		mailAccountTable = new MailAccountTable(options.getDomainName(), options.getDomain(), options.getUser()) {
 			
-			signatureTable = new SignatureTable(options.getDomainName(), options.getDomain(), options.getUser()) {
-				
-				@Override
-				protected void onShowErrorMessage(String errorMessage) {
-					AonMessagePanel.showError(messagePanel, errorMessage);
-				}
-			};
-			tablayoutPanel.add(signatureTable, "Firma Email");
-		}
+			@Override
+			protected void onShowErrorMessage(String errorMessage) {
+				AonMessagePanel.showError(messagePanel, errorMessage);
+			}
+			
+		};
+		tablayoutPanel.add(mailAccountTable, "Email");
+		
+		signatureTable = new SignatureTable(options.getDomainName(), options.getDomain(), options.getUser()) {
+			
+			@Override
+			protected void onShowErrorMessage(String errorMessage) {
+				AonMessagePanel.showError(messagePanel, errorMessage);
+			}
+		};
+		tablayoutPanel.add(signatureTable, "Firma Email");
 		
 		container.add(tablayoutPanel);
 
