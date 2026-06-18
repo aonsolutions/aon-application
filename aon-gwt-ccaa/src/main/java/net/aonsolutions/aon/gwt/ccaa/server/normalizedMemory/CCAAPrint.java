@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
@@ -50,7 +49,8 @@ public class CCAAPrint extends HttpServlet {
 			String format = req.getParameter("format");
 			Boolean isMemory = req.getParameter("isMemory").equalsIgnoreCase("true");
 			Boolean doget = req.getAttribute("doget") != null;
-			String user = AonServletUtils.getLoggedUser();
+//			String user = AonServletUtils.getLoggedUser();
+			String user = req.getParameter("user");
 
 			Boolean isPdf = "pdf".equals(format);
 			Domain domain = new Domain().setName(domainName).setId(domainId);

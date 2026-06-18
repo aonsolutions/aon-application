@@ -255,7 +255,7 @@ public class FillerDAO {
 					.setCustomerFee(r.get(RITEM.CUSTOMER_FEE))
 //					.setSeller(SellerFiller.build(r))
 					.setPrice(getValue(r, RITEM.PRICE))
-					.setDiscountExpr(getValue(r, RITEM.DISCOUNT_EXPR))
+					.setDiscountExpression(getValue(r, RITEM.DISCOUNT_EXPR))
 					.setWorkplace(getValue(r, RITEM.WORKPLACE))
 					.setPriority(Priority.safeValueOf(getValue(r, RITEM.PRIORITY)))
 					.setStatus(RegistryItemStatus.safeValueOf(getValue(r, RITEM.STATUS)))

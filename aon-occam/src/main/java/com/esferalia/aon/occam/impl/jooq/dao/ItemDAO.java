@@ -488,7 +488,7 @@ public class ItemDAO {
 					.setEdiSalesCode(r.getEdiSalesCode())
 					.setWorkplace(r.getWorkplace())
 					.setRegistry(r.getRegistry())
-					.setDiscountExpr(r.getDiscountExpr())
+					.setDiscountExpression(r.getDiscountExpr())
 					.setQuantity(r.getQuantity())
 					.setStartDate(r.getStartDate())
 					.setEndDate(r.getEndDate())

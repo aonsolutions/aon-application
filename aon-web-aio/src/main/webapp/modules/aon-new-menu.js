@@ -497,7 +497,7 @@ export class AonNewMenu extends AonElement {
 		li2.classList.add("aonNewMenuSideNavLi2");
 		ul.appendChild(li2);
 
-		aonMenuSidenav.innerHTML = '';
+		aonMenuSidenav.textContent = '';
 		aonMenuSidenav.appendChild(ul);
 
 		for (let item in MENU_APPS) {
@@ -552,7 +552,14 @@ export class AonNewMenu extends AonElement {
 				div.classList.add("aonNewMenuAppDiv");
 				div.title = app.title;
 
-				if (app.symbol) {
+				if (app.aonSymbol) {
+					let icon = this.createElement(TAG.SPAN);
+					icon.id = `aonMenuListAppImgTop-${app.app}`;
+					icon.classList.add(CSS.AON_SYMBOLS_OUTLINED);
+					icon.innerHTML = app.aonSymbol;
+					icon.classList.add("aonNewMenuAppIcon");
+					div.appendChild(icon);
+				} else if (app.symbol) {
 					let icon = this.createElement(TAG.SPAN);
 					icon.id = `aonMenuListAppImgTop-${app.app}`;
 					icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
@@ -706,7 +713,6 @@ export class AonNewMenu extends AonElement {
 	}
 
 	buildApp(app, style, id) {
-
 		let a = this.createElement(TAG.A);
 		a.addEventListener(EVENT.CLICK, () => {
 			this.appSelection(app);
@@ -735,7 +741,17 @@ export class AonNewMenu extends AonElement {
 		let header = this.getElement("aonHeaderWeb");
 		let welcome = this.getElement("aonCompanyTabFilter");
 
-		if (app.symbol) {
+		if (app.aonSymbol) {
+			let icon = this.createElement(TAG.SPAN);
+			icon.id = `aonMenuListAppImgTop-${app.app}`;
+			icon.classList.add(CSS.AON_SYMBOLS_OUTLINED);
+			icon.innerHTML = app.aonSymbol;
+			if (app.newColor || app.color) {
+				icon.style.color = app.newColor || app.color;
+			}
+			icon.classList.add("aonNewMenuAppIcon");
+			div.appendChild(icon);
+		} else if (app.symbol) {
 			let icon = this.createElement(TAG.SPAN);
 			icon.id = `aonMenuListAppImgTop-${app.app}`;
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
@@ -831,7 +847,7 @@ export class AonNewMenu extends AonElement {
 			case Apps.NOTES.app:
 				return "Crea y organiza anotaciones de todo lo que necesites";
 			case CONTENT_INDEX.app:
-				return "Consulta nuestros manueles para aprender nuevas funcionalidades";
+				return "Consulta nuestros manuales para aprender nuevas funcionalidades";
 			case MESSENGER.app:
 				return "Crear y administra tus solicitudes";
 			default:
@@ -1542,11 +1558,12 @@ export class AonNewMenu extends AonElement {
 			if (name?.length === 0)
 				break;
 			let size = 20;
-			let icon = desktopApp.symbol;
+			let icon = desktopApp.aonSymbol || desktopApp.symbol;
 			let image = icon ? undefined : desktopApp.logo;
 			let aonIcon = icon ? undefined : (desktopApp.newIcon || desktopApp.icon);
 			let color = desktopApp.newColor || desktopApp.color;
-			let icon_class = icon ? CSS.MATERIAL_SYMBOLS_OUTLINED : undefined;
+			let icon_class = desktopApp.aonSymbol ? CSS.AON_SYMBOLS_OUTLINED
+				: icon ? CSS.MATERIAL_SYMBOLS_OUTLINED : undefined;
 			applicationsOptions.unshift({
 				size,
 				name,

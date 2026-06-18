@@ -20,7 +20,6 @@ import java.util.zip.ZipOutputStream;
 
 import javax.xml.bind.JAXBException;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -480,7 +479,7 @@ public class DownloadXmlFileServlet extends HttpServlet {
 			
 			// Codificación de documentos (clave 8081010)
 			
-//			Cadena tipo "abcdefghijklmnnopqstruv" donde:
+//			Cadena tipo "abcdefghijklmnnopqstruvw" donde:
 //				"a" es el balance (0 no hay, 1 es normal, 2 es abreviado, 3 es PYME, 4 es Mixto)
 //				"b" es la cuenta de pérdidas y ganancias (0 no hay, 1 es normal, 2 es abreviada, 3 es PYME)
 //				"c" es la memoria (0 no hay, 1 es normal, 2 es abreviada, 3 es PYME) Claves 8080805 abr y 8080852 pymes
@@ -503,6 +502,7 @@ public class DownloadXmlFileServlet extends HttpServlet {
 //				"r" es la retención (0 no hay, 1 si hay)
 //				"u" es el formato de presentación (0 si no es ESEF / FEUE, 1 si es ESEF/ FEUE)
 //				"v" es la Hoja COVID-19 (0 no hay)
+//				"w" es el impuesto sobre sociedades (información por países) (0 no hay, 1 si hay) (A PARTIR DEL EJERCICIO 2025, NO SE USA ES SOLO PARA EL MODELO NORMAL)
 			
 			String formato = "PYMES".equalsIgnoreCase(schema.getCabecera().getTipoCuestionario()) ? "3" : "2"; // Formato PYMES o Abreviado
 			String g = buscar(schema, "8080807");
@@ -515,8 +515,8 @@ public class DownloadXmlFileServlet extends HttpServlet {
 			String q = buscar(schema, "8080825"); 
 			String t = buscar(schema, "8080832"); 
 			
-            //        a         b         c       def    g   h   i   j   k   l   m    nnop    q    s    t    ruv
-            return formato + formato + formato + "001" + g + h + i + j + k + l + m + "0001" + q + "1" + t + "000";
+            //        a         b         c       def    g   h   i   j   k   l   m    nnop    q    s    t    ruv                                                               w
+            return formato + formato + formato + "001" + g + h + i + j + k + l + m + "0001" + q + "1" + t + "000" + (schema.getCabecera().getEjercicio().intValue() >= 2025 ? "0" : "");
 		}
 		
 	    // Busca la clave que se le pasa en el XML y devuelve su valor o "0" si no se encuentra  

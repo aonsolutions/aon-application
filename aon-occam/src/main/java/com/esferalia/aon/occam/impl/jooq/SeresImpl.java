@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.seres.SeresInfo;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.impl.jooq.dao.PriceStrategyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PriceStrategyDAO.PriceStrategy;
 import com.esferalia.aon.occam.impl.jooq.dao.SeresDAO;
 
 public class SeresImpl implements ISeres {
@@ -45,9 +46,9 @@ public class SeresImpl implements ISeres {
     }
 	
 	@Override
-    public double getUnitPrice(AONContext ctx, Integer customer, Date date, Item item) {
+    public PriceStrategy calculatePriceStrategy(AONContext ctx, Integer customer, Date date, Item item) {
         return ctx.getDslContext().transactionResult(configuration -> 
-            PriceStrategyDAO.getUnitPrice(ctx, customer, date, item));
+            PriceStrategyDAO.calculatePriceStrategy(ctx, customer, date, item));
     }
-
+	
 }

@@ -16,7 +16,6 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -238,7 +237,7 @@ public class DomainInvoiceStatDAO {
 			:cr.params.getScope()
 				.filter(s -> s != null)
 				.map(s -> c.and(DOMAIN.SCOPE.eq(s)))
-				.orElse(c.and(SecurityDAO.getUserScopesCondition(cr.ctx, DOMAIN.SCOPE)));
+				.orElse(c.and(DOMAIN.SCOPE.isNull().or(SecurityDAO.getUserScopesCondition(cr.ctx, DOMAIN.SCOPE))));
 	
 	
 	private static final BiFunction<Condition, ConditionRecord, Condition> QUERY_CONDITION = (c, cr) -> 

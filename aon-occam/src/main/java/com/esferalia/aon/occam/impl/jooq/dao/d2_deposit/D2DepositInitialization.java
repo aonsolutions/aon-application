@@ -33,9 +33,9 @@ public class D2DepositInitialization {
 																						// TODO NECA 6.ª 8 (abreviado)
 																						// TODO NECA 5.ª 5 (pymes)
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112370.toString(), "sdb({5580})");
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112390.toString(), "sdb({44,460,470,471,472,544})");
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112400.toString(), "ABREVIADO?sdb({5303,5304,5313,5314,5323,5324,5333,5334,5343,5344,5353,5354,5523,5524})-sab({5393,5394,593,5943,5944,5953,5954})"
-																				+ ":sdb({5303,5304,5313,5314,5323,5324,5333,5334,5343,5344,5353,5354,5523,5524})-sab({5393,5394,5933,5934,5943,5944,5953,5954})");
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112390.toString(), "sdb({44,460,470,471,472,473,544})"); // La 473 no está en la definición publicada por los RRMM pero la pongo porque también está puesta en la definición de los balances de Contabilidad
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112400.toString(), "ABREVIADO?sdb({5303,5304,5313,5314,5323,5324,5333,5334,5343,5344,5353,5354})+sdbPositivo({5523})+sdbPositivo({5524})-sab({5393,5394,593,5943,5944,5953,5954})"
+																				     + ":sdb({5303,5304,5313,5314,5323,5324,5333,5334,5343,5344,5353,5354})+sdbPositivo({5523})+sdbPositivo({5524})-sab({5393,5394,5933,5934,5943,5944,5953,5954})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112500.toString(), "ABREVIADO?sdb({5305,5315,5325,5335,5345,5355,540,541,542,543,545,546,547,548,5590,5593,565,566})-sab({5395,549,5945,5955,597,598})+sdbPositivo({551})+sdbPositivo({5525})"
 																				+ ":sdb({5305,5315,5325,5335,5345,5355,540,541,542,543,545,546,547,548,5590,565,566})-sab({5395,549,5935,5945,5955,596,597,598})+sdbPositivo({551})+sdbPositivo({5525})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112600.toString(), "sdb({480,567})");
@@ -77,7 +77,7 @@ public class D2DepositInitialization {
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232330.toString(),"sab({5125,524})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232390.toString(),"ABREVIADO?sabPositivo({194,500,501,505,506,509,5115,5135,5145,521,522,523,525,526,528,551,5525,555,5565,5566,5595,5598,560,561,569})-sdb({1034,1044,190,192})"
 																				+ ":sabPositivo({194,500,501,505,506,509,5115,5135,5145,521,522,523,525,526,528,551,5525,555,5565,5566,5595,560,561})-sdb({1034,1044,190,192})");
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232400.toString(),"sab({5103,5104,5113,5114,5123,5124,5133,5134,5143,5144,5523,5524,5563,5564})");
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232400.toString(),"sab({5103,5104,5113,5114,5123,5124,5133,5134,5143,5144,5563,5564})+sabPositivo({5523})+sabPositivo({5524})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232580.toString(),"sab({400,401,403,404,405})-sdb({406})"); // TODO ¿¿??
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232581.toString(),"sab({40001})"); 	// TODO NECA 6.ª 16 (ABREVIADO)
 																								// TODO NECA 5.ª 11 (PYMES)

@@ -1,9 +1,9 @@
+// DOCUMENTO SOBRE SERVICIOS A TERCEROS
 package net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory;
 
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2PDepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
@@ -101,8 +101,11 @@ public class PageH6 extends PageAbs {
 	}
 	
 	private void listBoxItemAdd(ListBox lb) {
-		for(Integer i = 0; i< D2DepositConstants.PROVINCES.length; i++){
-			Provinces p = D2DepositConstants.PROVINCES[i];
+//		for(Integer i = 0; i< D2DepositConstants.PROVINCES.length; i++){
+//			Provinces p = D2DepositConstants.PROVINCES[i];
+//			lb.addItem(p.getName());
+//		}
+		for (Provinces p : Provinces.values()) {
 			lb.addItem(p.getName());
 		}
 	}
@@ -220,10 +223,14 @@ public class PageH6 extends PageAbs {
 				
 				String value = getMap().get(key2);
 				String value2 ="";
-				for (Integer i = 0 ; i< D2DepositConstants.PROVINCES.length; i++){
-		
-					if(D2DepositConstants.PROVINCES[i].getId().equals(value)){
-						value2 = D2DepositConstants.PROVINCES[i].getName();
+//				for (Integer i = 0 ; i< D2DepositConstants.PROVINCES.length; i++){
+//					if(D2DepositConstants.PROVINCES[i].getId().equals(value)){
+//						value2 = D2DepositConstants.PROVINCES[i].getName();
+//					}
+//				}
+				for (Provinces p : Provinces.values()) {
+					if (p.getId().equals(value)) {
+						value2 = p.getName();
 					}
 				}
 				for (Integer i = 0; i< lb.getItemCount(); i++) {
@@ -240,15 +247,18 @@ public class PageH6 extends PageAbs {
 				@Override
 				public void onChange(ChangeEvent event) {
 					String value ="";
-					for(Integer i = 0; i< D2DepositConstants.PROVINCES.length;i++){
-						Provinces p = D2DepositConstants.PROVINCES[i];
-						if(lb.getSelectedItemText().equals(p.getName())){
-							value = p.getId(); 
+//					for(Integer i = 0; i< D2DepositConstants.PROVINCES.length;i++){
+//						Provinces p = D2DepositConstants.PROVINCES[i];
+//						if(lb.getSelectedItemText().equals(p.getName())){
+//							value = p.getId(); 
+//						}
+//					}
+					for (Provinces p : Provinces.values()) {
+						if (lb.getSelectedItemText().equals(p.getName())) {
+							value = p.getId();
 						}
 					}
 					onEdit(key2, value);
-					
-					
 				}
 			});
 		}
