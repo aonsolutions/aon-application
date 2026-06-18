@@ -2239,7 +2239,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public LinkedList<Signature> getSignatures(String domainName, Integer domain, String user) throws AonCoreException {
-		return AON.getSignatures(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getUserIdProperty().isNull()));
+		return AON.getSignatures(domainName, domain, user, f -> f.getDomainProperty().eq(domain));
 	}
 	@Override
 	public void deleteSignature(String domainName, Integer domain, String user, Integer id) throws AonCoreException {

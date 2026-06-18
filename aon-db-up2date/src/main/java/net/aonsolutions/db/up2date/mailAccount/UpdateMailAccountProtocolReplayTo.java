@@ -62,10 +62,11 @@ public class UpdateMailAccountProtocolReplayTo implements Update {
 			
 
 			int replayToOutgoingVerificationUpdates = config.dsl().update(MAIL_ACCOUNT)
-			        .set(MAIL_ACCOUNT.REPLYTO_MAIL, DSL.trim(MAIL_ACCOUNT.EMAIL)) 	// ReplayTo = Email
+			        .set(MAIL_ACCOUNT.REPLYTO_MAIL, DSL.trim(MAIL_ACCOUNT.EMAIL)) 		// ReplayTo = Email
 			        .set(MAIL_ACCOUNT.OUTGOING_VERIFICATION, (byte) 0)					// Desactivar nuevo isBCCInclude
 			        .where(MAIL_ACCOUNT.REPLYTO_MAIL.isNull()
 			        		.or(DSL.length(DSL.trim(MAIL_ACCOUNT.REPLYTO_MAIL)).gt(0)))
+			        .and(MAIL_ACCOUNT.PROTOCOL.eq("aon"))
 			        .execute();
 				
 				

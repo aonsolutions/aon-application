@@ -9,7 +9,6 @@ import static com.esferalia.aon.watson.util.AonStringUtils.substringAfterLast;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -24,18 +23,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
-import jakarta.mail.Address;
-import jakarta.mail.BodyPart;
-import jakarta.mail.Flags.Flag;
-import jakarta.mail.Folder;
-import jakarta.mail.Message;
-import jakarta.mail.Message.RecipientType;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeBodyPart;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.internet.MimeMultipart;
-import jakarta.mail.internet.MimeUtility;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.VelocityContext;
@@ -64,7 +51,6 @@ import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonMessageUtils;
 import com.code.aon.webmail.bean.AonServer;
-import com.esferalia.aon.jooq.tables.Auth;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -76,6 +62,19 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.MailProcessType;
 import com.google.api.services.drive.Drive;
 
+import jakarta.mail.Address;
+import jakarta.mail.BodyPart;
+import jakarta.mail.Flags.Flag;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.Message.RecipientType;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.internet.MimeUtility;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 import software.amazon.awssdk.services.sesv2.model.GetEmailIdentityResponse;
 import solutions.aon.aws.ses.SES;
@@ -200,6 +199,10 @@ public class MessageController implements IWebMailConstants, Serializable {
 		return this.senderMailAccount.getProtocol() != null && "aon".equalsIgnoreCase(this.senderMailAccount.getProtocol());
 	}
 	
+	public boolean isProtocolCustom() {
+		return this.senderMailAccount.getProtocol() != null && "ses".equalsIgnoreCase(this.senderMailAccount.getProtocol());
+	}
+	
     public void onSend(ActionEvent event) {
        	AonServer server = new AonServer(this.senderMailAccount);
        	try {
@@ -216,19 +219,31 @@ public class MessageController implements IWebMailConstants, Serializable {
     	AonMessage sentMessage = null;
     	try {
 	    	sentMessage = compoundMessage(server);
-	    	if(isProtocolAon()) {
+	    	
+	    	if(isProtocolAon() || isProtocolCustom()) {
 	    		String address = isVerifiedForSendingStatus(this.senderMailAccount.getEmail()) ?
-				this.senderMailAccount.getEmail() : "no-reply@aon.solutions" ;
+				this.senderMailAccount.getEmail() : "app@aon.solutions" ;
 
 	    		MimeMessage message = (MimeMessage) sentMessage.getMessage();
 	            String personal = this.senderMailAccount.getDisplayName();
 	    		message.setFrom(new InternetAddress(address, personal, "UTF-8" ));
 
-	            Address replyTo = new InternetAddress(this.senderMailAccount.getEmail());
-	            if(this.senderMailAccount.getReplyToMail() != null)
-	            	message.addRecipient(RecipientType.BCC, replyTo);
-	            Address[] addresses = {replyTo};
+	    		ArrayList<String> replyToEmails = parseEmails(this.senderMailAccount.getReplyToMail());
+	            ArrayList<Address> replyToAddresses = new ArrayList<Address>();
+	            replyToEmails.forEach(rtm -> {
+	            	 try {
+						Address replyTo = new InternetAddress(rtm);
+						replyToAddresses.add(replyTo);
+					} catch (AddressException e) {
+						e.printStackTrace();
+					}
+	            });
+	            
+	            Address[] addresses = replyToAddresses.toArray(new Address[0]);
+	            
+	            if(this.senderMailAccount.getReplyToMail() != null) message.addRecipients(RecipientType.BCC, addresses);
 	            message.setReplyTo(addresses);
+	            
 	            SES.sendEmail(AonUtil.getDomainName(), message);
 	    	} else {
 	    		server.sendMessage(sentMessage);
@@ -245,7 +260,21 @@ public class MessageController implements IWebMailConstants, Serializable {
 		} catch (Throwable th) {
 			throw new WebmailException(th.getMessage(), th);
 		}
-    }    
+    }   
+	
+	public ArrayList<String> parseEmails(String value) {
+		ArrayList<String> emails = new ArrayList<>();
+	    if (value == null || value.trim().isEmpty()) {
+	        return emails; // lista vacía
+	    }
+	    for (String part : value.split(",")) {
+	        String email = part.trim();
+	        if (!email.isEmpty()) {
+	            emails.add(email);
+	        }
+	    }
+	    return emails;
+	} 
 
     public void onCancelSend(ActionEvent event) {
     	finishMessage();

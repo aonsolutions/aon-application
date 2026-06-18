@@ -314,7 +314,9 @@ public class AonMailAccountPanel extends HTMLPanel {
     	okButton.addClickHandler(e -> {
     		okButton.setEnabled(false);
     		
-    		if(!isValidEmail(email.getValue() + host.getValue())) {
+    		String emailValue = email.getValue() + (AonStringUtils.isBlank( host.getValue()) ? "@aon.solutions" : host.getValue());
+    		
+    		if(!isValidEmail(emailValue)) {
     			okButton.setEnabled(true);
     			AonMessagePanel.showError(messagePanel, "Email incorrecto");
     			return;
@@ -328,7 +330,7 @@ public class AonMailAccountPanel extends HTMLPanel {
     		
     		mailAccount
 				.setName(name.getValue())
-				.setEmail(email.getValue() + host.getValue())
+				.setEmail(emailValue)
 				.setDisplayName(showAs.getValue())
 				.setIncludeBcc(bccInclude.getValue())
 				.setReplytoMail(replayTo.getValue())
