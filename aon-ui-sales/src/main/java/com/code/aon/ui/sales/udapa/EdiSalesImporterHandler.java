@@ -259,7 +259,7 @@ public class EdiSalesImporterHandler implements Serializable {
 									
 								Occam occam = new Occam().setDomain(sales.getDomain()).setDomainName(AonUtil.getDomainName()).setUser(AonUtil.getRemoteUser());
 								
-								PriceStrategy priceStrategy = SERES.calculatePriceStrategy(occam, line, sales.getIssueDate(), occamItem);
+								PriceStrategy priceStrategy = SERES.calculatePriceStrategy(occam, rItem.getRegistry().getId(), sales.getIssueDate(), occamItem);
 								
 								if (testing) {
 									detailController.onReset(event);
