@@ -216,11 +216,14 @@ export class AonConfigurationNew extends AonElement {
 		}
 		
 		if (this.getDur().isAdmin()) {
-			classicViewOptions.push(			{
+			classicViewOptions.push(			
+			/*	
+			{
 				name: MSG.EMAIL,
 				icon: MATERIAL_ICONS.MAIL,
 				fn: () => this.getApplication().setContent(new JSF.AonJsfEmail()),
 			},
+			*/
 			/*		
 			{
 				name: MSG.PRINTS,

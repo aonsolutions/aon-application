@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.seres.SeresInfo;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.occam.impl.jooq.dao.PriceStrategyDAO.PriceStrategy;
 
 public interface ISeres {
 	
@@ -17,6 +18,6 @@ public interface ISeres {
 	public EdiCodes getEdiCodes(AONContext ctx, Delivery delivery);
 	public EdiCodes getEdiCodes(AONContext ctx, Invoice invoice);
 	
-	public double getUnitPrice(AONContext ctx, Integer customer, Date date, Item item);
+	public PriceStrategy calculatePriceStrategy(AONContext ctx, Integer customer, Date date, Item item);
 
 }

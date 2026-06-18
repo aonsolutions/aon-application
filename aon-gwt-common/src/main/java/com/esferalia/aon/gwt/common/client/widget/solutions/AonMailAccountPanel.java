@@ -120,8 +120,8 @@ public class AonMailAccountPanel extends HTMLPanel {
 		protocol.getElement().getStyle().setProperty("max-width", "8rem");
 		
 		type.clearItems();
-		type.addItem("Empresa", MailAccountType.SYSTEM.name());
-		type.addItem("Usuario", MailAccountType.USER.name());
+		type.addItem("Empresa", "enterprise");
+		type.addItem("Usuario", "user");
 		
 		protocol.clearItems();
 		protocol.addItem("Aplicaci\u00f3n", "aon");
@@ -207,7 +207,7 @@ public class AonMailAccountPanel extends HTMLPanel {
 		// Fill info
 		if(mailAccount.getId() != null) {
 			name.setValue(mailAccount.getName());
-			type.setValue(mailAccount.getType().name());
+			type.setValue(null == mailAccount.getUserId() ? "enterprise" : "user");
 			protocol.setValue(mailAccount.getProtocol());
 			
 			email.setValue(getEmailWithoutHost(mailAccount.getEmail()));
@@ -229,17 +229,18 @@ public class AonMailAccountPanel extends HTMLPanel {
 		add(container);	
 		
 		getVerifiedHostEmails(hostEmails -> {
-			hostEmails.entrySet().forEach(h -> {
-				if(h.getValue()) host.addItem("@" + h.getKey());
-			});
-			
 			if(hostEmails.isEmpty())
 				protocol.getListBox().getElement().getElementsByTagName("option").getItem(1).setAttribute("disabled", "disabled");
-			
-			host.addItem("@aon.solutions");
-			
-			if(mailAccount.getId() != null)
-				host.setValue(getEmailHost(mailAccount.getEmail()));
+			else {
+				hostEmails.entrySet().forEach(h -> {
+					if(h.getValue()) host.addItem("@" + h.getKey());
+				});
+				
+				host.addItem("@aon.solutions");
+				
+				if(mailAccount.getId() != null)
+					host.setValue(getEmailHost(mailAccount.getEmail()));
+			}
 		});
 		
 		getDomainUsers(userList -> {
@@ -259,7 +260,7 @@ public class AonMailAccountPanel extends HTMLPanel {
 	}
 
 	private void checkUsersVisibility(HTMLPanel row_) {
-		if(AonStringUtils.equalsIgnoreCase(MailAccountType.SYSTEM.name(), type.getValue())){
+		if(AonStringUtils.equalsIgnoreCase("enterprise", type.getValue())){
 			row_.getElement().getStyle().setDisplay(Display.NONE);
 			users.setValue("");
 		} else {
@@ -331,13 +332,12 @@ public class AonMailAccountPanel extends HTMLPanel {
 				.setDisplayName(showAs.getValue())
 				.setIncludeBcc(bccInclude.getValue())
 				.setReplytoMail(replayTo.getValue())
-				.setType(MailAccountType.safeValueOf(type.getValue()))
+				.setType(MailAccountType.USER)
 				.setSignatureId(AonStringUtils.isBlank(signature.getValue()) ? null : Integer.parseInt(signature.getValue()))
 				.setProtocol(protocol.getValue())
 				;
     		
     		if(AonStringUtils.isBlank(users.getValue())) {
-    			mailAccount.setType(MailAccountType.SYSTEM);
     			mailAccount.setUserId(null);
     		} else {
     			mailAccount.setUserId(Integer.parseInt(users.getValue()));

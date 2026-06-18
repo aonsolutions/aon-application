@@ -36,6 +36,7 @@ export const AON_MARKETPLACE_PANEL = 'aonMarketplacePanel';
 export const AON_MOBILE_PROFILE = 'aonMobileProfile';
 export const AON_PRODUCT = 'aonProduct';
 export const AON_SEARCH = 'aonSearch';
+export const AON_SYMBOL = 'aonSymbol';
 export const AON_USER_LIST = 'aonUserList';
 export const AON_SALES = 'aonSales';
 export const AON_SALES_LIST = 'aonSalesList';

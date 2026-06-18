@@ -303,17 +303,15 @@ public class InvoiceServlet extends AonApiHttpServlet{
 
 		// ids to null
 		invoice.setId(null);
-		invoice
-			.detailStream()
+		invoice.detailStream()
 			.map( d -> d.setId(null))
 			.flatMap(d -> d.taxStream())
-			.forEach(t -> t.setId(null))
-		; 
-//		invoice.setDetails(invoice.getDetails().stream().map(r -> {
-//			r.setId(null);
-//			r.setInvoiceTaxes(r.getInvoiceTaxes().stream().map(tax -> tax.setId(null)).toList());
-//			return r;
-//		}).toList());
+			.forEach(t -> t.setId(null)); 
+		
+		invoice.financeStream()
+			.map( f -> f.setId(null))
+			.forEach(t -> t.setId(null));
+		
 		// ----------
 	
 		Rawdoc rawdoc = new Rawdoc()

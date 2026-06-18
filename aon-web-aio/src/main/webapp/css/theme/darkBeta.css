@@ -13,6 +13,8 @@
 	
 	--aonHeaderBackgroundColor: var(--aonPrimary);
 
+	--aonMenuBackgroundColor: var(--aonPrimary);
+
 	--aonHeaderBackgroundAvailable: var(--aonPrimary);
 
   	--aonRightPanelColor: var(--aonPrimary);
@@ -215,7 +217,7 @@ h1 {
 
 .aonMenuSidenav {
 	color: #FFF;
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonSidenavTitle {
@@ -350,7 +352,7 @@ h1 {
 .aonHeaderFiscalMenu, .aonMenuLeftopFiscalMenu,
 .aonHeaderPayrollMenu, .aonMenuLeftopPayrollMenu,
 .aonHeaderMarketingMenu, .aonMenuLeftopMarketingMenu {
-	background-color: var(--aonHeaderBackgroundColor);
+	background-color: var(--aonMenuBackgroundColor);
 }
 
 .aonHeader #aonHeaderCompanyName,

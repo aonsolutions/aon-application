@@ -7,7 +7,8 @@ export class AonIcon extends AonElement {
   TYPES = {
     MATERIAL: 'MATERIAL',
     AON: 'AON',
-    IMAGE: 'IMAGE' 
+    AON_SYMBOL: 'AON_SYMBOL',
+    IMAGE: 'IMAGE'
   };
   type;
 
@@ -54,10 +55,18 @@ export class AonIcon extends AonElement {
         svg.style.width = newValue;
         svg.style.height = newValue;
       }
+      let symbol = this.querySelector('i.' + CSS.AON_SYMBOLS_OUTLINED);
+      if(symbol) {
+        symbol.style.fontSize = newValue;
+      }
     } else if('color' === name){
       let path = this.querySelector('path');
       if(path) {
         path.style.fill = newValue;
+      }
+      let symbol = this.querySelector('i.' + CSS.AON_SYMBOLS_OUTLINED);
+      if(symbol) {
+        symbol.style.color = newValue;
       }
     }
   }
@@ -72,12 +81,14 @@ export class AonIcon extends AonElement {
   }
 
   initialize() {
-    this.type = this.type || this.TYPES.AON;
+    this.type = this.type || (this.hasAttribute('aonSymbol') ? this.TYPES.AON_SYMBOL : this.TYPES.AON);
   }
 
   build() {
     if(this.TYPES.MATERIAL === this.type) {
       this.buildMaterialIcon();
+    } else if(this.TYPES.AON_SYMBOL === this.type) {
+      this.buildAonSymbolIcon();
     } else if(this.TYPES.IMAGE === this.type) {
       this.buildImageIcon();
     } else this.buildAonIcon();
@@ -89,6 +100,21 @@ export class AonIcon extends AonElement {
     icon.className = CSS.MATERIAL_ICONS;
     icon.innerHTML = this.icon;
 	icon.setAttribute('icon', this.icon);
+    this.appendChild(icon);
+  }
+
+  buildAonSymbolIcon() {
+    let icon = this.createElement(TAG.I);
+    icon.id = this.id + CONSTANT.AON_SYMBOL.initCap();
+    icon.className = CSS.AON_SYMBOLS_OUTLINED;
+    icon.innerHTML = this.icon;
+    icon.setAttribute('icon', this.icon);
+    if(this.hasAttribute('size')) {
+      icon.style.fontSize = this.getAttribute('size');
+    }
+    if(this.hasAttribute('color')) {
+      icon.style.color = this.getAttribute('color');
+    }
     this.appendChild(icon);
   }
 
