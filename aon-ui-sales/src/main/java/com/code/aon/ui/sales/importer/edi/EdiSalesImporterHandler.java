@@ -303,7 +303,9 @@ public class EdiSalesImporterHandler implements Serializable {
 							
 							Item occamItem = new Item()
 									.setProduct(new Product().setId(rItem.getItem().getProduct().getId()))
-									.setId(rItem.getItem().getId());
+									.setId(rItem.getItem().getId())
+									.setPrice(rItem.getItem().getPrice());
+							
 							Occam occam = new Occam().setDomain(sales.getDomain()).setDomainName(AonUtil.getDomainName()).setUser(AonUtil.getRemoteUser());
 							
 
