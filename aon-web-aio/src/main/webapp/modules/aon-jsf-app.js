@@ -1627,6 +1627,14 @@ export class AonJsfEmail extends AonJsfApp {
 	}
 }
 
+export class AonJsfContact extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/contact.xhtml');
+	}
+}
+
 if (!window.customElements.get(TAG.AON_JSF_APP)) {
 	window.customElements.define(TAG.AON_JSF_APP, AonJsfApp);
 }
@@ -2299,4 +2307,7 @@ if (!window.customElements.get(TAG.AON_JSF_EMAIL)) {
 	window.customElements.define(TAG.AON_JSF_EMAIL, AonJsfEmail);
 }
 
+if (!window.customElements.get(TAG.AON_JSF_CONTACT)) {
+	window.customElements.define(TAG.AON_JSF_CONTACT, AonJsfContact);
+}
 

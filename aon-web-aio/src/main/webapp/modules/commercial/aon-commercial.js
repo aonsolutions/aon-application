@@ -3,6 +3,8 @@ import { getCompany } from "../../services/service.js";
 import { AonApplication } from '../../components/aon-application.js';
 import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
 import { AonCommercialMenu } from "./aon-commercial-menu.js";
+import * as GWT from '../../gwt/gwt.js';
+import * as JSF from '../aon-jsf-app.js';
 
 export class AonCommercial extends AonElement {
 
@@ -57,6 +59,23 @@ export class AonCommercial extends AonElement {
 			}
 		];
 		this.getApplication().addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);
+		
+		let parametersOptions = [
+			{
+                name: MSG.SEGMENTATION,
+                fn: () => this.getApplication().setContent(new JSF.AonJsfSegment())
+            }, {
+                name: MSG.COUNTRY_PROVINCE,
+                fn: () => this.getApplication().setContent(new JSF.AonJsfGeotree())
+            }, {
+				name: MSG.TARIFFS,
+				fn: () => GWT.iLoad(GWT.TARIFF_MODULE, this.getApplication().CONTENT),
+			}, {
+				name: MSG.CATALOGUES,
+				fn: () => this.getApplication().setContent(new JSF.AonJsfCatalogue()),
+			}
+		];
+		this.getApplication().addSidenavOptions(MSG.PARAMETERS.toUpperCase(), parametersOptions);
 	}
 
 	buildCommercialMenu() {

@@ -24,9 +24,9 @@ import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule.FBATCH_TYPE;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.model.FBatchParams;
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFBatchStatusVisitor;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.type.FBatchStatus;
+import com.esferalia.aon.occam.api.model.type.FBatchStatus.FBatchStatusVisitor;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -489,25 +489,18 @@ public abstract class FBatchPaymentList extends AonCustomDockLayout {
 		tab.addRow(row, bankAccount, COLS.CUE.getColWidth());
 		
 		Label status = new Label(null == fBatch.getStatus() ? "" : fBatch.getStatus().getDescription());
-		fBatch.getStatus().visit(new IFBatchStatusVisitor() {
+		fBatch.getStatus().visit(new FBatchStatusVisitor() {
 			
-			@Override
-			public void visitUnknown() {
-				// TODO Auto-generated method stub	
-			}
+			@Override public void visitUnknown() 	{ /*Nothing to do*/ }
+			@Override public void visitGenerated() 	{ /*Nothing to do*/ }
 			
 			@Override
 			public void visitPending() {
 				status.setStyleName(AON.CSS.aonColorRed());
 			}
-			
+
 			@Override
-			public void visitGenerated() {
-				// TODO Auto-generated method stub
-			}
-			
-			@Override
-			public void visitAccounted() {
+			public void visitRecorded() {
 				status.setStyleName(AON.CSS.aonColorGreen());
 				status.addStyleName(AON.CSS.aonBold());
 			}
@@ -590,7 +583,9 @@ public abstract class FBatchPaymentList extends AonCustomDockLayout {
 			status.setText(FBatchStatus.PENDING.getDescription());
 			status.setStyleName(AON.CSS.aonColorRed());
 		});
-		setVisible(deleteFile, fBatch.getRattach() != null && !fBatch.getStatus().equals(FBatchStatus.ACCOUNTED) && fBatch.getType() != (byte)0);
+		setVisible(deleteFile, fBatch.getRattach() != null 
+			&& !fBatch.getStatus().equals(FBatchStatus.RECORDED) 
+			&& fBatch.getType() != (byte)0);
 		actionsPanel.add(deleteFile);
 		
 		sepaButton.addClickHandler(e -> {

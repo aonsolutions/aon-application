@@ -4507,5 +4507,8 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Informaci\u00F3n facturas/Documentos pendientes")
 	String domainInvoiceStat();
+
+	@DefaultMessage("Fecha contable")
+	String accountingDate();
 }
 

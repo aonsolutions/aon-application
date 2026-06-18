@@ -2252,7 +2252,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public LinkedList<MailAccount> getMailAccounts(String domainName, Integer domain, String user) throws AonCoreException {
-		return AON.getMailAccounts(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getUserIdProperty().isNull()));
+		return AON.getMailAccounts(domainName, domain, user, f -> f.getDomainProperty().eq(domain));
 	}
 	
 	@Override
@@ -2267,7 +2267,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public HashMap<Integer, Boolean> checkMailAccounts(String domainName, Integer domain, String user) throws AonCoreException {
-		LinkedList<MailAccount> mailAccounts = AON.getMailAccounts(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getUserIdProperty().isNull()));
+		LinkedList<MailAccount> mailAccounts = AON.getMailAccounts(domainName, domain, user, f -> f.getDomainProperty().eq(domain));
 		HashMap<Integer, Boolean> result = new HashMap<Integer, Boolean>();
 		mailAccounts.forEach(m -> {
 			//String status = SES.verificationStatus(m.getEmail());
@@ -2300,6 +2300,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			hosts.add(host);
 		}
 		
+		/*
 		if(null != domain.getParentId()) {
 			Company parentDomainCompany = AON.getCompany(domainName, domainId, user, f -> f.getDomainProperty().eq(domain.getParentId()));
 			RegistryMedia parentDomainCompanyWeb = AON.getRegistryMedia(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRegistryProperty().eq(parentDomainCompany.getId()).and(f.getMediaProperty().eq(MediaType.WEB.value())));
@@ -2315,10 +2316,13 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 				hosts.add(host);
 			}
 		}
+		*/
 		
 		hosts.forEach(h -> {
 			boolean isVerifiedDomain = SES.isVerifiedForSendingStatus("aon.awsses@" + h);
-			result.put(h, isVerifiedDomain);
+			
+			if(isVerifiedDomain)
+				result.put(h, isVerifiedDomain);
 		});
 		
 		return result;

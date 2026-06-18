@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -44,5 +45,9 @@ public interface FinanceServiceAsync {
 	void deleteFBatches(String domainName, int domain, String user, LinkedList<Integer> fBatchIds, AsyncCallback<Void> callback);
 	void createUpdateFBatch(String domainName, int domain, String user, FBatch fBatch, AsyncCallback<FBatch> callback);
 	void deleteSepaFile(String domainName, int domain, String user, Integer rattachId, AsyncCallback<Void> asyncCallback);
-	
+	void recordFBatch(Occam occam, Integer fbatchId, Date paymentDate, AsyncCallback<FBatch> callback);
+	void unrecordFBatch(Occam occam, Integer fbatchId, AsyncCallback<FBatch> callback);
+	void getFBatchAccountEntry(Occam occam, Integer id, AsyncCallback<AccountEntry> callback);
+
 }
+

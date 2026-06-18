@@ -54,9 +54,42 @@ export class AonManagement extends AonElement {
 				icon: "speaker_notes",
 				name: "Observaciones",
 				fn: () => this.getApplication().buildObservations('MANAGEMENT')
+			},
+			{
+				id: "series",
+				name: "Series",
+				fn: () => this.getApplication().setContent(new JSF.AonJsfSeries()),
+			},
+			{
+				id: "impuestos",
+				name: "Impuestos aplicables",
+				fn: () => this.getApplication().setContent(new JSF.AonJsfTax()),
 			}
 		];
 		this.getApplication().addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);
+		
+		let parametersOptions = [
+			{
+				id: "segmentation",
+				name: MSG.SEGMENTATION,
+				fn: () => this.getApplication().setContent(new JSF.AonJsfSegment()),
+			},
+			{
+				id: "countryProvince",
+				name: MSG.COUNTRY_PROVINCE,
+				fn: () => this.getApplication().setContent(new JSF.AonJsfGeotree()),
+			}
+		];
+		this.getApplication().addSidenavOptions(MSG.PARAMETERS.toUpperCase(), parametersOptions);
+		
+		let utilitiesOptions = [
+			{
+				id: "billignConsole",
+				name: MSG.BILLING_CONSOLE,
+				fn: () => GWT.iLoad(GWT.INVOICE_CONSOLE),
+			}
+		];
+		this.getApplication().addSidenavOptions(MSG.UTILITIES.toUpperCase(), utilitiesOptions);
 	}
 	
 	buildManagementMenu() {

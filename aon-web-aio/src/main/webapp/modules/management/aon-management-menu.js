@@ -131,6 +131,10 @@ export class AonManagementMenu extends AonSuiteMenu {
                 description: MSG.PURCHASE_ORDERS,
                 title: MSG.PURCHASE_ORDERS,
                 action: () => this.rootPanel(new JSF.AonJsfPurchase())
+            }, {
+                description: MSG.EXPENSES_SHEET,
+                title: MSG.EXPENSES_SHEET,
+                action: () => this.rootPanel(new JSF.AonJsfExpense())
             }]
         }, {
             title: MSG.EXPENSES,
@@ -146,7 +150,11 @@ export class AonManagementMenu extends AonSuiteMenu {
                 description: MSG.UNDEDUCTIBLE_VAT_EXPENSES,
                 title: MSG.UNDEDUCTIBLE_VAT_EXPENSES,
                 action: () => this.rootPanel(new JSF.AonJsfUndeductibleInvoice())
-            }]
+            }, {
+				description: MSG.EXPENSES_SHEET,
+                title: MSG.EXPENSES_SHEET,
+				fn: () =>  this.rootPanel(new JSF.AonJsfExpense()),
+			}]
         }, {
             title: MSG.TREASURY,
             options: [{
@@ -188,20 +196,18 @@ export class AonManagementMenu extends AonSuiteMenu {
                 action: () => GWT.iLoad(GWT.MODEL_347)
             }]
         }, {
-            title: MSG.MASTERS,
+            title: MSG.PRODUCTS,
             options: [{
-                description: MSG.PRODUCTS,
-                title: MSG.PRODUCTS,
+                description: MSG.PRODUCTS_SHEET,
+                title: MSG.PRODUCTS_SHEET,
                 action: () => this.rootPanel(new JSF.AonJsfProduct())
-            }, {
-                description: MSG.EXPENSE,
-                title: MSG.EXPENSE,
-                action: () => this.rootPanel(new JSF.AonJsfExpense())
             }, {
                 description: MSG.CATEGORIES,
                 title: MSG.CATEGORIES,
                 action: () => this.rootPanel(new JSF.AonJsfProductCategory())
-            }, {
+            }, 
+            /*
+            {
                 description: MSG.COUNTRY_PROVINCE,
                 title: MSG.COUNTRY_PROVINCE,
                 action: () => this.rootPanel(new JSF.AonJsfGeotree())
@@ -209,7 +215,18 @@ export class AonManagementMenu extends AonSuiteMenu {
                 description: MSG.SEGMENTATION,
                 title: MSG.SEGMENTATION,
                 action: () => this.rootPanel(new JSF.AonJsfSegment())
-            }]
+            }, 
+            */
+            {
+				description: "Etiquetas de Productos",
+				action: () => this.rootPanel(new JSF.AonJsfProductTag()),
+			}, {
+				description: "Marcas",
+				action: () => this.rootPanel(new JSF.AonJsfBrand()),
+			}, {
+				description:"Tarifas",
+				action: () => GWT.iLoad(GWT.TARIFF_MODULE),
+			}]
         }];
     }
 }

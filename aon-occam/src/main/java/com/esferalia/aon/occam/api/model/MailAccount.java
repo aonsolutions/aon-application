@@ -143,7 +143,7 @@ public class MailAccount implements Serializable{
 		return this;
 	}
 	public Byte getOutgoingSecurity() {
-		return outgoingSecurity;
+		return null == outgoingSecurity ? (byte)0 : outgoingSecurity;
 	}
 	public MailAccount setOutgoingSecurity(Byte outgoingSecurity) {
 		this.outgoingSecurity = outgoingSecurity;
@@ -217,13 +217,17 @@ public class MailAccount implements Serializable{
 		return getProtocol() != null && "aon".equalsIgnoreCase(getProtocol());
 	}
 	
+	public boolean isProtocolCustom() {
+		return getProtocol() != null && "ses".equalsIgnoreCase(getProtocol());
+	}
+	
 	public boolean isIncludeBcc() {
-		return null != getOutgoingSecurity() && getOutgoingSecurity() == (byte) 1;
+		return null != getOutgoingVerification() && getOutgoingVerification() == (byte) 1;
 		//return getReplytoMail() != null;
 	}
 	
 	public MailAccount setIncludeBcc(boolean includeBcc) {
-		setOutgoingSecurity(includeBcc ? (byte)1 : (byte)0);
+		setOutgoingVerification(includeBcc ? (byte)1 : (byte)0);
 		return this;
 	}
 	

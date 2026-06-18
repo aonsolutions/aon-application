@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -12,7 +13,6 @@ import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -161,5 +161,22 @@ public class FinanceServiceAsyncDecorator implements FinanceServiceAsync {
 		fsa.deleteSepaFile(domainName, domain, user, rattachId, new AsyncCallbackWrapper<Void>(callback));
 	}
 
+	@Override
+	public void recordFBatch(Occam occam, Integer fbatchId, Date paymentDate, AsyncCallback<FBatch> callback) {
+		AON.start();
+		fsa.recordFBatch(occam, fbatchId, paymentDate, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void unrecordFBatch(Occam occam, Integer fbatchId, AsyncCallback<FBatch> callback) {
+		AON.start();
+		fsa.unrecordFBatch(occam, fbatchId, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getFBatchAccountEntry(Occam occam, Integer id, AsyncCallback<AccountEntry> callback) {
+		AON.start();
+		fsa.getFBatchAccountEntry(occam, id, new AsyncCallbackWrapper<>(callback));
+	}
 	
 }

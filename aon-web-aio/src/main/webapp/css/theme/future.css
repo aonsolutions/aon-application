@@ -29,6 +29,10 @@
   font-style:normal;
 }
 
+.aon-symbols-outlined {
+	font-weight: normal;
+}
+
 :root {
 	
 	--aonTopMenuSpecial: transparent;
@@ -37,6 +41,10 @@
 	--aonBackgroundColor2: #f1f5f9;
 	--colorNeutralBackground2: #ffffff;
 	--aonHeaderBackgroundColor: #0f172a;
+	--aonHeaderButtonColor: var(--aonWhite);
+	
+	--aonTopMenuAvailable: var(--aonBlack);
+	
 	--aonFontFamily: 'Inter-regular', sans-serif;
 	
 	--aonNote: none;
@@ -240,10 +248,11 @@ body {
 	font-family: "Inter-medium", sans-serif;
 }
 
+#aonMenuListAppImgTop-managementMenu,
+#aonMenuListAppImgTop-invoice,
 #aonMenuListAppImgTop-new,
 #aonMenuListAppImgTop-note,
 #aonMenuListAppImgTop-office,
-#aonMenuListAppImgTop-invoice,
 #aonMenuListAppImgTop-warehouse,
 #aonMenuListAppImgTop-documental,
 #aonMenuListAppImgTop-accounting,
@@ -251,7 +260,6 @@ body {
 #aonMenuListAppImgTop-messenger,
 #aonMenuListAppImgTop-payroll,
 #aonMenuListAppImgTop-aonApplication,
-#aonMenuListAppImgTop-managementMenu,
 #aonMenuListAppImgTop-accountingMenu,
 #aonMenuListAppImgTop-timecontrol,
 #aonMenuListAppImgTop-fiscalMenu,
@@ -271,14 +279,13 @@ body {
 #aonEventAddToolbarHeaderToolSectionhistoricButtonIcon,
 #createEnterpriseButtonIcon,
 #removeEnterpriseButtonIcon
- {
-	width: 25.5px;
-	height: 25.5px;
-	mask-size: contain;
-	mask-position: center;
-    mask-repeat: no-repeat;
-	background-color: var(--aonTopAppTextColor);
-} 
+{
+	/* color: var(--aonTopAppTextColor); */
+}
+
+#aonMenuListAppImgTop-expandHirin {
+	color: white;
+}
 
 #aonMenu #aonMenuTopnav #aonTopMenuDiv>div>a>div i {
   transition:transform .2s ease
@@ -286,7 +293,6 @@ body {
 
 #aonMenu #aonMenuTopnav #aonTopMenuDiv>div>a>div span {
   transition:transform .2s ease;
-  font-size:.625rem
 }
 
 #aonMenu #aonMenuTopnav #aonTopMenuDiv>div>a:hover>div i {
@@ -297,45 +303,11 @@ body {
 }
 
 #aonMenuListAppImgTop-new{
-	mask-image: url('/icons/plus-circle.svg');
-	
     transition: transform 0.5s;
 }
 
 #aonMenuListAppImgTop-new.open{
 	transform: rotate(-45deg);
-}
-
-#aonMenuListAppImgTop-office {
-	mask-image: url('/icons/briefcase.svg');
-}
-
-#aonMenuListAppImgTop-invoice,
-#aonMenuListAppImgTop-managementMenu {
-    mask-image: url('/icons/file-bar-chart.svg') ;
-}
-
-#aonMenuListAppImgTop-apps {
-	mask-image: url('/icons/box.svg') ;
-}
-
-#aonMenuListAppImgTop-expandHirin {
-	mask-image: url('/icons/box.svg') ;
-	background-color: white;
-}
-
-#aonMenuListAppImgTop-contentIndex {
-	mask-image: url('/icons/graduation-cap.svg') ;
-}
-
-#aonMenuListAppImgTop-accountingMenu,
-#aonMenuListAppImgTop-accounting {
-    mask-image: url('/icons/calculator.svg') ;
-}
-
-#aonMenuListAppImgTop-fiscalMenu,
-#aonMenuListAppImgTop-fiscal  {
-    mask-image: url('/icons/building-2.svg') ;
 }
 
 #aonMenuListAppImgTop-fiscal,
@@ -347,60 +319,6 @@ body {
 	scale: unset;
 }
 
-#aonMenuListAppImgTop-payroll,
-#aonMenuListAppImgTop-payrollMenu {
-    mask-image: url('/icons/users.svg') ;
-}
-
-#aonMenuListAppImgTop-configurationMenu {
-    mask-image: url('/icons/settings-2.svg') ;
-}
-
-.aonMenuBarConfigurationMenuConsultancy #aonMenuListAppImgTop-configurationMenu{
-	mask-image: url('/icons/file-bar-chart.svg') ;
-}
-
-#aonMenuListAppImgTop-enterpriseMenu {
-    mask-image: url('/icons/building.svg') ;
-}
-
-#aonMenuListAppImgTop-comercialMenu {
-    mask-image: url('/icons/heart-handshake.svg') ;
-}
-
-#aonMenuListAppImgTop-treasuryMenu {
-    mask-image: url('/icons/euro.svg') ;
-}
-
-#aonMenuListAppImgTop-groupwareMenu {
-    mask-image: url('/icons/files.svg') ;
-}
-
-#aonMenuListAppImgTop-marketingMenu{	
-    mask-image: url('/icons/target.svg') ;
-}
-
-#aonMenuListAppImgTop-warehouse,
-#aonMenuListAppImgTop-warehouseMenu {
-    mask-image: url('/icons/shopping-cart.svg') ;
-}
-
-#aonMenuListAppImgTop-documental{
-	mask-image: url('/icons/folder-open.svg') ;	
-}
-
-#aonMenuListAppImgTop-note {
-	mask-image: url('/icons/bookmark.svg') ;
-}
-
-#aonMenuListAppImgTop-timecontrol {
-    mask-image: url('/icons/timer.svg') ;
-}
-
-#aonMenuListAppImgTop-messenger{
-    mask-image: url('/icons/subtitles.svg') ;
- }
- 
 #aonSigninToolbarHeaderToolSectionsyncButtonIcon{
 	mask-image: url('/icons/refresh-cw.svg') ;	
 }
@@ -415,44 +333,8 @@ body {
 	background-image: url('/icons/aon.svg');
 }
 
-#aonHeaderHomeButtonIcon,
-#aonHeaderCompanyListButtonIcon,
-#aonHeaderHelpButtonIcon,
-#aonHeaderConfigButtonIcon,
-#aonHeaderNotificationButtonIcon,
-#aonHeaderUserButtonIcon
- {
-	width: 25.5px;
-	height: 25.5px;
-	background-color: white;
-    mask-size: contain;
-    mask-position: center;
-    mask-repeat: no-repeat;
-} 
-
-#aonHeaderHomeButtonIcon {
-	mask-image: url('/icons/home.svg') ;
-}
-
-#aonHeaderCompanyListButtonIcon{
-    mask-image: url('/icons/building.svg') ;
-}
-
-#aonHeaderHelpButtonIcon {	
-    mask-image: url('/icons/help-circle.svg') ;
-}
-	
-#aonHeaderConfigButtonIcon,
 #aonConfig > span > i {
     mask-image: url('/icons/settings.svg') ;
-}
-
-#aonHeaderNotificationButtonIcon {
-    mask-image: url('/icons/bell.svg') ;
-}
-
-#aonHeaderUserButtonIcon{
-    mask-image: url('/icons/user.svg') ;
 }
 
 #aonSigninToolbarHeaderToolSectionfile_downloadButtonIcon,
@@ -692,8 +574,7 @@ aon-fiscal-menu .suiteMenuDiv2{
 
 #aonMenuAnchorDivIcon {
 	/*background: url('/icons/arrow-left-circle.svg') no-repeat center;*/
-	mask-image: url('/icons/arrow-left-circle.svg');
-	
+	/* mask-image: url('/icons/arrow-left-circle.svg'); */
 	transition: transform 0.5s;
 	padding: 0px;
 }
@@ -747,7 +628,7 @@ aon-fiscal-menu .suiteMenuDiv2{
 	flex-direction: row;
 	justify-content: left;
 	gap: 1.25rem;
-  	padding: 0 1.25rem;
+  	padding: 0 1rem;
 }
 
 #aonMenu #aonMenuSidenav .aonNewMenuAppSpan {

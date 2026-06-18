@@ -114,7 +114,15 @@ export class AonTreasuryMenu extends AonSuiteMenu {
                 description: MSG.ADVANCES_MANAGEMENT,
                 title: MSG.ADVANCES_MANAGEMENT,
                 action: () => this.rootPanel(new JSF.AonJsfPrepayment())
-            }]
+            }, {
+			    description: MSG.PAYMETHODS,
+			    title: MSG.PAYMETHODS,
+			    action: () => GWT.iLoad(GWT.PAY_METHOD)
+			},{
+				description: MSG.BANK_CONCEPTS,
+				title: MSG.BANK_CONCEPTS,
+				action: () => this.rootPanel(new JSF.AonJsfBankConcept()),
+			}]
         }, {
             title: MSG.FEES,
             options: [{

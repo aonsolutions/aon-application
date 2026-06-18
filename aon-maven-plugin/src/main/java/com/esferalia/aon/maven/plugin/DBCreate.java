@@ -221,6 +221,7 @@ public class DBCreate extends AbstractMojo {
 			properties.setProperty("user", dbUser);
 			properties.setProperty("password", dbPasswd);
 			properties.setProperty("useSSL", dbUseSSL);
+			properties.setProperty("allowPublicKeyRetrieval", "true");
 			properties.setProperty("serverTimezone", dbTimeZone);
 			Connection c = DriverManager.getConnection(url, properties);
 	    	getLog().info("Connected!");
