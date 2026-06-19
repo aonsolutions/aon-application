@@ -43,10 +43,10 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 	}
 	
 	private void paintTitle(Invoice invoice) {
-		InvoiceSource source = invoice
-			.getDetails()
-			.stream()
+		Label sourceDesciption = invoice.detailStream()
 			.map( id -> id.getSource())
+			.map( s -> s == InvoiceSource.TEDI?"PORTAL":AonStringUtils.upperCase( s.getDescription() ))
+			.map( Label::new )
 			.findFirst()
 			.orElse(null);
 		
@@ -55,10 +55,6 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 		AonDisplayTable tab = new AonDisplayTable();
 		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
 		tab.addStyleName(AON.CSS.aonBlockCenter());
-		String sourceDesciption = "M\u00F3dulo origen: " 
-			+ ( source == InvoiceSource.TEDI
-				?"PORTAL"
-				:AonStringUtils.upperCase( source.getDescription() ));
 		tab.addRow()
 			.addCell( new Label("Factura de " + invoice.getType().getDescription())
 					,AON.CSS.aonBold(),AON.CSS.aonTextCenter()
@@ -68,7 +64,7 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 					,AON.CSS.aonFontSmall(),AON.CSS.aonWidth100())
 			.addCell( getAttributes( invoice )
 					,AON.CSS.aonWidthAuto(),AON.CSS.aonTextCenter())
-			.addCellIf( source != null , new Label( sourceDesciption )
+			.addCellIf( sourceDesciption != null , sourceDesciption
 					,AON.CSS.aonWidth200(),AON.CSS.aonColorGreen(),AON.CSS.aonTextCenter()
 					,AON.CSS.aonFontLarger(),AON.CSS.aonNowrap())
 		;
@@ -125,36 +121,32 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 				?(invoice.getRegistryDocumentCountry().getIso2() + "/"):"") 
 			+ invoice.getRegistryDocument();
 		String numberLabel = invoice.isSales()?"N/Fra":"S/Fra";
-		String numberValue = invoice.isSales()
-				?(invoice.getSeries() == null ? "" + invoice.getNumber() : invoice.getSeries() + "/" + invoice.getNumber())
-				:(invoice.getReferenceCode());
+		String numberValue = invoice.getReferenceCode();
+		
 		tab.addRow()
 			.addCell( new Label(AON.MSG.titular()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth120())
 			.addCell( new Label(invoice.getRegistryName()),AON.CSS.aonWidth300())
-			.addCell( new Label(invoice.getRegistryDocumentType() == null ? "" : invoice.getRegistryDocumentType().getDescription()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth120())
-			.addCell( new Label(document),AON.CSS.aonWidth150())
-			.addCell( new Label(AON.MSG.issueDate()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth120())
+			
+			.addCell( new Label( numberLabel ),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth120())
+			.addCell( new Label( numberValue ),AON.CSS.aonWidth150())
+
+			.addCell( new Label(AON.MSG.issueDate()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth200())
 			.addCell( new Label(AON.DATE_FORMAT.format(invoice.getIssueDate())),AON.CSS.aonWidth150())
+			.addCell( new Label())
+			.addCell( new Label())
 			.addCell( new Label() , AON.CSS.aonWidthAuto())
 		;
 		tab.addRow()
-			.addCell( new Label( numberLabel ),AON.CSS.aonBold(),AON.CSS.aonBorderBottom())
-			.addCell( new Label( numberValue ))
+			.addCell( new Label(invoice.getRegistryDocumentType() == null ? "" : invoice.getRegistryDocumentType().getDescription()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth120())
+			.addCell( new Label(document))
 			.addCell( new Label(AON.MSG.document()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom())
 			.addCell( new Label( invoice.getDocumentNumber()))
-			.addCell( new Label(AON.MSG.taxDate()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth120())
-			.addCell( new Label(AON.DATE_FORMAT.format(invoice.getTaxDate())),AON.CSS.aonWidth150())
+			.addCell( new Label(AON.MSG.taxDate()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom())
+			.addCell( new Label(AON.DATE_FORMAT.format(invoice.getTaxDate())))
+			.addCell( new Label(AON.MSG.invoiceTotal()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom())
+			.addCell( new Label(AON.FMT.format( invoice.getTotal())),AON.CSS.aonBold(),AON.CSS.aonFontXLarger())
 			.addCell( new Label() , AON.CSS.aonWidthAuto())
 		;
-		tab.addRow()
-			.addCell( new Label())
-			.addCell( new Label())
-			.addCell( new Label())
-			.addCell( new Label())
-			.addCell( new Label(AON.MSG.invoiceTotal()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom())
-			.addCell( new Label(AON.FMT.format( invoice.getTotal())),AON.CSS.aonBold(),AON.CSS.aonFontLarger())
-			.addCell( new Label() , AON.CSS.aonWidthAuto())
-	;
 		headerContainer.add(tab);
 		container.add(headerContainer);
 	}
@@ -178,24 +170,26 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 			.addCell(new Label( "Dto." ), AON.CSS.aonTextRight(),AON.CSS.aonWidth120())
 			.addCell(new Label( AON.MSG.amount() ), AON.CSS.aonTextRight(),AON.CSS.aonWidth120())
 		;
-		for (InvoiceDetail detail : invoice.getDetails()) {
-			Label descriptionLabel = new Label();
-			String desc = detail.getDescription();
-			if (AonStringUtils.length(desc) > 50) {
-				desc = AonStringUtils.abbreviate(desc, 50);
-				descriptionLabel.setTitle(detail.getDescription());
+		invoice.detailStream()
+			.forEach( detail -> {
+				Label descriptionLabel = new Label();
+				String desc = detail.getDescription();
+				if (AonStringUtils.length(desc) > 50) {
+					desc = AonStringUtils.abbreviate(desc, 50);
+					descriptionLabel.setTitle(detail.getDescription());
+				}
+				descriptionLabel.setText(desc);
+				tab.addRow()
+					.addCell(new Label( "" + detail.getLine() ), AON.CSS.aonTextCenter())
+					.addCell(new Label(detail.getItem() != null?detail.getItem().getProduct().getCode():""))
+					.addCell(descriptionLabel)
+					.addCell(new Label( AON.FMT.format( detail.getQuantity())), AON.CSS.aonTextRight())
+					.addCell(new Label( AON.FMT.format( detail.getPrice()))   , AON.CSS.aonTextRight())
+					.addCell(new Label( AON.FMT.format( detail.getDiscount())), AON.CSS.aonTextRight())
+					.addCell(new Label( AON.FMT.format( detail.getTaxableBase())), AON.CSS.aonTextRight())
+				;
 			}
-			descriptionLabel.setText(desc);
-			tab.addRow()
-				.addCell(new Label( "" + detail.getLine() ), AON.CSS.aonTextCenter())
-				.addCell(new Label(detail.getItem() != null?detail.getItem().getProduct().getCode():""))
-				.addCell(descriptionLabel)
-				.addCell(new Label( AON.FMT.format( detail.getQuantity())), AON.CSS.aonTextRight())
-				.addCell(new Label( AON.FMT.format( detail.getPrice()))   , AON.CSS.aonTextRight())
-				.addCell(new Label( AON.FMT.format( detail.getDiscount())), AON.CSS.aonTextRight())
-				.addCell(new Label( AON.FMT.format( detail.getTaxableBase())), AON.CSS.aonTextRight())
-			;
-		}
+		);
 		detailsContainer.add(tab);
 		container.add(detailsContainer);
 	}

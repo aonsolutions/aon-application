@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationDetailFlat;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -16,6 +17,7 @@ public interface AmortizationService extends RemoteService {
 
 	Amortization get(Occam occam, Integer domain, Integer id) throws AonCoreException;
 	LinkedList<Amortization> get(Occam occam, AmortizationParams params) throws AonCoreException;
+	LinkedList<AmortizationDetailFlat> getFlat(Occam occam, AmortizationParams params) throws AonCoreException;
 	Amortization save(Occam occam, Amortization am) throws AonCoreException;
 	Amortization saveFiscalAllocation (Occam occam, AmortizationDetail detail) throws AonCoreException;
 	void delete(Occam occam, Amortization am) throws AonCoreException;

@@ -95,6 +95,11 @@ export const AMORTIZATION = {
   entryPoint: 'AmortizationModule'
 };
 
+export const ACCOUNTING_AMORTIZATION = {
+  module: GWT_FISCAL,
+  entryPoint: 'AccountingAmortizationModule'
+};
+
 export const AMORTIZATION_TYPE = {
   module: GWT_FISCAL,
   entryPoint: 'AmortizationType'

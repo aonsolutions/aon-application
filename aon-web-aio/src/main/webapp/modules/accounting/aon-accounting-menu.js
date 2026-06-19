@@ -162,6 +162,11 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				title: MSG.NEW_AMORTIZATION_SHEET,
 				action: () => GWT.iLoad(GWT.AMORTIZATION)
 			},{
+//				description: MSG.NEW_ACCOUNTING_AMORTIZATION_SHEET,
+//				disabled: !this.isBeta(),
+//				title: MSG.NEW_ACCOUNTING_AMORTIZATION_SHEET,
+//				action: () => GWT.iLoad(GWT.ACCOUNTING_AMORTIZATION)
+//			},{
 				description: MSG.AMORTIZATION_TYPE_TABLE,
 				title: MSG.AMORTIZATION_TYPE_TABLE,
 				action: () => GWT.iLoad(GWT.AMORTIZATION_TYPE)

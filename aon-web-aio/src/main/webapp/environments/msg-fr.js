@@ -746,6 +746,7 @@ export const MOVEMENTS_LIST = 'Liste des Mouvements';
 export const NAME = 'Nombre';
 export const NEW = 'Nouveau';
 export const NEW_AMORTIZATION_SHEET = "[NOUVEAU] Fiche d'amortissement";
+export const NEW_ACCOUNTING_AMORTIZATION_SHEET = "[NOUVEAU] Écritures d'amortissement";
 export const NEW_COMPANY = 'Nouvelle Entreprise';
 export const NEW_DOCUMENT = 'Nouveau Document';
 
