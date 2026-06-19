@@ -12,7 +12,7 @@ import { getInvoiceAccounts, getPaymethods } from '../../services/invoiceService
 import { getItems } from '../../services/productService.js';
 import * as ACTION from '../actions.js';
 import { AonInvoice } from './aon-invoice.js';
-import { TaxIVAPercentage, TaxType, Transactions } from './invoiceEnums.js';
+import { TaxIVAPercentage, TaxType, Transactions, WithholdingType } from './invoiceEnums.js';
 import * as LS from '../../services/localStorageService.js';
 
 import {INVOICE} from  '../../services/app.js';
@@ -450,6 +450,29 @@ export class AonMobileInvoice extends AonInvoice {
 			irpf.setDisabled(true);
 		}
 		irpf.checked = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0;
+
+		let irpfDiv = this.createElement(TAG.DIV);
+		card.addContent(irpfDiv);
+
+		let irpfType = createSelect('irpfwithholdingTYpe', 'Tipo IRPF');
+		irpfType.setAlias('id', 'name');
+		if (this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length === 0) {
+			irpfType.disabled = 'true';
+		}
+		irpfType.setOptions(WithholdingType);
+
+		irpfType.addEventListener(EVENT.SELECT, () => {
+			let detail = WithholdingType.find(v => v.id == irpfType.value);
+			this.invoice.withholding = true;
+			this.invoice.setWithholdingType(detail);
+			this.reload();
+		});
+		irpfDiv.appendChild(irpfType);
+		irpfType.readonly = this.invoice.isReadonly();
+		if (this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0) {
+			let val = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax)[0].withholding_type;
+			irpfType.value = val || this.getDefaultWithholdingType();
+		}
 	}
 
 	buildDetailCard(parent) {
