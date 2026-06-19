@@ -1923,7 +1923,7 @@ CREATE TABLE `contract_cost` (
   `contract` int NOT NULL COMMENT 'Contrato',
   `type` tinyint DEFAULT NULL COMMENT 'Tipo de Coste',
   `code` varchar(25) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo',
-  `expression` varchar(512) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Formula',
+  `expression` text CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Formula',
   `description` varchar(128) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL,
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date DEFAULT NULL COMMENT 'Fecha de finalizacion',

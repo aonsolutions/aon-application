@@ -14,6 +14,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_FACTOR
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATIONAL_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
+import static com.esferalia.aon.watson.server.AonDateUtils.getMonthLastDay;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static java.util.Calendar.MONTH;
@@ -889,7 +890,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
-		ContractRecord contract = newContract(aonContext, toSQL(startDate), ssPECs, datas, payments);
+		ContractRecord contract = newContract(aonContext, toSQL(startDate), toSQL(endDate), ssPECs, datas, payments);
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, toSQL(startDate),
 				toSQL(endDate), toSQL(endDate), contract);
@@ -5039,7 +5040,13 @@ public class IdcTest extends AbstractSQLTestCase {
 				new String[] { "1000.00 * DIAS_TRABAJADOS / DIAS_MES", "500.00*DIAS_TRABAJADOS/DIAS_MES", });
 	}
 
-	private ContractRecord newContract(AONContext aonContext, java.sql.Date startDate, Collection<PEC> ssBonuses,
+	private ContractRecord newContract(AONContext aonContext, java.sql.Date startDate,Collection<PEC> ssBonuses,
+			Collection<Data> datas, String[] payments) {
+		return newContract(aonContext, startDate, null, ssBonuses, datas, payments);
+	}
+	
+	
+	private ContractRecord newContract(AONContext aonContext, java.sql.Date startDate,java.sql.Date endDate, Collection<PEC> ssBonuses,
 			Collection<Data> datas, String[] payments) {
 
 		cleanSystemData(aonContext);
@@ -5063,6 +5070,13 @@ public class IdcTest extends AbstractSQLTestCase {
 				put("PORCENTAJE_DESMPL_E", "[ " + "\"100\": 5.50" + "][TC2]");
 
 				put("PORCENTAJE_FOGASA", "0.20");
+
+				put("DIAS_MES", 
+						"[ "
+						+ "\"01\":30, "
+						+ "\"05\":30, "
+						+ "\"11\": DIAS_NATURALES_MES][GRUPO_COTIZACION]"
+						);
 			}
 		});
 		addSystemData(aonContext, getFirstDayOf(2023), null, new HashMap<String, String>() {
@@ -5112,11 +5126,12 @@ public class IdcTest extends AbstractSQLTestCase {
 				"BASE_CGC * PORCENTAJE_DESMPL/100");
 		addSSRegimeDeduction(aonContext, meiConcept, SSRegimeType.GENERAL, getFirstDayOf(2023), "BASE_CGC * PORCENTAJE_MEI/100");
 
-		ContractRecord contract = newContract(aonContext, getFirstDayOfYear(startDate), new HashMap<String, String>() {
+		ContractRecord contract = newContract(aonContext, getFirstDayOfYear(startDate), endDate, new HashMap<String, String>() {
 			{
-				put(ContextVariable.OCCUPATION.getName(), "'h'");
 				put(ContextVariable.TC2.getName(), "'100'");
-				put(ContextVariable.MONTH_DAYS.getName(), "30.00");
+				put(ContextVariable.OCCUPATION.getName(), "'h'");
+				put(ContextVariable.QUOTE_GROUP.getName(), "\"05\"");
+				//put(ContextVariable.MONTH_DAYS.getName(), "30.00");
 			}
 		}, payments, new String[] {
 
@@ -6792,6 +6807,545 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testIdcSEA25() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+	ExpressionException, SQLException, SalaryException, ParseException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcSEA2526.pdf")) {
+			byte[] idc = is.readAllBytes();
+
+			Collection<PEC> ssPECs = Idc.getSSPECs(idc);
+			// 40 TIPO COT. ESPEC. SEA 	100,00 	62 FOGASA-FP/CUOT.TOTAL 22-04-2025 14-05-2026 144
+			// 06 DECREMENTO DE TIPOS 	2,64 	03 CONT.COMUN-C.EMPRESA 22-04-2025 31-12-2025 AKE
+			// 06 DECREMENTO DE TIPOS 	2,40 	03 CONT.COMUN-C.EMPRESA 01-01-2026 14-05-2026 DGK			
+			
+			ssPECs.stream().forEach( sspec -> System.out.println("SSPEC : "+ sspec.getName() + " : " +  sspec.getFormula() ));
+
+			Map<ContextVariable, Collection<IdcContractData>> ssData = Idc.getContractData(idc);
+			Date date = new SimpleDateFormat("dd-MM-yyyy").parse("22-04-2025");
+			Collection<Data> datas = new ArrayList<>();
+			
+			ssData.forEach((var, value) -> {
+				value.forEach(idcContractData -> {
+					Data data = new Data() {
+						{
+							startDate = date;
+							name = var.getName();
+							startDate = idcContractData.startDate();
+							endDate = idcContractData.endDate();
+							expression = var.getName().startsWith("PORCENTAJE") ? 
+									String.valueOf(idcContractData.data()) : 
+									String.format("\"%s\"", idcContractData.data());
+						}
+					};
+					System.out.println("DATA : " + data.name	 + " : " + data.expression + " : " + data.startDate + " : " + data.endDate);
+					datas.add(data);
+				});
+			});
+
+			datas.add(new Data() {
+				{
+					expression = "0.03";
+					startDate = date;
+					name = "PORCENTAJE_FP";
+				}
+			});
+			datas.add(new Data() {
+				{
+					expression = "0.15";
+					startDate = date;
+					name = "PORCENTAJE_FP_E";
+				}
+			});
+			datas.add(new Data() {
+				{
+					expression = "0.13";
+					startDate = date;
+					name = "PORCENTAJE_MEI";
+				}
+			});
+			datas.add(new Data() {
+				{
+					expression = "0.67";
+					startDate = date;
+					name = "PORCENTAJE_MEI_E";
+				}
+			});
+			datas.add(new Data() {
+				{
+					expression = "0.10";
+					startDate = date;
+					name = "PORCENTAJE_FOGASA";
+				}
+			});
+
+			datas.add(new Data() {
+				{
+					expression = "3";
+					startDate = date;
+					name = "JORNADAS_REALES";
+				}
+			});
+
+			Date january2025 = new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2025");
+
+			datas.add(new Data() {
+				{
+					expression = "7.45";
+					startDate = january2025;
+					name = "CGC_E_MIN_DIA";
+				}
+			});
+
+
+			Date december2025 = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2025");
+
+			Salary salary = calculate(
+					ssPECs, 
+					datas, 
+					new String[] {
+							"180.15"
+					} , 
+					december2025, 
+					getMonthLastDay(december2025) );
+			
+			
+			double cgcBase = salary.getCommonBase();
+			double cgpBase = salary.getProfessionalBase();
+
+			double totalDeduction = 0.00;
+			for (SalaryDeduction deduction : salary.getSalaryDeductions()) {
+				totalDeduction += deduction.getAmount();
+				System.out.println(deduction.getName() + ": " + deduction.getAmount() + " (" + deduction.getExpression() + ")");
+			}
+			System.out.println("CUOTA TRABAJADOR :" + totalDeduction);
+			assertEquals(8.47 + 2.79 + 0.05 + 0.23, salary.getSocialSecurityContributions(), DELTA);
+
+			double totalCost = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				totalCost += cost.getAmount();
+				System.out.println(cost.getName() + ": " + cost.getAmount());
+			}
+
+			assertEquals(0, salary.getSalaryBonus().size());
+
+			System.out.println("CUOTA EMPRESARIAL :" + totalCost);
+
+			assertEquals(38.60, salary.getTotalEnterprise(), DELTA);
+		}
+	}
+
+	@Test
+	public void testIdcSEA26() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+	ExpressionException, SQLException, SalaryException, ParseException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcSEA2526.pdf")) {
+			byte[] idc = is.readAllBytes();
+
+			Collection<PEC> ssPECs = Idc.getSSPECs(idc);
+			// 40 TIPO COT. ESPEC. SEA 	100,00 	62 FOGASA-FP/CUOT.TOTAL 22-04-2025 14-05-2026 144
+			// 06 DECREMENTO DE TIPOS 	2,64 	03 CONT.COMUN-C.EMPRESA 22-04-2025 31-12-2025 AKE
+			// 06 DECREMENTO DE TIPOS 	2,40 	03 CONT.COMUN-C.EMPRESA 01-01-2026 14-05-2026 DGK			
+			
+			ssPECs.stream().forEach( sspec -> System.out.println("SSPEC : "+ sspec.getName() + " : " +  sspec.getFormula() ));
+
+			Map<ContextVariable, Collection<IdcContractData>> ssData = Idc.getContractData(idc);
+			Date date = new SimpleDateFormat("dd-MM-yyyy").parse("22-04-2025");
+			Collection<Data> datas = new ArrayList<>();
+			
+			ssData.forEach((var, value) -> {
+				value.forEach(idcContractData -> {
+					Data data = new Data() {
+						{
+							startDate = date;
+							name = var.getName();
+							startDate = idcContractData.startDate();
+							endDate = idcContractData.endDate();
+							expression = var.getName().startsWith("PORCENTAJE") ? 
+									String.valueOf(idcContractData.data()) : 
+									String.format("\"%s\"", idcContractData.data());
+						}
+					};
+					System.out.println("DATA : " + data.name	 + " : " + data.expression + " : " + data.startDate + " : " + data.endDate);
+					datas.add(data);
+				});
+			});
+
+			datas.add(new Data() {
+				{
+					expression = "0.03";
+					startDate = date;
+					name = "PORCENTAJE_FP";
+				}
+			});
+			datas.add(new Data() {
+				{
+					expression = "0.15";
+					startDate = date;
+					name = "PORCENTAJE_FP_E";
+				}
+			});
+			datas.add(new Data() {
+				{
+					expression = "0.15";
+					startDate = date;
+					name = "PORCENTAJE_MEI";
+				}
+			});
+			datas.add(new Data() {
+				{
+					expression = "0.75";
+					startDate = date;
+					name = "PORCENTAJE_MEI_E";
+				}
+			});
+			datas.add(new Data() {
+				{
+					expression = "0.10";
+					startDate = date;
+					name = "PORCENTAJE_FOGASA";
+				}
+			});
+
+			datas.add(new Data() {
+				{
+					expression = "2";
+					startDate = date;
+					name = "JORNADAS_REALES";
+				}
+			});
+			
+			
+			Date january2026 = new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2026");
+			datas.add(new Data() {
+				{
+					expression = "8.16";
+					startDate = january2026;
+					name = "CGC_E_MIN_DIA";
+				}
+			});
+			
+		    Connection connection = getConnection();
+		    AONContext aonContext = new AONContext(connection);
+
+			Salary salary = calculate(
+					ssPECs, 
+					datas, 
+					new String[] {
+							"123.86"
+					} , 
+					january2026, 
+					getMonthLastDay(january2026) );
+			
+			
+			double cgcBase = salary.getCommonBase();
+			double cgpBase = salary.getProfessionalBase();
+
+			double totalDeduction = 0.00;
+			for (SalaryDeduction deduction : salary.getSalaryDeductions()) {
+				totalDeduction += deduction.getAmount();
+				System.out.println(deduction.getName() + ": " + deduction.getAmount() + " (" + deduction.getExpression() + ")");
+			}
+			System.out.println("CUOTA TRABAJADOR :" + totalDeduction);
+			assertEquals(5.82 + 1.92 + 0.04 + 0.19, salary.getSocialSecurityContributions(), DELTA);
+
+			double totalCost = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				totalCost += cost.getAmount();
+				System.out.println(cost.getName() + ": " + cost.getAmount());
+			}
+
+			assertEquals(0, salary.getSalaryBonus().size());
+
+			System.out.println("CUOTA EMPRESARIAL :" + totalCost);
+
+			assertEquals(27.58, salary.getTotalEnterprise(), DELTA);
+		}
+	}
+
+	@Test
+	public void testIdcSEA26II() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+	ExpressionException, SQLException, SalaryException, ParseException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcSEA2526.pdf")) {
+			byte[] idc = is.readAllBytes();
+
+			Collection<PEC> ssPECs = Idc.getSSPECs(idc);
+			// 40 TIPO COT. ESPEC. SEA 	100,00 	62 FOGASA-FP/CUOT.TOTAL 22-04-2025 14-05-2026 144
+			// 06 DECREMENTO DE TIPOS 	2,64 	03 CONT.COMUN-C.EMPRESA 22-04-2025 31-12-2025 AKE
+			// 06 DECREMENTO DE TIPOS 	2,40 	03 CONT.COMUN-C.EMPRESA 01-01-2026 14-05-2026 DGK			
+			
+			ssPECs.stream().forEach( sspec -> System.out.println("SSPEC : "+ sspec.getName() + " : " +  sspec.getFormula() ));
+
+			Map<ContextVariable, Collection<IdcContractData>> ssData = Idc.getContractData(idc);
+			Date date = new SimpleDateFormat("dd-MM-yyyy").parse("22-04-2025");
+			Collection<Data> datas = new ArrayList<>();
+			
+			ssData.forEach((var, value) -> {
+				value.forEach(idcContractData -> {
+					Data data = new Data() {
+						{
+							startDate = date;
+							name = var.getName();
+							startDate = idcContractData.startDate();
+							endDate = idcContractData.endDate();
+							expression = var.getName().startsWith("PORCENTAJE") ? 
+									String.valueOf(idcContractData.data()) : 
+									String.format("\"%s\"", idcContractData.data());
+						}
+					};
+					System.out.println("DATA : " + data.name	 + " : " + data.expression + " : " + data.startDate + " : " + data.endDate);
+					datas.add(data);
+				});
+			});
+
+			datas.add(new Data() {
+				{
+					expression = "0.03";
+					startDate = date;
+					name = "PORCENTAJE_FP";
+				}
+			});
+			datas.add(new Data() {
+				{
+					expression = "0.15";
+					startDate = date;
+					name = "PORCENTAJE_FP_E";
+				}
+			});
+			datas.add(new Data() {
+				{
+					expression = "0.15";
+					startDate = date;
+					name = "PORCENTAJE_MEI";
+				}
+			});
+			datas.add(new Data() {
+				{
+					expression = "0.75";
+					startDate = date;
+					name = "PORCENTAJE_MEI_E";
+				}
+			});
+			datas.add(new Data() {
+				{
+					expression = "0.10";
+					startDate = date;
+					name = "PORCENTAJE_FOGASA";
+				}
+			});
+
+			
+//			datas.add(new Data() {
+//				{
+//					expression = "1";
+//					startDate = AonDateUtils.addDays(date, 5);
+//					name = "JORNADAS_REALES";
+//				}
+//			});
+			
+			Date january2026 = new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2026");
+
+			datas.add(new Data() {
+				{
+					expression = "8.16";
+					startDate = january2026;
+					name = "CGC_E_MIN_DIA";
+				}
+			});
+			datas.add(new Data() {
+				{
+					expression = "1";
+					endDate = january2026;
+					startDate = january2026;
+					name = "JORNADAS_REALES";
+				}
+			});
+
+			datas.add(new Data() {
+				{
+					expression = "1";
+					endDate =AonDateUtils.getLastDayOfMonth(january2026);
+					startDate = AonDateUtils.getLastDayOfMonth(january2026);
+					name = "JORNADAS_REALES";
+				}
+			});
+			
+			Salary salary = calculate(
+					ssPECs, 
+					datas, 
+					new String[] {
+							"123.86"
+					} , 
+					january2026, 
+					getMonthLastDay(january2026) );
+			
+			
+			double cgcBase = salary.getCommonBase();
+			double cgpBase = salary.getProfessionalBase();
+
+			double totalDeduction = 0.00;
+			for (SalaryDeduction deduction : salary.getSalaryDeductions()) {
+				totalDeduction += deduction.getAmount();
+				System.out.println(deduction.getName() + ": " + deduction.getAmount() + " (" + deduction.getExpression() + ")");
+			}
+			System.out.println("CUOTA TRABAJADOR :" + totalDeduction);
+			assertEquals(5.82 + 1.92 + 0.04 + 0.19, salary.getSocialSecurityContributions(), DELTA);
+
+			double totalCost = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				totalCost += cost.getAmount();
+				System.out.println(cost.getName() + ": " + cost.getAmount());
+			}
+
+			assertEquals(0, salary.getSalaryBonus().size());
+
+			System.out.println("CUOTA EMPRESARIAL :" + totalCost);
+
+			assertEquals(27.58, salary.getTotalEnterprise(), DELTA);
+		}
+	}
+
+	@Test
+	public void testIdcSEA26III() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+	ExpressionException, SQLException, SalaryException, ParseException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcSEA2526.pdf")) {
+			byte[] idc = is.readAllBytes();
+
+			Collection<PEC> ssPECs = Idc.getSSPECs(idc);
+			// 40 TIPO COT. ESPEC. SEA 	100,00 	62 FOGASA-FP/CUOT.TOTAL 22-04-2025 14-05-2026 144
+			// 06 DECREMENTO DE TIPOS 	2,64 	03 CONT.COMUN-C.EMPRESA 22-04-2025 31-12-2025 AKE
+			// 06 DECREMENTO DE TIPOS 	2,40 	03 CONT.COMUN-C.EMPRESA 01-01-2026 14-05-2026 DGK			
+			
+			ssPECs.stream().forEach( sspec -> System.out.println("SSPEC : "+ sspec.getName() + " : " +  sspec.getFormula() ));
+
+			Map<ContextVariable, Collection<IdcContractData>> ssData = Idc.getContractData(idc);
+			Date date = new SimpleDateFormat("dd-MM-yyyy").parse("22-04-2025");
+			Collection<Data> datas = new ArrayList<>();
+			
+			ssData.forEach((var, value) -> {
+				value.forEach(idcContractData -> {
+					Data data = new Data() {
+						{
+							startDate = date;
+							name = var.getName();
+							startDate = idcContractData.startDate();
+							endDate = idcContractData.endDate();
+							expression = var.getName().startsWith("PORCENTAJE") ? 
+									String.valueOf(idcContractData.data()) : 
+									String.format("\"%s\"", idcContractData.data());
+						}
+					};
+					System.out.println("DATA : " + data.name	 + " : " + data.expression + " : " + data.startDate + " : " + data.endDate);
+					datas.add(data);
+				});
+			});
+
+			datas.add(new Data() {
+				{
+					expression = "0.03";
+					startDate = date;
+					name = "PORCENTAJE_FP";
+				}
+			});
+			datas.add(new Data() {
+				{
+					expression = "0.15";
+					startDate = date;
+					name = "PORCENTAJE_FP_E";
+				}
+			});
+			datas.add(new Data() {
+				{
+					expression = "0.15";
+					startDate = date;
+					name = "PORCENTAJE_MEI";
+				}
+			});
+			datas.add(new Data() {
+				{
+					expression = "0.75";
+					startDate = date;
+					name = "PORCENTAJE_MEI_E";
+				}
+			});
+			datas.add(new Data() {
+				{
+					expression = "0.10";
+					startDate = date;
+					name = "PORCENTAJE_FOGASA";
+				}
+			});
+
+
+			
+			Date january2026 = new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2026");
+
+			datas.add(new Data() {
+				{
+					expression = "8.16";
+					startDate = january2026;
+					name = "CGC_E_MIN_DIA";
+				}
+			});
+
+			datas.add(new Data() {
+				{
+					expression = "\"10\"";
+					startDate = january2026;
+					name = "GRUPO_COTIZACION";
+				}
+			});
+
+			datas.add(new Data() {
+				{
+					expression = "1";
+					endDate = new SimpleDateFormat("dd-MM-yyyy").parse("07-05-2026");
+					startDate = new SimpleDateFormat("dd-MM-yyyy").parse("07-05-2026");
+					name = "JORNADAS_REALES";
+				}
+			});
+
+			datas.add(new Data() {
+				{
+					expression = "1";
+					startDate = new SimpleDateFormat("dd-MM-yyyy").parse("14-05-2026");
+					name = "JORNADAS_REALES";
+				}
+			});
+			
+
+			Salary salary = calculate(
+					ssPECs, 
+					datas, 
+					new String[] {
+							"123.86 / 2 * JORNADAS_REALES"
+					} , 
+					new SimpleDateFormat("dd-MM-yyyy").parse("01-05-2026"), 
+					new SimpleDateFormat("dd-MM-yyyy").parse("14-05-2026"));
+			
+			
+			assertEquals(salary.getEndDate(), new SimpleDateFormat("dd-MM-yyyy").parse("14-05-2026"));
+			
+			double totalDeduction = 0.00;
+			for (SalaryDeduction deduction : salary.getSalaryDeductions()) {
+				totalDeduction += deduction.getAmount();
+				System.out.println(deduction.getName() + ": " + deduction.getAmount() + " (" + deduction.getExpression() + ")");
+			}
+			System.out.println("CUOTA TRABAJADOR :" + totalDeduction);
+			assertEquals(5.82 + 1.92 + 0.04 + 0.19, salary.getSocialSecurityContributions(), 0.015);
+
+			double totalCost = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				totalCost += cost.getAmount();
+				System.out.println(cost.getName() + ": " + cost.getAmount());
+			}
+
+			assertEquals(0, salary.getSalaryBonus().size());
+
+			System.out.println("CUOTA EMPRESARIAL :" + totalCost);
+
+			assertEquals(27.58, salary.getTotalEnterprise(), 0.03);
+		}
+	}
+
+	@Test
 	public void testIdc0913() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
 			ExpressionException, SQLException, SalaryException, ParseException {
 
@@ -6967,6 +7521,13 @@ public class IdcTest extends AbstractSQLTestCase {
 					expression = "3525.14";
 				}
 			});
+			datas.add( new Data() {
+				{
+					startDate = date;
+					name = "CGC_E_MIN_MES";
+					expression = "163.84";
+				}
+			});
 			
 			Salary salary = calculate(ssPECs, datas, date );
 			
@@ -7065,6 +7626,13 @@ public class IdcTest extends AbstractSQLTestCase {
 					startDate = date;
 					name = ContextVariable.CGP_BASE_MAX.getName();
 					expression = "1488.02";
+				}
+			});
+			datas.add( new Data() {
+				{
+					startDate = date;
+					name = "CGC_E_MIN_MES";
+					expression = "163.84";
 				}
 			});
 			
@@ -7168,6 +7736,14 @@ public class IdcTest extends AbstractSQLTestCase {
 				});
 			});
 
+			datas.add( new Data() {
+				{
+					expression = "163.84";
+					name = "CGC_E_MIN_MES";
+					startDate = date;
+				}
+			});
+
 		    java.sql.Date salaryStartDate = toSQL(AonDateUtils.getFirstDayOfMonth(date));
 		    java.sql.Date salaryEndDate = toSQL(AonDateUtils.getLastDayOfMonth(date));
 			datas.add( new Data() {
@@ -7227,7 +7803,6 @@ public class IdcTest extends AbstractSQLTestCase {
 				}
 			});
 			
-
 
 		    Connection connection = getConnection();
 		    AONContext aonContext = new AONContext(connection);

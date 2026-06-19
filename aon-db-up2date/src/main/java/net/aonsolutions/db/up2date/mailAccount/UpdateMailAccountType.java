@@ -34,12 +34,49 @@ public class UpdateMailAccountType implements Update {
 		
 		dslContext.transaction( (config) -> {
 			
+			/*
+			 * YA SE HA EJECUTADO CON ANTERIORIDAD
+			 * 
+			 * 
 			int typeUserUpdates = config.dsl().update(MAIL_ACCOUNT)
 					.set(MAIL_ACCOUNT.TYPE, (byte)0) // Usuario
+					.where(MAIL_ACCOUNT.PROTOCOL.eq("aon"))
 					.execute();
 				
 				
 			System.out.printf("%d mailAccount user type updates \r\n", typeUserUpdates );
+			*/
+			
+			/*
+			 * Las siguiente Updates se pueden ejecutar como arreglo varias veces, previe nulls que existan
+			 * */
+			
+			int dafaultIncomingPort = config.dsl().update(MAIL_ACCOUNT)
+					.set(MAIL_ACCOUNT.INCOMING_PORT, 0) // Port by default
+					.where(MAIL_ACCOUNT.PROTOCOL.eq("aon"))
+					.and(MAIL_ACCOUNT.INCOMING_PORT.isNull())
+					.execute();
+				
+				
+			System.out.printf("%d mailAccount default incoming port updates \r\n", dafaultIncomingPort );
+			
+			int dafaultOutgoingPort = config.dsl().update(MAIL_ACCOUNT)
+					.set(MAIL_ACCOUNT.OUTGOING_PORT, 25) // Port by default
+					.where(MAIL_ACCOUNT.PROTOCOL.eq("aon"))
+					.and(MAIL_ACCOUNT.OUTGOING_PORT.isNull())
+					.execute();
+				
+				
+			System.out.printf("%d mailAccount default outgoing port updates \r\n", dafaultOutgoingPort );
+			
+			int dafaultAccount = config.dsl().update(MAIL_ACCOUNT)
+					.set(MAIL_ACCOUNT.DEFAULT_ACCOUNT, (byte)0) // Port by default
+					.where(MAIL_ACCOUNT.PROTOCOL.eq("aon"))
+					.and(MAIL_ACCOUNT.DEFAULT_ACCOUNT.isNull())
+					.execute();
+				
+				
+			System.out.printf("%d mailAccount default accounts updates \r\n", dafaultAccount );
 			
 		});
 	}
