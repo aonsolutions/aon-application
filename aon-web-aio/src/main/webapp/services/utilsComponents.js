@@ -117,8 +117,8 @@ export const createSpan = (properties)=> newComponent({
    * @param {*} classes 
    */
   export const setClasses = (element,classes) => {
-    if(element && classes) 
-      classes.forEach(cl => element.classList.add(cl));
+    if(element && classes)
+      classes.forEach(cl => { if(cl) element.classList.add(cl); });
     return element;
   }
   

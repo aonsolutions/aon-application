@@ -9,8 +9,8 @@ export const createFormEvent = (id, parent) => {
     const form = CreateComponent.createForm(id+"Form");
     parent.appendChild(form);
     
-    const className = parent.isMobile() ? "" : CSS.AON_SUB_CONTENT;
-    const div = createDiv({id: id+"Div",classes:[className]});
+    const classes = parent.isMobile() ? [] : [CSS.AON_SUB_CONTENT];
+    const div = createDiv({id: id+"Div",classes});
     form.appendChild(div.element)
 
     let divC;
