@@ -2,7 +2,9 @@ package com.esferalia.aon.occam.api.model.accounting;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class AmortizationInvoice implements Serializable {
 	
@@ -12,7 +14,7 @@ public class AmortizationInvoice implements Serializable {
 	private Integer domain;
 	private Amortization amortization;
 	private Invoice invoice;
-	private Integer accountEntryId;
+	private AccountEntry accountEntry;
 	
 	public Integer getId() {
 		return id;
@@ -46,12 +48,19 @@ public class AmortizationInvoice implements Serializable {
 		return this;
 	}
 	
-	public Integer getAccountEntryId() {
-		return accountEntryId;
+	public AccountEntry getAccountEntry() {
+		return accountEntry;
 	}
-	public AmortizationInvoice setAccountEntryId(Integer accountEntryId) {
-		this.accountEntryId = accountEntryId;
+	public AmortizationInvoice setAccountEntry(AccountEntry accountEntry) {
+		this.accountEntry= accountEntry;
 		return this;
 	}
-	
+	public boolean isFixedAssetInAccountEntry() {
+		return accountEntry != null 
+			&& amortization != null
+			&& amortization.getFixedAssetAccount() != null
+			&& accountEntry.getDetailsStream()
+			.anyMatch( d -> AonNumberUtils.equals(d.getAccountId(), amortization.getFixedAssetAccount().getId()) );
+			
+	}
 }

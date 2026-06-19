@@ -731,6 +731,7 @@ export const MOVEMENTS_LIST = 'Bewegungsliste';
 export const NAME = 'Name';
 export const NEW = 'Neu';
 export const NEW_AMORTIZATION_SHEET = '[NEU] Abschreibungsblatt';
+export const NEW_ACCOUNTING_AMORTIZATION_SHEET = '[NEU] Abschreibungsbuchungen';
 export const NEW_COMPANY = 'Neue Company';
 export const NEW_DOCUMENT = 'Neues Dokument';
 export const NEW_ELABORATION = 'Neue Ausarbeitung';

@@ -3,8 +3,8 @@ package com.esferalia.aon.occam.api.model.eccounting;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.InvestAsset;
+import com.esferalia.aon.occam.api.model.type.AmortizationDetailStatus;
 import com.esferalia.aon.occam.api.model.type.AmortizationPeriod;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
@@ -17,10 +17,10 @@ public class AmortizationParams implements Serializable {
 	private Integer domain;
 	private Integer activity;
 	
-	private InvestAsset investAsset;
-	private Account allocationAccount;
-	private Account accumulatedAccount;
-	private Account fixedAssetAccount;
+	private Integer investAsset;
+	private Integer allocationAccount;
+	private Integer accumulatedAccount;
+	private Integer fixedAssetAccount;
 	private String description;
 	private Date initialDate;
 	private Date deadline;
@@ -28,8 +28,9 @@ public class AmortizationParams implements Serializable {
 	private AmortizationPeriod feePeriod;
 	private Double saleAmount;
 	private String comments;
-	private double percentage;
+	private Double percentage;
 	private SecurityLevel securityLevel;
+	private AmortizationDetailStatus status;
 
 	private int offset;
 	private int limit = 50;
@@ -66,34 +67,34 @@ public class AmortizationParams implements Serializable {
 		return this;
 	}
 	
-	public InvestAsset getInvestAsset() {
+	public Integer getInvestAsset() {
 		return investAsset;
 	}
-	public AmortizationParams setInvestAsset(InvestAsset investAsset) {
+	public AmortizationParams setInvestAsset(Integer investAsset) {
 		this.investAsset = investAsset;
 		return this;
 	}
 	
-	public Account getAllocationAccount() {
+	public Integer getAllocationAccount() {
 		return allocationAccount;
 	}
-	public AmortizationParams setAllocationAccount(Account allocationAccount) {
+	public AmortizationParams setAllocationAccount(Integer allocationAccount) {
 		this.allocationAccount = allocationAccount;
 		return this;
 	}
 	
-	public Account getAccumulatedAccount() {
+	public Integer getAccumulatedAccount() {
 		return accumulatedAccount;
 	}
-	public AmortizationParams setAccumulatedAccount(Account accumulatedAccount) {
+	public AmortizationParams setAccumulatedAccount(Integer accumulatedAccount) {
 		this.accumulatedAccount = accumulatedAccount;
 		return this;
 	}
 	
-	public Account getFixedAssetAccount() {
+	public Integer getFixedAssetAccount() {
 		return fixedAssetAccount;
 	}
-	public AmortizationParams setFixedAssetAccount(Account fixedAssetAccount) {
+	public AmortizationParams setFixedAssetAccount(Integer fixedAssetAccount) {
 		this.fixedAssetAccount = fixedAssetAccount;
 		return this;
 	}
@@ -154,10 +155,10 @@ public class AmortizationParams implements Serializable {
 		return this;
 	}
 	
-	public double getPercentage() {
+	public Double getPercentage() {
 		return percentage;
 	}
-	public AmortizationParams setPercentage(double percentage) {
+	public AmortizationParams setPercentage(Double percentage) {
 		this.percentage = percentage;
 		return this;
 	}
@@ -167,6 +168,14 @@ public class AmortizationParams implements Serializable {
 	}
 	public AmortizationParams setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
+		return this;
+	}
+	
+	public AmortizationDetailStatus getStatus() {
+		return status;
+	}
+	public AmortizationParams setStatus(AmortizationDetailStatus status) {
+		this.status = status;
 		return this;
 	}
 	

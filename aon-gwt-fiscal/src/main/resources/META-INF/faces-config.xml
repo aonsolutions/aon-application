@@ -296,6 +296,10 @@
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/amortization.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>gwt_accounting_amortization</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/accounting_amortization.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>gwt_amortization_type</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/amortizationType.xhtml</to-view-id>
 		</navigation-case>

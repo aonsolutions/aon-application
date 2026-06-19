@@ -1,6 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.amortization;
 
+import java.util.Objects;
+
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.Wnd;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
@@ -49,7 +52,7 @@ public class AmortizationPanel extends AonLayoutPanel {
 	
 	private final AonToolbar toolbar = new AonToolbar(AON.MSG.amortizationModule()); 
 	private final AonToolbarButton resetButton = new AonToolbarButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
-	private final AonToolbarButton backButton = new AonToolbarButton(AON.MSG.cancelAction(), AON.CSS.aonIconBack());
+	private final AonToolbarButton backButton = new AonToolbarButton(AON.MSG.backToListAction(), AON.CSS.aonIconBack());
 
 	private AonToolbarButton saveButton;
 	private AonToolbarButton deleteButton;
@@ -88,7 +91,7 @@ public class AmortizationPanel extends AonLayoutPanel {
 	
 		deckPanel.setStyleName(AON.CSS.aonSelector());
 		this.add(deckPanel);
-		
+
 		// Table Panel
 		tablePanel.setStyleName(AON.CSS.aonSelector());
 		deckPanel.add(tablePanel);
@@ -96,6 +99,19 @@ public class AmortizationPanel extends AonLayoutPanel {
 		// Form Panel
 		formPanel.setStyleName(AON.CSS.aonSelector());
 		deckPanel.add(formPanel);
+
+		this.addAttachHandler(e -> {
+			Wnd.consoleLog("AmortizationPanel attached, adjusting layout...");
+			
+			Wnd.getCSSOptionalVariable(toolbar, "height-adjust")
+				.map( AonNumberUtils::toInteger ).filter(Objects::nonNull)
+				.ifPresent( height -> this.setWidgetSize(toolbar, height) );
+		
+			Wnd.getCSSOptionalVariable(deckPanel, "width-adjust")
+				.map( AonNumberUtils::toInteger ).filter(Objects::nonNull)
+				.ifPresent( width -> this.setWidgetSize(deckPanel, width) );
+		
+		});
 
 		showTable( opts );
 		
