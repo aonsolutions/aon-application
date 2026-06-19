@@ -18,8 +18,20 @@ Requires python3 with fontTools and brotli (pip install fonttools brotli).
 import math
 import sys
 from fontTools.ttLib import TTFont, newTable
-from fontTools.ttLib.tables._f_v_a_r import Axis
+from fontTools.ttLib.tables._f_v_a_r import Axis, NamedInstance
 from fontTools.ttLib.tables.TupleVariation import TupleVariation
+from fontTools.otlLib.builder import buildStatTable
+
+# wght value -> subfamily name, for fvar named instances and the STAT table.
+WEIGHTS = [
+    (100, 'Thin'),
+    (200, 'ExtraLight'),
+    (300, 'Light'),
+    (400, 'Regular'),
+    (500, 'Medium'),
+    (600, 'SemiBold'),
+    (700, 'Bold'),
+]
 
 LIGHT_OFFSET = -27.1  # per-side stroke offset at wght 100
 BOLD_OFFSET = 24.0    # per-side stroke offset at wght 700
@@ -114,7 +126,14 @@ def main(path):
     axis.flags = 0
     axis.axisNameID = font['name'].addName('Weight', minNameID=255)
     fvar.axes = [axis]
+    # Named instances: Safari/CoreText is strict about variable fonts and
+    # needs concrete weight definitions to instantiate them.
     fvar.instances = []
+    for value, label in WEIGHTS:
+        inst = NamedInstance()
+        inst.subfamilyNameID = font['name'].addName(label, minNameID=255)
+        inst.coordinates = {'wght': float(value)}
+        fvar.instances.append(inst)
     font['fvar'] = fvar
 
     gvar = newTable('gvar')
@@ -131,6 +150,18 @@ def main(path):
         ]
         count += 1
     font['gvar'] = gvar
+
+    # STAT table: required by the OpenType spec for every variable font.
+    # Without it Safari/WebKit (CoreText) refuses to instantiate the wght
+    # axis and renders the font at the wrong weight or falls back entirely,
+    # leaving the ligature names showing as literal text. Chrome/Firefox are
+    # lenient and work without it, which is why the bug is Safari-only.
+    buildStatTable(font, [
+        dict(tag='wght', name='Weight', values=[
+            dict(value=value, name=label, flags=(0x2 if value == 400 else 0))
+            for value, label in WEIGHTS
+        ]),
+    ])
 
     font.flavor = 'woff2'
     font.save(path)
