@@ -663,6 +663,8 @@ export const MESSAGES = 'Mensajes';
 // ----- M
 
 export const MAILBOX = 'Buzón';
+export const MAIL_ACCOUNT = 'Cuentas Correo';
+export const MAIL_ACCOUNT_SIGNATURES = 'Firmas Correo';
 export const MARKETING = 'Marketing';
 export const MARK_ENTRY = 'Marcar Entrada';
 export const MARK_EXIT = 'Marcar Salida';

@@ -664,6 +664,8 @@ export const MESSAGES = 'Messages';
 // ----- M
 
 export const MAILBOX = 'Mailbox';
+export const MAIL_ACCOUNT = 'Mail Accounts';
+export const MAIL_ACCOUNT_SIGNATURES = 'Mail Account Signatures';
 export const MAIN_TABLES = 'Main Tables';
 export const MAKES = 'Makes';
 export const MASTERS = 'Masters';

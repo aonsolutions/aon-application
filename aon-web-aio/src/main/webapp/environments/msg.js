@@ -685,6 +685,8 @@ export const LOANS = MSG.LOANS;
 
 // ----- M
 
+export const MAIL_ACCOUNT = MSG.MAIL_ACCOUNT;
+export const MAIL_ACCOUNT_SIGNATURES = MSG.MAIL_ACCOUNT_SIGNATURES;
 export const MARK_ENTRY = MSG.MARK_ENTRY;
 export const MARK_EXIT = MSG.MARK_EXIT;
 export const MARKETING = MSG.MARKETING;

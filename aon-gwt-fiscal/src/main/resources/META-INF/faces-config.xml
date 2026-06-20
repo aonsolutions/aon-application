@@ -403,5 +403,21 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	<!-- =================== Mail Account Entry Module ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_mail_account_entry_module</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mailAccount/mailAccountEntryModule.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== Signature Entry Module ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_mail_signature_module</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mailAccount/signatureEntryModule.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 </faces-config>
 		

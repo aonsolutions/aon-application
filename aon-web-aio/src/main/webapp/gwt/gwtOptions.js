@@ -700,6 +700,16 @@ export const REGISTRY_COMPANY_ENTRY_MODULE = {
   entryPoint: 'RegistryCompanyEntryModule'
 };
 
+export const SIGNATURE_ENTRY_MODULE = {
+  module: GWT_FISCAL,
+  entryPoint: 'SignatureEntryModule'
+};
+
+export const MAIL_ACCOUNT_ENTRY_MODULE = {
+  module: GWT_FISCAL,
+  entryPoint: 'MailAccountEntryModule'
+};
+
 export const SYNC_SIG_CUSTOMER_DOMAIN = {
   module: GWT_FISCAL,
   entryPoint: 'SyncSigCustomerDomainModule'

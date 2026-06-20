@@ -731,6 +731,10 @@ input, select, textarea,
     height: 65px !important;
 }
 
+.gwt-Selector div:has( > .aon_no_border_toolbar) > div {
+    height: 50px !important;
+}
+
 .gwt-TabLayoutPanel{
 	margin-left: 0.65rem !important;	
 	margin-right: 0.65rem !important;	
