@@ -18,13 +18,10 @@ import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -41,9 +38,6 @@ public abstract class MailAccountTable extends ScrollPanel {
 	
 	private HTMLPanel content;
 	
-	private HTMLPanel filterPanel;
-	private AonCustomTextBox textFilter = new AonCustomTextBox("Filtrar (descripci\u00f3n, email...)");
-	
 	private SimplePanel container;
 	private ScrollPanel scrollPanel;
 	private AonCustomTable tab;
@@ -59,7 +53,10 @@ public abstract class MailAccountTable extends ScrollPanel {
 	private HashMap<Integer, MailAccount> mailAccounts = new HashMap<Integer, MailAccount>();
 	private HashMap<Integer, Boolean> checkVeficationStatus = new HashMap<Integer, Boolean>();
 	
-	private boolean showUserEmails = true;
+	//private boolean showUserEmails = true;
+	private boolean showAdd = true;
+	private String searchPattern = null;
+	private String typeFilter = "all";
 	
 	private static enum COLS {
 		  TYP("Tipo"								, "5rem"			, "max-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -91,25 +88,19 @@ public abstract class MailAccountTable extends ScrollPanel {
 		}
 	}
 	
-	public MailAccountTable(String domainName, int domain, String user) {
+	public MailAccountTable(String domainName, int domain, String user, boolean showAdd) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		this.domainName = domainName;
 		this.domain = domain;
 		this.user = user;
+		this.showAdd = showAdd;
 		
 		content = new HTMLPanel("");
 		content.addStyleName(AON.CSS.aonFlexColumn2());
-		
-		filterPanel = new HTMLPanel("");
-		filterPanel.addStyleName(AON.CSS.aonItemFlex());
-		filterPanel.getElement().getStyle().setProperty("margin-left", "auto");
-		filterPanel.getElement().getStyle().setProperty("width", "16rem");
-		content.add(filterPanel);
 
 		container = new SimplePanel();
-		container.getElement().getStyle().setProperty("max-height", "200px");
 		container.getElement().getStyle().setProperty("padding-left", "1px");		
 		content.add(container);
 		
@@ -121,14 +112,6 @@ public abstract class MailAccountTable extends ScrollPanel {
 	private void loadData() {
 		getSignatures(end -> {
 			getList(mails -> {
-				
-				if(mails.size() > 9) {
-					filterPanel.getElement().getStyle().clearDisplay();
-				} else {
-					filterPanel.getElement().getStyle().setDisplay(Display.NONE);
-				}
-				
-				createFilterPanel();
 				onSearch();
 				
 				checkMailAccounts(checkMailAccounts -> {
@@ -156,23 +139,6 @@ public abstract class MailAccountTable extends ScrollPanel {
 		});
 	}
 	
-	private void createFilterPanel() {
-		filterPanel.clear();
-		
-		filterPanel.add(textFilter);
-		
-		textFilter.getTextBox().addKeyUpHandler(e -> {
-			String value = textFilter.getValue();
-			if(e.getNativeKeyCode() == KeyCodes.KEY_ENTER || e.getNativeKeyCode() == KeyCodes.KEY_MAC_ENTER) return;
-			
-			if(AonStringUtils.isNotBlank(value) && value.length() > 2) {
-				onSearch();
-			} else if(AonStringUtils.isBlank(value)) {
-				onSearch();
-			}
-		});
-	}
-	
 	public void onSearch() {
 		search();
 	}
@@ -192,7 +158,7 @@ public abstract class MailAccountTable extends ScrollPanel {
 	private void paintHeader() {
 		tab.createHeader();
 		for ( COLS col : COLS.values()) {
-			if(col.equals(COLS.BUT)) {
+			if(this.showAdd && col.equals(COLS.BUT)) {
 				FlowPanel buttonContainer = new FlowPanel();
 				buttonContainer.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 				
@@ -205,7 +171,9 @@ public abstract class MailAccountTable extends ScrollPanel {
 				buttonContainer.add(button);
 				
 				tab.addHeader(buttonContainer, col.getColWidth(), col.getStyles());
-			} else if (col.equals(COLS.TYP)) {
+			} 
+			/*
+			else if (col.equals(COLS.TYP)) {
 				FlowPanel buttonContainer = new FlowPanel();
 				buttonContainer.getElement().getStyle().setTextAlign(TextAlign.LEFT);
 
@@ -221,7 +189,9 @@ public abstract class MailAccountTable extends ScrollPanel {
 				buttonContainer.add(showActive);
 
 				tab.addHeader(buttonContainer, col.getColWidth(), col.getStyles());
-			} else
+			} 
+			*/
+			else
 				tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
 		
 		}
@@ -231,13 +201,18 @@ public abstract class MailAccountTable extends ScrollPanel {
 		boolean something = false;
 		
 		List<MailAccount> mailAccountListTable = mailAccountList.stream()
-				.filter(ma -> showUserEmails || (!showUserEmails && null == ma.getUserId()) )
+				//.filter(ma -> showUserEmails || (!showUserEmails && null == ma.getUserId()) )
 				.filter(ma -> 
-					AonStringUtils.isBlank(textFilter.getValue()) ||
+							AonStringUtils.equalsIgnoreCase(typeFilter, "all")
+						|| (AonStringUtils.equalsIgnoreCase(typeFilter, "enterprise") && null == ma.getUserId()) 
+						|| (AonStringUtils.equalsIgnoreCase(typeFilter, "user") && null != ma.getUserId())
+				)
+				.filter(ma -> 
+					AonStringUtils.isBlank(searchPattern) ||
 					(
-						AonStringUtils.containsIgnoreCase(ma.getDisplayName(), textFilter.getValue()) ||
-						AonStringUtils.containsIgnoreCase(ma.getEmail(), textFilter.getValue()) ||
-						AonStringUtils.containsIgnoreCase(ma.getName(), textFilter.getValue())
+						AonStringUtils.containsIgnoreCase(ma.getDisplayName(), searchPattern) ||
+						AonStringUtils.containsIgnoreCase(ma.getEmail(), searchPattern) ||
+						AonStringUtils.containsIgnoreCase(ma.getName(), searchPattern)
 					)
 				)
 				.collect(Collectors.toList());
@@ -398,7 +373,7 @@ public abstract class MailAccountTable extends ScrollPanel {
 			
 			@Override
 			public void onSuccess(Void result) {
-				onSearch();
+				loadData();
 			}
 			
 			@Override
@@ -430,7 +405,7 @@ public abstract class MailAccountTable extends ScrollPanel {
 		dialog.showLoaded();
 	}
 
-	private void createMailAccount() {
+	public void createMailAccount() {
 		final AonCustomDialog dialog = new AonCustomDialog();
 		dialog.setCaption("Nuevo Email");
 
@@ -451,6 +426,14 @@ public abstract class MailAccountTable extends ScrollPanel {
 		dialog.add(aonSignaturePanel);
 		dialog.showLoaded();
 		
+	}
+	
+	public void setSearchPattern(String searchPattern) {
+		this.searchPattern = searchPattern;
+	}
+	
+	public void setTypeFilter(String typeFilter) {
+		this.typeFilter = typeFilter;
 	}
 
 	protected abstract void onShowErrorMessage(String errorMessage);

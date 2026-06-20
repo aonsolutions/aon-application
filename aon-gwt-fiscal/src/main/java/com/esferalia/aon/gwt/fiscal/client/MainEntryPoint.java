@@ -36,6 +36,8 @@ import com.esferalia.aon.gwt.fiscal.client.finance.paymethod.PayMethodModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilitiesModule;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.vat.VatReport;
+import com.esferalia.aon.gwt.fiscal.client.mailaccount.MailAccountEntryModule;
+import com.esferalia.aon.gwt.fiscal.client.mailaccount.SignatureEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod240.Model240;
 import com.esferalia.aon.gwt.fiscal.client.product.ProductCatalogueModule;
@@ -363,6 +365,14 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== REGISTRY ENTRY
 	//
 	private static final String REGISTRY_COMPANY_ENTRY_MODULE_ENTRY_POINT = "RegistryCompanyEntryModule";
+	//
+	//    ================================================================== MAIL ACCOUNT ENTRY
+	//
+	private static final String MAIL_ACCOUNT_MODULE_ENTRY_POINT = "MailAccountEntryModule";
+	//
+	//    ================================================================== SIGNATURE ENTRY
+	//
+	private static final String SIGNATURE_MODULE_ENTRY_POINT = "SignatureEntryModule";
 	
 	
 	
@@ -1155,6 +1165,36 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					RegistryCompanyEntryModule registryEntryModule = new RegistryCompanyEntryModule();
 					registryEntryModule.onModuleLoad();
+				}
+				
+			});
+		} else if( entryPoint.equalsIgnoreCase(MAIL_ACCOUNT_MODULE_ENTRY_POINT) ) {
+			GWT.runAsync(MailAccountEntryModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					MailAccountEntryModule mailAccountEntryModule = new MailAccountEntryModule();
+					mailAccountEntryModule.onModuleLoad();
+				}
+				
+			});
+		} else if( entryPoint.equalsIgnoreCase(SIGNATURE_MODULE_ENTRY_POINT) ) {
+			GWT.runAsync(SignatureEntryModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					SignatureEntryModule signatureEntryModule = new SignatureEntryModule();
+					signatureEntryModule.onModuleLoad();
 				}
 				
 			});
