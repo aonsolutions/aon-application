@@ -1296,7 +1296,7 @@ public class JooqEnterpriseSalaryBuilder {
 				Double fundaeAmount = 0d;
 				LinkedHashSet<ContractData> removeable = new LinkedHashSet<>();
 				for(ContractData cd : fundaeList) {
-					if (salaryStart.compareTo(cd.getEndDate()) <= 0 && salaryEnd.compareTo(cd.getEndDate()) >= 0) {
+					if (salaryStart.compareTo(cd.getEndDate()) <= 0 && salaryEnd.compareTo(cd.getStartDate()) >= 0) {
 						try {
 							Double value = (-1) * Double.parseDouble(cd.getExpression());
 							fundaeAmount += value;

@@ -403,6 +403,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Volver")
 	String backAction();
 
+	@DefaultMessage("Volver a la lista")
+	String backToListAction();
+
 	@DefaultMessage("Duplicar")
 	String duplicate();
 
@@ -3596,6 +3599,9 @@ public interface CommonMessages extends Messages {
     @AlternateMessage({"=1", "Existe un asiento de n\u00F3minas en el periodo seleccionado. [VER]"})
     String salaryEntryErrorMsg(@PluralCount int count);
     
+    @DefaultMessage("Asiento contable no encontrado")
+    String accountEntryNotFound();
+
     @DefaultMessage("No se pudo comprobar la existencia de asientos")
     String accountEntryReadError();
     
@@ -4066,7 +4072,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Desvincular facturas")
 	String unlinkInvoice();
 
-	@DefaultMessage("\u00BFContinuar con la vinculaci\u00F3n de facturas?")
+	@DefaultMessage("Si contin\u00FAa, la factura se desvincular\u00E1 de la ficha de amortización. \u00BFContinuar?")
+	String confirmUnlinkInvoice();
+
+	@DefaultMessage("Si contin\u00FAa, la factura se vincular\u00E1 a la ficha de amortización. \u00BFContinuar?")
 	String confirmLinkInvoice();
 
 	@DefaultMessage("Facturas vinculadas")
@@ -4465,6 +4474,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Fichas de amortizaci\u00F3n")
 	String amortizationModule();
 
+	@DefaultMessage("Apuntes de amortizaciones")
+	String accountingAmortizationModule();
+
 	@DefaultMessage("Fecha de inicio de utilizaci\u00F3n")
 	String assetInitialDate();
 	
@@ -4510,5 +4522,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Fecha contable")
 	String accountingDate();
+
+	@DefaultMessage("La cuenta de inmovilizado no se refleja en el asiento contable de la factura.")
+	String fixedAssetNotInAccountEntry();
+	
 }
 

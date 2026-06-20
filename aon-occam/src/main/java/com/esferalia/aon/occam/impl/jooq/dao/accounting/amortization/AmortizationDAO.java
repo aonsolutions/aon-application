@@ -26,7 +26,6 @@ import org.jooq.InsertSetMoreStep;
 import org.jooq.Query;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
-import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.AmortizationDetailRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -36,6 +35,7 @@ import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationDetailFlat;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -126,8 +126,74 @@ public class AmortizationDAO {
 	}
 
 	
+	public static Stream<AmortizationDetailFlat> detailStream(AONContext ctx, AmortizationParams params) {
+	    return ctx.getDslContext()
+	        .select()
+	        .from(AMORTIZATION_DETAIL)
+	        .innerJoin(AMORTIZATION).on(AMORTIZATION_DETAIL.AMORTIZATION.eq(AMORTIZATION.ID))
+	        .innerJoin(FIXED_ASSET_ACCOUNT).on(AMORTIZATION.FIXED_ASSET_ACCOUNT.eq(FIXED_ASSET_ACCOUNT.ID))
+	        .innerJoin(ACCUMULATED_ACCOUNT).on(AMORTIZATION.ACCUMULATED_ACCOUNT.eq(ACCUMULATED_ACCOUNT.ID))
+	        .innerJoin(ALLOCATION_ACCOUNT).on(AMORTIZATION.ALLOCATION_ACCOUNT.eq(ALLOCATION_ACCOUNT.ID))
+	        .leftOuterJoin(INVEST_ASSET).on(AMORTIZATION.INVEST_ASSET.eq(INVEST_ASSET.ID))
+    		.and( getCondition(params) )
+    		.orderBy(AMORTIZATION.DESCRIPTION)
+    		.limit(params.getOffset() , params.getLimit())
+	        .fetch()
+	        .stream()
+	        .map( r -> new AmortizationDetailFlat()
+	        		.setAmortization(AmortizationFiller.build(r))
+	        		.setDetail(AmortizationDetailFiller.build(r))
+	        )
+        ;
+	}
+
 	private static Condition getCondition(AmortizationParams params) {
-		return DSL.noCondition();
+		if (params == null) throw new IllegalArgumentException( AonError.EMPTY_DATA.format("Par\u00E1metros de b\u00FAsqueda") );
+		if (params.getDomain() == null) throw new IllegalArgumentException( AonError.EMPTY_DOMAIN.getMessage());
+		Condition c = AMORTIZATION.DOMAIN.eq(params.getDomain());
+		if (params.getInitialDate() != null) {
+			c = c.and(AMORTIZATION.INITIAL_DATE.greaterOrEqual(AonDateUtils.toSql(params.getInitialDate())));
+		}
+		if (params.getDeadline() != null) {
+			c = c.and(AMORTIZATION.DEADLINE.lessOrEqual(AonDateUtils.toSql(params.getDeadline())));
+		}
+		if (params.getInvestAsset() != null) {
+			c = c.and(AMORTIZATION.INVEST_ASSET.eq(params.getInvestAsset()));
+		}
+		if (params.getAllocationAccount() != null) {
+			c = c.and(AMORTIZATION.ALLOCATION_ACCOUNT.eq(params.getAllocationAccount()));
+		}
+		if (params.getFixedAssetAccount() != null) {
+			c = c.and(AMORTIZATION.FIXED_ASSET_ACCOUNT.eq(params.getFixedAssetAccount()));
+		}
+		if (params.getAccumulatedAccount() != null) {
+			c = c.and(AMORTIZATION.ACCUMULATED_ACCOUNT.eq(params.getAccumulatedAccount()));
+		}
+		if (AonStringUtils.isNotBlank(params.getDescription())) {
+			c = c.and(AMORTIZATION.DESCRIPTION.like(AonStringUtils.SQLlike( params.getDescription() )));
+		}
+		if (params.getAmount() != null) {
+			c = c.and(AMORTIZATION.AMOUNT.equal(params.getAmount()));
+		}
+		if (params.getFeePeriod() != null) {
+			c = c.and(AMORTIZATION.FEE_PERIOD.equal((byte)params.getFeePeriod().ordinal()));
+		}
+		if (params.getPercentage() != null) {
+			c = c.and(AMORTIZATION.PERCENTAGE.equal(params.getPercentage()));
+		}
+		if (params.getSecurityLevel() != null) {
+			c = c.and(AMORTIZATION.SECURITY_LEVEL.equal((byte)params.getSecurityLevel().ordinal()));
+		}
+		if (params.getSaleAmount() != null) {
+			c = c.and(AMORTIZATION.SALE_AMOUNT.equal(params.getSaleAmount()));
+		}
+		if (params.getComments() != null) {
+			c = c.and(AMORTIZATION.COMMENTS.like(AonStringUtils.SQLlike(params.getComments())));
+		}
+		if (params.getStatus() != null) {
+			c = c.and(AMORTIZATION_DETAIL.STATUS.equal(params.getStatus().value()));
+		}
+		return c;
 	}
 
 	private static Collector<Record, Map<Integer, Amortization>, Map<Integer, Amortization>> toAmortizationMap() {
@@ -766,13 +832,13 @@ public class AmortizationDAO {
 				.setDomain( domain )
 				.setAmortization( am )
 				.setInvoice( InvoiceDAO.getFullInvoice(ctx, r.getValue(AMORTIZATION_INVOICE.INVOICE)) ))
-			.map( ami -> fillAccountEntryId(ctx, ami) )
+			.map( ami -> fillAccountEntry(ctx, ami) )
 			.collect(Collectors.toCollection(LinkedList::new))
 		;
 		
 	}
 
-	private static AmortizationInvoice fillAccountEntryId(AONContext ctx, AmortizationInvoice ami) {
+	private static AmortizationInvoice fillAccountEntry(AONContext ctx, AmortizationInvoice ami) {
 		if (ami != null && ami.getInvoice() != null) {
 			ctx.getDslContext()
 				.select(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY)
@@ -782,7 +848,7 @@ public class AmortizationDAO {
 				.stream()
 				.map( r -> r.getValue(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY) )
 				.findFirst()
-				.ifPresent( id -> ami.setAccountEntryId(id))
+				.ifPresent( id -> ami.setAccountEntry( AccountEntryDAO.getAccountEntry(ctx,id)))
 			;
 		}
 		return ami;

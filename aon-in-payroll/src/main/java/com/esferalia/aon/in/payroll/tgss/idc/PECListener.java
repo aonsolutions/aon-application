@@ -818,14 +818,22 @@ class PECListener  implements IdcParserListener {
 			//    _                                                             _
 			//   |																 |
 			//   | 8.10% - % reduccion de 2021 a la base mes o jornada de 2025   |
-			// + | ___________________________________________________________   | x 4
+			// + | ___________________________________________________________   | x ( AÑO - 2021 )
 			//   |                                                               |
 			//   |                              10                               |
 			//   |_                                                             _|
 			//
 			
-			String red2021 = String.format("7.36 * ( 1 + ( %1$s - 986.7 / DIAS_MES * DIAS_NOMINA) / %1$s * 2.52 * 6.15 / 7.36 )", baseVar.getName()); 
-			String percent = String.format("SELF.isDef(\"DIAS_TRABAJADOS\") ? ROUND(((SEA_21=%1$s) + (8.1 - SEA_21) / 10 * 4),2) : 18.21", red2021 );
+			String red2021 = String.format(
+					"7.36 "
+					+ "* ( "
+					+ "1 "
+					+ "+ ( (%1$s / (SELF.isDef(\"JORNADAS_REALES\") ? JORNADAS_REALES_TOTALES : 1) ) - (SELF.isDef(\"JORNADAS_REALES\") ? 42.90 : 986.7 / DIAS_MES * DIAS_NOMINA) )"
+					+ 									"/ (%1$s / (SELF.isDef(\"JORNADAS_REALES\") ? JORNADAS_REALES_TOTALES : 1) ) "
+					+ "* 2.52 * 6.15 / 7.36 "
+					+ ")"
+					, baseVar.getName()); 
+			String percent = String.format("SELF.isDef(\"DIAS_TRABAJADOS\") ? ROUND((SEA_21=%1$s) + (8.1 - SEA_21) / 10 * (AÑO(INICIO_NOMINA) - 2021),2) : 18.21", red2021 );
 			
 			Cost cost =  new Cost();	
 			cost.setCcc(ccc);
@@ -834,13 +842,18 @@ class PECListener  implements IdcParserListener {
 			cost.setEndDate(end);
 			cost.setDescription("Reducciones SEA a Cargo TGSS");
 			cost.setFormula(String.format(Locale.ROOT,
-					"/*epoch:%d,pec:%s,quota:%s*//*read-only*/SEA = (%s * ( %s ) / 100.0); ( !SELF.isDef(\"DIAS_TRABAJADOS\") || (%s - SEA ) > L=(163.84 / DIAS_MES * DIAS_NOMINA) ) ? -1 * SEA : -1 * MAX(%s - L,0)/**/", 
+					"/*epoch:%d,pec:%s,quota:%s*//*read-only*/"
+					+ "SEA = (%s * ( %s ) / 100.0);"
+					+ "( !SELF.isDef(\"DIAS_TRABAJADOS\") || (%s - SEA) > L=(SELF.isDef(\"JORNADAS_REALES\") ? %s *JORNADAS_REALES_TOTALES : (%s / DIAS_MES * DIAS_NOMINA) )) ? -1 * SEA : -1 * MAX(%s - L,0)"
+					+ "/**/",
 					Calendar.getInstance().getTimeInMillis(),
 					pec, 
 					quota,
 					baseVar.getName(),
 					percent,
 					costVar.getName(),
+					"CGC_E_MIN_DIA", //"7.45",
+					"CGC_E_MIN_MES", //"163.84",
 					costVar.getName()
 					)
 					.trim()

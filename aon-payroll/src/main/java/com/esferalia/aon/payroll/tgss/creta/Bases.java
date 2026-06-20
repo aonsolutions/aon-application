@@ -419,17 +419,15 @@ public class Bases {
 				return def.getAsDouble();
 
 			for (ContextData data : datas) {
-				Period intersect = p.intersect(
-						new Period(data.getStartDate(), data.getEndDate()));
-				if (intersect == null)
-					continue;
-
 				// TODO : More than one unique valor ?
 				try {
+					Period intersect = p.intersect(
+							new Period(data.getStartDate(), data.getEndDate()));
+					if (intersect == null)
+						continue;
 					return ExpressionContext.eval(data.getExpression(),
 							Number.class).doubleValue();
 				} catch ( Exception e ) {
-					
 				}
 			}
 

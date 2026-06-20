@@ -3,10 +3,13 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
 public class AccountEntry implements Serializable, HasAudit {
@@ -42,7 +45,7 @@ public class AccountEntry implements Serializable, HasAudit {
 		return this.id;
 	}
 	public AccountEntry setId(Integer id) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.id , id) );
+		this.setDirty( isDirty() || AonUtils.notEquals(this.id , id) );
 		this.id = id;
 		return this;
 	}
@@ -51,7 +54,7 @@ public class AccountEntry implements Serializable, HasAudit {
 		return this.period;
 	}
 	public AccountEntry setPeriod(Integer period) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.period , period) );
+		this.setDirty( isDirty() || AonUtils.notEquals(this.period , period) );
 		this.period = period;
 		return this;
 	}
@@ -78,7 +81,7 @@ public class AccountEntry implements Serializable, HasAudit {
 		return this.domain;
 	}
 	public AccountEntry setDomain(Integer domain) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.domain , domain) );
+		this.setDirty( isDirty() || AonUtils.notEquals(this.domain , domain) );
 		this.domain = domain;
 		return this;
 	}
@@ -87,7 +90,7 @@ public class AccountEntry implements Serializable, HasAudit {
 		return this.entryDate;
 	}
 	public AccountEntry setEntryDate(Date entryDate) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.entryDate , entryDate) );
+		this.setDirty( isDirty() || AonUtils.notEquals(this.entryDate , entryDate) );
 		this.entryDate = entryDate;
 		return this;
 	}
@@ -96,7 +99,7 @@ public class AccountEntry implements Serializable, HasAudit {
 		return this.entryType;
 	}
 	public AccountEntry setEntryType(AccountEntryType entryType) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.entryType , entryType) );
+		this.setDirty( isDirty() || AonUtils.notEquals(this.entryType , entryType) );
 		this.entryType = entryType;
 		return this;
 	}
@@ -104,7 +107,7 @@ public class AccountEntry implements Serializable, HasAudit {
 		return activity;
 	}
 	public AccountEntry setActivity(Integer activity) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.activity,activity) );
+		this.setDirty( isDirty() || AonUtils.notEquals(this.activity,activity) );
 		this.activity = activity;
 		return this;
 	}
@@ -112,7 +115,7 @@ public class AccountEntry implements Serializable, HasAudit {
 		return activityDescription;
 	}
 	public AccountEntry setActivityDescription(String activityDescription) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.activity,activity) );
+		this.setDirty( isDirty() || AonUtils.notEquals(this.activity,activity) );
 		this.activityDescription = activityDescription;
 		return this;
 	}
@@ -124,7 +127,7 @@ public class AccountEntry implements Serializable, HasAudit {
 		return this.journal;
 	}
 	public AccountEntry setJournal(Integer journal) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.journal , journal) );
+		this.setDirty( isDirty() || AonUtils.notEquals(this.journal , journal) );
 		this.journal = journal;
 		return this;
 	}
@@ -133,7 +136,7 @@ public class AccountEntry implements Serializable, HasAudit {
 		return this.securityLevel;
 	}
 	public AccountEntry setSecurityLevel(SecurityLevel securityLevel) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.securityLevel , securityLevel) );
+		this.setDirty( isDirty() || AonUtils.notEquals(this.securityLevel , securityLevel) );
 		this.securityLevel = securityLevel;
 		return this;
 	}
@@ -142,7 +145,7 @@ public class AccountEntry implements Serializable, HasAudit {
 		return this.comments;
 	}
 	public AccountEntry setComments(String comments) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.comments , comments) );
+		this.setDirty( isDirty() || AonUtils.notEquals(this.comments , comments) );
 		this.comments = comments;
 		return this;
 	}
@@ -164,14 +167,15 @@ public class AccountEntry implements Serializable, HasAudit {
 	}
 	
 	public LinkedList<AccountEntryDetail> getDetails() {
-		if (this.details == null) {
-			this.details = new LinkedList<AccountEntryDetail>();
-		}
+		if (this.details == null) this.details = new LinkedList<>();
 		return details;
 	}
 	public AccountEntry setDetails(LinkedList<AccountEntryDetail> details) {
 		this.details = details;
 		return this;
+	}
+	public Stream<AccountEntryDetail> getDetailsStream() {
+		return AonCollectionUtils.stream(getDetails());
 	}
 	public AccountEntry addDetail( AccountEntryDetail detail) {
 		getDetails().add(detail);
@@ -249,14 +253,6 @@ public class AccountEntry implements Serializable, HasAudit {
 	}
 	
 	public static AccountEntry clone(AccountEntry ori) {
-		LinkedList<AccountEntryDetail> details = ori.details == null
-				?null
-				:new LinkedList<AccountEntryDetail>();
-		if (ori.details != null) {
-			for ( AccountEntryDetail detail : ori.details ) {
-				details.add(AccountEntryDetail.clone(detail));
-			}
-		}
 		return new AccountEntry()
 			.setId(ori.id)
 			.setPeriod(ori.period)
@@ -275,6 +271,11 @@ public class AccountEntry implements Serializable, HasAudit {
 			.setCreationDate(ori.creationDate)
 			.setModificationUser(ori.modificationUser)
 			.setModificationDate(ori.modificationDate)
-			.setDetails(details);
+			.setDetails(
+				ori.details == null
+					? null
+					: ori.getDetailsStream()
+				        .map(AccountEntryDetail::clone)
+				        .collect(Collectors.toCollection(LinkedList::new)));
 	}
 }

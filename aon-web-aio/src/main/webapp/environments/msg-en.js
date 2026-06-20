@@ -733,6 +733,7 @@ export const MOVEMENTS_LIST = 'Movements List';
 export const NAME = 'Name';
 export const NEW = 'New';
 export const NEW_AMORTIZATION_SHEET = '[NEW] Amortization Sheet';
+export const NEW_ACCOUNTING_AMORTIZATION_SHEET = '[NEW] Amortization Entries';
 export const NEW_COMPANY = 'New Company';
 export const NEW_DOCUMENT = 'New Document';
 export const NEW_ELABORATION = 'New Elaboration';

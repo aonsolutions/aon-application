@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationDetailFlat;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -29,6 +30,11 @@ public class AmortizationServiceAsyncDecorator implements AmortizationServiceAsy
 	public void get(Occam occam, AmortizationParams params, AsyncCallback<LinkedList<Amortization>> callback) {
 		AON.start();
 		serviceAsync.get(occam, params, new AsyncCallbackWrapper<>(callback));
+	}
+	@Override
+	public void getFlat(Occam occam, AmortizationParams params, AsyncCallback<LinkedList<AmortizationDetailFlat>> callback) {
+		AON.start();
+		serviceAsync.getFlat(occam, params, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override

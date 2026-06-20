@@ -351,6 +351,7 @@ public enum ContextVariable implements IResourceable {
 	
 	TOTAL_WORKED_DAYS("DIAS_TRABAJADOS_TOTALES", VariableType.DOUBLE, false),
 	TOTAL_DAYS("DIAS_TOTALES", VariableType.DOUBLE, false),
+	TOTAL_DO_DAYS("JORNADAS_REALES_TOTALES", VariableType.DOUBLE, false),
 
 	EFECTIVE_START("INICIO_EFECTIVO", VariableType.DATE, false),
 	EFECTIVE_END("FIN_EFECTIVO", VariableType.DATE, false),

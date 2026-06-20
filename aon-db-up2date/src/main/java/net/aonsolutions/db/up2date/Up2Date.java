@@ -19,12 +19,19 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.mailAccount.UpdateMailAccountType;
+import net.aonsolutions.db.up2date.payroll.ContractCostExpressionText;
+import net.aonsolutions.db.up2date.payroll.ContractCostSeaExpressionFix;
 import net.aonsolutions.db.up2date.payroll.BonificEntrenadoresYMonitoresFix;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
+import net.aonsolutions.db.up2date.payroll.PPEITUpdateIII;
 import net.aonsolutions.db.up2date.scope.InsertDefaultScope;
+import net.aonsolutions.db.up2date.tgss.AgriculturalBaseCgcJornadasTotalesFix;
+import net.aonsolutions.db.up2date.tgss.CgcEMinInsert;
 import net.aonsolutions.db.up2date.tgss.DropNoJustifiedFix;
 import net.aonsolutions.db.up2date.timecontrol.CalendarFixNulls;
+
+
+import net.aonsolutions.db.up2date.mailAccount.UpdateMailAccountType;
 
 public class Up2Date {
 
@@ -619,12 +626,16 @@ public class Up2Date {
 			// InsertTarifaPrimasDF_1_3_RDL_3_2026.INSERTTARIFAPRIMASDF_1_3_RDL_3_2026,
 			//AddColumnCustomerFiscalStatus.ADD_COLUMN_CUSTOMER_FISCAL_STATUS,
 			//SalaryTypeUpdate.ALL,
-			BonificEntrenadoresYMonitoresFix.BONIFICENTRENADORESYMONITORESFIX,
-			DropNoJustifiedFix.DROPNOJUSTIFIEDFIX,
-			
-			
+			// BonificEntrenadoresYMonitoresFix.BONIFICENTRENADORESYMONITORESFIX,
+			// DropNoJustifiedFix.DROPNOJUSTIFIEDFIX,
+			CgcEMinInsert.CGCEMININSERT,
+			ContractCostExpressionText.CONTRACT_COST_EXPRESSION_TEXT,
+			ContractCostSeaExpressionFix.CONTRACT_COST_SEA_EXPRESSION_FIX,
+			AgriculturalBaseCgcJornadasTotalesFix.AGRICULTURALBASECGCJORNADASTOTALESFIX,
+
+
 			// ----------------------------------------------------------------
-			// Warning. Don't delete or comment following instructions 
+			// Warning. Don't delete or comment following instructions
 			// MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
 			CalendarFixNulls.CALENDAR_FIX_NULLS,
 			InsertDefaultScope.INSERT_DEAFULT_SCOPE,

@@ -730,6 +730,7 @@ export const MOVEMENTS_LIST = 'Llistat de moviments';
 export const NAME = 'Nom';
 export const NEW = 'Nou';
 export const NEW_AMORTIZATION_SHEET = "[NOU] Fitxa d'Amortització";
+export const NEW_ACCOUNTING_AMORTIZATION_SHEET = "[NOU] Apunts d'Amortització";
 export const NEW_COMPANY = 'Nova Empresa';
 export const NEW_DOCUMENT = 'Nou Document';
 export const NEW_ELABORATION = 'Nova Elaboració';

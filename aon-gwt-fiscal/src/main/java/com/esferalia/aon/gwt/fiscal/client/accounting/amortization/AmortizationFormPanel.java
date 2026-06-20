@@ -117,7 +117,7 @@ class AmortizationFormPanel extends DockLayoutPanel {
 			
 		};
 		
-		addNorth( getHeader(opts, cbk), 60 );
+		addNorth( getHeader(opts, cbk), 45 );
 		
 		tabPanel.add( getData(opts, cbk), AON.MSG.amortizationData());
 		
@@ -144,6 +144,7 @@ class AmortizationFormPanel extends DockLayoutPanel {
 	private Widget getHeader(AmortizationModuleOptions opts, AmortizationFormPanelCallback cbk) {
 		FlowPanel header = new FlowPanel();
 		header.setStyleName( AON.CSS.aonTextCenter() );
+		header.addStyleName( AON.CSS.aonPaddingTop() );
 		
 		FlowPanel grid = new FlowPanel();
 		grid.setStyleName( AON.CSS.aonInlineBlock() );
@@ -151,7 +152,6 @@ class AmortizationFormPanel extends DockLayoutPanel {
 
 		InlineLabel idLabel = new InlineLabel(AON.MSG.code());
 		grid.add(idLabel);
-		
 		
 		AonIntegerBox idBox = new AonIntegerBox();
 		idBox.addStyleName( AON.CSS.aonMarginLeft() );

@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationDetailFlat;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
@@ -202,6 +203,7 @@ public interface IAccounting {
 	// **************************************** [AMORTIZATION]
 	public Optional<Amortization> getAmortization(AONContext ctx, Integer domain, Integer id) throws AonCoreException;
 	public LinkedList<Amortization> getAmortizations(AONContext ctx, AmortizationParams params) throws AonCoreException;
+	public LinkedList<AmortizationDetailFlat> getFlatAmortizations(AONContext ctx, AmortizationParams params) throws AonCoreException;
 	public Amortization saveAmortization(AONContext ctx, Amortization am) throws AonCoreException;
 	public Amortization saveFiscalAllocation(AONContext ctx, AmortizationDetail detail) throws AonCoreException;
 	public void deleteAmortization(AONContext ctx, Amortization am) throws AonCoreException;
