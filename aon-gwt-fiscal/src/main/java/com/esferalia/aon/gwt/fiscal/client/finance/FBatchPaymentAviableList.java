@@ -108,7 +108,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		, FEC("F. Venc."				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FFT("F. Factura"				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FAC("N. Factura"				,"8rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, TIT("Titular"					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, TIT("Titular"					,"5rem"  			,"flex: 1 1 5rem; min-width: 5rem; width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, AMO("Importe"					,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
 		, ACT(AonStringUtils.EMPTY		,"2rem" 			,"")
 		;
@@ -141,7 +141,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		  CHK(AonStringUtils.EMPTY		,"2rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FEC("F. Venc."				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FAC("Concepto"				,"9rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, TIT("Titular"					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, TIT("Titular"					,"5rem"  			,"flex: 1 1 5rem; min-width: 5rem; width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, AMO("Importe"					,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
 		, ACT(AonStringUtils.EMPTY		,"2rem" 			,"")
 		;
@@ -353,6 +353,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 	private void searchData() {
 		tableContainer.clear();
 		tab = new AonCustomTable();
+		tab.getElement().getStyle().setProperty("min-width", "0");
 		tableScrollPanel = new ScrollPanel(tab);
 		tableScrollPanel.getElement().getStyle().setProperty("margin", "0 1rem");
 		
@@ -385,6 +386,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		tab.createHeader();
 		
 		addAviableButton = new AonTableButton("A\u00f1adir a la remesa", AON.CSS.aonIconKeyboardDoubleArrowRight());
+		addAviableButton.getElement().getStyle().setProperty("background-repeat", "no-repeat");
 		addAviableButton.setEnabled(false);
 		addAviableButton.addClickHandler(e -> {
 			addAviableButton.setEnabled(false);
@@ -412,14 +414,12 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 			for ( COLS_PAYROLL col : COLS_PAYROLL.values()) 
 				if(col.equals(COLS_PAYROLL.ACT))
 					tab.addHeader(addAviableButton, col.getColWidth(), col.getCellStyleClass());
-			
 				else
 					tab.addHeader(col.equals(COLS_PAYROLL.CHK) ? aviableCount : new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
 		else
 			for ( COLS col : COLS.values()) 
 				if(col.equals(COLS.ACT))
 					tab.addHeader(addAviableButton, col.getColWidth(), col.getCellStyleClass());
-				
 				else
 					tab.addHeader(col.equals(COLS.CHK) ? aviableCount : new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
 		

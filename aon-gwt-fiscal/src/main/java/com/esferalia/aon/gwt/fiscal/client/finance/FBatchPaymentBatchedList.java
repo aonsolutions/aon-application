@@ -123,7 +123,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		, FEC("F. Venc."				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FFT("F. Factura"				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FAC("N. Factura"				,"8rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, TIT("Titular"					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, TIT("Titular"					,"5rem"  			,"flex: 1 1 5rem; min-width: 5rem; width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, AMO("Importe"					,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		;
 		
@@ -156,7 +156,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		, CHK(AonStringUtils.EMPTY		,"2rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FEC("F. Venc."				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FAC("Concepto"				,"9rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, TIT("Titular"					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, TIT("Titular"					,"5rem"  			,"flex: 1 1 5rem; min-width: 5rem; width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, AMO("Importe"					,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		;
 		
@@ -254,7 +254,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 			else
 				selectedFinances.remove(financeRow.getFinance().getId());
 			
-			Widget w = tab.getWidget(financeRow.getRow(), 0);
+			Widget w = tab.getWidget(financeRow.getRow(), 1);
 			
 			if (null != w && w instanceof AonTableButton) {
 				if (check) {
@@ -430,6 +430,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		tab.createHeader();
 		
 		addSelectedButton = new AonTableButton("Quitar de la remesa", AON.CSS.aonIconKeyboardDoubleArrowLeft());
+		addSelectedButton.getElement().getStyle().setProperty("background-repeat", "no-repeat");
 		addSelectedButton.setEnabled(false);
 		addSelectedButton.addClickHandler(e -> {
 			addSelectedButton.setEnabled(false);
