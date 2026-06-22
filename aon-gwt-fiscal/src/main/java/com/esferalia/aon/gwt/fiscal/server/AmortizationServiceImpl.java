@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationDetailFlat;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -28,6 +29,11 @@ public class AmortizationServiceImpl extends AonStatelessRemoteServiceServlet im
 	@Override
 	public LinkedList<Amortization> get(Occam occam, AmortizationParams params) throws AonCoreException {
 		return ACCOUNTING.getAmortizations(occam, params);
+	}
+
+	@Override
+	public LinkedList<AmortizationDetailFlat> getFlat(Occam occam, AmortizationParams params) throws AonCoreException {
+		return ACCOUNTING.getFlatAmortizations(occam, params);
 	}
 
 	@Override
@@ -87,6 +93,6 @@ public class AmortizationServiceImpl extends AonStatelessRemoteServiceServlet im
 	
 	@Override
 	public void unlinkInvoice(Occam occam, Integer domain, Integer amortizationId, Integer invoiceId) throws AonCoreException {
-		ACCOUNTING.linkAmortizationInvoices(occam, domain, amortizationId, invoiceId);
+		ACCOUNTING.unlinkAmortizationInvoice(occam, domain, amortizationId, invoiceId);
 	}
 }

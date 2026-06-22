@@ -4,9 +4,12 @@ import java.util.function.Supplier;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridHeaderRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
@@ -15,6 +18,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceView
 import com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceConsoleAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceConsoleService;
 import com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceConsoleServiceAsync;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -38,7 +42,7 @@ class AmortizationInvoiceTableRow extends AonDisplayGridRow {
 		String issueDate = ensure(inv.getIssueDate(), () -> AON.DATE_FORMAT.format(inv.getIssueDate()), AonStringUtils.EMPTY);
 		Label issueDateLabel = new Label(issueDate);
 		
-		AonTableButton unlinkInvoice = new AonTableButton(AON.MSG.linkInvoice(),AON.CSS.aonIconLinkOff());
+		AonTableButton unlinkInvoice = new AonTableButton(AON.MSG.unlinkInvoice(),AON.CSS.aonIconLinkOff());
 		unlinkInvoice.addClickHandler( event -> unlinkInvoice(opts, callback, inv));
 		
 		AonTableButton viewInvoice = new AonTableButton(AON.MSG.viewInvoice(), AON.CSS.aonIconData());
@@ -46,9 +50,15 @@ class AmortizationInvoiceTableRow extends AonDisplayGridRow {
 		
 		FlowPanel recordedPanel = new FlowPanel();
 		if (inv.isRecorded()) {
-			AonTableButton recorded = new AonTableButton(AON.MSG.recorded(), AON.CSS.aonIconValid());
-			recorded.setTitle( AON.MSG.viewAccountEntry() );
-			recorded.addClickHandler( event -> viewAccountEntry(opts, ami.getAccountEntryId()) );
+			AonTableButton recorded = null; 
+			if (ami.isFixedAssetInAccountEntry()) {
+				recorded = new AonTableButton(AON.MSG.viewAccountEntry(), AON.CSS.aonIconValid());
+			} else {
+				String title = AON.MSG.fixedAssetNotInAccountEntry() + ". " + AON.MSG.viewAccountEntry();
+				recorded = new AonTableButton(title, AON.CSS.aonIconWarning());
+				recorded.addStyleName(AON.CSS.aonBlink());
+			} 
+			recorded.addClickHandler( event -> viewAccountEntry(opts, ami.getAccountEntry()) );
 			recordedPanel.add(recorded);
 		} else {
 			Label unrecorded = new Label();
@@ -128,25 +138,36 @@ class AmortizationInvoiceTableRow extends AonDisplayGridRow {
 	}
 	
 	private void unlinkInvoice(AmortizationModuleOptions opts, AmortizationPanelCallback callback, Invoice invoice) {
-		AmortizationModule.SERVICE.unlinkInvoice(opts.getOccam()
-			, opts.getDomain()
-			, callback.getAmortization().getId()
-			, invoice.getId(), new AsyncCallback<Void>() {
+		AonConfirmDialog.showConfirm(AON.MSG.unlinkInvoice(), AON.MSG.confirmUnlinkInvoice()
+			, new AonConfirmDialogCallback() {
+			
+			@Override
+			public void onAccept() {
+				AmortizationModule.SERVICE.unlinkInvoice(opts.getOccam()
+					, opts.getDomain()
+					, callback.getAmortization().getId()
+					, invoice.getId(), new AsyncCallback<Void>() {
 
-				@Override
-				public void onSuccess(Void arg0) {
-					callback.refresh();
-				}
-				
-				@Override
-				public void onFailure(Throwable arg0) {
-					callback.showError( arg0.getMessage() );
-				}
+						@Override
+						public void onSuccess(Void arg0) {
+							callback.refresh();
+						}
+						
+						@Override
+						public void onFailure(Throwable arg0) {
+							callback.showError( arg0.getMessage() );
+						}
+					}
+				);
 			}
-		);
+		});
 	}
 	
-	private void viewAccountEntry(AmortizationModuleOptions opts, Integer entryId) {
+	private void viewAccountEntry(AmortizationModuleOptions opts, AccountEntry entry) {
+		if (entry == null) {
+			AonMessageDialog.error(AON.MSG.accountEntryNotFound());
+			return;
+		}
 		AonCustomPopup entryDialog = new AonCustomPopup();
 		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
 		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
@@ -160,7 +181,7 @@ class AmortizationInvoiceTableRow extends AonDisplayGridRow {
 			.setDomainName(opts.getDomainName())
 			.setUser(opts.getUser())
 			.setDomain(opts.getDomain())
-			.setAccountEntryId(entryId)
+			.setAccountEntryId(entry.getId())
 			.setSessionLogTabVisible(false)
 			.setJournalTabVisible(false)
 			.setExtraInfoTabVisible(false)

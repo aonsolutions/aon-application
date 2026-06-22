@@ -556,6 +556,7 @@ export class AonNewMenu extends AonElement {
 					let icon = this.createElement(TAG.SPAN);
 					icon.id = `aonMenuListAppImgTop-${app.app}`;
 					icon.classList.add(CSS.AON_SYMBOLS_OUTLINED);
+					icon.classList.add(CSS.AON_MENU_APP_AON_SYMBOLS);
 					icon.innerHTML = app.aonSymbol;
 					icon.classList.add("aonNewMenuAppIcon");
 					div.appendChild(icon);
@@ -745,6 +746,7 @@ export class AonNewMenu extends AonElement {
 			let icon = this.createElement(TAG.SPAN);
 			icon.id = `aonMenuListAppImgTop-${app.app}`;
 			icon.classList.add(CSS.AON_SYMBOLS_OUTLINED);
+			icon.classList.add(CSS.AON_MENU_APP_AON_SYMBOLS);
 			icon.innerHTML = app.aonSymbol;
 			if (app.newColor || app.color) {
 				icon.style.color = app.newColor || app.color;

@@ -715,6 +715,7 @@ export const MOVEMENTS_LIST = 'Mugimendu Zerrenda';
 export const NAME = 'Izena';
 export const NEW = 'Berria';
 export const NEW_AMORTIZATION_SHEET = '[BERRIA] Amortizazio Fitxa';
+export const NEW_ACCOUNTING_AMORTIZATION_SHEET = '[BERRIA] Amortizazio Idazpenak';
 export const NEW_COMPANY = 'Enpresa Berria';
 export const NEW_DOCUMENT = 'Dokumentu Berria';
 export const NEW_ELABORATION = 'Elaborazio Berria';

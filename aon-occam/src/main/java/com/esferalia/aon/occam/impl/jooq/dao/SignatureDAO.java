@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Signature.SIGNATURE;
-import static com.esferalia.aon.jooq.tables.Tag.TAG;
 
 import java.util.LinkedList;
 import java.util.function.Function;
@@ -75,7 +74,7 @@ public class SignatureDAO {
 	
 	private static Signature insert(AONContext ctx, Signature signature) {
 		Integer newId = ctx.getDslContext()
-				.insertInto(TAG)
+				.insertInto(SIGNATURE)
 				.set(SIGNATURE.DOMAIN, ctx.getDomainId())
 				.set(SIGNATURE.NAME, signature.getName())
 				.set(SIGNATURE.SIGNATURE_, signature.getSignature())

@@ -716,6 +716,7 @@ export const MY_USER = 'O Meu Usuario';
 export const NAME = 'Nome';
 export const NEW = 'Novo';
 export const NEW_AMORTIZATION_SHEET = '[NOVO] Ficha de Amortización';
+export const NEW_ACCOUNTING_AMORTIZATION_SHEET = '[NOVO] Apuntamentos de Amortización';
 export const NEW_COMPANY = 'Nova Empresa';
 export const NEW_DOCUMENT = 'Novo Documento';
 export const NEW_ELABORATION = 'Nova Elaboración';

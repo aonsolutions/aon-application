@@ -1,9 +1,12 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -13,13 +16,10 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog.AonC
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSignaturePanel.AonSignaturePanelCallback;
 import com.esferalia.aon.occam.api.model.Signature;
-import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ScrollEvent;
-import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -36,22 +36,25 @@ public abstract class SignatureTable extends ScrollPanel {
 	private static final Logger LOGGER = Logger.getLogger(SignatureTable.class.getName());
 	static { LOGGER.addHandler( new ConsoleLogHandler() ); }
 	
-	private final int limit = 100;
-	private final MutableInt offset = new MutableInt(0);
-	private final MutableInt moreData = new MutableInt(0);
-	private final MutableInt searchEnabled = new MutableInt( 0 );
+	private HTMLPanel content;
 	
 	private SimplePanel container;
 	private ScrollPanel scrollPanel;
 	private AonCustomTable tab;
-	private int lastScrollPos = 0;
 	
 	private String domainName;
 	private Integer domain;
 	private String user;
 	
+	private List<Signature> signatures = new ArrayList<Signature>();
+	//private boolean showUserEmails = true;
+	private boolean showAdd = true;
+	private String searchPattern = null;
+	private String typeFilter = "all";
+	
 	private static enum COLS {
-		  NAM(AON.MSG.name()						, "-moz-available"	, "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		  TYP("Tipo"								, "5rem"			, "max-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, NAM(AON.MSG.name()						, "-moz-available"	, "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, BUT(AonStringUtils.EMPTY					, "3rem"			,"")
 		;
 
@@ -75,63 +78,34 @@ public abstract class SignatureTable extends ScrollPanel {
 		}
 	}
 	
-	public SignatureTable(String domainName, int domain, String user) {
+	public SignatureTable(String domainName, int domain, String user, boolean showAdd) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		this.domainName = domainName;
 		this.domain = domain;
 		this.user = user;
+		this.showAdd = showAdd;
+		
+		content = new HTMLPanel("");
+		content.addStyleName(AON.CSS.aonFlexColumn2());
 
 		container = new SimplePanel();
-		container.getElement().getStyle().setProperty("max-height", "200px");
 		container.getElement().getStyle().setProperty("padding-left", "1px");
-		setWidget(container);
+		content.add(container);
 		
-		addScrollHandler(new ScrollHandler() {
-
-			public void onScroll(ScrollEvent event) {
-				// ------------------------------------ Ignore scroll up.
-				int oldScrollPos = lastScrollPos;
-				lastScrollPos = getVerticalScrollPosition();
-				if (oldScrollPos >= lastScrollPos) {
-					return;
-				}
-				// -----------------------------------------------------
-				if (isSearchEnabled()) {
-					int maxScrollTop = getWidget().getOffsetHeight() - getOffsetHeight();
-					if (lastScrollPos >= maxScrollTop) {
-						disableSearch();
-						searchData();
-					}
-				}
-			}
-		});
+		setWidget(content);
 		
-		onSearch();
-	}
-
-	public boolean isSearchEnabled() {
-		return (searchEnabled.getValue() == 0 );
-	}
-	public void disableSearch() {
-		searchEnabled.setValue(-1);
-	}
-	public void enableSearch() {
-		searchEnabled.setValue(0);
-	}
-	public boolean isMoreData() {
-		return (moreData.getValue() == 0 );
-	}
-	public void disableMoreData() {
-		moreData.setValue(-1);
-	}
-	public void enableMoreData() {
-		moreData.setValue(0);
+		loadData();
 	}
 	
+	private void loadData() {
+		getList(sign -> {
+			onSearch();
+		});
+	}
+
 	public void onSearch() {
-		enableMoreData();
 		search();
 	}
 
@@ -150,7 +124,7 @@ public abstract class SignatureTable extends ScrollPanel {
 	private void paintHeader() {
 		tab.createHeader();
 		for ( COLS col : COLS.values()) {
-			if(col.equals(COLS.BUT)) {
+			if(this.showAdd && col.equals(COLS.BUT)) {
 				FlowPanel buttonContainer = new FlowPanel();
 				buttonContainer.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 				
@@ -163,41 +137,58 @@ public abstract class SignatureTable extends ScrollPanel {
 				buttonContainer.add(button);
 				
 				tab.addHeader(buttonContainer, col.getColWidth(), col.getStyles());
-			} else
+			} 
+			/*
+			else if (col.equals(COLS.TYP)) {
+				FlowPanel buttonContainer = new FlowPanel();
+				buttonContainer.getElement().getStyle().setTextAlign(TextAlign.LEFT);
+
+				CheckBox showActive = new CheckBox("Usr.");
+				showActive.setTitle("Todos");
+				showActive.addStyleName(AON.CSS.aonCustomRowButtom());
+				showActive.setValue(showUserEmails);
+				showActive.getElement().getStyle().setProperty("flex-direction", "row-reverse");
+				showActive.addValueChangeHandler(e -> {
+					showUserEmails = !showUserEmails;
+					onSearch();
+				});
+				buttonContainer.add(showActive);
+
+				tab.addHeader(buttonContainer, col.getColWidth(), col.getStyles());
+			} 
+			*/
+			else
 				tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
 		
 		}
 	}
 	
 	private void searchData() {
-		if (!isMoreData()) return;
+		boolean something = false;
 		
-		getList(signatures -> {
-			boolean something = false;
+		List<Signature> signatureListTable = signatures.stream()
+				//.filter(s -> showUserEmails || (!showUserEmails && null == s.getUserId()) )
+				.filter(s -> 
+							AonStringUtils.equalsIgnoreCase(typeFilter, "all")
+						|| (AonStringUtils.equalsIgnoreCase(typeFilter, "enterprise") && null == s.getUserId()) 
+						|| (AonStringUtils.equalsIgnoreCase(typeFilter, "user") && null != s.getUserId())
+				)
+				.filter(s ->  AonStringUtils.isBlank(searchPattern) || AonStringUtils.containsIgnoreCase(s.getName(), searchPattern) )
+				.collect(Collectors.toList());
+		
+		
+		for(Signature signature : signatureListTable) {
+			something = true;
+			paintRow(signature);
+		}
+		
+		if (!something) {
+			HTMLPanel row = tab.createRow();
 			
-			for(Signature signature : signatures) {
-				something = true;
-				paintRow(signature);
-			}
-			
-			if (signatures.size() < limit) {
-				disableMoreData();
-			} else {
-				offset.setValue(offset.intValue() + signatures.size() - 1);
-				enableMoreData();
-			}
-			
-			if (!something) {
-				HTMLPanel row = tab.createRow();
-				
-				Label empty = new Label("No exiten datos");
-				tab.addInlineStyle(empty, COLS.NAM.getStyles());
-				tab.addRow(row, empty, COLS.NAM.getColWidth());
-				disableMoreData();
-			}
-			enableSearch();
-			
-		});
+			Label empty = new Label("No exiten datos");
+			tab.addInlineStyle(empty, COLS.NAM.getStyles());
+			tab.addRow(row, empty, COLS.NAM.getColWidth());
+		}
 	}
 	
 	private void paintRow(Signature signature) {
@@ -231,6 +222,11 @@ public abstract class SignatureTable extends ScrollPanel {
 		HTMLPanel row = tab.createRow();
 		row.addDomHandler(e -> onUpdateSignature(signature), ClickEvent.getType());
 		
+		Label type = new Label(signature.getUserId() != null ? "Usuario" : "Empresa");
+		type.setTitle(signature.getName());
+		tab.addInlineStyle(type, COLS.TYP.getStyles());
+		tab.addRow(row, type, COLS.TYP.getColWidth());
+		
 		Label name = new Label(signature.getName());
 		name.setTitle(signature.getName());
 		tab.addInlineStyle(name, COLS.NAM.getStyles());
@@ -243,7 +239,15 @@ public abstract class SignatureTable extends ScrollPanel {
 		COMMON_SERVICE.getSignatures(domainName, domain, user, new AsyncCallback<LinkedList<Signature>>() {
 			
 			@Override
-			public void onSuccess(LinkedList<Signature> signatures) {
+			public void onSuccess(LinkedList<Signature> signaturesDB) {
+				signaturesDB.sort(
+					    Comparator.comparing(
+					    	Signature::getUserId,
+					        Comparator.nullsFirst((u1, u2) -> 0) // solo agrupa null primero
+					    ).thenComparing(Signature::getName)
+					);
+				
+				signatures = signaturesDB;
 				success.accept(signatures);
 			}
 			
@@ -259,7 +263,7 @@ public abstract class SignatureTable extends ScrollPanel {
 			
 			@Override
 			public void onSuccess(Void result) {
-				onSearch();
+				loadData();
 			}
 			
 			@Override
@@ -283,7 +287,7 @@ public abstract class SignatureTable extends ScrollPanel {
 			@Override
 			public void onAccept(Signature signature) {
 				dialog.hide();
-				onSearch();
+				loadData();
 			}
 		});
 		
@@ -291,7 +295,7 @@ public abstract class SignatureTable extends ScrollPanel {
 		dialog.showLoaded();
 	}
 
-	private void createSignature() {
+	public void createSignature() {
 		final AonCustomDialog dialog = new AonCustomDialog();
 		dialog.setCaption("Nueva Firma");
 
@@ -305,7 +309,7 @@ public abstract class SignatureTable extends ScrollPanel {
 					@Override
 					public void onAccept(Signature signature) {
 						dialog.hide();
-						onSearch();
+						loadData();
 					}
 				});
 		
@@ -314,6 +318,14 @@ public abstract class SignatureTable extends ScrollPanel {
 			@Override public void onEnd() { aonSignaturePanel.name.setFocus(true); }
 		});
 		
+	}
+	
+	public void setSearchPattern(String searchPattern) {
+		this.searchPattern = searchPattern;
+	}
+	
+	public void setTypeFilter(String typeFilter) {
+		this.typeFilter = typeFilter;
 	}
 
 	protected abstract void onShowErrorMessage(String errorMessage);

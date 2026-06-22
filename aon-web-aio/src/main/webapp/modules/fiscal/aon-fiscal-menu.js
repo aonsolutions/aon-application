@@ -94,7 +94,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
 			}, {
                 description: MSG.DECLARATION_SII,
                 title: MSG.DECLARATION_SII,
-                // disabled: !this.icc?.isSii(),
+                disabled: !this.icc?.isSii(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()
@@ -259,7 +259,7 @@ export class AonFiscalMenu extends AonSuiteMenu {
             }, {
                 description: MSG.DECLARATION_SII,
                 title: MSG.DECLARATION_SII,
-                // disabled: !this.icc?.isSii(),
+                disabled: !this.icc?.isSii(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()

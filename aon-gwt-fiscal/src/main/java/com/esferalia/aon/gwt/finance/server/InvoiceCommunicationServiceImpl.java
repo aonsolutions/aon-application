@@ -255,7 +255,7 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 	}
 
 	@Override
-	public String bajaSii(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) {
+	public ICResponse bajaSii(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) {
 		try {
 			Domain domain = AON.getDomain(domainName, domainId, user);
 			Company company = AON.getCompanyForDomain(domainName, domainId, user);
@@ -269,13 +269,13 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 						.setCompany(company);
 
 			InvoiceCommunicationType.SII.visit(visitor);
-			return null; // new ICResponse().setError(false);
+			return new ICResponse().setError(false);
 		} catch (Exception e) {
 			e.printStackTrace();
 			ICResponse icResponse = new ICResponse();
 			icResponse.setError(true);
 			icResponse.setErrorMessage(e.getMessage());
-			return e.getMessage(); // icResponse;
+			return icResponse;
 		}
 	}
 

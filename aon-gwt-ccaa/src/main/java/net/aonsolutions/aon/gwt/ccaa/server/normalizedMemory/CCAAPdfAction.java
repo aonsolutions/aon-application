@@ -197,10 +197,12 @@ public abstract class CCAAPdfAction {
 		activity.addCell(tableCell("Actividad principal", 2));
 		activity.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA02009.getCode()), 6));
 		
-		activity.addCell(tableCell("C\u00f3digo CNAE09", 2));
-		activity.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA02001.getCode()), 6));
+		if (d2Deposit.getYear() <= 2024) {
+			activity.addCell(tableCell("C\u00f3digo CNAE09", 2));
+			activity.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA02001.getCode()), 6));
+		}
 		
-		if(d2Deposit.getYear() >= 2024) {
+		if (d2Deposit.getYear() >= 2024) {
 			activity.addCell(tableCell("C\u00f3digo CNAE25", 2));
 			activity.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA02014.getCode()), 6));
 		}

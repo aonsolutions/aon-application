@@ -1,3 +1,4 @@
+// DECLARACION COVID 19
 package net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory;
 
 
@@ -5,7 +6,6 @@ import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -105,8 +105,11 @@ public class PageH7 extends PageAbs {
 	}
 	
 	private void listBoxItemAdd(ListBox lb) {
-		for(Integer i = 0; i< D2DepositConstants.PROVINCES.length; i++){
-			Provinces p = D2DepositConstants.PROVINCES[i];
+//		for(Integer i = 0; i< D2DepositConstants.PROVINCES.length; i++){
+//			Provinces p = D2DepositConstants.PROVINCES[i];
+//			lb.addItem(p.getName(), p.getId());
+//		}
+		for (Provinces p : Provinces.values()) {
 			lb.addItem(p.getName(), p.getId());
 		}
 	}

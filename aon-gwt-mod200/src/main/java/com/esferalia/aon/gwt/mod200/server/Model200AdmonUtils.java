@@ -39,7 +39,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.jooq.tools.json.ParseException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -66,13 +65,16 @@ import com.esferalia.aon.occam.mod200.api.MODEL200;
 import com.esferalia.aon.occam.mod200.api.MODEL2002022;
 import com.esferalia.aon.occam.mod200.api.MODEL2002023;
 import com.esferalia.aon.occam.mod200.api.MODEL2002024;
+import com.esferalia.aon.occam.mod200.api.MODEL2002025;
 import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2025.Mod2002025;
 import com.esferalia.aon.occam.mod200.server.format.mod200_2022.Mod2002022Writer;
 import com.esferalia.aon.occam.mod200.server.format.mod200_2023.Mod2002023Writer;
 import com.esferalia.aon.occam.mod200.server.format.mod200_2024.Mod2002024Writer;
+import com.esferalia.aon.occam.mod200.server.format.mod200_2025.Mod2002025Writer;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
@@ -148,7 +150,7 @@ public class Model200AdmonUtils {
 		AEATParams aeatParams = null;
 		try {
 			aeatParams = JsonParser.parseAEATParams(aeatParamsString);
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			throw new AonCoreException(MessageFormat.format("[INT] Error en la evaluaci\u00F3n de los par\u00C1metros {0}", e.getMessage()));	
 		}
 		return aeatParams; 
@@ -401,6 +403,9 @@ public class Model200AdmonUtils {
 			} else if (fm instanceof Mod2002024) {
 				Mod2002024 mod = (Mod2002024) fm;
 				Mod2002024Writer.fillWriter(mod, writer);
+			} else if (fm instanceof Mod2002025) {
+				Mod2002025 mod = (Mod2002025) fm;
+				Mod2002025Writer.fillWriter(mod, writer);
 			}
 		} catch (IOException e) {
 			throw new AonCoreException(e);
@@ -445,10 +450,15 @@ public class Model200AdmonUtils {
 		} else if (fm instanceof Mod2002024) {
 			Mod2002024 mod = (Mod2002024) fm;
 			MODEL2002024.aeatPresentation(occam, mod, aeatResponse);
+		} else if (fm instanceof Mod2002025) {
+			Mod2002025 mod = (Mod2002025) fm;
+			MODEL2002025.aeatPresentation(occam, mod, aeatResponse);
 		}
+		
 		// Se muestra el PDF solo si no es presentación multiple
 		if (aeatParams.getSelected() == null)
 			giveDataResponseDataBack(resp, aeatParams, fm);
+		
 	}
 	
 	public static void send(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model) {
@@ -649,7 +659,9 @@ public class Model200AdmonUtils {
 			// La presentación múltiple del Modelo 200, solo se puede hacer a partir del 2022, que es cuando se introduce el estado en el modelo 200
 			Mod200 m200 = MODEL200.getMod200(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
 			if (m200 != null) {
-				if (m200.getYear() == 2024) {
+				if (m200.getYear() == 2025) {
+					model = MODEL2002025.getMod2002025ById(occam, m200.getId());
+				} else if (m200.getYear() == 2024) {
 					model = MODEL2002024.getMod2002024ById(occam, m200.getId());
 				} else if (m200.getYear() == 2023) {
 					model = MODEL2002023.getMod2002023ById(occam, m200.getId());

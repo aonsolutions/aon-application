@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.registry;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -21,12 +22,10 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonVisualIdentity;
 import com.esferalia.aon.gwt.common.client.widget.solutions.CompanyDomainStatusSelect;
 import com.esferalia.aon.gwt.common.client.widget.solutions.EnterpriseActivityTable;
-import com.esferalia.aon.gwt.common.client.widget.solutions.MailAccountTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.MediaTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.RDirStaffTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.RecordDataTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.RegistryPaymethodBanksTable;
-import com.esferalia.aon.gwt.common.client.widget.solutions.SignatureTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.WorkplaceTable;
 import com.esferalia.aon.gwt.common.shared.Dni;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -34,22 +33,53 @@ import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistrySource;
+import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
+	
+	// ------------------------------------------------- ScrollableTabLayoutPanel
+	
+	public class ScrollableTabLayoutPanel extends TabLayoutPanel {
+
+	    public ScrollableTabLayoutPanel(double barHeight, Unit unit) {
+	        super(barHeight, unit);
+
+	        Scheduler.get().scheduleDeferred(() -> {
+	            Element root = getElement(); // siempre existe
+
+	            DOM.sinkEvents(root, Event.ONMOUSEWHEEL);
+
+	            DOM.setEventListener(root, event -> {
+	                if (event.getTypeInt() == Event.ONMOUSEWHEEL) {
+	                    int delta = event.getMouseWheelVelocityY();
+
+	                    root.setScrollLeft(root.getScrollLeft() + delta * 2);
+
+	                    event.preventDefault();
+	                }
+	            });
+	        });
+	    }
+	}
 
 	// ------------------------------------------------- CommonServiceAsync
 
@@ -74,6 +104,8 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 	}
 
 	// ------------------------------------------------- Variables
+	
+	private AonCustomListBox scope = new AonCustomListBox(null);
 
 	private RegistryModuleOptions options;
 	private RegistrySource registrySource;
@@ -96,8 +128,9 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 	private HTMLPanel rightInfoTable;
 	private HTMLPanel leftInfoTable;
 	
-	private TabLayoutPanel tablayoutPanel;
-
+//	private TabLayoutPanel tablayoutPanel;
+	private ScrollableTabLayoutPanel tablayoutPanel;
+	
 	// Other Info
 	private AonVisualIdentity aonVisualIdentity;
 	private AddressTable addressTable;
@@ -107,8 +140,8 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 	private RDirStaffTable rDirStaffTable;
 	private RecordDataTable recordDataTable;
 	private RegistryPaymethodBanksTable registryPaymethodBanksTable;
-	private SignatureTable signatureTable;
-	private MailAccountTable mailAccountTable;
+//	private SignatureTable signatureTable;
+//	private MailAccountTable mailAccountTable;
 	
 	private CompanyFull company;
 	private Registry registry;
@@ -128,7 +161,7 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		
 		createToolbar();
 
-		tablayoutPanel = new TabLayoutPanel(25.00, Unit.PX);
+		tablayoutPanel = new ScrollableTabLayoutPanel(25.00, Unit.PX);
 		tablayoutPanel.setHeight("100%");
 
 		container = new HTMLPanel(AonStringUtils.EMPTY);
@@ -172,23 +205,38 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 				statusValue = options.getConfiguration().getDomain().isActive() ? RegistryStatus.ACTIVE : RegistryStatus.INACTIVE;
 		
 			status = new CompanyDomainStatusSelect(statusValue, options.getConfiguration().getDomain().getExpirationDate());
-//			status.addChangeHandler(e -> {
-//				RegistryStatus newStatus = status.getValue();
-//			    Date exp = status.getExpirationDate();
-//			    Window.alert("newStatus : " + newStatus + ", exp : " + exp);
-//			});
 			getToolbar().addTitleButton(status);
 			
+			Label scopeLabel = new Label("\u00c1mbito");
+			
+			scope.getElement().getStyle().setProperty("margin-bottom", "0");
+			scope.getElement().getStyle().setProperty("justify-content", "center");
+			
+			scope.clearItems();
+			scope.addItem("-", "");
+			getToolbar().addTitleButton(scope);
+			getToolbar().addTitleButton(scopeLabel);
 		}
 	}
 	
 	// ------------------------------------------------- DataBase
 
 	private void getRegistryBySource() {
-		getCompanyFull(companyFull -> initCompanyRegistry() );
+		if(this.registrySource == RegistrySource.COMPANY && isParentUser()) {
+			getParentDomainScopes(scopes -> {
+				scope.clearItems();
+				scope.addItem("-", "");
+				scopes.forEach(s -> scope.addItem(s.getDescription(), s.getId().toString()));
+				
+				getCompanyFull(companyFull -> initCompanyRegistry() );
+			});
+		} else
+			getCompanyFull(companyFull -> initCompanyRegistry() );
 	}
 
 	private void initCompanyRegistry() {
+		scope.setValue(options.getConfiguration().getDomain().getScope() != null ? options.getConfiguration().getDomain().getScope().toString() : "");
+		
 		container.clear();
 		tablayoutPanel.clear();
 
@@ -370,24 +418,24 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		aonVisualIdentity = new AonVisualIdentity(options.getDomainName(), options.getDomain(), options.getUser(), registry.getId(), this.registrySource);
 		tablayoutPanel.add(aonVisualIdentity, this.registrySource.equals(RegistrySource.ENVIROMENT) ? "Logo" : "Logo / Firma");
 		
-		mailAccountTable = new MailAccountTable(options.getDomainName(), options.getDomain(), options.getUser()) {
-			
-			@Override
-			protected void onShowErrorMessage(String errorMessage) {
-				AonMessagePanel.showError(messagePanel, errorMessage);
-			}
-			
-		};
-		tablayoutPanel.add(mailAccountTable, "Email");
-		
-		signatureTable = new SignatureTable(options.getDomainName(), options.getDomain(), options.getUser()) {
-			
-			@Override
-			protected void onShowErrorMessage(String errorMessage) {
-				AonMessagePanel.showError(messagePanel, errorMessage);
-			}
-		};
-		tablayoutPanel.add(signatureTable, "Firma Email");
+//		mailAccountTable = new MailAccountTable(options.getDomainName(), options.getDomain(), options.getUser()) {
+//			
+//			@Override
+//			protected void onShowErrorMessage(String errorMessage) {
+//				AonMessagePanel.showError(messagePanel, errorMessage);
+//			}
+//			
+//		};
+//		tablayoutPanel.add(mailAccountTable, "Email");
+//		
+//		signatureTable = new SignatureTable(options.getDomainName(), options.getDomain(), options.getUser()) {
+//			
+//			@Override
+//			protected void onShowErrorMessage(String errorMessage) {
+//				AonMessagePanel.showError(messagePanel, errorMessage);
+//			}
+//		};
+//		tablayoutPanel.add(signatureTable, "Firma Email");
 		
 		container.add(tablayoutPanel);
 
@@ -483,6 +531,32 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 
 		return row;
 	}
+	
+	private void getParentDomainScopes(Consumer<List<Scope>> success) {
+		AonMessagePanel.showLoading(messagePanel, "Obteniendo \u00e1mbitos del entorno");
+		
+		ScopeParams params = new ScopeParams()
+				.setDomainName(options.getConfiguration().getDomain().getParent().getName())
+				.setDomain(options.getConfiguration().getDomain().getParent().getId())
+				.setUser(options.getUser())
+				.setOffset(0)
+				.setLimit(1000);
+		
+		commonService.getScopeList(params, new AsyncCallback<List<Scope>>() {
+
+					@Override
+					public void onSuccess(List<Scope> scopes) {
+						AonMessagePanel.hideMessage(messagePanel);
+						success.accept(scopes);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						AonMessagePanel.showError(messagePanel, "Empresa error : " + caught.getMessage());
+					}
+
+				});
+	}
 
 	private void getCompanyFull(Consumer<CompanyFull> success) {
 		AonMessagePanel.showLoading(messagePanel, "Obteniendo empresa");
@@ -511,39 +585,66 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		company.getRegistry().copy(registry);
 		
 		if(this.registrySource == RegistrySource.COMPANY) {
-			
-			RegistryStatus originalStatus;
-			if(null != options.getConfiguration().getDomain().getExpirationDate()) originalStatus = RegistryStatus.BLOCKED;
-			else 
-				originalStatus = options.getConfiguration().getDomain().isActive() ? RegistryStatus.ACTIVE : RegistryStatus.INACTIVE;
-			
-			RegistryStatus newStatus = status.getValue();
-		    Date newExpDate = status.getExpirationDate();
-		    
-		    if(originalStatus != newStatus) {
-		    	AonMessagePanel.showLoading(messagePanel, "Guardando estado del dominio");
-		    	
-		    	commonService.saveDomainStatus(options.getDomainName(), options.getDomain(), options.getUser(), newStatus, newExpDate,
-						new AsyncCallback<Domain>() {
-
-							@Override
-							public void onSuccess(Domain savedDomain) {
-								options.getConfiguration().setDomain(savedDomain);
-								saveCompany(success);
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								AonMessagePanel.showError(messagePanel, "Dominio error guardando estado : " + caught.getMessage());
-							}
-
-						});
-		    	
-		    } else 
-		    	saveCompany(success);
-			
+				saveDomainStatus(success);
 		} else
 			saveCompany(success);
+	}
+	
+	private void saveDomainStatus(Consumer<CompanyFull> success) {
+		RegistryStatus originalStatus;
+		if(null != options.getConfiguration().getDomain().getExpirationDate()) originalStatus = RegistryStatus.BLOCKED;
+		else 
+			originalStatus = options.getConfiguration().getDomain().isActive() ? RegistryStatus.ACTIVE : RegistryStatus.INACTIVE;
+		
+		RegistryStatus newStatus = status.getValue();
+	    Date newExpDate = status.getExpirationDate();
+	    
+	    if(originalStatus != newStatus) {
+	    	AonMessagePanel.showLoading(messagePanel, "Guardando estado del dominio");
+	    	
+	    	commonService.saveDomainStatus(options.getDomainName(), options.getDomain(), options.getUser(), newStatus, newExpDate,
+					new AsyncCallback<Domain>() {
+
+						@Override
+						public void onSuccess(Domain savedDomain) {
+							options.getConfiguration().setDomain(savedDomain);
+							saveDomainScope(success);
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessagePanel.showError(messagePanel, "Dominio error guardando estado : " + caught.getMessage());
+						}
+
+					});
+	    } else 
+	    	saveDomainScope(success);
+	}
+	
+	private void saveDomainScope(Consumer<CompanyFull> success) {
+		Integer originalScope = options.getConfiguration().getDomain().getScope();
+		Integer newScope = AonStringUtils.isNotBlank(scope.getValue()) ? Integer.parseInt(scope.getValue()) : null;
+		
+		 if(null != originalScope && null == newScope || null == originalScope && null != newScope || !originalScope.equals(newScope)) {
+	    	AonMessagePanel.showLoading(messagePanel, "Guardando \u00e1mbito del dominio");
+	    	
+	    	commonService.saveDomainScope(options.getDomainName(), options.getDomain(), options.getUser(), options.getDomain(), newScope,
+					new AsyncCallback<Void>() {
+
+						@Override
+						public void onSuccess(Void end) {
+							options.getConfiguration().getDomain().setScope(newScope);
+							saveCompany(success);
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessagePanel.showError(messagePanel, "Dominio error guardando estado : " + caught.getMessage());
+						}
+
+					});
+	    } else 
+		   	saveCompany(success);
 	}
 	
 	private void saveCompany(Consumer<CompanyFull> success) {

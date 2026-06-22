@@ -95,6 +95,11 @@ export const AMORTIZATION = {
   entryPoint: 'AmortizationModule'
 };
 
+export const ACCOUNTING_AMORTIZATION = {
+  module: GWT_FISCAL,
+  entryPoint: 'AccountingAmortizationModule'
+};
+
 export const AMORTIZATION_TYPE = {
   module: GWT_FISCAL,
   entryPoint: 'AmortizationType'
@@ -698,6 +703,16 @@ export const PRODUCT_CATALOGUE_MODULE = {
 export const REGISTRY_COMPANY_ENTRY_MODULE = {
   module: GWT_FISCAL,
   entryPoint: 'RegistryCompanyEntryModule'
+};
+
+export const SIGNATURE_ENTRY_MODULE = {
+  module: GWT_FISCAL,
+  entryPoint: 'SignatureEntryModule'
+};
+
+export const MAIL_ACCOUNT_ENTRY_MODULE = {
+  module: GWT_FISCAL,
+  entryPoint: 'MailAccountEntryModule'
 };
 
 export const SYNC_SIG_CUSTOMER_DOMAIN = {

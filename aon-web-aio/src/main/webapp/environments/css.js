@@ -2,6 +2,7 @@
 export const MATERIAL_ICONS = 'material-icons';
 export const MATERIAL_SYMBOLS_OUTLINED = "material-symbols-outlined";
 export const AON_SYMBOLS_OUTLINED = "aon-symbols-outlined";
+export const AON_MENU_APP_AON_SYMBOLS = "aonMenuAppAonSymbols";
 
 // aon.css
 export const AON_UL = 'aonUl';
