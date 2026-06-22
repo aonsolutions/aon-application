@@ -57,6 +57,7 @@ import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.Listener;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase.Extra;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -1016,6 +1017,83 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 	    }
 	}
 
+	@Test
+	public void testRoundChildPaymentsI() throws ExpressionException, SQLException, SalaryException {
+
+	    Connection connection = getConnection();
+	    AONContext aonContext = new AONContext(connection);
+	    try {
+
+		cleanSalaries(aonContext);
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+		
+		// @formatter:on
+		//@formatter:off
+		ContractRecord contract = 
+				newContract(aonContext, 
+				new String[] {}, 
+				new String[] {}, 
+				null);
+		//@formatter:on
+
+		PaymentConceptRecord salarioBaseConcept = addConcept(aonContext, "SALARIO_BASE");
+
+		addPayment(aonContext, contract, salarioBaseConcept, "SALARIO BASE",
+			"1000.00 * DIAS_TRABAJADOS / DIAS_MES", "_P", "_P", PaymentType.CRA_0001);
+
+		PaymentConceptRecord ppeConceptRecord = addConcept(aonContext, "PPE");
+		
+		
+		
+		addPayment(aonContext, contract, ppeConceptRecord, 
+				"APORTACIÓN EMPRESARIAL AL PLAN DE PENSIONES DE EMPLEO",
+				"TOTAL_DEVENGADO; __PPE =(/*user*/APORTACION_EMPRESA_PPE/**/ * DIAS_COTIZADOS / DIAS_MES * COEFICIENTE_PARCIALIDAD ); SELF.setBaseVariable('TOTAL_PPE', __PPE); 0.00", 
+				"_P", 
+				"isdef DIAS_TRABAJADOS ? APORTACION_EMPRESA_PPE * DIAS_TRABAJADOS/DIAS_MES : 0.00", 
+				PaymentType.CRA_0000);
+		
+		setData(aonContext, contract, "COEFICIENTE_PARCIALIDAD", "0.50");
+		setData(aonContext, contract, "APORTACION_EMPRESA_PPE", "31.60");
+		
+		Date firstDayOfMay = AonDateUtils.add(AonDateUtils.getFirstDayOfYear(getToday()), Calendar.MONTH, 4);
+		
+		addIT(aonContext, 
+			contract, 
+			LeaveType.COMMON_DISEASE, 
+			AonDateUtils.add(firstDayOfMay, Calendar.DAY_OF_MONTH, 14), 
+			AonDateUtils.add(firstDayOfMay, Calendar.DAY_OF_MONTH, 20) , 
+			(Double) null);
+
+		Salary salary = calculate(connection, aonContext, contract, firstDayOfMay);
+		
+	
+		double basePpe =
+		salary.getSalaryDatas()
+		.stream().filter(data -> "BASE_PPE".equals(data.getName()))
+		.peek(d -> System.out.println(d.getName() + " = " + d.getExpression()))
+		.mapToDouble(data -> Double.parseDouble(data.getExpression()))
+		.sum();
+		
+		assertEquals( 12.23 , basePpe, DELTA);
+		
+		double totalPpe =
+		salary.getSalaryPayments()
+		.stream().filter(p -> "PPE"	.equals(p.getName()))
+		.peek(p -> System.out.println(p.getDescription() + " = " + p.getAmount()))
+		.mapToDouble(p -> p.getQuote())
+		.sum()
+		;
+
+		assertEquals( 12.23 , totalPpe, DELTA);
+
+	    } finally {
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+	    }
+	}
 
 	private Salary calculate(
 			String[] payments,
