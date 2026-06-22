@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.Cnae;
 import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.Iae;
+import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
@@ -70,6 +71,8 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 	private AonCustomListBox irpfLB = new AonCustomListBox("IRPF");
 	private AonCustomToogleButton equivalence = new AonCustomToogleButton("R. Equivalencia");
 	private AonCustomDateBox endDate = new AonCustomDateBox("F. Fin");
+	
+	private AonCustomListBox ivaExemptLB = new AonCustomListBox("Causa Exenci\u00f3n IVA");
 
 	private AonCustomSuggestBox cnae25SB = new AonCustomSuggestBox("CNAE 2025");
 	private AonCustomTextBox cnae = new AonCustomTextBox("CNAE 2009 (Registro Anterior)");
@@ -146,7 +149,7 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		ivaLB.clearItems();
 		for (int i = 0; i < VATRegime.values().length; i++)
 			ivaLB.addItem(VATRegime.values()[i].getDescription(), VATRegime.values()[i].name());
-
+		
 		irpfLB.clearItems();
 		for (int i = 0; i < IRPFRegime.values().length; i++)
 			irpfLB.addItem(IRPFRegime.values()[i].getDescription(), IRPFRegime.values()[i].name());
@@ -159,6 +162,18 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		row2.add(endDate);
 		row2.add(equivalence);
 		container.add(row2);
+		
+		// Row 
+		HTMLPanel row_ = new HTMLPanel(EMPTY_STRING);
+		row_.setStyleName(AON.CSS.aonItemFlex());
+
+		ivaExemptLB.clearItems();
+		ivaExemptLB.addItem("-", "");
+		for (int i = 0; i < VATExemptionCause.values().length; i++)
+			ivaExemptLB.addItem(VATExemptionCause.values()[i].getDescription(), VATExemptionCause.values()[i].name());
+		
+		row_.add(ivaExemptLB);
+		container.add(row_);
 
 		// Third Row
 		HTMLPanel row3 = new HTMLPanel(EMPTY_STRING);
@@ -205,6 +220,8 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 			}
 		};
 		container.add(cccTable);
+	
+		ivaLB.addChangeHandler(e -> checkIvaExemptVisibility(row_));
 
 		// Fill info
 		if (enterpriseActivity.getId() != null) {
@@ -223,15 +240,28 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 			
 			iaeSB.setValue(null == enterpriseActivity.getIae() ? "" :  enterpriseActivity.getIae().getSection() + " - " +  enterpriseActivity.getIae().getEpigraph() + " : " +  enterpriseActivity.getIae().getTitle());
 			ivaLB.setValue(enterpriseActivity.getVatRegime().name());
+			ivaExemptLB.setValue(null != enterpriseActivity.getVatExemptionCause() ? enterpriseActivity.getVatExemptionCause().name() : "");
 			equivalence.setValue(enterpriseActivity.isSurcharge());
 			irpfLB.setValue(enterpriseActivity.getIrpfRegime().name());
 			startDate.setValue(enterpriseActivity.getStartDate());
 			endDate.setValue(enterpriseActivity.getEndDate());
 		}
+		
+		checkIvaExemptVisibility(row_);
 
 		// Buttons
 		container.add(createButtonsPanel());
 		add(container);
+	}
+	
+	private void checkIvaExemptVisibility(HTMLPanel row) {
+		VATRegime vatRegime = VATRegime.safeValueOf(ivaLB.getValue());
+		if(null != vatRegime && vatRegime.isExempt()) {
+			row.getElement().getStyle().clearDisplay();
+		} else {
+			row.getElement().getStyle().setDisplay(Display.NONE);
+			ivaExemptLB.setValue("");
+		}
 	}
 
 	private void initializeCnae25() {
@@ -339,6 +369,7 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 				.setDescription(description.getValue())
 				.setPrincipal(principal.getValue())
 				.setVatRegime(VATRegime.safeValueOf(ivaLB.getValue()))
+				.setVatExemptionCause(AonStringUtils.isBlank(ivaExemptLB.getValue()) ? null : VATExemptionCause.safeValueOf(ivaExemptLB.getValue()))
 				.setSurcharge(equivalence.getValue())
 				.setIrpfRegime(IRPFRegime.safeValueOf(irpfLB.getValue()))
 				;

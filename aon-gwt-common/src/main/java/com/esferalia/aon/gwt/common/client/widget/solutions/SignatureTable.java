@@ -22,7 +22,6 @@ import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -48,7 +47,10 @@ public abstract class SignatureTable extends ScrollPanel {
 	private String user;
 	
 	private List<Signature> signatures = new ArrayList<Signature>();
-	private boolean showUserEmails = true;
+	//private boolean showUserEmails = true;
+	private boolean showAdd = true;
+	private String searchPattern = null;
+	private String typeFilter = "all";
 	
 	private static enum COLS {
 		  TYP("Tipo"								, "5rem"			, "max-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -76,19 +78,19 @@ public abstract class SignatureTable extends ScrollPanel {
 		}
 	}
 	
-	public SignatureTable(String domainName, int domain, String user) {
+	public SignatureTable(String domainName, int domain, String user, boolean showAdd) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		this.domainName = domainName;
 		this.domain = domain;
 		this.user = user;
+		this.showAdd = showAdd;
 		
 		content = new HTMLPanel("");
 		content.addStyleName(AON.CSS.aonFlexColumn2());
 
 		container = new SimplePanel();
-		container.getElement().getStyle().setProperty("max-height", "200px");
 		container.getElement().getStyle().setProperty("padding-left", "1px");
 		content.add(container);
 		
@@ -122,7 +124,7 @@ public abstract class SignatureTable extends ScrollPanel {
 	private void paintHeader() {
 		tab.createHeader();
 		for ( COLS col : COLS.values()) {
-			if(col.equals(COLS.BUT)) {
+			if(this.showAdd && col.equals(COLS.BUT)) {
 				FlowPanel buttonContainer = new FlowPanel();
 				buttonContainer.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 				
@@ -135,7 +137,9 @@ public abstract class SignatureTable extends ScrollPanel {
 				buttonContainer.add(button);
 				
 				tab.addHeader(buttonContainer, col.getColWidth(), col.getStyles());
-			} else if (col.equals(COLS.TYP)) {
+			} 
+			/*
+			else if (col.equals(COLS.TYP)) {
 				FlowPanel buttonContainer = new FlowPanel();
 				buttonContainer.getElement().getStyle().setTextAlign(TextAlign.LEFT);
 
@@ -151,7 +155,9 @@ public abstract class SignatureTable extends ScrollPanel {
 				buttonContainer.add(showActive);
 
 				tab.addHeader(buttonContainer, col.getColWidth(), col.getStyles());
-			} else
+			} 
+			*/
+			else
 				tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
 		
 		}
@@ -161,8 +167,15 @@ public abstract class SignatureTable extends ScrollPanel {
 		boolean something = false;
 		
 		List<Signature> signatureListTable = signatures.stream()
-				.filter(ma -> showUserEmails || (!showUserEmails && null == ma.getUserId()) )
+				//.filter(s -> showUserEmails || (!showUserEmails && null == s.getUserId()) )
+				.filter(s -> 
+							AonStringUtils.equalsIgnoreCase(typeFilter, "all")
+						|| (AonStringUtils.equalsIgnoreCase(typeFilter, "enterprise") && null == s.getUserId()) 
+						|| (AonStringUtils.equalsIgnoreCase(typeFilter, "user") && null != s.getUserId())
+				)
+				.filter(s ->  AonStringUtils.isBlank(searchPattern) || AonStringUtils.containsIgnoreCase(s.getName(), searchPattern) )
 				.collect(Collectors.toList());
+		
 		
 		for(Signature signature : signatureListTable) {
 			something = true;
@@ -282,7 +295,7 @@ public abstract class SignatureTable extends ScrollPanel {
 		dialog.showLoaded();
 	}
 
-	private void createSignature() {
+	public void createSignature() {
 		final AonCustomDialog dialog = new AonCustomDialog();
 		dialog.setCaption("Nueva Firma");
 
@@ -305,6 +318,14 @@ public abstract class SignatureTable extends ScrollPanel {
 			@Override public void onEnd() { aonSignaturePanel.name.setFocus(true); }
 		});
 		
+	}
+	
+	public void setSearchPattern(String searchPattern) {
+		this.searchPattern = searchPattern;
+	}
+	
+	public void setTypeFilter(String typeFilter) {
+		this.typeFilter = typeFilter;
 	}
 
 	protected abstract void onShowErrorMessage(String errorMessage);

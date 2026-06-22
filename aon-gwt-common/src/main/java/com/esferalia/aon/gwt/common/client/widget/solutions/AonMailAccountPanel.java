@@ -192,6 +192,7 @@ public class AonMailAccountPanel extends HTMLPanel {
 		
 		type.addChangeHandler(e -> {
 			checkUsersVisibility(row_);
+			checkSignatureOptions();
 		});
 		
 		protocol.addChangeHandler(e -> {
@@ -213,7 +214,7 @@ public class AonMailAccountPanel extends HTMLPanel {
 			email.setValue(getEmailWithoutHost(mailAccount.getEmail()));
 			
 			showAs.setValue(mailAccount.getDisplayName());
-			signature.setValue(mailAccount.getSignatureId() == null ? "" : mailAccount.getSignatureId().toString());
+			//signature.setValue(mailAccount.getSignatureId() == null ? "" : mailAccount.getSignatureId().toString());
 			
 			bccInclude.setValue(mailAccount.isIncludeBcc());
 			replayTo.setValue(mailAccount.getReplytoMail());
@@ -245,12 +246,29 @@ public class AonMailAccountPanel extends HTMLPanel {
 		
 		getDomainUsers(userList -> {
 			userList.forEach(u -> users.addItem(u.getName() + " (" + u.getLogin() + ")", u.getId().toString()));
+			users.addChangeHandler(e -> checkSignatureOptions());
 			
 			if(mailAccount.getId() != null && mailAccount.getUserId() != null)
 				users.setValue(mailAccount.getUserId().toString());
+			
+			checkSignatureOptions();
+			signature.setValue(mailAccount.getSignatureId() == null ? "" : mailAccount.getSignatureId().toString());
 		});
 	}
 	
+	private void checkSignatureOptions() {
+		Integer userId = AonStringUtils.isBlank(users.getValue()) ? null : Integer.parseInt(users.getValue());
+		
+		signature.clearItems();
+		signature.addItem("-", "");
+		this.signatures.stream()
+			.filter(s -> 
+					(null == userId && s.getUserId() == null) 
+				|| ((null != userId && s.getUserId() != null && userId.equals(s.getUserId())) || s.getUserId() == null ))
+			.forEach(s -> signature.addItem(s.getName(), s.getId().toString()));
+		
+	}
+
 	private void checkEmailVisibility(HTMLPanel row) {
 		if(AonStringUtils.equalsIgnoreCase(protocol.getValue(), "aon")) {
 			row.getElement().getStyle().setDisplay(Display.NONE);
