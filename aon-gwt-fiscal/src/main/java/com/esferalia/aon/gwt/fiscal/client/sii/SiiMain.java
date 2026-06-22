@@ -244,15 +244,14 @@ public class SiiMain extends DockLayoutPanel {
 		toolbarPanel.add(sendButton);
 		
 		bajaButton = new AonToolbarButton("Anular", AON.CSS.aonIconSendCancel());
-		bajaButton.addClickHandler(event -> Window.alert("send"));
+		bajaButton.addClickHandler(event -> {
+			if(selectedInvoices.get(0).isSales()) {
+				Window.alert("La anulaci\u00f3n de facturas emitidas hay que realizarla desde la pantalla de facturas.");
+			} else send(false);
+		});
 		bajaButton.setVisible(false);
 		toolbarPanel.add(bajaButton);
 		
-//		if(options.getConfiguration().getDomain().getName().contains("udapa")) {
-//			prepareButton = new AonToolbarButton("Preparar SII", AON.CSS.aonIconRefresh());
-//			prepareButton.addClickHandler(event -> prepareNewSii());
-//			toolbarPanel.add(prepareButton);
-//		}
 		AonToolbarSearchBox searchBox = new AonToolbarSearchBox() {
 			
 			@Override
@@ -275,8 +274,7 @@ public class SiiMain extends DockLayoutPanel {
 				options.getConfiguration().getUser().getLogin());
 	}
 	
-	private void send(boolean alta) {
-		
+	private void send(boolean alta) {		
 		AonCertificationPopupParams params = new AonCertificationPopupParams()
 				.setShowDocument(false)
 				.setShowName(false);
@@ -325,7 +323,32 @@ public class SiiMain extends DockLayoutPanel {
 							}
 						});
 					} else {
-						Window.alert("BAJA");						
+						selectedInvoices.stream().forEach(invoice -> {
+							if(!invoice.isSales()) {
+								SII_SERVICE.bajaSii(options.getDomainName(), options.getDomain(), options.getUser(), invoice, params, new AsyncCallback<ICResponse>() {
+									
+									@Override
+									public void onSuccess(ICResponse result) {
+										if(!result.isError()) { 	
+											String message = "La factura " + invoice.getReferenceCode() + " se ha anulado correctamente.";
+											vp.add(getOkMessage(message));
+										} else vp.add(getErrorMessage(result.getErrorMessage()));
+										
+										if(selectedInvoices.size() >= vp.getWidgetCount()) {
+											invoiceGrid.setFilterParams(getFilterParams());
+										}
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										vp.add(getErrorMessage(caught.getMessage()));
+										if(selectedInvoices.size() >= vp.getWidgetCount()) {
+											invoiceGrid.setFilterParams(getFilterParams());
+										}
+									}
+								});
+							}	
+						});
 					}
 				}
 			};
