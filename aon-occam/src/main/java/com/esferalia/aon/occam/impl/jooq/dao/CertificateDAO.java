@@ -254,7 +254,7 @@ public class CertificateDAO {
 		            try {
 			            type = subjectDN.split("T=")[1].split(",")[0];
 		            } catch (Exception e) {
-		            	e.printStackTrace();
+		            	//e.printStackTrace();
 		            }
 
 		            try {
