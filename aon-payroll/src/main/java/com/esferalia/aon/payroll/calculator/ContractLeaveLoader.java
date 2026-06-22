@@ -28,6 +28,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -723,6 +724,15 @@ public class ContractLeaveLoader {
         			.filter( Number.class::isInstance )
         			.anyMatch( v -> ((Number)v).doubleValue() < 1.00) ;
         			if (isPartial)
+        				return days;
+        		} catch (Exception e) {
+        		}
+        		try {
+        			boolean is3XX = 
+        			ctx.getVariables(TC2, p.getStart(), p.getEnd()).stream()
+        			.map( v -> v.getValue(v.getPeriod())).filter(Objects::nonNull)
+        			.anyMatch( v -> AonStringUtils.startsWith(v.toString(), "3")) ;
+        			if (is3XX)
         				return days;
         		} catch (Exception e) {
         		}
