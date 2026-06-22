@@ -88,15 +88,6 @@ public class Model2002025 extends DockLayoutPanel {
 		popup.add(new AonSplash());
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
-		
-//		this.mod200Callback = mod200Callback;
-//		this.options = mod200Callback.getOptions();
-//		options.getParentWidget().add(this); 
-//		
-//		AON.ensureInjected();
-//
-//		mod200Object = new Mod2002025Object(options, mod200);
-		
 		popup.center();
 		
 		clear();
@@ -663,8 +654,7 @@ public class Model2002025 extends DockLayoutPanel {
 		linkContainer.setStyleName(AON.CSS.aonPaddingLeft());
 		linkContainer.addStyleName(AON.CSS.aonPaddingBottom());
 		 
-//		linkContainer.add(new WestFocusPanel( 1,AON.MSG.identification() + ", Estados de Cuentas, Caracteres de la Declaraci\u00F3n"));
-		westFocusPanelP00 = new WestFocusPanel( 1,AON.MSG.identification() + ", Estados de Cuentas, Caracteres de la Declaraci\u00F3n");
+		westFocusPanelP00 = new WestFocusPanel(1, AON.MSG.identification() + ", Estados de Cuentas, Caracteres de la Declaraci\u00F3n");
 		linkContainer.add(westFocusPanelP00);
 		
 		linkContainer.add(new WestFocusPanel( 2,"Cifra de Negocios, Personal Asalariado, Secretario, Grupo Fiscal o Mercantil"));

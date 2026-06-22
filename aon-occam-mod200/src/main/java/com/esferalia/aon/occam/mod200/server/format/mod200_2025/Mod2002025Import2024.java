@@ -245,7 +245,7 @@ public class Mod2002025Import2024 {
 			// G. Secretario del Consejo de Administración y representantes legales de la entidad
             ,(mod200old,mod200new) -> mod200new.getSecretary().setName(mod200old.getSecretary().getName())              // Apellidos y Nombre - Secretario del Consejo de Administración 
 			,(mod200old,mod200new) -> mod200new.getSecretary().setDocument(mod200old.getSecretary().getDocument())      // N.I.F. - Secretario del Consejo de Administración
-			,(mod200old,mod200new) -> mod200new.getRepresentatives().addAll(mod200old.getRepresentatives())  // Declaración representantes legales entidad
+			,(mod200old,mod200new) -> mod200new.getRepresentatives().addAll(mod200old.getRepresentatives())  			// Declaración representantes legales entidad
 		    
 		})		
 		

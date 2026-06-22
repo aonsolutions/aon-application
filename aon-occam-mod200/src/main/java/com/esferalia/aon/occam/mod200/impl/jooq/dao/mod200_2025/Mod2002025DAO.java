@@ -983,7 +983,6 @@ public class Mod2002025DAO  {
 			mod200.setEcpnType( EcpnType.NO_CONSTA );
 			mod200.setPygType(BalanceType.ABREVIADO );
 			
-//			AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);
 			mod200.setEnterprise(conf.getCompany().getId());
 			mod200.setDocument(conf.getCompany().getDocument());
 			mod200.setName(conf.getCompany().getName());

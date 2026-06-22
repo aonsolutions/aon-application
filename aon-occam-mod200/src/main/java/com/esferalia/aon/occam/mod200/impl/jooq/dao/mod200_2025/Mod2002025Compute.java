@@ -427,7 +427,6 @@ public class Mod2002025Compute {
 				
 		// Casilla 1033: Reserva de nivelación - Reducción de la base imponible 
 		// Lleva cálculos especiales en las casillas de la columna 2
-//		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ1962,"LQ1961-LQ1602");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ2411,"LQ2410-LQ1604");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ1730,"computeLQ1033_1(LQ1109,LQ1605,LQ2411)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ1404,"computeLQ1033_1(LQ1406,LQ1405,LQ2411+LQ1730)");

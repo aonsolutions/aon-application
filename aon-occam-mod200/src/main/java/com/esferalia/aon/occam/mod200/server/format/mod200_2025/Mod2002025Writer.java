@@ -607,6 +607,21 @@ public class Mod2002025Writer {
 		return res;
 	}
     
+	private static void addLQ558Key(Writer line, Mod2002025 mod200) throws IOException {
+		// En caso de tipo de gravamen único se rellenarán los dos primeros dígitos con el tipo, y los dos últimos con 00.						
+		//   Ej: 25% se rellenará como 2500.					
+		// En caso de tipo de gravamen doble se rellenarán los dos primeros dígitos con el primer tipo, y los dos últimos con el segundo.						
+		//   Ej: 18/19% se rellenará como 1819.				
+		// El tipo de gravamen doble, solo es si el carácter 00088 está marcado y el porcentaje es 18 (cooperativas) o 21 (resto de casos)
+		if (mod200.isChecked(Mod2002025Key.C0088) && mod200.getDoubleValue(Mod2002025Key.LQ558) == 18.0) {
+			line.append("1819");
+		} else if (mod200.isChecked(Mod2002025Key.C0088) && mod200.getDoubleValue(Mod2002025Key.LQ558) == 21.0) {
+			line.append("2122");
+		} else {
+			addUnSignedKey(line, mod200, Mod2002025Key.LQ558, 4, 2);
+		}
+	}
+    
 	// **** FIN VARIABLES Y METODOS ESTATICOS DE UTILIDAD ****
 
 	@FunctionalInterface
@@ -1560,7 +1575,7 @@ public class Mod2002025Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.LQ1509)				
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.LQ1576)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.LQ1577)
-				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002025Key.LQ558, 4, 2) // FALTA - TIPO DE GRAVAMEN HAY QUE PONER LOS DOS POSIBLES TIPOS DE GRAVAMEN
+				,(line, mod200, label) -> addLQ558Key(line, mod200)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.LQ560)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.LQ210)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002025Key.LQ480)
@@ -2307,5 +2322,6 @@ public class Mod2002025Writer {
 		line.close();
 
 	}
+
 
 }

@@ -186,7 +186,7 @@ public class Page01 extends PageAbs {
 		
 		// GRUPO MERCANTIL (solo habilitados si caracteres 81 o 82)
 		
-		AonDocumentTextBox ultimateDocument = new AonDocumentTextBox();           
+		AonDocumentTextBox ultimateDocument = new AonDocumentTextBox(false);           
 		AonTextBox ultimateName = new AonTextBox();
 		AonTextBox ultimateGroupName = new AonTextBox();
 		CountryListBox ultimateResidenceCountry = new CountryListBox();
