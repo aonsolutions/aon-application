@@ -81,7 +81,7 @@ public class InvoiceCommunicationServiceAsyncDecorator implements InvoiceCommuni
 	}
 
 	@Override
-	public void bajaSii(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback) {
+	public void bajaSii(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams, AsyncCallback<ICResponse> callback) {
 		AON.start();
 		ssa.bajaSii(domainName, domainId, user, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));		
 	}
