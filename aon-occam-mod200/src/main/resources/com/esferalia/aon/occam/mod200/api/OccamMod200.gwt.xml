@@ -2,7 +2,6 @@
 <module rename-to='Occam_mod200'>
 	
 	<inherits name="com.esferalia.aon.watson.Watson" />
-	<!-- <inherits name="es.translogia.tedi.Tedi" />  -->
 	
 	<source path='model' />
 	
