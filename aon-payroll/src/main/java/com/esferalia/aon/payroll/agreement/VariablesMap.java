@@ -2528,6 +2528,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("HORA_NOCTURNA_ENTRE_61_Y_70_HORAS_AL_MES_HORAS", "H_NOCT_61_70_H");
 		variablesMap.put("HORA_NOCTURNA_ENTRE_71_Y_80_HORAS_AL_MES_HORAS", "H_NOCT_71_80_H");
 		variablesMap.put("HORA_NOCTURNA_MAS_DE_80_HORAS_AL_MES_HORAS", "H_NOCT_80MAS_H");
+		variablesMap.put("PLUS_FORMACION_DIARIO", "P_FORM_D");
+		variablesMap.put("PLUS_RECAUDACION_MENSUAL", "P_RECAUD_M");
 		
 	}
 	
