@@ -50,6 +50,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -206,25 +207,31 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 			status = new CompanyDomainStatusSelect(statusValue, options.getConfiguration().getDomain().getExpirationDate());
 			getToolbar().addTitleButton(status);
 			
+			Label scopeLabel = new Label("\u00c1mbito");
+			
 			scope.getElement().getStyle().setProperty("margin-bottom", "0");
 			scope.getElement().getStyle().setProperty("justify-content", "center");
 			
 			scope.clearItems();
 			scope.addItem("-", "");
 			getToolbar().addTitleButton(scope);
+			getToolbar().addTitleButton(scopeLabel);
 		}
 	}
 	
 	// ------------------------------------------------- DataBase
 
 	private void getRegistryBySource() {
-		getParentDomainScopes(scopes -> {
-			scope.clearItems();
-			scope.addItem("-", "");
-			scopes.forEach(s -> scope.addItem(s.getDescription(), s.getId().toString()));
-			
+		if(this.registrySource == RegistrySource.COMPANY && isParentUser()) {
+			getParentDomainScopes(scopes -> {
+				scope.clearItems();
+				scope.addItem("-", "");
+				scopes.forEach(s -> scope.addItem(s.getDescription(), s.getId().toString()));
+				
+				getCompanyFull(companyFull -> initCompanyRegistry() );
+			});
+		} else
 			getCompanyFull(companyFull -> initCompanyRegistry() );
-		});
 	}
 
 	private void initCompanyRegistry() {
