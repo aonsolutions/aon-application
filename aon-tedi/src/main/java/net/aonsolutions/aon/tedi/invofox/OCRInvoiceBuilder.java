@@ -1152,7 +1152,7 @@ public class OCRInvoiceBuilder {
 		guessItemsOrAccounts(ocr.getCtx(),ocr.getInvoice(),ocr.getDetail());
 		
 		// Si no se ha rellenado ni iten ni account, se busca el par�metro por defecto. 
-		if ( ocr.getDetail().getItem() == null && ocr.getDetail().getAccountId() == null) {
+		if ( ocr.getDetail().getItem() == null && ocr.getDetail().getExpAccountId() == null) {
 			if (ocr.getConfig() != null && ocr.getConfig().getOcrDefaultItem() != null) {
 				ocr.getDetail().setItem( ocr.getConfig().getOcrDefaultItem() );	
 			} else {
@@ -1168,9 +1168,7 @@ public class OCRInvoiceBuilder {
 					guessItemsOrAccounts(ctx, invoice, invoice.getDetails().get(i) );			
 				} else {
 					invoice.getDetails().get(i).setItem( invoice.getDetails().get(0).getItem() );
-					invoice.getDetails().get(i).setAccountId( invoice.getDetails().get(0).getAccountId() );
-					invoice.getDetails().get(i).setAccountCode( invoice.getDetails().get(0).getAccountCode() );
-					invoice.getDetails().get(i).setAccountDescription( invoice.getDetails().get(0).getAccountDescription() );
+					invoice.getDetails().get(i).setExpAccount( invoice.getDetails().get(0).getExpAccount().orElse(null) );
 				}
 			}
 		}
@@ -1190,9 +1188,7 @@ public class OCRInvoiceBuilder {
 					.findFirst()
 					.orElse(null);
 				if (account != null) {
-					invoiceDetail.setAccountId( account.getId() );	
-					invoiceDetail.setAccountCode( account.getCode() );
-					invoiceDetail.setAccountDescription( account.getDescription() );
+					invoiceDetail.setExpAccount( account );	
 				}
 			}
 		}

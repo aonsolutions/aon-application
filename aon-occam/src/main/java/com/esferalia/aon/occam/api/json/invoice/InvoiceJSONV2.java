@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.ScopeJSON;
 import com.esferalia.aon.occam.api.json.doc.InvoiceDocJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON.InvoiceJSONVersion;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Workplace;
@@ -174,6 +175,12 @@ class InvoiceJSONV2 {
 			.mapToObj(details::getJSONObject)
     		.filter(JsonUtils::isNotEmpty )
     		.map(j -> {
+    			Account expAccount = (JsonUtils.has(j, IJsonNames.ACCOUNT_ID)) 
+					? new Account()
+						.setId(JsonUtils.getInteger(j, IJsonNames.ACCOUNT_ID))
+						.setCode(JsonUtils.getString(j, IJsonNames.ACCOUNT_CODE))
+						.setDescription(JsonUtils.getString(j, IJsonNames.ACCOUNT_DESCRIPTION))
+					: null;
     			InvoiceDetail det = new InvoiceDetail()
 	    			.setId(JsonUtils.getInteger(j, IJsonNames.ID))
 	    			.setInvestAsset(JsonUtils.getInteger(j, IJsonNames.INVEST_ASSET))
@@ -188,9 +195,7 @@ class InvoiceJSONV2 {
 	    			.setPrepayment(JsonUtils.getboolean(j, IJsonNames.PREPAYMENT))
 	    			.setWarehouse(JsonUtils.getInteger(j,IJsonNames.WAREHOUSE))
 	    			.setWorkplace( getWorkplace(j) )
-	    			.setAccountId(JsonUtils.getInteger(j, IJsonNames.ACCOUNT_ID))
-	    			.setAccountCode(JsonUtils.getString(j, IJsonNames.ACCOUNT_CODE))
-	    			.setAccountDescription(JsonUtils.getString(j, IJsonNames.ACCOUNT_DESCRIPTION))
+	    			.setExpAccount(expAccount)
 	    			.setSource(InvoiceSource.safeValueOf( JsonUtils.getString(j, IJsonNames.SOURCE) ))
 	    			.setSourceId(JsonUtils.getInteger(j, IJsonNames.SOURCE_ID))
     			;
@@ -445,9 +450,9 @@ class InvoiceJSONV2 {
 						.put(IJsonNames.PREPAYMENT, det.isPrepayment())
 						.put(IJsonNames.WAREHOUSE, det.getWarehouse())
 						.put(IJsonNames.WORKPLACE, AonObjectUtils.ifNotNullGet(det.getWorkplace(), Workplace::getId))
-						.put(IJsonNames.ACCOUNT_ID, det.getAccountId())
-						.put(IJsonNames.ACCOUNT_CODE, det.getAccountCode())
-						.put(IJsonNames.ACCOUNT_DESCRIPTION, det.getAccountDescription())
+						.put(IJsonNames.ACCOUNT_ID, det.getExpAccountId())
+						.put(IJsonNames.ACCOUNT_CODE, det.getExpAccountCode())
+						.put(IJsonNames.ACCOUNT_DESCRIPTION, det.getExpAccountDescription())
 						.put(IJsonNames.SOURCE, InvoiceSource.name(det.getSource()))
 						.put(IJsonNames.SOURCE_ID, det.getSourceId())
 						
