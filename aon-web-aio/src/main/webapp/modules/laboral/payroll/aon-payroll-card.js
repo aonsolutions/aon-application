@@ -5,6 +5,7 @@ import { CSS } from "../../../environments/environments.js";
 import { TAG } from "../../../environments/environments.js";
 import { formatNumber, isEmptyObject, sortBy, waitEl, setValueName } from "../../../services/utils.js";
 import { getEmployeeSalaries, getEnterpriseSalaries, getPeriodLaboral, getWorkplaceCCCs, getAllEmployeesWorkplace } from "../../../services/service.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
 export class AonPayrollCard extends AonElement {
   AON_FISCAL;
@@ -27,7 +28,9 @@ export class AonPayrollCard extends AonElement {
     });
   }
 
-  initialize() {}
+  initialize() {
+
+  }
 
   getDur() {
     return this.dur;
@@ -52,12 +55,20 @@ export class AonPayrollCard extends AonElement {
   async getPayrolls() {
     let data = [];
     try {
-      let filter = this.getApplicationParent()._filter;
+      let filter = this.getApplicationParent() ? this.getApplicationParent()._filter : this._filter;
       let datos = []; 
       if(this.dur.isEmployee())  {
+        if(!filter) filter = {
+          endDate: AonDateUtils.getLastMonthLastDayFormat(new Date()),
+        }
         datos = await getEmployeeSalaries(filter);
         datos = sortBy(datos, 'endDate', 'desc').filter(({endDate})=> new Date(endDate) <= new Date());
       } else {
+        if(!filter) filter = {
+          period: 'lastMonth',
+          startDate: AonDateUtils.getLastMonthFirstDayFormat(new Date()),
+          endDate: AonDateUtils.getLastMonthLastDayFormat(new Date()),
+        }
         datos = await getEnterpriseSalaries(filter);
         datos = sortBy(datos, 'employeeName', 'asc');
       }
@@ -156,6 +167,14 @@ export class AonPayrollCard extends AonElement {
       year.innerHTML = new Date(Date.parse(payroll.endDate)).getFullYear();
       leftContent.appendChild(year);
 
+      if(!this.dur.isEmployee() && payroll.employeeName) {
+        let name = this.createElement(TAG.SPAN);
+        name.style.fontSize = "1rem";
+        name.style.color = "rgb(51, 169, 169)";
+        name.style.fontWeight = "500";
+        name.textContent = payroll.employeeName;
+        leftContent.appendChild(name);
+      }
       let rightContent = this.createElement(TAG.DIV);
       rightContent.className = CSS.AON_FLEX;
       rightContent.style.alignItems = "center";

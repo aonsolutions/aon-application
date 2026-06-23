@@ -96,6 +96,77 @@ export const AonDateUtils = {
 		return new Date(d.getFullYear(), 0, 1);
 	},
 	/**
+	 * 
+	 * @param {Date} date
+	 * @return {Date} date last day year
+	*/
+	getYearLastDay: function(d) {
+		return new Date(d.getFullYear(), 11, 31);
+	},
+	/**
+	 * 
+	 * @param {Date} date
+	 * @return {Date} date first day month
+	*/
+	getMonthFirstDay: function(d) {
+		return new Date(d.getFullYear(), d.getMonth(), 1);
+	},
+	/**
+	 * 
+	 * @param {Date} date
+	 * @return {String} date first day month
+	*/
+	getMonthFirstDayFormat: function(d) {
+		return this.formatDate(this.getMonthFirstDay(d), 'yyyy-MM-dd');
+	},
+	/**
+	 * 
+	 * @param {Date} date
+	 * @return {Date} date last day month
+	*/
+	getMonthLastDay: function(d) {
+		return new Date(d.getFullYear(), d.getMonth() + 1, 0);
+	},
+	/**
+	 * 
+	 * @param {Date} date
+	 * @return {String} date last day month
+	 */
+	getMonthLastDayFormat: function(d) {
+		return this.formatDate(this.getMonthLastDay(d), 'yyyy-MM-dd');
+	},
+	/**
+	 * 
+	 * @param {Date} date
+	 * @return {Date} date last day of last month
+	*/
+	getLastMonthLastDay: function(d) {
+		return new Date(d.getFullYear(), d.getMonth(), 0);
+	},
+	/**
+	 * @param {Date} date
+	 * @return {String} date last day of last month
+	 */
+	getLastMonthLastDayFormat: function(d) {
+		return this.formatDate(this.getLastMonthLastDay(d), 'yyyy-MM-dd');
+	},
+	/**
+	 * 
+	 * @param {Date} date
+	 * @return {Date} date first day of last month
+	*/
+	getLastMonthFirstDay: function(d) {
+		return new Date(d.getFullYear(), d.getMonth() - 1, 1);
+	},
+	/**
+	 * @param {Date} date
+	 * @return {String} date first day of last month
+	 */
+	getLastMonthFirstDayFormat: function(d) {
+		return this.formatDate(this.getLastMonthFirstDay(d), 'yyyy-MM-dd');
+	},
+	
+	/**
 	 *
 	 * @param {Date} date
 	 * @return {String} DAY OR NULL
