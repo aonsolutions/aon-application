@@ -8,6 +8,7 @@ import { getParentCompany } from '../services/companyService.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import { AonCertification } from './certification/aon-certification.js';
 import * as JSF from './aon-jsf-app.js';
+import * as HELP from './aon-site-help.js';
 
 
 export class AonHelp extends AonElement {
@@ -173,26 +174,39 @@ export class AonHelp extends AonElement {
 		
 		helpContent.appendChild(supportContent);
 
-		let helpContentIndexDiv = this.createSpan("contentIndexHelp");
-		helpContentIndexDiv.className = "helpCardText";
+		let suiteHelpDiv = this.createSpan("contentIndexHelp");
+		suiteHelpDiv.className = "helpCardText";
 
-		let helpContentIndexI = this.createElement(TAG.I);
-		helpContentIndexI.className = CSS.MATERIAL_ICONS;
-		helpContentIndexI.classList.add("aonHelpI");
-		helpContentIndexI.innerHTML= "school";
-		helpContentIndexDiv.appendChild(helpContentIndexI);
-
-		let helpContentIndexSpan = this.createDiv();
-		helpContentIndexSpan.className = CSS.AON_CARD_TEXT;
-        helpContentIndexSpan.classList.add("aonHelpSpan2");
-		helpContentIndexSpan.innerHTML = MSG.MANUALS;
-		helpContentIndexDiv.appendChild(helpContentIndexSpan);
-		helpContent.appendChild(helpContentIndexDiv);
 		
-		helpContentIndexDiv.addEventListener(EVENT.CLICK, () => {
-			this.rootPanel(new JSF.AonJsfHelpContent())
+		let suiteHelpI = this.createElement(TAG.I);
+		suiteHelpI.className = CSS.MATERIAL_ICONS;
+		suiteHelpI.classList.add("aonHelpI");
+		suiteHelpI.innerHTML= "school";
+		suiteHelpI.addEventListener(EVENT.CLICK, () => {
+			this.rootPanel(new HELP.AonSiteHelpSuite())
 			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
 		});
+		suiteHelpDiv.appendChild(suiteHelpI);
+
+		let suiteHelpSpan = this.createDiv();
+		suiteHelpSpan.className = CSS.AON_CARD_TEXT;
+        suiteHelpSpan.classList.add("aonHelpSpan2");
+		suiteHelpSpan.classList.add(CSS.AON_WIDTH_75);
+		suiteHelpSpan.innerHTML = MSG.MANUALS;
+		suiteHelpDiv.appendChild(suiteHelpSpan);
+		suiteHelpSpan.addEventListener(EVENT.CLICK, () => {
+			this.rootPanel(new HELP.AonSiteHelpSuite())
+			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
+		});
+		
+		let suiteHelpAnchor = this.createElement(TAG.A);
+		suiteHelpAnchor.className = CSS.AON_BUTTON_GOTO;
+		suiteHelpAnchor.href = HELP.HELP_SUITE_SITE;
+		suiteHelpAnchor.target = "suite.aonsolutions.info";
+		suiteHelpDiv.appendChild(suiteHelpAnchor);
+
+		helpContent.appendChild(suiteHelpDiv);
+		
 
 		let helpNotificationDiv = this.createSpan();
 		helpNotificationDiv.id = "notificationsHelp";

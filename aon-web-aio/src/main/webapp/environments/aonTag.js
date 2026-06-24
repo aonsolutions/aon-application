@@ -487,3 +487,6 @@ export const SUPERSET = 'aon-superset' ;
 export const AON_CONSOLE_MENU = 'aon-console-menu';
 
 export const AON_SINGLETON_ACCESS = 'aon-singleton-access';
+
+export const AON_SITE_HELP_SUITE = 'aon-site-help-suite' ;
+export const AON_SITE_HELP_PORTAL = 'aon-site-help-portal' ;

@@ -320,6 +320,15 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 	background-color: #cccccc !important;
 }
 
+.aonButtonGoto {
+	width: 23px;
+	height: 23px;
+    background-size:23px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url("../images/aon-icon-launch.svg");
+}
+
 .aonTimeControlButton {
 	padding: .5rem 1rem;
 	font-size: .8rem;

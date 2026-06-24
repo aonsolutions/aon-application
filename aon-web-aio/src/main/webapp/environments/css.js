@@ -11,6 +11,7 @@ export const AON_UL_UPLOAD_TOAST = 'aonUlUploadToast';
 export const AON_APP_LI = 'aonAppLi';
 export const AON_LINK = 'aonLink';
 export const AON_BUTTON = 'aonButton';
+export const AON_BUTTON_GOTO = 'aonButtonGoTo';
 export const AON_DASHBOARD_BUTTON = 'aonDashboardButton';
 export const AON_COLOR_ICON = 'aonColorIcon';
 export const AON_COLOR_GRAY = 'aonColorGray';
