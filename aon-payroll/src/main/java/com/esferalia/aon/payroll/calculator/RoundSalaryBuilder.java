@@ -41,12 +41,14 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.TimedConstant;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
@@ -75,7 +77,40 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	    }
 	    
 	    private void fireAdd(ISalaryBuilder<?> salaryBuilder) {
-		datas.forEach( data -> salaryBuilder.addData(data.name, data.variable));
+	    	datas.forEach( data -> salaryBuilder.addData(data.name, data.variable));
+	    }
+	    
+	    private void round4Periods(String name, UnaryOperator<BigDecimal> f) {
+	    	List<Data> list =
+	    	datas.stream()
+	    	.filter(d -> AonStringUtils.equals(d.name, name))
+	    	.filter(d -> d.variable.getValue(d.variable.getPeriod()) instanceof Number)
+	    	.toList();
+	    	
+	    	int count = list.size();
+	    	if ( count <=  1 )
+	    		return;
+	    	
+	    	BigDecimal sum = 
+	    	list.stream()
+	    	.map(d -> d.variable.getValue(d.variable.getPeriod()))
+	    	.map(value -> bigDecimalValue(((Number)value).doubleValue()))
+	    	.reduce(ZERO, RoundSalaryBuilder::add);
+	    	
+	    	BigDecimal rounded = f.apply(sum);
+	    	
+	    	for (int i = 0; i < ( count - 1 ); i++) {
+	    		Data data = list.get(i);
+	    		ITimedVariable<?> variable = data.variable;
+	    		BigDecimal roundValue = f.apply(bigDecimalValue(variable.getValue(variable.getPeriod())));
+	    		rounded = rounded.subtract(roundValue);
+	    		data.variable = new TimedObject<>(doubleValue(roundValue), variable.getPeriod().getStart(), variable.getPeriod().getEnd());
+	    	}
+	    	
+	    	// Last one, all remain
+    		Data data = list.get(count -1);
+    		ITimedVariable<?> variable = data.variable;
+    		data.variable = new TimedObject<>(doubleValue(rounded), variable.getPeriod().getStart(), variable.getPeriod().getEnd());
 	    }
 	}
 
@@ -355,41 +390,34 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 			unround[i].amount = remain;
 		    }
 		}
+		
 
-		private void roundQuote(UnaryOperator<BigDecimal> f, BigDecimal commonBase) {
-		    if ( payments.isEmpty()) {
-			return;
-		    }
-		    // Already rounded, don't touch   
-		    BigDecimal round = 
-		    payments.stream()
-		    .filter(p -> p.quote.compareTo(f.apply(p.quote)) == 0)
-		    .map( p -> p.quote )
-		    .reduce(ZERO, RoundSalaryBuilder::add);
-		    
-		    BigDecimal remain = commonBase.subtract(round);
-		    
-		    // Need to round, go for it   
-		    Payment [] unround =
-		    payments.stream()
-		    .filter(p -> p.quote.compareTo(f.apply(p.quote)) != 0)
-		    .toArray(Payment[]::new);
 
-		    if ( unround.length == 0) {
-			return;
-		    }
-
-		    Arrays.sort(unround, RoundSalaryBuilder::compare);
-
-		    for (int i = 0; i < ( unround.length - 1 ); i++) {
-			unround[i].quote = f.apply(unround[i].quote);
-			remain = remain.subtract(unround[i].quote);
-		    }
-		    
-		    // And de last one, all remain
-		    for (int i = unround.length - 1; i < unround.length; i++) {
-			unround[i].quote = remain;
-		    }
+		private void roundQuote4Periods(UnaryOperator<BigDecimal> f) {
+			Map <?, List<Payment>> grouped =
+			payments.stream()
+			.filter(p -> p.payment instanceof IContractPayment)
+			.filter(p -> AonNumberUtils.compare(p.quote, ZERO) > 0)
+			.filter(p -> AonNumberUtils.compare(p.amount, ZERO) == 0)
+			.collect(Collectors.groupingBy( p -> ((IContractPayment) p.payment).getId() ));
+			
+			grouped.values().stream()
+			.filter(list -> list.size() > 1)
+			.forEach( list -> {
+			    BigDecimal sumQuote = f.apply(list.stream()
+			    		.map(p -> p.quote).reduce(ZERO, RoundSalaryBuilder::add));
+			    for (int i = 0; i < ( list.size() - 1 ); i++) {
+					Payment p = list.get(i);
+					BigDecimal roundQuote = f.apply(p.quote);
+					sumQuote = sumQuote.subtract(roundQuote);
+					p.quote = roundQuote;
+			    }
+			    // Last one, all remain
+			    Payment p = list.get(list.size() -1);
+			    p.quote = sumQuote;
+			})
+			;
+			
 		}
 
 		private void fireAdd(ISalaryBuilder<?> salaryBuilder) {
@@ -978,6 +1006,17 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		return embargos.getTotal(f);
 	}
 	
+	private  void round4Periods(ContextVariable var) {
+	    datas.round4Periods(var.getName(), f);
+	}
+	
+	private void roundPaymentsQuote4Periods() {
+	    try {
+	    	payments.roundQuote4Periods(f);
+	    } catch ( Exception e ) {
+	    }
+	}
+
 	private void roundPaymentsAmount(BigDecimal totalPayment) {
 	    try {
 		payments.roundAmount(f, totalPayment);
@@ -985,17 +1024,10 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	    }
 	}
 
-	private void roundPaymentsQuote(BigDecimal commonBase) {
-	    try {
-		payments.roundQuote(f, commonBase);
-	    } catch ( Exception e ) {
-	    }
-	}
-
 	private void fireAddDatas(ISalaryBuilder<?> salaryBuilder) {
 	    datas.fireAdd(salaryBuilder);
 	}
-
+	
 	private void fireAddPayments(ISalaryBuilder<?> salaryBuilder) {
 	    payments.fireAdd(salaryBuilder);
 	}
@@ -1034,7 +1066,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 
 		totalPayment = f.apply(totalPayment);
 		roundPaymentsAmount(totalPayment);
-		//roundPaymentsQuote(cgcBase);
+		roundPaymentsQuote4Periods();
 		fireAddPayments(salaryBuilder);
 
 		BigDecimal totalEmbargo = getTotalEmbargo();
@@ -1076,6 +1108,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		totalEnterprise = f.apply(totalEnterprise);
 		salaryBuilder.setTotalEnterprise(doubleValue(totalEnterprise));
 		
+		round4Periods(ContextVariable.BASE_PPE);
 		fireAddDatas(salaryBuilder);
 		
 		addIrpfQuotas();

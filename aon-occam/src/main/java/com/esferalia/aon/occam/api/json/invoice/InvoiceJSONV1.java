@@ -215,7 +215,7 @@ class InvoiceJSONV1 {
 		}
 		
 		if(!invoice.getDetails().isEmpty()) {
-			json.put(IJsonNames.CATEGORY, invoice.getDetails().get(0).getAccountCode());
+			json.put(IJsonNames.CATEGORY, invoice.getDetails().get(0).getExpAccountCode());
 		}
 			
 		if(invoice.getAddress() != null) {

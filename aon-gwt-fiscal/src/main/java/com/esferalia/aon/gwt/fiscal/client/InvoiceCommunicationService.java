@@ -29,7 +29,7 @@ public interface InvoiceCommunicationService extends RemoteService {
 	String bajaLroe140(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) throws Exception;
 	String bajaLroe240(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) throws Exception;
 	ICResponse altaSii(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams);
-	String bajaSii(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams);
+	ICResponse bajaSii(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams);
 	Boolean refresh140(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams);
 	Boolean refresh240(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams);
 

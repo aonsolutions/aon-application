@@ -3,8 +3,10 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.DiscountExpression;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Workplace;
@@ -45,9 +47,9 @@ public class InvoiceDetail implements Serializable {
 	private Integer warehouse;
 	private String warehouseName;
 	private Workplace workplace;
-	private Integer accountId;
-	private String accountCode;
-	private String accountDescription;
+
+	private Account expAccount;
+	
 	private List<InvoiceTax> invoiceTaxes;
 	
 	// SOURCE INFO
@@ -97,6 +99,9 @@ public class InvoiceDetail implements Serializable {
 		return this;
 	}
 	
+	public Optional<Integer> optInvestAsset() {
+		return Optional.ofNullable(investAsset);
+	}
 	public Integer getInvestAsset() {
 		return investAsset;
 	}
@@ -249,31 +254,23 @@ public class InvoiceDetail implements Serializable {
 		return this;
 	}
 
-	public Integer getAccountId() {
-		return accountId;
+	public Optional<Account> getExpAccount() {
+		return Optional.ofNullable( expAccount );
 	}
-	public InvoiceDetail setAccountId(Integer accountId) {
-		this.accountId = accountId;
+	public InvoiceDetail setExpAccount(Account expAccount) {
+		this.expAccount = expAccount;
 		return this;
 	}
-	
-	public String getAccountCode() {
-		return accountCode;
+	public Integer getExpAccountId() {
+		return getExpAccount().map( a -> a.getId() ).orElse(null);
 	}
-	public InvoiceDetail setAccountCode(String accountCode) {
-		this.accountCode = accountCode;
-		return this;
+	public String getExpAccountCode() {
+		return getExpAccount().map( a -> a.getCode() ).orElse(null);
 	}
-	
-	public String getAccountDescription() {
-		return accountDescription;
+	public String getExpAccountDescription() {
+		return getExpAccount().map( a -> a.getDescription() ).orElse(null);
 	}
-	
-	public InvoiceDetail setAccountDescription(String accountDescription) {
-		this.accountDescription = accountDescription;
-		return this;
-	}
-	
+
 	// ---------------------------------------------------- [TAXES]
 	public Stream<InvoiceTax> taxStream() {
 		return AonCollectionUtils.stream(this.invoiceTaxes);

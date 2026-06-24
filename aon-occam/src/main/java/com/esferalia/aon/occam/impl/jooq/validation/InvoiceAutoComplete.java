@@ -565,21 +565,19 @@ public class InvoiceAutoComplete {
 				double base = inv.isUndeductible() ?AonMathUtils.round(b.getBase() + b.getQuota()) : b.getBase();
 				
 				InvoiceDetail id = new InvoiceDetail()
-						.setAccountId( acc != null ? acc.getId(): null)
-						.setAccountCode(acc != null ? acc.getCode() : null)
-						.setAccountDescription(acc != null ? acc.getDescription() : null)
-						.setDescription(acc == null || AonStringUtils.isBlank(acc.getDescription()) 
-								? "IVA " + b.getPercentage() : acc.getDescription())
-						.setDomain(inv.getDomain())
-						.setInvoice(inv)
-						.setInvoiceTaxes(invoiceTax)
-						.setPrice(base)
-						.setQuantity(1)
-						.setTaxableBase(base)
-						.setSource(InvoiceSource.TEDI)
-						.setWorkplace(ctx.getConfiguration().getWorkplaces() != null
-							? ctx.getConfiguration().getWorkplaces().getFirst() 
-							: null);
+					.setExpAccount( acc )
+					.setDescription(acc == null || AonStringUtils.isBlank(acc.getDescription()) 
+							? "IVA " + b.getPercentage() : acc.getDescription())
+					.setDomain(inv.getDomain())
+					.setInvoice(inv)
+					.setInvoiceTaxes(invoiceTax)
+					.setPrice(base)
+					.setQuantity(1)
+					.setTaxableBase(base)
+					.setSource(InvoiceSource.TEDI)
+					.setWorkplace(ctx.getConfiguration().getWorkplaces() != null
+						? ctx.getConfiguration().getWorkplaces().getFirst() 
+						: null);
 				invoiceDetails.add(id);
 			});
 			inv.setDetails(invoiceDetails);
@@ -638,17 +636,10 @@ public class InvoiceAutoComplete {
 				detail.setWorkplace(ctx.getConfiguration().getWorkplaces().get(0));
 			}
 			
-			if(detail.getAccountId() == null && detail.getAccountCode() != null) {
-				Domain domain = DomainDAO.getDomain(ctx.getContext(), inv.getDomain());
-				Account acc = null;
-				if(domain.isEnableHeredity() && domain.getParentId() != null) {
-					Integer[] domains = {domain.getId(), domain.getParentId()};
-					acc = AccountDAO.get(ctx.getContext(), ACCOUNT.DOMAIN.in(domains).and(ACCOUNT.CODE.eq(inv.getTediCategory())));
-				} else acc = AccountDAO.get(ctx.getContext(), ACCOUNT.DOMAIN.eq(domain.getId()).and(ACCOUNT.CODE.eq(inv.getTediCategory())));
-
+			if(detail.getExpAccountId() == null && detail.getExpAccountCode() != null) {
+				Account acc = AccountDAO.get(ctx.getContext(), detail.getExpAccountCode());
 				if(acc != null && acc.getId() != null) {
-					detail.setAccountId(acc.getId());
-					detail.setAccountDescription(acc.getDescription());
+					detail.setExpAccount(acc);
 				}
 			}
 			
@@ -671,17 +662,17 @@ public class InvoiceAutoComplete {
 						
 			if(!InvoiceSource.ACCOUNT.equals(detail.getSource()) 
 					&& (detail.getItem() == null || detail.getItem().getId() == null)
-					&& !AonStringUtils.isBlank(detail.getAccountCode())) {
+					&& !AonStringUtils.isBlank(detail.getExpAccountCode())) {
 				
 				Item i = ItemDAO.get(ctx.getContext(), f -> f.getDomainProperty().eq(inv.getDomain()).and(
 						f.getDescriptionProperty().eq(detail.getDescription())
-						.or(f.getProductCodeProperty().eq(detail.getAccountCode()))
+						.or(f.getProductCodeProperty().eq(detail.getExpAccountCode()))
 						.or(f.getProductNameProperty().eq(detail.getDescription()))));
 				if(i.getId() == null) {
 					String name = detail.getDescription().length() > 63
 							? detail.getDescription().substring(0, 63) 
 							: detail.getDescription();
-					i = createProductItem(ctx.getContext(), detail.getAccountCode(), name, detail, it);
+					i = createProductItem(ctx.getContext(), detail.getExpAccountCode(), name, detail, it);
 				}
 				detail.setItem(new Item().setId(i.getId()));
 			}

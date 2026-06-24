@@ -229,11 +229,11 @@ public class InvoiceConsoleTextPanel extends ScrollPanel {
 		buf.append(detail.getSource());
 		buf.append(AonStringUtils.CLOSE_BRACKET);
 		buf.append(" [Cuenta contable ");
-		buf.append(detail.getAccountCode());
+		buf.append(detail.getExpAccountCode());
 		buf.append(AonStringUtils.SPACE);
 		buf.append(AonStringUtils.HYPHEN);
 		buf.append(AonStringUtils.SPACE);
-		buf.append(detail.getAccountDescription());
+		buf.append(detail.getExpAccountDescription());
 		buf.append(AonStringUtils.CLOSE_BRACKET);
 		
 		buf.append(AonStringUtils.leftPad(" ", getLineSize() - buf.length()));

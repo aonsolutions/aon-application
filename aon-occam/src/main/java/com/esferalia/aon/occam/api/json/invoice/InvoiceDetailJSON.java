@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.json.ItemJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -35,12 +36,15 @@ public class InvoiceDetailJSON {
 	
 	public static InvoiceDetail fromJSON(JSONObject json) {
 		String discount = JsonUtils.getString(json, IJsonNames.DISCOUNT);
+		String accountCode = json.optString(IJsonNames.CATEGORY);
 		InvoiceDetail detail =  new InvoiceDetail()
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
 			.setDescription(json.optString(IJsonNames.DESCRIPTION))
 			.setItem(ItemJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ITEM)))
-			.setAccountCode(json.optString(IJsonNames.CATEGORY))
+			.setExpAccount((AonStringUtils.isNotBlank(accountCode))
+				? new Account().setCode(accountCode)
+				: null)
 			.setQuantity(JsonUtils.getdouble(json, IJsonNames.QUANTITY))
 			.setPrice(JsonUtils.getdouble(json, IJsonNames.PRICE))
 			.setDiscountExpression(AonStringUtils.isBlank(discount) ? "0.0" : discount)
@@ -108,7 +112,7 @@ public class InvoiceDetailJSON {
 				.put(IJsonNames.PRICE, detail.getPrice())
 				.put(IJsonNames.AMOUNT, detail.getTaxableBase())
 				.put(IJsonNames.DISCOUNT, detail.getDiscount())
-				.put(IJsonNames.CATEGORY, detail.getAccountCode())
+				.put(IJsonNames.CATEGORY, detail.getExpAccountCode())
 				.put(IJsonNames.PREPAYMENT, detail.isPrepayment())
 				.put(IJsonNames.SOURCE, detail.getSource().name())
 				.put(IJsonNames.WORKPLACE, detail.getWorkplace() != null ? detail.getWorkplace().getId() : null);

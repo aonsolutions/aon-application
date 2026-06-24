@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
+import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
@@ -11,7 +11,6 @@ import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
@@ -27,8 +26,8 @@ import org.jooq.SelectSeekStep1;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.api.model.Properties.InvoiceDetailProperties;
 import com.esferalia.aon.occam.api.model.InvestAsset;
+import com.esferalia.aon.occam.api.model.Properties.InvoiceDetailProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -36,6 +35,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO.InvestAssetFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.InvoiceFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
@@ -237,9 +237,7 @@ public class InvoiceDetailDAO {
 							: new Workplace().setId(getValue(r, INVOICE_DETAIL.WORKPLACE)))
 					.setWarehouse(getValue(r, INVOICE_DETAIL.WAREHOUSE))
 					.setWarehouseName(getString(r, WAREHOUSE.NAME))
-					.setAccountId(getValue(r,ACCOUNT.ID))
-					.setAccountCode(getValue(r, ACCOUNT.CODE))
-					.setAccountDescription(getValue(r, ACCOUNT.DESCRIPTION))
+					.setExpAccount( FullAccountFiller.buildIf( r ) )
 					.setInvestAsset(getValue(r, INVOICE_DETAIL.INVEST_ASSET))
 					.setInvestAssetData(checkField(r, INVEST_ASSET.ID)
 							? InvestAssetFiller.build(r) 

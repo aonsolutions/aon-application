@@ -1310,6 +1310,23 @@ public class Mod2002024DAO  {
 			}
 		}
 		return mod;
-	}	
+	}
+	
+	// Obtiene el último modelo 200 del ejercicio 2024 (Presentado, Finalizado o Pendiente, en ese orden) (Estos son los únicos estados posibles actualmente en el modelo 200)
+	public static Mod2002024 getLastModel2024(AONContext ctx) {
+		Result<FsModel200Record> result = ctx.getDslContext()
+				.selectFrom(FS_MODEL200)
+				.where(FS_MODEL200.DOMAIN.equal(ctx.getDomainId()))
+				.and(FS_MODEL200.YEAR.equal(2024))
+				.orderBy(FS_MODEL200.STATUS.desc(), FS_MODEL200.ID.desc())
+				.fetch();
+		FsModel200Record rec = null;
+		Mod2002024 mod200 = null; 
+		if (result != null && result.isNotEmpty()) {
+			rec = result.get(0);
+			mod200 = populateMod200(ctx,rec);
+		}
+		return mod200;
+	}
 	
 }

@@ -156,7 +156,12 @@ public class AccountEntryDetail implements Serializable, HasAudit {
 		}
 		return setDebit(newDebit);
 	}
-
+	public AccountEntryDetail addDebit(boolean condition, double debit) {
+		return (condition) 
+			?addDebit(debit)
+			:addCredit(debit);
+	}
+	
 	public double getCredit() {
 		return credit;
 	}
@@ -188,6 +193,11 @@ public class AccountEntryDetail implements Serializable, HasAudit {
 			debit = 0;
 		}
 		return setCredit(newCredit);
+	}
+	public AccountEntryDetail addCredit(boolean condition, double credit) {
+		return (condition) 
+			?addCredit(credit)
+			:addDebit(credit);
 	}
 
 	public Integer getBalancingAccountId() {
