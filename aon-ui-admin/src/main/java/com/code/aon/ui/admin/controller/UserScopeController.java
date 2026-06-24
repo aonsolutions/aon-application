@@ -111,7 +111,7 @@ public class UserScopeController implements Serializable {
 			if (! _scopes.isEmpty() ) {
 				for( Scope scope : _scopes ) {
 					UserScope us = new UserScope();
-					us.setUser(user);
+					us.setUserDBByUserId(user);
 					us.setScope(scope);
 					bean.insert(us);
 				}			
