@@ -9,6 +9,7 @@ import '../modules/project/aon-project-panel.js';
 import * as GWT from '../gwt/gwt.js';
 import * as LS from '../services/localStorageService.js';
 import * as JSF from './aon-jsf-app.js';
+import * as HELP from './aon-site-help.js';
 import { AonMessenger } from '../modules/messenger/aon-messenger.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonUploadToast } from "../components/aon-upload-toast.js";
@@ -290,7 +291,7 @@ export class AonNewMenu extends AonElement {
 					GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
 					break;
 				case CONTENT_INDEX.app:
-					this.rootPanel(new JSF.AonJsfHelpContent())
+					this.rootPanel(new HELP.AonSiteHelpPortal());
 					this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
 					break;
 				default/*Apps.HOME*/:
@@ -823,6 +824,16 @@ export class AonNewMenu extends AonElement {
 			span.classList.add("aonNewMenuAppSpan");
 			span.innerHTML = app.description;
 			div.appendChild(span);
+		}
+		if ( app.goto) {
+			let gotoAnchor = this.createElement(TAG.A);
+			gotoAnchor.className = CSS.AON_BUTTON_GOTO;
+			gotoAnchor.href = app.goto;
+			gotoAnchor.target = "portal.aonsolutions.info";
+			div.appendChild(gotoAnchor);
+			gotoAnchor.addEventListener(EVENT.CLICK, (e) => {
+				e.stopPropagation();
+			});
 		}
 
 		a.appendChild(div);
