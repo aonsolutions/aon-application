@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.security;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 public class Scope implements Serializable {
 	
@@ -9,6 +10,9 @@ public class Scope implements Serializable {
 	private String description;
 	private Integer domain;
 	private Integer id;
+	
+	// Only fill in SecurityDAO.getUserScopesByUserList
+	private HashMap<Integer, String> scopeDomains = new HashMap<Integer, String>();
 	
 	public Integer getId() {
 		return id;
@@ -31,6 +35,14 @@ public class Scope implements Serializable {
 	}
 	public Scope setDescription(String description) {
 		this.description = description;
+		return this;
+	}
+	
+	public HashMap<Integer, String> getScopeDomains() {
+		return scopeDomains;
+	}
+	public Scope setScopeDomains(HashMap<Integer, String> scopeDomains) {
+		this.scopeDomains = scopeDomains;
 		return this;
 	}
 	
