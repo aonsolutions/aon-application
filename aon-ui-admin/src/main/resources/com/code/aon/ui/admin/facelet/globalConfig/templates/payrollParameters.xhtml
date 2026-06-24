@@ -21,7 +21,7 @@
 					<aon:actionListener method="#{enterprise.accept}" />
 					<aon:if test="#{aonRole.config}">
 						<aon:actionListener method="#{payrollAppParams.onAccept}" />
-						<aon:actionListener method="#{sepeAppParams.onAccept}" />
+						<!-- <aon:actionListener method="#{sepeAppParams.onAccept}" /> -->
 					</aon:if>
 				</aon:commandButton>					
 			</ui:define>				
@@ -40,10 +40,11 @@
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/params/formContent.xhtml" />
 				</aon:div>
 			</aon:if>
-		
+			<!--
 			<aon:if test="#{aonRole.config}">
 				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/params/form_content.xhtml" />
 			</aon:if>
+			-->
 		</aon:div>
 	</aon:form>
 	<aon:lookupButtonPopup lookup="#{agreementLookup}" />

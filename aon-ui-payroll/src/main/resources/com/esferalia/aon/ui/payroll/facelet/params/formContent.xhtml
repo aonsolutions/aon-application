@@ -76,34 +76,36 @@
 						
 				</aon:panelGrid>
 				
-				<aon:panel>
-					<f:facet name="header">
-						<aon:outputText value="Seguros sociales"/>
-					</f:facet>
-					<aon:panelGrid columns="2" styleClass="aon-width-all"
-						columnClasses="aon-panelGrid-odd aon-width-200, aon-panelGrid-even aon-width-auto">
-						
-						<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-							<aon:outputLabel for="mutual" 
-								value="#{bundle.payroll_mutual_at_ep}" />
-							<aon:selectOneMenu id="mutual"
-								value="#{payrollAppParams.parameters['PAY_ss_mutual_PAY'].value}" >
-								<f:selectItem itemValue="#{null}" itemLabel="-" />
-								<f:selectItems value="#{payrollCollections.mutualList}" />
-							</aon:selectOneMenu>
-								
-							<aon:outputLabel for="ss_payment_bankAccount" 
-								value="#{bundle.aon_bank_account} (Pago de cuotas)" />
-							<aon:selectOneMenu id="ss_payment_bankAccount" 
-								value="#{payrollAppParams.ssPaymentBankAccount}">
-								<f:selectItem itemLabel="Pago electrónico" value="#{null}" />
-								<f:selectItems value="#{companyCollections.allCompanyBanks}" />
-							</aon:selectOneMenu>
-						</aon:if>
-						
-					</aon:panelGrid>	
-				</aon:panel>
-			
+				<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+					<aon:panel>
+						<f:facet name="header">
+							<aon:outputText value="Seguros sociales"/>
+						</f:facet>
+						<aon:panelGrid columns="2" styleClass="aon-width-all"
+							columnClasses="aon-panelGrid-odd aon-width-200, aon-panelGrid-even aon-width-auto">
+							
+							<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+								<aon:outputLabel for="mutual" 
+									value="#{bundle.payroll_mutual_at_ep}" />
+								<aon:selectOneMenu id="mutual"
+									value="#{payrollAppParams.parameters['PAY_ss_mutual_PAY'].value}" >
+									<f:selectItem itemValue="#{null}" itemLabel="-" />
+									<f:selectItems value="#{payrollCollections.mutualList}" />
+								</aon:selectOneMenu>
+									
+								<aon:outputLabel for="ss_payment_bankAccount" 
+									value="#{bundle.aon_bank_account} (Pago de cuotas)" />
+								<aon:selectOneMenu id="ss_payment_bankAccount" 
+									value="#{payrollAppParams.ssPaymentBankAccount}">
+									<f:selectItem itemLabel="Pago electrónico" value="#{null}" />
+									<f:selectItems value="#{companyCollections.allCompanyBanks}" />
+								</aon:selectOneMenu>
+							</aon:if>
+							
+						</aon:panelGrid>	
+					</aon:panel>
+				</aon:if>
+				<!--			
 				<aon:panel>
 					<f:facet name="header">
 						<aon:outputText value="Afiliación" />
@@ -121,7 +123,7 @@
 						</aon:div>
 					</aon:panelGrid>
 				</aon:panel>
-				
+				-->
 			</aon:div>
 		</aon:div>
 	</aon:div>
