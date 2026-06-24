@@ -116,26 +116,26 @@ public class ModelMatrixPanel extends FlowPanel {
 		LinkedList<String> periodList = new LinkedList<>();
 		periodList.add(params.getPeriod()==null?"":params.getPeriod().getName());
 		filterMap.put(IJsonNames.PERIOD, periodList);
-
 		api.getFiscal().getFiscalModels( filterMap, new AsyncCallback<JSON<JsFiscalMenuItem>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsFiscalMenuItem> result) {
 				AonJsArray<JsFiscalMenuItem> aonJsArray = result.getData();
 				if (aonJsArray == null || aonJsArray.length() == 0) {
-					FlowPanel content = new FlowPanel();
-					content.setStyleName(AON.CSS.aonMarginRight());
-					content.addStyleName(AON.CSS.aonMarginLeft());
-					content.addStyleName(AON.CSS.aonBlockCenter());
-					
-					Label noData = new Label(AON.MSG.noData());
-					noData.setStyleName(AON.CSS.aonTextCenter());
-					noData.addStyleName(AON.CSS.aonMarginTop());
-					noData.addStyleName(AON.CSS.aonPadding());
-					noData.addStyleName(AON.CSS.aonColorRed());
-					noData.addStyleName(AON.CSS.aonBold());
-					content.add(noData);
-					ModelMatrixPanel.this.add( content );
+//					FlowPanel content = new FlowPanel();
+//					content.setStyleName(AON.CSS.aonMarginRight());
+//					content.addStyleName(AON.CSS.aonMarginLeft());
+//					content.addStyleName(AON.CSS.aonBlockCenter());
+//					
+//					Label noData = new Label(AON.MSG.noData());
+//					noData.setStyleName(AON.CSS.aonTextCenter());
+//					noData.addStyleName(AON.CSS.aonMarginTop());
+//					noData.addStyleName(AON.CSS.aonPadding());
+//					noData.addStyleName(AON.CSS.aonColorRed());
+//					noData.addStyleName(AON.CSS.aonBold());
+//					content.add(noData);
+//					ModelMatrixPanel.this.add( content );
+					addInfoLine(AON.MSG.noData());
 				} else {
 					MatrixData matrixData = sortInfo(aonJsArray);
 					ModelMatrixPanel.this.paint( options, matrixData, params);
@@ -147,21 +147,36 @@ public class ModelMatrixPanel extends FlowPanel {
 				options.getSelected().clear();
 				selected.forEach(s -> options.getSelected().add(s));
 				selected.clear();		
+				LOGGER.info("ModelMatrixPanel getFiscalModels Success");
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
 				if (!options.isCompactMode()) {
 					pop.hide();
+//					addInfoLine(caught.getMessage());
 				}
+				LOGGER.severe("ModelMatrixPanel getFiscalModels Failure: " + caught.getMessage());
 			}
+			
+			private void addInfoLine(String text) {
+				FlowPanel content = new FlowPanel();
+				content.setStyleName(AON.CSS.aonMarginRight());
+				content.addStyleName(AON.CSS.aonMarginLeft());
+				content.addStyleName(AON.CSS.aonBlockCenter());
+				
+				Label infoLabel = new Label(text);
+				infoLabel.setStyleName(AON.CSS.aonTextCenter());
+				infoLabel.addStyleName(AON.CSS.aonMarginTop());
+				infoLabel.addStyleName(AON.CSS.aonPadding());
+				infoLabel.addStyleName(AON.CSS.aonColorRed());
+				infoLabel.addStyleName(AON.CSS.aonBold());
+				content.add(infoLabel);
+				ModelMatrixPanel.this.add( content );
+			}
+
 		});
 	}
-
-//	public ModelMatrixPanel(MatrixModuleOptions options, MatrixData matrixData, FiscalMatrixParams params) {
-//		super();
-//		paint( options, matrixData, params);
-//	}
 	
 	private void paint(MatrixModuleOptions options, MatrixData matrixData, FiscalMatrixParams params) {
 		setStyleName(AON.CSS.aonMarginRight());
@@ -472,11 +487,12 @@ public class ModelMatrixPanel extends FlowPanel {
 		AonDisplayTableRow periodRow = table.addRow();
 		if (!options.isCompactMode()) {
 			if (!params.isFiscalModelTypePresent()) {
-				if (!AonStringUtils.equals(domainName,fm.getName())) {
-					periodRow.addCell( new Label( docKey + " " + fm.getName() ), AON.CSS.aonBorderBottom());
-				} else {
-					periodRow.addCell( getEmptyLabel());
-				}
+//				if (!AonStringUtils.equals(domainName,fm.getName())) {
+//					periodRow.addCell( new Label( docKey + " " + fm.getName() ), AON.CSS.aonBorderBottom());
+//				} else {
+//					periodRow.addCell( getEmptyLabel());
+//				}
+				periodRow.addCell( new Label( docKey + " " + fm.getName() ), AON.CSS.aonBorderBottom());
 			} else {
 				periodRow.addCell( new Label( docKey + " " + fm.getName() ), AON.CSS.aonBorderBottom());
 			}
@@ -508,7 +524,7 @@ public class ModelMatrixPanel extends FlowPanel {
 	private void paintDomainRowIfNeeded(boolean modelPresent, AonDisplayTable table, String domainName) {
 		if (!modelPresent) {
 			table.addRow( )
-				.addCell( new Label(domainName), AON.CSS.aonBold(), AON.CSS.aonPaddingLeft(),AON.CSS.aonTextUppercase())
+				.addCell( new Label(domainName), AON.CSS.aonBold(), AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingTop(), AON.CSS.aonTextUppercase())
 				.addCell( getEmptyLabel())
 				.addCell( getEmptyLabel())
 				.addCell( getEmptyLabel())

@@ -24,7 +24,6 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
-import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.http.AonHttpUtils;
@@ -58,7 +57,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 	private ListBox year;
 	private ListBox model;
 	private ListBox admon;
-	private ListBox scopeBox;
+	private ListBox scopeBox; 
 	private CheckBox showConfigurated;
 	private CheckBox showMadeModels;
 	private AonTextBox declared;
@@ -147,14 +146,13 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		
 		InlineLabel scopeLabel = new InlineLabel(AON.MSG.scope());
 		scopeBox = new ListBox();
-		boolean showScopes = (options != null && options.getConfiguration() != null && options.getConfiguration().hasAvailableScopes());
+		boolean showScopes = true;
 		if (showScopes) {
 			scopeLabel.setStyleName(AON.CSS.aonMarginRight());
 			scopeBox.setStyleName(AON.CSS.aonMarginRight());
-			scopeBox.addItem(" TODOS ", "");
-			for (Scope scope : options.getConfiguration().getAvailableScopes()) {
-				scopeBox.addItem(scope.getDescription(),AonNumberUtils.toString(scope.getId()));
-			}
+			scopeBox.addItem(" Mis \u00E1mbitos ", "0");
+			scopeBox.addItem(" Sin \u00E1mbito ", "1");
+			scopeBox.addItem(" Todos ", "2");
 			scopeBox.addChangeHandler(event -> fireValueChangeEvent());
 		}
 
