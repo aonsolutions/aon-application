@@ -1715,7 +1715,6 @@ public class AccountingInvoiceDAO {
 					.setInvestAssetData(null))
 				.flatMap( d -> AonCollectionUtils.stream(d.getInvoiceTaxes()))
 				.forEach( t -> t 
-					.setInvestAsset( null )
 					.setDeductiblePercent(100.0)
 					.setDeductibleQuota( t.getQuota() )	
 					);

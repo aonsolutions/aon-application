@@ -43,8 +43,6 @@ public class InvoiceTax implements Serializable {
 	 * 
 	*/
 	@Deprecated
-	private Integer investAsset;
-	@Deprecated
 	private boolean withholding;
 	@Deprecated
 	private Integer account;
@@ -290,15 +288,6 @@ public class InvoiceTax implements Serializable {
 	@Deprecated
 	public InvoiceTax setWithholding(boolean withholding) {
 		this.withholding = withholding;
-		return this;
-	}
-	@Deprecated
-	public Integer getInvestAsset() {
-		return investAsset;
-	}
-	@Deprecated
-	public InvoiceTax setInvestAsset(Integer investAsset) {
-		this.investAsset = investAsset;
 		return this;
 	}
 }
