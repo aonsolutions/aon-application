@@ -62,6 +62,7 @@ public class FiscalMenuDAO {
 	
 	private static JSONArray getDomainModels(AONContext ctx, final Domain domain, JSONArray allModels,FiscalMatrixParams params) {
 		LOGGER.info("FiscalMenuDAO getDomainModels BEGIN");
+		LOGGER.info("FiscalMenuDAO getDomainModels AonContext " + ctx.getDomainName() + " " + ctx.getUser());
 		if (params.isConfiguredVisible()) {
 			addConfiguredModels(ctx, domain, allModels,params);
 		}
@@ -223,7 +224,8 @@ public class FiscalMenuDAO {
 				type.visit( visitor );
 			}
 		}
-		
+
+		LOGGER.info("FiscalMenuDAO getDomainModels allModels size " + allModels.length());
 		LOGGER.info("FiscalMenuDAO getDomainModels END");
 		return allModels;
 	}
