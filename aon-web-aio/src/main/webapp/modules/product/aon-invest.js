@@ -9,7 +9,7 @@ import { deleteInvestAsset, saveInvestAsset } from '../../services/productServic
 import * as ACTION from '../actions.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonInvestList } from './aon-invest-list.js';
-import { createNumber, createSelect } from '../../components/CreateComponent.js';
+import { createNumber, createSelect, createInput, createDate } from '../../components/CreateComponent.js';
 
 export class AonInvest extends AonElement {
 
@@ -112,7 +112,8 @@ export class AonInvest extends AonElement {
 		table.addCell(activitySelect, 2);
 		getCompanyActivities({}).then(activities => {
 			activitySelect.setOptions(activities) ;
-			activitySelect.value = this.investAsset.activity.id;
+			if(this.investAsset.activity && this.investAsset.activity.id)
+				activitySelect.value = this.investAsset.activity.id;
 		});
 
 		table.addRow();
