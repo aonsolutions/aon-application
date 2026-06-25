@@ -419,17 +419,15 @@ public class Bases {
 				return def.getAsDouble();
 
 			for (ContextData data : datas) {
-				Period intersect = p.intersect(
-						new Period(data.getStartDate(), data.getEndDate()));
-				if (intersect == null)
-					continue;
-
 				// TODO : More than one unique valor ?
 				try {
+					Period intersect = p.intersect(
+							new Period(data.getStartDate(), data.getEndDate()));
+					if (intersect == null)
+						continue;
 					return ExpressionContext.eval(data.getExpression(),
 							Number.class).doubleValue();
 				} catch ( Exception e ) {
-					
 				}
 			}
 
@@ -2580,7 +2578,7 @@ public class Bases {
 							if ( AonStringUtils.containsIgnoreCase("L00", tipo) )
 								filter = filter.and(props.getIsSalaryProperty().eq(true));
 							else if ( AonStringUtils.containsIgnoreCase("L02", tipo) )
-								filter = filter.and(props.getIsSalaryProperty().eq(true));
+								filter = filter.and(props.getIsProceduralProperty().eq(true));
 							else if ( AonStringUtils.containsIgnoreCase("L91", tipo) )
 								filter = filter.and(props.getIsSalaryProperty().eq(true));
 							else if ( AonStringUtils.equalsIgnoreCase("L13", tipo) )

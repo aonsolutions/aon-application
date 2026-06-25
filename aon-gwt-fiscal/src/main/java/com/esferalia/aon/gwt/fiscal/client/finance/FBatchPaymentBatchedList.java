@@ -10,24 +10,35 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCheckBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.fiscal.client.FinanceService;
+import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule.FBATCH_TYPE;
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFBatchStatusVisitor;
+import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.FBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.type.FBatchStatus.FBatchStatusVisitor;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -39,7 +50,17 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 	
-	private static CommonServiceAsync COMMON_SERVICE;
+	private static final CommonServiceAsync COMMON_SERVICE;
+	static {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
+	}
+	
+	private static FinanceServiceAsync FINANCE_SERVICE;
+	static {
+		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
+		FINANCE_SERVICE = new FinanceServiceAsyncDecorator(financeServiceRaw);
+	}
 	
 	// ------- FBatchRow
 	
@@ -102,7 +123,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		, FEC("F. Venc."				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FFT("F. Factura"				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FAC("N. Factura"				,"8rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, TIT("Titular"					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, TIT("Titular"					,"5rem"  			,"flex: 1 1 5rem; min-width: 5rem; width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, AMO("Importe"					,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		;
 		
@@ -135,7 +156,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		, CHK(AonStringUtils.EMPTY		,"2rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FEC("F. Venc."				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FAC("Concepto"				,"9rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, TIT("Titular"					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, TIT("Titular"					,"5rem"  			,"flex: 1 1 5rem; min-width: 5rem; width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, AMO("Importe"					,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		;
 		
@@ -166,9 +187,6 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 	// Constructor
 	public FBatchPaymentBatchedList(FinanceModuleOptions options, FBATCH_TYPE fbatchType, FBatch fbatch) {
 		super("Vencimientos Remesados");
-		
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		this.options = options;
 		this.fbatchType = fbatchType;
@@ -210,11 +228,11 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 
 	private void addButtonsToolbar() {
 		checkAll = new AonTableButton( AON.MSG.selectAll(), AON.CSS.aonIconChecked() );
-		checkAll.setEnabled(!fbatch.isGenerated() && !fbatch.isAccounted());
+		checkAll.setEnabled(!fbatch.isGenerated() && !fbatch.isRecorded());
 		checkAll.addClickHandler(e -> checkAllAviable( true ));
 		
 		uncheckAll = new AonTableButton( AON.MSG.selectNone(), AON.CSS.aonIconCheck() );
-		uncheckAll.setEnabled(!fbatch.isGenerated() && !fbatch.isAccounted());
+		uncheckAll.setEnabled(!fbatch.isGenerated() && !fbatch.isRecorded());
 		uncheckAll.addClickHandler(e -> checkAllAviable( false ));
 		
 		HTMLPanel checksPanel = new HTMLPanel(AonStringUtils.EMPTY);
@@ -236,7 +254,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 			else
 				selectedFinances.remove(financeRow.getFinance().getId());
 			
-			Widget w = tab.getWidget(financeRow.getRow(), 0);
+			Widget w = tab.getWidget(financeRow.getRow(), 1);
 			
 			if (null != w && w instanceof AonTableButton) {
 				if (check) {
@@ -250,7 +268,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		}
 
 		selectedCount.setText((selectedFinances.size() > 0) ? AonNumberUtils.toString(selectedFinances.size()) : "");
-		addSelectedButton.setEnabled(selectedFinances.size() > 0 && !fbatch.isGenerated() && !fbatch.isAccounted());
+		addSelectedButton.setEnabled(selectedFinances.size() > 0 && !fbatch.isGenerated() && !fbatch.isRecorded());
 	}
 	
 	private void createBatchContainer() {
@@ -299,6 +317,15 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 			saveFBatch(fbatch);
 		});
 		
+		
+		if ( fbatch.isRecorded()) {
+			status.addStyleName(AON.CSS.aonWidth320());
+			status.getTextBox().setMaxLength(25);
+			AonTableButton viewEntryButton = new AonTableButton(AON.MSG.viewAccountEntry(), AON.CSS.aonIconOpenInNew());
+			viewEntryButton.addClickHandler(e -> showEntry() );
+			status.addButton( viewEntryButton );
+		}
+		
 		confidential.addValueChangeHandler(e -> {
 			fbatch.setConfidential(e.getValue());
 			saveFBatch(fbatch);
@@ -331,31 +358,28 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 	
 	private void fillFBatchInfo() {
 		description.setValue(fbatch.getDescription());
-		description.setEnable(!fbatch.isAccounted());
+		description.setEnable(!fbatch.isRecorded());
 		
 		issueDate.setValue(fbatch.getIssueDate());
-		issueDate.setEnable(!fbatch.isGenerated() && !fbatch.isAccounted());
+		issueDate.setEnable(!fbatch.isGenerated() && !fbatch.isRecorded());
 		
 		type.setValue(null != fbatch.getType() ? fbatch.getType().toString() : null);
-		type.setEnable(fbatch.getBatchDetails().isEmpty() || (!fbatch.isGenerated() && !fbatch.isAccounted()));
+		type.setEnabled(fbatch.getBatchDetails().isEmpty() || (!fbatch.isGenerated() && !fbatch.isRecorded()));
 		
 		status.setValue(null == fbatch.getStatus() ? "" : fbatch.getStatus().getDescription());
 		status.setEnable(false);
-		fbatch.getStatus().visit(new IFBatchStatusVisitor() {
+		fbatch.getStatus().visit(new FBatchStatusVisitor() {
 			
 			@Override
 			public void visitUnknown() {
-				status.removeStyleName(AON.CSS.aonColorGreen());
-				status.removeStyleName(AON.CSS.aonBold());
-				status.removeStyleName(AON.CSS.aonColorRed());
+				visitGenerated();
 			}
 			
 			@Override
 			public void visitPending() {
 				status.removeStyleName(AON.CSS.aonColorGreen());
 				status.removeStyleName(AON.CSS.aonBold());
-				
-				status.setStyleName(AON.CSS.aonColorRed());
+				status.addStyleName(AON.CSS.aonColorRed());
 			}
 			
 			@Override
@@ -366,21 +390,20 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 			}
 			
 			@Override
-			public void visitAccounted() {
+			public void visitRecorded() {
 				status.removeStyleName(AON.CSS.aonColorRed());
-				
-				status.setStyleName(AON.CSS.aonColorGreen());
+				status.addStyleName(AON.CSS.aonColorGreen());
 				status.addStyleName(AON.CSS.aonBold());
 			}
 		});
 		
 		getEnterpriseBanks(companyBanks -> {
 			bank.setValue(null != fbatch.getRbank() ? fbatch.getRbank().getId().toString() : "");
-			bank.setEnable(!fbatch.isGenerated() && !fbatch.isAccounted());
+			bank.setEnabled(!fbatch.isGenerated() && !fbatch.isRecorded());
 		});
 		
 		confidential.setValue(fbatch.isConfidential());
-		confidential.setEnable(!fbatch.isGenerated() && !fbatch.isAccounted());
+		confidential.setEnable(!fbatch.isGenerated() && !fbatch.isRecorded());
 		
 		String amountSum = null == fbatch.getBatchDetails() || fbatch.getBatchDetails().isEmpty() ? "0.00 \u20ac"
 				: AON.FMT.format(fbatch.getBatchDetails().stream().map(fBatchDetail -> fBatchDetail.getAmount())
@@ -407,6 +430,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		tab.createHeader();
 		
 		addSelectedButton = new AonTableButton("Quitar de la remesa", AON.CSS.aonIconKeyboardDoubleArrowLeft());
+		addSelectedButton.getElement().getStyle().setProperty("background-repeat", "no-repeat");
 		addSelectedButton.setEnabled(false);
 		addSelectedButton.addClickHandler(e -> {
 			addSelectedButton.setEnabled(false);
@@ -471,7 +495,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		row.addDomHandler(e -> {}, ClickEvent.getType());
 		
 		AonTableButton removeButton = new AonTableButton("Quitar de la remesa", AON.CSS.aonIconKeyboardArrowLeft());
-		removeButton.setEnabled(!fbatch.isAccounted() && !fbatch.isGenerated());
+		removeButton.setEnabled(!fbatch.isRecorded() && !fbatch.isGenerated());
 		removeButton.addClickHandler(e -> {
 			removeButton.setEnabled(false);
 			Optional<FBatchDetail> fbatchDetail = this.fbatch.getBatchDetails().stream()
@@ -487,7 +511,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		tab.addRow(row, finance.isPending() || finance.isBatched() ? removeButton : new Label(), COLS.ACT.getColWidth());
 		
 		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), selectedFinances.contains(finance.getId()) ? AON.CSS.aonIconChecked() : AON.CSS.aonIconCheck());
-		checkButton.setEnabled(!fbatch.isAccounted() && !fbatch.isGenerated());
+		checkButton.setEnabled(!fbatch.isRecorded() && !fbatch.isGenerated());
 		checkButton.addClickHandler( new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -504,7 +528,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 				}
 
 				selectedCount.setText((selectedFinances.size() > 0) ? AonNumberUtils.toString(selectedFinances.size()) : "");
-				addSelectedButton.setEnabled(selectedFinances.size() > 0 && !fbatch.isAccounted() && !fbatch.isGenerated());
+				addSelectedButton.setEnabled(selectedFinances.size() > 0 && !fbatch.isRecorded() && !fbatch.isGenerated());
 			}
 		});
 		tab.addRow(row, finance.isPending() || finance.isBatched() || finance.hasSalary() && null != finance.getSalaryTotalLiquid() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid() ? checkButton : new Label(), COLS.CHK.getColWidth());
@@ -595,6 +619,57 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 				});
 	}
 	
+	private void showEntry() {
+		FINANCE_SERVICE.getFBatchAccountEntry( options.getOccam(), fbatch.getId(), new AsyncCallback<AccountEntry>() {
+
+			@Override
+			public void onSuccess(AccountEntry entry) {
+				AonCustomPopup entryDialog = new AonCustomPopup();
+				entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
+				entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
+				entryDialog.setAnimationEnabled(true);
+				entryDialog.setGlassEnabled(true);
+				entryDialog.setModal(true);
+				entryDialog.setCaption(AON.MSG.accountingDocument());
+				AccountEntryModule module = new AccountEntryModule();
+				module.onModuleLoad(new AccountEntryModuleOptions()
+						.setParentWidget(entryDialog)
+						.setDomainName(options.getDomainName())
+						.setDomain(options.getDomain())
+						.setUser(options.getUser())
+						.setConfiguration(options.getConfiguration())
+						.setAccountEntryId( entry.getId() )
+						.setBackButtonVisible(false)
+						.setSessionLogTabVisible(false)
+						.setJournalTabVisible(false)
+						.setExtraInfoTabVisible(false)
+						.setResetAfterAccept(false)
+						.setExternalCallback(new ModuleCallback() {
+
+							private static final long serialVersionUID = -2947804456883665519L;
+
+							@Override public void onRemove(IAccountEntryWrapper removed) {onChange(null);}
+							@Override public void onFailure(Throwable caught) {onChange(null);}
+							@Override public void onExit() { onChange(null);}
+
+							@Override
+							public void onChange(IAccountEntryWrapper changed) {
+								entryDialog.clear();
+								entryDialog.hide();
+							}
+						}));
+				entryDialog.center();
+				entryDialog.show();
+				
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessageDialog.error("Error al cargar el asiento contable asociado a la remesa - " + caught.getMessage());
+			}
+		});
+	}
+
 	protected abstract void saveFBatch(FBatch fBatch);
 	
 }

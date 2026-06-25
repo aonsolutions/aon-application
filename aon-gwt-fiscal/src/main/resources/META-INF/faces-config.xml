@@ -296,6 +296,10 @@
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/amortization.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>gwt_accounting_amortization</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/accounting_amortization.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>gwt_amortization_type</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/amortizationType.xhtml</to-view-id>
 		</navigation-case>
@@ -398,8 +402,24 @@
 	<!-- =================== Registry Entry Module ========================== -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>gwt_registry_entry_module</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/registryEntryModule.xhtml</to-view-id>
+			<from-outcome>gwt_registry_company_entry_module</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/registryCompanyEntryModule.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== Mail Account Entry Module ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_mail_account_entry_module</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mailAccount/mailAccountEntryModule.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== Signature Entry Module ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_mail_signature_module</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mailAccount/signatureEntryModule.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

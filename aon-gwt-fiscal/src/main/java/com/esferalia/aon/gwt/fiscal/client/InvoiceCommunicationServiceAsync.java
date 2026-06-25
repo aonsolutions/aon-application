@@ -31,7 +31,7 @@ public interface InvoiceCommunicationServiceAsync {
 	void altaSii(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams,
 			AsyncCallback<ICResponse> callback);
 	void bajaSii(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams,
-			AsyncCallback<String> callback);
+			AsyncCallback<ICResponse> callback);
 	
 	void refresh140(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams, AsyncCallback<Boolean> callback);
 	void refresh240(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams, AsyncCallback<Boolean> callback);

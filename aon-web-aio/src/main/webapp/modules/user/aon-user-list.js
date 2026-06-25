@@ -181,7 +181,7 @@ export class AonUserList extends AonElement {
 		let d = this.getApplication().getDialog();
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle("Suplantar Usuario");
+		d.setTitle(MSG.IMPERSONATE_USER);
 		
 		d.setContentHTML("Estás seguro de suplantar a " + user.login);
 		d.addAcceptAction(() => {

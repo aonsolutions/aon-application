@@ -241,9 +241,7 @@ public class BidoqRequest {
 						.setDescription(detail.optString("description"))
 						.setDiscountExpression(detail.optString("discountPct"))
 						.setQuantity(detail.optDouble("quantity"))
-						.setAccountId(expAccount.getId())
-						.setAccountCode(expAccount.getCode())
-						.setAccountDescription(expAccount.getDescription())
+						.setExpAccount(expAccount)
 						.setDomain(domain.getId())
 					//	.setInvestAsset(investAsset)
 						.setSource(InvoiceSource.ACCOUNT)
@@ -1331,7 +1329,6 @@ public class BidoqRequest {
 		
 
 		for (InvoiceDetail detail : invoice.getDetails()) {
-			detail.getAccountId();
 
 			Account outputAccount = aonCtx.accounting().getDefaultChargedVatAccount();
 			if (outputAccount == null || outputAccount.getId() == null) {
@@ -1344,8 +1341,8 @@ public class BidoqRequest {
 			Account adjAccount = aonCtx.accounting().getVatNegativeAdjustAccount();
 
 			
-			Account expAccount = detail.getAccountId() != null
-				? ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), detail.getAccountId())
+			Account expAccount = detail.getExpAccountId() != null
+				? ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), detail.getExpAccountId())
 				: ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), category);
 			if (expAccount == null) {
 				expAccount = new Account().setCode(category)
@@ -1366,10 +1363,8 @@ public class BidoqRequest {
 				.setQuota(detailTax.getQuota())
 				.setSurcharge(detailTax.getSurcharge())
 				.setSurchargeQuota(detailTax.getSurchargeQuota())
-				// .setInvestAsset(ivs.get(j).getInvestAsset())
 				.setDeductiblePercent(detailTax.getDeductiblePercent())
 				.setDeductibleQuota(detailTax.getDeductibleQuota())
-				.setWithholding(detailTax.isWithholding())
 				.setExpAccount(expAccount)
 				.setOutputAccount(outputAccount)
 				.setInputAccount(inputAccount)

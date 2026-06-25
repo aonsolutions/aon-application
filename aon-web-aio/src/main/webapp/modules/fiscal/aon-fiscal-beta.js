@@ -45,6 +45,13 @@ export class AonFiscalBeta extends AonElement {
 
 		if (localStorage.getItem("aon_domain_id")) {
 			let configurationOptions = [];
+
+			configurationOptions.push({
+				id: "observations",
+				icon: "speaker_notes",
+				name: "Observaciones",
+				fn: () => this.buildObservations(),
+			});
 			
 			if(!this.getDur().isConsultancy())
 				configurationOptions.push({
@@ -54,14 +61,7 @@ export class AonFiscalBeta extends AonElement {
 					fn: () => this.getApplication().setContent(new JSF.AonJsfFiscalParams()),
 				});
 
-			configurationOptions.push({
-				id: "observations",
-				icon: "speaker_notes",
-				name: "Observaciones",
-				fn: () => this.buildObservations(),
-			});
-
-			aonFiscalBeta.addSidenavOptions(MSG.UTILITIES.toUpperCase(), configurationOptions);
+			aonFiscalBeta.addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), configurationOptions);
 		}
 
 		if (localStorage.getItem("aon_domain_id") && !this.getDur().isConsultancy()) {

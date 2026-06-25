@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationDetailFlat;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
@@ -53,6 +54,7 @@ import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
+import com.esferalia.aon.occam.api.model.registry.RegistrySource;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -66,6 +68,7 @@ public interface IAccounting {
 	public Account getAccount(AONContext ctx,Integer accountId);		
 	public Account getAccount(AONContext ctx,String code);
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter);
+	public Stream<Account> getAviablesAccountsForBank(AONContext ctx,AccountFilter filter);
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter, int offset, int limit);
 	public Account save(AONContext ctx, Account account);
 	public Account delete(AONContext ctx, Account account);
@@ -73,6 +76,9 @@ public interface IAccounting {
 	public Stream<Account> getAccounts(AONContext ctx, AccountParams params);
 	public List<Account> getAccountsList(AONContext ctx, AccountParams params);
 	public List<Account> getSuggestedAccounts(AONContext ctx, Integer registry, InvoiceType type);
+	
+	public Account createAccountsForBank(CloseableAONContext ctx, Integer domain, String alias,  String suffixCode);
+	
 	
 	// **************************************************
 	// ********************************* [ACCOUNT PERIOD]
@@ -197,6 +203,7 @@ public interface IAccounting {
 	// **************************************** [AMORTIZATION]
 	public Optional<Amortization> getAmortization(AONContext ctx, Integer domain, Integer id) throws AonCoreException;
 	public LinkedList<Amortization> getAmortizations(AONContext ctx, AmortizationParams params) throws AonCoreException;
+	public LinkedList<AmortizationDetailFlat> getFlatAmortizations(AONContext ctx, AmortizationParams params) throws AonCoreException;
 	public Amortization saveAmortization(AONContext ctx, Amortization am) throws AonCoreException;
 	public Amortization saveFiscalAllocation(AONContext ctx, AmortizationDetail detail) throws AonCoreException;
 	public void deleteAmortization(AONContext ctx, Amortization am) throws AonCoreException;

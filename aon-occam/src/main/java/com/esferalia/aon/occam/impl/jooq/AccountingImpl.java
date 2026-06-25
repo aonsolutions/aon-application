@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationDetailFlat;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
@@ -111,6 +112,14 @@ public class AccountingImpl implements IAccounting {
 	}
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter) {
 		return AccountDAO.getAccounts(ctx, filter);
+	}
+	@Override
+	public Stream<Account> getAviablesAccountsForBank(AONContext ctx, AccountFilter filter) {
+		return AccountDAO.getAviablesAccountsForBank(ctx, filter);
+	}
+	@Override
+	public Account createAccountsForBank(CloseableAONContext ctx, Integer domain, String alias, String suffixCode) {
+		return AccountDAO.createBankAccount(ctx, domain, alias, suffixCode);
 	}
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter, int offset, int limit) {
 		return AccountDAO.getAccounts(ctx, filter, offset, limit);
@@ -705,6 +714,11 @@ public class AccountingImpl implements IAccounting {
 	@Override
 	public LinkedList<Amortization> getAmortizations(AONContext ctx, AmortizationParams params) {
 		return AmortizationDAO.stream(ctx, params)
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	@Override
+	public LinkedList<AmortizationDetailFlat> getFlatAmortizations(AONContext ctx, AmortizationParams params) {
+		return AmortizationDAO.detailStream(ctx, params)
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	@Override

@@ -770,8 +770,8 @@ public class AccountingOperationNewDAO {
 				.setConceptAmount(conceptAmount) 								// Ingreso computable o Gasto deducible 	
 				.setEntryDate(rec.getValue(INVOICE.ISSUE_DATE)) 				// Fecha Expedición
 				.setTaxDate(rec.getValue(INVOICE.TAX_DATE))        				// Fecha Iva (Ejercicio y Periodo de Autoliquidación)	
-				.setInvoiceSeries(isSales ? AonStringUtils.trimToEmpty(rec.getValue(INVOICE.SERIES)) : "") 	// Identificación de la Factura: Serie (Emitidas)
-				.setInvoiceNumber(isSales ? AonStringUtils.leftPad(AonNumberUtils.toString(rec.getValue(INVOICE.NUMBER)), 6, "0") : rec.getValue(INVOICE.REFERENCE_CODE)) 							// Identificación de la Factura: Número (Emitidas), Serie-Numero (Recibidas)
+				.setInvoiceSeries(isSales ? getSalesInvoiceSeries(rec) : "") 									// Identificación de la Factura: Serie (Emitidas)
+				.setInvoiceNumber(isSales ? getSalesInvoiceNumber(rec) : rec.getValue(INVOICE.REFERENCE_CODE)) 	// Identificación de la Factura: Número (Emitidas), Serie-Numero (Recibidas)
 				.setReceptionNumber(isSales ? "" : FinanceUtil.getDocumentNumber(InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)), rec.getValue(INVOICE.SERIES), rec.getValue(INVOICE.NUMBER))) 	// Número recepción (Recibidas)
 				.setReceptionDate(isSales ? null : rec.getValue(INVOICE.TAX_DATE))			// Fecha Recepción (Recibidas) (Fecha IVA)
 				.setDocumentType(documentType) 												// NIF Destinatario/Expedidor: Tipo
@@ -1054,8 +1054,8 @@ public class AccountingOperationNewDAO {
 //				.setConceptAmount() 											// Ingreso computable o Gasto deducible 	
 				.setEntryDate(rec.getValue(INVOICE.ISSUE_DATE)) 				// Fecha Expedición
 				.setTaxDate(payDate)        									// Fecha Iva (Ejercicio y Periodo de Autoliquidación) (Fecha de pago o limite de devengo del Vencimiento)	
-				.setInvoiceSeries(isSales ? AonStringUtils.trimToEmpty(rec.getValue(INVOICE.SERIES)) : "") 																							// Identificación de la Factura: Serie (Emitidas)
-				.setInvoiceNumber(isSales ? AonStringUtils.leftPad(AonNumberUtils.toString(rec.getValue(INVOICE.NUMBER)), 6, "0") : rec.getValue(INVOICE.REFERENCE_CODE)) 							// Identificación de la Factura: Número (Emitidas), Serie-Numero (Recibidas)
+				.setInvoiceSeries(isSales ? getSalesInvoiceSeries(rec) : "") 								   	// Identificación de la Factura: Serie (Emitidas)
+				.setInvoiceNumber(isSales ? getSalesInvoiceNumber(rec) : rec.getValue(INVOICE.REFERENCE_CODE)) 	// Identificación de la Factura: Número (Emitidas), Serie-Numero (Recibidas)
 				.setReceptionNumber(isSales ? "" : FinanceUtil.getDocumentNumber(InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)), rec.getValue(INVOICE.SERIES), rec.getValue(INVOICE.NUMBER))) 	// Número recepción (Recibidas)
 				.setReceptionDate(isSales ? null : rec.getValue(INVOICE.TAX_DATE))			// Fecha Recepción (Recibidas) (Fecha IVA de la factura)
 				.setDocumentType(documentType) 												// NIF Destinatario/Expedidor: Tipo
@@ -1203,6 +1203,7 @@ public class AccountingOperationNewDAO {
 		
 	}
 
+
 	// Grecia se pone como EL, no como su codigo ISO2 que es GR
 	public static String getDocumentCountry(String value) {
 		if ("GR".equals(value))
@@ -1312,6 +1313,36 @@ public class AccountingOperationNewDAO {
 		}
 		return registryDocumentType;
 		
+	}
+	
+	public static String getSalesInvoiceSeries(Record rec) {
+		
+		String series = AonStringUtils.trimToEmpty(rec.getValue(INVOICE.SERIES));
+		String number = AonStringUtils.trimToEmpty(AonStringUtils.leftPad(AonNumberUtils.toString(rec.getValue(INVOICE.NUMBER)), 6, "0"));
+		String referenceCode = AonStringUtils.trimToEmpty(rec.getValue(INVOICE.REFERENCE_CODE));
+		
+		// Si series no está vacio y coincide series + "/" + number con referenceCode, entonces se devuelve series, si no, se devuelve cadena vacia
+		if (AonStringUtils.isNotBlank(series) && AonStringUtils.equals(series + "/" + number, referenceCode)) {
+			return series;
+		} else {
+			return "";
+		}
+		
+	}
+
+	public static String getSalesInvoiceNumber(Record rec) {
+		
+		String series = AonStringUtils.trimToEmpty(rec.getValue(INVOICE.SERIES));
+		String number = AonStringUtils.trimToEmpty(AonStringUtils.leftPad(AonNumberUtils.toString(rec.getValue(INVOICE.NUMBER)), 6, "0"));
+		String referenceCode = AonStringUtils.trimToEmpty(rec.getValue(INVOICE.REFERENCE_CODE));
+		
+		// Si series no está vacio y coincide series + "/" + number con referenceCode, entonces se devuelve number, si no, se devuelve referenceCode
+		if (AonStringUtils.isNotBlank(series) && AonStringUtils.equals(series + "/" + number, referenceCode)) {
+			return number;
+		} else {
+			return referenceCode;
+		}
+			
 	}
 	
 }

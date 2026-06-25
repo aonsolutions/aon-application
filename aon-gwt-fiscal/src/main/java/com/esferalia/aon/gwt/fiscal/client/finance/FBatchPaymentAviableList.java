@@ -108,7 +108,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		, FEC("F. Venc."				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FFT("F. Factura"				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FAC("N. Factura"				,"8rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, TIT("Titular"					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, TIT("Titular"					,"5rem"  			,"flex: 1 1 5rem; min-width: 5rem; width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, AMO("Importe"					,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
 		, ACT(AonStringUtils.EMPTY		,"2rem" 			,"")
 		;
@@ -141,7 +141,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		  CHK(AonStringUtils.EMPTY		,"2rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FEC("F. Venc."				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FAC("Concepto"				,"9rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, TIT("Titular"					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, TIT("Titular"					,"5rem"  			,"flex: 1 1 5rem; min-width: 5rem; width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, AMO("Importe"					,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
 		, ACT(AonStringUtils.EMPTY		,"2rem" 			,"")
 		;
@@ -220,10 +220,10 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		
 		add(container);
 		
-		if (!fbatch.isAccounted())
+		if (!fbatch.isRecorded())
 			onSearch();
 		else {
-			Label label = new Label("No se pueden a\u00f1adir vemcimientos a una remesa contabilizada");
+			Label label = new Label("No se pueden a\u00f1adir vencimientos a una remesa contabilizada");
 			label.setStyleName(AON.CSS.aonBlockMessage());
 			label.addStyleName(AON.CSS.aonBlockInfoMessage());
 			label.addStyleName(AON.CSS.aonMarginTop());
@@ -255,12 +255,12 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		addToolbarButton(resetSearchButton);
 		
 		checkAll = new AonTableButton( AON.MSG.selectAll(), AON.CSS.aonIconChecked() );
-		checkAll.setEnabled(!fbatch.isGenerated() && !fbatch.isAccounted());
+		checkAll.setEnabled(!fbatch.isGenerated() && !fbatch.isRecorded());
 		checkAll.addClickHandler(e -> checkAllAviable( true ));
 		addToolbarButton(checkAll);
 		
 		uncheckAll = new AonTableButton( AON.MSG.selectNone(), AON.CSS.aonIconCheck() );
-		uncheckAll.setEnabled(!fbatch.isGenerated() && !fbatch.isAccounted());
+		uncheckAll.setEnabled(!fbatch.isGenerated() && !fbatch.isRecorded());
 		uncheckAll.addClickHandler(e -> checkAllAviable( false ));
 		addToolbarButton(uncheckAll);
 		
@@ -297,7 +297,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		}
 
 		aviableCount.setText((selectedFinances.size() > 0) ? AonNumberUtils.toString(selectedFinances.size()) : "");
-		addAviableButton.setEnabled(selectedFinances.size() > 0 && !fbatch.isGenerated() && !fbatch.isAccounted());
+		addAviableButton.setEnabled(selectedFinances.size() > 0 && !fbatch.isGenerated() && !fbatch.isRecorded());
 	}
 	
 	public boolean isSearchEnabled() {
@@ -332,8 +332,8 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 	}
 	
 	private void resetInfo() {
-		checkAll.setEnabled(!fbatch.isGenerated() && !fbatch.isAccounted());
-		uncheckAll.setEnabled(!fbatch.isGenerated() && !fbatch.isAccounted());
+		checkAll.setEnabled(!fbatch.isGenerated() && !fbatch.isRecorded());
+		uncheckAll.setEnabled(!fbatch.isGenerated() && !fbatch.isRecorded());
 		
 		aviableFinances.clear();
 		selectedFinances.clear();
@@ -353,6 +353,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 	private void searchData() {
 		tableContainer.clear();
 		tab = new AonCustomTable();
+		tab.getElement().getStyle().setProperty("min-width", "0");
 		tableScrollPanel = new ScrollPanel(tab);
 		tableScrollPanel.getElement().getStyle().setProperty("margin", "0 1rem");
 		
@@ -385,6 +386,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		tab.createHeader();
 		
 		addAviableButton = new AonTableButton("A\u00f1adir a la remesa", AON.CSS.aonIconKeyboardDoubleArrowRight());
+		addAviableButton.getElement().getStyle().setProperty("background-repeat", "no-repeat");
 		addAviableButton.setEnabled(false);
 		addAviableButton.addClickHandler(e -> {
 			addAviableButton.setEnabled(false);
@@ -412,14 +414,12 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 			for ( COLS_PAYROLL col : COLS_PAYROLL.values()) 
 				if(col.equals(COLS_PAYROLL.ACT))
 					tab.addHeader(addAviableButton, col.getColWidth(), col.getCellStyleClass());
-			
 				else
 					tab.addHeader(col.equals(COLS_PAYROLL.CHK) ? aviableCount : new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
 		else
 			for ( COLS col : COLS.values()) 
 				if(col.equals(COLS.ACT))
 					tab.addHeader(addAviableButton, col.getColWidth(), col.getCellStyleClass());
-				
 				else
 					tab.addHeader(col.equals(COLS.CHK) ? aviableCount : new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
 		
@@ -467,7 +467,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		row.addDomHandler(e -> {}, ClickEvent.getType());
 		
 		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), selectedFinances.contains(finance.getId()) ? AON.CSS.aonIconChecked() : AON.CSS.aonIconCheck());
-		checkButton.setEnabled(!fbatch.isAccounted() && !fbatch.isGenerated() && !(notValidAccountBic(finance) || hasNegativeAmount(finance) || !finance.hasSalary()));
+		checkButton.setEnabled(!fbatch.isRecorded() && !fbatch.isGenerated() && !(notValidAccountBic(finance) || hasNegativeAmount(finance) || !finance.hasSalary()));
 		checkButton.addClickHandler( new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -484,7 +484,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 				}
 
 				aviableCount.setText((selectedFinances.size() > 0) ? AonNumberUtils.toString(selectedFinances.size()) : "");
-				addAviableButton.setEnabled(selectedFinances.size() > 0 && !fbatch.isAccounted() && !fbatch.isGenerated());
+				addAviableButton.setEnabled(selectedFinances.size() > 0 && !fbatch.isRecorded() && !fbatch.isGenerated());
 			}
 		});
 		tab.addRow(row, checkButton, COLS.CHK.getColWidth());
@@ -560,7 +560,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		}
 
 		AonTableButton addButton = new AonTableButton("A\u00f1adir a la remesa", AON.CSS.aonIconKeyboardArrowRight());
-		addButton.setEnabled(!fbatch.isAccounted() && !fbatch.isGenerated());
+		addButton.setEnabled(!fbatch.isRecorded() && !fbatch.isGenerated());
 		addButton.addClickHandler(e -> {
 			addButton.setEnabled(false);
 			
@@ -622,7 +622,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 	private void getList(Consumer<List<Finance>> success) {
 		if (!isMoreData()) return; 
 		
-		if(this.fbatch.isAccounted()) return;
+		if(this.fbatch.isRecorded()) return;
 		
 		clearSelection();
 		

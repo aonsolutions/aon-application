@@ -118,6 +118,8 @@ public class AonRDirStaffPanel extends HTMLPanel {
 		acciones.hideNearBy();
 		nominal.hideNearBy();
 		
+		acciones.setValue(0);
+		
 		row3.add(accionesPer);
 		row3.add(acciones);
 		row3.add(nominal);
@@ -174,7 +176,7 @@ public class AonRDirStaffPanel extends HTMLPanel {
 				.setShareHolder(socio.getValue())
 				.setDirector(admin.getValue())
 				.setPercentShare(accionesPer.getValue())
-				.setShareNumber(acciones.getValue())
+				.setShareNumber(null == acciones.getValue() ? 0 : acciones.getValue())
 				.setNominalValue(nominal.getValue())
 				.setDueDate(caducidad.getValue())
 				;

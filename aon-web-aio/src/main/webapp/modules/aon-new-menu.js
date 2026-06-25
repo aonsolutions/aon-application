@@ -9,6 +9,7 @@ import '../modules/project/aon-project-panel.js';
 import * as GWT from '../gwt/gwt.js';
 import * as LS from '../services/localStorageService.js';
 import * as JSF from './aon-jsf-app.js';
+import * as HELP from './aon-site-help.js';
 import { AonMessenger } from '../modules/messenger/aon-messenger.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonUploadToast } from "../components/aon-upload-toast.js";
@@ -290,7 +291,7 @@ export class AonNewMenu extends AonElement {
 					GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
 					break;
 				case CONTENT_INDEX.app:
-					this.rootPanel(new JSF.AonJsfHelpContent())
+					this.rootPanel(new HELP.AonSiteHelpPortal());
 					this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
 					break;
 				default/*Apps.HOME*/:
@@ -497,7 +498,7 @@ export class AonNewMenu extends AonElement {
 		li2.classList.add("aonNewMenuSideNavLi2");
 		ul.appendChild(li2);
 
-		aonMenuSidenav.innerHTML = '';
+		aonMenuSidenav.textContent = '';
 		aonMenuSidenav.appendChild(ul);
 
 		for (let item in MENU_APPS) {
@@ -552,7 +553,15 @@ export class AonNewMenu extends AonElement {
 				div.classList.add("aonNewMenuAppDiv");
 				div.title = app.title;
 
-				if (app.symbol) {
+				if (app.aonSymbol) {
+					let icon = this.createElement(TAG.SPAN);
+					icon.id = `aonMenuListAppImgTop-${app.app}`;
+					icon.classList.add(CSS.AON_SYMBOLS_OUTLINED);
+					icon.classList.add(CSS.AON_MENU_APP_AON_SYMBOLS);
+					icon.innerHTML = app.aonSymbol;
+					icon.classList.add("aonNewMenuAppIcon");
+					div.appendChild(icon);
+				} else if (app.symbol) {
 					let icon = this.createElement(TAG.SPAN);
 					icon.id = `aonMenuListAppImgTop-${app.app}`;
 					icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
@@ -706,7 +715,6 @@ export class AonNewMenu extends AonElement {
 	}
 
 	buildApp(app, style, id) {
-
 		let a = this.createElement(TAG.A);
 		a.addEventListener(EVENT.CLICK, () => {
 			this.appSelection(app);
@@ -735,7 +743,18 @@ export class AonNewMenu extends AonElement {
 		let header = this.getElement("aonHeaderWeb");
 		let welcome = this.getElement("aonCompanyTabFilter");
 
-		if (app.symbol) {
+		if (app.aonSymbol) {
+			let icon = this.createElement(TAG.SPAN);
+			icon.id = `aonMenuListAppImgTop-${app.app}`;
+			icon.classList.add(CSS.AON_SYMBOLS_OUTLINED);
+			icon.classList.add(CSS.AON_MENU_APP_AON_SYMBOLS);
+			icon.innerHTML = app.aonSymbol;
+			if (app.newColor || app.color) {
+				icon.style.color = app.newColor || app.color;
+			}
+			icon.classList.add("aonNewMenuAppIcon");
+			div.appendChild(icon);
+		} else if (app.symbol) {
 			let icon = this.createElement(TAG.SPAN);
 			icon.id = `aonMenuListAppImgTop-${app.app}`;
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
@@ -806,6 +825,16 @@ export class AonNewMenu extends AonElement {
 			span.innerHTML = app.description;
 			div.appendChild(span);
 		}
+		if ( app.goto) {
+			let gotoAnchor = this.createElement(TAG.A);
+			gotoAnchor.className = CSS.AON_BUTTON_GOTO;
+			gotoAnchor.href = app.goto;
+			gotoAnchor.target = "portal.aonsolutions.info";
+			div.appendChild(gotoAnchor);
+			gotoAnchor.addEventListener(EVENT.CLICK, (e) => {
+				e.stopPropagation();
+			});
+		}
 
 		a.appendChild(div);
 
@@ -831,7 +860,7 @@ export class AonNewMenu extends AonElement {
 			case Apps.NOTES.app:
 				return "Crea y organiza anotaciones de todo lo que necesites";
 			case CONTENT_INDEX.app:
-				return "Consulta nuestros manueles para aprender nuevas funcionalidades";
+				return "Consulta nuestros manuales para aprender nuevas funcionalidades";
 			case MESSENGER.app:
 				return "Crear y administra tus solicitudes";
 			default:
@@ -1203,7 +1232,7 @@ export class AonNewMenu extends AonElement {
 		return element && element.id == this.AON_MENU_TOPNAV;
 	}
 
-	showNewDialogMenu(el, isFixedButton = false) {
+	async showNewDialogMenu(el, isFixedButton = false) {
 
 		let newMenuOptions = [];
 		if (this.getDur().isInvoice()) {
@@ -1224,12 +1253,16 @@ export class AonNewMenu extends AonElement {
 			];
 
 			if (this.getDur().isOcr() || this.getDur().isInvofox()) {
+				
+				// Comprobamos el límite ANTES, fuera del gesto del click,
+	            // para que el fn pueda ser 100% síncrono (requisito de Safari).
+	            let exceedTrail = await this.exceedTrailInvoinces();
+				
 				optionsMenu.push({
 					name: MSG.UPLOAD_INVOICE,
 					icon: MATERIAL_ICONS.CLOUD_UPLOAD,
-					fn: async () => {
+					fn: () => {
 						// Check trial limit
-						let exceedTrail = await this.exceedTrailInvoinces();
 						if (exceedTrail) return;
 
 						let input = this.createElement(TAG.INPUT);
@@ -1245,7 +1278,7 @@ export class AonNewMenu extends AonElement {
 								if (activities.length > 1) {
 									activities.push({
 										id: "all",
-										description: "TODAS"
+										description: MSG.ALL2
 									});
 									let activity = createSelect(this.ACTIVITY, MSG.ACTIVITY);
 									activity.setAlias("id", "description");
@@ -1292,18 +1325,20 @@ export class AonNewMenu extends AonElement {
 								}
 							});
 						});
+							
 						input.click();
+						
 					}
 				});
 			}
 
 			let otherOptions = [
 				{
-					name: 'Nuevo ingreso',
+					name: MSG.NEW_INCOME_ENTRY,
 					icon: 'add_card',
 					fn: () => this.newIncome()
 				}, {
-					name: "Nuevo gasto",
+					name: MSG.NEW_EXPENSE_ENTRY,
 					icon: MATERIAL_ICONS.ACCOUNT_BALANCE_WALLET,
 					fn: () => this.newExpense()
 				}
@@ -1319,7 +1354,7 @@ export class AonNewMenu extends AonElement {
 			newMenuOptions.push({
 				fn: () => { },
 				icon: MATERIAL_ICONS.ACCOUNT_BALANCE_WALLET,
-				name: 'Otros gastos/ingresos',
+				name: MSG.OTHER_INCOME_EXPENSES,
 				options: otherOptions
 			});
 		}
@@ -1335,7 +1370,7 @@ export class AonNewMenu extends AonElement {
 					input.click();
 				},
 				icon: MATERIAL_ICONS.CLOUD_UPLOAD,
-				name: LS.isFutureTheme() ? 'Subir a mi nube' : MSG.UPLOAD_DOCUMENT,
+				name: LS.isFutureTheme() ? MSG.UPLOAD_TO_CLOUD : MSG.UPLOAD_DOCUMENT,
 			});
 		}
 		if (this.getDur().isMessenger()) {
@@ -1536,11 +1571,12 @@ export class AonNewMenu extends AonElement {
 			if (name?.length === 0)
 				break;
 			let size = 20;
-			let icon = desktopApp.symbol;
+			let icon = desktopApp.aonSymbol || desktopApp.symbol;
 			let image = icon ? undefined : desktopApp.logo;
 			let aonIcon = icon ? undefined : (desktopApp.newIcon || desktopApp.icon);
 			let color = desktopApp.newColor || desktopApp.color;
-			let icon_class = icon ? CSS.MATERIAL_SYMBOLS_OUTLINED : undefined;
+			let icon_class = desktopApp.aonSymbol ? CSS.AON_SYMBOLS_OUTLINED
+				: icon ? CSS.MATERIAL_SYMBOLS_OUTLINED : undefined;
 			applicationsOptions.unshift({
 				size,
 				name,

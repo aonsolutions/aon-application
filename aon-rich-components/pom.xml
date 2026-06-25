@@ -89,19 +89,17 @@
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-servlet-api</artifactId>
-      <version>${tomcat-version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-jsp-api</artifactId>
-      <version>${tomcat-version}</version>
-      <scope>provided</scope>
+            <scope>provided</scope>
     </dependency>
     <dependency>
         <groupId>jakarta.el</groupId>
         <artifactId>jakarta.el-api</artifactId>
-        <version>6.0.1</version>
+        <version>6.1.0-M2</version>
     </dependency>
     <dependency>
       <groupId>com.sun.facelets</groupId>
@@ -111,7 +109,6 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.20.0</version>
     </dependency>
     <dependency>
       <groupId>net.aonsolutions</groupId>

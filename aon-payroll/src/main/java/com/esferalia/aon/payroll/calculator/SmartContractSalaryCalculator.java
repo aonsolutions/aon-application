@@ -927,11 +927,17 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			//return  fixConstantResult(contractPayment, results.get(0), start, end, expressionContext);
 		}
 
+		List<ITimedResult<Double>> zeroITResults =
+		results.stream()
+		.filter( r -> its.contains(r.getPeriod() ))
+		.filter( r -> AonNumberUtils.equals(r.getValue(),0.00)).toList();
+		results.removeAll(zeroITResults);
+
 		List<ITimedResult<Double>> nonZeroResults = 
 				results.stream().filter( r -> AonNumberUtils.compare(r.getValue(),0.00) > 0).toList();
 		List<Period> nonZeroPeriods =  nonZeroResults.stream().map( ITimedResult::getPeriod).toList();
 		if ( !Period.intersects(nonZeroPeriods.iterator(), its.iterator()) ) 
-			return results;
+			return results ; 
 
 		throw new UnsupportedOperationException(String.format(IT_PAY_MSG, contractPayment.getDescription(),
 					contractPayment.getExpression())); 

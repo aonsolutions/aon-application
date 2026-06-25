@@ -1,8 +1,8 @@
-import { COLORS, MATERIAL_ICONS, MSG, CONSTANT, AON_ICONS } from "../environments/environments.js";
+import { AON_SYMBOLS, COLORS, MATERIAL_ICONS, MSG, CONSTANT, AON_ICONS } from "../environments/environments.js";
 
 import * as GWT from "../gwt/gwt.js";
-import * as MSG_ES from "../environments/msg-es.js";
 import * as LS from  "./localStorageService.js";
+import * as HELP from '../modules/aon-site-help.js';
 
 import * as DocumentalOptions from  "../modules/documental/DocumentalOptions.js";
 import * as InvoiceOptions from  "../modules/invoice/InvoiceOptions.js";
@@ -12,7 +12,8 @@ export const TIMECONTROL = {
   app: CONSTANT.TIMECONTROL,
   title: MSG.TIMECONTROL,
   description: MSG.TIMECTRL,
-  tag: MSG_ES.TIMECONTROL,
+  tag: MSG.TIMECONTROL,
+  aonSymbol: AON_SYMBOLS.TIMER,
   symbol: MATERIAL_ICONS.ALARM,
   color: "var(--aonTimecontrol)",
   backgroundColor: "rgba(209, 195, 109, .2)",
@@ -48,9 +49,9 @@ export const ACCOUNTING = {
   app: CONSTANT.ACCOUNTING,
   title: MSG.ACCOUNTING,
   description: MSG.ACCOUNTING,
-  tag: MSG_ES.ACCOUNTING,
-  headerIcon: 'registradores', 
+  tag: MSG.ACCOUNTING,
   iconSize: '24px',
+  aonSymbol: AON_SYMBOLS.CALCULATOR,
   symbol: MATERIAL_ICONS.CALCULATE,
   // logo: '/images/apps/aon-RRMM.png',
   color: "var(--aonAccounting)",
@@ -82,7 +83,8 @@ export const FISCAL = {
   app: CONSTANT.FISCAL,
   title: MSG.FISCAL,
   description: MSG.FISCAL,
-  tag: MSG_ES.FISCAL,
+  tag: MSG.FISCAL,
+  aonSymbol: AON_SYMBOLS.BUILDING_2,
   symbol: MATERIAL_ICONS.ACCOUNT_BALANCE,
   color: "var(--aonFiscal)",
   // newColor: "var(--aonFiscal)",
@@ -115,6 +117,7 @@ export const PAYROLL = {
   title: MSG.PAYROLL,
   description: MSG.PAYROLL,
   tag: MSG.PAYROLL,
+  aonSymbol: AON_SYMBOLS.USERS,
   symbol: MATERIAL_ICONS.GROUP,
   color: "var(--aonPayroll)",
   // newColor: "var(--aonPayroll)",
@@ -151,6 +154,7 @@ export const TREASURY = {
   title: MSG.TREASURY,
   description: MSG.TREASURY,
   tag: MSG.TREASURY,
+  aonSymbol: AON_SYMBOLS.EURO,
   symbol: MATERIAL_ICONS.EURO_SYMBOL,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
@@ -168,6 +172,7 @@ export const MARKETING = {
   title: MSG.MARKETING,
   description: MSG.MARKETING,
   tag: MSG.MARKETING,
+  aonSymbol: AON_SYMBOLS.TARGET,
   symbol: "ads_click",
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
@@ -202,6 +207,7 @@ export const COMMERCIAL = {
   title: MSG.COMMERCIAL,
   description: MSG.COMMERCIAL,
   tag: MSG.COMMERCIAL,
+  aonSymbol: AON_SYMBOLS.HEART_HANDSHAKE,
   symbol: MATERIAL_ICONS.HANDSHAKE,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
@@ -215,9 +221,10 @@ export const COMMERCIAL = {
 
 export const GROUPWARE = {
   app: 'groupware',
-  title: 'Expedientes',
-  description: 'Expedientes',
-  tag: 'Expedientes',
+  title: MSG.EXPEDIENTS,
+  description: MSG.EXPEDIENTS,
+  tag: MSG.EXPEDIENTS,
+  aonSymbol: AON_SYMBOLS.FILES,
   symbol: MATERIAL_ICONS.NOTE_STACK,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
@@ -232,7 +239,7 @@ export const COMUNICA = {
   app: CONSTANT.COMUNICA,
   title: MSG.COMUNICA,
   description: MSG.COMUNICA,
-  tag: MSG_ES.COMUNICA,
+  tag: MSG.COMUNICA,
   _icon: AON_ICONS.AON_COMUNICA,
   symbol: MATERIAL_ICONS.ALTERNATE_EMAIL,
   color: "var(--aonPayroll)",
@@ -263,7 +270,8 @@ export const DOCUMENTAL = {
   app: CONSTANT.DOCUMENTAL,
   title: LS.isFutureTheme() ? MSG.MY_CLOUD : MSG.DOCUMENTARY,
   description: LS.isFutureTheme() ? MSG.MY_CLOUD : MSG.DOCUMENTARY,
-  tag: LS.isFutureTheme() ? MSG_ES.MY_CLOUD : MSG_ES.DOCUMENTARY,
+  tag: LS.isFutureTheme() ? MSG.MY_CLOUD : MSG.DOCUMENTARY,
+  aonSymbol: AON_SYMBOLS.FOLDER_OPEN,
   symbol: MATERIAL_ICONS.FOLDER_OPEN,
   color: "var(--aonDocumental)",
   // newColor: "var(--aonDocumental)",
@@ -300,9 +308,10 @@ export const WAREHOUSE = {
   app: CONSTANT.WAREHOUSE,
   title: MSG.WAREHOUSE,
   description: MSG.WAREHOUSE,
-  tag: MSG_ES.WAREHOUSE,
+  tag: MSG.WAREHOUSE,
+  aonSymbol: AON_SYMBOLS.SHOPPING_CART,
   symbol: MATERIAL_ICONS.TROLLEY,
-  color: "#002469",
+ 	color: "var(--aonTopMenuAvailable)",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
   price: " ", 
@@ -323,7 +332,8 @@ export const MANAGEMENT = {
   app: CONSTANT.MANAGEMENT,
   title: MSG.MANAGEMENT,
   description: MSG.MANAGEMENT,
-  tag: MSG_ES.MANAGEMENT,
+  tag: MSG.MANAGEMENT,
+  aonSymbol: AON_SYMBOLS.FILE_BAR_CHART,
   symbol: MATERIAL_ICONS.MONITORING,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
@@ -346,7 +356,8 @@ export const INVOICE = {
   app: CONSTANT.INVOICE,
   title: MSG.BILLING, //MSG.INVOICES,
   description: MSG.BILLING,
-  tag: MSG_ES.INVOICES,
+  tag: MSG.INVOICES,
+  aonSymbol: AON_SYMBOLS.FILE_BAR_CHART,
   symbol: MATERIAL_ICONS.MONITORING,
   color: "var(--aonInvoice)",
   // newColor: "var(--aonInvoice)", 
@@ -384,6 +395,7 @@ export const CONFIGURATION = {
   title: MSG.CONFIGURATION,
   description: MSG.CONFIGURATION,
   icon: AON_ICONS.AON_SETTINGS,
+  aonSymbol: AON_SYMBOLS.SETTINGS,
   color: "black",
   hover: 'aonSidenavHover',
   backgroundColor: "rgba(0, 0, 0, .2)", 
@@ -396,7 +408,8 @@ export const MESSENGER = {
   app: CONSTANT.MESSENGER,
   title: MSG.REQUESTS,
   description: MSG.REQUESTS,
-  tag: MSG_ES.REQUESTS,
+  tag: MSG.REQUESTS,
+  aonSymbol: AON_SYMBOLS.SUBTITLES,
   symbol: MATERIAL_ICONS.SPEAKER_NOTES,
   color: "var(--aonMessenger)",
   // newColor: "va    r(--aonMessenger)",
@@ -447,6 +460,7 @@ export const NOTES = {
   title: MSG.NOTES,
   description: MSG.NOTES,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_NOTES : AON_ICONS.AON_NOTES,
+  aonSymbol: AON_SYMBOLS.BOOKMARK,
   symbol: MATERIAL_ICONS.PINBOARD,
   newIcon: AON_ICONS.AON_NEW_NOTES,
   color: "var(--aonNote)",
@@ -615,9 +629,9 @@ export const OFFICE = {
   app: 'office',
   title: MSG.OFFICE, //MSG.INVOICES,
   description: MSG.OFFICE,
-  tag: MSG_ES.OFFICE,
+  tag: MSG.OFFICE,
+  aonSymbol: AON_SYMBOLS.BRIEFCASE,
   symbol: MATERIAL_ICONS.BUSINESS_CENTER,
-  color: "var(--aonTopMenuSpecial)",
   // newColor: "var(--aonInvoice)", 
   backgroundColor: 'rgba(0, 0, 0, .2)',
   hover: 'sidenavHover',
@@ -898,7 +912,6 @@ export const ACADEMY = {
   symbol: MATERIAL_ICONS.DICTIONARY,
   title: "Academia",
   description: MSG.ACADEMY,
-  color: "var(--aonTopMenuSpecial)",
   domainType: true,
 };
 
@@ -908,7 +921,6 @@ export const GARAGE = {
   symbol: MATERIAL_ICONS.CAR_REPAIR,
   title: "Taller",
   description: MSG.GARAGE,
-  color: "var(--aonTopMenuSpecial)",
   domainType: true,
 };
 
@@ -918,7 +930,6 @@ export const COMMERCE = {
   symbol: MATERIAL_ICONS.POINT_OF_SALE,
   title: "Comercio",
   description: MSG.COMMERCE,
-  color: "var(--aonTopMenuSpecial)",
   domainType: true,
 };
 
@@ -926,7 +937,6 @@ export const HOTEL = {
   app: "hotel",
   icon: AON_ICONS.AON_HOTEL,
   title: "Hotel",
-  color: "black",
   domainType: true,
 };
 
@@ -1696,12 +1706,14 @@ export const NEW = {
 	title: MSG.NEW,
 	description: MSG.NEW,
 	app: CONSTANT.NEW,
+  aonSymbol: AON_SYMBOLS.PLUS_CIRCLE,
 	symbol: MATERIAL_ICONS.ADD_CIRCLE_OUTLINE,
 };
 
 export const NOTIFICATION = {
 	app: "notification",
-	symbol: MATERIAL_ICONS.NOTIFICATIONS,
+  aonSymbol: AON_SYMBOLS.BELL,
+  symbol: MATERIAL_ICONS.NOTIFICATIONS,
 	title: MSG.NOTIFICATIONS,
 	subtitle: "Notification",
 }
@@ -1711,6 +1723,7 @@ export const HOME = {
 	title: MSG.HOME,
 	description: MSG.HOME,
 	app: CONSTANT.HOME,
+  aonSymbol: AON_SYMBOLS.HOME,
 	symbol: MATERIAL_ICONS.HOME,
 };
 
@@ -1747,6 +1760,7 @@ export const EXPAND_HIRIND = {
 	app: CONSTANT.EXPAND_HIRIND,
 	title: MSG.EXPAND_HIRIND,
 	description: MSG.EXPAND_HIRIND,
+  	aonSymbol: AON_SYMBOLS.BOX,
 	symbol: MATERIAL_ICONS.STORE_MALL_DIRECTORY,
 };
 
@@ -1754,7 +1768,9 @@ export const CONTENT_INDEX = {
 	app: CONSTANT.CONTENT_INDEX,
 	title: MSG.MANUALS,
 	description: MSG.MANUALS,
+	aonSymbol: AON_SYMBOLS.BOOK_OPEN,
 	symbol: MATERIAL_ICONS.MENU_BOOK,
+	goto: HELP.HELP_PORTAL_SITE,
 };
 
 export function getConstNewApps(dur, isAyudaT) {
@@ -1787,6 +1803,7 @@ export const PLAN_APPS = {
 	app: 'planApps',
 	title: MSG.PLAN,
 	description: MSG.PLAN,
+  aonSymbol: AON_SYMBOLS.BOX,
 	symbol: MATERIAL_ICONS.STORE_MALL_DIRECTORY
 };
 
@@ -1841,6 +1858,7 @@ export const HomeApps = {
 
 export const COMMERCIAL_MENU = {
 	app: "comercialMenu",
+  aonSymbol: AON_SYMBOLS.HEART_HANDSHAKE,
 	symbol: MATERIAL_ICONS.HANDSHAKE,
 	title: MSG.COMMERCIAL,
 	description: MSG.COMMERCIAL,
@@ -1853,6 +1871,7 @@ export const COMMERCIAL_MENU = {
 
 export const MANAGEMENT_MENU = {
 	app: "managementMenu",
+  aonSymbol: AON_SYMBOLS.FILE_BAR_CHART,
 	symbol: MATERIAL_ICONS.MONITORING,
 	title: MSG.MANAGEMENT,
 	description: MSG.MANAGEMENT,
@@ -1865,6 +1884,7 @@ export const MANAGEMENT_MENU = {
 
 export const TREASURY_MENU = {
 	app: "treasuryMenu",
+  aonSymbol: AON_SYMBOLS.EURO,
 	symbol: MATERIAL_ICONS.EURO_SYMBOL,
 	title: MSG.TREASURY,
 	description: MSG.TREASURY,
@@ -1877,6 +1897,7 @@ export const TREASURY_MENU = {
 
 export const WAREHOUSE_MENU = {
 	app: "warehouseMenu",
+  aonSymbol: AON_SYMBOLS.SHOPPING_CART,
 	symbol: MATERIAL_ICONS.TROLLEY,
 	title: MSG.WAREHOUSE,
 	description: MSG.WAREHOUSE,
@@ -1889,6 +1910,7 @@ export const WAREHOUSE_MENU = {
 
 export const GROUPWARE_MENU = {
 	app: "groupwareMenu",
+  aonSymbol: AON_SYMBOLS.FILES,
 	symbol: MATERIAL_ICONS.NOTE_STACK,
 	title: MSG.GROUPWARE,
 	description: MSG.GROUPWARE,
@@ -1901,6 +1923,7 @@ export const GROUPWARE_MENU = {
 
 export const ACCOUNTING_MENU = {
 	app: "accountingMenu",
+  aonSymbol: AON_SYMBOLS.CALCULATOR,
 	symbol: MATERIAL_ICONS.CALCULATE,
 	title: MSG.ACCOUNTING,
 	description: MSG.ACCOUNTING,
@@ -1913,6 +1936,7 @@ export const ACCOUNTING_MENU = {
 
 export const FISCAL_MENU = {
 	app: "fiscalMenu",
+  aonSymbol: AON_SYMBOLS.BUILDING_2,
 	symbol: MATERIAL_ICONS.ACCOUNT_BALANCE,
 	title: MSG.FISCAL,
 	description: MSG.FISCAL,
@@ -1925,6 +1949,7 @@ export const FISCAL_MENU = {
 
 export const PAYROLL_MENU = {
 	app: "payrollMenu",
+  aonSymbol: AON_SYMBOLS.USERS,
 	symbol: "group",
 	title: MSG.PAYROLL,
 	description: MSG.PAYROLL,
@@ -1937,6 +1962,7 @@ export const PAYROLL_MENU = {
 
 export const MARKETING_MENU = {
 	app: "marketingMenu",
+  aonSymbol: AON_SYMBOLS.TARGET,
 	symbol: "ads_click",
 	title: MSG.MARKETING,
 	description: MSG.MARKETING,
@@ -1949,6 +1975,7 @@ export const MARKETING_MENU = {
 
 export const CONFIGURATION_MENU = {
 	app: "configurationMenu",
+  aonSymbol: AON_SYMBOLS.SETTINGS_2,
 	symbol: "construction",
 	title: "Parámetros",
 	description: "Parámetros",
@@ -1962,6 +1989,7 @@ export const CONFIGURATION_MENU = {
 
 export const ENTERPRISE_MENU = {
 	app: "enterpriseMenu",
+  aonSymbol: AON_SYMBOLS.BUILDING,
 	symbol: "domain",
 	title: MSG.ENTERPRISES,
 	description: MSG.ENTERPRISES,
@@ -1974,6 +2002,7 @@ export const ENTERPRISE_MENU = {
 
 export const CONSOLE_MENU = {
 	app: "consoleMenu",
+  aonSymbol: AON_SYMBOLS.TERMINAL,
 	symbol: "construction",
 	title: MSG.CONFIGURATION,
 	description: MSG.CONFIGURATION,

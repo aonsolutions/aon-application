@@ -22,9 +22,9 @@ import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class RegistryEntryModule implements EntryPoint {
+public class RegistryCompanyEntryModule implements EntryPoint {
 	
-	private static final Logger LOGGER = Logger.getLogger(RegistryEntryModule.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(RegistryCompanyEntryModule.class.getName());
 	static { LOGGER.addHandler( new ConsoleLogHandler() ); }
 	
 	private static CommonServiceAsync COMMON_SERVICE;
@@ -32,7 +32,7 @@ public class RegistryEntryModule implements EntryPoint {
 	private static RegistryModuleOptions options;
 	private static RegistrySource registrySource;
 	
-	private static RegistryEntryPanel registryEntryPanel;
+	private static RegistryCompanyEntryPanel registryCompanyEntryPanel;
 
 	@Override
 	public void onModuleLoad() {
@@ -69,15 +69,9 @@ public class RegistryEntryModule implements EntryPoint {
 	private void moduleLoad() {
 		AON.ensureInjected();
 		
-		registryEntryPanel = new RegistryEntryPanel(options, registrySource) {
-			@Override protected void onBack() {}
-
-			@Override protected void onPrev(Integer registryId) {}
-
-			@Override protected void onNext(Integer registryId) {}
-		};
+		registryCompanyEntryPanel = new RegistryCompanyEntryPanel(options, registrySource);
 		
-		options.getParentWidget().add(registryEntryPanel);
+		options.getParentWidget().add(registryCompanyEntryPanel);
 	}
 
 }

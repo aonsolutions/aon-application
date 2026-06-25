@@ -76,13 +76,13 @@ export class AonPayrollBeta extends AonElement {
 				});
 			}
 			
+			utilitiesOptions.push({
+				id: "parameteraPayroll",
+				icon: "settings_applications",
+				name: "Parametros Laboral",
+				fn: () => this.getApplication().setContent(new JSF.AonJsfPayrollParams()),
+			});
 			if(!this.getDur().isDomainManagementAvailable()){
-				utilitiesOptions.push({
-					id: "parameteraPayroll",
-					icon: "settings_applications",
-					name: "Parametros Laboral",
-					fn: () => this.getApplication().setContent(new JSF.AonJsfPayrollParams()),
-				});
 	
 				utilitiesOptions.push({
 					id: "parametersContracts",
@@ -92,7 +92,7 @@ export class AonPayrollBeta extends AonElement {
 				});
 			}
 
-			this.getApplication().addSidenavOptions(MSG.UTILITIES.toUpperCase(), utilitiesOptions);
+			this.getApplication().addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), utilitiesOptions);
 		}
 		
 		if(this.getDur().isDomainManagementAvailable()){
@@ -186,7 +186,7 @@ export class AonPayrollBeta extends AonElement {
 		}
 		
 		if(paramsOptions.length > 0)
-			this.getApplication().addSidenavOptions("Parámetros".toUpperCase(), paramsOptions);
+			this.getApplication().addSidenavOptions(MSG.PARAMETERS.toUpperCase(), paramsOptions);
 
 		if (localStorage.getItem("aon_domain_id")) {
 			let menuOptions = [];

@@ -2,21 +2,21 @@ package com.esferalia.aon.occam.api.model.fiscal.d2_deposit;
 
 public class D2PDepositConstants {
 	
-	
-	public static D2DepositHeaderKey[] IDP_ABREVIATE_KEYS = new D2DepositHeaderKey[]{
-		D2DepositHeaderKey.IDA01010, D2DepositHeaderKey.IDA01011, D2DepositHeaderKey.IDA01012, D2DepositHeaderKey.IDA01013,
-		D2DepositHeaderKey.IDA01020, D2DepositHeaderKey.IDA01022, D2DepositHeaderKey.IDA01023, D2DepositHeaderKey.IDA01024,
-		D2DepositHeaderKey.IDA01025, D2DepositHeaderKey.IDA01031, D2DepositHeaderKey.IDA01037, D2DepositHeaderKey.IDA01040,
-		D2DepositHeaderKey.IDA01041, D2DepositHeaderKey.IDA01060, D2DepositHeaderKey.IDA01061, D2DepositHeaderKey.IDA01101,
-		D2DepositHeaderKey.IDA011019, D2DepositHeaderKey.IDA01102, D2DepositHeaderKey.IDA011029, D2DepositHeaderKey.IDA01901,
-		D2DepositHeaderKey.IDA01903, D2DepositHeaderKey.IDA02001, D2DepositHeaderKey.IDA02009, D2DepositHeaderKey.IDA04001,
-		D2DepositHeaderKey.IDA040019, D2DepositHeaderKey.IDA04002, D2DepositHeaderKey.IDA040029, D2DepositHeaderKey.IDA04010,
-		D2DepositHeaderKey.IDA040109, D2DepositHeaderKey.IDA04120, D2DepositHeaderKey.IDA041209, D2DepositHeaderKey.IDA04121,
-		D2DepositHeaderKey.IDA041219, D2DepositHeaderKey.IDA04122, D2DepositHeaderKey.IDA041229, D2DepositHeaderKey.IDA04123,
-		D2DepositHeaderKey.IDA041239, D2DepositHeaderKey.IDA09002
-		
-		//UNIDADES ---> MICROEMPRESAS
-	};
+	// NO SE USA
+//	public static D2DepositHeaderKey[] IDP_ABREVIATE_KEYS = new D2DepositHeaderKey[]{
+//		D2DepositHeaderKey.IDA01010, D2DepositHeaderKey.IDA01011, D2DepositHeaderKey.IDA01012, D2DepositHeaderKey.IDA01013,
+//		D2DepositHeaderKey.IDA01020, D2DepositHeaderKey.IDA01022, D2DepositHeaderKey.IDA01023, D2DepositHeaderKey.IDA01024,
+//		D2DepositHeaderKey.IDA01025, D2DepositHeaderKey.IDA01031, D2DepositHeaderKey.IDA01037, D2DepositHeaderKey.IDA01040,
+//		D2DepositHeaderKey.IDA01041, D2DepositHeaderKey.IDA01060, D2DepositHeaderKey.IDA01061, D2DepositHeaderKey.IDA01101,
+//		D2DepositHeaderKey.IDA011019, D2DepositHeaderKey.IDA01102, D2DepositHeaderKey.IDA011029, D2DepositHeaderKey.IDA01901,
+//		D2DepositHeaderKey.IDA01903, D2DepositHeaderKey.IDA02001, D2DepositHeaderKey.IDA02009, D2DepositHeaderKey.IDA04001,
+//		D2DepositHeaderKey.IDA040019, D2DepositHeaderKey.IDA04002, D2DepositHeaderKey.IDA040029, D2DepositHeaderKey.IDA04010,
+//		D2DepositHeaderKey.IDA040109, D2DepositHeaderKey.IDA04120, D2DepositHeaderKey.IDA041209, D2DepositHeaderKey.IDA04121,
+//		D2DepositHeaderKey.IDA041219, D2DepositHeaderKey.IDA04122, D2DepositHeaderKey.IDA041229, D2DepositHeaderKey.IDA04123,
+//		D2DepositHeaderKey.IDA041239, D2DepositHeaderKey.IDA09002
+//		
+//		//UNIDADES ---> MICROEMPRESAS
+//	};
 	
 	public static D2DepositHeaderKey[][] SRP_KEYS = new D2DepositHeaderKey[][]{
 		new D2DepositHeaderKey[]{D2DepositHeaderKey.SRP831010, D2DepositHeaderKey.SRP8310109, D2DepositHeaderKey.SRP831011}

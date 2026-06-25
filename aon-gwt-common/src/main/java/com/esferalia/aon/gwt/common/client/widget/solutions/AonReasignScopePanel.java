@@ -57,7 +57,7 @@ public class AonReasignScopePanel extends AonCustomDialog {
 		
 		this.getElement().getStyle().setProperty("min-width", "35rem");
 		
-		setCaption("Nuevo \u00c1mbito");
+		setCaption("Reasignar \u00c1mbitos");
 		
 		show(new Scope(), callback);
 		

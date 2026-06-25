@@ -220,6 +220,15 @@ export class AonCard extends AonElement {
 	setApp(app) {
 		this.app = app;
 	}
+
+	onToggle() {
+		this.addEventListener(EVENT.CLICK_TITLE, () => {
+			let content = this.getContent();
+			if(content.style.display === 'none') {
+				content.style.display = 'block';
+			} else content.style.display = 'none';
+		});
+	}
 }
 
 if(!window.customElements.get('aon-card')){

@@ -7,6 +7,9 @@ export const ACCEPT = 'Accepter';
 export const ACCESS = 'Accès';
 export const ACCESS_TO_YOUR_AON_ACCOUNT = 'Accédez à votre compte AON';
 export const ACCOUNT = 'Compte';
+export const ACCOUNT_CHANGE = 'Changement de compte';
+export const ACCOUNT_DEPOSIT_D2 = 'Dépôt de comptes (D2)';
+export const ACCOUNT_STATEMENT = 'Relevé de compte';
 export const ACCOUNTED = 'Comptabilisé';
 export const ACCOUNTEDS = 'Comptabilisés';
 export const ACCOUNTING = 'Comptabilité';
@@ -14,12 +17,36 @@ export const ACCOUNTING_SUMMARY = 'Résumé Comptabilité';
 export const ACTIVATE = 'Activer';
 export const ACTIVE = 'Actif';
 export const ACTIVES = 'Actifs'
+export const ACADEMIC_MANAGEMENT = 'Gestion Académique';
+export const ACCOUNTING_BOOKS_EMISSION = 'Émission de livres comptables (LEGALIA)';
+export const ACCOUNTING_ENTRIES = 'Écritures Comptables';
+export const ACCOUNTING_PERIODS = 'Exercices comptables';
+export const ACCOUNTING_UTILITIES = 'Utilitaires et vérifications comptables';
+export const AEAT_BOOKS = 'Livres de registre AEAT';
+export const AFI_AGRICULTURAL = 'AFI - Régimen Especial Agrario Jornadas';
+export const AFI_PENSION_REDUCTION = 'AFI - Reduc. contribuciones planes de pensiones';
+export const AMORTIZATION_ENTRIES = "Écritures d'amortissements";
+export const AMORTIZATION_SHEET = "Fiche d'amortissement";
+export const AMORTIZATION_TYPE_TABLE = "Tableau des types d'amortissement";
+export const AUTOMATIC_CONCEPTS = 'Concepts automatiques';
+export const ACCOUNTING_LISTINGS = 'Listings Comptables';
+export const AEAT = 'AEAT';
+export const ACTIVE_ACTIONS = 'Actions actives';
+export const ACTIVE_CAMPAIGNS = 'Campagnes actives';
 export const ACTIVITY = 'Activité';
 export const ACTIVITY_SUMMARY = 'Résumé des Activités';
+export const AGENDA = 'Agenda';
+export const AGREEMENTS = 'Conventions';
+export const ANNUAL_SUMMARY = 'Résumé Annuel';
+export const AUXILIARIES = 'Auxiliaires';
+export const AUX_MANAGEMENT_TABLES = 'Tables Auxiliaires de Gestion';
+export const AUX_PRODUCT_TABLES = 'Tables Auxiliaires de Produits';
+export const AUX_TABLES = 'Tables Auxiliaires';
 export const ADD = 'Ajouter';
 export const ADD_CATEGORY = 'Ajouter Catégorie';
 export const ADD_COMMENT = 'Ajouter Commentaire';
 export const ADD_COMPOSITION = 'Ajouter Composition';
+
 export const ADD_CREDITOR = 'Ajouter un créancier';
 export const ADD_CUSTOMER = 'Ajouter un client';
 export const ADD_EXPENSE = 'Ajouter une dépense';
@@ -61,14 +88,30 @@ export const APPLICATION = 'Application';
 export const APPLICATIONS = 'Applications';
 export const APPROVED = 'Approuvée';
 export const ASESOR = 'Conseiller';
+export const ACCESS_LINKED_COMPANY = 'Accéder à l\'entreprise liée';
+export const ADJUST_QUANTITY = 'Ajuster la Quantité';
+export const ADD_CONTENT = 'Ajouter du Contenu';
+export const ADD_TO_INVENTORY = 'Ajouter à l\'Inventaire';
 export const ASSIGN = 'Attribuer';
+export const ASSIGN_EXPEDIENT = 'Assigner le Dossier';
 export const ATTACH_FILES_DRAGGING_DROPPING = 'Faites glisser ou sélectionnez le fichier';
 export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = 'Faites glisser ou sélectionnez le fond';
 export const ATTACH_FILES_DRAGGING_DROPPING_LOGO = 'Faites glisser ou sélectionnez le logo';
+
 export const AUDIT = 'Audit';
 export const AUTOBOOKING = 'Auto-contratation';
 export const AVAILABLE = 'Disponible';
 export const AVERAGE = 'Moyenne';
+export const ACADEMIC_YEAR = 'Année Scolaire';
+export const ACCOUNTING_ACCOUNT = 'Compte Comptable';
+export const ACCOUNTING_PAYMENT_TYPE = 'Affectation Comptable par Type de Mode de Paiement';
+export const ACTION = 'Action';
+export const ACTIVITY_TYPE = 'Type d\'Activité';
+export const ADVANCES_MANAGEMENT = 'Gestion des Avances';
+export const AGENTS_COMMERCIAL = 'Agents Commerciaux';
+export const ASSIGN_FEES_CUSTOMERS = 'Assigner Quotas Clients';
+export const ASSIGN_FEES_GROUPS = 'Assigner Quotas Groupes';
+export const ASSIGN_SKILLS_GROUPS = 'Assigner Compétences Groupes';
 
 
 // ----- B
@@ -76,8 +119,13 @@ export const AVERAGE = 'Moyenne';
 export const BACK = 'Retour';
 export const BACKGROUND = 'Fond';
 export const BACKGROUND_ADJUST = 'Ajuster le fond';
+export const BALANCE_DEFINITION = 'Définition des bilans';
 export const BANK = 'Banque';
+export const BANK_AGGREGATOR = 'Agrégateur bancaire';
+export const BULK_CONTRACT_CHANGE = 'Modification en masse des contrats';
+
 export const BANK_ACCOUNT = 'Compte Bancaire';
+export const BANK_MOVEMENTS = 'Mouvements Bancaires';
 export const BANK_ACCOUNTS = 'Comptes Bancaires';
 export const BANK_DATA = 'Données Bancaires';
 export const BANKS = 'Banques';
@@ -97,27 +145,59 @@ export const BORDER = 'Bordure';
 export const BOX_CRITERION = 'Critère de Boîte';
 export const BUDGET = 'Budget';
 export const BUDGETS = 'Budgets';
+export const BUDGETS_PENDING = 'Devis en attente';
 export const BUSINESS_NAME = 'Raison Sociale';
+export const BANK_CONCEPTS = 'Concepts Bancaires';
+export const BATCH_CASH_RECEIPTS = 'Remise Encaissements Caisse';
+export const BILLING_CONSOLE = 'Console de Facturation';
+export const BILLING_GROUPS = 'Groupes de Facturation';
+export const BOLETINS = 'Bulletins';
+export const BRANDS = 'Marques';
+export const BULK_DELIVERY_INVOICING = 'Facturation en Masse de Bons';
+
 
 // ----- C
 
 export const CAMPAIGN = 'Campagne';
 export const CAMPAIGNS = 'Campagnes';
+export const CHANNEL = 'Canal';
+export const CALENDAR = 'Calendrier';
 export const CANCEL = 'Annuler';
+
 export const CARRIER = 'Agence de Transport';
 export const CARRIERS = 'Agences de Transport';
 export const CATALAN = 'Catalan';
 export const CATEGORY = 'Catégorie';
 export const CATEGORIES = 'Catégories';
 export const CAUSE = 'Cause';
+export const BANK_CONCILIATOR = 'Conciliateur Bancaire';
+export const BANK_PORTFOLIO = "Portefeuille d'encaissements et de paiements";
+export const CCC = 'CCC';
+export const COST_CENTER = 'Centros de Costo';
 export const CERTIFICATE = 'Certificat';
 export const CERTIFICATES = 'Certificats';
+export const CERTIFICATE_MANAGEMENT = 'Gestion des certificats';
+export const CHART_OF_ACCOUNTS = 'Plan comptable général';
+export const CONTRACT_MODELS = 'Modèles de contrat';
+export const COST_LIST = 'Liste des coûts';
+export const CRA = 'CRA - Conceptos Retributivos Abonados';
+export const CRETA_SYSTEM = 'Cret@ - Sistema de Liquidación Directa';
 export const CERTIFICATIONS = 'Certifications';
 export const CHANGE_TYPE = 'Changer le type';
+export const CHARGES = 'Encaissements';
 export const CHARGES_AND_PAYMENTS = 'Encaissements et paiements';
+export const COMMERCIAL_ACTIVITY = 'Activité Commerciale';
+export const COMMERCIAL_REGISTRY = 'Registre du Commerce';
+export const COMMISSIONS = 'Commissions';
+export const COMPANY_DATA_SECTION = 'Données Entreprise';
+export const CONSOLE_ADMIN = 'Console Administration';
+export const CONTENTS = 'Contenus';
+export const CREATE_COMPANIES = 'Créer des entreprises';
+export const CURRENT_MONTH = 'Mois Actuel';
 export const CHANGE_PASSWORD = 'Changer le mot de passe';
 export const CHOOSE_A_DOMAIN = 'Veuillez sélectionner un domaine';
 export const CITY = 'Ville';
+
 export const CLASSIC = 'Classique';
 export const CLASSIC_APPLICATIONS = 'Applications Classiques';
 export const CLASSIC_VIEW = 'Vue classique';
@@ -133,18 +213,23 @@ export const COMMERCIAL = 'Commercial';
 export const COMMERCIAL_NAME = 'Nom Commercial';
 export const COMMERCIAL_PRODUCT = 'Produit Commercial';
 export const COMMERCIAL_REGISTRY_CODE = 'Code du registre du commerce';
+export const CLOSE_RECEIVED_INVOICES = 'Clôture des Factures Reçues';
 export const COMMUNICATE = 'Communiquer';
 export const COMMUNICATE_CONFIRM = 'Voulez-vous communiquer à la sécurité sociale?';
 export const COMMUNICATE_INVOICE = 'Communiquer Facture';
+export const COMMUNICATE_SELECTED_INVOICES = 'Communiquer les Factures Sélectionnées';
+export const COMMUNICATING_INVOICE = 'Communication de la Facture';
+export const COMMUNICATING_SELECTED_INVOICES = 'Communication des Factures Sélectionnées';
 export const COMMUNICATION = 'Communication';
 export const COMMUNICATIONS = 'Communications';
-export const COMUNICA = "Comunic@";// TODO
 export const COMPANIES = 'Entreprises';
 export const COMPANY = 'Entreprise';
 export const COMPANY_COSTS = 'Coûts de l\'entreprise';
 export const COMPANY_MANAGEMENT = 'Gestion des entreprises';
 export const COMPANY_SELECTION = 'Sélection de l\'entreprise';
 export const COMPONENTS = 'Composants';
+export const COMUNICA = "Comunic@";// TODO
+
 export const COMPOSITION = 'Composition';
 export const CONCEPT = 'Concept';
 export const CONCEPTS = 'Concepts';
@@ -170,6 +255,8 @@ export const COPIED_TO_CLIPBOARD = "Copié dans le presse-papiers";
 export const COPY = "Copier";
 export const COUNTRY = 'Pays';
 export const CREATE = 'Créer';
+export const CREATE_BRANCH = 'Créer une branche';
+
 export const CREATE_INVOICE = 'Créer Facture';
 export const CREATE_QUERY = 'Créer une requête';
 export const CREATED_BY = 'Créé par';
@@ -184,17 +271,53 @@ export const CUSTOMER_SEARCH_DOMAIN_NOT_FOUND  = "Aucun client trouvé pour ce d
 export const CUSTOMER_SEARCH_NOT_FOUND = 'Aucun client trouvé pour cette recherche';
 export const CUSTOMERS = 'Clients';
 export const CUSTOMIZE_INVOICE = 'Personnaliser Facture';
+export const CAMPAIGN_MONITOR = 'Moniteur de Campagnes';
+export const CAMPAIGN_TYPES = 'Types de Campagnes';
+export const CASH_AUDIT = 'Arquée de Caisse';
+export const CASH_DEFINITION = 'Définition de Caisse';
+export const CASH_OPENING = 'Ouverture de Caisse';
+export const CASH_SHIFTS = 'Quarts de Caisse';
+export const CATALOGUES = 'Catalogues';
+export const CERTIFICA_NOTIFICATIONS = 'Notifications Certific@';
+export const COMMERCIAL_ACTIVITY_TYPES = 'Types d\'Activités Commerciales';
+export const COMMERCIAL_CALENDAR = 'Agenda Commercial';
+export const COMMERCIAL_OPERATION = 'Opération Commerciale';
+export const COMMERCIAL_TERMS = 'Conditions Commerciales';
+export const COMMISSION_BANDS = 'Définition des Tranches de Commissions';
+export const COMMISSION_CALCULATION = 'Calcul des Commissions';
+export const COMMISSION_CONTROL = 'Contrôle des Commissions';
+export const COMMISSION_TYPES = 'Types de Commission';
+export const CHARGES_MANAGEMENT = 'Gestion des Encaissements';
+export const CHARGES_PAYMENTS_PORTFOLIO = 'Portefeuille d\'Encaissements et Paiements';
+export const COMMUNICATION_CENTER = 'Centre de Communication';
+export const COMPANY_DOWNLOAD = 'Téléchargement d\'Entreprises';
+export const CONTRATA_NOTIFICATIONS = 'Notifications Contrat@';
+export const CORPORATION_TAX = 'Impôt sur les Sociétés';
+export const CORPORATION_TAX_PAYMENT = 'Impôt sur les Sociétés. Paiement Fractionné';
+export const COST_PROFILES = 'Profils de Coût';
+export const COUNTRY_PROVINCE = 'Pays/Province';
 
 // ----- D
 
+export const DAILY_JOURNAL = 'Journal quotidien des mouvements';
+export const DECLARATION_SII = 'Declaración SII';
+export const DASHBOARD = 'Tableau de bord';
 export const DATA = 'Données';
+export const DATA_LOAD_UTILITIES = 'Utilitaires de chargement de données';
+export const DELETE_COMPANIES = 'Supprimer des entreprises';
+export const DELIVERY_PREPARATION = 'Préparation Bon de livraison';
 export const DATE = 'Date';
 export const DATE_CREATION = 'Date de création';
 export const DARK = 'Sombre';
+export const DOCS_PENDING = 'En attente';
+export const DOCS_REJECTED = 'Rejetés';
 export const DEACTIVATE = 'Désactiver';
+
 export const DEFAULT_CATEGORIES = 'Catégories par défaut';
 export const DELETE = 'Supprimer';
 export const DELETE_ALL_SCOPES = 'Supprimer tous les périmètres';
+export const DELETE_CONTRACTED_PRODUCT_RELATIONS = 'Supprimer les relations de produits contractés';
+export const DELETE_PRODUCT_RELATIONS = 'Supprimer les relations de produits';
 export const DELETE_BACKGROUND_CONFIRM = 'Êtes-vous sûr de vouloir supprimer le fond';
 export const DELETE_CATEGORY = 'Supprimer la catégorie';
 export const DELETE_CONFIRM = "Êtes-vous sûr de vouloir supprimer";
@@ -202,6 +325,7 @@ export const DELETE_FILE = 'Supprimer le fichier';
 export const DELETE_FILE_CONFIRM = 'Êtes-vous sûr de vouloir supprimer le fichier';
 export const DELETE_FOREVER = 'Supprimer définitivement';
 export const DELETE_FOREVER_INVOICE_CONFIRMATION = 'La facture a été supprimée définitivement.';
+
 export const DELETE_INVOICE = 'Supprimer Facture';
 export const DELETE_LOGO_CONFIRM = 'Êtes-vous sûr de vouloir supprimer le logo';
 export const DELETE_SCOPE = 'Supprimer périmètre';
@@ -213,10 +337,14 @@ export const DELETED_DATA = "Les données ont été supprimées avec succès";
 export const DELIVERY = 'Bon de livraison';
 export const DELIVERY_TAG = 'Étiquette d\'expédition';
 export const DESCRIPTION = 'Description';
+export const DETAIL = 'Détail';
 export const DETAILED = 'Détaillé';
 export const DEUTSCH = 'Allemand';
+export const DISCHARGE_DATA = 'Données de Sortie';
+export const DOMICILIATION = 'Prélèvement automatique';
 export const DISCARDED = 'Rejeté';
 export const DOCUMENT = 'Document';
+
 export const DOCUMENT_DATA = 'Données du Document';
 export const DOCUMENTS = 'Documents';
 export const DOCUMENTS_IN_PROCESS = 'Documents en cours de traitement';
@@ -237,10 +365,30 @@ export const DROP_FILE = 'Déposer le fichier ici';
 export const DUPLICATE = 'Dupliquer';
 export const DUPLICATE_INVOICE = 'Dupliquer Facture';
 export const DURATION = "Durée";
+export const DASHBOARD_CATEGORIES = 'Tableau de Bord Catégories';
+export const DASHBOARD_PRODUCTS = 'Tableau de Bord Produits';
+export const DASHBOARD_PROSPECTS = 'Tableau de Bord Prospects';
+export const DASHBOARD_SALES_AGENTS = 'Tableau de Bord Agents Commerciaux';
+export const CSV_DATA_LOAD = 'Chargement depuis fichiers CSV';
+export const DATA_DOWNLOAD_EXCEL = 'Télécharger Données en Format Excel';
+export const DATA_LOAD_TEMPLATE_MGT = 'Gestion des Modèles de Chargement';
+export const DATA_UPLOAD_CSV = 'Charger Données depuis Fichiers CSV';
+export const DATA_UPLOAD_EXCEL = 'Charger Données depuis Fichiers Excel';
+export const DATA_UPLOAD_TEMPLATES = 'Gestion Modèles de Chargement de Données';
+export const DEDUPLICATION_PROSPECTS = 'Déduplication de Prospects';
+export const DUPLICATE_GROUPS = 'Dupliquer Groupes';
+export const EXCEL_DATA_DOWNLOAD = 'Téléchargement données format Excel';
+export const EXCEL_DATA_LOAD = 'Chargement depuis fichiers Excel';
 
 // ----- E
 
 export const EDIT = 'Éditer';
+export const ELABORATIONS_OPEN = 'Élaborations ouvertes';
+export const EXPEDIENTS = 'Dossiers';
+export const EXPEDITIONS_OPEN = 'Expéditions ouvertes';
+export const EXPIRED_APPOINTMENTS = 'Rendez-vous expirés';
+export const EXPIRED_CHARGES = 'Encaissements échus';
+export const EXPIRED_PAYMENTS = 'Paiements échus';
 export const EDIT_CATEGORY = 'Éditer Catégorie';
 export const EDIT_FILE = 'Éditer Fichier';
 export const EDIT_FILES = 'Éditer Fichiers';
@@ -248,6 +396,7 @@ export const EDIT_TAG = 'Éditer Étiquette';
 export const EDIT_WAREHOUSE = 'Éditer Entrepôt';
 export const EDIT_WORKGROUP = 'Modifier le groupe de travail';
 export const ELABORATION = 'Élaboration';
+export const ELABORATION_ORDER = 'Ordre d\'élaboration';
 export const ELABORATIONS = 'Élaborations';
 export const EMAIL = 'Email';
 export const EMAIL_ADD = 'Attribuer une adresse e-mail';
@@ -261,7 +410,10 @@ export const ENGLISH = 'Anglais';
 export const ENTERPRISE = 'Entreprise';
 export const ENTERPRISES = 'Entreprises';
 export const ENTRY = 'Entrée';
+export const ENTRY_MAINTENANCE = 'Maintenance des écritures';
 export const ENVIRONMENT = 'Environnement';
+export const ENVIRONMENT_CALC_VARIABLES = "Variables de calcul d'environnement";
+export const EXPENSE_INVOICES = 'Factures de dépenses';
 export const EQUIVALENCE_SURCHARGE = 'Surcharge d\'équivalence';
 export const ERR_EMPTY_VALUE = 'Champs sans valeur';
 export const ERR_LOW_CONFIDENCE = 'Champs à faible confiance';
@@ -278,14 +430,38 @@ export const EXPEDITION_DATE_MIN = 'D. expédition';
 export const EXPIRATION_DATE = 'Date d\'expiration';
 export const EXPENSE = 'Dépense';
 export const EXPENSES = 'Dépenses';
+export const EXPIRATION = 'Échéance';
 export const EXPIRATIONS = 'Échéances';
 export const EXPIRED = 'Expiré';
 export const EXPIRED_SESSION = 'La session a expiré';
 export const EXPORTED = 'Exportées';
+export const EMAIL_ACCOUNTS = 'Comptes E-mail';
+export const EMAIL_SENDING_CUSTOMIZATION = 'Personnalisation Envoi Email';
+export const EMAIL_SIGNATURES = 'Signatures E-mail';
+export const EMAIL_TEMPLATES = 'Modèles d\'E-mail';
+export const ENTITY_RELATIONSHIP_TYPES = 'Types de Relations entre Entités';
+export const EXPENSE_INVOICE = 'Facture de Dépenses';
+export const EXPEDIENT_TYPE = 'Type de Dossier';
 
 // ----- F
 
 export const FAILED = 'Échoué';
+export const FEES = 'Cotisations';
+export const FIE_BULK_IMPORT = 'FIE - Importación masiva de I.T';
+export const FISCAL_MODELS_MATRIX = 'Matrice des entreprises et modèles fiscaux';
+export const FIXED_ASSETS = 'Immobilisations';
+export const FORECAST = 'Prévision';
+export const FORAL_IGIC = 'IGIC Canaries';
+export const FORAL_IVA = 'TVA Forales';
+export const FORAL_IRPF = 'IRPF Forales';
+export const FORAL_IVA_NAVARRA = 'TVA Navarre';
+export const FORAL_IRPF_NAVARRA = 'IRPF Navarre';
+export const FORAL_LROE_BIZKAIA = 'LROE Bizkaia';
+export const WITH_PROFESSIONAL_IRPF = 'avec IRPF professionnel';
+export const WITH_RENTAL_IRPF = 'avec IRPF location';
+export const INTRACOMUNITARIAS = 'Intracommunautaires';
+export const EXTRACOMUNITARIAS = 'Extracommunautaires';
+export const OPEN_OPERATIONS = 'Opérations ouvertes';
 export const FAX = 'Fax';
 export const FILE = 'Fichier';
 export const FILE_DATA = 'Données du Fichier';
@@ -300,11 +476,21 @@ export const FORMALITIES = 'Formalités';
 export const FROM = 'Depuis';
 export const FRENCH = 'Français';
 export const FUTURE = 'À venir...';
+export const FEE_INVOICING = 'Facturation de Cotisations';
+export const FEE_INVOICING_PANEL = 'Panneau Facturation Cotisations';
+export const FEES_LIST = 'Liste des Cotisations';
+export const FEES_PROJECTION = 'Projection des Cotisations';
+export const FINANCIAL_DATA_CHECK = 'Vérification Données Financières';
+export const FORECAST_LIST = 'Liste des Prévisions';
+export const FORECAST_MANAGEMENT = 'Gestion des Prévisions';
+export const FORMAT_LABELS = 'Étiquettes de Formats/Mesures';
+export const FORMAT_SIZE_TAGS = 'Étiquettes Formats/Tailles';
 
 // ----- G
 
 export const GALICIAN = 'Galicien';
 export const GARAGE = 'Garage';
+export const GENERATE_TOKEN = 'Générer un Token';
 export const GENERAL_DATA = 'Données Générales';
 export const GENERAL_INFORMATION = 'Informations Générales';
 export const GET_INVOICE = 'Obtenir Facture';
@@ -317,11 +503,17 @@ export const GROUP = 'Groupe';
 export const GROUPWARE = 'Dossier';
 export const GROUPED = 'Groupées';
 export const GROUPS = 'Groupes';
+export const GANTT_CHART = 'Diagramme de Gantt';
+export const GLOBAL_STATISTICS = 'Statistiques Globales';
+export const GRADES = 'Notes';
+export const GRADES_QUERY = 'Consultation Notes';
+export const GROUP_CLOSURE = 'Clôture de Groupes';
 
 // ----- H
 
 export const HEADER = 'En-tête';
 export const HELP = 'Aide';
+export const HOLIDAYS = 'Jours Fériés';
 export const HELP_RESULTS = "Résultats dans l'aide";
 export const HIDE_FIELDS = 'Masquer les champs';
 export const HIRING = 'Embauche';
@@ -335,7 +527,13 @@ export const HOURS = "Heures";
 
 // ----- I
 
+export const IMPERSONATE_USER = 'Usurper l\'Utilisateur';
+export const IMPORT = 'Importer';
 export const IN_DEVELOPMENT = 'Cette option est en développement...';
+export const INSTALL_NEW_VERSION = 'Installer la nouvelle version';
+export const INVOICES_UNACCOUNTED_ABBR = 'Factures non comptabilisées';
+export const IT_PART = 'Rapport IT';
+export const IT_PARTS = 'Rapports IT';
 export const IN_PREPARATION = 'En préparation';
 export const IN_PROGRESS = 'En cours';
 export const IN_TRASH = 'Dans la corbeille';
@@ -354,12 +552,18 @@ export const INFO_PENDING = "Section Boucles d'oreilles";
 export const INSCRIPTION = 'Inscription';
 export const INTERNAL = 'Interne';
 export const INVENTORIES = "Inventaires";
+export const INVEST_ASSETS_SHEET = 'Bienes Afectos o de Inversión';
+export const IRPF_PANEL_CONTROL = 'Panel de Control de IRPF';
+export const IVA_PANEL_CONTROL = 'Panel de control de IVA';
 export const INVENTORY = "Inventaire";
 export const INVEST_ASSET = 'Actif immobilisé';
 export const INVEST_ASSETS = 'Actifs immobilisés';
 export const INVESTMENT = 'Investissement';
+export const INCOME_STATEMENT = 'Compte de résultat (P et G)';
 export const INVOICE = 'Facture';
 export const INVOICE_CONCEPTS =  'Concepts de Facture';
+export const INVOICE_COUNTERS = 'Compteurs de factures';
+export const INVOICE_INTEGRITY_CHECK = "Vérification d'intégrité des factures";
 export const INVOICE_CONFIGURATION = 'Configuration des Factures';
 export const INVOICE_DATA = 'Données de Facture';
 export const INVOICE_ISSUED = 'Facture Émise';
@@ -406,6 +610,19 @@ export const ISSUE = 'Sujet';
 export const ISSUED = 'Émis';
 export const ISSUED_INVOICES = 'Factures Émises';
 export const ISSUEDS = 'Émis';
+export const IGIC_ANNUAL_SUMMARY = 'IGIC Déclaration Récapitulative Annuelle';
+export const IGIC_SELF_ASSESSMENT = 'IGIC Autoliquidation';
+export const IGIC_SIMPLIFIED_REGIME = 'IGIC Régime Simplifié';
+export const IMAGES = 'Images';
+export const INCOMING_PURCHASE_NOTES = 'Entrées (Bons de Livraison Achat)';
+export const INVENTORY_CLOSURE = 'Clôture d\'Inventaire';
+export const INVOICE_CONSOLE = 'Console de Facturation';
+export const INVOICE_EXPIRATION_CHECK = 'Vérification Factures / Échéances';
+export const INVOICE_PRINT_EMAIL = 'Impression / Email Factures';
+export const INVOICE_SIGNATURE = 'Signature de Factures';
+export const INVOICE_SURCHARGES = 'Majorations sur Factures';
+export const IT_SICK_LEAVES = 'Congés Maladie IT';
+export const IVA_SELF_ASSESSMENT = 'TVA Autoliquidation';
 
 // ----- J
 
@@ -413,10 +630,23 @@ export const ISSUEDS = 'Émis';
 
 // ----- L
 
+export const LEDGER_REPORT = 'Listado Mayor de Cuentas';
+export const OFFICIAL_BALANCES = 'Balances oficiales';
 export const LABORAL_COSTS = 'Résumé du poste';
 export const LABELS = 'Étiquettes';
 export const LANGUAGE = 'Langue';
 export const LAST = 'Dernier';
+export const LAST_ACTIONS = 'Dernières actions';
+export const LAST_CONTRACTS = 'Derniers contrats';
+export const LAST_CUSTOMERS = 'Derniers clients';
+export const LAST_ELABORATIONS = 'Dernières élaborations';
+export const LAST_ENTRIES = 'Dernières écritures';
+export const LAST_EXPEDIENTS = 'Derniers dossiers';
+export const LAST_EXPIRATIONS = 'Dernières échéances';
+export const LAST_POTENTIALS = 'Derniers prospects';
+export const LAST_STUDENTS = 'Derniers étudiants';
+export const LIQUIDATIONS_PENDING = 'Liquidations en attente';
+export const LOAD_FILE = 'Charger fichier';
 export const LAST_ACCESS = 'Dernier accès';
 export const LAST_LOCATION = 'Dernier emplacement';
 export const LAST_MODIFICATION = 'Dernière modification';
@@ -424,6 +654,7 @@ export const LAST_STATUS = 'Dernier état';
 export const LEGAL_LITERALS = 'Mentions légales';
 export const LINK = 'Lier';
 export const LINK_CLIENT = "Lier le client";
+export const LINKINGS = 'Liaisons';
 export const LINKING = "Liaison";
 export const LINKED = 'Lié';
 export const LINKED1 = 'Liés';
@@ -436,10 +667,19 @@ export const LOCATION = 'Emplacement';
 export const LOCATIONS = 'Emplacements';
 export const LOGIN = 'Se connecter';
 export const LOGIN_SUBTITLE = 'Entrez vos identifiants';
+export const LEVELS = 'Niveaux';
+export const LOANS = 'Prêts';
+export const MESSAGES = 'Messages';
 
 // ----- M
 
 export const MAILBOX = 'Boîte aux lettres';
+export const MAIN_TABLES = 'Tables Principales';
+export const MAKES = 'Marques';
+export const MASTERS = 'Données maîtres';
+export const MOVEMENTS = 'Mouvements';
+export const PHOTO_DOCUMENT = 'Photo document';
+export const PHOTO_INVOICE = 'Photo facture';
 export const MARKETING = 'Marketing';
 export const MARK_ENTRY = 'Marquer l\'entrée';
 export const MARK_EXIT = 'Marquer la sortie';
@@ -452,10 +692,37 @@ export const MESSENGER_SERVICE = 'Messagerie';
 export const MINIMIZE = 'Minimiser';
 export const MINS = 'Minutes';
 export const MODEL = 'Modèle';
+export const MODEL_110_111 = 'Formulaire 110/111';
 export const MODEL_111 = 'Modèle 111';
+export const MODEL_115 = 'Formulaire 115';
+export const MODEL_123 = 'Formulaire 123';
+export const MODEL_130 = 'Formulaire 130';
+export const MODEL_131 = 'Formulaire 131';
+export const MODEL_140 = 'Formulaire 140';
+export const MODEL_145 = 'Formulaire 145';
+export const MODEL_180 = 'Formulaire 180';
+export const MODEL_184 = 'Formulaire 184';
+export const MODEL_193 = 'Formulaire 193';
+export const MODEL_200 = 'Formulaire 200';
+export const MODEL_202 = 'Formulaire 202';
+export const MODEL_240 = 'Formulaire 240';
+export const MODEL_303 = 'Formulaire 303';
+export const MODEL_347 = 'Formulaire 347';
+export const MODEL_349 = 'Formulaire 349';
+export const MODEL_369 = 'Formulaire 369';
+export const MODEL_390 = 'Formulaire 390';
+export const MODEL_415 = 'Formulaire 415';
+export const MODEL_420_417 = 'Formulaire 420/417';
+export const MODEL_421 = 'Formulaire 421';
+export const MODEL_425 = 'Formulaire 425';
+export const MODEL_716 = 'Formulaire 716';
+export const MODEL_745_715 = 'Formulaire 745/715';
+export const MODEL_759_760 = 'Formulaire 759/760';
+export const MODEL_F69 = 'Formulaire F69';
 export const MODEL_111_DESCRIPTION = 'Modèle 111. Retenues et acomptes. Revenus du travail et des activités économiques, prix et certains gains patrimoniaux et imputations de revenus. Auto-liquidation.';
 export const MODEL_190 = 'Modèle 190';
 export const MODEL_190_DESCRIPTION = 'Modèle 190. Déclaration informative. Retenues et acomptes. Revenus du travail et des activités économiques, prix et certains gains patrimoniaux et imputations de revenus. Résumé annuel.';
+
 export const MODIFIED_BY = 'Modifié par';
 export const MODERN = "Moderne";
 export const MONTH = 'Mois';
@@ -470,14 +737,19 @@ export const MY_MANAGER = 'Mon gestionnaire';
 export const MY_USER = 'Mon utilisateur';
 export const MAGIC_LINK = "Envoi du lien d'accès par email";
 export const UPPER_MENU = `Menu d'en-tête`;
+export const MANAGEMENT_INVENTORY = 'Gestion des Inventaires';
+export const MOVEMENTS_LIST = 'Liste des Mouvements';
 
 
 // ----- N
 
 export const NAME = 'Nombre';
 export const NEW = 'Nouveau';
+export const NEW_AMORTIZATION_SHEET = "[NOUVEAU] Fiche d'amortissement";
+export const NEW_ACCOUNTING_AMORTIZATION_SHEET = "[NOUVEAU] Écritures d'amortissement";
 export const NEW_COMPANY = 'Nouvelle Entreprise';
 export const NEW_DOCUMENT = 'Nouveau Document';
+
 export const NEW_ELABORATION = 'Nouvelle élaboration';
 export const NEW_EMPLOYEE = 'Nouvel Employé';
 export const NEW_EXPENSE = 'Nouvelle Dépense';
@@ -490,9 +762,22 @@ export const NEW_RECEIVED_INVOICE = 'Nouvelle Facture Reçue';
 export const NEW_REQUEST = 'Nouvelle Demande';
 export const NEW_SALE = 'Nouvelle commande de vente';
 export const NEW_TICKET = 'Nouveau Ticket';
+export const NEW_ACTION = 'Nouvelle Action';
+export const NEW_BUDGET = 'Nouveau Devis';
+export const NEW_CONTRACT = 'Nouveau Contrat';
+export const NEW_CUSTOMER_ACTION = 'Nouveau Client';
+export const NEW_DELIVERY_NOTE = 'Nouveau Bon de livraison';
+export const NEW_ENTRY = 'Nouvelle Écriture';
+export const NEW_EXPIRATION = 'Nouvelle Échéance';
+export const NEW_EXPENSE_ENTRY = 'Nouvelle dépense';
+export const NEW_INCOME_ENTRY = 'Nouveau revenu';
+export const NEW_PACKAGING = 'Nouvel Emballage';
+export const NEW_WORK_ORDER = 'Nouvel Ordre de Travail';
 export const NEW_WAREHOUSE = 'Nouvel Entrepôt';
 export const NEWS = 'Actualités';
 export const NEXT = 'Suivant';
+export const NO_NOTIFICATIONS = 'Aucune Notification';
+
 export const NIF = 'NIF';
 export const NO_DATA = `Il n'y a aucune information`;
 export const NO_INFORMATION = `Pas d'information`;
@@ -511,12 +796,18 @@ export const NOTE = 'Note';
 export const NUMBER = "Nombre";
 export const NUMBER_OF_USERS = "Nombre d'utilisateurs";
 export const NUMBER_OF_PALLETS = "Nombre de palettes";
+export const NEWSLETTERS = 'Bulletins';
+export const NON_DEDUCTIBLE_EXPENSE = 'Dépense Non Déductible TVA';
+export const NON_DEDUCTIBLE_EXPENSES = 'Dépenses Non Déductibles TVA';
 
 // ----- O
 
 export const OCR = 'OCR';
 export const OBSERVATION = 'Observation';
+export const OBSERVATIONS = 'Observations';
+
 export const OFFERS = 'Devis';
+export const OPERATING_ENTRIES = "Écritures d'exploitation, de clôture et d'ouverture";
 export const OFFICE = 'Bureau';
 export const OFFICE_CATEGORIES = 'Catégories de bureaux';
 export const ONE = 'Un';
@@ -524,7 +815,14 @@ export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = "Domaines sans client lié";
 export const ONLY_PORTAL = 'Seulement le portail';
 export const OPEN = 'Ouvrir';
 export const OPEN_MENU = 'Ouvrir le menu';
+export const OPEN_ELABORATIONS = 'Élaborations ouvertes';
+export const OPEN_EXPEDIENTS = 'Dossiers ouverts';
+export const OPEN_FEES = 'Cotisations ouvertes';
 export const OPEN_REQUESTS = 'Demandes ouvertes';
+export const OPERATORS = 'Opérateurs';
+export const OPERATOR = 'Opérateur';
+export const ORDERS_PENDING = 'Commandes en attente';
+export const OTHER_INCOME_EXPENSES = 'Autres dépenses/revenus';
 export const OPENED = 'Ouvert';
 export const OPERATION_DATE = 'Date de l\'opération';
 export const OPERATION_DATE_MIN = 'D. opération';
@@ -541,6 +839,7 @@ export const OTHERS = 'Autres';
 export const PACKAGE = 'Emballage';
 export const PACKAGES = 'Emballages';
 export const PACKAGING = 'Conditionnement';
+export const PACKING_LIST = 'Liste de Colisage';
 export const PARENT = 'Parent';
 export const PARENT_APPS = 'Applications du parent';
 export const PAUSE = 'Pause';
@@ -548,9 +847,19 @@ export const PASSWORD = 'Mot de passe';
 export const PAYMETHOD = 'Mode de Paiement';
 export const PAYMETHODS = 'Modes de Paiement';
 export const PAYROLL = "Travail";
+export const PAYROLL_BATCH_TRANSFER = 'Remise Virement de Paie';
+export const PAYROLL_CALCULATION = 'Calcul de Paie';
+export const PAYROLL_INTEGRAL = 'Paie Intégrale';
 export const PAYSHEET = 'Fiche de paie';
 export const PAYSHEETS = 'Fiches de paie';
+export const PAYSHEETS_EXPIRATIONS = 'Échéances de Paie';
+export const PAYSHEETS_PENDING = 'Fiches de paie en attente';
+export const PAYSHEETS_PRINT_EMAIL = 'Impression / eMail de Paie';
+export const PAYMENT_BATCH_TEMP = 'Remises de paiement (TEMPORAIRE)';
+export const PENDING_INVOICE_ACCOUNTING = 'Comptabilisation des factures et documents en attente';
+export const PAYMENTS = 'Paiements';
 export const PENDING = 'En attente';
+
 export const PENDING_CORRECTION = 'Correction en attente';
 export const PENDING_DECISSION = 'Décision en attente';
 export const PENDING_DOCUMENTS = 'Documents en attente';
@@ -580,6 +889,9 @@ export const PRINTER = 'Imprimante';
 export const PRINTS = 'Impressions';
 export const PROCCESSING = 'En traitement';
 export const PROCESS = 'Procédure';
+export const PROCESSES = 'Processus';
+export const PURCHASE_DELIVERY = 'Bon de livraison';
+export const PURCHASES = 'Achats';
 export const PROCESS_TYPE = 'Type de procédure';
 export const PROCESSED = 'traité';
 export const PROCESSED_MOVEMENT = "L'enregistrement a été traité correctement";
@@ -599,15 +911,47 @@ export const PROJECTS = 'Projets';
 export const PROFILES = "Profils";
 export const PROTOCOL = 'Protocole';
 export const PURCHASE_PRICE = 'Prix de revient';
+export const ORDER_PROPOSAL = 'Proposition de Commandes';
+export const OUTGOING_SALES_NOTES = 'Sorties (Bons de Livraison Vente)';
+export const PAYMENTS_MANAGEMENT = 'Gestion des Paiements';
+export const PAYMENT_BATCH_NEW = 'Remises de Paiement (Nouveau)';
+export const PAYMENT_BATCH_RECEIPT = 'Remise de Recouvrement';
+export const PAYMENT_BATCH_SINGLE = 'Remise de Paiement';
+export const PAYMENT_BATCHES_RECEIPT = 'Remises de Recouvrement';
+export const PERSONS = 'Personnes';
+export const POS = 'TPV';
+export const POS_OPTIONS = 'Options TPV';
+export const POS_SALES = 'Ventes TPV';
+export const PRE_INVOICE_LIST = 'Liste de Pré-facturation';
+export const PRE_INVOICING_LIST = 'Liste de Pré-facturation';
+export const PRINT_PRODUCT_LABELS = 'Impression Étiquettes Produits';
+export const PROCESS_LAUNCHER = 'Lanceur de Processus';
+export const PRODUCT_LABELS = 'Étiquettes Produits';
+export const PRODUCT_TAG_PRINT = 'Impression d\'étiquettes produits';
+export const PRODUCT_TAGS = 'Étiquettes de Produits';
+export const PROMISSORY_NOTE_PRINTING = 'Impression de Billets à Ordre';
+export const PURCHASE_INVOICE_SINGLE = 'Facture d\'Achat';
+export const PURCHASE_INVOICES = 'Factures d\'Achat';
+export const PURCHASE_ORDERS = 'Commandes d\'Achat';
 // ----- Q
 
+export const QUALIFICATIONS = 'Qualifications';
+export const QUALITY_SKILLS = 'Aptitudes Qualité';
 export const QUANTITY = 'Quantité';
+
 export const QUARTERLY_VIEW = 'Vue trimestrielle';
 export const QUERY = 'Requête';
 export const QUESTION = 'Question';
 export const QUESTIONS = 'Questions';
+export const QUOTES_BY_AGENT = 'Devis par Agent Commercial';
+export const QUOTES_BY_CATEGORY_PRODUCT = 'Devis par Catégorie et Produit';
+export const QUOTES_BY_PRODUCT = 'Devis par Produit';
+export const QUOTES_BY_PROSPECT = 'Devis par Prospect';
+export const QUOTES_BY_ZONE = 'Devis par Zone';
 export const QUICK_ACCESS = "Accès rapides";
+export const QUICK_ACCESS_TITLE = 'Accès Rapide';
 export const QUOTA = 'Quota';
+
 export const QUOTE_GROUP = 'Groupe de cotisation';
 
 // ----- R
@@ -616,10 +960,17 @@ export const RADIO = "Radio";
 export const RECEIVED = 'Reçue';
 export const RECEIVED_INVOICES = "Reçus";
 export const RECEIVEDS = 'Reçus';
+export const RECEIPTS_PAYMENTS_ACCOUNTING = 'Comptabilisation des encaissements et paiements effectués';
 export const RECENTS = 'Récents';
 export const RECENTLY_OPENED = "Récemment ouvert";
+export const REGENERATE_IVA_INVOICE = 'Régénérer le numéro dans les factures de TVA déductible';
 export const RECORD = 'Comptabiliser';
 export const RECORD_INVOICE = 'Comptabiliser Facture';
+export const REGISTER_OPERATOR = 'Enregistrer l\'Opérateur';
+export const REPAIR_ORDERS = 'Ordres de réparation';
+export const REPORTS = 'Rapports';
+export const REQUESTS_PENDING = 'Demandes en attente';
+
 export const RECOVER_PASSWORD = 'Récupérer le mot de passe';
 export const RECTIFIED = 'Rectifiée';
 export const RECTIFIER = 'Rectificative';
@@ -659,24 +1010,65 @@ export const RESULTS = "Résultats";
 export const RESUME_COSTS = "Résumé des coûts";
 export const RETENTION_PANEL = 'Panneau IRPF';
 export const REVIEW = 'Réviser';
+export const RECEIVABLES_MANAGEMENT = 'Gestion des Encaissements';
+export const RECLASSIFY_CUSTOMERS = 'Reclasser Clients/Élèves';
+export const REPAIR_ORDERS_EXCEL = 'Ordres de Réparation (Excel)';
+
 
 // ----- S
 
 export const SALES_PREPARATION = 'Préparation des commandes';
 export const SAVE = 'Enregistrer';
 export const SAVED_DATA = "Les données ont été enregistrées avec succès";
+export const SALARY_STAFF_REPORT = 'Rapport du personnel salarié';
 export const SCOPE = 'Portée';
 export const SCOPES =  'Portées';
+export const SALE_DELIVERY = 'Bon de livraison vente';
+export const SALES = 'Ventes';
 export const SCHEDULE = "Horaire";
+export const SEARCH_PACKAGES = 'Rechercher des emballages';
+export const SEE_OPTIONS = 'Voir les options';
+export const SETTLEMENTS_PENDING = 'Soldes en attente';
+export const SIGNING_MODIFICATION = 'Modification Pointage';
+export const SOCIAL_SECURITY = 'Sécurité Sociale';
+export const STOCK_CONTROL = 'Contrôle des Stocks';
+
 export const SEARCH = 'Chercher';
 export const SECTION = 'Section';
+export const SELECT_RECTIFIED_INVOICE = 'Sélectionnez la Facture Rectifiée';
+export const SIGN_INVOICE = 'Signer la Facture';
+export const SUBTRACT = 'Soustraire';
 export const SECURITY = 'Sécurité';
 export const SEE_ALL = 'Voir Tout';
+export const SELECT_LANGUAGE = "Sélection de la langue";
+export const SELECT_COMPANY_TYPE = "Sélectionner le type d'entreprise";
+export const SALE_INVOICE = 'Facture de vente';
+export const SALE_INVOICES = 'Factures de vente';
+export const SALE_ORDERS = 'Commandes de vente';
+export const SALES_INVOICE_SINGLE = 'Facture de Vente';
+export const SALES_INVOICES = 'Factures de Vente';
+export const SALES_ORDERS = 'Commandes de Vente';
+export const SALES_QUOTE = 'Devis de Vente';
+export const SEPA_DIRECT_DEBIT_ORDER = 'Ordre de Domiciliation de Débit Direct SEPA';
+export const SEGMENTATION = 'Segmentation';
+export const SEPE = 'SEPE';
+export const SERIES = 'Séries';
+export const SERVE_ORDERS = 'Exécuter Commandes';
+export const SHIPPING_LABELS = 'Étiquettes d\'Expédition';
+export const SII_DECLARATION = 'SII - Fourniture Immédiate d\'Informations';
+export const SII_DESCRIPTION = 'Fourniture Immédiate d\'Informations';
+export const SKILLS = 'Compétences';
+export const STUDENT = 'Élève';
+export const STUDENTS = 'Étudiants';
+export const SUBJECTS = 'Matières';
+export const SURVEY_RESPONSES = 'Réponses aux Questionnaires';
+export const SUPPLY_BY_CONSUMPTION = 'Approvisionnement selon Consommation';
 export const SEND = 'Envoyer';
 export const SEND_FILE = 'Envoyer Fichier';
 export const SEND_FILES = 'Envoyer Fichiers';
 export const SEND_INVOICE = 'Envoyer Facture';
 export const SEND_INVOICES = 'Envoyer Factures';
+
 export const SENDER = 'Expéditeur';
 export const SENT = 'Envoyées';
 export const SEPA_FILES = 'Fichiers SEPA';
@@ -723,13 +1115,19 @@ export const SURNAME = 'Nom de famille';
 export const SURVEY = 'Questionnaire';
 export const SURVEYS = 'Questionnaires';
 export const SYSTEM_MESSAGES = 'Messages du Système';
-export const SELECT_LANGUAGE = "Sélection de la langue";
-export const SELECT_COMPANY_TYPE = "Sélectionner le type d'entreprise";
 
 // ----- T
 
 export const TAG = 'Étiquette';
+export const TAX_INVOICE_EXCEL_REPORT = 'Rapport Excel des taxes appliquées aux factures';
+export const TAX_MODELS = 'Modèles Fiscaux';
+export const TEMPLATES_AND_REPORTS = 'Modèles et rapports';
+export const TRAINING_CENTERS_ACCREDITED = 'Centres de formation accrédités';
+export const TRIAL_BALANCE = 'Balance des sommes et soldes';
+export const TAX_REPORTS = 'Listes Fiscales';
+export const TEMPLATES = 'Modèles';
 export const TAGS = 'Étiquettes';
+
 export const TARGET = 'Client potentiel';
 export const TARGETS = 'Clients potentiels';
 export const TASK = 'Tâche';
@@ -770,16 +1168,29 @@ export const TYPE_INCIDENT = 'Type incident';
 export const TYPE_JOB = 'Type de travail';
 export const TYPE_REQUEST = 'Type demande';
 export const TYPES = 'Types';
+export const TARIFFS = 'Tarifs';
+export const TEACHERS = 'Professeurs';
+export const TEMPLATE_HEADERS_FOOTERS = 'En-têtes et Pieds de Modèle';
+export const UNDEDUCTIBLE_VAT_EXPENSE = 'Dépense TVA non Déductible';
+export const UNDEDUCTIBLE_VAT_EXPENSES = 'Dépenses TVA non Déductibles';
+export const TRANSITION_TYPES = 'Types de Transitions';
+export const TREASURY_UTILITIES = 'Utilitaires Trésorerie';
+
 
 // ----- U
 
 export const UNACCOUNT_INVOICES = 'Déscomptabiliser Factures';
+export const UNASSIGNED_LEAD = 'Prospect non assigné';
+export const UPLOAD_TO_CLOUD = 'Télécharger dans mon cloud';
 export const UNLINK = "Dissocier";
 export const UNLINK_DOMAIN_QUESTION = "Voulez-vous dissocier ce client du domaine ?";
 export const UNLINK_CLIENT = "Dissocier le client";
 export const UNLINKED = "Non lié";
+
 export const UPDATE = 'Mettre à jour';
+export const UPDATE_CONTRACTED_PRODUCTS = 'Mettre à jour les produits contractés';
 export const UPDATE_INVOICE = 'Mettre à jour Facture';
+export const UPDATE_PRODUCTS = 'Mettre à jour les produits';
 export const UPDATED_CONTRACT = "Le contrat a été modifié avec succès";
 export const UPLOAD = 'Téléverser';
 export const UPLOAD_FILE = 'Téléverser un fichier';
@@ -790,11 +1201,17 @@ export const USER_CATEGORIES = 'Mes catégories';
 export const USER_DATA = 'Données de l\'utilisateur';
 export const USER_MANAGEMENT = 'Gestion des utilisateurs';
 export const USERS = 'Utilisateurs';
+export const UTILITIES_INVOICES_EXPIRATIONS = 'Utilidades facturas/vencimientos';
 export const UTILITIES = 'Utilitaires';
+export const USER_GROUPS = 'Groupes d\'Utilisateurs';
 
 // ----- V
 
+export const VACATION_REQUEST = 'Demande de Congés';
+export const VEHICLES = 'Véhicules';
+export const VOID = 'Annuler';
 export const VAT = 'TVA';
+
 export const VAT_ACCRUAL_PAYMENT = 'Comptabilité de caisse';
 export const VAT_PANEL = 'Panneau TVA';
 export const VERSION = 'Version';
@@ -806,11 +1223,19 @@ export const VIEW_FIELDS = 'Voir les champs';
 export const VIEW_PAYROLL = "Voir la paie";
 export const VIEW_PAYROLLS = "Voir les paies";
 export const VOLUME = 'Volume';
+export const VALUED_ITEM_LIST = 'Liste Valorisée par Article';
+export const VALUED_WAREHOUSE_LIST = 'Liste Valorisée par Entrepôt';
+export const VEHICLES_AND_OWNERS = 'Véhicules et Titulaires';
 
 // ----- W
 
 export const WAREHOUSE = 'Entrepôt';
 export const WAREHOUSES = 'Entrepôts';
+export const WHAT_DO_YOU_WANT_TO_CREATE = 'Que voulez-vous créer?';
+export const WORKER_CALC_VARIABLES = 'Variables de calcul des travailleurs';
+export const WORK_ORDER = 'Ordre de Travail';
+export const WORK_ORDERS = 'Ordres de Travail';
+
 export const WEB = 'Web';
 export const WEEK_SCHEDULE = "Du lundi au jeudi de 8:00 à 15:00";
 export const WEEK_FRIDAY_SCHEDULE = "Vendredi de 8:00 à 14:00";
@@ -826,6 +1251,12 @@ export const WRITE_A_DESCRIPTION = "Écrivez une description";
 export const WRITE_A_NOTE =  "Écrivez une note";
 export const WRONG_CODE = 'Code incorrect';
 export const BLACK_AND_WHITE = 'Noir et Blanc';
+export const WAREHOUSE_DEFINITION = 'Définition des Entrepôts';
+export const WAREHOUSE_ITEM_LIST = 'Liste par Article';
+export const WAREHOUSE_LIST = 'Liste par Entrepôt';
+export const WAREHOUSE_TRANSFERS = 'Transferts entre Entrepôts';
+export const WORK_TYPES = 'Types de Travaux';
+export const WORKLOAD_PANEL = 'Panneau Charge de Travail';
 
 // ----- X
 

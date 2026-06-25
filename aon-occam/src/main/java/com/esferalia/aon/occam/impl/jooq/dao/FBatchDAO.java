@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.AccountEntryFbatch.ACCOUNT_ENTRY_FBATCH;
 import static com.esferalia.aon.jooq.tables.Fbatch.FBATCH;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
@@ -7,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -17,6 +19,7 @@ import org.jooq.SortField;
 import com.esferalia.aon.jooq.tables.records.FbatchRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.FBatchFilter;
@@ -24,6 +27,8 @@ import com.esferalia.aon.occam.api.model.finance.FBatchProperties;
 import com.esferalia.aon.occam.api.model.type.FBatchStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO.RegistryBankFiller;
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
@@ -236,4 +241,44 @@ public class FBatchDAO {
 			
 	}
 
+	// ---------------------------------------------------------- ACCOUNTING
+	public static FBatch record(AONContext ctx, Integer fbatchId, Date paymentDate) {
+		ctx.checkWrite();
+		if (fbatchId == null) throw new AonCoreException(AonError.EMPTY_DATA.format("ID Remesa"));
+		FBatch fbatch = get(ctx, fbatchId);
+		if (fbatch == null || fbatch.getId() == null) throw new AonCoreException(AonError.NOT_EXIST.format("Remesa con id " + fbatchId));
+		FinanceEntryDAO.recordFBatch(ctx, fbatch, paymentDate);
+		return get(ctx, fbatchId);
+	}
+
+	private static Optional<Integer> getAccountEntryId(AONContext ctx, Integer fbatchId) {
+		ctx.checkRead();
+		return ctx.getDslContext().select( ACCOUNT_ENTRY_FBATCH.ACCOUNT_ENTRY )
+			.from(ACCOUNT_ENTRY_FBATCH)
+			.where(ACCOUNT_ENTRY_FBATCH.FBATCH.eq(fbatchId))
+			.fetch()
+			.stream()
+			.map(rec -> rec.getValue(ACCOUNT_ENTRY_FBATCH.ACCOUNT_ENTRY))
+			.findFirst()
+		;
+	}
+	
+	public static FBatch unrecord(AONContext ctx, Integer fbatchId) {
+		ctx.checkWrite();
+		if (fbatchId == null) throw new AonCoreException(AonError.EMPTY_DATA.format("FBatch id"));
+		FBatch fbatch = get(ctx, fbatchId);
+		if (fbatch == null || fbatch.getId() == null) throw new AonCoreException(AonError.NOT_EXIST.format("Remesa con id " + fbatchId));
+		Integer accountEntryId = getAccountEntryId(ctx, fbatchId)
+			.orElseThrow(() -> new AonCoreException(AonError.NOT_EXIST.format("Asiento contable de la remesa con id " + fbatchId)));
+		AccountEntryDAO.delete(ctx, accountEntryId);
+		return get(ctx, fbatchId);
+	}
+
+	public static AccountEntry getAccountEntry(AONContext ctx, Integer fbatchId) {
+		return getAccountEntryId(ctx,fbatchId)
+			.map(accountEntryId -> AccountEntryDAO.getAccountEntry(ctx, accountEntryId))
+			.orElseThrow(() -> new AonCoreException(AonError.ACCOUNT_ENTRY_NOT_FOUND.getMessage()))	
+		;
+	}
+	
 }

@@ -1,9 +1,15 @@
 package com.esferalia.aon.gwt.fiscal.client.finance;
 
+import java.util.Date;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -16,17 +22,25 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.type.FBatchStatus;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -42,6 +56,8 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 	private AonToolbar toolbar;
 	private AonToolbarButton backButton;
 	private AonToolbarButton sepaButton;
+	private AonToolbarButton recordButton;
+	private AonToolbarButton unrecordButton;
 	private AonToolbarButton downloadButton;
 	private AonToolbarButton excelButton;
 	private AonToolbarButton deleteFileButton;
@@ -158,7 +174,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 			}
 			
 		};
-		financesPanel.addWest(fBatchPaymentAviableList, fBatch.isGenerated() || fBatch.isAccounted() ? 0 : Window.getClientWidth() / 2);
+		financesPanel.addWest(fBatchPaymentAviableList, fBatch.isGenerated() || fBatch.isRecorded() ? 0 : Window.getClientWidth() / 2);
 		
 		fBatchPaymentBatchedList = new FBatchPaymentBatchedList(opt, fbatchType, fBatch) {
 			
@@ -179,7 +195,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 			
 			@Override
 			public void run() {
-				if(fBatch.isAccounted() || fBatch.isGenerated())
+				if(fBatch.isRecorded() || fBatch.isGenerated())
 					AonMessagePanel.showInfo(messagePanel, "Para poder modificar un vencimiento con estado " + fBatch.getStatus().getDescription() + " se debe eliminar primero el fichero generado");
 			}
 		};
@@ -221,6 +237,17 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		sepaButton = new AonToolbarButton("Crear fichero SEPA", AON.CSS.aonIconXml());
 		sepaButton.addClickHandler(e -> createSepaFile());
 		toolbar.add(sepaButton);
+
+		recordButton = new AonToolbarButton(AON.MSG.record(), AON.CSS.aonIconAccountingRecord());
+		recordButton.addClickHandler(e -> recordFBatch());
+		toolbar.add(recordButton);
+
+		unrecordButton = new AonToolbarButton(AON.MSG.unrecord(), AON.CSS.aonIconAccountingUnrecord());
+		unrecordButton.addClickHandler(e -> unrecord());
+		// TODO ------ test!!
+		unrecordButton.setVisible(false);
+		// ------------------
+		toolbar.add(unrecordButton);
 
 		downloadButton = new AonToolbarButton(AON.MSG.download() + " fichero SEPA", AON.CSS.aonIconDownload());
 		downloadButton.addClickHandler(e -> {
@@ -265,6 +292,8 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		downloadButton.setVisible(this.fBatch.getRattach() != null);
 		deleteFileButton.setVisible(this.fBatch.getRattach() != null);
 		excelButton.setVisible(this.fBatch.getRattach() != null);
+		recordButton.setVisible(this.fBatch.getId() != null && this.fBatch.isNotRecorded());
+		unrecordButton.setVisible(this.fBatch.getId() != null && this.fBatch.isRecorded());
 	}
 	
 	private String getToolbarTitle() {
@@ -382,6 +411,166 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		});
 	}
 
+	private void recordFBatch() {
+		final AonCustomDialog dialog = new AonCustomDialog();
+		dialog.setCaption(AON.MSG.record());
+		RecordPanel recordPanel = new RecordPanel();
+		recordPanel.show(fBatch.getIssueDate(), new RecordPanelCallback() {
+			
+			@Override
+			public void onCancel() {
+				dialog.hide();
+			}
+			
+			@Override
+			public void onAccept(Date date) {
+				dialog.hide();
+				FINANCE_SERVICE.recordFBatch(opt.getOccam(), fBatch.getId(), date, new AsyncCallback<FBatch>() {
+					
+					@Override
+					public void onFailure(Throwable error) {
+						AonMessagePanel.showError(messagePanel, new HTMLPanel("Error al contabilizar la remesa '<b>" + fBatch.getDescription() + "</b>': " + error.getMessage()));
+					}
+					
+					@Override
+					public void onSuccess(FBatch fBatch) {
+						onModuleLoad(opt, fBatch);
+						AonMessagePanel.showSuccess(messagePanel, new HTMLPanel("Remesa contabilizada correctamente."));
+					}
+					
+				});
+			}
+		});
+		dialog.add( recordPanel );
+		dialog.center();
+		dialog.show();
+		
+		Scheduler.get().scheduleDeferred(() -> recordPanel.setFocus(true));		
+		
+		
+	}
+	private void unrecord() {
+		AonConfirmDialog.showConfirm(AON.MSG.unrecord()
+			, "\u00BFContinuar con la descontabilizaci\u00f3n de la remesa?"
+			, new AonConfirmDialogCallback() {
+			
+			@Override
+			public void onAccept() {
+				FINANCE_SERVICE.unrecordFBatch(opt.getOccam(), fBatch.getId(), new AsyncCallback<FBatch>() {
+					
+					@Override
+					public void onFailure(Throwable error) {
+						AonMessagePanel.showError(messagePanel, new HTMLPanel("Error al descontabilizar la remesa '<b>" + fBatch.getDescription() + "</b>': " + error.getMessage()));
+					}
+					
+					@Override
+					public void onSuccess(FBatch fBatch) {
+						onModuleLoad(opt, fBatch);
+						AonMessagePanel.showSuccess(messagePanel, new HTMLPanel("Remesa descontabilizada correctamente."));
+					}
+					
+				});
+			}
+			
+			@Override
+			public void onCancel() {
+				
+			}
+		});
+	}
+
+	private static interface RecordPanelCallback {
+		void onAccept(Date date);
+		void onCancel();
+	}
+	
+	private static class RecordPanel extends SimplePanel implements Focusable {
+
+		private AonDateBox issueDate; 
+		
+		void show(final Date date, final RecordPanelCallback callback) {
+			setWidth("400px");
+			setHeight("150px");
+			
+			FlowPanel rootPanel = new FlowPanel();
+			rootPanel.setStyleName(AON.CSS.aonMarginTop());
+			
+			FlowPanel tablePanel = new FlowPanel();
+			tablePanel.setStyleName(AON.CSS.aonScrollArea());
+			
+			KeyUpHandler keyUpHandler = event -> {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+					callback.onCancel();	
+				}
+			};
+			
+			FlexTable table = new FlexTable();
+			table.setStyleName(AON.CSS.aonTable());
+			int row = 0;
+			
+			table.setWidget(row,0,new InlineLabel(AON.MSG.accountingDate()));
+			table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
+			issueDate = new AonDateBox();
+			issueDate.setValue(date);
+			issueDate.getTextBox().addKeyUpHandler( keyUpHandler);
+			table.setWidget(row,1,issueDate);
+			
+			tablePanel.add( table );
+			rootPanel.add( tablePanel );
+			
+			FlowPanel buttons = new FlowPanel();
+	    	buttons.setStyleName(AON.CSS.aonTextCenter());
+	    	
+	    	final Button okButton = new Button();
+	    	okButton.setStyleName(AON.CSS.aonOkButton());
+	    	okButton.setText( AON.MSG.accept());
+	    	okButton.addKeyUpHandler( keyUpHandler);
+	    	okButton.addClickHandler(event -> {
+				okButton.setEnabled(false);
+				callback.onAccept(issueDate.getValue());
+			});
+	    	
+	    	buttons.add(okButton);
+	    	
+	    	final Button cancelButton = new Button();
+	    	cancelButton.setStyleName(AON.CSS.aonCancelButton());
+	    	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
+	    	cancelButton.setText( AON.MSG.cancelAction());
+	    	cancelButton.addKeyUpHandler( keyUpHandler);
+	    	cancelButton.addClickHandler(event -> {
+				cancelButton.setEnabled(false);
+				callback.onCancel();
+			});
+	    	buttons.add(cancelButton);
+	    	rootPanel.add(buttons);
+			setWidget(rootPanel);
+			issueDate.setFocus(true);
+		}
+
+		@Override
+		public int getTabIndex() {
+			return issueDate.getTabIndex();
+		}
+
+		@Override
+		public void setAccessKey(char key) {
+			issueDate.setAccessKey(key);
+		}
+
+		@Override
+		public void setFocus(boolean focused) {
+			issueDate.getTextBox().selectAll();
+			issueDate.setFocus(focused);
+			issueDate.hideDatePicker();
+		}
+
+		@Override
+		public void setTabIndex(int index) {
+			issueDate.setTabIndex(index);
+		}
+
+	}
+		
 	public abstract void back(boolean refresh);
 
 }

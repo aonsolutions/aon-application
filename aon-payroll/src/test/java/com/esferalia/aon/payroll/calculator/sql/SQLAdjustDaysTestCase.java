@@ -505,6 +505,61 @@ public class SQLAdjustDaysTestCase extends AbstractSQLTestCase {
 		
 	}
 
+	@Test
+	public void testZeroDaysQuote300() throws ExpressionException,
+			SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date firstDayOfYear = getFirstDayOfYear(getToday());
+		addSystemData(aonContext, firstDayOfYear, null, Collections.singletonMap(CGC_BASE_MIN.getName(), "[\"04\":MAX(8.32, (1381.20 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) ))][GRUPO_COTIZACION]"));
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = 
+		newContract(aonContext, 
+				firstDayOfYear,
+				new HashMap<String, String>() {
+					{
+					    put(TC2.getName(), "\"300\"");
+					    put(QUOTE_GROUP.getName(), "\"04\"");
+					    put(MONTH_DAYS.getName(), "30.00");
+					    put(PARTIAL_FACTOR.getName(), "1.00");
+					}
+				} 
+				, new String[] {
+				"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+				}
+				, new String[] {}
+			,null
+		);
+		Date startDate = firstDayOfYear;
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		SQLITTestCase.addPrestITs(aonContext, contract);
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, endDate, endDate, 1381.20 / 30.00);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder() {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				System.out.println( payment.getDescription() + " = " + amount +" [" + quote +"] " + startDate +".." + endDate );
+			}
+		}).calculate(
+		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		List<SalaryData> cgcBases = salary.getSalaryDatas().stream()
+		.filter( d -> d.getName().equalsIgnoreCase(ContextVariable.CGC_BASE.getName()))
+		.peek( d -> System.out.println(d.getName() + " = " + d.getExpression() ) )
+		.toList();
+		
+		assertEquals(1381.20 / 30 *  31, cgcBases.stream().collect(Collectors.summingDouble(v -> AonNumberUtils.todouble(v.getExpression()))), DELTA);
+		
+	}
+
 	private Double eval(ISQLContractSalaryCalculatorContext ctx, String expression )
 		throws UndefinedVariablesException, ExpressionException {
 	    return ctx.getExpressionContext()

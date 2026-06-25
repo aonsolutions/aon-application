@@ -152,7 +152,7 @@ export class AonTaskHolderList extends AonRegistryList {
     const application = this.getApplication();
     const dialog = application.getDialog();
     dialog.clear();
-    dialog.setTitle("Registrar operario");
+    dialog.setTitle(MSG.REGISTER_OPERATOR);
 
     if (this.isMobile()) {
       dialog.type = "fullscreen";

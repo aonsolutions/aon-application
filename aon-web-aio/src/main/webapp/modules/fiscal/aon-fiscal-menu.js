@@ -1,4 +1,4 @@
-import { TAG } from '../../environments/environments.js'; 
+import { MSG, TAG } from '../../environments/environments.js';
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import { isPersonaFisica } from '../../services/documentUtils.js';
 import { getCompany } from '../../services/companyService.js';
@@ -46,20 +46,20 @@ export class AonFiscalMenu extends AonSuiteMenu {
         this.AON_HEADER = 'aonHeader';
         this.ROOT_PANEL = 'rootPanel';
         this.RIGHT_PANEL = 'rightPanel';
-        this.last = "Matriz fiscal";
-        this.new = "Nueva Acción";
+        this.last = MSG.FISCAL_MODELS_MATRIX;
+        this.new = MSG.NEW_ACTION;
         this.cardData={
-            title: "Facturas",
-            info:["con IRPF profesional", "con IRPF alquiler", "Intracomunitarias", "Extracomunitarias"]
+            title: MSG.INVOICES,
+            info:[MSG.WITH_PROFESSIONAL_IRPF, MSG.WITH_RENTAL_IRPF, MSG.INTRACOMUNITARIAS, MSG.EXTRACOMUNITARIAS]
         };
         this.selectOptions= [{
-            title: "Modelo 303",
+            title: MSG.MODEL_303,
             action : () => GWT.iLoad(GWT.MODEL_303)
         },{
-            title: "Modelo 111",
+            title: MSG.MODEL_111,
             action : () => GWT.iLoad(GWT.MODEL_111)
         },{
-            title: "Modelo 115",
+            title: MSG.MODEL_115,
             action : () => GWT.iLoad(GWT.MODEL_115)
         }];
         await this.initOptions();
@@ -68,267 +68,267 @@ export class AonFiscalMenu extends AonSuiteMenu {
     async initOptions() {
 		await this.initInvoiceConfiguration();
         this.options = [{
-            title: 'IVA AEAT',
+            title: MSG.AEAT + ' IVA',
             visible: this.icc?.isCommonTerritory() || this.icc?.isCanarias(),
             disabled: !(this.icc?.isCommonTerritory() || this.icc?.isCanarias()),
             options: [{
-                description: "Modelo 303 ",
-                title: "IVA Autoliquidación",
+                description: MSG.MODEL_303,
+                title: MSG.MODEL_303,
                 action: () => GWT.iLoad(GWT.MODEL_303)
             }, {
-                description: "Modelo 349 ",
-                title: "Declaración recapitulativas de operaciones intracomunitarias",
+                description: MSG.MODEL_349,
+                title: MSG.MODEL_349,
                 action: () => GWT.iLoad(GWT.MODEL_349)
             }, {
-                description: "Modelo 390 ",
-                title: "Declaración resumen anual IVA",
+                description: MSG.MODEL_390,
+                title: MSG.MODEL_390,
                 action: () => GWT.iLoad(GWT.MODEL_390)
             }, {
-                description: "Modelo 347 ",
-                title: "Declaración anual operaciones con terceras personas",
+                description: MSG.MODEL_347,
+                title: MSG.MODEL_347,
                 action: () => GWT.iLoad(GWT.MODEL_347)
             }, {
-                description: "Modelo 369 ",
-                title: "Declaraciones de IVA del régimen One Stop Shop (OSS)",
+                description: MSG.MODEL_369,
+                title: MSG.MODEL_369,
                 action: () => GWT.iLoad(GWT.MODEL_369)
 			}, {
-                description: "Declaración SII ",
-                title: "Suministro Inmediato de Información",
-                // disabled: !this.icc?.isSii(),
-                action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
-            }],
-            filter: () => this.isNotDomainManagementAvailable()
-        }, {
-            title: 'IRPF AEAT',
-            visible: this.icc?.isCommonTerritory() || this.icc?.isCanarias(),
-            disabled: !(this.icc?.isCommonTerritory() || this.icc?.isCanarias()),
-            options: [{
-                description: "Modelo 111 ",
-                title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, permios y determinadas ganancias patrimoniales e imputaciones de renta",
-                action: () => GWT.iLoad(GWT.MODEL_111)
-            }, {
-                description: "Modelo 115 ",
-                title: "Retenciones e ingresos a cuenta sobre determinadas rentas o rendimientos procedentes del arrendamiento de inmuebles urbanos",
-                action: () => GWT.iLoad(GWT.MODEL_115)
-            }, {
-                description: "Modelo 123 ",
-                title: "Retención e ingreso a cuenta sobre determinadas rendimientos del capital mobiliario o determinadas rentas",
-                action: () => GWT.iLoad(GWT.MODEL_123)
-            }, {
-                description: "Modelo 180 ",
-                title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles Urbanos",
-                action: () => GWT.iLoad(GWT.MODEL_180)
-            }, {
-                description: "Modelo 184 ",
-                title: "Declaración anual. Entidades en régimen de atribución de rentas",
-                action: () => GWT.iLoad(GWT.MODEL_184)
-            }, {
-                description: "Modelo 190 ",
-                title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del trabajo de determinadas actividades económicas, premios y determinadas imputaciones de renta",
-                action: () => GWT.iLoad(GWT.MODEL_190)
-            }, {
-                description: "Modelo 193 ",
-                title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientosdel capital mobiliario, IS e IRNR sobre determinadas rentas",
-                action: () => GWT.iLoad(GWT.MODEL_193)
-            }],
-            filter: () => this.isNotDomainManagementAvailable()
-        }, {
-            title: 'AEAT',
-            visible: this.icc?.isCommonTerritory() || this.icc?.isCanarias(),
-            disabled: !(this.icc?.isCommonTerritory() || this.icc?.isCanarias()),
-            options: [{
-                description: "Modelo 130 ",
-                description2: " |Profes./Empresar.",
-                title: "IRPF. Pago fraccionado. Empresarios y profesionales en estimación directa",
-                action: () => GWT.iLoad(GWT.MODEL_130)
-            }, {
-                description: "Modelo 131 ",
-                description2: " |Profes./Empresar.",
-                title: "Pago fraccionado. Empresarios y profesionales en estimación objetiva",
-                action: () => GWT.iLoad(GWT.MODEL_131)
-            }, {
-                description: "Modelo 200 ",
-                description2: " |Sociedades",
-                title: "Impuesto sobre Sociedades",
-                action: () => GWT.iLoad(GWT.MODEL_200)
-            }, {
-                description: "Modelo 202 ",
-                description2: " |Sociedades",
-                title: "Impuesto Sociedades. Pago fraccionado",
-                action: () => GWT.iLoad(GWT.MODEL_202)
-            }],
-            filter: () => this.isNotDomainManagementAvailable()
-        }, {
-            title: 'IVA Forales',
-            visible: this.icc?.isAlava()  || this.icc?.isGipuzkoa() || this.icc?.isBizkaia(),
-            disabled: !(this.icc?.isAlava()  || this.icc?.isGipuzkoa() || this.icc?.isBizkaia()),
-            options: [{
-                description: "Modelo 303 ",
-                description2: " |320 Gipuzkoa",
-                title: "IVA. Autoliquidación",
-                action: () => GWT.iLoad(GWT.MODEL_303)
-            }, {
-                description: "Modelo 349 ",
-                tite: "Declaración recapitulativa de operaciones intracomunitarias",
-                action: () => GWT.iLoad(GWT.MODEL_349)
-            }, {
-                description: "Modelo 390 ",
-                title: "Declaración resumen anual IVA",
-                action: () => GWT.iLoad(GWT.MODEL_390_HF)
-            }, {
-                description: "Modelo 347 ",
-                title: "Declaración anual operaciones con terceras personas",
-                action: () => GWT.iLoad(GWT.MODEL_347)
-            }, {
-                description: "Declaración SII ",
-                title: "Suministro Inmediato de Información",
+                description: MSG.DECLARATION_SII,
+                title: MSG.DECLARATION_SII,
                 disabled: !this.icc?.isSii(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()
         }, {
-            title: 'IRPF Forales',
-            visible: this.icc?.isAlava()  || this.icc?.isGipuzkoa() || this.icc?.isBizkaia(),
-            disabled: !(this.icc?.isAlava()  || this.icc?.isGipuzkoa() || this.icc?.isBizkaia()),
+            title: MSG.AEAT + ' IRPF',
+            visible: this.icc?.isCommonTerritory() || this.icc?.isCanarias(),
+            disabled: !(this.icc?.isCommonTerritory() || this.icc?.isCanarias()),
             options: [{
-                description: "Modelo 110/111 ",
-                title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
+                description: MSG.MODEL_111,
+                title: MSG.MODEL_111,
                 action: () => GWT.iLoad(GWT.MODEL_111)
             }, {
-                description: "Modelo 115 ",
-                tite: "Retenciones e ingresos a cuenta sobre determinadas rentas o rendimientos procedentes del arrendamiento de inmuebles urbanes",
+                description: MSG.MODEL_115,
+                title: MSG.MODEL_115,
                 action: () => GWT.iLoad(GWT.MODEL_115)
             }, {
-                description: "Modelo 123 ",
-                title: "Retención e ingreso a cuenta sobre determinados rendimientos del capital mobiliario o determinadas rentas",
+                description: MSG.MODEL_123,
+                title: MSG.MODEL_123,
                 action: () => GWT.iLoad(GWT.MODEL_123)
             }, {
-                description: "Modelo 180 ",
-                title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles Urbanos",
+                description: MSG.MODEL_180,
+                title: MSG.MODEL_180,
                 action: () => GWT.iLoad(GWT.MODEL_180)
             }, {
-                description: "Modelo 184 ",
-                title: "Declaración anual. Entidades en régimen de atribución de rentas",
+                description: MSG.MODEL_184,
+                title: MSG.MODEL_184,
                 action: () => GWT.iLoad(GWT.MODEL_184)
             }, {
-                description: "Modelo 190 ",
-                title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del trabajo de determinadas actividades económicas, premios y determinadas imputaciones de renta",
+                description: MSG.MODEL_190,
+                title: MSG.MODEL_190,
                 action: () => GWT.iLoad(GWT.MODEL_190)
             }, {
-                description: "Modelo 193 ",
-                title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del capital mobiliario, IS e IRNR sobre determinadas rentas",
+                description: MSG.MODEL_193,
+                title: MSG.MODEL_193,
                 action: () => GWT.iLoad(GWT.MODEL_193)
             }],
             filter: () => this.isNotDomainManagementAvailable()
         }, {
-            title: 'LROE Bizkaia',
+            title: MSG.AEAT,
+            visible: this.icc?.isCommonTerritory() || this.icc?.isCanarias(),
+            disabled: !(this.icc?.isCommonTerritory() || this.icc?.isCanarias()),
+            options: [{
+                description: MSG.MODEL_130,
+                description2: " |Profes./Empresar.",
+                title: MSG.MODEL_130,
+                action: () => GWT.iLoad(GWT.MODEL_130)
+            }, {
+                description: MSG.MODEL_131,
+                description2: " |Profes./Empresar.",
+                title: MSG.MODEL_131,
+                action: () => GWT.iLoad(GWT.MODEL_131)
+            }, {
+                description: MSG.MODEL_200,
+                description2: " |Sociedades",
+                title: MSG.MODEL_200,
+                action: () => GWT.iLoad(GWT.MODEL_200)
+            }, {
+                description: MSG.MODEL_202,
+                description2: " |Sociedades",
+                title: MSG.MODEL_202,
+                action: () => GWT.iLoad(GWT.MODEL_202)
+            }],
+            filter: () => this.isNotDomainManagementAvailable()
+        }, {
+            title: MSG.FORAL_IVA,
+            visible: this.icc?.isAlava()  || this.icc?.isGipuzkoa() || this.icc?.isBizkaia(),
+            disabled: !(this.icc?.isAlava()  || this.icc?.isGipuzkoa() || this.icc?.isBizkaia()),
+            options: [{
+                description: MSG.MODEL_303,
+                description2: " |320 Gipuzkoa",
+                title: MSG.MODEL_303,
+                action: () => GWT.iLoad(GWT.MODEL_303)
+            }, {
+                description: MSG.MODEL_349,
+                title: MSG.MODEL_349,
+                action: () => GWT.iLoad(GWT.MODEL_349)
+            }, {
+                description: MSG.MODEL_390,
+                title: MSG.MODEL_390,
+                action: () => GWT.iLoad(GWT.MODEL_390_HF)
+            }, {
+                description: MSG.MODEL_347,
+                title: MSG.MODEL_347,
+                action: () => GWT.iLoad(GWT.MODEL_347)
+            }, {
+                description: MSG.DECLARATION_SII,
+                title: MSG.DECLARATION_SII,
+                disabled: !this.icc?.isSii(),
+                action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
+            }],
+            filter: () => this.isNotDomainManagementAvailable()
+        }, {
+            title: MSG.FORAL_IRPF,
+            visible: this.icc?.isAlava()  || this.icc?.isGipuzkoa() || this.icc?.isBizkaia(),
+            disabled: !(this.icc?.isAlava()  || this.icc?.isGipuzkoa() || this.icc?.isBizkaia()),
+            options: [{
+                description: MSG.MODEL_110_111,
+                title: MSG.MODEL_110_111,
+                action: () => GWT.iLoad(GWT.MODEL_111)
+            }, {
+                description: MSG.MODEL_115,
+                title: MSG.MODEL_115,
+                action: () => GWT.iLoad(GWT.MODEL_115)
+            }, {
+                description: MSG.MODEL_123,
+                title: MSG.MODEL_123,
+                action: () => GWT.iLoad(GWT.MODEL_123)
+            }, {
+                description: MSG.MODEL_180,
+                title: MSG.MODEL_180,
+                action: () => GWT.iLoad(GWT.MODEL_180)
+            }, {
+                description: MSG.MODEL_184,
+                title: MSG.MODEL_184,
+                action: () => GWT.iLoad(GWT.MODEL_184)
+            }, {
+                description: MSG.MODEL_190,
+                title: MSG.MODEL_190,
+                action: () => GWT.iLoad(GWT.MODEL_190)
+            }, {
+                description: MSG.MODEL_193,
+                title: MSG.MODEL_193,
+                action: () => GWT.iLoad(GWT.MODEL_193)
+            }],
+            filter: () => this.isNotDomainManagementAvailable()
+        }, {
+            title: MSG.FORAL_LROE_BIZKAIA,
             visible: this.icc?.isBizkaia(),
             disabled: !this.icc?.isBizkaia(),
             options: [{
-                description: "Modelo 140 ",
-                title: "Libro-registro de operaciones económicas de personas físicas",
+                description: MSG.MODEL_140,
+                title: MSG.MODEL_140,
                 disabled: !this.icc?.isLroe() || !isPersonaFisica(this.company.document),
                 action: () => GWT.iLoad(GWT.MODEL_140)
             }, {
-                description: "Modelo 240 ",
-                tite: "Libro-registro de operaciones económicas de sociedades",
+                description: MSG.MODEL_240,
+                title: MSG.MODEL_240,
                 disabled: !this.icc?.isLroe() || isPersonaFisica(this.company.document),
                 action: () => GWT.iLoad(GWT.MODEL_240)
             }],
             filter: () => this.isNotDomainManagementAvailable()
         }, {
-            title: 'IVA Navarra',
+            title: MSG.FORAL_IVA_NAVARRA,
             visible: this.icc?.isNavarra(),
             disabled: !this.icc?.isNavarra(),
             options: [{
-                description: "Modelo F69 ",
-                title: "Autoliquidación",
+                description: MSG.MODEL_F69,
+                title: MSG.MODEL_F69,
                 action: () => GWT.iLoad(GWT.MODEL_303)
             }, {
-                description: "Modelo 349 ",
-                tite: "Declaración recapitulativa de operaciones intracomunitarias",
+                description: MSG.MODEL_349,
+                title: MSG.MODEL_349,
                 action: () => GWT.iLoad(GWT.MODEL_349)
             }, {
-                description: "Modelo 111 ",
-                title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
+                description: MSG.MODEL_111,
+                title: MSG.MODEL_111,
                 action: () => GWT.iLoad(GWT.MODEL_111)
             }, {
-                description: "Modelo 347 ",
-                title: "Declaración anual operaciones con terceras personas",
+                description: MSG.MODEL_347,
+                title: MSG.MODEL_347,
                 action: () => GWT.iLoad(GWT.MODEL_347)
             }, {
-                description: "Declaración SII ",
-                title: "Suministro Inmediato de Información",
-                // disabled: !this.icc?.isSii(),
+                description: MSG.DECLARATION_SII,
+                title: MSG.DECLARATION_SII,
+                disabled: !this.icc?.isSii(),
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }],
             filter: () => this.isNotDomainManagementAvailable()
         }, {
-            title: 'IRPF Navarra',
+            title: MSG.FORAL_IRPF_NAVARRA,
             visible: this.icc?.isNavarra(),
             disabled: !this.icc?.isNavarra(),
             options: [{
-                description: "Modelo 745/715 ",
-                title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
+                description: MSG.MODEL_745_715,
+                title: MSG.MODEL_745_715,
                 action: () => GWT.iLoad(GWT.MODEL_111)
             }, {
-                description: "Modelo 759/760 ",
-                tite: "Retenciones e ingresos a cuenta sobre determinadas rentas o rendimientos procedentes del arrendamiento de inmuebles urbanos",
+                description: MSG.MODEL_759_760,
+                title: MSG.MODEL_759_760,
                 action: () => GWT.iLoad(GWT.MODEL_115)
             }, {
-                description: "Modelo 716 ",
-                title: "Retención e ingreso a cuenta sobre determinados rendimientos del capital mobiliario o determinadas rentas",
+                description: MSG.MODEL_716,
+                title: MSG.MODEL_716,
                 action: () => GWT.iLoad(GWT.MODEL_123)
             }, {
-                description: "Modelo 180 ",
-                title: "Resumen anual de retenciones e ingresos a cuenta. Rendimiento procedentes de arrendamiento de inmuebles Urbanos",
+                description: MSG.MODEL_180,
+                title: MSG.MODEL_180,
                 action: () => GWT.iLoad(GWT.MODEL_180)
             }, {
-                description: "Modelo 184 ",
-                title: "Declaración anual. Entidades en régimen de atribución de rentas",
+                description: MSG.MODEL_184,
+                title: MSG.MODEL_184,
                 action: () => GWT.iLoad(GWT.MODEL_184)
             }, {
-                description: "Modelo 190 ",
-                title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del trabajo de determinadas actividades económicas, premios y determinadas imputaciones de renta",
+                description: MSG.MODEL_190,
+                title: MSG.MODEL_190,
                 action: () => GWT.iLoad(GWT.MODEL_190)
             }, {
-                description: "Modelo 193 ",
-                title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del capital mobiliario, IS e IRNR sobre determinadas rentas",
+                description: MSG.MODEL_193,
+                title: MSG.MODEL_193,
                 action: () => GWT.iLoad(GWT.MODEL_193)
             }],
             filter: () => this.isNotDomainManagementAvailable()
         }, {
-            title: 'IGIC Canarias',
+            title: MSG.FORAL_IGIC,
             visible: this.icc?.isCanarias(),
             disabled: !this.icc?.isCanarias(),
             options: [{
-                description: "Modelo 420/417 ",
-                title: "IGIC Autoliquidación",
+                description: MSG.MODEL_420_417,
+                title: MSG.MODEL_420_417,
                 action: () => GWT.iLoad(GWT.MODEL_303)
-            }, 
+            },
 			{
-                description: "Modelo 421 ",
-                title: "IGIC Régimen Simplificado",
+                description: MSG.MODEL_421,
+                title: MSG.MODEL_421,
                 action: () => GWT.iLoad(GWT.MODEL_421)
-            }, 
+            },
 			{
-                description: "Modelo 425 ",
-                title: "IGIC Declaración resumen anual",
+                description: MSG.MODEL_425,
+                title: MSG.MODEL_425,
                 action: () => GWT.iLoad(GWT.MODEL_390)
-            }, 
+            },
             {
-                description: "Modelo 415 ",
-                title: "Declaración anual operaciones con terceras personas",
+                description: MSG.MODEL_415,
+                title: MSG.MODEL_415,
                 action: () => GWT.iLoad(GWT.MODEL_347)
 			}],
             filter: () => this.isNotDomainManagementAvailable()
         }, {
-            title: 'Matriz de empresas y modelos fiscales',
+            title: MSG.FISCAL_MODELS_MATRIX,
             visible: true,
             disabled: false,
             options: [{
-                title: "Matriz de empresas y modelos fiscales",
-                description: "Matriz de empresas y modelos fiscales",
+                title: MSG.FISCAL_MODELS_MATRIX,
+                description: MSG.FISCAL_MODELS_MATRIX,
                 action: () => GWT.iLoad(GWT.MODEL_MATRIX, this.getApplication().CONTENT)
             }],
             filter: () => this.isDomainManagementAvailable()

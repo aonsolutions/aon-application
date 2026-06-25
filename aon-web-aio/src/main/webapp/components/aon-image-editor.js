@@ -52,7 +52,7 @@ export class AonImageEditor extends AonElement {
         span.id = this.id + "FloatSpan";
         span.style.position = "fixed";
         span.style.right = "20px";
-        span.style.bottom = this.isSab() ? "80px" : "70px";
+        span.style.bottom = "80px";
 
         let aonIconButton = new AonIconButton();
         aonIconButton.icon = "check";

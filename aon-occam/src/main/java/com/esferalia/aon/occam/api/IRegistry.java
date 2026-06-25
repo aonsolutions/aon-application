@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -84,6 +85,7 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.target.TargetParams;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
 public interface IRegistry {
 	
@@ -296,6 +298,7 @@ public interface IRegistry {
 	public List<DomainLinked> getDomainLinkedList(AONContext ctx, Integer registry);
 	public DomainLinked saveDomainLinked(AONContext ctx, DomainLinked domainLinked);
 	public Domain updateDomainStatus(AONContext ctx, Domain domain);
+	public Domain saveDomainStatus(CloseableAONContext ctx, int domain, RegistryStatus newStatus, Date newExpDate);
 	public void updateDomainCustomer(AONContext ctx, Integer domainId, Integer customer);
 	
 	

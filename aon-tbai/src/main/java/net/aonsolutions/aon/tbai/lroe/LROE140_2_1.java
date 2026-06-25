@@ -237,8 +237,8 @@ public class LROE140_2_1 extends LROE140 {
 				r.setReferenciaBien(Integer.toString(ia));
 			}
 			
-			if(r.getBienAfectoIRPFYOIVA() == null && !AonStringUtils.isBlank(detail.getAccountCode()) && detail.getAccountCode().length() >= 3) {
-				r.setConcepto(getConcept(detail.getAccountCode()));
+			if(r.getBienAfectoIRPFYOIVA() == null && !AonStringUtils.isBlank(detail.getExpAccountCode()) && detail.getExpAccountCode().length() >= 3) {
+				r.setConcepto(getConcept(detail.getExpAccountCode()));
 				double importeGastoIRPF = AonMathUtils.round(tax.getBase() * tax.getDeductiblePercent() / 100);
 				r.setImporteGastoIRPF(Double.toString(importeGastoIRPF));
 			}

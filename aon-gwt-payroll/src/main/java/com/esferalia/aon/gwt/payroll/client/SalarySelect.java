@@ -303,6 +303,9 @@ public class SalarySelect extends Composite {
 		typeListBox.addItem(Salary.Type.SETTLE.getDescription(),
 				Salary.Type.SETTLE.name());
 
+		typeListBox.addItem(Salary.Type.PROCEDURAL.getDescription(),
+				Salary.Type.PROCEDURAL.name());
+
 //		typeListBox.addItem(Salary.Type.NOT_ENJOYED_VACATIONS.getDescription(),
 //				Salary.Type.NOT_ENJOYED_VACATIONS.name());
 

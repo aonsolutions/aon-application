@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -460,18 +461,23 @@ public class RegistryImport extends Import {
 					.setActive(true);
 			}
 			
-			Scope s = AON.getUserScopeStream(domain.getName(), domain.getId(), user.getLogin(), user.getId(), f -> 
-					f.getDomainProperty().eq(domain.getId())).findFirst().orElse(new Scope());
-			if(s.getId() == null && domain.isEnableHeredity() && domain.getParentId() != null) {
-				s = AON.getUserScopeStream(domain.getName(), domain.getId(), user.getLogin(), user.getId(), f -> 
-					f.getDomainProperty().eq(domain.getParentId())).findFirst().orElse(new Scope());
-			}
+			Scope scope = AON.getUserScopeStream(domain.getName(), domain.getId(), user.getLogin(), user.getId(), null).findFirst().orElse(new Scope());
+			if(scope.isEmpty()) {
+				scope = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(), f ->
+						f.getDomainProperty().eq(domain.getId())).findFirst().orElse(new Scope());
+				if(scope.isEmpty()) {
+					scope = AON.insertScope(domain.getName(), domain.getId(), user.getLogin(), new Scope()
+						.setDescription("EMPRESA")
+						.setDomain(domain.getId()));
+					if(user.getDomain().getId().equals(domain.getId()))
+						AON.insertUserScope(domain.getName(), domain.getId(), user.getLogin(), new UserScope()
+							.setDomain(domain.getId())
+							.setScope(scope.getId())
+							.setUserId(user.getId()));
+				}
+			}		
 			
-			if(s.getId() == null && !domain.isEnableHeredity() && domain.getId() != null) {
-				s = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(), f -> 
-					f.getDomainProperty().eq(domain.getId())).findFirst().orElse(new Scope());
-			}
-
+			
 			if(r.isCustomer()) {
 				Customer customer = AON.getCustomer(domain.getName(), domain.getId(), user.getLogin(), f->
 					f.getDomainProperty().eq(domain.getId()).and(f.getRegistryProperty().eq( registryId )));
@@ -480,7 +486,7 @@ public class RegistryImport extends Import {
 					Customer c = new Customer()
 							.setAccount(acc.getId())
 							.copy(reg)
-							.setScope(new Scope().setId(domain.getScope() != null ? domain.getScope() : s.getId()))
+							.setScope(scope)
 							.setStatus(RegistryStatus.ACTIVE)
 							.setTransaction(r.getTransaction());
 					c.setDomain(domain);
@@ -490,7 +496,7 @@ public class RegistryImport extends Import {
 				if(target.isEmpty()) {
 					Target t = new Target()
 						.copy(reg)
-						.setScope(s);
+						.setScope(scope);
 					AON.insertTarget(domain.getName(), domain.getId(), user.getLogin(), t);
 				}
 			}
@@ -503,7 +509,7 @@ public class RegistryImport extends Import {
 					Supplier sup = new Supplier()
 							.copy(reg)
 							.setAccount(acc.getId())
-							.setScope(new Scope().setId(domain.getScope() != null ? domain.getScope() : s.getId()))
+							.setScope(scope)
 							.setStatus(RegistryStatus.ACTIVE)
 							.setTransaction(r.getTransaction());
 					sup.setId(registryId);
@@ -519,8 +525,8 @@ public class RegistryImport extends Import {
 					acc = getAccount(domain, user, acc);
 					Creditor cre = new Creditor()
 							.copy(reg)
-							.setAccount(acc==null?null:acc.getId())
-							.setScope( new Scope().setId(domain.getScope() != null ? domain.getScope() : s.getId()))
+							.setAccount(acc == null ? null : acc.getId())
+							.setScope(scope)
 							.setStatus(RegistryStatus.ACTIVE)
 							.setTransaction(r.getTransaction());
 					cre.setId(registryId);

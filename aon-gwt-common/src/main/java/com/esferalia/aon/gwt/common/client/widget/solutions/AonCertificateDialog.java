@@ -71,13 +71,14 @@ public class AonCertificateDialog extends AonCustomDialog {
 	private AonCustomListBox security = new AonCustomListBox("Seguridad");
 	
 	private HTMLPanel typePanel = new HTMLPanel("");
-	private AonCustomCheckBox tgss = new AonCustomCheckBox("TGSS");
-	private AonCustomCheckBox sepe = new AonCustomCheckBox("SEPE");
-	private AonCustomCheckBox aeat = new AonCustomCheckBox("AEAT");
+	private AonCustomToogleButton tgss = new AonCustomToogleButton("TGSS");
+	private AonCustomToogleButton sepe = new AonCustomToogleButton("SEPE");
+	private AonCustomToogleButton aeat = new AonCustomToogleButton("AEAT");
 	
 	// Buttons Panel
 	private HTMLPanel buttonsPanel = new HTMLPanel("");
 	private Button acceptBtnDialog;
+	private Button verifyBtnDialog;
 	
 	// Variables
 	
@@ -249,7 +250,7 @@ public class AonCertificateDialog extends AonCustomDialog {
 		password.addButton(visibilityBtn);
 		password.getTextBox().addValueChangeHandler(e -> {
 			passwordHidden.setValue(e.getValue());
-			checkCertificate();
+			//checkCertificate();
 		});
 		
 		filePanel.add(certificate);
@@ -271,9 +272,9 @@ public class AonCertificateDialog extends AonCustomDialog {
 		security.getListBox().addChangeHandler(e -> securityHidden.setValue(AonStringUtils.equalsIgnoreCase(use.getValue(), "0") ? "public" : "private"));
 		
 		// CheckBoxes
-		tgss.getCheckBox().addValueChangeHandler(e -> tgssHidden.setValue(Boolean.TRUE.equals(e.getValue()) ? "tgss" : ""));
-		sepe.getCheckBox().addValueChangeHandler(e -> sepeHidden.setValue(Boolean.TRUE.equals(e.getValue()) ? "sepe" : ""));
-		aeat.getCheckBox().addValueChangeHandler(e -> aeatHidden.setValue(Boolean.TRUE.equals(e.getValue()) ? "aeat" : ""));
+		tgss.addValueChangeHandler(e -> tgssHidden.setValue(Boolean.TRUE.equals(e.getValue()) ? "tgss" : ""));
+		sepe.addValueChangeHandler(e -> sepeHidden.setValue(Boolean.TRUE.equals(e.getValue()) ? "sepe" : ""));
+		aeat.addValueChangeHandler(e -> aeatHidden.setValue(Boolean.TRUE.equals(e.getValue()) ? "aeat" : ""));
 		
 		typePanel.addStyleName(AON.CSS.aonItemFlex());
 		typePanel.add(tgss);
@@ -321,19 +322,19 @@ public class AonCertificateDialog extends AonCustomDialog {
 		security.getListBox().addChangeHandler(e -> securityHidden.setValue(AonStringUtils.equalsIgnoreCase(security.getValue(), "0") ? "public" : "private"));
 		
 		// CheckBoxes
-		tgss.getCheckBox().addValueChangeHandler(e -> {
+		tgss.addValueChangeHandler(e -> {
 			tgssHidden.setValue(Boolean.TRUE.equals(e.getValue()) ? "tgss" : "");
 			
 			if(Boolean.TRUE.equals(e.getValue())) certificate.addTag(CertificateType.TGSS);
 			else certificate.removeTag(CertificateType.TGSS);
 		});
-		sepe.getCheckBox().addValueChangeHandler(e -> {
+		sepe.addValueChangeHandler(e -> {
 			sepeHidden.setValue(Boolean.TRUE.equals(e.getValue()) ? "sepe" : "");
 			
 			if(Boolean.TRUE.equals(e.getValue())) certificate.addTag(CertificateType.SEPE);
 			else certificate.removeTag(CertificateType.SEPE);
 		});
-		aeat.getCheckBox().addValueChangeHandler(e -> {
+		aeat.addValueChangeHandler(e -> {
 			aeatHidden.setValue(Boolean.TRUE.equals(e.getValue()) ? "aeat" : "");
 
 			if(Boolean.TRUE.equals(e.getValue())) certificate.addTag(CertificateType.AEAT);
@@ -394,8 +395,15 @@ public class AonCertificateDialog extends AonCustomDialog {
 				String jsonStr = e.getResults().split(">")[1].split("<")[0];
 				JSONValue json = JSONParser.parseStrict(jsonStr);
 				parseJSON(json.isObject());
+				
+				JSONValue type = json.isObject().get("type");
+				if(AonStringUtils.equalsIgnoreCase(form.getAction(), GWT.getModuleBaseURL() + "certificate/check/") &&  (null == type || (null != type && !AonStringUtils.equalsIgnoreCase(type.toString().replaceAll("(^\")|(\"$)", ""), "error")) ) ) {
+					accept();
+				}
+				
 			} catch (NullPointerException | IllegalArgumentException err){
 				acceptBtnDialog.setVisible(true);
+				verifyBtnDialog.setVisible(false);
 				// showError("Formato", "Error formateando la informaci\u00f3n");
 			}
 		});
@@ -417,7 +425,7 @@ public class AonCertificateDialog extends AonCustomDialog {
             	extensionHidden.setValue(fileExt);
             	fileNameHidden.setValue(filename);
             	certificate.getTextBox().setValue(filename);
-            	checkCertificate();
+            	//checkCertificate();
             }
 		});
 		
@@ -530,6 +538,7 @@ public class AonCertificateDialog extends AonCustomDialog {
 			createCertificateInfoPanel();
 			showSuccess("Validaci\u00f3n", "Certificado validado correctamente");
 			acceptBtnDialog.setVisible(true);
+			verifyBtnDialog.setVisible(false);
 		} else {
 			if(AonStringUtils.containsIgnoreCase(type.toString(), "create")) {
 				hide();
@@ -653,9 +662,9 @@ public class AonCertificateDialog extends AonCustomDialog {
 		tgss.setEnable(true);
 		sepe.setEnable(true);
 		aeat.setEnable(true);
-		tgss.setValue(false, true);
-		sepe.setValue(false, true);
-		aeat.setValue(false, true);
+		tgss.setValue(false, false);
+		sepe.setValue(false, false);
+		aeat.setValue(false, false);
 	}
 
 	// ------------------------------------------------- Auxiliar Methods
@@ -687,11 +696,18 @@ public class AonCertificateDialog extends AonCustomDialog {
 		
 		acceptBtnDialog = new Button();
 		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
-		acceptBtnDialog.setText("Continuar");
+		acceptBtnDialog.setText("Grabar");
 		acceptBtnDialog.setVisible(false);
 		acceptBtnDialog.addClickHandler(e -> accept());
 		
 		buttonsPanel.add(acceptBtnDialog);
+		
+		verifyBtnDialog = new Button();
+		verifyBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
+		verifyBtnDialog.setText("Verificar");
+		verifyBtnDialog.addClickHandler(e -> checkCertificate());
+		
+		buttonsPanel.add(verifyBtnDialog);
 		
 		Button closeBtnDialog = new Button();
 		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());

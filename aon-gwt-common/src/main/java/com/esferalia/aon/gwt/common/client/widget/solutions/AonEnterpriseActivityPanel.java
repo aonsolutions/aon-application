@@ -11,17 +11,18 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.Cnae;
 import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.Iae;
+import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AonEnterpriseActivityPanel extends HTMLPanel {
@@ -70,10 +71,11 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 	private AonCustomListBox irpfLB = new AonCustomListBox("IRPF");
 	private AonCustomToogleButton equivalence = new AonCustomToogleButton("R. Equivalencia");
 	private AonCustomDateBox endDate = new AonCustomDateBox("F. Fin");
+	
+	private AonCustomListBox ivaExemptLB = new AonCustomListBox("Causa Exenci\u00f3n IVA");
 
 	private AonCustomSuggestBox cnae25SB = new AonCustomSuggestBox("CNAE 2025");
-	//private AonCustomSuggestBox cnaeSB = new AonCustomSuggestBox("CNAE 2009");
-	private AonCustomTextBox cnae = new AonCustomTextBox("CNAE 2009");
+	private AonCustomTextBox cnae = new AonCustomTextBox("CNAE 2009 (Registro Anterior)");
 	
 	private AonCustomSuggestBox iaeSB = new AonCustomSuggestBox("IAE");
 
@@ -147,7 +149,7 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		ivaLB.clearItems();
 		for (int i = 0; i < VATRegime.values().length; i++)
 			ivaLB.addItem(VATRegime.values()[i].getDescription(), VATRegime.values()[i].name());
-
+		
 		irpfLB.clearItems();
 		for (int i = 0; i < IRPFRegime.values().length; i++)
 			irpfLB.addItem(IRPFRegime.values()[i].getDescription(), IRPFRegime.values()[i].name());
@@ -160,6 +162,18 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		row2.add(endDate);
 		row2.add(equivalence);
 		container.add(row2);
+		
+		// Row 
+		HTMLPanel row_ = new HTMLPanel(EMPTY_STRING);
+		row_.setStyleName(AON.CSS.aonItemFlex());
+
+		ivaExemptLB.clearItems();
+		ivaExemptLB.addItem("-", "");
+		for (int i = 0; i < VATExemptionCause.values().length; i++)
+			ivaExemptLB.addItem(VATExemptionCause.values()[i].getDescription(), VATExemptionCause.values()[i].name());
+		
+		row_.add(ivaExemptLB);
+		container.add(row_);
 
 		// Third Row
 		HTMLPanel row3 = new HTMLPanel(EMPTY_STRING);
@@ -206,30 +220,48 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 			}
 		};
 		container.add(cccTable);
+	
+		ivaLB.addChangeHandler(e -> checkIvaExemptVisibility(row_));
 
 		// Fill info
 		if (enterpriseActivity.getId() != null) {
 			description.setValue(enterpriseActivity.getDescription());
 			principal.setValue(enterpriseActivity.isPrincipal());
 			cnae25SB.setValue(null == enterpriseActivity.getCnae25() ? "" : enterpriseActivity.getCnae25Code() + " - " +  enterpriseActivity.getCnae25Description());
-			//cnaeSB.setValue(null == enterpriseActivity.getCnae() ? "" : enterpriseActivity.getCnaeCode() + " - " +  enterpriseActivity.getCnaeDescription());
 			
-			cnae.setValue(AonStringUtils.isBlank(enterpriseActivity.getCnae2509Code()) ? "" : enterpriseActivity.getCnae2509Code() + " - " +  enterpriseActivity.getCnae2509Description());
-			if(null != enterpriseActivity.getCnae()) {
-				cnae.addButton(new AonTableButton(enterpriseActivity.getCnaeCode() + " - " +  enterpriseActivity.getCnaeDescription(), AON.CSS.aonIconInfo()));
+			if(null != enterpriseActivity.getCnae2509Code()) {
+				cnae25SB.addButton(new AonTableButton(AonStringUtils.isBlank(enterpriseActivity.getCnae2509Code()) ? "" : "CNAE 2009: " + enterpriseActivity.getCnae2509Code() + " - " +  enterpriseActivity.getCnae2509Description(), AON.CSS.aonIconInfo()));
 			}
 			
-			iaeSB.setValue(null == enterpriseActivity.getIae() ? "" : enterpriseActivity.getIae().getFullEpigraph()  + " - " + enterpriseActivity.getIae().getTitle());
+			cnae.setValue(AonStringUtils.isBlank(enterpriseActivity.getCnaeCode()) ? "" : enterpriseActivity.getCnaeCode() + " - " +  enterpriseActivity.getCnaeDescription());
+			
+			if(AonStringUtils.equalsIgnoreCase(enterpriseActivity.getCnae2509Code(), enterpriseActivity.getCnaeCode()))
+				cnae.getElement().getStyle().setDisplay(Display.NONE);
+			
+			iaeSB.setValue(null == enterpriseActivity.getIae() ? "" :  enterpriseActivity.getIae().getSection() + " - " +  enterpriseActivity.getIae().getEpigraph() + " : " +  enterpriseActivity.getIae().getTitle());
 			ivaLB.setValue(enterpriseActivity.getVatRegime().name());
+			ivaExemptLB.setValue(null != enterpriseActivity.getVatExemptionCause() ? enterpriseActivity.getVatExemptionCause().name() : "");
 			equivalence.setValue(enterpriseActivity.isSurcharge());
 			irpfLB.setValue(enterpriseActivity.getIrpfRegime().name());
 			startDate.setValue(enterpriseActivity.getStartDate());
 			endDate.setValue(enterpriseActivity.getEndDate());
 		}
+		
+		checkIvaExemptVisibility(row_);
 
 		// Buttons
 		container.add(createButtonsPanel());
 		add(container);
+	}
+	
+	private void checkIvaExemptVisibility(HTMLPanel row) {
+		VATRegime vatRegime = VATRegime.safeValueOf(ivaLB.getValue());
+		if(null != vatRegime && vatRegime.isExempt()) {
+			row.getElement().getStyle().clearDisplay();
+		} else {
+			row.getElement().getStyle().setDisplay(Display.NONE);
+			ivaExemptLB.setValue("");
+		}
 	}
 
 	private void initializeCnae25() {
@@ -237,9 +269,11 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		cnae2025List.forEach(c -> cnaeDescriptions.add(c.getCode() + " - " + c.getTitle()));
 		cnaeDescriptions.sort((o1, o2) -> o1.compareTo(o2));
 
-		MultiWordSuggestOracle orclCnaes = (MultiWordSuggestOracle) cnae25SB.getSuggestBox().getSuggestOracle();
-		orclCnaes.addAll(cnaeDescriptions);
-		orclCnaes.setDefaultSuggestionsFromText(cnaeDescriptions);
+		AonCustomSuggestOracle oracleCnae25 = new AonCustomSuggestOracle();
+		oracleCnae25.setData(cnaeDescriptions);
+
+		cnae25SB = new AonCustomSuggestBox("CNAE 2025", oracleCnae25);
+		
 		cnae25SB.setAutoSelectEnabled(true);
 		cnae25SB.setPlaceHolder("CNAE... (Ctrl + espacio para ver sugerencias)");
 
@@ -250,38 +284,27 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 			} else if (e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE)
 				cnae25SB.hideSuggestionList();
 		});
-	}
-
-	/*
-	private void initializeCnae() {
-		List<String> cnaeDescriptions = new ArrayList<>();
-		cnae2009List.forEach(c -> cnaeDescriptions.add(c.getCode() + " - " + c.getTitle()));
-		cnaeDescriptions.sort((o1, o2) -> o1.compareTo(o2));
-
-		MultiWordSuggestOracle orclCnaes = (MultiWordSuggestOracle) cnaeSB.getSuggestBox().getSuggestOracle();
-		orclCnaes.addAll(cnaeDescriptions);
-		orclCnaes.setDefaultSuggestionsFromText(cnaeDescriptions);
-		cnaeSB.setAutoSelectEnabled(true);
-		cnaeSB.setPlaceHolder("CNAE... (Ctrl + espacio para ver sugerencias)");
-
-		cnaeSB.getSuggestBox().getValueBox().addKeyUpHandler(e -> {
-			if (e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-				cnaeSB.setValue(AonStringUtils.EMPTY);
-				cnaeSB.showSuggestionList();
-			} else if (e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE)
-				cnaeSB.hideSuggestionList();
+		
+		cnae25SB.getSuggestBox().addSelectionHandler(e -> {
+			Cnae cnae25 = getCnae25();
+			if(null != cnae25)
+				cnae.setValue(cnae25.getCode09() + " - " +  cnae25.getTitle09());
+			
+			cnae25SB.removeButton();
+			cnae25SB.addButton(new AonTableButton("CNAE 2009: " + cnae25.getCode09() + " - " +  cnae25.getTitle09(), AON.CSS.aonIconInfo()));
 		});
 	}
-	*/
 
 	private void initializeIae() {
 		List<String> iaeDescriptions = new ArrayList<>();
-		iaeList.forEach(i -> iaeDescriptions.add(i.getFullEpigraph() + " - " + i.getTitle()));
+		iaeList.forEach(i -> iaeDescriptions.add(i.getSection() + " - " + i.getEpigraph() + " : " + i.getTitle()));
 		iaeDescriptions.sort((o1, o2) -> o1.compareTo(o2));
 
-		MultiWordSuggestOracle orclCnaes = (MultiWordSuggestOracle) iaeSB.getSuggestBox().getSuggestOracle();
-		orclCnaes.addAll(iaeDescriptions);
-		orclCnaes.setDefaultSuggestionsFromText(iaeDescriptions);
+		AonCustomSuggestOracle oracleIae = new AonCustomSuggestOracle();
+		oracleIae.setData(iaeDescriptions);
+
+		iaeSB = new AonCustomSuggestBox("IAE", oracleIae);
+		
 		iaeSB.setAutoSelectEnabled(true);
 		iaeSB.setPlaceHolder("IAE... (Ctrl + espacio para ver sugerencias)");
 
@@ -298,7 +321,7 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		String iaeSBValue = iaeSB.getValue();
 
 		for (Iae i : iaeList) {
-			if (AonStringUtils.equals(i.getFullEpigraph() + " - " + i.getTitle(), iaeSBValue))
+			if (AonStringUtils.equalsIgnoreCase(i.getSection() + " - " + i.getEpigraph() + " : " + i.getTitle(), iaeSBValue))
 				return i;
 		}
 
@@ -309,7 +332,7 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		String cnaeSBValue = cnae25SB.getValue();
 
 		for (Cnae c : cnae2025List) {
-			if (AonStringUtils.equals(c.getCode() + " - " + c.getTitle(), cnaeSBValue))
+			if (AonStringUtils.equalsIgnoreCase(c.getCode() + " - " + c.getTitle(), cnaeSBValue))
 				return c;
 		}
 
@@ -322,7 +345,7 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		String cnae09Code = cnae25.getCode09();
 
 		for (Cnae2009 c : cnae2009List) {
-			if (AonStringUtils.equals(c.getCode(), cnae09Code))
+			if (AonStringUtils.equalsIgnoreCase(c.getCode(), cnae09Code))
 				return c;
 		}
 
@@ -346,6 +369,7 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 				.setDescription(description.getValue())
 				.setPrincipal(principal.getValue())
 				.setVatRegime(VATRegime.safeValueOf(ivaLB.getValue()))
+				.setVatExemptionCause(AonStringUtils.isBlank(ivaExemptLB.getValue()) ? null : VATExemptionCause.safeValueOf(ivaExemptLB.getValue()))
 				.setSurcharge(equivalence.getValue())
 				.setIrpfRegime(IRPFRegime.safeValueOf(irpfLB.getValue()))
 				;

@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.Agreement;
@@ -237,6 +238,7 @@ import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
@@ -662,6 +664,12 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	public static Scope saveScopeAndAssign(String domainName, Integer domainId, String login, Scope scope, boolean assignAllUsers, ArrayList<User> selectedUsers) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getSecurity().saveScopeAndAssign(ctx, scope, assignAllUsers, selectedUsers);
 		}
 	}
 	
@@ -1317,39 +1325,73 @@ public class AON {
 	
 	// --------------------- SIGNATURE
 
-	public static Signature getSignature(String domainName, Integer domainId,
-			String login, Integer signatureId) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getSecurity().getSignature(ctx, signatureId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static Signature getSignature(String domainName, Integer domainId, String login, Integer signatureId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getSignature(ctx, signatureId);
 		}
 	}
 	
-	public static Signature getSignature(String domainName, Integer domainId,
-			String login, SignatureFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getSecurity().getSignature(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static Signature getSignature(String domainName, Integer domainId, String login, SignatureFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getSignature(ctx, filter);
 		}
 	}
 	
-	public static LinkedList<Signature> getSignatureList(String domainName, Integer domainId,
-			String login, SignatureFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getSecurity().getSignatureList(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static LinkedList<Signature> getSignatureList(String domainName, Integer domainId, String login, SignatureFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getSignatures(ctx, filter);
+		}
+	}
+	
+	public static LinkedList<Signature> getSignatures(String domainName, Integer domain, String login, SignatureFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, login)){
+			return getCommon().getSignatures(ctx, filter);
+		}
+	}
+
+	public static void deleteSignature(String domainName, Integer domain, String login, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, login)){
+			getCommon().deleteSignature(ctx, id);
+		}
+	}
+
+	public static Signature saveSignature(String domainName, Integer domain, String login, Signature signature) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, login)){
+			return getCommon().saveSignature(ctx, signature);
+		}
+	}
+	
+	// ********************************************
+	// *************************** MAIL ACCOUNTS **
+	// ********************************************
+
+	public static LinkedList<MailAccount> getMailAccounts(String domainName, Integer domain, String login, MailAccountFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, login)){
+			return getCommon().getMailAccounts(ctx, filter);
+		}
+	}
+
+	public static void deleteMailAccount(String domainName, Integer domain, String login, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, login)){
+			getCommon().deleteMailAccount(ctx, id);
+		}
+	}
+
+	public static MailAccount saveMailAccount(String domainName, Integer domain, String login, MailAccount mailAccount) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, login)){
+			return getCommon().saveMailAccount(ctx, mailAccount);
+		}
+	}
+	
+	public static MailAccount getMailAccount(String domainName, Integer domainId, String login, Integer signatureId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getMailAccount(ctx, signatureId);
+		}
+	}
+	
+	public static MailAccount getMailAccount(String domainName, Integer domainId, String login, MailAccountFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getMailAccount(ctx, filter);
 		}
 	}
 
@@ -6392,12 +6434,6 @@ public class AON {
 			return getSecurity().getMailAccount(ctx, filter);
 		}
 	}
-	
-	public static MailAccount getMailAccount(String domainName, Integer domainId, String login, MailAccountFilter filter) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getSecurity().getMailAccount(ctx, filter);
-		}
-	}
 
 	public static LinkedList<MailAccount> getMailAccountList(String domainName,
 			Integer domainId, String login, MailAccountFilter filter) {
@@ -8573,6 +8609,12 @@ public class AON {
 		}
 	}
 	
+	public static Domain saveDomainStatus(String domainName, int domain, String user, RegistryStatus newStatus, Date newExpDate) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().saveDomainStatus(ctx, domain, newStatus, newExpDate);
+		}
+	}
+	
 	// ---------------- Enterprise Data
 
 	public static EnterpriseData getEnterpriseData(Domain domain, User user, EnterpriseDataFilter filter) {
@@ -8801,6 +8843,24 @@ public class AON {
 		}
 	}
 	
+	public static FBatch recordFBatch(Occam occam, Integer fBatchId, Date paymentDate) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getFinance().recordFBatch(ctx, fBatchId, paymentDate);
+		}
+	}
+
+	public static FBatch unrecordFBatch(Occam occam, Integer fBatchId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getFinance().unrecordFBatch(ctx, fBatchId);
+		}
+	}
+	
+	public static AccountEntry getFBatchAccountEntry(Occam occam, Integer fBatchId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getFinance().getFBatchAccountEntry(ctx, fBatchId);
+		}
+	}
+
 	// ---------------- Marketing Campaign
 	
 	public static List<MarketingCampaign> getMarketingCampaignlist(MarketingCompaignParams params) {
@@ -9365,7 +9425,27 @@ public class AON {
 
 	public static List<Account> getAccountsForBank(String domainName, Integer domain, String user) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
-			return getAccounting().getAccounts(ctx, f -> f.getDomainProperty().eq(domain).and(f.getLevelProperty().eq((byte)5)).and(f.getCodeProperty().like("572%").or(f.getCodeProperty().like("5201%")))).collect(Collectors.toList());
+			return getAccounting().getAccounts(ctx, 
+					f -> f.getDomainProperty().eq(domain)
+							.and(f.getLevelProperty().eq((byte)5))
+							.and(f.getCodeProperty().like("5720%").or(f.getCodeProperty().like("5201%")))
+					).collect(Collectors.toList());
+		}
+	}
+
+	public static List<Account> getAviablesAccountsForBank(String domainName, Integer domain, String user) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getAccounting().getAviablesAccountsForBank(ctx, 
+					f -> f.getDomainProperty().eq(domain)
+							.and(f.getLevelProperty().eq((byte)5))
+							.and(f.getCodeProperty().like("5720%").or(f.getCodeProperty().like("5201%")))
+					).collect(Collectors.toList());
+		}
+	}
+
+	public static Account createAccountsForBank(String domainName, Integer domain, String user, String alias, String suffixCode) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getAccounting().createAccountsForBank(ctx, domain, alias, suffixCode);
 		}
 	}
 	

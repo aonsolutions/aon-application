@@ -558,6 +558,11 @@ export class AonDialog extends AonElement {
 		}
 	}
 
+	setWidth(width){
+		let content = this.getContent();
+		if(content) content.style.width = width;
+	}
+
 	// loadingButton(loading){
 	// 	let accept = this.getElement(this.ACCEPT);
 		// if(loading) accept.classList.add("button--loading"); 

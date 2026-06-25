@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.occam.api.model.type.CNAE2009ToCNAE2025;
 import com.esferalia.aon.occam.api.model.type.CNAE2025;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
@@ -26,7 +27,8 @@ public class AonCnae2025Panel extends AonCustomDialog implements HasSelectionHan
 		scroll = new ScrollPanel();
 		scroll.setWidth("550px");
 		scroll.setHeight("500px");
-		scroll.setStyleName(AON.CSS.aonPadding());
+		scroll.setStyleName(AON.CSS.aonPaddingLeft());
+		scroll.addStyleName(AON.CSS.aonPaddingRight());
 		this.setWidget(scroll);
 	}
 	
@@ -49,7 +51,8 @@ public class AonCnae2025Panel extends AonCustomDialog implements HasSelectionHan
 		table.addStyleName(AON.CSS.aonWidthAll());
 		table.addHeaderRow()
 			.addCell( new Label(AON.MSG.code()))
-			.addCell( new Label(AON.MSG.description()));
+			.addCell( new Label(AON.MSG.description()))
+			.getElement().getStyle().setFontSize(13, Unit.PX);
 
 		for (CNAE2025 cnae :  CNAE2025.values()) {
 			AonDisplayGridRow row = table.addRow();

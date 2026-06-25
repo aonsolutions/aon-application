@@ -1254,7 +1254,6 @@ public class AccountEntryDAO {
 			@Override
 			public Boolean visitOperatingAccount(IAccountEntryWrapper wrapper) {
 				return wrapper instanceof AccountingInvoice ai 
-					&& !isAlcatrazGuest(ai.getInvoice())
 					&& AonCollectionUtils.isNotEmpty(ai.getVats())
 					&& AonCollectionUtils.stream(ai.getVats())
 				        .map(vat -> vat.getExpAccount().map(com.esferalia.aon.occam.api.model.Account::getId).orElse(null))

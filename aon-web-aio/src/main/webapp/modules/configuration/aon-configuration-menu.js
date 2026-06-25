@@ -31,11 +31,11 @@ export class AonConfigurationMenu extends AonSuiteMenu {
 		this.AON_HEADER = 'aonHeader';
 		this.ROOT_PANEL = 'rootPanel';
 		this.RIGHT_PANEL = 'rightPanel';
-		this.last = "Últimas acciones";
-		this.new = "Nueva Acción";
+		this.last = MSG.LAST_ACTIONS;
+		this.new = MSG.NEW_ACTION;
 		this.cardData = {
-			title: "Actividad",
-			info: ["Pedidos ptes.", "Cuotas abiertas", "Fras. sin contabilizar"]
+			title: MSG.ACTIVITY,
+			info: [MSG.ORDERS_PENDING, MSG.OPEN_FEES, MSG.INVOICES_UNACCOUNTED_ABBR]
 		};
 		this.selectOptions = [];
 		this.initOptions();
@@ -55,151 +55,151 @@ export class AonConfigurationMenu extends AonSuiteMenu {
 				}]
 		}, {*/
 
-			title: 'Tablas Principales',
+			title: MSG.MAIN_TABLES,
 			options: [{
-				description: "Clientes",
-				title: "Clientes",
+				description: MSG.CUSTOMERS,
+				title: MSG.CUSTOMERS,
 				action: () => this.rootPanel(new JSF.AonJsfCustomer()),
 				filter: () => this.isNotDomainManagementAvailable()
 			}, {
-				description: "Grupos de Facturación",
-				title: "Grupos de Facturación",
+				description: MSG.BILLING_GROUPS,
+				title: MSG.BILLING_GROUPS,
 				action: () => this.rootPanel(new JSF.AonJsfInvoicingGroup()),
 				filter: () => this.isNotDomainManagementAvailable()
 			}, {
-				description: "Proveedores",
-				title: "Proveedores",
+				description: MSG.SUPPLIERS,
+				title: MSG.SUPPLIERS,
 				action: () => this.rootPanel(new JSF.AonJsfSupplier()),
 				filter: () => this.isNotDomainManagementAvailable()
 			}, {
-				description: "Acreedores",
-				title: "Acreedores",
+				description: MSG.CREDITORS,
+				title: MSG.CREDITORS,
 				action: () => this.rootPanel(new JSF.AonJsfCreditor()),
 				filter: () => this.isNotDomainManagementAvailable()
 			}, {
-				description: "Productos",
-				title: "Productos",
+				description: MSG.PRODUCTS,
+				title: MSG.PRODUCTS,
 				action: () => this.getApplication().setContent(new JSF.AonJsfProduct())
 				//action: () => this.rootPanel(new JSF.AonJsfProduct())
 			}, {
-				description: "Gastos",
-				title: "Gastos",
+				description: MSG.EXPENSE,
+				title: MSG.EXPENSE,
 				action: () => this.getApplication().setContent(new JSF.AonJsfExpense())
 			}, {
-				description: "Clientes Potenciales",
-				title: "Clientes Potenciales",
+				description: MSG.TARGETS,
+				title: MSG.TARGETS,
 				action: () => this.rootPanel(new JSF.AonJsfTarget()),
 				filter: () => this.isNotDomainManagementAvailable()
 			}, {
-				description: "Agentes Comerciales",
-				title: "Agentes Comerciales",
+				description: MSG.AGENTS_COMMERCIAL,
+				title: MSG.AGENTS_COMMERCIAL,
 				action: () => this.rootPanel(new JSF.AonJsfSeller()),
 				filter: () => this.isNotDomainManagementAvailable()
 			}, {
-				description: "Consola de facturación",
-				title: "Consola de facturación",
+				description: MSG.INVOICE_CONSOLE,
+				title: MSG.INVOICE_CONSOLE,
 				action: () => GWT.iLoad(GWT.INVOICE_CONSOLE),
 				filter: () => this.isNotDomainManagementAvailable()
 			}, {
-				description: "Carga de datos desde ficheros Excel",
-				title: "Carga de datos desde ficheros Excel",
+				description: MSG.EXCEL_DATA_LOAD,
+				title: MSG.EXCEL_DATA_LOAD,
 				action: () => GWT.iLoad(GWT.IMPORT),
 				filter: () => this.isNotDomainManagementAvailable()
 			}
 			]
 		}, {
-			title: 'Tablas Auxiliares de Gestión',
+			title: MSG.AUX_MANAGEMENT_TABLES,
 			options: [
 				{
 					description: MSG.PAYMETHODS,
 					title: MSG.PAYMETHODS,
 					action: () => GWT.iLoad(GWT.PAY_METHOD, this.getApplication().CONTENT)
 				}, {
-					description: "Asignación contable por tipo de forma de pago",
-					title: "Asignación contable por tipo de forma de pago",
+					description: MSG.ACCOUNTING_PAYMENT_TYPE,
+					title: MSG.ACCOUNTING_PAYMENT_TYPE,
 					action: () => this.getApplication().setContent(new JSF.AonJsfPayMethodTypeDetail()),
 					nofilter: () => this.isDomainManagementAvailable()
 				}, {
-					description: "Conceptos Bancarios",
-					title: "Conceptos Bancarios",
+					description: MSG.BANK_CONCEPTS,
+					title: MSG.BANK_CONCEPTS,
 					action: () => this.getApplication().setContent(new JSF.AonJsfBankConcept())
 				}, {
-					description: "Series",
-					title: "Series",
+					description: MSG.SERIES,
+					title: MSG.SERIES,
 					action: () => this.getApplication().setContent(new JSF.AonJsfSeries())
 				}, {
-					description: "Impuestos",
-					title: "Impuestos",
+					description: MSG.TAXES,
+					title: MSG.TAXES,
 					action: () => this.getApplication().setContent(new JSF.AonJsfTax())
 				}, {
-					description: "País/Provincia",
-					title: "País/Provincia",
+					description: MSG.COUNTRY_PROVINCE,
+					title: MSG.COUNTRY_PROVINCE,
 					action: () => this.getApplication().setContent(new JSF.AonJsfGeotree())
 				}, {
-					description: "Segmentación",
-					title: "Segmentación",
+					description: MSG.SEGMENTATION,
+					title: MSG.SEGMENTATION,
 					action: () => this.getApplication().setContent(new JSF.AonJsfSegment())
 				}, {
-					description: "Tipos de relaciones entre entidades",
-					title: "Tipos de relaciones entre entidades",
+					description: MSG.ENTITY_RELATIONSHIP_TYPES,
+					title: MSG.ENTITY_RELATIONSHIP_TYPES,
 					action: () => alert("Tipos de relaciones entre entidades"),
 					filter: () => false
 					//filter: () => this.isDomainManagementAvailable()
 				}]
 		}, {
-			title: 'Tablas Auxiliares de Productos',
+			title: MSG.AUX_PRODUCT_TABLES,
 			options: [{
-				description: "Etiquetas de Productos",
-				title: "Etiquetas de Productos",
+				description: MSG.PRODUCT_TAGS,
+				title: MSG.PRODUCT_TAGS,
 				action: () => this.rootPanel(new JSF.AonJsfProductTag())
 			}, {
-				description: "Etiquetas de Formatos/Medidas",
-				title: "Etiquetas de Formatos/Medidas",
+				description: MSG.FORMAT_SIZE_TAGS,
+				title: MSG.FORMAT_SIZE_TAGS,
 				action: () => alert("Etiquetas de Formatos/Medidas"),
 				filter: () => this.isDomainManagementAvailable()
 			}, {
-				description: "Categorías",
-				title: "Categorías",
+				description: MSG.CATEGORIES,
+				title: MSG.CATEGORIES,
 				action: () => this.rootPanel(new JSF.AonJsfProductCategory())
 			}, {
-				description: "Marcas",
-				title: "Marcas",
+				description: MSG.BRANDS,
+				title: MSG.BRANDS,
 				action: () => this.rootPanel(new JSF.AonJsfBrand())
 			}, {
-				description: "Tarifas",
-				title: "Tarifas",
+				description: MSG.TARIFFS,
+				title: MSG.TARIFFS,
 				action: () => GWT.iLoad(GWT.TARIFF_MODULE)
 				// action: () => this.rootPanel(new JSF.AonJsfTariff())
 			}, {
-				description: "Catálogos",
-				title: "Catálogos",
+				description: MSG.CATALOGUES,
+				title: MSG.CATALOGUES,
 				action: () => this.rootPanel(new JSF.AonJsfCatalogue())
 			}],
 			filter: () => this.isNotDomainManagementAvailable()
 		}, {
-			title: 'Utilidades Carga de Datos',
+			title: MSG.DATA_LOAD_UTILITIES,
 			options: [{
-				description: "Carga de datos desde ficheros Excel",
-				title: "Carga de datos desde ficheros Excel",
+				description: MSG.EXCEL_DATA_LOAD,
+				title: MSG.EXCEL_DATA_LOAD,
 				action: () => GWT.iLoad(GWT.IMPORT),
 				filter: () => this.isNotDomainManagementAvailable()
 			}, {
-				description: "Gestión Plantillas para carga de datos",
-				title: "Gestión Plantillas para carga de datos",
+				description: MSG.DATA_LOAD_TEMPLATE_MGT,
+				title: MSG.DATA_LOAD_TEMPLATE_MGT,
 				action: () => GWT.iLoad(GWT.TEMPLATE)
 			}, {
-				description: "Carga de datos desde ficheros CSV",
-				title: "Carga de datos desde ficheros CSV",
+				description: MSG.CSV_DATA_LOAD,
+				title: MSG.CSV_DATA_LOAD,
 				action: () => this.rootPanel(new JSF.AonJsfLoader()),
 				filter: () => this.isNotDomainManagementAvailable()
 			}, {
-				description: "Descarga de datos en formato Excel",
-				title: "Descarga de datos en formato Excel",
+				description: MSG.EXCEL_DATA_DOWNLOAD,
+				title: MSG.EXCEL_DATA_DOWNLOAD,
 				action: () => GWT.iLoad(GWT.INVOICE_REPORT),
 				filter: () => this.isNotDomainManagementAvailable()
 			}],
 			filter: () => this.isNotDomainManagementAvailable()
-		}, 
+		},
 		/*
 		{
 			title: 'Configuración',

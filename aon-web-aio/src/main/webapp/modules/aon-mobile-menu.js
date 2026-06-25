@@ -178,7 +178,7 @@ export class AonMobileMenu extends AonElement {
       icon: MATERIAL_ICONS.ADD,
       name: 'Add',
       color: 'white',
-      background: '#002469',
+      background: '#0f172a',
       fn: () => {
         this.add();
       }
@@ -275,7 +275,7 @@ export class AonMobileMenu extends AonElement {
     let dialog = this.getDialogMenu();
     dialog.clear();
 
-    dialog.setTitle("Acceso Rápido");
+    dialog.setTitle(MSG.QUICK_ACCESS_TITLE);
     dialog.open();
 
     const isInvoice = this.getDur().isInvoice();
@@ -313,7 +313,7 @@ export class AonMobileMenu extends AonElement {
     };
 
     const photoInvoice = {
-      title: "Foto factura",
+      title: MSG.PHOTO_INVOICE,
       icon: 'photo_camera',
       permission: isInvoice,
       backgroundColor: "#4472C4",
@@ -348,7 +348,7 @@ export class AonMobileMenu extends AonElement {
 
     const uploadDocument = {
       icon: 'upload',
-      title:"Subir documento",
+      title: MSG.UPLOAD_DOCUMENT,
       permission: isDocumentalManager,
       backgroundColor: "#6986BB",
       fn :  () => {
@@ -360,7 +360,7 @@ export class AonMobileMenu extends AonElement {
     }
 
     const photoDocument = {
-      title:"Foto documento",
+      title: MSG.PHOTO_DOCUMENT,
       icon: 'photo_camera',
       permission: isDocumentalManager,
       backgroundColor: "#6986BB",
@@ -379,7 +379,7 @@ export class AonMobileMenu extends AonElement {
     };
 
     const newPackaging = {
-      title:'Nuevo Empaquetado',
+      title: MSG.NEW_PACKAGING,
       icon: 'add',
       permission: isUdapa,
       backgroundColor: "#002469",
@@ -394,7 +394,7 @@ export class AonMobileMenu extends AonElement {
     };
 
     const deliveryPreparation = {
-      title:'Preparación Albaran',
+      title: MSG.DELIVERY_PREPARATION,
       icon: MATERIAL_ICONS.QR_CODE_SCANNER,
       permission: isUdapa,
       backgroundColor: "#002469",
@@ -407,7 +407,7 @@ export class AonMobileMenu extends AonElement {
     };
 
     const searchPackage = {
-      title:'Buscar Envases',
+      title: MSG.SEARCH_PACKAGES,
       icon: MATERIAL_ICONS.QR_CODE_SCANNER,
       permission: isUdapa,
       backgroundColor: "#002469",

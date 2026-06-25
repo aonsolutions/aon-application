@@ -63,26 +63,26 @@ export class AonManagementMenu extends AonSuiteMenu {
         this.AON_HEADER = 'aonHeader';
         this.ROOT_PANEL = 'rootPanel';
         this.RIGHT_PANEL = 'rightPanel';
-        this.last = "Últimos clientes";
-        this.new = "Nuevo Cliente";
+        this.last = MSG.LAST_CUSTOMERS;
+        this.new = MSG.NEW_CUSTOMER_ACTION;
         this.cardData={
-            title: "Actividad",
-            info:["Pedidos ptes.", "Cuotas abiertas", "Fras. sin contabilizar"]
+            title: MSG.ACTIVITY,
+            info:[MSG.ORDERS_PENDING, MSG.OPEN_FEES, MSG.INVOICES_UNACCOUNTED_ABBR]
         };
         this.selectOptions= [{
-            title: "Factura de venta",
+            title: MSG.SALE_INVOICE,
             action: () => this.rootPanel(new JSF.AonJsfSaleInvoice())
         },{
-            title: "Factura de gastos",
+            title: MSG.EXPENSE_INVOICE,
             action: () => this.rootPanel(new JSF.AonJsfExpenseInvoice())
         },{
-            title: "Factura de compras", 
+            title: MSG.PURCHASE_INVOICE_SINGLE,
             action: () => this.rootPanel(new JSF.AonJsfPurchaseInvoice())
         },{
-            title: "Gasto no deducible en IVA", 
+            title: MSG.UNDEDUCTIBLE_VAT_EXPENSE,
             action: () => this.rootPanel(new JSF.AonJsfUndeductibleInvoice())
         },{
-            title: "Cliente", 
+            title: MSG.CUSTOMER,
             action: () => this.rootPanel(new JSF.AonJsfCustomer())
         }];
         await this.initOptions();
@@ -92,124 +92,137 @@ export class AonManagementMenu extends AonSuiteMenu {
 		await this.initInvoiceConfiguration();
         let checkConfiguration = this.checkConfiguration();
         this.options = [{
-            title: 'Ventas',
+            title: MSG.SALES,
             options: [{
                 description: MSG.CUSTOMERS,
                 title: MSG.CUSTOMERS,
                 action: () => this.rootPanel(new JSF.AonJsfCustomer())
             }, {
-                description: "Facturas de Venta",
-                title: "Facturas de Venta",
+                description: MSG.SALE_INVOICES,
+                title: MSG.SALE_INVOICES,
                 disabled: this.icc?.isNoSif() || !checkConfiguration,
                 action: () => this.rootPanel(new JSF.AonJsfSaleInvoice())
             }, {
-                description: "Impresión / eMail de Facturas",
-                title: "Impresión / eMail de Facturas",
+                description: MSG.INVOICE_PRINT_EMAIL,
+                title: MSG.INVOICE_PRINT_EMAIL,
                 disabled: this.icc?.isNoSif() || !checkConfiguration,
                 action: () => this.rootPanel(new JSF.AonJsfInvoicePrint())
             }, {
-                description: "Pedidos de Venta",
-                title: "Pedidos de Venta",
+                description: MSG.SALE_ORDERS,
+                title: MSG.SALE_ORDERS,
                 action: () => this.rootPanel(new JSF.AonJsfSale())
             }, {
-                description: "Facturación masiva de Albaranes",
-                title: "Facturación masiva de Albaranes",
+                description: MSG.BULK_DELIVERY_INVOICING,
+                title: MSG.BULK_DELIVERY_INVOICING,
                 disabled: this.icc?.isNoSif() || !checkConfiguration,
                 action: () => this.rootPanel(new JSF.AonJsfInvoiceDelivery())
             }]
         }, {
-            title: 'Compras',
+            title: MSG.PURCHASES,
             options: [{
                 description: MSG.SUPPLIERS,
                 title: MSG.SUPPLIERS,
                 action: () => this.rootPanel(new JSF.AonJsfSupplier())
             }, {
-                description: "Facturas de Compra",
-                title: "Facturas de Compra",
+                description: MSG.PURCHASE_INVOICES,
+                title: MSG.PURCHASE_INVOICES,
                 action: () => this.rootPanel(new JSF.AonJsfPurchaseInvoice())
             }, {
-                description: "Pedidos de Compra",
-                title: "Facturas de Compra",
+                description: MSG.PURCHASE_ORDERS,
+                title: MSG.PURCHASE_ORDERS,
                 action: () => this.rootPanel(new JSF.AonJsfPurchase())
             }]
         }, {
-            title: 'Gastos',
+            title: MSG.EXPENSES,
             options: [{
                 description: MSG.CREDITORS,
                 title: MSG.CREDITORS,
                 action: () => this.rootPanel(new JSF.AonJsfCreditor())
             }, {
-                description: "Facturas de Gastos",
-                title: "Facturas de Gastos",
+                description: MSG.EXPENSE_INVOICES,
+                title: MSG.EXPENSE_INVOICES,
                 action: () => this.rootPanel(new JSF.AonJsfExpenseInvoice())
             }, {
-                description: "Gastos no Deducibles en IVA",
-                title: "Gastos no Deducibles en IVA",
+                description: MSG.UNDEDUCTIBLE_VAT_EXPENSES,
+                title: MSG.UNDEDUCTIBLE_VAT_EXPENSES,
                 action: () => this.rootPanel(new JSF.AonJsfUndeductibleInvoice())
+            }, {
+                description: MSG.EXPENSES_SHEET,
+                title: MSG.EXPENSES_SHEET,
+                action: () => this.rootPanel(new JSF.AonJsfExpense())
             }]
         }, {
-            title: 'Tesorería',
+            title: MSG.TREASURY,
             options: [{
-                description: "Gestión de Cobros",
-                title: "Gestión de Cobros",
+                description: MSG.CHARGES_MANAGEMENT,
+                title: MSG.CHARGES_MANAGEMENT,
                 action: () => this.rootPanel(new JSF.AonJsfFinanceCharge())
             }, {
-                description: "Gestión de Pagos",
-                title: "Gestión de Cobros",
+                description: MSG.PAYMENTS_MANAGEMENT,
+                title: MSG.PAYMENTS_MANAGEMENT,
                 action: () => this.rootPanel(new JSF.AonJsfFinancePayment())
             }, {
-                description: "Cartera de cobros y pagos",
-                title: "Cartera de cobros y pagos",
+                description: MSG.CHARGES_PAYMENTS_PORTFOLIO,
+                title: MSG.CHARGES_PAYMENTS_PORTFOLIO,
                 action: () => GWT.iLoad(GWT.FINANCE)
-            }, PAYMETHODS 
+            }, PAYMETHODS
             , {
-                description: "Estadisticas Globales",
-                title: "Estadisticas Globales",
+                description: MSG.GLOBAL_STATISTICS,
+                title: MSG.GLOBAL_STATISTICS,
                 action: () => GWT.iLoad(GWT.INVOICE_STAT)
             }]
         }, {
-            title: 'Impuestos',
+            title: MSG.TAXES,
             options: [{
-                description: "Panel de control de IVA",
-                title: "Panel de control de IVA",
+                description: MSG.IVA_PANEL_CONTROL,
+                title: MSG.IVA_PANEL_CONTROL,
                 action: () => GWT.iLoad(GWT.VAT_REPORT)
             }, {
-                description: "Panel de Control de IRPF",
-                title: "Panel de Control de IRPF",
+                description: MSG.IRPF_PANEL_CONTROL,
+                title: MSG.IRPF_PANEL_CONTROL,
                 action: () => GWT.iLoad(GWT.IRPF_REPORT)
             }, {
-                description: "SII - Suministro Inmediato de Información",
-                title: "SII - Suministro Inmediato de Información",
+                description: MSG.DECLARATION_SII,
+                title: MSG.DECLARATION_SII,
                 disabled: !this.icc?.isSii() || !checkConfiguration,
                 action: () => GWT.iLoad(GWT.NEW_MODEL_SII)
             }, {
-                description: "Modelo 347 - Declaración anual operaciones con terceras personas.",
-                title: "Modelo 347 - Declaración anual operaciones con terceras personas.",
+                description: MSG.MODEL_347,
+                title: MSG.MODEL_347,
                 action: () => GWT.iLoad(GWT.MODEL_347)
             }]
         }, {
-            title: 'Maestros',
+            title: MSG.PRODUCTS,
             options: [{
-                description: MSG.PRODUCTS,
-                title: MSG.PRODUCTS,
+                description: MSG.PRODUCTS_SHEET,
+                title: MSG.PRODUCTS_SHEET,
                 action: () => this.rootPanel(new JSF.AonJsfProduct())
-            }, {
-                description: "Gastos",
-                title: "Gastos",
-                action: () => this.rootPanel(new JSF.AonJsfExpense())
             }, {
                 description: MSG.CATEGORIES,
                 title: MSG.CATEGORIES,
                 action: () => this.rootPanel(new JSF.AonJsfProductCategory())
-            }, {
-                description: "Pais/Provincia",
-                title: "Pais/Provincia",
+            }, 
+            /*
+            {
+                description: MSG.COUNTRY_PROVINCE,
+                title: MSG.COUNTRY_PROVINCE,
                 action: () => this.rootPanel(new JSF.AonJsfGeotree())
             }, {
-                description: "Segmentación",
-                title: "Segmentación",
+                description: MSG.SEGMENTATION,
+                title: MSG.SEGMENTATION,
                 action: () => this.rootPanel(new JSF.AonJsfSegment())
-            }]
+            }, 
+            */
+            {
+				description: "Etiquetas de Productos",
+				action: () => this.rootPanel(new JSF.AonJsfProductTag()),
+			}, {
+				description: "Marcas",
+				action: () => this.rootPanel(new JSF.AonJsfBrand()),
+			}, {
+				description:"Tarifas",
+				action: () => GWT.iLoad(GWT.TARIFF_MODULE),
+			}]
         }];
     }
 }

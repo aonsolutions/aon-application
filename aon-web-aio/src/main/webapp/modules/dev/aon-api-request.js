@@ -1,7 +1,6 @@
 import { AonElement } from "../../components/AonElement.js";
 
 import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
-import { REQUEST } from "../../environments/msg-en.js";
  
 export class AonApiRequest extends AonElement {
 

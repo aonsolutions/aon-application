@@ -33,8 +33,17 @@ public class Methods {
 	public boolean authorized = false;
 		
 	protected <T extends JavaScriptObject> void get(String url, AsyncCallback<T> callback) {
+//		String requestUrl = makeRequestUrl(url);
+//		JsonpRequestBuilder jsonp = new JsonpRequestBuilder();
+//		jsonp.requestObject(requestUrl, hookCallback(callback));
+		get(url, callback, 0);
+	}
+	
+	protected <T extends JavaScriptObject> void get(String url, AsyncCallback<T> callback, int timeout) {
 		String requestUrl = makeRequestUrl(url);
 		JsonpRequestBuilder jsonp = new JsonpRequestBuilder();
+		if (timeout > jsonp.getTimeout())
+			jsonp.setTimeout(timeout); // Set the timeout in milliseconds (default is 10 seconds)
 		jsonp.requestObject(requestUrl, hookCallback(callback));
 	}
 
@@ -82,15 +91,16 @@ public class Methods {
 			url += prefix + "domain=" + domainId;
 		return url;
 	}
-	
-	private String makeNamesString(String[] names) {
-		StringBuilder sb = new StringBuilder();
-		for (int x = 0; x < names.length; x++) {
-			sb.append(names[x]);
-			sb.append(',');
-		}
-		return sb.toString().substring(0, sb.length() - 1);
-	}
+
+// NO SE USA
+//	private String makeNamesString(String[] names) {
+//		StringBuilder sb = new StringBuilder();
+//		for (int x = 0; x < names.length; x++) {
+//			sb.append(names[x]);
+//			sb.append(',');
+//		}
+//		return sb.toString().substring(0, sb.length() - 1);
+//	}
 	
 	protected <T extends JavaScriptObject> void post(String url, String requestData, AsyncCallback<T> callback) {
 		String requestUrl = makeRequestUrl(url);

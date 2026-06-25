@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MarketingAction;
 import com.esferalia.aon.occam.api.model.MarketingActionParams;
 import com.esferalia.aon.occam.api.model.MarketingActionTarget;
@@ -43,6 +44,7 @@ import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SecondaryUserCertificate;
 import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
+import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
@@ -123,6 +125,7 @@ import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -463,6 +466,7 @@ public interface CommonServiceAsync {
 	
 	void getScope(String domainName, int domain, String user, Integer scopeId, AsyncCallback<Scope> asyncCallback) throws AonCoreException;
 	void saveScope(String domainName, int domain, String user, Scope scope, AsyncCallback<Scope> asyncCallback) throws AonCoreException;
+	void saveScopeAndAssign(String domainName, int domain, String user, Scope scope, boolean assignAllUsers, ArrayList<User> selectedUsers, AsyncCallback<Scope> asyncCallback) throws AonCoreException;
 	void deleteScope(String domainName, int domain, String user, Integer scopeId, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
 	void getUserScopeList(String domainName, Integer domain, String user, Integer scopeId, AsyncCallback<List<UserScopeFull>> asyncCallback) throws AonCoreException;
@@ -475,6 +479,8 @@ public interface CommonServiceAsync {
 	
 	void getDomains(String domainName, Integer domainId, String user, AsyncCallback<List<Domain>> asyncCallback) throws AonCoreException;
 
+	void getUsers(String currentDomainName, int currentDomain, String currentUser, AsyncCallback<ArrayList<User>> asyncCallback) throws AonCoreException;
+	
 	// **************************************************
 	// ******************************************** [TAG]
 	// **************************************************
@@ -564,11 +570,25 @@ public interface CommonServiceAsync {
 	void saveRregistryBank(String domainName, Integer domain, String user, RegistryBank registryBank, AsyncCallback<RegistryBank> asyncCallback) throws AonCoreException;
 	void deleteRregistryBank(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void getAccountsForBank(String domainName, Integer domain, String user, AsyncCallback<List<Account>> asyncCallback) throws AonCoreException;
-	void getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource, String pattern, AsyncCallback<List<Account>> asyncCallback);
+	void getAviablesAccountsForBank(String domainName, Integer domain, String user, AsyncCallback<List<Account>> asyncCallback) throws AonCoreException;
+	void createAccountsForBank(String domainName, Integer domain, String user, String alias, String suffixCode, AsyncCallback<Account> asyncCallback) throws AonCoreException;
+	void getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource, String pattern, AsyncCallback<List<Account>> asyncCallback) throws AonCoreException;
+	
+	void reassignScope(String domainName, Integer domainId, String user, int originScope, int finalScope, boolean deleteOrigin, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void getSignatures(String domainName, Integer domain, String user, AsyncCallback<LinkedList<Signature>> asyncCallback) throws AonCoreException;
+	void deleteSignature(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void saveSignature(String domainName, Integer domainId, String user, Signature signature, AsyncCallback<Signature> asyncCallback) throws AonCoreException;
+
+	void getMailAccounts(String domainName, Integer domain, String user, AsyncCallback<LinkedList<MailAccount>> asyncCallback) throws AonCoreException;
+	void deleteMailAccount(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void saveMailAccount(String domainName, Integer domainId, String user, MailAccount mailAccount, AsyncCallback<MailAccount> asyncCallback) throws AonCoreException;
+	void checkMailAccounts(String domainName, Integer domain, String user, AsyncCallback<HashMap<Integer, Boolean>> asyncCallback) throws AonCoreException;
+	void getVerifiedHostEmails(String domainName, Integer domainId, String user, AsyncCallback<HashMap<String, Boolean>> asyncCallback) throws AonCoreException;
 	
 	// *********************** [AMORTIZATION TYPE]
 	void getAmortizationTypes(Occam occam, int domain, AsyncCallback<List<AmortizationType>> asyncCallback);
 	
-	void reassignScope(String domainName, Integer domainId, String user, int originScope, int finalScope, boolean deleteOrigin, AsyncCallback<Void> asyncCallback);
+	// *********************** [DOMAIN STATUS]
+	void saveDomainStatus(String domainName, int domain, String user, RegistryStatus newStatus, Date newExpDate, AsyncCallback<Domain> asyncCallback) throws AonCoreException;
 	
 }

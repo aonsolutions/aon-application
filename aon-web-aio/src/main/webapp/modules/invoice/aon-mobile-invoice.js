@@ -12,7 +12,7 @@ import { getInvoiceAccounts, getPaymethods } from '../../services/invoiceService
 import { getItems } from '../../services/productService.js';
 import * as ACTION from '../actions.js';
 import { AonInvoice } from './aon-invoice.js';
-import { TaxIVAPercentage, TaxType, Transactions } from './invoiceEnums.js';
+import { TaxIVAPercentage, TaxType, Transactions, WithholdingType } from './invoiceEnums.js';
 import * as LS from '../../services/localStorageService.js';
 
 import {INVOICE} from  '../../services/app.js';
@@ -20,6 +20,7 @@ import { AonCustomerSuggestion } from '../registry/customer/aon-customer-suggest
 import { AonRegistrySuggestion } from '../registry/aon-registry-suggestion.js';
 import { getWorkplaces } from '../../services/workplaceService.js';
 import { createCard, createDate, createInput, createNumber, createSelect, createSuggestion, createTable } from '../../components/CreateComponent.js';
+import { CARD } from '../../environments/constants.js';
 
 export class AonMobileInvoice extends AonInvoice {
 
@@ -29,6 +30,8 @@ export class AonMobileInvoice extends AonInvoice {
 
 	initialize() {
 		super.initialize();
+		this.REGISTRY_CARD = CONSTANT.AON_INVOICE + 'RegistryCard';
+		this.REGISTRY_CARD_TABLE = this.REGISTRY_CARD + CONSTANT.TABLE.initCap();
 		this.DIALOG =  CONSTANT.AON_INVOICE + 'Dialog';
 		this.FINANCE_OPTIONS =  this.FINANCE + CONSTANT.OPTIONS.initCap();
 	}
@@ -45,9 +48,7 @@ export class AonMobileInvoice extends AonInvoice {
     	if(this.getInvoice().isInbox()){
       		if(this.getInvoice().isEmitida())
 				invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
-			if(!this.autosave && this.getInvoice().isInbox()){
-				invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
-			}
+			invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
 		} 
 		invoiceToolbar.addButton2(ACTION.BACK, () => this.back());
 		if(this.getInvoice().file || this.invoice.isEmitida()){
@@ -56,10 +57,7 @@ export class AonMobileInvoice extends AonInvoice {
 	}
 
 	buildContent() {
-		// let form = this.createElement(TAG.FORM);
-		// this.appendChild(form);
 		let div = this.createElement(TAG.DIV);
-		div.className = CSS.AON_MOBILE_SUB_CONTENT;
 		this.appendChild(div);
 
     	let file = this.createElement(TAG.DIV);
@@ -68,20 +66,52 @@ export class AonMobileInvoice extends AonInvoice {
 	    div.appendChild(file);
 
 		this.buildCommentCard(div);
+		this.buildRegistryCard(div);
 		this.buildGeneralCard(div);
 		this.buildTaxCard(div);
 		this.buildDetailCard(div);
 		this.buildFinanceCard(div);
+	}
 
+	buildRegistryCard(parent) {
+		let card = createCard(this.REGISTRY_CARD, this.invoice.isEmitida() ? "Datos Cliente" : "Datos Proveedor/Acreedor", parent);
+		card.onToggle();
+		
+		let table = new AonBasicTable();
+		table.id = this.REGISTRY_CARD_TABLE;
+		card.setContent(table);
 
+		table.addRow(); // ----- ROW 1
+
+		if(this.invoice.isEmitida()) {
+			let customer = new AonCustomerSuggestion();	
+			customer.id = this.REGISTRY;
+			customer.showAddress = true;
+			customer.readonly = this.invoice.isReadonly();
+			customer.setCustomer(this.invoice.getRegistry());
+			customer.addEventListener(EVENT.SELECT_REGISTRY, () => this.onChangeRegistry(customer.getCustomer()));
+			customer.addEventListener(EVENT.CUSTOMER_CHANGE, () => {
+				this.invoice.receiver.address = customer.getCustomer().address;
+			});
+			table.addCell(customer, '2');	
+		} else {
+			let registry = new AonRegistrySuggestion();
+			registry.id = this.REGISTRY;
+			registry.showAddress = true;
+			registry.types = this.invoice.getRegistryType();
+			// registry.value = this.invoice.getRegistry();
+			registry.setRegistry(this.invoice.getRegistry());
+			registry.addEventListener(EVENT.SELECT_REGISTRY, () => this.onChangeRegistry(registry.getRegistry()));
+			registry.addEventListener(EVENT.CUSTOMER_CHANGE, () => {
+				this.invoice.receiver.address = registry.getRegistry().address;
+			});
+			table.addCell(registry, '2');
+		}
 	}
 
 	buildGeneralCard(parent) {
-		let card = new AonCard();
-		card.id = this.GENERAL_CARD;
-		card.title = MSG.INVOICE_DATA;
-		card.style.width = '50%';
-		parent.appendChild(card);
+		let card = createCard(this.GENERAL_CARD, MSG.INVOICE_DATA, parent);
+		card.onToggle();
 
 		let dialog = new AonDialog();
 		dialog.id = this.DIALOG_BLANK;
@@ -149,39 +179,34 @@ export class AonMobileInvoice extends AonInvoice {
 		card.setContent(table);
 
 		table.addRow(); // ----- ROW 1
-		if(this.invoice.isEmitida()){
+
+		if (this.invoice.isRawdoc() && this.invoice.isEmitida() && !this.isInvofoxInvoice()) {
 
 			// ----- SERIE
 
-			let serie = createInput(this.SERIE, MSG.SERIE);
-			table.addCell(serie);
+			let seriesOptions = this.configuration.series.filter(f => this.invoice.isRectifier() ? f.rectification : f.invoice);
+			if (!seriesOptions.map(o => o.code).includes(this.invoice.series)) {
+				this.invoice.setSeries(seriesOptions.length > 0 ? seriesOptions[0].code : undefined);
+			}
+			let serie = createSelect(this.SERIE, MSG.SERIE);
+			serie.setOptions(seriesOptions);
+			serie.setAlias("code", "code");
+			serie.setValue(this.invoice.series);
 			serie.readonly = this.invoice.isReadonly();
-			serie.value = this.invoice.series;
-			serie.addEventListener(EVENT.CHANGE, () => {
-				this.invoice.setSeries(serie.value);
-				if(this.autosave) this.save();
-			});
-
-			// ----- NUMBER
-
-			let number = createInput(this.NUMBER, MSG.NUMBER);
-			number.value = this.invoice.number;
-
-			table.addCell(number);
-			number.readonly = CONSTANT.READONLY;
-			number.disabled = CONSTANT.TRUE;			
+			serie.addEventListener(EVENT.SELECT, () => this.onChangeSerie(serie.value));
+			table.addCell(serie, '2');			
+			
 		} else {
 
 			// ----- REFERENCE
 			
 			let reference = createInput(this.REFERENCE, MSG.REFERENCE);
 			reference.readonly = this.invoice.isReadonly();
+			reference.value = this.invoice.reference;
 			reference.addEventListener(EVENT.CHANGE, () => {
 				this.invoice.setReference(reference.value);
-				if(this.autosave) this.save();
 			});
-			table.addCell(reference, '2');
-			reference.value = this.invoice.reference;
+			table.addCell(reference, '2');			
 		}
 
 		table.addRow(); // ----- ROW 2
@@ -193,7 +218,6 @@ export class AonMobileInvoice extends AonInvoice {
 		date.setDate(this.invoice.date);
 		date.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setDate(date.getDateValue());
-			if(this.autosave) this.save();
 		});
 		table.addCell(date);
 
@@ -206,7 +230,6 @@ export class AonMobileInvoice extends AonInvoice {
 			this.invoice.setTotal(total.value);
 			this.setFocus(total.id);
 			this.reload();
-			if(this.autosave) this.save();
 		});
 		table.addCell(total);
 		total.readonly = this.invoice.isReadonly()
@@ -216,35 +239,6 @@ export class AonMobileInvoice extends AonInvoice {
 
 		table.addRow(); // ----- ROW 3
 
-		// ----- REGISTRY
-
-		if(this.invoice.isEmitida()) {
-			let customer = new AonCustomerSuggestion();	
-			customer.id = this.REGISTRY;
-			customer.showAddress = true;
-			customer.readonly = this.invoice.isReadonly();
-			customer.setCustomer(this.invoice.getRegistry());
-			customer.addEventListener(EVENT.SELECT_REGISTRY, () => this.onChangeRegistry(customer.getCustomer()));
-			customer.addEventListener(EVENT.CUSTOMER_CHANGE, () => {
-				this.invoice.receiver.address = customer.getCustomer().address;
-			});
-			table.addCell(customer, '2');	
-		} else {
-			let registry = new AonRegistrySuggestion();
-			registry.id = this.REGISTRY;
-			registry.showAddress = true;
-			registry.types = this.invoice.getRegistryType();
-			// registry.value = this.invoice.getRegistry();
-			registry.setRegistry(this.invoice.getRegistry());
-			registry.addEventListener(EVENT.SELECT_REGISTRY, () => this.onChangeRegistry(registry.getRegistry()));
-			registry.addEventListener(EVENT.CUSTOMER_CHANGE, () => {
-				this.invoice.receiver.address = registry.getRegistry().address;
-			});
-			table.addCell(registry, '2');
-		}
-
-		table.addRow(); // ----- ROW 4
-
 		// ----- CATEGORY
 		if(this.getDur().hasAccounting() || this.getDur().hasParentAccounting()) {
 			let category = createSelect(this.CATEGORY, MSG.CATEGORY);
@@ -252,7 +246,6 @@ export class AonMobileInvoice extends AonInvoice {
 			category.readonly = this.invoice.isReadonly();
 			category.addEventListener(EVENT.SELECT, () => {
 				this.invoice.setCategory(category.value);
-				if(this.autosave) this.save();
 			});
 			table.addCell(category, '2');
 			getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
@@ -263,27 +256,6 @@ export class AonMobileInvoice extends AonInvoice {
 		}
 
 		table.addRow(); // ----- ROW 4 
-
-		// ----- PAYMETHOD
-
-		// let paymethod = createSelect(this.PAYMETHOD, MSG.PAYMETHOD);
-		// paymethod.autocomplete = true;
-		// paymethod.readonly = this.invoice.isReadonly();
-		// paymethod.addEventListener(EVENT.SELECT, () => {
-		// 	this.invoice.setPaymethod(paymethod.value);
-		// 	this.setFocus(paymethod.id);
-		// 	this.reload();
-		// 	if(this.autosave) this.save();
-		// });
-		// table.addCell(paymethod, '2');
-		
-		// getPaymethods({}).then(paymethods => {
-		// 	let pms = paymethods.map(pm => {return {name: pm.name, value: pm.id};});
-		// 	paymethod.options = JSON.stringify(pms);
-		// 	if(this.invoice.finances.length === 1) {
-		// 		paymethod.value = this.invoice.finances[0].paymethod;
-		// 	}
-		// });
 
 		// ----- WORKPLACES
 
@@ -301,7 +273,6 @@ export class AonMobileInvoice extends AonInvoice {
 				workplace.value = this.invoice.getWorkplace();
 				workplace.addEventListener(EVENT.SELECT, () => {
 					this.invoice.setWorkplace(workplace.value);
-					if(this.autosave) this.save();
 				});
 				table.addCell(workplace, this.invoice.isEmitida() ? '4' : '6');
 			} else if(r.length === 1) this.invoice.setWorkplace(r[0].id);
@@ -312,7 +283,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 	buildTaxCard(parent) {
 		let card = createCard(this.TAX, MSG.TAXES_DETAIL, parent);
-		card.style.width = '50%';
+		card.onToggle();
 
 		let dialog = this.getElement(this.DIALOG_BLANK);
 		card.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {
@@ -341,7 +312,6 @@ export class AonMobileInvoice extends AonInvoice {
 			surcharge.addEventListener(EVENT.CHANGE, () => {
 				this.invoice.setSurcharge(surcharge.checked);
 				this.reload();
-				if(this.autosave) this.save();
 			});
 			div.appendChild(surcharge);
 			surcharge.checked = this.invoice.isSurcharge();
@@ -355,7 +325,6 @@ export class AonMobileInvoice extends AonInvoice {
 			farmer.addEventListener(EVENT.CHANGE, () => {
 				this.invoice.setWithholdingFarmer(farmer.checked);
 				this.reload();
-				if(this.autosave) this.save();
 			});
 			div.appendChild(farmer);
 			if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
@@ -395,12 +364,10 @@ export class AonMobileInvoice extends AonInvoice {
 			this.invoice.setTransaction(transaction.value);
 			this.setFocus(transaction.id);
 			this.reload();
-			if(this.autosave) this.save();
 		});
 		table.addCell(transaction, '2');
 
 		table.addRow(); // ----- ROW 2
-
 
 		// ----- ACTIVITY TYPE
 
@@ -408,7 +375,6 @@ export class AonMobileInvoice extends AonInvoice {
 		activity.readonly = this.invoice.isReadonly();
 		activity.addEventListener(EVENT.SELECT, () => {
 			this.invoice.setActivity(activity.value);
-			if(this.autosave) this.save();
 		});
 		table.addCell(activity, '2');
 		getCompanyActivities({}).then(activities => {
@@ -416,45 +382,6 @@ export class AonMobileInvoice extends AonInvoice {
 			activity.options = JSON.stringify(acts);
 			activity.value = this.invoice.getActivity();
 		});
-
-		// ----- SURCHARGE
-
-		// let surcharge = new AonSwitch();
-		// surcharge.id = this.SURCHARGE;
-		// surcharge.title = MSG.SURCHARGE_RE;
-		// surcharge.readonly = this.invoice.isReadonly();
-		// surcharge.addEventListener(EVENT.CHANGE, () => {
-		// 	this.invoice.setSurcharge(surcharge.checked);
-		// 	this.setFocus(surcharge.id);
-		// 	this.reload();
-		// 	if(this.autosave) this.save();
-		// });
-		// table.addCell(surcharge);
-		// if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
-		// 	this.invoice.setSurcharge(false);
-		// 	surcharge.setDisabled(true);
-		// }
-		// surcharge.checked = this.invoice.isSurcharge();
-		
-
-		// ----- WITHHOLDING FARMER
-
-		// let farmer = new AonSwitch();
-		// farmer.id = this.WITHHOLDING_FARMER;
-		// farmer.title = MSG.WITHHOLDING_FARMER;
-		// farmer.readonly = this.invoice.isReadonly();
-		// farmer.addEventListener(EVENT.CHANGE, () => {
-		// 	this.invoice.setWithholdingFarmer(farmer.checked);
-		// 	this.setFocus(farmer.id);
-		// 	this.reload();
-		// 	if(this.autosave) this.save();
-		// });
-		// table.addCell(farmer);
-		// if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
-		// 	this.invoice.setWithholdingFarmer(false);
-		// 	farmer.setDisabled(true);
-		// }
-		// farmer.checked = this.invoice.isWithholdingFarmer();
 
 		// ----- TAXES
 		
@@ -481,7 +408,6 @@ export class AonMobileInvoice extends AonInvoice {
 		let div = this.createElement(TAG.DIV);
 		card.addContent(div);
 		
-		
 		if(!this.invoice.isReadonly() && this.invoice.details.length === 0) {
 			// ----- ADD TAX
 
@@ -497,7 +423,6 @@ export class AonMobileInvoice extends AonInvoice {
 					this.setFocus(this.TAX_PERCENTAGE + this.invoice.taxes.length);
 					this.invoice.addTax();
 					this.reload();
-					if(this.autosave) this.save();
 				}
 			});
 			div.appendChild(addButton);
@@ -519,18 +444,43 @@ export class AonMobileInvoice extends AonInvoice {
 		irpf.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setWithholding(irpf.checked); 
 			this.reload();
-			if(this.autosave) this.save();
 		});
 		div.appendChild(irpf);
 		if(!this.invoice.isNacional() && !this.invoice.isCcm()) {
 			irpf.setDisabled(true);
 		}
 		irpf.checked = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0;
+
+		let irpfDiv = this.createElement(TAG.DIV);
+		card.addContent(irpfDiv);
+
+		let irpfType = createSelect('irpfwithholdingTYpe', 'Tipo IRPF');
+		irpfType.setAlias('id', 'name');
+		if (this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length === 0) {
+			irpfType.disabled = 'true';
+		}
+		irpfType.setOptions(WithholdingType);
+
+		irpfType.addEventListener(EVENT.SELECT, () => {
+			let detail = WithholdingType.find(v => v.id == irpfType.value);
+			this.invoice.withholding = true;
+			this.invoice.setWithholdingType(detail);
+			this.reload();
+		});
+		irpfDiv.appendChild(irpfType);
+		irpfType.readonly = this.invoice.isReadonly();
+		if (this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0) {
+			let val = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax)[0].withholding_type;
+			irpfType.value = val || this.getDefaultWithholdingType();
+		}
 	}
 
 	buildDetailCard(parent) {
 		let card = this.getElement(this.DETAIL);
-		if(!card) card = createCard(this.DETAIL, MSG.INVOICE_CONCEPTS, parent);
+		if(!card) {
+			card = createCard(this.DETAIL, MSG.INVOICE_CONCEPTS, parent);
+			card.onToggle();
+		}
 
 		let table = this.getElement(this.DETAIL_TABLE);
 		if(!table) table = createTable(this.DETAIL_TABLE, card.getContent());
@@ -556,7 +506,6 @@ export class AonMobileInvoice extends AonInvoice {
 				const i = this.invoice.details.length -1;
 				const detail = this.invoice.details[i];
 				this.printDetailDialog(detail, i);
-				if(this.autosave) this.save();
 			});
 			div.appendChild(addButton);
 		}
@@ -630,7 +579,6 @@ export class AonMobileInvoice extends AonInvoice {
 				this.setFocus(undefined);
 				this.invoice.deleteDetail(detail, i);
 				this.reload();
-				if(this.autosave) this.save();
 			});
 			table.addCell(detailDelete);
 		}
@@ -638,7 +586,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 	printDetailDialog(detail, i) {
 		let dialog = this.getApplication().getDialog();
-		dialog.setTitle("DETALLE");
+		dialog.setTitle(MSG.DETAIL);
 		dialog.addAcceptAction(() => {
 			
 		});
@@ -696,7 +644,6 @@ export class AonMobileInvoice extends AonInvoice {
 			this.invoice.setDetail(detail, i);
 			this.reload();
 			this.printDetailDialog(this.invoice.details[i], i);
-			if(this.autosave) this.save();
 		});
 		table.addCell(quantity);
 		quantity.readonly = this.invoice.isReadonly();
@@ -712,7 +659,6 @@ export class AonMobileInvoice extends AonInvoice {
 			this.invoice.setDetail(detail, i);
 			this.reload();
 			this.printDetailDialog(this.invoice.details[i], i);
-			if(this.autosave) this.save();
 		});
 		table.addCell(price);
 		price.readonly = this.invoice.isReadonly();
@@ -730,7 +676,6 @@ export class AonMobileInvoice extends AonInvoice {
 			this.invoice.setDetail(detail, i);
 			this.reload();
 			this.printDetailDialog(this.invoice.details[i], i);
-			if(this.autosave) this.save();
 		});
 		table.addCell(discount);
 		discount.readonly = this.invoice.isReadonly();
@@ -757,7 +702,6 @@ export class AonMobileInvoice extends AonInvoice {
 			this.invoice.setDetail(detail, i);
 			this.reload();
 			this.printDetailDialog(this.invoice.details[i], i);
-			if(this.autosave) this.save();
 		});
 		table.addCell(prepayment);
 		prepayment.readonly = this.invoice.isReadonly();
@@ -775,7 +719,6 @@ export class AonMobileInvoice extends AonInvoice {
 			this.invoice.setDetail(detail, i);
 			this.reload();
 			this.printDetailDialog(this.invoice.details[i], i);
-			if(this.autosave) this.save();
 		});
 		table.addCell(vat);
 		if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
@@ -789,7 +732,10 @@ export class AonMobileInvoice extends AonInvoice {
 
 	buildFinanceCard(parent) {
 		let card = this.getElement(this.FINANCE);
-		if(!card) card = createCard(this.FINANCE, MSG.EXPIRATIONS, parent);
+		if(!card) {
+			card = createCard(this.FINANCE, MSG.EXPIRATIONS, parent);
+			card.onToggle();
+		}
 		
 		let table = this.getElement(this.FINANCE_TABLE);
 		if(!table) table = createTable(this.FINANCE_TABLE, card.getContent());
@@ -816,7 +762,6 @@ export class AonMobileInvoice extends AonInvoice {
 				const i = this.invoice.finances.length -1;
 				const finance = this.invoice.finances[i];
 				this.printFinanceDialog(finance, i);
-				if(this.autosave) this.save();
 			});
 			div.appendChild(addButton);
 		}
@@ -834,7 +779,6 @@ export class AonMobileInvoice extends AonInvoice {
 			finance.due_date = date.getDateValue();
 			this.setFocus(date.id);
 			this.invoice.setFinance(finance, i);
-			if(this.autosave) this.save();
 		});
 		table.addCell(date);
 
@@ -848,7 +792,6 @@ export class AonMobileInvoice extends AonInvoice {
 			this.setFocus(this.FINANCE_AMOUNT + i);
 			finance.amount = amount.value;
 			this.invoice.setFinance(finance, i);
-			if(this.autosave) this.save();
 		});
 		table.addCell(amount);
 		amount.value = finance.amount;
@@ -874,7 +817,6 @@ export class AonMobileInvoice extends AonInvoice {
 			financeDelete.addEventListener(EVENT.CLICK, () => {
 				this.invoice.deleteFinance(finance, i);
 				this.reload();
-				if(this.autosave) this.save();
 			});
 			table.addCell(financeDelete);
 		}
@@ -882,7 +824,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 	printFinanceDialog(finance, i) {
 		let dialog = this.getApplication().getDialog();
-		dialog.setTitle("VENCIMIENTO");
+		dialog.setTitle(MSG.EXPIRATION);
 		dialog.addAcceptAction(() => {
 			
 		});
@@ -905,7 +847,6 @@ export class AonMobileInvoice extends AonInvoice {
 			finance.due_date = date.getDateValue();
 			this.setFocus(date.id);
 			this.invoice.setFinance(finance, i);
-			if(this.autosave) this.save();
 		});
 		table.addCell(date);
 
@@ -921,7 +862,6 @@ export class AonMobileInvoice extends AonInvoice {
 			this.setFocus(this.FINANCE_BANK_ACCOUNT + i);
 			finance.paymethod = paymethod.value;
 			this.invoice.setFinance(finance, i);
-			if(this.autosave) this.save();
 		});
 		table.addCell(paymethod);
 
@@ -969,7 +909,6 @@ export class AonMobileInvoice extends AonInvoice {
 			this.setFocus(this.FINANCE_AMOUNT + i);
 			finance.amount = amount.value;
 			this.invoice.setFinance(finance, i);
-			if(this.autosave) this.save();
 		});
 		table.addCell(amount);
 		amount.value = finance.amount;

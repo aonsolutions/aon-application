@@ -293,19 +293,7 @@ public class InvoiceVAT implements Serializable {
 	public void syncChangesToWrappedDetail() {
 		if ( this.isInvoiceDetailPresent() ) {
 			// ACCOUNT
-			getExpAccount()
-				.ifPresentOrElse( 
-					a -> {
-						this.getInvoiceDetail().setAccountId(a.getId());
-						this.getInvoiceDetail().setAccountCode(a.getCode());
-						this.getInvoiceDetail().setAccountDescription(a.getDescription());
-					}
-					,() -> {
-						this.getInvoiceDetail().setAccountId(null);
-						this.getInvoiceDetail().setAccountCode(null);
-						this.getInvoiceDetail().setAccountDescription(null);
-					}
-			);
+			getExpAccount().ifPresent(a -> this.getInvoiceDetail().setExpAccount(a));
 			
 			// INVEST ASSET
 			this.getInvoiceDetail().setInvestAsset( this.getInvestAsset() );

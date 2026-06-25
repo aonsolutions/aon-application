@@ -130,7 +130,7 @@ export class AonConfigurationNew extends AonElement {
 				fn: () => {
 					localStorage.setItem("registrySource", 'ENVIROMENT');
 					this.getApplication().removeToolbarOptions();
-					GWT.iLoad(GWT.REGISTRY_ENTRY_MODULE, this.getApplication().CONTENT);
+					GWT.iLoad(GWT.REGISTRY_COMPANY_ENTRY_MODULE, this.getApplication().CONTENT);
 				},
 			});
 		}
@@ -161,6 +161,38 @@ export class AonConfigurationNew extends AonElement {
 				aonConfiguration.addSidenavOptions(this.getDur().isConsultancy() ? MSG.ENVIRONMENT.toUpperCase() : MSG.COMPANY.toUpperCase(), companyOptions);
 			});
 		} else aonConfiguration.addSidenavOptions(this.getDur().isConsultancy() ? MSG.ENVIRONMENT.toUpperCase() : MSG.COMPANY.toUpperCase(), companyOptions);
+
+		// Mail
+		
+		let mailOptions = [];
+		
+		if (this.getDur().isAdmin() || (!this.getDur().isEmployee() && !this.isMobile())) {
+			mailOptions.push({
+				id: "mailAccount",
+				name: MSG.MAIL_ACCOUNT,
+				icon: MATERIAL_ICONS.ALTERNATE_EMAIL,
+				fn: () => {
+					GWT.iLoad(GWT.MAIL_ACCOUNT_ENTRY_MODULE, this.getApplication().CONTENT);
+				},
+			});
+			
+			mailOptions.push({
+				id: "signature",
+				name: MSG.MAIL_ACCOUNT_SIGNATURES,
+				icon: MATERIAL_ICONS.CONTACT_PAGE,
+				fn: () => {
+					GWT.iLoad(GWT.SIGNATURE_ENTRY_MODULE, this.getApplication().CONTENT);
+				},
+			});
+			
+			mailOptions.push({
+				name: MSG.CONTACTS,
+				icon: MATERIAL_ICONS.CONTACTS,
+				fn: () => this.getApplication().setContent(new JSF.AonJsfContact()),
+			});
+			
+			aonConfiguration.addSidenavOptions(MSG.EMAIL.toUpperCase(), mailOptions);
+		}
 
 		// Security
 
@@ -207,7 +239,7 @@ export class AonConfigurationNew extends AonElement {
 
 		let classicViewOptions = [];
 
-		if ( this.isBeta() ) {
+		if ( this.isBeta() || this.isAyudaTorInfoautonomos()) {
 			classicViewOptions.push({
 				name: MSG.GLOBAL_CONFIGURATION,
 				icon: MATERIAL_ICONS.SETTINGS,
@@ -216,11 +248,14 @@ export class AonConfigurationNew extends AonElement {
 		}
 		
 		if (this.getDur().isAdmin()) {
-			classicViewOptions.push(			{
+			classicViewOptions.push(			
+			/*	
+			{
 				name: MSG.EMAIL,
 				icon: MATERIAL_ICONS.MAIL,
 				fn: () => this.getApplication().setContent(new JSF.AonJsfEmail()),
 			},
+			*/
 			/*		
 			{
 				name: MSG.PRINTS,
@@ -236,11 +271,15 @@ export class AonConfigurationNew extends AonElement {
 				name: MSG.USERS,
 				icon: MATERIAL_ICONS.PEOPLE,
 				fn: () => this.getApplication().setContent(new JSF.AonJsfUser()),
-			}, {
+			},{
 				name: MSG.PROFILES,
 				icon: MATERIAL_ICONS.GROUPS,
 				fn: () => this.getApplication().setContent(new JSF.AonJsfProfile()),
-			},
+			},{
+				name: MSG.CONTACTS,
+				icon: MATERIAL_ICONS.CONTACTS,
+				fn: () => this.getApplication().setContent(new JSF.AonJsfContact()),
+		    }
 			/*
 			{
 				name: MSG.SCOPES,
@@ -287,7 +326,9 @@ export class AonConfigurationNew extends AonElement {
 			}
 
 		}
-		
+
+		let classicView = this.getElement("aonSidenavTitleVistaClasica");
+		classicView && classicView.click();
 		
 		let genernalInfo = this.getElement('aonConfigurationNewSidenavInformacionGeneral');
 		genernalInfo && genernalInfo.click();

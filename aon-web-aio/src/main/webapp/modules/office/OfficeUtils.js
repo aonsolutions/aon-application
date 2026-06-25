@@ -22,7 +22,7 @@ const buildDialogExpediente = (aonOfficePanel) => {
     dialog.autoclose = false;
     dialog.width = '40%';
     dialog.clear();
-    dialog.setTitle("Asignar expediente");
+    dialog.setTitle(MSG.ASSIGN_EXPEDIENT);
 
     dialog.setContent(buildFormExpediente(aonOfficePanel, project));
     
@@ -227,7 +227,7 @@ const builDialogRelationship = (aonOfficePanel, data) => {
     dialog.autoclose = false;
     dialog.width = '60%';
     dialog.clear();
-    dialog.setTitle("Vinculaciones");
+    dialog.setTitle(MSG.LINKINGS);
 
     let simpleList = new AonOfficeLinkSimpleList();
     simpleList.setData(data);

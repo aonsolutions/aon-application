@@ -85,6 +85,8 @@ public enum ContextVariable implements IResourceable {
 	NOT_PAID_PERMISSION("PERMISO_NO_RETRIBUIDO", VariableType.DOUBLE, false),
 	SUSPEND_JOB_AND_SALARY("SUSPENSION_EMPLEO_SUELDO", VariableType.DOUBLE, false),
 	
+	DROP_CAUSE("CAUSA_AUSENCIA", VariableType.DOUBLE, false),
+	DROP_NOT_JUSTIFIED("AUSENCIA_NO_JUSTIFICADA", VariableType.DOUBLE, false),
 
 	// ADVANCE_NOTICE_DATE("FECHA_PREAVISO", VariableType.DATE, false),
 	// ADVANCE_NOTICE_DAYS("DIAS_PREAVISO", VariableType.INTEGER, false),
@@ -349,6 +351,7 @@ public enum ContextVariable implements IResourceable {
 	
 	TOTAL_WORKED_DAYS("DIAS_TRABAJADOS_TOTALES", VariableType.DOUBLE, false),
 	TOTAL_DAYS("DIAS_TOTALES", VariableType.DOUBLE, false),
+	TOTAL_DO_DAYS("JORNADAS_REALES_TOTALES", VariableType.DOUBLE, false),
 
 	EFECTIVE_START("INICIO_EFECTIVO", VariableType.DATE, false),
 	EFECTIVE_END("FIN_EFECTIVO", VariableType.DATE, false),

@@ -36,16 +36,12 @@
 .aonMobileRootPanel {
   position: fixed;
   top: 60px;
-  bottom: 60px;
+  bottom: 0px;
   width: 100%;
   border-top: 1px solid #ddd;
   overflow-y: auto;
-}
-
-.aonMobileSubContent {
-  position: relative;
-  height: calc(100vh - 202px);
-  overflow-y: auto;
+  background-color: #fafafa;
+  padding-bottom: 80px;
 }
 
 .aonMobileSidenav {
@@ -82,14 +78,42 @@
 .aonMobileContent {
   position: fixed;
   top: 102px;
-  bottom: 59px;
+  bottom: 0px;
   width: 100%;
   display: block;
   transition: 0.5s;
   overflow-y: auto;
+  padding-bottom: 80px;
 }
 
 .aonMobileMenu {
+    position: fixed;
+    height: 60px;
+    border: 1px solid #ddd;
+    border-radius: 40px;
+    background-color: rgba(255, 255, 255, 0.5);
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 1rem;
+    bottom: 10px;
+    left: 20px;
+    right: 20px;
+    transition: height 0.3s ease, left 0.3s ease, right 0.3s ease;
+}
+
+#aonMobileMenuAddButtonIcon {
+    color: white;
+    font-weight: bold;
+}
+
+#aonMobileMenuHomeButtonIcon,
+#aonMobileMenuUserButtonIcon {
+    color: #0f172a;
+    font-weight: bold;
+}
+
+/* .aonMobileMenu {
   position: fixed;
   bottom: 0px;
   width: 100%;
@@ -100,6 +124,16 @@
   justify-content: space-evenly;
   align-items: center;
   gap: 1rem;
+} */
+
+.aonUl {
+  padding: 0px !important;
+}
+
+.aonLi {
+  margin: 5px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
 }
 
 /* remove color active */
@@ -128,4 +162,22 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Invoice Future Sidenav options */
+
+#aonInvoiceMobileSidenavContentFutureIncomes {
+	display: none;
+}
+
+#aonInvoiceMobileSidenavContentFutureExpenses {
+	display: none;
+}
+
+#aonInvoiceMobileSidenavContentFutureDocument {
+	display: none;
+}
+
+#aonInvoiceMobileSidenavContentFutureManagement {
+	display: none;
 }

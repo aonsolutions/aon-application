@@ -33,6 +33,8 @@ public class MailAccount implements Serializable{
 	private MailAccountType type;
 	private Integer userId;
 	
+	private boolean isSESVerified;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -71,7 +73,7 @@ public class MailAccount implements Serializable{
 	}
 	
 	public Byte getDefaultAccount() {
-		return defaultAccount;
+		return null == defaultAccount ? (byte)0 : defaultAccount;
 	}
 	public MailAccount setDefaultAccount(Byte defaultAccount) {
 		this.defaultAccount = defaultAccount;
@@ -106,14 +108,14 @@ public class MailAccount implements Serializable{
 		return this;
 	}
 	public Integer getIncomingPort() {
-		return incomingPort;
+		return null == incomingPort ? 0 : incomingPort;
 	}
 	public MailAccount setIncomingPort(Integer incomingPort) {
 		this.incomingPort = incomingPort;
 		return this;
 	}
 	public Byte getIncomingSecurity() {
-		return incomingSecurity;
+		return null == incomingSecurity ? (byte)0 : incomingSecurity;
 	}
 	public MailAccount setIncomingSecurity(Byte incomingSecurity) {
 		this.incomingSecurity = incomingSecurity;
@@ -134,14 +136,14 @@ public class MailAccount implements Serializable{
 		return this;
 	}
 	public Integer getOutgoingPort() {
-		return outgoingPort;
+		return null == outgoingPort ? 25 : outgoingPort;
 	}
 	public MailAccount setOutgoingPort(Integer outgoingPort) {
 		this.outgoingPort = outgoingPort;
 		return this;
 	}
 	public Byte getOutgoingSecurity() {
-		return outgoingSecurity;
+		return null == outgoingSecurity ? (byte)0 : outgoingSecurity;
 	}
 	public MailAccount setOutgoingSecurity(Byte outgoingSecurity) {
 		this.outgoingSecurity = outgoingSecurity;
@@ -215,7 +217,28 @@ public class MailAccount implements Serializable{
 		return getProtocol() != null && "aon".equalsIgnoreCase(getProtocol());
 	}
 	
-	public boolean isIncludeBcc() {
-		return getReplytoMail() != null;
+	public boolean isProtocolCustom() {
+		return getProtocol() != null && "ses".equalsIgnoreCase(getProtocol());
 	}
+	
+	public boolean isIncludeBcc() {
+		return null != getOutgoingVerification() && getOutgoingVerification() == (byte) 1;
+		//return getReplytoMail() != null;
+	}
+	
+	public MailAccount setIncludeBcc(boolean includeBcc) {
+		setOutgoingVerification(includeBcc ? (byte)1 : (byte)0);
+		return this;
+	}
+	
+	public boolean isSESVerified() {
+		return isSESVerified;
+	}
+	
+	public MailAccount setSESVerified(boolean isSESVerified) {
+		this.isSESVerified = isSESVerified;
+		return this;
+	}
+	
+	
 }

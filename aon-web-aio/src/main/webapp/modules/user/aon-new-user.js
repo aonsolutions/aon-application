@@ -227,7 +227,7 @@ export class AonNewUser extends AonElement {
 	}
 
 	buildMobileContent() {
-		let content = this.createDiv(this.CONTENT, CSS.AON_MOBILE_SUB_CONTENT);
+		let content = this.createDiv(this.CONTENT);
 		this.appendChild(content);
 		this.buildUserCard(content);
 		

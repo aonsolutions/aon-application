@@ -237,7 +237,10 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			.filter( p -> isNotProrrated(salary,p))
 			.distinct().forEach( salaryPayment -> 
 			getContractPaymentByDescriptionAndExpression(salaryPayment, extraPayments)
-			.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
+			.ifPresent( p -> {
+				if ( /*AonNumberUtils.todouble(salaryPayment.getQuote()) > 0 &&*/ payments.isEmpty() )
+					payments.add(salary2ContractPayment(salary,salaryPayment, p));
+			})
 			);
 
 			if ( payments.isEmpty() )  {
@@ -245,7 +248,10 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 				.filter( p -> isNotProrrated(salary,p))
 				.distinct().forEach( salaryPayment -> 
 				getContractPaymentByDescription(salaryPayment, extraPayments)
-				.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
+				.ifPresent( p -> {
+					if ( AonNumberUtils.todouble(salaryPayment.getQuote()) > 0 && payments.isEmpty() )
+						payments.add(salary2ContractPayment(salary,salaryPayment, p));
+				})
 				);
 			}
 			
@@ -263,12 +269,24 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 				.forEach( salaryPayment -> 
 				getContractPaymentByName(salaryPayment, extraPayments)
 				.ifPresent( p -> {
-					if ( payments.isEmpty() )
+					if ( AonNumberUtils.todouble(salaryPayment.getQuote()) > 0 && payments.isEmpty() )
 						payments.add(salary2ContractPayment(salary,salaryPayment, p));
 				})
 				);
-				
 			}
+
+//			if ( payments.isEmpty() )  {
+//				salary.getPayments().stream()
+//				.filter(p -> isNotProrrated(salary,p))
+//				.forEach( salaryPayment -> 
+//				getContractPaymentByName(salaryPayment, extraPayments)
+//				.ifPresent( p -> {
+//					if ( payments.isEmpty() )
+//						payments.add(salary2ContractPayment(salary,salaryPayment, p));
+//				})
+//				);
+//				
+//			}
 			
 				
 			payments.stream().findFirst()
@@ -278,7 +296,6 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 
 		})
 		;
-		
 		
 		return monthlyQuotedPayments;
 	}

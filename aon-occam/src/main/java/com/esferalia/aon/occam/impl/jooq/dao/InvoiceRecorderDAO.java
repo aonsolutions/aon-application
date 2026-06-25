@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.jooq.Field;
@@ -21,7 +22,6 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -32,21 +32,25 @@ public class InvoiceRecorderDAO {
 	}
 	
 	public static AccountEntry getEntryBase(AONContext ctx, AonConfiguration aonCtx, Invoice invoice) {
-		EnterpriseActivity ea = !invoice.getActivity().isEmpty() ? invoice.getActivity() : aonCtx.getMainActivity();
-		Integer activity = (ea==null?null:ea.getId());
 		Integer periodId = null;
 		if (invoice.getIssueDate() != null) {
 			AccountPeriod period = ACCOUNTING.ensurePeriod(ctx, ctx.getDomainId(), invoice.getIssueDate());
 			periodId = (period == null? null : period.getId());
 		}
 		AccountEntry accountEntry = new AccountEntry()
-				.setPeriod(periodId)
-				.setDomain(invoice.getDomain())
-				.setConfidential(false)
-				.setEntryDate(invoice.getIssueDate())
-				.setActivity(activity)
-				.setComments(invoice.getComments())
-				.setDirty(false);
+			.setPeriod(periodId)
+			.setDomain(invoice.getDomain())
+			.setConfidential(false)
+			.setEntryDate(invoice.getIssueDate())
+			.setActivity(
+				invoice.optActivity()                                                                                                 
+					.filter(a -> !a.isEmpty())                                                                                                           
+					.or(() -> Optional.ofNullable(aonCtx.getMainActivity()))                                                                             
+					.map(EnterpriseActivity::getId)                                                                                                      
+					.orElse(null)
+			)
+			.setComments(invoice.getComments())
+			.setDirty(false);
 		invoice.getType().visit(invoice,  new IInvoiceTypeVisitor<Void>() {
 			@Override 
 			public Void visitUndeductible(Invoice invoice) {
@@ -150,7 +154,7 @@ public class InvoiceRecorderDAO {
 	};
 
 	private static final Consumer<InvoicePreRecordContext> CHECK_PREPAYMENT = c -> 
-		AonCollectionUtils.stream( c.inv.getDetails() )
+		c.inv.detailStream()
 			.filter( d -> d.isPrepayment() )
 			.findFirst()
 			.ifPresent(d -> c.inv.addMessage( new InvoiceError(
@@ -161,8 +165,8 @@ public class InvoiceRecorderDAO {
 
 	private static final Consumer<InvoicePreRecordContext> CHECK_EXPENSES = c -> {
 		if ( c.inv.isExpenses() || c.inv.isUndeductible() ) {
-			AonCollectionUtils.stream( c.inv.getDetails() )
-				.filter( d -> d.getAccountId() == null )
+			c.inv.detailStream()
+				.filter( d -> d.getExpAccountId() == null )
 				.findAny()
 				.ifPresent( d -> c.inv.addMessage( new InvoiceError(
 					 InvoiceErrorKey.EXPENSE_ACCOUNT
@@ -264,22 +268,23 @@ public class InvoiceRecorderDAO {
 	 * En facturas emitidas, el Domain/Serie/Número/Tipo no puede estar duplicado
 	 */
 	private static final Consumer<InvoicePreRecordContext> DUPLICATED_SERIES_NUMBER = c -> {
-		if ( c.inv.isSales() && c.inv.getNumber() != 0) {
-			if (c.ctx != null && c.ctx.getDslContext().fetchExists( 
-				c.ctx.getDslContext().selectOne()
-					.from(INVOICE)
-					.where(INVOICE.DOMAIN.eq(c.inv.getDomain()))
-					.and(AonStringUtils.isBlank(c.inv.getSeries())
-						?INVOICE.SERIES.isNull().or(DSL.trim(INVOICE.SERIES).eq(""))
-						:INVOICE.SERIES.eq(c.inv.getSeries()))
-					.and(INVOICE.NUMBER.eq(c.inv.getNumber()))
-					.and(c.inv.getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(c.inv.getId()))
-					.and(INVOICE.TYPE.eq(c.inv.getType().value())))) {
-				c.inv.addMessage(new InvoiceError(
-					InvoiceErrorKey.DUPLICATED_SERIES_NUMBER
-					,InvoiceErrorLevel.ERR
-					,AonError.INVOICE_DUPLICATED_SERIES_NUMBER.getMessage()) );
-			}
+		if (c.inv.isSales() 
+		 && c.inv.getNumber() != 0 
+		 && c.ctx != null 
+		 && c.ctx.getDslContext().fetchExists( 
+				 c.ctx.getDslContext().selectOne()
+				 	.from(INVOICE)
+				 	.where(INVOICE.DOMAIN.eq(c.inv.getDomain()))
+				 	.and(AonStringUtils.isBlank(c.inv.getSeries())
+			 			?INVOICE.SERIES.isNull().or(DSL.trim(INVOICE.SERIES).eq(""))
+	 					:INVOICE.SERIES.eq(c.inv.getSeries()))
+				 	.and(INVOICE.NUMBER.eq(c.inv.getNumber()))
+				 	.and(c.inv.getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(c.inv.getId()))
+				 	.and(INVOICE.TYPE.eq(c.inv.getType().value())))) {
+			c.inv.addMessage(new InvoiceError(
+				InvoiceErrorKey.DUPLICATED_SERIES_NUMBER
+				,InvoiceErrorLevel.ERR
+				,AonError.INVOICE_DUPLICATED_SERIES_NUMBER.getMessage()) );
 		}
 	};
 	
@@ -291,9 +296,10 @@ public class InvoiceRecorderDAO {
 			&& c.inv.getType() != null
 			&& !c.inv.isSales() 
 			&& !c.inv.isUndeductible() 
-			&& c.inv.getIssueDate() != null) {
-			if (c.ctx != null && c.ctx.getDslContext().fetchExists( 
-					c.ctx.getDslContext().selectOne()
+			&& c.inv.getIssueDate() != null
+			&& c.ctx != null 
+			&& c.ctx.getDslContext().fetchExists( 
+				c.ctx.getDslContext().selectOne()
 					.from(INVOICE)
 					.where(INVOICE.DOMAIN.eq(c.inv.getDomain()))
 					.and(INVOICE.REGISTRY.eq(c.inv.getRegistry()))
@@ -306,7 +312,6 @@ public class InvoiceRecorderDAO {
 					InvoiceErrorKey.DUPLICATED_REFERENCE_CODE
 					,InvoiceErrorLevel.ERR
 					,AonError.INVOICE_DUPLICATED_REFERENCE_CODE.getMessage()) );
-			}
 		}
 	};
 	
@@ -371,13 +376,12 @@ public class InvoiceRecorderDAO {
 	 * El documento del titular no debe superar caracters definido en BD.
 	 */
 	private static final Consumer<InvoicePreRecordContext> OVERFLOW_REGISTRY_DOCUMENT = c -> {
-		if (AonStringUtils.isNotBlank(c.inv.getRegistryDocument())) {
-			if (willOverflow(INVOICE.RDOCUMENT, c.inv.getRegistryDocument())) {
+		if (AonStringUtils.isNotBlank(c.inv.getRegistryDocument())
+			&& willOverflow(INVOICE.RDOCUMENT, c.inv.getRegistryDocument())) {
 				c.inv.addMessage(new InvoiceError(
 					InvoiceErrorKey.RDOCUMENT
 					,InvoiceErrorLevel.WRN
-					,AonError.INVALID_LENGTH.format(InvoiceErrorKey.REGISTRY.getDescription(),INVOICE.INVOICE.RDOCUMENT.getDataType().length()) ));
-			}
+					,AonError.INVALID_LENGTH.format(InvoiceErrorKey.REGISTRY.getDescription(),INVOICE.RDOCUMENT.getDataType().length()) ));
 		}
 	};
 
@@ -407,26 +411,25 @@ public class InvoiceRecorderDAO {
 	/**
 	 * La razon social del titular de la factura es un dato obligatorio.
 	 */
-	private static final Consumer<InvoicePreRecordContext> EMPTY_REGISTRY_NAME = c -> {
-		if (c.inv.getRegistry() != null &&  AonStringUtils.isBlank(c.inv.getRegistryName())) {
-			c.inv.addMessage(new InvoiceError(
-				InvoiceErrorKey.RNAME
-				,InvoiceErrorLevel.WRN
-				,AonError.REGISTRY_EMPTY_NAME.getMessage()));
-		}
-	};
+//	private static final Consumer<InvoicePreRecordContext> EMPTY_REGISTRY_NAME = c -> {
+//		if (c.inv.getRegistry() != null &&  AonStringUtils.isBlank(c.inv.getRegistryName())) {
+//			c.inv.addMessage(new InvoiceError(
+//				InvoiceErrorKey.RNAME
+//				,InvoiceErrorLevel.WRN
+//				,AonError.REGISTRY_EMPTY_NAME.getMessage()));
+//		}
+//	};
 	
 	/**
 	 * La razon social del titular no debe superar caracters definido en BD.
 	 */
 	private static final Consumer<InvoicePreRecordContext> OVERFLOW_REGISTRY_NAME = c -> {
-		if (AonStringUtils.isNotBlank(c.inv.getRegistryName())) {
-			if (willOverflow(INVOICE.RNAME, c.inv.getRegistryName())) {
+		if (AonStringUtils.isNotBlank(c.inv.getRegistryName())
+			&& willOverflow(INVOICE.RNAME, c.inv.getRegistryName())) {
 				c.inv.addMessage(new InvoiceError(
 					InvoiceErrorKey.REGISTRY
 					,InvoiceErrorLevel.WRN
-					,AonError.INVALID_LENGTH.format(InvoiceErrorKey.RNAME.getDescription(),INVOICE.INVOICE.RNAME.getDataType().length()) ));
-			}
+					,AonError.INVALID_LENGTH.format(InvoiceErrorKey.RNAME.getDescription(),INVOICE.RNAME.getDataType().length()) ));
 		}
 	};
 //

@@ -15,7 +15,7 @@ const createForm = (id, parent) => {
     const form = CreateComponent.createForm(id+"Form");
     parent.appendChild(form);
 
-    const className = parent.isMobile() ? CSS.AON_MOBILE_SUB_CONTENT : CSS.AON_SUB_CONTENT;
+    const className = parent.isMobile() ? "" : CSS.AON_SUB_CONTENT;
     const divParent = createDiv({id: id+"Div", classes:[className]}).element;
     form.appendChild(divParent);
 
@@ -323,7 +323,7 @@ const openCategoryDialog = (category) => {
         dialog.width = '40%';
     
     dialog.clear();
-    dialog.setTitle("Canal");
+    dialog.setTitle(MSG.CHANNEL);
         
     const aonCategoryAdd = new AonCategoryAdd();
     if(category && category.id){

@@ -1222,24 +1222,20 @@ public class AccountingInvoiceDAO {
 		LinkedList<InvoiceDetail> details = new LinkedList<>();
 		for (InvoiceVAT vat :  accInvoice.getVats()) {
 			InvoiceDetail detail = vat.getInvoiceDetail() != null
-				? vat.getInvoiceDetail().setAccountId(
-					vat.getInvoiceDetail().getAccountId() != null
-						? vat.getInvoiceDetail().getAccountId() 
-						: vat.getExpAccount().map(a -> a.getId()).orElse(null)
-				)
+				? vat.getInvoiceDetail().setExpAccount( vat.getExpAccount().orElse(null) )
 				: new InvoiceDetail()
 					.setDomain(accInvoice.getInvoice().getDomain())
 					.setInvoice(accInvoice.getInvoice())
 					.setInvestAsset(vat.getInvestAsset())
 					.setWorkplace( new Workplace().setId( accInvoice.getWorkplace()))
 					.setLine(line)
-					.setDescription( vat.getExpAccount().map(a -> a.getDescription()).orElse(null) )
+					.setDescription( vat.getExpAccount().map(Account::getDescription).orElse(null) )
 					.setQuantity(1)
 					.setPrice(vat.getBase())
 					.setDiscountExpression("0.0")
 					.setSource(InvoiceSource.ACCOUNT)
 					.setTaxableBase(vat.getBase())
-					.setAccountId(vat.getExpAccount().map(a -> a.getId()).orElse(null) )
+					.setExpAccount(vat.getExpAccount().orElse(null) )
 					.setPrepayment(vat.isPrepayment());
 			if (!vat.isPrepayment()) {				
 				InvoiceTax invoiceTax = detail.getInvoiceTaxes().stream().filter(f -> TaxType.VAT.equals(f.getTaxType())).findFirst().orElse(null);
@@ -1342,7 +1338,7 @@ public class AccountingInvoiceDAO {
 					.setDiscountExpression("0.0")
 					.setSource(InvoiceSource.ACCOUNT)
 					.setTaxableBase(vat.getBase())
-					.setAccountId(vat.getExpAccount().map(a->a.getId()).orElse(null))
+					.setExpAccount(vat.getExpAccount().orElse(null))
 					.setPrepayment(vat.isPrepayment())
 				;
 			} else {
@@ -1352,7 +1348,7 @@ public class AccountingInvoiceDAO {
 					.setInvestAsset(vat.getInvestAsset())
 					.setWorkplace( new Workplace().setId( accInvoice.getWorkplace()))
 					.setLine(line)
-					.setAccountId(vat.getExpAccount().map(a->a.getId()).orElse(null))
+					.setExpAccount(vat.getExpAccount().orElse(null))
 					.setPrepayment(vat.isPrepayment())
 				;
 				if (AonNumberUtils.notEquals (detail.getTaxableBase(), vat.getBase())) {
@@ -1719,7 +1715,6 @@ public class AccountingInvoiceDAO {
 					.setInvestAssetData(null))
 				.flatMap( d -> AonCollectionUtils.stream(d.getInvoiceTaxes()))
 				.forEach( t -> t 
-					.setInvestAsset( null )
 					.setDeductiblePercent(100.0)
 					.setDeductibleQuota( t.getQuota() )	
 					);
