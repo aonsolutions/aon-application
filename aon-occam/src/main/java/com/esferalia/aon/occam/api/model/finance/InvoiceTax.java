@@ -43,8 +43,6 @@ public class InvoiceTax implements Serializable {
 	 * 
 	*/
 	@Deprecated
-	private boolean withholding;
-	@Deprecated
 	private Integer account;
 	
 	public Integer getId() {
@@ -279,15 +277,6 @@ public class InvoiceTax implements Serializable {
 	@Deprecated
 	public InvoiceTax setAccount(Integer account) {
 		this.account = account;
-		return this;
-	}
-	@Deprecated
-	public boolean isWithholding() {
-		return withholding;
-	}
-	@Deprecated
-	public InvoiceTax setWithholding(boolean withholding) {
-		this.withholding = withholding;
 		return this;
 	}
 }

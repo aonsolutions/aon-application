@@ -865,7 +865,6 @@ public class ServalInvoiceImport extends ImportUtils{
 					InvoiceTax wh = new InvoiceTax()
 						.setDomain(invoice.getDomain())
 						.setTaxType(TaxType.RETENTION)
-						.setWithholding(true)
 						.setWithholdingType(getWithholdingType(iic.getRetentionKey(), iic.getAccount()))
 						.setBase(retBase)
 						.setPercentage(retPercentage)
