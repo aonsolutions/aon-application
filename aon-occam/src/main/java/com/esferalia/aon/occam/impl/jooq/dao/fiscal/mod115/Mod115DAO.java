@@ -171,9 +171,10 @@ public class Mod115DAO extends FiscalModelDAO {
 			Integer admin = conf.fiscal().getAdministration();
 			boolean inc = false;
 			if (admin != null ) {
-					inc = mod115.getAdministration() ==  Administration.values()[admin];
+				// Administración por defecto es la misma del modelo, o bien si administración por defecto es Canarias y la del modelo es AEAT
+				inc = (mod115.getAdministration() == Administration.values()[admin]) || (Administration.values()[admin].isCanarias() && mod115.isAEAT());
 			} else {
-					inc = getSamePeriodNoAdmonModels( ctx, mod115).noneMatch( Mod115::mustIncludeInvoicesOnGeneration );
+				inc = getSamePeriodNoAdmonModels( ctx, mod115).noneMatch( Mod115::mustIncludeInvoicesOnGeneration );
 			}
 			mod115.setMustIncludeInvoicesOnGeneration( inc );
 		}
