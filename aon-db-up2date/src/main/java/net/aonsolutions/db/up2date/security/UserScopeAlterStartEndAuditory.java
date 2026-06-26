@@ -25,7 +25,7 @@ public class UserScopeAlterStartEndAuditory implements Update {
         settings.setRenderSchema(false);
         settings.setParamType(ParamType.INLINED);
 
-        DSLContext dsl = DSL.using(connection, SQLDialect.MARIADB, settings);
+        DSLContext dsl = DSL.using(connection, SQLDialect.MYSQL, settings);
 
         dsl.transaction(cfg -> {
 
@@ -35,28 +35,32 @@ public class UserScopeAlterStartEndAuditory implements Update {
             // Helpers reutilizables
             // -----------------------------
             Predicate<String> columnExists = col ->
-                ctx.fetchExists(
-                    DSL.selectOne()
-                       .from("INFORMATION_SCHEMA.COLUMNS")
-                       .where(DSL.field("TABLE_NAME").eq("user_scope"))
-                       .and(DSL.field("COLUMN_NAME").eq(col))
-                );
+	            ctx.fetchExists(
+	                DSL.selectOne()
+	                   .from("INFORMATION_SCHEMA.COLUMNS")
+	                   .where(DSL.field("TABLE_NAME").eq("user_scope"))
+	                   .and(DSL.field("TABLE_SCHEMA").eq(DSL.field("DATABASE()", String.class)))
+	                   .and(DSL.field("COLUMN_NAME").eq(col))
+	            );
+	
+	        Predicate<String> indexExists = idx ->
+	            ctx.fetchExists(
+	                DSL.selectOne()
+	                   .from("INFORMATION_SCHEMA.STATISTICS")
+	                   .where(DSL.field("TABLE_NAME").eq("user_scope"))
+	                   .and(DSL.field("TABLE_SCHEMA").eq(DSL.field("DATABASE()", String.class)))
+	                   .and(DSL.field("INDEX_NAME").eq(idx))
+	            );
+	
+	        Predicate<String> fkExists = fk ->
+	            ctx.fetchExists(
+	                DSL.selectOne()
+	                   .from("INFORMATION_SCHEMA.TABLE_CONSTRAINTS")
+	                   .where(DSL.field("TABLE_NAME").eq("user_scope"))
+	                   .and(DSL.field("TABLE_SCHEMA").eq(DSL.field("DATABASE()", String.class)))
+	                   .and(DSL.field("CONSTRAINT_NAME").eq(fk))
+	            );
 
-            Predicate<String> indexExists = idx ->
-                ctx.fetchExists(
-                    DSL.selectOne()
-                       .from("INFORMATION_SCHEMA.STATISTICS")
-                       .where(DSL.field("TABLE_NAME").eq("user_scope"))
-                       .and(DSL.field("INDEX_NAME").eq(idx))
-                );
-
-            Predicate<String> fkExists = fk ->
-                ctx.fetchExists(
-                    DSL.selectOne()
-                       .from("INFORMATION_SCHEMA.TABLE_CONSTRAINTS")
-                       .where(DSL.field("TABLE_NAME").eq("user_scope"))
-                       .and(DSL.field("CONSTRAINT_NAME").eq(fk))
-                );
 
             // -----------------------------
             // Columnas
