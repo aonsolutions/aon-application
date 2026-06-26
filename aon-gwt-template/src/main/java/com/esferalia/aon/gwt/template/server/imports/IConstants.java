@@ -115,6 +115,7 @@ public interface IConstants {
 	String CANTIDAD = "CANTIDAD";
 	String PRECIO = "PRECIO";
 	String DESCUENTO = "DESCUENTO";
+	String IMPORTE = "IMPORTE";
 	String FECHA_INICIO = "FECHA INICIO";
 	String FECHA_FIN = "FECHA FIN";
 	String FECHA_FACTURACION = "FECHA FACTURACION";
@@ -205,6 +206,9 @@ public interface IConstants {
 	
 	String CUENTA_TESORERIA = "CUENTA TESORERIA";
 	String PAGO_POR_CAJA = "PAGO POR CAJA";
+	
+	String SERVICIO = "SERVICIO";
+	String SERVICE = "SERVICE";
 	
 	String TRANSACCION = "TRANSACCION";
 	String TRANSACCION2 = "TRANSACCIÓN";
