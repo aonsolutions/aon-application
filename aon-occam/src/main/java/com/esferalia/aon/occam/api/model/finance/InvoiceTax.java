@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Optional;
 
 import com.esferalia.aon.occam.api.model.Account;
@@ -31,7 +31,7 @@ public class InvoiceTax implements Serializable {
 	private double directTaxPercent;
 	private WithholdingType withholdingType;
 	
-	private EnumMap<InvoiceTaxAccountType, Account> accounts = new EnumMap<>(InvoiceTaxAccountType.class);
+	private HashMap<InvoiceTaxAccountType, Account> accounts = new HashMap<>();
 	
 	private boolean quotaEdited;
 	private boolean surchargeQuotaEdited;
