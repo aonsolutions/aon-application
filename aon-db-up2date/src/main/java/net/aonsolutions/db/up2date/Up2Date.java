@@ -21,18 +21,12 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.ContractCostExpressionText;
 import net.aonsolutions.db.up2date.payroll.ContractCostSeaExpressionFix;
-import net.aonsolutions.db.up2date.payroll.BonificEntrenadoresYMonitoresFix;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.PPEITUpdateIII;
 import net.aonsolutions.db.up2date.scope.InsertDefaultScope;
 import net.aonsolutions.db.up2date.security.UserScopeAlterStartEndAuditory;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBaseCgcJornadasTotalesFix;
 import net.aonsolutions.db.up2date.tgss.CgcEMinInsert;
-import net.aonsolutions.db.up2date.tgss.DropNoJustifiedFix;
 import net.aonsolutions.db.up2date.timecontrol.CalendarFixNulls;
-
-
-import net.aonsolutions.db.up2date.mailAccount.UpdateMailAccountType;
 
 public class Up2Date {
 

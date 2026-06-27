@@ -246,6 +246,9 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 	}
 	
 	public void onSearch() {
+		userScope.clear();
+		selectedUserScopes.clear();
+		aviableUserScopes.clear();
 		searchData();
 	}
 	
