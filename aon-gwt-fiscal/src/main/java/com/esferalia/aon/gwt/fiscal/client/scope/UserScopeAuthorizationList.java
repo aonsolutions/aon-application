@@ -161,7 +161,6 @@ public abstract class UserScopeAuthorizationList extends AonCustomDockLayout {
 	}
 	
 	public void onSearch() {
-		userScope.clear();
 		searchData();
 	}
 	
