@@ -214,7 +214,6 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
-import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
@@ -708,18 +707,6 @@ public class AON {
 		} 
 	}
 
-	public static List<UserScopeFull> getUserScopesByUserList(String domainName, Integer domain, String user, Integer userId) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
-			return getSecurity().getUserScopesByUserList(ctx, userId);
-		} 
-	}
-	
-	public static void authorizateUserScopes(String domainName, int domain, String user, UserScopeAuthorization userScopeAuthorization) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
-			getSecurity().authorizateUserScopes(ctx, domain, user, userScopeAuthorization);
-		} 
-	}
-	
 	public static List<UserScopeFull> getUserScopeFullList(String domainName, Integer domain, String user, Integer scopeId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getSecurity().getUserScopeFullList(ctx, scopeId);

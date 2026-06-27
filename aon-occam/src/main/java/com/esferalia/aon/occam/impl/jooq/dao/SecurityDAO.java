@@ -56,7 +56,6 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
-import org.jooq.Record2;
 import org.jooq.Record6;
 import org.jooq.Record8;
 import org.jooq.Result;
@@ -102,7 +101,6 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
-import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
@@ -1701,51 +1699,6 @@ public class SecurityDAO {
 		return condition;
 	}
 
-	public static List<UserScopeFull> getUserScopesByUserList(CloseableAONContext ctx, Integer userId) {
-		List<UserScopeFull> list = ctx.getDslContext().select()
-			.from(USER_SCOPE)
-			.join(SCOPE).on(SCOPE.ID.eq(USER_SCOPE.SCOPE))
-			.join(USER).on(USER.ID.eq(USER_SCOPE.USER_ID))
-			.innerJoin(DOMAIN).on(DOMAIN.ID.eq(USER.DOMAIN))
-			.leftOuterJoin(AUTH).on(AUTH.ID.eq(USER.AUTH))
-			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(USER.REGISTRY))
-			.leftJoin(USER.as("owner")).on(USER.as("owner").ID.eq(USER_SCOPE.OWNER))
-			.where(USER_SCOPE.USER_ID.eq(userId))
-			.fetch()
-			.stream()
-			.map(new UserScopeFullFiller())
-			.collect(Collectors.toList());
-		
-		list.forEach(us -> {
-			Result<Record2<Integer, String>> scopeDomains = ctx.getDslContext().select(DOMAIN.ID, DOMAIN.DESCRIPTION)
-				.from(DOMAIN)
-				.where(DOMAIN.SCOPE.eq(us.getScope().getId()))
-				.fetch();
-			
-			scopeDomains.forEach(r -> us.getScope().getScopeDomains().put(r.get(DOMAIN.ID), r.get(DOMAIN.DESCRIPTION)));
-		});
-		
-		return list;
-	}
-	
-	public static void authorizateUserScopes(CloseableAONContext ctx, int domain, String user, UserScopeAuthorization userScopeAuthorization) {
-		userScopeAuthorization.getUserScopes().forEach(us -> {
-			User owner = us.getUser();
-			Scope scope = us.getScope();
-			
-			ctx.getDslContext().insertInto(USER_SCOPE)
-				.set(USER_SCOPE.DOMAIN, domain)
-				.set(USER_SCOPE.USER_ID, userScopeAuthorization.getAuthorizationId())
-				.set(USER_SCOPE.SCOPE, scope.getId())
-				.set(USER_SCOPE.START_DATE, AonDateUtils.toSql(userScopeAuthorization.getStartDate()))
-				.set(USER_SCOPE.END_DATE, AonDateUtils.toSql(userScopeAuthorization.getEndDate()))
-				.set(USER_SCOPE.OWNER, owner.getId())
-				.set(USER_SCOPE.CREATION_USER, user)
-				.set(USER_SCOPE.CREATION_DATE, DSL.currentTimestamp())
-				.execute();
-		});
-	}
-	
 	public static List<UserScopeFull> getUserScopeFullList(CloseableAONContext ctx, Integer scopeId) {
 		List<UserScopeFull> list = ctx.getDslContext().select()
 			.from(USER_SCOPE)
@@ -1754,7 +1707,6 @@ public class SecurityDAO {
 			.innerJoin(DOMAIN).on(DOMAIN.ID.eq(USER.DOMAIN))
 			.leftOuterJoin(AUTH).on(AUTH.ID.eq(USER.AUTH))
 			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(USER.REGISTRY))
-			.leftJoin(USER.as("owner")).on(USER.as("owner").ID.eq(USER_SCOPE.OWNER))
 			.where(USER_SCOPE.SCOPE.eq(scopeId))
 			.fetch()
 			.stream()
@@ -1765,39 +1717,21 @@ public class SecurityDAO {
 	}
 	
 	public static class UserScopeFullFiller extends Filler implements Function<Record, UserScopeFull> {
-
-	    @Override
-	    public UserScopeFull apply(Record r) {
-	        return build(r);
-	    }
-
-	    public static UserScopeFull build(Record r) {
-
-	        com.esferalia.aon.jooq.tables.User ownerAlias = USER.as("owner");
-
-	        return new UserScopeFull()
-	            .setId(r.getValue(USER_SCOPE.ID))
-	            .setDomain(r.getValue(USER_SCOPE.DOMAIN))
-
-	            // Scope y User
-	            .setScope(checkField(r, USER_SCOPE.SCOPE) ? ScopeFiller.buildScope(r) : null)
-	            .setUser(checkField(r, USER_SCOPE.USER_ID) ? UserFiller.build(r, USER) : null)
-
-	            // Fechas
-	            .setStartDate(r.getValue(USER_SCOPE.START_DATE))
-	            .setEndDate(r.getValue(USER_SCOPE.END_DATE))
-
-	            // Owner como User completo
-	            .setOwner(checkField(r, USER_SCOPE.OWNER) ? UserFiller.build(r, ownerAlias) : null)
-
-	            // Auditoría
-	            .setCreatedBy(r.getValue(USER_SCOPE.CREATION_USER))
-	            .setCreatedDate(r.getValue(USER_SCOPE.CREATION_DATE))
-	            .setModifiedBy(r.getValue(USER_SCOPE.MODIFICATION_USER))
-	            .setModifiedDate(r.getValue(USER_SCOPE.MODIFICATION_DATE));
-	    }
+		
+		@Override
+		public UserScopeFull apply(Record r) {
+			return build(r);
+		}
+		
+		public static UserScopeFull build(Record r) {
+			return new UserScopeFull()
+				.setId(r.getValue(USER_SCOPE.ID))
+				.setDomain(r.getValue(USER_SCOPE.DOMAIN))
+				.setScope( checkField(r, USER_SCOPE.SCOPE) ? ScopeFiller.buildScope(r) : null )
+				.setUser( checkField(r, USER_SCOPE.USER_ID) ? UserFiller.build(r) : null )
+				;
+		}		
 	}
-
 	
 
 

@@ -49,7 +49,6 @@ import com.esferalia.aon.gwt.fiscal.client.registry.DomainBookingResumeModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryCompanyEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.SupplierModuleNew;
 import com.esferalia.aon.gwt.fiscal.client.sales.SalesModule;
-import com.esferalia.aon.gwt.fiscal.client.scope.ScopeTemporaryAuthorizationEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.sii.Sii;
 import com.esferalia.aon.gwt.fiscal.client.target.TargetEnterpriseModule;
 import com.esferalia.aon.gwt.fiscal.client.tariff.TariffModule;
@@ -374,10 +373,6 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== SIGNATURE ENTRY
 	//
 	private static final String SIGNATURE_MODULE_ENTRY_POINT = "SignatureEntryModule";
-	//
-	//    ================================================================== SCOPE TEMPORARY AUTHORIZATION ENTRY
-	//
-	private static final String SCOPE_TEMPORARY_AUTHORIZATION_ENTRY_POINT = "ScopeTemporaryAuthorizationEntryModule";
 	
 	
 	
@@ -1203,22 +1198,9 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
-		} else if( entryPoint.equalsIgnoreCase(SCOPE_TEMPORARY_AUTHORIZATION_ENTRY_POINT) ) {
-			GWT.runAsync(ScopeTemporaryAuthorizationEntryModule.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					ScopeTemporaryAuthorizationEntryModule scopeTemporaryAuthorizationEntryModule = new ScopeTemporaryAuthorizationEntryModule();
-					scopeTemporaryAuthorizationEntryModule.onModuleLoad();
-				}
-				
-			});
 		} 
+		
+		
 	}
 	
 	public static void ensureGwtSelector() {
