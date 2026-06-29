@@ -362,6 +362,10 @@ export class DomainUserRoles {
 		return this.isPayroll() && !this.isPayrollManager();
 	}
 
+	isPayrollEmployee() {
+		return this.isPayroll() && !this.isPayrollManager() && !this.isPayrollPortal();
+	}
+
 	isPayrollPortal() {
 		return (this.hasPayroll() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentPayroll()))
 			&& (this.isAdmin() || this.hasRole(Role.PAYROLL_PORTAL));
