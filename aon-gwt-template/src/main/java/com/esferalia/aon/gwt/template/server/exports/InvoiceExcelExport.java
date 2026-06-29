@@ -60,6 +60,7 @@ public class InvoiceExcelExport extends ExcelExport {
 		columns.add(new AonExcelColumn("Serie", 12));
 		columns.add(new AonExcelColumn("Número", 12));
 		columns.add(new AonExcelColumn("Referencia", 12));
+		columns.add(new AonExcelColumn("Servicio", 12));
 		columns.add(new AonExcelColumn("NIF", 12));
 		columns.add(new AonExcelColumn("Nombre", 12));
 		columns.add(new AonExcelColumn("Cuenta Contraparte", 12));
@@ -71,6 +72,11 @@ public class InvoiceExcelExport extends ExcelExport {
         columns.add(new AonExcelColumn("País", 12));
         columns.add(new AonExcelColumn("Cuenta Explotación", 12));
         columns.add(new AonExcelColumn("Descripción Cuenta", 12));
+        columns.add(new AonExcelColumn("Suplido", 12));
+        columns.add(new AonExcelColumn("Cantidad", 12));
+        columns.add(new AonExcelColumn("Precio", 12));
+        columns.add(new AonExcelColumn("Descuento", 12));
+        columns.add(new AonExcelColumn("Importe", 12));
         columns.add(new AonExcelColumn("Base Imponible", 12));
         columns.add(new AonExcelColumn("%" + vatName, 12));
         columns.add(new AonExcelColumn("Cuota " + vatName , 12));
@@ -172,6 +178,16 @@ public class InvoiceExcelExport extends ExcelExport {
 			return "";
 		case "Subclave Retención":
 			return "";
+		case "Servicio":
+			return invoice.isService() ? "Si" : "No";
+		case "Cantidad":
+			return Double.toString(detail.getQuantity());
+		case "Precio":
+			return Double.toString(detail.getPrice());
+		case "Descuento":
+			return Double.toString(detail.getDiscount());
+		case "Importe":
+			return Double.toString(detail.getAmount());
 		case "Fichero":
 			return AonStringUtils.isBlank(invoice.getFileUrl()) ? "" : "Descargar";
 		default:
