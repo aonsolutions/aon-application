@@ -204,9 +204,9 @@ public class UserUtils implements Serializable {
 	}
 	
 	public List<Scope> getCurrentUserScopes( boolean forceHeredity ) {
-		List<Scope> scopes = null;
-		try {
-			if ( isAdminUser() ) {
+	    List<Scope> scopes = new LinkedList<Scope>();   // nunca null
+	    try {
+	    	if ( isAdminUser() ) {
 				scopes = getScopes(getDomains(true));
 			} else if (DomainManager.isParentDomainUserInChildDomain()) {
 				scopes = getScopes(new Integer[]{DomainManager.getCurrentDomain()});
@@ -216,10 +216,10 @@ public class UserUtils implements Serializable {
 			} else {
 				scopes = getUserScopes(getDomains(forceHeredity));
 			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error("Error scopes related with the user" + getLoggedUser().getLogin(), e);
-		}
-		return scopes;
+	    } catch (ManagerBeanException e) {
+	        LOGGER.error("Error scopes related with the user " + getLoggedUser().getLogin(), e);
+	    }
+	    return scopes;
 	}
 
 	private List<Integer> getUserScopeIds( boolean forceHeredity ) {
