@@ -9115,22 +9115,13 @@ CREATE TABLE `user_scope` (
   `domain` int NOT NULL COMMENT 'Identificador del Dominio',
   `user_id` int NOT NULL COMMENT 'Identificador del Usuario',
   `scope` int NOT NULL COMMENT 'Identificador del Ambito',
-  `start_date` date DEFAULT NULL COMMENT 'Fecha inicio autorizado',
-  `end_date` date DEFAULT NULL COMMENT 'Fecha fin autorizado',
-  `owner` int(11) DEFAULT NULL COMMENT 'Usuario propietario',
-  `creation_user` varchar(16) DEFAULT NULL COMMENT 'Usuario de creacion',
-  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
-  `modification_user` varchar(16) DEFAULT NULL COMMENT 'Usuario de modificacion',
-  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',  
   PRIMARY KEY (`id`),
   KEY `IDX_USER_SCOPE_SCOPE` (`scope`),
   KEY `IDX_USER_SCOPE_USER` (`user_id`),
   KEY `IDX_USER_SCOPE_DOMAIN` (`domain`),
-  KEY `IDX_USER_SCOPE_OWNER` (`owner`),  
   CONSTRAINT `FK_USER_SCOPE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_USER_SCOPE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
-  CONSTRAINT `FK_USER_SCOPE_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
-  CONSTRAINT `FK_USER_SCOPE_OWNER` FOREIGN KEY (`owner`) REFERENCES `user` (`id`)
+  CONSTRAINT `FK_USER_SCOPE_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ambitos de Usuario';
 
 #

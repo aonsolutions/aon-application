@@ -75,7 +75,6 @@ public class TbaiEmisionGipuzkoaTest {
 		tax.setSurchargeQuota(0.0);
 		tax.setTaxType(TaxType.VAT);
 		tax.setVatDeductionType(VatDeductionType.WITH_RIGHT);
-		tax.setWithholding(false);
 		invoiceDetail.getInvoiceTaxes().add(tax);
 		invoice.getDetails().add(invoiceDetail);
 		

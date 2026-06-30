@@ -2,6 +2,7 @@ import { AON_SYMBOLS, COLORS, MATERIAL_ICONS, MSG, CONSTANT, AON_ICONS } from ".
 
 import * as GWT from "../gwt/gwt.js";
 import * as LS from  "./localStorageService.js";
+import * as HELP from '../modules/aon-site-help.js';
 
 import * as DocumentalOptions from  "../modules/documental/DocumentalOptions.js";
 import * as InvoiceOptions from  "../modules/invoice/InvoiceOptions.js";
@@ -1759,7 +1760,7 @@ export const EXPAND_HIRIND = {
 	app: CONSTANT.EXPAND_HIRIND,
 	title: MSG.EXPAND_HIRIND,
 	description: MSG.EXPAND_HIRIND,
-  aonSymbol: AON_SYMBOLS.BOX,
+  	aonSymbol: AON_SYMBOLS.BOX,
 	symbol: MATERIAL_ICONS.STORE_MALL_DIRECTORY,
 };
 
@@ -1767,8 +1768,9 @@ export const CONTENT_INDEX = {
 	app: CONSTANT.CONTENT_INDEX,
 	title: MSG.MANUALS,
 	description: MSG.MANUALS,
-  aonSymbol: AON_SYMBOLS.GRADUATION_CAP,
+	aonSymbol: AON_SYMBOLS.BOOK_OPEN,
 	symbol: MATERIAL_ICONS.MENU_BOOK,
+	goto: HELP.HELP_PORTAL_SITE,
 };
 
 export function getConstNewApps(dur, isAyudaT) {

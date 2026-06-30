@@ -126,7 +126,8 @@ public class Mod123DAO extends FiscalModelDAO {
 			Integer admin = conf.fiscal().getAdministration();
 			boolean inc = false;
 			if (admin != null ) {
-				inc = mod123.getAdministration() ==  Administration.values()[admin];
+				// Administración por defecto es la misma del modelo, o bien si administración por defecto es Canarias y la del modelo es AEAT
+				inc = (mod123.getAdministration() == Administration.values()[admin]) || (Administration.values()[admin].isCanarias() && mod123.isAEAT());
 			} else {
 				inc = getSamePeriodNoAdmonModels( ctx, mod123).noneMatch( Mod123::mustIncludeInvoicesOnGeneration );
 			}

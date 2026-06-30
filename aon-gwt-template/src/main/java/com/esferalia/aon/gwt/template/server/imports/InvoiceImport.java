@@ -203,6 +203,11 @@ public class InvoiceImport extends ImportUtils{
 			|| compare(IConstants.CODIGO_REFERENCIA, value)
 			|| compare(IConstants.CODIGO_DE_REFERENCIA, value);
 	}
+	
+	private boolean isService(String value) {
+		return compare(IConstants.SERVICIO, value)
+			|| compare(IConstants.SERVICE, value);
+	}
 
 	private boolean isNif(String value) {
 		return compare(IConstants.NIF, value);
@@ -291,6 +296,26 @@ public class InvoiceImport extends ImportUtils{
 	
 	private boolean isConceptoDetalle(String value) {
 		return compare(IConstants.CONCEPTO_DETALLE, value);
+	}
+	
+	private boolean isSuplido(String value) {
+		return compare(IConstants.SUPLIDO, value);
+	}
+	
+	private boolean isQuantity(String value) {
+		return compare(IConstants.CANTIDAD);
+	}
+	
+	private boolean isPrice(String value) {
+		return compare(IConstants.PRECIO);
+	}
+	
+	private boolean isDiscount(String value) {
+		return compare(IConstants.DESCUENTO);
+	}
+	
+	private boolean isAmount(String value) {
+		return compare(IConstants.IMPORTE);
 	}
 	
 	private boolean isBase(String value) {
@@ -383,6 +408,12 @@ public class InvoiceImport extends ImportUtils{
 			} else inv.setRef(o.toString());
 			return ;
 		}
+		
+		if(isService(title)) {
+			String service = o.toString().replace(" ", "");
+			inv.setService("SI".equalsIgnoreCase(service) || "SÍ".equalsIgnoreCase(service));
+		}
+		
 		if(isNif(title)) {
 			if(CellType.NUMERIC == cell.getCellType()) { 
 				inv.setNif(NumberToTextConverter.toText(cell.getNumericCellValue()));
@@ -460,6 +491,29 @@ public class InvoiceImport extends ImportUtils{
 			// TODO CONCEPTO DETALLE
 			return;
 		}
+		
+		if(isSuplido(title)) {
+			String suplido = o.toString().replace(" ", "");
+			inv.setSuplido("SI".equalsIgnoreCase(suplido) || "SÍ".equalsIgnoreCase(suplido));
+		}
+		
+		if(isQuantity(title)) {
+			inv.setQuantity(Utils.parseDouble(o));
+		}
+		
+		if(isPrice(title)) {
+			inv.setPrice(Utils.parseDouble(o));
+		}
+		
+		if(isDiscount(title)) {
+			inv.setDiscount(Utils.parseDouble(o));
+		}
+		
+		if(isAmount(title)) {
+			inv.setAmount(Utils.parseDouble(o));
+			return;
+		}
+		
 		if(isBase(title)) {
 			inv.setBase(Utils.parseDouble(o));
 			return;
@@ -679,11 +733,17 @@ public class InvoiceImport extends ImportUtils{
 				}
 				
 				
+				double vatBase = 0.0;
+				if(ivs.get(j).isSuplido() && ivs.get(j).getAmount() != null) vatBase = ivs.get(j).getAmount();
+				else if(ivs.get(j).isSuplido() && ivs.get(j).getQuantity() != null && ivs.get(j).getPrice() != null && ivs.get(j).getDiscount() != null)
+					vatBase = AonMathUtils.round(ivs.get(j).getQuantity() * ivs.get(j).getPrice() * (ivs.get(j).getDiscount() /100));
+				else if(ivs.get(j).getBase() != null) vatBase = ivs.get(j).getBase();
+				
+				
 				InvoiceVAT vat = new InvoiceVAT()
-					.setPrepayment("5600".equals(ivs.get(i).getAccount().substring(0, 4)) || "5660".equals(ivs.get(i).getAccount().substring(0, 4)))
+					.setPrepayment(ivs.get(i).isSuplido() || "5600".equals(ivs.get(i).getAccount().substring(0, 4)) || "5660".equals(ivs.get(i).getAccount().substring(0, 4)))
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-					.setBase(ivs.get(j).getBase() != null 
-							? ivs.get(j).getBase() : 0.0)
+					.setBase(vatBase)
 					.setPercentage(ivs.get(j).getPercentage() != null
 							? ivs.get(j).getPercentage() : 0.0)
 					.setQuota(ivs.get(j).getQuota() != null
@@ -715,9 +775,9 @@ public class InvoiceImport extends ImportUtils{
 				ai.addVat(vat);
 				double retentionQuota = ivs.get(j).getRetentionQuota() != null ? ivs.get(j).getRetentionQuota() : 0.0;
 				total = total + (invoice.mustApplyISP() 
-						? ivs.get(j).getBase() - retentionQuota
+						? vatBase - retentionQuota
 						: ivs.get(j).getTotal());
-				base = base + ivs.get(j).getBase();
+				base = base + vatBase;
 				j++;
 			}
 			Integer cci = i;
@@ -857,7 +917,7 @@ public class InvoiceImport extends ImportUtils{
 		
 		Invoice invoice = new Invoice();
 		invoice.setScope(getScope(domain, user));
-		invoice.setService(InvoiceOpType.PIS.equals(iic.getType())|| InvoiceOpType.AIS.equals(iic.getType()));
+		invoice.setService(iic.isService() || InvoiceOpType.PIS.equals(iic.getType()) || InvoiceOpType.AIS.equals(iic.getType()));
 		invoice.setTransaction(getTransaction(iic));
 		invoice.setInvestment(iic.isInvestment() != null && iic.isInvestment());
 		invoice.setDomain(domain.getId());
@@ -990,7 +1050,7 @@ public class InvoiceImport extends ImportUtils{
 
 			Invoice invoice = new Invoice();
 			invoice.setScope(getScope(domain, user));
-			invoice.setService(InvoiceOpType.PIS.equals(iic.getType())|| InvoiceOpType.AIS.equals(iic.getType()));
+			invoice.setService(iic.isService() || InvoiceOpType.PIS.equals(iic.getType())|| InvoiceOpType.AIS.equals(iic.getType()));
 			invoice.setTransaction(getTransaction(iic));
 			invoice.setInvestment(iic.isInvestment() != null && iic.isInvestment());
 			invoice.setDomain(domain.getId());
@@ -1055,11 +1115,17 @@ public class InvoiceImport extends ImportUtils{
 				
 				Account expAccount = getAccount(domain, user, aux.getAccount(), aux.getAccountDescription());
 				
+				double vatBase = 0.0;
+				if(aux.isSuplido() && aux.getAmount() != null) vatBase = aux.getAmount();
+				else if(aux.isSuplido() && aux.getQuantity() != null && aux.getPrice() != null && aux.getDiscount() != null)
+					vatBase = AonMathUtils.round(aux.getQuantity() * aux.getPrice() * (aux.getDiscount() /100));
+				else if(aux.getBase() != null) vatBase = aux.getBase();
+				
+				
 				InvoiceVAT vat = new InvoiceVAT()
-					.setPrepayment("5600".equals(aux.getAccount().substring(0, 4)) || "5660".equals(aux.getAccount().substring(0, 4)))
+					.setPrepayment(iic.isSuplido() || "5600".equals(aux.getAccount().substring(0, 4)) || "5660".equals(aux.getAccount().substring(0, 4)))
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-					.setBase(aux.getBase() != null 
-							? aux.getBase() : 0.0)
+					.setBase(vatBase)
 					.setPercentage(aux.getPercentage() != null
 							? aux.getPercentage() : 0.0)
 					.setQuota(aux.getQuota() != null
@@ -1092,9 +1158,9 @@ public class InvoiceImport extends ImportUtils{
 				double retentionQuota = aux.getRetentionQuota() != null ? aux.getRetentionQuota() : 0.0;
 	
 				total = total + (invoice.isIsp() 
-						? aux.getBase() - retentionQuota
+						? vatBase - retentionQuota
 						: aux.getTotal());
-				base = base + aux.getBase();
+				base = base + vatBase;
 				checkCuotas(domain, aux);
 			}
 

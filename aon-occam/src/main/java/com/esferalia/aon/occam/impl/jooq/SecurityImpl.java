@@ -36,7 +36,6 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
-import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.AuthDevice;
@@ -276,18 +275,6 @@ public class SecurityImpl implements ISecurity {
 				configuration -> SecurityDAO.getScopesCount(ctx, params));
 	}
 
-	@Override
-	public List<UserScopeFull> getUserScopesByUserList(CloseableAONContext ctx, Integer userId) {
-		return ctx.getDslContext().transactionResult( 
-				configuration -> SecurityDAO.getUserScopesByUserList(ctx, userId));
-	}
-
-	@Override
-	public void authorizateUserScopes(CloseableAONContext ctx, int domain, String user, UserScopeAuthorization userScopeAuthorization) {
-		ctx.getDslContext().transaction( 
-				configuration -> SecurityDAO.authorizateUserScopes(ctx, domain, user, userScopeAuthorization));
-	}
-	
 	@Override
 	public List<UserScopeFull> getUserScopeFullList(CloseableAONContext ctx, Integer scopeId) {
 		return ctx.getDslContext().transactionResult( 

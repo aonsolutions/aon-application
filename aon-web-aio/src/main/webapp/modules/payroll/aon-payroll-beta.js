@@ -76,13 +76,13 @@ export class AonPayrollBeta extends AonElement {
 				});
 			}
 			
+			utilitiesOptions.push({
+				id: "parameteraPayroll",
+				icon: "settings_applications",
+				name: "Parametros Laboral",
+				fn: () => this.getApplication().setContent(new JSF.AonJsfPayrollParams()),
+			});
 			if(!this.getDur().isDomainManagementAvailable()){
-				utilitiesOptions.push({
-					id: "parameteraPayroll",
-					icon: "settings_applications",
-					name: "Parametros Laboral",
-					fn: () => this.getApplication().setContent(new JSF.AonJsfPayrollParams()),
-				});
 	
 				utilitiesOptions.push({
 					id: "parametersContracts",

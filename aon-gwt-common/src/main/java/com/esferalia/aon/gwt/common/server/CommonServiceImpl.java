@@ -153,7 +153,6 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
-import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -1459,17 +1458,6 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		AON.deleteScope(domainName, domain, user, scopeId);
 	}
 
-	@Override
-	public List<UserScopeFull> getUserScopesByUser(String domainName, Integer domain, String user, Integer userId) throws AonCoreException {
-		List<UserScopeFull> list = AON.getUserScopesByUserList(domainName, domain, user, userId);
-		return list;
-	}
-	
-	@Override
-	public void authorizateUserScopes(String domainName, int domain, String user, UserScopeAuthorization userScopeAuthorization) throws AonCoreException {
-		 AON.authorizateUserScopes(domainName, domain, user, userScopeAuthorization);
-	}
-	
 	@Override
 	public List<UserScopeFull> getUserScopeList(String domainName, Integer domain, String user, Integer scopeId) throws AonCoreException {
 		List<UserScopeFull> list = AON.getUserScopeFullList(domainName, domain, user, scopeId);

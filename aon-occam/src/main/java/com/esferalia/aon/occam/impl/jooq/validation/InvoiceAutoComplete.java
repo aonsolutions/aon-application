@@ -529,7 +529,6 @@ public class InvoiceAutoComplete {
 							.setPercentage(ret.getPercentage())
 							.setQuota(ret.getBase() * ret.getPercentage() / 100)
 							.setTaxType(TaxType.RETENTION)
-							.setWithholding(true)
 							.setWithholdingType(ret.getWithholdingType())
 							.setAccount(inv.isSales()
 									? ctx.getConfiguration().accounting().getDefaultChargedRetAccount().getId()

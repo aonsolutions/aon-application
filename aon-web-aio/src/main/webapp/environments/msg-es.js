@@ -1119,7 +1119,6 @@ export const TAX = 'Impuesto';
 export const TAX_BASE = 'Base Imponible';
 export const TAXES = 'Impuestos';
 export const TAXES_DETAIL= 'Detalle Impuestos';
-export const TEMPORARY_AUTORIZATIONS = 'Autorizaciones Temporales';
 export const TEST_ENVIRONMENT = 'Entorno de Pruebas';
 export const THEME = 'Tema';
 export const THEME_SELECTION = 'Selección de tema';

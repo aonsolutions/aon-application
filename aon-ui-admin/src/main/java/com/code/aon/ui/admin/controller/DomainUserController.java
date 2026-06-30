@@ -53,6 +53,7 @@ import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -239,7 +240,7 @@ public class DomainUserController extends BasicController {
 		if ( bean.getCount(criteria) == 0 ) {
 			UserScope userScope = new UserScope();
 			userScope.setScope(scope);
-			userScope.setUserDBByUserId(user);
+			userScope.setUser(user);
 			bean.insert(userScope);
 		}
 	}	
