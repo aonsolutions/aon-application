@@ -39,7 +39,7 @@ public class InvoiceApiDAO {
 	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
 	
 	public static Stream<Invoice> getInvoices(AONContext ctx, Integer domainId, InvoiceFilter filter) {
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, domainId);
+		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, domainId, false);
 		Integer page = INVOICE_PROPERTIES.getPage(filter);
 		if (page == null) page = 1;
 		Integer perPage = INVOICE_PROPERTIES.getPerPage(filter);

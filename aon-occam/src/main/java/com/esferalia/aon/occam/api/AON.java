@@ -8263,8 +8263,12 @@ public class AON {
 	
 	// INVOICE COMMUNICATION CONFIGURATION
 	public static InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(Occam occam) {
+		return getInvoiceCommunicationConfiguration(occam, false);
+	}
+	
+	public static InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(Occam occam, boolean check) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getFinance().getInvoiceCommunicationConfiguration(ctx,occam.getDomain());
+			return getFinance().getInvoiceCommunicationConfiguration(ctx,occam.getDomain(), check);
 		}
 	}
 	
