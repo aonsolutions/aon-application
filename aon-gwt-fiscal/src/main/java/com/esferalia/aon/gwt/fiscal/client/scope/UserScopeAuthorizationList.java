@@ -161,10 +161,7 @@ public abstract class UserScopeAuthorizationList extends AonCustomDockLayout {
 	}
 	
 	public void onSearch() {
-<<<<<<< HEAD
 		userScope.clear();
-=======
->>>>>>> parent of 847d9aad496 (Revert "Merge pull request #6726 from aonsolutions/svaldepenas")
 		searchData();
 	}
 	
