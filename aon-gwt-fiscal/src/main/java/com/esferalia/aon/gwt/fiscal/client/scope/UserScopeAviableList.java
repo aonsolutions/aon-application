@@ -246,9 +246,12 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 	}
 	
 	public void onSearch() {
+<<<<<<< HEAD
 		userScope.clear();
 		selectedUserScopes.clear();
 		aviableUserScopes.clear();
+=======
+>>>>>>> parent of 847d9aad496 (Revert "Merge pull request #6726 from aonsolutions/svaldepenas")
 		searchData();
 	}
 	
