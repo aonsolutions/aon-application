@@ -220,6 +220,10 @@ public class InvoiceCommunicationDAO {
 	
 	
 	// ------------------------------------------------------ [READ]
+	public static InvoiceCommunicationConfiguration get(AONContext ctx, int domainId) {	
+		return get(ctx, domainId, false);
+	}
+
 	public static InvoiceCommunicationConfiguration get(AONContext ctx, int domainId, boolean check) {
 		ctx.checkRead();
 		InvoiceCommunicationConfiguration configuration = new InvoiceCommunicationConfiguration();
