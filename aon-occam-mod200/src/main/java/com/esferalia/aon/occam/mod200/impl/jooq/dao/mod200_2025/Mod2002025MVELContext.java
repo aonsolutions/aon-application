@@ -570,7 +570,9 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		// Tipo 0% o No Liquida
 		if ( (isChecked(C0013) || isChecked(C0085)) && (getValue(Mod2002025Key.UT060) == 100.0) ) return 0.0;
 		if ( isChecked(C0014) ) return 0.0;
-		if ( isChecked(C0048) ) return 0.0;
+		
+		// Caracter 48 Fondo de Pensiones 0% excepto si están marcados los caracteres 46, 83 u 88, en cuyo caso se aplica el de ellos
+		if ( isChecked(C0048) && !isChecked(C0046) && !isChecked(C0083) && !isChecked(C0088) ) return 0.0;
 		
 		// Cooperativas protegidas
 		if (isChecked(C0017) || isChecked(C0018)) {
@@ -593,10 +595,14 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		if ( isChecked(C0001) && !isChecked(C0021) && !isChecked(C0046) ) return 10.0;  
 		
 		// Tipo reducido 15%
+		//	00083 Empresa emergente		
+		if ( isChecked(C0083) && !(isChecked(C0001) && isChecked(C0046)) ) 
+			return 15.0;
+
+		// Tipo reducido 15%
 		//	00063 Entidades de nueva creación (DT 22 LIS)
 		//	00071 Entidades de nueva creación (art 29.1 LIS)
-		//	00083 Empresa emergente		
-		if ( isChecked(C0063) || isChecked(C0071) || isChecked(C0083) ) 
+		if ( isChecked(C0063) || isChecked(C0071) ) 
 			return 15.0; 
 		
 		// 00034 Hidrocarburos y no marcada 00046 Entidad en régimen atribución rentas extranjera
@@ -609,7 +615,6 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		// 00088 Entidades con INCN inferior a 1 millón euros
 		if ( isChecked(C0088) ) return 21.0; 
 		
-
 		// 00006 Empresa reducida dimensión (ERD)
 		if ( isChecked(C0006) ) return 24.0; 
 		
@@ -852,6 +857,7 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			if (lq558 == 20 && isChecked(C0006)) {
 				return round((lq553 * lq558 / 100) + (lq554 * 24 / 100));
 			}
+			
 			
 			// Caracter 88 marcado
 			// Clave 00558 = 18/19% 
