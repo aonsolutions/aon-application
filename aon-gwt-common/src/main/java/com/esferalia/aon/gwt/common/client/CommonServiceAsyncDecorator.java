@@ -1833,6 +1833,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.reassignScope(domainName, domainId, user, originScope, finalScope, deleteOrigin, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void getUsedScopesInDomain(String domainName, int domainId, String user, AsyncCallback<ArrayList<Scope>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getUsedScopesInDomain(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
+	}
 
 	@Override
 	public void checkMailAccounts(String domainName, Integer domain, String user, AsyncCallback<HashMap<Integer, Boolean>> callback) throws AonCoreException {

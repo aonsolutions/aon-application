@@ -579,6 +579,7 @@ public interface CommonServiceAsync {
 	void getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource, String pattern, AsyncCallback<List<Account>> asyncCallback) throws AonCoreException;
 	
 	void reassignScope(String domainName, Integer domainId, String user, int originScope, int finalScope, boolean deleteOrigin, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void getUsedScopesInDomain(String domainName, int domain, String user, AsyncCallback<ArrayList<Scope>> asyncCallback) throws AonCoreException;
 	void getSignatures(String domainName, Integer domain, String user, AsyncCallback<LinkedList<Signature>> asyncCallback) throws AonCoreException;
 	void deleteSignature(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void saveSignature(String domainName, Integer domainId, String user, Signature signature, AsyncCallback<Signature> asyncCallback) throws AonCoreException;
