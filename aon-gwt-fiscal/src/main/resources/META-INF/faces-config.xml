@@ -423,5 +423,13 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	<!-- =================== Scope Temporary Authorization Entry Module ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_mail_signature_module</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/scope/scopeTemporaryAuthorizationEntryModule.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 </faces-config>
 		

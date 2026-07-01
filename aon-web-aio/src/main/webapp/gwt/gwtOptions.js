@@ -745,6 +745,11 @@ export const SCOPE_MODULE = {
   entryPoint: 'ScopeModule'
 };
 
+export const TEMPORARY_SCOPES_MODULE = {
+  module: GWT_FISCAL,
+  entryPoint: 'ScopeTemporaryAuthorizationEntryModule'
+};
+
 export const TAG_MODULE = {
   module: GWT_AIO,
   entryPoint: 'TagModule'

@@ -138,7 +138,7 @@
 
 	<bean class="com.code.aon.config.UserScope">
 		<alias names="id,scope_id,user_id,scope_description"/>
-		<hibernate names="id,scope.id,user.id,scope.description"/>
+		<hibernate names="id,scope.id,userDBByUserId.id,scope.description"/>
 	</bean>
 	
 	<bean class="com.code.aon.config.User">

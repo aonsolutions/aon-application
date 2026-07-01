@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -188,34 +189,51 @@ public class UserDAO {
 	}
 	
 	public static class UserFiller extends Filler implements Function<Record,User> {
-		
-		@Override
-		public User apply(Record r) {
-			return build(r);
-		}
-		
-		public static User build(Record r) {
-			return new User()
-				.setId(r.getValue(USER.ID))
-				.setDomain( ( checkField(r, REGISTRY.ID) && r.get(USER.DOMAIN).equals(r.get(DOMAIN.ID)))
-					?  DomainFiller.build(r) : new com.esferalia.aon.occam.api.model.Domain().setId(r.get(USER.DOMAIN)))
-				.setType(UserType.safeValueOf(getValue(r, USER.TYPE)))
-				.setName(r.getValue(USER.NAME))
-				.setLogin(r.getValue(USER.LOGIN))
-				.setActive(AonEnumUtils.getBoolean(r.getValue(USER.ACTIVE)))
-				.setRegistry(checkField(r, REGISTRY.ID)
-				        ? RegistryFiller.build(r)
-				        : new Registry().setId(r.getValue(USER.REGISTRY)))
-				.setAuth(checkField(r, AUTH.ID) && r.getValue(AUTH.ID) != null
-						? AuthFiller.build(r).setUuid(hex(r.getValue(AUTH.ID)))
-						: new Auth().setAuth(r.getValue(USER.AUTH)).setUuid(hex(r.getValue(USER.AUTH))) )
-				.setShared(AonEnumUtils.getBoolean(r.getValue(USER.SHARED)))
-				.setToolbar(UserToolbar.safeValueOf(r.getValue(USER.TOOLBAR)))
-				.setEnterprise(r.getValue(USER.ENTERPRISE))
-				.setExpirationDate(getValue(r, USER.PASSWORDEXPIRATION))
-				;
-		}		
+        
+	    @Override
+	    public User apply(Record r) {
+	        return build(r, USER);
+	    }
+
+	    public static User build(Record r) {
+	        return build(r, USER);
+	    }
+
+	    public static User build(Record r, com.esferalia.aon.jooq.tables.User user) {
+	        if (user == null)
+	            user = USER;
+
+	        return new User()
+	            .setId(getValue(r, user.ID))
+	            .setDomain(
+	            		checkField(r, DOMAIN.ID)
+	            		&& checkField(r, user.DOMAIN)
+	            		&& Objects.equals(getValue(r, user.DOMAIN), getValue(r, DOMAIN.ID))
+	                    ? DomainFiller.build(r)
+	                    : new com.esferalia.aon.occam.api.model.Domain().setId(getValue(r, user.DOMAIN))
+	            )
+	            .setType(UserType.safeValueOf(getValue(r, user.TYPE)))
+	            .setName(getValue(r, user.NAME))
+	            .setLogin(getValue(r, user.LOGIN))
+	            .setActive(AonEnumUtils.getBoolean(getValue(r, user.ACTIVE)))
+	            .setRegistry(
+	                checkField(r, REGISTRY.ID)
+	                    ? RegistryFiller.build(r)
+	                    : new Registry().setId(getValue(r, user.REGISTRY))
+	            )
+	            .setAuth(
+	                checkField(r, AUTH.ID) && getValue(r, AUTH.ID) != null
+	                    ? AuthFiller.build(r).setUuid(hex(getValue(r, AUTH.ID)))
+	                    : new Auth().setAuth(getValue(r, user.AUTH)).setUuid(hex(getValue(r, user.AUTH)))
+	            )
+	            .setShared(AonEnumUtils.getBoolean(getValue(r, user.SHARED)))
+	            .setToolbar(UserToolbar.safeValueOf(getValue(r, user.TOOLBAR)))
+	            .setEnterprise(getValue(r, user.ENTERPRISE))
+	            .setExpirationDate(getValue(r, user.PASSWORDEXPIRATION))
+	            ;
+	    }
 	}
+
 	
     public static String hex(byte[] bytes) {
     	if ( bytes == null )
