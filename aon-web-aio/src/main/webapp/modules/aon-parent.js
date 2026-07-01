@@ -656,6 +656,7 @@ export class AonParent extends AonElement {
 
 		this.getApplication().addSidenavOptions3(invoiceOptions);
 
+		/*
 		let helpOptions = {
 			id: CONSTANT.HELP,
 			name: MSG.HELP.toUpperCase(),
@@ -677,6 +678,7 @@ export class AonParent extends AonElement {
 		};
 
 		this.getApplication().addSidenavOptions3(helpOptions);
+		*/
 
 		let appsDiv = this.createDiv();
 		appsDiv.id = this.APPS_DIV;
