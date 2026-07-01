@@ -2395,6 +2395,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		}
 	}
 	
+	@Override
+	public ArrayList<Scope> getUsedScopesInDomain(String domainName, int domain, String user) throws AonCoreException {
+		return AON.getUsedScopesInDomain(new Occam().setDomainName(domainName).setDomain(domain).setUser(user), domain).collect(Collectors.toCollection(ArrayList::new));
+	}
+	
 	// *********************** [DOMAIN STATUS]
 	@Override
 	public Domain saveDomainStatus(String domainName, int domain, String user, RegistryStatus newStatus, Date newExpDate) throws AonCoreException {

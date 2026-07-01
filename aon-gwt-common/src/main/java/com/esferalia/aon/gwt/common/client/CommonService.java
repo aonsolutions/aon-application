@@ -599,4 +599,5 @@ public interface CommonService extends RemoteService {
 		
 	
 	void reassignScope(String domainName, Integer domainId, String user, int originScope, int finalScope, boolean deleteOrigin) throws AonCoreException;
+	ArrayList<Scope> getUsedScopesInDomain(String domainName, int domain, String user) throws AonCoreException;
 }

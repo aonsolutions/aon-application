@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -41,13 +41,13 @@ public class AonReasignScopePanel extends AonCustomDialog {
 	private AonCustomListBox finalScope = new AonCustomListBox("Por \u00c1mbito");
 	private AonCustomToogleButton deleteOriginScope = new AonCustomToogleButton("Borrar \u00c1mbito sustituido");
 	
-	private LinkedList<Scope> scopeList;
+	private ArrayList<Scope> scopeList;
 	
 	private String domainName;
 	private Integer domainId;
 	private String user;
 	
-	public AonReasignScopePanel(String domainName, int domain, String user, LinkedList<Scope> scopeList, AonReasignScopePanelCallback callback) {
+	public AonReasignScopePanel(String domainName, int domain, String user, ArrayList<Scope> scopeList, AonReasignScopePanelCallback callback) {
 		initializeCommonService();
 		this.domainName = domainName;
 		this.domainId = domain;
@@ -75,11 +75,11 @@ public class AonReasignScopePanel extends AonCustomDialog {
 		
 		originScope.clearItems();
 		originScope.addItem("-", "");
-		this.scopeList.forEach(s -> originScope.addItem(s.getDescription(), s.getId().toString()));
+		this.scopeList.forEach(s -> originScope.addItem(s.getDomain().equals(domainId) ? ("(*) " + s.getDescription()) : s.getDescription(), s.getId().toString()));
 		
 		finalScope.clearItems();
 		finalScope.addItem("-", "");
-		this.scopeList.forEach(s -> finalScope.addItem(s.getDescription(), s.getId().toString()));
+		this.scopeList.stream().filter(s -> s.getDomain().equals(domainId)).forEach(s -> finalScope.addItem(s.getDescription(), s.getId().toString()));
 		
 		container.add(createRowPanel(originScope, finalScope, deleteOriginScope));
 		

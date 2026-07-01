@@ -259,6 +259,12 @@ public class SecurityImpl implements ISecurity {
 		ctx.getDslContext().transaction( 
 			configuration -> ScopeDAO.reassignAndDelete(ctx, domainId, fromScopeId, toScopeId));
 	}
+
+	@Override
+	public Stream<Scope> getUsedScopesInDomain(CloseableAONContext ctx, int domain) {
+		return ctx.getDslContext().transactionResult( configuration -> ScopeDAO.getUsedScopesInDomain(ctx, domain) );
+	}
+	
 	@Override
 	public Integer deleteScope(AONContext ctx, Integer scopeId) {
 		return SecurityDAO.deleteScope(ctx, scopeId);

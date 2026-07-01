@@ -529,8 +529,10 @@ export class AonHeader extends AonElement {
 			aonHeaderSearch.style.display = 'flex';
 
 
-			let aonHeaderCompanyName = this.getElement(this.AON_HEADER_COMPANY_NAME);
-			this.getCompanyName().then( name =>  aonHeaderCompanyName.innerHTML = name ) ;
+			//let aonHeaderCompanyName = this.getElement(this.AON_HEADER_COMPANY_NAME);
+			//this.getCompanyName().then( name =>  {
+			//	aonHeaderCompanyName.innerHTML = name; 
+			//} ) ;
 
 			if (!LS.isNewTheme() && !this.newTheme) {
 				let aonShowMenu = this.getElement('aonShowMenu');
@@ -587,7 +589,9 @@ export class AonHeader extends AonElement {
 		applications.className = 'aonMenuLeftopStart';
 		
 		let aonHeaderCompanyName = this.getElement(this.AON_HEADER_COMPANY_NAME);
-		this.getCompanyName().then( name =>  aonHeaderCompanyName.innerHTML = name ) ;
+		this.getCompanyName().then( name =>  {
+			aonHeaderCompanyName.innerHTML = name;
+		}) ;
 	}
 
 	timeControlStatus(signin) {
@@ -671,7 +675,9 @@ export class AonHeader extends AonElement {
 
 
 		let aonHeaderCompanyName = this.getElement(this.AON_HEADER_COMPANY_NAME);
-		this.getCompanyName(company).then(name => aonHeaderCompanyName.innerHTML = name  ); 
+		this.getCompanyName(company).then(name => {
+			aonHeaderCompanyName.innerHTML = name;
+		}); 
 
 		if (onlyOne) {
 			// aonHeaderHome.style.right = '140px';
