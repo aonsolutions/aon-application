@@ -1079,6 +1079,7 @@ export const STORE = 'Archivieren';
 export const STREET_TYPE = 'Straßenart';
 export const SUITE_MENU = "Menü Suite";
 export const SUMMARIZED = 'Zusammengefasst';
+export const SUMMARY = 'Zusammenfassung';
 export const SUPPLIED = 'Supplied';
 export const SUPPLIER = 'Supplier';
 export const SUPPLIERS = 'Suppliers';

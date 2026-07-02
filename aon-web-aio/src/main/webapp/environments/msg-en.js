@@ -1064,6 +1064,7 @@ export const STORE = 'Archive';
 export const STREET_TYPE = 'Street type';
 export const SUITE_MENU = "Suite menu";
 export const SUMMARIZED = 'Summarized';
+export const SUMMARY = 'Summary';
 export const SUPPLIED = 'Supplied';
 export const SUPPLIER = 'Supplier';
 export const SUPPLIERS = 'Suppliers';
