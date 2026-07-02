@@ -1770,7 +1770,7 @@ export const CONTENT_INDEX = {
 	description: MSG.MANUALS,
 	aonSymbol: AON_SYMBOLS.BOOK_OPEN,
 	symbol: MATERIAL_ICONS.MENU_BOOK,
-	goto: HELP.HELP_PORTAL_SITE,
+	//goto: HELP.HELP_PORTAL_SITE,
 };
 
 export function getConstNewApps(dur, isAyudaT) {
