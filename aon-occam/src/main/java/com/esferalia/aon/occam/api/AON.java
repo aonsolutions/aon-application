@@ -728,6 +728,12 @@ public class AON {
 		} 
 	}
 	
+	public static void closeUserScopeAuthorizations(String domainName, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getSecurity().closeUserScopeAuthorizations(ctx, domain, user, authUserScopes, endDate);
+		} 
+	}
+	
 	public static List<UserScopeFull> getUserScopeFullList(String domainName, Integer domain, String user, Integer scopeId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getSecurity().getUserScopeFullList(ctx, scopeId);

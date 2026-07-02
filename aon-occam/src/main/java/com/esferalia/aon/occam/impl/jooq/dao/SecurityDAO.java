@@ -1746,6 +1746,17 @@ public class SecurityDAO {
 		});
 	}
 	
+	public static void closeUserScopeAuthorizations(CloseableAONContext ctx, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate) {
+		authUserScopes.forEach(us -> {
+			ctx.getDslContext().update(USER_SCOPE)
+				.set(USER_SCOPE.END_DATE, AonDateUtils.toSql(endDate))
+				.set(USER_SCOPE.MODIFICATION_USER, user)
+				.set(USER_SCOPE.MODIFICATION_DATE, DSL.currentTimestamp())
+				.where(USER_SCOPE.ID.eq(us.getId()))
+				.execute();
+		});
+	}
+	
 	public static List<UserScopeFull> getUserScopeFullList(CloseableAONContext ctx, Integer scopeId) {
 		List<UserScopeFull> list = ctx.getDslContext().select()
 			.from(USER_SCOPE)

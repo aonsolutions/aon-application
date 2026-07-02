@@ -475,6 +475,7 @@ public interface CommonService extends RemoteService {
 	
 	List<UserScopeFull> getUserScopesByUser(String domainName, Integer domain, String user, Integer userId) throws AonCoreException;
 	void authorizateUserScopes(String currentDomainName, int currentDomain, String currentUser, UserScopeAuthorization userScopeAuthorization) throws AonCoreException;
+	void closeUserScopeAuthorizations(String domainName, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate) throws AonCoreException;
 	
 	List<UserScopeFull> getUserScopeList(String domainName, Integer domain, String user, Integer scopeId) throws AonCoreException;
 	void saveUserScope(String domainName, Integer domainId, String user, UserScope userScope) throws AonCoreException;

@@ -1471,6 +1471,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
+	public void closeUserScopeAuthorizations(String domainName, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate) throws AonCoreException {
+		AON.closeUserScopeAuthorizations(domainName, domain, user, authUserScopes, endDate);
+	}
+	
+	@Override
 	public List<UserScopeFull> getUserScopeList(String domainName, Integer domain, String user, Integer scopeId) throws AonCoreException {
 		List<UserScopeFull> list = AON.getUserScopeFullList(domainName, domain, user, scopeId);
 		return list;

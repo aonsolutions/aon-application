@@ -13,14 +13,36 @@ import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.OutlineStyle;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
+import com.google.gwt.event.dom.client.HasAllMouseHandlers;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.ProvidesResize;
+import com.google.gwt.user.client.ui.RequiresResize;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
 
 public class AonCustomDialog extends PopupPanel implements AonCustomDialogListener {
 
@@ -511,6 +533,22 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
         public void onDoubleClick(DoubleClickEvent event) {
             handleMaximize();
         }
+    }
+    
+    public void setRelativeSize(double widthPct, double heightPct) {
+        // Estirar la cadena interna hasta el widget de contenido
+        getContainerElement().getStyle().setWidth(100, Unit.PCT);
+        getContainerElement().getStyle().setHeight(100, Unit.PCT);
+        focusAll.setSize("100%", "100%");
+        flowPanel.setSize("100%", "100%");
+        flowPanel.getElement().getStyle().setProperty("display", "flex");
+        flowPanel.getElement().getStyle().setProperty("flexDirection", "column");
+        simplePanel.getElement().getStyle().setProperty("flex", "1 1 auto");
+        simplePanel.getElement().getStyle().setProperty("minHeight", "0");
+
+        int w = (int) (Window.getClientWidth() * widthPct / 100d);
+        int h = (int) (Window.getClientHeight() * heightPct / 100d);
+        setPixelSize(w, h);   // ya llama a simplePanel.onResize()
     }
 
     public void showLoaded() {
