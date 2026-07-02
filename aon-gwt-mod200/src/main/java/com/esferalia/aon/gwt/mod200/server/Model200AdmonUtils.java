@@ -734,7 +734,13 @@ public class Model200AdmonUtils {
 	//	SINVL Si se desea no realizar el proceso de validación y obtener directamente el documento de la declaración correspondiente (sin validar) en
 	//			formato PDF, se deberá enviar otra variable llamada "SINVL" sin	necesidad de informar ningún valor. Para que el proceso de impresión
 	//			sea coherente, el fichero debe estar bien formado, ya que no se aplica validación sobre su contenido.			
-	public static void serValiDos(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model ) {
+	public static void serValiDos(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model) {
+		
+		boolean fromTest = (resp == null);
+		if (fromTest) {
+			if (aeatParams.getErrores() == null)
+				aeatParams.setErrores(new ArrayList<String>());
+		}
 		
 		try {
 			System.out.println("Model200AdmonUtils_SerValiDos: " + model.getModel() + " " + model.getYear() + " " + model.getPeriod());
@@ -765,7 +771,10 @@ public class Model200AdmonUtils {
 				.send(request, HttpResponse.BodyHandlers.ofByteArray());
 			
 			if (response.statusCode() == 302) {
-				giveRedirectBack(resp, response, httpClient );				 
+				if (fromTest)
+					aeatParams.getErrores().add("ERROR 302");
+				else
+					giveRedirectBack(resp, response, httpClient );				 
 			} else {
 				String ct = getContentTypeHeader(response);
 				if (AonStringUtils.contains(ct, MimeType.JSON.getName())) {
@@ -776,25 +785,45 @@ public class Model200AdmonUtils {
 						// Respuesta correcta, devuelve JSON que contiene el PDF de la declaración en base64
 						JSONArray jsonPdf = jsonRespuesta.optJSONArray("pdf");						
 						if (jsonPdf != null && jsonPdf.length() > 0) {
-							giveBase64Back(resp, Base64.getDecoder().decode(jsonPdf.getString(0)), MimeType.PDF);
+							if (fromTest)
+								// Si se llama desde los test, se pone el PDF en la propiedad nrc de aeatParams
+								aeatParams.setNrc(jsonPdf.getString(0));
+							else
+								giveBase64Back(resp, Base64.getDecoder().decode(jsonPdf.getString(0)), MimeType.PDF);
 						} else {
-							giveExceptionBack(resp, "No se ha encontrado una respuesta válida por parte de la Agencia Tributaria. (PDF)");
+							if (fromTest)
+								aeatParams.getErrores().add("No se ha encontrado una respuesta válida por parte de la Agencia Tributaria. (PDF)");
+							else
+								giveExceptionBack(resp, "No se ha encontrado una respuesta válida por parte de la Agencia Tributaria. (PDF)");
 						}
 					} else if (jsonRespuesta.has("errores")) {
 						// Respuesta con errores, obtenemos los mensajes de error
 						JSONArray jsonErrores = jsonRespuesta.optJSONArray("errores");
 						if (jsonErrores != null) {
 							for (int i = 0; i < jsonErrores.length(); i++ ) {
-								aeatResponse.addError(jsonErrores.getString(i));
+								if (fromTest)
+									aeatParams.getErrores().add(jsonErrores.getString(i));
+								else
+									aeatResponse.addError(jsonErrores.getString(i));
 							}
 						}
-						manageWrongResponse(resp, aeatResponse, aeatParams);
+						if (!fromTest)
+							manageWrongResponse(resp, aeatResponse, aeatParams);
 					} else {
-						giveExceptionBack(resp, "No se ha encontrado una respuesta válida por parte de la Agencia Tributaria. (JSON)");
+						if (fromTest)
+							aeatParams.getErrores().add("No se ha encontrado una respuesta válida por parte de la Agencia Tributaria. (JSON)");
+						else
+							giveExceptionBack(resp, "No se ha encontrado una respuesta válida por parte de la Agencia Tributaria. (JSON)");
 					}					
 				} else if (AonStringUtils.contains(ct, MimeType.HTML.getName())) {
-						giveBase64Back(resp, response.body(), MimeType.HTML);					  
-				} else {					 					
+						if (fromTest)
+							aeatParams.getErrores().add("No se ha encontrado una respuesta válida por parte de la Agencia Tributaria. (HTML)");
+						else
+							giveBase64Back(resp, response.body(), MimeType.HTML);					  
+				} else {	
+					if (fromTest)
+						aeatParams.getErrores().add("No se ha encontrado una respuesta válida por parte de la Agencia Tributaria. (OTRO)");
+					else
 						giveExceptionBack(resp, "No se ha encontrado una respuesta válida por parte de la Agencia Tributaria.");
 				}
 			}
@@ -802,9 +831,12 @@ public class Model200AdmonUtils {
 			// Restore interrupted state...
 			Thread.currentThread().interrupt();
 		} catch (AonCoreException | IOException e) {
+			if (fromTest)
+				aeatParams.getErrores().add(e.getMessage());
+			else
 				giveExceptionBack(resp,e.getMessage());
 		}
 		
 	}
-
+	
 }
