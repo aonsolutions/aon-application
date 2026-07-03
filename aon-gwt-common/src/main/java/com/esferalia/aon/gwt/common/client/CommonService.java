@@ -110,6 +110,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -128,7 +129,6 @@ import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -473,6 +473,9 @@ public interface CommonService extends RemoteService {
 	Scope saveScopeAndAssign(String domainName, int domain, String user, Scope scope, boolean assignAllUsers, ArrayList<User> selectedUsers) throws AonCoreException;
 	void deleteScope(String domainName, int domain, String user, Integer scopeId) throws AonCoreException;
 	
+	List<UserScopeFull> getUserScopesByUser(String domainName, Integer domain, String user, Integer userId) throws AonCoreException;
+	void authorizateUserScopes(String currentDomainName, int currentDomain, String currentUser, UserScopeAuthorization userScopeAuthorization) throws AonCoreException;
+	
 	List<UserScopeFull> getUserScopeList(String domainName, Integer domain, String user, Integer scopeId) throws AonCoreException;
 	void saveUserScope(String domainName, Integer domainId, String user, UserScope userScope) throws AonCoreException;
 	void deleteUserScope(String domainName, Integer domain, String user, Integer userScopeId) throws AonCoreException;
@@ -596,4 +599,5 @@ public interface CommonService extends RemoteService {
 		
 	
 	void reassignScope(String domainName, Integer domainId, String user, int originScope, int finalScope, boolean deleteOrigin) throws AonCoreException;
+	ArrayList<Scope> getUsedScopesInDomain(String domainName, int domain, String user) throws AonCoreException;
 }

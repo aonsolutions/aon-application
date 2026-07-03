@@ -1119,6 +1119,7 @@ export const TAX = 'Tax';
 export const TAX_BASE = 'Tax Base';
 export const TAXES = 'Taxes';
 export const TAXES_DETAIL= 'Taxes Detail';
+export const TEMPORARY_AUTORIZATIONS = 'Temporary Authorizations';
 export const TEST_ENVIRONMENT = 'Test Environment';
 export const THEME = 'Theme';
 export const THEME_SELECTION = 'Theme selection';
