@@ -5110,3 +5110,28 @@ aonSwitchFilter{
 #aonSigninToolbarHeaderToolSectionSearchCountFilter{
 	display: none;
 }
+
+.aonInvoiceRecordDiv {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 5px;
+	padding: 2px 4px;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.aonInvoiceRecordDiv:hover {
+	background-color: var(--aonLightBlue);
+}
+
+.aonInvoiceRecordLabel {
+	color: var(--aonBlue);
+	font-weight: bold;
+	font-size: 16px;
+	margin: 1rem;
+}
+
+.aonInvoiceRecordValue {
+	margin: 1rem;
+}

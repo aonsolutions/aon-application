@@ -122,8 +122,18 @@ export class AonInvoiceRecord extends AonElement {
         card.setContent(contentDiv);   
         data.forEach(item => {
             let itemDiv = this.createElement(TAG.DIV);
-            itemDiv.textContent = `${item.label}: ${item.value}`;
-            itemDiv.style.marginBottom = "5px";
+            itemDiv.className = "aonInvoiceRecordDiv";
+
+            let labelSpan = this.createElement(TAG.SPAN);
+            labelSpan.textContent = item.label;
+            labelSpan.className = "aonInvoiceRecordLabel";
+
+            let valueSpan = this.createElement(TAG.SPAN);
+            valueSpan.textContent = item.value;
+            valueSpan.className = "aonInvoiceRecordValue";
+
+            itemDiv.appendChild(labelSpan);
+            itemDiv.appendChild(valueSpan);
             contentDiv.appendChild(itemDiv);
         });
     }
