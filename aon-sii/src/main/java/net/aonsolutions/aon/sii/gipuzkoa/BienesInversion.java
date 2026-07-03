@@ -144,11 +144,11 @@ public class BienesInversion extends SIIBuilt{
 			emisor.setNIF(vat.getRegistryDocument());
 		} else {
 			IDOtroType otro = new IDOtroType();
-			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
+			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getAeatCode()));
 
 			String document = vat.getRegistryDocument();
-			if (!document.substring(0, 2).equals(vat.getRegistryDocumentCountry().getIso2())) {
-				document = vat.getRegistryDocumentCountry().getIso2() + document;
+			if (!document.substring(0, 2).equals(vat.getRegistryDocumentCountry().getAeatCode())) {
+				document = vat.getRegistryDocumentCountry().getAeatCode() + document;
 			}
 			otro.setID(document);
 			otro.setIDType(IDType.NIF_IVA.getName());
