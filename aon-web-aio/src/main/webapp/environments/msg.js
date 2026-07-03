@@ -1086,6 +1086,7 @@ export const SITUATION = MSG.SITUATION;
 export const SIX_MONTHLY = MSG.SIX_MONTHLY;
 export const SUITE_MENU = MSG.SUITE_MENU;
 export const SUMMARIZED = MSG.SUMMARIZED;
+export const SUMMARY = MSG.SUMMARY;
 export const SUPERSET = 'Superset';
 export const SUPPLIED = MSG.SUPPLIED;
 export const SUPPLY_BY_CONSUMPTION = MSG.SUPPLY_BY_CONSUMPTION;

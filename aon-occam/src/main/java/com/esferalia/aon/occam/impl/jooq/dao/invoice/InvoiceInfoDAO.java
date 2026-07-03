@@ -57,7 +57,7 @@ public class InvoiceInfoDAO {
 			.stream()
 			.map(r -> {
 				Integer domainId = r.getValue(INVOICE_INFO.DOMAIN);
-				InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, domainId);
+				InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, domainId, false);
 				InvoiceInfo v = InvoiceInfoFiller.build(ctx, r);
 				fixUrl( icc, v );
 				return v;
@@ -79,7 +79,7 @@ public class InvoiceInfoDAO {
 		, InvoiceType invoiceType
 		, Date atDate
 	) {
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, domainId );
+		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, domainId, false);
 		return getMap(ctx, icc, domainId, invoiceId, invoiceType, atDate); 
 	}
 	

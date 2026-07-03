@@ -980,8 +980,12 @@ public class ServalInvoiceImport extends ImportUtils{
 			try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 				ctx.getDslContext().transaction(configuration -> {
 					fillExternalSalesSeriesNumber(ctx, invoice);
-					InvoiceDAO.insert(ctx, invoice);
-					FinanceDAO.insertFinances(ctx, invoice.getFinances());
+					Invoice auxInv = InvoiceDAO.insert(ctx, invoice);
+					auxInv.financeStream().forEach(finance -> {
+						finance.setInvoice(auxInv);
+						finance.setConcept(auxInv.getDocumentNumber());
+						FinanceDAO.insert(ctx, finance);
+					});
 					AccountingInvoiceDAO.saveCommunicationData(ctx, aonCtx, invoice);					
 				});
 			}

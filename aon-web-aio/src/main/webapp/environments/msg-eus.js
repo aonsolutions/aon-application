@@ -1050,6 +1050,7 @@ export const STORE = 'Artxibatu';
 export const STREET_TYPE = 'Bide mota';
 export const SUITE_MENU = "Suite menua";
 export const SUMMARIZED = 'Laburbildua';
+export const SUMMARY = 'Laburpena';
 export const SUPPLIED = 'Ordezkatuak';
 export const SUPPLY_BY_CONSUMPTION = 'Hornidura Kontsumoen Arabera';
 export const SUPPLIER = 'Hornitzaile';

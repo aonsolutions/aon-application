@@ -1065,6 +1065,7 @@ export const STORE = 'Archivar';
 export const STREET_TYPE = 'Tipo vía';
 export const SUITE_MENU = "Menú suite";
 export const SUMMARIZED = "Resumido";
+export const SUMMARY = 'Resumen';
 export const SUPPLIED = 'Suplidos';
 export const SUPPLIER = 'Proveedor';
 export const SUPPLIERS = 'Proveedores';

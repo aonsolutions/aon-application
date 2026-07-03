@@ -1105,6 +1105,7 @@ export const STORE = 'Archiver';
 export const STREET_TYPE = 'Type de voie';
 export const SUITE_MENU = "Menu suite";
 export const SUMMARIZED = 'Résumé';
+export const SUMMARY = 'Résumé';
 export const SUPPLIED = 'Fournis';
 export const SUPPLIER = 'Fournisseur';
 export const SUPPLIERS = 'Fournisseurs';

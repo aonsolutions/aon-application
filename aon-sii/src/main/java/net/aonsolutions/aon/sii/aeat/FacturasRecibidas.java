@@ -200,11 +200,11 @@ public class FacturasRecibidas extends SIIBuilt {
 			emisor.setNIF(vat.getRegistryDocument());
 		} else if(vat.isIntracommunity()){
 			IDOtroType otro = new IDOtroType();
-			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
+			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getAeatCode()));
 			String document = vat.getRegistryDocument();
-			if(!document.substring(0,2).equals(vat.getRegistryDocumentCountry().getIso2())) {
+			if(!document.substring(0,2).equals(vat.getRegistryDocumentCountry().getAeatCode())) {
 				boolean isGrecia = Country.GR.equals(vat.getRegistryDocumentCountry());
-				String countryDocument = isGrecia ? "EL" : vat.getRegistryDocumentCountry().getIso2();
+				String countryDocument = isGrecia ? "EL" : vat.getRegistryDocumentCountry().getAeatCode();
 				document = countryDocument + document;
 			}
 			otro.setID(document);		
@@ -212,7 +212,7 @@ public class FacturasRecibidas extends SIIBuilt {
 			emisor.setIDOtro(otro);
 		} else {
 			IDOtroType otro = new IDOtroType();
-			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
+			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getAeatCode()));
 			otro.setID(vat.getRegistryDocument());
 			otro.setIDType(IDType.valueOf(vat.getRegistryDocumentType()).getName());
 			emisor.setIDOtro(otro);
@@ -455,11 +455,11 @@ public class FacturasRecibidas extends SIIBuilt {
 			emisor.setNIF(vat.getRegistryDocument());
 		} else if(vat.isIntracommunity()){
 			IDOtroType otro = new IDOtroType();
-			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
+			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getAeatCode()));
 			String document = vat.getRegistryDocument();
-			if(!document.substring(0,2).equals(vat.getRegistryDocumentCountry().getIso2())) {
+			if(!document.substring(0,2).equals(vat.getRegistryDocumentCountry().getAeatCode())) {
 				boolean isGrecia = Country.GR.equals(vat.getRegistryDocumentCountry());
-				String countryDocument = isGrecia ? "EL" : vat.getRegistryDocumentCountry().getIso2();
+				String countryDocument = isGrecia ? "EL" : vat.getRegistryDocumentCountry().getAeatCode();
 				document = countryDocument + document;
 			}
 			otro.setID(document);		
@@ -467,7 +467,7 @@ public class FacturasRecibidas extends SIIBuilt {
 			emisor.setIDOtro(otro);
 		} else {
 			IDOtroType otro = new IDOtroType();
-			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
+			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getAeatCode()));
 			otro.setID(vat.getRegistryDocument());
 			otro.setIDType(IDType.valueOf(vat.getRegistryDocumentType()).getName());
 			emisor.setIDOtro(otro);
@@ -551,7 +551,7 @@ public class FacturasRecibidas extends SIIBuilt {
 			emisor.setNIF(invoice.getRegistryDocument());
 		} else {
 			IDOtroType otro = new IDOtroType();
-			otro.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
+			otro.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getAeatCode()));
 			otro.setID(invoice.getRegistryDocument());
 			otro.setIDType(IDType.valueOf(invoice.getRegistryDocumentType()).getName());
 			emisor.setIDOtro(otro);
@@ -646,7 +646,7 @@ public class FacturasRecibidas extends SIIBuilt {
 			contraparte.setNIF(vat.getRegistryDocument());
 		} else {
 			IDOtroType otro = new IDOtroType();
-			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
+			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getAeatCode()));
 			otro.setID(vat.getRegistryDocument());
 			otro.setIDType(vat.getRegistryDocumentCountry().equals(Country.ES) ? 
 				IDType.NO_CENSADO.getName() : IDType.valueOf(vat.getRegistryDocumentType()).getName());
@@ -663,12 +663,12 @@ public class FacturasRecibidas extends SIIBuilt {
 			contraparte.setNIF(vat.getRegistryDocument());
 		} else {
 			IDOtroType otro = new IDOtroType();
-			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
+			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getAeatCode()));
 
 			String document = vat.getRegistryDocument();
-			if(!document.substring(0,2).equalsIgnoreCase(vat.getRegistryDocumentCountry().getIso2())) {
+			if(!document.substring(0,2).equalsIgnoreCase(vat.getRegistryDocumentCountry().getAeatCode())) {
 				boolean isGrecia = Country.GR.equals(vat.getRegistryDocumentCountry());
-				String countryDocument = isGrecia ? "EL" : vat.getRegistryDocumentCountry().getIso2();
+				String countryDocument = isGrecia ? "EL" : vat.getRegistryDocumentCountry().getAeatCode();
 				document = countryDocument + document;
 			}
 			otro.setID(document);		

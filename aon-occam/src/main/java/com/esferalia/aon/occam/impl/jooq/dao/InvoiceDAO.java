@@ -548,7 +548,7 @@ public class InvoiceDAO {
 	}
 	
 	public static int getNextNumber(AONContext ctx, Byte[] types, String series ) {
-		InvoiceCommunicationConfiguration comConfig = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId());
+		InvoiceCommunicationConfiguration comConfig = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId(), false);
 		if((comConfig.hasCommunication()) 
 			&& InvoiceType.contains(types, InvoiceType.SALES)) {
 			return getCommunicationNextNumber(ctx, types, series);
@@ -1090,7 +1090,7 @@ public class InvoiceDAO {
 
 		// ONLY IF IS COMMUNICATION.
 		if (invoice.isSales() && invoice.getNumber() > 0) {
-			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId());
+			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId(), false);
 			if((icc.hasCommunication())) {
 				InvoiceTrackingDAO.insert(ctx, invoice, InvoiceTrackingStatus.DELETED);
 			}
