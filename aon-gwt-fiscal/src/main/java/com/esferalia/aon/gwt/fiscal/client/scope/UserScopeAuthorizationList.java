@@ -51,7 +51,7 @@ public abstract class UserScopeAuthorizationList extends AonCustomDockLayout {
 	
 	private AonCustomListBox scopeOwnerLB = new AonCustomListBox("Autorizado temporal \u00e1mbito");
 	private AonCustomDateBox startDate = new AonCustomDateBox("F. Inicio");
-	private AonCustomDateBox endDate = new AonCustomDateBox("F. Inicio");
+	private AonCustomDateBox endDate = new AonCustomDateBox("F. Fin");
 	
 	private SimplePanel tableContainer;
 	private ScrollPanel tableScrollPanel;

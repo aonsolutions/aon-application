@@ -59,6 +59,8 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 	
 	private boolean showActiveActivities = true;
 	
+	private List<Activity> enterpriseActivities;
+	
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 
 	private static enum COLS {
@@ -354,8 +356,9 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 		COMMON_SERVICE.getEnterpriseActivities(domainName, domain, user, registry, new AsyncCallback<List<Activity>>() {
 
 			@Override
-			public void onSuccess(List<Activity> enterpriseActivities) {
-				List<Activity> parseEnterpriseActivities = enterpriseActivities.stream().filter(ac -> (showActiveActivities && (ac.getEndDate() == null || ac.getEndDate().after(new Date()))) || !showActiveActivities).collect(Collectors.toList());
+			public void onSuccess(List<Activity> enterpriseActivitiesDB) {
+				List<Activity> parseEnterpriseActivities = enterpriseActivitiesDB.stream().filter(ac -> (showActiveActivities && (ac.getEndDate() == null || ac.getEndDate().after(new Date()))) || !showActiveActivities).collect(Collectors.toList());
+				enterpriseActivities = enterpriseActivitiesDB;
 				success.accept(parseEnterpriseActivities);
 			}
 
@@ -404,6 +407,16 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 					public void onLoadedEnd() {
 						dialog.showLoaded();
 					}
+
+					@Override
+					public boolean existsMainEnterpriseActivity(Integer currentEnterpriseActivityId) {
+						return enterpriseActivities.stream().anyMatch(ac -> ac.isPrincipal() && (null == currentEnterpriseActivityId || !ac.getId().equals(currentEnterpriseActivityId)) );
+					}
+
+					@Override
+					public boolean isEmptyActivities() {
+						return enterpriseActivities.isEmpty();
+					}
 				});
 
 		dialog.add(marketingCampaignPanel);
@@ -430,6 +443,16 @@ public abstract class EnterpriseActivityTable extends ScrollPanel {
 					@Override
 					public void onLoadedEnd() {
 						dialog.showLoaded();
+					}
+
+					@Override
+					public boolean existsMainEnterpriseActivity(Integer currentEnterpriseActivityId) {
+						return enterpriseActivities.stream().anyMatch(ac -> ac.isPrincipal() && (null == currentEnterpriseActivityId || !ac.getId().equals(currentEnterpriseActivityId)) );
+					}
+
+					@Override
+					public boolean isEmptyActivities() {
+						return enterpriseActivities.isEmpty();
 					}
 				});
 

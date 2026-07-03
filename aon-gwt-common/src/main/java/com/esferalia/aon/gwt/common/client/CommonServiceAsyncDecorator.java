@@ -1336,6 +1336,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 	
 	@Override
+	public void closeUserScopeAuthorizations(String domainName, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.closeUserScopeAuthorizations(domainName, domain, user, authUserScopes, endDate, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
 	public void getUserScopeList(String domainName, Integer domain, String user, Integer scopeId, AsyncCallback<List<UserScopeFull>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getUserScopeList(domainName, domain, user, scopeId, new AsyncCallbackWrapper<>(callback));

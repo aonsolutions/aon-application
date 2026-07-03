@@ -13,10 +13,14 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
@@ -29,6 +33,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -37,8 +42,9 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.datepicker.client.CalendarUtil;
 
-public abstract class UserScopeAviableList extends AonCustomDockLayout {
+public class UserScopeAuthorizationEndList extends AonCustomDockLayout {
 	
 	// ------------------------------------------------- CommonServiceAsync
 
@@ -76,13 +82,15 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 	// ------------------------------------------------- Variables
 
 	private HTMLPanel container;
+	private HTMLPanel messagePanel;
 	
 	private AonTableButton resetSearchButton;
 	private AonTableButton checkAll; 
 	private AonTableButton uncheckAll;
 	
-	private AonCustomListBox scopeOwnerLB = new AonCustomListBox("Usuario");
-	private AonTableButton addAviableButton = new AonTableButton("Autorizar al usuario", AON.CSS.aonIconKeyboardDoubleArrowRight());
+	private AonCustomListBox scopeOwnerLB = new AonCustomListBox("Autorizado \u00e1mbito");
+	private AonCustomDateBox endAuthorizationDate = new AonCustomDateBox("Fin Autorizaci\u00f3n");
+	private AonTableButton closeAuthorizationButton = new AonTableButton("Autorizar al usuario", AON.CSS.aonIconKeyboardDoubleArrowRight());
 	
 	private SimplePanel tableContainer;
 	private ScrollPanel tableScrollPanel;
@@ -137,8 +145,8 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 	
 	// ------------------------------------------------- Constructor
 	
-	public UserScopeAviableList(RegistryModuleOptions options) {
-		super("\u00e1mbitos");
+	public UserScopeAuthorizationEndList(RegistryModuleOptions options) {
+		super("Autorizado \u00e1mbito");
 		
 		initializeCommonService();
 		
@@ -161,12 +169,21 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 		container = new HTMLPanel("");
 		container.addStyleName(AON.CSS.aonFlexColumn2());
 		
+		messagePanel = new HTMLPanel("");
+		container.add(messagePanel);
+		
+		HTMLPanel row = new HTMLPanel("");
+		row.addStyleName(AON.CSS.aonItemFlex());
+		row.getElement().getStyle().setProperty("padding", "1rem 1rem 0");
+		
 		scopeOwnerLB.clearItems();
 		scopeOwnerLB.addItem("-", AonStringUtils.EMPTY);
 		scopeOwnerLB.addChangeHandler(e -> onSearch());
-		scopeOwnerLB.getElement().getStyle().setProperty("padding", "0 1rem");
 		
-		container.add(scopeOwnerLB);
+		row.add(scopeOwnerLB);
+		row.add(endAuthorizationDate);
+		
+		container.add(row);
 	
 		tableContainer = new SimpleLayoutPanel();
 		tableContainer.setHeight("100%");
@@ -187,9 +204,9 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 	private void addButtonsToolbar() {
 		resetSearchButton = new AonTableButton(AON.MSG.clean() + " filtros", AON.CSS.aonIconClear());
 		resetSearchButton.addClickHandler(e -> {
-			hideMessage();
 			getSearchTextBox().setValue(null, false);
 			scopeOwnerLB.setValue("");
+			endAuthorizationDate.setValue(null);
 			onSearch();
 		});
 		addToolbarButton(resetSearchButton);
@@ -208,15 +225,41 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 		checksPanel.add(uncheckAll);
 		addToolbarButton(checksPanel);
 		
-		addAviableButton = new AonTableButton("Autorizar al usuario", AON.CSS.aonIconGroupAdd());
-		addAviableButton.getElement().getStyle().setProperty("background-repeat", "no-repeat");
-		addAviableButton.setEnabled(false);
-		addAviableButton.addClickHandler(e -> {
-			List<UserScopeFull> authUserScopes = userScope.stream().filter(us -> selectedUserScopes.contains(us.getId())).collect(Collectors.toList());
-			onAuthorizeUserScopes(authUserScopes);
+		closeAuthorizationButton = new AonTableButton("Finalizar autorizaciones seleccionadas", AON.CSS.aonIconGroupOff());
+		closeAuthorizationButton.getElement().getStyle().setProperty("background-repeat", "no-repeat");
+		closeAuthorizationButton.setEnabled(false);
+		closeAuthorizationButton.addClickHandler(e -> {
+			
+			AonDialog dialog = new AonDialog("Finalizar autorizaciones seleccionadas",
+					new HTML("Se va a proceder a finalizar las autorizaciones seleccionadas.<br>\u00bfEsta seguro que desea proceder con la finalizaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+			
+			dialog.confirm(new AonAcceptDialogCallback() {
+
+				@Override
+				public void onCancel() {
+					closeAuthorizationButton.setEnabled(true);
+				}
+
+				@Override
+				public void onAccept() {
+					closeAuthorizationButton.setEnabled(true);
+					List<UserScopeFull> authUserScopes = userScope.stream().filter(us -> selectedUserScopes.contains(us.getId())).collect(Collectors.toList());
+					closeUserScopeAuthorizations(end -> {
+						AonMessagePanel.showSuccess(messagePanel, "Se han finalizado las autorizaciones seleccionadas");
+						onSearch();
+						
+						new Timer() {
+							@Override
+							public void run() {
+								AonMessagePanel.hideMessage(messagePanel);
+							}
+						}.schedule(2000);
+					}, authUserScopes);
+				}
+			});
 		});
-		addToolbarButton(addAviableButton);
 		
+		addToolbarButton(closeAuthorizationButton);
 	}
 	
 	private void checkAllAviable(boolean check) {
@@ -245,7 +288,7 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 		}
 
 		aviableCount.setText((selectedUserScopes.size() > 0) ? AonNumberUtils.toString(selectedUserScopes.size()) : "");
-		addAviableButton.setEnabled(selectedUserScopes.size() > 0);
+		closeAuthorizationButton.setEnabled(selectedUserScopes.size() > 0);
 	}
 	
 
@@ -322,15 +365,12 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 			}
 
 			aviableCount.setText((selectedUserScopes.size() > 0) ? AonNumberUtils.toString(selectedUserScopes.size()) : "");
-			addAviableButton.setEnabled(selectedUserScopes.size() > 0);
+			closeAuthorizationButton.setEnabled(selectedUserScopes.size() > 0);
 		
 		});
 		
-		Integer userId = AonStringUtils.isBlank(scopeOwnerLB.getValue()) ? null : Integer.valueOf(scopeOwnerLB.getValue());
-		checkButton.setEnabled(userScope_.getOwner() == null || userScope_.getOwner().getId() == null || userScope_.getOwner().getId().equals(userId));
-		
 		if(null != userAuthorizationScope && !userAuthorizationScope.isEmpty())
-			checkButton.setEnabled(userAuthorizationScope.stream().noneMatch(us -> us.getScope().getId().equals(userScope_.getScope().getId()) && us.getEndDate() == null));
+			checkButton.setEnabled(userAuthorizationScope.stream().noneMatch(us -> us.getScope().getId().equals(userScope_.getScope().getId())));
 		
 		tab.addRow(row, checkButton, COLS.CHK.getColWidth());
 		
@@ -389,7 +429,7 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 		});
 		
 		tab.addRow(row, userScope_.getScope().getScopeDomains().isEmpty() ? new Label() : infoButon, COLS.INF.getColWidth());
-
+		
 		aviableUserScopes.put(userScope_.getId(), new UserScopeRow(tab.getRowsCount(), userScope_));
 	}
 	
@@ -404,13 +444,14 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 		Integer userId = AonStringUtils.isBlank(scopeOwnerLB.getValue()) ? null : Integer.valueOf(scopeOwnerLB.getValue());
 		
 		if(null == userId) {
-			showWarning("Debe seleccionar un propietario de \u00e1mbito");
+			AonMessagePanel.showWarning(messagePanel, "Debe seleccionar un usuario para poder buscar los \u00e1mbitos autorizados");
+			
 			success.accept(new ArrayList<UserScopeFull>());
 				
 			new Timer() {
 				@Override
 				public void run() {
-					hideMessage();
+					AonMessagePanel.hideMessage(messagePanel);
 				}
 			}.schedule(2000);
 			
@@ -421,13 +462,13 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 
 			@Override
 			public void onSuccess(List<UserScopeFull> result) {
-				userScope = result;
+				userScope = result.stream().filter(us -> null != us.getOwner() && null != us.getOwner().getId() && !us.getOwner().getId().equals(userId) && null == us.getEndDate()).collect(Collectors.toList());
 				success.accept(userScope);
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
-				showError(caught.getMessage());
+				AonMessagePanel.showError(messagePanel, caught.getMessage());
 			}
 		});
 	}
@@ -442,7 +483,42 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				showError(caught.getMessage());
+				AonMessagePanel.showError(messagePanel, caught.getMessage());
+			}
+		});
+	}
+	
+	private void closeUserScopeAuthorizations(Consumer<Void> success, List<UserScopeFull> authUserScopes) {
+		Date endDate = endAuthorizationDate.getValue();
+		
+		Date yesterday = new Date();
+		CalendarUtil.addDaysToDate(yesterday, -1);
+		
+		Date leastDate = authUserScopes.stream().map(us -> us.getStartDate()).min(Date::compareTo).orElse(null);
+		
+		if(null == endDate || endDate.before(yesterday) || endDate.before(leastDate)) {
+			AonMessagePanel.showWarning(messagePanel, "Debe seleccionar una fecha de fin de autorizaci\u00f3n igual o superior a la fecha actual");
+			
+			new Timer() {
+				@Override
+				public void run() {
+					AonMessagePanel.hideMessage(messagePanel);
+				}
+			}.schedule(2000);
+			
+			return;
+		}
+		
+		commonService.closeUserScopeAuthorizations(options.getDomainName(), options.getDomain(), options.getUser(), authUserScopes, endDate, new AsyncCallback<Void>() {
+
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, caught.getMessage());
 			}
 		});
 	}
@@ -451,11 +527,5 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 		Integer userId = AonStringUtils.isBlank(scopeOwnerLB.getValue()) ? null : Integer.valueOf(scopeOwnerLB.getValue());
 		return userId;
 	}
-	
-	protected abstract void showWarning(String message);
-	protected abstract void showError(String message);
-	protected abstract void hideMessage();
-
-	protected abstract void onAuthorizeUserScopes(List<UserScopeFull> selectedUserScopes);
 	
 }

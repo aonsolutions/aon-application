@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -95,6 +96,7 @@ public interface ISecurity {
 	public Integer getScopesCount(CloseableAONContext ctx, ScopeParams params);
 	public List<UserScopeFull> getUserScopesByUserList(CloseableAONContext ctx, Integer userId);
 	public void authorizateUserScopes(CloseableAONContext ctx, int domain, String user, UserScopeAuthorization userScopeAuthorization);
+	public void closeUserScopeAuthorizations(CloseableAONContext ctx, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate);
 	public List<UserScopeFull> getUserScopeFullList(CloseableAONContext ctx, Integer scopeId);
 	
 	public void assignAuthToUser(AONContext ctx, User user, byte[] auth);
@@ -165,5 +167,6 @@ public interface ISecurity {
 	public List<RegistryRelationship> getRegistryRelationships(CloseableAONContext ctx, int domainId);
 	
 	public Stream<DomainCompany> getAviableDomainsForSync(CloseableAONContext ctx, boolean isSig, DomainFilter filter);
+	
 
 }
