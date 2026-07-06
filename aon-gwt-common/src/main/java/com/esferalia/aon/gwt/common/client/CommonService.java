@@ -129,6 +129,7 @@ import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -488,7 +489,8 @@ public interface CommonService extends RemoteService {
 	List<Domain> getDomains(String domainName, Integer domainId, String user) throws AonCoreException;
 	
 	ArrayList<User> getUsers(String currentDomainName, int currentDomain, String currentUser) throws AonCoreException;
-
+	ArrayList<User> getUsers(String currentDomainName, int currentDomain, String currentUser, String description) throws AonCoreException;
+	
 	// **************************************************
 	// ******************************************** [TAG]
 	// **************************************************

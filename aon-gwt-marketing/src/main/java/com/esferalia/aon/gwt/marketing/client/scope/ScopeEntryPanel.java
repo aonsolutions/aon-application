@@ -117,7 +117,10 @@ public abstract class ScopeEntryPanel extends AonCustomDockLayout {
 			if(AonStringUtils.isBlank(description.getValue()) || AonStringUtils.isBlank(description.getValue())) {
 				saveButton.setEnabled(true);
     			AonMessagePanel.showWarning(messagePanel, "El campo descripci\u00f3n es obligatorio");
-    		} else {
+    		} else if(existsScopeDescription(description.getValue(), scope.getId())) {
+				saveButton.setEnabled(true);
+				AonMessagePanel.showWarning(messagePanel, "Ya existe un \u00e1mbito con la descripci\u00f3n <b>" + description.getValue() + "</b>");
+			} else {
     			AonMessagePanel.showLoading(messagePanel, "Guardando \u00e1mbito ...");
     			
     			scope.setDescription(description.getValue());
@@ -278,7 +281,7 @@ public abstract class ScopeEntryPanel extends AonCustomDockLayout {
 		newButton.addClickHandler(e -> showUserScopeDialog());
 		
 		AonCustomCard userScopeCard = new AonCustomCard("Usuarios", newButton);
-		
+		userScopeCard.setToolbarWidgetShown();
 		userScopeTable = new UserScopeTable(options.getDomainName(), options.getDomain(), options.getUser(), this.scope) {
 
 			@Override
@@ -301,6 +304,7 @@ public abstract class ScopeEntryPanel extends AonCustomDockLayout {
 			newEntepriseButton.addClickHandler(e -> showDomainScopeDialog());
 			
 			AonCustomCard domainScopeCard = new AonCustomCard("Empresas (Dominios)", newEntepriseButton);
+			domainScopeCard.setToolbarWidgetShown();
 			
 			domainScopeTable = new DomainScopeTable(options.getDomainName(), options.getDomain(), options.getUser(), this.scope) {
 
@@ -404,5 +408,6 @@ public abstract class ScopeEntryPanel extends AonCustomDockLayout {
 	protected abstract ScopeParams getScopeListParams();
 	
 	protected abstract void onScopeSelectionChange(Scope scope, Integer position);
+	protected abstract boolean existsScopeDescription(String description, Integer scopeId);
 
 }

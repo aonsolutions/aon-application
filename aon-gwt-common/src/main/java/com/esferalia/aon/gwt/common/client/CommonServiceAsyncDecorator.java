@@ -1389,6 +1389,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		serviceAsync.getUsers(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
 	}
 	
+	@Override
+	public void getUsers(String domainName, int domainId, String user, String description, AsyncCallback<ArrayList<User>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getUsers(domainName, domainId, user, description, new AsyncCallbackWrapper<>(callback));
+	}
+	
 	// **************************************************
 	// ******************************************** [TAG]
 	// **************************************************
