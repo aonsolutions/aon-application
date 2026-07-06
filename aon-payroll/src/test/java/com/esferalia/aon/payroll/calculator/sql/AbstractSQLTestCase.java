@@ -645,6 +645,14 @@ public abstract class AbstractSQLTestCase {
 				.set(DOMAIN.PARENT, parent).set(DOMAIN.DESCRIPTION, "").returning().fetchOne();
 	}
 
+	public static final DomainRecord newDomain(AONContext aonContext, String domainName, String domainDescription) {
+		return aonContext.getDslContext().insertInto(DOMAIN)
+				.set(DOMAIN.OWNER, "")
+				.set(DOMAIN.NAME, domainName)
+				.set(DOMAIN.DESCRIPTION, domainDescription)
+				.returning().fetchOne();
+	}
+
 	public static final AgreementRecord newAgreement(AONContext aonContext) {
 		// Add a domain, with a generated ID
 		DomainRecord domain = newDomain(aonContext);
@@ -1009,6 +1017,31 @@ public abstract class AbstractSQLTestCase {
 
 		return contract;
 	}
+
+	public static final RegistryRecord newEnterprise(AONContext aonContext, int domainId, String enterpriseName,String document, String documentCountry, DocumentType documentType, int scopeId) {
+
+		RegistryRecord enterprise = aonContext.getDslContext()
+				.insertInto(REGISTRY).set(REGISTRY.DOMAIN, domainId)
+				.set(REGISTRY.NAME, enterpriseName)
+				.set(REGISTRY.ALIAS, enterpriseName)
+				.set(REGISTRY.DOCUMENT, document)
+				.set(REGISTRY.DOCUMENT_COUNTRY, documentCountry)
+				.set(REGISTRY.DOCUMENT_TYPE, (byte) documentType.ordinal())
+				.set(REGISTRY.TYPE, (byte) RegistryType.LEGAL.ordinal()).returning()
+				.fetchOne();
+
+		aonContext.getDslContext()
+		.insertInto(ENTERPRISE)
+		.set(ENTERPRISE.DOMAIN, domainId)
+		.set(ENTERPRISE.REGISTRY, enterprise.getId())
+		.set(ENTERPRISE.SCOPE, scopeId) // Assuming scopeId is defined elsewhere in your code
+		.execute();
+
+		return enterprise;
+
+	}
+	
+
 	public static final EnterpriseActivityRecord newEnterpriseActivity(AONContext aonContext, int domainId, int scopeId,
 			SSRegimeType ssRegimeType) {
 		return newEnterpriseActivity(aonContext, domainId, scopeId, ssRegimeType, null);

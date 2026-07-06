@@ -3485,7 +3485,18 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
 
 	@SuppressWarnings("serial")
-	ContractRecord contract = newContract(aonContext, ccc, ContractCode.C300, "07");
+	ContractRecord contract = newContract(
+			aonContext, 
+			ccc, 
+			new ContractCode [] {
+					ContractCode.C300,
+					ContractCode.C309,
+					ContractCode.C330,
+					ContractCode.C339,
+					ContractCode.C350,
+					ContractCode.C389,
+			}[ (int) Math.round(Math.random() * 5.00)] , 
+			"07");
 	addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(),
 		ContextVariable.PARTIAL_FACTOR.getName(), "1.00");
 	Date startDate = getFirstDayOfYear(getToday());
@@ -3511,6 +3522,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	;
 
     }
+
 
     @Test
     public void testCretaTiempoParcialWithoutH01I() throws ExpressionException, SQLException, SalaryException,
