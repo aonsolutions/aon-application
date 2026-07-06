@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -33,6 +34,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.AuthDevice;
@@ -88,9 +90,13 @@ public interface ISecurity {
 	public boolean canScopeBeDeleted(AONContext ctx, Integer domainId, Integer scopeId);
 	public void reassignScope(AONContext ctx, Integer domainId, Integer fromScopeId, Integer toScopeId);
 	public void reassignAndDeleteScope(AONContext ctx, Integer domainId, Integer fromScopeId, Integer toScopeId);
+	public Stream<Scope> getUsedScopesInDomain(CloseableAONContext ctx, int domain);
 	
 	public List<Scope> getScopeList(CloseableAONContext ctx, ScopeParams params);
 	public Integer getScopesCount(CloseableAONContext ctx, ScopeParams params);
+	public List<UserScopeFull> getUserScopesByUserList(CloseableAONContext ctx, Integer userId);
+	public void authorizateUserScopes(CloseableAONContext ctx, int domain, String user, UserScopeAuthorization userScopeAuthorization);
+	public void closeUserScopeAuthorizations(CloseableAONContext ctx, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate);
 	public List<UserScopeFull> getUserScopeFullList(CloseableAONContext ctx, Integer scopeId);
 	
 	public void assignAuthToUser(AONContext ctx, User user, byte[] auth);
@@ -161,5 +167,6 @@ public interface ISecurity {
 	public List<RegistryRelationship> getRegistryRelationships(CloseableAONContext ctx, int domainId);
 	
 	public Stream<DomainCompany> getAviableDomainsForSync(CloseableAONContext ctx, boolean isSig, DomainFilter filter);
+	
 
 }

@@ -56,8 +56,8 @@ export class AonPayrollCard extends AonElement {
     let data = [];
     try {
       let filter = this.getApplicationParent() ? this.getApplicationParent()._filter : this._filter;
-      let datos = []; 
-      if(this.dur.isEmployee())  {
+      let datos = [];       
+      if(this.dur.isEmployee() || this.dur.isPayrollEmployee()) { 
         if(!filter) filter = {
           endDate: AonDateUtils.getLastMonthLastDayFormat(new Date()),
         }
@@ -167,7 +167,7 @@ export class AonPayrollCard extends AonElement {
       year.innerHTML = new Date(Date.parse(payroll.endDate)).getFullYear();
       leftContent.appendChild(year);
 
-      if(!this.dur.isEmployee() && payroll.employeeName) {
+      if(!this.dur.isEmployee() && !this.dur.isPayrollEmployee() && payroll.employeeName) {
         let name = this.createElement(TAG.SPAN);
         name.style.fontSize = "1rem";
         name.style.color = "rgb(51, 169, 169)";

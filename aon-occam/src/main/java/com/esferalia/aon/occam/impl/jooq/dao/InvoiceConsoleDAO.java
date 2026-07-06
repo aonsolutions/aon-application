@@ -160,7 +160,7 @@ public class InvoiceConsoleDAO {
 //		System.out.println( select .getSQL(ParamType.INLINED) );
 //		System.out.println("-----------------------------------------------");
 		
-		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, params.getDomain() );
+		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, params.getDomain(), false);
 		
 		System.out.println( select.getSQL(ParamType.INLINED) );
 		

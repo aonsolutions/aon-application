@@ -1051,6 +1051,7 @@ export const STORE = 'Arquivar';
 export const STREET_TYPE = 'Tipo de vía';
 export const SUITE_MENU = "Menu suite";
 export const SUMMARIZED = "Resumido";
+export const SUMMARY = 'Resumo';
 export const SUPPLIED = 'Suplidos';
 export const SUPPLY_BY_CONSUMPTION = 'Aprovisionamento segundo Consumo';
 export const SUPPLIER = 'Provedor';

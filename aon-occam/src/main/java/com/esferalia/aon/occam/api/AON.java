@@ -214,6 +214,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
@@ -678,14 +679,22 @@ public class AON {
 			return getSecurity().canScopeBeDeleted(ctx, domainId, scopeId);
 		}
 	}
+	
 	public static void reassignScope(Occam occam, Integer domainId, Integer fromScopeId, Integer toScopeId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			getSecurity().reassignScope(ctx, domainId, fromScopeId, toScopeId);
 		}
 	}
+	
 	public static void reassignAndDeleteScope(Occam occam, Integer domainId, Integer fromScopeId, Integer toScopeId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			getSecurity().reassignAndDeleteScope(ctx, domainId, fromScopeId, toScopeId);
+		}
+	}
+
+	public static Stream<Scope> getUsedScopesInDomain(Occam occam, int domain) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getSecurity().getUsedScopesInDomain(ctx, domain);
 		}
 	}
 	
@@ -707,6 +716,24 @@ public class AON {
 		} 
 	}
 
+	public static List<UserScopeFull> getUserScopesByUserList(String domainName, Integer domain, String user, Integer userId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getSecurity().getUserScopesByUserList(ctx, userId);
+		} 
+	}
+	
+	public static void authorizateUserScopes(String domainName, int domain, String user, UserScopeAuthorization userScopeAuthorization) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getSecurity().authorizateUserScopes(ctx, domain, user, userScopeAuthorization);
+		} 
+	}
+	
+	public static void closeUserScopeAuthorizations(String domainName, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getSecurity().closeUserScopeAuthorizations(ctx, domain, user, authUserScopes, endDate);
+		} 
+	}
+	
 	public static List<UserScopeFull> getUserScopeFullList(String domainName, Integer domain, String user, Integer scopeId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getSecurity().getUserScopeFullList(ctx, scopeId);
@@ -8263,8 +8290,12 @@ public class AON {
 	
 	// INVOICE COMMUNICATION CONFIGURATION
 	public static InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(Occam occam) {
+		return getInvoiceCommunicationConfiguration(occam, false);
+	}
+	
+	public static InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(Occam occam, boolean check) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getFinance().getInvoiceCommunicationConfiguration(ctx,occam.getDomain());
+			return getFinance().getInvoiceCommunicationConfiguration(ctx,occam.getDomain(), check);
 		}
 	}
 	

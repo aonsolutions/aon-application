@@ -21,17 +21,12 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.ContractCostExpressionText;
 import net.aonsolutions.db.up2date.payroll.ContractCostSeaExpressionFix;
-import net.aonsolutions.db.up2date.payroll.BonificEntrenadoresYMonitoresFix;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.PPEITUpdateIII;
 import net.aonsolutions.db.up2date.scope.InsertDefaultScope;
+import net.aonsolutions.db.up2date.security.UserScopeAlterStartEndAuditory;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBaseCgcJornadasTotalesFix;
 import net.aonsolutions.db.up2date.tgss.CgcEMinInsert;
-import net.aonsolutions.db.up2date.tgss.DropNoJustifiedFix;
 import net.aonsolutions.db.up2date.timecontrol.CalendarFixNulls;
-
-
-import net.aonsolutions.db.up2date.mailAccount.UpdateMailAccountType;
 
 public class Up2Date {
 
@@ -662,7 +657,7 @@ public class Up2Date {
 			// CalendarHolidaysAlter.CALENDAR_HOLIDAYS_ALTER,
 			// CalendarPersonalDaysAlter.CALENDAR_PERSONAL_DAYS_ALTER,
 
-			// EnterpriseDataAddAudit.ENTERPRISE_DATA_ADD_AUDIT
+			// EnterpriseDataAddAudit.ENTERPRISE_DATA_ADD_AUDIT,
 			
 			// RecordDataAlterTable.RECORD_DATA_ALTER_TABLE
 			// DeleteDomainAppApp7.DELETE_DOMAIN_APP_APP7
@@ -670,7 +665,8 @@ public class Up2Date {
 			// InvoiceTrackingAlterTableJson.INVOICE_TRACKING_ALTER_TABLE_JSON,
 			
 			// UpdateMailAccountProtocolReplayTo.UPDATEMAILACCOUNTPROTOCOLREPLAYTO,
-			UpdateMailAccountType.UPDATEMAILACCOUNTTYPE
+			// UpdateMailAccountType.UPDATEMAILACCOUNTTYPE,
+			UserScopeAlterStartEndAuditory.USERSCOPEALTERSTARTENDAUDITORY
 	};
 
 	// ------------------------------------------------------------------------

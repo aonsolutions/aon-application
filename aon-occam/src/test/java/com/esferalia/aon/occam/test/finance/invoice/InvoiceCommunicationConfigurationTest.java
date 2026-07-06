@@ -34,7 +34,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 	public void testArabaWithouthTbaiAndSii() {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.FS_DEFAULT_ADMINISTRATION, Integer.toString(Administration.ALAVA.value()));
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.ALAVA.value(), config.getAdministration().value());
 		
@@ -59,7 +59,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.TBAI_TEST, "false");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.TBAI_INCLUDE_DATE, "");
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.ALAVA.value(), config.getAdministration().value());
 		
@@ -86,7 +86,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.TBAI_TEST, "true");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.TBAI_INCLUDE_DATE, "2024-12-16");
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.ALAVA.value(), config.getAdministration().value());
 		
@@ -126,7 +126,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_TEST, "false");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_INCLUDE_DATE, "");
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.ALAVA.value(), config.getAdministration().value());
 		
@@ -165,7 +165,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_TEST, "true");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_INCLUDE_DATE, "2024-12-16");
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.ALAVA.value(), config.getAdministration().value());
 		
@@ -205,7 +205,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_TEST, "false");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_INCLUDE_DATE, "");
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.ALAVA.value(), config.getAdministration().value());
 		
@@ -235,7 +235,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 	public void testGipuzkoaWithouthTbaiAndSii() {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.FS_DEFAULT_ADMINISTRATION, Integer.toString(Administration.GIPUZKOA.value()));
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.GIPUZKOA.value(), config.getAdministration().value());
 		
@@ -262,7 +262,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.TBAI_TEST, "false");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.TBAI_INCLUDE_DATE, "");
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.GIPUZKOA.value(), config.getAdministration().value());
 		
@@ -289,7 +289,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.TBAI_TEST, "true");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.TBAI_INCLUDE_DATE, "2024-12-16");
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.GIPUZKOA.value(), config.getAdministration().value());
 		
@@ -329,7 +329,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_TEST, "false");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_INCLUDE_DATE, "");
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.GIPUZKOA.value(), config.getAdministration().value());
 		
@@ -368,7 +368,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_TEST, "true");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_INCLUDE_DATE, "2024-12-16");
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.GIPUZKOA.value(), config.getAdministration().value());
 		
@@ -408,7 +408,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_TEST, "false");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_INCLUDE_DATE, "");
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.GIPUZKOA.value(), config.getAdministration().value());
 		
@@ -438,7 +438,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 	public void testBizkaiaWithouthLroe() {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.FS_DEFAULT_ADMINISTRATION, Integer.toString(Administration.BIZKAIA.value()));
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.BIZKAIA.value(), config.getAdministration().value());
 		
@@ -464,7 +464,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.TBAI_TEST, "false");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.TBAI_INCLUDE_DATE, "");
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.BIZKAIA.value(), config.getAdministration().value());
 		
@@ -491,7 +491,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.TBAI_TEST, "true");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.TBAI_INCLUDE_DATE, "2024-12-16");
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.BIZKAIA.value(), config.getAdministration().value());
 		
@@ -527,7 +527,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.TBAI_TEST, "false");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.TBAI_INCLUDE_DATE, "");
 
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.BIZKAIA.value(), config.getAdministration().value());
 		
@@ -554,7 +554,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 	public void testNavarraWithouthSii() {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.FS_DEFAULT_ADMINISTRATION, Integer.toString(Administration.NAVARRA.value()));
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.NAVARRA.value(), config.getAdministration().value());
 		
@@ -580,7 +580,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_TEST, "false");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_INCLUDE_DATE, "");
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.NAVARRA.value(), config.getAdministration().value());
 		
@@ -607,7 +607,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_TEST, "true");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_INCLUDE_DATE, "2024-12-16");
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.NAVARRA.value(), config.getAdministration().value());
 		
@@ -641,7 +641,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_TEST, "false");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_INCLUDE_DATE, "");
 
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.NAVARRA.value(), config.getAdministration().value());
 		
@@ -669,7 +669,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 	public void testAeatWithouthSiiAndVerifactu() {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.FS_DEFAULT_ADMINISTRATION, Integer.toString(Administration.COMMON_TERRITORY.value()));
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.COMMON_TERRITORY.value(), config.getAdministration().value());
 		
@@ -696,7 +696,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_TEST, "false");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_INCLUDE_DATE, "");
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.COMMON_TERRITORY.value(), config.getAdministration().value());
 		
@@ -725,7 +725,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_TEST, "true");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_INCLUDE_DATE, "2024-12-16");
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.COMMON_TERRITORY.value(), config.getAdministration().value());
 		
@@ -761,7 +761,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_TEST, "false");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.SII_INCLUDE_DATE, "");
 
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.COMMON_TERRITORY.value(), config.getAdministration().value());
 		
@@ -792,7 +792,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.VERIFACTU_TEST, "false");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.VERIFACTU_INCLUDE_DATE, "");
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.COMMON_TERRITORY.value(), config.getAdministration().value());
 		
@@ -821,7 +821,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.VERIFACTU_TEST, "true");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.VERIFACTU_INCLUDE_DATE, "2024-12-16");
 		
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.COMMON_TERRITORY.value(), config.getAdministration().value());
 		
@@ -857,7 +857,7 @@ public class InvoiceCommunicationConfigurationTest extends AbstractOccamTest  {
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.VERIFACTU_TEST, "false");
 		AppParamDAO.save(ctx, DOMAIN_ID, AppParam.VERIFACTU_INCLUDE_DATE, "");
 
-		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID);
+		InvoiceCommunicationConfiguration config = InvoiceCommunicationDAO.get(ctx, DOMAIN_ID, true);
 		
 		assertEquals(Administration.COMMON_TERRITORY.value(), config.getAdministration().value());
 		

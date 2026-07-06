@@ -111,6 +111,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -469,6 +470,10 @@ public interface CommonServiceAsync {
 	void saveScopeAndAssign(String domainName, int domain, String user, Scope scope, boolean assignAllUsers, ArrayList<User> selectedUsers, AsyncCallback<Scope> asyncCallback) throws AonCoreException;
 	void deleteScope(String domainName, int domain, String user, Integer scopeId, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
+	void getUserScopesByUser(String domainName, Integer domain, String user, Integer userId, AsyncCallback<List<UserScopeFull>> asyncCallback) throws AonCoreException;
+	void authorizateUserScopes(String currentDomainName, int currentDomain, String currentUser, UserScopeAuthorization userScopeAuthorization, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void closeUserScopeAuthorizations(String domainName, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	
 	void getUserScopeList(String domainName, Integer domain, String user, Integer scopeId, AsyncCallback<List<UserScopeFull>> asyncCallback) throws AonCoreException;
 	void saveUserScope(String domainName, Integer domainId, String user, UserScope userScope, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void deleteUserScope(String domainName, Integer domain, String user, Integer userScopeId, AsyncCallback<Void> asyncCallback) throws AonCoreException;
@@ -575,6 +580,7 @@ public interface CommonServiceAsync {
 	void getAccountsForRegistry(String domainName, Integer domain, String user, RegistrySource registrySource, String pattern, AsyncCallback<List<Account>> asyncCallback) throws AonCoreException;
 	
 	void reassignScope(String domainName, Integer domainId, String user, int originScope, int finalScope, boolean deleteOrigin, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void getUsedScopesInDomain(String domainName, int domain, String user, AsyncCallback<ArrayList<Scope>> asyncCallback) throws AonCoreException;
 	void getSignatures(String domainName, Integer domain, String user, AsyncCallback<LinkedList<Signature>> asyncCallback) throws AonCoreException;
 	void deleteSignature(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void saveSignature(String domainName, Integer domainId, String user, Signature signature, AsyncCallback<Signature> asyncCallback) throws AonCoreException;

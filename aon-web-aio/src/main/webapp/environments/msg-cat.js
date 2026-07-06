@@ -1082,6 +1082,7 @@ export const STORE = 'Arxivar';
 export const STREET_TYPE = 'Tipus de via';
 export const SUITE_MENU = "Menu suite";
 export const SUMMARIZED = 'Resumit';
+export const SUMMARY = 'Resum';
 export const SUPPLIED = 'Bestretes';
 export const SUPPLIER = 'Proveïdor';
 export const SUPPLIERS = 'Proveïdors';

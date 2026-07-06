@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -36,6 +37,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.AuthDevice;
@@ -258,6 +260,12 @@ public class SecurityImpl implements ISecurity {
 		ctx.getDslContext().transaction( 
 			configuration -> ScopeDAO.reassignAndDelete(ctx, domainId, fromScopeId, toScopeId));
 	}
+
+	@Override
+	public Stream<Scope> getUsedScopesInDomain(CloseableAONContext ctx, int domain) {
+		return ctx.getDslContext().transactionResult( configuration -> ScopeDAO.getUsedScopesInDomain(ctx, domain) );
+	}
+	
 	@Override
 	public Integer deleteScope(AONContext ctx, Integer scopeId) {
 		return SecurityDAO.deleteScope(ctx, scopeId);
@@ -275,6 +283,24 @@ public class SecurityImpl implements ISecurity {
 				configuration -> SecurityDAO.getScopesCount(ctx, params));
 	}
 
+	@Override
+	public List<UserScopeFull> getUserScopesByUserList(CloseableAONContext ctx, Integer userId) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.getUserScopesByUserList(ctx, userId));
+	}
+
+	@Override
+	public void authorizateUserScopes(CloseableAONContext ctx, int domain, String user, UserScopeAuthorization userScopeAuthorization) {
+		ctx.getDslContext().transaction( 
+				configuration -> SecurityDAO.authorizateUserScopes(ctx, domain, user, userScopeAuthorization));
+	}
+	
+	@Override
+	public void closeUserScopeAuthorizations(CloseableAONContext ctx, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate) {
+		ctx.getDslContext().transaction( 
+				configuration -> SecurityDAO.closeUserScopeAuthorizations(ctx, domain, user, authUserScopes, endDate));
+	}
+	
 	@Override
 	public List<UserScopeFull> getUserScopeFullList(CloseableAONContext ctx, Integer scopeId) {
 		return ctx.getDslContext().transactionResult( 

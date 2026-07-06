@@ -9845,7 +9845,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		
 		ContractRecord contract = newContract(aonContext,
-				add(getToday(), Calendar.YEAR, -2)
+				add(getFirstDayOfMonth(getToday()), Calendar.YEAR, -2)
 				,new HashMap<String, String>() {
 				} 
 				,new String[] {} 
@@ -9887,7 +9887,15 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		AgreementExtraRecord julyExtra = getExtra(aonContext, agreement.getId(), "01/07");
 
 		Salary extra = new SmartContractSalaryCalculator<Salary>( 
-				new SalaryBuilder())
+				new SalaryBuilder() {
+					@Override
+					public void addPayment(Double amount, Double quote, Double tax, String description,
+							java.util.Date startDate, java.util.Date endDate, IPayment payment,
+							Map<String, ITimedVariable<?>> context) {
+						System.out.println( startDate + " - " + endDate + " [EXTRA PAYMENT] " + payment.getDescription() + ": " + amount + ", " + quote );
+						super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+					}
+				})
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, issueDate));
 		
 		extra.getPaymentS().forEach( p -> System.out.println(p.getExpression() + ": " + p.getAmount() + ", " + p.getQuote()  ));

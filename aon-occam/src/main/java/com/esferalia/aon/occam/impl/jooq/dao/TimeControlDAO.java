@@ -416,9 +416,37 @@ public class TimeControlDAO {
 
 		details.forEach(r -> {
 
-		    if (tc.getStatus() == null) {
-		        tc.setInDate(r.getDate());
+			if (tc.getStatus() == null) {
+		        if (TimeControlStatus.IN.equals(r.getStatus()) || TimeControlStatus.PAUSE.equals(r.getStatus())) {
+		            tc.setInDate(r.getDate());
+		        } else {
+		            // El primer evento del tramo es un cierre (OUT): la jornada venia
+		            // abierta del dia anterior. Se cuenta desde las 00:00 de ese dia
+		            // y se añade el IN sintetico de medianoche heredando el motivo
+		            // del ultimo fichaje de la vispera.
+		            Date midnight = AonDateUtils.getDateWithoutTime(r.getDate());
+		            tc.setTime(tc.getTime() + (r.getDate().getTime() - midnight.getTime()));
+		            tc.setInDate(null);
+
+		            Timestamp midnightTs = new Timestamp(midnight.getTime());
+		            TimeControlDetail previousDayLast = getLastTimeControlDetail(ctx, f ->
+		                f.getTaskHolderProperty().eq(taskHolderId)
+		                .and(f.getDateProperty().lt(midnightTs))
+		                .and(f.getIdProperty().ge(0)));
+
+		            boolean hasPrevious = previousDayLast.getId() != null;
+
+		            tc.getDetail().add(new TimeControlDetail()
+		                    .setDate(midnight)
+		                    .setStatus(TimeControlStatus.IN)
+		                    .setDomain(r.getDomain())
+		                    .setReason(hasPrevious ? previousDayLast.getReason() : r.getReason())
+		                    .setComments(hasPrevious ? previousDayLast.getComments() : r.getComments()));
+		        }
 		        tc.setStatus(r.getStatus());
+		        if (tc.getTaskHolder() == null || tc.getTaskHolder().getId() == null) {
+		            tc.setTaskHolder(r.getTaskHolder());
+		        }
 		        tc.getDetail().add(r);
 		        return;
 		    }
@@ -454,14 +482,18 @@ public class TimeControlDAO {
 			.and(f.getIdProperty().ge(0)));
 
 		if(tc.getDetail().isEmpty() && TimeControlStatus.IN.equals(tcd.getStatus())  
-			&& AonDateUtils.isSameDay(AonDateUtils.addDays(new Date(), -1), tcd.getDate())) {
-			tc.setInDate(AonDateUtils.getDateWithoutTime(new Date()));
-			tc.setStatus(TimeControlStatus.IN);
-			tc.getDetail().add(new TimeControlDetail()
-					.setDate(AonDateUtils.getDateWithoutTime(new Date()))
-					.setStatus(TimeControlStatus.IN)
-					.setDomain(tcd.getDomain()));
-		} else if(TimeControlStatus.IN.equals(tc.getStatus()) 
+				&& AonDateUtils.isSameDay(AonDateUtils.addDays(new Date(), -1), tcd.getDate())) {
+				Date now = new Date();
+				Date midnight = AonDateUtils.getDateWithoutTime(now);
+				tc.setInDate(midnight);
+				tc.setStatus(TimeControlStatus.IN);
+				// La jornada viene abierta de ayer: contar desde las 00:00 hasta ahora
+				tc.setTime(tc.getTime() + (now.getTime() - midnight.getTime()));
+				tc.getDetail().add(new TimeControlDetail()
+						.setDate(midnight)
+						.setStatus(TimeControlStatus.IN)
+						.setDomain(tcd.getDomain()));
+			} else if(TimeControlStatus.IN.equals(tc.getStatus())
 			&& tc.getInDate().compareTo(AonDateUtils.getDateWithoutTime(new Date())) < 0) {
 			Date d = AonDateUtils.addDays(tc.getInDate(), 1);
 			Date date = AonDateUtils.addSeconds(AonDateUtils.getDateWithoutTime(d), -1);

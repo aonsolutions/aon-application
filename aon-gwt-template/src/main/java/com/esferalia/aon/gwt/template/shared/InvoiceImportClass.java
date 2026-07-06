@@ -20,6 +20,7 @@ public class InvoiceImportClass implements IsSerializable {
 	String serie;
 	Integer number;
 	String ref;
+	boolean service;
 	String nif;
 	String name;
 	String registryAccount;
@@ -38,6 +39,9 @@ public class InvoiceImportClass implements IsSerializable {
 	String productBarcode;
 	boolean suplido;
 	Double quantity;
+	Double price;
+	Double discount;
+	Double amount;
 	Double base;
 	Double percentage;
 	Double quota;
@@ -102,6 +106,15 @@ public class InvoiceImportClass implements IsSerializable {
 
 	public InvoiceImportClass setRef(String ref) {
 		this.ref = ref;
+		return this;
+	}
+	
+	public boolean isService() {
+		return service;
+	}
+	
+	public InvoiceImportClass setService(boolean service) {
+		this.service = service;
 		return this;
 	}
 
@@ -441,6 +454,33 @@ public class InvoiceImportClass implements IsSerializable {
 	
 	public InvoiceImportClass setQuantity(Double quantity) {
 		this.quantity = quantity;
+		return this;
+	}
+	
+	public Double getPrice() {
+		return price;
+	}
+	
+	public InvoiceImportClass setPrice(Double price) {
+		this.price = price;
+		return this;
+	}
+	
+	public Double getDiscount() {
+		return discount;
+	}
+	
+	public InvoiceImportClass setDiscount(Double discount) {
+		this.discount = discount;
+		return this;
+	}
+	
+	public Double getAmount() {
+		return amount;
+	}
+	
+	public InvoiceImportClass setAmount(Double amount) {
+		this.amount = amount;
 		return this;
 	}
 	

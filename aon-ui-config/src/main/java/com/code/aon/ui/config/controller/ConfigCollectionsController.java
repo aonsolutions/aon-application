@@ -335,11 +335,12 @@ public class ConfigCollectionsController implements Serializable {
 	}
 	
 	public static List<SelectItem> getScopeList( List<Scope> scopes ) {
-		List<SelectItem> list = new LinkedList<SelectItem>();
-		for (Scope scope : scopes) {
-			list.add( AonUtil.getSelectItem(scope, scope.getDescription()));
-		}
-		return list;
+	    List<SelectItem> list = new LinkedList<SelectItem>();
+	    if (scopes == null) return list;
+	    for (Scope scope : scopes) {
+	        list.add( AonUtil.getSelectItem(scope, scope.getDescription()));
+	    }
+	    return list;
 	}
 
 	public static List<SelectItem> getTagList( List<Tag> tags ) {

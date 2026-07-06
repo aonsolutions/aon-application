@@ -197,6 +197,10 @@ public class ServalInvoiceImport extends ImportUtils{
 			IConstants.NUMERO_FACTURA, IConstants.CODIGO_REFERENCIA,
 			IConstants.CODIGO_DE_REFERENCIA);
 	}
+	
+	private boolean isService(String value) {
+		return compare(value, IConstants.SERVICIO);
+	}
 
 	private boolean isNif(String value) {
 		return compare(value, IConstants.NIF, IConstants.DOCUMENTO);
@@ -296,8 +300,20 @@ public class ServalInvoiceImport extends ImportUtils{
 		return compare(value, IConstants.SUPLIDO);
 	}
 	
-	private boolean isCantidad(String value) {
+	private boolean isQuantity(String value) {
 		return compare(value, IConstants.CANTIDAD);
+	}
+	
+	private boolean isPrice(String value) {
+		return compare(value, IConstants.PRECIO);
+	}
+	
+	private boolean isDiscount(String value) {
+		return compare(value, IConstants.DESCUENTO);
+	}
+	
+	private boolean isAmount(String value) {
+		return compare(value, IConstants.IMPORTE);
 	}
 	
 	private boolean isConceptoDetalle(String value) {
@@ -390,6 +406,11 @@ public class ServalInvoiceImport extends ImportUtils{
 				inv.setRef(NumberToTextConverter.toText(cell.getNumericCellValue()));
 			} else inv.setRef(o.toString());
 			return ;
+		}
+		
+		if(isService(title)) {
+			String service = o.toString().replace(" ", "");
+			inv.setService("SI".equalsIgnoreCase(service) || "SÍ".equalsIgnoreCase(service));
 		}
 		
 		if(isNif(title)) {
@@ -485,9 +506,26 @@ public class ServalInvoiceImport extends ImportUtils{
 			inv.setProductSerialNumber(o.toString());
 			return;
 		}
+		if(isSuplido(title)) {
+			String suplido = o.toString().replace(" ", "");
+			inv.setSuplido("SI".equalsIgnoreCase(suplido) || "SÍ".equalsIgnoreCase(suplido));
+		}
 		
-		if(isCantidad(title)) {
+		if(isQuantity(title)) {
 			inv.setQuantity(Utils.parseDouble(o));
+			return;
+		}
+				
+		if(isPrice(title)) {
+			inv.setPrice(Utils.parseDouble(o));
+		}
+		
+		if(isDiscount(title)) {
+			inv.setDiscount(Utils.parseDouble(o));
+		}
+		
+		if(isAmount(title)) {
+			inv.setAmount(Utils.parseDouble(o));
 			return;
 		}
 		
@@ -496,9 +534,6 @@ public class ServalInvoiceImport extends ImportUtils{
 			return;
 		}
 		
-		if(isSuplido(title)) {
-			//TODO SUPLIDO
-		}
 		
 		if(isBase(title)) {
 			inv.setBase(Utils.parseDouble(o));
@@ -679,7 +714,7 @@ public class ServalInvoiceImport extends ImportUtils{
 	private static Invoice buildInvoice(AonConfiguration aonCtx, Domain domain, User user, InvoiceImportClass iic) {
 		Invoice invoice = new Invoice();
 		invoice.setScope(getScope(domain, user));
-		invoice.setService(InvoiceOpType.PIS.equals(iic.getType())|| InvoiceOpType.AIS.equals(iic.getType()));
+		invoice.setService(iic.isService() || InvoiceOpType.PIS.equals(iic.getType())|| InvoiceOpType.AIS.equals(iic.getType()));
 		invoice.setTransaction(getTransaction(iic));
 		invoice.setInvestment(iic.isInvestment() != null && iic.isInvestment());
 		invoice.setDomain(domain.getId());
@@ -816,6 +851,7 @@ public class ServalInvoiceImport extends ImportUtils{
 					throw new Exception("El código de producto está vacío.");
 				}
 				double quantity = aux.getQuantity() != null ? aux.getQuantity() : 1.0;
+				
 				double taxableBase = aux.getBase() != null ? aux.getBase() : 0.0;
 				InvoiceDetail detail =  new InvoiceDetail()
 						.setDomain(invoice.getDomain())
@@ -831,7 +867,7 @@ public class ServalInvoiceImport extends ImportUtils{
 						.setPrice(AonMathUtils.round((taxableBase / quantity) , 4))
 						.setDiscountExpression("0.0")
 						.setTaxableBase(taxableBase)
-//						.setPrepayment("5600".equals(aux.getAccount().substring(0, 4)) || "5660".equals(aux.getAccount().substring(0, 4)))
+						.setPrepayment(aux.isSuplido())
 						.setSource(InvoiceSource.DIRECT_INVOICE);
 				
 				if(aonCtx.getWorkplaces() == null || aonCtx.getWorkplaces().isEmpty()) {
@@ -944,8 +980,12 @@ public class ServalInvoiceImport extends ImportUtils{
 			try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 				ctx.getDslContext().transaction(configuration -> {
 					fillExternalSalesSeriesNumber(ctx, invoice);
-					InvoiceDAO.insert(ctx, invoice);
-					FinanceDAO.insertFinances(ctx, invoice.getFinances());
+					Invoice auxInv = InvoiceDAO.insert(ctx, invoice);
+					auxInv.financeStream().forEach(finance -> {
+						finance.setInvoice(auxInv);
+						finance.setConcept(auxInv.getDocumentNumber());
+						FinanceDAO.insert(ctx, finance);
+					});
 					AccountingInvoiceDAO.saveCommunicationData(ctx, aonCtx, invoice);					
 				});
 			}

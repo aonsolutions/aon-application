@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.occam.api.model.Cnae;
 import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.Iae;
@@ -21,6 +22,7 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -35,6 +37,10 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		void onCancel();
 
 		void onLoadedEnd();
+		
+		boolean existsMainEnterpriseActivity(Integer currentEnterpriseActivityId);
+		
+		boolean isEmptyActivities();
 	}
 
 	// CommonService
@@ -136,6 +142,11 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 
 		principal.getElement().getStyle().setProperty("max-width", "8rem");
 		startDate.getElement().getStyle().setProperty("max-width", "8rem");
+		
+		if(callback.isEmptyActivities()) {
+			principal.setValue(true);
+			principal.setEnable(false);
+		}
 
 		row.add(description);
 		row.add(startDate);
@@ -362,59 +373,29 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		okButton.setText(AON.MSG.accept());
 		okButton.addClickHandler(e -> {
 			okButton.setEnabled(false);
-
-			enterpriseActivity
-				.setStartDate(startDate.getValue())
-				.setEndDate(endDate.getValue())
-				.setDescription(description.getValue())
-				.setPrincipal(principal.getValue())
-				.setVatRegime(VATRegime.safeValueOf(ivaLB.getValue()))
-				.setVatExemptionCause(AonStringUtils.isBlank(ivaExemptLB.getValue()) ? null : VATExemptionCause.safeValueOf(ivaExemptLB.getValue()))
-				.setSurcharge(equivalence.getValue())
-				.setIrpfRegime(IRPFRegime.safeValueOf(irpfLB.getValue()))
-				;
-
-
-			Cnae cnae25 = getCnae25();
-			if(null != cnae25) {
-				enterpriseActivity.setCnae25(cnae25.getId());
-				enterpriseActivity.setCnae25Code(cnae25.getCode());
-				enterpriseActivity.setCnae25Description(cnae25.getTitle());
-			} else {
-				enterpriseActivity.setCnae25(null);
-				enterpriseActivity.setCnae25Code(null);
-				enterpriseActivity.setCnae25Description(null);
-			}
 			
-			Cnae2009 cnae = getCnae(cnae25);
-			if(null != cnae) {
-				enterpriseActivity.setCnae(cnae.getId());
-				enterpriseActivity.setCnaeCode(cnae.getCode());
-				enterpriseActivity.setCnaeDescription(cnae.getTitle());
-			} else {
-				enterpriseActivity.setCnae(null);
-				enterpriseActivity.setCnaeCode(null);
-				enterpriseActivity.setCnaeDescription(null);
-			}
+			if(callback.existsMainEnterpriseActivity(enterpriseActivity.getId()) && principal.getValue()) {
+				
+				AonDialog dialog = new AonDialog("Cambio de actividad principal",
+						new HTML("Ya existe una actividad principal. Si establece esta actividad como principal, la actividad que actualmente es principal dejara de serlo. \u00bfDesea continuar\u003f"));
+				
+				dialog.confirm(new AonAcceptDialogCallback() {
+
+					@Override
+					public void onCancel() {
+						okButton.setEnabled(true);
+						return;
+					}
+
+					@Override
+					public void onAccept() {
+						saveActivity(okButton);
+					}
+				});
+			} 
+			else saveActivity(okButton);
+
 			
-			Iae iae = getIae();
-			enterpriseActivity.setIae(iae);
-
-			commonService.saveEnterpriseActivity(domainName, domainId, user, enterpriseActivity,
-					new AsyncCallback<Activity>() {
-
-						@Override
-						public void onSuccess(Activity result) {
-							callback.onAccept(result);
-						}
-
-						@Override
-						public void onFailure(Throwable error) {
-							AonMessagePanel.showError(messagePanel, error.getMessage());
-							okButton.setEnabled(true);
-						}
-
-					});
 		});
 		buttonsPanel.add(okButton);
 
@@ -429,6 +410,61 @@ public class AonEnterpriseActivityPanel extends HTMLPanel {
 		buttonsPanel.add(cancelButton);
 
 		return buttonsPanel;
+	}
+	
+	private void saveActivity(Button okButton) {
+		enterpriseActivity
+			.setStartDate(startDate.getValue())
+			.setEndDate(endDate.getValue())
+			.setDescription(description.getValue())
+			.setPrincipal(principal.getValue())
+			.setVatRegime(VATRegime.safeValueOf(ivaLB.getValue()))
+			.setVatExemptionCause(AonStringUtils.isBlank(ivaExemptLB.getValue()) ? null : VATExemptionCause.safeValueOf(ivaExemptLB.getValue()))
+			.setSurcharge(equivalence.getValue())
+			.setIrpfRegime(IRPFRegime.safeValueOf(irpfLB.getValue()))
+			;
+	
+	
+		Cnae cnae25 = getCnae25();
+		if(null != cnae25) {
+			enterpriseActivity.setCnae25(cnae25.getId());
+			enterpriseActivity.setCnae25Code(cnae25.getCode());
+			enterpriseActivity.setCnae25Description(cnae25.getTitle());
+		} else {
+			enterpriseActivity.setCnae25(null);
+			enterpriseActivity.setCnae25Code(null);
+			enterpriseActivity.setCnae25Description(null);
+		}
+		
+		Cnae2009 cnae = getCnae(cnae25);
+		if(null != cnae) {
+			enterpriseActivity.setCnae(cnae.getId());
+			enterpriseActivity.setCnaeCode(cnae.getCode());
+			enterpriseActivity.setCnaeDescription(cnae.getTitle());
+		} else {
+			enterpriseActivity.setCnae(null);
+			enterpriseActivity.setCnaeCode(null);
+			enterpriseActivity.setCnaeDescription(null);
+		}
+		
+		Iae iae = getIae();
+		enterpriseActivity.setIae(iae);
+	
+		commonService.saveEnterpriseActivity(domainName, domainId, user, enterpriseActivity,
+				new AsyncCallback<Activity>() {
+	
+					@Override
+					public void onSuccess(Activity result) {
+						callback.onAccept(result);
+					}
+	
+					@Override
+					public void onFailure(Throwable error) {
+						AonMessagePanel.showError(messagePanel, error.getMessage());
+						okButton.setEnabled(true);
+					}
+	
+				});
 	}
 
 	private void getContextInfo(Consumer<Void> end) {

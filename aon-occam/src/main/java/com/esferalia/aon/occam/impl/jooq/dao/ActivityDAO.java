@@ -188,8 +188,12 @@ public class ActivityDAO {
 				;
 		
 		Integer enterpriseId = activity.getEnterprise();
-		if(null == enterpriseId)
+		if(null == enterpriseId) {
 			enterpriseId = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(activity.getDomain())).getId();
+			activity.setEnterprise(enterpriseId);
+		}
+		
+		checkEnterpriseActivityPrincipal(ctx, activity);
 		
 		Integer id = ctx.getDslContext().insertInto(ENTERPRISE_ACTIVITY)
 			.set(ENTERPRISE_ACTIVITY.DOMAIN, activity.getDomain())
@@ -229,6 +233,8 @@ public class ActivityDAO {
 				: new Cnae(activity.getCnae25(), activity.getCnae25Code(), activity.getCnae25Description())		
 				;
 		
+		checkEnterpriseActivityPrincipal(ctx, activity);
+		
 		ctx.getDslContext()
 			.update(ENTERPRISE_ACTIVITY)
 			.set(ENTERPRISE_ACTIVITY.DESCRIPTION, activity.getDescription())
@@ -250,6 +256,23 @@ public class ActivityDAO {
 		EnterpriseCCCDAO.save(ctx, activity.getCccs());
 		
 		return activity;
+	}
+
+	private static void checkEnterpriseActivityPrincipal(AONContext ctx, Activity activity) {
+		if(activity.isPrincipal()) {
+			EnterpriseActivityFilter filter = 
+					f -> f.getEnterpriseProperty().eq(activity.getEnterprise())
+					.and(f.getPrincipalProperty().eq((byte)1))
+					.and(f.getIdProperty().ne(activity.getId()))
+					.and(f.getDomainProperty().eq(activity.getDomain()));
+					
+			List<Activity> principalActivities = getList(ctx, filter);
+			
+			principalActivities.forEach(principalActivity -> {
+				principalActivity.setPrincipal(false);
+				update(ctx, principalActivity);
+			});
+		}
 	}
 
 	public static void delete(CloseableAONContext ctx, Integer id) {

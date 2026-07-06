@@ -282,6 +282,8 @@
 .aon_icon_group_off { background-image: iconGroupOff;}
 @url iconGroup aonIconGroup;
 .aon_icon_group { background-image: iconGroup;}
+@url iconGroupAdd aonIconGroupAdd;
+.aon_icon_group_add { background-image: iconGroupAdd;}
 @url iconTune aonIconTune;
 .aon_icon_tune { background-image: iconTune;}
 @url iconPin aonIconPin;
