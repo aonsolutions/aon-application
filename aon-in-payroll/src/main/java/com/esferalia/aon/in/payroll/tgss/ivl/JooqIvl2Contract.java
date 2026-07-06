@@ -18,6 +18,8 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -41,6 +43,9 @@ import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
+import com.esferalia.aon.payroll.enumeration.CCCType;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -50,14 +55,13 @@ public class JooqIvl2Contract implements IvlParserListener {
     
     private Optional<String> user; 
     private DSLContext dslContext;
-    private String enterpriseScope;
     private String domainName;
+    private String enterpriseScope;
+    
+    private Enterprise enterprise;
     
     private DomainRecord domainRecord;
     private PersonRecord personRecord;
-    private ContractRecord contractRecord; 
-    private EnterpriseCccRecord enterpriseCccRecord;
-    private PayrollWorkplaceRecord payrollWorkplaceRecord;
     
     public JooqIvl2Contract(DSLContext dslContext, String parentDomainName) {
 	this(dslContext, parentDomainName, "GENERAL", null);
@@ -74,6 +78,18 @@ public class JooqIvl2Contract implements IvlParserListener {
     public void onEnterprise(String enterpriseName, String cccRegime, String cccProvince, String cccNumber,
             String docType, String docNumber, String enterpriseAddress, String enterpriseCity, String enterpriseCP,
             String enterpriseCNAENumber, String enterpriseCNAEDescription) {
+	enterprise = new Enterprise(
+			enterpriseName, 
+			cccRegime, 
+			cccProvince, 
+			cccNumber, 
+			docType, 
+			docNumber,
+			enterpriseAddress, 
+			enterpriseCity, 
+			enterpriseCP, 
+			enterpriseCNAENumber, 
+			enterpriseCNAEDescription);
 	
 	domainRecord = 
 	getDomain(dslContext, DOMAIN.NAME.eq(domainName).and(DOMAIN.TYPE.in((byte)0))) 
@@ -81,13 +97,14 @@ public class JooqIvl2Contract implements IvlParserListener {
 	.orElseGet(() -> newDomain(dslContext, domainName, docNumber, enterpriseName))
 	);
 	
-	enterpriseCccRecord =
-	getEnterpriseCCC(dslContext, ENTERPRISE_CCC.CCC.eq(cccProvince + cccNumber).and(DOMAIN.ID.eq(domainRecord.getId())) )
-	.orElseGet(() -> newEnterpriseCCC(dslContext, domainRecord, enterpriseName, cccRegime, cccProvince, cccNumber, docType, docNumber, enterpriseCNAENumber, enterpriseCNAEDescription, enterpriseScope));
 	
-	payrollWorkplaceRecord = 
-	getAnyPayrollWorkplace(dslContext, PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY.eq(enterpriseCccRecord.getEnterpriseActivity()).and(RADDRESS.ZIP.eq(enterpriseCP)))
-	.orElseGet(() -> newPayrollWorkplace(dslContext,enterpriseCccRecord, enterpriseAddress, enterpriseCity, enterpriseCP ));
+	// enterpriseCccRecords =
+	// getEnterpriseCCCs(dslContext, ENTERPRISE_CCC.CCC.eq(cccProvince + cccNumber).and(DOMAIN.ID.eq(domainRecord.getId())) );
+	//.orElseGet(() -> newEnterpriseCCC(dslContext, domainRecord, enterpriseName, cccRegime, cccProvince, cccNumber, docType, docNumber, enterpriseCNAENumber, enterpriseCNAEDescription, enterpriseScope))
+	
+	// payrollWorkplaceRecord = 
+	// getAnyPayrollWorkplace(dslContext, PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY.eq(enterpriseCccRecord.getEnterpriseActivity()).and(RADDRESS.ZIP.eq(enterpriseCP)))
+	// .orElseGet(() -> newPayrollWorkplace(dslContext,enterpriseCccRecord, enterpriseAddress, enterpriseCity, enterpriseCP ));
     }
     
     
@@ -95,11 +112,12 @@ public class JooqIvl2Contract implements IvlParserListener {
     public void onEmployee(String nafProvince, String nafNumber, String docType, String docNumber,
             String employeeName) {
 	
-	Integer domainId = enterpriseCccRecord.getDomain();
+	Integer domainId = domainRecord.getId();
 
 	personRecord =
-	getPerson(dslContext, PERSON.DOMAIN.eq(domainId).and(PERSON.SOCIAL_SECURITY_NUM.eq(nafProvince + nafNumber)))
-	.orElseGet(() -> newPerson(dslContext, domainId, nafProvince, nafNumber, docType, docNumber, employeeName));
+	getPerson4Contract(dslContext, PERSON.DOMAIN.eq(domainId).and(PERSON.SOCIAL_SECURITY_NUM.eq(nafProvince + nafNumber)))
+	.orElseGet(() -> getPerson(dslContext, PERSON.DOMAIN.eq(domainId).and(PERSON.SOCIAL_SECURITY_NUM.eq(nafProvince + nafNumber)))
+	.orElseGet(() -> newPerson(dslContext, domainId, nafProvince, nafNumber, docType, docNumber, employeeName)));
 	
 	
     }
@@ -108,11 +126,20 @@ public class JooqIvl2Contract implements IvlParserListener {
     public void onEmployeeContract(Date realStartDate, Date efectiveStartDate, Date realEndDate, Date efectiveEndDate,
             String quoteGroup, String monthly, String tc2, Double partialFactor, Double it, Double ims, Integer quoteDays) {
 	
-	Integer domainId = enterpriseCccRecord.getDomain();
+    	
+	Integer domainId = domainRecord.getId();
 	java.sql.Date contractStartDate = new java.sql.Date (realStartDate.getTime());
 	Optional<java.sql.Date> contractEndDate = realEndDate != null ? Optional.of(new java.sql.Date (realEndDate.getTime())) : Optional.empty() ;
 	
-	contractRecord = 
+	byte cccType = geCCCType(tc2);
+	
+	EnterpriseCccRecord enterpriseCccRecord = getEnterpriseCCC(dslContext, ENTERPRISE_CCC.CCC.eq(enterprise.cccProvince + enterprise.cccNumber).and(DOMAIN.ID.eq(domainRecord.getId())).and(ENTERPRISE_CCC.TYPE.eq(cccType)) )
+	.orElseGet(() -> newEnterpriseCCC(dslContext, domainRecord, enterprise.enterpriseName, enterprise.cccRegime, enterprise.cccProvince, enterprise.cccNumber, enterprise.docType, enterprise.docNumber, enterprise.enterpriseCNAENumber, enterprise.enterpriseCNAEDescription, enterpriseScope, cccType));
+	
+	PayrollWorkplaceRecord payrollWorkplaceRecord = 
+	getAnyPayrollWorkplace(dslContext, PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY.eq(enterpriseCccRecord.getEnterpriseActivity()).and(RADDRESS.ZIP.eq(enterprise.enterpriseCP)))
+	.orElseGet(() -> newPayrollWorkplace(dslContext,enterpriseCccRecord, enterprise.enterpriseAddress, enterprise.enterpriseCity, enterprise.enterpriseCP ));
+
 	getContract(dslContext, CONTRACT.DOMAIN.eq(domainId).and(CONTRACT.PERSON.eq(personRecord.getRegistry())).and(CONTRACT.START_DATE.eq(contractStartDate)))
 	.orElseGet(() -> newContract(dslContext, payrollWorkplaceRecord, enterpriseCccRecord, personRecord, contractStartDate, contractEndDate, quoteGroup, monthly, tc2, partialFactor, it, ims));
     }
@@ -268,11 +295,26 @@ public class JooqIvl2Contract implements IvlParserListener {
 	.from(PERSON)
 	.innerJoin(REGISTRY).onKey()
 	.where(condition)
-	.fetchOptionalInto(PERSON);
+	.orderBy(PERSON.REGISTRY.desc())
+	.fetchStreamInto(PERSON)
+	.findFirst();
+    }
+
+    private static Optional<PersonRecord> getPerson4Contract(DSLContext dslContext, Condition condition) {
+	return 
+	dslContext
+	.select()
+	.from(PERSON)
+	.innerJoin(REGISTRY).onKey()
+	.innerJoin(CONTRACT).onKey()
+	.where(condition)
+	.orderBy(CONTRACT.START_DATE.desc())
+	.fetchStreamInto(PERSON)
+	.findFirst();
     }
 
     private static  EnterpriseCccRecord newEnterpriseCCC(DSLContext dslContext, DomainRecord domainRecord , String enterpriseName, String cccRegime, String cccProvince, String cccNumber,
-            String docType, String docNumber, String enterpriseCNAENumber,  String enterpriseCNAEDescription, String enterpriseScope) {
+            String docType, String docNumber, String enterpriseCNAENumber,  String enterpriseCNAEDescription, String enterpriseScope, byte cccType) {
 	
 	Optional<GeozoneRecord> geozoneRecord = getGeozone(dslContext, cccProvince, domainRecord); 
 	
@@ -283,7 +325,7 @@ public class JooqIvl2Contract implements IvlParserListener {
 	return 
 	dslContext
 	.insertInto(ENTERPRISE_CCC)
-	.set(ENTERPRISE_CCC.TYPE, (byte) 0 ) 
+	.set(ENTERPRISE_CCC.TYPE, cccType)
 	.set(ENTERPRISE_CCC.CCC, cccProvince+cccNumber)
 	.set(ENTERPRISE_CCC.DOMAIN, domainRecord.getId())
 	.set(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, enterpriseActivityRecord.getId())
@@ -547,7 +589,7 @@ public class JooqIvl2Contract implements IvlParserListener {
 	.fetchOptionalInto(ENTERPRISE_CCC)
 	;
     }
-    
+
     private static  Optional<EnterpriseActivityRecord> getEnterpriseActivity(DSLContext dslContext,  Condition condition) {
 	
 	return dslContext
@@ -615,4 +657,20 @@ public class JooqIvl2Contract implements IvlParserListener {
 	    return (byte) 6;
 	}
     }
+
+    private static  byte geCCCType(String tc2) {
+    		switch (tc2) {
+    			case "421", "521": 
+    				return (byte) 1; // TRAINING
+    			default:
+    				return (byte) 0; // GENERAL
+    		}
+    }
+    
+    private static record Enterprise(String enterpriseName, String cccRegime, String cccProvince, String cccNumber,
+            String docType, String docNumber, String enterpriseAddress, String enterpriseCity, String enterpriseCP,
+            String enterpriseCNAENumber, String enterpriseCNAEDescription) {
+     	
+    }
+    
 }
