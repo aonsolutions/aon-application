@@ -485,6 +485,7 @@ public interface CommonServiceAsync {
 	void getDomains(String domainName, Integer domainId, String user, AsyncCallback<List<Domain>> asyncCallback) throws AonCoreException;
 
 	void getUsers(String currentDomainName, int currentDomain, String currentUser, AsyncCallback<ArrayList<User>> asyncCallback) throws AonCoreException;
+	void getUsers(String currentDomainName, int currentDomain, String currentUser, String description, AsyncCallback<ArrayList<User>> asyncCallback) throws AonCoreException;
 	
 	// **************************************************
 	// ******************************************** [TAG]

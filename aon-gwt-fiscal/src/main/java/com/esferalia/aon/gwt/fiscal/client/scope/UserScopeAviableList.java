@@ -15,7 +15,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomSuggestBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
@@ -32,6 +32,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -81,8 +82,10 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 	private AonTableButton checkAll; 
 	private AonTableButton uncheckAll;
 	
-	private AonCustomListBox scopeOwnerLB = new AonCustomListBox("Usuario");
+	private AonCustomSuggestBox scopeOwnerSB = new AonCustomSuggestBox("Usuario");
 	private AonTableButton addAviableButton = new AonTableButton("Autorizar al usuario", AON.CSS.aonIconKeyboardDoubleArrowRight());
+	private HashMap<String, Integer> scopeOwnerByLabel = new HashMap<String, Integer>();
+	private Integer selectedScopeOwnerId;
 	
 	private SimplePanel tableContainer;
 	private ScrollPanel tableScrollPanel;
@@ -98,6 +101,7 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 	private List<UserScopeFull> userScope = new ArrayList<UserScopeFull>();
 	
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	private int searchRequestToken;
 	
 	// ------------------------------------------------- COLS
 	
@@ -161,12 +165,24 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 		container = new HTMLPanel("");
 		container.addStyleName(AON.CSS.aonFlexColumn2());
 		
-		scopeOwnerLB.clearItems();
-		scopeOwnerLB.addItem("-", AonStringUtils.EMPTY);
-		scopeOwnerLB.addChangeHandler(e -> onSearch());
-		scopeOwnerLB.getElement().getStyle().setProperty("padding", "0 1rem");
+		scopeOwnerSB.setAutoSelectEnabled(false);
+		scopeOwnerSB.setPlaceHolder("Ctrl + espacio para ver sugerencias");
+		scopeOwnerSB.getSuggestBox().addSelectionHandler(e -> {
+			selectedScopeOwnerId = scopeOwnerByLabel.get(e.getSelectedItem().getReplacementString());
+			onSearch();
+		});
+		scopeOwnerSB.getSuggestBox().addValueChangeHandler(e -> {
+			resolveSelectedScopeOwnerId();
+			onSearch();
+		});
+		scopeOwnerSB.getSuggestBox().addKeyUpHandler(e -> {
+			if (e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				scopeOwnerSB.showSuggestionList();
+			}
+		});
+		scopeOwnerSB.getElement().getStyle().setProperty("padding", "0 1rem");
 		
-		container.add(scopeOwnerLB);
+		container.add(scopeOwnerSB);
 	
 		tableContainer = new SimpleLayoutPanel();
 		tableContainer.setHeight("100%");
@@ -175,8 +191,18 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 		
 		add(container);
 		
-		getUsers(users -> {
-			users.stream().filter(u -> u.isActive()).forEach(u -> scopeOwnerLB.addItem(u.getName() + " (" + u.getLogin() + ")", u.getId().toString()));
+		getUsers("", users -> {
+			List<String> userLabels = new ArrayList<String>();
+			scopeOwnerByLabel.clear();
+			users.stream().filter(u -> u.isActive()).forEach(u -> {
+				String label = u.getName() + " (" + u.getLogin() + ")";
+				scopeOwnerByLabel.put(label, u.getId());
+				userLabels.add(label);
+			});
+			MultiWordSuggestOracle oracle = (MultiWordSuggestOracle) scopeOwnerSB.getSuggestBox().getSuggestOracle();
+			oracle.clear();
+			oracle.addAll(userLabels);
+			oracle.setDefaultSuggestionsFromText(userLabels);
 			onSearch();	
 		});
 	}
@@ -189,7 +215,8 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 		resetSearchButton.addClickHandler(e -> {
 			hideMessage();
 			getSearchTextBox().setValue(null, false);
-			scopeOwnerLB.setValue("");
+			scopeOwnerSB.setValue("");
+			selectedScopeOwnerId = null;
 			onSearch();
 		});
 		addToolbarButton(resetSearchButton);
@@ -255,6 +282,7 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 	}
 	
 	public void onSearch() {
+		searchRequestToken++;
 		userScope.clear();
 		selectedUserScopes.clear();
 		aviableUserScopes.clear();
@@ -285,10 +313,15 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 	}
 
 	private void searchDataList() {
+		final int currentSearchRequestToken = searchRequestToken;
 		getList(userScopesDB -> {
+			if (currentSearchRequestToken != searchRequestToken) {
+				return;
+			}
+
 			boolean something = false;
 			
-			for(UserScopeFull userScope : userScope) {
+			for(UserScopeFull userScope : userScopesDB) {
 				something = true;
 				paintRow(userScope);
 			}
@@ -326,7 +359,7 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 		
 		});
 		
-		Integer userId = AonStringUtils.isBlank(scopeOwnerLB.getValue()) ? null : Integer.valueOf(scopeOwnerLB.getValue());
+		Integer userId = resolveSelectedScopeOwnerId();
 		checkButton.setEnabled(userScope_.getOwner() == null || userScope_.getOwner().getId() == null || userScope_.getOwner().getId().equals(userId));
 		
 		if(null != userAuthorizationScope && !userAuthorizationScope.isEmpty())
@@ -401,7 +434,7 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 	}
 	
 	private void getList(Consumer<List<UserScopeFull>> success) {
-		Integer userId = AonStringUtils.isBlank(scopeOwnerLB.getValue()) ? null : Integer.valueOf(scopeOwnerLB.getValue());
+		Integer userId = resolveSelectedScopeOwnerId();
 		
 		if(null == userId) {
 			showWarning("Debe seleccionar un propietario de \u00e1mbito");
@@ -432,8 +465,8 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 		});
 	}
 	
-	private void getUsers(Consumer<ArrayList<User>> success) {
-		commonService.getUsers(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<ArrayList<User>>() {
+	private void getUsers(String description, Consumer<ArrayList<User>> success) {
+		commonService.getUsers(options.getDomainName(), options.getDomain(), options.getUser(), description, new AsyncCallback<ArrayList<User>>() {
 
 			@Override
 			public void onSuccess(ArrayList<User> result) {
@@ -448,8 +481,18 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 	}
 
 	public Integer getSelectedUser() {
-		Integer userId = AonStringUtils.isBlank(scopeOwnerLB.getValue()) ? null : Integer.valueOf(scopeOwnerLB.getValue());
-		return userId;
+		return resolveSelectedScopeOwnerId();
+	}
+
+	private Integer resolveSelectedScopeOwnerId() {
+		String selectedUser = scopeOwnerSB.getValue();
+		if (AonStringUtils.isBlank(selectedUser) || "-".equals(selectedUser)) {
+			selectedScopeOwnerId = null;
+			return null;
+		}
+
+		selectedScopeOwnerId = scopeOwnerByLabel.get(selectedUser);
+		return selectedScopeOwnerId;
 	}
 	
 	protected abstract void showWarning(String message);
