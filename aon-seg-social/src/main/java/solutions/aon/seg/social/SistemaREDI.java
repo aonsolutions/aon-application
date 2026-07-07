@@ -7,6 +7,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -22,29 +24,27 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.transform.TransformerException;
-
 import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.HttpMethod;
 import org.htmlunit.Page;
 import org.htmlunit.WebClient;
+import org.htmlunit.WebRequest;
 import org.htmlunit.WebResponse;
 import org.htmlunit.html.DomElement;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.DomNodeList;
-import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlDivision;
 import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlLabel;
 import org.htmlunit.html.HtmlOption;
 import org.htmlunit.html.HtmlPage;
-import org.htmlunit.html.HtmlParagraph;
 import org.htmlunit.html.HtmlRadioButtonInput;
 import org.htmlunit.html.HtmlSelect;
 import org.htmlunit.html.HtmlTableCell;
 import org.htmlunit.html.HtmlTableRow;
-import org.htmlunit.xml.XmlPage;
+import org.htmlunit.util.NameValuePair;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
@@ -566,95 +566,229 @@ class SistemaREDI {
 	}
 
 	public static byte[] getObligationAwarenessCertificate(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, String regime, String ccc, String authCode)
-			throws SegSocialException {
-		Object[] arrFields= {regime, ccc};
-		Toolkit.verifyData(arrFields);
-		InvalidCertificateException.checkCertificate(certificateInputStream);
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
-				certificateType)) {
-			
-			webClient.getOptions().setUseInsecureSSL(true);
-			
-			XmlPage xXmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21F001");
-			HtmlPage htmlPage = HtmlUnitToolkit.transformXmlPage(xXmlPage);
-				
-			handleSepeExceptions(htmlPage);
-			
-			// Mirar si necesita autorizacion (Por ejemplo certificados como los de AyudaT)
-			DomElement selectAuth = htmlPage.getElementById("TITULO_SECCION_forSelAutori");
-			if(selectAuth != null) htmlPage = selectAuthCode(htmlPage, authCode);
-			
-			htmlPage.getElementById("radio_Opcion3").click();
-			HtmlInput criBusCccNaf = (HtmlInput) htmlPage.getElementById("criBusCccNaf") ;
-			criBusCccNaf.setValue(regime+ccc);
-			XmlPage xmlPage  = htmlPage.getElementById("botBuscar").click();
-			htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+	        final String certificatePassword, final String certificateType, String regime, String ccc, String authCode)
+	        throws SegSocialException {
 
-			xmlPage = htmlPage.getElementById("enlace_" + regime.substring(1, regime.length()) + ccc).click();
-			htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
-			
-			xmlPage = htmlPage.getElementById("ENVIO_13").click();
-			htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
-			
-			xmlPage = htmlPage.getElementById("ENVIO_12").click();
-			htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+	    Object[] arrFields = {regime, ccc};
+	    Toolkit.verifyData(arrFields);
+	    InvalidCertificateException.checkCertificate(certificateInputStream);
 
-			for (HtmlAnchor anchor : htmlPage.getAnchors()) {
-			    if ( "documento".equals(anchor.getAttribute("data-pc_tipo"))) {
-				Page pdfPage = anchor.click();
-				return pdfPage.getWebResponse().getContentAsStream().readAllBytes();
-			    }
-			} 
-				    
-		} catch (FailingHttpStatusCodeException e1) {
-		    e1.printStackTrace();
-		} catch (MalformedURLException e1) {
-		    e1.printStackTrace();
-		} catch (IOException e1) {
-		    e1.printStackTrace();
-		} catch (TransformerException e) {
-		    e.printStackTrace();
-		}
-		return null;
+	    try (WebClient webClient = HtmlUnitToolkit.getWebClientTgss(certificateInputStream, certificatePassword,
+	            certificateType)) {
+
+	        webClient.getOptions().setUseInsecureSSL(true);
+
+	        String svcUrl = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21F001";
+
+	        // ---------- PASO 1: shell del servicio (con login Cl@ve si hace falta) ----------
+	        Page first = webClient.getPage(svcUrl);
+	        if (first instanceof HtmlPage && ((HtmlPage) first).getElementById("IPCEIdP") != null) {
+	            HtmlUnitToolkit.ensureClaveAuth(webClient, (HtmlPage) first, svcUrl);
+	            first = webClient.getPage(svcUrl);
+	        }
+	        org.w3c.dom.Document arq1 = parseEmbeddedXml(first.getWebResponse().getContentAsString());
+
+	        // ---------- PASO 2: seleccionar autorizado (GET) ----------
+	        String numeroAut = resolveAuthNumber(arq1, authCode);
+	        String urlSelAut = buildBase(arq1)
+	                + "&SPM.ACC.AC_SELECCIONAR_AUTORIZADO_OAR=AC_SELECCIONAR_AUTORIZADO_OAR"
+	                + "&param1=" + numeroAut;
+	        Page pg2 = webClient.getPage(new WebRequest(new URL(urlSelAut), HttpMethod.GET));
+	        org.w3c.dom.Document arq2 = parseEmbeddedXml(pg2.getWebResponse().getContentAsString());
+
+	        // ---------- PASO 3: localizar el CCC (paginando si hace falta) ----------
+	        org.w3c.dom.Document arqAsig = arq2;
+	        String valorCccNaf = findCccNaf(arqAsig, regime, ccc);
+	        int guarda = 0;
+	        while (valorCccNaf == null && "S".equalsIgnoreCase(xmlText(arqAsig, "SIGUIENTE_ARCO")) && guarda++ < 50) {
+	            arqAsig = siguientePagina(webClient, arqAsig);
+	            valorCccNaf = findCccNaf(arqAsig, regime, ccc);
+	        }
+	        if (valorCccNaf == null) {
+	            throw new SegSocialException("No se encontró el CCC " + regime + ccc + " entre las asignaciones");
+	        }
+
+	        // ---------- PASO 3b: seleccionar la asignación (GET) ----------
+	        String urlSelAsig = buildBase(arqAsig)
+	                + "&SPM.ACC.AC_SELECCIONAR_ASIGNACION_OAR=AC_SELECCIONAR_ASIGNACION_OAR"
+	                + "&param1=" + valorCccNaf;
+	        Page pg3 = webClient.getPage(new WebRequest(new URL(urlSelAsig), HttpMethod.GET));
+	        org.w3c.dom.Document arq3 = parseEmbeddedXml(pg3.getWebResponse().getContentAsString());
+
+	        // ---------- PASO 4: seleccionar tipo de certificado y continuar (ENVIO_13 = CONTINUAR) ----------
+	        List<NameValuePair> p4 = new ArrayList<>();
+	        addHiddens(p4, arq3);
+	        p4.add(new NameValuePair("certificado", "1")); // 1 = Certificado genérico (estar al corriente)
+	        p4.add(new NameValuePair("SPM.ACC.CONTINUAR", "CONTINUAR"));
+	        Page pg4 = webClient.getPage(buildPost(arq3, p4));
+	        org.w3c.dom.Document arq4 = parseEmbeddedXml(pg4.getWebResponse().getContentAsString());
+
+	        // Comprobar que no hubo error de negocio
+	        String err4 = xmlText(arq4, "dsError");
+	        if (err4 != null && !err4.trim().isEmpty()) {
+	            throw new SegSocialException(err4.trim());
+	        }
+
+	     // ---------- PASO 5: imprimir/generar el documento (ENVIO_12 = IMPRIMIR) ----------
+	        
+	        
+	        List<NameValuePair> p5 = new ArrayList<>();
+	        addHiddens(p5, arq4);
+	        p5.add(new NameValuePair("SPM.ACC.IMPRIMIR", "IMPRIMIR"));
+	        Page pg5 = webClient.getPage(buildPost(arq4, p5));
+
+	        Page xsl5 = webClient.getPage(
+	        	    "https://w2.seg-social.es/CertificadoCorrientePago/templates/aecp/"
+	        	    + "CU_SolicitudCertificadoInformeDeudaRED/AECPPaSolicitudRED_Imprimir_ES.xsl");
+	        	Toolkit.buildFile(xsl5.getWebResponse().getContentAsString().getBytes(),
+	        	    System.getProperty("user.home") + "/Desktop/obligation_paso5.xsl");
+	        
+	        
+	        // Si IMPRIMIR ya devolviera el PDF directo (por si acaso), lo tomamos
+	        String ctype = pg5.getWebResponse().getContentType();
+	        if (ctype != null && ctype.toLowerCase().contains("pdf")) {
+	            return pg5.getWebResponse().getContentAsStream().readAllBytes();
+	        }
+
+	        // Caso normal: la respuesta trae SCREEN_REPORTS con la referencia al documento.
+	        org.w3c.dom.Document arq5 = parseEmbeddedXml(pg5.getWebResponse().getContentAsString());
+
+	        String err5 = xmlText(arq5, "dsError");
+	        if (err5 != null && !err5.trim().isEmpty()) {
+	            throw new SegSocialException(err5.trim());
+	        }
+
+	        // ---------- PASO 6: descargar el PDF desde ViewDoc ----------
+	        byte[] pdf = descargarDocumento(webClient, arq5);
+	        if (pdf == null || pdf.length == 0) {
+	            throw new SegSocialException("El documento se generó pero no se pudo descargar el PDF");
+	        }
+	        return pdf;
+
+	    } catch (SegSocialException e) {
+	        throw e;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw new SegSocialException(e.getMessage());
+	    }
 	}
 	
-	private static HtmlPage selectAuthCode(HtmlPage htmlPage, String authCode) throws IOException, TransformerException {
-		// Seleccione un Número de Autorización
-		String auth = removeLeftZeros(authCode);
-		
-		Pattern pattern = Pattern.compile("enlace_0*" + auth + "$");
-
-		HtmlAnchor authAnchor = null;
-		for (DomElement element : htmlPage.getElementsByTagName("a")) {
-		    String id = element.getId();
-		    if (id != null && pattern.matcher(id).matches()) {
-		        authAnchor = (HtmlAnchor) element;
-		        break;
-		    }
-		}
-		
-		if(null == authAnchor)
-			throw new IllegalArgumentException("No existe el numero de autorizaci\u00f3n: " + auth + ". Reviselo en Configuraci\u00f3n > Parametros > Laborales");	
-		
-		XmlPage authXmlPage = authAnchor.click();
-		return HtmlUnitToolkit.transformXmlPage(authXmlPage);
+	private static String buildBase(org.w3c.dom.Document arq) {
+	    String ticket    = xmlText(arq, "SPM.TICKET");
+	    String urlFront  = xmlText(arq, "SPM.URLFRONTEND");
+	    String idSession = xmlText(arq, "SPM.IDSESSION");
+	    String frontend  = urlFront.contains("Utf8") ? urlFront : urlFront + "Utf8";
+	    return "https://w2.seg-social.es" + frontend + idSession + "?ARQ.SPM.TICKET=" + ticket;
 	}
 
-	private static String removeLeftZeros(String input) {
-		if (input == null || input.isEmpty()) {
-            return input;
-        }
-
-        // Use regular expression to remove leading zeros
-        String result = input.replaceFirst("^0+", "");
-
-        return result;
+	// Construye un WebRequest POST al PR_ACTION_FORM (frontend + idsession) con los parámetros dados
+	private static WebRequest buildPost(org.w3c.dom.Document arq, List<NameValuePair> params) throws Exception {
+	    String urlFront  = xmlText(arq, "SPM.URLFRONTEND");
+	    String idSession = xmlText(arq, "SPM.IDSESSION");
+	    String frontend  = urlFront.contains("Utf8") ? urlFront : urlFront + "Utf8";
+	    WebRequest req = new WebRequest(new URL("https://w2.seg-social.es" + frontend + idSession), HttpMethod.POST);
+	    req.setCharset(StandardCharsets.UTF_8);
+	    req.setRequestParameters(params);
+	    return req;
 	}
 
-	private static void handleSepeExceptions(HtmlPage htmlPage) {
-		HtmlParagraph error = htmlPage.querySelector("#CONTENEDOR_SECCION_1 > div > div > p");
-		if(null != error) throw new IllegalArgumentException(error.getTextContent());		
+	private static void addHiddens(List<NameValuePair> params, org.w3c.dom.Document arq) {
+	    String ticket = xmlText(arq, "SPM.TICKET");
+	    if (!ticket.isEmpty()) params.add(new NameValuePair("ARQ.SPM.TICKET", ticket));
+	    params.add(new NameValuePair("SPM.CONTEXT", xmlText(arq, "SPM.CONTEXT")));
+	    params.add(new NameValuePair("ARQ.SPM.OUT", "XML_STYLESHEET"));
+	    params.add(new NameValuePair("ES_FW4", "1"));
+	    params.add(new NameValuePair("SPM.ISPOPUP", "0"));
+	    params.add(new NameValuePair("ARQ.SPM.IDIOMA", xmlText(arq, "SPM.LANGUAGE")));
+	    params.add(new NameValuePair("SPM.HAYJS", "0"));
+	}
+
+	private static String resolveAuthNumber(org.w3c.dom.Document arq, String authCode) throws SegSocialException {
+	    org.w3c.dom.NodeList nums = arq.getElementsByTagName("numero");
+	    if (nums.getLength() == 0) throw new SegSocialException("No hay autorizaciones disponibles");
+	    if (authCode != null && !authCode.isBlank()) {
+	        for (int i = 0; i < nums.getLength(); i++) {
+	            String n = nums.item(i).getTextContent().trim();
+	            if (n.equals(authCode.trim())) return n;
+	        }
+	    }
+	    return nums.item(0).getTextContent().trim();
+	}
+
+	private static String findCccNaf(org.w3c.dom.Document arq, String regime, String ccc) {
+	    String objetivo = (regime + ccc).replaceAll("\\D", "");
+	    String soloCcc  = ccc.replaceAll("\\D", "");
+	    org.w3c.dom.NodeList nodos = arq.getElementsByTagName("valorCccNaf");
+	    for (int i = 0; i < nodos.getLength(); i++) {
+	        String v = nodos.item(i).getTextContent().trim();
+	        if (v.equals(objetivo) || v.endsWith(soloCcc)) return v;
+	    }
+	    for (int i = 0; i < nodos.getLength(); i++) {
+	        String v = nodos.item(i).getTextContent().trim();
+	        if (v.contains(soloCcc)) return v;
+	    }
+	    return null;
+	}
+
+	private static org.w3c.dom.Document siguientePagina(WebClient webClient, org.w3c.dom.Document arq) throws Exception {
+	    String urlSig = buildBase(arq)
+	            + "&SPM.ACC.AC_SIGUIENTE_ASIGNACION_OAR=AC_SIGUIENTE_ASIGNACION_OAR";
+	    Page pg = webClient.getPage(new WebRequest(new URL(urlSig), HttpMethod.GET));
+	    return parseEmbeddedXml(pg.getWebResponse().getContentAsString());
+	}
+
+	private static org.w3c.dom.Document parseEmbeddedXml(String html) throws Exception {
+	    String xml = extractDataIsland(html);
+	    if (xml == null) throw new SegSocialException("No se encontró ProsaXMLData en la respuesta");
+	    javax.xml.parsers.DocumentBuilderFactory f = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+	    f.setNamespaceAware(false);
+	    javax.xml.parsers.DocumentBuilder db = f.newDocumentBuilder();
+	    return db.parse(new java.io.ByteArrayInputStream(xml.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+	}
+
+	private static String extractDataIsland(String body) {
+	    int s = body.indexOf("<ProsaXMLData");
+	    int e = body.indexOf("</ProsaXMLData>");
+	    return (s >= 0 && e > s) ? body.substring(s, e + "</ProsaXMLData>".length()) : null;
+	}
+
+	private static String xmlText(org.w3c.dom.Document doc, String tag) {
+	    org.w3c.dom.NodeList n = doc.getElementsByTagName(tag);
+	    return n.getLength() > 0 ? n.item(0).getTextContent().trim() : "";
+	}
+	
+	private static byte[] descargarDocumento(WebClient webClient, org.w3c.dom.Document arq) throws Exception {
+	    org.w3c.dom.NodeList srList = arq.getElementsByTagName("SCREEN_REPORTS");
+	    if (srList.getLength() == 0) return null;
+	    org.w3c.dom.Element screenReports = (org.w3c.dom.Element) srList.item(0);
+
+	    String contextPreview = screenReports.getAttribute("CONTEXT_TO_PREVIEW"); // /ProsaInternet/ViewDocUtf8
+	    if (contextPreview == null || contextPreview.isEmpty()) contextPreview = "/ProsaInternet/ViewDocUtf8";
+
+	    org.w3c.dom.NodeList adjuntos = arq.getElementsByTagName("ATTACHMENT");
+	    if (adjuntos.getLength() == 0) return null;
+
+	    org.w3c.dom.Element att = null;
+	    for (int i = 0; i < adjuntos.getLength(); i++) {
+	        org.w3c.dom.Element a = (org.w3c.dom.Element) adjuntos.item(i);
+	        if ("pdf".equalsIgnoreCase(a.getAttribute("EXT"))) { att = a; break; }
+	    }
+	    if (att == null) att = (org.w3c.dom.Element) adjuntos.item(0);
+
+	    String secuencial = att.getAttribute("SECUENCIAL");
+	    if (secuencial == null || secuencial.isEmpty()) secuencial = "1";
+
+	    String idSession = xmlText(arq, "SPM.IDSESSION");
+
+	    // PR_PATH_PREVIEW = CONTEXT_TO_PREVIEW + IDSESSION + "?"  ; luego SECUENCIAL + TYPEVIEW
+	    // (sin ticket  así lo construye el XSL, línea 774 de prosa_ejecucion.xsl)
+	    String url = "https://w2.seg-social.es" + contextPreview + idSession
+	            + "?SECUENCIAL=" + secuencial
+	            + "&TYPEVIEW=DOCUMENTO";
+
+	    Page doc = webClient.getPage(new WebRequest(new URL(url), HttpMethod.GET));
+	    byte[] bytes = doc.getWebResponse().getContentAsStream().readAllBytes();
+	    return bytes;
 	}
 
 	protected static Collection<Idc> getIDCDates(byte[] certificateData,
