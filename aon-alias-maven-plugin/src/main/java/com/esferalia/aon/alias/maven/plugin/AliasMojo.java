@@ -27,6 +27,11 @@ import java.util.Map;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.hibernate.MappingException;
@@ -37,60 +42,42 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 
 /**
  * @author ecastellano
- * 
- * @goal generate-alias
- * @phase process-sources
- * @requiresDependencyResolution compile+runtime
- * @requiresProject
- * @threadSafe
- * 
  */
+@Mojo(name = "generate-alias", defaultPhase = LifecyclePhase.PROCESS_SOURCES,
+		requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+		requiresProject = true, threadSafe = true)
 public class AliasMojo extends AbstractMojo {
-	
+
 	private static final Object LOCK = new Object();
 
-	private static final String ENTITY_PACKAGE = "com.esferalia.aon.entity.master."; 
+	private static final String ENTITY_PACKAGE = "com.esferalia.aon.entity.master.";
 	private static final String MESSAGING_PACKAGE = "com.code.aon.messaging.";
 
 	/**
 	 * The Maven Project Object
-	 * 
-	 * @parameter expression="${project}"
-	 * @readonly
 	 */
+	@Parameter(defaultValue = "${project}", readonly = true)
 	protected MavenProject project;
 
 	/**
 	 * The maven project's helper.
-	 * 
-	 * @component role="org.apache.maven.project.MavenProjectHelper"
-	 * @readonly
 	 */
+	@Component
 	private MavenProjectHelper projectHelper;
 
-	/**
-	 * @parameter
-	 */
+	@Parameter
 	private String targetPackage;
 
-	/**
-	 * @parameter
-	 */
+	@Parameter
 	private String targetName;
 
-	/**
-	 * @parameter
-	 */
+	@Parameter
 	private String sourcePackages;
-	
-	/**
-	 * @parameter
-	 */
+
+	@Parameter
 	private String excludes;
 
-	/**
-	 * @parameter default-value="${project.build.directory}/generated-sources"
-	 */
+	@Parameter(defaultValue = "${project.build.directory}/generated-sources")
 	private String outputDir;
 
 	public MavenProject getProject() {
@@ -161,11 +148,11 @@ public class AliasMojo extends AbstractMojo {
 				File file  = new File(packageDir, getTargetName() + ".java");
 				getLog().info("Alias Class file ..: " + file);
 				
-				// Lista de Entidades que todavia están en los proyectos aon.
+				// Lista de Entidades que todavia estï¿½n en los proyectos aon.
 				// Sirve basicamente para mostrar los imports en la clase generada.
 				List<String> aonClasses = new LinkedList<String>();
 	
-				// Lista de Entidades que alimentarán a  todavia están en los proyectos aon.			
+				// Lista de Entidades que alimentarï¿½n a  todavia estï¿½n en los proyectos aon.			
 				List<String> entityClasses = new LinkedList<String>();
 				
 				HibernateUtil.getSessionFactory(sessionFactoryName);

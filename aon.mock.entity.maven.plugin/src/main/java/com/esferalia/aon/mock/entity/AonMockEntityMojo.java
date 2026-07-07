@@ -37,6 +37,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
@@ -48,52 +53,36 @@ import freemarker.template.Template;
 
 /**
  * @author ecastellano
- * 
- * @goal generate-mock-entities
- * @phase generate-sources
- * @requiresDependencyResolution compile+runtime
- * @requiresProject
- * @threadSafe
- * 
  */
+@Mojo(name = "generate-mock-entities", defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+		requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+		requiresProject = true, threadSafe = true)
 public class AonMockEntityMojo extends AbstractMojo {
-	
+
 	private static final Object LOCK = new Object();
-	
+
 	/**
 	 * The Maven Project Object
-	 * 
-	 * @parameter expression="${project}"
-	 * @readonly
 	 */
+	@Parameter(defaultValue = "${project}", readonly = true)
 	protected MavenProject project;
 
 	/**
 	 * The maven project's helper.
-	 * 
-	 * @component role="org.apache.maven.project.MavenProjectHelper"
-	 * @readonly
 	 */
+	@Component
 	private MavenProjectHelper projectHelper;
 
-	/**
-	 * @parameter default-value="${project.build.directory}/generated-sources"
-	 */
+	@Parameter(defaultValue = "${project.build.directory}/generated-sources")
 	private String outputDir;
-	
-	/**
-	 * @parameter default-value="true"
-	 */
+
+	@Parameter(defaultValue = "true")
 	private boolean generateHibernateCfg;
 
-	/**
-	 * @parameter 
-	 */
+	@Parameter
 	private String buildNumber;
 
-	/**
-	 * @parameter default-value="${project.build.directory}/classes"
-	 */
+	@Parameter(defaultValue = "${project.build.directory}/classes")
 	private String resourcesOutputDir;
 
 	public MavenProject getProject() {

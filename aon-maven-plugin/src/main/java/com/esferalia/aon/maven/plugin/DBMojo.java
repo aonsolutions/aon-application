@@ -37,6 +37,10 @@ import java.util.TimeZone;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.velocity.app.Velocity;
@@ -47,13 +51,8 @@ import com.code.aon.master.VersionManager;
 
 /**
  * @author rtrepiana
- *
- * @goal 	generate-db
- * @phase	generate-sources
- * @requiresDependencyResolution
- * @threadSafe
- *
  */
+@Mojo(name = "generate-db", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class DBMojo extends AbstractMojo {
 
 	private static final Object LOCK = new Object();
@@ -64,42 +63,32 @@ public class DBMojo extends AbstractMojo {
 
     /**
      * Specifies the variable name in template's context for tables.
-     *
-     * @parameter default-value="tables"
-     * @readonly
      */
+    @Parameter(defaultValue = "tables", readonly = true)
     protected String tablesVariable;
 
     /**
      * Specifies the variable name in template's context for targetPackage.
-     *
-     * @parameter default-value="package"
-     * @readonly
      */
+    @Parameter(defaultValue = "package", readonly = true)
     protected String packageVariable;
 
     /**
      * Specifies the directory containing template files.
-     *
-     * @parameter default-value="com/esferalia/aon/master/vm/"
-     * @readonly
      */
+    @Parameter(defaultValue = "com/esferalia/aon/master/vm/", readonly = true)
     protected String sourceDirectory;
 
     /**
      * The Maven Project Object
-     *
-     * @parameter expression="${project}"
-     * @readonly
      */
+    @Parameter(defaultValue = "${project}", readonly = true)
     protected MavenProject project;
 
     /**
      * The maven project's helper.
-     *
-     * @component role="org.apache.maven.project.MavenProjectHelper"
-     * @readonly
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     // ----------------------------------------------------------------------
@@ -108,80 +97,69 @@ public class DBMojo extends AbstractMojo {
 
     /**
      * Host to connect to.
-     *
-     * @parameter default-value="127.0.0.1"
      */
+    @Parameter(defaultValue = "127.0.0.1")
     private String dbHost ;
 
     /**
      * Port number to use for connection.
-     *
-     * @parameter default-value="3306"
      */
+    @Parameter(defaultValue = "3306")
     private String dbPort;
 
     /**
-     *
-     * @parameter default-value="aon-master"
      */
+    @Parameter(defaultValue = "aon-master")
     private String dbName ;
 
     /**
      * User for login.
-     *
-     * @parameter default-value="dbuser"
      */
+    @Parameter(defaultValue = "dbuser")
     private String dbUser ;
 
     /**
      * Password to use when connecting to server.
-     *
-     * @parameter default-value="serubd2000"
      */
+    @Parameter(defaultValue = "serubd2000")
     private String dbPasswd ;
 
 		/**
      * TimeZone to use when connecting to server.
-     *
-     * @parameter default-value="Europe/Madrid"
      */
+    @Parameter(defaultValue = "Europe/Madrid")
     private String dbTimeZone ;
 
 		/**
      *  Establishing SSL connection.
-     *
-     * @parameter default-value="false"
      */
+    @Parameter(defaultValue = "false")
     private String dbUseSSL ;
 
     /**
      * Comma separated list of database tables to generate files for. <br/>
-     *
-     * @parameter expression="${dbtables}"
      */
+    @Parameter(property = "dbtables")
     protected String dbtables;
 
 
     /**
      * Specifies the java package for generated files.
-     *
-     * @parameter default-value="com.esferalia.aon.master.sql"
      */
+    @Parameter(defaultValue = "com.esferalia.aon.master.sql")
     private String targetPackage ;
 
     /**
      * Specifies the destination directory where should generate files. <br/>
-     *
-     * @parameter default-value="${project.build.directory}/generated-sources/aon-master"
      */
+    @Parameter(defaultValue = "${project.build.directory}/generated-sources/aon-master")
     protected File outputDirectory;
 
     /**
      * Comma separated template file names present in the <code>sourceDirectory</code>
      * directory. <br/>
-     *
-     * @parameter default-value="AbstractSQL.java.vm,SQLReader.java.vm,SQLWriter.java.vm,SQLConstants.java.vm" expression="${templates}"
      */
+    @Parameter(property = "templates", defaultValue = "AbstractSQL.java.vm,SQLReader.java.vm,SQLWriter.java.vm,SQLConstants.java.vm")
     protected String templates;
 
 

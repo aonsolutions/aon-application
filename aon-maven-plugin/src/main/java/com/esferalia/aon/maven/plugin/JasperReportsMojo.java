@@ -36,6 +36,10 @@ import net.sf.jasperreports.engine.DefaultJasperReportsContext;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
 import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
@@ -52,56 +56,46 @@ import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
  *
  * @author gjoseph
  * @author Tom Schwenk
- * @goal compile-reports
- * @phase generate-sources
- * @requiresDependencyResolution compile
- * @threadSafe
- *
  */
+@Mojo(name = "compile-reports", defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+		requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
 public class JasperReportsMojo extends AbstractMojo {
 
 	private static final Object LOCK = new Object();
 
-	/**
-	 * @parameter expression="${project}
-	 */
+	@Parameter(defaultValue = "${project}", readonly = true)
 	private MavenProject project;
 
 	/**
 	 * This is where the generated java sources are stored.
-	 *
-	 * @parameter expression="${project.build.directory}/jasperreports/java"
 	 */
+	@Parameter(defaultValue = "${project.build.directory}/jasperreports/java")
 	private File javaDirectory;
 
 	/**
 	 * This is where the .jasper files are written.
-	 *
-	 * @parameter expression="${project.build.outputDirectory}"
 	 */
+	@Parameter(defaultValue = "${project.build.outputDirectory}")
 	private File outputDirectory;
 
 	/**
 	 * This is where the xml report design files should be.
-	 *
-	 * @parameter default-value="src/main/jasperreports"
 	 */
+	@Parameter(defaultValue = "src/main/jasperreports")
 	private File sourceDirectory;
 
 	/**
 	 * The extension of the source files to look for. Finds files with a .jrxml
 	 * extension by default.
-	 *
-	 * @parameter default-value=".jrxml"
 	 */
+	@Parameter(defaultValue = ".jrxml")
 	private String sourceFileExt;
 
 	/**
 	 * The extension of the compiled report files. Creates files with a .jasper
 	 * extension by default.
-	 *
-	 * @parameter default-value=".jasper"
 	 */
+	@Parameter(defaultValue = ".jasper")
 	private String outputFileExt;
 
 	/**
@@ -111,11 +105,11 @@ public class JasperReportsMojo extends AbstractMojo {
 	 * bound to the compile or any other later phase. (As one might need to do
 	 * if they use classes from their project in their report design)
 	 *
-	 * @parameter default-value="false"
 	 * @deprecated There seems to be an issue with the compiler plugin so don't
 	 *             expect this to work yet - the dependencies will have
 	 *             disappeared.
 	 */
+	@Parameter(defaultValue = "false")
 	private boolean keepJava;
 
 	/**
@@ -123,47 +117,41 @@ public class JasperReportsMojo extends AbstractMojo {
 	 * set this to false if they want to handle the generated java source in
 	 * their application.
 	 *
-	 * @parameter default-value="true"
 	 * @deprecated Not implemented
 	 */
+	@Parameter(defaultValue = "true")
 	private boolean keepSerializedObject;
 
 	/**
 	 * Wether the xml design files must be validated.
-	 *
-	 * @parameter default-value="true"
 	 */
+	@Parameter(defaultValue = "true")
 	private boolean xmlValidation;
 
 	/**
 	 * Uses the Javac compiler by default. This is different from the original
 	 * JasperReports ant task, which uses the JDT compiler by default.
-	 *
-	 * @parameter
-	 *            default-value="net.sf.jasperreports.engine.design.JRJavacCompiler"
 	 */
+	@Parameter(defaultValue = "net.sf.jasperreports.engine.design.JRJavacCompiler")
 	private String compiler;
 
-	/**
-	 * @parameter expression="${project.compileClasspathElements}"
-	 */
+	@Parameter(defaultValue = "${project.compileClasspathElements}")
 	private List classpathElements;
 
 	/**
 	 * Additional JRPropertiesUtil
 	 *
-	 * @parameter
 	 * @since 1.0-beta-2
 	 */
+	@Parameter
 	private Map additionalProperties = new HashMap();
 
 	/**
 	 * Any additional classpath entry you might want to add to the JasperReports
 	 * compiler. Not recommended for general use, plugin dependencies should be
 	 * used instead.
-	 *
-	 * @parameter
 	 */
+	@Parameter
 	private String additionalClasspath;
 
 	public void execute() throws MojoExecutionException, MojoFailureException {

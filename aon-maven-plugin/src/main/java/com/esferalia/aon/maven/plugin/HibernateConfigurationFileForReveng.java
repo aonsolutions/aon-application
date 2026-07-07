@@ -35,6 +35,10 @@ import java.util.Properties;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
@@ -43,51 +47,36 @@ import com.code.aon.master.VersionManager;
 
 /**
  * @author rtrepiana
- *
- * @goal 	create-hibernate-configuration-file
- * @phase	initialize
- * @requiresDependencyResolution
- * @threadSafe
- *  
  */
+@Mojo(name = "create-hibernate-configuration-file", defaultPhase = LifecyclePhase.INITIALIZE, threadSafe = true)
 public class HibernateConfigurationFileForReveng extends AbstractMojo {
-	
+
 	private static final Object LOCK = new Object();
-	
+
     // ----------------------------------------------------------------------
     // Mojo parameters
     // ----------------------------------------------------------------------
 
     /**
      * The Maven Project Object
-     * 
-     * @parameter expression="${project}"
-     * @readonly
      */
+    @Parameter(defaultValue = "${project}", readonly = true)
     protected MavenProject project;
 
     /**
      * The maven project's helper.
-     * 
-     * @component role="org.apache.maven.project.MavenProjectHelper"
-     * @readonly
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     // ----------------------------------------------------------------------
     // aon parameters
     // ----------------------------------------------------------------------
 
-    /**
-     *  
-     * @parameter 
-     */
+    @Parameter
     private String destDir;
 
-    /**
-     *  
-     * @parameter 
-     */
+    @Parameter
     private List<String> properties;
 
     

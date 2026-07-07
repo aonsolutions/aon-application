@@ -26,6 +26,11 @@ import java.util.Map;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
@@ -37,43 +42,31 @@ import freemarker.template.Template;
 
 /**
  * @author ecastellano
- * 
- * @goal generate-hibernate-cfg
- * @phase generate-resources
- * @requiresDependencyResolution compile+runtime
- * @requiresProject
- * @threadSafe
- * 
  */
+@Mojo(name = "generate-hibernate-cfg", defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
+		requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+		requiresProject = true, threadSafe = true)
 public class AonHibernateCFGMojo extends AbstractMojo {
-	
-		
+
+
 	private static final Object LOCK = new Object();
-	
+
 	/**
 	 * The Maven Project Object
-	 * 
-	 * @parameter expression="${project}"
-	 * @readonly
 	 */
+	@Parameter(defaultValue = "${project}", readonly = true)
 	protected MavenProject project;
 
 	/**
 	 * The maven project's helper.
-	 * 
-	 * @component role="org.apache.maven.project.MavenProjectHelper"
-	 * @readonly
 	 */
+	@Component
 	private MavenProjectHelper projectHelper;
 
-	/**
-	 * @parameter default-value="${project.build.directory}/generated-resources"
-	 */
+	@Parameter(defaultValue = "${project.build.directory}/generated-resources")
 	private String outputDir;
 
-	/**
-	 * @parameter default-value="${project.basedir}/templates/hibernate.cfg.xml.ftl"
-	 */
+	@Parameter(defaultValue = "${project.basedir}/templates/hibernate.cfg.xml.ftl")
 	private String template;
 	
 	private String buildNumber;

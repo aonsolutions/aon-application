@@ -34,80 +34,70 @@ import org.apache.commons.lang.Validate;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * This plugin compiles jasper source files to the target folder. While doing
  * so, it keeps the folder structure in tact.
- * 
- * @goal jasper
- * @phase process-resources
- * 
  */
+@Mojo(name = "jasper", defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 public class JasperReporter extends AbstractMojo {
 
 	static final String ERROR_JRE_COMPILE_ERROR = "Some Jasper reports could not be compiled. See log above for details.";
 
 	/**
 	 * This is the java compiler used
-	 * 
-	 * @parameter 
-	 *            default-value="net.sf.jasperreports.engine.design.JRJdtCompiler"
-	 * @required
 	 */
+	@Parameter(defaultValue = "net.sf.jasperreports.engine.design.JRJdtCompiler", required = true)
 	private String compiler;
 
 	/**
 	 * This is where the .jasper files are written.
-	 * 
-	 * @parameter expression="${project.build.outputDirectory}/jasper"
 	 */
+	@Parameter(defaultValue = "${project.build.outputDirectory}/jasper")
 	private File outputDirectory;
 
 	/**
 	 * This is where the xml report design files should be.
-	 * 
-	 * @parameter default-value="src/main/jasperreports"
 	 */
+	@Parameter(defaultValue = "src/main/jasperreports")
 	private File sourceDirectory;
 
 	/**
 	 * The extension of the source files to look for. Finds files with a .jrxml
 	 * extension by default.
-	 * 
-	 * @parameter default-value=".jrxml"
 	 */
+	@Parameter(defaultValue = ".jrxml")
 	private String sourceFileExt;
 
 	/**
 	 * The extension of the compiled report files. Creates files with a .jasper
 	 * extension by default.
-	 * 
-	 * @parameter default-value=".jasper"
 	 */
+	@Parameter(defaultValue = ".jasper")
 	private String outputFileExt;
 
 	/**
 	 * Check the source files before compiling. Default value is true.
-	 * 
-	 * @parameter default-value="true"
 	 */
+	@Parameter(defaultValue = "true")
 	private boolean xmlValidation;
 
 	/**
 	 * If verbose is on the plug-in will report which reports it is compiling
 	 * and which files are being skipped.
-	 * 
-	 * @parameter default-value="false"
 	 */
+	@Parameter(defaultValue = "false")
 	private boolean verbose;
 
 	/**
 	 * The number of threads the reporting will use. Default is 4 which is good
 	 * for a lot of reports on a hard drive (in stead of SSD). If you only have
 	 * a few, or if you have SSD, it might be faster to set it to 2.
-	 * 
-	 * @parameter default-value=4
 	 */
+	@Parameter(defaultValue = "4")
 	private int numberOfThreads;
 
 	private Log log;
