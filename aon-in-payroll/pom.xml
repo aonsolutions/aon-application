@@ -98,20 +98,6 @@
 	</dependency>
 	 
 	<dependency>
-		<groupId>solutions.aon</groupId>
-		<artifactId>aon.seg.social</artifactId>
-		<type>test-jar</type>
-		<version>${project.version}</version>
-		<scope>test</scope>
-	</dependency>
-	<dependency>
-		<groupId>com.esferalia.aon</groupId>
-		<artifactId>aon.occam</artifactId>
-		<type>test-jar</type>
-		<version>${project.version}</version>
-		<scope>test</scope>
-	 </dependency>		
-	<dependency>
 		<groupId>com.esferalia.aon</groupId>
 		<artifactId>aon.payroll</artifactId>
 		<type>test-jar</type>
@@ -143,14 +129,6 @@
     	<version>3.5.4</version>
 	</dependency>
 
-	<dependency>
-		<groupId>solutions.aon</groupId>
-		<artifactId>aon.seg.social</artifactId>
-		<type>test-jar</type>
-		<version>${project.version}</version>
-		<scope>test</scope>
-	</dependency>
-	
      <dependency>
 		<groupId>com.github.javafaker</groupId>
 		<artifactId>javafaker</artifactId>

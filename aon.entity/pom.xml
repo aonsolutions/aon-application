@@ -98,10 +98,34 @@
 							</properties>
 						</configuration>
 					</execution>
+
+					<execution>
+						<id>AON-SQL-PAYROLL</id>
+						<goals>
+							<goal>generate-db</goal>
+						</goals>
+						<configuration>
+							<dbName>aon_reveng_${buildNumber}</dbName>
+							<targetPackage>com.esferalia.aon.google.sql</targetPackage>
+							<dbtables>person,mail_account,task,domain.*,registry,user.*,commercial.*,project.*,enterprise,rmedia,rattach</dbtables>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>AON-SQL-GOOGLE</id>
+						<goals>
+							<goal>generate-db</goal>
+						</goals>
+						<configuration>
+							<dbName>aon_reveng_${buildNumber}</dbName>
+							<targetPackage>com.esferalia.aon.payroll.sql</targetPackage>
+							<dbtables>domain,registry,person,raddress,rattach,category,enterprise.*,customer,workplace.*,agreement.*,calendar.*,deduction_concept,payment_concept,bonus_concept,system.*,contract.*,salary.*,cnae2009.*,payroll.*,user.*,irpf.*,geozone_irpf.*,app_param,fs_model190,fs_model190_detail,fs_model180,fs_model180_detail,company,geozone,invoice,invoice_detail,invoice_tax,fs_vat,fs_vat_detail,fs_vat_declaration,fs_model390,rbank,holiday,holiday_detail,scope</dbtables>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 
-			
+
 			<!-- Para levantar los entities mediate el proceso de reven de hibernate tools -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -183,39 +207,6 @@
 				<configuration>
 					<skipTests>true</skipTests>
 				</configuration>
-			</plugin>
-			
-			<!-- ********** AON-SQL-PAYROLL **********	 -->
-			<plugin>
-				
-				<groupId>com.esferalia.aon</groupId>
-				<artifactId>aon-maven-plugin</artifactId>
-				<version>${project.version}</version>
-				<executions>
-					<execution>
-						<id>AON-SQL-PAYROLL</id>
-						<goals>
-							<goal>generate-db</goal>
-						</goals>
-						<configuration>
-							<dbName>aon_reveng_${buildNumber}</dbName>
-							<targetPackage>com.esferalia.aon.google.sql</targetPackage>
-							<dbtables>person,mail_account,task,domain.*,registry,user.*,commercial.*,project.*,enterprise,rmedia,rattach</dbtables>
-						</configuration>
-					</execution>
-
-					<execution>
-						<id>AON-SQL-GOOGLE</id>
-						<goals>
-							<goal>generate-db</goal>
-						</goals>
-						<configuration>
-							<dbName>aon_reveng_${buildNumber}</dbName>
-							<targetPackage>com.esferalia.aon.payroll.sql</targetPackage>
-							<dbtables>domain,registry,person,raddress,rattach,category,enterprise.*,customer,workplace.*,agreement.*,calendar.*,deduction_concept,payment_concept,bonus_concept,system.*,contract.*,salary.*,cnae2009.*,payroll.*,user.*,irpf.*,geozone_irpf.*,app_param,fs_model190,fs_model190_detail,fs_model180,fs_model180_detail,company,geozone,invoice,invoice_detail,invoice_tax,fs_vat,fs_vat_detail,fs_vat_declaration,fs_model390,rbank,holiday,holiday_detail,scope</dbtables>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
