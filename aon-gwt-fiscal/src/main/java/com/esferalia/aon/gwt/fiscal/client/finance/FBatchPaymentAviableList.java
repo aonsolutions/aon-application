@@ -94,7 +94,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 	
 	private int lastScrollPos = 0;
 
-	private InlineLabel aviableCount;
+	private InlineLabel aviableCount = new InlineLabel("");;
 	private LinkedHashMap<Integer, FinanceRow> aviableFinances;
 	private LinkedHashSet<Integer> selectedFinances;
 	
@@ -269,6 +269,32 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		checksPanel.add(checkAll);
 		checksPanel.add(uncheckAll);
 		addToolbarButton(checksPanel);
+		
+		addAviableButton = new AonTableButton("A\u00f1adir a la remesa", AON.CSS.aonIconKeyboardDoubleArrowRight());
+		addAviableButton.getElement().getStyle().setProperty("background-repeat", "no-repeat");
+		addAviableButton.setEnabled(false);
+		addAviableButton.addClickHandler(e -> {
+			addAviableButton.setEnabled(false);
+			
+			for (Integer financeId : selectedFinances) {
+				FinanceRow financeRow = aviableFinances.get(financeId);
+				if (null != financeRow) {
+					fbatch.addBatchDetail(
+							new FBatchDetail()
+								.setDomain(fbatch.getDomain())
+								.setFbatch(fbatch.getId())
+								.setFinance(financeRow.getFinance())
+								.setAmount(financeRow.getFinance().getAmount())
+								.setStatus((byte) 1)
+								.setRemoved(false));
+
+					
+				}
+			}
+
+			saveFBatch(fbatch);
+		});
+		addToolbarButton(addAviableButton);
 	}
 	
 	private void checkAllAviable(boolean check) {
@@ -380,48 +406,16 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 	}
 	
 	private void paintHeader() {
-		aviableCount = new InlineLabel("");
 		aviableCount.addStyleName(AON.CSS.aonTextCenter());
 		
 		tab.createHeader();
 		
-		addAviableButton = new AonTableButton("A\u00f1adir a la remesa", AON.CSS.aonIconKeyboardDoubleArrowRight());
-		addAviableButton.getElement().getStyle().setProperty("background-repeat", "no-repeat");
-		addAviableButton.setEnabled(false);
-		addAviableButton.addClickHandler(e -> {
-			addAviableButton.setEnabled(false);
-			
-			for (Integer financeId : selectedFinances) {
-				FinanceRow financeRow = aviableFinances.get(financeId);
-				if (null != financeRow) {
-					fbatch.addBatchDetail(
-							new FBatchDetail()
-								.setDomain(fbatch.getDomain())
-								.setFbatch(fbatch.getId())
-								.setFinance(financeRow.getFinance())
-								.setAmount(financeRow.getFinance().getAmount())
-								.setStatus((byte) 1)
-								.setRemoved(false));
-
-					
-				}
-			}
-
-			saveFBatch(fbatch);
-		});
-		
 		if(FBATCH_TYPE.PAYROLL_PAYMENT.equals(this.fbatchType))
 			for ( COLS_PAYROLL col : COLS_PAYROLL.values()) 
-				if(col.equals(COLS_PAYROLL.ACT))
-					tab.addHeader(addAviableButton, col.getColWidth(), col.getCellStyleClass());
-				else
-					tab.addHeader(col.equals(COLS_PAYROLL.CHK) ? aviableCount : new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
+				tab.addHeader(col.equals(COLS_PAYROLL.CHK) ? aviableCount : new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
 		else
 			for ( COLS col : COLS.values()) 
-				if(col.equals(COLS.ACT))
-					tab.addHeader(addAviableButton, col.getColWidth(), col.getCellStyleClass());
-				else
-					tab.addHeader(col.equals(COLS.CHK) ? aviableCount : new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
+				tab.addHeader(col.equals(COLS.CHK) ? aviableCount : new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
 		
 	}
 	
@@ -559,25 +553,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 			amount.setTitle(infoTitle);
 		}
 
-		AonTableButton addButton = new AonTableButton("A\u00f1adir a la remesa", AON.CSS.aonIconKeyboardArrowRight());
-		addButton.setEnabled(!fbatch.isRecorded() && !fbatch.isGenerated());
-		addButton.addClickHandler(e -> {
-			addButton.setEnabled(false);
-			
-			this.fbatch.addBatchDetail(
-					new FBatchDetail()
-						.setDomain(fbatch.getDomain())
-						.setFbatch(fbatch.getId())
-						.setFinance(finance)
-						.setAmount(negativeCharge(finance) ?  finance.getAmount() * -1 : finance.getAmount())
-						.setStatus((byte) 1)
-						.setRemoved(false)
-					);
-
-			saveFBatch(this.fbatch);
-		});
-		
-		tab.addRow(row, notValidAccountBic(finance) || hasNegativeAmount(finance) || !finance.hasSalary() ? infoButton : addButton, COLS.ACT.getColWidth());
+		tab.addRow(row, notValidAccountBic(finance) || hasNegativeAmount(finance) || !finance.hasSalary() ? infoButton : new Label(), COLS.ACT.getColWidth());
 		
 		aviableFinances.put(finance.getId(), new FinanceRow(tab.getRowsCount(), finance));
 	}

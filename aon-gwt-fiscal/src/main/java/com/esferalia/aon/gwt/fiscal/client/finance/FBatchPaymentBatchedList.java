@@ -110,7 +110,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 	private FinanceModuleOptions options;
 	
 	// Table UI
-	private InlineLabel selectedCount;
+	private InlineLabel selectedCount = new InlineLabel("");;
 	private LinkedHashMap<Integer, FinanceRow> batchedFinances;
 	private LinkedHashSet<Integer> selectedFinances;
 	
@@ -118,8 +118,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 	private FBatch fbatch;
 	
 	private static enum COLS {
-		  ACT(AonStringUtils.EMPTY		,"2rem" 			,"")
-		, CHK(AonStringUtils.EMPTY		,"2rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		  CHK(AonStringUtils.EMPTY		,"2rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FEC("F. Venc."				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FFT("F. Factura"				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FAC("N. Factura"				,"8rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -152,8 +151,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 	}
 	
 	private static enum COLS_PAYROLL {
-		  ACT(AonStringUtils.EMPTY		,"2rem" 			,"")
-		, CHK(AonStringUtils.EMPTY		,"2rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		  CHK(AonStringUtils.EMPTY		,"2rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FEC("F. Venc."				,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, FAC("Concepto"				,"9rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, TIT("Titular"					,"5rem"  			,"flex: 1 1 5rem; min-width: 5rem; width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -240,6 +238,35 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		checksPanel.add(checkAll);
 		checksPanel.add(uncheckAll);
 		addToolbarButton(checksPanel);
+				
+		addSelectedButton = new AonTableButton("Quitar de la remesa", AON.CSS.aonIconKeyboardDoubleArrowLeft());
+		addSelectedButton.getElement().getStyle().setProperty("background-repeat", "no-repeat");
+		addSelectedButton.setEnabled(false);
+		addSelectedButton.addClickHandler(e -> {
+			addSelectedButton.setEnabled(false);
+			LinkedHashSet<Integer> moveIds = new LinkedHashSet<>();
+
+			for (Integer financeId : selectedFinances) {
+				FinanceRow financeRow = batchedFinances.get(financeId);
+				if (null != financeRow) {
+					Optional<FBatchDetail> fbatchDetail = fbatch.getBatchDetails().stream()
+							.filter(fbatchDetial -> null != fbatchDetial.getFinance()
+									&& fbatchDetial.getFinance().getId() == financeRow.getFinance().getId())
+							.findFirst();
+					if (fbatchDetail.isPresent())
+						fbatchDetail.get().setRemoved(true);
+
+					batchedFinances.remove(financeRow.getFinance().getId());
+
+					moveIds.add(financeRow.getFinance().getId());
+				}
+			}
+
+			moveIds.forEach(moveId -> selectedFinances.remove(moveId));
+
+			saveFBatch(fbatch);
+		});
+		addToolbarButton(addSelectedButton);
 	}
 	
 	private void checkAllAviable(boolean check) {
@@ -254,7 +281,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 			else
 				selectedFinances.remove(financeRow.getFinance().getId());
 			
-			Widget w = tab.getWidget(financeRow.getRow(), 1);
+			Widget w = tab.getWidget(financeRow.getRow(), 0);
 			
 			if (null != w && w instanceof AonTableButton) {
 				if (check) {
@@ -294,7 +321,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		if(FBATCH_TYPE.PAYROLL_PAYMENT == fbatchType)
 			type.addItem("SEPA 34-14 N\u00f3mina (XML)", "10");
 		else if(FBATCH_TYPE.PAYMENT == fbatchType) {
-			type.addItem("VISA", "0");
+			type.addItem("GEN\u00c9RICO", "0");
 			type.addItem("SEPA 34-14 (XML)", "9");
 		}
 		type.addChangeHandler(e -> {
@@ -424,51 +451,16 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 	}
 	
 	private void paintHeader() {
-		selectedCount = new InlineLabel("");
 		selectedCount.addStyleName(AON.CSS.aonTextCenter());
 		
 		tab.createHeader();
 		
-		addSelectedButton = new AonTableButton("Quitar de la remesa", AON.CSS.aonIconKeyboardDoubleArrowLeft());
-		addSelectedButton.getElement().getStyle().setProperty("background-repeat", "no-repeat");
-		addSelectedButton.setEnabled(false);
-		addSelectedButton.addClickHandler(e -> {
-			addSelectedButton.setEnabled(false);
-			LinkedHashSet<Integer> moveIds = new LinkedHashSet<>();
-
-			for (Integer financeId : selectedFinances) {
-				FinanceRow financeRow = batchedFinances.get(financeId);
-				if (null != financeRow) {
-					Optional<FBatchDetail> fbatchDetail = fbatch.getBatchDetails().stream()
-							.filter(fbatchDetial -> null != fbatchDetial.getFinance()
-									&& fbatchDetial.getFinance().getId() == financeRow.getFinance().getId())
-							.findFirst();
-					if (fbatchDetail.isPresent())
-						fbatchDetail.get().setRemoved(true);
-
-					batchedFinances.remove(financeRow.getFinance().getId());
-
-					moveIds.add(financeRow.getFinance().getId());
-				}
-			}
-
-			moveIds.forEach(moveId -> selectedFinances.remove(moveId));
-
-			saveFBatch(fbatch);
-		});
-		
 		if(FBATCH_TYPE.PAYROLL_PAYMENT.equals(this.fbatchType)) {
 			for ( COLS_PAYROLL col : COLS_PAYROLL.values()) 
-				if(col.equals(COLS_PAYROLL.ACT)) {
-					tab.addHeader(addSelectedButton, col.getColWidth(), col.getCellStyleClass());
-				} else
-					tab.addHeader(col.equals(COLS_PAYROLL.CHK) ? selectedCount : new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
+				tab.addHeader(col.equals(COLS_PAYROLL.CHK) ? selectedCount : new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
 		} else {
 			for ( COLS col : COLS.values()) 
-				if(col.equals(COLS.ACT)) {
-					tab.addHeader(addSelectedButton, col.getColWidth(), col.getCellStyleClass());
-				} else
-					tab.addHeader(col.equals(COLS.CHK) ? selectedCount : new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
+				tab.addHeader(col.equals(COLS.CHK) ? selectedCount : new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
 		}
 		
 	}
@@ -493,22 +485,6 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		
 		HTMLPanel row = tab.createRow();
 		row.addDomHandler(e -> {}, ClickEvent.getType());
-		
-		AonTableButton removeButton = new AonTableButton("Quitar de la remesa", AON.CSS.aonIconKeyboardArrowLeft());
-		removeButton.setEnabled(!fbatch.isRecorded() && !fbatch.isGenerated());
-		removeButton.addClickHandler(e -> {
-			removeButton.setEnabled(false);
-			Optional<FBatchDetail> fbatchDetail = this.fbatch.getBatchDetails().stream()
-					.filter(fbatchDetial -> null != fbatchDetial.getFinance()
-							&& fbatchDetial.getFinance().getId() == finance.getId())
-					.findFirst();
-			
-			if (fbatchDetail.isPresent())
-				fbatchDetail.get().setRemoved(true);
-
-			saveFBatch(fbatch);
-		});
-		tab.addRow(row, finance.isPending() || finance.isBatched() ? removeButton : new Label(), COLS.ACT.getColWidth());
 		
 		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), selectedFinances.contains(finance.getId()) ? AON.CSS.aonIconChecked() : AON.CSS.aonIconCheck());
 		checkButton.setEnabled(!fbatch.isRecorded() && !fbatch.isGenerated());

@@ -79,7 +79,6 @@ private static CommonServiceAsync COMMON_SERVICE;
 		this.scope = scope;
 		
 		container = new SimplePanel();
-		container.getElement().getStyle().setProperty("max-height", "200px");
 		container.getElement().getStyle().setProperty("padding-left", "1px");
 		setWidget(container);
 		
