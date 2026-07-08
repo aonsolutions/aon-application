@@ -60,6 +60,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FBatchController extends BasicController implements ICollectionProvider, IFinanceConstants, IFinanceController, IAuditableController {
 
@@ -579,6 +580,47 @@ public class FBatchController extends BasicController implements ICollectionProv
 	@Override
 	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
 		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+	
+	public boolean isCreateAEBDiskVisible() {
+		FinanceBatch fbatch = (FinanceBatch) this.getTo();
+		FinanceBatchType financeBatchType = fbatch == null ? null :fbatch.getFinanceBatchType();
+		boolean ret = fbatch != null
+			&& !isNevv()
+			&& !isRecorded()
+			&& isDiskMode()
+			&& isFilled()
+			&& getAebOutput() == null
+			&& fbatch.getRegistryBank() != null
+			&& fbatch.getRegistryBank().getId() != null
+			&& financeBatchType != FinanceBatchType.SEPA_19_14_CORE_XML
+			&& financeBatchType != FinanceBatchType.SEPA_19_14_COR1_XML
+			&& financeBatchType != FinanceBatchType.SEPA_58_ANTICIPO_XML
+			&& financeBatchType != FinanceBatchType.SEPA_58_COBRO_XML
+		;
+		System.out.println("isCreateAEBDiskVisible: " + ret);
+		return ret;
+	}
+	
+	public boolean isCreateSepaDiskVisible() {
+		FinanceBatch fbatch = (FinanceBatch) this.getTo();
+		FinanceBatchType financeBatchType = fbatch == null ? null :fbatch.getFinanceBatchType();
+		boolean ret = fbatch != null
+			&& !isNevv()
+			&& !isRecorded()
+			&& isDiskMode()
+			&& isFilled()
+			&& getAebOutput() == null
+			&& fbatch.getRegistryBank() != null
+			&& fbatch.getRegistryBank().getId() != null
+			&& (financeBatchType == FinanceBatchType.SEPA_19_14_CORE_XML
+			 || financeBatchType == FinanceBatchType.SEPA_19_14_COR1_XML
+			 || financeBatchType == FinanceBatchType.SEPA_58_ANTICIPO_XML
+			 || financeBatchType == FinanceBatchType.SEPA_58_COBRO_XML)
+		;
+		// empty fbatch.aebOutput
+		System.out.println("isCreateDiskVisible: " + ret);
+		return ret;
 	}
 	
 }

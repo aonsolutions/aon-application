@@ -25,7 +25,7 @@
 			styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
 			value="#{bundle.finance_remove_batch}"
 			rendered="#{fBatchDetail.checkedCount > 0}"
-			actionListener="#{fbatch.onRemoveSelected}" reRender="financeBatchForm,fbatchPanelTabSet">
+			actionListener="#{fbatch.onRemoveSelected}" reRender="fbatchToolbar, financeBatchForm,fbatchPanelTabSet">
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/shared/waitProcessSupport.xhtml" />     		
      	</aon:commandButton>	
