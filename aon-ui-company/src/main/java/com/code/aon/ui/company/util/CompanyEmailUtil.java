@@ -132,7 +132,7 @@ public class CompanyEmailUtil implements Serializable {
 			Set<String> emails = new TreeSet<String>();
 			for( int i = 0; i < list.size(); i++ ) {
 				RegistryMedia rm = (RegistryMedia) list.get(i);
-				emails.add( rm.getValue() );
+				emails.add( rm.getValue().trim() );
 			}
 			return emails.toArray(new String[emails.size()]);
 		}
