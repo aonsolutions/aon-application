@@ -419,8 +419,8 @@ public class HtmlUnitToolkit {
 	    HtmlPage result = webClient.getPage(target);
 
 	    if (result.getElementById("IPCEIdP") != null) {
-	        Toolkit.buildFile(result.asXml().getBytes(),
-	                System.getProperty("user.home") + "/Desktop/clave_debug.html");
+//	        Toolkit.buildFile(result.asXml().getBytes(),
+//	                System.getProperty("user.home") + "/Desktop/clave_debug.html");
 	        throw new Exception("La autenticación con certificado en Cl@ve no se completó. "
 	                + "Revisa clave_debug.html y verifica la cadena del certificado.");
 	    }
@@ -958,16 +958,12 @@ public class HtmlUnitToolkit {
 		
 		// 1. Pedimos el recurso PROTEGIDO. El servidor redirige a Cl@ve/PGIS si hace falta.
 	    HtmlPage page = asHtmlPage(webClient.getPage(MENU_AFI_DIRECTO_URL));
-	    
-	    Toolkit.buildFile(page.asXml().getBytes(), System.getProperty("user.home") + "/Desktop/menu.html");
 
 	    // 2. Si estamos en la pantalla Cl@ve, autenticamos con certificado.
 	    //    ensureClaveAuth vuelve a pedir 'target' y devuelve el recurso ya autenticado.
 	    page = ensureClaveAuth(webClient, page, MENU_AFI_DIRECTO_URL);
 
 	    webClient.waitForBackgroundJavaScript(10000);
-	    
-	    Toolkit.buildFile(page.asXml().getBytes(), System.getProperty("user.home") + "/Desktop/menu_2.html");
 	    
 	    return page; // ya es el menuAFI-DIRECTO autenticado
 	}
