@@ -16,7 +16,6 @@ package com.code.aon.faces.component.richfaces.jsf.ui;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 import javax.faces.FacesException;
 import javax.faces.component.UICommand;
@@ -30,12 +29,8 @@ import org.richfaces.component.html.HtmlMenuItem;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.sun.facelets.FaceletContext;
-import com.sun.facelets.FaceletException;
 import com.sun.facelets.TemplateClient;
-import com.sun.facelets.tag.TagAttribute;
-import com.sun.facelets.tag.TagAttributeException;
 import com.sun.facelets.tag.TagConfig;
-import com.sun.facelets.tag.TagHandler;
 
 import jakarta.el.ELException;
 import jakarta.el.ValueExpression;
@@ -115,7 +110,15 @@ public final class InsertMenuItemsHandler extends AbstractInsertHandler implemen
 
     	HtmlMenuItem htmlMenuItem = new HtmlMenuItem();
     	htmlMenuItem.setIconStyle("display:none");
-    	htmlMenuItem.setRendered(uiCommand.isRendered());
+    	// FIX ReRender ---> [RedMine #60873]
+    	// htmlMenuItem.setRendered(uiCommand.isRendered());
+    	ValueExpression renderedVE = uiCommand.getValueExpression("rendered");
+    	if (renderedVE != null) {
+    		htmlMenuItem.setValueExpression("rendered", renderedVE);
+    	} else {
+    		htmlMenuItem.setRendered(uiCommand.isRendered());
+    	}
+    	// End FIX
     	htmlMenuItem.setId( getMenuItemId(uiCommand));
 
     	htmlMenuItem.getChildren().add(uiCommand);
@@ -128,7 +131,15 @@ public final class InsertMenuItemsHandler extends AbstractInsertHandler implemen
 
     	HtmlMenuItem htmlMenuItem = new HtmlMenuItem();
     	htmlMenuItem.setIconStyle("display:none");
-    	htmlMenuItem.setRendered(htmlOutputLink.isRendered());
+    	// FIX ReRender ---> [RedMine #60873]
+    	// htmlMenuItem.setRendered(htmlOutputLink.isRendered());
+    	ValueExpression renderedVE = htmlOutputLink.getValueExpression("rendered");
+    	if (renderedVE != null) {
+    		htmlMenuItem.setValueExpression("rendered", renderedVE);
+    	} else {
+    		htmlMenuItem.setRendered(htmlOutputLink.isRendered());
+    	}
+    	// End FIX
     	htmlMenuItem.setId( getMenuItemId(htmlOutputLink));
 
     	htmlMenuItem.getChildren().add(htmlOutputLink);
