@@ -91,6 +91,11 @@ import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.NoMoreDataException;
 
 public class HtmlUnitToolkit {
+	
+	public static final String PGIS_LOGIN_URL = "https://idp.seg-social.es/PGIS/Login";
+	public static final String MENU_AFI_DIRECTO = "menuAFI-DIRECTO";
+	public static final String MENU_AFI_DIRECTO_URL = "https://w2sp.seg-social.es/M/menuAFI-DIRECTO.html";
+
 
 	// WAIT FOR A SPECIFIC HTML ELEMENT
 	public static <HtmlPage, R> Optional<R> wait4(HtmlPage htmlPage, Function<HtmlPage, R> function)
@@ -249,6 +254,71 @@ public class HtmlUnitToolkit {
 	        e.printStackTrace();
 	        throw new InvalidCertificateException();
 	    }
+	}
+	
+
+	 
+	/**
+	 * Variante que además entra en el servicio concreto: busca en el menú
+	 * AFI-DIRECTO el enlace cuyo href contiene el ARQ.IDAPP indicado y lo pulsa.
+	 * Devuelve la página del servicio ya transformada a HtmlPage.
+	 * @throws Exception 
+	 */
+	public static HtmlPage connectTgss(WebClient webClient, String idApp)
+			throws Exception {
+	 
+		HtmlPage menuPage = connectTgss(webClient);
+		
+		HtmlAnchor appAnchor = menuPage.getAnchors().stream()
+				.filter(a -> a.getHrefAttribute().contains("ARQ.IDAPP=" + idApp))
+				.findFirst()
+				.orElseThrow(() -> new SegSocialException(
+						"menuAFI-DIRECTO: no se encontró el enlace con ARQ.IDAPP=" + idApp));
+	 
+		Page page = appAnchor.click();
+		webClient.waitForBackgroundJavaScript(5000);
+	 
+		if (page instanceof XmlPage)
+			return transformXmlPage((XmlPage) page);
+		return asHtmlPage(page);
+	}
+	 
+	/** Localiza el botón/enlace "DNIe o certificado" en la página de PGIS. */
+	private static DomElement findCertificateAccess(HtmlPage loginPage) {
+		// a) Por texto visible del enlace
+		for (HtmlAnchor anchor : loginPage.getAnchors()) {
+			String text = anchor.asNormalizedText().toLowerCase();
+			if (text.contains("certificado") || text.contains("dnie"))
+				return anchor;
+		}
+		// b) Por texto de cualquier botón
+		for (DomElement button : loginPage.getElementsByTagName("button")) {
+			String text = button.asNormalizedText().toLowerCase();
+			if (text.contains("certificado") || text.contains("dnie"))
+				return button;
+		}
+		// c) Por href que sugiera login por certificado
+		for (HtmlAnchor anchor : loginPage.getAnchors()) {
+			String href = anchor.getHrefAttribute().toLowerCase();
+			if (href.contains("cert") || href.contains("dnie"))
+				return anchor;
+		}
+		return null;
+	}
+	 
+	/** Convierte cualquier Page devuelta por HtmlUnit en HtmlPage. 
+	 * @throws IOException */
+	private static HtmlPage asHtmlPage(Page page) throws SegSocialException, IOException {
+		if (page instanceof HtmlPage)
+			return (HtmlPage) page;
+		if (page instanceof XmlPage) {
+			try {
+				return transformXmlPage((XmlPage) page);
+			} catch (TransformerException e) {
+				throw new SegSocialException(e);
+			}
+		}
+		throw new SegSocialException("Página inesperada: " + page.getClass().getName());
 	}
 
 	private static boolean needsChainCompletion(KeyStore keyStore, char[] password) throws Exception {
@@ -961,6 +1031,41 @@ public class HtmlUnitToolkit {
 				
 			}
 		};
+	}
+	
+	/**
+	 * Pasos comunes de entrada al Sistema RED:
+	 *   1. Entra en https://idp.seg-social.es/PGIS/Login
+	 *   2. Pulsa "DNIe o certificado" (la autenticación la resuelve el keystore
+	 *      del WebClient)
+	 *   3. Pulsa el enlace cuyo href apunta a
+	 *      https://w2sp.seg-social.es:443/M/menuAFI-DIRECTO.html
+	 *
+	 * Devuelve la página del menú AFI-DIRECTO, ya autenticada, desde la que
+	 * cada servicio puede pulsar su propio enlace ARQ.IDAPP.
+	 * @throws Exception 
+	 */
+	public static HtmlPage connectTgss(WebClient webClient) throws Exception {
+	 
+		webClient.getOptions().setJavaScriptEnabled(true);
+		webClient.getOptions().setRedirectEnabled(true);
+		webClient.getOptions().setUseInsecureSSL(true);
+		webClient.getOptions().setThrowExceptionOnScriptError(false);
+		
+		// 1. Pedimos el recurso PROTEGIDO. El servidor redirige a Cl@ve/PGIS si hace falta.
+	    HtmlPage page = asHtmlPage(webClient.getPage(MENU_AFI_DIRECTO_URL));
+	    
+	    Toolkit.buildFile(page.asXml().getBytes(), System.getProperty("user.home") + "/Desktop/menu.html");
+
+	    // 2. Si estamos en la pantalla Cl@ve, autenticamos con certificado.
+	    //    ensureClaveAuth vuelve a pedir 'target' y devuelve el recurso ya autenticado.
+	    page = ensureClaveAuth(webClient, page, MENU_AFI_DIRECTO_URL);
+
+	    webClient.waitForBackgroundJavaScript(10000);
+	    
+	    Toolkit.buildFile(page.asXml().getBytes(), System.getProperty("user.home") + "/Desktop/menu_2.html");
+	    
+	    return page; // ya es el menuAFI-DIRECTO autenticado
 	}
 	
 	private static void trace(WebClient webClient) {
