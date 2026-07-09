@@ -56,6 +56,7 @@ import org.htmlunit.IncorrectnessListener;
 import org.htmlunit.NicelyResynchronizingAjaxController;
 import org.htmlunit.Page;
 import org.htmlunit.ScriptException;
+import org.htmlunit.SgmlPage;
 import org.htmlunit.StringWebResponse;
 import org.htmlunit.WebClient;
 import org.htmlunit.WebClientOptions;
@@ -671,6 +672,64 @@ public class HtmlUnitToolkit {
 		}
 	}
 
+	public static HtmlPage transformPage(Page page) throws IOException, TransformerException  {
+		if(page instanceof HtmlPage)
+			return HtmlUnitToolkit.secureTransformHtmlPage((HtmlPage) page);
+		return HtmlUnitToolkit.transformXmlPage((XmlPage) page);
+	}
+
+	public static HtmlPage secureTransformHtmlPage(HtmlPage htmlXmlPage)  {
+		try {
+			return transformHtmlPage(htmlXmlPage);
+		} catch ( Exception e ) {
+			return htmlXmlPage; 
+		}
+	}
+
+	public static HtmlPage transformHtmlPage(HtmlPage htmlXmlPage) throws IOException, TransformerException {
+		WebClient webClient = htmlXmlPage.getWebClient();
+	    
+	    String xslStylesheet = getXslStylesheet(htmlXmlPage);
+
+	    XmlPage xslPage = webClient.getPage(xslStylesheet);
+	    Source xslSource = new DOMSource(xslPage.getXmlDocument());
+
+	    Source xmlSource = new StreamSource( new StringReader(htmlXmlPage.getElementById("xml").getTextContent()));
+
+	    StringWriter out = new StringWriter();
+	    Result outputTarget = new StreamResult(out);
+
+	    URL xslUrl = xslPage.getWebResponse().getWebRequest().getUrl();
+
+	    URIResolver uriResolver = (href, base) -> {
+		try {
+		    XmlPage hrefPage = webClient.getPage(new URL( xslUrl, href));
+		    return new DOMSource(hrefPage.getXmlDocument());
+		} catch ( MalformedURLException e ) {
+		    throw new TransformerException(e);
+		}
+		catch (FailingHttpStatusCodeException | IOException e) {
+		    throw new TransformerException(e);
+		}
+	    };
+
+	    TransformerFactory transformerFactory = TransformerFactory.newDefaultInstance();
+	    transformerFactory.setURIResolver(uriResolver);
+
+	    Transformer transformer = transformerFactory.newTransformer(xslSource);
+	    transformer.setURIResolver(uriResolver);
+
+	    transformer.transform(xmlSource, outputTarget);
+
+	    URL xmlUrl = htmlXmlPage.getWebResponse().getWebRequest().getUrl();
+	    
+	    String path = xmlUrl.getPath().substring ( 0, xmlUrl.getPath().lastIndexOf("/"));
+	    webClient.getPage(String.format("%s://%s%s", xmlUrl.getProtocol(), xmlUrl.getHost(), path));
+	    
+	    HtmlPage htmlPage = loadHtmlAndJsCodeIntoCurrentWindow(webClient, out.toString(), xmlUrl);
+	    return htmlPage;
+	}
+
 	public static HtmlPage transformXmlPage(XmlPage xmlPage) throws IOException, TransformerException {
 		WebClient webClient = xmlPage.getWebClient();
 	    
@@ -800,8 +859,25 @@ public class HtmlUnitToolkit {
 	    final StringWebResponse webResponse = new StringWebResponse(htmlCode,url);
 	    final HtmlPage page = new HtmlPage(webResponse, webWindow);
 	    webWindow.setEnclosedPage(page);
+	    
+	    webClient.getJavaScriptEngine().initialize(webWindow, page);
+	    
+	    htmlParser.parse(webClient, webResponse, page, false, true);
+	    return page;
+	}	
 
-	    htmlParser.parse(webClient, webResponse, page, false, false);
+
+	public static HtmlPage loadHtmlAndJsCodeIntoCurrentWindow(final WebClient webClient,  final String htmlCode, final URL url) throws IOException {
+
+        // 1. Ensure JavaScript is enabled (true by default, but good to enforce)
+        webClient.getOptions().setJavaScriptEnabled(true);
+
+        // 2. Wrap your raw HTML string into a WebResponse object
+	    final StringWebResponse webResponse = new StringWebResponse(htmlCode,url);
+
+        // 3. Load the page via the WebClient window to trigger the JS engine
+        HtmlPage page = (HtmlPage) webClient.loadWebResponseInto(webResponse, webClient.getCurrentWindow());
+
 	    return page;
 	}	
 	
@@ -824,6 +900,26 @@ public class HtmlUnitToolkit {
 
 	public static boolean hasXslStylesheet (WebResponse response) throws MalformedURLException {
 	    return Pattern.compile("xml-stylesheet\\s*type=\"text/xsl\"\\s*href\\s*=\\s*\"(?<href>.*)\"").matcher(response.getContentAsString()).find();
+	}
+
+	public static String getXslStylesheet (HtmlPage htmlPage) throws MalformedURLException {
+		
+	    
+	    return getXslScript(htmlPage.getWebResponse()).toString();
+	    
+	}
+
+	public static URL getXslScript (WebResponse response) throws MalformedURLException {
+		
+		//<script id="xslUri" href="/ServiciosAfiliacionRED/templates/afrd/fw4/CU300_ATR66ConsultaNumeroSegSocial/AfrdPaConsultaNumeroSegSocial_ES.xsl" type="text/plain">
+	    
+	    Matcher matcher = Pattern.compile("script\\s*id=\"xslUri\"\\s*href\\s*=\\s*\"(?<href>[^\"]*)\"").matcher(response.getContentAsString());
+	    matcher.find();
+	    String href = matcher.group("href");
+
+	    URL url = response.getWebRequest().getUrl();
+	    return new URL(url, href);
+	    
 	}
 
 	public static WebConnectionWrapper transformXmlPage(WebClient webClient, byte[] certificateData, String certificatePassword,
