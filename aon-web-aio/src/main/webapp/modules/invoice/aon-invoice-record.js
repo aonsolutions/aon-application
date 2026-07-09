@@ -86,30 +86,30 @@ export class AonInvoiceRecord extends AonElement {
         getInvoicesCounters(params)
             .then(stat => {
                 let invoices = [
-                    {label: "Op. Interiores",       value: stat.national || 0}, 
-                    {label: "Intracomunitarias",    value: stat.intracommunity || 0}, 
-                    {label: "Extracomunitarias",    value: stat.extracommunity || 0}, 
-                    {label: "CanCeuMel",            value: stat.canCeuMel || 0}, 
-                    {label: "OtherISP",             value: stat.otherISP || 0}, 
-                    {label: "Withholding",          value: stat.withholding || 0},
+                    {label: "Op. Interiores",       	value: stat.national || 0}, 
+                    {label: "Intracomunitarias",    	value: stat.intracommunity || 0}, 
+                    {label: "Extracomunitarias",    	value: stat.extracommunity || 0}, 
+                    {label: "Canarias, Ceuta, Melilla", value: stat.canCeuMel || 0}, 
+                    {label: "I.S.P.",             		value: stat.otherISP || 0}, 
+                    {label: "Con Retención",        	value: stat.withholding || 0},
                 ];
 
                 let unrecordes = [
                     {label: "Proformas",    value: stat.proformas || 0}, 
-                    {label: "Emitidas",     value: stat.unrecordedIssued || 0}, 
-                    {label: "Recibidas",    value: stat.unrecordedReceived || 0}, 
-                    {label: "Simplificadas",value: stat.unrecordedSimplified || 0}, 
+                    {label: "Emitidas",     value: stat.unrecordedIssued || 0, color: "orange"}, 
+                    {label: "Recibidas",    value: stat.unrecordedReceived || 0, color: "orange"}, 
+                    {label: "Simplificadas",value: stat.unrecordedSimplified || 0, color: "orange"}, 
                 ];
                 let rawdocs = [
-                    {label: "Pendientes",   value: stat.draft || 0}, 
-                    {label: "En proceso",   value: stat.inProcess || 0}, 
-                    {label: "Revisión",     value: stat.review || 0}, 
+                    {label: "Borrador",   	value: stat.draft || 0, color: "orange"}, 
+                    {label: "En trámite",   value: stat.inProcess || 0, color: "orange"}, 
+                    {label: "A revisar",    value: stat.review || 0, color: "red"}, 
                     {label: "Papelera",     value: stat.trash || 0}, 
                 ];
 
-                this.paintBlock(this.id + "invoices", "Facturas", invoices);
+                this.paintBlock(this.id + "invoices", "Resumen de Facturas", invoices);
                 this.paintBlock(this.id + "unrecordes", "Facturas Pendientes de contabilizar", unrecordes);
-                this.paintBlock(this.id + "rawdocs", "Documentos Pendientes", rawdocs);
+                this.paintBlock(this.id + "rawdocs", "Documentos Pendientes de contabilizar", rawdocs);
                 
             });
     }
@@ -132,7 +132,13 @@ export class AonInvoiceRecord extends AonElement {
             valueSpan.textContent = item.value;
             valueSpan.className = "aonInvoiceRecordValue";
 
-            itemDiv.appendChild(labelSpan);
+			let foregroundColor = item.color;
+			if (item.value && item.value > 0 && foregroundColor) {
+				labelSpan.style.color = foregroundColor;
+				valueSpan.style.color = foregroundColor;
+			}
+
+			itemDiv.appendChild(labelSpan);
             itemDiv.appendChild(valueSpan);
             contentDiv.appendChild(itemDiv);
         });

@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.Rawdoc.RAWDOC;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.Date;
 import java.util.function.BiFunction;
@@ -43,7 +44,7 @@ public class DomainInvoiceStatDAO {
 		}
 		return ctx.getDslContext()
 			.select(DOMAIN.ID, DOMAIN.PARENT, DOMAIN.NAME, DOMAIN.DESCRIPTION, DOMAIN.ACTIVE, DOMAIN.EXPIRATIONDATE
-				, REGISTRY.DOCUMENT, REGISTRY.NAME)
+				, REGISTRY.ID, REGISTRY.DOCUMENT, REGISTRY.NAME)
 			.from(DOMAIN)
 			.innerJoin(COMPANY).on(COMPANY.DOMAIN.eq(DOMAIN.ID))
 			.innerJoin(REGISTRY).on(REGISTRY.ID.eq(COMPANY.REGISTRY))
@@ -55,7 +56,44 @@ public class DomainInvoiceStatDAO {
 			.stream()
 			.map(new DomainInvoiceStatFiller())
 			.map( stat -> fillData( ctx, params, stat ) )
+			.filter(stat -> filter(stat, params))
 		;
+	}
+
+	private static boolean filter(DomainInvoiceStat stat, DomainInvoiceStatParams params) {
+		int f = params.getScoredFilter().orElse(0).intValue();
+		//	0 - "Todas"
+		if (f == 0) return true;
+		
+		//	1 - "Pendiente de declarar"
+		if (f == 1) return (
+			stat.getUndeclaredIssued() +
+			stat.getUndeclaredReceived() + 
+			stat.getUndeclaredSimplified()) > 0;
+		
+		//	2 - "Algo pendiente"
+		if (f == 2) return (
+			stat.getProformas() +
+			stat.getUnrecordedIssued()+
+			stat.getUnrecordedReceived() +
+			stat.getUnrecordedSimplified() +
+			stat.getDraft() + 
+			stat.getInProcess()) > 0;
+
+		
+		//	3 - "Facturas pendientes"
+		if (f == 3) return (
+			stat.getProformas() +
+			stat.getUnrecordedIssued()+
+			stat.getUnrecordedReceived() +
+			stat.getUnrecordedSimplified()) > 0;
+		
+		//	4 - "Documentos pendientes"
+		if (f == 4) return (
+			stat.getDraft() + 
+			stat.getInProcess()) > 0;
+
+		return true;
 	}
 
 	private static DomainInvoiceStat fillData(AONContext ctx, DomainInvoiceStatParams params, DomainInvoiceStat stat) {
@@ -64,7 +102,7 @@ public class DomainInvoiceStatDAO {
 			fillProformasData( ctx, params, stat );
 		}
 		if (params.getRawdoc().orElse(true)) {
-			fillRawdocsData( ctx, params, stat );
+			fillRawdocsData( ctx, stat );
 		}
 		if (params.getAlcatraz().orElse(true)) {
 			fillAlcatrazData( ctx, params, stat );
@@ -87,7 +125,6 @@ public class DomainInvoiceStatDAO {
 				.orElse(DSL.noCondition()))
 			.groupBy(INVOICE.TYPE, INVOICE.TRANSACTION, INVOICE.WITHHOLDING, INVOICE.STATUS)
 			.fetch()
-			.stream()
 			.forEach( r -> {
 				Integer c = r.get(invCount);
 				InvoiceTransactionType transaction = InvoiceTransactionType.safeValueOf( r.get(INVOICE.TRANSACTION) );
@@ -131,14 +168,13 @@ public class DomainInvoiceStatDAO {
 			.ifPresent( r -> stat.addProformas( r.get(invCount) ) );
 	}
 
-	private static void fillRawdocsData(AONContext ctx, DomainInvoiceStatParams params, DomainInvoiceStat stat) {
+	private static void fillRawdocsData(AONContext ctx, DomainInvoiceStat stat) {
 		Field<Integer> rawCount = DSL.count( RAWDOC.ID );
 		ctx.getDslContext().select( rawCount, RAWDOC.STATUS )
 		 	.from(RAWDOC)
 			.where(RAWDOC.DOMAIN.eq(stat.getId()))
 			.groupBy(RAWDOC.STATUS)
 			.fetch()
-			.stream()
 			.forEach( r -> {
 				Integer c = r.get(rawCount);
 				RawdocStatus status = RawdocStatus.safeValueOf( r.get(RAWDOC.STATUS) );
@@ -182,7 +218,6 @@ public class DomainInvoiceStatDAO {
 			)
 		   .groupBy(INVOICE.TYPE, INVOICE.TRANSACTION, INVOICE.WITHHOLDING, INVOICE.STATUS)
 		   .fetch()
-		   .stream()
 		   .forEach( r -> {
 			   Integer c = r.get(invCount);
 			   InvoiceType type = InvoiceType.safeValueOf( r.get(INVOICE.TYPE) );
@@ -229,16 +264,36 @@ public class DomainInvoiceStatDAO {
 				}
 			})
 			.orElse(c);
+		
+	private static String getUserName(ConditionRecord cr) {
+		return cr.params
+			.getImpersonatedUser()
+			.flatMap(userId -> 
+				cr.ctx.getDslContext()
+					.select(USER.LOGIN)
+					.from(USER)
+					.where(USER.ID.eq(userId))
+					.fetch()
+					.stream()
+					.map(r -> r.get(USER.LOGIN))
+					.findFirst()
+			)
+			.orElse(cr.ctx.getUser());
+	}
 	
-	
-	private static final BiFunction<Condition, ConditionRecord, Condition> SCOPE_CONDITION = (c, cr) -> 
-		(!cr.domain.isParent()) 
-			? c
-			:cr.params.getScope()
-				.filter(s -> s != null)
-				.map(s -> c.and(DOMAIN.SCOPE.eq(s)))
-				.orElse(c.and(DOMAIN.SCOPE.isNull().or(SecurityDAO.getUserScopesCondition(cr.ctx, DOMAIN.SCOPE))));
-	
+	private static final BiFunction<Condition, ConditionRecord, Condition> SCOPE_CONDITION = (c, cr) -> {
+		if (!cr.domain.isParent()) return c;
+		int scopes = cr.params.getScope().orElse(0);
+		String userName = getUserName(cr);
+		if ( scopes == 0) {				// TODOS
+			c = c.and(DOMAIN.SCOPE.isNull().or(SecurityDAO.getUserScopesCondition(cr.ctx, userName, DOMAIN.SCOPE)));
+		} else if ( scopes == 1) {		// MIS SCOPES
+			c = c.and(SecurityDAO.getUserScopesCondition(cr.ctx, userName, DOMAIN.SCOPE));
+		} else if ( scopes == 2) {		// SIN SCOPES
+			c = c.and(DOMAIN.SCOPE.isNull());
+		}
+		return c;
+	};
 	
 	private static final BiFunction<Condition, ConditionRecord, Condition> QUERY_CONDITION = (c, cr) -> 
 		cr.params.getQuery()
@@ -262,6 +317,7 @@ public class DomainInvoiceStatDAO {
 				.setParentId(getValue(r, DOMAIN.PARENT))
 				.setName(getValue(r, DOMAIN.NAME))
 				.setDescription(getValue(r, DOMAIN.DESCRIPTION))
+				.setCompanyId(getValue(r, REGISTRY.ID))
 				.setCompanyDocument(getValue(r, REGISTRY.DOCUMENT))
 				.setCompanyName(getValue(r, REGISTRY.NAME))
 				.setActive(getBoolean(r, DOMAIN.ACTIVE))

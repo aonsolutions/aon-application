@@ -876,7 +876,7 @@ public class JsonParser {
 		
 	}
 	
-	public static DomainInvoiceStatParams parseDomainInvoiceStatParams(String stringParams) throws ParseException, java.text.ParseException {
+	public static DomainInvoiceStatParams parseDomainInvoiceStatParams(String stringParams) {
 		DomainInvoiceStatParams params = new DomainInvoiceStatParams();
 		org.json.JSONObject jsonParams = new org.json.JSONObject( stringParams );
 		Integer dom = JsonUtils.getInteger(jsonParams,IRequestParamsNames.DOMAIN);
@@ -888,6 +888,8 @@ public class JsonParser {
 			.setActive(JsonUtils.getInteger(jsonParams, IRequestParamsNames.ACTIVE))
 			.setQuery(JsonUtils.getString(jsonParams, IRequestParamsNames.QUERY))
 			.setScope(JsonUtils.getInteger(jsonParams, IRequestParamsNames.SCOPE))
+			.setImpersonatedUser(JsonUtils.getInteger(jsonParams, IRequestParamsNames.IMPERSONATED_USER))
+			.setScoredFilter(JsonUtils.getInteger(jsonParams, IRequestParamsNames.SCORED_FILTER))
 			.setFiscalModelType( FiscalModelType.safeValueByName(JsonUtils.getString(jsonParams, IRequestParamsNames.FISCAL_MODEL)) )
 			.setInvoices(JsonUtils.getBoolean(jsonParams, IRequestParamsNames.INVOICES))
 			.setAlcatraz(JsonUtils.getBoolean(jsonParams, IRequestParamsNames.ALCATRAZ))

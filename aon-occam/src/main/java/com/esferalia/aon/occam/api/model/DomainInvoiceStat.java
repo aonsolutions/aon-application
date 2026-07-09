@@ -10,6 +10,7 @@ public class DomainInvoiceStat implements Serializable {
 	private Integer parentId;
 	private String name;
 	private String description;
+	private Integer companyId;
 	private String companyDocument;
 	private String companyName;
 	private boolean active;
@@ -66,6 +67,14 @@ public class DomainInvoiceStat implements Serializable {
 	}
 	public DomainInvoiceStat setDescription(String description) {
 		this.description = description;
+		return this;
+	}
+	
+	public Integer getCompanyId() {
+		return companyId;
+	}
+	public DomainInvoiceStat setCompanyId(Integer companyId) {
+		this.companyId = companyId;
 		return this;
 	}
 	

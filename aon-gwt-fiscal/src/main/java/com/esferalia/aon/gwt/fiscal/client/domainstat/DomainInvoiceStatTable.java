@@ -104,7 +104,7 @@ class DomainInvoiceStatTable extends ScrollPanel {
 		Label unrecordedReceivedLabel = headerLabel("Recib", "Facturas recibidas no contabilizadas");
 		Label unrecordedSimplifiedLabel = headerLabel("Simpl", "Facturas simplificadas no contabilizadas");
 		
-		Label draftLabel = headerLabel("Prof", "Borrador");  
+		Label draftLabel = headerLabel("Borr", "Borrador");  
 		Label reviewLabel = headerLabel("Revi", "Revisi\u00F3n");
 		Label inProcessLabel = headerLabel("Tr\u00E1m", "Tr\u00E1mite");
 		Label trashLabel = headerLabel("Pap", "Papelera");
@@ -226,6 +226,9 @@ class DomainInvoiceStatTable extends ScrollPanel {
 					if ( AonStringUtils.length(stat.getCompanyName()) > 40 ) {
 						nameLabel.setTitle(stat.getCompanyName());
 					}
+					nameLabel.setStyleName(AON.CSS.aonClickableLabel());
+					nameLabel.addClickHandler( e -> navigate(stat) );
+					
 					AonIntegerLabel undeclaredIssuedLabel = new AonIntegerLabel(stat.getUndeclaredIssued(), AonStringUtils.HYPHEN);
 					AonIntegerLabel undeclaredReceivedLabel = new AonIntegerLabel(stat.getUndeclaredReceived(), AonStringUtils.HYPHEN);
 					AonIntegerLabel undeclaredSimplifiedLabel = new AonIntegerLabel(stat.getUndeclaredSimplified(), AonStringUtils.HYPHEN);
@@ -284,5 +287,26 @@ class DomainInvoiceStatTable extends ScrollPanel {
 			disableMoreData();
 		}
 		
+		private native void navigate(JsDomainInvoiceStat stat) /*-{
+			var header = ($wnd.top && $wnd.top.document) 
+				? $wnd.top.document.querySelector('aon-header') 
+				: null;
+			if (!header || typeof header.companySelectionToPendingAccounting !== 'function') {
+				var c = ($wnd.top && $wnd.top.console) 
+					? $wnd.top.console
+					: $wnd.console;
+				if (c) c.error('navigate: aon-header.companySelectionToPendingAccounting no disponible');
+				return;
+			}
+			var company = {
+				id : stat.id,
+				domain : stat.name,
+				name : stat.companyName,
+				document : stat.companyDocument,
+				parentId : stat.parentId
+			};
+			header.companySelectionToPendingAccounting(company);
+		}-*/;
+  
 	}
 }
