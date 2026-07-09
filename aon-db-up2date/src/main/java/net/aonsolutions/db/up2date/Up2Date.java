@@ -22,7 +22,6 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.payroll.ContractCostExpressionText;
 import net.aonsolutions.db.up2date.payroll.ContractCostSeaExpressionFix;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.registry.RMediaEmailsCleanUpdate;
 import net.aonsolutions.db.up2date.scope.InsertDefaultScope;
 import net.aonsolutions.db.up2date.security.UserScopeAlterStartEndAuditory;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBaseCgcJornadasTotalesFix;
@@ -667,8 +666,7 @@ public class Up2Date {
 			
 			// UpdateMailAccountProtocolReplayTo.UPDATEMAILACCOUNTPROTOCOLREPLAYTO,
 			// UpdateMailAccountType.UPDATEMAILACCOUNTTYPE,
-			//UserScopeAlterStartEndAuditory.USERSCOPEALTERSTARTENDAUDITORY,
-			RMediaEmailsCleanUpdate.RMEDIA_EMAILS_CLEAN_UPDATE
+			UserScopeAlterStartEndAuditory.USERSCOPEALTERSTARTENDAUDITORY
 	};
 
 	// ------------------------------------------------------------------------
