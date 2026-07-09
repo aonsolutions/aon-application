@@ -570,6 +570,10 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		}
 
 	}
+
+	public void setHasSaved(boolean isNewFBatch) {
+		hasSaved = isNewFBatch;
+	}
 		
 	public abstract void back(boolean refresh);
 
