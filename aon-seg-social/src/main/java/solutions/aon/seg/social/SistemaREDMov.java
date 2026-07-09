@@ -707,22 +707,12 @@ class SistemaREDMov {
 
 	        webClient.getOptions().setUseInsecureSSL(true);
 
-	        // 1. Carga inicial + autenticación Cl@ve con certificado
-	        String target = "https://w2sp.seg-social.es/M/menuAFI-REMESAS.html";
-	        HtmlPage htmlPage = webClient.getPage(target);
-	        htmlPage = HtmlUnitToolkit.ensureClaveAuth(webClient, htmlPage, target);
-
-	        // 2. Click en el enlace del servicio -> devuelve el "shell" de Prosa (HtmlPage
-	        //    con el XML embebido en <script id="xml">). HtmlUnit NO ejecuta el polyfill,
-	        //    así que FORMULARIO_1 no existe; reconstruimos el POST a mano.
-	        Page p = htmlPage.getAnchorByHref(
-	                "/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00C"
-	        ).click();
+	        // 1+2. Entrada común (PGIS -> certificado -> menuAFI-DIRECTO) y click en el
+	        //       servicio XV24M00C. connectTgss ya devuelve el shell del servicio.
+	        HtmlPage shell = HtmlUnitToolkit.connectTgss(webClient, "XV24M00C");
 	        webClient.waitForBackgroundJavaScript(15000);
-	        HtmlPage shell = (p instanceof XmlPage)
-	                ? HtmlUnitToolkit.transformXmlPage((XmlPage) p) : (HtmlPage) p;
 
-	        // 3. Extraer el XML embebido del shell y leer el nodo <ARQ>
+	        // 3. Leer el nodo ARQ del XML embebido para reconstruir el POST
 	        String shellHtml = shell.getWebResponse().getContentAsString();
 	        org.w3c.dom.Document arqDoc = parseEmbeddedXml(shellHtml);
 
@@ -761,14 +751,14 @@ class SistemaREDMov {
 	        }
 	        req.setRequestParameters(params);
 
-	        // 6. Enviar y parsear el XML de respuesta (vuelve otro shell con <listaTrabajador> relleno)
+	        // 6. Enviar y parsear el XML de respuesta (vuelve otro shell con <TRABAJADOR> relleno)
 	        Page resp = webClient.getPage(req);
 	        String body = resp.getWebResponse().getContentAsString();
 
 	        return parseProsaXml(body);
 	    }
 	}
-
+	
 	private static Employee nafxipfImpl(final InputStream certificateInputStream, final String certificatePassword,
 	        final String certificateType, String ipf, String apellido1, String apellido2)
 	        throws SegSocialException, FailingHttpStatusCodeException, IOException, InterruptedException {
@@ -778,18 +768,10 @@ class SistemaREDMov {
 
 	        webClient.getOptions().setUseInsecureSSL(true);
 
-	        // 1. Acceso + autenticación Cl@ve (igual que ipfxnaf)
-	        String target = "https://w2sp.seg-social.es/M/menuAFI-REMESAS.html";
-	        HtmlPage htmlPage = webClient.getPage(target);
-	        htmlPage = HtmlUnitToolkit.ensureClaveAuth(webClient, htmlPage, target);
-
-	        // 2. Enlace al servicio (IDAPP termina en D)
-	        Page p = htmlPage.getAnchorByHref(
-	                "/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00D"
-	        ).click();
+	        // 1+2. Entrada común (PGIS -> certificado -> menuAFI-DIRECTO) y click en el
+	        //       servicio XV24M00D. connectTgss ya devuelve el shell del servicio.
+	        HtmlPage shell = HtmlUnitToolkit.connectTgss(webClient, "XV24M00D");
 	        webClient.waitForBackgroundJavaScript(15000);
-	        HtmlPage shell = (p instanceof XmlPage)
-	                ? HtmlUnitToolkit.transformXmlPage((XmlPage) p) : (HtmlPage) p;
 
 	        // 3. Leer el nodo ARQ del XML embebido para reconstruir el POST
 	        String shellHtml = shell.getWebResponse().getContentAsString();

@@ -1247,8 +1247,10 @@ public class JooqCertifica2 {
 	// methods
 
 	private static int getAgrarianDays(DSLContext dslContext, Integer salaryId) {
-		Result<Record> agrarianRecords = dslContext.select().from(SALARY_DATA).where(SALARY_DATA.SALARY.eq(salaryId))
-				.and(SALARY_DATA.NAME.eq("JORNADAS_REALES")).fetch();
+		Result<Record> agrarianRecords = dslContext.select().from(SALARY_DATA)
+				.where(SALARY_DATA.SALARY.eq(salaryId))
+				.and(SALARY_DATA.NAME.eq("JORNADAS_REALES").or(SALARY_DATA.NAME.eq("JORNADAS_REALES_TOTALES")))
+				.fetch();
 
 		int agrarian = 0;
 
@@ -1256,7 +1258,15 @@ public class JooqCertifica2 {
 			return agrarian;
 
 		for (Record agrarianRecord : agrarianRecords) {
-			int itValue = Integer.parseInt(agrarianRecord.get(SALARY_DATA.EXPRESSION));
+			
+			int itValue = 0;
+			try {
+				itValue = Integer.parseInt(agrarianRecord.get(SALARY_DATA.EXPRESSION));
+			} catch (Exception e) {
+				Double itValueDouble = Double.parseDouble(agrarianRecord.get(SALARY_DATA.EXPRESSION));
+				itValue = itValueDouble.intValue();
+			}
+			
 			agrarian += itValue;
 		}
 		return agrarian;

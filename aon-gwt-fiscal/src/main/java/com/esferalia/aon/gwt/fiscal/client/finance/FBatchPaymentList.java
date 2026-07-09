@@ -300,7 +300,7 @@ public abstract class FBatchPaymentList extends AonCustomDockLayout {
 					AonMessagePanel.hideMessage(messagePanel);
 					enableMoreData();
 					resetSearchOffset();
-					onFBatchSelect(fBatch);
+					onFBatchSelect(fBatch, true);
 				}
 			}) {
 
@@ -451,7 +451,7 @@ public abstract class FBatchPaymentList extends AonCustomDockLayout {
 	
 	private void paintRow(FBatch fBatch) {
 		HTMLPanel row = tab.createRow();
-		row.addDomHandler(e -> onFBatchSelect(fBatch), ClickEvent.getType());
+		row.addDomHandler(e -> onFBatchSelect(fBatch, false), ClickEvent.getType());
 		
 		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), selectedItems.contains(fBatch.getId()) ? AON.CSS.aonIconChecked() : AON.CSS.aonIconCheck());
 		checkButton.addClickHandler( new ClickHandler() {
@@ -763,6 +763,6 @@ public abstract class FBatchPaymentList extends AonCustomDockLayout {
 		});
 	}
 	
-	protected abstract void onFBatchSelect(FBatch fBatch);
+	protected abstract void onFBatchSelect(FBatch fBatch, boolean newFBatch);
 	
 }
