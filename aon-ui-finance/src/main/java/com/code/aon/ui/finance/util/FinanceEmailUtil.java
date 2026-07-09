@@ -81,9 +81,9 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 		Address[] addresses = new Address[emails.length];
 		for( int i = 0; i < emails.length; i++ ) {
 			if ( i == 0 ) {
-				addresses[i] = new InternetAddress( emails[i].trim(), name );
+				addresses[i] = new InternetAddress( emails[i], name );
 			} else {
-				addresses[i] = new InternetAddress( emails[i].trim() );	
+				addresses[i] = new InternetAddress( emails[i] );	
 			}
 		} 
 		return addresses;
@@ -355,8 +355,8 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 					
 					String from = getEmailSender().getMailAccount().getDisplayName() + "<" + fromEmail + ">";
 		    		MimeMessage message = (MimeMessage) aonMessage.getMessage();
-		            message.setFrom(new InternetAddress(from.trim()));
-		            Address replyTo = new InternetAddress(getEmailSender().getMailAccount().getEmail().trim());
+		            message.setFrom(new InternetAddress(from));
+		            Address replyTo = new InternetAddress(getEmailSender().getMailAccount().getEmail());
 		            if(getEmailSender().getMailAccount().getReplyToMail() != null)
 		            	message.addRecipient(RecipientType.BCC, replyTo);
 		            Address[] addresses = {replyTo};
