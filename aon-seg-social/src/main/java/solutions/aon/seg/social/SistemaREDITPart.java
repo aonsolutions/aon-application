@@ -133,41 +133,12 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			webClient.getOptions().setJavaScriptEnabled(true);
 			webClient.getOptions().setFetchPolyfillEnabled(true);
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
-			webClient.setJavaScriptErrorListener( new JavaScriptErrorListener() {
-				
-				@Override
-				public void warn(String message, String sourceName, int line, String lineSource, int lineOffset) {
-					System.out.println("warn: " + message + " sourceName: " + sourceName + " line: " + line + " lineSource: " + lineSource + " lineOffset: " + lineOffset);
-				}
-				
-				@Override
-				public void timeoutError(HtmlPage page, long allowedTime, long executionTime) {
-					System.out.println("timeoutError: " + allowedTime + " executionTime: " + executionTime);
-				}
-				
-				@Override
-				public void scriptException(HtmlPage page, ScriptException scriptException) {
-					System.out.println("scriptException: " + scriptException.getMessage());
-				}
-				
-				@Override
-				public void malformedScriptURL(HtmlPage page, String url, MalformedURLException malformedURLException) {
-					System.out.println("malformedScriptURL: " + url + " malformedURLException: " + malformedURLException.getMessage());
-				}
-				
-				@Override
-				public void loadScriptError(HtmlPage page, URL scriptUrl, Exception exception) {
-					System.out.println("loadScriptError: " + scriptUrl + " exception: " + exception.getMessage());
-				}
-			});
 			
 			HtmlPage htmlPage = webClient.getPage(BASE_URI);
 			
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			htmlPage = HtmlUnitToolkit.secureTransformHtmlPage(htmlPage);
 			
 			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, startdate, contingency, situationEmployee, BAJA);
-			htmlPage = HtmlUnitToolkit.secureTransformHtmlPage(htmlPage);
 			
 			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_4")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			if (job.isPresent()) {		
@@ -235,7 +206,6 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			
 			HtmlButton validate = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[type=\"submit\"][title=\"Validar\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			htmlPage = validate.click();
-			htmlPage = HtmlUnitToolkit.secureTransformHtmlPage(htmlPage);
 			
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 			
@@ -246,7 +216,6 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			HtmlButton confim = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[type=\"submit\"][title=\"Confirmar\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			htmlPage = confim.click();
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
-			htmlPage = HtmlUnitToolkit.secureTransformHtmlPage(htmlPage);
 			
 			return getPdfProcess(htmlPage, "#ENVIO_8");
 		}
@@ -444,18 +413,22 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			Date dateProcess)
 			throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException, TransformerException {
 		
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+		byte [] certificateData = certificateInputStream.readAllBytes();
+
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
 			
-			HtmlPage htmlPage = null;
+			webClient.getOptions().setJavaScriptEnabled(false);
+			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			
-			Page page = webClient.getPage(BASE_URI);
-			htmlPage = HtmlUnitToolkit.transformPage(page);
+			HtmlUnitToolkit.transformXmlPage(webClient, certificateData, certificatePassword, certificateType);
+
+			
+			HtmlPage htmlPage = webClient.getPage(BASE_URI);
 			
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			
-			page = htmlPage.getElementById("PEST_3").click();
-			htmlPage = HtmlUnitToolkit.transformPage(page);
+			htmlPage = htmlPage.getElementById("PEST_3").click();
 		
 			wait4(htmlPage, p -> p.querySelector("[name=\"regimenConsulta\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			
@@ -468,8 +441,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			Toolkit.formatDate(dateBj, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBajaMedConsulta").setValue(d));
 			
 			HtmlButton continueIn = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[value=\"CONTINUAR_CONSULTA\"]")).orElseThrow();
-			page = continueIn.click();
-			htmlPage = HtmlUnitToolkit.transformPage(page);
+			htmlPage = continueIn.click();
 			
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 			
@@ -477,8 +449,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			List<HtmlTableBody> tableBodies = table.getBodies();
 			HtmlTableBody firstRow = tableBodies.get(0);
 			List<HtmlAnchor> anchor = firstRow.getByXPath(".//a");
-			page= anchor.get(0).click();
-			htmlPage = HtmlUnitToolkit.transformPage(page);
+			htmlPage= anchor.get(0).click();
 			
 			return getPdfProcess2(htmlPage);
 		}
@@ -560,7 +531,6 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 
 		HtmlButton continueIn = (HtmlButton) wait4(htmlPage, p ->p.querySelector(continueSelector)).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 		htmlPage = continueIn.click();
-		htmlPage = HtmlUnitToolkit.secureTransformHtmlPage(htmlPage);
 		
 		HtmlAnchor doc = (HtmlAnchor) wait4(htmlPage, p ->p.querySelector("a[href*=\"INFORME\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 		Page page = doc.click();
@@ -585,14 +555,13 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		formTwo.getInputByName(ARQ_SPM_OUT).remove(); //PREVENT XML
 
 		HtmlButton doc = (HtmlButton) wait4(htmlPage, p ->p.getElementByName("SPM.ACC.GENERAR_INFORME_EMISION")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-		Page page = doc.click();
-		htmlPage = HtmlUnitToolkit.transformPage(page);
+		htmlPage = doc.click();
 
 		wait4(htmlPage, p -> p.getElementById("prevdocumentoseinformes"));
 		
 		HtmlAnchor docAnchor = htmlPage.querySelector("#CONTENEDOR_prevdocumentoseinformes > ul > li > a");
 		
-		page = docAnchor.click();
+		Page page = docAnchor.click();
 		if (page.isHtmlPage()) {
 			htmlPage = (HtmlPage) page;
 			HtmlUnitToolkit.manageStatusCode(htmlPage);

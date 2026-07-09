@@ -179,6 +179,8 @@ public class HtmlUnitToolkit {
 			webClient.getOptions().setCssEnabled(false);
 			webClient.getOptions().setDownloadImages(false);
 			webClient.setJavaScriptTimeout(10000);
+			webClient.getOptions().setThrowExceptionOnScriptError(false);
+			webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 			webClient.getOptions().setSSLClientCertificateKeyStore(certificateInputStream, certificatePassword,
 					certificateType);
@@ -672,12 +674,14 @@ public class HtmlUnitToolkit {
 		}
 	}
 
+	@Deprecated
 	public static HtmlPage transformPage(Page page) throws IOException, TransformerException  {
 		if(page instanceof HtmlPage)
 			return HtmlUnitToolkit.secureTransformHtmlPage((HtmlPage) page);
 		return HtmlUnitToolkit.transformXmlPage((XmlPage) page);
 	}
 
+	@Deprecated
 	public static HtmlPage secureTransformHtmlPage(HtmlPage htmlXmlPage)  {
 		try {
 			return transformHtmlPage(htmlXmlPage);
@@ -686,6 +690,7 @@ public class HtmlUnitToolkit {
 		}
 	}
 
+	@Deprecated
 	public static HtmlPage transformHtmlPage(HtmlPage htmlXmlPage) throws IOException, TransformerException {
 		WebClient webClient = htmlXmlPage.getWebClient();
 	    
@@ -774,6 +779,82 @@ public class HtmlUnitToolkit {
 	    return htmlPage;
 	}
 	
+	public static WebResponse transformHtmlPage(WebClient webClient, WebResponse response, Map<String,String> variables, Map<URI,String> uriCache ) throws IOException, TransformerException {
+
+	    URL xslUrl = getXslScript(response);
+
+	    XmlPage xslPage = webClient.getPage(xslUrl);
+	    Source xslSource = new DOMSource(xslPage.getXmlDocument());
+
+	    Source xmlSource = new StreamSource( new StringReader(getXmlScript(response)));
+
+	    StringWriter out = new StringWriter();
+	    Result outputTarget = new StreamResult(out);
+
+	    URIResolver uriResolver = (href, base) -> {
+		try {
+//			URI hrefURI = new URI(base).resolve(href);
+//		    
+//		    if ( uriCache.containsKey(hrefURI )) {
+//			    return new StreamSource(new StringReader(uriCache.get(hrefURI)), hrefURI.toURL().toExternalForm());
+//		    }
+
+		    XmlPage hrefPage = webClient.getPage(new URL( xslUrl, href));
+		    return new DOMSource(hrefPage.getXmlDocument());
+		} catch ( MalformedURLException e ) {
+		    throw new TransformerException(e);
+		}
+		catch (FailingHttpStatusCodeException | IOException e) {
+		    throw new TransformerException(e);
+		}
+	    };
+
+	    TransformerFactory transformerFactory = TransformerFactory.newDefaultInstance();
+	    transformerFactory.setURIResolver(uriResolver);
+
+	    Transformer transformer = transformerFactory.newTransformer(xslSource);
+	    transformer.setURIResolver(uriResolver);
+
+	    transformer.transform(xmlSource, outputTarget);
+
+	    URL xmlUrl = response.getWebRequest().getUrl();
+	    
+	    String path = xmlUrl.getPath().substring ( 0, xmlUrl.getPath().lastIndexOf("/"));
+	    webClient.getPage(String.format("%s://%s%s", xmlUrl.getProtocol(), xmlUrl.getHost(), path));
+	    
+	    return new WebResponseWrapper(response) {
+
+	    	private String content = out.toString();
+	    	
+	    	@Override
+	    	public String getContentType() {
+	    		return super.getContentType();
+	    	}
+	    	
+	    	@Override
+	    	public long getContentLength() {
+	    		return content.getBytes().length;
+	    	}
+	    	
+	    	@Override
+	    	public String getContentAsString() {
+	    		return getContentAsString(getContentCharset());
+	    	}
+	    	
+	    	@Override
+	    	public String getContentAsString(Charset encoding) {
+	    		return new String(content.getBytes(encoding));
+	    	}
+
+	    	@Override
+	    	public InputStream getContentAsStream() throws IOException {
+	    		return new ByteArrayInputStream(content.getBytes());
+	    	}
+	    	
+	    };
+	    
+	}
+
 	public static WebResponse transformXmlPage(WebClient webClient, WebResponse response, Map<String,String> variables, Map<URI,String> uriCache ) throws IOException, TransformerException {
 	    URL xslURL = getXslStylesheet(response);
 	    
@@ -871,6 +952,7 @@ public class HtmlUnitToolkit {
 
         // 1. Ensure JavaScript is enabled (true by default, but good to enforce)
         webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
 
         // 2. Wrap your raw HTML string into a WebResponse object
 	    final StringWebResponse webResponse = new StringWebResponse(htmlCode,url);
@@ -909,6 +991,10 @@ public class HtmlUnitToolkit {
 	    
 	}
 
+	public static boolean hasXslScript (WebResponse response) throws MalformedURLException {
+	    return Pattern.compile("script\\s*id=\"xslUri\"\\s*href\\s*=\\s*\"(?<href>[^\"]*)\"").matcher(response.getContentAsString()).find();
+	}
+
 	public static URL getXslScript (WebResponse response) throws MalformedURLException {
 		
 		//<script id="xslUri" href="/ServiciosAfiliacionRED/templates/afrd/fw4/CU300_ATR66ConsultaNumeroSegSocial/AfrdPaConsultaNumeroSegSocial_ES.xsl" type="text/plain">
@@ -922,9 +1008,33 @@ public class HtmlUnitToolkit {
 	    
 	}
 
+	public static String getXmlScript (WebResponse response) throws MalformedURLException {
+		
+		//<script id="xml" type="text/plain">
+		// <ProsaXMLData FechaCreacion="09/07/2026 11:45:36.062" Version="1.0">
+		// <SPM arqobj="ed"><ARQ.ANALYTICS id="ARQ.ANALYTICS"><content><page_name><![CDATA[fw4/crtr/nuevaconsultacalculos/CrtrPaObtencionAutorizacion]]></page_name>
+		// ...
+		// ...
+		// </ProsaXMLData>
+	    
+		//Pattern prosaXmlDatapattern = Pattern.compile("script\\s*id=\"xml\"\\s*type=\"text/plain\">(?<xml>.*)</script>", Pattern.DOTALL);
+		Pattern prosaXmlDatapattern = Pattern.compile("<ProsaXMLData.*</ProsaXMLData>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+	    Matcher prosaXmlDataMatcher = prosaXmlDatapattern.matcher(response.getContentAsString());
+	    prosaXmlDataMatcher.find();
+	    String prosaXmlData = prosaXmlDataMatcher.group();
+
+	    return prosaXmlData;
+	    
+	}
+
 	public static WebConnectionWrapper transformXmlPage(WebClient webClient, byte[] certificateData, String certificatePassword,
 			String certificateType, Map<String,String> variables) {
 		return transformXmlPage(webClient, certificateData, certificatePassword, certificateType, variables, (request, response ) -> response );
+	}
+
+	public static WebConnectionWrapper transformXmlPage(WebClient webClient, byte[] certificateData, String certificatePassword,
+			String certificateType) {
+		return transformXmlPage(webClient, certificateData, certificatePassword, certificateType, new HashMap<>(), (request, response ) -> response );
 	}
 
 	public static WebConnectionWrapper transformXmlPage(WebClient webClient, byte[] certificateData, String certificatePassword,
@@ -948,6 +1058,17 @@ public class HtmlUnitToolkit {
 								xmlClient.getOptions().setUseInsecureSSL(true);
 								
 								response = transformXmlPage(xmlClient, response, variables, cache);
+							} 
+						} else if ("text/html".equals(response.getContentType()) && hasXslScript(response) ){
+							try (WebClient xmlClient = getWebClient(certificateData, certificatePassword, certificateType) ) {
+								xmlClient.getOptions().setCssEnabled(false);
+								xmlClient.getOptions().setDownloadImages(false);
+								xmlClient.getOptions().setUseInsecureSSL(true);
+								
+								xmlClient.getOptions().setJavaScriptEnabled(true);
+								xmlClient.getOptions().setThrowExceptionOnScriptError(false);
+								
+								response = transformHtmlPage(xmlClient, response, variables, cache);
 							} 
 						} 
 						
