@@ -695,20 +695,23 @@ class SistemaREDMov {
 		if (nssList.size() >= 7) {			
 			throw new Exception("nss max 7");
 		}
+		
+		byte [] certificateData = certificateInputStream.readAllBytes();
 
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword,
 				certificateType)) {
+			
 			
 			webClient.getOptions().setUseInsecureSSL(true);
 			
-//			webClient.getOptions().setJavaScriptEnabled(true);
+			webClient.getOptions().setJavaScriptEnabled(true);
 //			webClient.getOptions().setUseInsecureSSL(true);
-//			webClient.getOptions().setThrowExceptionOnScriptError(false);
+			webClient.getOptions().setThrowExceptionOnScriptError(false);
 //			webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
 			
-			XmlPage xmlPage = webClient.getPage(
+			HtmlPage htmlXmlPage = webClient.getPage(
 					"https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00C");
-			HtmlPage htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+			HtmlPage htmlPage = HtmlUnitToolkit.transformHtmlPage(htmlXmlPage);
 			
 			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1"))
 					.orElseThrow();
@@ -723,9 +726,19 @@ class SistemaREDMov {
 			ArrayList<Employee> employees = new ArrayList<>();
 
 			Page pageAux = ((HtmlButton) formDatos.querySelector("#ENVIO_3")).click();
-
+			
+			XmlPage xmlPage = null;
+			
 			if (pageAux instanceof XmlPage) {
 				xmlPage = (XmlPage) pageAux;
+			} else if ( HtmlUnitToolkit.isXmlScriptPage(pageAux) ) {
+				xmlPage = HtmlUnitToolkit.getXmlScriptPage(pageAux);
+			} else {
+				htmlPage = (HtmlPage) pageAux;
+				HtmlUnitToolkit.manageStatusCode(htmlPage);
+			}
+			
+			if ( xmlPage != null ) {
 				DomNodeList<DomNode> employeesHtml = xmlPage.querySelectorAll("trabajador");
 				if(null == employeesHtml || employeesHtml.isEmpty()) employeesHtml = xmlPage.querySelectorAll("TRABAJADOR");
 				EmployeeBuilder builder = new EmployeeBuilder();
@@ -746,10 +759,8 @@ class SistemaREDMov {
 						throw new Exception(fieldName.trim());
 					}
 				}
-			} else {
-				htmlPage = (HtmlPage) pageAux;
-				HtmlUnitToolkit.manageStatusCode(htmlPage);
 			}
+			
 			return employees;
 		}
 	}

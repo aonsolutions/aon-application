@@ -548,7 +548,8 @@ public class HtmlUnitToolkit {
 	    HtmlPage htmlPage = loadHtmlAndJsCodeIntoCurrentWindow(webClient, out.toString(), xmlUrl);
 	    return htmlPage;
 	}
-
+	
+	@Deprecated
 	public static HtmlPage transformXmlPage(XmlPage xmlPage) throws IOException, TransformerException {
 		WebClient webClient = xmlPage.getWebClient();
 	    
@@ -803,6 +804,20 @@ public class HtmlUnitToolkit {
 	    
 	    return getXslScript(htmlPage.getWebResponse()).toString();
 	    
+	}
+	
+	public static boolean isXmlScriptPage ( Page page ) {
+		return ( page instanceof HtmlPage htmlPage) && htmlPage.getElementById("xml") != null ;
+	}
+
+	public static XmlPage getXmlScriptPage ( Page page ) {
+		HtmlPage htmlPage = (HtmlPage) page;
+		String xml = htmlPage.getElementById("xml").getTextContent();
+		try {
+			return new XmlPage(new StringWebResponse(xml, htmlPage.getUrl()), htmlPage.getEnclosingWindow());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static boolean hasXslScript (WebResponse response) throws MalformedURLException {
