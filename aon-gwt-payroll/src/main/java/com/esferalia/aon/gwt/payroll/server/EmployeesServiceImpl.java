@@ -7066,8 +7066,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				employeeContractInfo.setContractSpecificData(JooqContractSEPE.getContractSpecificData(connection,
 						employeeContractInfo.getContractInfo().getContractId()));
 
-			aon.sepe.objects.Contract cto = createContract(domainName, domainId, userLogin, employeeContractInfo,
-					employeeContractInfo.getEmployeeInfo().getDocument());
+			String ipf =  AonStringUtils.isBlank(employeeContractInfo.getEmployeeInfo().getDocument()) ? "" : employeeContractInfo.getEmployeeInfo().getDocument().trim().toUpperCase();
+			
+			aon.sepe.objects.Contract cto = createContract(domainName, domainId, userLogin, employeeContractInfo, ipf);
 
 			System.out.println(cto.toString());
 
@@ -7101,6 +7102,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			// Data
 			String ipf = employeeContractInfo.getEmployeeInfo().getDocument();
+			ipf = AonStringUtils.isBlank(ipf) ? "" : ipf.trim().toUpperCase();
 			Date startDate = employeeContractInfo.getContractInfo().getStartDate();
 			Date endDate = employeeContractInfo.getContractInfo().getEndDate();
 			String signBasicCopy = employeeContractInfo.getContractSpecificData().getSignBasicCopy();

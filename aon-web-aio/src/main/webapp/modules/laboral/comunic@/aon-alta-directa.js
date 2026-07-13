@@ -569,7 +569,7 @@ export class AonAltaDirecta extends AonElement {
             setValueName('name', name);
 
             if(ipf){
-                setValueName('ipf', ipf.toString().substring(1));
+                setValueName('ipf', ipf.toString().substring(0));
             }
 
             if(resp.nss){
