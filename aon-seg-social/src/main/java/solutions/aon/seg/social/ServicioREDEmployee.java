@@ -170,7 +170,6 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 			webClient.getOptions().setRedirectEnabled(true);
 			
 			HtmlPage page =  webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
-//			HtmlPage page = HtmlUnitToolkit.transformXmlPage(xmlPage);
 			
 			System.out.println("CCCs loaded: " + cccs.size());
 			
@@ -268,11 +267,12 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 	    }
 	}
 
-	/** Códigos que indican fin de listado / sin datos, no un error real. */
+	/** Códigos informativos de paginación / fin de datos: NO son error. */
 	private static boolean isEndOfListCode(String code) {
-	    return "3252".equals(code)
-	        || "3037".equals(code)
-	        || "3083".equals(code);
+	    return "3251".equals(code)   // HAY MAS AFILIADOS A CONSULTAR (hay más páginas)
+	        || "3252".equals(code)   // NO HAY MAS AFILIADOS A CONSULTAR (última página)
+	        || "3037".equals(code)   // fin de datos
+	        || "3083".equals(code);  // sin datos
 	}
 	
 	private static void getEmployeesTable(HtmlPage page, List<Employee> employees, String regime, String ccc)
