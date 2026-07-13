@@ -28,6 +28,7 @@ import org.htmlunit.ScriptException;
 import org.htmlunit.WebClient;
 import org.htmlunit.WebRequest;
 import org.htmlunit.html.DomNode;
+import org.htmlunit.html.DomNodeList;
 import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlCheckBoxInput;
 import org.htmlunit.html.HtmlForm;
