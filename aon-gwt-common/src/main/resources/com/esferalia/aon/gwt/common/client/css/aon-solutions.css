@@ -3165,3 +3165,64 @@
 	text-overflow: ellipsis;
 	background: white;
 }
+
+.aon_flex_table {
+	display: grid;
+	gap: 1px;
+  	padding: 1px;
+}
+
+.aon_flex_table_header_cell {
+	display: flex;
+	position: sticky;
+	z-index: 1;
+	top: 0;
+	min-height: 42px;
+	align-items: center;
+	box-sizing: border-box;
+	user-select: none;
+	background-color: #e2e8f0;
+	color: #64748b;
+	font-weight: 500;
+	font-size: 14px;
+	text-transform: capitalize;
+	text-align: left;
+	border-bottom: 1px solid #e2e8f0;
+	padding: 8px 14px 3.5px;
+}
+
+.aon_flex_table_row {
+	grid-column: 1 / -1;
+	display: grid;
+	grid-template-columns: subgrid;
+	cursor: pointer;
+	background: white;
+}
+.aon_flex_table_row:hover {
+	background-color: #edf0ff;
+}
+.aon_flex_table_row_selected {
+	background-color: #D5E2FF;
+}
+.aon_flex_table_cell {
+	min-width: 0;
+	min-height: 42px;
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	user-select: none;
+	/* --- look aon-editDataTable (Gestión → Clientes) --- */
+	color: #64748b;
+	font-size: 14px;
+	font-weight: 400;
+	text-align: left;
+	border-bottom: 1px solid #e2e8f0;
+	padding: 3.5px 7px 3.5px 14px;
+}
+
+.aon_flex_table_cell_inner {
+	min-width: 0;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

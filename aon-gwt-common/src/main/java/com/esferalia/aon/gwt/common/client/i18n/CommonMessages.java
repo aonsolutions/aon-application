@@ -4526,5 +4526,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("La cuenta de inmovilizado no se refleja en el asiento contable de la factura.")
 	String fixedAssetNotInAccountEntry();
 	
+	@DefaultMessage("Ya vinculadas")
+	String alreadyLinked();
+	
+	@DefaultMessage("A\u00FAn no vinculadas")
+	String notYetLinked();
 }
 

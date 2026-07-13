@@ -11,7 +11,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class AonToolbarSearchBox extends FlowPanel{
 
-	Widget advancedSearch;
+	private Widget advancedSearch;
+	private TextBox text;
 	
 	public AonToolbarSearchBox() {
 		super();
@@ -20,7 +21,7 @@ public abstract class AonToolbarSearchBox extends FlowPanel{
 		AonToolbarButton searchButton = new AonToolbarButton(AON.MSG.searchAction(), AON.CSS.aonIconSearch());
 		this.add(searchButton);
 
-		TextBox text = new TextBox();
+		text = new TextBox();
 		text.setStyleName(AON.CSS.aonToolbarTextBox());
 		text.setTitle(AON.MSG.searchAction());
 		text.setName(AON.MSG.searchAction());
@@ -63,6 +64,10 @@ public abstract class AonToolbarSearchBox extends FlowPanel{
 	
 	public void setAdvancedSearch(Widget advancedSearch) {
 		this.advancedSearch = advancedSearch;
+	}
+	
+	public String getValue() {
+		return text.getValue();
 	}
 	
 	public abstract void onValueChange(String value);
