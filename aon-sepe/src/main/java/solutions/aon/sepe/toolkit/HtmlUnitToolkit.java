@@ -76,6 +76,7 @@ public class HtmlUnitToolkit {
 			webClient.getOptions().setDownloadImages(false);
 			webClient.setJavaScriptTimeout(15000);
 			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+			
 			webClient.getOptions().setSSLClientCertificateKeyStore(certificateInputStream, certificatePassword,
 					certificateType);
 
@@ -110,6 +111,8 @@ public class HtmlUnitToolkit {
 	        };
 
 	        SSLContext sslContext = SSLContext.getInstance("TLS");
+	        SSLContext.setDefault(sslContext);
+	        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
 	        sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
 	        
 	        WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
@@ -119,6 +122,7 @@ public class HtmlUnitToolkit {
 	        webClient.getOptions().setUseInsecureSSL(true);
 	        webClient.setJavaScriptTimeout(15000);
 	        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+	        
 
 	        SSLContext.setDefault(sslContext);
 	        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
