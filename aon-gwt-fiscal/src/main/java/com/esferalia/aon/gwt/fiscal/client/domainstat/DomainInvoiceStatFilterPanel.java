@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.domainstat;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -7,17 +8,19 @@ import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.occam.api.model.DomainInvoiceStatParams;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -32,28 +35,31 @@ class DomainInvoiceStatFilterPanel extends SimpleLayoutPanel implements HasValue
 	private PeriodListBox periodBox;
 	private AonDateBox fromDateBox;
 	private AonDateBox toDateBox;
+	private ListBox impersonatedUserBox;
 	private ListBox scopeBox;
 	private ListBox activeBox;
 	private AonTextBox queryBox;
+	private ListBox scoredFilterBox;
 	
 	DomainInvoiceStatFilterPanel( final DomainInvoiceStatModuleOptions opts ) {
 		initYearBox(opts);
 		initPeriodBox(opts);
 		initFromDateBox(opts);
 		initToDateBox(opts);
+		initImpersonatedUser(opts);
 		initScopeBox(opts);
 		initActiveBox(opts);
 		initQueryBox(opts);
+		initScoredFilterBox(opts);
 		initialize();
 		paint( opts);
 	}
 	
 	private void paint(DomainInvoiceStatModuleOptions opts) {
-		AonDisplayTable mainTab = new AonDisplayTable(
-			 AON.CSS.aonSearchPanel()
-			,AON.CSS.aonBlockCenter()
-			,AON.CSS.aonWidthAlmostAll()
-		);
+		FlowPanel rowsContainier = new FlowPanel();
+		rowsContainier.setStyleName( AON.CSS.aonSearchPanel());
+		
+		AonDisplayTable row1Tab = new AonDisplayTable(AON.CSS.aonBlockCenter(),AON.CSS.aonWidthAlmostAll());
 		
 		FlowPanel datePanel = new FlowPanel();
 		datePanel.addStyleName(AON.CSS.aonNowrap());
@@ -65,33 +71,54 @@ class DomainInvoiceStatFilterPanel extends SimpleLayoutPanel implements HasValue
 		datePanel.add(toDateLabel);
 		datePanel.add(toDateBox);
 		
-		AonTableButton refreshButton = new AonTableButton(AON.MSG.refresh(), AON.CSS.aonIconRefresh());
-		refreshButton.addClickHandler(event -> fire(opts));
-		AonTableButton initializeButton = new AonTableButton(AON.MSG.clean(), AON.CSS.aonIconClear());
-		initializeButton.addClickHandler(event -> {
-			initialize();
-			fire(opts);
-		});
-		
-		mainTab.addRow()
-			.addCell( new Label(AON.MSG.fiscalYear()), AON.CSS.aonBold(), AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight(), AON.CSS.aonTextRight() )
-			.addCell( yearBox , AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight())
-			.addCell( new Label(AON.MSG.period()), AON.CSS.aonBold(), AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight(), AON.CSS.aonTextRight())
-			.addCell( periodBox , AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight())
-			.addCell( new Label(AON.MSG.date()), AON.CSS.aonBold() , AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight(), AON.CSS.aonTextRight())
-			.addCell( datePanel , AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight())
-			.addCell( new Label(AON.MSG.scope()), AON.CSS.aonBold() , AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight(), AON.CSS.aonTextRight())
-			.addCell( scopeBox, AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight())
-			.addCell( new Label(AON.MSG.show()), AON.CSS.aonBold() , AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight(), AON.CSS.aonTextRight())
-			.addCell( activeBox, AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight())
-			.addCell( new Label(AON.MSG.filter()), AON.CSS.aonBold() , AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight(), AON.CSS.aonTextRight())
-			.addCell( queryBox, AON.CSS.aonWidthAuto(), AON.CSS.aonPaddingLeft(), AON.CSS.aonPaddingRight())
-			.addCell( refreshButton, AON.CSS.aonWidth40() )
-			.addCell( initializeButton, AON.CSS.aonWidth40() )
+		row1Tab.addRow()
+			.addCell( new Label(AON.MSG.fiscalYear()), AON.CSS.aonWidth80(), AON.CSS.aonBold(), AON.CSS.aonTextRight() )
+			.addCell( yearBox , AON.CSS.aonWidth60() )
+			.addCell( new Label(AON.MSG.period()), AON.CSS.aonWidth80(), AON.CSS.aonBold(), AON.CSS.aonTextRight())
+			.addCell( periodBox , AON.CSS.aonWidth100() )
+			.addCell( new Label(AON.MSG.date()), AON.CSS.aonWidth80(), AON.CSS.aonBold() , AON.CSS.aonTextRight())
+			.addCell( datePanel , AON.CSS.aonWidth200() )
+			.addCell( new Label(AON.MSG.recorded()), AON.CSS.aonWidth80(), AON.CSS.aonBold() , AON.CSS.aonTextRight())
+			.addCell( scoredFilterBox, AON.CSS.aonPaddingLeft(), AON.CSS.aonWidth100(), AON.CSS.aonPaddingRight())
+			.addCell( new Label(AON.MSG.show()), AON.CSS.aonWidth80(), AON.CSS.aonBold() , AON.CSS.aonTextRight())
+			.addCell( activeBox, AON.CSS.aonWidth100() )
+			.addCell( new Label(), AON.CSS.aonWidthAuto())
 		;
-		this.setWidget(mainTab);
+		rowsContainier.add(row1Tab);
+		
+		AonDisplayTable row2Tab = new AonDisplayTable(AON.CSS.aonBlockCenter(),AON.CSS.aonWidthAlmostAll());
+		row2Tab.addRow()
+			.addCell( new Label(AON.MSG.enterprise()), AON.CSS.aonBold(), AON.CSS.aonWidth80(), AON.CSS.aonTextRight())
+			.addCell( queryBox, AON.CSS.aonWidth300())
+			.addCell( new Label(AON.MSG.user()), AON.CSS.aonWidth80(), AON.CSS.aonBold() , AON.CSS.aonTextRight())
+			.addCellIf( isAdminUser(opts), impersonatedUserBox, AON.CSS.aonPaddingLeft(), AON.CSS.aonWidth100(), AON.CSS.aonPaddingRight())
+			.addCellIf( isAdminUser(opts), new Label(AON.MSG.scope()), AON.CSS.aonWidth80(), AON.CSS.aonBold() , AON.CSS.aonTextRight())
+			.addCell( scopeBox, AON.CSS.aonPaddingLeft(), AON.CSS.aonWidth100(), AON.CSS.aonPaddingRight())
+			.addCell( new Label(), AON.CSS.aonWidthAuto())
+		;
+		rowsContainier.add(row2Tab);
+
+		this.setWidget(rowsContainier);
 	}
  
+	private boolean isAdminUser(DomainInvoiceStatModuleOptions opts) {
+		return opts.optConfiguration()
+		 	.map(c -> c.getDur())
+		 	.filter(d -> d != null)
+		 	.map(d -> d.isAdmin())
+		 	.orElse(false)
+	 	;
+	}
+
+	void clear(DomainInvoiceStatModuleOptions opts) {
+		initialize();
+		fire(opts);
+	}
+
+	void refresh(DomainInvoiceStatModuleOptions opts) {
+		fire(opts);
+	}
+
 	private void initYearBox(DomainInvoiceStatModuleOptions opts) {
 		yearBox = new AonIntegerBox();
 		yearBox.addStyleName(AON.CSS.aonMarginLeft());
@@ -158,13 +185,43 @@ class DomainInvoiceStatFilterPanel extends SimpleLayoutPanel implements HasValue
 		toDateBox.addValueChangeHandler(event -> checkDatesAndFire(opts));
 	}
 	
+	private void initImpersonatedUser(DomainInvoiceStatModuleOptions opts) {
+		impersonatedUserBox = new ListBox();
+		impersonatedUserBox.addStyleName(AON.CSS.aonMarginLeft());
+		DomainInvoiceStatModule.COMMON_SERVICE.getUsers(
+			opts.getDomainName(), opts.getDomain(), opts.getUser(), new AsyncCallback<ArrayList<User>>() {
+				
+				@Override
+				public void onSuccess(ArrayList<User> users) {
+					AonCollectionUtils.stream(users)
+						.forEach(u -> {
+							String userLabel = u.getLogin() + " (" + u.getName() + ")";
+							impersonatedUserBox.addItem(userLabel, AonNumberUtils.toString(u.getId()));
+							if (AonStringUtils.equals(opts.getUser(),u.getLogin())) {
+								impersonatedUserBox.setSelectedIndex(impersonatedUserBox.getItemCount() - 1);
+							}
+						});
+					impersonatedUserBox.addChangeHandler(event -> fire(opts));
+				}
+				
+				@Override
+				public void onFailure(Throwable arg0) {
+					impersonatedUserBox.addItem("<No resuelto>");
+					impersonatedUserBox.setEnabled(false);
+				}
+			});
+	}
+	
 	private void initScopeBox(DomainInvoiceStatModuleOptions opts) {
 		scopeBox = new ListBox();
 		scopeBox.addStyleName(AON.CSS.aonMarginLeft());
-		scopeBox.addItem("-----", "");
-		scopeBox.setSelectedIndex(0);
-		AonCollectionUtils.stream( opts.getConfiguration().getAvailableScopes())
-			.forEach( s -> scopeBox.addItem(s.getDescription(), AonNumberUtils.toString( s.getId() ) ) );
+		String scopesLabel = (isAdminUser(opts))
+			? "\u00C1mbitos del usuario"
+			: "Mis \u00E1mbitos";
+		scopeBox.addItem("Todos");
+		scopeBox.addItem( scopesLabel );
+		scopeBox.addItem("Sin \u00E1mbito");
+		scopeBox.setSelectedIndex(1);
 		scopeBox.addChangeHandler(event -> fire(opts));
 	}
 	
@@ -175,7 +232,7 @@ class DomainInvoiceStatFilterPanel extends SimpleLayoutPanel implements HasValue
 		activeBox.addItem("Activas");
 		activeBox.addItem("Inactivas");
 		activeBox.addItem("Expiradas");
-		activeBox.setSelectedIndex(0);
+		activeBox.setSelectedIndex(1);
 		activeBox.addChangeHandler(event -> fire(opts));
 	}
 
@@ -185,6 +242,18 @@ class DomainInvoiceStatFilterPanel extends SimpleLayoutPanel implements HasValue
 		queryBox.setMaxLength(30);
 		queryBox.setVisibleLength(30);
 		queryBox.addValueChangeHandler(event -> fire(opts));
+	}
+	
+	private void initScoredFilterBox(DomainInvoiceStatModuleOptions opts) {
+		scoredFilterBox = new ListBox();
+		scoredFilterBox.addStyleName(AON.CSS.aonMarginLeft());
+		scoredFilterBox.addItem("Todas");
+		scoredFilterBox.addItem("Pendiente de declarar");
+		scoredFilterBox.addItem("Algo pendiente");
+		scoredFilterBox.addItem("Facturas pendientes");
+		scoredFilterBox.addItem("Documentos pendientes");
+		scoredFilterBox.setSelectedIndex(2);
+		scoredFilterBox.addChangeHandler(event -> fire(opts));
 	}
 
 	void initialize() {
@@ -200,9 +269,10 @@ class DomainInvoiceStatFilterPanel extends SimpleLayoutPanel implements HasValue
 			yearBox.setValue(null,false);
 		}
 		periodBox.setSelectedIndex(0);
-		scopeBox.setSelectedIndex(0);
-		activeBox.setSelectedIndex(0);
+		scopeBox.setSelectedIndex(1);
+		activeBox.setSelectedIndex(1);
 		queryBox.setValue(null,false);
+		scoredFilterBox.setSelectedIndex(2);
 	}
 
 	DomainInvoiceStatParams getParams(DomainInvoiceStatModuleOptions opts) {
@@ -215,7 +285,9 @@ class DomainInvoiceStatFilterPanel extends SimpleLayoutPanel implements HasValue
 		params.setFromDate(fromDateBox.getValue());
 		params.setToDate(toDateBox.getValue());
 		params.setQuery(queryBox.getValue());
-		params.setScope( AonNumberUtils.toInteger( scopeBox.getSelectedValue() ) );
+		params.setImpersonatedUser( AonNumberUtils.toInteger( impersonatedUserBox.getSelectedValue()) );
+		params.setScope( scopeBox.getSelectedIndex() );
+		params.setScoredFilter( scoredFilterBox.getSelectedIndex() );
 		params.setLimit(100);
 		params.setOffset(0);
 		return params;

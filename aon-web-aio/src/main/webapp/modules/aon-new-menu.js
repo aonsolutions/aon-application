@@ -291,8 +291,9 @@ export class AonNewMenu extends AonElement {
 					GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
 					break;
 				case CONTENT_INDEX.app:
-					this.rootPanel(new HELP.AonSiteHelpPortal());
-					this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
+					window.open('https://portal.aonsolutions.info/', '_blank');
+					//this.rootPanel(new HELP.AonSiteHelpPortal());
+					//this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
 					break;
 				default/*Apps.HOME*/:
 					this.rootPanel(new AonNewDesktop(portalApps, portalNoApps, suiteApps, suiteNoApps));

@@ -568,9 +568,14 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			return roundKey(LQ558);
 		
 		// Tipo 0% o No Liquida
-		if ( (isChecked(C0013) || isChecked(C0085)) && (getValue(Mod2002025Key.UT060) == 100.0) ) return 0.0;
-		if ( isChecked(C0014) ) return 0.0;
-		if ( isChecked(C0048) ) return 0.0;
+		if ( (isChecked(C0013) || isChecked(C0085)) && (getValue(Mod2002025Key.UT060) == 100.0) ) 
+			return 0.0;
+		if ( isChecked(C0014) ) 
+			return 0.0;
+		
+		// Caracter 48 Fondo de Pensiones 0% excepto si están marcados los caracteres 46, 83 u 88, en cuyo caso se aplica el de ellos
+		if ( isChecked(C0048) && !isChecked(C0046) && !isChecked(C0083) && !isChecked(C0088) ) 
+			return 0.0;
 		
 		// Cooperativas protegidas
 		if (isChecked(C0017) || isChecked(C0018)) {
@@ -587,31 +592,40 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		}
 		
 		// 00015 o 00079 Entidades ZEC
-		if ( isChecked(C0015) || isChecked(C0079) ) return 4.0;
+		if ( isChecked(C0015) || isChecked(C0079) ) 
+			return 4.0;
 		
 		// 00001 Entidad sin ánimo de lucro (tipo reducido 10% excepto si se combina con 00021 o 00046)
-		if ( isChecked(C0001) && !isChecked(C0021) && !isChecked(C0046) ) return 10.0;  
+		if ( isChecked(C0001) && !isChecked(C0021) && !isChecked(C0046) ) 
+			return 10.0;  
 		
+		// Tipo reducido 15%
+		//	00083 Empresa emergente
+		if ( isChecked(C0083) && !(isChecked(C0001) && isChecked(C0021)) && !(isChecked(C0001) && isChecked(C0046))) 
+			return 15.0;
+
 		// Tipo reducido 15%
 		//	00063 Entidades de nueva creación (DT 22 LIS)
 		//	00071 Entidades de nueva creación (art 29.1 LIS)
-		//	00083 Empresa emergente		
-		if ( isChecked(C0063) || isChecked(C0071) || isChecked(C0083) ) 
+		if ( isChecked(C0063) || isChecked(C0071) ) 
 			return 15.0; 
 		
 		// 00034 Hidrocarburos y no marcada 00046 Entidad en régimen atribución rentas extranjera
-		if ( isChecked(C0034) && !isChecked(C0046) ) return 30.0; 
+		if ( isChecked(C0034) && !isChecked(C0046) ) 
+			return 30.0; 
 		
 		// DOC PADIS DE 17/06 Caracteres 00012 y 00064 prevalecen sobre el 00006 (aunque realmente son incompatibles) 
 		// y en el calculo de la cuota integra pone que la casilla 558 debe ser el 25% si estan combinadas la 00012 o 00064 con la 00088
-		if ( isChecked(C0012) || isChecked(C0064) ) return 25.0;
+		if ( isChecked(C0012) || isChecked(C0064) ) 
+			return 25.0;
 		
 		// 00088 Entidades con INCN inferior a 1 millón euros
-		if ( isChecked(C0088) ) return 21.0; 
+		if ( isChecked(C0088) ) 
+			return 21.0; 
 		
-
 		// 00006 Empresa reducida dimensión (ERD)
-		if ( isChecked(C0006) ) return 24.0; 
+		if ( isChecked(C0006) ) 
+			return 24.0; 
 		
 		// RESTO VAN AL 25%
 //		if ( isChecked(C0046) ) return 25.0;
@@ -648,6 +662,12 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		
 		if (lq1330 <= 0) 
 			return 0;
+
+		// Tipo 0% o No Liquida
+		if ( (isChecked(C0013) || isChecked(C0085)) && (getValue(Mod2002025Key.UT060) == 100.0) ) 
+			return 0.0;
+		if ( isChecked(C0014) ) 
+			return 0.0;
 		
 		if (isChecked(C0063)) {
 			if (lq1330<=getLimit(LIM_1)){
@@ -675,12 +695,6 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 				 }
 			}
 			
-			// Si marca la clave 00006:
-			// 00562 = (00559) x 00558/100 + (01330 - 00559) x 24% 
-			if (isChecked(C0006)) {
-				return round(((lq559) * lq558 / 100) + (lq1330 - lq559) * 24 / 100);	
-			}
-			
 			// Si marca la clave 00071:
 			// 00562 = (00559) x 00558 / 100 + (01330 - 00559) x 15%
 			if (isChecked(C0071)) {
@@ -691,6 +705,12 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			// 00562 = (00559) x 00558 / 100 + (01330 - 00559) x 15%		
 			if (isChecked(C0083)) {
 				return round(((lq559) * lq558 / 100) + (lq1330 - lq559) * 15 / 100);	
+			}
+			
+			// Si marca la clave 00006:
+			// 00562 = (00559) x 00558/100 + (01330 - 00559) x 24% 
+			if (isChecked(C0006)) {
+				return round(((lq559) * lq558 / 100) + (lq1330 - lq559) * 24 / 100);	
 			}
 			
 			// Caso general para el resto de casos de entidades ZEC
@@ -834,15 +854,10 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			// Si clave 00558 = 20
 			// Clave 00560 = clave 00553 x clave 00558/100 + clave 00554 - 00521 x 25% + 00521 x 0 %
 			// En caso de que 00521 tenga un valor negativo se tendrá en cuenta el valor cero en los cálculos.
-			if (isChecked(C0057) && lq558 == 20) {
+			// El PADIS también hace este cálculo si el tipo es del 12%
+			if (isChecked(C0057) && (lq558 == 20 || lq558 == 12)) {
 				double lq521Adj = lq521 < 0 ? 0 : lq521;
 				return round((lq553 * lq558 / 100) + ((lq554 - lq521Adj) * 25 / 100));
-			}
-			
-			// Cuando prevalezca el carácter 00083:
-			// [00560] = [00552] x 15% (clave 00558)			
-			if (isChecked(C0083)) {
-				return round(lq552 * 15 / 100);
 			}
 			
 			if (lq558 == 20 && !isChecked(C0006)) {
@@ -882,6 +897,11 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			// Clave 00560 = clave 00553 x clave 00558/100 + clave 00554 x 15%
 			if (lq558 == 12) {
 				return round((lq553 * lq558 / 100) + (lq554 * 15 / 100));
+			}
+			
+			// EL PADIS SI ES COOPERATIVA Y EL TIPO ES DEL 25% Y ESTA MARCADO EL CARACTER 46 EL CALCULO ES DEL 25% SOBRE LA CASILLAS 553 Y 554
+			if (lq558 == 25 && isChecked(C0046)) {
+				return round((lq553 * lq558 / 100) + (lq554 * lq558 / 100));
 			}
 			
 			// Clave 00558 = 25%
@@ -952,14 +972,7 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 				double lq521Adj = lq521 < 0 ? 0 : lq521;
 				return round( ((lq552 - lq521Adj) * lq558 / 100) + (lq521 * 0));  //
 			}						
-						
-			// Cuando se haya marcado la clave 00006 (y no estén marcadas las claves 00071, 00083 o 00088:
-			//  [00560] = [00552] x [00558]
-			//  Clave [00558] = 24%
-			if (isChecked(C0006) && !isChecked(C0071) && !isChecked(C0083) && !isChecked(C0088)) {
-				return round(lq552 * 24 / 100); 
-			}
-		
+
 			// Caso general
 			return round(lq552 * lq558 / 100); 
 			
@@ -1587,9 +1600,6 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 			
 			double m1 = (c01330-c00778+c00813) * 0.15;
 
-			if (isChecked(C0071))
-				m1 = (c01330-c00778+c00813) * 0.10;
-			
 			// Entidades con INCN período anterior inferior a 1 millón euros (carácter 00088)
 			//  A) Si (01330 - 00778 + 00813) <= 50.000 => M1 = (01330 - 00778 + 00813) x 13%
 			//  B) Si (01330 - 00778 + 00813) > 50.000 => M1 = 50.000 x 13% + ((01330 - 00778 + 00813) - 50.000) x 14%
@@ -1633,6 +1643,9 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 				else 							
 					m1 = amount * 0.15; // Resto de entidades ZEC
 			}
+			
+			if (isChecked(C0071))
+				m1 = (c01330-c00778+c00813) * 0.10;
 			
 			double tramo1 = computeSection(TRAMO_1); 
 			double tramo2 = computeSection(TRAMO_2); 

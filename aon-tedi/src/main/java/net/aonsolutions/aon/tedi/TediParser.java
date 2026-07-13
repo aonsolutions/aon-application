@@ -286,7 +286,6 @@ public class TediParser {
 			.setQuota(tax.getQuota())
 			.setSurcharge(tax.getSurcharge())
 			.setSurchargeQuota(tax.getSurchargeQuota())
-			.setInvestAsset(tax.getInvestAsset())
 			.setDeductiblePercent(tax.getDeductiblePercent())
 			.setDeductibleQuota(tax.getDeductibleQuota()).setWithholding(withholding)
 			.setOutputAccount(outputAccount)

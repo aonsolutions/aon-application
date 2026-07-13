@@ -112,7 +112,7 @@ public class ConfigurationDAO {
 			.setOcrDefaultItem( getOcrDefaultItem(ctx) )
 			.setBetaEnabled(AonEnumUtils.getAonBoolean(AppParamDAO.fetchValue(ctx, AppParam.AON_BETA_ENABLED)))
 			.setAlphaEnabled(AonEnumUtils.getAonBoolean(AppParamDAO.fetchValue(ctx, AppParam.AON_ALPHA_ENABLED)))
-			.setCommunicationConfig( InvoiceCommunicationDAO.get(ctx, ctx.getDomainId()))
+			.setCommunicationConfig( InvoiceCommunicationDAO.get(ctx, ctx.getDomainId(), false))
 		;
 		if (params.hasAccounting() ) {
 			fillAccountingParameters(ctx, conf);
@@ -355,7 +355,7 @@ public class ConfigurationDAO {
 			.setSeries( SeriesDAO.stream(ctx, domainId).collect(Collectors.toCollection(LinkedList::new)) )
 			.setWorkplaces( WorkplaceDAO.getWorkplaces(ctx, domainId).collect(Collectors.toCollection(LinkedList::new)))
 			.setPrintConfiguration( PrintInvoiceConfigurationDAO.get(ctx) )
-			.setCommunicationConfiguration(InvoiceCommunicationDAO.get(ctx, domainId))
+			.setCommunicationConfiguration(InvoiceCommunicationDAO.get(ctx, domainId, false))
 			.setInvofoxConfiguration( InvofoxConfigurationDAO.get(ctx) )
 		;
 	}

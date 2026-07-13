@@ -356,7 +356,7 @@ public class Mod131AEAT2025Declaration extends Mod131Declaration {
 			,(mod,key) -> ensureActivity(mod,1).setTem((int)mod.getAmount(key)))
 		,AC2_NUE ( Mod131Key.AC2_NUE
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getNue())
-			,(mod,key) -> ensureActivity(mod,1).setTem((int) mod.getAmount(key)))
+			,(mod,key) -> ensureActivity(mod,1).setNue((int) mod.getAmount(key))) 
 		,AC2_DIS ( Mod131Key.AC2_DIS
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).isDis()?1:0)
 			,(mod,key) -> ensureActivity(mod,1).setDis(mod.getAmount(key)==1))
@@ -635,7 +635,7 @@ public class Mod131AEAT2025Declaration extends Mod131Declaration {
 			,(mod,key) -> ensureActivity(mod,2).setTem((int)mod.getAmount(key)))
 		,AC3_NUE ( Mod131Key.AC3_NUE
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getNue())
-			,(mod,key) -> ensureActivity(mod,2).setTem((int) mod.getAmount(key)))
+			,(mod,key) -> ensureActivity(mod,2).setNue((int) mod.getAmount(key))) 
 		,AC3_DIS ( Mod131Key.AC3_DIS
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).isDis()?1:0)
 			,(mod,key) -> ensureActivity(mod,2).setDis(mod.getAmount(key)==1))
@@ -914,7 +914,7 @@ public class Mod131AEAT2025Declaration extends Mod131Declaration {
 			,(mod,key) -> ensureActivity(mod,3).setTem((int)mod.getAmount(key)))
 		,AC4_NUE ( Mod131Key.AC4_NUE
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getNue())
-			,(mod,key) -> ensureActivity(mod,3).setTem((int) mod.getAmount(key)))
+			,(mod,key) -> ensureActivity(mod,3).setNue((int) mod.getAmount(key))) 
 		,AC4_DIS ( Mod131Key.AC4_DIS
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).isDis()?1:0)
 			,(mod,key) -> ensureActivity(mod,3).setDis(mod.getAmount(key)==1))
@@ -1193,7 +1193,7 @@ public class Mod131AEAT2025Declaration extends Mod131Declaration {
 			,(mod,key) -> ensureActivity(mod,4).setTem((int)mod.getAmount(key)))
 		,AC5_NUE ( Mod131Key.AC5_NUE
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getNue())
-			,(mod,key) -> ensureActivity(mod,4).setTem((int) mod.getAmount(key)))
+			,(mod,key) -> ensureActivity(mod,4).setNue((int) mod.getAmount(key))) 
 		,AC5_DIS ( Mod131Key.AC5_DIS
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).isDis()?1:0)
 			,(mod,key) -> ensureActivity(mod,4).setDis(mod.getAmount(key)==1))
@@ -2691,8 +2691,20 @@ public class Mod131AEAT2025Declaration extends Mod131Declaration {
 		periodDays = periodDays + 1;
 		
 		double daysFactor = 1;
-		if (act.getDia() < periodDays ) {
-			daysFactor = ((double)act.getDia()) / ((double) periodDays);
+		
+		// En las actividades de temporada, a efectos del pago fraccionado, el rendimiento diario resultará de dividir el anual por el 
+		// número de días de ejercicio de la actividad en el año anterior
+		// actividad de temporada se considera si los dias anteriores son mayores que 0 y menores o iguales a 180
+		if (act.getTem() > 0 && act.getTem() <= 180) {			
+			int days = act.getDia();
+			if (days > periodDays) {
+				days = periodDays;
+			}
+			daysFactor = ((double) days) / ((double) act.getTem());
+		} else {
+			if (act.getDia() < periodDays ) {
+				daysFactor = ((double)act.getDia()) / ((double) periodDays);
+			}
 		}
 		double net = AonMathUtils.round(act.getRdr() * daysFactor);
 		act.setNet(net);

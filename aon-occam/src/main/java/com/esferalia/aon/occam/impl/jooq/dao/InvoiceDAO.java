@@ -319,10 +319,8 @@ public class InvoiceDAO {
 				LinkedList<InvoiceTax> taxes = getInvoiceTaxStreamFromDetail(ctx, detail.getId())
 						.collect(Collectors.toCollection(LinkedList::new));
 				detail.setInvoiceTaxes(taxes);
-				Account acc = getInvoiceDetailAccount(ctx, detail.getId());
-				detail.setAccountId(acc.getId());
-				detail.setAccountCode(acc.getCode());
-				detail.setAccountDescription(acc.getDescription());
+				getInvoiceDetailAccount(ctx, detail.getId())
+					.ifPresent(acc -> detail.setExpAccount(acc));
 			}
 			
 			invoice.setFinances( FinanceDAO.getFinanceStream(ctx, prop -> prop.getInvoiceProperty().eq(id))
@@ -550,7 +548,7 @@ public class InvoiceDAO {
 	}
 	
 	public static int getNextNumber(AONContext ctx, Byte[] types, String series ) {
-		InvoiceCommunicationConfiguration comConfig = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId());
+		InvoiceCommunicationConfiguration comConfig = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId(), false);
 		if((comConfig.hasCommunication()) 
 			&& InvoiceType.contains(types, InvoiceType.SALES)) {
 			return getCommunicationNextNumber(ctx, types, series);
@@ -1092,7 +1090,7 @@ public class InvoiceDAO {
 
 		// ONLY IF IS COMMUNICATION.
 		if (invoice.isSales() && invoice.getNumber() > 0) {
-			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId());
+			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId(), false);
 			if((icc.hasCommunication())) {
 				InvoiceTrackingDAO.insert(ctx, invoice, InvoiceTrackingStatus.DELETED);
 			}
@@ -1625,11 +1623,11 @@ public class InvoiceDAO {
 			.fetch().stream().map(new InvoiceDetailFiller());
 	}
 	
-	private static Account getInvoiceDetailAccount(AONContext ctx, Integer invoiceDetailId) {
+	private static Optional<Account> getInvoiceDetailAccount(AONContext ctx, Integer invoiceDetailId) {
 		return ctx.getDslContext().select().from(ACCOUNT)
 		.join(INVOICE_DETAIL_ACCOUNT).on(INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(ACCOUNT.ID))
 		.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(invoiceDetailId)).limit(1)
-		.fetch().stream().map(new FullAccountFiller()).findFirst().orElse(new Account());
+		.fetch().stream().map(new FullAccountFiller()).findFirst();
 	}
 
 
@@ -1760,12 +1758,12 @@ public class InvoiceDAO {
 			@Override public void visitDelivery(InvoiceDetail detail) {}
 			
 			@Override public void visitAccount(InvoiceDetail detail) {
-				if (detail.getAccountId() == null) 
+				if (detail.getExpAccountId() == null) 
 					throw new AonCoreException(AonError.ACCOUNT_ENTRY_NO_EXP_ACCOUNT.getMessage());
 				ctx.getDslContext().insertInto(INVOICE_DETAIL_ACCOUNT)
 					.set(INVOICE_DETAIL_ACCOUNT.DOMAIN, detail.getDomain())
 					.set(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL, detail.getId())
-					.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, detail.getAccountId())
+					.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, detail.getExpAccountId())
 					.execute();
 				if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !detail.isPrepayment()) {
 					ctx.log().debug("\tINSERT INVOICE_DETAIL_ACCOUNT");
@@ -1773,7 +1771,7 @@ public class InvoiceDAO {
 						ctx.getDslContext().insertInto(INVOICE_TAX_ACCOUNT)
 						.set(INVOICE_TAX_ACCOUNT.DOMAIN,detail.getDomain())
 						.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, tax.getId())
-						.set(INVOICE_TAX_ACCOUNT.ACCOUNT, tax.getAccount()!=null?tax.getAccount():detail.getAccountId())
+						.set(INVOICE_TAX_ACCOUNT.ACCOUNT, tax.getAccount()!=null?tax.getAccount():detail.getExpAccountId())
 						.execute();
 						ctx.log().debug("\t\tINSERT INVOICE_TAX_ACCOUNT");
 					}
@@ -1783,11 +1781,11 @@ public class InvoiceDAO {
 			}
 			
 			@Override public void visitTedi(InvoiceDetail detail) {
-				if (detail.getAccountId() != null) { 
+				if (detail.getExpAccountId() != null) { 
 					ctx.getDslContext().insertInto(INVOICE_DETAIL_ACCOUNT)
 						.set(INVOICE_DETAIL_ACCOUNT.DOMAIN, detail.getDomain())
 						.set(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL, detail.getId())
-						.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, detail.getAccountId())
+						.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, detail.getExpAccountId())
 						.execute();
 					ctx.log().debug("\tINSERT INVOICE_DETAIL_ACCOUNT");
 					if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !detail.isPrepayment()) {						
@@ -1795,7 +1793,7 @@ public class InvoiceDAO {
 							ctx.getDslContext().insertInto(INVOICE_TAX_ACCOUNT)
 								.set(INVOICE_TAX_ACCOUNT.DOMAIN,detail.getDomain())
 								.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, tax.getId())
-								.set(INVOICE_TAX_ACCOUNT.ACCOUNT, tax.getAccount() != null ? tax.getAccount() : detail.getAccountId())
+								.set(INVOICE_TAX_ACCOUNT.ACCOUNT, tax.getAccount() != null ? tax.getAccount() : detail.getExpAccountId())
 								.execute();
 							ctx.log().debug("\t\tINSERT INVOICE_TAX_ACCOUNT");
 						}

@@ -131,10 +131,6 @@ export class AonManagementMenu extends AonSuiteMenu {
                 description: MSG.PURCHASE_ORDERS,
                 title: MSG.PURCHASE_ORDERS,
                 action: () => this.rootPanel(new JSF.AonJsfPurchase())
-            }, {
-                description: MSG.EXPENSES_SHEET,
-                title: MSG.EXPENSES_SHEET,
-                action: () => this.rootPanel(new JSF.AonJsfExpense())
             }]
         }, {
             title: MSG.EXPENSES,
@@ -151,10 +147,10 @@ export class AonManagementMenu extends AonSuiteMenu {
                 title: MSG.UNDEDUCTIBLE_VAT_EXPENSES,
                 action: () => this.rootPanel(new JSF.AonJsfUndeductibleInvoice())
             }, {
-				description: MSG.EXPENSES_SHEET,
+                description: MSG.EXPENSES_SHEET,
                 title: MSG.EXPENSES_SHEET,
-				fn: () =>  this.rootPanel(new JSF.AonJsfExpense()),
-			}]
+                action: () => this.rootPanel(new JSF.AonJsfExpense())
+            }]
         }, {
             title: MSG.TREASURY,
             options: [{

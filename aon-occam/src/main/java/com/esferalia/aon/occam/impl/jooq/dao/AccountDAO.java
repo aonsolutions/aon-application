@@ -95,7 +95,14 @@ public class AccountDAO {
 		public static Account build(Record r) {
 			return build(r, ACCOUNT);
 		}
-
+		
+		public static Account buildIf(Record r) {
+			return buildIf(r, ACCOUNT);
+		}
+		public static Account buildIf(Record r, com.esferalia.aon.jooq.tables.Account alias) {
+			return (isNull(r, alias.ID) ) ? null : build(r, alias);
+		}
+		
 		public static Account build(Record r, com.esferalia.aon.jooq.tables.Account alias) {
 			return new Account()
 				.setId(getValue(r, alias.ID))

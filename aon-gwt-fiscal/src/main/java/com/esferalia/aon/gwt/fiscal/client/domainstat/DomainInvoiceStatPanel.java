@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.domainstat;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.occam.api.model.DomainInvoiceStatParams;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -14,10 +15,20 @@ class DomainInvoiceStatPanel extends DockLayoutPanel {
 	public DomainInvoiceStatPanel( final DomainInvoiceStatModuleOptions options ) {
 		super(Unit.PX);
 		AON.ensureInjected();
-		AonToolbar toolbar = new AonToolbar(AON.MSG.domainInvoiceStat());
-		this.addNorth(toolbar, AonToolbar.HEIGTH);
 		
 		DomainInvoiceStatFilterPanel filterPanel = new DomainInvoiceStatFilterPanel( options);
+		
+		AonToolbar toolbar = new AonToolbar(AON.MSG.domainInvoiceStat());
+		AonToolbarButton refreshButton = new AonToolbarButton(AON.MSG.refresh(), AON.CSS.aonIconRefresh());
+		refreshButton.addClickHandler(event -> filterPanel.refresh(options));
+		toolbar.add(refreshButton);
+		
+		AonToolbarButton initializeButton = new AonToolbarButton(AON.MSG.clean(), AON.CSS.aonIconClear());
+		initializeButton.addClickHandler(event -> filterPanel.clear(options) );
+		toolbar.add(initializeButton);
+		
+		this.addNorth(toolbar, AonToolbar.HEIGTH);
+		
 		this.addNorth(filterPanel, DomainInvoiceStatFilterPanel.HEIGTH);
 		filterPanel.addValueChangeHandler( e -> search(options, e.getValue()) );
 		

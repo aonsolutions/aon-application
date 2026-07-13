@@ -232,6 +232,14 @@ export class AonConfigurationNew extends AonElement {
 				icon: MATERIAL_ICONS.BUSINESS,
 				fn: () => GWT.iLoad(GWT.SCOPE_MODULE, this.getApplication().CONTENT),
 			});
+			
+			if ( this.isBeta() || this.isAyudaTorInfoautonomos() ) {
+				securityOptions.push({
+					name: MSG.TEMPORARY_AUTORIZATIONS,
+					icon: MATERIAL_ICONS.BUSINESS,
+					fn: () => GWT.iLoad(GWT.TEMPORARY_SCOPES_MODULE, this.getApplication().CONTENT),
+				});
+			}
 
 		}
 

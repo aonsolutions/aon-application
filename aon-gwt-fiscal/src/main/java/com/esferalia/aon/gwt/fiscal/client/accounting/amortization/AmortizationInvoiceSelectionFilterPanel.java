@@ -89,12 +89,12 @@ class AmortizationInvoiceSelectionFilterPanel extends SimpleLayoutPanel implemen
 
 	private void addPair(FlowPanel container, String label, Widget widget) {
 		FlowPanel blockContainer = new FlowPanel();
+		blockContainer.setStyleName(AON.CSS.aonAlignItemsCenter());
 		blockContainer.getElement().getStyle().setProperty("display", "flex");
 		blockContainer.getElement().getStyle().setProperty("flex-grow", "0");
 		Label l = new Label(label);
-		l.setStyleName(AON.CSS.aonSearchPanelLabel());
-		l.addStyleName(AON.CSS.aonCustomTextBoxTitle());
-		widget.addStyleName(AON.CSS.aonCustomTextBoxInput());
+		l.setStyleName(AON.CSS.aonNowrap());
+		l.addStyleName(AON.CSS.aonBold());
 		widget.setWidth("100%");
 		widget.getElement().getStyle().setProperty("padding", "0");
 		blockContainer.add(l);

@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -125,20 +126,26 @@ public abstract class ScopeModulePanel extends AonCustomDockLayout {
 				public void onAccept(Scope scopeDB) {
 					onScopeCreate(scopeDB);
 				}
+				
+				public boolean existsScopeWithDescription(String description) {
+					return scopePanel.existsScopeWithDescription(description);
+				}
 		});
 	}
 	
 	private void showReassignScopeDialog() {
-		new AonReasignScopePanel( options.getDomainName(), options.getDomain(), options.getUser(), options.getConfiguration().getAvailableScopes(), new AonReasignScopePanelCallback() {
-			
-			@Override
-			public void onCancel() {}
-			
-			@Override
-			public void onAccept() {
-				onSearch();
-			}
-	});
+		getUsedScopesInDomain(scopes -> {
+			new AonReasignScopePanel( options.getDomainName(), options.getDomain(), options.getUser(), scopes, new AonReasignScopePanelCallback() {
+				
+				@Override
+				public void onCancel() {}
+				
+				@Override
+				public void onAccept() {
+					onSearch();
+				}
+			});
+		});
 	}
 
 	public void onSearch() {
@@ -213,7 +220,28 @@ public abstract class ScopeModulePanel extends AonCustomDockLayout {
 		return DomainType.OFFICE.equals( options.getConfiguration().getDomain().getDomainType() );
 	}
 	
+	private void getUsedScopesInDomain(Consumer<ArrayList<Scope>> finish) {
+		commonService.getUsedScopesInDomain(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<ArrayList<Scope>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, "Error al obtener los \u00c1mbitos del dominio");
+			}
+
+			@Override
+			public void onSuccess(ArrayList<Scope> result) {
+				finish.accept(result);
+			}
+			
+		});
+	}
+	
+	public boolean existsScopeWithDescription(String description) {
+		return null == scopePanel ? false : scopePanel.existsScopeWithDescription(description);
+	}
+	
 	protected abstract void onScopeSelect(Scope scope);
 	protected abstract void onScopeCreate(Scope scope);
+
 
 }

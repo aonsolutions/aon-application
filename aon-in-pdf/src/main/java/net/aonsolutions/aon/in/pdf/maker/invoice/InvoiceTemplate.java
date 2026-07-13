@@ -65,6 +65,7 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -2101,9 +2102,7 @@ public class InvoiceTemplate {
 		newInvoiceDetail.setWarehouse(original.getWarehouse());
 		newInvoiceDetail.setWarehouseName(original.getWarehouseName());
 		newInvoiceDetail.setWorkplace(original.getWorkplace());
-		newInvoiceDetail.setAccountId(original.getAccountId());
-		newInvoiceDetail.setAccountCode(original.getAccountCode());
-		newInvoiceDetail.setAccountDescription(original.getAccountDescription());
+		newInvoiceDetail.setExpAccount(original.getExpAccount().orElse(null));
 		newInvoiceDetail.setInvoiceTaxes(original.getInvoiceTaxes());
 		newInvoiceDetail.setSource(original.getSource());
 		newInvoiceDetail.setSourceId(original.getSourceId());

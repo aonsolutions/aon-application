@@ -110,6 +110,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -1321,7 +1322,25 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.deleteScope(domainName, domain, user, scopeId, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void getUserScopesByUser(String domainName, Integer domain, String user, Integer userId, AsyncCallback<List<UserScopeFull>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getUserScopesByUser(domainName, domain, user, userId, new AsyncCallbackWrapper<>(callback));
+	}
 
+	@Override
+	public void authorizateUserScopes(String domainName, int domain, String user, UserScopeAuthorization userScopeAuthorization, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.authorizateUserScopes(domainName, domain, user, userScopeAuthorization, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void closeUserScopeAuthorizations(String domainName, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.closeUserScopeAuthorizations(domainName, domain, user, authUserScopes, endDate, new AsyncCallbackWrapper<>(callback));
+	}
+	
 	@Override
 	public void getUserScopeList(String domainName, Integer domain, String user, Integer scopeId, AsyncCallback<List<UserScopeFull>> callback) throws AonCoreException {
 		AON.start();
@@ -1368,6 +1387,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getUsers(String domainName, int domainId, String user, AsyncCallback<ArrayList<User>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getUsers(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getUsers(String domainName, int domainId, String user, String description, AsyncCallback<ArrayList<User>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getUsers(domainName, domainId, user, description, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	// **************************************************
@@ -1819,6 +1844,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void reassignScope(String domainName, Integer domainId, String user, int originScope, int finalScope, boolean deleteOrigin, AsyncCallback<Void> callback) {
 		AON.start();
 		serviceAsync.reassignScope(domainName, domainId, user, originScope, finalScope, deleteOrigin, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getUsedScopesInDomain(String domainName, int domainId, String user, AsyncCallback<ArrayList<Scope>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getUsedScopesInDomain(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override

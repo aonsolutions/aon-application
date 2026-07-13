@@ -48,7 +48,7 @@ export class AonSiteHelp extends HELP {
 		this.isLoaded().then(() => [...this.getIDocument().getElementsByTagName('header')].forEach( header => {
 			header.remove();
 			this.showIFrame();
-			this.shiowHomeButton();
+			this.showHomeButton();
 			this.getHomeButton().innerHTML = header.textContent; 
 		}));
 		
@@ -67,7 +67,7 @@ export class AonSiteHelp extends HELP {
 		iframe.style.display = 'block';
 	}
 	
-	shiowHomeButton() {
+	showHomeButton() {
 		let homeButton = this.getHomeButton();
 		homeButton.style.removeProperty('display');
 	}
@@ -112,16 +112,13 @@ export class AonSiteHelp extends HELP {
 	
 	isLoaded() {
 		let iframe = this.getIFrame();
-		let idocument = iframe.document || iframe.contentDocument || iframe.contentWindow?.document;
 
 		return new Promise((resolve, reject) => {
-			if (idocument?.readyState === "complete") {
-				resolve();
-			} else if ( iframe.isConnected ) {
+			if ( iframe.isConnected ) {
 				iframe.addEventListener( EVENT.LOAD, resolve );
 			} else  {
 				this.addEventListener(EVENT.BUILD, () => {
-					iframe.addEventListener( EVENT.LOAD, resolve );						
+					iframe.addEventListener( EVENT.LOAD, resolve );
 				});
 			}
 		});

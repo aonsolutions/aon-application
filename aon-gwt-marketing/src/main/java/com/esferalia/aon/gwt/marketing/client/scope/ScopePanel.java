@@ -308,6 +308,10 @@ public abstract class ScopePanel extends ScrollPanel {
 				});
 	}
 
+	public boolean existsScopeWithDescription(String description) {
+		return rowScopes.values().stream().anyMatch(s -> AonStringUtils.equals(s.getDescription(), description));
+	}
+	
 	protected abstract void onShowSuccessMessage(String successMessage);
 	protected abstract void onShowErrorMessage(String errorMessage);
 	protected abstract void onShowLoadingMessage(String loadingMessage);

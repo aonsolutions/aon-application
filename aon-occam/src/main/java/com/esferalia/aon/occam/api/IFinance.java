@@ -247,7 +247,7 @@ public interface IFinance {
 	// 	********************************************
 	
 	public Stream<Invoice> getCommunicationInvoices(AONContext ctx, InvoiceCommunicationParams params);
-	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(AONContext ctx, int invoice);
+	public InvoiceCommunicationConfiguration getInvoiceCommunicationConfiguration(AONContext ctx, int invoice, boolean check);
 	public InvoiceCommunicationConfiguration saveInvoiceCommunicationConfiguration(AONContext ctx, int domainId , InvoiceCommunicationConfiguration config);
 	public void prepareNewSii(AONContext ctx);
 	public void prepareNewSii(AONContext ctx, Integer year);

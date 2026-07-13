@@ -25,6 +25,7 @@ public class AonScopePanel extends AonCustomDialog {
 	public static interface AonScopePanelCallback {
 		void onAccept(Scope scope);
 		void onCancel();
+		boolean existsScopeWithDescription(String description);
 	}
 
 	static CommonServiceAsync commonService;
@@ -101,7 +102,10 @@ public class AonScopePanel extends AonCustomDialog {
     		if(AonStringUtils.isBlank(descriptionTextBox.getValue())) {
     			okButton.setEnabled(true);
     			AonMessagePanel.showWarning(messagePanel, "El campo descripci\u00f3n es obligatorio");
-    		} else {
+    		} else if(callback.existsScopeWithDescription(descriptionTextBox.getValue())) {
+				okButton.setEnabled(true);
+				AonMessagePanel.showWarning(messagePanel, "Ya existe un \u00e1mbito con la misma descripci\u00f3n");
+			} else {
     			
     			scope.setDomain(domainId);
     			scope.setDescription(descriptionTextBox.getValue());

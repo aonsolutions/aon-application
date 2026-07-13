@@ -7,10 +7,10 @@ import static com.esferalia.aon.jooq.tables.FsModel200.FS_MODEL200;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
-import org.jooq.impl.DSL;
 import org.json.JSONArray;
 
 import com.esferalia.aon.jooq.tables.AppParam;
@@ -37,12 +37,14 @@ import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod190.Mod190DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod193.Mod193DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod390.Mod390DAO;
 import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FiscalMenuDAO {
 	
 	private static final String PARAM_PREFIX = "FS_MODEL_CFG_";
 	private static final String PARAM_PREFIX_LIKE = PARAM_PREFIX + "%";
+	private static final Logger LOGGER  = Logger.getLogger(FiscalMenuDAO.class.getName());
 	
 	private FiscalMenuDAO() {
 		
@@ -59,7 +61,8 @@ public class FiscalMenuDAO {
 	}
 	
 	private static JSONArray getDomainModels(AONContext ctx, final Domain domain, JSONArray allModels,FiscalMatrixParams params) {
-		
+		LOGGER.info("FiscalMenuDAO getDomainModels BEGIN");
+		LOGGER.info("FiscalMenuDAO getDomainModels AonContext " + ctx.getDomainName() + " " + ctx.getUser());
 		if (params.isConfiguredVisible()) {
 			addConfiguredModels(ctx, domain, allModels,params);
 		}
@@ -82,43 +85,46 @@ public class FiscalMenuDAO {
 						.filter( fm -> fm.getModel() != FiscalModelType.M200 )  // Tampoco se coge el modelo 200 de fs_model
 						.filter( fm -> fm.getModel() != FiscalModelType.M369 )  // Tampoco se coge el modelo 369 de fs_model
 						.filter( fm -> fm.getModel() != FiscalModelType.M390_HF || (fm.getModel() == FiscalModelType.M390_HF && (params.getModel() == null || params.getModel() == FiscalModelType.M390_HF)) )
-						.filter( fm -> checkScope(ctx, fm) )
+						.filter( fm -> checkScope(ctx, fm, params.getScope()) )
 						.map( FiscalMenuItemJSON::toJSON )
 						.forEach( allModels::put );
+					LOGGER.info("FiscalMenuDAO getDomainModels visitM111");
 				}
 				
 				@Override 
 				public void visitM347() {
 					if (params.accept( FiscalModelType.M347 )) {
-						Mod347DAO.getHeaders(ctx, domain.getId(), params.getScope())
+						Mod347DAO.getHeaders(ctx, domain.getId())						
 							.filter( mod -> mod.getYear()== params.getYear())
 							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
 							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getName(), params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getDocument(), params.getDeclared()) )
 							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus())
 							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
-							.filter( mod -> checkScope(ctx, mod) )
+							.filter( mod -> checkScope(ctx, mod, params.getScope()) )
 							.map( FiscalMenuItemJSON::toJSON )
 							.forEach( allModels::put );
+						LOGGER.info("FiscalMenuDAO getDomainModels visitM347");
 					}
 				}
 				@Override 
 				public void visitM349() {
 					if (params.accept( FiscalModelType.M349 )) {
-						Mod349DAO.getHeaders(ctx, domain.getId(), params.getScope())
+						Mod349DAO.getHeaders(ctx, domain.getId())
 							.filter( mod -> mod.getYear()== params.getYear())
 							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
 							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getName(), params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getDocument(), params.getDeclared()) )
 							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus())
 							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
-							.filter( mod -> checkScope(ctx, mod) )
+							.filter( mod -> checkScope(ctx, mod, params.getScope()) )
 							.map( FiscalMenuItemJSON::toJSON )
 							.forEach( allModels::put );
+						LOGGER.info("FiscalMenuDAO getDomainModels visitM349");
 					}
 				}
 				@Override 
 				public void visitM390() {
 					if (params.accept( FiscalModelType.M390)) {
-						Mod390DAO.getHeaders(ctx, domain.getId(), params.getScope())
+						Mod390DAO.getHeaders(ctx, domain.getId())
 							.filter( mod -> mod.getYear()== params.getYear())
 							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
 							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) 
@@ -128,79 +134,85 @@ public class FiscalMenuDAO {
 									|| AonStringUtils.containsIgnoreCase(mod.getDocument(), params.getDeclared()) )
 							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus())
 							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
-							.filter( mod -> checkScope(ctx, mod) )
+							.filter( mod -> checkScope(ctx, mod, params.getScope()) )
 							.map( FiscalMenuItemJSON::toJSON )
 							.forEach( allModels::put );
+						LOGGER.info("FiscalMenuDAO getDomainModels visitM390");
 					}
 				}
 				@Override 
 				public void visitM180() {
 					if (params.accept( FiscalModelType.M180 )) {
-						Mod180DAO.getHeaders(ctx, domain.getId(), params.getScope())
+						Mod180DAO.getHeaders(ctx, domain.getId())
 							.filter( mod -> mod.getYear()== params.getYear())
 							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
 							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getName(), params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getDocument(), params.getDeclared()) )
 							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
 							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
-							.filter( mod -> checkScope(ctx, mod) )
+							.filter( mod -> checkScope(ctx, mod, params.getScope()) )
 							.map( FiscalMenuItemJSON::toJSON )
 							.forEach( allModels::put );
+						LOGGER.info("FiscalMenuDAO getDomainModels visitM180");
 					}
 				}
 				@Override 
 				public void visitM184() {
 					if (params.accept( FiscalModelType.M184 )) {
-						Mod184DAO.getHeaders(ctx, domain.getId(), params.getScope())
-						.filter( mod -> mod.getYear()== params.getYear())
-						.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
-						.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getName(), params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getDocument(), params.getDeclared()) )
-						.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
-						.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
-						.filter( mod -> checkScope(ctx, mod) )
-						.map( FiscalMenuItemJSON::toJSON )
-						.forEach( allModels::put );
+						Mod184DAO.getHeaders(ctx, domain.getId())
+							.filter( mod -> mod.getYear()== params.getYear())
+							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
+							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getName(), params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getDocument(), params.getDeclared()) )
+							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
+							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
+							.filter( mod -> checkScope(ctx, mod, params.getScope()) )
+							.map( FiscalMenuItemJSON::toJSON )
+							.forEach( allModels::put );
+						LOGGER.info("FiscalMenuDAO getDomainModels visitM184");
 					}
 				}
 				@Override 
 				public void visitM190() {
 					if (params.accept( FiscalModelType.M190 )) {
-						Mod190DAO.getHeaders(ctx, domain.getId(), params.getScope())
-						.filter( mod -> mod.getYear()== params.getYear())
-						.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
-						.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getName(), params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getDocument(), params.getDeclared()) )
-						.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
-						.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
-						.filter( mod -> checkScope(ctx, mod) )
-						.map( FiscalMenuItemJSON::toJSON )
-						.forEach( allModels::put );
+						Mod190DAO.getHeaders(ctx, domain.getId())
+							.filter( mod -> mod.getYear()== params.getYear())
+							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
+							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getName(), params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getDocument(), params.getDeclared()) )
+							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
+							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
+							.filter( mod -> checkScope(ctx, mod, params.getScope()) )
+							.map( FiscalMenuItemJSON::toJSON )
+							.forEach( allModels::put );
+						LOGGER.info("FiscalMenuDAO getDomainModels visitM190");
 					}
 				}
 				@Override 
 				public void visitM193() {
 					if (params.accept( FiscalModelType.M193 )) {
-						Mod193DAO.getHeaders(ctx, domain.getId(), params.getScope())
-						.filter( mod -> mod.getYear()== params.getYear())
-						.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
-						.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getName(), params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getDocument(), params.getDeclared()) )
-						.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
-						.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
-						.filter( mod -> checkScope(ctx, mod) )
-						.map( FiscalMenuItemJSON::toJSON )
-						.forEach( allModels::put );
+						Mod193DAO.getHeaders(ctx, domain.getId())
+							.filter( mod -> mod.getYear()== params.getYear())
+							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
+							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getName(), params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getDocument(), params.getDeclared()) )
+							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
+							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
+							.filter( mod -> checkScope(ctx, mod, params.getScope()) )
+							.map( FiscalMenuItemJSON::toJSON )
+							.forEach( allModels::put );
+						LOGGER.info("FiscalMenuDAO getDomainModels visitM193");
 					}
 				}
 				@Override 
 				public void visitM200() {
 					if (params.accept( FiscalModelType.M200 )) {
-						getHeadersMod200(ctx, domain.getId(), params.getScope())
+						getHeadersMod200(ctx, domain.getId())
 							.filter( mod -> mod.getYear() == params.getYear())  
 							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())							
 							.filter( mod -> AonStringUtils.isBlank(params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getName(), params.getDeclared()) || AonStringUtils.containsIgnoreCase(mod.getDocument(), params.getDeclared()) )
 							.filter( mod -> params.getStatus() == null || mod.getStatus() == params.getStatus() )
 							.filter( mod -> params.getPeriod() == null || mod.getPeriod() == params.getPeriod())
-							.filter( mod -> checkScope(ctx, mod) )
+							.filter( mod -> checkScope(ctx, mod, params.getScope()) )
 							.map( mod -> FiscalMenuItemJSON.toJSON(mod).put(IJsonNames.IBAN, mod.getIban()) )  // MOD200 AUN NO USA FINANCE						
 							.forEach( allModels::put );
+						LOGGER.info("FiscalMenuDAO getDomainModels visitM200");
 					}
 				}
 				@Override
@@ -212,12 +224,14 @@ public class FiscalMenuDAO {
 				type.visit( visitor );
 			}
 		}
+
+		LOGGER.info("FiscalMenuDAO getDomainModels allModels size " + allModels.length());
+		LOGGER.info("FiscalMenuDAO getDomainModels END");
 		return allModels;
 	}
-	
 
 	// Comprobar ambito
-	protected static boolean checkScope(AONContext ctx, IFiscalModel fm) {
+	private static boolean checkScope(AONContext ctx, IFiscalModel fm, Integer scopeFilter) {
 
 		// No estamos en el entorno, aparecen todos porque segun el ambito el usuario ha podido entrar en esa empresa
 		if (ctx.getDomainId() == fm.getDomain())
@@ -227,12 +241,13 @@ public class FiscalMenuDAO {
 		Domain childDomain = DomainDAO.getDomain(ctx, fm.getDomain());
 		if (childDomain != null) {
 			if (childDomain.getScope() == null) {
-				return true; // Si ambito de la empresa es nulo, aparece siempre
+				// Si ambito de la empresa es nulo, aparece si se pide "Sin ámbito" (1) o "Todos" (2)
+				return AonNumberUtils.equals(scopeFilter, 1) || AonNumberUtils.equals(scopeFilter, 2); 
 			} else if (ctx.getConfig().hasAvailableScopes()) {
-				// Si ambito de la empresa no es nulo, debe ser uno de los ambitos disponibles para el usuario
+				// Si ámbito de la empresa no es nulo, debe ser uno de los ambitos disponibles para el usuario
 				for (Scope scope : ctx.getConfig().getAvailableScopes()) {
 					if (scope.getId().intValue() == childDomain.getScope().intValue()) {
-						return true;
+						return AonNumberUtils.equals(scopeFilter, 0) || AonNumberUtils.equals(scopeFilter, 2); // Aparece si se pide "Mis ámbitos" (0) o "Todos" (2)
 					}
 				}			 
 			}
@@ -259,7 +274,7 @@ public class FiscalMenuDAO {
 					.and(admonAppParam.NAME.eq(com.esferalia.aon.occam.api.model.type.AppParam.FS_DEFAULT_ADMINISTRATION.toString())))
 			.where(APP_PARAM.DOMAIN.equal(domain.getId()).or(DOMAIN.PARENT.equal(domain.getId())))
 			.and(APP_PARAM.NAME.like( params.getModel()  == null ? PARAM_PREFIX_LIKE : PARAM_PREFIX + params.getModel().toString() + "%"))
-			.and(params.getScope() == null?DSL.trueCondition():DOMAIN.SCOPE.eq( params.getScope()))
+//			.and(params.getScope() == null?DSL.trueCondition():DOMAIN.SCOPE.eq( params.getScope()))
 			.and(DOMAIN.PARENT.isNotNull())
 			.and(DOMAIN.ACTIVE.eq((byte) 1))
 			.orderBy(APP_PARAM.NAME)
@@ -330,7 +345,7 @@ public class FiscalMenuDAO {
 						.setStatus( FiscalStatus.MISSING)
 						.setPeriod("Y".equals(rec.getValue(APP_PARAM.VALUE))?Period.YEAR:"Q".equals(rec.getValue(APP_PARAM.VALUE))?Period.T1:Period.M01);
 			})
-			.filter( fm -> checkScope(ctx, fm))
+			.filter( fm -> checkScope(ctx, fm, params.getScope()))
 			.map( FiscalMenuItemJSON::toJSON )
 			.forEach( allModels::put )
 			;
@@ -347,8 +362,7 @@ public class FiscalMenuDAO {
 		return fmt;
 	}
 
-
-	public static Filter getFilter(FiscalModelProperties p, Domain domain, FiscalMatrixParams params) {
+	private static Filter getFilter(FiscalModelProperties p, Domain domain, FiscalMatrixParams params) {
 		Filter prop = p.getYearProperty().eq(params.getYear());
 		if (domain.isParent()) {
 			prop = prop.and( p.getParentDomainProperty().eq(domain.getId()));
@@ -362,9 +376,9 @@ public class FiscalMenuDAO {
 		if (params.getModel() != null) {
 			prop = prop.and( p.getModelProperty().eq(params.getModel().getValue()));
 		}
-		if (params.getScope() != null) {
-			prop = prop.and( p.getDomainScopeProperty().eq( params.getScope()));
-		}
+//		if (params.getScope() != null) {
+//			prop = prop.and( p.getDomainScopeProperty().eq( params.getScope()));
+//		}
 		if (AonStringUtils.isNotBlank(params.getDeclared())) {
 			prop = prop.and( p.getNameProperty().like("%"+params.getDeclared()+"%").or(p.getSurnameProperty().like("%"+params.getDeclared()+"%")).or(p.getDocumentProperty().like("%"+params.getDeclared()+"%")) );
 		}
@@ -378,7 +392,7 @@ public class FiscalMenuDAO {
 		return prop;
 	}
 	
-	private static Stream<FiscalModel> getHeadersMod200(AONContext ctx, int domain, Integer scope) {
+	private static Stream<FiscalModel> getHeadersMod200(AONContext ctx, int domain) {
 		ctx.checkRead();
 		return ctx.getDslContext()
 			.select(FS_MODEL200.fields())
@@ -386,7 +400,6 @@ public class FiscalMenuDAO {
 			.from(FS_MODEL200)
 			.join(DOMAIN).on(FS_MODEL200.DOMAIN.equal(DOMAIN.ID))
 			.where(FS_MODEL200.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
-			.and( scope == null ? DSL.trueCondition() : DOMAIN.SCOPE.equal(scope))
 			.orderBy(FS_MODEL200.YEAR.desc(), FS_MODEL200.NAME.asc(), FS_MODEL200.ID.desc())
 			.fetch()
 			.stream()

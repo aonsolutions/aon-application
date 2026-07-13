@@ -331,6 +331,8 @@ public class JsonParams extends JSONObject {
 		params.getActive().ifPresent( a -> json.put(IRequestParamsNames.ACTIVE, new JSONNumber( a )));
 		params.getQuery().ifPresent( q -> json.put(IRequestParamsNames.QUERY, new JSONString( q )));
 		params.getScope().ifPresent( s -> json.put(IRequestParamsNames.SCOPE, new JSONNumber( s )));
+		params.getImpersonatedUser().ifPresent( s -> json.put(IRequestParamsNames.IMPERSONATED_USER, new JSONNumber( s )));
+		params.getScoredFilter().ifPresent( s -> json.put(IRequestParamsNames.SCORED_FILTER, new JSONNumber( s )));
 		params.getFiscalModelType().ifPresent( f -> json.put(IRequestParamsNames.FISCAL_MODEL, new JSONString( f.name() )));
 		params.getInvoices().ifPresent( i -> json.put(IRequestParamsNames.INVOICES, JSONBoolean.getInstance(i)));
 		params.getAlcatraz().ifPresent( a -> json.put(IRequestParamsNames.ALCATRAZ, JSONBoolean.getInstance(a)));

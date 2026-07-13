@@ -340,7 +340,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			Integer domainId = invoice.getDomain();
 			// [START]
 			// Cuando se grabe en invoice_info la información de los envios de ARABA y GIPUZKOA, el siguiente código debe borrarse.
-			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx,domainId);
+			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx,domainId, false);
 			if (!icc.isBizkaia() && icc.isTbai()) {
 				Map<InvoiceCommunicationType, InvoiceCommunicationHistoryMapValue> history = InvoiceCommunicator.history(ctx, icc, invoice );
 				AonCollectionUtils.stream(history)
@@ -822,7 +822,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject getInvoiceCommunicationConfiguration(AonApiData api) {
-		InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(api.getOccam());
+		InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(api.getOccam(), true);
 		return InvoiceCommunicationConfigurationJSON.to(config).orElse(null);
 	}
 	

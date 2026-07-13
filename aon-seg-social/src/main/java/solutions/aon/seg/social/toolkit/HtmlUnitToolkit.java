@@ -3,15 +3,27 @@ package solutions.aon.seg.social.toolkit;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.SecureRandom;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -20,6 +32,11 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -74,6 +91,11 @@ import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.NoMoreDataException;
 
 public class HtmlUnitToolkit {
+	
+	public static final String PGIS_LOGIN_URL = "https://idp.seg-social.es/PGIS/Login";
+	public static final String MENU_AFI_DIRECTO = "menuAFI-DIRECTO";
+	public static final String MENU_AFI_DIRECTO_URL = "https://w2sp.seg-social.es/M/menuAFI-DIRECTO.html";
+
 
 	// WAIT FOR A SPECIFIC HTML ELEMENT
 	public static <HtmlPage, R> Optional<R> wait4(HtmlPage htmlPage, Function<HtmlPage, R> function)
@@ -172,6 +194,240 @@ public class HtmlUnitToolkit {
 		} catch (RuntimeException e) {
 			throw new InvalidCertificateException();
 		}
+	}
+	
+	public static WebClient getWebClientTgss(final InputStream certificateInputStream,
+	        final String certificatePassword, final String certificateType) throws InvalidCertificateException {
+	    try {
+	        char[] password = certificatePassword.toCharArray();
+
+	        KeyStore keyStore = KeyStore.getInstance(certificateType);
+	        keyStore.load(certificateInputStream, password);
+
+	        // Solo completar cadena si es necesario
+	        KeyStore finalKeyStore = needsChainCompletion(keyStore, password)
+	                ? addChainFromAIA(keyStore, password)
+	                : keyStore;
+
+	        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+	        kmf.init(finalKeyStore, password);
+
+	        TrustManager[] trustAll = new TrustManager[]{
+	            new X509TrustManager() {
+	                public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
+	                public void checkClientTrusted(X509Certificate[] c, String a) {}
+	                public void checkServerTrusted(X509Certificate[] c, String a) {}
+	            }
+	        };
+
+	        SSLContext sslContext = SSLContext.getInstance("TLS");
+	        sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
+	        
+	        WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
+	        disableLogging(webClient);
+	        webClient.getOptions().setCssEnabled(false);
+	        webClient.getOptions().setDownloadImages(false);
+	        webClient.getOptions().setUseInsecureSSL(true);
+	        
+	        webClient.getOptions().setJavaScriptEnabled(true);
+	        webClient.getOptions().setThrowExceptionOnScriptError(false);
+	        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+	        webClient.getOptions().setRedirectEnabled(true);
+	        webClient.setJavaScriptTimeout(20000);
+	        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+
+	        SSLContext.setDefault(sslContext);
+	        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+
+	        Path tempCert = Files.createTempFile("cert_", ".p12");
+	        try (OutputStream os = Files.newOutputStream(tempCert)) {
+	            finalKeyStore.store(os, password);
+	        }
+	        tempCert.toFile().deleteOnExit();
+
+	        webClient.getOptions().setSSLClientCertificateKeyStore(
+	            tempCert.toUri().toURL(),
+	            certificatePassword,
+	            certificateType
+	        );
+
+	        return webClient;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw new InvalidCertificateException();
+	    }
+	}
+	
+
+	 
+	/**
+	 * Variante que además entra en el servicio concreto: busca en el menú
+	 * AFI-DIRECTO el enlace cuyo href contiene el ARQ.IDAPP indicado y lo pulsa.
+	 * Devuelve la página del servicio ya transformada a HtmlPage.
+	 * @throws Exception 
+	 */
+	public static HtmlPage connectTgss(WebClient webClient, String idApp)
+			throws Exception {
+	 
+		HtmlPage menuPage = connectTgss(webClient);
+		
+		HtmlAnchor appAnchor = menuPage.getAnchors().stream()
+				.filter(a -> a.getHrefAttribute().contains("ARQ.IDAPP=" + idApp))
+				.findFirst()
+				.orElseThrow(() -> new SegSocialException(
+						"menuAFI-DIRECTO: no se encontró el enlace con ARQ.IDAPP=" + idApp));
+	 
+		Page page = appAnchor.click();
+		webClient.waitForBackgroundJavaScript(5000);
+	 
+		if (page instanceof XmlPage)
+			return transformXmlPage((XmlPage) page);
+		return asHtmlPage(page);
+	}
+	 
+	/** Localiza el botón/enlace "DNIe o certificado" en la página de PGIS. */
+	private static DomElement findCertificateAccess(HtmlPage loginPage) {
+		// a) Por texto visible del enlace
+		for (HtmlAnchor anchor : loginPage.getAnchors()) {
+			String text = anchor.asNormalizedText().toLowerCase();
+			if (text.contains("certificado") || text.contains("dnie"))
+				return anchor;
+		}
+		// b) Por texto de cualquier botón
+		for (DomElement button : loginPage.getElementsByTagName("button")) {
+			String text = button.asNormalizedText().toLowerCase();
+			if (text.contains("certificado") || text.contains("dnie"))
+				return button;
+		}
+		// c) Por href que sugiera login por certificado
+		for (HtmlAnchor anchor : loginPage.getAnchors()) {
+			String href = anchor.getHrefAttribute().toLowerCase();
+			if (href.contains("cert") || href.contains("dnie"))
+				return anchor;
+		}
+		return null;
+	}
+	 
+	/** Convierte cualquier Page devuelta por HtmlUnit en HtmlPage. 
+	 * @throws IOException */
+	private static HtmlPage asHtmlPage(Page page) throws SegSocialException, IOException {
+		if (page instanceof HtmlPage)
+			return (HtmlPage) page;
+		if (page instanceof XmlPage) {
+			try {
+				return transformXmlPage((XmlPage) page);
+			} catch (TransformerException e) {
+				throw new SegSocialException(e);
+			}
+		}
+		throw new SegSocialException("Página inesperada: " + page.getClass().getName());
+	}
+
+	private static boolean needsChainCompletion(KeyStore keyStore, char[] password) throws Exception {
+	    String alias = keyStore.aliases().nextElement();
+	    Certificate[] chain = keyStore.getCertificateChain(alias);
+	    boolean needs = chain == null || chain.length <= 1;
+	    System.out.println("Chain length: " + (chain == null ? 0 : chain.length) + " -> " 
+	        + (needs ? "completar cadena vï¿½a AIA" : "cadena completa, no es necesario completar"));
+	    return needs;
+	}
+	
+	private static KeyStore addChainFromAIA(KeyStore original, char[] password) throws Exception {
+	    String alias = original.aliases().nextElement();
+	    PrivateKey privateKey = (PrivateKey) original.getKey(alias, password);
+	    X509Certificate userCert = (X509Certificate) original.getCertificate(alias);
+
+	    List<Certificate> chain = new ArrayList<>();
+	    chain.add(userCert);
+
+	    List<X509Certificate> intermediates = downloadIntermediates(userCert);
+	    if (intermediates.isEmpty()) {
+	        System.out.println("No se encontraron intermedios, se usa el certificado tal cual.");
+	    } else {
+	        chain.addAll(intermediates);
+	    }
+
+	    KeyStore newKs = KeyStore.getInstance("PKCS12");
+	    newKs.load(null, password);
+	    newKs.setKeyEntry(alias, privateKey, password, chain.toArray(new Certificate[0]));
+
+	    System.out.println("Cadena final:");
+	    chain.forEach(c -> System.out.println("  Subject: " + ((X509Certificate) c).getSubjectX500Principal()));
+
+	    return newKs;
+	}
+
+	private static List<X509Certificate> downloadIntermediates(X509Certificate userCert) {
+	    String issuerCN = userCert.getIssuerX500Principal().getName();
+	    System.out.println("Issuer detectado: " + issuerCN);
+
+	    // Mapa de emisores conocidos con sus cadenas de intermedios (orden: intermedio -> raï¿½z)
+	    if (issuerCN.contains("UANATACA CA1 2021")) {
+	        return downloadCertChain(
+	            "https://web.uanataca.com/common/project/pdf/autoridad-certificacion/07_subordinada-ca1-2021.cer",
+	            "https://web.uanataca.com/common/project/pdf/autoridad-certificacion/01_raiz-ca-2016.cer"
+	        );
+	    }
+
+	    // Aï¿½adir aquï¿½ otros emisores conocidos si aparecen en el futuro:
+	    // if (issuerCN.contains("OTRO EMISOR")) { return downloadCertChain(...); }
+
+	    System.out.println("Emisor no reconocido, no se aï¿½aden intermedios.");
+	    return Collections.emptyList();
+	}
+
+	private static List<X509Certificate> downloadCertChain(String... urls) {
+	    List<X509Certificate> certs = new ArrayList<>();
+	    CertificateFactory cf;
+	    try {
+	        cf = CertificateFactory.getInstance("X.509");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return certs;
+	    }
+
+	    for (String url : urls) {
+	        try {
+	            System.out.println("Descargando: " + url);
+	            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+	            conn.setConnectTimeout(5000);
+	            conn.setReadTimeout(5000);
+	            try (InputStream is = conn.getInputStream()) {
+	                X509Certificate cert = (X509Certificate) cf.generateCertificate(is);
+	                certs.add(cert);
+	                System.out.println("  OK: " + cert.getSubjectX500Principal());
+	            }
+	        } catch (Exception e) {
+	            System.err.println("Error descargando " + url + ": " + e.getMessage());
+	        }
+	    }
+	    return certs;
+	}
+
+	// ENSURE CLAVE AUTHENTICATION (DNIe OR CERTIFICATE)
+	public static HtmlPage ensureClaveAuth(WebClient webClient, HtmlPage page, String target) throws Exception {
+	    DomElement certOption = page.getElementById("IPCEIdP");
+	    if (certOption == null) {
+	        return page; // ya autenticado, no estás en la pantalla de Cl@ve
+	    }
+	    System.out.println("Pantalla Cl@ve detectada -> seleccionando 'DNIe o certificado'");
+
+	    // Este click navega al endpoint mTLS; aquí HtmlUnit presenta el certificado del keystore
+	    certOption.click();
+
+	    // Deja que se ejecuten los autosubmit de los formularios SAML (Cl@ve -> IdP -> RP)
+	    webClient.waitForBackgroundJavaScript(20000);
+
+	    // Recupera el recurso protegido ya con la sesión autenticada (cookies del CookieManager)
+	    HtmlPage result = webClient.getPage(target);
+
+	    if (result.getElementById("IPCEIdP") != null) {
+//	        Toolkit.buildFile(result.asXml().getBytes(),
+//	                System.getProperty("user.home") + "/Desktop/clave_debug.html");
+	        throw new Exception("La autenticación con certificado en Cl@ve no se completó. "
+	                + "Revisa clave_debug.html y verifica la cadena del certificado.");
+	    }
+	    return result;
 	}
 
 	// GET TRIMMED STRING FROM HTML ELEMENT
@@ -911,6 +1167,37 @@ public class HtmlUnitToolkit {
 				
 			}
 		};
+	}
+	
+	/**
+	 * Pasos comunes de entrada al Sistema RED:
+	 *   1. Entra en https://idp.seg-social.es/PGIS/Login
+	 *   2. Pulsa "DNIe o certificado" (la autenticación la resuelve el keystore
+	 *      del WebClient)
+	 *   3. Pulsa el enlace cuyo href apunta a
+	 *      https://w2sp.seg-social.es:443/M/menuAFI-DIRECTO.html
+	 *
+	 * Devuelve la página del menú AFI-DIRECTO, ya autenticada, desde la que
+	 * cada servicio puede pulsar su propio enlace ARQ.IDAPP.
+	 * @throws Exception 
+	 */
+	public static HtmlPage connectTgss(WebClient webClient) throws Exception {
+	 
+		webClient.getOptions().setJavaScriptEnabled(true);
+		webClient.getOptions().setRedirectEnabled(true);
+		webClient.getOptions().setUseInsecureSSL(true);
+		webClient.getOptions().setThrowExceptionOnScriptError(false);
+		
+		// 1. Pedimos el recurso PROTEGIDO. El servidor redirige a Cl@ve/PGIS si hace falta.
+	    HtmlPage page = asHtmlPage(webClient.getPage(MENU_AFI_DIRECTO_URL));
+
+	    // 2. Si estamos en la pantalla Cl@ve, autenticamos con certificado.
+	    //    ensureClaveAuth vuelve a pedir 'target' y devuelve el recurso ya autenticado.
+	    page = ensureClaveAuth(webClient, page, MENU_AFI_DIRECTO_URL);
+
+	    webClient.waitForBackgroundJavaScript(10000);
+	    
+	    return page; // ya es el menuAFI-DIRECTO autenticado
 	}
 	
 	private static void trace(WebClient webClient) {

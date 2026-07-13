@@ -6,6 +6,7 @@ import { getInvoicesCounters } from '../../services/accountingService.js';
 
 import * as GWT from "../../gwt/gwt.js";
 import * as JSF from "../aon-jsf-app.js";
+import { createCard } from '../../components/CreateComponent.js';
 
 export class AonInvoiceRecord extends AonElement {
 
@@ -35,14 +36,21 @@ export class AonInvoiceRecord extends AonElement {
         this.TABS = this.id + 'Tabs';
         this.DIV = this.id + 'Div';
         this.COUNTERS_DIV = this.id + 'CountersDiv';
-        this.options = this.options || [
-			{ title: MSG.INVOICES, fn: () => this.buildInvoiceRecord()},
-			{ title: MSG.PENDING_DOCUMENTS, fn: () => this.buildRawdocRecord()}
-		];
+        if(this.isBeta()) {
+            this.options = this.options || [
+   			    { title: MSG.SUMMARY, fn: () => this.buildAccountingSummary()},
+		    	{ title: MSG.INVOICES, fn: () => this.buildInvoiceRecord()},
+	    		{ title: MSG.PENDING_DOCUMENTS, fn: () => this.buildRawdocRecord()}
+    		];
+        } else {
+            this.options = this.options || [
+   		        { title: MSG.INVOICES, fn: () => this.buildInvoiceRecord()},
+			    { title: MSG.PENDING_DOCUMENTS, fn: () => this.buildRawdocRecord()}
+		    ];
+        }
     }
 
     build() {
-        this.buildCountersDiv();
         this.buildTabs();
 
         let div = this.createElement(TAG.DIV);
@@ -50,20 +58,23 @@ export class AonInvoiceRecord extends AonElement {
 		div.style.width = "100%";
         div.style.marginTop = '1px';
 		this.appendChild(div);
-
-        this.buildInvoiceRecord();
+        if(this.isBeta()) {
+            this.buildAccountingSummary();
+        } else {
+            this.buildInvoiceRecord();
+        } 
     }
 
-    buildCountersDiv() {
+    buildCountersDiv(parent) {
         let div = this.createElement(TAG.DIV);
         div.id = this.COUNTERS_DIV;
         div.style.width = "100%";
         div.style.display = "flex";
         div.style.justifyContent = "space-between";
-        this.appendChild(div);
+        parent.appendChild(div);
 
         // TODO Enable this method when the front was pretty
-        // this.refreshCounters();
+        this.refreshCounters();
     }
 
     refreshCounters() {
@@ -75,53 +86,62 @@ export class AonInvoiceRecord extends AonElement {
         getInvoicesCounters(params)
             .then(stat => {
                 let invoices = [
-                    {label: "Op. Interiores",       value: stat.national || 0}, 
-                    {label: "Intracomunitarias",    value: stat.intracommunity || 0}, 
-                    {label: "Extracomunitarias",    value: stat.extracommunity || 0}, 
-                    {label: "CanCeuMel",            value: stat.canCeuMel || 0}, 
-                    {label: "OtherISP",             value: stat.otherISP || 0}, 
-                    {label: "Withholding",          value: stat.withholding || 0},
+                    {label: "Op. Interiores",       	value: stat.national || 0}, 
+                    {label: "Intracomunitarias",    	value: stat.intracommunity || 0}, 
+                    {label: "Extracomunitarias",    	value: stat.extracommunity || 0}, 
+                    {label: "Canarias, Ceuta, Melilla", value: stat.canCeuMel || 0}, 
+                    {label: "I.S.P.",             		value: stat.otherISP || 0}, 
+                    {label: "Con Retención",        	value: stat.withholding || 0},
                 ];
 
                 let unrecordes = [
                     {label: "Proformas",    value: stat.proformas || 0}, 
-                    {label: "Emitidas",     value: stat.unrecordedIssued || 0}, 
-                    {label: "Recibidas",    value: stat.unrecordedReceived || 0}, 
-                    {label: "Simplificadas",value: stat.unrecordedSimplified || 0}, 
+                    {label: "Emitidas",     value: stat.unrecordedIssued || 0, color: "orange"}, 
+                    {label: "Recibidas",    value: stat.unrecordedReceived || 0, color: "orange"}, 
+                    {label: "Simplificadas",value: stat.unrecordedSimplified || 0, color: "orange"}, 
                 ];
                 let rawdocs = [
-                    {label: "Pendientes",   value: stat.draft || 0}, 
-                    {label: "En proceso",   value: stat.inProcess || 0}, 
-                    {label: "Revisión",     value: stat.review || 0}, 
+                    {label: "Borrador",   	value: stat.draft || 0, color: "orange"}, 
+                    {label: "En trámite",   value: stat.inProcess || 0, color: "orange"}, 
+                    {label: "A revisar",    value: stat.review || 0, color: "red"}, 
                     {label: "Papelera",     value: stat.trash || 0}, 
                 ];
 
-                this.paintBlock(invoices);
-                this.paintBlock(unrecordes);
-                this.paintBlock(rawdocs);
+                this.paintBlock(this.id + "invoices", "Resumen de Facturas", invoices);
+                this.paintBlock(this.id + "unrecordes", "Facturas Pendientes de contabilizar", unrecordes);
+                this.paintBlock(this.id + "rawdocs", "Documentos Pendientes de contabilizar", rawdocs);
                 
             });
     }
 
     // TODO refactor this method to be pretty
-    paintBlock(data) {
-        let div = this.createElement(TAG.DIV);
-        div.style.display = "flex";
-        div.style.flexDirection = "column";
-        div.style.alignItems = "center";
-        div.style.justifyContent = "center";
-        div.style.padding = "5px 10px";
-        div.style.border = "1px solid #ccc";
-        div.style.borderRadius = "5px";
-        div.style.backgroundColor = "#f9f9f9";
-
+    paintBlock(id, title, data) {
+        let card = createCard(id, title, this.getElement(this.COUNTERS_DIV));
+        card.style.width = "100%";
+        let contentDiv = this.createDiv();
+        card.setContent(contentDiv);   
         data.forEach(item => {
             let itemDiv = this.createElement(TAG.DIV);
-            itemDiv.textContent = `${item.label}: ${item.value}`;
-            itemDiv.style.marginBottom = "5px";
-            div.appendChild(itemDiv);
+            itemDiv.className = "aonInvoiceRecordDiv";
+
+            let labelSpan = this.createElement(TAG.SPAN);
+            labelSpan.textContent = item.label;
+            labelSpan.className = "aonInvoiceRecordLabel";
+
+            let valueSpan = this.createElement(TAG.SPAN);
+            valueSpan.textContent = item.value;
+            valueSpan.className = "aonInvoiceRecordValue";
+
+			let foregroundColor = item.color;
+			if (item.value && item.value > 0 && foregroundColor) {
+				labelSpan.style.color = foregroundColor;
+				valueSpan.style.color = foregroundColor;
+			}
+
+			itemDiv.appendChild(labelSpan);
+            itemDiv.appendChild(valueSpan);
+            contentDiv.appendChild(itemDiv);
         });
-        this.getElement(this.COUNTERS_DIV).appendChild(div);
     }
 
     buildTabs() {
@@ -129,6 +149,12 @@ export class AonInvoiceRecord extends AonElement {
         tab.id = this.TABS;
         tab.setOptions(this.options);
         this.appendChild(tab);
+    }
+
+    buildAccountingSummary() {
+        let div = this.getElement(this.DIV);
+		this.clearElement(div);
+        this.buildCountersDiv(div);
     }
 
     buildInvoiceRecord() {

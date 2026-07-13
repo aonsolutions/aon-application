@@ -10,8 +10,8 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.InvoiceCounterJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RawdocInvoiceCounterJSON;
@@ -37,7 +37,6 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
-import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -318,7 +317,7 @@ public class InvoicesServlet extends AonApiHttpServlet {
     		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
     		Integer invoiceId = JsonUtils.getInteger(api.getData(), IJsonNames.INVOICE);
     		Integer certificateId = JsonUtils.getInteger(api.getData(), IJsonNames.CERTIFICATE);
-    		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, api.getDomain().getId());
+    		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, api.getDomain().getId(), false);
     		icc.setCertificate(checkCertificate(api, certificateId));
     		
     		Invoice invoice = InvoiceDAO.getFullInvoice(ctx, invoiceId);

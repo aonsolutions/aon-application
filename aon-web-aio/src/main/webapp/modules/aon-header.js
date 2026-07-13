@@ -20,6 +20,7 @@ import { AonIcon } from '../components/aon-icon.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonParent } from './aon-parent.js';
 import { AonDesktop } from './company/aon-desktop.js';
+import { AonInvoiceRecord } from './invoice/aon-invoice-record.js';
 
 import * as GWT from '../gwt/gwt.js';
 import { favicon, title, loadCustomView } from '../css/aon-customView.js';
@@ -529,8 +530,10 @@ export class AonHeader extends AonElement {
 			aonHeaderSearch.style.display = 'flex';
 
 
-			let aonHeaderCompanyName = this.getElement(this.AON_HEADER_COMPANY_NAME);
-			this.getCompanyName().then( name =>  aonHeaderCompanyName.innerHTML = name ) ;
+			//let aonHeaderCompanyName = this.getElement(this.AON_HEADER_COMPANY_NAME);
+			//this.getCompanyName().then( name =>  {
+			//	aonHeaderCompanyName.innerHTML = name; 
+			//} ) ;
 
 			if (!LS.isNewTheme() && !this.newTheme) {
 				let aonShowMenu = this.getElement('aonShowMenu');
@@ -587,7 +590,9 @@ export class AonHeader extends AonElement {
 		applications.className = 'aonMenuLeftopStart';
 		
 		let aonHeaderCompanyName = this.getElement(this.AON_HEADER_COMPANY_NAME);
-		this.getCompanyName().then( name =>  aonHeaderCompanyName.innerHTML = name ) ;
+		this.getCompanyName().then( name =>  {
+			aonHeaderCompanyName.innerHTML = name;
+		}) ;
 	}
 
 	timeControlStatus(signin) {
@@ -671,7 +676,9 @@ export class AonHeader extends AonElement {
 
 
 		let aonHeaderCompanyName = this.getElement(this.AON_HEADER_COMPANY_NAME);
-		this.getCompanyName(company).then(name => aonHeaderCompanyName.innerHTML = name  ); 
+		this.getCompanyName(company).then(name => {
+			aonHeaderCompanyName.innerHTML = name;
+		}); 
 
 		if (onlyOne) {
 			// aonHeaderHome.style.right = '140px';
@@ -1201,7 +1208,11 @@ export class AonHeader extends AonElement {
 		}
 	}
 
-	companySelection(company, onlyOne, callback = (company) => this.showCompany(company)) {
+	companySelectionToPendingAccounting(company) {
+	   this.companySelection(company, false, () => this.rootPanel(new AonInvoiceRecord()));
+	 }
+	 
+	 companySelection(company, onlyOne, callback = (company) => this.showCompany(company)) {
 		localStorage.setItem('company', JSON.stringify(company));
 		LS.setDomainId(company.id);
 		LS.setDomainName(company.domain);

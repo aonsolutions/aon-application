@@ -166,7 +166,7 @@ public class InvoiceRecorderDAO {
 	private static final Consumer<InvoicePreRecordContext> CHECK_EXPENSES = c -> {
 		if ( c.inv.isExpenses() || c.inv.isUndeductible() ) {
 			c.inv.detailStream()
-				.filter( d -> d.getAccountId() == null )
+				.filter( d -> d.getExpAccountId() == null )
 				.findAny()
 				.ifPresent( d -> c.inv.addMessage( new InvoiceError(
 					 InvoiceErrorKey.EXPENSE_ACCOUNT

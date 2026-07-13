@@ -1,8 +1,11 @@
 package com.esferalia.aon.gwt.fiscal.client.registry;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -15,6 +18,7 @@ import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AddressTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomSuggestBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMainCertificatesPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
@@ -48,9 +52,11 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -105,7 +111,11 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 
 	// ------------------------------------------------- Variables
 	
-	private AonCustomListBox scope = new AonCustomListBox(null);
+	private AonCustomSuggestBox scope = new AonCustomSuggestBox(null);
+	private Timer scopeSearchTimer;
+	private Map<String, Integer> scopeSuggestionsByLabel = new HashMap<String, Integer>();
+	private Integer selectedScopeId;
+	private String selectedScopeLabel = AonStringUtils.EMPTY;
 
 	private RegistryModuleOptions options;
 	private RegistrySource registrySource;
@@ -211,9 +221,9 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 			
 			scope.getElement().getStyle().setProperty("margin-bottom", "0");
 			scope.getElement().getStyle().setProperty("justify-content", "center");
+			scope.getElement().getStyle().setProperty("max-width", "9rem");
+			configureScopeSuggestBox();
 			
-			scope.clearItems();
-			scope.addItem("-", "");
 			getToolbar().addTitleButton(scope);
 			getToolbar().addTitleButton(scopeLabel);
 		}
@@ -222,21 +232,10 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 	// ------------------------------------------------- DataBase
 
 	private void getRegistryBySource() {
-		if(this.registrySource == RegistrySource.COMPANY && isParentUser()) {
-			getParentDomainScopes(scopes -> {
-				scope.clearItems();
-				scope.addItem("-", "");
-				scopes.forEach(s -> scope.addItem(s.getDescription(), s.getId().toString()));
-				
-				getCompanyFull(companyFull -> initCompanyRegistry() );
-			});
-		} else
-			getCompanyFull(companyFull -> initCompanyRegistry() );
+		getCompanyFull(companyFull -> initCompanyRegistry() );
 	}
 
 	private void initCompanyRegistry() {
-		scope.setValue(options.getConfiguration().getDomain().getScope() != null ? options.getConfiguration().getDomain().getScope().toString() : "");
-		
 		container.clear();
 		tablayoutPanel.clear();
 
@@ -294,6 +293,10 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		name.addValueChangeHandler(e -> registry.setName(e.getValue()));
 		name.setValue(registry.getName());
 		name.setEnable(isParentUser());
+
+		if(this.registrySource == RegistrySource.COMPANY && isParentUser()) {
+			loadSelectedScopeFromRegistryDomain();
+		}
 		
 		rightInfoTable.add(createRow(name, firstSurname, secondSurname));
 		
@@ -532,21 +535,28 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 		return row;
 	}
 	
-	private void getParentDomainScopes(Consumer<List<Scope>> success) {
-		AonMessagePanel.showLoading(messagePanel, "Obteniendo \u00e1mbitos del entorno");
+	private void getParentDomainScopes(String description, boolean showLoading, Consumer<List<Scope>> success) {
+		if (showLoading) {
+			AonMessagePanel.showLoading(messagePanel, "Obteniendo \u00e1mbitos del entorno");
+		}
 		
 		ScopeParams params = new ScopeParams()
 				.setDomainName(options.getConfiguration().getDomain().getParent().getName())
 				.setDomain(options.getConfiguration().getDomain().getParent().getId())
 				.setUser(options.getUser())
+				.setDescription(description)
+				.setOrderBy("description")
+				.setAsc(true)
 				.setOffset(0)
-				.setLimit(1000);
+				.setLimit(100);
 		
 		commonService.getScopeList(params, new AsyncCallback<List<Scope>>() {
 
 					@Override
 					public void onSuccess(List<Scope> scopes) {
-						AonMessagePanel.hideMessage(messagePanel);
+						if (showLoading) {
+							AonMessagePanel.hideMessage(messagePanel);
+						}
 						success.accept(scopes);
 					}
 
@@ -623,9 +633,14 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 	
 	private void saveDomainScope(Consumer<CompanyFull> success) {
 		Integer originalScope = options.getConfiguration().getDomain().getScope();
-		Integer newScope = AonStringUtils.isNotBlank(scope.getValue()) ? Integer.parseInt(scope.getValue()) : null;
+		Integer newScope = resolveScopeIdFromInput();
+
+		if (AonStringUtils.isNotBlank(scope.getValue()) && newScope == null) {
+			AonMessagePanel.showWarning(messagePanel, "Seleccione un \u00e1mbito v\u00e1lido de la lista de sugerencias");
+			return;
+		}
 		
-		 if(null != originalScope && null == newScope || null == originalScope && null != newScope || !originalScope.equals(newScope)) {
+		 if(!Objects.equals(originalScope, newScope)) {
 	    	AonMessagePanel.showLoading(messagePanel, "Guardando \u00e1mbito del dominio");
 	    	
 	    	commonService.saveDomainScope(options.getDomainName(), options.getDomain(), options.getUser(), options.getDomain(), newScope,
@@ -645,6 +660,139 @@ public class RegistryCompanyEntryPanel extends AonCustomDockLayout {
 					});
 	    } else 
 		   	saveCompany(success);
+	}
+
+	private void configureScopeSuggestBox() {
+		scope.setAutoSelectEnabled(false);
+		scope.setPlaceHolder("Buscar \u00e1mbito (m\u00ednimo 3 caracteres, Ctrl + Espacio para ver todos)");
+
+		scope.getSuggestBox().addSelectionHandler(e -> {
+			scope.hideSuggestionList();
+			selectedScopeLabel = scope.getValue();
+			selectedScopeId = scopeSuggestionsByLabel.get(selectedScopeLabel);
+		});
+
+		scope.getSuggestBox().addKeyUpHandler(e -> {
+			String query = scope.getValue();
+
+			if (e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				searchScopeSuggestions(AonStringUtils.EMPTY, true);
+				return;
+			}
+
+			if (AonStringUtils.isBlank(query)) {
+				selectedScopeId = null;
+				selectedScopeLabel = AonStringUtils.EMPTY;
+				scope.hideSuggestionList();
+				return;
+			}
+
+			if (!AonStringUtils.equals(query, selectedScopeLabel)) {
+				selectedScopeId = null;
+			}
+
+			if (query.length() < 3) {
+				scope.hideSuggestionList();
+				return;
+			}
+
+			if (scopeSearchTimer == null) {
+				scopeSearchTimer = new Timer() {
+					@Override
+					public void run() {
+						searchScopeSuggestions(scope.getValue(), false);
+					}
+				};
+			}
+
+			scopeSearchTimer.cancel();
+			scopeSearchTimer.schedule(250);
+		});
+	}
+
+	private void loadSelectedScopeFromRegistryDomain() {
+		selectedScopeId = registry != null && registry.getDomain() != null ? registry.getDomain().getScope() : null;
+		selectedScopeLabel = AonStringUtils.EMPTY;
+
+		if (selectedScopeId == null) {
+			scope.setValue(AonStringUtils.EMPTY);
+			return;
+		}
+
+		commonService.getScope(options.getDomainName(), options.getDomain(), options.getUser(), selectedScopeId,
+				new AsyncCallback<Scope>() {
+
+					@Override
+					public void onSuccess(Scope scopeDb) {
+						if (scopeDb == null || scopeDb.getId() == null) {
+							scope.setValue(AonStringUtils.EMPTY);
+							return;
+						}
+
+						selectedScopeId = scopeDb.getId();
+						selectedScopeLabel = buildScopeSuggestionLabel(scopeDb);
+						scopeSuggestionsByLabel.put(selectedScopeLabel, selectedScopeId);
+						scope.setValue(selectedScopeLabel);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						AonMessagePanel.showError(messagePanel, "Error obteniendo ámbito : " + caught.getMessage());
+					}
+
+				});
+	}
+
+	private void searchScopeSuggestions(String query, boolean forceAll) {
+		if (!forceAll && (AonStringUtils.isBlank(query) || query.length() < 3)) {
+			return;
+		}
+
+		getParentDomainScopes(forceAll ? AonStringUtils.EMPTY : query, false, scopes -> {
+			if (!forceAll && !AonStringUtils.equals(query, scope.getValue())) {
+				return;
+			}
+
+			scopeSuggestionsByLabel.clear();
+			List<String> labels = new LinkedList<String>();
+
+			for (Scope s : scopes) {
+				String label = buildScopeSuggestionLabel(s);
+				scopeSuggestionsByLabel.put(label, s.getId());
+				labels.add(label);
+			}
+
+			MultiWordSuggestOracle oracle = (MultiWordSuggestOracle) scope.getSuggestBox().getSuggestOracle();
+			oracle.clear();
+			oracle.addAll(labels);
+			oracle.setDefaultSuggestionsFromText(labels);
+			scope.showSuggestionList();
+		});
+	}
+
+	private String buildScopeSuggestionLabel(Scope scopeData) {
+		String label = scopeData.getDescription();
+		if (scopeSuggestionsByLabel.containsKey(label)) {
+			return scopeData.getDescription() + " [" + scopeData.getId() + "]";
+		}
+		return label;
+	}
+
+	private Integer resolveScopeIdFromInput() {
+		if (AonStringUtils.isBlank(scope.getValue())) {
+			return selectedScopeId;
+		}
+
+		if (selectedScopeId != null && AonStringUtils.equals(scope.getValue(), selectedScopeLabel)) {
+			return selectedScopeId;
+		}
+
+		Integer scopeId = scopeSuggestionsByLabel.get(scope.getValue());
+		if (scopeId != null) {
+			selectedScopeId = scopeId;
+			selectedScopeLabel = scope.getValue();
+		}
+		return scopeId;
 	}
 	
 	private void saveCompany(Consumer<CompanyFull> success) {

@@ -145,6 +145,7 @@ public final class IJsonNames {
 	public static final String COMMUNICATION_TYPE = "communicationType";
 	public static final String COMPANY = "company";
 	public static final String COMPANY_DOCUMENT = "companyDocument";
+	public static final String COMPANY_ID = "companyId";
 	public static final String COMPANY_NAME = "companyName";
 	public static final String COMPANY_ACTS_LIKE = "companyActsLike";
 	public static final String COMPLEMENTARY = "complementary";

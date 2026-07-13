@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -15,14 +17,17 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Optional;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.TransformerException;
 
 import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.HttpMethod;
 import org.htmlunit.Page;
 import org.htmlunit.ScriptException;
 import org.htmlunit.WebClient;
+import org.htmlunit.WebRequest;
 import org.htmlunit.html.DomNode;
-import org.htmlunit.html.DomNodeList;
 import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlCheckBoxInput;
 import org.htmlunit.html.HtmlForm;
@@ -32,6 +37,7 @@ import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlSelect;
 import org.htmlunit.html.HtmlSubmitInput;
 import org.htmlunit.javascript.JavaScriptErrorListener;
+import org.htmlunit.util.NameValuePair;
 import org.htmlunit.xml.XmlPage;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
@@ -306,7 +312,7 @@ class SistemaREDMov {
     	Integer mov = 0;
 		String ident = Toolkit.getIdentityType(employee.getIpf());
 		String dni =  Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
-		String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,año]
+		String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,aÃ±o]
 		WebClient webclient = getWebClient(certificateInputStream,certificatePassword, certificateType);
 		webclient.getOptions().setUseInsecureSSL(true);
 		
@@ -764,92 +770,91 @@ class SistemaREDMov {
 			return employees;
 		}
 	}
-
-	private static Employee nafxipfImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ipf, String apellido1, String apellido2) throws SegSocialException, FailingHttpStatusCodeException, IOException, InterruptedException {
-
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
-				certificateType)) {
-			
-			String message = null;
-			
-			webClient.getOptions().setUseInsecureSSL(true);
-			
-//			webClient.getOptions().setUseInsecureSSL(true);
-//			webClient.getOptions().setJavaScriptEnabled(true);
-//			webClient.getOptions().setThrowExceptionOnScriptError(false);
-//			webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
-			
-			XmlPage xmlPage = webClient.getPage(
-					"https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00D");
-			HtmlPage htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
-			
-			Integer ident = 1; // NIF DEFAULT
-			if (Toolkit.getIdentityType(ipf).equals("6")) {
-				ident = 3; // NIE
-			}
 	
-			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1")).orElseThrow();
+	private static Employee nafxipfImpl(final InputStream certificateInputStream, final String certificatePassword,
+	        final String certificateType, String ipf, String apellido1, String apellido2)
+	        throws SegSocialException, FailingHttpStatusCodeException, IOException, InterruptedException {
 
-			((HtmlOption) formDatos.querySelectorAll("select[name=tipo]>option").get(ident)).click();
+	    try (WebClient webClient = HtmlUnitToolkit.getWebClientTgss(certificateInputStream, certificatePassword,
+	            certificateType)) {
 
-			formDatos.getInputByName("ipf6NumeroDocumento").setValue(ipf);
-			formDatos.getInputByName("primerApellido").setValue(apellido1);
-			if (apellido2 != null && !apellido2.trim().isEmpty()) {
-				formDatos.getInputByName("segundoApellido").setValue(apellido2);
-			} else {
-				formDatos.getInputByName("checkApellido2").setChecked(true);
-			}
+	        webClient.getOptions().setUseInsecureSSL(true);
 
-			EmployeeBuilder builder = new EmployeeBuilder();
+	        // 1+2. Entrada común (PGIS -> certificado -> menuAFI-DIRECTO) y click en el
+	        //       servicio XV24M00D. connectTgss ya devuelve el shell del servicio.
+	        HtmlPage shell = HtmlUnitToolkit.connectTgss(webClient, "XV24M00D");
+	        webClient.waitForBackgroundJavaScript(15000);
 
-			Page pageAux = ((HtmlButton) formDatos.querySelector("#ENVIO_2")).click();
-			if (pageAux instanceof XmlPage) {
-				xmlPage = (XmlPage) pageAux;
-				DomNode employeeHtml = xmlPage.querySelector("usuario_red");
-				if(employeeHtml == null)
-					employeeHtml = xmlPage.querySelector("USUARIO_RED");
-				System.out.println(xmlPage.asXml());
-				if(employeeHtml!=null) {
-					String nss = getStringNode(employeeHtml.querySelector("na5numsegsocialcompleto"));
-					if(nss == null) nss = getStringNode(employeeHtml.querySelector("NA5NumSegSocialCompleto"));
-					String doc = getStringNode(employeeHtml.querySelector("ip6numero_documento"));
-					if(doc == null) doc = getStringNode(employeeHtml.querySelector("IP6NUMERO_DOCUMENTO"));
-					String name = getStringNode(employeeHtml.querySelector("nombre_completo"));
-					if(name == null) name = getStringNode(employeeHtml.querySelector("NOMBRE_COMPLETO"));
-					String identNew = getStringNode(employeeHtml.querySelector("codigo_tipo"));
-					if(identNew == null) identNew = getStringNode(employeeHtml.querySelector("CODIGO_TIPO"));
-					if (nss!=null && doc!=null && name!=null && identNew!=null) {
-						builder
-						.setNss(nss)						
-						.setName(name)
-						.setIpf(doc)
-						.setIdent(Integer.parseInt(identNew));
-					} else {
-						message = "Sin datos para la consulta";
-						String text = getStringNode(xmlPage.querySelector("texto"));
-						if (text != null) {
-							message = text;
-						}
-					}
-				} else {
-					message = "Sin datos para la consulta";
-				}
-			} else {
-				htmlPage = (HtmlPage) pageAux;
-				HtmlUnitToolkit.manageStatusCode(htmlPage);
-			}
-			
-			if(message!=null) {
-				throw new SegSocialException(message);
-			}
+	        // 3. Leer el nodo ARQ del XML embebido para reconstruir el POST
+	        String shellHtml = shell.getWebResponse().getContentAsString();
+	        org.w3c.dom.Document arqDoc = parseEmbeddedXml(shellHtml);
 
-			return builder.build();
-		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new IllegalArgumentException(e.getMessage());
-		}
+	        String ticket    = xmlText(arqDoc, "SPM.TICKET");
+	        String context   = xmlText(arqDoc, "SPM.CONTEXT");
+	        String idioma    = xmlText(arqDoc, "SPM.LANGUAGE");
+	        String urlFront  = xmlText(arqDoc, "SPM.URLFRONTEND");
+	        String idSession = xmlText(arqDoc, "SPM.IDSESSION");
+	        String isPopup   = xmlText(arqDoc, "SPM.ISPOPUP");
+	        if (isPopup.isEmpty()) isPopup = "0";
+
+	        String frontend = urlFront;
+	        if (!frontend.contains("Utf8")) frontend = frontend + "Utf8";
+	        URL actionUrl = new URL("https://w2sp.seg-social.es" + frontend + idSession);
+
+	        // 4. Tipo de documento: 1=NIF, 6=NIE
+	        String tipo = "1";
+	        if ("6".equals(Toolkit.getIdentityType(ipf))) {
+	            tipo = "6";
+	        }
+
+	     // 5. Construir el cuerpo del POST codificado a mano en UTF-8 (sin ambigüedad)
+	        List<NameValuePair> params = new ArrayList<>();
+	        if (!ticket.isEmpty()) params.add(new NameValuePair("ARQ.SPM.TICKET", ticket));
+	        params.add(new NameValuePair("SPM.CONTEXT", context));
+	        params.add(new NameValuePair("ARQ.SPM.OUT", "XML_STYLESHEET"));
+	        params.add(new NameValuePair("ES_FW4", "1"));
+	        params.add(new NameValuePair("SPM.ISPOPUP", isPopup));
+	        if (!idioma.isEmpty()) params.add(new NameValuePair("ARQ.SPM.IDIOMA", idioma));
+	        params.add(new NameValuePair("SPM.HAYJS", "0"));
+	        params.add(new NameValuePair("tipo", tipo));
+	        params.add(new NameValuePair("ipf6NumeroDocumento", ipf == null ? "" : ipf.trim().toUpperCase()));
+
+	        boolean tieneAp1 = apellido1 != null && !apellido1.trim().isEmpty();
+	        boolean tieneAp2 = apellido2 != null && !apellido2.trim().isEmpty();
+	        params.add(new NameValuePair("primerApellido", tieneAp1 ? apellido1.trim().toUpperCase() : ""));
+	        params.add(new NameValuePair("segundoApellido", tieneAp2 ? apellido2.trim().toUpperCase() : ""));
+	        params.add(new NameValuePair("checkBoxApel1", tieneAp1 ? "0" : "1"));
+	        params.add(new NameValuePair("checkBoxApel2", tieneAp2 ? "0" : "1"));
+	        params.add(new NameValuePair("SPM.ACC.Continuar", "Continuar"));
+
+	        StringBuilder sb = new StringBuilder();
+	        for (NameValuePair nv : params) {
+	            if (sb.length() > 0) sb.append('&');
+	            sb.append(URLEncoder.encode(nv.getName(), "UTF-8"));
+	            sb.append('=');
+	            sb.append(URLEncoder.encode(nv.getValue(), "UTF-8"));
+	        }
+	        String bodyPost = sb.toString();
+	        System.out.println("BODY POST -> " + bodyPost); // verifica aquí que VALDEPE%C3%91AS (Ñ en UTF-8)
+
+	        WebRequest req = new WebRequest(actionUrl, HttpMethod.POST);
+	        req.setAdditionalHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+	        req.setRequestBody(bodyPost);
+
+	        // 6. Enviar y parsear
+	        Page resp = webClient.getPage(req);
+	        String body = resp.getWebResponse().getContentAsString(StandardCharsets.UTF_8);
+	        return parseUsuarioRed(body);
+
+	    } catch (TransformerException e) {
+	        e.printStackTrace();
+	        throw new IllegalArgumentException(e.getMessage());
+	    } catch (SegSocialException e) {
+	        throw e; // dejar pasar el mensaje real de Prosa sin envolverlo
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw new IllegalArgumentException(e.getMessage());
+	    }
 	}
 
 	private static void updateQuoteGroupImpl(final InputStream certificateInputStream, final String certificatePassword,
@@ -1257,6 +1262,131 @@ class SistemaREDMov {
 			public void loadScriptError(HtmlPage page, URL scriptUrl, Exception exception) {
 			}
 		};
+	}
+	
+	// -------------------------- Helper methods (ipfXNaf) --------------------------
+	
+	private static org.w3c.dom.Document parseEmbeddedXml(String html) throws Exception {
+	    String xml = extractDataIsland(html);
+	    if (xml == null) throw new Exception("No se encontró ProsaXMLData en la respuesta");
+	    DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+	    f.setNamespaceAware(false);
+	    DocumentBuilder db = f.newDocumentBuilder();
+	    return db.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+	}
+
+	private static String extractDataIsland(String body) {
+	    int s = body.indexOf("<ProsaXMLData");
+	    int e = body.indexOf("</ProsaXMLData>");
+	    return (s >= 0 && e > s) ? body.substring(s, e + "</ProsaXMLData>".length()) : null;
+	}
+
+	// Lee el primer elemento con ese tag name (los del nodo ARQ tienen punto en el nombre,
+	// p.ej. "SPM.TICKET"; getElementsByTagName los encuentra igual)
+	private static String xmlText(org.w3c.dom.Document doc, String tag) {
+	    org.w3c.dom.NodeList n = doc.getElementsByTagName(tag);
+	    return n.getLength() > 0 ? n.item(0).getTextContent().trim() : "";
+	}
+
+	private static Collection<Employee> parseProsaXml(String body) throws Exception {
+	    String xml = extractDataIsland(body);
+	    if (xml == null) xml = body;
+
+	    DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+	    f.setNamespaceAware(false);
+	    DocumentBuilder db = f.newDocumentBuilder();
+	    org.w3c.dom.Document doc = db.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+
+	    ArrayList<Employee> employees = new ArrayList<>();
+	    EmployeeBuilder builder = new EmployeeBuilder();
+	    org.w3c.dom.NodeList nodes = doc.getElementsByTagName("TRABAJADOR");
+	    for (int i = 0; i < nodes.getLength(); i++) {
+	        org.w3c.dom.Element t = (org.w3c.dom.Element) nodes.item(i);
+
+	        String tipoDoc = childText(t, "IP2TipoDocIPF");
+	        String docRaw  = childText(t, "IP3DocIPF");
+	        String name    = childText(t, "NOMBRE_COMPLETO");
+	        String nss     = childText(t, "NA5NumSegSocialCompleto");
+
+	        
+		     // IP3DocIPF puede venir con un carácter de relleno delante (longitud 10).
+		     // El documento real (DNI/NIE) tiene 9 caracteres, así que solo recortamos
+		     // el primer carácter cuando hay relleno, no incondicionalmente.
+		     String ipf = docRaw;
+		     if ("1".equals(tipoDoc) && docRaw.length() > 9) {
+		         ipf = docRaw.substring(docRaw.length() - 10); // quedarse con los últimos 9
+		     }else {
+	            ipf = docRaw;
+	        }
+
+	        if (!ipf.isEmpty()) {
+	            employees.add(builder.setNss(nss).setName(name.trim()).setIpf(ipf).build());
+	        } else if (!name.isEmpty()) {
+	            throw new Exception(name.trim());
+	        }
+	    }
+	    return employees;
+	}
+
+	private static String childText(org.w3c.dom.Element parent, String tag) {
+	    org.w3c.dom.NodeList n = parent.getElementsByTagName(tag);
+	    return n.getLength() > 0 ? n.item(0).getTextContent().trim() : "";
+	}
+	
+	// -------------------------- Helper methods (nafxIpf) --------------------------
+	
+	private static Employee parseUsuarioRed(String body) throws SegSocialException {
+	    EmployeeBuilder builder = new EmployeeBuilder();
+	    try {
+	        String xml = extractDataIsland(body);
+	        if (xml == null) throw new SegSocialException("Sin datos para la consulta");
+
+	        DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+	        f.setNamespaceAware(false);
+	        org.w3c.dom.Document doc = f.newDocumentBuilder()
+	                .parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+
+	        // 1) Si Prosa devolvió un mensaje de error, ese es el motivo (registro no encontrado, etc.)
+	        org.w3c.dom.NodeList msgs = doc.getElementsByTagName("MESSAGE");
+	        for (int i = 0; i < msgs.getLength(); i++) {
+	            org.w3c.dom.Element m = (org.w3c.dom.Element) msgs.item(i);
+	            if ("ERROR".equalsIgnoreCase(childText(m, "TIPO"))) {
+	                String texto = childText(m, "TEXTO").trim();
+	                throw new SegSocialException(texto.isEmpty() ? "Sin datos para la consulta" : texto);
+	            }
+	        }
+
+	        // 2) Datos del usuario
+	        org.w3c.dom.NodeList ur = doc.getElementsByTagName("USUARIO_RED");
+	        if (ur.getLength() == 0) throw new SegSocialException("Sin datos para la consulta");
+	        org.w3c.dom.Element u = (org.w3c.dom.Element) ur.item(0);
+
+	        String nss   = childText(u, "NA5NumSegSocialCompleto");
+	        String docNum = childText(u, "IP6NUMERO_DOCUMENTO");
+	        String ident = childText(u, "CODIGO_TIPO");
+	        String ap1   = childText(u, "PRIMER_APELLIDO");
+	        String ap2   = childText(u, "SEGUNDO_APELLIDO");
+	        String nom   = childText(u, "NOM_usuarioRed");
+
+	        // Nombre completo: en este servicio el nombre viene en NOM_usuarioRed (puede ir vacío)
+	        // y los apellidos por separado. Compón según cómo defina tu EmployeeBuilder "name".
+	        String name = (nom + " " + ap1 + " " + ap2).trim().replaceAll("\\s+", " ");
+
+	        if (!docNum.isEmpty() && !ident.isEmpty()) {
+	            return builder
+	                    .setNss(nss)
+	                    .setName(name)
+	                    .setIpf(docNum)
+	                    .setIdent(Integer.parseInt(ident))
+	                    .build();
+	        }
+	        throw new SegSocialException("Sin datos para la consulta");
+
+	    } catch (SegSocialException e) {
+	        throw e;
+	    } catch (Exception e) {
+	        throw new SegSocialException("Error procesando la respuesta: " + e.getMessage());
+	    }
 	}
 
 }
