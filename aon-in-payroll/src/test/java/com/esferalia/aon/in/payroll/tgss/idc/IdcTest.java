@@ -3489,6 +3489,106 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testIdcplnssTrabajadoresTramosPPE()
+			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcplnss-ppe.pdf")) {
+			TrabajadoresTramos trabajadoresTramos = Idcplnss.getTrabajadoresTramos(is,
+					new TrabajadoresTramosCallback() {
+					});
+
+			marshal(trabajadoresTramos, System.out);
+
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("29", liquidacion.getCcc().getProvincia());
+			assertEquals("139775555", liquidacion.getCcc().getNumero());
+
+			assertEquals("06", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2026", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("06", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2026", liquidacion.getPeriodoHasta().getAnho());
+
+			assertEquals(1, liquidacion.getLiquidacionMes().size());
+
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("06", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2026", liquidacionesMes.getMesLiquidativo().getAnho());
+
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			assertEquals(1, trabajadores.getTrabajador().size());
+
+			for (Trabajador trabajador : trabajadores.getTrabajador()) {
+
+				assertEquals("071051445730", trabajador.getNaf());
+
+				assertEquals(1, trabajador.getTramos().getTramo().size());
+
+				Tramo tramo = trabajador.getTramos().getTramo().get(0);
+				assertEquals("09", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				assertEquals("01", tramo.getFechaDesde().getDia());
+				assertEquals("06", tramo.getFechaDesde().getMes());
+				assertEquals("2026", tramo.getFechaDesde().getAnho());
+				assertEquals("30", tramo.getFechaHasta().getDia());
+				assertEquals("06", tramo.getFechaHasta().getMes());
+				assertEquals("2026", tramo.getFechaHasta().getAnho());
+				assertTramoActivoNormal(tramo);
+				assertDatosSolicitado(tramo, "C", "301", "P");
+			}
+
+		}
+	}
+	
+	
+	@Test
+	public void testIdcplcccTrabajadoresTramosPPE()
+			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcplccc-ppe.pdf")) {
+			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {});
+	
+			marshal(trabajadoresTramos, System.out);
+	
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+	
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("29", liquidacion.getCcc().getProvincia());
+			assertEquals("139775555", liquidacion.getCcc().getNumero());
+
+			assertEquals("06", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2026", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("06", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2026", liquidacion.getPeriodoHasta().getAnho());
+
+			assertEquals(1, liquidacion.getLiquidacionMes().size());
+
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("06", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2026", liquidacionesMes.getMesLiquidativo().getAnho());
+	
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			//assertEquals(3, trabajadores.getTrabajador().size());
+	
+			for (Trabajador trabajador : trabajadores.getTrabajador()) {
+				if ( !Arrays.asList(
+						"081113125788",	// 21 IT.CC.PAGO DELEGADO 
+						"111077900895",	// 31 MATERN/PATERN.T.COMP
+						"141039248468",	// 23 IT.AT.PAGO DELEGADO
+						"291036247280"	// 21 IT.CC.PAGO DELEGADO, 22 IT.CC.PAGO DIRECTO
+						)
+						.contains(trabajador.getNaf())) {
+					System.out.println(trabajador.getNaf() + ":");
+					for ( Tramo tramo : trabajador.getTramos().getTramo()) {
+						System.out.println("\t" + tramo.getFechaDesde().getDia() + ".." + tramo.getFechaHasta().getDia() );
+						assertDatosSolicitado(tramo, "C", "301", "P");
+					}
+				}
+			}
+	
+		}
+	}
+
+
+	@Test
 	public void testIdcplcccTrabajadoresTramosXIX()
 			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcplcccXIX.pdf")) {
