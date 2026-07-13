@@ -1785,5 +1785,19 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_flex_grid_cell")
 	String aonFlexGridCell();
 
+	@ClassName("aon_flex_table")
+	String aonFlexTable();
+	
+	@ClassName("aon_flex_table_header_cell")
+	String aonFlexTableHeaderCell();
+
+	@ClassName("aon_flex_table_row")
+	String aonFlexTableRow();
+	
+	@ClassName("aon_flex_table_cell")
+	String aonFlexTableCell();
+	
+	@ClassName("aon_flex_table_cell_inner")
+	String aonFlexTableCellInner();
 }
 
