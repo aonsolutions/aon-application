@@ -19,7 +19,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class DomainInvoiceStatModule implements EntryPoint {
 	
-	private static final CommonServiceAsync COMMON_SERVICE;
+	static final CommonServiceAsync COMMON_SERVICE;
 	static {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);

@@ -63,6 +63,7 @@ public interface IRequestParamsNames {
 	String EXPENSES = "expenses";
 	String FARMER_REGIME = "farmerRegime";
 	String FILE_DATA = "fileData";
+	String FILTER = "filter";
 	String FISCAL_MODEL = "fiscalModel";
 	String FINANCE_PARAMS = "financeParams";	
 	String FOOTER_TEXT = "footerText";
@@ -79,6 +80,7 @@ public interface IRequestParamsNames {
 	String HIDE_DATETIME_ON_FOOTER = "hideDateTimeOnFooter";
 	String HIDE_FILTER = "hideFilter";
 	String ID = "id";
+	String IMPERSONATED_USER = "impersonatedUser";
 	String INACTIVE = "inactive";
 	String INVESTMENT = "investment";
 	String INVOICES = "invoices";
@@ -146,6 +148,7 @@ public interface IRequestParamsNames {
 	String SCHEMA = "schema";
 	String SCHEMAS_OFFSETS = "schemasOffsets";
 	String SCOPE = "scope";
+	String SCORED_FILTER = "scoredFilter";
 	String SECURITY_LEVEL = "securityLevel";
 	String SELECT = "select";
 	String SELECTED = "selected";

@@ -27,7 +27,6 @@ import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
-import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.Builder;
 import java.net.http.HttpResponse;
@@ -36,7 +35,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
@@ -175,10 +173,14 @@ class NordigenAPI {
 	}
 
 	private static void checkResposeStatus(HttpResponse<String> resp) {
+		System.out.println("NordigenAPI checkResposeStatus - Request URI: " + (resp.request() == null ? "null" : resp.request().uri()));
+		System.out.println("NordigenAPI checkResposeStatus - Request Method: " + (resp.request() == null ? "null" : resp.request().method()));
+		System.out.println("NordigenAPI checkResposeStatus - Response Status code: " + resp.statusCode());
+		System.out.println("NordigenAPI checkResposeStatus - Response Body: " + resp.body());		
 		if (checkStatus(resp.statusCode())) {
 			String errStr = resp.body();					
 			if (errStr != null && errStr.charAt(0) == '{') {
-				System.out.println(errStr);
+//				System.out.println(errStr);
 				throw new NordigenException(NordigenResponseJSON.from(errStr));
 			}
 		}
