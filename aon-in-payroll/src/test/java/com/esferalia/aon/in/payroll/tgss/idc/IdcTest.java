@@ -3569,7 +3569,13 @@ public class IdcTest extends AbstractSQLTestCase {
 			//assertEquals(3, trabajadores.getTrabajador().size());
 	
 			for (Trabajador trabajador : trabajadores.getTrabajador()) {
-				if ( !Arrays.asList("081113125788").contains(trabajador.getNaf())) {
+				if ( !Arrays.asList(
+						"081113125788",	// 21 IT.CC.PAGO DELEGADO 
+						"111077900895",	// 31 MATERN/PATERN.T.COMP
+						"141039248468",	// 23 IT.AT.PAGO DELEGADO
+						"291036247280"	// 21 IT.CC.PAGO DELEGADO, 22 IT.CC.PAGO DIRECTO
+						)
+						.contains(trabajador.getNaf())) {
 					System.out.println(trabajador.getNaf() + ":");
 					for ( Tramo tramo : trabajador.getTramos().getTramo()) {
 						System.out.println("\t" + tramo.getFechaDesde().getDia() + ".." + tramo.getFechaHasta().getDia() );
