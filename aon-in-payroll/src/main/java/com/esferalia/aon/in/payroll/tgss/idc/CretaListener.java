@@ -215,7 +215,7 @@ public class CretaListener implements IdcParserListener {
 		tramoBuilder.ifPresent( b -> {
 			switch (code) {
 			case "17": //APORT.NO OBL.SUS.EMP
-			    	// clean all different from 'Indicador'
+			    // clean all different from 'Indicador'
 				b.clear( d-> "C".equalsIgnoreCase(d.getTipoDato()));
 				b.clear( d-> "H".equalsIgnoreCase(d.getTipoDato()));
 				addExpedienteRegulacionEmpleoTotal(b);
@@ -245,7 +245,10 @@ public class CretaListener implements IdcParserListener {
 				b.clear();
 				addMaternidadPaternidadTiempoCompleto(b);
 				return;
-
+			case "58": // 58 RED.PLAN.PENS.EMPLEO
+				addPlanPensionesEmpleo(b);
+				break;
+			
 			default:
 				break;
 			}
@@ -578,5 +581,13 @@ public class CretaListener implements IdcParserListener {
 
 	private static void addExpedienteRegulacionEmpleoTotal(TramoBuilder tramoBuilder) {
 	    addMaternidadPaternidadTiempoCompleto(tramoBuilder);
+	}
+	private static void addPlanPensionesEmpleo(TramoBuilder tramoBuilder) {
+		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
+		// Base de cotización sin Condicional aportación al plan de pensiones de empleo
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("301");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
 	}
 }

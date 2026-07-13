@@ -562,6 +562,10 @@ public abstract class AbstractSQLTestCase {
 		return System.getProperty("dbUseSSL", "false");
 	}
 
+	public static String getAllowPublicKeyRetrieval() {
+		return System.getProperty("dbAllowPublicKeyRetrieval", "true");
+	}
+
 	public static String getDbTimeZone() {
 		return System.getProperty("dbTimeZone", TimeZone.getDefault().getID());
 	}
@@ -607,11 +611,14 @@ public abstract class AbstractSQLTestCase {
 		String dbPasswd = getDbPasswd();
 		String dbUseSSL = getDbUseSSL();
 		String dbTimeZone = getDbTimeZone();
+		String dbAllowPublicKeyRetrieval = getAllowPublicKeyRetrieval();
 
 		Properties properties = new Properties();
 		properties.setProperty("user", dbUser);
 		properties.setProperty("password", dbPasswd);
 		properties.setProperty("useSSL", dbUseSSL);
+		properties.setProperty("allowPublicKeyRetrieval", dbAllowPublicKeyRetrieval);
+		
 		properties.setProperty("serverTimezone", dbTimeZone);
 		String url = String.format("jdbc:mysql://%s:%s", dbHost, dbPort, dbName);
 		Connection connection = DriverManager.getConnection(url, properties);
