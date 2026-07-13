@@ -121,7 +121,7 @@ public class RDirStaff implements Serializable {
 	}
 
 	public Double getPercentShare() {
-		return percentShare;
+		return null == percentShare ? 0.00 : percentShare;
 	}
 	public RDirStaff setPercentShare(Double percentShare) {
 		this.setDirty( isDirty() || AonUtils.notEquals(this.percentShare, percentShare) );

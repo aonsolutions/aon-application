@@ -44,7 +44,7 @@ class AmortizationInvoiceSelectionTable extends ScrollPanel implements HasInvoic
 		INVOICE_SERVICE = new InvoiceConsoleAsyncDecorator(fiscalServiceRaw);
 	}
 	private static final String[] COLUMN_WIDTHS = new String[] {
-		"20px","20px","40px","40px","100px","80px","80px","150px","300px","100px" };
+		"40px","40px","40px","40px","100px","80px","80px","150px","300px","100px" };
 
 	FlowPanel containerPanel = new FlowPanel();
 	private AonFlexTable grid = new AonFlexTable(COLUMN_WIDTHS, AON.CSS.aonBlockCenter());

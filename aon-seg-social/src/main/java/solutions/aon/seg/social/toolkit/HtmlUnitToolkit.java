@@ -56,7 +56,6 @@ import org.htmlunit.IncorrectnessListener;
 import org.htmlunit.NicelyResynchronizingAjaxController;
 import org.htmlunit.Page;
 import org.htmlunit.ScriptException;
-import org.htmlunit.SgmlPage;
 import org.htmlunit.StringWebResponse;
 import org.htmlunit.WebClient;
 import org.htmlunit.WebClientOptions;
@@ -257,56 +256,6 @@ public class HtmlUnitToolkit {
 	        throw new InvalidCertificateException();
 	    }
 	}
-	
-
-	 
-	/**
-	 * Variante que además entra en el servicio concreto: busca en el menú
-	 * AFI-DIRECTO el enlace cuyo href contiene el ARQ.IDAPP indicado y lo pulsa.
-	 * Devuelve la página del servicio ya transformada a HtmlPage.
-	 * @throws Exception 
-	 */
-	public static HtmlPage connectTgss(WebClient webClient, String idApp)
-			throws Exception {
-	 
-		HtmlPage menuPage = connectTgss(webClient);
-		
-		HtmlAnchor appAnchor = menuPage.getAnchors().stream()
-				.filter(a -> a.getHrefAttribute().contains("ARQ.IDAPP=" + idApp))
-				.findFirst()
-				.orElseThrow(() -> new SegSocialException(
-						"menuAFI-DIRECTO: no se encontró el enlace con ARQ.IDAPP=" + idApp));
-	 
-		Page page = appAnchor.click();
-		webClient.waitForBackgroundJavaScript(5000);
-	 
-		if (page instanceof XmlPage)
-			return transformXmlPage((XmlPage) page);
-		return asHtmlPage(page);
-	}
-	 
-	/** Localiza el botón/enlace "DNIe o certificado" en la página de PGIS. */
-	private static DomElement findCertificateAccess(HtmlPage loginPage) {
-		// a) Por texto visible del enlace
-		for (HtmlAnchor anchor : loginPage.getAnchors()) {
-			String text = anchor.asNormalizedText().toLowerCase();
-			if (text.contains("certificado") || text.contains("dnie"))
-				return anchor;
-		}
-		// b) Por texto de cualquier botón
-		for (DomElement button : loginPage.getElementsByTagName("button")) {
-			String text = button.asNormalizedText().toLowerCase();
-			if (text.contains("certificado") || text.contains("dnie"))
-				return button;
-		}
-		// c) Por href que sugiera login por certificado
-		for (HtmlAnchor anchor : loginPage.getAnchors()) {
-			String href = anchor.getHrefAttribute().toLowerCase();
-			if (href.contains("cert") || href.contains("dnie"))
-				return anchor;
-		}
-		return null;
-	}
 	 
 	/** Convierte cualquier Page devuelta por HtmlUnit en HtmlPage. 
 	 * @throws IOException */
@@ -408,24 +357,27 @@ public class HtmlUnitToolkit {
 	public static HtmlPage ensureClaveAuth(WebClient webClient, HtmlPage page, String target) throws Exception {
 	    DomElement certOption = page.getElementById("IPCEIdP");
 	    if (certOption == null) {
-	        return page; // ya autenticado, no estás en la pantalla de Cl@ve
+	        // No estamos en Cl@ve. Si además ya es el menú, connectTgss lo validará.
+	        return page;
 	    }
 	    System.out.println("Pantalla Cl@ve detectada -> seleccionando 'DNIe o certificado'");
 
-	    // Este click navega al endpoint mTLS; aquí HtmlUnit presenta el certificado del keystore
+	    // El click dispara la cadena Cl@ve (PGIS/IPCE/PostLogin) que establece CookieSMS.
 	    certOption.click();
-
-	    // Deja que se ejecuten los autosubmit de los formularios SAML (Cl@ve -> IdP -> RP)
 	    webClient.waitForBackgroundJavaScript(20000);
 
-	    // Recupera el recurso protegido ya con la sesión autenticada (cookies del CookieManager)
-	    HtmlPage result = webClient.getPage(target);
+	    // NO damos por buena la página a la que el auto-redirect nos dejó (cae en
+	    // "Usuario No Autorizado" por la cookie perdida en el 302 de GetAccess).
+	    // Re-navegamos al recurso siguiendo los 302 a mano: ahora CookieSMS ya está
+	    // en el CookieManager y GetAccess podrá consolidar AUTH_SESSION_ID.
+	    HtmlPage result = getPageFollowingRedirects(webClient, new URL(target));
+	    webClient.waitForBackgroundJavaScript(10000);
 
-	    if (result.getElementById("IPCEIdP") != null) {
-//	        Toolkit.buildFile(result.asXml().getBytes(),
-//	                System.getProperty("user.home") + "/Desktop/clave_debug.html");
-	        throw new Exception("La autenticación con certificado en Cl@ve no se completó. "
-	                + "Revisa clave_debug.html y verifica la cadena del certificado.");
+	    if (!isAfiDirectoMenu(result)) {
+	        throw new SegSocialException(
+	            "Cl@ve completó pero GetAccess no consolidó la sesión. URL=" + result.getUrl()
+	            + " título=" + result.getTitleText()
+	            + (isNotAuthorized(result) ? " (Usuario No Autorizado)" : ""));
 	    }
 	    return result;
 	}
@@ -1170,43 +1122,41 @@ public class HtmlUnitToolkit {
 	}
 	
 	/**
-	 * Pasos comunes de entrada al Sistema RED:
-	 *   1. Entra en https://idp.seg-social.es/PGIS/Login
-	 *   2. Pulsa "DNIe o certificado" (la autenticación la resuelve el keystore
-	 *      del WebClient)
-	 *   3. Pulsa el enlace cuyo href apunta a
-	 *      https://w2sp.seg-social.es:443/M/menuAFI-DIRECTO.html
-	 *
-	 * Devuelve la página del menú AFI-DIRECTO, ya autenticada, desde la que
-	 * cada servicio puede pulsar su propio enlace ARQ.IDAPP.
-	 * @throws Exception 
+	 * Pide una URL siguiendo los 302 UNO A UNO (redirect manual), de modo que
+	 * cada petición vuelve a leer el CookieManager y adjunta las cookies recién
+	 * emitidas. Necesario porque el auto-redirect de HtmlUnit no aplica la cookie
+	 * que GetAccess fija en un 302 a la petición que sigue a ese mismo redirect.
 	 */
-	public static HtmlPage connectTgss(WebClient webClient) throws Exception {
-	 
-		webClient.getOptions().setJavaScriptEnabled(true);
-		webClient.getOptions().setRedirectEnabled(true);
-		webClient.getOptions().setUseInsecureSSL(true);
-		webClient.getOptions().setThrowExceptionOnScriptError(false);
-		
-		// 1. Pedimos el recurso PROTEGIDO. El servidor redirige a Cl@ve/PGIS si hace falta.
-	    HtmlPage page = asHtmlPage(webClient.getPage(MENU_AFI_DIRECTO_URL));
+	private static HtmlPage getPageFollowingRedirects(WebClient webClient, URL url)
+	        throws IOException, SegSocialException {
+	    boolean prev = webClient.getOptions().isRedirectEnabled();
+	    webClient.getOptions().setRedirectEnabled(false);
+	    try {
+	        Page p = webClient.getPage(url);
+	        int hops = 0;
+	        while (p.getWebResponse().getStatusCode() / 100 == 3 && hops++ < 20) {
+	            String loc = p.getWebResponse().getResponseHeaderValue("Location");
+	            if (loc == null || loc.isEmpty())
+	                break;
+	            URL next = new URL(p.getUrl(), loc);   // resuelve absoluto o relativo
+	            p = webClient.getPage(next);
+	        }
+	        return asHtmlPage(p);
+	    } finally {
+	        webClient.getOptions().setRedirectEnabled(prev);
+	    }
+	}
 
-	    // 2. Si estamos en la pantalla Cl@ve, autenticamos con certificado.
-	    //    ensureClaveAuth vuelve a pedir 'target' y devuelve el recurso ya autenticado.
-	    page = ensureClaveAuth(webClient, page, MENU_AFI_DIRECTO_URL);
+	/** El menú AFI-DIRECTO es el único que trae enlaces con ARQ.IDAPP=. */
+	private static boolean isAfiDirectoMenu(HtmlPage page) {
+	    return page.getAnchors().stream()
+	            .anyMatch(a -> a.getHrefAttribute().contains("ARQ.IDAPP="));
+	}
 
-	    webClient.waitForBackgroundJavaScript(10000);
-	    
-	    return page; // ya es el menuAFI-DIRECTO autenticado
+	/** Página de "Usuario No Autorizado" de la Sede. */
+	private static boolean isNotAuthorized(HtmlPage page) {
+	    return page.querySelector(".cuerpo_noautorizado") != null
+	        || page.querySelector(".mensajeError") != null;
 	}
 	
-	private static void trace(WebClient webClient) {
-		new WebConnectionWrapper(webClient) {
-			@Override
-			public WebResponse getResponse(WebRequest request) throws IOException {
-				System.out.println(request.getUrl());
-				return super.getResponse(request);
-			}
-		};
-	}
 }

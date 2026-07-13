@@ -16,8 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLContext;
 import javax.xml.transform.TransformerException;
@@ -169,7 +170,8 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 			webClient.getOptions().setRedirectEnabled(true);
 			
 			HtmlPage page =  webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
-//			HtmlPage page = HtmlUnitToolkit.transformXmlPage(xmlPage);
+			
+			System.out.println("CCCs loaded: " + cccs.size());
 			
 			for (Entry<String, Set<String>> entry : cccs.entrySet()) {
 				
@@ -189,6 +191,10 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 					((HtmlInput)page.getElementById("chkgrupo1_1")).click();
 					
 					page = ((HtmlInput)page.getElementById("Sub2207601004")).click();
+					
+					System.out.println("ccc: " + ccc + " - regime: " + regime);
+					
+					hanleStatusCodeException(page);
 					
 					getEmployeesTable(page, employees, regime, ccc);
 					
@@ -227,30 +233,83 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 		}
 	}
 	
-	private static void getEmployeesTable(HtmlPage page, List<Employee> employees, String regime, String ccc) throws IOException, TransformerException {
-		HtmlLabel noMoreDataLabel = (HtmlLabel) page.getElementById("DIL");
-		
-		if(!noMoreDataLabel.getTextContent().contains("NO EXISTEN DATOS PARA ESTA CONSULTA")) {
-			while (!noMoreDataLabel.getTextContent().contains("NO EXISTEN MAS AFILIADOS")) {
-			
-				noMoreDataLabel = (HtmlLabel) page.getElementById("DIL");
-				
-				HtmlTable table = (HtmlTable) page.getElementById("Sub1000112079");
-				
-				for (int i = 1; i < table.getRowCount(); i++) { 
-	                HtmlTableRow row = table.getRow(i);
+	private static final Pattern SEG_SOCIAL_ERROR_PATTERN =
+	        Pattern.compile("^\\s*(\\d+)\\*\\s*(.*)$");
+
+	private static void hanleStatusCodeException(HtmlPage page) throws SegSocialException {
+	    DomElement dil = page.getElementById("DIL");
+	    if (dil == null) {
+	        return; // no hay zona de mensajes en esta página
+	    }
+
+	    String message = dil.getTextContent();
+	    if (message == null || message.isBlank()) {
+	        return;
+	    }
+	    message = message.trim();
+
+	    // Formato de error de la Seg. Social: "<codigo>*  <descripcion>"
+	    // p.ej. "3462*    CUENTA DE COTIZACION NO AUTORIZADA"
+	    Matcher matcher = SEG_SOCIAL_ERROR_PATTERN.matcher(message);
+	    if (matcher.matches()) {
+	        String code = matcher.group(1);
+	        String description = matcher.group(2).trim();
+
+	        // Códigos informativos de "fin de lista / sin datos": NO son error.
+	        // 3252 = NO HAY MAS AFILIADOS A CONSULTAR
+	        // 3037 = fin de datos (usado como NoMoreDataException en el toolkit)
+	        // 3083 = sin datos
+	        if (isEndOfListCode(code)) {
+	            return;
+	        }
+
+	        throw new SegSocialException(code + " - " + description);
+	    }
+	}
+
+	/** Códigos informativos de paginación / fin de datos: NO son error. */
+	private static boolean isEndOfListCode(String code) {
+	    return "3251".equals(code)   // HAY MAS AFILIADOS A CONSULTAR (hay más páginas)
+	        || "3252".equals(code)   // NO HAY MAS AFILIADOS A CONSULTAR (última página)
+	        || "3037".equals(code)   // fin de datos
+	        || "3083".equals(code);  // sin datos
+	}
 	
-	                // Obtener valores de cada celda
+	private static void getEmployeesTable(HtmlPage page, List<Employee> employees, String regime, String ccc)
+	        throws IOException, TransformerException {
+
+	    HtmlLabel dil = (HtmlLabel) page.getElementById("DIL");
+	    if (dil == null) return;
+
+	    String status = dil.getTextContent();
+
+	    // Caso sin datos: no hay nada que leer.
+	    // 3251 suele ser "NO EXISTEN DATOS"; si el código difiere, ajústalo con la traza.
+	    if (status.contains("NO EXISTEN DATOS") || status.contains("3251")) {
+	        return;
+	    }
+
+	    // Recorremos páginas hasta el fin de lista.
+	    // OJO: el literal real es "NO HAY MAS AFILIADOS A CONSULTAR" (código 3252),
+	    // no "NO EXISTEN MAS AFILIADOS". Comparamos por código, que es estable.
+	    while (true) {
+	        dil = (HtmlLabel) page.getElementById("DIL");
+	        status = dil != null ? dil.getTextContent() : "";
+
+	        HtmlTable table = (HtmlTable) page.getElementById("Sub1000112079");
+	        if (table != null) {
+	            for (int i = 1; i < table.getRowCount(); i++) {
+	                HtmlTableRow row = table.getRow(i);
+
 	                String nss = removeSpaces(getLabelValue(row.getCell(0)));
-	                
-	                if(null == nss || nss.isEmpty()) continue;
-	                
+	                if (null == nss || nss.isEmpty()) continue;
+
 	                String name = getLabelValue(row.getCell(1));
 	                Date date = parseDateWithDashes(getLabelValue(row.getCell(2)));
-	                String situation = !getLabelValue(row.getCell(3)).isEmpty() ? getLabelValue(row.getCell(3)) : "AL";
+	                String situation = !getLabelValue(row.getCell(3)).isEmpty()
+	                        ? getLabelValue(row.getCell(3)) : "AL";
 	                String ipf = Toolkit.removeExtraZeros(removeSpaces(getLabelValue(row.getCell(4))));
-	
-	                // Construir el objeto EmployeeBuilder
+
 	                EmployeeBuilder builder = new EmployeeBuilder();
 	                builder.setNss(nss)
 	                       .setName(name)
@@ -259,20 +318,28 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 	                       .setIpf(ipf)
 	                       .setCtaCti(ccc)
 	                       .setRegime(regime);
-	
+
 	                if (!situation.contains("AL")) {
 	                    builder.setFrb(date);
 	                }
-	  
-	                // Agregar a la lista si no existe
-	                if(employees.stream().filter(employee -> employee.getNss().equals(nss)).collect(Collectors.toList()).size() == 0)
-	                	employees.add(builder.build());
+
+	                final String nssFinal = nss;
+	                if (employees.stream().noneMatch(e -> e.getNss().equals(nssFinal))) {
+	                    employees.add(builder.build());
+	                }
 	            }
-				
-				page = ((HtmlInput)page.getElementById("Sub2207801001")).click();
-			
-			}
-		}
+	        }
+
+	        // Fin de lista: código 3252 (= "NO HAY MAS AFILIADOS A CONSULTAR").
+	        if (status.contains("3252") || status.contains("NO HAY MAS AFILIADOS")) {
+	            break;
+	        }
+
+	        // Pasar a la página siguiente.
+	        HtmlInput next = (HtmlInput) page.getElementById("Sub2207801001");
+	        if (next == null) break;   // sin botón siguiente -> terminar
+	        page = next.click();
+	    }
 	}
 
 	private static String getLabelValue(HtmlTableCell cell) {

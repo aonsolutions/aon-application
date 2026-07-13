@@ -12,11 +12,13 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
 class AmortizationInvoicePanel extends DockLayoutPanel {
 
 	private final SimpleLayoutPanel contentPanel;
 	private final SimpleLayoutPanel eastPanel;
+	private final SplitLayoutPanel splitPanel = new SplitLayoutPanel();
 	
 	AmortizationInvoicePanel(AmortizationModuleOptions opts, AmortizationPanelCallback callback) {
 		super(Unit.PX);
@@ -29,7 +31,7 @@ class AmortizationInvoicePanel extends DockLayoutPanel {
 		toolbar.add(addButton);
 		
 		eastPanel = new SimpleLayoutPanel();
-		addEast(eastPanel, 0);
+		splitPanel.addEast(eastPanel, 0);
 		
 		this.addAttachHandler(e -> {
 			Wnd.consoleLog("AmortizationInvoicePanel attached, adjusting layout...");
@@ -38,14 +40,16 @@ class AmortizationInvoicePanel extends DockLayoutPanel {
 			.map( AonNumberUtils::toInteger ).filter(Objects::nonNull)
 			.ifPresent( height -> this.setWidgetSize(toolbar, height) );
 
-			Wnd.getCSSOptionalVariable(eastPanel, "width-adjust")
+			Wnd.getCSSOptionalVariable(splitPanel, "width-adjust")
 			.map( AonNumberUtils::toInteger ).filter(Objects::nonNull)
-			.ifPresent( width -> this.setWidgetSize(eastPanel, width) );
+			.ifPresent( width -> this.setWidgetSize(splitPanel, width) );
 		
 		});
 
 		contentPanel = new SimpleLayoutPanel();
-		add(contentPanel);
+		splitPanel.add(contentPanel);
+		
+		add(splitPanel);
 		
 		search(opts, callback);
 		
@@ -62,8 +66,8 @@ class AmortizationInvoicePanel extends DockLayoutPanel {
 		AmortizationInvoiceSelectionPanel p = new AmortizationInvoiceSelectionPanel(opts, callback);
 		eastPanel.setWidget(p);
 
-		this.setWidgetSize(eastPanel, (Window.getClientWidth() / 2));
-		this.animate(200); 
+		splitPanel.setWidgetSize(eastPanel, (Window.getClientWidth() / 2));
+		splitPanel.animate(200); 
 	}
 	
 	

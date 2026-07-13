@@ -7,30 +7,28 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Optional;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.TransformerException;
 
+import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.FailingHttpStatusCodeException;
-import org.htmlunit.HttpMethod;
 import org.htmlunit.Page;
 import org.htmlunit.ScriptException;
 import org.htmlunit.WebClient;
-import org.htmlunit.WebRequest;
+import org.htmlunit.html.DomElement;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.DomNodeList;
 import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlCheckBoxInput;
+import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlOption;
@@ -38,7 +36,7 @@ import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlSelect;
 import org.htmlunit.html.HtmlSubmitInput;
 import org.htmlunit.javascript.JavaScriptErrorListener;
-import org.htmlunit.util.NameValuePair;
+import org.htmlunit.util.WebConnectionWrapper;
 import org.htmlunit.xml.XmlPage;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
@@ -313,7 +311,7 @@ class SistemaREDMov {
     	Integer mov = 0;
 		String ident = Toolkit.getIdentityType(employee.getIpf());
 		String dni =  Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
-		String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,aÃ±o]
+		String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,aÃÂ±o]
 		WebClient webclient = getWebClient(certificateInputStream,certificatePassword, certificateType);
 		webclient.getOptions().setUseInsecureSSL(true);
 		
@@ -694,7 +692,7 @@ class SistemaREDMov {
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 		}
 	}
-
+	
 	private static Collection<Employee> ipfxnafImpl(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, List<String> nssList)
 			throws Exception {
@@ -781,7 +779,7 @@ class SistemaREDMov {
 
 	        webClient.getOptions().setUseInsecureSSL(true);
 
-	        // 1+2. Entrada común (PGIS -> certificado -> menuAFI-DIRECTO) y click en el
+	        // 1+2. Entrada comÃºn (PGIS -> certificado -> menuAFI-DIRECTO) y click en el
 	        //       servicio XV24M00D. connectTgss ya devuelve el shell del servicio.
 	        HtmlPage shell = HtmlUnitToolkit.connectTgss(webClient, "XV24M00D");
 	        webClient.waitForBackgroundJavaScript(15000);
@@ -807,8 +805,9 @@ class SistemaREDMov {
 	        if ("6".equals(Toolkit.getIdentityType(ipf))) {
 	            tipo = "6";
 	        }
+	        if (tr == null) continue;
 
-	     // 5. Construir el cuerpo del POST codificado a mano en UTF-8 (sin ambigüedad)
+	     // 5. Construir el cuerpo del POST codificado a mano en UTF-8 (sin ambigÃ¼edad)
 	        List<NameValuePair> params = new ArrayList<>();
 	        if (!ticket.isEmpty()) params.add(new NameValuePair("ARQ.SPM.TICKET", ticket));
 	        params.add(new NameValuePair("SPM.CONTEXT", context));
@@ -836,26 +835,159 @@ class SistemaREDMov {
 	            sb.append(URLEncoder.encode(nv.getValue(), "UTF-8"));
 	        }
 	        String bodyPost = sb.toString();
-	        System.out.println("BODY POST -> " + bodyPost); // verifica aquí que VALDEPE%C3%91AS (Ñ en UTF-8)
+	        System.out.println("BODY POST -> " + bodyPost); // verifica aquÃ­ que VALDEPE%C3%91AS (Ã en UTF-8)
 
-	        WebRequest req = new WebRequest(actionUrl, HttpMethod.POST);
-	        req.setAdditionalHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-	        req.setRequestBody(bodyPost);
+	        EmployeeBuilder builder = new EmployeeBuilder();
+	        EmployeeBuilder built = builder
+	                .setNss(nssRes)
+	                .setName(nombre)
+	                .setIpf(documento);
 
-	        // 6. Enviar y parsear
-	        Page resp = webClient.getPage(req);
-	        String body = resp.getWebResponse().getContentAsString(StandardCharsets.UTF_8);
-	        return parseUsuarioRed(body);
+	        // ident puede no venir siempre; parsear con cuidado.
+	        if (!ident.isEmpty()) {
+	            try {
+	                built = built.setIdent(Integer.parseInt(ident));
+	            } catch (NumberFormatException e) {
+	                System.out.println("Fila " + i + ": ident no numérico [" + ident + "], se omite");
+	            }
+	        }
 
-	    } catch (TransformerException e) {
-	        e.printStackTrace();
-	        throw new IllegalArgumentException(e.getMessage());
+	        employees.add(built.build());
+	    }
+	    return employees;
+	}
+	
+	private static Employee nafxipfImpl(final InputStream certificateInputStream, final String certificatePassword,
+	        final String certificateType, String ipf, String apellido1, String apellido2)
+	        throws SegSocialException, FailingHttpStatusCodeException, IOException, InterruptedException {
+
+	    try {
+	        byte[] certificateData = certificateInputStream.readAllBytes();
+
+	        try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType);
+	             WebConnectionWrapper wrapper = HtmlUnitToolkit.transformXmlPage(webClient, certificateData,
+	                     certificatePassword, certificateType, Collections.emptyMap())) {
+
+	            webClient.getOptions().setCssEnabled(true);
+	            webClient.getOptions().setUseInsecureSSL(true);
+	            webClient.getOptions().setRedirectEnabled(true);
+	            webClient.getOptions().setJavaScriptEnabled(true);
+	            webClient.getOptions().setFetchPolyfillEnabled(true);
+	            webClient.getOptions().setThrowExceptionOnScriptError(false);
+
+	            // Entrada DIRECTA por certificado (mTLS) en el host w2 (NO w2sp).
+	            HtmlPage htmlPage = webClient.getPage(
+	                "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00D");
+
+	            HtmlUnitToolkit.manageStatusCode(htmlPage);
+
+	            HtmlInput ipfInput = (HtmlInput) HtmlUnitToolkit.wait4(htmlPage,
+	                    p -> p.getElementById("ipf6NumeroDocumento"))
+	                    .orElseThrow(() -> new SegSocialException(
+	                            "Formulario de búsqueda por IPF no encontrado. Inténtelo de nuevo más tarde."));
+	            HtmlForm form = ipfInput.getEnclosingForm();
+
+	            // Tipo de documento: <select id="tipo"> 1=NIF, 2=Pasaporte, 6=NIE
+	            String tipo = "6".equals(Toolkit.getIdentityType(ipf)) ? "6" : "1";
+	            HtmlUnitToolkit.selectOption(htmlPage, "tipo", tipo);
+
+	            // IPF (type() para disparar la validación FW4).
+	            ipfInput.focus();
+	            ipfInput.type(ipf == null ? "" : ipf.trim().toUpperCase());
+	            ipfInput.blur();
+
+	            boolean tieneAp1 = apellido1 != null && !apellido1.trim().isEmpty();
+	            boolean tieneAp2 = apellido2 != null && !apellido2.trim().isEmpty();
+
+	            HtmlInput ap1 = form.getInputByName("primerApellido");
+	            ap1.focus();
+	            ap1.type(tieneAp1 ? apellido1.trim().toUpperCase() : "");
+	            ap1.blur();
+
+	            HtmlInput ap2 = form.getInputByName("segundoApellido");
+	            ap2.focus();
+	            ap2.type(tieneAp2 ? apellido2.trim().toUpperCase() : "");
+	            ap2.blur();
+
+	            // Checkboxes "No consta": marcar cuando NO hay apellido.
+	            setCheckbox(form, "checkApellido1", !tieneAp1);
+	            setCheckbox(form, "checkApellido2", !tieneAp2);
+
+	            // Botón Continuar (id ENVIO_2 / name SPM.ACC.Continuar).
+	            HtmlButton continuar = (HtmlButton) HtmlUnitToolkit.wait4(htmlPage,
+	                    p -> p.querySelector("#ENVIO_2"))
+	                    .orElseThrow(() -> new SegSocialException(
+	                            "Botón Continuar no encontrado. Inténtelo de nuevo más tarde."));
+	            continuar.click();
+	            webClient.waitForBackgroundJavaScript(15000);
+
+	            htmlPage = (HtmlPage) webClient.getCurrentWindow().getEnclosedPage();
+
+	            HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
+
+	            return parseUsuarioRedFromDom(htmlPage);
+	        }
 	    } catch (SegSocialException e) {
 	        throw e; // dejar pasar el mensaje real de Prosa sin envolverlo
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        throw new IllegalArgumentException(e.getMessage());
 	    }
+	}
+
+	/** Marca/desmarca un checkbox por name si existe en el formulario. */
+	private static void setCheckbox(HtmlForm form, String name, boolean checked) {
+	    try {
+	        org.htmlunit.html.HtmlCheckBoxInput cb =
+	                (org.htmlunit.html.HtmlCheckBoxInput) form.getInputByName(name);
+	        cb.setChecked(checked);
+	    } catch (ElementNotFoundException e) {
+	        System.out.println("Checkbox " + name + " no encontrado, se omite.");
+	    }
+	}
+	
+	/**
+	 * Lee el resultado de XV24M00D del DOM. Los datos vienen como
+	 * <div class="db_col ...">Etiqueta: valor</div> dentro de #CONTENEDOR_SECCION_1.
+	 */
+	private static Employee parseUsuarioRedFromDom(HtmlPage htmlPage) throws SegSocialException {
+	    DomElement contenedor = htmlPage.getElementById("CONTENEDOR_SECCION_1");
+	    if (contenedor == null) {
+	        // Sin sección de datos: puede ser error de negocio (no encontrado, etc.).
+	        HtmlUnitToolkit.manageStatusMessage(htmlPage);
+	        throw new SegSocialException("No se obtuvieron datos del afiliado.");
+	    }
+
+	    String tipoDoc = null, documento = null, nombre = null, nss = null;
+
+	    for (DomElement div : contenedor.getElementsByTagName("div")) {
+	        String txt = Toolkit.removeNBSP(div.asNormalizedText());
+	        if (txt == null) continue;
+	        txt = txt.trim();
+	        int sep = txt.indexOf(':');
+	        if (sep < 0) continue;
+
+	        String etiqueta = txt.substring(0, sep).trim().toLowerCase();
+	        String valor    = txt.substring(sep + 1).trim();
+
+	        if (etiqueta.startsWith("tipo documento"))      tipoDoc   = valor;
+	        else if (etiqueta.startsWith("documento"))      documento = valor;
+	        else if (etiqueta.startsWith("nombre"))         nombre    = valor;
+	        else if (etiqueta.startsWith("número de afil")
+	              || etiqueta.startsWith("numero de afil")) nss       = valor;
+	    }
+
+	    if (nss == null && documento == null && nombre == null) {
+	        HtmlUnitToolkit.manageStatusMessage(htmlPage);
+	        throw new SegSocialException("No se obtuvieron datos del afiliado.");
+	    }
+
+	    EmployeeBuilder builder = new EmployeeBuilder();
+	    return builder
+	            .setNss(nss != null ? nss : "")
+	            .setName(nombre != null ? nombre : "")
+	            .setIpf(documento != null ? documento : "")
+	            .build();
 	}
 
 	private static void updateQuoteGroupImpl(final InputStream certificateInputStream, final String certificatePassword,
@@ -1075,10 +1207,6 @@ class SistemaREDMov {
 		} catch (NullPointerException e) {}
 	}
 	
-	private static String getStringNode(DomNode el) {
-		return el!=null && !el.getTextContent().trim().isEmpty() ? el.getTextContent().trim() : null;
-	}
-	
 	private static HtmlPage firstPageAltaBaja(WebClient webClient,
 			Integer mov, String nss, Optional<String> ctaCti, String regimen, String dni, String ident) throws FailingHttpStatusCodeException, IOException, SegSocialException, InterruptedException {
 		HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
@@ -1269,7 +1397,7 @@ class SistemaREDMov {
 	
 	private static org.w3c.dom.Document parseEmbeddedXml(String html) throws Exception {
 	    String xml = extractDataIsland(html);
-	    if (xml == null) throw new Exception("No se encontró ProsaXMLData en la respuesta");
+	    if (xml == null) throw new Exception("No se encontrÃ³ ProsaXMLData en la respuesta");
 	    DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
 	    f.setNamespaceAware(false);
 	    DocumentBuilder db = f.newDocumentBuilder();
@@ -1310,12 +1438,12 @@ class SistemaREDMov {
 	        String nss     = childText(t, "NA5NumSegSocialCompleto");
 
 	        
-		     // IP3DocIPF puede venir con un carácter de relleno delante (longitud 10).
-		     // El documento real (DNI/NIE) tiene 9 caracteres, así que solo recortamos
-		     // el primer carácter cuando hay relleno, no incondicionalmente.
+		     // IP3DocIPF puede venir con un carÃ¡cter de relleno delante (longitud 10).
+		     // El documento real (DNI/NIE) tiene 9 caracteres, asÃ­ que solo recortamos
+		     // el primer carÃ¡cter cuando hay relleno, no incondicionalmente.
 		     String ipf = docRaw;
 		     if ("1".equals(tipoDoc) && docRaw.length() > 9) {
-		         ipf = docRaw.substring(docRaw.length() - 10); // quedarse con los últimos 9
+		         ipf = docRaw.substring(docRaw.length() - 10); // quedarse con los Ãºltimos 9
 		     }else {
 	            ipf = docRaw;
 	        }
@@ -1334,7 +1462,6 @@ class SistemaREDMov {
 	    return n.getLength() > 0 ? n.item(0).getTextContent().trim() : "";
 	}
 	
-	// -------------------------- Helper methods (nafxIpf) --------------------------
 	
 	private static Employee parseUsuarioRed(String body) throws SegSocialException {
 	    EmployeeBuilder builder = new EmployeeBuilder();
@@ -1347,7 +1474,7 @@ class SistemaREDMov {
 	        org.w3c.dom.Document doc = f.newDocumentBuilder()
 	                .parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
 
-	        // 1) Si Prosa devolvió un mensaje de error, ese es el motivo (registro no encontrado, etc.)
+	        // 1) Si Prosa devolviÃ³ un mensaje de error, ese es el motivo (registro no encontrado, etc.)
 	        org.w3c.dom.NodeList msgs = doc.getElementsByTagName("MESSAGE");
 	        for (int i = 0; i < msgs.getLength(); i++) {
 	            org.w3c.dom.Element m = (org.w3c.dom.Element) msgs.item(i);
@@ -1369,8 +1496,8 @@ class SistemaREDMov {
 	        String ap2   = childText(u, "SEGUNDO_APELLIDO");
 	        String nom   = childText(u, "NOM_usuarioRed");
 
-	        // Nombre completo: en este servicio el nombre viene en NOM_usuarioRed (puede ir vacío)
-	        // y los apellidos por separado. Compón según cómo defina tu EmployeeBuilder "name".
+	        // Nombre completo: en este servicio el nombre viene en NOM_usuarioRed (puede ir vacÃ­o)
+	        // y los apellidos por separado. CompÃ³n segÃºn cÃ³mo defina tu EmployeeBuilder "name".
 	        String name = (nom + " " + ap1 + " " + ap2).trim().replaceAll("\\s+", " ");
 
 	        if (!docNum.isEmpty() && !ident.isEmpty()) {

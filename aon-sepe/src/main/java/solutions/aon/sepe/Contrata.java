@@ -462,6 +462,7 @@ public class Contrata {
 			Integer page = 1;
 
 			String[] startDate = Toolkit.dateString(cto.getDateIniContract());
+			String[] endDate = Toolkit.dateString(cto.getDateFinContract());
 			String[] now = Toolkit.dateString(new Date());
 
 			try {
@@ -515,15 +516,16 @@ public class Contrata {
 			}
 
 			{// ---------------------------DATA EMPLOYEE-------------------------
-				String idetType = Toolkit.getIdentityType(cto.getIpf());
-				String tipodoc = idetType.length() == 0 ? "U" : (idetType.equals("6") ? "E" : "D"); // NIE OR DNI
+				String ipf = cto.getIpf() == null ? "" : cto.getIpf().trim().toUpperCase();
+				String idetType = Toolkit.getIdentityType(ipf);
+			    String tipodoc = idetType.length() == 0 ? "U" : (idetType.equals("6") ? "E" : "D"); // NIE OR DNI
 
 				String nss = cto.getNss();
 				((HtmlSelect) form.querySelector("select[name=tipodoc]")).setSelectedAttribute(tipodoc, true);
-				form.getInputByName("nif").setValue(cto.getIpf());
-				form.getInputByName("nifnie").setValue(tipodoc + "  " + cto.getIpf());
-				form.getInputByName("nif").setValueAttribute(cto.getIpf());
-				form.getInputByName("nifnie").setValueAttribute(tipodoc + "  " + cto.getIpf());
+				form.getInputByName("nif").setValue(ipf);
+				form.getInputByName("nifnie").setValue(tipodoc + "  " + ipf);
+				form.getInputByName("nif").setValueAttribute(ipf);
+				form.getInputByName("nifnie").setValueAttribute(tipodoc + "  " + ipf);
 
 				String name = cto.getName();
 				if (null != name && name.length() > 15)
@@ -585,11 +587,11 @@ public class Contrata {
 				form.getInputByName("diafechaini").setValue(startDate[0]);
 				form.getInputByName("mesfechaini").setValue(startDate[1]);
 				form.getInputByName("anniofechaini").setValue(startDate[2]);
-				form.getInputByName("fechainicio")
-						.setValueAttribute(startDate[0] + "/" + startDate[1] + "/" + startDate[2]);
-				form.getInputByName("diafechaini").setValueAttribute(startDate[0]);
-				form.getInputByName("mesfechaini").setValueAttribute(startDate[1]);
-				form.getInputByName("anniofechaini").setValueAttribute(startDate[2]);
+				form.getInputByName("fechainicio").setValueAttribute(startDate[0] + "/" + startDate[1] + "/" + startDate[2]);
+				
+				form.getInputByName("diafechafin").setValueAttribute(endDate[0]);
+				form.getInputByName("mesfechafin").setValueAttribute(endDate[1]);
+				form.getInputByName("anniofechafin").setValueAttribute(endDate[2]);
 
 				setOccupation(cto, form);
 
@@ -867,6 +869,8 @@ public class Contrata {
 						&& htmlPage.querySelector("#avisos > div > p:last-child").getVisibleText()
 								.contains("Obligatorio indicar si el contrato tiene")) {
 					htmlPage = htmlPage.getElementById("volver").click();
+					
+//					Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Desktop/sepe_502.html");
 
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 
@@ -928,6 +932,8 @@ public class Contrata {
 			} catch (Exception e) {
 			}
 
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home") + "/Desktop/sepe_2.html");
+			
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 			handleSepeExceptions(htmlPage);
 
@@ -953,14 +959,22 @@ public class Contrata {
 	}
 
 	private static HtmlPage loginAndSelectEnterprise(String cif, HtmlPage htmlPage) throws IOException {
-		try {
-			HtmlForm form = htmlPage.getFormByName("loginForm");
-			form.getSelectByName("tipodoc2").setSelectedAttribute("", true);
-			form.getInputByName("usuarioPrincipal").setValue(cif);
-			return form.getInputByName("enviar").click();
-		} catch (Exception e) {
-			return htmlPage;
-		}
+		 try {
+            HtmlForm form = htmlPage.getFormByName("loginForm");
+            if (form == null) {
+                System.out.println("loginAndSelectEnterprise: NO existe loginForm en la p<E1>gina. "
+                    + "URL=" + htmlPage.getUrl());
+                System.out.println("Formularios presentes: " +
+                    htmlPage.getForms().stream().map(f -> f.getAttribute("name")).toList());
+                return htmlPage;
+            }
+            form.getSelectByName("tipodoc2").setSelectedAttribute("", true);
+            form.getInputByName("usuarioPrincipal").setValue(cif);
+            return form.getInputByName("enviar").click();
+        } catch (Exception e) {
+            e.printStackTrace();   // <-- deja de tragarte el error
+            return htmlPage;
+        }
 	}
 
 	private static Contract getContractDataImpl(final InputStream certificateInputStream,
@@ -993,6 +1007,7 @@ public class Contrata {
 					.click();
 			handleSepeExceptions(htmlPage);
 
+			ipf = ipf == null ? "" : ipf.trim().toUpperCase();
 			htmlPage = pageContracOrCopybasic(htmlPage, startDate, endDate, ipf);
 
 			HtmlForm form = htmlPage.querySelector("form[name=datos]");
