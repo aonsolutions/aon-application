@@ -859,7 +859,7 @@ public class Contrata {
 
 			webClient.waitForBackgroundJavaScript(5000);
 
-			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Desktop/sepe.html");
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Desktop/sepe.html");
 
 			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
 
@@ -870,7 +870,7 @@ public class Contrata {
 								.contains("Obligatorio indicar si el contrato tiene")) {
 					htmlPage = htmlPage.getElementById("volver").click();
 					
-					Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Desktop/sepe_502.html");
+//					Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Desktop/sepe_502.html");
 
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 
@@ -932,7 +932,7 @@ public class Contrata {
 			} catch (Exception e) {
 			}
 
-			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home") + "/Desktop/sepe_2.html");
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home") + "/Desktop/sepe_2.html");
 			
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 			handleSepeExceptions(htmlPage);
