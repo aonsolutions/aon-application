@@ -193,8 +193,11 @@ public class SellerWorkloadDAO {
 	public static List<SellerWorkload> getList(CloseableAONContext ctx, SellerWorkloadParams params) {
 	    List<SellerWorkload> sellers = new ArrayList<>();
 
-	    Date start = getStartDatePeriod(params.getPeriod());
-	    Date end = getEndDatePeriod(params.getPeriod());
+//	    Date start = getStartDatePeriod(params.getPeriod());
+//	    Date end = getEndDatePeriod(params.getPeriod());
+	    
+	    Date start = AonDateUtils.toSql(params.getPeriodStart());
+		Date end = AonDateUtils.toSql(params.getPeriodEnd());
 
 	    StatusFilter sf = getCustomerStatusCondition(params, end);
 
@@ -299,8 +302,11 @@ public class SellerWorkloadDAO {
 
 
 	public static Integer getListCount(CloseableAONContext ctx, SellerWorkloadParams params) {
-	    Date start = getStartDatePeriod(params.getPeriod());
-	    Date end = getEndDatePeriod(params.getPeriod());
+//	    Date start = getStartDatePeriod(params.getPeriod());
+//	    Date end = getEndDatePeriod(params.getPeriod());
+	    
+	    Date start = AonDateUtils.toSql(params.getPeriodStart());
+		Date end = AonDateUtils.toSql(params.getPeriodEnd());
 
 	    StatusFilter sf = getCustomerStatusCondition(params, end);
 
@@ -381,9 +387,13 @@ public class SellerWorkloadDAO {
 	public static SellerWorkloadContent getSellersWorkloadContent(CloseableAONContext ctx, SellerWorkloadParams params) {
 		//Condition condition = createFeeWorkloadCondition(ctx, params);
 
-		Date start = getStartDatePeriod(params.getPeriod());
+		Date start = AonDateUtils.toSql(params.getPeriodStart());
 		Date endIt = AonDateUtils.toSql( AonDateUtils.getMonthLastDay(start) );
-		Date end = getEndDatePeriod(params.getPeriod());
+		Date end = AonDateUtils.toSql(params.getPeriodEnd());
+		
+//		Date start = getStartDatePeriod(params.getPeriod());
+//		Date endIt = AonDateUtils.toSql( AonDateUtils.getMonthLastDay(start) );
+//		Date end = getEndDatePeriod(params.getPeriod());
 		
 		StatusFilter sf = getCustomerStatusCondition(params, end); 
 		
@@ -972,9 +982,13 @@ public class SellerWorkloadDAO {
 	}
 
 	private static void getCustomerAmount(AONContext ctx, SellerWorkload sellerWorkload, Integer seller, SellerWorkloadParams params) {
-		Date start = getStartDatePeriod(params.getPeriod());
+//		Date start = getStartDatePeriod(params.getPeriod());
+//		Date endIt = AonDateUtils.toSql( AonDateUtils.getMonthLastDay(start) );
+//		Date end = getEndDatePeriod(params.getPeriod());
+		
+		Date start = AonDateUtils.toSql(params.getPeriodStart());
 		Date endIt = AonDateUtils.toSql( AonDateUtils.getMonthLastDay(start) );
-		Date end = getEndDatePeriod(params.getPeriod());
+		Date end = AonDateUtils.toSql(params.getPeriodEnd());
 		
 		Condition condition = createFeeWorkloadCondition(ctx, params);
 		
@@ -1124,9 +1138,13 @@ public class SellerWorkloadDAO {
 	}
 
 	private static void getProjectCustomerAmount(AONContext ctx, SellerWorkload sellerWorkload, Integer taskHolderId, SellerWorkloadParams params) {
-		Date start = getStartDatePeriod(params.getPeriod());
+//		Date start = getStartDatePeriod(params.getPeriod());
+//		Date endIt = AonDateUtils.toSql( AonDateUtils.getMonthLastDay(start) );
+//		Date end = getEndDatePeriod(params.getPeriod());
+		
+		Date start = AonDateUtils.toSql(params.getPeriodStart());
 		Date endIt = AonDateUtils.toSql( AonDateUtils.getMonthLastDay(start) );
-		Date end = getEndDatePeriod(params.getPeriod());
+		Date end = AonDateUtils.toSql(params.getPeriodEnd());
 		
 		Condition condition = createFeeWorkloadCondition(ctx, params);
 		
