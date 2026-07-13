@@ -12,10 +12,12 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSearchBox;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -59,6 +61,7 @@ public class AmortizationPanel extends AonLayoutPanel {
 	private AonToolbarButton calculateButton;
 	private AonToolbarButton saleButton;
 	private AonToolbarButton excelButton;
+	private AonToolbarSearchBox searchBox;
 	
 	private FormPanel diskForm = new FormPanel("_blank");
 	private Hidden amortizationIdHidden = new Hidden(IRequestParamsNames.ID);
@@ -86,6 +89,14 @@ public class AmortizationPanel extends AonLayoutPanel {
 		formFlowPanel.add(userHidden);
 		formFlowPanel.add(amortizationIdHidden);
 		toolbar.add(diskForm);
+		
+		searchBox = new AonToolbarSearchBox() {
+			@Override
+			public void onValueChange(String value) {
+				showTable(opts);
+			}
+		};
+		toolbar.showSearchPanel(searchBox);
 		
 		this.addNorth(toolbar, AonToolbar.HEIGTH);
 	
@@ -274,7 +285,9 @@ public class AmortizationPanel extends AonLayoutPanel {
 	}
 
 	private AmortizationParams getParams(AmortizationModuleOptions opts) {
-		return new AmortizationParams().setDomain(opts.getDomain());
+		return new AmortizationParams()
+			.setDomain(opts.getDomain())
+			.setDescription( AonStringUtils.trimToNull(searchBox.getValue()));
 	}
 
 	private void manageButtons() {
@@ -294,9 +307,8 @@ public class AmortizationPanel extends AonLayoutPanel {
 		if (saleButton != null) saleButton.removeFromParent();
 		if (excelButton != null) excelButton.removeFromParent();
 		
-		AmortizationParams params = getParams(opts);
 		tablePanel.clear();
-		AmortizationTable amortizationTable = new AmortizationTable(opts, params);
+		AmortizationTable amortizationTable = new AmortizationTable(opts, getParams(opts));
 		amortizationTable.addSelectionHandler(e -> {
 			selectedTab = null;
 			searchAndShowForm(opts, e.getSelectedItem());
