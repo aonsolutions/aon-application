@@ -52,7 +52,7 @@ public class Fiscal extends Methods{
 	
 	public void getFiscalModels(HashMap<String, LinkedList<String>> filterMap,AsyncCallback<JSON<JsFiscalMenuItem>> callback){
 		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "ms/api/fiscal/"+getDomainName()+"/"+getUserName()+"/matrix" + str, callback, 180000);
+		get(getUrl() + "ms/api/fiscal/"+getDomainName()+"/"+getUserName()+"/matrix" + str, callback, 240000);
 	}
 	
 }

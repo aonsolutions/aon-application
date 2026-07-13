@@ -2695,11 +2695,12 @@ public class Mod131AEAT2025Declaration extends Mod131Declaration {
 		// En las actividades de temporada, a efectos del pago fraccionado, el rendimiento diario resultará de dividir el anual por el 
 		// número de días de ejercicio de la actividad en el año anterior
 		// actividad de temporada se considera si los dias anteriores son mayores que 0 y menores o iguales a 180
-		if (act.getTem() > 0 && act.getTem() <= 180) {
-			daysFactor = ((double) periodDays) / ((double)act.getTem());
-			if (daysFactor > 1.0) {
-				daysFactor = 1.0;
+		if (act.getTem() > 0 && act.getTem() <= 180) {			
+			int days = act.getDia();
+			if (days > periodDays) {
+				days = periodDays;
 			}
+			daysFactor = ((double) days) / ((double) act.getTem());
 		} else {
 			if (act.getDia() < periodDays ) {
 				daysFactor = ((double)act.getDia()) / ((double) periodDays);
