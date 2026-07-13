@@ -284,8 +284,7 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 	    String status = dil.getTextContent();
 
 	    // Caso sin datos: no hay nada que leer.
-	    // 3251 suele ser "NO EXISTEN DATOS"; si el código difiere, ajústalo con la traza.
-	    if (status.contains("NO EXISTEN DATOS") || status.contains("3251")) {
+	    if (status.contains("NO EXISTEN DATOS") ) {
 	        return;
 	    }
 
