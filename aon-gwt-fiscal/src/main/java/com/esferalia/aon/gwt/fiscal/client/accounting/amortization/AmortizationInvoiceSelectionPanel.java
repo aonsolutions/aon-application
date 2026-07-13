@@ -34,7 +34,7 @@ class AmortizationInvoiceSelectionPanel extends DockLayoutPanel {
 
 
 		AmortizationInvoiceSelectionFilterPanel filterPanel = new AmortizationInvoiceSelectionFilterPanel(opts );
-		addNorth(filterPanel, 80);
+		addNorth(filterPanel, 100);
 		filterPanel.addValueChangeHandler( event -> search(opts, callback, selectionHandler, event.getValue() ) );
 		
 		contentPanel = new SimpleLayoutPanel();

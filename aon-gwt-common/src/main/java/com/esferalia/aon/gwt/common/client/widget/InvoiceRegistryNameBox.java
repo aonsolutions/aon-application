@@ -9,7 +9,13 @@ public class InvoiceRegistryNameBox extends InvoiceRegistryBox {
 		super(options);
 		suggestTextBox.setVisibleLength(30);
 		suggestTextBox.setMaxLength(40);
-
+	}
+	
+	public void setVisibleLength(int length) {
+		suggestTextBox.setVisibleLength(length);
+	}
+	public void setMaxLength(int length) {
+		suggestTextBox.setMaxLength(length);
 	}
 
 	@Override

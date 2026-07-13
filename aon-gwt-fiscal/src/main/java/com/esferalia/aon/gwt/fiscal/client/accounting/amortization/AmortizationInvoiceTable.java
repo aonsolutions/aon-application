@@ -41,7 +41,7 @@ class AmortizationInvoiceTable extends ScrollPanel {
 	}
 	
 	private static final String[] COLUMN_WIDTHS = new String[] {
-			"30px","30px","30px","40px","100px","80px","80px","100px","300px","100px"
+			"40px","40px","40px","40px","100px","80px","80px","100px","300px","100px"	
 	};
 	
 	FlowPanel containerPanel = new FlowPanel();
