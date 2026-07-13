@@ -953,14 +953,22 @@ public class Contrata {
 	}
 
 	private static HtmlPage loginAndSelectEnterprise(String cif, HtmlPage htmlPage) throws IOException {
-		try {
-			HtmlForm form = htmlPage.getFormByName("loginForm");
-			form.getSelectByName("tipodoc2").setSelectedAttribute("", true);
-			form.getInputByName("usuarioPrincipal").setValue(cif);
-			return form.getInputByName("enviar").click();
-		} catch (Exception e) {
-			return htmlPage;
-		}
+		 try {
+            HtmlForm form = htmlPage.getFormByName("loginForm");
+            if (form == null) {
+                System.out.println("loginAndSelectEnterprise: NO existe loginForm en la p<E1>gina. "
+                    + "URL=" + htmlPage.getUrl());
+                System.out.println("Formularios presentes: " +
+                    htmlPage.getForms().stream().map(f -> f.getAttribute("name")).toList());
+                return htmlPage;
+            }
+            form.getSelectByName("tipodoc2").setSelectedAttribute("", true);
+            form.getInputByName("usuarioPrincipal").setValue(cif);
+            return form.getInputByName("enviar").click();
+        } catch (Exception e) {
+            e.printStackTrace();   // <-- deja de tragarte el error
+            return htmlPage;
+        }
 	}
 
 	private static Contract getContractDataImpl(final InputStream certificateInputStream,
