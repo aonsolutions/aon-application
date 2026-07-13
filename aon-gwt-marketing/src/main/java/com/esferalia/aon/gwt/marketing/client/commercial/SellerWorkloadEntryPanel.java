@@ -241,6 +241,8 @@ public abstract class SellerWorkloadEntryPanel extends AonCustomDockLayout {
 	public SellerWorkloadParams getWidgetParams( SellerWorkloadParams params ) {
 		SellerWorkloadParams sellerWorkloadParams = new SellerWorkloadParams();
 		sellerWorkloadParams.setPeriod(params.getPeriod());
+		sellerWorkloadParams.setPeriodStart(params.getPeriodStart());
+		sellerWorkloadParams.setPeriodEnd(params.getPeriodEnd());
 		sellerWorkloadParams.setCustomers(params.getCustomers());
 		
 		sellerWorkloadParams.setCustomerActive(customerStatus.getSelectedOptions().contains("Activo"));
