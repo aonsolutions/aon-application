@@ -161,10 +161,10 @@ public class Contrata {
 	}
 
 	public static byte[] getContratoPdf(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ipf, Date startDate, Date endDate, Optional<String> sepeId)
+			final String certificateType, String cif, String ipf, Date startDate, Date endDate, Optional<String> sepeId)
 			throws SepeException {
 		try {
-			return getContratoPdfImpl(certificateInputStream, certificatePassword, certificateType, ipf, startDate,
+			return getContratoPdfImpl(certificateInputStream, certificatePassword, certificateType, cif, ipf, startDate,
 					endDate, sepeId);
 		} catch (FailingHttpStatusCodeException e) {
 			throw new SepeException(e);
@@ -875,10 +875,8 @@ public class Contrata {
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 
 					if (null != cto.getDateFinContract()) {
-						long daysBetween = ChronoUnit.DAYS.between(cto.getDateIniContract().toInstant(),
-								cto.getDateFinContract().toInstant());
 						((HtmlSelect) form.querySelector("select[name=preg90dias]"))
-								.setSelectedAttribute(daysBetween <= 90 ? "S" : "N", true);
+								.setSelectedAttribute(cto.getPrevisible() ? "S" : "N", true);
 					} else
 						((HtmlSelect) form.querySelector("select[name=preg90dias]")).setSelectedAttribute("N", true);
 
@@ -1703,7 +1701,6 @@ public class Contrata {
 			HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
 
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=copiabasica").click();
-			handleSepeExceptions(htmlPage);
 
 			htmlPage = htmlPage
 					.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaTransformacion?pagina=entradaCBTransf")
@@ -1786,7 +1783,7 @@ public class Contrata {
 	}
 
 	private static byte[] getContratoPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ipf, Date startDate, Date endDate, Optional<String> sepeId)
+			final String certificateType, String cif, String ipf, Date startDate, Date endDate, Optional<String> sepeId)
 			throws FailingHttpStatusCodeException, IOException, InterruptedException, SepeException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClientSepe(certificateInputStream, certificatePassword,
 				certificateType)) {
@@ -1796,6 +1793,8 @@ public class Contrata {
 
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas").click();
 			handleSepeExceptions(htmlPage);
+			
+			htmlPage = loginAndSelectEnterprise(cif, htmlPage);
 
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_consultasImpresion.jsp?origen=")
 					.click();
@@ -1847,6 +1846,7 @@ public class Contrata {
 						.click();// por identificador del trabajador
 				handleSepeExceptions(htmlPage);
 
+				ipf = null == ipf ? "" : ipf.trim().toUpperCase();
 				htmlPage = pageContracOrCopybasic(htmlPage, startDate, endDate, ipf);
 			}
 
@@ -1936,6 +1936,7 @@ public class Contrata {
 						.click();// por identificador del trabajador
 				handleSepeExceptions(htmlPage);
 
+				ipf = null == ipf ? "" : ipf.trim().toUpperCase();
 				htmlPage = pageContracOrCopybasic(htmlPage, startDate, endDate, ipf);
 			}
 

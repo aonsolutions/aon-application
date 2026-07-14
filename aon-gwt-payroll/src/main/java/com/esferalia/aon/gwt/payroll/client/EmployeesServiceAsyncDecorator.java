@@ -844,10 +844,10 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void getEmployeeCto(String currentDomainName, String user, String document, Integer contractId, Date startDate,
+	public void getEmployeeCto(String currentDomainName, String user, String cif, String document, Integer contractId, Date startDate,
 			Date endDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEmployeeCto(currentDomainName, user, document, contractId, startDate, endDate, sepeIde, new AsyncCallbackWrapper<String>(callback));
+		employeesServiceAsync.getEmployeeCto(currentDomainName, user, cif, document, contractId, startDate, endDate, sepeIde, new AsyncCallbackWrapper<String>(callback));
 	}
 	
 	@Override
