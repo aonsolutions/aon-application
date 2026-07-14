@@ -17,8 +17,8 @@ import solutions.aon.sepe.exceptions.SepeException;
 public class Sepe {
 
 	public static byte[] getContratoPdf(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ipf, Date fini, Date fend) throws SepeException {
-		return Contrata.getContratoPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend,
+			final String certificateType, String cif, String ipf, Date fini, Date fend) throws SepeException {
+		return Contrata.getContratoPdf(certificateInputStream, certificatePassword, certificateType, cif, ipf, fini, fend,
 				Optional.empty());
 	}
 
@@ -53,8 +53,8 @@ public class Sepe {
 	}
 
 	public static byte[] getContratoPdf(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String sepeId) throws SepeException {
-		return Contrata.getContratoPdf(certificateInputStream, certificatePassword, certificateType, null, null, null,
+			final String certificateType, String cif, String sepeId) throws SepeException {
+		return Contrata.getContratoPdf(certificateInputStream, certificatePassword, certificateType, cif, null, null, null,
 				Optional.ofNullable(sepeId));
 	}
 
