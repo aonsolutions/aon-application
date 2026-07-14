@@ -195,18 +195,20 @@ export class AonHelp extends AonElement {
 		suiteHelpSpan.innerHTML = MSG.MANUALS;
 		suiteHelpDiv.appendChild(suiteHelpSpan);
 		suiteHelpSpan.addEventListener(EVENT.CLICK, () => {
-			this.rootPanel(new HELP.AonSiteHelpSuite())
-			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
+			window.open('https://suite.aonsolutions.info/', 'suiteManualTab');
+			//this.rootPanel(new HELP.AonSiteHelpSuite())
+			//this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
 		});
 		
+		/*
 		let suiteHelpAnchor = this.createElement(TAG.A);
 		suiteHelpAnchor.className = CSS.AON_BUTTON_GOTO;
 		suiteHelpAnchor.href = HELP.HELP_SUITE_SITE;
 		suiteHelpAnchor.target = "suite.aonsolutions.info";
 		suiteHelpDiv.appendChild(suiteHelpAnchor);
-
-		helpContent.appendChild(suiteHelpDiv);
+		*/
 		
+		helpContent.appendChild(suiteHelpDiv);
 
 		let helpNotificationDiv = this.createSpan();
 		helpNotificationDiv.id = "notificationsHelp";
