@@ -110,7 +110,7 @@ public class LoginTestCase extends AppBaseTestCase {
 			);
 			wait.until(ExpectedConditions.elementToBeClickable(By.id("aonHeaderHelpButton"))).click();
 			
-			WebElement aonHelpSwitchSupportInput = wait.until(ExpectedConditions.elementToBeClickable(By.id("aonHelpSwitchSupport")));
+			WebElement aonHelpSwitchSupportInput = wait.until(ExpectedConditions.elementToBeClickable(By.id("aonHelpSwitchSupportInput")));
 			if ( !aonHelpSwitchSupportInput.isSelected())
 				wait.until(ExpectedConditions.elementToBeClickable(By.id("aonHelpSwitchSupport"))).click();
 			
