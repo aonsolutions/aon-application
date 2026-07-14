@@ -23,7 +23,7 @@ public class ImporteHoraFormacion2026Update implements Update {
 	public static final ImporteHoraFormacion2026Update IMPORTEHORAFORMACION2026UPDATE = new ImporteHoraFormacion2026Update();
 
 	private static final String IMPORTE_HORA_FORMACION_DISTANCIA = "IMPORTE_HORA_FORMACION_DISTANCIA";
-	private static final String IMPORTE_HORA_FORMACION_PRESENCIAL = "IMPORTE_HORA_FORMACION_PRESENCIAL";
+	private static final String IMPORTE_HORA_FORMACION_PRESENCIAL = "IMPORTE_HORA_FORMACION_PRESEN";
 
 	private ImporteHoraFormacion2026Update() {
 		super();
