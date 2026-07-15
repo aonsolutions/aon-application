@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -61,8 +60,7 @@ import solutions.aon.sepe.toolkit.Toolkit;
 
 public class Contrata {
 
-	// Toolkit.buildFile(htmlPage.asXml().getBytes(),
-	// System.getProperty("user.home")+"/test.html");
+	// Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/test.html");
 
 	private static final String MESSAGE_ERROR = "Error no aceptada la comunicaci\u00f3n";
 	private static final String FORMAT_DATE_ES = "dd/MM/yyyy";
@@ -443,7 +441,7 @@ public class Contrata {
 
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click();
 			handleSepeExceptions(htmlPage);
-
+			
 			htmlPage = loginAndSelectEnterprise(cto.getCifEnterprise(), htmlPage);
 			handleSepeExceptions(htmlPage);
 
@@ -462,7 +460,10 @@ public class Contrata {
 			Integer page = 1;
 
 			String[] startDate = Toolkit.dateString(cto.getDateIniContract());
-			String[] endDate = Toolkit.dateString(cto.getDateFinContract());
+			String[] endDate = null;
+			if(null != cto.getDateFinContract())
+				endDate = Toolkit.dateString(cto.getDateFinContract());
+			
 			String[] now = Toolkit.dateString(new Date());
 
 			try {
@@ -589,9 +590,16 @@ public class Contrata {
 				form.getInputByName("anniofechaini").setValue(startDate[2]);
 				form.getInputByName("fechainicio").setValueAttribute(startDate[0] + "/" + startDate[1] + "/" + startDate[2]);
 				
-				form.getInputByName("diafechafin").setValueAttribute(endDate[0]);
-				form.getInputByName("mesfechafin").setValueAttribute(endDate[1]);
-				form.getInputByName("anniofechafin").setValueAttribute(endDate[2]);
+				if(null != endDate) {
+					try {
+						form.getInputByName("diafechafin").setValueAttribute(endDate[0]);
+						form.getInputByName("mesfechafin").setValueAttribute(endDate[1]);
+						form.getInputByName("anniofechafin").setValueAttribute(endDate[2]);
+					} catch (Exception e) {
+						e.printStackTrace();
+						System.err.println("Error setting end date: " + endDate[0] + "/" + endDate[1] + "/" + endDate[2]);
+					}
+				}
 
 				setOccupation(cto, form);
 
@@ -1795,6 +1803,8 @@ public class Contrata {
 			handleSepeExceptions(htmlPage);
 			
 			htmlPage = loginAndSelectEnterprise(cif, htmlPage);
+			
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Desktop/getContratoPdfImpl.html");
 
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_consultasImpresion.jsp?origen=")
 					.click();
@@ -1881,6 +1891,8 @@ public class Contrata {
 			handleSepeExceptions(htmlPage);
 
 			htmlPage = loginAndSelectEnterprise(enterpriseCif, htmlPage);
+			
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Desktop/getCopyBasicPdfImpl.html");
 
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_consultasImpresion.jsp?origen=")
 					.click();
