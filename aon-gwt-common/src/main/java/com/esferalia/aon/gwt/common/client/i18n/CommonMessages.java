@@ -4531,5 +4531,15 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("A\u00FAn no vinculadas")
 	String notYetLinked();
+
+	@DefaultMessage("Filtrar por descripci\u00F3n")
+	String filterByDescription();
+
+	@DefaultMessage("Desde fecha")
+	String fromDate();
+	
+	@DefaultMessage("Hasta fecha")
+	String toDate();
+	
 }
 

@@ -26,6 +26,8 @@ import org.jooq.InsertSetMoreStep;
 import org.jooq.Query;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
+import org.jooq.SortField;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.AmortizationDetailRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -38,6 +40,8 @@ import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetailFlat;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
+import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams.AmortizationParamsOrderBy;
+import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams.AmortizationParamsOrderByVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AmortizationDetailStatus;
@@ -115,9 +119,9 @@ public class AmortizationDAO {
 	}
 	
 	public static Stream<Amortization> stream(AONContext ctx, AmortizationParams params) {
-	    return select(ctx, params.getDomain())
+	    return select(ctx, getDomain(params))
     		.and( getCondition(params) )
-    		.orderBy(AMORTIZATION.DESCRIPTION)
+    		.orderBy(getOrderBy(params,false))
     		.limit(params.getOffset() , params.getLimit())
 	        .fetch()
 	        .stream()
@@ -136,7 +140,7 @@ public class AmortizationDAO {
 	        .innerJoin(ALLOCATION_ACCOUNT).on(AMORTIZATION.ALLOCATION_ACCOUNT.eq(ALLOCATION_ACCOUNT.ID))
 	        .leftOuterJoin(INVEST_ASSET).on(AMORTIZATION.INVEST_ASSET.eq(INVEST_ASSET.ID))
     		.and( getCondition(params) )
-    		.orderBy(AMORTIZATION.DESCRIPTION)
+    		.orderBy(getOrderBy(params,true))
     		.limit(params.getOffset() , params.getLimit())
 	        .fetch()
 	        .stream()
@@ -146,56 +150,38 @@ public class AmortizationDAO {
 	        )
         ;
 	}
-
-	private static Condition getCondition(AmortizationParams params) {
-		if (params == null) throw new IllegalArgumentException( AonError.EMPTY_DATA.format("Par\u00E1metros de b\u00FAsqueda") );
-		if (params.getDomain() == null) throw new IllegalArgumentException( AonError.EMPTY_DOMAIN.getMessage());
-		Condition c = AMORTIZATION.DOMAIN.eq(params.getDomain());
-		if (params.getInitialDate() != null) {
-			c = c.and(AMORTIZATION.INITIAL_DATE.greaterOrEqual(AonDateUtils.toSql(params.getInitialDate())));
-		}
-		if (params.getDeadline() != null) {
-			c = c.and(AMORTIZATION.DEADLINE.lessOrEqual(AonDateUtils.toSql(params.getDeadline())));
-		}
-		if (params.getInvestAsset() != null) {
-			c = c.and(AMORTIZATION.INVEST_ASSET.eq(params.getInvestAsset()));
-		}
-		if (params.getAllocationAccount() != null) {
-			c = c.and(AMORTIZATION.ALLOCATION_ACCOUNT.eq(params.getAllocationAccount()));
-		}
-		if (params.getFixedAssetAccount() != null) {
-			c = c.and(AMORTIZATION.FIXED_ASSET_ACCOUNT.eq(params.getFixedAssetAccount()));
-		}
-		if (params.getAccumulatedAccount() != null) {
-			c = c.and(AMORTIZATION.ACCUMULATED_ACCOUNT.eq(params.getAccumulatedAccount()));
-		}
-		if (AonStringUtils.isNotBlank(params.getDescription())) {
-			c = c.and(AMORTIZATION.DESCRIPTION.like(AonStringUtils.SQLlike( params.getDescription() )));
-		}
-		if (params.getAmount() != null) {
-			c = c.and(AMORTIZATION.AMOUNT.equal(params.getAmount()));
-		}
-		if (params.getFeePeriod() != null) {
-			c = c.and(AMORTIZATION.FEE_PERIOD.equal((byte)params.getFeePeriod().ordinal()));
-		}
-		if (params.getPercentage() != null) {
-			c = c.and(AMORTIZATION.PERCENTAGE.equal(params.getPercentage()));
-		}
-		if (params.getSecurityLevel() != null) {
-			c = c.and(AMORTIZATION.SECURITY_LEVEL.equal((byte)params.getSecurityLevel().ordinal()));
-		}
-		if (params.getSaleAmount() != null) {
-			c = c.and(AMORTIZATION.SALE_AMOUNT.equal(params.getSaleAmount()));
-		}
-		if (params.getComments() != null) {
-			c = c.and(AMORTIZATION.COMMENTS.like(AonStringUtils.SQLlike(params.getComments())));
-		}
-		if (params.getStatus() != null) {
-			c = c.and(AMORTIZATION_DETAIL.STATUS.equal(params.getStatus().value()));
-		}
-		return c;
+	
+	private static Integer getDomain(AmortizationParams params) {
+		return params.getDomain()
+			.orElseThrow(() -> new AonCoreException( AonError.EMPTY_DOMAIN.getMessage()));
 	}
-
+	
+	private static Condition getCondition(AmortizationParams params) {
+	    if (params == null)
+	        throw new AonCoreException(AonError.EMPTY_DATA.format("Par\u00E1metros de b\u00FAsqueda"));
+	    return AMORTIZATION.DOMAIN.eq(getDomain(params))
+	        .and(when(params.getFromInitialDate(),  d -> AMORTIZATION.INITIAL_DATE.ge(AonDateUtils.toSql(d))))
+	        .and(when(params.getToInitialDate(),    d -> AMORTIZATION.INITIAL_DATE.le(AonDateUtils.toSql(d))))
+	        .and(when(params.getFromDeadline(),     d -> AMORTIZATION.DEADLINE.ge(AonDateUtils.toSql(d))))
+	        .and(when(params.getToDeadline(),       d -> AMORTIZATION.DEADLINE.le(AonDateUtils.toSql(d))))
+	        .and(when(params.getInvestAsset(),      AMORTIZATION.INVEST_ASSET::eq))
+	        .and(when(params.getAllocationAccount(),AMORTIZATION.ALLOCATION_ACCOUNT::eq))
+	        .and(when(params.getFixedAssetAccount(),AMORTIZATION.FIXED_ASSET_ACCOUNT::eq))
+	        .and(when(params.getAccumulatedAccount(),AMORTIZATION.ACCUMULATED_ACCOUNT::eq))
+	        .and(when(params.getDescription(),      d -> AMORTIZATION.DESCRIPTION.like(AonStringUtils.SQLlike(d))))
+	        .and(when(params.getAmount(),           AMORTIZATION.AMOUNT::eq))
+	        .and(when(params.getFeePeriod(),        p -> AMORTIZATION.FEE_PERIOD.eq((byte) p.ordinal())))
+	        .and(when(params.getPercentage(),       AMORTIZATION.PERCENTAGE::eq))
+	        .and(when(params.getSecurityLevel(),    s -> AMORTIZATION.SECURITY_LEVEL.eq((byte) s.ordinal())))
+	        .and(when(params.getSaleAmount(),       AMORTIZATION.SALE_AMOUNT::eq))
+	        .and(when(params.getComments(),         cmt -> AMORTIZATION.COMMENTS.like(AonStringUtils.SQLlike(cmt))))
+	        .and(when(params.getStatus(),           s -> AMORTIZATION_DETAIL.STATUS.eq(s.value())));
+	}
+	
+	private static <T> Condition when(Optional<T> opt, Function<T, Condition> mapper) {
+	    return opt.map(mapper).orElse(DSL.noCondition());
+	}
+	
 	private static Collector<Record, Map<Integer, Amortization>, Map<Integer, Amortization>> toAmortizationMap() {
 
 	    return Collector.of(
@@ -620,11 +606,6 @@ public class AmortizationDAO {
 			.accept(new AmortizationContext(ctx,a));
 		}
 
-//		private static final Consumer<AmortizationContext> EMPTY_DEADLINE = ivc -> {
-//			if (ivc.a.getDeadline() == null) 
-//				throw new AonCoreException(AonError.EMPTY_DATA.format("Fecha de baja"));
-//		};
-		
 		private static final Consumer<AmortizationContext> WRONG_DEADLINE = ivc -> {
 			if (DateUtils.isSameDay(ivc.a.getInitialDate(), ivc.a.getDeadline()) || ivc.a.getInitialDate().after(ivc.a.getDeadline())) 
 				throw new AonCoreException(AonError.AMORTIZATION_WRONG_DEADLINE.getMessage());
@@ -912,5 +893,48 @@ public class AmortizationDAO {
 			.set(AMORTIZATION_INVOICE.INVOICE, invoiceId)
 			.execute();
 	}
+	
+	private static SortField<?>[] DETAIL_FIELDS = new SortField<?>[] { AMORTIZATION_DETAIL.FROM_DATE.asc() };
 
+	private static SortField<?>[] getOrderBy(AmortizationParams params, boolean linesFields) {
+		SortField<?>[] fields = params.getOrderBy()
+				.orElse( AmortizationParamsOrderBy.DESCRIPTION_ASC )
+				.visit(new OrderFields()); 
+		if (linesFields) {
+			int size = fields.length + DETAIL_FIELDS.length;
+			SortField<?>[] ret = new SortField<?>[size];
+			for (int i=0; i<fields.length; i++) ret[i] = fields[i];
+			for (int i=0; i<DETAIL_FIELDS.length; i++) ret[fields.length + i] = DETAIL_FIELDS[i];
+			return ret; 
+		} 
+		return fields; 
+	}
+	
+	private static class OrderFields implements AmortizationParamsOrderByVisitor<SortField<?>[]> {
+		@Override 
+		public SortField<?>[] visitIdAsc() {
+			return new SortField<?>[] { AMORTIZATION.ID.asc() };
+		}
+		@Override 
+		public SortField<?>[] visitIdDesc() {
+			return new SortField<?>[] { AMORTIZATION.ID.desc() };
+		}
+		@Override 
+		public SortField<?>[] visitDescriptionAsc() {
+			return new SortField<?>[] { AMORTIZATION.DESCRIPTION.asc() }; 
+		}
+		@Override 
+		public SortField<?>[] visitDescriptionDesc() {
+			return new SortField<?>[] { AMORTIZATION.DESCRIPTION.desc() };
+		}
+		@Override 
+		public SortField<?>[] visitInitialDateAsc() {
+			return new SortField<?>[] { AMORTIZATION.INITIAL_DATE.asc() };
+		}
+		@Override 
+		public SortField<?>[] visitInitialDateDesc() {
+			return new SortField<?>[] { AMORTIZATION.INITIAL_DATE.desc() };
+		}
+		
+	}
 }
