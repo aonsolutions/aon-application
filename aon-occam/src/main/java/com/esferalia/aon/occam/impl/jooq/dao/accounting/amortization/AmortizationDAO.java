@@ -159,7 +159,15 @@ public class AmortizationDAO {
 	private static Condition getCondition(AmortizationParams params) {
 	    if (params == null)
 	        throw new AonCoreException(AonError.EMPTY_DATA.format("Par\u00E1metros de b\u00FAsqueda"));
-	    return AMORTIZATION.DOMAIN.eq(getDomain(params))
+	    Condition c = AMORTIZATION.DOMAIN.eq(getDomain(params));
+	    c = params.getDeadlineFilled()
+	    	.filter( f -> params.getFromDeadline().isEmpty() )
+	    	.filter( f -> params.getToDeadline().isEmpty() )
+	    	.map(f -> f?AMORTIZATION.DEADLINE.isNotNull():AMORTIZATION.DEADLINE.isNull())
+	    	.map( c::and )
+	    	.orElse(c)
+    	;
+	    return c
 	        .and(when(params.getFromInitialDate(),  d -> AMORTIZATION.INITIAL_DATE.ge(AonDateUtils.toSql(d))))
 	        .and(when(params.getToInitialDate(),    d -> AMORTIZATION.INITIAL_DATE.le(AonDateUtils.toSql(d))))
 	        .and(when(params.getFromDeadline(),     d -> AMORTIZATION.DEADLINE.ge(AonDateUtils.toSql(d))))

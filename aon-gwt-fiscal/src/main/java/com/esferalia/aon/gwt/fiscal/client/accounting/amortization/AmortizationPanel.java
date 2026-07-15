@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams.AmortizationParamsOrderBy;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -82,6 +83,7 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 	private AonCustomDateBox toInitialDateBox = new AonCustomDateBox(AON.MSG.to());
 	private AonCustomDateBox fromDeadlineBox = new AonCustomDateBox(AON.MSG.saleDate());
 	private AonCustomDateBox toDeadlineBox = new AonCustomDateBox(AON.MSG.to());
+	private AonCustomListBox deadlineFilledBox = new AonCustomListBox(AON.MSG.status());
 	private AonCustomListBox confidentialBox = new AonCustomListBox(AON.MSG.confidential());
 	private AonAccountBox allocationBox;
 	private AonAccountBox accumulatedBox;
@@ -302,6 +304,7 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 			.setAccumulatedAccount(accumulatedBox.getId())
 			.setInvestAsset(investAssetBox.getInvestAsset().map(ia -> ia.getId()).orElse(null))
 			.setSecurityLevel( SecurityLevel.safeValueOf( AonNumberUtils.toInteger(confidentialBox.getValue()) ))
+			.setDeadlineFilled(  AonEnumUtils.safeBoolean(deadlineFilledBox.getSelectedIndex()) )
 			.setOrderBy( AmortizationParamsOrderBy.values()[orderByBox.getSelectedIndex()])
 		;
 		
@@ -468,6 +471,9 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 		confidentialBox.addItem( "Confidenciales", "1" );
 		confidentialBox.addItem( "Todos", "2");
 		
+		deadlineFilledBox.addItem( "Fichas activas", "0" );
+		deadlineFilledBox.addItem( "Fichas dadas de baja", "1" );
+		deadlineFilledBox.addItem( "Todas", "2");
 		
 		AonCollectionUtils.stream(AmortizationParamsOrderBy.values())
 			.forEach( e -> orderByBox.addItem( e.getDescription()));
@@ -484,6 +490,7 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 		fixedAssetBox.addSelectionHandler(e -> showTable(opts));
 		investAssetBox.addSelectionHandler(e -> showTable(opts));
 		confidentialBox.addChangeHandler(e -> showTable(opts));
+		deadlineFilledBox.addChangeHandler(e -> showTable(opts));
 		orderByBox.addChangeHandler(e -> showTable(opts));
 		
 		this.addFilterWidget(descriptionBox);
@@ -501,6 +508,8 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 		deadlinePanel.add(toDeadlineBox);
 		this.addFilterWidget(deadlinePanel);
 
+		this.addFilterWidget(deadlineFilledBox);
+		
 		this.addFilterWidget(new AonCustomWidget<AonAccountBox>(AON.MSG.fixedAssetAccount(), fixedAssetBox));
 		this.addFilterWidget(new AonCustomWidget<AonAccountBox>(AON.MSG.allocationAccount(), allocationBox));
 		this.addFilterWidget(new AonCustomWidget<AonAccountBox>(AON.MSG.accumulatedAccount(), accumulatedBox));
@@ -522,6 +531,7 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 		toInitialDateBox.setValue(null, false);
 		fromDeadlineBox.setValue(null, false);
 		toDeadlineBox.setValue(null, false);
+		deadlineFilledBox.setValue("2");
 		confidentialBox.setValue("2");
 		descriptionBox.setValue(null, false);
 		allocationBox.setValue(null, false);

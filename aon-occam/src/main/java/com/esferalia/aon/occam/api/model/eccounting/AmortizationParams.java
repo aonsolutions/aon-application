@@ -28,6 +28,7 @@ public class AmortizationParams implements Serializable {
 	private Date fromInitialDate;
 	private Date toInitialDate;
 	
+	private Boolean deadlineFilled;
 	private Date fromDeadline;
 	private Date toDeadline;
 	
@@ -128,6 +129,14 @@ public class AmortizationParams implements Serializable {
 	}
 	public AmortizationParams setToInitialDate(Date toInitialDate) {
 		this.toInitialDate = toInitialDate;
+		return this;
+	}
+	
+	public Optional<Boolean> getDeadlineFilled() {
+		return Optional.ofNullable(deadlineFilled);
+	}
+	public AmortizationParams setDeadlineFilled(Boolean deadlineFilled) {
+		this.deadlineFilled = deadlineFilled;
 		return this;
 	}
 	
