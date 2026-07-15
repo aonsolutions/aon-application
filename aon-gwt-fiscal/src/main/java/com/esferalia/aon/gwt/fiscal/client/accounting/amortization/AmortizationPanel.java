@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomWidget;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonInvestAssetBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
@@ -85,6 +86,7 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 	private AonAccountBox allocationBox;
 	private AonAccountBox accumulatedBox;
 	private AonAccountBox fixedAssetBox;
+	private AonInvestAssetBox investAssetBox;
 	private AonCustomListBox orderByBox = new AonCustomListBox(AON.MSG.orderBy());
 
 	public AmortizationPanel( AmortizationModuleOptions opts ) {
@@ -298,6 +300,7 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 			.setFixedAssetAccount(fixedAssetBox.getId())
 			.setAllocationAccount(allocationBox.getId())
 			.setAccumulatedAccount(accumulatedBox.getId())
+			.setInvestAsset(investAssetBox.getInvestAsset().map(ia -> ia.getId()).orElse(null))
 			.setSecurityLevel( SecurityLevel.safeValueOf( AonNumberUtils.toInteger(confidentialBox.getValue()) ))
 			.setOrderBy( AmortizationParamsOrderBy.values()[orderByBox.getSelectedIndex()])
 		;
@@ -459,6 +462,7 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 		allocationBox.setRequired(false);
 		accumulatedBox = new AonAccountBox( opts.getOccam(), false);
 		accumulatedBox.setRequired(false);
+		investAssetBox = new AonInvestAssetBox( opts, AON.MSG.investAsset());
 		
 		confidentialBox.addItem( "NO confidenciales", "0" );
 		confidentialBox.addItem( "Confidenciales", "1" );
@@ -478,6 +482,7 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 		allocationBox.addSelectionHandler(e -> showTable(opts));
 		accumulatedBox.addSelectionHandler(e -> showTable(opts));
 		fixedAssetBox.addSelectionHandler(e -> showTable(opts));
+		investAssetBox.addSelectionHandler(e -> showTable(opts));
 		confidentialBox.addChangeHandler(e -> showTable(opts));
 		orderByBox.addChangeHandler(e -> showTable(opts));
 		
@@ -499,6 +504,7 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 		this.addFilterWidget(new AonCustomWidget<AonAccountBox>(AON.MSG.fixedAssetAccount(), fixedAssetBox));
 		this.addFilterWidget(new AonCustomWidget<AonAccountBox>(AON.MSG.allocationAccount(), allocationBox));
 		this.addFilterWidget(new AonCustomWidget<AonAccountBox>(AON.MSG.accumulatedAccount(), accumulatedBox));
+		this.addFilterWidget(investAssetBox);
 		
 		if (opts.getConfiguration() != null 
 			&& opts.getConfiguration().getUser() != null 
@@ -518,6 +524,10 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 		toDeadlineBox.setValue(null, false);
 		confidentialBox.setValue("2");
 		descriptionBox.setValue(null, false);
+		allocationBox.setValue(null, false);
+		accumulatedBox.setValue(null, false);
+		fixedAssetBox.setValue(null, false);
+		investAssetBox.setInvestAsset(null, false);
 		orderByBox.setSelectedIndex(0);
 	}
 }
