@@ -185,6 +185,10 @@ public class AmortizationReportExcelPrint extends HttpServlet {
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 50 * 256);
 			
+			CellUtil.createCell(row, cellCount, "Bien de inversi\u00F3n", headerStyle);
+			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
+			sheet.setColumnWidth(cellCount++, 50 * 256);
+
 			CellUtil.createCell(row, cellCount, "Desde Fec.", headerStyle);
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 12 * 256);
@@ -243,6 +247,7 @@ public class AmortizationReportExcelPrint extends HttpServlet {
 					addCell(am.getFixedAssetAccount().getFullName());
 					addCell(am.getAccumulatedAccount().getFullName());
 					addCell(am.getAllocationAccount().getFullName());
+					addCell(am.getInvestAsset() != null ? am.getInvestAsset().getDescription() : "");
 					addCell(det.getFromDate());
 					addCell(det.getToDate());
 					addCell(det.getCoefficient());

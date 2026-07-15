@@ -177,8 +177,8 @@ class AccountingAmortizationFilterPanel extends SimpleLayoutPanel implements Has
 	AmortizationParams getWidgetParams(AmortizationModuleOptions opts) {
 		AmortizationParams params = new AmortizationParams()
 			.setDomain(opts.getDomain())
-			.setInitialDate(fromDateBox.getValue())
-			.setDeadline(toDateBox.getValue())
+			.setFromInitialDate(fromDateBox.getValue())
+			.setFromDeadline(toDateBox.getValue())
 		;
 		if (accountBox.getId() != null) {
 			params.setAllocationAccount( accountBox.getId() );

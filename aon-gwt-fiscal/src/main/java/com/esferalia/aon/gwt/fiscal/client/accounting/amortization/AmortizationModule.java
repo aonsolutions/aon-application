@@ -61,7 +61,12 @@ public class AmortizationModule implements EntryPoint {
 	}
 	
 	private void loadModule( AmortizationModuleOptions opts ) {
-		AmortizationPanel panel = new AmortizationPanel(opts);
+		AmortizationPanel panel = new AmortizationPanel(opts) {
+			@Override
+			protected void onClearFilter() {
+				this.clearFilter( opts );
+			}
+		};
 		opts.getParentWidget().add(panel);
 	}
 	
