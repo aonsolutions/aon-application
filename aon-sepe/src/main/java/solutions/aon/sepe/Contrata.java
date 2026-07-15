@@ -441,7 +441,7 @@ public class Contrata {
 
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click();
 			handleSepeExceptions(htmlPage);
-
+			
 			htmlPage = loginAndSelectEnterprise(cto.getCifEnterprise(), htmlPage);
 			handleSepeExceptions(htmlPage);
 
@@ -591,9 +591,14 @@ public class Contrata {
 				form.getInputByName("fechainicio").setValueAttribute(startDate[0] + "/" + startDate[1] + "/" + startDate[2]);
 				
 				if(null != endDate) {
-					form.getInputByName("diafechafin").setValueAttribute(endDate[0]);
-					form.getInputByName("mesfechafin").setValueAttribute(endDate[1]);
-					form.getInputByName("anniofechafin").setValueAttribute(endDate[2]);
+					try {
+						form.getInputByName("diafechafin").setValueAttribute(endDate[0]);
+						form.getInputByName("mesfechafin").setValueAttribute(endDate[1]);
+						form.getInputByName("anniofechafin").setValueAttribute(endDate[2]);
+					} catch (Exception e) {
+						e.printStackTrace();
+						System.err.println("Error setting end date: " + endDate[0] + "/" + endDate[1] + "/" + endDate[2]);
+					}
 				}
 
 				setOccupation(cto, form);
