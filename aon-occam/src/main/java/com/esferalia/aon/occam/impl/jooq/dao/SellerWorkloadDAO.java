@@ -497,8 +497,10 @@ public class SellerWorkloadDAO {
 
 		while (start.before(end)) {
 
+			// ---- FEES por SELLER ----
 			if (null != params.getSeller()) {
-				SelectConditionStep<Record1<Integer>> select = ctx.getDslContext().selectDistinct(CUSTOMER_FEE.ID)
+				SelectConditionStep<Record3<Integer, Integer, Byte>> select = ctx.getDslContext()
+						.selectDistinct(CUSTOMER_FEE.ID, CUSTOMER.REGISTRY, CUSTOMER.STATUS)
 						.from(CUSTOMER_FEE)
 						.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 						.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
@@ -508,16 +510,13 @@ public class SellerWorkloadDAO {
 						.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))
 						.and(recalculatedBillingDateAdjusted.lessThan(start));
 
-				applyFeeOrdering(select, params);
-
-				Result<Record1<Integer>> result = select.groupBy(CUSTOMER_FEE.ID).offset(params.getOffset())
-						.limit(params.getLimit()).fetch();
-
-				customerFeeIds.addAll(result.getValues(CUSTOMER_FEE.ID));
+				addFilteredIds(select.fetch(), CUSTOMER_FEE.ID, sf, customerFeeIds);
 			}
 
+			// ---- FEES por TASK_HOLDER (proyecto) ----
 			if (null != params.getTaskHolder()) {
-				SelectConditionStep<Record1<Integer>> select = ctx.getDslContext().selectDistinct(CUSTOMER_FEE.ID)
+				SelectConditionStep<Record3<Integer, Integer, Byte>> select = ctx.getDslContext()
+						.selectDistinct(CUSTOMER_FEE.ID, CUSTOMER.REGISTRY, CUSTOMER.STATUS)
 						.from(CUSTOMER_FEE)
 						.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 						.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
@@ -527,16 +526,13 @@ public class SellerWorkloadDAO {
 						.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))
 						.and(recalculatedBillingDateAdjusted.lessThan(start));
 
-				applyFeeOrdering(select, params);
-
-				Result<Record1<Integer>> result = select.groupBy(CUSTOMER_FEE.ID).offset(params.getOffset())
-						.limit(params.getLimit()).fetch();
-
-				customerFeeIds.addAll(result.getValues(CUSTOMER_FEE.ID));
+				addFilteredIds(select.fetch(), CUSTOMER_FEE.ID, sf, customerFeeIds);
 			}
 
+			// ---- INVOICES por SELLER ----
 			if (null != params.getSeller()) {
-				SelectConditionStep<Record1<Integer>> invoiceSelect = ctx.getDslContext().selectDistinct(INVOICE_DETAIL.ID)
+				SelectConditionStep<Record3<Integer, Integer, Byte>> invoiceSelect = ctx.getDslContext()
+						.selectDistinct(INVOICE_DETAIL.ID, CUSTOMER.REGISTRY, CUSTOMER.STATUS)
 						.from(INVOICE_DETAIL)
 						.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
@@ -544,14 +540,13 @@ public class SellerWorkloadDAO {
 						.and(INVOICE_DETAIL.DOMAIN.in(domainIds))
 						.and(INVOICE.ISSUE_DATE.between(start, endIt));
 
-				Result<Record1<Integer>> resultInvoice = invoiceSelect.groupBy(INVOICE_DETAIL.ID).offset(params.getOffset())
-						.limit(params.getLimit()).fetch();
-
-				invoiceIds.addAll(resultInvoice.getValues(INVOICE_DETAIL.ID));
+				addFilteredIds(invoiceSelect.fetch(), INVOICE_DETAIL.ID, sf, invoiceIds);
 			}
 
+			// ---- INVOICES por TASK_HOLDER (proyecto) ----
 			if (null != params.getTaskHolder()) {
-				SelectConditionStep<Record1<Integer>> invoiceSelect = ctx.getDslContext().selectDistinct(INVOICE_DETAIL.ID)
+				SelectConditionStep<Record3<Integer, Integer, Byte>> invoiceSelect = ctx.getDslContext()
+						.selectDistinct(INVOICE_DETAIL.ID, CUSTOMER.REGISTRY, CUSTOMER.STATUS)
 						.from(INVOICE_DETAIL)
 						.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
@@ -559,10 +554,7 @@ public class SellerWorkloadDAO {
 						.and(INVOICE_DETAIL.DOMAIN.in(domainIds))
 						.and(INVOICE.ISSUE_DATE.between(start, endIt));
 
-				Result<Record1<Integer>> resultInvoice = invoiceSelect.groupBy(INVOICE_DETAIL.ID).offset(params.getOffset())
-						.limit(params.getLimit()).fetch();
-
-				invoiceIds.addAll(resultInvoice.getValues(INVOICE_DETAIL.ID));
+				addFilteredIds(invoiceSelect.fetch(), INVOICE_DETAIL.ID, sf, invoiceIds);
 			}
 
 			start = AonDateUtils.toSql(AonDateUtils.addMonths(start, 1));
@@ -583,9 +575,11 @@ public class SellerWorkloadDAO {
 		customerFeeParams.setAsc(params.isAsc());
 
 		LinkedList<Fee> feeList = customerFeeIds.size() > 0 ? getFees(ctx, customerFeeParams) : new LinkedList<Fee>();
-		List<InvoiceDetail> invoiceList = InvoiceDetailExtendedDAO
-				.getInvoiceDetails(ctx, f -> f.getDetailIdProperty().in(customerFeeParams.getInvoiceIds()))
-				.collect(Collectors.toList());
+		List<InvoiceDetail> invoiceList = invoiceIds.isEmpty()
+				? new java.util.ArrayList<>()
+				: InvoiceDetailExtendedDAO
+						.getInvoiceDetails(ctx, f -> f.getDetailIdProperty().in(customerFeeParams.getInvoiceIds()))
+						.collect(Collectors.toList());
 
 		SellerWorkloadContent sellerWorkloadContent = new SellerWorkloadContent()
 				.setFees(
@@ -598,6 +592,29 @@ public class SellerWorkloadDAO {
 				.setInvoiceDetails(invoiceList);
 
 		return sellerWorkloadContent;
+	}
+
+	/**
+	 * Recorre las filas (id, registry, status) y añade el id a la coleccion
+	 * solo si el cliente pasa el filtro de estado.
+	 */
+	private static void addFilteredIds(Result<Record3<Integer, Integer, Byte>> rows,
+			Field<Integer> idField, StatusFilter sf, HashSet<Integer> target) {
+		for (Record3<Integer, Integer, Byte> r : rows) {
+			Integer id = r.get(idField);
+			Integer registry = r.get(CUSTOMER.REGISTRY);
+			Byte status = r.get(CUSTOMER.STATUS);
+			if (status == null) {
+				status = (byte) 0; // sin status -> activo, conservador
+			}
+			if (registry == null) {
+				target.add(id); // sin registry no podemos filtrar; conservador
+				continue;
+			}
+			if (incluir(status, registry, sf)) {
+				target.add(id);
+			}
+		}
 	}
 
 	// ------------------------------------------------------------------
