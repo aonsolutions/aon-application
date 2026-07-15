@@ -882,7 +882,7 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 					crc = round((getLimit(LIM_4) * 18 / 100) + ((lq553 - getLimit(LIM_4)) * 19 / 100));						 
 				}
 				// B) Cálculo de la cuota por resultados extracooperativos
-				//	Si la clave 00554 es <= 50.000 (en términos absolutos) => CRE = 00553 x 21%
+				//	Si la clave 00554 es <= 50.000 (en términos absolutos) => CRE = 00554 x 21%
 				//	Si la clave 00554 es > 50.000 (en términos absolutos) => CRE = 50.000 x 21% + (00554 - 50.000) x 22 %
 				double cre = 0.0;
 				if (Math.abs(round(lq554)) <= getLimit(LIM_4)) {
@@ -1485,8 +1485,6 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		}		
 	}
 	
-	// La clave 01034 sólo puede tener contenido si se ha marcado la clave 00006 de caracteres de la
-	// declaración.
 	// La clave 01034 (disminuciones) sólo podrá tener contenido cuando la base imponible (clave
 	// 00552) sea positiva (excepto en los supuestos que también se haya marcado la clave 00072 de 
 	// caracteres "extinción de entidad", en cuyo caso la clave 01034 permanecerá cerrada sin posibilidad 
@@ -1496,7 +1494,7 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 	public double computeLQ1034A() throws AonCoreException {
 		
 		double lq552 = getValue(Mod2002025Key.LQ552);
-		if (isChecked(Mod2002025Key.C0006) && !isChecked(Mod2002025Key.C0072) && lq552 > 0) {
+		if (!isChecked(Mod2002025Key.C0072) && lq552 > 0) {
 			double lq1034 = roundKey(Mod2002025Key.LQ1034A);
 			if (lq1034 > round(lq552*10/100))
 				lq1034 = round(lq552*10/100);

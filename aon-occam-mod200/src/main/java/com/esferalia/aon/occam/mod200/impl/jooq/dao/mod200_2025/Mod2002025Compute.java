@@ -443,7 +443,7 @@ public class Mod2002025Compute {
 		addBreakdown(Mod2002025LQ1033_2Key.values(), Mod2002025Key.LQ1158, false);
 		
 		// Base imponible después de la reserva de nivelación
-		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ1330,"C0006?LQ552+LQ1033-LQ1034:LQ552");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.LQ1330,"LQ552+LQ1033-LQ1034");
 
 		// Sólo entidades cooperativas (Casillas 553 y 554)
 		COMPUTE_EXPRESSION_MAP.put(Mod2002025Key.CP2837,"(isCooperativa())?CP2827-CP2829-CP2832-CP2834:0.0");
