@@ -24,6 +24,7 @@ import net.aonsolutions.db.up2date.payroll.ContractCostSeaExpressionFix;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.ImporteHoraFormacion2026Update;
 import net.aonsolutions.db.up2date.scope.InsertDefaultScope;
+import net.aonsolutions.db.up2date.scope.UserScopeStartDateNotNull;
 import net.aonsolutions.db.up2date.security.UserScopeAlterStartEndAuditory;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBaseCgcJornadasTotalesFix;
 import net.aonsolutions.db.up2date.tgss.CgcEMinInsert;
@@ -629,6 +630,7 @@ public class Up2Date {
 			//ContractCostSeaExpressionFix.CONTRACT_COST_SEA_EXPRESSION_FIX,
 			//AgriculturalBaseCgcJornadasTotalesFix.AGRICULTURALBASECGCJORNADASTOTALESFIX,
 			ImporteHoraFormacion2026Update.IMPORTEHORAFORMACION2026UPDATE,
+			UserScopeStartDateNotNull.USER_SCOPE_START_DATE_NOT_NULL,
 
 
 			// ----------------------------------------------------------------
