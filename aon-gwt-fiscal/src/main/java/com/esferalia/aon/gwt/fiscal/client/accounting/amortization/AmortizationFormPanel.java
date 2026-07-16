@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAmortizationTypeBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCloseTab;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableRow;
@@ -24,6 +25,7 @@ import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.type.AmortizationPeriod;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -139,6 +141,31 @@ class AmortizationFormPanel extends DockLayoutPanel {
 			tabPanel.selectTab(callback.getSelectedTab());
 		}
 		add( tabPanel );
+		
+		if ( callback.getAmortization().hasMessages() ) {
+			showMessages( callback.getAmortization() );
+		}
+		
+	}
+
+	private void showMessages(Amortization amortization) {
+		AonCustomPopup entryDialog = new AonCustomPopup();
+		entryDialog.setAnimationEnabled(true);
+		entryDialog.setGlassEnabled(true);
+		entryDialog.setModal(true);
+		entryDialog.setCaption(AON.MSG.message());
+		entryDialog.setWidth("500px");
+		entryDialog.setHeight("300px");
+		AmortizationMassagesList amortizationMassagesList = new AmortizationMassagesList( amortization );
+		amortizationMassagesList.setWidth("500px");
+		amortizationMassagesList.getElement().getStyle().setProperty("maxHeight", "300px");
+		amortizationMassagesList.addClickHandler(e -> entryDialog.hide());
+		amortizationMassagesList.addKeyUpHandler(e -> {
+			if (e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) entryDialog.hide();
+		});
+		entryDialog.add(amortizationMassagesList);
+		entryDialog.center();
+		entryDialog.show();
 	}
 
 	private Widget getHeader(AmortizationModuleOptions opts, AmortizationFormPanelCallback cbk) {

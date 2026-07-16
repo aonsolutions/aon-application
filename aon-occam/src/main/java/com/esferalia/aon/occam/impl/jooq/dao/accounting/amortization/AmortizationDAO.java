@@ -6,6 +6,8 @@ import static com.esferalia.aon.jooq.tables.Amortization.AMORTIZATION;
 import static com.esferalia.aon.jooq.tables.AmortizationDetail.AMORTIZATION_DETAIL;
 import static com.esferalia.aon.jooq.tables.AmortizationInvoice.AMORTIZATION_INVOICE;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -46,6 +48,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AmortizationDetailStatus;
 import com.esferalia.aon.occam.api.model.type.AmortizationPeriod;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
@@ -64,6 +67,8 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AmortizationDAO {
+	
+	private static final double INVESTMENT_LIMIT = 3005.06;
 	
 	private static final String AMORTIZATION_DETAIL_ID_LABEL = "Identificador del detalle de amortizaci\u00F3n";
 	private static final String AMORTIZATION_DETAIL_LABEL = "Detalle de amortizaci\u00F3n";
@@ -114,6 +119,7 @@ public class AmortizationDAO {
 	        .values()
 	        .stream()
 			.findFirst()
+			.map( am -> checkLinkedInvoices(ctx, domain, am) )
 			.map( am -> calculateDetails(am) )
 		;
 	}
@@ -804,27 +810,32 @@ public class AmortizationDAO {
 		return get(ctx, am.getDomain(), am.getId())
 			.orElseThrow(() -> new AonCoreException("Error al grabar amortizaci\u00F3n"));
 	}
+	
+	private static Stream<AmortizationInvoice> getInvoices(AONContext ctx, Integer domain, Amortization am) {
+		if (am == null) throw new AonCoreException(AonError.EMPTY_DATA.format("Amortization"));
+		return ctx.getDslContext()
+		        .select()
+		        .from(AMORTIZATION_INVOICE)
+				.where(AMORTIZATION_INVOICE.AMORTIZATION.eq(am.getId()))
+				.fetch()
+				.stream()
+				.map( r -> new AmortizationInvoice()
+					.setId( r.getValue(AMORTIZATION_INVOICE.ID) )
+					.setDomain( domain )
+					.setAmortization( am )
+					.setInvoice( InvoiceDAO.getFullInvoice(ctx, r.getValue(AMORTIZATION_INVOICE.INVOICE)) ))
+				.map( ami -> fillAccountEntry(ctx, ami) )
+				
+			;
+	}
 
 	public static LinkedList<AmortizationInvoice> getInvoices(AONContext ctx, Integer domain, Integer amortizationId) {
 		if (domain == null) throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
 		if (amortizationId == null) throw new AonCoreException(AonError.EMPTY_ID.getMessage());
 		Amortization am = get(ctx, domain, amortizationId)
 			.orElseThrow(() -> new AonCoreException(AonError.AMORTIZATION_NOT_FOUND.getMessage()));
-		return ctx.getDslContext()
-	        .select()
-	        .from(AMORTIZATION_INVOICE)
-			.where(AMORTIZATION_INVOICE.AMORTIZATION.eq(amortizationId))
-			.fetch()
-			.stream()
-			.map( r -> new AmortizationInvoice()
-				.setId( r.getValue(AMORTIZATION_INVOICE.ID) )
-				.setDomain( domain )
-				.setAmortization( am )
-				.setInvoice( InvoiceDAO.getFullInvoice(ctx, r.getValue(AMORTIZATION_INVOICE.INVOICE)) ))
-			.map( ami -> fillAccountEntry(ctx, ami) )
-			.collect(Collectors.toCollection(LinkedList::new))
-		;
-		
+		return getInvoices(ctx, domain, am)
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	private static AmortizationInvoice fillAccountEntry(AONContext ctx, AmortizationInvoice ami) {
@@ -944,5 +955,58 @@ public class AmortizationDAO {
 			return new SortField<?>[] { AMORTIZATION.INITIAL_DATE.desc() };
 		}
 		
+	}
+	
+	public static Amortization checkLinkedInvoices( AONContext ctx, Integer domain, Amortization am) {
+		double totalBases = ctx.getDslContext().select(INVOICE_DETAIL.TAXABLE_BASE)
+			.from(AMORTIZATION_INVOICE)
+			.join(INVOICE).on(INVOICE.ID.eq(AMORTIZATION_INVOICE.INVOICE))
+			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.eq(INVOICE.ID))
+			.where(AMORTIZATION_INVOICE.AMORTIZATION.eq(am.getId()))
+			.and(AMORTIZATION_INVOICE.DOMAIN.eq(domain))
+			.and(INVOICE.TYPE.ne(InvoiceType.SALES.value()))
+			.and(INVOICE_DETAIL.PREPAYMENT.eq((byte) 0))
+			.fetch()
+			.stream()
+			.mapToDouble(r -> r.getValue(INVOICE_DETAIL.TAXABLE_BASE))
+			.sum();
+		if (totalBases >= INVESTMENT_LIMIT) {
+			ctx.getDslContext().selectOne()
+				.from(AMORTIZATION_INVOICE)
+				.join(INVOICE).on(AMORTIZATION_INVOICE.INVOICE.eq(INVOICE.ID))
+				.where(AMORTIZATION_INVOICE.AMORTIZATION.eq(am.getId()))
+				.and(AMORTIZATION_INVOICE.DOMAIN.eq(domain))
+				.and(INVOICE.TYPE.ne(InvoiceType.SALES.value()))
+				.and(INVOICE.INVESTMENT.eq((byte)0))
+				.fetch()
+				.stream()
+				.findAny()
+				.ifPresent( x -> am.addMessage(
+					"La base imponible de las facturas recibidas vinculadas supera "
+					+ INVESTMENT_LIMIT
+					+ " \u20AC: la ficha tiene la consideraci\u00F3n de bien de"
+					+ " inversi\u00F3n (art. 108 LIVA). Recuerde marcar las facturas"
+					+ " como inversi\u00F3n para declararlas en los modelos de IVA"
+				));
+		} else {
+			ctx.getDslContext().selectOne()
+				.from(AMORTIZATION_INVOICE)
+				.join(INVOICE).on(AMORTIZATION_INVOICE.INVOICE.eq(INVOICE.ID))
+				.where(AMORTIZATION_INVOICE.AMORTIZATION.eq(am.getId()))
+				.and(AMORTIZATION_INVOICE.DOMAIN.eq(domain))
+				.and(INVOICE.TYPE.ne(InvoiceType.SALES.value()))
+				.and(INVOICE.INVESTMENT.eq((byte)1))
+				.fetch()
+				.stream()
+				.findAny()
+				.ifPresent( ami -> am.addMessage(
+					"La base imponible de las facturas recibidas vinculadas no supera "
+					+ INVESTMENT_LIMIT
+					+ " \u20AC: la ficha no tiene la consideraci\u00F3n de bien de"
+					+ " inversi\u00F3n (art. 108 LIVA). Recuerde desmarcar las facturas"
+					+ " como inversi\u00F3n para no declararlas como tal en los modelos de IVA"
+				));
+		}
+		return am;
 	}
 }
