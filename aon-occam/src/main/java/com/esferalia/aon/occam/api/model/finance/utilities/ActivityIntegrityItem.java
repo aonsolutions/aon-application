@@ -11,6 +11,7 @@ public class ActivityIntegrityItem implements IFinanceUtilitiesItem {
 	private String invoiceRef;
 	private Integer invoiceActivityId;
 	private String invoiceActivityRef;
+	private boolean invoiceDeclared;
 	
 	private Integer accountEntryId;
 	private Integer accountEntryActivityId;
@@ -74,6 +75,15 @@ public class ActivityIntegrityItem implements IFinanceUtilitiesItem {
 		this.invoiceActivityRef = invoiceActivityRef;
 		return this;
 	}
+	
+	public boolean isInvoiceDeclared() {
+		return invoiceDeclared;
+	}
+	public ActivityIntegrityItem setInvoiceDeclared(boolean invoiceDeclared) {
+		this.invoiceDeclared = invoiceDeclared;
+		return this;
+	}
+	
 	public Integer getAccountEntryId() {
 		return accountEntryId;
 	}
