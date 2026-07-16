@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdownNew;
@@ -216,6 +217,7 @@ public interface IAccounting {
 	public LinkedList<AmortizationInvoice> getAmortizationInvoices(AONContext ctx, Integer domain, Integer amortizationId);
 	public void linkAmortizationInvoices(AONContext ctx, Integer domain, Integer amotizationId, Integer[] invoiceIds);
 	public void unlinkAmortizationInvoice(AONContext ctx, Integer domain, Integer amortizationId, Integer invoiceId);
+	public Invoice changeInvestment(CloseableAONContext ctx, Integer domain, Integer invoiceId);
 	
 	// ********************************** [INVOICES CONUNTERS]
 	public Stream<DomainInvoiceStat> getDomainInvoiceStats(AONContext ctx, DomainInvoiceStatParams params);

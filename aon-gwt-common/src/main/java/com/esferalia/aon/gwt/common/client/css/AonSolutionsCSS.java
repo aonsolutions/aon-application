@@ -1799,5 +1799,24 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_flex_table_cell_inner")
 	String aonFlexTableCellInner();
+	
+    @ClassName("aon_message_toast")
+    String aonMessageToast();
+
+    @ClassName("aon_message_toast_visible")
+    String aonMessageToastVisible();
+
+    @ClassName("aon_message_toast_content")
+    String aonMessageToastContent();
+
+    @ClassName("aon_message_toast_error")
+    String aonMessageToastError();
+
+    @ClassName("aon_message_toast_success")
+    String aonMessageToastSuccess();
+
+    @ClassName("aon_message_toast_info")
+    String aonMessageToastInfo();
+	
 }
 

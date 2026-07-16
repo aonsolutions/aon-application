@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetailFlat;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface AmortizationServiceAsync {
@@ -30,4 +31,5 @@ public interface AmortizationServiceAsync {
 	void getInvoices(Occam occam, Integer domain, Integer amortizationId, AsyncCallback<LinkedList<AmortizationInvoice>> callback);
 	void linkInvoices(Occam occam, Integer domain, Integer amortizationId, Integer[] invoiceIds, AsyncCallback<Void> asyncCallback);
 	void unlinkInvoice(Occam occam, Integer domain, Integer amortizationId, Integer invoiceId, AsyncCallback<Void> asyncCallback);
+	void changeInvestment(Occam occam, Integer domain, Integer invoiceId, AsyncCallback<Invoice> asyncCallback);
 }

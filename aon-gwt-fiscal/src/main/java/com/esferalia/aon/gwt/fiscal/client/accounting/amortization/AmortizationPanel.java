@@ -14,7 +14,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonInvestAssetBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageToast;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
@@ -41,10 +41,11 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 	private static final int FORM_IDX = 1;
 	private static final String AMORTIZATION_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/AmortizationReportExcelPrint";
 	
-	
 	static interface AmortizationPanelCallback {
 		Amortization getAmortization();
 		void showError(String message);
+		void showInfo(String message);
+		void showSuccess(String message);
 		AonToolbarButton paintSaveButton( );
 		AonToolbarButton paintDeleteButton( );
 		AonToolbarButton paintCalculateButton( );
@@ -142,12 +143,12 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 	
 				@Override
 				public void onFailure(Throwable ex) {
-					getToolbar().showErrorMessage( ex.getMessage() );
+					AonMessageToast.showError(ex.getMessage());
 				}
 	
 				@Override
 				public void onSuccess(Void v) {
-					getToolbar().showInfoMessage( AON.MSG.saveSuccess(), AonToolbar.DEFAULT_DELAY );
+					AonMessageToast.showSuccess(AON.MSG.saveSuccess());
 					showTable(opts);
 				}
 			})
@@ -160,12 +161,12 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 	
 				@Override
 				public void onFailure(Throwable ex) {
-					getToolbar().showErrorMessage( ex.getMessage() );
+					AonMessageToast.showError(ex.getMessage());
 				}
 	
 				@Override
 				public void onSuccess(Amortization saved) {
-					getToolbar().showInfoMessage( AON.MSG.saveSuccess(), AonToolbar.DEFAULT_DELAY );
+					AonMessageToast.showSuccess(AON.MSG.saveSuccess());
 					showForm(opts, saved);
 				}
 				
@@ -240,13 +241,13 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 
 				@Override
 				public void onFailure(Throwable ex) {
-					getToolbar().showErrorMessage( ex.getMessage() );
+					AonMessageToast.showError(ex.getMessage());
 					saleDialog.hide();
 				}
 
 				@Override
 				public void onSuccess(Amortization saved) {
-					getToolbar().showInfoMessage( AON.MSG.saveSuccess(), AonToolbar.DEFAULT_DELAY );
+					AonMessageToast.showSuccess(AON.MSG.saveSuccess());
 					saleDialog.hide();
 					showForm(opts, saved);
 				}
@@ -273,12 +274,12 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 	
 				@Override
 				public void onFailure(Throwable ex) {
-					getToolbar().showErrorMessage( ex.getMessage() );
+					AonMessageToast.showError(ex.getMessage());
 				}
 	
 				@Override
 				public void onSuccess(Amortization saved) {
-					getToolbar().showInfoMessage( AON.MSG.saveSuccess(), AonToolbar.DEFAULT_DELAY );
+					AonMessageToast.showSuccess(AON.MSG.saveSuccess());
 					showForm(opts, saved);
 				}
 				
@@ -343,7 +344,7 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 
 			@Override
 			public void onFailure(Throwable ex) {
-				getToolbar().showErrorMessage( ex.getMessage() );
+				AonMessageToast.showError(ex.getMessage());
 			}
 
 			@Override
@@ -369,7 +370,17 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 			
 			@Override
 			public void showError(String message) {
-				getToolbar().showErrorMessage(message);
+				AonMessageToast.showError(message);
+			}
+
+			@Override
+			public void showInfo(String message) {
+				AonMessageToast.showInfo(message);
+			}
+			
+			@Override
+			public void showSuccess(String message) {
+				AonMessageToast.showSuccess(message);
 			}
 
 			@Override

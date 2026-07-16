@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetailFlat;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -95,4 +96,11 @@ public class AmortizationServiceImpl extends AonStatelessRemoteServiceServlet im
 	public void unlinkInvoice(Occam occam, Integer domain, Integer amortizationId, Integer invoiceId) throws AonCoreException {
 		ACCOUNTING.unlinkAmortizationInvoice(occam, domain, amortizationId, invoiceId);
 	}
+
+	@Override
+	public Invoice changeInvestment(Occam occam, Integer domain, Integer invoiceId) throws AonCoreException {
+		return ACCOUNTING.changeInvestment(occam, domain, invoiceId);
+	}
+	
+	
 }
