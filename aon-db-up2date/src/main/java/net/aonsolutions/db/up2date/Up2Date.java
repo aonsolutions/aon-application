@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.ContractCostExpressionText;
 import net.aonsolutions.db.up2date.payroll.ContractCostSeaExpressionFix;
+import net.aonsolutions.db.up2date.payroll.ContractForeignKeysAddIfNotExist;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.ImporteHoraFormacion2026Update;
 import net.aonsolutions.db.up2date.scope.InsertDefaultScope;
@@ -631,6 +632,7 @@ public class Up2Date {
 			//AgriculturalBaseCgcJornadasTotalesFix.AGRICULTURALBASECGCJORNADASTOTALESFIX,
 			ImporteHoraFormacion2026Update.IMPORTEHORAFORMACION2026UPDATE,
 			UserScopeStartDateNotNull.USER_SCOPE_START_DATE_NOT_NULL,
+			ContractForeignKeysAddIfNotExist.CONTRACTFOREIGNKEYSADDIFNOTEXITS,
 
 
 			// ----------------------------------------------------------------
