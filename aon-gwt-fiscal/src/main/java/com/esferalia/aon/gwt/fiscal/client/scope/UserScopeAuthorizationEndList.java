@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptD
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -404,7 +405,7 @@ public class UserScopeAuthorizationEndList extends AonCustomDockLayout {
 			e.stopPropagation();
 			e.getNativeEvent().stopPropagation();
 
-		    HashMap<Integer, String> map = userScope_.getScope().getScopeDomains();
+		    HashMap<Integer, Domain> map = userScope_.getScope().getScopeDomains();
 		    
 		    AonCustomDialog dialog = new AonCustomDialog();
 		    dialog.showCloseButton(true);
@@ -416,8 +417,8 @@ public class UserScopeAuthorizationEndList extends AonCustomDockLayout {
 	        root.getElement().getStyle().setProperty("margin", ".5rem");
 
 	        // Lista de valores del HashMap
-	        for (String value : map.values()) {
-	            Label item = new Label(value);
+	        for (Domain domain : map.values()) {
+	        	Label item = new Label(domain.getDescription());
 	            item.getElement().getStyle().setProperty("padding-left", ".5rem");
 	            root.add(item);
 	        }
