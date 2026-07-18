@@ -40,6 +40,7 @@ import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlTable;
 import org.htmlunit.html.HtmlTableCell;
 import org.htmlunit.html.HtmlTableRow;
+import org.htmlunit.util.WebConnectionWrapper;
 
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
@@ -151,7 +152,7 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 	}
 	
 	private static final String SEARCH_URL =
-	        "https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR";
+			"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR";
 
 	private static Collection<Employee> getTotalEmployees(final InputStream certificateInputStream,
 	        final String certificatePassword, final String certificateType,
@@ -161,10 +162,19 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 	    if (cccs == null) {
 	        return Collections.emptyList();
 	    }
+	    
+	    byte [] certificateData = certificateInputStream.readAllBytes();
 
-	    byte[] certificateData = certificateInputStream.readAllBytes();
+	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType);
+		         WebConnectionWrapper wrapper = HtmlUnitToolkit.transformXmlPage(webClient, certificateData, certificatePassword,
+		                 certificateType)) {
 
-	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType)) {
+		        webClient.getOptions().setCssEnabled(true);
+		        webClient.getOptions().setUseInsecureSSL(true);
+		        webClient.getOptions().setRedirectEnabled(true);
+		        webClient.getOptions().setJavaScriptEnabled(true);
+		        webClient.getOptions().setFetchPolyfillEnabled(true);
+		        webClient.getOptions().setThrowExceptionOnScriptError(false);
 
 	        List<Employee> employees = new LinkedList<>();
 
