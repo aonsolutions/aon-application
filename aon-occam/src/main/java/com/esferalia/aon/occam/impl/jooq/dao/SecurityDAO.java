@@ -56,7 +56,6 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
-import org.jooq.Record2;
 import org.jooq.Record6;
 import org.jooq.Record8;
 import org.jooq.Result;
@@ -1717,12 +1716,8 @@ public class SecurityDAO {
 			.collect(Collectors.toList());
 		
 		list.forEach(us -> {
-			Result<Record2<Integer, String>> scopeDomains = ctx.getDslContext().select(DOMAIN.ID, DOMAIN.DESCRIPTION)
-				.from(DOMAIN)
-				.where(DOMAIN.SCOPE.eq(us.getScope().getId()))
-				.fetch();
-			
-			scopeDomains.forEach(r -> us.getScope().getScopeDomains().put(r.get(DOMAIN.ID), r.get(DOMAIN.DESCRIPTION)));
+			LinkedList<Domain> domainsScope = DomainDAO.getDomainList(ctx, f -> f.getScopeProperty().eq(us.getScope().getId()));
+			domainsScope.forEach(r -> us.getScope().getScopeDomains().put(r.getId(), r));
 		});
 		
 		return list;
