@@ -94,11 +94,15 @@ public class ContractForeignKeysAddIfNotExist implements Update {
 				String referencedColumn = foreignKey[3];
 
 				if (!checkFK(ctx, constraint, database)) {
-
+					
+					ctx.execute("SET FOREIGN_KEY_CHECKS=0");
+					
 					fixViolations(ctx, column, referencedTable, referencedColumn);
 
 					ctx.execute("ALTER TABLE `" + TABLE + "` ADD CONSTRAINT `" + constraint + "` "
 							+ "FOREIGN KEY (`" + column + "`) REFERENCES `" + referencedTable + "` (`" + referencedColumn + "`)");
+				
+					ctx.execute("SET FOREIGN_KEY_CHECKS=1");
 				}
 			}
 		});
@@ -137,7 +141,9 @@ public class ContractForeignKeysAddIfNotExist implements Update {
 
 			System.out.println("Contracts with orphan " + column + " set to NULL = " + violatingIds.size());
 		} else {
-			removeContracts(ctx, violatingIds);
+			//removeContracts(ctx, violatingIds);
+			ctx.update(CONTRACT).set(CONTRACT.REGISTRATION, 666)
+			.where(CONTRACT.ID.in(violatingIds)).execute();
 
 			System.out.println("Contracts removed due to orphan " + column + " = " + violatingIds.size());
 		}
