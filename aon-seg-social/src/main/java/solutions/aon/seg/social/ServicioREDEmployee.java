@@ -150,87 +150,117 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 		return getTotalEmployees(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, cccs);
 	}
 	
+	private static final String SEARCH_URL =
+	        "https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR";
+
 	private static Collection<Employee> getTotalEmployees(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, Map<String, Set<String>> cccs) /*cccs -> Map<REGIME, Set<CCC>>*/
-			throws SegSocialException, IOException {
-		if (cccs == null) {
-			return Collections.emptyList();
-		}
-		
-		byte[] certificateData = certificateInputStream.readAllBytes();
-		
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType)) {
-			
-			List<Employee> employees = new LinkedList<>();
-			
-			webClient.getOptions().setCssEnabled(false);
-            webClient.getOptions().setJavaScriptEnabled(true);
-            
-			webClient.getOptions().setUseInsecureSSL(true);
-			webClient.getOptions().setRedirectEnabled(true);
-			
-			HtmlPage page =  webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
-			
-			System.out.println("CCCs loaded: " + cccs.size());
-			
-			for (Entry<String, Set<String>> entry : cccs.entrySet()) {
-				
-				String regime = entry.getKey();
-				Set<String> cccSet = entry.getValue();
-				
-				for(String ccc : cccSet) {
-					((HtmlInput)page.getElementById("SDFREG62_ayuda")).setValue(regime);
-					((HtmlInput)page.getElementById("SDFREG62_ayuda")).setValueAttribute(regime);
-					
-					((HtmlInput)page.getElementById("SDFTESO62")).setValue(ccc.substring(0, 2));
-					((HtmlInput)page.getElementById("SDFTESO62")).setValueAttribute(ccc.substring(0, 2));
-					
-					((HtmlInput)page.getElementById("SDFNUM62")).setValue(ccc.substring(2));
-					((HtmlInput)page.getElementById("SDFNUM62")).setValueAttribute(ccc.substring(2));
-					
-					((HtmlInput)page.getElementById("chkgrupo1_1")).click();
-					
-					page = ((HtmlInput)page.getElementById("Sub2207601004")).click();
-					
-					System.out.println("ccc: " + ccc + " - regime: " + regime);
-					
-					hanleStatusCodeException(page);
-					
-					getEmployeesTable(page, employees, regime, ccc);
-					
-					// Prev employees
-					page = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
-					
-					((HtmlInput)page.getElementById("SDFREG62_ayuda")).setValue(regime);
-					((HtmlInput)page.getElementById("SDFREG62_ayuda")).setValueAttribute(regime);
-					
-					((HtmlInput)page.getElementById("SDFTESO62")).setValue(ccc.substring(0, 2));
-					((HtmlInput)page.getElementById("SDFTESO62")).setValueAttribute(ccc.substring(0, 2));
-					
-					((HtmlInput)page.getElementById("SDFNUM62")).setValue(ccc.substring(2));
-					((HtmlInput)page.getElementById("SDFNUM62")).setValueAttribute(ccc.substring(2));
-					
-					((HtmlInput)page.getElementById("chkgrupo1_2")).click();
-					
-					page = ((HtmlInput)page.getElementById("Sub2207601004")).click();
-					
-					getEmployeesTable(page, employees, regime, ccc);
-					
-					// Search again
-					page = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
-				}
-				
-			};
-			
-			return employees;
-			
-		} catch (FailingHttpStatusCodeException e) {
-			HandleStatusCodeException(e);
-			throw new SegSocialException(e.getMessage());
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new SegSocialException(e.getMessage());
-		}
+	        final String certificatePassword, final String certificateType,
+	        Map<String, Set<String>> cccs) /* cccs -> Map<REGIME, Set<CCC>> */
+	        throws SegSocialException, IOException {
+
+	    if (cccs == null) {
+	        return Collections.emptyList();
+	    }
+
+	    byte[] certificateData = certificateInputStream.readAllBytes();
+
+	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType)) {
+
+	        List<Employee> employees = new LinkedList<>();
+
+	        webClient.getOptions().setCssEnabled(false);
+	        webClient.getOptions().setJavaScriptEnabled(true);
+	        webClient.getOptions().setUseInsecureSSL(true);
+	        webClient.getOptions().setRedirectEnabled(true);
+
+	        HtmlPage page = webClient.getPage(SEARCH_URL);
+
+	        System.out.println("CCCs loaded: " + cccs.size());
+
+	        for (Entry<String, Set<String>> entry : cccs.entrySet()) {
+
+	            String regime = entry.getKey();
+	            Set<String> cccSet = entry.getValue();
+
+	            for (String ccc : cccSet) {
+	                try {
+	                    // --- Trabajadores actuales ---
+	                    page = search(page, regime, ccc, "chkgrupo1_1");
+
+	                    System.out.println("ccc: " + ccc + " - regime: " + regime);
+	                    
+//	                    Toolkit.buildFile(page.asXml().getBytes(),
+//	                            System.getProperty("user.home") + "/Desktop/" + ccc + ".html");
+
+	                    hanleStatusCodeException(page); // si no hay datos -> salta al catch
+	                    getEmployeesTable(page, employees, regime, ccc);
+
+	                    // --- Trabajadores previos ---
+	                    page = webClient.getPage(SEARCH_URL);
+	                    page = search(page, regime, ccc, "chkgrupo1_2");
+	                    getEmployeesTable(page, employees, regime, ccc);
+
+	                } catch (SegSocialException e) {
+	                    if (isNoDataException(e)) {
+	                        // Este CCC no tiene datos: no es un error, seguimos con el resto
+	                        System.out.println("Sin datos para ccc: " + ccc + " - regime: " + regime);
+	                    } else {
+	                        throw e; // cualquier otro error real sí se propaga
+	                    }
+	                } finally {
+	                    // Reiniciamos la pantalla de búsqueda para el siguiente CCC
+	                    page = webClient.getPage(SEARCH_URL);
+	                }
+	            }
+	        }
+
+	        // La decisión "no hay datos" se toma UNA sola vez, al final:
+	        if (employees.isEmpty()) {
+	            throw new SegSocialException("3543 - NO EXISTEN DATOS PARA ESTA CONSULTA");
+	        }
+
+	        return employees;
+
+	    } catch (FailingHttpStatusCodeException e) {
+	        HandleStatusCodeException(e);
+	        throw new SegSocialException(e.getMessage());
+	    } catch (SegSocialException e) {
+	        throw e; // no la envolvemos en el catch genérico de abajo
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw new SegSocialException(e.getMessage());
+	    }
+	}
+	
+	/**
+	 * Rellena región, tesorería y número de CCC, marca el grupo indicado
+	 * (chkgrupo1_1 = actuales, chkgrupo1_2 = previos) y lanza la búsqueda.
+	 * @throws IOException 
+	 */
+	private static HtmlPage search(HtmlPage page, String regime, String ccc, String grupoCheckboxId) throws IOException {
+	    setValue(page, "SDFREG62_ayuda", regime);
+	    setValue(page, "SDFTESO62", ccc.substring(0, 2));
+	    setValue(page, "SDFNUM62", ccc.substring(2));
+	    ((HtmlInput) page.getElementById(grupoCheckboxId)).click();
+	    return ((HtmlInput) page.getElementById("Sub2207601004")).click();
+	}
+
+	private static void setValue(HtmlPage page, String id, String value) {
+	    HtmlInput input = (HtmlInput) page.getElementById(id);
+	    input.setValue(value);
+	    input.setValueAttribute(value);
+	}
+
+	/**
+	 * True solo cuando la excepción corresponde al "no existen datos" (3543),
+	 * que es el único caso que queremos ignorar por CCC.
+	 */
+	private static boolean isNoDataException(SegSocialException e) {
+	    // Opción preferida: si SegSocialException guarda el código, úsalo
+	    // return "3543".equals(e.getCode());
+
+	    String msg = e.getMessage();
+	    return msg != null && msg.contains("3543");
 	}
 	
 	private static final Pattern SEG_SOCIAL_ERROR_PATTERN =
