@@ -34,6 +34,7 @@ import org.apache.http.ssl.SSLContexts;
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.DomElement;
+import org.htmlunit.html.DomNode;
 import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlLabel;
 import org.htmlunit.html.HtmlPage;
@@ -152,43 +153,35 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 	}
 	
 	private static final String SEARCH_URL =
-			"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR";
+	        "https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR";
 
 	private static Collection<Employee> getTotalEmployees(final InputStream certificateInputStream,
 	        final String certificatePassword, final String certificateType,
-	        Map<String, Set<String>> cccs) /* cccs -> Map<REGIME, Set<CCC>> */
-	        throws SegSocialException, IOException {
+	        Map<String, Set<String>> cccs) throws SegSocialException, IOException {
 
 	    if (cccs == null) {
 	        return Collections.emptyList();
 	    }
-	    
-	    byte [] certificateData = certificateInputStream.readAllBytes();
+
+	    byte[] certificateData = certificateInputStream.readAllBytes();
+	    List<Employee> employees = new LinkedList<>();
 
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType);
-		         WebConnectionWrapper wrapper = HtmlUnitToolkit.transformXmlPage(webClient, certificateData, certificatePassword,
-		                 certificateType)) {
+	         WebConnectionWrapper wrapper = HtmlUnitToolkit.transformXmlPage(webClient, certificateData,
+	                 certificatePassword, certificateType)) {
 
-		        webClient.getOptions().setCssEnabled(true);
-		        webClient.getOptions().setUseInsecureSSL(true);
-		        webClient.getOptions().setRedirectEnabled(true);
-		        webClient.getOptions().setJavaScriptEnabled(true);
-		        webClient.getOptions().setFetchPolyfillEnabled(true);
-		        webClient.getOptions().setThrowExceptionOnScriptError(false);
-
-	        List<Employee> employees = new LinkedList<>();
-
-	        webClient.getOptions().setCssEnabled(false);
-	        webClient.getOptions().setJavaScriptEnabled(true);
+	        webClient.getOptions().setCssEnabled(true);
 	        webClient.getOptions().setUseInsecureSSL(true);
 	        webClient.getOptions().setRedirectEnabled(true);
+	        webClient.getOptions().setJavaScriptEnabled(true);
+	        webClient.getOptions().setFetchPolyfillEnabled(true);
+	        webClient.getOptions().setThrowExceptionOnScriptError(false);
 
 	        HtmlPage page = webClient.getPage(SEARCH_URL);
 
 	        System.out.println("CCCs loaded: " + cccs.size());
 
 	        for (Entry<String, Set<String>> entry : cccs.entrySet()) {
-
 	            String regime = entry.getKey();
 	            Set<String> cccSet = entry.getValue();
 
@@ -196,50 +189,44 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 	                try {
 	                    // --- Trabajadores actuales ---
 	                    page = search(page, regime, ccc, "chkgrupo1_1");
-
 	                    System.out.println("ccc: " + ccc + " - regime: " + regime);
-	                    
-//	                    Toolkit.buildFile(page.asXml().getBytes(),
-//	                            System.getProperty("user.home") + "/Desktop/" + ccc + ".html");
 
-	                    hanleStatusCodeException(page); // si no hay datos -> salta al catch
-	                    getEmployeesTable(page, employees, regime, ccc);
+	                    if (hasNoData(page)) {
+	                        System.out.println("Sin datos (actuales) ccc: " + ccc + " - regime: " + regime);
+	                    } else {
+	                        getEmployeesTable(page, employees, regime, ccc);
+	                    }
 
-	                    // --- Trabajadores previos ---
+	                    // --- Trabajadores previos --- (se intenta SIEMPRE)
 	                    page = webClient.getPage(SEARCH_URL);
 	                    page = search(page, regime, ccc, "chkgrupo1_2");
-	                    getEmployeesTable(page, employees, regime, ccc);
 
-	                } catch (SegSocialException e) {
-	                    if (isNoDataException(e)) {
-	                        // Este CCC no tiene datos: no es un error, seguimos con el resto
-	                        System.out.println("Sin datos para ccc: " + ccc + " - regime: " + regime);
+	                    if (hasNoData(page)) {
+	                        System.out.println("Sin datos (previos) ccc: " + ccc + " - regime: " + regime);
 	                    } else {
-	                        throw e; // cualquier otro error real sí se propaga
+	                        getEmployeesTable(page, employees, regime, ccc);
 	                    }
+
 	                } finally {
-	                    // Reiniciamos la pantalla de búsqueda para el siguiente CCC
 	                    page = webClient.getPage(SEARCH_URL);
 	                }
 	            }
 	        }
 
-	        // La decisión "no hay datos" se toma UNA sola vez, al final:
-	        if (employees.isEmpty()) {
-	            throw new SegSocialException("3543 - NO EXISTEN DATOS PARA ESTA CONSULTA");
-	        }
-
-	        return employees;
-
 	    } catch (FailingHttpStatusCodeException e) {
 	        HandleStatusCodeException(e);
 	        throw new SegSocialException(e.getMessage());
 	    } catch (SegSocialException e) {
-	        throw e; // no la envolvemos en el catch genérico de abajo
+	        throw e;
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        throw new SegSocialException(e.getMessage());
 	    }
+
+	    if (employees.isEmpty()) {
+	        throw new SegSocialException("3543 - NO EXISTEN DATOS PARA ESTA CONSULTA");
+	    }
+	    return employees;
 	}
 	
 	/**
@@ -259,6 +246,20 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 	    HtmlInput input = (HtmlInput) page.getElementById(id);
 	    input.setValue(value);
 	    input.setValueAttribute(value);
+	}
+	
+	/**
+	 * Detecta el "no existen datos" (3543) leyendo el label #DIL,
+	 * devolviendo un booleano en vez de lanzar excepción,
+	 * para no abortar el resto de consultas del CCC.
+	 */
+	private static boolean hasNoData(HtmlPage page) {
+	    DomNode label = page.querySelector("#DIL");
+	    if (label == null) {
+	        return false;
+	    }
+	    String text = label.getTextContent().replaceAll("\\s+", " ").trim();
+	    return text.startsWith("3543") || text.toUpperCase().contains("NO EXISTEN DATOS");
 	}
 
 	/**
