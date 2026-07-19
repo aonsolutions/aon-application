@@ -18,6 +18,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.TEMP_PAYMENT
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.salary.enumeration.PaymentType.CRA_0000;
 import static com.esferalia.aon.salary.enumeration.PaymentType.CRA_0001;
+import static com.esferalia.aon.watson.server.AonDateUtils.getMonthFirstDay;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.MONTH;
@@ -898,9 +899,9 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			else if (
 					results.size() == 1 
 					&& results.get(0).getContext().isEmpty()  
-					&& startThisMonth(startIt, contractPayment)) {
+					&& startThisMonthOrAfter(startIt, contractPayment)) {
 				return moveITPart(results, its, contractPayment);
-			} 
+			}
 			else if (
 					results.size() == 1 
 					&& contractPayment.getType() == PaymentType.CRA_0050 ) {
@@ -2284,6 +2285,14 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		Date endDayOfMonth = AonDateUtils.getFirstDayOfMonth(date);
 		if ( Period.compare(payment.getStartDate(), firstDayOfMonth) >= 0 
 				&& Period.compare(payment.getStartDate(), endDayOfMonth) <= 0 )
+			return true;
+				
+		return false;
+	}
+
+	private static boolean startThisMonthOrAfter ( Date date, IContractPayment payment) {
+		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(date);
+		if ( Period.compare(payment.getStartDate(), firstDayOfMonth) >= 0 )
 			return true;
 				
 		return false;
