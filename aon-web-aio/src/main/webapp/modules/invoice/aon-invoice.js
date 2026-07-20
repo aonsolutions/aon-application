@@ -1582,6 +1582,15 @@ export class AonInvoice extends AonElement {
 		});
 		activitySpan.appendChild(activity);
 		getCompanyActivities({}).then(activities => {
+			/* 
+			if (activities.length > 1) {
+				let act = [{id: -1, description: MSG.ALL2.toUpperCase()}];
+				act = act.concat(activities);
+				if (!this.invoice.activity) this.invoice.setActivity(this.invoice.getActivity() || act[0]);
+				activity.setOptions(act);
+				activity.value = this.invoice.getActivity().id;
+			} else {
+			*/
 			if (activities.length > 0) {
 				if (!this.invoice.activity) this.invoice.setActivity(this.invoice.getActivity() || activities[0]);
 				activity.setOptions(activities);
@@ -2896,7 +2905,7 @@ export class AonInvoice extends AonElement {
 
 		let email = new AonEmail();
 		email.id = 'rejectInvoiceEmail';
-		email.title = MSG.EMAIL;
+		email.title = MSG.SEND_TO;
 		email.style.display = 'none';
 		div.appendChild(email);
 		getUserEmail({userLogin: this.invoice.creation_user}).then(emailData => {
@@ -3582,7 +3591,7 @@ export class AonInvoice extends AonElement {
 			
 			this.updateCounter(getRestoreFromOption(this.invoice), getRestoreToOption(this.invoice), 1);
 			this.updateCounter(getFutureRestoreFromOption(this.invoice), getFutureRestoreToOption(this.invoice), 1);
-			this.getInvoice().status = this.invoice.lastStatus || CONSTANT.INBOX;
+			this.getInvoice().status =  this.invoice.lastStatus && this.invoice.lastStatus !== this.invoice.status ? this.invoice.lastStatus : CONSTANT.INBOX;
 			this.getInvoice().number = '';
 			this.save(MSG.RESTORED_DATA);
 			this.reload();

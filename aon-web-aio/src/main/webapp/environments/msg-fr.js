@@ -1064,6 +1064,7 @@ export const SUBJECTS = 'Matières';
 export const SURVEY_RESPONSES = 'Réponses aux Questionnaires';
 export const SUPPLY_BY_CONSUMPTION = 'Approvisionnement selon Consommation';
 export const SEND = 'Envoyer';
+export const SEND_TO = 'Envoyer à';
 export const SEND_FILE = 'Envoyer Fichier';
 export const SEND_FILES = 'Envoyer Fichiers';
 export const SEND_INVOICE = 'Envoyer Facture';
