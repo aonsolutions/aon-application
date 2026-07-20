@@ -1046,6 +1046,7 @@ export const STOCK_CONTROL = MSG.STOCK_CONTROL;
 export const SELECT_LANGUAGE = MSG.SELECT_LANGUAGE;
 export const SELECT_COMPANY_TYPE = MSG.SELECT_COMPANY_TYPE;
 export const SEND = MSG.SEND;
+export const SEND_TO = MSG.SEND_TO;
 export const SENT = MSG.SENT;
 export const SEND_FILE = MSG.SEND_FILE;
 export const SEND_FILES = MSG.SEND_FILES;

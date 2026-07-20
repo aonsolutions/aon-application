@@ -1042,6 +1042,7 @@ export const SUBJECTS = 'Matèries';
 export const SURVEY_RESPONSES = 'Respostes de Qüestionaris';
 export const SUPPLY_BY_CONSUMPTION = 'Aprovisionament segons consum';
 export const SEND = 'Enviar';
+export const SEND_TO = 'Enviar a';
 export const SEND_FILE = 'Enviar Fitxer';
 export const SEND_FILES = 'Enviar Fitxers';
 export const SEND_INVOICE = 'Enviar Factura';
