@@ -59,6 +59,7 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Locale;
@@ -220,6 +221,14 @@ public abstract class AbstractSQLTestCase {
 	}
 
 	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+			Date startDate, Date endDate, Date issueDate, ContractRecord []contracts,
+			IContractSalaryCalculatorContext.IListener listener) throws ExpressionException, SQLException {
+		Criteria criteria = new Criteria();
+		criteria.addInExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), Arrays.stream(contracts).map(ContractRecord::getId).toList());
+		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, criteria, listener);
+	}
+
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
 		Date startDate, Date endDate, Date issueDate, Date chargeDate, ContractRecord contract ) throws ExpressionException, SQLException {
         	Criteria criteria = new Criteria();
         	criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
@@ -238,6 +247,12 @@ public abstract class AbstractSQLTestCase {
 			Date startDate, Date endDate, Date issueDate, ContractRecord contract)
 			throws ExpressionException, SQLException {
 		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract, null);
+	}
+
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+			Date startDate, Date endDate, Date issueDate, ContractRecord ...contracts)
+			throws ExpressionException, SQLException {
+		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contracts, null);
 	}
 	// ------------------------------------------------------- static 'library'
 

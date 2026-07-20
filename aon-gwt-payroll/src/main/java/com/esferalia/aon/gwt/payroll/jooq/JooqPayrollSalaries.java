@@ -802,10 +802,12 @@ public class JooqPayrollSalaries {
 		if(params.isDelay()) salaryTypes.add((byte)Salary.Type.DELAY.ordinal());
 		if(params.isProcedural()) salaryTypes.add((byte)Salary.Type.PROCEDURAL.ordinal());
 		
-		condition = condition.and(
-				SALARY.TYPE.lt((byte)Salary.Type.L00.ordinal())
-				.and(SALARY.TYPE.in(salaryTypes))
-		);
+		if(params.isLiquidations()) salaryTypes.add((byte)Salary.Type.L00.ordinal());
+		if(params.isLiquidations()) salaryTypes.add((byte)Salary.Type.L02.ordinal());
+		if(params.isLiquidations()) salaryTypes.add((byte)Salary.Type.L03.ordinal());
+		if(params.isLiquidations()) salaryTypes.add((byte)Salary.Type.L13.ordinal());
+		
+		condition = condition.and(SALARY.TYPE.in(salaryTypes));
 		
 		List<Integer> userScopes = dslContext
 				.select(USER_SCOPE.SCOPE)
