@@ -1,7 +1,6 @@
 {
   "watch": [
-	"src",
-	"../aon-solutions/src"
+	"src"
   ],
   "ext": "js",
   "exec": "npm run build-dev",
