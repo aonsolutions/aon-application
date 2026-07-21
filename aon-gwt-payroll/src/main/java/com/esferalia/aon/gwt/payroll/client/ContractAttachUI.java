@@ -100,6 +100,7 @@ public abstract class ContractAttachUI extends ScrollPanel {
 
 	private void search() {
 		container.clear();
+		selectedItems.clear();
 		tab = new AonCustomTable();
 		
 		paintHeader();
