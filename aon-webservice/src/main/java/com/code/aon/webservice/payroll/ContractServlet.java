@@ -95,10 +95,19 @@ public class ContractServlet extends HttpServlet{
 			Double[] endFixed = new Double[]{0.0};
 			Double[] endUnfixed = new Double[]{0.0};
 			
+			Date contractStart = (contract.getStartDate() != null && contract.getStartDate().compareTo(ejInitDate) > 0)
+			        ? contract.getStartDate() : ejInitDate;
+			Date contractEnd = (contract.getEndDate() != null && contract.getEndDate().compareTo(ejFinalDate) < 0)
+			        ? contract.getEndDate() : ejFinalDate;
+			
 			if(list.stream().filter(e -> e.getName().equals("COEFICIENTE_PARCIALIDAD")).count() > 0){ 
 				list.stream().filter(e -> e.getName().equals("COEFICIENTE_PARCIALIDAD")).forEach(c -> {
-					Date start = AonDateUtils.getYear(c.getStartDate()) == year ? c.getStartDate() : ejInitDate;
-					Date end = c.getEndDate() != null && AonDateUtils.getYear(c.getEndDate()) == year ? c.getEndDate() : ejFinalDate;
+					// Intersección real del periodo de parcialidad con el ejercicio
+					Date pStart = c.getStartDate();
+				    Date pEnd   = c.getEndDate() != null ? c.getEndDate() : contractEnd;   // fallback = fin de contrato, no fin de año
+				    Date start  = pStart.compareTo(contractStart) > 0 ? pStart : contractStart;
+				    Date end    = pEnd.compareTo(contractEnd)     < 0 ? pEnd   : contractEnd;
+				    if (end.compareTo(start) < 0) return;   // tramo fuera de la vida del contrato en el año
 					
 					String expression = c.getExpression();
 					
