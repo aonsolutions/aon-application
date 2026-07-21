@@ -17,7 +17,7 @@ public class AccountingAmortizationPanel extends AonLayoutPanel {
 	
 	private final AonToolbar toolbar = new AonToolbar(AON.MSG.accountingAmortizationModule()); 
 	private SimpleLayoutPanel tablePanel = new SimpleLayoutPanel();
-	
+	private AccountingAmortizationFilterPanel filterPanel;
 	
 	private FormPanel diskForm = new FormPanel("_blank");
 	private Hidden amortizationIdHidden = new Hidden(IRequestParamsNames.ID);
@@ -30,6 +30,21 @@ public class AccountingAmortizationPanel extends AonLayoutPanel {
 		AON.ensureInjected();
 		this.addStyleName(AON.CSS.aonSelector());
 		
+		filterPanel = new AccountingAmortizationFilterPanel(opts);
+		filterPanel.addValueChangeHandler(e -> search(opts));
+
+		AonToolbarButton refreshButton = new AonToolbarButton(AON.MSG.refresh(), AON.CSS.aonIconRefresh());
+		refreshButton.addClickHandler(e -> search(opts));
+		toolbar.add(refreshButton);
+		
+		AonToolbarButton clearButton = new AonToolbarButton(AON.MSG.clean(), AON.CSS.aonIconClean());
+		clearButton.addClickHandler(e -> filterPanel.clean(opts));
+		toolbar.add(clearButton);
+		
+		AonToolbarButton excelButton = new AonToolbarButton(AON.MSG.printExcel(), AON.CSS.aonIconExcel());
+		excelButton.addClickHandler(e -> excel(opts, filterPanel.getWidgetParams( opts )));
+		toolbar.add(excelButton);
+
 		diskForm.setMethod(FormPanel.METHOD_POST);
 		FlowPanel formFlowPanel = new FlowPanel();
 		diskForm.add(formFlowPanel);
@@ -39,11 +54,6 @@ public class AccountingAmortizationPanel extends AonLayoutPanel {
 		formFlowPanel.add(amortizationIdHidden);
 		toolbar.add(diskForm);
 		
-		AccountingAmortizationFilterPanel filterPanel = new AccountingAmortizationFilterPanel(opts);
-		
-		AonToolbarButton excelButton = new AonToolbarButton(AON.MSG.printExcel(), AON.CSS.aonIconExcel());
-		excelButton.addClickHandler(e -> excel(opts, filterPanel.getWidgetParams( opts )));
-		
 		this.addNorth(toolbar, AonToolbar.HEIGTH);
 		
 		this.addNorth(filterPanel, 100);
@@ -52,16 +62,17 @@ public class AccountingAmortizationPanel extends AonLayoutPanel {
 		tablePanel.setStyleName(AON.CSS.aonSelector());
 		this.add(tablePanel);
 		
-		AmortizationParams params = getParams(opts);
+		search(opts);	
+	}
+	
+	private void search(AmortizationModuleOptions opts) {
 		tablePanel.clear();
-		AmortizationTable amortizationTable = new AmortizationTable(opts, params);
+		AccountingAmortizationDetailTable amortizationTable = new AccountingAmortizationDetailTable(opts, getParams(opts));
 		tablePanel.setWidget(amortizationTable);
-		
-		
 	}
 	
 	private AmortizationParams getParams(AmortizationModuleOptions opts) {
-		return new AmortizationParams().setDomain(opts.getDomain());
+		return filterPanel.getWidgetParams(opts);
 	}
 	
 	private void excel(AmortizationModuleOptions opts , AmortizationParams params) {

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.accounting.AccountingAmortization;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetailFlat;
@@ -116,4 +117,11 @@ public class AmortizationServiceAsyncDecorator implements AmortizationServiceAsy
 		AON.start();
 		serviceAsync.changeInvestment(occam, domain, invoiceId, new AsyncCallbackWrapper<>(asyncCallback));
 	}
+	
+	@Override
+	public void getAccountingAmortizations(Occam occam, Integer domain, AmortizationParams params, AsyncCallback<LinkedList<AccountingAmortization>> callback) {
+		AON.start();
+		serviceAsync.getAccountingAmortizations(occam, domain, params, new AsyncCallbackWrapper<>(callback));
+	}
+				
 }

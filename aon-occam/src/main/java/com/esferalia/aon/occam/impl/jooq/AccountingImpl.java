@@ -37,6 +37,7 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.AccountingAmortization;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
@@ -792,6 +793,13 @@ public class AccountingImpl implements IAccounting {
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceDAO.changeInvestment(ctx, domain, invoiceId) );	
 	}
+	
+	@Override
+	public Stream<AccountingAmortization> getAccountingAmortizations(AONContext ctx, Integer domain, AmortizationParams params) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> AmortizationDAO.getAccountingAmortizations(ctx, domain, params) );		
+	}
+	
 
 	// ********************************** [INVOICES CONUNTERS]
 	public Stream<DomainInvoiceStat> getDomainInvoiceStats(AONContext ctx, DomainInvoiceStatParams params) {

@@ -1123,6 +1123,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_flex_grow_1")
 	String aonFlexGrow1();
 	
+	@ClassName("aon_flex_grow_0")
+	String aonFlexGrow0();
+
 	@ClassName("aon_flex_label")
 	String aonFlexLabel();
 	

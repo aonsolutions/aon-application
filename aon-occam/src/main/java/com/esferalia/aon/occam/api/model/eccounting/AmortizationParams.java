@@ -13,6 +13,7 @@ public class AmortizationParams implements Serializable {
 
 	private static final long serialVersionUID = 2683060057390169937L;
 	
+	private Integer id;
 	private Integer fromId;
 	private Integer toId;
 	
@@ -38,11 +39,22 @@ public class AmortizationParams implements Serializable {
 	private String comments;
 	private Double percentage;
 	private SecurityLevel securityLevel;
+	
+	private Double allocation;
 	private AmortizationDetailStatus status;
+	
 	private AmortizationParamsOrderBy orderBy;
 
 	private int offset;
 	private int limit = 50;
+
+	public Optional<Integer> getId() {
+		return Optional.ofNullable(id);
+	}
+	public AmortizationParams setId(Integer id) {
+		this.id = id;
+		return this;
+	}
 
 	public Optional<Integer> getFromId() {
 		return Optional.ofNullable(fromId);
@@ -201,6 +213,14 @@ public class AmortizationParams implements Serializable {
 	}
 	public AmortizationParams setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
+		return this;
+	}
+	
+	public Optional<Double> getAllocation() {
+		return Optional.ofNullable(allocation);
+	}
+	public AmortizationParams setAllocation(Double allocation) {
+		this.allocation = allocation;
 		return this;
 	}
 	

@@ -37,6 +37,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.accounting.AccountingAmortization;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetailFlat;
@@ -1008,5 +1009,60 @@ public class AmortizationDAO {
 				));
 		}
 		return am;
+	}
+	
+	public static Stream<AccountingAmortization> getAccountingAmortizations(AONContext ctx, Integer domain, AmortizationParams params) {
+		if (domain == null) throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
+		return ctx.getDslContext()
+		        .select()
+		        .from(AMORTIZATION_DETAIL)
+		        .innerJoin(AMORTIZATION).on(AMORTIZATION.ID.eq(AMORTIZATION_DETAIL.AMORTIZATION))
+		        .innerJoin(FIXED_ASSET_ACCOUNT).on(AMORTIZATION.FIXED_ASSET_ACCOUNT.eq(FIXED_ASSET_ACCOUNT.ID))
+		        .innerJoin(ACCUMULATED_ACCOUNT).on(AMORTIZATION.ACCUMULATED_ACCOUNT.eq(ACCUMULATED_ACCOUNT.ID))
+		        .innerJoin(ALLOCATION_ACCOUNT).on(AMORTIZATION.ALLOCATION_ACCOUNT.eq(ALLOCATION_ACCOUNT.ID))
+		        .leftOuterJoin(INVEST_ASSET).on(AMORTIZATION.INVEST_ASSET.eq(INVEST_ASSET.ID))
+				.where(getAccountingCondition(params))
+	    		.orderBy(getOrderBy(params,true))
+	    		.limit(params.getOffset() , params.getLimit())
+				.fetch()
+				.stream()
+				.map( r -> new AccountingAmortization()
+					.setAmortization( AmortizationFiller.build(r) )
+					.setDetail( AmortizationDetailFiller.build(r) ))
+			;
+	}
+	
+	private static Condition getAccountingCondition(AmortizationParams params) {
+	    if (params == null) throw new AonCoreException(AonError.EMPTY_DATA.format("Par\u00E1metros de b\u00FAsqueda"));
+	    Condition c = AMORTIZATION.DOMAIN.eq(getDomain(params));
+	    c = params.getDeadlineFilled()
+	    	.filter( f -> params.getFromDeadline().isEmpty() )
+	    	.filter( f -> params.getToDeadline().isEmpty() )
+	    	.map(f -> f?AMORTIZATION.DEADLINE.isNotNull():AMORTIZATION.DEADLINE.isNull())
+	    	.map( c::and )
+	    	.orElse(c)
+    	;
+	    return c
+    		.and(when(params.getId(),  				AMORTIZATION.ID::eq))
+			.and(when(params.getFromId(),  				AMORTIZATION.ID::ge))
+			.and(when(params.getToId(),  				AMORTIZATION.ID::le))
+	        .and(when(params.getFromInitialDate(),  d -> AMORTIZATION_DETAIL.FROM_DATE.ge(AonDateUtils.toSql(d))))
+	        .and(when(params.getToInitialDate(),    d -> AMORTIZATION_DETAIL.FROM_DATE.le(AonDateUtils.toSql(d))))
+	        .and(when(params.getFromDeadline(),     d -> AMORTIZATION_DETAIL.TO_DATE.ge(AonDateUtils.toSql(d))))
+	        .and(when(params.getToDeadline(),       d -> AMORTIZATION_DETAIL.TO_DATE.le(AonDateUtils.toSql(d))))
+	        .and(when(params.getInvestAsset(),      AMORTIZATION.INVEST_ASSET::eq))
+	        .and(when(params.getAllocationAccount(),AMORTIZATION.ALLOCATION_ACCOUNT::eq))
+	        .and(when(params.getFixedAssetAccount(),AMORTIZATION.FIXED_ASSET_ACCOUNT::eq))
+	        .and(when(params.getAccumulatedAccount(),AMORTIZATION.ACCUMULATED_ACCOUNT::eq))
+	        .and(when(params.getDescription(),      d -> AMORTIZATION.DESCRIPTION.like(AonStringUtils.SQLlike(d))))
+	        .and(when(params.getAmount(),           AMORTIZATION.AMOUNT::eq))
+	        .and(when(params.getFeePeriod(),        p -> AMORTIZATION.FEE_PERIOD.eq((byte) p.ordinal())))
+	        .and(when(params.getPercentage(),       AMORTIZATION.PERCENTAGE::eq))
+	        .and(when(params.getSecurityLevel(),    s -> AMORTIZATION.SECURITY_LEVEL.eq((byte) s.ordinal())))
+	        .and(when(params.getSaleAmount(),       AMORTIZATION.SALE_AMOUNT::eq))
+	        .and(when(params.getComments(),         cmt -> AMORTIZATION.COMMENTS.like(AonStringUtils.SQLlike(cmt))))
+	        
+	        .and(when(params.getAllocation(),		AMORTIZATION_DETAIL.ALLOCATION::eq))
+	        .and(when(params.getStatus(),           s -> AMORTIZATION_DETAIL.STATUS.eq(s.value())));
 	}
 }
