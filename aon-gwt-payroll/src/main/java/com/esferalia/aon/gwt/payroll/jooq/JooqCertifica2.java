@@ -55,6 +55,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sepe.certifica.CertificaFill;
 import com.esferalia.aon.payroll.tgss.cra.StringUtils;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.COTIZACIONREATYPE;
@@ -393,7 +394,7 @@ public class JooqCertifica2 {
 		if (null == endDate) {
 			ereRecords = dslContext.select().from(CONTRACT_DATA)
 					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-					.and(CONTRACT_DATA.NAME.eq("COEFICIENTE_ERE"))
+					.and(CONTRACT_DATA.NAME.in(ContextVariable.ERE_FACTORS_NAMES))
 					.orderBy(CONTRACT_DATA.START_DATE)
 					.fetch();
 			
