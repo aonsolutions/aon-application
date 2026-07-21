@@ -24,6 +24,8 @@ import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.console.ConsoleSchema;
+import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
+import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams.AmortizationParamsOrderBy;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsGroupedBy;
@@ -33,6 +35,8 @@ import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.AmortizationDetailStatus;
+import com.esferalia.aon.occam.api.model.type.AmortizationPeriod;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -898,6 +902,42 @@ public class JsonParser {
 			.setOffset(JsonUtils.getInt(jsonParams, IRequestParamsNames.OFFSET))
 		;
 	}
+	
+	public static AmortizationParams parseAmortizationParams(String stringParams) {
+		AmortizationParams params = new AmortizationParams();
+		org.json.JSONObject jsonParams = new org.json.JSONObject( stringParams );
+		Integer dom = JsonUtils.getInteger(jsonParams,IRequestParamsNames.DOMAIN);
+		if (dom == null) throw new IllegalArgumentException("NULL DOMAIN!");
+		return params
+			.setDomain(dom)
+			.setId(JsonUtils.getInteger(jsonParams, IRequestParamsNames.ID))
+			.setFromId(JsonUtils.getInteger(jsonParams, IRequestParamsNames.FROM_ID))
+			.setToId(JsonUtils.getInteger(jsonParams, IRequestParamsNames.TO_ID))
+			.setActivity(JsonUtils.getInteger(jsonParams, IRequestParamsNames.ACTIVITY))
+			.setInvestAsset(JsonUtils.getInteger(jsonParams, IRequestParamsNames.INVEST_ASSET))
+			.setAllocationAccount(JsonUtils.getInteger(jsonParams, IRequestParamsNames.ALLOCATION_ACCOUNT))
+			.setAccumulatedAccount(JsonUtils.getInteger(jsonParams, IRequestParamsNames.ACCUMULATED_ACCOUNT))
+			.setFixedAssetAccount(JsonUtils.getInteger(jsonParams, IRequestParamsNames.FIXED_ASSET_ACCOUNT))
+			.setDescription(JsonUtils.getString(jsonParams, IRequestParamsNames.DESCRIPTION))
+			.setFromInitialDate( JsonUtils.getDate(jsonParams, IRequestParamsNames.FROM_INITIAL_DATE))
+			.setToInitialDate( JsonUtils.getDate(jsonParams, IRequestParamsNames.TO_INITIAL_DATE))
+			.setDeadlineFilled( JsonUtils.getBooleanNumber(jsonParams, IRequestParamsNames.DEADLINE_FILLED))
+			.setFromDeadline( JsonUtils.getDate(jsonParams, IRequestParamsNames.FROM_DEADLINE))
+			.setToDeadline( JsonUtils.getDate(jsonParams, IRequestParamsNames.TO_DEADLINE))
+			.setAmount(JsonUtils.getDouble(jsonParams, IRequestParamsNames.AMOUNT))
+			.setFeePeriod(AmortizationPeriod.safeValueOf(JsonUtils.getInteger(jsonParams, IRequestParamsNames.FEE_PERIOD)).orElse(null))
+			.setSaleAmount(JsonUtils.getDouble(jsonParams, IRequestParamsNames.SALE_AMOUNT))
+			.setComments(JsonUtils.getString(jsonParams, IRequestParamsNames.COMMENTS))
+			.setPercentage(JsonUtils.getDouble(jsonParams, IRequestParamsNames.PERCENTAGE))
+			.setSecurityLevel(SecurityLevel.safeValueOf(JsonUtils.getInteger(jsonParams, IRequestParamsNames.SECURITY_LEVEL)))
+			.setAllocation(JsonUtils.getDouble(jsonParams, IRequestParamsNames.ALLOCATION))
+			.setStatus(AmortizationDetailStatus.safeValueOf(JsonUtils.getInteger(jsonParams, IRequestParamsNames.STATUS)).orElse(null))
+			.setOrderBy(AmortizationParamsOrderBy.safeValueOf(JsonUtils.getInteger(jsonParams, IRequestParamsNames.ORDER_BY)).orElse(null))
+			.setLimit(JsonUtils.getInt(jsonParams, IRequestParamsNames.LIMIT))
+			.setOffset(JsonUtils.getInt(jsonParams, IRequestParamsNames.OFFSET))
+		;
+	}
+	
 }
 
 

@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonInvestAssetBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageToast;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
+import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams.AmortizationParamsOrderBy;
@@ -70,7 +71,7 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 	private AonToolbarButton excelButton;
 	
 	private FormPanel diskForm = new FormPanel("_blank");
-	private Hidden amortizationIdHidden = new Hidden(IRequestParamsNames.ID);
+	private Hidden amortizationParamsHidden = new Hidden(IRequestParamsNames.AMORTIZATION_PARAMS);
 	private Hidden domainIdHidden = new Hidden(IRequestParamsNames.DOMAIN_ID);
 	private Hidden domainNameHidden= new Hidden(IRequestParamsNames.DOMAIN_NAME);
 	private Hidden userHidden = new Hidden(IRequestParamsNames.USER);
@@ -109,7 +110,7 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 		formFlowPanel.add(domainIdHidden);
 		formFlowPanel.add(domainNameHidden);
 		formFlowPanel.add(userHidden);
-		formFlowPanel.add(amortizationIdHidden);
+		formFlowPanel.add(amortizationParamsHidden);
 		this.getToolbar().add(diskForm);
 		
 		createFilter(opts);
@@ -449,7 +450,10 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 		domainIdHidden.setValue( AonNumberUtils.toString(opts.getDomain()));
 		domainNameHidden.setValue(opts.getDomainName());
 		userHidden.setValue(opts.getUser());
-		amortizationIdHidden.setValue(AonNumberUtils.toString(amortization.getId()));
+		amortizationParamsHidden.setValue(
+			JsonParams.convert(new AmortizationParams()
+				.setDomain(opts.getDomain())
+				.setId(amortization.getId())));
 		diskForm.submit();
 	}
 	

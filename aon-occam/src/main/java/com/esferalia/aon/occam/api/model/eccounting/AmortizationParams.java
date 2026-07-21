@@ -282,6 +282,12 @@ public class AmortizationParams implements Serializable {
 		}
 
 		public abstract <T> T visit(AmortizationParamsOrderByVisitor<T> visitor);
+
+		public static Optional<AmortizationParamsOrderBy> safeValueOf( Integer i ) {
+			if (i == null) return Optional.empty(); ;
+			if (i < 0 || i >= AmortizationParamsOrderBy.values().length) return Optional.empty();
+			return Optional.of(AmortizationParamsOrderBy.values()[i]);
+		}
 	}
 	
 	public interface AmortizationParamsOrderByVisitor<T> {

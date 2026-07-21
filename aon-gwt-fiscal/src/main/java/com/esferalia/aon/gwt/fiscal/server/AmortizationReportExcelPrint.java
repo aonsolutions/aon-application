@@ -24,8 +24,11 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
+import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.mutable.MutableObject;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import jakarta.servlet.ServletException;
@@ -46,7 +49,9 @@ public class AmortizationReportExcelPrint extends HttpServlet {
 			String domainName = req.getParameter(IRequestParamsNames.DOMAIN_NAME);
 			String user = req.getParameter(IRequestParamsNames.USER);
 			Integer domainId = AonNumberUtils.toInteger( req.getParameter(IRequestParamsNames.DOMAIN_ID) );
-			Integer amortizationId = AonNumberUtils.toInteger( req.getParameter( IRequestParamsNames.ID));
+			String paramsJson = req.getParameter(IRequestParamsNames.AMORTIZATION_PARAMS);
+			AmortizationParams params = JsonParser.parseAmortizationParams(paramsJson); 
+			
 			Occam occam = new Occam()
 				.setDomainName(domainName)
 				.setDomain(domainId)
@@ -54,16 +59,27 @@ public class AmortizationReportExcelPrint extends HttpServlet {
 			AonConfiguration config = AON.getConfiguration(occam);
 			Company company = config.getCompany();
 			String companyName = company == null ? "" : company.getName();
-			
-			Amortization am = ACCOUNTING.getAmortization(occam, domainId, amortizationId)
-				.orElseThrow(() -> new AonCoreException("Amortizaci\u00F3n no encontrada: " + amortizationId));
-			
+
 			ExcelAction action = new ExcelAction( companyName );
-			action.initialize("Ficha de amortizaci\u00F3n ");
-			action.run(am);
-			
+			MutableObject<String> nameHolder = new MutableObject<>();
+			params.getId()
+				.ifPresentOrElse( 
+					amortizationId -> {
+						action.initialize("Ficha de amortizaci\u00F3n ");
+						Amortization am = ACCOUNTING.getAmortization(occam, domainId, amortizationId)
+							.orElseThrow(() -> new AonCoreException("Amortizaci\u00F3n no encontrada: " + amortizationId));
+						am.detailStream().forEach( det -> action.run(am, det));
+						nameHolder.setValue("FICHA-"+params.getId());
+					}
+					, () -> {
+						action.initialize("Apuntest de amortiazci\u00F3n");
+						ACCOUNTING.getAccountingAmortizations(occam, domainId, params)
+							.forEach( aam -> action.run(aam.getAmortization(), aam.getDetail()));
+						nameHolder.setValue("APUNTES AMORTIZ.");
+					}
+			);
 			resp.setContentType(MimeType.MS_EXCEL.getName());
-			resp.setHeader("Content-disposition", "attachment; filename=\"FICHA-"+amortizationId+"."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
+			resp.setHeader("Content-disposition", "attachment; filename=\""+nameHolder.getValue()+"."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
 			action.finalize(resp.getOutputStream());
 			resp.flushBuffer();
 		} catch (Throwable e) {
@@ -229,37 +245,35 @@ public class AmortizationReportExcelPrint extends HttpServlet {
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 12 * 256);
 		}
-
-		public void run(Amortization am) {
-			am.detailStream()
-				.forEach( det -> {
-					row = sheet.createRow(rowCount++);
-					cellCount = 0;
-					addCell(am.getId());
-					addCell(am.getDescription());
-					addCell(am.isConfidential()?"SI":"NO");
-					addCell(am.getInitialDate());
-					addCell(am.getAmount());
-					addCell(am.getDeadline());
-					addCell(am.getSaleAmount());
-					addCell(am.getFeePeriod().getDescription());
-					addCell(am.getPercentage());
-					addCell(am.getFixedAssetAccount().getFullName());
-					addCell(am.getAccumulatedAccount().getFullName());
-					addCell(am.getAllocationAccount().getFullName());
-					addCell(am.getInvestAsset() != null ? am.getInvestAsset().getDescription() : "");
-					addCell(det.getFromDate());
-					addCell(det.getToDate());
-					addCell(det.getCoefficient());
-					addCell(det.getAllocation());
-					addCell(det.getAccumulated());
-					addCell(det.getPending());
-					addCell(det.getFiscalAllocation());
-					addCell(det.getFiscalAccumulated());
-					addCell(det.getFiscalPending());
-					addCell(det.getStatus().getDescription());
-			});
+		
+		public void run(Amortization am, AmortizationDetail det) {
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			addCell(am.getId());
+			addCell(am.getDescription());
+			addCell(am.isConfidential()?"SI":"NO");
+			addCell(am.getInitialDate());
+			addCell(am.getAmount());
+			addCell(am.getDeadline());
+			addCell(am.getSaleAmount());
+			addCell(am.getFeePeriod().getDescription());
+			addCell(am.getPercentage());
+			addCell(am.getFixedAssetAccount().getFullName());
+			addCell(am.getAccumulatedAccount().getFullName());
+			addCell(am.getAllocationAccount().getFullName());
+			addCell(am.getInvestAsset() != null ? am.getInvestAsset().getDescription() : "");
+			addCell(det.getFromDate());
+			addCell(det.getToDate());
+			addCell(det.getCoefficient());
+			addCell(det.getAllocation());
+			addCell(det.getAccumulated());
+			addCell(det.getPending());
+			addCell(det.getFiscalAllocation());
+			addCell(det.getFiscalAccumulated());
+			addCell(det.getFiscalPending());
+			addCell(det.getStatus().getDescription());
 		}
+		
 	}
 	
 }

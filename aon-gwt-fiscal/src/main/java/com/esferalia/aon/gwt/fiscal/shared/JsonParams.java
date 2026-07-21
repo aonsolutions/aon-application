@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.console.ConsoleSchema;
+import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
@@ -337,6 +338,37 @@ public class JsonParams extends JSONObject {
 		params.getInvoices().ifPresent( i -> json.put(IRequestParamsNames.INVOICES, JSONBoolean.getInstance(i)));
 		params.getAlcatraz().ifPresent( a -> json.put(IRequestParamsNames.ALCATRAZ, JSONBoolean.getInstance(a)));
 		params.getRawdoc().ifPresent( r -> json.put(IRequestParamsNames.RAWDOC, JSONBoolean.getInstance(r)));
+		json.put(IRequestParamsNames.LIMIT,new JSONNumber( params.getLimit()));
+		json.put(IRequestParamsNames.OFFSET,new JSONNumber( params.getOffset()));
+		return json.toString();
+	}
+
+	public static String convert(AmortizationParams params) {
+		JSONObject json = new JSONObject();
+		params.getDomain().ifPresent( d -> json.put(IRequestParamsNames.DOMAIN, new JSONNumber( d)));
+		params.getId().ifPresent( d -> json.put(IRequestParamsNames.ID, new JSONNumber( d)));
+		params.getFromId().ifPresent( d -> json.put(IRequestParamsNames.FROM_ID, new JSONNumber( d)));
+		params.getToId().ifPresent( d -> json.put(IRequestParamsNames.TO_ID, new JSONNumber( d)));
+		params.getActivity().ifPresent( d -> json.put(IRequestParamsNames.ACTIVITY, new JSONNumber( d)));
+		params.getInvestAsset().ifPresent( d -> json.put(IRequestParamsNames.INVEST_ASSET, new JSONNumber( d)));
+		params.getAllocationAccount().ifPresent( d -> json.put(IRequestParamsNames.ALLOCATION_ACCOUNT, new JSONNumber( d)));
+		params.getAccumulatedAccount().ifPresent( d -> json.put(IRequestParamsNames.ACCUMULATED_ACCOUNT, new JSONNumber( d)));
+		params.getFixedAssetAccount().ifPresent( d -> json.put(IRequestParamsNames.FIXED_ASSET_ACCOUNT, new JSONNumber( d)));
+		params.getDescription().ifPresent( d -> json.put(IRequestParamsNames.DESCRIPTION, new JSONString(d)));
+		params.getFromInitialDate().ifPresent( d -> json.put(IRequestParamsNames.FROM_INITIAL_DATE, new JSONString( FORMATTER.format(d))));
+		params.getToInitialDate().ifPresent( d -> json.put(IRequestParamsNames.TO_INITIAL_DATE,new JSONString( FORMATTER.format(d))));
+		params.getDeadlineFilled().ifPresent( d -> json.put(IRequestParamsNames.DEADLINE_FILLED, new JSONNumber( AonNumberUtils.toInteger(d))));
+		params.getFromDeadline().ifPresent( d -> json.put(IRequestParamsNames.FROM_DEADLINE, new JSONString( FORMATTER.format(d))));
+		params.getToDeadline().ifPresent( d -> json.put(IRequestParamsNames.TO_DEADLINE,new JSONString( FORMATTER.format(d))));
+		params.getAmount().ifPresent( d -> json.put(IRequestParamsNames.AMOUNT, new JSONNumber( d)));
+		params.getFeePeriod().ifPresent( d -> json.put(IRequestParamsNames.FEE_PERIOD, new JSONNumber( d.ordinal())));
+		params.getSaleAmount().ifPresent( d -> json.put(IRequestParamsNames.SALE_AMOUNT, new JSONNumber( d)));
+		params.getComments().ifPresent( d -> json.put(IRequestParamsNames.COMMENTS, new JSONString(d)));
+		params.getPercentage().ifPresent( d -> json.put(IRequestParamsNames.PERCENTAGE, new JSONNumber( d)));
+		params.getSecurityLevel().ifPresent( d -> json.put(IRequestParamsNames.SECURITY_LEVEL, new JSONNumber( d.value())));
+		params.getAllocation().ifPresent( d -> json.put(IRequestParamsNames.ALLOCATION, new JSONNumber( d)));
+		params.getStatus().ifPresent( d -> json.put(IRequestParamsNames.STATUS, new JSONNumber( d.ordinal())));
+		params.getOrderBy().ifPresent( d -> json.put(IRequestParamsNames.ORDER_BY, new JSONNumber( d.ordinal())));
 		json.put(IRequestParamsNames.LIMIT,new JSONNumber( params.getLimit()));
 		json.put(IRequestParamsNames.OFFSET,new JSONNumber( params.getOffset()));
 		return json.toString();

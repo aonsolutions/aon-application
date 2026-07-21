@@ -5,7 +5,10 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
+import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -20,7 +23,7 @@ public class AccountingAmortizationPanel extends AonLayoutPanel {
 	private AccountingAmortizationFilterPanel filterPanel;
 	
 	private FormPanel diskForm = new FormPanel("_blank");
-	private Hidden amortizationIdHidden = new Hidden(IRequestParamsNames.ID);
+	private Hidden paramsHidden = new Hidden(IRequestParamsNames.AMORTIZATION_PARAMS);
 	private Hidden domainIdHidden = new Hidden(IRequestParamsNames.DOMAIN_ID);
 	private Hidden domainNameHidden= new Hidden(IRequestParamsNames.DOMAIN_NAME);
 	private Hidden userHidden = new Hidden(IRequestParamsNames.USER);
@@ -51,7 +54,7 @@ public class AccountingAmortizationPanel extends AonLayoutPanel {
 		formFlowPanel.add(domainIdHidden);
 		formFlowPanel.add(domainNameHidden);
 		formFlowPanel.add(userHidden);
-		formFlowPanel.add(amortizationIdHidden);
+		formFlowPanel.add(paramsHidden);
 		toolbar.add(diskForm);
 		
 		this.addNorth(toolbar, AonToolbar.HEIGTH);
@@ -76,11 +79,13 @@ public class AccountingAmortizationPanel extends AonLayoutPanel {
 	}
 	
 	private void excel(AmortizationModuleOptions opts , AmortizationParams params) {
-//		diskForm.setAction(GWT.getHostPageBaseURL() + AMORTIZATION_REPORT_EXCEL_PRINT);
-//		domainIdHidden.setValue( AonNumberUtils.toString(opts.getDomain()));
-//		domainNameHidden.setValue(opts.getDomainName());
-//		userHidden.setValue(opts.getUser());
-//		amortizationIdHidden.setValue(AonNumberUtils.toString(amortization.getId()));
-//		diskForm.submit();
+		diskForm.setAction(GWT.getHostPageBaseURL() + AMORTIZATION_REPORT_EXCEL_PRINT);
+		domainIdHidden.setValue( AonNumberUtils.toString(opts.getDomain()));
+		domainNameHidden.setValue(opts.getDomainName());
+		userHidden.setValue(opts.getUser());
+		params.setOffset(0);
+		params.setLimit(Integer.MAX_VALUE);
+		paramsHidden.setValue(JsonParams.convert( params ));
+		diskForm.submit();
 	}
 }
