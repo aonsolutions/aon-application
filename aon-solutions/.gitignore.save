@@ -1,6 +1,0 @@
-/target/
-/src/main/webapp/invoice/factura-emitida/
-.settings
-.classpath
-.project
-/target/*
