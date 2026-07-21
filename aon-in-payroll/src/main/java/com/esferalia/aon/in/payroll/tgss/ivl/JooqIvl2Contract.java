@@ -226,6 +226,7 @@ public class JooqIvl2Contract implements IvlParserListener {
 	.select()
 	.from(CONTRACT)
 	.where(condition)
+	.limit(1)
 	.fetchOptionalInto(CONTRACT);
     }
     
