@@ -692,7 +692,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 		Date startITDate = getToday();
 		int maxItDays = (int) ((getMax(startITDate, DAY_OF_MONTH) - get(startITDate, DAY_OF_MONTH))) + 1;
-		for ( int itDays = 9; itDays <= maxItDays; itDays++) {
+		for ( int itDays = 1; itDays <= maxItDays; itDays++) {
 
 			ContractRecord contract = newContract(aonContext, 
 					new String[] {
@@ -722,9 +722,6 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 						java.util.Date startDate, java.util.Date endDate, IPayment payment,
 						Map<String, ITimedVariable<?>> context) {
 					System.out.println("Payment [" + description + "] : " + amount + " quote: " + quote + " tax: " + tax + " startDate: " + startDate + " endDate: " + endDate);
-					context.entrySet().stream().forEach(entry->{
-						System.out.println("Context [" + entry.getKey() + "] : " + entry.getValue().getValue(entry.getValue().getPeriod()));
-					});
 					super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
 				}
 			});
