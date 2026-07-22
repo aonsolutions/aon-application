@@ -359,7 +359,6 @@ export const ROW = 'row';
 export const ROWS = 'rows';
 
 // ----- S
-export const SALTRA = 'saltra';
 export const SALES_PREPARATION = 'salesPreparation';
 export const SAVE = 'save';
 export const SCROLLING = 'scrolling';

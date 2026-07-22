@@ -867,7 +867,7 @@ export class AonAltaDirecta extends AonElement {
 
     isManager(){
         let dur = this.getApplicationParent().getDur();
-        return dur.isComunicaManager() || dur.isSaltraManager();
+        return dur.isComunicaManager();
     }
 
     // async suggestionConvenio() {

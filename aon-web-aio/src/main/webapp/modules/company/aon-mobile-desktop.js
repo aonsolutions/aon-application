@@ -7,7 +7,6 @@ import { AonMessenger } from '../messenger/aon-messenger.js';
 import '../invoice/aon-invoice-panel.js';
 import { AonStatistics } from '../timecontrol/time-control/statistics/aon-statistics.js';
 import { Apps, getAppsByDur } from '../../services/app.js';
-import { AonSaltra } from '../laboral/aon-saltra.js';
 import { getPosition } from '../../services/maps.js';
 import * as LS from '../../services/localStorageService.js';
 
@@ -119,10 +118,6 @@ export class AonMobileDesktop extends AonElement {
 
 		if(appsOpen && appsOpen.length===1){
 			let app = appsOpen[0];
-			if( app.app === Apps.AON_SALTRA.app ){
-				this.rootPanel(new AonSaltra())
-				return true;
-			}
 		}
 		return false;
 	}

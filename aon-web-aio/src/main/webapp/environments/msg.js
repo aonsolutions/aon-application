@@ -1018,7 +1018,6 @@ export const REPAIR_ORDERS_EXCEL = MSG.REPAIR_ORDERS_EXCEL;
 
 // ----- S
 
-export const SALTRA = 'Saltra';
 export const SALE_DELIVERY = MSG.SALE_DELIVERY;
 export const SALES = MSG.SALES;
 export const SALES_PREPARATION = MSG.SALES_PREPARATION;

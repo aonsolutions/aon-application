@@ -505,35 +505,6 @@ export const SELFCONTA = {
   has: (dur) => new DomainUserRoles(dur).hasSelfconta(),
 };
 
-export const AON_SALTRA = {
-  app: CONSTANT.SALTRA,
-  title: MSG.SALTRA,
-  tag: MSG.SALTRA,
-  description: MSG.SALTRA,
-  access: [
-    {
-      value: "Asesor",
-      name: "Asesor",
-    },
-    {
-      value: "Empresa",
-      name: "Empresa",
-    },
-    {
-      value: "Empleado",
-      name: "Empleado",
-    },
-  ],
-  icon: AON_ICONS.AON_SALTRA,
-  color: "#002469",
-  backgroundColor: "rgba(0, 36, 105, .2)",
-  hover: 'aonSidenavHover',
-  price: " ", 
-  is: (dur) => new DomainUserRoles(dur).isSaltra(),
-  has: (dur) => new DomainUserRoles(dur).hasSaltra(),
-  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
-};
-
 export const AUTOBOOKING = {
   app: "autobooking",
   title: MSG.AUTOBOOKING,
@@ -702,7 +673,6 @@ export const MenuApps = {
   FISCAL,
   PAYROLL,
   COMUNICA,
-  AON_SALTRA,
   INVOICE,
   // TREASURY,
   DOCUMENTAL,
@@ -760,7 +730,6 @@ export const EnterpriseAonApps = [
   AON_SOLUTIONS,
   BIDOQ,
   SELFCONTA,
-  AON_SALTRA,
   BANK,
   OFFICE
 ];
@@ -780,7 +749,6 @@ export const EnterpriseApps = [
   "aio",
   "bidoq",
   "selfconta",
-  "saltra",
   "bank"
 ];
 
@@ -795,7 +763,6 @@ export const Apps = {
   FISCAL,
   PAYROLL,
   COMUNICA,
-  AON_SALTRA,
   INVOICE,
   // MARKETING,
   // TREASURY,
@@ -1005,7 +972,7 @@ export const Packs = {
 };
 
 export const AuxApps = { TOOLS };
-export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, AON_SALTRA };
+export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA };
 export const Services = { INVOFOX, OCR, CONVENIOS, BANK, AULA, API_SERVICE };
 export const ConsoleServices = { INVOFOX, OCR, CONVENIOS, BANK, AULA, SERES, API_SERVICE, CUSTOM_VIEW, AUTOBOOKING };
 
@@ -1030,8 +997,7 @@ export const AllAonApps = [
   BANK,
   AON_SOLUTIONS,
   BIDOQ,
-  SELFCONTA,
-  AON_SALTRA
+  SELFCONTA
   ];
   
 export const AllApps = {
@@ -1054,8 +1020,7 @@ export const AllApps = {
   BANK,
   AON_SOLUTIONS,
   BIDOQ,
-  SELFCONTA,
-  AON_SALTRA
+  SELFCONTA
 };
 
 export const AllApps2 = {
@@ -1083,7 +1048,6 @@ export const AllApps2 = {
   CUSTOM_VIEW,
   AULA,
   NOTES,
-  AON_SALTRA,
   BASIC_MANAGEMENT,
   STANDAR_MANAGEMENT,
   PROFESSIONAL_MANAGEMENT,
@@ -1147,10 +1111,6 @@ export const getAppsByDur = (dur) => {
 
   if(dur.isInvoice())
     apps.push(Apps.INVOICE);
-
-  if(dur.isSaltra() && !dur.isPayroll() && !dur.isComunica()){
-    apps.push(Apps.AON_SALTRA);
-  }
 
   return apps;
 };
@@ -1810,8 +1770,7 @@ export const PLAN_APPS = {
 export const AON_APPS = [ 
 	AON_SOLUTIONS, 
 	BIDOQ, 
-	SELFCONTA, 
-	AON_SALTRA,
+	SELFCONTA,
 ];
 
 export const MENU_APPS = [

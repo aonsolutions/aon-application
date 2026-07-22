@@ -77,9 +77,6 @@ export const Role = {
   	AON_SMB: 'AON_SMB',							// ACCESO A AON SMB
   	DEV: 'DEV',									// USUARIO TIPO DESARROLLADOR.
 	SELFCONTA: 'SELFCONTA',
-	SALTRA: 'SALTRA',
-	SALTRA_MANAGER: 'SALTRA_MANAGER',
-	SALTRA_PORTAL: 'SALTRA_PORTAL',
 	WAREHOUSE: 'WAREHOUSE',
 	COMMERCIAL: 'COMMERCIAL',
 	TREASURY: 'TREASURY',
@@ -131,9 +128,6 @@ export const Roles = [
 	{ value: Role.BETA, is: (dur) => new DomainUserRoles(dur).isBeta()},
 	{ value: Role.DEV, is: (dur) => new DomainUserRoles(dur).isDev()},
 	{ value: Role.SELFCONTA, is: (dur) => new DomainUserRoles(dur).isSelfconta()},
-	{ value: Role.SALTRA, is: (dur) => new DomainUserRoles(dur).isSaltra()},
-	{ value: Role.SALTRA_MANAGER, is: (dur) => new DomainUserRoles(dur).isSaltraManager()},
-	{ value: Role.SALTRA_PORTAL, is: (dur) => new DomainUserRoles(dur).isSaltraPortal()},
 	{ value: Role.WAREHOUSE, is: (dur) => new DomainUserRoles(dur).isWarehouse()},
 	{ value: Role.COMMERCIAL, is: (dur) => new DomainUserRoles(dur).isCommercial()},
 	{ value: Role.TREASURY, is: (dur) => new DomainUserRoles(dur).isTreasury()},
@@ -196,7 +190,6 @@ export const App = {
 	PACK_FISCAL_ACCOUNTING: 'PACK_FISCAL_ACCOUNTING',
 	SELFCONTA: 'SELFCONTA',
 	CUSTOM_VIEW: 'CUSTOM_VIEW',
-	SALTRA: 'SALTRA',
 	BASIC_MANAGEMENT: 'BASIC_MANAGEMENT',
 	STANDAR_MANAGEMENT: 'STANDAR_MANAGEMENT',
 	PROFESSIONAL_MANAGEMENT: 'PROFESSIONAL_MANAGEMENT',

@@ -51,8 +51,11 @@ public enum AonRole  implements Serializable {
 	SELFCONTA,			// 38 - 
 	MESSENGER_PORTAL,	// 39 - ACCESO A MENSAJERIA -  MODO MODO PORTAL/EMPRESA
 	NOTES,				// 40 -
+	@Deprecated
 	SALTRA,				// 41 -
+	@Deprecated
 	SALTRA_MANAGER,		// 42 - ACCESO A COMUNIC@ -  MODO ASESOR
+	@Deprecated
 	SALTRA_PORTAL,		// 43 - ACCESO A COMUNIC@ -  MODO PORTAL/EMPRESA
 	COMMERCIAL, 		// 44 - ACCESO A COMERCIAL
 	WAREHOUSE,			// 45 -

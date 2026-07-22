@@ -6,7 +6,6 @@ import {DomainUserRoles} from '../models/DomainUserRoles.js';
 import { CONSTANT, CSS, MSG, TAG } from '../environments/environments.js';
 import { AonDocumentalAyudat } from './documental/ayudat/aon-documental-ayudat.js';
 import { AonDocumental } from './documental/aon-documental.js';
-import { AonSaltra } from'./laboral/aon-saltra.js';
 import '../components/aon-icon.js';
 import * as UA from '../services/userAgentService.js' ;
 import '../components/aon-application.js';
@@ -172,9 +171,6 @@ export class AonApps extends AonElement {
 			case Apps.MESSENGER.app:
 				this.rootPanelHtml('<aon-messenger></aon-messenger>');
 				break;
-			case Apps.AON_SALTRA.app:
-				this.rootPanel(new AonSaltra());
-				break;
 			case Apps.WAREHOUSE.app:
 				this.rootPanel(new AonWarehouse());
 				break;
@@ -205,8 +201,6 @@ export class AonApps extends AonElement {
 			return this.getDur().isInvoice();
 		else if(Apps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
-		else if(Apps.AON_SALTRA.app === app.app)
-			return !this.getDur().isComunica() && !this.getDur().isPayroll() && this.getDur().isSaltra();
 		else if(Apps.MARKETING.app === app.app)
 			return this.getDur().isMarketing() && this.isBeta();
 		else if(Apps.WAREHOUSE.app === app.app){
