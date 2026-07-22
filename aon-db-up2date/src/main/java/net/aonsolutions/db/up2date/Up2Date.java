@@ -19,16 +19,13 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.ContractCostExpressionText;
-import net.aonsolutions.db.up2date.payroll.ContractCostSeaExpressionFix;
 import net.aonsolutions.db.up2date.payroll.ContractForeignKeysAddIfNotExist;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.ImporteHoraFormacion2026Update;
 import net.aonsolutions.db.up2date.scope.InsertDefaultScope;
 import net.aonsolutions.db.up2date.scope.UserScopeStartDateNotNull;
+import net.aonsolutions.db.up2date.security.DeleteDomainAppApp19;
 import net.aonsolutions.db.up2date.security.UserScopeAlterStartEndAuditory;
-import net.aonsolutions.db.up2date.tgss.AgriculturalBaseCgcJornadasTotalesFix;
-import net.aonsolutions.db.up2date.tgss.CgcEMinInsert;
 import net.aonsolutions.db.up2date.timecontrol.CalendarFixNulls;
 
 public class Up2Date {
@@ -667,6 +664,7 @@ public class Up2Date {
 			
 			// RecordDataAlterTable.RECORD_DATA_ALTER_TABLE
 			// DeleteDomainAppApp7.DELETE_DOMAIN_APP_APP7
+			DeleteDomainAppApp19.DELETE_DOMAIN_APP_APP19,
 
 			// InvoiceTrackingAlterTableJson.INVOICE_TRACKING_ALTER_TABLE_JSON,
 			
