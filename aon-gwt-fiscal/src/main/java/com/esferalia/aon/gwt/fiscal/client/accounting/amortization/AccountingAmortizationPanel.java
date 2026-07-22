@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
 public class AccountingAmortizationPanel extends AonLayoutPanel {
-	private static final String AMORTIZATION_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/AmortizationReportExcelPrint";
+	private static final String ACCOUNTING_AMORTIZATION_EXCEL = "/aon_gwt_fiscal/roms/AccountingAmortizationExcelServlet";
 	
 	private final AonToolbar toolbar = new AonToolbar(AON.MSG.accountingAmortizationModule()); 
 	private SimpleLayoutPanel tablePanel = new SimpleLayoutPanel();
@@ -79,7 +79,7 @@ public class AccountingAmortizationPanel extends AonLayoutPanel {
 	}
 	
 	private void excel(AmortizationModuleOptions opts , AmortizationParams params) {
-		diskForm.setAction(GWT.getHostPageBaseURL() + AMORTIZATION_REPORT_EXCEL_PRINT);
+		diskForm.setAction(GWT.getHostPageBaseURL() + ACCOUNTING_AMORTIZATION_EXCEL);
 		domainIdHidden.setValue( AonNumberUtils.toString(opts.getDomain()));
 		domainNameHidden.setValue(opts.getDomainName());
 		userHidden.setValue(opts.getUser());

@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -29,6 +30,7 @@ import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableObject;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import jakarta.servlet.ServletException;
@@ -37,8 +39,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "Amortization Report Excel Print", urlPatterns = { "/aon_gwt_fiscal/roms/AmortizationReportExcelPrint" })
-public class AmortizationReportExcelPrint extends HttpServlet {
+@WebServlet(name = "Amortization Excel Print", urlPatterns = { "/aon_gwt_fiscal/roms/AmortizationExcelServlet" })
+public class AmortizationExcelServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -4737903276711035815L;
 	
@@ -69,13 +71,18 @@ public class AmortizationReportExcelPrint extends HttpServlet {
 						Amortization am = ACCOUNTING.getAmortization(occam, domainId, amortizationId)
 							.orElseThrow(() -> new AonCoreException("Amortizaci\u00F3n no encontrada: " + amortizationId));
 						am.detailStream().forEach( det -> action.run(am, det));
-						nameHolder.setValue("FICHA-"+params.getId());
+						nameHolder.setValue("FICHA-"+amortizationId);
 					}
 					, () -> {
-						action.initialize("Apuntest de amortiazci\u00F3n");
-						ACCOUNTING.getAccountingAmortizations(occam, domainId, params)
-							.forEach( aam -> action.run(aam.getAmortization(), aam.getDetail()));
-						nameHolder.setValue("APUNTES AMORTIZ.");
+						action.initialize("Apuntes de amortizaci\u00F3n");
+						AonCollectionUtils.stream(ACCOUNTING.getAmortizations(occam, params))
+					      	.map(am -> ACCOUNTING.getAmortization(occam, domainId, am.getId()))
+					      	.flatMap(Optional::stream)
+			      			.forEach( am -> am.detailStream().forEach( det -> action.run(am, det)))
+		      			;
+						ACCOUNTING.getAmortizations(occam, params)
+							.forEach( am -> am.detailStream().forEach( det -> action.run(am, det)));
+						nameHolder.setValue("FICHA AMORTIZ.");
 					}
 			);
 			resp.setContentType(MimeType.MS_EXCEL.getName());

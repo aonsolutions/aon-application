@@ -40,7 +40,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class AmortizationPanel extends AonCustomDockLayout {
 	private static final int FORM_IDX = 1;
-	private static final String AMORTIZATION_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/AmortizationReportExcelPrint";
+	private static final String AMORTIZATION_EXCEL = "/aon_gwt_fiscal/roms/AmortizationExcelServlet";
 	
 	static interface AmortizationPanelCallback {
 		Amortization getAmortization();
@@ -69,6 +69,7 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 	private AonToolbarButton calculateButton;
 	private AonToolbarButton saleButton;
 	private AonToolbarButton excelButton;
+	private AonToolbarButton excelListButton;
 	
 	private FormPanel diskForm = new FormPanel("_blank");
 	private Hidden amortizationParamsHidden = new Hidden(IRequestParamsNames.AMORTIZATION_PARAMS);
@@ -103,6 +104,11 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 		
 		resetButton.addClickHandler(e -> reset(opts));
 		this.addToolbarButton(resetButton);
+		
+		excelListButton = new AonToolbarButton(AON.MSG.printExcel(), AON.CSS.aonIconExcel());
+		excelListButton.addClickHandler(e -> excel(opts));
+		this.addToolbarButton(excelListButton);
+
 		
 		diskForm.setMethod(FormPanel.METHOD_POST);
 		FlowPanel formFlowPanel = new FlowPanel();
@@ -328,6 +334,7 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 		if (calculateButton != null) calculateButton.removeFromParent();
 		if (saleButton != null) saleButton.removeFromParent();
 		if (excelButton != null) excelButton.removeFromParent();
+		excelListButton.setVisible(true);
 		
 		tablePanel.clear();
 		AmortizationTable amortizationTable = new AmortizationTable(opts, getParams(opts));
@@ -427,6 +434,7 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 			
 			@Override
 			public AonToolbarButton paintExcelButton() {
+				excelListButton.setVisible(false);
 				if (excelButton != null) excelButton.removeFromParent();
 				excelButton = new AonToolbarButton(AON.MSG.printExcel(), AON.CSS.aonIconExcel());
 				excelButton.addClickHandler(e -> excel( opts , amortization));
@@ -445,17 +453,28 @@ public abstract class AmortizationPanel extends AonCustomDockLayout {
 		show(formPanel);
 	}
 	
+	private void excel(AmortizationModuleOptions opts) {
+		AmortizationParams params = getParams(opts)
+			.setOffset(0)
+			.setLimit(Integer.MAX_VALUE);
+		excel( opts , params );
+	}
+	
 	private void excel(AmortizationModuleOptions opts , Amortization amortization) {
-		diskForm.setAction(GWT.getHostPageBaseURL() + AMORTIZATION_REPORT_EXCEL_PRINT);
+		excel( opts , new AmortizationParams()
+			.setDomain(opts.getDomain())
+			.setId(amortization.getId()));
+	}
+	
+	private void excel(AmortizationModuleOptions opts , AmortizationParams params) {
+		diskForm.setAction(GWT.getHostPageBaseURL() + AMORTIZATION_EXCEL);
 		domainIdHidden.setValue( AonNumberUtils.toString(opts.getDomain()));
 		domainNameHidden.setValue(opts.getDomainName());
 		userHidden.setValue(opts.getUser());
-		amortizationParamsHidden.setValue(
-			JsonParams.convert(new AmortizationParams()
-				.setDomain(opts.getDomain())
-				.setId(amortization.getId())));
+		amortizationParamsHidden.setValue(JsonParams.convert(params));
 		diskForm.submit();
 	}
+	
 	
 	protected void clearFilter( AmortizationModuleOptions opts ) {
 		initialize(opts);

@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -24,6 +25,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.jooq.Condition;
+import org.jooq.Field;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.Query;
 import org.jooq.Record;
@@ -70,6 +72,16 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class AmortizationDAO {
 	
 	private static final double INVESTMENT_LIMIT = 3005.06;
+	
+	private static final com.esferalia.aon.jooq.tables.AmortizationDetail AMORTIZATION_DETAIL_SUM = AMORTIZATION_DETAIL.as("ad2");
+	private static final Field<BigDecimal> ACCUMULATED_SUM_FIELD = 
+		DSL.coalesce(
+			DSL.select(DSL.sum(AMORTIZATION_DETAIL_SUM.ALLOCATION))
+				.from(AMORTIZATION_DETAIL_SUM)
+				.where(AMORTIZATION_DETAIL_SUM.AMORTIZATION.eq(AMORTIZATION_DETAIL.AMORTIZATION))
+				.and(AMORTIZATION_DETAIL_SUM.FROM_DATE.le(AMORTIZATION_DETAIL.FROM_DATE))
+				.asField()
+			,BigDecimal.ZERO);
 	
 	private static final String AMORTIZATION_DETAIL_ID_LABEL = "Identificador del detalle de amortizaci\u00F3n";
 	private static final String AMORTIZATION_DETAIL_LABEL = "Detalle de amortizaci\u00F3n";
@@ -1014,22 +1026,33 @@ public class AmortizationDAO {
 	public static Stream<AccountingAmortization> getAccountingAmortizations(AONContext ctx, Integer domain, AmortizationParams params) {
 		if (domain == null) throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
 		return ctx.getDslContext()
-		        .select()
-		        .from(AMORTIZATION_DETAIL)
-		        .innerJoin(AMORTIZATION).on(AMORTIZATION.ID.eq(AMORTIZATION_DETAIL.AMORTIZATION))
-		        .innerJoin(FIXED_ASSET_ACCOUNT).on(AMORTIZATION.FIXED_ASSET_ACCOUNT.eq(FIXED_ASSET_ACCOUNT.ID))
-		        .innerJoin(ACCUMULATED_ACCOUNT).on(AMORTIZATION.ACCUMULATED_ACCOUNT.eq(ACCUMULATED_ACCOUNT.ID))
-		        .innerJoin(ALLOCATION_ACCOUNT).on(AMORTIZATION.ALLOCATION_ACCOUNT.eq(ALLOCATION_ACCOUNT.ID))
-		        .leftOuterJoin(INVEST_ASSET).on(AMORTIZATION.INVEST_ASSET.eq(INVEST_ASSET.ID))
-				.where(getAccountingCondition(params))
-	    		.orderBy(getOrderBy(params,true))
-	    		.limit(params.getOffset() , params.getLimit())
-				.fetch()
-				.stream()
-				.map( r -> new AccountingAmortization()
-					.setAmortization( AmortizationFiller.build(r) )
-					.setDetail( AmortizationDetailFiller.build(r) ))
-			;
+			.select(
+				AMORTIZATION.asterisk(),
+				AMORTIZATION_DETAIL.asterisk(),
+				FIXED_ASSET_ACCOUNT.asterisk(),
+				ACCUMULATED_ACCOUNT.asterisk(),
+				ALLOCATION_ACCOUNT.asterisk(),
+				INVEST_ASSET.asterisk(),
+				ACCUMULATED_SUM_FIELD)
+			.from(AMORTIZATION_DETAIL)
+			.innerJoin(AMORTIZATION).on(AMORTIZATION.ID.eq(AMORTIZATION_DETAIL.AMORTIZATION))
+			.innerJoin(FIXED_ASSET_ACCOUNT).on(AMORTIZATION.FIXED_ASSET_ACCOUNT.eq(FIXED_ASSET_ACCOUNT.ID))
+			.innerJoin(ACCUMULATED_ACCOUNT).on(AMORTIZATION.ACCUMULATED_ACCOUNT.eq(ACCUMULATED_ACCOUNT.ID))
+			.innerJoin(ALLOCATION_ACCOUNT).on(AMORTIZATION.ALLOCATION_ACCOUNT.eq(ALLOCATION_ACCOUNT.ID))
+			.leftOuterJoin(INVEST_ASSET).on(AMORTIZATION.INVEST_ASSET.eq(INVEST_ASSET.ID))
+			.where(getAccountingCondition(params))
+			.orderBy(getOrderBy(params, true))
+			.limit(params.getOffset(), params.getLimit())
+			.fetch()
+			.stream()
+			.map(r -> {
+				Amortization am = AmortizationFiller.build(r);
+				AmortizationDetail det = AmortizationDetailFiller.build(r);
+				double accumulated = AonMathUtils.round(r.get(ACCUMULATED_SUM_FIELD).doubleValue());
+				det.setAccumulated(accumulated);
+				det.setPending(AonMathUtils.round(am.getAmount() - accumulated));
+				return new AccountingAmortization().setAmortization(am).setDetail(det);
+			});
 	}
 	
 	private static Condition getAccountingCondition(AmortizationParams params) {
