@@ -244,13 +244,14 @@ class IvlcccParser {
 		+ "(?<quoteGroup>\\d{2})\\s*(?<monthly>/S)?\\s*"
 		+ "(?<tc2>\\d{3})?\\s*"
 		+ "(?<partialFactor>\\d+,\\d{3})?\\s*"
+		+ "(?<ocupation>[A-Za-z])?\\s*"
 		+ "((?<it>\\d+(,\\d+)?)\\s*(?<ims>\\d+(,\\d+)?)\\s*(?<total>\\d+(,\\d+)?)\\s*)?"
 		+ "(?<quoteDays>\\d+)"
 		+ ".*$"
 		, Pattern.CASE_INSENSITIVE);
 	
 	public static void main(String[] args) {
-	    Matcher matcher = EMPLOYEE_START_END_GC_TC.matcher(" ALTA 12-06-2023 12-06-2023   08 100   3,35 3,35 6,70 149 D7K");
+	    Matcher matcher = EMPLOYEE_START_END_GC_TC.matcher(" ALTA 12-06-2023 12-06-2023   08 100 G 3,35 3,35 6,70 149 D7K");
 	    if (!matcher.matches()) 
 		throw new AssertionError();
 	    matcher = EMPLOYEE_NAF_NIF_NAME.matcher("08 1330742864 6 0Y4553289Q CHARNJIT --- G56");
