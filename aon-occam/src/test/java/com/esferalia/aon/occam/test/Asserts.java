@@ -1117,7 +1117,7 @@ public class Asserts {
 			assertEquals("Creation user", expected.getCreationUser(), actual.getCreationUser());
 			assertEquals(expected.getDelivery().getId(), actual.getDelivery().getId());
 			assertEquals("Description", expected.getDescription(), actual.getDescription());
-			assertEquals("Discount expression", expected.getDiscountExpression(), actual.getDiscountExpression());
+			assertEquals("Discount expression", expected.getDiscountExpression().getDiscountExpr(), actual.getDiscountExpression().getDiscountExpr());
 			assertEquals("Domain", expected.getDomain(), actual.getDomain());
 			assertEquals("Id", expected.getId(), actual.getId());
 			assertEquals(expected.getItem().getId(), actual.getItem().getId());

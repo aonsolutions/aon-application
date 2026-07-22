@@ -158,7 +158,7 @@ public class DeliveryExcelAction extends AbsExcelAction implements Consumer<Deli
 		addCell(AonStringUtils.abbreviate(detail.getDescription(), 60)) ;
 		addCell(detail.getQuantity());
 		addCell(detail.getPrice());
-		addCell(detail.getDiscountExpression());
+		addCell(detail.getDiscountExpression().getDiscountExpr());
 		addCell(detail.getDelivery().getScopeName());
 		addCell(detail.getDelivery().getWorkplaceName());
 		addCell(detail.getDelivery().getProject().getName());
