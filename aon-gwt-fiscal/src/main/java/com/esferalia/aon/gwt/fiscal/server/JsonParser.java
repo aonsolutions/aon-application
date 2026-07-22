@@ -913,6 +913,7 @@ public class JsonParser {
 			.setId(JsonUtils.getInteger(jsonParams, IRequestParamsNames.ID))
 			.setFromId(JsonUtils.getInteger(jsonParams, IRequestParamsNames.FROM_ID))
 			.setToId(JsonUtils.getInteger(jsonParams, IRequestParamsNames.TO_ID))
+			.setDetailId(JsonUtils.getInteger(jsonParams, IRequestParamsNames.DETAIL_ID))
 			.setActivity(JsonUtils.getInteger(jsonParams, IRequestParamsNames.ACTIVITY))
 			.setInvestAsset(JsonUtils.getInteger(jsonParams, IRequestParamsNames.INVEST_ASSET))
 			.setAllocationAccount(JsonUtils.getInteger(jsonParams, IRequestParamsNames.ALLOCATION_ACCOUNT))

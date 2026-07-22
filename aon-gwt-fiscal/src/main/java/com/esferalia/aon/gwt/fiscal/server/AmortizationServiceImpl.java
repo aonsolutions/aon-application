@@ -107,5 +107,15 @@ public class AmortizationServiceImpl extends AonStatelessRemoteServiceServlet im
 	public LinkedList<AccountingAmortization> getAccountingAmortizations(Occam occam, Integer domain, AmortizationParams params) throws AonCoreException {
 		return ACCOUNTING.getAccountingAmortizations(occam, domain, params);
 	}
+
+	@Override
+	public void recordAmortizationDetails(Occam occam, Integer domain, Integer[] ids) throws AonCoreException {
+		ACCOUNTING.recordAmortizationDetails(occam, domain, ids);
+	}
+
+	@Override
+	public void unrecordAmortizationDetails(Occam occam, Integer domain, Integer[] ids) throws AonCoreException {
+		ACCOUNTING.unrecordAmortizationDetails(occam, domain, ids);
+	}
 	
 }

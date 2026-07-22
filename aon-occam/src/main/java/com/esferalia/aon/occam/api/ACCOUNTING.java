@@ -973,6 +973,19 @@ public class ACCOUNTING {
 				.collect(Collectors.toCollection(LinkedList::new));
 		}
 	}
+	
+	public static void recordAmortizationDetails(Occam occam, Integer domain, Integer[] ids) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			getAccounting().recordAmortizationDetails(ctx, domain, ids);
+		}
+	}
+	
+	public static void unrecordAmortizationDetails(Occam occam, Integer domain, Integer[] ids) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			getAccounting().unrecordAmortizationDetails(ctx, domain, ids);
+		}
+	}
+	
 	// *******************************************************
 	// ********************************** [INVOICES COUNTERS]
 	// *******************************************************
@@ -982,5 +995,4 @@ public class ACCOUNTING {
 				.collect(Collectors.toCollection(LinkedList::new));
 		}
 	}
-
 }

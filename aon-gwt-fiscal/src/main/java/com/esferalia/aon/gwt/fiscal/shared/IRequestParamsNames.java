@@ -55,6 +55,7 @@ public interface IRequestParamsNames {
 	String DELIVERY_STATUS_INVOICED = "deliveryStatusInvoiced";
 	String DELIVERY_STATUS_PENDING = "deliveryStatusPending";
 	String DESCRIPTION = "description";
+	String DETAIL_ID = "detailId";
 	String DOCUMENT_COUNTRY = "documentCountry";
 	String DOCUMENT = "document";
 	String DOCUMENT_TYPE = "documentType";

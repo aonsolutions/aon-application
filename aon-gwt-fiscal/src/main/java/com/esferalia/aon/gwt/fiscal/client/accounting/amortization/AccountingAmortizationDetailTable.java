@@ -5,6 +5,12 @@ import java.util.function.Supplier;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
+import com.esferalia.aon.gwt.common.client.event.AonCheckedEvent;
+import com.esferalia.aon.gwt.common.client.event.AonCheckedHandler;
+import com.esferalia.aon.gwt.common.client.event.AonUncheckedEvent;
+import com.esferalia.aon.gwt.common.client.event.AonUncheckedHandler;
+import com.esferalia.aon.gwt.common.client.event.HasCheckedHandlers;
+import com.esferalia.aon.gwt.common.client.event.HasUncheckedHandlers;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
@@ -25,6 +31,7 @@ import com.esferalia.aon.watson.mutable.MutableBoolean;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -32,7 +39,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-class AccountingAmortizationDetailTable extends ScrollPanel {
+class AccountingAmortizationDetailTable extends ScrollPanel implements HasCheckedHandlers<AccountingAmortization>, HasUncheckedHandlers<AccountingAmortization>{
 
 	private FlowPanel containerPanel = new FlowPanel();
 	private AonFlexTable grid = new AonFlexTable(COLUMN_WIDTHS, AON.CSS.aonBlockCenter());
@@ -159,8 +166,12 @@ class AccountingAmortizationDetailTable extends ScrollPanel {
 		});
 	}
 	
+	private void uncheckAndfillRow(AmortizationModuleOptions opts, AonFlexTableRow row, AccountingAmortization aa) {
+		AonUncheckedEvent.fire(AccountingAmortizationDetailTable.this, aa);
+		fillRow(opts, row, aa);			
+	}
 	private void fillRow(AmortizationModuleOptions opts, AonFlexTableRow row, AccountingAmortization aa) {
-		row	.clear();
+		row.clear();
 		Amortization a = aa.getAmortization();
 		AmortizationDetail d = aa.getDetail();
 		String fromDate = ensure(d.getFromDate(), () -> AON.DATE_FORMAT.format(d.getFromDate()), AonStringUtils.EMPTY);
@@ -168,7 +179,7 @@ class AccountingAmortizationDetailTable extends ScrollPanel {
 		String toDate = ensure(d.getToDate(), () -> AON.DATE_FORMAT.format(d.getToDate()), AonStringUtils.EMPTY);
 		Label toDateLabel = new Label(toDate);
 		row
-			.addCell( new Label() )
+			.addCell( new AonCheckButton( aa ) )
 			.addCell( new Label( a.getDescription() ) )
 			.addCell( fromDateLabel)
 			.addCell( toDateLabel )
@@ -225,7 +236,7 @@ class AccountingAmortizationDetailTable extends ScrollPanel {
 										@Override
 										public void onSuccess(AmortizationDetail det) {
 											aa.setDetail(det);
-											fillRow(opts, row, aa);
+											uncheckAndfillRow(opts, row, aa);
 										}
 									}
 								);
@@ -263,7 +274,7 @@ class AccountingAmortizationDetailTable extends ScrollPanel {
 											@Override
 											public void onSuccess(AmortizationDetail det) {
 												aa.setDetail(det);
-												fillRow(opts, row, aa);
+												uncheckAndfillRow(opts, row, aa);
 											}
 										}
 									);
@@ -309,7 +320,7 @@ class AccountingAmortizationDetailTable extends ScrollPanel {
 									@Override
 									public void onSuccess(AmortizationDetail det) {
 										aa.setDetail(det);
-										fillRow(opts, row, aa);
+										uncheckAndfillRow(opts, row, aa);
 									}
 								});
 							}
@@ -348,7 +359,7 @@ class AccountingAmortizationDetailTable extends ScrollPanel {
 										@Override
 										public void onSuccess(AmortizationDetail det) {
 											aa.setDetail(det);
-											fillRow(opts, row, aa);
+											uncheckAndfillRow(opts, row, aa);
 										}
 									}
 								);
@@ -409,4 +420,34 @@ class AccountingAmortizationDetailTable extends ScrollPanel {
 		entryDialog.show();
 	}
 	
+	@Override
+	public HandlerRegistration addCheckedHandler(AonCheckedHandler<AccountingAmortization> handler) {
+		return super.addHandler(handler, AonCheckedEvent.getType());
+	}
+
+	@Override
+	public HandlerRegistration addUncheckedHandler(AonUncheckedHandler<AccountingAmortization> handler) {
+		return super.addHandler(handler, AonUncheckedEvent.getType());
+	}
+
+	private class AonCheckButton extends AonTableButton {
+		private boolean checked = false;
+		
+		public AonCheckButton( AccountingAmortization aa) {
+			super("",AON.CSS.aonIconCheck());
+			addClickHandler( event -> {
+				checked = !checked;
+				if (checked) {
+					this.addStyleName(AON.CSS.aonIconChecked());
+					this.removeStyleName(AON.CSS.aonIconCheck());
+					AonCheckedEvent.fire(AccountingAmortizationDetailTable.this, aa);
+				} else {
+					this.addStyleName(AON.CSS.aonIconCheck());
+					this.removeStyleName(AON.CSS.aonIconChecked());
+					AonUncheckedEvent.fire(AccountingAmortizationDetailTable.this, aa);
+				}
+			});
+		}
+
+	}
 }

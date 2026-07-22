@@ -219,6 +219,8 @@ public interface IAccounting {
 	public void unlinkAmortizationInvoice(AONContext ctx, Integer domain, Integer amortizationId, Integer invoiceId);
 	public Invoice changeInvestment(CloseableAONContext ctx, Integer domain, Integer invoiceId);
 	public Stream<AccountingAmortization> getAccountingAmortizations(AONContext ctx, Integer domain, AmortizationParams params);
+	public void recordAmortizationDetails(AONContext ctx, Integer domain, Integer[] ids);
+	public void unrecordAmortizationDetails(AONContext ctx, Integer domain, Integer[] ids);
 	
 	// ********************************** [INVOICES CONUNTERS]
 	public Stream<DomainInvoiceStat> getDomainInvoiceStats(AONContext ctx, DomainInvoiceStatParams params);

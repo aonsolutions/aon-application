@@ -800,6 +800,18 @@ public class AccountingImpl implements IAccounting {
 			configuration -> AmortizationDAO.getAccountingAmortizations(ctx, domain, params) );		
 	}
 	
+	@Override
+	public void recordAmortizationDetails(AONContext ctx, Integer domain, Integer[] ids) {
+		ctx.getDslContext().transaction(
+			configuration -> AmortizationDAO.recordAmortizationDetails(ctx, domain, ids) );
+	}
+	
+	@Override
+	public void unrecordAmortizationDetails(AONContext ctx, Integer domain, Integer[] ids) {
+		ctx.getDslContext().transaction(
+				configuration -> AmortizationDAO.unrecordAmortizationDetails(ctx, domain, ids) );
+	}
+	
 
 	// ********************************** [INVOICES CONUNTERS]
 	public Stream<DomainInvoiceStat> getDomainInvoiceStats(AONContext ctx, DomainInvoiceStatParams params) {

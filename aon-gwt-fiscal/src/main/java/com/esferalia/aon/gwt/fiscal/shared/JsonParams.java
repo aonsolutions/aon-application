@@ -349,6 +349,7 @@ public class JsonParams extends JSONObject {
 		params.getId().ifPresent( d -> json.put(IRequestParamsNames.ID, new JSONNumber( d)));
 		params.getFromId().ifPresent( d -> json.put(IRequestParamsNames.FROM_ID, new JSONNumber( d)));
 		params.getToId().ifPresent( d -> json.put(IRequestParamsNames.TO_ID, new JSONNumber( d)));
+		params.getDetailId().ifPresent( d -> json.put(IRequestParamsNames.DETAIL_ID, new JSONNumber( d)));
 		params.getActivity().ifPresent( d -> json.put(IRequestParamsNames.ACTIVITY, new JSONNumber( d)));
 		params.getInvestAsset().ifPresent( d -> json.put(IRequestParamsNames.INVEST_ASSET, new JSONNumber( d)));
 		params.getAllocationAccount().ifPresent( d -> json.put(IRequestParamsNames.ALLOCATION_ACCOUNT, new JSONNumber( d)));

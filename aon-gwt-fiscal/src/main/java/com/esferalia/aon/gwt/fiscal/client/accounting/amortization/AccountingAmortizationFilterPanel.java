@@ -53,8 +53,6 @@ class AccountingAmortizationFilterPanel extends SimpleLayoutPanel implements Has
 	}
 	
 	private void paint(AmortizationModuleOptions opts) {
-		this.setStyleName(AON.CSS.aonPaddingTop());
-		
 		FlowPanel container = new FlowPanel();
 		container.getElement().getStyle().setProperty("display", "flex");
 		container.getElement().getStyle().setProperty("flexWrap", "wrap");
@@ -75,13 +73,20 @@ class AccountingAmortizationFilterPanel extends SimpleLayoutPanel implements Has
 		addPair(container,AON.MSG.period(),periodBox);
 		addPair(container,AON.MSG.date() ,datePanel);
 		addPair(container,AON.MSG.status() ,statusBox);
+		
+		FlowPanel lineBreak = new FlowPanel();
+		lineBreak.setStyleName(AON.CSS.aonFlexBreak()); 
+		container.add(lineBreak);
+		
 		addPair(container,AON.MSG.fixedAssetAccount() ,fixedAssetAccount);
 		addPair(container,AON.MSG.allocationAccount() ,allocationAccountBox);
 		addPair(container,AON.MSG.accumulatedAccount() ,accumulatedAccount);
 		
 		ScrollPanel scrollPanel = new ScrollPanel();
-		scrollPanel.setStyleName(AON.CSS.aonScrollArea());
-		scrollPanel.addStyleName(AON.CSS.aonWidthAll());
+		scrollPanel.setStyleName(AON.CSS.aonPaddingTop());
+		scrollPanel.addStyleName(AON.CSS.aonPaddingLeft());
+		scrollPanel.addStyleName(AON.CSS.aonWidthAlmostAll());
+		scrollPanel.addStyleName(AON.CSS.aonBlockCenter());
 		scrollPanel.setWidget(container);
 		setWidget( scrollPanel );
 		
@@ -189,6 +194,7 @@ class AccountingAmortizationFilterPanel extends SimpleLayoutPanel implements Has
 
 	private void initStatusBox(AmortizationModuleOptions opts) {
 		statusBox = new ListBox();
+		statusBox.addStyleName(AON.CSS.aonWidth150());
 		statusBox.addItem(ALL);
 		AonCollectionUtils.stream(AmortizationDetailStatus.values())
 			.forEach(status -> statusBox.addItem(status.getDescription()));

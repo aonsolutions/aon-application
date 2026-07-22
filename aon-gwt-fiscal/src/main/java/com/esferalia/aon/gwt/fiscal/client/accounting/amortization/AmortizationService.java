@@ -38,5 +38,8 @@ public interface AmortizationService extends RemoteService {
 	Invoice changeInvestment(Occam occam, Integer domain, Integer invoiceId) throws AonCoreException;
 	
 	LinkedList<AccountingAmortization> getAccountingAmortizations(Occam occam, Integer domain, AmortizationParams params) throws AonCoreException;
+
+	void recordAmortizationDetails(Occam occam, Integer domain, Integer[] ids) throws AonCoreException;
+	void unrecordAmortizationDetails(Occam occam, Integer domain, Integer[] ids) throws AonCoreException;
 	
 }

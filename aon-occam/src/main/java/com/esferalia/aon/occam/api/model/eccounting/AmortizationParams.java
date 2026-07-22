@@ -16,6 +16,7 @@ public class AmortizationParams implements Serializable {
 	private Integer id;
 	private Integer fromId;
 	private Integer toId;
+	private Integer detailId;
 	
 	private Integer domain;
 	private Integer activity;
@@ -69,6 +70,14 @@ public class AmortizationParams implements Serializable {
 	}
 	public AmortizationParams setToId(Integer toId) {
 		this.toId = toId;
+		return this;
+	}
+	
+	public Optional<Integer> getDetailId() {
+		return Optional.ofNullable(detailId);
+	}
+	public AmortizationParams setDetailId(Integer detailId) {
+		this.detailId = detailId;
 		return this;
 	}
 	

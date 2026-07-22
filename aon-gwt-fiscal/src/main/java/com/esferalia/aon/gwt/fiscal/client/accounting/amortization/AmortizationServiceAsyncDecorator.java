@@ -123,5 +123,17 @@ public class AmortizationServiceAsyncDecorator implements AmortizationServiceAsy
 		AON.start();
 		serviceAsync.getAccountingAmortizations(occam, domain, params, new AsyncCallbackWrapper<>(callback));
 	}
-				
+
+	@Override
+	public void recordAmortizationDetails(Occam occam, Integer domain, Integer[] ids, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.recordAmortizationDetails(occam, domain, ids, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void unrecordAmortizationDetails(Occam occam, Integer domain, Integer[] ids, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.unrecordAmortizationDetails(occam, domain, ids, new AsyncCallbackWrapper<>(callback));
+	}
+	
 }

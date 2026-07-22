@@ -28,15 +28,17 @@ public class InvoiceConsoleSelectionHandler extends FlowPanel implements HasValu
 		refresh();
 	}
 
-	void clean() {
+	public void clean() {
 		selectedInvoices.clear();	
+		refresh();
+		fireEvent( new ValueChangeEvent<Integer>( selectedCount() ) {} );
 	}
 	
-	void refresh() {
+	public void refresh() {
 		selectedLabel.setText( AON.MSG.selectedItem( selectedCount() ) );
 	}
 	
-	int selectedCount() {
+	public int selectedCount() {
 		return AonCollectionUtils.size( selectedInvoices );
 	}
 

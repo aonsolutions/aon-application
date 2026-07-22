@@ -1782,6 +1782,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_encrypted_off")
 	String aonIconEncryptedOff();
 
+	@ClassName("aon_flex_break")
+	String aonFlexBreak();
+	
 	@ClassName("aon_flex_grid")
 	String aonFlexGrid();
 	
