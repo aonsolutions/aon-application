@@ -6,6 +6,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAmortizationTypeBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCloseTab;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
@@ -21,11 +23,13 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.panel.StatementPanel;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.type.AmortizationPeriod;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -42,6 +46,7 @@ class AmortizationFormPanel extends DockLayoutPanel {
 		void onAllocationAccountStatement();
 		void onAccumulatedAccountStatement();
 		void onFixedAssetAccountStatement();
+		void changeFiscalAllocation(AmortizationModuleOptions opts, AmortizationDetail d, AonDoubleBox fiscalAllocation);
 	}
 	
 	AmortizationFormPanel(AmortizationModuleOptions opts, AmortizationPanelCallback callback ) {
@@ -117,6 +122,33 @@ class AmortizationFormPanel extends DockLayoutPanel {
 				tabPanel.selectTab(tabPanel.getWidgetCount() - 1);
 			}
 			
+			public void changeFiscalAllocation(AmortizationModuleOptions opts, AmortizationDetail d, AonDoubleBox fiscalAllocation) {
+				double newFiscalAllocation = fiscalAllocation.getValue();
+				AonConfirmDialog.showConfirm( "Continuar con la modificaci\u00F3n de la asignaci\u00F3n fiscal?" , new AonConfirmDialogCallback() {
+					
+					@Override
+					public void onAccept() {
+						d.setFiscalAllocation( newFiscalAllocation );
+						AmortizationModule.SERVICE.saveFiscalAllocation(opts.getOccam(), d, new AsyncCallback<Amortization>() {
+							@Override
+							public void onSuccess(Amortization result) {
+								onChange( result );
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								onError(caught.getMessage());;
+							}
+						});
+					}
+					
+					@Override
+					public void onCancel() {
+						fiscalAllocation.setValue( d.getFiscalAllocation() );
+					}
+				});
+			}
+			
 		};
 		
 		addNorth( getHeader(opts, cbk), 45 );
@@ -128,7 +160,7 @@ class AmortizationFormPanel extends DockLayoutPanel {
 				tabPanel.add( getSummary(opts, cbk), AON.MSG.yearSummary() );
 			}
 			
-			AmortizationDetailTable detailPanel = getDetails(opts, callback);
+			AmortizationDetailTable detailPanel = getDetails(opts, callback, cbk);
 			tabPanel.add( detailPanel, AON.MSG.amortizationDetails());
 			
 			AmortizationInvoicePanel invoicesPanel = new AmortizationInvoicePanel(opts, callback);
@@ -400,8 +432,8 @@ class AmortizationFormPanel extends DockLayoutPanel {
 	private boolean isNew(Amortization am) {
 		return am.getId() == null;
 	}
-	private AmortizationDetailTable getDetails(AmortizationModuleOptions opts, AmortizationPanelCallback callback) {
-		return new AmortizationDetailTable( opts, callback ) ;
+	private AmortizationDetailTable getDetails(AmortizationModuleOptions opts, AmortizationPanelCallback callback, AmortizationFormPanelCallback formCallback) {
+		return new AmortizationDetailTable( opts, callback, formCallback) ;
 	}
 
 	private AmortizationSummaryTable getSummary(AmortizationModuleOptions opts, AmortizationFormPanelCallback cbk) {

@@ -5,15 +5,18 @@ import java.util.function.Supplier;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleLabel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonFlexTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonFlexTable.AonFlexTableRow;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.accounting.amortization.AmortizationFormPanel.AmortizationFormPanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.amortization.AmortizationPanel.AmortizationPanelCallback;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
 import com.esferalia.aon.occam.api.model.type.AmortizationDetailStatus.AmortizationDetailStatusVisitor;
+import com.esferalia.aon.occam.api.model.type.AmortizationPeriod;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.Window;
@@ -29,13 +32,13 @@ class AmortizationDetailTable extends ScrollPanel {
 			"120px","120px","80px","150px","150px","150px","150px","150px","150px","150px","100px","100px" 
 	};
 	
-	AmortizationDetailTable( AmortizationModuleOptions opts, AmortizationPanelCallback callback) {
+	AmortizationDetailTable( AmortizationModuleOptions opts, AmortizationPanelCallback callback, AmortizationFormPanelCallback formCallback) {
 		setStyleName( AON.CSS.aonScrollArea() );
 		addStyleName(AON.CSS.aonMarginTop());
-		setWidget( getTable(opts, callback) );
+		setWidget( getTable(opts, callback, formCallback) );
 	}
 
-	private Widget getTable(AmortizationModuleOptions opts, AmortizationPanelCallback callback) {
+	private Widget getTable(AmortizationModuleOptions opts, AmortizationPanelCallback callback, AmortizationFormPanelCallback formCallback) {
 		AonFlexTable grid = new AonFlexTable(COLUMN_WIDTHS, AON.CSS.aonBlockCenter());
 		
 		grid
@@ -55,18 +58,26 @@ class AmortizationDetailTable extends ScrollPanel {
 		callback.getAmortization().detailStream()
 			.forEach( d -> {
 				AonFlexTableRow row = grid.addRow();
-				fillRow(opts, callback, row, d);
-			});
-		;
+				fillRow(opts, callback, formCallback, row, d);
+		});
 		return grid;
 	}
 	
-	private void fillRow(AmortizationModuleOptions opts, AmortizationPanelCallback callback, AonFlexTableRow row, AmortizationDetail d) {
+	private void fillRow(AmortizationModuleOptions opts, AmortizationPanelCallback callback, AmortizationFormPanelCallback formCallback, AonFlexTableRow row, AmortizationDetail d) {
 		row	.clear();
 		String fromDate = ensure(d.getFromDate(), () -> AON.DATE_FORMAT.format(d.getFromDate()), AonStringUtils.EMPTY);
 		Label fromDateLabel = new Label(fromDate);
 		String toDate = ensure(d.getToDate(), () -> AON.DATE_FORMAT.format(d.getToDate()), AonStringUtils.EMPTY);
 		Label toDateLabel = new Label(toDate);
+		Widget fiscalAllocation = null;
+		if (callback.getAmortization().getFeePeriod() == AmortizationPeriod.YEARLY) {
+			AonDoubleBox fiscalAllocationBox = new AonDoubleBox( );
+			fiscalAllocationBox.setValue( d.getFiscalAllocation() );
+			fiscalAllocationBox.addValueChangeHandler(v -> formCallback.changeFiscalAllocation(opts, d, fiscalAllocationBox ) );
+			fiscalAllocation = fiscalAllocationBox;
+		} else {
+			fiscalAllocation = new AonDoubleLabel( d.getFiscalAllocation() ); 
+		}
 		row
 			.addCell( fromDateLabel)
 			.addCell( toDateLabel )
@@ -74,12 +85,12 @@ class AmortizationDetailTable extends ScrollPanel {
 			.addCell( new AonDoubleLabel( d.getAllocation() ) )
 			.addCell( new AonDoubleLabel( d.getAccumulated() ) )
 			.addCell( new AonDoubleLabel( d.getPending() ) )
-			.addCell( new AonDoubleLabel( d.getFiscalAllocation() ) )
+			.addCell( fiscalAllocation )
 			.addCell( new AonDoubleLabel( d.getFiscalAccumulated() ) )
 			.addCell( new AonDoubleLabel( d.getFiscalPending() ) )
 			.addCell( new AonDoubleLabel( AonMathUtils.round(  d.getAllocation() - d.getFiscalAllocation() ) ) )
 			.addCell( new Label( ensure(d.getStatus(), () -> d.getStatus().getDescription() , "") ) )
-			.addCell( getActionsPanel( opts, callback, row, d) )
+			.addCell( getActionsPanel( opts, callback, formCallback, row, d) )
 		;
 	}
 
@@ -89,7 +100,8 @@ class AmortizationDetailTable extends ScrollPanel {
 			: supplier.get();
 	}
 
-	private FlowPanel getActionsPanel(AmortizationModuleOptions opts, AmortizationPanelCallback callback, AonFlexTableRow row, AmortizationDetail d) {
+	private FlowPanel getActionsPanel(AmortizationModuleOptions opts, AmortizationPanelCallback callback, AmortizationFormPanelCallback formCallback, AonFlexTableRow row, AmortizationDetail d) 
+	{
 		FlowPanel actionsPanel = new FlowPanel();
 		actionsPanel.setStyleName( AON.CSS.aonNowrap() );
 		d.getStatus().accept( new AmortizationDetailStatusVisitor() {
@@ -113,7 +125,7 @@ class AmortizationDetailTable extends ScrollPanel {
 		
 							@Override
 							public void onSuccess(AmortizationDetail det) {
-								fillRow(opts, callback, row, det);
+								fillRow(opts, callback, formCallback, row, det);
 							}
 						}
 					)
@@ -138,7 +150,7 @@ class AmortizationDetailTable extends ScrollPanel {
 		
 							@Override
 							public void onSuccess(AmortizationDetail det) {
-								fillRow(opts, callback, row, det);
+								fillRow(opts, callback, formCallback, row, det);
 							}
 						}
 					)
@@ -163,7 +175,7 @@ class AmortizationDetailTable extends ScrollPanel {
 				unrecordLabel.addStyleName( AON.CSS.aonIconCancelCircle());
 				unrecordLabel.addStyleName( AON.CSS.aonClickable());
 				unrecordLabel.setTitle( AON.MSG.unrecord() );
-				unrecordLabel.addClickHandler( e -> {
+				unrecordLabel.addClickHandler( e -> 
 					AmortizationModule.SERVICE.unrecordAllocation( opts.getOccam(), d, new AsyncCallback<AmortizationDetail>() {
 						@Override
 						public void onFailure(Throwable ex) {
@@ -172,10 +184,10 @@ class AmortizationDetailTable extends ScrollPanel {
 	
 						@Override
 						public void onSuccess(AmortizationDetail det) {
-							fillRow(opts, callback, row, det);
+							fillRow(opts, callback, formCallback, row, det);
 						}
-					});
-				});
+					})
+				);
 				actionsPanel.add( unrecordLabel );
 				
 			}
@@ -198,7 +210,7 @@ class AmortizationDetailTable extends ScrollPanel {
 		
 							@Override
 							public void onSuccess(AmortizationDetail det) {
-								fillRow(opts, callback, row, det);
+								fillRow(opts, callback, formCallback, row, det);
 							}
 						}
 					)

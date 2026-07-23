@@ -4568,10 +4568,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Modificar marca de inversi\u00F3n")
 	String changeInvestment();
 
-	@DefaultMessage("Confirma que desea contabilizar {0} cuotas del amortizaci\u00F3n?") 
+	@DefaultMessage("Confirma que desea contabilizar {0} cuotas de amortizaci\u00F3n?") 
 	String confirmMultipleRecord(int selectedCount);
 	
-	@DefaultMessage("Confirma que desea descontabilizar {0} cuotas del amortizaci\u00F3n?") 
+	@DefaultMessage("Confirma que desea descontabilizar {0} cuotas de amortizaci\u00F3n?") 
 	String confirmMultipleUnrecord(int selectedCount);
 
 }
