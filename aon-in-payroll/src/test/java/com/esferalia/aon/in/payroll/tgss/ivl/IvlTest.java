@@ -863,7 +863,7 @@ public class IvlTest extends AbstractSQLTestCase {
 	}
 	
 	// re-entrat 
-	try (InputStream is = IvlTest.class.getResourceAsStream("ivlcccIII.pdf")) {
+	try (InputStream is = IvlTest.class.getResourceAsStream("ivlcccIV.pdf")) {
 	    JooqIvl2Contract jooqIvl2Contract =  
 	    new JooqIvl2Contract(dslContext, domainName);
 	    
@@ -884,15 +884,15 @@ public class IvlTest extends AbstractSQLTestCase {
 	    .where(DOMAIN.NAME.eq(/*"B66259516." +*/ domainName))
 	    .fetchAny();
 	    
-	    assertEquals("77722690D", record.get(REGISTRY.DOCUMENT));
-	    assertEquals("30132614207", record.get(ENTERPRISE_CCC.CCC));
-	    assertEquals(9329,  (int) record.get(ENTERPRISE_ACTIVITY.CNAE2009));
-	    assertEquals("CASTAÑO CARRASCO JOSE MIGUEL", record.get(REGISTRY.NAME));
-	    assertEquals("CASTAÑO CARRASCO JOSE MIGUEL", record.get(DOMAIN.DESCRIPTION));
-	    assertEquals("ABARAN", record.get(RADDRESS.CITY));
+	    assertEquals("B16931438", record.get(REGISTRY.DOCUMENT));
+	    assertEquals("28252599007", record.get(ENTERPRISE_CCC.CCC));
+	    assertEquals(7810,  (int) record.get(ENTERPRISE_ACTIVITY.CNAE2009));
+	    assertEquals("FC812 STAFF S.L.", record.get(REGISTRY.NAME));
+	    assertEquals("FC812 STAFF S.L.", record.get(DOMAIN.DESCRIPTION));
+	    assertEquals("GRIÑON", record.get(RADDRESS.CITY));
 	    //assertEquals("08019", record.get(RADDRESS.MUNICIPALITY_CODE));
-	    assertEquals("30550", record.get(RADDRESS.ZIP));
-	    assertEquals("CL MANUEL AUSENSI 37 1 E", record.get(RADDRESS.ADDRESS));
+	    assertEquals("28971", record.get(RADDRESS.ZIP));
+	    assertEquals("CL ANDROMEDA 6", record.get(RADDRESS.ADDRESS));
 	    
 	    assertEquals(domainId, record.get(DOMAIN.ID) );
 	    assertEquals(registryId, record.get(REGISTRY.ID) );
@@ -944,7 +944,7 @@ public class IvlTest extends AbstractSQLTestCase {
 	    
 	    
 	}
-	try (InputStream is = IvlTest.class.getResourceAsStream("ivlcccIII.pdf")) {
+	try (InputStream is = IvlTest.class.getResourceAsStream("ivlcccIV.pdf")) {
 
 	    contractMap
 	    .entrySet()
