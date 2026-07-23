@@ -303,9 +303,11 @@ export const TaxVatREPercentage = [
 
 export const TaxVatIGICPercentage = [
   {value:0.0, name:'0%'},
+  {value:1.0, name:'1%'},
   {value:3.0, name:'3%'},
   {value:7.0, name:'7%'},
   {value:9.0, name:'9%'},
+  {value:9.5, name:'9,5%'},
   {value:13.5, name:'13,5%'},
   {value:20.0, name:'20%'},
   {value:35.0, name:'35%'},

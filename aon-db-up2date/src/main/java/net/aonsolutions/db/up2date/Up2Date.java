@@ -21,8 +21,11 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.ContractCostExpressionText;
 import net.aonsolutions.db.up2date.payroll.ContractCostSeaExpressionFix;
+import net.aonsolutions.db.up2date.payroll.ContractForeignKeysAddIfNotExist;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
+import net.aonsolutions.db.up2date.payroll.ImporteHoraFormacion2026Update;
 import net.aonsolutions.db.up2date.scope.InsertDefaultScope;
+import net.aonsolutions.db.up2date.scope.UserScopeStartDateNotNull;
 import net.aonsolutions.db.up2date.security.UserScopeAlterStartEndAuditory;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBaseCgcJornadasTotalesFix;
 import net.aonsolutions.db.up2date.tgss.CgcEMinInsert;
@@ -105,7 +108,7 @@ public class Up2Date {
 			// IndemnizacionDescriptionUpdate.INDEMNIZACIONDESCRIPTIONUPDATE,
 			// EreFzaInsert.EREFZAINSERT,
 			// SMIWarn2020Delete.SMIWARN2020DELETE,
-			// AyudaTWarnDelete.AYUDATWARNDELETE,
+			// AyudaTWarnDelete.AYUDATWARNDELETE,SMI2026Update
 			// EreFzaExoneradoInsert.EREFZAEXONERADOINSERT,
 			// AlterCertifica2BatchDetail4ERE.ALTER_CERTIFICA2_BATCH_DETAIL_ERE,
 			// EreFzaExoneradoUpdate.EREFZAEXONERADOUPDATE[] 
@@ -158,7 +161,7 @@ public class Up2Date {
 			// IntegrityFix.INTEGRITYFIX,
 			// RetirementInsert.RETIREMENTINSERT,
 			// NotificationCreation.NOTIFICATION_CREATION,
-			// NotificationReceiverCreation.NOTIFICATION_RECEIVER_CREATION,
+			// NotificationReceiverCreation.NOTIFICATION_RECEIVER_CREATION,SMI2026Update
 			// Bases2021UpdateII.BASES2021UPDATEII,
 			// InKindDeductionInsert.INKIND_DEDUCTION_INSERT,
 			// WorkAccidentInsuranceInsert.WORKACCIDENTINSURANCEINSERT
@@ -623,10 +626,13 @@ public class Up2Date {
 			//SalaryTypeUpdate.ALL,
 			// BonificEntrenadoresYMonitoresFix.BONIFICENTRENADORESYMONITORESFIX,
 			// DropNoJustifiedFix.DROPNOJUSTIFIEDFIX,
-			CgcEMinInsert.CGCEMININSERT,
-			ContractCostExpressionText.CONTRACT_COST_EXPRESSION_TEXT,
-			ContractCostSeaExpressionFix.CONTRACT_COST_SEA_EXPRESSION_FIX,
-			AgriculturalBaseCgcJornadasTotalesFix.AGRICULTURALBASECGCJORNADASTOTALESFIX,
+			//CgcEMinInsert.CGCEMININSERT,
+			//ContractCostExpressionText.CONTRACT_COST_EXPRESSION_TEXT,
+			//ContractCostSeaExpressionFix.CONTRACT_COST_SEA_EXPRESSION_FIX,
+			//AgriculturalBaseCgcJornadasTotalesFix.AGRICULTURALBASECGCJORNADASTOTALESFIX,
+			ImporteHoraFormacion2026Update.IMPORTEHORAFORMACION2026UPDATE,
+			UserScopeStartDateNotNull.USER_SCOPE_START_DATE_NOT_NULL,
+			ContractForeignKeysAddIfNotExist.CONTRACTFOREIGNKEYSADDIFNOTEXITS,
 
 
 			// ----------------------------------------------------------------

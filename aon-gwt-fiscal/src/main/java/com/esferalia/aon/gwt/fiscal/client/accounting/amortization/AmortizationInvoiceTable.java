@@ -41,7 +41,7 @@ class AmortizationInvoiceTable extends ScrollPanel {
 	}
 	
 	private static final String[] COLUMN_WIDTHS = new String[] {
-			"40px","40px","40px","40px","100px","80px","80px","100px","300px","100px"	
+			"40px","40px","40px","70px","60px","120px","100px","100px","100px","300px","120px"	
 	};
 	
 	FlowPanel containerPanel = new FlowPanel();
@@ -57,6 +57,7 @@ class AmortizationInvoiceTable extends ScrollPanel {
 			.addHeaderCell(new Label())
 			.addHeaderCell(new Label("Ver"))
 			.addHeaderCell(new Label("Cont"))
+			.addHeaderCell(new Label("Inv"))
 			.addHeaderCell(new Label("Tipo"))
 			.addHeaderCell(new Label("N\u00BA Referencia"),AON.CSS.aonNowrap())
 			.addHeaderCell(new Label("Fec. Fac."),AON.CSS.aonNowrap())
@@ -112,7 +113,7 @@ class AmortizationInvoiceTable extends ScrollPanel {
 				recorded = new AonTableButton(title, AON.CSS.aonIconWarning());
 				recorded.addStyleName(AON.CSS.aonBlink());
 			} 
-			recorded.addClickHandler( event -> viewAccountEntry(opts, ami.getAccountEntry()) );
+			recorded.addClickHandler( event -> viewAccountEntry(opts, callback, row, ami) );
 			recordedPanel.add(recorded);
 		} else {
 			Label unrecorded = new Label();
@@ -127,10 +128,16 @@ class AmortizationInvoiceTable extends ScrollPanel {
 		if (AonStringUtils.length(registryName) > 40) {
 			registryNameLabel.setTitle(inv.getRegistryName());
 		}
+		
+		AonTableButton investmentButton = new AonTableButton(AON.MSG.changeInvestment(), 
+			inv.isInvestment()?AON.CSS.aonIconToggleOn():AON.CSS.aonIconToggleOff());
+		investmentButton.addClickHandler(e -> changeInvestment(opts, callback, row, ami));
+		
 		row
 			.addCell( unlinkInvoice )
 			.addCell(viewInvoice )
 			.addCell(recordedPanel)
+			.addCell(investmentButton)
 			.addCell(new Label(ensure(inv.getType(),inv.getType()::getAbbrDescription)))
 			.addCellIfElse( inv.isProforma() 
 					,new Label(AonStringUtils.EMPTY)
@@ -143,6 +150,30 @@ class AmortizationInvoiceTable extends ScrollPanel {
 		;
 	}
 	
+	private void changeInvestment(AmortizationModuleOptions opts, AmortizationPanelCallback callback, AonFlexTableRow row, AmortizationInvoice ami) {
+		Invoice inv = ami.getInvoice();
+		String msg = inv.isInvestment()?AON.MSG.unmarkAsInvestment():AON.MSG.markAsInvestment();
+		AonConfirmDialog.showConfirm(AON.MSG.changeInvestment(), msg
+			, () -> AmortizationModule.SERVICE.changeInvestment(opts.getOccam()
+				, opts.getDomain()
+				, inv.getId()
+				, new AsyncCallback<Invoice>() {
+				
+					@Override
+					public void onSuccess(Invoice invoice) {
+						row.clear();
+						ami.setInvoice(invoice);
+						fillRow(opts, callback, row, ami);
+					}
+					
+					@Override
+					public void onFailure(Throwable arg0) {
+						callback.showError( arg0.getMessage() );
+					}
+				}
+			));
+	}
+
 	private String ensure(Object nullable, Supplier<String>  supplier) {
 		return ensure(nullable, supplier, "---");
 	}
@@ -203,7 +234,8 @@ class AmortizationInvoiceTable extends ScrollPanel {
 	}
 	
 	
-	private void viewAccountEntry(AmortizationModuleOptions opts, AccountEntry entry) {
+	private void viewAccountEntry(AmortizationModuleOptions opts, AmortizationPanelCallback callback, AonFlexTableRow row, AmortizationInvoice ami) {
+		AccountEntry entry = ami.getAccountEntry();
 		if (entry == null) {
 			AonMessageDialog.error(AON.MSG.accountEntryNotFound());
 			return;
@@ -246,6 +278,10 @@ class AmortizationInvoiceTable extends ScrollPanel {
 				
 				@Override
 				public void onChange(IAccountEntryWrapper changed) {
+					AccountEntry entry = changed.getAccountEntry();
+					ami.setAccountEntry(entry);
+					row.clear();
+					fillRow(opts, callback, row, ami);
 					entryDialog.hide();
 				}
 			})

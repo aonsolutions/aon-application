@@ -998,6 +998,7 @@ export const SEE_ALL = 'Guztiak Ikusi';
 export const SELECT_LANGUAGE = "Hizkuntza hautatzea";
 export const SELECT_COMPANY_TYPE = "Hautatu enpresa mota";
 export const SEND = 'Bidali';
+export const SEND_TO = 'Honi bidali';
 export const SEND_FILE = 'Fitxategia Bidali';
 export const SEND_FILES = 'Fitxategiak Bidali';
 export const SEND_INVOICE = 'Faktura Bidali';

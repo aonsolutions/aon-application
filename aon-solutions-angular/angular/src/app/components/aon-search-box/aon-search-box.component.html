@@ -1,5 +1,0 @@
-  <input #name role="search" title="Búsqueda" id="search-input"
-    autocomplete="off" placeholder="Búsqueda" class="tedi-search-box tedi-search-noborder" (keyup)="search(name.value)">
-
-  <button *ngIf="hasValue" mat-icon-button (click)="advanced()" ><mat-icon>arrow_drop_down</mat-icon></button>
-  <button *ngIf="!hasValue" mat-icon-button (click)="advanced()" ><mat-icon>arrow_drop_down</mat-icon></button>

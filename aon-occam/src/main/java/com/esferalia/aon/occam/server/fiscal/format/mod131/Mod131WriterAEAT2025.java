@@ -47,27 +47,27 @@ public class Mod131WriterAEAT2025 implements IMod131Writer{
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.mark(isDiscapacitado(mod)))
 		   
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(extractEpigraph(ensureActivity(mod,0)), 4))
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(ensureActivity(mod,0).getNet(),17,2))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero((ensureActivity(mod,0).getTem() > 0 && ensureActivity(mod,0).getTem() <= 180 ? ensureActivity(mod,0).getNet() : ensureActivity(mod,0).getRdr()),17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(ensureActivity(mod,0).getPor(),5,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(ensureActivity(mod,0).getRes(),17,2))
 		   
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(extractEpigraph(ensureActivity(mod,1)), 4))
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(ensureActivity(mod,1).getNet(),17,2))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero((ensureActivity(mod,1).getTem() > 0 && ensureActivity(mod,1).getTem() <= 180 ? ensureActivity(mod,1).getNet() : ensureActivity(mod,1).getRdr()),17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(ensureActivity(mod,1).getPor(),5,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(ensureActivity(mod,1).getRes(),17,2))
 
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(extractEpigraph(ensureActivity(mod,2)), 4))
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(ensureActivity(mod,2).getNet(),17,2))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero((ensureActivity(mod,2).getTem() > 0 && ensureActivity(mod,2).getTem() <= 180 ? ensureActivity(mod,2).getNet() : ensureActivity(mod,2).getRdr()),17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(ensureActivity(mod,2).getPor(),5,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(ensureActivity(mod,2).getRes(),17,2))
 
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(extractEpigraph(ensureActivity(mod,3)), 4))
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(ensureActivity(mod,3).getNet(),17,2))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero((ensureActivity(mod,3).getTem() > 0 && ensureActivity(mod,3).getTem() <= 180 ? ensureActivity(mod,3).getNet() : ensureActivity(mod,3).getRdr()),17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(ensureActivity(mod,3).getPor(),5,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(ensureActivity(mod,3).getRes(),17,2))
 
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(extractEpigraph(ensureActivity(mod,4)), 4))
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(ensureActivity(mod,4).getNet(),17,2))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero((ensureActivity(mod,4).getTem() > 0 && ensureActivity(mod,4).getTem() <= 180 ? ensureActivity(mod,4).getNet() : ensureActivity(mod,4).getRdr()),17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(ensureActivity(mod,4).getPor(),5,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(ensureActivity(mod,4).getRes(),17,2))
 		   

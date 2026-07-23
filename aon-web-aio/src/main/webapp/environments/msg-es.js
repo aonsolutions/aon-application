@@ -1025,6 +1025,7 @@ export const SECURITY = 'Seguridad';
 export const SEE_ALL = 'Ver Todas';
 export const SEE_OPTIONS = 'Ver opciones';
 export const SEND = 'Enviar';
+export const SEND_TO = 'Enviar a';
 export const SEND_FILE = 'Enviar Fichero';
 export const SEND_FILES = 'Enviar Ficheros';
 export const SEND_INVOICE = 'Enviar Factura';

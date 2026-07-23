@@ -659,6 +659,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Desbloquear")
 	String unblockAction();	
 
+	@DefaultMessage("Contabilizar")
+	String recordAction();
+	
+	@DefaultMessage("Descontabilizar")
+	String unrecordAction();
+	
 	@DefaultMessage("Facturado")
 	String invoiced();
 
@@ -4072,11 +4078,29 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Desvincular facturas")
 	String unlinkInvoice();
 
-	@DefaultMessage("Si contin\u00FAa, la factura se desvincular\u00E1 de la ficha de amortización. \u00BFContinuar?")
+	@DefaultMessage("Si contin\u00FAa, la factura se desvincular\u00E1 de la ficha de amortizaci\u00F3n. \u00BFContinuar?")
 	String confirmUnlinkInvoice();
 
-	@DefaultMessage("Si contin\u00FAa, la factura se vincular\u00E1 a la ficha de amortización. \u00BFContinuar?")
+	@DefaultMessage("Si contin\u00FAa, la factura se vincular\u00E1 a la ficha de amortizaci\u00F3n. \u00BFContinuar?")
 	String confirmLinkInvoice();
+
+	@DefaultMessage("\u00BFContinuar con el bloqueo de la l\u00EDnea?")
+	String confirmBlockAction();
+
+	@DefaultMessage("\u00BFContinuar con el desbloqueo de la l\u00EDnea?")
+	String confirmUnblockAction();
+
+	@DefaultMessage("\u00BFContinuar con la contabilizaci\u00F3n?")
+	String confirmRecordAction();
+
+	@DefaultMessage("\u00BFContinuar con la descontabilizaci\u00F3n?")
+	String confirmUnrecordAction();
+
+	@DefaultMessage("Si contin\u00FAa, la factura se marcar\u00E1 como bien de inversi\u00F3n. \u00BFContinuar?")
+	String markAsInvestment();
+
+	@DefaultMessage("Si contin\u00FAa, la factura se desmarcar\u00E1 como bien de inversi\u00F3n. \u00BFContinuar?")
+	String unmarkAsInvestment();
 
 	@DefaultMessage("Facturas vinculadas")
 	String linkedInvoices();
@@ -4540,6 +4564,15 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Hasta fecha")
 	String toDate();
+
+	@DefaultMessage("Modificar marca de inversi\u00F3n")
+	String changeInvestment();
+
+	@DefaultMessage("Confirma que desea contabilizar {0} cuotas del amortizaci\u00F3n?") 
+	String confirmMultipleRecord(int selectedCount);
 	
+	@DefaultMessage("Confirma que desea descontabilizar {0} cuotas del amortizaci\u00F3n?") 
+	String confirmMultipleUnrecord(int selectedCount);
+
 }
 

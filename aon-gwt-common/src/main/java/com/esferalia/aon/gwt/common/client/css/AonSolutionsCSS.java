@@ -1123,6 +1123,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_flex_grow_1")
 	String aonFlexGrow1();
 	
+	@ClassName("aon_flex_grow_0")
+	String aonFlexGrow0();
+
 	@ClassName("aon_flex_label")
 	String aonFlexLabel();
 	
@@ -1779,6 +1782,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_encrypted_off")
 	String aonIconEncryptedOff();
 
+	@ClassName("aon_flex_break")
+	String aonFlexBreak();
+	
 	@ClassName("aon_flex_grid")
 	String aonFlexGrid();
 	
@@ -1799,5 +1805,24 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_flex_table_cell_inner")
 	String aonFlexTableCellInner();
+	
+    @ClassName("aon_message_toast")
+    String aonMessageToast();
+
+    @ClassName("aon_message_toast_visible")
+    String aonMessageToastVisible();
+
+    @ClassName("aon_message_toast_content")
+    String aonMessageToastContent();
+
+    @ClassName("aon_message_toast_error")
+    String aonMessageToastError();
+
+    @ClassName("aon_message_toast_success")
+    String aonMessageToastSuccess();
+
+    @ClassName("aon_message_toast_info")
+    String aonMessageToastInfo();
+	
 }
 

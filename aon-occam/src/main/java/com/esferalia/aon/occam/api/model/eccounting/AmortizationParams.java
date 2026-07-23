@@ -13,8 +13,10 @@ public class AmortizationParams implements Serializable {
 
 	private static final long serialVersionUID = 2683060057390169937L;
 	
+	private Integer id;
 	private Integer fromId;
 	private Integer toId;
+	private Integer detailId;
 	
 	private Integer domain;
 	private Integer activity;
@@ -28,6 +30,7 @@ public class AmortizationParams implements Serializable {
 	private Date fromInitialDate;
 	private Date toInitialDate;
 	
+	private Boolean deadlineFilled;
 	private Date fromDeadline;
 	private Date toDeadline;
 	
@@ -37,11 +40,22 @@ public class AmortizationParams implements Serializable {
 	private String comments;
 	private Double percentage;
 	private SecurityLevel securityLevel;
+	
+	private Double allocation;
 	private AmortizationDetailStatus status;
+	
 	private AmortizationParamsOrderBy orderBy;
 
 	private int offset;
 	private int limit = 50;
+
+	public Optional<Integer> getId() {
+		return Optional.ofNullable(id);
+	}
+	public AmortizationParams setId(Integer id) {
+		this.id = id;
+		return this;
+	}
 
 	public Optional<Integer> getFromId() {
 		return Optional.ofNullable(fromId);
@@ -56,6 +70,14 @@ public class AmortizationParams implements Serializable {
 	}
 	public AmortizationParams setToId(Integer toId) {
 		this.toId = toId;
+		return this;
+	}
+	
+	public Optional<Integer> getDetailId() {
+		return Optional.ofNullable(detailId);
+	}
+	public AmortizationParams setDetailId(Integer detailId) {
+		this.detailId = detailId;
 		return this;
 	}
 	
@@ -131,6 +153,14 @@ public class AmortizationParams implements Serializable {
 		return this;
 	}
 	
+	public Optional<Boolean> getDeadlineFilled() {
+		return Optional.ofNullable(deadlineFilled);
+	}
+	public AmortizationParams setDeadlineFilled(Boolean deadlineFilled) {
+		this.deadlineFilled = deadlineFilled;
+		return this;
+	}
+	
 	public Optional<Date> getFromDeadline() {
 		return Optional.ofNullable(fromDeadline);
 	}
@@ -195,6 +225,14 @@ public class AmortizationParams implements Serializable {
 		return this;
 	}
 	
+	public Optional<Double> getAllocation() {
+		return Optional.ofNullable(allocation);
+	}
+	public AmortizationParams setAllocation(Double allocation) {
+		this.allocation = allocation;
+		return this;
+	}
+	
 	public Optional<AmortizationDetailStatus> getStatus() {
 		return Optional.ofNullable(status);
 	}
@@ -253,6 +291,12 @@ public class AmortizationParams implements Serializable {
 		}
 
 		public abstract <T> T visit(AmortizationParamsOrderByVisitor<T> visitor);
+
+		public static Optional<AmortizationParamsOrderBy> safeValueOf( Integer i ) {
+			if (i == null) return Optional.empty(); ;
+			if (i < 0 || i >= AmortizationParamsOrderBy.values().length) return Optional.empty();
+			return Optional.of(AmortizationParamsOrderBy.values()[i]);
+		}
 	}
 	
 	public interface AmortizationParamsOrderByVisitor<T> {

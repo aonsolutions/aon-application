@@ -1,8 +1,0 @@
-<button *ngIf="!noHover" mat-icon-button  (mouseover)="hover=true" (mouseleave)="hover=false"
-  [ngClass]="{'aon-icon-button-hover' : hover==true}">
-  <mat-icon [color]="color" [fontSet]="outline ? 'material-icons-outlined' : 'material-icons'">{{icon}}</mat-icon>
-</button>
-
-<button *ngIf="noHover" mat-icon-button>
-  <mat-icon [color]="color" [fontSet]="outline ? 'material-icons-outlined' : 'material-icons'">{{icon}}</mat-icon>
-</button>

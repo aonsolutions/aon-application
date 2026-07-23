@@ -19,6 +19,7 @@ public class SalaryParams implements Serializable {
 	private boolean settle;
 	private boolean delay;
 	private boolean procedural;
+	private boolean liquidations;
 	
 	private int limit;
 	private int offset;
@@ -120,6 +121,15 @@ public class SalaryParams implements Serializable {
 		return this;
 	}
 	
+	public boolean isLiquidations() {
+		return liquidations;
+	}
+	
+	public SalaryParams setLiquidations(boolean liquidations) {
+		this.liquidations = liquidations;
+		return this;
+	}
+
 	public int getLimit() {
 		return limit;
 	}

@@ -104,17 +104,18 @@ public class MainCCC extends MainEntryPoint{
 
 		@Override
 		protected <T> void fireWarningMessage(Map<String, T> messages) {
-			AonMessagePanel.showWarning(messagePanel, messages);
+			
+			AonMessagePanel.showWarning(getMessagePanel(), messages);
 		}
 		
 		@Override
 		protected <T> void fireInfoMessage(Map<String, T> messages) {
-			AonMessagePanel.showInfo(messagePanel, messages);
+			AonMessagePanel.showInfo(getMessagePanel(), messages);
 		}
 
 		@Override
 		protected <T> void fireLoadingMessage(T message) {
-			AonMessagePanel.showLoading(messagePanel, message);
+			AonMessagePanel.showLoading(getMessagePanel(), message);
 		}
 
 		@Override
@@ -128,6 +129,12 @@ public class MainCCC extends MainEntryPoint{
 			showPdf(isLaboralLife);
 			pdfDockLayoutPanel.setToolbarTitle(title);
 			fullViewer.open(dataURI);
+		}
+		
+		
+		private HTMLPanel getMessagePanel() {
+			Widget visibleWidget = MainCCC.this.deckPanel.getWidget(MainCCC.this.deckPanel.getVisibleWidget());
+			return visibleWidget == pdfDockLayoutPanel ? messagePanelPDF : messagePanel ;
 		}
 	}
 	

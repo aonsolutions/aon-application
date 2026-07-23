@@ -701,6 +701,9 @@ public class Invoice implements Serializable, HasAudit {
 	public boolean isSales() {
 		return getType() == InvoiceType.SALES;
 	}
+	public boolean isNotSales() {
+		return !isSales();
+	}
 	public boolean isPurchase() {
 		return getType() == InvoiceType.PURCHASE;
 	}

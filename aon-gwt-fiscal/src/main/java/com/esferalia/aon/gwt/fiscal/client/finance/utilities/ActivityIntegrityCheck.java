@@ -111,6 +111,10 @@ class ActivityIntegrityCheck extends OptionBase {
 					Label entryActLabel = new Label( AonStringUtils.defaultIfBlank(it.getAccountEntryActivityRef(), noActivity));
 					invoiceOK.addClickHandler( e -> change( it, true, invoiceOK, entryOK, invoiceActLabel, entryActLabel) );
 					entryOK.addClickHandler( e -> change( it, false, invoiceOK, entryOK, invoiceActLabel, entryActLabel) );
+					if ( it.isInvoiceDeclared() ) {
+						entryOK.setEnabled( false );
+						entryOK.setTitle( "No se puede modificar la factura porque ya está declarada." );
+					}
 					row
 						.addCell(invoiceOK, AON.CSS.aonWidth30())
 						.addCell(new Label( it.getInvoiceRef()))
@@ -133,8 +137,7 @@ class ActivityIntegrityCheck extends OptionBase {
 		return tabContainer;
 	}
 
-	private void change(ActivityIntegrityItem it, boolean useInvoiceActivity, AonTableButton invoiceOK, AonTableButton entryOK
-			,Label invoiceLabel, Label entryLabel) {
+	private void change(ActivityIntegrityItem it, boolean useInvoiceActivity, AonTableButton invoiceOK, AonTableButton entryOK, Label invoiceLabel, Label entryLabel) {
 		invoiceOK.setEnabled(false);
 		entryOK.setEnabled(false);
 		FinanceUtilitiesModule.SERVICE.activityIntegrityFix(getOptions().getOccam(), it.getInvoiceId(), useInvoiceActivity, new AsyncCallback<Void>() {

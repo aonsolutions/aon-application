@@ -28,11 +28,11 @@ public class AonConfirmDialog extends AonCustomDialog {
 		}
 	}
 
-	private SimpleLayoutPanel root;
+	private FlowPanel root;
 	
 	public AonConfirmDialog() {
 		addStyleName(AON.CSS.aonConfirmDialog());
-		root = new SimpleLayoutPanel();
+		root = new FlowPanel();
 		root.setWidth("500px");
 		root.setStyleName(AON.CSS.aonPadding());
 		root.addStyleName(AON.CSS.aonConfirmDialogHeight());
