@@ -109,7 +109,7 @@ class AmortizationSummaryTable extends ScrollPanel {
 		Label toDateLabel = new Label(toDate);
 		AonDoubleBox fiscalAllocation = new AonDoubleBox( );
 		fiscalAllocation.setValue( d.getFiscalAllocation() );
-		fiscalAllocation.addValueChangeHandler(v -> changeFiscalAllocation(opts, cbk, d, fiscalAllocation ) );
+		fiscalAllocation.addValueChangeHandler(v -> cbk.changeFiscalAllocation(opts, d, fiscalAllocation ) );
 		AonFlexTableRow row = grid.addRow();
 		row
 			.addCell( fromDateLabel)
@@ -124,34 +124,7 @@ class AmortizationSummaryTable extends ScrollPanel {
 			.addCell( new AonDoubleLabel( AonMathUtils.round(  d.getAllocation() - d.getFiscalAllocation() ) ) )
 		;
 	}
-
-	private void changeFiscalAllocation(AmortizationModuleOptions opts, AmortizationFormPanelCallback cbk, AmortizationDetail d, AonDoubleBox fiscalAllocation) {
-		double newFiscalAllocation = fiscalAllocation.getValue();
-		AonConfirmDialog.showConfirm( "Continuar con la modificaci\u00F3n de la asignaci\u00F3n fiscal?" , new AonConfirmDialogCallback() {
-			
-			@Override
-			public void onAccept() {
-				d.setFiscalAllocation( newFiscalAllocation );
-				AmortizationModule.SERVICE.saveFiscalAllocation(opts.getOccam(), d, new AsyncCallback<Amortization>() {
-					@Override
-					public void onSuccess(Amortization result) {
-						cbk.onChange( result );
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						cbk.onError(caught.getMessage());;
-					}
-				});
-			}
-			
-			@Override
-			public void onCancel() {
-				fiscalAllocation.setValue( d.getFiscalAllocation() );
-			}
-		});
-	}
-
+	
 	private <T> T ensure(Object nullable, Supplier<T>  supplier, T defaultValue) {
 		return (nullable == null) 
 			? defaultValue
