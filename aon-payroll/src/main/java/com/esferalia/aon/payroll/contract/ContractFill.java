@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -23,6 +24,9 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts.FontName;
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationWidget;
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDAppearanceDictionary;
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDAppearanceStream;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
@@ -1087,72 +1091,91 @@ public class ContractFill {
 	        HashMap<String, String> contractClauses
 	) throws IOException {
 
-	    // Construimos el texto completo
-		StringBuilder fullText = new StringBuilder();
-		for (Entry<String, String> entry : contractClauses.entrySet()) {
-		    fullText.append(entry.getKey())
-		            .append(":\n")
-		            .append(entry.getValue())
-		            .append("\n\n");
-		}
-
+	    // 1) Texto completo
+	    StringBuilder fullText = new StringBuilder();
+	    for (Entry<String, String> entry : contractClauses.entrySet()) {
+	        fullText.append(entry.getKey()).append(":\n")
+	                .append(entry.getValue()).append("\n\n");
+	    }
 	    String allClauses = fullText.toString();
 
-	    // Calculamos cuánto texto cabe en el campo
 	    PDTextField textField = (PDTextField) field;
+	    PDAnnotationWidget widget = textField.getWidgets().get(0);
+	    PDRectangle rect = widget.getRectangle();
 
-	    int maxLinesInField = 35; // AJUSTABLE según el tamaño real del campo
-	    List<String> lines = wrapTextPreservingNewlines(allClauses, 175);
+	    float fontSize = 8f;
+	    float leading  = fontSize * 1.2f;   // el MISMO que usa buildFieldAppearance
+	    float padding  = 3f;
+	    PDFont font = new PDType1Font(FontName.HELVETICA);
 
-	    List<String> fieldLines = new ArrayList<>();
-	    List<String> overflowLines = new ArrayList<>();
+	    float usableWidth  = rect.getWidth()  - 2 * padding;
+	    float usableHeight = rect.getHeight() - 2 * padding;
 
-	    for (int i = 0; i < lines.size(); i++) {
-	        if (i < maxLinesInField) {
-	            fieldLines.add(lines.get(i));
-	        } else {
-	            overflowLines.add(lines.get(i));
+	    // 2) Cuantas lineas ocupa el texto y cuantas caben en el campo
+	    List<String> lines = wrapTextByWidth(allClauses, font, fontSize, usableWidth);
+	    int maxLinesInField = (int) Math.floor(usableHeight / leading);
+
+//	    System.out.println("[CLAUSULAS] lineas=" + lines.size()
+//	            + " maxCampo=" + maxLinesInField
+//	            + " -> " + (lines.size() <= maxLinesInField ? "CAMPO" : "ANEXO"));
+
+	    // 3) Decision: cabe todo -> campo ; no cabe -> anexo completo
+	    if (lines.size() <= maxLinesInField) {
+	        // Cabe entero: lo metemos en el campo y pintamos NOSOTROS la apariencia
+	        try {
+	            textField.setValue(String.join("\n", lines));
+	        } catch (Exception e) {
+	            System.out.println("[CLAUSULAS] setValue fallo (usamos appearance propia): " + e.getMessage());
 	        }
-	    }
+	        buildFieldAppearance(pdfDocument, widget, font, fontSize, leading, padding, lines);
+	        pdfDocument.getDocumentCatalog().getAcroForm().setNeedAppearances(false);
+	    } else {
+	        // No cabe: dejamos referencia y mandamos TODO al anexo
+	        try {
+	            textField.setValue("VER ANEXO DE CLAUSULAS ADICIONALES");
+	        } catch (Exception e) { /* ignorable */ }
 
-	    // Rellenamos el campo SOLO con lo que cabe
-	    String fieldText = String.join("\n", fieldLines);
-	    textField.setValue(fieldText);
-	    textField.setDefaultValue(fieldText);
-
-	    // Si sobra texto, lo escribimos en nuevas páginas
-	    if (!overflowLines.isEmpty()) {
-	        writeOverflowPages(pdfDocument, overflowLines);
+	        List<String> anexoLines = new ArrayList<>(java.util.Arrays.asList(allClauses.split("\n")));
+	        writeOverflowPages(pdfDocument, anexoLines);
 	    }
 	}
 	
-	private static List<String> wrapTextPreservingNewlines(String text, int maxChars) {
-	    List<String> result = new ArrayList<>();
+	private static void buildFieldAppearance(
+	        PDDocument doc,
+	        PDAnnotationWidget widget,
+	        PDFont font,
+	        float fontSize,
+	        float leading,
+	        float padding,
+	        List<String> linesToDraw
+	) throws IOException {
 
-	    for (String paragraph : text.split("\n")) {
+	    PDRectangle rect = widget.getRectangle();
 
-	        if (paragraph.trim().isEmpty()) {
-	            result.add(""); // línea en blanco
-	            continue;
+	    PDAppearanceStream aps = new PDAppearanceStream(doc);
+	    aps.setBBox(new PDRectangle(rect.getWidth(), rect.getHeight()));
+	    PDResources res = new PDResources();
+	    res.put(COSName.getPDFName("Helv"), font);
+	    aps.setResources(res);
+
+	    try (PDPageContentStream cs = new PDPageContentStream(doc, aps)) {
+	        cs.beginText();
+	        cs.setFont(font, fontSize);
+	        cs.setLeading(leading);
+	        // arrancamos arriba del todo, bajando una linea
+	        cs.newLineAtOffset(padding, rect.getHeight() - padding - fontSize);
+	        boolean first = true;
+	        for (String line : linesToDraw) {
+	            if (!first) cs.newLine();       // usa el leading fijado
+	            cs.showText(line);
+	            first = false;
 	        }
-
-	        String[] words = paragraph.split("\\s+");
-	        StringBuilder line = new StringBuilder();
-
-	        for (String word : words) {
-	            if (line.length() + word.length() > maxChars) {
-	                result.add(line.toString());
-	                line = new StringBuilder(word);
-	            } else {
-	                if (line.length() > 0) line.append(" ");
-	                line.append(word);
-	            }
-	        }
-	        if (line.length() > 0) {
-	            result.add(line.toString());
-	        }
+	        cs.endText();
 	    }
-	    return result;
+
+	    PDAppearanceDictionary apDict = new PDAppearanceDictionary();
+	    apDict.setNormalAppearance(aps);
+	    widget.setAppearance(apDict);
 	}
 
 	private static void writeOverflowPages(
@@ -1241,6 +1264,7 @@ public class ContractFill {
 	            continue;
 	        }
 
+	        line = sanitize(line);
 	        cs.showText(line);
 	        cs.newLineAtOffset(0, -leading);
 	        lineCount++;
@@ -1248,6 +1272,14 @@ public class ContractFill {
 
 	    cs.endText();
 	    cs.close();
+	}
+	
+	private static String sanitize(String s) {
+	    if (s == null) return "";
+	    return s.replace('\u2018', '\'').replace('\u2019', '\'')
+	            .replace('\u201C', '"').replace('\u201D', '"')
+	            .replace('\u2013', '-').replace('\u2014', '-')
+	            .replace('\u00A0', ' ');
 	}
 
 	private static List<String> wrapTextByWidth(
